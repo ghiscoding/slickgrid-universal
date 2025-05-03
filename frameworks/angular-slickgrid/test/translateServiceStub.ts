@@ -134,6 +134,9 @@ export class TranslateServiceStub {
       case 'ITEMS_PER_PAGE':
         output = this.currentLang === 'en' ? 'items per page' : 'éléments par page';
         break;
+      case 'LOADING':
+        output = this.currentLang === 'en' ? 'Loading...' : 'Chargement...';
+        break;
       case 'NOT_EQUAL_TO':
         output = this.currentLang === 'en' ? 'Not equal to' : 'Non égal à';
         break;

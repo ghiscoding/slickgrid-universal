@@ -29,7 +29,6 @@ export class SelectFilter implements Filter {
   protected _locales!: Locale;
   protected _msInstance?: MultipleSelectInstance;
   protected _shouldTriggerQuery = true;
-  protected _isLazyDataLoaded = false;
 
   /** DOM Element Name, useful for auto-detecting positioning (dropup / dropdown) */
   elementName!: string;
@@ -70,6 +69,10 @@ export class SelectFilter implements Filter {
   /** Getter for the Collection Options */
   protected get collectionOptions(): CollectionOption {
     return this.columnDef?.filter?.collectionOptions ?? {};
+  }
+
+  get columnId(): string | number {
+    return this.columnDef?.id ?? '';
   }
 
   /** Getter for the Filter Operator */
@@ -174,7 +177,7 @@ export class SelectFilter implements Filter {
     // we probably want this value to be a valid filter option that will ONLY return value that are empty (not everything like its default behavior)
     // user can still override it by defining it
     if (this._isMultipleSelect && this.columnDef?.filter) {
-      this.columnDef.filter.emptySearchTermReturnAllValues = this.columnDef.filter?.emptySearchTermReturnAllValues ?? false;
+      this.columnDef.filter.emptySearchTermReturnAllValues ??= false;
     }
 
     // always render the Select (dropdown) DOM element,
@@ -281,16 +284,12 @@ export class SelectFilter implements Filter {
    * @return outputCollection filtered and/or sorted collection
    */
   protected filterCollection(inputCollection: any[]): any[] {
-    let outputCollection = inputCollection;
-
-    // user might want to filter certain items of the collection
-    if (this.columnFilter && this.columnFilter.collectionFilterBy) {
+    if (this.columnFilter?.collectionFilterBy) {
       const filterBy = this.columnFilter.collectionFilterBy;
       const filterCollectionBy = this.columnFilter.collectionOptions?.filterResultAfterEachPass || null;
-      outputCollection = this.collectionService?.filterCollection(outputCollection, filterBy, filterCollectionBy) || [];
+      return this.collectionService?.filterCollection(inputCollection, filterBy, filterCollectionBy) || [];
     }
-
-    return outputCollection;
+    return inputCollection;
   }
 
   /**
@@ -299,15 +298,11 @@ export class SelectFilter implements Filter {
    * @return outputCollection filtered and/or sorted collection
    */
   protected sortCollection(inputCollection: any[]): any[] {
-    let outputCollection = inputCollection;
-
-    // user might want to sort the collection
-    if (this.columnFilter && this.columnFilter.collectionSortBy) {
+    if (this.columnFilter?.collectionSortBy) {
       const sortBy = this.columnFilter.collectionSortBy;
-      outputCollection = this.collectionService?.sortCollection(this.columnDef, outputCollection, sortBy, this.enableTranslateLabel) || [];
+      return this.collectionService?.sortCollection(this.columnDef, inputCollection, sortBy, this.enableTranslateLabel) || [];
     }
-
-    return outputCollection;
+    return inputCollection;
   }
 
   /**
@@ -337,22 +332,6 @@ export class SelectFilter implements Filter {
 
   protected watchCallback(updatedArray: any[]): void {
     this.renderDomElement(this.columnFilter.collection || updatedArray || []);
-  }
-
-  protected parseCollectionList(collection: any[]): {
-    selectElement: HTMLSelectElement;
-    dataCollection: OptionRowData[];
-    hasFoundSearchTerm: boolean;
-  } {
-    return buildMsSelectCollectionList(
-      'filter',
-      collection,
-      this.columnDef,
-      this.grid,
-      this.isMultipleSelect,
-      this.translaterService,
-      this.searchTerms || []
-    );
   }
 
   renderDomElement(inputCollection: any[]): void {
@@ -397,20 +376,16 @@ export class SelectFilter implements Filter {
     }
 
     // assign the collection to a temp variable before filtering/sorting the collection
-    let newCollection = collection;
-
     // user might want to filter and/or sort certain items of the collection
-    newCollection = this.filterCollection(newCollection);
-    newCollection = this.sortCollection(newCollection);
+    const { dataCollection, hasFoundSearchTerm, selectElement } = this.filterSortAndParseCollection(collection);
 
     // step 1, create HTML DOM element
-    const selectBuildResult = this.parseCollectionList(newCollection);
-    this.isFilled = selectBuildResult.hasFoundSearchTerm;
+    this.isFilled = hasFoundSearchTerm;
 
     // step 2, create the DOM Element of the filter & pre-load search terms
     // we will later also subscribe to the onClose event to filter the data whenever that event is triggered
-    this.createFilterElement(selectBuildResult.selectElement!, selectBuildResult.dataCollection);
-    this._collectionLength = newCollection.length;
+    this.createFilterElement(selectElement, dataCollection);
+    this._collectionLength = dataCollection.length;
   }
 
   /** Create a blank entry that can be added to the collection. It will also reuse the same collection structure provided by the user */
@@ -433,17 +408,15 @@ export class SelectFilter implements Filter {
    * @param {Object} selectElement
    */
   protected createFilterElement(selectElement: HTMLSelectElement, dataCollection: OptionRowData[]): void {
-    const columnId = this.columnDef?.id ?? '';
-
     // provide the name attribute to the DOM element which will be needed to auto-adjust drop position (dropup / dropdown)
-    this.elementName = `filter-${columnId}`;
+    this.elementName = `filter-${this.columnId}`;
     this.defaultOptions.name = this.elementName;
 
     emptyElement(this.filterContainerElm);
 
     // create the DOM element & add an ID and filter class
     this.filterElm = selectElement;
-    this.filterElm.dataset.columnId = `${columnId}`;
+    this.filterElm.dataset.columnId = `${this.columnId}`;
 
     // if there's a search term, we will add the "filled" class for styling purposes
     this.updateFilterStyle(this.isFilled);
@@ -457,16 +430,33 @@ export class SelectFilter implements Filter {
     this.columnFilter.onInstantiated?.(this._msInstance);
   }
 
-  protected initMultipleSelectTemplate(): void {
-    const isTranslateEnabled = this.gridOptions?.enableTranslate ?? false;
-    const columnId = this.columnDef?.id ?? '';
+  protected filterSortAndParseCollection(inputCollection: any[]): {
+    selectElement: HTMLSelectElement;
+    dataCollection: OptionRowData[];
+    hasFoundSearchTerm: boolean;
+  } {
+    // user might want to filter and/or sort certain items of the collection
+    inputCollection = this.filterCollection(inputCollection);
+    inputCollection = this.sortCollection(inputCollection);
 
+    return buildMsSelectCollectionList(
+      'filter',
+      inputCollection,
+      this.columnDef,
+      this.grid,
+      this.isMultipleSelect,
+      this.translaterService,
+      this.searchTerms || []
+    );
+  }
+
+  protected initMultipleSelectTemplate(): void {
     // default options used by this Filter, user can overwrite any of these by passing "otions"
     const options = {
       autoAdjustDropHeight: true,
       autoAdjustDropPosition: true,
       autoAdjustDropWidthByTextSize: true,
-      name: `${columnId}`,
+      name: `${this.columnId}`,
       container: 'body',
       darkMode: !!this.gridOptions.darkMode,
       filter: false, // input search term on top of the select option list
@@ -482,23 +472,18 @@ export class SelectFilter implements Filter {
       onClear: () => this.clear(),
     } as MultipleSelectOption;
 
+    // optional lazy loading of the collection (when select is opened)
     if (this.columnFilter.collectionLazy) {
-      options.onOpen = () => {
-        if (this.columnFilter.collectionLazy && !this._isLazyDataLoaded) {
-          const lazyProcess = this.columnFilter.collectionLazy(this.columnDef);
-          const collectionPromise = fetchAsPromise(lazyProcess, this.rxjs);
-
-          (collectionPromise as Promise<any[]>).then((collectionData) => {
-            collectionData = getCollectionFromObjectWhenEnabled(collectionData, this.columnFilter);
+      options.lazyData = () => {
+        const lazyProcess = this.columnFilter.collectionLazy?.(this.columnDef);
+        return new Promise((resolve) =>
+          fetchAsPromise(lazyProcess, this.rxjs).then((collectionData) => {
             // user might want to filter and/or sort certain items of the collection
-            collectionData = this.filterCollection(collectionData);
-            collectionData = this.sortCollection(collectionData);
-
-            const colResult = this.parseCollectionList(collectionData);
-            this._msInstance?.refreshOptions({ data: colResult.dataCollection });
-            this._isLazyDataLoaded = true;
-          });
-        }
+            collectionData = getCollectionFromObjectWhenEnabled(collectionData, this.columnFilter);
+            const { dataCollection } = this.filterSortAndParseCollection(collectionData);
+            resolve(dataCollection || []);
+          })
+        );
       };
     }
 
@@ -508,26 +493,12 @@ export class SelectFilter implements Filter {
       options.showOkButton = true;
       options.displayTitle = true; // show tooltip of all selected items while hovering the filter
       const translationPrefix = getTranslationPrefix(this.gridOptions);
-      options.countSelectedText =
-        isTranslateEnabled && this.translaterService?.translate
-          ? this.translaterService.translate(`${translationPrefix}X_OF_Y_SELECTED`)
-          : this._locales?.TEXT_X_OF_Y_SELECTED;
-      options.allSelectedText =
-        isTranslateEnabled && this.translaterService?.translate
-          ? this.translaterService.translate(`${translationPrefix}ALL_SELECTED`)
-          : this._locales?.TEXT_ALL_SELECTED;
-      options.noMatchesFoundText =
-        isTranslateEnabled && this.translaterService?.translate
-          ? this.translaterService.translate(`${translationPrefix}NO_MATCHES_FOUND`)
-          : this._locales?.TEXT_NO_MATCHES_FOUND;
-      options.okButtonText =
-        isTranslateEnabled && this.translaterService?.translate
-          ? this.translaterService.translate(`${translationPrefix}OK`)
-          : this._locales?.TEXT_OK;
-      options.selectAllText =
-        isTranslateEnabled && this.translaterService?.translate
-          ? this.translaterService.translate(`${translationPrefix}SELECT_ALL`)
-          : this._locales?.TEXT_SELECT_ALL;
+      options.countSelectedText = this.translateOrDefault(`${translationPrefix}X_OF_Y_SELECTED`, this._locales?.TEXT_X_OF_Y_SELECTED);
+      options.allSelectedText = this.translateOrDefault(`${translationPrefix}ALL_SELECTED`, this._locales?.TEXT_ALL_SELECTED);
+      options.noMatchesFoundText = this.translateOrDefault(`${translationPrefix}NO_MATCHES_FOUND`, this._locales?.TEXT_NO_MATCHES_FOUND);
+      options.okButtonText = this.translateOrDefault(`${translationPrefix}OK`, this._locales?.TEXT_OK);
+      options.selectAllText = this.translateOrDefault(`${translationPrefix}SELECT_ALL`, this._locales?.TEXT_SELECT_ALL);
+      options.lazyLoadingText = this.translateOrDefault(`${translationPrefix}LOADING`, this._locales?.TEXT_LOADING);
     }
     this.defaultOptions = options;
   }
@@ -561,5 +532,10 @@ export class SelectFilter implements Filter {
       this.filterElm?.classList.remove('filled');
       this._msInstance?.getParentElement()?.classList.remove('filled');
     }
+  }
+
+  protected translateOrDefault(translationKey: string, defaultValue = ''): string {
+    const isTranslateEnabled = this.gridOptions?.enableTranslate ?? false;
+    return isTranslateEnabled && this.translaterService?.translate ? this.translaterService.translate(translationKey) : defaultValue;
   }
 }

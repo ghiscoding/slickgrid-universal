@@ -997,26 +997,29 @@ describe('SelectFilter', () => {
   it('should create the multi-select filter with a default search term when using "collectionLazy" as a Promise', () =>
     new Promise(async (done: any) => {
       const spyCallback = vi.spyOn(filterArguments, 'callback');
-      const mockCollection = ['male', 'female'];
+      const mockCollection = ['male', 'female', 'other'];
       mockColumn.filter!.collection = undefined;
-      mockColumn.filter!.collectionLazy = () => Promise.resolve(mockCollection);
+      mockColumn.filter!.collectionLazy = () => {
+        return Promise.resolve(mockCollection);
+      };
 
       filterArguments.searchTerms = ['female'];
       await filter.init(filterArguments);
       await filter.msInstance?.open(null);
 
       setTimeout(() => {
-        const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-        const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=filter-gender].ms-drop ul>li input[type=checkbox]`);
-        const filterOkElm = divContainer.querySelector(`[data-name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
-        filterBtnElm.click();
-        filterOkElm.click();
-        expect(filterListElm.length).toBe(2);
-        expect(filterListElm[1].checked).toBe(true);
+        const msData = filter.msInstance?.getData() || [];
+        const selectDropElm = filter.msInstance?.getDropElement();
+        const filterListElm = selectDropElm?.querySelectorAll<HTMLInputElement>('ul>li input[type=checkbox]');
+        const okBtnElm = selectDropElm?.querySelector('.ms-ok-button') as HTMLButtonElement;
+        okBtnElm.click();
+        expect(msData.length).toBe(3);
+        expect(filterListElm?.length).toBe(3);
+        expect(filterListElm?.[1].checked).toBe(true);
         expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: 'IN', searchTerms: ['female'], shouldTriggerQuery: true });
         filter.msInstance?.close();
         done();
-      }, 0);
+      });
     }));
 
   it('should create the multi-select filter with a default search term when using "collectionLazy" as a Promise with content to simulate http-client', () =>
@@ -1031,16 +1034,16 @@ describe('SelectFilter', () => {
       await filter.msInstance?.open(null);
 
       setTimeout(() => {
-        const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-        const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=filter-gender].ms-drop ul>li input[type=checkbox]`);
-        const filterOkElm = divContainer.querySelector(`[data-name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
-        filterBtnElm.click();
-        filterOkElm.click();
-        filter.msInstance?.close();
-
-        expect(filterListElm.length).toBe(2);
-        expect(filterListElm[1].checked).toBe(true);
+        const msData = filter.msInstance?.getData() || [];
+        const selectDropElm = filter.msInstance?.getDropElement();
+        const filterListElm = selectDropElm?.querySelectorAll<HTMLInputElement>('ul>li input[type=checkbox]');
+        const okBtnElm = selectDropElm?.querySelector('.ms-ok-button') as HTMLButtonElement;
+        okBtnElm.click();
+        expect(msData.length).toBe(2);
+        expect(filterListElm?.length).toBe(2);
+        expect(filterListElm?.[1].checked).toBe(true);
         expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: 'IN', searchTerms: ['female'], shouldTriggerQuery: true });
+        filter.msInstance?.close();
         done();
       });
     }));
@@ -1062,18 +1065,16 @@ describe('SelectFilter', () => {
       await filter.msInstance?.open(null);
 
       setTimeout(() => {
-        const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-        const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=filter-gender].ms-drop ul>li input[type=checkbox]`);
-        // const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
-        const filterOkElm = divContainer.querySelector(`[data-name=filter-gender].ms-drop .ms-ok-button`) as HTMLButtonElement;
-        filterBtnElm.click();
-        filterOkElm.click();
-        filter.msInstance?.close();
-
-        expect(filterListElm.length).toBe(2);
-        // expect(filterFilledElms.length).toBe(1);
-        expect(filterListElm[1].checked).toBe(true);
+        const msData = filter.msInstance?.getData() || [];
+        const selectDropElm = filter.msInstance?.getDropElement();
+        const filterListElm = selectDropElm?.querySelectorAll<HTMLInputElement>('ul>li input[type=checkbox]');
+        const okBtnElm = selectDropElm?.querySelector('.ms-ok-button') as HTMLButtonElement;
+        okBtnElm.click();
+        expect(msData.length).toBe(2);
+        expect(filterListElm?.length).toBe(2);
+        expect(filterListElm?.[1].checked).toBe(true);
         expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: 'IN', searchTerms: ['female'], shouldTriggerQuery: true });
+        filter.msInstance?.close();
         done();
       });
     }));
@@ -1099,15 +1100,17 @@ describe('SelectFilter', () => {
       await filter.msInstance?.open(null);
 
       setTimeout(() => {
-        const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
-        const filterListElm = divContainer.querySelectorAll<HTMLSpanElement>(`[data-name=filter-gender].ms-drop ul>li span`);
-        filterBtnElm.click();
+        const msData = filter.msInstance?.getData() || [];
+        const selectDropElm = filter.msInstance?.getDropElement();
+        const filterListElm = selectDropElm?.querySelectorAll<HTMLInputElement>('ul>li input[type=checkbox]');
+        const okBtnElm = selectDropElm?.querySelector('.ms-ok-button') as HTMLButtonElement;
+        okBtnElm.click();
+        expect(msData.length).toBe(3);
+        expect(filterListElm?.length).toBe(3);
+        expect(filterListElm?.[0].value).toBe('other');
+        expect(filterListElm?.[1].value).toBe('male');
+        expect(filterListElm?.[2].value).toBe('female');
         filter.msInstance?.close();
-
-        expect(filterListElm.length).toBe(3);
-        expect(filterListElm[0].textContent).toBe('other');
-        expect(filterListElm[1].textContent).toBe('male');
-        expect(filterListElm[2].textContent).toBe('female');
         done();
       });
     }));

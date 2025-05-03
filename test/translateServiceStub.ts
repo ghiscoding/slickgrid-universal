@@ -158,6 +158,9 @@ export class TranslateServiceStub implements TranslaterService {
       case 'ITEMS_SELECTED':
         output = this._locale === 'en' ? 'items selected' : 'éléments sélectionnés';
         break;
+      case 'LOADING':
+        output = this._locale === 'en' ? 'Loading...' : 'Chargement...';
+        break;
       case 'NOT_CONTAINS':
         output = this._locale === 'en' ? 'Not contains' : 'Ne contient pas';
         break;

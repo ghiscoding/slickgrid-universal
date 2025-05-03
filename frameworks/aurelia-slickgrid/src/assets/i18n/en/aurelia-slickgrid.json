@@ -37,6 +37,7 @@
   "ITEMS": "items",
   "ITEMS_PER_PAGE": "items per page",
   "ITEMS_SELECTED": "items selected",
+  "LOADING": "Loading...",
   "NO_ELEMENTS_FOUND": "No elements found",
   "LAST_UPDATE": "Last Update",
   "LESS_THAN": "Less than",
