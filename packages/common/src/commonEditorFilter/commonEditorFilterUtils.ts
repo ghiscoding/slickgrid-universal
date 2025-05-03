@@ -4,9 +4,18 @@ import type { AutocompleteItem } from 'autocompleter';
 import { Calendar, type FormatDateString, type Options, type Range } from 'vanilla-calendar-pro';
 
 import { FieldType } from '../enums/fieldType.enum.js';
-import type { AutocompleterOption, Column, ColumnEditor, ColumnFilter } from '../interfaces/index.js';
+import type {
+  AutocompleterOption,
+  CollectionFilterBy,
+  CollectionOption,
+  CollectionSortBy,
+  Column,
+  ColumnEditor,
+  ColumnFilter,
+} from '../interfaces/index.js';
 import { formatDateByFieldType, mapTempoDateFormatWithFieldType, tryParseDate } from '../services/dateUtils.js';
 import { getDescendantProperty } from '../services/utilities.js';
+import type { CollectionService } from '../services/collection.service.js';
 
 /**
  * add loading class ".slick-autocomplete-loading" to the Kraaden Autocomplete input element
@@ -63,6 +72,21 @@ export function resetDatePicker(pickerInstance: Calendar): void {
     dateInputElm.value = '';
   }
   pickerInstance.update();
+}
+
+/** Create a blank entry for Select Editor/Filter that can be added to the collection. It will also reuse the same collection structure provided by the user */
+export function createBlankSelectEntry(labelName: string, valueName: string, labelPrefixName?: string, labelSuffixName?: string): any {
+  const blankEntry = {
+    [labelName]: '',
+    [valueName]: '',
+  };
+  if (labelPrefixName) {
+    blankEntry[labelPrefixName] = '';
+  }
+  if (labelSuffixName) {
+    blankEntry[labelSuffixName] = '';
+  }
+  return blankEntry;
 }
 
 export function setPickerDates(
@@ -123,4 +147,34 @@ export function setPickerDates(
 
     return isChanged;
   }
+}
+
+/** When user defines pre-filter on his Editor/Filter collection */
+export function filterCollectionWithOptions<T = any>(
+  inputCollection: T[],
+  collectionService?: CollectionService,
+  collectionFilterBy?: CollectionFilterBy | CollectionFilterBy[],
+  collectionOptions?: CollectionOption
+): T[] {
+  if (collectionFilterBy) {
+    const filterBy = collectionFilterBy;
+    const filterCollectionBy = collectionOptions?.filterResultAfterEachPass || null;
+    return collectionService?.filterCollection(inputCollection, filterBy, filterCollectionBy) || [];
+  }
+  return inputCollection;
+}
+
+/** When user defines pre-sort on his Editor/Filter collection */
+export function sortCollectionWithOptions<T = any>(
+  inputCollection: T[],
+  columnDef: Column,
+  collectionService?: CollectionService,
+  collectionSortBy?: CollectionSortBy | CollectionSortBy[],
+  enableTranslateLabel?: boolean
+): T[] {
+  if (collectionSortBy) {
+    const sortBy = collectionSortBy;
+    return collectionService?.sortCollection(columnDef, inputCollection, sortBy, enableTranslateLabel) || [];
+  }
+  return inputCollection;
 }

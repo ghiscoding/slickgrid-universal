@@ -100,6 +100,8 @@
     "@lerna-lite/publish": "^4.0.0",
     "@lerna-lite/run": "^4.0.0",
     "@lerna-lite/watch": "^4.0.0",
+    "@slickgrid-universal/common": "workspace:*",
+    "@slickgrid-universal/event-pub-sub": "workspace:*",
     "@types/node": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "@vitest/eslint-plugin": "^1.1.43",

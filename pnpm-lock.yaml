@@ -122,6 +122,12 @@ importers:
       '@lerna-lite/watch':
         specifier: ^4.0.0
         version: 4.0.0(@lerna-lite/publish@4.0.0)(@lerna-lite/run@4.0.0)(@types/node@22.15.2)(babel-plugin-macros@3.1.0)(typescript@5.8.3)
+      '@slickgrid-universal/common':
+        specifier: workspace:*
+        version: link:packages/common
+      '@slickgrid-universal/event-pub-sub':
+        specifier: workspace:*
+        version: link:packages/event-pub-sub
       '@types/node':
         specifier: 'catalog:'
         version: 22.15.2

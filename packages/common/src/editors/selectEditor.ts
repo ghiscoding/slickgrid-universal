@@ -19,7 +19,12 @@ import type {
   Locale,
   SelectOption,
 } from './../interfaces/index.js';
-import { getCollectionFromObjectWhenEnabled } from '../commonEditorFilter/commonEditorFilterUtils.js';
+import {
+  createBlankSelectEntry,
+  filterCollectionWithOptions,
+  getCollectionFromObjectWhenEnabled,
+  sortCollectionWithOptions,
+} from '../commonEditorFilter/commonEditorFilterUtils.js';
 import { buildMsSelectCollectionList, CollectionService, findOrDefault, type TranslaterService } from '../services/index.js';
 import { getDescendantProperty, getTranslationPrefix } from '../services/utilities.js';
 import { SlickEventData, type SlickGrid } from '../core/index.js';
@@ -643,33 +648,6 @@ export class SelectEditor implements Editor {
     this.disable(isCellEditable === false);
   }
 
-  /**
-   * user might want to filter certain items of the collection
-   * @param inputCollection
-   * @return outputCollection filtered and/or sorted collection
-   */
-  protected filterCollection(inputCollection: any[]): any[] {
-    if (this.columnEditor?.collectionFilterBy) {
-      const filterBy = this.columnEditor.collectionFilterBy;
-      const filterCollectionBy = this.columnEditor.collectionOptions?.filterResultAfterEachPass ?? null;
-      return this._collectionService.filterCollection(inputCollection, filterBy, filterCollectionBy);
-    }
-    return inputCollection;
-  }
-
-  /**
-   * user might want to sort the collection in a certain way
-   * @param inputCollection
-   * @return outputCollection filtered and/or sorted collection
-   */
-  protected sortCollection(inputCollection: any[]): any[] {
-    if (this.columnDef && this.columnEditor?.collectionSortBy) {
-      const sortBy = this.columnEditor.collectionSortBy;
-      return this._collectionService.sortCollection(this.columnDef, inputCollection, sortBy, this.enableTranslateLabel);
-    }
-    return inputCollection;
-  }
-
   protected translatePrefixSuffix(prefixSuffix: string | number): string | number {
     return this.enableTranslateLabel && this._translaterService && prefixSuffix && typeof prefixSuffix === 'string'
       ? this._translaterService.translate(prefixSuffix || ' ')
@@ -701,8 +679,8 @@ export class SelectEditor implements Editor {
       collection.length > 0 &&
       collection[0][this.valueName] !== ''
     ) {
-      collection.unshift(this.createBlankEntry());
-      this.collection.unshift(this.createBlankEntry()); // also make the change on the original collection
+      collection.unshift(createBlankSelectEntry(this.labelName, this.valueName, this.labelPrefixName, this.labelSuffixName));
+      this.collection.unshift(createBlankSelectEntry(this.labelName, this.valueName, this.labelPrefixName, this.labelSuffixName)); // also make the change on the original collection
     }
 
     // user can optionally add his own custom entry at the beginning of the collection
@@ -728,8 +706,19 @@ export class SelectEditor implements Editor {
     let finalCollection = collection;
 
     // user might want to filter and/or sort certain items of the collection
-    finalCollection = this.filterCollection(finalCollection);
-    finalCollection = this.sortCollection(finalCollection);
+    finalCollection = filterCollectionWithOptions(
+      finalCollection,
+      this._collectionService,
+      this.columnEditor?.collectionFilterBy,
+      this.collectionOptions
+    );
+    finalCollection = sortCollectionWithOptions(
+      finalCollection,
+      this.columnDef,
+      this._collectionService,
+      this.columnEditor?.collectionSortBy,
+      this.enableTranslateLabel
+    );
 
     // user could also override the collection
     if (this.columnEditor?.collectionOverride) {
@@ -762,21 +751,6 @@ export class SelectEditor implements Editor {
     // step 2, create the DOM Element of the editor
     // we will later also subscribe to the onClose event to save the Editor whenever that event is triggered
     this.createDomElement(selectBuildResult.selectElement, selectBuildResult.dataCollection);
-  }
-
-  /** Create a blank entry that can be added to the collection. It will also reuse the same collection structure provided by the user */
-  protected createBlankEntry(): any {
-    const blankEntry = {
-      [this.labelName]: '',
-      [this.valueName]: '',
-    };
-    if (this.labelPrefixName) {
-      blankEntry[this.labelPrefixName] = '';
-    }
-    if (this.labelSuffixName) {
-      blankEntry[this.labelSuffixName] = '';
-    }
-    return blankEntry;
   }
 
   /**
