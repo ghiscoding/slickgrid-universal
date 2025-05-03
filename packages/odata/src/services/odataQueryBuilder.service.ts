@@ -1,4 +1,4 @@
-import { CaseType, type Column } from '@slickgrid-universal/common';
+import { type Column } from '@slickgrid-universal/common';
 import { titleCase } from '@slickgrid-universal/utils';
 import type { OdataOption } from '../interfaces/odataOption.interface.js';
 
@@ -148,7 +148,7 @@ export class OdataQueryBuilderService {
         let sortBy = options[property as keyof OdataOption];
 
         // make sure first char of each orderBy field is capitalize
-        if (this._odataOptions.caseType === CaseType.pascalCase) {
+        if (this._odataOptions.caseType === 'pascalCase') {
           if (Array.isArray(sortBy)) {
             sortBy.forEach((field, index, inputArray) => {
               inputArray[index] = titleCase(field);

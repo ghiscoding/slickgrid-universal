@@ -60,7 +60,6 @@ import {
   // utilities
   autoAddEditorFormatterToColumnsWithEditor,
   emptyElement,
-  GridStateType,
   unsubscribeAll,
 } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
@@ -781,7 +780,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
       }
     }
     this._eventPubSubService.publish('onGridStateChanged', {
-      change: { newValues: { pageNumber, pageSize }, type: GridStateType.pagination },
+      change: { newValues: { pageNumber, pageSize }, type: 'pagination' },
       gridState: this.gridStateService.getCurrentGridState(),
     });
     this.cd.markForCheck();

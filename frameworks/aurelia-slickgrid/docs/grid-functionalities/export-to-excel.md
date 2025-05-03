@@ -230,7 +230,7 @@ export class MySample {
   exportToFile() {
     this.excelExportService.exportToExcel({
       filename: 'myExport',
-      format: FileType.xlsx
+      format: 'xlsx'
     });
   }
 }

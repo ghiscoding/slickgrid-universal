@@ -9,7 +9,7 @@ import type {
   TreeDataOption,
   DOMMouseOrTouchEvent,
 } from '../interfaces/index.js';
-import { EmitterType, FieldType, SortDirection, SortDirectionNumber, type SortDirectionString } from '../enums/index.js';
+import { type EmitterType, FieldType, SortDirection, SortDirectionNumber, type SortDirectionString } from '../enums/index.js';
 import type { BackendUtilityService } from './backendUtility.service.js';
 import type { CollectionService } from './collection.service.js';
 import { getDescendantProperty, flattenToParentChildArray, isColumnDateType } from './utilities.js';
@@ -147,7 +147,7 @@ export class SortService {
     }
 
     this.onLocalSortChanged(this._grid, sortColumns);
-    this.emitSortChanged(EmitterType.local);
+    this.emitSortChanged('local');
   }
 
   clearSortByColumnId(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData | undefined, columnId: string | number): void {
@@ -277,14 +277,14 @@ export class SortService {
    * @param sender
    */
   emitSortChanged(sender: EmitterType, currentLocalSorters?: CurrentSorter[]): void {
-    if (sender === EmitterType.remote && this._gridOptions.backendServiceApi) {
+    if (sender === 'remote' && this._gridOptions.backendServiceApi) {
       let currentSorters: CurrentSorter[] = [];
       const backendService = this._gridOptions.backendServiceApi.service;
       if (backendService?.getCurrentSorters) {
         currentSorters = backendService.getCurrentSorters() as CurrentSorter[];
       }
       this.pubSubService.publish('onSortChanged', currentSorters);
-    } else if (sender === EmitterType.local) {
+    } else if (sender === 'local') {
       if (currentLocalSorters) {
         this._currentLocalSorters = currentLocalSorters;
       }
@@ -496,7 +496,7 @@ export class SortService {
 
       if (emitSortChanged) {
         this.emitSortChanged(
-          EmitterType.local,
+          'local',
           sortColumns.map((col) => {
             return {
               columnId: col.sortCol?.id ?? 'id',
@@ -533,7 +533,7 @@ export class SortService {
       sortColumns.forEach((sortCol) => {
         this._currentLocalSorters.push({ columnId: sortCol.columnId, direction: sortCol.sortAsc ? 'ASC' : 'DESC' });
       });
-      const emitterType = this._gridOptions.backendServiceApi ? EmitterType.remote : EmitterType.local;
+      const emitterType: EmitterType = this._gridOptions.backendServiceApi ? 'remote' : 'local';
       this.emitSortChanged(emitterType);
     }
 
@@ -668,7 +668,7 @@ export class SortService {
       }
 
       if (emitChangedEvent) {
-        const emitterType = backendApi ? EmitterType.remote : EmitterType.local;
+        const emitterType: EmitterType = backendApi ? 'remote' : 'local';
         this.emitSortChanged(emitterType);
       }
     }

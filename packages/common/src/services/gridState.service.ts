@@ -1,7 +1,7 @@
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { dequal } from 'dequal/lite';
 
-import { ExtensionName, GridStateType } from '../enums/index.js';
+import { ExtensionName } from '../enums/index.js';
 import type {
   Column,
   CurrentColumn,
@@ -352,7 +352,7 @@ export class GridStateService {
     const columns: Column[] = columnDefinitions || this._columns;
     const currentColumns: CurrentColumn[] = this.getAssociatedCurrentColumns(columns);
     this.pubSubService.publish('onGridStateChanged', {
-      change: { newValues: currentColumns, type: GridStateType.columns },
+      change: { newValues: currentColumns, type: 'columns' },
       gridState: this.getCurrentGridState(),
     });
   }
@@ -392,7 +392,7 @@ export class GridStateService {
       this.pubSubService.subscribe<CurrentFilter[]>('onFilterChanged', (currentFilters) => {
         this.resetRowSelectionWhenRequired();
         this.pubSubService.publish('onGridStateChanged', {
-          change: { newValues: currentFilters, type: GridStateType.filter },
+          change: { newValues: currentFilters, type: 'filter' },
           gridState: this.getCurrentGridState(),
         });
       })
@@ -403,7 +403,7 @@ export class GridStateService {
       this.pubSubService.subscribe('onFilterCleared', () => {
         this.resetRowSelectionWhenRequired();
         this.pubSubService.publish('onGridStateChanged', {
-          change: { newValues: [], type: GridStateType.filter },
+          change: { newValues: [], type: 'filter' },
           gridState: this.getCurrentGridState(),
         });
       })
@@ -414,7 +414,7 @@ export class GridStateService {
       this.pubSubService.subscribe<CurrentSorter[]>('onSortChanged', (currentSorters) => {
         this.resetRowSelectionWhenRequired();
         this.pubSubService.publish('onGridStateChanged', {
-          change: { newValues: currentSorters, type: GridStateType.sorter },
+          change: { newValues: currentSorters, type: 'sorter' },
           gridState: this.getCurrentGridState(),
         });
       })
@@ -424,7 +424,7 @@ export class GridStateService {
       this.pubSubService.subscribe('onSortCleared', () => {
         this.resetRowSelectionWhenRequired();
         this.pubSubService.publish('onGridStateChanged', {
-          change: { newValues: [], type: GridStateType.sorter },
+          change: { newValues: [], type: 'sorter' },
           gridState: this.getCurrentGridState(),
         });
       })
@@ -455,7 +455,7 @@ export class GridStateService {
             filteredDataContextIds: args.filteredIds,
           } as CurrentRowSelection;
           this.pubSubService.publish('onGridStateChanged', {
-            change: { newValues, type: GridStateType.rowSelection },
+            change: { newValues, type: 'rowSelection' },
             gridState: this.getCurrentGridState(),
           });
         }
@@ -467,7 +467,7 @@ export class GridStateService {
       this.pubSubService.subscribe<{ columns: Column[]; hiddenColumn?: Column }>(['onHideColumns', 'onShowColumns'], (data) => {
         const currentColumns: CurrentColumn[] = this.getAssociatedCurrentColumns(data.columns);
         this.pubSubService.publish('onGridStateChanged', {
-          change: { newValues: currentColumns, type: GridStateType.columns },
+          change: { newValues: currentColumns, type: 'columns' },
           gridState: this.getCurrentGridState(),
         });
       })
@@ -477,7 +477,7 @@ export class GridStateService {
     this._subscriptions.push(
       this.pubSubService.subscribe<TreeToggleStateChange>('onTreeItemToggled', (toggleChange) => {
         this.pubSubService.publish('onGridStateChanged', {
-          change: { newValues: toggleChange, type: GridStateType.treeData },
+          change: { newValues: toggleChange, type: 'treeData' },
           gridState: this.getCurrentGridState(),
         });
       })
@@ -487,7 +487,7 @@ export class GridStateService {
     this._subscriptions.push(
       this.pubSubService.subscribe<Omit<TreeToggleStateChange, 'fromItemId'>>('onTreeFullToggleEnd', (toggleChange) => {
         this.pubSubService.publish('onGridStateChanged', {
-          change: { newValues: toggleChange, type: GridStateType.treeData },
+          change: { newValues: toggleChange, type: 'treeData' },
           gridState: this.getCurrentGridState(),
         });
       })
@@ -541,7 +541,7 @@ export class GridStateService {
         const columns: Column[] = args?.columns;
         const currentColumns: CurrentColumn[] = this.getAssociatedCurrentColumns(columns);
         this.pubSubService.publish('onGridStateChanged', {
-          change: { newValues: currentColumns, type: GridStateType.columns },
+          change: { newValues: currentColumns, type: 'columns' },
           gridState: this.getCurrentGridState(),
         });
       });
@@ -561,7 +561,7 @@ export class GridStateService {
         const columns: Column[] = grid.getColumns();
         const currentColumns: CurrentColumn[] = this.getAssociatedCurrentColumns(columns);
         this.pubSubService.publish('onGridStateChanged', {
-          change: { newValues: currentColumns, type: GridStateType.columns },
+          change: { newValues: currentColumns, type: 'columns' },
           gridState: this.getCurrentGridState(),
         });
       });
@@ -583,7 +583,7 @@ export class GridStateService {
         const newValues = { frozenBottom: frozenBottomAfter, frozenColumn: frozenColumnAfter, frozenRow: frozenRowAfter };
         const currentGridState = this.getCurrentGridState();
         this.pubSubService.publish('onGridStateChanged', {
-          change: { newValues, type: GridStateType.pinning },
+          change: { newValues, type: 'pinning' },
           gridState: currentGridState,
         });
       }

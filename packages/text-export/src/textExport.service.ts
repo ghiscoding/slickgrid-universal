@@ -3,6 +3,7 @@ import type {
   Column,
   ContainerService,
   ExternalResource,
+  FileType,
   GridOption,
   KeyTitlePair,
   Locale,
@@ -16,7 +17,7 @@ import type {
 import {
   Constants,
   DelimiterType,
-  FileType,
+
   // utility functions
   exportWithFormatterWhenDefined,
   getTranslationPrefix,
@@ -27,7 +28,7 @@ import { addWhiteSpaces, extend, getHtmlStringOutput, stripTags, titleCase } fro
 const DEFAULT_EXPORT_OPTIONS: TextExportOption = {
   delimiter: DelimiterType.comma,
   filename: 'export',
-  format: FileType.csv,
+  format: 'csv',
   useUtf8WithBom: true,
 };
 
@@ -43,7 +44,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
   protected _delimiter = ',';
   protected _exportQuoteWrapper = '';
   protected _exportOptions!: TextExportOption;
-  protected _fileFormat: FileType | 'csv' | 'txt' = FileType.csv;
+  protected _fileFormat: FileType | 'csv' | 'txt' = 'csv';
   protected _lineCarriageReturn = '\n';
   protected _grid!: SlickGrid;
   protected _groupedColumnHeaders?: Array<KeyTitlePair>;
@@ -103,7 +104,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
    * NOTES: The column position needs to match perfectly the JSON Object position because of the way we are pulling the data,
    * which means that if any column(s) got moved in the UI, it has to be reflected in the JSON array output as well
    *
-   * Example: exportToFile({ format: FileType.csv, delimiter: DelimiterType.comma })
+   * Example: exportToFile({ format: 'csv', delimiter: DelimiterType.comma })
    */
   exportToFile(options?: TextExportOption): Promise<boolean> {
     if (!this._grid || !this._dataView || !this._pubSubService) {
@@ -116,7 +117,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
       this._pubSubService?.publish(`onBeforeExportToTextFile`, true);
       this._exportOptions = extend(true, {}, { ...DEFAULT_EXPORT_OPTIONS, ...this._gridOptions.textExportOptions, ...options });
       this._delimiter = this._exportOptions.delimiterOverride || this._exportOptions.delimiter || '';
-      this._fileFormat = this._exportOptions.format || FileType.csv;
+      this._fileFormat = this._exportOptions.format || 'csv';
 
       // get the CSV output from the grid data
       const dataOutput = this.getDataOutput();
@@ -126,7 +127,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
       window.setTimeout(() => {
         const downloadOptions = {
           filename: `${this._exportOptions.filename}.${this._fileFormat}`,
-          format: this._fileFormat || FileType.csv,
+          format: this._fileFormat || 'csv',
           mimeType: this._exportOptions.mimeType || 'text/plain',
           // prettier-ignore
           useUtf8WithBom: (this._exportOptions && this._exportOptions.hasOwnProperty('useUtf8WithBom')) ? this._exportOptions.useUtf8WithBom : true,
@@ -155,7 +156,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
     // reference: http://stackoverflow.com/questions/155097/microsoft-excel-mangles-diacritics-in-csv-files
     // Option#2: use a 3rd party extension to javascript encode into UTF-16
     let outputData: Uint8Array | string;
-    if (options.format === FileType.csv) {
+    if (options.format === 'csv') {
       outputData = new TextEncoder('utf-8').encode(csvContent);
     } else {
       outputData = csvContent;
@@ -210,7 +211,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
     }
 
     // a CSV needs double quotes wrapper, the other types do not need any wrapper
-    this._exportQuoteWrapper = this._fileFormat === FileType.csv ? '"' : '';
+    this._exportQuoteWrapper = this._fileFormat === 'csv' ? '"' : '';
 
     // data variable which will hold all the fields data of a row
     let outputDataString = '';
@@ -221,7 +222,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
     if (grouping && Array.isArray(grouping) && grouping.length > 0) {
       this._hasGroupedItems = true;
       outputDataString +=
-        this._fileFormat === FileType.csv ? `"${groupByColumnHeader}"${this._delimiter}` : `${groupByColumnHeader}${this._delimiter}`;
+        this._fileFormat === 'csv' ? `"${groupByColumnHeader}"${this._delimiter}` : `${groupByColumnHeader}${this._delimiter}`;
     } else {
       this._hasGroupedItems = false;
     }
@@ -378,7 +379,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
 
       // if we are grouping and are on 1st column index, we need to skip this column since it will be used later by the grouping text:: Group by [columnX]
       if (this._hasGroupedItems && idx === 0) {
-        const emptyValue = this._fileFormat === FileType.csv ? `""` : '';
+        const emptyValue = this._fileFormat === 'csv' ? `""` : '';
         rowOutputStrings.push(emptyValue);
       }
 
@@ -422,7 +423,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
         }
 
         // when CSV we also need to escape double quotes twice, so " becomes ""
-        if (this._fileFormat === FileType.csv && itemData) {
+        if (this._fileFormat === 'csv' && itemData) {
           itemData = itemData.toString().replace(/"/gi, `""`);
         }
 
@@ -449,7 +450,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
 
     groupName = addWhiteSpaces(5 * itemObj.level) + groupName;
 
-    if (this._fileFormat === FileType.csv) {
+    if (this._fileFormat === 'csv') {
       // when CSV we also need to escape double quotes twice, so " becomes ""
       groupName = groupName.toString().replace(/"/gi, `""`);
     }
@@ -484,7 +485,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
         itemData = stripTags(itemData);
       }
 
-      if (format === FileType.csv) {
+      if (format === 'csv') {
         // when CSV we also need to escape double quotes twice, so a double quote " becomes 2x double quotes ""
         itemData = itemData.toString().replace(/"/gi, `""`);
       }

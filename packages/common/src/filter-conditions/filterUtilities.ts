@@ -32,7 +32,7 @@ export function compareObjects(o1: any, o2: any, compareKey?: string): boolean {
 
 /** Simple check to see if the given Operator is meant to be used with a collection check */
 export function isCollectionOperator(operator: OperatorString): boolean {
-  const inputOperator = (operator && operator.toUpperCase()) || '';
+  const inputOperator = operator?.toUpperCase() || '';
   switch (inputOperator) {
     case 'IN':
     case 'NIN':

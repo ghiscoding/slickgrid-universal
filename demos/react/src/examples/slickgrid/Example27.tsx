@@ -321,7 +321,7 @@ const Example27: React.FC = () => {
   // function handleOnGridStateChanged(gridStateChange: GridStateChange) {
   //   setHasNoExpandCollapseChanged(false);
 
-  //   if (gridStateChange?.change?.type === GridStateType.treeData) {
+  //   if (gridStateChange?.change?.type === 'treeData') {
   //     setTreeToggleItems(gridStateChange?.gridState?.treeData?.toggledItems as TreeToggledItem[]);
   //   }
   // }

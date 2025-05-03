@@ -3,7 +3,7 @@ import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { deepCopy } from '@slickgrid-universal/utils';
 
 import { type SlickDataView, SlickEvent, SlickEventData, type SlickGrid } from '../../core/index.js';
-import { DelimiterType, FileType } from '../../enums/index.js';
+import { DelimiterType } from '../../enums/index.js';
 import type { ContextMenu, Column, ElementPosition, GridOption, MenuCommandItem, MenuOptionItem, Formatter } from '../../interfaces/index.js';
 import { BackendUtilityService, type ExcelExportService, SharedService, type TextExportService, type TreeDataService } from '../../services/index.js';
 import { ExtensionUtility } from '../../extensions/extensionUtility.js';
@@ -1349,7 +1349,7 @@ describe('ContextMenu Plugin', () => {
 
         expect(exportSpy).toHaveBeenCalledWith({
           delimiter: DelimiterType.comma,
-          format: FileType.csv,
+          format: 'csv',
         });
       });
 
@@ -1374,7 +1374,7 @@ describe('ContextMenu Plugin', () => {
 
         expect(exportSpy).toHaveBeenCalledWith({
           delimiter: DelimiterType.tab,
-          format: FileType.txt,
+          format: 'txt',
         });
       });
 

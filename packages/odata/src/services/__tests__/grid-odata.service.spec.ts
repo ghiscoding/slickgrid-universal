@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest';
 import {
   type BackendService,
-  CaseType,
   type Column,
   type ColumnFilter,
   type ColumnFilters,
@@ -51,7 +50,7 @@ describe('GridOdataService', () => {
     serviceOptions = {
       orderBy: '',
       top: 10,
-      caseType: CaseType.pascalCase,
+      caseType: 'pascalCase',
     };
     paginationOptions = {
       pageNumber: 1,

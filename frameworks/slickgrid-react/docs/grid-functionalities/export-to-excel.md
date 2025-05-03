@@ -263,7 +263,7 @@ const Example: React.FC = () => {
   function exportToFile() {
     excelExportService.exportToExcel({
       filename: 'myExport',
-      format: FileType.xlsx
+      format: 'xlsx'
     });
   }
 }

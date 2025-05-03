@@ -9,7 +9,7 @@ import {
   toKebabCase,
 } from '@slickgrid-universal/utils';
 
-import { EmitterType } from '../enums/index.js';
+import type { EmitterType } from '../enums/index.js';
 import type {
   Column,
   CurrentSorter,
@@ -741,7 +741,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
       // prettier-ignore
       const tmpSortedColumns = !this.sharedService.gridOptions.multiColumnSort ? [] : this.sortService.getCurrentColumnSorts(columnDef.id + '');
 
-      let emitterType = EmitterType.local;
+      let emitterType: EmitterType = 'local';
 
       // 2- add to the column array, the new sorted column by the header menu
       tmpSortedColumns.push({ columnId: columnDef.id, sortCol: columnDef, sortAsc: isSortingAsc });
@@ -752,10 +752,10 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
           sortCols: tmpSortedColumns,
           grid: this.sharedService.slickGrid,
         });
-        emitterType = EmitterType.remote;
+        emitterType = 'remote';
       } else if (this.sharedService.dataView) {
         this.sortService.onLocalSortChanged(this.sharedService.slickGrid, tmpSortedColumns);
-        emitterType = EmitterType.local;
+        emitterType = 'local';
       } else {
         // when using customDataView, we will simply send it as a onSort event with notify
         args.grid.onSort.notify(tmpSortedColumns as unknown as MultiColumnSort);

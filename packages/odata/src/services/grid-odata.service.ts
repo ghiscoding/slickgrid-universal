@@ -21,7 +21,7 @@ import type {
   SingleColumnSort,
   SlickGrid,
 } from '@slickgrid-universal/common';
-import { CaseType, FieldType, mapOperatorByFieldType, OperatorType, parseUtcDate, SortDirection } from '@slickgrid-universal/common';
+import { FieldType, mapOperatorByFieldType, OperatorType, parseUtcDate, SortDirection } from '@slickgrid-universal/common';
 import { getHtmlStringOutput, stripTags, titleCase } from '@slickgrid-universal/utils';
 import { OdataQueryBuilderService } from './odataQueryBuilder.service.js';
 import type { OdataOption, OdataSortingOption } from '../interfaces/index.js';
@@ -41,7 +41,7 @@ export class GridOdataService implements BackendService {
   defaultOptions: OdataOption = {
     top: DEFAULT_ITEMS_PER_PAGE,
     orderBy: '',
-    caseType: CaseType.pascalCase,
+    caseType: 'pascalCase',
   };
 
   /** Getter for the Column Definitions */
@@ -421,7 +421,7 @@ export class GridOdataService implements BackendService {
 
         // Range with 1 searchterm should lead to equals for a date field.
         if (
-          (operator === OperatorType.rangeInclusive || operator === OperatorType.rangeExclusive) &&
+          (operator === 'RangeInclusive' || operator === 'RangeExclusive') &&
           Array.isArray(searchTerms) &&
           searchTerms.length === 1 &&
           fieldType === FieldType.date
@@ -452,7 +452,7 @@ export class GridOdataService implements BackendService {
           searchBy = '';
 
           // titleCase the fieldName so that it matches the WebApi names
-          if (this._odataService.options.caseType === CaseType.pascalCase) {
+          if (this._odataService.options.caseType === 'pascalCase') {
             fieldName = titleCase(getHtmlStringOutput(fieldName || ''));
           }
 
@@ -616,7 +616,7 @@ export class GridOdataService implements BackendService {
               let fieldName = (columnDef.sortCol.queryFieldSorter || columnDef.sortCol.queryField || columnDef.sortCol.field) + '';
               let columnFieldName = (columnDef.sortCol.field || columnDef.sortCol.id) + '';
               let queryField = (columnDef.sortCol.queryFieldSorter || columnDef.sortCol.queryField || columnDef.sortCol.field || '') + '';
-              if (this._odataService.options.caseType === CaseType.pascalCase) {
+              if (this._odataService.options.caseType === 'pascalCase') {
                 fieldName = titleCase(fieldName);
                 columnFieldName = titleCase(columnFieldName);
                 queryField = titleCase(queryField);
@@ -645,7 +645,7 @@ export class GridOdataService implements BackendService {
       .map((sorter) => {
         let str = '';
         if (sorter && sorter.field) {
-          const sortField = this._odataService.options.caseType === CaseType.pascalCase ? titleCase(sorter.field) : sorter.field;
+          const sortField = this._odataService.options.caseType === 'pascalCase' ? titleCase(sorter.field) : sorter.field;
           str = `${sortField} ${(sorter && sorter.direction && sorter.direction.toLowerCase()) || ''}`;
         }
         return str;

@@ -32,7 +32,6 @@ import {
   GridEventService,
   GridService,
   GridStateService,
-  GridStateType,
   HeaderGroupingService,
   isColumnDateType,
   type Observable,
@@ -1028,7 +1027,7 @@ export class AureliaSlickgridCustomElement {
       }
     }
     this._eventPubSubService.publish('onGridStateChanged', {
-      change: { newValues: { pageNumber, pageSize }, type: GridStateType.pagination },
+      change: { newValues: { pageNumber, pageSize }, type: 'pagination' },
       gridState: this.gridStateService.getCurrentGridState(),
     });
   }

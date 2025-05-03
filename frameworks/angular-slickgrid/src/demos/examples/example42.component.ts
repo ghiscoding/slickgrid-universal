@@ -7,7 +7,6 @@ import {
   Formatters,
   GridOption,
   MultipleSelectOption,
-  OperatorType,
   SliderRangeOption,
 } from '../../library';
 import { CustomPagerComponent } from './grid-custom-pager.component';
@@ -79,7 +78,7 @@ export class Example42Component implements OnInit {
         filter: {
           model: Filters.sliderRange,
           maxValue: 100, // or you can use the filterOptions as well
-          operator: OperatorType.rangeInclusive, // defaults to inclusive
+          operator: 'RangeInclusive', // defaults to inclusive
           filterOptions: {
             hideSliderNumbers: false, // you can hide/show the slider numbers on both side
             min: 0,
@@ -125,7 +124,7 @@ export class Example42Component implements OnInit {
         filterable: true,
         filter: {
           model: Filters.input,
-          operator: OperatorType.rangeExclusive, // defaults to exclusive
+          operator: 'RangeExclusive', // defaults to exclusive
         },
       },
       {

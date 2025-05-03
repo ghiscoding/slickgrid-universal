@@ -72,7 +72,7 @@ export class MyExample {
   }
 
   exportToExcel() {
-    this.excelExportService.exportToExcel({ filename: 'export', format: FileType.xlsx });
+    this.excelExportService.exportToExcel({ filename: 'export', format: 'xlsx' });
   }
 }
 ```

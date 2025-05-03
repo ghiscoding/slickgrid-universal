@@ -3,7 +3,6 @@ import {
   type Column,
   Editors,
   Filters,
-  FileType,
   Formatters,
   type GridOption,
   type Grouping,
@@ -365,7 +364,7 @@ export default class Example02 {
   }
 
   exportToExcel() {
-    this.excelExportService.exportToExcel({ filename: 'export', format: FileType.xlsx });
+    this.excelExportService.exportToExcel({ filename: 'export', format: 'xlsx' });
   }
 
   groupByDuration() {

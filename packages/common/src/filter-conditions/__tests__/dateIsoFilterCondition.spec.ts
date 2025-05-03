@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { FieldType, OperatorType } from '../../enums/index.js';
+import { FieldType } from '../../enums/index.js';
 import type { FilterConditionOption } from '../../interfaces/index.js';
 import { executeDateFilterCondition, getFilterParsedDates } from '../dateFilterCondition.js';
 import { getParsedSearchTermsByFieldType } from '../filterConditionProcesses.js';
@@ -112,7 +112,7 @@ describe('dateIsoFilterCondition method', () => {
         const searchTerms = ['1993-12-01..1993-12-31'];
         const options = {
           dataKey: '',
-          defaultFilterRangeOperator: OperatorType.rangeInclusive,
+          defaultFilterRangeOperator: 'RangeInclusive',
           cellValue: '1993-12-01',
           fieldType: FieldType.dateIso,
           searchTerms,
@@ -125,7 +125,7 @@ describe('dateIsoFilterCondition method', () => {
         const searchTerms = ['1993-12-01..1993-12-31'];
         const options = {
           dataKey: '',
-          defaultFilterRangeOperator: OperatorType.rangeExclusive,
+          defaultFilterRangeOperator: 'RangeExclusive',
           cellValue: '1993-12-01',
           fieldType: FieldType.dateIso,
           searchTerms,

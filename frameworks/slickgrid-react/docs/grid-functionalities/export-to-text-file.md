@@ -148,7 +148,7 @@ const Example: React.FC = () => {
     textExportService.exportToFile({
       delimiter: (type === 'csv') ? DelimiterType.comma : DelimiterType.tab,
       filename: 'myExport',
-      format: (type === 'csv') ? FileType.csv : FileType.txt
+      format: (type === 'csv') ? 'csv' : 'txt'
     });
   }
 }

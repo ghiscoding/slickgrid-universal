@@ -5,7 +5,6 @@ import { useTranslation } from 'i18next-vue';
 import {
   type Column,
   DelimiterType,
-  FileType,
   Filters,
   type Formatter,
   Formatters,
@@ -270,7 +269,7 @@ function dynamicallyAddTitleHeader() {
 function exportToExcel() {
   excelExportService.exportToExcel({
     filename: 'Export',
-    format: FileType.xlsx,
+    format: 'xlsx',
   });
 }
 
@@ -278,7 +277,7 @@ function exportToFile(type = 'csv') {
   textExportService.exportToFile({
     delimiter: type === 'csv' ? DelimiterType.comma : DelimiterType.tab,
     filename: 'myExport',
-    format: type === 'csv' ? FileType.csv : FileType.txt,
+    format: type === 'csv' ? 'csv' : 'txt',
   });
 }
 

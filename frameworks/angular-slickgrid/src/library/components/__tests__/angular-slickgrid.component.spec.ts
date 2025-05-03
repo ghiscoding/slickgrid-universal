@@ -26,7 +26,6 @@ import {
   GridService,
   GridState,
   GridStateService,
-  GridStateType,
   HeaderGroupingService,
   OnRowCountChangedEventArgs,
   OnRowsChangedEventArgs,
@@ -2023,7 +2022,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         component.paginationChanged(mockPagination);
 
         expect(pluginEaSpy).toHaveBeenCalledWith('onGridStateChanged', {
-          change: { newValues: mockPagination, type: GridStateType.pagination },
+          change: { newValues: mockPagination, type: 'pagination' },
           gridState: { columns: [], pagination: mockPagination },
         });
       });
@@ -2046,7 +2045,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         eventPubSubService.publish('onPaginationChanged', mockPaginationMetadata);
 
         expect(pubSubSpy).toHaveBeenCalledWith('onGridStateChanged', {
-          change: { newValues: mockPagination, type: GridStateType.pagination },
+          change: { newValues: mockPagination, type: 'pagination' },
           gridState: { columns: [], pagination: mockPagination },
         });
       });
@@ -2066,7 +2065,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
 
         expect(setRowSpy).toHaveBeenCalledWith([]);
         expect(pluginEaSpy).toHaveBeenCalledWith('onGridStateChanged', {
-          change: { newValues: mockPagination, type: GridStateType.pagination },
+          change: { newValues: mockPagination, type: 'pagination' },
           gridState: { columns: [], pagination: mockPagination },
         });
       });
@@ -2086,7 +2085,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
 
         expect(setRowSpy).toHaveBeenCalledWith([]);
         expect(pluginEaSpy).toHaveBeenCalledWith('onGridStateChanged', {
-          change: { newValues: mockPagination, type: GridStateType.pagination },
+          change: { newValues: mockPagination, type: 'pagination' },
           gridState: { columns: [], pagination: mockPagination },
         });
       });

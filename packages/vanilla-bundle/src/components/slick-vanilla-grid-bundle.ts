@@ -21,7 +21,6 @@ import {
   autoAddEditorFormatterToColumnsWithEditor,
   type AutocompleterEditor,
   GlobalGridOptions,
-  GridStateType,
   SlickGroupItemMetadataProvider,
 
   // services
@@ -1118,7 +1117,7 @@ export class SlickVanillaGridBundle<TData = any> {
       this.sharedService.currentPagination = { pageNumber, pageSize };
     }
     this._eventPubSubService.publish('onGridStateChanged', {
-      change: { newValues: { pageNumber, pageSize }, type: GridStateType.pagination },
+      change: { newValues: { pageNumber, pageSize }, type: 'pagination' },
       gridState: this.gridStateService.getCurrentGridState(),
     });
   }

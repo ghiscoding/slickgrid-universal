@@ -14,7 +14,6 @@ import {
   Metrics,
   type MultipleSelectOption,
   OperatorType,
-  SortDirection,
   unsubscribeAllObservables,
 } from '../../library';
 
@@ -229,7 +228,7 @@ export class Example6Component implements OnInit, OnDestroy {
         sorters: [
           // direction can written as 'asc' (uppercase or lowercase) and/or use the SortDirection type
           { columnId: 'name', direction: 'asc' },
-          { columnId: 'company', direction: SortDirection.DESC },
+          { columnId: 'company', direction: 'DESC' },
         ],
         pagination: { pageNumber: this.isWithCursor ? 1 : 2, pageSize: 20 }, // if cursor based, start at page 1
       },
@@ -413,7 +412,7 @@ export class Example6Component implements OnInit, OnDestroy {
     this.angularGrid.sortService.updateSorting([
       // direction can written as 'asc' (uppercase or lowercase) and/or use the SortDirection type
       { columnId: 'name', direction: 'asc' },
-      { columnId: 'company', direction: SortDirection.DESC },
+      { columnId: 'company', direction: 'DESC' },
     ]);
     setTimeout(() => {
       this.angularGrid.paginationService?.changeItemPerPage(20);

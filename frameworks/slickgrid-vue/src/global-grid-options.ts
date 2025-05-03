@@ -1,12 +1,4 @@
-import {
-  type Column,
-  DelimiterType,
-  EventNamingStyle,
-  FileType,
-  Filters,
-  OperatorType,
-  type TreeDataOption,
-} from '@slickgrid-universal/common';
+import { type Column, DelimiterType, EventNamingStyle, Filters, type TreeDataOption } from '@slickgrid-universal/common';
 
 import type { GridOption, RowDetailView } from './models/index.js';
 
@@ -114,7 +106,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
   defaultBackendServiceFilterTypingDebounce: 500,
   defaultColumnSortFieldId: 'id',
   defaultFilterPlaceholder: '🔎︎', // magnifying glass icon
-  defaultFilterRangeOperator: OperatorType.rangeInclusive,
+  defaultFilterRangeOperator: 'RangeInclusive',
   editable: false,
   editorTypingDebounce: 450,
   filterTypingDebounce: 0,
@@ -151,7 +143,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
     addGroupIndentation: true,
     exportWithFormatter: false,
     filename: 'export',
-    format: FileType.xlsx,
+    format: 'xlsx',
     groupingColumnHeaderTitle: 'Group By',
     groupCollapsedSymbol: '⮞',
     groupExpandedSymbol: '⮟',
@@ -162,7 +154,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
     delimiter: DelimiterType.comma,
     exportWithFormatter: false,
     filename: 'export',
-    format: FileType.csv,
+    format: 'csv',
     groupingColumnHeaderTitle: 'Group By',
     groupingAggregatorRowText: '',
     sanitizeDataExport: false,

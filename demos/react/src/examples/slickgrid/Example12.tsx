@@ -4,7 +4,6 @@ import i18next from 'i18next';
 import {
   type Column,
   DelimiterType,
-  FileType,
   Filters,
   type Formatter,
   Formatters,
@@ -248,7 +247,7 @@ const Example12: React.FC = () => {
   function exportToExcel() {
     excelExportService.exportToExcel({
       filename: 'Export',
-      format: FileType.xlsx,
+      format: 'xlsx',
     });
   }
 
@@ -256,7 +255,7 @@ const Example12: React.FC = () => {
     textExportService.exportToFile({
       delimiter: type === 'csv' ? DelimiterType.comma : DelimiterType.tab,
       filename: 'myExport',
-      format: type === 'csv' ? FileType.csv : FileType.txt,
+      format: type === 'csv' ? 'csv' : 'txt',
     });
   }
 
