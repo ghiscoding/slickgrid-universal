@@ -313,22 +313,6 @@ export class SelectFilter implements Filter {
     this.renderDomElement(this.columnFilter.collection || updatedArray || []);
   }
 
-  protected parseCollectionList(collection: any[]): {
-    selectElement: HTMLSelectElement;
-    dataCollection: OptionRowData[];
-    hasFoundSearchTerm: boolean;
-  } {
-    return buildMsSelectCollectionList(
-      'filter',
-      collection,
-      this.columnDef,
-      this.grid,
-      this.isMultipleSelect,
-      this.translaterService,
-      this.searchTerms || []
-    );
-  }
-
   renderDomElement(inputCollection: any[]): void {
     inputCollection = getCollectionFromObjectWhenEnabled(inputCollection, this.columnFilter);
     if (!Array.isArray(inputCollection)) {
