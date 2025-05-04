@@ -1,3 +1,4 @@
+/** @deprecated @use grid state type as string instead (ie: `GridStateType.columns` => 'columns', `GridStateType.rowSelection` => 'rowSelection') */
 export enum GridStateType {
   columns = 'columns',
   filter = 'filter',
