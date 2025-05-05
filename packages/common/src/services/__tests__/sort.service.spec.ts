@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vite
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { of, throwError } from 'rxjs';
 
-import { EmitterType, FieldType } from '../../enums/index.js';
+import { FieldType } from '../../enums/index.js';
 import type {
   BackendService,
   Column,
@@ -619,7 +619,7 @@ describe('SortService', () => {
       const localSorterMock = { columnId: 'field1', direction: 'DESC' } as CurrentSorter;
       const pubSubSpy = vi.spyOn(eventPubSubService, 'publish');
 
-      service.emitSortChanged(EmitterType.local, [localSorterMock]);
+      service.emitSortChanged('local', [localSorterMock]);
       const currentLocalSorters = service.getCurrentLocalSorters();
 
       await new Promise(process.nextTick);

@@ -5,7 +5,6 @@ import {
   type Column,
   type ExcelExportOption,
   FieldType,
-  FileType,
   type Formatter,
   Formatters,
   type GridOption,
@@ -133,7 +132,7 @@ describe('ExcelExportService', () => {
       const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       service.init(gridStub, container);
-      const result = await service.exportToExcel({ ...mockExportExcelOptions, format: FileType.xls });
+      const result = await service.exportToExcel({ ...mockExportExcelOptions, format: 'xls' });
 
       expect(result).toBeTruthy();
       expect(pubSubSpy).toHaveBeenNthCalledWith(1, `onBeforeExportToExcel`, true);
@@ -248,7 +247,7 @@ describe('ExcelExportService', () => {
         mockGridOptions.excelExportOptions = { mimeType: mimeTypeXLSX };
         mockExportExcelOptions = {
           filename: 'export',
-          format: FileType.xlsx,
+          format: 'xlsx',
         };
       });
 
@@ -810,7 +809,7 @@ describe('ExcelExportService', () => {
         mockGridOptions.excelExportOptions = { sanitizeDataExport: true, addGroupIndentation: true, mimeType: mimeTypeXLSX };
         mockExportExcelOptions = {
           filename: 'export',
-          format: FileType.xlsx,
+          format: 'xlsx',
         };
 
         mockColumns = [

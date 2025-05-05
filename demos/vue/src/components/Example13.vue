@@ -7,7 +7,6 @@ import {
   type SlickgridVueInstance,
   Aggregators,
   type Column,
-  FileType,
   Filters,
   Formatters,
   GroupTotalFormatters,
@@ -257,7 +256,7 @@ function expandAllGroups() {
 function exportToExcel() {
   excelExportService.exportToExcel({
     filename: 'Export',
-    format: FileType.xlsx,
+    format: 'xlsx',
   });
 }
 

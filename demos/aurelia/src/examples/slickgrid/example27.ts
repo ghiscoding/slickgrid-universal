@@ -1,7 +1,7 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 
 import type { AureliaGridInstance, Column, GridOption, GridStateChange, TreeToggledItem, TreeToggleStateChange } from 'aurelia-slickgrid';
-import { GridStateType, Filters, Formatters } from 'aurelia-slickgrid';
+import { Filters, Formatters } from 'aurelia-slickgrid';
 import './example27.scss'; // provide custom CSS/SASS styling
 
 const NB_ITEMS = 500;
@@ -351,7 +351,7 @@ export class Example27 {
   handleOnGridStateChanged(gridStateChange: GridStateChange) {
     this.hasNoExpandCollapseChanged = false;
 
-    if (gridStateChange?.change?.type === GridStateType.treeData) {
+    if (gridStateChange?.change?.type === 'treeData') {
       console.log('Tree Data gridStateChange', gridStateChange?.gridState?.treeData);
       this.treeToggleItems = gridStateChange?.gridState?.treeData?.toggledItems as TreeToggledItem[];
     }

@@ -24,7 +24,6 @@ import {
   GridEventService,
   GridService,
   GridStateService,
-  GridStateType,
   HeaderGroupingService,
   isColumnDateType,
   type Metrics,
@@ -1022,7 +1021,7 @@ function paginationChanged(pagination: PaginationMetadata) {
     }
   }
   eventPubSubService.publish('onGridStateChanged', {
-    change: { newValues: { pageNumber, pageSize }, type: GridStateType.pagination },
+    change: { newValues: { pageNumber, pageSize }, type: 'pagination' },
     gridState: gridStateService.getCurrentGridState(),
   });
 }

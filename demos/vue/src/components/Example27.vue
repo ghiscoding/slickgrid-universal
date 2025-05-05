@@ -343,7 +343,7 @@ function handleOnTreeItemToggled(treeToggleExecution: TreeToggleStateChange) {
 // function handleOnGridStateChanged(gridStateChange: GridStateChange) {
 //   hasNoExpandCollapseChanged.value = false;
 
-//   if (gridStateChange?.change?.type === GridStateType.treeData) {
+//   if (gridStateChange?.change?.type === 'treeData') {
 //     console.log('Tree Data gridStateChange', gridStateChange?.gridState?.treeData);
 //     treeToggleItems.value = gridStateChange?.gridState?.treeData?.toggledItems as TreeToggledItem[];
 //   }

@@ -1,4 +1,4 @@
-import { EmitterType } from '../enums/emitterType.enum.js';
+import type { EmitterType } from '../enums/emitterType.type.js';
 import type { BackendServiceApi, GridOption } from '../interfaces/index.js';
 import type { Observable, RxJsFacade, Subject } from './rxjsFacade.js';
 
@@ -78,7 +78,7 @@ export class BackendUtilityService {
     if (backendServiceApi) {
       // emit an onFilterChanged event when it's not called by a clear filter
       if (args && !args.clearFilterTriggered && !args.clearSortTriggered && extraCallbacks?.emitActionChangedCallback) {
-        extraCallbacks.emitActionChangedCallback.call(this, EmitterType.remote);
+        extraCallbacks.emitActionChangedCallback.call(this, 'remote');
       }
 
       // the processes can be Observables (like HttpClient) or Promises

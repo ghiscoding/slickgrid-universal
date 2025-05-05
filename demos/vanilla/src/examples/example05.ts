@@ -4,7 +4,6 @@ import {
   Formatters,
   type GridOption,
   type GridStateChange,
-  GridStateType,
   type OnSelectedRowsChangedEventArgs,
   type TreeToggledItem,
   type TreeToggleStateChange,
@@ -484,7 +483,7 @@ export default class Example05 {
     this.hasNoExpandCollapseChanged = false;
     const gridStateChange = e.detail;
 
-    if (gridStateChange.change?.type === GridStateType.treeData) {
+    if (gridStateChange.change?.type === 'treeData') {
       console.log('Tree Data gridStateChange', gridStateChange.gridState?.treeData);
       this.treeToggleItems = gridStateChange.gridState?.treeData?.toggledItems as TreeToggledItem[];
     }

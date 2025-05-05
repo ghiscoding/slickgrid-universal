@@ -8,7 +8,6 @@ import {
   Column,
   DelimiterType,
   Editors,
-  FileType,
   Filters,
   Formatters,
   GridOption,
@@ -334,7 +333,7 @@ export class Example18Component implements OnInit, OnDestroy {
   exportToExcel() {
     this.excelExportService.exportToExcel({
       filename: 'Export',
-      format: FileType.xlsx,
+      format: 'xlsx',
     });
   }
 
@@ -342,7 +341,7 @@ export class Example18Component implements OnInit, OnDestroy {
     this.textExportService.exportToFile({
       delimiter: type === 'csv' ? DelimiterType.comma : DelimiterType.tab,
       filename: 'myExport',
-      format: type === 'csv' ? FileType.csv : FileType.txt,
+      format: type === 'csv' ? 'csv' : 'txt',
     });
   }
 

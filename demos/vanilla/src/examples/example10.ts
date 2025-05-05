@@ -7,7 +7,6 @@ import {
   type GridStateChange,
   type Metrics,
   OperatorType,
-  SortDirection,
 } from '@slickgrid-universal/common';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import {
@@ -248,7 +247,7 @@ export default class Example10 {
         sorters: [
           // direction can written as 'asc' (uppercase or lowercase) and/or use the SortDirection type
           { columnId: 'name', direction: 'asc' },
-          { columnId: 'company', direction: SortDirection.DESC },
+          { columnId: 'company', direction: 'DESC' },
         ],
         pagination: { pageNumber: this.isWithCursor ? 1 : 2, pageSize: 20 }, // if cursor based, start at page 1
       },
@@ -426,7 +425,7 @@ export default class Example10 {
     this.sgb?.sortService.updateSorting([
       // direction can written as 'asc' (uppercase or lowercase) and/or use the SortDirection type
       { columnId: 'name', direction: 'asc' },
-      { columnId: 'company', direction: SortDirection.DESC },
+      { columnId: 'company', direction: 'DESC' },
     ]);
     window.setTimeout(() => {
       this.sgb?.paginationService?.changeItemPerPage(20);

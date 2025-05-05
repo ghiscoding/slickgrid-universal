@@ -3,7 +3,6 @@ import { TextExportService } from '@slickgrid-universal/text-export';
 import {
   Aggregators,
   type Column,
-  FileType,
   Filters,
   Formatters,
   type GridOption,
@@ -339,7 +338,7 @@ const Example18: React.FC = () => {
   function exportToExcel() {
     excelExportService.exportToExcel({
       filename: 'Export',
-      format: FileType.xlsx,
+      format: 'xlsx',
     });
   }
 

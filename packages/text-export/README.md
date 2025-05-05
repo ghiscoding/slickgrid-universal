@@ -71,7 +71,7 @@ export class MyExample {
   }
 
   exportToFile() {
-    this.exportService.exportToFile({ filename: 'export', format: FileType.csv });
+    this.exportService.exportToFile({ filename: 'export', format: 'csv' });
   }
 }
 ```

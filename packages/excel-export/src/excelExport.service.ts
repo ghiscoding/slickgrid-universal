@@ -27,7 +27,6 @@ import {
   Constants,
   // utility functions
   exportWithFormatterWhenDefined,
-  FieldType,
   FileType,
   getColumnFieldType,
   getTranslationPrefix,
@@ -648,7 +647,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       // auto-detect best possible Excel format for Group Totals, unless the user provide his own formatting,
       // we only do this check once per column (everything after that will be pull from temp ref)
       const autoDetectCellFormat = columnDef.excelExportOptions?.autoDetectCellFormat ?? this._excelExportOptions?.autoDetectCellFormat;
-      if (fieldType === FieldType.number && autoDetectCellFormat !== false) {
+      if (fieldType === 'number' && autoDetectCellFormat !== false) {
         let groupCellFormat = this._groupTotalExcelFormats[columnDef.id];
         if (!groupCellFormat?.groupType) {
           groupCellFormat = getExcelFormatFromGridFormatter(this._stylesheet, this._stylesheetFormats, columnDef, this._grid, 'group');

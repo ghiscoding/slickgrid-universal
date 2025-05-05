@@ -28,7 +28,6 @@ import {
   type GridService,
   type GridState,
   type GridStateService,
-  GridStateType,
   type HeaderGroupingService,
   type OnRowCountChangedEventArgs,
   type OnRowsChangedEventArgs,
@@ -1979,7 +1978,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.paginationChanged(mockPagination);
 
         expect(pluginEaSpy).toHaveBeenCalledWith('onGridStateChanged', {
-          change: { newValues: mockPagination, type: GridStateType.pagination },
+          change: { newValues: mockPagination, type: 'pagination' },
           gridState: { columns: [], pagination: mockPagination },
         });
       });
@@ -2002,7 +2001,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         eventPubSubService.publish('onPaginationChanged', mockPaginationMetadata);
 
         expect(pluginEaSpy).toHaveBeenCalledWith('onGridStateChanged', {
-          change: { newValues: mockPagination, type: GridStateType.pagination },
+          change: { newValues: mockPagination, type: 'pagination' },
           gridState: { columns: [], pagination: mockPagination },
         });
       });
@@ -2022,7 +2021,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         expect(setRowSpy).toHaveBeenCalledWith([]);
         expect(pluginEaSpy).toHaveBeenCalledWith('onGridStateChanged', {
-          change: { newValues: mockPagination, type: GridStateType.pagination },
+          change: { newValues: mockPagination, type: 'pagination' },
           gridState: { columns: [], pagination: mockPagination },
         });
       });
@@ -2042,7 +2041,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         expect(setRowSpy).toHaveBeenCalledWith([]);
         expect(pluginEaSpy).toHaveBeenCalledWith('onGridStateChanged', {
-          change: { newValues: mockPagination, type: GridStateType.pagination },
+          change: { newValues: mockPagination, type: 'pagination' },
           gridState: { columns: [], pagination: mockPagination },
         });
       });

@@ -7,7 +7,6 @@ import {
   type AureliaGridInstance,
   type Column,
   DelimiterType,
-  FileType,
   Filters,
   type Formatter,
   Formatters,
@@ -310,7 +309,7 @@ export class Example12 {
   exportToExcel() {
     this.excelExportService.exportToExcel({
       filename: 'Export',
-      format: FileType.xlsx,
+      format: 'xlsx',
     });
   }
 
@@ -318,7 +317,7 @@ export class Example12 {
     this.textExportService.exportToFile({
       delimiter: type === 'csv' ? DelimiterType.comma : DelimiterType.tab,
       filename: 'myExport',
-      format: type === 'csv' ? FileType.csv : FileType.txt,
+      format: type === 'csv' ? 'csv' : 'txt',
     });
   }
 

@@ -1,3 +1,4 @@
+/** @deprecated @use field type as string, ie: (FieldType.boolean => 'boolean' or FieldType.number => 'number') */
 export const FieldType = {
   /** unknown type */
   unknown: 'unknown',

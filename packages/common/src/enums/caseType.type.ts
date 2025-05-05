@@ -1,13 +1,12 @@
-export enum CaseType {
+export type CaseType =
   /** For example: camelCase */
-  camelCase,
+  | 'camelCase'
 
   /** For example: PascalCase */
-  pascalCase,
+  | 'pascalCase'
 
   /** For example: snake_case */
-  snakeCase,
+  | 'snakeCase'
 
   /** For example: kebab-case */
-  kebabCase,
-}
+  | 'kebabCase';

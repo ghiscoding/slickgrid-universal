@@ -9,7 +9,7 @@ import type {
   MenuOptionItem,
 } from '../interfaces/index.js';
 import type { SlickEventData, SlickGrid } from '../core/index.js';
-import { DelimiterType, FileType } from '../enums/index.js';
+import { DelimiterType } from '../enums/index.js';
 import {
   type ExcelExportService,
   getCellValueFromQueryFieldGetter,
@@ -220,7 +220,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
             if (excelService?.exportToFile) {
               excelService.exportToFile({
                 delimiter: DelimiterType.comma,
-                format: FileType.csv,
+                format: 'csv',
               });
             } else {
               throw new Error(
@@ -273,7 +273,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
             if (excelService?.exportToFile) {
               excelService.exportToFile({
                 delimiter: DelimiterType.tab,
-                format: FileType.txt,
+                format: 'txt',
               });
             } else {
               throw new Error(

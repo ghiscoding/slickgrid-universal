@@ -3,7 +3,6 @@ import {
   type Column,
   type EditCommand,
   Editors,
-  FileType,
   Filters,
   Formatters,
   type GridOption,
@@ -476,7 +475,7 @@ export default class Example03 {
   exportToExcel() {
     this.excelExportService.exportToExcel({
       filename: 'Export',
-      format: FileType.xlsx,
+      format: 'xlsx',
     });
   }
 

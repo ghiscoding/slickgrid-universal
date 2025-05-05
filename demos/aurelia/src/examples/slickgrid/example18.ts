@@ -4,7 +4,6 @@ import {
   Aggregators,
   type AureliaGridInstance,
   type Column,
-  FileType,
   Filters,
   Formatters,
   type GridOption,
@@ -327,7 +326,7 @@ export class Example18 {
   exportToExcel() {
     this.excelExportService.exportToExcel({
       filename: 'Export',
-      format: FileType.xlsx,
+      format: 'xlsx',
     });
   }
 

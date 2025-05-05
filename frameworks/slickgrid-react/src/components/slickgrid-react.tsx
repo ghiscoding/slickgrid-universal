@@ -10,7 +10,6 @@ import {
   type EventSubscription,
   type ExtensionList,
   type ExternalResource,
-  GridStateType,
   type Metrics,
   type Pagination,
   type PaginationMetadata,
@@ -1131,7 +1130,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
       }
     }
     this._eventPubSubService.publish('onGridStateChanged', {
-      change: { newValues: { pageNumber, pageSize }, type: GridStateType.pagination },
+      change: { newValues: { pageNumber, pageSize }, type: 'pagination' },
       gridState: this.gridStateService.getCurrentGridState(),
     });
   }
