@@ -3,7 +3,7 @@
   extends: ['config:base', 'group:allNonMajor'],
   labels: ['dependencies'],
   baseBranches: ['master', 'next'],
-  dependencyDashboard: false,
+  dependencyDashboard: true,
   lockFileMaintenance: {
     enabled: false,
   },
@@ -18,13 +18,7 @@
       description: 'Group all Angular dependencies',
       matchFileNames: ['frameworks/angular-slickgrid/**', 'demos/angular/**'],
       groupName: 'Angular dependencies',
-      rules: [
-        {
-          matchUpdateTypes: ['minor', 'patch'],
-          matchPackagePatterns: ['^typescript$'],
-          ignoreVersion: true,
-        },
-      ],
+      ignoreDependencies: ['typescript'],
     },
     {
       description: 'Group all Aurelia dependencies',
