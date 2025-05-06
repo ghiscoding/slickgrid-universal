@@ -101,7 +101,7 @@ const Example39: React.FC = () => {
             sortDesc: false,
           },
           collectionAsync: fetch(SAMPLE_COLLECTION_DATA_URL).then((e) => e.json()),
-          filterOptions: {
+          options: {
             filter: true, // adds a filter on top of the multi-select dropdown
           } as MultipleSelectOption,
         },

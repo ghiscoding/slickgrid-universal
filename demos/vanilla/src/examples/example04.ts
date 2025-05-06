@@ -130,7 +130,7 @@ export default class Example04 {
           //   console.log(args);
           //   return updatedCollection.filter((col) => args.dataContext.id % 2 ? col.value < 50 : col.value >= 50);
           // },
-          editorOptions: {
+          options: {
             filter: true, // adds a filter on top of the multi-select dropdown
           },
           model: Editors.singleSelect,
@@ -268,7 +268,7 @@ export default class Example04 {
 
         //   enableRenderHtml: true,
         //   collection: [{ code: true, name: 'True', labelPrefix: `<i class="mdi mdi-pin-outline"></i> ` }, { code: false, name: 'False', labelSuffix: '<i class="mdi mdi-close"></i>' }],
-        //   editorOptions: { minLength: 1 }
+        //   options: { minLength: 1 }
         // },
         editor: {
           model: Editors.autocompleter,
@@ -276,7 +276,7 @@ export default class Example04 {
 
           // We can use the autocomplete through 3 ways "collection", "collectionAsync" or with your own autocomplete options
           // use your own autocomplete options, instead of fetch-jsonp, use HttpClient or FetchClient
-          editorOptions: {
+          options: {
             minLength: 3,
             fetch: (searchText, updateCallback) => {
               fetchJsonp<string[]>(`http://gd.geobytes.com/AutoCompleteCity?q=${searchText}`)
@@ -295,7 +295,7 @@ export default class Example04 {
 
         //   // enableRenderHtml: true,
         //   // collection: [{ code: true, name: 'True', labelPrefix: `<i class="mdi mdi-pin-outline"></i> ` }, { code: false, name: 'False', labelSuffix: '<i class="mdi mdi-close"></i>' }],
-        //   // filterOptions: { minLength: 1 }
+        //   // options: { minLength: 1 }
         // },
         filter: {
           model: Filters.autocompleter,
@@ -307,7 +307,7 @@ export default class Example04 {
 
           // OR use your own autocomplete options, instead of fetchJsonp, use HttpClient or FetchClient
           // here we use fetchJsonp just because I'm not sure how to configure HttpClient with JSONP and CORS
-          filterOptions: {
+          options: {
             minLength: 3,
             fetch: (searchText, updateCallback) => {
               fetchJsonp<string[]>(`http://gd.geobytes.com/AutoCompleteCity?q=${searchText}`)

@@ -73,7 +73,8 @@ columnDefinitions.value = [
       onInstantiated: (instance) => console.log('instance', instance), // get instance from 3rd party lib
 
       // you can add "multiple-select" plugin options like styling the first row
-      filterOptions: {
+      // previously known as `filterOptions` for < 9.0
+      options: {
         offsetLeft: 14,
         width: 100
       } as MultipleSelectOption,
@@ -589,19 +590,20 @@ columnDefinitions.value = [
 ```
 
 ### Filter Options (`MultipleSelectOption` interface)
-All the available options that can be provided as `filterOptions` to your column definitions can be found under this [multipleSelectOption interface](/ghiscoding/slickgrid-universal/tree/master/packages/common/src/interfaces/multipleSelectOption.interface.ts) and you should cast your `filterOptions` to that interface to make sure that you use only valid options of the `multiple-select.js` library.
+All the available options that can be provided as `options` to your column definitions can be found under this [multipleSelectOption interface](/ghiscoding/slickgrid-universal/tree/master/packages/common/src/interfaces/multipleSelectOption.interface.ts) and you should cast your `options` to that interface to make sure that you use only valid options of the `multiple-select.js` library.
 
 ```ts
 filter: {
   model: Filters.singleSelect,
-  filterOptions: {
+  // previously known as `filterOptions` for < 9.0
+  options: {
     maxHeight: 400
   } as MultipleSelectOption
 }
 ```
 
 #### Grid Option `defaultFilterOptions
-You could also define certain options as a global level (for the entire grid or even all grids) by taking advantage of the `defaultFilterOptions` Grid Option. Note that they are set via the filter type as a key name (`autocompleter`, `date`, ...) and then the content is the same as `filterOptions` (also note that each key is already typed with the correct filter option interface), for example
+You could also define certain options as a global level (for the entire grid or even all grids) by taking advantage of the `defaultFilterOptions` Grid Option. Note that they are set via the filter type as a key name (`autocompleter`, `date`, ...) and then the content is the same as filter `options` (also note that each key is already typed with the correct filter option interface), for example
 ```ts
 gridOptions.value = {
   defaultFilterOptions: {
@@ -612,7 +614,7 @@ gridOptions.value = {
 ```
 
 ### Multiple-select.js Options
-You can use any options from [Multiple-Select.js](http://wenzhixin.net.cn/p/multiple-select) and add them to your `filterOptions` property. However please note that this is a customized version of the original (all original [lib options](http://wenzhixin.net.cn/p/multiple-select/docs/) are available so you can still consult the original site for all options).
+You can use any options from [Multiple-Select.js](http://wenzhixin.net.cn/p/multiple-select) and add them to your `options` property. However please note that this is a customized version of the original (all original [lib options](http://wenzhixin.net.cn/p/multiple-select/docs/) are available so you can still consult the original site for all options).
 
 Couple of small options were added to suit SlickGrid-Universal needs, which is why we are using a fork [ghiscoding/multiple-select-modified](https://github.com/ghiscoding/multiple-select-modified) folder (which is our customized version of the original). This lib is required if you plan to use `multipleSelect` or `singleSelect` Filters. What was customized to (compare to the original) is the following:
 - `okButton` option was added to add an OK button for simpler closing of the dropdown after selecting multiple options.
@@ -639,7 +641,8 @@ columnDefinitions.value = [
     filter: {
       collection: [{ value: '', label: '' }, { value: true, label: 'true' }, { value: false, label: 'false' }],
       model: Filters.singleSelect,
-      filterOptions: {
+      // previously known as `filterOptions` for < 9.0
+      options: {
         // add any multiple-select.js options (from original or custom version)
         autoAdjustDropPosition: false, // by default set to True, but you can disable it
         position: 'top'
@@ -670,7 +673,7 @@ columnDefinitions.value = [
         value: 'value',
         optionLabel: 'value', // use value instead to show "1, 2" instead of "1 day, 2 days"
       },
-      filterOptions: {
+      options: {
         // use different label to show as selected text
         // please note the Custom Structure with optionLabel defined
         // or use "useSelectOptionLabelToHtml" to render HTML

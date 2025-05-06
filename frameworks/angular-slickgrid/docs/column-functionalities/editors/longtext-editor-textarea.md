@@ -19,7 +19,8 @@ defineGrid() {
       editor: {
         model: Editors.longText,
         required: true, maxLength: 12,
-        editorOptions: {
+        // previously known as `editorOptions` for < 9.0
+        options: {
           cols: 45,
           rows: 6,
           position: 'auto', // defaults to "auto" but you can change to "top", "bottom", "left" or "right"
@@ -40,7 +41,7 @@ defineGrid() {
 ```
 
 #### Grid Option `defaultEditorOptions
-You could also define certain options as a global level (for the entire grid or even all grids) by taking advantage of the `defaultEditorOptions` Grid Option. Note that they are set via the editor type as a key name (`autocompleter`, `date`, ...) and then the content is the same as `editorOptions` (also note that each key is already typed with the correct editor option interface), for example
+You could also define certain options as a global level (for the entire grid or even all grids) by taking advantage of the `defaultEditorOptions` Grid Option. Note that they are set via the editor type as a key name (`autocompleter`, `date`, ...) and then the content is the same as editor `options` (also note that each key is already typed with the correct editor option interface), for example
 
 ```ts
 this.gridOptions = {

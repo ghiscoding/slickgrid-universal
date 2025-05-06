@@ -162,7 +162,7 @@ describe('LongTextEditor', () => {
     });
 
     it('should initialize the editor even when user define his own editor options', () => {
-      mockColumn.editor!.editorOptions = { minLength: 3 } as LongTextEditorOption;
+      mockColumn.editor!.options = { minLength: 3 } as LongTextEditorOption;
       editor = new LongTextEditor(editorArguments);
       const editorCount = document.body.querySelectorAll('.slick-large-editor-text.editor-title textarea').length;
 
@@ -170,7 +170,7 @@ describe('LongTextEditor', () => {
     });
 
     it('should initialize the editor with cols & rows define in user editor options', () => {
-      mockColumn.editor!.editorOptions = { cols: 9, rows: 8 } as LongTextEditorOption;
+      mockColumn.editor!.options = { cols: 9, rows: 8 } as LongTextEditorOption;
       editor = new LongTextEditor(editorArguments);
 
       expect(editor.editorDomElement.cols).toBe(9);
@@ -203,6 +203,15 @@ describe('LongTextEditor', () => {
       const editorElm = document.body.querySelector('.slick-large-editor-text.editor-title textarea') as HTMLTextAreaElement;
 
       expect(editorElm.placeholder).toBe(testValue);
+    });
+
+    it('should allow overriding the save button position', () => {
+      mockColumn.editor!.options = { saveButtonPosition: 'left' } as LongTextEditorOption;
+      editor = new LongTextEditor(editorArguments);
+      const cancelButtonElm = document.body.querySelector('.slick-large-editor-text.editor-title .btn-cancel') as HTMLButtonElement;
+      const saveButtonElm = document.body.querySelector('.slick-large-editor-text.editor-title .btn-save') as HTMLButtonElement;
+
+      expect(saveButtonElm.nextSibling).toBe(cancelButtonElm);
     });
 
     it('should allow overriding the save button position', () => {

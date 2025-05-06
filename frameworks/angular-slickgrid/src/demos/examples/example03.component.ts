@@ -18,6 +18,7 @@ import {
   OperatorType,
   SortComparers,
   SlickGlobalEditorLock,
+  type SliderOption,
   type VanillaCalendarOption,
 } from '../../library';
 import { Subject } from 'rxjs';
@@ -139,7 +140,7 @@ export class Example3Component implements OnInit {
           model: Editors.longText,
           required: true,
           maxLength: 12,
-          editorOptions: {
+          options: {
             // you can change textarea cols,rows (defaults to 40,4)
             cols: 42,
             rows: 5,
@@ -187,12 +188,15 @@ export class Example3Component implements OnInit {
         formatter: Formatters.complexObject,
         type: 'number',
         exportWithFormatter: true,
-        filter: { model: Filters.slider, filterOptions: { hideSliderNumber: false } },
+        filter: {
+          model: Filters.slider,
+          options: { hideSliderNumber: false } as SliderOption,
+        },
         editor: {
           model: Editors.slider,
           minValue: 0,
           maxValue: 100,
-          // editorOptions: { hideSliderNumber: true },
+          // options: { hideSliderNumber: true },
         },
         /*
         editor: {
@@ -249,9 +253,7 @@ export class Example3Component implements OnInit {
           //   console.log(args);
           //   return updatedCollection.filter((col) => args.dataContext.id % 2 ? col.value < 50 : col.value >= 50);
           // },
-          editorOptions: {
-            maxHeight: 400,
-          } as MultipleSelectOption,
+          options: { maxHeight: 400 } as MultipleSelectOption,
         },
         params: {
           formatters: [Formatters.collectionEditor, Formatters.percentCompleteBar],
@@ -296,9 +298,9 @@ export class Example3Component implements OnInit {
         saveOutputType: 'dateUtc', // save output date formattype: 'date',
         editor: {
           model: Editors.date,
-          // override any of the calendar picker options through "editorOptions"
+          // override any of the calendar picker options through "options"
           // please note that there's no TSlint on this property since it's generic for any filter, so make sure you entered the correct filter option(s)
-          editorOptions: {
+          options: {
             displayDateMin: 'today',
 
             // if we want to preload the date picker with a different date,
@@ -323,7 +325,7 @@ export class Example3Component implements OnInit {
           // We can use the autocomplete through 3 ways "collection", "collectionAsync" or with your own autocomplete options
           // use your own autocomplete options, instead of fetch-jsonp, use http
           // here we use fetch-jsonp just because I'm not sure how to configure http with JSONP and CORS
-          editorOptions: {
+          options: {
             forceUserInput: true,
             minLength: 3,
             fetch: (searchText: string, updateCallback: (items: false | any[]) => void) => {
@@ -347,7 +349,7 @@ export class Example3Component implements OnInit {
 
           // OR use the autocomplete through 3 ways "collection", "collectionAsync" or with your own autocomplete options
           // use your own autocomplete options, instead of fetch-jsonp, use HttpClient or FetchClient
-          filterOptions: {
+          options: {
             minLength: 3,
             fetch: (searchText: string, updateCallback: (items: false | any[]) => void) => {
               fetchJsonp<string[]>(`http://gd.geobytes.com/AutoCompleteCity?q=${searchText}`)

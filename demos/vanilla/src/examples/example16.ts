@@ -10,6 +10,7 @@ import {
   type SliderOption,
   type SliderRangeOption,
   type VanillaCalendarOption,
+  type MultipleSelectOption,
 } from '@slickgrid-universal/common';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
@@ -200,13 +201,17 @@ export default class Example16 {
           model: Editors.slider,
           minValue: 0,
           maxValue: 100,
-          editorOptions: { enableSliderTrackColoring: true, hideSliderNumber: true } as SliderOption,
+          options: { enableSliderTrackColoring: true, hideSliderNumber: true } as SliderOption,
         },
         exportWithFormatter: false,
         formatter: Formatters.percentCompleteBar,
         sortable: true,
         filterable: true,
-        filter: { model: Filters.sliderRange, operator: '>=', filterOptions: { hideSliderNumbers: true } as SliderRangeOption },
+        filter: {
+          model: Filters.sliderRange,
+          operator: '>=',
+          options: { hideSliderNumbers: true } as SliderRangeOption,
+        },
         customTooltip: {
           position: 'center',
           formatter: (_row, _cell, value) => (typeof value === 'string' && value.includes('%') ? value : `${value}%`),
@@ -244,7 +249,10 @@ export default class Example16 {
         name: 'Finish',
         field: 'finish',
         sortable: true,
-        editor: { model: Editors.date, editorOptions: { displayDateMin: 'today' } as VanillaCalendarOption },
+        editor: {
+          model: Editors.date,
+          options: { displayDateMin: 'today' } as VanillaCalendarOption,
+        },
         // formatter: Formatters.dateIso,
         type: 'date',
         outputType: 'dateIso',
@@ -343,12 +351,8 @@ export default class Example16 {
             value: 'value',
             labelPrefix: 'prefix',
           },
-          collectionOptions: {
-            separatorBetweenTextLabels: ' ',
-          },
-          filterOptions: {
-            minHeight: 70,
-          },
+          collectionOptions: { separatorBetweenTextLabels: ' ' },
+          options: { minHeight: 70 } as MultipleSelectOption,
           model: Filters.multipleSelect,
           operator: OperatorType.inContains,
         },

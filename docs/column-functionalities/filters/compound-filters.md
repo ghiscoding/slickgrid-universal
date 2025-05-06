@@ -129,19 +129,20 @@ this.gridOptions = {
 ```
 
 #### Filter Options (`VanillaCalendarOption` interface)
-All the available options that can be provided as `filterOptions` to your column definitions can be found under this [VanillaCalendarOption interface](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/vanillaCalendarOption.interface.ts) and you should cast your `filterOptions` with the expected interface to make sure that you use only valid settings of the [Vanilla-Calendar](https://vanilla-calendar.pro/docs/reference/additionally/settings) library.
+All the available options that can be provided as `options` to your column definitions can be found under this [VanillaCalendarOption interface](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/vanillaCalendarOption.interface.ts) and you should cast your `options` with the expected interface to make sure that you use only valid settings of the [Vanilla-Calendar](https://vanilla-calendar.pro/docs/reference/additionally/settings) library.
 
 ```ts
 filter: {
   model: Filters.compoundDate,
-  filterOptions: {
+  // previously known as `filterOptions` for < 9.0
+  options: {
     displayDateMin: 'today'
   } as VanillaCalendarOption
 }
 ```
 
 #### Grid Option `defaultFilterOptions
-You could also define certain options as a global level (for the entire grid or even all grids) by taking advantage of the `defaultFilterOptions` Grid Option. Note that they are set via the filter type as a key name (`autocompleter`, `date`, ...) and then the content is the same as `filterOptions` (also note that each key is already typed with the correct filter option interface), for example
+You could also define certain options as a global level (for the entire grid or even all grids) by taking advantage of the `defaultFilterOptions` Grid Option. Note that they are set via the filter type as a key name (`autocompleter`, `date`, ...) and then the content is the same as filter `options` (also note that each key is already typed with the correct filter option interface), for example
 
 ```ts
 this.gridOptions = {

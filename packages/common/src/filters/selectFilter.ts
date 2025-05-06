@@ -102,7 +102,7 @@ export class SelectFilter implements Filter {
   }
 
   get filterOptions(): MultipleSelectOption {
-    return { ...this.gridOptions.defaultFilterOptions?.select, ...this.columnFilter?.filterOptions };
+    return { ...this.gridOptions.defaultFilterOptions?.select, ...this.columnFilter?.filterOptions, ...this.columnFilter?.options };
   }
 
   /** Getter to know if the current filter is a multiple-select (false means it's a single select) */

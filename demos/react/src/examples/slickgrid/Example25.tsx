@@ -89,16 +89,9 @@ const Example25: React.FC = () => {
             { property: 'name', value: '', operator: 'NE' },
             { property: 'name', value: null, operator: 'NE' },
           ],
-          collectionSortBy: {
-            property: 'name',
-          },
-          customStructure: {
-            value: 'name',
-            label: 'name',
-          },
-          filterOptions: {
-            filter: true,
-          } as MultipleSelectOption,
+          collectionSortBy: { property: 'name' },
+          customStructure: { value: 'name', label: 'name' },
+          options: { filter: true } as MultipleSelectOption,
         },
       },
       {
@@ -124,16 +117,9 @@ const Example25: React.FC = () => {
             { property: 'native', value: '', operator: 'NE' },
             { property: 'native', value: null, operator: 'NE' },
           ],
-          collectionSortBy: {
-            property: 'native',
-          },
-          customStructure: {
-            value: 'native',
-            label: 'native',
-          },
-          filterOptions: {
-            filter: true,
-          } as MultipleSelectOption,
+          collectionSortBy: { property: 'native' },
+          customStructure: { value: 'native', label: 'native' },
+          options: { filter: true } as MultipleSelectOption,
         },
       },
       {

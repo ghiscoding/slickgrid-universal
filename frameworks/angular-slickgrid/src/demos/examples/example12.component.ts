@@ -13,6 +13,7 @@ import {
   Formatters,
   GridOption,
   GridStateChange,
+  type SliderOption,
   unsubscribeAllObservables,
 } from '../../library';
 
@@ -79,7 +80,11 @@ export class Example12Component implements OnInit, OnDestroy {
         exportWithFormatter: false,
         filterable: true,
         type: 'number',
-        filter: { model: Filters.slider, /* operator: '=',*/ filterOptions: { hideSliderNumber: true } },
+        filter: {
+          model: Filters.slider,
+          /* operator: '=',*/
+          options: { hideSliderNumber: true } as SliderOption,
+        },
       },
       {
         id: 'start',

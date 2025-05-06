@@ -199,7 +199,7 @@ export class SelectEditor implements Editor {
   }
 
   get editorOptions(): MultipleSelectOption {
-    return { ...this.gridOptions.defaultEditorOptions?.select, ...this.columnEditor?.editorOptions };
+    return { ...this.gridOptions.defaultEditorOptions?.select, ...this.columnEditor?.editorOptions, ...this.columnEditor?.options };
   }
 
   get isCompositeEditor(): boolean {
@@ -512,10 +512,9 @@ export class SelectEditor implements Editor {
     newValue: K
   ): void {
     if (this.columnEditor) {
-      if (!this.columnEditor.editorOptions) {
-        this.columnEditor.editorOptions = {};
-      }
-      this.columnEditor.editorOptions[optionName] = newValue;
+      this.columnEditor.options ??= {};
+      this.columnEditor.editorOptions ??= {};
+      this.columnEditor.options[optionName] = this.columnEditor.editorOptions[optionName] = newValue;
       this.editorElmOptions = { ...this.editorElmOptions, [optionName]: newValue };
       this._msInstance?.refreshOptions(this.editorElmOptions);
     }

@@ -101,7 +101,7 @@ function defineGrid() {
         required: true,
         alwaysSaveOnEnterKey: true,
         maxLength: 12,
-        editorOptions: {
+        options: {
           cols: 45,
           rows: 6,
           buttonTexts: {
@@ -229,7 +229,7 @@ function defineGrid() {
       saveOutputType: 'dateUtc',
       filterable: true,
       filter: { model: Filters.compoundDate },
-      editor: { model: Editors.date, massUpdate: true, editorOptions: { hideClearButton: false } },
+      editor: { model: Editors.date, massUpdate: true, options: { hideClearButton: false } },
     },
     {
       id: 'completed',
@@ -271,7 +271,7 @@ function defineGrid() {
       exportCustomFormatter: Formatters.dateUs,
       editor: {
         model: Editors.date,
-        editorOptions: {
+        options: {
           displayDateMin: 'today',
 
           // if we want to preload the date picker with a different date,
@@ -311,7 +311,7 @@ function defineGrid() {
         massUpdate: true,
 
         // example with a Remote API call
-        editorOptions: {
+        options: {
           minLength: 1,
           fetch: (searchTerm: string, callback: (items: false | any[]) => void) => {
             const products = mockProducts();
@@ -351,7 +351,7 @@ function defineGrid() {
         massUpdate: true,
         customStructure: { label: 'name', value: 'code' },
         collectionAsync: Promise.resolve(COUNTRIES_COLLECTION),
-        editorOptions: { minLength: 0 },
+        options: { minLength: 0 } as AutocompleterOption,
       },
       filter: {
         model: Filters.inputText,

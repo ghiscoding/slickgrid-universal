@@ -9,8 +9,10 @@ import {
   Filters,
   Formatters,
   GridOption,
+  type MultipleSelectOption,
   OnEventArgs,
   SlickGlobalEditorLock,
+  type SliderOption,
 } from '../../library';
 import { EditorNgSelectComponent } from './editor-ng-select.component';
 import { CustomAngularComponentEditor } from './custom-angularComponentEditor';
@@ -182,14 +184,12 @@ export class Example26Component implements OnInit {
             label: 'label',
             labelSuffix: 'symbol',
           },
-          editorOptions: {
-            maxHeight: 400,
-          },
+          options: { maxHeight: 400 } as MultipleSelectOption,
         },
         filter: {
           model: Filters.slider,
           operator: '>=',
-          filterOptions: { hideSliderNumber: false },
+          options: { hideSliderNumber: false } as SliderOption,
         },
         params: {
           formatters: [Formatters.collectionEditor, Formatters.percentCompleteBar],

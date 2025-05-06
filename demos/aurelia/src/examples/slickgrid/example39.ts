@@ -100,7 +100,7 @@ export class Example39 {
             sortDesc: false,
           },
           collectionAsync: this.http.fetch(SAMPLE_DATA_URL).then((e) => e.json()),
-          filterOptions: {
+          options: {
             filter: true, // adds a filter on top of the multi-select dropdown
           } as MultipleSelectOption,
         },

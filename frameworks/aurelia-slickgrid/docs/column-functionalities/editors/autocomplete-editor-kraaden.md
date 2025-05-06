@@ -78,7 +78,8 @@ this.columnDefinitions = [
       placeholder: '&#128269; search city',
 
       // example with a fixed Collection (or collectionAsync)
-      editorOptions: {
+      // previously known as `editorptions` for < 9.0
+      options: {
         showOnFocus: true, // display the list on focus of the autocomplete (without the need to type anything)
       } as AutocompleterOption,
       enableRenderHtml: true, // this flag only works with a fixed Collection
@@ -94,19 +95,19 @@ this.columnDefinitions = [
 ```
 
 ### Editor Options (`AutocompleterOption` interface)
-All the available options that can be provided as `editorOptions` to your column definitions can be found under this [AutocompleterOption interface](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/autocompleterOption.interface.ts) and you should cast your `editorOptions` to that interface to make sure that you use only valid options of the autocomplete library.
+All the available options that can be provided as `options` to your column definitions can be found under this [AutocompleterOption interface](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/autocompleterOption.interface.ts) and you should cast your `options` to that interface to make sure that you use only valid options of the autocomplete library.
 
 ```ts
 editor: {
   model: Editors.autocompleter,
-  editorOptions: {
+  options: {
     minLength: 3,
   } as AutocompleterOption
 }
 ```
 
 #### Grid Option `defaultEditorOptions
-You could also define certain options as a global level (for the entire grid or even all grids) by taking advantage of the `defaultEditorOptions` Grid Option. Note that they are set via the editor type as a key name (`autocompleter`, `date`, ...) and then the content is the same as `editorOptions` (also note that each key is already typed with the correct editor option interface), for example
+You could also define certain options as a global level (for the entire grid or even all grids) by taking advantage of the `defaultEditorOptions` Grid Option. Note that they are set via the editor type as a key name (`autocompleter`, `date`, ...) and then the content is the same as editor `options` (also note that each key is already typed with the correct editor option interface), for example
 
 ```ts
 this.gridOptions = {
@@ -139,7 +140,8 @@ export class GridBasicComponent {
         editor: {
           model: Editors.autocompleter,
           alwaysSaveOnEnterKey: true,
-          editorOptions: {
+          // previously known as `editorptions` for < 9.0
+          options: {
             showOnFocus: true,
             minLength: 1,
             fetch: (searchText, updateCallback) => {
@@ -172,7 +174,8 @@ this.columnDefinitions = [
       alwaysSaveOnEnterKey: true,
       type: 'object',
       sortComparer: SortComparers.objectString,
-      editorOptions: {
+      // previously known as `editorptions` for < 9.0
+      options: {
         showOnFocus: true,
         minLength: 1,
         fetch: (searchText, updateCallback) => {
@@ -211,7 +214,8 @@ export class GridBasicComponent {
             label: 'itemName',
             value: 'id'
           },
-          editorOptions: {
+          // previously known as `editorptions` for < 9.0
+          options: {
             showOnFocus: true,
             minLength: 1,
             fetch: (searchText, updateCallback) => {
@@ -272,7 +276,7 @@ export class GridBasicComponent {
             label: 'itemName',
             value: 'id'
           },
-          editorOptions: {
+          options: {
             showOnFocus: true,
             minLength: 1,
             classes: {
@@ -360,7 +364,7 @@ export class GridBasicComponent {
 
           // use your own autocomplete options, instead of $.ajax, use http
           // here we use $.ajax just because I'm not sure how to configure http with JSONP and CORS
-          editorOptions: {
+          options: {
             minLength: 3, // minimum count of character that the user needs to type before it queries to the remote
             fetch: (searchText, updateCallback) => {
               // assuming your API call returns a label/value pair
@@ -375,7 +379,7 @@ export class GridBasicComponent {
 
           // use your own autocomplete options, instead of $.ajax, use http
           // here we use $.ajax just because I'm not sure how to configure http with JSONP and CORS
-          editorOptions: {
+          options: {
             minLength: 3, // minimum count of character that the user needs to type before it queries to the remote
             fetch: (searchText, updateCallback) => {
               $.ajax({
@@ -411,7 +415,7 @@ this.columnDefinitions = [{
   field: 'area',
   editor: {
     model: Editors.autocompleter,
-    editorOptions: {
+    options: {
       minLength: 0,
       forceUserInput: true,
       fetch: (searchText, updateCallback) => {
@@ -436,7 +440,7 @@ this.columnDefinitions = [
       alwaysSaveOnEnterKey: true,
 
       // example with a Remote API call
-      editorOptions: {
+      options: {
         minLength: 1,
         fetch: (searchTerm, callback) => {
           // ...

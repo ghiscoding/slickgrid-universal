@@ -13,6 +13,7 @@ import {
   type GridOption,
   type GridStateChange,
   type SlickGrid,
+  type SliderOption,
 } from 'aurelia-slickgrid';
 import { resolve } from 'aurelia';
 
@@ -111,7 +112,11 @@ export class Example12 {
         exportWithFormatter: false,
         filterable: true,
         type: 'number',
-        filter: { model: Filters.slider, /* operator: '>=',*/ filterOptions: { hideSliderNumber: true } },
+        filter: {
+          model: Filters.slider,
+          /* operator: '>=',*/
+          options: { hideSliderNumber: true } as SliderOption,
+        },
       },
       {
         id: 'start',

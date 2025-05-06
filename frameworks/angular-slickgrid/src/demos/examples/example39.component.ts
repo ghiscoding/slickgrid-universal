@@ -116,7 +116,7 @@ export class Example39Component implements OnInit, OnDestroy {
             sortDesc: false,
           },
           collectionAsync: this.http.get(`${sampleDataRoot}/customers_100.json`),
-          filterOptions: {
+          options: {
             filter: true, // adds a filter on top of the multi-select dropdown
           } as MultipleSelectOption,
         },

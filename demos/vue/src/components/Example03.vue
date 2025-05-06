@@ -13,6 +13,7 @@ import {
   SlickGlobalEditorLock,
   SlickgridVue,
   type SlickgridVueInstance,
+  type SliderOption,
   SortComparers,
   type VanillaCalendarOption,
 } from 'slickgrid-vue';
@@ -173,13 +174,13 @@ function defineGrid() {
       type: 'number',
       filter: {
         model: Filters.slider,
-        filterOptions: { hideSliderNumber: false },
+        options: { hideSliderNumber: false } as SliderOption,
       },
       editor: {
         model: Editors.slider,
         minValue: 0,
         maxValue: 100,
-        // editorOptions: { hideSliderNumber: true },
+        // options: { hideSliderNumber: true },
       },
       /*
         editor: {
@@ -264,8 +265,8 @@ function defineGrid() {
       saveOutputType: 'dateUtc', // save output date format
       editor: {
         model: Editors.date,
-        // override any of the calendar options through "filterOptions"
-        editorOptions: { displayDateMin: 'today' } as VanillaCalendarOption,
+        // override any of the calendar options through "options"
+        options: { displayDateMin: 'today' } as VanillaCalendarOption,
       },
     },
     {
@@ -282,7 +283,7 @@ function defineGrid() {
         // We can use the autocomplete through 3 ways 'collection', 'collectionAsync' or with your own autocomplete options
         // use your own autocomplete options, instead of fetch-jsonp, use Fetch
         // here we use fetch-jsonp just because I'm not sure how to configure fetch with JSONP and CORS
-        editorOptions: {
+        options: {
           minLength: 3,
           forceUserInput: true,
           fetch: (searchText: string, updateCallback: (items: false | any[]) => void) => {
@@ -303,7 +304,7 @@ function defineGrid() {
 
         // OR use your own autocomplete options, instead of fetch-jsonp, use Fetch
         // here we use fetch-jsonp just because I'm not sure how to configure fetch with JSONP and CORS
-        filterOptions: {
+        options: {
           minLength: 3,
           fetch: (searchText: string, updateCallback: (items: false | any[]) => void) => {
             /** with JSONP will work locally but not on the GitHub demo because of CORS */

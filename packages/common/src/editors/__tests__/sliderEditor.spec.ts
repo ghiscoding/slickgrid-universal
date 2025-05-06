@@ -102,6 +102,14 @@ describe('SliderEditor', () => {
     });
 
     it('should initialize the editor with slider value define in user editor options', () => {
+      mockColumn.editor!.options = { sliderStartValue: 1 } as SliderOption;
+      editor = new SliderEditor(editorArguments);
+
+      expect(editor.editorInputDomElement.defaultValue).toBe('1');
+      expect(editor.editorInputDomElement.value).toBe('1');
+    });
+
+    it('should initialize the editor with slider value define in user editorOptions', () => {
       mockColumn.editor!.editorOptions = { sliderStartValue: 1 } as SliderOption;
       editor = new SliderEditor(editorArguments);
 
@@ -177,7 +185,7 @@ describe('SliderEditor', () => {
     });
 
     it('should create the input editor with min/max slider values being set by editor "sliderStartValue" through the editor editorOptions', () => {
-      mockColumn.editor = { editorOptions: { sliderStartValue: 4 } };
+      mockColumn.editor = { options: { sliderStartValue: 4 } };
       mockItemData = { id: 1, price: null, isActive: true };
 
       editor = new SliderEditor(editorArguments);
@@ -237,6 +245,25 @@ describe('SliderEditor', () => {
       expect(editor.getValue()).toBe('213');
       expect(editorElm).toBeTruthy();
       expect(editorInputElm.defaultValue).toBe('0');
+    });
+
+    it('should update slider number every time a change event happens on the input slider', () => {
+      const cellMouseEnterSpy = vi.spyOn(gridStub.onMouseEnter, 'notify');
+      mockColumn.editor!.options = { hideSliderNumber: false };
+      mockItemData = { id: 1, price: 32, isActive: true };
+      editor = new SliderEditor(editorArguments);
+      editor.loadValue(mockItemData);
+      editor.setValue(17);
+
+      const inputElm = divContainer.querySelector('.slider-editor-input.editor-price') as HTMLDivElement;
+      const editorNumberElm = divContainer.querySelector('.input-group-text') as HTMLInputElement;
+      const mockEvent = new CustomEvent('change');
+      Object.defineProperty(mockEvent, 'target', { writable: true, configurable: true, value: { value: '17' } });
+      inputElm.dispatchEvent(mockEvent);
+
+      expect(editor.isValueChanged()).toBe(true);
+      expect(editorNumberElm.textContent).toBe('17');
+      expect(cellMouseEnterSpy).toHaveBeenCalledWith({ column: mockColumn, grid: gridStub }, expect.anything());
     });
 
     it('should update slider number every time a change event happens on the input slider', () => {
@@ -318,7 +345,7 @@ describe('SliderEditor', () => {
 
     describe('isValueChanged() method', () => {
       it('should return True when previously dispatched change event is a different slider input number', () => {
-        mockColumn.editor!.editorOptions = { sliderStartValue: 5 };
+        mockColumn.editor!.options = { sliderStartValue: 5 };
         mockItemData = { id: 1, price: 32, isActive: true };
         editor = new SliderEditor(editorArguments);
         editor.loadValue(mockItemData);
@@ -342,6 +369,18 @@ describe('SliderEditor', () => {
 
       it('should return False when previously dispatched change event is the same as default (0) slider input number but provided as a string', () => {
         mockItemData = { id: 1, price: '0', isActive: true };
+        editor = new SliderEditor(editorArguments);
+        editor.loadValue(mockItemData);
+
+        const editorElm = divContainer.querySelector('.slider-editor input.editor-price') as HTMLInputElement;
+        editorElm.dispatchEvent(new Event('change'));
+
+        expect(editor.isValueChanged()).toBe(false);
+      });
+
+      it('should return False when previously dispatched change event is the same input number as "sliderStartValue" provided by the user', () => {
+        mockColumn.editor!.options = { sliderStartValue: 5 };
+        mockItemData = { id: 1, price: 5, isActive: true };
         editor = new SliderEditor(editorArguments);
         editor.loadValue(mockItemData);
 
@@ -441,6 +480,17 @@ describe('SliderEditor', () => {
         const output = editor.serializeValue();
 
         expect(output).toBe(0);
+      });
+
+      it('should return serialized value as the custom "sliderStartValue" number when item value is null', () => {
+        mockColumn.editor!.options = { sliderStartValue: 5 };
+        mockItemData = { id: 1, price: null, isActive: true };
+
+        editor = new SliderEditor(editorArguments);
+        editor.loadValue(mockItemData);
+        const output = editor.serializeValue();
+
+        expect(output).toBe(5);
       });
 
       it('should return serialized value as the custom "sliderStartValue" number when item value is null', () => {
@@ -551,7 +601,7 @@ describe('SliderEditor', () => {
     });
 
     it('should enableSliderTrackColoring and trigger a change event and expect slider track to have background color', () => {
-      mockColumn.editor!.editorOptions = { sliderStartValue: 5, enableSliderTrackColoring: true };
+      mockColumn.editor!.options = { sliderStartValue: 5, enableSliderTrackColoring: true };
       mockItemData = { id: 1, price: 80, isActive: true };
       editor = new SliderEditor(editorArguments);
       editor.loadValue(mockItemData);

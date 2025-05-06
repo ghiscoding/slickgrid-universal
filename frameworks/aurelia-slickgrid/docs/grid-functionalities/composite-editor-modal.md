@@ -16,7 +16,7 @@
 - [How to Skip a Mass Change](#how-to-skip-a-mass-change)
 - Dynamic Events/Methods
   - [Dynamically Change a Form Input](#dynamically-change-form-input) - for example when 1 input value affect 1 or more other input(s).
-  - [Dynamically Change `editorOptions`](#dynamically-change-editor-options-like-mindate-on-a-date-picker) - for example, date picker `minDate` based on other field values
+  - [Dynamically Change `options`](#dynamically-change-editor-options-like-mindate-on-a-date-picker) - for example, date picker `minDate` based on other field values
   - [Dynamically Update Select Editor Collection](#dynamically-update-select-editor-collection)
 - [Disabling Form Inputs (readonly)](#disabling-form-inputs-readonly)
 

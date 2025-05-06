@@ -143,7 +143,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
   }
 
   get editorOptions(): AutocompleterOption {
-    return { ...this.gridOptions.defaultEditorOptions?.autocompleter, ...this.columnEditor?.editorOptions };
+    return { ...this.gridOptions.defaultEditorOptions?.autocompleter, ...this.columnEditor?.editorOptions, ...this.columnEditor?.options };
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
@@ -589,7 +589,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     this._editorInputGroupElm.appendChild(document.createElement('span'));
 
     // show clear date button (unless user specifically doesn't want it)
-    if (!(this.editorOptions as AutocompleterOption)?.hideClearButton) {
+    if (!this.editorOptions?.hideClearButton) {
       closeButtonGroupElm.appendChild(this._clearButtonElm);
       this._editorInputGroupElm.appendChild(closeButtonGroupElm);
       this._bindEventService.bind(this._clearButtonElm, 'click', () => this.clear());

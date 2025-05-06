@@ -82,6 +82,15 @@ describe('CompoundSliderFilter', () => {
   });
 
   it('should initialize the filter with slider value define in user filter options', () => {
+    mockColumn.filter!.options = { sliderStartValue: 1 } as SliderOption;
+    filter.init(filterArguments);
+
+    const filterElm = divContainer.querySelector('.search-filter.slider-container.filter-duration input') as HTMLInputElement;
+    expect(filterElm.defaultValue).toBe('1');
+    expect(filterElm.value).toBe('1');
+  });
+
+  it('should initialize the filter with slider value define in user filterOptions', () => {
     mockColumn.filter!.filterOptions = { sliderStartValue: 1 } as SliderOption;
     filter.init(filterArguments);
 
@@ -266,6 +275,22 @@ describe('CompoundSliderFilter', () => {
 
   it('should create the input filter with min/max slider values being set by filter "sliderStartValue" and "sliderEndValue" through the filter params', () => {
     mockColumn.filter = {
+      options: {
+        sliderStartValue: 4,
+        sliderEndValue: 69,
+      },
+    };
+
+    filter.init(filterArguments);
+
+    const filterNumberElm = divContainer.querySelector('.input-group-text') as HTMLInputElement;
+
+    expect(filterNumberElm.textContent).toBe('4');
+    expect(filter.getValues()).toEqual(4);
+  });
+
+  it('should create the input filter with min/max slider values being set by filter "sliderStartValue" and "sliderEndValue" through the filter params', () => {
+    mockColumn.filter = {
       filterOptions: {
         sliderStartValue: 4,
         sliderEndValue: 69,
@@ -282,7 +307,7 @@ describe('CompoundSliderFilter', () => {
 
   it('should create the input filter with default search terms range but without showing side numbers when "hideSliderNumber" is set in params', () => {
     filterArguments.searchTerms = [3];
-    mockColumn.filter!.filterOptions = { hideSliderNumber: true };
+    mockColumn.filter!.options = { hideSliderNumber: true };
 
     filter.init(filterArguments);
 

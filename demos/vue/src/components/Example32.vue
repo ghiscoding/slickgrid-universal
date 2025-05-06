@@ -129,7 +129,7 @@ function defineGrid() {
         required: true,
         alwaysSaveOnEnterKey: true,
         maxLength: 12,
-        editorOptions: {
+        options: {
           cols: 45,
           rows: 6,
           buttonTexts: {
@@ -266,7 +266,7 @@ function defineGrid() {
       exportCustomFormatter: Formatters.dateUs,
       editor: {
         model: Editors.date,
-        editorOptions: { displayDateMin: 'today' } as VanillaCalendarOption,
+        options: { displayDateMin: 'today' } as VanillaCalendarOption,
         validator: (value, args) => {
           const dataContext = args && args.item;
           if (dataContext && dataContext.completed && !value) {
@@ -297,7 +297,7 @@ function defineGrid() {
         massUpdate: true,
 
         // example with a Remote API call
-        editorOptions: {
+        options: {
           minLength: 1,
           fetch: (searchTerm: string, callback: (items: false | any[]) => void) => {
             // const items = require('c://TEMP/items.json');

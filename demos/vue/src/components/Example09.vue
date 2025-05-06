@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import { useTranslation } from 'i18next-vue';
-import { type GridOption, type SlickgridVueInstance, type Column, ExtensionName, Filters, Formatters, SlickgridVue } from 'slickgrid-vue';
+import {
+  type GridOption,
+  type SlickgridVueInstance,
+  type Column,
+  ExtensionName,
+  Filters,
+  Formatters,
+  SlickgridVue,
+  type SliderRangeOption,
+} from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
 
 const { i18next } = useTranslation();
@@ -45,7 +54,10 @@ function defineGrid() {
       filterable: true,
       type: 'number',
       formatter: Formatters.percentCompleteBar,
-      filter: { model: Filters.compoundSlider, filterOptions: { hideSliderNumber: false } },
+      filter: {
+        model: Filters.compoundSlider,
+        options: { hideSliderNumber: false } as SliderRangeOption,
+      },
     },
     {
       id: 'start',

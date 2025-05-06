@@ -177,13 +177,13 @@ export class Example3 {
         type: 'number',
         filter: {
           model: Filters.slider,
-          filterOptions: { hideSliderNumber: false },
+          options: { hideSliderNumber: false },
         },
         editor: {
           model: Editors.slider,
           minValue: 0,
           maxValue: 100,
-          // editorOptions: { hideSliderNumber: true },
+          // options: { hideSliderNumber: true },
         },
         /*
         editor: {
@@ -268,8 +268,8 @@ export class Example3 {
         saveOutputType: 'dateUtc', // save output date format
         editor: {
           model: Editors.date,
-          // override any of the calendar options through "filterOptions"
-          editorOptions: { displayDateMin: 'today' } as VanillaCalendarOption,
+          // override any of the calendar options through "options"
+          options: { displayDateMin: 'today' } as VanillaCalendarOption,
         },
       },
       {
@@ -286,7 +286,7 @@ export class Example3 {
           // We can use the autocomplete through 3 ways "collection", "collectionAsync" or with your own autocomplete options
           // use your own autocomplete options, instead of fetch-jsonp, use Aurelia HttpClient or FetchClient
           // here we use fetch-jsonp just because I'm not sure how to configure Aurelia HttpClient with JSONP and CORS
-          editorOptions: {
+          options: {
             minLength: 3,
             forceUserInput: true,
             fetch: (searchText: string, updateCallback: (items: false | any[]) => void) => {
@@ -310,7 +310,7 @@ export class Example3 {
 
           // OR use the autocomplete through 3 ways "collection", "collectionAsync" or with your own autocomplete options
           // use your own autocomplete options, instead of fetch-jsonp, use HttpClient or FetchClient
-          filterOptions: {
+          options: {
             minLength: 3,
             fetch: (searchText: string, updateCallback: (items: false | any[]) => void) => {
               fetchJsonp<string[]>(`http://gd.geobytes.com/AutoCompleteCity?q=${searchText}`)

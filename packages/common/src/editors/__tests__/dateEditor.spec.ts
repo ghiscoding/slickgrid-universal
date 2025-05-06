@@ -146,6 +146,16 @@ describe('DateEditor', () => {
       const event = new KeyboardEvent('keydown', { key: 'Enter' });
       editor.editorDomElement.dispatchEvent(event);
 
+      expect(editor.columnEditor.options?.allowInput).toBeFalsy();
+      expect(editor.isValueTouched()).toBeFalsy();
+    });
+
+    it('should initialize the editor and add a keydown event listener that early exists by default', () => {
+      editor = new DateEditor(editorArguments);
+
+      const event = new KeyboardEvent('keydown', { key: 'Enter' });
+      editor.editorDomElement.dispatchEvent(event);
+
       expect(editor.columnEditor.editorOptions?.allowInput).toBeFalsy();
       expect(editor.isValueTouched()).toBeFalsy();
     });
@@ -659,6 +669,29 @@ describe('DateEditor', () => {
         expect(spy).not.toHaveBeenCalled();
       });
 
+      it('should not throw any error when date is lower than required "minDate" defined in the "options" and "autoCommitEdit" is enabled', () => {
+        mockColumn.editor!.options = { displayDateMin: 'today' };
+        mockItemData = { id: 1, startDate: '500-01-02T11:02:02.000Z', isActive: true };
+        gridOptionMock.autoCommitEdit = true;
+        gridOptionMock.autoEdit = true;
+        gridOptionMock.editable = true;
+
+        editor = new DateEditor(editorArguments);
+        vi.runAllTimers();
+        editor.loadValue(mockItemData);
+        editor.calendarInstance?.show();
+        const editorInputElm = divContainer.querySelector('input.date-picker') as HTMLInputElement;
+        editor.calendarInstance!.onClickDate!({ context: { inputElement: editorInputElm, selectedDates: [] } } as unknown as Calendar, new MouseEvent('click'));
+        editor.calendarInstance!.onChangeToInput!(
+          { context: { inputElement: editorInputElm, selectedDates: [] }, hide: vi.fn() } as unknown as Calendar,
+          new MouseEvent('click')
+        );
+
+        expect(editor.pickerOptions).toBeTruthy();
+        expect(editorInputElm.value).toBe('');
+        expect(editor.serializeValue()).toBe('');
+      });
+
       it('should not throw any error when date is lower than required "minDate" defined in the "editorOptions" and "autoCommitEdit" is enabled', () => {
         mockColumn.editor!.editorOptions = { displayDateMin: 'today' };
         mockItemData = { id: 1, startDate: '500-01-02T11:02:02.000Z', isActive: true };
@@ -682,7 +715,7 @@ describe('DateEditor', () => {
         expect(editor.serializeValue()).toBe('');
       });
 
-      it('should not throw any error when date is invalid when lower than required "minDate" defined in the global default editorOptions and "autoCommitEdit" is enabled', () => {
+      it('should not throw any error when date is invalid when lower than required "minDate" defined in the global defaultEditorOptions and "autoCommitEdit" is enabled', () => {
         // change to allow input value only for testing purposes & use the regular date picker input to test that one too
         gridOptionMock.defaultEditorOptions = {
           date: { displayDateMin: 'today' },

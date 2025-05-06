@@ -12,6 +12,7 @@ import {
   GridStateChange,
   SlickgridVue,
   SlickgridVueInstance,
+  type SliderOption,
 } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
 
@@ -71,7 +72,11 @@ function defineGrid() {
       exportWithFormatter: false,
       filterable: true,
       type: 'number',
-      filter: { model: Filters.slider, /* operator: '>=',*/ filterOptions: { hideSliderNumber: true } },
+      filter: {
+        model: Filters.slider,
+        /* operator: '>=',*/
+        options: { hideSliderNumber: true } as SliderOption,
+      },
     },
     {
       id: 'start',

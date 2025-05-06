@@ -138,7 +138,7 @@ export default class Example10 {
             { value: 'abc', label: 'Company ABC' },
             { value: 'xyz', label: 'Company XYZ' },
           ],
-          filterOptions: {
+          options: {
             filter: true, // adds a filter on top of the multi-select dropdown
           } as MultipleSelectOption,
         },

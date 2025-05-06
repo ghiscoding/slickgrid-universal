@@ -5,15 +5,15 @@
 - See the [Editors - Wiki](../Editors.md) for more general info about Editors (validators, event handlers, ...)
 
 ### Information
-The Date Editor is provided through an external library named [Vanilla-Calendar-Pro](https://vanilla-calendar.pro) and all options from that library can be added to your `editorOptions` (see below), so in order to add things like minimum date, disabling dates, ... just review all the [Vanilla-Calendar-Pro](https://vanilla-calendar.pro/docs/reference/additionally/settings) and then add them into `editorOptions`. We use [Tempo](https://tempo.formkit.com/) to parse and format Dates to the chosen format (when `type`, `outputType` and/or `saveType` are provided in your column definition)
+The Date Editor is provided through an external library named [Vanilla-Calendar-Pro](https://vanilla-calendar.pro) and all options from that library can be added to your `options` (see below), so in order to add things like minimum date, disabling dates, ... just review all the [Vanilla-Calendar-Pro](https://vanilla-calendar.pro/docs/reference/additionally/settings) and then add them into `options`. We use [Tempo](https://tempo.formkit.com/) to parse and format Dates to the chosen format (when `type`, `outputType` and/or `saveType` are provided in your column definition)
 
-> **Note** Also just so you know, `editorOptions` is used by all other editors as well to expose external library like Autocompleter, Multiple-Select, etc...
+> **Note** Also just so you know, `options` is used by all other editors as well to expose external library like Autocompleter, Multiple-Select, etc...
 
 ### Demo
 [Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example12) | [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example12.ts)
 
 ### Editor Options
-You can use any of the Vanilla-Calendar [settings](https://vanilla-calendar.pro/docs/reference/additionally/settings) by adding them to `editorOptions` as shown below.
+You can use any of the Vanilla-Calendar [settings](https://vanilla-calendar.pro/docs/reference/additionally/settings) by adding them to `options` as shown below.
 
 > **Note** for easier implementation, you should import `VanillaCalendarOption` from Slickgrid-Universal common package.
 
@@ -27,7 +27,8 @@ prepareGrid() {
       type: 'dateIso', // if your type has hours/minutes, then the date picker will include date+time
       editor: {
         model: Editors.date,
-        editorOptions: {
+        // previously known as `editorOptions` for < 9.0
+        options: {
           range: {
             max: 'today',
             disabled: ['2022-08-15', '2022-08-20'],
@@ -40,7 +41,7 @@ prepareGrid() {
 ```
 
 #### Grid Option `defaultEditorOptions
-You could also define certain options as a global level (for the entire grid or even all grids) by taking advantage of the `defaultEditorOptions` Grid Option. Note that they are set via the editor type as a key name (`autocompleter`, `date`, ...) and then the content is the same as `editorOptions` (also note that each key is already typed with the correct editor option interface), for example
+You could also define certain options as a global level (for the entire grid or even all grids) by taking advantage of the `defaultEditorOptions` Grid Option. Note that they are set via the editor type as a key name (`autocompleter`, `date`, ...) and then the content is the same as editor `options` (also note that each key is already typed with the correct editor option interface), for example
 
 ```ts
 this.gridOptions = {

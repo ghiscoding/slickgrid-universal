@@ -213,7 +213,7 @@ describe('SelectEditor', () => {
     });
 
     it('should initialize the editor even when user define its own editor options', () => {
-      mockColumn.editor!.editorOptions = { minHeight: 300 } as MultipleSelectOption;
+      mockColumn.editor!.options = { minHeight: 300 } as MultipleSelectOption;
       editor = new SelectEditor(editorArguments, true);
       const editorCount = document.body.querySelectorAll('select.ms-filter.editor-gender').length;
 

@@ -147,7 +147,7 @@ export class Example30 {
           required: true,
           alwaysSaveOnEnterKey: true,
           maxLength: 12,
-          editorOptions: {
+          options: {
             cols: 45,
             rows: 6,
             buttonTexts: {
@@ -275,7 +275,7 @@ export class Example30 {
         saveOutputType: 'dateUtc',
         filterable: true,
         filter: { model: Filters.compoundDate },
-        editor: { model: Editors.date, massUpdate: true, editorOptions: { hideClearButton: false } },
+        editor: { model: Editors.date, massUpdate: true, options: { hideClearButton: false } },
       },
       {
         id: 'completed',
@@ -317,7 +317,7 @@ export class Example30 {
         exportCustomFormatter: Formatters.dateUs,
         editor: {
           model: Editors.date,
-          editorOptions: {
+          options: {
             displayDateMin: 'today',
 
             // if we want to preload the date picker with a different date,
@@ -358,7 +358,7 @@ export class Example30 {
           massUpdate: true,
 
           // example with a Remote API call
-          editorOptions: {
+          options: {
             minLength: 1,
             fetch: (searchTerm: string, callback: (items: false | any[]) => void) => {
               const products = this.mockProducts();
@@ -398,7 +398,7 @@ export class Example30 {
           massUpdate: true,
           customStructure: { label: 'name', value: 'code' },
           collectionAsync: this.http.fetch(COUNTRIES_COLLECTION_URL),
-          editorOptions: { minLength: 0 },
+          options: { minLength: 0 },
         },
         filter: {
           model: Filters.inputText,
