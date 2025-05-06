@@ -1,0 +1,84 @@
+<div class="demo40">
+  <h2>
+    Example 40: Infinite Scroll from JSON data
+    <span class="float-end">
+      <a
+        style="font-size: 18px"
+        target="_blank"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example40.ts"
+      >
+        <span class="mdi mdi-link-variant"></span> code
+      </a>
+    </span>
+    <button
+      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+      type="button"
+      data-test="toggle-subtitle"
+      click.trigger="toggleSubTitle()"
+    >
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+  </h2>
+
+  <div class="subtitle">
+    <ul>
+      <li>
+        Infinite scrolling allows the grid to lazy-load rows from the server when reaching the scroll bottom (end) position. In its simplest
+        form, the more the user scrolls down, the more rows get loaded.
+      </li>
+      <li>
+        NOTES: <code>presets.pagination</code> is not supported with Infinite Scroll and will revert to the first page, simply because since
+        we keep appending data, we always have to start from index zero (no offset).
+      </li>
+    </ul>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-12">
+      <button
+        class="btn btn-outline-secondary btn-sm btn-icon"
+        data-test="clear-filters-sorting"
+        click.trigger="clearAllFiltersAndSorts()"
+        title="Clear all Filters & Sorts"
+      >
+        <span class="mdi mdi-close"></span>
+        <span>Clear all Filter & Sorts</span>
+      </button>
+      <button class="btn btn-outline-secondary btn-sm" data-test="set-dynamic-filter" click.trigger="setFiltersDynamically()">
+        Set Filters Dynamically
+      </button>
+      <button class="btn btn-outline-secondary btn-sm" data-test="set-dynamic-sorting" click.trigger="setSortingDynamically()">
+        Set Sorting Dynamically
+      </button>
+      <button class="btn btn-outline-secondary btn-sm" data-test="group-by-duration" click.trigger="groupByDuration()">
+        Group by Duration
+      </button>
+
+      <label class="ml-4">Reset Dataset <code>onSort</code>:</label>
+      <button class="btn btn-outline-secondary btn-sm" data-test="onsort-on" click.trigger="onSortReset(true)">ON</button>
+      <button class="btn btn-outline-secondary btn-sm" data-test="onsort-off" click.trigger="onSortReset(false)">OFF</button>
+    </div>
+  </div>
+
+  <div show.bind="metrics" class="mt-2" style="margin: 10px 0px">
+    <b>Metrics:</b>
+    <span>
+      <span>${metrics.endTime | dateFormat: 'DD MMM, h:mm:ss a'}</span> —
+      <span data-test="totalItemCount">${metrics.totalItemCount}</span>
+      items
+    </span>
+  </div>
+
+  <aurelia-slickgrid
+    grid-id="grid40"
+    columns.bind="columnDefinitions"
+    options.bind="gridOptions"
+    dataset.bind="dataset"
+    instances.bind="aureliaGrid"
+    on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"
+    on-row-count-changed.trigger="handleOnRowCountChanged($event.detail.args)"
+    on-sort.trigger="handleOnSort()"
+    on-scroll.trigger="handleOnScroll($event.detail.args)"
+  >
+  </aurelia-slickgrid>
+</div>

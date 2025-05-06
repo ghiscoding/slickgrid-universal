@@ -9,14 +9,14 @@ import type {
   MenuOptionItem,
 } from '../interfaces/index.js';
 import type { SlickEventData, SlickGrid } from '../core/index.js';
-import { DelimiterType, FileType } from '../enums/index.js';
+import { DelimiterType } from '../enums/index.js';
 import {
   type ExcelExportService,
   getCellValueFromQueryFieldGetter,
   getTranslationPrefix,
   type TextExportService,
 } from '../services/index.js';
-import { exportWithFormatterWhenDefined } from '../formatters/formatterUtilities.js';
+import { copyCellToClipboard } from '../formatters/formatterUtilities.js';
 import type { ExtensionUtility } from '../extensions/extensionUtility.js';
 import type { SharedService } from '../services/shared.service.js';
 import type { TreeDataService } from '../services/treeData.service.js';
@@ -183,9 +183,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
           disabled: false,
           command: commandName,
           positionOrder: 50,
-          action: (_e, args) => {
-            this.copyToClipboard(args as MenuCommandItemCallbackArgs);
-          },
+          action: (_e, args) => copyCellToClipboard(args as MenuCommandItemCallbackArgs),
           itemUsabilityOverride: (args: MenuCallbackArgs) => {
             // make sure there's an item to copy before enabling this command
             const columnDef = args?.column as Column;
@@ -222,7 +220,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
             if (excelService?.exportToFile) {
               excelService.exportToFile({
                 delimiter: DelimiterType.comma,
-                format: FileType.csv,
+                format: 'csv',
               });
             } else {
               throw new Error(
@@ -275,7 +273,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
             if (excelService?.exportToFile) {
               excelService.exportToFile({
                 delimiter: DelimiterType.tab,
-                format: FileType.txt,
+                format: 'txt',
               });
             } else {
               throw new Error(
@@ -380,56 +378,6 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
 
     this.extensionUtility.translateMenuItemsFromTitleKey(menuCommandItems);
     return menuCommandItems;
-  }
-
-  /**
-   * First get the value, if "exportWithFormatter" is set then we'll use the formatter output
-   * Then we create the DOM trick to copy a text value by creating a fake <div> that is not shown to the user
-   * and from there we can call the execCommand 'copy' command and expect the value to be in clipboard
-   * @param args
-   */
-  protected copyToClipboard(args: MenuCommandItemCallbackArgs): void {
-    try {
-      if (args && args.grid && args.command) {
-        // get the value, if "exportWithFormatter" is set then we'll use the formatter output
-        const gridOptions = this.sharedService?.gridOptions ?? {};
-        const cell = args?.cell ?? 0;
-        const row = args?.row ?? 0;
-        const columnDef = args?.column;
-        const dataContext = args?.dataContext;
-        const grid = this.sharedService?.slickGrid;
-        const exportOptions = gridOptions && (gridOptions.excelExportOptions || gridOptions.textExportOptions);
-        let textToCopy = exportWithFormatterWhenDefined(row, cell, columnDef, dataContext, grid, exportOptions);
-        if (typeof columnDef.queryFieldNameGetterFn === 'function') {
-          textToCopy = getCellValueFromQueryFieldGetter(columnDef, dataContext, '');
-        }
-        let finalTextToCopy = textToCopy;
-
-        // when it's a string, we'll remove any unwanted Tree Data/Grouping symbols from the beginning (if exist) from the string before copying (e.g.: "⮟  Task 21" or "·   Task 2")
-        if (typeof textToCopy === 'string') {
-          finalTextToCopy = textToCopy
-            .replace(/^([·|⮞|⮟]\s*)|([·|⮞|⮟])\s*/gi, '')
-            // eslint-disable-next-line
-            .replace(/[\u00b7|\u034f]/gi, '')
-            .trim();
-        }
-
-        // create fake <textarea> (positioned outside of the screen) to copy into clipboard & delete it from the DOM once we're done
-        const tmpElem = document.createElement('textarea');
-        if (tmpElem && document.body) {
-          tmpElem.style.position = 'absolute';
-          tmpElem.style.opacity = '0';
-          tmpElem.value = finalTextToCopy;
-          document.body.appendChild(tmpElem);
-          tmpElem.select();
-          if (document.execCommand('copy', false, finalTextToCopy)) {
-            tmpElem.remove();
-          }
-        }
-      }
-    } catch (e) {
-      /* v8 ignore next - do nothing */
-    }
   }
 
   /** sort all menu items by their position order when defined */

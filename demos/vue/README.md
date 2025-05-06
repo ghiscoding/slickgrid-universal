@@ -26,7 +26,7 @@ You can get this working demo by cloning our [Slickgrid-Vue-Demos](https://githu
 git clone https://github.com/ghiscoding/slickgrid-vue-demos
 cd bootstrap5-i18n-demo
 npm install # OR yarn install
-npm dev     # OR yarn start
+npm run dev     # OR yarn start
 ```
 
 Then open your browser to

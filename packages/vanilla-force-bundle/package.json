@@ -2,18 +2,16 @@
   "name": "@slickgrid-universal/vanilla-force-bundle",
   "version": "5.14.0",
   "description": "Vanilla Slick Grid Bundle (mostly exist for our Salesforce implementation) - Similar to Vanilla Bundle, the only difference is that it adds extra packages within its bundle (CustomTooltip, CompositeEditor & TextExport)",
-  "main": "./dist/cjs/index.js",
-  "types": "./dist/types/index.d.ts",
+  "type": "module",
+  "main": "./dist/index.js",
   "exports": {
     ".": {
-      "types": "./dist/types/index.d.ts",
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js",
-      "default": "./dist/esm/index.js"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     },
     "./package.json": "./package.json"
   },
-  "module": "./dist/esm/index.js",
+  "types": "./dist/index.d.ts",
   "publishConfig": {
     "access": "public"
   },
@@ -24,17 +22,12 @@
   "scripts": {
     "prebuild": "pnpm run clean",
     "build": "tsc --build",
-    "postbuild": "pnpm run bundle:cjs",
     "build:incremental": "tsc --incremental --declaration",
     "clean": "rimraf dist tsconfig.tsbuildinfo",
-    "bundle": "pnpm bundle:cjs && pnpm bundle:vite",
-    "bundle:cjs": "tsc --project tsconfig.bundle.json --outDir dist/cjs --module commonjs",
-    "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2021",
-    "bundle:types": "tsc --emitDeclarationOnly --declarationMap --outDir dist/types",
     "bundle:vite": "vite build",
     "prebundle:zip": "pnpm run delete:zip",
-    "bundle:zip": "pnpm run zip:dist",
-    "delete:zip": "rimraf dist-grid-bundle-zip",
+    "bundle:zip": "pnpm bundle:vite && pnpm run zip:dist",
+    "delete:zip": "rimraf --glob \"dist-grid-bundle-zip/*.zip\"",
     "zip:dist": "node compress.mjs --output-filename=slickgrid-vanilla-bundle --output-folder=\"dist-grid-bundle-zip/\"",
     "test": "echo testing slickgrid-universal vanilla-force-bundle code"
   },
@@ -66,8 +59,7 @@
     "@slickgrid-universal/pagination-component": "workspace:*",
     "@slickgrid-universal/text-export": "workspace:*",
     "@slickgrid-universal/utils": "workspace:*",
-    "@slickgrid-universal/vanilla-bundle": "workspace:*",
-    "whatwg-fetch": "catalog:"
+    "@slickgrid-universal/vanilla-bundle": "workspace:*"
   },
   "devDependencies": {
     "fflate": "^0.8.2",

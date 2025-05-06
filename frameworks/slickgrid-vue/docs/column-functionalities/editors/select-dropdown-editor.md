@@ -20,7 +20,6 @@ Here's an example with a `collection`, `collectionFilterBy` and `collectionSortB
 columnDefinitions.value = [
   {
     id: 'prerequisites', name: 'Prerequisites', field: 'prerequisites',
-    type: FieldType.string,
     editor: {
       model: Editors.multipleSelect,
       onInstantiated: (instance) => console.log('instance', instance), // get instance from 3rd party lib
@@ -39,19 +38,20 @@ columnDefinitions.value = [
 ```
 
 ### Editor Options (`MultipleSelectOption` interface)
-All the available options that can be provided as `editorOptions` to your column definitions can be found under this [multipleSelectOption interface](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/multipleSelectOption.interface.ts) and you should cast your `editorOptions` to that interface to make sure that you use only valid options of the `multiple-select.js` library.
+All the available options that can be provided as editor `options` to your column definitions can be found under this [multipleSelectOption interface](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/multipleSelectOption.interface.ts) and you should cast your editor `options` to that interface to make sure that you use only valid options of the `multiple-select.js` library.
 
 ```ts
 editor: {
   model: Editors.SingleSelect,
-  editorOptions: {
+  // previously known as `editorOptions` for < 9.0
+  options: {
     maxHeight: 400
   } as MultipleSelectOption
 }
 ```
 
 #### Grid Option `defaultEditorOptions
-You could also define certain options as a global level (for the entire grid or even all grids) by taking advantage of the `defaultEditorOptions` Grid Option. Note that they are set via the editor type as a key name (`autocompleter`, `date`, ...) and then the content is the same as `editorOptions` (also note that each key is already typed with the correct editor option interface), for example
+You could also define certain options as a global level (for the entire grid or even all grids) by taking advantage of the `defaultEditorOptions` Grid Option. Note that they are set via the editor type as a key name (`autocompleter`, `date`, ...) and then the content is the same as editor `options` (also note that each key is already typed with the correct editor option interface), for example
 
 ```ts
 gridOptions.value = {
@@ -103,7 +103,6 @@ Let take this example, let say that we want to allow collection values lower tha
 columnDefinitions.value = [
   {
     id: 'prerequisites', name: 'Prerequisites', field: 'prerequisites',
-    type: FieldType.string,
     editor: {
       model: Editors.multipleSelect,
       onInstantiated: (instance) => console.log('instance', instance), // get instance from 3rd party lib
@@ -165,7 +164,7 @@ columnDefinitions.value = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
-    type: FieldType.boolean,
+    type: 'boolean',
     editor: {
       // display checkmark icon when True
       enableRenderHtml: true,
@@ -184,7 +183,7 @@ columnDefinitions.value = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
-    type: FieldType.boolean,
+    type: 'boolean',
     editor: {
       // watch for any changes in the collection and re-render when that happens
       enableCollectionWatch: true,
@@ -196,7 +195,7 @@ columnDefinitions.value = [
 ```
 
 ### `multiple-select-vanilla.js` Options
-You can use any options from [Multiple-Select.js](http://wenzhixin.net.cn/p/multiple-select) and add them to your `editorOptions` property. However please note that this is a customized version of the original (all original [lib options](http://wenzhixin.net.cn/p/multiple-select/docs/) are available so you can still consult the original site for all options).
+You can use any options from [Multiple-Select.js](http://wenzhixin.net.cn/p/multiple-select) and add them to your editor `options` property. However please note that this is a customized version of the original (all original [lib options](http://wenzhixin.net.cn/p/multiple-select/docs/) are available so you can still consult the original site for all options).
 
 Couple of small options were added to suit SlickGrid-Universal needs, which is why it points to `slickgrid-universal/lib` folder (which is our customized version of the original). This lib is required if you plan to use `multipleSelect` or `singleSelect` Filters. What was customized to (compare to the original) is the following:
 - `okButton` option was added to add an OK button for simpler closing of the dropdown after selecting multiple options.

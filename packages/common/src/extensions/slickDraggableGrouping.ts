@@ -1,7 +1,8 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement, emptyElement, isEmptyObject, classNameToList } from '@slickgrid-universal/utils';
-import Sortable, { type Options as SortableOptions, type SortableEvent } from 'sortablejs';
+import Sortable from 'sortablejs/modular/sortable.core.esm.js';
+import type { Options as SortableOptions, SortableEvent } from 'sortablejs';
 
 import type { ExtensionUtility } from '../extensions/extensionUtility.js';
 import { SortDirectionNumber } from '../enums/index.js';
@@ -391,11 +392,11 @@ export class SlickDraggableGrouping {
     this._sortableLeftInstance = Sortable.create(
       this.gridContainer.querySelector(`.${grid.getUID()} .slick-header-columns.slick-header-columns-left`) as HTMLDivElement,
       sortableOptions
-    ) as Sortable;
+    );
     this._sortableRightInstance = Sortable.create(
       this.gridContainer.querySelector(`.${grid.getUID()} .slick-header-columns.slick-header-columns-right`) as HTMLDivElement,
       sortableOptions
-    ) as Sortable;
+    );
 
     // user can optionally provide initial groupBy columns
     if (this._addonOptions.initialGroupBy && !this._isInitialized) {
@@ -608,7 +609,7 @@ export class SlickDraggableGrouping {
       onAdd: (evt: SortableEvent) => {
         const el = evt.item;
         if (el.getAttribute('id')?.replace(this._gridUid, '')) {
-          this.handleGroupByDrop(dropzoneElm, (Sortable.utils as any).clone(evt.item));
+          this.handleGroupByDrop(dropzoneElm, Sortable.utils.clone(evt.item));
         }
         el.parentNode?.removeChild(el);
       },

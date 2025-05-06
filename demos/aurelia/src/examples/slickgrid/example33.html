@@ -1,0 +1,37 @@
+<h2>
+  ${title}
+  <span class="float-end">
+    <a
+      style="font-size: 18px"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example33.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </span>
+  <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" click.trigger="toggleSubTitle()">
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
+</h2>
+
+<div class="subtitle" innerhtml.bind="subTitle"></div>
+
+<div class="row">
+  <div class="col" style="margin-bottom: 20px">
+    <label for="pinned-rows">Simulated Server Delay (ms): </label>
+    <input type="number" id="server-delay" data-test="server-delay" style="width: 60px" value.bind="serverApiDelay" />
+  </div>
+  <div class="alert alert-info is-narrow col" class.bind="{ invisible: !showLazyLoading }" data-test="alert-lazy">
+    Lazy loading collection...
+  </div>
+</div>
+
+<aurelia-slickgrid
+  grid-id="grid33"
+  columns.bind="columnDefinitions"
+  options.bind="gridOptions"
+  dataset.bind="dataset"
+  instances.bind="aureliaGrid"
+  on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"
+>
+</aurelia-slickgrid>

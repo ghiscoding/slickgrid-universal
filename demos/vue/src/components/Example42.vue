@@ -2,7 +2,6 @@
 import {
   BasePaginationModel,
   type Column,
-  FieldType,
   Filters,
   Formatters,
   type GridOption,
@@ -50,7 +49,6 @@ function defineGrid() {
       filterable: true,
       sortable: true,
       minWidth: 80,
-      type: FieldType.string,
     },
     {
       id: 'percentComplete',
@@ -60,13 +58,13 @@ function defineGrid() {
       sortable: true,
       customTooltip: { position: 'center' },
       formatter: Formatters.progressBar,
-      type: FieldType.number,
+      type: 'number',
       filterable: true,
       filter: {
         model: Filters.sliderRange,
-        maxValue: 100, // or you can use the filterOptions as well
+        maxValue: 100, // or you can use the options as well
         operator: OperatorType.rangeInclusive, // defaults to inclusive
-        filterOptions: {
+        options: {
           hideSliderNumbers: false, // you can hide/show the slider numbers on both side
           min: 0,
           step: 5,
@@ -82,7 +80,7 @@ function defineGrid() {
       minWidth: 75,
       width: 100,
       exportWithFormatter: true,
-      type: FieldType.date,
+      type: 'date',
       filterable: true,
       filter: { model: Filters.compoundDate },
     },
@@ -95,7 +93,7 @@ function defineGrid() {
       minWidth: 75,
       width: 120,
       exportWithFormatter: true,
-      type: FieldType.date,
+      type: 'date',
       filterable: true,
       filter: {
         model: Filters.dateRange,
@@ -106,7 +104,7 @@ function defineGrid() {
       field: 'duration',
       name: 'Duration',
       maxWidth: 90,
-      type: FieldType.number,
+      type: 'number',
       sortable: true,
       filterable: true,
       filter: {
@@ -130,7 +128,7 @@ function defineGrid() {
           { value: false, label: 'False' },
         ],
         model: Filters.singleSelect,
-        filterOptions: { autoAdjustDropHeight: true } as MultipleSelectOption,
+        options: { autoAdjustDropHeight: true } as MultipleSelectOption,
       },
     },
   ];

@@ -2,18 +2,16 @@
   "name": "@slickgrid-universal/vanilla-bundle",
   "version": "5.14.0",
   "description": "Vanilla Slick Grid Bundle - Framework agnostic the output is to be used in vanilla JS/TS - Written in TypeScript and we also use Vite to bundle everything into a single JS file.",
-  "main": "./dist/cjs/index.js",
-  "types": "./dist/types/index.d.ts",
+  "type": "module",
+  "main": "./dist/index.js",
   "exports": {
     ".": {
-      "types": "./dist/types/index.d.ts",
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js",
-      "default": "./dist/esm/index.js"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     },
     "./package.json": "./package.json"
   },
-  "module": "./dist/esm/index.js",
+  "types": "./dist/index.d.ts",
   "publishConfig": {
     "access": "public"
   },
@@ -22,16 +20,12 @@
     "/src"
   ],
   "scripts": {
+    "are-types-wrong": "pnpx @arethetypeswrong/cli --pack .",
     "prebuild": "pnpm run clean",
-    "build": "tsc --build",
-    "postbuild": "pnpm run bundle:cjs",
+    "build": "tsc",
     "build:incremental": "tsc --incremental --declaration",
     "clean": "rimraf dist tsconfig.tsbuildinfo",
     "dev": "pnpm build:incremental",
-    "bundle": "pnpm bundle:cjs",
-    "bundle:cjs": "tsc --project tsconfig.bundle.json --outDir dist/cjs --module commonjs",
-    "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2021",
-    "bundle:types": "tsc --emitDeclarationOnly --declarationMap --outDir dist/types",
     "test": "echo testing slickgrid-universal slickgrid-vanilla-bundle code"
   },
   "license": "MIT",
@@ -59,8 +53,7 @@
     "@slickgrid-universal/pagination-component": "workspace:*",
     "@slickgrid-universal/utils": "workspace:*",
     "dequal": "catalog:",
-    "sortablejs": "catalog:",
-    "whatwg-fetch": "catalog:"
+    "sortablejs": "catalog:"
   },
   "devDependencies": {
     "@slickgrid-universal/graphql": "workspace:*",

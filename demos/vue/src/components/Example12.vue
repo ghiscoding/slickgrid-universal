@@ -5,8 +5,6 @@ import { useTranslation } from 'i18next-vue';
 import {
   type Column,
   DelimiterType,
-  FieldType,
-  FileType,
   Filters,
   type Formatter,
   Formatters,
@@ -14,6 +12,7 @@ import {
   GridStateChange,
   SlickgridVue,
   SlickgridVueInstance,
+  type SliderOption,
 } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
 
@@ -72,8 +71,12 @@ function defineGrid() {
       minWidth: 100,
       exportWithFormatter: false,
       filterable: true,
-      type: FieldType.number,
-      filter: { model: Filters.slider, /* operator: '>=',*/ filterOptions: { hideSliderNumber: true } },
+      type: 'number',
+      filter: {
+        model: Filters.slider,
+        /* operator: '>=',*/
+        options: { hideSliderNumber: true } as SliderOption,
+      },
     },
     {
       id: 'start',
@@ -81,8 +84,8 @@ function defineGrid() {
       field: 'start',
       nameKey: 'START',
       formatter: Formatters.dateIso,
-      outputType: FieldType.dateIso,
-      type: FieldType.date,
+      outputType: 'dateIso',
+      type: 'date',
       minWidth: 100,
       filterable: true,
       filter: { model: Filters.compoundDate },
@@ -93,8 +96,8 @@ function defineGrid() {
       field: 'finish',
       nameKey: 'FINISH',
       formatter: Formatters.dateIso,
-      outputType: FieldType.dateIso,
-      type: FieldType.date,
+      outputType: 'dateIso',
+      type: 'date',
       minWidth: 100,
       filterable: true,
       filter: { model: Filters.compoundDate },
@@ -271,7 +274,7 @@ function dynamicallyAddTitleHeader() {
 function exportToExcel() {
   excelExportService.exportToExcel({
     filename: 'Export',
-    format: FileType.xlsx,
+    format: 'xlsx',
   });
 }
 
@@ -279,7 +282,7 @@ function exportToFile(type = 'csv') {
   textExportService.exportToFile({
     delimiter: type === 'csv' ? DelimiterType.comma : DelimiterType.tab,
     filename: 'myExport',
-    format: type === 'csv' ? FileType.csv : FileType.txt,
+    format: type === 'csv' ? 'csv' : 'txt',
   });
 }
 

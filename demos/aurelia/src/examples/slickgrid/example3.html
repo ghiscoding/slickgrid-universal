@@ -1,0 +1,108 @@
+<h2>
+  ${title}
+  <span class="float-end">
+    <a
+      style="font-size: 18px"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example3.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </span>
+  <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" click.trigger="toggleSubTitle()">
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
+</h2>
+
+<div class="subtitle" innerhtml.bind="subTitle"></div>
+
+<div class="row">
+  <div class="col-sm-6">
+    <label>autoEdit setting</label>
+    <br />
+    <span id="radioAutoEdit">
+      <div class="row">
+        <label class="radio-inline control-label" for="radioTrue">
+          <input type="radio" name="inlineRadioOptions" id="radioTrue" checked value.bind="isAutoEdit" click.trigger="setAutoEdit(true)" />
+          ON (single-click)
+        </label>
+        <label class="radio-inline control-label" for="radioFalse">
+          <input type="radio" name="inlineRadioOptions" id="radioFalse" value.bind="isAutoEdit" click.trigger="setAutoEdit(false)" /> OFF
+          (double-click)
+        </label>
+      </div>
+      <div class="row col-sm-12">
+        <span>
+          <button class="btn btn-outline-secondary btn-sm btn-icon" click.trigger="undo()" data-test="undo-btn">
+            <i class="mdi mdi-undo"></i>
+            Undo last edit(s)
+          </button>
+          <label class="checkbox-inline control-label" for="autoCommitEdit">
+            <input
+              type="checkbox"
+              id="autoCommitEdit"
+              data-test="auto-commit"
+              value.bind="gridOptions.autoCommitEdit"
+              click.trigger="changeAutoCommit()"
+            />
+            Auto Commit Edit
+          </label>
+        </span>
+      </div>
+    </span>
+    <div class="row" style="margin-top: 5px">
+      <div class="col-sm-12">
+        <button class="btn btn-outline-secondary btn-sm btn-icon" click.trigger="aureliaGrid.filterService.clearFilters()">
+          Clear Filters
+        </button>
+        <button class="btn btn-outline-secondary btn-sm btn-icon" click.trigger="aureliaGrid.sortService.clearSorting()">
+          Clear Sorting
+        </button>
+        <button
+          class="btn btn-outline-primary btn-sm"
+          data-test="add-item-btn"
+          click.trigger="addItem()"
+          title="Clear Filters &amp; Sorting to see it better"
+        >
+          Add item
+        </button>
+        <button class="btn btn-outline-danger btn-sm" data-test="delete-item-btn" click.trigger="deleteItem()">Delete item</button>
+      </div>
+    </div>
+    <div class="row" style="margin-top: 5px">
+      <div class="col-sm-12">
+        <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="add-title-column" click.trigger="dynamicallyAddTitleHeader()">
+          <i class="mdi mdi-shape-square-plus"></i>
+          Dynamically Duplicate Title Column
+        </button>
+        <button
+          class="btn btn-outline-secondary btn-sm btn-icon"
+          data-test="remove-title-column"
+          click.trigger="dynamicallyRemoveLastColumn()"
+        >
+          <i class="mdi mdi-minus"></i>
+          Dynamically Remove Last Column
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-6">
+    <div class="alert alert-info" show.bind="updatedObject"><strong>Updated Item:</strong> ${updatedObject | stringify}</div>
+    <div class="alert alert-warning" show.bind="alertWarning">${alertWarning}</div>
+  </div>
+</div>
+
+<div id="grid-container" class="col-sm-12">
+  <aurelia-slickgrid
+    grid-id="grid3"
+    columns.bind="columnDefinitions"
+    options.bind="gridOptions"
+    dataset.bind="dataset"
+    instances.bind="aureliaGrid"
+    on-cell-change.trigger="onCellChanged($event.detail.eventData, $event.detail.args)"
+    on-click.trigger="onCellClicked($event.detail.eventData, $event.detail.args)"
+    on-validation-error.trigger="onCellValidationError($event.detail.eventData, $event.detail.args)"
+  >
+  </aurelia-slickgrid>
+</div>

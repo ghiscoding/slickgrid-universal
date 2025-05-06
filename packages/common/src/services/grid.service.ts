@@ -220,7 +220,7 @@ export class GridService {
   /**
    * Hide a Column from the Grid by its id, the column will just become hidden and will still show up in columnPicker/gridMenu
    * @param {string | number} columnId - column definition id
-   * @param {boolean} triggerEvent - do we want to trigger an event (onHeaderMenuHideColumns) when column becomes hidden? Defaults to true.
+   * @param {boolean} triggerEvent - do we want to trigger an event (`onHideColumns`) when column becomes hidden? Defaults to true.
    * @return {number} columnIndex - column index position when found or -1
    */
   hideColumnById(columnId: string | number, options?: HideColumnOption): number {
@@ -249,7 +249,7 @@ export class GridService {
         }
 
         // execute common grid commands when enabled
-        this.executeVisibilityCommands(options, ['onHeaderMenuHideColumns'], visibleColumns);
+        this.executeVisibilityCommands(options, ['onHideColumns'], visibleColumns);
         return colIndexFound;
       }
     }
@@ -275,8 +275,7 @@ export class GridService {
       this._grid.setColumns(finalVisibileColumns);
 
       // execute common grid commands when enabled
-      // @deprecate `onHeaderMenuHideColumns` event, we should keep only `onHideColumns`
-      this.executeVisibilityCommands(options, ['onHeaderMenuHideColumns', 'onHideColumns'], finalVisibileColumns);
+      this.executeVisibilityCommands(options, ['onHideColumns'], finalVisibileColumns);
     }
   }
 
@@ -359,7 +358,7 @@ export class GridService {
    * The column definitions could be passed as argument to reset (this can be used after a Grid State reset)
    * The reset will clear the Filters & Sort, then will reset the Columns to their original state
    */
-  resetGrid(columnDefinitions?: Column[]): void {
+  resetGrid(columns?: Column[]): void {
     // clear any Pinning/Frozen columns/rows
     // do it prior to setting the Columns back on the next few lines
     this.clearPinning(false);
@@ -374,7 +373,7 @@ export class GridService {
         if (this._gridOptions?.enableAutoSizeColumns) {
           this._grid.autosizeColumns();
         }
-        this.gridStateService.resetColumns(columnDefinitions);
+        this.gridStateService.resetColumns(columns);
       }
     }
 
@@ -462,7 +461,7 @@ export class GridService {
 
     // do we want to trigger an event after adding the item
     if (insertOptions.triggerEvent) {
-      this.pubSubService.publish('onItemAdded', item);
+      this.pubSubService.publish<T[]>('onItemsAdded', [item]);
     }
 
     // when using Pagination in a local grid, we need to either go to first page or last page depending on which position user want to insert the new row
@@ -543,7 +542,7 @@ export class GridService {
 
     // do we want to trigger an event after adding the item
     if (insertOptions.triggerEvent) {
-      this.pubSubService.publish('onItemAdded', items);
+      this.pubSubService.publish<T[]>('onItemsAdded', items);
     }
 
     return rowNumbers;
@@ -599,7 +598,7 @@ export class GridService {
 
     // do we want to trigger an event after deleting the item
     if (options.triggerEvent) {
-      this.pubSubService.publish('onItemDeleted', items);
+      this.pubSubService.publish<T[]>('onItemsDeleted', items);
     }
     return itemIds;
   }
@@ -633,7 +632,7 @@ export class GridService {
 
     // do we want to trigger an event after deleting the item
     if (options.triggerEvent) {
-      this.pubSubService.publish('onItemDeleted', itemId);
+      this.pubSubService.publish<Array<string | number>>('onItemsDeleted', [itemId]);
     }
     return itemId;
   }
@@ -662,7 +661,7 @@ export class GridService {
 
       // do we want to trigger an event after deleting the item
       if (options.triggerEvent) {
-        this.pubSubService.publish('onItemDeleted', itemIds);
+        this.pubSubService.publish<Array<number | string>>('onItemsDeleted', itemIds);
       }
       return itemIds;
     }
@@ -746,7 +745,7 @@ export class GridService {
 
     // do we want to trigger an event after updating the item
     if (options.triggerEvent) {
-      this.pubSubService.publish('onItemUpdated', items);
+      this.pubSubService.publish<T[]>('onItemsUpdated', items);
     }
 
     return rowNumbers;
@@ -805,7 +804,7 @@ export class GridService {
 
       // do we want to trigger an event after updating the item
       if (options.triggerEvent) {
-        this.pubSubService.publish('onItemUpdated', item);
+        this.pubSubService.publish<T[]>('onItemsUpdated', [item]);
       }
     }
     return rowNumber;
@@ -869,14 +868,14 @@ export class GridService {
 
     // do we want to trigger an event after updating the item
     if (options.triggerEvent) {
-      this.pubSubService.publish('onItemUpserted', items);
+      this.pubSubService.publish<T[]>('onItemsUpserted', items);
       const addedItems = upsertedRows.filter((upsertRow) => upsertRow.added !== undefined);
       if (Array.isArray(addedItems) && addedItems.length > 0) {
-        this.pubSubService.publish('onItemAdded', addedItems);
+        this.pubSubService.publish<Array<{ added: number | undefined; updated: number | undefined }>>('onItemsAdded', addedItems);
       }
       const updatedItems = upsertedRows.filter((upsertRow) => upsertRow.updated !== undefined);
       if (Array.isArray(updatedItems) && updatedItems.length > 0) {
-        this.pubSubService.publish('onItemUpdated', updatedItems);
+        this.pubSubService.publish<Array<{ added: number | undefined; updated: number | undefined }>>('onItemsUpdated', updatedItems);
       }
     }
     return upsertedRows;
@@ -916,8 +915,8 @@ export class GridService {
 
     // do we want to trigger an event after updating the item
     if (options.triggerEvent) {
-      this.pubSubService.publish('onItemUpserted', item);
-      isItemAdded ? this.pubSubService.publish('onItemAdded', item) : this.pubSubService.publish('onItemUpdated', item);
+      this.pubSubService.publish<T[]>('onItemsUpserted', [item]);
+      this.pubSubService.publish<T[]>(isItemAdded ? 'onItemsAdded' : 'onItemsUpdated', [item]);
     }
     return { added: rowNumberAdded, updated: rowNumberUpdated };
   }

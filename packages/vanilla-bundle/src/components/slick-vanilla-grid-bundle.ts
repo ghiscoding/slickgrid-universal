@@ -21,7 +21,6 @@ import {
   autoAddEditorFormatterToColumnsWithEditor,
   type AutocompleterEditor,
   GlobalGridOptions,
-  GridStateType,
   SlickGroupItemMetadataProvider,
 
   // services
@@ -70,7 +69,7 @@ export class SlickVanillaGridBundle<TData = any> {
   protected _eventPubSubService!: EventPubSubService;
   protected _darkMode = false;
   protected _collectionObservers: Array<null | { disconnect: () => void }> = [];
-  protected _columnDefinitions?: Column<TData>[];
+  protected _columns?: Column<TData>[];
   protected _gridOptions: GridOption = {};
   protected _gridContainerElm!: HTMLElement;
   protected _gridParentContainerElm!: HTMLElement;
@@ -140,10 +139,10 @@ export class SlickVanillaGridBundle<TData = any> {
   }
 
   get columnDefinitions(): Column<TData>[] {
-    return this._columnDefinitions || [];
+    return this._columns || [];
   }
-  set columnDefinitions(columnDefinitions: Column<TData>[]) {
-    this.columnDefinitionsChanged(columnDefinitions);
+  set columnDefinitions(columns: Column<TData>[]) {
+    this.columnDefinitionsChanged(columns);
   }
 
   get dataset(): TData[] {
@@ -334,9 +333,9 @@ export class SlickVanillaGridBundle<TData = any> {
     // we only want to do this check once in the constructor
     this._hideHeaderRowAfterPageLoad = options?.showHeaderRow === false;
 
-    this._columnDefinitions = columnDefs || [];
-    if (this._columnDefinitions.length > 0) {
-      this.copyColumnWidthsReference(this._columnDefinitions);
+    this._columns = columnDefs || [];
+    if (this._columns.length > 0) {
+      this.copyColumnWidthsReference(this._columns);
     }
 
     // save resource refs to register before the grid options are merged and possibly deep copied
@@ -487,7 +486,7 @@ export class SlickVanillaGridBundle<TData = any> {
       (this.sharedService as any)[prop] = null;
     }
     this.datasetHierarchical = undefined;
-    this._columnDefinitions = [];
+    this._columns = [];
 
     // we could optionally also empty the content of the grid container DOM element
     if (shouldEmptyDomElementContainer) {
@@ -556,16 +555,16 @@ export class SlickVanillaGridBundle<TData = any> {
     this.preRegisterResources();
 
     // prepare and load all SlickGrid editors, if an async editor is found then we'll also execute it.
-    this._columnDefinitions = this.loadSlickGridEditors(this._columnDefinitions || []);
+    this._columns = this.loadSlickGridEditors(this._columns || []);
 
     // if the user wants to automatically add a Custom Editor Formatter, we need to call the auto add function again
     if (this._gridOptions?.autoAddCustomEditorFormatter) {
-      autoAddEditorFormatterToColumnsWithEditor(this._columnDefinitions, this._gridOptions.autoAddCustomEditorFormatter);
+      autoAddEditorFormatterToColumnsWithEditor(this._columns, this._gridOptions.autoAddCustomEditorFormatter);
     }
 
     // save reference for all columns before they optionally become hidden/visible
-    this.sharedService.allColumns = this._columnDefinitions;
-    this.sharedService.visibleColumns = this._columnDefinitions;
+    this.sharedService.allColumns = this._columns;
+    this.sharedService.visibleColumns = this._columns;
 
     // TODO: revisit later, this is conflicting with Grid State & Presets
     // before certain extentions/plugins potentially adds extra columns not created by the user itself (RowMove, RowDetail, RowSelections)
@@ -578,7 +577,7 @@ export class SlickVanillaGridBundle<TData = any> {
 
     // after subscribing to potential columns changed, we are ready to create these optional extensions
     // when we did find some to create (RowMove, RowDetail, RowSelections), it will automatically modify column definitions (by previous subscribe)
-    this.extensionService.createExtensionsBeforeGridCreation(this._columnDefinitions, this._gridOptions);
+    this.extensionService.createExtensionsBeforeGridCreation(this._columns, this._gridOptions);
 
     // if user entered some Pinning/Frozen "presets", we need to apply them in the grid options
     if (this.gridOptions.presets?.pinning) {
@@ -588,7 +587,7 @@ export class SlickVanillaGridBundle<TData = any> {
     this.slickGrid = new SlickGrid<TData, Column<TData>, GridOption<Column<TData>>>(
       gridContainerElm,
       this.dataView as SlickDataView<TData>,
-      this._columnDefinitions,
+      this._columns,
       this._gridOptions,
       this._eventPubSubService
     );
@@ -605,8 +604,8 @@ export class SlickVanillaGridBundle<TData = any> {
 
     // when it's a frozen grid, we need to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward
     const frozenColumnIndex = this._gridOptions?.frozenColumn ?? -1;
-    if (frozenColumnIndex >= 0 && frozenColumnIndex <= this._columnDefinitions.length && this._columnDefinitions.length > 0) {
-      this.sharedService.frozenVisibleColumnId = this._columnDefinitions[frozenColumnIndex]?.id ?? '';
+    if (frozenColumnIndex >= 0 && frozenColumnIndex <= this._columns.length && this._columns.length > 0) {
+      this.sharedService.frozenVisibleColumnId = this._columns[frozenColumnIndex]?.id ?? '';
     }
 
     // get any possible Services that user want to register
@@ -731,7 +730,6 @@ export class SlickVanillaGridBundle<TData = any> {
       gridEventService: this.gridEventService,
       gridStateService: this.gridStateService,
       gridService: this.gridService,
-      groupingService: this.headerGroupingService,
       headerGroupingService: this.headerGroupingService,
       extensionService: this.extensionService,
       extensionUtility: this.extensionUtility,
@@ -931,18 +929,6 @@ export class SlickVanillaGridBundle<TData = any> {
       this.loadColumnPresetsWhenDatasetInitialized();
       this.loadFilterPresetsWhenDatasetInitialized();
     }
-
-    // @deprecated @use `dataview.globalItemMetadataProvider.getRowMetadata`
-    // did the user add a colspan callback? If so, hook it into the DataView getItemMetadata
-    if (gridOptions?.colspanCallback && dataView?.getItem && dataView?.getItemMetadata) {
-      dataView.getItemMetadata = (rowNumber: number) => {
-        let callbackResult = null;
-        if (gridOptions.colspanCallback) {
-          callbackResult = gridOptions.colspanCallback(dataView.getItem(rowNumber));
-        }
-        return callbackResult;
-      };
-    }
   }
 
   bindBackendCallbackFunctions(gridOptions: GridOption): void {
@@ -1131,7 +1117,7 @@ export class SlickVanillaGridBundle<TData = any> {
       this.sharedService.currentPagination = { pageNumber, pageSize };
     }
     this._eventPubSubService.publish('onGridStateChanged', {
-      change: { newValues: { pageNumber, pageSize }, type: GridStateType.pagination },
+      change: { newValues: { pageNumber, pageSize }, type: 'pagination' },
       gridState: this.gridStateService.getCurrentGridState(),
     });
   }
@@ -1209,20 +1195,20 @@ export class SlickVanillaGridBundle<TData = any> {
    * We will re-render the grid so that the new header and data shows up correctly.
    * If using translater, we also need to trigger a re-translate of the column headers
    */
-  updateColumnDefinitionsList(newColumnDefinitions: Column<TData>[]): void {
-    if (this.slickGrid && this._gridOptions && Array.isArray(newColumnDefinitions)) {
+  updateColumnDefinitionsList(newColumns: Column<TData>[]): void {
+    if (this.slickGrid && this._gridOptions && Array.isArray(newColumns)) {
       // map the Editor model to editorClass and load editor collectionAsync
-      newColumnDefinitions = this.loadSlickGridEditors(newColumnDefinitions);
+      newColumns = this.loadSlickGridEditors(newColumns);
 
       // if the user wants to automatically add a Custom Editor Formatter, we need to call the auto add function again
       if (this._gridOptions.autoAddCustomEditorFormatter) {
-        autoAddEditorFormatterToColumnsWithEditor(newColumnDefinitions, this._gridOptions.autoAddCustomEditorFormatter);
+        autoAddEditorFormatterToColumnsWithEditor(newColumns, this._gridOptions.autoAddCustomEditorFormatter);
       }
 
       if (this._gridOptions.enableTranslate) {
-        this.extensionService.translateColumnHeaders(undefined, newColumnDefinitions);
+        this.extensionService.translateColumnHeaders(undefined, newColumns);
       } else {
-        this.extensionService.renderColumnHeaders(newColumnDefinitions, true);
+        this.extensionService.renderColumnHeaders(newColumns, true);
       }
 
       if (this.slickGrid && this._gridOptions?.enableAutoSizeColumns) {
@@ -1285,8 +1271,8 @@ export class SlickVanillaGridBundle<TData = any> {
    * Loop through all column definitions and copy the original optional `width` properties optionally provided by the user.
    * We will use this when doing a resize by cell content, if user provided a `width` it won't override it.
    */
-  protected copyColumnWidthsReference(columnDefinitions: Column<TData>[]): void {
-    columnDefinitions.forEach((col) => (col.originalWidth = col.width));
+  protected copyColumnWidthsReference(columns: Column<TData>[]): void {
+    columns.forEach((col) => (col.originalWidth = col.width));
   }
 
   protected displayEmptyDataWarning(showWarning = true): void {
@@ -1349,9 +1335,9 @@ export class SlickVanillaGridBundle<TData = any> {
   }
 
   /** handler for when column definitions changes */
-  protected columnDefinitionsChanged(columnDefinitions?: Column[]): void {
-    if (columnDefinitions) {
-      this._columnDefinitions = columnDefinitions;
+  protected columnDefinitionsChanged(columns?: Column[]): void {
+    if (columns) {
+      this._columns = columns;
     }
     if (this._isGridInitialized) {
       this.updateColumnDefinitionsList(this.columnDefinitions);
@@ -1400,10 +1386,10 @@ export class SlickVanillaGridBundle<TData = any> {
   }
 
   protected insertDynamicPresetColumns(columnId: string, gridPresetColumns: Column<TData>[]): void {
-    if (this._columnDefinitions) {
-      const columnPosition = this._columnDefinitions.findIndex((c) => c.id === columnId);
+    if (this._columns) {
+      const columnPosition = this._columns.findIndex((c) => c.id === columnId);
       if (columnPosition >= 0) {
-        const dynColumn = this._columnDefinitions[columnPosition];
+        const dynColumn = this._columns[columnPosition];
         if (dynColumn?.id === columnId && !gridPresetColumns.some((c) => c.id === columnId)) {
           columnPosition > 0 ? gridPresetColumns.splice(columnPosition, 0, dynColumn) : gridPresetColumns.unshift(dynColumn);
         }
@@ -1424,7 +1410,7 @@ export class SlickVanillaGridBundle<TData = any> {
         this.slickGrid,
         this.gridOptions.presets.columns
       );
-      if (gridPresetColumns && Array.isArray(gridPresetColumns) && gridPresetColumns.length > 0 && Array.isArray(this._columnDefinitions)) {
+      if (gridPresetColumns && Array.isArray(gridPresetColumns) && gridPresetColumns.length > 0 && Array.isArray(this._columns)) {
         // make sure that the dynamic columns are included in presets (1.Row Move, 2. Row Selection, 3. Row Detail)
         if (this.gridOptions.enableRowMoveManager) {
           const rmmColId = this.gridOptions?.rowMoveManager?.columnId ?? '_move';
@@ -1623,7 +1609,7 @@ export class SlickVanillaGridBundle<TData = any> {
       // we'll also add props, by mutation, required by the TreeDataService on the flat array like `__hasChildren`, `parentId` and anything else to work properly
       sortedDatasetResult = this.treeDataService.convertFlatParentChildToTreeDatasetAndSort(
         flatDatasetInput,
-        this._columnDefinitions || [],
+        this._columns || [],
         this.gridOptions
       );
       this.sharedService.hierarchicalDataset = sortedDatasetResult.hierarchical;

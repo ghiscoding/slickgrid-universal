@@ -7,7 +7,7 @@ export interface RowDetailViewProps<T = any, C = any> {
   expandedRows?: (string | number)[];
   grid: SlickGrid;
   dataView: SlickDataView;
-  parent: C;
+  parentRef: C;
   rowId?: string | number;
   rowIndex?: number;
   rowIdsOutOfViewport?: (string | number)[];
@@ -56,7 +56,7 @@ export interface RowDetailViewOption {
   panelRows: number;
 
   /** Optionally pass your Parent Component reference or exposed functions to your Child Component (row detail component). */
-  parent?: any;
+  parentRef?: any;
 
   /** Defaults to false, makes the column reorderable to another position in the grid. */
   reorderable?: boolean;
@@ -69,12 +69,6 @@ export interface RowDetailViewOption {
 
   /** Defaults to false, when True will open the row detail on a row click (from any column) */
   useRowClick?: boolean;
-
-  /**
-   * @deprecated this flag is actually no longer used internally since we now have a single way of calculating the out/in viewport range.
-   * However, we will keep the flag to avoid introducing a breaking change but again it's not needed anymore and it will be removed in the next major version.
-   */
-  useSimpleViewportCalc?: boolean;
 
   /** no defaults, show a tooltip text while hovering the row detail icon */
   toolTip?: string;

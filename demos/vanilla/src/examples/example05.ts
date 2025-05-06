@@ -1,11 +1,9 @@
 import {
   type Column,
-  FieldType,
   Filters,
   Formatters,
   type GridOption,
   type GridStateChange,
-  GridStateType,
   type OnSelectedRowsChangedEventArgs,
   type TreeToggledItem,
   type TreeToggleStateChange,
@@ -184,7 +182,6 @@ export default class Example05 {
         sortable: true,
         exportWithFormatter: false,
         queryFieldSorter: 'id',
-        type: FieldType.string,
         formatter: Formatters.tree,
         exportCustomFormatter: Formatters.treeExport,
       },
@@ -200,14 +197,14 @@ export default class Example05 {
         filterable: true,
         filter: { model: Filters.compoundSlider, operator: '>=' },
         formatter: Formatters.percentCompleteBarWithText,
-        type: FieldType.number,
+        type: 'number',
       },
       {
         id: 'start',
         name: 'Start',
         field: 'start',
         minWidth: 60,
-        type: FieldType.dateIso,
+        type: 'dateIso',
         filterable: true,
         sortable: true,
         filter: { model: Filters.compoundDate },
@@ -218,7 +215,7 @@ export default class Example05 {
         name: 'Finish',
         field: 'finish',
         minWidth: 60,
-        type: FieldType.dateIso,
+        type: 'dateIso',
         filterable: true,
         sortable: true,
         filter: { model: Filters.compoundDate },
@@ -486,7 +483,7 @@ export default class Example05 {
     this.hasNoExpandCollapseChanged = false;
     const gridStateChange = e.detail;
 
-    if (gridStateChange.change?.type === GridStateType.treeData) {
+    if (gridStateChange.change?.type === 'treeData') {
       console.log('Tree Data gridStateChange', gridStateChange.gridState?.treeData);
       this.treeToggleItems = gridStateChange.gridState?.treeData?.toggledItems as TreeToggledItem[];
     }

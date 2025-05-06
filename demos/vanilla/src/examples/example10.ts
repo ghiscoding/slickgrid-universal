@@ -1,14 +1,12 @@
 import {
   type Column,
   type CursorPageInfo,
-  FieldType,
   Filters,
   Formatters,
   type GridOption,
   type GridStateChange,
   type Metrics,
   OperatorType,
-  SortDirection,
 } from '@slickgrid-universal/common';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import {
@@ -94,7 +92,6 @@ export default class Example10 {
         nameKey: 'NAME',
         width: 60,
         columnGroupKey: 'CUSTOMER_INFORMATION',
-        type: FieldType.string,
         sortable: true,
         filterable: true,
         filter: {
@@ -141,7 +138,7 @@ export default class Example10 {
             { value: 'abc', label: 'Company ABC' },
             { value: 'xyz', label: 'Company XYZ' },
           ],
-          filterOptions: {
+          options: {
             filter: true, // adds a filter on top of the multi-select dropdown
           } as MultipleSelectOption,
         },
@@ -161,7 +158,7 @@ export default class Example10 {
         field: 'billing.address.zip',
         nameKey: 'BILLING.ADDRESS.ZIP',
         width: 60,
-        type: FieldType.number,
+        type: 'number',
         columnGroupKey: 'BILLING.INFORMATION',
         filterable: true,
         sortable: true,
@@ -181,7 +178,7 @@ export default class Example10 {
         width: 120,
         exportWithFormatter: true,
         columnGroupKey: 'BILLING.INFORMATION',
-        type: FieldType.date,
+        type: 'date',
         filterable: true,
         filter: {
           model: Filters.dateRange,
@@ -250,7 +247,7 @@ export default class Example10 {
         sorters: [
           // direction can written as 'asc' (uppercase or lowercase) and/or use the SortDirection type
           { columnId: 'name', direction: 'asc' },
-          { columnId: 'company', direction: SortDirection.DESC },
+          { columnId: 'company', direction: 'DESC' },
         ],
         pagination: { pageNumber: this.isWithCursor ? 1 : 2, pageSize: 20 }, // if cursor based, start at page 1
       },
@@ -428,7 +425,7 @@ export default class Example10 {
     this.sgb?.sortService.updateSorting([
       // direction can written as 'asc' (uppercase or lowercase) and/or use the SortDirection type
       { columnId: 'name', direction: 'asc' },
-      { columnId: 'company', direction: SortDirection.DESC },
+      { columnId: 'company', direction: 'DESC' },
     ]);
     window.setTimeout(() => {
       this.sgb?.paginationService?.changeItemPerPage(20);

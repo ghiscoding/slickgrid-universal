@@ -8,7 +8,6 @@ import {
   type CurrentSorter,
   type EditCommand,
   Editors,
-  FieldType,
   Filters,
   type Formatter,
   Formatters,
@@ -134,7 +133,7 @@ export default class Example11 {
 
     // bind any of the grid events
     this._bindingEventService.bind(this.gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
-    this._bindingEventService.bind(this.gridContainerElm, 'onitemdeleted', this.handleItemDeleted.bind(this));
+    this._bindingEventService.bind(this.gridContainerElm, 'onitemsdeleted', this.handleItemsDeleted.bind(this));
     this.recreatePredefinedViews();
   }
 
@@ -177,7 +176,7 @@ export default class Example11 {
           }
           return value > 1 ? `${value} days` : `${value} day`;
         },
-        type: FieldType.number,
+        type: 'number',
       },
       {
         id: 'cost',
@@ -187,7 +186,7 @@ export default class Example11 {
         width: 90,
         sortable: true,
         filterable: true,
-        type: FieldType.number,
+        type: 'number',
         filter: { model: Filters.compoundInputNumber },
         formatter: Formatters.dollar,
       },
@@ -195,14 +194,14 @@ export default class Example11 {
         id: 'percentComplete',
         name: '% Complete',
         field: 'percentComplete',
-        type: FieldType.number,
+        type: 'number',
         minWidth: 80,
         editor: {
           model: Editors.slider,
           massUpdate: true,
           minValue: 0,
           maxValue: 100,
-          editorOptions: { hideSliderNumber: true } as SliderOption,
+          options: { hideSliderNumber: true } as SliderOption,
         },
         sortable: true,
         filterable: true,
@@ -215,11 +214,11 @@ export default class Example11 {
         sortable: true,
         minWidth: 80,
         formatter: Formatters.dateIso,
-        type: FieldType.date,
-        outputType: FieldType.dateIso,
+        type: 'date',
+        outputType: 'dateIso',
         filterable: true,
         filter: { model: Filters.compoundDate },
-        editor: { model: Editors.date, massUpdate: true, editorOptions: { allowInput: true } },
+        editor: { model: Editors.date, massUpdate: true, options: { allowInput: true } },
       },
       {
         id: 'finish',
@@ -227,10 +226,14 @@ export default class Example11 {
         field: 'finish',
         sortable: true,
         minWidth: 80,
-        editor: { model: Editors.date, massUpdate: true, editorOptions: { range: { min: 'today' } } as VanillaCalendarOption },
+        editor: {
+          model: Editors.date,
+          massUpdate: true,
+          options: { displayDateMin: 'today' } as VanillaCalendarOption,
+        },
         formatter: Formatters.dateIso,
-        type: FieldType.date,
-        outputType: FieldType.dateIso,
+        type: 'date',
+        outputType: 'dateIso',
         filterable: true,
         filter: {
           model: Filters.compoundDate,
@@ -266,7 +269,7 @@ export default class Example11 {
             { value: false, label: 'False' },
           ],
           massUpdate: true,
-          editorOptions: { showClear: true } as MultipleSelectOption,
+          options: { showClear: true } as MultipleSelectOption,
         },
         filter: {
           model: Filters.singleSelect,
@@ -275,7 +278,7 @@ export default class Example11 {
             { value: true, label: 'True' },
             { value: false, label: 'False' },
           ],
-          filterOptions: { showClear: true } as MultipleSelectOption,
+          options: { showClear: true } as MultipleSelectOption,
         },
         exportWithFormatter: false,
         formatter: Formatters.checkmarkMaterial,
@@ -290,14 +293,14 @@ export default class Example11 {
         dataKey: 'id',
         labelKey: 'itemName',
         formatter: Formatters.complexObject,
-        type: FieldType.object,
+        type: 'object',
         sortComparer: SortComparers.objectString,
         editor: {
           model: Editors.autocompleter,
           alwaysSaveOnEnterKey: true,
           massUpdate: true,
           // example with a Remote API call
-          editorOptions: {
+          options: {
             showOnFocus: true,
             minLength: 1,
             fetch: (searchText, updateCallback) => {
@@ -316,7 +319,6 @@ export default class Example11 {
         filter: {
           model: Filters.inputText,
           // placeholder: '🔎︎ search city',
-          type: FieldType.string,
           queryField: 'product.itemName',
         },
       },
@@ -328,7 +330,7 @@ export default class Example11 {
         exportWithFormatter: true,
         dataKey: 'code',
         labelKey: 'name',
-        type: FieldType.object,
+        type: 'object',
         sortComparer: SortComparers.objectString,
         filterable: true,
         sortable: true,
@@ -337,7 +339,7 @@ export default class Example11 {
           model: Editors.autocompleter,
           alwaysSaveOnEnterKey: true,
           massUpdate: true,
-          editorOptions: {
+          options: {
             minLength: 1,
             fetch: (searchText, updateCallback) => {
               const countries: any[] = JSON.parse(countriesJson);
@@ -514,15 +516,15 @@ export default class Example11 {
 
   handleValidationError(event) {
     console.log('handleValidationError', event.detail);
-    const args = event.detail && event.detail.args;
+    const args = event?.detail?.args;
     if (args.validationResults) {
       alert(args.validationResults.msg);
     }
     return false;
   }
 
-  handleItemDeleted(event) {
-    const itemId = event && event.detail;
+  handleItemsDeleted(event) {
+    const itemId = event?.detail;
     console.log('item deleted with id:', itemId);
   }
 

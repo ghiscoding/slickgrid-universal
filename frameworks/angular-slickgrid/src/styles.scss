@@ -1,0 +1,178 @@
+@use 'sass:color';
+
+$primary-color: #0d6efd;
+
+@use 'bootstrap/scss/bootstrap' with (
+  $primary: $primary-color
+);
+
+// -- 1. load with modern `@use`
+// @use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss';
+@use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss' with (
+  $slick-primary-color: $primary-color // $slick-input-focus-box-shadow: 0 0 0 0.25rem rgba($primary-color, 0.25),
+);
+
+// -- 2. load with legacy `@import`
+// $slick-primary-color: red;
+// $slick-link-color: red;
+// @import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss';
+
+:root {
+  --ms-choice-border: var(--bs-border-width) solid var(--bs-border-color);
+  //   --slick-button-style-bg-color: #fff;
+  //   --slick-button-border-color: #c7c7c7;
+}
+
+$button-border-color: #ababab;
+$button-style-bg-color: #fff;
+
+.btn-group-xs > .btn,
+.btn-xs {
+  padding: 1px 5px;
+  font-size: 12px;
+  line-height: 1.5;
+  border-radius: 3px;
+  margin: 0;
+  font-size: 12px;
+  height: 22px;
+  vertical-align: middle;
+}
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.gap-4px {
+  gap: 4px;
+}
+
+.hidden {
+  display: none;
+}
+
+.side-menu {
+  margin-left: 15px;
+
+  .links {
+    background-color: #f9f9f9;
+    border-right: 1px solid #d0d0d0;
+    overflow-y: auto;
+    padding: 10px;
+    li {
+      width: 100%;
+    }
+  }
+}
+
+.italic {
+  font-style: italic;
+}
+.subtitle {
+  font-size: 15px;
+  font-style: italic;
+  color: grey;
+  margin-bottom: 10px;
+}
+.lightblue {
+  color: lightblue;
+}
+.red {
+  color: red;
+}
+.faded {
+  opacity: 0.7;
+}
+.faded:hover {
+  opacity: 1;
+}
+.pointer {
+  cursor: pointer !important;
+}
+.padding10 {
+  padding: 10px !important;
+}
+.text-danger {
+  color: red !important;
+}
+.mdi-pencil.pointer:hover {
+  color: #00bfff;
+}
+.mdi-trash-can.pointer:hover {
+  color: #ff002b;
+}
+
+.github-button-container {
+  position: relative;
+  top: -2px;
+  margin-left: 5px;
+}
+
+.slick-dark-mode {
+  --slick-button-style-bg-color: #212121;
+  --slick-button-border-color: #626262;
+  .text-primary {
+    color: #599bfe !important;
+  }
+}
+.button-style {
+  cursor: pointer;
+  background-color: var(--slick-button-style-bg-color, $button-style-bg-color);
+  border: 1px solid #{var(--slick-button-border-color, $button-border-color)};
+  border-radius: 2px;
+  justify-content: center;
+  text-align: center;
+  &:hover {
+    border-color: color.adjust($button-border-color, $lightness: 10%);
+  }
+}
+
+.panel-wm-content {
+  background-color: #fff;
+  /* the height is 100% minus the 2 navbars */
+  height: calc(100vh - 56px);
+  padding: 0 20px;
+
+  #demo-container {
+    padding-bottom: 15px;
+  }
+  h3 {
+    color: #333;
+  }
+  .subtitle {
+    color: #727272;
+  }
+}
+.panel-wm-content.dark-mode {
+  background-color: #212529;
+  color: #dddddd;
+  h3 {
+    color: #dddddd;
+  }
+  .subtitle {
+    color: #cbcbcb;
+  }
+  .btn-outline-secondary {
+    color: #dfdfdf;
+  }
+}
+
+/* editable field with outline border */
+.slick-cell .editing-field,
+.slick-cell.selected .editing-field {
+  border: 1px solid #dddbda;
+  padding: 3px 5px 3px 4px;
+  margin: -2px;
+  height: calc(100% + 4px);
+  border-radius: 3px;
+  background-color: #ffffff;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &:hover {
+    border: 1px solid #adadad;
+  }
+}

@@ -132,6 +132,14 @@ describe('AutocompleterEditor', () => {
     });
 
     it('should initialize the editor even when user define his own editor options', () => {
+      mockColumn.editor!.options = { minLength: 3 } as AutocompleterOption;
+      editor = new AutocompleterEditor(editorArguments);
+      const editorCount = divContainer.querySelectorAll('input.editor-text.editor-gender').length;
+
+      expect(editorCount).toBe(1);
+    });
+
+    it('should initialize the editor even when user define his own editor options', () => {
       mockColumn.editor!.editorOptions = { minLength: 3 } as AutocompleterOption;
       editor = new AutocompleterEditor(editorArguments);
       const editorCount = divContainer.querySelectorAll('input.editor-text.editor-gender').length;
@@ -359,7 +367,7 @@ describe('AutocompleterEditor', () => {
 
     describe('forceUserInput flag', () => {
       it('should return DOM element value when "forceUserInput" is enabled and loaded value length is greater then minLength defined when calling "serializeValue"', () => {
-        mockColumn.editor!.editorOptions = { forceUserInput: true };
+        mockColumn.editor!.options = { forceUserInput: true };
         mockItemData = { id: 123, gender: { value: 'male', label: 'Male' }, isActive: true };
 
         editor = new AutocompleterEditor(editorArguments);
@@ -371,7 +379,7 @@ describe('AutocompleterEditor', () => {
       });
 
       it('should return DOM element value when "forceUserInput" is enabled and loaded value length is greater then custom minLength defined when calling "serializeValue"', () => {
-        mockColumn.editor!.editorOptions = { forceUserInput: true, minLength: 2 } as AutocompleterOption;
+        mockColumn.editor!.options = { forceUserInput: true, minLength: 2 } as AutocompleterOption;
         mockItemData = { id: 123, gender: { value: 'male', label: 'Male' }, isActive: true };
 
         editor = new AutocompleterEditor(editorArguments);
@@ -642,7 +650,7 @@ describe('AutocompleterEditor', () => {
         vi.clearAllMocks();
       });
 
-      it('should expect the "handleSelect" method to be called when the callback method is triggered when user provide his own filterOptions', () => {
+      it('should expect the "handleSelect" method to be called when the callback method is triggered when user provide his own editor options', () => {
         editor = new AutocompleterEditor(editorArguments);
         const setValueSpy = vi.spyOn(editor, 'setValue');
         const saveSpy = vi.spyOn(editor, 'save');
@@ -671,6 +679,27 @@ describe('AutocompleterEditor', () => {
         expect(editor.isValueTouched()).toBe(true);
       });
 
+      it('should initialize the editor with options and expect the "handleSelect" method to be called when the callback method is triggered', () => {
+        gridOptionMock.autoCommitEdit = true;
+        mockColumn.editor!.collection = [
+          { value: 'm', label: 'Male' },
+          { value: 'f', label: 'Female' },
+        ];
+        mockColumn.editor!.options = { minLength: 3 } as AutocompleterOption;
+        mockItemData = { id: 123, gender: { value: 'f', label: 'Female' }, isActive: true };
+
+        editor = new AutocompleterEditor(editorArguments);
+        const focusSpy = vi.spyOn(editor, 'focus');
+        const saveSpy = vi.spyOn(editor, 'save');
+        editor.autocompleterOptions.onSelect!({ item: 'fem' }, editor.editorDomElement);
+        vi.runAllTimers(); // fast-forward timer
+
+        // expect(handleSelectSpy).toHaveBeenCalledWith({ item: 'fem' });
+        expect(saveSpy).toHaveBeenCalled();
+        expect(focusSpy).toHaveBeenCalled();
+        expect(editor.isValueTouched()).toBe(true);
+      });
+
       it('should initialize the editor with editorOptions and expect the "handleSelect" method to be called when the callback method is triggered', () => {
         gridOptionMock.autoCommitEdit = true;
         mockColumn.editor!.collection = [
@@ -692,7 +721,25 @@ describe('AutocompleterEditor', () => {
         expect(editor.isValueTouched()).toBe(true);
       });
 
-      it('should expect the "onSelect" method to be called when defined and the callback method is triggered when user provide his own filterOptions', () => {
+      it('should expect the "onSelect" method to be called when defined and the callback method is triggered when user provide his own editor options', () => {
+        gridOptionMock.autoCommitEdit = true;
+        const mockOnSelect = vi.fn();
+        const activeCellMock = { row: 1, cell: 0 };
+        vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
+        mockColumn.editor!.options = { minLength: 3, onSelectItem: mockOnSelect } as AutocompleterOption;
+
+        editor = new AutocompleterEditor(editorArguments);
+        vi.spyOn(editor, 'save');
+        vi.spyOn(editor, 'handleSelect');
+        editor.autocompleterOptions.onSelect!({ item: 'fem' }, editor.editorDomElement);
+
+        // expect(saveSpy).toHaveBeenCalled();
+        // expect(handleSelectSpy).toHaveBeenCalledWith(event, { item: 'fem' });
+        expect(mockOnSelect).toHaveBeenCalledWith({ item: 'fem' }, activeCellMock.row, activeCellMock.cell, mockColumn, mockItemData);
+        expect(editor.isValueTouched()).toBe(true);
+      });
+
+      it('should expect the "onSelect" method to be called when defined and the callback method is triggered when user provide his own editor options', () => {
         gridOptionMock.autoCommitEdit = true;
         const mockOnSelect = vi.fn();
         const activeCellMock = { row: 1, cell: 0 };
@@ -712,7 +759,7 @@ describe('AutocompleterEditor', () => {
     });
 
     describe('renderItem callback method', () => {
-      it('should provide "renderItem" in the "filterOptions" and expect the autocomplete "render" to be overriden', () => {
+      it('should provide "renderItem" in the "editorOptions" and expect the autocomplete "render" to be overriden', () => {
         const mockTemplateString = `<div>Hello World</div>`;
         const mockTemplateCallback = () => mockTemplateString;
         mockColumn.editor = {
@@ -785,6 +832,24 @@ describe('AutocompleterEditor', () => {
       ];
       mockColumn.editor = {
         collection: mockCollection,
+        options: { showOnFocus: true } as AutocompleterOption,
+      };
+      editor = new AutocompleterEditor(editorArguments);
+      const clearSpy = vi.spyOn(editor, 'clear');
+
+      const clearBtnElm = divContainer.querySelector('.btn.btn-clear') as HTMLButtonElement;
+      clearBtnElm.dispatchEvent(new Event('click'));
+
+      expect(clearSpy).toHaveBeenCalled();
+    });
+
+    it('should call "clear" method when clear button is clicked', () => {
+      const mockCollection = [
+        { value: 'male', label: 'Male' },
+        { value: 'unknown', label: 'Unknown' },
+      ];
+      mockColumn.editor = {
+        collection: mockCollection,
         editorOptions: { showOnFocus: true } as AutocompleterOption,
       };
       editor = new AutocompleterEditor(editorArguments);
@@ -804,7 +869,7 @@ describe('AutocompleterEditor', () => {
       const event = new (window.window as any).KeyboardEvent('keydown', { key: 'm', bubbles: true, cancelable: true });
 
       mockColumn.editor = {
-        editorOptions: {
+        options: {
           showOnFocus: true,
           fetch: (_, updateCallback) => updateCallback(mockCollection),
         } as AutocompleterOption,

@@ -12,7 +12,7 @@ You typically want to implement your service following these TypeScript interfac
 At the end of it, you'll have a Custom Backend Service that will be instantiated just like the GraphQL or OData that I've created, it should look similar to this (also note, try to avoid passing anything in the `constructor` of your Service to keep it usable by everyone)
 ```vue
 <script setup lang="ts">
-import { type Column, FieldType, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, onMounted, onUnmounted, ref, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();

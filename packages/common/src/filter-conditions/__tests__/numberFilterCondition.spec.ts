@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { FieldType, OperatorType } from '../../enums/index.js';
+import { FieldType } from '../../enums/index.js';
 import type { FilterConditionOption } from '../../interfaces/index.js';
 import { executeFilterConditionTest } from '../filterConditions.index.js';
 import { executeNumberFilterCondition, getFilterParsedNumbers } from '../numberFilterCondition.js';
@@ -122,7 +122,7 @@ describe('executeNumberFilterCondition method', () => {
     const searchTerms = ['1..5'];
     const options = {
       dataKey: '',
-      defaultFilterRangeOperator: OperatorType.rangeInclusive,
+      defaultFilterRangeOperator: 'RangeInclusive',
       cellValue: '1',
       fieldType: FieldType.number,
       searchTerms,
@@ -135,7 +135,7 @@ describe('executeNumberFilterCondition method', () => {
     const searchTerms = ['1..5'];
     const options = {
       dataKey: '',
-      defaultFilterRangeOperator: OperatorType.rangeExclusive,
+      defaultFilterRangeOperator: 'RangeExclusive',
       cellValue: '1',
       fieldType: FieldType.number,
       searchTerms,

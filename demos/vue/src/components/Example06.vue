@@ -6,7 +6,6 @@ import { useTranslation } from 'i18next-vue';
 import {
   type Column,
   type CursorPageInfo,
-  FieldType,
   Filters,
   Formatters,
   type GridOption,
@@ -61,7 +60,6 @@ function defineGrid() {
       nameKey: 'NAME',
       width: 60,
       columnGroupKey: 'CUSTOMER_INFORMATION',
-      type: FieldType.string,
       sortable: true,
       filterable: true,
       filter: {
@@ -108,7 +106,7 @@ function defineGrid() {
           { value: 'abc', label: 'Company ABC' },
           { value: 'xyz', label: 'Company XYZ' },
         ],
-        filterOptions: {
+        options: {
           filter: true, // adds a filter on top of the multi-select dropdown
         } as MultipleSelectOption,
       },
@@ -127,7 +125,7 @@ function defineGrid() {
       field: 'billing.address.zip',
       nameKey: 'BILLING.ADDRESS.ZIP',
       width: 60,
-      type: FieldType.number,
+      type: 'number',
       columnGroupKey: 'BILLING.INFORMATION', // or use "columnGroup" without Translate
       filterable: true,
       sortable: true,
@@ -146,7 +144,7 @@ function defineGrid() {
       minWidth: 90,
       width: 120,
       exportWithFormatter: true,
-      type: FieldType.date,
+      type: 'date',
       columnGroupKey: 'BILLING.INFORMATION', // or use "columnGroup" without Translate
       filterable: true,
       filter: {

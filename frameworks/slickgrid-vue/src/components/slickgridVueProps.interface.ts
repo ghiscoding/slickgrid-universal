@@ -203,15 +203,15 @@ export interface SlickgridVueProps {
   onOnBeforePasteCell?: (
     e: CustomEvent<{ eventData: any; args: { cell: number; row: number; item: any; columnDef: Column; value: any } }>
   ) => void;
-  onOnHeaderMenuHideColumns?: (e: CustomEvent<{ eventData: any; args: { columns: Column[]; hiddenColumn: Column[] } }>) => void;
+  onOnHideColumns?: (e: CustomEvent<{ eventData: any; args: { columns: Column[]; hiddenColumn: Column[] } }>) => void;
   onOnHeaderMenuCommand?: (e: CustomEvent<{ eventData: any; args: MenuCommandItemCallbackArgs }>) => void;
   onOnHeaderMenuColumnResizeByContent?: (e: CustomEvent<{ eventData: any; args: { columnId: string } }>) => void;
   onOnHeaderMenuBeforeMenuShow?: (e: CustomEvent<{ eventData: any; args: HeaderMenuCommandItemCallbackArgs }>) => void;
   onOnHeaderMenuAfterMenuShow?: (e: CustomEvent<{ eventData: any; args: HeaderMenuCommandItemCallbackArgs }>) => void;
-  onOnItemAdded?: (e: CustomEvent<any>) => void;
-  onOnItemDeleted?: (e: CustomEvent<any>) => void;
-  onOnItemUpdated?: (e: CustomEvent<any>) => void;
-  onOnItemUpserted?: (e: CustomEvent<any>) => void;
+  onOnItemsAdded?: (e: CustomEvent<any>) => void;
+  onOnItemsDeleted?: (e: CustomEvent<any>) => void;
+  onOnItemsUpdated?: (e: CustomEvent<any>) => void;
+  onOnItemsUpserted?: (e: CustomEvent<any>) => void;
   onOnFullResizeByContentRequested?: (e: CustomEvent<any>) => void;
   onOnFilterChanged?: (e: CustomEvent<any>) => void;
   onOnFilterCleared?: (e: CustomEvent<any>) => void;

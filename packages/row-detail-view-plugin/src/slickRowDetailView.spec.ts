@@ -247,7 +247,6 @@ describe('SlickRowDetailView plugin', () => {
 
     expect(onAsyncResponseSpy).toHaveBeenCalledWith({
       item: mockItem,
-      itemDetail: mockItem,
       detailView: 'loading...',
       grid: gridStub,
     });
@@ -345,7 +344,7 @@ describe('SlickRowDetailView plugin', () => {
     expect(output).toEqual(parentItemMock);
   });
 
-  it('should trigger "onAsyncResponse" but throw an error when there is no item neither itemDetail provided', () => {
+  it('should trigger "onAsyncResponse" but throw an error when there is no item provided', () => {
     const consoleSpy = vi.spyOn(global.console, 'error').mockReturnValue();
     const updateItemSpy = vi.spyOn(dataviewStub, 'updateItem');
     const postViewMock = (item) => `<span>Post ${item.id}</span>`;
@@ -366,7 +365,7 @@ describe('SlickRowDetailView plugin', () => {
     vi.spyOn(gridStub, 'getOptions').mockReturnValue({ ...gridOptionsMock, rowDetailView: { postTemplate: postViewMock } as any });
 
     plugin.init(gridStub);
-    plugin.onAsyncResponse.notify({ item: itemMock, itemDetail: itemMock }, new SlickEventData());
+    plugin.onAsyncResponse.notify({ item: itemMock }, new SlickEventData());
 
     expect(updateItemSpy).toHaveBeenCalledWith(123, {
       __detailContent: '<span>Post 123</span>',
@@ -379,7 +378,6 @@ describe('SlickRowDetailView plugin', () => {
       {
         grid: gridStub,
         item: itemMock,
-        itemDetail: { __detailContent: '<span>Post 123</span>', __detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' },
       },
       expect.anything(),
       plugin
@@ -411,7 +409,7 @@ describe('SlickRowDetailView plugin', () => {
     vi.spyOn(gridStub, 'getOptions').mockReturnValue({ ...gridOptionsMock, rowDetailView: { postTemplate: postViewMock } as any });
 
     plugin.init(gridStub);
-    plugin.onAsyncResponse.notify({ item: itemMock, itemDetail: itemMock }, new SlickEventData());
+    plugin.onAsyncResponse.notify({ item: itemMock }, new SlickEventData());
 
     expect(updateItemSpy).toHaveBeenCalledWith(123, {
       __detailContent: createDomElement('span', { textContent: 'Post 123' }),
@@ -424,13 +422,6 @@ describe('SlickRowDetailView plugin', () => {
       {
         grid: gridStub,
         item: itemMock,
-        itemDetail: {
-          __detailContent: createDomElement('span', { textContent: 'Post 123' }),
-          __detailViewLoaded: true,
-          id: 123,
-          firstName: 'John',
-          lastName: 'Doe',
-        },
       },
       expect.anything(),
       plugin
@@ -444,7 +435,7 @@ describe('SlickRowDetailView plugin', () => {
     const detailView = `<span>loading...</span>`;
 
     plugin.init(gridStub);
-    plugin.onAsyncResponse.notify({ item: itemMock, itemDetail: itemMock, detailView }, new SlickEventData());
+    plugin.onAsyncResponse.notify({ item: itemMock, detailView }, new SlickEventData());
 
     expect(updateItemSpy).toHaveBeenCalledWith(123, {
       __detailContent: `<span>loading...</span>`,
@@ -457,7 +448,6 @@ describe('SlickRowDetailView plugin', () => {
       {
         grid: gridStub,
         item: itemMock,
-        itemDetail: { __detailContent: `<span>loading...</span>`, __detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' },
       },
       expect.anything(),
       plugin
@@ -472,7 +462,7 @@ describe('SlickRowDetailView plugin', () => {
 
     plugin.init(gridStub);
     plugin.expandableOverride(() => false);
-    plugin.onAsyncResponse.notify({ item: itemMock, itemDetail: itemMock, detailView }, new SlickEventData());
+    plugin.onAsyncResponse.notify({ item: itemMock, detailView }, new SlickEventData());
 
     const clickEvent = new Event('click');
     Object.defineProperty(clickEvent, 'target', { writable: true, configurable: true, value: document.createElement('div') });
@@ -493,7 +483,6 @@ describe('SlickRowDetailView plugin', () => {
       {
         grid: gridStub,
         item: itemMock,
-        itemDetail: { __detailContent: `<span>loading...</span>`, __detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' },
       },
       expect.anything(),
       plugin
@@ -521,7 +510,7 @@ describe('SlickRowDetailView plugin', () => {
     });
 
     plugin.init(gridStub);
-    plugin.onAsyncResponse.notify({ item: itemMock, itemDetail: itemMock, detailView }, new SlickEventData());
+    plugin.onAsyncResponse.notify({ item: itemMock, detailView }, new SlickEventData());
 
     const clickEvent = new Event('click');
     Object.defineProperty(clickEvent, 'target', { writable: true, configurable: true, value: document.createElement('div') });
@@ -555,7 +544,7 @@ describe('SlickRowDetailView plugin', () => {
     });
 
     plugin.init(gridStub);
-    plugin.onAsyncResponse.notify({ item: itemMock, itemDetail: itemMock, detailView }, new SlickEventData());
+    plugin.onAsyncResponse.notify({ item: itemMock, detailView }, new SlickEventData());
 
     const clickEvent = new Event('click');
     Object.defineProperty(clickEvent, 'target', { writable: true, configurable: true, value: document.createElement('div') });
@@ -581,7 +570,7 @@ describe('SlickRowDetailView plugin', () => {
     vi.spyOn(gridStub, 'getOptions').mockReturnValue({ ...gridOptionsMock, rowDetailView: { columnIndexPosition: 0, useRowClick: true } as any });
 
     plugin.init(gridStub);
-    plugin.onAsyncResponse.notify({ item: itemMock, itemDetail: itemMock, detailView }, new SlickEventData());
+    plugin.onAsyncResponse.notify({ item: itemMock, detailView }, new SlickEventData());
     const filteredItem = plugin.getFilterItem(itemMock);
 
     expect(updateItemSpy).toHaveBeenCalledWith(123, {
@@ -595,7 +584,6 @@ describe('SlickRowDetailView plugin', () => {
       {
         grid: gridStub,
         item: itemMock,
-        itemDetail: { __detailContent: `<span>loading...</span>`, __detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' },
       },
       expect.anything(),
       plugin
@@ -642,7 +630,7 @@ describe('SlickRowDetailView plugin', () => {
     const afterRowDetailToggleSpy = vi.spyOn(plugin.onAfterRowDetailToggle, 'notify');
 
     plugin.init(gridStub);
-    plugin.onAsyncResponse.notify({ item: itemMock, itemDetail: itemMock, detailView }, new SlickEventData());
+    plugin.onAsyncResponse.notify({ item: itemMock, detailView }, new SlickEventData());
 
     expect(updateItemSpy).toHaveBeenCalledWith(123, {
       __detailContent: `<span>loading...</span>`,
@@ -655,7 +643,6 @@ describe('SlickRowDetailView plugin', () => {
       {
         grid: gridStub,
         item: itemMock,
-        itemDetail: { __detailContent: `<span>loading...</span>`, __detailViewLoaded: true, id: 123, firstName: 'John', lastName: 'Doe' },
       },
       expect.anything(),
       plugin

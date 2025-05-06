@@ -90,12 +90,13 @@ export class GridBasicComponent {
         filterable: true,
         filter: {
           model: Filters.sliderRange,
-          maxValue: 100, // or you can use the filterOptions as well
+          maxValue: 100, // or you can use the options as well
           operator: OperatorType.rangeInclusive, // optional, defaults to exclusive
           params: { hideSliderNumbers: false }, // you can hide/show the slider numbers on both side
 
           // you can also optionally pass any option of the Slider filter
-          filterOptions: { sliderStartValue: 5 } as SliderRangeOption
+          // previously known as `filterOptions` for < 9.0
+          options: { sliderStartValue: 5 } as SliderRangeOption
         }
       },
     ];
@@ -108,25 +109,25 @@ export class GridBasicComponent {
 ```
 
 ##### Filter Options
-All the available options that can be provided as `filterOptions` to your column definitions and you should try to cast your `filterOptions` to the specific interface as much as possible to make sure that you use only valid options of allowed by the targeted filter
+All the available options that can be provided as filter `options` to your column definitions and you should try to cast your filter `options` to the specific interface as much as possible to make sure that you use only valid options of allowed by the targeted filter
 
 ```ts
 filter: {
   model: Filters.sliderRange,
-  filterOptions: {
+  options: {
     sliderStartValue: 5
   } as SliderOption
 }
 ```
 
 #### Grid Option `defaultFilterOptions
-You could also define certain options as a global level (for the entire grid or even all grids) by taking advantage of the `defaultFilterOptions` Grid Option. Note that they are set via the filter type as a key name (`autocompleter`, `date`, ...) and then the content is the same as `filterOptions` (also note that each key is already typed with the correct filter option interface), for example
+You could also define certain options as a global level (for the entire grid or even all grids) by taking advantage of the `defaultFilterOptions` Grid Option. Note that they are set via the filter type as a key name (`autocompleter`, `date`, ...) and then the content is the same as filter `options` (also note that each key is already typed with the correct filter option interface), for example
 
 ```ts
 this.gridOptions = {
   defaultFilterOptions: {
     // Note: that `date`, `select` and `slider` are combining both compound & range filters together
-    date: { range: { min: 'today' } },
+    date: { displayDateMin: 'today' },
     select: { minHeight: 350 }, // typed as MultipleSelectOption
     slider: { sliderStartValue: 10 }
   }
@@ -154,13 +155,14 @@ export class GridBasicComponent {
         id: 'finish', name: 'Finish', field: 'finish', headerKey: 'FINISH',
         minWidth: 75, width: 120, exportWithFormatter: true,
         formatter: Formatters.dateIso, sortable: true,
-        type: FieldType.date,
+        type: 'date',
         filterable: true,
         filter: {
           model: Filters.dateRange,
 
-          // override any of the Vanilla-Calendar options through "filterOptions"
-          filterOptions: { range: { min: 'today' } } as VanillaCalendarOption
+          // override any of the Vanilla-Calendar options through "options"
+          // previously known as `filterOptions` for < 9.0
+          options: { displayDateMin: 'today' } as VanillaCalendarOption
         }
       },
     ];
@@ -173,13 +175,13 @@ export class GridBasicComponent {
 ```
 
 #### Filter Options (`VanillaCalendarOption` interface)
-All the available options that can be provided as `filterOptions` to your column definitions can be found under this [VanillaCalendarOption interface](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/vanillaCalendarOption.interface.ts) and you should cast your `filterOptions` with the expected interface to make sure that you use only valid settings of the [Vanilla-Calendar](https://vanilla-calendar.pro/docs/reference/additionally/settings) library.
+All the available options that can be provided as filter `options` to your column definitions can be found under this [VanillaCalendarOption interface](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/vanillaCalendarOption.interface.ts) and you should cast your filter `options` with the expected interface to make sure that you use only valid settings of the [Vanilla-Calendar](https://vanilla-calendar.pro/docs/reference/additionally/settings) library.
 
 ```ts
 filter: {
   model: Filters.compoundDate,
-  filterOptions: {
-    range: { min: 'today' }
+  options: {
+    displayDateMin: 'today'
   } as VanillaCalendarOption
 }
 ```

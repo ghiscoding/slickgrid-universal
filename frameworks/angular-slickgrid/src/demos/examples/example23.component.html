@@ -1,0 +1,111 @@
+<div class="container-fluid">
+  <h2>
+    Example 23: Filtering from Range of Search Values
+    <span class="float-end">
+      <a
+        style="font-size: 18px"
+        target="_blank"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-range.component.ts"
+      >
+        <span class="mdi mdi-link-variant"></span> code
+      </a>
+    </span>
+  </h2>
+  <div class="subtitle">
+    This demo shows how to use Filters with Range of Search Values (<a
+      href="https://ghiscoding.gitbook.io/angular-slickgrid/column-functionalities/filters/range-filters"
+      target="_blank"
+      >Wiki docs</a
+    >)
+    <br />
+    <ul class="small">
+      <li>All input filters support the following operators: (>, >=, <, <=, <>, !=, =, ==, *) and now also the (..) for an input range</li>
+      <li>
+        All filters (which support ranges) can be defined via the 2 dots (..) which represents a range, this also works for dates and slider
+        in the "presets"
+      </li>
+      <ul>
+        <li>For a numeric range defined in an input filter (must be of type text), you can use 2 dots (..) to represent a range</li>
+        <li>example: typing "10..90" will filter values between 10 and 90 (but excluding the number 10 and 90)</li>
+      </ul>
+      <ul>
+        <li>note that the examples shown below for the operator, are case sensitive</li>
+        <li>
+          by default the range is inclusive which would be the same as defining the filter options to "operator: 'RangeInclusive'" or
+          "operator: OperatoryType.rangeInclusive"
+        </li>
+        <li>
+          you can also set the inverse (exclusive) by defining the filter options to "operator: 'RangeExclusive'" or "operator:
+          OperatoryType.rangeExclusive"
+        </li>
+      </ul>
+      <li>
+        Date Range with Vanilla Calendar Date Picker, they will also use the locale, choose a start date then drag or click on the end date
+      </li>
+    </ul>
+  </div>
+
+  <br />
+
+  <span *ngIf="metrics" style="margin-right: 10px">
+    <b>Metrics:</b> {{ metrics.startTime | date: "yyyy-MM-dd hh:mm aaaaa'm'" }} | {{ metrics.itemCount }} of
+    {{ metrics.totalItemCount }} items
+  </span>
+
+  <form class="row row-cols-lg-auto g-1 align-items-center">
+    <div class="col">
+      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="clear-filters" (click)="clearFilters()">Clear Filters</button>
+    </div>
+    <div class="col">
+      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="clear-sorting" (click)="angularGrid.sortService.clearSorting()">
+        Clear Sorting
+      </button>
+    </div>
+    <div class="col">
+      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="set-dynamic-filter" (click)="setFiltersDynamically()">
+        Set Filters Dynamically
+      </button>
+    </div>
+    <div class="col">
+      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="set-dynamic-sorting" (click)="setSortingDynamically()">
+        Set Sorting Dynamically
+      </button>
+    </div>
+    <div class="col">
+      <label for="selectedFilter" style="margin-left: 10px">Predefined Filters</label>
+    </div>
+    <div class="col">
+      <select
+        name="selectedFilter"
+        class="form-select"
+        [(ngModel)]="selectedPredefinedFilter"
+        data-test="select-dynamic-filter"
+        (ngModelChange)="usePredefinedFilter($event)"
+      >
+        <option [ngValue]="filter.value" *ngFor="let filter of filterList">{{ filter.label }}</option>
+      </select>
+    </div>
+  </form>
+
+  <div class="row mt-2">
+    <div class="col">
+      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="language" (click)="switchLanguage()">
+        <i class="mdi mdi-translate"></i>
+        Switch Language
+      </button>
+      <b>Locale:</b> <span style="font-style: italic" data-test="selected-locale">{{ selectedLanguage + '.json' }}</span>
+    </div>
+  </div>
+
+  <angular-slickgrid
+    gridId="grid23"
+    [columns]="columnDefinitions"
+    [options]="gridOptions"
+    [dataset]="dataset"
+    (onAngularGridCreated)="angularGridReady($event.detail)"
+    (onGridStateChanged)="gridStateChanged($event.detail)"
+    (onBeforeGridDestroy)="saveCurrentGridState()"
+    (onRowCountChanged)="refreshMetrics($event.detail.eventData, $event.detail.args)"
+  >
+  </angular-slickgrid>
+</div>

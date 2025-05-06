@@ -5,7 +5,7 @@ import { dequal } from 'dequal/lite';
 import { Constants } from '../constants.js';
 import { FilterConditions, getParsedSearchTermsByFieldType } from './../filter-conditions/index.js';
 import { type FilterFactory } from './../filters/filterFactory.js';
-import { EmitterType, FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
+import { type EmitterType, FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
 import type {
   Column,
   ColumnFilters,
@@ -188,7 +188,7 @@ export class FilterService {
 
         // emit an onBeforeFilterChange event except when it's called by a clear filter
         if (!isClearFilterEvent) {
-          await this.emitFilterChanged(EmitterType.local, true);
+          await this.emitFilterChanged('local', true);
         }
 
         // When using Tree Data, we need to do it in 2 steps
@@ -200,7 +200,7 @@ export class FilterService {
 
         // emit an onFilterChanged event except when it's called by a clear filter
         if (!isClearFilterEvent) {
-          await this.emitFilterChanged(EmitterType.local);
+          await this.emitFilterChanged('local');
         }
 
         if (args.columnId !== null) {
@@ -225,7 +225,7 @@ export class FilterService {
     await this.pubSubService.publish('onBeforeFilterClear', { columnId }, 0);
 
     const isBackendApi = this._gridOptions.backendServiceApi ?? false;
-    const emitter = isBackendApi ? EmitterType.remote : EmitterType.local;
+    const emitter = isBackendApi ? 'remote' : 'local';
 
     // get current column filter before clearing, this allow us to know if the filter was empty prior to calling the clear filter
     const currentFilterColumnIds = Object.keys(this._columnFilters);
@@ -759,14 +759,14 @@ export class FilterService {
   emitFilterChanged(caller: EmitterType, isBeforeExecution = false): void | boolean | Promise<boolean> {
     const eventName = isBeforeExecution ? 'onBeforeFilterChange' : 'onFilterChanged';
 
-    if (caller === EmitterType.remote && this._gridOptions.backendServiceApi) {
+    if (caller === 'remote' && this._gridOptions.backendServiceApi) {
       let currentFilters: CurrentFilter[] = [];
       const backendService = this._gridOptions.backendServiceApi.service;
       if (backendService?.getCurrentFilters) {
         currentFilters = backendService.getCurrentFilters() as CurrentFilter[];
       }
       return this.pubSubService.publish(eventName, currentFilters);
-    } else if (caller === EmitterType.local) {
+    } else if (caller === 'local') {
       return this.pubSubService.publish(eventName, this.getCurrentLocalFilters());
     }
   }
@@ -775,7 +775,7 @@ export class FilterService {
     const isTriggeringQueryEvent = args?.shouldTriggerQuery;
 
     if (isTriggeringQueryEvent) {
-      await this.emitFilterChanged(EmitterType.remote, true);
+      await this.emitFilterChanged('remote', true);
     }
 
     if (!args || !args.grid) {
@@ -987,7 +987,7 @@ export class FilterService {
       });
 
       const backendApi = this._gridOptions.backendServiceApi;
-      const emitterType = backendApi ? EmitterType.remote : EmitterType.local;
+      const emitterType: EmitterType = backendApi ? 'remote' : 'local';
 
       // trigger the onBeforeFilterChange event before the process
       if (emitChangedEvent) {
@@ -1048,7 +1048,7 @@ export class FilterService {
       }
 
       const backendApi = this._gridOptions.backendServiceApi;
-      const emitterType = backendApi ? EmitterType.remote : EmitterType.local;
+      const emitterType: EmitterType = backendApi ? 'remote' : 'local';
 
       // trigger the onBeforeFilterChange event before the process
       if (emitChangedEvent) {

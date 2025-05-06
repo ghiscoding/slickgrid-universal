@@ -62,9 +62,6 @@ export interface GraphqlServiceOption extends BackendServiceOption {
   /** What is the dataset, this is required for the GraphQL query to be built */
   datasetName?: string;
 
-  /** Column definitions, you can pass this instead of "columnIds" */
-  columnDefinitions?: Column[];
-
   /** Used for defining the operation name when building the GraphQL query */
   operationName?: string;
 
@@ -107,7 +104,7 @@ export interface GraphqlServiceOption extends BackendServiceOption {
 ```vue
 <script setup lang="ts">
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, } from '@slickgrid-universal/graphql';
-import { type Column, FieldType, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -135,7 +132,6 @@ function defineGrid() {
       // add some options to the backend service to work
       // shown below is the minimum setup for the service to work correctly
       options: {
-        columnDefinitions: columnDefinitions,
         datasetName: 'users',
         paginationOptions: {
           first: 25,
@@ -177,7 +173,6 @@ gridOptions.value = {
 
     // add some options to the backend service to work
     options: {
-      columnDefinitions: columnDefinitions.value,
       executeProcessCommandOnInit: false, // true by default, which load the data on page load
       datasetName: 'users',
       paginationOptions: {
@@ -221,7 +216,7 @@ You might want to change certain options dynamically, for example passing new se
 ```vue
 <script setup lang="ts">
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, } from '@slickgrid-universal/graphql';
-import { type Column, FieldType, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();

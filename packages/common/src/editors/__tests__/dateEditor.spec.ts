@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { format } from '@formkit/tempo';
-import type VanillaCalendar from 'vanilla-calendar-pro';
-import type { ISelected } from 'vanilla-calendar-pro/types';
+import type { Calendar } from 'vanilla-calendar-pro';
 
 import { Editors } from '../index.js';
 import { DateEditor } from '../dateEditor.js';
@@ -147,6 +146,16 @@ describe('DateEditor', () => {
       const event = new KeyboardEvent('keydown', { key: 'Enter' });
       editor.editorDomElement.dispatchEvent(event);
 
+      expect(editor.columnEditor.options?.allowInput).toBeFalsy();
+      expect(editor.isValueTouched()).toBeFalsy();
+    });
+
+    it('should initialize the editor and add a keydown event listener that early exists by default', () => {
+      editor = new DateEditor(editorArguments);
+
+      const event = new KeyboardEvent('keydown', { key: 'Enter' });
+      editor.editorDomElement.dispatchEvent(event);
+
       expect(editor.columnEditor.editorOptions?.allowInput).toBeFalsy();
       expect(editor.isValueTouched()).toBeFalsy();
     });
@@ -252,7 +261,7 @@ describe('DateEditor', () => {
       vi.runAllTimers();
 
       const spy = vi.spyOn(editor.calendarInstance!, 'hide');
-      const calendarElm = document.body.querySelector<HTMLDivElement>('.vanilla-calendar');
+      const calendarElm = document.body.querySelector<HTMLDivElement>('.vc');
       editor.hide();
 
       expect(calendarElm).toBeTruthy();
@@ -265,7 +274,7 @@ describe('DateEditor', () => {
       vi.runAllTimers();
 
       const spy = vi.spyOn(editor.calendarInstance!, 'show');
-      const calendarElm = document.body.querySelector<HTMLDivElement>('.vanilla-calendar');
+      const calendarElm = document.body.querySelector<HTMLDivElement>('.vc');
       editor.show();
       editor.focus();
 
@@ -276,19 +285,35 @@ describe('DateEditor', () => {
 
     it('should call the "changeEditorOption" method and expect new option to be merged with the previous Editor options', () => {
       editor = new DateEditor(editorArguments);
-      const calendarElm = document.body.querySelector<HTMLDivElement>('.vanilla-calendar');
-      editor.changeEditorOption('range', { disablePast: true });
-      editor.changeEditorOption('selected', { dates: ['2001-02-04'], month: 2 });
+
+      vi.runAllTimers();
+
+      const setSpy = vi.spyOn(editor.calendarInstance!, 'set');
+      const calendarElm = document.body.querySelector<HTMLDivElement>('.vc');
+      editor.changeEditorOption('disableDatesPast', true);
+      editor.changeEditorOption('selectedDates', ['2001-02-04']);
+      editor.changeEditorOption('selectedMonth', 2);
 
       expect(calendarElm).toBeTruthy();
-      expect(editor.pickerOptions.settings?.range?.disablePast).toBeTruthy();
-      expect(editor.pickerOptions.settings?.selected).toEqual({ dates: ['2001-02-04'], month: 2 });
+      expect(editor.pickerOptions.disableDatesPast).toBeTruthy();
+      expect(editor.pickerOptions.selectedDates).toEqual(['2001-02-04']);
+      expect(editor.pickerOptions.selectedMonth).toEqual(2);
 
-      editor.changeEditorOption('range', { edgesOnly: true });
-      editor.changeEditorOption('selected', { dates: ['2020-03-10', 'today'] } as ISelected);
+      editor.changeEditorOption('enableEdgeDatesOnly', true);
+      editor.changeEditorOption('selectedDates', ['2020-03-10', 'today']);
 
-      expect(editor.pickerOptions.settings?.range).toEqual({ disablePast: true, edgesOnly: true });
-      expect(editor.pickerOptions.settings?.selected).toEqual({ dates: ['2020-03-10', 'today'], month: 2 });
+      expect(editor.pickerOptions.disableDatesPast).toEqual(true);
+      expect(editor.pickerOptions.enableEdgeDatesOnly).toEqual(true);
+      expect(editor.pickerOptions.selectedDates).toEqual(['2020-03-10', 'today']);
+      expect(editor.pickerOptions.selectedMonth).toEqual(2);
+
+      expect(setSpy).toHaveBeenCalledWith(expect.objectContaining({ selectedDates: ['2020-03-10', 'today'] }), {
+        dates: true,
+        locale: true,
+        month: true,
+        time: true,
+        year: true,
+      });
     });
 
     describe('isValueChanged method', () => {
@@ -303,19 +328,14 @@ describe('DateEditor', () => {
         editor.focus();
         const editorInputElm = editor.editorDomElement;
         editorInputElm.value = '2024-04-02T16:02:02.239Z';
-        editor.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), {
-          HTMLInputElement: editorInputElm,
-          selectedDates: [dateMock],
-          selectedHours: 11,
-          selectedMinutes: 2,
-        } as unknown as VanillaCalendar);
-        editor.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), {
-          HTMLInputElement: editorInputElm,
-          selectedDates: [dateMock],
-          selectedHours: 11,
-          selectedMinutes: 2,
-          hide: vi.fn(),
-        } as unknown as VanillaCalendar);
+        editor.calendarInstance!.onClickDate!(
+          { context: { inputElement: editorInputElm, selectedDates: [dateMock], selectedHours: 11, selectedMinutes: 2 } } as unknown as Calendar,
+          new MouseEvent('click')
+        );
+        editor.calendarInstance!.onChangeToInput!(
+          { context: { inputElement: editorInputElm, selectedDates: [dateMock], selectedHours: 11, selectedMinutes: 2 }, hide: vi.fn() } as unknown as Calendar,
+          new MouseEvent('click')
+        );
 
         expect(editor.isValueChanged()).toBe(true);
         expect(editor.isValueTouched()).toBe(true);
@@ -354,17 +374,13 @@ describe('DateEditor', () => {
         const clearBtnElm = divContainer.querySelector('.btn-clear') as HTMLInputElement;
         const editorInputElm = divContainer.querySelector('input.date-picker') as HTMLInputElement;
         clearBtnElm.click();
-        editor.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), {
-          HTMLInputElement: editorInputElm,
-          selectedDates: [],
-        } as unknown as VanillaCalendar);
-        editor.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), {
-          HTMLInputElement: editorInputElm,
-          selectedDates: [],
-          hide: vi.fn(),
-        } as unknown as VanillaCalendar);
+        editor.calendarInstance!.onClickDate!({ context: { inputElement: editorInputElm, selectedDates: [] } } as unknown as Calendar, new MouseEvent('click'));
+        editor.calendarInstance!.onChangeToInput!(
+          { context: { inputElement: editorInputElm, selectedDates: [] }, hide: vi.fn() } as unknown as Calendar,
+          new MouseEvent('click')
+        );
 
-        expect(editor.calendarInstance?.settings.selected.dates).toEqual([]);
+        expect(editor.calendarInstance?.context.selectedDates).toEqual([]);
         expect(editorInputElm.value).toBe('');
         expect(editor.isValueChanged()).toBe(true);
         expect(editor.isValueTouched()).toBe(true);
@@ -379,21 +395,20 @@ describe('DateEditor', () => {
         editor.loadValue(mockItemData);
         editor.focus();
 
-        const today = new Date();
-        let calendarElm = document.body.querySelector('.vanilla-calendar') as HTMLDivElement;
-        let yearElm = calendarElm.querySelector('.vanilla-calendar-year') as HTMLButtonElement;
+        let calendarElm = document.body.querySelector('.vc') as HTMLDivElement;
+        let yearElm = calendarElm.querySelector('[data-vc="year"]') as HTMLButtonElement;
         const clearBtnElm = divContainer.querySelector('.btn-clear') as HTMLInputElement;
 
-        expect(+yearElm.innerText).not.toBe(today.getFullYear());
+        expect(yearElm.innerText).toBe('2001');
 
         clearBtnElm.click();
-        editor.reset();
+        editor.reset('2025-01-01');
         editor.show();
 
-        calendarElm = document.body.querySelector('.vanilla-calendar') as HTMLDivElement;
-        yearElm = calendarElm.querySelector('.vanilla-calendar-year') as HTMLButtonElement;
+        calendarElm = document.body.querySelector('.vc') as HTMLDivElement;
+        yearElm = calendarElm.querySelector('[data-vc="year"]') as HTMLButtonElement;
 
-        expect(+yearElm.innerText).toBe(today.getFullYear());
+        expect(yearElm.innerText).toBe('2025');
       });
 
       it('should also return True when date is reset by the clear date button even if the previous date was empty', () => {
@@ -406,19 +421,15 @@ describe('DateEditor', () => {
         editor.focus();
         const clearBtnElm = divContainer.querySelector('.btn-clear') as HTMLInputElement;
         const editorInputElm = divContainer.querySelector('input.date-picker') as HTMLInputElement;
-        editor.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), {
-          HTMLInputElement: editorInputElm,
-          selectedDates: [],
-        } as unknown as VanillaCalendar);
-        editor.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), {
-          HTMLInputElement: editorInputElm,
-          selectedDates: [],
-          hide: vi.fn(),
-        } as unknown as VanillaCalendar);
+        editor.calendarInstance!.onClickDate!({ context: { inputElement: editorInputElm, selectedDates: [] } } as unknown as Calendar, new MouseEvent('click'));
+        editor.calendarInstance!.onChangeToInput!(
+          { context: { inputElement: editorInputElm, selectedDates: [] }, hide: vi.fn() } as unknown as Calendar,
+          new MouseEvent('click')
+        );
         clearBtnElm.click();
 
         expect(editorInputElm.value).toBe('');
-        expect(editor.calendarInstance?.settings.selected.dates).toEqual([]);
+        expect(editor.calendarInstance?.context.selectedDates).toEqual([]);
         expect(editor.isValueChanged()).toBe(true);
         expect(editor.isValueTouched()).toBe(true);
       });
@@ -434,19 +445,18 @@ describe('DateEditor', () => {
         editor.loadValue(mockItemData);
         const editorInputElm = divContainer.querySelector('input.date-picker') as HTMLInputElement;
         editorInputElm.value = dateMock;
-        editor.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), {
-          HTMLInputElement: editorInputElm,
-          selectedDates: [dateMock],
-        } as unknown as VanillaCalendar);
-        editor.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), {
-          HTMLInputElement: editorInputElm,
-          selectedDates: [dateMock],
-          hide: vi.fn(),
-        } as unknown as VanillaCalendar);
+        editor.calendarInstance!.onClickDate!(
+          { context: { inputElement: editorInputElm, selectedDates: ['2001-01-02'] } } as unknown as Calendar,
+          new MouseEvent('click')
+        );
+        editor.calendarInstance!.onChangeToInput!(
+          { context: { inputElement: editorInputElm, selectedDates: ['2001-01-02'] }, hide: vi.fn() } as unknown as Calendar,
+          new MouseEvent('click')
+        );
         editor.reset();
 
         expect(editorInputElm.value).toBe(dateMock);
-        expect(editor.calendarInstance?.settings.selected.dates).toEqual(['2020-02-25']); // picker only deals with ISO formatted dates
+        expect(editor.calendarInstance?.selectedDates).toEqual(['2020-02-25']); // picker only deals with ISO formatted dates
         expect(editor.isValueChanged()).toBe(false);
         expect(editor.isValueTouched()).toBe(false);
       });
@@ -462,15 +472,14 @@ describe('DateEditor', () => {
 
         const editorInputElm = divContainer.querySelector('input.date-picker') as HTMLInputElement;
         editorInputElm.value = '2001-01-02';
-        editor.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), {
-          HTMLInputElement: editorInputElm,
-          selectedDates: ['2001-01-02'],
-        } as unknown as VanillaCalendar);
-        editor.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), {
-          HTMLInputElement: editorInputElm,
-          selectedDates: ['2001-01-02'],
-          hide: vi.fn(),
-        } as unknown as VanillaCalendar);
+        editor.calendarInstance!.onClickDate!(
+          { context: { inputElement: editorInputElm, selectedDates: ['2001-01-02'] } } as unknown as Calendar,
+          new MouseEvent('click')
+        );
+        editor.calendarInstance!.onChangeToInput!(
+          { context: { inputElement: editorInputElm, selectedDates: ['2001-01-02'] }, hide: vi.fn() } as unknown as Calendar,
+          new MouseEvent('click')
+        );
 
         expect(editor.isValueChanged()).toBe(false);
         expect(editor.isValueTouched()).toBe(true);
@@ -487,15 +496,14 @@ describe('DateEditor', () => {
         editor.loadValue(mockItemData);
         const editorInputElm = divContainer.querySelector('input.date-picker') as HTMLInputElement;
         editorInputElm.value = dateMock;
-        editor.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), {
-          HTMLInputElement: editorInputElm,
-          selectedDates: [dateMock],
-        } as unknown as VanillaCalendar);
-        editor.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), {
-          HTMLInputElement: editorInputElm,
-          selectedDates: [dateMock],
-          hide: vi.fn(),
-        } as unknown as VanillaCalendar);
+        editor.calendarInstance!.onClickDate!(
+          { context: { inputElement: editorInputElm, selectedDates: [dateMock] } } as unknown as Calendar,
+          new MouseEvent('click')
+        );
+        editor.calendarInstance!.onChangeToInput!(
+          { context: { inputElement: editorInputElm, selectedDates: [dateMock] }, hide: vi.fn() } as unknown as Calendar,
+          new MouseEvent('click')
+        );
 
         expect(editor.isValueChanged()).toBe(false);
         expect(editor.isValueTouched()).toBe(true);
@@ -661,8 +669,8 @@ describe('DateEditor', () => {
         expect(spy).not.toHaveBeenCalled();
       });
 
-      it('should not throw any error when date is lower than required "minDate" defined in the "editorOptions" and "autoCommitEdit" is enabled', () => {
-        mockColumn.editor!.editorOptions = { range: { min: 'today' } };
+      it('should not throw any error when date is lower than required "minDate" defined in the "options" and "autoCommitEdit" is enabled', () => {
+        mockColumn.editor!.options = { displayDateMin: 'today' };
         mockItemData = { id: 1, startDate: '500-01-02T11:02:02.000Z', isActive: true };
         gridOptionMock.autoCommitEdit = true;
         gridOptionMock.autoEdit = true;
@@ -673,25 +681,44 @@ describe('DateEditor', () => {
         editor.loadValue(mockItemData);
         editor.calendarInstance?.show();
         const editorInputElm = divContainer.querySelector('input.date-picker') as HTMLInputElement;
-        editor.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), {
-          HTMLInputElement: editorInputElm,
-          selectedDates: [],
-        } as unknown as VanillaCalendar);
-        editor.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), {
-          HTMLInputElement: editorInputElm,
-          selectedDates: [],
-          hide: vi.fn(),
-        } as unknown as VanillaCalendar);
+        editor.calendarInstance!.onClickDate!({ context: { inputElement: editorInputElm, selectedDates: [] } } as unknown as Calendar, new MouseEvent('click'));
+        editor.calendarInstance!.onChangeToInput!(
+          { context: { inputElement: editorInputElm, selectedDates: [] }, hide: vi.fn() } as unknown as Calendar,
+          new MouseEvent('click')
+        );
 
         expect(editor.pickerOptions).toBeTruthy();
         expect(editorInputElm.value).toBe('');
         expect(editor.serializeValue()).toBe('');
       });
 
-      it('should not throw any error when date is invalid when lower than required "minDate" defined in the global default editorOptions and "autoCommitEdit" is enabled', () => {
+      it('should not throw any error when date is lower than required "minDate" defined in the "editorOptions" and "autoCommitEdit" is enabled', () => {
+        mockColumn.editor!.editorOptions = { displayDateMin: 'today' };
+        mockItemData = { id: 1, startDate: '500-01-02T11:02:02.000Z', isActive: true };
+        gridOptionMock.autoCommitEdit = true;
+        gridOptionMock.autoEdit = true;
+        gridOptionMock.editable = true;
+
+        editor = new DateEditor(editorArguments);
+        vi.runAllTimers();
+        editor.loadValue(mockItemData);
+        editor.calendarInstance?.show();
+        const editorInputElm = divContainer.querySelector('input.date-picker') as HTMLInputElement;
+        editor.calendarInstance!.onClickDate!({ context: { inputElement: editorInputElm, selectedDates: [] } } as unknown as Calendar, new MouseEvent('click'));
+        editor.calendarInstance!.onChangeToInput!(
+          { context: { inputElement: editorInputElm, selectedDates: [] }, hide: vi.fn() } as unknown as Calendar,
+          new MouseEvent('click')
+        );
+
+        expect(editor.pickerOptions).toBeTruthy();
+        expect(editorInputElm.value).toBe('');
+        expect(editor.serializeValue()).toBe('');
+      });
+
+      it('should not throw any error when date is invalid when lower than required "minDate" defined in the global defaultEditorOptions and "autoCommitEdit" is enabled', () => {
         // change to allow input value only for testing purposes & use the regular date picker input to test that one too
         gridOptionMock.defaultEditorOptions = {
-          date: { range: { min: 'today' } },
+          date: { displayDateMin: 'today' },
         };
         mockItemData = { id: 1, startDate: '500-01-02T11:02:02.000Z', isActive: true };
         gridOptionMock.autoCommitEdit = true;
@@ -703,15 +730,11 @@ describe('DateEditor', () => {
         editor.loadValue(mockItemData);
         editor.calendarInstance?.show();
         const editorInputElm = divContainer.querySelector('input.date-picker') as HTMLInputElement;
-        editor.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), {
-          HTMLInputElement: editorInputElm,
-          selectedDates: [],
-        } as unknown as VanillaCalendar);
-        editor.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), {
-          HTMLInputElement: editorInputElm,
-          selectedDates: [],
-          hide: vi.fn(),
-        } as unknown as VanillaCalendar);
+        editor.calendarInstance!.onClickDate!({ context: { inputElement: editorInputElm, selectedDates: [] } } as unknown as Calendar, new MouseEvent('click'));
+        editor.calendarInstance!.onChangeToInput!(
+          { context: { inputElement: editorInputElm, selectedDates: [] }, hide: vi.fn() } as unknown as Calendar,
+          new MouseEvent('click')
+        );
 
         expect(editor.pickerOptions).toBeTruthy();
         expect(editorInputElm.value).toBe('');
@@ -747,12 +770,12 @@ describe('DateEditor', () => {
         editor = new DateEditor(editorArguments);
         vi.runAllTimers();
 
-        const calendarElm = document.body.querySelector('.vanilla-calendar') as HTMLDivElement;
-        const monthElm = calendarElm.querySelector('.vanilla-calendar-month') as HTMLButtonElement;
+        const calendarElm = document.body.querySelector('.vc') as HTMLDivElement;
+        const monthElm = calendarElm.querySelector('[data-vc="month"]') as HTMLButtonElement;
 
         expect(calendarElm).toBeTruthy();
         expect(monthElm).toBeTruthy();
-        expect(editor.calendarInstance?.settings.lang).toBe('fr');
+        expect(editor.calendarInstance?.locale).toBe('fr');
         // expect(monthElm.textContent).toBe('janvier');
       });
     });
@@ -858,8 +881,8 @@ describe('DateEditor', () => {
         expect.anything()
       );
       expect(disableSpy).toHaveBeenCalledWith(true);
-      expect(editor.calendarInstance?.HTMLInputElement?.disabled).toEqual(true);
-      expect(editor.calendarInstance?.HTMLInputElement?.value).toEqual('');
+      expect(editor.calendarInstance?.context.inputElement?.disabled).toEqual(true);
+      expect(editor.calendarInstance?.context.inputElement?.value).toEqual('');
     });
 
     it('should call "show" and expect the DOM element to become disabled and empty when "onBeforeEditCell" returns false and also expect "onBeforeComposite" to not be called because the value is blank', () => {
@@ -892,8 +915,8 @@ describe('DateEditor', () => {
       });
       expect(onCompositeEditorSpy).not.toHaveBeenCalled();
       expect(disableSpy).toHaveBeenCalledWith(true);
-      expect(editor.calendarInstance?.HTMLInputElement?.disabled).toEqual(true);
-      expect(editor.calendarInstance?.HTMLInputElement?.value).toEqual('');
+      expect(editor.calendarInstance?.context.inputElement?.disabled).toEqual(true);
+      expect(editor.calendarInstance?.context.inputElement?.value).toEqual('');
     });
 
     it('should call "disable" method and expect the DOM element to become disabled and have an empty formValues be passed in the onCompositeEditorChange event', () => {
@@ -925,8 +948,8 @@ describe('DateEditor', () => {
         },
         expect.anything()
       );
-      expect(editor.calendarInstance?.HTMLInputElement?.disabled).toEqual(true);
-      expect(editor.calendarInstance?.HTMLInputElement?.value).toEqual('');
+      expect(editor.calendarInstance?.context.inputElement?.disabled).toEqual(true);
+      expect(editor.calendarInstance?.context.inputElement?.value).toEqual('');
     });
 
     it('should expect "onCompositeEditorChange" to have been triggered with the new value showing up in its "formValues" object', () => {
@@ -949,15 +972,14 @@ describe('DateEditor', () => {
       editor.focus();
       const editorInputElm = divContainer.querySelector('input.date-picker') as HTMLInputElement;
       editorInputElm.value = dateMock;
-      editor.calendarInstance!.actions!.clickDay!(new MouseEvent('click'), {
-        HTMLInputElement: editorInputElm,
-        selectedDates: [dateMock],
-      } as unknown as VanillaCalendar);
-      editor.calendarInstance!.actions!.changeToInput!(new MouseEvent('click'), {
-        HTMLInputElement: editorInputElm,
-        selectedDates: [dateMock],
-        hide: vi.fn(),
-      } as unknown as VanillaCalendar);
+      editor.calendarInstance!.onClickDate!(
+        { context: { inputElement: editorInputElm, selectedDates: [dateMock] } } as unknown as Calendar,
+        new MouseEvent('click')
+      );
+      editor.calendarInstance!.onChangeToInput!(
+        { context: { inputElement: editorInputElm, selectedDates: [dateMock] }, hide: vi.fn() } as unknown as Calendar,
+        new MouseEvent('click')
+      );
 
       expect(getCellSpy).toHaveBeenCalled();
       expect(onBeforeEditSpy).toHaveBeenCalledWith({

@@ -5,10 +5,10 @@ import {
   type SlickgridVueInstance,
   type Column,
   ExtensionName,
-  FieldType,
   Filters,
   Formatters,
   SlickgridVue,
+  type SliderRangeOption,
 } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
 
@@ -36,7 +36,7 @@ onBeforeMount(() => {
 /* Define grid Options and Columns */
 function defineGrid() {
   columnDefinitions.value = [
-    { id: 'title', name: 'Title', field: 'title', nameKey: 'TITLE', filterable: true, type: FieldType.string },
+    { id: 'title', name: 'Title', field: 'title', nameKey: 'TITLE', filterable: true },
     {
       id: 'duration',
       name: 'Duration',
@@ -44,7 +44,6 @@ function defineGrid() {
       nameKey: 'DURATION',
       sortable: true,
       filterable: true,
-      type: FieldType.string,
     },
     {
       id: 'percentComplete',
@@ -53,9 +52,12 @@ function defineGrid() {
       nameKey: 'PERCENT_COMPLETE',
       sortable: true,
       filterable: true,
-      type: FieldType.number,
+      type: 'number',
       formatter: Formatters.percentCompleteBar,
-      filter: { model: Filters.compoundSlider, filterOptions: { hideSliderNumber: false } },
+      filter: {
+        model: Filters.compoundSlider,
+        options: { hideSliderNumber: false } as SliderRangeOption,
+      },
     },
     {
       id: 'start',
@@ -63,7 +65,7 @@ function defineGrid() {
       field: 'start',
       nameKey: 'START',
       filterable: true,
-      type: FieldType.dateUs,
+      type: 'dateUs',
       filter: { model: Filters.compoundDate },
     },
     {
@@ -72,7 +74,7 @@ function defineGrid() {
       field: 'finish',
       nameKey: 'FINISH',
       filterable: true,
-      type: FieldType.dateUs,
+      type: 'dateUs',
       filter: { model: Filters.compoundDate },
     },
     {
@@ -82,7 +84,7 @@ function defineGrid() {
       nameKey: 'COMPLETED',
       maxWidth: 80,
       formatter: Formatters.checkmarkMaterial,
-      type: FieldType.boolean,
+      type: 'boolean',
       minWidth: 100,
       sortable: true,
       filterable: true,

@@ -31,7 +31,6 @@ A Row Detail allows you to open a detail panel which can contain extra and/or mo
 import {
   type Column,
   createDomElement,
-  FieldType,
   Filters,
   Formatters,
   type GridOption,
@@ -103,7 +102,7 @@ export default class Example21 {
         expandableOverride: (_row, dataContext) => dataContext.id % 2 === 1,
 
         // Optionally pass your Parent Component reference to your Child Component (row detail component)
-        parent: this
+        parentRef: this
       }
     };
   }
@@ -250,7 +249,7 @@ export class Example {
         postTemplate: this.loadView.bind(this),
 
         // Optionally pass your Parent Component reference to your Child Component (row detail component)
-        parent: this
+        parentRef: this
       }
     };
   }

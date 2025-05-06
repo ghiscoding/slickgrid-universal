@@ -8,7 +8,8 @@
   },
   "scripts": {
     "vue:dev": "vite",
-    "vue:build": "tsc && vite build",
+    "build": "pnpm type-check && vite build",
+    "type-check": "tsc --noEmit",
     "vue:preview": "vite preview",
     "vue:cypress": "cypress open --config-file test/cypress.config.mjs"
   },
@@ -29,8 +30,7 @@
     "@slickgrid-universal/text-export": "workspace:*",
     "bootstrap": "^5.3.5",
     "dompurify": "catalog:",
-    "i18next": "^24.2.3",
-    "i18next-http-backend": "^3.0.2",
+    "i18next": "catalog:",
     "i18next-vue": "^5.2.0",
     "rxjs": "catalog:",
     "slickgrid-vue": "workspace:*",

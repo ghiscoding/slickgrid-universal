@@ -5,9 +5,9 @@
 [![NPM downloads](https://img.shields.io/npm/dy/slickgrid-vue)](https://npmjs.org/package/slickgrid-vue)
 [![npm](https://img.shields.io/npm/v/slickgrid-vue.svg?logo=npm&logoColor=fff&label=npm)](https://www.npmjs.com/package/slickgrid-vue)
 [![npm bundle size](https://img.shields.io/bundlephobia/minzip/slickgrid-vue?color=success&label=gzip)](https://bundlephobia.com/result?p=slickgrid-vue)
-[![Actions Status](https://github.com/ghiscoding/slickgrid-universal/actions/workflows/vue-cypress.yml/badge.svg)](https://github.com/ghiscoding/slickgrid-universal/actions/workflows/vue-cypress.yml)
+[![Actions Status](https://github.com/ghiscoding/slickgrid-universal/actions/workflows/test-vue.yml/badge.svg)](https://github.com/ghiscoding/slickgrid-universal/actions/workflows/test-vue.yml)
 
-## Description 
+## Description
 SlickGrid-Vue is a custom component created specifically for [VueJS](https://vuejs.org/) framework, it is a wrapper on top of Slickgrid-Universal library which contains the core functionalities. Slickgrid-Universal is written with TypeScript in browser native code, it is framework agnostic and is a monorepo that includes all Editors, Filters, Extensions and Services related to SlickGrid usage with also a few optional packages (like GraphQL, OData, Export to Excel, ...).
 
 ## Documentation
@@ -42,17 +42,17 @@ const gridOptions = ref<GridOption>({ /*...*/ }); // optional grid options
     grid-id="grid1"
     v-model:columns="columnDefinitions"
     v-model:data="dataset"
-    v-model:options="gridOptions"    
+    v-model:options="gridOptions"
   ></slickgrid-vue>
 </template>
 ```
 
-#### Requirements 
-- Vue >=3.4
-  
+#### Requirements
+- Vue >=3.5
+
 ### Stackblitz
 
-You can also play with the live Stackbliz [Slickgrid-Vue-Demos](https://github.com/ghiscoding/slickgrid-vue-demos). 
+You can also play with the live Stackbliz [Slickgrid-Vue-Demos](https://github.com/ghiscoding/slickgrid-vue-demos).
 Stackblitz is also the recommended way to provide a repro when opening a new bug or feature request.
 
 [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/slickgrid-vue-demos)

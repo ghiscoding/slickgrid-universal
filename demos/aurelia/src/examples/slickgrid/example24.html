@@ -1,0 +1,79 @@
+<h2>
+  ${title}
+  <span class="float-end">
+    <a
+      style="font-size: 18px"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example24.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </span>
+  <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" click.trigger="toggleSubTitle()">
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
+  <button class="btn btn-outline-secondary btn-sm btn-icon" click.trigger="toggleDarkMode()" data-test="toggle-dark-mode">
+    <i class="mdi mdi-theme-light-dark"></i>
+    <span>Toggle Dark Mode</span>
+  </button>
+</h2>
+
+<div class="subtitle" innerhtml.bind="subTitle"></div>
+
+<div class="row">
+  <span class="context-menu">
+    <strong>Context Menu:</strong>
+    <button
+      class="btn btn-outline-secondary btn-xs btn-icon"
+      click.trigger="showContextCommandsAndOptions(false)"
+      data-test="context-menu-priority-only-button"
+    >
+      Show Priority Options Only
+    </button>
+    <button
+      class="btn btn-outline-secondary btn-xs btn-icon"
+      click.trigger="showContextCommandsAndOptions(true)"
+      data-test="context-menu-commands-and-priority-button"
+    >
+      Show Commands & Priority Options
+    </button>
+  </span>
+
+  <span class="cell-menu">
+    <strong>Cell Menu:</strong>
+    <button
+      class="btn btn-outline-secondary btn-xs btn-icon"
+      click.trigger="showCellMenuCommandsAndOptions(false)"
+      data-test="cell-menu-commands-and-options-false-button"
+    >
+      Show Action Commands Only
+    </button>
+    <button
+      class="btn btn-outline-secondary btn-xs btn-icon"
+      click.trigger="showCellMenuCommandsAndOptions(true)"
+      data-test="cell-menu-commands-and-options-true-button"
+    >
+      Show Actions Commands & Completed Options
+    </button>
+  </span>
+</div>
+
+<div class="row locale">
+  <div class="col-12">
+    <button class="btn btn-outline-secondary btn-xs btn-icon" click.trigger="switchLanguage()" data-test="language-button">
+      <i class="mdi mdi-translate"></i>
+      Switch Language
+    </button>
+    <label>Locale:</label>
+    <span style="font-style: italic" data-test="selected-locale"> ${selectedLanguage + '.json'} </span>
+  </div>
+</div>
+
+<aurelia-slickgrid
+  grid-id="grid24"
+  columns.bind="columnDefinitions"
+  options.bind="gridOptions"
+  dataset.bind="dataset"
+  instances.bind="aureliaGrid"
+>
+</aurelia-slickgrid>

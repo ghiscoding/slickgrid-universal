@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { type GridOption, type ItemMetadata, type SlickgridVueInstance, type Column, FieldType, SlickgridVue } from 'slickgrid-vue';
+import { type GridOption, type ItemMetadata, type SlickgridVueInstance, type Column, SlickgridVue } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
 
 const NB_ITEMS = 500;
@@ -30,7 +30,7 @@ function definedGrid1() {
     { id: 'start', name: 'Start', field: 'start', columnGroup: 'Period' },
     { id: 'finish', name: 'Finish', field: 'finish', columnGroup: 'Period' },
     { id: '%', name: '% Complete', field: 'percentComplete', selectable: false, columnGroup: 'Analysis' },
-    { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', type: FieldType.boolean, columnGroup: 'Analysis' },
+    { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', type: 'boolean', columnGroup: 'Analysis' },
   ];
 
   gridOptions1.value = {
@@ -77,7 +77,7 @@ function definedGrid2() {
     { id: 'start', name: 'Start', field: 'start', columnGroup: 'Period' },
     { id: 'finish', name: 'Finish', field: 'finish', columnGroup: 'Period' },
     { id: '%', name: '% Complete', field: 'percentComplete', selectable: false, columnGroup: 'Analysis' },
-    { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', type: FieldType.boolean, columnGroup: 'Analysis' },
+    { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', type: 'boolean', columnGroup: 'Analysis' },
   ];
 
   gridOptions2.value = {

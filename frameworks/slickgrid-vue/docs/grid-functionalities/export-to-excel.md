@@ -38,7 +38,7 @@ You can set certain options for the entire grid, for example if you set `exportW
 ```vue
 <script setup lang="ts">
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { type Column, FieldType, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -97,7 +97,7 @@ Inside the column definition there are couple of flags you can set in `excelExpo
 ```vue
 <script setup lang="ts">
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { type Column, FieldType, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -193,7 +193,7 @@ The example below shows a title which uses a merged cell from "B1" to "D1" with 
 #### Component
 ```vue
 <script setup lang="ts">
-import { type Column, FieldType, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -251,7 +251,7 @@ You can use the export from the Grid Menu and/or you can simply create your own 
 The code below is just an example and it can be configured in many ways, see the `excelExportOptions`.
 ```vue
 <script setup lang="ts">
-import { type Column, FieldType, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -275,7 +275,7 @@ function defineGrid() {
 function exportToFile() {
   excelExportService.exportToExcel({
     filename: 'myExport',
-    format: FileType.xlsx
+    format: 'xlsx'
   });
 }
 </script>
@@ -333,7 +333,7 @@ Internally, the lib will detect the correct Excel cell format for each column, i
 columnDefinitions.value = [
   {
     id: 'cost', name: 'Cost', field: 'cost', width: 80,
-    type: FieldType.number,
+    type: 'number',
     formatter: Formatters.currency,
     groupTotalsFormatter: GroupTotalFormatters.sumTotalsCurrency,
     params: { displayNegativeNumberWithParentheses: true, currencyPrefix: '€', groupFormatterCurrencyPrefix: '€', minDecimal: 2, maxDecimal: 4, groupFormatterPrefix: '<b>Total</b>: ' },
@@ -390,7 +390,7 @@ The system will auto-detect the Excel format to use for Date and Number field ty
 // via column
 columnDefinitions.value = [
   {
-    id: 'cost', name: 'Cost', field: 'cost', type: FieldType.number
+    id: 'cost', name: 'Cost', field: 'cost', type: 'number'
     excelExportOptions: { autoDetectCellFormat: false }
   }
 ];
@@ -411,7 +411,7 @@ This is not recommended but if you have no other ways, you can also provide a `v
 columnDefinitions.value = [
   {
     id: 'cost', name: 'Cost', field: 'cost', width: 80,
-    type: FieldType.number,
+    type: 'number',
     formatter: Formatters.currency,
     groupTotalsFormatter: GroupTotalFormatters.sumTotalsCurrency,
     params: { displayNegativeNumberWithParentheses: true, currencyPrefix: '€', groupFormatterCurrencyPrefix: '€', minDecimal: 2, maxDecimal: 4, groupFormatterPrefix: '<b>Total</b>: ' },
@@ -451,7 +451,7 @@ By using `valueParserCallback`, there a lot of extra customizations that you can
 columnDefinitions.value = [
   {
     id: 'cost', name: 'Cost', field: 'cost', width: 80,
-    type: FieldType.number,
+    type: 'number',
 
     // use Formatters in the UI
     formatter: Formatters.dollar,

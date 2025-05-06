@@ -26,7 +26,7 @@ export interface AutocompleterOption<T extends AutocompleteItem = any> extends P
    * renderItem option is to simply provide a Template and decide which custom Layout to use
    *
    * Note that this "renderItem" is just a shortcut and can be done with the following code:
-   * editor: { editorOptions: { className: { 'autocomplete': 'autocomplete-custom-2rows', render: (item: any) => this.renderItemCallbackWith2Rows(ul, item) }}
+   * editor: { options: { className: { 'autocomplete': 'autocomplete-custom-2rows', render: (item: any) => this.renderItemCallbackWith2Rows(ul, item) }}
    */
   renderItem?: AutoCompleterRenderItemDefinition;
 

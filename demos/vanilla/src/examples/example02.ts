@@ -2,9 +2,7 @@ import {
   Aggregators,
   type Column,
   Editors,
-  FieldType,
   Filters,
-  FileType,
   Formatters,
   type GridOption,
   type Grouping,
@@ -106,7 +104,7 @@ export default class Example02 {
         id: 'sel',
         name: nameElementColumn1,
         field: 'num',
-        type: FieldType.number,
+        type: 'number',
         columnPickerLabel: 'Custom Label', // add a custom label for the ColumnPicker/GridMenu when default header value extractor doesn't work for you ()
         width: 160,
         maxWidth: 200,
@@ -136,14 +134,14 @@ export default class Example02 {
         filter: {
           model: Filters.slider,
           operator: '>=',
-          filterOptions: {
+          options: {
             hideSliderNumber: true,
             enableSliderTrackColoring: true,
             sliderTrackFilledColor: '#9ac49c',
           } as SliderOption,
         },
         sortable: true,
-        type: FieldType.number,
+        type: 'number',
         groupTotalsFormatter: GroupTotalFormatters.sumTotals,
         params: { groupFormatterPrefix: 'Total: ' },
       },
@@ -157,7 +155,7 @@ export default class Example02 {
         filterable: true,
         filter: { model: Filters.compoundSlider },
         sortable: true,
-        type: FieldType.number,
+        type: 'number',
         groupTotalsFormatter: GroupTotalFormatters.avgTotalsPercentage,
         params: { groupFormatterPrefix: '<i>Avg</i>: ' },
       },
@@ -171,7 +169,7 @@ export default class Example02 {
         filter: { model: Filters.compoundDate },
         editor: { model: Editors.date },
         sortable: true,
-        type: FieldType.dateUsShort,
+        type: 'dateUsShort',
         formatter: Formatters.dateUs,
         exportWithFormatter: true,
       },
@@ -185,7 +183,7 @@ export default class Example02 {
         filter: { model: Filters.compoundDate },
         editor: { model: Editors.date },
         sortable: true,
-        type: FieldType.dateUsShort,
+        type: 'dateUsShort',
         formatter: Formatters.dateUs,
       },
       {
@@ -197,7 +195,7 @@ export default class Example02 {
         sortable: true,
         filterable: true,
         filter: { model: Filters.compoundInputNumber },
-        type: FieldType.number,
+        type: 'number',
         formatter: Formatters.currency,
         groupTotalsFormatter: GroupTotalFormatters.sumTotalsCurrency,
         params: {
@@ -366,7 +364,7 @@ export default class Example02 {
   }
 
   exportToExcel() {
-    this.excelExportService.exportToExcel({ filename: 'export', format: FileType.xlsx });
+    this.excelExportService.exportToExcel({ filename: 'export', format: 'xlsx' });
   }
 
   groupByDuration() {

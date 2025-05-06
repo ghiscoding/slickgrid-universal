@@ -1,6 +1,6 @@
 import { EventNamingStyle } from '@slickgrid-universal/event-pub-sub';
 
-import { DelimiterType, FileType, OperatorType } from './enums/index.js';
+import { DelimiterType } from './enums/index.js';
 import type { Column, EmptyWarning, GridOption, RowDetailView, TreeDataOption } from './interfaces/index.js';
 import { Filters } from './filters/index.js';
 
@@ -113,7 +113,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
   defaultBackendServiceFilterTypingDebounce: 500,
   enableFilterTrimWhiteSpace: false, // do we want to trim white spaces on all Filters?
   defaultFilterPlaceholder: '🔎︎',
-  defaultFilterRangeOperator: OperatorType.rangeInclusive,
+  defaultFilterRangeOperator: 'RangeInclusive',
   defaultColumnSortFieldId: 'id',
   draggableGrouping: {
     hideToggleAllButton: false,
@@ -154,7 +154,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
     autoDetectCellFormat: true,
     exportWithFormatter: false,
     filename: 'export',
-    format: FileType.xlsx,
+    format: 'xlsx',
     groupingColumnHeaderTitle: 'Group By',
     groupCollapsedSymbol: '⮞',
     groupExpandedSymbol: '⮟',
@@ -165,7 +165,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
     delimiter: DelimiterType.comma,
     exportWithFormatter: false,
     filename: 'export',
-    format: FileType.csv,
+    format: 'csv',
     groupingColumnHeaderTitle: 'Group By',
     groupingAggregatorRowText: '',
     sanitizeDataExport: true,
@@ -272,6 +272,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
     maxItemToInspectSingleColumnWidthByContent: 5000,
     widthToRemoveFromExceededWidthReadjustment: 50,
   },
+  rowTopOffsetRenderType: 'transform',
   treeDataOptions: {
     exportIndentMarginLeft: 5,
     exportIndentationLeadingChar: '͏͏͏͏͏͏͏͏͏·',

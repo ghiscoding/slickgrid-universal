@@ -1,0 +1,114 @@
+{
+  "name": "slickgrid-react",
+  "version": "5.13.3",
+  "description": "Slickgrid components made available in React",
+  "keywords": [
+    "react",
+    "datagrid",
+    "datatable",
+    "plugin",
+    "slickgrid"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "homepage": "https://github.com/ghiscoding/slickgrid-react",
+  "bugs": {
+    "url": "https://github.com/ghiscoding/slickgrid-react/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ghiscoding/slickgrid-react.git"
+  },
+  "license": "MIT",
+  "author": "Ghislain B.",
+  "contributors": [
+    {
+      "name": "Ghislain B."
+    },
+    {
+      "name": "Devin Garner"
+    },
+    {
+      "name": "Javier Soques"
+    },
+    {
+      "name": "Dustin Garner"
+    },
+    {
+      "name": "Joel Peña"
+    }
+  ],
+  "scripts": {
+    "are-types-wrong": "pnpx @arethetypeswrong/cli --pack .",
+    "react:dev": "tsc --watch",
+    "prebuild": "rimraf dist",
+    "build": "tsc",
+    "postbuild": "npm run copy-i18n:dist && npm run copy-asset-lib",
+    "copy-asset-lib": "copyfiles src/assets/lib/** dist --up 2 --stat",
+    "copy-i18n:dist": "copyfiles src/assets/locales/**/*.* dist/i18n --up 3 --stat",
+    "pack": "npm pack"
+  },
+  "browserslist": [
+    "last 2 version",
+    "> 1%",
+    "not dead"
+  ],
+  "files": [
+    "/dist",
+    "/src"
+  ],
+  "dependencies": {
+    "@slickgrid-universal/common": "workspace:*",
+    "@slickgrid-universal/custom-footer-component": "workspace:*",
+    "@slickgrid-universal/empty-warning-component": "workspace:*",
+    "@slickgrid-universal/event-pub-sub": "workspace:*",
+    "@slickgrid-universal/pagination-component": "workspace:*",
+    "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
+    "@slickgrid-universal/utils": "workspace:*",
+    "dequal": "catalog:",
+    "sortablejs": "catalog:"
+  },
+  "peerDependencies": {
+    "react": ">=19.0.0"
+  },
+  "devDependencies": {
+    "@formkit/tempo": "catalog:",
+    "@slickgrid-universal/composite-editor-component": "workspace:*",
+    "@slickgrid-universal/custom-tooltip-plugin": "workspace:*",
+    "@slickgrid-universal/excel-export": "workspace:*",
+    "@slickgrid-universal/graphql": "workspace:*",
+    "@slickgrid-universal/odata": "workspace:*",
+    "@slickgrid-universal/rxjs-observable": "workspace:*",
+    "@slickgrid-universal/text-export": "workspace:*",
+    "@types/node": "catalog:",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.1",
+    "@types/sortablejs": "^1.15.8",
+    "@vitejs/plugin-react": "^4.3.4",
+    "custom-event-polyfill": "^1.0.7",
+    "dompurify": "catalog:",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "globals": "^16.0.0",
+    "native-copyfiles": "^0.3.2",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.5.0",
+    "regenerator-runtime": "^0.14.1",
+    "rimraf": "catalog:",
+    "rxjs": "catalog:",
+    "sass": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plugin-svgr": "^4.3.0",
+    "vite-tsconfig-paths": "^5.1.4"
+  }
+}

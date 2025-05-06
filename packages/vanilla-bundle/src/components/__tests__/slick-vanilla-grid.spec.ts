@@ -28,7 +28,6 @@ import {
   type GridService,
   type GridState,
   type GridStateService,
-  GridStateType,
   type HeaderGroupingService,
   type OnRowCountChangedEventArgs,
   type OnRowsChangedEventArgs,
@@ -1901,29 +1900,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         expect(populateSpy).toHaveBeenCalledWith(mockPresetFilters);
       });
 
-      it('should return null when "getItemMetadata" is called without a colspan callback defined', () => {
-        const itemSpy = vi.spyOn(mockDataView, 'getItem');
-
-        component.gridOptions = { colspanCallback: undefined } as unknown as GridOption;
-        component.initialization(divContainer, slickEventHandler);
-        mockDataView.getItemMetadata(2);
-
-        expect(itemSpy).not.toHaveBeenCalled();
-      });
-
-      it('should execute colspan callback when defined in the grid options and "getItemMetadata" is called', () => {
-        const mockCallback = vi.fn();
-        const mockItem = { firstName: 'John', lastName: 'Doe' };
-        const itemSpy = vi.spyOn(mockDataView, 'getItem').mockReturnValue(mockItem);
-
-        component.gridOptions = { colspanCallback: mockCallback } as unknown as GridOption;
-        component.initialization(divContainer, slickEventHandler);
-        mockDataView.getItemMetadata(2);
-
-        expect(itemSpy).toHaveBeenCalledWith(2);
-        expect(mockCallback).toHaveBeenCalledWith(mockItem);
-      });
-
       it('should update each row and re-render the grid when filtering and DataView "onRowsChanged" event is triggered', () => {
         const renderSpy = vi.spyOn(mockGrid, 'render');
         const updateRowSpy = vi.spyOn(mockGrid, 'updateRow');
@@ -2002,7 +1978,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.paginationChanged(mockPagination);
 
         expect(pluginEaSpy).toHaveBeenCalledWith('onGridStateChanged', {
-          change: { newValues: mockPagination, type: GridStateType.pagination },
+          change: { newValues: mockPagination, type: 'pagination' },
           gridState: { columns: [], pagination: mockPagination },
         });
       });
@@ -2025,7 +2001,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         eventPubSubService.publish('onPaginationChanged', mockPaginationMetadata);
 
         expect(pluginEaSpy).toHaveBeenCalledWith('onGridStateChanged', {
-          change: { newValues: mockPagination, type: GridStateType.pagination },
+          change: { newValues: mockPagination, type: 'pagination' },
           gridState: { columns: [], pagination: mockPagination },
         });
       });
@@ -2045,7 +2021,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         expect(setRowSpy).toHaveBeenCalledWith([]);
         expect(pluginEaSpy).toHaveBeenCalledWith('onGridStateChanged', {
-          change: { newValues: mockPagination, type: GridStateType.pagination },
+          change: { newValues: mockPagination, type: 'pagination' },
           gridState: { columns: [], pagination: mockPagination },
         });
       });
@@ -2065,7 +2041,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         expect(setRowSpy).toHaveBeenCalledWith([]);
         expect(pluginEaSpy).toHaveBeenCalledWith('onGridStateChanged', {
-          change: { newValues: mockPagination, type: GridStateType.pagination },
+          change: { newValues: mockPagination, type: 'pagination' },
           gridState: { columns: [], pagination: mockPagination },
         });
       });

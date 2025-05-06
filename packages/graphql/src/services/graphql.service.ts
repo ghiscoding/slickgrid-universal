@@ -43,7 +43,7 @@ export class GraphqlService implements BackendService {
   protected _currentFilters: ColumnFilters | CurrentFilter[] = [];
   protected _currentPagination: CurrentPagination | null = null;
   protected _currentSorters: CurrentSorter[] = [];
-  protected _columnDefinitions?: Column[] | undefined;
+  protected _columns?: Column[] | undefined;
   protected _grid: SlickGrid | undefined;
   protected _datasetIdPropName = 'id';
   options: GraphqlServiceOption | undefined;
@@ -55,7 +55,7 @@ export class GraphqlService implements BackendService {
 
   /** Getter for the Column Definitions */
   get columnDefinitions(): Column[] | undefined {
-    return this._columnDefinitions;
+    return this._columns;
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
@@ -71,7 +71,7 @@ export class GraphqlService implements BackendService {
     this._datasetIdPropName = this._gridOptions.datasetIdPropertyName || 'id';
 
     if (typeof grid?.getColumns === 'function') {
-      this._columnDefinitions = sharedService?.allColumns ?? grid.getColumns() ?? [];
+      this._columns = sharedService?.allColumns ?? grid.getColumns() ?? [];
     }
   }
 
@@ -80,11 +80,11 @@ export class GraphqlService implements BackendService {
    * @param serviceOptions GraphqlServiceOption
    */
   buildQuery(): string {
-    if (!this.options || !this.options.datasetName || !Array.isArray(this._columnDefinitions)) {
+    if (!this.options || !this.options.datasetName || !Array.isArray(this._columns)) {
       throw new Error('GraphQL Service requires the "datasetName" property to properly build the GraphQL query');
     }
     // get the column definitions and exclude some if they were tagged as excluded
-    let columnDefinitions = this._columnDefinitions || [];
+    let columnDefinitions = this._columns || [];
     columnDefinitions = columnDefinitions.filter((column: Column) => !column.excludeFromQuery);
 
     const queryQb = new QueryBuilder(`query ${this.options.operationName ?? ''}`);
@@ -414,8 +414,8 @@ export class GraphqlService implements BackendService {
 
         // if user defined some "presets", then we need to find the filters from the column definitions instead
         let columnDef: Column | undefined;
-        if (isUpdatedByPresetOrDynamically && Array.isArray(this._columnDefinitions)) {
-          columnDef = this._columnDefinitions.find((column: Column) => column.id === columnFilter.columnId);
+        if (isUpdatedByPresetOrDynamically && Array.isArray(this._columns)) {
+          columnDef = this._columns.find((column: Column) => column.id === columnFilter.columnId);
         } else {
           columnDef = columnFilter.columnDef;
         }
@@ -535,7 +535,7 @@ export class GraphqlService implements BackendService {
 
           // Range with 1 searchterm should lead to equals for a date field.
           if (
-            (operator === OperatorType.rangeInclusive || operator === OperatorType.rangeExclusive) &&
+            (operator === 'RangeInclusive' || operator === 'RangeExclusive') &&
             Array.isArray(searchTerms) &&
             searchTerms.length === 1 &&
             fieldType === FieldType.date
@@ -645,7 +645,7 @@ export class GraphqlService implements BackendService {
 
       // display the correct sorting icons on the UI, for that it requires (columnId, sortAsc) properties
       const tmpSorterArray = currentSorters.map((sorter) => {
-        const columnDef = this._columnDefinitions?.find((column: Column) => column.id === sorter.columnId);
+        const columnDef = this._columns?.find((column: Column) => column.id === sorter.columnId);
 
         graphqlSorters.push({
           field: columnDef ? (columnDef.queryFieldSorter || columnDef.queryField || columnDef.field) + '' : sorter.columnId + '',

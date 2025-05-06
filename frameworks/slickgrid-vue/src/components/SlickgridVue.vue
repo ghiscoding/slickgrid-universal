@@ -24,7 +24,6 @@ import {
   GridEventService,
   GridService,
   GridStateService,
-  GridStateType,
   HeaderGroupingService,
   isColumnDateType,
   type Metrics,
@@ -590,7 +589,6 @@ function initialization() {
     gridEventService: gridEventService,
     gridStateService: gridStateService,
     gridService: gridService,
-    groupingService: headerGroupingService,
     headerGroupingService: headerGroupingService,
     extensionService: extensionService,
     paginationComponent: slickPagination,
@@ -842,18 +840,6 @@ function bindDifferentHooks(grid: SlickGrid, gridOptions: GridOption, dataView: 
       }
     }
   }
-
-  // @deprecated @user `dataview.globalItemMetadataProvider.getRowMetadata`
-  // did the user add a colspan callback? If so, hook it into the DataView getItemMetadata
-  if (gridOptions?.colspanCallback && dataView?.getItem && dataView?.getItemMetadata) {
-    dataView.getItemMetadata = (rowNumber: number) => {
-      let callbackResult = null;
-      if (gridOptions.colspanCallback) {
-        callbackResult = gridOptions.colspanCallback(dataView.getItem(rowNumber));
-      }
-      return callbackResult;
-    };
-  }
 }
 
 function bindBackendCallbackFunctions(gridOptions: GridOption) {
@@ -1035,7 +1021,7 @@ function paginationChanged(pagination: PaginationMetadata) {
     }
   }
   eventPubSubService.publish('onGridStateChanged', {
-    change: { newValues: { pageNumber, pageSize }, type: GridStateType.pagination },
+    change: { newValues: { pageNumber, pageSize }, type: 'pagination' },
     gridState: gridStateService.getCurrentGridState(),
   });
 }
@@ -1167,20 +1153,20 @@ function setDarkMode(dark = false) {
  * We will re-render the grid so that the new header and data shows up correctly.
  * If using i18n, we also need to trigger a re-translate of the column headers
  */
-function updateColumnDefinitionsList(newColumnDefinitions: Column<any>[]) {
-  if (newColumnDefinitions) {
+function updateColumnDefinitionsList(newColumns: Column<any>[]) {
+  if (newColumns) {
     // map the Editor model to editorClass and load editor collectionAsync
-    newColumnDefinitions = loadSlickGridEditors(newColumnDefinitions);
+    newColumns = loadSlickGridEditors(newColumns);
 
     // if the user wants to automatically add a Custom Editor Formatter, we need to call the auto add function again
     if (_gridOptions.value.autoAddCustomEditorFormatter) {
-      autoAddEditorFormatterToColumnsWithEditor(newColumnDefinitions, _gridOptions.value.autoAddCustomEditorFormatter);
+      autoAddEditorFormatterToColumnsWithEditor(newColumns, _gridOptions.value.autoAddCustomEditorFormatter);
     }
 
     if (_gridOptions.value.enableTranslate) {
-      extensionService.translateColumnHeaders(undefined, newColumnDefinitions);
+      extensionService.translateColumnHeaders(undefined, newColumns);
     } else {
-      extensionService.renderColumnHeaders(newColumnDefinitions, true);
+      extensionService.renderColumnHeaders(newColumns, true);
     }
 
     if (_gridOptions.value?.enableAutoSizeColumns) {
@@ -1203,8 +1189,8 @@ function observeColumnDefinitions() {
  * Loop through all column definitions and copy the original optional `width` properties optionally provided by the user.
  * We will use this when doing a resize by cell content, if user provided a `width` it won't override it.
  */
-function copyColumnWidthsReference(columnDefinitions: Column<any>[]) {
-  columnDefinitions.forEach((col) => (col.originalWidth = col.width));
+function copyColumnWidthsReference(columns: Column<any>[]) {
+  columns.forEach((col) => (col.originalWidth = col.width));
 }
 
 function displayEmptyDataWarning(showWarning = true) {
@@ -1620,14 +1606,14 @@ function sortTreeDataset<T>(flatDatasetInput: T[], forceGridRefresh = false): T[
 }
 
 /** Prepare and load all SlickGrid editors, if an async editor is found then we'll also execute it. */
-function loadSlickGridEditors(columnDefinitions: Column<any>[]): Column<any>[] {
-  if (columnDefinitions.some((col) => `${col.id}`.includes('.'))) {
+function loadSlickGridEditors(columns: Column<any>[]): Column<any>[] {
+  if (columns.some((col) => `${col.id}`.includes('.'))) {
     console.error(
       '[Slickgrid-Vue] Make sure that none of your Column Definition "id" property includes a dot in its name because that will cause some problems with the Editors. For example if your column definition "field" property is "user.firstName" then use "firstName" as the column "id".'
     );
   }
 
-  return columnDefinitions.map((column: Column | any) => {
+  return columns.map((column: Column | any) => {
     // on every Editor which have a "collection" or a "collectionAsync"
     if (column.editor?.collectionAsync) {
       loadEditorCollectionAsync(column);

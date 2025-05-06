@@ -3,8 +3,6 @@ import {
   type Column,
   type EditCommand,
   Editors,
-  FieldType,
-  FileType,
   Filters,
   Formatters,
   type GridOption,
@@ -61,7 +59,7 @@ export default class Example03 {
     this._bindingEventService.bind(gridContainerElm, 'onclick', this.handleOnClick.bind(this));
     this._bindingEventService.bind(gridContainerElm, 'oncellchange', this.handleOnCellChange.bind(this));
     this._bindingEventService.bind(gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
-    this._bindingEventService.bind(gridContainerElm, 'onitemdeleted', this.handleItemDeleted.bind(this));
+    this._bindingEventService.bind(gridContainerElm, 'onitemsdeleted', this.handleItemsDeleted.bind(this));
     this._bindingEventService.bind(
       gridContainerElm,
       'onbeforeexporttoexcel',
@@ -91,7 +89,6 @@ export default class Example03 {
         field: 'title',
         columnGroup: 'Common Factor',
         sortable: true,
-        type: FieldType.string,
         editor: {
           model: Editors.longText,
           required: true,
@@ -123,7 +120,7 @@ export default class Example03 {
           maxValue: 10000,
           alwaysSaveOnEnterKey: true,
         },
-        type: FieldType.number,
+        type: 'number',
         groupTotalsFormatter: GroupTotalFormatters.sumTotals,
         grouping: {
           getter: 'duration',
@@ -143,8 +140,8 @@ export default class Example03 {
         sortable: true,
         columnGroup: 'Period',
         // formatter: Formatters.dateIso,
-        type: FieldType.date,
-        outputType: FieldType.dateIso,
+        type: 'date',
+        outputType: 'dateIso',
         filterable: true,
         filter: { model: Filters.compoundDate },
         formatter: Formatters.dateIso,
@@ -165,11 +162,11 @@ export default class Example03 {
         sortable: true,
         editor: {
           model: Editors.date,
-          editorOptions: { range: { min: 'today' } } as VanillaCalendarOption,
+          options: { displayDateMin: 'today' } as VanillaCalendarOption,
         },
         // formatter: Formatters.dateIso,
-        type: FieldType.date,
-        outputType: FieldType.dateIso,
+        type: 'date',
+        outputType: 'dateIso',
         formatter: Formatters.dateIso,
         filterable: true,
         filter: { model: Filters.dateRange },
@@ -193,7 +190,7 @@ export default class Example03 {
         formatter: Formatters.dollar,
         exportWithFormatter: true,
         groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollar,
-        type: FieldType.number,
+        type: 'number',
         grouping: {
           getter: 'cost',
           formatter: (g) => `Cost: ${g.value} <span class="text-color-primary">(${g.count} items)</span>`,
@@ -207,12 +204,12 @@ export default class Example03 {
         name: '% Complete',
         field: 'percentComplete',
         columnGroup: 'Analysis',
-        type: FieldType.number,
+        type: 'number',
         editor: {
           model: Editors.slider,
           minValue: 0,
           maxValue: 100,
-          // editorOptions: { hideSliderNumber: true } as SliderOption,
+          // options: { hideSliderNumber: true } as SliderOption,
         },
         sortable: true,
         filterable: true,
@@ -478,7 +475,7 @@ export default class Example03 {
   exportToExcel() {
     this.excelExportService.exportToExcel({
       filename: 'Export',
-      format: FileType.xlsx,
+      format: 'xlsx',
     });
   }
 
@@ -559,14 +556,14 @@ export default class Example03 {
 
   handleValidationError(event) {
     console.log('handleValidationError', event.detail);
-    const args = event.detail && event.detail.args;
+    const args = event?.detail?.args;
     if (args.validationResults) {
       alert(args.validationResults.msg);
     }
   }
 
-  handleItemDeleted(event) {
-    const itemId = event && event.detail;
+  handleItemsDeleted(event) {
+    const itemId = event?.detail;
     console.log('item deleted with id:', itemId);
   }
 

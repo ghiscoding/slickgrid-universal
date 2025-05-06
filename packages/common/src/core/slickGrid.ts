@@ -12,7 +12,8 @@ import {
   isDefinedNumber,
   isPrimitiveOrHTML,
 } from '@slickgrid-universal/utils';
-import Sortable, { type Options as SortableOptions, type SortableEvent } from 'sortablejs';
+import Sortable from 'sortablejs/modular/sortable.core.esm.js';
+import type { Options as SortableOptions, SortableEvent } from 'sortablejs';
 import type { TrustedHTML } from 'trusted-types/lib';
 
 import {
@@ -96,6 +97,7 @@ import type {
   ElementPosition,
 } from '../interfaces/index.js';
 import type { SlickDataView } from './slickDataview.js';
+import { copyCellToClipboard } from '../formatters/formatterUtilities.js';
 
 /**
  * @license
@@ -487,8 +489,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected slickDraggableInstance: InteractionBase | null = null;
   protected slickMouseWheelInstances: Array<InteractionBase> = [];
   protected slickResizableInstances: Array<InteractionBase> = [];
-  protected sortableSideLeftInstance?: Sortable;
-  protected sortableSideRightInstance?: Sortable;
+  protected sortableSideLeftInstance?: ReturnType<typeof Sortable.create>;
+  protected sortableSideRightInstance?: ReturnType<typeof Sortable.create>;
   protected _pubSubService?: BasePubSub;
 
   /**
@@ -588,6 +590,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       console.warn(
         '[Slickgrid] Zoom level other than 100% is not supported by the library and will give subpar experience. ' +
           'SlickGrid relies on the `rowHeight` grid option to do row positioning & calculation and when zoom is not 100% then calculation becomes all offset.'
+      );
+    }
+    if (this._options.rowTopOffsetRenderType === 'transform' && (this._options.enableCellRowSpan || this._options.enableRowDetailView)) {
+      console.warn(
+        '[Slickgrid-Universal] `rowTopOffsetRenderType` should be set to "top" when using either RowDetail and/or RowSpan since "transform" is known to have UI issues.'
       );
     }
     this.finishInitialization();
@@ -2243,6 +2250,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
               if (c?.resizable) {
                 if (stretchLeewayOnLeft !== null) {
                   if (c.maxWidth) {
+                    /* v8 ignore next */
                     stretchLeewayOnLeft += c.maxWidth - (c.previousWidth || 0);
                   } else {
                     stretchLeewayOnLeft = null;
@@ -2274,6 +2282,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
                 if (c && c.resizable && !c.hidden) {
                   actualMinWidth = Math.max(c.minWidth || 0, this.absoluteColumnMinWidth);
                   if (x && (c.previousWidth || 0) + x < actualMinWidth) {
+                    /* v8 ignore next 2 */
                     x += (c.previousWidth || 0) - actualMinWidth;
                     c.width = actualMinWidth;
                   } else {
@@ -2335,6 +2344,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
                   c = vc[j];
                   if (c && !c.hidden && c.resizable) {
                     if (x && c.maxWidth && c.maxWidth - (c.previousWidth || 0) < x) {
+                      /* v8 ignore next 2 */
                       x -= c.maxWidth - (c.previousWidth || 0);
                       c.width = c.maxWidth;
                     } else {
@@ -2395,6 +2405,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
                   if (c && !c.hidden && c.resizable) {
                     actualMinWidth = Math.max(c.minWidth || 0, this.absoluteColumnMinWidth);
                     if (x && (c.previousWidth || 0) + x < actualMinWidth) {
+                      /* v8 ignore next 2 */
                       x += (c.previousWidth || 0) - actualMinWidth;
                       c.width = actualMinWidth;
                     } else {
@@ -3279,13 +3290,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /**
    * Sets grid columns. Column headers will be recreated and all rendered rows will be removed. To rerender the grid (if necessary), call render().
-   * @param {Column[]} columnDefinitions An array of column definitions.
+   * @param {Column[]} columns An array of column definitions.
    */
-  setColumns(columnDefinitions: C[]): void {
-    this.triggerEvent(this.onBeforeSetColumns, { previousColumns: this.columns, newColumns: columnDefinitions, grid: this });
-    this.columns = columnDefinitions;
+  setColumns(columns: C[]): void {
+    this.triggerEvent(this.onBeforeSetColumns, { previousColumns: this.columns, newColumns: columns, grid: this });
+    this.columns = columns;
     this.updateColumnsInternal();
-    this.triggerEvent(this.onAfterSetColumns, { newColumns: columnDefinitions, grid: this });
+    this.triggerEvent(this.onAfterSetColumns, { newColumns: columns, grid: this });
   }
 
   /** Update columns for when a hidden property has changed but the column list itself has not changed. */
@@ -4159,6 +4170,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     cacheEntry.rowNode?.forEach((node) => node.remove());
   }
 
+  /* v8 ignore next 10 */
   protected queuePostProcessedCellForCleanup(cellnode: HTMLElement, columnIdx: number, rowIdx: number): void {
     this.postProcessedCleanupQueue.push({
       actionType: 'C',
@@ -4293,6 +4305,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       cellHeight = this.getRowBottom(rowSpanBottomIdx) - this.getRowTop(row);
     } else {
       const rowHeight = this.getRowHeight();
+      /* v8 ignore next 3 */
       if (rowHeight !== cellHeight - this.cellHeightDiff) {
         cellHeight = rowHeight;
       }
@@ -4599,7 +4612,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         // maintain virtual position
         this.scrollTo(this.scrollTop + this.offset);
       } else {
-        // scroll to bottom
+        /* v8 ignore next 2 - scroll to bottom */
         this.scrollTo(this.th - tempViewportH + (this.scrollbarDimensions?.height || 0));
       }
 
@@ -4754,6 +4767,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     while (isDefined((cellToRemove = cellsToRemove.pop()))) {
       cellNode = cacheEntry.cellNodesByColumnIdx[cellToRemove];
 
+      /* v8 ignore next 2 */
       if (this._options.enableAsyncPostRenderCleanup && this.postProcessedRows[row]?.[cellToRemove]) {
         this.queuePostProcessedCellForCleanup(cellNode, cellToRemove, row);
       } else {
@@ -4762,6 +4776,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       delete cacheEntry.cellColSpans[cellToRemove];
       delete cacheEntry.cellNodesByColumnIdx[cellToRemove];
+      /* v8 ignore next 3 */
       if (this.postProcessedRows[row]) {
         delete this.postProcessedRows[row][cellToRemove];
       }
@@ -4861,6 +4876,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         // no idea why node would be null here but apparently it could be..
         if (node) {
           if (this.hasFrozenColumns() && columnIdx > this._options.frozenColumn!) {
+            /* v8 ignore next */
             cacheEntry.rowNode![1].appendChild(node);
           } else {
             cacheEntry.rowNode![0].appendChild(node);
@@ -5267,6 +5283,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     };
 
     const unblock = () => {
+      /* v8 ignore next 3 */
       if (queued) {
         dequeue();
         blockAndExecute();
@@ -5538,7 +5555,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     let handled: boolean | undefined | void = retval.isImmediatePropagationStopped();
 
     if (!handled) {
-      if (!e.shiftKey && !e.altKey) {
+      if (this._options.enableCellNavigation && e.ctrlKey && e.key.toLowerCase() === 'c' && !this._options.enableExcelCopyBuffer) {
+        // Ctrl+C (copy cell to clipboard, unless Excel Copy Buffer is enabled)
+        copyCellToClipboard({
+          grid: this as unknown as SlickGrid,
+          cell: this.activeCell,
+          row: this.activeRow,
+          column: this.columns[this.activeCell],
+          dataContext: this.getDataItem(this.activeRow),
+        });
+      } else if (!e.shiftKey && !e.altKey) {
         // editor may specify an array of keys to bubble
         if (this._options.editable && this.currentEditor?.keyCaptureList) {
           if (this.currentEditor.keyCaptureList.indexOf(e.which) > -1) {
@@ -5560,6 +5586,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         }
       }
     }
+
     if (!handled) {
       if (!e.shiftKey && !e.altKey && !e.ctrlKey) {
         if (e.key === 'Escape') {
@@ -6697,6 +6724,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (pos.cell >= cell) {
         // when right cell is within a rowspan, we need to use original row (posY)
         const nextRow = this.findFocusableRow(posY, prev.cell, 'up');
+        /* v8 ignore next 3 */
         if (nextRow !== prev.row) {
           prev.row = nextRow;
         }

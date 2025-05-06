@@ -1,0 +1,65 @@
+<h2>
+  ${title}
+  <span class="float-end">
+    <a
+      style="font-size: 18px"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example20.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </span>
+  <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" click.trigger="toggleSubTitle()">
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
+</h2>
+
+<div class="subtitle" innerhtml.bind="subTitle"></div>
+
+<br />
+
+<div class="row">
+  <div class="col-sm-12">
+    <span>
+      <label for="">Pinned Rows: </label>
+      <input type="number" value.bind="frozenRowCount" />
+      <button class="btn btn-outline-secondary btn-xs btn-icon" click.trigger="changeFrozenRowCount()">Set</button>
+    </span>
+    <span style="margin-left: 10px">
+      <label for="">Pinned Columns: </label>
+      <input type="number" value.bind="frozenColumnCount" />
+      <button class="btn btn-outline-secondary btn-xs btn-icon" click.trigger="changeFrozenColumnCount()">Set</button>
+    </span>
+  </div>
+</div>
+
+<div class="row mt-2">
+  <div class="col-sm-12">
+    <button class="btn btn-outline-secondary btn-sm btn-icon" click.trigger="setFrozenColumns(-1)" data-test="remove-frozen-column-button">
+      <i class="mdi mdi-close"></i> Remove Frozen Columns
+    </button>
+    <button class="btn btn-outline-secondary btn-sm btn-icon" click.trigger="setFrozenColumns(2)" data-test="set-3frozen-columns">
+      <i class="mdi mdi-pin-outline"></i> Set 3 Frozen Columns
+    </button>
+    <span style="margin-left: 15px">
+      <button class="btn btn-outline-secondary btn-sm btn-icon" click.trigger="toggleFrozenBottomRows()">
+        <i class="mdi mdi-flip-vertical"></i> Toggle Pinned Rows
+      </button>
+      <span style="font-weight: bold">: ${ isFrozenBottom ? 'Bottom' : 'Top' }</span>
+    </span>
+  </div>
+</div>
+
+<div class="col-sm-12">
+  <hr />
+</div>
+
+<aurelia-slickgrid
+  grid-id="grid20"
+  columns.bind="columnDefinitions"
+  options.bind="gridOptions"
+  dataset.bind="dataset"
+  on-validation-error.trigger="onCellValidationError($event.detail.eventData, $event.detail.args)"
+  on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"
+>
+</aurelia-slickgrid>

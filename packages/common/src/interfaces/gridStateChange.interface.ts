@@ -1,4 +1,4 @@
-import type { GridStateType } from '../enums/index.js';
+import type { GridStateType, GridStateTypeString } from '../enums/index.js';
 import type {
   CurrentColumn,
   CurrentFilter,
@@ -24,7 +24,7 @@ export interface GridStateChange {
       | Partial<TreeToggleStateChange>;
 
     /** The Grid State Type of change that was made (filter/sorter/...) */
-    type: GridStateType;
+    type: GridStateType | GridStateTypeString;
   };
 
   /** Current Grid State, that will include all of the current states (columns/filters/sorters) and some optional ones (pagination/rowSelection) */

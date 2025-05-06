@@ -9,7 +9,7 @@ import {
   toKebabCase,
 } from '@slickgrid-universal/utils';
 
-import { EmitterType } from '../enums/index.js';
+import type { EmitterType } from '../enums/index.js';
 import type {
   Column,
   CurrentSorter,
@@ -122,7 +122,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
       const visibleColumns = arrayRemoveItemByIndex<Column>(currentVisibleColumns, columnIndex);
       this.sharedService.visibleColumns = visibleColumns;
       this.sharedService.slickGrid.setColumns(visibleColumns);
-      this.pubSubService.publish('onHeaderMenuHideColumns', { columns: visibleColumns, hiddenColumn: column });
+      this.pubSubService.publish('onHideColumns', { columns: visibleColumns, hiddenColumn: column });
     }
   }
 
@@ -349,16 +349,16 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
   /**
    * Create Header Menu with Custom Commands if user has enabled Header Menu
    * @param gridOptions
-   * @param columnDefinitions
+   * @param columns
    * @return header menu
    */
-  protected addHeaderMenuCustomCommands(columnDefinitions: Column[]): HeaderMenu {
+  protected addHeaderMenuCustomCommands(columns: Column[]): HeaderMenu {
     const gridOptions = this.sharedService.gridOptions;
     const headerMenuOptions = gridOptions.headerMenu || {};
     const translationPrefix = getTranslationPrefix(gridOptions);
 
-    if (Array.isArray(columnDefinitions) && gridOptions.enableHeaderMenu) {
-      columnDefinitions.forEach((columnDef: Column) => {
+    if (Array.isArray(columns) && gridOptions.enableHeaderMenu) {
+      columns.forEach((columnDef: Column) => {
         if (columnDef && !columnDef.excludeFromHeaderMenu) {
           if (!columnDef.header) {
             columnDef.header = {
@@ -718,8 +718,8 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
    * Reset all the internal Menu options which have text to translate
    * @param header menu object
    */
-  protected resetHeaderMenuTranslations(columnDefinitions: Column[]): void {
-    columnDefinitions.forEach((columnDef: Column) => {
+  protected resetHeaderMenuTranslations(columns: Column[]): void {
+    columns.forEach((columnDef: Column) => {
       if (columnDef?.header?.menu?.commandItems && !columnDef.excludeFromHeaderMenu) {
         const columnHeaderMenuItems: Array<MenuCommandItem | 'divider'> = columnDef.header.menu.commandItems || [];
         this.extensionUtility.translateMenuItemsFromTitleKey(columnHeaderMenuItems);
@@ -741,7 +741,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
       // prettier-ignore
       const tmpSortedColumns = !this.sharedService.gridOptions.multiColumnSort ? [] : this.sortService.getCurrentColumnSorts(columnDef.id + '');
 
-      let emitterType = EmitterType.local;
+      let emitterType: EmitterType = 'local';
 
       // 2- add to the column array, the new sorted column by the header menu
       tmpSortedColumns.push({ columnId: columnDef.id, sortCol: columnDef, sortAsc: isSortingAsc });
@@ -752,10 +752,10 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
           sortCols: tmpSortedColumns,
           grid: this.sharedService.slickGrid,
         });
-        emitterType = EmitterType.remote;
+        emitterType = 'remote';
       } else if (this.sharedService.dataView) {
         this.sortService.onLocalSortChanged(this.sharedService.slickGrid, tmpSortedColumns);
-        emitterType = EmitterType.local;
+        emitterType = 'local';
       } else {
         // when using customDataView, we will simply send it as a onSort event with notify
         args.grid.onSort.notify(tmpSortedColumns as unknown as MultiColumnSort);

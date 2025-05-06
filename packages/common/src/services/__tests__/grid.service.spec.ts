@@ -216,7 +216,7 @@ describe('Grid Service', () => {
         skipError: false,
         triggerEvent: true,
       });
-      expect(pubSubSpy).toHaveBeenCalledWith(`onItemUpserted`, mockItem);
+      expect(pubSubSpy).toHaveBeenCalledWith('onItemsUpserted', [mockItem]);
     });
 
     it('should expect the service to call the DataView "addItem" when calling "upsertItem" with an item and the option "position" set to "bottom"', () => {
@@ -235,7 +235,7 @@ describe('Grid Service', () => {
       expect(addSpy).toHaveBeenCalledTimes(1);
       expect(addSpy).toHaveBeenCalledWith(mockItem);
       expect(scrollSpy).toHaveBeenCalledWith(expectationNewRowPosition);
-      expect(pubSubSpy).toHaveBeenCalledWith(`onItemUpserted`, mockItem);
+      expect(pubSubSpy).toHaveBeenCalledWith('onItemsUpserted', [mockItem]);
     });
 
     it('should expect the service to call the "updateItem" multiple times when calling "upsertItems" with the items found in the grid', () => {
@@ -283,8 +283,8 @@ describe('Grid Service', () => {
         triggerEvent: false,
       });
       expect(serviceHighlightSpy).toHaveBeenCalledWith([0, 1]);
-      expect(pubSubSpy).toHaveBeenNthCalledWith(1, `onItemUpserted`, mockItems);
-      expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onItemUpdated`, [
+      expect(pubSubSpy).toHaveBeenNthCalledWith(1, 'onItemsUpserted', mockItems);
+      expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onItemsUpdated', [
         { added: undefined as any, updated: 0 },
         { added: undefined as any, updated: 1 },
       ]);
@@ -336,9 +336,9 @@ describe('Grid Service', () => {
         triggerEvent: false,
       });
       expect(serviceHighlightSpy).toHaveBeenCalledWith([0, 15]);
-      expect(pubSubSpy).toHaveBeenNthCalledWith(1, `onItemUpserted`, mockItems);
-      expect(pubSubSpy).toHaveBeenNthCalledWith(2, `onItemAdded`, [{ added: 0, updated: undefined }]);
-      expect(pubSubSpy).toHaveBeenNthCalledWith(3, `onItemUpdated`, [{ added: undefined as any, updated: 15 }]);
+      expect(pubSubSpy).toHaveBeenNthCalledWith(1, 'onItemsUpserted', mockItems);
+      expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onItemsAdded', [{ added: 0, updated: undefined }]);
+      expect(pubSubSpy).toHaveBeenNthCalledWith(3, 'onItemsUpdated', [{ added: undefined as any, updated: 15 }]);
       expect(selectSpy).toHaveBeenCalledWith([0, 15]);
     });
 
@@ -375,7 +375,7 @@ describe('Grid Service', () => {
       });
       expect(serviceHighlightSpy).not.toHaveBeenCalled();
       expect(pubSubSpy).toHaveBeenCalledTimes(0);
-      expect(pubSubSpy).not.toHaveBeenLastCalledWith(`onItemUpserted`, mockItem);
+      expect(pubSubSpy).not.toHaveBeenLastCalledWith('onItemsUpserted', [mockItem]);
       expect(selectSpy).not.toHaveBeenCalled();
     });
 
@@ -441,7 +441,7 @@ describe('Grid Service', () => {
         triggerEvent: true,
       });
       expect(serviceHighlightSpy).toHaveBeenCalledWith(0);
-      expect(pubSubSpy).toHaveBeenCalledWith(`onItemUpserted`, mockItem);
+      expect(pubSubSpy).toHaveBeenCalledWith('onItemsUpserted', [mockItem]);
     });
 
     it('should call the "upsertItemById" method and expect it to call the "addItem" with different boolean flags provided as arguments', () => {
@@ -464,7 +464,7 @@ describe('Grid Service', () => {
         triggerEvent: false,
       });
       expect(serviceHighlightSpy).not.toHaveBeenCalled();
-      expect(pubSubSpy).not.toHaveBeenLastCalledWith(`onItemUpserted`, mockItem);
+      expect(pubSubSpy).not.toHaveBeenLastCalledWith('onItemsUpserted', [mockItem]);
     });
 
     it('should call the "upsertItemById" method and expect it to call the "updateItem" when the item already exist in the grid', () => {
@@ -522,7 +522,7 @@ describe('Grid Service', () => {
         skipError: false,
         triggerEvent: true,
       });
-      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemUpdated`, mockItem);
+      expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsUpdated', [mockItem]);
     });
 
     it('should be able to update an item that exist in the dataview even when it is not showing in the grid (filtered from the grid) but will not highlight/selectRow since it is not in showing in the grid', () => {
@@ -541,7 +541,7 @@ describe('Grid Service', () => {
       expect(serviceHighlightSpy).not.toHaveBeenCalled();
       expect(updateRowSpy).not.toHaveBeenCalled();
       expect(selectSpy).not.toHaveBeenCalled();
-      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemUpdated`, mockItem);
+      expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsUpdated', [mockItem]);
     });
 
     it('should expect the service to call the "updateItemById" when calling "updateItem" and setting the "selecRow" flag and the grid option "enableRowSelection" is set', () => {
@@ -556,7 +556,7 @@ describe('Grid Service', () => {
       expect(getRowIdSpy).toHaveBeenCalledWith(0);
       expect(getRowIndexSpy).toHaveBeenCalledWith(0);
       expect(serviceHighlightSpy).not.toHaveBeenCalled();
-      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemUpdated`, mockItem);
+      expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsUpdated', [mockItem]);
     });
 
     it('should expect the service to call the "updateItem" when calling "updateItems" with a single item which is not an array', () => {
@@ -584,7 +584,7 @@ describe('Grid Service', () => {
         triggerEvent: true,
       });
       expect(serviceHighlightSpy).toHaveBeenCalledWith(0);
-      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemUpdated`, mockItem);
+      expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsUpdated', [mockItem]);
     });
 
     it('should expect the row to be selected when calling "updateItems" with an item when setting the "selecRow" flag and the grid option "enableRowSelection" is set', () => {
@@ -605,7 +605,7 @@ describe('Grid Service', () => {
       expect(updateSpy).toHaveBeenCalledWith([0], [mockItem]);
       expect(selectSpy).toHaveBeenCalledWith([0]);
       expect(serviceHighlightSpy).toHaveBeenCalledWith([0]);
-      expect(pubSubSpy).toHaveBeenCalledWith(`onItemUpdated`, [mockItem]);
+      expect(pubSubSpy).toHaveBeenCalledWith('onItemsUpdated', [mockItem]);
     });
 
     it('should call the "updateItem" method and expect it to call the "updateItemById" with different boolean flags provided as arguments', () => {
@@ -637,7 +637,7 @@ describe('Grid Service', () => {
         triggerEvent: true,
       });
       expect(serviceHighlightSpy).not.toHaveBeenCalled();
-      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemUpdated`, mockItem);
+      expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsUpdated', [mockItem]);
     });
 
     it('should expect the service to call the DataView "updateItem" when calling "addItem" with an item that has an Id defined by the "datasetIdPropertyName" property', () => {
@@ -660,7 +660,7 @@ describe('Grid Service', () => {
         skipError: false,
         triggerEvent: true,
       });
-      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemUpdated`, mockItem);
+      expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsUpdated', [mockItem]);
 
       delete mockGridOptions.datasetIdPropertyName;
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
@@ -737,7 +737,7 @@ describe('Grid Service', () => {
 
       expect(updateSpy).toHaveBeenCalledTimes(1);
       expect(updateSpy).toHaveBeenCalledWith(mockUpdatedItem.id, mockUpdatedItem);
-      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemUpdated`, mockUpdatedItem);
+      expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsUpdated', [mockUpdatedItem]);
       expect(invalidateSpy).toHaveBeenCalled();
       expect(setItemSpy).toHaveBeenCalledWith(mockFlatDataset);
     });
@@ -768,7 +768,7 @@ describe('Grid Service', () => {
 
       expect(updateSpy).toHaveBeenCalledTimes(1);
       expect(updateSpy).toHaveBeenCalledWith([mockUpdatedItem.id], [mockUpdatedItem]);
-      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemUpdated`, [mockUpdatedItem]);
+      expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsUpdated', [mockUpdatedItem]);
       expect(invalidateSpy).toHaveBeenCalled();
       expect(setItemSpy).toHaveBeenCalledWith(mockFlatDataset);
     });
@@ -852,7 +852,7 @@ describe('Grid Service', () => {
       expect(addSpy).toHaveBeenCalledWith(0, mockItem);
       expect(selectSpy).not.toHaveBeenCalled();
       expect(scrollSpy).toHaveBeenCalledWith(0);
-      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemAdded`, mockItem);
+      expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsAdded', [mockItem]);
       delete mockGridOptions.datasetIdPropertyName;
       vi.spyOn(gridStub, 'getOptions').mockReturnValue({});
     });
@@ -870,7 +870,7 @@ describe('Grid Service', () => {
       expect(addSpy).toHaveBeenCalledWith(0, mockItem);
       expect(selectSpy).not.toHaveBeenCalled();
       expect(scrollSpy).toHaveBeenCalledWith(0);
-      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemAdded`, mockItem);
+      expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsAdded', [mockItem]);
     });
 
     it('should expect the row to be selected when calling "addItem" with an item when setting the "selecRow" flag and the grid option "enableRowSelection" is set', () => {
@@ -886,7 +886,7 @@ describe('Grid Service', () => {
       expect(addSpy).toHaveBeenCalledTimes(1);
       expect(addSpy).toHaveBeenCalledWith(0, mockItem);
       expect(selectSpy).toHaveBeenCalledWith([0]);
-      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemAdded`, mockItem);
+      expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsAdded', [mockItem]);
     });
 
     it('should expect the service to call the DataView "addItem" when calling "addItem" with an item and the option "position" set to "bottom"', () => {
@@ -902,7 +902,7 @@ describe('Grid Service', () => {
       expect(addSpy).toHaveBeenCalledTimes(1);
       expect(addSpy).toHaveBeenCalledWith(mockItem);
       expect(scrollSpy).toHaveBeenCalledWith(expectationNewRowPosition);
-      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemAdded`, mockItem);
+      expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsAdded', [mockItem]);
     });
 
     it('should expect the service to call the DataView "insertItem" and go to first page when using local Pagination and calling "addItem" when the insert position is set to "top"', () => {
@@ -919,7 +919,7 @@ describe('Grid Service', () => {
 
       expect(addSpy).toHaveBeenCalledTimes(1);
       expect(addSpy).toHaveBeenCalledWith(0, mockItem);
-      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemAdded`, mockItem);
+      expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsAdded', [mockItem]);
       expect(firstPageSpy).toHaveBeenCalledTimes(1);
       expect(lastPageSpy).toHaveBeenCalledTimes(0);
 
@@ -944,7 +944,7 @@ describe('Grid Service', () => {
       expect(addSpy).toHaveBeenCalledTimes(1);
       expect(addSpy).toHaveBeenCalledWith(mockItem);
       expect(scrollSpy).toHaveBeenCalledWith(expectationNewRowPosition);
-      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemAdded`, mockItem);
+      expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsAdded', [mockItem]);
       expect(firstPageSpy).toHaveBeenCalledTimes(0);
       expect(lastPageSpy).toHaveBeenCalledTimes(1);
 
@@ -973,7 +973,7 @@ describe('Grid Service', () => {
       expect(insertItemsSpy).toHaveBeenCalledWith(0, [mockItems[0], mockItems[1]]);
       expect(serviceHighlightSpy).toHaveBeenCalledTimes(1);
       expect(serviceHighlightSpy).toHaveBeenCalledWith([0, 1]);
-      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemAdded`, mockItems);
+      expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsAdded', mockItems);
     });
 
     it('should expect to call the DataView "addItems" once when calling the service "addItems" with an array of items and the option "position" set to "bottom"', () => {
@@ -998,7 +998,7 @@ describe('Grid Service', () => {
       expect(addItemsSpy).toHaveBeenCalledWith([mockItems[0], mockItems[1]]);
       expect(serviceHighlightSpy).toHaveBeenCalledTimes(1);
       expect(serviceHighlightSpy).toHaveBeenCalledWith([expectationNewRowPosition1, expectationNewRowPosition2]);
-      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemAdded`, mockItems);
+      expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsAdded', mockItems);
     });
 
     it('should expect the service to call the "addItem" when calling "addItems" with a single item which is not an array', () => {
@@ -1023,7 +1023,7 @@ describe('Grid Service', () => {
         triggerEvent: true,
       });
       expect(serviceHighlightSpy).toHaveBeenCalledTimes(1);
-      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemAdded`, mockItem);
+      expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsAdded', [mockItem]);
     });
 
     it('should add a single item by calling "addItems" method and expect to call a grid resort but without highlighting neither triggering an event', () => {
@@ -1050,7 +1050,7 @@ describe('Grid Service', () => {
         triggerEvent: false,
       });
       expect(serviceHighlightSpy).not.toHaveBeenCalled();
-      expect(pubSubSpy).not.toHaveBeenLastCalledWith(`onItemAdded`);
+      expect(pubSubSpy).not.toHaveBeenLastCalledWith('onItemsAdded');
     });
 
     it('should add a single item by calling "addItems" method and expect to call a grid resort & highlight but without triggering an event', () => {
@@ -1075,7 +1075,7 @@ describe('Grid Service', () => {
       expect(insertItemsSpy).toHaveBeenCalledWith(0, [mockItems[0], mockItems[1]]);
       expect(serviceHighlightSpy).toHaveBeenCalledTimes(1);
       expect(getRowByIdSpy).toHaveBeenCalledTimes(2);
-      expect(pubSubSpy).not.toHaveBeenLastCalledWith(`onItemAdded`);
+      expect(pubSubSpy).not.toHaveBeenLastCalledWith('onItemsAdded');
     });
 
     it('should expect the row to be selected when calling "addItems" with an item when setting the "selecRow" flag and the grid option "enableRowSelection" is set', () => {
@@ -1095,7 +1095,7 @@ describe('Grid Service', () => {
       expect(insertSpy).toHaveBeenCalledTimes(1);
       expect(insertSpy).toHaveBeenCalledWith(0, [mockItem]);
       expect(selectSpy).toHaveBeenCalledWith([0]);
-      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemAdded`, [mockItem]);
+      expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsAdded', [mockItem]);
     });
 
     it('should expect the row to be selected when calling "addItems" with an item wich is not an array when setting the "selecRow" flag and the grid option "enableRowSelection" is set', () => {
@@ -1118,7 +1118,7 @@ describe('Grid Service', () => {
       expect(addSpy).toHaveBeenCalledTimes(1);
       expect(addSpy).toHaveBeenCalledWith(0, mockItem);
       expect(selectSpy).toHaveBeenCalledWith(0);
-      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemAdded`, mockItem);
+      expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsAdded', [mockItem]);
     });
 
     it('should expect the service to call the DataView "insertItem" when calling "addItem" with an item that has an Id defined by the "datasetIdPropertyName" property', () => {
@@ -1141,7 +1141,7 @@ describe('Grid Service', () => {
       expect(addSpy).toHaveBeenCalledWith(0, mockItem);
       expect(selectSpy).not.toHaveBeenCalled();
       expect(scrollSpy).toHaveBeenCalledWith(0);
-      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemAdded`, mockItem);
+      expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsAdded', [mockItem]);
       delete mockGridOptions.datasetIdPropertyName;
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
     });
@@ -1174,7 +1174,7 @@ describe('Grid Service', () => {
 
       expect(addSpy).toHaveBeenCalledTimes(1);
       expect(addSpy).toHaveBeenCalledWith(mockItem);
-      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemAdded`, mockItem);
+      expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsAdded', [mockItem]);
       expect(invalidateSpy).toHaveBeenCalled();
       expect(setItemSpy).toHaveBeenCalledWith(mockFlatDataset);
       expect(scrollSpy).toHaveBeenCalled();
@@ -1208,7 +1208,7 @@ describe('Grid Service', () => {
 
       expect(addSpy).toHaveBeenCalledTimes(1);
       expect(addSpy).toHaveBeenCalledWith(mockItem);
-      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemAdded`, mockItem);
+      expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsAdded', [mockItem]);
       expect(invalidateSpy).toHaveBeenCalled();
       expect(setItemSpy).toHaveBeenCalledWith(mockFlatDataset);
       expect(scrollSpy).not.toHaveBeenCalled();
@@ -1242,7 +1242,7 @@ describe('Grid Service', () => {
 
       expect(addSpy).toHaveBeenCalledTimes(1);
       expect(addSpy).toHaveBeenCalledWith([mockItem]);
-      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemAdded`, [mockItem]);
+      expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsAdded', [mockItem]);
       expect(invalidateSpy).toHaveBeenCalled();
       expect(setItemSpy).toHaveBeenCalledWith(mockFlatDataset);
       expect(scrollSpy).toHaveBeenCalled();
@@ -1276,7 +1276,7 @@ describe('Grid Service', () => {
 
       expect(addSpy).toHaveBeenCalledTimes(1);
       expect(addSpy).toHaveBeenCalledWith([mockItem]);
-      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemAdded`, [mockItem]);
+      expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsAdded', [mockItem]);
       expect(invalidateSpy).toHaveBeenCalled();
       expect(setItemSpy).toHaveBeenCalledWith(mockFlatDataset);
       expect(scrollSpy).not.toHaveBeenCalled();
@@ -1352,7 +1352,7 @@ describe('Grid Service', () => {
       expect(output).toEqual(4);
       expect(deleteSpy).toHaveBeenCalledTimes(1);
       expect(deleteSpy).toHaveBeenCalledWith(mockItem.id);
-      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemDeleted`, mockItem.id);
+      expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsDeleted', [mockItem.id]);
     });
 
     it('should remove any row selection when the grid option "enableCheckboxSelector" is enabled', () => {
@@ -1392,7 +1392,7 @@ describe('Grid Service', () => {
       expect(output).toEqual([0, 5]);
       expect(deleteItemsSpy).toHaveBeenCalledTimes(1);
       expect(deleteItemsSpy).toHaveBeenCalledWith([0, 5]);
-      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemDeleted`, mockItems);
+      expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsDeleted', mockItems);
     });
 
     it('should expect the service to call the "deleteItem" when calling "deleteItems" with a single item which is not an array', () => {
@@ -1409,7 +1409,7 @@ describe('Grid Service', () => {
       expect(output).toEqual([4]);
       expect(serviceDeleteSpy).toHaveBeenCalledTimes(1);
       expect(serviceDeleteSpy).toHaveBeenCalledWith(mockItem, { skipError: false, triggerEvent: true });
-      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemDeleted`, mockItem.id);
+      expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsDeleted', [mockItem.id]);
     });
 
     it('should delete a single item by calling "deleteItems" method without triggering an event', () => {
@@ -1426,7 +1426,7 @@ describe('Grid Service', () => {
       expect(output).toEqual([0]);
       expect(serviceDeleteSpy).toHaveBeenCalled();
       expect(serviceDeleteSpy).toHaveBeenCalledWith(mockItem, { skipError: false, triggerEvent: false });
-      expect(pubSubSpy).not.toHaveBeenLastCalledWith(`onItemDeleted`);
+      expect(pubSubSpy).not.toHaveBeenLastCalledWith('onItemsDeleted');
     });
 
     it('should delete multiple items by calling "deleteItems" method and expect to trigger a single an event', () => {
@@ -1462,7 +1462,7 @@ describe('Grid Service', () => {
       expect(output).toEqual([3]);
       expect(serviceDeleteSpy).toHaveBeenCalled();
       expect(serviceDeleteSpy).toHaveBeenCalledWith(3, { triggerEvent: false });
-      expect(pubSubSpy).not.toHaveBeenLastCalledWith(`onItemDeleted`);
+      expect(pubSubSpy).not.toHaveBeenLastCalledWith('onItemsDeleted');
     });
 
     it('should delete a single item by calling "deleteItemByIds" method and expect to trigger a single an event', () => {
@@ -1501,7 +1501,7 @@ describe('Grid Service', () => {
       expect(output).toEqual(4);
       expect(deleteSpy).toHaveBeenCalledTimes(1);
       expect(deleteSpy).toHaveBeenCalledWith(mockItem.customId);
-      expect(pubSubSpy).toHaveBeenLastCalledWith(`onItemDeleted`, mockItem.customId);
+      expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsDeleted', [mockItem.customId]);
       delete mockGridOptions.datasetIdPropertyName;
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
     });
@@ -1800,7 +1800,7 @@ describe('Grid Service', () => {
       expect(autoSizeSpy).toHaveBeenCalled();
       expect(setVisibleSpy).toHaveBeenCalledWith(mockWithoutColumns);
       expect(setColsSpy).toHaveBeenCalledWith(mockWithoutColumns);
-      expect(pubSubSpy).toHaveBeenCalledWith('onHeaderMenuHideColumns', { columns: mockWithoutColumns });
+      expect(pubSubSpy).toHaveBeenCalledWith('onHideColumns', { columns: mockWithoutColumns });
       expect(setColSpy).toHaveBeenCalledTimes(1);
     });
 
@@ -1940,7 +1940,6 @@ describe('Grid Service', () => {
         triggerEvent: false,
       });
       expect(autoSizeSpy).toHaveBeenCalled();
-      expect(pubSubSpy).toHaveBeenCalledWith('onHeaderMenuHideColumns', { columns: expect.any(Array) });
       expect(pubSubSpy).toHaveBeenCalledWith('onHideColumns', { columns: expect.any(Array) });
       expect(setColSpy).toHaveBeenCalledTimes(1);
     });

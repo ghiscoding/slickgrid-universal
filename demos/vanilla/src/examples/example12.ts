@@ -5,7 +5,6 @@ import {
   type EditCommand,
   Editors,
   EventNamingStyle,
-  FieldType,
   Filters,
   type Formatter,
   Formatters,
@@ -138,7 +137,7 @@ export default class Example12 {
 
     // bind any of the grid events
     this._bindingEventService.bind(this.gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
-    this._bindingEventService.bind(this.gridContainerElm, 'onitemdeleted', this.handleItemDeleted.bind(this));
+    this._bindingEventService.bind(this.gridContainerElm, 'onitemsdeleted', this.handleItemsDeleted.bind(this));
     this._bindingEventService.bind(this.gridContainerElm, 'onbeforeeditcell', this.handleOnBeforeEditCell.bind(this));
     this._bindingEventService.bind(this.gridContainerElm, 'oncellchange', this.handleOnCellChange.bind(this));
     this._bindingEventService.bind(this.gridContainerElm, 'onclick', this.handleOnCellClicked.bind(this));
@@ -164,7 +163,6 @@ export default class Example12 {
         name: '<span title="Task must always be followed by a number" class="text-color-warning-dark mdi mdi-alert-outline"></span> Title <span title="Title is always rendered as UPPERCASE" class="mdi mdi-information-outline"></span>',
         field: 'title',
         sortable: true,
-        type: FieldType.string,
         minWidth: 75,
         cssClass: 'text-bold text-uppercase',
         filterable: true,
@@ -176,7 +174,7 @@ export default class Example12 {
           required: true,
           alwaysSaveOnEnterKey: true,
           maxLength: 12,
-          editorOptions: {
+          options: {
             cols: 45,
             rows: 6,
             buttonTexts: {
@@ -194,7 +192,7 @@ export default class Example12 {
         sortable: true,
         filterable: true,
         minWidth: 75,
-        type: FieldType.number,
+        type: 'number',
         columnGroup: 'Common Factor',
         formatter: (_row, _cell, value) => {
           if (value === null || value === undefined || value === '') {
@@ -221,7 +219,7 @@ export default class Example12 {
         minWidth: 70,
         sortable: true,
         filterable: true,
-        type: FieldType.number,
+        type: 'number',
         columnGroup: 'Analysis',
         filter: { model: Filters.compoundInputNumber },
         formatter: Formatters.dollar,
@@ -231,7 +229,7 @@ export default class Example12 {
         name: '% Complete',
         field: 'percentComplete',
         minWidth: 100,
-        type: FieldType.number,
+        type: 'number',
         sortable: true,
         filterable: true,
         columnGroup: 'Analysis',
@@ -246,7 +244,7 @@ export default class Example12 {
       },
       // {
       //   id: 'percentComplete2', name: '% Complete', field: 'analysis.percentComplete', minWidth: 100,
-      //   type: FieldType.number,
+      //   type: 'number',
       //   sortable: true, filterable: true, columnGroup: 'Analysis',
       //   // filter: { model: Filters.compoundSlider, operator: '>=' },
       //   formatter: Formatters.complex,
@@ -274,7 +272,7 @@ export default class Example12 {
         name: 'Complexity',
         field: 'complexity',
         minWidth: 100,
-        type: FieldType.number,
+        type: 'number',
         sortable: true,
         filterable: true,
         columnGroup: 'Analysis',
@@ -283,7 +281,7 @@ export default class Example12 {
         filter: {
           model: Filters.multipleSelect,
           collection: this.complexityLevelList,
-          filterOptions: { showClear: true } as MultipleSelectOption,
+          options: { showClear: true } as MultipleSelectOption,
         },
         editor: {
           model: Editors.singleSelect,
@@ -300,12 +298,12 @@ export default class Example12 {
         formatter: Formatters.dateUs,
         columnGroup: 'Period',
         exportCustomFormatter: Formatters.dateUs,
-        type: FieldType.date,
-        outputType: FieldType.dateUs,
-        saveOutputType: FieldType.dateUtc,
+        type: 'date',
+        outputType: 'dateUs',
+        saveOutputType: 'dateUtc',
         filterable: true,
         filter: { model: Filters.compoundDate },
-        editor: { model: Editors.date, massUpdate: true, editorOptions: { hideClearButton: false } as SliderOption },
+        editor: { model: Editors.date, massUpdate: true, options: { hideClearButton: false } as SliderOption },
       },
       {
         id: 'completed',
@@ -327,7 +325,7 @@ export default class Example12 {
             { value: false, label: 'False' },
           ],
           model: Filters.singleSelect,
-          filterOptions: { showClear: true } as MultipleSelectOption,
+          options: { showClear: true } as MultipleSelectOption,
         },
         editor: { model: Editors.checkbox, massUpdate: true },
         // editor: { model: Editors.singleSelect, collection: [{ value: true, label: 'Yes' }, { value: false, label: 'No' }], },
@@ -340,25 +338,23 @@ export default class Example12 {
         minWidth: 100,
         formatter: Formatters.dateUs,
         columnGroup: 'Period',
-        type: FieldType.date,
-        outputType: FieldType.dateUs,
-        saveOutputType: FieldType.dateUtc,
+        type: 'date',
+        outputType: 'dateUs',
+        saveOutputType: 'dateUtc',
         filterable: true,
         filter: { model: Filters.compoundDate },
         exportCustomFormatter: Formatters.dateUs,
         editor: {
           model: Editors.date,
-          editorOptions: {
-            range: { min: 'today' }, // set minimum date as today
+          options: {
+            displayDateMin: 'today', // set minimum date as today
 
             // if we want to preload the date picker with a different date,
-            // we could do it by assigning settings.seleted.dates
+            // we could do it by assigning `selectedDates: []`
             // NOTE: vanilla-calendar doesn't automatically focus the picker to the year/month and you need to do it yourself
-            // selected: {
-            //   dates: ['2021-06-04'],
-            //   month: 6 - 1, // Note: JS Date month (only) is zero index based, so June is 6-1 => 5
-            //   year: 2021
-            // }
+            //  selectedDates: ['2021-06-04'],
+            //  selectedMonth: 6 - 1, // Note: JS Date month (only) is zero index based, so June is 6-1 => 5
+            //  selectedYear: 2021
           } as VanillaCalendarOption,
           massUpdate: true,
           validator: (value, args) => {
@@ -382,7 +378,7 @@ export default class Example12 {
         labelKey: 'itemName',
         formatter: Formatters.complexObject,
         exportCustomFormatter: Formatters.complex, // without the Editing cell Formatter
-        type: FieldType.object,
+        type: 'object',
         sortComparer: SortComparers.objectString,
         editor: {
           model: Editors.autocompleter,
@@ -390,7 +386,7 @@ export default class Example12 {
           massUpdate: true,
 
           // example with a Remote API call
-          editorOptions: {
+          options: {
             minLength: 1,
             fetch: (searchTerm, callback) => {
               const products = this.mockProducts();
@@ -408,7 +404,7 @@ export default class Example12 {
         filter: {
           model: Filters.inputText,
           // placeholder: '🔎︎ search product',
-          type: FieldType.string,
+          type: 'string',
           queryField: 'product.itemName',
         },
       },
@@ -421,7 +417,7 @@ export default class Example12 {
         exportCustomFormatter: Formatters.complex, // without the Editing cell Formatter
         dataKey: 'code',
         labelKey: 'name',
-        type: FieldType.object,
+        type: 'object',
         sortComparer: SortComparers.objectString,
         filterable: true,
         sortable: true,
@@ -430,7 +426,7 @@ export default class Example12 {
           model: Editors.autocompleter,
           alwaysSaveOnEnterKey: true,
           massUpdate: true,
-          editorOptions: {
+          options: {
             minLength: 0,
             showOnFocus: false,
             fetch: (searchText, updateCallback) => {
@@ -657,7 +653,7 @@ export default class Example12 {
     return false;
   }
 
-  handleItemDeleted(event) {
+  handleItemsDeleted(event) {
     const itemId = event?.detail;
     console.log('item deleted with id:', itemId);
   }
@@ -729,7 +725,7 @@ export default class Example12 {
     if (columnDef.id === 'completed') {
       this.compositeEditorInstance.changeFormEditorOption('complexity', 'filter', true); // multiple-select dropdown editor
       this.compositeEditorInstance.changeFormEditorOption('percentComplete', 'hideSliderNumber', formValues['completed']); // slider editor
-      this.compositeEditorInstance.changeFormEditorOption('finish', 'range', { min: 'today' }); // calendar picker, change minDate to today
+      this.compositeEditorInstance.changeFormEditorOption('finish', 'displayDateMin', 'today'); // calendar picker, change minDate to today
     }
     */
   }

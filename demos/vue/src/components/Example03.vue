@@ -5,7 +5,6 @@ import {
   type EditCommand,
   Editors,
   type EditorValidator,
-  FieldType,
   Filters,
   Formatters,
   type GridOption,
@@ -14,6 +13,7 @@ import {
   SlickGlobalEditorLock,
   SlickgridVue,
   type SlickgridVueInstance,
+  type SliderOption,
   SortComparers,
   type VanillaCalendarOption,
 } from 'slickgrid-vue';
@@ -135,7 +135,6 @@ function defineGrid() {
       field: 'title',
       filterable: true,
       sortable: true,
-      type: FieldType.string,
       editor: {
         model: Editors.longText,
         placeholder: 'something',
@@ -154,7 +153,6 @@ function defineGrid() {
       field: 'title',
       filterable: true,
       sortable: true,
-      type: FieldType.string,
       editor: {
         model: CustomInputEditor,
         placeholder: 'custom',
@@ -173,16 +171,16 @@ function defineGrid() {
       filterable: true,
       minWidth: 100,
       sortable: true,
-      type: FieldType.number,
+      type: 'number',
       filter: {
         model: Filters.slider,
-        filterOptions: { hideSliderNumber: false },
+        options: { hideSliderNumber: false } as SliderOption,
       },
       editor: {
         model: Editors.slider,
         minValue: 0,
         maxValue: 100,
-        // editorOptions: { hideSliderNumber: true },
+        // options: { hideSliderNumber: true },
       },
       /*
         editor: {
@@ -203,7 +201,7 @@ function defineGrid() {
       field: 'percentComplete',
       filterable: true,
       formatter: Formatters.multiple,
-      type: FieldType.number,
+      type: 'number',
       editor: {
         // We can also add HTML text to be rendered (any bad script will be sanitized) but we have to opt-in, else it will be sanitized
         enableRenderHtml: true,
@@ -248,7 +246,7 @@ function defineGrid() {
       formatter: Formatters.dateIso,
       sortable: true,
       minWidth: 100,
-      type: FieldType.date,
+      type: 'date',
       editor: {
         model: Editors.date,
       },
@@ -262,13 +260,13 @@ function defineGrid() {
       formatter: Formatters.dateIso,
       sortable: true,
       minWidth: 100,
-      type: FieldType.date, // dataset cell input format
-      // outputType: FieldType.dateUs,   // date picker format
-      saveOutputType: FieldType.dateUtc, // save output date format
+      type: 'date', // dataset cell input format
+      // outputType: 'dateUs',   // date picker format
+      saveOutputType: 'dateUtc', // save output date format
       editor: {
         model: Editors.date,
-        // override any of the calendar options through "filterOptions"
-        editorOptions: { range: { min: 'today' } } as VanillaCalendarOption,
+        // override any of the calendar options through "options"
+        options: { displayDateMin: 'today' } as VanillaCalendarOption,
       },
     },
     {
@@ -285,7 +283,7 @@ function defineGrid() {
         // We can use the autocomplete through 3 ways 'collection', 'collectionAsync' or with your own autocomplete options
         // use your own autocomplete options, instead of fetch-jsonp, use Fetch
         // here we use fetch-jsonp just because I'm not sure how to configure fetch with JSONP and CORS
-        editorOptions: {
+        options: {
           minLength: 3,
           forceUserInput: true,
           fetch: (searchText: string, updateCallback: (items: false | any[]) => void) => {
@@ -306,7 +304,7 @@ function defineGrid() {
 
         // OR use your own autocomplete options, instead of fetch-jsonp, use Fetch
         // here we use fetch-jsonp just because I'm not sure how to configure fetch with JSONP and CORS
-        filterOptions: {
+        options: {
           minLength: 3,
           fetch: (searchText: string, updateCallback: (items: false | any[]) => void) => {
             /** with JSONP will work locally but not on the GitHub demo because of CORS */
@@ -325,7 +323,7 @@ function defineGrid() {
       formatter: Formatters.complexObject,
       dataKey: 'code',
       labelKey: 'name',
-      type: FieldType.object,
+      type: 'object',
       sortComparer: SortComparers.objectString,
       filterable: true,
       sortable: true,
@@ -362,7 +360,7 @@ function defineGrid() {
       name: 'Effort Driven',
       field: 'effortDriven',
       filterable: true,
-      type: FieldType.boolean,
+      type: 'boolean',
       filter: {
         model: Filters.singleSelect,
         collection: [
@@ -387,7 +385,6 @@ function defineGrid() {
       sanitizeDataExport: true,
       minWidth: 100,
       sortable: true,
-      type: FieldType.string,
       editor: {
         // We can load the 'collection' asynchronously (on first load only, after that we will simply use 'collection')
         // 3 ways are supported (fetch, Promise or RxJS when available)
@@ -403,7 +400,7 @@ function defineGrid() {
         collectionSortBy: {
           property: 'value',
           sortDesc: true,
-          fieldType: FieldType.number,
+          fieldType: 'number',
         },
         customStructure: {
           label: 'label',
@@ -429,7 +426,7 @@ function defineGrid() {
         collectionSortBy: {
           property: 'value',
           sortDesc: true,
-          fieldType: FieldType.number,
+          fieldType: 'number',
         },
         customStructure: {
           label: 'label',

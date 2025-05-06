@@ -182,7 +182,7 @@ You can provide a custom predicate by using the `filterPredicate` when defining 
 this.columnDefinitions = [
   {
     id: 'title', name: 'Title', field: 'title', sortable: true,
-    filterable: true, type: FieldType.string,
+    filterable: true,
     filter: {
       model: Filters.inputText,
       // you can use your own custom filter predicate when built-in filters aren't working for you

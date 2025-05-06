@@ -7,8 +7,6 @@ import {
   type SlickgridVueInstance,
   Aggregators,
   type Column,
-  FieldType,
-  FileType,
   Filters,
   Formatters,
   GroupTotalFormatters,
@@ -56,7 +54,7 @@ function defineGrid() {
       id: 'sel',
       name: nameElementColumn1,
       field: 'num',
-      type: FieldType.number,
+      type: 'number',
       columnPickerLabel: 'Custom Label', // add a custom label for the ColumnPicker/GridMenu when default header value extractor doesn't work for you ()
       width: 140,
       maxWidth: 150,
@@ -85,7 +83,7 @@ function defineGrid() {
       filterable: true,
       filter: { model: Filters.slider, operator: '>=' },
       sortable: true,
-      type: FieldType.number,
+      type: 'number',
       groupTotalsFormatter: GroupTotalFormatters.sumTotals,
       params: { groupFormatterPrefix: 'Total: ' },
     },
@@ -99,7 +97,7 @@ function defineGrid() {
       filterable: true,
       filter: { model: Filters.compoundSlider },
       sortable: true,
-      type: FieldType.number,
+      type: 'number',
       groupTotalsFormatter: GroupTotalFormatters.avgTotalsPercentage,
       params: { groupFormatterPrefix: '<i>Avg</i>: ' },
     },
@@ -112,7 +110,7 @@ function defineGrid() {
       filterable: true,
       filter: { model: Filters.compoundDate },
       sortable: true,
-      type: FieldType.dateIso,
+      type: 'dateIso',
       formatter: Formatters.dateIso,
       exportWithFormatter: true,
     },
@@ -125,7 +123,7 @@ function defineGrid() {
       filterable: true,
       filter: { model: Filters.compoundDate },
       sortable: true,
-      type: FieldType.dateIso,
+      type: 'dateIso',
       formatter: Formatters.dateIso,
       exportWithFormatter: true,
     },
@@ -138,7 +136,7 @@ function defineGrid() {
       sortable: true,
       filterable: true,
       filter: { model: Filters.compoundInputNumber },
-      type: FieldType.number,
+      type: 'number',
       formatter: Formatters.currency,
       groupTotalsFormatter: GroupTotalFormatters.sumTotalsCurrency,
       params: {
@@ -258,7 +256,7 @@ function expandAllGroups() {
 function exportToExcel() {
   excelExportService.exportToExcel({
     filename: 'Export',
-    format: FileType.xlsx,
+    format: 'xlsx',
   });
 }
 

@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vite
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { of, throwError } from 'rxjs';
 
-import { EmitterType, FieldType } from '../../enums/index.js';
+import { FieldType } from '../../enums/index.js';
 import type {
   BackendService,
   Column,
@@ -439,7 +439,7 @@ describe('SortService', () => {
       expect(collectionServiceStub.parseSingleDateItem).toHaveBeenCalled();
     });
 
-    it('should enable pre-parse and expect "preParseSingleDateItem()" being called when PubSub "onItemAdded" event is called', async () => {
+    it('should enable pre-parse and expect "preParseSingleDateItem()" being called when PubSub "onItemsAdded" event is called', async () => {
       const mockColumns = [
         { id: 'firstName', field: 'firstName' },
         { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso },
@@ -455,13 +455,13 @@ describe('SortService', () => {
       gridOptionMock.preParseDateColumns = true;
 
       service.bindLocalOnSort(gridStub);
-      eventPubSubService.publish('onItemAdded', mockData[0]);
+      eventPubSubService.publish('onItemsAdded', mockData[0]);
 
       expect(parseSingleSpy).toHaveBeenCalled();
       expect(collectionServiceStub.parseSingleDateItem).toHaveBeenCalled();
     });
 
-    it('should enable pre-parse and expect "preParseSingleDateItem()" being called when PubSub "onItemUpdated" event is called', async () => {
+    it('should enable pre-parse and expect "preParseSingleDateItem()" being called when PubSub "onItemsUpdated" event is called', async () => {
       const mockColumns = [
         { id: 'firstName', field: 'firstName' },
         { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso },
@@ -477,7 +477,7 @@ describe('SortService', () => {
       gridOptionMock.preParseDateColumns = true;
 
       service.bindLocalOnSort(gridStub);
-      eventPubSubService.publish('onItemUpdated', mockData[0]);
+      eventPubSubService.publish('onItemsUpdated', [mockData[0]]);
 
       expect(parseSingleSpy).toHaveBeenCalled();
       expect(collectionServiceStub.parseSingleDateItem).toHaveBeenCalled();
@@ -619,7 +619,7 @@ describe('SortService', () => {
       const localSorterMock = { columnId: 'field1', direction: 'DESC' } as CurrentSorter;
       const pubSubSpy = vi.spyOn(eventPubSubService, 'publish');
 
-      service.emitSortChanged(EmitterType.local, [localSorterMock]);
+      service.emitSortChanged('local', [localSorterMock]);
       const currentLocalSorters = service.getCurrentLocalSorters();
 
       await new Promise(process.nextTick);

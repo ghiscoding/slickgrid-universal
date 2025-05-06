@@ -16,7 +16,6 @@ import {
   type VanillaCalendarOption,
   type Column,
   Editors,
-  FieldType,
   Filters,
   formatNumber,
   Formatters,
@@ -91,7 +90,6 @@ function defineGrid() {
       name: '<span title="Task must always be followed by a number" class="text-warning mdi mdi-alert-outline"></span> Title <span title="Title is always rendered as UPPERCASE" class="mdi mdi-information-outline"></span>',
       field: 'title',
       sortable: true,
-      type: FieldType.string,
       minWidth: 75,
       cssClass: 'text-uppercase fw-bold',
       columnGroup: 'Common Factor',
@@ -103,7 +101,7 @@ function defineGrid() {
         required: true,
         alwaysSaveOnEnterKey: true,
         maxLength: 12,
-        editorOptions: {
+        options: {
           cols: 45,
           rows: 6,
           buttonTexts: {
@@ -121,7 +119,7 @@ function defineGrid() {
       sortable: true,
       filterable: true,
       minWidth: 75,
-      type: FieldType.number,
+      type: 'number',
       columnGroup: 'Common Factor',
       formatter: (_row, _cell, value) => {
         if (value === null || value === undefined || value === '') {
@@ -148,7 +146,7 @@ function defineGrid() {
       minWidth: 70,
       sortable: true,
       filterable: true,
-      type: FieldType.number,
+      type: 'number',
       columnGroup: 'Analysis',
       filter: { model: Filters.compoundInputNumber },
       formatter: Formatters.dollar,
@@ -158,7 +156,7 @@ function defineGrid() {
       name: '% Complete',
       field: 'percentComplete',
       minWidth: 100,
-      type: FieldType.number,
+      type: 'number',
       sortable: true,
       filterable: true,
       columnGroup: 'Analysis',
@@ -173,7 +171,7 @@ function defineGrid() {
     },
     // {
     //   id: 'percentComplete2', name: '% Complete', field: 'analysis.percentComplete', minWidth: 100,
-    //   type: FieldType.number,
+    //   type: 'number',
     //   sortable: true, filterable: true, columnGroup: 'Analysis',
     //   // filter: { model: Filters.compoundSlider, operator: '>=' },
     //   formatter: Formatters.complex,
@@ -201,7 +199,7 @@ function defineGrid() {
       name: 'Complexity',
       field: 'complexity',
       minWidth: 100,
-      type: FieldType.number,
+      type: 'number',
       sortable: true,
       filterable: true,
       columnGroup: 'Analysis',
@@ -226,12 +224,12 @@ function defineGrid() {
       formatter: Formatters.dateUs,
       columnGroup: 'Period',
       exportCustomFormatter: Formatters.dateUs,
-      type: FieldType.date,
-      outputType: FieldType.dateUs,
-      saveOutputType: FieldType.dateUtc,
+      type: 'date',
+      outputType: 'dateUs',
+      saveOutputType: 'dateUtc',
       filterable: true,
       filter: { model: Filters.compoundDate },
-      editor: { model: Editors.date, massUpdate: true, editorOptions: { hideClearButton: false } },
+      editor: { model: Editors.date, massUpdate: true, options: { hideClearButton: false } },
     },
     {
       id: 'completed',
@@ -265,25 +263,23 @@ function defineGrid() {
       minWidth: 100,
       formatter: Formatters.dateUs,
       columnGroup: 'Period',
-      type: FieldType.date,
-      outputType: FieldType.dateUs,
-      saveOutputType: FieldType.dateUtc,
+      type: 'date',
+      outputType: 'dateUs',
+      saveOutputType: 'dateUtc',
       filterable: true,
       filter: { model: Filters.compoundDate },
       exportCustomFormatter: Formatters.dateUs,
       editor: {
         model: Editors.date,
-        editorOptions: {
-          range: { min: 'today' },
+        options: {
+          displayDateMin: 'today',
 
           // if we want to preload the date picker with a different date,
-          // we could do it by assigning settings.seleted.dates
+          // we could do it by assigning `selectedDates: []`
           // NOTE: vanilla-calendar doesn't automatically focus the picker to the year/month and you need to do it yourself
-          // selected: {
-          //   dates: ['2021-06-04'],
-          //   month: 6 - 1, // Note: JS Date month (only) is zero index based, so June is 6-1 => 5
-          //   year: 2021
-          // }
+          //  selectedDates: ['2021-06-04'],
+          //  selectedMonth: 6 - 1, // Note: JS Date month (only) is zero index based, so June is 6-1 => 5
+          //  selectedYear: 2021
         } as VanillaCalendarOption,
         massUpdate: true,
         validator: (value, args) => {
@@ -307,7 +303,7 @@ function defineGrid() {
       labelKey: 'itemName',
       formatter: Formatters.complexObject,
       exportCustomFormatter: Formatters.complex, // without the Editing cell Formatter
-      type: FieldType.object,
+      type: 'object',
       sortComparer: SortComparers.objectString,
       editor: {
         model: Editors.autocompleter,
@@ -315,7 +311,7 @@ function defineGrid() {
         massUpdate: true,
 
         // example with a Remote API call
-        editorOptions: {
+        options: {
           minLength: 1,
           fetch: (searchTerm: string, callback: (items: false | any[]) => void) => {
             const products = mockProducts();
@@ -333,7 +329,6 @@ function defineGrid() {
       filter: {
         model: Filters.inputText,
         // placeholder: '🔎︎ search product',
-        type: FieldType.string,
         queryField: 'product.itemName',
       },
     },
@@ -346,7 +341,7 @@ function defineGrid() {
       exportCustomFormatter: Formatters.complex, // without the Editing cell Formatter
       dataKey: 'code',
       labelKey: 'name',
-      type: FieldType.object,
+      type: 'object',
       sortComparer: SortComparers.objectString,
       filterable: true,
       sortable: true,
@@ -356,11 +351,10 @@ function defineGrid() {
         massUpdate: true,
         customStructure: { label: 'name', value: 'code' },
         collectionAsync: Promise.resolve(COUNTRIES_COLLECTION),
-        editorOptions: { minLength: 0 },
+        options: { minLength: 0 } as AutocompleterOption,
       },
       filter: {
         model: Filters.inputText,
-        type: 'string',
         queryField: 'origin.name',
       },
     },
@@ -560,7 +554,7 @@ function handleValidationError(e: Event, args: any) {
   return false;
 }
 
-function handleItemDeleted(itemId: string) {
+function handleItemsDeleted(itemId: string) {
   console.log('item deleted with id:', itemId);
 }
 
@@ -624,7 +618,7 @@ function handleOnCompositeEditorChange(_e: Event, args: OnCompositeEditorChangeE
     if (columnDef.id === 'completed') {
       compositeEditorInstance.value.changeFormEditorOption('complexity', 'filter', true); // multiple-select dropdown editor
       compositeEditorInstance.value.changeFormEditorOption('percentComplete', 'hideSliderNumber', formValues['completed']); // slider editor
-      compositeEditorInstance.value.changeFormEditorOption('finish', 'range', { min: 'today' }); // calendar picker, change minDate to today
+      compositeEditorInstance.value.changeFormEditorOption('finish', 'displayDateMin', 'today'); // calendar picker, change minDate to today
     }
     */
 }
@@ -1156,7 +1150,7 @@ function renderItemCallbackWith4Corners(item: any): string {
     @onCellChange="handleOnCellChange($event.detail.eventData, $event.detail.args)"
     @onClick="handleOnCellClicked($event.detail.eventData, $event.detail.args)"
     @onCompositeEditorChange="handleOnCompositeEditorChange($event.detail.eventData, $event.detail.args)"
-    @onItemDeleted="handleItemDeleted($event.detail)"
+    @onItemsDeleted="handleItemsDeleted($event.detail)"
     @onGridStateChanged="handleOnGridStateChanged($event.detail)"
     @onRowsOrCountChanged="handleReRenderUnsavedStyling()"
     @onValidationError="handleValidationError($event.detail.eventData, $event.detail.args)"

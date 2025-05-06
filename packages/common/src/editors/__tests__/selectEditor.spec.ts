@@ -195,8 +195,25 @@ describe('SelectEditor', () => {
       expect(disableSpy).toHaveBeenCalledWith(true);
     });
 
+    it('should translate prefix/suffix when "enableTranslateLabel" is enabled', () => {
+      mockColumn.editor!.enableTranslateLabel = true;
+      mockColumn.editor!.collection = [
+        { value: 'male', label: 'male', labelPrefix: 'HELLO', labelSuffix: 'DEVELOPER' },
+        { value: 'female', label: 'female' },
+      ];
+      gridOptionMock.translater = translateService;
+      editor = new SelectEditor(editorArguments, true);
+      editor.msInstance?.setSelects(['male']);
+
+      const selectDropElm = editor.msInstance?.getDropElement();
+      const editorListElm = selectDropElm?.querySelectorAll<HTMLInputElement>('ul>li');
+
+      expect(editor.currentValues).toEqual(['male']);
+      expect(editorListElm?.[0].querySelector('span')?.textContent).toBe('HellomaleDeveloper');
+    });
+
     it('should initialize the editor even when user define its own editor options', () => {
-      mockColumn.editor!.editorOptions = { minHeight: 300 } as MultipleSelectOption;
+      mockColumn.editor!.options = { minHeight: 300 } as MultipleSelectOption;
       editor = new SelectEditor(editorArguments, true);
       const editorCount = document.body.querySelectorAll('select.ms-filter.editor-gender').length;
 

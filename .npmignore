@@ -1,4 +1,5 @@
 .env
+.angular
 
 # dependencies
 /node_modules

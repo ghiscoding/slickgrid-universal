@@ -2,7 +2,7 @@ import { parse } from '@formkit/tempo';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { CollectionService } from '../collection.service.js';
-import { FieldType, FilterMultiplePassType, OperatorType } from '../../enums/index.js';
+import { FieldType, OperatorType } from '../../enums/index.js';
 import type { CollectionFilterBy, CollectionSortBy, Column, GridOption } from '../../interfaces/index.js';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import { type SlickGrid } from '../../core/slickGrid.js';
@@ -101,7 +101,7 @@ describe('CollectionService', () => {
             { property: 'lastName', value: 'Doe' }, // ommitted Operator are Equal by default
           ] as CollectionFilterBy[];
 
-          const result = service.filterCollection(collection, filterBy, FilterMultiplePassType.merge);
+          const result = service.filterCollection(collection, filterBy, 'merge');
 
           expect(result).toEqual([
             // the array will have all "John" 1st, then all "Doe"
@@ -271,7 +271,7 @@ describe('CollectionService', () => {
             { value: 'Bob' }, // ommitted Operator are Equal by default
           ] as CollectionFilterBy[];
 
-          const result = service.filterCollection(stringCollection, filterBy, FilterMultiplePassType.merge);
+          const result = service.filterCollection(stringCollection, filterBy, 'merge');
 
           expect(result).toEqual(['John', 'Bob']);
         });

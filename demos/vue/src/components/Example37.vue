@@ -1,13 +1,5 @@
 <script setup lang="ts">
-import {
-  type GridOption,
-  type OnCellChangeEventArgs,
-  type SlickgridVueInstance,
-  type Column,
-  Editors,
-  FieldType,
-  SlickgridVue,
-} from 'slickgrid-vue';
+import { type GridOption, type OnCellChangeEventArgs, type SlickgridVueInstance, type Column, Editors, SlickgridVue } from 'slickgrid-vue';
 import { onBeforeMount, onMounted, onUnmounted, ref, type Ref } from 'vue';
 
 const NB_ITEMS = 100;
@@ -41,7 +33,7 @@ function defineGrid() {
       id: i,
       name: String.fromCharCode('A'.charCodeAt(0) + i),
       field: String(i),
-      type: FieldType.number,
+      type: 'number',
       width: 58,
       editor: { model: Editors.integer },
     });

@@ -5,7 +5,7 @@ import type { ExtensionService } from '../extension.service.js';
 import type { FilterService } from '../filter.service.js';
 import { GridStateService } from '../gridState.service.js';
 import type { SortService } from '../sort.service.js';
-import { GridStateType, ExtensionName } from '../../enums/index.js';
+import { ExtensionName } from '../../enums/index.js';
 import { type SlickDataView, SlickEvent, SlickEventData, type SlickGrid } from '../../core/index.js';
 import type {
   BackendService,
@@ -301,7 +301,7 @@ describe('GridStateService', () => {
         const associatedColumnsMock = [{ columnId: 'field1', cssClass: 'red', headerCssClass: '', width: 100 }] as CurrentColumn[];
         const extensionMock = { name: ExtensionName.columnPicker, addon: instanceMock, instance: instanceMock as SlickColumnPicker, class: null };
         const gridStateMock = { columns: associatedColumnsMock, filters: [], sorters: [] } as GridState;
-        const stateChangeMock = { change: { newValues: associatedColumnsMock, type: GridStateType.columns }, gridState: gridStateMock } as GridStateChange;
+        const stateChangeMock = { change: { newValues: associatedColumnsMock, type: 'columns' }, gridState: gridStateMock } as GridStateChange;
 
         const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
         const gridStateSpy = vi.spyOn(service, 'getCurrentGridState').mockReturnValue(gridStateMock);
@@ -323,7 +323,7 @@ describe('GridStateService', () => {
         const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
         const associatedColumnsMock = [{ columnId: 'field1', cssClass: 'red', headerCssClass: '', width: 100 }] as CurrentColumn[];
         const gridStateMock = { columns: associatedColumnsMock, filters: [], sorters: [] } as GridState;
-        const stateChangeMock = { change: { newValues: associatedColumnsMock, type: GridStateType.columns }, gridState: gridStateMock } as GridStateChange;
+        const stateChangeMock = { change: { newValues: associatedColumnsMock, type: 'columns' }, gridState: gridStateMock } as GridStateChange;
 
         const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
         const gridColumnSpy = vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
@@ -349,7 +349,7 @@ describe('GridStateService', () => {
         const mockGridOptionsBefore = { frozenBottom: false, frozenColumn: -1, frozenRow: -1 } as GridOption;
         const mockGridOptionsAfter = { frozenBottom: true, frozenColumn: 1, frozenRow: 1 } as GridOption;
         const gridStateMock = { pinning: mockGridOptionsBefore, columns: [], filters: [], sorters: [] } as GridState;
-        const stateChangeMock = { change: { newValues: mockGridOptionsAfter, type: GridStateType.pinning }, gridState: gridStateMock } as GridStateChange;
+        const stateChangeMock = { change: { newValues: mockGridOptionsAfter, type: 'pinning' }, gridState: gridStateMock } as GridStateChange;
         const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
         const gridStateSpy = vi.spyOn(service, 'getCurrentGridState').mockReturnValue(gridStateMock);
 
@@ -604,7 +604,7 @@ describe('GridStateService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith(`onGridStateChanged`, {
           change: {
             newValues: { gridRowIndexes: mockNewRowIndexes, dataContextIds: mockNewDataIds, filteredDataContextIds: mockNewDataIds },
-            type: GridStateType.rowSelection,
+            type: 'rowSelection',
           },
           gridState: {
             columns: columnMock,
@@ -832,7 +832,7 @@ describe('GridStateService', () => {
   describe('resetColumns method', () => {
     it('should call the method without any column definitions and expect "onGridStateChanged" to be triggered with empty changes', () => {
       const gridStateMock = { columns: [], filters: [], sorters: [] } as GridState;
-      const stateChangeMock = { change: { newValues: [], type: GridStateType.columns }, gridState: gridStateMock } as GridStateChange;
+      const stateChangeMock = { change: { newValues: [], type: 'columns' }, gridState: gridStateMock } as GridStateChange;
       const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
       const serviceSpy = vi.spyOn(service, 'getCurrentGridState').mockReturnValue(gridStateMock);
 
@@ -848,7 +848,7 @@ describe('GridStateService', () => {
       const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
       const currentColumnsMock = [{ columnId: 'field1', cssClass: 'red', headerCssClass: '', width: 100 }] as CurrentColumn[];
       const gridStateMock = { columns: [], filters: [], sorters: [] } as GridState;
-      const stateChangeMock = { change: { newValues: currentColumnsMock, type: GridStateType.columns }, gridState: gridStateMock } as GridStateChange;
+      const stateChangeMock = { change: { newValues: currentColumnsMock, type: 'columns' }, gridState: gridStateMock } as GridStateChange;
       const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
       const serviceSpy = vi.spyOn(service, 'getCurrentGridState').mockReturnValue(gridStateMock);
 
@@ -935,7 +935,7 @@ describe('GridStateService', () => {
 
     it('should trigger a "onGridStateChanged" event when "onFilterChanged" is triggered', () => {
       const gridStateMock = { columns: currentColumnsMock, filters: filterMock, sorters: sorterMock, pinning: pinningMock } as GridState;
-      const stateChangeMock = { change: { newValues: filterMock, type: GridStateType.filter }, gridState: gridStateMock } as GridStateChange;
+      const stateChangeMock = { change: { newValues: filterMock, type: 'filter' }, gridState: gridStateMock } as GridStateChange;
 
       const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
 
@@ -945,7 +945,7 @@ describe('GridStateService', () => {
 
     it('should trigger a "onGridStateChanged" event when "onFilterCleared" is triggered', () => {
       const gridStateMock = { columns: currentColumnsMock, filters: filterMock, sorters: sorterMock, pinning: pinningMock } as GridState;
-      const stateChangeMock = { change: { newValues: [], type: GridStateType.filter }, gridState: gridStateMock } as GridStateChange;
+      const stateChangeMock = { change: { newValues: [], type: 'filter' }, gridState: gridStateMock } as GridStateChange;
 
       const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
 
@@ -955,7 +955,7 @@ describe('GridStateService', () => {
 
     it('should trigger a "onGridStateChanged" event when "onSortChanged" is triggered', () => {
       const gridStateMock = { columns: currentColumnsMock, filters: filterMock, sorters: sorterMock, pinning: pinningMock } as GridState;
-      const stateChangeMock = { change: { newValues: sorterMock, type: GridStateType.sorter }, gridState: gridStateMock } as GridStateChange;
+      const stateChangeMock = { change: { newValues: sorterMock, type: 'sorter' }, gridState: gridStateMock } as GridStateChange;
 
       const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
 
@@ -965,7 +965,7 @@ describe('GridStateService', () => {
 
     it('should trigger a "onGridStateChanged" event when "onSortCleared" is triggered', () => {
       const gridStateMock = { columns: currentColumnsMock, filters: filterMock, sorters: sorterMock, pinning: pinningMock } as GridState;
-      const stateChangeMock = { change: { newValues: [], type: GridStateType.sorter }, gridState: gridStateMock } as GridStateChange;
+      const stateChangeMock = { change: { newValues: [], type: 'sorter' }, gridState: gridStateMock } as GridStateChange;
 
       const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
       fnCallbacks['onSortCleared'](sorterMock);
@@ -973,16 +973,16 @@ describe('GridStateService', () => {
       expect(pubSubSpy).toHaveBeenCalledWith(`onGridStateChanged`, stateChangeMock);
     });
 
-    it('should trigger a "onGridStateChanged" event when "onHeaderMenuHideColumns", "onHideColumns" or "onShowColumns" are triggered', () => {
+    it('should trigger a "onGridStateChanged" event when "onHideColumns" or "onShowColumns" are triggered', () => {
       const columnsMock1 = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
       const currentColumnsMock1 = [{ columnId: 'field1', cssClass: 'red', headerCssClass: '', width: 100 }] as CurrentColumn[];
       const gridStateMock = { columns: currentColumnsMock1, filters: [], sorters: [] } as GridState;
-      const stateChangeMock = { change: { newValues: currentColumnsMock1, type: GridStateType.columns }, gridState: gridStateMock } as GridStateChange;
+      const stateChangeMock = { change: { newValues: currentColumnsMock1, type: 'columns' }, gridState: gridStateMock } as GridStateChange;
       const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
       const getCurGridStateSpy = vi.spyOn(service, 'getCurrentGridState').mockReturnValue(gridStateMock);
       const getAssocCurColSpy = vi.spyOn(service, 'getAssociatedCurrentColumns').mockReturnValue(currentColumnsMock1);
 
-      for (const eventName of ['onHeaderMenuHideColumns', 'onHideColumns', 'onShowColumns']) {
+      for (const eventName of ['onHideColumns', 'onShowColumns']) {
         fnCallbacks[eventName](columnsMock1);
 
         expect(getCurGridStateSpy).toHaveBeenCalled();
@@ -999,7 +999,7 @@ describe('GridStateService', () => {
         toggledItems: [{ itemId: 2, isCollapsed: true }],
       } as TreeToggleStateChange;
       const gridStateMock = { columns: [], filters: [], sorters: [], treeData: toggleChangeMock } as GridState;
-      const stateChangeMock = { change: { newValues: toggleChangeMock, type: GridStateType.treeData }, gridState: gridStateMock } as GridStateChange;
+      const stateChangeMock = { change: { newValues: toggleChangeMock, type: 'treeData' }, gridState: gridStateMock } as GridStateChange;
       const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
       const getCurGridStateSpy = vi.spyOn(service, 'getCurrentGridState').mockReturnValue(gridStateMock);
 
@@ -1012,7 +1012,7 @@ describe('GridStateService', () => {
     it('should trigger a "onGridStateChanged" event when "onTreeFullToggleEnd" is triggered', () => {
       const toggleChangeMock = { type: 'full-expand', previousFullToggleType: 'full-expand', toggledItems: null } as TreeToggleStateChange;
       const gridStateMock = { columns: [], filters: [], sorters: [], treeData: toggleChangeMock } as GridState;
-      const stateChangeMock = { change: { newValues: toggleChangeMock, type: GridStateType.treeData }, gridState: gridStateMock } as GridStateChange;
+      const stateChangeMock = { change: { newValues: toggleChangeMock, type: 'treeData' }, gridState: gridStateMock } as GridStateChange;
       const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
       const getCurGridStateSpy = vi.spyOn(service, 'getCurrentGridState').mockReturnValue(gridStateMock);
 

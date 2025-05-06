@@ -18,10 +18,11 @@ export default defineConfig({
     }),
   ],
   build: {
+    emptyOutDir: false,
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
       formats: ['es'],
-      fileName: (format) => (format === 'cjs' ? 'index.cjs' : 'index.mjs'),
+      fileName: (format) => (format === 'cjs' ? 'index.cjs' : 'index.js'),
     },
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled

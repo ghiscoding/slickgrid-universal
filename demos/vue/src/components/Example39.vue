@@ -10,7 +10,6 @@ import {
   OnRowCountChangedEventArgs,
   SlickgridVueInstance,
   type Column,
-  FieldType,
   Filters,
   SlickgridVue,
 } from 'slickgrid-vue';
@@ -54,7 +53,6 @@ function defineGrid() {
       field: 'name',
       nameKey: 'NAME',
       width: 60,
-      type: FieldType.string,
       sortable: true,
       filterable: true,
       filter: {
@@ -95,7 +93,7 @@ function defineGrid() {
           sortDesc: false,
         },
         collectionAsync: fetch(SAMPLE_COLLECTION_DATA_URL).then((e) => e.json()),
-        filterOptions: {
+        options: {
           filter: true, // adds a filter on top of the multi-select dropdown
         } as MultipleSelectOption,
       },

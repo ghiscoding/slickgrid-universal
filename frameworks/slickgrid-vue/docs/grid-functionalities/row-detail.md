@@ -29,7 +29,7 @@ A Row Detail allows you to open a detail panel which can contain extra and/or mo
 ##### Component
 ```vue
 <script setup lang="ts">
-import { type Column, FieldType, Filters, Formatters, GridState, OperatorType, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, GridState, OperatorType, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -85,7 +85,7 @@ function defineGrid() {
       viewComponent: Example19DetailView,
 
       // Optionally pass your Parent Component reference to your Child Component (row detail component)
-      parent: this
+      parentRef: this
     }
   };
 }
@@ -199,12 +199,12 @@ function deleteRow(model: Item) {
     // then you can delete the item from the dataView
     props.dataView?.deleteItem(model.rowId);
 
-    props.parent?.showFlashMessage(`Deleted row with ${model.title}`, 'danger');
+    props.parentRef?.showFlashMessage(`Deleted row with ${model.title}`, 'danger');
   }
 }
 
 function callParentMethod(model: Item) {
-  props.parent?.showFlashMessage(`We just called Parent Method from the Row Detail Child Component on ${model.title}`);
+  props.parentRef?.showFlashMessage(`We just called Parent Method from the Row Detail Child Component on ${model.title}`);
 }
 </script>
 <template>
@@ -278,7 +278,7 @@ function defineGrid() {
       viewComponent: Example19DetailView,
 
       // Optionally pass your Parent Component reference to your Child Component (row detail component)
-      parent: this
+      parentRef: this
     }
   };
 }
@@ -315,7 +315,7 @@ function defineGrid() {
       viewComponent: CustomDetailView,
 
       // Optionally pass your Parent Component reference to your Child Component (row detail component)
-      parent: this  // <-- THIS REFERENCE
+      parentRef: this  // <-- THIS REFERENCE
     }
   }
 }
@@ -389,12 +389,12 @@ function deleteRow(model: any) {
     // then you can delete the item from the dataView
     props.dataView.deleteItem(model.rowId);
 
-    props.parent!.showFlashMessage(`Deleted row with ${model.title}`, 'danger');
+    props.parentRef!.showFlashMessage(`Deleted row with ${model.title}`, 'danger');
   }
 }
 
 function callParentMethod(model: any) {
-  props.parent!.showFlashMessage(`We just called Parent Method from the Row Detail Child Component on ${model.title}`);
+  props.parentRef!.showFlashMessage(`We just called Parent Method from the Row Detail Child Component on ${model.title}`);
 }
 </script>
 
@@ -435,7 +435,7 @@ Main Grid Component
 
 ```vue
 <script setup lang="ts">
-import { type Column, FieldType, Filters, Formatters, GridState, OperatorType, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, GridState, OperatorType, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();

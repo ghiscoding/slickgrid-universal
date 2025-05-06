@@ -25,6 +25,36 @@
       }
     },
     {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Angular - Chrome Debugger",
+      "url": "http://localhost:4300",
+      "webRoot": "${workspaceFolder}/frameworks/angular-slickgrid",
+      "pathMapping": {
+        "/@fs/": ""
+      }
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Aurelia - Chrome Debugger",
+      "url": "http://localhost:9000",
+      "webRoot": "${workspaceFolder}/demos/aurelia",
+      "pathMapping": {
+        "/@fs/": ""
+      }
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "React - Chrome Debugger",
+      "url": "http://localhost:8000",
+      "webRoot": "${workspaceFolder}/demos/aurelia",
+      "pathMapping": {
+        "/@fs/": ""
+      }
+    },
+    {
       "type": "msedge",
       "request": "launch",
       "name": "Vue - Edge Debugger",
@@ -44,6 +74,18 @@
       "args": ["run", "${relativeFile}", "--no-watch", "--config", "./test/vitest.config.mts"],
       "smartStep": true,
       "console": "integratedTerminal"
+    },
+    {
+      "name": "Angular Vitest - Debug Current Test File",
+      "type": "node",
+      "request": "launch",
+      "autoAttachChildProcesses": true,
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
+      "program": "${workspaceRoot}/node_modules/vitest/vitest.mjs",
+      "args": ["run", "${file}", "--no-watch", "--config", "./vite.config.mts"],
+      "smartStep": true,
+      "console": "integratedTerminal",
+      "cwd": "${workspaceRoot}/frameworks/angular-slickgrid"
     }
   ]
 }

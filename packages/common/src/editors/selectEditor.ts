@@ -19,7 +19,12 @@ import type {
   Locale,
   SelectOption,
 } from './../interfaces/index.js';
-import { getCollectionFromObjectWhenEnabled } from '../commonEditorFilter/commonEditorFilterUtils.js';
+import {
+  createBlankSelectEntry,
+  filterCollectionWithOptions,
+  getCollectionFromObjectWhenEnabled,
+  sortCollectionWithOptions,
+} from '../commonEditorFilter/commonEditorFilterUtils.js';
 import { buildMsSelectCollectionList, CollectionService, findOrDefault, type TranslaterService } from '../services/index.js';
 import { getDescendantProperty, getTranslationPrefix } from '../services/utilities.js';
 import { SlickEventData, type SlickGrid } from '../core/index.js';
@@ -108,8 +113,7 @@ export class SelectEditor implements Editor {
     this._locales = this.gridOptions.locales || Constants.locales;
 
     // provide the name attribute to the DOM element which will be needed to auto-adjust drop position (dropup / dropdown)
-    const columnId = this.columnDef?.id ?? '';
-    this.elementName = `editor-${columnId}`;
+    this.elementName = `editor-${this.columnId}`;
     const compositeEditorOptions = this.args.compositeEditorOptions;
 
     const libOptions = {
@@ -152,20 +156,12 @@ export class SelectEditor implements Editor {
       libOptions.displayTitle = true;
       libOptions.showOkButton = true;
 
-      if (this._translaterService?.getCurrentLanguage()) {
-        const translationPrefix = getTranslationPrefix(this.gridOptions);
-        libOptions.countSelectedText = this._translaterService.translate(`${translationPrefix}X_OF_Y_SELECTED`);
-        libOptions.allSelectedText = this._translaterService.translate(`${translationPrefix}ALL_SELECTED`);
-        libOptions.selectAllText = this._translaterService.translate(`${translationPrefix}SELECT_ALL`);
-        libOptions.okButtonText = this._translaterService.translate(`${translationPrefix}OK`);
-        libOptions.noMatchesFoundText = this._translaterService.translate(`${translationPrefix}NO_MATCHES_FOUND`);
-      } else {
-        libOptions.countSelectedText = this._locales?.TEXT_X_OF_Y_SELECTED;
-        libOptions.allSelectedText = this._locales?.TEXT_ALL_SELECTED;
-        libOptions.selectAllText = this._locales?.TEXT_SELECT_ALL;
-        libOptions.okButtonText = this._locales?.TEXT_OK;
-        libOptions.noMatchesFoundText = this._locales?.TEXT_NO_MATCHES_FOUND;
-      }
+      const translationPrefix = getTranslationPrefix(this.gridOptions);
+      libOptions.countSelectedText = this.translateOrDefault(`${translationPrefix}X_OF_Y_SELECTED`, this._locales?.TEXT_X_OF_Y_SELECTED);
+      libOptions.allSelectedText = this.translateOrDefault(`${translationPrefix}ALL_SELECTED`, this._locales?.TEXT_ALL_SELECTED);
+      libOptions.selectAllText = this.translateOrDefault(`${translationPrefix}SELECT_ALL`, this._locales?.TEXT_SELECT_ALL);
+      libOptions.okButtonText = this.translateOrDefault(`${translationPrefix}OK`, this._locales?.TEXT_OK);
+      libOptions.noMatchesFoundText = this.translateOrDefault(`${translationPrefix}NO_MATCHES_FOUND`, this._locales?.TEXT_NO_MATCHES_FOUND);
     }
 
     // assign the multiple select lib options
@@ -188,6 +184,10 @@ export class SelectEditor implements Editor {
     return this.args.column;
   }
 
+  get columnId(): string | number {
+    return this.columnDef?.id ?? '';
+  }
+
   /** Get Column Editor object */
   get columnEditor(): ColumnEditor {
     return (this.columnDef?.editor ?? {}) as ColumnEditor;
@@ -199,7 +199,7 @@ export class SelectEditor implements Editor {
   }
 
   get editorOptions(): MultipleSelectOption {
-    return { ...this.gridOptions.defaultEditorOptions?.select, ...this.columnEditor?.editorOptions };
+    return { ...this.gridOptions.defaultEditorOptions?.select, ...this.columnEditor?.editorOptions, ...this.columnEditor?.options };
   }
 
   get isCompositeEditor(): boolean {
@@ -258,10 +258,8 @@ export class SelectEditor implements Editor {
         }
 
         // also translate prefix/suffix if enableTranslateLabel is true and text is a string
-        // prettier-ignore
-        prefixText = (this.enableTranslateLabel && this._translaterService && prefixText && typeof prefixText === 'string') ? this._translaterService.translate(prefixText || ' ') : prefixText;
-        // prettier-ignore
-        suffixText = (this.enableTranslateLabel && this._translaterService && suffixText && typeof suffixText === 'string') ? this._translaterService.translate(suffixText || ' ') : suffixText;
+        prefixText = this.translatePrefixSuffix(prefixText);
+        suffixText = this.translatePrefixSuffix(suffixText);
 
         if (isIncludingPrefixSuffix) {
           const tmpOptionArray = [prefixText, labelText, suffixText].filter((text) => text); // add to a temp array for joining purpose and filter out empty text
@@ -307,10 +305,8 @@ export class SelectEditor implements Editor {
           let suffixText = itemFound[this.labelSuffixName] || '';
 
           // also translate prefix/suffix if enableTranslateLabel is true and text is a string
-          // prettier-ignore
-          prefixText = (this.enableTranslateLabel && this._translaterService && prefixText && typeof prefixText === 'string') ? this._translaterService.translate(prefixText || ' ') : prefixText;
-          // prettier-ignore
-          suffixText = (this.enableTranslateLabel && this._translaterService && suffixText && typeof suffixText === 'string') ? this._translaterService.translate(suffixText || ' ') : suffixText;
+          prefixText = this.translatePrefixSuffix(prefixText);
+          suffixText = this.translatePrefixSuffix(suffixText);
 
           // add to a temp array for joining purpose and filter out empty text
           const tmpOptionArray = [prefixText, labelText, suffixText].filter((text) => text);
@@ -516,10 +512,9 @@ export class SelectEditor implements Editor {
     newValue: K
   ): void {
     if (this.columnEditor) {
-      if (!this.columnEditor.editorOptions) {
-        this.columnEditor.editorOptions = {};
-      }
-      this.columnEditor.editorOptions[optionName] = newValue;
+      this.columnEditor.options ??= {};
+      this.columnEditor.editorOptions ??= {};
+      this.columnEditor.options[optionName] = this.columnEditor.editorOptions[optionName] = newValue;
       this.editorElmOptions = { ...this.editorElmOptions, [optionName]: newValue };
       this._msInstance?.refreshOptions(this.editorElmOptions);
     }
@@ -601,7 +596,7 @@ export class SelectEditor implements Editor {
   validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
     const isRequired = this.isCompositeEditor ? false : this.columnEditor?.required;
     const elmValue = inputValue !== undefined ? inputValue : this._msInstance?.getSelects(); // && this.$editorElm.val && this.$editorElm.val();
-    const errorMsg = this.columnEditor && this.columnEditor.errorMessage;
+    const errorMsg = this.columnEditor?.errorMessage;
 
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
     if (this.isCompositeEditor) {
@@ -652,39 +647,15 @@ export class SelectEditor implements Editor {
     this.disable(isCellEditable === false);
   }
 
-  /**
-   * user might want to filter certain items of the collection
-   * @param inputCollection
-   * @return outputCollection filtered and/or sorted collection
-   */
-  protected filterCollection(inputCollection: any[]): any[] {
-    let outputCollection = inputCollection;
-
-    // user might want to filter certain items of the collection
-    if (this.columnEditor && this.columnEditor.collectionFilterBy) {
-      const filterBy = this.columnEditor.collectionFilterBy;
-      const filterCollectionBy = this.columnEditor.collectionOptions?.filterResultAfterEachPass ?? null;
-      outputCollection = this._collectionService.filterCollection(outputCollection, filterBy, filterCollectionBy);
-    }
-
-    return outputCollection;
+  protected translatePrefixSuffix(prefixSuffix: string | number): string | number {
+    return this.enableTranslateLabel && this._translaterService && prefixSuffix && typeof prefixSuffix === 'string'
+      ? this._translaterService.translate(prefixSuffix || ' ')
+      : prefixSuffix;
   }
 
-  /**
-   * user might want to sort the collection in a certain way
-   * @param inputCollection
-   * @return outputCollection filtered and/or sorted collection
-   */
-  protected sortCollection(inputCollection: any[]): any[] {
-    let outputCollection = inputCollection;
-
-    // user might want to sort the collection
-    if (this.columnDef && this.columnEditor && this.columnEditor.collectionSortBy) {
-      const sortBy = this.columnEditor.collectionSortBy;
-      outputCollection = this._collectionService.sortCollection(this.columnDef, outputCollection, sortBy, this.enableTranslateLabel);
-    }
-
-    return outputCollection;
+  protected translateOrDefault(translationKey: string, defaultValue = ''): string {
+    const isTranslateEnabled = this.gridOptions?.enableTranslate ?? false;
+    return isTranslateEnabled && this._translaterService?.translate ? this._translaterService.translate(translationKey) : defaultValue;
   }
 
   renderDomElement(inputCollection?: any[]): void {
@@ -707,8 +678,8 @@ export class SelectEditor implements Editor {
       collection.length > 0 &&
       collection[0][this.valueName] !== ''
     ) {
-      collection.unshift(this.createBlankEntry());
-      this.collection.unshift(this.createBlankEntry()); // also make the change on the original collection
+      collection.unshift(createBlankSelectEntry(this.labelName, this.valueName, this.labelPrefixName, this.labelSuffixName));
+      this.collection.unshift(createBlankSelectEntry(this.labelName, this.valueName, this.labelPrefixName, this.labelSuffixName)); // also make the change on the original collection
     }
 
     // user can optionally add his own custom entry at the beginning of the collection
@@ -734,8 +705,19 @@ export class SelectEditor implements Editor {
     let finalCollection = collection;
 
     // user might want to filter and/or sort certain items of the collection
-    finalCollection = this.filterCollection(finalCollection);
-    finalCollection = this.sortCollection(finalCollection);
+    finalCollection = filterCollectionWithOptions(
+      finalCollection,
+      this._collectionService,
+      this.columnEditor?.collectionFilterBy,
+      this.collectionOptions
+    );
+    finalCollection = sortCollectionWithOptions(
+      finalCollection,
+      this.columnDef,
+      this._collectionService,
+      this.columnEditor?.collectionSortBy,
+      this.enableTranslateLabel
+    );
 
     // user could also override the collection
     if (this.columnEditor?.collectionOverride) {
@@ -770,21 +752,6 @@ export class SelectEditor implements Editor {
     this.createDomElement(selectBuildResult.selectElement, selectBuildResult.dataCollection);
   }
 
-  /** Create a blank entry that can be added to the collection. It will also reuse the same collection structure provided by the user */
-  protected createBlankEntry(): any {
-    const blankEntry = {
-      [this.labelName]: '',
-      [this.valueName]: '',
-    };
-    if (this.labelPrefixName) {
-      blankEntry[this.labelPrefixName] = '';
-    }
-    if (this.labelSuffixName) {
-      blankEntry[this.labelSuffixName] = '';
-    }
-    return blankEntry;
-  }
-
   /**
    * From the Select DOM Element created earlier, create a Multiple/Single Select Editor using the multiple-select-vanilla.js lib
    * @param {Object} selectElement
@@ -817,7 +784,6 @@ export class SelectEditor implements Editor {
   ): void {
     const activeCell = this.grid.getActiveCell();
     const column = this.args.column;
-    const columnId = this.columnDef?.id ?? '';
     const item = this.dataContext;
     const grid = this.grid;
     const newValues = this.serializeValue();
@@ -831,9 +797,9 @@ export class SelectEditor implements Editor {
     const isExcludeDisabledFieldFormValues = this.gridOptions?.compositeEditorOptions?.excludeDisabledFieldFormValues ?? false;
     if (
       isCalledByClearValue ||
-      (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(columnId))
+      (this.disabled && isExcludeDisabledFieldFormValues && compositeEditorOptions.formValues.hasOwnProperty(this.columnId))
     ) {
-      delete compositeEditorOptions.formValues[columnId]; // when the input is disabled we won't include it in the form result object
+      delete compositeEditorOptions.formValues[this.columnId]; // when the input is disabled we won't include it in the form result object
     }
     grid.onCompositeEditorChange.notify(
       {

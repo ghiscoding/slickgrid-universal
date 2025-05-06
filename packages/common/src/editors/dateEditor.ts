@@ -1,8 +1,7 @@
 import { parse } from '@formkit/tempo';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, emptyElement, extend, setDeepValue } from '@slickgrid-universal/utils';
-import VanillaCalendar from 'vanilla-calendar-pro';
-import type { FormatDateString, IOptions } from 'vanilla-calendar-pro/types';
+import { Calendar, type FormatDateString, type Options } from 'vanilla-calendar-pro';
 
 import { Constants } from './../constants.js';
 import { FieldType } from '../enums/index.js';
@@ -35,9 +34,9 @@ export class DateEditor implements Editor {
   protected _lastClickIsDate = false;
   protected _lastTriggeredByClearDate = false;
   protected _originalDate?: string;
-  protected _pickerMergedOptions!: IOptions;
+  protected _pickerMergedOptions!: Options;
   protected _lastInputKeyEvent?: KeyboardEvent;
-  calendarInstance?: VanillaCalendar;
+  calendarInstance?: Calendar;
   defaultDate?: string;
   hasTimePicker = false;
 
@@ -87,15 +86,15 @@ export class DateEditor implements Editor {
   }
 
   /** Get options passed to the editor by the user */
-  get editorOptions(): IOptions {
-    return { ...this.gridOptions.defaultEditorOptions?.date, ...this.columnEditor?.editorOptions };
+  get editorOptions(): VanillaCalendarOption {
+    return { ...this.gridOptions.defaultEditorOptions?.date, ...this.columnEditor?.editorOptions, ...this.columnEditor?.options };
   }
 
   get hasAutoCommitEdit(): boolean {
     return this.gridOptions.autoCommitEdit ?? false;
   }
 
-  get pickerOptions(): IOptions {
+  get pickerOptions(): VanillaCalendarOption {
     return this._pickerMergedOptions;
   }
 
@@ -120,59 +119,51 @@ export class DateEditor implements Editor {
       }
       const pickerFormat = mapTempoDateFormatWithFieldType(this.hasTimePicker ? FieldType.dateTimeIsoAM_PM : FieldType.dateIso);
 
-      const pickerOptions: IOptions = {
-        input: true,
-        jumpToSelectedDate: true,
-        sanitizer: (dirtyHtml) => this.grid.sanitizeHtmlString(dirtyHtml),
-        toggleSelected: false,
-        actions: {
-          clickDay: () => {
-            this._lastClickIsDate = true;
-          },
-          changeToInput: (_e, self) => {
-            if (self.HTMLInputElement) {
-              let selectedDate = '';
-              if (self.selectedDates[0]) {
-                selectedDate = self.selectedDates[0];
-                self.HTMLInputElement.value = formatDateByFieldType(self.selectedDates[0], undefined, outputFieldType);
-              } else {
-                self.HTMLInputElement.value = '';
-              }
-
-              if (selectedDate && this.hasTimePicker) {
-                const tempoDate = parse(selectedDate, pickerFormat);
-                tempoDate.setHours(+(self.selectedHours || 0));
-                tempoDate.setMinutes(+(self.selectedMinutes || 0));
-                self.HTMLInputElement.value = formatDateByFieldType(tempoDate, undefined, outputFieldType);
-              }
-
-              if (this._lastClickIsDate) {
-                this.handleOnDateChange();
-                self.hide();
-              }
-            }
-          },
+      const pickerOptions: Options = {
+        inputMode: true,
+        enableJumpToSelectedDate: true,
+        firstWeekday: 0,
+        enableDateToggle: false,
+        locale: currentLocale,
+        selectedTheme: this.gridOptions?.darkMode ? 'dark' : 'light',
+        positionToInput: 'auto',
+        sanitizerHTML: (dirtyHtml) => this.grid.sanitizeHtmlString(dirtyHtml),
+        selectedWeekends: [],
+        onClickDate: () => {
+          this._lastClickIsDate = true;
         },
-        settings: {
-          lang: currentLocale,
-          iso8601: false,
-          visibility: {
-            theme: this.gridOptions?.darkMode ? 'dark' : 'light',
-            positionToInput: 'auto',
-            weekend: false,
-          },
+        onChangeToInput: (self) => {
+          if (self.context.inputElement) {
+            let selectedDate = '';
+            if (self.context.selectedDates[0]) {
+              selectedDate = self.context.selectedDates[0];
+              self.context.inputElement.value = formatDateByFieldType(self.context.selectedDates[0], undefined, outputFieldType);
+            } else {
+              self.context.inputElement.value = '';
+            }
+
+            if (selectedDate && this.hasTimePicker) {
+              const tempoDate = parse(selectedDate, pickerFormat);
+              tempoDate.setHours(+(self.context.selectedHours || 0));
+              tempoDate.setMinutes(+(self.context.selectedMinutes || 0));
+              self.context.inputElement.value = formatDateByFieldType(tempoDate, undefined, outputFieldType);
+            }
+
+            if (this._lastClickIsDate) {
+              this.handleOnDateChange();
+              self.hide();
+            }
+          }
         },
       };
 
       // add the time picker when format includes time (hours/minutes)
       if (this.hasTimePicker) {
-        pickerOptions.settings!.selection = {
-          time: 24,
-        };
+        pickerOptions.selectionTimeMode = 24;
       }
 
       // merge options with optional user's custom options
-      this._pickerMergedOptions = extend(true, {}, pickerOptions, { settings: this.editorOptions, type: 'default' });
+      this._pickerMergedOptions = extend(true, {}, pickerOptions, this.editorOptions, { type: 'default' });
 
       const inputCssClasses = `.editor-text.date-picker.editor-${columnId}.form-control.input-group-editor`;
       this._editorInputGroupElm = createDomElement('div', { className: 'vanilla-picker input-group' });
@@ -189,7 +180,7 @@ export class DateEditor implements Editor {
           title: (this.columnEditor && this.columnEditor.title) || '',
           className: inputCssClasses.replace(/\./g, ' '),
           dataset: { input: '', defaultdate: this.defaultDate },
-          readOnly: this.columnEditor.editorOptions?.allowInput === true ? false : true,
+          readOnly: this.editorOptions?.allowInput === true ? false : true,
         },
         this._editorInputGroupElm
       );
@@ -197,7 +188,7 @@ export class DateEditor implements Editor {
       this.args.container.appendChild(this._editorInputGroupElm);
 
       // show clear date button (unless user specifically doesn't want it)
-      if (!(this.columnEditor.editorOptions as any)?.hideClearButton) {
+      if (!this.editorOptions?.hideClearButton) {
         closeButtonGroupElm.appendChild(this._clearButtonElm);
         this._editorInputGroupElm.appendChild(closeButtonGroupElm);
         this._bindEventService.bind(this._clearButtonElm, 'click', () => {
@@ -207,7 +198,7 @@ export class DateEditor implements Editor {
       }
 
       this._bindEventService.bind(this._inputElm, 'keydown', ((event: KeyboardEvent) => {
-        if (this.columnEditor.editorOptions?.allowInput !== true) {
+        if (this.editorOptions?.allowInput !== true) {
           return;
         }
 
@@ -219,7 +210,7 @@ export class DateEditor implements Editor {
       }) as EventListener);
 
       queueMicrotask(() => {
-        this.calendarInstance = new VanillaCalendar(this._inputElm, this._pickerMergedOptions);
+        this.calendarInstance = new Calendar(this._inputElm, this._pickerMergedOptions);
         this.calendarInstance.init();
         if (!compositeEditorOptions) {
           this.show();
@@ -284,15 +275,12 @@ export class DateEditor implements Editor {
    * @param {string} optionName
    * @param {newValue} newValue
    */
-  changeEditorOption<T extends keyof Required<VanillaCalendarOption>, K extends Required<VanillaCalendarOption>[T]>(
-    optionName: T,
-    newValue: K
-  ): void {
-    if (!this.columnEditor.editorOptions) {
-      this.columnEditor.editorOptions = {};
-    }
-    this.columnEditor.editorOptions[optionName] = newValue;
-    this._pickerMergedOptions = extend(true, {}, this._pickerMergedOptions, { settings: { [optionName]: newValue } });
+  changeEditorOption<T extends keyof Options, K extends Options[T]>(optionName: T, newValue: K): void {
+    this.columnEditor.options ??= {};
+    this.columnEditor.editorOptions ??= {};
+    this.columnEditor.options[optionName] = this.columnEditor.editorOptions[optionName] = newValue;
+    this._pickerMergedOptions = extend(true, {}, this._pickerMergedOptions, { [optionName]: newValue });
+    this.calendarInstance?.set(this._pickerMergedOptions, { dates: true, locale: true, month: true, time: true, year: true });
   }
 
   focus(): void {
@@ -326,7 +314,6 @@ export class DateEditor implements Editor {
       setPickerDates(this.columnEditor, this._inputElm, this.calendarInstance, {
         columnDef: this.columnDef,
         newVal: val,
-        updatePickerUI: true,
       });
     }
 
@@ -370,7 +357,7 @@ export class DateEditor implements Editor {
     const elmDateStr = this.getValue();
 
     const lastEventKey = this._lastInputKeyEvent?.key;
-    if (this.columnEditor.editorOptions?.allowInput === true && this.columnEditor?.alwaysSaveOnEnterKey && lastEventKey === 'Enter') {
+    if (this.editorOptions?.allowInput === true && this.columnEditor?.alwaysSaveOnEnterKey && lastEventKey === 'Enter') {
       return true;
     }
 
@@ -410,7 +397,7 @@ export class DateEditor implements Editor {
     const inputValue = value ?? this._originalDate ?? '';
     if (this.calendarInstance) {
       this._originalDate = inputValue;
-      this.calendarInstance.settings.selected.dates = [inputValue as FormatDateString];
+      this.calendarInstance.selectedDates = [inputValue as FormatDateString];
       if (inputValue) {
         setPickerDates(this.columnEditor, this._inputElm, this.calendarInstance, {
           columnDef: this.columnDef,

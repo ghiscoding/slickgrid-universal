@@ -7,7 +7,7 @@
 @use 'sass:color';
 
 // import external lib CSS files (without the .css extension)
-@use 'vanilla-calendar-pro/build/vanilla-calendar.min';
+@use 'vanilla-calendar-pro/styles/index';
 
 // SASS utils to generate SVGs
 @use './svg-utilities';
@@ -941,6 +941,7 @@ $slick-empty-data-warning-z-index:                          10 !default;
   $ms-icon-color:                                           $slick-icon-color,
   $ms-icon-size:                                            $slick-multiselect-icon-font-size,
   $ms-chevron-icon-size:                                    #{$slick-multiselect-icon-font-size + 3px},
+  $ms-loading-icon-size:                                    #{$slick-multiselect-icon-font-size + 5px},
   $ms-placeholder-color:                                    $slick-placeholder-color,
   $ms-label-padding:                                        $slick-multiselect-item-padding,
   $ms-ok-button-bg-color:                                   $slick-multiselect-ok-button-bg-color,

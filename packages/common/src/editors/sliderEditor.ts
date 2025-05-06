@@ -79,7 +79,7 @@ export class SliderEditor implements Editor {
   }
 
   get editorOptions(): SliderOption {
-    return { ...this.gridOptions.defaultEditorOptions?.slider, ...this.columnEditor?.editorOptions };
+    return { ...this.gridOptions.defaultEditorOptions?.slider, ...this.columnEditor?.editorOptions, ...this.columnEditor?.options };
   }
 
   get hasAutoCommitEdit(): boolean {
@@ -222,8 +222,9 @@ export class SliderEditor implements Editor {
     K extends Required<CurrentSliderOption & SliderOption>[T],
   >(optionName: T, newValue: K): void {
     if (this.columnEditor) {
+      this.columnEditor.options ??= {};
       this.columnEditor.editorOptions ??= {};
-      this.columnEditor.editorOptions[optionName] = newValue;
+      this.columnEditor.options[optionName] = this.columnEditor.editorOptions[optionName] = newValue;
       (this._sliderOptions as any)[optionName] = newValue;
 
       switch (optionName) {
@@ -412,7 +413,6 @@ export class SliderEditor implements Editor {
   protected handleChangeEvent(event: MouseEvent): void {
     this._isValueTouched = true;
     const compositeEditorOptions = this.args.compositeEditorOptions;
-
     if (compositeEditorOptions) {
       this.handleChangeOnCompositeEditor(event, compositeEditorOptions);
     } else {

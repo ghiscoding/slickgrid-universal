@@ -11,6 +11,6 @@ export interface GridServiceUpdateOption {
   /** Defaults to false, should we skip error thrown? */
   skipError?: boolean;
 
-  /** Defaults to true, trigger an onItemUpdated event after the update */
+  /** Defaults to true, trigger an onItemsUpdated event after the update */
   triggerEvent?: boolean;
 }

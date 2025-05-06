@@ -3,10 +3,9 @@ import type {
   GridOption,
   OnAfterRowDetailToggleArgs,
   OnBeforeRowDetailToggleArgs,
-  OnRowBackToViewportRangeArgs,
+  OnRowBackOrOutOfViewportRangeArgs,
   OnRowDetailAsyncEndUpdateArgs,
   OnRowDetailAsyncResponseArgs,
-  OnRowOutOfViewportRangeArgs,
   RowDetailViewOption,
 } from './index.js';
 import type { ContainerService } from '../services/container.service.js';
@@ -24,7 +23,7 @@ export interface SlickRowDetailView {
   dispose(): void;
 
   /** Create the plugin */
-  create(columnDefinitions: Column[], gridOptions?: GridOption): SlickRowDetailView | null;
+  create(columns: Column[], gridOptions?: GridOption): SlickRowDetailView | null;
 
   /** Collapse all of the open items */
   collapseAll(): void;
@@ -81,11 +80,11 @@ export interface SlickRowDetailView {
   onBeforeRowDetailToggle?: SlickEvent<OnBeforeRowDetailToggleArgs>;
 
   /** Fired just before a row becomes out of viewport range (you can use this event to save inner Grid State before it gets destroyed) */
-  onBeforeRowOutOfViewportRange: SlickEvent<OnRowOutOfViewportRangeArgs>;
+  onBeforeRowOutOfViewportRange: SlickEvent<OnRowBackOrOutOfViewportRangeArgs>;
 
   /** Fired after the row detail gets toggled */
-  onRowBackToViewportRange?: SlickEvent<OnRowBackToViewportRangeArgs>;
+  onRowBackToViewportRange?: SlickEvent<OnRowBackOrOutOfViewportRangeArgs>;
 
   /** Fired after a row becomes out of viewport range (user can't see the row anymore) */
-  onRowOutOfViewportRange?: SlickEvent<OnRowOutOfViewportRangeArgs>;
+  onRowOutOfViewportRange?: SlickEvent<OnRowBackOrOutOfViewportRangeArgs>;
 }

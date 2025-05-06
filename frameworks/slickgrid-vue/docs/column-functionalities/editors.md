@@ -42,12 +42,12 @@ Simply call the editor in your column definition with the `Editors` you want, as
 <script setup lang="ts">
 function defineGrid() {
   columnDefinitions.value = [
-    { id: 'title', name: 'Title', field: 'title', type: FieldType.string, editor: { model: Editors.longText } },
-    { id: 'duration', name: 'Duration (days)', field: 'duration', type: FieldType.number, editor: { model: Editors.text } },
-    { id: 'complete', name: '% Complete', field: 'percentComplete', type: FieldType.number, editor: { model: Editors.integer } },
-    { id: 'start', name: 'Start', field: 'start', type: FieldType.date, editor: { model: Editors.date } },
+    { id: 'title', name: 'Title', field: 'title', editor: { model: Editors.longText } },
+    { id: 'duration', name: 'Duration (days)', field: 'duration', type: 'number', editor: { model: Editors.text } },
+    { id: 'complete', name: '% Complete', field: 'percentComplete', type: 'number', editor: { model: Editors.integer } },
+    { id: 'start', name: 'Start', field: 'start', type: 'date', editor: { model: Editors.date } },
     {
-      id: 'finish', name: 'Finish', field: 'finish', type: FieldType.date,
+      id: 'finish', name: 'Finish', field: 'finish', type: 'date',
       editor: {
         model: Editors.date,
 
@@ -57,7 +57,7 @@ function defineGrid() {
     },
     {
       id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', formatter: Formatters.checkmarkMaterial,
-      type: FieldType.number, editor: { model: Editors.checkbox }
+      type: 'number', editor: { model: Editors.checkbox }
     }
   ];
 
@@ -77,7 +77,7 @@ function defineGrid() {
   columnDefinitions.value = [
     {
       id: 'cost', name: 'Cost', field: 'cost',
-      type: FieldType.float,
+      type: 'float',
       formatter: Formatters.dollar, // the Dollar Formatter will default to 2 decimals unless you provide a minDecimal/maxDecimal
       // params: { minDecimal: 2, maxDecimal: 4, }, // optionally provide different decimal places
 
@@ -91,25 +91,25 @@ function defineGrid() {
 ```
 
 #### Editor Output Type & Save Output Type
-You could also define an `outputType` and a `saveOutputType` to an inline editor. There is only 1 built-in Editor with this functionality for now which is the `dateEditor`. For example, on a date field, we can call this `outputType: FieldType.dateIso` (by default it uses `dateUtc` as the output):
+You could also define an `outputType` and a `saveOutputType` to an inline editor. There is only 1 built-in Editor with this functionality for now which is the `dateEditor`. For example, on a date field, we can call this `outputType: 'dateIso'` (by default it uses `dateUtc` as the output):
 ```vue
 <script setup lang="ts">
 function defineGrid() {
   columnDefinitions.value = [
    {
      id: 'start', name: 'Start', field: 'start',
-     type: FieldType.date,
+     type: 'date',
      editor: { model: Editors.date },
-     type: FieldType.date,              // dataset cell input format
-     // outputType: FieldType.dateUs,   // date picker format
-     saveOutputType: FieldType.dateUtc, // save output date format
+     type: 'date',              // dataset cell input format
+     // outputType: 'dateUs',   // date picker format
+     saveOutputType: 'dateUtc', // save output date format
     }
   ];
 }
 </script>
 ```
 
-So to make it more clear, the `saveOutputType` is the format that will be sent to the `onCellChange` event, then the `outputType` is how the date will show up in the date picker (Vanilla-Calendar) and finally the `type` is basically the input format (coming from your dataset). Note however that each property are cascading, if 1 property is missing it will go to the next one until 1 is found... for example, on the `onCellChange` if you aren't defining `saveOutputType`, it will try to use `outputType`, if again none is provided it will try to use `type` and finally if none is provided it will use `FieldType.dateIso` as the default.
+So to make it more clear, the `saveOutputType` is the format that will be sent to the `onCellChange` event, then the `outputType` is how the date will show up in the date picker (Vanilla-Calendar) and finally the `type` is basically the input format (coming from your dataset). Note however that each property are cascading, if 1 property is missing it will go to the next one until 1 is found... for example, on the `onCellChange` if you aren't defining `saveOutputType`, it will try to use `outputType`, if again none is provided it will try to use `type` and finally if none is provided it will use `'dateIso'` as the default.
 
 ## Perform an action After Inline Edit
 #### Recommended way
@@ -152,7 +152,6 @@ function defineGrid() {
   columnDefinitions.value = [
     {
       id: 'title2', name: 'Title, Custom Editor', field: 'title',
-      type: FieldType.string,
       editor: {
         model: CustomInputEditor // reference your custom editor class
       },
@@ -211,10 +210,10 @@ export interface OnEventArgs {
 ```
 
 ## AutoComplete Editor
-The AutoComplete Editor has the same configuration (except for the `model: Editors.autoComplete`) as the AutoComplete Filter, so you can refer to the [AutoComplete Filter - Docs](../column-functionalities/filters/autocomplete-filter-kraaden.md) for more info on how to use it.
+The AutoComplete Editor has the same configuration (except for the `model: Editors.autoComplete`) as the AutoComplete Filter, so you can refer to the [AutoComplete Filter - Docs](../column-functionalities/filters/autocomplete-filter.md) for more info on how to use it.
 
 ## Select Editors
-The library ships with two select editors: [singleSelectEditor](https://github.com/ghiscoding/slickgrid-vue/blob/master/slickgrid-vue/src/slickgrid-vue/editors/singleSelectEditor.ts) and the [multipleSelectEditor](https://github.com/ghiscoding/slickgrid-vue/blob/master/slickgrid-vue/src/slickgrid-vue/editors/multipleSelectEditor.ts). Both support the [multiple-select](https://github.com/ghiscoding/slickgrid-vue/blob/master/slickgrid-vue/assets/lib/multiple-select/multiple-select.js) library, but fallback to the bootstrap form-control style if you decide to exclude this library from your build. These editors will work with a list of foreign key values (custom structure not supported) and can be displayed properly with the [collectionFormatter](https://github.com/ghiscoding/slickgrid-vue/blob/master/slickgrid-vue/src/slickgrid-vue/formatters/collectionEditorFormatter.ts). [example 3](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example3) has all the details for you to get started with these editors.
+The library ships with two select editors: [singleSelectEditor](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/editors/singleSelectEditor.ts) and the [multipleSelectEditor](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/editors/multipleSelectEditor.ts). Both support the [multiple-select](https://github.com/ghiscoding/slickgrid-vue/blob/master/slickgrid-vue/assets/lib/multiple-select/multiple-select.js) library, but fallback to the bootstrap form-control style if you decide to exclude this library from your build. These editors will work with a list of foreign key values (custom structure not supported) and can be displayed properly with the [collectionFormatter](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/formatters/collectionEditorFormatter.ts). [example 3](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example3) has all the details for you to get started with these editors.
 
 Here's an example with a `collection`, `collectionFilterBy` and `collectionSortBy`
 
@@ -224,7 +223,6 @@ function defineGrid() {
   columnDefinitions.value = [
     {
       id: 'prerequisites', name: 'Prerequisites', field: 'prerequisites',
-      type: FieldType.string,
       editor: {
         model: Editors.multipleSelect,
         collection: Array.from(Array(12).keys()).map(k => ({ value: `Task ${k}`, label: `Task ${k}` })),
@@ -244,12 +242,13 @@ function defineGrid() {
 ```
 
 ### Editor Options (`MultipleSelectOption` interface)
-All the available options that can be provided as `editorOptions` to your column definitions can be found under this [multipleSelectOption interface](https://github.com/ghiscoding/slickgrid-vue/blob/master/src/slickgrid-vue/models/multipleSelectOption.interface.ts) and you should cast your `editorOptions` to that interface to make sure that you use only valid options of the `multiple-select.js` library.
+All the available options that can be provided as editor `options` to your column definitions can be found under this [multipleSelectOption interface](https://github.com/ghiscoding/slickgrid-vue/blob/master/src/slickgrid-vue/models/multipleSelectOption.interface.ts) and you should cast your editor `options` to that interface to make sure that you use only valid options of the `multiple-select.js` library.
 
 ```ts
 editor: {
   model: Editors.SingleSelect,
-  editorOptions: {
+  // previously known as `editorOptions` for < 9.0
+  options: {
     maxHeight: 400
   } as MultipleSelectOption
 }
@@ -362,7 +361,7 @@ function defineGrid() {
     {
       id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
       formatter: Formatters.checkmarkMaterial,
-      type: FieldType.boolean,
+      type: 'boolean',
       editor: {
         // display checkmark icon when True
         enableRenderHtml: true,
@@ -376,7 +375,7 @@ function defineGrid() {
 ```
 
 ### `multiple-select` Options
-You can use any options from [Multiple-Select-Vanilla](https://github.com/ghiscoding/multiple-select-vanilla) and add them to your `filterOptions` property.
+You can use any options from [Multiple-Select-Vanilla](https://github.com/ghiscoding/multiple-select-vanilla) and add them to your editor `options` property.
 
 Couple of small options were added to suit slickgrid-vue needs, which is why it points to `slickgrid-vue/lib` folder (which is our customized version of the original). This lib is required if you plan to use `multipleSelect` or `singleSelect` Filters. What was customized to (compare to the original) is the following:
 - `okButton` option was added to add an OK button for simpler closing of the dropdown after selecting multiple options.
@@ -417,27 +416,28 @@ function defineGrid() {
 
 ## Editor Options
 
-#### Column Editor `editorOptions`
-Some of the Editors could receive extra options, which is mostly the case for Editors using external dependencies (e.g. `autocompleter`, `date`, `multipleSelect`, ...) you can provide options via the `editorOptions`, for example
+#### Column Editor `options`
+Some of the Editors could receive extra options, which is mostly the case for Editors using external dependencies (e.g. `autocompleter`, `date`, `multipleSelect`, ...) you can provide options via the editor `options`, for example
 
 ```ts
 columnDefinitions.value = [{
   id: 'start', name: 'Start Date', field: 'start',
   editor: {
     model: Editors.date,
-    editorOptions: { range: { date: 'today' } } as VanillaCalendarOption
+    // previously known as `editorOptions` for < 9.0
+    options: { displayDateMin: 'today' } as VanillaCalendarOption
   }
 }];
 ```
 
 #### Grid Option `defaultEditorOptions
-You could also define certain options as a global level (for the entire grid or even all grids) by taking advantage of the `defaultEditorOptions` Grid Option. Note that they are set via the editor type as a key name (`autocompleter`, `date`, ...) and then the content is the same as `editorOptions` (also note that each key is already typed with the correct editor option interface), for example
+You could also define certain options as a global level (for the entire grid or even all grids) by taking advantage of the `defaultEditorOptions` Grid Option. Note that they are set via the editor type as a key name (`autocompleter`, `date`, ...) and then the content is the same as editor `options` (also note that each key is already typed with the correct editor option interface), for example
 
 ```ts
 gridOptions.value = {
   defaultEditorOptions: {
     autocompleter: { debounceWaitMs: 150 }, // typed as AutocompleterOption
-    date: { range: { date: 'today' } }, // typed as VanillaCalendarOption,
+    date: { displayDateMin: 'today' }, // typed as VanillaCalendarOption,
     longText: { cols: 50, rows: 5 }
   }
 }
@@ -529,7 +529,7 @@ With that in mind and the code from the SO answer, we end up with the following 
 
 ```vue
 <script setup lang="ts">
-import { type Column, FieldType, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();

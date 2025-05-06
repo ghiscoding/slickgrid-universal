@@ -1,14 +1,21 @@
 import { format } from '@formkit/tempo';
+import { isObject } from '@slickgrid-universal/utils';
 import type { AutocompleteItem } from 'autocompleter';
-import { dequal } from 'dequal/lite';
-import type VanillaCalendar from 'vanilla-calendar-pro';
-import type { IOptions, ISelected, FormatDateString } from 'vanilla-calendar-pro/types';
+import { Calendar, type FormatDateString, type Options, type Range } from 'vanilla-calendar-pro';
 
 import { FieldType } from '../enums/fieldType.enum.js';
-import type { AutocompleterOption, Column, ColumnEditor, ColumnFilter } from '../interfaces/index.js';
+import type {
+  AutocompleterOption,
+  CollectionFilterBy,
+  CollectionOption,
+  CollectionSortBy,
+  Column,
+  ColumnEditor,
+  ColumnFilter,
+} from '../interfaces/index.js';
 import { formatDateByFieldType, mapTempoDateFormatWithFieldType, tryParseDate } from '../services/dateUtils.js';
 import { getDescendantProperty } from '../services/utilities.js';
-import { isObject } from '@slickgrid-universal/utils';
+import type { CollectionService } from '../services/collection.service.js';
 
 /**
  * add loading class ".slick-autocomplete-loading" to the Kraaden Autocomplete input element
@@ -55,35 +62,43 @@ export function getCollectionFromObjectWhenEnabled<T = any>(collection: T, colum
   return collection;
 }
 
-export function resetDatePicker(pickerInstance: VanillaCalendar): void {
+export function resetDatePicker(pickerInstance: Calendar): void {
   const today = new Date();
-  pickerInstance.settings.selected = {
-    dates: [],
-    month: today.getMonth(),
-    year: today.getFullYear(),
-  };
-  const dateInputElm = pickerInstance.HTMLInputElement;
+  pickerInstance.selectedDates = [];
+  pickerInstance.selectedMonth = today.getMonth() as Range<12>;
+  pickerInstance.selectedYear = today.getFullYear();
+  const dateInputElm = pickerInstance.context.inputElement;
   if (dateInputElm) {
     dateInputElm.value = '';
   }
-  pickerInstance.update({
-    dates: true,
-    month: true,
-    year: true,
-    time: true,
-  });
+  pickerInstance.update();
+}
+
+/** Create a blank entry for Select Editor/Filter that can be added to the collection. It will also reuse the same collection structure provided by the user */
+export function createBlankSelectEntry(labelName: string, valueName: string, labelPrefixName?: string, labelSuffixName?: string): any {
+  const blankEntry = {
+    [labelName]: '',
+    [valueName]: '',
+  };
+  if (labelPrefixName) {
+    blankEntry[labelPrefixName] = '';
+  }
+  if (labelSuffixName) {
+    blankEntry[labelSuffixName] = '';
+  }
+  return blankEntry;
 }
 
 export function setPickerDates(
   colEditorOrFilter: ColumnEditor | ColumnFilter,
   dateInputElm: HTMLInputElement,
-  pickerInstance: IOptions | VanillaCalendar,
+  pickerInstance: Options | Calendar,
   options: {
     oldVal?: Date | string | Array<Date | string> | undefined;
     newVal: Date | string | Array<Date | string> | undefined;
     columnDef: Column;
     updatePickerUI?: boolean;
-    selectedSettings?: ISelected;
+    selectedSettings?: Pick<Options, 'selectedDates' | 'selectedMonth' | 'selectedTime' | 'selectedYear'>;
   }
 ): void {
   const { oldVal, newVal, columnDef, selectedSettings, updatePickerUI } = options;
@@ -103,26 +118,63 @@ export function setPickerDates(
       }
     }
 
-    const newSettingSelected: ISelected = selectedSettings ?? {
-      dates: [pickerDates.map((p) => format(p, isoFormat)).join(':') as FormatDateString],
-      month: pickerDates[0]?.getMonth(),
-      year: pickerDates[0]?.getFullYear(),
-      time: inputFormat === 'ISO8601' || (inputFormat || '').toLowerCase().includes('h') ? format(pickerDates[0], 'HH:mm') : undefined,
+    const newSettingSelected = selectedSettings ?? {
+      selectedDates: [pickerDates.map((p) => format(p, isoFormat)).join(':') as FormatDateString],
+      selectedMonth: pickerDates[0]?.getMonth() as Range<12>,
+      selectedYear: pickerDates[0]?.getFullYear(),
+      selectedTime:
+        inputFormat === 'ISO8601' || (inputFormat || '').toLowerCase().includes('h') ? format(pickerDates[0], 'HH:mm') : undefined,
     };
 
-    if (!dequal(pickerInstance.settings!.selected, newSettingSelected)) {
-      pickerInstance.settings!.selected = newSettingSelected;
-
-      if (updatePickerUI && (pickerInstance as VanillaCalendar)?.update) {
-        (pickerInstance as VanillaCalendar).update({
-          dates: true,
-          month: true,
-          year: true,
-          time: true,
-        });
-      }
+    if (updatePickerUI !== false && hasCalendarChanges(pickerInstance, newSettingSelected) && pickerInstance instanceof Calendar) {
+      pickerInstance.selectedDates = newSettingSelected.selectedDates!;
+      pickerInstance.selectedMonth = newSettingSelected.selectedMonth!;
+      pickerInstance.selectedYear = newSettingSelected.selectedYear!;
+      pickerInstance.selectedTime = newSettingSelected.selectedTime!;
+      pickerInstance.update();
     }
 
     dateInputElm.value = newDates.length ? pickerDates.map((p) => formatDateByFieldType(p, undefined, outputFieldType)).join(' — ') : '';
   }
+
+  function hasCalendarChanges(sourceObj: Partial<Options>, targetObj: Partial<Options>) {
+    let isChanged = false;
+    for (const selectType of ['selectedDates', 'selectedMonth', 'selectedYear', 'selectedTime']) {
+      if (sourceObj[selectType as keyof Options] !== targetObj[selectType as keyof Options]) {
+        isChanged = true;
+      }
+    }
+
+    return isChanged;
+  }
+}
+
+/** When user defines pre-filter on his Editor/Filter collection */
+export function filterCollectionWithOptions<T = any>(
+  inputCollection: T[],
+  collectionService?: CollectionService,
+  collectionFilterBy?: CollectionFilterBy | CollectionFilterBy[],
+  collectionOptions?: CollectionOption
+): T[] {
+  if (collectionFilterBy) {
+    const filterBy = collectionFilterBy;
+    const filterCollectionBy = collectionOptions?.filterResultAfterEachPass || null;
+    return collectionService?.filterCollection(inputCollection, filterBy, filterCollectionBy) || [];
+  }
+  return inputCollection;
+}
+
+/** When user defines pre-sort on his Editor/Filter collection */
+export function sortCollectionWithOptions<T = any>(
+  inputCollection: T[],
+  columnDef: Column,
+  collectionService?: CollectionService,
+  collectionSortBy?: CollectionSortBy | CollectionSortBy[],
+  enableTranslateLabel?: boolean
+): T[] {
+  if (collectionSortBy) {
+    const sortBy = collectionSortBy;
+    return collectionService?.sortCollection(columnDef, inputCollection, sortBy, enableTranslateLabel) || [];
+  }
+  return inputCollection;
 }

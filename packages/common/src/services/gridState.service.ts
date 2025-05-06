@@ -1,7 +1,7 @@
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { dequal } from 'dequal/lite';
 
-import { ExtensionName, GridStateType } from '../enums/index.js';
+import { ExtensionName } from '../enums/index.js';
 import type {
   Column,
   CurrentColumn,
@@ -352,7 +352,7 @@ export class GridStateService {
     const columns: Column[] = columnDefinitions || this._columns;
     const currentColumns: CurrentColumn[] = this.getAssociatedCurrentColumns(columns);
     this.pubSubService.publish('onGridStateChanged', {
-      change: { newValues: currentColumns, type: GridStateType.columns },
+      change: { newValues: currentColumns, type: 'columns' },
       gridState: this.getCurrentGridState(),
     });
   }
@@ -392,7 +392,7 @@ export class GridStateService {
       this.pubSubService.subscribe<CurrentFilter[]>('onFilterChanged', (currentFilters) => {
         this.resetRowSelectionWhenRequired();
         this.pubSubService.publish('onGridStateChanged', {
-          change: { newValues: currentFilters, type: GridStateType.filter },
+          change: { newValues: currentFilters, type: 'filter' },
           gridState: this.getCurrentGridState(),
         });
       })
@@ -403,7 +403,7 @@ export class GridStateService {
       this.pubSubService.subscribe('onFilterCleared', () => {
         this.resetRowSelectionWhenRequired();
         this.pubSubService.publish('onGridStateChanged', {
-          change: { newValues: [], type: GridStateType.filter },
+          change: { newValues: [], type: 'filter' },
           gridState: this.getCurrentGridState(),
         });
       })
@@ -414,7 +414,7 @@ export class GridStateService {
       this.pubSubService.subscribe<CurrentSorter[]>('onSortChanged', (currentSorters) => {
         this.resetRowSelectionWhenRequired();
         this.pubSubService.publish('onGridStateChanged', {
-          change: { newValues: currentSorters, type: GridStateType.sorter },
+          change: { newValues: currentSorters, type: 'sorter' },
           gridState: this.getCurrentGridState(),
         });
       })
@@ -424,7 +424,7 @@ export class GridStateService {
       this.pubSubService.subscribe('onSortCleared', () => {
         this.resetRowSelectionWhenRequired();
         this.pubSubService.publish('onGridStateChanged', {
-          change: { newValues: [], type: GridStateType.sorter },
+          change: { newValues: [], type: 'sorter' },
           gridState: this.getCurrentGridState(),
         });
       })
@@ -455,7 +455,7 @@ export class GridStateService {
             filteredDataContextIds: args.filteredIds,
           } as CurrentRowSelection;
           this.pubSubService.publish('onGridStateChanged', {
-            change: { newValues, type: GridStateType.rowSelection },
+            change: { newValues, type: 'rowSelection' },
             gridState: this.getCurrentGridState(),
           });
         }
@@ -464,23 +464,20 @@ export class GridStateService {
 
     // subscribe to HeaderMenu & GridService show/hide column(s)
     this._subscriptions.push(
-      this.pubSubService.subscribe<{ columns: Column[]; hiddenColumn?: Column }>(
-        ['onHeaderMenuHideColumns', 'onHideColumns', 'onShowColumns'],
-        (data) => {
-          const currentColumns: CurrentColumn[] = this.getAssociatedCurrentColumns(data.columns);
-          this.pubSubService.publish('onGridStateChanged', {
-            change: { newValues: currentColumns, type: GridStateType.columns },
-            gridState: this.getCurrentGridState(),
-          });
-        }
-      )
+      this.pubSubService.subscribe<{ columns: Column[]; hiddenColumn?: Column }>(['onHideColumns', 'onShowColumns'], (data) => {
+        const currentColumns: CurrentColumn[] = this.getAssociatedCurrentColumns(data.columns);
+        this.pubSubService.publish('onGridStateChanged', {
+          change: { newValues: currentColumns, type: 'columns' },
+          gridState: this.getCurrentGridState(),
+        });
+      })
     );
 
     // subscribe to Tree Data toggle items changes
     this._subscriptions.push(
       this.pubSubService.subscribe<TreeToggleStateChange>('onTreeItemToggled', (toggleChange) => {
         this.pubSubService.publish('onGridStateChanged', {
-          change: { newValues: toggleChange, type: GridStateType.treeData },
+          change: { newValues: toggleChange, type: 'treeData' },
           gridState: this.getCurrentGridState(),
         });
       })
@@ -490,7 +487,7 @@ export class GridStateService {
     this._subscriptions.push(
       this.pubSubService.subscribe<Omit<TreeToggleStateChange, 'fromItemId'>>('onTreeFullToggleEnd', (toggleChange) => {
         this.pubSubService.publish('onGridStateChanged', {
-          change: { newValues: toggleChange, type: GridStateType.treeData },
+          change: { newValues: toggleChange, type: 'treeData' },
           gridState: this.getCurrentGridState(),
         });
       })
@@ -507,12 +504,12 @@ export class GridStateService {
    * we just ask the developer to enable the feature, via flags, and internally the lib will create the necessary column.
    * So specifically for these column(s) and feature(s), we need to re-add them internally when the user calls the `changeColumnsArrangement()` method.
    * @param {Array<Object>} dynamicAddonColumnByIndexPositionList - array of plugin columnId and columnIndexPosition that will be re-added (if it wasn't already found in the output array) dynamically
-   * @param {Array<Column>} fullColumnDefinitions - full column definitions array that includes every columns (including Row Selection, Row Detail, Row Move when enabled)
+   * @param {Array<Column>} fullColumns - full column definitions array that includes every columns (including Row Selection, Row Detail, Row Move when enabled)
    * @param {Array<Column>} newArrangedColumns - output array that will be use to show in the UI (it could have less columns than fullColumnDefinitions array since user might hide some columns)
    */
   protected addColumnDynamicWhenFeatureEnabled(
     dynamicAddonColumnByIndexPositionList: Array<{ columnId: string; columnIndexPosition: number }>,
-    fullColumnDefinitions: Column[],
+    fullColumns: Column[],
     newArrangedColumns: Column[]
   ): void {
     // 1- first step is to sort them by their index position
@@ -520,11 +517,11 @@ export class GridStateService {
 
     // 2- second step, we can now proceed to create each extension/addon and that will position them accordingly in the column definitions list
     dynamicAddonColumnByIndexPositionList.forEach((feature) => {
-      const pluginColumnIdx = fullColumnDefinitions.findIndex((col) => col.id === feature.columnId);
+      const pluginColumnIdx = fullColumns.findIndex((col) => col.id === feature.columnId);
       const associatedGridCheckboxColumnIdx = newArrangedColumns.findIndex((col) => col.id === feature.columnId);
 
       if (pluginColumnIdx >= 0 && associatedGridCheckboxColumnIdx === -1) {
-        const pluginColumn = fullColumnDefinitions[pluginColumnIdx];
+        const pluginColumn = fullColumns[pluginColumnIdx];
         pluginColumnIdx === 0 ? newArrangedColumns.unshift(pluginColumn) : newArrangedColumns.splice(pluginColumnIdx, 0, pluginColumn);
       }
     });
@@ -544,7 +541,7 @@ export class GridStateService {
         const columns: Column[] = args?.columns;
         const currentColumns: CurrentColumn[] = this.getAssociatedCurrentColumns(columns);
         this.pubSubService.publish('onGridStateChanged', {
-          change: { newValues: currentColumns, type: GridStateType.columns },
+          change: { newValues: currentColumns, type: 'columns' },
           gridState: this.getCurrentGridState(),
         });
       });
@@ -564,7 +561,7 @@ export class GridStateService {
         const columns: Column[] = grid.getColumns();
         const currentColumns: CurrentColumn[] = this.getAssociatedCurrentColumns(columns);
         this.pubSubService.publish('onGridStateChanged', {
-          change: { newValues: currentColumns, type: GridStateType.columns },
+          change: { newValues: currentColumns, type: 'columns' },
           gridState: this.getCurrentGridState(),
         });
       });
@@ -586,7 +583,7 @@ export class GridStateService {
         const newValues = { frozenBottom: frozenBottomAfter, frozenColumn: frozenColumnAfter, frozenRow: frozenRowAfter };
         const currentGridState = this.getCurrentGridState();
         this.pubSubService.publish('onGridStateChanged', {
-          change: { newValues, type: GridStateType.pinning },
+          change: { newValues, type: 'pinning' },
           gridState: currentGridState,
         });
       }

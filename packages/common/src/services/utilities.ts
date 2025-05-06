@@ -425,7 +425,7 @@ export function getDescendantProperty<T = any>(object: T, path: string | undefin
 
 /** Get I18N Translation Prefix, defaults to an empty string */
 export function getTranslationPrefix(gridOptions?: GridOption): string {
-  if (gridOptions && gridOptions.translationNamespace) {
+  if (gridOptions?.translationNamespace) {
     return gridOptions.translationNamespace + (gridOptions.translationNamespaceSeparator || '');
   }
   return '';

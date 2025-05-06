@@ -26,32 +26,32 @@ describe('Example 08 - Column Span & Header Grouping', () => {
 
   it('should have a frozen grid on page load with 3 columns on the left and 4 columns on the right', () => {
     cy.get('.grid2')
-      .find(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"]`)
+      .find(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"]`)
       .should('have.length', 2);
     cy.get('.grid2')
-      .find(`.grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 0}px;"]`)
+      .find(`.grid-canvas-left > [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"]`)
       .children()
       .should('have.length', 3);
     cy.get('.grid2')
-      .find(`.grid-canvas-right > [style="top: ${GRID_ROW_HEIGHT * 0}px;"]`)
+      .find(`.grid-canvas-right > [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"]`)
       .children()
       .should('have.length', 4);
 
     cy.get('.grid2')
-      .find(`.grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 0}px;"]> .slick-cell:nth(0)`)
+      .find(`.grid-canvas-left > [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"]> .slick-cell:nth(0)`)
       .should('contain', '0');
     cy.get('.grid2')
-      .find(`.grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 0}px;"]> .slick-cell:nth(1)`)
+      .find(`.grid-canvas-left > [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"]> .slick-cell:nth(1)`)
       .should('contain', 'Task 0');
     cy.get('.grid2')
-      .find(`.grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 0}px;"]> .slick-cell:nth(2)`)
+      .find(`.grid-canvas-left > [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"]> .slick-cell:nth(2)`)
       .should('contain', '5 days');
 
     cy.get('.grid2')
-      .find(`.grid-canvas-right > [style="top: ${GRID_ROW_HEIGHT * 0}px;"]> .slick-cell:nth(0)`)
+      .find(`.grid-canvas-right > [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"]> .slick-cell:nth(0)`)
       .should('contain', '01/01/2009');
     cy.get('.grid2')
-      .find(`.grid-canvas-right > [style="top: ${GRID_ROW_HEIGHT * 0}px;"]> .slick-cell:nth(1)`)
+      .find(`.grid-canvas-right > [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"]> .slick-cell:nth(1)`)
       .should('contain', '01/05/2009');
   });
 
@@ -71,27 +71,27 @@ describe('Example 08 - Column Span & Header Grouping', () => {
     cy.get('[data-test="remove-frozen-column-button"]').click();
 
     cy.get('.grid2')
-      .find(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"]`)
+      .find(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"]`)
       .should('have.length', 1);
     cy.get('.grid2')
-      .find(`.grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 0}px;"]`)
+      .find(`.grid-canvas-left > [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"]`)
       .children()
       .should('have.length', 7);
 
     cy.get('.grid2')
-      .find(`.grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`)
+      .find(`.grid-canvas-left > [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0)`)
       .should('contain', '0');
     cy.get('.grid2')
-      .find(`.grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`)
+      .find(`.grid-canvas-left > [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`)
       .should('contain', 'Task 0');
     cy.get('.grid2')
-      .find(`.grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`)
+      .find(`.grid-canvas-left > [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`)
       .should('contain', '5 days');
     cy.get('.grid2')
-      .find(`.grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(3)`)
+      .find(`.grid-canvas-left > [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(3)`)
       .should('contain', '01/01/2009');
     cy.get('.grid2')
-      .find(`.grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(4)`)
+      .find(`.grid-canvas-left > [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(4)`)
       .should('contain', '01/05/2009');
   });
 
@@ -111,32 +111,32 @@ describe('Example 08 - Column Span & Header Grouping', () => {
     cy.contains('Set 3 Frozen Columns').click({ force: true });
 
     cy.get('.grid2')
-      .find(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"]`)
+      .find(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"]`)
       .should('have.length', 2);
     cy.get('.grid2')
-      .find(`.grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 0}px;"]`)
+      .find(`.grid-canvas-left > [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"]`)
       .children()
       .should('have.length', 3);
     cy.get('.grid2')
-      .find(`.grid-canvas-right > [style="top: ${GRID_ROW_HEIGHT * 0}px;"]`)
+      .find(`.grid-canvas-right > [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"]`)
       .children()
       .should('have.length', 4);
 
     cy.get('.grid2')
-      .find(`.grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`)
+      .find(`.grid-canvas-left > [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0)`)
       .should('contain', '0');
     cy.get('.grid2')
-      .find(`.grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`)
+      .find(`.grid-canvas-left > [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`)
       .should('contain', 'Task 0');
     cy.get('.grid2')
-      .find(`.grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`)
+      .find(`.grid-canvas-left > [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`)
       .should('contain', '5 days');
 
     cy.get('.grid2')
-      .find(`.grid-canvas-right > [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`)
+      .find(`.grid-canvas-right > [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0)`)
       .should('contain', '01/01/2009');
     cy.get('.grid2')
-      .find(`.grid-canvas-right > [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`)
+      .find(`.grid-canvas-right > [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`)
       .should('contain', '01/05/2009');
   });
 
@@ -158,27 +158,27 @@ describe('Example 08 - Column Span & Header Grouping', () => {
     cy.contains('Unfreeze Columns/Rows').click({ force: true });
 
     cy.get('.grid2')
-      .find(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"]`)
+      .find(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"]`)
       .should('have.length', 1);
     cy.get('.grid2')
-      .find(`.grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 0}px;"]`)
+      .find(`.grid-canvas-left > [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"]`)
       .children()
       .should('have.length', 7);
 
     cy.get('.grid2')
-      .find(`.grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`)
+      .find(`.grid-canvas-left > [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0)`)
       .should('contain', '0');
     cy.get('.grid2')
-      .find(`.grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`)
+      .find(`.grid-canvas-left > [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`)
       .should('contain', 'Task 0');
     cy.get('.grid2')
-      .find(`.grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(2)`)
+      .find(`.grid-canvas-left > [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`)
       .should('contain', '5 days');
     cy.get('.grid2')
-      .find(`.grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(3)`)
+      .find(`.grid-canvas-left > [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(3)`)
       .should('contain', '01/01/2009');
     cy.get('.grid2')
-      .find(`.grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(4)`)
+      .find(`.grid-canvas-left > [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(4)`)
       .should('contain', '01/05/2009');
   });
 
@@ -189,11 +189,26 @@ describe('Example 08 - Column Span & Header Grouping', () => {
 
     cy.get('[data-test="search-value-input"]').type('5');
 
-    cy.get(`.grid2 .grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 5');
-    cy.get(`.grid2 .grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 15');
-    cy.get(`.grid2 .grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 25');
-    cy.get(`.grid2 .grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 35');
-    cy.get(`.grid2 .grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 45');
+    cy.get(`.grid2 .grid-canvas-left > [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).should(
+      'contain',
+      'Task 5'
+    );
+    cy.get(`.grid2 .grid-canvas-left > [style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).should(
+      'contain',
+      'Task 15'
+    );
+    cy.get(`.grid2 .grid-canvas-left > [style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`).should(
+      'contain',
+      'Task 25'
+    );
+    cy.get(`.grid2 .grid-canvas-left > [style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(1)`).should(
+      'contain',
+      'Task 35'
+    );
+    cy.get(`.grid2 .grid-canvas-left > [style="transform: translateY(${GRID_ROW_HEIGHT * 4}px);"] > .slick-cell:nth(1)`).should(
+      'contain',
+      'Task 45'
+    );
 
     cy.get('.grid2')
       .find('.slick-custom-footer')
@@ -234,11 +249,26 @@ describe('Example 08 - Column Span & Header Grouping', () => {
   it('should clear search input and expect empty dataset warning to go away and also expect data back (Task 0, 1, 2, ...)', () => {
     cy.get('[data-test="clear-search-input"]').click();
 
-    cy.get(`.grid2 .grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 0');
-    cy.get(`.grid2 .grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 1}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 1');
-    cy.get(`.grid2 .grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 2}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 2');
-    cy.get(`.grid2 .grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 3}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 3');
-    cy.get(`.grid2 .grid-canvas-left > [style="top: ${GRID_ROW_HEIGHT * 4}px;"] > .slick-cell:nth(1)`).should('contain', 'Task 4');
+    cy.get(`.grid2 .grid-canvas-left > [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).should(
+      'contain',
+      'Task 0'
+    );
+    cy.get(`.grid2 .grid-canvas-left > [style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).should(
+      'contain',
+      'Task 1'
+    );
+    cy.get(`.grid2 .grid-canvas-left > [style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`).should(
+      'contain',
+      'Task 2'
+    );
+    cy.get(`.grid2 .grid-canvas-left > [style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(1)`).should(
+      'contain',
+      'Task 3'
+    );
+    cy.get(`.grid2 .grid-canvas-left > [style="transform: translateY(${GRID_ROW_HEIGHT * 4}px);"] > .slick-cell:nth(1)`).should(
+      'contain',
+      'Task 4'
+    );
 
     cy.get('.grid2')
       .find('.slick-custom-footer')

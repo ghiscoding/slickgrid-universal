@@ -1,5 +1,5 @@
 # CI Build & Vitest Unit Tests (ship smaller name for CI badge)
-name: Build & Unit Tests
+name: Universal Build & Unit Tests
 on:
   # Trigger the workflow on push or pull request,
   # but only for the master branch on Push and any branches on PR
@@ -63,14 +63,8 @@ jobs:
       - name: Run pnpm install dependencies
         run: pnpm install
 
-      - name: ESLint
-        run: pnpm lint
-
-      - name: Prettier
-        run: pnpm prettier:check
-
-      - name: TSC Full Bundle (all Bundler types)
-        run: pnpm bundle
+      - name: Build Slickgrid-Universal packages (excludes frameworks)
+        run: pnpm build:universal
 
       - name: Run Vitest unit tests
         if: ${{ !contains(github.event.head_commit.message, 'chore(release)') }}
@@ -82,6 +76,7 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
+          flags: universal
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: test/vitest-coverage
           verbose: true

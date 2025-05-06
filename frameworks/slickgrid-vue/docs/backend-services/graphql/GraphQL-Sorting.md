@@ -51,7 +51,6 @@ function defineGrid() {
       service: new GraphqlService(),
       process: (query) => userService.getAll<Customer[]>(query),
       options: {
-        columnDefinitions: columnDefinitions,
         datasetName: 'customers'
       }
     }

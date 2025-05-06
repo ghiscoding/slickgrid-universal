@@ -21,7 +21,7 @@ import type {
   GridOption,
   onGridMenuColumnsChangedCallbackArgs,
 } from '../interfaces/index.js';
-import { DelimiterType, FileType } from '../enums/index.js';
+import { DelimiterType } from '../enums/index.js';
 import type { ExtensionUtility } from '../extensions/extensionUtility.js';
 import { getTranslationPrefix } from '../services/index.js';
 import type { ExcelExportService } from '../services/excelExport.service.js';
@@ -829,7 +829,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
           if (exportCsvService?.exportToFile) {
             exportCsvService.exportToFile({
               delimiter: DelimiterType.comma,
-              format: FileType.csv,
+              format: 'csv',
             });
           } else {
             console.error(
@@ -852,7 +852,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
           if (exportTxtService?.exportToFile) {
             exportTxtService.exportToFile({
               delimiter: DelimiterType.tab,
-              format: FileType.txt,
+              format: 'txt',
             });
           } else {
             console.error(

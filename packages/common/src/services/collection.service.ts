@@ -1,12 +1,6 @@
 import { uniqueArray } from '@slickgrid-universal/utils';
 
-import {
-  FilterMultiplePassType,
-  type FilterMultiplePassTypeString,
-  FieldType,
-  OperatorType,
-  SortDirectionNumber,
-} from './../enums/index.js';
+import { type FilterMultiplePassType, FieldType, OperatorType, SortDirectionNumber } from './../enums/index.js';
 import type { CollectionFilterBy, CollectionSortBy, Column } from './../interfaces/index.js';
 import { mapTempoDateFormatWithFieldType, tryParseDate } from './dateUtils.js';
 import { sortByFieldType } from '../sortComparers/sortUtilities.js';
@@ -31,17 +25,17 @@ export class CollectionService<T = any> {
   filterCollection(
     collection: T[],
     filterByOptions: CollectionFilterBy | CollectionFilterBy[],
-    filterResultBy: FilterMultiplePassType | FilterMultiplePassTypeString | null = FilterMultiplePassType.chain
+    filterResultBy: FilterMultiplePassType | null = 'chain'
   ): T[] {
     let filteredCollection: T[] = [];
 
     // when it's array, we will use the new filtered collection after every pass
     // basically if input collection has 10 items on 1st pass and 1 item is filtered out, then on 2nd pass the input collection will be 9 items
     if (Array.isArray(filterByOptions)) {
-      filteredCollection = filterResultBy === FilterMultiplePassType.merge ? [] : [...collection];
+      filteredCollection = filterResultBy === 'merge' ? [] : [...collection];
 
       filterByOptions.forEach((filter) => {
-        if (filterResultBy === FilterMultiplePassType.merge) {
+        if (filterResultBy === 'merge') {
           const filteredPass = this.singleFilterCollection(collection, filter);
           filteredCollection = uniqueArray([...filteredCollection, ...filteredPass]);
         } else {

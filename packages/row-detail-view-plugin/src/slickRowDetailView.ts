@@ -6,10 +6,9 @@ import type {
   GridOption,
   OnAfterRowDetailToggleArgs,
   OnBeforeRowDetailToggleArgs,
-  OnRowBackToViewportRangeArgs,
+  OnRowBackOrOutOfViewportRangeArgs,
   OnRowDetailAsyncEndUpdateArgs,
   OnRowDetailAsyncResponseArgs,
-  OnRowOutOfViewportRangeArgs,
   PubSubService,
   RowDetailView,
   RowDetailViewOption,
@@ -45,13 +44,13 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   onBeforeRowDetailToggle: SlickEvent<OnBeforeRowDetailToggleArgs>;
 
   /** Fired just before a row becomes out of viewport range (you can use this event to save inner Grid State before it gets destroyed) */
-  onBeforeRowOutOfViewportRange: SlickEvent<OnRowOutOfViewportRangeArgs>;
+  onBeforeRowOutOfViewportRange: SlickEvent<OnRowBackOrOutOfViewportRangeArgs>;
 
   /** Fired after the row detail gets toggled */
-  onRowBackToViewportRange: SlickEvent<OnRowBackToViewportRangeArgs>;
+  onRowBackToViewportRange: SlickEvent<OnRowBackOrOutOfViewportRangeArgs>;
 
   /** Fired after a row becomes out of viewport range (when user can't see the row anymore) */
-  onRowOutOfViewportRange: SlickEvent<OnRowOutOfViewportRangeArgs>;
+  onRowOutOfViewportRange: SlickEvent<OnRowBackOrOutOfViewportRangeArgs>;
 
   // --
   // protected props
@@ -95,9 +94,9 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     this.onAsyncResponse = new SlickEvent<OnRowDetailAsyncResponseArgs>('onAsyncResponse');
     this.onAfterRowDetailToggle = new SlickEvent<OnAfterRowDetailToggleArgs>('onAfterRowDetailToggle');
     this.onBeforeRowDetailToggle = new SlickEvent<OnBeforeRowDetailToggleArgs>('onBeforeRowDetailToggle');
-    this.onBeforeRowOutOfViewportRange = new SlickEvent<OnRowOutOfViewportRangeArgs>('onBeforeRowOutOfViewportRange');
-    this.onRowBackToViewportRange = new SlickEvent<OnRowBackToViewportRangeArgs>('onRowBackToViewportRange');
-    this.onRowOutOfViewportRange = new SlickEvent<OnRowOutOfViewportRangeArgs>('onRowOutOfViewportRange');
+    this.onBeforeRowOutOfViewportRange = new SlickEvent<OnRowBackOrOutOfViewportRangeArgs>('onBeforeRowOutOfViewportRange');
+    this.onRowBackToViewportRange = new SlickEvent<OnRowBackOrOutOfViewportRangeArgs>('onRowBackToViewportRange');
+    this.onRowOutOfViewportRange = new SlickEvent<OnRowBackOrOutOfViewportRangeArgs>('onRowOutOfViewportRange');
   }
 
   get addonOptions(): RowDetailView {
@@ -218,7 +217,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     clearTimeout(this._backViewportTimer);
   }
 
-  create(columnDefinitions: Column[], gridOptions: GridOption): UniversalRowDetailView | null {
+  create(columns: Column[], gridOptions: GridOption): UniversalRowDetailView | null {
     if (!gridOptions.rowDetailView) {
       throw new Error(
         '[Slickgrid-Universal] The Row Detail View requires options to be passed via the "rowDetailView" property of the Grid Options'
@@ -232,24 +231,24 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       this.expandableOverride(this._addonOptions.expandableOverride);
     }
 
-    if (Array.isArray(columnDefinitions) && gridOptions) {
+    if (Array.isArray(columns) && gridOptions) {
       const newRowDetailViewColumn: Column = this.getColumnDefinition();
 
       // add new row detail column unless it was already added
-      if (!columnDefinitions.some((col) => col.id === newRowDetailViewColumn.id)) {
-        const rowDetailColDef = Array.isArray(columnDefinitions) && columnDefinitions.find((col) => col?.behavior === 'selectAndMove');
+      if (!columns.some((col) => col.id === newRowDetailViewColumn.id)) {
+        const rowDetailColDef = Array.isArray(columns) && columns.find((col) => col?.behavior === 'selectAndMove');
         const finalRowDetailViewColumn = rowDetailColDef ? rowDetailColDef : newRowDetailViewColumn;
 
         // column index position in the grid
         const columnPosition = gridOptions?.rowDetailView?.columnIndexPosition ?? 0;
         if (columnPosition > 0) {
-          columnDefinitions.splice(columnPosition, 0, finalRowDetailViewColumn);
+          columns.splice(columnPosition, 0, finalRowDetailViewColumn);
         } else {
-          columnDefinitions.unshift(finalRowDetailViewColumn);
+          columns.unshift(finalRowDetailViewColumn);
         }
 
         this.pubSubService.publish(`onPluginColumnsChanged`, {
-          columns: columnDefinitions,
+          columns,
           pluginName: this.pluginName,
         });
       }
@@ -333,7 +332,6 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     } else {
       this.onAsyncResponse.notify({
         item,
-        itemDetail: item,
         detailView: item[`${this._keyPrefix}detailContent`],
         grid: this._grid,
       });
@@ -370,16 +368,16 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
   /**
    * subscribe to the onAsyncResponse so that the plugin knows when the user server side calls finished
-   * the response has to be as "args.item" (or "args.itemDetail") with it's data back
+   * the response has to be as "args.item" with it's data back
    */
-  handleOnAsyncResponse(e: SlickEventData, args: { item: any; itemDetail: any; detailView?: any }): void {
-    if (!args || (!args.item && !args.itemDetail)) {
+  handleOnAsyncResponse(e: SlickEventData, args: { item: any; detailView?: any }): void {
+    if (!args || !args.item) {
       console.error('SlickRowDetailView plugin requires the onAsyncResponse() to supply "args.item" property.');
       return;
     }
 
-    // @deprecated `args.itemDetail` we accept item/itemDetail, just get the one which has data
-    const itemDetail = args.item || args.itemDetail;
+    // get item detail argument
+    const itemDetail = args.item;
 
     // if we just want to load in a view directly we can use detailView property to do so
     itemDetail[`${this._keyPrefix}detailContent`] = args.detailView ?? this._addonOptions?.postTemplate?.(itemDetail);
@@ -392,7 +390,6 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       {
         grid: this._grid,
         item: itemDetail,
-        itemDetail,
       },
       e,
       this

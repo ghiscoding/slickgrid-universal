@@ -1,5 +1,5 @@
 import { format } from '@formkit/tempo';
-import { type Column, FieldType, Filters, type GridOption, type OnRowCountChangedEventArgs } from '@slickgrid-universal/common';
+import { type Column, Filters, type GridOption, type OnRowCountChangedEventArgs } from '@slickgrid-universal/common';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { GraphqlService, type GraphqlPaginatedResult, type GraphqlServiceApi } from '@slickgrid-universal/graphql';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
@@ -86,7 +86,6 @@ export default class Example27 {
         field: 'name',
         nameKey: 'NAME',
         width: 60,
-        type: FieldType.string,
         sortable: true,
         filterable: true,
         filter: {
@@ -119,7 +118,7 @@ export default class Example27 {
         filter: {
           model: Filters.multipleSelect,
           collection: this.jsonData.sort((a, b) => (a.company < b.company ? -1 : 1)).map((m) => ({ value: m.company, label: m.company })),
-          filterOptions: {
+          options: {
             filter: true, // adds a filter on top of the multi-select dropdown
           } as MultipleSelectOption,
         },

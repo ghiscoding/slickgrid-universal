@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { CaseType } from '@slickgrid-universal/common';
 
 import { OdataQueryBuilderService } from '../odataQueryBuilder.service.js';
 
@@ -244,7 +243,7 @@ describe('OdataService', () => {
 
   describe('updateOptions method', () => {
     beforeEach(() => {
-      service.updateOptions({ caseType: CaseType.pascalCase });
+      service.updateOptions({ caseType: 'pascalCase' });
     });
 
     it('should be able to provide "filterBy" array and expect see the query string include the filter', () => {

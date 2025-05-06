@@ -81,7 +81,7 @@ For the `Select` Filter, you will use `labelKey` instead of `label`. Anytime a t
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { useTranslation } from 'i18next-vue';
-import { type Column, DelimiterType, FieldType, FileType, Filters, type Formatter, Formatters, GridOption, GridStateChange,SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
+import { type Column, DelimiterType, Filters, type Formatter, Formatters, GridOption, GridStateChange,SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, ref } from 'vue';
 
 const { i18next } = useTranslation();

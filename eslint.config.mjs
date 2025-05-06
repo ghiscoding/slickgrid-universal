@@ -7,23 +7,16 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: [
-      '**/*.{js,mjs}',
-      '**/*/*.d.ts',
-      '**/dist',
-    ],
+    ignores: ['**/*.{js,mjs}', '**/*/*.d.ts', '**/dist', '**/demos/angular/**', '**/frameworks/angular-slickgrid/**'],
   },
   {
-    extends: [
-      eslint.configs.recommended,
-      ...tseslint.configs.recommended,
-    ],
+    extends: [eslint.configs.recommended, ...tseslint.configs.recommended],
     plugins: {
       cypress,
       vitest,
-      n
+      n,
     },
-    files: ['**/*.ts'],
+    files: ['**/*.{ts,tsx}'],
     languageOptions: {
       globals: {
         ...globals.es2021,
@@ -33,13 +26,13 @@ export default tseslint.config(
       parserOptions: {
         project: ['./tsconfig.base.json'],
         tsconfigRootDir: import.meta.dirname,
-      }
+      },
     },
     settings: {
       node: {
         tryExtensions: ['.ts'],
-        resolvePaths: ['node_modules/@types']
-      }
+        resolvePaths: ['node_modules/@types'],
+      },
     },
     rules: {
       '@typescript-eslint/ban-ts-comment': 'off',
@@ -55,7 +48,10 @@ export default tseslint.config(
       '@typescript-eslint/no-non-null-assertion': 'off',
       '@typescript-eslint/no-inferrable-types': 'error',
       '@typescript-eslint/no-unused-expressions': 'off',
-      '@typescript-eslint/no-unused-vars': ['error', { 'argsIgnorePattern': '^_', 'destructuredArrayIgnorePattern': '^_', caughtErrors: 'none' }],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', destructuredArrayIgnorePattern: '^_', caughtErrors: 'none' },
+      ],
       'cypress/no-assigning-return-values': 'off',
       'cypress/unsafe-to-chain-command': 'off',
       'object-shorthand': 'error',
@@ -64,7 +60,8 @@ export default tseslint.config(
       'no-case-declarations': 'off',
       'no-prototype-builtins': 'off',
       'no-extra-boolean-cast': 'off',
-      'semi': 'off',
+      semi: 'off',
       // 'sort-imports': ['error', { ignoreCase: true, ignoreMemberSort: true }]
-    }
-  });
+    },
+  }
+);

@@ -32,7 +32,7 @@ describe('Example 24 - Footer Totals Row', () => {
     let totalVal = 0;
     const increasingVal = 50;
 
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).should(($span) => {
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0)`).should(($span) => {
       cellVal = Number($span.text());
       expect(cellVal).to.gte(0);
     });
@@ -41,7 +41,7 @@ describe('Example 24 - Footer Totals Row', () => {
       expect(totalVal).to.gte(400);
     });
 
-    cy.get(`[style="top: ${GRID_ROW_HEIGHT * 0}px;"] > .slick-cell:nth(0)`).click();
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0)`).click();
     cy.get('.editor-0').type(`${increasingVal}{enter}`);
     cy.wait(1);
 

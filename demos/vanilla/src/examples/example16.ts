@@ -3,7 +3,6 @@ import {
   type Column,
   type EditCommand,
   Editors,
-  FieldType,
   Filters,
   Formatters,
   type GridOption,
@@ -11,6 +10,7 @@ import {
   type SliderOption,
   type SliderRangeOption,
   type VanillaCalendarOption,
+  type MultipleSelectOption,
 } from '@slickgrid-universal/common';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
@@ -72,7 +72,6 @@ export default class Example16 {
         name: 'Title',
         field: 'title',
         sortable: true,
-        type: FieldType.string,
         editor: {
           model: Editors.longText,
           required: true,
@@ -116,7 +115,7 @@ export default class Example16 {
           alwaysSaveOnEnterKey: true,
         },
         formatter: (_row, _cell, value) => (value > 1 ? `${value} days` : `${value} day`),
-        type: FieldType.number,
+        type: 'number',
       },
       {
         // `name` can be a DOM element with a `title` to use as tooltip text
@@ -190,25 +189,29 @@ export default class Example16 {
           useRegularTooltip: true,
           useRegularTooltipFromFormatterOnly: true,
         },
-        type: FieldType.number,
+        type: 'number',
       },
       {
         id: 'percentComplete',
         name: '% Complete',
         field: 'percentComplete',
-        type: FieldType.number,
+        type: 'number',
         minWidth: 130,
         editor: {
           model: Editors.slider,
           minValue: 0,
           maxValue: 100,
-          editorOptions: { enableSliderTrackColoring: true, hideSliderNumber: true } as SliderOption,
+          options: { enableSliderTrackColoring: true, hideSliderNumber: true } as SliderOption,
         },
         exportWithFormatter: false,
         formatter: Formatters.percentCompleteBar,
         sortable: true,
         filterable: true,
-        filter: { model: Filters.sliderRange, operator: '>=', filterOptions: { hideSliderNumbers: true } as SliderRangeOption },
+        filter: {
+          model: Filters.sliderRange,
+          operator: '>=',
+          options: { hideSliderNumbers: true } as SliderRangeOption,
+        },
         customTooltip: {
           position: 'center',
           formatter: (_row, _cell, value) => (typeof value === 'string' && value.includes('%') ? value : `${value}%`),
@@ -222,8 +225,8 @@ export default class Example16 {
         field: 'start',
         sortable: true,
         // formatter: Formatters.dateIso,
-        type: FieldType.date,
-        outputType: FieldType.dateIso,
+        type: 'date',
+        outputType: 'dateIso',
         filterable: true,
         filter: { model: Filters.compoundDate },
         formatter: Formatters.dateIso,
@@ -246,10 +249,13 @@ export default class Example16 {
         name: 'Finish',
         field: 'finish',
         sortable: true,
-        editor: { model: Editors.date, editorOptions: { range: { min: 'today' } } as VanillaCalendarOption },
+        editor: {
+          model: Editors.date,
+          options: { displayDateMin: 'today' } as VanillaCalendarOption,
+        },
         // formatter: Formatters.dateIso,
-        type: FieldType.date,
-        outputType: FieldType.dateIso,
+        type: 'date',
+        outputType: 'dateIso',
         formatter: Formatters.dateIso,
         filterable: true,
         filter: { model: Filters.dateRange },
@@ -300,7 +306,6 @@ export default class Example16 {
         sanitizeDataExport: true,
         minWidth: 100,
         sortable: true,
-        type: FieldType.string,
         editor: {
           // OR 1- use "fetch client", they are both supported
           // collectionAsync: fetch(SAMPLE_COLLECTION_DATA_URL),
@@ -346,12 +351,8 @@ export default class Example16 {
             value: 'value',
             labelPrefix: 'prefix',
           },
-          collectionOptions: {
-            separatorBetweenTextLabels: ' ',
-          },
-          filterOptions: {
-            minHeight: 70,
-          },
+          collectionOptions: { separatorBetweenTextLabels: ' ' },
+          options: { minHeight: 70 } as MultipleSelectOption,
           model: Filters.multipleSelect,
           operator: OperatorType.inContains,
         },

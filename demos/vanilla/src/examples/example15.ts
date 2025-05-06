@@ -2,7 +2,6 @@ import { BindingEventService } from '@slickgrid-universal/binding';
 import {
   type Column,
   Editors,
-  FieldType,
   Filters,
   type GridOption,
   type GridStateChange,
@@ -80,7 +79,6 @@ export default class Example15 {
         name: 'Name',
         field: 'name',
         sortable: true,
-        type: FieldType.string,
         filterable: true,
         editor: {
           model: Editors.text,

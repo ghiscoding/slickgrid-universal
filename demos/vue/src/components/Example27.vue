@@ -6,7 +6,6 @@ import {
   type TreeToggledItem,
   type TreeToggleStateChange,
   type Column,
-  FieldType,
   Filters,
   Formatters,
   SlickgridVue,
@@ -43,7 +42,6 @@ function defineGrid() {
       sortable: true,
       exportWithFormatter: false,
       queryFieldSorter: 'id',
-      type: FieldType.string,
       formatter: Formatters.tree,
       exportCustomFormatter: Formatters.treeExport,
     },
@@ -59,14 +57,14 @@ function defineGrid() {
       filterable: true,
       filter: { model: Filters.compoundSlider, operator: '>=' },
       formatter: Formatters.percentCompleteBarWithText,
-      type: FieldType.number,
+      type: 'number',
     },
     {
       id: 'start',
       name: 'Start',
       field: 'start',
       minWidth: 60,
-      type: FieldType.dateIso,
+      type: 'dateIso',
       filterable: true,
       sortable: true,
       filter: { model: Filters.compoundDate },
@@ -77,7 +75,7 @@ function defineGrid() {
       name: 'Finish',
       field: 'finish',
       minWidth: 60,
-      type: FieldType.dateIso,
+      type: 'dateIso',
       filterable: true,
       sortable: true,
       filter: { model: Filters.compoundDate },
@@ -345,7 +343,7 @@ function handleOnTreeItemToggled(treeToggleExecution: TreeToggleStateChange) {
 // function handleOnGridStateChanged(gridStateChange: GridStateChange) {
 //   hasNoExpandCollapseChanged.value = false;
 
-//   if (gridStateChange?.change?.type === GridStateType.treeData) {
+//   if (gridStateChange?.change?.type === 'treeData') {
 //     console.log('Tree Data gridStateChange', gridStateChange?.gridState?.treeData);
 //     treeToggleItems.value = gridStateChange?.gridState?.treeData?.toggledItems as TreeToggledItem[];
 //   }

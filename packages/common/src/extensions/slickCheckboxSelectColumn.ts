@@ -141,22 +141,22 @@ export class SlickCheckboxSelectColumn<T = any> {
    * Create the plugin before the Grid creation to avoid having odd behaviors.
    * Mostly because the column definitions might change after the grid creation, so we want to make sure to add it before then
    */
-  create(columnDefinitions: Column[], gridOptions: GridOption): SlickCheckboxSelectColumn | null {
+  create(columns: Column[], gridOptions: GridOption): SlickCheckboxSelectColumn | null {
     this._addonOptions = { ...this._defaults, ...gridOptions.checkboxSelector } as CheckboxSelectorOption;
-    if (Array.isArray(columnDefinitions) && gridOptions) {
+    if (Array.isArray(columns) && gridOptions) {
       const selectionColumn: Column = this.getColumnDefinition();
 
       // add new checkbox column unless it was already added
-      if (!columnDefinitions.some((col) => col.id === selectionColumn.id)) {
+      if (!columns.some((col) => col.id === selectionColumn.id)) {
         // column index position in the grid
         const columnPosition = gridOptions?.checkboxSelector?.columnIndexPosition ?? 0;
         if (columnPosition > 0) {
-          columnDefinitions.splice(columnPosition, 0, selectionColumn);
+          columns.splice(columnPosition, 0, selectionColumn);
         } else {
-          columnDefinitions.unshift(selectionColumn);
+          columns.unshift(selectionColumn);
         }
         this.pubSubService.publish(`onPluginColumnsChanged`, {
-          columns: columnDefinitions,
+          columns,
           pluginName: this.pluginName,
         });
       }

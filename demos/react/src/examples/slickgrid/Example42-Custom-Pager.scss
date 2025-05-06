@@ -1,0 +1,67 @@
+@use 'sass:color';
+
+.custom-pagination {
+  display: flex;
+  justify-content: flex-end;
+  margin: 10px;
+  font-size: 13px;
+
+  .custom-pagination-settings {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 30px;
+
+    .item-from,
+    .item-to,
+    .total-items {
+      margin: 0 4px;
+    }
+  }
+
+  .custom-pagination-nav {
+    display: flex;
+    align-items: center;
+    list-style-type: none;
+
+    .page-item {
+      display: flex;
+      width: 26px;
+      justify-content: center;
+      margin: 0;
+      &.disabled .pagination-link {
+        color: rgb(180, 179, 179);
+        background-color: rgb(180, 179, 179);
+      }
+    }
+
+    .page-number {
+      .page-number {
+        margin: 0 4px;
+        padding: 0 5px;
+        display: inline-flex;
+        justify-content: center;
+        width: 20px;
+      }
+    }
+
+    .page-count {
+      margin: 0 4px;
+    }
+
+    nav {
+      ul.custom-pagination-ul  {
+        display: flex;
+        margin: 0;
+        padding: 0 5px;
+        color: #0d6efd;
+
+        .pagination-link {
+          color: #0d6efd;
+          &:hover {
+            color: color.adjust(#0d6efd, $lightness: 10%);
+          }
+        }
+      }
+    }
+  }
+}

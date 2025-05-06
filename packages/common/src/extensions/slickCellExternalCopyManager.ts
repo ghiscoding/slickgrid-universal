@@ -1,4 +1,4 @@
-import { createDomElement, getHtmlStringOutput, stripTags } from '@slickgrid-universal/utils';
+import { getHtmlStringOutput, stripTags } from '@slickgrid-universal/utils';
 
 import { DataWrapperService } from '../services/dataWrapperService.js';
 import type {
@@ -23,7 +23,6 @@ import {
 
 // using external SlickGrid JS libraries
 const CLEAR_COPY_SELECTION_DELAY = 2000;
-const CLIPBOARD_PASTE_DELAY = 100;
 
 /* v8 ignore next */
 const noop = () => {};
@@ -44,7 +43,6 @@ export class SlickCellExternalCopyManager {
   onBeforePasteCell: SlickEvent<{ cell: number; row: number; item: any; columnDef: Column; value: any }>;
 
   protected _addonOptions!: ExcelCopyBufferOption;
-  protected _bodyElement: HTMLElement = document.body;
   protected _clearCopyTI?: number;
   protected _copiedCellStyle = 'copied';
   protected _copiedCellStyleLayerKey = 'copy-manager';
@@ -78,7 +76,6 @@ export class SlickCellExternalCopyManager {
     this._addonOptions = { ...this._addonOptions, ...options };
     this._copiedCellStyleLayerKey = this._addonOptions.copiedCellStyleLayerKey || 'copy-manager';
     this._copiedCellStyle = this._addonOptions.copiedCellStyle || 'copied';
-    this._bodyElement = this._addonOptions.bodyElement || document.body;
     this._onCopyInit = this._addonOptions.onCopyInit || undefined;
     this._onCopySuccess = this._addonOptions.onCopySuccess || undefined;
 
@@ -233,29 +230,9 @@ export class SlickCellExternalCopyManager {
   // protected functions
   // ---------------------
 
-  protected createTextBox(innerText: string): HTMLTextAreaElement {
-    const scrollPos = document.documentElement.scrollTop || document.body.scrollTop;
-    const textAreaElm = createDomElement(
-      'textarea',
-      {
-        value: innerText,
-        style: {
-          position: 'absolute',
-          opacity: '0',
-          top: `${scrollPos}px`,
-        },
-      },
-      this._bodyElement
-    );
-    textAreaElm.select();
-
-    return textAreaElm;
-  }
-
-  protected decodeTabularData(grid: SlickGrid, textAreaElement: HTMLTextAreaElement): void {
+  protected decodeTabularData(grid: SlickGrid, clipText: string): void {
     const columns = grid.getColumns();
-    const clipText = textAreaElement.value;
-    const clipRows = clipText.split(/[\n\f\r](?=(?:[^"]*"[^"]*")*[^"]*$)/);
+    const clipRows = clipText.replace('\r\n', '\n').split(/[\n\f\r](?=(?:[^"]*"[^"]*")*[^"]*$)/);
 
     // trim trailing CR if present
     if (clipRows[clipRows.length - 1] === '') {
@@ -264,7 +241,6 @@ export class SlickCellExternalCopyManager {
 
     let j = 0;
     const clippedRange: any[] = [];
-    this._bodyElement.removeChild(textAreaElement);
 
     for (const clipRow of clipRows) {
       if (clipRow.startsWith('"') && clipRow.endsWith('"')) {
@@ -443,47 +419,62 @@ export class SlickCellExternalCopyManager {
     }
   }
 
-  protected handleKeyDown(e: SlickEventData): boolean | void {
-    let ranges: SlickRange[];
-    if (!this._grid.getEditorLock().isActive() || this._grid.getOptions().autoEdit) {
-      if (e.key === 'Escape') {
-        if (this._copiedRanges) {
-          e.preventDefault();
-          this.clearCopySelection();
-          this.onCopyCancelled.notify({ ranges: this._copiedRanges });
-          if (typeof this._addonOptions.onCopyCancelled === 'function') {
-            this._addonOptions.onCopyCancelled(e, { ranges: this._copiedRanges });
+  protected async handleKeyDown(e: SlickEventData): Promise<boolean | void> {
+    try {
+      let ranges: SlickRange[];
+      if (!this._grid.getEditorLock().isActive() || this._grid.getOptions().autoEdit) {
+        if (e.key === 'Escape') {
+          if (this._copiedRanges) {
+            e.preventDefault();
+            this.clearCopySelection();
+            this.onCopyCancelled.notify({ ranges: this._copiedRanges });
+            if (typeof this._addonOptions.onCopyCancelled === 'function') {
+              this._addonOptions.onCopyCancelled(e, { ranges: this._copiedRanges });
+            }
+            this._copiedRanges = null;
           }
-          this._copiedRanges = null;
         }
-      }
 
-      if ((e.key === 'c' || e.key === 'Insert') && (e.ctrlKey || e.metaKey) && !e.shiftKey) {
-        // CTRL+C or CTRL+INS
-        if (typeof this._onCopyInit === 'function') {
-          this._onCopyInit.call(this);
-        }
-        ranges = this._grid.getSelectionModel()?.getSelectedRanges() ?? [];
-        if (ranges.length !== 0) {
-          this._copiedRanges = ranges;
-          this.markCopySelection(ranges);
-          this.onCopyCells.notify({ ranges });
-          if (typeof this._addonOptions.onCopyCells === 'function') {
-            this._addonOptions.onCopyCells(e, { ranges });
+        if ((e.key === 'c' || e.key === 'Insert') && (e.ctrlKey || e.metaKey) && !e.shiftKey) {
+          // CTRL+C or CTRL+INS
+          if (typeof this._onCopyInit === 'function') {
+            this._onCopyInit.call(this);
           }
+          ranges = this._grid.getSelectionModel()?.getSelectedRanges() ?? [];
+          if (ranges.length !== 0) {
+            this._copiedRanges = ranges;
+            this.markCopySelection(ranges);
+            this.onCopyCells.notify({ ranges });
+            if (typeof this._addonOptions.onCopyCells === 'function') {
+              this._addonOptions.onCopyCells(e, { ranges });
+            }
 
-          const columns = this._grid.getColumns();
-          let clipText = '';
+            const columns = this._grid.getColumns();
+            let clipText = '';
 
-          for (let rg = 0; rg < ranges.length; rg++) {
-            const range = ranges[rg];
-            const clipTextRows: string[] = [];
-            for (let i = range.fromRow; i < range.toRow + 1; i++) {
-              const clipTextCells: string[] = [];
-              const dt = this._dataWrapper.getDataItem(i);
+            for (let rg = 0; rg < ranges.length; rg++) {
+              const range = ranges[rg];
+              const clipTextRows: string[] = [];
+              for (let i = range.fromRow; i < range.toRow + 1; i++) {
+                const clipTextCells: string[] = [];
+                const dt = this._dataWrapper.getDataItem(i);
 
-              if (clipTextRows.length === 0 && this._addonOptions.includeHeaderWhenCopying) {
-                const clipTextHeaders: string[] = [];
+                if (clipTextRows.length === 0 && this._addonOptions.includeHeaderWhenCopying) {
+                  const clipTextHeaders: string[] = [];
+                  for (let j = range.fromCell; j < range.toCell + 1; j++) {
+                    if (columns[j]) {
+                      const colName: string =
+                        columns[j].name instanceof HTMLElement
+                          ? stripTags((columns[j].name as HTMLElement).innerHTML)
+                          : (columns[j].name as string);
+                      if (colName.length > 0 && !columns[j].hidden) {
+                        clipTextHeaders.push(this.getHeaderValueForColumn(columns[j]));
+                      }
+                    }
+                  }
+                  clipTextRows.push(clipTextHeaders.join('\t'));
+                }
+
                 for (let j = range.fromCell; j < range.toCell + 1; j++) {
                   if (columns[j]) {
                     const colName: string =
@@ -491,42 +482,16 @@ export class SlickCellExternalCopyManager {
                         ? stripTags((columns[j].name as HTMLElement).innerHTML)
                         : (columns[j].name as string);
                     if (colName.length > 0 && !columns[j].hidden) {
-                      clipTextHeaders.push(this.getHeaderValueForColumn(columns[j]));
+                      clipTextCells.push(this.getDataItemValueForColumn(dt, columns[j], i, j, e));
                     }
                   }
                 }
-                clipTextRows.push(clipTextHeaders.join('\t'));
+                clipTextRows.push(clipTextCells.join('\t'));
               }
-
-              for (let j = range.fromCell; j < range.toCell + 1; j++) {
-                if (columns[j]) {
-                  const colName: string =
-                    columns[j].name instanceof HTMLElement
-                      ? stripTags((columns[j].name as HTMLElement).innerHTML)
-                      : (columns[j].name as string);
-                  if (colName.length > 0 && !columns[j].hidden) {
-                    clipTextCells.push(this.getDataItemValueForColumn(dt, columns[j], i, j, e));
-                  }
-                }
-              }
-              clipTextRows.push(clipTextCells.join('\t'));
+              clipText += clipTextRows.join('\r\n') + '\r\n';
             }
-            clipText += clipTextRows.join('\r\n') + '\r\n';
-          }
 
-          if ((window as any).clipboardData) {
-            (window as any).clipboardData.setData('Text', clipText);
-            return true;
-          } else {
-            const focusElm = document.activeElement as HTMLElement;
-            const textAreaElm = this.createTextBox(clipText);
-            textAreaElm.focus();
-
-            window.setTimeout(() => {
-              this._bodyElement.removeChild(textAreaElm);
-              // restore focus when possible
-              focusElm ? focusElm.focus() : console.log('No element to restore focus to after copy?');
-            }, this.addonOptions?.clipboardPasteDelay ?? CLIPBOARD_PASTE_DELAY);
+            await navigator.clipboard.writeText(clipText);
 
             if (typeof this._onCopySuccess === 'function') {
               // If it's cell selection, use the toRow/fromRow fields
@@ -537,20 +502,18 @@ export class SlickCellExternalCopyManager {
             return false;
           }
         }
-      }
 
-      if (
-        !this._addonOptions.readOnlyMode &&
-        ((e.key === 'v' && (e.ctrlKey || e.metaKey) && !e.shiftKey) || (e.key === 'Insert' && e.shiftKey && !e.ctrlKey))
-      ) {
-        // CTRL+V or Shift+INS
-        const textBoxElm = this.createTextBox('');
-        window.setTimeout(
-          () => this.decodeTabularData(this._grid, textBoxElm),
-          this.addonOptions?.clipboardPasteDelay ?? CLIPBOARD_PASTE_DELAY
-        );
-        return false;
+        if (
+          !this._addonOptions.readOnlyMode &&
+          ((e.key === 'v' && (e.ctrlKey || e.metaKey) && !e.shiftKey) || (e.key === 'Insert' && e.shiftKey && !e.ctrlKey))
+        ) {
+          // CTRL+V or Shift+INS
+          const pastedText = await navigator.clipboard.readText();
+          this.decodeTabularData(this._grid, pastedText);
+        }
       }
+    } catch (err) {
+      console.error(`Unable to read/write to clipboard. Please check your browser settings or permissions. Error: ${err}`);
     }
   }
 

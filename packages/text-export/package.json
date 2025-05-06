@@ -2,18 +2,16 @@
   "name": "@slickgrid-universal/text-export",
   "version": "5.14.0",
   "description": "Export to Text File (csv/txt) Service.",
-  "main": "./dist/cjs/index.js",
-  "types": "./dist/types/index.d.ts",
+  "type": "module",
+  "main": "./dist/index.js",
   "exports": {
     ".": {
-      "types": "./dist/types/index.d.ts",
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js",
-      "default": "./dist/esm/index.js"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     },
     "./package.json": "./package.json"
   },
-  "module": "./dist/esm/index.js",
+  "types": "./dist/index.d.ts",
   "publishConfig": {
     "access": "public"
   },
@@ -23,14 +21,10 @@
   ],
   "scripts": {
     "prebuild": "pnpm run clean",
-    "build": "pnpm run bundle:esm && tsc --declaration",
+    "build": "tsc",
     "build:incremental": "tsc --incremental --declaration",
     "clean": "rimraf dist tsconfig.tsbuildinfo",
-    "dev": "pnpm build:incremental",
-    "bundle": "pnpm bundle:cjs",
-    "bundle:cjs": "tsc --project tsconfig.bundle.json --outDir dist/cjs --module commonjs",
-    "bundle:esm": "tsc --project tsconfig.bundle.json --outDir dist/esm --module esnext --target es2021",
-    "bundle:types": "tsc --emitDeclarationOnly --declarationMap --outDir dist/types"
+    "dev": "pnpm build:incremental"
   },
   "license": "MIT",
   "author": "Ghislain B.",

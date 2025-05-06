@@ -5,12 +5,12 @@ import {
   type Column,
   type EditCommand,
   Editors,
-  FieldType,
   Filters,
   type Formatter,
   Formatters,
   type OnEventArgs,
   OperatorType,
+  type SliderOption,
   SlickGlobalEditorLock,
   SlickgridVue,
 } from 'slickgrid-vue';
@@ -54,7 +54,6 @@ function defineGrid() {
       field: 'title',
       filterable: true,
       sortable: true,
-      type: FieldType.string,
       editor: {
         model: Editors.longText,
         minLength: 5,
@@ -130,13 +129,16 @@ function defineGrid() {
       filterable: true,
       minWidth: 100,
       sortable: true,
-      type: FieldType.number,
-      filter: { model: Filters.slider, filterOptions: { hideSliderNumber: false } },
+      type: 'number',
+      filter: {
+        model: Filters.slider,
+        options: { hideSliderNumber: false } as SliderOption,
+      },
       editor: {
         model: Editors.slider,
         minValue: 0,
         maxValue: 100,
-        // editorOptions: { hideSliderNumber: true },
+        // options: { hideSliderNumber: true },
       },
       /*
         editor: {
@@ -157,7 +159,7 @@ function defineGrid() {
       field: 'percentComplete',
       filterable: true,
       formatter: Formatters.multiple,
-      type: FieldType.number,
+      type: 'number',
       editor: {
         // We can also add HTML text to be rendered (any bad script will be sanitized) but we have to opt-in, else it will be sanitized
         enableRenderHtml: true,
@@ -196,7 +198,7 @@ function defineGrid() {
       formatter: Formatters.dateIso,
       sortable: true,
       minWidth: 100,
-      type: FieldType.date,
+      type: 'date',
       editor: {
         model: Editors.date,
       },
@@ -210,7 +212,7 @@ function defineGrid() {
       formatter: Formatters.dateIso,
       sortable: true,
       minWidth: 100,
-      type: FieldType.date,
+      type: 'date',
       editor: {
         model: Editors.date,
       },

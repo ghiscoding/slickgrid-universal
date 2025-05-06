@@ -179,12 +179,6 @@ export interface GridOption<C extends Column = Column> {
   /** Checkbox Select Plugin options (columnId, cssClass, toolTip, width) */
   checkboxSelector?: CheckboxSelectorOption;
 
-  /**
-   * @deprecated @use `gridOptions = { dataView: { globalItemMetadataProvider: { getRowMetadata: (item, row) => any }}}` instead
-   * A callback function that will be used to define row spanning accross multiple columns
-   */
-  colspanCallback?: (item: any) => ItemMetadata;
-
   /** Defaults to " - ", separator between the column group label and the column label. */
   columnGroupSeparator?: string;
 
@@ -770,9 +764,9 @@ export interface GridOption<C extends Column = Column> {
   rowSelectionOptions?: RowSelectionModelOption;
 
   /**
-   * Defaults to "top", what CSS style to we want to use to render each row top offset (we can use "top" or "transform").
-   * For example, with a default `rowHeight: 22`, the 2nd row will have a `top` offset of 44px and by default have a CSS style of `top: 44px`.
-   * NOTE: for perf reasons, the "transform" might become the default in our future major version.
+   * Defaults to "transform", what CSS style to we want to use to render each row top offset (choose between "top" and "transform").
+   * For example, with a default `rowHeight: 22`, the 2nd row will have a `top` offset of 44px and by default have a CSS style of `transform: translateY(44px)`.
+   * NOTE: you should use "top" when using either Row Detail and/or RowSpan
    */
   rowTopOffsetRenderType?: 'top' | 'transform';
 

@@ -16,7 +16,7 @@
 - [How to Skip a Mass Change](#how-to-skip-a-mass-change)
 - Dynamic Events/Methods
   - [Dynamically Change a Form Input](#dynamically-change-form-input) - for example when 1 input value affect 1 or more other input(s).
-  - [Dynamically Change `editorOptions`](#dynamically-change-editor-options-like-mindate-on-a-date-picker) - for example, date picker `minDate` based on other field values
+  - [Dynamically Change `options`](#dynamically-change-editor-options-like-mindate-on-a-date-picker) - for example, date picker `minDate` based on other field values
   - [Dynamically Update Select Editor Collection](#dynamically-update-select-editor-collection)
 - [Disabling Form Inputs (readonly)](#disabling-form-inputs-readonly)
 
@@ -160,7 +160,7 @@ example class MyCompositeDemo {
     this.columnDefinitions = [
       {
         id: 'percentComplete', name: '% Complete', field: 'percentComplete',
-        type: FieldType.number, sortable: true, filterable: true,
+        type: 'number', sortable: true, filterable: true,
         filter: { model: Filters.compoundSlider, operator: '>=' },
         editor: {
           model: Editors.slider,
@@ -467,7 +467,7 @@ export class GridExample {
     if (columnDef.id === 'completed') {
       this.compositeEditorInstance.changeFormEditorOption('percentComplete', 'filter', formValues.completed);
       this.compositeEditorInstance.changeFormEditorOption('product', 'minLength', 3);
-      this.compositeEditorInstance.changeFormEditorOption('finish', 'range', { min: 'today' });
+      this.compositeEditorInstance.changeFormEditorOption('finish', 'displayDateMin', 'today');
     }
   }
 }
@@ -499,7 +499,7 @@ export class GridExample {
     if (columnDef.id === 'completed') {
       this.compositeEditorInstance.changeFormEditorOption('percentComplete', 'filter', true);   // multiple-select.js, show filter in dropdown
       this.compositeEditorInstance.changeFormEditorOption('product', 'minLength', 3);           // autocomplete, change minLength char to type
-      this.compositeEditorInstance.changeFormEditorOption('finish', 'range', { min: 'today' }); // vanilla calendar date picker, change minDate to today
+      this.compositeEditorInstance.changeFormEditorOption('finish', 'displayDateMin', 'today'); // vanilla calendar date picker, change minDate to today
     }
   }
 }
@@ -526,11 +526,11 @@ export class GridExample {
   prepareGrid() {
     this.columnDefinitions = [
       {
-        id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true, type: FieldType.number,
+        id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true, type: 'number',
         editor: { model: Editors.float, massUpdate: true, decimal: 2, required: true },
       },
       {
-        id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: FieldType.number,
+        id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: 'number',
         editor: {
           model: Editors.singleSelect,
           collection: [ /*...*/ ],
@@ -583,11 +583,11 @@ export class GridExample {
   prepareGrid() {
     this.columnDefinitions = [
       {
-        id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true, type: FieldType.number,
+        id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true, type: 'number',
         editor: { model: Editors.float, massUpdate: true, decimal: 2, required: true },
       },
       {
-        id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: FieldType.number,
+        id: 'percentComplete', name: '% Complete', field: 'percentComplete', type: 'number',
         editor: {
           model: Editors.singleSelect,
           collection: [ /*...*/ ],

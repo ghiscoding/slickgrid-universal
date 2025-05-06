@@ -1,7 +1,15 @@
 import autocompleter from 'autocompleter';
 import type { AutocompleteItem, AutocompleteSettings } from 'autocompleter';
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { classNameToList, createDomElement, emptyElement, isPrimitiveValue, toKebabCase, toSentenceCase } from '@slickgrid-universal/utils';
+import {
+  classNameToList,
+  createDomElement,
+  emptyElement,
+  isObjectEmpty,
+  isPrimitiveValue,
+  toKebabCase,
+  toSentenceCase,
+} from '@slickgrid-universal/utils';
 
 import { FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
 import type {
@@ -20,7 +28,9 @@ import type {
 } from '../interfaces/index.js';
 import {
   addAutocompleteLoadingByOverridingFetch,
+  filterCollectionWithOptions,
   getCollectionFromObjectWhenEnabled,
+  sortCollectionWithOptions,
 } from '../commonEditorFilter/commonEditorFilterUtils.js';
 import type { CollectionService } from '../services/collection.service.js';
 import { collectionObserver, propertyObserver } from '../services/observers.js';
@@ -103,7 +113,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
   }
 
   get filterOptions(): AutocompleterOption {
-    return { ...this.gridOptions.defaultFilterOptions?.autocompleter, ...this.columnFilter?.filterOptions };
+    return { ...this.gridOptions.defaultFilterOptions?.autocompleter, ...this.columnFilter?.filterOptions, ...this.columnFilter?.options };
   }
 
   /** Getter for the Custom Structure if exist */
@@ -163,11 +173,11 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
       !this.grid ||
       !this.columnDef ||
       !this.columnFilter ||
-      (!this.columnFilter.collection && !this.columnFilter.collectionAsync && !this.columnFilter.filterOptions)
+      (!this.columnFilter.collection && !this.columnFilter.collectionAsync && isObjectEmpty(this.filterOptions))
     ) {
       throw new Error(
-        `[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") for the AutoComplete Filter to work correctly.` +
-          ` Also each option should include a value/label pair (or value/labelKey when using Locale).` +
+        '[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") for the AutoComplete Filter to work correctly.' +
+          ' Also each option should include a value/label pair (or value/labelKey when using Locale).' +
           ` For example:: { filter: model: Filters.autocompleter, collection: [{ value: true, label: 'True' }, { value: false, label: 'False'}] }`
       );
     }
@@ -284,42 +294,6 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
   // ------------------
 
   /**
-   * user might want to filter certain items of the collection
-   * @param inputCollection
-   * @return outputCollection filtered and/or sorted collection
-   */
-  protected filterCollection(inputCollection: any[]): any[] {
-    let outputCollection = inputCollection;
-
-    // user might want to filter certain items of the collection
-    if (this.columnFilter && this.columnFilter.collectionFilterBy) {
-      const filterBy = this.columnFilter.collectionFilterBy;
-      const filterCollectionBy =
-        (this.columnFilter.collectionOptions && this.columnFilter.collectionOptions.filterResultAfterEachPass) || null;
-      outputCollection = this.collectionService?.filterCollection(outputCollection, filterBy, filterCollectionBy) || [];
-    }
-
-    return outputCollection;
-  }
-
-  /**
-   * user might want to sort the collection in a certain way
-   * @param inputCollection
-   * @return outputCollection filtered and/or sorted collection
-   */
-  protected sortCollection(inputCollection: any[]): any[] {
-    let outputCollection = inputCollection;
-
-    // user might want to sort the collection
-    if (this.columnFilter && this.columnFilter.collectionSortBy) {
-      const sortBy = this.columnFilter.collectionSortBy;
-      outputCollection = this.collectionService?.sortCollection(this.columnDef, outputCollection, sortBy, this.enableTranslateLabel) || [];
-    }
-
-    return outputCollection;
-  }
-
-  /**
    * Subscribe to both CollectionObserver & PropertyObserver with BindingEngine.
    * They each have their own purpose, the "propertyObserver" will trigger once the collection is replaced entirely
    * while the "collectionObverser" will trigger on collection changes (`push`, `unshift`, `splice`, ...)
@@ -358,8 +332,19 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
 
     // user might want to filter and/or sort certain items of the collection
     if (newCollection) {
-      newCollection = this.filterCollection(newCollection);
-      newCollection = this.sortCollection(newCollection);
+      newCollection = filterCollectionWithOptions(
+        newCollection,
+        this.collectionService,
+        this.columnFilter?.collectionFilterBy,
+        this.columnFilter.collectionOptions
+      );
+      newCollection = sortCollectionWithOptions(
+        newCollection,
+        this.columnDef,
+        this.collectionService,
+        this.columnFilter?.collectionSortBy,
+        this.enableTranslateLabel
+      );
     }
 
     // filter input can only have 1 search term, so we will use the 1st array index if it exist
@@ -520,8 +505,6 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
   // a better solution would be to get the autocomplete DOM element to work with selection but I couldn't find how to do that in Jest
   handleSelect(item: AutocompleteSearchItem): void | boolean {
     if (item !== undefined) {
-      const event = undefined; // TODO do we need the event?
-
       // when the user defines a "renderItem" (or "_renderItem") template, then we assume the user defines his own custom structure of label/value pair
       // otherwise we know that the autocomplete lib always require a label/value pair, we can pull them directly
       const hasCustomRenderItemCallback = this.filterOptions?.renderItem ?? false;
@@ -536,7 +519,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
       this.updateFilterStyle(itemValue !== '');
 
       this.setValues(itemLabel);
-      this.callback(event, {
+      this.callback(undefined, {
         columnDef: this.columnDef,
         operator: this.operator,
         searchTerms: [itemValue],

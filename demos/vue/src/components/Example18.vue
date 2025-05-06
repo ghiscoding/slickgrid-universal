@@ -8,8 +8,6 @@ import {
   type SlickgridVueInstance,
   Aggregators,
   type Column,
-  FieldType,
-  FileType,
   Filters,
   Formatters,
   GroupTotalFormatters,
@@ -73,7 +71,7 @@ function defineGrid() {
       sortable: true,
       filterable: true,
       filter: { model: Filters.slider, operator: '>=' },
-      type: FieldType.number,
+      type: 'number',
       groupTotalsFormatter: GroupTotalFormatters.sumTotals,
       grouping: {
         getter: 'duration',
@@ -96,8 +94,8 @@ function defineGrid() {
       filterable: true,
       filter: { model: Filters.compoundDate },
       formatter: Formatters.dateIso,
-      type: FieldType.dateUtc,
-      outputType: FieldType.dateIso,
+      type: 'dateUtc',
+      outputType: 'dateIso',
       exportWithFormatter: true,
       grouping: {
         getter: 'start',
@@ -117,8 +115,8 @@ function defineGrid() {
       filterable: true,
       filter: { model: Filters.compoundDate },
       formatter: Formatters.dateIso,
-      type: FieldType.dateUtc,
-      outputType: FieldType.dateIso,
+      type: 'dateUtc',
+      outputType: 'dateIso',
       exportWithFormatter: true,
       grouping: {
         getter: 'finish',
@@ -140,7 +138,7 @@ function defineGrid() {
       formatter: Formatters.dollar,
       exportWithFormatter: true,
       groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollar,
-      type: FieldType.number,
+      type: 'number',
       grouping: {
         getter: 'cost',
         formatter: (g) => `Cost: ${g.value} <span class="text-primary">(${g.count} items)</span>`,
@@ -157,7 +155,7 @@ function defineGrid() {
       minWidth: 70,
       width: 90,
       formatter: Formatters.percentCompleteBar,
-      type: FieldType.number,
+      type: 'number',
       filterable: true,
       filter: { model: Filters.compoundSlider },
       sortable: true,
@@ -304,7 +302,7 @@ function expandAllGroups() {
 function exportToExcel() {
   excelExportService.exportToExcel({
     filename: 'Export',
-    format: FileType.xlsx,
+    format: 'xlsx',
   });
 }
 

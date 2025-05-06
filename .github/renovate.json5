@@ -15,14 +15,31 @@
       enabled: false,
     },
     {
+      description: 'Group all Angular dependencies',
+      matchFileNames: ['frameworks/angular-slickgrid/**', 'demos/angular/**'],
+      groupName: 'Angular dependencies',
+      rules: [
+        {
+          matchUpdateTypes: ['minor', 'patch'],
+          matchPackagePatterns: ['^typescript$'],
+          ignoreVersion: true,
+        },
+      ],
+    },
+    {
+      description: 'Group all Aurelia dependencies',
+      matchFileNames: ['frameworks/aurelia-slickgrid/**', 'demos/aurelia/**'],
+      groupName: 'Aurelia dependencies',
+    },
+    {
+      description: 'Group all React dependencies',
+      matchFileNames: ['frameworks/slickgrid-react/**', 'demos/react/**'],
+      groupName: 'React dependencies',
+    },
+    {
       description: 'Group all VueJS dependencies',
       matchFileNames: ['frameworks/slickgrid-vue/**', 'demos/vue/**'],
       groupName: 'VueJS dependencies',
-    },
-    // rimraf new major releases dropped support for Node 18, we'll have to wait our next major to upgrade them
-    {
-      packageNames: ['rimraf'],
-      allowedVersions: '<6.0.0',
     },
   ],
   ignoreDeps: ['node', 'pnpm'],
