@@ -87,6 +87,9 @@ jobs:
       - name: Website Dev Build (served for Cypress)
         run: pnpm angular:build:demo
 
+      - name: Run Cypress install
+        run: pnpm run cypress install
+
       - name: Start HTTP Server
         run: pnpm angular:serve &
 
