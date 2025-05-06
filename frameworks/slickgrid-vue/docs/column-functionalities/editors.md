@@ -242,7 +242,7 @@ function defineGrid() {
 ```
 
 ### Editor Options (`MultipleSelectOption` interface)
-All the available options that can be provided as `options` to your column definitions can be found under this [multipleSelectOption interface](https://github.com/ghiscoding/slickgrid-vue/blob/master/src/slickgrid-vue/models/multipleSelectOption.interface.ts) and you should cast your `options` to that interface to make sure that you use only valid options of the `multiple-select.js` library.
+All the available options that can be provided as editor `options` to your column definitions can be found under this [multipleSelectOption interface](https://github.com/ghiscoding/slickgrid-vue/blob/master/src/slickgrid-vue/models/multipleSelectOption.interface.ts) and you should cast your editor `options` to that interface to make sure that you use only valid options of the `multiple-select.js` library.
 
 ```ts
 editor: {
@@ -375,7 +375,7 @@ function defineGrid() {
 ```
 
 ### `multiple-select` Options
-You can use any options from [Multiple-Select-Vanilla](https://github.com/ghiscoding/multiple-select-vanilla) and add them to your `options` property.
+You can use any options from [Multiple-Select-Vanilla](https://github.com/ghiscoding/multiple-select-vanilla) and add them to your editor `options` property.
 
 Couple of small options were added to suit slickgrid-vue needs, which is why it points to `slickgrid-vue/lib` folder (which is our customized version of the original). This lib is required if you plan to use `multipleSelect` or `singleSelect` Filters. What was customized to (compare to the original) is the following:
 - `okButton` option was added to add an OK button for simpler closing of the dropdown after selecting multiple options.
@@ -417,7 +417,7 @@ function defineGrid() {
 ## Editor Options
 
 #### Column Editor `options`
-Some of the Editors could receive extra options, which is mostly the case for Editors using external dependencies (e.g. `autocompleter`, `date`, `multipleSelect`, ...) you can provide options via the `options`, for example
+Some of the Editors could receive extra options, which is mostly the case for Editors using external dependencies (e.g. `autocompleter`, `date`, `multipleSelect`, ...) you can provide options via the editor `options`, for example
 
 ```ts
 columnDefinitions.value = [{

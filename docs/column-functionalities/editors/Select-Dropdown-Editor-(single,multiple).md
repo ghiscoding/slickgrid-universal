@@ -38,7 +38,7 @@ this.columnDefinitions = [
 ```
 
 ### Editor Options (`MultipleSelectOption` interface)
-All the available options that can be provided as `options` to your column definitions via the `MultipleSelectOption` interface of the external library and so you should cast your `options` to that interface to make sure that you use only valid options of the `Multiple-Select-Vanilla` library.
+All the available options that can be provided as editor `options` to your column definitions via the `MultipleSelectOption` interface of the external library and so you should cast your editor `options` to that interface to make sure that you use only valid options of the `Multiple-Select-Vanilla` library.
 
 ```ts
 import { MultipleSelectOption } from 'multiple-select-vanilla';

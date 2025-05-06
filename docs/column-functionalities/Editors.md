@@ -196,7 +196,7 @@ export interface OnEventArgs {
 ## Editor Options
 
 #### Column Editor `options`
-Some of the Editors could receive extra options, which is mostly the case for Editors using external dependencies (e.g. `autocompleter`, `date`, `multipleSelect`, ...) you can provide options via the `options`, for example
+Some of the Editors could receive extra options, which is mostly the case for Editors using external dependencies (e.g. `autocompleter`, `date`, `multipleSelect`, ...) you can provide options via the editor `options`, for example
 
 ```ts
 this.columnDefinitions = [{

@@ -67,7 +67,7 @@ export class GridBasicComponent {
 ```
 
 ### Filter Options (`AutocompleterOption` interface)
-All the available options that can be provided as `options` to your column definitions can be found under this [AutocompleterOption interface](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/autocompleterOption.interface.ts) and you should cast your `options` to that interface to make sure that you use only valid options of the autocomplete library.
+All the available options that can be provided as filter `options` to your column definitions can be found under this [AutocompleterOption interface](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/autocompleterOption.interface.ts) and you should cast your filter `options` to that interface to make sure that you use only valid options of the autocomplete library.
 
 ```ts
 filter: {
