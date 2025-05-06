@@ -174,6 +174,22 @@ describe('SingleSliderFilter', () => {
 
   it('should create the input filter with min/max slider values being set by filter "sliderStartValue" and "sliderEndValue" through the filter params', () => {
     mockColumn.filter = {
+      options: {
+        sliderStartValue: 4,
+        sliderEndValue: 69,
+      },
+    };
+
+    filter.init(filterArgs);
+
+    const filterNumberElm = divContainer.querySelector('.input-group-text') as HTMLInputElement;
+
+    expect(filterNumberElm.textContent).toBe('4');
+    expect(filter.getValues()).toEqual(4);
+  });
+
+  it('should create the input filter with min/max slider values being set by filter "sliderStartValue" and "sliderEndValue" through the filter params', () => {
+    mockColumn.filter = {
       filterOptions: {
         sliderStartValue: 4,
         sliderEndValue: 69,
@@ -190,7 +206,7 @@ describe('SingleSliderFilter', () => {
 
   it('should create the input filter with default search terms range but without showing side numbers when "hideSliderNumber" is set in params', () => {
     filterArgs.searchTerms = [3];
-    mockColumn.filter!.filterOptions = { hideSliderNumber: true };
+    mockColumn.filter!.options = { hideSliderNumber: true };
 
     filter.init(filterArgs);
 
@@ -225,6 +241,22 @@ describe('SingleSliderFilter', () => {
   it('should trigger a callback with the clear filter set when calling the "clear" method and expect min slider values being with values of "sliderStartValue" when defined through the filter params', () => {
     const callbackSpy = vi.spyOn(filterArgs, 'callback');
     mockColumn.filter = {
+      options: {
+        sliderStartValue: 4,
+        sliderEndValue: 69,
+      },
+    };
+
+    filter.init(filterArgs);
+    filter.clear(false);
+
+    expect(filter.getValues()).toEqual(4);
+    expect(callbackSpy).toHaveBeenLastCalledWith(undefined, { columnDef: mockColumn, clearFilterTriggered: true, searchTerms: [], shouldTriggerQuery: false });
+  });
+
+  it('should trigger a callback with the clear filter set when calling the "clear" method and expect min slider values being with values of "sliderStartValue" when defined through the filter params', () => {
+    const callbackSpy = vi.spyOn(filterArgs, 'callback');
+    mockColumn.filter = {
       filterOptions: {
         sliderStartValue: 4,
         sliderEndValue: 69,
@@ -239,7 +271,7 @@ describe('SingleSliderFilter', () => {
   });
 
   it('should enableSliderTrackColoring and trigger a change event and expect slider track to have background color', () => {
-    mockColumn.filter = { filterOptions: { enableSliderTrackColoring: true } };
+    mockColumn.filter = { options: { enableSliderTrackColoring: true } };
     filter.init(filterArgs);
     filter.setValues(['80']);
     const filterElms = divContainer.querySelectorAll<HTMLInputElement>('.search-filter.slider-container.filter-duration input');

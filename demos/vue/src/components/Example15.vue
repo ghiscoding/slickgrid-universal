@@ -99,7 +99,7 @@ function defineGrid(gridStatePresets?: GridState) {
         collection: multiSelectFilterArray,
         model: Filters.multipleSelect,
         // we could add certain option(s) to the "multiple-select" plugin
-        filterOptions: {
+        options: {
           maxHeight: 250,
           width: 175,
         } as MultipleSelectOption,

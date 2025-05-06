@@ -207,7 +207,7 @@ export default class Example14 {
           required: true,
           alwaysSaveOnEnterKey: true,
           maxLength: 12,
-          editorOptions: {
+          options: {
             cols: 45,
             rows: 6,
             buttonTexts: {
@@ -269,7 +269,7 @@ export default class Example14 {
           model: Filters.sliderRange,
           operator: '>=',
           // searchTerms: [15, 78],
-          filterOptions: {
+          options: {
             enableSliderTrackColoring: true,
             hideSliderNumbers: false,
           } as SliderRangeOption,
@@ -312,7 +312,7 @@ export default class Example14 {
         saveOutputType: 'dateUtc',
         filterable: true,
         filter: { model: Filters.compoundDate },
-        editor: { model: Editors.date, editorOptions: { hideClearButton: false } as VanillaCalendarOption },
+        editor: { model: Editors.date, options: { hideClearButton: false } as VanillaCalendarOption },
       },
       {
         id: 'completed',
@@ -353,7 +353,7 @@ export default class Example14 {
         exportCustomFormatter: Formatters.dateUs,
         editor: {
           model: Editors.date,
-          editorOptions: { displayDateMin: 'today' } as VanillaCalendarOption,
+          options: { displayDateMin: 'today' } as VanillaCalendarOption,
           validator: (value, args) => {
             const dataContext = args && args.item;
             if (dataContext && dataContext.completed && !value) {
@@ -385,7 +385,7 @@ export default class Example14 {
           alwaysSaveOnEnterKey: true,
 
           // example with a Remote API call
-          editorOptions: {
+          options: {
             minLength: 1,
             fetch: (searchText, updateCallback) => {
               const products = this.mockProducts();
@@ -424,7 +424,7 @@ export default class Example14 {
         editor: {
           model: Editors.autocompleter,
           alwaysSaveOnEnterKey: true,
-          editorOptions: {
+          options: {
             minLength: 0,
             showOnFocus: false,
             fetch: (searchText, updateCallback) => {

@@ -11,8 +11,10 @@ import {
   Formatters,
   GridOption,
   MenuCommandItemCallbackArgs,
+  type MultipleSelectOption,
   OperatorType,
   SlickGrid,
+  type VanillaCalendarOption,
 } from '../../library';
 
 const NB_ITEMS = 1000;
@@ -174,7 +176,7 @@ export class Example33Component implements OnInit {
           model: Editors.slider,
           minValue: 0,
           maxValue: 100,
-          // editorOptions: { hideSliderNumber: true },
+          // options: { hideSliderNumber: true },
         },
         formatter: Formatters.percentCompleteBar,
         sortable: true,
@@ -217,7 +219,10 @@ export class Example33Component implements OnInit {
         name: 'Finish',
         field: 'finish',
         sortable: true,
-        editor: { model: Editors.date, editorOptions: { displayDateMin: 'today' } },
+        editor: {
+          model: Editors.date,
+          options: { displayDateMin: 'today' } as VanillaCalendarOption,
+        },
         // formatter: Formatters.dateIso,
         type: 'date',
         outputType: 'dateIso',
@@ -317,10 +322,8 @@ export class Example33Component implements OnInit {
           collectionOptions: {
             separatorBetweenTextLabels: ' ',
           },
-          filterOptions: {
-            minHeight: 70,
-          },
           model: Filters.multipleSelect,
+          options: { minHeight: 70 } as MultipleSelectOption,
           operator: OperatorType.inContains,
         },
       },

@@ -126,9 +126,9 @@ export default class Example25 {
         filterable: true,
         filter: {
           model: Filters.sliderRange,
-          maxValue: 100, // or you can use the filterOptions as well
+          maxValue: 100, // or you can use the options as well
           operator: OperatorType.rangeInclusive, // defaults to inclusive
-          filterOptions: {
+          options: {
             hideSliderNumbers: false, // you can hide/show the slider numbers on both side
             min: 0,
             step: 5,
@@ -195,7 +195,7 @@ export default class Example25 {
             { value: false, label: 'False' },
           ],
           model: Filters.singleSelect,
-          filterOptions: { autoAdjustDropHeight: true } as MultipleSelectOption,
+          options: { autoAdjustDropHeight: true } as MultipleSelectOption,
         },
       },
     ];

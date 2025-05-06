@@ -15,6 +15,7 @@ import {
   SlickGlobalEditorLock,
   SlickgridReact,
   type SlickgridReactInstance,
+  type SliderOption,
   type VanillaCalendarOption,
 } from 'slickgrid-react';
 import { useState } from 'react';
@@ -149,12 +150,15 @@ const Example3: React.FC = () => {
       minWidth: 100,
       sortable: true,
       type: 'number',
-      filter: { model: Filters.slider, filterOptions: { hideSliderNumber: false } },
+      filter: {
+        model: Filters.slider,
+        options: { hideSliderNumber: false } as SliderOption,
+      },
       editor: {
         model: Editors.slider,
         minValue: 0,
         maxValue: 100,
-        // editorOptions: { hideSliderNumber: true },
+        // options: { hideSliderNumber: true },
       },
       /*
       editor: {
@@ -239,8 +243,8 @@ const Example3: React.FC = () => {
       saveOutputType: 'dateUtc', // save output date format
       editor: {
         model: Editors.date,
-        // override any of the calendar options through 'filterOptions'
-        editorOptions: { displayDateMin: 'today' } as VanillaCalendarOption,
+        // override any of the calendar options through 'options'
+        options: { displayDateMin: 'today' } as VanillaCalendarOption,
       },
     },
     {
@@ -257,7 +261,7 @@ const Example3: React.FC = () => {
         // We can use the autocomplete through 3 ways 'collection', 'collectionAsync' or with your own autocomplete options
         // use your own autocomplete options, instead of fetch-jsonp, use React HttpClient or FetchClient
         // here we use fetch-jsonp just because I'm not sure how to configure React HttpClient with JSONP and CORS
-        editorOptions: {
+        options: {
           minLength: 3,
           forceUserInput: true,
           fetch: (searchText: string, updateCallback: (items: false | any[]) => void) => {
@@ -281,7 +285,7 @@ const Example3: React.FC = () => {
 
         // OR use your own autocomplete options, instead of fetch-jsonp, use React HttpClient or FetchClient
         // here we use fetch-jsonp just because I'm not sure how to configure React HttpClient with JSONP and CORS
-        filterOptions: {
+        options: {
           minLength: 3,
           fetch: (searchText: string, updateCallback: (items: false | any[]) => void) => {
             /** with React Http, note this demo won't work because of CORS */

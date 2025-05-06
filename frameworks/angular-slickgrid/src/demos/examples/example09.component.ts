@@ -1,5 +1,14 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { AngularGridInstance, Column, ExtensionName, Filters, Formatters, GridOption, unsubscribeAllObservables } from '../../library';
+import {
+  AngularGridInstance,
+  Column,
+  ExtensionName,
+  Filters,
+  Formatters,
+  GridOption,
+  type SliderOption,
+  unsubscribeAllObservables,
+} from '../../library';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 
@@ -49,7 +58,10 @@ export class Example9Component implements OnInit, OnDestroy {
         filterable: true,
         type: 'number',
         formatter: Formatters.percentCompleteBar,
-        filter: { model: Filters.compoundSlider, filterOptions: { hideSliderNumber: false } },
+        filter: {
+          model: Filters.compoundSlider,
+          options: { hideSliderNumber: false } as SliderOption,
+        },
       },
       { id: 'start', name: 'Start', field: 'start', nameKey: 'START', filterable: true },
       { id: 'finish', name: 'Finish', field: 'finish', nameKey: 'FINISH', filterable: true },

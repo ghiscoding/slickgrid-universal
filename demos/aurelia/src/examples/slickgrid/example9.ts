@@ -8,6 +8,7 @@ import {
   type GridOption,
   type SlickDataView,
   type SlickGrid,
+  type SliderOption,
 } from 'aurelia-slickgrid';
 import './example9.scss'; // provide custom CSS/SASS styling
 import { resolve } from 'aurelia';
@@ -77,7 +78,10 @@ export class Example9 {
         filterable: true,
         type: 'number',
         formatter: Formatters.percentCompleteBar,
-        filter: { model: Filters.compoundSlider, filterOptions: { hideSliderNumber: false } },
+        filter: {
+          model: Filters.compoundSlider,
+          options: { hideSliderNumber: false } as SliderOption,
+        },
       },
       {
         id: 'start',

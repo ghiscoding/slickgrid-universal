@@ -37,19 +37,20 @@ this.columnDefinitions = [
 ```
 
 ### Editor Options (`MultipleSelectOption` interface)
-All the available options that can be provided as `editorOptions` to your column definitions can be found under this [multipleSelectOption interface](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/multipleSelectOption.interface.ts) and you should cast your `editorOptions` to that interface to make sure that you use only valid options of the `multiple-select.js` library.
+All the available options that can be provided as editor `options` to your column definitions can be found under this [multipleSelectOption interface](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/multipleSelectOption.interface.ts) and you should cast your editor `options` to that interface to make sure that you use only valid options of the `multiple-select.js` library.
 
 ```ts
 editor: {
   model: Editors.SingleSelect,
-  editorOptions: {
+  // previously known as `editorptions` for < 9.0
+  options: {
     maxHeight: 400
   } as MultipleSelectOption
 }
 ```
 
 #### Grid Option `defaultEditorOptions
-You could also define certain options as a global level (for the entire grid or even all grids) by taking advantage of the `defaultEditorOptions` Grid Option. Note that they are set via the editor type as a key name (`autocompleter`, `date`, ...) and then the content is the same as `editorOptions` (also note that each key is already typed with the correct editor option interface), for example
+You could also define certain options as a global level (for the entire grid or even all grids) by taking advantage of the `defaultEditorOptions` Grid Option. Note that they are set via the editor type as a key name (`autocompleter`, `date`, ...) and then the content is the same as editor `options` (also note that each key is already typed with the correct editor option interface), for example
 
 ```ts
 this.gridOptions = {
@@ -190,7 +191,7 @@ this.columnDefinitions = [
 ```
 
 ### `multiple-select-vanilla.js` Options
-You can use any options from [Multiple-Select.js](http://wenzhixin.net.cn/p/multiple-select) and add them to your `editorOptions` property. However please note that this is a customized version of the original (all original [lib options](http://wenzhixin.net.cn/p/multiple-select/docs/) are available so you can still consult the original site for all options).
+You can use any options from [Multiple-Select.js](http://wenzhixin.net.cn/p/multiple-select) and add them to your editor `options` property. However please note that this is a customized version of the original (all original [lib options](http://wenzhixin.net.cn/p/multiple-select/docs/) are available so you can still consult the original site for all options).
 
 Couple of small options were added to suit SlickGrid-Universal needs, which is why it points to `slickgrid-universal/lib` folder (which is our customized version of the original). This lib is required if you plan to use `multipleSelect` or `singleSelect` Filters. What was customized to (compare to the original) is the following:
 - `okButton` option was added to add an OK button for simpler closing of the dropdown after selecting multiple options.

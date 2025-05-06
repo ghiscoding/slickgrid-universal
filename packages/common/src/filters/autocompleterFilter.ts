@@ -1,7 +1,15 @@
 import autocompleter from 'autocompleter';
 import type { AutocompleteItem, AutocompleteSettings } from 'autocompleter';
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { classNameToList, createDomElement, emptyElement, isPrimitiveValue, toKebabCase, toSentenceCase } from '@slickgrid-universal/utils';
+import {
+  classNameToList,
+  createDomElement,
+  emptyElement,
+  isObjectEmpty,
+  isPrimitiveValue,
+  toKebabCase,
+  toSentenceCase,
+} from '@slickgrid-universal/utils';
 
 import { FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
 import type {
@@ -105,7 +113,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
   }
 
   get filterOptions(): AutocompleterOption {
-    return { ...this.gridOptions.defaultFilterOptions?.autocompleter, ...this.columnFilter?.filterOptions };
+    return { ...this.gridOptions.defaultFilterOptions?.autocompleter, ...this.columnFilter?.filterOptions, ...this.columnFilter?.options };
   }
 
   /** Getter for the Custom Structure if exist */
@@ -165,11 +173,11 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
       !this.grid ||
       !this.columnDef ||
       !this.columnFilter ||
-      (!this.columnFilter.collection && !this.columnFilter.collectionAsync && !this.columnFilter.filterOptions)
+      (!this.columnFilter.collection && !this.columnFilter.collectionAsync && isObjectEmpty(this.filterOptions))
     ) {
       throw new Error(
-        `[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") for the AutoComplete Filter to work correctly.` +
-          ` Also each option should include a value/label pair (or value/labelKey when using Locale).` +
+        '[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") for the AutoComplete Filter to work correctly.' +
+          ' Also each option should include a value/label pair (or value/labelKey when using Locale).' +
           ` For example:: { filter: model: Filters.autocompleter, collection: [{ value: true, label: 'True' }, { value: false, label: 'False'}] }`
       );
     }

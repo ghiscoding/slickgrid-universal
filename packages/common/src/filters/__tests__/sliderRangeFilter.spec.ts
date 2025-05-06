@@ -75,6 +75,24 @@ describe('SliderRangeFilter', () => {
   });
 
   it('should initialize the filter with slider value define in user filter options', () => {
+    mockColumn.filter!.options = { sliderStartValue: 1 } as SliderRangeOption;
+    filter.init(filterArguments);
+
+    const filterElm = divContainer.querySelector('.search-filter.slider-container.filter-duration input') as HTMLInputElement;
+    expect(filterElm.defaultValue).toBe('1');
+    expect(filterElm.value).toBe('1');
+  });
+
+  it('should initialize the filter with slider value define in user filter options', () => {
+    mockColumn.filter!.options = { sliderStartValue: 1 } as SliderRangeOption;
+    filter.init(filterArguments);
+
+    const filterElm = divContainer.querySelector('.search-filter.slider-container.filter-duration input') as HTMLInputElement;
+    expect(filterElm.defaultValue).toBe('1');
+    expect(filterElm.value).toBe('1');
+  });
+
+  it('should initialize the filter with slider value define in user filterOptions', () => {
     mockColumn.filter!.filterOptions = { sliderStartValue: 1 } as SliderRangeOption;
     filter.init(filterArguments);
 
@@ -104,7 +122,7 @@ describe('SliderRangeFilter', () => {
     });
   });
 
-  it('should be able to retrieve slider options defined through the Getter when passing different filterOptions', () => {
+  it('should be able to retrieve slider options defined through the Getter when passing different filter options', () => {
     mockColumn.filter = {
       minValue: 4,
       maxValue: 69,
@@ -235,7 +253,7 @@ describe('SliderRangeFilter', () => {
     const maxVal = 58;
 
     mockColumn.filter = {
-      filterOptions: { stopGapBetweenSliderHandles: 5 },
+      options: { stopGapBetweenSliderHandles: 5 },
     };
     filter.init(filterArguments);
     filter.setValues([minVal, maxVal]);
@@ -306,6 +324,24 @@ describe('SliderRangeFilter', () => {
     mockColumn.filter = {
       minValue: 4,
       maxValue: 69,
+    };
+
+    filter.init(filterArguments);
+
+    const filterLowestElm = divContainer.querySelector('.lowest-range-duration') as HTMLInputElement;
+    const filterHighestElm = divContainer.querySelector('.highest-range-duration') as HTMLInputElement;
+
+    expect(filterLowestElm.textContent).toBe('4');
+    expect(filterHighestElm.textContent).toBe('69');
+    expect(filter.currentValues).toEqual([4, 69]);
+  });
+
+  it('should create the input filter with min/max slider values being set by filter "sliderStartValue" and "sliderEndValue" through the filter options', () => {
+    mockColumn.filter = {
+      options: {
+        sliderStartValue: 4,
+        sliderEndValue: 69,
+      },
     };
 
     filter.init(filterArguments);

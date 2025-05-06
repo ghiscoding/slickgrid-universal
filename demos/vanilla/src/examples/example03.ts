@@ -162,7 +162,7 @@ export default class Example03 {
         sortable: true,
         editor: {
           model: Editors.date,
-          editorOptions: { displayDateMin: 'today' } as VanillaCalendarOption,
+          options: { displayDateMin: 'today' } as VanillaCalendarOption,
         },
         // formatter: Formatters.dateIso,
         type: 'date',
@@ -209,7 +209,7 @@ export default class Example03 {
           model: Editors.slider,
           minValue: 0,
           maxValue: 100,
-          // editorOptions: { hideSliderNumber: true } as SliderOption,
+          // options: { hideSliderNumber: true } as SliderOption,
         },
         sortable: true,
         filterable: true,

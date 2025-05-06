@@ -14,6 +14,7 @@ import type {
   EditorValidator,
   EditorValidationResult,
   GridOption,
+  VanillaCalendarOption,
 } from './../interfaces/index.js';
 import { getDescendantProperty } from './../services/utilities.js';
 import type { TranslaterService } from '../services/translater.service.js';
@@ -85,15 +86,15 @@ export class DateEditor implements Editor {
   }
 
   /** Get options passed to the editor by the user */
-  get editorOptions(): Options {
-    return { ...this.gridOptions.defaultEditorOptions?.date, ...this.columnEditor?.editorOptions };
+  get editorOptions(): VanillaCalendarOption {
+    return { ...this.gridOptions.defaultEditorOptions?.date, ...this.columnEditor?.editorOptions, ...this.columnEditor?.options };
   }
 
   get hasAutoCommitEdit(): boolean {
     return this.gridOptions.autoCommitEdit ?? false;
   }
 
-  get pickerOptions(): Options {
+  get pickerOptions(): VanillaCalendarOption {
     return this._pickerMergedOptions;
   }
 
@@ -179,7 +180,7 @@ export class DateEditor implements Editor {
           title: (this.columnEditor && this.columnEditor.title) || '',
           className: inputCssClasses.replace(/\./g, ' '),
           dataset: { input: '', defaultdate: this.defaultDate },
-          readOnly: this.columnEditor.editorOptions?.allowInput === true ? false : true,
+          readOnly: this.editorOptions?.allowInput === true ? false : true,
         },
         this._editorInputGroupElm
       );
@@ -187,7 +188,7 @@ export class DateEditor implements Editor {
       this.args.container.appendChild(this._editorInputGroupElm);
 
       // show clear date button (unless user specifically doesn't want it)
-      if (!(this.columnEditor.editorOptions as any)?.hideClearButton) {
+      if (!this.editorOptions?.hideClearButton) {
         closeButtonGroupElm.appendChild(this._clearButtonElm);
         this._editorInputGroupElm.appendChild(closeButtonGroupElm);
         this._bindEventService.bind(this._clearButtonElm, 'click', () => {
@@ -197,7 +198,7 @@ export class DateEditor implements Editor {
       }
 
       this._bindEventService.bind(this._inputElm, 'keydown', ((event: KeyboardEvent) => {
-        if (this.columnEditor.editorOptions?.allowInput !== true) {
+        if (this.editorOptions?.allowInput !== true) {
           return;
         }
 
@@ -275,14 +276,11 @@ export class DateEditor implements Editor {
    * @param {newValue} newValue
    */
   changeEditorOption<T extends keyof Options, K extends Options[T]>(optionName: T, newValue: K): void {
-    if (!this.columnEditor.editorOptions) {
-      this.columnEditor.editorOptions = {};
-    }
-    this.columnEditor.editorOptions[optionName] = newValue;
+    this.columnEditor.options ??= {};
+    this.columnEditor.editorOptions ??= {};
+    this.columnEditor.options[optionName] = this.columnEditor.editorOptions[optionName] = newValue;
     this._pickerMergedOptions = extend(true, {}, this._pickerMergedOptions, { [optionName]: newValue });
-    if (this.calendarInstance) {
-      this.calendarInstance.set(this._pickerMergedOptions, { dates: true, locale: true, month: true, time: true, year: true });
-    }
+    this.calendarInstance?.set(this._pickerMergedOptions, { dates: true, locale: true, month: true, time: true, year: true });
   }
 
   focus(): void {
@@ -359,7 +357,7 @@ export class DateEditor implements Editor {
     const elmDateStr = this.getValue();
 
     const lastEventKey = this._lastInputKeyEvent?.key;
-    if (this.columnEditor.editorOptions?.allowInput === true && this.columnEditor?.alwaysSaveOnEnterKey && lastEventKey === 'Enter') {
+    if (this.editorOptions?.allowInput === true && this.columnEditor?.alwaysSaveOnEnterKey && lastEventKey === 'Enter') {
       return true;
     }
 

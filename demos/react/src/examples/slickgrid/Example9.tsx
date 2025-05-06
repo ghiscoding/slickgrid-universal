@@ -10,6 +10,7 @@ import {
   type GridOption,
   SlickgridReact,
   type SlickgridReactInstance,
+  type SliderOption,
 } from 'slickgrid-react';
 
 import './example9.scss'; // provide custom CSS/SASS styling
@@ -54,7 +55,10 @@ const Example9: React.FC = () => {
         filterable: true,
         type: 'number',
         formatter: Formatters.percentCompleteBar,
-        filter: { model: Filters.compoundSlider, filterOptions: { hideSliderNumber: false } },
+        filter: {
+          model: Filters.compoundSlider,
+          options: { hideSliderNumber: false } as SliderOption,
+        },
       },
       {
         id: 'start',

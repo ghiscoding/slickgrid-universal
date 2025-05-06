@@ -6,7 +6,7 @@ import { SlickCompositeEditor, SlickCompositeEditorComponent } from '@slickgrid-
 
 import {
   AngularGridInstance,
-  AutocompleterOption,
+  type AutocompleterOption,
   Column,
   CompositeEditorModalType,
   EditCommand,
@@ -147,7 +147,7 @@ export class Example30Component implements OnDestroy, OnInit {
           required: true,
           alwaysSaveOnEnterKey: true,
           maxLength: 12,
-          editorOptions: {
+          options: {
             cols: 45,
             rows: 6,
             buttonTexts: {
@@ -275,7 +275,7 @@ export class Example30Component implements OnDestroy, OnInit {
         saveOutputType: 'dateUtc',
         filterable: true,
         filter: { model: Filters.compoundDate },
-        editor: { model: Editors.date, massUpdate: true, editorOptions: { hideClearButton: false } },
+        editor: { model: Editors.date, massUpdate: true, options: { hideClearButton: false } as VanillaCalendarOption },
       },
       {
         id: 'completed',
@@ -317,7 +317,7 @@ export class Example30Component implements OnDestroy, OnInit {
         exportCustomFormatter: Formatters.dateUs,
         editor: {
           model: Editors.date,
-          editorOptions: {
+          options: {
             displayDateMin: 'today',
 
             // if we want to preload the date picker with a different date,
@@ -357,7 +357,7 @@ export class Example30Component implements OnDestroy, OnInit {
           massUpdate: true,
 
           // example with a Remote API call
-          editorOptions: {
+          options: {
             minLength: 1,
             fetch: (searchTerm: string, callback: (items: false | any[]) => void) => {
               const products = this.mockProducts();
@@ -397,7 +397,7 @@ export class Example30Component implements OnDestroy, OnInit {
           massUpdate: true,
           customStructure: { label: 'name', value: 'code' },
           collectionAsync: this.http.get(URL_COUNTRIES_COLLECTION),
-          editorOptions: { minLength: 0 },
+          options: { minLength: 0 } as AutocompleterOption,
         },
         filter: {
           model: Filters.inputText,

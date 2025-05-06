@@ -148,7 +148,7 @@ export class Example4 {
             filterResultAfterEachPass: 'chain', // options are "merge" or "chain" (defaults to "chain")
           },
           // we could add certain option(s) to the "multiple-select" plugin
-          filterOptions: {
+          options: {
             maxHeight: 250,
             width: 175,
 
@@ -203,8 +203,8 @@ export class Example4 {
         filterable: true,
         filter: {
           model: Filters.compoundDate,
-          // override any of the calendar options through "filterOptions"
-          filterOptions: { displayDateMin: 'today' } as VanillaCalendarOption,
+          // override any of the calendar options through "options"
+          options: { displayDateMin: 'today' } as VanillaCalendarOption,
         },
       },
       {
@@ -232,7 +232,7 @@ export class Example4 {
           model: Filters.singleSelect,
 
           // we could add certain option(s) to the "multiple-select" plugin
-          filterOptions: {
+          options: {
             maxHeight: 250,
           } as MultipleSelectOption,
         },

@@ -10,6 +10,7 @@ import {
   Formatters,
   type OnEventArgs,
   OperatorType,
+  type SliderOption,
   SlickGlobalEditorLock,
   SlickgridVue,
 } from 'slickgrid-vue';
@@ -129,12 +130,15 @@ function defineGrid() {
       minWidth: 100,
       sortable: true,
       type: 'number',
-      filter: { model: Filters.slider, filterOptions: { hideSliderNumber: false } },
+      filter: {
+        model: Filters.slider,
+        options: { hideSliderNumber: false } as SliderOption,
+      },
       editor: {
         model: Editors.slider,
         minValue: 0,
         maxValue: 100,
-        // editorOptions: { hideSliderNumber: true },
+        // options: { hideSliderNumber: true },
       },
       /*
         editor: {

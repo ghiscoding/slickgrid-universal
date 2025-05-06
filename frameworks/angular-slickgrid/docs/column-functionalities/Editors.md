@@ -122,12 +122,13 @@ this.columnDefinitions = [
 ```
 
 ### Editor Options (`MultipleSelectOption` interface)
-All the available options that can be provided as `editorOptions` to your column definitions can be found under this [multipleSelectOption interface](https://ghiscoding.github.io/multiple-select-vanilla/) and you should cast your `editorOptions` to that interface to make sure that you use only valid options of the `multiple-select-vanilla` library.
+All the available options that can be provided as editor `options` to your column definitions can be found under this [multipleSelectOption interface](https://ghiscoding.github.io/multiple-select-vanilla/) and you should cast your editor `options` to that interface to make sure that you use only valid options of the `multiple-select-vanilla` library.
 
 ```ts
 editor: {
   model: Editors.SingleSelect,
-  editorOptions: {
+  // previously known as `editorOptions` for < 9.0
+  options: {
     maxHeight: 400
   } as MultipleSelectOption
 }
@@ -254,7 +255,7 @@ sanitizeHtmlOptions: {
 ```
 
 ### `multiple-select-vanilla` Options
-You can use any options from [Multiple-Select-Vanilla](https://github.com/ghiscoding/multiple-select-vanilla) and add them to your `filterOptions` property. However please note that this is a customized version of the original (all original [lib options](https://ghiscoding.github.io/multiple-select-vanilla/) are available so you can still consult the original site for all options).
+You can use any options from [Multiple-Select-Vanilla](https://github.com/ghiscoding/multiple-select-vanilla) and add them to your editor `options` property. However please note that this is a customized version of the original (all original [lib options](https://ghiscoding.github.io/multiple-select-vanilla/) are available so you can still consult the original site for all options).
 
 Couple of small options were added to suit Angular-SlickGrid needs, which is why it points to `angular-slickgrid/lib` folder (which is our customized version of the original). This lib is required if you plan to use `multipleSelect` or `singleSelect` Filters. What was customized to (compare to the original) is the following:
 - `okButton` option was added to add an OK button for simpler closing of the dropdown after selecting multiple options.
@@ -425,15 +426,16 @@ You can also use the Slick Grid events as shown below
 
 ## Editor Options
 
-#### Column Editor `editorOptions`
-Some of the Editors could receive extra options, which is mostly the case for Editors using external dependencies (e.g. `autocompleter`, `date`, `multipleSelect`, ...) you can provide options via the `editorOptions`, for example
+#### Column Editor `options`
+Some of the Editors could receive extra options, which is mostly the case for Editors using external dependencies (e.g. `autocompleter`, `date`, `multipleSelect`, ...) you can provide options via the editor `options`, for example
 
 ```ts
 this.columnDefinitions = [{
   id: 'start', name: 'Start Date', field: 'start',
   editor: {
     model: Editors.date,
-    editorOptions: { minDate: 'today' }
+    // previously known as `editorOptions` for < 9.0
+    options: { minDate: 'today' }
   }
 }];
 ```

@@ -174,7 +174,7 @@ export default class Example12 {
           required: true,
           alwaysSaveOnEnterKey: true,
           maxLength: 12,
-          editorOptions: {
+          options: {
             cols: 45,
             rows: 6,
             buttonTexts: {
@@ -281,7 +281,7 @@ export default class Example12 {
         filter: {
           model: Filters.multipleSelect,
           collection: this.complexityLevelList,
-          filterOptions: { showClear: true } as MultipleSelectOption,
+          options: { showClear: true } as MultipleSelectOption,
         },
         editor: {
           model: Editors.singleSelect,
@@ -303,7 +303,7 @@ export default class Example12 {
         saveOutputType: 'dateUtc',
         filterable: true,
         filter: { model: Filters.compoundDate },
-        editor: { model: Editors.date, massUpdate: true, editorOptions: { hideClearButton: false } as SliderOption },
+        editor: { model: Editors.date, massUpdate: true, options: { hideClearButton: false } as SliderOption },
       },
       {
         id: 'completed',
@@ -325,7 +325,7 @@ export default class Example12 {
             { value: false, label: 'False' },
           ],
           model: Filters.singleSelect,
-          filterOptions: { showClear: true } as MultipleSelectOption,
+          options: { showClear: true } as MultipleSelectOption,
         },
         editor: { model: Editors.checkbox, massUpdate: true },
         // editor: { model: Editors.singleSelect, collection: [{ value: true, label: 'Yes' }, { value: false, label: 'No' }], },
@@ -346,7 +346,7 @@ export default class Example12 {
         exportCustomFormatter: Formatters.dateUs,
         editor: {
           model: Editors.date,
-          editorOptions: {
+          options: {
             displayDateMin: 'today', // set minimum date as today
 
             // if we want to preload the date picker with a different date,
@@ -386,7 +386,7 @@ export default class Example12 {
           massUpdate: true,
 
           // example with a Remote API call
-          editorOptions: {
+          options: {
             minLength: 1,
             fetch: (searchTerm, callback) => {
               const products = this.mockProducts();
@@ -426,7 +426,7 @@ export default class Example12 {
           model: Editors.autocompleter,
           alwaysSaveOnEnterKey: true,
           massUpdate: true,
-          editorOptions: {
+          options: {
             minLength: 0,
             showOnFocus: false,
             fetch: (searchText, updateCallback) => {

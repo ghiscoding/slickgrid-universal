@@ -134,7 +134,7 @@ export default class Example02 {
         filter: {
           model: Filters.slider,
           operator: '>=',
-          filterOptions: {
+          options: {
             hideSliderNumber: true,
             enableSliderTrackColoring: true,
             sliderTrackFilledColor: '#9ac49c',

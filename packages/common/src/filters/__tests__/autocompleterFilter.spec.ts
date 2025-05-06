@@ -122,6 +122,19 @@ describe('AutocompleterFilter', () => {
       { value: 'male', label: 'male' },
       { value: 'female', label: 'female' },
     ];
+    mockColumn.filter.options = { minLength: 3 } as AutocompleterOption;
+    filter.init(filterArguments);
+    const filterCount = divContainer.querySelectorAll('input.search-filter.filter-gender').length;
+
+    expect(spyGetHeaderRow).toHaveBeenCalled();
+    expect(filterCount).toBe(1);
+  });
+
+  it('should initialize the filter even when user define his own filterOptions', () => {
+    mockColumn.filter.collection = [
+      { value: 'male', label: 'male' },
+      { value: 'female', label: 'female' },
+    ];
     mockColumn.filter.filterOptions = { minLength: 3 } as AutocompleterOption;
     filter.init(filterArguments);
     const filterCount = divContainer.querySelectorAll('input.search-filter.filter-gender').length;
@@ -150,7 +163,7 @@ describe('AutocompleterFilter', () => {
       { value: 'male', label: 'male' },
       { value: 'female', label: 'female' },
     ];
-    mockColumn.filter.filterOptions = { triggerOnEveryKeyStroke: true };
+    mockColumn.filter.options = { triggerOnEveryKeyStroke: true };
 
     filter.init(filterArguments);
     filter.setValues('male');
@@ -192,7 +205,7 @@ describe('AutocompleterFilter', () => {
       { value: 'male', label: 'male' },
       { value: 'female', label: 'female' },
     ];
-    mockColumn.filter.filterOptions = { triggerOnEveryKeyStroke: true };
+    mockColumn.filter.options = { triggerOnEveryKeyStroke: true };
     gridOptionMock.enableFilterTrimWhiteSpace = false;
     mockColumn.filter.enableTrimWhiteSpace = true;
     const spyCallback = vi.spyOn(filterArguments, 'callback');
@@ -214,7 +227,7 @@ describe('AutocompleterFilter', () => {
       { value: 'male', label: 'male' },
       { value: 'female', label: 'female' },
     ];
-    mockColumn.filter.filterOptions = { triggerOnEveryKeyStroke: true };
+    mockColumn.filter.options = { triggerOnEveryKeyStroke: true };
     gridOptionMock.enableFilterTrimWhiteSpace = false;
     mockColumn.filter.enableTrimWhiteSpace = true;
     const spyCallback = vi.spyOn(filterArguments, 'callback');
@@ -360,7 +373,7 @@ describe('AutocompleterFilter', () => {
     const callbackMock = vi.fn().mockReturnValue(mockDataResponse);
 
     mockColumn.filter = {
-      filterOptions: {
+      options: {
         triggerOnEveryKeyStroke: true,
         showOnFocus: true,
         fetch: (searchText) => {
@@ -417,7 +430,7 @@ describe('AutocompleterFilter', () => {
     ];
 
     mockColumn.filter = {
-      filterOptions: {
+      options: {
         showOnFocus: true,
         fetch: (_, updateCallback) => updateCallback(mockDataResponse),
       },
@@ -438,7 +451,7 @@ describe('AutocompleterFilter', () => {
     const spyCallback = vi.spyOn(filterArguments, 'callback');
     const mockCollection = ['male', 'female'];
     mockColumn.filter.collectionAsync = Promise.resolve({ content: mockCollection });
-    mockColumn.filter.filterOptions = { showOnFocus: true, triggerOnEveryKeyStroke: true } as AutocompleterOption;
+    mockColumn.filter.options = { showOnFocus: true, triggerOnEveryKeyStroke: true } as AutocompleterOption;
 
     filterArguments.searchTerms = ['female'];
     await filter.init(filterArguments);
@@ -688,14 +701,14 @@ describe('AutocompleterFilter', () => {
       expect(spy).toHaveBeenCalledWith({ item: 'fem' });
     });
 
-    it('should initialize the filter with filterOptions and expect the "handleSelect" method to be called when the callback method is triggered', () => {
+    it('should initialize the filter with options and expect the "handleSelect" method to be called when the callback method is triggered', () => {
       const spy = vi.spyOn(filter, 'handleSelect');
 
       mockColumn.filter.collection = [
         { value: 'male', label: 'male' },
         { value: 'female', label: 'female' },
       ];
-      mockColumn.filter.filterOptions = { minLength: 3 } as AutocompleterOption;
+      mockColumn.filter.options = { minLength: 3 } as AutocompleterOption;
       filter.init(filterArguments);
       filter.autocompleterOptions.onSelect({ item: 'fem' });
 
@@ -779,6 +792,19 @@ describe('AutocompleterFilter', () => {
       expect(autocompleteListElms.length).toBe(1);
       expect(autocompleteListElms[0].innerHTML).toContain(mockTemplateString);
     });
+
+    it('should throw an error when "collectionAsync" Promise does not return a valid array', () =>
+      new Promise((done: any) => {
+        const promise = Promise.resolve({ hello: 'world' });
+        mockColumn.filter.collectionAsync = promise;
+        mockColumn.filter.options = { showOnFocus: true } as AutocompleterOption;
+        filter.init(filterArguments).catch((e) => {
+          expect(e.toString()).toContain(
+            `Something went wrong while trying to pull the collection from the "collectionAsync" call in the Filter, the collection is not a valid array.`
+          );
+          done();
+        });
+      }));
 
     it('should throw an error when "collectionAsync" Promise does not return a valid array', () =>
       new Promise((done: any) => {

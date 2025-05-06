@@ -384,6 +384,29 @@ describe('CompoundDateFilter', () => {
 
   it('should create the input filter with a default input dates when passed as a filter options', () => {
     mockColumn.filter!.operator = '<=';
+    mockColumn.filter!.options = {
+      selectedDates: ['2001-01-02'],
+    };
+    const spyCallback = vi.spyOn(filterArguments, 'callback');
+
+    filter.init(filterArguments);
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish input.date-picker') as HTMLInputElement;
+
+    filterInputElm.focus();
+    filter.calendarInstance!.onChangeToInput!(
+      { context: { inputElement: filterInputElm, selectedDates: ['2000-01-02'] }, hide: vi.fn() } as unknown as Calendar,
+      new MouseEvent('click')
+    );
+    const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
+
+    expect(filterFilledElms.length).toBe(1);
+    expect(format(filter.currentDateOrDates![0], mapTempoDateFormatWithFieldType(FieldType.dateTimeIso))).toBe('2000-01-02 00:00:00');
+    expect(filterInputElm.value).toBe('2000-01-02');
+    expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-02'], shouldTriggerQuery: true });
+  });
+
+  it('should create the input filter with a default input dates when passed as a filterOptions', () => {
+    mockColumn.filter!.operator = '<=';
     mockColumn.filter!.filterOptions = {
       selectedDates: ['2001-01-02'],
     };

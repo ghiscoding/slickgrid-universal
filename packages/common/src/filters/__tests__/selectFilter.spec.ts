@@ -131,6 +131,17 @@ describe('SelectFilter', () => {
   });
 
   it('should initialize the filter with minHeight define in user filter options', () => {
+    mockColumn.filter!.options = { minHeight: 255 } as MultipleSelectOption;
+    mockColumn.filter!.collection = [
+      { value: 'male', label: 'male' },
+      { value: 'female', label: 'female' },
+    ];
+    filter.init(filterArguments);
+
+    expect(filter.msInstance?.getOptions().minHeight).toBe(255);
+  });
+
+  it('should initialize the filter with minHeight define in user filterOptions', () => {
     mockColumn.filter!.filterOptions = { minHeight: 255 } as MultipleSelectOption;
     mockColumn.filter!.collection = [
       { value: 'male', label: 'male' },
@@ -230,7 +241,7 @@ describe('SelectFilter', () => {
     const spyCallback = vi.spyOn(filterArguments, 'callback');
 
     mockColumn.filter!.collection = ['male', 'female'];
-    mockColumn.filter!.filterOptions = { showClear: true };
+    mockColumn.filter!.options = { showClear: true };
     filter.init(filterArguments);
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
     const filterListElm = divContainer.querySelectorAll<HTMLInputElement>(`[data-name=filter-gender].ms-drop ul>li input[type=checkbox]`);
@@ -738,7 +749,7 @@ describe('SelectFilter', () => {
           { value: 'male', labelKey: 'MALE' },
           { value: 'female', labelKey: 'FEMALE' },
         ],
-        filterOptions: { minimumCountSelected: 1 },
+        options: { minimumCountSelected: 1 },
       };
 
       filterArguments.searchTerms = ['male', 'female'];
@@ -795,6 +806,30 @@ describe('SelectFilter', () => {
         expect(filterOkElm.textContent).toBe('Terminé');
         expect(filterSelectAllElm.textContent).toBe('Sélectionner tout');
         expect(filterParentElm.textContent).toBe('2 de 3 sélectionnés');
+        done();
+      });
+    }));
+
+  it('should enable Dark Mode and expect ".ms-dark-mode" CSS class to be found on parent element', () =>
+    new Promise(async (done: any) => {
+      gridOptionMock.darkMode = true;
+      mockColumn.filter = {
+        enableTranslateLabel: true,
+        collection: [
+          { value: 'other', label: 'Other' },
+          { value: 'male', label: 'Male' },
+          { value: 'female', label: 'Female' },
+        ],
+        options: { minimumCountSelected: 1 },
+      };
+
+      filterArguments.searchTerms = ['male', 'female'];
+      filter.init(filterArguments);
+
+      setTimeout(() => {
+        const filterElm = divContainer.querySelector('.ms-parent') as HTMLButtonElement;
+
+        expect(filterElm.classList.contains('ms-dark-mode')).toBeTruthy();
         done();
       });
     }));

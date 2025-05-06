@@ -201,7 +201,7 @@ export default class Example11 {
           massUpdate: true,
           minValue: 0,
           maxValue: 100,
-          editorOptions: { hideSliderNumber: true } as SliderOption,
+          options: { hideSliderNumber: true } as SliderOption,
         },
         sortable: true,
         filterable: true,
@@ -218,7 +218,7 @@ export default class Example11 {
         outputType: 'dateIso',
         filterable: true,
         filter: { model: Filters.compoundDate },
-        editor: { model: Editors.date, massUpdate: true, editorOptions: { allowInput: true } },
+        editor: { model: Editors.date, massUpdate: true, options: { allowInput: true } },
       },
       {
         id: 'finish',
@@ -226,7 +226,11 @@ export default class Example11 {
         field: 'finish',
         sortable: true,
         minWidth: 80,
-        editor: { model: Editors.date, massUpdate: true, editorOptions: { displayDateMin: 'today' } as VanillaCalendarOption },
+        editor: {
+          model: Editors.date,
+          massUpdate: true,
+          options: { displayDateMin: 'today' } as VanillaCalendarOption,
+        },
         formatter: Formatters.dateIso,
         type: 'date',
         outputType: 'dateIso',
@@ -265,7 +269,7 @@ export default class Example11 {
             { value: false, label: 'False' },
           ],
           massUpdate: true,
-          editorOptions: { showClear: true } as MultipleSelectOption,
+          options: { showClear: true } as MultipleSelectOption,
         },
         filter: {
           model: Filters.singleSelect,
@@ -274,7 +278,7 @@ export default class Example11 {
             { value: true, label: 'True' },
             { value: false, label: 'False' },
           ],
-          filterOptions: { showClear: true } as MultipleSelectOption,
+          options: { showClear: true } as MultipleSelectOption,
         },
         exportWithFormatter: false,
         formatter: Formatters.checkmarkMaterial,
@@ -296,7 +300,7 @@ export default class Example11 {
           alwaysSaveOnEnterKey: true,
           massUpdate: true,
           // example with a Remote API call
-          editorOptions: {
+          options: {
             showOnFocus: true,
             minLength: 1,
             fetch: (searchText, updateCallback) => {
@@ -335,7 +339,7 @@ export default class Example11 {
           model: Editors.autocompleter,
           alwaysSaveOnEnterKey: true,
           massUpdate: true,
-          editorOptions: {
+          options: {
             minLength: 1,
             fetch: (searchText, updateCallback) => {
               const countries: any[] = JSON.parse(countriesJson);

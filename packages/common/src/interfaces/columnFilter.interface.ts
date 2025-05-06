@@ -94,13 +94,19 @@ export interface ColumnFilter {
   enableTranslateLabel?: boolean;
 
   /**
-   * Options that could be provided to the Filter, example: { container: 'body', maxHeight: 250}
-   *
-   * Please note that if you use options that have existed model interfaces,
-   * you should always cast it with the "as X" (where X is the external lib options interface),
-   * for example { filterOptions: {maxHeight: 250} as MultipleSelectOption }
+   * @deprecated @use `options` instead.
+   * Options that could be provided to the Filter, example: `{ container: 'body', maxHeight: 250 }`
    */
   filterOptions?: any;
+
+  /**
+   * Options, typically 3rd party lib options, that could be provided to the Filter, example: `{ container: 'body', maxHeight: 250}`
+   *
+   * Please note that if you use options that have model interfaces that exists,
+   * you should always cast it with the "as X" (where X is the external lib options interface),
+   * for example `{ options: {maxHeight: 250} as MultipleSelectOption }`
+   */
+  options?: any;
 
   /**
    * Custom Filter predicate function to use instead of the built-in filters

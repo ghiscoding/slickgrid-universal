@@ -58,12 +58,13 @@ const Example: React.FC = () => {
 ```
 
 ### Filter Options (`AutocompleterOption` interface)
-All the available options that can be provided as `filterOptions` to your column definitions can be found under this [AutocompleterOption interface](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/autocompleterOption.interface.ts) and you should cast your `filterOptions` to that interface to make sure that you use only valid options of the autocomplete library.
+All the available options that can be provided as filter `options` to your column definitions can be found under this [AutocompleterOption interface](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/autocompleterOption.interface.ts) and you should cast your filter `options` to that interface to make sure that you use only valid options of the autocomplete library.
 
 ```ts
 filter: {
   model: Filters.autocompleter,
-  filterOptions: {
+  // previously known as `filterOptions` for < 9.0
+  options: {
     minLength: 3,
   } as AutocompleterOption
 }
@@ -93,7 +94,8 @@ const Example: React.FC = () => {
 
           // use your own autocomplete options, instead of $.ajax, use http
           // here we use $.ajax just because I'm not sure how to configure http with JSONP and CORS
-          editorOptions: {
+          // previously known as `filterOptions` for < 9.0
+          options: {
             minLength: 3, // minimum count of character that the user needs to type before it queries to the remote
             source: (request, response) => {
               $.ajax({
@@ -113,7 +115,7 @@ const Example: React.FC = () => {
 
           // use your own autocomplete options, instead of $.ajax, use http
           // here we use $.ajax just because I'm not sure how to configure http with JSONP and CORS
-          filterOptions: {
+          options: {
             minLength: 3, // minimum count of character that the user needs to type before it queries to the remote
             source: (request, response) => {
               $.ajax({
@@ -148,7 +150,8 @@ const columnDefinitions = [
     field: 'area',
     editor: {
       model: Editors.autocompleter,
-      editorOptions: {
+      // previously known as `filterOptions` for < 9.0
+      options: {
         minLength: 0,
         forceUserInput: true,
         fetch: (searchText, updateCallback) => {

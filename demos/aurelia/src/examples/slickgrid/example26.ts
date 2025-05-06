@@ -11,6 +11,7 @@ import {
   type OnEventArgs,
   OperatorType,
   SlickGlobalEditorLock,
+  type SliderOption,
   type ViewModelBindableInputData,
 } from 'aurelia-slickgrid';
 import { CustomAureliaViewModelEditor } from './custom-aureliaViewModelEditor.js';
@@ -167,12 +168,15 @@ export class Example26 {
         minWidth: 100,
         sortable: true,
         type: 'number',
-        filter: { model: Filters.slider, filterOptions: { hideSliderNumber: false } },
+        filter: {
+          model: Filters.slider,
+          options: { hideSliderNumber: false } as SliderOption,
+        },
         editor: {
           model: Editors.slider,
           minValue: 0,
           maxValue: 100,
-          // editorOptions: { hideSliderNumber: true },
+          // options: { hideSliderNumber: true },
         },
         /*
         editor: {
