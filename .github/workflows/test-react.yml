@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [22]
+        node: [20]
         platform:
           - ubuntu-latest
 
@@ -72,16 +72,13 @@ jobs:
       - name: Website Dev Build (served for Cypress)
         run: pnpm react:build:demo
 
-      - name: Run Cypress install
-        run: pnpm run cypress install
-
       - name: Start HTTP Server
         run: pnpm react:serve &
 
       - name: Run Cypress E2E tests
         uses: cypress-io/github-action@v6
         with:
-          install: false
+          install: true
           working-directory: demos/react
           # start: pnpm react:serve
           wait-on: 'http://localhost:8000'
