@@ -14,14 +14,14 @@
 
 ## Column Functionalities
 
-* [Cell Menu (Action Menu)](column-functionalities/Cell-Menu.md)
-* [Editors](column-functionalities/Editors.md)
-  * [Autocomplete](column-functionalities/editors/autocomplete-editor-kraaden-lib.md)
+* [Cell Menu (Action Menu)](column-functionalities/cell-menu.md)
+* [Editors](column-functionalities/editors.md)
+  * [Autocomplete](column-functionalities/editors/autocomplete-editor.md)
   * [Date Picker (vanilla-calendar)](column-functionalities/editors/date-editor-vanilla-calendar.md)
   * [LongText (textarea)](column-functionalities/editors/longtext-editor-textarea.md)
   * [Select Dropdown Editor (single/multiple)](column-functionalities/editors/select-dropdown-editor.md)
 * [Filters](column-functionalities/filters/filter-intro.md)
-  * [Autocomplete](column-functionalities/filters/autocomplete-filter-kraaden-lib.md)
+  * [Autocomplete](column-functionalities/filters/autocomplete-filter.md)
   * [Input Filter (default)](column-functionalities/filters/input-filter.md)
   * [Select Filter (dropdown)](column-functionalities/filters/select-filter.md)
   * [Compound Filters](column-functionalities/filters/compound-filters.md)
@@ -29,8 +29,8 @@
   * [Custom Filter](column-functionalities/filters/custom-filter.md)
   * [Styling Filled Filters](column-functionalities/filters/styling-filled-filters.md)
   * [Single Search Filter](column-functionalities/filters/single-search-filter.md)
-* [Formatters](column-functionalities/Formatters.md)
-* [Sorting](column-functionalities/Sorting.md)
+* [Formatters](column-functionalities/formatters.md)
+* [Sorting](column-functionalities/sorting.md)
 
 ## Events
 

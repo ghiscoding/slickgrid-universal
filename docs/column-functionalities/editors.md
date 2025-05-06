@@ -7,7 +7,7 @@
 - [How to prevent Editor from going to the next bottom cell](#how-to-prevent-editor-from-going-to-the-next-bottom-cell)
 - [onClick Action Editor (icon click)](#onclick-action-editor-icon-click)
 - [AutoComplete Editor](editors/AutoComplete-Editor.md)
-- [Select (single/multi) Editors](editors/Select-Dropdown-Editor-(single,multiple).md)
+- [Select (single/multi) Editors](editors/select-dropdown-editor.md)
 - [Editor Options](#editor-options)
 - [Validators](#validators)
    - [Custom Validator](#custom-validator)

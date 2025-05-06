@@ -7,7 +7,7 @@
 - [How to prevent Editor from going to the next bottom cell](#how-to-prevent-editor-from-going-to-the-next-bottom-cell)
 - [onClick Action Editor (icon click)](#onclick-action-editor-icon-click)
 - [AutoComplete Editor](editors/AutoComplete-Editor.md)
-- [Select (single/multi) Editors](editors/Select-Dropdown-Editor-(single,multiple).md)
+- [Select (single/multi) Editors](editors/select-dropdown-editor.md)
 - [Editor Options](#editor-options)
 - [Validators](#validators)
    - [Custom Validator](#custom-validator)
@@ -94,7 +94,7 @@ this.columnDefinitions = [
 So to make it more clear, the `saveOutputType` is the format that will be sent to the `onCellChange` event, then the `outputType` is how the date will show up in the date picker (Vanilla-Calendar) and finally the `type` is basically the input format (coming from your dataset). Note however that each property are cascading, if 1 property is missing it will go to the next one until 1 is found... for example, on the `onCellChange` if you aren't defining `saveOutputType`, it will try to use `outputType`, if again none is provided it will try to use `type` and finally if none is provided it will use `'dateIso'` as the default.
 
 ## AutoComplete Editor
-The AutoComplete Editor has the same configuration (except for the `model: Editors.autoComplete`) as the AutoComplete Filter, so you can refer to the [AutoComplete Filter Wiki](filters/Autocomplete-Filter-(Kraaden-lib).md) for more info on how to use it.
+The AutoComplete Editor has the same configuration (except for the `model: Editors.autoComplete`) as the AutoComplete Filter, so you can refer to the [AutoComplete Filter Wiki](filters/autocomplete-filter.md) for more info on how to use it.
 
 ## Select Editors
 The library ships with two select editors: `singleSelectEditor` and the `multipleSelectEditor`. Both support the [Multiple-Select-Vanilla](https://github.com/ghiscoding/multiple-select-vanilla) library, but fallback to the bootstrap form-control style if you decide to exclude this library from your build. These editors will work with a list of foreign key values (custom structure not supported) and can be displayed properly with the [collectionFormatter](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/formatters/collectionFormatter.ts). [example 3](https://ghiscoding.github.io/Angular-Slickgrid/#/editor) has all the details for you to get started with these editors.

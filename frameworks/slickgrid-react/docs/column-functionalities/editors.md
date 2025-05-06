@@ -184,7 +184,7 @@ export interface OnEventArgs {
 ```
 
 ## AutoComplete Editor
-The AutoComplete Editor has the same configuration (except for the `model: Editors.autoComplete`) as the AutoComplete Filter, so you can refer to the [AutoComplete Filter - Docs](../column-functionalities/filters/autocomplete-filter-kraaden.md) for more info on how to use it.
+The AutoComplete Editor has the same configuration (except for the `model: Editors.autoComplete`) as the AutoComplete Filter, so you can refer to the [AutoComplete Filter - Docs](../column-functionalities/filters/autocomplete-filter.md) for more info on how to use it.
 
 ## Select Editors
 The library ships with two select editors: [singleSelectEditor](https://github.com/ghiscoding/slickgrid-react/blob/master/slickgrid-react/src/slickgrid-react/editors/singleSelectEditor.ts) and the [multipleSelectEditor](https://github.com/ghiscoding/slickgrid-react/blob/master/slickgrid-react/src/slickgrid-react/editors/multipleSelectEditor.ts). Both support the [multiple-select](https://github.com/ghiscoding/slickgrid-react/blob/master/slickgrid-react/assets/lib/multiple-select/multiple-select.js) library, but fallback to the bootstrap form-control style if you decide to exclude this library from your build. These editors will work with a list of foreign key values (custom structure not supported) and can be displayed properly with the [collectionFormatter](https://github.com/ghiscoding/slickgrid-react/blob/master/slickgrid-react/src/slickgrid-react/formatters/collectionEditorFormatter.ts). [example 3](https://ghiscoding.github.io/slickgrid-react/#/slickgrid/Example3) has all the details for you to get started with these editors.
