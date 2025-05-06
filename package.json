@@ -28,7 +28,7 @@
     "cypress:ci": "cypress run --config-file test/cypress.config.ts",
     "sass:bundle": "pnpm -r --stream --filter=./packages/common run sass:bundle",
     "build:universal": "tsc --build ./tsconfig.packages.json && pnpm sass:bundle",
-    "build:watch": "tsc --build ./tsconfig.packages.json --watch",    
+    "build:watch": "tsc --build ./tsconfig.packages.json --watch",
     "angular:watch": "pnpm -r --parallel run angular:dev",
     "aurelia:watch": "pnpm -r --parallel run aurelia:dev",
     "react:watch": "pnpm -r --parallel run react:dev",
@@ -91,13 +91,14 @@
   },
   "engines": {
     "node": "^20.17.0 || >=22.9.0",
-    "pnpm": "9.x"
+    "pnpm": "10.x"
   },
-  "packageManager": "pnpm@9.15.0",
+  "packageManager": "pnpm@10.10.0",
   "devDependencies": {
     "@4tw/cypress-drag-drop": "catalog:",
     "@commitlint/cli": "^19.8.0",
     "@commitlint/config-conventional": "^19.8.0",
+    "@eslint/js": "^9.26.0",
     "@formkit/tempo": "catalog:",
     "@lerna-lite/cli": "^4.0.0",
     "@lerna-lite/publish": "^4.0.0",
@@ -123,7 +124,6 @@
     "jsdom": "catalog:",
     "jsdom-global": "^3.0.2",
     "npm-run-all2": "catalog:",
-    "pnpm": "^9.15.0",
     "prettier": "^3.5.3",
     "rimraf": "^6.0.1",
     "rxjs": "catalog:",
