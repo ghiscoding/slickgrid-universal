@@ -588,7 +588,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/text-export
       bootstrap:
-        specifier: ^5.3.5
+        specifier: 'catalog:'
         version: 5.3.6(@popperjs/core@2.11.8)
       dompurify:
         specifier: 'catalog:'

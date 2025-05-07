@@ -28,7 +28,7 @@
     "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
     "@slickgrid-universal/rxjs-observable": "workspace:*",
     "@slickgrid-universal/text-export": "workspace:*",
-    "bootstrap": "^5.3.5",
+    "bootstrap": "catalog:",
     "dompurify": "catalog:",
     "i18next": "catalog:",
     "i18next-vue": "^5.2.0",
