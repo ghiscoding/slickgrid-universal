@@ -80,16 +80,6 @@ describe('SelectEditor', () => {
   });
 
   describe('with invalid Editor instance', () => {
-    it('should throw an error when trying to call init without any arguments', () =>
-      new Promise((done: any) => {
-        try {
-          editor = new SelectEditor(null as any, true);
-        } catch (e) {
-          expect(e.toString()).toContain(`[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.`);
-          done();
-        }
-      }));
-
     it('should throw an error when there is no collection provided in the editor property', () =>
       new Promise((done: any) => {
         try {

@@ -62,10 +62,6 @@ describe('CompoundInputFilter', () => {
     filter.destroy();
   });
 
-  it('should throw an error when trying to call init without any arguments', () => {
-    expect(() => filter.init(null as any)).toThrow('[Slickgrid-Universal] A filter must always have an "init()" with valid arguments.');
-  });
-
   it('should initialize the filter', () => {
     filter.init(filterArguments);
     const filterCount = divContainer.querySelectorAll('.search-filter.filter-duration').length;

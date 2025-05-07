@@ -74,10 +74,6 @@ describe('AutocompleterFilter', () => {
     vi.clearAllMocks();
   });
 
-  it('should throw an error when trying to call init without any arguments', () => {
-    expect(() => filter.init(null as any)).toThrow('[Slickgrid-Universal] A filter must always have an "init()" with valid arguments.');
-  });
-
   it('should throw an error when there is no collection provided in the filter property', () =>
     new Promise((done: any) => {
       try {

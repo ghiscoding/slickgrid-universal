@@ -100,9 +100,6 @@ export class SelectEditor implements Editor {
     protected readonly isMultipleSelect: boolean,
     public delayOpening = -1
   ) {
-    if (!args) {
-      throw new Error('[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.');
-    }
     this.grid = args.grid;
     this.gridOptions = (this.grid.getOptions() || {}) as GridOption;
     if (this.gridOptions?.translater) {

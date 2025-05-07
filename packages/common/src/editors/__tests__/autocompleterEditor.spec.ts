@@ -76,18 +76,6 @@ describe('AutocompleterEditor', () => {
     };
   });
 
-  describe('with invalid Editor instance', () => {
-    it('should throw an error when trying to call init without any arguments', () =>
-      new Promise((done: any) => {
-        try {
-          editor = new AutocompleterEditor(null as any);
-        } catch (e) {
-          expect(e.toString()).toContain('[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.');
-          done();
-        }
-      }));
-  });
-
   describe('with valid Editor instance', () => {
     beforeEach(() => {
       mockItemData = { id: 123, gender: 'male', isActive: true };

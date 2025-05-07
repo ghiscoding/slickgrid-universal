@@ -48,9 +48,6 @@ export class LongTextEditor implements Editor {
   protected _translater?: TranslaterService;
 
   constructor(protected readonly args: EditorArguments) {
-    if (!args) {
-      throw new Error('[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.');
-    }
     this.grid = args.grid;
     this.gridOptions = args.grid?.getOptions() as GridOption;
     const options = this.gridOptions || this.args.column.params || {};

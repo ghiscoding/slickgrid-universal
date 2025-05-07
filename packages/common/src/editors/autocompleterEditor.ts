@@ -79,9 +79,6 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
   finalCollection: T[] = [];
 
   constructor(protected readonly args: EditorArguments) {
-    if (!args) {
-      throw new Error('[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.');
-    }
     this.grid = args.grid;
     this._bindEventService = new BindingEventService();
     if (this.gridOptions?.translater) {
