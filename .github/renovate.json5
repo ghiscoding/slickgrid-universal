@@ -18,7 +18,7 @@
       description: 'Group all Angular dependencies',
       matchFileNames: ['frameworks/angular-slickgrid/**', 'demos/angular/**'],
       groupName: 'Angular dependencies',
-      ignoreDependencies: ['typescript'],
+      ignoreDeps: ['typescript'],
     },
     {
       description: 'Group all Aurelia dependencies',
