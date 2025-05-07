@@ -67,8 +67,8 @@ catalogs:
       specifier: ^0.3.2
       version: 0.3.2
     npm-run-all2:
-      specifier: ^7.0.2
-      version: 7.0.2
+      specifier: ^8.0.1
+      version: 8.0.1
     rimraf:
       specifier: ^6.0.1
       version: 6.0.1
@@ -181,7 +181,7 @@ importers:
         version: 3.0.2(jsdom@26.1.0)
       npm-run-all2:
         specifier: 'catalog:'
-        version: 7.0.2
+        version: 8.0.1
       pnpm:
         specifier: ^9.15.0
         version: 9.15.9
@@ -311,7 +311,7 @@ importers:
         version: 3.2.5
       npm-run-all2:
         specifier: 'catalog:'
-        version: 7.0.2
+        version: 8.0.1
       sass:
         specifier: 'catalog:'
         version: 1.87.0
@@ -834,7 +834,7 @@ importers:
         version: 19.0.2(@angular/animations@19.2.9(@angular/common@19.2.9(@angular/core@19.2.9(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.9(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.9(@angular/core@19.2.9(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.9(rxjs@7.8.2)(zone.js@0.15.0))(@angular/forms@19.2.9(@angular/common@19.2.9(@angular/core@19.2.9(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.9(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.9(@angular/animations@19.2.9(@angular/common@19.2.9(@angular/core@19.2.9(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.9(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.9(@angular/core@19.2.9(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.9(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2))(rxjs@7.8.2)
       npm-run-all2:
         specifier: 'catalog:'
-        version: 7.0.2
+        version: 8.0.1
       rimraf:
         specifier: ^6.0.1
         version: 6.0.1
@@ -1177,7 +1177,7 @@ importers:
         version: 0.3.2
       npm-run-all2:
         specifier: 'catalog:'
-        version: 7.0.2
+        version: 8.0.1
       postcss:
         specifier: ^8.5.3
         version: 8.5.3
@@ -9423,9 +9423,9 @@ packages:
     resolution: {integrity: sha512-LeVMZBBVy+oQb5R6FDV9OlJCcWDU+al10oKpe+nsvcHnG24Z3uM3SvJYKfGJlfGjVU8v9liejCrUR/M5HO5NEQ==}
     engines: {node: ^18.17.0 || >=20.5.0}
 
-  npm-run-all2@7.0.2:
-    resolution: {integrity: sha512-7tXR+r9hzRNOPNTvXegM+QzCuMjzUIIq66VDunL6j60O4RrExx32XUhlrS7UK4VcdGw5/Wxzb3kfNcFix9JKDA==}
-    engines: {node: ^18.17.0 || >=20.5.0, npm: '>= 9'}
+  npm-run-all2@8.0.1:
+    resolution: {integrity: sha512-jkhE0AsELQeCtScrcJ/7mSIdk+ZsnWjvKk3KwE96HZ6+OFVB74XhxQtHT1W6kdUfn92fRnBb29Mz82j9bV2XEQ==}
+    engines: {node: ^20.5.0 || >=22.0.0, npm: '>= 10'}
     hasBin: true
 
   npm-run-path@4.0.1:
@@ -22176,12 +22176,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  npm-run-all2@7.0.2:
+  npm-run-all2@8.0.1:
     dependencies:
       ansi-styles: 6.2.1
       cross-spawn: 7.0.6
       memorystream: 0.3.1
-      minimatch: 9.0.5
+      minimatch: 10.0.1
       pidtree: 0.6.0
       read-package-json-fast: 4.0.0
       shell-quote: 1.8.2
