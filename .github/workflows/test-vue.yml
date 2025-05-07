@@ -45,9 +45,10 @@ jobs:
 
       - run: pnpm --version
 
-      - name: Install dependencies
-        run: |
-          CYPRESS_CACHE_FOLDER=./.cypress/cache pnpm install
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-${{ runner.os }}-cypress-${{ hashFiles('pnpm-lock.yaml') }}
 
       - name: Get pnpm store directory
         shell: bash
@@ -85,8 +86,9 @@ jobs:
           browser: chrome
           record: false
         env:
-          CYPRESS_CACHE_FOLDER: ./.cypress/cache
+          # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          # pass GitHub token to allow accurately detecting a build vs a re-run build
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           Cypress_extended: true
 
