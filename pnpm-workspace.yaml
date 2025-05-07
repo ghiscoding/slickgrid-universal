@@ -24,7 +24,7 @@ catalog:
   jsdom: ^26.1.0
   multiple-select-vanilla: ^4.1.2
   native-copyfiles: ^0.3.2
-  npm-run-all2: ^7.0.2
+  npm-run-all2: ^8.0.1
   rimraf: ^6.0.1
   rxjs: ^7.8.2
   sass: ^1.87.0
