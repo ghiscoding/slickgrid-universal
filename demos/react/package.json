@@ -85,7 +85,7 @@
     "@vitejs/plugin-react": "^4.4.1",
     "cross-env": "catalog:",
     "custom-event-polyfill": "^1.0.7",
-    "globals": "^16.0.0",
+    "globals": "catalog:",
     "react-router-dom": "^7.5.3",
     "regenerator-runtime": "^0.14.1",
     "rxjs": "catalog:",
