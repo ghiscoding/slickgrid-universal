@@ -43,6 +43,12 @@ jobs:
           version: 10
           run_install: false
 
+      - run: pnpm --version
+
+      - name: Install dependencies
+        run: |
+          CYPRESS_CACHE_FOLDER=./.cypress/cache pnpm install
+
       - name: Get pnpm store directory
         shell: bash
         run: |
@@ -55,13 +61,6 @@ jobs:
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
-
-      - uses: pnpm/action-setup@v3
-        with:
-          version: 10
-          run_install: true
-
-      - run: pnpm --version
 
       - name: Build Slickgrid-Universal packages
         run: pnpm build:universal
@@ -86,9 +85,8 @@ jobs:
           browser: chrome
           record: false
         env:
-          # pass the Dashboard record key as an environment variable
+          CYPRESS_CACHE_FOLDER: ./.cypress/cache
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          # pass GitHub token to allow accurately detecting a build vs a re-run build
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           Cypress_extended: true
 
