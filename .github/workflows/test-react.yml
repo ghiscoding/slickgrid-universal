@@ -41,7 +41,9 @@ jobs:
         uses: pnpm/action-setup@v3
         with:
           version: 10
-          run_install: false
+          run_install: true
+
+      - run: pnpm --version
 
       - name: Get pnpm store directory
         shell: bash
@@ -55,13 +57,6 @@ jobs:
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
-
-      - uses: pnpm/action-setup@v3
-        with:
-          version: 10
-          run_install: true
-
-      - run: pnpm --version
 
       - name: Build Slickgrid-Universal packages
         run: pnpm build:universal
@@ -78,7 +73,7 @@ jobs:
       - name: Run Cypress E2E tests
         uses: cypress-io/github-action@v6
         with:
-          install: true
+          install: false
           working-directory: demos/react
           # start: pnpm react:serve
           wait-on: 'http://localhost:8000'

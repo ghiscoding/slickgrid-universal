@@ -78,7 +78,7 @@ jobs:
       - name: Run Cypress E2E tests
         uses: cypress-io/github-action@v6
         with:
-          install: true
+          install: false
           working-directory: demos/vue
           # start: pnpm vue:serve
           wait-on: 'http://localhost:7000'
