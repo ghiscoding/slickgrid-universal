@@ -25,7 +25,7 @@
       matchFileNames: ['frameworks/aurelia-slickgrid/**', 'demos/aurelia/**'],
       groupName: 'Aurelia dependencies',
       // ignore latest Au2.beta.24 since it's causing some issues that I haven't figured out yet
-      ignoreDeps: ['@aurelia/*'],
+      ignoreDeps: ['aurelia', '@aurelia/**'],
     },
     {
       description: 'Group all React dependencies',
