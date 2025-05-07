@@ -90,4 +90,6 @@
 
 * [Testing Patterns](testing/testing-patterns.md)
 
-<!-- ## Migrations -->
+## Migrations
+
+* [Migration Guide to 9.x (2025-05-10)](migrations/migration-to-9.x.md)

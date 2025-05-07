@@ -100,3 +100,4 @@
 * [Migration Guide to 6.x (2023-05-29)](migrations/migration-to-6.x.md)
 * [Migration Guide to 7.x (2023-12-15)](migrations/migration-to-7.x.md)
 * [Migration Guide to 8.x (2024-05-10)](migrations/migration-to-8.x.md)
+* [Migration Guide to 9.x (2025-05-10)](migrations/migration-to-9.x.md)
