@@ -97,7 +97,7 @@
     "dompurify": "catalog:",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
-    "globals": "^16.0.0",
+    "globals": "catalog:",
     "native-copyfiles": "^0.3.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
