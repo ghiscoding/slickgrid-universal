@@ -45,11 +45,6 @@ jobs:
 
       - run: pnpm --version
 
-      - uses: actions/cache@v4
-        with:
-          path: ~/.cache/Cypress
-          key: cypress-${{ runner.os }}-cypress-${{ hashFiles('pnpm-lock.yaml') }}
-
       - name: Get pnpm store directory
         shell: bash
         run: |
@@ -74,6 +69,8 @@ jobs:
 
       - name: Start HTTP Server
         run: pnpm vue:serve &
+
+      - run: pnpm cypress install
 
       - name: Run Cypress E2E tests
         uses: cypress-io/github-action@v6
