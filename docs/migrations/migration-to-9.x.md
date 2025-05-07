@@ -6,6 +6,8 @@ Wait, what happened to version 6 to 8?
 
 I'm skipping versions 6-8 and going straight to v9.0 because some of the wrappers (Angular-Slickgrid, Aurelia-Slickgrid) were already at v8.x and so the next available major version bump for everyone is v9.0
 
+The other great thing about having everything under the same roof/project is that every package will be released at the exact same time with the exact same versions across the board. Everything will be released under v9.0 and whenever a new feature/bugfix comes in, then every package will be bumped to v9.1 and so on (no more version discrepancies).
+
 #### Major Changes - Quick Summary
 - minimum requirements bump
   - Node v20+
@@ -180,16 +182,16 @@ import { type MultipleSelectOption } from '@slickgrid-universal/common';
 columnDefinitions = [{
   id: 'duration', field: 'duration', name: 'Duration',
   editor: {
--     editorOptions: {
-+     options: {
-        maxHeight: 250, useSelectOptionLabelToHtml: true,
-      } as MultipleSelectOption,
+-   editorOptions: {
++   options: {
+      maxHeight: 250, useSelectOptionLabelToHtml: true,
+    } as MultipleSelectOption,
   },
   filter: {
--     filterOptions: {
-+     options: {
-        maxHeight: 250, useSelectOptionLabelToHtml: true,
-      } as MultipleSelectOption,
+-   filterOptions: {
++   options: {
+      maxHeight: 250, useSelectOptionLabelToHtml: true,
+    } as MultipleSelectOption,
   }
 }];
 ```

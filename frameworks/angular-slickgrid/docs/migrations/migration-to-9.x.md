@@ -2,7 +2,9 @@
 
 This new release is focused around 2 things, we now ship ESM-only builds (in other words, CommonJS builds are fully dropped and only ESM will remain), this move will cut the npm download size by half. The other big change is an internal one which is an organizational one, I'm moving all framework wrappers directly into Slickgrid-Universal (Angular, Aurelia, React and Vue wrappers are now all located under the [frameworks/](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/) folder), this will help tremendously with the project maintenance (any new PR will now run against all frameworks all at once (catching bugs early), publishing a new version is becoming a single execution for all frameworks all at once, and finally having a single codebase to test & troubleshoot any wrapper, etc... will be so much easier to handle). Now Slickgrid-Universal name totally makes sense with this new structure change 🌐
 
-I also decided to align all SlickGrid examples in all frameworks and Angular-Slickgrid turned out to have many example offsets, so just be aware that the example positions might have changed a little.
+The other great thing about having everything under the same roof/project is that every package will be released at the exact same time with the exact same versions across the board. Everything will be released under v9.0 and whenever a new feature/bugfix comes in, then every package will be bumped to v9.1 and so on (no more version discrepancies).
+
+I also decided to align all SlickGrid examples in all frameworks and Angular-Slickgrid turned out to have many example offsets, so just be aware that the example numbering might have changed a little (ie: Row Detail is now Example 19 instead of 21).
 
 #### Major Changes - Quick Summary
 - minimum requirements bump
@@ -201,16 +203,16 @@ import { type MultipleSelectOption } from '@slickgrid-universal/common';
 columnDefinitions = [{
   id: 'duration', field: 'duration', name: 'Duration',
   editor: {
--     editorOptions: {
-+     options: {
-        maxHeight: 250, useSelectOptionLabelToHtml: true,
-      } as MultipleSelectOption,
+-   editorOptions: {
++   options: {
+      maxHeight: 250, useSelectOptionLabelToHtml: true,
+    } as MultipleSelectOption,
   },
   filter: {
--     filterOptions: {
-+     options: {
-        maxHeight: 250, useSelectOptionLabelToHtml: true,
-      } as MultipleSelectOption,
+-   filterOptions: {
++   options: {
+      maxHeight: 250, useSelectOptionLabelToHtml: true,
+    } as MultipleSelectOption,
   }
 }];
 ```

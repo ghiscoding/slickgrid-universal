@@ -6,6 +6,8 @@ Wait, what happened to version 6 to 8?
 
 I'm skipping versions 6-8 and going straight to v9.0 because some of the wrappers (Angular-Slickgrid, Aurelia-Slickgrid) were already at v8.x and so the next available major version bump for everyone is v9.0
 
+The other great thing about having everything under the same roof/project is that every package will be released at the exact same time with the exact same versions across the board. Everything will be released under v9.0 and whenever a new feature/bugfix comes in, then every package will be bumped to v9.1 and so on (no more version discrepancies).
+
 #### Major Changes - Quick Summary
 - minimum requirements bump
   - React v19+
@@ -130,14 +132,14 @@ The biggest change that you will most probably have to update is the min/max dat
 import { type VanillaCalendarOption } from '@slickgrid-universal/common';
 
 prepareGrid() {
-  columnDefinitions = [{
+  setColumns({
     id: 'finish', field: 'finish', name: 'Finish',
     editor: {
       model: Editors.date,
 -      editorOptions: { range: { min: 'today' } } as VanillaCalendarOption,
 +      editorOptions: { displayDateMin: 'today' } as VanillaCalendarOption,
     }
-  }];
+  }]);
 }
 ```
 
@@ -186,11 +188,11 @@ The `GridService` has CRUD methods that were sometime returning a single item an
 So when I created the project, I used a few TypeScript Enums and I though this was great but it turns out that all of these Enums end up in the final transpiled JS bundle. So in the next major, I'm planning to remove most of these Enums and replace them with string literal types (`type` instead of `enum`). So you should consider using string types as much and as soon as possible in all your new grids. Note that at the moment, they are only deprecations, and will only be dropped in the future (not now, but you should still consider this for the future), for example:
 
 ```diff
-columns = [{
+setColumns([{
   id: 'age', ...
 - type: FieldType.number,
 + type: 'number',
-}];
+}]);
 ```
 > Note that migrating from `FieldType` to string types was already doable for the past couple years, so this one is far from new.
 
@@ -225,19 +227,19 @@ in order to make it easier to merge and simplify editor/filter options, I'm merg
 ```diff
 import { type MultipleSelectOption } from '@slickgrid-universal/common';
 
-columnDefinitions = [{
+setColumns([{
   id: 'duration', field: 'duration', name: 'Duration',
   editor: {
--     editorOptions: {
-+     options: {
-        maxHeight: 250, useSelectOptionLabelToHtml: true,
-      } as MultipleSelectOption,
+-   editorOptions: {
++   options: {
+      maxHeight: 250, useSelectOptionLabelToHtml: true,
+    } as MultipleSelectOption,
   },
   filter: {
--     filterOptions: {
-+     options: {
-        maxHeight: 250, useSelectOptionLabelToHtml: true,
-      } as MultipleSelectOption,
+-   filterOptions: {
++   options: {
+      maxHeight: 250, useSelectOptionLabelToHtml: true,
+    } as MultipleSelectOption,
   }
-}];
+}]);
 ```
