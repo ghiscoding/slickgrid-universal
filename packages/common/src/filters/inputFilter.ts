@@ -70,9 +70,6 @@ export class InputFilter implements Filter {
    * Initialize the Filter
    */
   init(args: FilterArguments): void {
-    if (!args) {
-      throw new Error('[Slickgrid-Universal] A filter must always have an "init()" with valid arguments.');
-    }
     this.grid = args.grid;
     this.callback = args.callback;
     this.columnDef = args.columnDef;

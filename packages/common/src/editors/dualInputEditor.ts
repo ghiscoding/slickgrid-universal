@@ -47,9 +47,6 @@ export class DualInputEditor implements Editor {
   gridOptions: GridOption;
 
   constructor(protected readonly args: EditorArguments) {
-    if (!args) {
-      throw new Error('[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.');
-    }
     this.grid = args.grid;
     this.gridOptions = (this.grid.getOptions() || {}) as GridOption;
     this._eventHandler = new SlickEventHandler();

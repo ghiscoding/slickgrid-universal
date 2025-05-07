@@ -132,10 +132,6 @@ export class SelectFilter implements Filter {
 
   /** Initialize the filter template */
   init(args: FilterArguments): Promise<any[]> {
-    if (!args) {
-      throw new Error('[Slickgrid-Universal] A filter must always have an "init()" with valid arguments.');
-    }
-
     this.grid = args.grid;
     this.callback = args.callback;
     this.columnDef = args.columnDef;

@@ -20,9 +20,6 @@ export class InputMaskFilter extends InputFilter {
    * Override the Filter init used by SlickGrid
    */
   init(args: FilterArguments): void {
-    if (!args) {
-      throw new Error('[Slickgrid-Universal] A filter must always have an "init()" with valid arguments.');
-    }
     this.grid = args.grid;
     this.callback = args.callback;
     this.columnDef = args.columnDef;

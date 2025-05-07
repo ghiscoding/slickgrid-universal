@@ -95,18 +95,6 @@ describe('DateEditor', () => {
     };
   });
 
-  describe('with invalid Editor instance', () => {
-    it('should throw an error when trying to call init without any arguments', () =>
-      new Promise((done: any) => {
-        try {
-          editor = new DateEditor(null as any);
-        } catch (e) {
-          expect(e.toString()).toContain(`[Slickgrid-Universal] Something is wrong with this grid, an Editor must always have valid arguments.`);
-          done();
-        }
-      }));
-  });
-
   describe('with valid Editor instance', () => {
     beforeEach(() => {
       mockItemData = { id: 1, startDate: '2001-01-02T11:02:02.000Z', isActive: true };

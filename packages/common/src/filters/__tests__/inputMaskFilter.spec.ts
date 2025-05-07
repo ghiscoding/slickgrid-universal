@@ -49,10 +49,6 @@ describe('InputMaskFilter', () => {
     filter.destroy();
   });
 
-  it('should throw an error when trying to call init without any arguments', () => {
-    expect(() => filter.init(null as any)).toThrow('[Slickgrid-Universal] A filter must always have an "init()" with valid arguments.');
-  });
-
   it('should throw an error when no mask provided in params', () => {
     expect(() => filter.init(filterArguments)).toThrow('[Slickgrid-Universal] The Filters.inputMask requires the mask to be passed in the filter params');
   });
