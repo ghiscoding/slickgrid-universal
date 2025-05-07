@@ -87,6 +87,17 @@ jobs:
       - name: Website Dev Build (served for Cypress)
         run: pnpm angular:build:demo
 
+      - name: Cache Cypress binary
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/Cypress
+          key: ${{ runner.os }}-cypress-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-cypress-
+
+      - name: Ensure Cypress binary is installed
+        run: pnpm exec cypress install
+
       - name: Start HTTP Server
         run: pnpm angular:serve &
 
