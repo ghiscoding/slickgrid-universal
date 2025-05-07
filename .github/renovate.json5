@@ -7,6 +7,8 @@
   lockFileMaintenance: {
     enabled: false,
   },
+  // since all PRs touches the pnpm lock file, let's open not more than 2 PRs at the same time
+  prConcurrentLimit: 2,
   pin: false,
   rangeStrategy: 'bump',
   packageRules: [
@@ -25,7 +27,18 @@
       matchFileNames: ['frameworks/aurelia-slickgrid/**', 'demos/aurelia/**'],
       groupName: 'Aurelia dependencies',
       // ignore latest Au2.beta.24 since it's causing some issues that I haven't figured out yet
-      ignoreDeps: ['aurelia', '@aurelia/**'],
+      ignoreDeps: [
+        'aurelia',
+        '@aurelia/fetch-client',
+        '@aurelia/i18n',
+        '@aurelia/kernel',
+        '@aurelia/metadata',
+        '@aurelia/router',
+        '@aurelia/router-lite',
+        '@aurelia/runtime',
+        '@aurelia/runtime-html',
+        '@aurelia/vite-plugin',
+      ],
     },
     {
       description: 'Group all React dependencies',
