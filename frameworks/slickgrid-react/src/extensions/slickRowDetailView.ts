@@ -137,11 +137,14 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
             this._preloadRoot?.unmount();
 
             // triggers after backend called "onAsyncResponse.notify()"
-            this.renderViewModel(args?.item);
+            // because of the preload destroy above, we need a small delay to make sure the DOM element is ready to render the Row Detail
+            queueMicrotask(() => {
+              this.renderViewModel(args?.item);
 
-            if (typeof this.rowDetailViewOptions?.onAsyncEndUpdate === 'function') {
-              this.rowDetailViewOptions.onAsyncEndUpdate(event, args);
-            }
+              if (typeof this.rowDetailViewOptions?.onAsyncEndUpdate === 'function') {
+                this.rowDetailViewOptions.onAsyncEndUpdate(event, args);
+              }
+            });
           });
 
           this._eventHandler.subscribe(this.onAfterRowDetailToggle, async (event, args) => {
