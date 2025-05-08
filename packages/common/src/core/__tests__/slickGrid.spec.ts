@@ -2171,6 +2171,37 @@ describe('SlickGrid core file', () => {
         expect(grid.getViewportHeight()).toBe(DEFAULT_COLUMN_HEIGHT * data.length);
       });
 
+      it('should return full viewport height by data size when "autoHeight" is enabled and has pre-header & frozenColumn', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, {
+          ...defaultOptions,
+          autoHeight: true,
+          frozenColumn: 1,
+          createPreHeaderPanel: true,
+          showPreHeaderPanel: true,
+          preHeaderPanelHeight: 44,
+        });
+        grid.init();
+
+        expect(grid.getViewportHeight()).toBe(DEFAULT_COLUMN_HEIGHT * data.length);
+      });
+
+      it('should return full viewport height by data size + headerRow & preHeader when they are enabled with "autoHeight"', () => {
+        grid = new SlickGrid<any, Column>(container, data, columns, {
+          ...defaultOptions,
+          autoHeight: true,
+          forceFitColumns: true,
+          showHeaderRow: true,
+          headerRowHeight: 50,
+          createPreHeaderPanel: true,
+          showPreHeaderPanel: true,
+          preHeaderPanelHeight: 44,
+        });
+        grid.init();
+
+        expect(grid.getViewportHeight()).toBe(DEFAULT_COLUMN_HEIGHT * data.length + 50 + 44);
+        expect(grid.getCanvasWidth()).toBe(800);
+      });
+
       it('should return full viewport height by data size + headerRow & footerRow when they are enabled with "autoHeight"', () => {
         grid = new SlickGrid<any, Column>(container, data, columns, {
           ...defaultOptions,
