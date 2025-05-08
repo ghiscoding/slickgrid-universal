@@ -35,8 +35,7 @@
     "lint:fix": "eslint --fix .",
     "pack-tarball": "npm pack",
     "pack-lib": "npm pack ./dist",
-    "test": "ng test",
-    "test:watch": "ng test --watch",
+    "test": "ng test --watch",
     "test:coverage": "vitest --no-watch --coverage"
   },
   "publishConfig": {

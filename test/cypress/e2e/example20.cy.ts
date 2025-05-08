@@ -281,4 +281,14 @@ describe('Example 20 - Row Detail View', () => {
 
     cy.get('[data-test="row-selections"]').contains('2,4');
   });
+
+  it('should expect the Row Detail to be re-rendered after expanding/collapsing multiple times', () => {
+    cy.get('.grid20').find('.slick-row:nth(5) .slick-cell:nth(1)').as('toggle1');
+    cy.get('@toggle1').click();
+    cy.get('@toggle1').click();
+    cy.get('@toggle1').click();
+
+    cy.get('.grid20').find('.slick-cell + .dynamic-cell-detail .innerDetailView_9').as('detailContainer');
+    cy.get('@detailContainer').find('h4').contains('Task 9');
+  });
 });

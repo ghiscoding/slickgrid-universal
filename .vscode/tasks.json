@@ -10,7 +10,7 @@
     {
       "label": "Run Angular Unit Tests (watch)",
       "type": "shell",
-      "command": "pnpm angular:test:watch",
+      "command": "pnpm angular:test",
       "problemMatcher": []
     },
     {
@@ -22,7 +22,7 @@
     {
       "label": "Run Vanilla Unit Tests (watch)",
       "type": "shell",
-      "command": "pnpm test:watch",
+      "command": "pnpm test",
       "problemMatcher": []
     },
     {

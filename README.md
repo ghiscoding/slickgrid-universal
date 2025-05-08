@@ -163,9 +163,6 @@ You must go through Installation Steps 1-3 prior to running the Vitest unit test
 To run all unit tests (with Vitest), you can run one of the following commands (make sure that steps 1-3 were executed prior to running this command)
 ```bash
 pnpm run test
-
-# or run Vitest in watch mode
-pnpm run test:watch
 ```
 
 #### Cypress E2E Tests

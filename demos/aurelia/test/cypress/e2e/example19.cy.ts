@@ -243,4 +243,21 @@ describe('Example 19 - Row Detail View', () => {
 
     cy.get('#grid19').find('.slick-cell + .dynamic-cell-detail .innerDetailView_101').should('not.exist');
   });
+
+  it('should expect the Row Detail to be re-rendered after expanding/collapsing multiple times', () => {
+    cy.get('#grid19').find('.slick-row:nth(1) .slick-cell:nth(0)').as('toggle1');
+    cy.get('@toggle1').click();
+    cy.get('@toggle1').click();
+    cy.get('@toggle1').click();
+
+    cy.get('#grid19').find('.slick-cell + .dynamic-cell-detail .innerDetailView_1').as('detailContainer');
+    cy.get('@detailContainer').find('h3').contains('Task 1');
+
+    cy.get('@toggle1').click();
+    cy.get('@detailContainer').should('not.exist');
+
+    cy.get('@toggle1').click();
+    cy.get('#grid19').find('.slick-cell + .dynamic-cell-detail .innerDetailView_1').as('detailContainer');
+    cy.get('@detailContainer').find('h3').contains('Task 1');
+  });
 });
