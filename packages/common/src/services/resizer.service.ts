@@ -227,7 +227,7 @@ export class ResizerService {
 
   /**
    * Calculate the datagrid new height/width from the available space, also consider that a % factor might be applied to calculation
-   * object gridOptions
+   * @param {GridOption} gridOptions
    */
   calculateGridNewDimensions(gridOptions: GridOption): GridSize | null {
     const autoResizeOptions = gridOptions?.autoResize ?? {};
@@ -239,7 +239,7 @@ export class ResizerService {
 
     // calculate bottom padding
     // if using pagination, we need to add the pagination height to this bottom padding
-    let bottomPadding = autoResizeOptions?.bottomPadding !== undefined ? autoResizeOptions.bottomPadding : DATAGRID_BOTTOM_PADDING;
+    let bottomPadding = autoResizeOptions?.bottomPadding ?? DATAGRID_BOTTOM_PADDING;
     if (bottomPadding && gridOptions.enablePagination) {
       bottomPadding += DATAGRID_PAGINATION_HEIGHT;
     }
@@ -389,11 +389,14 @@ export class ResizerService {
       // also call the grid auto-size columns so that it takes available space when going bigger
       if (this._grid && this.gridOptions?.enableAutoSizeColumns) {
         // make sure that the grid still exist (by looking if the Grid UID is found in the DOM tree) to avoid SlickGrid error "missing stylesheet"
-        if (this.gridUid && document.querySelector(this.gridUidSelector)) {
-          // don't call autosize unless dimension really changed
-          if (!this._lastDimensions || this._lastDimensions.height !== newHeight || this._lastDimensions.width !== newWidth) {
-            this._grid.autosizeColumns();
-          }
+        // don't call autosize unless dimension really changed
+        if (
+          (this.gridUid && document.querySelector(this.gridUidSelector)) ||
+          !this._lastDimensions ||
+          this._lastDimensions.height !== newHeight ||
+          this._lastDimensions.width !== newWidth
+        ) {
+          this._grid.autosizeColumns();
         }
       } else if (
         this.gridOptions.enableAutoResizeColumnsByCellContent &&
