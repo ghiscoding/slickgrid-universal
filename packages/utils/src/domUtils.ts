@@ -3,16 +3,17 @@ import type { InferDOMType } from './models/types.js';
 
 /** Calculate available space for each side of the DOM element */
 export function calculateAvailableSpace(element: HTMLElement): { top: number; bottom: number; left: number; right: number } {
-  const { innerHeight: windowHeight = 0, innerWidth: windowWidth = 0 } = window;
+  const vh = window.innerHeight || 0;
+  const vw = window.innerWidth || 0;
   const { top: pageScrollTop, left: pageScrollLeft } = windowScrollPosition();
-  const { top = 0, left = 0 } = getOffset(element) || {};
+  const { top: elementOffsetTop, left: elementOffsetLeft } = getOffset(element) || {};
 
-  return {
-    top: top - pageScrollTop,
-    bottom: windowHeight - (top - pageScrollTop),
-    left: left - pageScrollLeft,
-    right: windowWidth - (left - pageScrollLeft),
-  };
+  const top = elementOffsetTop - pageScrollTop;
+  const left = elementOffsetLeft - pageScrollLeft;
+  const bottom = vh - (elementOffsetTop - pageScrollTop + element.clientHeight);
+  const right = vw - (elementOffsetLeft - pageScrollLeft + element.clientWidth);
+
+  return { top, bottom, left, right };
 }
 
 /**
