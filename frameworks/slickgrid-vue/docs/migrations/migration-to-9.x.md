@@ -17,6 +17,7 @@ The other great thing about having everything under the same roof/project is tha
   - requires i18next v25+ (when installed)
 - skipping v6-8 and going straight to v9.0
 - now using `clipboard` API, used in ExcelCopyBuffer/ContextMenu/CellCopy, which might requires end user permissions
+- removing Arrow pointer from Custom Tooltip addon (because it was often offset with the cell text)
 
 > **Note:** if you come from an earlier version, please make sure to follow each migrations in their respected order (review previous migration guides)
 

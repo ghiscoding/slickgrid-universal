@@ -78,11 +78,9 @@ export class SlickCustomTooltip {
   protected _defaultOptions = {
     bodyClassName: 'tooltip-body',
     className: '',
-    offsetArrow: 3, // same as `$slick-tooltip-arrow-side-margin` CSS/SASS variable
     offsetLeft: 0,
     offsetRight: 0,
     offsetTopBottom: 4,
-    hideArrow: false,
     regularTooltipWhiteSpace: 'pre-line',
     whiteSpace: 'normal',
   } as CustomTooltipOption;
@@ -493,11 +491,6 @@ export class SlickCustomTooltip {
       // reposition the tooltip on top of the cell that triggered the mouse over event
       this.reposition(cell);
 
-      // user could optionally hide the tooltip arrow (we can simply update the CSS variables, that's the only way we have to update CSS pseudo)
-      if (!this._cellAddonOptions?.hideArrow) {
-        this._tooltipElm.classList.add('tooltip-arrow');
-      }
-
       // also clear any "title" attribute to avoid showing a 2nd browser tooltip
       this.swapAndClearTitleAttribute(inputTitleElm, outputText);
     }
@@ -523,54 +516,41 @@ export class SlickCustomTooltip {
       let newPositionTop = (cellPosition.top || 0) - this._tooltipElm.offsetHeight - (this._cellAddonOptions?.offsetTopBottom ?? 0);
       let newPositionLeft = (cellPosition.left || 0) - (this._cellAddonOptions?.offsetRight ?? 0);
 
-      // user could explicitely use a "left-align" arrow position, (when user knows his column is completely on the right in the grid)
+      // user could explicitely use a "left-align" position, (when user knows his column is completely on the right in the grid)
       // or when using "auto" and we detect not enough available space then we'll position to the "left" of the cell
-      // NOTE the class name is for the arrow and is inverse compare to the tooltip itself, so if user ask for "left-align", then the arrow will in fact be "arrow-right-align"
       const position = this._cellAddonOptions?.position ?? 'auto';
       let finalTooltipPosition = '';
       if (position === 'center') {
         newPositionLeft += cellContainerWidth / 2 - calculatedTooltipWidth / 2 + (this._cellAddonOptions?.offsetRight ?? 0);
         finalTooltipPosition = 'top-center';
-        this._tooltipElm.classList.remove('arrow-left-align', 'arrow-right-align');
-        this._tooltipElm.classList.add('arrow-center-align');
       } else if (
         position === 'right-align' ||
         ((position === 'auto' || position !== 'left-align') && newPositionLeft + calculatedTooltipWidth > calculatedBodyWidth)
       ) {
         finalTooltipPosition = 'right';
         newPositionLeft -= calculatedTooltipWidth - cellContainerWidth - (this._cellAddonOptions?.offsetLeft ?? 0);
-        this._tooltipElm.classList.remove('arrow-center-align', 'arrow-left-align');
-        this._tooltipElm.classList.add('arrow-right-align');
       } else {
         finalTooltipPosition = 'left';
-        this._tooltipElm.classList.remove('arrow-center-align', 'arrow-right-align');
-        this._tooltipElm.classList.add('arrow-left-align');
       }
 
       // do the same calculation/reposition with top/bottom (default is top of the cell or in other word starting from the cell going down)
-      // NOTE the class name is for the arrow and is inverse compare to the tooltip itself, so if user ask for "bottom", then the arrow will in fact be "arrow-top"
       if (
         position === 'bottom' ||
         ((position === 'auto' || position !== 'top') && calculatedTooltipHeight > calculateAvailableSpace(this._cellNodeElm).top)
       ) {
         newPositionTop = (cellPosition.top || 0) + (this.gridOptions.rowHeight ?? 0) + (this._cellAddonOptions?.offsetTopBottom ?? 0);
         finalTooltipPosition = `bottom-${finalTooltipPosition}`;
-        this._tooltipElm.classList.remove('arrow-down');
-        this._tooltipElm.classList.add('arrow-up');
       } else {
         finalTooltipPosition = `top-${finalTooltipPosition}`;
-        this._tooltipElm.classList.remove('arrow-up');
-        this._tooltipElm.classList.add('arrow-down');
       }
 
       // when having multiple tooltips, we'll try to reposition tooltip to mouse position
       if (this._tooltipElm && (this._hasMultipleTooltips || this.cellAddonOptions?.repositionByMouseOverTarget)) {
         const mouseElmOffset = getOffset(this._mouseTarget);
         if (finalTooltipPosition.includes('left') || finalTooltipPosition === 'top-center') {
-          newPositionLeft = mouseElmOffset.left - (this._addonOptions?.offsetArrow ?? 3);
+          newPositionLeft = mouseElmOffset.left - 3;
         } else if (finalTooltipPosition.includes('right')) {
-          newPositionLeft =
-            mouseElmOffset.left - calculatedTooltipWidth + (this._mouseTarget?.offsetWidth ?? 0) + (this._addonOptions?.offsetArrow ?? 3);
+          newPositionLeft = mouseElmOffset.left - calculatedTooltipWidth + (this._mouseTarget?.offsetWidth ?? 0) + 3;
         }
       }
 

@@ -903,14 +903,6 @@ $slick-tooltip-overflow:                                    hidden !default;
 $slick-tooltip-text-overflow:                               ellipsis !default;
 $slick-tooltip-white-space:                                 normal !default;
 $slick-tooltip-z-index:                                     9999 !default;
-// tooltip arrow
-$slick-tooltip-arrow-color:                                 color.adjust($slick-tooltip-border-color, $lightness: -5%) !default;
-$slick-tooltip-arrow-size:                                  8px !default;
-$slick-tooltip-down-arrow-top-margin:                       100% !default;
-$slick-tooltip-up-arrow-top-margin:                         -($slick-tooltip-arrow-size * 2) !default;
-$slick-tooltip-arrow-side-margin:                           3px !default;
-$slick-tooltip-arrow-center-margin:                         calc(50% - #{$slick-tooltip-arrow-size}) !default;
-$slick-tooltip-right-arrow-side-margin:                     calc(100% - #{($slick-tooltip-arrow-size * 2)} - #{$slick-tooltip-arrow-side-margin}) !default;
 
 /** Empty Data Warning element */
 $slick-empty-data-warning-color:                            $slick-cell-text-color !default;

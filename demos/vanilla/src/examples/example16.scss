@@ -8,10 +8,6 @@
 //   --slick-tooltip-border-color:             #252525;
 //   --slick-tooltip-border:                   2px solid #252525;
 //   --slick-tooltip-color:                    #ffffff;
-
-//   --slick-tooltip-arrow-color:              var(--slick-tooltip-border-color);
-//   --slick-tooltip-arrow-size:               10px;
-//   --slick-tooltip-arrow-side-margin:        15px;
 // }
 
 .header-tooltip-title {
@@ -19,7 +15,7 @@
   font-size: 14px;
 }
 .headerrow-tooltip-title {
-  color: #AD0041;
+  color: #ad0041;
   font-style: italic;
   font-size: 13px;
   font-weight: bold;
@@ -40,33 +36,12 @@
     background-color: #696969;
     border: 2px solid #545454;
   }
-  &.l4.arrow-down::after,
-  &.l4.arrow-up::after {
-    border-width: 10px; // arrow size
-  }
-  &.l4.arrow-down::after {
-    border-top-color: #464646; // arrow down color
-  }
-  &.l4.arrow-up::after {
-    top: -20px; // arrow size * 2
-    border-bottom-color: #464646; // arrow up color
-  }
-  &.l4.arrow-left-align::after {
-    margin-left: 15px;
-  }
-  &.l4.arrow-right-align::after {
-    margin-left: calc(100% - 20px - 15px); // 20px is (arrow size * 2), 15px is your extra side margin
-  }
-  &.l6.arrow-left-align::after {
-    margin-left: 4px;
-  }
 }
 
-[data-theme=dark] .grid16-tooltip {
+[data-theme='dark'] .grid16-tooltip {
   --slick-tooltip-color: #dadada;
   --slick-tooltip-border: 1px solid #5a5a5a;
   --slick-tooltip-background-color: #414141;
-  --slick-tooltip-arrow-color: #707070;
 
   &.l4 {
     --slick-tooltip-color: #dadada;

@@ -77,11 +77,9 @@ describe('SlickCustomTooltip plugin', () => {
     const mockOptions = {
       bodyClassName: 'tooltip-body',
       className: 'some-class',
-      offsetArrow: 3,
       offsetLeft: 5,
       offsetRight: 7,
       offsetTopBottom: 8,
-      hideArrow: true,
       regularTooltipWhiteSpace: 'pre-wrap',
       whiteSpace: 'normal',
     };
@@ -195,8 +193,6 @@ describe('SlickCustomTooltip plugin', () => {
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
     expect(tooltipElm.textContent).toBe('editing input tooltip text');
-    expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
-    expect(tooltipElm.classList.contains('arrow-left-align')).toBeTruthy();
   });
 
   it('should create a tooltip from the editor [title] attribute and a formatter instead of the cell [title] when currently editing (editor lock) and a formatter is provided', () => {
@@ -219,8 +215,6 @@ describe('SlickCustomTooltip plugin', () => {
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
     expect(tooltipElm.textContent).toBe('EDITING FORMATTER');
-    expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
-    expect(tooltipElm.classList.contains('arrow-left-align')).toBeTruthy();
   });
 
   it('should create a tooltip, with default positioning (down & leftAlign), when tooltip option has "useRegularTooltip" enabled', () => {
@@ -240,8 +234,6 @@ describe('SlickCustomTooltip plugin', () => {
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
     expect(tooltipElm.textContent).toBe('tooltip text');
-    expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
-    expect(tooltipElm.classList.contains('arrow-left-align')).toBeTruthy();
   });
 
   it('should create a tooltip align on the right, when position is set to "right-align"', () => {
@@ -261,10 +253,6 @@ describe('SlickCustomTooltip plugin', () => {
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
     expect(tooltipElm.textContent).toBe('tooltip text');
-    expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
-    expect(tooltipElm.classList.contains('arrow-center-align')).toBeFalsy();
-    expect(tooltipElm.classList.contains('arrow-left-align')).toBeFalsy();
-    expect(tooltipElm.classList.contains('arrow-right-align')).toBeTruthy();
   });
 
   it('should create a centered tooltip, when position is set to "center"', () => {
@@ -284,10 +272,6 @@ describe('SlickCustomTooltip plugin', () => {
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
     expect(tooltipElm.textContent).toBe('tooltip text');
-    expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
-    expect(tooltipElm.classList.contains('arrow-center-align')).toBeTruthy();
-    expect(tooltipElm.classList.contains('arrow-left-align')).toBeFalsy();
-    expect(tooltipElm.classList.contains('arrow-right-align')).toBeFalsy();
   });
 
   it('should create a tooltip with truncated text when tooltip option has "useRegularTooltip" enabled and the tooltip text is longer than that of "tooltipTextMaxLength"', () => {
@@ -307,8 +291,6 @@ describe('SlickCustomTooltip plugin', () => {
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
     expect(tooltipElm.textContent).toBe('some very extra long...');
-    expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
-    expect(tooltipElm.classList.contains('arrow-left-align')).toBeTruthy();
   });
 
   it('should create a tooltip as regular tooltip with coming from text content when it is filled & also expect "hideTooltip" to be called after leaving the cell when "onMouseLeave" event is triggered', () => {
@@ -334,8 +316,6 @@ describe('SlickCustomTooltip plugin', () => {
     expect(plugin.addonOptions).toBeTruthy();
     expect(tooltipElm.style.maxWidth).toBe('85px');
     expect(tooltipElm.textContent).toBe('some text content');
-    expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
-    expect(tooltipElm.classList.contains('arrow-left-align')).toBeTruthy();
 
     gridStub.onMouseLeave.notify({ grid: gridStub } as any);
     expect(hideColumnSpy).toHaveBeenCalled();
@@ -364,8 +344,6 @@ describe('SlickCustomTooltip plugin', () => {
     expect(plugin.addonOptions).toBeTruthy();
     expect(tooltipElm.style.maxWidth).toBe('85px');
     expect(tooltipElm.textContent).toBe('some text content');
-    expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
-    expect(tooltipElm.classList.contains('arrow-left-align')).toBeTruthy();
 
     gridStub.onHeaderRowMouseLeave.notify({ grid: gridStub } as any);
     expect(hideColumnSpy).toHaveBeenCalled();
@@ -390,8 +368,6 @@ describe('SlickCustomTooltip plugin', () => {
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
     expect(tooltipElm.textContent).toBe('some very extra long...');
-    expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
-    expect(tooltipElm.classList.contains('arrow-left-align')).toBeTruthy();
   });
 
   it('should NOT create a tooltip as regular tooltip with truncated text when tooltip option has "useRegularTooltip" enabled but the mouse over is not a slick-cell cell type', () => {
@@ -434,8 +410,6 @@ describe('SlickCustomTooltip plugin', () => {
     expect(tooltipElm).toBeTruthy();
     expect(tooltipElm.textContent).toBe('tooltip text');
     expect(tooltipElm.style.maxHeight).toBe('100px');
-    expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
-    expect(tooltipElm.classList.contains('arrow-left-align')).toBeTruthy();
   });
 
   it('should create a tooltip aligned left from a cell with multiple span and title attributes', () => {
@@ -470,8 +444,6 @@ describe('SlickCustomTooltip plugin', () => {
     expect(tooltipElm).toBeTruthy();
     expect(tooltipElm.textContent).toBe('Click here to cancel the action');
     expect(tooltipElm.style.maxHeight).toBe('100px');
-    expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
-    expect(tooltipElm.classList.contains('arrow-left-align')).toBeTruthy();
   });
 
   it('should create a tooltip aligned right from a cell with multiple span and title attributes', () => {
@@ -506,8 +478,6 @@ describe('SlickCustomTooltip plugin', () => {
     expect(tooltipElm).toBeTruthy();
     expect(tooltipElm.textContent).toBe('Click here to cancel the action');
     expect(tooltipElm.style.maxHeight).toBe('100px');
-    expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
-    expect(tooltipElm.classList.contains('arrow-right-align')).toBeTruthy();
   });
 
   it('should NOT create a tooltip from a cell with multiple span and title attributes but it is actually hidden', () => {
@@ -558,8 +528,6 @@ describe('SlickCustomTooltip plugin', () => {
     expect(tooltipElm).toBeTruthy();
     expect(tooltipElm.textContent).toBe('formatter tooltip text');
     expect(tooltipElm.style.maxHeight).toBe('100px');
-    expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
-    expect(tooltipElm.classList.contains('arrow-left-align')).toBeTruthy();
   });
 
   it('should throw an error when trying to create an async tooltip without "asyncPostFormatter" defined', () => {
@@ -613,7 +581,6 @@ describe('SlickCustomTooltip plugin', () => {
 
     tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm.textContent).toBe('async post text with ratio: 1.2');
-    expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
   });
 
   it('should create an Observable async tooltip and throw an error when the Observable is throwing', () => {
@@ -678,8 +645,6 @@ describe('SlickCustomTooltip plugin', () => {
 
     tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm.textContent).toBe('async post text with ratio: 1.2');
-    expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
-    expect(tooltipElm.classList.contains('arrow-left-align')).toBeTruthy();
   });
 
   it('should create a Promise async tooltip even on regular tooltip with "asyncProcess" and "useRegularTooltip" flags', async () => {
@@ -711,7 +676,6 @@ describe('SlickCustomTooltip plugin', () => {
 
     tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm.textContent).toBe('tooltip title text with ratio: 1.2');
-    expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
   });
 
   it('should create a Promise async tooltip and throw an error when the Promise is not completing (rejected)', () =>
@@ -766,8 +730,6 @@ describe('SlickCustomTooltip plugin', () => {
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
     expect(tooltipElm.textContent).toBe('name title tooltip');
-    expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
-    expect(tooltipElm.classList.contains('arrow-left-align')).toBeTruthy();
   });
 
   it('should create a tooltip on the header column when "useRegularTooltip" enabled and "onHeaderMouseOver" is triggered', () => {
@@ -795,8 +757,6 @@ describe('SlickCustomTooltip plugin', () => {
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
     expect(tooltipElm.textContent).toBe('header tooltip text');
-    expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
-    expect(tooltipElm.classList.contains('arrow-left-align')).toBeTruthy();
   });
 
   it('should create a tooltip on the header column when "useRegularTooltip" enabled and "onHeaderRowMouseEnter" is triggered', () => {
@@ -824,8 +784,6 @@ describe('SlickCustomTooltip plugin', () => {
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
     expect(tooltipElm.textContent).toBe('header row tooltip text');
-    expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
-    expect(tooltipElm.classList.contains('arrow-left-align')).toBeTruthy();
   });
 
   it('should create a tooltip on the header column when "useRegularTooltip" enabled and "onHeaderRowMouseOver" is triggered', () => {
@@ -853,7 +811,5 @@ describe('SlickCustomTooltip plugin', () => {
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
     expect(tooltipElm.textContent).toBe('header row tooltip text');
-    expect(tooltipElm.classList.contains('arrow-down')).toBeTruthy();
-    expect(tooltipElm.classList.contains('arrow-left-align')).toBeTruthy();
   });
 });

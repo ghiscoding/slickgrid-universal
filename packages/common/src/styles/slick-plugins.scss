@@ -455,32 +455,6 @@ li.hidden {
     text-overflow: var(--slick-tooltip-text-overflow, v.$slick-tooltip-text-overflow);
     white-space: var(--slick-tooltip-white-space, v.$slick-tooltip-white-space);
   }
-
-  &.tooltip-arrow::after {
-    content: '';
-    left: 0px;
-    position: absolute;
-    border: transparent;
-    border-style: solid;
-    border-width: var(--slick-tooltip-arrow-size, v.$slick-tooltip-arrow-size);
-  }
-  &.tooltip-arrow.arrow-up::after {
-    top: var(--slick-tooltip-up-arrow-top-margin, v.$slick-tooltip-up-arrow-top-margin);
-    border-bottom-color: var(--slick-tooltip-arrow-color, v.$slick-tooltip-arrow-color);
-  }
-  &.tooltip-arrow.arrow-down::after {
-    top: var(--slick-tooltip-down-arrow-top-margin, v.$slick-tooltip-down-arrow-top-margin);
-    border-top-color: var(--slick-tooltip-arrow-color, v.$slick-tooltip-arrow-color);
-  }
-  &.tooltip-arrow.arrow-left-align::after {
-    margin-left: var(--slick-tooltip-arrow-side-margin, v.$slick-tooltip-arrow-side-margin);
-  }
-  &.tooltip-arrow.arrow-right-align::after {
-    margin-left: var(--slick-tooltip-right-arrow-side-margin, v.$slick-tooltip-right-arrow-side-margin);
-  }
-  &.tooltip-arrow.arrow-center-align::after {
-    margin-left: var(--slick-tooltip-arrow-center-margin, v.$slick-tooltip-arrow-center-margin);
-  }
 }
 
 // ---------------------------------------------------------
