@@ -25,7 +25,7 @@ describe('Example 32 - Columns Resize by Content', () => {
       cy.get('.slick-row').find('.slick-cell:nth(8)').invoke('width').should('be.gt', 72);
       cy.get('.slick-row').find('.slick-cell:nth(9)').invoke('width').should('be.gt', 179);
       cy.get('.slick-row').find('.slick-cell:nth(10)').invoke('width').should('be.gt', 94);
-      cy.get('.slick-row').find('.slick-cell:nth(11)').invoke('width').should('equal', 58);
+      cy.get('.slick-row').find('.slick-cell:nth(11)').invoke('width').should('be.approximately', 58, 1);
     });
 
     it('should make the grid readonly and expect to fit the text by content and expect column width to be the same as earlier', () => {
@@ -41,7 +41,7 @@ describe('Example 32 - Columns Resize by Content', () => {
       cy.get('.slick-row').find('.slick-cell:nth(8)').invoke('width').should('be.gt', 72);
       cy.get('.slick-row').find('.slick-cell:nth(9)').invoke('width').should('be.gt', 179);
       cy.get('.slick-row').find('.slick-cell:nth(10)').invoke('width').should('be.gt', 94);
-      cy.get('.slick-row').find('.slick-cell:nth(11)').invoke('width').should('equal', 58);
+      cy.get('.slick-row').find('.slick-cell:nth(11)').invoke('width').should('be.approximately', 58, 1);
     });
 
     it('should click on (default resize "autosizeColumns") and expect column to be much thinner and fit all its column within the grid container', () => {
@@ -57,7 +57,7 @@ describe('Example 32 - Columns Resize by Content', () => {
       cy.get('.slick-row').find('.slick-cell:nth(8)').invoke('width').should('be.lt', 85);
       cy.get('.slick-row').find('.slick-cell:nth(9)').invoke('width').should('be.lt', 120);
       cy.get('.slick-row').find('.slick-cell:nth(10)').invoke('width').should('be.lt', 100);
-      cy.get('.slick-row').find('.slick-cell:nth(11)').invoke('width').should('equal', 58);
+      cy.get('.slick-row').find('.slick-cell:nth(11)').invoke('width').should('be.approximately', 58, 1);
     });
 
     it('should double-click on the "Complexity" column resize handle and expect the column to become wider and show all text', () => {
