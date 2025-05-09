@@ -9,9 +9,6 @@
 ### Brief introduction
 Angular-SlickGrid is a custom component created specifically for [Angular](https://angular.dev/) framework, it is a wrapper on top of Slickgrid-Universal library which contains the core functionalities. Slickgrid-Universal is written with TypeScript in browser native code, it is framework agnostic and is a monorepo that includes all Editors, Filters, Extensions and Services related to SlickGrid usage with also a few optional packages (like GraphQL, OData, Export to Excel, ...).
 
-### License
-[MIT License](LICENSE)
-
 ## Documentation
 📕 [Documentation](https://ghiscoding.gitbook.io/angular-slickgrid/getting-started/quick-start) website powered by GitBook for version 7+ (_or use the [Wikis](https://github.com/ghiscoding/Angular-Slickgrid/wiki) for older versions_).
 
@@ -27,6 +24,9 @@ A good starting point is the **[Docs - Quick Start](https://ghiscoding.gitbook.i
 ```sh
 npm install angular-slickgrid
 ```
+
+## License
+[MIT License](../../LICENSE)
 
 #### Basic Grid
 

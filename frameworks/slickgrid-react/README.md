@@ -24,6 +24,9 @@ Refer to the **[Docs - Quick Start](https://ghiscoding.gitbook.io/slickgrid-reac
 ### NPM Package
 [slickgrid-react on NPM](https://www.npmjs.com/package/slickgrid-react)
 
+## License
+[MIT License](../../LICENSE)
+
 #### Install it
 
 ```sh
@@ -101,9 +104,6 @@ Also note that all of these themes also have **Dark Theme** equivalent and even 
 
 #### Working Demos
 For a complete set of working demos (40+ examples), we strongly suggest you to clone the [Slickgrid-React Demos](https://github.com/ghiscoding/slickgrid-react-demos) repository (instructions are provided inside it). The repo provides multiple examples and are updated every time a new release is out, so it is updated frequently and is used as the GitHub live demo page.
-
-## License
-[MIT License](LICENSE)
 
 ## Latest News & Releases
 Check out the [Releases](https://github.com/ghiscoding/slickgrid-react/releases) section for all latest News & Releases.

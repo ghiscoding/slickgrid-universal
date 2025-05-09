@@ -15,9 +15,26 @@ SlickGrid-Vue is a custom component created specifically for [VueJS](https://vue
 
 ## Installation
 
+You can also play with the live Stackbliz [Slickgrid-Vue-Demos](https://github.com/ghiscoding/slickgrid-vue-demos).
+Stackblitz is also the recommended way to provide a repro when opening a new bug or feature request.
+
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/slickgrid-vue-demos)
+
+Visit the **[Docs - Quick Start](https://ghiscoding.gitbook.io/slickgrid-vue/getting-started/quick-start)** and/or clone the [Slickgrid-Vue-Demos](https://github.com/ghiscoding/slickgrid-vue-demos) repository for a fully working local demo. Please make sure to read the documentation before opening any new issue and also consider asking installation and/or general questions on [Stack Overflow](https://stackoverflow.com/search?tab=newest&q=slickgrid) unless you think there's a bug with the library.
+
 ```sh
 npm install slickgrid-vue
 ```
+Install any optional Slickgrid-Universal dependencies, for example Excel Export
+```sh
+npm install @slickgrid-universal/excel-export
+```
+
+### Requirements
+- Vue >=3.5
+
+## License
+[MIT License](../../LICENSE)
 
 #### Basic Usage
 
@@ -47,37 +64,10 @@ const gridOptions = ref<GridOption>({ /*...*/ }); // optional grid options
 </template>
 ```
 
-#### Requirements
-- Vue >=3.5
+### Like it? ⭐ it
+You like **Slickgrid-Vue**? Be sure to upvote ⭐ the project, and perhaps support me with caffeine [☕](https://ko-fi.com/ghiscoding) or sponsor me on GitHub. Any contributions are also very welcome. Thanks
 
-### Stackblitz
-
-You can also play with the live Stackbliz [Slickgrid-Vue-Demos](https://github.com/ghiscoding/slickgrid-vue-demos).
-Stackblitz is also the recommended way to provide a repro when opening a new bug or feature request.
-
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/slickgrid-vue-demos)
-
-Visit the **[Docs - Quick Start](https://ghiscoding.gitbook.io/slickgrid-vue/getting-started/quick-start)** and/or clone the [Slickgrid-Vue-Demos](https://github.com/ghiscoding/slickgrid-vue-demos) repository for a fully working local demo. Please make sure to read the documentation before opening any new issue and also consider asking installation and/or general questions on [Stack Overflow](https://stackoverflow.com/search?tab=newest&q=slickgrid) unless you think there's a bug with the library.
-
-### Styling Themes
-
-Multiple styling themes are available
-- Default (UI agnostic)
-- Bootstrap (see all Slickgrid-Vue [live demos](https://ghiscoding.github.io/slickgrid-vue-demos/))
-- Material (see [Slickgrid-Universal](https://ghiscoding.github.io/slickgrid-universal/#/example07))
-- Salesforce (see [Slickgrid-Universal](https://ghiscoding.github.io/slickgrid-universal/#/example16))
-
-Also note that all of these themes also include a **Dark Theme** equivalent and even though Bootstrap is often used in the live demos, it also works well with any other UI framework like Bulma, Material, Quasar...
-
-### Live Demo page
-`Slickgrid-Vue` works with Bootstrap or any other UI frameworks like Material, Bulma, Quasar... and there are also extra styling themes based on Material & Salesforce which are also available. You can also use different SVG icons, you may want to look at the [Docs - SVG Icons](https://ghiscoding.gitbook.io/slickgrid-vue/styling/svg-icons)
-- [Bootstrap 5 demo](https://ghiscoding.github.io/slickgrid-vue-demos) / [examples repo](https://github.com/ghiscoding/slickgrid-vue-demos)
-
-#### Working Demos
-For a complete set of working demos (45+ examples), we strongly suggest you to clone the [Slickgrid-Vue Demos](https://github.com/ghiscoding/slickgrid-vue-demos) repository (instructions are provided in it). The repo comes with multiple examples and are updated frequently (basically every time a new version is out) and it is also used as the GitHub [live demo]([https://github.com/ghiscoding/slickgrid-vue-demos](https://ghiscoding.github.io/slickgrid-vue-demos/) page.
-
-## License
-[MIT License](LICENSE)
+<a href='https://ko-fi.com/ghiscoding' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi3.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
 ## Latest News & Releases
 Check out the [Releases](https://github.com/ghiscoding/slickgrid-universal/releases) section for all latest News & Releases.

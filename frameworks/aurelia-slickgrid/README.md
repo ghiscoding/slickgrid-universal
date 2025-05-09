@@ -36,8 +36,7 @@ npm install @slickgrid-universal/excel-export
 - [Bootstrap 5 demo](https://ghiscoding.github.io/aurelia-slickgrid) / [examples repo](https://github.com/ghiscoding/aurelia-slickgrid-demos/tree/master/webpack-bs5-demo)
 
 ## License
-[MIT License](LICENSE)
-
+[MIT License](../../LICENSE)
 
 #### Basic Grid
 
