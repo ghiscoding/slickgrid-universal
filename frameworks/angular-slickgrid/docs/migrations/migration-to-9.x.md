@@ -13,7 +13,7 @@ I also decided to align all SlickGrid examples in all frameworks and Angular-Sli
 - upgrade Vanilla-Calendar-Pro to v3 with [flat config](#date-editorfilter-flat-config)
 - [shorter attribute names](#shorter-attribute-names)
 - now using `clipboard` API, used in ExcelCopyBuffer/ContextMenu/CellCopy, which might requires end user permissions
-- removing Arrow pointer from Custom Tooltip addon
+- removing Arrow pointer from Custom Tooltip addon (because it was often offset with the cell text)
 
 > **Note:** if you come from an earlier version, please make sure to follow each migrations in their respected order (review previous migration guides)
 
