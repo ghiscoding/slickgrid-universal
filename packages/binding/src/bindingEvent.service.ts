@@ -18,7 +18,7 @@ export class BindingEventService {
   }
 
   /** Bind an event listener to any element */
-  bind(
+  bind<H extends HTMLElement = HTMLElement>(
     elementOrElements: Document | Element | NodeListOf<Element> | Array<Element> | Window,
     eventNameOrNames: string | string[],
     listener: EventListenerOrEventListenerObject,
@@ -33,18 +33,12 @@ export class BindingEventService {
       (elementOrElements as NodeListOf<HTMLElement>)?.forEach
     ) {
       // multiple elements to bind to
-      (elementOrElements as NodeListOf<HTMLElement>).forEach((element) => {
-        for (const eventName of eventNames) {
-          element.addEventListener(eventName, listener, listenerOptions);
-          this._boundedEvents.push({ element, eventName, listener, groupName });
-        }
-      });
+      (elementOrElements as NodeListOf<HTMLElement>).forEach((element) =>
+        this.bindElementEvents(element, eventNames, listener, listenerOptions, groupName)
+      );
     } else if (elementOrElements) {
       // single elements to bind to
-      for (const eventName of eventNames) {
-        (elementOrElements as Element).addEventListener(eventName, listener, listenerOptions);
-        this._boundedEvents.push({ element: elementOrElements as Element, eventName, listener, groupName });
-      }
+      this.bindElementEvents(elementOrElements as H, eventNames, listener, listenerOptions, groupName);
     }
   }
 
@@ -98,6 +92,23 @@ export class BindingEventService {
         const { element, eventName, listener } = boundedEvent;
         this.unbind(element, eventName, listener);
       }
+    }
+  }
+
+  // --
+  // private functions
+
+  /** bind all event(s) to the element */
+  private bindElementEvents(
+    element: HTMLElement,
+    eventNames: string | string[],
+    listener: EventListenerOrEventListenerObject,
+    listenerOptions?: boolean | AddEventListenerOptions,
+    groupName = ''
+  ) {
+    for (const eventName of eventNames) {
+      element.addEventListener(eventName, listener as EventListener, listenerOptions);
+      this._boundedEvents.push({ element, eventName, listener: listener as EventListener, groupName });
     }
   }
 }

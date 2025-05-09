@@ -1,28 +1,17 @@
 import type { HtmlElementPosition } from './models/interfaces.js';
 import type { InferDOMType } from './models/types.js';
 
-/** calculate available space for each side of the DOM element */
+/** Calculate available space for each side of the DOM element */
 export function calculateAvailableSpace(element: HTMLElement): { top: number; bottom: number; left: number; right: number } {
-  let bottom = 0;
-  let top = 0;
-  let left = 0;
-  let right = 0;
+  const vh = window.innerHeight || 0;
+  const vw = window.innerWidth || 0;
+  const { top: pageScrollTop, left: pageScrollLeft } = windowScrollPosition();
+  const { top: elementOffsetTop, left: elementOffsetLeft } = getOffset(element) || {};
 
-  const windowHeight = window.innerHeight || 0;
-  const windowWidth = window.innerWidth || 0;
-  const scrollPosition = windowScrollPosition();
-  const pageScrollTop = scrollPosition.top;
-  const pageScrollLeft = scrollPosition.left;
-  const elmOffset = getOffset(element);
-
-  if (elmOffset) {
-    const elementOffsetTop = elmOffset.top;
-    const elementOffsetLeft = elmOffset.left;
-    top = elementOffsetTop - pageScrollTop;
-    left = elementOffsetLeft - pageScrollLeft;
-    bottom = windowHeight - (elementOffsetTop - pageScrollTop + element.clientHeight);
-    right = windowWidth - (elementOffsetLeft - pageScrollLeft + element.clientWidth);
-  }
+  const top = elementOffsetTop - pageScrollTop;
+  const left = elementOffsetLeft - pageScrollLeft;
+  const bottom = vh - (elementOffsetTop - pageScrollTop + element.clientHeight);
+  const right = vw - (elementOffsetLeft - pageScrollLeft + element.clientWidth);
 
   return { top, bottom, left, right };
 }
@@ -154,24 +143,17 @@ export function getOffsetRelativeToParent(
 
 /** Get HTML element offset with pure JS */
 export function getOffset(elm?: HTMLElement | null): HtmlElementPosition {
-  let top = 0;
-  let left = 0;
-  let bottom = 0;
-  let right = 0;
-
-  if (!elm || !elm.getBoundingClientRect) {
-    return { top, bottom, left, right };
+  if (!elm?.getBoundingClientRect) {
+    return { top: 0, bottom: 0, left: 0, right: 0 };
   }
-  const box = elm.getBoundingClientRect();
-  const docElem = document.documentElement;
 
-  if (box?.top !== undefined && box.left !== undefined) {
-    top = box.top + window.pageYOffset - docElem.clientTop;
-    left = box.left + window.pageXOffset - docElem.clientLeft;
-    right = box.right;
-    bottom = box.bottom;
-  }
-  return { top, left, bottom, right };
+  const { top, left, bottom, right } = elm.getBoundingClientRect();
+  return {
+    top: top + window.pageYOffset,
+    left: left + window.pageXOffset,
+    bottom,
+    right,
+  };
 }
 
 export function getInnerSize(elm: HTMLElement, type: 'height' | 'width'): number {
