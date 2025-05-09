@@ -142,7 +142,7 @@ export function getOffsetRelativeToParent(
 }
 
 /** Get HTML element offset with pure JS */
-export function getOffset(elm: HTMLElement | null): HtmlElementPosition {
+export function getOffset(elm?: HTMLElement | null): HtmlElementPosition {
   if (!elm?.getBoundingClientRect) {
     return { top: 0, bottom: 0, left: 0, right: 0 };
   }
