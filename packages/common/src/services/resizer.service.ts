@@ -227,7 +227,7 @@ export class ResizerService {
 
   /**
    * Calculate the datagrid new height/width from the available space, also consider that a % factor might be applied to calculation
-   * object gridOptions
+   * @param {GridOption} gridOptions
    */
   calculateGridNewDimensions(gridOptions: GridOption): GridSize | null {
     const autoResizeOptions = gridOptions?.autoResize ?? {};
@@ -239,7 +239,7 @@ export class ResizerService {
 
     // calculate bottom padding
     // if using pagination, we need to add the pagination height to this bottom padding
-    let bottomPadding = autoResizeOptions?.bottomPadding !== undefined ? autoResizeOptions.bottomPadding : DATAGRID_BOTTOM_PADDING;
+    let bottomPadding = autoResizeOptions?.bottomPadding ?? DATAGRID_BOTTOM_PADDING;
     if (bottomPadding && gridOptions.enablePagination) {
       bottomPadding += DATAGRID_PAGINATION_HEIGHT;
     }
