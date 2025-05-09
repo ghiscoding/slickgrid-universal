@@ -389,14 +389,11 @@ export class ResizerService {
       // also call the grid auto-size columns so that it takes available space when going bigger
       if (this._grid && this.gridOptions?.enableAutoSizeColumns) {
         // make sure that the grid still exist (by looking if the Grid UID is found in the DOM tree) to avoid SlickGrid error "missing stylesheet"
-        // don't call autosize unless dimension really changed
-        if (
-          (this.gridUid && document.querySelector(this.gridUidSelector)) ||
-          !this._lastDimensions ||
-          this._lastDimensions.height !== newHeight ||
-          this._lastDimensions.width !== newWidth
-        ) {
-          this._grid.autosizeColumns();
+        if (this.gridUid && document.querySelector(this.gridUidSelector)) {
+          // don't call autosize unless dimension really changed
+          if (!this._lastDimensions || this._lastDimensions.height !== newHeight || this._lastDimensions.width !== newWidth) {
+            this._grid.autosizeColumns();
+          }
         }
       } else if (
         this.gridOptions.enableAutoResizeColumnsByCellContent &&
