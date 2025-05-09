@@ -142,11 +142,15 @@ export function getOffsetRelativeToParent(
 }
 
 /** Get HTML element offset with pure JS */
-export function getOffset(element?: HTMLElement | null): HtmlElementPosition {
-  const { top, left, bottom, right } = element?.getBoundingClientRect() || { top: 0, left: 0, bottom: 0, right: 0 };
+export function getOffset(elm: HTMLElement | null): HtmlElementPosition {
+  if (!elm?.getBoundingClientRect) {
+    return { top: 0, bottom: 0, left: 0, right: 0 };
+  }
+
+  const { top, left, bottom, right } = elm.getBoundingClientRect();
   return {
-    top: top + (window.pageYOffset || 0),
-    left: left + (window.pageXOffset || 0),
+    top: top + window.pageYOffset,
+    left: left + window.pageXOffset,
     bottom,
     right,
   };
