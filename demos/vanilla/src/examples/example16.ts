@@ -451,7 +451,6 @@ export default class Example16 {
         headerFormatter: this.headerFormatter,
         headerRowFormatter: this.headerRowFormatter,
         usabilityOverride: (args) => args.cell !== 0 && args?.column?.id !== 'action', // don't show on first/last columns
-        // hideArrow: true, // defaults to False
       },
       presets: {
         filters: [{ columnId: 'prerequisites', searchTerms: [1, 3, 5, 7, 9, 12, 15, 18, 21, 25, 28, 29, 30, 32, 34] }],
