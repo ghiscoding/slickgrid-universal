@@ -72,10 +72,10 @@
   },
   "devDependencies": {
     "@gc-utils/release": "^0.1.5",
-    "@vitejs/plugin-vue": "^5.2.3",
+    "@vitejs/plugin-vue": "^5.2.4",
     "cross-env": "catalog:",
     "i18next": "catalog:",
-    "i18next-vue": "^5.2.0",
+    "i18next-vue": "^5.3.0",
     "sass": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",

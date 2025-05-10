@@ -31,7 +31,7 @@
     "bootstrap": "catalog:",
     "dompurify": "catalog:",
     "i18next": "catalog:",
-    "i18next-vue": "^5.2.0",
+    "i18next-vue": "^5.3.0",
     "rxjs": "catalog:",
     "slickgrid-vue": "workspace:*",
     "vue": "^3.5.13",
@@ -40,7 +40,7 @@
   "devDependencies": {
     "@4tw/cypress-drag-drop": "catalog:",
     "@types/fnando__sparkline": "catalog:",
-    "@vitejs/plugin-vue": "^5.2.3",
+    "@vitejs/plugin-vue": "^5.2.4",
     "cypress": "catalog:",
     "cypress-real-events": "catalog:",
     "sass": "catalog:",
