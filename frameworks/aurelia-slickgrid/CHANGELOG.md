@@ -6,6 +6,9 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [9.0.0](https://github.com/ghiscoding/aurelia-slickgrid/compare/v5.14.0...v9.0.0) (2025-05-10)
 
+> [!NOTE]
+> #### Follow the [Migration to 9.0](https://ghiscoding.gitbook.io/aurelia-slickgrid/migrations/migration-to-9.x) for all the changes and take a look at the [v9.0.0](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v9.0.0) release for the announcement and quick info.
+
 ### ⚠ BREAKING CHANGES
 
 * remove Arrow pointer from Custom Tooltip (#1964)
