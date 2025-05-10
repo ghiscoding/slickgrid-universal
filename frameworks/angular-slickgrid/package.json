@@ -11,7 +11,7 @@
   ],
   "license": "MIT",
   "author": "Ghislain B.",
-  "homepage": "https://github.com/ghiscoding/slickgrid-universal/frameworks/angular-slickgrid",
+  "homepage": "https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/angular-slickgrid",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ghiscoding/slickgrid-universal.git",
@@ -19,6 +19,15 @@
   },
   "bugs": {
     "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  },
+  "main": "src/public_api.ts",
+  "funding": {
+    "type": "ko_fi",
+    "url": "https://ko-fi.com/ghiscoding"
   },
   "scripts": {
     "angular:dev": "ng serve --port 4300",
@@ -37,15 +46,6 @@
     "pack-lib": "npm pack ./dist",
     "test": "ng test --watch",
     "test:coverage": "vitest --no-watch --coverage"
-  },
-  "publishConfig": {
-    "access": "public",
-    "directory": "dist"
-  },
-  "main": "src/public_api.ts",
-  "funding": {
-    "type": "ko_fi",
-    "url": "https://ko-fi.com/ghiscoding"
   },
   "dependencies": {
     "@ngx-translate/core": "^16.0.4",

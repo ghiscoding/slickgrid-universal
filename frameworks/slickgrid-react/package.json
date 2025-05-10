@@ -19,13 +19,14 @@
     "./package.json": "./package.json"
   },
   "types": "./dist/index.d.ts",
-  "homepage": "https://github.com/ghiscoding/slickgrid-react",
-  "bugs": {
-    "url": "https://github.com/ghiscoding/slickgrid-react/issues"
-  },
+  "homepage": "https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/slickgrid-react",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ghiscoding/slickgrid-react.git"
+    "url": "git+https://github.com/ghiscoding/slickgrid-universal.git",
+    "directory": "packages/slickgrid-react"
+  },
+  "bugs": {
+    "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
   },
   "license": "MIT",
   "author": "Ghislain B.",
