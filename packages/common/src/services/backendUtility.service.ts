@@ -22,15 +22,17 @@ export class BackendUtilityService {
   executeBackendProcessesCallback(startTime: Date, processResult: any, backendApi: BackendServiceApi, totalItems: number): any {
     const endTime = new Date();
 
-    // allow the backend service to change the result.
-    if (processResult && backendApi.service.postProcess) {
-      backendApi.service.postProcess(processResult);
-    }
+    if (processResult) {
+      // allow the backend service to change the result.
+      if (backendApi.service.postProcess) {
+        backendApi.service.postProcess(processResult);
+      }
 
-    // define what our internal Post Process callback, only available for GraphQL Service for now
-    // it will basically refresh the Dataset & Pagination removing the need for the user to always create his own PostProcess every time
-    if (processResult && backendApi?.internalPostProcess) {
-      backendApi.internalPostProcess(processResult);
+      // define what our internal Post Process callback, only available for GraphQL Service for now
+      // it will basically refresh the Dataset & Pagination removing the need for the user to always create his own PostProcess every time
+      if (backendApi?.internalPostProcess) {
+        backendApi.internalPostProcess(processResult);
+      }
     }
 
     // send the response process to the postProcess callback
@@ -143,10 +145,7 @@ export class BackendUtilityService {
     if (query && query !== '') {
       // keep start time & end timestamps & return it after process execution
       const startTime = new Date();
-
-      if (backendApi.preProcess) {
-        backendApi.preProcess();
-      }
+      backendApi.preProcess?.();
 
       const totalItems = gridOptions?.pagination?.totalItems ?? 0;
       this.executeBackendCallback(backendApi, query, null, startTime, totalItems);

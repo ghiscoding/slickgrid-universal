@@ -82,12 +82,8 @@ export class GridService {
   /** Clear all Filters & Sorts */
   clearAllFiltersAndSorts(): void {
     // call both clear Filters & Sort but only trigger the last one to avoid sending multiple backend queries
-    if (this.sortService && this.sortService.clearSorting) {
-      this.sortService.clearSorting(false); // skip event trigger on this one
-    }
-    if (this.filterService && this.filterService.clearFilters) {
-      this.filterService.clearFilters();
-    }
+    this.sortService?.clearSorting(false); // skip event trigger on this one
+    this.filterService?.clearFilters();
   }
 
   /** Clear all the pinning (frozen) options */
@@ -149,7 +145,7 @@ export class GridService {
    * @return object with columnDef and dataContext
    */
   getColumnFromEventArguments(args: CellArgs): OnEventArgs {
-    if (!args || !args.grid || !args.grid.getColumns || !args.grid.getDataItem) {
+    if (!args?.grid || !args.grid.getColumns || !args.grid.getDataItem) {
       throw new Error(
         '[Slickgrid-Universal] To get the column definition and data, we need to have these arguments passed as objects (row, cell, grid)'
       );
@@ -334,23 +330,17 @@ export class GridService {
 
   /** Select the selected row by a row index */
   setSelectedRow(rowIndex: number): void {
-    if (this._grid?.setSelectedRows) {
-      this._grid.setSelectedRows([rowIndex]);
-    }
+    this._grid?.setSelectedRows([rowIndex]);
   }
 
   /** Set selected rows with provided array of row indexes */
   setSelectedRows(rowIndexes: number[]): void {
-    if (this._grid?.setSelectedRows) {
-      this._grid.setSelectedRows(rowIndexes);
-    }
+    this._grid?.setSelectedRows(rowIndexes);
   }
 
   /** Re-Render the Grid */
   renderGrid(): void {
-    if (typeof this._grid?.invalidate === 'function') {
-      this._grid.invalidate();
-    }
+    this._grid?.invalidate();
   }
 
   /**

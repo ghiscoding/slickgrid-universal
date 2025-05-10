@@ -85,14 +85,9 @@ export function buildMsSelectCollectionList(
         }
 
         // also translate prefix/suffix if enableTranslateLabel is true and text is a string
-        // prettier-ignore
-        prefixText = (enableTranslateLabel && translaterService && prefixText && typeof prefixText === 'string') ? translaterService.translate(prefixText || ' ') : prefixText;
-        // prettier-ignore
-        suffixText = (enableTranslateLabel && translaterService && suffixText && typeof suffixText === 'string') ? translaterService.translate(suffixText || ' ') : suffixText;
-        selectOptionLabel =
-          enableTranslateLabel && translaterService && selectOptionLabel && typeof selectOptionLabel === 'string'
-            ? translaterService.translate(selectOptionLabel || ' ')
-            : selectOptionLabel;
+        prefixText = translateWhenEnabled(prefixText, enableTranslateLabel, translaterService);
+        suffixText = translateWhenEnabled(suffixText, enableTranslateLabel, translaterService);
+        selectOptionLabel = translateWhenEnabled(selectOptionLabel, enableTranslateLabel, translaterService);
 
         // add to a temp array for joining purpose and filter out empty text
         const tmpOptionArray = [
@@ -134,4 +129,10 @@ export function buildMsSelectCollectionList(
   }
 
   return { selectElement, dataCollection, hasFoundSearchTerm };
+}
+
+function translateWhenEnabled(input: string | number, enableTranslateLabel: boolean, translaterService?: TranslaterService) {
+  return enableTranslateLabel && translaterService && input && typeof input === 'string'
+    ? translaterService.translate(input || ' ')
+    : input;
 }
