@@ -86,7 +86,7 @@
     "cross-env": "catalog:",
     "custom-event-polyfill": "^1.0.7",
     "globals": "catalog:",
-    "react-router-dom": "^7.5.3",
+    "react-router-dom": "^7.6.0",
     "regenerator-runtime": "^0.14.1",
     "rxjs": "catalog:",
     "sass": "catalog:",
