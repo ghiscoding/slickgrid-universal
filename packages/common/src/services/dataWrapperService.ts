@@ -12,18 +12,18 @@ export class DataWrapperService {
   }
 
   getDataItem(row: number): any {
-    return this._dataView ? this._dataView.getItem(row) : this._grid.getDataItem(row);
+    return this._dataView?.getItem(row) ?? this._grid.getDataItem(row);
   }
 
   getDataItems(): any[] {
-    return this._dataView ? this._dataView.getItems() : this._grid.getData<any[]>();
+    return this._dataView?.getItems() ?? this._grid.getData<any[]>();
   }
 
   getDataLength(): number {
-    return this._dataView ? this._dataView.getItemCount() : this._grid.getDataLength();
+    return this._dataView?.getItemCount() ?? this._grid.getDataLength();
   }
 
   setDataItems(items: any[]): void {
-    this._dataView ? this._dataView.setItems(items) : this._grid.setData(items);
+    this._dataView?.setItems(items) ?? this._grid.setData(items);
   }
 }

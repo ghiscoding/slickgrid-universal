@@ -56,9 +56,7 @@ export class SortService {
 
   dispose(): void {
     // unsubscribe all SlickGrid events
-    if (this._eventHandler?.unsubscribeAll) {
-      this._eventHandler.unsubscribeAll();
-    }
+    this._eventHandler?.unsubscribeAll();
     if (this.httpCancelRequests$ && this.rxjs?.isObservable(this.httpCancelRequests$)) {
       this.httpCancelRequests$.next(); // this cancels any pending http requests
       this.httpCancelRequests$.complete();
@@ -405,7 +403,7 @@ export class SortService {
     event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData | undefined,
     args: (SingleColumnSort | MultiColumnSort) & { clearSortTriggered?: boolean }
   ): void {
-    if (!args || !args.grid) {
+    if (!args?.grid) {
       throw new Error(
         'Something went wrong when trying to bind the "onBackendSortChanged(event, args)" function, it seems that "args" is not populated correctly'
       );
@@ -419,10 +417,7 @@ export class SortService {
 
     // keep start time & end timestamps & return it after process execution
     const startTime = new Date();
-
-    if (backendApi.preProcess) {
-      backendApi.preProcess();
-    }
+    backendApi.preProcess?.();
 
     // query backend
     const query = backendApi.service.processOnSortChanged(event as Event, args);

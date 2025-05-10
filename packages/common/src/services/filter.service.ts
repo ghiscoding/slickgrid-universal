@@ -778,7 +778,7 @@ export class FilterService {
       await this.emitFilterChanged('remote', true);
     }
 
-    if (!args || !args.grid) {
+    if (!args?.grid) {
       throw new Error(
         'Something went wrong when trying to bind the "onBackendFilterChange(event, args)" function, it seems that "args" is not populated correctly'
       );
@@ -794,9 +794,7 @@ export class FilterService {
     const startTime = new Date();
 
     // run a preProcess callback if defined
-    if (backendApi.preProcess) {
-      backendApi.preProcess();
-    }
+    backendApi.preProcess?.();
 
     // query backend, except when it's called by a ClearFilters then we won't
     if (isTriggeringQueryEvent) {
