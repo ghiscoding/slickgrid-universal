@@ -876,6 +876,49 @@ importers:
         version: 0.15.0
     publishDirectory: dist
 
+  frameworks/angular-slickgrid/dist:
+    dependencies:
+      '@angular/core':
+        specifier: '>=19.0.0'
+        version: 19.2.10(rxjs@7.8.2)(zone.js@0.15.0)
+      '@ngx-translate/core':
+        specifier: ^16.0.4
+        version: 16.0.4(@angular/common@19.2.10(@angular/core@19.2.10(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.10(rxjs@7.8.2)(zone.js@0.15.0))
+      '@slickgrid-universal/common':
+        specifier: workspace:*
+        version: link:../../../packages/common
+      '@slickgrid-universal/custom-footer-component':
+        specifier: workspace:*
+        version: link:../../../packages/custom-footer-component
+      '@slickgrid-universal/empty-warning-component':
+        specifier: workspace:*
+        version: link:../../../packages/empty-warning-component
+      '@slickgrid-universal/event-pub-sub':
+        specifier: workspace:*
+        version: link:../../../packages/event-pub-sub
+      '@slickgrid-universal/pagination-component':
+        specifier: workspace:*
+        version: link:../../../packages/pagination-component
+      '@slickgrid-universal/row-detail-view-plugin':
+        specifier: workspace:*
+        version: link:../../../packages/row-detail-view-plugin
+      '@slickgrid-universal/rxjs-observable':
+        specifier: workspace:*
+        version: link:../../../packages/rxjs-observable
+      '@slickgrid-universal/utils':
+        specifier: workspace:*
+        version: link:../../../packages/utils
+      dequal:
+        specifier: 'catalog:'
+        version: 2.0.3
+      rxjs:
+        specifier: 'catalog:'
+        version: 7.8.2
+      tslib:
+        specifier: ^2.3.0
+        version: 2.8.1
+    publishDirectory: dist
+
   frameworks/aurelia-slickgrid:
     dependencies:
       '@aurelia/i18n':

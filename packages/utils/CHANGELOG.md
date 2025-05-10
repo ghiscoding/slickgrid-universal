@@ -4,6 +4,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.14.0...v9.0.0) (2025-05-10)
+
+### ⚠ BREAKING CHANGES
+
+* prepare next major release v9.0 (#1947)
+
+### Features
+
+* prepare next major release v9.0 ([#1947](https://github.com/ghiscoding/slickgrid-universal/issues/1947)) ([0bbc398](https://github.com/ghiscoding/slickgrid-universal/commit/0bbc39803c6956f74f6a6b46dc39eb3a97ec84a5)) - by @ghiscoding
+
 ## [5.12.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.11.0...v5.12.0) (2025-01-21)
 
 **Note:** Version bump only for package @slickgrid-universal/utils

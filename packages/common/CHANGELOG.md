@@ -4,6 +4,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.14.0...v9.0.0) (2025-05-10)
+
+### ⚠ BREAKING CHANGES
+
+* remove Arrow pointer from Custom Tooltip (#1964)
+* prepare next major release v9.0 (#1947)
+
+### Features
+
+* prepare next major release v9.0 ([#1947](https://github.com/ghiscoding/slickgrid-universal/issues/1947)) ([0bbc398](https://github.com/ghiscoding/slickgrid-universal/commit/0bbc39803c6956f74f6a6b46dc39eb3a97ec84a5)) - by @ghiscoding
+
+### Bug Fixes
+
+* autoHeight should add preHeader height when enabled ([#1960](https://github.com/ghiscoding/slickgrid-universal/issues/1960)) ([cbe2f32](https://github.com/ghiscoding/slickgrid-universal/commit/cbe2f32d3476e29285603698ab697bc61e98505e)) - by @ghiscoding
+* **deps:** update all non-major dependencies ([#1952](https://github.com/ghiscoding/slickgrid-universal/issues/1952)) ([65b89aa](https://github.com/ghiscoding/slickgrid-universal/commit/65b89aa80f20131b43f1d1d64e6272b9bc1d3038)) - by @renovate-bot
+* incorrect grid container box size calculation border not showing ([#1961](https://github.com/ghiscoding/slickgrid-universal/issues/1961)) ([237ae51](https://github.com/ghiscoding/slickgrid-universal/commit/237ae51cbf406c3dd93078cd44f98f3f35d4bd58)) - by @ghiscoding
+* remove Arrow pointer from Custom Tooltip ([#1964](https://github.com/ghiscoding/slickgrid-universal/issues/1964)) ([018169d](https://github.com/ghiscoding/slickgrid-universal/commit/018169df816441d0a8d780299ecabbc81163caba)) - by @ghiscoding
+
 ## [5.14.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.13.4...v5.14.0) (2025-04-26)
 
 ### Features

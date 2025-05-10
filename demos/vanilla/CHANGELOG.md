@@ -4,6 +4,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.14.0...v9.0.0) (2025-05-10)
+
+### ⚠ BREAKING CHANGES
+
+* remove Arrow pointer from Custom Tooltip (#1964)
+* prepare next major release v9.0 (#1947)
+
+### Features
+
+* prepare next major release v9.0 ([#1947](https://github.com/ghiscoding/slickgrid-universal/issues/1947)) ([0bbc398](https://github.com/ghiscoding/slickgrid-universal/commit/0bbc39803c6956f74f6a6b46dc39eb3a97ec84a5)) - by @ghiscoding
+
+### Bug Fixes
+
+* remove Arrow pointer from Custom Tooltip ([#1964](https://github.com/ghiscoding/slickgrid-universal/issues/1964)) ([018169d](https://github.com/ghiscoding/slickgrid-universal/commit/018169df816441d0a8d780299ecabbc81163caba)) - by @ghiscoding
+
 ## [5.12.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.11.0...v5.12.0) (2025-01-21)
 
 ### Features

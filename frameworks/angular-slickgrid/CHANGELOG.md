@@ -1,5 +1,25 @@
 # Change Log
-All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+## All-in-One SlickGrid framework agnostic wrapper, visit [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) 📦🚀
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+## [9.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.14.0...v9.0.0) (2025-05-10)
+
+### ⚠ BREAKING CHANGES
+
+* remove Arrow pointer from Custom Tooltip (#1964)
+* prepare next major release v9.0 (#1947)
+
+### Features
+
+* prepare next major release v9.0 ([#1947](https://github.com/ghiscoding/slickgrid-universal/issues/1947)) ([0bbc398](https://github.com/ghiscoding/slickgrid-universal/commit/0bbc39803c6956f74f6a6b46dc39eb3a97ec84a5)) - by @ghiscoding
+
+### Bug Fixes
+
+* incorrect grid container box size calculation border not showing ([#1961](https://github.com/ghiscoding/slickgrid-universal/issues/1961)) ([237ae51](https://github.com/ghiscoding/slickgrid-universal/commit/237ae51cbf406c3dd93078cd44f98f3f35d4bd58)) - by @ghiscoding
+* remove Arrow pointer from Custom Tooltip ([#1964](https://github.com/ghiscoding/slickgrid-universal/issues/1964)) ([018169d](https://github.com/ghiscoding/slickgrid-universal/commit/018169df816441d0a8d780299ecabbc81163caba)) - by @ghiscoding
+* Row Detail open/close multiple times should always re-render ([#1959](https://github.com/ghiscoding/slickgrid-universal/issues/1959)) ([8b1437c](https://github.com/ghiscoding/slickgrid-universal/commit/8b1437cab5c1a445406414157adacef78854862c)) - by @ghiscoding
 
 ## [8.13.4](https://github.com/ghiscoding/angular-slickgrid/compare/v8.13.3...v8.13.4) (2025-04-02)
 
@@ -81,11 +101,9 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [8.9.0](https://github.com/ghiscoding/angular-slickgrid/compare/v8.8.1...v8.9.0) (2024-10-19)
 
-
 ### Features
 
 * allow providing a Custom Pagination Component ([b677009](https://github.com/ghiscoding/angular-slickgrid/commit/b6770090a80483cbe594ceeb37ba55a51a5c354a))
-
 
 ### Bug Fixes
 
@@ -93,11 +111,9 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [8.8.1](https://github.com/ghiscoding/angular-slickgrid/compare/v8.7.0...v8.8.1) (2024-09-29)
 
-
 ### Features
 
 * option to improve Date Sorting by pre-parsing date items only once ([60539e7](https://github.com/ghiscoding/angular-slickgrid/commit/60539e76b1c155abc4289a68cce93352daaead62))
-
 
 ### Bug Fixes
 
@@ -107,7 +123,6 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [8.6.2](https://github.com/ghiscoding/angular-slickgrid/compare/v8.6.1...v8.6.2) (2024-09-14)
 
-
 ### Performance Improvements
 
 * don't invalidate grid rows more than once ([c0d4fbe](https://github.com/ghiscoding/angular-slickgrid/commit/c0d4fbe999a788faf865c1d9a4467614d32474fe))
@@ -115,19 +130,16 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [8.6.1](https://github.com/ghiscoding/angular-slickgrid/compare/v8.6.0...v8.6.1) (2024-08-31)
 
-
 ### Bug Fixes
 
 * unflattening tree->flat array multiple times ([7740bd4](https://github.com/ghiscoding/angular-slickgrid/commit/7740bd4e74b9016507e909897f6c52745efdc2d5))
 
 ## [8.6.0](https://github.com/ghiscoding/angular-slickgrid/compare/v8.5.2...v8.6.0) (2024-08-24)
 
-
 ### Features
 
 * migrate back to Vanilla-Calendar-Pro ([e51eb06](https://github.com/ghiscoding/angular-slickgrid/commit/e51eb067bc379ade555cab8a67e3c2d9f4a12652))
 * new Drag to Recycle Bin demo ([93750d8](https://github.com/ghiscoding/angular-slickgrid/commit/93750d82afb485367332450e4767f63b3d951b36))
-
 
 ### Bug Fixes
 
@@ -136,20 +148,17 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [8.5.2](https://github.com/ghiscoding/angular-slickgrid/compare/v8.5.1...v8.5.2) (2024-08-17)
 
-
 ### Bug Fixes
 
 * use setTimeout/setInterval from window object with correct TS type ([1050774](https://github.com/ghiscoding/angular-slickgrid/commit/1050774198e180e66753ce6726ef5ff81a8cf00f))
 
 ## [8.5.1](https://github.com/ghiscoding/angular-slickgrid/compare/v8.5.0...v8.5.1) (2024-08-17)
 
-
 ### Bug Fixes
 
 * Tree Data should work without initial sort ([5afdd5b](https://github.com/ghiscoding/angular-slickgrid/commit/5afdd5b65f8f05b7056d2634af25f11ef51d098a))
 
 ## [8.5.0](https://github.com/ghiscoding/angular-slickgrid/compare/v8.4.0...v8.5.0) (2024-08-07)
-
 
 ### Features
 
@@ -158,11 +167,9 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [8.4.0](https://github.com/ghiscoding/angular-slickgrid/compare/v8.3.2...v8.4.0) (2024-07-20)
 
-
 ### Features
 
 * add `columnPickerLabel` for custom label, also fix [#1442](https://github.com/ghiscoding/angular-slickgrid/issues/1442) ([45b0f7f](https://github.com/ghiscoding/angular-slickgrid/commit/45b0f7f77db11fc5d137f59d4e4eaf7ce0c6ddf9))
-
 
 ### Bug Fixes
 
@@ -170,13 +177,11 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [8.3.2](https://github.com/ghiscoding/angular-slickgrid/compare/v8.3.1...v8.3.2) (2024-07-13)
 
-
 ### Bug Fixes
 
 * SASS warnings & other unit test fixes ([227e538](https://github.com/ghiscoding/angular-slickgrid/commit/227e53806ae260930c12e89546394c0da48132f9))
 
 ## [8.3.1](https://github.com/ghiscoding/angular-slickgrid/compare/v8.3.0...v8.3.1) (2024-07-06)
-
 
 ### Bug Fixes
 
@@ -184,18 +189,15 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [8.3.0](https://github.com/ghiscoding/angular-slickgrid/compare/v8.2.0...v8.3.0) (2024-06-29)
 
-
 ### Features
 
 * add onPreHeaderContextMenu for Column Picker usage ([c5be4a8](https://github.com/ghiscoding/angular-slickgrid/commit/c5be4a8f298c1badaca5b665cb76cef6b89583c9))
-
 
 ### Bug Fixes
 
 * setting date picker should always work ([050deb8](https://github.com/ghiscoding/angular-slickgrid/commit/050deb8f4ff02ae37b740f085b6e766010b11977))
 
 ## [8.2.0](https://github.com/ghiscoding/angular-slickgrid/compare/v8.1.0...v8.2.0) (2024-06-18)
-
 
 ### Features
 
@@ -204,7 +206,6 @@ All notable changes to this project will be documented in this file. See [Conven
 * paste multiline content as single cell ([7c9fdc0](https://github.com/ghiscoding/angular-slickgrid/commit/7c9fdc06451fe7a805a7699029af853b490baa0e))
 
 ## [8.1.0](https://github.com/ghiscoding/angular-slickgrid/compare/v8.0.0...v8.1.0) (2024-06-08)
-
 
 ### Features
 
@@ -216,7 +217,6 @@ All notable changes to this project will be documented in this file. See [Conven
 * **export:** enhanced `valueParserCallback` with dataContext & new demo ([bd057e5](https://github.com/ghiscoding/angular-slickgrid/commit/bd057e5950957d044e3d2e34b695a5153f67f96b))
 * **filters:** add a `filterPredicate` option for user customization ([2a7ebba](https://github.com/ghiscoding/angular-slickgrid/commit/2a7ebba4c9204390616b60ca57805ce06951c8b5))
 
-
 ### Bug Fixes
 
 * **demo:** out of boundaries page Grid Preset should be unset ([7e4e3b8](https://github.com/ghiscoding/angular-slickgrid/commit/7e4e3b801c09129ee35e0fab69c0c7bb1f519a3e))
@@ -226,7 +226,6 @@ All notable changes to this project will be documented in this file. See [Conven
 
 > [!NOTE]
 > #### Follow the [Migration 8.x Guide](https://github.com/ghiscoding/angular-slickgrid/wiki/Migration-to-8.x) 📖 for all the changes and take a look at the [v8.0.0](https://github.com/ghiscoding/Angular-Slickgrid/releases/tag/v8.0.0) release for the announcement and quick info.
-
 
 ### ⚠ BREAKING CHANGES
 
@@ -244,7 +243,6 @@ All notable changes to this project will be documented in this file. See [Conven
 * remove Font-Awesome and use new SVG icons ([d73cc9c](https://github.com/ghiscoding/angular-slickgrid/commit/d73cc9c9b5b750f63cbad13f875defe45ca775bb))
 * upgrade to Angular 18 ([97b27e4](https://github.com/ghiscoding/angular-slickgrid/commit/97b27e494dabef77c4f53a1ecf9f762e3a3badf0))
 
-
 ### Bug Fixes
 
 * **deps:** update all non-major dependencies ([7f4e145](https://github.com/ghiscoding/angular-slickgrid/commit/7f4e1452196a16e75a4ecc5d5f39eb081740ba50))
@@ -252,13 +250,11 @@ All notable changes to this project will be documented in this file. See [Conven
 
 # [7.7.0](https://github.com/ghiscoding/angular-slickgrid/compare/v7.6.1...v7.7.0) (2024-04-20)
 
-
 ### Features
 
 * add global `defaultEditorOptions` & `defaultFilterOptions` ([4c6d1de](https://github.com/ghiscoding/angular-slickgrid/commit/4c6d1de6c80dd462511ceea726a52ac82256fdc0))
 
 ## [7.6.1](https://github.com/ghiscoding/angular-slickgrid/compare/v7.6.0...v7.6.1) (2024-04-01)
-
 
 ### Bug Fixes
 
@@ -266,12 +262,10 @@ All notable changes to this project will be documented in this file. See [Conven
 
 # [7.6.0](https://github.com/ghiscoding/angular-slickgrid/compare/v7.5.0...v7.6.0) (2024-03-23)
 
-
 ### Bug Fixes
 
 * Filter `model` is now `FilterConstructor` and shouldn't be newed ([6831c53](https://github.com/ghiscoding/angular-slickgrid/commit/6831c53b4fc4c9c7ec23358a088a0050e2c9b7a9))
 * hide Toggle Dark Mode from Grid Menu by default ([6ccd6f3](https://github.com/ghiscoding/angular-slickgrid/commit/6ccd6f35f7eb0e27d76ddd0dcf598bf14ca9a55d))
-
 
 ### Features
 
@@ -279,19 +273,16 @@ All notable changes to this project will be documented in this file. See [Conven
 
 # [7.5.0](https://github.com/ghiscoding/angular-slickgrid/compare/v7.4.1...v7.5.0) (2024-03-05)
 
-
 ### Bug Fixes
 
 * remove width style on grid container for CSP safe, fixes [#1368](https://github.com/ghiscoding/angular-slickgrid/issues/1368) ([81e5fe1](https://github.com/ghiscoding/angular-slickgrid/commit/81e5fe13eb6aee4a274832560c6eb8dccb08d197))
 * switch to `isomorphic-dompurify` for SSR support ([5b2f29d](https://github.com/ghiscoding/angular-slickgrid/commit/5b2f29d1f5703dcf0670de2d8b4b1d261ec8a983)), closes [/github.com/ghiscoding/Angular-Slickgrid/discussions/838#discussioncomment-8574215](https://github.com//github.com/ghiscoding/Angular-Slickgrid/discussions/838/issues/discussioncomment-8574215)
-
 
 ### Features
 
 * add Dark Mode grid option ([91c2726](https://github.com/ghiscoding/angular-slickgrid/commit/91c2726281571180e012c2a3a4419abab76d4bae))
 
 ## [7.4.1](https://github.com/ghiscoding/angular-slickgrid/compare/v7.4.0...v7.4.1) (2024-02-13)
-
 
 ### Bug Fixes
 
@@ -300,13 +291,11 @@ All notable changes to this project will be documented in this file. See [Conven
 
 # [7.4.0](https://github.com/ghiscoding/angular-slickgrid/compare/v7.3.1...v7.4.0) (2024-02-13)
 
-
 ### Bug Fixes
 
 * **build:** add compilation mode to fix npm publish ([3e4dc70](https://github.com/ghiscoding/angular-slickgrid/commit/3e4dc7084c4757930e51c7fe9909fb816fefafec))
 * change namespace imports to ESM default imports. Fixes Angular esbuild error on DomPurify with rowDetailView and no pre/post template [#1362](https://github.com/ghiscoding/angular-slickgrid/issues/1362) ([fac2b37](https://github.com/ghiscoding/angular-slickgrid/commit/fac2b37a179f0f601ec36608c5bc2454a5073d34))
 * **demo:** change trading demo full screen z-index lower than ms-select ([ae57fbe](https://github.com/ghiscoding/angular-slickgrid/commit/ae57fbeda1d07577f32df2716cb2c38ea346ca81))
-
 
 ### Features
 
@@ -314,18 +303,15 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [7.3.1](https://github.com/ghiscoding/angular-slickgrid/compare/v7.3.0...v7.3.1) (2024-01-27)
 
-
 ### Performance Improvements
 
 * decrease number of calls to translate all extensions only once ([21a5016](https://github.com/ghiscoding/angular-slickgrid/commit/21a501608359466d5aaf76392b5e392f3e357123))
 
 # [7.3.0](https://github.com/ghiscoding/angular-slickgrid/compare/v7.2.0...v7.3.0) (2024-01-21)
 
-
 ### Features
 
 * **plugin:** new Row Based Editing ([1f768a5](https://github.com/ghiscoding/angular-slickgrid/commit/1f768a575d011fb5ba487988567e6b959a4bdfcd))
-
 
 ### Performance Improvements
 
@@ -333,18 +319,15 @@ All notable changes to this project will be documented in this file. See [Conven
 
 # [7.2.0](https://github.com/ghiscoding/angular-slickgrid/compare/v7.1.0...v7.2.0) (2023-12-30)
 
-
 ### Bug Fixes
 
 * sync row defatil grid option to fix build ([870cf47](https://github.com/ghiscoding/angular-slickgrid/commit/870cf47589cc095dd2e87b504fe537193c3b9588))
-
 
 ### Features
 
 * (re)add option to cancel Row Detail opening ([03c2c64](https://github.com/ghiscoding/angular-slickgrid/commit/03c2c6498cf1ac62f21c2db62a215b3c63deed1e))
 
 # [7.1.0](https://github.com/ghiscoding/angular-slickgrid/compare/v7.0.3...v7.1.0) (2023-12-21)
-
 
 ### Features
 
@@ -354,20 +337,17 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [7.0.3](https://github.com/ghiscoding/angular-slickgrid/compare/v7.0.2...v7.0.3) (2023-12-16)
 
-
 ### Bug Fixes
 
 * **deps:** update all Slickgrid-Universal dependencies ([fdc5fa8](https://github.com/ghiscoding/angular-slickgrid/commit/fdc5fa894e5c301be756d06a42cf4a1c4274d01e))
 
 ## [7.0.2](https://github.com/ghiscoding/angular-slickgrid/compare/v7.0.1...v7.0.2) (2023-12-16)
 
-
 ### Bug Fixes
 
 * read external resource when required ([6e9af2a](https://github.com/ghiscoding/angular-slickgrid/commit/6e9af2aa3424bb3d01a4cda6d7926d3f8dfcf820)), closes [#1320](https://github.com/ghiscoding/angular-slickgrid/issues/1320)
 
 ## [7.0.1](https://github.com/ghiscoding/angular-slickgrid/compare/v7.0.0...v7.0.1) (2023-12-15)
-
 
 ### Bug Fixes
 
@@ -380,9 +360,7 @@ All notable changes to this project will be documented in this file. See [Conven
 * migrate to Slickgrid-Universal v4.0 new major version PR (#1325) ([65aac1c](https://github.com/ghiscoding/Angular-Slickgrid/commit/65aac1c3e71ffc890dbdc97fcbbaa352fc527a32))
 * upgrade to Angular 17 (#1328) ([b72a828](https://github.com/ghiscoding/Angular-Slickgrid/pull/1328))
 
-
 ## [6.6.5](https://github.com/ghiscoding/angular-slickgrid/compare/v6.6.4...v6.6.5) (2023-12-12)
-
 
 ### Bug Fixes
 
@@ -390,13 +368,11 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [6.6.4](https://github.com/ghiscoding/angular-slickgrid/compare/v6.6.3...v6.6.4) (2023-12-08)
 
-
 ### Features
 
 * introduce devMode to support nodejs based unit testing ([fe76745](https://github.com/ghiscoding/angular-slickgrid/commit/fe76745803ecee6420f8d391a07eca443adee46b))
 
 ## [6.6.3](https://github.com/ghiscoding/angular-slickgrid/compare/v6.6.2...v6.6.3) (2023-12-08)
-
 
 ### Bug Fixes
 
@@ -405,7 +381,6 @@ All notable changes to this project will be documented in this file. See [Conven
 ## [6.6.2](https://github.com/ghiscoding/angular-slickgrid/compare/v6.6.1...v6.6.2) (2023-11-26)
 
 ## [6.6.1](https://github.com/ghiscoding/angular-slickgrid/compare/v6.6.0...v6.6.1) (2023-11-26)
-
 
 ### Bug Fixes
 
@@ -416,13 +391,11 @@ All notable changes to this project will be documented in this file. See [Conven
 
 # [6.6.0](https://github.com/ghiscoding/angular-slickgrid/compare/v6.5.1...v6.6.0) (2023-11-26)
 
-
 ### Features
 
 * **GraphQL:** .excludeFieldFromQuery, exclude field but keep fields ([61482dc](https://github.com/ghiscoding/angular-slickgrid/commit/61482dcf1ce59f2d4859526799ff06f495059638))
 
 ## [6.5.1](https://github.com/ghiscoding/angular-slickgrid/compare/v6.5.0...v6.5.1) (2023-11-13)
-
 
 ### Bug Fixes
 
@@ -430,13 +403,11 @@ All notable changes to this project will be documented in this file. See [Conven
 
 # [6.5.0](https://github.com/ghiscoding/angular-slickgrid/compare/v6.4.0...v6.5.0) (2023-11-11)
 
-
 ### Bug Fixes
 
 * SlickCellRangeSelector stopped event bubbling in editor, fix [#1303](https://github.com/ghiscoding/angular-slickgrid/issues/1303) ([e6581db](https://github.com/ghiscoding/angular-slickgrid/commit/e6581dbfdb004812c4a043889569e1ce33b5c1a5))
 
 # [6.4.0](https://github.com/ghiscoding/angular-slickgrid/compare/v6.3.1...v6.4.0) (2023-11-02)
-
 
 ### Features
 
@@ -447,19 +418,16 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [6.3.1](https://github.com/ghiscoding/angular-slickgrid/compare/v6.3.0...v6.3.1) (2023-10-06)
 
-
 ### Bug Fixes
 
 * **graphql:** column with complex object could throw null pointer exception ([15d2246](https://github.com/ghiscoding/angular-slickgrid/commit/15d2246b0260716bbba4087f7e625e51f276149c))
 
 # [6.3.0](https://github.com/ghiscoding/angular-slickgrid/compare/v6.2.2...v6.3.0) (2023-10-05)
 
-
 ### Bug Fixes
 
 * avoid setTimeout after creating dynamic component, fixes [#1273](https://github.com/ghiscoding/angular-slickgrid/issues/1273) ([9436b68](https://github.com/ghiscoding/angular-slickgrid/commit/9436b682ccea391df8466585642a3250c219174d))
 * remove component after copying innerHTML ([c4ba24a](https://github.com/ghiscoding/angular-slickgrid/commit/c4ba24a361869339bc03343402f698b65f6abd62))
-
 
 ### Features
 
@@ -467,13 +435,11 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [6.2.2](https://github.com/ghiscoding/angular-slickgrid/compare/v6.2.1...v6.2.2) (2023-09-24)
 
-
 ### Bug Fixes
 
 * bump Slickgrid-Universal w/auto-resize w/o container, fixes [#1266](https://github.com/ghiscoding/angular-slickgrid/issues/1266) ([c8a9317](https://github.com/ghiscoding/angular-slickgrid/commit/c8a931717254cda1b30222427311a838856bb066))
 
 ## [6.2.1](https://github.com/ghiscoding/angular-slickgrid/compare/v6.2.0...v6.2.1) (2023-09-05)
-
 
 ### Bug Fixes
 
@@ -481,27 +447,21 @@ All notable changes to this project will be documented in this file. See [Conven
 
 # [6.2.0](https://github.com/ghiscoding/angular-slickgrid/compare/v6.1.0...v6.2.0) (2023-08-21)
 
-
 ### Bug Fixes
 
 * adding dataset hierarchical item shouldn't cause scroll flickering ([4c5864f](https://github.com/ghiscoding/angular-slickgrid/commit/4c5864f376e9e645c10668e7f12dfe5ad44332bf))
-
 
 ### Features
 
 * **TreeData:** add optional Aggregators for Tree Data totals calc ([236add4](https://github.com/ghiscoding/angular-slickgrid/commit/236add4ea8aa6ad744c07221272e2542f0b220a3))
 
-
-
 # [6.1.0](https://github.com/ghiscoding/angular-slickgrid/compare/v6.0.1...v6.1.0) (2023-07-21)
-
 
 ### Features
 
 * **common:** add `scrollIntoView` to GridService `addItems`, fix [#1201](https://github.com/ghiscoding/angular-slickgrid/issues/1201) ([f93f5bf](https://github.com/ghiscoding/angular-slickgrid/commit/f93f5bf29a7d6f3804e12c58a06e70b01f4cf99f))
 
 ## [6.0.1](https://github.com/ghiscoding/angular-slickgrid/compare/v6.0.0...v6.0.1) (2023-07-01)
-
 
 ### Bug Fixes
 
@@ -521,13 +481,11 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [5.6.4](https://github.com/ghiscoding/angular-slickgrid/compare/v5.6.3...v5.6.4) (2023-05-20)
 
-
 ### Bug Fixes
 
 * **export:** fix negative number exports to Excel, fixes [#1135](https://github.com/ghiscoding/angular-slickgrid/issues/1135) ([f52dc8a](https://github.com/ghiscoding/angular-slickgrid/commit/f52dc8aea6c8f26a6a0a9072521c609223b3a033))
 
 ## [5.6.3](https://github.com/ghiscoding/angular-slickgrid/compare/v5.6.1...v5.6.3) (2023-03-23)
-
 
 ### Bug Fixes
 
@@ -536,13 +494,11 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [5.6.1](https://github.com/ghiscoding/angular-slickgrid/compare/v5.6.0...v5.6.1) (2023-03-03)
 
-
 ### Bug Fixes
 
 * draggable grouping shouldn't throw error when dynamically changing columns ([b0791ec](https://github.com/ghiscoding/angular-slickgrid/commit/b0791ec35f2fde9b33c9500e5b154571e3229d72))
 
 # [5.6.0](https://github.com/ghiscoding/angular-slickgrid/compare/v5.5.1...v5.6.0) (2023-02-24)
-
 
 ### Bug Fixes
 
@@ -552,7 +508,6 @@ All notable changes to this project will be documented in this file. See [Conven
 
 # [5.5.0](https://github.com/ghiscoding/angular-slickgrid/compare/v5.4.1...v5.5.0) (2023-02-17)
 
-
 ### Bug Fixes
 
 * **RowDetail:** Row Detail extension should work with editable grid ([85cde68](https://github.com/ghiscoding/angular-slickgrid/commit/85cde68ddf7e78e24da8eda19154e3b5d9396a70))
@@ -561,13 +516,11 @@ All notable changes to this project will be documented in this file. See [Conven
 
 # [5.4.0](https://github.com/ghiscoding/angular-slickgrid/compare/v5.3.0...v5.4.0) (2023-02-04)
 
-
 ### Features
 
 * **dataView:** add option to apply row selection to all pages ([e6335be](https://github.com/ghiscoding/angular-slickgrid/commit/e6335be01875e2e1223039f2daa11cea23643843))
 
 # [5.3.0](https://github.com/ghiscoding/angular-slickgrid/compare/v5.2.2...v5.3.0) (2023-01-21)
-
 
 ### Bug Fixes
 
@@ -575,20 +528,17 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [5.2.2](https://github.com/ghiscoding/angular-slickgrid/compare/v5.2.1...v5.2.2) (2022-12-24)
 
-
 ### Bug Fixes
 
 * **common:** cell selection in Firefox not working ([45c5791](https://github.com/ghiscoding/angular-slickgrid/commit/45c5791c9b8fefdf1ae1b14d70b1f398500c8adf))
 
 ## [5.2.1](https://github.com/ghiscoding/angular-slickgrid/compare/v5.2.0...v5.2.1) (2022-12-22)
 
-
 ### Bug Fixes
 
 * **styling:** make Grid Menu item full width instead of max-content ([b79a6ae](https://github.com/ghiscoding/angular-slickgrid/commit/b79a6ae51ec2346bcd21d4e9e35317116a57b84d))
 
 # [5.2.0](https://github.com/ghiscoding/angular-slickgrid/compare/v5.1.3...v5.2.0) (2022-12-22)
-
 
 ### Features
 
@@ -599,14 +549,12 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [5.1.3](https://github.com/ghiscoding/angular-slickgrid/compare/v5.1.2...v5.1.3) (2022-12-08)
 
-
 ### Bug Fixes
 
 * **pinning:** cols reorder & freezing shouldn't affect order ([a81f92a](https://github.com/ghiscoding/angular-slickgrid/commit/a81f92a8392c514b35f5b460205070c838c2aec4))
 * **sorting:** update Slickgrid-Universal, fixes date sort shuffling ([4f70ada](https://github.com/ghiscoding/angular-slickgrid/commit/4f70adaa5e0c19715b369acd3e815d68b7b44631))
 
 ## [5.1.2](https://github.com/ghiscoding/angular-slickgrid/compare/v5.1.1...v5.1.2) (2022-12-02)
-
 
 ### Bug Fixes
 
@@ -620,11 +568,9 @@ All notable changes to this project will be documented in this file. See [Conven
 
 # [5.1.0](https://github.com/ghiscoding/angular-slickgrid/compare/v5.0.2...v5.1.0) (2022-11-17)
 
-
 ### Bug Fixes
 
 * **deps:** update dependency dompurify to ^2.4.1 ([84ecc9d](https://github.com/ghiscoding/angular-slickgrid/commit/84ecc9d80ef26b7bf4b4d9acd2e96f7b5567d154))
-
 
 ### Features
 
@@ -635,22 +581,17 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [5.0.2](https://github.com/ghiscoding/angular-slickgrid/compare/v5.0.1...v5.0.2) (2022-10-18)
 
-
 ### Bug Fixes
 
 * load SortableJS via `angular.json` instead of component ([69f14de](https://github.com/ghiscoding/angular-slickgrid/commit/69f14deab289f4c8cf6be9343f7bc590425ef8b5))
 
 ## [5.0.1](https://github.com/ghiscoding/angular-slickgrid/compare/v5.0.0...v5.0.1) (2022-10-18)
 
-
 # [5.0.0](https://github.com/ghiscoding/angular-slickgrid/compare/v5.0.0-alpha.0...v5.0.0) (2022-10-17)
-
 
 # [5.0.0-alpha.0](https://github.com/ghiscoding/angular-slickgrid/compare/v4.3.1...v5.0.0-alpha.0) (2022-10-15)
 
-
 ### [4.3.1](https://github.com/ghiscoding/angular-slickgrid/compare/v4.3.0...v4.3.1) (2022-09-12)
-
 
 ### Bug Fixes
 
@@ -658,7 +599,6 @@ All notable changes to this project will be documented in this file. See [Conven
 * **deps:** downgrade to Angular 13 to avoid breaking changes, fixes [#994](https://github.com/ghiscoding/angular-slickgrid/issues/994) ([c0a3816](https://github.com/ghiscoding/angular-slickgrid/commit/c0a381654e969f5fc912fe9c13173ce378d25cd0))
 
 ## [4.3.0](https://github.com/ghiscoding/angular-slickgrid/compare/v4.2.7...v4.3.0) (2022-08-15)
-
 
 ### ⚠ BREAKING CHANGES
 
@@ -671,13 +611,11 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [4.2.7](https://github.com/ghiscoding/angular-slickgrid/compare/v4.2.6...v4.2.7) (2022-08-02)
 
-
 ### Bug Fixes
 
 * **version:** update to latest Slickgrid-Universal versions ([c37f4b6](https://github.com/ghiscoding/angular-slickgrid/commit/c37f4b6422ea1863597d261260d1cf99bd7a0778))
 
 ### [4.2.6](https://github.com/ghiscoding/angular-slickgrid/compare/v4.2.5...v4.2.6) (2022-07-28)
-
 
 ### Bug Fixes
 
@@ -685,13 +623,11 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [4.2.5](https://github.com/ghiscoding/angular-slickgrid/compare/v4.2.4...v4.2.5) (2022-07-28)
 
-
 ### Bug Fixes
 
 * **build:** use patch version when releasing from slickgrid-universal ([4c58560](https://github.com/ghiscoding/angular-slickgrid/commit/4c58560f66fad1972c327d073a91aed823754d55))
 
 ### [4.2.4](https://github.com/ghiscoding/angular-slickgrid/compare/v4.2.3...v4.2.4) (2022-07-07)
-
 
 ### Bug Fixes
 
@@ -700,13 +636,11 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [4.2.3](https://github.com/ghiscoding/angular-slickgrid/compare/v4.2.2...v4.2.3) (2022-07-06)
 
-
 ### Bug Fixes
 
 * **composite:** selected row count always 0 on mass-selected, fix [#951](https://github.com/ghiscoding/angular-slickgrid/issues/951) ([757155f](https://github.com/ghiscoding/angular-slickgrid/commit/757155f839a023bfb83b05d25d6ce1b9d3a23ce6))
 
 ### [4.2.2](https://github.com/ghiscoding/angular-slickgrid/compare/v4.2.1...v4.2.2) (2022-07-05)
-
 
 ### Bug Fixes
 
@@ -716,18 +650,15 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [4.2.0](https://github.com/ghiscoding/angular-slickgrid/compare/v4.1.4...v4.2.0) (2022-06-18)
 
-
 ### Features
 
 * **core:** upgrade to jQuery 3.6 and jQuery-UI 1.13 ([7e7f24c](https://github.com/ghiscoding/angular-slickgrid/commit/7e7f24c8fdd62b2aff1fd28449b122cc629bc52f))
-
 
 ### Bug Fixes
 
 * **core:** throw error when `[gridOptions]` missing, fixes [#910](https://github.com/ghiscoding/angular-slickgrid/issues/910) ([974be12](https://github.com/ghiscoding/angular-slickgrid/commit/974be124bbb3210d71b86cb6d93a35e8e2e60405))
 
 ### [4.1.4](https://github.com/ghiscoding/angular-slickgrid/compare/v4.1.3...v4.1.4) (2022-04-28)
-
 
 ### Bug Fixes
 
@@ -737,13 +668,11 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [4.1.2](https://github.com/ghiscoding/angular-slickgrid/compare/v4.1.1...v4.1.2) (2022-02-15)
 
-
 ### Bug Fixes
 
 * **core:** pagination set in global config should work, fixes [#879](https://github.com/ghiscoding/angular-slickgrid/issues/879) ([7237a23](https://github.com/ghiscoding/angular-slickgrid/commit/7237a238d0eef14abc57afb42114b1eea9dcfe66))
 
 ### [4.1.1](https://github.com/ghiscoding/angular-slickgrid/compare/v4.1.0...v4.1.1) (2022-01-19)
-
 
 ### Bug Fixes
 
@@ -753,19 +682,16 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [4.1.0](https://github.com/ghiscoding/angular-slickgrid/compare/v4.0.0...v4.1.0) (2022-01-06)
 
-
 ### Features
 
 * **demo:** add new Example 33 to demo Realtime Trading ([75987b4](https://github.com/ghiscoding/angular-slickgrid/commit/75987b4c7eea85a8e233930053e6507170fa157b))
 * **OData:** add `$select` and `$expand` query options ([b445a79](https://github.com/ghiscoding/angular-slickgrid/commit/b445a79b72e4a707070b3871677d3caa76d6a3e2))
-
 
 ### Bug Fixes
 
 * **build:** should use `EventSubscription` to be unsubscribed ([ee81db3](https://github.com/ghiscoding/angular-slickgrid/commit/ee81db3c13e562948171d80c60453c11a905b350))
 
 ## [4.0.0](https://github.com/ghiscoding/angular-slickgrid/compare/v3.3.2...v4.0.0) (2021-12-11)
-
 
 ### ⚠ BREAKING CHANGES
 
@@ -776,17 +702,14 @@ All notable changes to this project will be documented in this file. See [Conven
 
 * **plugins:** use new internal slickgrid-universal plugins ([9ef4651](https://github.com/ghiscoding/angular-slickgrid/commit/9ef46511eab80ab923ff983b02830da0a5f287c1))
 
-
 ### Bug Fixes
 
 * **styling:** better support of auto width on drop menu ([44a979d](https://github.com/ghiscoding/angular-slickgrid/commit/44a979df8e44bfeddb5b709991507998bb121207))
-
 
 * Merge pull request #864 from ghiscoding/feat/slickgrid-universal-plugins ([ee3bf0e](https://github.com/ghiscoding/angular-slickgrid/commit/ee3bf0ec311ece5836234087668db6b6a9fe0dc7)), closes [#864](https://github.com/ghiscoding/angular-slickgrid/issues/864)
 * Merge pull request #857 from ghiscoding/feat/angular13 ([9774b80](https://github.com/ghiscoding/angular-slickgrid/commit/9774b80a7b37940cad5b40a4f060415b0967750b)), closes [#857](https://github.com/ghiscoding/angular-slickgrid/issues/857)
 
 ### [3.3.2](https://github.com/ghiscoding/angular-slickgrid/compare/v3.3.1...v3.3.2) (2021-11-20)
-
 
 ### Bug Fixes
 
@@ -796,14 +719,12 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [3.3.0](https://github.com/ghiscoding/angular-slickgrid/compare/v3.2.0...v3.3.0) (2021-10-28)
 
-
 ### Features
 
 * **plugin:** add example for new Custom Tooltip plugin ([44dd1cd](https://github.com/ghiscoding/angular-slickgrid/commit/44dd1cdccf82d9ff1c4ffd164ba2120fdbca01be))
 * **plugin:** add row move shadow item while moving/dragging row ([9cf714f](https://github.com/ghiscoding/angular-slickgrid/commit/9cf714f99ec25ac880da8b9662a16e0de55e619c))
 
 ## [3.2.0](https://github.com/ghiscoding/angular-slickgrid/compare/v3.1.0...v3.2.0) (2021-09-29)
-
 
 ### Features
 
@@ -813,12 +734,10 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [3.1.0](https://github.com/ghiscoding/angular-slickgrid/compare/v3.0.5...v3.1.0) (2021-09-09)
 
-
 ### Features
 
 * **backend:** rollback on error & add cancellable events ([d3f31d7](https://github.com/ghiscoding/angular-slickgrid/commit/d3f31d773322e51b667164826ddde1dbd62de4e3))
 * **tree:** add `dynamicallyToggledItemState` method to toggle parent(s) ([afb61cf](https://github.com/ghiscoding/angular-slickgrid/commit/afb61cf9caee78f6620550c1e6f00a841c9a1d83))
-
 
 ### Bug Fixes
 
@@ -834,13 +753,11 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [3.0.1](https://github.com/ghiscoding/angular-slickgrid/compare/v3.0.0...v3.0.1) (2021-07-20)
 
-
 ### Bug Fixes
 
 * **build:** revert to previous ng-packgr build config ([34890ca](https://github.com/ghiscoding/angular-slickgrid/commit/34890cadea255dd9ed033e0e6714b695f8193d02))
 
 ## [3.0.0](https://github.com/ghiscoding/angular-slickgrid/compare/v2.30.2...v3.0.0) (2021-07-20)
-
 
 ### ⚠ BREAKING CHANGES
 
@@ -854,16 +771,13 @@ All notable changes to this project will be documented in this file. See [Conven
 * **core:** use Slickgrid-Universal Formatters and Grouping Formatters ([8648a88](https://github.com/ghiscoding/angular-slickgrid/commit/8648a88fb5b6354e63640476f6d8799ffabc2e19))
 * **footer:** reuse Footer Component from Slickgrid-Universal ([3932032](https://github.com/ghiscoding/angular-slickgrid/commit/393203249c0820fe21eb774b751fb570fdd6da9e))
 
-
 ### Bug Fixes
 
 * **tree:** same dataset length but w/different prop should refresh Tree ([1798a48](https://github.com/ghiscoding/angular-slickgrid/commit/1798a487413130becf3b6a87feaa7fac4ceef1ea))
 
-
 * Merge pull request #803 from ghiscoding/feat/version-next-universal ([dae384c](https://github.com/ghiscoding/angular-slickgrid/commit/dae384c5d0b9fda5a71ffc4c9b70ee073355563d)), closes [#803](https://github.com/ghiscoding/angular-slickgrid/issues/803)
 
 ### [2.30.2](https://github.com/ghiscoding/angular-slickgrid/compare/v2.30.1...v2.30.2) (2021-06-30)
-
 
 ### Bug Fixes
 
@@ -872,7 +786,6 @@ All notable changes to this project will be documented in this file. See [Conven
 ### [2.30.1](https://github.com/ghiscoding/angular-slickgrid/compare/v2.30.0...v2.30.1) (2021-06-29)
 
 ## [2.30.0](https://github.com/ghiscoding/angular-slickgrid/compare/v2.29.1...v2.30.0) (2021-06-29)
-
 
 ### Features
 
@@ -892,7 +805,6 @@ All notable changes to this project will be documented in this file. See [Conven
 * **tree:** add Tree Collapse Grid State/Preset ([87d5c2a](https://github.com/ghiscoding/angular-slickgrid/commit/87d5c2a41fab6fce8825fd5fc8b73269e876a24d))
 * **editors:**  add new Input Password Editor which uses common inputEditor ([66535fd](https://github.com/ghiscoding/angular-slickgrid/commit/66535fd9ea2602838c1d53c14134ea23749815c6))
 * **filters:**  convert jQuery to native element on few more filters ([331accf](https://github.com/ghiscoding/angular-slickgrid/commit/331accffe94aa3286e5e540e96e6f06f7a5e7349))
-
 
 ### Bug Fixes
 
@@ -920,7 +832,6 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.29.1](https://github.com/ghiscoding/angular-slickgrid/compare/v2.29.0...v2.29.1) (2021-05-21)
 
-
 ### Bug Fixes
 
 * **backend:** able to preset filters on hidden columns & all queried ([e10f723](https://github.com/ghiscoding/angular-slickgrid/commit/e10f7232a1738ad87a1f7bf1438ffa572edf0a53))
@@ -928,7 +839,6 @@ All notable changes to this project will be documented in this file. See [Conven
 * **sorting:** multi-column sort shouldn't work when option is disabled ([9841155](https://github.com/ghiscoding/angular-slickgrid/commit/984115559fd537aed0cdd2b3a297b9e9aef8cb08))
 
 ## [2.29.0](https://github.com/ghiscoding/angular-slickgrid/compare/v2.28.2...v2.29.0) (2021-05-19)
-
 
 ### Features
 
@@ -938,7 +848,6 @@ All notable changes to this project will be documented in this file. See [Conven
 * **resizer:** add single Column Resize by Content dblClick & headerMenu ([183f33f](https://github.com/ghiscoding/angular-slickgrid/commit/183f33f70070665da1fc068e74be0a5875662e99))
 * **styling:** switch from node-sass to dart-sass (sass) ([3dcf7c9](https://github.com/ghiscoding/angular-slickgrid/commit/3dcf7c9766a24beaa4ae965206eedb2149cfd30f))
 * **tree:** improve Tree Data speed considerably & fix more issues ([900cd59](https://github.com/ghiscoding/angular-slickgrid/commit/900cd5966ff298f88805f075151fd3b65e8fedf2))
-
 
 ### Bug Fixes
 
@@ -952,7 +861,6 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.28.2](https://github.com/ghiscoding/angular-slickgrid/compare/v2.28.1...v2.28.2) (2021-04-26)
 
-
 ### Bug Fixes
 
 * **footer:** add correct implementation of locale usage in custom footer ([5dcac2f](https://github.com/ghiscoding/angular-slickgrid/commit/5dcac2ff2c64b03c66fcb5f0f06c3aed1cb0cbac))
@@ -963,7 +871,6 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [2.28.0](https://github.com/ghiscoding/angular-slickgrid/compare/v2.27.0...v2.28.0) (2021-04-22)
 
-
 ### Features
 
 * **filters:** add option to filter empty values for select filter ([7c9ce5a](https://github.com/ghiscoding/angular-slickgrid/commit/7c9ce5a2c0b6835514ac71f431185d1e996513d6))
@@ -972,13 +879,11 @@ All notable changes to this project will be documented in this file. See [Conven
 * **resize:** add column resize by cell content ([c198686](https://github.com/ghiscoding/angular-slickgrid/commit/c1986867334675209da20d6dac89d67e3cb25a7c))
 * **typing:** add missing item metadata interface ([c3eefd0](https://github.com/ghiscoding/angular-slickgrid/commit/c3eefd0851c6350604f0ccc594ac33974fcd2712))
 
-
 ### Bug Fixes
 
 * **exports:** grid with colspan should be export accordingly ([00989ab](https://github.com/ghiscoding/angular-slickgrid/commit/00989ab0076b2a4e143b01b449b9ca36a795de30))
 
 ## [2.27.0](https://github.com/ghiscoding/angular-slickgrid/compare/v2.26.1...v2.27.0) (2021-03-23)
-
 
 ### Features
 
@@ -988,7 +893,6 @@ All notable changes to this project will be documented in this file. See [Conven
 * **filters:** add possibility to filter by text range like "a..e" ([#711](https://github.com/ghiscoding/angular-slickgrid/issues/711)) ([aa4fa03](https://github.com/ghiscoding/angular-slickgrid/commit/aa4fa0313523da8b1754d8d63dabc134f54501e9))
 * **filters:** display operator into input text filter from Grid Presets ([#719](https://github.com/ghiscoding/angular-slickgrid/issues/719)) ([cf6593a](https://github.com/ghiscoding/angular-slickgrid/commit/cf6593aa40fbca900b2ac2c0ac1cde377e3d270d))
 * **state:** add Pinning (frozen) to Grid State & Presets ([b47f2a0](https://github.com/ghiscoding/angular-slickgrid/commit/b47f2a019c2bb20bc38118b974596a9b7f62138f))
-
 
 ### Bug Fixes
 
@@ -1002,7 +906,6 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.26.1](https://github.com/ghiscoding/angular-slickgrid/compare/v2.26.0...v2.26.1) (2021-03-01)
 
-
 ### Bug Fixes
 
 * **build:** enable tsconfig strict mode tsconfig, fixes [#675](https://github.com/ghiscoding/angular-slickgrid/issues/675) ([#702](https://github.com/ghiscoding/angular-slickgrid/issues/702)) ([7219249](https://github.com/ghiscoding/angular-slickgrid/commit/7219249d99f63f839c19ae7d37191945b74d1215))
@@ -1013,7 +916,6 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [2.26.0](https://github.com/ghiscoding/angular-slickgrid/compare/v2.25.1...v2.26.0) (2021-02-16)
 
-
 ### Features
 
 * **filters:** add updateSingleFilter for a single external filter ([#699](https://github.com/ghiscoding/angular-slickgrid/issues/699)) ([677beb4](https://github.com/ghiscoding/angular-slickgrid/commit/677beb4016f03a6a2086a516cceac8117f24ea4a))
@@ -1021,7 +923,6 @@ All notable changes to this project will be documented in this file. See [Conven
 * **perf:** improve date sorting speed ([#691](https://github.com/ghiscoding/angular-slickgrid/issues/691)) ([1040352](https://github.com/ghiscoding/angular-slickgrid/commit/1040352922d6c3922327d6a5ba5ed594846ad4bf))
 * **services:** add bulk transactions in Grid Service CRUD methods ([#687](https://github.com/ghiscoding/angular-slickgrid/issues/687)) ([277e627](https://github.com/ghiscoding/angular-slickgrid/commit/277e6275f71340ebcaea43b03aadb595bc973cad))
 * **tests:** add Cypress E2E tests to Bootstrap Tabs Example ([#698](https://github.com/ghiscoding/angular-slickgrid/issues/698)) ([b8d1d14](https://github.com/ghiscoding/angular-slickgrid/commit/b8d1d145c13abf0458d63c3aa5c91534ac6e59aa))
-
 
 ### Bug Fixes
 
@@ -1033,12 +934,10 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.25.1](https://github.com/ghiscoding/angular-slickgrid/compare/v2.25.0...v2.25.1) (2021-01-25)
 
-
 ### Features
 
 * **editors:** change all private keyword to protected for extensability ([#680](https://github.com/ghiscoding/angular-slickgrid/issues/680)) ([029a90c](https://github.com/ghiscoding/angular-slickgrid/commit/029a90ce2f776f606e6947dc9a95b24ca3d17dfa))
 * **filters:** change all private keyword to protected for extensability ([#679](https://github.com/ghiscoding/angular-slickgrid/issues/679)) ([e5b5e8d](https://github.com/ghiscoding/angular-slickgrid/commit/e5b5e8d9a3d40870135058d39154786962e7675c))
-
 
 ### Bug Fixes
 
@@ -1052,14 +951,12 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [2.25.0](https://github.com/ghiscoding/angular-slickgrid/compare/v2.24.1...v2.25.0) (2021-01-06)
 
-
 ### Features
 
 * **core:** export Editors, Filters & Formatters as Public ([e244218](https://github.com/ghiscoding/angular-slickgrid/commit/e2442184f11e313150208f2b580ceb73fd3700f5))
 * **core:** methods to change column positions/visibilities dynamically ([49ab5e5](https://github.com/ghiscoding/angular-slickgrid/commit/49ab5e589b12eada71c214054920e7a2e9e02404))
 * **editors:** add Column Editor collectionOverride option ([96cbd78](https://github.com/ghiscoding/angular-slickgrid/commit/96cbd7861765da28bf425666960404cf03c5dcad))
 * **styling:** add support for Bootstrap 5 ([afb79e7](https://github.com/ghiscoding/Angular-Slickgrid/commit/afb79e769644e4b0c126f2b1d30a82ff64376708))
-
 
 ### Bug Fixes
 
@@ -1076,19 +973,16 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.24.1](https://github.com/ghiscoding/angular-slickgrid/compare/v2.24.0...v2.24.1) (2020-12-10)
 
-
 ### Bug Fixes
 
 * **filters:** use offset left to calculate multi-select auto position (left/right) ([9d79e2d](https://github.com/ghiscoding/angular-slickgrid/commit/9d79e2d149b21fb8766e0ad40cbbd4cf4f6572e6))
 
 ## [2.24.0](https://github.com/ghiscoding/angular-slickgrid/compare/v2.23.3...v2.24.0) (2020-12-10)
 
-
 ### Features
 
 * **editors:** add few editor options to LongText (textarea) Editor ([38c7442](https://github.com/ghiscoding/angular-slickgrid/commit/38c7442792afd1d8512da7c5a1e5886e2d93c4a4))
 * **filters:** add auto position (left/right) to multiple-select lib ([1b23b84](https://github.com/ghiscoding/angular-slickgrid/commit/1b23b84f7d9d099301b757ec9d59bf254e13b837))
-
 
 ### Bug Fixes
 
@@ -1098,11 +992,9 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.23.3](https://github.com/ghiscoding/angular-slickgrid/compare/v2.23.2...v2.23.3) (2020-12-02)
 
-
 ### Features
 
 * **core:** add enableMouseWheelScrollHandler grid option ([3150124](https://github.com/ghiscoding/angular-slickgrid/commit/31501249701458e07fa8e914b9efee48f8c4e036))
-
 
 ### Bug Fixes
 
@@ -1110,7 +1002,6 @@ All notable changes to this project will be documented in this file. See [Conven
 * **formatters:** date formatters should accept ISO input & output to US ([482d0f5](https://github.com/ghiscoding/angular-slickgrid/commit/482d0f5d2c9d6ae561d36081917beaf420971726))
 
 ### [2.23.2](https://github.com/ghiscoding/angular-slickgrid/compare/v2.23.1...v2.23.2) (2020-11-20)
-
 
 ### Bug Fixes
 
@@ -1120,14 +1011,12 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.23.1](https://github.com/ghiscoding/angular-slickgrid/compare/v2.23.0...v2.23.1) (2020-11-18)
 
-
 ### Features
 
 * **core:** add "Empty Data" warning message when grid is empty ([#631](https://github.com/ghiscoding/angular-slickgrid/issues/631)) ([8f72e38](https://github.com/ghiscoding/angular-slickgrid/commit/8f72e387a0e16fa205160e60fb31a55e6f9fadd1))
 * **formatters:** add a fake hyperlink formatter ([#630](https://github.com/ghiscoding/angular-slickgrid/issues/630)) ([694f0ea](https://github.com/ghiscoding/angular-slickgrid/commit/694f0eaecf50db6f77f734cfd0b4ce0ddeae4e25))
 * **formatters:** add AlignRight and AlignCenter Formatters ([#634](https://github.com/ghiscoding/angular-slickgrid/issues/634)) ([3645d60](https://github.com/ghiscoding/angular-slickgrid/commit/3645d6055ed617a84ee28fccdad944fc1a538ffe))
 * **services:** add 2x new methods hideColumnById or ..byIds ([#633](https://github.com/ghiscoding/angular-slickgrid/issues/633)) ([e4455a9](https://github.com/ghiscoding/angular-slickgrid/commit/e4455a9aa052d0f01ff8715a029e8534f2b73395))
-
 
 ### Bug Fixes
 
@@ -1139,11 +1028,9 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [2.23.0](https://github.com/ghiscoding/angular-slickgrid/compare/v2.22.5...v2.23.0) (2020-11-02)
 
-
 ### Features
 
 * **core:** update project lib to Angular 8 with newer ng-packagr ([#617](https://github.com/ghiscoding/angular-slickgrid/issues/617)) ([edae737](https://github.com/ghiscoding/angular-slickgrid/commit/edae737f744f78e1857a90dc02b37d25cc5c6899))
-
 
 ### Bug Fixes
 
@@ -1153,11 +1040,9 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.22.5](https://github.com/ghiscoding/angular-slickgrid/compare/v2.22.4...v2.22.5) (2020-10-29)
 
-
 ### Features
 
 * **chore:** update Cypress reporter call with mochawesome ([#614](https://github.com/ghiscoding/angular-slickgrid/issues/614)) ([07bd99a](https://github.com/ghiscoding/angular-slickgrid/commit/07bd99a486004c290fe44bc8a57c8246ae30b1a9))
-
 
 ### Bug Fixes
 
@@ -1172,11 +1057,9 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.22.2](https://github.com/ghiscoding/angular-slickgrid/compare/v2.22.1...v2.22.2) (2020-10-14)
 
-
 ### Features
 
 * **styling:** add frozen on all possible elements with SASS variables ([#599](https://github.com/ghiscoding/angular-slickgrid/issues/599)) ([a6f292c](https://github.com/ghiscoding/angular-slickgrid/commit/a6f292c8c4ef90cd6bca606b0609efdf4ceab1e1))
-
 
 ### Bug Fixes
 
@@ -1185,13 +1068,11 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.22.1](https://github.com/ghiscoding/angular-slickgrid/compare/v2.22.0...v2.22.1) (2020-10-02)
 
-
 ### Bug Fixes
 
 * **styling:** Compound Filter Operator dropdown too wide in BS4 ([#598](https://github.com/ghiscoding/angular-slickgrid/issues/598)) ([cb48247](https://github.com/ghiscoding/angular-slickgrid/commit/cb482478384e5f83625082bce390f914ad015d03))
 
 ## [2.22.0](https://github.com/ghiscoding/angular-slickgrid/compare/v2.21.3...v2.22.0) (2020-10-02)
-
 
 ### Features
 
@@ -1201,7 +1082,6 @@ All notable changes to this project will be documented in this file. See [Conven
 * **styling:** add description to Compound Filter Operators ([#588](https://github.com/ghiscoding/angular-slickgrid/issues/588)) ([56588d1](https://github.com/ghiscoding/angular-slickgrid/commit/56588d1e8851623f657265883cf84f9794d247e2))
 * **styling:** add Pagination button height sass variable ([#596](https://github.com/ghiscoding/angular-slickgrid/issues/596)) ([5db78c2](https://github.com/ghiscoding/angular-slickgrid/commit/5db78c226dffaa8ce14a4c8ecd93eaecb0f88856))
 * **tests:** add more Cypress E2E tests for grouping ([#584](https://github.com/ghiscoding/angular-slickgrid/issues/584)) ([90d47e6](https://github.com/ghiscoding/angular-slickgrid/commit/90d47e6b2a0f73a6e4f375e356d36283469f3393))
-
 
 ### Bug Fixes
 
@@ -1218,7 +1098,6 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.21.2](https://github.com/ghiscoding/angular-slickgrid/compare/v2.21.1...v2.21.2) (2020-09-08)
 
-
 ### Bug Fixes
 
 * **editors:** all Editors should call commitChanges even when invalid, fixes [#571](https://github.com/ghiscoding/angular-slickgrid/issues/571) ([#574](https://github.com/ghiscoding/angular-slickgrid/issues/574)) ([fd052d1](https://github.com/ghiscoding/angular-slickgrid/commit/fd052d156999b9113e33ac5102b877fadfe610b6))
@@ -1226,13 +1105,11 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.21.1](https://github.com/ghiscoding/angular-slickgrid/compare/v2.21.0...v2.21.1) (2020-09-03)
 
-
 ### Bug Fixes
 
 * **styling:** extra styling shouldn't override default bootstrap style ([#570](https://github.com/ghiscoding/angular-slickgrid/issues/570)) ([5cdc4d9](https://github.com/ghiscoding/angular-slickgrid/commit/5cdc4d9e2072e16b0d948e4f05cb0c4cbb75c0a0))
 
 ## [2.21.0](https://github.com/ghiscoding/angular-slickgrid/compare/v2.20.2...v2.21.0) (2020-09-02)
-
 
 ### Features
 
@@ -1244,7 +1121,6 @@ All notable changes to this project will be documented in this file. See [Conven
 * **tests:** add more Cypress E2E tests for Language change ([082ed22](https://github.com/ghiscoding/angular-slickgrid/commit/082ed227ca7f453a45be809e6dd3c4ea1935bf50))
 * **tests:** add more Cypress E2E tests for Pagination Lang change ([dc1a96c](https://github.com/ghiscoding/angular-slickgrid/commit/dc1a96c42b34fc996a8e05b019c03be94b2e0a97))
 
-
 ### Bug Fixes
 
 * **core:** latest Flatpickr breaks Date Filters/Editors ([#558](https://github.com/ghiscoding/angular-slickgrid/issues/558)) ([d6e0bef](https://github.com/ghiscoding/angular-slickgrid/commit/d6e0befa28a95df44c87148411d4822f5f42dab7))
@@ -1255,11 +1131,9 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.20.2](https://github.com/ghiscoding/angular-slickgrid/compare/v2.20.1...v2.20.2) (2020-08-03)
 
-
 ### Features
 
 * **examples:** add fetch to autoComplete sample ([#549](https://github.com/ghiscoding/angular-slickgrid/issues/549)) ([3941ba7](https://github.com/ghiscoding/angular-slickgrid/commit/3941ba797448b0b457fef9121cd18ad5f511dd8a))
-
 
 ### Bug Fixes
 
@@ -1272,12 +1146,10 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [2.20.0](https://github.com/ghiscoding/angular-slickgrid/compare/v2.19.1...v2.20.0) (2020-07-30)
 
-
 ### Features
 
 * **core:** expose all addon instances ([#545](https://github.com/ghiscoding/angular-slickgrid/issues/545)) ([3578d9e](https://github.com/ghiscoding/angular-slickgrid/commit/3578d9eea2d12999bc10010416ccb24188637dd6))
 * **editors:** add min/max length options to text editors ([#542](https://github.com/ghiscoding/angular-slickgrid/issues/542)) ([cc17d36](https://github.com/ghiscoding/angular-slickgrid/commit/cc17d369c6eec67be4fe25b834979fe50040297c))
-
 
 ### Bug Fixes
 
@@ -1288,7 +1160,6 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.19.1](https://github.com/ghiscoding/angular-slickgrid/compare/v2.19.0...v2.19.1) (2020-07-20)
 
-
 ### Features
 
 * **badge:** add Cypress badge ([7c6c8e1](https://github.com/ghiscoding/angular-slickgrid/commit/7c6c8e1f2619a3b440b09ffaa6cd7e41869b21b7))
@@ -1296,7 +1167,6 @@ All notable changes to this project will be documented in this file. See [Conven
 * **styling:** add custom footer font-size SASS variable ([#519](https://github.com/ghiscoding/angular-slickgrid/issues/519)) ([bc56030](https://github.com/ghiscoding/angular-slickgrid/commit/bc560306ec2e7ef77df65e816265ed3e3c1ad052))
 * **tests:** add more Cypress E2E tests for grid with Editors ([#532](https://github.com/ghiscoding/angular-slickgrid/issues/532)) ([701b624](https://github.com/ghiscoding/angular-slickgrid/commit/701b62451019f45c1e04bd332ba7b8cdad3904db))
 * **tests:** add more Cypress E2E tests for Tree Data ([#525](https://github.com/ghiscoding/angular-slickgrid/issues/525)) ([36f958d](https://github.com/ghiscoding/angular-slickgrid/commit/36f958d22859ccf8b166ce17d18a604236abe050))
-
 
 ### Bug Fixes
 
@@ -1309,7 +1179,6 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [2.19.0](https://github.com/ghiscoding/angular-slickgrid/compare/v2.18.7...v2.19.0) (2020-06-29)
 
-
 ### Features
 
 * **editor:** use better error message for inclusive values ([#499](https://github.com/ghiscoding/angular-slickgrid/issues/499)) ([6f7b569](https://github.com/ghiscoding/angular-slickgrid/commit/6f7b56923f18c82c237cd4b0c926946eb6634d07))
@@ -1317,7 +1186,6 @@ All notable changes to this project will be documented in this file. See [Conven
 * **sorting:** header menu clear sort, reset sorting when nothing left ([#509](https://github.com/ghiscoding/angular-slickgrid/issues/509)) ([5898c18](https://github.com/ghiscoding/angular-slickgrid/commit/5898c18678e52e3e608bc76a82fe1a8bd1b24907))
 * **typing:** add SlickGrid and DataView interfaces ([#483](https://github.com/ghiscoding/angular-slickgrid/issues/483)) ([2cee037](https://github.com/ghiscoding/angular-slickgrid/commit/2cee0378b005d9f58b2738b632626947c5a22975))
 * **typings:** add more TS Generic Types ([#489](https://github.com/ghiscoding/angular-slickgrid/issues/489)) ([a379837](https://github.com/ghiscoding/angular-slickgrid/commit/a3798374bbcf49ea8cf920472ba3be78d4cdd69a))
-
 
 ### Bug Fixes
 
@@ -1342,11 +1210,9 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.18.7](https://github.com/ghiscoding/angular-slickgrid/compare/v2.18.6...v2.18.7) (2020-05-26)
 
-
 ### Features
 
 * **gridMenu:** update SlickGrid & add new Grid Menu options, fixes [#464](https://github.com/ghiscoding/angular-slickgrid/issues/464) ([#473](https://github.com/ghiscoding/angular-slickgrid/issues/473)) ([10f0b7d](https://github.com/ghiscoding/angular-slickgrid/commit/10f0b7d94f81569d238d411153aac4a559242302))
-
 
 ### Bug Fixes
 
@@ -1357,7 +1223,6 @@ All notable changes to this project will be documented in this file. See [Conven
 * **resizer:** check for undefined option instead of fallback ([#474](https://github.com/ghiscoding/angular-slickgrid/issues/474)) ([59975f0](https://github.com/ghiscoding/angular-slickgrid/commit/59975f042002eab4b49cde6b867dff3cdd881cc9))
 
 ### [2.18.6](https://github.com/ghiscoding/angular-slickgrid/compare/v2.18.5...v2.18.6) (2020-05-19)
-
 
 ### Bug Fixes
 
@@ -1373,7 +1238,6 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.18.1](https://github.com/ghiscoding/angular-slickgrid/compare/v2.17.11...v2.18.1) (2020-05-19)
 
-
 ### Features
 
 * **editor:** add new Dual Input Editor & extract all Editor Validators ([#446](https://github.com/ghiscoding/angular-slickgrid/issues/446)) ([06f5dc9](https://github.com/ghiscoding/angular-slickgrid/commit/06f5dc9ba4826e2b018e71d4991ba04f6bec17a4))
@@ -1387,7 +1251,6 @@ All notable changes to this project will be documented in this file. See [Conven
 * **styling:** add CSS/SASS Material Design & Salesforce styling themes ([#454](https://github.com/ghiscoding/angular-slickgrid/issues/454)) ([0030763](https://github.com/ghiscoding/angular-slickgrid/commit/00307637bed9dd575f250af3919a4949f6902ce3))
 * **translate:** add namespace prefix + separator grid option ([#462](https://github.com/ghiscoding/angular-slickgrid/issues/462)) ([c23370e](https://github.com/ghiscoding/angular-slickgrid/commit/c23370ed12e36edd64e1d897210f09ec8f2827f3))
 * **treeData:** add new Tree Data View feature, closes [#178](https://github.com/ghiscoding/angular-slickgrid/issues/178) ([#455](https://github.com/ghiscoding/angular-slickgrid/issues/455)) ([3250bde](https://github.com/ghiscoding/angular-slickgrid/commit/3250bde0696a81913d196a2f97dfca5f6e53ab5b))
-
 
 ### Bug Fixes
 
@@ -1407,11 +1270,9 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.17.11](https://github.com/ghiscoding/angular-slickgrid/compare/v2.17.10...v2.17.11) (2020-03-18)
 
-
 ### Features
 
 * **sort:** add default sort field as grid option ([00b0751](https://github.com/ghiscoding/angular-slickgrid/commit/00b0751277a7d1c4311e56e282700a745c34275f))
-
 
 ### Bug Fixes
 
@@ -1421,13 +1282,11 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.17.10](https://github.com/ghiscoding/angular-slickgrid/compare/v2.17.9...v2.17.10) (2020-03-03)
 
-
 ### Bug Fixes
 
 * **columns:** remove columns dynamically with Editors, fixes [#406](https://github.com/ghiscoding/angular-slickgrid/issues/406) ([903473d](https://github.com/ghiscoding/angular-slickgrid/commit/903473d280b6d9f4992603c1b867a442a50ffa99))
 
 ### [2.17.9](https://github.com/ghiscoding/angular-slickgrid/compare/v2.17.8...v2.17.9) (2020-03-02)
-
 
 ### Bug Fixes
 
@@ -1435,7 +1294,6 @@ All notable changes to this project will be documented in this file. See [Conven
 * **example:** should re-render after clearing groups, fixes [#407](https://github.com/ghiscoding/angular-slickgrid/issues/407) ([7752abd](https://github.com/ghiscoding/angular-slickgrid/commit/7752abd27933a51d5e58c3e305ceff791400ea88))
 
 ### [2.17.8](https://github.com/ghiscoding/angular-slickgrid/compare/v2.17.7...v2.17.8) (2020-02-27)
-
 
 ### Bug Fixes
 
@@ -1445,13 +1303,11 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.17.6](https://github.com/ghiscoding/angular-slickgrid/compare/v2.17.5...v2.17.6) (2020-02-27)
 
-
 ### Bug Fixes
 
 * **editor:** LongText Editor save button that was not working properly ([90beeac](https://github.com/ghiscoding/angular-slickgrid/commit/90beeacebdc03d8bdfdb163c9813a54a7d2e68b6))
 
 ### [2.17.5](https://github.com/ghiscoding/angular-slickgrid/compare/v2.17.4...v2.17.5) (2020-02-21)
-
 
 ### Features
 
@@ -1460,13 +1316,11 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.17.4](https://github.com/ghiscoding/angular-slickgrid/compare/v2.17.3...v2.17.4) (2020-02-06)
 
-
 ### Bug Fixes
 
 * **selection:** row selection always be kept, closes [#295](https://github.com/ghiscoding/angular-slickgrid/issues/295) again ([#399](https://github.com/ghiscoding/angular-slickgrid/issues/399)) ([5e8f1df](https://github.com/ghiscoding/angular-slickgrid/commit/5e8f1df472b899e488fa9b930bedca8895f5e8f4))
 
 ### [2.17.3](https://github.com/ghiscoding/angular-slickgrid/compare/v2.17.2...v2.17.3) (2020-02-05)
-
 
 ### Bug Fixes
 
@@ -1477,7 +1331,6 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.17.1](https://github.com/ghiscoding/angular-slickgrid/compare/v2.17.0...v2.17.1) (2020-02-03)
 
-
 ### Bug Fixes
 
 * **backend:** updateOptions can be use with partial options - TS type ([80bdaa5](https://github.com/ghiscoding/angular-slickgrid/commit/80bdaa5270aa613a1bbc6794c7d97950089a3e2e))
@@ -1485,7 +1338,6 @@ All notable changes to this project will be documented in this file. See [Conven
 * **locales:** fix some Locales not showing up when not using Translate ([#392](https://github.com/ghiscoding/angular-slickgrid/issues/392)) ([4d5e65b](https://github.com/ghiscoding/angular-slickgrid/commit/4d5e65b0697276cb827f1bc0355e8dff378304b1))
 
 ## [2.17.0](https://github.com/ghiscoding/angular-slickgrid/compare/v2.16.5...v2.17.0) (2020-01-31)
-
 
 ### Features
 
@@ -1495,13 +1347,11 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.16.5](https://github.com/ghiscoding/angular-slickgrid/compare/v2.16.4...v2.16.5) (2020-01-23)
 
-
 ### Bug Fixes
 
 * **state:** Clear Sort should trigger only 1 event & fix Pagination ([8e4f931](https://github.com/ghiscoding/angular-slickgrid/commit/8e4f93102329173f65e2e6054dec54824bd0b85a))
 
 ### [2.16.4](https://github.com/ghiscoding/angular-slickgrid/compare/v2.16.3...v2.16.4) (2020-01-23)
-
 
 ### Bug Fixes
 
@@ -1511,25 +1361,21 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.16.3](https://github.com/ghiscoding/angular-slickgrid/compare/v2.16.2...v2.16.3) (2020-01-22)
 
-
 ### Bug Fixes
 
 * **build:** remove extensionUtility DI to fix build ([42cc4b4](https://github.com/ghiscoding/angular-slickgrid/commit/42cc4b44917bccdb189e571c369403047ac69f01))
 
 ### [2.16.2](https://github.com/ghiscoding/angular-slickgrid/compare/v2.16.1...v2.16.2) (2020-01-22)
 
-
 ### Features
 
 * **columnGroup:** add columnGroupKey property in order to use translate ([147470f](https://github.com/ghiscoding/angular-slickgrid/commit/147470febe5327f36e569fb934a883059ba76a30))
-
 
 ### Bug Fixes
 
 * **tests:** fix a Cypress E2E flaky test ([8fb09e2](https://github.com/ghiscoding/angular-slickgrid/commit/8fb09e21660b8a02ce420aa08ed62bcefb735f8f))
 
 ### [2.16.1](https://github.com/ghiscoding/angular-slickgrid/compare/v2.16.0...v2.16.1) (2020-01-21)
-
 
 ### Bug Fixes
 
@@ -1538,7 +1384,6 @@ All notable changes to this project will be documented in this file. See [Conven
 * **pagination:** should be empty (0) when filtering an empty dataset ([7409832](https://github.com/ghiscoding/angular-slickgrid/commit/74098325661b012f90acb9c57cf4aac2fe47e04b))
 
 ## [2.16.0](https://github.com/ghiscoding/angular-slickgrid/compare/v2.15.4...v2.16.0) (2020-01-20)
-
 
 ### Features
 
@@ -1551,7 +1396,6 @@ All notable changes to this project will be documented in this file. See [Conven
 * **rowDetail:** add few object instances that can be used in child comp ([9cc52c3](https://github.com/ghiscoding/angular-slickgrid/commit/9cc52c331dcfc7af413783518e739e44674c426c))
 * **rowDetail:** add Parent property to pass ref to parent comp ([dd8c1cd](https://github.com/ghiscoding/angular-slickgrid/commit/dd8c1cdb4bbd0a867dfca61adb2ddb2f3b674afe))
 * **tests:** add Cypress E2E for Local Pagination and fix new bugs found ([b7b1a73](https://github.com/ghiscoding/angular-slickgrid/commit/b7b1a7362a50e0994a585c9e57a6df50342fd774))
-
 
 ### Bug Fixes
 
@@ -1574,13 +1418,11 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.15.4](https://github.com/ghiscoding/angular-slickgrid/compare/v2.15.3...v2.15.4) (2020-01-10)
 
-
 ### Bug Fixes
 
 * **build:** TS warning on a missing Type ([97b25f7](https://github.com/ghiscoding/angular-slickgrid/commit/97b25f72cd448a348f3adf1a795cfde541268621))
 
 ### [2.15.3](https://github.com/ghiscoding/angular-slickgrid/compare/v2.15.2...v2.15.3) (2020-01-10)
-
 
 ### Bug Fixes
 
@@ -1588,20 +1430,17 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.15.2](https://github.com/ghiscoding/angular-slickgrid/compare/v2.15.1...v2.15.2) (2020-01-07)
 
-
 ### Bug Fixes
 
 * **security:** update DOMpurify to fix potential xss vulnerability ([63c1ddc](https://github.com/ghiscoding/angular-slickgrid/commit/63c1ddc748932671c4b168fbeab09278715dfcf9))
 
 ### [2.15.1](https://github.com/ghiscoding/angular-slickgrid/compare/v2.15.0...v2.15.1) (2020-01-06)
 
-
 ### Features
 
 * **styling:** add more SASS variables to header menu ([373641f](https://github.com/ghiscoding/angular-slickgrid/commit/373641f33f27eacec43068ed81aeb24d65d91601))
 
 ## [2.15.0](https://github.com/ghiscoding/angular-slickgrid/compare/v2.14.5...v2.15.0) (2020-01-06)
-
 
 ### Features
 
@@ -1613,7 +1452,6 @@ All notable changes to this project will be documented in this file. See [Conven
 * **styling:** change Column Picker & Grid Menu styling ([b9dc977](https://github.com/ghiscoding/angular-slickgrid/commit/b9dc977a03e9bd4ed1740430d1c22934453bc4a6))
 * **styling:** change Column Picker & Grid Menu styling ([d91086b](https://github.com/ghiscoding/angular-slickgrid/commit/d91086bf1734b392adaf4c13cb5e42672cb5eb8e))
 
-
 ### Bug Fixes
 
 * **graphql:** disable pagination should remove any page info from query ([63190c8](https://github.com/ghiscoding/angular-slickgrid/commit/63190c8bdca3312a317480772c48fdf7bd7edb50))
@@ -1622,18 +1460,15 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.14.4](https://github.com/ghiscoding/angular-slickgrid/compare/v2.14.3...v2.14.4) (2019-12-06)
 
-
 ### Features
 
 * **build:** add Build Demo site to CircleCI task ([62ed009](https://github.com/ghiscoding/angular-slickgrid/commit/62ed009c73c4d6b2f1583e2246da894b2f9c0538))
-
 
 ### Bug Fixes
 
 * **backend:** make sure pagination object exist before using it ([07dbbb1](https://github.com/ghiscoding/angular-slickgrid/commit/07dbbb18622d8af02335bf58609fa3334e70c172))
 
 ### [2.14.3](https://github.com/ghiscoding/angular-slickgrid/compare/v2.14.2...v2.14.3) (2019-11-29)
-
 
 ### Bug Fixes
 
@@ -1643,12 +1478,10 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.14.2](https://github.com/ghiscoding/angular-slickgrid/compare/v2.14.1...v2.14.2) (2019-11-27)
 
-
 ### Features
 
 * **tests:** add missing unit tests to have 100% test coverage ([99736fc](https://github.com/ghiscoding/angular-slickgrid/commit/99736fc39476428c08914aa4438af185642008d8))
 * **tests:** add more unit tests & cleanup some code ([644e1dc](https://github.com/ghiscoding/angular-slickgrid/commit/644e1dc14b3bb09b29901955514c413639c51e0e))
-
 
 ### Bug Fixes
 
@@ -1656,13 +1489,11 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.14.1](https://github.com/ghiscoding/angular-slickgrid/compare/v2.14.0...v2.14.1) (2019-11-26)
 
-
 ### Bug Fixes
 
 * **filter:** updateFilters w/BackendService should call query only once ([8228799](https://github.com/ghiscoding/angular-slickgrid/commit/82287995eb103088d3acf671594363ad74059074))
 
 ## [2.14.0](https://github.com/ghiscoding/angular-slickgrid/compare/v2.13.1...v2.14.0) (2019-11-21)
-
 
 ### Features
 
@@ -1673,14 +1504,12 @@ All notable changes to this project will be documented in this file. See [Conven
 * **sorting:** provide method to apply grid sorting dynamically ([9a99ca0](https://github.com/ghiscoding/angular-slickgrid/commit/9a99ca04b1d18624614a4f310e32a1f9f08ab654))
 * **tests:** add Jest & Cypress tests for Dynamic Sorting feature ([d0fa65e](https://github.com/ghiscoding/angular-slickgrid/commit/d0fa65e186c77ffbfe1d471d580a926e299669f9))
 
-
 ### Bug Fixes
 
 * **odata:** no single quote escape required for IN operator for non-string column ([6e4a855](https://github.com/ghiscoding/Angular-Slickgrid/pull/341/commits/6e4a85537dbb628c3f174d939fca888f7d443e45))
 * **picker:** make sure picker addon is available before translating ([e295c26](https://github.com/ghiscoding/angular-slickgrid/commit/e295c26b99a59664219fd457215308f305933d6a))
 
 ### [2.13.1](https://github.com/ghiscoding/angular-slickgrid/compare/v2.13.0...v2.13.1) (2019-11-12)
-
 
 ### Bug Fixes
 
@@ -1689,7 +1518,6 @@ All notable changes to this project will be documented in this file. See [Conven
 * **pagination:** never display page 0, minimum should be page 1 ([a44af9f](https://github.com/ghiscoding/angular-slickgrid/commit/a44af9f3aa1dff44862d2e01ead8698711339954))
 
 ## [2.13.0](https://github.com/ghiscoding/angular-slickgrid/compare/v2.12.3...v2.13.0) (2019-11-07)
-
 
 ### Features
 
@@ -1701,7 +1529,6 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.12.3](https://github.com/ghiscoding/angular-slickgrid/compare/v2.12.2...v2.12.3) (2019-10-29)
 
-
 ### Features
 
 * **cypress:** add Pagination Service E2E tests ([72f6df3](https://github.com/ghiscoding/angular-slickgrid/commit/72f6df309b834180709de70fbbae37b4a19f2184))
@@ -1709,7 +1536,6 @@ All notable changes to this project will be documented in this file. See [Conven
 * **tests:** add Angular-Slickgrid component tests ([1e84911](https://github.com/ghiscoding/angular-slickgrid/commit/1e84911c69949de469f3b0d797f3a04e46a418d7))
 * **tests:** add more Angular-Slickgrid unit tests ([60192cd](https://github.com/ghiscoding/angular-slickgrid/commit/60192cd9c1c6d537da81863f723b94bbe99702eb))
 * **tests:** starting adding Slick-Pagination Component unit tests ([b48ee06](https://github.com/ghiscoding/angular-slickgrid/commit/b48ee0616047d3077ebb5afb13d4ee109c48839a))
-
 
 ### Bug Fixes
 
@@ -1721,19 +1547,16 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.12.2](https://github.com/ghiscoding/angular-slickgrid/compare/v2.12.1...v2.12.2) (2019-10-21)
 
-
 ### Bug Fixes
 
 * **frozen:** fix header grouping grid with frozen columns, fixes [#290](https://github.com/ghiscoding/angular-slickgrid/issues/290) ([b851224](https://github.com/ghiscoding/angular-slickgrid/commit/b851224))
 
 ### [2.12.1](https://github.com/ghiscoding/angular-slickgrid/compare/v2.12.0...v2.12.1) (2019-10-21)
 
-
 ### Bug Fixes
 
 * **editor:** autocommit should not save if value is the same as before ([a07d239](https://github.com/ghiscoding/angular-slickgrid/commit/a07d239))
 * **editor:** provide complex object override path for select editor ([a93a53d](https://github.com/ghiscoding/angular-slickgrid/commit/a93a53d))
-
 
 ### Features
 
@@ -1741,13 +1564,11 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [2.12.0](https://github.com/ghiscoding/angular-slickgrid/compare/v2.11.3...v2.12.0) (2019-10-17)
 
-
 ### Bug Fixes
 
 * **gridService:** addItem/updatedItemById must pass an array to setSelectedRows ([#308](https://github.com/ghiscoding/Angular-Slickgrid/pull/308))
 * **excel:** exporting to Excel should also work from Grid Menu ([b2f0680](https://github.com/ghiscoding/angular-slickgrid/commit/b2f0680))
 * **filter:** should be able to filter even on hidden columns, fixes [#310](https://github.com/ghiscoding/angular-slickgrid/issues/310) ([47a1ab7](https://github.com/ghiscoding/angular-slickgrid/commit/47a1ab7))
-
 
 ### Features
 
@@ -1758,7 +1579,6 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.11.3](https://github.com/ghiscoding/angular-slickgrid/compare/v2.11.2...v2.11.3) (2019-10-08)
 
-
 ### Features
 
 * **example:** add Bootstrap Dropdown Action demo, closes [#304](https://github.com/ghiscoding/angular-slickgrid/issues/304) ([ba6082c](https://github.com/ghiscoding/angular-slickgrid/commit/ba6082c))
@@ -1766,13 +1586,11 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.11.2](https://github.com/ghiscoding/angular-slickgrid/compare/v2.11.1...v2.11.2) (2019-10-07)
 
-
 ### Bug Fixes
 
 * **gridService:** upsertItem(s) should trigger onItemAdded/Updated event ([df9af21](https://github.com/ghiscoding/angular-slickgrid/commit/df9af21))
 * **pagination:** when item is added it should trigger pagination changed ([c953a23](https://github.com/ghiscoding/angular-slickgrid/commit/c953a23))
 * **pagination:** don't reset page 1 after manually adding items to grid ([f61285d](https://github.com/ghiscoding/angular-slickgrid/commit/f61285d))
-
 
 ### Features
 
@@ -1780,11 +1598,9 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.11.1](https://github.com/ghiscoding/angular-slickgrid/compare/v2.11.0...v2.11.1) (2019-10-04)
 
-
 ### Bug Fixes
 
 * **styling:** styling issue in Firefox after col reordering, fixes [#297](https://github.com/ghiscoding/angular-slickgrid/issues/297) ([a2c7e39](https://github.com/ghiscoding/angular-slickgrid/commit/a2c7e39))
-
 
 ### Features
 
@@ -1792,13 +1608,11 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [2.11.0](https://github.com/ghiscoding/angular-slickgrid/compare/v2.10.5...v2.11.0) (2019-10-02)
 
-
 ### Bug Fixes
 
 * **build:** use latest SlickGrid version which might fix ES2015 build ([ff9f9d8](https://github.com/ghiscoding/angular-slickgrid/commit/ff9f9d8))
 * **editors:** complex objects should work with all editors ([01f53ed](https://github.com/ghiscoding/angular-slickgrid/commit/01f53ed))
 * **insert:** add item to bottom position should highlight correctly ([9f9e6eb](https://github.com/ghiscoding/angular-slickgrid/commit/9f9e6eb))
-
 
 ### Features
 
@@ -1819,11 +1633,9 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.10.3](https://github.com/ghiscoding/angular-slickgrid/compare/v2.10.2...v2.10.3) (2019-08-29)
 
-
 ### Bug Fixes
 
 * **core:** dowgrade to previous SlickGrid version to fix issues ([1fd11ab](https://github.com/ghiscoding/angular-slickgrid/commit/1fd11ab))
-
 
 ### Features
 
@@ -1834,19 +1646,16 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### [2.10.2](https://github.com/ghiscoding/angular-slickgrid/compare/v2.10.1...v2.10.2) (2019-08-26)
 
-
 ### Bug Fixes
 
 * **backend:** queries should not include pagination option when disabled ([d648b80](https://github.com/ghiscoding/angular-slickgrid/commit/d648b80))
 * **test:** fix a Cypress flaky test that was sometime failing ([4ed5a29](https://github.com/ghiscoding/angular-slickgrid/commit/4ed5a29))
-
 
 ### Features
 
 * **tests:** add SelectFilter unit tests ([5115e08](https://github.com/ghiscoding/angular-slickgrid/commit/5115e08))
 
 ## [2.10.0](https://github.com/ghiscoding/angular-slickgrid/compare/v2.9.9...v2.10.0) (2019-08-19)
-
 
 ### Bug Fixes
 
@@ -1856,13 +1665,11 @@ All notable changes to this project will be documented in this file. See [Conven
 * **presets:** Grid State & Presets stopped working for columns ([4e0b528](https://github.com/ghiscoding/angular-slickgrid/commit/4e0b528))
 * **styling:** fix some Bootstrap 4 styling ([ee4931c](https://github.com/ghiscoding/angular-slickgrid/commit/ee4931c))
 
-
 ### Build System
 
 * **deps:** bump fstream from 1.0.11 to 1.0.12 ([6813234](https://github.com/ghiscoding/angular-slickgrid/commit/6813234))
 * **deps:** bump jquery from 3.3.1 to 3.4.0 ([4175f25](https://github.com/ghiscoding/angular-slickgrid/commit/4175f25))
 * **deps:** bump lodash.mergewith from 4.6.1 to 4.6.2 ([f538320](https://github.com/ghiscoding/angular-slickgrid/commit/f538320))
-
 
 ### Features
 

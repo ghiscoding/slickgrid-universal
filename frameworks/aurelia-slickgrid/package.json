@@ -1,7 +1,7 @@
 {
   "name": "aurelia-slickgrid",
   "description": "Slickgrid components made available in Aurelia",
-  "version": "8.13.3",
+  "version": "9.0.0",
   "keywords": [
     "aurelia",
     "datagrid",
