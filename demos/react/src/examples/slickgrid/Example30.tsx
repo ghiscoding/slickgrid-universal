@@ -665,7 +665,7 @@ const Example30: React.FC = () => {
     if (columnDef.id === 'completed') {
       compositeEditorInstanceRef.current!.changeFormEditorOption('complexity', 'filter', true); // multiple-select dropdown editor
       compositeEditorInstanceRef.current!.changeFormEditorOption('percentComplete', 'hideSliderNumber', formValues['completed']); // slider editor
-      compositeEditorInstanceRef.current!.changeFormEditorOption('finish', 'range', { min: 'today' }); // calendar picker, change minDate to today
+      compositeEditorInstanceRef.current!.changeFormEditorOption('finish', 'displayDateMin', 'today'); // calendar picker, change minDate to today
     }
     */
   }

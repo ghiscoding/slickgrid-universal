@@ -678,7 +678,7 @@ export class Example30 {
     if (columnDef.id === 'completed') {
       this.compositeEditorInstance.changeFormEditorOption('complexity', 'filter', true); // multiple-select dropdown editor
       this.compositeEditorInstance.changeFormEditorOption('percentComplete', 'hideSliderNumber', formValues['completed']); // slider editor
-      this.compositeEditorInstance.changeFormEditorOption('finish', 'range', { min: 'today' }); // calendar picker, change minDate to today
+      this.compositeEditorInstance.changeFormEditorOption('finish', 'displayDateMin', 'today'); // calendar picker, change minDate to today
     }
     */
   }

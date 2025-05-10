@@ -449,7 +449,7 @@ const Example: React.FC = () => {
     if (columnDef.id === 'completed') {
       compositeEditorInstance.changeFormEditorOption('percentComplete', 'filter', true); // multiple-select.js, show filter in dropdown
       compositeEditorInstance.changeFormEditorOption('product', 'minLength', 3);         // autocomplete, change minLength char to type
-      compositeEditorInstance.changeFormEditorOption('finish', 'range', { min: 'today' });
+      this.compositeEditorInstance.changeFormEditorOption('finish', 'displayDateMin', 'today'); // calendar picker, change minDate to today
     }
   }
 

@@ -35,11 +35,11 @@ const Example: React.FC = () => {
         editor: {
           model: Editors.date,
           // previously known as `editorOptions` for < 9.0
+          // also vanilla-calendar was previously v2
+          // see their migration: https://github.com/uvarov-frontend/vanilla-calendar-pro/wiki/%5BMigration-from-v2.*.*%5D-New-API-for-all-options-and-actions-in-v3.0.0)
           options: {
-            range: {
-              max: 'today',
-              disabled: ['2022-08-15', '2022-08-20'],
-            }
+            displayDateMin: 'today',
+            disableDates: ['2022-08-15', '2022-08-20'],
           } as VanillaCalendarOption,
         },
       },
