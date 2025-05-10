@@ -68,15 +68,15 @@ export function SlickCompositeEditor(
 
   const getContainerBox = (i: number): ElementPosition => {
     const container = containers[i];
-    const offset = getOffset(container);
+    const { top, left } = getOffset(container);
     const width = container?.clientWidth ?? 0;
     const height = container?.clientHeight ?? 0;
 
     return {
-      top: offset.top,
-      left: offset.left,
-      bottom: offset.top + height,
-      right: offset.left + width,
+      top,
+      left,
+      bottom: top + height,
+      right: left + width,
       width,
       height,
       visible: true,

@@ -73,7 +73,10 @@ export function buildMsSelectCollectionList(
         }
 
         const labelKey = (option.labelKey || option[labelName]) as string;
-        const labelText = option.labelKey || translateWhenEnabled(labelKey, isTranslateEnabled, translaterService);
+        const labelText =
+          (option.labelKey || (enableTranslateLabel && translaterService)) && labelKey && isTranslateEnabled
+            ? translaterService?.translate(labelKey || ' ')
+            : labelKey;
         let prefixText = option[labelPrefixName] || '';
         let suffixText = option[labelSuffixName] || '';
         let selectOptionLabel = option.hasOwnProperty(optionLabel) ? option[optionLabel] : '';
