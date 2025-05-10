@@ -49,9 +49,7 @@ export function createDomElement<T extends keyof HTMLElementTagNameMap, K extend
       }
     });
   }
-  if (appendToParent?.appendChild) {
-    appendToParent.appendChild(elm);
-  }
+  appendToParent?.appendChild(elm);
   return elm;
 }
 

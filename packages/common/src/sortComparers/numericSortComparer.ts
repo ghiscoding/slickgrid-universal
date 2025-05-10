@@ -9,9 +9,11 @@ export const numericSortComparer: SortComparer = (
   gridOptions?: GridOption
 ) => {
   const checkForUndefinedValues = sortColumn?.valueCouldBeUndefined ?? gridOptions?.cellValueCouldBeUndefined ?? false;
-  const x =
-    isNaN(value1) || value1 === '' || value1 === null || (checkForUndefinedValues && value1 === undefined) ? -Infinity : parseFloat(value1);
-  const y =
-    isNaN(value2) || value2 === '' || value2 === null || (checkForUndefinedValues && value2 === undefined) ? -Infinity : parseFloat(value2);
+  const x = getSortVal(value1, checkForUndefinedValues);
+  const y = getSortVal(value2, checkForUndefinedValues);
   return sortDirection * (x === y ? 0 : x > y ? 1 : -1);
 };
+
+function getSortVal(val: any, checkForUndefinedValues: boolean) {
+  return isNaN(val) || val === '' || val === null || (checkForUndefinedValues && val === undefined) ? -Infinity : parseFloat(val);
+}

@@ -10,7 +10,7 @@ import { findOrDefault } from '../services/index.js';
  * const dataset = [1, 2];
  */
 export const collectionFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid) => {
-  if (!value || !columnDef || !columnDef.params || !columnDef.params.collection || !columnDef.params.collection.length) {
+  if (!value || !columnDef?.params?.collection?.length) {
     return value;
   }
 
@@ -18,8 +18,8 @@ export const collectionFormatter: Formatter = (row, cell, value, columnDef, data
     params,
     params: { collection },
   } = columnDef;
-  const labelName = params.customStructure ? params.customStructure.label : 'label';
-  const valueName = params.customStructure ? params.customStructure.value : 'value';
+  const labelName = params.customStructure?.label ?? 'label';
+  const valueName = params.customStructure?.value ?? 'value';
 
   if (Array.isArray(value)) {
     return arrayToCsvFormatter(
