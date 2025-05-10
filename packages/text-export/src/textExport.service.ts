@@ -87,7 +87,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
     this._pubSubService = containerService.get<PubSubService>('PubSubService');
 
     // get locales provided by user in main file or else use default English locales via the Constants
-    this._locales = (this._gridOptions && this._gridOptions.locales) || Constants.locales;
+    this._locales = this._gridOptions?.locales ?? Constants.locales;
     this._translaterService = this._gridOptions?.translater;
 
     if (this._gridOptions.enableTranslate && (!this._translaterService || !this._translaterService.translate)) {
@@ -130,7 +130,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
           format: this._fileFormat || 'csv',
           mimeType: this._exportOptions.mimeType || 'text/plain',
           // prettier-ignore
-          useUtf8WithBom: (this._exportOptions && this._exportOptions.hasOwnProperty('useUtf8WithBom')) ? this._exportOptions.useUtf8WithBom : true,
+          useUtf8WithBom: this._exportOptions?.hasOwnProperty('useUtf8WithBom') ? this._exportOptions.useUtf8WithBom : true,
         };
 
         // start downloading but add the content property only on the start download not on the event itself
@@ -219,7 +219,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
     // get grouped column titles and if found, we will add a "Group by" column at the first column index
     // if it's a CSV format, we'll escape the text in double quotes
     const grouping = this._dataView.getGrouping();
-    if (grouping && Array.isArray(grouping) && grouping.length > 0) {
+    if (Array.isArray(grouping) && grouping.length > 0) {
       this._hasGroupedItems = true;
       outputDataString +=
         this._fileFormat === 'csv' ? `"${groupByColumnHeader}"${this._delimiter}` : `${groupByColumnHeader}${this._delimiter}`;
@@ -230,7 +230,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
     // get all Grouped Column Header Titles when defined (from pre-header row)
     if (this._gridOptions.createPreHeaderPanel && this._gridOptions.showPreHeaderPanel && !this._gridOptions.enableDraggableGrouping) {
       this._groupedColumnHeaders = this.getColumnGroupedHeaderTitles(columns) || [];
-      if (this._groupedColumnHeaders && Array.isArray(this._groupedColumnHeaders) && this._groupedColumnHeaders.length > 0) {
+      if (Array.isArray(this._groupedColumnHeaders) && this._groupedColumnHeaders.length > 0) {
         // add the header row + add a new line at the end of the row
         const outputGroupedHeaderTitles = this._groupedColumnHeaders.map(
           (header) => `${this._exportQuoteWrapper}${header.title}${this._exportQuoteWrapper}`
@@ -241,7 +241,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
 
     // get all Column Header Titles
     this._columnHeaders = this.getColumnHeaders(columns) || [];
-    if (this._columnHeaders && Array.isArray(this._columnHeaders) && this._columnHeaders.length > 0) {
+    if (Array.isArray(this._columnHeaders) && this._columnHeaders.length > 0) {
       // add the header row + add a new line at the end of the row
       const outputHeaderTitles = this._columnHeaders.map((header) =>
         stripTags(`${this._exportQuoteWrapper}${header.title}${this._exportQuoteWrapper}`)
@@ -293,7 +293,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
   protected getColumnGroupedHeaderTitles(columns: Column[]): Array<KeyTitlePair> {
     const groupedColumnHeaders: KeyTitlePair[] = [];
 
-    if (columns && Array.isArray(columns)) {
+    if (Array.isArray(columns)) {
       // Populate the Grouped Column Header, pull the columnGroup(Key) defined
       columns.forEach((columnDef) => {
         let groupedHeaderTitle = '';

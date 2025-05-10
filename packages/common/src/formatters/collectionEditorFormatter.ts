@@ -11,7 +11,7 @@ import { findOrDefault } from '../services/index.js';
  * const dataset = [1, 2];
  */
 export const collectionEditorFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid) => {
-  if (!value || !columnDef || !columnDef.editor || !columnDef.editor.collection || !columnDef.editor.collection.length) {
+  if (!value || !columnDef?.editor?.collection?.length) {
     return value;
   }
 
@@ -19,8 +19,8 @@ export const collectionEditorFormatter: Formatter = (row, cell, value, columnDef
     editor,
     editor: { collection },
   } = columnDef;
-  const labelName = editor.customStructure ? editor.customStructure.label : 'label';
-  const valueName = editor.customStructure ? editor.customStructure.value : 'value';
+  const labelName = editor.customStructure?.label ?? 'label';
+  const valueName = editor.customStructure?.value ?? 'value';
 
   if (Array.isArray(value)) {
     if (collection.every((x: any) => typeof x === 'string')) {

@@ -802,13 +802,13 @@ export class SlickVanillaGridBundle<TData = any> {
         backendApi.internalPostProcess = (processResult: any) => {
           // prettier-ignore
           const datasetName = (backendApi && backendApiService && typeof backendApiService.getDatasetName === 'function') ? backendApiService.getDatasetName() : '';
-          if (processResult && processResult.data && processResult.data[datasetName]) {
+          if (processResult?.data?.[datasetName]) {
             const data = processResult.data[datasetName].hasOwnProperty('nodes')
-              ? (processResult as any).data[datasetName].nodes
-              : (processResult as any).data[datasetName];
+              ? processResult.data[datasetName].nodes
+              : processResult.data[datasetName];
             const totalCount = processResult.data[datasetName].hasOwnProperty('totalCount')
-              ? (processResult as any).data[datasetName].totalCount
-              : (processResult as any).data[datasetName].length;
+              ? processResult.data[datasetName].totalCount
+              : processResult.data[datasetName].length;
             this.refreshGridData(data, totalCount || 0);
           }
         };
@@ -833,10 +833,7 @@ export class SlickVanillaGridBundle<TData = any> {
       this._eventPubSubService.subscribe('onLanguageChange', (args: { language: string }) => {
         if (gridOptions.enableTranslate) {
           this.extensionService.translateAllExtensions(args.language);
-          if (
-            (gridOptions.createPreHeaderPanel && gridOptions.createTopHeaderPanel) ||
-            (gridOptions.createPreHeaderPanel && !gridOptions.enableDraggableGrouping)
-          ) {
+          if (gridOptions.createPreHeaderPanel && (gridOptions.createTopHeaderPanel || !gridOptions.enableDraggableGrouping)) {
             this.headerGroupingService.translateHeaderGrouping();
           }
         }
@@ -976,9 +973,7 @@ export class SlickVanillaGridBundle<TData = any> {
           const startTime = new Date();
 
           // run any pre-process, if defined, for example a spinner
-          if (backendApi.preProcess) {
-            backendApi.preProcess();
-          }
+          backendApi.preProcess?.();
 
           // the processes can be a Promise (like Http)
           const totalItems = this.gridOptions?.pagination?.totalItems ?? 0;
@@ -1145,7 +1140,6 @@ export class SlickVanillaGridBundle<TData = any> {
         if (dataset.length > 0) {
           if (!this._isDatasetInitialized) {
             this.loadFilterPresetsWhenDatasetInitialized();
-
             if (this._gridOptions.enableCheckboxSelector) {
               this.loadRowSelectionPresetWhenExists();
             }
@@ -1553,10 +1547,7 @@ export class SlickVanillaGridBundle<TData = any> {
     this._registeredResources.push(this.gridService, this.gridStateService);
 
     // when using Grouping/DraggableGrouping/Colspan register its Service
-    if (
-      (this.gridOptions.createPreHeaderPanel && this.gridOptions.createTopHeaderPanel) ||
-      (this.gridOptions.createPreHeaderPanel && !this.gridOptions.enableDraggableGrouping)
-    ) {
+    if (this.gridOptions.createPreHeaderPanel && (this.gridOptions.createTopHeaderPanel || !this.gridOptions.enableDraggableGrouping)) {
       this._registeredResources.push(this.headerGroupingService);
     }
 
