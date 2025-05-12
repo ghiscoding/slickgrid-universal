@@ -71,10 +71,10 @@ export class GridExample {
 | on-before-export-to-text-file |
 | on-after-export-to-text-file |
 | on-grid-state-changed |
-| on-item-added |
-| on-item-deleted |
-| on-item-updated |
-| on-item-upserted |
+| on-items-added |
+| on-items-deleted |
+| on-items-updated |
+| on-items-upserted |
 | on-grid-before-resize |
 | on-grid-after-resize |
 
