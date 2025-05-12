@@ -94,7 +94,7 @@ Slickgrid-Universal has close to **100%** Unit Test Coverage, ~5,000 Vitest unit
 ## Installation
 **NOTE:** the installation instructions below are **only** required if you want to contribute to this project, if however you just want to download a quick Slickgrid-Universal demo, then I would suggest you to take a look at the following repos [Slickgrid-Universal Vite Demo](https://github.com/ghiscoding/slickgrid-universal-vite-demo) or [Slickgrid-Universal WebPack Demo](https://github.com/ghiscoding/slickgrid-universal-webpack-demo).
 
-To get started with development in this monorepo, you will need to clone the repo and follow the steps shown below. Note that you must be at the root of the project in order to run the commands below. This project also requires `pnpm`.
+To get started with development in this monorepo, you will need to clone the repo and follow the steps shown below. Note that you must be at the root of the project in order to run the commands, this project also requires `pnpm`.
 
 1. pnpm installation
 
