@@ -102,7 +102,7 @@ this.gridOptions = {
 | `cy.get([style="top: ${GRID_ROW_HEIGHT * 0}px;"])` | `cy.get([style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"])` |
 | | OR `cy.get([data-row=0])` |
 
-> Please note that you will have to change the default to `rowTopOffsetRenderType: 'top'` when using either RowSpan and/or Row Detail features.
+> Please note that you will have to change the option back to `rowTopOffsetRenderType: 'top'` when using either RowSpan and/or Row Detail features.
 
 ### Shorter Attribute Names
 We are changing the `columnDefinitions` and `gridOptions` attribute names to much simpler single word names. Basically, I'm not exactly sure why I chose the long name in the past, but going forward, I think it would be much simpler to use single name attributes (which can help slightly with build size)
@@ -160,7 +160,7 @@ The `GridService` has CRUD methods that were sometime returning a single item an
 ### Code being Deprecated (to be removed in the future, not before another year)
 #### You can start using new properties and options shown below in v9.0 and above.
 
-So when I created the project, I used a few TypeScript Enums and I though this was great but it turns out that all of these Enums end up in the final transpiled JS bundle. So in the next major, I'm planning to remove most of these Enums and replace them with string literal types (`type` instead of `enum`). So you should consider using string types as much and as soon as possible in all your new grids. Note that at the moment, they are only deprecations, and will only be dropped in the future (not now, but you should still consider this for the future), for example:
+So when I created the project, I used a few TypeScript Enums and I though this was great but it turns out that all of these Enums end up in the final transpiled JS bundle. So in the next major, I'm planning to remove most of these Enums and replace them with string literal types (`type` instead of `enum` because `type` aren't transpiled and `enum` are). So you should consider using string types as much and as soon as possible in all your new grids. Note that at the moment, they are only deprecations, and will only be dropped in the future (not now, but you should still consider this for the future), for example:
 
 ```diff
 columns = [{
@@ -175,10 +175,10 @@ Below are a list of Enums being deprecated and you should think about migrating 
 
 | Enum Name   | from `enum`         | to string `type`    | Note |
 | ----------- | ------------------- | ------------------- | ---- |
-| `FileType`  | `FieldType.boolean` | `'boolean'`         |
-|             | `FileType.number`   | `'number'`          |
+| `FieldType`  | `FieldType.boolean` | `'boolean'`         |
+|             | `FieldType.number`   | `'number'`          |
 | - | - | - |
-| `FieldType` | `FileType.csv`      | `'csv'`             |
+| `FileType` | `FileType.csv`      | `'csv'`             |
 |             | `FileType.xlsx`     | `'xlsx'`            |
 | - | - | - |
 | `GridStateType`  | `GridStateType.columns` | `'columns'`  |
@@ -197,7 +197,7 @@ Below are a list of Enums being deprecated and you should think about migrating 
 
 ##### deprecating `editorOptions` and `filterOptions`, they are being renamed as `options`
 
-in order to make it easier to merge and simplify editor/filter options, I'm merging them into a single `options` property which will make it more easily transportable (you will be able to reuse the same `options` for both the editor/filter if need be). You can start using `options` in v9.0 and above.
+in order to make it easier to merge and simplify editor/filter options, I'm renaming the options to a single `options` property which will make it more easily transportable (you will be able to reuse the same `options` for both the editor/filter if need be). You can start using `options` in v9.0 and above.
 
 ```diff
 import { type MultipleSelectOption } from '@slickgrid-universal/common';
