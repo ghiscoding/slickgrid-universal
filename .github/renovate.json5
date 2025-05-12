@@ -20,6 +20,7 @@
       matchFileNames: ['frameworks/angular-slickgrid/**', 'demos/angular/**'],
       groupName: 'Angular dependencies',
       ignoreDeps: ['typescript'],
+      updateTypes: ['patch', 'minor'],
     },
     {
       description: 'Group all Aurelia dependencies',
