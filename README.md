@@ -27,9 +27,9 @@ One of the best JavaScript data grid named as "SlickGrid", which was originally 
 This is a monorepo project (using [pnpm workspaces](https://pnpm.io/workspaces) and [Lerna-Lite](https://github.com/lerna-lite/lerna-lite)) which is regrouping a few packages under a single repository. It was originally requiring `6pac/slickgrid` as an external dependency, but that was dropped in v4.0, and it has been a standalone library since then. The main goal of this project is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any frameworks (the project is framework agnostic).
 
 ### What's the difference with the original SlickGrid (now [`6pac/slickgrid`](https://github.com/6pac/SlickGrid)) project?
-If you have used the original SlickGrid in the past, you might be wondering, should I use the [`6pac/slickgrid`](https://github.com/6pac/SlickGrid) or Slickgrid-Universal (or any of its variances), what are the differences? The main difference is that the original `SlickGrid`/`6pac/slickgrid` is like an unassembled IKEA product where it's very bare bone and unassembled, on the other hand Slickgrid-Universal is an all assembled product with batteries included. What we mean is that Slickgrid-Universal comes with many built-in things like Formatters, Editors, Filters, Tree Data, ... which are not available in the original SlickGrid. So in the end SlickGrid (`6pac/slickgrid`) project is much smaller in size because it's very bare bone but you will have to implement many things by yourself (Sorting/Filtering/Editing/...), and if you're looking at creating very basic grids with the smallest footprint possible, then SlickGrid might work for you, otherwise Slickgrid-Universal has a more complete set of built-ins with a bit larger download size.
+If you've used the original SlickGrid in the past, you might be wondering, should I use the [`6pac/slickgrid`](https://github.com/6pac/SlickGrid) or Slickgrid-Universal (or any of its wrappers), what are the differences? The main difference is that the original `SlickGrid`/`6pac/slickgrid` is like an unassembled IKEA product where it's very bare bone and unassembled, on the other hand Slickgrid-Universal is an all assembled product with batteries included. What that means is that Slickgrid-Universal comes in with many built-in features like Formatters, Editors, Filters, Tree Data, ... which are not available in the original SlickGrid. So in the end SlickGrid (`6pac/slickgrid`) project is much smaller in size because it's very bare bone but you will have to implement many things by yourself (Sorting/Filtering/Editing/...), and if you're looking at creating very basic grids with the smallest footprint possible, then SlickGrid might work for you, otherwise Slickgrid-Universal has a more complete set of features with a bit larger download and installation size.
 
-Side note, I am (`@ghiscoding`) actually a maintainer in both projects, that is Slickgrid-Universal as well as the `6pac/slickgrid` (in fact Slickgrid-Universal was originally requiring the `6pac/slickgrid` dependency but that was eventually dropped and is now a standalone). The main reason to support both projects is to keep core files in sync as much as possible (SlickGrid, SlickDataView and all plugins). Both projects combined together have a large userbase and this mean more more stability for both projects, and we also often sync new features in both projects as well... and that's it, I hope it's clear what the differences are, if you need more clarity then feel free to open a new Discussion for more details.
+Side note, I am (`@ghiscoding`) a maintainer in both projects, which are Slickgrid-Universal as well as the `6pac/slickgrid` (in fact Slickgrid-Universal was originally requiring the `6pac/slickgrid` dependency but that was eventually dropped in v4 and it is now a standalone). The main reason to support both projects is to keep core files in sync as much as possible (SlickGrid, SlickDataView and all plugins). Both projects combined together have a much larger userbase and this mean more more stability for both projects, and we also often sync new features in both projects as well... and that's it, this makes it clearer what the differences are and if you need more clarity then feel free to open a new Discussion for more details.
 
 ### Why create this monorepo?
 Below is a list of reasons as to why this project was created and why it was built as a monorepo project:
@@ -45,7 +45,7 @@ Below is a list of reasons as to why this project was created and why it was bui
 Check out the [Releases](https://github.com/ghiscoding/slickgrid-universal/releases) section for all the latest News & Releases.
 
 ### Like my work?
-You could ⭐ the lib and perhaps support me with caffeine via the button below. Thanks in advance.
+You could ⭐ the lib and perhaps support me with caffeine via GitHub sponsorship or the Ko-Fi button below. Thanks in advance.
 
 <a href='https://ko-fi.com/ghiscoding' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi3.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
@@ -112,7 +112,7 @@ corepack prepare pnpm@latest --activate
 
 #### Specific Framework install
 For a more targeted install, you could optionally install a specific framework (which avoids installing all frameworks).
-Taking Vue for example
+You should only do that if you're only interested in contributing something specific to a framework wrapper, see commands below:
 
 ```sh
 # install all framework wrappers
