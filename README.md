@@ -33,8 +33,7 @@ Side note, I am (`@ghiscoding`) a maintainer in both projects, which are Slickgr
 
 ### Why create this monorepo?
 Below is a list of reasons as to why this project was created and why it was built as a monorepo project:
-1. originally created to remove duplicated code from the first 2 framework wrappers
-   - [Angular-Slickgrid](https://github.com/ghiscoding/Angular-Slickgrid) and [Aurelia-Slickgrid](https://github.com/ghiscoding/aurelia-slickgrid)
+1. originally created to remove duplicated code from the first 2 framework wrappers (Angular, Aurelia)
 2. it also decoupled a few Services which are simply not required in every project
    - OData, GraphQL, Export to CSV, Export to Excel, Composite Editor, RxJS, ...
 4. and finally it is framework agnostic, the same logic is reused in all different framework wrappers
