@@ -35,7 +35,7 @@
     "are-types-wrong": "pnpx @arethetypeswrong/cli --pack .",
     "prebuild": "pnpm run clean",
     "build": "tsc",
-    "postbuild": "run-s sass:build sass:copy",
+    "postbuild": "pnpm run sass:bundle",
     "sass:bundle": "run-s sass:build sass:copy",
     "build:incremental": "tsc --incremental --declaration",
     "clean": "rimraf dist tsconfig.tsbuildinfo",
