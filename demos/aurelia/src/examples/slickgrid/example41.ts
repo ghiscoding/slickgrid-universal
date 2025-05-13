@@ -188,13 +188,13 @@ export class Example41 {
   }
 
   handleOnDragEnd(e: CustomEvent, args: any) {
-    if (this.dragMode != 'recycle') {
+    if (this.dragMode !== 'recycle') {
       return;
     }
     this.dragHelper?.remove();
     document.querySelector<HTMLDivElement>('#dropzone')?.classList.remove('drag-dropzone', 'drag-hover');
 
-    if (this.dragMode != 'recycle' || args.target.id !== 'dropzone') {
+    if (this.dragMode !== 'recycle' || args.target.id !== 'dropzone') {
       return;
     }
 

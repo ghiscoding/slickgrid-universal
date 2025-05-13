@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { AngularGridInstance, Column, Editors, Formatters, GridOption, SlickGlobalEditorLock } from '../../library';
+import { AngularGridInstance, Column, Editors, Formatters, GridOption, isDefined, SlickGlobalEditorLock } from '../../library';
 
 @Component({
   templateUrl: './example41.component.html',
@@ -199,13 +199,13 @@ export class Example41Component implements OnInit {
   }
 
   handleOnDragEnd(e: CustomEvent, args: any) {
-    if (this.dragMode != 'recycle') {
+    if (this.dragMode !== 'recycle') {
       return;
     }
     this.dragHelper?.remove();
     document.querySelector<HTMLDivElement>('#dropzone')?.classList.remove('drag-dropzone', 'drag-hover');
 
-    if (this.dragMode != 'recycle' || args.target.id !== 'dropzone') {
+    if (this.dragMode !== 'recycle' || args.target.id !== 'dropzone') {
       return;
     }
 
@@ -220,7 +220,7 @@ export class Example41Component implements OnInit {
   }
 
   requiredFieldValidator(value: any) {
-    if (value == null || value == undefined || !value.length) {
+    if (isDefined(value)) {
       return { valid: false, msg: 'This is a required field' };
     } else {
       return { valid: true, msg: null };

@@ -183,13 +183,13 @@ function handleOnDrag(e: MouseEvent, args: any) {
 }
 
 function handleOnDragEnd(e: CustomEvent, args: any) {
-  if (dragMode.value != 'recycle') {
+  if (dragMode.value !== 'recycle') {
     return;
   }
   dragHelper?.remove();
   document.querySelector<HTMLDivElement>('#dropzone')?.classList.remove('drag-dropzone', 'drag-hover');
 
-  if (dragMode.value != 'recycle' || args.target.id !== 'dropzone') {
+  if (dragMode.value !== 'recycle' || args.target.id !== 'dropzone') {
     return;
   }
 
