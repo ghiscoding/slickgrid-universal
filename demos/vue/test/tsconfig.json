@@ -1,11 +1,18 @@
 {
   "compilerOptions": {
-    "outDir": "../out-tsc/spec",
-    "baseUrl": "./",
-    "target": "es2018",
-    "module": "commonjs",
-    "lib": ["es2018"],
-    "types": ["cypress", "node"]
+    "target": "es2021",
+    "lib": ["es5", "dom"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "baseUrl": ".",
+    "types": ["cypress-real-events", "node"],
+    "typeRoots": ["../node_modules/@types"]
   },
-  "include": ["**/*.ts", "src/types/**/*.ts", "**/*.d.ts"]
+  "include": ["**/*.ts"]
 }
