@@ -1384,8 +1384,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.canvasWidth !== oldCanvasWidth || this.canvasWidthL !== oldCanvasWidthL || this.canvasWidthR !== oldCanvasWidthR;
 
     if (widthChanged || this.hasFrozenColumns() || this.hasFrozenRows) {
-      // in some browsers horizontal is showing when it shouldn't and removing 0.1px patches this issue (or even 0.0001 would be enough)
-      Utils.width(this._canvasTopL, this.canvasWidthL - 0.1);
+      Utils.width(this._canvasTopL, this.canvasWidthL);
 
       this.getHeadersWidth();
 
@@ -2970,7 +2969,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             continue;
           }
           const absMinWidth = Math.max(c.minWidth!, this.absoluteColumnMinWidth);
-          let shrinkSize = Math.floor(shrinkProportion * (width - absMinWidth)) || 1;
+          let shrinkSize = Math.fround(shrinkProportion * (width - absMinWidth)) || 1;
           shrinkSize = Math.min(shrinkSize, width - absMinWidth);
           total -= shrinkSize;
           shrinkLeeway -= shrinkSize;
@@ -2997,7 +2996,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           if (!c.resizable || c.maxWidth! <= currentWidth) {
             growSize = 0;
           } else {
-            growSize = Math.min(Math.floor(growProportion * currentWidth) - currentWidth, c.maxWidth! - currentWidth || 1000000) || 1;
+            growSize = Math.min(Math.fround(growProportion * currentWidth) - currentWidth, c.maxWidth! - currentWidth || 1000000) || 1;
           }
           total += growSize;
           widths[i] += total <= availWidth ? growSize : 0;

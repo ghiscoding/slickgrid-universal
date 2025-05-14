@@ -376,9 +376,9 @@ export class ResizerService {
       if (!this.gridOptions.autoHeight) {
         this._gridDomElm.style.height = `${newHeight}px`;
       }
-      this._gridDomElm.style.width = `${newWidth}px`;
+      this._gridDomElm.style.width = typeof newWidth === 'string' ? newWidth : `${newWidth || 1}px`;
       if (this._gridContainerElm) {
-        this._gridContainerElm.style.width = `${newWidth}px`;
+        this._gridContainerElm.style.width = typeof newWidth === 'string' ? newWidth : `${newWidth}px`;
       }
 
       // resize the slickgrid canvas on all browser
