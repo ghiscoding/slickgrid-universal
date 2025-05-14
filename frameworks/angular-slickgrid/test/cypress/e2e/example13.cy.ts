@@ -8,7 +8,7 @@ describe('Example 13 - Grouping & Aggregators', () => {
   });
 
   it('should have exact column titles on 1st grid', () => {
-    cy.get('#grid14')
+    cy.get('#grid13')
       .find('.slick-header-columns')
       .children()
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
@@ -228,13 +228,13 @@ describe('Example 13 - Grouping & Aggregators', () => {
     });
 
     it('should open Column Picker and have a "Custom Label" as the 1st column label', () => {
-      cy.get('#grid14').find('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
+      cy.get('#grid13').find('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
 
       cy.get('.slick-column-picker').find('.slick-column-picker-list li:nth-child(1) .checkbox-label').should('have.text', 'Custom Label');
     });
 
     it('should open Grid Menu and have a "Custom Label" as the 1st column label', () => {
-      cy.get('#grid14').find('button.slick-grid-menu-button').trigger('click').click({ force: true });
+      cy.get('#grid13').find('button.slick-grid-menu-button').trigger('click').click({ force: true });
 
       cy.get(`.slick-grid-menu:visible`)
         .find('.slick-column-picker-list li:nth-child(1) .checkbox-label')
