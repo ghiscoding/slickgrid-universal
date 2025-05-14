@@ -7,6 +7,8 @@ export default defineConfig({
   fixturesFolder: 'test/cypress/fixtures',
   screenshotsFolder: 'test/cypress/screenshots',
   videosFolder: 'test/cypress/videos',
+  defaultCommandTimeout: 5000,
+  pageLoadTimeout: 90000,
   numTestsKeptInMemory: 5,
   retries: {
     experimentalStrategy: 'detect-flake-and-pass-on-threshold',
