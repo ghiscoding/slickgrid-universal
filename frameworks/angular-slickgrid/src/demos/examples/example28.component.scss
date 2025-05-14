@@ -1,6 +1,6 @@
 // @use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-salesforce.scss';
 
-#grid29 {
+#grid28 {
   .slick-cell {
     display: inline-flex;
     align-items: center;
@@ -25,7 +25,8 @@
     opacity: 0.9;
   }
 
-  .mdi-folder, .mdi-folder-open {
+  .mdi-folder,
+  .mdi-folder-open {
     color: #ffa500;
     opacity: 0.9;
   }
@@ -34,7 +35,7 @@
     opacity: 0.9;
   }
   .mdi-file-excel-outline {
-    color: #1E9F75;
+    color: #1e9f75;
     opacity: 0.9;
   }
   .mdi-file-document-outline,
@@ -50,5 +51,7 @@
 
 // create a few 15px indentation multiplied by level number
 @for $i from 1 through 6 {
-  .width-#{$i*15}px { width: #{$i * 15}px; }
+  .width-#{$i*15}px {
+    width: #{$i * 15}px;
+  }
 }
