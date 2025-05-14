@@ -99,7 +99,7 @@ const Example29: React.FC = () => {
       <hr />
 
       <SlickgridReact
-        gridId="grid"
+        gridId="grid29"
         columns={columnDefinitions}
         options={gridOptions}
         dataset={dataset}
