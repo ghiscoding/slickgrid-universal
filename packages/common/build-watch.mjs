@@ -41,6 +41,7 @@ async function run() {
 async function compileAllSassThemes() {
   // we can simply run the npm scripts in parallel that already exist
   await Promise.all([
+    exec('npm run sass-build-task:scss-compile:default'),
     exec('npm run sass-build-task:scss-compile:bootstrap'),
     exec('npm run sass-build-task:scss-compile:material'),
     exec('npm run sass-build-task:scss-compile:salesforce'),
