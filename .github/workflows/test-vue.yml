@@ -93,7 +93,7 @@ jobs:
           working-directory: demos/vue
           # start: pnpm vue:serve
           wait-on: 'http://localhost:7000'
-          config-file: test/cypress.config.ts
+          config-file: test/cypress.config.mjs
           browser: chrome
           record: false
         env:
