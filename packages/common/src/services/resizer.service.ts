@@ -404,6 +404,11 @@ export class ResizerService {
         this.resizeColumnsByCellContent(false);
       }
 
+      // patch for Chromium browsers to avoid scrollbar from showing way too early when using `overflow:auto`
+      // the canvas size equals exactly the size of its container and for some users (not all) it will show the horizontal scrollbar too early.
+      // not exactly sure but, this might be caused by a floating precision on some computers
+      this._gridDomElm.style.width = typeof newWidth === 'string' ? newWidth : `${(newWidth || 1) + 0.2}px`;
+
       // keep last resized dimensions & resolve them to the Promise
       this._lastDimensions = {
         height: newHeight || 0,
