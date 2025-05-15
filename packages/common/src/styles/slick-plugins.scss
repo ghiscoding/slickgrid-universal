@@ -11,6 +11,14 @@ li.hidden {
   display: none !important;
 }
 
+.slick-grid-menu,
+.slick-column-picker {
+  li {
+    list-style: none;
+    background: none;
+  }
+}
+
 .slick-column-picker {
   cursor: default;
   list-style-type: none;
@@ -55,9 +63,6 @@ li.hidden {
   }
 
   li {
-    list-style: none;
-    background: none;
-
     a {
       display: block;
       padding: 4px;
@@ -204,8 +209,6 @@ li.hidden {
   }
 
   li {
-    list-style: none;
-    background: none;
     overflow: hidden;
     text-overflow: ellipsis;
     @-moz-document url-prefix() {
@@ -385,8 +388,8 @@ li.hidden {
     &.slick-menu-item-disabled {
       border-color: transparent !important;
       background: inherit !important;
-      color: var(--slick-menu-item-disabled-color, v.$slick-menu-item-disabled-color);
       cursor: inherit;
+      color: var(--slick-menu-item-disabled-color, v.$slick-menu-item-disabled-color);
       .slick-menu-icon,
       .slick-menu-content {
         color: var(--slick-menu-item-disabled-color, v.$slick-menu-item-disabled-color);
@@ -782,9 +785,6 @@ li.hidden {
       &.form-control {
         cursor: pointer;
         appearance: none;
-        &:-ms-expand {
-          display: none;
-        }
         .empty {
           color: #c0c0c0;
         }
@@ -795,12 +795,12 @@ li.hidden {
     min-width: 30px;
   }
 
-  input.search-filter {
+  input.search-filter,
+  .search-filter input {
     font-family: var(--slick-filter-placeholder-font-family, v.$slick-filter-placeholder-font-family);
   }
   .search-filter {
     input {
-      font-family: var(--slick-filter-placeholder-font-family, v.$slick-filter-placeholder-font-family);
       &.compound-input {
         border-radius: var(--slick-compound-filter-border-radius, v.$slick-compound-filter-border-radius) !important;
         border-left: none;
@@ -817,9 +817,7 @@ li.hidden {
   .slick-headerrow {
     .slick-headerrow-columns {
       .slick-headerrow-column {
-        input.form-control.search-filter {
-          background-color: var(--slick-form-control-bg-color, v.$slick-form-control-bg-color);
-        }
+        input.form-control.search-filter,
         .form-group.search-filter {
           input,
           button,
@@ -1092,43 +1090,6 @@ li.hidden {
       outline: 1px solid #fff;
       outline-offset: -1px;
     }
-
-    /* Microsoft IE specific */
-    &::-ms-track {
-      height: var(--slick-slider-filter-runnable-track-height, v.$slick-slider-filter-runnable-track-height);
-
-      /*remove bg colour from the track, we'll use ms-fill-lower and ms-fill-upper instead */
-      background: transparent;
-
-      /*leave room for the larger thumb to overflow with a transparent border */
-      border-color: transparent;
-      border-width: 6px 0;
-
-      /*remove default tick marks*/
-      color: transparent;
-      appearance: none;
-    }
-    &::-ms-fill-lower {
-      background: var(--slick-slider-filter-fill-lower-color, v.$slick-slider-filter-fill-lower-color);
-      border-radius: 10px;
-    }
-    &::-ms-fill-upper {
-      background: var(--slick-slider-filter-bgcolor, v.$slick-slider-filter-bgcolor);
-      border-radius: 10px;
-    }
-    &::-ms-thumb {
-      cursor: var(--slick-slider-filter-thumb-cursor, v.$slick-slider-filter-thumb-cursor);
-      height: var(--slick-slider-filter-thumb-height, v.$slick-slider-filter-thumb-height);
-      width: var(--slick-slider-filter-thumb-width, v.$slick-slider-filter-thumb-width);
-      border-radius: var(--slick-slider-filter-thumb-border-radius, v.$slick-slider-filter-thumb-border-radius);
-      border: var(--slick-slider-filter-thumb-border, v.$slick-slider-filter-thumb-border);
-      background: var(--slick-slider-filter-thumb-color, v.$slick-slider-filter-thumb-color);
-      margin-top: 1px;
-      pointer-events: auto;
-    }
-    &::-ms-tooltip {
-      display: none;
-    }
     &:active::-webkit-slider-thumb {
       background-color: var(--slick-slider-filter-thumb-active-bg-color, v.$slick-slider-filter-thumb-active-bg-color);
       border: var(--slick-slider-filter-thumb-active-border, v.$slick-slider-filter-thumb-active-border);
@@ -1193,7 +1154,6 @@ li.hidden {
     }
   }
   &.input-group > :first-child:not(.input-group-addon),
-  &.input-group > :first-child:not(.input-group-addon),
   &.input-group > :first-child:not(.input-group-addon) .slider-filter-input,
   &.input-group > :first-child:not(.input-group-addon) .slider-editor-input {
     border-bottom-left-radius: var(--slick-slider-filter-border-radius, v.$slick-slider-filter-border-radius);
@@ -1252,16 +1212,6 @@ li.hidden {
       border-color: var(--slick-slider-filter-focus-border-color, v.$slick-slider-filter-focus-border-color);
       box-shadow: var(--slick-slider-filter-focus-box-shadow, v.$slick-slider-filter-focus-box-shadow);
     }
-  }
-
-  input[type='range']::-webkit-slider-thumb {
-    pointer-events: auto;
-  }
-  input[type='range']::-moz-range-thumb {
-    pointer-events: auto;
-  }
-  input[type='range']::-ms-thumb {
-    pointer-events: auto;
   }
 }
 

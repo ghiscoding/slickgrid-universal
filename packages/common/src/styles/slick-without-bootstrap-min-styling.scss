@@ -4,7 +4,8 @@
 // $input-focus-box-shadow: 0 0 0 0.25rem #0d6efd40 !default;
 
 /** Bootstrap buttons styling copied and changed slightly for Material Design */
-.slick-editor-modal, .slick-large-editor-text {
+.slick-editor-modal,
+.slick-large-editor-text {
   .btn {
     cursor: pointer;
     font-family: var(--slick-font-family, v.$slick-font-family);
@@ -29,21 +30,24 @@
   }
 
   .btn-xs,
-  .btn-group-xs>.btn {
-    padding: 1px 5px;
+  .btn-group-xs > .btn,
+  .btn-sm {
     font-size: 12px;
     line-height: 1.5;
     border-radius: 3px;
+  }
+  .btn-xs,
+  .btn-group-xs > .btn {
+    padding: 1px 5px;
   }
   .btn-sm {
     padding: 5px 10px;
-    font-size: 12px;
-    line-height: 1.5;
-    border-radius: 3px;
   }
 }
 
-.gridPane, .grid-pane, .slick-editor-modal {
+.gridPane,
+.grid-pane,
+.slick-editor-modal {
   font-family: var(--slick-font-family, v.$slick-font-family);
 
   .form-control {
@@ -56,8 +60,10 @@
     background-color: var(--slick-form-control-bg-color, v.$slick-form-control-bg-color);
     border: var(--slick-form-control-border, v.$slick-form-control-border);
     color: var(--slick-font-color, v.$slick-font-color);
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    transition:
+      border-color ease-in-out 0.15s,
+      box-shadow ease-in-out 0.15s;
   }
 
   .input-group .form-control {
@@ -85,12 +91,15 @@
     background-color: var(--slick-input-group-addon-bg-color, v.$slick-input-group-addon-bg-color);
     border-radius: 4px;
   }
-  .input-group-addon, .input-group-btn {
+  .input-group-addon,
+  .input-group-btn {
     width: 1%;
     white-space: nowrap;
     vertical-align: middle;
   }
-  .input-group .form-control, .input-group-addon, .input-group-btn {
+  .input-group .form-control,
+  .input-group-addon,
+  .input-group-btn {
     display: table-cell;
   }
   .input-group-addon:first-child {
@@ -101,11 +110,11 @@
   }
   .input-group .form-control:last-child,
   .input-group-addon:last-child,
-  .input-group-btn:first-child>.btn-group:not(:first-child)>.btn,
-  .input-group-btn:first-child>.btn:not(:first-child),
-  .input-group-btn:last-child>.btn,
-  .input-group-btn:last-child>.btn-group>.btn,
-  .input-group-btn:last-child>.dropdown-toggle {
+  .input-group-btn:first-child > .btn-group:not(:first-child) > .btn,
+  .input-group-btn:first-child > .btn:not(:first-child),
+  .input-group-btn:last-child > .btn,
+  .input-group-btn:last-child > .btn-group > .btn,
+  .input-group-btn:last-child > .dropdown-toggle {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
   }
@@ -119,7 +128,8 @@
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
   }
-  .input-group-btn:last-child > .btn, .input-group-btn:last-child > .btn-group {
+  .input-group-btn:last-child > .btn,
+  .input-group-btn:last-child > .btn-group {
     z-index: 2;
     margin-left: -1px;
   }
@@ -134,7 +144,9 @@
     border-bottom-left-radius: 0px;
   }
 
-  *, :after, :before {
+  *,
+  :after,
+  :before {
     box-sizing: border-box;
   }
 
@@ -147,7 +159,8 @@
   .slick-pagination {
     .slick-pagination-nav {
       .pagination > li {
-        a, span {
+        a,
+        span {
           position: relative;
           float: left;
           margin-left: -1px;
