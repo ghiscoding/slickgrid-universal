@@ -51,8 +51,6 @@
     "vue:dev": "cross-env NODE_ENV=development vite build --watch",
     "vue:dev:init": "vite build",
     "build": "pnpm clean && vue-tsc --p ./tsconfig.app.json && vite build --sourcemap",
-    "preview:release": "release --dry-run --skip-checks --npm-client pnpm --build-script build",
-    "release": "release --npm-client pnpm --build-script build",
     "type-check": "vue-tsc --build --force"
   },
   "dependencies": {
@@ -71,16 +69,15 @@
     "vue": ">=3.5.0"
   },
   "devDependencies": {
-    "@gc-utils/release": "^0.1.5",
-    "@vitejs/plugin-vue": "^5.2.4",
+    "@vitejs/plugin-vue": "catalog:",
     "cross-env": "catalog:",
     "i18next": "catalog:",
-    "i18next-vue": "^5.3.0",
+    "i18next-vue": "catalog:",
     "sass": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-plugin-dts": "^4.5.3",
-    "vue": "^3.5.13",
+    "vue": "catalog:",
     "vue-tsc": "^2.2.10"
   }
 }
