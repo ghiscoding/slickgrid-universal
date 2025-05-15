@@ -98,10 +98,10 @@
     "@commitlint/config-conventional": "^19.8.1",
     "@eslint/js": "^9.26.0",
     "@formkit/tempo": "catalog:",
-    "@lerna-lite/cli": "^4.1.1",
-    "@lerna-lite/publish": "^4.1.1",
-    "@lerna-lite/run": "^4.1.1",
-    "@lerna-lite/watch": "^4.1.1",
+    "@lerna-lite/cli": "^4.1.2",
+    "@lerna-lite/publish": "^4.1.2",
+    "@lerna-lite/run": "^4.1.2",
+    "@lerna-lite/watch": "^4.1.2",
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/event-pub-sub": "workspace:*",
     "@types/node": "catalog:",
@@ -127,7 +127,7 @@
     "rxjs": "catalog:",
     "sortablejs": "catalog:",
     "typescript": "catalog:",
-    "typescript-eslint": "^8.32.0",
+    "typescript-eslint": "^8.32.1",
     "vitest": "catalog:"
   },
   "funding": {
