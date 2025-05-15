@@ -388,8 +388,8 @@ li.hidden {
     &.slick-menu-item-disabled {
       border-color: transparent !important;
       background: inherit !important;
-      color: var(--slick-menu-item-disabled-color, v.$slick-menu-item-disabled-color);
       cursor: inherit;
+      color: var(--slick-menu-item-disabled-color, v.$slick-menu-item-disabled-color);
       .slick-menu-icon,
       .slick-menu-content {
         color: var(--slick-menu-item-disabled-color, v.$slick-menu-item-disabled-color);
@@ -785,9 +785,6 @@ li.hidden {
       &.form-control {
         cursor: pointer;
         appearance: none;
-        &:-ms-expand {
-          display: none;
-        }
         .empty {
           color: #c0c0c0;
         }
@@ -798,12 +795,12 @@ li.hidden {
     min-width: 30px;
   }
 
-  input.search-filter {
+  input.search-filter,
+  .search-filter input {
     font-family: var(--slick-filter-placeholder-font-family, v.$slick-filter-placeholder-font-family);
   }
   .search-filter {
     input {
-      font-family: var(--slick-filter-placeholder-font-family, v.$slick-filter-placeholder-font-family);
       &.compound-input {
         border-radius: var(--slick-compound-filter-border-radius, v.$slick-compound-filter-border-radius) !important;
         border-left: none;
@@ -820,9 +817,7 @@ li.hidden {
   .slick-headerrow {
     .slick-headerrow-columns {
       .slick-headerrow-column {
-        input.form-control.search-filter {
-          background-color: var(--slick-form-control-bg-color, v.$slick-form-control-bg-color);
-        }
+        input.form-control.search-filter,
         .form-group.search-filter {
           input,
           button,
@@ -1158,7 +1153,6 @@ li.hidden {
       border-radius: var(--slick-slider-filter-border-radius, v.$slick-slider-filter-border-radius);
     }
   }
-  &.input-group > :first-child:not(.input-group-addon),
   &.input-group > :first-child:not(.input-group-addon),
   &.input-group > :first-child:not(.input-group-addon) .slider-filter-input,
   &.input-group > :first-child:not(.input-group-addon) .slider-editor-input {

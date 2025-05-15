@@ -2,7 +2,7 @@
 @use './slick.layout' as sl;
 @use './svg-utilities' as svg;
 
-.slick-cell  {
+.slick-cell {
   input.dual-editor-text,
   input.editor-text {
     border: var(--slick-text-editor-border, v.$slick-text-editor-border);
@@ -115,11 +115,14 @@
 }
 
 /* Long Text Editor */
+.slick-large-editor-text,
+.slick-large-editor-text textarea {
+  background: var(--slick-large-editor-background-color, v.$slick-large-editor-background-color);
+  color: var(--slick-large-editor-text-color, v.$slick-large-editor-text-color);
+}
 .slick-large-editor-text {
   z-index: 10000;
   position: absolute;
-  background: var(--slick-large-editor-background-color, v.$slick-large-editor-background-color);
-  color: var(--slick-large-editor-text-color, v.$slick-large-editor-text-color);
   padding: var(--slick-large-editor-text-padding, v.$slick-large-editor-text-padding);
   border: var(--slick-large-editor-border, v.$slick-large-editor-border);
   border-radius: var(--slick-large-editor-border-radius, v.$slick-large-editor-border-radius);
@@ -133,8 +136,6 @@
   }
 
   textarea {
-    background: var(--slick-large-editor-background-color, v.$slick-large-editor-background-color);
-    color: var(--slick-large-editor-text-color, v.$slick-large-editor-text-color);
     border: 0;
     outline: 0;
   }
@@ -181,9 +182,9 @@
     left: var(--slick-editor-modal-container-left, v.$slick-editor-modal-container-left);
     transform: var(--slick-editor-modal-container-transform, v.$slick-editor-modal-container-transform);
     transition: var(--slick-editor-modal-backdrop-transition-end, v.$slick-editor-modal-backdrop-transition-end);
-    transition-property: opacity,transform;
+    transition-property: opacity, transform;
 
-    @media only screen and (min-width : 768px) {
+    @media only screen and (min-width: 768px) {
       &.split-view {
         width: calc(#{v.$slick-editor-modal-container-width} * 2);
       }
@@ -193,7 +194,7 @@
     }
 
     /** we'll triple the width only a large screen */
-    @media only screen and (max-width : 1200px) {
+    @media only screen and (max-width: 1200px) {
       &.triple-split-view {
         width: calc(#{v.$slick-editor-modal-container-width} * 2);
       }
@@ -349,7 +350,10 @@
           height: var(--slick-editor-modal-footer-btn-saving-icon-height, v.$slick-editor-modal-footer-btn-saving-icon-height);
           width: var(--slick-editor-modal-footer-btn-saving-icon-width, v.$slick-editor-modal-footer-btn-saving-icon-width);
           display: var(--slick-editor-modal-footer-btn-saving-icon-display, v.$slick-editor-modal-footer-btn-saving-icon-display);
-          vertical-align: var(--slick-editor-modal-footer-btn-saving-icon-vertical-align, v.$slick-editor-modal-footer-btn-saving-icon-vertical-align);
+          vertical-align: var(
+            --slick-editor-modal-footer-btn-saving-icon-vertical-align,
+            v.$slick-editor-modal-footer-btn-saving-icon-vertical-align
+          );
           margin: var(--slick-editor-modal-footer-btn-saving-icon-margin, v.$slick-editor-modal-footer-btn-saving-icon-margin);
           animation: var(--slick-editor-modal-footer-btn-saving-icon-animation, v.$slick-editor-modal-footer-btn-saving-icon-animation);
           content: var(--slick-editor-modal-footer-btn-saving-icon-content, v.$slick-editor-modal-footer-btn-saving-icon-content);
@@ -385,9 +389,13 @@
       margin: var(--slick-editor-modal-detail-container-margin, v.$slick-editor-modal-detail-container-margin);
       padding: var(--slick-editor-modal-detail-container-padding, v.$slick-editor-modal-detail-container-padding);
 
+      input,
+      .input-group,
+      .input-group input {
+        height: var(--slick-editor-modal-input-editor-height, v.$slick-editor-modal-input-editor-height);
+      }
       input {
         color: var(--slick-editor-modal-text-color, v.$slick-editor-modal-text-color);
-        height: var(--slick-editor-modal-input-editor-height, v.$slick-editor-modal-input-editor-height);
         margin: var(--slick-editor-modal-input-editor-margin, v.$slick-editor-modal-input-editor-margin);
         border: var(--slick-editor-modal-input-editor-border, v.$slick-editor-modal-input-editor-border);
         padding: var(--slick-editor-modal-input-editor-padding, v.$slick-editor-modal-input-editor-padding);
@@ -395,17 +403,10 @@
           border-color: var(--slick-text-editor-focus-border-color, v.$slick-text-editor-focus-border-color);
           box-shadow: var(--slick-text-editor-focus-box-shadow, v.$slick-text-editor-focus-box-shadow);
         }
-        &:disabled {
-          background-color: var(--slick-editor-input-disabled-color, v.$slick-editor-input-disabled-color);
-        }
       }
       .input-group {
         display: flex;
         position: relative;
-        height: var(--slick-editor-modal-input-editor-height, v.$slick-editor-modal-input-editor-height);
-        input {
-          height: var(--slick-editor-modal-input-editor-height, v.$slick-editor-modal-input-editor-height);
-        }
       }
       .slick-large-editor-text {
         border: var(--slick-editor-modal-large-editor-border, v.$slick-editor-modal-large-editor-border);
@@ -418,9 +419,6 @@
         textarea {
           width: 100%;
           height: 100%;
-          &:disabled {
-            background-color: var(--slick-editor-input-disabled-color, v.$slick-editor-input-disabled-color);
-          }
         }
         .editor-footer {
           height: var(--slick-editor-modal-large-editor-footer-height, v.$slick-editor-modal-large-editor-footer-height);
@@ -435,15 +433,9 @@
         &.invalid {
           border: var(--slick-editor-modal-detail-container-border-invalid, v.$slick-editor-modal-detail-container-border-invalid);
         }
-        &:disabled, &.disabled {
-          background-color: var(--slick-editor-input-disabled-color, v.$slick-editor-input-disabled-color);
-        }
       }
       button.ms-choice {
         height: var(--slick-editor-modal-multiselect-editor-height, v.$slick-editor-modal-multiselect-editor-height);
-        &:disabled {
-          background-color: var(--slick-editor-input-disabled-color, v.$slick-editor-input-disabled-color);
-        }
       }
       .checkbox-editor-container {
         padding: var(--slick-editor-modal-checkbox-editor-padding, v.$slick-editor-modal-checkbox-editor-padding);
@@ -452,9 +444,6 @@
         height: var(--slick-editor-modal-input-editor-height, v.$slick-editor-modal-input-editor-height);
         input {
           height: inherit;
-        }
-        &.disabled {
-          background-color: var(--slick-editor-input-disabled-color, v.$slick-editor-input-disabled-color);
         }
       }
 
@@ -478,7 +467,6 @@
         cursor: pointer;
         background-color: var(--slick-date-picker-bg-color, v.$slick-date-picker-bg-color);
         &:disabled {
-          background-color: var(--slick-editor-input-disabled-color, v.$slick-editor-input-disabled-color);
           cursor: initial;
         }
       }
@@ -495,16 +483,28 @@
       }
 
       &.modified {
-        input, .slick-large-editor-text, .ms-choice, .checkbox-editor-container {
+        input,
+        .slick-large-editor-text,
+        .ms-choice,
+        .checkbox-editor-container {
           border: var(--slick-editor-modal-detail-container-border-modified, v.$slick-editor-modal-detail-container-border-modified);
-          border-width: var(--slick-editor-modal-detail-container-border-width-modified, v.$slick-editor-modal-detail-container-border-width-modified);
+          border-width: var(
+            --slick-editor-modal-detail-container-border-width-modified,
+            v.$slick-editor-modal-detail-container-border-width-modified
+          );
         }
       }
       &.invalid {
-        input, .slick-large-editor-text {
+        input,
+        .slick-large-editor-text {
           border: var(--slick-editor-modal-detail-container-border-invalid, v.$slick-editor-modal-detail-container-border-invalid);
         }
       }
+    }
+
+    .item-details-editor-container,
+    .item-details-editor-container .form-control {
+      &:disabled,
       &.disabled {
         background-color: var(--slick-editor-input-disabled-color, v.$slick-editor-input-disabled-color);
       }
