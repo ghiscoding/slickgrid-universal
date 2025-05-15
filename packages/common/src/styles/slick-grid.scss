@@ -668,8 +668,8 @@
         /* like TH  */
         & {
           background: var(--slick-header-background-color, v.$slick-header-background-color);
-          font-family: var(--slick-font-family, v.$slick-font-family);
           color: var(--slick-header-text-color, v.$slick-header-text-color);
+          font-family: var(--slick-font-family, v.$slick-font-family);
           font-size: var(--slick-header-font-size, v.$slick-header-font-size);
           font-weight: var(--slick-header-font-weight, v.$slick-header-font-weight);
         }
