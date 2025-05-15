@@ -69,15 +69,15 @@
     "vue": ">=3.5.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^5.2.4",
+    "@vitejs/plugin-vue": "catalog:",
     "cross-env": "catalog:",
     "i18next": "catalog:",
-    "i18next-vue": "^5.3.0",
+    "i18next-vue": "catalog:",
     "sass": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-plugin-dts": "^4.5.3",
-    "vue": "^3.5.14",
+    "vue": "catalog:",
     "vue-tsc": "^2.2.10"
   }
 }
