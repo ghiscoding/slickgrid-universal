@@ -676,11 +676,14 @@ importers:
         specifier: workspace:*
         version: link:../../packages/utils
       dequal:
-        specifier: 'catalog:'
+        specifier: ^2.0.3
         version: 2.0.3
       rxjs:
-        specifier: 'catalog:'
+        specifier: ^7.8.2
         version: 7.8.2
+      tslib:
+        specifier: ^2.3.0
+        version: 2.8.1
     devDependencies:
       '@4tw/cypress-drag-drop':
         specifier: 'catalog:'
@@ -844,9 +847,6 @@ importers:
       ngx-bootstrap:
         specifier: ^19.0.2
         version: 19.0.2(@angular/animations@19.2.11(@angular/common@19.2.11(@angular/core@19.2.11(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.11(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.11(@angular/core@19.2.11(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.11(rxjs@7.8.2)(zone.js@0.15.0))(@angular/forms@19.2.11(@angular/common@19.2.11(@angular/core@19.2.11(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.11(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.11(@angular/animations@19.2.11(@angular/common@19.2.11(@angular/core@19.2.11(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.11(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.11(@angular/core@19.2.11(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.11(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2))(rxjs@7.8.2)
-      npm-run-all2:
-        specifier: 'catalog:'
-        version: 8.0.1
       rimraf:
         specifier: ^6.0.1
         version: 6.0.1
@@ -859,9 +859,6 @@ importers:
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@22.15.18)(typescript@5.8.3)
-      tslib:
-        specifier: 'catalog:'
-        version: 2.8.1
       typescript:
         specifier: ~5.8.3
         version: 5.8.3
@@ -915,10 +912,10 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/utils
       dequal:
-        specifier: 'catalog:'
+        specifier: ^2.0.3
         version: 2.0.3
       rxjs:
-        specifier: 'catalog:'
+        specifier: ^7.8.2
         version: 7.8.2
       tslib:
         specifier: ^2.3.0

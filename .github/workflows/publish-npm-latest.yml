@@ -106,6 +106,9 @@ jobs:
           pnpm whoami
           pnpm exec ${{ env.LERNA_VERSION_QUERY }}
 
+      - name: replace Angular-Slickgrid "workspace:"
+        run: pnpm replace-workspace
+
       - name: OTP
         if: ${{ inputs.dryrun != true }}
         uses: step-security/wait-for-secrets@v1

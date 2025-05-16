@@ -35,7 +35,7 @@
     "angular:preview": "vite preview --outDir=website --port=4300",
     "prebuild": "pnpm lint",
     "build": "pnpm packagr",
-    "postbuild": "npm-run-all copy:i18n",
+    "postbuild": "pnpm run copy:i18n && pnpm run replace-workspace",
     "packagr": "ng-packagr -p ng-package.json -c tsconfig.json",
     "copy:i18n": "copyfiles src/assets/i18n/*.json dist/i18n --flat --stat",
     "delete:dist": "rimraf dist",
@@ -44,6 +44,7 @@
     "lint:fix": "eslint --fix .",
     "pack-tarball": "npm pack",
     "pack-lib": "npm pack ./dist",
+    "replace-workspace": "node ./scripts/replace-workspace.mjs",
     "test": "ng test --watch",
     "test:coverage": "vitest --no-watch --coverage"
   },
@@ -57,8 +58,9 @@
     "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
     "@slickgrid-universal/rxjs-observable": "workspace:*",
     "@slickgrid-universal/utils": "workspace:*",
-    "dequal": "catalog:",
-    "rxjs": "catalog:"
+    "dequal": "^2.0.3",
+    "rxjs": "^7.8.2",
+    "tslib": "^2.3.0"
   },
   "peerDependencies": {
     "@angular/core": ">=19.0.0"
@@ -118,13 +120,11 @@
     "native-copyfiles": "catalog:",
     "ng-packagr": "^19.2.2",
     "ngx-bootstrap": "^19.0.2",
-    "npm-run-all2": "catalog:",
     "rimraf": "^6.0.1",
     "rxjs": "catalog:",
     "sass": "catalog:",
     "sortablejs": "catalog:",
     "ts-node": "^10.9.2",
-    "tslib": "catalog:",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.32.1",
     "vite": "catalog:",
