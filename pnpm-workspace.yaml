@@ -3,6 +3,9 @@ packages:
   - frameworks/**
   - packages/**
 
+  # exclude packages that are inside dist/test directories
+  - '!**/dist/**'
+
 catalog:
   '@4tw/cypress-drag-drop': ^2.3.0
   '@faker-js/faker': ^9.8.0
