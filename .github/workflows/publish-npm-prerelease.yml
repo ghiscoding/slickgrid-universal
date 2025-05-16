@@ -154,6 +154,9 @@ jobs:
           pnpm whoami
           pnpm exec lerna version ${{ inputs.bump }} --conventional-commits --conventional-prerelease --preid ${{ inputs.tag }} --force-publish --yes
 
+      - name: replace Angular-Slickgrid "workspace:"
+        run: pnpm replace-workspace
+
       - name: OTP
         if: ${{ inputs.dryrun != true }}
         uses: step-security/wait-for-secrets@v1
