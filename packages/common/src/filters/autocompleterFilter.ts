@@ -200,7 +200,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
 
         if (collectionAsync && !this.columnFilter.collection) {
           // only read the collectionAsync once (on the 1st load),
-          // we do this because Http Fetch will throw an error saying body was already read and is streaming is locked
+          // we do this because Http Fetch will throw an error saying body was already read and its streaming is locked
           collectionOutput = renderCollectionOptionsAsync(
             collectionAsync,
             this.columnDef,
