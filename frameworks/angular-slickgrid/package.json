@@ -59,8 +59,7 @@
     "@slickgrid-universal/rxjs-observable": "workspace:*",
     "@slickgrid-universal/utils": "workspace:*",
     "dequal": "^2.0.3",
-    "rxjs": "^7.8.2",
-    "tslib": "^2.3.0"
+    "rxjs": "^7.8.2"
   },
   "peerDependencies": {
     "@angular/core": ">=19.0.0"
@@ -125,6 +124,7 @@
     "sass": "catalog:",
     "sortablejs": "catalog:",
     "ts-node": "^10.9.2",
+    "tslib": "catalog:",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.32.1",
     "vite": "catalog:",
