@@ -4,6 +4,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.0.2](https://github.com/ghiscoding/slickgrid-universal/compare/v9.0.0...v9.0.2) (2025-05-16)
+
+### Bug Fixes
+
+* Chromium patch to avoid showing scrollbar too early ([#1978](https://github.com/ghiscoding/slickgrid-universal/issues/1978)) ([0744e75](https://github.com/ghiscoding/slickgrid-universal/commit/0744e750fd911dfbf56124d81e49600826717ab0)) - by @ghiscoding
+* **core:** rollback slickgrid width UI change & drop `::ms` styling ([#1977](https://github.com/ghiscoding/slickgrid-universal/issues/1977)) ([32da143](https://github.com/ghiscoding/slickgrid-universal/commit/32da14367b748cd825640c91b26e8d8f08082799)) - by @ghiscoding
+* **core:** small UI regression causing column width to be smaller ([#1973](https://github.com/ghiscoding/slickgrid-universal/issues/1973)) ([8bf8c3e](https://github.com/ghiscoding/slickgrid-universal/commit/8bf8c3e524d168f4a1faa22e6ac9ac713620a344)), closes [#1961](https://github.com/ghiscoding/slickgrid-universal/issues/1961) - by @ghiscoding
+
 ## [9.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.14.0...v9.0.0) (2025-05-10)
 
 ### ⚠ BREAKING CHANGES

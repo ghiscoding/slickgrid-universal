@@ -4,6 +4,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.0.2](https://github.com/ghiscoding/slickgrid-universal/compare/v9.0.0...v9.0.2) (2025-05-16)
+
+**Note:** Version bump only for package slickgrid-react
+
 ## [9.0.0](https://github.com/ghiscoding/slickgrid-react/compare/v5.14.0...v9.0.0) (2025-05-10)
 
 > [!NOTE]
@@ -142,13 +146,11 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [5.8.0](https://github.com/ghiscoding/slickgrid-react/compare/v5.7.1...v5.8.0) (2024-09-29)
 
-
 ### Features
 
 * option to improve Date Sorting by pre-parsing date items only once ([#412](https://github.com/ghiscoding/slickgrid-react/issues/412)) ([1a4b752](https://github.com/ghiscoding/slickgrid-react/commit/1a4b7527bff56262af733b9a4816a0d5cd5a1ba0))
 
 ## [5.7.1](https://github.com/ghiscoding/slickgrid-react/compare/v5.7.0...v5.7.1) (2024-09-14)
-
 
 ### Performance Improvements
 
@@ -157,16 +159,13 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [5.7.0](https://github.com/ghiscoding/slickgrid-react/compare/v5.6.0...v5.7.0) (2024-08-31)
 
-
 ### Features
 
 * new Drag & Drop to Recycle Bin demo ([#402](https://github.com/ghiscoding/slickgrid-react/issues/402)) ([f6fd61c](https://github.com/ghiscoding/slickgrid-react/commit/f6fd61c293242fde6f4a9139157c08853aae55c8))
 
-
 ### Bug Fixes
 
 * unflattening tree->flat array multiple times ([#403](https://github.com/ghiscoding/slickgrid-react/issues/403)) ([0797efa](https://github.com/ghiscoding/slickgrid-react/commit/0797efae7f72dd93166338370ade30b681e0429d))
-
 
 ### Performance Improvements
 
@@ -174,13 +173,11 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [5.6.0](https://github.com/ghiscoding/slickgrid-react/compare/v5.5.2...v5.6.0) (2024-08-24)
 
-
 ### Features
 
 * migrate back to Vanilla-Calendar-Pro ([1716f40](https://github.com/ghiscoding/slickgrid-react/commit/1716f40c8de94d52f2bacaea42993f4d1dd62236))
 
 ## [5.5.2](https://github.com/ghiscoding/slickgrid-react/compare/v5.5.1...v5.5.2) (2024-08-17)
-
 
 ### Bug Fixes
 
@@ -188,19 +185,16 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [5.5.1](https://github.com/ghiscoding/slickgrid-react/compare/v5.5.0...v5.5.1) (2024-08-17)
 
-
 ### Bug Fixes
 
 * Tree Data should work without initial sort, fixes [#394](https://github.com/ghiscoding/slickgrid-react/issues/394) ([#395](https://github.com/ghiscoding/slickgrid-react/issues/395)) ([f7abf41](https://github.com/ghiscoding/slickgrid-react/commit/f7abf418ac04e1ff85c4106c504df342f0dd44df)), closes [#393](https://github.com/ghiscoding/slickgrid-react/issues/393)
 
 ## [5.5.0](https://github.com/ghiscoding/slickgrid-react/compare/v5.4.0...v5.5.0) (2024-08-07)
 
-
 ### Features
 
 * Infinite Scroll for Backend Services (OData/GraphQL) ([#386](https://github.com/ghiscoding/slickgrid-react/issues/386)) ([8dc8d7b](https://github.com/ghiscoding/slickgrid-react/commit/8dc8d7bbe277990e516196a2f41c4cc9b7932229))
 * Infinite Scroll for JSON data ([#387](https://github.com/ghiscoding/slickgrid-react/issues/387)) ([2d06248](https://github.com/ghiscoding/slickgrid-react/commit/2d062486b0218289af794f482a2bef35359be2d5))
-
 
 ### Bug Fixes
 
@@ -208,11 +202,9 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [5.4.0](https://github.com/ghiscoding/slickgrid-react/compare/v5.3.2...v5.4.0) (2024-07-20)
 
-
 ### Features
 
 * add `columnPickerLabel` for custom label ([#375](https://github.com/ghiscoding/slickgrid-react/issues/375)) ([0b86f12](https://github.com/ghiscoding/slickgrid-react/commit/0b86f122ea5f68c07f7657078935f7078d1a5dfa))
-
 
 ### Bug Fixes
 
@@ -220,13 +212,11 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [5.3.2](https://github.com/ghiscoding/slickgrid-react/compare/v5.3.1...v5.3.2) (2024-07-13)
 
-
 ### Bug Fixes
 
 * SASS warnings & other unit test fixes ([#372](https://github.com/ghiscoding/slickgrid-react/issues/372)) ([c526d2b](https://github.com/ghiscoding/slickgrid-react/commit/c526d2b6e89e86607d8620a39dfd52d87bd4434c))
 
 ## [5.3.1](https://github.com/ghiscoding/slickgrid-react/compare/v5.3.0...v5.3.1) (2024-07-06)
-
 
 ### Bug Fixes
 
@@ -234,18 +224,15 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [5.3.0](https://github.com/ghiscoding/slickgrid-react/compare/v5.2.0...v5.3.0) (2024-06-29)
 
-
 ### Features
 
 * add onPreHeaderContextMenu for Column Picker usage ([#368](https://github.com/ghiscoding/slickgrid-react/issues/368)) ([c5d16e2](https://github.com/ghiscoding/slickgrid-react/commit/c5d16e246ad046781ff50c4e14ef7a2eae3d1510))
-
 
 ### Bug Fixes
 
 * setting date picker should always work ([#369](https://github.com/ghiscoding/slickgrid-react/issues/369)) ([8f68f66](https://github.com/ghiscoding/slickgrid-react/commit/8f68f66a287ed1df39bf9905ba562a5a083e7bde))
 
 ## [5.2.0](https://github.com/ghiscoding/slickgrid-react/compare/v5.1.0...v5.2.0) (2024-06-18)
-
 
 ### Features
 
@@ -254,7 +241,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * paste multiline content as single cell ([d415a51](https://github.com/ghiscoding/slickgrid-react/commit/d415a510c43b499922390c798b1f3628aa6969ee))
 
 ## [5.1.0](https://github.com/ghiscoding/slickgrid-react/compare/v5.0.2...v5.1.0) (2024-06-08)
-
 
 ### Features
 
@@ -266,7 +252,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * add StartsWith/EndsWith (`a*z`) to OData/GraphQL ([#356](https://github.com/ghiscoding/slickgrid-react/issues/356)) ([643f8a8](https://github.com/ghiscoding/slickgrid-react/commit/643f8a85c0fef93910d1318464a4a78fb305724d))
 * enhance Excel `valueParserCallback` with dataContext & new demo ([#350](https://github.com/ghiscoding/slickgrid-react/issues/350)) ([e1e6c0d](https://github.com/ghiscoding/slickgrid-react/commit/e1e6c0def7f458fdd3cb4563a62b6caea6558c23))
 
-
 ### Bug Fixes
 
 * **demo:** out of boundaries page Grid Preset should be unset ([#347](https://github.com/ghiscoding/slickgrid-react/issues/347)) ([36a3a85](https://github.com/ghiscoding/slickgrid-react/commit/36a3a855c12933fbb29040e130094ec597bf981b))
@@ -275,13 +260,11 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [5.0.2](https://github.com/ghiscoding/slickgrid-react/compare/v5.0.1...v5.0.2) (2024-05-12)
 
-
 ### Bug Fixes
 
 * small styling issues & better primary color support w/Dark Mode ([#345](https://github.com/ghiscoding/slickgrid-react/issues/345)) ([bfaaf21](https://github.com/ghiscoding/slickgrid-react/commit/bfaaf211c496b862c06890fa13daea330b44d360))
 
 ## [5.0.1](https://github.com/ghiscoding/slickgrid-react/compare/v5.0.0...v5.0.1) (2024-05-10)
-
 
 ### Bug Fixes
 
@@ -291,7 +274,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 > [!NOTE]
 > #### Follow the [Migration to 5.0](https://github.com/ghiscoding/slickgrid-react/wiki/Migration-to-5.x) for all the changes and take a look at the [v5.0.0](https://github.com/ghiscoding/Slickgrid-react/releases/tag/v5.0.1) release for the announcement and quick info.
-
 
 ### ⚠ BREAKING CHANGES
 
@@ -309,20 +291,17 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * pure SVG icons, Moment to Tempo, Flatpickr to Vanilla-Calendar ([#343](https://github.com/ghiscoding/slickgrid-react/issues/343)) ([a27125c](https://github.com/ghiscoding/slickgrid-react/commit/a27125ce55d6b1990e2f0a18654417cbdc475db5))
 * remove Font-Awesome and use new SVG icons ([#331](https://github.com/ghiscoding/slickgrid-react/issues/331)) ([7cb3670](https://github.com/ghiscoding/slickgrid-react/commit/7cb3670d4d5dda616b3cda5de2529cb5693fd5f5))
 
-
 ### Bug Fixes
 
 * we shouldn't always commit on focusout/blur ([#332](https://github.com/ghiscoding/slickgrid-react/issues/332)) ([aab435b](https://github.com/ghiscoding/slickgrid-react/commit/aab435bc9dc37770427a3fdcf1a5597bf96b611a))
 
 # [4.7.0](https://github.com/ghiscoding/slickgrid-react/compare/v4.6.3...v4.7.0) (2024-04-20)
 
-
 ### Features
 
 * add global `defaultEditorOptions` & `defaultFilterOptions` ([#326](https://github.com/ghiscoding/slickgrid-react/issues/326)) ([317e4e0](https://github.com/ghiscoding/slickgrid-react/commit/317e4e0700694513190836248db5d439a7fe00b8))
 
 ## [4.6.3](https://github.com/ghiscoding/slickgrid-react/compare/v4.6.2...v4.6.3) (2024-04-01)
-
 
 ### Bug Fixes
 
@@ -331,13 +310,11 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [4.6.2](https://github.com/ghiscoding/slickgrid-react/compare/v4.6.1...v4.6.2) (2024-03-23)
 
-
 ### Bug Fixes
 
 * invalid types exports ([5ea0e19](https://github.com/ghiscoding/slickgrid-react/commit/5ea0e19935b58d49d81822ac4076191bac139c4a))
 
 ## [4.6.1](https://github.com/ghiscoding/slickgrid-react/compare/v4.6.0...v4.6.1) (2024-03-23)
-
 
 ### Bug Fixes
 
@@ -345,12 +322,10 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 # [4.6.0](https://github.com/ghiscoding/slickgrid-react/compare/v4.5.0...v4.6.0) (2024-03-23)
 
-
 ### Bug Fixes
 
 * Filter `model` is now `FilterConstructor` and shouldn't be newed ([#310](https://github.com/ghiscoding/slickgrid-react/issues/310)) ([5f3f765](https://github.com/ghiscoding/slickgrid-react/commit/5f3f765c61531bfb1bc712f10d06f847516d89d7))
 * hide Toggle Dark Mode from Grid Menu by default ([#308](https://github.com/ghiscoding/slickgrid-react/issues/308)) ([074f07e](https://github.com/ghiscoding/slickgrid-react/commit/074f07e9664998b0a968c8b39dcbc6ae578af070))
-
 
 ### Features
 
@@ -358,12 +333,10 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 # [4.5.0](https://github.com/ghiscoding/slickgrid-react/compare/v4.4.1...v4.5.0) (2024-03-05)
 
-
 ### Bug Fixes
 
 * add extra conditions to help strict mode ([#302](https://github.com/ghiscoding/slickgrid-react/issues/302)) ([8b4d1f6](https://github.com/ghiscoding/slickgrid-react/commit/8b4d1f6e918c0359321bf324fc523a346eabee2a))
 * remove width style on grid container for CSP safe ([#306](https://github.com/ghiscoding/slickgrid-react/issues/306)) ([529abab](https://github.com/ghiscoding/slickgrid-react/commit/529abab098079447b94f452e00bb6d7571193576))
-
 
 ### Features
 
@@ -371,18 +344,15 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [4.4.1](https://github.com/ghiscoding/slickgrid-react/compare/v4.4.0...v4.4.1) (2024-02-13)
 
-
 ### Bug Fixes
 
 * update to latest Slickgrid-Universal v4.4.1 ([e06f669](https://github.com/ghiscoding/slickgrid-react/commit/e06f669b7a2350a2e9204f3fb4a8ce76a2647526))
 
 # [4.4.0](https://github.com/ghiscoding/slickgrid-react/compare/v4.3.1...v4.4.0) (2024-02-13)
 
-
 ### Bug Fixes
 
 * **demo:** change trading demo full screen z-index lower than ms-select ([7761265](https://github.com/ghiscoding/slickgrid-react/commit/77612652c3a2949a823c97986fdf2651e60c2047))
-
 
 ### Features
 
@@ -390,18 +360,15 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [4.3.1](https://github.com/ghiscoding/slickgrid-react/compare/v4.3.0...v4.3.1) (2024-01-27)
 
-
 ### Performance Improvements
 
 * decrease number of calls to translate all extensions only once ([#290](https://github.com/ghiscoding/slickgrid-react/issues/290)) ([89ddb41](https://github.com/ghiscoding/slickgrid-react/commit/89ddb4139145d54236e3787a6221e83a24fac065))
 
 # [4.3.0](https://github.com/ghiscoding/slickgrid-react/compare/v4.2.0...v4.3.0) (2024-01-21)
 
-
 ### Features
 
 * **plugin:** new Row Based Editing ([#289](https://github.com/ghiscoding/slickgrid-react/issues/289)) ([ac3218d](https://github.com/ghiscoding/slickgrid-react/commit/ac3218daafd37a6df7ec3d7c74184b0b7d2f19e6))
-
 
 ### Performance Improvements
 
@@ -409,25 +376,21 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 # [4.2.0](https://github.com/ghiscoding/slickgrid-react/compare/v4.1.0...v4.2.0) (2023-12-30)
 
-
 ### Features
 
 * update Slickgrid-Universal with perf improvements ([#279](https://github.com/ghiscoding/slickgrid-react/issues/279)) ([a157905](https://github.com/ghiscoding/slickgrid-react/commit/a157905fb75bde0603158fcce527679c3e402521))
 
 # [4.1.0](https://github.com/ghiscoding/slickgrid-react/compare/v4.0.2...v4.1.0) (2023-12-21)
 
-
 ### Bug Fixes
 
 * publish src folder for source maps, fixes [#273](https://github.com/ghiscoding/slickgrid-react/issues/273) ([#274](https://github.com/ghiscoding/slickgrid-react/issues/274)) ([18a8909](https://github.com/ghiscoding/slickgrid-react/commit/18a8909b255b03c8a7d601e22e1525b29987eed2))
-
 
 ### Features
 
 * reimplement highlight row, node-extend & fix few issues ([#275](https://github.com/ghiscoding/slickgrid-react/issues/275)) ([e29842a](https://github.com/ghiscoding/slickgrid-react/commit/e29842aedf213c956cc309378bdae4d92ca5f8cc))
 
 ## [4.0.2](https://github.com/ghiscoding/slickgrid-react/compare/v4.0.1...v4.0.2) (2023-12-16)
-
 
 ### Bug Fixes
 
@@ -443,13 +406,11 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [3.6.4](https://github.com/ghiscoding/slickgrid-react/compare/v3.6.3...v3.6.4) (2023-12-13)
 
-
 ### Bug Fixes
 
 * `devMode` can be false/object & use `!important` on text CSS utils ([#270](https://github.com/ghiscoding/slickgrid-react/issues/270)) ([66576ee](https://github.com/ghiscoding/slickgrid-react/commit/66576ee17f5167ee15d4ada20ae752bffdaf8536))
 
 ## [3.6.3](https://github.com/ghiscoding/slickgrid-react/compare/v3.6.2...v3.6.3) (2023-12-08)
-
 
 ### Features
 
@@ -457,13 +418,11 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [3.6.2](https://github.com/ghiscoding/slickgrid-react/compare/v3.6.1...v3.6.2) (2023-12-08)
 
-
 ### Bug Fixes
 
 * registered external resouces should keep singleton ref ([#262](https://github.com/ghiscoding/slickgrid-react/issues/262)) ([14703df](https://github.com/ghiscoding/slickgrid-react/commit/14703dfd087560b779f157c98e288aa39943bc56))
 
 ## [3.6.1](https://github.com/ghiscoding/slickgrid-react/compare/v3.6.0...v3.6.1) (2023-11-26)
-
 
 ### Bug Fixes
 
@@ -475,13 +434,11 @@ All notable changes to this project will be documented in this file. See [Conven
 
 # [3.6.0](https://github.com/ghiscoding/slickgrid-react/compare/v3.5.1...v3.6.0) (2023-11-26)
 
-
 ### Features
 
 * **GraphQL:** .excludeFieldFromQuery, exclude field but keep fields ([#261](https://github.com/ghiscoding/slickgrid-react/issues/261)) ([b0e67cf](https://github.com/ghiscoding/slickgrid-react/commit/b0e67cfaf8228e35e852a451cc850459c77fd50e))
 
 ## [3.5.1](https://github.com/ghiscoding/slickgrid-react/compare/v3.5.0...v3.5.1) (2023-11-13)
-
 
 ### Bug Fixes
 
@@ -490,13 +447,11 @@ All notable changes to this project will be documented in this file. See [Conven
 
 # [3.5.0](https://github.com/ghiscoding/slickgrid-react/compare/v3.4.0...v3.5.0) (2023-11-11)
 
-
 ### Bug Fixes
 
 * SlickCellRangeSelector stopped event bubbling in editor ([#252](https://github.com/ghiscoding/slickgrid-react/issues/252)) ([f3e64e8](https://github.com/ghiscoding/slickgrid-react/commit/f3e64e8da3a5d898a90496070dc93fa75a2d3c44))
 
 # [3.4.0](https://github.com/ghiscoding/slickgrid-react/compare/v3.3.2...v3.4.0) (2023-11-03)
-
 
 ### Features
 
@@ -505,7 +460,6 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [3.3.2](https://github.com/ghiscoding/slickgrid-react/compare/v3.3.0...v3.3.2) (2023-10-14)
 
-
 ### Bug Fixes
 
 * **graphql:** column with complex object could throw null pointer exception ([#229](https://github.com/ghiscoding/slickgrid-react/issues/229)) ([2cbb717](https://github.com/ghiscoding/slickgrid-react/commit/2cbb7174eec1d775c1413b4b1e8958bfcbc208f1))
@@ -513,13 +467,11 @@ All notable changes to this project will be documented in this file. See [Conven
 
 # [3.3.0](https://github.com/ghiscoding/slickgrid-react/compare/v3.2.2...v3.3.0) (2023-10-05)
 
-
 ### Features
 
 * add pageUp/pageDown/home/end to SlickCellSelection ([#226](https://github.com/ghiscoding/slickgrid-react/issues/226)) ([efc77fe](https://github.com/ghiscoding/slickgrid-react/commit/efc77feb9cfb509b2afaf48dc5285a84c07028d2))
 
 ## [3.2.2](https://github.com/ghiscoding/slickgrid-react/compare/v3.2.1...v3.2.2) (2023-09-24)
-
 
 ### Bug Fixes
 
@@ -527,29 +479,23 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [3.2.1](https://github.com/ghiscoding/slickgrid-react/compare/v3.2.0...v3.2.1) (2023-09-05)
 
-
 ### Bug Fixes
 
 * **common:** Select Filter/Editor enableRenderHtml invalid displays ([#202](https://github.com/ghiscoding/slickgrid-react/issues/202)) ([a61c239](https://github.com/ghiscoding/slickgrid-react/commit/a61c2395cee6d98cb44837c85450d6292d92a7e0))
 
 # [3.2.0](https://github.com/ghiscoding/slickgrid-react/compare/v3.1.0...v3.2.0) (2023-08-21)
 
-
 ### Features
 
 * **TreeData:** add optional Aggregators for Tree Data totals calc ([#191](https://github.com/ghiscoding/slickgrid-react/issues/191)) ([26bfac5](https://github.com/ghiscoding/slickgrid-react/commit/26bfac59f0ade3dbaba62fb396e40d25461a0f29))
 
-
-
 # [3.1.0](https://github.com/ghiscoding/slickgrid-react/compare/v3.0.2...v3.1.0) (2023-07-21)
-
 
 ### Features
 
 * **common:** add optional `scrollIntoView` to GridService `addItems` ([#165](https://github.com/ghiscoding/slickgrid-react/issues/165)) ([2c4aa98](https://github.com/ghiscoding/slickgrid-react/commit/2c4aa98202fe037e07b2d1a52ef24a61e5e0af16))
 
 ## [3.0.2](https://github.com/ghiscoding/slickgrid-react/compare/v3.0.1...v3.0.2) (2023-07-01)
-
 
 ### Bug Fixes
 
@@ -560,7 +506,6 @@ All notable changes to this project will be documented in this file. See [Conven
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
 ## [3.0.1](https://github.com/ghiscoding/slickgrid-react/compare/v3.0.0...v3.0.1) (2023-05-30)
-
 
 ### Bug Fixes
 
@@ -575,13 +520,11 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [2.6.4](https://github.com/ghiscoding/slickgrid-react/compare/v2.6.3...v2.6.4) (2023-05-20)
 
-
 ### Bug Fixes
 
 * **export:** fix negative number exports to Excel ([#108](https://github.com/ghiscoding/slickgrid-react/issues/108)) ([c7f93b3](https://github.com/ghiscoding/slickgrid-react/commit/c7f93b3f9a5f49b4106b3eadd1e186112b348723))
 
 ## [2.6.3](https://github.com/ghiscoding/slickgrid-react/compare/v2.6.2...v2.6.3) (2023-03-23)
-
 
 ### Bug Fixes
 
@@ -590,13 +533,11 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [2.6.2](https://github.com/ghiscoding/slickgrid-react/compare/v2.6.1...v2.6.2) (2023-03-03)
 
-
 ### Bug Fixes
 
 * draggable grouping shouldn't throw when dynamically changing cols ([#62](https://github.com/ghiscoding/slickgrid-react/issues/62)) ([b934d0a](https://github.com/ghiscoding/slickgrid-react/commit/b934d0a30c1331389f91550ec15bca3bbf8633a6))
 
 ## [2.6.1](https://github.com/ghiscoding/slickgrid-react/compare/v2.6.0...v2.6.1) (2023-02-24)
-
 
 ### Bug Fixes
 
@@ -604,13 +545,11 @@ All notable changes to this project will be documented in this file. See [Conven
 
 # [2.6.0](https://github.com/ghiscoding/slickgrid-react/compare/v2.5.0...v2.6.0) (2023-02-24)
 
-
 ### Bug Fixes
 
 * regression Edit cell mouseout should save & excel copy should work ([#57](https://github.com/ghiscoding/slickgrid-react/issues/57)) ([152bc80](https://github.com/ghiscoding/slickgrid-react/commit/152bc8073f676544c0dbd133b51b4196b55b3665))
 
 # [2.5.0](https://github.com/ghiscoding/slickgrid-react/compare/v2.4.0...v2.5.0) (2023-02-17)
-
 
 ### Bug Fixes
 
@@ -620,20 +559,17 @@ All notable changes to this project will be documented in this file. See [Conven
 
 # [2.4.0](https://github.com/ghiscoding/slickgrid-react/compare/v2.3.0...v2.4.0) (2023-02-04)
 
-
 ### Bug Fixes
 
 * use DOMPurify correct namespace for dts file ([#45](https://github.com/ghiscoding/slickgrid-react/issues/45)) ([8f2d6c3](https://github.com/ghiscoding/slickgrid-react/commit/8f2d6c3e4374026985eb22062e3e5b86af78efc8))
 
 # [2.3.0](https://github.com/ghiscoding/slickgrid-react/compare/v2.2.0...v2.3.0) (2023-02-04)
 
-
 ### Features
 
 * **dataView:** add option to apply row selection to all pages ([#44](https://github.com/ghiscoding/slickgrid-react/issues/44)) ([d878e4f](https://github.com/ghiscoding/slickgrid-react/commit/d878e4f3401a1f095cbaa6ad24d17a0c33312fce))
 
 # [2.2.0](https://github.com/ghiscoding/slickgrid-react/compare/v2.1.2...v2.2.0) (2023-01-22)
-
 
 ### Features
 
@@ -645,13 +581,11 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ## [2.1.2](https://github.com/ghiscoding/slickgrid-react/compare/v2.1.1...v2.1.2) (2022-12-24)
 
-
 ### Bug Fixes
 
 * **common:** cell selection in Firefox not working ([#28](https://github.com/ghiscoding/slickgrid-react/issues/28)) ([459c127](https://github.com/ghiscoding/slickgrid-react/commit/459c1272a45449003a628fdc5b406a3e3c211219))
 
 ## [2.1.1](https://github.com/ghiscoding/slickgrid-react/compare/v2.1.0...v2.1.1) (2022-12-22)
-
 
 ### Bug Fixes
 
@@ -663,36 +597,23 @@ All notable changes to this project will be documented in this file. See [Conven
 
 # [2.1.0](https://github.com/ghiscoding/slickgrid-react/compare/2.0.4...v2.1.0) (2022-12-22)
 
-
 ### Features
 
 * **exports:** add auto-detect and Excel custom cell (column) styling ([#25](https://github.com/ghiscoding/slickgrid-react/issues/25)) ([14a8be1](https://github.com/ghiscoding/slickgrid-react/commit/14a8be14cc2075123c74c8a3cdc12f85aa4c1c77))
 
-
-
 ## [2.0.4](https://github.com/ghiscoding/slickgrid-react/compare/2.0.3...2.0.4) (2022-12-09)
-
-
 
 ## [2.0.3](https://github.com/ghiscoding/slickgrid-react/compare/2.0.2...2.0.3) (2022-12-09)
 
-
-
 ## [2.0.2](https://github.com/ghiscoding/slickgrid-react/compare/2.0.1...2.0.2) (2022-12-09)
 
-
-
 ## [2.0.1](https://github.com/ghiscoding/slickgrid-react/compare/2.0.0...2.0.1) (2022-12-09)
-
 
 ### Bug Fixes
 
 * **build:** component should be <SlickgridReact/> ([#22](https://github.com/ghiscoding/slickgrid-react/issues/22)) ([f11a231](https://github.com/ghiscoding/slickgrid-react/commit/f11a23107f2ac408afc826c642778870f0bae932))
 
-
-
 # [2.0.0](https://github.com/ghiscoding/slickgrid-react/compare/549862ffff59bac1ad2ad86aae0bfad23ed686b3...2.0.0) (2022-12-08)
-
 
 ### Bug Fixes
 
@@ -706,7 +627,6 @@ All notable changes to this project will be documented in this file. See [Conven
 * **pinning:** cols reorder & freezing shouldn't affect order ([#12](https://github.com/ghiscoding/slickgrid-react/issues/12)) ([b6c806b](https://github.com/ghiscoding/slickgrid-react/commit/b6c806b3a24327ad4c54b1e37f4cd7a31b5acc6a))
 * **sorting:** update Slickgrid-Universal, fixes date sort shuffling ([#21](https://github.com/ghiscoding/slickgrid-react/issues/21)) ([2d35508](https://github.com/ghiscoding/slickgrid-react/commit/2d35508d58de82cbdfdefc25b1df67dbcb7bcfcf))
 * **ui:** use correct grid container on Resizer to fix Pagination ([b00dc98](https://github.com/ghiscoding/slickgrid-react/commit/b00dc98153934922e77b9a113f36eb191ed5ab89))
-
 
 ### Features
 
