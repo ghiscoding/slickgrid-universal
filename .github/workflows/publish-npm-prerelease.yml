@@ -154,15 +154,6 @@ jobs:
           pnpm whoami
           pnpm exec lerna version ${{ inputs.bump }} --conventional-commits --conventional-prerelease --preid ${{ inputs.tag }} --force-publish --yes
 
-      # because ng-packagr copies the package.json to dist,
-      # we need to re-run the build to get latest version in its dist/package.json
-      - name: run another Angular-Slickgrid build
-        run: pnpm run angular:build:framework
-
-      # then we need to replace all `workspace:` protocol with valid workspace package versions
-      - name: replace Angular-Slickgrid "workspace:"
-        run: pnpm run angular:replace-workspace
-
       - name: OTP
         if: ${{ inputs.dryrun != true }}
         uses: step-security/wait-for-secrets@v1

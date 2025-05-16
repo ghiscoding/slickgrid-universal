@@ -82,7 +82,9 @@
     "vue:build:framework": "pnpm -r --stream --filter=slickgrid-vue run build",
     "vue:build:demo": "pnpm -r --stream --filter=slickgrid-vue-demo run build",
     "vue:cypress": "pnpm -r --stream --filter=slickgrid-vue-demo run vue:cypress",
-    "vue:serve": "pnpm -r --stream --filter=slickgrid-vue-demo run vue:preview"
+    "vue:serve": "pnpm -r --stream --filter=slickgrid-vue-demo run vue:preview",
+    "docs:99": "// run Lerna-Lite lifecycle to patch Angular-Slickgrid dist/package.json (because of ng-packagr)",
+    "postversion": "pnpm angular:replace-workspace"
   },
   "comments": {
     "new-version": "To create a new version with Lerna-Lite, simply run the following script (1) 'roll-new-release'.",

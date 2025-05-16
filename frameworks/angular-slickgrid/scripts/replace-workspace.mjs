@@ -12,18 +12,23 @@ const projectRootPath = pJoin(__dirname, '../');
  * with current version from "package.json" root into "dist/package.json"
  */
 (async function main() {
+  const mainPkg = readJSONSync(pJoin(projectRootPath, 'package.json'));
   const distPkg = readJSONSync(pJoin(projectRootPath, 'dist', 'package.json'));
 
   // replace all workspace protocol with current version from "package.json" root into "dist/package.json"
   console.log('-------------------------------------------------------------------------------------');
-  console.log(`Angular-Slickgrid, replace all "workspace:*" protocol in "dist/package.json"`);
+  console.log(`Angular-Slickgrid, replace dist version & all "workspace:*" protocol in "dist/package.json"`);
+
+  console.log(`update "dist/package.json" to { "version": "${mainPkg.version}" }`);
+  distPkg.version = mainPkg.version;
+
   for (let [depName, depVersion] of Object.entries(distPkg.dependencies)) {
     if (depVersion.startsWith('workspace:*')) {
       // we need to get each package version
       const depPkgName = depName.replace('@slickgrid-universal', '');
       const depPkg = readJSONSync(pJoin(projectRootPath, '../../packages/', depPkgName, 'package.json'));
-      distPkg.dependencies[depName] = depPkg.version;
       console.log(`update dependency { "${depName}": "${depPkg.version}" }`);
+      distPkg.dependencies[depName] = depPkg.version;
     }
   }
   writeJsonSync(pResolve(projectRootPath, 'dist', 'package.json'), distPkg, { spaces: 2 });
