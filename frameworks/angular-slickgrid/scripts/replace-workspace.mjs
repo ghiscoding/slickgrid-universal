@@ -23,7 +23,7 @@ const projectRootPath = pJoin(__dirname, '../');
   distPkg.version = mainPkg.version;
 
   for (let [depName, depVersion] of Object.entries(distPkg.dependencies)) {
-    if (depVersion.startsWith('workspace:*')) {
+    if (depName.startsWith('@slickgrid-universal/') || depVersion.startsWith('workspace:')) {
       // we need to get each package version
       const depPkgName = depName.replace('@slickgrid-universal', '');
       const depPkg = readJSONSync(pJoin(projectRootPath, '../../packages/', depPkgName, 'package.json'));
