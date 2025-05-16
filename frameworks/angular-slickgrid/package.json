@@ -90,6 +90,7 @@
     "@faker-js/faker": "catalog:",
     "@fnando/sparkline": "catalog:",
     "@formkit/tempo": "catalog:",
+    "@gc-utils/fs-extra": "^0.2.1",
     "@ng-select/ng-select": "^14.7.0",
     "@ngx-translate/http-loader": "^16.0.1",
     "@nx/angular": "^21.0.3",
