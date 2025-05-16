@@ -107,7 +107,7 @@ jobs:
           pnpm exec ${{ env.LERNA_VERSION_QUERY }}
 
       - name: replace Angular-Slickgrid "workspace:"
-        run: pnpm replace-workspace
+        run: pnpm run angular:replace-workspace
 
       - name: OTP
         if: ${{ inputs.dryrun != true }}

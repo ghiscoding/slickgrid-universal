@@ -64,6 +64,7 @@
     "angular:serve": "pnpm -r --stream --filter=angular-slickgrid run angular:preview",
     "angular:test": "pnpm --stream --filter=angular-slickgrid run test",
     "angular:test:coverage": "pnpm --stream --filter=angular-slickgrid run test:coverage",
+    "angular:replace-workspace": "pnpm -r --stream --filter=angular-slickgrid run replace-workspace",
     "aurelia:install": "pnpm install --filter=aurelia-slickgrid-demo --filter=aurelia-slickgrid --filter=./packages",
     "aurelia:build": "pnpm aurelia:build:framework && pnpm aurelia:build:demo",
     "aurelia:build:framework": "pnpm -r --stream --filter=aurelia-slickgrid run build",
