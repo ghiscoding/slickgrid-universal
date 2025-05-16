@@ -1,15 +1,12 @@
 {
   "$schema": "node_modules/@lerna-lite/cli/schemas/lerna-schema.json",
-  "version": "9.0.4",
+  "version": "9.0.3",
   "npmClient": "pnpm",
   "loglevel": "info",
   "command": {
     "publish": {
       "cleanupTempFiles": true,
-      "removePackageFields": [
-        "devDependencies",
-        "scripts"
-      ]
+      "removePackageFields": ["devDependencies", "scripts"]
     },
     "version": {
       "conventionalCommits": true,
@@ -21,9 +18,5 @@
     }
   },
   "changelogPreset": "conventionalcommits",
-  "packages": [
-    "demos/*",
-    "frameworks/*",
-    "packages/*"
-  ]
+  "packages": ["demos/*", "frameworks/*", "packages/*"]
 }

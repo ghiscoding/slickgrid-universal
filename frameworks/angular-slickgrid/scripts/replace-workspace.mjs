@@ -23,7 +23,7 @@ const projectRootPath = pJoin(__dirname, '../');
       const depPkgName = depName.replace('@slickgrid-universal', '');
       const depPkg = readJSONSync(pJoin(projectRootPath, '../../packages/', depPkgName, 'package.json'));
       distPkg.dependencies[depName] = depPkg.version;
-      console.log(`replace "${depName}" dependency to "${depPkg.version}"`);
+      console.log(`update dependency { "${depName}": "${depPkg.version}" }`);
     }
   }
   writeJsonSync(pResolve(projectRootPath, 'dist', 'package.json'), distPkg, { spaces: 2 });
