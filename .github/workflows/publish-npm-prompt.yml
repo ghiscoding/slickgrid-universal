@@ -124,18 +124,26 @@ jobs:
         shell: bash
         id: lerna-publish
         run: |
-          # Attempt to publish all packages
-          pnpm exec lerna publish from-package --force-publish --yes --otp ${{ steps.wait-for-secrets.outputs.OTP }}
-          EXIT_CODE=$?
-          echo "EXIT_CODE=$EXIT_CODE" >> $GITHUB_ENV
-          OUTPUT=$(cat /dev/stdout)
-          echo "OUTPUT=$OUTPUT" >> $GITHUB_ENV
+          set -o pipefail
+          OUTPUT_FILE=$(mktemp)
+          pnpm exec lerna publish from-package --force-publish --yes --otp ${{ steps.wait-for-secrets.outputs.OTP }} 2>&1 | tee $OUTPUT_FILE
+          EXIT_CODE=${PIPESTATUS[0]}
+          OUTPUT=$(cat $OUTPUT_FILE)
+          echo "publish_failed=false" >> $GITHUB_OUTPUT
+          echo "publish_output<<EOF" >> $GITHUB_OUTPUT
+          echo "$OUTPUT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
           if [ $EXIT_CODE -ne 0 ]; then
-            echo "::set-output name=publish_failed::true"
+            if echo "$OUTPUT" | grep -q 'HttpErrorAuthOTP'; then
+              echo "publish_failed=true" >> $GITHUB_OUTPUT
+            else
+              echo "::error title=Lerna Publish Failed::$OUTPUT"
+              exit $EXIT_CODE
+            fi
           fi
 
       - name: Check for EOTP and Prompt for New OTP
-        if: ${{ steps.lerna-publish.outputs.publish_failed == 'true' && contains(env.OUTPUT, 'HttpErrorAuthOTP') }}
+        if: ${{ steps.lerna-publish.outputs.publish_failed == 'true' }}
         uses: step-security/wait-for-secrets@v1
         id: wait-for-new-otp
         with:
@@ -145,14 +153,13 @@ jobs:
               description: 'OTP from authenticator app'
 
       - name: Retry Lerna Publish with New OTP
-        if: ${{ steps.lerna-publish.outputs.publish_failed == 'true' && contains(env.OUTPUT, 'HttpErrorAuthOTP') }}
+        if: ${{ steps.lerna-publish.outputs.publish_failed == 'true' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
         shell: bash
         run: |
-          # Retry the publish command with the new OTP
           pnpm exec lerna publish from-package --force-publish --yes --otp ${{ steps.wait-for-new-otp.outputs.OTP }} || {
             echo "::error title=Publish Failed::Publishing failed even after providing a new OTP."
             exit 1
