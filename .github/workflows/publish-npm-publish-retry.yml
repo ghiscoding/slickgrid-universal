@@ -64,6 +64,9 @@ jobs:
       - name: Run pnpm install dependencies
         run: pnpm install
 
+      - name: Build Everything
+        run: pnpm build
+
       - name: OTP
         if: ${{ inputs.dryrun != true }}
         uses: step-security/wait-for-secrets@v1
