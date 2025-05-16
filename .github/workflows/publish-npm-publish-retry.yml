@@ -1,4 +1,4 @@
-name: 🏷️ Publish NPM Latest
+name: 🏷️ Publish NPM Retry
 
 on:
   workflow_dispatch:
