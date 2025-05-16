@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.0.3](https://github.com/ghiscoding/slickgrid-universal/compare/v9.0.2...v9.0.3) (2025-05-16)
+
+### Bug Fixes
+
+* **angular:** Angular-Slickgrid npm publish should replace workspace: ([66dc808](https://github.com/ghiscoding/slickgrid-universal/commit/66dc80807ff90352c9f60aad2218bc5b16dd228a)) - by @ghiscoding
+* **angular:** replace workspace version before release ([0108ede](https://github.com/ghiscoding/slickgrid-universal/commit/0108ede43733f1ff61b3cf058291edd1958ed201)) - by @ghiscoding
+
 ## [9.0.2](https://github.com/ghiscoding/slickgrid-universal/compare/v9.0.0...v9.0.2) (2025-05-16)
 
 ### Bug Fixes
