@@ -1,19 +1,19 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, type OnInit, ViewEncapsulation } from '@angular/core';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
-  AngularGridInstance,
-  Column,
-  EditCommand,
+  type AngularGridInstance,
+  type Column,
+  type EditCommand,
   Editors,
   Filters,
-  Formatter,
+  type Formatter,
   Formatters,
-  GridOption,
-  MenuCommandItemCallbackArgs,
+  type GridOption,
+  type MenuCommandItemCallbackArgs,
   type MultipleSelectOption,
   OperatorType,
-  SlickGrid,
+  type SlickGrid,
   type VanillaCalendarOption,
 } from '../../library';
 
@@ -31,9 +31,9 @@ export class Example33Component implements OnInit {
   editCommandQueue: EditCommand[] = [];
   gridOptions!: GridOption;
   dataset!: any[];
+  hideSubTitle = false;
   serverApiDelay = 500;
   showLazyLoading = false;
-  hideSubTitle = false;
 
   ngOnInit(): void {
     this.initializeGrid();

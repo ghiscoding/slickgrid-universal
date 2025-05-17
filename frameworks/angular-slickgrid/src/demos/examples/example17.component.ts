@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { type Column, type GridOption, toCamelCase } from '../../library';
+import { type AngularGridInstance, type Column, type GridOption, toCamelCase } from '../../library';
 
 const sampleDataRoot = 'assets/data';
 
@@ -11,15 +11,20 @@ const sampleDataRoot = 'assets/data';
   standalone: false,
 })
 export class Example17Component {
+  angularGrid!: AngularGridInstance;
   columnDefinitions: Column[] = [];
   gridOptions!: GridOption;
   dataset: any[] = [];
   gridCreated = false;
-  showSubTitle = true;
+  hideSubTitle = false;
   uploadFileRef = '';
   templateUrl = `${sampleDataRoot}/users.csv`;
 
   constructor(private readonly cd: ChangeDetectorRef) {}
+
+  angularGridReady(angularGrid: AngularGridInstance) {
+    this.angularGrid = angularGrid;
+  }
 
   handleFileImport(event: any) {
     const file = event.target.files[0];
@@ -102,8 +107,9 @@ export class Example17Component {
   }
 
   toggleSubTitle() {
-    this.showSubTitle = !this.showSubTitle;
-    const action = this.showSubTitle ? 'remove' : 'add';
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
     document.querySelector('.subtitle')?.classList[action]('hidden');
+    this.angularGrid.resizerService.resizeGrid(0);
   }
 }

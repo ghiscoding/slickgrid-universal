@@ -1,14 +1,14 @@
-import { ComponentRef } from '@angular/core';
-import { Subscription } from 'rxjs';
+import type { ComponentRef } from '@angular/core';
+import type { Subscription } from 'rxjs';
 import {
   AngularUtilService,
-  Column,
-  ColumnEditor,
-  Editor,
-  EditorValidator,
-  EditorValidationResult,
-  GridOption,
-  SlickGrid,
+  type Column,
+  type ColumnEditor,
+  type Editor,
+  type EditorValidator,
+  type EditorValidationResult,
+  type GridOption,
+  type SlickGrid,
   unsubscribeAllObservables,
 } from '../../library';
 

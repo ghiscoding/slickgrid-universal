@@ -1,14 +1,14 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, type OnInit, ViewEncapsulation } from '@angular/core';
 import {
-  AngularGridInstance,
-  Column,
+  type AngularGridInstance,
+  type Column,
   Editors,
   Formatters,
-  GridOption,
-  GridService,
-  OnEventArgs,
-  SlickDataView,
-  SlickGrid,
+  type GridOption,
+  type GridService,
+  type OnEventArgs,
+  type SlickDataView,
+  type SlickGrid,
 } from '../../library';
 
 @Component({
@@ -25,6 +25,7 @@ export class Example11Component implements OnInit {
   columnDefinitions: Column[] = [];
   gridOptions!: GridOption;
   dataset: any[];
+  hideSubTitle = false;
   updatedObject: any;
 
   constructor() {
@@ -272,5 +273,12 @@ export class Example11Component implements OnInit {
 
   scrollGridTop() {
     this.angularGrid.slickGrid.navigateTop();
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    this.angularGrid.resizerService.resizeGrid(0);
   }
 }

@@ -1,15 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, type OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  AngularGridInstance,
-  Column,
+  type AngularGridInstance,
+  type Column,
   Filters,
   Formatters,
-  GridOption,
-  GridStateChange,
-  Metrics,
+  type GridOption,
+  type GridStateChange,
+  type Metrics,
   type MultipleSelectOption,
   OperatorType,
   type VanillaCalendarOption,
@@ -31,6 +31,7 @@ export class Example4Component implements OnInit {
   columnDefinitions: Column[] = [];
   gridOptions!: GridOption;
   dataset!: any[];
+  hideSubTitle = false;
   metrics!: Metrics;
 
   constructor(
@@ -322,5 +323,12 @@ export class Example4Component implements OnInit {
 
   scrollGridTop() {
     this.angularGrid.slickGrid.navigateTop();
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    this.angularGrid.resizerService.resizeGrid(0);
   }
 }

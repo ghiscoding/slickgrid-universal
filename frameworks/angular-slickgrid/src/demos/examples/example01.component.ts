@@ -1,5 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Column, GridOption, Formatters, AngularGridInstance } from '../../library';
+import { Component, type OnDestroy, type OnInit } from '@angular/core';
+import { type AngularGridInstance, type Column, type GridOption, Formatters } from '../../library';
 
 import { zeroPadding } from './utilities';
 

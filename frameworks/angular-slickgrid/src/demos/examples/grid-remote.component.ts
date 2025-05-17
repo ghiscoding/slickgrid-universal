@@ -1,5 +1,3 @@
-// import 'slickgrid/slick.remotemodel'; // SlickGrid Remote Plugin
-
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AngularGridInstance, Column, Formatter, GridOption, SlickEventHandler } from '../../library';
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, type OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 
@@ -77,6 +77,7 @@ export class Example32Component implements OnInit {
   dataset: any[] = [];
   editQueue: any[] = [];
   editedItems: any = {};
+  hideSubTitle = false;
   isUsingDefaultResize = false;
   isGridEditable = true;
   isMassSelectionDisabled = true;
@@ -901,5 +902,12 @@ export class Example32Component implements OnInit {
           <div class="autocomplete-bottom-left">${item.itemNameTranslated}</div>
           <span class="autocomplete-bottom-right">Type: <b>${item.itemTypeName === 'I' ? 'Item' : item.itemTypeName === 'C' ? 'PdCat' : 'Cat'}</b></span>
         </div>`;
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    this.angularGrid.resizerService.resizeGrid(0);
   }
 }

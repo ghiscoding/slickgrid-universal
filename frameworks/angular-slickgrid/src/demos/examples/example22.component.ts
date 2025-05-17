@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, type OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { AngularGridInstance, Column, GridOption, Filters } from '../../library';
+import { type AngularGridInstance, type Column, type GridOption, Filters } from '../../library';
 
 const URL_CUSTOMERS = 'assets/data/customers_100.json';
 
@@ -17,6 +17,7 @@ export class Example22Component implements OnInit {
   gridOptions2!: GridOption;
   dataset1!: any[];
   dataset2!: any[];
+  hideSubTitle = false;
 
   constructor(private http: HttpClient) {}
 
@@ -113,5 +114,12 @@ export class Example22Component implements OnInit {
 
   resizeGrid2() {
     this.angularGrid2.resizerService.resizeGrid(10);
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    this.angularGrid2.resizerService.resizeGrid(0);
   }
 }

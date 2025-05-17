@@ -1,17 +1,17 @@
-import { ComponentRef } from '@angular/core';
-import { Subscription } from 'rxjs';
+import type { ComponentRef } from '@angular/core';
+import type { Subscription } from 'rxjs';
 import {
   AngularUtilService,
-  Column,
-  ColumnFilter,
-  Filter,
-  FilterArguments,
-  FilterCallback,
-  GridOption,
+  type Column,
+  type ColumnFilter,
+  type Filter,
+  type FilterArguments,
+  type FilterCallback,
+  type GridOption,
   OperatorType,
-  OperatorString,
-  SearchTerm,
-  SlickGrid,
+  type OperatorString,
+  type SearchTerm,
+  type SlickGrid,
   unsubscribeAllObservables,
 } from '../../library';
 

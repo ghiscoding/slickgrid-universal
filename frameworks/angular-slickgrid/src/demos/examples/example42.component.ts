@@ -1,13 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, type OnInit } from '@angular/core';
 import {
-  AngularGridInstance,
+  type AngularGridInstance,
   AngularUtilService,
-  Column,
+  type Column,
   Filters,
   Formatters,
-  GridOption,
-  MultipleSelectOption,
-  SliderRangeOption,
+  type GridOption,
+  type MultipleSelectOption,
+  type SliderRangeOption,
 } from '../../library';
 import { CustomPagerComponent } from './grid-custom-pager.component';
 
@@ -23,13 +23,14 @@ function randomBetween(min: number, max: number): number {
   standalone: false,
 })
 export class Example42Component implements OnInit {
-  pageSize = 50;
+  angularGrid!: AngularGridInstance;
   columnDefinitions: Column[] = [];
+  dataset: any[] = [];
   gridContainerElm!: HTMLDivElement;
   gridOptions!: GridOption;
-  dataset: any[] = [];
+  hideSubTitle = false;
+  pageSize = 50;
   paginationPosition: 'bottom' | 'top' = 'top';
-  angularGrid!: AngularGridInstance;
 
   constructor(protected readonly angularUtilService: AngularUtilService) {}
 
@@ -199,5 +200,12 @@ export class Example42Component implements OnInit {
     this.paginationPosition = this.paginationPosition === 'top' ? 'bottom' : 'top';
     (this.angularGrid.paginationComponent as CustomPagerComponent)?.disposeElement();
     (this.angularGrid.paginationComponent as CustomPagerComponent)?.renderPagination(gridContainerElm, this.paginationPosition);
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    this.angularGrid.resizerService.resizeGrid(0);
   }
 }

@@ -1,6 +1,6 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, type OnInit } from '@angular/core';
 
-import { AngularGridInstance, Column, Filters, Formatters, GridOption, GridStateChange } from '../../library';
+import { type AngularGridInstance, type Column, Filters, Formatters, type GridOption, type GridStateChange } from '../../library';
 
 @Component({
   templateUrl: './example10.component.html',
@@ -18,6 +18,7 @@ export class Example10Component implements OnInit {
   dataset2!: any[];
   gridObj1!: any;
   gridObj2!: any;
+  hideSubTitle = false;
   isGrid2WithPagination = true;
   selectedTitles = '';
   selectedTitle = '';
@@ -305,5 +306,12 @@ export class Example10Component implements OnInit {
         return item.title || '';
       });
     }
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    this.angularGrid2.resizerService.resizeGrid(0);
   }
 }

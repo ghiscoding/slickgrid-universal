@@ -1,24 +1,24 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, type OnInit, type OnDestroy } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { CustomInputFilter } from './custom-inputFilter';
 import {
-  AngularGridInstance,
-  Column,
+  type AngularGridInstance,
+  type Column,
   Filters,
-  Formatter,
+  type Formatter,
   Formatters,
-  GridOption,
-  GridStateChange,
-  Metrics,
+  type GridOption,
+  type GridStateChange,
+  type Metrics,
   type MultipleSelectOption,
   OperatorType,
-  SliderRangeOption,
+  type SliderRangeOption,
   unsubscribeAllObservables,
 } from '../../library';
 import { addDay, format } from '@formkit/tempo';
-import { Subscription } from 'rxjs';
+import type { Subscription } from 'rxjs';
 
 const NB_ITEMS = 1500;
 
@@ -44,6 +44,7 @@ export class Example23Component implements OnInit, OnDestroy {
   columnDefinitions!: Column[];
   gridOptions!: GridOption;
   dataset!: any[];
+  hideSubTitle = false;
   selectedLanguage: string;
   metrics!: Metrics;
   filterList = [
@@ -319,5 +320,12 @@ export class Example23Component implements OnInit, OnDestroy {
         this.selectedLanguage = nextLanguage;
       })
     );
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    this.angularGrid.resizerService.resizeGrid(0);
   }
 }

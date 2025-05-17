@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { SlickDataView, SlickGrid } from '../../library';
-import { Example19Component } from './example19.component';
+import type { SlickDataView, SlickGrid } from '../../library';
+import type { Example19Component } from './example19.component';
 
 @Component({
   styles: ['.detail-label { display: inline-flex; align-items: center; gap: 4px; padding: 4px; }', 'label { font-weight: 600; }'],

@@ -1,17 +1,22 @@
-import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import {
+  GraphqlService,
+  type GraphqlPaginatedResult,
+  type GraphqlServiceApi,
+  type GraphqlServiceOption,
+} from '@slickgrid-universal/graphql';
+import { ChangeDetectorRef, Component, type OnInit, type OnDestroy } from '@angular/core';
 import { addDay, format as tempoFormat } from '@formkit/tempo';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import type { Subscription } from 'rxjs';
 import {
-  AngularGridInstance,
-  Column,
-  CursorPageInfo,
+  type AngularGridInstance,
+  type Column,
+  type CursorPageInfo,
   Filters,
   Formatters,
-  GridOption,
-  GridStateChange,
-  Metrics,
+  type GridOption,
+  type GridStateChange,
+  type Metrics,
   type MultipleSelectOption,
   OperatorType,
   unsubscribeAllObservables,
@@ -33,7 +38,7 @@ export class Example6Component implements OnInit, OnDestroy {
   gridOptions!: GridOption;
   dataset = [];
   metrics!: Metrics;
-
+  hideSubTitle = false;
   isWithCursor = false;
   graphqlQuery = '';
   processing = true;
@@ -442,5 +447,12 @@ export class Example6Component implements OnInit, OnDestroy {
         this.selectedLanguage = nextLanguage;
       })
     );
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    this.angularGrid.resizerService.resizeGrid(0);
   }
 }

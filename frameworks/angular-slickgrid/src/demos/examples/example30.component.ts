@@ -1,26 +1,26 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, type OnDestroy, type OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { SlickCompositeEditor, SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 
 import {
-  AngularGridInstance,
+  type AngularGridInstance,
   type AutocompleterOption,
-  Column,
-  CompositeEditorModalType,
-  EditCommand,
+  type Column,
+  type CompositeEditorModalType,
+  type EditCommand,
   Editors,
   Filters,
   formatNumber,
-  Formatter,
+  type Formatter,
   Formatters,
-  GridOption,
-  GridStateChange,
-  LongTextEditorOption,
-  OnCompositeEditorChangeEventArgs,
+  type GridOption,
+  type GridStateChange,
+  type LongTextEditorOption,
+  type OnCompositeEditorChangeEventArgs,
   SlickGlobalEditorLock,
-  SlickGrid,
+  type SlickGrid,
   SortComparers,
   type VanillaCalendarOption,
 } from '../../library';
@@ -96,11 +96,11 @@ export class Example30Component implements OnDestroy, OnInit {
   dataset: any[] = [];
   editQueue: any[] = [];
   editedItems: any = {};
+  hideSubTitle = false;
   isGridEditable = true;
   isCompositeDisabled = false;
   isMassSelectionDisabled = true;
   cellCssStyleQueue: string[] = [];
-  hideSubTitle = false;
   complexityLevelList = [
     { value: 0, label: 'Very Simple' },
     { value: 1, label: 'Simple' },

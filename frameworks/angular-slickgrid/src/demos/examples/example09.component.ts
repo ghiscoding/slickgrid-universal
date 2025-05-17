@@ -1,16 +1,16 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, type OnDestroy, type OnInit, ViewEncapsulation } from '@angular/core';
 import {
-  AngularGridInstance,
-  Column,
+  type AngularGridInstance,
+  type Column,
   ExtensionName,
   Filters,
   Formatters,
-  GridOption,
+  type GridOption,
   type SliderOption,
   unsubscribeAllObservables,
 } from '../../library';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import type { Subscription } from 'rxjs';
 
 @Component({
   templateUrl: './example09.component.html',
@@ -24,6 +24,7 @@ export class Example9Component implements OnInit, OnDestroy {
   columnDefinitions!: Column[];
   gridOptions!: GridOption;
   dataset!: any[];
+  hideSubTitle = false;
   selectedLanguage: string;
 
   constructor(private translate: TranslateService) {
@@ -298,5 +299,12 @@ export class Example9Component implements OnInit, OnDestroy {
       }
     }
     return true;
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    this.angularGrid.resizerService.resizeGrid(0);
   }
 }
