@@ -21,9 +21,6 @@ import SAMPLE_DATA_URL from './data/customers_100.json?url';
 const defaultPageSize = 20;
 
 export class Example31 {
-  title = 'Example 31: Grid with OData Backend Service using RxJS Observables';
-  subTitle = `Optionally use RxJS instead of Promises, you would typically use this with a Backend Service API (OData/GraphQL)`;
-
   aureliaGrid!: AureliaGridInstance;
   columnDefinitions: Column[] = [];
   gridOptions!: GridOption;

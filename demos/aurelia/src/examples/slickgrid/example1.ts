@@ -6,9 +6,6 @@ const NB_ITEMS = 995;
 
 export class Example1 {
   private _darkModeGrid1 = false;
-  title = 'Example 1: Basic Grids';
-  subTitle = `Simple Grids with Fixed Sizes (800 x 225)`;
-
   aureliaGrid1!: AureliaGridInstance;
   gridOptions1!: GridOption;
   gridOptions2!: GridOption;
@@ -109,5 +106,11 @@ export class Example1 {
       document.querySelector('.grid-container1')?.classList.remove('dark-mode');
     }
     this.aureliaGrid1.slickGrid?.setOptions({ darkMode: this._darkModeGrid1 });
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
   }
 }

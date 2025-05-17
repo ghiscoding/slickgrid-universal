@@ -3,9 +3,6 @@ import { type Column, type GridOption, Formatters } from 'aurelia-slickgrid';
 const NB_ITEMS = 995;
 
 export class Example29 {
-  title = 'Example 29: Grid with Header and Footer slot';
-  subTitle = `Simple Grids with a custom header and footer via named slots`;
-
   gridOptions!: GridOption;
   columnDefinitions: Column[] = [];
   dataset: any[] = [];
@@ -60,5 +57,11 @@ export class Example29 {
     }
 
     return mockDataset;
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
   }
 }

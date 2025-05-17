@@ -3,14 +3,6 @@ import { type AureliaGridInstance, type Column, type GridOption, type ItemMetada
 import './example14.scss'; // provide custom CSS/SASS styling
 
 export class Example14 {
-  title = 'Example 14: Column Span & Header Grouping';
-  subTitle = `
-  This example demonstrates how to easily span a row over multiple columns & how to group header titles.
-  <ul>
-    <li>Note that you can add Sort but remember that it will sort by the data which the row contains, even if the data is visually hidden by colspan it will still sort it</li>
-  </ul>
-  `;
-
   aureliaGrid2!: AureliaGridInstance;
   gridObj2: any;
   columnDefinitions1: Column[] = [];
@@ -159,5 +151,12 @@ export class Example14 {
         },
       },
     };
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    this.aureliaGrid2.resizerService.resizeGrid(0);
   }
 }

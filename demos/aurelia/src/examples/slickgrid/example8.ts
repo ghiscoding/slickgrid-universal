@@ -1,30 +1,10 @@
 import { I18N } from '@aurelia/i18n';
-import { type Column, Formatters, type GridOption } from 'aurelia-slickgrid';
+import { type AureliaGridInstance, type Column, Formatters, type GridOption } from 'aurelia-slickgrid';
 import './example8.scss'; // provide custom CSS/SASS styling
 import { resolve } from 'aurelia';
 
 export class Example8 {
-  title = 'Example 8: Header Menu Plugin';
-  subTitle = `
-    This example demonstrates using the <b>Slick.Plugins.HeaderMenu</b> plugin to easily add menus to colum headers.<br/>
-    These menus can be specified directly in the column definition, and are very easy to configure and use.
-    (<a href="https://ghiscoding.gitbook.io/aurelia-slickgrid/grid-functionalities/header-menu-header-buttonss" target="_blank">Wiki docs</a>)
-    <ul>
-      <li>Now enabled by default in the Global Grid Options, it will add the default commands of (hide column, sort asc/desc)</li>
-      <li>Hover over any column header to see an arrow showing up on the right</li>
-      <li>Try Sorting (multi-sort) the 2 columns "Duration" and "% Complete" (the other ones are disabled)</li>
-      <li>Try hiding any columns (you use the "Column Picker" plugin by doing a right+click on the header to show the column back)</li>
-      <li>Note: The "Header Button" & "Header Menu" Plugins cannot be used at the same time</li>
-      <li>You can change the menu icon via SASS variables as shown in this demo (check all SASS variables)</li>
-      <li>Use override callback functions to change the properties of show/hide, enable/disable the menu or certain item(s) from the list</li>
-      <ol>
-        <li>These callbacks are: "itemVisibilityOverride", "itemUsabilityOverride"</li>
-        <li>for example if we want to disable the "Help" command over the "Title" and "Completed" column</li>
-        <li>for example don't show Help on column "% Complete"</li>
-      </ol>
-    </ul>
-  `;
-
+  aureliaGrid!: AureliaGridInstance;
   columnDefinitions: Column[] = [];
   gridOptions!: GridOption;
   dataset: any[] = [];
@@ -40,6 +20,10 @@ export class Example8 {
     const defaultLang = 'en';
     this.i18n.setLocale(defaultLang);
     this.selectedLanguage = defaultLang;
+  }
+
+  aureliaGridReady(aureliaGrid: AureliaGridInstance) {
+    this.aureliaGrid = aureliaGrid;
   }
 
   attached() {
@@ -205,5 +189,12 @@ export class Example8 {
     const nextLanguage = this.selectedLanguage === 'en' ? 'fr' : 'en';
     await this.i18n.setLocale(nextLanguage);
     this.selectedLanguage = nextLanguage;
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    this.aureliaGrid.resizerService.resizeGrid(0);
   }
 }

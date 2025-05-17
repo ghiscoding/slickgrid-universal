@@ -55,20 +55,6 @@ const taskFormatter = (_row: number, _cell: number, value: any) => {
 };
 
 export class Example3 {
-  title = 'Example 3: Editors / Delete';
-  subTitle = `
-  Grid with Inline Editors and onCellClick actions (<a href="https://ghiscoding.gitbook.io/aurelia-slickgrid/column-functionalities/editors" target="_blank">Wiki docs</a>).
-  <ul>
-    <li>When using "enableCellNavigation: true", clicking on a cell will automatically make it active &amp; selected.</li>
-    <ul><li>If you don't want this behavior, then you should disable "enableCellNavigation"</li></ul>
-    <li>Inline Editors requires "enableCellNavigation: true" (not sure why though)</li>
-    <li>
-        Support Excel Copy Buffer (SlickGrid Copy Manager Plugin), you can use it by simply enabling "enableExcelCopyBuffer" flag.
-        Note that it will only evaluate Formatter when the "exportWithFormatter" flag is enabled (through "ExcelExportOptions" or "TextExportOptions" or the column definition)
-    </li>
-    <li>Support of "collectionAsync" is possible, click on "Clear Filters/Sorting" then add/delete item(s) and look at "Prerequisites" Select Filter</li>
-  </ul>
-  `;
   private _commandQueue: EditCommand[] = [];
   aureliaGrid!: AureliaGridInstance;
   gridOptions!: GridOption;

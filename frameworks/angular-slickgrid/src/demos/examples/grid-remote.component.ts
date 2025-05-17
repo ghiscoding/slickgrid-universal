@@ -19,31 +19,6 @@ const mpnFormatter: Formatter = (_row, _cell, _value, _columnDef, dataContext) =
 })
 export class GridRemoteComponent implements OnDestroy, OnInit {
   private _eventHandler: any = new SlickEventHandler();
-
-  title = 'Example 18: Octopart Catalog Search - Remote Model Plugin';
-  subTitle = `
-    This example demonstrates how to use "slick.remotemodel.js" or any Remote implementation through an external Remote Service
-    <ul>
-      <li>
-        Your browser (Chrome) might block access to the Octopart query, if you get "block content" then just unblock it
-        or try with different browser like Firefox or Edge
-      </li>
-      <li>If the demo throws some errors, try again later (there's a limit per day).</li>
-      <li>
-        Uses <a href="https://github.com/6pac/SlickGrid/blob/master/src/slick.remotemodel.ts" target="_blank">slick.remotemodel.js</a>
-        which is hooked up to load search results from Octopart, but can easily be extended
-        to support any JSONP-compatible backend that accepts paging parameters.
-      </li>
-      <li>
-        This demo implements a custom DataView, however please note that you are on your own to implement all necessary DataView methods
-        for Sorting, Filtering, etc...
-      </li>
-      <li>
-        Soure code for this example is available <a href="https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-remote.component.ts" target="_blank">here</a>
-      </li>
-    </ul>
-  `;
-
   angularGrid!: AngularGridInstance;
   columnDefinitions!: Column[];
   customDataView: any;

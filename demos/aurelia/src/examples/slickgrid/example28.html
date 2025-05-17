@@ -1,5 +1,11 @@
 <h2>
-  <span innerhtml.bind="title"></span>
+  <span>
+    Example 28: Tree Data with Aggregators
+    <small>
+      <span class="mdi mdi-file-tree mdi-27px"></span> (from a Hierarchical Dataset -
+      <a href="https://ghiscoding.gitbook.io/aurelia-slickgrid/grid-functionalities/tree-data-grid" target="_blank">Wiki</a>)</small
+    >
+  </span>
   <span class="float-end">
     <a
       style="font-size: 18px"
@@ -14,7 +20,21 @@
   </button>
 </h2>
 
-<div class="subtitle" innerhtml.bind="subTitle"></div>
+<div class="subtitle">
+  <ul>
+    <li>It is assumed that your dataset will have Parent/Child references AND also Tree Level (indent) property.</li>
+    <ul>
+      <li>
+        If you do not have the Tree Level (indent), you could call "convertParentChildArrayToHierarchicalView()" then call
+        "convertHierarchicalViewToParentChildArray()"
+      </li>
+      <li>
+        You could also pass the result of "convertParentChildArrayToHierarchicalView()" to "dataset-hierarchical.bind" as defined in the
+        next Hierarchical Example
+      </li>
+    </ul>
+  </ul>
+</div>
 
 <div class="row">
   <div class="col-md-7">

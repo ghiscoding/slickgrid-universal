@@ -1,5 +1,5 @@
 <h2>
-  ${title}
+  Example 1: Basic Grids
   <span class="float-end">
     <a
       style="font-size: 18px"
@@ -9,17 +9,12 @@
       <span class="mdi mdi-link-variant"></span> code
     </a>
   </span>
-  <button
-    class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-    type="button"
-    data-test="toggle-subtitle"
-    click.trigger="hideSubTitle = !hideSubTitle"
-  >
+  <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" click.trigger="toggleSubTitle()">
     <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
   </button>
 </h2>
 
-<div class="subtitle" innerhtml.bind="subTitle" hidden.bind="hideSubTitle"></div>
+<div class="subtitle">Simple Grids with Fixed Sizes (800 x 225)</div>
 
 <h3>
   <div class="column">

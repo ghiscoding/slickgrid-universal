@@ -9,24 +9,6 @@ import {
 } from 'aurelia-slickgrid';
 
 export class Example16 {
-  title = 'Example 16: Row Move & Checkbox Selector';
-  subTitle = `
-    This example demonstrates using the <b>Slick.Plugins.RowMoveManager</b> plugin to easily move a row in the grid.<br/>
-    <ul>
-      <li>Click to select, Ctrl+Click to toggle selection, Shift+Click to select a range.</li>
-      <li>Drag one or more rows by the handle (icon) to reorder</li>
-      <li>If you plan to use Row Selection + Row Move, then use "singleRowMove: true" and "disableRowSelection: true"</li>
-      <li>You can change "columnIndexPosition" to move the icon position of any extension (RowMove, RowDetail or RowSelector icon)</li>
-      <ul>
-        <li>You will also want to enable the DataView "syncGridSelection: true" to keep row selection even after a row move</li>
-      </ul>
-      <li>If you plan to use only Row Move, then you could keep default values (or omit them completely) of "singleRowMove: false" and "disableRowSelection: false"</li>
-      <ul>
-        <li>SingleRowMove has the name suggest will only move 1 row at a time, by default it will move any row(s) that are selected unless you disable the flag</li>
-      </ul>
-    </ul>
-  `;
-
   aureliaGrid!: AureliaGridInstance;
   columnDefinitions: Column[] = [];
   gridOptions!: GridOption;

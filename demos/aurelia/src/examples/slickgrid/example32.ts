@@ -44,9 +44,6 @@ const myCustomTitleValidator = (value: any) => {
 };
 
 export class Example32 {
-  title = 'Example 32: Columns Resize by Content';
-  subTitle = `The grid below uses the optional resize by cell content (with a fixed 950px for demo purposes), you can click on the 2 buttons to see the difference. The "autosizeColumns" is really the default option used by SlickGrid-Universal, the resize by cell content is optional because it requires to read the first thousand rows and do extra width calculation.`;
-
   aureliaGrid!: AureliaGridInstance;
   gridOptions!: GridOption;
   columnDefinitions: Column[] = [];

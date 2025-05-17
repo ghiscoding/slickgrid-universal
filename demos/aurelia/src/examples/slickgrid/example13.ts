@@ -16,16 +16,6 @@ import {
 } from 'aurelia-slickgrid';
 
 export class Example13 {
-  title = 'Example 13: Grouping & Aggregators';
-  subTitle = `
-    <ul>
-      <li><a href="https://ghiscoding.gitbook.io/aurelia-slickgrid/grid-functionalities/grouping-aggregators" target="_blank">Wiki docs</a></li>
-      <li>Fully dynamic and interactive multi-level grouping with filtering and aggregates over 50'000 items</li>
-      <li>Each grouping level can have its own aggregates (over child rows, child groups, or all descendant rows)..</li>
-      <li>Use "Aggregators" and "GroupTotalFormatters" directly from Aurelia-Slickgrid</li>
-    </ul>
-  `;
-
   aureliaGrid!: AureliaGridInstance;
   columnDefinitions: Column[] = [];
   gridOptions!: GridOption;

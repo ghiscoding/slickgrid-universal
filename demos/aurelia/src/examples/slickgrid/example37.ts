@@ -4,10 +4,6 @@ const NB_ITEMS = 100;
 
 export class Example37 {
   private _darkMode = false;
-
-  title = 'Example 37: Footer Totals Row';
-  subTitle = `Display a totals row at the end of the grid.`;
-
   aureliaGrid!: AureliaGridInstance;
   gridOptions!: GridOption;
   columnDefinitions: Column[] = [];

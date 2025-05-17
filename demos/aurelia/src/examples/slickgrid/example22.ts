@@ -119,4 +119,11 @@ export class Example22 {
   resizeGrid2() {
     this.aureliaGrid2.resizerService.resizeGrid(10);
   }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    this.aureliaGrid2.resizerService.resizeGrid(0);
+  }
 }

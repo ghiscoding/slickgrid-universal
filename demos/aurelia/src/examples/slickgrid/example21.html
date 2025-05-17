@@ -1,5 +1,5 @@
 <h2>
-  ${title}
+  Example 21: Grid AutoHeight
   <span class="float-end">
     <a
       style="font-size: 18px"
@@ -13,7 +13,17 @@
     <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
   </button>
 </h2>
-<div class="subtitle" innerhtml.bind="subTitle"></div>
+<div class="subtitle">
+  The SlickGrid option "autoHeight" can be used if you wish to keep the full height of the grid without any scrolling
+  <ul>
+    <li>You define a fixed grid width via "gridWidth" in the View</li>
+    <li>You can still use the "autoResize" for the width to be resized automatically (the height will never change in this case)</li>
+    <li>
+      This dataset has 25 rows, if you scroll down the page you can see the entire set is shown without any grid scrolling (though you might
+      have browser scrolling)
+    </li>
+  </ul>
+</div>
 
 <div class="row row-cols-lg-auto g-1 align-items-center">
   <div class="col">

@@ -21,17 +21,6 @@ import './example33.scss';
 const NB_ITEMS = 1000;
 
 export class Example33 {
-  title = 'Example 33: Regular & Custom Tooltips';
-  subTitle = `
-  This demo shows how to create Regular & Custom Tooltips (<a href="https://ghiscoding.gitbook.io/aurelia-slickgrid/grid-functionalities/custom-tooltip" target="_blank">Wiki docs</a>)
-  <br/>
-  <ul class="small">
-    <li>optionally parse regular [title] attributes and transform them into tooltips</li>
-    <li>create your own Custom Tooltip via a Custom Formatter</li>
-    <li>create an Async Custom Tooltip (Promise/Observable) to allowing fetching data from an API</li>
-    <li>optionally add Custom Tooltip on Column Header & Column Header-Row (filters)</li>
-  </ul>`;
-
   aureliaGrid!: AureliaGridInstance;
   columnDefinitions: Column[] = [];
   gridOptions!: GridOption;
