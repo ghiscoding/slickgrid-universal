@@ -28,28 +28,11 @@
       description: 'Group all Aurelia dependencies',
       matchFileNames: ['frameworks/aurelia-slickgrid/**', 'demos/aurelia/**'],
       groupName: 'Aurelia dependencies',
-      // ignore latest Au2.beta.24 since it's causing some issues that I haven't figured out yet
-      ignoreDeps: [
-        'aurelia',
-        '@aurelia/fetch-client',
-        '@aurelia/i18n',
-        '@aurelia/kernel',
-        '@aurelia/metadata',
-        '@aurelia/router',
-        '@aurelia/router-lite',
-        '@aurelia/runtime',
-        '@aurelia/runtime-html',
-        '@aurelia/vite-plugin',
-      ],
     },
     {
+      // let's group React & Vue since they have similar implementation and not too many deps
       description: 'Group all React/Vue dependencies',
-      matchFileNames: [
-        'frameworks/slickgrid-react/**',
-        'frameworks/slickgrid-vue/**',
-        'demos/react/**',
-        'demos/vue/**',
-      ],
+      matchFileNames: ['frameworks/slickgrid-react/**', 'frameworks/slickgrid-vue/**', 'demos/react/**', 'demos/vue/**'],
       groupName: 'React and VueJS dependencies',
     },
   ],
