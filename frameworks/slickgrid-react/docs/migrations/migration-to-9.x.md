@@ -1,12 +1,12 @@
 ## Embracing ESM-only builds ⚡
 
-This new release is focused around 2 things, we now ship ESM-only builds (in other words, CommonJS builds are fully dropped and only ESM will remain), this move will cut the npm download size by half. The other big change is an internal one which is an organizational one, I'm moving all framework wrappers directly into Slickgrid-Universal (Angular, Aurelia, React and Vue wrappers are now all located under the [frameworks/](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/) folder), this will help tremendously with the project maintenance (any new PR will now run against all frameworks all at once (catching bugs early), publishing a new version is becoming a single execution for all frameworks all at once, and finally having a single codebase to test & troubleshoot any wrapper, etc... will be so much easier to handle). Now Slickgrid-Universal name totally makes sense with this new structure change 🌐
+This new release is focused around 2 things, we now ship ESM-only builds (in other words, CommonJS builds are fully dropped and only ESM will remain), this move will cut the npm download size by half. The other big change is an internal one which is an organizational one, I'm moving all framework wrappers directly into Slickgrid-Universal (Angular, Aurelia, React and Vue wrappers are now all located under the [frameworks/](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/) folder). This change will help tremendously with the project maintenance (any new PR will now run against all frameworks all at once (catching bugs early), publishing a new version is now a single click execution for all frameworks all at once, and finally having a single codebase to test & troubleshoot all wrappers, etc... will be so much easier to handle). With this new structure change, Slickgrid-Universal name is now making even more sense. 🌐
+
+The other great thing about having everything under the same roof/project is that every package will now be released at the same time with the exact same version number across the board. Everything will be released under v9.0 and whenever any new feature/bugfix comes in, then every package will be bumped to v9.1 and so on (no more version discrepancies).
 
 Wait, what happened to version 6 to 8?
 
 I'm skipping versions 6-8 and going straight to v9.0 because some of the wrappers (Angular-Slickgrid, Aurelia-Slickgrid) were already at v8.x and so the next available major version bump for everyone is v9.0
-
-The other great thing about having everything under the same roof/project is that every package will be released at the exact same time with the exact same versions across the board. Everything will be released under v9.0 and whenever a new feature/bugfix comes in, then every package will be bumped to v9.1 and so on (no more version discrepancies).
 
 #### Major Changes - Quick Summary
 - minimum requirements bump
@@ -221,14 +221,14 @@ Below are a list of Enums being deprecated and you should think about migrating 
 |             | `SortDirection.DESC`   | `'DESC'` or `'desc'`  |
 | - | - | - |
 
-##### deprecating `editorOptions` and `filterOptions`, they are being renamed as `options`
+##### deprecating `editorOptions` and `filterOptions`, they are being renamed as simply `options`
 
-in order to make it easier to merge and simplify editor/filter options, I'm renaming the options to a single `options` property which will make it more easily transportable (you will be able to reuse the same `options` for both the editor/filter if need be). You can start using `options` in v9.0 and above.
+in order to make it easier to merge and simplify editor/filter options, I'm renaming the options to a single `options` property which will make it more easily transportable (you will be able to reuse the same `options` for both the editor/filter if you wanted). You can start using `options` in v9.0 and above (or keep using `editorOptions`, `filterOptions`).
 
 ```diff
 import { type MultipleSelectOption } from '@slickgrid-universal/common';
 
-setColumns([{
+columnDefinitions = [{
   id: 'duration', field: 'duration', name: 'Duration',
   editor: {
 -   editorOptions: {
@@ -242,5 +242,18 @@ setColumns([{
       maxHeight: 250, useSelectOptionLabelToHtml: true,
     } as MultipleSelectOption,
   }
-}]);
+}];
+
+// or reuse the same `options`
++ const msOptions = { maxHeight: 250, useSelectOptionLabelToHtml: true } as MultipleSelectOption;
+
+columnDefinitions = [{
+  id: 'duration', field: 'duration', name: 'Duration',
+  editor: {
++   options: msOptions,
+  },
+  filter: {
++   options: msOptions,
+  },
+}];
 ```
