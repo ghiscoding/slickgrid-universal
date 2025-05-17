@@ -1,4 +1,5 @@
-import { AppTask, type Constructable, CustomElement, type IAppRoot, IAurelia, resolve, singleton } from 'aurelia';
+import { AppTask, type Constructable, CustomElement, type IAppRoot, IAurelia, type INode, resolve, singleton } from 'aurelia';
+import { type Writable } from '@aurelia/kernel';
 
 import type { ViewModelBindableInputData } from '../models/index.js';
 
@@ -22,7 +23,7 @@ export class AureliaUtilService {
         `<${def.name} model.bind="bindableData.model" ${addonBindable} ${gridBindable} ${dataViewBindable} ${parentBindable}></${def.name}>`.trim();
 
       // patch for this error "Node already associated with a controlle"
-      delete (targetElement as any)['$au']?.['au:resource:custom-element'];
+      delete (targetElement as Writable<INode>)['$au']?.['au:resource:custom-element'];
 
       return await this.au.enhance({
         host: targetElement,

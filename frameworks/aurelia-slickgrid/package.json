@@ -66,6 +66,7 @@
     "sortablejs": "catalog:"
   },
   "devDependencies": {
+    "@aurelia/kernel": "^2.0.0-beta.24",
     "dompurify": "catalog:",
     "native-copyfiles": "catalog:",
     "rimraf": "catalog:",
