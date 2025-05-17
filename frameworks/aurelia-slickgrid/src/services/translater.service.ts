@@ -1,13 +1,14 @@
 import type { TranslaterService as UniversalTranslateService } from '@slickgrid-universal/common';
 import { I18N } from '@aurelia/i18n';
-import { optional, resolve } from 'aurelia';
+import { inject, optional } from 'aurelia';
 
 /**
  * This is a Translate Service Wrapper for Slickgrid-Universal monorepo lib to work properly,
  * it must implement Slickgrid-Universal TranslaterService interface to work properly
  */
+@inject(optional(I18N))
 export class TranslaterService implements UniversalTranslateService {
-  constructor(private readonly i18n: I18N | undefined = resolve(optional(I18N))) {}
+  constructor(private readonly i18n: I18N) {}
 
   /**
    * Method to return the current language used by the App

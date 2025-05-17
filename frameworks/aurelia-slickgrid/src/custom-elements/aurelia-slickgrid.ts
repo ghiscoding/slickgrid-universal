@@ -125,6 +125,7 @@ export class AureliaSlickgridCustomElement {
   extensionUtility: ExtensionUtility;
   filterFactory!: FilterFactory;
   filterService: FilterService;
+  gridContainer!: HTMLDivElement;
   gridEventService: GridEventService;
   gridService: GridService;
   gridStateService: GridStateService;
@@ -135,7 +136,6 @@ export class AureliaSlickgridCustomElement {
   sharedService: SharedService;
   sortService: SortService;
   treeDataService: TreeDataService;
-  gridContainer!: HTMLDivElement;
 
   @bindable({ mode: BindingMode.twoWay }) columns: Column[] = [];
   @bindable({ mode: BindingMode.twoWay }) element!: Element;

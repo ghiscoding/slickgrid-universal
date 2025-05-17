@@ -136,10 +136,5 @@
   "funding": {
     "type": "ko_fi",
     "url": "https://ko-fi.com/ghiscoding"
-  },
-  "pnpm": {
-    "overrides": {
-      "vite": "catalog:"
-    }
   }
 }

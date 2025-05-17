@@ -1,6 +1,8 @@
 import type { RowDetailView as UniversalRowDetailView } from '@slickgrid-universal/common';
 import type { Constructable } from 'aurelia';
 
+import type { AureliaViewOutput } from './aureliaViewOutput.interface.js';
+
 export interface RowDetailView extends UniversalRowDetailView {
   /**
    * Optionally pass your Parent Component reference to your Child Component (row detail component).
@@ -13,4 +15,9 @@ export interface RowDetailView extends UniversalRowDetailView {
 
   /** View Model template that will be loaded once the async function finishes */
   viewModel?: Constructable;
+}
+
+export interface CreatedView extends AureliaViewOutput {
+  id: string | number;
+  dataContext: any;
 }
