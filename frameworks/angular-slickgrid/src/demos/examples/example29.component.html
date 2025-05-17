@@ -22,7 +22,13 @@
     </ul>
   </div>
 
-  <angular-slickgrid gridId="grid1" [columns]="columnDefinitions" [options]="gridOptions" [dataset]="dataset"  (onAngularGridCreated)="angularGridReady($event.detail)">
+  <angular-slickgrid
+    gridId="grid1"
+    [columns]="columnDefinitions"
+    [options]="gridOptions"
+    [dataset]="dataset"
+    (onAngularGridCreated)="angularGridReady($event.detail)"
+  >
     <ng-template #slickgridHeader>
       <h3>Grid with header and footer slot</h3>
     </ng-template>
