@@ -4,6 +4,7 @@
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
 [![NPM downloads](https://img.shields.io/npm/dy/angular-slickgrid)](https://npmjs.org/package/angular-slickgrid)
 [![npm](https://img.shields.io/npm/v/angular-slickgrid.svg?logo=npm&logoColor=fff&label=npm)](https://www.npmjs.com/package/angular-slickgrid)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/aurelia-slickgrid?color=success&label=gzip)](https://bundlephobia.com/result?p=angular-slickgrid)
 [![Actions Status](https://github.com/ghiscoding/slickgrid-universal/actions/workflows/test-angular.yml/badge.svg)](https://github.com/ghiscoding/slickgrid-universal/actions/workflows/test-angular.yml)
 
 ### Brief introduction
