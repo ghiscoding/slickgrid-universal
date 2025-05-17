@@ -1,9 +1,10 @@
-import { type Column, type GridOption, toCamelCase } from 'aurelia-slickgrid';
+import { type AureliaGridInstance, type Column, type GridOption, toCamelCase } from 'aurelia-slickgrid';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 
 const sampleDataRoot = 'assets/data';
 
 export class Example17 {
+  aureliaGrid!: AureliaGridInstance;
   columnDefinitions: Column[] = [];
   gridOptions!: GridOption;
   gridCreated = false;
@@ -12,6 +13,10 @@ export class Example17 {
   paginationPosition: 'bottom' | 'top' = 'top';
   templateUrl = `${sampleDataRoot}/users.csv`;
   uploadFileRef = '';
+
+  aureliaGridReady(aureliaGrid: AureliaGridInstance) {
+    this.aureliaGrid = aureliaGrid;
+  }
 
   destroyGrid() {
     this.gridCreated = false;
@@ -92,5 +97,12 @@ export class Example17 {
     this.columnDefinitions = colDefs;
     console.log(this.columnDefinitions, this.dataset);
     this.gridCreated = true;
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    this.aureliaGrid.resizerService.resizeGrid(0);
   }
 }

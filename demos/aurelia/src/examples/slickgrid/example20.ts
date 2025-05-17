@@ -13,17 +13,6 @@ import {
 import './example20.scss'; // provide custom CSS/SASS styling
 
 export class Example20 {
-  title = 'Example 20: Pinned (frozen) Columns/Rows';
-  subTitle = `
-    This example demonstrates the use of Pinned (aka frozen) Columns and/or Rows (<a href="https://ghiscoding.gitbook.io/aurelia-slickgrid/grid-functionalities/frozen-columns-rows" target="_blank">Wiki docs</a>)
-    <ul>
-      <li>Option to pin any number of columns (left only) or rows</li>
-      <li>Option to pin the rows at the bottom instead of the top (default)</li>
-      <li>You can also dynamically any of these options, through SlickGrid "setOptions()"</li>
-      <li>Possibility to change the styling of the line border between pinned columns/rows</li>
-    </ul>
-  `;
-
   aureliaGrid!: AureliaGridInstance;
   columnDefinitions: Column[] = [];
   gridObj!: SlickGrid;

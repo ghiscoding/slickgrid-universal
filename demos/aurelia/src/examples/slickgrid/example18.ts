@@ -18,22 +18,6 @@ import {
 
 export class Example18 {
   private _darkMode = false;
-  title = 'Example 18: Draggable Grouping & Aggregators';
-  subTitle = `
-  <ul>
-  <li><a href="https://ghiscoding.gitbook.io/aurelia-slickgrid/grid-functionalities/grouping-aggregators" target="_blank">Wiki docs</a></li>
-  <li>This example shows 3 ways of grouping</li>
-  <ol>
-  <li>Drag any Column Header on the top placeholder to group by that column (support moti-columns grouping by adding more columns to the drop area).</li>
-  <li>Use buttons and defined functions to group by whichever field you want</li>
-  <li>Use the Select dropdown to group, the position of the Selects represent the grouping level</li>
-  </ol>
-  <li>Fully dynamic and interactive multi-level grouping with filtering and aggregates ovor 50'000 items</li>
-  <li>Each grouping level can have its own aggregates (over child rows, child groups, or all descendant rows)..</li>
-  <li>Use "Aggregators" and "GroupTotalFormatters" directly from Aurelia-Slickgrid</li>
-  </ul>
-  `;
-
   aureliaGrid!: AureliaGridInstance;
   columnDefinitions: Column[] = [];
   dataset: any[] = [];

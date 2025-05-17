@@ -20,19 +20,6 @@ const LOCAL_STORAGE_KEY = 'gridState';
 const NB_ITEMS = 500;
 
 export class Example15 {
-  title = 'Example 15: Grid State & Presets using Local Storage';
-  subTitle = `
-  Grid State & Preset (<a href="https://ghiscoding.gitbook.io/aurelia-slickgrid/grid-functionalities/grid-state-preset" target="_blank">Wiki docs</a>)
-  <br/>
-  <ul class="small">
-    <li>Uses Local Storage to persist the Grid State and uses Grid Options "presets" to put the grid back to it's previous state</li>
-    <ul>
-       <li>to demo this, simply change any columns (position reorder, visibility, size, filter, sort), then refresh your browser with (F5)</li>
-    </ul>
-    <li>Local Storage is just one option, you can use whichever is more convenient for you (Local Storage, Session Storage, DB, ...)</li>
-  </ul>
-`;
-
   aureliaGrid!: AureliaGridInstance;
   columnDefinitions: Column[] = [];
   gridOptions!: GridOption;

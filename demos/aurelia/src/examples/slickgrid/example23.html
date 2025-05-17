@@ -1,5 +1,5 @@
 <h2>
-  ${title}
+  Example 23: Filtering from Range of Search Values
   <span class="float-end">
     <a
       style="font-size: 18px"
@@ -14,7 +14,25 @@
   </button>
 </h2>
 
-<div class="subtitle" innerhtml.bind="subTitle"></div>
+<div class="subtitle">
+  This demo shows how to use Filters with Range of Search Values (<a
+    href="https://ghiscoding.gitbook.io/aurelia-slickgrid/column-functionalities/filters/range-filters"
+    target="_blank"
+    >Wiki docs</a
+  >)
+  <br />
+  <ul class="small">
+    <li>All input filters support the following operators: (>, >=, <, <=, <>, !=, =, ==, *) and now also the (..) for an input range</li>
+    <li>
+      All filters (which support ranges) can be defined via the 2 dots (..) which represents a range, this also works for dates and slider
+      in the "presets"
+    </li>
+    <ul>
+      <li>For a numeric range defined in an input filter (must be of type text), you can use 2 dots (..) to represent a range</li>
+      <li>example: typing "10..90" will filter values between 10 and 90 (but excluding the number 10 and 90)</li>
+    </ul>
+  </ul>
+</div>
 
 <br />
 

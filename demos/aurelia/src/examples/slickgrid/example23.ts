@@ -38,20 +38,6 @@ const taskTranslateFormatter: Formatter = (_row, _cell, value, _columnDef, _data
 };
 
 export class Example23 {
-  title = 'Example 23: Filtering from Range of Search Values';
-  subTitle = `
-    This demo shows how to use Filters with Range of Search Values (<a href="https://ghiscoding.gitbook.io/aurelia-slickgrid/column-functionalities/filters/range-filters" target="_blank">Wiki docs</a>)
-    <br/>
-    <ul class="small">
-      <li>All input filters support the following operators: (>, >=, <, <=, <>, !=, =, ==, *) and now also the (..) for an input range</li>
-      <li>All filters (which support ranges) can be defined via the 2 dots (..) which represents a range, this also works for dates and slider in the "presets"</li>
-      <ul>
-        <li>For a numeric range defined in an input filter (must be of type text), you can use 2 dots (..) to represent a range</li>
-        <li>example: typing "10..90" will filter values between 10 and 90 (but excluding the number 10 and 90)</li>
-      </ul>
-    </ul>
-  `;
-
   aureliaGrid!: AureliaGridInstance;
   columnDefinitions: Column[] = [];
   gridOptions!: GridOption;

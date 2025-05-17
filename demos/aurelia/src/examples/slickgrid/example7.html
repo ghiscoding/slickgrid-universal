@@ -1,5 +1,5 @@
 <h2>
-  ${title}
+  Example 7: Header Button Plugin
   <span class="float-end">
     <a
       style="font-size: 18px"
@@ -9,17 +9,30 @@
       <span class="mdi mdi-link-variant"></span> code
     </a>
   </span>
-  <button
-    class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-    type="button"
-    data-test="toggle-subtitle"
-    click.trigger="hideSubTitle = !hideSubTitle"
-  >
+  <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" click.trigger="toggleSubTitle()">
     <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
   </button>
 </h2>
 
-<div class="subtitle" innerhtml.bind="subTitle" hidden.bind="hideSubTitle"></div>
+<div class="subtitle">
+  This example demonstrates using the <b>Slick.Plugins.HeaderButtons</b> plugin to easily add buttons to colum headers. These buttons can be
+  specified directly in the column definition, and are very easy to configure and use. (<a
+    href="https://ghiscoding.gitbook.io/aurelia-slickgrid/grid-functionalities/header-menu-header-buttons"
+    target="_blank"
+    >Wiki docs</a
+  >)
+  <ul>
+    <li>Resize the 1st column to see all icon/command</li>
+    <li>Mouse hover the 2nd column to see it's icon/command</li>
+    <li>For all the other columns, click on top-right red circle icon to enable highlight of negative numbers.</li>
+    <li>Use override callback functions to change the properties of show/hide, enable/disable the menu or certain item(s) from the list</li>
+    <ol>
+      <li>These callbacks are: "itemVisibilityOverride", "itemUsabilityOverride"</li>
+      <li>for example the "Column E" does not show the header button via "itemVisibilityOverride"</li>
+      <li>for example the "Column J" header button is displayed but it not usable via "itemUsabilityOverride"</li>
+    </ol>
+  </ul>
+</div>
 
 <h5>Grid 1</h5>
 <aurelia-slickgrid

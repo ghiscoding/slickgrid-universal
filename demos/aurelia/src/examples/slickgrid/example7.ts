@@ -5,23 +5,6 @@ let columns1WithHighlightingById: any = {};
 let columns2WithHighlightingById: any = {};
 
 export class Example7 {
-  title = 'Example 7: Header Button Plugin';
-  subTitle = `
-    This example demonstrates using the <b>Slick.Plugins.HeaderButtons</b> plugin to easily add buttons to colum headers.
-    These buttons can be specified directly in the column definition, and are very easy to configure and use.
-    (<a href="https://ghiscoding.gitbook.io/aurelia-slickgrid/grid-functionalities/header-menu-header-buttons" target="_blank">Wiki docs</a>)
-    <ul>
-      <li>Resize the 1st column to see all icon/command</li>
-      <li>Mouse hover the 2nd column to see it's icon/command</li>
-      <li>For all the other columns, click on top-right red circle icon to enable highlight of negative numbers.</li>
-      <li>Use override callback functions to change the properties of show/hide, enable/disable the menu or certain item(s) from the list</li>
-      <ol>
-        <li>These callbacks are: "itemVisibilityOverride", "itemUsabilityOverride"</li>
-        <li>for example the "Column E" does not show the header button via "itemVisibilityOverride"</li>
-        <li>for example the "Column J" header button is displayed but it not usable via "itemUsabilityOverride"</li>
-      </ol>
-    </ul>
-  `;
   columnDefinitions1: Column[] = [];
   columnDefinitions2: Column[] = [];
   gridOptions1!: GridOption;
@@ -230,5 +213,12 @@ export class Example7 {
     this[`columnDefinitions${gridNo}`] = cols;
 
     return mockDataset;
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    this.aureliaGrid2.resizerService.resizeGrid(0);
   }
 }

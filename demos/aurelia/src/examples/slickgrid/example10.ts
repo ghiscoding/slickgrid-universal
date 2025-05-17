@@ -3,15 +3,6 @@ import { type AureliaGridInstance, type Column, Filters, Formatters, type GridOp
 import './example10.scss'; // provide custom CSS/SASS styling
 
 export class Example10 {
-  title = 'Example 10: Multiple Grids with Row Selection';
-  subTitle = `
-    Row selection, single or multi-select (<a href="https://ghiscoding.gitbook.io/aurelia-slickgrid/grid-functionalities/row-selection" target="_blank">Wiki docs</a>).
-    <ul>
-      <li>Single Select, you can click on any cell to make the row active</li>
-      <li>Multiple Selections, you need to specifically click on the checkbox to make 1 or more selections</li>
-      <li>NOTE: Any Row Selection(s) will be reset when using Pagination and changing Page (you will need to set it back manually if you want it back)</li>
-    </ul>
-  `;
   @bindable() isGrid2WithPagination = true;
 
   aureliaGrid1!: AureliaGridInstance;
@@ -309,5 +300,12 @@ export class Example10 {
         return (item && item.title) || '';
       });
     }
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    this.aureliaGrid2.resizerService.resizeGrid(0);
   }
 }

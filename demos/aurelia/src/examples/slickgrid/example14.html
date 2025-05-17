@@ -1,5 +1,5 @@
 <h2>
-  ${title}
+  Example 14: Column Span & Header Grouping
   <span class="float-end">
     <a
       style="font-size: 18px"
@@ -9,17 +9,20 @@
       <span class="mdi mdi-link-variant"></span> code
     </a>
   </span>
-  <button
-    class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-    type="button"
-    data-test="toggle-subtitle"
-    click.trigger="hideSubTitle = !hideSubTitle"
-  >
+  <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" click.trigger="toggleSubTitle()">
     <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
   </button>
 </h2>
 
-<div class="subtitle" innerhtml.bind="subTitle" hidden.bind="hideSubTitle"></div>
+<div class="subtitle">
+  This example demonstrates how to easily span a row over multiple columns & how to group header titles.
+  <ul>
+    <li>
+      Note that you can add Sort but remember that it will sort by the data which the row contains, even if the data is visually hidden by
+      colspan it will still sort it
+    </li>
+  </ul>
+</div>
 
 <h3>Grid 1 <small>(with Header Grouping &amp; Colspan)</small></h3>
 <aurelia-slickgrid grid-id="grid1" columns.bind="columnDefinitions1" options.bind="gridOptions1" dataset.bind="dataset1">

@@ -1,6 +1,6 @@
 <require from="./custom-footer"></require>
 <h2>
-  ${title}
+  Example 29: Grid with Header and Footer slot
   <span class="float-end">
     <a
       style="font-size: 18px"
@@ -10,17 +10,12 @@
       <span class="mdi mdi-link-variant"></span> code
     </a>
   </span>
-  <button
-    class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-    type="button"
-    data-test="toggle-subtitle"
-    click.trigger="hideSubTitle = !hideSubTitle"
-  >
+  <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" click.trigger="toggleSubTitle()">
     <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
   </button>
 </h2>
 
-<div class="subtitle" innerhtml.bind="subTitle" hidden.bind="hideSubTitle"></div>
+<div class="subtitle">Simple Grids with a custom header and footer via named slots</div>
 
 <aurelia-slickgrid grid-id="grid" columns.bind="columnDefinitions" options.bind="gridOptions" dataset.bind="dataset">
   <div au-slot="slickgrid-header" class="custom-header-slot">

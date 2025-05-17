@@ -17,15 +17,6 @@ import {
 import './example28.scss'; // provide custom CSS/SASS styling
 
 export class Example28 {
-  title =
-    'Example 28: Tree Data with Aggregators <small> <span class="mdi mdi-file-tree mdi-27px"></span> (from a Hierarchical Dataset - <a href="https://ghiscoding.gitbook.io/aurelia-slickgrid/grid-functionalities/tree-data-grid" target="_blank">Wiki</a>)</small>';
-  subTitle = `<ul>
-    <li>It is assumed that your dataset will have Parent/Child references AND also Tree Level (indent) property.</li>
-    <ul>
-      <li>If you do not have the Tree Level (indent), you could call "convertParentChildArrayToHierarchicalView()" then call "convertHierarchicalViewToParentChildArray()"</li>
-      <li>You could also pass the result of "convertParentChildArrayToHierarchicalView()" to "dataset-hierarchical.bind" as defined in the next Hierarchical Example</li>
-    </ul>
-  </ul>`;
   aureliaGrid!: AureliaGridInstance;
   gridOptions!: GridOption;
   columnDefinitions: Column[] = [];

@@ -1,5 +1,5 @@
 <h2>
-  ${title}
+  Example 6: Grid with Backend GraphQL Service
   <span class="float-end">
     <a
       style="font-size: 18px"
@@ -14,7 +14,34 @@
   </button>
 </h2>
 
-<div class="subtitle" innerhtml.bind="subTitle"></div>
+<div class="subtitle">
+  Use it when you need to support Pagination with a GraphQL endpoint (for simple JSON, use a regular grid).
+  <br />Take a look at the (<a href="https://ghiscoding.gitbook.io/aurelia-slickgrid/backend-services/graphql" target="_blank">Wiki docs</a
+  >)
+  <ul class="small">
+    <li><span class="red bold">(*) NO DATA SHOWN</span> - just change filters &amp; page and look at the "GraphQL Query" changing</li>
+    <li>Only "Name" field is sortable for the demo (because we use JSON files), however "multiColumnSort: true" is also supported</li>
+    <li>String column also support operator (>, >=, <, <=, <>, !=, =, ==, *)</li>
+    <ul>
+      <li>The (*) can be used as startsWith (ex.: "abc*" => startsWith "abc") / endsWith (ex.: "*xyz" => endsWith "xyz")</li>
+      <li>The other operators can be used on column type number for example: ">=100" (greater or equal than 100)</li>
+    </ul>
+    <li>
+      You can also preload a grid with certain "presets" like Filters / Sorters / Pagination
+      <a href="https://ghiscoding.gitbook.io/aurelia-slickgrid/grid-functionalities/grid-state-preset" target="_blank"
+        >Wiki - Grid Preset</a
+      >
+    </li>
+    <li>
+      Also note that the column Name has a filter with a custom %% operator that behaves like an SQL LIKE operator supporting % wildcards.
+    </li>
+    <li>
+      Depending on your configuration, your GraphQL Server might already support regex querying (e.g. Hasura
+      <a href="https://hasura.io/docs/latest/queries/postgres/filters/text-search-operators/#_regex" target="_blank">_regex</a>) or you
+      could add your own implementation (e.g. see this SO <a href="https://stackoverflow.com/a/37981802/1212166">Question</a>).
+    </li>
+  </ul>
+</div>
 
 <div class="row">
   <div class="col-sm-5">
