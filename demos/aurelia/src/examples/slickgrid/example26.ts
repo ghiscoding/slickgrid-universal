@@ -23,27 +23,6 @@ import { FilterSelect } from './filter-select.js';
 const NB_ITEMS = 100;
 
 export class Example26 {
-  title = 'Example 26: Use of Aurelia Custom Elements';
-  subTitle = `
-  <h5>Filters, Editors, AsyncPostRender with Aurelia Custom Elements</h5>
-  Grid with usage of Aurelia Custom Elements as Editor &amp; AsyncPostRender (similar to Formatter).
-  <ul>
-    <li>Support of Aurelia Custom Element as Custom Editor (click on any "Assignee" name cell)</li>
-    <ul>
-      <li>That column uses a simple select drodown wrapped in an Aurelia Custom Element</li>
-      <li>Increased Grid Options "rowHeight" &amp; "headerRowHeight" to 45 so that the Custom Element fits in the cell.</li>
-    </ul>
-    <li>Support of Aurelia Custom Element as Custom Filter ("Assignee" columns), which also uses Custom Element</li>
-    <li>The 2nd "Assignee" column (showing in bold text) uses "asyncPostRender" with an Aurelia Custom Element</li>
-    <ul>
-      <li>Why can't we use Aurelia Custom Element as Customer Formatter and why do I see a slight delay in loading the data?</li>
-      <li>It's totally normal since SlickGrid Formatters only accept strings (synchronously),
-      so we cannot use that (Aurelia requires at least 1 full cycle to render the element), so we are left with SlickGrid "asyncPostRender" and
-      it works but as the name suggest it's async users might see noticeable delay in loading the data
-      </li>
-    </ul>
-  </ul>
-  `;
   private _commandQueue: EditCommand[] = [];
   aureliaGrid!: AureliaGridInstance;
   gridOptions!: GridOption;

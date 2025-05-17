@@ -23,6 +23,7 @@ export { AureliaSlickgridCustomElement } from './custom-elements/aurelia-slickgr
 import type {
   AureliaGridInstance,
   AureliaViewOutput,
+  CreatedView,
   GridOption,
   RowDetailView,
   ViewModelBindableData,
@@ -33,6 +34,7 @@ import type {
 export {
   type AureliaGridInstance,
   type AureliaViewOutput,
+  type CreatedView,
   type GridOption,
   type RowDetailView,
   type ViewModelBindableData,

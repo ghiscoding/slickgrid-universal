@@ -1,6 +1,6 @@
-import { AppTask, type Constructable, CustomElement, IAurelia, resolve, singleton } from 'aurelia';
+import { AppTask, type Constructable, CustomElement, type IAppRoot, IAurelia, resolve, singleton } from 'aurelia';
 
-import type { AureliaViewOutput, ViewModelBindableInputData } from '../models/index.js';
+import type { ViewModelBindableInputData } from '../models/index.js';
 
 @singleton()
 export class AureliaUtilService {
@@ -10,7 +10,7 @@ export class AureliaUtilService {
     viewModel: Constructable,
     bindableData?: ViewModelBindableInputData,
     targetElement?: HTMLElement
-  ): Promise<AureliaViewOutput | null> {
+  ): Promise<IAppRoot | null> {
     if (targetElement) {
       const def = CustomElement.getDefinition(viewModel);
       const addonBindable = bindableData?.addon ? 'addon.bind="bindableData.addon"' : '';
@@ -20,6 +20,9 @@ export class AureliaUtilService {
 
       targetElement.innerHTML =
         `<${def.name} model.bind="bindableData.model" ${addonBindable} ${gridBindable} ${dataViewBindable} ${parentBindable}></${def.name}>`.trim();
+
+      // patch for this error "Node already associated with a controlle"
+      delete (targetElement as any)['$au']?.['au:resource:custom-element'];
 
       return await this.au.enhance({
         host: targetElement,
