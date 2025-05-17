@@ -1,7 +1,10 @@
 <div class="container-fluid">
   <h2>
     Example 34: Real-Time Trading Platform
-    <button class="btn btn-outline-secondary btn-sm btn-icon ms-3" (click)="toggleDarkMode()" data-test="toggle-dark-mode">
+    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" (click)="toggleSubTitle()">
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+    <button class="btn btn-outline-secondary btn-sm btn-icon" (click)="toggleDarkMode()" data-test="toggle-dark-mode">
       <span class="mdi mdi-theme-light-dark"></span>
       <span>Toggle Dark Mode</span>
     </button>
@@ -15,6 +18,7 @@
       </a>
     </span>
   </h2>
+
   <div class="subtitle">
     Simulate a stock trading platform with lot of price changes, it is strongly suggested to disable the
     <code>autoResize.autoHeight</code> grid option for this type of grid.

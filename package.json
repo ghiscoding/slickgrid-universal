@@ -99,7 +99,7 @@
     "@4tw/cypress-drag-drop": "catalog:",
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
-    "@eslint/js": "^9.26.0",
+    "@eslint/js": "catalog:",
     "@formkit/tempo": "catalog:",
     "@lerna-lite/cli": "^4.1.2",
     "@lerna-lite/publish": "^4.1.2",

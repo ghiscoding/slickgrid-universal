@@ -1,5 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { AngularGridInstance, Column, Editors, GridOption, OnCellChangeEventArgs } from '../../library';
+import { Component, type OnDestroy, type OnInit } from '@angular/core';
+import { type AngularGridInstance, type Column, Editors, type GridOption, type OnCellChangeEventArgs } from '../../library';
 
 const NB_ITEMS = 100;
 
@@ -9,10 +9,11 @@ const NB_ITEMS = 100;
 })
 export class Example37Component implements OnDestroy, OnInit {
   private _darkMode = false;
+  angularGrid!: AngularGridInstance;
   columnDefinitions: Column[] = [];
   gridOptions!: GridOption;
   dataset!: any[];
-  angularGrid!: AngularGridInstance;
+  hideSubTitle = false;
 
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid;
@@ -119,5 +120,12 @@ export class Example37Component implements OnDestroy, OnInit {
     if (columnElement) {
       columnElement.textContent = `Sum: ${total}`;
     }
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    this.angularGrid.resizerService.resizeGrid(0);
   }
 }

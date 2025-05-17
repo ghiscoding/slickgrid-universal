@@ -29,6 +29,7 @@ export class Example38Component implements OnInit {
   columnDefinitions!: Column[];
   gridOptions!: GridOption;
   dataset: any[] = [];
+  hideSubTitle = false;
   isPageErrorTest = false;
   metrics!: Partial<Metrics>;
   tagDataClass = '';
@@ -416,5 +417,12 @@ export class Example38Component implements OnInit {
 
   setSortingDynamically() {
     this.angularGrid?.sortService.updateSorting([{ columnId: 'name', direction: 'DESC' }]);
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    this.angularGrid.resizerService.resizeGrid(0);
   }
 }

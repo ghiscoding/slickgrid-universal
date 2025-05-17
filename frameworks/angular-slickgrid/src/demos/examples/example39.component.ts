@@ -1,17 +1,17 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, type OnDestroy, type OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { TranslateService } from '@ngx-translate/core';
 import { GraphqlService, type GraphqlPaginatedResult, type GraphqlServiceApi } from '@slickgrid-universal/graphql';
 import { Subscription } from 'rxjs';
 
 import {
-  AngularGridInstance,
-  Column,
+  type AngularGridInstance,
+  type Column,
   Filters,
-  GridOption,
-  Metrics,
-  MultipleSelectOption,
-  OnRowCountChangedEventArgs,
+  type GridOption,
+  type Metrics,
+  type MultipleSelectOption,
+  type OnRowCountChangedEventArgs,
   unsubscribeAllObservables,
 } from '../../library';
 const sampleDataRoot = 'assets/data';
@@ -36,6 +36,7 @@ export class Example39Component implements OnInit, OnDestroy {
   columnDefinitions!: Column[];
   gridOptions!: GridOption;
   dataset: any[] = [];
+  hideSubTitle = false;
   metrics!: Partial<Metrics>;
   tagDataClass = '';
   graphqlQuery = '...';
@@ -367,5 +368,12 @@ export class Example39Component implements OnInit, OnDestroy {
     );
     // we could also force a query since we provide a Locale and it changed
     this.getCustomerApiCall(this.backendService.buildQuery() || '');
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    this.angularGrid.resizerService.resizeGrid(0);
   }
 }

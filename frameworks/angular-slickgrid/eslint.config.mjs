@@ -1,12 +1,23 @@
 import angular from 'angular-eslint';
 import eslint from '@eslint/js';
 import cypress from 'eslint-plugin-cypress/flat';
+import globals from 'globals';
 import n from 'eslint-plugin-n';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ['.angular/*', 'coverage/'],
+    ignores: [
+      '**/*.spec.ts',
+      '**/*.cy.ts',
+      '.angular/*',
+      'dist/',
+      'coverage/',
+      'test/',
+      '**/environment.*.ts',
+      '**/grid-remote.component.ts',
+      '**/public_api.ts',
+    ],
   },
   {
     extends: [
@@ -22,12 +33,25 @@ export default tseslint.config(
     },
     // Everything in this config object targets our TypeScript files (Components, Directives, Pipes etc)
     files: ['**/*.ts'],
+    languageOptions: {
+      globals: {
+        ...globals.es2021,
+        ...globals.browser,
+      },
+      parser: tseslint.parser,
+      parserOptions: {
+        project: ['./tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
     // Set the custom processor which will allow us to have our inline Component templates extracted
     // and treated as if they are HTML files (and therefore have the .html config below applied to them)
     processor: angular.processInlineTemplates,
     rules: {
       '@angular-eslint/directive-selector': ['error', { type: 'attribute', prefix: 'app', style: 'camelCase' }],
       '@angular-eslint/component-selector': ['error', { type: 'element', style: 'kebab-case' }],
+      '@typescript-eslint/consistent-type-exports': 'error',
+      // '@typescript-eslint/consistent-type-imports': ['warn', { prefer: 'type-imports' }],
       '@typescript-eslint/array-type': 'off',
       '@typescript-eslint/ban-ts-comment': 'off',
       '@typescript-eslint/no-empty-function': 'off',

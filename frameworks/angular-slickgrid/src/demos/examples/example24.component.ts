@@ -1,17 +1,17 @@
-import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { Component, type OnInit, type OnDestroy, ViewEncapsulation } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { Subscription } from 'rxjs';
+import type { Subscription } from 'rxjs';
 
 import {
-  AngularGridInstance,
-  Column,
-  ContextMenu,
+  type AngularGridInstance,
+  type Column,
+  type ContextMenu,
   ExtensionName,
   Filters,
-  Formatter,
+  type Formatter,
   Formatters,
-  GridOption,
+  type GridOption,
   unsubscribeAllObservables,
 } from '../../library';
 
@@ -70,6 +70,7 @@ export class Example24Component implements OnInit, OnDestroy {
   columnDefinitions!: Column[];
   gridOptions!: GridOption;
   dataset!: any[];
+  hideSubTitle = false;
   selectedLanguage: string;
 
   constructor(private translate: TranslateService) {
@@ -637,5 +638,12 @@ export class Example24Component implements OnInit, OnDestroy {
       document.querySelector<HTMLDivElement>('#demo-container')!.dataset.bsTheme = 'light';
     }
     this.angularGrid.slickGrid?.setOptions({ darkMode: this._darkModeGrid });
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    this.angularGrid.resizerService.resizeGrid(0);
   }
 }

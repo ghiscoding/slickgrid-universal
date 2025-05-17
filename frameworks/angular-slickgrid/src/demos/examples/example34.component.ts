@@ -1,16 +1,16 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, type OnDestroy, type OnInit, ViewEncapsulation } from '@angular/core';
 import { faker } from '@faker-js/faker';
 import sparkline from '@fnando/sparkline';
 import {
   Aggregators,
-  AngularGridInstance,
-  Column,
+  type AngularGridInstance,
+  type Column,
   createDomElement,
   deepCopy,
   Filters,
-  Formatter,
+  type Formatter,
   Formatters,
-  GridOption,
+  type GridOption,
   GroupTotalFormatters,
 } from '../../library';
 
@@ -86,6 +86,7 @@ export class Example34Component implements OnDestroy, OnInit {
   gridOptions!: GridOption;
   columnDefinitions: Column[] = [];
   dataset: any[] = [];
+  hideSubTitle = false;
   isFullScreen = false;
   highlightDuration = 150;
   itemCount = 200;
@@ -430,5 +431,12 @@ export class Example34Component implements OnDestroy, OnInit {
   private randomNumber(min: number, max: number, floor = true) {
     const number = Math.random() * (max - min + 1) + min;
     return floor ? Math.floor(number) : number;
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    this.angularGrid.resizerService.resizeGrid(0);
   }
 }

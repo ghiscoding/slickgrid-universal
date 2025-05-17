@@ -1,16 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, type OnInit } from '@angular/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 
 import {
-  AngularGridInstance,
+  type AngularGridInstance,
   Aggregators,
-  Column,
+  type Column,
   DelimiterType,
   Filters,
   Formatters,
-  GridOption,
-  Grouping,
+  type GridOption,
+  type Grouping,
   GroupTotalFormatters,
   SortDirectionNumber,
   SortComparers,
@@ -27,6 +27,7 @@ export class Example13Component implements OnInit {
   dataset!: any[];
   gridObj: any;
   dataviewObj: any;
+  hideSubTitle = false;
   processing = false;
   excelExportService = new ExcelExportService();
   textExportService = new TextExportService();
@@ -366,5 +367,12 @@ export class Example13Component implements OnInit {
       },
     ] as Grouping[]);
     this.gridObj.invalidate(); // invalidate all rows and re-render
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    this.angularGrid.resizerService.resizeGrid(0);
   }
 }

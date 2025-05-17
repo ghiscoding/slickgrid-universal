@@ -1,7 +1,7 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { Column, GridOption, unsubscribeAllObservables } from '../../library';
+import { Component, type OnDestroy, type OnInit, ViewEncapsulation } from '@angular/core';
+import { type AngularGridInstance, type Column, type GridOption, unsubscribeAllObservables } from '../../library';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import type { Subscription } from 'rxjs';
 
 @Component({
   templateUrl: './example08.component.html',
@@ -11,9 +11,11 @@ import { Subscription } from 'rxjs';
 })
 export class Example8Component implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
+  angularGrid!: AngularGridInstance;
   columnDefinitions!: Column[];
   gridOptions!: GridOption;
   dataset!: any[];
+  hideSubTitle = false;
   selectedLanguage: string;
 
   constructor(private translate: TranslateService) {
@@ -21,6 +23,10 @@ export class Example8Component implements OnInit, OnDestroy {
     const defaultLang = 'en';
     this.translate.use(defaultLang);
     this.selectedLanguage = defaultLang;
+  }
+
+  angularGridReady(angularGrid: AngularGridInstance) {
+    this.angularGrid = angularGrid;
   }
 
   ngOnDestroy() {
@@ -191,5 +197,12 @@ export class Example8Component implements OnInit, OnDestroy {
         this.selectedLanguage = nextLanguage;
       })
     );
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    this.angularGrid.resizerService.resizeGrid(0);
   }
 }

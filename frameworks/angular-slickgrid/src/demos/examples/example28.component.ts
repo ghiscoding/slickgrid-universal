@@ -1,19 +1,19 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, type OnInit, ViewEncapsulation } from '@angular/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 
 import {
   addWhiteSpaces,
-  AngularGridInstance,
+  type AngularGridInstance,
   Aggregators,
-  Column,
+  type Column,
   decimalFormatted,
   Filters,
   findItemInTreeStructure,
-  Formatter,
+  type Formatter,
   Formatters,
-  GridOption,
+  type GridOption,
   isNumber,
-  SlickDataView,
+  type SlickDataView,
 } from '../../library';
 
 @Component({
@@ -29,6 +29,7 @@ export class Example28Component implements OnInit {
   gridOptions!: GridOption;
   columnDefinitions!: Column[];
   datasetHierarchical: any[] = [];
+  hideSubTitle = false;
   isExcludingChildWhenFiltering = false;
   isAutoApproveParentItemWhenTreeColumnIsValid = true;
   isAutoRecalcTotalsOnFilterChange = false;
@@ -449,5 +450,12 @@ export class Example28Component implements OnInit {
         ],
       },
     ];
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    this.angularGrid.resizerService.resizeGrid(0);
   }
 }

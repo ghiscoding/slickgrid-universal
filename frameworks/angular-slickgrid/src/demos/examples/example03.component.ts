@@ -1,20 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, type OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  AngularGridInstance,
-  AutocompleterOption,
-  Column,
+  type AngularGridInstance,
+  type AutocompleterOption,
+  type Column,
   Editors,
-  EditorArguments,
-  EditorValidator,
+  type EditorArguments,
+  type EditorValidator,
   Filters,
-  Formatter,
+  type Formatter,
   Formatters,
-  GridOption,
-  LongTextEditorOption,
+  type GridOption,
+  type LongTextEditorOption,
   type MultipleSelectOption,
-  OnEventArgs,
+  type OnEventArgs,
   OperatorType,
   SortComparers,
   SlickGlobalEditorLock,
@@ -71,6 +71,7 @@ export class Example3Component implements OnInit {
   gridOptions!: GridOption;
   dataset!: any[];
   gridObj: any;
+  hideSubTitle = false;
   isAutoEdit = true;
   alertWarning: any;
   updatedObject: any;
@@ -690,5 +691,12 @@ export class Example3Component implements OnInit {
       command.undo();
       this.gridObj.gotoCell(command.row, command.cell, false);
     }
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    this.angularGrid.resizerService.resizeGrid(0);
   }
 }

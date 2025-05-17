@@ -1,14 +1,14 @@
 import {
-  Column,
-  ColumnFilter,
-  Filter,
-  FilterArguments,
-  FilterCallback,
-  GridOption,
+  type Column,
+  type ColumnFilter,
+  type Filter,
+  type FilterArguments,
+  type FilterCallback,
+  type GridOption,
   OperatorType,
-  OperatorString,
-  SearchTerm,
-  SlickGrid,
+  type OperatorString,
+  type SearchTerm,
+  type SlickGrid,
 } from '../../library';
 
 export class CustomInputFilter implements Filter {

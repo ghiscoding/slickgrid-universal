@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule, provideRouter } from '@angular/router';
+import { type Routes, RouterModule, provideRouter } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { HomeComponent } from './examples/home.component';

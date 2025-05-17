@@ -1,16 +1,16 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, type OnInit, ViewEncapsulation } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 import {
-  AngularGridInstance,
+  type AngularGridInstance,
   AngularUtilService,
-  Column,
+  type Column,
   Editors,
   Filters,
   Formatters,
-  GridOption,
+  type GridOption,
   type MultipleSelectOption,
-  OnEventArgs,
+  type OnEventArgs,
   SlickGlobalEditorLock,
   type SliderOption,
 } from '../../library';
@@ -37,6 +37,7 @@ export class Example26Component implements OnInit {
   gridOptions!: GridOption;
   dataset!: any[];
   gridObj: any;
+  hideSubTitle = false;
   isAutoEdit = true;
   alertWarning: any;
   updatedObject: any;
@@ -379,5 +380,12 @@ export class Example26Component implements OnInit {
   deleteCell(rowNumber: number) {
     const item = this.angularGrid.dataView.getItem(rowNumber);
     this.angularGrid.gridService.deleteItemById(item.id);
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    this.angularGrid.resizerService.resizeGrid(0);
   }
 }

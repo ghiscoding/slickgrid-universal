@@ -9,6 +9,9 @@ catalogs:
     '@4tw/cypress-drag-drop':
       specifier: ^2.3.0
       version: 2.3.0
+    '@eslint/js':
+      specifier: ^9.26.0
+      version: 9.26.0
     '@faker-js/faker':
       specifier: ^9.8.0
       version: 9.8.0
@@ -120,7 +123,7 @@ importers:
         specifier: ^19.8.1
         version: 19.8.1
       '@eslint/js':
-        specifier: ^9.26.0
+        specifier: 'catalog:'
         version: 9.26.0
       '@formkit/tempo':
         specifier: 'catalog:'
@@ -748,6 +751,9 @@ importers:
       '@angular/router':
         specifier: ^19.2.11
         version: 19.2.11(@angular/common@19.2.11(@angular/core@19.2.11(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.11(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.11(@angular/animations@19.2.11(@angular/common@19.2.11(@angular/core@19.2.11(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.11(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.11(@angular/core@19.2.11(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.11(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2)
+      '@eslint/js':
+        specifier: 'catalog:'
+        version: 9.26.0
       '@faker-js/faker':
         specifier: 'catalog:'
         version: 9.8.0
@@ -835,6 +841,9 @@ importers:
       eslint-plugin-n:
         specifier: ^17.18.0
         version: 17.18.0(eslint@9.26.0(jiti@2.4.2))
+      globals:
+        specifier: 'catalog:'
+        version: 16.1.0
       jsdom:
         specifier: 'catalog:'
         version: 26.1.0

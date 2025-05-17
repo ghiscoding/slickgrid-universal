@@ -1,5 +1,5 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { AngularGridInstance, Column, GridOption, GridState } from '../../library';
+import { Component, type OnDestroy, type OnInit, ViewEncapsulation } from '@angular/core';
+import type { AngularGridInstance, Column, GridOption, GridState } from '../../library';
 
 export interface Distributor {
   id: number;

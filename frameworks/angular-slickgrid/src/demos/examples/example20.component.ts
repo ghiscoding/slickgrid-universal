@@ -1,13 +1,13 @@
-import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { Component, type OnInit, type OnDestroy, ViewEncapsulation } from '@angular/core';
 import {
-  AngularGridInstance,
-  Column,
-  ColumnEditorDualInput,
+  type AngularGridInstance,
+  type Column,
+  type ColumnEditorDualInput,
   Editors,
   formatNumber,
   Formatters,
   Filters,
-  GridOption,
+  type GridOption,
   SlickEventHandler,
 } from '../../library';
 
@@ -24,6 +24,7 @@ export class Example20Component implements OnInit, OnDestroy {
   dataset!: any[];
   frozenColumnCount = 2;
   frozenRowCount = 3;
+  hideSubTitle = false;
   isFrozenBottom = false;
   gridObj: any;
   slickEventHandler: any;
@@ -337,5 +338,12 @@ export class Example20Component implements OnInit, OnDestroy {
       });
       this.isFrozenBottom = !this.isFrozenBottom; // toggle the variable
     }
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    this.angularGrid.resizerService.resizeGrid(0);
   }
 }

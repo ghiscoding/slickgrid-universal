@@ -1,5 +1,13 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { AngularGridInstance, Column, Editors, Formatters, GridOption, isDefined, SlickGlobalEditorLock } from '../../library';
+import { Component, type OnInit, ViewEncapsulation } from '@angular/core';
+import {
+  type AngularGridInstance,
+  type Column,
+  Editors,
+  Formatters,
+  type GridOption,
+  isDefined,
+  SlickGlobalEditorLock,
+} from '../../library';
 
 @Component({
   templateUrl: './example41.component.html',
@@ -15,6 +23,7 @@ export class Example41Component implements OnInit {
   dragHelper?: HTMLElement;
   dragRows: number[] = [];
   dragMode = '';
+  hideSubTitle = false;
 
   ngOnInit(): void {
     this.defineGrids();
@@ -225,5 +234,12 @@ export class Example41Component implements OnInit {
     } else {
       return { valid: true, msg: null };
     }
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    this.angularGrid.resizerService.resizeGrid(0);
   }
 }

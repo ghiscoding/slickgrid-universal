@@ -10,12 +10,7 @@
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
-    <button
-      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
-      type="button"
-      data-test="toggle-subtitle"
-      (click)="hideSubTitle = !hideSubTitle"
-    >
+    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" (click)="toggleSubTitle()">
       <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
     </button>
     <button class="btn btn-outline-secondary btn-sm btn-icon" (click)="toggleDarkMode()" data-test="toggle-dark-mode">
@@ -24,7 +19,7 @@
     </button>
   </h2>
 
-  <div class="subtitle" [hidden]="hideSubTitle">
+  <div class="subtitle">
     Add functionality to show extra information with a Row Detail View, (<a
       href="https://ghiscoding.gitbook.io/angular-slickgrid/grid-functionalities/row-detail"
       target="_blank"

@@ -1,18 +1,18 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, type OnDestroy, type OnInit } from '@angular/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 
 import {
-  AngularGridInstance,
+  type AngularGridInstance,
   Aggregators,
-  Column,
+  type Column,
   DelimiterType,
   Editors,
   Filters,
   Formatters,
-  GridOption,
-  Grouping,
-  GroupingGetterFunction,
+  type GridOption,
+  type Grouping,
+  type GroupingGetterFunction,
   GroupTotalFormatters,
   SortDirectionNumber,
   SortComparers,
@@ -32,6 +32,7 @@ export class Example18Component implements OnInit, OnDestroy {
   durationOrderByCount = false;
   gridObj: any;
   gridOptions!: GridOption;
+  hideSubTitle = false;
   processing = false;
   selectedGroupingFields: Array<string | GroupingGetterFunction> = ['', '', ''];
   excelExportService = new ExcelExportService();
@@ -441,5 +442,12 @@ export class Example18Component implements OnInit, OnDestroy {
       document.querySelector('.panel-wm-content')!.classList.remove('dark-mode');
       document.querySelector<HTMLDivElement>('#demo-container')!.dataset.bsTheme = 'light';
     }
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    this.angularGrid.resizerService.resizeGrid(0);
   }
 }

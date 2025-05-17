@@ -1,7 +1,10 @@
 <div class="container-fluid">
   <h2>
     Example 24: Cell Menu & Context Menu Plugins
-    <button class="btn btn-outline-secondary btn-sm ms-3" (click)="toggleDarkMode()" data-test="toggle-dark-mode">
+    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" (click)="toggleSubTitle()">
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+    <button class="btn btn-outline-secondary btn-sm" (click)="toggleDarkMode()" data-test="toggle-dark-mode">
       <span>Toggle Dark Mode</span>
     </button>
     <span class="float-end">
@@ -14,6 +17,7 @@
       </a>
     </span>
   </h2>
+
   <div class="subtitle">
     Add Cell Menu and Context Menu
     <ul>
