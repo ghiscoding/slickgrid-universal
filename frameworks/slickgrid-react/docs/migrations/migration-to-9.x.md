@@ -57,7 +57,8 @@ function reactGridReady(reactGrid: SlickgridReactInstance) {
 ```diff
 const gridOptions = {
   enableRowDetailView: true,
-  rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
+  // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
+  rowTopOffsetRenderType: 'top',
   rowDetailView: {
 -   onAsyncResponse: (e, args) => console.log('before toggling row detail', args.itemDetail),
 +   onAsyncResponse: (e, args) => console.log('before toggling row detail', args.item),
@@ -184,18 +185,19 @@ The `GridService` has CRUD methods that were sometime returning a single item an
 
 ## Future Changes (next major)
 ### Code being Deprecated (to be removed in the future, not before another year)
-#### You can start using new properties and options shown below in v9.0 and above.
+#### You can start using these new properties and options (shown below) in v9.0 and above.
 
-So when I created the project, I used a few TypeScript Enums and I though this was great but it turns out that all of these Enums end up in the final transpiled JS bundle. So in the next major, I'm planning to remove most of these Enums and replace them with string literal types (`type` instead of `enum` because `type` aren't transpiled and `enum` are). So you should consider using string types as much and as soon as possible in all your new grids. Note that at the moment, they are only deprecations, and will only be dropped in the future (not now, but you should still consider this for the future), for example:
+So when I created the project, I used a few TypeScript Enums and I thought that it was great but it turns out that all of these Enums end up in the final transpiled JS bundle and that takes space. So in the next major, I'm planning to remove most of these Enums and replace them with string literal types (`type` instead of `enum` because `type` aren't transpiled and `enum` are). So you should consider using string types as much and as soon as possible in all your new grids and eventually make the changes in your older grids. Note that at the moment, those are only deprecations and they will only be dropped in the future (not now, but you should still consider this for the near future), for example:
 
 ```diff
-setColumns([{
+columns = [{
   id: 'age', ...
 - type: FieldType.number,
 + type: 'number',
-}]);
+}];
 ```
-> Note that migrating from `FieldType` to string types was already doable for the past couple years, so this one is far from new.
+
+> Note that using the string types (ie: `'number'`) instead of `FieldType` was already doable for the past couple years, so this is far from new.
 
 Below are a list of Enums being deprecated and you should think about migrating them eventually because they will be removed in the next major release (whenever that happens, but that won't be before another year). Note that the list below are only a summary of these deprecations and replacements.
 
@@ -221,7 +223,7 @@ Below are a list of Enums being deprecated and you should think about migrating 
 |             | `SortDirection.DESC`   | `'DESC'` or `'desc'`  |
 | - | - | - |
 
-##### deprecating `editorOptions` and `filterOptions`, they are being renamed as simply `options`
+##### deprecating `editorOptions` and `filterOptions`, they are being renamed as a more generic `options` name
 
 in order to make it easier to merge and simplify editor/filter options, I'm renaming the options to a single `options` property which will make it more easily transportable (you will be able to reuse the same `options` for both the editor/filter if you wanted). You can start using `options` in v9.0 and above (or keep using `editorOptions`, `filterOptions`).
 
