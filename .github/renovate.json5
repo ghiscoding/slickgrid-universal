@@ -35,6 +35,10 @@
       matchFileNames: ['frameworks/slickgrid-react/**', 'frameworks/slickgrid-vue/**', 'demos/react/**', 'demos/vue/**'],
       groupName: 'React and VueJS dependencies',
     },
+    {
+      packageNames: ['conventional-changelog-conventionalcommits'],
+      allowedVersions: '8.0.0', // v9.0 not yet supported in Lerna-Lite
+    },
   ],
   ignoreDeps: ['node', 'pnpm'],
   schedule: ['every 4 weeks on friday'],
