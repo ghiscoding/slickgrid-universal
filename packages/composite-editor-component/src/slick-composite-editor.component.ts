@@ -1008,8 +1008,9 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   /** Check wether the grid has the Row Selection enabled */
   protected hasRowSelectionEnabled(): boolean {
     const selectionModel = this.grid.getSelectionModel();
-    const isRowSelectionEnabled = this.gridOptions.enableRowSelection || this.gridOptions.enableCheckboxSelector;
-    return !!(isRowSelectionEnabled && selectionModel);
+    // Either the CellSelectionModel or the RowSelectionModel must be active for
+    // the grid to return the selected rows.
+    return !!selectionModel;
   }
 
   /** Reset Form button handler */
