@@ -20,6 +20,7 @@ import type {
   SlickDataView,
   SlickEventData,
   SlickGrid,
+  SlickRange,
   TranslaterService,
 } from '@slickgrid-universal/common';
 import {
@@ -62,6 +63,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   protected _editorContainers!: Array<HTMLElement | null>;
   protected _modalBodyTopValidationElm!: HTMLDivElement;
   protected _modalSaveButtonElm!: HTMLButtonElement;
+  protected _selectedRanges: SlickRange[] = [];
   protected grid!: SlickGrid;
   protected gridService: GridService | null = null;
   protected translaterService?: TranslaterService | null;
@@ -127,6 +129,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
   /** Dispose of the Component & unsubscribe all events */
   dispose(): void {
+    this.restoreSelectedRanges();
     this._eventHandler.unsubscribeAll();
     this._bindEventService.unbindAll();
     this._formValues = null;
@@ -350,6 +353,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         const fullDatasetLength = this.dataView?.getItemCount() ?? 0;
         this._lastActiveRowNumber = activeRow;
         const dataContextIds = this.dataView.getAllSelectedIds();
+        this._selectedRanges = this.grid.getSelectionModel()?.getSelectedRanges() || [];
 
         // focus on a first cell with an Editor (unless current cell already has an Editor then do nothing)
         // also when it's a "Create" modal, we'll scroll to the end of the grid
@@ -364,6 +368,8 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         if (!hasFoundEditor) {
           return null;
         }
+
+        this.restoreSelectedRanges();
 
         if (modalType === 'edit' && !dataContext) {
           onError({ type: 'warning', code: 'ROW_NOT_EDITABLE', message: 'Current row is not editable.' });
@@ -627,6 +633,11 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   // --
   // protected methods
   // ----------------
+
+  /** Set the selected ranges back to how they were before editing */
+  protected restoreSelectedRanges(): void {
+    this.grid.getSelectionModel()?.setSelectedRanges(this._selectedRanges);
+  }
 
   /** Apply Mass Update Changes (form values) to the entire dataset */
   protected applySaveMassUpdateChanges(formValues: any, _selection: DataSelection, applyToDataview = true): any[] {
