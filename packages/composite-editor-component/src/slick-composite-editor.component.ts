@@ -130,6 +130,9 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     this._eventHandler.unsubscribeAll();
     this._bindEventService.unbindAll();
     this._formValues = null;
+    if (typeof this._options.onDispose === 'function') {
+      this._options.onDispose();
+    }
     this.disposeComponent();
   }
 

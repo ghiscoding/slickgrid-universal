@@ -104,6 +104,12 @@ export interface CompositeEditorOpenDetailOption {
    */
   onClose?: () => Promise<boolean>;
 
+  /**
+   * onDispose callback allows user to execute something when the modal is disposed (closed and removed from the DOM).
+   * This will be called regardless of whether there are changes done in the form or not.
+   */
+  onDispose?: () => void;
+
   /** onError callback allows user to override what the system does when an error (error message & type) is thrown, defaults to console.log */
   onError?: (error: OnErrorOption) => void;
 
