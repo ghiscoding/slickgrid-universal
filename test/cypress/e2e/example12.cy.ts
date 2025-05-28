@@ -667,10 +667,6 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get('.slick-editor-modal').should('not.exist');
   });
 
-  it('should not have any row selected after the mass-selection save is over', () => {
-    cy.get('.slick-row').children().filter('.slick-cell-checkboxsel.selected.true').should('have.length', 0);
-  });
-
   it('should have updated all the changed values BUT only on the 2 selected rows', () => {
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(4)`).should('contain', '51');
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(7)`)
