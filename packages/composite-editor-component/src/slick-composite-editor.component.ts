@@ -636,7 +636,10 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
   /** Set the selected ranges back to how they were before editing */
   protected restoreSelectedRanges(): void {
-    this.grid.getSelectionModel()?.setSelectedRanges(this._selectedRanges);
+    // On mass-update, it would be strange to keep the selection, because the
+    // editor operates on all rows, ignoring the selection.
+    const ranges = this._options?.modalType === 'mass-update' ? [] : this._selectedRanges;
+    this.grid.getSelectionModel()?.setSelectedRanges(ranges);
   }
 
   /** Apply Mass Update Changes (form values) to the entire dataset */
