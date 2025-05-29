@@ -110,7 +110,6 @@
     "@vitest/coverage-v8": "catalog:",
     "angular-eslint": "^19.6.0",
     "bootstrap": "catalog:",
-    "custom-event-polyfill": "^1.0.7",
     "cypress": "catalog:",
     "cypress-real-events": "catalog:",
     "dompurify": "catalog:",

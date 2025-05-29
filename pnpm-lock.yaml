@@ -457,9 +457,6 @@ importers:
       cross-env:
         specifier: 'catalog:'
         version: 7.0.3
-      custom-event-polyfill:
-        specifier: ^1.0.7
-        version: 1.0.7
       globals:
         specifier: 'catalog:'
         version: 16.1.0
@@ -829,9 +826,6 @@ importers:
       bootstrap:
         specifier: 'catalog:'
         version: 5.3.6(@popperjs/core@2.11.8)
-      custom-event-polyfill:
-        specifier: ^1.0.7
-        version: 1.0.7
       cypress:
         specifier: 'catalog:'
         version: 14.3.3
@@ -1033,9 +1027,6 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.5.0
         version: 4.5.0(vite@6.3.5(@types/node@22.15.18)(jiti@2.4.2)(less@4.3.0)(sass-embedded@1.87.0)(sass@1.89.0)(stylus@0.64.0)(terser@5.39.0)(yaml@2.7.1))
-      custom-event-polyfill:
-        specifier: ^1.0.7
-        version: 1.0.7
       dompurify:
         specifier: 'catalog:'
         version: 3.2.5
@@ -6465,9 +6456,6 @@ packages:
 
   csstype@3.1.3:
     resolution: {integrity: sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==}
-
-  custom-event-polyfill@1.0.7:
-    resolution: {integrity: sha512-TDDkd5DkaZxZFM8p+1I3yAlvM3rSr1wbrOliG4yJiwinMZN8z/iGL7BTlDkrJcYTmgUSb4ywVCc3ZaUtOtC76w==}
 
   cypress-real-events@1.14.0:
     resolution: {integrity: sha512-XmI8y3OZLh6cjRroPalzzS++iv+pGCaD9G9kfIbtspgv7GVsDt30dkZvSXfgZb4rAN+3pOkMVB7e0j4oXydW7Q==}
@@ -18285,8 +18273,6 @@ snapshots:
       rrweb-cssom: 0.8.0
 
   csstype@3.1.3: {}
-
-  custom-event-polyfill@1.0.7: {}
 
   cypress-real-events@1.14.0(cypress@14.3.3):
     dependencies:

@@ -84,7 +84,6 @@
     "@types/text-encoding-utf-8": "^1.0.5",
     "@vitejs/plugin-react": "^4.5.0",
     "cross-env": "catalog:",
-    "custom-event-polyfill": "^1.0.7",
     "globals": "catalog:",
     "react-router-dom": "^7.6.1",
     "regenerator-runtime": "^0.14.1",
