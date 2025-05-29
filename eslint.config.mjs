@@ -1,5 +1,5 @@
 import eslint from '@eslint/js';
-import cypress from 'eslint-plugin-cypress/flat';
+import cypress from 'eslint-plugin-cypress';
 import globals from 'globals';
 import vitest from '@vitest/eslint-plugin';
 import n from 'eslint-plugin-n';
