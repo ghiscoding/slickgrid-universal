@@ -1,16 +1,25 @@
-
 import { strToU8, zip } from 'fflate';
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import { parseArgs } from 'node:util';
 import normalizePath from 'normalize-path';
 import { globSync } from 'tinyglobby';
-import { hideBin } from 'yargs/helpers';
-import yargs from 'yargs';
 
 const inputFolder1 = './dist/bundle';
 const inputFolder2 = '../common/dist/styles';
-const argv = yargs(hideBin(process.argv)).argv;
-const outputFilename = argv.outputFilename || 'bundle';
-const outputFolder = argv.outputFolder || './dist/';
+
+const { values: args } = parseArgs({
+  options: {
+    outputFilename: { type: 'string' },
+    outputFolder: { type: 'string' },
+    'output-filename': { type: 'string' },
+    'output-folder': { type: 'string' },
+  },
+  allowPositionals: true,
+});
+
+// Prefer kebab-case if provided, otherwise camelCase, otherwise default
+const outputFilename = args['output-filename'] || args.outputFilename || 'bundle';
+const outputFolder = args['output-folder'] || args.outputFolder || './dist/';
 
 if (!existsSync(outputFolder)) {
   mkdirSync(outputFolder);
@@ -25,7 +34,7 @@ const files = [
 
 // get all files from `common/dist/styles`
 const styleFiles = globSync('../common/dist/styles/**/*.*');
-styleFiles.forEach(file => {
+styleFiles.forEach((file) => {
   const [styleName] = file.match(/(styles.*)/gi) || [];
   files.push({ name: normalizePath(styleName), path: normalizePath(file) });
 });
