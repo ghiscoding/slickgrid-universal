@@ -207,6 +207,16 @@ compositeEditorInstance?.openDetails({
 });
 ```
 
+### onDispose
+The `onDispose` callback function notifies you that the editor is finished and being disposed. It gets called regardless of whether there are changes or not.
+```ts
+this.compositeEditorInstance?.openDetails({
+  headerTitle: 'Create Item',
+  modalType: 'create',
+  onDispose: () => console.log('editor removed'),
+});
+```
+
 ### onError
 The `onError` callback function will execute anytime an error is thrown by the modal window.
 You can return a synchronous or asynchronous function (typically the latter), for example we could display an alert when leaving with unsaved data.

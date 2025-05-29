@@ -743,6 +743,30 @@ describe('CompositeEditorService', () => {
       expect(cancelSpy).not.toHaveBeenCalled();
     });
 
+    it('should execute "onDispose" callback when user cancels the modal without changes when "onDispose" callback is defined', () => {
+      const mockProduct = { id: 222, address: { zip: 123456 }, productName: 'Product ABC', price: 12.55 };
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+
+      const mockOnDispose = vi.fn();
+      const mockModalOptions = { headerTitle: 'Details', modalType: 'edit', onDispose: mockOnDispose } as CompositeEditorOpenDetailOption;
+      const spyOnDispose = vi.spyOn(mockModalOptions, 'onDispose');
+      component = new SlickCompositeEditorComponent();
+      component.init(gridStub, container);
+      component.openDetails(mockModalOptions);
+
+      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeFooterElm = compositeContainerElm.querySelector('.slick-editor-modal-footer') as HTMLSelectElement;
+      const compositeFooterCancelBtnElm = compositeFooterElm.querySelector('.btn-cancel') as HTMLSelectElement;
+      compositeFooterCancelBtnElm.click();
+
+      vi.runAllTimers();
+
+      expect(component).toBeTruthy();
+      expect(component.eventHandler).toBeTruthy();
+      expect(component.constructor).toBeDefined();
+      expect(spyOnDispose).toHaveBeenCalled();
+    });
+
     it('should pass a Header Title that has to be parsed from the dataContext object', () => {
       const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
       vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
