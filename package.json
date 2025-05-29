@@ -111,7 +111,7 @@
     "@vitest/coverage-v8": "catalog:",
     "@vitest/eslint-plugin": "^1.1.44",
     "@vitest/ui": "catalog:",
-    "conventional-changelog-conventionalcommits": "^8.0.0",
+    "conventional-changelog-conventionalcommits": "^9.0.0",
     "cross-env": "catalog:",
     "cypress": "catalog:",
     "cypress-real-events": "catalog:",
