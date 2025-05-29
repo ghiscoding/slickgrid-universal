@@ -94,7 +94,6 @@
     "@types/react-dom": "^19.1.5",
     "@types/sortablejs": "^1.15.8",
     "@vitejs/plugin-react": "^4.5.0",
-    "custom-event-polyfill": "^1.0.7",
     "dompurify": "catalog:",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
