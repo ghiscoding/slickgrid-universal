@@ -1,9 +1,8 @@
 import { strToU8, zip } from 'fflate';
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import { parseArgs } from 'node:util';
 import normalizePath from 'normalize-path';
 import { globSync } from 'tinyglobby';
-
-import { parseArgs } from 'node:util';
 
 const inputFolder1 = './dist/bundle';
 const inputFolder2 = '../common/dist/styles';
