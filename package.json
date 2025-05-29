@@ -116,9 +116,9 @@
     "cypress": "catalog:",
     "cypress-real-events": "catalog:",
     "dotenv": "^16.5.0",
-    "eslint": "^9.26.0",
-    "eslint-plugin-cypress": "^4.3.0",
-    "eslint-plugin-n": "^17.18.0",
+    "eslint": "catalog:",
+    "eslint-plugin-cypress": "catalog:",
+    "eslint-plugin-n": "catalog:",
     "globals": "catalog:",
     "happy-dom": "^17.4.7",
     "husky": "^9.1.7",
@@ -130,7 +130,7 @@
     "rxjs": "catalog:",
     "sortablejs": "catalog:",
     "typescript": "catalog:",
-    "typescript-eslint": "^8.32.1",
+    "typescript-eslint": "^8.33.0",
     "vitest": "catalog:"
   },
   "funding": {
