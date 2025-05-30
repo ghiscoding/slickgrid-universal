@@ -85,8 +85,8 @@ This project **does not** work well with `React.StrictMode`, so please make sure
 | 9.x               | React 18+       | [Migration 9.x](https://ghiscoding.gitbook.io/slickgrid-react/migrations/migration-to-9.x)     | ESM-Only, requires Slickgrid-Universal [9.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v9.0.0) |
 | 5.x               | React 18+       | [Migration 5.x](https://ghiscoding.gitbook.io/slickgrid-react/migrations/migration-to-5.x)     | Modern UI / Dark Mode, requires Slickgrid-Universal [5.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v5.0.0) |
 | 4.x               |        | [Migration 4.x](https://ghiscoding.gitbook.io/slickgrid-react/migrations/migration-to-4.x)     | merge SlickGrid into Slickgrid-Universal, requires Slickgrid-Universal [4.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v4.0.2) |
-| 3.x               |        | [Migration 3.x](https://github.com/ghiscoding/slickgrid-react/wiki/Migration-to-3.x)     | removal of jQuery (now uses browser native code), requires Slickgrid-Universal [3.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v3.0.0) |
-| 2.x               | React 18+       | [Migration 2.x](https://github.com/ghiscoding/slickgrid-react/wiki/Migration-to-2.x)     | removal of jQueryUI, requires Slickgrid-Universal [2.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v2.0.0) version |
+| 3.x               |        | [Migration 3.x](https://ghiscoding.gitbook.io/slickgrid-react/migrations/migration-to-3.x)     | removal of jQuery (now uses browser native code), requires Slickgrid-Universal [3.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v3.0.0) |
+| 2.x               | React 18+       | [Migration 2.x](https://ghiscoding.gitbook.io/slickgrid-react/migrations/migration-to-2.x)     | removal of jQueryUI, requires Slickgrid-Universal [2.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v2.0.0) version |
 
 ### Styling Themes
 
@@ -106,7 +106,7 @@ Also note that all of these themes also have **Dark Theme** equivalent and even 
 For a complete set of working demos (40+ examples), we strongly suggest you to clone the [Slickgrid-React Demos](https://github.com/ghiscoding/slickgrid-react-demos) repository (instructions are provided inside it). The repo provides multiple examples and are updated every time a new release is out, so it is updated frequently and is used as the GitHub live demo page.
 
 ## Latest News & Releases
-Check out the [Releases](https://github.com/ghiscoding/slickgrid-react/releases) section for all latest News & Releases.
+Check out the [Releases](https://github.com/ghiscoding/slickgrid-universal/releases) section for all latest News & Releases.
 
 ### Tested with [Jest](https://jestjs.io/) (Unit Tests) - [Cypress](https://www.cypress.io/) (E2E Tests)
 Slickgrid-Universal has **100%** Unit Test Coverage and all Slickgrid-React Examples are tested with [Cypress](https://www.cypress.io/) as E2E tests.

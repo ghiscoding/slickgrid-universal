@@ -1,7 +1,7 @@
 SlickGrid is very flexible and it allows you to change or add CSS Class(es) dynamically (or on page load) by changing it's `Item Metadata` (see [SlickGrid Wiki - Item Metadata](providing-grid-data.md)). There is also a Stack Overflow [answer](https://stackoverflow.com/a/19985148/1212166), which this code below is based from.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example11) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example11.vue)
+[Demo Page](https://ghiscoding.github.io/slickgrid-vue-demos/#/Example11) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example11.vue)
 
 ### Dynamically Change CSS Classes
 ##### Component

@@ -15,7 +15,7 @@ For row selection, you can simply play with couple of grid options (see below) a
 **Note:** `enableCheckboxSelector` and `enableExcelCopyBuffer` do not work well together, this is because they both share the same `Row.SelectionModel` and one cancels the other. It is recommended to not use `enableExcelCopyBuffer` in that case.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example10) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example10.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-vue-demos/#/Example10) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example10.ts)
 
 ## Single Row Selection
 For a single row selection, you need to have `enableCellNavigation: true`, `enableRowSelection: true` and `multiSelect: false` and as described earlier, subscribe to `onSelectedRowsChanged` (for that you need to bind to `(gridChanged)`). There are 2 ways to choose for the implementation of a row selection, option **1.** is the most common option and is the recommend way of doing it.

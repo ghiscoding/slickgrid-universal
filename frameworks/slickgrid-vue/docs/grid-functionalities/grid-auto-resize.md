@@ -14,7 +14,7 @@
 Almost all grids from the demos are using the auto-resize feature, and the feature does what its name suggest, it resizes the grid to fill entirely within the container it is contained. It also automatically resizes when the user changes its browser size.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example2) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example2.vue)
+[Demo Page](https://ghiscoding.github.io/slickgrid-vue-demos/#/Example2) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example2.vue)
 
 ### Usage
 All you need to do is enable the Grid Option `enableAutoResize: true` and provide necessary information in the `autoResize`, at minimum you should provide your container an id or class name.

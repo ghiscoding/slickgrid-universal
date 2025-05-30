@@ -9,7 +9,7 @@ Technically, it's enable by default and so you don't have anything to do to enjo
 
 ## Customization
 ### Column Picker
-The Grid Menu comes, by default, with a `Column Picker`. This brings an easy way to show/hide certain column(s) from the grid. This functionality was copied from the [Column Picker Plugin](https://github.com/ghiscoding/angular-slickgrid/wiki/SlickGrid-Controls-&-Plugins#column-picker) and brought over to the Grid Menu.
+The Grid Menu comes, by default, with a `Column Picker`. This brings an easy way to show/hide certain column(s) from the grid. This functionality was copied from the [Column Picker Plugin](./Column-Picker.md) and brought over to the Grid Menu.
 
 ### Custom Commands
 

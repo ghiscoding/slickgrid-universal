@@ -25,10 +25,10 @@
 - [Filter Shortcuts](input-filter.md#filter-shortcuts)
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-react/#/slickgrid/Example4) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example4.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-react-demos/#/Example4) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example4.tsx)
 
 ##### Demo with Localization
-[Demo Page](https://ghiscoding.github.io/slickgrid-react/#/slickgrid/Example12) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example12.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-react-demos/#/Example12) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example12.tsx)
 
 ### Description
 Multiple Select (dropdown) filter is useful when we want to filter the grid 1 or more search term value.
@@ -601,7 +601,7 @@ const columnDefinitions = [
 ```
 
 ### Filter Options (`MultipleSelectOption` interface)
-All the available options that can be provided as filter `options` to your column definitions can be found under this [multipleSelectOption interface](/ghiscoding/slickgrid-universal/tree/master/packages/common/src/interfaces/multipleSelectOption.interface.ts) and you should cast your filter `options` to that interface to make sure that you use only valid options of the `multiple-select.js` library.
+All the available options that can be provided as filter `options` to your column definitions can be found under this [MultipleSelectOption](https://github.com/ghiscoding/multiple-select-vanilla/blob/main/packages/multiple-select-vanilla/src/models/multipleSelectOption.interface.ts) interface and you should cast your filter `options` to that interface to make sure that you use only valid options of the `multiple-select.js` library.
 
 ```ts
 filter: {

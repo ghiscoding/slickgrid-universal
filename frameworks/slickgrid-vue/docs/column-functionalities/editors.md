@@ -30,7 +30,7 @@ Editors won't work without these 2 flags `enableCellNavigation: true` and `edita
 
 ### Demo
 ##### with plain javascript
-[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example3) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example3.vue)
+[Demo Page](https://ghiscoding.github.io/slickgrid-vue-demos/#/Example3) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example3.vue)
 
 ##### with Vue Custom Components
 [Demo](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example26.vue)
@@ -144,7 +144,7 @@ export class IntegerEditor implements Editor {
 ```
 
 ##### Use it in your Column Definition
-For Custom Editor class example, take a look at [custom-inputEditor.ts](https://github.com/ghiscoding/slickgrid-vue/blob/master/src/examples/slickgrid/custom-inputEditor.ts)
+For Custom Editor class example, take a look at [custom-inputEditor.ts](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/custom-inputEditor.ts)
 
 ```vue
 <script setup lang="ts">
@@ -213,7 +213,7 @@ export interface OnEventArgs {
 The AutoComplete Editor has the same configuration (except for the `model: Editors.autoComplete`) as the AutoComplete Filter, so you can refer to the [AutoComplete Filter - Docs](../column-functionalities/filters/autocomplete-filter.md) for more info on how to use it.
 
 ## Select Editors
-The library ships with two select editors: [singleSelectEditor](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/editors/singleSelectEditor.ts) and the [multipleSelectEditor](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/editors/multipleSelectEditor.ts). Both support the [multiple-select](https://github.com/ghiscoding/slickgrid-vue/blob/master/slickgrid-vue/assets/lib/multiple-select/multiple-select.js) library, but fallback to the bootstrap form-control style if you decide to exclude this library from your build. These editors will work with a list of foreign key values (custom structure not supported) and can be displayed properly with the [collectionFormatter](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/formatters/collectionEditorFormatter.ts). [example 3](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example3) has all the details for you to get started with these editors.
+The library ships with two select editors: [singleSelectEditor](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/editors/singleSelectEditor.ts) and the [multipleSelectEditor](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/editors/multipleSelectEditor.ts). Both support the [multiple-select-vanilla](https://github.com/ghiscoding/multiple-select-vanilla) library, but fallback to the bootstrap form-control style if you decide to exclude this library from your build. These editors will work with a list of foreign key values (custom structure not supported) and can be displayed properly with the [collectionFormatter](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/formatters/collectionEditorFormatter.ts). [example 3](https://ghiscoding.github.io/slickgrid-vue-demos/#/Example3) has all the details for you to get started with these editors.
 
 Here's an example with a `collection`, `collectionFilterBy` and `collectionSortBy`
 
@@ -242,7 +242,7 @@ function defineGrid() {
 ```
 
 ### Editor Options (`MultipleSelectOption` interface)
-All the available options that can be provided as editor `options` to your column definitions can be found under this [multipleSelectOption interface](https://github.com/ghiscoding/slickgrid-vue/blob/master/src/slickgrid-vue/models/multipleSelectOption.interface.ts) and you should cast your editor `options` to that interface to make sure that you use only valid options of the `multiple-select.js` library.
+All the available options that can be provided as editor `options` to your column definitions can be found under this [MultipleSelectOption](https://github.com/ghiscoding/multiple-select-vanilla/blob/main/packages/multiple-select-vanilla/src/models/multipleSelectOption.interface.ts) interface and you should cast your editor `options` to that interface to make sure that you use only valid options of the `multiple-select.js` library.
 
 ```ts
 editor: {

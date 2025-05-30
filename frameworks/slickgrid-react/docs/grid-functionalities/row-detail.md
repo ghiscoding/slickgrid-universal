@@ -9,7 +9,7 @@
   - [Adding a Column dynamically is removing the Row Selection, why is that?](#adding-a-column-dynamically-is-removing-the-row-selection-why-is-that)
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-react/#/slickgrid/Example19) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example19.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-react-demos/#/Example19) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example19.ts)
 
 ### Description
 A Row Detail allows you to open a detail panel which can contain extra and/or more detailed information about a row. For example, we have a user list but we want to display detailed information about this user (his full address, account info, last purchasers, ...) but these are extra details that we don't want to display this in the user grid (for performance and real estate reasons)... so a Row Detail is perfect for that use case.

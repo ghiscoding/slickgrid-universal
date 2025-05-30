@@ -1,5 +1,5 @@
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example12) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example12.vue)
+[Demo Page](https://ghiscoding.github.io/slickgrid-vue-demos/#/Example12) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example12.vue)
 
 ### Installation
 
@@ -173,4 +173,4 @@ The final step is of course the actual translations. There's multiple ways to co
 ```js
 "copy:i18n": "cross-env copyfiles -f node_modules/slickgrid-vue/i18n/*.json assets/i18n"
 ```
-If you want to manually re-create the translation in your own files, the list of translations that you will need are displayed in the [asset i18n](https://github.com/ghiscoding/slickgrid-vue/tree/master/slickgrid-vue/assets/i18n) translation folder (from that file, you need all translations shown before the 'BILLING', the next few ones are for the demo page only).
+If you want to manually re-create the translation in your own files, the list of translations that you will need are displayed in the [asset locales](https://github.com/ghiscoding/slickgrid-universal/tree/master/demos/vue/src/assets/locales) translation folder (from that file, you need all translations shown before the 'BILLING', the next few ones are for the demo page only).

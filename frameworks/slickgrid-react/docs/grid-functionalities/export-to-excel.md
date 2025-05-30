@@ -17,7 +17,7 @@ You can Export to Excel, it will create an Excel file with the `.xlsx` default e
 **NOTE:** this is an opt-in Service, you must download the necessary Service from `@slickgrid-universal/excel-export` and instantiate it in your grid options via `externalResources`, see multiple examples below.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-react/#/slickgrid/Example12) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example12.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-react-demos/#/Example12) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example12.tsx)
 
 ### CSP (Content Security Policy)
 Since we use the library `Excel-Builder-Vanilla`, which itself uses `fflate` as a dependency, that library uses Web Worker when it can which might throw a CSP error.
@@ -164,7 +164,7 @@ const gridOptions = {
 ```
 
 ### Styling the Header Titles
-By default the header titles (first row) will be styled as Bold text, however you can choose to style them differently with custom styles as shown below. To find out what styling you can use, you can take a look at Excel Builder-Vanilla [Documentation](https://ghiscoding.gitbook.io/excel-builder-vanilla/cookbook/fonts-and-colors) website. The code shown below is used in [Example 24](https://ghiscoding.github.io/slickgrid-react/#/Example24) if you wish to see the result.
+By default the header titles (first row) will be styled as Bold text, however you can choose to style them differently with custom styles as shown below. To find out what styling you can use, you can take a look at Excel Builder-Vanilla [Documentation](https://ghiscoding.gitbook.io/excel-builder-vanilla/cookbook/fonts-and-colors) website. The code shown below is used in [Example 24](https://ghiscoding.github.io/slickgrid-react-demos/#/Example24) if you wish to see the result.
 
 ```ts
 const gridOptions = {
@@ -270,7 +270,7 @@ const Example: React.FC = () => {
 ```
 
 ### Show Loading Process Spinner
-If you have lots of data, you might want to show a spinner telling the user that something is happening. You can use the subscribe to the event `onBeforeExportToExcel` to start your spinner and then `onAfterExportToExcel` to stop the spinner once the process is done. You can see a this [Grouping Example](https://ghiscoding.github.io/slickgrid-react/#/slickgrid/Example13) demo which has this feature enabled.
+If you have lots of data, you might want to show a spinner telling the user that something is happening. You can use the subscribe to the event `onBeforeExportToExcel` to start your spinner and then `onAfterExportToExcel` to stop the spinner once the process is done. You can see a this [Grouping Example](https://ghiscoding.github.io/slickgrid-react-demos/#/Example13) demo which has this feature enabled.
 
 ##### Component
 ```tsx
@@ -311,7 +311,7 @@ Please note the following
 Internally, the lib will detect the correct Excel cell format for each column, it will do this only once per column and keep a reference of the Excel format it found for each column field. For every other rows afterward, it will reapply the previously saved format reference.
 
 ##### Demo with Excel Custom Styling
-[Demo page](https://ghiscoding.github.io/slickgrid-react/#/Example13) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example13.tsx)
+[Demo page](https://ghiscoding.github.io/slickgrid-react-demos/#/Example13) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example13.tsx)
 
 ##### ViewModel
 ```ts
@@ -430,7 +430,7 @@ const columnDefinitions = [
 ];
 ```
 
-By using `valueParserCallback`, there a lot of extra customizations that you can do with it. You could even use Excel Formula to do calculation even based on other fields on your item data context, the code below is calculating Sub-Total and Total. It's a lot of code but it shows the real power customization that exist. If you want to go with even more customization, the new [Example 36](https://ghiscoding.github.io/slickgrid-react/#/example36) even shows you how to summarize Groups with Excel Formulas (but be warned, it does take a fair amount of code and logic to implement by yourself)
+By using `valueParserCallback`, there a lot of extra customizations that you can do with it. You could even use Excel Formula to do calculation even based on other fields on your item data context, the code below is calculating Sub-Total and Total. It's a lot of code but it shows the real power customization that exist. If you want to go with even more customization, the new [Example 36](https://ghiscoding.github.io/slickgrid-react-demos/#/example36) even shows you how to summarize Groups with Excel Formulas (but be warned, it does take a fair amount of code and logic to implement by yourself)
 
 ```ts
 const columnDefinitions = [

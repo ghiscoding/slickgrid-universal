@@ -24,7 +24,7 @@ To specify a tooltip when hovering a cell
 **NOTE:** this is an opt-in plugin, you must import the necessary plugin from `@slickgrid-universal/custom-tooltip-plugin` and instantiate it in your grid options via `externalResources`, see multiple examples below.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example32) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example32.vue)
+[Demo Page](https://ghiscoding.github.io/slickgrid-vue-demos/#/Example32) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example32.vue)
 
 ### via Column Definition
 You can set or change option of an individual column definition custom tooltip.

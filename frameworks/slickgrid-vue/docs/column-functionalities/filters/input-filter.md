@@ -14,7 +14,7 @@
 Input filter is the default filter when enabling filters.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example4) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example4.vue)
+[Demo Page](https://ghiscoding.github.io/slickgrid-vue-demos/#/Example4) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example4.vue)
 
 ### UI Usage
 All column types support the following operators: (`>`, `>=`, `<`, `<=`, `<>`, `!=`, `=`, `==`, `*`), range filters can also have 1 of these options (`rangeInclusive` or `rangeExclusive`, the inclusive is default)

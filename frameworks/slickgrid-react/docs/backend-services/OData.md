@@ -10,10 +10,10 @@
 OData Backend Service (for Pagination purposes) to get data from a backend server with the help of OData.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-react/#/Example5) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example5.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-react-demos/#/Example5) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example5.tsx)
 
 ### Note
-Use it when you need to support **Pagination** (that is when your dataset is rather large, more than 5k rows) with a OData endpoint. If your dataset is small (less than 5k rows), then go with a [regular grid](https://ghiscoding.github.io/slickgrid-react/#/Example1) with the `[dataset]` binding property. SlickGrid can easily handle million of rows using a DataView object, but personally when the dataset is known to be large, I usually use a backend service (OData or GraphQL) and when it's small I go with a [regular grid](https://ghiscoding.github.io/slickgrid-react/#/Example1).
+Use it when you need to support **Pagination** (that is when your dataset is rather large, more than 5k rows) with a OData endpoint. If your dataset is small (less than 5k rows), then go with a [regular grid](https://ghiscoding.github.io/slickgrid-react-demos/#/Example1) with the `[dataset]` binding property. SlickGrid can easily handle million of rows using a DataView object, but personally when the dataset is known to be large, I usually use a backend service (OData or GraphQL) and when it's small I go with a [regular grid](https://ghiscoding.github.io/slickgrid-react-demos/#/Example1).
 
 ## Implementation
 To connect a backend service into `Slickgrid-Universal`, you simply need to modify your `gridOptions` and add a declaration of `backendServiceApi` and pass it the `service`. See below for the signature and an example further down below.

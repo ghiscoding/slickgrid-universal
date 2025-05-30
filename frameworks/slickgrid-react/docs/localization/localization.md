@@ -1,5 +1,5 @@
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-react/#/slickgrid/Example12) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example12.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-react-demos/#/Example12) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example12.tsx)
 
 ### Installation
 
@@ -166,4 +166,4 @@ The final step is of course the actual translations. There's multiple ways to co
 ```tsx
 "copy:i18n": "cross-env copyfiles -f node_modules/slickgrid-react/i18n/*.json assets/i18n"
 ```
-If you want to manually re-create the translation in your own files, the list of translations that you will need are displayed in the [asset i18n](https://github.com/ghiscoding/slickgrid-react/tree/master/slickgrid-react/assets/i18n) translation folder (from that file, you need all translations shown before the 'BILLING', the next few ones are for the demo page only).
+If you want to manually re-create the translation in your own files, the list of translations that you will need are displayed in the [asset locales](https://github.com/ghiscoding/slickgrid-universal/tree/master/demos/react/src/assets/locales) translation folder (from that file, you need all translations shown before the 'BILLING', the next few ones are for the demo page only).

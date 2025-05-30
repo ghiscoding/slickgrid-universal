@@ -37,7 +37,7 @@ this.columnDefinitions = [
 ```
 
 ### Editor Options (`MultipleSelectOption` interface)
-All the available options that can be provided as editor `options` to your column definitions can be found under this [multipleSelectOption interface](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/multipleSelectOption.interface.ts) and you should cast your editor `options` to that interface to make sure that you use only valid options of the `multiple-select.js` library.
+All the available options that can be provided as editor `options` to your column definitions can be found under this [MultipleSelectOption](https://github.com/ghiscoding/multiple-select-vanilla/blob/main/packages/multiple-select-vanilla/src/models/multipleSelectOption.interface.ts) interface and you should cast your editor `options` to that interface to make sure that you use only valid options of the `multiple-select.js` library.
 
 ```ts
 editor: {

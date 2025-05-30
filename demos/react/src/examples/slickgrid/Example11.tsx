@@ -311,7 +311,7 @@ const Example11: React.FC = () => {
           <li>
             You can change the highlighted color &amp; animation by changing the{' '}
             <a
-              href="https://github.com/ghiscoding/slickgrid-react/blob/master/slickgrid-react/src/slickgrid-react/styles/_variables.scss"
+              href="https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss"
               target="_blank"
             >
               SASS Variables

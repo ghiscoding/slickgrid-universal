@@ -4,7 +4,7 @@
 ---
 
 ### E2E (Cypress)
-The library is fully tested with Cypress, you can take a look at the [test/cypress/e2e](https://github.com/ghiscoding/slickgrid-vue/tree/master/test/cypress/e2e) folder to see the full list of Slickgrid-Vue E2E tests that run with every PR. You could also use other testing framework like Playwright.
+The library is fully tested with Cypress, you can take a look at the [test/cypress/e2e](https://github.com/ghiscoding/slickgrid-universal/tree/master/demos/vue/test/cypress/e2e) folder to see the full list of Slickgrid-Vue E2E tests that run with every PR. You could also use other testing framework like Playwright.
 
 Below is a super small Cypress test
 

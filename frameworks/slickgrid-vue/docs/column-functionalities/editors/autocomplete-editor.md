@@ -12,7 +12,7 @@
   - See the [Editors - Wiki](../Editors.md) for more general info about Editors (validators, event handlers, ...)
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example3) | [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example3.vue)
+[Demo Page](https://ghiscoding.github.io/slickgrid-vue-demos/#/Example3) | [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example3.vue)
 
 ### Introduction
 AutoComplete is a functionality that let the user start typing characters and the autocomplete will try to give suggestions according to the characters entered. The collection can be a fixed JSON files (collection of strings or objects) or can also be an external remote resource to an external API. For a demo of what that could look like, take a look at the [animated gif demo](#animated-gif-demo) below.

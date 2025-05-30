@@ -157,7 +157,7 @@ function exportToFile(type = 'csv') {
 ```
 
 ### Show Loading Process Spinner
-If you have lots of data, you might want to show a spinner telling the user that something is happening. You can use the subscribe to the event `onBeforeExportToFile` to start your spinner and then `onAfterExportToFile` to stop the spinner once the process is done. You can see a this [Grouping Example](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example13) demo which has this feature enabled.
+If you have lots of data, you might want to show a spinner telling the user that something is happening. You can use the subscribe to the event `onBeforeExportToFile` to start your spinner and then `onAfterExportToFile` to stop the spinner once the process is done. You can see a this [Grouping Example](https://ghiscoding.github.io/slickgrid-vue-demos/#/Example13) demo which has this feature enabled.
 
 ##### Component
 ```vue

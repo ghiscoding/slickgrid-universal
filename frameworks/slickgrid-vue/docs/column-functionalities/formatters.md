@@ -14,7 +14,7 @@
 * [Vue Component Formatter](#vue-component-formatter)
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-vue/#/slickgrid/Example2) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example2.vue)
+[Demo Page](https://ghiscoding.github.io/slickgrid-vue-demos/#/Example2) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example2.vue)
 
 #### Definition
 

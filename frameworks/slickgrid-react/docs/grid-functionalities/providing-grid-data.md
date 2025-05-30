@@ -58,4 +58,4 @@ When looking up a property, the grid checks in the following order:
 
 ## Examples
 
-See [colspan example](https://ghiscoding.github.io/slickgrid-react/#/Example14).
+See [colspan example](https://ghiscoding.github.io/slickgrid-react-demos/#/Example14).

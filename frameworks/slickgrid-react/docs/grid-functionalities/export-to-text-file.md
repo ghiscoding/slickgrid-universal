@@ -14,7 +14,7 @@ You can Export to File in 2 formats (csv/txt), the following formats are current
 **NOTE:** this is an opt-in Service, you must download the necessary Service from `@slickgrid-universal/text-export` and instantiate it in your grid options via `externalResources`, see multiple examples below.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-react/#/localization) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example12.tsx)
+[Demo Page](https://ghiscoding.github.io/slickgrid-react-demos/#/localization) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example12.tsx)
 
 ### Grid Menu (hamburger menu)
 The Grid Menu already has the "Export to CSV" enabled by default, so you will see it automatically in your Grid Menu. You still have the options to show or hide the 2 types of export
@@ -155,7 +155,7 @@ const Example: React.FC = () => {
 ```
 
 ### Show Loading Process Spinner
-If you have lots of data, you might want to show a spinner telling the user that something is happening. You can use the subscribe to the event `onBeforeExportToFile` to start your spinner and then `onAfterExportToFile` to stop the spinner once the process is done. You can see a this [Grouping Example](https://ghiscoding.github.io/slickgrid-react/#/slickgrid/Example13) demo which has this feature enabled.
+If you have lots of data, you might want to show a spinner telling the user that something is happening. You can use the subscribe to the event `onBeforeExportToFile` to start your spinner and then `onAfterExportToFile` to stop the spinner once the process is done. You can see a this [Grouping Example](https://ghiscoding.github.io/slickgrid-react-demos/#/Example13) demo which has this feature enabled.
 
 ##### Component
 ```tsx

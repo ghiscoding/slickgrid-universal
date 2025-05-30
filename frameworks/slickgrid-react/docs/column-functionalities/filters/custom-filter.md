@@ -3,7 +3,7 @@
 - [Update Filters Dynamically](input-filter.md#update-filters-dynamically)
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-react/#/slickgrid/Example4) / [Demo Client Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example4.tsx) / [Custom InputFilter.ts](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/custom-inputFilter.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-react-demos/#/Example4) / [Demo Client Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example4.tsx) / [Custom InputFilter.ts](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/custom-inputFilter.ts)
 
 ### Description
 You can also create your own Custom Filter with any html/css you want to use. React template (View) are not supported at this point, if you wish to contribute on that end then I certainly accept PR (Pull Request).
@@ -16,7 +16,7 @@ You can also create your own Custom Filter with any html/css you want to use. Re
 
 ### How to use Custom Filter?
 1. You first need to create a `class` using the [Filter interface](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/models/filter.interface.ts). Make sure to create all necessary public properties and functions.
- - You can see a demo with a [custom-inputFilter.ts](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/custom-inputFilter.ts) that is used in the [demo - example 4](https://ghiscoding.github.io/slickgrid-react/#/slickgrid/Example4)
+ - You can see a demo with a [custom-inputFilter.ts](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/custom-inputFilter.ts) that is used in the [demo - example 4](https://ghiscoding.github.io/slickgrid-react-demos/#/Example4)
 2. There are two methods to use your custom filters on the grid.
    1.  Simply set the `columnDefinition.filter.model` to your new custom Filter class and instantiate it with `new` (you can also use dependency injection in the constructor if you wish). Here is an example with a custom input filter:
    ```tsx

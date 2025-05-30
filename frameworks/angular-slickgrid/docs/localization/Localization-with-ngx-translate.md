@@ -2,10 +2,10 @@
 We use `ngx-translate` because the `i18n` from Angular core is yet to support dynamic translation (without reloading the page) which is a must for our project. However it is ~~suppose to land in Angular `6.x`~~ (still postponed) as the `ngx-translate` author wrote [here](https://github.com/ngx-translate/core/issues/495#issuecomment-325570932), he is also 1 of the guy working on implementing it in the Angular core. When the `i18n` Service supports dynamic translation, I will revisit this implementation but in the mean time we will stick with `ngx-translate`.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/Angular-Slickgrid/#/localization) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-localization.component.ts) / [Translation Files](https://github.com/ghiscoding/angular-slickgrid/blob/master/src/assets/i18n)
+[Demo Page](https://ghiscoding.github.io/Angular-Slickgrid/#/localization) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-localization.component.ts) / [Translation Files](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/angular-slickgrid/src/assets/i18n)
 
 #### ngx-translate setup
-[Demo Component](https://github.com/ghiscoding/angular-slickgrid/blob/master/src/app)
+[Demo Component](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/angular-slickgrid/src/library)
 
 ### Angular Versions
 ##### Angular 7
@@ -145,4 +145,4 @@ The final step is that you need the actual translations. Note that `ngx-translat
 ```typescript
 "copy:i18n": "cross-env copyfiles -f node_modules/angular-slickgrid/i18n/*.json src/assets/i18n"
 ```
-If you want to manually re-create the translation in your own files, the list of translations that you will need are displayed in the [asset i18n](https://github.com/ghiscoding/angular-slickgrid/tree/master/src/assets/i18n) translation folder (from that file, you need all translations shown before the 'BILLING', the next few ones are for the demo page only)
+If you want to manually re-create the translation in your own files, the list of translations that you will need are displayed in the [asset i18n](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/angular-slickgrid/src/assets/i18n) translation folder (from that file, you need all translations shown before the 'BILLING', the next few ones are for the demo page only)

@@ -33,7 +33,7 @@ function toggleDarkMode() {
 
 ### How to Auto-Detect Dark Mode?
 
-By default the grid will **not** automatically enable Dark Mode, neither read the browser's color scheme (the reason are mentioned in the description above). However, you could implement your own code to detect the color scheme (for modern browser only) when loading your browser and set it in your grid options. You can see a demo of that in the first grid of [Example 1](https://ghiscoding.github.io/slickgrid-vue/#/example1)
+By default the grid will **not** automatically enable Dark Mode, neither read the browser's color scheme (the reason are mentioned in the description above). However, you could implement your own code to detect the color scheme (for modern browser only) when loading your browser and set it in your grid options. You can see a demo of that in the first grid of [Example 1](https://ghiscoding.github.io/slickgrid-vue-demos/#/Example1)
 
 ```vue
 <script setup lang="ts">

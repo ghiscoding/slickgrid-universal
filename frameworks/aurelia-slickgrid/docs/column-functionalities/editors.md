@@ -127,7 +127,7 @@ export class IntegerEditor implements Editor {
 ```
 
 ##### Use it in your Column Definition
-For Custom Editor class example, take a look at [custom-inputEditor.ts](https://github.com/ghiscoding/aurelia-slickgrid/blob/master/src/examples/slickgrid/custom-inputEditor.ts)
+For Custom Editor class example, take a look at [custom-inputEditor.ts](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/custom-inputEditor.ts)
 
 ```ts
 this.columnDefinitions = [
@@ -141,13 +141,13 @@ this.columnDefinitions = [
 ```
 
 ## Custom Editor with Aurelia Custom Element
-I added a new [Example 26](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example26) which have both Custom Editors & Filters which uses Aurelia Custom Elements. The 2nd column "Assignee" is the column that uses both (it's a simple select dropdown created as an Aurelia Custom Elements [here](https://github.com/ghiscoding/aurelia-slickgrid/blob/master/src/examples/slickgrid/editor-select.ts)) and you need to create a Custom Editor like [here](https://github.com/ghiscoding/aurelia-slickgrid/blob/master/src/examples/slickgrid/custom-aureliaViewModelEditor.ts) and use that Custom Editor in your column definition like [here](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example26.ts#L125).
+I added a new [Example 26](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example26) which have both Custom Editors & Filters which uses Aurelia Custom Elements. The 2nd column "Assignee" is the column that uses both (it's a simple select dropdown created as an Aurelia Custom Element) and you need to create a Custom Editor and use that Custom Editor in your column definition like [here](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example26.ts#L125).
 
 Personally I don't find this very straightforward and I don't recommend using Aurelia Custom Elements for Editors/Filters as it adds a lot of boilerplate (compare to 1 step with a jQuery Custom Editor) but if you really wish to go that route, it's now possible following the steps shown below.
 
 The steps to use an Aurelia Custom Elements as a Custom Editor are the following:
-1. Create a Custom Editor that will handle the creation or compilation of the Aurelia Custom Element into a SlickGrid Editors. For that you can take a look at this [Custom Editor](https://github.com/ghiscoding/aurelia-slickgrid/blob/master/src/examples/slickgrid/custom-aureliaViewModelEditor.ts)
-2. Define your Aurelia Custom Element, for example take a look at this simple [Select Custom Element](https://github.com/ghiscoding/aurelia-slickgrid/blob/master/src/examples/slickgrid/editor-select.ts)
+1. Create a Custom Editor that will handle the creation or compilation of the Aurelia Custom Element into a SlickGrid Editors. For that you can take a look at this [Custom Editor](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/custom-aureliaViewModelEditor.ts)
+2. Define your Aurelia Custom Element, for example take a look at this simple [Select Custom Element](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/editor-select.ts)
 3. Use the Custom Editor inside your Column Definitions, for that you can see previous paragraph [here](https://github.com#use-it-in-your-column-definition)
 
 ## How to prevent Editor from going to the next bottom cell?
@@ -192,7 +192,7 @@ export interface OnEventArgs {
 The AutoComplete Editor has the same configuration (except for the `model: Editors.autoComplete`) as the AutoComplete Filter, so you can refer to the [AutoComplete Filter Wiki](../column-functionalities/filters/autocomplete-filter.md) for more info on how to use it.
 
 ## Select Editors
-The library ships with two select editors: [singleSelectEditor](https://github.com/ghiscoding/aurelia-slickgrid/blob/master/aurelia-slickgrid/src/aurelia-slickgrid/editors/singleSelectEditor.ts) and the [multipleSelectEditor](https://github.com/ghiscoding/aurelia-slickgrid/blob/master/aurelia-slickgrid/src/aurelia-slickgrid/editors/multipleSelectEditor.ts). Both support the [multiple-select](https://github.com/ghiscoding/aurelia-slickgrid/blob/master/aurelia-slickgrid/assets/lib/multiple-select/multiple-select.js) library, but fallback to the bootstrap form-control style if you decide to exclude this library from your build. These editors will work with a list of foreign key values (custom structure not supported) and can be displayed properly with the [collectionFormatter](https://github.com/ghiscoding/aurelia-slickgrid/blob/master/aurelia-slickgrid/src/aurelia-slickgrid/formatters/collectionEditorFormatter.ts). [example 3](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example3) has all the details for you to get started with these editors.
+The library ships with two select editors: [singleSelectEditor](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/editors/singleSelectEditor.ts) and the [multipleSelectEditor](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/editors/multipleSelectEditor.ts). Both support the [multiple-select-vanilla](https://github.com/ghiscoding/multiple-select-vanilla) library, but fallback to the bootstrap form-control style if you decide to exclude this library from your build. These editors will work with a list of foreign key values (custom structure not supported) and can be displayed properly with the [collectionFormatter](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/formatters/collectionEditorFormatter.ts). [example 3](https://ghiscoding.github.io/aurelia-slickgrid-demos/#/example3) has all the details for you to get started with these editors.
 
 Here's an example with a `collection`, `collectionFilterBy` and `collectionSortBy`
 
@@ -217,7 +217,7 @@ this.columnDefinitions = [
 ```
 
 ### Editor Options (`MultipleSelectOption` interface)
-All the available options that can be provided as editor `options` to your column definitions can be found under this [multipleSelectOption interface](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/multipleSelectOption.interface.ts) and you should cast your editor `options` to that interface to make sure that you use only valid options of the `multiple-select.js` library.
+All the available options that can be provided as editor `options` to your column definitions can be found under this [MultipleSelectOption](https://github.com/ghiscoding/multiple-select-vanilla/blob/main/packages/multiple-select-vanilla/src/models/multipleSelectOption.interface.ts) interface and you should cast your editor `options` to that interface to make sure that you use only valid options of the `multiple-select.js` library.
 
 ```ts
 editor: {

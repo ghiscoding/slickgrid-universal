@@ -58,4 +58,4 @@ When looking up a property, the grid checks in the following order:
 
 ## Examples
 
-See [colspan example](https://ghiscoding.github.io/slickgrid-vue/#/Example14).
+See [colspan example](https://ghiscoding.github.io/slickgrid-vue-demos/#/Example14).

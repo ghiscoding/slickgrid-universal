@@ -144,4 +144,4 @@ The final step is of course the actual translations. There's multiple ways to co
 ```typescript
 "copy:i18n": "cross-env copyfiles -f node_modules/aurelia-slickgrid/i18n/*.json assets/i18n"
 ```
-If you want to manually re-create the translation in your own files, the list of translations that you will need are displayed in the [asset i18n](https://github.com/ghiscoding/aurelia-slickgrid/tree/master/aurelia-slickgrid/assets/i18n) translation folder (from that file, you need all translations shown before the 'BILLING', the next few ones are for the demo page only).
+If you want to manually re-create the translation in your own files, the list of translations that you will need are displayed in the [asset i18n](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/aurelia-slickgrid/src/assets/i18n) translation folder (from that file, you need all translations shown before the 'BILLING', the next few ones are for the demo page only).

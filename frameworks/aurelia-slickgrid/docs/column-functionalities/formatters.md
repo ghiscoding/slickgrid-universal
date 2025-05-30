@@ -220,7 +220,7 @@ export const iconFormatter: Formatter = (_row, _cell, _value, columnDef) => {
 
 
 ### More Complex Example
-If you need to add more complex logic to a `Formatter`, you can take a look at the [percentCompleteBar](https://github.com/ghiscoding/aurelia-slickgrid/blob/master/aurelia-slickgrid/src/aurelia-slickgrid/formatters/percentCompleteBarFormatter.ts) `Formatter` for more inspiration.
+If you need to add more complex logic to a `Formatter`, you can take a look at the [percentCompleteBar](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/formatters/percentCompleteBarFormatter.ts) `Formatter` for more inspiration.
 
 ### Common Formatter Options
 
