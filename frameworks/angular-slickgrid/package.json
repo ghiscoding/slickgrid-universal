@@ -121,7 +121,7 @@
     "native-copyfiles": "catalog:",
     "ng-packagr": "^19.2.2",
     "ngx-bootstrap": "^19.0.2",
-    "rimraf": "^6.0.1",
+    "rimraf": "catalog:",
     "rxjs": "catalog:",
     "sass": "catalog:",
     "sortablejs": "catalog:",
