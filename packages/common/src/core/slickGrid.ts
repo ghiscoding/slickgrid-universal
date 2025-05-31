@@ -6195,7 +6195,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
   }
 
-  editActiveCell(editor: Editor | EditorConstructor, preClickModeOn?: boolean | null, e?: Event): void {
+  editActiveCell(editor?: Editor | EditorConstructor, preClickModeOn?: boolean | null, e?: Event): void {
     this.makeActiveCellEditable(editor, preClickModeOn, e);
   }
 
