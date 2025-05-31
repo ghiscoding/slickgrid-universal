@@ -64,7 +64,7 @@
   "devDependencies": {
     "fflate": "^0.8.2",
     "normalize-path": "^3.0.0",
-    "tinyglobby": "^0.2.13",
+    "tinyglobby": "^0.2.14",
     "vite": "catalog:"
   }
 }
