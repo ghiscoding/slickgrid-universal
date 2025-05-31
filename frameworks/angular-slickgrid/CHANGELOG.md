@@ -4,6 +4,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.0.3...v9.1.0) (2025-05-31)
+
+### Features
+
+* Composite Editor should support cell selection ([#1990](https://github.com/ghiscoding/slickgrid-universal/issues/1990)) ([0a7ab6e](https://github.com/ghiscoding/slickgrid-universal/commit/0a7ab6e3b59176a3d4a6af67bdca8c31b681aad3)), closes [#1987](https://github.com/ghiscoding/slickgrid-universal/issues/1987) - by @wscherphof
+
+### Bug Fixes
+
+* **angular:** Angular-Slickgrid npm publish should replace workspace: ([b216c26](https://github.com/ghiscoding/slickgrid-universal/commit/b216c2690d9d8f7818a477d238c5b8250ef7692a)) - by @ghiscoding
+* **angular:** Angular-Slickgrid should use latest bumped version ([f76a615](https://github.com/ghiscoding/slickgrid-universal/commit/f76a6157cee18591ae079d8356561fecac37668c)) - by @ghiscoding
+
 ## [9.0.3](https://github.com/ghiscoding/slickgrid-universal/compare/v9.0.3...v9.0.3) (2025-05-16)
 
 ### Bug Fixes

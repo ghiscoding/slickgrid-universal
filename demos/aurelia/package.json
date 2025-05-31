@@ -1,7 +1,7 @@
 {
   "name": "aurelia-slickgrid-demo",
   "private": true,
-  "version": "9.0.3",
+  "version": "9.1.0",
   "description": "Slickgrid components made available in Aurelia",
   "keywords": [
     "aurelia",

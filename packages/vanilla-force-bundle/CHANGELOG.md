@@ -4,6 +4,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.0.3...v9.1.0) (2025-05-31)
+
+**Note:** Version bump only for package @slickgrid-universal/vanilla-force-bundle
+
 ## [9.0.3](https://github.com/ghiscoding/slickgrid-universal/compare/v9.0.2...v9.0.3) (2025-05-16)
 
 **Note:** Version bump only for package @slickgrid-universal/vanilla-force-bundle
