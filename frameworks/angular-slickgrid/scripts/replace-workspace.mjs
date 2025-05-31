@@ -1,19 +1,19 @@
-import { dirname as pDirname, join as pJoin, resolve as pResolve } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { readJsonSync, writeJsonSync } from '@gc-utils/fs-extra';
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = pDirname(__filename);
-const projectRootPath = pJoin(__dirname, '../');
+const __dirname = dirname(__filename);
+const projectRootPath = join(__dirname, '../');
 
 /**
  * Main entry, this script will replace all workspace protocol
  * with current version from "package.json" root into "dist/package.json"
  */
 (async function main() {
-  const mainPkg = readJsonSync(pJoin(projectRootPath, 'package.json'));
-  const distPkg = readJsonSync(pJoin(projectRootPath, 'dist', 'package.json'));
+  const mainPkg = readJsonSync(join(projectRootPath, 'package.json'));
+  const distPkg = readJsonSync(join(projectRootPath, 'dist', 'package.json'));
 
   // replace all workspace protocol with current version from "package.json" root into "dist/package.json"
   console.log('-------------------------------------------------------------------------------------');
@@ -26,12 +26,12 @@ const projectRootPath = pJoin(__dirname, '../');
     if (depName.startsWith('@slickgrid-universal/') || depVersion.startsWith('workspace:')) {
       // we need to get each package version
       const depPkgName = depName.replace('@slickgrid-universal', '');
-      const depPkg = readJsonSync(pJoin(projectRootPath, '../../packages/', depPkgName, 'package.json'));
+      const depPkg = readJsonSync(join(projectRootPath, '../../packages/', depPkgName, 'package.json'));
       console.log(`update dependency { "${depName}": "${depPkg.version}" }`);
       distPkg.dependencies[depName] = depPkg.version;
     }
   }
-  writeJsonSync(pResolve(projectRootPath, 'dist', 'package.json'), distPkg, { spaces: 2 });
+  writeJsonSync(resolve(projectRootPath, 'dist', 'package.json'), distPkg, { spaces: 2 });
   console.log('-------------------------------------------------------------------------------------\n');
 
   process.exit();
