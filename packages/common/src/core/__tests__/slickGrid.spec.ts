@@ -359,7 +359,7 @@ describe('SlickGrid core file', () => {
     });
     grid.setData(data);
     grid.setActiveCell(0, 0);
-    grid.editActiveCell(InputEditor as any, true);
+    grid.editActiveCell(undefined, true);
     expect(grid.getCellEditor()).toBeTruthy();
 
     const onBeforeSpy = vi.spyOn(grid.onBeforeCellEditorDestroy, 'notify');

@@ -18,6 +18,7 @@ import {
   OperatorType,
   SortComparers,
   SlickGlobalEditorLock,
+  type SlickGrid,
   type SliderOption,
   type VanillaCalendarOption,
 } from '../../library';
@@ -70,7 +71,7 @@ export class Example3Component implements OnInit {
   columnDefinitions!: Column[];
   gridOptions!: GridOption;
   dataset!: any[];
-  gridObj: any;
+  gridObj: SlickGrid | undefined;
   hideSubTitle = false;
   isAutoEdit = true;
   alertWarning: any;
@@ -630,7 +631,7 @@ export class Example3Component implements OnInit {
 
   changeAutoCommit() {
     this.gridOptions.autoCommitEdit = !this.gridOptions.autoCommitEdit;
-    this.gridObj.setOptions({
+    this.gridObj?.setOptions({
       autoCommitEdit: this.gridOptions.autoCommitEdit,
     });
     return true;
@@ -680,7 +681,7 @@ export class Example3Component implements OnInit {
 
   setAutoEdit(isAutoEdit: boolean) {
     this.isAutoEdit = isAutoEdit;
-    this.gridObj.setOptions({ autoEdit: isAutoEdit }); // change the grid option dynamically
+    this.gridObj?.setOptions({ autoEdit: isAutoEdit }); // change the grid option dynamically
     return true;
   }
 
@@ -689,7 +690,7 @@ export class Example3Component implements OnInit {
     // const item = this.angularGrid.dataView.getItem(command.row);
     if (command && SlickGlobalEditorLock.cancelCurrentEdit()) {
       command.undo();
-      this.gridObj.gotoCell(command.row, command.cell, false);
+      this.gridObj?.gotoCell(command.row, command.cell, false);
     }
   }
 

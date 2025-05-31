@@ -564,7 +564,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
           this._editorContainers,
           this._compositeOptions
         ) as typeof SlickCompositeEditor;
-        this.grid.editActiveCell(compositeEditor as any);
+        this.grid.editActiveCell(compositeEditor as unknown as Editor);
 
         // --
         // Add a few Event Handlers
