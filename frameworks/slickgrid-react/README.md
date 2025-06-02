@@ -38,10 +38,16 @@ npm install slickgrid-react
 ```tsx
 import { type Column, type GridOption, SlickgridReact } from 'slickgrid-react';
 
+interface User {
+  firstName: string;
+  lastName: string;
+  age: number;
+}
+
 export default function Example() {
   const [columns, setColumns] = useState<Column[]>();
   const [options, setOptions] = useState<GridOption>();
-  const [dataset, setDataset] = useState<any[]>(getData());
+  const [dataset, setDataset] = useState<User[]>(getData());
 
   useEffect(() => defineGrid());
 
@@ -82,7 +88,7 @@ This project **does not** work well with `React.StrictMode`, so please make sure
 
 | Slickgrid-React | React version | Migration Guide | Notes |
 |-------------------|-----------------|-----------------|------|
-| 9.x               | React 18+       | [Migration 9.x](https://ghiscoding.gitbook.io/slickgrid-react/migrations/migration-to-9.x)     | ESM-Only, requires Slickgrid-Universal [9.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v9.0.0) |
+| 9.x               | React 19+       | [Migration 9.x](https://ghiscoding.gitbook.io/slickgrid-react/migrations/migration-to-9.x)     | ESM-Only, requires Slickgrid-Universal [9.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v9.0.0) |
 | 5.x               | React 18+       | [Migration 5.x](https://ghiscoding.gitbook.io/slickgrid-react/migrations/migration-to-5.x)     | Modern UI / Dark Mode, requires Slickgrid-Universal [5.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v5.0.0) |
 | 4.x               |        | [Migration 4.x](https://ghiscoding.gitbook.io/slickgrid-react/migrations/migration-to-4.x)     | merge SlickGrid into Slickgrid-Universal, requires Slickgrid-Universal [4.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v4.0.2) |
 | 3.x               |        | [Migration 3.x](https://ghiscoding.gitbook.io/slickgrid-react/migrations/migration-to-3.x)     | removal of jQuery (now uses browser native code), requires Slickgrid-Universal [3.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v3.0.0) |
