@@ -43,10 +43,16 @@ npm install @slickgrid-universal/excel-export
 ```ts
 import { type Column, type GridOption } from 'aurelia-slickgrid';
 
+interface User {
+  firstName: string;
+  lastName: string;
+  age: number;
+}
+
 export class Example {
-  columnDefinitions: Column[] = [];
+  columnDefinitions: Column[] = []; // it could also be `Column<User>[]`
   gridOptions: GridOption;
-  dataset: any[] = [];
+  dataset: User[] = [];
 
   constructor() {
     this.columnDefinitions = [

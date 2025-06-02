@@ -45,7 +45,7 @@ interface User {
 }
 
 export default function Example() {
-  const [columns, setColumns] = useState<Column[]>();
+  const [columns, setColumns] = useState<Column[]>(); // it could also be `Column<User>[]`
   const [options, setOptions] = useState<GridOption>();
   const [dataset, setDataset] = useState<User[]>(getData());
 

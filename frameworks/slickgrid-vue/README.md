@@ -42,12 +42,19 @@ npm install @slickgrid-universal/excel-export
 <script setup lang="ts">
 import { type Column, type GridOption, SlickgridVue } from 'slickgrid-vue';
 
+interface User {
+  firstName: string;
+  lastName: string;
+  age: number;
+}
+
+// it could also be `Column<User>[]`
 const columnDefinitions: Ref<Column[]> = ref([
   { id: 'firstName', name: 'First Name', field: 'firstName', sortable: true },
   { id: 'lastName', name: 'Last Name', field: 'lastName', sortable: true },
   { id: 'age', name: 'Age', field: 'age', type: 'number', sortable: true },
 ]);
-const dataset = ref([
+const dataset = ref<User[]>([
   { id: 1, firstName: 'John', lastName: 'Doe', age: 20 },
   { id: 2, firstName: 'Jane', lastName: 'Smith', age: 21 },
 ]);

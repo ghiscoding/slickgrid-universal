@@ -34,10 +34,16 @@ npm install angular-slickgrid
 ```ts
 import { type Column, type GridOption } from 'angular-slickgrid';
 
+interface User {
+  firstName: string;
+  lastName: string;
+  age: number;
+}
+
 export class GridComponent implements OnInit {
-  columnDefinitions: Column[] = [];
+  columnDefinitions: Column[] = []; // it could also be `Column<User>[]`
   gridOptions: GridOption;
-  dataset: any[] = [];
+  dataset: User[] = [];
 
   onInit() {
     this.columnDefinitions = [
