@@ -82,7 +82,7 @@
     "@types/react-dom": "^19.1.5",
     "@types/sortablejs": "catalog:",
     "@types/text-encoding-utf-8": "^1.0.5",
-    "@vitejs/plugin-react": "^4.5.0",
+    "@vitejs/plugin-react": "^4.5.1",
     "cross-env": "catalog:",
     "globals": "catalog:",
     "react-router-dom": "^7.6.1",
