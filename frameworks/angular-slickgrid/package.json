@@ -118,6 +118,7 @@
     "eslint-plugin-n": "catalog:",
     "globals": "catalog:",
     "jsdom": "catalog:",
+    "jsdom-global": "catalog:",
     "native-copyfiles": "catalog:",
     "ng-packagr": "^19.2.2",
     "ngx-bootstrap": "^19.0.2",

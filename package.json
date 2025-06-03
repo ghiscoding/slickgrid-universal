@@ -123,7 +123,7 @@
     "happy-dom": "^17.6.1",
     "husky": "^9.1.7",
     "jsdom": "catalog:",
-    "jsdom-global": "^3.0.2",
+    "jsdom-global": "catalog:",
     "npm-run-all2": "catalog:",
     "prettier": "^3.5.3",
     "rimraf": "catalog:",
