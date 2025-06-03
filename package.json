@@ -120,7 +120,7 @@
     "eslint-plugin-cypress": "catalog:",
     "eslint-plugin-n": "catalog:",
     "globals": "catalog:",
-    "happy-dom": "^17.5.6",
+    "happy-dom": "^17.6.1",
     "husky": "^9.1.7",
     "jsdom": "catalog:",
     "jsdom-global": "^3.0.2",
@@ -130,7 +130,7 @@
     "rxjs": "catalog:",
     "sortablejs": "catalog:",
     "typescript": "catalog:",
-    "typescript-eslint": "^8.33.0",
+    "typescript-eslint": "^8.33.1",
     "vitest": "catalog:"
   },
   "funding": {
