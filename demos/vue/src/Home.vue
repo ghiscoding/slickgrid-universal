@@ -14,13 +14,12 @@
   </p>
   <h4>Documentation</h4>
   <p>
-    The documentation is powered by GitBook and can be found at this link
-    <a href="https://ghiscoding.gitbook.io/slickgrid-vue" target="_blank">Slickgrid-Vue - Documentation</a>, so be sure to consult it before
-    opening any new issue.
-    <br />
-    The
-    <a href="https://ghiscoding.gitbook.io/slickgrid-vue/getting-started/quick-start" target="_blank">HOWTO - Quick Start</a>
-    is the best starting point to get going with this library.
+    <h3>Documentation</h3>
+    Most of the info, news and documentation links are mostly available in the <a href="https://github.com/ghiscoding/slickgrid-universal">Slickgrid-Universal</a> project. Please consult the
+    <a href="https://ghiscoding.gitbook.io/slickgrid-vue" target="_blank">Slickgrid-Vue - Docs</a>
+    before opening any new issues. The
+    <a href="https://ghiscoding.gitbook.io/slickgrid-vue/getting-started/quick-start" target="_blank">Docs - Getting Started</a>
+    is a great place to start with.
   </p>
 
   <hr />

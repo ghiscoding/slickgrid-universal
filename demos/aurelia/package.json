@@ -2,7 +2,7 @@
   "name": "aurelia-slickgrid-demo",
   "private": true,
   "version": "9.1.0",
-  "description": "Slickgrid components made available in Aurelia",
+  "description": "Aurelia-Slickgrid demos",
   "keywords": [
     "aurelia",
     "datagrid",
@@ -10,16 +10,8 @@
     "plugin",
     "slickgrid"
   ],
-  "homepage": "https://github.com/ghiscoding/aurelia-slickgrid",
-  "bugs": {
-    "url": "https://github.com/ghiscoding/aurelia-slickgrid/issues"
-  },
   "license": "MIT",
   "author": "Ghislain B.",
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/ghiscoding/aurelia-slickgrid.git"
-  },
   "browserslist": [
     "last 2 version",
     "> 1%",

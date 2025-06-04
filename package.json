@@ -120,7 +120,7 @@
     "eslint-plugin-cypress": "catalog:",
     "eslint-plugin-n": "catalog:",
     "globals": "catalog:",
-    "happy-dom": "^17.6.1",
+    "happy-dom": "^17.6.3",
     "husky": "^9.1.7",
     "jsdom": "catalog:",
     "jsdom-global": "catalog:",

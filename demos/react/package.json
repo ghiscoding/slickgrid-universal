@@ -2,7 +2,7 @@
   "name": "slickgrid-react-demo",
   "private": true,
   "version": "9.1.0",
-  "description": "Slickgrid components made available in React",
+  "description": "Slickgrid-React demo",
   "keywords": [
     "react",
     "datagrid",
@@ -10,23 +10,6 @@
     "plugin",
     "slickgrid"
   ],
-  "module": "./dist/esm/index.js",
-  "types": "./dist/types/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/types/index.d.ts",
-      "import": "./dist/esm/index.js"
-    },
-    "./package.json": "./package.json"
-  },
-  "homepage": "https://github.com/ghiscoding/slickgrid-react",
-  "bugs": {
-    "url": "https://github.com/ghiscoding/slickgrid-react/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ghiscoding/slickgrid-react.git"
-  },
   "license": "MIT",
   "author": "Ghislain B.",
   "scripts": {
@@ -40,10 +23,6 @@
     "last 2 version",
     "> 1%",
     "not dead"
-  ],
-  "files": [
-    "/dist",
-    "/src/slickgrid-react"
   ],
   "dependencies": {
     "@slickgrid-universal/common": "workspace:*",
