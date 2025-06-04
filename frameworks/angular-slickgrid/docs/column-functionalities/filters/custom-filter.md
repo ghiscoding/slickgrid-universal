@@ -4,7 +4,7 @@
 - [Custom Filter with Angular Components](#custom-filter-with-angular-components)
 
 ### Demo
-##### with plain javascript/jQuery
+##### with plain JavaScript/jQuery
 [Demo Page](https://ghiscoding.github.io/Angular-Slickgrid/#/clientside) / [Demo Client Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-clientside.component.ts) / [Custom InputFilter.ts](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/custom-inputFilter.ts)
 
 ##### with Angular Component

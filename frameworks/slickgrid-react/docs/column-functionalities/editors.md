@@ -29,7 +29,7 @@
 Editors won't work without these 2 flags `enableCellNavigation: true` and `editable: true` enabled in your Grid Options, so make sure to always to always defined them. Also note that you can toggle the grid to read only (not editable) via the `editable` grid option flag.
 
 ### Demo
-##### with plain javascript
+##### with plain JavaScript
 [Demo Page](https://ghiscoding.github.io/slickgrid-react-demos/#/Example3) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example3.tsx)
 
 ##### with React Custom Components

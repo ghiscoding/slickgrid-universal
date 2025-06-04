@@ -7,19 +7,20 @@
 
   <h4>Quick intro</h4>
   <p>
-    One of the best JavaScript data grid
+    One of the best JavaScript datagrid
     <a href="https://github.com/mleibman/SlickGrid" target="_blank">SlickGrid</a> which was originally developed by &#64;mleibman is now
-    available to Vue. I have tried, and used, a few data grids and SlickGrid beats most of them in terms of functionalities and performance
-    (it can even handle a million rows).
+    available to Aurelia. I have tried, and used, a few datagrids and SlickGrid beats most of them in terms of functionalities and
+    performance (it can easily handle a million row).
   </p>
   <h4>Documentation</h4>
   <p>
-    <h3>Documentation</h3>
-    Most of the info, news and documentation links are mostly available in the <a href="https://github.com/ghiscoding/slickgrid-universal">Slickgrid-Universal</a> project. Please consult the
-    <a href="https://ghiscoding.gitbook.io/slickgrid-vue" target="_blank">Slickgrid-Vue - Docs</a>
-    before opening any new issues. The
-    <a href="https://ghiscoding.gitbook.io/slickgrid-vue/getting-started/quick-start" target="_blank">Docs - Getting Started</a>
-    is a great place to start with.
+    The documentation is powered by GitBook and can be found at this link
+    <a href="https://ghiscoding.gitbook.io/slickgrid-vue" target="_blank">Slickgrid-Vue - Documentation</a>, so be sure to consult it before
+    opening any new issue.
+    <br />
+    The
+    <a href="https://ghiscoding.gitbook.io/slickgrid-vue/getting-started/quick-start" target="_blank">HOWTO - Quick Start</a>
+    is the best starting point to get going with this library.
   </p>
 
   <hr />

@@ -158,7 +158,7 @@ const Example22: React.FC = () => {
         <div className="subtitle">
           This example demonstrate the creation of multiple grids in Bootstrap Tabs
           <ol>
-            <li>Regular mocked data with javascript</li>
+            <li>Regular mocked data with JavaScript</li>
             <li>Load dataset through Fetch. Also note we need to call a "resizeGrid()" after focusing on this tab</li>
           </ol>
         </div>
