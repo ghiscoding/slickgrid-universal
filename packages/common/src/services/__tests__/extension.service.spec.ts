@@ -739,7 +739,6 @@ describe('ExtensionService', () => {
       const cellMenuSpy = vi.spyOn(service, 'translateCellMenu');
       const contextMenuSpy = vi.spyOn(service, 'translateContextMenu');
       const colHeaderSpy = vi.spyOn(service, 'translateColumnHeaders');
-      const contextSpy = vi.spyOn(service, 'translateContextMenu');
       const headerMenuSpy = vi.spyOn(service, 'translateHeaderMenu');
 
       service.translateAllExtensions();
@@ -747,7 +746,6 @@ describe('ExtensionService', () => {
       expect(cellMenuSpy).toHaveBeenCalled();
       expect(contextMenuSpy).toHaveBeenCalled();
       expect(colHeaderSpy).toHaveBeenCalled();
-      expect(contextSpy).toHaveBeenCalled();
       expect(headerMenuSpy).toHaveBeenCalled();
     });
 
