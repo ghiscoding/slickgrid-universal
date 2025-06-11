@@ -1,6 +1,6 @@
 ## Embracing ESM-only builds ⚡
 
-This new release is focused around 2 things, we now ship ESM-only builds (in other words, CommonJS builds are fully dropped and only ESM will remain), this move will cut the npm download size by half. The other big change is an internal one which is an organizational one, I'm moving all framework wrappers directly into Slickgrid-Universal (Angular, Aurelia, React and Vue wrappers are now all located under the [frameworks/](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/) folder). This change will help tremendously with the project maintenance (any new PR will now run against all frameworks all at once (catching bugs early), publishing a new version is now a single click execution for all frameworks all at once, and finally having a single codebase to test & troubleshoot all wrappers, etc... will be so much easier to handle). With this new structure change, Slickgrid-Universal name is now making even more sense. 🌐
+This new release is focused around 2 things, we now ship ESM-only builds (in other words, CommonJS builds are fully dropped and only ESM will remain), this move will cut the npm download size by half. The other big change is an internal one which is an organizational one, I'm moving all framework wrappers directly into Slickgrid-Universal (Angular, Aurelia, React and Vue wrappers are now **all** located under the [frameworks/](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/) folder). This change will help tremendously with the project maintenance (any new PR will now run against all frameworks all at once (catching bugs early), publishing a new version is now a single click execution for all frameworks all at once, and finally having a single codebase to test & troubleshoot all wrappers, etc... will be so much easier to handle). With this new structure change, Slickgrid-Universal name is now making even more sense. 🌐
 
 The other great thing about having everything under the same roof/project is that every package will now be released at the same time with the exact same version number across the board. Everything will be released under v9.0 and whenever any new feature/bugfix comes in, then every package will be bumped to v9.1 and so on (no more version discrepancies).
 
@@ -113,7 +113,7 @@ gridOptions.value = {
 ## Column Functionalities
 
 ### Date Editor/Filter (flat config)
-Vanilla-Calendar-Pro was upgraded to v3.0 and the main breaking change is that they migrated to flat config (instead of complex object config) and this mean that if you use any of their option, then you'll have to update them to be flat.
+Vanilla-Calendar-Pro was upgraded to v3.0 and their main breaking change is the migration to flat config (instead of complex object config) and this mean that if you use any of their option, you'll have to update them to use the new flat options.
 
 The biggest change that you will most probably have to update is the min/max date setting when using the `'today'` shortcut as shown below:
 
@@ -133,7 +133,7 @@ prepareGrid() {
 ```
 
 > [!NOTE]
-> for a complete list of option changes, visit the Vanilla-Calendar-Pro [migration](https://github.com/uvarov-frontend/vanilla-calendar-pro/wiki/%5BMigration-from-v2.*.*%5D-New-API-for-all-options-and-actions-in-v3.0.0) page, which details every single options with their new option names.
+> for a complete list of option changes, visit the Vanilla-Calendar-Pro [migration](https://github.com/uvarov-frontend/vanilla-calendar-pro/wiki/%5BMigration-from-v2.*.*%5D-New-API-for-all-options-and-actions-in-v3.0.0) page, which details every single options with their new associated option names.
 
 ## Grid Functionalities
 
