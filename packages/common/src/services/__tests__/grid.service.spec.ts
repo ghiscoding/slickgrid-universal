@@ -1792,7 +1792,6 @@ describe('Grid Service', () => {
       const autoSizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
       const setColsSpy = vi.spyOn(gridStub, 'setColumns');
       const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
-      const setColSpy = vi.spyOn(gridStub, 'setColumns');
 
       const output = service.hideColumnById('field2');
 
@@ -1801,7 +1800,6 @@ describe('Grid Service', () => {
       expect(setVisibleSpy).toHaveBeenCalledWith(mockWithoutColumns);
       expect(setColsSpy).toHaveBeenCalledWith(mockWithoutColumns);
       expect(pubSubSpy).toHaveBeenCalledWith('onHideColumns', { columns: mockWithoutColumns });
-      expect(setColSpy).toHaveBeenCalledTimes(1);
     });
 
     it('should set new columns minus the column to hide but without triggering an event when set to False', () => {

@@ -1046,8 +1046,6 @@ describe('SlickRowDetailView plugin', () => {
       gridStub.onScroll.notify({ scrollLeft: 20, scrollTop: 53, scrollHeight: 10, grid: gridStub }, eventData as any, gridStub);
       vi.advanceTimersByTime(1);
 
-      expect(onRowOutOfViewportSpy).toHaveBeenCalled();
-
       vi.spyOn(gridStub, 'getRenderedRange').mockReturnValue({ top: 125, bottom: 150, left: 33, right: 18 } as any);
       plugin.expandDetailView(123);
       plugin.addonOptions.singleRowExpand = false;

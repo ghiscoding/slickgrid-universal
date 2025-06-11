@@ -332,7 +332,7 @@ export class ResizerService {
    */
   resizeGrid(delay?: number, newSizes?: GridSize): Promise<GridSize | undefined> {
     return new Promise((resolve) => {
-      // because of the javascript async nature, we might want to delay the resize a little bit
+      // because of the JavaScript async nature, we might want to delay the resize a little bit
       delay = delay || 0;
 
       if (delay > 0) {

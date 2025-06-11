@@ -18,7 +18,7 @@ export const FieldType = {
   /** number includes Integer and Float */
   number: 'number',
 
-  /** new Date(), javascript Date object */
+  /** new Date(), JavaScript Date object */
   date: 'date',
 
   /** Format: 'YYYY-MM-DD' <=> 2001-02-28 */

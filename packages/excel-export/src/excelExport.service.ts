@@ -123,7 +123,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   }
 
   /**
-   * Function to export the Grid result to an Excel CSV format using javascript for it to produce the CSV file.
+   * Function to export the Grid result to an Excel CSV format using JavaScript for it to produce the CSV file.
    * This is a WYSIWYG export to file output (What You See is What You Get)
    *
    * NOTES: The column position needs to match perfectly the JSON Object position because of the way we are pulling the data,

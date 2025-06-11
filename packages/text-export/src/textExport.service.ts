@@ -98,7 +98,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
   }
 
   /**
-   * Function to export the Grid result to an Excel CSV format using javascript for it to produce the CSV file.
+   * Function to export the Grid result to an Excel CSV format using JavaScript for it to produce the CSV file.
    * This is a WYSIWYG export to file output (What You See is What You Get)
    *
    * NOTES: The column position needs to match perfectly the JSON Object position because of the way we are pulling the data,
@@ -144,7 +144,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
   /**
    * Triggers download file with file format.
    * IE(6-10) are not supported
-   * All other browsers will use plain javascript on client side to produce a file download.
+   * All other browsers will use plain JavaScript on client side to produce a file download.
    * @param options
    */
   startDownloadFile(options: ExportTextDownloadOption): void {
@@ -154,7 +154,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
     // dealing with Excel CSV export and UTF-8 is a little tricky.. We will use Option #2 to cover older Excel versions
     // Option #1: we need to make Excel knowing that it's dealing with an UTF-8, A correctly formatted UTF8 file can have a Byte Order Mark as its first three octets
     // reference: http://stackoverflow.com/questions/155097/microsoft-excel-mangles-diacritics-in-csv-files
-    // Option#2: use a 3rd party extension to javascript encode into UTF-16
+    // Option#2: use a 3rd party extension to JavaScript encode into UTF-16
     let outputData: Uint8Array | string;
     if (options.format === 'csv') {
       outputData = new TextEncoder('utf-8').encode(csvContent);

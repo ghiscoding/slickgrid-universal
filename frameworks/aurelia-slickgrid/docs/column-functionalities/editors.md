@@ -24,7 +24,7 @@
 Editors won't work without these 2 flags `enableCellNavigation: true` and `editable: true` enabled in your Grid Options, so make sure to always to always defined them. Also note that you can toggle the grid to read only (not editable) via the `editable` grid option flag.
 
 ### Demo
-##### with plain javascript/jQuery
+##### with plain JavaScript/jQuery
 [Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example3) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example3.ts)
 
 ##### with Aurelia Custom Components

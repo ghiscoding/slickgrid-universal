@@ -17,7 +17,7 @@ import { type SlickDataView, SlickEventHandler, SlickGlobalEditorLock, type Slic
   This manager enables users to copy/paste data from/to an external Spreadsheet application
   such as MS-Excel® or OpenOffice-Spreadsheet.
 
-  Since it is not possible to access directly the clipboard in javascript, the plugin uses
+  Since it is not possible to access directly the clipboard in JavaScript, the plugin uses
   a trick to do it's job. After detecting the keystroke, we dynamically create a textarea
   where the browser copies/pastes the serialized data.
 */
