@@ -264,6 +264,7 @@ $slick-icon-group-margin-right:             2px;
 $slick-group-totals-formatter-color:        gray;
 $slick-group-totals-formatter-bgcolor:      white;
 $slick-group-totals-formatter-font-size:    14px;
+$slick-group-totals-formatter-font-weight:  normal;
 ```
 
 For more info on SASS styling and variables, please read the [Wiki - SASS Styling](../styling/styling.md),

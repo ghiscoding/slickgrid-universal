@@ -156,6 +156,7 @@
       background: var(--slick-group-totals-formatter-bgcolor, v.$slick-group-totals-formatter-bgcolor);
       .slick-cell {
         font-size: var(--slick-group-totals-formatter-font-size, v.$slick-group-totals-formatter-font-size);
+        font-weight: var(--slick-group-totals-formatter-font-weight, v.$slick-group-totals-formatter-font-weight);
       }
     }
 
