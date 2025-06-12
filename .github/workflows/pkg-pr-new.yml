@@ -18,7 +18,7 @@ jobs:
       - run: corepack enable
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: "pnpm"
 
       - name: Install dependencies
@@ -28,4 +28,4 @@ jobs:
         run: pnpm build
 
       - name: Publish
-        run: pnpm dlx pkg-pr-new publish './packages/*' './frameworks/*' --compact --packageManager=pnpm
+        run: pnpm dlx pkg-pr-new publish --no-template --pnpm './packages/*' './frameworks/*'
