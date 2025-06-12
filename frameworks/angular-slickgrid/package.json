@@ -58,8 +58,8 @@
     "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
     "@slickgrid-universal/rxjs-observable": "workspace:*",
     "@slickgrid-universal/utils": "workspace:*",
-    "dequal": "^2.0.3",
-    "rxjs": "^7.8.2"
+    "dequal": "catalog:",
+    "rxjs": "catalog:"
   },
   "peerDependencies": {
     "@angular/core": ">=19.0.0"
@@ -133,6 +133,7 @@
     "vite": "catalog:",
     "vite-tsconfig-paths": "catalog:",
     "vitest": "catalog:",
+    "yaml": "^2.8.0",
     "zone.js": "~0.15.1"
   }
 }
