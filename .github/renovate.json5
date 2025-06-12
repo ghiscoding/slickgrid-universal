@@ -36,6 +36,6 @@
       groupName: 'React and VueJS dependencies',
     },
   ],
-  ignoreDeps: ['node', 'pnpm'],
+  ignoreDeps: ['lee-dohm/no-response', 'node', 'pnpm'],
   schedule: ['every 4 weeks on friday'],
 }
