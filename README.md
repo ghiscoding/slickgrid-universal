@@ -17,9 +17,7 @@
 ### Live Demo
 [Live Demo](https://ghiscoding.github.io/slickgrid-universal/) website
 
-Also available in Stackblitz (Codeflow) below, this can also be used to provide an issue repro.
-
-[![Open in Codeflow](https://developer.stackblitz.com/img/open_in_codeflow.svg)](https:///pr.new/ghiscoding/slickgrid-universal)
+Also available in Stackblitz for all available frameworks (see [table](https://github.com/ghiscoding/slickgrid-universal?tab=readme-ov-file#available-framework-wrappers) below)
 
 ### Description
 One of the best JavaScript data grid named as "SlickGrid", which was originally developed by @mleibman, beats most other data grids in terms of features, customizability & performance (running smoothly with even a million rows).
