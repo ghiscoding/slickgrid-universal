@@ -10,11 +10,11 @@ const __dirname = dirname(__filename);
 const processPath = join(__dirname, '../');
 const projectRootPath = join(__dirname, '../../../'); // project root from current script location
 
-const MONOREPO_NAME = '@slickgrid-universal';
+const MONOREPO_NAMESPACE = '@slickgrid-universal';
 
 /**
- * Main entry, this script will replace all workspace protocol
- * with current version from "package.json" root into "dist/package.json"
+ * Main entry, this script will replace all `catalog:` and `workspace:` protocols
+ * with current version from "package.json" package root into "dist/package.json"
  */
 (async function main() {
   const mainPkg = readJsonSync(join(processPath, 'package.json'));
@@ -35,15 +35,20 @@ const MONOREPO_NAME = '@slickgrid-universal';
     // check if it's a `catalog:` protocol
     if (depVersion.startsWith('catalog:')) {
       distPkg.dependencies[depName] = catalog[depName] || catalogs[depVersion]?.[depName] || '';
-      console.log(`resolve '${depVersion}'    → { "${depName}": "${distPkg.dependencies[depName]}" }`);
+      console.log(`transformed '${depVersion}'    → { "${depName}": "${distPkg.dependencies[depName]}" }`);
     }
     // otherwise check if it's a local `workspace:` protocol (if so, find associated local dep's version and replace it)
-    else if (depName.startsWith(`${MONOREPO_NAME}/`) || depVersion.startsWith('workspace:')) {
+    else if (depName.startsWith(`${MONOREPO_NAMESPACE}/`) || depVersion.startsWith('workspace:')) {
+      // extra workspace: details, accepts: `workspace:[*~^]` or `workspace:[*~^]1.5.2`
+      const [_, _wsTxt, rangePrefix, semver] = depVersion.match(/^(workspace:)?([*~^])?(.*)$/) || [];
+      const versionPrefix = rangePrefix === '*' ? '' : rangePrefix;
+      const finalVersion = semver ? `${versionPrefix}${semver}` : `${versionPrefix}${depPkg.version}`;
+
       // we need to get each package version
-      const depPkgName = depName.replace(MONOREPO_NAME, '');
+      const depPkgName = depName.replace(MONOREPO_NAMESPACE, '');
       const depPkg = readJsonSync(join(processPath, '../../packages/', depPkgName, 'package.json'));
-      console.log(`resolve '${depVersion}' → { "${depName}": "${depPkg.version}" }`);
-      distPkg.dependencies[depName] = depPkg.version;
+      console.log(`transformed '${depVersion}' → { "${depName}": "${finalVersion}" }`);
+      distPkg.dependencies[depName] = finalVersion;
     }
   }
   writeJsonSync(resolve(processPath, 'dist', 'package.json'), distPkg, { spaces: 2 });
