@@ -1,14 +1,12 @@
 import { existsSync, readFileSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { join, resolve } from 'node:path';
 
 import { readJsonSync, writeJsonSync } from '@gc-utils/fs-extra';
 import { parse } from 'yaml';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const processPath = join(__dirname, '../');
-const projectRootPath = join(__dirname, '../../../'); // project root from current script location
+const cwd = process.cwd();
+const processPath = join(cwd, '../');
+const projectRootPath = join(cwd, '../../../'); // project root from current script location
 
 const MONOREPO_NAMESPACE = '@slickgrid-universal';
 
