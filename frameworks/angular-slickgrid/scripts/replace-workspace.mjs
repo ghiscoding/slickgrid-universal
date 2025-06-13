@@ -29,7 +29,7 @@ const MONOREPO_NAME = '@slickgrid-universal';
   distPkg.version = mainPkg.version;
 
   // retrieve any pnpm Catalog values
-  const { catalog = {}, catalogs = {} } = existsSync(yamlPath) ? parse(readFileSync(yamlPath, { encoding: 'utf8' }), 'utf8') : {};
+  const { catalog = {}, catalogs = {} } = existsSync(yamlPath) ? parse(readFileSync(yamlPath, 'utf8')) : {};
 
   for (let [depName, depVersion] of Object.entries(distPkg.dependencies)) {
     // check if it's a `catalog:` protocol
