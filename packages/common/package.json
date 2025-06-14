@@ -83,7 +83,7 @@
     "cssnano": "^7.0.7",
     "native-copyfiles": "catalog:",
     "npm-run-all2": "catalog:",
-    "postcss": "^8.5.4",
+    "postcss": "^8.5.5",
     "postcss-cli": "^11.0.1",
     "sass": "catalog:"
   },
