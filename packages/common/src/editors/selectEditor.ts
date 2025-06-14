@@ -120,6 +120,7 @@ export class SelectEditor implements Editor {
       container: 'body',
       darkMode: !!this.gridOptions.darkMode,
       filter: false,
+      isOpen: !this.isCompositeEditor,
       maxHeight: 275,
       minHeight: 25,
       name: this.elementName,
@@ -130,6 +131,16 @@ export class SelectEditor implements Editor {
       onClick: () => (this._isValueTouched = true),
       onCheckAll: () => (this._isValueTouched = true),
       onUncheckAll: () => (this._isValueTouched = true),
+      onBlur: (e) => {
+        const keyEvt = e as KeyboardEvent | undefined;
+        if (keyEvt?.key === 'Tab' && this._msInstance?.getOptions().isOpen) {
+          keyEvt.preventDefault();
+          this._msInstance.close('blur');
+          if (!this.isCompositeEditor) {
+            keyEvt.shiftKey ? this.grid.navigatePrev() : this.grid.navigateNext();
+          }
+        }
+      },
       onClose: (reason) => {
         if (reason === 'key.escape' || reason === 'body.click' || (!this.hasAutoCommitEdit && !this.isValueChanged())) {
           if (reason === 'key.escape') {
@@ -768,10 +779,6 @@ export class SelectEditor implements Editor {
     this._msInstance = multipleSelect(selectElement, this.editorElmOptions) as MultipleSelectInstance;
     this.editorElm = this._msInstance.getParentElement();
     this.columnEditor.onInstantiated?.(this._msInstance);
-
-    if (!this.isCompositeEditor) {
-      this.show(this.delayOpening);
-    }
   }
 
   protected handleChangeOnCompositeEditor(

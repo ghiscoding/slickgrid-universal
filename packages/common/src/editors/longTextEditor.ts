@@ -431,16 +431,9 @@ export class LongTextEditor implements Editor {
       } else if (key === 'Escape') {
         e.preventDefault();
         this.cancel();
-      } else if (key === 'Tab' && e.shiftKey) {
-        e.preventDefault();
-        if (this.args && this.grid) {
-          this.grid.navigatePrev();
-        }
       } else if (key === 'Tab') {
         e.preventDefault();
-        if (this.args && this.grid) {
-          this.grid.navigateNext();
-        }
+        e.shiftKey ? this.grid.navigatePrev() : this.grid.navigateNext();
       }
     }
   }

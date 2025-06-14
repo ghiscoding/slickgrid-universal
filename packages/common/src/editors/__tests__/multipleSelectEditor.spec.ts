@@ -7,7 +7,6 @@ import { Editors } from '../index.js';
 import { MultipleSelectEditor } from '../multipleSelectEditor.js';
 import type { Column, Editor, EditorArguments, GridOption } from '../../interfaces/index.js';
 import type { SlickDataView } from '../../core/slickDataview.js';
-import type { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import { type SlickGrid } from '../../core/index.js';
 
 const containerId = 'demo-container';
@@ -43,7 +42,6 @@ const gridStub = {
 } as unknown as SlickGrid;
 
 describe('MultipleSelectEditor', () => {
-  let translateService: TranslateServiceStub;
   let divContainer: HTMLDivElement;
   let editor: MultipleSelectEditor;
   let editorArguments: EditorArguments;
@@ -94,7 +92,7 @@ describe('MultipleSelectEditor', () => {
         { value: 'male', label: 'male' },
         { value: 'female', label: 'female' },
       ];
-      gridOptionMock.translater = translateService;
+      gridOptionMock.translater = undefined;
       editor = new MultipleSelectEditor(editorArguments, 0);
       const editorCount = document.body.querySelectorAll('select.ms-filter.editor-gender').length;
 

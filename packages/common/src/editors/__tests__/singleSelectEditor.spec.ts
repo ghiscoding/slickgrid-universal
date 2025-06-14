@@ -6,7 +6,6 @@ import 'multiple-select-vanilla';
 import { Editors } from '../index.js';
 import { SingleSelectEditor } from '../singleSelectEditor.js';
 import type { Column, Editor, EditorArguments, GridOption } from '../../interfaces/index.js';
-import type { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import type { SlickDataView, SlickGrid } from '../../core/index.js';
 
 const containerId = 'demo-container';
@@ -41,7 +40,6 @@ const gridStub = {
 } as unknown as SlickGrid;
 
 describe('SingleSelectEditor', () => {
-  let translateService: TranslateServiceStub;
   let divContainer: HTMLDivElement;
   let editor: SingleSelectEditor;
   let editorArguments: EditorArguments;
@@ -93,7 +91,7 @@ describe('SingleSelectEditor', () => {
         { value: 'male', label: 'male' },
         { value: 'female', label: 'female' },
       ];
-      gridOptionMock.translater = translateService;
+      gridOptionMock.translater = undefined;
       editor = new SingleSelectEditor(editorArguments);
       const editorCount = document.body.querySelectorAll('select.ms-filter.editor-gender').length;
 
