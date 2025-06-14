@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.1.0...v9.2.0) (2025-06-14)
+
+### Bug Fixes
+
+* **deps:** update react and vuejs dependencies ([#2007](https://github.com/ghiscoding/slickgrid-universal/issues/2007)) ([d5aae1c](https://github.com/ghiscoding/slickgrid-universal/commit/d5aae1c520ade1ea22a05ec951df6b98c5f62922)) - by @renovate-bot
+
 ## [9.1.0](https://github.com/ghiscoding/slickgrid-react/compare/v9.0.3...v9.1.0) (2025-05-31)
 
 ### Features

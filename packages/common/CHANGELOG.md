@@ -4,6 +4,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.1.0...v9.2.0) (2025-06-14)
+
+### Features
+
+* **core:** add slick group totals formatter font weight style variable ([#2001](https://github.com/ghiscoding/slickgrid-universal/issues/2001)) ([3b33891](https://github.com/ghiscoding/slickgrid-universal/commit/3b338913992d0332cb20d4bd9088dd9490957679)) - by @anton-gustafsson
+
+### Bug Fixes
+
+* **core:** the `editActiveCell()` first `editor` arg should be optional ([#1997](https://github.com/ghiscoding/slickgrid-universal/issues/1997)) ([25f340f](https://github.com/ghiscoding/slickgrid-universal/commit/25f340fafae2b504a5e323e4c854a80f997c782c)) - by @ghiscoding
+* **editors:** ms-select should close on Tab and focus on next edit cell ([#2004](https://github.com/ghiscoding/slickgrid-universal/issues/2004)) ([a6c89d6](https://github.com/ghiscoding/slickgrid-universal/commit/a6c89d62b54490cee42a812174138eed79ce1384)) - by @ghiscoding
+
 ## [9.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.0.3...v9.1.0) (2025-05-31)
 
 ### Features

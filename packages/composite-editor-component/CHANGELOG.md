@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.1.0...v9.2.0) (2025-06-14)
+
+### Bug Fixes
+
+* **core:** the `editActiveCell()` first `editor` arg should be optional ([#1997](https://github.com/ghiscoding/slickgrid-universal/issues/1997)) ([25f340f](https://github.com/ghiscoding/slickgrid-universal/commit/25f340fafae2b504a5e323e4c854a80f997c782c)) - by @ghiscoding
+
 ## [9.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.0.3...v9.1.0) (2025-05-31)
 
 ### Features
