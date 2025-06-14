@@ -124,6 +124,7 @@ jobs:
           NPM_CONFIG_PROVENANCE: true
         shell: bash
         id: lerna-publish
+        continue-on-error: true
         run: |
           set -o pipefail
           OUTPUT_FILE=$(mktemp)
