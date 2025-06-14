@@ -168,6 +168,47 @@ describe('SelectEditor', () => {
       expect(editorCount).toBe(1);
     });
 
+    it('should navigate to next cell when blur is called with Tab key', () => {
+      mockColumn.editor!.collection = [
+        { value: 'male', label: 'male' },
+        { value: 'female', label: 'female' },
+      ];
+      gridOptionMock.translater = translateService;
+      editor = new SelectEditor(editorArguments, true);
+      const keyEvent = new (window.window as any).KeyboardEvent('keydown', { key: 'Tab', shiftKey: false, bubbles: true, cancelable: true });
+      editor.msInstance?.getOptions().onBlur(keyEvent);
+
+      expect(gridStub.navigateNext).toHaveBeenCalled();
+    });
+
+    it('should navigate to previous cell when blur is called with Shift+Tab keys', () => {
+      mockColumn.editor!.collection = [
+        { value: 'male', label: 'male' },
+        { value: 'female', label: 'female' },
+      ];
+      gridOptionMock.translater = translateService;
+      editor = new SelectEditor(editorArguments, true);
+      const keyEvent = new (window.window as any).KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true, cancelable: true });
+      editor.msInstance?.getOptions().onBlur(keyEvent);
+
+      expect(gridStub.navigatePrev).toHaveBeenCalled();
+      vi.resetAllMocks();
+    });
+
+    it('should NOT navigate to next cell when blur is called with Tab key with CompositeEditor', () => {
+      mockColumn.editor!.collection = [
+        { value: 'male', label: 'male' },
+        { value: 'female', label: 'female' },
+      ];
+      gridOptionMock.translater = translateService;
+      editor = new SelectEditor({ ...editorArguments, compositeEditorOptions: { modalType: 'auto-mass', editors: {}, formValues: {} } }, true);
+      editor.msInstance?.open(null);
+      const keyEvent = new (window.window as any).KeyboardEvent('keydown', { key: 'Tab', shiftKey: false, bubbles: true, cancelable: true });
+      editor.msInstance?.getOptions().onBlur(keyEvent);
+
+      expect(gridStub.navigateNext).not.toHaveBeenCalled();
+    });
+
     it('should initialize the editor with element being disabled in the DOM when passing a collectionAsync and an empty collection property', () => {
       const mockCollection = ['male', 'female'];
       const promise = Promise.resolve(mockCollection);

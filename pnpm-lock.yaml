@@ -85,8 +85,8 @@ catalogs:
       specifier: ^3.0.2
       version: 3.0.2
     multiple-select-vanilla:
-      specifier: ^4.2.0
-      version: 4.2.0
+      specifier: ^4.3.1
+      version: 4.3.1
     native-copyfiles:
       specifier: ^1.0.0
       version: 1.0.0
@@ -540,7 +540,7 @@ importers:
         version: 3.2.6
       multiple-select-vanilla:
         specifier: 'catalog:'
-        version: 4.2.0
+        version: 4.3.1
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -1176,7 +1176,7 @@ importers:
         version: 2.0.3
       multiple-select-vanilla:
         specifier: 'catalog:'
-        version: 4.2.0
+        version: 4.3.1
       sortablejs:
         specifier: 'catalog:'
         version: 1.15.6
@@ -9342,8 +9342,8 @@ packages:
     resolution: {integrity: sha512-SYU3HBAdF4psHEL/+jXDKHO95/m5P2RvboHT2Y0WtTttvJLP4H/2WS9WlQPFvF6C8d6SpLw8vjCnQOnVIVOSJQ==}
     engines: {node: '>=18'}
 
-  multiple-select-vanilla@4.2.0:
-    resolution: {integrity: sha512-EYtFeOZ0yYrsrznaxlGN8OFr3WTQel9E8gTW7SYaJq6x5UeaNL4bbLxkLt3KvsvWHssKYXdCKQrijmBg55dK4Q==}
+  multiple-select-vanilla@4.3.1:
+    resolution: {integrity: sha512-2WxjM35Ocin1x15n8Ds97XLUeWjbpmAJOBLrpyo7IMBJ+GHY1IIu84NqSiIr4KkfVaIgJoqUZIqX2TblBqbMQg==}
 
   mute-stream@1.0.0:
     resolution: {integrity: sha512-avsJQhyd+680gKXyG/sQc0nXaC6rBkPOfyHYcFb9+hdkqQkR9bdnkJ0AMZhke0oesPqIO+mFFJ+IdBc7mst4IA==}
@@ -22209,7 +22209,7 @@ snapshots:
       array-union: 3.0.1
       minimatch: 9.0.5
 
-  multiple-select-vanilla@4.2.0:
+  multiple-select-vanilla@4.3.1:
     dependencies:
       '@types/trusted-types': 2.0.7
 

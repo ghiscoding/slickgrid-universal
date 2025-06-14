@@ -33,7 +33,7 @@ catalog:
   i18next-vue: ^5.3.0
   jsdom: ^26.1.0
   'jsdom-global': ^3.0.2
-  multiple-select-vanilla: ^4.2.0
+  multiple-select-vanilla: ^4.3.1
   native-copyfiles: ^1.0.0
   npm-run-all2: ^8.0.4
   rimraf: ^6.0.1

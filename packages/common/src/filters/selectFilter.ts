@@ -429,6 +429,7 @@ export class SelectFilter implements Filter {
       autoAdjustDropWidthByTextSize: true,
       name: `${this.columnId}`,
       container: 'body',
+      closeOnTab: true,
       darkMode: !!this.gridOptions.darkMode,
       filter: false, // input search term on top of the select option list
       maxHeight: 275,
