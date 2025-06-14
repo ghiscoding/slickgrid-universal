@@ -5,8 +5,7 @@ import { readJsonSync, writeJsonSync } from '@gc-utils/fs-extra';
 import { parse } from 'yaml';
 
 const cwd = process.cwd();
-const processPath = join(cwd, '../');
-const projectRootPath = join(cwd, '../../../'); // project root from current script location
+const projectRootPath = join(cwd, '../../'); // project root from current script location
 
 const MONOREPO_NAMESPACE = '@slickgrid-universal';
 
@@ -15,8 +14,8 @@ const MONOREPO_NAMESPACE = '@slickgrid-universal';
  * with current version from "package.json" package root into "dist/package.json"
  */
 (async function main() {
-  const mainPkg = readJsonSync(join(processPath, 'package.json'));
-  const distPkg = readJsonSync(join(processPath, 'dist', 'package.json'));
+  const mainPkg = readJsonSync(join(cwd, 'package.json'));
+  const distPkg = readJsonSync(join(cwd, 'dist', 'package.json'));
   const yamlPath = join(projectRootPath, 'pnpm-workspace.yaml');
 
   // replace all workspace protocol with current version from "package.json" root into "dist/package.json"
@@ -37,19 +36,19 @@ const MONOREPO_NAMESPACE = '@slickgrid-universal';
     }
     // otherwise check if it's a local `workspace:` protocol (if so, find associated local dep's version and replace it)
     else if (depName.startsWith(`${MONOREPO_NAMESPACE}/`) || depVersion.startsWith('workspace:')) {
+      // we need to get each package version
+      const depPkgName = depName.replace(MONOREPO_NAMESPACE, '');
+      const depPkg = readJsonSync(join(cwd, '../../packages/', depPkgName, 'package.json'));
+
       // extra workspace: details, accepts: `workspace:[*~^]` or `workspace:[*~^]1.5.2`
       const [_, _wsTxt, rangePrefix, semver] = depVersion.match(/^(workspace:)?([*~^])?(.*)$/) || [];
       const versionPrefix = rangePrefix === '*' ? '' : rangePrefix;
       const finalVersion = semver ? `${versionPrefix}${semver}` : `${versionPrefix}${depPkg.version}`;
-
-      // we need to get each package version
-      const depPkgName = depName.replace(MONOREPO_NAMESPACE, '');
-      const depPkg = readJsonSync(join(processPath, '../../packages/', depPkgName, 'package.json'));
-      console.log(`transformed '${depVersion}' → { "${depName}": "${finalVersion}" }`);
       distPkg.dependencies[depName] = finalVersion;
+      console.log(`transformed '${depVersion}' → { "${depName}": "${finalVersion}" }`);
     }
   }
-  writeJsonSync(resolve(processPath, 'dist', 'package.json'), distPkg, { spaces: 2 });
+  writeJsonSync(resolve(cwd, 'dist', 'package.json'), distPkg, { spaces: 2 });
   console.log('-------------------------------------------------------------------------------------\n');
 
   process.exit();
