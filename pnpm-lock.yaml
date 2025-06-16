@@ -145,16 +145,13 @@ importers:
         version: 0.1.2
       '@lerna-lite/cli':
         specifier: ^4.4.1
-        version: 4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/run@4.4.1)(@lerna-lite/version@4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/run@4.4.1)(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(conventional-commits-filter@5.0.0)(typescript@5.8.3))(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(typescript@5.8.3)
+        version: 4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/version@4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(conventional-commits-filter@5.0.0)(typescript@5.8.3))(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(typescript@5.8.3)
       '@lerna-lite/publish':
         specifier: ^4.4.1
-        version: 4.4.1(@lerna-lite/run@4.4.1)(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(conventional-commits-filter@5.0.0)(typescript@5.8.3)
-      '@lerna-lite/run':
-        specifier: ^4.4.1
-        version: 4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(typescript@5.8.3)
+        version: 4.4.1(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(conventional-commits-filter@5.0.0)(typescript@5.8.3)
       '@lerna-lite/watch':
         specifier: ^4.4.1
-        version: 4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/run@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(typescript@5.8.3)
+        version: 4.4.1(@lerna-lite/publish@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(typescript@5.8.3)
       '@slickgrid-universal/common':
         specifier: workspace:*
         version: link:packages/common
@@ -3483,16 +3480,8 @@ packages:
     resolution: {integrity: sha512-XAouatIhNq+Lh0g3VnX/w/ksc+69mUc2fNDONmayMjFij78iIx07EvIwTwlYTnpdRuI3MfAGboCIAT6TByTgdg==}
     engines: {node: ^20.17.0 || >=22.9.0}
 
-  '@lerna-lite/profiler@4.4.1':
-    resolution: {integrity: sha512-Nq61C0IfPxuOWityujzcEYCl1i5TRg7sS3C4WUgM4Upx55hCnLfHLAC6j4gMDkuzjxXrI6RUlabUI1bHqgAeDA==}
-    engines: {node: ^20.17.0 || >=22.9.0}
-
   '@lerna-lite/publish@4.4.1':
     resolution: {integrity: sha512-XYTk9nSciWQ+EMbHjSyNw8hWoax+poas94iXq9Ug0uvr/1RtMn78t/VfgFacT5Kl1Pc+O4XF+E++HEdwDnwn0Q==}
-    engines: {node: ^20.17.0 || >=22.9.0}
-
-  '@lerna-lite/run@4.4.1':
-    resolution: {integrity: sha512-kLlHS/ZwOb6734ptX8IiEFuw2GesaJjkvgNp0D+Neh4PE10px5HD4+hmkpFR4KaWUJvYkAtfSJXVZKaIDw8S2g==}
     engines: {node: ^20.17.0 || >=22.9.0}
 
   '@lerna-lite/version@4.4.1':
@@ -14747,7 +14736,7 @@ snapshots:
 
   '@leichtgewicht/ip-codec@2.0.5': {}
 
-  '@lerna-lite/cli@4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/run@4.4.1)(@lerna-lite/version@4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/run@4.4.1)(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(conventional-commits-filter@5.0.0)(typescript@5.8.3))(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(typescript@5.8.3)':
+  '@lerna-lite/cli@4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/version@4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(conventional-commits-filter@5.0.0)(typescript@5.8.3))(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(typescript@5.8.3)':
     dependencies:
       '@lerna-lite/core': 4.4.1(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(typescript@5.8.3)
       '@lerna-lite/init': 4.4.1(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(typescript@5.8.3)
@@ -14758,10 +14747,9 @@ snapshots:
       load-json-file: 7.0.1
       yargs: 18.0.0
     optionalDependencies:
-      '@lerna-lite/publish': 4.4.1(@lerna-lite/run@4.4.1)(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(conventional-commits-filter@5.0.0)(typescript@5.8.3)
-      '@lerna-lite/run': 4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(typescript@5.8.3)
-      '@lerna-lite/version': 4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/run@4.4.1)(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(conventional-commits-filter@5.0.0)(typescript@5.8.3)
-      '@lerna-lite/watch': 4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/run@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(typescript@5.8.3)
+      '@lerna-lite/publish': 4.4.1(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(conventional-commits-filter@5.0.0)(typescript@5.8.3)
+      '@lerna-lite/version': 4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(conventional-commits-filter@5.0.0)(typescript@5.8.3)
+      '@lerna-lite/watch': 4.4.1(@lerna-lite/publish@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(typescript@5.8.3)
     transitivePeerDependencies:
       - '@types/node'
       - babel-plugin-macros
@@ -14829,24 +14817,12 @@ snapshots:
       string-width: 7.2.0
       wide-align: 1.1.5
 
-  '@lerna-lite/profiler@4.4.1(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(typescript@5.8.3)':
+  '@lerna-lite/publish@4.4.1(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(conventional-commits-filter@5.0.0)(typescript@5.8.3)':
     dependencies:
+      '@lerna-lite/cli': 4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/version@4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(conventional-commits-filter@5.0.0)(typescript@5.8.3))(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(typescript@5.8.3)
       '@lerna-lite/core': 4.4.1(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(typescript@5.8.3)
       '@lerna-lite/npmlog': 4.1.2
-      fs-extra: 11.3.0
-      upath: 2.0.1
-    transitivePeerDependencies:
-      - '@types/node'
-      - babel-plugin-macros
-      - supports-color
-      - typescript
-
-  '@lerna-lite/publish@4.4.1(@lerna-lite/run@4.4.1)(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(conventional-commits-filter@5.0.0)(typescript@5.8.3)':
-    dependencies:
-      '@lerna-lite/cli': 4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/run@4.4.1)(@lerna-lite/version@4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/run@4.4.1)(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(conventional-commits-filter@5.0.0)(typescript@5.8.3))(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(typescript@5.8.3)
-      '@lerna-lite/core': 4.4.1(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(typescript@5.8.3)
-      '@lerna-lite/npmlog': 4.1.2
-      '@lerna-lite/version': 4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/run@4.4.1)(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(conventional-commits-filter@5.0.0)(typescript@5.8.3)
+      '@lerna-lite/version': 4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(conventional-commits-filter@5.0.0)(typescript@5.8.3)
       '@npmcli/arborist': 9.1.2
       '@npmcli/package-json': 6.2.0
       byte-size: 9.0.1
@@ -14879,30 +14855,10 @@ snapshots:
       - supports-color
       - typescript
 
-  '@lerna-lite/run@4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(typescript@5.8.3)':
-    dependencies:
-      '@lerna-lite/cli': 4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/run@4.4.1)(@lerna-lite/version@4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/run@4.4.1)(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(conventional-commits-filter@5.0.0)(typescript@5.8.3))(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(typescript@5.8.3)
-      '@lerna-lite/core': 4.4.1(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(typescript@5.8.3)
-      '@lerna-lite/npmlog': 4.1.2
-      '@lerna-lite/profiler': 4.4.1(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(typescript@5.8.3)
-      fs-extra: 11.3.0
-      p-map: 7.0.3
-      tinyrainbow: 2.0.0
-    transitivePeerDependencies:
-      - '@lerna-lite/exec'
-      - '@lerna-lite/list'
-      - '@lerna-lite/publish'
-      - '@lerna-lite/version'
-      - '@lerna-lite/watch'
-      - '@types/node'
-      - babel-plugin-macros
-      - supports-color
-      - typescript
-
-  '@lerna-lite/version@4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/run@4.4.1)(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(conventional-commits-filter@5.0.0)(typescript@5.8.3)':
+  '@lerna-lite/version@4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(conventional-commits-filter@5.0.0)(typescript@5.8.3)':
     dependencies:
       '@conventional-changelog/git-client': 2.4.0(conventional-commits-filter@5.0.0)(conventional-commits-parser@6.1.0)
-      '@lerna-lite/cli': 4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/run@4.4.1)(@lerna-lite/version@4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/run@4.4.1)(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(conventional-commits-filter@5.0.0)(typescript@5.8.3))(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(typescript@5.8.3)
+      '@lerna-lite/cli': 4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/version@4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(conventional-commits-filter@5.0.0)(typescript@5.8.3))(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(typescript@5.8.3)
       '@lerna-lite/core': 4.4.1(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(typescript@5.8.3)
       '@lerna-lite/npmlog': 4.1.2
       '@octokit/plugin-enterprise-rest': 6.0.1
@@ -14943,9 +14899,9 @@ snapshots:
       - supports-color
       - typescript
 
-  '@lerna-lite/watch@4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/run@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(typescript@5.8.3)':
+  '@lerna-lite/watch@4.4.1(@lerna-lite/publish@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(typescript@5.8.3)':
     dependencies:
-      '@lerna-lite/cli': 4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/run@4.4.1)(@lerna-lite/version@4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/run@4.4.1)(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(conventional-commits-filter@5.0.0)(typescript@5.8.3))(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(typescript@5.8.3)
+      '@lerna-lite/cli': 4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/version@4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(conventional-commits-filter@5.0.0)(typescript@5.8.3))(@lerna-lite/watch@4.4.1)(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(typescript@5.8.3)
       '@lerna-lite/core': 4.4.1(@types/node@22.15.31)(babel-plugin-macros@3.1.0)(typescript@5.8.3)
       chokidar: 4.0.3
       picomatch: 4.0.2
