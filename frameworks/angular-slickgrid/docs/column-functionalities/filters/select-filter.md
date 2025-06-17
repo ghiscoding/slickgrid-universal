@@ -198,24 +198,26 @@ this.columnDefinitions = [
 ```
 
 ### How to filter empty values?
-By default you cannot filter empty dataset values (unless you use a `multipleSelect` Filter). You might be wondering, why though? By default an empty value in a `singleSelect` Filter is equal to returning **all values**. You could however use this option `emptySearchTermReturnAllValues` set to `false` to add the ability to really search only empty values.
+By default you cannot filter empty dataset values (unless you use a `multipleSelect` Filter). You might be wondering, why though? By default an empty value in a `singleSelect` Filter is equal to returning **all values**. You could however use this option `processEmptySearchTerms` set to `true` (or the previously `@deprecated` flag `emptySearchTermReturnAllValues` to `false`) to add the ability to really search only empty values.
 
 Note: the defaults for single & multiple select filters are different
-- single select filter default is `emptySearchTermReturnAllValues: true`
-- multiple select filter default is `emptySearchTermReturnAllValues: false`
+- single select filter default is `processEmptySearchTerms: false` (or deprecated `emptySearchTermReturnAllValues: true`)
+- multiple select filter default is `processEmptySearchTerms: true` (or deprecated `emptySearchTermReturnAllValues: false`)
 
 ```ts
 // define you columns, in this demo Effort Driven will use a Select Filter
 this.columnDefinitions = [
-  { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
+  {
+    id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
     type: 'boolean',
     filterable: true,
     filter: {
        collection: [ { value: '', label: '' }, { value: true, labelKey: 'TRUE' }, { value: false, label: 'FALSE' } ],
        model: Filters.singleSelect,
-       emptySearchTermReturnAllValues: false, // False when we really want to filter empty values
-   }
+       processEmptySearchTerms: true, // enable it when we really want to filter empty values
+    }
+  }
 ];
 ```
 

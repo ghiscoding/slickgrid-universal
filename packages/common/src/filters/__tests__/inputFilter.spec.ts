@@ -170,6 +170,23 @@ describe('InputFilter', () => {
       expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: '>', searchTerms: ['>9'], shouldTriggerQuery: true });
     });
 
+    it('should call "setValues" with an operator that equals to the input value and use it with `processEmptySearchTerms`', () => {
+      mockColumn.filter!.processEmptySearchTerms = true;
+      gridOptionMock.enableFilterTrimWhiteSpace = true;
+      const spyCallback = vi.spyOn(filterArguments, 'callback');
+
+      filter.init(filterArguments);
+      filter.setValues('!=', '!=');
+      const filterElm = divContainer.querySelector('input.filter-duration') as HTMLInputElement;
+
+      filterElm.focus();
+      filterElm.dispatchEvent(new (window.window as any).Event('keyup', { key: 'a', keyCode: 97, bubbles: true, cancelable: true }));
+      const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('input.filter-duration.filled');
+
+      expect(filterFilledElms.length).toBe(1);
+      expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '!=', searchTerms: ['!='], shouldTriggerQuery: true });
+    });
+
     it('should call "setValues" and include an operator and expect the operator to show up in the output search string shown in the filter input text value', () => {
       filter.init(filterArguments);
 

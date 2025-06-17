@@ -139,8 +139,13 @@ export class InputFilter implements Filter {
   setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString, triggerChange = false): void {
     const searchValues = Array.isArray(values) ? values : [values];
     let newInputValue: SearchTerm = '';
-    for (const value of searchValues) {
+    for (let value of searchValues) {
       if (this.inputFilterType === 'single') {
+        // when dealing with a Grid State/Presets, it could happen that the vlaue and operator are parsed as the same,
+        // if so we'll consider the value to be empty
+        if (value === operator) {
+          value = '';
+        }
         newInputValue = operator ? this.addOptionalOperatorIntoSearchString(value, operator) : value;
       } else {
         newInputValue = `${value}`;
@@ -178,11 +183,13 @@ export class InputFilter implements Filter {
    * @param operator - operator string
    */
   protected addOptionalOperatorIntoSearchString(inputValue: SearchTerm, operator: OperatorType | OperatorString): string {
+    const processEmptySearchTerms =
+      this.columnDef.filter?.processEmptySearchTerms ?? !(this.columnDef.filter?.emptySearchTermReturnAllValues ?? true);
     let searchTermPrefix = '';
     let searchTermSuffix = '';
     let outputValue = inputValue === undefined || inputValue === null ? '' : `${inputValue}`;
 
-    if (operator && outputValue) {
+    if (operator && (outputValue || processEmptySearchTerms)) {
       switch (operator) {
         case '<>':
         case '!=':
@@ -203,9 +210,14 @@ export class InputFilter implements Filter {
           searchTermSuffix = '*';
           break;
       }
+
+      // when enabled, we should filter an empty whitespace value
+      // otherwise an empty string would be ignored and skipped and we don't want that
+      if (processEmptySearchTerms) {
+        outputValue = ' ';
+      }
       outputValue = `${searchTermPrefix}${outputValue}${searchTermSuffix}`;
     }
-
     return outputValue;
   }
 

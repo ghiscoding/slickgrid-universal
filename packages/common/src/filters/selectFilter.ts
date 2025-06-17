@@ -260,12 +260,14 @@ export class SelectFilter implements Filter {
 
   /** Set value(s) on the DOM element */
   setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString, triggerChange = false): void {
-    if (values !== undefined && this._msInstance) {
+    const processEmptySearchTerms =
+      this.columnDef.filter?.processEmptySearchTerms ?? !(this.columnDef.filter?.emptySearchTermReturnAllValues ?? true);
+    if (this._msInstance && (values !== undefined || !processEmptySearchTerms)) {
       values = Array.isArray(values) ? (values.every((x) => isPrimitiveValue(x)) ? values.map(String) : values) : [values];
       this._msInstance.setSelects(values);
     }
 
-    // set the operator when defined
+    // update the CSS filter style when operator is defined
     this.updateFilterStyle(this.getValues().length > 0);
 
     // set the operator when defined

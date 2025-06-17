@@ -149,15 +149,17 @@ export interface ColumnFilter {
   queryField?: string;
 
   /**
-   * Defaults to true, should an empty search term have the effect of returning all results?
-   * Typically that would be True except for a dropdown Select Filter,
-   * we might really want to filter an empty string and/or `undefined` and for these special cases we can set this flag to `false`.
-   *
-   * NOTE: for a dropdown Select Filter, we will assume that on a multipleSelect Filter it should default to `false`
-   * however for a singleSelect Filter (and any other type of Filters) it should default to `true`.
-   * In any case, the user can overrides it this flag.
+   * @deprecated @use `processEmptySearchTerms` (just a rename with a shorter, better and clearer flag name)
+   * NOTE: `processEmptySearchTerms` is the inverse of `emptySearchTermReturnAllValues` (if you had it set to `false` then use the new `processEmptySearchTerms: true`)
    */
   emptySearchTermReturnAllValues?: boolean;
+
+  /**
+   * Defaults to `false`, when set to `true` an empty string search term would be applied and stored as Grid State/Presets.
+   * But when set to `false` (default), an empty search terms has the default behavior of returning all values.
+   * For example, typically an empty value would be skipped and not saved as Grid State/Presets
+   */
+  processEmptySearchTerms?: boolean;
 
   /**
    * Should we skip filtering when the Operator is changed before the Compound Filter input.
