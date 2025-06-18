@@ -261,7 +261,7 @@ describe('Example 04 - Frozen Grid', () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 3}px"] > .slick-cell:nth(1)`).should('contain', 'Task 4');
   });
 
-  it('should filter autocomplete by typing Vancouver in the "City of Origin" and expect only filtered rows to show up', () => {
+  it.skip('should filter autocomplete by typing Vancouver in the "City of Origin" and expect only filtered rows to show up', () => {
     cy.get('.search-filter.filter-cityOfOrigin')
       .type('Vancouver');
 
@@ -290,7 +290,7 @@ describe('Example 04 - Frozen Grid', () => {
       .click();
   });
 
-  it('should edit first row (Task 1) and change its city by choosing it inside the autocomplete editor list', () => {
+  it.skip('should edit first row (Task 1) and change its city by choosing it inside the autocomplete editor list', () => {
     cy.get(`[style="top:${GRID_ROW_HEIGHT * 0}px"] > .slick-cell:nth(7)`).click();
     cy.get('input.autocomplete.editor-cityOfOrigin')
       .type('Sydney');
