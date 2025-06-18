@@ -24,17 +24,6 @@
         enabled: false,
       },
     },
-    {
-      description: 'Group all Aurelia dependencies',
-      matchFileNames: ['frameworks/aurelia-slickgrid/**', 'demos/aurelia/**'],
-      groupName: 'Aurelia dependencies',
-    },
-    {
-      // let's group React & Vue since they have similar implementation and not too many deps
-      description: 'Group all React/Vue dependencies',
-      matchFileNames: ['frameworks/slickgrid-react/**', 'frameworks/slickgrid-vue/**', 'demos/react/**', 'demos/vue/**'],
-      groupName: 'React and VueJS dependencies',
-    },
   ],
   ignoreDeps: ['lee-dohm/no-response', 'node', 'pnpm'],
   schedule: ['every 4 weeks on friday'],

@@ -130,7 +130,7 @@
     "rxjs": "catalog:",
     "sortablejs": "catalog:",
     "typescript": "catalog:",
-    "typescript-eslint": "^8.34.0",
+    "typescript-eslint": "catalog:",
     "vitest": "catalog:"
   },
   "funding": {
