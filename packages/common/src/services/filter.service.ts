@@ -438,7 +438,7 @@ export class FilterService {
       // group (2): comboStartsWith, (3): comboEndsWith, (4): Operator, (1 or 5): searchValue, (6): last char is '*' (meaning starts with, ex.: abc*)
       matches =
         autoParseInputFilterOperator !== false
-          ? fieldSearchValue.match(/^((.*[^\\*\r\n])[*]{1}(.*[^*\r\n]))|^([<>!=*]{0,2})(.*[^<>!=*])([*]?)$/) || []
+          ? fieldSearchValue.match(/^((.*[^\\*\r\n])[*]{1}(.*[^*\r\n]))|^([<>!=*]{0,2})(.*[^<>!=*])?([*])*$/) || []
           : [fieldSearchValue, '', '', '', '', fieldSearchValue, ''];
     }
 
@@ -727,8 +727,6 @@ export class FilterService {
       for (const colId of Object.keys(this._columnFilters)) {
         const columnFilter = this._columnFilters[colId];
         const filter = { columnId: colId || '' } as CurrentFilter;
-        const columnDef = this.sharedService.allColumns.find((col) => col.id === filter.columnId);
-        const emptySearchTermReturnAllValues = columnDef?.filter?.emptySearchTermReturnAllValues ?? true;
 
         if (columnFilter?.searchTerms) {
           filter.searchTerms = columnFilter.searchTerms;
@@ -739,11 +737,7 @@ export class FilterService {
         if (columnFilter.targetSelector) {
           filter.targetSelector = columnFilter.targetSelector;
         }
-        if (
-          Array.isArray(filter.searchTerms) &&
-          filter.searchTerms.length > 0 &&
-          (!emptySearchTermReturnAllValues || filter.searchTerms[0] !== '')
-        ) {
+        if (Array.isArray(filter.searchTerms) && filter.searchTerms.length > 0) {
           currentFilters.push(filter);
         }
       }

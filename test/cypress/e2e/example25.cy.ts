@@ -241,6 +241,30 @@ describe('Example 25 - Range Filters', () => {
             });
         });
     });
+
+    it('should clear all filters and filter Description using only "=" and expect only rows with empty description to show up', () => {
+      cy.get('[data-test=clear-filters]').click();
+
+      cy.get('.search-filter.filter-description').type('=');
+
+      cy.get(`.grid25 [data-row="0"] > .slick-cell:nth(1)`).should('be.empty', '');
+      cy.get(`.grid25 [data-row="1"] > .slick-cell:nth(1)`).should('be.empty', '');
+      cy.get(`.grid25 [data-row="2"] > .slick-cell:nth(1)`).should('be.empty', '');
+      cy.get(`.grid25 [data-row="3"] > .slick-cell:nth(1)`).should('be.empty', '');
+      cy.get(`.grid25 [data-row="4"] > .slick-cell:nth(1)`).should('be.empty', '');
+    });
+
+    it('should clear all filters and filter Description using only "=" and expect only rows with empty description to show up', () => {
+      cy.get('[data-test=clear-filters]').click();
+
+      cy.get('.search-filter.filter-description').type('!=');
+
+      cy.get(`.grid25 [data-row="0"] > .slick-cell:nth(1)`).should('not.be.empty');
+      cy.get(`.grid25 [data-row="1"] > .slick-cell:nth(1)`).should('not.be.empty');
+      cy.get(`.grid25 [data-row="2"] > .slick-cell:nth(1)`).should('not.be.empty');
+      cy.get(`.grid25 [data-row="3"] > .slick-cell:nth(1)`).should('not.be.empty');
+      cy.get(`.grid25 [data-row="4"] > .slick-cell:nth(1)`).should('not.be.empty');
+    });
   });
 
   describe('Set Dynamic Sorting', () => {
