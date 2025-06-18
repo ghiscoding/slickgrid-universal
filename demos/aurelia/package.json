@@ -62,7 +62,6 @@
     "dompurify": "catalog:",
     "npm-run-all2": "catalog:",
     "sass": "catalog:",
-    "ts-node": "^10.9.2",
     "tslib": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
