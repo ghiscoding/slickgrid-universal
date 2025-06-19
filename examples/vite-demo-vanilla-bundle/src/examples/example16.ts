@@ -400,7 +400,7 @@ export default class Example16 {
         id: i,
         title: 'Task ' + i,
         duration: Math.round(Math.random() * 100),
-        description: `This is a sample task description.\nIt can be multiline\r\rAnother line...`,
+        description: i > 420 ? null : `This is a sample task description.\nIt can be multiline\r\rAnother line...`,
         percentComplete: Math.floor(Math.random() * (100 - 5 + 1) + 5),
         start: new Date(randomYear, randomMonth, randomDay),
         finish: randomFinish < new Date() ? '' : randomFinish, // make sure the random date is earlier than today
@@ -436,6 +436,12 @@ export default class Example16 {
         }
         break;
     }
+  }
+
+  setFiltersDynamically(descOperator: OperatorType) {
+    this.sgb?.filterService.updateFilters([
+      { columnId: 'desc2', searchTerms: [''], operator: descOperator },
+    ]);
   }
 
   headerFormatter(_row, _cell, _value, column) {

@@ -189,7 +189,7 @@ export class InputFilter implements Filter {
     let searchTermSuffix = '';
     let outputValue = inputValue === undefined || inputValue === null ? '' : `${inputValue}`;
 
-    if (operator && outputValue) {
+    if (operator) {
       switch (operator) {
         case '<>':
         case '!=':
