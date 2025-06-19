@@ -197,6 +197,12 @@ describe('InputFilter', () => {
       filter.setValues(123, '>=');
       expect(filter.getValues()).toBe('>=123');
 
+      filter.setValues('', '=');
+      expect(filter.getValues()).toBe('=');
+
+      filter.setValues('', '!=');
+      expect(filter.getValues()).toBe('!=');
+
       filter.setValues('abc', 'EndsWith');
       expect(filter.getValues()).toBe('*abc');
 
