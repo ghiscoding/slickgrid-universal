@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, test } from 'vitest';
+import { beforeEach, describe, expect, it, test, vi } from 'vitest';
 
 import {
   addToArrayWhenNotExists,
@@ -26,6 +26,7 @@ import {
   toSnakeCase,
   uniqueArray,
   uniqueObjectArray,
+  queueMicrotaskOrSetTimeout,
 } from '../utils.js';
 
 function removeExtraSpaces(text: string) {
@@ -659,6 +660,57 @@ describe('Service/Utilies', () => {
       expect(output2).toBe(false);
       expect(output3).toBe(false);
     });
+  });
+
+  describe('queueMicrotaskOrSetTimeout() method', () => {
+    it('use queueMicrotask() when available', () =>
+      new Promise((done: any) => {
+        const callback = vi.fn();
+
+        // Mock queueMicrotask
+        const queueMicrotaskSpy = vi.spyOn(global, 'queueMicrotask');
+
+        // Call the function being tested
+        queueMicrotaskOrSetTimeout(callback);
+
+        // Wait for the callback to be executed
+        setTimeout(() => {
+          expect(queueMicrotaskSpy).toHaveBeenCalledWith(callback);
+          expect(callback).toHaveBeenCalledTimes(1);
+          queueMicrotaskSpy.mockRestore();
+          done();
+        }, 10);
+      }));
+
+    it('use setTimeout() fallback when queueMicrotask() is not available', () =>
+      new Promise((done: any) => {
+        const callback = vi.fn();
+
+        // Mock queueMicrotask
+        const queueMicrotaskSpy = vi.spyOn(global, 'queueMicrotask');
+        queueMicrotaskSpy.mockImplementation(() => {
+          // Simulate queueMicrotask throwing an error
+          throw new Error('queueMicrotask not available');
+        });
+
+        // Mock setTimeout
+        const setTimeoutSpy = vi.spyOn(global, 'setTimeout');
+
+        // Call the function being tested
+        queueMicrotaskOrSetTimeout(callback);
+
+        // Assertions
+        expect(queueMicrotaskSpy).toHaveBeenCalledWith(callback);
+        expect(setTimeoutSpy).toHaveBeenCalledWith(expect.any(Function), 0);
+
+        // Wait for the callback to be executed
+        setTimeout(() => {
+          expect(callback).toHaveBeenCalledTimes(1);
+          queueMicrotaskSpy.mockRestore();
+          setTimeoutSpy.mockRestore();
+          done();
+        }, 10);
+      }));
   });
 
   describe('removeAccentFromText() method', () => {
