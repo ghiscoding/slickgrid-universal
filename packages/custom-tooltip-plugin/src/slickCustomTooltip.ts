@@ -72,7 +72,6 @@ export class SlickCustomTooltip {
   protected _sharedService?: SharedService | null = null;
   protected _tooltipBodyElm?: HTMLDivElement;
   protected _tooltipElm?: HTMLDivElement;
-  protected _mousePosition: { x: number; y: number } = { x: 0, y: 0 };
   protected _mouseTarget?: HTMLElement | null;
   protected _hasMultipleTooltips = false;
   protected _defaultOptions = {
@@ -210,8 +209,7 @@ export class SlickCustomTooltip {
   /** depending on the selector type, execute the necessary handler code */
   protected handleOnHeaderMouseOverByType(event: SlickEventData, args: any, selector: CellType): void {
     this._cellType = selector;
-    this._mousePosition = { x: event.clientX || 0, y: event.clientY || 0 };
-    this._mouseTarget = document.elementFromPoint(event.clientX || 0, event.clientY || 0)?.closest(SELECTOR_CLOSEST_TOOLTIP_ATTR);
+    this._mouseTarget = event.target?.closest(SELECTOR_CLOSEST_TOOLTIP_ATTR);
 
     // before doing anything, let's remove any previous tooltip before
     // and cancel any opened Promise/Observable when using async
@@ -256,8 +254,7 @@ export class SlickCustomTooltip {
 
   protected async handleOnMouseOver(event: SlickEventData): Promise<void> {
     this._cellType = 'slick-cell';
-    this._mousePosition = { x: event.clientX || 0, y: event.clientY || 0 };
-    this._mouseTarget = document.elementFromPoint(event.clientX || 0, event.clientY || 0)?.closest(SELECTOR_CLOSEST_TOOLTIP_ATTR);
+    this._mouseTarget = event.target?.closest(SELECTOR_CLOSEST_TOOLTIP_ATTR);
 
     // before doing anything, let's remove any previous tooltip before
     // and cancel any opened Promise/Observable when using async
