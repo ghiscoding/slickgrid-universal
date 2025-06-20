@@ -240,6 +240,15 @@ export function parseBoolean(input: any): boolean {
   return /(true|1)/i.test(input + '');
 }
 
+/** use `queueMicrotask()` when available, otherwise fallback to `setTimeout` for Salesforce LWC locker service */
+export function queueMicrotaskOrSetTimeout(callback: () => void): void {
+  try {
+    queueMicrotask(callback);
+  } catch {
+    setTimeout(callback, 0);
+  }
+}
+
 /**
  * Remove any accents from a string by normalizing it
  * @param {String} text - input text

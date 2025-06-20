@@ -14,6 +14,7 @@ import type { SharedService } from './shared.service.js';
 import { propertyObserver } from './observers.js';
 import type { Observable, RxJsFacade } from './rxjsFacade.js';
 import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index.js';
+import { queueMicrotaskOrSetTimeout } from '@slickgrid-universal/utils';
 
 export class PaginationService {
   protected _eventHandler: SlickEventHandler;
@@ -143,7 +144,7 @@ export class PaginationService {
           };
         }
       });
-      queueMicrotask(() => {
+      queueMicrotaskOrSetTimeout(() => {
         if (this.dataView) {
           this.dataView.setRefreshHints({ isFilterUnchanged: true });
           this.dataView.setPagingOptions({ pageSize: this.paginationOptions.pageSize, pageNum: this._pageNumber - 1 }); // dataView page starts at 0 instead of 1
