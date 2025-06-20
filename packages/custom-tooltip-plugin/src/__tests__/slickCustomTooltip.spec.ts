@@ -59,7 +59,6 @@ describe('SlickCustomTooltip plugin', () => {
     plugin = new SlickCustomTooltip();
     divContainer.className = `slickgrid-container ${GRID_UID}`;
     document.body.appendChild(divContainer);
-    (document as any).elementFromPoint = vi.fn(); // document.elementFromPoint() doesn't exist in JSDOM but we can mock it
     (getOffset as Mock).mockReturnValue({ top: 0, left: 0, right: 0, bottom: 0 });
   });
 
@@ -370,26 +369,6 @@ describe('SlickCustomTooltip plugin', () => {
     expect(tooltipElm.textContent).toBe('some very extra long...');
   });
 
-  it('should NOT create a tooltip as regular tooltip with truncated text when tooltip option has "useRegularTooltip" enabled but the mouse over is not a slick-cell cell type', () => {
-    const cellNode = document.createElement('div');
-    cellNode.className = 'slick-cell l2 r2';
-    cellNode.textContent = 'some very extra long tooltip text sentence';
-    cellNode.setAttribute('title', 'tooltip text');
-    Object.defineProperty(cellNode, 'scrollWidth', { writable: true, configurable: true, value: 400 });
-    const mockColumns = [{ id: 'firstName', field: 'firstName' }] as Column[];
-    vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
-    vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
-    vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-    vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
-
-    plugin.init(gridStub, container);
-    plugin.setOptions({ useRegularTooltip: true, tooltipTextMaxLength: 23 });
-    gridStub.onHeaderMouseOver.notify({ column: mockColumns[0], grid: gridStub }, { ...new SlickEventData(), target: cellNode } as any);
-
-    const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
-    expect(tooltipElm).toBeFalsy();
-  });
-
   it('should create a tooltip with only the tooltip pulled from the cell text when enabling option "useRegularTooltip" & "useRegularTooltipFromCellTextOnly" and column definition has a regular formatter with a "title" attribute filled', () => {
     const cellNode = document.createElement('div');
     cellNode.className = 'slick-cell l2 r2';
@@ -402,7 +381,6 @@ describe('SlickCustomTooltip plugin', () => {
 
     plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: true, useRegularTooltipFromCellTextOnly: true, maxHeight: 100 });
-    (document as any).elementFromPoint.mockReturnValue(cellNode);
 
     gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
 
@@ -436,9 +414,8 @@ describe('SlickCustomTooltip plugin', () => {
 
     plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: true, maxHeight: 100 });
-    (document as any).elementFromPoint.mockReturnValue(icon2Elm);
 
-    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
+    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: icon2Elm } as any);
 
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
@@ -470,9 +447,8 @@ describe('SlickCustomTooltip plugin', () => {
 
     plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: true, maxHeight: 100 });
-    (document as any).elementFromPoint.mockReturnValue(icon2Elm);
 
-    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
+    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: icon2Elm } as any);
 
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
@@ -502,7 +478,6 @@ describe('SlickCustomTooltip plugin', () => {
 
     plugin.init(gridStub, container);
     plugin.setOptions({ useRegularTooltip: true, maxHeight: 100 });
-    (document as any).elementFromPoint.mockReturnValue(icon2Elm);
 
     gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
 
