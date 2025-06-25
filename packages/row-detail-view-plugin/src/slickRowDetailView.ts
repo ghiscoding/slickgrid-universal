@@ -784,6 +784,11 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
   protected handleRemoveRow(rowIndex: number): void {
     const item = this.dataView.getItemByIdx(rowIndex);
+    
+    if (!item) {
+      return;
+    }
+    
     const rowId = item[this.dataViewIdProperty];
 
     if (this._expandedRowIds.has(rowId)) {
