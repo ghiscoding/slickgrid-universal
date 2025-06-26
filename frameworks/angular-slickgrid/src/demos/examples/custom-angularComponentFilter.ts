@@ -14,13 +14,14 @@ import {
   type SlickGrid,
   unsubscribeAllObservables,
 } from '../../library';
+import { FilterNgSelectComponent } from './filter-ng-select.component';
 
 export class CustomAngularComponentFilter implements Filter {
   private _shouldTriggerQuery = true;
   private _subscriptions: Subscription[] = [];
 
   /** Angular Component Reference */
-  componentRef!: ComponentRef<any>;
+  componentRef!: ComponentRef<FilterNgSelectComponent>;
 
   grid!: SlickGrid;
   searchTerms: SearchTerm[] = [];
@@ -79,11 +80,11 @@ export class CustomAngularComponentFilter implements Filter {
         this.componentRef = componentOuput.componentRef;
 
         this._subscriptions.push(
-          componentOuput.componentRef.instance.onItemChanged.subscribe((item: any) => {
+          componentOuput.componentRef.instance.onItemChanged.subscribe((items: any[]) => {
             this.callback(undefined, {
               columnDef: this.columnDef,
               operator: this.operator,
-              searchTerms: [item.id],
+              searchTerms: items.map((item) => item.id),
               shouldTriggerQuery: this._shouldTriggerQuery,
             });
             // reset flag for next use
@@ -99,8 +100,8 @@ export class CustomAngularComponentFilter implements Filter {
    */
   clear(shouldTriggerQuery = true) {
     this._shouldTriggerQuery = shouldTriggerQuery;
-    if (this.componentRef?.instance && 'selectedId' in this.componentRef.instance) {
-      this.componentRef.instance.selectedId = 0;
+    if (this.componentRef?.instance) {
+      this.componentRef.instance.selectedIds.set([]);
     }
   }
 
@@ -116,8 +117,9 @@ export class CustomAngularComponentFilter implements Filter {
 
   /** Set value(s) on the DOM element */
   setValues(values: SearchTerm[] | SearchTerm) {
-    if (this.componentRef?.instance && 'selectedId' in this.componentRef.instance) {
-      this.componentRef.instance.selectedId = values;
+    if (this.componentRef?.instance) {
+      const value = values instanceof Array ? values : [values];
+      this.componentRef.instance.selectedIds.set(value);
     }
   }
 }

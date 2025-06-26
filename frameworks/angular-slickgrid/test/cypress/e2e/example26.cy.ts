@@ -103,6 +103,30 @@ describe('Example 26 - Use of Angular Components', () => {
       });
   });
 
+  it('should render the Custom Tooltip on top of the ng-select multi value component', () => {
+    cy.get('.slick-headerrow-column:nth(2)').find('ng-select').click();
+    cy.get('.ng-option:nth(1)').click();
+
+    cy.get('.slick-headerrow-column:nth(2)').find('ng-select').click();
+    cy.get('.ng-option:nth(2)').click();
+
+    cy.wait(1000);
+
+    cy.get('.ng-value:nth(1)')
+      .realHover()
+      .then(() => {
+        cy.get('.slick-custom-tooltip').should('exist');
+        cy.get('.slick-custom-tooltip').should('contain', 'Pierre');
+      });
+
+    cy.get('.ng-value:nth(0)')
+      .realHover()
+      .then(() => {
+        cy.get('.slick-custom-tooltip').should('exist');
+        cy.get('.slick-custom-tooltip').should('contain', 'John');
+      });
+  });
+
   it('should remove Angular Component rendered for AsyncPostRender once content is copied', () => {
     cy.visit(`${Cypress.config('baseUrl')}/angular-components`);
 
