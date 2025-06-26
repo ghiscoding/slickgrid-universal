@@ -20,6 +20,7 @@ import { CustomAngularComponentFilter } from './custom-angularComponentFilter';
 import { CustomTitleFormatterComponent } from './custom-titleFormatter.component';
 import { FilterNgSelectComponent } from './filter-ng-select.component';
 import { CustomButtonFormatterComponent } from './custom-buttonFormatter.component';
+import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 
 const NB_ITEMS = 100;
 
@@ -278,6 +279,7 @@ export class Example26Component implements OnInit {
         this._commandQueue.push(editCommand);
         editCommand.execute();
       },
+      externalResources: [new SlickCustomTooltip()],
       i18n: this.translate,
       params: {
         angularUtilService: this.angularUtilService, // provide the service to all at once (Editor, Filter, AsyncPostRender)
