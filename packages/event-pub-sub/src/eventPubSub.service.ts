@@ -78,23 +78,26 @@ export class EventPubSubService implements BasePubSubService {
    * @returns {String} - output event name
    */
   getEventNameByNamingConvention(inputEventName: string, eventNamePrefix: string): string {
-    let outputEventName = '';
+    let namingStyle = this.eventNamingStyle;
+    let outputEventName = inputEventName;
 
-    if (this.eventNamingStyle === EventNamingStyle.lowerCaseWithoutOnPrefix) {
+    if (namingStyle === EventNamingStyle.lowerCaseWithoutOnPrefix) {
       outputEventName = `${eventNamePrefix}${inputEventName.replace(/^on/, '')}`;
-    } else if (this.eventNamingStyle === EventNamingStyle.camelCaseWithExtraOnPrefix) {
+      namingStyle = EventNamingStyle.lowerCase; // we will use lowerCase for the rest of the code
+    } else if (namingStyle === EventNamingStyle.camelCaseWithExtraOnPrefix) {
       outputEventName = `${eventNamePrefix}${inputEventName.replace(/^on/, 'onOn')}`;
+      namingStyle = EventNamingStyle.camelCase; // we will use camelCase for the rest of the code
     }
 
-    switch (this.eventNamingStyle) {
+    switch (namingStyle) {
       case EventNamingStyle.camelCase:
-        outputEventName = eventNamePrefix !== '' ? `${eventNamePrefix}${titleCase(inputEventName)}` : inputEventName;
+        outputEventName = eventNamePrefix !== '' ? `${eventNamePrefix}${titleCase(outputEventName)}` : outputEventName;
         break;
       case EventNamingStyle.kebabCase:
-        outputEventName = eventNamePrefix !== '' ? `${eventNamePrefix}-${toKebabCase(inputEventName)}` : toKebabCase(inputEventName);
+        outputEventName = eventNamePrefix !== '' ? `${eventNamePrefix}-${toKebabCase(outputEventName)}` : toKebabCase(outputEventName);
         break;
       case EventNamingStyle.lowerCase:
-        outputEventName = `${eventNamePrefix}${inputEventName}`.toLowerCase();
+        outputEventName = `${eventNamePrefix}${outputEventName}`.toLowerCase();
         break;
     }
     return outputEventName;
