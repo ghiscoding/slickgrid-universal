@@ -78,25 +78,24 @@ export class EventPubSubService implements BasePubSubService {
    * @returns {String} - output event name
    */
   getEventNameByNamingConvention(inputEventName: string, eventNamePrefix: string): string {
-    let namingStyle = this.eventNamingStyle;
     let outputEventName = inputEventName;
 
-    if (namingStyle === EventNamingStyle.lowerCaseWithoutOnPrefix) {
-      outputEventName = `${eventNamePrefix}${inputEventName.replace(/^on/, '')}`;
-      namingStyle = EventNamingStyle.lowerCase; // we will use lowerCase for the rest of the code
-    } else if (namingStyle === EventNamingStyle.camelCaseWithExtraOnPrefix) {
-      outputEventName = `${eventNamePrefix}${inputEventName.replace(/^on/, 'onOn')}`;
-      namingStyle = EventNamingStyle.camelCase; // we will use camelCase for the rest of the code
-    }
-
-    switch (namingStyle) {
+    switch (this.eventNamingStyle) {
       case EventNamingStyle.camelCase:
+      case EventNamingStyle.camelCaseWithExtraOnPrefix:
+        if (this.eventNamingStyle === EventNamingStyle.camelCaseWithExtraOnPrefix) {
+          outputEventName = `${eventNamePrefix}${inputEventName.replace(/^on/, 'onOn')}`;
+        }
         outputEventName = eventNamePrefix !== '' ? `${eventNamePrefix}${titleCase(outputEventName)}` : outputEventName;
         break;
       case EventNamingStyle.kebabCase:
         outputEventName = eventNamePrefix !== '' ? `${eventNamePrefix}-${toKebabCase(outputEventName)}` : toKebabCase(outputEventName);
         break;
       case EventNamingStyle.lowerCase:
+      case EventNamingStyle.lowerCaseWithoutOnPrefix:
+        if (this.eventNamingStyle === EventNamingStyle.lowerCaseWithoutOnPrefix) {
+          outputEventName = `${eventNamePrefix}${inputEventName.replace(/^on/, '')}`;
+        }
         outputEventName = `${eventNamePrefix}${outputEventName}`.toLowerCase();
         break;
     }
