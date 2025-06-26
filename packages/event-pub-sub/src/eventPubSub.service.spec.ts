@@ -139,21 +139,61 @@ describe('EventPubSub Service', () => {
       service.unsubscribeAll();
     });
 
-    it('should call subscribe method and expect "addEventListener" and "getEventNameByNamingConvention" to be called', () => {
+    it('should call subscribe method and expect "addEventListener" and "getEventNameByNamingConvention" to be called with camelCase event name', () => {
+      const addEventSpy = vi.spyOn(divContainer, 'addEventListener');
+      const getEventNameSpy = vi.spyOn(service, 'getEventNameByNamingConvention');
+      const mockCallback = vi.fn();
+
+      service.eventNamingStyle = EventNamingStyle.camelCase;
+      const subscription = service.subscribeEvent('onDblClick', mockCallback);
+      divContainer.dispatchEvent(new CustomEvent('onDblClick', { composed: true, detail: { name: 'John' } }));
+
+      expect(getEventNameSpy).toHaveBeenCalledWith('onDblClick', '');
+      expect(service.subscribedEventNames).toEqual(['onDblClick']);
+      expect(service.subscribedEvents.length).toBe(1);
+      expect(addEventSpy).toHaveBeenCalledWith('onDblClick', expect.any(Function));
+      expect(mockCallback).toHaveBeenCalledTimes(1);
+
+      subscription.unsubscribe();
+      expect(service.subscribedEvents.length).toBe(0);
+    });
+
+    it('should call subscribe method and expect "addEventListener" and "getEventNameByNamingConvention" to be called with lowerCase event name', () => {
+      const addEventSpy = vi.spyOn(divContainer, 'addEventListener');
+      const getEventNameSpy = vi.spyOn(service, 'getEventNameByNamingConvention');
+      const mockCallback = vi.fn();
+
+      service.eventNamingStyle = EventNamingStyle.lowerCase;
+      const subscription = service.subscribeEvent('onDblClick', mockCallback);
+      divContainer.dispatchEvent(new CustomEvent('ondblclick', { composed: true, detail: { name: 'John' } }));
+
+      expect(getEventNameSpy).toHaveBeenCalledWith('onDblClick', '');
+      expect(service.subscribedEventNames).toEqual(['ondblclick']);
+      expect(service.subscribedEvents.length).toBe(1);
+      expect(addEventSpy).toHaveBeenCalledWith('ondblclick', expect.any(Function));
+      expect(mockCallback).toHaveBeenCalledTimes(1);
+
+      subscription.unsubscribe();
+      expect(service.subscribedEvents.length).toBe(0);
+    });
+
+    it('should call subscribe method and expect "addEventListener" and "getEventNameByNamingConvention" to be called with lowerCase but without "on" Prefix', () => {
       const addEventSpy = vi.spyOn(divContainer, 'addEventListener');
       const getEventNameSpy = vi.spyOn(service, 'getEventNameByNamingConvention');
       const mockCallback = vi.fn();
 
       service.eventNamingStyle = EventNamingStyle.lowerCaseWithoutOnPrefix;
-      service.subscribeEvent('click', mockCallback);
-      divContainer.dispatchEvent(new CustomEvent('click', { detail: { name: 'John' } }));
+      const subscription = service.subscribeEvent('onDblClick', mockCallback);
+      divContainer.dispatchEvent(new CustomEvent('dblclick', { composed: true, detail: { name: 'John' } }));
 
-      expect(getEventNameSpy).toHaveBeenCalledWith('click', '');
-      expect(service.subscribedEventNames).toEqual(['click']);
+      expect(getEventNameSpy).toHaveBeenCalledWith('onDblClick', '');
+      expect(service.subscribedEventNames).toEqual(['dblclick']);
       expect(service.subscribedEvents.length).toBe(1);
-      expect(addEventSpy).toHaveBeenCalledWith('click', expect.any(Function));
+      expect(addEventSpy).toHaveBeenCalledWith('dblclick', expect.any(Function));
       expect(mockCallback).toHaveBeenCalledTimes(1);
-      // expect(mockCallback).toHaveBeenCalledWith({ detail: { name: 'John' } });
+
+      subscription.unsubscribe();
+      expect(service.subscribedEvents.length).toBe(0);
     });
 
     it('should call subscribe method and expect "addEventListener" and "getEventNameByNamingConvention" to be called with kebabCase', () => {
@@ -162,15 +202,14 @@ describe('EventPubSub Service', () => {
       const mockCallback = vi.fn();
 
       service.eventNamingStyle = EventNamingStyle.kebabCase;
-      const subscription = service.subscribeEvent('onClick', mockCallback);
-      divContainer.dispatchEvent(new CustomEvent('on-click', { composed: true, detail: { name: 'John' } }));
+      const subscription = service.subscribeEvent('onDblClick', mockCallback);
+      divContainer.dispatchEvent(new CustomEvent('on-dbl-click', { composed: true, detail: { name: 'John' } }));
 
-      expect(getEventNameSpy).toHaveBeenCalledWith('onClick', '');
-      expect(service.subscribedEventNames).toEqual(['on-click']);
+      expect(getEventNameSpy).toHaveBeenCalledWith('onDblClick', '');
+      expect(service.subscribedEventNames).toEqual(['on-dbl-click']);
       expect(service.subscribedEvents.length).toBe(1);
-      expect(addEventSpy).toHaveBeenCalledWith('on-click', expect.any(Function));
+      expect(addEventSpy).toHaveBeenCalledWith('on-dbl-click', expect.any(Function));
       expect(mockCallback).toHaveBeenCalledTimes(1);
-      // expect(mockCallback).toHaveBeenCalledWith({ detail: { name: 'John' } });
 
       subscription.unsubscribe();
       expect(service.subscribedEvents.length).toBe(0);
@@ -182,15 +221,14 @@ describe('EventPubSub Service', () => {
       const mockCallback = vi.fn();
 
       service.eventNamingStyle = EventNamingStyle.camelCaseWithExtraOnPrefix;
-      const subscription = service.subscribeEvent('onClick', mockCallback);
-      divContainer.dispatchEvent(new CustomEvent('onOnClick', { composed: true, detail: { name: 'John' } }));
+      const subscription = service.subscribeEvent('onDblClick', mockCallback);
+      divContainer.dispatchEvent(new CustomEvent('onOnDblClick', { composed: true, detail: { name: 'John' } }));
 
-      expect(getEventNameSpy).toHaveBeenCalledWith('onClick', '');
-      expect(service.subscribedEventNames).toEqual(['onOnClick']);
+      expect(getEventNameSpy).toHaveBeenCalledWith('onDblClick', '');
+      expect(service.subscribedEventNames).toEqual(['onOnDblClick']);
       expect(service.subscribedEvents.length).toBe(1);
-      expect(addEventSpy).toHaveBeenCalledWith('onOnClick', expect.any(Function));
+      expect(addEventSpy).toHaveBeenCalledWith('onOnDblClick', expect.any(Function));
       expect(mockCallback).toHaveBeenCalledTimes(1);
-      // expect(mockCallback).toHaveBeenCalledWith({ detail: { name: 'John' } });
 
       subscription.unsubscribe();
       expect(service.subscribedEvents.length).toBe(0);
