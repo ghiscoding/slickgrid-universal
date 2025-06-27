@@ -56,12 +56,8 @@ export class BindingHelper {
     callback: EventListenerOrEventListenerObject,
     options?: boolean | AddEventListenerOptions
   ): void {
-    const elements = document.querySelectorAll<T>(`${this.querySelectorPrefix}${selector}`);
-
-    elements.forEach((elm) => {
-      if (elm?.addEventListener) {
-        elm.addEventListener(eventName, callback, options);
-      }
+    document.querySelectorAll<T>(`${this.querySelectorPrefix}${selector}`).forEach((elm) => {
+      elm?.addEventListener(eventName, callback, options);
     });
   }
 
