@@ -253,7 +253,6 @@
   .slick-group-header-columns {
     position: relative;
     white-space: nowrap;
-    cursor: default;
     overflow: hidden;
   }
 
@@ -345,7 +344,6 @@
   .slick-footerrow-columns {
     position: relative;
     white-space: nowrap;
-    cursor: default;
     overflow: hidden;
     margin: 0;
     padding: 0;
@@ -373,7 +371,6 @@
     vertical-align: middle;
     z-index: 1;
     white-space: nowrap;
-    cursor: default;
 
     // do not include a bottom border for the bottom-most = leaf header cells:
     // that border will be provided by the rows container.
