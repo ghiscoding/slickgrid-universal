@@ -129,7 +129,7 @@ catalogs:
 
 patchedDependencies:
   vanilla-calendar-pro:
-    hash: 07ab215e6440e1fb903499ec791def717b33cb53af9bbb0da28ca23b2c443c34
+    hash: 10a8e5bb899003cbf23793e3de0fe803ec07f1638fc674a64f82526b95810c1b
     path: patches/vanilla-calendar-pro.patch
 
 importers:
@@ -1184,7 +1184,7 @@ importers:
         version: 2.0.12
       vanilla-calendar-pro:
         specifier: ^3.0.4
-        version: 3.0.4(patch_hash=07ab215e6440e1fb903499ec791def717b33cb53af9bbb0da28ca23b2c443c34)
+        version: 3.0.4(patch_hash=10a8e5bb899003cbf23793e3de0fe803ec07f1638fc674a64f82526b95810c1b)
     devDependencies:
       autoprefixer:
         specifier: ^10.4.21
@@ -24232,7 +24232,7 @@ snapshots:
 
   validate-npm-package-name@6.0.0: {}
 
-  vanilla-calendar-pro@3.0.4(patch_hash=07ab215e6440e1fb903499ec791def717b33cb53af9bbb0da28ca23b2c443c34): {}
+  vanilla-calendar-pro@3.0.4(patch_hash=10a8e5bb899003cbf23793e3de0fe803ec07f1638fc674a64f82526b95810c1b): {}
 
   varint@6.0.0: {}
 
