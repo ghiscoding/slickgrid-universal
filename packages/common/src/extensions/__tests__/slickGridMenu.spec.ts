@@ -103,7 +103,7 @@ describe('GridMenuControl', () => {
   let translateService: TranslateServiceStub;
   let sharedService: SharedService;
 
-  const gridMenuOptionsMock = {
+  const gridMenuOptionsMock: GridMenu = {
     commandLabels: {
       clearAllFiltersCommandKey: 'CLEAR_ALL_FILTERS',
       clearAllSortingCommandKey: 'CLEAR_ALL_SORTING',
@@ -1156,6 +1156,7 @@ describe('GridMenuControl', () => {
           control.init();
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
             {
+              _orgTitle: '',
               iconCssClass: 'mdi mdi-pin-off-outline',
               titleKey: 'CLEAR_PINNING',
               title: 'Dégeler les colonnes/rangées',
@@ -1175,6 +1176,7 @@ describe('GridMenuControl', () => {
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
             {
+              _orgTitle: '',
               iconCssClass: 'mdi mdi-filter-remove-outline',
               titleKey: 'CLEAR_ALL_FILTERS',
               title: 'Supprimer tous les filtres',
@@ -1183,6 +1185,7 @@ describe('GridMenuControl', () => {
               positionOrder: 50,
             },
             {
+              _orgTitle: '',
               iconCssClass: 'mdi mdi-flip-vertical',
               titleKey: 'TOGGLE_FILTER_ROW',
               title: 'Basculer la ligne des filtres',
@@ -1191,6 +1194,7 @@ describe('GridMenuControl', () => {
               positionOrder: 53,
             },
             {
+              _orgTitle: '',
               iconCssClass: 'mdi mdi-sync',
               titleKey: 'REFRESH_DATASET',
               title: 'Rafraîchir les données',
@@ -1221,6 +1225,7 @@ describe('GridMenuControl', () => {
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
             {
+              _orgTitle: '',
               iconCssClass: 'mdi mdi-filter-remove-outline',
               titleKey: 'CLEAR_ALL_FILTERS',
               title: 'Supprimer tous les filtres',
@@ -1251,6 +1256,7 @@ describe('GridMenuControl', () => {
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
             {
+              _orgTitle: '',
               iconCssClass: 'mdi mdi-flip-vertical',
               titleKey: 'TOGGLE_FILTER_ROW',
               title: 'Basculer la ligne des filtres',
@@ -1280,6 +1286,7 @@ describe('GridMenuControl', () => {
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
             {
+              _orgTitle: '',
               iconCssClass: 'mdi mdi-brightness-4',
               titleKey: 'TOGGLE_DARK_MODE',
               title: 'Basculer le mode clair/sombre',
@@ -1310,6 +1317,7 @@ describe('GridMenuControl', () => {
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
             {
+              _orgTitle: '',
               iconCssClass: 'mdi mdi-sync',
               titleKey: 'REFRESH_DATASET',
               title: 'Rafraîchir les données',
@@ -1329,6 +1337,7 @@ describe('GridMenuControl', () => {
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
             {
+              _orgTitle: '',
               iconCssClass: 'mdi mdi-flip-vertical',
               titleKey: 'TOGGLE_PRE_HEADER_ROW',
               title: 'Basculer la ligne de pré-en-tête',
@@ -1367,6 +1376,7 @@ describe('GridMenuControl', () => {
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
             {
+              _orgTitle: '',
               iconCssClass: 'mdi mdi-sort-variant-off',
               titleKey: 'CLEAR_ALL_SORTING',
               title: 'Supprimer tous les tris',
@@ -1415,6 +1425,7 @@ describe('GridMenuControl', () => {
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
             {
+              _orgTitle: '',
               iconCssClass: 'mdi mdi-download',
               titleKey: 'EXPORT_TO_CSV',
               title: 'Exporter en format CSV',
@@ -1466,6 +1477,7 @@ describe('GridMenuControl', () => {
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
             {
+              _orgTitle: '',
               iconCssClass: 'mdi mdi-file-excel-outline text-success',
               titleKey: 'EXPORT_TO_EXCEL',
               title: 'Exporter vers Excel',
@@ -1495,6 +1507,7 @@ describe('GridMenuControl', () => {
           control.init(); // calling 2x register to make sure it doesn't duplicate commands
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
             {
+              _orgTitle: '',
               iconCssClass: 'mdi mdi-download',
               titleKey: 'EXPORT_TO_TAB_DELIMITED',
               title: 'Exporter en format texte (délimité par tabulation)',
@@ -1843,6 +1856,10 @@ describe('GridMenuControl', () => {
         .mockReturnValue(1);
 
       translateService.use('fr');
+      gridOptionsMock.gridMenu!.commandTitle = '';
+      gridOptionsMock.gridMenu!.columnTitle = '';
+      gridOptionsMock.gridMenu!.forceFitTitle = '';
+      gridOptionsMock.gridMenu!.syncResizeTitle = '';
       gridOptionsMock.gridMenu!.hideForceFitButton = false;
       gridOptionsMock.gridMenu!.hideSyncResizeButton = false;
       gridOptionsMock.syncColumnCellResize = true;
@@ -1852,8 +1869,8 @@ describe('GridMenuControl', () => {
 
       control.columns = columnsMock;
       control.initEventHandlers();
-      control.translateGridMenu();
       control.init();
+      control.translateGridMenu();
       const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLDivElement;
       buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
       control.menuElement!.querySelector('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
@@ -1868,6 +1885,58 @@ describe('GridMenuControl', () => {
       expect((SharedService.prototype.gridOptions.gridMenu as GridMenu).columnTitle).toBe('Colonnes');
       expect((SharedService.prototype.gridOptions.gridMenu as GridMenu).forceFitTitle).toBe('Ajustement forcé des colonnes');
       expect((SharedService.prototype.gridOptions.gridMenu as GridMenu).syncResizeTitle).toBe('Redimension synchrone');
+      expect(columnsMock).toEqual([
+        { id: 'field1', field: 'field1', name: 'Titre', width: 100, nameKey: 'TITLE' },
+        { id: 'field2', field: 'field2', name: 'Field 2', width: 75 },
+        { id: 'field3', field: 'field3', name: 'Field 3', columnGroup: 'Billing', width: 75, excludeFromGridMenu: true },
+      ]);
+      expect(control.getAllColumns()).toEqual(columnsMock);
+      expect(control.getVisibleColumns()).toEqual(columnsMock);
+    });
+
+    it('should not translate when providing custom titles', () => {
+      const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
+      const utilitySpy = vi.spyOn(extensionUtility, 'getPickerTitleOutputString');
+      const translateSpy = vi.spyOn(extensionUtility, 'translateItems');
+      vi.spyOn(gridStub, 'getColumnIndex')
+        .mockReturnValue(undefined as any)
+        .mockReturnValue(1);
+
+      translateService.use('fr');
+      gridOptionsMock.gridMenu!.commandTitle = 'Custom Command Title';
+      gridOptionsMock.gridMenu!.columnTitle = 'Custom Column Title';
+      gridOptionsMock.gridMenu!.forceFitTitle = 'Custom Force Fit Title';
+      gridOptionsMock.gridMenu!.syncResizeTitle = 'Custom Sync Resize Title';
+      gridOptionsMock.gridMenu!.hideForceFitButton = false;
+      gridOptionsMock.gridMenu!.hideSyncResizeButton = false;
+      gridOptionsMock.syncColumnCellResize = true;
+      gridOptionsMock.forceFitColumns = true;
+      vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
+
+      control.columns = columnsMock;
+      control.initEventHandlers();
+      control.init();
+      control.translateGridMenu();
+      const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLDivElement;
+      buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+      control.menuElement!.querySelector('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
+      // const commandTitleElm = control.menuElement!.querySelectorAll('.slickgrid_124343 .slick-menu-command-list .slick-menu-title')[0] as HTMLSpanElement;
+      const columnTitleElm = control.menuElement!.querySelector('.slickgrid_124343 .slick-menu-title') as HTMLSpanElement;
+      const labelForcefitElm = control.menuElement!.querySelector('label[for=slickgrid_124343-gridmenu-colpicker-forcefit]') as HTMLLabelElement;
+      const labelSyncElm = control.menuElement!.querySelector('label[for=slickgrid_124343-gridmenu-colpicker-syncresize]') as HTMLLabelElement;
+
+      expect(handlerSpy).toHaveBeenCalledTimes(4);
+      // expect(commandTitleElm.textContent).toBe('Custom Command Title');
+      expect(columnTitleElm.textContent).toBe('Custom Column Title');
+      expect(labelForcefitElm.textContent).toBe('Custom Force Fit Title');
+      expect(labelSyncElm.textContent).toBe('Custom Sync Resize Title');
+      expect(utilitySpy).toHaveBeenCalled();
+      expect(translateSpy).toHaveBeenCalled();
+      // expect((SharedService.prototype.gridOptions.gridMenu as GridMenu).commandTitle).toBe('Custom Command Title');
+      expect((SharedService.prototype.gridOptions.gridMenu as GridMenu).columnTitle).toBe('Custom Column Title');
+      expect((SharedService.prototype.gridOptions.gridMenu as GridMenu).forceFitTitle).toBe('Custom Force Fit Title');
+      expect((SharedService.prototype.gridOptions.gridMenu as GridMenu).syncResizeTitle).toBe('Custom Sync Resize Title');
       expect(columnsMock).toEqual([
         { id: 'field1', field: 'field1', name: 'Titre', width: 100, nameKey: 'TITLE' },
         { id: 'field2', field: 'field2', name: 'Field 2', width: 75 },

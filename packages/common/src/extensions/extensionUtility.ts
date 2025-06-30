@@ -27,11 +27,6 @@ export class ExtensionUtility {
 
     let output = '';
     const picker = this.sharedService.gridOptions?.[pickerName] ?? {};
-    const enableTranslate = this.sharedService.gridOptions?.enableTranslate ?? false;
-
-    // get locales provided by user in forRoot or else use default English locales via the Constants
-    const locales = this.sharedService.gridOptions?.locales ?? Constants.locales;
-
     const title = (picker as any)?.[propName];
     const titleKey = (picker as any)?.[`${propName}Key`];
     const gridOptions = this.sharedService.gridOptions;
@@ -42,36 +37,16 @@ export class ExtensionUtility {
     } else {
       switch (propName) {
         case 'commandTitle':
-          output =
-            title ||
-            (enableTranslate &&
-              this.translaterService?.getCurrentLanguage &&
-              this.translaterService?.translate(`${translationPrefix}COMMANDS`)) ||
-            locales?.TEXT_COMMANDS;
+          output = this.translateWhenEnabledAndServiceExist(`${translationPrefix}COMMANDS`, 'TEXT_COMMANDS', title);
           break;
         case 'columnTitle':
-          output =
-            title ||
-            (enableTranslate &&
-              this.translaterService?.getCurrentLanguage &&
-              this.translaterService?.translate(`${translationPrefix}COLUMNS`)) ||
-            locales?.TEXT_COLUMNS;
+          output = this.translateWhenEnabledAndServiceExist(`${translationPrefix}COLUMNS`, 'TEXT_COLUMNS', title);
           break;
         case 'forceFitTitle':
-          output =
-            title ||
-            (enableTranslate &&
-              this.translaterService?.getCurrentLanguage &&
-              this.translaterService?.translate(`${translationPrefix}FORCE_FIT_COLUMNS`)) ||
-            locales?.TEXT_FORCE_FIT_COLUMNS;
+          output = this.translateWhenEnabledAndServiceExist(`${translationPrefix}FORCE_FIT_COLUMNS`, 'TEXT_FORCE_FIT_COLUMNS', title);
           break;
         case 'syncResizeTitle':
-          output =
-            title ||
-            (enableTranslate &&
-              this.translaterService?.getCurrentLanguage &&
-              this.translaterService?.translate(`${translationPrefix}SYNCHRONOUS_RESIZE`)) ||
-            locales?.TEXT_SYNCHRONOUS_RESIZE;
+          output = this.translateWhenEnabledAndServiceExist(`${translationPrefix}SYNCHRONOUS_RESIZE`, 'TEXT_SYNCHRONOUS_RESIZE', title);
           break;
         default:
           output = title;
@@ -165,7 +140,7 @@ export class ExtensionUtility {
       // translate `titleKey` and also `subMenuTitleKey` if exists
       if (typeof item === 'object') {
         if (item.titleKey) {
-          item.title = this.translateWhenEnabledAndServiceExist(`${item.titleKey}`, `TEXT_${item.titleKey}`);
+          item.title = this.translateWhenEnabledAndServiceExist(`${item.titleKey}`, `TEXT_${item.titleKey}`, item._orgTitle);
         }
         if (item.subMenuTitleKey) {
           item.subMenuTitle = this.translateWhenEnabledAndServiceExist(`${item.subMenuTitleKey}`, `TEXT_${item.subMenuTitleKey}`);

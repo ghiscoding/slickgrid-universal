@@ -345,6 +345,9 @@ export class SlickVanillaGridBundle<TData = any> {
     this._gridOptions = this.mergeGridOptions(options || {});
     const isDeepCopyDataOnPageLoadEnabled = !!this._gridOptions?.enableDeepCopyDatasetOnPageLoad;
 
+    this.sharedService = services?.sharedService ?? new SharedService();
+    this.sharedService.gridOptions = this._gridOptions;
+
     // add dark mode CSS class when enabled
     if (this._gridOptions.darkMode) {
       this.setDarkMode(true);
@@ -362,7 +365,6 @@ export class SlickVanillaGridBundle<TData = any> {
     const slickgridConfig = new SlickgridConfig();
     this.backendUtilityService = services?.backendUtilityService ?? new BackendUtilityService();
     this.gridEventService = services?.gridEventService ?? new GridEventService();
-    this.sharedService = services?.sharedService ?? new SharedService();
     this.collectionService = services?.collectionService ?? new CollectionService(this.translaterService);
     this.extensionUtility =
       services?.extensionUtility ?? new ExtensionUtility(this.sharedService, this.backendUtilityService, this.translaterService);

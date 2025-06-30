@@ -31,6 +31,9 @@ export interface MenuItem<O = MenuCallbackArgs> {
   /** CSS class to be added to the menu item text. */
   textCssClass?: string;
 
+  /** internal usage only, keeps a reference to the original title when optionally provided by the external user */
+  _orgTitle?: string;
+
   /** Menu item text to show in the list. */
   title?: string;
 
