@@ -71,6 +71,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   protected _isMenuOpen = false;
   protected _listElm!: HTMLSpanElement;
   protected _subMenuParentId = '';
+  protected _originalGridMenu!: GridMenu;
   protected _userOriginalGridMenu!: GridMenu;
   protected _defaults = {
     dropSide: 'left',
@@ -162,9 +163,9 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
     // keep original user grid menu, useful when switching locale to translate
     if (isFirstLoad) {
-      this._userOriginalGridMenu = extend(true, {}, this.sharedService.gridOptions.gridMenu);
+      this._originalGridMenu = extend(true, {}, this.sharedService.gridOptions.gridMenu);
     }
-
+    this._userOriginalGridMenu = { ...this.sharedService.gridOptions.gridMenu };
     this._addonOptions = { ...this._defaults, ...this.getDefaultGridMenuOptions(), ...this.sharedService.gridOptions.gridMenu };
     this.sharedService.gridOptions.gridMenu = this._addonOptions;
 
@@ -580,10 +581,10 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     // we also need to call the control init so that it takes the new Grid object with latest values
     if (this.sharedService.gridOptions.gridMenu) {
       this.sharedService.gridOptions.gridMenu.commandItems = [];
-      this.sharedService.gridOptions.gridMenu.commandTitle = this._userOriginalGridMenu.commandTitle || '';
-      this.sharedService.gridOptions.gridMenu.columnTitle = this._userOriginalGridMenu.columnTitle || '';
-      this.sharedService.gridOptions.gridMenu.forceFitTitle = this._userOriginalGridMenu.forceFitTitle || '';
-      this.sharedService.gridOptions.gridMenu.syncResizeTitle = this._userOriginalGridMenu.syncResizeTitle || '';
+      this.sharedService.gridOptions.gridMenu.commandTitle = this._originalGridMenu.commandTitle || '';
+      this.sharedService.gridOptions.gridMenu.columnTitle = this._originalGridMenu.columnTitle || '';
+      this.sharedService.gridOptions.gridMenu.forceFitTitle = this._originalGridMenu.forceFitTitle || '';
+      this.sharedService.gridOptions.gridMenu.syncResizeTitle = this._originalGridMenu.syncResizeTitle || '';
 
       // merge original user grid menu items with internal items
       // then sort all Grid Menu command items (sorted by pointer, no need to use the return)
