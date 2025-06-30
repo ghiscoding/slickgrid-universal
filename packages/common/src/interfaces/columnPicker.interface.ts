@@ -17,8 +17,14 @@ export interface ColumnPickerOption {
   /** Defaults to "Columns" which is the title that shows up over the columns */
   columnTitle?: string;
 
+  /** Same as "columnTitle", except that it's a translation key which can be used on page load and/or when switching locale */
+  columnTitleKey?: string;
+
   /** Defaults to "Force fit columns" which is 1 of the last 2 checkbox title shown at the end of the picker list */
   forceFitTitle?: string;
+
+  /** Same as "forceFitTitle", except that it's a translation key which can be used on page load and/or when switching locale */
+  forceFitTitleKey?: string;
 
   /** Defaults to True, show/hide 1 of the last 2 checkbox at the end of the picker list */
   hideForceFitButton?: boolean;
@@ -40,6 +46,9 @@ export interface ColumnPickerOption {
 
   /** Defaults to "Synchronous resize" which is 1 of the last 2 checkbox title shown at the end of the picker list */
   syncResizeTitle?: string;
+
+  /** Same as "syncResizeTitle", except that it's a translation key which can be used on page load and/or when switching locale */
+  syncResizeTitleKey?: string;
 
   /** Callback method to override the column name output used by the ColumnPicker/GridMenu. */
   headerColumnValueExtractor?: (column: Column, gridOptions?: GridOption) => string | HTMLElement | DocumentFragment;

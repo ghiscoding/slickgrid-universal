@@ -1,8 +1,15 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { createDomElement, emptyElement, findWidthOrDefault, getHtmlStringOutput } from '@slickgrid-universal/utils';
+import { createDomElement, emptyElement, extend, findWidthOrDefault, getHtmlStringOutput } from '@slickgrid-universal/utils';
 
-import type { Column, ColumnPickerOption, DOMMouseOrTouchEvent, GridOption, OnColumnsChangedArgs } from '../interfaces/index.js';
+import type {
+  Column,
+  ColumnPicker,
+  ColumnPickerOption,
+  DOMMouseOrTouchEvent,
+  GridOption,
+  OnColumnsChangedArgs,
+} from '../interfaces/index.js';
 import type { ExtensionUtility } from '../extensions/extensionUtility.js';
 import type { SharedService } from '../services/shared.service.js';
 import {
@@ -38,6 +45,7 @@ export class SlickColumnPicker {
   protected _listElm!: HTMLSpanElement;
   protected _menuElm: HTMLDivElement | null = null;
   protected _columnCheckboxes: HTMLInputElement[] = [];
+  protected _originalPickerOptions!: ColumnPicker;
 
   protected _defaults = {
     // the last 2 checkboxes titles
@@ -96,15 +104,16 @@ export class SlickColumnPicker {
   /** Initialize plugin. */
   init(): void {
     this._gridUid = this.grid.getUID() ?? '';
+
+    // keep original user grid menu, useful when switching locale to translate
+    this._originalPickerOptions = extend(true, {}, this.sharedService.gridOptions.columnPicker);
     this.gridOptions.columnPicker = { ...this._defaults, ...this.gridOptions.columnPicker };
 
     // add PubSub instance to all SlickEvent
     this.onColumnsChanged.setPubSubService(this.pubSubService);
 
     // localization support for the picker
-    this.addonOptions.columnTitle = this.extensionUtility.getPickerTitleOutputString('columnTitle', 'columnPicker');
-    this.addonOptions.forceFitTitle = this.extensionUtility.getPickerTitleOutputString('forceFitTitle', 'columnPicker');
-    this.addonOptions.syncResizeTitle = this.extensionUtility.getPickerTitleOutputString('syncResizeTitle', 'columnPicker');
+    this.translateColumnPickerTitles();
 
     this._eventHandler.subscribe(this.grid.onPreHeaderContextMenu, (e) => {
       if (['slick-column-name', 'slick-header-column'].some((className) => e.target?.classList.contains(className))) {
@@ -174,21 +183,22 @@ export class SlickColumnPicker {
 
   /** Translate the Column Picker headers and also the last 2 checkboxes */
   translateColumnPicker(): void {
-    // update the properties by pointers, that is the only way to get Column Picker Control to see the new values
+    this.translateColumnPickerTitles();
+
+    // translate all columns (including hidden columns)
+    this.extensionUtility.translateItems(this._columns, 'nameKey', 'name');
+  }
+
+  // update the properties by pointers, that is the only way to get Column Picker Control to see the new values
+  translateColumnPickerTitles(): void {
     if (this.addonOptions) {
-      this.addonOptions.columnTitle = '';
-      this.addonOptions.forceFitTitle = '';
-      this.addonOptions.syncResizeTitle = '';
+      this.addonOptions.columnTitle = this._originalPickerOptions.columnTitle || '';
+      this.addonOptions.forceFitTitle = this._originalPickerOptions.forceFitTitle || '';
+      this.addonOptions.syncResizeTitle = this._originalPickerOptions.syncResizeTitle || '';
       this.addonOptions.columnTitle = this.extensionUtility.getPickerTitleOutputString('columnTitle', 'columnPicker');
       this.addonOptions.forceFitTitle = this.extensionUtility.getPickerTitleOutputString('forceFitTitle', 'columnPicker');
       this.addonOptions.syncResizeTitle = this.extensionUtility.getPickerTitleOutputString('syncResizeTitle', 'columnPicker');
     }
-
-    // translate all columns (including hidden columns)
-    this.extensionUtility.translateItems(this._columns, 'nameKey', 'name');
-
-    // update the Titles of each sections (command, commandTitle, ...)
-    this.translateTitleLabels(this.addonOptions);
   }
 
   // --
@@ -241,13 +251,6 @@ export class SlickColumnPicker {
       this._menuElm.style.display = 'block';
       this._menuElm.ariaExpanded = 'true';
       this._menuElm.appendChild(this._listElm);
-    }
-  }
-
-  /** Update the Titles of each sections (command, commandTitle, ...) */
-  protected translateTitleLabels(pickerOptions: ColumnPickerOption): void {
-    if (pickerOptions) {
-      pickerOptions.columnTitle = this.extensionUtility.getPickerTitleOutputString('columnTitle', 'gridMenu');
     }
   }
 }

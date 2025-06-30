@@ -756,6 +756,8 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
     cy.get('.grid7').find('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
 
+    cy.get('.slick-column-picker .slick-menu-title').contains('Columns');
+
     cy.get('.slick-column-picker')
       .find('.slick-column-picker-list')
       .children()
@@ -771,6 +773,12 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       .children('label')
       .should('contain', 'Finish')
       .click();
+
+    cy.get('.slick-column-picker')
+      .find('.slick-column-picker-list')
+      .children('li:nth-of-type(12)')
+      .children('label')
+      .should('contain', 'Force fit columns');
 
     cy.get('.slick-column-picker:visible').find('.close').trigger('click').click();
   });
@@ -815,6 +823,31 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
   it('should have 2 of 501 items shown as metrics on the right footer shown in French', () => {
     cy.get('.right-footer.metrics').contains('2 de 501 éléments');
+  });
+
+  it('should open column picker and expect all columns to be translated to French', () => {
+    const originalColumns = ['Titre', 'Action', '% Achevée', 'Durée', 'Terminé', 'Fin', 'Début', 'Prerequisites', 'Titre'];
+
+    cy.get('.grid7').find('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
+
+    cy.get('.slick-column-picker .slick-menu-title').contains('Colonnes');
+
+    cy.get('.slick-column-picker')
+      .find('.slick-column-picker-list')
+      .children('li:not(.hidden)')
+      .each(($child, index) => {
+        if (index < originalColumns.length) {
+          expect($child.text()).to.eq(originalColumns[index]);
+        }
+      });
+
+    cy.get('.slick-column-picker')
+      .find('.slick-column-picker-list')
+      .children('li:nth-of-type(12)')
+      .children('label')
+      .should('contain', 'Ajustement forcé des colonnes');
+
+    cy.get('.slick-column-picker:visible').find('.close').trigger('click').click();
   });
 
   it('should re-open Header Menu of last "Titre" column and expect all commands to be translated to French', () => {

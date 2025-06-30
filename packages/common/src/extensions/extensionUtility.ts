@@ -32,26 +32,25 @@ export class ExtensionUtility {
     const gridOptions = this.sharedService.gridOptions;
     const translationPrefix = getTranslationPrefix(gridOptions);
 
-    if (titleKey && this.translaterService?.translate) {
+    if (!title && titleKey && this.translaterService?.translate) {
       output = this.translaterService.translate(titleKey || ' ');
     } else {
+      let transKey = '';
       switch (propName) {
         case 'commandTitle':
-          output = this.translateWhenEnabledAndServiceExist(`${translationPrefix}COMMANDS`, 'TEXT_COMMANDS', title);
+          transKey = 'COMMANDS';
           break;
         case 'columnTitle':
-          output = this.translateWhenEnabledAndServiceExist(`${translationPrefix}COLUMNS`, 'TEXT_COLUMNS', title);
+          transKey = 'COLUMNS';
           break;
         case 'forceFitTitle':
-          output = this.translateWhenEnabledAndServiceExist(`${translationPrefix}FORCE_FIT_COLUMNS`, 'TEXT_FORCE_FIT_COLUMNS', title);
+          transKey = 'FORCE_FIT_COLUMNS';
           break;
         case 'syncResizeTitle':
-          output = this.translateWhenEnabledAndServiceExist(`${translationPrefix}SYNCHRONOUS_RESIZE`, 'TEXT_SYNCHRONOUS_RESIZE', title);
-          break;
-        default:
-          output = title;
+          transKey = 'SYNCHRONOUS_RESIZE';
           break;
       }
+      output = transKey ? this.translateWhenEnabledAndServiceExist(`${translationPrefix}${transKey}`, `TEXT_${transKey}`, title) : title;
     }
     return output;
   }
