@@ -6,6 +6,23 @@ const emptyWarningElm = document.createElement('div');
 emptyWarningElm.appendChild(createDomElement('span', { className: 'mdi mdi-alert text-color-warning' }));
 emptyWarningElm.appendChild(createDomElement('span', { textContent: 'No data to display.' }));
 
+// copy to clipboard override since the default clipboard API isn't supported in Salesforce
+function copyToClipboard(textInput: string) {
+  const scrollPos = document.documentElement.scrollTop || document.body.scrollTop;
+  const tmpElem = document.createElement('textarea');
+  if (tmpElem && document.body) {
+    tmpElem.style.position = 'absolute';
+    tmpElem.style.opacity = '0';
+    tmpElem.style.top = `${scrollPos}px`;
+    tmpElem.value = textInput;
+    document.body.appendChild(tmpElem);
+    tmpElem.select();
+    if (document.execCommand('copy', false, textInput)) {
+      tmpElem.remove();
+    }
+  }
+}
+
 /** Global Grid Options Defaults for Salesforce */
 export const SalesforceGlobalGridOptions = {
   autoEdit: true, // true single click (false for double-click)
@@ -14,6 +31,7 @@ export const SalesforceGlobalGridOptions = {
   autoFixResizeRequiredGoodCount: 5 * 60 * 60, // make it the same as the interval timeout, this is equivalent to say don't stop until the timeout is over
   autoFixResizeWhenBrokenStyleDetected: true,
   cellValueCouldBeUndefined: true,
+  clipboardWriteOverride: copyToClipboard,
   contextMenu: {
     hideCloseButton: false,
   },
