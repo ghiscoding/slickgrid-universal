@@ -27,56 +27,30 @@ export class ExtensionUtility {
 
     let output = '';
     const picker = this.sharedService.gridOptions?.[pickerName] ?? {};
-    const enableTranslate = this.sharedService.gridOptions?.enableTranslate ?? false;
-
-    // get locales provided by user in forRoot or else use default English locales via the Constants
-    const locales = this.sharedService.gridOptions?.locales ?? Constants.locales;
-
     const title = (picker as any)?.[propName];
     const titleKey = (picker as any)?.[`${propName}Key`];
     const gridOptions = this.sharedService.gridOptions;
     const translationPrefix = getTranslationPrefix(gridOptions);
 
-    if (titleKey && this.translaterService?.translate) {
+    if (!title && titleKey && this.translaterService?.translate) {
       output = this.translaterService.translate(titleKey || ' ');
     } else {
+      let transKey = '';
       switch (propName) {
         case 'commandTitle':
-          output =
-            title ||
-            (enableTranslate &&
-              this.translaterService?.getCurrentLanguage &&
-              this.translaterService?.translate(`${translationPrefix}COMMANDS`)) ||
-            locales?.TEXT_COMMANDS;
+          transKey = 'COMMANDS';
           break;
         case 'columnTitle':
-          output =
-            title ||
-            (enableTranslate &&
-              this.translaterService?.getCurrentLanguage &&
-              this.translaterService?.translate(`${translationPrefix}COLUMNS`)) ||
-            locales?.TEXT_COLUMNS;
+          transKey = 'COLUMNS';
           break;
         case 'forceFitTitle':
-          output =
-            title ||
-            (enableTranslate &&
-              this.translaterService?.getCurrentLanguage &&
-              this.translaterService?.translate(`${translationPrefix}FORCE_FIT_COLUMNS`)) ||
-            locales?.TEXT_FORCE_FIT_COLUMNS;
+          transKey = 'FORCE_FIT_COLUMNS';
           break;
         case 'syncResizeTitle':
-          output =
-            title ||
-            (enableTranslate &&
-              this.translaterService?.getCurrentLanguage &&
-              this.translaterService?.translate(`${translationPrefix}SYNCHRONOUS_RESIZE`)) ||
-            locales?.TEXT_SYNCHRONOUS_RESIZE;
-          break;
-        default:
-          output = title;
+          transKey = 'SYNCHRONOUS_RESIZE';
           break;
       }
+      output = transKey ? this.translateWhenEnabledAndServiceExist(`${translationPrefix}${transKey}`, `TEXT_${transKey}`, title) : title;
     }
     return output;
   }
@@ -165,7 +139,7 @@ export class ExtensionUtility {
       // translate `titleKey` and also `subMenuTitleKey` if exists
       if (typeof item === 'object') {
         if (item.titleKey) {
-          item.title = this.translateWhenEnabledAndServiceExist(`${item.titleKey}`, `TEXT_${item.titleKey}`);
+          item.title = this.translateWhenEnabledAndServiceExist(`${item.titleKey}`, `TEXT_${item.titleKey}`, item._orgTitle);
         }
         if (item.subMenuTitleKey) {
           item.subMenuTitle = this.translateWhenEnabledAndServiceExist(`${item.subMenuTitleKey}`, `TEXT_${item.subMenuTitleKey}`);

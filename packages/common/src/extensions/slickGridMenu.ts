@@ -1,12 +1,13 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import {
   calculateAvailableSpace,
+  classNameToList,
   createDomElement,
   emptyElement,
+  extend,
   findWidthOrDefault,
-  getOffset,
-  classNameToList,
   getHtmlStringOutput,
+  getOffset,
 } from '@slickgrid-universal/utils';
 
 import type {
@@ -70,6 +71,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   protected _isMenuOpen = false;
   protected _listElm!: HTMLSpanElement;
   protected _subMenuParentId = '';
+  protected _originalGridMenu!: GridMenu;
   protected _userOriginalGridMenu!: GridMenu;
   protected _defaults = {
     dropSide: 'left',
@@ -153,13 +155,16 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   }
 
   /** Initialize plugin. */
-  init(): void {
+  init(isFirstLoad = true): void {
     this._gridUid = this.grid.getUID() ?? '';
 
     // add PubSub instance to all SlickEvent
     SlickUtils.addSlickEventPubSubWhenDefined(this.pubSubService, this);
 
     // keep original user grid menu, useful when switching locale to translate
+    if (isFirstLoad) {
+      this._originalGridMenu = extend(true, {}, this.sharedService.gridOptions.gridMenu);
+    }
     this._userOriginalGridMenu = { ...this.sharedService.gridOptions.gridMenu };
     this._addonOptions = { ...this._defaults, ...this.getDefaultGridMenuOptions(), ...this.sharedService.gridOptions.gridMenu };
     this.sharedService.gridOptions.gridMenu = this._addonOptions;
@@ -380,7 +385,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   /** destroy and recreate the Grid Menu in the DOM */
   recreateGridMenu(): void {
     this.deleteMenu();
-    this.init();
+    this.init(false);
   }
 
   repositionMenu(e: MouseEvent | TouchEvent, menuElm: HTMLElement, buttonElm?: HTMLButtonElement, addonOptions?: GridMenu): void {
@@ -576,10 +581,10 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     // we also need to call the control init so that it takes the new Grid object with latest values
     if (this.sharedService.gridOptions.gridMenu) {
       this.sharedService.gridOptions.gridMenu.commandItems = [];
-      this.sharedService.gridOptions.gridMenu.commandTitle = '';
-      this.sharedService.gridOptions.gridMenu.columnTitle = '';
-      this.sharedService.gridOptions.gridMenu.forceFitTitle = '';
-      this.sharedService.gridOptions.gridMenu.syncResizeTitle = '';
+      this.sharedService.gridOptions.gridMenu.commandTitle = this._originalGridMenu.commandTitle || '';
+      this.sharedService.gridOptions.gridMenu.columnTitle = this._originalGridMenu.columnTitle || '';
+      this.sharedService.gridOptions.gridMenu.forceFitTitle = this._originalGridMenu.forceFitTitle || '';
+      this.sharedService.gridOptions.gridMenu.syncResizeTitle = this._originalGridMenu.syncResizeTitle || '';
 
       // merge original user grid menu items with internal items
       // then sort all Grid Menu command items (sorted by pointer, no need to use the return)
@@ -627,6 +632,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
           gridMenuCommandItems.push({
             iconCssClass: this._addonOptions.iconClearFrozenColumnsCommand || 'mdi mdi-pin-off-outline',
+            _orgTitle: commandLabels?.clearFrozenColumnsCommand || '',
             titleKey: `${translationPrefix}${commandLabels?.clearFrozenColumnsCommandKey ?? 'CLEAR_PINNING'}`,
             disabled: false,
             command: commandName,
@@ -642,6 +648,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
           if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
             gridMenuCommandItems.push({
               iconCssClass: this._addonOptions.iconClearAllFiltersCommand || 'mdi mdi-filter-remove-outline',
+              _orgTitle: commandLabels?.clearAllFiltersCommand || '',
               titleKey: `${translationPrefix}${commandLabels?.clearAllFiltersCommandKey ?? 'CLEAR_ALL_FILTERS'}`,
               disabled: false,
               command: commandName,
@@ -656,6 +663,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
           if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
             gridMenuCommandItems.push({
               iconCssClass: this._addonOptions.iconToggleFilterCommand || 'mdi mdi-flip-vertical',
+              _orgTitle: commandLabels?.toggleFilterCommand || '',
               titleKey: `${translationPrefix}${commandLabels?.toggleFilterCommandKey ?? 'TOGGLE_FILTER_ROW'}`,
               disabled: false,
               command: commandName,
@@ -670,6 +678,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
           if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
             gridMenuCommandItems.push({
               iconCssClass: this._addonOptions.iconRefreshDatasetCommand || 'mdi mdi-sync',
+              _orgTitle: commandLabels?.refreshDatasetCommand || '',
               titleKey: `${translationPrefix}${commandLabels?.refreshDatasetCommandKey ?? 'REFRESH_DATASET'}`,
               disabled: false,
               command: commandName,
@@ -685,6 +694,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
           gridMenuCommandItems.push({
             iconCssClass: this._addonOptions.iconToggleDarkModeCommand || 'mdi mdi-brightness-4',
+            _orgTitle: commandLabels?.toggleDarkModeCommand || '',
             titleKey: `${translationPrefix}${commandLabels?.toggleDarkModeCommandKey ?? 'TOGGLE_DARK_MODE'}`,
             disabled: false,
             command: commandName,
@@ -700,6 +710,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
           if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
             gridMenuCommandItems.push({
               iconCssClass: this._addonOptions.iconTogglePreHeaderCommand || 'mdi mdi-flip-vertical',
+              _orgTitle: commandLabels?.togglePreHeaderCommand || '',
               titleKey: `${translationPrefix}${commandLabels?.togglePreHeaderCommandKey ?? 'TOGGLE_PRE_HEADER_ROW'}`,
               disabled: false,
               command: commandName,
@@ -716,6 +727,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
           if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
             gridMenuCommandItems.push({
               iconCssClass: this._addonOptions.iconClearAllSortingCommand || 'mdi mdi-sort-variant-off',
+              _orgTitle: commandLabels?.clearAllSortingCommand || '',
               titleKey: `${translationPrefix}${commandLabels?.clearAllSortingCommandKey ?? 'CLEAR_ALL_SORTING'}`,
               disabled: false,
               command: commandName,
@@ -731,6 +743,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
           gridMenuCommandItems.push({
             iconCssClass: this._addonOptions.iconExportCsvCommand || 'mdi mdi-download',
+            _orgTitle: commandLabels?.exportCsvCommand || '',
             titleKey: `${translationPrefix}${commandLabels?.exportCsvCommandKey ?? 'EXPORT_TO_CSV'}`,
             disabled: false,
             command: commandName,
@@ -745,6 +758,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
           gridMenuCommandItems.push({
             iconCssClass: this._addonOptions.iconExportExcelCommand || 'mdi mdi-file-excel-outline text-success',
+            _orgTitle: commandLabels?.exportExcelCommand || '',
             titleKey: `${translationPrefix}${commandLabels?.exportExcelCommandKey ?? 'EXPORT_TO_EXCEL'}`,
             disabled: false,
             command: commandName,
@@ -759,6 +773,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
           gridMenuCommandItems.push({
             iconCssClass: this._addonOptions.iconExportTextDelimitedCommand || 'mdi mdi-download',
+            _orgTitle: commandLabels?.exportTextDelimitedCommand || '',
             titleKey: `${translationPrefix}${commandLabels?.exportTextDelimitedCommandKey ?? 'EXPORT_TO_TAB_DELIMITED'}`,
             disabled: false,
             command: commandName,
@@ -773,8 +788,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         (Array.isArray(gridMenuCommandItems) && gridMenuCommandItems.length > 0) ||
         (Array.isArray(commandItems) && commandItems.length > 0)
       ) {
-        this._addonOptions.commandTitle =
-          this._addonOptions.commandTitle || this.extensionUtility.getPickerTitleOutputString('commandTitle', 'gridMenu');
+        this._addonOptions.commandTitle ||= this.extensionUtility.getPickerTitleOutputString('commandTitle', 'gridMenu');
       }
     }
 

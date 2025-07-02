@@ -85,6 +85,7 @@ const extensionServiceStub = {
 Object.defineProperty(extensionServiceStub, 'extensionList', { get: vi.fn(() => {}), set: vi.fn(), configurable: true });
 
 const mockExtensionUtility = {
+  getPickerTitleOutputString: vi.fn(),
   translateItems: vi.fn(),
 } as unknown as ExtensionUtility;
 

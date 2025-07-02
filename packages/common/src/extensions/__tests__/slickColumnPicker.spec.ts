@@ -467,6 +467,9 @@ describe('ColumnPickerControl', () => {
         .mockReturnValue(undefined as any)
         .mockReturnValue(1);
 
+      gridOptionsMock.columnPicker!.columnTitle = '';
+      gridOptionsMock.columnPicker!.forceFitTitle = '';
+      gridOptionsMock.columnPicker!.syncResizeTitle = '';
       gridOptionsMock.columnPicker!.hideForceFitButton = false;
       gridOptionsMock.syncColumnCellResize = true;
       gridOptionsMock.forceFitColumns = true;
@@ -487,6 +490,50 @@ describe('ColumnPickerControl', () => {
       expect((SharedService.prototype.gridOptions.columnPicker as ColumnPicker).columnTitle).toBe('Colonnes');
       expect((SharedService.prototype.gridOptions.columnPicker as ColumnPicker).forceFitTitle).toBe('Ajustement forcé des colonnes');
       expect((SharedService.prototype.gridOptions.columnPicker as ColumnPicker).syncResizeTitle).toBe('Redimension synchrone');
+      expect(columnsMock).toEqual([
+        { id: 'field1', field: 'field1', name: 'Titre', width: 100, nameKey: 'TITLE' },
+        { id: 'field2', field: 'field2', name: 'Field 2', width: 75, columnPickerLabel: 'Custom Label' },
+        { id: 'field3', field: 'field3', name: 'Field 3', columnGroup: 'Billing', width: 75 },
+        { id: 'field4', field: 'field4', name: 'Field 4', width: 75, excludeFromColumnPicker: true },
+      ]);
+      expect(control.getAllColumns()).toEqual(columnsMock);
+      expect(control.getVisibleColumns()).toEqual(columnsMock);
+    });
+
+    it('should not translate when providing custom titles', () => {
+      const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
+      const utilitySpy = vi.spyOn(extensionUtility, 'getPickerTitleOutputString');
+      const translateSpy = vi.spyOn(extensionUtility, 'translateItems');
+      vi.spyOn(gridStub, 'getColumnIndex')
+        .mockReturnValue(undefined as any)
+        .mockReturnValue(1);
+
+      translateService.use('fr');
+      gridOptionsMock.columnPicker!.columnTitle = 'Custom Column Title';
+      gridOptionsMock.columnPicker!.forceFitTitle = 'Custom Force Fit Title';
+      gridOptionsMock.columnPicker!.syncResizeTitle = 'Custom Sync Resize Title';
+      gridOptionsMock.columnPicker!.hideForceFitButton = false;
+      gridOptionsMock.syncColumnCellResize = true;
+      gridOptionsMock.forceFitColumns = true;
+      control.columns = columnsMock;
+      control.init();
+      control.translateColumnPicker();
+
+      gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData as any, gridStub);
+      control.menuElement!.querySelector<HTMLInputElement>('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
+      const columnTitleElm = control.menuElement!.querySelector('.slickgrid_124343 .slick-menu-title') as HTMLSpanElement;
+      const labelForcefitElm = control.menuElement!.querySelector('label[for=slickgrid_124343-colpicker-forcefit]') as HTMLDivElement;
+      const labelSyncElm = control.menuElement!.querySelector('label[for=slickgrid_124343-colpicker-syncresize]') as HTMLDivElement;
+
+      expect(handlerSpy).toHaveBeenCalledTimes(4);
+      expect(columnTitleElm.textContent).toBe('Custom Column Title');
+      expect(labelForcefitElm.textContent).toBe('Custom Force Fit Title');
+      expect(labelSyncElm.textContent).toBe('Custom Sync Resize Title');
+      expect(utilitySpy).toHaveBeenCalled();
+      expect(translateSpy).toHaveBeenCalled();
+      expect((SharedService.prototype.gridOptions.columnPicker as ColumnPicker).columnTitle).toBe('Custom Column Title');
+      expect((SharedService.prototype.gridOptions.columnPicker as ColumnPicker).forceFitTitle).toBe('Custom Force Fit Title');
+      expect((SharedService.prototype.gridOptions.columnPicker as ColumnPicker).syncResizeTitle).toBe('Custom Sync Resize Title');
       expect(columnsMock).toEqual([
         { id: 'field1', field: 'field1', name: 'Titre', width: 100, nameKey: 'TITLE' },
         { id: 'field2', field: 'field2', name: 'Field 2', width: 75, columnPickerLabel: 'Custom Label' },
