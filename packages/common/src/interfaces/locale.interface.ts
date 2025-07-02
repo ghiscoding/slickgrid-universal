@@ -155,6 +155,9 @@ export interface Locale {
   /** Text "OK" displayed in the Multiple Select Editor/Filter */
   TEXT_OK: string;
 
+  /** Text "Options" title displayed in the Column Picker & Grid Menu (when enabled) */
+  TEXT_OPTIONS: string;
+
   /** Text "Page" displayed in the Pagination (when enabled) */
   TEXT_PAGE?: string;
 

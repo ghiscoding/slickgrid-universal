@@ -176,6 +176,9 @@ export class TranslateServiceStub implements TranslaterService {
       case 'OK':
         output = this._locale === 'en' ? 'OK' : 'Terminé';
         break;
+      case 'OPTIONS':
+        output = this._locale === 'en' ? 'Options' : 'Options';
+        break;
       case 'OPTIONS_LIST':
         output = this._locale === 'en' ? 'Options List' : `Liste d'options`;
         break;

@@ -189,7 +189,7 @@ It works exactly like the rest of the library when `enableTranslate` is set, all
 this.columnDefinitions = [
   { id: 'action', field: 'action', name: 'Action',
     cellMenu: {
-      optionTitleKey: 'COMMANDS', // optionally pass a title to show over the Options
+      optionTitleKey: 'OPTIONS', // optionally pass a title to show over the Options
       optionItems: [
         { option: 1, titleKey: 'LOW', iconCssClass: 'mdi mdi-star-outline yellow' },
         { option: 2, titleKey: 'MEDIUM', iconCssClass: 'mdi mdi-star orange' },

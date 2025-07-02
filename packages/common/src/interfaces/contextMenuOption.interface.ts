@@ -1,3 +1,4 @@
+import type { ContextMenuLabel } from './contextMenuLabel.interface.js';
 import type { MenuCallbackArgs, MenuCommandItem, MenuOptionItem } from './index.js';
 
 export interface ContextMenuOption {
@@ -15,6 +16,12 @@ export interface ContextMenuOption {
 
   /** Array of Command Items (title, command, disabled, ...) */
   commandItems?: Array<MenuCommandItem | 'divider'>;
+
+  /**
+   * All the commands text labels
+   * NOTE: some of the text have other properties outside of this option (like 'exportCsvCommand', 'exportExcelCommand', 'clearGroupingCommand', ...) and that is because they were created prior to this refactoring of labels
+   */
+  commandLabels?: ContextMenuLabel;
 
   /** Defaults to undefined, which column to show the Commands list, when not defined the context menu will be shown over all columns */
   commandShownOverColumnIds?: string[];
@@ -67,7 +74,7 @@ export interface ContextMenuOption {
   /** icon for the "Clear Grouping" command (Grid Option "enableGrouping: true" has to be enabled) */
   iconClearGroupingCommand?: string;
 
-  /** icon for the "Expand all Groups" command (Grid Option "enableGrouping: true" has to be enabled) */
+  /** icon for the "Collapse all Groups" command (Grid Option "enableGrouping: true" has to be enabled) */
   iconCollapseAllGroupsCommand?: string;
 
   /** icon for the "Copy Cell Value" command */

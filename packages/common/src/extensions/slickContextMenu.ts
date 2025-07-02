@@ -1,4 +1,6 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { extend } from '@slickgrid-universal/utils';
+
 import type {
   ContextMenu,
   ContextMenuOption,
@@ -39,6 +41,7 @@ import { MenuFromCellBaseClass } from './menuFromCellBaseClass.js';
  *   };
  */
 export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
+  protected _originalContextMenu!: ContextMenu;
   protected _defaults = {
     autoAdjustDrop: true, // dropup/dropdown
     autoAlignSide: true, // left/right
@@ -67,6 +70,8 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
 
   /** Initialize plugin. */
   init(contextMenuOptions?: ContextMenu): void {
+    // keep original user context menu, useful when switching locale to translate
+    this._originalContextMenu = extend(true, {}, this.sharedService.gridOptions.contextMenu);
     this._addonOptions = { ...this._defaults, ...contextMenuOptions };
 
     // merge the original commands with the built-in internal commands
@@ -91,6 +96,10 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
   translateContextMenu(): void {
     const gridOptions = this.sharedService?.gridOptions ?? {};
     const contextMenu = this.sharedService.gridOptions.contextMenu;
+    if (contextMenu) {
+      contextMenu.commandTitle = this._originalContextMenu.commandTitle || '';
+      contextMenu.optionTitle = this._originalContextMenu.optionTitle || '';
+    }
 
     if (contextMenu && gridOptions?.enableTranslate) {
       // get both items list
@@ -100,11 +109,11 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
       // translate their titles only if they have a titleKey defined
       if (contextMenu.commandTitleKey) {
         // prettier-ignore
-        contextMenu.commandTitle = this.extensionUtility.translateWhenEnabledAndServiceExist(contextMenu.commandTitleKey, 'TEXT_COMMANDS') || contextMenu.commandTitle;
+        contextMenu.commandTitle ||= this.extensionUtility.translateWhenEnabledAndServiceExist(contextMenu.commandTitleKey, 'TEXT_COMMANDS') || contextMenu.commandTitle;
       }
       if (contextMenu.optionTitleKey) {
         // prettier-ignore
-        contextMenu.optionTitle = this.extensionUtility.translateWhenEnabledAndServiceExist(contextMenu.optionTitleKey, 'TEXT_COMMANDS') || contextMenu.optionTitle;
+        contextMenu.optionTitle ||= this.extensionUtility.translateWhenEnabledAndServiceExist(contextMenu.optionTitleKey, 'TEXT_OPTIONS') || contextMenu.optionTitle;
       }
 
       // translate both command/option items (whichever is provided)
@@ -170,6 +179,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     const menuCommandItems: Array<MenuCommandItem | 'divider'> = [];
     const gridOptions = (this.sharedService && this.sharedService.gridOptions) || {};
     const contextMenu = gridOptions?.contextMenu;
+    const commandLabels = this._addonOptions?.commandLabels;
     const dataView = this.sharedService?.dataView;
     const translationPrefix = getTranslationPrefix(gridOptions);
 
@@ -178,6 +188,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
       const commandName = 'copy';
       if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
         menuCommandItems.push({
+          _orgTitle: commandLabels?.copyCellValueCommand || '',
           iconCssClass: contextMenu.iconCopyCellValueCommand || 'mdi mdi-content-copy',
           titleKey: `${translationPrefix}COPY`,
           disabled: false,
@@ -209,6 +220,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
       const commandName = 'export-csv';
       if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
         menuCommandItems.push({
+          _orgTitle: commandLabels?.exportCsvCommand || '',
           iconCssClass: contextMenu.iconExportCsvCommand || 'mdi mdi-download',
           titleKey: `${translationPrefix}EXPORT_TO_CSV`,
           disabled: false,
@@ -237,6 +249,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
       const commandName = 'export-excel';
       if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
         menuCommandItems.push({
+          _orgTitle: commandLabels?.exportExcelCommand || '',
           iconCssClass: contextMenu.iconExportExcelCommand || 'mdi mdi-file-excel-outline text-success',
           titleKey: `${translationPrefix}EXPORT_TO_EXCEL`,
           disabled: false,
@@ -262,6 +275,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
       const commandName = 'export-text-delimited';
       if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
         menuCommandItems.push({
+          _orgTitle: commandLabels?.exportTextDelimitedCommand || '',
           iconCssClass: contextMenu.iconExportTextDelimitedCommand || 'mdi mdi-download',
           titleKey: `${translationPrefix}EXPORT_TO_TAB_DELIMITED`,
           disabled: false,
@@ -297,6 +311,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
         const commandName = 'clear-grouping';
         if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
           menuCommandItems.push({
+            _orgTitle: commandLabels?.clearGroupingCommand || '',
             iconCssClass: contextMenu.iconClearGroupingCommand || 'mdi mdi-close',
             titleKey: `${translationPrefix}CLEAR_ALL_GROUPING`,
             disabled: false,
@@ -320,6 +335,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
         const commandName = 'collapse-all-groups';
         if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
           menuCommandItems.push({
+            _orgTitle: commandLabels?.collapseAllGroupsCommand || '',
             iconCssClass: contextMenu.iconCollapseAllGroupsCommand || 'mdi mdi-arrow-collapse',
             titleKey: `${translationPrefix}COLLAPSE_ALL_GROUPS`,
             disabled: false,
@@ -350,6 +366,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
         const commandName = 'expand-all-groups';
         if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
           menuCommandItems.push({
+            _orgTitle: commandLabels?.expandAllGroupsCommand || '',
             iconCssClass: contextMenu.iconExpandAllGroupsCommand || 'mdi mdi-arrow-expand',
             titleKey: `${translationPrefix}EXPAND_ALL_GROUPS`,
             disabled: false,

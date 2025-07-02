@@ -142,8 +142,11 @@ describe('extensionUtility', () => {
 
     describe('translateWhenEnabledAndServiceExist method', () => {
       it('should translate using the Translate Service', () => {
-        const output = utility.translateWhenEnabledAndServiceExist('COMMANDS', 'TEXT_COMMANDS');
-        expect(output).toBe('Commandes');
+        const output1 = utility.translateWhenEnabledAndServiceExist('COMMANDS', 'TEXT_COMMANDS');
+        const output2 = utility.translateWhenEnabledAndServiceExist('OPTIONS', 'TEXT_OPTIONS');
+
+        expect(output1).toBe('Commandes');
+        expect(output2).toBe('Options');
       });
     });
 
@@ -240,8 +243,11 @@ describe('extensionUtility', () => {
           gridMenu: { hideForceFitButton: false, hideSyncResizeButton: true, columnTitle: 'Columns' },
         } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-        const output = utility.translateWhenEnabledAndServiceExist('COMMANDS', 'TEXT_COMMANDS');
-        expect(output).toBe('Commands');
+        const output1 = utility.translateWhenEnabledAndServiceExist('COMMANDS', 'TEXT_COMMANDS');
+        const output2 = utility.translateWhenEnabledAndServiceExist('OPTIONS', 'TEXT_OPTIONS');
+
+        expect(output1).toBe('Commands');
+        expect(output2).toBe('Options');
       });
 
       it('should return the same key passed as argument when not found in the Locales Constants', () => {

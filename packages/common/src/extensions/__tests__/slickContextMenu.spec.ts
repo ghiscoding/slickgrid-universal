@@ -335,6 +335,7 @@ describe('ContextMenu Plugin', () => {
 
     describe('with Command Items', () => {
       beforeEach(() => {
+        sharedService.gridOptions.contextMenu!.commandTitle = '';
         gridOptionsMock.contextMenu!.hideCopyCellValueCommand = true;
         gridOptionsMock.contextMenu!.commandItems = deepCopy(commandItemsMock);
       });
