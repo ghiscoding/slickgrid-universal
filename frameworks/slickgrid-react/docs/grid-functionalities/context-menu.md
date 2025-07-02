@@ -168,7 +168,7 @@ contextMenu: {
 It works exactly like the rest of the library when `enableTranslate` is set, all we have to do is to provide translations with the `Key` suffix, so for example without translations, we would use `title` and that would become `titleKey` with translations, that;'s easy enough. So for example, a list of Options could be defined as follow:
 ```ts
 contextMenu: {
-  optionTitleKey: 'COMMANDS', // optionally pass a title to show over the Options
+  optionTitleKey: 'OPTIONS', // optionally pass a title to show over the Options
   optionItems: [
     { option: 1, titleKey: 'LOW', iconCssClass: 'mdi mdi-star-outline yellow' },
     { option: 2, titleKey: 'MEDIUM', iconCssClass: 'mdi mdi-star orange' },

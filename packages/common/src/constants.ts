@@ -47,6 +47,7 @@ export class Constants {
     TEXT_ITEMS_SELECTED: 'items selected',
     TEXT_OF: 'of',
     TEXT_OK: 'OK',
+    TEXT_OPTIONS: 'Options',
     TEXT_LAST_UPDATE: 'Last Update',
     TEXT_LESS_THAN: 'Less than',
     TEXT_LESS_THAN_OR_EQUAL_TO: 'Less than or equal to',

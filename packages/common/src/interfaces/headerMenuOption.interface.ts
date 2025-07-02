@@ -1,5 +1,6 @@
 import type { Column } from './index.js';
 import type { SlickGrid } from '../core/index.js';
+import type { HeaderMenuLabel } from './headerMenuLabel.interface.js';
 
 export interface HeaderMenuOption {
   /** Auto-align drop menu to the left when not enough viewport space to show on the right */
@@ -10,6 +11,12 @@ export interface HeaderMenuOption {
 
   /** an extra CSS class to add to the menu button */
   buttonCssClass?: string;
+
+  /**
+   * All the commands text labels
+   * NOTE: some of the text have other properties outside of this option (like 'columnResizeByContentCommand', 'clearFilterCommand', 'clearSortCommand', ...) and that is because they were created prior to this refactoring of labels
+   */
+  commandLabels?: HeaderMenuLabel;
 
   /** position order index of the "Filter Shortcuts" menu */
   filterShortcutsPositionOrder?: number;

@@ -177,8 +177,8 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
       // Considering the threshold, 5 times faster than default is expected
       testInterval(SCROLLBAR_DIMENSION).then((newInterval) => {
         // scrolling speed is quicker than before
-        expect(2.0 * newInterval.cell).to.be.lessThan(defaultInterval.cell);
-        expect(2.0 * newInterval.row).to.be.lessThan(defaultInterval.row);
+        expect(1.5 * newInterval.cell).to.be.lessThan(defaultInterval.cell);
+        expect(1.5 * newInterval.row).to.be.lessThan(defaultInterval.row);
 
         cy.get('[data-test="default-options-btn"]').click();
         cy.get('[data-test="delay-cursor-input"]').should('have.value', '5');

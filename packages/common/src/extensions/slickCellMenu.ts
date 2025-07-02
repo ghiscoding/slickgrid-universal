@@ -91,7 +91,7 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
           }
           if (columnDef.cellMenu.optionTitleKey) {
             // prettier-ignore
-            columnDef.cellMenu.optionTitle = this.extensionUtility.translateWhenEnabledAndServiceExist(columnDef.cellMenu.optionTitleKey, 'TEXT_COMMANDS') || columnDef.cellMenu.optionTitle;
+            columnDef.cellMenu.optionTitle = this.extensionUtility.translateWhenEnabledAndServiceExist(columnDef.cellMenu.optionTitleKey, 'TEXT_OPTIONS') || columnDef.cellMenu.optionTitle;
           }
 
           // translate both command/option items (whichever is provided)
