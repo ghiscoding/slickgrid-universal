@@ -83,7 +83,8 @@ export async function copyCellToClipboard(args: {
         .trim();
     }
 
-    await navigator.clipboard.writeText(finalTextToCopy);
+    const copyFn = gridOptions.clipboardWriteOverride ?? navigator.clipboard.writeText;
+    await copyFn(finalTextToCopy);
   } catch (err) {
     console.error(`Unable to read/write to clipboard. Please check your browser settings or permissions. Error: ${err}`);
   }

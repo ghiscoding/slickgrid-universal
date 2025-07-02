@@ -179,6 +179,12 @@ export interface GridOption<C extends Column = Column> {
   /** Checkbox Select Plugin options (columnId, cssClass, toolTip, width) */
   checkboxSelector?: CheckboxSelectorOption;
 
+  /**
+   * Optionally override the default copy (write) to clipboard behavior.
+   * The default is to use the native Clipboard API but it isn't guaranteed to work in all environments (i.e.: Salesforce LWC).
+   */
+  clipboardWriteOverride?: (text: string) => void;
+
   /** Defaults to " - ", separator between the column group label and the column label. */
   columnGroupSeparator?: string;
 
