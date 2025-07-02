@@ -18,8 +18,6 @@ jobs:
   deploy-npm-latest:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    env:
-      HUSKY: 0 # Disable Husky for the entire job
     steps:
       - name: Retrieve current Date Time in EST
         shell: bash
@@ -85,7 +83,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
-          HUSKY: 0
         run: |
           pnpm exec lerna publish from-package --force-publish --yes --otp ${{ steps.wait-for-secrets.outputs.OTP }}
 
