@@ -491,7 +491,8 @@ export class SlickCellExternalCopyManager {
               clipText += clipTextRows.join('\r\n') + '\r\n';
             }
 
-            await navigator.clipboard.writeText(clipText);
+            const copyFn = this._grid.getOptions().clipboardWriteOverride ?? navigator.clipboard.writeText;
+            await copyFn(clipText);
 
             if (typeof this._onCopySuccess === 'function') {
               // If it's cell selection, use the toRow/fromRow fields
