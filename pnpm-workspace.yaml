@@ -36,7 +36,7 @@ catalog:
   multiple-select-vanilla: ^4.3.2
   native-copyfiles: ^1.2.1
   npm-run-all2: ^8.0.4
-  rimraf: ^6.0.1
+  remove-glob: ^0.3.0
   rxjs: ^7.8.2
   sass: ^1.89.2
   sortablejs: ^1.15.6

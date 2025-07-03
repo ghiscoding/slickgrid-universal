@@ -50,7 +50,7 @@
   "scripts": {
     "are-types-wrong": "pnpx @arethetypeswrong/cli --pack .",
     "react:dev": "tsc --watch",
-    "prebuild": "rimraf dist",
+    "prebuild": "remove dist",
     "build": "tsc",
     "postbuild": "npm run copy-i18n:dist && npm run copy-asset-lib",
     "copy-asset-lib": "copyfiles src/assets/lib/** dist --up 2 --stat",
@@ -103,7 +103,7 @@
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.2",
     "regenerator-runtime": "^0.14.1",
-    "rimraf": "catalog:",
+    "remove-glob": "catalog:",
     "rxjs": "catalog:",
     "sass": "catalog:",
     "typescript": "catalog:",

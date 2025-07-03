@@ -40,7 +40,7 @@
   "scripts": {
     "are-types-wrong": "pnpx @arethetypeswrong/cli --pack .",
     "aurelia:dev": "tsc --watch",
-    "prebuild": "rimraf dist",
+    "prebuild": "remove dist",
     "build": "tsc",
     "postbuild": "npm run copy-i18n:dist && npm run copy-asset-lib",
     "copy-asset-lib": "copyfiles src/assets/lib/** dist --up 2 --stat",
@@ -69,7 +69,7 @@
     "@aurelia/kernel": "^2.0.0-beta.24",
     "dompurify": "catalog:",
     "native-copyfiles": "catalog:",
-    "rimraf": "catalog:",
+    "remove-glob": "catalog:",
     "tslib": "catalog:",
     "typescript": "catalog:"
   }
