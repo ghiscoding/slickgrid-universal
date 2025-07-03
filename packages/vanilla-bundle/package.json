@@ -24,7 +24,7 @@
     "prebuild": "pnpm run clean",
     "build": "tsc",
     "build:incremental": "tsc --incremental --declaration",
-    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "clean": "remove dist tsconfig.tsbuildinfo",
     "dev": "pnpm build:incremental",
     "test": "echo testing slickgrid-universal slickgrid-vanilla-bundle code"
   },

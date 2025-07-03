@@ -47,7 +47,7 @@
   },
   "scripts": {
     "are-types-wrong": "pnpx @arethetypeswrong/cli --pack .",
-    "clean": "rimraf dist",
+    "clean": "remove dist",
     "vue:dev": "cross-env NODE_ENV=development vite build --watch",
     "vue:dev:init": "vite build",
     "build": "pnpm clean && vue-tsc --p ./tsconfig.app.json && vite build --sourcemap",

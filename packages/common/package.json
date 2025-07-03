@@ -38,7 +38,7 @@
     "postbuild": "pnpm run sass:bundle",
     "sass:bundle": "run-s sass:build sass:copy",
     "build:incremental": "tsc --incremental --declaration",
-    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "clean": "remove dist tsconfig.tsbuildinfo",
     "dev": "node build-watch.mjs",
     "sass-build-task:scss-compile:default": "sass src/styles/slickgrid-theme-default.scss dist/styles/css/slickgrid-theme-default.css --style=compressed --quiet-deps --no-source-map --load-path=node_modules",
     "sass-build-task:scss-compile:default-lite": "sass src/styles/slickgrid-theme-default.lite.scss dist/styles/css/slickgrid-theme-default.lite.css --style=compressed --quiet-deps --no-source-map --load-path=node_modules",
