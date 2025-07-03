@@ -111,7 +111,6 @@
     "cross-env": "catalog:",
     "cypress": "catalog:",
     "cypress-real-events": "catalog:",
-    "dotenv": "^16.5.0",
     "eslint": "catalog:",
     "eslint-plugin-cypress": "catalog:",
     "eslint-plugin-n": "catalog:",

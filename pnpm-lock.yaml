@@ -184,9 +184,6 @@ importers:
       cypress-real-events:
         specifier: 'catalog:'
         version: 1.14.0(cypress@14.5.0)
-      dotenv:
-        specifier: ^16.5.0
-        version: 16.5.0
       eslint:
         specifier: 'catalog:'
         version: 9.29.0(jiti@2.4.2)
