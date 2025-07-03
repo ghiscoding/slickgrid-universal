@@ -4200,7 +4200,7 @@ describe('SlickGrid core file', () => {
       grid.scrollCellIntoView(1, 2, true);
 
       const mouseEvent = new Event('mousewheel');
-      const mousePreventSpy = vi.spyOn(mouseEvent, 'preventDefault');
+      const mousePreventSpy = vi.spyOn(mouseEvent, 'stopPropagation');
       const onViewportChangedSpy = vi.spyOn(grid.onViewportChanged, 'notify');
       const viewportTopLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
       Object.defineProperty(viewportTopLeftElm, 'scrollHeight', { writable: true, value: DEFAULT_GRID_HEIGHT });
@@ -4236,7 +4236,7 @@ describe('SlickGrid core file', () => {
 
       const mouseEvent = new Event('mousewheel');
       Object.defineProperty(mouseEvent, 'shiftKey', { writable: true, value: true });
-      const mousePreventSpy = vi.spyOn(mouseEvent, 'preventDefault');
+      const mousePreventSpy = vi.spyOn(mouseEvent, 'stopPropagation');
       const onViewportChangedSpy = vi.spyOn(grid.onViewportChanged, 'notify');
       const viewportTopLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
       Object.defineProperty(viewportTopLeftElm, 'scrollHeight', { writable: true, value: DEFAULT_GRID_HEIGHT });
@@ -4271,7 +4271,7 @@ describe('SlickGrid core file', () => {
       grid.scrollCellIntoView(1, 2, true);
 
       const mouseEvent = new Event('mousewheel');
-      const mousePreventSpy = vi.spyOn(mouseEvent, 'preventDefault');
+      const mousePreventSpy = vi.spyOn(mouseEvent, 'stopPropagation');
       const onViewportChangedSpy = vi.spyOn(grid.onViewportChanged, 'notify');
       const viewportTopLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
       Object.defineProperty(viewportTopLeftElm, 'scrollHeight', { writable: true, value: DEFAULT_GRID_HEIGHT });
@@ -4307,7 +4307,7 @@ describe('SlickGrid core file', () => {
       grid.scrollCellIntoView(1, 2, true);
 
       const mouseEvent = new Event('mousewheel');
-      const mousePreventSpy = vi.spyOn(mouseEvent, 'preventDefault');
+      const mousePreventSpy = vi.spyOn(mouseEvent, 'stopPropagation');
       const onViewportChangedSpy = vi.spyOn(grid.onViewportChanged, 'notify');
       const viewportTopRightElm = container.querySelector('.slick-viewport-top.slick-viewport-right') as HTMLDivElement;
       Object.defineProperty(viewportTopRightElm, 'scrollHeight', { writable: true, value: DEFAULT_GRID_HEIGHT });
@@ -4344,7 +4344,7 @@ describe('SlickGrid core file', () => {
       grid.scrollCellIntoView(1, 2, true);
 
       const mouseEvent = new Event('mousewheel');
-      const mousePreventSpy = vi.spyOn(mouseEvent, 'preventDefault');
+      const mousePreventSpy = vi.spyOn(mouseEvent, 'stopPropagation');
       const onViewportChangedSpy = vi.spyOn(grid.onViewportChanged, 'notify');
       const viewportTopLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
       const viewportBottomRightElm = container.querySelector('.slick-viewport-bottom.slick-viewport-left') as HTMLDivElement;
@@ -4390,7 +4390,7 @@ describe('SlickGrid core file', () => {
       grid.scrollCellIntoView(1, 2, true);
 
       const mouseEvent = new Event('mousewheel');
-      const mousePreventSpy = vi.spyOn(mouseEvent, 'preventDefault');
+      const mousePreventSpy = vi.spyOn(mouseEvent, 'stopPropagation');
       const onViewportChangedSpy = vi.spyOn(grid.onViewportChanged, 'notify');
       const viewportTopLeftElm = container.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
       viewportBottomLeftElm = container.querySelector('.slick-viewport-bottom.slick-viewport-left') as HTMLDivElement;
@@ -4429,7 +4429,7 @@ describe('SlickGrid core file', () => {
       grid.scrollCellIntoView(1, 2, true);
 
       const mouseEvent = new Event('mousewheel');
-      const mousePreventSpy = vi.spyOn(mouseEvent, 'preventDefault');
+      const mousePreventSpy = vi.spyOn(mouseEvent, 'stopPropagation');
       const onViewportChangedSpy = vi.spyOn(grid.onViewportChanged, 'notify');
       const viewportBottomRightElm = container.querySelector('.slick-viewport-bottom.slick-viewport-right') as HTMLDivElement;
       Object.defineProperty(viewportBottomRightElm, 'scrollHeight', { writable: true, value: DEFAULT_GRID_HEIGHT });
@@ -4466,7 +4466,7 @@ describe('SlickGrid core file', () => {
       grid.scrollCellIntoView(1, 2, true);
 
       const mouseEvent = new Event('mousewheel');
-      const mousePreventSpy = vi.spyOn(mouseEvent, 'preventDefault');
+      const mousePreventSpy = vi.spyOn(mouseEvent, 'stopPropagation');
       const onViewportChangedSpy = vi.spyOn(grid.onViewportChanged, 'notify');
       const viewportTopRightElm = container.querySelector('.slick-viewport-top.slick-viewport-right') as HTMLDivElement;
       Object.defineProperty(viewportTopRightElm, 'scrollHeight', { writable: true, value: DEFAULT_GRID_HEIGHT });
