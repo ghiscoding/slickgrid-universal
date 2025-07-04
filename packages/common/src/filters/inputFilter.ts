@@ -224,8 +224,6 @@ export class InputFilter implements Filter {
         case 'a*':
           searchTermSuffix = '*';
           break;
-        default:
-          searchTermPrefix = ''; // no prefix for this operator (e.g. 'Contains' operator)
       }
       outputValue = `${searchTermPrefix}${this.trimValueWhenEnabled(outputValue)}${searchTermSuffix}`;
     }

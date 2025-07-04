@@ -799,15 +799,17 @@ export default class Example11 {
     const { columns, filters, sorters, pinning } = currentGridState;
 
     if (this.currentSelectedViewPreset && filters) {
-      const filterName = (await prompt(`Update View name or click on OK to continue.`, this.currentSelectedViewPreset.label)) as string;
-      this.currentSelectedViewPreset.label = filterName;
-      this.currentSelectedViewPreset.value = filterName.replace(/\s/g, '');
-      this.currentSelectedViewPreset.columns = columns || [];
-      this.currentSelectedViewPreset.filters = filters || [];
-      this.currentSelectedViewPreset.sorters = sorters || [];
-      this.currentSelectedViewPreset.pinning = pinning || {};
-      this.recreatePredefinedViews();
-      localStorage.setItem('gridViewPreset', JSON.stringify(this.predefinedViews));
+      const filterName = await prompt(`Update View name or click on OK to continue.`, this.currentSelectedViewPreset.label);
+      if (filterName) {
+        this.currentSelectedViewPreset.label = filterName;
+        this.currentSelectedViewPreset.value = filterName.replace(/\s/g, '');
+        this.currentSelectedViewPreset.columns = columns || [];
+        this.currentSelectedViewPreset.filters = filters || [];
+        this.currentSelectedViewPreset.sorters = sorters || [];
+        this.currentSelectedViewPreset.pinning = pinning || {};
+        this.recreatePredefinedViews();
+        localStorage.setItem('gridViewPreset', JSON.stringify(this.predefinedViews));
+      }
     }
   }
 
