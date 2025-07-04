@@ -94,6 +94,12 @@ export class InputFilter implements Filter {
     // filter input can only have 1 search term, so we will use the 1st array index if it exist
     const searchTerm = Array.isArray(this.searchTerms) && this.searchTerms.length >= 0 ? this.searchTerms[0] : '';
 
+    // when we're using an input filter and we have an empty search value,
+    // we probably want this value to be a valid filter option that will ONLY return value that are empty (not everything like its default behavior)
+    // user can still override it by defining it
+    this.columnDef.filter ??= {};
+    this.columnDef.filter.emptySearchTermReturnAllValues ??= false;
+
     // step 1, create the DOM Element of the filter & initialize it if searchTerm is filled
     this.createDomFilterElement(searchTerm);
 

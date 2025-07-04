@@ -3,6 +3,7 @@
 - [Filtering with Localization](#filtering-with-localization-i18n)
 - [Filter Complex Object](#how-to-filter-complex-objects)
 - [Update Filters Dynamically](#update-filters-dynamically)
+- [Filtering empty values](#filtering-empty-values)
 - [Query Different Field (Filter/Sort)](#query-different-field)
 - [Dynamic Query Field](#dynamic-query-field)
 - [Debounce/Throttle Text Search (wait for user to stop typing before filtering)](#debouncethrottle-text-search-wait-for-user-to-stop-typing-before-filtering)
@@ -101,6 +102,31 @@ const columns = [
     // it will use the "field" property to explode (from "." notation) and find the child value
     id: 'zip', name: 'ZIP', field: 'buyer.address.zip', filterable: true
    // id: 'street',  ...
+  }
+];
+```
+
+### Filtering empty values
+You can filter empty dataset values using `=` (empty values) and `!=` (non-empty values) by default. Using this in a Grid State/Preset will also work. However in some cases you might want to disregard such behavior and for that you can assign the `emptySearchTermReturnAllValues` filter option to `false` which will ignore such filters and delete them from the final search.
+
+Note: the default is different depending on the filter type
+- input filter default is `emptySearchTermReturnAllValues: false`
+- multiple select filter default is `emptySearchTermReturnAllValues: false`
+- single select filter default is `emptySearchTermReturnAllValues: true`
+- any other filter type has a default of `emptySearchTermReturnAllValues: true`
+
+For example if you would want to disable this behavior, you can assign `emptySearchTermReturnAllValues: false`
+```ts
+// define you columns, in this demo Effort Driven will use a Select Filter
+this.columnDefinitions = [
+  { 
+    id: 'lastName', name: 'Last Name', field: 'lastName',
+    filterable: true,
+    filter: {
+       model: Filters.input, // default filter
+       emptySearchTermReturnAllValues: true, // True will ignore the filter and return all values (empty & non-empty)
+    }
+  }
 ];
 ```
 
