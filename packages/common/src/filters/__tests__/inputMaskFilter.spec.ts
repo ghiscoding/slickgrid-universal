@@ -223,7 +223,7 @@ describe('InputMaskFilter', () => {
     filter.init(filterArguments);
     const filterElm = divContainer.querySelector('input.filter-mask') as HTMLInputElement;
 
-    expect(filterElm.value).toBe('123');
+    expect(filterElm.value).toBe('=123');
   });
 
   it('should trigger a callback with the clear filter set when calling the "clear" method', () => {

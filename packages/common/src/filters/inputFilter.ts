@@ -66,6 +66,10 @@ export class InputFilter implements Filter {
     return this.grid?.getOptions() ?? {};
   }
 
+  get isCompoundFilter(): boolean {
+    return this.inputFilterType === 'compound';
+  }
+
   /**
    * Initialize the Filter
    */
@@ -73,7 +77,7 @@ export class InputFilter implements Filter {
     this.grid = args.grid;
     this.callback = args.callback;
     this.columnDef = args.columnDef;
-    if (this.inputFilterType === 'compound') {
+    if (this.isCompoundFilter) {
       this.operator = args.operator || '';
     }
     this.searchTerms = args?.searchTerms ?? [];
@@ -100,7 +104,7 @@ export class InputFilter implements Filter {
     this._bindEventService.bind(this._filterInputElm, 'wheel', this.onTriggerEvent.bind(this) as EventListener, {
       passive: true,
     });
-    if (this.inputFilterType === 'compound' && this._selectOperatorElm) {
+    if (this.isCompoundFilter && this._selectOperatorElm) {
       this._bindEventService.bind(this._selectOperatorElm, 'change', this.onTriggerEvent.bind(this) as EventListener);
     }
   }
@@ -115,7 +119,7 @@ export class InputFilter implements Filter {
       this._filterInputElm.value = '';
       this._currentValue = undefined;
       this.updateFilterStyle(false);
-      if (this.inputFilterType === 'compound' && this._selectOperatorElm) {
+      if (this.isCompoundFilter && this._selectOperatorElm) {
         this._selectOperatorElm.selectedIndex = 0;
       }
       this.onTriggerEvent(undefined, true);
@@ -140,7 +144,7 @@ export class InputFilter implements Filter {
     const searchValues = Array.isArray(values) ? values : [values];
     let newInputValue: SearchTerm = '';
     for (const value of searchValues) {
-      if (this.inputFilterType === 'single') {
+      if (!this.isCompoundFilter) {
         newInputValue = operator ? this.addOptionalOperatorIntoSearchString(value, operator) : value;
       } else {
         newInputValue = `${value}`;
@@ -194,6 +198,24 @@ export class InputFilter implements Filter {
         case '<=':
           searchTermPrefix = operator;
           break;
+        case 'EQ':
+          searchTermPrefix = '=';
+          break;
+        case 'GE':
+          searchTermPrefix = '>=';
+          break;
+        case 'GT':
+          searchTermPrefix = '>';
+          break;
+        case 'NE':
+          searchTermPrefix = '!=';
+          break;
+        case 'LE':
+          searchTermPrefix = '<=';
+          break;
+        case 'LT':
+          searchTermPrefix = '<';
+          break;
         case 'EndsWith':
         case '*z':
           searchTermPrefix = '*';
@@ -202,8 +224,10 @@ export class InputFilter implements Filter {
         case 'a*':
           searchTermSuffix = '*';
           break;
+        default:
+          searchTermPrefix = ''; // no prefix for this operator (e.g. 'Contains' operator)
       }
-      outputValue = `${searchTermPrefix}${outputValue}${searchTermSuffix}`;
+      outputValue = `${searchTermPrefix}${this.trimValueWhenEnabled(outputValue)}${searchTermSuffix}`;
     }
 
     return outputValue;
@@ -254,7 +278,10 @@ export class InputFilter implements Filter {
       placeholder = this.columnFilter.placeholder;
     }
 
-    const searchVal = `${searchTerm ?? ''}`;
+    let searchVal = `${searchTerm ?? ''}`;
+    if (!this.isCompoundFilter) {
+      searchVal = this.addOptionalOperatorIntoSearchString(searchVal, this.operator);
+    }
     this._filterInputElm = createDomElement('input', {
       type: this._inputType || 'text',
       autocomplete: 'off',
@@ -273,7 +300,7 @@ export class InputFilter implements Filter {
     }
 
     // create the DOM Select dropdown for the Operator
-    if (this.inputFilterType === 'single') {
+    if (!this.isCompoundFilter) {
       this._filterContainerElm = this._filterInputElm;
       // append the new DOM element to the header row & an empty span
       this._filterInputElm.classList.add('search-filter', 'slick-filter');
@@ -307,6 +334,14 @@ export class InputFilter implements Filter {
     }
   }
 
+  protected trimValueWhenEnabled(val: string): string {
+    const enableWhiteSpaceTrim = this.gridOptions.enableFilterTrimWhiteSpace || this.columnFilter.enableTrimWhiteSpace;
+    if (typeof val === 'string' && enableWhiteSpaceTrim) {
+      return val.trim();
+    }
+    return val;
+  }
+
   /**
    * Event handler to cover the following (keyup, change, mousewheel & spinner)
    * We will trigger the Filter Service callback from this handler
@@ -321,13 +356,9 @@ export class InputFilter implements Filter {
       this.updateFilterStyle(false);
     } else {
       const eventType = event?.type || '';
-      const selectedOperator = (this._selectOperatorElm?.value ?? this.operator) as OperatorString;
-      let value = this._filterInputElm.value;
-      const enableWhiteSpaceTrim = this.gridOptions.enableFilterTrimWhiteSpace || this.columnFilter.enableTrimWhiteSpace;
-      if (typeof value === 'string' && enableWhiteSpaceTrim) {
-        value = value.trim();
-      }
-
+      // pull operator from compound or re-evaluate on each keystroke
+      const selectedOperator = (this._selectOperatorElm?.value ?? (!this.isCompoundFilter ? '' : this.operator)) as OperatorString;
+      const value = this.trimValueWhenEnabled(this._filterInputElm.value);
       if ((event?.target as HTMLElement)?.tagName.toLowerCase() !== 'select') {
         this._currentValue = value;
       }
@@ -346,7 +377,7 @@ export class InputFilter implements Filter {
       const hasSkipNullValChanged =
         (skipNullInput && isDefined(this._currentValue)) || (this._currentValue === '' && isDefined(this._lastSearchValue));
 
-      if (this.inputFilterType === 'single' || !skipNullInput || hasSkipNullValChanged) {
+      if (!this.isCompoundFilter || !skipNullInput || hasSkipNullValChanged) {
         if (typingDelay > 0) {
           window.clearTimeout(this._timer);
           this._timer = window.setTimeout(() => this.callback(event, callbackArgs), typingDelay);
