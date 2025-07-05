@@ -43,8 +43,8 @@
     "i18next": "catalog:",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-i18next": "^15.5.3",
-    "react-router-dom": "^7.6.2",
+    "react-i18next": "^15.6.0",
+    "react-router-dom": "^7.6.3",
     "slickgrid-react": "workspace:*"
   },
   "peerDependencies": {
@@ -61,7 +61,7 @@
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@types/sortablejs": "catalog:",
-    "@vitejs/plugin-react": "^4.5.2",
+    "@vitejs/plugin-react": "^4.6.0",
     "cross-env": "catalog:",
     "globals": "catalog:",
     "regenerator-runtime": "^0.14.1",
