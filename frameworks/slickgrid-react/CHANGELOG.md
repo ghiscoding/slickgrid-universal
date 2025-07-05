@@ -4,6 +4,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.2.0...v9.3.0) (2025-07-05)
+
+### Features
+
+* add `commandLabels` to ContextMenu & HeaderMenu ([#2035](https://github.com/ghiscoding/slickgrid-universal/issues/2035)) ([b8f7612](https://github.com/ghiscoding/slickgrid-universal/commit/b8f76122f5ab2e3c9d0453beed9b3efbffe18811)) - by @ghiscoding
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#2042](https://github.com/ghiscoding/slickgrid-universal/issues/2042)) ([7f183a8](https://github.com/ghiscoding/slickgrid-universal/commit/7f183a897789623b3568d6a3506e14141022d22a)) - by @renovate-bot
+* **filter:** input filter empty values & save GridState/Preset ([#2041](https://github.com/ghiscoding/slickgrid-universal/issues/2041)) ([8c77f27](https://github.com/ghiscoding/slickgrid-universal/commit/8c77f27f8c60066173f43ef7a170b75e4393ebe2)) - by @ghiscoding
+
 ## [9.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.1.0...v9.2.0) (2025-06-14)
 
 ### Features

@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.2.0...v9.3.0) (2025-07-05)
+
+### Bug Fixes
+
+* avoid using SF unsupported `document.elementFromPoint()` ([#2020](https://github.com/ghiscoding/slickgrid-universal/issues/2020)) ([3e00bc1](https://github.com/ghiscoding/slickgrid-universal/commit/3e00bc12351003632726ab6a45768214285af264)) - by @ghiscoding
+* only toggle title and data-slick-tooltip if value is defined ([#2029](https://github.com/ghiscoding/slickgrid-universal/issues/2029)) ([2960a1e](https://github.com/ghiscoding/slickgrid-universal/commit/2960a1eb98e113916aa627814c75dcd21b7f60b4)), closes [#2028](https://github.com/ghiscoding/slickgrid-universal/issues/2028) [#2028](https://github.com/ghiscoding/slickgrid-universal/issues/2028) - by @zewa666
+
 ## [9.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.1.0...v9.2.0) (2025-06-14)
 
 **Note:** Version bump only for package @slickgrid-universal/custom-tooltip-plugin

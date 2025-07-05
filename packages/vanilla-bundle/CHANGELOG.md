@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.2.0...v9.3.0) (2025-07-05)
+
+### Bug Fixes
+
+* custom command/column & menu titles should work, fixes [#2023](https://github.com/ghiscoding/slickgrid-universal/issues/2023) ([#2031](https://github.com/ghiscoding/slickgrid-universal/issues/2031)) ([417d6b8](https://github.com/ghiscoding/slickgrid-universal/commit/417d6b8aed0e78d877f1c79ed62b2a6eaa00e579)) - by @ghiscoding
+* fallback to `setTimeout` when `queueMicrotask` fails in SF ([#2017](https://github.com/ghiscoding/slickgrid-universal/issues/2017)) ([5be3542](https://github.com/ghiscoding/slickgrid-universal/commit/5be354279de14c3840cd1264b239c9cd88bec79f)) - by @ghiscoding
+
 ## [9.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.1.0...v9.2.0) (2025-06-14)
 
 **Note:** Version bump only for package @slickgrid-universal/vanilla-bundle

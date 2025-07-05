@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.2.0...v9.3.0) (2025-07-05)
+
+### Bug Fixes
+
+* **pubsub:** event naming convention incorrect in Salesforce ([#2027](https://github.com/ghiscoding/slickgrid-universal/issues/2027)) ([a355893](https://github.com/ghiscoding/slickgrid-universal/commit/a3558937ec7a986887767038589d2d079b9d1914)) - by @ghiscoding
+
 ## [9.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.14.0...v9.0.0) (2025-05-10)
 
 ### ⚠ BREAKING CHANGES

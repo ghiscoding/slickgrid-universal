@@ -4,6 +4,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.2.0...v9.3.0) (2025-07-05)
+
+### Features
+
+* add `commandLabels` to ContextMenu & HeaderMenu ([#2035](https://github.com/ghiscoding/slickgrid-universal/issues/2035)) ([b8f7612](https://github.com/ghiscoding/slickgrid-universal/commit/b8f76122f5ab2e3c9d0453beed9b3efbffe18811)) - by @ghiscoding
+
+### Bug Fixes
+
+* **filters:** Grid State/Presets text filter w/operator+empty value ([#2012](https://github.com/ghiscoding/slickgrid-universal/issues/2012)) ([6af9737](https://github.com/ghiscoding/slickgrid-universal/commit/6af97370e6feae65d7efb5767df5a3f549673a9d)) - by @ghiscoding
+
 ## [9.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.1.0...v9.2.0) (2025-06-14)
 
 **Note:** Version bump only for package aurelia-slickgrid-demo

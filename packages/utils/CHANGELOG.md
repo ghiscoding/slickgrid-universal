@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.2.0...v9.3.0) (2025-07-05)
+
+### Bug Fixes
+
+* fallback to `setTimeout` when `queueMicrotask` fails in SF ([#2017](https://github.com/ghiscoding/slickgrid-universal/issues/2017)) ([5be3542](https://github.com/ghiscoding/slickgrid-universal/commit/5be354279de14c3840cd1264b239c9cd88bec79f)) - by @ghiscoding
+
 ## [9.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v5.14.0...v9.0.0) (2025-05-10)
 
 ### ⚠ BREAKING CHANGES

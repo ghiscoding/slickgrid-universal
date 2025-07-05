@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.2.0...v9.3.0) (2025-07-05)
+
+### Bug Fixes
+
+* **filter:** input filter should only accept & use inline operator ([#2040](https://github.com/ghiscoding/slickgrid-universal/issues/2040)) ([a52e37c](https://github.com/ghiscoding/slickgrid-universal/commit/a52e37c37a2ae0928607848b6bcca9dd8037599d)) - by @ghiscoding
+* **filters:** Grid Presets text filter should load operator w/empty val ([#2016](https://github.com/ghiscoding/slickgrid-universal/issues/2016)) ([3fd9f20](https://github.com/ghiscoding/slickgrid-universal/commit/3fd9f20ca78754ec724df25e604d66d013ca955c)) - by @ghiscoding
+
 ## [9.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.1.0...v9.2.0) (2025-06-14)
 
 **Note:** Version bump only for package vanilla-demo

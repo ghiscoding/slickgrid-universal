@@ -4,6 +4,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.2.0...v9.3.0) (2025-07-05)
+
+### Features
+
+* add `commandLabels` to ContextMenu & HeaderMenu ([#2035](https://github.com/ghiscoding/slickgrid-universal/issues/2035)) ([b8f7612](https://github.com/ghiscoding/slickgrid-universal/commit/b8f76122f5ab2e3c9d0453beed9b3efbffe18811)) - by @ghiscoding
+
+### Bug Fixes
+
+* avoid using SF unsupported `document.elementFromPoint()` ([#2020](https://github.com/ghiscoding/slickgrid-universal/issues/2020)) ([3e00bc1](https://github.com/ghiscoding/slickgrid-universal/commit/3e00bc12351003632726ab6a45768214285af264)) - by @ghiscoding
+* **core:** stopPropagation to avoid browser scrolling, fixes [#2034](https://github.com/ghiscoding/slickgrid-universal/issues/2034) ([#2037](https://github.com/ghiscoding/slickgrid-universal/issues/2037)) ([ca3b86c](https://github.com/ghiscoding/slickgrid-universal/commit/ca3b86cb84727e80480a17ad69dc412526a7472d)) - by @ghiscoding
+* custom command/column & menu titles should work, fixes [#2023](https://github.com/ghiscoding/slickgrid-universal/issues/2023) ([#2031](https://github.com/ghiscoding/slickgrid-universal/issues/2031)) ([417d6b8](https://github.com/ghiscoding/slickgrid-universal/commit/417d6b8aed0e78d877f1c79ed62b2a6eaa00e579)) - by @ghiscoding
+* **deps:** add missing min Node version via engine field ([411c29a](https://github.com/ghiscoding/slickgrid-universal/commit/411c29a55d422c47825656f32a9392b153ffa96e)) - by @ghiscoding
+* **deps:** update all non-major dependencies ([#2042](https://github.com/ghiscoding/slickgrid-universal/issues/2042)) ([7f183a8](https://github.com/ghiscoding/slickgrid-universal/commit/7f183a897789623b3568d6a3506e14141022d22a)) - by @renovate-bot
+* fallback to `setTimeout` when `queueMicrotask` fails in SF ([#2017](https://github.com/ghiscoding/slickgrid-universal/issues/2017)) ([5be3542](https://github.com/ghiscoding/slickgrid-universal/commit/5be354279de14c3840cd1264b239c9cd88bec79f)) - by @ghiscoding
+* **filter:** input filter empty values & save GridState/Preset ([#2041](https://github.com/ghiscoding/slickgrid-universal/issues/2041)) ([8c77f27](https://github.com/ghiscoding/slickgrid-universal/commit/8c77f27f8c60066173f43ef7a170b75e4393ebe2)) - by @ghiscoding
+* **filter:** input filter should only accept & use inline operator ([#2040](https://github.com/ghiscoding/slickgrid-universal/issues/2040)) ([a52e37c](https://github.com/ghiscoding/slickgrid-universal/commit/a52e37c37a2ae0928607848b6bcca9dd8037599d)) - by @ghiscoding
+* **filters:** Grid Presets text filter should load operator w/empty val ([#2016](https://github.com/ghiscoding/slickgrid-universal/issues/2016)) ([3fd9f20](https://github.com/ghiscoding/slickgrid-universal/commit/3fd9f20ca78754ec724df25e604d66d013ca955c)) - by @ghiscoding
+* **filters:** Grid State/Presets text filter w/operator+empty value ([#2012](https://github.com/ghiscoding/slickgrid-universal/issues/2012)) ([6af9737](https://github.com/ghiscoding/slickgrid-universal/commit/6af97370e6feae65d7efb5767df5a3f549673a9d)) - by @ghiscoding
+* make sure Row Detail item exists before trying to access it ([#2026](https://github.com/ghiscoding/slickgrid-universal/issues/2026)) ([150757d](https://github.com/ghiscoding/slickgrid-universal/commit/150757d1bd07ef4843a7803af16015ddb061c9cb)) - by @carlosdelros
+* only toggle title and data-slick-tooltip if value is defined ([#2029](https://github.com/ghiscoding/slickgrid-universal/issues/2029)) ([2960a1e](https://github.com/ghiscoding/slickgrid-universal/commit/2960a1eb98e113916aa627814c75dcd21b7f60b4)), closes [#2028](https://github.com/ghiscoding/slickgrid-universal/issues/2028) [#2028](https://github.com/ghiscoding/slickgrid-universal/issues/2028) - by @zewa666
+* patch Vanilla-Calendar to open w/displayDateMin ([#2030](https://github.com/ghiscoding/slickgrid-universal/issues/2030)) ([95cf8b3](https://github.com/ghiscoding/slickgrid-universal/commit/95cf8b39157496eb92089885233e2a9b566973f0)) - by @ghiscoding
+* **pubsub:** event naming convention incorrect in Salesforce ([#2027](https://github.com/ghiscoding/slickgrid-universal/issues/2027)) ([a355893](https://github.com/ghiscoding/slickgrid-universal/commit/a3558937ec7a986887767038589d2d079b9d1914)) - by @ghiscoding
+* repatch vanilla calendar picker since it might have selected dates ([b842c52](https://github.com/ghiscoding/slickgrid-universal/commit/b842c52bf1340eda843b158834b0f2f6055308a9)), closes [#2030](https://github.com/ghiscoding/slickgrid-universal/issues/2030) - by @ghiscoding
+* repatch vanilla calendar picker since it might have selected dates ([7af57cd](https://github.com/ghiscoding/slickgrid-universal/commit/7af57cd8c902c82f7ee5469266e80f8d8dfea21a)), closes [#2030](https://github.com/ghiscoding/slickgrid-universal/issues/2030) - by @ghiscoding
+* use custom clipboard override when native API unsupported in SF ([#2032](https://github.com/ghiscoding/slickgrid-universal/issues/2032)) ([db513d0](https://github.com/ghiscoding/slickgrid-universal/commit/db513d0c33ea266b2751f90647ebaae5196efb6b)) - by @ghiscoding
+
 ## [9.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.1.0...v9.2.0) (2025-06-14)
 
 ### Features
