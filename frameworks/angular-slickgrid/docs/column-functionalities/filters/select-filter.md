@@ -207,7 +207,8 @@ Note: the defaults for single & multiple select filters are different
 ```ts
 // define you columns, in this demo Effort Driven will use a Select Filter
 this.columnDefinitions = [
-  { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
+  { 
+    id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
     type: 'boolean',
     filterable: true,
@@ -215,7 +216,8 @@ this.columnDefinitions = [
        collection: [ { value: '', label: '' }, { value: true, labelKey: 'TRUE' }, { value: false, label: 'FALSE' } ],
        model: Filters.singleSelect,
        emptySearchTermReturnAllValues: false, // False when we really want to filter empty values
-   }
+    }
+  }
 ];
 ```
 

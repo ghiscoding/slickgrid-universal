@@ -455,7 +455,12 @@ describe('FilterService', () => {
       service.init(gridStub);
       service.bindLocalOnFilter(gridStub);
       gridStub.onHeaderRowCellRendered.notify(mockArgs as any, new SlickEventData(), gridStub);
-      service.getFiltersMetadata()[0].callback(new Event('input'), { columnDef: mockColumn, operator: 'EQ', searchTerms: [''], shouldTriggerQuery: true });
+      service.getFiltersMetadata()[0].callback(new Event('input'), {
+        columnDef: { ...mockColumn, filter: { model: Filters.singleSelect } },
+        operator: 'EQ',
+        searchTerms: [''],
+        shouldTriggerQuery: true,
+      });
 
       expect(service.getColumnFilters()).toEqual({});
     });
