@@ -823,8 +823,8 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
     });
 
     describe('with editors', () => {
-      it('should display a console error when any of the column definition ids include a dot notation', () => {
-        const consoleSpy = vi.spyOn(global.console, 'error').mockReturnValue();
+      it('should display a console warning when any of the column definition ids include a dot notation', () => {
+        const consoleSpy = vi.spyOn(global.console, 'warn').mockReturnValue();
         const mockColDefs = [{ id: 'user.gender', field: 'user.gender', editor: { model: Editors.text, collection: ['male', 'female'] } }] as Column[];
 
         component.columnDefinitions = mockColDefs;
