@@ -1620,7 +1620,7 @@ export class SlickVanillaGridBundle<TData = any> {
     const columns = Array.isArray(columnDefinitions) ? columnDefinitions : [];
 
     if (columns.some((col) => `${col.id}`.includes('.'))) {
-      console.error(
+      console.warn(
         '[Slickgrid-Universal] Make sure that none of your Column Definition "id" property includes a dot in its name because that will cause some problems with the Editors. For example if your column definition "field" property is "user.firstName" then use "firstName" as the column "id".'
       );
     }
