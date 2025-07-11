@@ -1613,7 +1613,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
   /** Prepare and load all SlickGrid editors, if an async editor is found then we'll also execute it. */
   protected loadSlickGridEditors(columns: Column<TData>[]): Column<TData>[] {
     if (columns.some((col) => `${col.id}`.includes('.'))) {
-      console.error(
+      console.warn(
         '[Angular-Slickgrid] Make sure that none of your Column Definition "id" property includes a dot in its name because that will cause some problems with the Editors. For example if your column definition "field" property is "user.firstName" then use "firstName" as the column "id".'
       );
     }
