@@ -8,7 +8,7 @@ import { AureliaSlickGridConfiguration } from 'aurelia-slickgrid';
 import DOMPurify from 'dompurify';
 import { I18nConfiguration } from '@aurelia/i18n';
 // import Fetch from 'i18next-fetch-backend';
-import { RouterConfiguration } from '@aurelia/router';
+import { RouterConfiguration } from '@aurelia/router-direct';
 
 import { MyApp } from './my-app.js';
 import { DateFormatValueConverter, DecimalValueConverter, StringifyValueConverter } from './examples/resources/value-converters/index.js';
