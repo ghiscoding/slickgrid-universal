@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.3.0...v9.4.0) (2025-07-12)
+
+### Bug Fixes
+
+* **editor:** ms-select drop, full width in composite editor, fixes [#2044](https://github.com/ghiscoding/slickgrid-universal/issues/2044) ([#2048](https://github.com/ghiscoding/slickgrid-universal/issues/2048)) ([a20f52c](https://github.com/ghiscoding/slickgrid-universal/commit/a20f52c4af3b03931fb907031412e4319bb393dd)) - by @ghiscoding
+
 ## [9.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.2.0...v9.3.0) (2025-07-05)
 
 ### Features
