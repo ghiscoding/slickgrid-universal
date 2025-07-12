@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.3.0...v9.4.0) (2025-07-12)
+
+### Bug Fixes
+
+* **editor:** change console error to a console warning ([#2045](https://github.com/ghiscoding/slickgrid-universal/issues/2045)) ([8a40d3d](https://github.com/ghiscoding/slickgrid-universal/commit/8a40d3dd7d1ad35f104c3deefb6988086884a774)) - by @ghiscoding
+
 ## [9.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.2.0...v9.3.0) (2025-07-05)
 
 ### Bug Fixes

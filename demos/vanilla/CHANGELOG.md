@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.3.0...v9.4.0) (2025-07-12)
+
+### Features
+
+* **deps:** update to latest Aurelia 2 Beta.25 ([#2046](https://github.com/ghiscoding/slickgrid-universal/issues/2046)) ([d07dd73](https://github.com/ghiscoding/slickgrid-universal/commit/d07dd73d402d7d0c4f85bbd9ec793519c6d704e2)) - by @ghiscoding
+
 ## [9.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.2.0...v9.3.0) (2025-07-05)
 
 ### Bug Fixes

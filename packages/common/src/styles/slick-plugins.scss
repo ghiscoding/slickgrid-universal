@@ -667,7 +667,6 @@ li.hidden {
   box-shadow: var(--slick-multiselect-input-focus-box-shadow, v.$slick-multiselect-input-focus-box-shadow);
 }
 .ms-drop {
-  max-width: var(--slick-multiselect-dropdown-max-width, v.$slick-multiselect-dropdown-max-width);
   border: var(--slick-multiselect-dropdown-border, v.$slick-multiselect-dropdown-border);
   z-index: var(--slick-multiselect-dropdown-z-index, v.$slick-multiselect-dropdown-z-index);
 

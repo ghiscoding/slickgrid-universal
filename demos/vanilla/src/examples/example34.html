@@ -1,0 +1,60 @@
+<div class="demo34">
+  <h3 class="title is-3">
+    Example 34 - Infinite Scroll with Row Move & Row Selections
+    <div class="subtitle code-link">
+      <span class="is-size-6">see</span>
+      <a
+        class="is-size-5"
+        target="_blank"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example34.ts"
+      >
+        <span class="mdi mdi-link-variant"></span> code
+      </a>
+    </div>
+  </h3>
+
+  <h6 class="italic content example-details">
+    <ul>
+      <li>
+        Infinite scrolling allows the grid to lazy-load rows from the server when reaching the scroll bottom (end) position. In its simplest
+        form, the more the user scrolls down, the more rows get loaded. This example includes 3 features (Infinite Scroll + Row Move + Row
+        Selections).
+      </li>
+      <li>
+        NOTES: <code>presets.pagination</code> is not supported with Infinite Scroll and will revert to the first page, simply because since
+        we keep appending data, we always have to start from index zero (no offset).
+      </li>
+    </ul>
+  </h6>
+
+  <div class="row">
+    <button
+      class="button is-small"
+      data-test="clear-filters-sorting"
+      onclick.trigger="clearAllFiltersAndSorts()"
+      title="Clear all Filters & Sorts"
+    >
+      <span class="mdi mdi-close"></span>
+      <span>Clear all Filter & Sorts</span>
+    </button>
+    <button class="button is-small" data-test="set-dynamic-filter" onclick.trigger="setFiltersDynamically()">
+      Set Filters Dynamically
+    </button>
+    <button class="button is-small" data-test="set-dynamic-sorting" onclick.trigger="setSortingDynamically()">
+      Set Sorting Dynamically
+    </button>
+    <button class="button is-small" data-test="group-by-duration" onclick.trigger="groupByDuration()">Group by Duration</button>
+
+    <label class="ml-4">Reset Dataset <code>onSort</code>:</label>
+    <button class="button is-small" data-test="onsort-on" onclick.trigger="onSortReset(true)">ON</button>
+    <button class="button is-small" data-test="onsort-off" onclick.trigger="onSortReset(false)">OFF</button>
+  </div>
+
+  <div class="mt-3 mb-2">
+    <b>Metrics:</b>
+    <span textcontent.bind="metricsEndTime"></span> —
+    <span textcontent.bind="metricsTotalItemCount" data-test="totalItemCount"></span> items
+  </div>
+
+  <div class="grid34"></div>
+</div>
