@@ -16,7 +16,7 @@ I'm skipping versions 6-8 and going straight to v9.0 because some of the wrapper
 - [`i18next` is now totally optional](#i18next-is-now-optional)
   - requires i18next v25+ (when installed)
 - skipping v6-8 and going straight to v9.0
-- now using `clipboard` API, used in ExcelCopyBuffer/ContextMenu/CellCopy, which might requires end user permissions
+- now using `clipboard` API, used in ExcelCopyBuffer/ContextMenu/CellCopy, which might require end user permissions (an override is available)
 - removing Arrow pointer from Custom Tooltip addon (because it was often offset with the cell text)
 
 > **Note:** if you come from an earlier version, please make sure to follow each migrations in their respected order (review previous migration guides)
@@ -101,7 +101,7 @@ gridOptions.value = {
 | --------------- | ------------ |
 | `rowTopOffsetRenderType: 'top'` | `rowTopOffsetRenderType: 'transform'` |
 
-- if you are using Cypress to get the row X in the grid, which is what we do ourselves, then you will need to adjust your tests
+- if you are using Cypress to get to the row X in the grid, which is what we do ourselves, then you will need to adjust your E2E tests
 
 | Cypress before | Cypress after  |
 | -------------- | -------------- |
@@ -113,7 +113,7 @@ gridOptions.value = {
 ## Column Functionalities
 
 ### Date Editor/Filter (flat config)
-Vanilla-Calendar-Pro was upgraded to v3.0 and their main breaking change was the move to flat config (instead of complex object config) and this mean that if you use any of their option, you'll have to update them to use the new flat options.
+Vanilla-Calendar-Pro was upgraded to v3.0 and their main breaking change was the move to flat config (instead of complex object config) and this mean that if you use any of their option, you'll have to update them to use their new flat options.
 
 The biggest change that you will most probably have to update is the min/max date setting when using the `'today'` shortcut as shown below:
 
@@ -148,11 +148,11 @@ The `GridService` has CRUD methods that were sometime returning a single item an
 
 ---
 
-## Future Changes (next major)
-### Code being Deprecated (to be removed in the future, but not until another year)
+## Future Changes (next major around Node 20 EOL)
+### Code being `@deprecated` (to be removed in the future, but not until another year)
 #### You can start using these new properties and options (shown below) in v9.0 and above.
 
-So when I created the project, I used a few TypeScript Enums and I thought that was great, however what I didn't know at the time is that all of these Enums are ending up in the final transpiled JS bundle and that takes space (but `type` do not). So in the next major, I'm planning to remove most of these Enums and replace them with string literal types (`type` instead of `enum` because `type` aren't transpiled and `enum` are). So you should consider using string types as much, and as soon, as possible in all your new grids and eventually make the changes in your older grids. Note that at the moment, these are only tagged as deprecations and they will only be dropped in the future (not now, but still, you should consider making this change in the near future), for example:
+So when I created the project, I used a few TypeScript Enums and I thought that was great, but what I didn't know at the time was that all of these Enums are ending up in the final transpiled JS bundle and that takes space (but `type` do not). So in the next major, I'm planning to remove most of these Enums and replace them with string literal types (`type` instead of `enum` because `type` aren't transpiled and `enum` are). So you should consider using string types as much, and as soon, as possible in all your new grids and eventually make the changes in your older grids. Note that at the moment, these are only tagged as deprecations and they will only be dropped in the future (not now, but still, you should consider making this change in the near future), for example:
 
 ```diff
 columns = [{
@@ -162,9 +162,9 @@ columns = [{
 }];
 ```
 
-> Note that using the string types (ie: `'number'`) instead of `FieldType` was already doable for the past couple years, so this is far from new.
+> Note that using the string types (ie: `'number'`) instead of `FieldType` was already doable for the past couple of years, so this is far from being something new.
 
-Below are a list of Enums being deprecated and you should think about migrating them eventually because they will be removed in the next major release (whenever that happens, but that won't be before another year). Note that the list below are only a summary of these deprecations and replacements.
+Below is a list of Enums being deprecated and you should think about migrating them eventually because they will be removed in the next major release (whenever that happens, but that won't be before another year). Note that the list below is only a summary of these deprecations and replacements.
 
 | Enum Name   | from `enum`         | to string `type`    | Note |
 | ----------- | ------------------- | ------------------- | ---- |
