@@ -1,5 +1,6 @@
 :root {
-  .grid17-1, .grid17-2 {
+  .grid17-1,
+  .grid17-2 {
     // --slick-header-row-count: 1;
     --slick-header-column-height: 17px;
   }
@@ -9,7 +10,12 @@
   width: 60px;
 }
 
-.grid17-1, .grid17-2 {
+.margin-grid {
+  margin-left: 125px;
+}
+
+.grid17-1,
+.grid17-2 {
   .cell-effort-driven {
     text-align: center;
   }
@@ -22,7 +28,7 @@
   .slick-group-title[level='2'] {
     font-style: italic;
   }
-  .slick-row:not(.slick-group) >.cell-unselectable {
+  .slick-row:not(.slick-group) > .cell-unselectable {
     background: #ececec !important;
   }
   .slick-row .slick-cell.frozen:last-child,
