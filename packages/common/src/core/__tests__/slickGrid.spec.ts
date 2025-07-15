@@ -2880,7 +2880,7 @@ describe('SlickGrid core file', () => {
       Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: slickCellElm });
       container.dispatchEvent(cMouseDownEvent);
       document.body.dispatchEvent(bodyMouseMoveEvent);
-      document.body.dispatchEvent(bodyMouseUpEvent);
+      window.dispatchEvent(bodyMouseUpEvent);
 
       expect(onDragInitSpy).toHaveBeenCalled();
       expect(onDragStartSpy).not.toHaveBeenCalled();
@@ -2906,7 +2906,7 @@ describe('SlickGrid core file', () => {
 
       container.dispatchEvent(cMouseDownEvent);
       document.body.dispatchEvent(bodyMouseMoveEvent1);
-      document.body.dispatchEvent(bodyMouseUpEvent);
+      window.dispatchEvent(bodyMouseUpEvent);
 
       expect(onDragInitSpy).toHaveBeenCalled();
       expect(onDragStartSpy).not.toHaveBeenCalled();
@@ -2938,7 +2938,7 @@ describe('SlickGrid core file', () => {
 
       container.dispatchEvent(cMouseDownEvent);
       document.body.dispatchEvent(bodyMouseMoveEvent1);
-      document.body.dispatchEvent(bodyMouseUpEvent);
+      window.dispatchEvent(bodyMouseUpEvent);
 
       expect(onDragInitSpy).toHaveBeenCalled();
       expect(onDragStartSpy).toHaveBeenCalled();
@@ -2969,7 +2969,7 @@ describe('SlickGrid core file', () => {
 
       container.dispatchEvent(cMouseDownEvent);
       document.body.dispatchEvent(bodyMouseMoveEvent);
-      document.body.dispatchEvent(bodyMouseUpEvent);
+      window.dispatchEvent(bodyMouseUpEvent);
 
       expect(onDragInitSpy).toHaveBeenCalled();
       expect(onDragStartSpy).toHaveBeenCalled();
@@ -3014,7 +3014,7 @@ describe('SlickGrid core file', () => {
 
       container.dispatchEvent(cMouseDownEvent);
       document.body.dispatchEvent(bodyMouseMoveEvent);
-      document.body.dispatchEvent(bodyMouseUpEvent);
+      window.dispatchEvent(bodyMouseUpEvent);
       expect(onDragInitSpy).toHaveBeenCalled();
       expect(onDragStartSpy).toHaveBeenCalled();
       expect(onDragSpy).toHaveBeenCalled();
@@ -3073,7 +3073,7 @@ describe('SlickGrid core file', () => {
 
       container.dispatchEvent(cMouseDownEvent);
       document.body.dispatchEvent(bodyMouseMoveEvent);
-      document.body.dispatchEvent(bodyMouseUpEvent);
+      window.dispatchEvent(bodyMouseUpEvent);
       expect(onDragInitSpy).toHaveBeenCalled();
       expect(onDragStartSpy).toHaveBeenCalled();
       expect(onDragSpy).toHaveBeenCalled();
@@ -3116,7 +3116,7 @@ describe('SlickGrid core file', () => {
 
       container.dispatchEvent(cMouseDownEvent);
       document.body.dispatchEvent(bodyMouseMoveEvent);
-      document.body.dispatchEvent(bodyMouseUpEvent);
+      window.dispatchEvent(bodyMouseUpEvent);
 
       expect(onDragInitSpy).toHaveBeenCalled();
       expect(onDragStartSpy).not.toHaveBeenCalled();

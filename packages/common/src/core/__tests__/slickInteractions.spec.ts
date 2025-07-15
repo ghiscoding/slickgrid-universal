@@ -72,7 +72,8 @@ describe('Draggable class', () => {
   });
 
   it('should trigger mousedown and expect a dragInit and a dragStart and drag to all happen since it was triggered by an allowed element and we did move afterward', () => {
-    const removeListenerSpy = vi.spyOn(document.body, 'removeEventListener');
+    const removeBodyListenerSpy = vi.spyOn(document.body, 'removeEventListener');
+    const removeWindowListenerSpy = vi.spyOn(window, 'removeEventListener');
     const dragInitSpy = vi.fn();
     const dragSpy = vi.fn();
     const dragStartSpy = vi.fn();
@@ -100,7 +101,7 @@ describe('Draggable class', () => {
     Object.defineProperty(muEvt, 'clientX', { writable: true, configurable: true, value: 12 });
     Object.defineProperty(muEvt, 'clientY', { writable: true, configurable: true, value: 10 });
     document.body.dispatchEvent(mmEvt);
-    document.body.dispatchEvent(muEvt);
+    window.dispatchEvent(muEvt);
 
     expect(dg).toBeTruthy();
     expect(dragInitSpy).toHaveBeenCalledWith(mdEvt, {
@@ -110,12 +111,13 @@ describe('Draggable class', () => {
       deltaY: 0,
       dragHandle: containerElement,
       dragSource: containerElement,
-      target: document.body,
+      target: window,
     });
     expect(dragStartSpy).toHaveBeenCalled(); // TODO: revisit calledWith X/Y pos, after migrating to TS class
     expect(dragSpy).toHaveBeenCalled();
     expect(dragEndSpy).toHaveBeenCalled();
-    expect(removeListenerSpy).toHaveBeenCalledTimes(5 * 2);
+    expect(removeBodyListenerSpy).toHaveBeenCalledTimes(2 * 2); // 2x events
+    expect(removeWindowListenerSpy).toHaveBeenCalledTimes(3 * 2); // 3x events
   });
 
   it('should NOT trigger dragInit,dragStart events when user is pressing mousedown and mousemove + Meta key combo that we considered as forbidden via "preventDragFromKeys"', async () => {
@@ -148,7 +150,7 @@ describe('Draggable class', () => {
     Object.defineProperty(muEvt, 'clientX', { writable: true, configurable: true, value: 12 });
     Object.defineProperty(muEvt, 'clientY', { writable: true, configurable: true, value: 10 });
     document.body.dispatchEvent(mmEvt);
-    document.body.dispatchEvent(muEvt);
+    window.dispatchEvent(muEvt);
 
     expect(dg).toBeTruthy();
     expect(dragInitSpy).not.toHaveBeenCalledWith(mdEvt, {
