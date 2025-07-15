@@ -321,7 +321,7 @@ export class SlickCellRangeSelector {
   protected handleDragEnd(e: any, dd: DragRowMove): void {
     this._decorator.hide();
 
-    if (this._dragging) {
+    if (this._dragging && dd.range) {
       this._dragging = false;
       e.stopImmediatePropagation();
 
@@ -329,6 +329,8 @@ export class SlickCellRangeSelector {
       this.onCellRangeSelected.notify({
         range: new SlickRange(dd.range.start.row ?? 0, dd.range.start.cell ?? 0, dd.range.end.row, dd.range.end.cell),
       });
+    } else if (this._autoScrollTimerId) {
+      this.stopIntervalTimer();
     }
   }
 

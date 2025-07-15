@@ -605,6 +605,7 @@ describe('CellRangeSelector Plugin', () => {
     } as any);
     const getCellFromPointSpy = vi.spyOn(gridStub, 'getCellFromPoint');
     const onCellRangeSelectingSpy = vi.spyOn(plugin.onCellRangeSelecting, 'notify');
+    const stopIntervalSpy = vi.spyOn(plugin, 'stopIntervalTimer');
 
     plugin.init(gridStub);
     plugin.addonOptions.minIntervalToShowNextCell = 5;
@@ -627,10 +628,15 @@ describe('CellRangeSelector Plugin', () => {
       gridStub
     );
 
+    // calling dragEnd without a range should still call the stopIntervalTimer() which simulate auto-dragging outside the viewport
+    const dragEventEnd = addVanillaEventPropagation(new Event('dragEnd'));
+    gridStub.onDragEnd.notify({ startX: 3, startY: 4, grid: gridStub } as any, dragEventEnd, gridStub);
+
     expect(focusSpy).toHaveBeenCalled();
     expect(decoratorShowSpy).toHaveBeenCalled();
     expect(plugin.getCurrentRange()).toEqual({ start: { cell: 4, row: 5 }, end: {} });
     expect(getCellFromPointSpy).toHaveBeenCalledWith(3, 14);
+    expect(stopIntervalSpy).toHaveBeenCalled();
 
     vi.advanceTimersByTime(7);
     expect(onCellRangeSelectingSpy).not.toHaveBeenCalled();

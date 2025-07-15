@@ -94,7 +94,7 @@ describe('Draggable class', () => {
     containerElement.dispatchEvent(mdEvt);
 
     const mmEvt = new MouseEvent('mousemove');
-    const muEvt = new MouseEvent('mouseup');
+    const muEvt = new MouseEvent('mouseleave'); // using `mouseLeave` or `mouseUp` will both trigger the dragEnd event
     Object.defineProperty(mmEvt, 'clientX', { writable: true, configurable: true, value: 12 });
     Object.defineProperty(mmEvt, 'clientY', { writable: true, configurable: true, value: 10 });
     Object.defineProperty(muEvt, 'clientX', { writable: true, configurable: true, value: 12 });
@@ -115,7 +115,7 @@ describe('Draggable class', () => {
     expect(dragStartSpy).toHaveBeenCalled(); // TODO: revisit calledWith X/Y pos, after migrating to TS class
     expect(dragSpy).toHaveBeenCalled();
     expect(dragEndSpy).toHaveBeenCalled();
-    expect(removeListenerSpy).toHaveBeenCalledTimes(5 * 2);
+    expect(removeListenerSpy).toHaveBeenCalledTimes(6 * 2); // 6x events
   });
 
   it('should NOT trigger dragInit,dragStart events when user is pressing mousedown and mousemove + Meta key combo that we considered as forbidden via "preventDragFromKeys"', async () => {

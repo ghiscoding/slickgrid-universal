@@ -110,6 +110,7 @@ export function Draggable(options: DraggableOption): {
 
         if (result !== false) {
           document.body.addEventListener('mousemove', userMoved);
+          document.body.addEventListener('mouseleave', userReleased);
           document.body.addEventListener('touchmove', userMoved);
           document.body.addEventListener('mouseup', userReleased);
           document.body.addEventListener('touchend', userReleased);
@@ -138,6 +139,7 @@ export function Draggable(options: DraggableOption): {
   }
 
   function userReleased(event: MouseEvent | TouchEvent): void {
+    document.body.removeEventListener('mouseleave', userReleased);
     document.body.removeEventListener('mousemove', userMoved);
     document.body.removeEventListener('touchmove', userMoved);
     document.body.removeEventListener('mouseup', userReleased);
