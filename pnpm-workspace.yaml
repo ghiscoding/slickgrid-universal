@@ -47,6 +47,3 @@ catalog:
   vite-tsconfig-paths: ^5.1.4
   vitest: ^3.2.4
   vue: ^3.5.17
-
-patchedDependencies:
-  vanilla-calendar-pro: patches/vanilla-calendar-pro.patch
