@@ -127,11 +127,6 @@ catalogs:
       specifier: ^3.5.17
       version: 3.5.17
 
-patchedDependencies:
-  vanilla-calendar-pro:
-    hash: 0fc6d01a2ce755732c8927dcbcdc6ac6159548ad62088e0fa4fe02be9e3b041d
-    path: patches/vanilla-calendar-pro.patch
-
 importers:
 
   .:
@@ -1168,8 +1163,8 @@ importers:
         specifier: ^2.0.12
         version: 2.0.12
       vanilla-calendar-pro:
-        specifier: ^3.0.4
-        version: 3.0.4(patch_hash=0fc6d01a2ce755732c8927dcbcdc6ac6159548ad62088e0fa4fe02be9e3b041d)
+        specifier: ^3.0.5
+        version: 3.0.5
     devDependencies:
       autoprefixer:
         specifier: ^10.4.21
@@ -11178,8 +11173,8 @@ packages:
     resolution: {integrity: sha512-d7KLgL1LD3U3fgnvWEY1cQXoO/q6EQ1BSz48Sa149V/5zVTAbgmZIpyI8TRi6U9/JNyeYLlTKsEMPtLC27RFUg==}
     engines: {node: ^18.17.0 || >=20.5.0}
 
-  vanilla-calendar-pro@3.0.4:
-    resolution: {integrity: sha512-i13aJsfovlfRGm7zkoxYh9WylkdLVJkjmfZjJms5cb5i/lbnPTBaDQ0J51joC3Q4h66sFpEUjA4bXLAr/OPZ2w==}
+  vanilla-calendar-pro@3.0.5:
+    resolution: {integrity: sha512-4X9bmTo1/KzbZrB7B6mZXtvVXIhcKxaVSnFZuaVtps7tshKJDxgaIElkgdia6IjB5qWetWuu7kZ+ZaV1sPxy6w==}
 
   varint@6.0.0:
     resolution: {integrity: sha512-cXEIW6cfr15lFv563k4GuVuW/fiwjknytD37jIOLSdSWuOI6WnO/oKwmP2FQTU2l01LP8/M5TSAJpzUaGe3uWg==}
@@ -23659,7 +23654,7 @@ snapshots:
 
   validate-npm-package-name@6.0.0: {}
 
-  vanilla-calendar-pro@3.0.4(patch_hash=0fc6d01a2ce755732c8927dcbcdc6ac6159548ad62088e0fa4fe02be9e3b041d): {}
+  vanilla-calendar-pro@3.0.5: {}
 
   varint@6.0.0: {}
 
