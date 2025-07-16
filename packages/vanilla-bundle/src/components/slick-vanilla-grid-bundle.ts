@@ -53,7 +53,7 @@ import {
   SlickGrid,
   unsubscribeAll,
 } from '@slickgrid-universal/common';
-import { extend, queueMicrotaskOrSetTimeout } from '@slickgrid-universal/utils';
+import { deepCopy, extend, queueMicrotaskOrSetTimeout } from '@slickgrid-universal/utils';
 import { EventNamingStyle, EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
 import { SlickFooterComponent } from '@slickgrid-universal/custom-footer-component';
@@ -152,7 +152,7 @@ export class SlickVanillaGridBundle<TData = any> {
     const prevDatasetLn = this._currentDatasetLength;
     const isDatasetEqual = dequal(newDataset, this.dataset || []);
     const isDeepCopyDataOnPageLoadEnabled = !!this._gridOptions?.enableDeepCopyDatasetOnPageLoad;
-    let data = isDeepCopyDataOnPageLoadEnabled ? extend(true, [], newDataset) : newDataset;
+    let data = isDeepCopyDataOnPageLoadEnabled ? deepCopy(newDataset) : newDataset;
 
     // when Tree Data is enabled and we don't yet have the hierarchical dataset filled, we can force a convert+sort of the array
     if (
@@ -398,7 +398,7 @@ export class SlickVanillaGridBundle<TData = any> {
 
     if (hierarchicalDataset) {
       this.sharedService.hierarchicalDataset =
-        (isDeepCopyDataOnPageLoadEnabled ? extend(true, [], hierarchicalDataset) : hierarchicalDataset) || [];
+        (isDeepCopyDataOnPageLoadEnabled ? deepCopy(hierarchicalDataset) : hierarchicalDataset) || [];
     }
     const eventHandler = new SlickEventHandler();
 

@@ -50,7 +50,7 @@ import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickFooterComponent } from '@slickgrid-universal/custom-footer-component';
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
 import { SlickPaginationComponent } from '@slickgrid-universal/pagination-component';
-import { extend } from '@slickgrid-universal/utils';
+import { deepCopy, extend } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 import React from 'react';
 import type { Subscription } from 'rxjs';
@@ -189,7 +189,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     const prevDatasetLn = this._currentDatasetLength;
     const isDatasetEqual = dequal(newDataset, this.dataset || []);
     const isDeepCopyDataOnPageLoadEnabled = !!this._options?.enableDeepCopyDatasetOnPageLoad;
-    let data = isDeepCopyDataOnPageLoadEnabled ? extend(true, [], newDataset) : newDataset;
+    let data = isDeepCopyDataOnPageLoadEnabled ? deepCopy(newDataset) : newDataset;
 
     // when Tree Data is enabled and we don't yet have the hierarchical dataset filled, we can force a convert+sort of the array
     if (

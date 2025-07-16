@@ -1,5 +1,4 @@
 import type { AnyFunction } from './models/types.js';
-import { extend } from './nodeExtend.js';
 
 /**
  * Add an item to an array only when the item does not exists, when the item is an object we will be using their "id" to compare
@@ -44,20 +43,50 @@ export function arrayRemoveItemByIndex<T>(array: T[], index: number): T[] {
 }
 
 /**
- * @use `extend()` when possible.
- * Create an immutable clone of an array or object (native type will be returned "as is").
- * This function will deep copy whatever is provided as the first argument, but nonetheless it is now an alias to `extend()` (node-extend) function.
- * We'll keep the method to avoid breaking users of `deepCopy()`, however we suggest to directly use `extend(true, {}, obj)` whenever possible
+ * Create an immutable clone of an array or object
+ * (c) 2019 Chris Ferdinandi, MIT License, https://gomakethings.com
+ * @param  {Array|Object} objectOrArray - the array or object to copy
+ * @return {Array|Object} - the clone of the array or object
  */
 export function deepCopy(objectOrArray: any | any[]): any | any[] {
-  // we previously had a full implementation but we can now use node-extend to do the job
-  // except that we need couple of small priors checks (native will be returned as is)
-  if (!Array.isArray(objectOrArray) && !isObject(objectOrArray)) {
-    return objectOrArray;
+  /**
+   * Create an immutable copy of an object
+   * @return {Object}
+   */
+  const cloneObj = () => {
+    // Create new object
+    const clone = {};
+
+    // Loop through each item in the original
+    // Recursively copy it's value and add to the clone
+    Object.keys(objectOrArray).forEach((key) => {
+      if (Object.prototype.hasOwnProperty.call(objectOrArray, key)) {
+        (clone as any)[key] = deepCopy(objectOrArray[key]);
+      }
+    });
+    return clone;
+  };
+
+  /**
+   * Create an immutable copy of an array
+   * @return {Array}
+   */
+  const cloneArr = () => objectOrArray.map((item: any) => deepCopy(item));
+
+  // -- init --//
+  // Get object type
+  const type = Object.prototype.toString.call(objectOrArray).slice(8, -1).toLowerCase();
+
+  // If an object
+  if (type === 'object') {
+    return cloneObj();
   }
-  // Array or Object need 2nd arg to be either [] or {} for a deep copy to assign to when using node-extend (same as jQuery.extend())
-  const assignment = Array.isArray(objectOrArray) ? [] : {};
-  return extend(true, assignment, objectOrArray);
+  // If an array
+  if (type === 'array') {
+    return cloneArr();
+  }
+  // Otherwise, return it as-is
+  return objectOrArray;
 }
 
 /**
