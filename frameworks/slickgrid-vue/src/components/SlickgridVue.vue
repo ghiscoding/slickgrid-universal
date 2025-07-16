@@ -47,7 +47,7 @@ import { SlickFooterComponent } from '@slickgrid-universal/custom-footer-compone
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickPaginationComponent } from '@slickgrid-universal/pagination-component';
-import { extend } from '@slickgrid-universal/utils';
+import { deepCopy, extend } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 import {
   type ComponentPublicInstance,
@@ -214,7 +214,7 @@ watch(
     const prevDatasetLn = currentDatasetLength;
     const isDatasetEqual = dequal(newDataset, dataModel.value || []);
     const isDeepCopyDataOnPageLoadEnabled = !!_gridOptions.value?.enableDeepCopyDatasetOnPageLoad;
-    let data = isDeepCopyDataOnPageLoadEnabled ? extend(true, [], newDataset) : newDataset;
+    let data = isDeepCopyDataOnPageLoadEnabled ? deepCopy(newDataset) : newDataset;
 
     // when Tree Data is enabled and we don't yet have the hierarchical dataset filled, we can force a convert+sort of the array
     if (
