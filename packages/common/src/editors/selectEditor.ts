@@ -97,8 +97,7 @@ export class SelectEditor implements Editor {
 
   constructor(
     protected readonly args: EditorArguments,
-    protected readonly isMultipleSelect: boolean,
-    public delayOpening = -1
+    protected readonly isMultipleSelect: boolean
   ) {
     this.grid = args.grid;
     this.gridOptions = (this.grid.getOptions() || {}) as GridOption;

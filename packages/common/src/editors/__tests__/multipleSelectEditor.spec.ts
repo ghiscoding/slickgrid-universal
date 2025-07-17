@@ -93,7 +93,7 @@ describe('MultipleSelectEditor', () => {
         { value: 'female', label: 'female' },
       ];
       gridOptionMock.translater = undefined;
-      editor = new MultipleSelectEditor(editorArguments, 0);
+      editor = new MultipleSelectEditor(editorArguments);
       const editorCount = document.body.querySelectorAll('select.ms-filter.editor-gender').length;
 
       vi.runAllTimers(); // fast-forward timer
