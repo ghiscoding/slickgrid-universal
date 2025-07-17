@@ -46,4 +46,10 @@ export interface HeaderMenuLabel {
 
   /** Defaults to "SORT_DESCENDING" translation key */
   sortDescCommandKey?: string;
+
+  /** Defaults to "Unfreeze Columns" */
+  unfreezeColumnsCommand?: string;
+
+  /** Defaults to "UNFREEZE_COLUMNS" translation key */
+  unfreezeColumnsCommandKey?: string;
 }
