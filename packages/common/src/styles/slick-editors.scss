@@ -62,7 +62,7 @@
   }
 
   .ms-filter.select-editor {
-    transform: var(--slick-multiselect-editor-transform, v.$slick-multiselect-editor-transform);
+    width: 100%;
     height: var(--slick-multiselect-editor-height, v.$slick-multiselect-editor-height);
     button.ms-choice {
       height: var(--slick-multiselect-editor-height, v.$slick-multiselect-editor-height);
@@ -436,6 +436,7 @@
       }
       button.ms-choice {
         height: var(--slick-editor-modal-multiselect-editor-height, v.$slick-editor-modal-multiselect-editor-height);
+        border: var(--slick-editor-modal-select-editor-border, v.$slick-editor-modal-select-editor-border);
       }
       .checkbox-editor-container {
         padding: var(--slick-editor-modal-checkbox-editor-padding, v.$slick-editor-modal-checkbox-editor-padding);
