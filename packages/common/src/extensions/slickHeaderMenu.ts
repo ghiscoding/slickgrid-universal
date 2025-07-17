@@ -377,14 +377,26 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
           let hasFrozenOrResizeCommand = false;
           if (headerMenuOptions && !headerMenuOptions.hideFreezeColumnsCommand) {
             hasFrozenOrResizeCommand = true;
-            if (!columnHeaderMenuItems.some((item) => item !== 'divider' && item?.command === 'freeze-columns')) {
-              columnHeaderMenuItems.push({
-                _orgTitle: commandLabels?.freezeColumnsCommand || '',
-                iconCssClass: headerMenuOptions.iconFreezeColumns || 'mdi mdi-pin-outline',
-                titleKey: `${translationPrefix}FREEZE_COLUMNS`,
-                command: 'freeze-columns',
-                positionOrder: 45,
-              });
+            if (gridOptions.frozenColumn === columns.findIndex((col) => col.id === columnDef.id)) {
+              if (!columnHeaderMenuItems.some((item) => item !== 'divider' && item?.command === 'unfreeze-columns')) {
+                columnHeaderMenuItems.push({
+                  _orgTitle: commandLabels?.unfreezeColumnsCommand || '',
+                  iconCssClass: headerMenuOptions.iconUnfreezeColumns || 'mdi mdi-pin-off-outline',
+                  titleKey: `${translationPrefix}UNFREEZE_COLUMNS`,
+                  command: 'unfreeze-columns',
+                  positionOrder: 45,
+                });
+              }
+            } else {
+              if (!columnHeaderMenuItems.some((item) => item !== 'divider' && item?.command === 'freeze-columns')) {
+                columnHeaderMenuItems.push({
+                  _orgTitle: commandLabels?.freezeColumnsCommand || '',
+                  iconCssClass: headerMenuOptions.iconFreezeColumns || 'mdi mdi-pin-outline',
+                  titleKey: `${translationPrefix}FREEZE_COLUMNS`,
+                  command: 'freeze-columns',
+                  positionOrder: 45,
+                });
+              }
             }
           }
 
@@ -545,6 +557,54 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     }
   }
 
+  /** freeze or unfreeze columns command */
+  protected freezeOrUnfreezeColumns(column: Column, command: 'freeze-columns' | 'unfreeze-columns'): void {
+    const visibleColumns = [...this.sharedService.visibleColumns];
+    const columnPosition = visibleColumns.findIndex((col) => col.id === column.id);
+    const newGridOptions = {
+      frozenColumn: command === 'unfreeze-columns' ? -1 : columnPosition,
+      enableMouseWheelScrollHandler: true,
+    };
+
+    // remove the last freeze/unfreeze command called from Header Menu since it will be replaced by the other one when reopening the menu
+    const columnHeaderMenuItems: Array<MenuCommandItem | 'divider'> = column?.header?.menu?.commandItems ?? [];
+    const freezeCommandIdx = columnHeaderMenuItems.findIndex((item) => (item as MenuCommandItem)?.command === command);
+    if (freezeCommandIdx >= 0) {
+      columnHeaderMenuItems.splice(freezeCommandIdx, 1); // remove the "unfreeze columns" command
+    }
+
+    // to circumvent a bug in SlickGrid core lib, let's keep the columns positions ref and re-apply them after calling setOptions
+    // the bug is highlighted in this issue comment:: https://github.com/6pac/SlickGrid/issues/592#issuecomment-822885069
+    const previousColumnDefinitions = this.sharedService.slickGrid.getColumns();
+
+    this.sharedService.slickGrid.setOptions(newGridOptions, false, true); // suppress the setColumns (3rd argument) since we'll do that ourselves
+    this.sharedService.gridOptions.frozenColumn = newGridOptions.frozenColumn;
+    this.sharedService.gridOptions.enableMouseWheelScrollHandler = newGridOptions.enableMouseWheelScrollHandler;
+    this.sharedService.frozenVisibleColumnId = column.id;
+
+    let finalVisibleColumns = [];
+    if (command === 'freeze-columns') {
+      // to freeze columns, we need to take only the visible columns and we also need to use setColumns() when some of them are hidden
+      // to make sure that we only use the visible columns, not doing this will have the undesired effect of showing back some of the hidden columns
+      // prettier-ignore
+      if (this.sharedService.hasColumnsReordered || (Array.isArray(visibleColumns) && Array.isArray(this.sharedService.allColumns) && visibleColumns.length !== this.sharedService.allColumns.length)) {
+        finalVisibleColumns = visibleColumns;
+      } else {
+        // to circumvent a bug in SlickGrid core lib re-apply same column definitions that were backed up before calling setOptions()
+        finalVisibleColumns = previousColumnDefinitions;
+      }
+    } else {
+      finalVisibleColumns = visibleColumns;
+    }
+    this.sharedService.slickGrid.setColumns(finalVisibleColumns);
+
+    // we also need to autosize columns if the option is enabled
+    const gridOptions = this.sharedService.slickGrid.getOptions();
+    if (gridOptions.enableAutoSizeColumns) {
+      this.sharedService.slickGrid.autosizeColumns();
+    }
+  }
+
   /** Execute the Header Menu Commands that was triggered by the onCommand subscribe */
   protected executeHeaderMenuInternalCommands(
     event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData,
@@ -568,34 +628,10 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
           this.pubSubService.publish('onHeaderMenuColumnResizeByContent', { columnId: args.column.id });
           break;
         case 'freeze-columns':
-          const visibleColumns = [...this.sharedService.visibleColumns];
-          const columnPosition = visibleColumns.findIndex((col) => col.id === args.column.id);
-          const newGridOptions = { frozenColumn: columnPosition, enableMouseWheelScrollHandler: true };
-
-          // to circumvent a bug in SlickGrid core lib, let's keep the columns positions ref and re-apply them after calling setOptions
-          // the bug is highlighted in this issue comment:: https://github.com/6pac/SlickGrid/issues/592#issuecomment-822885069
-          const previousColumnDefinitions = this.sharedService.slickGrid.getColumns();
-
-          this.sharedService.slickGrid.setOptions(newGridOptions, false, true); // suppress the setColumns (3rd argument) since we'll do that ourselves
-          this.sharedService.gridOptions.frozenColumn = newGridOptions.frozenColumn;
-          this.sharedService.gridOptions.enableMouseWheelScrollHandler = newGridOptions.enableMouseWheelScrollHandler;
-          this.sharedService.frozenVisibleColumnId = args.column.id;
-
-          // to freeze columns, we need to take only the visible columns and we also need to use setColumns() when some of them are hidden
-          // to make sure that we only use the visible columns, not doing this will have the undesired effect of showing back some of the hidden columns
-          // prettier-ignore
-          if (this.sharedService.hasColumnsReordered || (Array.isArray(visibleColumns) && Array.isArray(this.sharedService.allColumns) && visibleColumns.length !== this.sharedService.allColumns.length)) {
-            this.sharedService.slickGrid.setColumns(visibleColumns);
-          } else {
-            // to circumvent a bug in SlickGrid core lib re-apply same column definitions that were backend up before calling setOptions()
-            this.sharedService.slickGrid.setColumns(previousColumnDefinitions);
-          }
-
-          // we also need to autosize columns if the option is enabled
-          const gridOptions = this.sharedService.slickGrid.getOptions();
-          if (gridOptions.enableAutoSizeColumns) {
-            this.sharedService.slickGrid.autosizeColumns();
-          }
+          this.freezeOrUnfreezeColumns(args.column, args.command);
+          break;
+        case 'unfreeze-columns':
+          this.freezeOrUnfreezeColumns(args.column, args.command);
           break;
         case 'sort-asc':
         case 'sort-desc':

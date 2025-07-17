@@ -113,6 +113,9 @@ export class TranslateServiceStub implements TranslaterService {
       case 'FREEZE_COLUMNS':
         output = this._locale === 'en' ? 'Freeze Columns' : 'Geler les colonnes';
         break;
+      case 'UNFREEZE_COLUMNS':
+        output = this._locale === 'en' ? 'Unfreeze Columns' : 'Dégeler les colonnes';
+        break;
       case 'GREATER_THAN':
         output = this._locale === 'en' ? 'Greater than' : 'Plus grand que';
         break;

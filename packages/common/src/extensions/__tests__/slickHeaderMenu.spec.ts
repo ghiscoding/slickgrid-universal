@@ -915,6 +915,57 @@ describe('HeaderMenu Plugin', () => {
         expect(gridStub.setColumns).toHaveBeenCalledWith(columnsMock);
       });
 
+      it('should expect menu related to Unfreeze Columns when "hideFreezeColumnsCommand" is disabled and column is already frozen to that index and then also expect grid "setOptions" method to be called with current column position', async () => {
+        const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
+          ...gridOptionsMock,
+          headerMenu: { hideFreezeColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+          frozenColumn: 1,
+        });
+
+        // calling `onBeforeSetColumns` 2x times shouldn't duplicate clear sort menu
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
+        const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
+        headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+
+        const commandDivElm = gridContainerDiv.querySelector('[data-command="unfreeze-columns"]') as HTMLDivElement;
+        const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
+        const commandLabelElm = commandDivElm.querySelector('.slick-menu-content') as HTMLDivElement;
+        expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
+          {
+            _orgTitle: '',
+            iconCssClass: 'mdi mdi-pin-off-outline',
+            title: 'Unfreeze Columns',
+            titleKey: 'UNFREEZE_COLUMNS',
+            command: 'unfreeze-columns',
+            positionOrder: 45,
+          },
+          { divider: true, command: '', positionOrder: 48 },
+        ]);
+        expect(commandIconElm.classList.contains('mdi-pin-off-outline')).toBeTruthy();
+        expect(commandLabelElm.textContent).toBe('Unfreeze Columns');
+
+        await translateService.use('fr');
+        plugin.translateHeaderMenu();
+        expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
+          {
+            _orgTitle: '',
+            iconCssClass: 'mdi mdi-pin-off-outline',
+            title: 'Dégeler les colonnes',
+            titleKey: 'UNFREEZE_COLUMNS',
+            command: 'unfreeze-columns',
+            positionOrder: 45,
+          },
+          { divider: true, command: '', positionOrder: 48 },
+        ]);
+
+        commandDivElm.dispatchEvent(new Event('click')); // execute command
+        expect(setOptionsSpy).toHaveBeenCalledWith({ frozenColumn: -1, enableMouseWheelScrollHandler: true }, false, true);
+        expect(gridStub.setColumns).toHaveBeenCalledWith(columnsMock);
+      });
+
       it('should expect menu related to Freeze Columns when "hideFreezeColumnsCommand" is disabled and also expect grid "setOptions" method to be called with frozen column of -1 because the column found is not visible', () => {
         // const originalColumnDefinitions = [{ id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' }, { id: 'field2', field: 'field2', width: 75 }];
         // vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(originalColumnDefinitions);

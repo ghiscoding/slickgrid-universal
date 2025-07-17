@@ -225,6 +225,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
     iconClearSortCommand: 'mdi mdi-sort-variant-off',
     iconFilterShortcutSubMenu: 'mdi mdi-filter-outline',
     iconFreezeColumns: 'mdi mdi-pin-outline',
+    iconUnfreezeColumns: 'mdi mdi-pin-off-outline',
     iconSortAscCommand: 'mdi mdi-sort-ascending',
     iconSortDescCommand: 'mdi mdi-sort-descending',
     iconColumnHideCommand: 'mdi mdi-close',

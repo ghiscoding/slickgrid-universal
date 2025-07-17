@@ -69,6 +69,9 @@ export interface HeaderMenuOption {
   /** icon for the "Freeze Columns" command */
   iconFreezeColumns?: string;
 
+  /** icon for the "Unfreeze Columns" command */
+  iconUnfreezeColumns?: string;
+
   /** icon for the "Sort Ascending" command */
   iconSortAscCommand?: string;
 
