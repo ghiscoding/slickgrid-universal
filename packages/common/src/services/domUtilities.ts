@@ -40,7 +40,7 @@ export function buildMsSelectCollectionList(
   const optionLabel = columnFilterOrEditor?.customStructure?.optionLabel ?? 'value';
   const valueName = columnFilterOrEditor?.customStructure?.value ?? 'value';
 
-  const selectElement = createDomElement('select', { className: 'ms-filter search-filter' });
+  const selectElement = createDomElement('select', { className: 'ms-filter' });
   const extraCssClasses = type === 'filter' ? ['search-filter', `filter-${columnId}`] : ['select-editor', `editor-${columnId}`];
   selectElement.classList.add(...extraCssClasses);
   selectElement.multiple = isMultiSelect;
