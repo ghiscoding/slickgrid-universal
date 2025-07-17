@@ -423,6 +423,10 @@ export default class Example07 {
           dataContextIds: [2, 3, 6, 7], // (recommended) select by your data object IDs
         },
       },
+      headerMenu: {
+        hideFreezeColumnsCommand: false,
+        subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
+      },
     };
   }
 

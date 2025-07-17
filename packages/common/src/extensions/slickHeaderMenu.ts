@@ -378,6 +378,10 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
           if (headerMenuOptions && !headerMenuOptions.hideFreezeColumnsCommand) {
             hasFrozenOrResizeCommand = true;
             if (gridOptions.frozenColumn === columns.findIndex((col) => col.id === columnDef.id)) {
+              // make sure the "freeze-columns" doesn't exist before adding the "unfreeze-columns"
+              this.removeCommandWhenFound(columnHeaderMenuItems, 'freeze-columns');
+
+              // add unfreeze command
               if (!columnHeaderMenuItems.some((item) => item !== 'divider' && item?.command === 'unfreeze-columns')) {
                 columnHeaderMenuItems.push({
                   _orgTitle: commandLabels?.unfreezeColumnsCommand || '',
@@ -388,6 +392,10 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
                 });
               }
             } else {
+              // make sure the "unfreeze-columns" doesn't exist before adding the "freeze-columns"
+              this.removeCommandWhenFound(columnHeaderMenuItems, 'unfreeze-columns');
+
+              // add freeze command
               if (!columnHeaderMenuItems.some((item) => item !== 'divider' && item?.command === 'freeze-columns')) {
                 columnHeaderMenuItems.push({
                   _orgTitle: commandLabels?.freezeColumnsCommand || '',
@@ -557,6 +565,13 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     }
   }
 
+  protected removeCommandWhenFound(columnHeaderMenuItems: Array<MenuCommandItem | 'divider'>, command: string): void {
+    const commandIdx = columnHeaderMenuItems.findIndex((item) => item !== 'divider' && item?.command === command);
+    if (commandIdx >= 0) {
+      columnHeaderMenuItems.splice(commandIdx, 1);
+    }
+  }
+
   /** freeze or unfreeze columns command */
   protected freezeOrUnfreezeColumns(column: Column, command: 'freeze-columns' | 'unfreeze-columns'): void {
     const visibleColumns = [...this.sharedService.visibleColumns];
@@ -568,10 +583,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
     // remove the last freeze/unfreeze command called from Header Menu since it will be replaced by the other one when reopening the menu
     const columnHeaderMenuItems: Array<MenuCommandItem | 'divider'> = column?.header?.menu?.commandItems ?? [];
-    const freezeCommandIdx = columnHeaderMenuItems.findIndex((item) => (item as MenuCommandItem)?.command === command);
-    if (freezeCommandIdx >= 0) {
-      columnHeaderMenuItems.splice(freezeCommandIdx, 1); // remove the "unfreeze columns" command
-    }
+    this.removeCommandWhenFound(columnHeaderMenuItems, command);
 
     // to circumvent a bug in SlickGrid core lib, let's keep the columns positions ref and re-apply them after calling setOptions
     // the bug is highlighted in this issue comment:: https://github.com/6pac/SlickGrid/issues/592#issuecomment-822885069
