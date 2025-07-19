@@ -431,6 +431,7 @@
         border: var(--slick-editor-modal-select-editor-border, v.$slick-editor-modal-select-editor-border);
       }
       .checkbox-editor-container {
+        background-color: var(--slick-text-editor-background, v.$slick-text-editor-background);
         padding: var(--slick-editor-modal-checkbox-editor-padding, v.$slick-editor-modal-checkbox-editor-padding);
         border: var(--slick-editor-modal-checkbox-editor-border, v.$slick-editor-modal-checkbox-editor-border);
         border-radius: var(--slick-editor-modal-checkbox-editor-border-radius, v.$slick-editor-modal-checkbox-editor-border-radius);
