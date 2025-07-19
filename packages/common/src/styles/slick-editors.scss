@@ -399,10 +399,6 @@
         margin: var(--slick-editor-modal-input-editor-margin, v.$slick-editor-modal-input-editor-margin);
         border: var(--slick-editor-modal-input-editor-border, v.$slick-editor-modal-input-editor-border);
         padding: var(--slick-editor-modal-input-editor-padding, v.$slick-editor-modal-input-editor-padding);
-        &:focus {
-          border-color: var(--slick-text-editor-focus-border-color, v.$slick-text-editor-focus-border-color);
-          box-shadow: var(--slick-text-editor-focus-box-shadow, v.$slick-text-editor-focus-box-shadow);
-        }
       }
       .input-group {
         display: flex;
@@ -412,10 +408,6 @@
         border: var(--slick-editor-modal-large-editor-border, v.$slick-editor-modal-large-editor-border);
         border-radius: var(--slick-editor-modal-large-editor-border-radius, v.$slick-editor-modal-large-editor-border-radius);
         padding: var(--slick-editor-modal-large-editor-padding, v.$slick-editor-modal-large-editor-padding);
-        &:focus-within {
-          border-color: var(--slick-text-editor-focus-border-color, v.$slick-text-editor-focus-border-color);
-          box-shadow: var(--slick-text-editor-focus-box-shadow, v.$slick-text-editor-focus-box-shadow);
-        }
         textarea {
           width: 100%;
           height: 100%;
@@ -446,6 +438,15 @@
         input {
           height: inherit;
         }
+      }
+
+      input:focus-within,
+      .slick-large-editor-text:focus-within,
+      .ms-parent-open button.ms-choice,
+      button.ms-choice:focus-within {
+        outline: 0;
+        border-color: var(--slick-text-editor-focus-border-color, v.$slick-text-editor-focus-border-color);
+        box-shadow: var(--slick-text-editor-focus-box-shadow, v.$slick-text-editor-focus-box-shadow);
       }
 
       .autocomplete-container.input-group,
