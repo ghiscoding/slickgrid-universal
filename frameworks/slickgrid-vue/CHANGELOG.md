@@ -4,6 +4,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.5.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.4.0...v9.5.0) (2025-07-19)
+
+### Features
+
+* add unfreeze command to HeaderMenu, toggle command after calling ([#2058](https://github.com/ghiscoding/slickgrid-universal/issues/2058)) ([eb7cdd4](https://github.com/ghiscoding/slickgrid-universal/commit/eb7cdd40717a3e09d5d3961c54ab360c48c2d65b)) - by @ghiscoding
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#2060](https://github.com/ghiscoding/slickgrid-universal/issues/2060)) ([cb39ab2](https://github.com/ghiscoding/slickgrid-universal/commit/cb39ab2dbb9e2203f1c1d6615566b7922eb4aa3b)) - by @renovate-bot
+* partial revert of PR [#1516](https://github.com/ghiscoding/slickgrid-universal/issues/1516) custom deepCopy() for array in SF/LWC ([#2056](https://github.com/ghiscoding/slickgrid-universal/issues/2056)) ([3703b31](https://github.com/ghiscoding/slickgrid-universal/commit/3703b314fb0dc396eacbee08dc660a2879fd0ceb)) - by @ghiscoding
+
 ## [9.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.3.0...v9.4.0) (2025-07-12)
 
 ### Bug Fixes

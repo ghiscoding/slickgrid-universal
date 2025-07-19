@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/custom-footer-component",
-  "version": "9.4.0",
+  "version": "9.5.0",
   "description": "Slick Custom Footer Component - Vanilla Implementation of a Custom Footer Component",
   "type": "module",
   "main": "./dist/index.js",

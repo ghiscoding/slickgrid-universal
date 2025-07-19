@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.5.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.4.0...v9.5.0) (2025-07-19)
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#2060](https://github.com/ghiscoding/slickgrid-universal/issues/2060)) ([cb39ab2](https://github.com/ghiscoding/slickgrid-universal/commit/cb39ab2dbb9e2203f1c1d6615566b7922eb4aa3b)) - by @renovate-bot
+
 ## [9.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.3.0...v9.4.0) (2025-07-12)
 
 **Note:** Version bump only for package slickgrid-react-demo

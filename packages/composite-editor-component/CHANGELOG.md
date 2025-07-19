@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.5.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.4.0...v9.5.0) (2025-07-19)
+
+### Bug Fixes
+
+* partial revert of PR [#1516](https://github.com/ghiscoding/slickgrid-universal/issues/1516) custom deepCopy() for array in SF/LWC ([#2056](https://github.com/ghiscoding/slickgrid-universal/issues/2056)) ([3703b31](https://github.com/ghiscoding/slickgrid-universal/commit/3703b314fb0dc396eacbee08dc660a2879fd0ceb)) - by @ghiscoding
+
 ## [9.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.3.0...v9.4.0) (2025-07-12)
 
 **Note:** Version bump only for package @slickgrid-universal/composite-editor-component
