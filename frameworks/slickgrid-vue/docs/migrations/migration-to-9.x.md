@@ -190,7 +190,7 @@ Below is a list of Enums being deprecated and you should think about migrating t
 
 ##### deprecating `editorOptions` and `filterOptions`, they are being renamed as a more generic `options` name
 
-in order to make it easier to merge and simplify editor/filter options, I'm renaming the options to a single `options` property which will make it more easily transportable (you will be able to reuse the same `options` for both the editor/filter if you wanted). You can start using `options` in v9.0 and above (or keep using `editorOptions`, `filterOptions`).
+in order to make it easier to merge and simplify editor/filter options, I'm renaming the options to a single `options` property which will make it more easily transportable (you will be able to reuse the same `options` for both the editor/filter if you wanted). You can start using `options` in v9.0 and above (or keep using `editorOptions`, `filterOptions` until v10).
 
 ```diff
 import { type MultipleSelectOption } from '@slickgrid-universal/common';
