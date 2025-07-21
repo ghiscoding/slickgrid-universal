@@ -188,8 +188,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
   set dataset(newDataset: any[]) {
     const prevDatasetLn = this._currentDatasetLength;
     const isDatasetEqual = dequal(newDataset, this.dataset || []);
-    const isDeepCopyDataOnPageLoadEnabled = !!this._options?.enableDeepCopyDatasetOnPageLoad;
-    let data = isDeepCopyDataOnPageLoadEnabled ? deepCopy(newDataset) : newDataset;
+    let data = !!this._options?.enableDeepCopyDatasetOnPageLoad ? deepCopy(newDataset) : newDataset;
 
     // when Tree Data is enabled and we don't yet have the hierarchical dataset filled, we can force a convert+sort of the array
     if (

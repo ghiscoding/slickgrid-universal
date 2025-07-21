@@ -151,8 +151,7 @@ export class SlickVanillaGridBundle<TData = any> {
   set dataset(newDataset: TData[]) {
     const prevDatasetLn = this._currentDatasetLength;
     const isDatasetEqual = dequal(newDataset, this.dataset || []);
-    const isDeepCopyDataOnPageLoadEnabled = !!this._gridOptions?.enableDeepCopyDatasetOnPageLoad;
-    let data = isDeepCopyDataOnPageLoadEnabled ? deepCopy(newDataset) : newDataset;
+    let data = !!this._gridOptions?.enableDeepCopyDatasetOnPageLoad ? deepCopy(newDataset) : newDataset;
 
     // when Tree Data is enabled and we don't yet have the hierarchical dataset filled, we can force a convert+sort of the array
     if (
@@ -343,7 +342,6 @@ export class SlickVanillaGridBundle<TData = any> {
     this._registeredResources = options?.externalResources || [];
 
     this._gridOptions = this.mergeGridOptions(options || {});
-    const isDeepCopyDataOnPageLoadEnabled = !!this._gridOptions?.enableDeepCopyDatasetOnPageLoad;
 
     // add dark mode CSS class when enabled
     if (this._gridOptions.darkMode) {
@@ -398,7 +396,7 @@ export class SlickVanillaGridBundle<TData = any> {
 
     if (hierarchicalDataset) {
       this.sharedService.hierarchicalDataset =
-        (isDeepCopyDataOnPageLoadEnabled ? deepCopy(hierarchicalDataset) : hierarchicalDataset) || [];
+        (!!this._gridOptions?.enableDeepCopyDatasetOnPageLoad ? deepCopy(hierarchicalDataset) : hierarchicalDataset) || [];
     }
     const eventHandler = new SlickEventHandler();
 
