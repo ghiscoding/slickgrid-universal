@@ -16,6 +16,7 @@ import { dollarFormatter } from './dollarFormatter.js';
 import { hyperlinkFormatter } from './hyperlinkFormatter.js';
 import { iconBooleanFormatter } from './iconBooleanFormatter.js';
 import { iconFormatter } from './iconFormatter.js';
+import { htmlDecodeFormatter } from './htmlDecodeFormatter.js';
 import { maskFormatter } from './maskFormatter.js';
 import { multipleFormatter } from './multipleFormatter.js';
 import { percentFormatter } from './percentFormatter.js';
@@ -51,6 +52,7 @@ const allFormatters: Record<string, Formatter> = {
   dollarColoredBold: dollarColoredBoldFormatter,
   hyperlink: hyperlinkFormatter,
   icon: iconFormatter,
+  htmlDecode: htmlDecodeFormatter,
   iconBoolean: iconBooleanFormatter,
   mask: maskFormatter,
   multiple: multipleFormatter,
