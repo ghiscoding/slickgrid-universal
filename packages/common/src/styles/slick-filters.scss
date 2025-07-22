@@ -5,6 +5,10 @@
 // ------------------------------------------------
 
 .slick-headerrow {
+  // remove any BS margins, fixes issue found in SF using BS theme
+  .search-filter.form-group {
+    margin: 0;
+  }
   input.search-filter.filled,
   .search-filter.filled input,
   .search-filter.filled .date-picker input,
