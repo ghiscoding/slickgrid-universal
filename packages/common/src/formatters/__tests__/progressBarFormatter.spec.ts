@@ -32,7 +32,7 @@ describe('the Progress Bar Formatter', () => {
   it('should display a red color bar when value is a negative number', () => {
     const inputValue = -15;
     const barType = 'danger';
-    const template = `<div class="progress"><div class="progress-bar progress-bar-${barType} bg-${barType}" role="progressbar" aria-valuenow="${inputValue}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: ${inputValue}%;">${inputValue}%</div></div>`;
+    const template = `<div class="progress"><div class="progress-bar progress-bar-${barType} bg-${barType}" role="progressbar" aria-valuenow="${inputValue}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em;">${inputValue}%</div></div>`;
     const output = progressBarFormatter(1, 1, inputValue, {} as Column, {}, {} as any) as HTMLDivElement;
     const innerDiv = output.querySelector('div.progress-bar') as HTMLDivElement;
 

@@ -27,9 +27,7 @@ describe('the Percent Complete Formatter', () => {
     const input = -15;
     const color = 'red';
     const output = percentCompleteBarFormatter(1, 1, input, {} as Column, {}, {} as any);
-    expect((output as HTMLElement).outerHTML).toBe(
-      `<span class="percent-complete-bar" title="${input}%" style="background: ${color}; width: ${input}%;"></span>`
-    );
+    expect((output as HTMLElement).outerHTML).toBe(`<span class="percent-complete-bar" title="${input}%" style="background: ${color};"></span>`);
   });
 
   it('should display a silver color bar when value is between 30 and 69', () => {

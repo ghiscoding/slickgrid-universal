@@ -28,7 +28,7 @@ describe('the Percent Complete with Text Formatter', () => {
     const color = 'red';
     const output = percentCompleteBarWithTextFormatter(1, 1, input, {} as Column, {}, {} as any);
     expect((output as HTMLElement).outerHTML).toBe(
-      `<div class="percent-complete-bar-with-text" title="${input}%" style="background: ${color}; width: ${input}%;">${input}%</div>`
+      `<div class="percent-complete-bar-with-text" title="${input}%" style="background: ${color};">${input}%</div>`
     );
   });
 
