@@ -151,7 +151,9 @@ describe('SlickRowMoveManager Plugin', () => {
       behavior: 'selectAndMove',
       reorderable: false,
       resizable: false,
+      minWidth: 40,
       width: 40,
+      maxWidth: 40,
     };
 
     plugin.create(mockColumns, { rowMoveManager: { columnId: 'move-id' } });
@@ -211,7 +213,9 @@ describe('SlickRowMoveManager Plugin', () => {
       name: '',
       reorderable: false,
       resizable: false,
+      minWidth: 40,
       width: 40,
+      maxWidth: 40,
     });
   });
 

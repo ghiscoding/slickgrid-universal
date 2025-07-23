@@ -129,6 +129,7 @@ export class SlickRowMoveManager {
 
   getColumnDefinition(): Column {
     const columnId = String(this._addonOptions?.columnId ?? this._defaults.columnId);
+    const columnWidth = this._addonOptions.width || this._defaults.width;
 
     return {
       id: columnId,
@@ -142,7 +143,9 @@ export class SlickRowMoveManager {
       field: columnId,
       reorderable: this._addonOptions.reorderable,
       resizable: false,
-      width: this._addonOptions.width || 40,
+      width: columnWidth,
+      minWidth: columnWidth,
+      maxWidth: columnWidth,
       formatter: this.moveIconFormatter.bind(this),
     };
   }
