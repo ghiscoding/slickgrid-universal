@@ -1,5 +1,6 @@
 import type { HtmlElementPosition } from './models/interfaces.js';
 import type { InferDOMType } from './models/types.js';
+import { isDefined } from './utils.js';
 
 /** Calculate available space for each side of the DOM element */
 export function calculateAvailableSpace(element: HTMLElement): { top: number; bottom: number; left: number; right: number } {
@@ -200,9 +201,8 @@ export function findWidthOrDefault(inputWidth?: number | string | null, defaultV
 }
 
 /**
- * HTML encode using a plain <div>
- * Create a in-memory div, set it's inner text(which a div can encode)
- * then grab the encoded contents back out.  The div never exists on the page.
+ * Simple function to encode the 5 most common HTML entities (`<`, `>`, `"`, `'`, `&`).
+ * For example: "<div>Hello</div>" => "&lt;div&gt;Hello&lt;/div&gt;"
  * @param {String} inputValue - input value to be encoded
  * @return {String}
  */
@@ -216,6 +216,25 @@ export function htmlEncode(inputValue: string): string {
     "'": '&#39;',
   };
   return (val || '').toString().replace(/[&<>"']/g, (s) => entityMap[s as keyof { [char: string]: string }]);
+}
+
+/**
+ * Simple function to decode the 5 most common HTML entities (`<`, `>`, `"`, `'`, `&`).
+ * For example: "&lt;div&gt;Hello&lt;/div&gt;" => "<div>Hello</div>"
+ * @param {String} inputValue - input value to be decoded
+ * @return {String}
+ */
+export function htmlDecode(input?: string): string {
+  if (isDefined(input)) {
+    const val = typeof input === 'string' ? input : String(input);
+    return val
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'");
+  }
+  return '';
 }
 
 /**

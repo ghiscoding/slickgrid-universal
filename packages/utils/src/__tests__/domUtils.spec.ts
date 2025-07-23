@@ -13,6 +13,7 @@ import {
   getStyleProp,
   getOffset,
   getInnerSize,
+  htmlDecode,
   htmlEncode,
   htmlEntityDecode,
   htmlEncodeWithPadding,
@@ -20,7 +21,7 @@ import {
 } from '../domUtils.js';
 
 describe('Service/domUtilies', () => {
-  describe('calculateAvailableSpace()  method', () => {
+  describe('calculateAvailableSpace() method', () => {
     const div = document.createElement('div');
     div.innerHTML = `<ul><li>Item 1</li><li>Item 2</li></ul>`;
     document.body.appendChild(div);
@@ -68,7 +69,7 @@ describe('Service/domUtilies', () => {
     });
   });
 
-  describe('createDomElement()  method', () => {
+  describe('createDomElement() method', () => {
     it('should create a DOM element via the method to equal a regular DOM element', () => {
       const div = document.createElement('div');
       div.className = 'red bold';
@@ -86,7 +87,7 @@ describe('Service/domUtilies', () => {
       expect(div.outerHTML).toBe('<div class="red bold"><span class="blue" style="font-weight: bold;">some text</span></div>');
     });
 
-    it('should display a warning when trying to use innerHTML via the  method', () => {
+    it('should display a warning when trying to use innerHTML via the method', () => {
       const consoleWarnSpy = vi.spyOn(global.console, 'warn').mockReturnValue();
       createDomElement('div', { className: 'red bold', innerHTML: '<input />' });
 
@@ -283,10 +284,54 @@ describe('Service/domUtilies', () => {
     });
   });
 
-  describe('htmlEncode()  method', () => {
+  describe('htmlDecode() method', () => {
+    it('should return a decoded HTML string', () => {
+      const result = htmlDecode(`&lt;div class=&quot;color: blue&quot;&gt;Bob&#39;s Boat&lt;/div&gt;`);
+      expect(result).toBe(`<div class="color: blue">Bob's Boat</div>`);
+    });
+
+    it('should return a decoded HTML string with single quotes decoded as well', () => {
+      const result = htmlDecode(`&lt;div class=&#39;color: blue&#39;&gt;Something&lt;/div&gt;`);
+      expect(result).toBe(`<div class='color: blue'>Something</div>`);
+    });
+
+    it('should return a decoded HTML map even when prefixed with invalid map like the "&" char and still decode what it can', () => {
+      const result = htmlDecode(`&lt;div class=&quot;color: blue&quot;&gt;Bob &&amp; John&lt;/div&gt;`);
+      expect(result).toBe(`<div class="color: blue">Bob && John</div>`);
+    });
+
+    it('should return same HTML string when encode value is not a valid entity map', () => {
+      const input = `&abc;Hello&xyz;`;
+      const result = htmlDecode(input);
+      expect(result).toBe(input);
+    });
+
+    it('should return empty string when input is undefined or null', () => {
+      const result1 = htmlDecode(undefined);
+      const result2 = htmlDecode(null as any);
+
+      expect(result1).toBe('');
+      expect(result2).toBe('');
+    });
+
+    it('should return stringified value when input is a boolean', () => {
+      const result1 = htmlDecode(false as any);
+      const result2 = htmlDecode(true as any);
+
+      expect(result1).toBe('false');
+      expect(result2).toBe('true');
+    });
+
+    it('should return stringified number when input is a number', () => {
+      const result = htmlDecode(0 as any);
+      expect(result).toBe('0');
+    });
+  });
+
+  describe('htmlEncode() method', () => {
     it('should return a encoded HTML string', () => {
-      const result = htmlEncode(`<div class="color: blue">Something</div>`);
-      expect(result).toBe(`&lt;div class=&quot;color: blue&quot;&gt;Something&lt;/div&gt;`);
+      const result = htmlEncode(`<div class="color: blue">Bob's Boat</div>`);
+      expect(result).toBe(`&lt;div class=&quot;color: blue&quot;&gt;Bob&#39;s Boat&lt;/div&gt;`);
     });
 
     it('should return a encoded HTML string with single quotes encoded as well', () => {
@@ -295,7 +340,7 @@ describe('Service/domUtilies', () => {
     });
   });
 
-  describe('htmlEntityDecode()  method', () => {
+  describe('htmlEntityDecode() method', () => {
     it('should be able to decode HTML entity of an HTML string', () => {
       const result = htmlEntityDecode(`&#60;&#100;&#105;&#118;&#62;&#97;&#60;&#47;&#100;&#105;&#118;&#62;`);
       expect(result).toBe(`<div>a</div>`);
@@ -307,7 +352,7 @@ describe('Service/domUtilies', () => {
     });
   });
 
-  describe('htmlEncodeWithPadding()  method', () => {
+  describe('htmlEncodeWithPadding() method', () => {
     it('should return 2 spaces HTML encoded when input is empty', () => {
       const result = htmlEncodeWithPadding('', 2);
       expect(result).toBe(`&nbsp;&nbsp;`);
@@ -319,7 +364,7 @@ describe('Service/domUtilies', () => {
     });
   });
 
-  describe('insertAfterElement()  method', () => {
+  describe('insertAfterElement() method', () => {
     it('should insert span3 after span1', () => {
       const div = document.createElement('div');
       div.className = 'div-one';

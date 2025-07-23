@@ -62,6 +62,13 @@ export function castObservableToPromise<T>(
   return promise;
 }
 
+export function createDomFragmentOrElement(
+  gridOptions?: GridOption,
+  defaultElmType: 'span' | 'div' = 'span'
+): DocumentFragment | HTMLElement {
+  return gridOptions?.preventDocumentFragmentUsage ? document.createElement(defaultElmType) : new DocumentFragment();
+}
+
 /**
  * Mutate the original array and add a treeLevel (defaults to `__treeLevel`) property on each item.
  * @param {Array<Object>} treeArray - hierarchical tree array

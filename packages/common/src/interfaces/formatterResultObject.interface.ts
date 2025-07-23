@@ -22,6 +22,6 @@ export interface FormatterResultWithText extends FormatterResultObject {
 }
 
 export interface FormatterResultWithHtml extends FormatterResultObject {
-  /** Text to be displayed in the cell, basically the formatter output. */
+  /** DOM HTML Element or Document Fragment that will be used to show in the cell container. */
   html: HTMLElement | DocumentFragment;
 }

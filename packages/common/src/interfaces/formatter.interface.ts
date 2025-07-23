@@ -170,6 +170,9 @@ export interface IFormatters {
    */
   hyperlink: Formatter;
 
+  /** Display a decoded HTML string (e.g. "&lt;div&gt;Hello&lt;/div&gt;" => "<div>Hello</div>") */
+  htmlDecode: Formatter;
+
   /** Display whichever icon you want (library agnostic, it could be Font-Awesome, Material or any other icons set) */
   icon: Formatter;
 
