@@ -761,13 +761,13 @@ importers:
         specifier: ^16.0.1
         version: 16.0.1(@angular/common@19.2.14(@angular/core@19.2.14(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@19.2.14(rxjs@7.8.2)(zone.js@0.15.1))
       '@nx/angular':
-        specifier: ^21.3.0
+        specifier: ^21.3.5
         version: 21.3.5(4e11a53a171a1c3a3835650a9f369a85)
       '@nx/devkit':
-        specifier: ^21.3.0
+        specifier: ^21.3.5
         version: 21.3.5(nx@21.3.5)
       '@nx/vite':
-        specifier: ^21.3.0
+        specifier: ^21.3.5
         version: 21.3.5(@babel/traverse@7.28.0)(nx@21.3.5)(typescript@5.8.3)(vite@7.0.5(@types/node@22.16.5)(jiti@2.5.0)(less@4.4.0)(sass-embedded@1.89.2)(sass@1.89.2)(terser@5.43.1)(yaml@2.8.0))(vitest@3.2.4)
       '@popperjs/core':
         specifier: 'catalog:'
@@ -13807,7 +13807,7 @@ snapshots:
       '@jest/schemas': 29.6.3
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 22.16.5
+      '@types/node': 24.1.0
       '@types/yargs': 17.0.33
       chalk: 4.1.2
 
@@ -14623,7 +14623,7 @@ snapshots:
       npm-pick-manifest: 10.0.0
       proc-log: 5.0.0
       promise-retry: 2.0.1
-      semver: 7.7.1
+      semver: 7.7.2
       which: 5.0.0
 
   '@npmcli/installed-package-contents@3.0.0':
@@ -15740,7 +15740,6 @@ snapshots:
   '@types/node@24.1.0':
     dependencies:
       undici-types: 7.8.0
-    optional: true
 
   '@types/normalize-package-data@2.4.4': {}
 
@@ -17744,7 +17743,7 @@ snapshots:
 
   dotenv-expand@11.0.7:
     dependencies:
-      dotenv: 16.4.7
+      dotenv: 16.6.1
 
   dotenv@16.4.7: {}
 
@@ -19330,7 +19329,7 @@ snapshots:
   jest-util@29.7.0:
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 22.16.5
+      '@types/node': 24.1.0
       chalk: 4.1.2
       ci-info: 3.9.0
       graceful-fs: 4.2.11
@@ -19344,7 +19343,7 @@ snapshots:
 
   jest-worker@29.7.0:
     dependencies:
-      '@types/node': 22.16.5
+      '@types/node': 24.1.0
       jest-util: 29.7.0
       merge-stream: 2.0.0
       supports-color: 8.1.1
@@ -20270,7 +20269,7 @@ snapshots:
       make-fetch-happen: 14.0.3
       nopt: 8.1.0
       proc-log: 5.0.0
-      semver: 7.7.1
+      semver: 7.7.2
       tar: 7.4.3
       tinyglobby: 0.2.14
       which: 5.0.0
@@ -20323,7 +20322,7 @@ snapshots:
 
   npm-install-checks@7.1.1:
     dependencies:
-      semver: 7.7.1
+      semver: 7.7.2
 
   npm-normalize-package-bin@4.0.0: {}
 
@@ -20338,7 +20337,7 @@ snapshots:
     dependencies:
       hosted-git-info: 8.1.0
       proc-log: 5.0.0
-      semver: 7.7.1
+      semver: 7.7.2
       validate-npm-package-name: 6.0.2
 
   npm-packlist@10.0.0:
@@ -20354,7 +20353,7 @@ snapshots:
       npm-install-checks: 7.1.1
       npm-normalize-package-bin: 4.0.0
       npm-package-arg: 12.0.2
-      semver: 7.7.1
+      semver: 7.7.2
 
   npm-registry-fetch@18.0.2:
     dependencies:
@@ -22734,8 +22733,7 @@ snapshots:
 
   undici-types@6.21.0: {}
 
-  undici-types@7.8.0:
-    optional: true
+  undici-types@7.8.0: {}
 
   unenv@2.0.0-rc.18:
     dependencies:
