@@ -62,7 +62,7 @@ export function castObservableToPromise<T>(
   return promise;
 }
 
-export function createDomFragmentOrElement(
+export function createDocumentFragmentOrElement(
   gridOptions?: GridOption,
   defaultElmType: 'span' | 'div' = 'span'
 ): DocumentFragment | HTMLElement {

@@ -3,7 +3,7 @@ import { createDomElement } from '@slickgrid-universal/utils';
 import { Constants } from '../constants.js';
 import { type Formatter } from './../interfaces/index.js';
 import { parseFormatterWhenExist } from './formatterUtilities.js';
-import { getCellValueFromQueryFieldGetter } from '../services/utilities.js';
+import { createDocumentFragmentOrElement, getCellValueFromQueryFieldGetter } from '../services/utilities.js';
 
 /** Formatter that must be use with a Tree Data column */
 export const treeFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid) => {
@@ -49,7 +49,7 @@ export const treeFormatter: Formatter = (row, cell, value, columnDef, dataContex
   grid.applyHtmlCode(spanTitleElm, outputValue);
   spanTitleElm.setAttribute('level', treeLevel);
 
-  const containerElm = gridOptions?.preventDocumentFragmentUsage ? document.createElement('span') : new DocumentFragment();
+  const containerElm = createDocumentFragmentOrElement(gridOptions);
   containerElm.appendChild(indentSpacerElm);
   containerElm.appendChild(spanIconElm);
   containerElm.appendChild(spanTitleElm);

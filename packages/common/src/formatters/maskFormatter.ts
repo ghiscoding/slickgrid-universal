@@ -1,3 +1,4 @@
+import { createDocumentFragmentOrElement } from '../services/utilities.js';
 import { type Formatter } from './../interfaces/index.js';
 
 /**
@@ -17,8 +18,7 @@ export const maskFormatter: Formatter = (_row, _cell, value, columnDef, data, gr
   if (value) {
     let i = 0;
     const v = value.toString();
-    const gridOptions = grid.getOptions() || {};
-    const containerElm = gridOptions?.preventDocumentFragmentUsage ? document.createElement('span') : new DocumentFragment();
+    const containerElm = createDocumentFragmentOrElement(grid.getOptions());
     containerElm.textContent = mask.replace(/[09A]/gi, () => v[i++] || '');
     return containerElm;
   }

@@ -14,6 +14,7 @@ import type {
 } from '../interfaces/index.js';
 import { SlickRowSelectionModel } from './slickRowSelectionModel.js';
 import type { SelectionModel } from '../enums/index.js';
+import { createDocumentFragmentOrElement } from '../services/utilities.js';
 
 export interface RowLookup {
   [row: number]: boolean;
@@ -234,7 +235,7 @@ export class SlickCheckboxSelectColumn<T = any> {
    * @returns
    */
   createCheckboxElement(inputId: string, checked = false): DocumentFragment | HTMLSpanElement {
-    const checkboxElm = this.gridOptions?.preventDocumentFragmentUsage ? document.createElement('span') : new DocumentFragment();
+    const checkboxElm = createDocumentFragmentOrElement(this.gridOptions);
     const labelElm = createDomElement('label', { className: 'checkbox-selector-label', htmlFor: inputId });
     const divElm = createDomElement('div', { className: 'icon-checkbox-container' });
     divElm.appendChild(createDomElement('input', { id: inputId, type: 'checkbox', checked, ariaChecked: String(checked) }));

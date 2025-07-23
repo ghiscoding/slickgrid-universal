@@ -11,6 +11,7 @@ import type {
   OnClickEventArgs,
   SlickPlugin,
 } from '../interfaces/index.js';
+import { createDocumentFragmentOrElement } from '../services/utilities.js';
 
 /**
  * Provides item metadata for group (SlickGroup) and totals (SlickTotals) rows produced by the DataView.
@@ -133,7 +134,7 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
     const toggleClass = item.collapsed ? this._options.toggleCollapsedCssClass : this._options.toggleExpandedCssClass;
 
     // use a DocumentFragment to avoid creating an extra div container
-    const containerElm = this.gridOptions?.preventDocumentFragmentUsage ? document.createElement('span') : new DocumentFragment();
+    const containerElm = createDocumentFragmentOrElement(this.gridOptions);
 
     // 1. group toggle span
     containerElm.appendChild(
