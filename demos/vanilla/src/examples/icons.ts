@@ -17,11 +17,7 @@ export default class Icons {
 
       const iconElm = document.createElement('span');
       iconElm.className = icon.replace(/\./gi, ' ');
-      if (icon.includes('mdi-change-record-type')) {
-        iconElm.classList.add('mdi-20px');
-      } else {
-        iconElm.classList.add('mdi-24px');
-      }
+      iconElm.classList.add('mdi-24px');
       iconElm.title = icon.replace('.mdi.', '');
       iconElm.style.marginRight = '5px';
       iconDivElm.appendChild(iconElm);
@@ -95,7 +91,6 @@ export default class Icons {
       '.mdi.mdi-cash-remove',
       '.mdi.mdi-certificate',
       '.mdi.mdi-certificate-outline',
-      '.mdi.mdi-change-record-type',
       '.mdi.mdi-check',
       '.mdi.mdi-check-all',
       '.mdi.mdi-check-bold',
