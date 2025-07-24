@@ -34,7 +34,7 @@ export interface GridMenuOption {
   columnTitleKey?: string;
 
   /** Defaults to false, which will sort the columns by name */
-  columnSortByName?: boolean;
+  columnSort?: (item1: Column, item2: Column) => number;
 
   /** Defaults to "left", which side to align the grid menu dropdown? */
   dropSide?: 'left' | 'right';

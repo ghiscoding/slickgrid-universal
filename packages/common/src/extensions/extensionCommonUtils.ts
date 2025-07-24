@@ -167,13 +167,9 @@ export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, ad
   const menuPrefix = isGridMenu ? 'gridmenu-' : '';
 
   let sortedColumns = context.columns;
-  if (addonOptions?.columnSortByName === true) {
+  if (typeof addonOptions?.columnSort === 'function') {
     // create a sorted copy of the columns array based on the "name" property
-    sortedColumns = [...context.columns].sort((a, b) => {
-      const nameA = a.name?.toString().toLowerCase() || '';
-      const nameB = b.name?.toString().toLowerCase() || '';
-      return nameA.localeCompare(nameB);
-    });
+    sortedColumns = [...context.columns].sort(addonOptions.columnSort);
   }
 
   for (const column of sortedColumns) {

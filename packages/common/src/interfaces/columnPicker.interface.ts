@@ -21,7 +21,7 @@ export interface ColumnPickerOption {
   columnTitleKey?: string;
 
   /** Defaults to false, which will sort the columns by name */
-  columnSortByName?: boolean;
+  columnSort?: (item1: Column, item2: Column) => number;
 
   /** Defaults to "Force fit columns" which is 1 of the last 2 checkbox title shown at the end of the picker list */
   forceFitTitle?: string;
