@@ -624,12 +624,14 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     const gridOptions = this.gridOptions;
     const translationPrefix = getTranslationPrefix(gridOptions);
     const commandLabels = this._addonOptions?.commandLabels;
+    const cmdExists = (commandName: string) =>
+      originalCommandItems.some((item) => item !== 'divider' && 'command' in item && item.command === commandName);
 
     if (this._addonOptions && this.gridOptions) {
       // show grid menu: Unfreeze Columns/Rows
       if (!this._addonOptions.hideClearFrozenColumnsCommand) {
         const commandName = 'clear-pinning';
-        if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
+        if (!cmdExists(commandName)) {
           gridMenuCommandItems.push({
             iconCssClass: this._addonOptions.iconClearFrozenColumnsCommand || 'mdi mdi-pin-off-outline',
             _orgTitle: commandLabels?.clearFrozenColumnsCommand || '',
@@ -645,7 +647,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         // show grid menu: Clear all Filters
         if (!this._addonOptions.hideClearAllFiltersCommand) {
           const commandName = 'clear-filter';
-          if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
+          if (!cmdExists(commandName)) {
             gridMenuCommandItems.push({
               iconCssClass: this._addonOptions.iconClearAllFiltersCommand || 'mdi mdi-filter-remove-outline',
               _orgTitle: commandLabels?.clearAllFiltersCommand || '',
@@ -660,7 +662,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         // show grid menu: toggle filter row
         if (!this._addonOptions.hideToggleFilterCommand) {
           const commandName = 'toggle-filter';
-          if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
+          if (!cmdExists(commandName)) {
             gridMenuCommandItems.push({
               iconCssClass: this._addonOptions.iconToggleFilterCommand || 'mdi mdi-flip-vertical',
               _orgTitle: commandLabels?.toggleFilterCommand || '',
@@ -675,7 +677,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         // show grid menu: refresh dataset
         if (backendApi && !this._addonOptions.hideRefreshDatasetCommand) {
           const commandName = 'refresh-dataset';
-          if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
+          if (!cmdExists(commandName)) {
             gridMenuCommandItems.push({
               iconCssClass: this._addonOptions.iconRefreshDatasetCommand || 'mdi mdi-sync',
               _orgTitle: commandLabels?.refreshDatasetCommand || '',
@@ -691,7 +693,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       // show grid menu: toggle dark mode
       if (!this._addonOptions.hideToggleDarkModeCommand) {
         const commandName = 'toggle-dark-mode';
-        if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
+        if (!cmdExists(commandName)) {
           gridMenuCommandItems.push({
             iconCssClass: this._addonOptions.iconToggleDarkModeCommand || 'mdi mdi-brightness-4',
             _orgTitle: commandLabels?.toggleDarkModeCommand || '',
@@ -707,7 +709,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         // show grid menu: toggle pre-header row
         if (!this._addonOptions.hideTogglePreHeaderCommand) {
           const commandName = 'toggle-preheader';
-          if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
+          if (!cmdExists(commandName)) {
             gridMenuCommandItems.push({
               iconCssClass: this._addonOptions.iconTogglePreHeaderCommand || 'mdi mdi-flip-vertical',
               _orgTitle: commandLabels?.togglePreHeaderCommand || '',
@@ -724,7 +726,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         // show grid menu: Clear all Sorting
         if (!this._addonOptions.hideClearAllSortingCommand) {
           const commandName = 'clear-sorting';
-          if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
+          if (!cmdExists(commandName)) {
             gridMenuCommandItems.push({
               iconCssClass: this._addonOptions.iconClearAllSortingCommand || 'mdi mdi-sort-variant-off',
               _orgTitle: commandLabels?.clearAllSortingCommand || '',
@@ -740,7 +742,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       // show grid menu: Export to file
       if (this.gridOptions.enableTextExport && !this._addonOptions.hideExportCsvCommand) {
         const commandName = 'export-csv';
-        if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
+        if (!cmdExists(commandName)) {
           gridMenuCommandItems.push({
             iconCssClass: this._addonOptions.iconExportCsvCommand || 'mdi mdi-download',
             _orgTitle: commandLabels?.exportCsvCommand || '',
@@ -755,7 +757,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       // show grid menu: Export to Excel
       if (this.gridOptions.enableExcelExport && !this._addonOptions.hideExportExcelCommand) {
         const commandName = 'export-excel';
-        if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
+        if (!cmdExists(commandName)) {
           gridMenuCommandItems.push({
             iconCssClass: this._addonOptions.iconExportExcelCommand || 'mdi mdi-file-excel-outline text-success',
             _orgTitle: commandLabels?.exportExcelCommand || '',
@@ -770,7 +772,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       // show grid menu: export to text file as tab delimited
       if (this.gridOptions.enableTextExport && !this._addonOptions.hideExportTextDelimitedCommand) {
         const commandName = 'export-text-delimited';
-        if (!originalCommandItems.some((item) => item !== 'divider' && item.hasOwnProperty('command') && item.command === commandName)) {
+        if (!cmdExists(commandName)) {
           gridMenuCommandItems.push({
             iconCssClass: this._addonOptions.iconExportTextDelimitedCommand || 'mdi mdi-download',
             _orgTitle: commandLabels?.exportTextDelimitedCommand || '',

@@ -372,6 +372,8 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
             columnDef.header.menu = { commandItems: [] };
           }
           const columnHeaderMenuItems: Array<MenuCommandItem | 'divider'> = columnDef?.header?.menu?.commandItems ?? [];
+          const cmdExists = (commandName: string) =>
+            columnHeaderMenuItems.some((item) => item !== 'divider' && 'command' in item && item.command === commandName);
 
           // Freeze Column (pinning)
           let hasFrozenOrResizeCommand = false;
@@ -382,12 +384,13 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
               this.removeCommandWhenFound(columnHeaderMenuItems, 'freeze-columns');
 
               // add unfreeze command
-              if (!columnHeaderMenuItems.some((item) => item !== 'divider' && item?.command === 'unfreeze-columns')) {
+              const cmdUnfreeze = 'unfreeze-columns';
+              if (!cmdExists(cmdUnfreeze)) {
                 columnHeaderMenuItems.push({
                   _orgTitle: commandLabels?.unfreezeColumnsCommand || '',
                   iconCssClass: headerMenuOptions.iconUnfreezeColumns || 'mdi mdi-pin-off-outline',
                   titleKey: `${translationPrefix}UNFREEZE_COLUMNS`,
-                  command: 'unfreeze-columns',
+                  command: cmdUnfreeze,
                   positionOrder: 45,
                 });
               }
@@ -396,12 +399,13 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
               this.removeCommandWhenFound(columnHeaderMenuItems, 'unfreeze-columns');
 
               // add freeze command
-              if (!columnHeaderMenuItems.some((item) => item !== 'divider' && item?.command === 'freeze-columns')) {
+              const cmdFreeze = 'freeze-columns';
+              if (!cmdExists(cmdFreeze)) {
                 columnHeaderMenuItems.push({
                   _orgTitle: commandLabels?.freezeColumnsCommand || '',
                   iconCssClass: headerMenuOptions.iconFreezeColumns || 'mdi mdi-pin-outline',
                   titleKey: `${translationPrefix}FREEZE_COLUMNS`,
-                  command: 'freeze-columns',
+                  command: cmdFreeze,
                   positionOrder: 45,
                 });
               }
@@ -415,12 +419,13 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
             this.sharedService.gridOptions.enableColumnResizeOnDoubleClick
           ) {
             hasFrozenOrResizeCommand = true;
-            if (!columnHeaderMenuItems.some((item) => item !== 'divider' && item?.command === 'column-resize-by-content')) {
+            const cmdResize = 'column-resize-by-content';
+            if (!cmdExists(cmdResize)) {
               columnHeaderMenuItems.push({
                 _orgTitle: commandLabels?.columnResizeByContentCommand || '',
                 iconCssClass: headerMenuOptions.iconColumnResizeByContentCommand || 'mdi mdi-arrow-expand-horizontal',
                 titleKey: `${translationPrefix}COLUMN_RESIZE_BY_CONTENT`,
-                command: 'column-resize-by-content',
+                command: cmdResize,
                 positionOrder: 47,
               });
             }
@@ -433,21 +438,23 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
           // Sorting Commands
           if (gridOptions.enableSorting && columnDef.sortable && headerMenuOptions && !headerMenuOptions.hideSortCommands) {
-            if (!columnHeaderMenuItems.some((item) => item !== 'divider' && item?.command === 'sort-asc')) {
+            const cmdAscName = 'sort-asc';
+            const cmdDescName = 'sort-desc';
+            if (!cmdExists(cmdAscName)) {
               columnHeaderMenuItems.push({
                 _orgTitle: commandLabels?.sortAscCommand || '',
                 iconCssClass: headerMenuOptions.iconSortAscCommand || 'mdi mdi-sort-ascending',
                 titleKey: `${translationPrefix}SORT_ASCENDING`,
-                command: 'sort-asc',
+                command: cmdAscName,
                 positionOrder: 50,
               });
             }
-            if (!columnHeaderMenuItems.some((item) => item !== 'divider' && item?.command === 'sort-desc')) {
+            if (!cmdExists(cmdDescName)) {
               columnHeaderMenuItems.push({
                 _orgTitle: commandLabels?.sortDescCommand || '',
                 iconCssClass: headerMenuOptions.iconSortDescCommand || 'mdi mdi-sort-descending',
                 titleKey: `${translationPrefix}SORT_DESCENDING`,
-                command: 'sort-desc',
+                command: cmdDescName,
                 positionOrder: 51,
               });
             }
@@ -457,25 +464,21 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
               columnHeaderMenuItems.push({ divider: true, command: '', positionOrder: 52 });
             }
 
-            if (
-              !headerMenuOptions.hideClearSortCommand &&
-              !columnHeaderMenuItems.some((item) => item !== 'divider' && item?.command === 'clear-sort')
-            ) {
+            const cmdClearSort = 'clear-sort';
+            if (!headerMenuOptions.hideClearSortCommand && !cmdExists(cmdClearSort)) {
               columnHeaderMenuItems.push({
                 _orgTitle: commandLabels?.clearSortCommand || '',
                 iconCssClass: headerMenuOptions.iconClearSortCommand || 'mdi mdi-sort-variant-off',
                 titleKey: `${translationPrefix}REMOVE_SORT`,
-                command: 'clear-sort',
+                command: cmdClearSort,
                 positionOrder: 58,
               });
             }
           }
 
           // Filter Shortcuts via sub-menus
-          if (
-            columnDef.filter?.filterShortcuts &&
-            !columnHeaderMenuItems.some((item) => item !== 'divider' && item?.command === 'filter-shortcuts-root-menu')
-          ) {
+          const cmdShortcutName = 'filter-shortcuts-root-menu';
+          if (columnDef.filter?.filterShortcuts && !cmdExists(cmdShortcutName)) {
             const shortcutSubItems: MenuCommandItem[] = [];
             columnDef.filter.filterShortcuts.forEach((fs) => {
               // use the Title name as the command key in kebab cas
@@ -497,7 +500,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
               _orgTitle: commandLabels?.filterShortcutsCommand || '',
               iconCssClass: headerMenuOptions.iconFilterShortcutSubMenu || 'mdi mdi-filter-outline',
               titleKey: `${translationPrefix}FILTER_SHORTCUTS`,
-              command: 'filter-shortcuts-root-menu',
+              command: cmdShortcutName,
               positionOrder: filterShortcutsPositionOrder,
               commandItems: shortcutSubItems,
             });
@@ -512,32 +515,27 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
           }
 
           // Filtering Commands
+          const cmdRemoveFilter = 'clear-filter';
           if (gridOptions.enableFiltering && columnDef.filterable && headerMenuOptions && !headerMenuOptions.hideFilterCommand) {
-            if (
-              !headerMenuOptions.hideClearFilterCommand &&
-              !columnHeaderMenuItems.some((item) => item !== 'divider' && item?.command === 'clear-filter')
-            ) {
+            if (!headerMenuOptions.hideClearFilterCommand && !cmdExists(cmdRemoveFilter)) {
               columnHeaderMenuItems.push({
                 _orgTitle: commandLabels?.clearFilterCommand || '',
                 iconCssClass: headerMenuOptions.iconClearFilterCommand || 'mdi mdi-filter-remove-outline',
                 titleKey: `${translationPrefix}REMOVE_FILTER`,
-                command: 'clear-filter',
+                command: cmdRemoveFilter,
                 positionOrder: 57,
               });
             }
           }
 
           // Hide Column Command
-          if (
-            headerMenuOptions &&
-            !headerMenuOptions.hideColumnHideCommand &&
-            !columnHeaderMenuItems.some((item) => item !== 'divider' && item?.command === 'hide-column')
-          ) {
+          const cmdHideColumn = 'hide-column';
+          if (headerMenuOptions && !headerMenuOptions.hideColumnHideCommand && !cmdExists(cmdHideColumn)) {
             columnHeaderMenuItems.push({
               _orgTitle: commandLabels?.hideColumnCommand || '',
               iconCssClass: headerMenuOptions.iconColumnHideCommand || 'mdi mdi-close',
               titleKey: `${translationPrefix}HIDE_COLUMN`,
-              command: 'hide-column',
+              command: cmdHideColumn,
               positionOrder: 59,
             });
           }
