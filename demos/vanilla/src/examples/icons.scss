@@ -12,11 +12,14 @@
   }
 }
 .note-negative {
-  margin-bottom: 18px;
+  margin-bottom: 15px;
   margin-top: -12px;
 }
-.bg-gray {
-  background-color: #3F3E3E;
+.bg-dark {
+  background-color: #888888;
+}
+.bg-light {
+  background-color: transparent;
 }
 .icon-box {
   display: flex;
@@ -29,4 +32,13 @@
 }
 .mr-5px {
   margin-right: 5px;
+}
+
+.dark-mode {
+  .bg-dark {
+    background-color: transparent;
+  }
+  .bg-light {
+    background-color: #888888;
+  }
 }
