@@ -501,6 +501,7 @@ $slick-text-editor-padding-top:                             0 !default;
 $slick-text-editor-focus-border-color:                      $slick-input-focus-border-color !default;
 $slick-text-editor-focus-box-shadow:                        $slick-input-focus-box-shadow !default;
 $slick-text-editor-readonly-color:                          #f0f0f0 !default;
+$slick-slider-editor-border:                                1px solid #{$slick-form-control-border-color} !default;
 $slick-slider-editor-height:                                100% !default;
 $slick-slider-editor-runnable-track-padding:                0 6px !default;
 $slick-slider-editor-number-padding:                        4px 6px !default;
@@ -717,7 +718,7 @@ $slick-draggable-group-column-icon-width:                   9px !default;
 $slick-draggable-group-column-icon-margin-left:             4px !default;
 
 /* Input Slider Filter (vanilla html) */
-$slick-slider-filter-border:                                1px solid #ccc !default;
+$slick-slider-filter-border:                                $slick-form-control-border !default;
 $slick-slider-filter-border-radius:                         4px !default;
 $slick-slider-filter-bgcolor:                               #eee !default;
 $slick-slider-filter-input-bgcolor:                         #fff !default;
@@ -1116,6 +1117,8 @@ $slick-dark-text-color:                                   #d4d4d4 !default;
   --slick-large-editor-background-color:                  var(--slick-base-dark-menu-bg-color);
   --slick-large-editor-border:                            2px solid #565656;
   --slick-large-editor-text-color:                        var(--slick-base-dark-text-color);
+  --slick-slider-editor-border:                           1px solid #565656;
+  --slick-text-editor-border:                             1px solid #565656;
   --slick-text-editor-color:                              var(--slick-base-dark-text-color);
   --slick-header-menu-button-icon-color:                  var(--slick-menu-color);
   --slick-text-editor-background:                         var(--slick-base-dark-menu-bg-color);
