@@ -157,18 +157,20 @@ export class SlickFooterComponent {
       }
     } else if (this.locales) {
       this.customFooterOptions.metricTexts = this.customFooterOptions.metricTexts || {};
-      this.customFooterOptions.metricTexts.lastUpdate =
-        this.customFooterOptions.metricTexts.lastUpdate || this.locales?.TEXT_LAST_UPDATE || 'TEXT_LAST_UPDATE';
-      this.customFooterOptions.metricTexts.items = this.customFooterOptions.metricTexts.items || this.locales?.TEXT_ITEMS || 'TEXT_ITEMS';
-      this.customFooterOptions.metricTexts.itemsSelected =
-        this.customFooterOptions.metricTexts.itemsSelected || this.locales?.TEXT_ITEMS_SELECTED || 'TEXT_ITEMS_SELECTED';
-      this.customFooterOptions.metricTexts.of = this.customFooterOptions.metricTexts.of || this.locales?.TEXT_OF || 'TEXT_OF';
+      this.customFooterOptions.metricTexts.lastUpdate ||= this.localeOrDefault('TEXT_LAST_UPDATE');
+      this.customFooterOptions.metricTexts.items ||= this.localeOrDefault('TEXT_ITEMS');
+      this.customFooterOptions.metricTexts.itemsSelected ||= this.localeOrDefault('TEXT_ITEMS_SELECTED');
+      this.customFooterOptions.metricTexts.of ||= this.localeOrDefault('TEXT_OF');
     }
   }
 
   // --
   // protected functions
   // --------------------
+
+  protected localeOrDefault(key: string): string {
+    return this.locales[key as keyof Locale] || key;
+  }
 
   /** Create the Footer Container */
   protected createFooterContainer(gridParentContainerElm: HTMLElement): void {
@@ -268,14 +270,12 @@ export class SlickFooterComponent {
     const isRowSelectionEnabled = this.gridOptions.enableCheckboxSelector || this.gridOptions.enableRowSelection;
     if (isRowSelectionEnabled && customFooterOptions && !customFooterOptions.hideRowSelectionCount && this._isLeftFooterOriginallyEmpty) {
       this._isLeftFooterDisplayingSelectionRowCount = true;
-      const selectedCountText =
-        customFooterOptions.metricTexts?.itemsSelected ?? this.locales?.TEXT_ITEMS_SELECTED ?? 'TEXT_ITEMS_SELECTED';
+      const selectedCountText = customFooterOptions.metricTexts?.itemsSelected ?? this.localeOrDefault('TEXT_ITEMS_SELECTED');
       customFooterOptions.leftFooterText = `0 ${selectedCountText}`;
 
       this._eventHandler.subscribe(this.grid.onSelectedRowsChanged, (_e, args) => {
         this._selectedRowCount = args.rows.length;
-        const selectedCountText2 =
-          customFooterOptions.metricTexts?.itemsSelected ?? this.locales?.TEXT_ITEMS_SELECTED ?? 'TEXT_ITEMS_SELECTED';
+        const selectedCountText2 = customFooterOptions.metricTexts?.itemsSelected ?? this.localeOrDefault('TEXT_ITEMS_SELECTED');
         this.leftFooterText = `${this._selectedRowCount} ${selectedCountText2}`;
       });
     }
