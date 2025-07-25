@@ -86,11 +86,11 @@ Also note that all of these themes also have **Dark Theme** equivalent and even 
 `Angular-Slickgrid` works with all `Bootstrap` versions, you can see a demo of each one below. It also works well with any other frameworks like Material or Bulma and there are also couple of extra styling themes based on Material & Salesforce which are also available. You can also use different SVG icons, you may want to look at the [Docs - SVG Icons](https://ghiscoding.gitbook.io/angular-slickgrid/styling/svg-icons) for more info.
 
 [Angular-Slickgrid-Demos](https://github.com/ghiscoding/angular-slickgrid-demos) includes the following:
-- [Bootstrap 5 demo](https://ghiscoding.github.io/Angular-Slickgrid) / [examples repo](https://github.com/ghiscoding/angular-slickgrid-demos/tree/master/bootstrap5-demo-with-translate) - Code samples which uses `ngx-translate` to support multiple locales.
+- [Bootstrap 5 demo](https://ghiscoding.github.io/angular-slickgrid-demos) / [examples repo](https://github.com/ghiscoding/angular-slickgrid-demos/tree/master/bootstrap5-demo-with-translate) - Code samples which uses `ngx-translate` to support multiple locales.
 - [Bootstrap 5 (single Locale)](https://github.com/ghiscoding/angular-slickgrid-demos/tree/master/bootstrap5-demo-with-locales) / [examples repo](https://github.com/ghiscoding/angular-slickgrid-demos/tree/master/bootstrap5-demo-with-locales) - Code Sample with a single Locale (without `ngx-translate`)
 
 #### Working Demo
-For a complete set of working demos (40+ examples), we strongly suggest you clone [Angular-Slickgrid Demos](https://github.com/ghiscoding/angular-slickgrid-demos) repository (instructions are provided inside it). The demo repo provides multiple examples and are updated on every new project release, so it is updated frequently and is also the GitHub live demo page for both the [Bootstrap 5 demo](https://ghiscoding.github.io/Angular-Slickgrid) and [Bootstrap 5 demo (single Locale)](https://ghiscoding.github.io/angular-slickgrid-demos).
+For a complete set of working demos (40+ examples), we strongly suggest you clone [Angular-Slickgrid Demos](https://github.com/ghiscoding/angular-slickgrid-demos) repository (instructions are provided inside it). The demo repo provides multiple examples and are updated on every new project release, so it is updated frequently and is also the GitHub live demo page for the [Bootstrap 5 demo](https://ghiscoding.github.io/angular-slickgrid-demos).
 
 ```sh
 git clone https://github.com/ghiscoding/angular-slickgrid-demos
