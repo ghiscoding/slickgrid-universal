@@ -19,7 +19,7 @@ In our previous v5.0 release (see [Migration to v5.0](https://github.com/ghiscod
 ## Changes
 
 ### Dynamically Loading Component via `AngularUtilService`
-as shown in ([Example 21 - Row Detail](https://ghiscoding.github.io/Angular-Slickgrid/#/rowdetail) / [Example 22 - Angular Components](https://ghiscoding.github.io/Angular-Slickgrid/#/angular-components))
+as shown in ([Example 21 - Row Detail](https://ghiscoding.github.io/angular-slickgrid-demos/#/rowdetail) / [Example 22 - Angular Components](https://ghiscoding.github.io/angular-slickgrid-demos/#/angular-components))
 
 In our `AngularUtilService` we were dynamically creating component by using `ComponentFactoryResolver` but that got removed in Angular 16 and so we had to replace it with `ViewContainerRef` and for that to work you might need to add `providers` to use it as a singleton
 

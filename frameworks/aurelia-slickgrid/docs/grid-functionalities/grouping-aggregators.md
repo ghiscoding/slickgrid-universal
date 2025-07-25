@@ -12,10 +12,10 @@
 - [Styling - Change Icons](#styling-change-icons)
 
 ## Demo
-[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example13) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example13.ts)
+[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid-demos/#/slickgrid/example13) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example13.ts)
 
 ##### Draggable Grouping
-[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example18) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example18.ts)
+[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid-demos/#/slickgrid/example18) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example18.ts)
 
 ### Description
 Fully dynamic and interactive multi-level grouping with filtering and aggregates that is achieved with the help of the `DataView` object in `SlickGrid`. Each grouping level can have its own aggregates (over child rows, child groups, or all descendant rows). An aggregate can be seen as sub-totals, totals, average, ... or any defined group(s).

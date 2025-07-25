@@ -1,5 +1,5 @@
 ### Demo
-[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example12) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example12.ts)
+[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid-demos/#/slickgrid/example12) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example12.ts)
 
 ### i18n General Documentation
 For more information about `i18n`, you can read this [article](http://blog.aurelia.io/2016/08/22/aurelia-i18n-update-and-cli-tutorial/) and the official Aurelia [documentation](http://aurelia.io/docs/plugins/i18n/)

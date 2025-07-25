@@ -6,7 +6,7 @@
 Some users might want to have 1 main single search for filtering the grid data instead of using multiple column filters. You can see a demo of that below
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example21) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example21.ts#L162)
+[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid-demos/#/slickgrid/example21) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example21.ts#L162)
 
 ### Code Sample
 #### View

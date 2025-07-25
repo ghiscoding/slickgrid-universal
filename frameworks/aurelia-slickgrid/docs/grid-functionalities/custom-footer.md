@@ -4,7 +4,7 @@ You can use and show the Custom Footer with 2 left/right containers and will by 
 **NOTE:** The Custom Footer cannot be used in combination with Pagination, you can only show 1 or the other.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example2) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example2.ts)
+[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid-demos/#/slickgrid/example2) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example2.ts)
 
 ### Usage
 

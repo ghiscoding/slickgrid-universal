@@ -58,4 +58,4 @@ When looking up a property, the grid checks in the following order:
 
 ## Examples
 
-See [colspan example](https://ghiscoding.github.io/Angular-Slickgrid/#/colspan).
+See [colspan example](https://ghiscoding.github.io/angular-slickgrid-demos/#/colspan).

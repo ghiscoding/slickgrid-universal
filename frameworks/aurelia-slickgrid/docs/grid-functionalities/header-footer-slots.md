@@ -3,7 +3,7 @@ You can add Header and/or Footer to your grid by using the `#header` and `#foote
 
 ### Demo
 
-[Demo](https://ghiscoding.github.io/aurelia-slickgrid/#/example29) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example29.ts)
+[Demo](https://ghiscoding.github.io/aurelia-slickgrid-demos/#/example29) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example29.ts)
 
 ### Basic Usage
 

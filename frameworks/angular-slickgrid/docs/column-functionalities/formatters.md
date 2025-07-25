@@ -320,6 +320,6 @@ A **Better Solution** is to use Custom Formatters **as much as possible** becaus
 
 **Examples**
 
-* [Example 22](https://ghiscoding.github.io/Angular-Slickgrid/#/angular-components) | [Component](../../src/app/examples/grid-angular.component.ts) | [animated gif](https://user-images.githubusercontent.com/643976/53061045-87346580-348a-11e9-95f3-dfe33be6e966.gif)
+* [Example 22](https://ghiscoding.github.io/angular-slickgrid-demos/#/angular-components) | [Component](../../src/app/examples/grid-angular.component.ts) | [animated gif](https://user-images.githubusercontent.com/643976/53061045-87346580-348a-11e9-95f3-dfe33be6e966.gif)
 
 In the [animated gif](https://user-images.githubusercontent.com/643976/53061045-87346580-348a-11e9-95f3-dfe33be6e966.gif), you can see the 3rd column is using `asyncPostRender` and before it gets rendered we show 3 dots (...), and if you look carefully you can see them being rendered before the actual result, it's short but it is visible.

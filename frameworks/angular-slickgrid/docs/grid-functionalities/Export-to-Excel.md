@@ -17,7 +17,7 @@ You can Export to Excel, it will create an Excel file with the `.xlsx` default e
 **NOTE:** this is an opt-in Service, you must download the necessary Service from `@slickgrid-universal/excel-export` and instantiate it in your grid options via `registerExternalResources`, see multiple examples below.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/Angular-Slickgrid/#/localization) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-localization.component.ts)
+[Demo Page](https://ghiscoding.github.io/angular-slickgrid-demos/#/localization) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-localization.component.ts)
 
 ### CSP (Content Security Policy)
 Since we use the library `Excel-Builder-Vanilla`, which itself uses `fflate` as a dependency, that library uses Web Worker when it can which might throw a CSP error.
@@ -146,7 +146,7 @@ this.gridOptions = {
 ```
 
 ### Styling the Header Titles
-By default the header titles (first row) will be styled as Bold text, however you can choose to style them differently with custom styles as shown below. To find out what styling you can use, you can take a look at Excel Builder-Vanilla [Documentation](https://ghiscoding.gitbook.io/excel-builder-vanilla/cookbook/fonts-and-colors) website. The code shown below is used in [Example 26](https://ghiscoding.github.io/Angular-Slickgrid/#/context) if you wish to see the result.
+By default the header titles (first row) will be styled as Bold text, however you can choose to style them differently with custom styles as shown below. To find out what styling you can use, you can take a look at Excel Builder-Vanilla [Documentation](https://ghiscoding.gitbook.io/excel-builder-vanilla/cookbook/fonts-and-colors) website. The code shown below is used in [Example 26](https://ghiscoding.github.io/angular-slickgrid-demos/#/context) if you wish to see the result.
 
 ```ts
 this.gridOptions = {
@@ -233,7 +233,7 @@ export class MySample {
 ```
 
 ### Show Loading Process Spinner
-If you have lots of data, you might want to show a spinner telling the user that something is happening. You can use the Event Emitters `(onBeforeExportToExcel)` to start your spinner and then `(onAfterExportToExcel)` to stop the spinner once the process is done. You can see a this [Grouping Example](https://ghiscoding.github.io/Angular-Slickgrid/#/grouping) demo which has this feature enabled.
+If you have lots of data, you might want to show a spinner telling the user that something is happening. You can use the Event Emitters `(onBeforeExportToExcel)` to start your spinner and then `(onAfterExportToExcel)` to stop the spinner once the process is done. You can see a this [Grouping Example](https://ghiscoding.github.io/angular-slickgrid-demos/#/grouping) demo which has this feature enabled.
 
 #### View
 ```html
@@ -393,7 +393,7 @@ this.columnDefinitions = [
 ];
 ```
 
-By using `valueParserCallback`, there a lot of extra customizations that you can do with it. You could even use Excel Formula to do calculation even based on other fields on your item data context, the code below is calculating Sub-Total and Total. It's a lot of code but it shows the real power customization that exist. If you want to go with even more customization, the new [Example 36](https://ghiscoding.github.io/Angular-Slickgrid/#/excel-formula) even shows you how to summarize Groups with Excel Formulas (but be warned, it does take a fair amount of code and logic to implement by yourself)
+By using `valueParserCallback`, there a lot of extra customizations that you can do with it. You could even use Excel Formula to do calculation even based on other fields on your item data context, the code below is calculating Sub-Total and Total. It's a lot of code but it shows the real power customization that exist. If you want to go with even more customization, the new [Example 36](https://ghiscoding.github.io/angular-slickgrid-demos/#/excel-formula) even shows you how to summarize Groups with Excel Formulas (but be warned, it does take a fair amount of code and logic to implement by yourself)
 
 ```ts
 this.columnDefinitions = [

@@ -1,10 +1,10 @@
 ### Demo
 
 #### Header Button Plugin
-[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example7) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example7.ts)
+[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid-demos/#/slickgrid/example7) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example7.ts)
 
 #### Header Menu Plugin
-[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example8) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example8.ts)
+[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid-demos/#/slickgrid/example8) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example8.ts)
 
 ## Header Menu
 The `Header Menu` is now part of `Slickgrid-Universal` and is enabled by default via the grid option "enableHeaderMenu" flag.

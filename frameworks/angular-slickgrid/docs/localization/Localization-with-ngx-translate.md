@@ -2,7 +2,7 @@
 We use `ngx-translate` because the `i18n` from Angular core is yet to support dynamic translation (without reloading the page) which is a must for our project. However it is ~~suppose to land in Angular `6.x`~~ (still postponed) as the `ngx-translate` author wrote [here](https://github.com/ngx-translate/core/issues/495#issuecomment-325570932), he is also 1 of the guy working on implementing it in the Angular core. When the `i18n` Service supports dynamic translation, I will revisit this implementation but in the mean time we will stick with `ngx-translate`.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/Angular-Slickgrid/#/localization) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-localization.component.ts) / [Translation Files](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/angular-slickgrid/src/assets/i18n)
+[Demo Page](https://ghiscoding.github.io/angular-slickgrid-demos/#/localization) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-localization.component.ts) / [Translation Files](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/angular-slickgrid/src/assets/i18n)
 
 #### ngx-translate setup
 [Demo Component](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/angular-slickgrid/src/library)

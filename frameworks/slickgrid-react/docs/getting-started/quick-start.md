@@ -143,7 +143,7 @@ The last step is really to explore all the pages that are available in the docum
 
 ### 7. Get Started
 The best way to get started is to clone the [Slickgrid-React-Demos](https://github.com/ghiscoding/slickgrid-react-demos), it has multiple examples and it is also updated frequently since it is used for the GitHub Bootstrap 5 demo page. `Slickgrid-React` has 2 `Bootstrap` themes, you can see a demo of each one below.
-- [Bootstrap 5 demo](https://ghiscoding.github.io/slickgrid-react) / [examples repo](https://github.com/ghiscoding/slickgrid-react-demos) (with `I18N` Service)
+- [Bootstrap 5 demo](https://ghiscoding.github.io/slickgrid-react-demos) / [examples repo](https://github.com/ghiscoding/slickgrid-react-demos) (with `I18N` Service)
 
 ##### All Live Demo Examples have links to the actual code
 Like to see the code to a particular Example? Just click on the "see code" that is available in every live examples.

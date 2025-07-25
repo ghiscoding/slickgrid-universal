@@ -25,10 +25,10 @@ Editors won't work without these 2 flags `enableCellNavigation: true` and `edita
 
 ### Demo
 ##### with plain JavaScript/jQuery
-[Demo Page](https://ghiscoding.github.io/Angular-Slickgrid/#/editor) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-editor.component.ts)
+[Demo Page](https://ghiscoding.github.io/angular-slickgrid-demos/#/editor) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-editor.component.ts)
 
 ##### with Angular Component
-[Demo](https://ghiscoding.github.io/Angular-Slickgrid/#/angular-components) / [Demo Client Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-angular.component.ts)
+[Demo](https://ghiscoding.github.io/angular-slickgrid-demos/#/angular-components) / [Demo Client Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-angular.component.ts)
 
 ### How to use Inline Editors
 Simply call the editor in your column definition with the `Editors` you want, as for example (`editor: { model: Editors.text }`). Here is an example with a full column definition:
@@ -97,7 +97,7 @@ So to make it more clear, the `saveOutputType` is the format that will be sent t
 The AutoComplete Editor has the same configuration (except for the `model: Editors.autoComplete`) as the AutoComplete Filter, so you can refer to the [AutoComplete Filter Wiki](filters/autocomplete-filter.md) for more info on how to use it.
 
 ## Select Editors
-The library ships with two select editors: `singleSelectEditor` and the `multipleSelectEditor`. Both support the [Multiple-Select-Vanilla](https://github.com/ghiscoding/multiple-select-vanilla) library, but fallback to the bootstrap form-control style if you decide to exclude this library from your build. These editors will work with a list of foreign key values (custom structure not supported) and can be displayed properly with the [collectionFormatter](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/formatters/collectionFormatter.ts). [example 3](https://ghiscoding.github.io/Angular-Slickgrid/#/editor) has all the details for you to get started with these editors.
+The library ships with two select editors: `singleSelectEditor` and the `multipleSelectEditor`. Both support the [Multiple-Select-Vanilla](https://github.com/ghiscoding/multiple-select-vanilla) library, but fallback to the bootstrap form-control style if you decide to exclude this library from your build. These editors will work with a list of foreign key values (custom structure not supported) and can be displayed properly with the [collectionFormatter](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/formatters/collectionFormatter.ts). [example 3](https://ghiscoding.github.io/angular-slickgrid-demos/#/editor) has all the details for you to get started with these editors.
 
 Here's an example with a `collection`, `collectionFilterBy` and `collectionSortBy`
 
@@ -337,7 +337,7 @@ this.columnDefinitions = [
 ```
 
 ## Custom Editor with Angular Components
-You can see them in [Example 22](https://ghiscoding.github.io/Angular-Slickgrid/#/angular-components) which have both Custom Editors & Filters which uses Angular Components. The 2nd column "Assignee" is the column that uses both (it uses `ng-select` 3rd party lib wrapped in an Angular Components [here](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/editor-ng-select.component.ts)) and you need to create a Custom Editor like [here](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/custom-angularComponentEditor.ts) and use that Custom Editor in your column definition like
+You can see them in [Example 22](https://ghiscoding.github.io/angular-slickgrid-demos/#/angular-components) which have both Custom Editors & Filters which uses Angular Components. The 2nd column "Assignee" is the column that uses both (it uses `ng-select` 3rd party lib wrapped in an Angular Components [here](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/editor-ng-select.component.ts)) and you need to create a Custom Editor like [here](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/custom-angularComponentEditor.ts) and use that Custom Editor in your column definition like
 
 Personally I don't find this very straightforward and I don't recommend using Angular Components for Editors/Filters as it adds a lot of boilerplate (compare to 1 step with a jQuery Custom Editor) but if you really wish to go that route, it's now possible following the steps shown below.
 

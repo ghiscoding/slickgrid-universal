@@ -98,7 +98,7 @@ This project **does not** work well with `React.StrictMode`, so please make sure
 
 Multiple styling themes are available
 - Default (UI agnostic)
-- Bootstrap (see all Slickgrid-React [live demos](https://ghiscoding.github.io/slickgrid-react/))
+- Bootstrap (see all Slickgrid-React [live demos](https://ghiscoding.github.io/slickgrid-react-demos/))
 - Material (see [Slickgrid-Universal](https://ghiscoding.github.io/slickgrid-universal/#/example07))
 - Salesforce (see [Slickgrid-Universal](https://ghiscoding.github.io/slickgrid-universal/#/example16))
 

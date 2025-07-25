@@ -131,7 +131,7 @@ this.gridOptions = {
 ```
 
 ### Styling the Header Titles
-By default the header titles (first row) will be styled as Bold text, however you can choose to style them differently with custom styles as shown below. To find out what styling you can use, you can take a look at Excel Builder-Vanilla [Documentation](https://ghiscoding.gitbook.io/excel-builder-vanilla/cookbook/fonts-and-colors) website. The code shown below is used in [Aurelia-Slickgrid - Example 24](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example24) if you wish to see the result.
+By default the header titles (first row) will be styled as Bold text, however you can choose to style them differently with custom styles as shown below. To find out what styling you can use, you can take a look at Excel Builder-Vanilla [Documentation](https://ghiscoding.gitbook.io/excel-builder-vanilla/cookbook/fonts-and-colors) website. The code shown below is used in [Aurelia-Slickgrid - Example 24](https://ghiscoding.github.io/aurelia-slickgrid-demos/#/slickgrid/example24) if you wish to see the result.
 
 ```ts
 this.gridOptions = {

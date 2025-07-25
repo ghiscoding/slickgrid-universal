@@ -5,7 +5,7 @@ The `Grid Menu` (also known as the `Hamburger Menu`) is now part of the project 
 Technically, it's enable by default and so you don't have anything to do to enjoy it. However if you want to customize the content of the Grid Menu, then continue reading.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example9) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example9.ts)
+[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid-demos/#/slickgrid/example9) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example9.ts)
 
 ## Customization
 ### Column Picker

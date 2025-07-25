@@ -13,7 +13,7 @@ When working with the grid, you might want to Add / Update or Hightlight an item
 **Note:** This is strictly a client side event, you still have to implement any backend change yourself.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example11) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example11.ts)
+[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid-demos/#/slickgrid/example11) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example11.ts)
 
 ## CRUD Methods
 ### Add an Item (row)

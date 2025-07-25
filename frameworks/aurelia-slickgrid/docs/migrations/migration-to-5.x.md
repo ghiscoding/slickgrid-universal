@@ -14,7 +14,7 @@ This new release is rather small for the developer, but a lot have changed inter
 **NOTE:** if you come from a version earlier than 4.x, it is very important that you follow the migrations in order
 
 ### Removed Code
-~Since we dropped jQueryUI, and we were using jQueryUI Slider for the `Filters.SliderRange`, we had to remove the Slider Range and we don't currently have a replacement at the moment, though it might come in the future.~ Slider Range Filter is back in version **[v5.1.0](https://github.com/ghiscoding/aurelia-slickgrid/releases/tag/v5.1.0)** release (see [Example 23](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example23)).
+~Since we dropped jQueryUI, and we were using jQueryUI Slider for the `Filters.SliderRange`, we had to remove the Slider Range and we don't currently have a replacement at the moment, though it might come in the future.~ Slider Range Filter is back in version **[v5.1.0](https://github.com/ghiscoding/aurelia-slickgrid/releases/tag/v5.1.0)** release (see [Example 23](https://ghiscoding.github.io/aurelia-slickgrid-demos/#/slickgrid/example23)).
 
 ### @deprecated Code
 ##### Text Export Service (see [code change](#text-export-service) sample below)

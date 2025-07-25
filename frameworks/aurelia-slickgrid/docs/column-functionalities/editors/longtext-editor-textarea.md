@@ -4,7 +4,7 @@
 - See the [Editors - Wiki](../Editors.md) for more general info about Editors (validators, event handlers, ...)
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example3) | [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example3.ts) - ("Title" column to be more specific)
+[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid-demos/#/slickgrid/example3) | [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example3.ts) - ("Title" column to be more specific)
 
 ### Editor Options
 You can change button texts, textarea size (cols, rows) and also change position of the textarea (auto is the default which will try to automatically find best place to position the textarea).

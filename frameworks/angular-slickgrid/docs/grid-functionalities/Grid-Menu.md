@@ -5,7 +5,7 @@ The `Grid Menu` (also known as the `Hamburger Menu`) is now part of the project 
 Technically, it's enable by default and so you don't have anything to do to enjoy it. However if you want to customize the content of the Grid Menu, then continue reading.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/Angular-Slickgrid/#/gridmenu) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-menu.component.ts)
+[Demo Page](https://ghiscoding.github.io/angular-slickgrid-demos/#/gridmenu) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-menu.component.ts)
 
 ## Customization
 ### Column Picker

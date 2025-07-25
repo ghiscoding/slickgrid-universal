@@ -12,10 +12,10 @@
 GraphQL Backend Service (for Pagination purposes) to get data from a backend server with the help of GraphQL.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/Angular-Slickgrid/#/gridgraphql) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-graphql.component.ts)
+[Demo Page](https://ghiscoding.github.io/angular-slickgrid-demos/#/gridgraphql) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-graphql.component.ts)
 
 ### Note
-You can use it when you need to support **Pagination** (though you could disable Pagination if you wish), that is when your dataset is rather large and has typically more than 5k rows, with a GraphQL endpoint. If your dataset is small (less than 5k rows), then you might be better off with [regular grid](https://ghiscoding.github.io/Angular-Slickgrid/#/basic) with the "dataset.bind" property. SlickGrid can easily handle million of rows using a DataView object, but personally when the dataset is known to be large, I usually use a backend service (OData or GraphQL) and when it's small I go with a [regular grid](https://ghiscoding.github.io/Angular-Slickgrid/#/basic).
+You can use it when you need to support **Pagination** (though you could disable Pagination if you wish), that is when your dataset is rather large and has typically more than 5k rows, with a GraphQL endpoint. If your dataset is small (less than 5k rows), then you might be better off with [regular grid](https://ghiscoding.github.io/angular-slickgrid-demos/#/basic) with the "dataset.bind" property. SlickGrid can easily handle million of rows using a DataView object, but personally when the dataset is known to be large, I usually use a backend service (OData or GraphQL) and when it's small I go with a [regular grid](https://ghiscoding.github.io/angular-slickgrid-demos/#/basic).
 
 ## Implementation
 To connect a backend service into `Slickgrid-Universal`, you simply need to modify your `gridOptions` and add a declaration of `backendServiceApi`. See below for the signature and an example further down below.

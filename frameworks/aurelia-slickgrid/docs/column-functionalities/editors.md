@@ -25,10 +25,10 @@ Editors won't work without these 2 flags `enableCellNavigation: true` and `edita
 
 ### Demo
 ##### with plain JavaScript/jQuery
-[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example3) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example3.ts)
+[Demo Page](https://ghiscoding.github.io/aurelia-slickgrid-demos/#/slickgrid/example3) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example3.ts)
 
 ##### with Aurelia Custom Components
-[Demo](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example26.ts)
+[Demo](https://ghiscoding.github.io/aurelia-slickgrid-demos/#/slickgrid) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example26.ts)
 
 
 ### How to use Inline Editors
@@ -141,7 +141,7 @@ this.columnDefinitions = [
 ```
 
 ## Custom Editor with Aurelia Custom Element
-I added a new [Example 26](https://ghiscoding.github.io/aurelia-slickgrid/#/slickgrid/example26) which have both Custom Editors & Filters which uses Aurelia Custom Elements. The 2nd column "Assignee" is the column that uses both (it's a simple select dropdown created as an Aurelia Custom Element) and you need to create a Custom Editor and use that Custom Editor in your column definition like [here](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example26.ts#L125).
+I added a new [Example 26](https://ghiscoding.github.io/aurelia-slickgrid-demos/#/slickgrid/example26) which have both Custom Editors & Filters which uses Aurelia Custom Elements. The 2nd column "Assignee" is the column that uses both (it's a simple select dropdown created as an Aurelia Custom Element) and you need to create a Custom Editor and use that Custom Editor in your column definition like [here](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example26.ts#L125).
 
 Personally I don't find this very straightforward and I don't recommend using Aurelia Custom Elements for Editors/Filters as it adds a lot of boilerplate (compare to 1 step with a jQuery Custom Editor) but if you really wish to go that route, it's now possible following the steps shown below.
 
