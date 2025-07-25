@@ -1112,7 +1112,7 @@ describe('GridMenuControl', () => {
 
           subCommands1Elm!.dispatchEvent(new Event('click'));
           const gridMenu2Elm = document.body.querySelector('.slick-grid-menu.slick-menu-level-1') as HTMLDivElement;
-          Object.defineProperty(gridMenu2Elm, 'clientHeight', { writable: true, configurable: true, value: 320 });
+          Object.defineProperty(gridMenu2Elm, 'offsetHeight', { writable: true, configurable: true, value: 320 });
 
           const divEvent = new MouseEvent('click', { bubbles: true, cancelable: true, composed: false });
           const subMenuElm = document.createElement('div');
