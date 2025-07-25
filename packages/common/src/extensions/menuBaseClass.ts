@@ -440,7 +440,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
       // for sub-menus only, auto-adjust drop position (up/down)
       // we first need to see what position the drop will be located (defaults to bottom)
       // since we reposition menu below slick cell, we need to take it in consideration and do our calculation from that element
-      const menuHeight = menuElm?.clientHeight || 0;
+      const menuHeight = menuElm?.offsetHeight || 0;
       if ((this.pluginName === 'GridMenu' || this.pluginName === 'HeaderMenu') && isSubMenu) {
         availableSpaceBottom = parentSpaceBottom;
         availableSpaceTop = parentSpaceTop;
