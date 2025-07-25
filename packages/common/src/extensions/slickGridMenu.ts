@@ -1,13 +1,11 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import {
-  calculateAvailableSpace,
   classNameToList,
   createDomElement,
   emptyElement,
   extend,
   findWidthOrDefault,
   getHtmlStringOutput,
-  getOffset,
 } from '@slickgrid-universal/utils';
 
 import type {
@@ -74,6 +72,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   protected _originalGridMenu!: GridMenu;
   protected _userOriginalGridMenu!: GridMenu;
   protected _defaults = {
+    autoAlignSide: true,
     dropSide: 'left',
     showButton: true,
     hideForceFitButton: false,
@@ -89,6 +88,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     headerColumnValueExtractor: (columnDef: Column) =>
       getHtmlStringOutput(columnDef.columnPickerLabel || columnDef.name || '', 'innerHTML'),
   } as GridMenuOption;
+  pluginName: 'GridMenu' = 'GridMenu' as const;
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(
@@ -388,87 +388,6 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     this.init(false);
   }
 
-  repositionMenu(e: MouseEvent | TouchEvent, menuElm: HTMLElement, buttonElm?: HTMLButtonElement, addonOptions?: GridMenu): void {
-    const targetEvent: MouseEvent | Touch = (e as TouchEvent)?.touches?.[0] ?? e;
-    const isSubMenu = menuElm.classList.contains('slick-submenu');
-    const parentElm = isSubMenu
-      ? ((e.target as HTMLElement)!.closest('.slick-menu-item') as HTMLDivElement)
-      : (targetEvent.target as HTMLElement);
-
-    if (parentElm) {
-      const iconButtonElm = buttonElm || this._gridMenuButtonElm;
-      const menuIconOffset = getOffset(buttonElm); // get button offset position
-      const parentOffset = getOffset(parentElm);
-      const gridMenuOptions = addonOptions ?? this._addonOptions;
-      const buttonComptStyle = getComputedStyle(iconButtonElm as HTMLButtonElement);
-      const buttonWidth = parseInt(buttonComptStyle?.width ?? this._defaults?.menuWidth, 10);
-
-      const menuWidth = menuElm?.offsetWidth ?? 0;
-      const contentMinWidth = gridMenuOptions?.contentMinWidth ?? this._defaults.contentMinWidth ?? 0;
-      const currentMenuWidth = (contentMinWidth > menuWidth ? contentMinWidth : menuWidth) || 0;
-      const nextPositionTop = menuIconOffset.top;
-      const nextPositionLeft = menuIconOffset.right;
-
-      let menuOffsetLeft;
-      let menuOffsetTop;
-      if (isSubMenu) {
-        menuOffsetTop = parentOffset.top;
-        menuOffsetLeft = parentOffset.left;
-      } else {
-        menuOffsetTop = nextPositionTop + iconButtonElm.offsetHeight; // top position has to include button height so the menu is placed just below it
-        menuOffsetLeft = gridMenuOptions?.dropSide === 'right' ? nextPositionLeft - buttonWidth : nextPositionLeft - currentMenuWidth;
-      }
-
-      // for sub-menus only, auto-adjust drop position (up/down)
-      //  we first need to see what position the drop will be located (defaults to bottom)
-      if (isSubMenu) {
-        // since we reposition menu below slick cell, we need to take it in consideration and do our calculation from that element
-        const menuHeight = menuElm?.clientHeight || 0;
-        const { bottom: availableSpaceBottom, top: availableSpaceTop } = calculateAvailableSpace(parentElm);
-        const dropPosition = availableSpaceBottom < menuHeight && availableSpaceTop > availableSpaceBottom ? 'top' : 'bottom';
-        if (dropPosition === 'top') {
-          menuElm.classList.remove('dropdown');
-          menuElm.classList.add('dropup');
-          menuOffsetTop -= menuHeight - parentElm.clientHeight;
-        } else {
-          menuElm.classList.remove('dropup');
-          menuElm.classList.add('dropdown');
-        }
-      }
-
-      // auto-align side (left/right)
-      const gridPos = this.grid.getGridPosition();
-      let subMenuPosCalc = menuOffsetLeft + Number(menuWidth); // calculate coordinate at caller element far right
-      if (isSubMenu) {
-        subMenuPosCalc += parentElm.clientWidth;
-      }
-      const browserWidth = document.documentElement.clientWidth;
-      const dropSide = subMenuPosCalc >= gridPos.width || subMenuPosCalc >= browserWidth ? 'left' : 'right';
-      if (dropSide === 'left' || (!isSubMenu && gridMenuOptions?.dropSide === 'left')) {
-        menuElm.classList.remove('dropright');
-        menuElm.classList.add('dropleft');
-        if (isSubMenu) {
-          menuOffsetLeft -= Number(menuWidth);
-        }
-      } else {
-        menuElm.classList.remove('dropleft');
-        menuElm.classList.add('dropright');
-        if (isSubMenu) {
-          menuOffsetLeft += parentElm.offsetWidth;
-        }
-      }
-
-      menuElm.style.top = `${menuOffsetTop}px`;
-      menuElm.style.left = `${menuOffsetLeft}px`;
-
-      if (contentMinWidth! > 0) {
-        menuElm.style.minWidth = `${contentMinWidth}px`;
-      }
-      menuElm.style.opacity = '1';
-      menuElm.style.display = 'block';
-    }
-  }
-
   /** Open the Grid Menu */
   openGridMenu(): void {
     const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true, composed: false });
@@ -563,7 +482,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       this._menuElm.appendChild(this._listElm);
 
       // once we have both lists (commandItems + columnPicker), we are ready to reposition the menu since its height/width should be calculated by then
-      this.repositionMenu(e, this._menuElm, buttonElm, addonOptions);
+      this.repositionMenu(e as any, this._menuElm, buttonElm, addonOptions);
       this._isMenuOpen = true;
 
       // execute optional callback method defined by the user
@@ -1049,6 +968,6 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     const subMenuElm = this.createCommandMenu(commandItems as Array<GridMenuItem | 'divider'>, level + 1, item);
     subMenuElm.style.display = 'block';
     document.body.appendChild(subMenuElm);
-    this.repositionMenu(e, subMenuElm);
+    this.repositionMenu(e, subMenuElm, this._gridMenuButtonElm, this._addonOptions);
   }
 }

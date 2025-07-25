@@ -794,12 +794,12 @@ describe('HeaderMenu Plugin', () => {
         expect(disposeSubMenuSpy).toHaveBeenCalled();
       });
 
-      it('should create a Grid Menu item with commands sub-menu commandItems and expect sub-menu to be positioned on top (dropup)', () => {
+      it('should create a Header Menu item with commands sub-menu commandItems and expect sub-menu to be positioned on top (dropup)', () => {
         const hideMenuSpy = vi.spyOn(plugin, 'hideMenu');
         const onCommandMock = vi.fn();
         Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, configurable: true, value: 50 });
         vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(columnsMock);
-        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValueOnce({
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
           darkMode: true,
         });
@@ -820,7 +820,7 @@ describe('HeaderMenu Plugin', () => {
         Object.defineProperty(divEvent1, 'target', { writable: true, configurable: true, value: headerButtonElm });
 
         subCommands1Elm!.dispatchEvent(new Event('click'));
-        plugin.repositionMenu(divEvent1 as any, headerMenu1Elm);
+        plugin.repositionMenu(divEvent1 as any, headerMenu1Elm, undefined, plugin.addonOptions);
         const headerMenu2Elm = document.body.querySelector('.slick-header-menu.slick-menu-level-1') as HTMLDivElement;
         Object.defineProperty(headerMenu2Elm, 'clientHeight', { writable: true, configurable: true, value: 320 });
 
@@ -836,7 +836,7 @@ describe('HeaderMenu Plugin', () => {
         menuItem.appendChild(subMenuElm);
 
         parentContainer.classList.add('slickgrid-container');
-        plugin.repositionMenu(divEvent as any, headerMenu2Elm);
+        plugin.repositionMenu(divEvent as any, headerMenu2Elm, undefined, plugin.addonOptions);
         const headerMenu2Elm2 = document.body.querySelector('.slick-header-menu.slick-menu-level-1') as HTMLDivElement;
 
         expect(headerMenu2Elm2.classList.contains('dropup')).toBeTruthy();

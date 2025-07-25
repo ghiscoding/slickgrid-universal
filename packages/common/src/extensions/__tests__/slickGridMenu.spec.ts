@@ -154,6 +154,7 @@ describe('GridMenuControl', () => {
 
   describe('with I18N Service', () => {
     const consoleErrorSpy = vi.spyOn(global.console, 'error').mockReturnValue();
+    let parentContainer: HTMLDivElement;
 
     beforeEach(() => {
       div = document.createElement('div');
@@ -166,6 +167,8 @@ describe('GridMenuControl', () => {
       sharedService.dataView = dataViewStub;
       sharedService.slickGrid = gridStub;
 
+      parentContainer = document.createElement('div');
+      sharedService.gridContainerElement = parentContainer;
       vi.spyOn(gridStub, 'getContainerNode').mockReturnValue(document.body as HTMLDivElement);
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
@@ -1101,7 +1104,7 @@ describe('GridMenuControl', () => {
           control.columns = columnsMock;
           control.init();
 
-          const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLDivElement;
+          const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLButtonElement;
           buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
           const gridMenu1Elm = document.body.querySelector('.slick-grid-menu.slick-menu-level-0') as HTMLDivElement;
           const commandList1Elm = gridMenu1Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
@@ -1122,7 +1125,7 @@ describe('GridMenuControl', () => {
           Object.defineProperty(divEvent, 'target', { writable: true, configurable: true, value: subMenuElm });
           menuItem.appendChild(subMenuElm);
 
-          control.repositionMenu(divEvent, gridMenu2Elm);
+          control.repositionMenu(divEvent as any, gridMenu2Elm, buttonElm);
           const gridMenu2Elm2 = document.body.querySelector('.slick-grid-menu.slick-menu-level-1') as HTMLDivElement;
 
           expect(gridMenu2Elm2.classList.contains('dropup')).toBeTruthy();

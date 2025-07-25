@@ -173,6 +173,7 @@ const treeDataServiceStub = {
 describe('ContextMenu Plugin', () => {
   let backendUtilityService: BackendUtilityService;
   let extensionUtility: ExtensionUtility;
+  let parentContainer: HTMLDivElement;
   let translateService: TranslateServiceStub;
   let plugin: SlickContextMenu;
   let sharedService: SharedService;
@@ -190,6 +191,9 @@ describe('ContextMenu Plugin', () => {
       readText: vi.fn(() => Promise.resolve('')),
       writeText: vi.fn(() => Promise.resolve()),
     };
+    parentContainer = document.createElement('div');
+    sharedService.gridContainerElement = parentContainer;
+    vi.spyOn(gridStub, 'getGridPosition').mockReturnValue({ top: 10, bottom: 5, left: 15, right: 22, width: 225 } as ElementPosition);
     vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
     vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsMock);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);

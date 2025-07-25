@@ -1,6 +1,14 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { classNameToList, createDomElement, emptyElement, isDefined } from '@slickgrid-universal/utils';
+import {
+  calculateAvailableSpace,
+  classNameToList,
+  createDomElement,
+  emptyElement,
+  getOffset,
+  getOffsetRelativeToParent,
+  isDefined,
+} from '@slickgrid-universal/utils';
 
 import type {
   CellMenu,
@@ -9,16 +17,18 @@ import type {
   DOMMouseOrTouchEvent,
   GridMenu,
   GridMenuItem,
+  GridMenuOption,
   GridOption,
   HeaderButton,
   HeaderButtonItem,
   HeaderMenu,
+  HeaderMenuOption,
   MenuCommandItem,
   MenuOptionItem,
 } from '../interfaces/index.js';
+import { type SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index.js';
 import type { ExtensionUtility } from '../extensions/extensionUtility.js';
 import type { SharedService } from '../services/shared.service.js';
-import { SlickEventHandler, type SlickGrid } from '../core/index.js';
 
 export type MenuType = 'command' | 'option';
 export type ExtendableItemTypes = HeaderButtonItem | MenuCommandItem | MenuOptionItem | 'divider';
@@ -36,6 +46,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
   protected _menuCssPrefix = '';
   protected _menuPluginCssPrefix = '';
   protected _optionTitleElm?: HTMLSpanElement;
+  pluginName = '';
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(
@@ -350,5 +361,185 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
       }
     }
     return commandLiElm;
+  }
+
+  /**
+   * Reposition any of the menu plugins (CellMenu, ContextMenu, GridMenu, HeaderMenu) to where the user clicked,
+   * it will calculate the best position depending on available space in the viewport and the menu type.
+   */
+  repositionMenu(
+    e: DOMMouseOrTouchEvent<HTMLElement> | SlickEventData,
+    menuElm: HTMLElement,
+    buttonElm?: HTMLButtonElement,
+    addonOptions?: GridMenu | CellMenu | ContextMenu | HeaderMenu
+  ): void {
+    const targetElm = e.target as HTMLDivElement; // get header button createElement
+    const targetEvent: MouseEvent | Touch = (e as TouchEvent)?.touches?.[0] ?? e;
+    const isSubMenu = menuElm.classList.contains('slick-submenu');
+    const rowHeight = this.gridOptions.rowHeight || 0;
+    const parentElm = isSubMenu
+      ? ((e.target as HTMLElement)!.closest('.slick-menu-item') as HTMLDivElement)
+      : this.pluginName === 'CellMenu' || this.pluginName === 'ContextMenu'
+        ? (e.target!.closest('.slick-cell') as HTMLDivElement)
+        : (targetEvent.target as HTMLElement);
+
+    if (menuElm && parentElm) {
+      // for Cell/Context Menus we should move to (0,0) coordinates before calculating height/width
+      // since it could end up being cropped width values when element is outside browser viewport.
+      if (this.pluginName === 'CellMenu' || this.pluginName === 'ContextMenu') {
+        menuElm.style.top = `0px`;
+        menuElm.style.left = `0px`;
+      }
+
+      const containerElm: HTMLElement = this.sharedService.gridContainerElement.classList.contains('slickgrid-container')
+        ? this.sharedService.gridContainerElement
+        : (this.sharedService.gridContainerElement.querySelector('.slickgrid-container') ?? this.sharedService.gridContainerElement);
+      const relativePos = getOffsetRelativeToParent(containerElm, targetElm);
+      const menuWidth = menuElm.offsetWidth;
+      const parentOffset = getOffset(parentElm);
+      let menuOffsetLeft = 0;
+      let menuOffsetTop = 0;
+      let dropOffset = 0;
+      let sideOffset = 0;
+      let availableSpaceBottom = 0;
+      let availableSpaceTop = 0;
+      const { bottom: parentSpaceBottom, top: parentSpaceTop } = calculateAvailableSpace(parentElm);
+
+      if (this.pluginName === 'GridMenu' && buttonElm) {
+        if (!isSubMenu) {
+          const buttonComptStyle = getComputedStyle(buttonElm);
+          const buttonWidth = parseInt(buttonComptStyle?.width ?? (addonOptions as GridMenuOption)?.menuWidth, 10);
+          const contentMinWidth = (addonOptions as GridMenuOption)?.contentMinWidth ?? 0;
+          const currentMenuWidth = (contentMinWidth > menuWidth ? contentMinWidth : menuWidth) || 0;
+          if (contentMinWidth > 0) {
+            menuElm.style.minWidth = `${contentMinWidth}px`;
+          }
+          const menuIconOffset = getOffset(buttonElm); // get button offset position
+          const nextPositionLeft = menuIconOffset.right;
+          menuOffsetTop = menuIconOffset.top + buttonElm!.offsetHeight; // top position has to include button height so the menu is placed just below it
+          menuOffsetLeft =
+            (addonOptions as GridMenuOption)?.dropSide === 'right' ? nextPositionLeft - buttonWidth : nextPositionLeft - currentMenuWidth;
+        }
+      } else if (this.pluginName === 'CellMenu' || this.pluginName === 'ContextMenu') {
+        menuOffsetLeft = parentElm && this.pluginName === 'CellMenu' ? parentOffset.left : targetEvent.pageX;
+        menuOffsetTop = parentElm && this.pluginName === 'CellMenu' ? parentOffset.top : targetEvent.pageY;
+        dropOffset = Number((addonOptions as CellMenu | ContextMenu)?.autoAdjustDropOffset || 0);
+        sideOffset = Number((addonOptions as CellMenu | ContextMenu)?.autoAlignSideOffset || 0);
+      } else {
+        menuOffsetLeft = isSubMenu ? parentOffset.left : (relativePos?.left ?? 0);
+        menuOffsetTop = isSubMenu
+          ? parentOffset.top
+          : (relativePos?.top ?? 0) + ((addonOptions as HeaderMenuOption)?.menuOffsetTop ?? 0) + targetElm.clientHeight;
+      }
+
+      if ((this.pluginName === 'ContextMenu' || this.pluginName === 'GridMenu') && isSubMenu) {
+        menuOffsetLeft = parentOffset.left;
+        menuOffsetTop = parentOffset.top;
+      }
+
+      // for sub-menus only, auto-adjust drop position (up/down)
+      // we first need to see what position the drop will be located (defaults to bottom)
+      // since we reposition menu below slick cell, we need to take it in consideration and do our calculation from that element
+      const menuHeight = menuElm?.clientHeight || 0;
+      if ((this.pluginName === 'GridMenu' || this.pluginName === 'HeaderMenu') && isSubMenu) {
+        availableSpaceBottom = parentSpaceBottom;
+        availableSpaceTop = parentSpaceTop;
+      } else if (
+        this.pluginName === 'CellMenu' ||
+        this.pluginName === 'ContextMenu' ||
+        (addonOptions as CellMenu | ContextMenu)?.autoAdjustDrop ||
+        (addonOptions as CellMenu | ContextMenu)?.dropDirection
+      ) {
+        availableSpaceBottom = parentSpaceBottom + dropOffset - rowHeight;
+        availableSpaceTop = parentSpaceTop - dropOffset + rowHeight;
+      }
+      const dropPosition = availableSpaceBottom < menuHeight && availableSpaceTop > availableSpaceBottom ? 'top' : 'bottom';
+      if (dropPosition === 'top' || (addonOptions as CellMenu | ContextMenu)?.dropDirection === 'top') {
+        menuElm.classList.remove('dropdown');
+        menuElm.classList.add('dropup');
+        if (isSubMenu) {
+          menuOffsetTop -= menuHeight - dropOffset - parentElm.clientHeight;
+        } else {
+          menuOffsetTop -= menuHeight - dropOffset;
+        }
+      } else {
+        menuElm.classList.remove('dropup');
+        menuElm.classList.add('dropdown');
+        if (this.pluginName === 'CellMenu' || this.pluginName === 'ContextMenu') {
+          menuOffsetTop = menuOffsetTop + dropOffset;
+          if (this.pluginName === 'CellMenu') {
+            if (isSubMenu) {
+              menuOffsetTop += dropOffset;
+            } else {
+              menuOffsetTop += rowHeight + dropOffset;
+            }
+          }
+        }
+      }
+
+      // when auto-align is set, it will calculate whether it has enough space in the viewport to show the drop menu on the right (default)
+      // if there isn't enough space on the right, it will automatically align the drop menu to the left
+      // to simulate an align left, we actually need to know the width of the drop menu
+      if (
+        (addonOptions as HeaderMenu)?.autoAlign ||
+        (addonOptions as CellMenu | ContextMenu)?.autoAlignSide ||
+        (addonOptions as CellMenu | ContextMenu)?.dropSide === 'left'
+      ) {
+        let subMenuPosCalc = menuOffsetLeft + Number(menuWidth); // calculate coordinate at caller element far right
+        if (isSubMenu) {
+          subMenuPosCalc += parentElm.clientWidth;
+        }
+        const gridPos = this.grid.getGridPosition();
+        const browserWidth = document.documentElement.clientWidth;
+        const dropSide = subMenuPosCalc >= gridPos.width || subMenuPosCalc >= browserWidth ? 'left' : 'right';
+
+        let needHeaderMenuOffsetLeftRecalc = false;
+        if (dropSide === 'left' || (!isSubMenu && (addonOptions as CellMenu | ContextMenu)?.dropSide === 'left')) {
+          menuElm.classList.remove('dropright');
+          menuElm.classList.add('dropleft');
+          if (this.pluginName === 'HeaderMenu') {
+            if (isSubMenu) {
+              menuOffsetLeft -= menuWidth;
+            } else {
+              needHeaderMenuOffsetLeftRecalc = true;
+            }
+          } else if (this.pluginName === 'CellMenu' && !isSubMenu) {
+            const parentCellWidth = parentElm.offsetWidth || 0;
+            menuOffsetLeft -= Number(menuWidth) - parentCellWidth - sideOffset;
+          } else if (this.pluginName !== 'GridMenu' || (this.pluginName === 'GridMenu' && isSubMenu)) {
+            menuOffsetLeft -= Number(menuWidth) - sideOffset;
+          }
+        } else {
+          menuElm.classList.remove('dropleft');
+          menuElm.classList.add('dropright');
+          if (isSubMenu) {
+            menuOffsetLeft += sideOffset + parentElm.offsetWidth;
+          } else {
+            if (this.pluginName === 'HeaderMenu') {
+              needHeaderMenuOffsetLeftRecalc = true;
+            } else {
+              menuOffsetLeft += sideOffset;
+            }
+          }
+        }
+
+        if (needHeaderMenuOffsetLeftRecalc) {
+          menuOffsetLeft = relativePos?.left ?? 0;
+          if ((addonOptions as HeaderMenu)?.autoAlign && gridPos?.width && menuOffsetLeft + (menuElm.clientWidth ?? 0) >= gridPos.width) {
+            menuOffsetLeft =
+              menuOffsetLeft + targetElm.clientWidth - menuElm.clientWidth + ((addonOptions as HeaderMenuOption)?.autoAlignOffset || 0);
+          }
+        }
+      }
+
+      // ready to reposition the menu
+      menuElm.style.top = `${menuOffsetTop}px`;
+      menuElm.style.left = `${menuOffsetLeft}px`;
+
+      if (this.pluginName === 'GridMenu') {
+        menuElm.style.opacity = '1';
+        menuElm.style.display = 'block';
+      }
+    }
   }
 }

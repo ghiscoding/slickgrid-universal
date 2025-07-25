@@ -156,6 +156,7 @@ const columnsMock: Column[] = [
 describe('CellMenu Plugin', () => {
   let backendUtilityService: BackendUtilityService;
   let extensionUtility: ExtensionUtility;
+  let parentContainer: HTMLDivElement;
   let translateService: TranslateServiceStub;
   let plugin: SlickCellMenu;
   let sharedService: SharedService;
@@ -166,6 +167,9 @@ describe('CellMenu Plugin', () => {
     translateService = new TranslateServiceStub();
     extensionUtility = new ExtensionUtility(sharedService, backendUtilityService, translateService);
     sharedService.slickGrid = gridStub;
+    parentContainer = document.createElement('div');
+    sharedService.gridContainerElement = parentContainer;
+    vi.spyOn(gridStub, 'getGridPosition').mockReturnValue({ top: 10, bottom: 5, left: 15, right: 22, width: 225 } as ElementPosition);
     vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
     vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsMock);
     vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
