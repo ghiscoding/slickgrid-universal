@@ -822,7 +822,7 @@ describe('HeaderMenu Plugin', () => {
         subCommands1Elm!.dispatchEvent(new Event('click'));
         plugin.repositionMenu(divEvent1 as any, headerMenu1Elm, undefined, plugin.addonOptions);
         const headerMenu2Elm = document.body.querySelector('.slick-header-menu.slick-menu-level-1') as HTMLDivElement;
-        Object.defineProperty(headerMenu2Elm, 'clientHeight', { writable: true, configurable: true, value: 320 });
+        Object.defineProperty(headerMenu2Elm, 'offsetHeight', { writable: true, configurable: true, value: 320 });
 
         const divEvent = new MouseEvent('click', { bubbles: true, cancelable: true, composed: false });
         const subMenuElm = document.createElement('div');
