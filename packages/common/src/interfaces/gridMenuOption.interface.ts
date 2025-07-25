@@ -9,6 +9,9 @@ import type {
 } from './index.js';
 
 export interface GridMenuOption {
+  /** Defaults to true, Auto-align drop menu to the left or right depending on grid viewport available space */
+  autoAlignSide?: boolean;
+
   /**
    * All the commands text labels
    * NOTE: some of the text have other properties outside of this option (like 'clearAllFiltersCommand', 'exportExcelCommand', ...) and that is because they were created prior to this refactoring of labels

@@ -1,5 +1,5 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { calculateAvailableSpace, createDomElement, findWidthOrDefault, getOffset, titleCase } from '@slickgrid-universal/utils';
+import { createDomElement, findWidthOrDefault, titleCase } from '@slickgrid-universal/utils';
 
 import type {
   CellMenu,
@@ -432,101 +432,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
     if (subMenuElm) {
       subMenuElm.style.display = 'block';
       document.body.appendChild(subMenuElm);
-      this.repositionMenu(e, subMenuElm);
-    }
-  }
-
-  protected repositionMenu(event: DOMMouseOrTouchEvent<HTMLElement> | SlickEventData, menuElm?: HTMLElement): void {
-    const isSubMenu = menuElm?.classList.contains('slick-submenu');
-    const parentElm = isSubMenu
-      ? (event.target!.closest(`.${this._menuCssPrefix}-item`) as HTMLDivElement)
-      : (event.target!.closest('.slick-cell') as HTMLDivElement);
-
-    if (menuElm && parentElm) {
-      // move to 0,0 before calulating height/width since it could be cropped values
-      // when element is outside browser viewport
-      menuElm.style.top = `0px`;
-      menuElm.style.left = `0px`;
-
-      const targetEvent: MouseEvent | Touch = (event as TouchEvent)?.touches?.[0] ?? event;
-      const parentOffset = getOffset(parentElm);
-      let menuOffsetLeft = parentElm && this._camelPluginName === 'cellMenu' ? parentOffset.left : targetEvent.pageX;
-      let menuOffsetTop = parentElm && this._camelPluginName === 'cellMenu' ? parentOffset.top : targetEvent.pageY;
-      if (isSubMenu && this._camelPluginName === 'contextMenu') {
-        menuOffsetLeft = parentOffset.left;
-        menuOffsetTop = parentOffset.top;
-      }
-      const parentCellWidth = parentElm.offsetWidth || 0;
-      const menuHeight = menuElm?.offsetHeight || 0;
-      const menuWidth = menuElm?.offsetWidth || this._addonOptions.width || 0;
-      const rowHeight = this.gridOptions.rowHeight || 0;
-      const dropOffset = Number((this._addonOptions as CellMenu | ContextMenu).autoAdjustDropOffset || 0);
-      const sideOffset = Number((this._addonOptions as CellMenu | ContextMenu).autoAlignSideOffset || 0);
-
-      // if autoAdjustDrop is enabled, we first need to see what position the drop will be located (defaults to bottom)
-      // without necessary toggling it's position just yet, we just want to know the future position for calculation
-      // prettier-ignore
-      if ((this._addonOptions as CellMenu | ContextMenu).autoAdjustDrop || (this._addonOptions as CellMenu | ContextMenu).dropDirection) {
-        // since we reposition menu below slick cell, we need to take it in consideration and do our calculation from that element
-        const { bottom: spaceBottom, top: spaceTop } = calculateAvailableSpace(parentElm);
-        const availableSpaceBottom = spaceBottom + dropOffset - rowHeight;
-        const availableSpaceTop = spaceTop - dropOffset + rowHeight;
-        const dropPosition = availableSpaceBottom < menuHeight && availableSpaceTop > availableSpaceBottom ? 'top' : 'bottom';
-        if (dropPosition === 'top' || (this._addonOptions as CellMenu | ContextMenu).dropDirection === 'top') {
-          menuElm.classList.remove('dropdown');
-          menuElm.classList.add('dropup');
-          if (isSubMenu) {
-            menuOffsetTop -= menuHeight - dropOffset - parentElm.clientHeight;
-          } else {
-            menuOffsetTop -= menuHeight - dropOffset;
-          }
-        } else {
-          menuElm.classList.remove('dropup');
-          menuElm.classList.add('dropdown');
-          menuOffsetTop = menuOffsetTop + dropOffset;
-          if (this._camelPluginName === 'cellMenu') {
-            if (isSubMenu) {
-              menuOffsetTop += dropOffset;
-            } else {
-              menuOffsetTop += rowHeight + dropOffset;
-            }
-          }
-        }
-      }
-
-      // when auto-align is set, it will calculate whether it has enough space in the viewport to show the drop menu on the right (default)
-      // if there isn't enough space on the right, it will automatically align the drop menu to the left (defaults to the right)
-      // to simulate an align left, we actually need to know the width of the drop menu
-      if ((this._addonOptions as CellMenu | ContextMenu).autoAlignSide || this._addonOptions.dropSide === 'left') {
-        const gridPos = this.grid.getGridPosition();
-        let subMenuPosCalc = menuOffsetLeft + Number(menuWidth); // calculate coordinate at caller element far right
-        if (isSubMenu) {
-          subMenuPosCalc += parentElm.clientWidth;
-        }
-        const browserWidth = document.documentElement.clientWidth;
-        const dropSide = subMenuPosCalc >= gridPos.width || subMenuPosCalc >= browserWidth ? 'left' : 'right';
-        if (dropSide === 'left' || (!isSubMenu && this._addonOptions.dropSide === 'left')) {
-          menuElm.classList.remove('dropright');
-          menuElm.classList.add('dropleft');
-          if (this._camelPluginName === 'cellMenu' && !isSubMenu) {
-            menuOffsetLeft -= Number(menuWidth) - parentCellWidth - sideOffset;
-          } else {
-            menuOffsetLeft -= Number(menuWidth) - sideOffset;
-          }
-        } else {
-          menuElm.classList.remove('dropleft');
-          menuElm.classList.add('dropright');
-          if (isSubMenu) {
-            menuOffsetLeft += sideOffset + parentElm.offsetWidth;
-          } else {
-            menuOffsetLeft += sideOffset;
-          }
-        }
-      }
-
-      // ready to reposition the menu
-      menuElm.style.top = `${menuOffsetTop}px`;
-      menuElm.style.left = `${menuOffsetLeft}px`;
+      this.repositionMenu(e, subMenuElm, undefined, this._addonOptions);
     }
   }
 }
