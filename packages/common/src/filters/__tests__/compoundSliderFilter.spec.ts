@@ -81,7 +81,7 @@ describe('CompoundSliderFilter', () => {
     mockColumn.filter!.options = { sliderStartValue: 1 } as SliderOption;
     filter.init(filterArguments);
 
-    const filterElm = divContainer.querySelector('.search-filter.slider-container.filter-duration input') as HTMLInputElement;
+    const filterElm = divContainer.querySelector('.search-filter.slider-container.filter-duration input.compound-input') as HTMLInputElement;
     expect(filterElm.defaultValue).toBe('1');
     expect(filterElm.value).toBe('1');
   });
@@ -90,7 +90,7 @@ describe('CompoundSliderFilter', () => {
     mockColumn.filter!.filterOptions = { sliderStartValue: 1 } as SliderOption;
     filter.init(filterArguments);
 
-    const filterElm = divContainer.querySelector('.search-filter.slider-container.filter-duration input') as HTMLInputElement;
+    const filterElm = divContainer.querySelector('.search-filter.slider-container.filter-duration input.compound-input') as HTMLInputElement;
     expect(filterElm.defaultValue).toBe('1');
     expect(filterElm.value).toBe('1');
   });
@@ -101,14 +101,14 @@ describe('CompoundSliderFilter', () => {
     };
     filter.init(filterArguments);
 
-    const filterElm = divContainer.querySelector('.search-filter.slider-container.filter-duration input') as HTMLInputElement;
+    const filterElm = divContainer.querySelector('.search-filter.slider-container.filter-duration input.compound-input') as HTMLInputElement;
     expect(filterElm.defaultValue).toBe('2');
     expect(filterElm.value).toBe('2');
   });
 
   it('should have an aria-label when creating the filter', () => {
     filter.init(filterArguments);
-    const filterInputElm = divContainer.querySelector('.input-group.search-filter.filter-duration input') as HTMLInputElement;
+    const filterInputElm = divContainer.querySelector('.input-group.search-filter.filter-duration input.compound-input') as HTMLInputElement;
 
     expect(filterInputElm.ariaLabel).toBe('Duration Search Filter');
   });
@@ -121,7 +121,7 @@ describe('CompoundSliderFilter', () => {
 
     filter.init(filterArgs);
     filter.setValues(['2']);
-    const filterElm = divContainer.querySelector('.input-group.search-filter.filter-duration input') as HTMLInputElement;
+    const filterElm = divContainer.querySelector('.input-group.search-filter.filter-duration input.compound-input') as HTMLInputElement;
     filterElm.dispatchEvent(new Event('change'));
 
     expect(callbackSpy).toHaveBeenLastCalledWith(expect.anything(), { columnDef: mockColumn, operator: '>', searchTerms: [2], shouldTriggerQuery: true });
@@ -136,7 +136,7 @@ describe('CompoundSliderFilter', () => {
     filter.init(filterArgs);
     filter.setValues(['2']);
     const filterNumberElm = divContainer.querySelector('.input-group-text') as HTMLInputElement;
-    const filterElm = divContainer.querySelector('.input-group.search-filter.filter-duration input') as HTMLInputElement;
+    const filterElm = divContainer.querySelector('.input-group.search-filter.filter-duration input.compound-input') as HTMLInputElement;
     filterElm.dispatchEvent(new Event('input'));
 
     expect(filterNumberElm.textContent).toBe('2');
@@ -149,7 +149,7 @@ describe('CompoundSliderFilter', () => {
 
     filter.init(filterArgs);
     filter.setValues(3);
-    const filterElm = divContainer.querySelector('.input-group.search-filter.filter-duration input') as HTMLInputElement;
+    const filterElm = divContainer.querySelector('.input-group.search-filter.filter-duration input.compound-input') as HTMLInputElement;
     filterElm.dispatchEvent(new Event('change'));
     const filterFilledElms = divContainer.querySelectorAll('.slider-container.search-filter.filter-duration.filled');
 
@@ -248,7 +248,7 @@ describe('CompoundSliderFilter', () => {
 
     filter.init(filterArgs);
     const filterNumberElm = divContainer.querySelector('.input-group-text') as HTMLInputElement;
-    const filterInputElm = divContainer.querySelector('.search-filter.filter-duration input') as HTMLInputElement;
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-duration input.compound-input') as HTMLInputElement;
 
     expect(filterInputElm.step).toBe('5');
     expect(filterNumberElm.textContent).toBe('15');
@@ -356,7 +356,7 @@ describe('CompoundSliderFilter', () => {
     mockColumn.filter = { filterOptions: { enableSliderTrackColoring: true } };
     filter.init(filterArguments);
     filter.setValues(['80']);
-    const filterElms = divContainer.querySelectorAll<HTMLInputElement>('.search-filter.slider-container.filter-duration input');
+    const filterElms = divContainer.querySelectorAll<HTMLInputElement>('.search-filter.slider-container.filter-duration input.compound-input');
     filterElms[0].dispatchEvent(new Event('change'));
 
     expect(filter.sliderOptions?.sliderTrackBackground).toBe('linear-gradient(to right, #eee 0%, #86bff8 0%, #86bff8 80%, #eee 80%)');
@@ -381,7 +381,7 @@ describe('CompoundSliderFilter', () => {
     filterArguments.searchTerms = ['9'];
 
     filter.init(filterArguments);
-    const filterInputElm = divContainer.querySelector('.input-group.search-filter.filter-duration input') as HTMLInputElement;
+    const filterInputElm = divContainer.querySelector('.input-group.search-filter.filter-duration input.compound-input') as HTMLInputElement;
     const filterOperatorElm = divContainer.querySelectorAll<HTMLSelectElement>('.search-filter.filter-duration select');
 
     expect(filterInputElm.value).toBe('9');
@@ -470,7 +470,7 @@ describe('CompoundSliderFilter', () => {
       filterArguments.searchTerms = [9];
 
       filter.init(filterArguments);
-      const filterInputElm = divContainer.querySelector('.input-group.search-filter.filter-duration input') as HTMLInputElement;
+      const filterInputElm = divContainer.querySelector('.input-group.search-filter.filter-duration input.compound-input') as HTMLInputElement;
       const filterOperatorElm = divContainer.querySelectorAll<HTMLSelectElement>('.search-filter.filter-duration select');
 
       expect(filterInputElm.value).toBe('9');

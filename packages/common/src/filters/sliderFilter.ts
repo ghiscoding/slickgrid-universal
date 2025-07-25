@@ -315,7 +315,7 @@ export class SliderFilter implements Filter {
     if (this.sliderType === 'double') {
       this._sliderLeftInputElm = createDomElement('input', {
         type: 'range',
-        className: `slider-filter-input`,
+        className: `slider-filter-input form-control`,
         ariaLabel: this.columnFilter.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`,
         defaultValue: `${defaultStartValue}`,
         value: `${defaultStartValue}`,
@@ -329,7 +329,7 @@ export class SliderFilter implements Filter {
     const rightDefaultVal = this.sliderType === 'double' ? defaultEndValue : defaultStartValue;
     this._sliderRightInputElm = createDomElement('input', {
       type: 'range',
-      className: `slider-filter-input`,
+      className: `slider-filter-input form-control compound-input`,
       ariaLabel: this.columnFilter.ariaLabel ?? `${toSentenceCase(columnId + '')} Search Filter`,
       defaultValue: `${rightDefaultVal}`,
       value: `${rightDefaultVal}`,

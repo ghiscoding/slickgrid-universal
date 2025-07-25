@@ -764,7 +764,6 @@ li.hidden {
 
     .form-control {
       border-radius: var(--slick-compound-filter-operator-border-radius, v.$slick-compound-filter-operator-border-radius);
-      // border-right: none;
       padding: var(--slick-compound-filter-text-padding, v.$slick-compound-filter-text-padding);
       font-size: var(--slick-compound-filter-text-font-size, v.$slick-compound-filter-text-font-size);
       color: var(--slick-compound-filter-text-color, v.$slick-compound-filter-text-color);
@@ -799,7 +798,7 @@ li.hidden {
     font-family: var(--slick-filter-placeholder-font-family, v.$slick-filter-placeholder-font-family);
   }
   .search-filter {
-    input {
+    input:not(.slider-filter-input) {
       &.compound-input {
         border-radius: var(--slick-compound-filter-border-radius, v.$slick-compound-filter-border-radius) !important;
         border-left: none;
@@ -1028,6 +1027,12 @@ li.hidden {
 // Input Slider Filters (with vanilla html)
 // ----------------------------------------------
 
+.slider-container,
+.slider-input-container {
+  input.form-control.compound-input {
+    border-radius: 0;
+  }
+}
 .slider-container {
   display: flex;
   height: 100%;
@@ -1037,11 +1042,9 @@ li.hidden {
     /*removes default webkit styles*/
     appearance: none;
     flex: 1;
+    border-radius: 0;
     height: var(--slick-slider-filter-height, v.$slick-slider-filter-height);
     padding: var(--slick-slider-filter-runnable-track-padding, v.$slick-slider-filter-runnable-track-padding);
-
-    /*fix for FF unable to apply focus style bug */
-    border: var(--slick-slider-filter-border, v.$slick-slider-filter-border);
 
     /* change runnable track color while in focus on all browsers */
     &:focus {
@@ -1128,6 +1131,7 @@ li.hidden {
 
   /* Slider Editor */
   input.slider-editor-input[type='range'] {
+    border: var(--slick-slider-editor-border, v.$slick-slider-editor-border);
     padding: var(--slick-slider-editor-runnable-track-padding, v.$slick-slider-editor-runnable-track-padding);
     height: var(--slick-slider-editor-height, v.$slick-slider-editor-height);
   }
