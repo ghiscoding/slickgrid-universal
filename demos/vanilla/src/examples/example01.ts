@@ -120,12 +120,6 @@ export default class Example01 {
           onColumnsChanged: (_e, args) => console.log('onColumnPickerColumnsChanged - visible columns count', args.visibleColumns.length),
         },
         gridMenu: {
-          // enable the "columnSort" option to sort columns by name
-          columnSort: (item1: Column, item2: Column) => {
-            const nameA = item1.name?.toString().toLowerCase() || '';
-            const nameB = item2.name?.toString().toLowerCase() || '';
-            return nameA.localeCompare(nameB);
-          },
           subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
           commandItems: [
             { command: '', divider: true, positionOrder: 98 },

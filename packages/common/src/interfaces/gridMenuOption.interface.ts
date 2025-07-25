@@ -33,7 +33,7 @@ export interface GridMenuOption {
   /** Same as "columnTitle", except that it's a translation key which can be used on page load and/or when switching locale */
   columnTitleKey?: string;
 
-  /** Defaults to false, which will sort the columns by name */
+  /** Custom sort function for the columns in the grid menu */
   columnSort?: (item1: Column, item2: Column) => number;
 
   /** Defaults to "left", which side to align the grid menu dropdown? */
