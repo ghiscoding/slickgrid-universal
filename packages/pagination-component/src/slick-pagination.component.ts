@@ -165,7 +165,7 @@ export class SlickPaginationComponent implements BasePaginationComponent {
 
     // left nav
     const leftNavElm = createDomElement('nav', { ariaLabel: 'Page navigation' });
-    const leftUlElm = createDomElement('ul', { className: 'pagination' });
+    const leftUlElm = createDomElement('ul', { className: 'pagination' }, leftNavElm);
     this._seekFirstElm = createDomElement('li', { className: 'page-item seek-first' }, leftUlElm);
     this._seekFirstElm.appendChild(
       createDomElement('a', { className: 'page-link icon-seek-first', ariaLabel: 'First Page', role: 'button' })
@@ -174,18 +174,16 @@ export class SlickPaginationComponent implements BasePaginationComponent {
     this._seekPrevElm.appendChild(
       createDomElement('a', { className: 'page-link icon-seek-prev', ariaLabel: 'Previous Page', role: 'button' })
     );
-    leftNavElm.appendChild(leftUlElm);
 
     const pageNumberSectionElm = this.createPageNumberSection();
 
     // right nav
     const rightNavElm = createDomElement('nav', { ariaLabel: 'Page navigation' });
-    const rightUlElm = createDomElement('ul', { className: 'pagination' });
+    const rightUlElm = createDomElement('ul', { className: 'pagination' }, rightNavElm);
     this._seekNextElm = createDomElement('li', { className: 'page-item seek-next' }, rightUlElm);
     this._seekNextElm.appendChild(createDomElement('a', { className: 'page-link icon-seek-next', ariaLabel: 'Next Page', role: 'button' }));
     this._seekEndElm = createDomElement('li', { className: 'page-item seek-end' }, rightUlElm);
     this._seekEndElm.appendChild(createDomElement('a', { className: 'page-link icon-seek-end', ariaLabel: 'Last Page', role: 'button' }));
-    rightNavElm.appendChild(rightUlElm);
 
     // append both navs to container
     paginationElm.appendChild(divNavContainerElm);
@@ -211,7 +209,7 @@ export class SlickPaginationComponent implements BasePaginationComponent {
   renderPageSizes(): void {
     if (this._itemPerPageElm && Array.isArray(this.availablePageSizes)) {
       for (const option of this.availablePageSizes) {
-        this._itemPerPageElm.appendChild(createDomElement('option', { value: `${option}`, text: `${option}` }));
+        createDomElement('option', { value: `${option}`, text: `${option}` }, this._itemPerPageElm);
       }
     }
   }
@@ -314,8 +312,7 @@ export class SlickPaginationComponent implements BasePaginationComponent {
       style: { width: '100%' },
     });
 
-    const paginationElm = createDomElement('div', { className: 'slick-pagination' });
-    paginationContainerElm.appendChild(paginationElm);
+    const paginationElm = createDomElement('div', { className: 'slick-pagination' }, paginationContainerElm);
     this._paginationElement = paginationContainerElm; // keep internal ref
 
     return paginationElm;
@@ -394,9 +391,9 @@ export class SlickPaginationComponent implements BasePaginationComponent {
   }
 
   protected updatePageButtonsUsability(): void {
-    this.firstButtonClasses = this.isLeftPaginationDisabled ? 'page-item seek-first disabled' : 'page-item seek-first';
-    this.prevButtonClasses = this.isLeftPaginationDisabled ? 'page-item seek-prev disabled' : 'page-item seek-prev';
-    this.lastButtonClasses = this.isRightPaginationDisabled ? 'page-item seek-end disabled' : 'page-item seek-end';
-    this.nextButtonClasses = this.isRightPaginationDisabled ? 'page-item seek-next disabled' : 'page-item seek-next';
+    this.firstButtonClasses = `page-item seek-first${this.isLeftPaginationDisabled ? ' disabled' : ''}`;
+    this.prevButtonClasses = `page-item seek-prev${this.isLeftPaginationDisabled ? ' disabled' : ''}`;
+    this.lastButtonClasses = `page-item seek-end${this.isRightPaginationDisabled ? ' disabled' : ''}`;
+    this.nextButtonClasses = `page-item seek-next${this.isRightPaginationDisabled ? ' disabled' : ''}`;
   }
 }
