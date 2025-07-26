@@ -442,9 +442,7 @@ export class SlickCustomTooltip {
     // create the tooltip DOM element with the text returned by the Formatter
     this._tooltipElm = createDomElement('div', { className: this.className });
     this._tooltipBodyElm = createDomElement('div', { className: this.bodyClassName });
-    this._tooltipElm.classList.add(this.gridUid);
-    this._tooltipElm.classList.add('l' + cell.cell);
-    this._tooltipElm.classList.add('r' + cell.cell);
+    this._tooltipElm.classList.add(this.gridUid, `l${cell.cell}`, `r${cell.cell}`);
     this.tooltipElm?.appendChild(this._tooltipBodyElm);
 
     // when cell is currently lock for editing, we'll force a tooltip title search

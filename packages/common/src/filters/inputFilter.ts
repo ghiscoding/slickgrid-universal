@@ -398,12 +398,7 @@ export class InputFilter implements Filter {
 
   /** add/remove "filled" CSS class */
   protected updateFilterStyle(isFilled: boolean): void {
-    if (isFilled) {
-      this._filterContainerElm?.classList.add('filled');
-      this._filterInputElm.classList.add('filled');
-    } else {
-      this._filterContainerElm?.classList.remove('filled');
-      this._filterInputElm.classList.remove('filled');
-    }
+    this._filterContainerElm?.classList.toggle('filled', isFilled);
+    this._filterInputElm.classList.toggle('filled', isFilled);
   }
 }

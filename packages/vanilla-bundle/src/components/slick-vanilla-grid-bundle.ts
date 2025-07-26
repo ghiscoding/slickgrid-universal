@@ -1248,11 +1248,7 @@ export class SlickVanillaGridBundle<TData = any> {
   }
 
   setDarkMode(dark = false): void {
-    if (dark) {
-      this._gridParentContainerElm.classList.add('slick-dark-mode');
-    } else {
-      this._gridParentContainerElm.classList.remove('slick-dark-mode');
-    }
+    this._gridParentContainerElm.classList.toggle('slick-dark-mode', dark);
   }
 
   // --

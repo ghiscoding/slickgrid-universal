@@ -5472,11 +5472,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (times > 0) {
         window.clearTimeout(this._flashCellTimer);
         this._flashCellTimer = window.setTimeout(() => {
-          if (times % 2 === 0) {
-            cellNode.classList.add(this._options.cellFlashingCssClass || '');
-          } else {
-            cellNode.classList.remove(this._options.cellFlashingCssClass || '');
-          }
+          cellNode.classList.toggle(this._options.cellFlashingCssClass || '', times % 2 === 0);
           toggleCellClass(cellNode, times - 1);
         }, speed);
       }
@@ -6164,8 +6160,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       if (this.activeCellNode) {
         const d = this.getDataItem(this.activeRow);
-        this.activeCellNode.classList.remove('editable');
-        this.activeCellNode.classList.remove('invalid');
+        this.activeCellNode.classList.remove('editable', 'invalid');
         if (d) {
           const column = this.columns[this.activeCell];
           const formatter = this.getFormatter(this.activeRow, column);

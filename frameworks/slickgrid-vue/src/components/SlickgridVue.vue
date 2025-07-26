@@ -1140,11 +1140,7 @@ function setPaginationOptionsWhenPresetDefined(gridOptions: GridOption, paginati
 }
 
 function setDarkMode(dark = false) {
-  if (dark) {
-    sharedService.gridContainerElement?.classList.add('slick-dark-mode');
-  } else {
-    sharedService.gridContainerElement?.classList.remove('slick-dark-mode');
-  }
+  sharedService.gridContainerElement?.classList.toggle('slick-dark-mode', dark);
 }
 
 /**

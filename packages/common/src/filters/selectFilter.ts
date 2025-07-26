@@ -495,15 +495,9 @@ export class SelectFilter implements Filter {
 
   /** add/remove "filled" CSS class */
   protected updateFilterStyle(isFilled: boolean): void {
-    if (isFilled) {
-      this.isFilled = true;
-      this.filterElm?.classList.add('filled');
-      this._msInstance?.getParentElement()?.classList.add('filled');
-    } else {
-      this.isFilled = false;
-      this.filterElm?.classList.remove('filled');
-      this._msInstance?.getParentElement()?.classList.remove('filled');
-    }
+    this.isFilled = isFilled;
+    this.filterElm?.classList.toggle('filled', isFilled);
+    this._msInstance?.getParentElement()?.classList.toggle('filled', isFilled);
   }
 
   protected translateOrDefault(translationKey: string, defaultValue = ''): string {

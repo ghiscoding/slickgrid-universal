@@ -1008,11 +1008,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
     // add extra css styling to the composite editor input(s) that got modified
     const editorElm = this._modalElm.querySelector(`[data-editorid='${columnId}']`);
     if (editorElm?.classList) {
-      if (isEditorValueTouched) {
-        editorElm.classList.add('modified');
-      } else {
-        editorElm.classList.remove('modified');
-      }
+      editorElm.classList.toggle('modified', isEditorValueTouched);
     }
 
     // after any input changes we'll re-validate all fields

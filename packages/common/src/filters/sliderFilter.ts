@@ -644,12 +644,7 @@ export class SliderFilter implements Filter {
 
   /** add/remove "filled" CSS class */
   protected updateFilterStyle(isFilled: boolean): void {
-    if (isFilled) {
-      this._divContainerFilterElm.classList.add('filled');
-      this._filterElm?.classList.add('filled');
-    } else {
-      this._divContainerFilterElm.classList.remove('filled');
-      this._filterElm?.classList.remove('filled');
-    }
+    this._divContainerFilterElm.classList.toggle('filled', isFilled);
+    this._filterElm?.classList.toggle('filled', isFilled);
   }
 }

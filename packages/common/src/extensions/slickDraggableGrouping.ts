@@ -552,13 +552,9 @@ export class SlickDraggableGrouping {
 
   protected toggleGroupAll({ grouping }: Column, collapsed?: boolean): void {
     const togglerIcon = this._groupToggler?.querySelector<HTMLSpanElement>('.slick-group-toggle-all-icon');
-    if (collapsed === true || grouping?.collapsed) {
-      togglerIcon?.classList.add('collapsed');
-      togglerIcon?.classList.remove('expanded');
-    } else {
-      togglerIcon?.classList.add('expanded');
-      togglerIcon?.classList.remove('collapsed');
-    }
+    const isCollapsed = collapsed === true || grouping?.collapsed;
+    togglerIcon?.classList.toggle('collapsed', isCollapsed);
+    togglerIcon?.classList.toggle('expanded', !isCollapsed);
   }
 
   protected removeFromArray(arrayToModify: any[], itemToRemove: any): any[] {
@@ -643,18 +639,11 @@ export class SlickDraggableGrouping {
 
   protected toggleGroupToggler(targetElm: Element | null, collapsing = true, shouldExecuteDataViewCommand = true): void {
     if (targetElm) {
-      if (collapsing === true) {
-        targetElm.classList.add('collapsed');
-        targetElm.classList.remove('expanded');
-        if (shouldExecuteDataViewCommand) {
-          this.dataView.collapseAllGroups();
-        }
-      } else {
-        targetElm.classList.remove('collapsed');
-        targetElm.classList.add('expanded');
-        if (shouldExecuteDataViewCommand) {
-          this.dataView.expandAllGroups();
-        }
+      const isCollapsing = collapsing === true;
+      targetElm.classList.toggle('collapsed', isCollapsing);
+      targetElm.classList.toggle('expanded', !isCollapsing);
+      if (shouldExecuteDataViewCommand) {
+        isCollapsing ? this.dataView.collapseAllGroups() : this.dataView.expandAllGroups();
       }
     }
   }
