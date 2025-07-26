@@ -13,7 +13,6 @@ export const sumTotalsCurrencyFormatter: GroupTotalsFormatter = (totals: any, co
   const suffix = params?.groupFormatterSuffix || '';
   const currencyPrefix = params?.groupFormatterCurrencyPrefix || '';
   const currencySuffix = params?.groupFormatterCurrencySuffix || '';
-
   const { minDecimal, maxDecimal, decimalSeparator, thousandSeparator, wrapNegativeNumber } = retrieveFormatterOptions(
     columnDef,
     grid,

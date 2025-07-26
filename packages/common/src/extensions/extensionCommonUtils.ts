@@ -68,8 +68,7 @@ export function handleColumnPickerItemClick(this: SlickColumnPicker | SlickGridM
 
     // Iterate through columns and add those that have checked checkboxes to visibleColumns
     context.columns.forEach((column: Column) => {
-      const columnId = column.id;
-      const checkbox = context._columnCheckboxes.find((cb: HTMLInputElement) => cb.dataset.columnid === columnId.toString());
+      const checkbox = context._columnCheckboxes.find((cb: HTMLInputElement) => cb.dataset.columnid === column.id.toString());
       if (checkbox?.checked) {
         visibleColumns.push(column);
       }
@@ -184,11 +183,11 @@ export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, ad
     const { inputElm, labelElm, labelSpanElm } = generatePickerCheckbox(columnLiElm, inputId, { columnid: `${columnId}` }, isChecked);
     context._columnCheckboxes.push(inputElm);
 
-    const headerColumnValueExtractorFn =
+    const headerColumnValueExtractorFn: Function =
       typeof addonOptions?.headerColumnValueExtractor === 'function'
         ? addonOptions.headerColumnValueExtractor
         : context._defaults.headerColumnValueExtractor;
-    const columnLabel = headerColumnValueExtractorFn!(column, context.gridOptions);
+    const columnLabel = headerColumnValueExtractorFn(column, context.gridOptions);
 
     this.grid.applyHtmlCode(labelSpanElm, columnLabel);
     columnLiElm.appendChild(labelElm);
@@ -227,7 +226,7 @@ export function updateColumnPickerOrder(this: SlickColumnPicker | SlickGridMenu)
   const current = context.grid.getColumns().slice(0);
   const ordered = new Array(context.columns.length);
 
-  for (let i = 0; i < ordered.length; i++) {
+  for (let i = 0, ln = ordered.length; i < ln; i++) {
     const columnIdx = context.grid.getColumnIndex(context.columns[i].id);
     if (columnIdx === undefined) {
       // if the column doesn't return a value from getColumnIndex, it is hidden. Leave it in this position.

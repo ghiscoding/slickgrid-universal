@@ -14,10 +14,14 @@ export const percentCompleteFormatter: Formatter = (_row, _cell, value, columnDe
   );
 
   if (isNumber(value)) {
-    const colorStyle = value < 50 ? 'red' : 'green';
-    const formattedNumber = formatNumber(value, minDecimal, maxDecimal, wrapNegativeNumber, '', '%', decimalSeparator, thousandSeparator);
-    const outputFormattedValue = value > 100 ? '100%' : formattedNumber;
-    return createDomElement('span', { textContent: outputFormattedValue, style: { color: colorStyle } });
+    const color = value < 50 ? 'red' : 'green';
+    return createDomElement('span', {
+      style: { color },
+      textContent:
+        value > 100
+          ? '100%'
+          : formatNumber(value, minDecimal, maxDecimal, wrapNegativeNumber, '', '%', decimalSeparator, thousandSeparator),
+    });
   }
   return value;
 };

@@ -221,14 +221,10 @@ export class SlickRowMoveManager {
           insertBefore,
         };
 
-        if (
+        dd.canMove = !(
           this._addonOptions?.onBeforeMoveRows?.(e, eventData) === false ||
           this.onBeforeMoveRows.notify(eventData).getReturnValue() === false
-        ) {
-          dd.canMove = false;
-        } else {
-          dd.canMove = true;
-        }
+        );
 
         // if there's a UsabilityOverride defined, we also need to verify that the condition is valid
         if (this._usabilityOverride && dd.canMove) {
