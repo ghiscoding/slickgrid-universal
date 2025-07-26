@@ -32,12 +32,12 @@ export const treeExportFormatter: Formatter = (row, cell, value, columnDef, data
     );
   }
 
-  const treeLevel = dataContext?.[treeLevelPropName] ?? 0;
+  const treeLevel = dataContext[treeLevelPropName] ?? 0;
   let toggleSymbol = '';
   let indentation = 0;
 
   if (dataContext[hasChildrenPropName]) {
-    toggleSymbol = dataContext?.[collapsedPropName] ? groupCollapsedSymbol : groupExpandedSymbol; // parent with child will have a toggle icon
+    toggleSymbol = dataContext[collapsedPropName] ? groupCollapsedSymbol : groupExpandedSymbol; // parent with child will have a toggle icon
     indentation = treeLevel === 0 ? 0 : indentMarginLeft * treeLevel;
   } else {
     indentation = indentMarginLeft * (treeLevel === 0 ? 0 : treeLevel + 1);

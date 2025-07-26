@@ -9,10 +9,10 @@ import type { Formatter } from './../interfaces/index.js';
  * params: { propertyNames: ['firtName', 'lastName'] } => 'John Doe, Jane Doe'
  */
 export const arrayObjectToCsvFormatter: Formatter = (_row, _cell, value, columnDef, dataContext) => {
-  const columnParams = columnDef?.params ?? {};
-  const propertyNames = columnParams.propertyNames;
-  const isIncludingTitle = columnParams?.includeTitle ?? true;
-  let parentObjectKeyName: string = columnParams.dataContextProperty;
+  const params = columnDef?.params ?? {};
+  const propertyNames = params.propertyNames;
+  const isIncludingTitle = params.includeTitle ?? true;
+  let parentObjectKeyName: string = params.dataContextProperty;
   if (!parentObjectKeyName) {
     parentObjectKeyName = columnDef?.field?.split('.')[0] || ''; // e.g. "users.roles" would be "users"
   }

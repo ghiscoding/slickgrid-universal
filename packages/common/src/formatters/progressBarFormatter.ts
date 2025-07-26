@@ -8,20 +8,11 @@ export const progressBarFormatter: Formatter = (_row, _cell, value) => {
     return '';
   }
 
-  let color = '';
   let inputNumber = parseFloat(value as any);
   if (inputNumber > 100) {
     inputNumber = 100;
   }
-
-  if (inputNumber < 30) {
-    color = 'danger';
-  } else if (inputNumber < 70) {
-    color = 'warning';
-  } else {
-    color = 'success';
-  }
-
+  const color = inputNumber < 30 ? 'danger' : inputNumber < 70 ? 'warning' : 'success';
   const container = createDomElement('div', { className: 'progress' });
   container.appendChild(
     createDomElement('div', {

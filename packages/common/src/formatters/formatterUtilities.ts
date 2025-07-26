@@ -196,8 +196,8 @@ export function getAssociatedDateFormatter(fieldType: (typeof FieldType)[keyof t
   const defaultDateFormat = mapTempoDateFormatWithFieldType(fieldType, { withZeroPadding: true });
 
   return (_row, _cell, value, columnDef, _dataContext, grid) => {
-    const gridOptions = (grid.getOptions?.() ?? {}) as GridOption;
-    const customSeparator = gridOptions?.formatterOptions?.dateSeparator ?? defaultSeparator;
+    const gridOptions = (grid.getOptions() ?? {}) as GridOption;
+    const customSeparator = gridOptions.formatterOptions?.dateSeparator ?? defaultSeparator;
     const inputType = columnDef?.type ?? FieldType.date;
     const inputDateFormat = mapTempoDateFormatWithFieldType(inputType, { withDefaultIso8601: true });
     let outputDate = parseDateByIOFormats(columnDef, value, inputDateFormat, defaultDateFormat);

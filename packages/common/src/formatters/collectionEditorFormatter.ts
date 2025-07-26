@@ -32,16 +32,15 @@ export const collectionEditorFormatter: Formatter = (row, cell, value, columnDef
         dataContext,
         grid
       );
-    } else {
-      return arrayToCsvFormatter(
-        row,
-        cell,
-        value.map((v: any) => findOrDefault(collection, (c: any) => c[valueName] === v)[labelName]),
-        columnDef,
-        dataContext,
-        grid
-      );
     }
+    return arrayToCsvFormatter(
+      row,
+      cell,
+      value.map((v: any) => findOrDefault(collection, (c: any) => c[valueName] === v)[labelName]),
+      columnDef,
+      dataContext,
+      grid
+    );
   }
 
   return findOrDefault(collection, (c: any) => c[valueName] === value)[labelName] || '';

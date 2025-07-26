@@ -8,11 +8,11 @@ import { type SlickGrid } from '../core/index.js';
 export const sumTotalsCurrencyFormatter: GroupTotalsFormatter = (totals: any, columnDef: Column, grid: SlickGrid) => {
   const field = columnDef.field ?? '';
   const val = totals.sum?.[field];
-  const params = columnDef?.params;
-  const prefix = params?.groupFormatterPrefix || '';
-  const suffix = params?.groupFormatterSuffix || '';
-  const currencyPrefix = params?.groupFormatterCurrencyPrefix || '';
-  const currencySuffix = params?.groupFormatterCurrencySuffix || '';
+  const params = columnDef?.params ?? {};
+  const prefix = params.groupFormatterPrefix || '';
+  const suffix = params.groupFormatterSuffix || '';
+  const currencyPrefix = params.groupFormatterCurrencyPrefix || '';
+  const currencySuffix = params.groupFormatterCurrencySuffix || '';
   const { minDecimal, maxDecimal, decimalSeparator, thousandSeparator, wrapNegativeNumber } = retrieveFormatterOptions(
     columnDef,
     grid,

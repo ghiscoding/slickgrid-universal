@@ -9,12 +9,8 @@ import type { Formatter } from './../interfaces/index.js';
  * OR this.columnDefs = [{ id: 'username', field: 'user', params: { complexField: 'user.firstName' }, ... }]
  */
 export const complexObjectFormatter: Formatter = (_row, _cell, cellValue, columnDef, dataContext) => {
-  if (!columnDef) {
-    return '';
-  }
-
   const columnParams = columnDef.params || {};
-  const complexField = columnParams?.complexField ?? columnParams?.complexFieldLabel ?? columnDef.field;
+  const complexField = columnParams.complexField ?? columnParams.complexFieldLabel ?? columnDef.field;
 
   if (!complexField) {
     throw new Error(`For the Formatters.complexObject to work properly, you need to tell it which property of the complex object to use.

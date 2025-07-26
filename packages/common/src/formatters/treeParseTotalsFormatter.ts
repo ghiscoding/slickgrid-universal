@@ -3,7 +3,7 @@ import type { Formatter, GridOption, GroupTotalsFormatter } from '../interfaces/
 
 export const treeParseTotalsFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid) => {
   const gridOptions = grid.getOptions() as GridOption;
-  const hasChildrenPropName = gridOptions?.treeDataOptions?.hasChildrenPropName ?? Constants.treeDataProperties.HAS_CHILDREN_PROP;
+  const hasChildrenPropName = gridOptions.treeDataOptions?.hasChildrenPropName ?? Constants.treeDataProperties.HAS_CHILDREN_PROP;
   const { groupTotalsFormatter, treeTotalsFormatter, params } = columnDef;
 
   // make sure that the user provided a total formatter or else it won't work

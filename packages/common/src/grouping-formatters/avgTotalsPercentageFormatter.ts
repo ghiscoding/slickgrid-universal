@@ -8,9 +8,9 @@ import { type SlickGrid } from '../core/index.js';
 export const avgTotalsPercentageFormatter: GroupTotalsFormatter = (totals: any, columnDef: Column, grid: SlickGrid) => {
   const field = columnDef.field ?? '';
   let val = totals.avg?.[field];
-  const params = columnDef?.params;
-  let prefix = params?.groupFormatterPrefix || '';
-  const suffix = params?.groupFormatterSuffix || '';
+  const params = columnDef?.params ?? {};
+  let prefix = params.groupFormatterPrefix || '';
+  const suffix = params.groupFormatterSuffix || '';
   const { minDecimal, maxDecimal, decimalSeparator, thousandSeparator, wrapNegativeNumber } = retrieveFormatterOptions(
     columnDef,
     grid,
