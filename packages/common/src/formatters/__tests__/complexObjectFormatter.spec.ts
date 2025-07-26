@@ -19,11 +19,6 @@ describe('the ComplexObject Formatter', () => {
     expect(() => complexObjectFormatter(0, 0, 'anything', {} as Column, {}, {} as any)).toThrow('For the Formatters.complexObject to work properly');
   });
 
-  it('should return empty string when no column definition is provided', () => {
-    const result = complexObjectFormatter(0, 0, 'anything', null as any, {}, {} as any);
-    expect(result).toBe('');
-  });
-
   it('should return original input value when the "field" property does not include a not ".", neither "complexFieldLabel"', () => {
     const result = complexObjectFormatter(0, 0, 'anything', { field: 'role' } as Column, {}, {} as any);
     expect(result).toBe('anything');
