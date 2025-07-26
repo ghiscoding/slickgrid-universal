@@ -519,10 +519,6 @@ export class DateFilter implements Filter {
 
   /** add/remove "filled" CSS class */
   protected updateFilterStyle(isFilled: boolean): void {
-    if (isFilled) {
-      this._filterElm.classList.add('filled');
-    } else {
-      this._filterElm.classList.remove('filled');
-    }
+    this._filterElm.classList.toggle('filled', isFilled);
   }
 }

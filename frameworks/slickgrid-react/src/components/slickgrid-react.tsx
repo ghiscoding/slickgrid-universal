@@ -1243,11 +1243,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
   }
 
   setDarkMode(dark = false) {
-    if (dark) {
-      this.sharedService.gridContainerElement?.classList.add('slick-dark-mode');
-    } else {
-      this.sharedService.gridContainerElement?.classList.remove('slick-dark-mode');
-    }
+    this.sharedService.gridContainerElement?.classList.toggle('slick-dark-mode', dark);
   }
 
   /**
