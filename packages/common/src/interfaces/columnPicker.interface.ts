@@ -20,7 +20,7 @@ export interface ColumnPickerOption {
   /** Same as "columnTitle", except that it's a translation key which can be used on page load and/or when switching locale */
   columnTitleKey?: string;
 
-  /** Custom sort function for the columns in the grid menu */
+  /** Custom sort function for the columns in the column picker */
   columnSort?: (item1: Column, item2: Column) => number;
 
   /** Defaults to "Force fit columns" which is 1 of the last 2 checkbox title shown at the end of the picker list */
