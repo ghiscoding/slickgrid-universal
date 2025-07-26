@@ -544,4 +544,104 @@ describe('ColumnPickerControl', () => {
       expect(control.getVisibleColumns()).toEqual(columnsMock);
     });
   });
+
+  describe('columnSort functionality', () => {
+    it('should sort columns alphabetically by name when "columnSort" function is provided', () => {
+      const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
+      vi.spyOn(gridStub, 'getColumnIndex')
+        .mockReturnValue(undefined as any)
+        .mockReturnValue(1);
+
+      // Create columns with names that are not in alphabetical order
+      const unsortedColumnsMock: Column[] = [
+        { id: 'field1', field: 'field1', name: 'Zebra Field', width: 100 },
+        { id: 'field2', field: 'field2', name: 'Alpha Field', width: 75 },
+        { id: 'field3', field: 'field3', name: 'Beta Field', width: 75 },
+      ];
+
+      // Mock the shared service to return our custom columns
+      vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(unsortedColumnsMock);
+      vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(unsortedColumnsMock);
+      vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(unsortedColumnsMock);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(unsortedColumnsMock);
+
+      // Define the columnSort function to sort alphabetically by name
+      gridOptionsMock.columnPicker!.columnSort = (col1: Column, col2: Column) => {
+        const nameA = String(col1.name || '').toLowerCase();
+        const nameB = String(col2.name || '').toLowerCase();
+        return nameA.localeCompare(nameB);
+      };
+
+      control.columns = unsortedColumnsMock;
+      control.init();
+
+      gridStub.onHeaderContextMenu.notify({ column: unsortedColumnsMock[1], grid: gridStub }, eventData as any, gridStub);
+
+      // Get the column labels from the menu in the order they appear
+      const liElmList = control.menuElement!.querySelectorAll<HTMLLIElement>('li');
+      const columnLabels: string[] = [];
+
+      // Extract text content from each column item (excluding force fit and sync resize buttons)
+      for (let i = 0; i < Math.min(liElmList.length, unsortedColumnsMock.length); i++) {
+        const labelSpan = liElmList[i].querySelector('.checkbox-label');
+        if (labelSpan && labelSpan.textContent) {
+          columnLabels.push(labelSpan.textContent.trim());
+        }
+      }
+
+      expect(handlerSpy).toHaveBeenCalledTimes(4);
+      expect(control.getAllColumns()).toEqual(unsortedColumnsMock);
+      expect(control.getVisibleColumns()).toEqual(unsortedColumnsMock);
+
+      // Verify that columns are displayed in alphabetical order: Alpha Field, Beta Field, Zebra Field
+      expect(columnLabels).toEqual(['Alpha Field', 'Beta Field', 'Zebra Field']);
+    });
+
+    it('should maintain the original column order when no "columnSort" function is provided', () => {
+      const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
+      vi.spyOn(gridStub, 'getColumnIndex')
+        .mockReturnValue(undefined as any)
+        .mockReturnValue(1);
+
+      // Create columns in a specific order
+      const originalColumnsMock: Column[] = [
+        { id: 'field1', field: 'field1', name: 'Zebra Field', width: 100 },
+        { id: 'field2', field: 'field2', name: 'Alpha Field', width: 75 },
+        { id: 'field3', field: 'field3', name: 'Beta Field', width: 75 },
+      ];
+
+      // Mock the shared service to return our custom columns
+      vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(originalColumnsMock);
+      vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(originalColumnsMock);
+      vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(originalColumnsMock);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(originalColumnsMock);
+
+      // Don't set columnSort, so it should remain undefined
+      gridOptionsMock.columnPicker!.columnSort = undefined;
+
+      control.columns = originalColumnsMock;
+      control.init();
+
+      gridStub.onHeaderContextMenu.notify({ column: originalColumnsMock[1], grid: gridStub }, eventData as any, gridStub);
+
+      // Get the column labels from the menu in the order they appear
+      const liElmList = control.menuElement!.querySelectorAll<HTMLLIElement>('li');
+      const columnLabels: string[] = [];
+
+      // Extract text content from each column item (excluding force fit and sync resize buttons)
+      for (let i = 0; i < Math.min(liElmList.length, originalColumnsMock.length); i++) {
+        const labelSpan = liElmList[i].querySelector('.checkbox-label');
+        if (labelSpan && labelSpan.textContent) {
+          columnLabels.push(labelSpan.textContent.trim());
+        }
+      }
+
+      expect(handlerSpy).toHaveBeenCalledTimes(4);
+      expect(control.getAllColumns()).toEqual(originalColumnsMock);
+      expect(control.getVisibleColumns()).toEqual(originalColumnsMock);
+
+      // Verify that columns maintain their original order: Zebra Field, Alpha Field, Beta Field
+      expect(columnLabels).toEqual(['Zebra Field', 'Alpha Field', 'Beta Field']);
+    });
+  });
 });

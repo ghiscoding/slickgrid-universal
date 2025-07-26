@@ -65,9 +65,13 @@ export function handleColumnPickerItemClick(this: SlickColumnPicker | SlickGridM
     context._areVisibleColumnDifferent = true;
     const columnId = event.target.dataset.columnid || '';
     const visibleColumns: Column[] = [];
-    context._columnCheckboxes.forEach((columnCheckbox: HTMLInputElement, idx: number) => {
-      if (columnCheckbox.checked) {
-        visibleColumns.push(context.columns[idx]);
+
+    // Iterate through columns and add those that have checked checkboxes to visibleColumns
+    context.columns.forEach((column: Column) => {
+      const columnId = column.id;
+      const checkbox = context._columnCheckboxes.find((cb: HTMLInputElement) => cb.dataset.columnid === columnId.toString());
+      if (checkbox?.checked) {
+        visibleColumns.push(column);
       }
     });
 
@@ -162,7 +166,13 @@ export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, ad
   const isGridMenu = context instanceof SlickGridMenu;
   const menuPrefix = isGridMenu ? 'gridmenu-' : '';
 
-  for (const column of context.columns) {
+  let sortedColumns = context.columns;
+  if (typeof addonOptions?.columnSort === 'function') {
+    // create a sorted copy of the columns array based on the "name" property
+    sortedColumns = [...context.columns].sort(addonOptions.columnSort);
+  }
+
+  for (const column of sortedColumns) {
     const columnId = column.id;
     const columnLiElm = document.createElement('li');
     if ((column.excludeFromColumnPicker && !isGridMenu) || (column.excludeFromGridMenu && isGridMenu)) {
