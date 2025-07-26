@@ -1,23 +1,21 @@
 import { createDomElement } from '@slickgrid-universal/utils';
 
 import { Constants } from '../constants.js';
-import { type Formatter } from './../interfaces/index.js';
+import { type Formatter, type TreeDataOption } from './../interfaces/index.js';
 import { parseFormatterWhenExist } from './formatterUtilities.js';
 import { createDocumentFragmentOrElement, getCellValueFromQueryFieldGetter } from '../services/utilities.js';
 
 /** Formatter that must be use with a Tree Data column */
 export const treeFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid) => {
   const gridOptions = grid.getOptions();
-  const treeDataOptions = gridOptions?.treeDataOptions;
-  const indentMarginLeft = treeDataOptions?.indentMarginLeft ?? 15;
-  const collapsedPropName = treeDataOptions?.collapsedPropName ?? Constants.treeDataProperties.COLLAPSED_PROP;
-  const hasChildrenPropName = treeDataOptions?.hasChildrenPropName ?? Constants.treeDataProperties.HAS_CHILDREN_PROP;
-  const treeLevelPropName = treeDataOptions?.levelPropName ?? Constants.treeDataProperties.TREE_LEVEL_PROP;
-  let outputValue = value;
+  const treeDataOptions = (gridOptions.treeDataOptions ?? {}) as TreeDataOption;
+  const indentMarginLeft = treeDataOptions.indentMarginLeft ?? 15;
+  const collapsedPropName = treeDataOptions.collapsedPropName ?? Constants.treeDataProperties.COLLAPSED_PROP;
+  const hasChildrenPropName = treeDataOptions.hasChildrenPropName ?? Constants.treeDataProperties.HAS_CHILDREN_PROP;
+  const treeLevelPropName = treeDataOptions.levelPropName ?? Constants.treeDataProperties.TREE_LEVEL_PROP;
 
   // when a queryFieldNameGetterFn is defined, then get the value from that getter callback function
-  outputValue = getCellValueFromQueryFieldGetter(columnDef, dataContext, value);
-
+  let outputValue = getCellValueFromQueryFieldGetter(columnDef, dataContext, value);
   if (outputValue === null || outputValue === undefined || dataContext === undefined) {
     return '';
   }
@@ -39,7 +37,7 @@ export const treeFormatter: Formatter = (row, cell, value, columnDef, dataContex
     toggleClass = dataContext?.[collapsedPropName] ? 'collapsed' : 'expanded'; // parent with child will have a toggle icon
   }
 
-  if (treeDataOptions?.titleFormatter) {
+  if (treeDataOptions.titleFormatter) {
     outputValue = parseFormatterWhenExist(treeDataOptions.titleFormatter, row, cell, columnDef, dataContext, grid);
   }
   const spanToggleClass = `slick-group-toggle ${toggleClass}`.trim();
