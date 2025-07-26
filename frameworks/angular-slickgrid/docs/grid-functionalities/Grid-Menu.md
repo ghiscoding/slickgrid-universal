@@ -132,3 +132,18 @@ this.gridOptions = {
    enableGridMenu: false
 };
 ```
+
+### How to change the "columnSort" option to sort columns
+The example demonstrates how to use the new alphabetical sorting feature:
+
+```typescript
+gridMenu: {
+  // enable the "columnSort" option to sort columns by name
+  columnSort: (item1: Column, item2: Column) => {
+    const nameA = item1.name?.toString().toLowerCase() || '';
+    const nameB = item2.name?.toString().toLowerCase() || '';
+    return nameA.localeCompare(nameB);
+  },
+  // ... other grid menu options
+}
+```
