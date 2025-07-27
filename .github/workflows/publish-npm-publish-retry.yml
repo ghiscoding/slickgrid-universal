@@ -67,6 +67,9 @@ jobs:
       - name: Build Everything
         run: pnpm build
 
+      - name: Angular post-version (workspace replace)
+        run: pnpm postversion
+
       - name: OTP
         if: ${{ inputs.dryrun != true }}
         uses: step-security/wait-for-secrets@v1
