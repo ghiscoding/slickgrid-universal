@@ -123,7 +123,7 @@ We are changing the `columnDefinitions` and `gridOptions` attribute names to muc
 ## Column Functionalities
 
 ### Date Editor/Filter (flat config)
-Vanilla-Calendar-Pro was upgraded to v3.0 and their main breaking change was the move to flat config (instead of complex object config) and this mean that if you use any of their option, you'll have to update them to use their new flat options.
+Vanilla-Calendar-Pro was upgraded to v3.0 and their main breaking change was the move to flat config (instead of complex object config) and this mean that if you use any of their options, you'll have to update them to use their new flat options.
 
 The biggest change that you will most probably have to update is the min/max date setting when using the `'today'` shortcut as shown below:
 
@@ -162,7 +162,7 @@ The `GridService` has CRUD methods that were sometime returning a single item an
 ### Code being `@deprecated` (to be removed in the future, but not until another year)
 #### You can start using these new properties and options (shown below) in v9.0 and above.
 
-So when I created the project, I used a few TypeScript Enums and I thought that was great, but what I didn't know at the time was that all of these Enums are ending up in the final transpiled JS bundle and that takes space (but `type` do not). So in the next major, I'm planning to remove most of these Enums and replace them with string literal types (`type` instead of `enum` because `type` aren't transpiled and `enum` are). So you should consider using string types as much, and as soon, as possible in all your new grids and eventually make the changes in your older grids. Note that at the moment, these are only tagged as deprecations and they will only be dropped in the future (not now, but still, you should consider making this change in the near future), for example:
+So when I created the project, I used a few TypeScript Enums and I thought that was pretty good, but what I didn't know at the time was that all of these Enums were ending up in the final transpiled JS bundle and that ends up taking space (but `type` do not). So in the next major, I'm planning to remove most of these Enums and replace them with string literal types (`type` instead of `enum` because `type` aren't transpiled and `enum` are). So you should consider using string types as much, and as soon, as possible in all your new grids and eventually make the changes in your older grids. Note that at the moment, these are only tagged as deprecations and they will only be dropped in the future (not now, but still, you should consider making this change in the near future), for example:
 
 ```diff
 columns = [{
@@ -174,7 +174,7 @@ columns = [{
 
 > Note that using the string types (ie: `'number'`) instead of `FieldType` was already doable for the past couple of years, so this is far from being something new.
 
-Below is a list of Enums being deprecated and you should think about migrating them eventually because they will be removed in the next major release (whenever that happens, but that won't be before another year). Note that the list below is only a summary of these deprecations and replacements.
+Below is a list of Enums being deprecated and you should think about migrating sooner than later, or at the minimum use them in your new grids, because they will be removed in the next major release (whenever that happens, but that won't be before another year). Note that the list below is only a summary of these deprecations and replacements (you should do Search on any of these group name prefixes, e.g.: `FieldType.`).
 
 | Enum Name   | from `enum`         | to string `type`    | Note |
 | ----------- | ------------------- | ------------------- | ---- |
@@ -188,7 +188,7 @@ Below is a list of Enums being deprecated and you should think about migrating t
 |             | `GridStateType.filters`   | `'filters'`   |
 |             | `GridStateType.sorters`   | `'sorters'`   |
 | - | - | - |
-| `Operator`  | `Operator.greaterThan` | `'>'`  |    See [Operator](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/enums/operatorString.type.ts) list for all available opeators |
+| `Operator`  | `Operator.greaterThan` | `'>'`  |    See [Operator](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/enums/operatorString.type.ts) list for all available operators |
 |             | `Operator.lessThanOrEqual`   | `'<='`   |
 |             | `Operator.contains`   | `'Contains'` or `'CONTAINS'`  | Operators are written as PascalCase |
 |             | `Operator.equal`   | `'EQ'`  |
@@ -198,9 +198,9 @@ Below is a list of Enums being deprecated and you should think about migrating t
 |             | `SortDirection.DESC`   | `'DESC'` or `'desc'`  |
 | - | - | - |
 
-##### deprecating `editorOptions` and `filterOptions`, they are being renamed as a more generic `options` name
+##### deprecating `editorOptions` and `filterOptions`, they are being renamed as a more generic `options` names
 
-in order to make it easier to merge and simplify editor/filter options, I'm renaming the options to a single `options` property which will make it more easily transportable (you will be able to reuse the same `options` for both the editor/filter if you wanted). You can start using `options` in v9.0 and above (or keep using `editorOptions`, `filterOptions` until v10).
+in order to make it easier to merge and simplify editor/filter options, I'm renaming these props to a single `options` property name which will make them more easily transportable (you will be able to reuse the same `options` for both the editor/filter if you wanted too). You can start using `options` in v9.0 and above (or keep using `editorOptions`, `filterOptions` until v10).
 
 ```diff
 import { type MultipleSelectOption } from '@slickgrid-universal/common';
