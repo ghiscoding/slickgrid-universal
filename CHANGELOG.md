@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.6.1](https://github.com/ghiscoding/slickgrid-universal/compare/v9.6.0...v9.6.1) (2025-07-27)
+
+### Bug Fixes
+
+* add missing "Unfreeze Columns" translations ([477e2c7](https://github.com/ghiscoding/slickgrid-universal/commit/477e2c7f1a9c248a46a69754eeba9f6b2aa1a2ff)) - by @ghiscoding
+
 ## [9.6.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.5.0...v9.6.0) (2025-07-27)
 
 ### Features
