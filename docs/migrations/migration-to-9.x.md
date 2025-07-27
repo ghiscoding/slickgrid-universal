@@ -150,7 +150,7 @@ columns = [{
 
 > Note that using the string types (ie: `'number'`) instead of `FieldType` was already doable for the past couple of years, so this is far from being something new.
 
-Below is a list of Enums being deprecated and you should think about migrating sooner than later, or at the minimum use them in your new grids, because they will be removed in the next major release (whenever that happens, but that won't be before another year). Note that the list below is only a summary of these deprecations and replacements (you should do Search on any of these group name prefixes, e.g.: `FieldType.`).
+Below is a list of Enums being deprecated and you should think about migrating sooner than later, or at the minimum use them in your new grids, because they will be removed in the next major release (whenever that happens, but that won't be before another year). Note that the list below is only a summary of these deprecations and replacements (a suggestion is to do a Search on any of these group name prefixes, e.g.: `FieldType.` and start replacing them).
 
 | Enum Name   | from `enum`         | to string `type`    | Note |
 | ----------- | ------------------- | ------------------- | ---- |
