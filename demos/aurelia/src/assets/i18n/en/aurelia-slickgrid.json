@@ -62,6 +62,7 @@
   "SYNCHRONOUS_RESIZE": "Synchronous resize",
   "TOGGLE_FILTER_ROW": "Toggle Filter Row",
   "TOGGLE_PRE_HEADER_ROW": "Toggle Pre-Header Row",
+  "UNFREEZE_COLUMNS": "Unfreeze Columns",
   "X_OF_Y_SELECTED": "# of % selected",
   "X_OF_Y_MASS_SELECTED": "{{x}} of {{y}} selected",
   "BILLING": {

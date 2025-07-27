@@ -31,6 +31,7 @@ export const localeFrench = {
   TEXT_SORT_ASCENDING: 'Trier par ordre croissant',
   TEXT_SORT_DESCENDING: 'Trier par ordre décroissant',
   TEXT_STARTS_WITH: 'Commence par',
+  TEXT_UNFREEZE_COLUMNS: 'Dégeler les colonnes',
   TEXT_X_OF_Y_SELECTED: '# de % sélectionné',
   TEXT_X_OF_Y_MASS_SELECTED: '{{x}} de {{y}} sélectionnés',
   TEXT_CLEAR_PINNING: 'Dégeler les colonnes/rangées',

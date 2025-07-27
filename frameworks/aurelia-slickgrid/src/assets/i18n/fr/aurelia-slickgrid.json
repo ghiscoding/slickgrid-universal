@@ -62,6 +62,7 @@
   "SYNCHRONOUS_RESIZE": "Redimension synchrone",
   "TOGGLE_FILTER_ROW": "Basculer la ligne des filtres",
   "TOGGLE_PRE_HEADER_ROW": "Basculer la ligne de pré-en-tête",
+  "UNFREEZE_COLUMNS": "Dégeler les colonnes",
   "X_OF_Y_SELECTED": "# de % sélectionnés",
   "X_OF_Y_MASS_SELECTED": "{{x}} de {{y}} sélectionnés",
   "BILLING": {
