@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.6.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.5.0...v9.6.0) (2025-07-27)
+
+### Bug Fixes
+
+* add min/max width on RowMove icon for a constant width ([#2067](https://github.com/ghiscoding/slickgrid-universal/issues/2067)) ([401ebed](https://github.com/ghiscoding/slickgrid-universal/commit/401ebedcda5c9cc38740863985b0c72dfab49f64)) - by @ghiscoding
+
 ## [9.5.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.4.0...v9.5.0) (2025-07-19)
 
 ### Features

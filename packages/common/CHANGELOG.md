@@ -4,6 +4,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.6.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.5.0...v9.6.0) (2025-07-27)
+
+### Features
+
+* add columnSort function as an option to ColumnPicker/GridMenu interfaces ([#2066](https://github.com/ghiscoding/slickgrid-universal/issues/2066)) ([5443113](https://github.com/ghiscoding/slickgrid-universal/commit/5443113803b7ed37778641d65d686ac33737c247)) - by @mcallegario
+* **formatters:** add buit-in `Formatters.htmlDecode` ([#2063](https://github.com/ghiscoding/slickgrid-universal/issues/2063)) ([799fb88](https://github.com/ghiscoding/slickgrid-universal/commit/799fb88949e35d1fbfd168ba5c4235c17645c589)) - by @ghiscoding
+
+### Bug Fixes
+
+* add min/max width on RowMove icon for a constant width ([#2067](https://github.com/ghiscoding/slickgrid-universal/issues/2067)) ([401ebed](https://github.com/ghiscoding/slickgrid-universal/commit/401ebedcda5c9cc38740863985b0c72dfab49f64)) - by @ghiscoding
+* remove any extra margins on filters added by external UI frameworks ([ca941fd](https://github.com/ghiscoding/slickgrid-universal/commit/ca941fdb95eb578a93ce9605e993070e741e6e1f)) - by @ghiscoding
+* **styling:** a few more styling fixes for light/dark themes ([#2073](https://github.com/ghiscoding/slickgrid-universal/issues/2073)) ([bd5892f](https://github.com/ghiscoding/slickgrid-universal/commit/bd5892f4a3d19d743f4913224b4b03a5b45f2965)) - by @ghiscoding
+* **styling:** Dark Mode add bg-color to input checkbox Composite Modal ([64baa1d](https://github.com/ghiscoding/slickgrid-universal/commit/64baa1d61885893a7f20cf28d12d572db548097f)) - by @ghiscoding
+* **styling:** Dark Mode missing focus border styling ([a0323b3](https://github.com/ghiscoding/slickgrid-universal/commit/a0323b3838f79bfbfb5329da5827e6f54468add9)) - by @ghiscoding
+
+### Performance Improvements
+
+* reconcile multiple `repositionMenu()` into single fn for all menus ([#2071](https://github.com/ghiscoding/slickgrid-universal/issues/2071)) ([39a2539](https://github.com/ghiscoding/slickgrid-universal/commit/39a25394e3b663a73373fa0dff04ca1167fa9905)) - by @ghiscoding
+
 ## [9.5.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.4.0...v9.5.0) (2025-07-19)
 
 ### Features

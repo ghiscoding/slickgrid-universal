@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.6.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.5.0...v9.6.0) (2025-07-27)
+
+### Features
+
+* **formatters:** add buit-in `Formatters.htmlDecode` ([#2063](https://github.com/ghiscoding/slickgrid-universal/issues/2063)) ([799fb88](https://github.com/ghiscoding/slickgrid-universal/commit/799fb88949e35d1fbfd168ba5c4235c17645c589)) - by @ghiscoding
+
 ## [9.5.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.4.0...v9.5.0) (2025-07-19)
 
 ### Bug Fixes
