@@ -134,7 +134,7 @@ jobs:
           echo "$OUTPUT" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
           if [ $EXIT_CODE -ne 0 ]; then
-            if echo "$OUTPUT" | grep -q 'HttpErrorAuthOTP'; then
+            if echo "$OUTPUT" | grep -E -q 'HttpErrorAuthOTP|EOTP|OTP required for authentication'; then
               echo "publish_failed=true" >> $GITHUB_OUTPUT
             else
               echo "::error title=Lerna Publish Failed::$OUTPUT"
