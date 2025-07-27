@@ -27,7 +27,7 @@ catalog:
   dompurify: ^3.2.6
   eslint: ^9.32.0
   eslint-plugin-cypress: ^5.1.0
-  eslint-plugin-n: ^17.21.0
+  eslint-plugin-n: ^17.21.1
   globals: ^16.3.0
   i18next: ^25.3.2
   i18next-vue: ^5.3.0
