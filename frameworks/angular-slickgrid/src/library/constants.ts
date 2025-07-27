@@ -67,6 +67,7 @@ export class Constants {
     TEXT_TOGGLE_DARK_MODE: 'Toggle Dark Mode',
     TEXT_TOGGLE_FILTER_ROW: 'Toggle Filter Row',
     TEXT_TOGGLE_PRE_HEADER_ROW: 'Toggle Pre-Header Row',
+    TEXT_UNFREEZE_COLUMNS: 'Unfreeze Columns',
     TEXT_X_OF_Y_SELECTED: '# of % selected',
     TEXT_X_OF_Y_MASS_SELECTED: '{{x}} of {{y}} selected',
   };
