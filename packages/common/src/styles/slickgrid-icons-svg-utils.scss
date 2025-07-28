@@ -1,23 +1,26 @@
 $slick-icon-width-min-size: 5;
 $slick-icon-width-max-size: 50;
 
+.mdi {
+  --scale-x: 1;
+  --scale-y: 1;
+  transform: scaleX(var(--scale-x)) scaleY(var(--scale-y));
+}
+
 @keyframes sg-spin {
   0% {
-    transform: rotate(0deg);
+    transform: rotate(0deg) scaleX(var(--scale-x, 1)) scaleY(var(--scale-y, 1));
   }
   100% {
-    transform: rotate(360deg);
+    transform: rotate(360deg) scaleX(var(--scale-x, 1)) scaleY(var(--scale-y, 1));
   }
 }
 
 .mdi-flip-h {
-  transform: scaleX(-1);
+  --scale-x: -1;
 }
 .mdi-flip-v {
-  transform: scaleY(-1);
-}
-.mdi-pulse {
-  animation: sg-spin 1s infinite steps(8);
+  --scale-y: -1;
 }
 /* use mdi-spin or mdi-spin-1s to change the speed */
 .mdi-spin,
