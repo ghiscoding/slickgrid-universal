@@ -1,6 +1,3 @@
-$slick-icon-width-min-size: 5;
-$slick-icon-width-max-size: 50;
-
 .mdi {
   --scale-x: 1;
   --scale-y: 1;
@@ -41,31 +38,16 @@ $slick-icon-width-max-size: 50;
     animation: sg-spin #{$i}s infinite linear;
   }
 }
-.mdi-rotate-45 {
-  transform: rotate(45deg);
-}
-.mdi-rotate-90 {
-  transform: rotate(90deg);
-}
-.mdi-rotate-135 {
-  transform: rotate(135deg);
-}
-.mdi-rotate-180 {
-  transform: rotate(180deg);
-}
-.mdi-rotate-225 {
-  transform: rotate(225deg);
-}
-.mdi-rotate-270 {
-  transform: rotate(270deg);
-}
-.mdi-rotate-315 {
-  transform: rotate(315deg);
+// rotate-45 up to rotate-315
+@for $i from 1 through 7 {
+  .mdi-rotate-#{$i * 45} {
+    transform: rotate(#{$i * 45}deg);
+  }
 }
 
 // font-5px up to 50px / mdi-5px to 50px
 // since SVG icons are now pure CSS, we can merge font-x with mdi-x
-@for $i from $slick-icon-width-min-size through $slick-icon-width-max-size {
+@for $i from 5 through 50 {
   .mdi.mdi-#{$i}px,
   .font-#{$i}px {
     font-size: #{$i}px !important;
