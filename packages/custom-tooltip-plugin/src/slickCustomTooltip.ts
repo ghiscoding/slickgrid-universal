@@ -79,7 +79,7 @@ export class SlickCustomTooltip {
     className: '',
     offsetLeft: 0,
     offsetRight: 0,
-    offsetTopBottom: 4,
+    offsetTopBottom: 2,
     regularTooltipWhiteSpace: 'pre-line',
     whiteSpace: 'normal',
   } as CustomTooltipOption;
