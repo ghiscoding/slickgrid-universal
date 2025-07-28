@@ -2389,7 +2389,6 @@ describe('SlickGrid core file', () => {
     });
 
     it('should do nothing when trying to commit unchanged Age field Editor', () => {
-      (navigator as any).__defineGetter__('userAgent', () => 'msie'); // this will call clearTextSelection() & window.getSelection()
       const columns = [
         { id: 'name', field: 'name', name: 'Name' },
         { id: 'age', field: 'age', name: 'Age', type: 'number', editorClass: InputEditor },
@@ -2409,7 +2408,6 @@ describe('SlickGrid core file', () => {
     });
 
     it('should commit Name field Editor via an Editor defined as ItemMetadata by column id & asyncEditorLoading enabled and expect it to call execute() command and triggering onCellChange() notify', () => {
-      (navigator as any).__defineGetter__('userAgent', () => 'msie'); // this will call clearTextSelection() & document.selection.empty()
       Object.defineProperty(document, 'selection', { writable: true, value: { empty: () => {} } });
       const newValue = 33;
       const columns = [

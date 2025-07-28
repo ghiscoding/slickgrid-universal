@@ -6112,21 +6112,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     // }
   }
 
-  protected clearTextSelection(): void {
-    if ((document as any).selection?.empty) {
-      try {
-        // IE fails here if selected element is not in DOM
-        (document as any).selection.empty();
-        // eslint-disable-next-line no-empty
-      } catch (e) {}
-    } else if (window.getSelection) {
-      const sel = window.getSelection();
-      if (sel?.removeAllRanges) {
-        sel.removeAllRanges();
-      }
-    }
-  }
-
   protected isCellPotentiallyEditable(row: number, cell: number): boolean {
     const dataLength = this.getDataLength();
     // is the data for this row actually loaded?
@@ -6178,12 +6163,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         if (refocusActiveCell) {
           this.setFocus();
         }
-      }
-
-      // if there previously was text selected on a page (such as selected text in the edit cell just removed),
-      // IE can't set focus to anything else correctly
-      if (navigator.userAgent.toLowerCase().match(/msie/)) {
-        this.clearTextSelection();
       }
 
       this.getEditorLock()?.deactivate(this.editController as EditController);

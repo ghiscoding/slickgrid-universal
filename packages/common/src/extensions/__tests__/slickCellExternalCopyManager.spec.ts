@@ -126,16 +126,18 @@ describe('CellExternalCopyManager', () => {
   describe('registered addon', () => {
     beforeEach(() => {
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
-      (navigator as any).clipboard = {
-        readText: vi.fn(() => Promise.resolve('')),
-        writeText: vi.fn(() => Promise.resolve()),
-      };
+      Object.defineProperty(globalThis.navigator, 'clipboard', {
+        value: {
+          readText: vi.fn(() => Promise.resolve('')),
+          writeText: vi.fn(() => Promise.resolve()),
+        },
+        writable: true,
+      });
     });
 
     afterEach(() => {
       plugin.dispose();
       vi.clearAllMocks();
-      delete (navigator as any).clipboard;
     });
 
     it('should throw an error initializing the plugin without a selection model', () =>

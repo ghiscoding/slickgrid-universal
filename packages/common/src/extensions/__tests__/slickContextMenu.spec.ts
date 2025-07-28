@@ -187,10 +187,13 @@ describe('ContextMenu Plugin', () => {
     sharedService.dataView = dataViewStub;
     sharedService.slickGrid = gridStub;
 
-    (navigator as any).clipboard = {
-      readText: vi.fn(() => Promise.resolve('')),
-      writeText: vi.fn(() => Promise.resolve()),
-    };
+    Object.defineProperty(globalThis.navigator, 'clipboard', {
+      value: {
+        readText: vi.fn(() => Promise.resolve('')),
+        writeText: vi.fn(() => Promise.resolve()),
+      },
+      writable: true,
+    });
     parentContainer = document.createElement('div');
     sharedService.gridContainerElement = parentContainer;
     vi.spyOn(gridStub, 'getGridPosition').mockReturnValue({ top: 10, bottom: 5, left: 15, right: 22, width: 225 } as ElementPosition);
@@ -202,7 +205,6 @@ describe('ContextMenu Plugin', () => {
 
   afterEach(() => {
     plugin?.dispose();
-    delete (navigator as any).clipboard;
   });
 
   it('should create the plugin', () => {
