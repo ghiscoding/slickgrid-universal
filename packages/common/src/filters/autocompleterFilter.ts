@@ -499,7 +499,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
   // ------------------
 
   // this function should be PRIVATE but for unit tests purposes we'll make it public until a better solution is found
-  // a better solution would be to get the autocomplete DOM element to work with selection but I couldn't find how to do that in Jest
+  // a better solution would be to get the autocomplete DOM element to work with selection but I couldn't find how to do that in Vitest
   handleSelect(item: AutocompleteSearchItem): void | boolean {
     if (item !== undefined) {
       // when the user defines a "renderItem" (or "_renderItem") template, then we assume the user defines his own custom structure of label/value pair

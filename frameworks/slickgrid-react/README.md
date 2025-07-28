@@ -80,7 +80,8 @@ export default function Example() {
 
 ### Troubleshooting
 
-This project **does not** work well with `React.StrictMode`, so please make sure to disable it to avoid getting mad at the library :P
+> [!WARNING]
+> This project **does not** work well with `React.StrictMode`, so please make sure to disable it to avoid getting mad at the library :P
 
 ### Versions Compatibility
 
@@ -114,7 +115,7 @@ For a complete set of working demos (40+ examples), we strongly suggest you to c
 ## Latest News & Releases
 Check out the [Releases](https://github.com/ghiscoding/slickgrid-universal/releases) section for all latest News & Releases.
 
-### Tested with [Jest](https://jestjs.io/) (Unit Tests) - [Cypress](https://www.cypress.io/) (E2E Tests)
+### Tested with [Vitest](https://vitest.dev/) (Unit Tests) - [Cypress](https://www.cypress.io/) (E2E Tests)
 Slickgrid-Universal has **100%** Unit Test Coverage and all Slickgrid-React Examples are tested with [Cypress](https://www.cypress.io/) as E2E tests.
 
 ### Like it? ⭐ it
