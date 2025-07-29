@@ -1,6 +1,5 @@
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 
-import { Constants } from '../constants.js';
 import { ToggleStateChangeType, type ToggleStateChangeTypeString } from '../enums/index.js';
 import type {
   Column,
@@ -115,6 +114,9 @@ export class TreeDataService {
       }
     }
 
+    // initialize anything related to hierarchical tree (e.g. `initiallyCollapsed`)
+    this.initHierarchicalTree();
+
     // subscribe to the SlickGrid event and call the backend execution
     this._eventHandler.subscribe(grid.onClick, this.handleOnCellClick.bind(this));
 
@@ -130,6 +132,32 @@ export class TreeDataService {
       if (typeof this._treeDataRecalcHandler === 'function' && this._isOneCpuCyclePassed) {
         window.clearTimeout(this._timer);
         this._timer = window.setTimeout(() => this._treeDataRecalcHandler?.(), this.treeDataOptions?.autoRecalcTotalsDebounce ?? 0);
+      }
+    });
+  }
+
+  /** init the hierarchical tree when necessary (e.g. `initiallyCollapsed` requires to collapse all items) */
+  initHierarchicalTree(): void {
+    if (this.gridOptions?.treeDataOptions?.initiallyCollapsed) {
+      const collapsedPropName = getTreeDataOptionPropName(this.treeDataOptions, 'collapsedPropName');
+      const childrenPropName = getTreeDataOptionPropName(this.treeDataOptions, 'childrenPropName');
+      this.toggleAllHierarchicalTree(this.datasetHierarchical || [], true, childrenPropName, collapsedPropName);
+    }
+  }
+
+  /**
+   * Toggle all items of a hierarchical (tree) dataset, user must provide the children & collapsed property names
+   * NOTE: this does NOT change or update the flat dataset, it only changes the collapsed flag in the hierarchical tree only.
+   * @param {Array<any>} hierarchicalData - hierarchical data to collapse/expand
+   * @param {Boolean} collapsing - optionally force a collapse/expand (True => collapse all, False => expand all)
+   * @param {String} childrenPropName - name of the property that holds the children array (defaults to "children")
+   * @param {String} collapsedPropName - name of the property that holds the collapsed state (defaults to "__collapsed")
+   */
+  toggleAllHierarchicalTree(hierarchicalData: any[], collapsing: boolean, childrenPropName: string, collapsedPropName: string): void {
+    hierarchicalData.forEach((item) => {
+      if (childrenPropName in item) {
+        item[collapsedPropName] = collapsing;
+        this.toggleAllHierarchicalTree(item[childrenPropName], collapsing, childrenPropName, collapsedPropName);
       }
     });
   }
@@ -342,8 +370,8 @@ export class TreeDataService {
    */
   recalculateTreeTotals(gridOptions: GridOption): void {
     const treeDataOptions = gridOptions.treeDataOptions;
-    const childrenPropName = treeDataOptions?.childrenPropName ?? Constants.treeDataProperties.CHILDREN_PROP;
-    const levelPropName = treeDataOptions?.levelPropName ?? Constants.treeDataProperties.TREE_LEVEL_PROP;
+    const childrenPropName = getTreeDataOptionPropName(this.treeDataOptions, 'childrenPropName');
+    const levelPropName = getTreeDataOptionPropName(this.treeDataOptions, 'levelPropName');
 
     if (treeDataOptions?.aggregators) {
       treeDataOptions.aggregators.forEach((aggregator) => {

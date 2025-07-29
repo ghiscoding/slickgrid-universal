@@ -231,6 +231,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     if (this.dataView && newHierarchicalDataset && this.grid && this.sortService?.processTreeDataInitialSort) {
       this.dataView.setItems([], this._options?.datasetIdPropertyName ?? 'id');
       this.sortService.processTreeDataInitialSort();
+      this.treeDataService.initHierarchicalTree();
 
       // we also need to reset/refresh the Tree Data filters because if we inserted new item(s) then it might not show up without doing this refresh
       // however we need to queue our process until the flat dataset is ready, so we can queue a microtask to execute the DataView refresh only after everything is ready
