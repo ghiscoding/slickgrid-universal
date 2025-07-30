@@ -194,6 +194,7 @@ const treeDataServiceStub = {
   convertFlatParentChildToTreeDatasetAndSort: vi.fn(),
   dispose: vi.fn(),
   handleOnCellClick: vi.fn(),
+  initHierarchicalTree: vi.fn(),
   sortHierarchicalDataset: vi.fn(),
   toggleTreeDataCollapse: vi.fn(),
 } as unknown as TreeDataService;

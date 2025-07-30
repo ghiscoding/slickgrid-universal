@@ -146,6 +146,7 @@ const Example28: React.FC = () => {
         columnId: 'file',
         childrenPropName: 'files',
         excludeChildrenWhenFilteringTree: isExcludingChildWhenFilteringRef.current, // defaults to false
+        // initiallyCollapsed: true,
 
         // skip any other filter criteria(s) if the column holding the Tree (file) passes its own filter criteria
         // (e.g. filtering with "Files = music AND Size > 7", the row "Music" and children will only show up when this flag is enabled

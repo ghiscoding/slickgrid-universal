@@ -827,4 +827,56 @@ describe('TreeData Service', () => {
       expect(sortHierarchySpy).toHaveBeenCalledWith(mockHierarchical, [mockColumnSort]);
     });
   });
+
+  describe('hierarchical dataset', () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
+      gridOptionsMock.treeDataOptions = { columnId: 'file', parentPropName: 'parentId', childrenPropName: 'files', initiallyCollapsed: false };
+      vi.clearAllMocks();
+    });
+
+    it('should initially collapse all hierarchical items when "initiallyCollapsed" is enabled', async () => {
+      const mockHierarchical = [
+        {
+          id: 0,
+          file: 'documents',
+          files: [
+            { id: 2, file: 'todo.txt', size: 2.3 },
+            {
+              id: 1,
+              file: 'vacations',
+              files: [
+                { id: 2, file: 'todo.txt', size: 2.3 },
+                { id: 1, file: 'vacation.txt', size: 1.2 },
+              ],
+            },
+          ],
+        },
+      ];
+      gridOptionsMock.treeDataOptions!.initiallyCollapsed = true;
+      vi.spyOn(SharedService.prototype, 'hierarchicalDataset', 'get').mockReturnValueOnce(mockHierarchical).mockReturnValueOnce(mockHierarchical);
+
+      service.init(gridStub);
+
+      expect(service.datasetHierarchical).toEqual([
+        {
+          __collapsed: true,
+          id: 0,
+          file: 'documents',
+          files: [
+            { id: 2, file: 'todo.txt', size: 2.3 },
+            {
+              __collapsed: true,
+              id: 1,
+              file: 'vacations',
+              files: [
+                { id: 2, file: 'todo.txt', size: 2.3 },
+                { id: 1, file: 'vacation.txt', size: 1.2 },
+              ],
+            },
+          ],
+        },
+      ]);
+    });
+  });
 });
