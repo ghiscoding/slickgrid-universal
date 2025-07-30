@@ -49,7 +49,9 @@ const mockRowSelectionModel = {
   onSelectedRangesChanged: new SlickEvent(),
 } as unknown as SlickRowSelectionModel;
 vi.mock('../../extensions/slickRowSelectionModel', () => ({
-  SlickRowSelectionModel: vi.fn().mockImplementation(() => mockRowSelectionModel),
+  SlickRowSelectionModel: vi.fn().mockImplementation(function () {
+    return mockRowSelectionModel;
+  }),
 }));
 
 const mockCheckboxSelectColumn = {
@@ -60,7 +62,9 @@ const mockCheckboxSelectColumn = {
   dispose: vi.fn(),
 } as unknown as SlickCheckboxSelectColumn;
 vi.mock('../../extensions/slickCheckboxSelectColumn', () => ({
-  SlickCheckboxSelectColumn: vi.fn().mockImplementation(() => mockCheckboxSelectColumn),
+  SlickCheckboxSelectColumn: vi.fn().mockImplementation(function () {
+    return mockCheckboxSelectColumn;
+  }),
 }));
 
 const mockRowMoveManager = {
@@ -71,24 +75,30 @@ const mockRowMoveManager = {
   dispose: vi.fn(),
 } as unknown as SlickRowMoveManager;
 vi.mock('../../extensions/slickRowMoveManager', () => ({
-  SlickRowMoveManager: vi.fn().mockImplementation(() => mockRowMoveManager),
+  SlickRowMoveManager: vi.fn().mockImplementation(function () {
+    return mockRowMoveManager;
+  }),
 }));
 
-// (SlickCheckboxSelectColumn as Mock).mockImplementation(() => ({
-//   constructor: vi.fn(),
-//   init: vi.fn(),
-//   create: vi.fn(),
-//   destroy: vi.fn(),
-//   dispose: vi.fn(),
-// }));
+// (SlickCheckboxSelectColumn as Mock).mockImplementation(function () {
+//   return {
+//     constructor: vi.fn(),
+//     init: vi.fn(),
+//     create: vi.fn(),
+//     destroy: vi.fn(),
+//     dispose: vi.fn(),
+//   };
+// });
 
-// (SlickRowMoveManager as Mock).mockImplementation(() => ({
-//   constructor: vi.fn(),
-//   init: vi.fn(),
-//   create: vi.fn(),
-//   destroy: vi.fn(),
-//   dispose: vi.fn(),
-// }));
+// (SlickRowMoveManager as Mock).mockImplementation(function () {
+//   return {
+//     constructor: vi.fn(),
+//     init: vi.fn(),
+//     create: vi.fn(),
+//     destroy: vi.fn(),
+//     dispose: vi.fn(),
+//   };
+// });
 
 const pubSubServiceStub = {
   publish: vi.fn(),
@@ -360,7 +370,9 @@ describe('ExtensionService', () => {
         } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-        vi.spyOn(SlickRowBasedEdit.prototype, 'init').mockImplementation(() => null);
+        vi.spyOn(SlickRowBasedEdit.prototype, 'init').mockImplementation(function () {
+          return null;
+        });
 
         service = new ExtensionService(
           extensionUtility,

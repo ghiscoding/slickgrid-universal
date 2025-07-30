@@ -87,7 +87,9 @@ const pubSubServiceStub = {
 } as BasePubSubService;
 
 vi.mock('../../extensions/slickRowSelectionModel', () => ({
-  SlickRowSelectionModel: vi.fn().mockImplementation(() => mockRowSelectionModel),
+  SlickRowSelectionModel: vi.fn().mockImplementation(function () {
+    return mockRowSelectionModel;
+  }),
 }));
 
 describe('SlickCheckboxSelectColumn Plugin', () => {
