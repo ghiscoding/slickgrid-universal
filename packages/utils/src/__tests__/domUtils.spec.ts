@@ -291,13 +291,13 @@ describe('Service/domUtilies', () => {
     });
 
     it('should return a decoded HTML string with single quotes decoded as well', () => {
-      const result = htmlDecode(`&lt;div class=&#39;color: blue&#39;&gt;Something&lt;/div&gt;`);
-      expect(result).toBe(`<div class='color: blue'>Something</div>`);
+      const result = htmlDecode(`&lt;div class=&#39;color: blue&#39;&gt;Hablar espa&#241;ol?&lt;/div&gt;`);
+      expect(result).toBe(`<div class='color: blue'>Hablar español?</div>`);
     });
 
     it('should return a decoded HTML map even when prefixed with invalid map like the "&" char and still decode what it can', () => {
-      const result = htmlDecode(`&lt;div class=&quot;color: blue&quot;&gt;Bob &&amp; John&lt;/div&gt;`);
-      expect(result).toBe(`<div class="color: blue">Bob && John</div>`);
+      const result = htmlDecode(`&lt;div class=&quot;color: blue&quot;&gt;Bob &&amp; John, hablar espa&#241;ol&lt;/div&gt;`);
+      expect(result).toBe(`<div class="color: blue">Bob && John, hablar español</div>`);
     });
 
     it('should return same HTML string when encode value is not a valid entity map', () => {

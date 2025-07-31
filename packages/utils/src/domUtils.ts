@@ -219,20 +219,16 @@ export function htmlEncode(inputValue: string): string {
 }
 
 /**
- * Simple function to decode the 5 most common HTML entities (`<`, `>`, `"`, `'`, `&`).
- * For example: "&lt;div&gt;Hello&lt;/div&gt;" => "<div>Hello</div>"
+ * Simple function to decode the most common HTML entities.
+ * For example: "&lt;div&gt;Hablar espa&#241;ol?&lt;/div&gt;" => "<div>Hablar español?</div>"
  * @param {String} inputValue - input value to be decoded
  * @return {String}
  */
 export function htmlDecode(input?: string): string {
   if (isDefined(input)) {
-    const val = typeof input === 'string' ? input : String(input);
-    return val
-      .replace(/&amp;/g, '&')
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/&quot;/g, '"')
-      .replace(/&#39;/g, "'");
+    const txt = document.createElement('textarea');
+    txt.innerHTML = input;
+    return txt.value;
   }
   return '';
 }
