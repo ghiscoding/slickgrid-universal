@@ -30,7 +30,6 @@ export default defineConfig({
     fakeTimers: {
       toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'queueMicrotask'],
     },
-    pool: 'threads',
     globalSetup: './test/vitest-global-setup.ts',
     setupFiles: ['./test/vitest-pretest.ts', './test/vitest-global-mocks.ts'],
     testTimeout: 60000,
