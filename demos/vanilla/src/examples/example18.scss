@@ -23,7 +23,7 @@ $sparkline-color: #00b78d;
 .simulation-form {
   margin-bottom: 15px;
 
-  input[type=number] {
+  input[type='number'] {
     height: 30px;
     width: 60px;
     border: 1px solid #c0c0c0;
@@ -54,7 +54,7 @@ $sparkline-color: #00b78d;
 
 .tooltip {
   position: absolute;
-  background: rgba(0, 0, 0, .7);
+  background: rgba(0, 0, 0, 0.7);
   color: #fff;
   padding: 2px 5px;
   font-size: 12px;
@@ -64,8 +64,8 @@ $sparkline-color: #00b78d;
 
 .slick-dark-mode,
 .dark-mode {
-  .text-color-success {
-    color: #42b47f !important
+  .color-success {
+    color: #42b47f !important;
   }
   .changed-gain {
     background-color: #00ff001d !important;

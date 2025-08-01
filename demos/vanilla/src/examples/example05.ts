@@ -75,7 +75,7 @@ export default class Example05 {
 
   showSpinner() {
     if (this.isLargeDataset) {
-      this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-24px text-color-alt-success';
+      this.loadingClass = 'mdi mdi-load mdi-spin-1s font-24px color-alt-success';
     }
   }
 
@@ -289,7 +289,7 @@ export default class Example05 {
         titleFormatter: (_row, _cell, value, _def, dataContext) => {
           let titleResult = '';
           if (dataContext.treeLevel > 0) {
-            titleResult = `<span class="mdi mdi-subdirectory-arrow-right text-color-se-secondary"></span>`;
+            titleResult = `<span class="mdi mdi-subdirectory-arrow-right color-se-secondary"></span>`;
           }
           titleResult += `<span class="bold">${value}</span>`;
           if (dataContext.parentId) {

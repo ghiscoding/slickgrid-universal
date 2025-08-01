@@ -295,7 +295,7 @@ export default class Example20 {
   /** Loading template, can be an HTML string or an HTML Element */
   loadingTemplate() {
     const headerElm = createDomElement('h5', { className: 'title is-5' });
-    headerElm.appendChild(createDomElement('i', { className: 'mdi mdi-load mdi-spin-1s mdi-40px' }));
+    headerElm.appendChild(createDomElement('i', { className: 'mdi mdi-load mdi-spin-1s font-40px' }));
     headerElm.appendChild(document.createTextNode('Loading...'));
 
     return headerElm;

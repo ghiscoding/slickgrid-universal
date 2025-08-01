@@ -1177,7 +1177,7 @@ $slick-dark-text-color:                                   #d4d4d4 !default;
   --ms-placeholder-color:                                 #999;
   --ms-select-all-label-hover-border:                     var(--slick-base-dark-menu-item-border);
 
-  .text-color-primary {
+  .text-color-primary, .color-primary {
     color:                                                var(--slick-primary-color);
   }
 }
@@ -1190,7 +1190,13 @@ $slick-dark-text-color:                                   #d4d4d4 !default;
   .text-color-primary {
     --text-color-primary:                                 var(--slick-primary-color, #{color.adjust($slick-primary-color, $lightness: 15%)});
   }
+  .color-primary {
+    --color-primary:                                      var(--slick-primary-color, #{color.adjust($slick-primary-color, $lightness: 15%)});
+  }
   .text-color-secondary {
     --text-color-secondary:                               rgba(222, 226, 230, 0.75);
+  }
+  .color-secondary {
+    --color-secondary:                                    rgba(222, 226, 230, 0.75);
   }
 }

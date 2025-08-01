@@ -88,7 +88,7 @@ export default class Example07 {
         excludeFromHeaderMenu: true,
         cssClass: 'justify-center',
         formatter: () =>
-          `<div class="button-style action-btn height-80"><span class="mdi mdi-chevron-down mdi-22px text-color-primary"></span></div>`,
+          `<div class="button-style action-btn height-80"><span class="mdi mdi-chevron-down font-22px color-primary"></span></div>`,
         cellMenu: {
           hideCloseButton: false,
           subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',
@@ -255,8 +255,8 @@ export default class Example07 {
           enableRenderHtml: true,
           collection: [
             { value: '', label: '' },
-            { value: true, label: 'True', labelSuffix: `<i class="mdi mdi-check mdi-16px"></i> ` },
-            { value: false, label: 'False', labelSuffix: `<i class="mdi mdi-close mdi-16px"></i> ` },
+            { value: true, label: 'True', labelSuffix: `<i class="mdi mdi-check font-16px"></i> ` },
+            { value: false, label: 'False', labelSuffix: `<i class="mdi mdi-close font-16px"></i> ` },
           ],
           model: Filters.singleSelect,
         },
@@ -271,8 +271,8 @@ export default class Example07 {
           collectionAsync: new Promise<any>((resolve) =>
             window.setTimeout(() => {
               resolve([
-                { value: true, label: 'True', labelSuffix: `<i class="mdi mdi-check mdi-16px"></i> ` },
-                { value: false, label: 'False', labelSuffix: `<i class="mdi mdi-close mdi-16px"></i> ` },
+                { value: true, label: 'True', labelSuffix: `<i class="mdi mdi-check font-16px"></i> ` },
+                { value: false, label: 'False', labelSuffix: `<i class="mdi mdi-close font-16px"></i> ` },
               ]);
             }, 250)
           ),

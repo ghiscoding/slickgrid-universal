@@ -125,12 +125,12 @@ export default class Example06 {
               // when found Avg & Sum, we'll display both
               return isNaN(sumVal)
                 ? ''
-                : `<span class="text-color-primary bold">sum: ${decimalFormatted(sumVal, 0, 2)} MB</span> / <span class="avg-total">avg: ${decimalFormatted(avgVal, 0, 2)} MB</span> <span class="total-suffix">(${treeLevel === 0 ? 'total' : 'sub-total'})</span>`;
+                : `<span class="color-primary bold">sum: ${decimalFormatted(sumVal, 0, 2)} MB</span> / <span class="avg-total">avg: ${decimalFormatted(avgVal, 0, 2)} MB</span> <span class="total-suffix">(${treeLevel === 0 ? 'total' : 'sub-total'})</span>`;
             } else if (sumVal !== undefined) {
               // or when only Sum is aggregated, then just show Sum
               return isNaN(sumVal)
                 ? ''
-                : `<span class="text-color-primary bold">sum: ${decimalFormatted(sumVal, 0, 2)} MB</span> <span class="total-suffix">(${treeLevel === 0 ? 'total' : 'sub-total'})</span>`;
+                : `<span class="color-primary bold">sum: ${decimalFormatted(sumVal, 0, 2)} MB</span> <span class="total-suffix">(${treeLevel === 0 ? 'total' : 'sub-total'})</span>`;
             }
           }
           // reaching this line means it's a regular dataContext without totals, so regular formatter output will be used
@@ -281,7 +281,7 @@ export default class Example06 {
     const indentSpacer = addWhiteSpaces(5 * treeLevel);
 
     if (data[idx + 1]?.[treeLevelPropName] > data[idx][treeLevelPropName] || data[idx]['__hasChildren']) {
-      const folderPrefix = `<i class="mdi mdi-22px ${dataContext.__collapsed ? 'mdi-folder' : 'mdi-folder-open'}"></i>`;
+      const folderPrefix = `<i class="mdi font-22px ${dataContext.__collapsed ? 'mdi-folder' : 'mdi-folder-open'}"></i>`;
       if (dataContext.__collapsed) {
         return `<span class="hidden">${exportIndentationLeadingChar}</span>${spacer}${indentSpacer} <span class="slick-group-toggle collapsed" level="${treeLevel}"></span>${folderPrefix} ${prefix} ${value}`;
       } else {
@@ -295,15 +295,15 @@ export default class Example06 {
   getFileIcon(value: string) {
     let prefix = '';
     if (value.includes('.pdf')) {
-      prefix = '<i class="mdi mdi-20px mdi-file-pdf-outline"></i>';
+      prefix = '<i class="mdi font-20px mdi-file-pdf-outline"></i>';
     } else if (value.includes('.txt')) {
-      prefix = '<i class="mdi mdi-20px mdi-file-document-outline"></i>';
+      prefix = '<i class="mdi font-20px mdi-file-document-outline"></i>';
     } else if (value.includes('.csv') || value.includes('.xls')) {
-      prefix = '<i class="mdi mdi-20px mdi-file-excel-outline"></i>';
+      prefix = '<i class="mdi font-20px mdi-file-excel-outline"></i>';
     } else if (value.includes('.mp3')) {
-      prefix = '<i class="mdi mdi-20px mdi-file-music-outline"></i>';
+      prefix = '<i class="mdi font-20px mdi-file-music-outline"></i>';
     } else if (value.includes('.')) {
-      prefix = '<i class="mdi mdi-20px mdi-file-question-outline"></i>';
+      prefix = '<i class="mdi font-20px mdi-file-question-outline"></i>';
     }
     return prefix;
   }

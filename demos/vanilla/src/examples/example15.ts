@@ -474,7 +474,7 @@ export default class Example15 {
 
     // display random address and zip code to simulate company address
     const randomStreet = dataContext.id % 3 ? 'Belleville' : 'Hollywood';
-    return `<div class="text-color-se-danger text-bold">${tooltipTitle}</div>
+    return `<div class="color-se-danger text-bold">${tooltipTitle}</div>
       <div class="tooltip-2cols-row"><div>Address:</div> <div>${dataContext.__params.doorNumber.toFixed(0)} ${randomStreet} blvd</div></div>
       <div class="tooltip-2cols-row"><div>Zip:</div> <div>${dataContext.__params.zip.toFixed(0)}</div></div>`;
   }

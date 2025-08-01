@@ -47,7 +47,7 @@ const gridOptionsMock = {
   enableDraggableGrouping: true,
   draggableGrouping: {
     hideToggleAllButton: false,
-    deleteIconCssClass: 'mdi mdi-close text-color-danger',
+    deleteIconCssClass: 'mdi mdi-close color-danger',
   },
   showHeaderRow: false,
   showTopPanel: false,
@@ -356,7 +356,7 @@ describe('Draggable Grouping Plugin', () => {
 
     it('should execute the "onEnd" callback of Sortable and expect sortable to be cancelled', () => {
       plugin.init(gridStub, { ...addonOptions });
-      plugin.setAddonOptions({ deleteIconCssClass: 'mdi mdi-close text-color-danger' });
+      plugin.setAddonOptions({ deleteIconCssClass: 'mdi mdi-close color-danger' });
       const fn = plugin.setupColumnReorder(
         gridStub,
         mockHeaderLeftDiv1,
@@ -386,7 +386,7 @@ describe('Draggable Grouping Plugin', () => {
 
     it('should clear grouping and expect placeholder to be displayed when calling "onEnd" callback', () => {
       plugin.init(gridStub, { ...addonOptions });
-      plugin.setAddonOptions({ deleteIconCssClass: 'mdi mdi-close text-color-danger' });
+      plugin.setAddonOptions({ deleteIconCssClass: 'mdi mdi-close color-danger' });
       const fn = plugin.setupColumnReorder(
         gridStub,
         mockHeaderLeftDiv1,
@@ -448,7 +448,7 @@ describe('Draggable Grouping Plugin', () => {
 
     it('should drag over dropzone and expect hover css class be added and removed when dragging outside of dropzone', () => {
       plugin.init(gridStub, { ...addonOptions });
-      plugin.setAddonOptions({ deleteIconCssClass: 'mdi mdi-close text-color-danger' });
+      plugin.setAddonOptions({ deleteIconCssClass: 'mdi mdi-close color-danger' });
       const fn = plugin.setupColumnReorder(
         gridStub,
         mockHeaderLeftDiv1,
@@ -850,7 +850,7 @@ describe('Draggable Grouping Plugin', () => {
 
       it('should execute the "onEnd" callback of Sortable and expect sortable to be cancelled', () => {
         plugin.init(gridStub, { ...addonOptions });
-        plugin.setAddonOptions({ deleteIconCssClass: 'mdi mdi-close text-color-danger' });
+        plugin.setAddonOptions({ deleteIconCssClass: 'mdi mdi-close color-danger' });
         const fn = plugin.setupColumnReorder(
           gridStub,
           [mockHeaderLeftDiv1, mockHeaderLeftDiv2],

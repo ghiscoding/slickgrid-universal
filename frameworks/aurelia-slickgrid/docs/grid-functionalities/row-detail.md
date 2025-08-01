@@ -146,7 +146,7 @@ Most of the time we would get data asynchronously, during that time we can show 
 ###### View (`preload.html`)
 ```html
 <template>
-  <h4><i class="mdi mdi-sync mdi-spin-1s mdi-50px"></i>Loading...</h4>
+  <h4><i class="mdi mdi-sync mdi-spin-1s font-50px"></i>Loading...</h4>
 </template>
 ```
 

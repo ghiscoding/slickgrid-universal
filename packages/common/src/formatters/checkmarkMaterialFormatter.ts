@@ -24,5 +24,5 @@ export const checkmarkMaterialFormatter: Formatter = (_row, _cell, value) => {
     isChecked = true;
   }
 
-  return isChecked ? createDomElement('i', { className: 'mdi mdi-18px mdi-check checkmark-icon', ariaHidden: 'true' }) : '';
+  return isChecked ? createDomElement('i', { className: 'mdi font-18px mdi-check checkmark-icon', ariaHidden: 'true' }) : '';
 };

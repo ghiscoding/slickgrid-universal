@@ -154,7 +154,7 @@ Most of the time we would get data asynchronously, during that time we can show 
 <template>
   <div class="container-fluid" style="margin-top: 10px">
     <h4>
-      <i class="mdi mdi-sync mdi-spin mdi-50px"></i>
+      <i class="mdi mdi-sync mdi-spin font-50px"></i>
       Loading...
     </h4>
   </div>

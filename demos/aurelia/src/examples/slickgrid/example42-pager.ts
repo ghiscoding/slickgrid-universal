@@ -34,10 +34,10 @@ import './example42-pager.scss';
 <nav aria-label="Page navigation">
   <ul class="custom-pagination-ul">
     <li class="li page-item seek-first" disabled.class="isLeftPaginationDisabled">
-      <a class="pagination-link mdi mdi-page-first icon-seek-first mdi-22px" aria-label="First Page" role="button" click.trigger="onFirstPageClicked($event)"></a>
+      <a class="pagination-link mdi mdi-page-first icon-seek-first font-22px" aria-label="First Page" role="button" click.trigger="onFirstPageClicked($event)"></a>
     </li>
     <li class="li page-item seek-prev" disabled.class="isLeftPaginationDisabled">
-      <a class="pagination-link icon-seek-prev mdi mdi-chevron-down mdi-22px mdi-rotate-90" aria-label="Previous Page" role="button" click.trigger="onPreviousPageClicked($event)"></a>
+      <a class="pagination-link icon-seek-prev mdi mdi-chevron-down font-22px mdi-rotate-90" aria-label="Previous Page" role="button" click.trigger="onPreviousPageClicked($event)"></a>
     </li>
   </ul>
 </nav>
@@ -50,10 +50,10 @@ import './example42-pager.scss';
 <nav aria-label="Page navigation">
   <ul class="custom-pagination-ul">
     <li class="li page-item seek-next" disabled.class="isRightPaginationDisabled" click.trigger="onNextPageClicked($event)">
-      <a class="pagination-link icon-seek-next mdi mdi-chevron-down mdi-22px mdi-rotate-270" aria-label="Next Page" role="button" ></a>
+      <a class="pagination-link icon-seek-next mdi mdi-chevron-down font-22px mdi-rotate-270" aria-label="Next Page" role="button" ></a>
     </li>
     <li class="li page-item seek-end"  disabled.class="isRightPaginationDisabled">
-      <a class="pagination-link icon-seek-end mdi mdi-page-last mdi-22px" aria-label="Last Page" role="button" click.trigger="onLastPageClicked($event)"></a>
+      <a class="pagination-link icon-seek-end mdi mdi-page-last font-22px" aria-label="Last Page" role="button" click.trigger="onLastPageClicked($event)"></a>
     </li>
   </ul>
 </nav>

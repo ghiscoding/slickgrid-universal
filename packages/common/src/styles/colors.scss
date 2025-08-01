@@ -7,90 +7,247 @@
 // we'll use the same color set as text-colors defined in Bootstrap 4 (ref: https://getbootstrap.com/docs/4.5/utilities/colors/)
 // we also use the "recolor" @mixin to add CSS "filter" color on top of SVG icons
 
-// NOTE: remember that we are using CSS "filter" and that is NOT the same as a using regular color/background-color, it behaves differently
+// DEPRECATIONS: I'm deprecating `text-color-xyz` and renaming them all to `color-xyz` (for simplification),
+// for now both will work but `text-color-xyz` will be dropped in v10
 
-$text-color-lighten-percentage: 6% !default;
-$text-color-darken-percentage: 6% !default;
+$color-lighten-percentage: 6% !default;
+$color-darken-percentage: 6% !default;
 
-$text-color-primary: v.$slick-primary-color !default;
-$text-color-secondary: #6c757d !default;
-$text-color-success: #28a745 !default;
-$text-color-danger: #dc3545 !default;
-$text-color-warning: #ffc107 !default;
-$text-color-info: #17a2b8 !default;
-$text-color-light: #f8f9fa !default;
-$text-color-dark: #343a40 !default;
-$text-color-body: #212529 !default;
-$text-color-muted: #6c757d !default;
-$text-color-white: #ffffff !default;
-$text-color-disabled: #DDDBDA !default;
-$text-color-disabled-dark: #cccccc !default;
-$text-color-alt-default: #1e87f0 !default;
-$text-color-alt-warning: #faa05a !default;
-$text-color-alt-danger: #f0506e !default;
-$text-color-alt-success: #32d296 !default;
-$text-color-se-primary: #3dcd58 !default;
-$text-color-se-link: #42b4e6 !default;
-$text-color-se-link-dark: #337ab7 !default;
-$text-color-se-danger: #b10043 !default;
-$text-color-se-secondary: #9fa0a4 !default;
-$text-color-se-warning: #e47f00 !default;
-$text-color-se-warning-light: #ffd100 !default;
-$text-color-sf-highlight: #0070D2 !default;
-$text-color-sf-primary: #006DCC !default;
-$text-color-sf-primary-dark: #004487 !default;
+$color-primary: v.$slick-primary-color !default;
+$color-secondary: #6c757d !default;
+$color-success: #28a745 !default;
+$color-danger: #dc3545 !default;
+$color-warning: #ffc107 !default;
+$color-info: #17a2b8 !default;
+$color-light: #f8f9fa !default;
+$color-dark: #343a40 !default;
+$color-body: #212529 !default;
+$color-muted: #6c757d !default;
+$color-white: #ffffff !default;
+$color-disabled: #dddbda !default;
+$color-disabled-dark: #cccccc !default;
+$color-alt-default: #1e87f0 !default;
+$color-alt-warning: #faa05a !default;
+$color-alt-danger: #f0506e !default;
+$color-alt-success: #32d296 !default;
+$color-se-primary: #3dcd58 !default;
+$color-se-link: #42b4e6 !default;
+$color-se-link-dark: #337ab7 !default;
+$color-se-danger: #b10043 !default;
+$color-se-secondary: #9fa0a4 !default;
+$color-se-warning: #e47f00 !default;
+$color-se-warning-light: #ffd100 !default;
+$color-sf-highlight: #0070d2 !default;
+$color-sf-primary: #006dcc !default;
+$color-sf-primary-dark: #004487 !default;
 
 // new simple
-.text-color-primary { color: var(--text-color-primary, $text-color-primary); }
-.text-color-secondary { color: var(--text-color-secondary, $text-color-secondary); }
-.text-color-success { color: var(--text-color-success, $text-color-success); }
-.text-color-danger { color: var(--text-color-danger, $text-color-danger); }
-.text-color-warning { color: var(--text-color-warning, $text-color-warning); }
-.text-color-info { color: var(--text-color-info, $text-color-info); }
-.text-color-light { color: var(--text-color-light, $text-color-light); }
-.text-color-dark { color: var(--text-color-dark, $text-color-dark); }
-.text-color-body { color: var(--text-color-body, $text-color-body); }
-.text-color-muted { color: var(--text-color-muted, $text-color-muted); }
-.text-color-white { color: var(--text-color-white, $text-color-white); }
-.text-color-disabled { color: var(--text-color-disabled, $text-color-disabled); }
-.text-color-disabled-dark { color: var(--text-color-disabled-dark, $text-color-disabled-dark); }
-.text-color-alt-default { color: var(--text-color-alt-default, $text-color-alt-default); }
-.text-color-alt-warning { color: var(--text-color-alt-warning, $text-color-alt-warning); }
-.text-color-alt-danger { color: var(--text-color-alt-danger, $text-color-alt-danger); }
-.text-color-alt-success { color: var(--text-color-alt-success, $text-color-alt-success); }
-.text-color-se-primary { color: var(--text-color-se-primary, $text-color-se-primary); }
-.text-color-se-link { color: var(--text-color-se-link, $text-color-se-link); }
-.text-color-se-link-dark { color: var(--text-color-se-link-dark, $text-color-se-link-dark); }
-.text-color-se-danger { color: var(--text-color-se-danger, $text-color-se-danger); }
-.text-color-se-secondary { color: var(--text-color-se-secondary, $text-color-se-secondary); }
-.text-color-se-warning { color: var(--text-color-se-warning, $text-color-se-warning); }
-.text-color-se-warning-light { color: var(--text-color-se-warning-light, $text-color-se-warning-light); }
-.text-color-sf-highlight { color: var(--text-color-sf-highlight, $text-color-sf-highlight); }
-.text-color-sf-primary { color: var(--text-color-sf-primary, $text-color-sf-primary); }
-.text-color-sf-primary-dark { color: var(--text-color-sf-primary-dark, $text-color-sf-primary-dark); }
+.color-primary,
+.text-color-primary {
+  color: var(--color-primary, $color-primary);
+}
+.color-secondary,
+.text-color-secondary {
+  color: var(--color-secondary, $color-secondary);
+}
+.color-success,
+.text-color-success {
+  color: var(--color-success, $color-success);
+}
+.color-danger,
+.text-color-danger {
+  color: var(--color-danger, $color-danger);
+}
+.color-warning,
+.text-color-warning {
+  color: var(--color-warning, $color-warning);
+}
+.color-info,
+.text-color-info {
+  color: var(--color-info, $color-info);
+}
+.color-light,
+.text-color-light {
+  color: var(--color-light, $color-light);
+}
+.color-dark,
+.text-color-dark {
+  color: var(--color-dark, $color-dark);
+}
+.color-body,
+.text-color-body {
+  color: var(--color-body, $color-body);
+}
+.color-muted,
+.text-color-muted {
+  color: var(--color-muted, $color-muted);
+}
+.color-white,
+.text-color-white {
+  color: var(--color-white, $color-white);
+}
+.color-disabled,
+.text-color-disabled {
+  color: var(--color-disabled, $color-disabled);
+}
+.color-disabled-dark,
+.text-color-disabled-dark {
+  color: var(--color-disabled-dark, $color-disabled-dark);
+}
+.color-alt-default,
+.text-color-alt-default {
+  color: var(--color-alt-default, $color-alt-default);
+}
+.color-alt-warning,
+.text-color-alt-warning {
+  color: var(--color-alt-warning, $color-alt-warning);
+}
+.color-alt-danger,
+.text-color-alt-danger {
+  color: var(--color-alt-danger, $color-alt-danger);
+}
+.color-alt-success,
+.text-color-alt-success {
+  color: var(--color-alt-success, $color-alt-success);
+}
+.color-se-primary,
+.text-color-se-primary {
+  color: var(--color-se-primary, $color-se-primary);
+}
+.color-se-link,
+.text-color-se-link {
+  color: var(--color-se-link, $color-se-link);
+}
+.color-se-link-dark,
+.text-color-se-link-dark {
+  color: var(--color-se-link-dark, $color-se-link-dark);
+}
+.color-se-danger,
+.text-color-se-danger {
+  color: var(--color-se-danger, $color-se-danger);
+}
+.color-se-secondary,
+.text-color-se-secondary {
+  color: var(--color-se-secondary, $color-se-secondary);
+}
+.color-se-warning,
+.text-color-se-warning {
+  color: var(--color-se-warning, $color-se-warning);
+}
+.color-se-warning-light,
+.text-color-se-warning-light {
+  color: var(--color-se-warning-light, $color-se-warning-light);
+}
+.color-sf-highlight,
+.text-color-sf-highlight {
+  color: var(--color-sf-highlight, $color-sf-highlight);
+}
+.color-sf-primary,
+.text-color-sf-primary {
+  color: var(--color-sf-primary, $color-sf-primary);
+}
+.color-sf-primary-dark,
+.text-color-sf-primary-dark {
+  color: var(--color-sf-primary-dark, $color-sf-primary-dark);
+}
 
-.text-color-primary-light { color: color.adjust($text-color-primary, $lightness: $text-color-lighten-percentage); }
-.text-color-primary-dark { color: color.adjust($text-color-primary, $lightness: -$text-color-darken-percentage); }
-.text-color-secondary-light { color: color.adjust($text-color-secondary, $lightness: $text-color-lighten-percentage); }
-.text-color-secondary-dark { color: color.adjust($text-color-secondary, $lightness: -$text-color-darken-percentage); }
-.text-color-success-light { color: color.adjust($text-color-success, $lightness: $text-color-lighten-percentage); }
-.text-color-success-dark { color: color.adjust($text-color-success, $lightness: -$text-color-darken-percentage); }
-.text-color-danger-light { color: color.adjust($text-color-danger, $lightness: $text-color-lighten-percentage); }
-.text-color-danger-dark { color: color.adjust($text-color-danger, $lightness: -$text-color-darken-percentage); }
-.text-color-warning-light { color: color.adjust($text-color-warning, $lightness: $text-color-lighten-percentage); }
-.text-color-warning-dark { color: color.adjust($text-color-warning, $lightness: -$text-color-darken-percentage); }
-.text-color-info-light { color: color.adjust($text-color-info, $lightness: $text-color-lighten-percentage); }
-.text-color-info-dark { color: color.adjust($text-color-info, $lightness: -$text-color-darken-percentage); }
-.text-color-body-light { color: color.adjust($text-color-body, $lightness: $text-color-lighten-percentage); }
-.text-color-body-dark { color: color.adjust($text-color-body, $lightness: -$text-color-darken-percentage); }
-.text-color-muted-light { color: color.adjust($text-color-muted, $lightness: $text-color-lighten-percentage); }
-.text-color-muted-dark { color: color.adjust($text-color-muted, $lightness: -$text-color-darken-percentage); }
-.text-color-alt-warning-light { color: color.adjust($text-color-alt-warning, $lightness: $text-color-lighten-percentage); }
-.text-color-alt-warning-dark { color: color.adjust($text-color-alt-warning, $lightness: -$text-color-darken-percentage); }
-.text-color-alt-default-light { color: color.adjust($text-color-alt-default, $lightness: $text-color-lighten-percentage); }
-.text-color-alt-default-dark { color: color.adjust($text-color-alt-default, $lightness: -$text-color-darken-percentage); }
-.text-color-alt-danger-light { color: color.adjust($text-color-alt-danger, $lightness: $text-color-lighten-percentage); }
-.text-color-alt-danger-dark { color: color.adjust($text-color-alt-danger, $lightness: -$text-color-darken-percentage); }
-.text-color-alt-success-light { color: color.adjust($text-color-alt-success, $lightness: $text-color-lighten-percentage); }
-.text-color-alt-success-dark { color: color.adjust($text-color-alt-success, $lightness: -$text-color-darken-percentage); }
-.text-color-se-secondary-light { color: color.adjust($text-color-se-secondary, $lightness: $text-color-lighten-percentage); }
+.color-primary-light,
+.text-color-primary-light {
+  color: color.adjust($color-primary, $lightness: $color-lighten-percentage);
+}
+.color-primary-dark,
+.text-color-primary-dark {
+  color: color.adjust($color-primary, $lightness: -$color-darken-percentage);
+}
+.color-secondary-light,
+.text-color-secondary-light {
+  color: color.adjust($color-secondary, $lightness: $color-lighten-percentage);
+}
+.color-secondary-dark,
+.text-color-secondary-dark {
+  color: color.adjust($color-secondary, $lightness: -$color-darken-percentage);
+}
+.color-success-light,
+.text-color-success-light {
+  color: color.adjust($color-success, $lightness: $color-lighten-percentage);
+}
+.color-success-dark,
+.text-color-success-dark {
+  color: color.adjust($color-success, $lightness: -$color-darken-percentage);
+}
+.color-danger-light,
+.text-color-danger-light {
+  color: color.adjust($color-danger, $lightness: $color-lighten-percentage);
+}
+.color-danger-dark,
+.text-color-danger-dark {
+  color: color.adjust($color-danger, $lightness: -$color-darken-percentage);
+}
+.color-warning-light,
+.text-color-warning-light {
+  color: color.adjust($color-warning, $lightness: $color-lighten-percentage);
+}
+.color-warning-dark,
+.text-color-warning-dark {
+  color: color.adjust($color-warning, $lightness: -$color-darken-percentage);
+}
+.color-info-light,
+.text-color-info-light {
+  color: color.adjust($color-info, $lightness: $color-lighten-percentage);
+}
+.color-info-dark,
+.text-color-info-dark {
+  color: color.adjust($color-info, $lightness: -$color-darken-percentage);
+}
+.color-body-light,
+.text-color-body-light {
+  color: color.adjust($color-body, $lightness: $color-lighten-percentage);
+}
+.color-body-dark,
+.text-color-body-dark {
+  color: color.adjust($color-body, $lightness: -$color-darken-percentage);
+}
+.color-muted-light,
+.text-color-muted-light {
+  color: color.adjust($color-muted, $lightness: $color-lighten-percentage);
+}
+.color-muted-dark,
+.text-color-muted-dark {
+  color: color.adjust($color-muted, $lightness: -$color-darken-percentage);
+}
+.color-alt-warning-light,
+.text-color-alt-warning-light {
+  color: color.adjust($color-alt-warning, $lightness: $color-lighten-percentage);
+}
+.color-alt-warning-dark,
+.text-color-alt-warning-dark {
+  color: color.adjust($color-alt-warning, $lightness: -$color-darken-percentage);
+}
+.color-alt-default-light,
+.text-color-alt-default-light {
+  color: color.adjust($color-alt-default, $lightness: $color-lighten-percentage);
+}
+.color-alt-default-dark,
+.text-color-alt-default-dark {
+  color: color.adjust($color-alt-default, $lightness: -$color-darken-percentage);
+}
+.color-alt-danger-light,
+.text-color-alt-danger-light {
+  color: color.adjust($color-alt-danger, $lightness: $color-lighten-percentage);
+}
+.color-alt-danger-dark,
+.text-color-alt-danger-dark {
+  color: color.adjust($color-alt-danger, $lightness: -$color-darken-percentage);
+}
+.color-alt-success-light,
+.text-color-alt-success-light {
+  color: color.adjust($color-alt-success, $lightness: $color-lighten-percentage);
+}
+.color-alt-success-dark,
+.text-color-alt-success-dark {
+  color: color.adjust($color-alt-success, $lightness: -$color-darken-percentage);
+}
+.color-se-secondary-light,
+.text-color-se-secondary-light {
+  color: color.adjust($color-se-secondary, $lightness: $color-lighten-percentage);
+}

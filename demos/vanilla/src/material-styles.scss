@@ -9,6 +9,7 @@
     $dark-primary-color: #66bb6a;
     $primary-color: #009530;
     $slick-primary-color: #009530;
+    --color-primary: #009530;
     --text-color-primary: #009530;
     --slick-primary-color: #009530;
     --slick-header-menu-display: inline-block;
@@ -212,7 +213,8 @@
   body.material-theme .slick-dark-mode,
   body.material-theme .slick-dark-mode .ms-dark-mode,
   body.material-theme .slick-dark-mode .slick-submenu,
-  body.material-theme .dark-mode .text-color-primary {
+  body.material-theme .dark-mode .text-color-primary,
+  body.material-theme .dark-mode .color-primary {
     --slick-primary-color: #66bb6a;
     --slick-menu-color: #ededed;
     --slick-menu-bg-color: #212121;

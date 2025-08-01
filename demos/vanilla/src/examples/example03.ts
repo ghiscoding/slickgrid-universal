@@ -63,7 +63,7 @@ export default class Example03 {
     this._bindingEventService.bind(
       gridContainerElm,
       'onbeforeexporttoexcel',
-      () => (this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-22px')
+      () => (this.loadingClass = 'mdi mdi-load mdi-spin-1s font-22px')
     );
     this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => (this.loadingClass = ''));
     this.sgb = new Slicker.GridBundle(
@@ -99,7 +99,7 @@ export default class Example03 {
         filterable: true,
         grouping: {
           getter: 'title',
-          formatter: (g) => `Title: ${g.value} <span class="text-color-primary">(${g.count} items)</span>`,
+          formatter: (g) => `Title: ${g.value} <span class="color-primary">(${g.count} items)</span>`,
           aggregators: [new Aggregators.Sum('cost')],
           aggregateCollapsed: false,
           collapsed: false,
@@ -124,7 +124,7 @@ export default class Example03 {
         groupTotalsFormatter: GroupTotalFormatters.sumTotals,
         grouping: {
           getter: 'duration',
-          formatter: (g) => `Duration: ${g.value} <span class="text-color-primary">(${g.count} items)</span>`,
+          formatter: (g) => `Duration: ${g.value} <span class="color-primary">(${g.count} items)</span>`,
           comparer: (a, b) => {
             return this.durationOrderByCount ? a.count - b.count : SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc);
           },
@@ -148,7 +148,7 @@ export default class Example03 {
         editor: { model: Editors.date },
         grouping: {
           getter: 'start',
-          formatter: (g) => `Start: ${g.value} <span class="text-color-primary">(${g.count} items)</span>`,
+          formatter: (g) => `Start: ${g.value} <span class="color-primary">(${g.count} items)</span>`,
           aggregators: [new Aggregators.Sum('cost')],
           aggregateCollapsed: false,
           collapsed: false,
@@ -172,7 +172,7 @@ export default class Example03 {
         filter: { model: Filters.dateRange },
         grouping: {
           getter: 'finish',
-          formatter: (g) => `Finish: ${g.value} <span class="text-color-primary">(${g.count} items)</span>`,
+          formatter: (g) => `Finish: ${g.value} <span class="color-primary">(${g.count} items)</span>`,
           aggregators: [new Aggregators.Sum('cost')],
           aggregateCollapsed: false,
           collapsed: false,
@@ -193,7 +193,7 @@ export default class Example03 {
         type: 'number',
         grouping: {
           getter: 'cost',
-          formatter: (g) => `Cost: ${g.value} <span class="text-color-primary">(${g.count} items)</span>`,
+          formatter: (g) => `Cost: ${g.value} <span class="color-primary">(${g.count} items)</span>`,
           aggregators: [new Aggregators.Sum('cost')],
           aggregateCollapsed: true,
           collapsed: true,
@@ -217,7 +217,7 @@ export default class Example03 {
         groupTotalsFormatter: GroupTotalFormatters.avgTotalsPercentage,
         grouping: {
           getter: 'percentComplete',
-          formatter: (g) => `% Complete:  ${g.value} <span class="text-color-primary">(${g.count} items)</span>`,
+          formatter: (g) => `% Complete:  ${g.value} <span class="color-primary">(${g.count} items)</span>`,
           aggregators: [new Aggregators.Sum('cost')],
           aggregateCollapsed: false,
           collapsed: false,
@@ -247,7 +247,7 @@ export default class Example03 {
         formatter: Formatters.checkmarkMaterial,
         grouping: {
           getter: 'effortDriven',
-          formatter: (g) => `Effort-Driven: ${g.value ? 'True' : 'False'} <span class="text-color-primary">(${g.count} items)</span>`,
+          formatter: (g) => `Effort-Driven: ${g.value ? 'True' : 'False'} <span class="color-primary">(${g.count} items)</span>`,
           aggregators: [new Aggregators.Sum('duration'), new Aggregators.Sum('cost')],
           collapsed: false,
         },
@@ -260,7 +260,7 @@ export default class Example03 {
         maxWidth: 90,
         excludeFromExport: true,
         formatter: () => {
-          return `<div class="fake-hyperlink text-color-primary flex justify-center">Action <i class="mdi mdi-chevron-down"></i></div>`;
+          return `<div class="fake-hyperlink color-primary flex justify-center">Action <i class="mdi mdi-chevron-down"></i></div>`;
         },
         cellMenu: {
           hideCloseButton: false,
@@ -375,7 +375,7 @@ export default class Example03 {
       draggableGrouping: {
         dropPlaceHolderText: 'Drop a column header here to group by the column',
         // hideGroupSortIcons: true,
-        deleteIconCssClass: 'mdi mdi-close text-color-danger',
+        deleteIconCssClass: 'mdi mdi-close color-danger',
         sortAscIconCssClass: 'mdi mdi-arrow-up',
         sortDescIconCssClass: 'mdi mdi-arrow-down',
         onGroupChanged: (_e, args) => this.onGroupChanged(args),

@@ -266,7 +266,7 @@ function hideSpinner() {
 
 function showSpinner() {
   if (isLargeDataset.value) {
-    loadingClass.value = 'mdi mdi-load mdi-spin-1s mdi-24px color-alt-success';
+    loadingClass.value = 'mdi mdi-load mdi-spin-1s font-24px color-alt-success';
   }
 }
 
@@ -387,7 +387,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
   <h2>
     Example 27: Tree Data
     <small>
-      <span class="mdi mdi-file-tree mdi-27px"></span> (from a flat dataset with <code>parentId</code> references -
+      <span class="mdi mdi-file-tree font-27px"></span> (from a flat dataset with <code>parentId</code> references -
       <a href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/tree-data-grid" target="_blank">Wiki</a>)</small
     >
     <span class="float-end">

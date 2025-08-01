@@ -449,8 +449,7 @@ export default class Example14 {
         maxWidth: 70,
         excludeFromExport: true,
         cssClass: 'justify-center flex',
-        formatter: () =>
-          `<div class="button-style action-btn"><span class="mdi mdi-chevron-down mdi-22px text-color-primary"></span></div>`,
+        formatter: () => `<div class="button-style action-btn"><span class="mdi mdi-chevron-down font-22px color-primary"></span></div>`,
         cellMenu: {
           hideCloseButton: false,
           commandTitle: 'Commands',
@@ -467,9 +466,9 @@ export default class Example14 {
               command: 'delete-row',
               title: 'Delete Row',
               positionOrder: 64,
-              iconCssClass: 'mdi mdi-close text-color-danger',
+              iconCssClass: 'mdi mdi-close color-danger',
               cssClass: 'red',
-              textCssClass: 'text-italic text-color-danger-light',
+              textCssClass: 'text-italic color-danger-light',
               // only show command to 'Delete Row' when the task is not completed
               itemVisibilityOverride: (args) => {
                 return !args.dataContext?.completed;
@@ -654,7 +653,7 @@ export default class Example14 {
   }
 
   showSpinner() {
-    this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-24px text-color-alt-success';
+    this.loadingClass = 'mdi mdi-load mdi-spin-1s font-24px color-alt-success';
   }
 
   loadData(count: number) {
@@ -1054,11 +1053,11 @@ export default class Example14 {
     return `<div class="autocomplete-container-list">
       <div class="autocomplete-left">
         <!--<img src="http://i.stack.imgur.com/pC1Tv.jpg" width="50" />-->
-        <span class="mdi ${item.icon} mdi-26px"></span>
+        <span class="mdi ${item.icon} font-26px"></span>
       </div>
       <div>
         <span class="autocomplete-top-left">
-          <span class="mdi ${item.itemTypeName === 'I' ? 'mdi-information-outline' : 'mdi-content-copy'} mdi-14px"></span>
+          <span class="mdi ${item.itemTypeName === 'I' ? 'mdi-information-outline' : 'mdi-content-copy'} font-14px"></span>
           ${item.itemName}
         </span>
       <div>
@@ -1072,11 +1071,11 @@ export default class Example14 {
     return `<div class="autocomplete-container-list">
           <div class="autocomplete-left">
             <!--<img src="http://i.stack.imgur.com/pC1Tv.jpg" width="50" />-->
-            <span class="mdi ${item.icon} mdi-26px"></span>
+            <span class="mdi ${item.icon} font-26px"></span>
           </div>
           <div>
             <span class="autocomplete-top-left">
-              <span class="mdi ${item.itemTypeName === 'I' ? 'mdi-information-outline' : 'mdi-content-copy'} mdi-14px"></span>
+              <span class="mdi ${item.itemTypeName === 'I' ? 'mdi-information-outline' : 'mdi-content-copy'} font-14px"></span>
               ${item.itemName}
             </span>
             <span class="autocomplete-top-right">${formatNumber(item.listPrice, 2, 2, false, '$')}</span>

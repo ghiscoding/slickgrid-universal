@@ -26,7 +26,7 @@ const priceFormatter: Formatter = (_cell, _row, value, _col, dataContext) => {
   const direction = dataContext.priceChange >= 0 ? 'up' : 'down';
   const fragment = new DocumentFragment();
   const divElm = document.createElement('div');
-  divElm.className = `d-inline-flex align-items-center text-color-${direction === 'up' ? 'success' : 'danger'}`;
+  divElm.className = `d-inline-flex align-items-center color-${direction === 'up' ? 'success' : 'danger'}`;
   const spanElm = document.createElement('span');
   spanElm.className = `mdi mdi-arrow-${direction}`;
   divElm.appendChild(spanElm);
@@ -40,7 +40,7 @@ const priceFormatter: Formatter = (_cell, _row, value, _col, dataContext) => {
 };
 
 const transactionTypeFormatter: Formatter = (_row, _cell, value: string) =>
-  `<div class="d-inline-flex align-items-center gap-5px"><span class="mdi mdi-16px mdi-${value === 'Buy' ? 'plus' : 'minus'}-circle ${value === 'Buy' ? 'text-color-info' : 'text-color-warning'}"></span> ${value}</div>`;
+  `<div class="d-inline-flex align-items-center gap-5px"><span class="mdi font-16px mdi-${value === 'Buy' ? 'plus' : 'minus'}-circle ${value === 'Buy' ? 'color-info' : 'color-warning'}"></span> ${value}</div>`;
 
 const historicSparklineFormatter: Formatter = (_row, _cell, _value: string, _col, dataContext) => {
   if (dataContext.historic.length < 2) {
@@ -143,7 +143,7 @@ export default class Example18 {
         grouping: {
           getter: 'currency',
           formatter: (g) =>
-            `Currency: <span class="text-color-primary text-bold">${g.value}</span>  <span class="text-color-success-light">(${g.count} items)</span>`,
+            `Currency: <span class="color-primary text-bold">${g.value}</span>  <span class="color-success-light">(${g.count} items)</span>`,
           aggregators: [new Aggregators.Sum('amount')],
           aggregateCollapsed: true,
           collapsed: false,
@@ -161,7 +161,7 @@ export default class Example18 {
         grouping: {
           getter: 'market',
           formatter: (g) =>
-            `Market: <span class="text-color-primary text-bold">${g.value}</span>  <span class="text-color-success-light">(${g.count} items)</span>`,
+            `Market: <span class="color-primary text-bold">${g.value}</span>  <span class="color-success-light">(${g.count} items)</span>`,
           aggregators: [new Aggregators.Sum('amount')],
           aggregateCollapsed: true,
           collapsed: false,
@@ -188,7 +188,7 @@ export default class Example18 {
         grouping: {
           getter: 'trsnType',
           formatter: (g) =>
-            `Type: <span class="text-color-primary text-bold">${g.value}</span>  <span class="text-color-success-light">(${g.count} items)</span>`,
+            `Type: <span class="color-primary text-bold">${g.value}</span>  <span class="color-success-light">(${g.count} items)</span>`,
           aggregators: [new Aggregators.Sum('amount')],
           aggregateCollapsed: true,
           collapsed: false,
@@ -284,7 +284,7 @@ export default class Example18 {
       },
       draggableGrouping: {
         dropPlaceHolderText: 'Drop a column header here to group by any of these available columns: Currency, Market or Type',
-        deleteIconCssClass: 'mdi mdi-close text-color-danger',
+        deleteIconCssClass: 'mdi mdi-close color-danger',
         sortAscIconCssClass: 'mdi mdi-arrow-up',
         sortDescIconCssClass: 'mdi mdi-arrow-down',
       },

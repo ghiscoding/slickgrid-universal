@@ -265,7 +265,7 @@ export class Example27 {
 
   showSpinner() {
     if (this.isLargeDataset) {
-      this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-24px color-alt-success';
+      this.loadingClass = 'mdi mdi-load mdi-spin-1s font-24px color-alt-success';
     }
   }
 

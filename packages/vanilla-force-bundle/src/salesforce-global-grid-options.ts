@@ -3,7 +3,7 @@ import { EventNamingStyle } from '@slickgrid-universal/event-pub-sub';
 
 // create empty warning message as Document Fragment to be CSP safe
 const emptyWarningElm = document.createElement('div');
-emptyWarningElm.appendChild(createDomElement('span', { className: 'mdi mdi-alert text-color-warning' }));
+emptyWarningElm.appendChild(createDomElement('span', { className: 'mdi mdi-alert color-warning' }));
 emptyWarningElm.appendChild(createDomElement('span', { textContent: 'No data to display.' }));
 
 // copy to clipboard override since the default clipboard API isn't supported in Salesforce
@@ -37,8 +37,8 @@ export const SalesforceGlobalGridOptions = {
   },
   eventNamingStyle: EventNamingStyle.lowerCaseWithoutOnPrefix,
   compositeEditorOptions: {
-    resetEditorButtonCssClass: 'mdi mdi-refresh mdi-15px',
-    resetFormButtonIconCssClass: 'mdi mdi-refresh mdi-16px mdi-flip-h',
+    resetEditorButtonCssClass: 'mdi mdi-refresh font-15px',
+    resetFormButtonIconCssClass: 'mdi mdi-refresh font-16px mdi-flip-h',
     shouldPreviewMassChangeDataset: true,
   },
   datasetIdPropertyName: 'Id',

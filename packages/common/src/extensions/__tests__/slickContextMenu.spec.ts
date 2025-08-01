@@ -36,7 +36,7 @@ const commandItemsMock = [
         command: 'more-sub-commands',
         title: 'More Sub Commands',
         subMenuTitle: 'Sub Command Title 2',
-        subMenuTitleCssClass: 'text-color-warning',
+        subMenuTitleCssClass: 'color-warning',
         commandItems: [{ command: 'command5', title: 'Command 5', positionOrder: 72 }],
       },
     ],
@@ -742,7 +742,7 @@ describe('ContextMenu Plugin', () => {
         expect(commandList2Elm.querySelectorAll('.slick-menu-item').length).toBe(3);
         expect(commandContentElm2.textContent).toBe('Sub Commands');
         expect(subMenuTitleElm.textContent).toBe('Sub Command Title 2');
-        expect(subMenuTitleElm.className).toBe('slick-menu-title text-color-warning');
+        expect(subMenuTitleElm.className).toBe('slick-menu-title color-warning');
         expect(commandChevronElm.className).toBe('sub-item-chevron mdi mdi-chevron-right');
         expect(subCommand3Elm.textContent).toContain('Command 3');
         expect(subCommand5Elm.textContent).toContain('Command 5');

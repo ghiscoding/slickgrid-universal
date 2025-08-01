@@ -439,7 +439,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
   <h2>
     Example 28: Tree Data with Aggregators
     <small>
-      <span class="mdi mdi-file-tree mdi-27px"></span> (from a Hierarchical Dataset -
+      <span class="mdi mdi-file-tree font-27px"></span> (from a Hierarchical Dataset -
       <a href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/tree-data-grid" target="_blank">Wiki</a>)</small
     >
     <span class="float-end">

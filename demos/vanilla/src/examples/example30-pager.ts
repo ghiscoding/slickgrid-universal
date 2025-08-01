@@ -94,10 +94,10 @@ export class CustomPager implements BasePaginationComponent {
           <nav aria-label="Page navigation">
             <ul class="custom-pagination-ul">
               <li class="${this.firstButtonClasses}">
-                <a class="page-link mdi mdi-page-first icon-seek-first mdi-22px" aria-label="First Page" role="button"></a>
+                <a class="page-link mdi mdi-page-first icon-seek-first font-22px" aria-label="First Page" role="button"></a>
               </li>
               <li class="${this.prevButtonClasses}">
-                <a class="page-link icon-seek-prev mdi mdi-chevron-down mdi-22px mdi-rotate-90" aria-label="Previous Page" role="button"></a>
+                <a class="page-link icon-seek-prev mdi mdi-chevron-down font-22px mdi-rotate-90" aria-label="Previous Page" role="button"></a>
               </li>
             </ul>
           </nav>
@@ -110,10 +110,10 @@ export class CustomPager implements BasePaginationComponent {
           <nav aria-label="Page navigation">
             <ul class="custom-pagination-ul">
               <li class="${this.nextButtonClasses}">
-                <a class="page-link icon-seek-next mdi mdi-chevron-down mdi-22px mdi-rotate-270" aria-label="Next Page" role="button"></a>
+                <a class="page-link icon-seek-next mdi mdi-chevron-down font-22px mdi-rotate-270" aria-label="Next Page" role="button"></a>
               </li>
               <li class="${this.lastButtonClasses}">
-                <a class="page-link icon-seek-end mdi mdi-page-last mdi-22px" aria-label="Last Page" role="button"></a>
+                <a class="page-link icon-seek-end mdi mdi-page-last font-22px" aria-label="Last Page" role="button"></a>
               </li>
             </ul>
           </nav>
