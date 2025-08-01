@@ -42,6 +42,31 @@ describe('Example 02 - Grouping & Aggregators', () => {
     cy.get('.grid2').find('.slick-custom-footer').find('.left-footer').contains('created with Slickgrid-Universal');
   });
 
+  it('should copy "Task 2" cell text to clipboard and paste it and expect 111 items shown in the footer', () => {
+    cy.get('.search-filter.filter-title').clear();
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`).should('contain', 'Task 2');
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`).rightclick({ force: true });
+    cy.get('.slick-context-menu.dropright .slick-menu-command-list')
+      .find('.slick-menu-item:nth(0)')
+      .find('.slick-menu-content')
+      .contains('Copy')
+      .click();
+
+    // paste in filter
+    // paste is not yet supported in Cypress, so we need to invoke the value manually (see: https://github.com/cypress-io/cypress/issues/2386)
+    cy.get('.search-filter.filter-title').clear().type('{ctrl+v}');
+    cy.get('.search-filter.filter-title').invoke('val', 'Task 2');
+    cy.get('.search-filter.filter-title').type('{enter}');
+
+    cy.get('.grid2')
+      .find('.slick-custom-footer')
+      .find('.right-footer')
+      .should(($span) => {
+        const text = removeExtraSpaces($span.text()); // remove all white spaces
+        expect(text).to.include('111 of 500 items');
+      });
+  });
+
   it('should type a filter in the Title and expect 176 items shown in the footer', () => {
     cy.get('.search-filter.filter-title').clear().type('2');
 
