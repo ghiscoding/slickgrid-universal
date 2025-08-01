@@ -51,7 +51,7 @@ const priceFormatter: Formatter = (_cell, _row, value, _col, dataContext) => {
 };
 
 const transactionTypeFormatter: Formatter = (_row, _cell, value: string) =>
-  `<div class="d-inline-flex align-items-center"><span class="me-1 mdi mdi-16px mdi-${value === 'Buy' ? 'plus' : 'minus'}-circle ${value === 'Buy' ? 'text-info' : 'text-warning'}"></span> ${value}</div>`;
+  `<div class="d-inline-flex align-items-center"><span class="me-1 mdi font-16px mdi-${value === 'Buy' ? 'plus' : 'minus'}-circle ${value === 'Buy' ? 'text-info' : 'text-warning'}"></span> ${value}</div>`;
 
 const historicSparklineFormatter: Formatter = (_row, _cell, _value: string, _col, dataContext) => {
   if (dataContext.historic.length < 2) {
@@ -270,7 +270,7 @@ function defineGrid() {
     },
     draggableGrouping: {
       dropPlaceHolderText: 'Drop a column header here to group by any of these available columns: Currency, Market or Type',
-      deleteIconCssClass: 'mdi mdi-close text-color-danger',
+      deleteIconCssClass: 'mdi mdi-close color-danger',
       sortAscIconCssClass: 'mdi mdi-arrow-up',
       sortDescIconCssClass: 'mdi mdi-arrow-down',
     },

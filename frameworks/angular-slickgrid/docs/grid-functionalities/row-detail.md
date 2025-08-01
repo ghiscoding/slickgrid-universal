@@ -149,7 +149,7 @@ Most of the time we would get data asynchronously, during that time we can show 
 import { Component } from '@angular/core';
 
 @Component({
-  template: `<h4><i class="mdi mdi-sync mdi-spin-1s mdi-50px"></i>Loading...</h4>`
+  template: `<h4><i class="mdi mdi-sync mdi-spin-1s font-50px"></i>Loading...</h4>`
 })
 export class RowDetailPreloadComponent {}
 ```

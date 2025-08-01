@@ -17,7 +17,7 @@ export default class Icons {
 
       const iconElm = document.createElement('span');
       iconElm.className = icon.replace(/\./gi, ' ');
-      iconElm.classList.add('mdi-24px');
+      iconElm.classList.add('font-24px');
       iconElm.title = icon.replace('.mdi.', '');
       iconElm.style.marginRight = '5px';
       iconDivElm.appendChild(iconElm);

@@ -45,9 +45,10 @@
   }
 }
 
-// font-5px up to 50px / mdi-5px to 50px
+// font-8px up to 50px / mdi-8px to 50px
 // since SVG icons are now pure CSS, we can merge font-x with mdi-x
-@for $i from 5 through 50 {
+@for $i from 8 through 50 {
+  // @deprecated, @use `font-{$i}px` instead and mdi-{$i}px will be dropped in v10
   .mdi.mdi-#{$i}px,
   .font-#{$i}px {
     font-size: #{$i}px !important;

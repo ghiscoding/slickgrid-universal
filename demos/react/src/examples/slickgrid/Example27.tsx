@@ -245,7 +245,7 @@ const Example27: React.FC = () => {
   }
 
   function showSpinner() {
-    setLoadingClass('mdi mdi-load mdi-spin-1s mdi-24px color-alt-success');
+    setLoadingClass('mdi mdi-load mdi-spin-1s font-24px color-alt-success');
   }
 
   function loadData(rowCount: number) {

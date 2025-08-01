@@ -253,7 +253,7 @@ export class Example27Component implements OnInit {
 
   showSpinner() {
     if (this.isLargeDataset) {
-      this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-24px';
+      this.loadingClass = 'mdi mdi-load mdi-spin-1s font-24px';
     }
   }
 

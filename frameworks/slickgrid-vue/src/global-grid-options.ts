@@ -50,8 +50,8 @@ export const GlobalGridOptions: Partial<GridOption> = {
       massUpdateStatusKey: 'ALL_X_RECORDS_SELECTED',
       saveButtonKey: 'SAVE',
     },
-    resetEditorButtonCssClass: 'mdi mdi-refresh mdi-15px',
-    resetFormButtonIconCssClass: 'mdi mdi-refresh mdi-16px mdi-flip-h',
+    resetEditorButtonCssClass: 'mdi mdi-refresh font-15px',
+    resetFormButtonIconCssClass: 'mdi mdi-refresh font-16px mdi-flip-h',
   },
   contextMenu: {
     autoAdjustDrop: true,

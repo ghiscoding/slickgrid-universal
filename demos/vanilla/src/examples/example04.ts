@@ -110,7 +110,7 @@ export default class Example04 {
           collection: Array.from(Array(101).keys()).map((k) => ({
             value: k,
             label: k,
-            symbol: '<i class="mdi mdi-percent-outline text-color-info"></i>',
+            symbol: '<i class="mdi mdi-percent-outline color-info"></i>',
           })),
           customStructure: {
             value: 'value',
@@ -459,9 +459,9 @@ export default class Example04 {
           }
         },
         optionItems: [
-          { option: 0, iconCssClass: 'mdi mdi-checkbox-blank-outline text-color-secondary', title: 'Not Started (0%)' },
+          { option: 0, iconCssClass: 'mdi mdi-checkbox-blank-outline color-secondary', title: 'Not Started (0%)' },
           { option: 50, iconCssClass: 'mdi mdi-flip-vertical', title: 'Half Completed (50%)' },
-          { option: 100, iconCssClass: 'mdi mdi-checkbox-marked text-color-success', title: 'Completed (100%)' },
+          { option: 100, iconCssClass: 'mdi mdi-checkbox-marked color-success', title: 'Completed (100%)' },
           'divider',
           {
             // we can also have multiple nested sub-menus
@@ -469,9 +469,9 @@ export default class Example04 {
             title: 'Sub-Options (demo)',
             subMenuTitle: 'Set Percent Complete',
             optionItems: [
-              { option: 0, iconCssClass: 'mdi mdi-checkbox-blank-outline text-color-secondary', title: 'Not Started (0%)' },
+              { option: 0, iconCssClass: 'mdi mdi-checkbox-blank-outline color-secondary', title: 'Not Started (0%)' },
               { option: 50, iconCssClass: 'mdi mdi-flip-vertical', title: 'Half Completed (50%)' },
-              { option: 100, iconCssClass: 'mdi mdi-checkbox-marked text-color-success', title: 'Completed (100%)' },
+              { option: 100, iconCssClass: 'mdi mdi-checkbox-marked color-success', title: 'Completed (100%)' },
             ],
           },
         ],

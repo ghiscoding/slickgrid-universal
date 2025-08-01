@@ -235,3 +235,35 @@ columnDefinitions = [{
   },
 }];
 ```
+
+##### deprecating `text-color-xyz` and renaming them all to `color-xyz`
+
+I decided to deprecate all `text-color-...` and renaming them all to `color-...` which is much simpler to type and use. 
+
+You can do a "Search and Replace" in VSCode via Regular Expressions to replace them all easily:
+
+| Search        | Replace  |
+| ------------- | -------- |
+| `text-color-` | `color-` |
+
+For example:
+```diff
+- <span class="text-color-primary">Primary Text</span>
++ <span class="color-primary">Primary Text</span>
+```
+
+##### deprecating `mdi-[0-9]px` and keeping only `font-[0-9]px`
+
+Since I have 2 CSS utilities that do exactly the same, I'm dropping `mdi-..px` in favor of `font-..px` since that makes more sense to represent font sizes since it works on any type of elements (not just icons). 
+
+You can do a "Search and Replace" in VSCode via Regular Expressions to replace them all easily (**make sure to use `regex` in VSCode Search & Replace**):
+
+| Search (regex)   | Replace     |
+| ---------------- | ----------- |
+| `mdi-([0-9]*)px` | `font-$1px` |
+
+For example:
+```diff
+- <span class="mdi mdi-check mdi-22px"></span> Checkmark Icon
++ <span class="mdi mdi-check font-22px"></span> Checkmark Icon
+```

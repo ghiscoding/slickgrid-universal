@@ -160,7 +160,7 @@ export default class Example12 {
     this.columnDefinitions = [
       {
         id: 'title',
-        name: '<span title="Task must always be followed by a number" class="text-color-warning-dark mdi mdi-alert-outline"></span> Title <span title="Title is always rendered as UPPERCASE" class="mdi mdi-information-outline"></span>',
+        name: '<span title="Task must always be followed by a number" class="color-warning-dark mdi mdi-alert-outline"></span> Title <span title="Title is always rendered as UPPERCASE" class="mdi mdi-information-outline"></span>',
         field: 'title',
         sortable: true,
         minWidth: 75,
@@ -451,8 +451,7 @@ export default class Example12 {
         maxWidth: 70,
         excludeFromExport: true,
         cssClass: 'justify-center flex',
-        formatter: () =>
-          `<div class="button-style action-btn"><span class="mdi mdi-dots-vertical mdi-22px text-color-primary"></span></div>`,
+        formatter: () => `<div class="button-style action-btn"><span class="mdi mdi-dots-vertical font-22px color-primary"></span></div>`,
         cellMenu: {
           hideCloseButton: false,
           commandTitle: 'Commands',
@@ -1023,11 +1022,11 @@ export default class Example12 {
     return `<div class="autocomplete-container-list">
       <div class="autocomplete-left">
         <!--<img src="http://i.stack.imgur.com/pC1Tv.jpg" width="50" />-->
-        <span class="mdi ${item.icon} mdi-26px"></span>
+        <span class="mdi ${item.icon} font-26px"></span>
       </div>
       <div>
         <span class="autocomplete-top-left">
-          <span class="mdi ${item.itemTypeName === 'I' ? 'mdi-information-outline' : 'mdi-content-copy'} mdi-14px"></span>
+          <span class="mdi ${item.itemTypeName === 'I' ? 'mdi-information-outline' : 'mdi-content-copy'} font-14px"></span>
           ${item.itemName}
         </span>
         <div>
@@ -1041,11 +1040,11 @@ export default class Example12 {
     return `<div class="autocomplete-container-list">
       <div class="autocomplete-left">
         <!--<img src="http://i.stack.imgur.com/pC1Tv.jpg" width="50" />-->
-        <span class="mdi ${item.icon} mdi-26px"></span>
+        <span class="mdi ${item.icon} font-26px"></span>
       </div>
       <div>
         <span class="autocomplete-top-left">
-          <span class="mdi ${item.itemTypeName === 'I' ? 'mdi-information-outline' : 'mdi-content-copy'} mdi-14px"></span>
+          <span class="mdi ${item.itemTypeName === 'I' ? 'mdi-information-outline' : 'mdi-content-copy'} font-14px"></span>
           ${item.itemName}
         </span>
         <span class="autocomplete-top-right">${formatNumber(item.listPrice, 2, 2, false, '$')}</span>
@@ -1070,7 +1069,7 @@ export default class Example12 {
         modalTitle = 'Clone - {{title}}';
         break;
       case 'edit':
-        modalTitle = 'Editing - {{title}} (<span class="text-color-muted">id:</span> <span class="text-color-primary">{{id}}</span>)'; // 'Editing - {{title}} ({{product.itemName}})'
+        modalTitle = 'Editing - {{title}} (<span class="color-muted">id:</span> <span class="color-primary">{{id}}</span>)'; // 'Editing - {{title}} ({{product.itemName}})'
         break;
       case 'mass-update':
         modalTitle = 'Mass Update All Records';

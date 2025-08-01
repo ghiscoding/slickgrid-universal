@@ -49,7 +49,7 @@ export default class Example02 {
     this._bindingEventService.bind(
       gridContainerElm,
       'onbeforeexporttoexcel',
-      () => (this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-22px')
+      () => (this.loadingClass = 'mdi mdi-load mdi-spin-1s font-22px')
     );
     this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => (this.loadingClass = ''));
     this._bindingEventService.bind(gridContainerElm, 'onbeforesort', () => {

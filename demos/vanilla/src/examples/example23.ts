@@ -501,7 +501,7 @@ export default class Example23 {
     this.sgb?.dataView?.setGrouping({
       getter: 'taxable',
       formatter: (g) =>
-        `Taxable: <span class="mdi ${g.value ? checkIcon : uncheckIcon} text-color-se-danger"></span> <span class="text-color-primary">(${g.count} items)</span>`,
+        `Taxable: <span class="mdi ${g.value ? checkIcon : uncheckIcon} color-se-danger"></span> <span class="color-primary">(${g.count} items)</span>`,
       comparer: (a, b) => b.value - a.value,
       aggregators: [
         new Aggregators.Sum('price'),

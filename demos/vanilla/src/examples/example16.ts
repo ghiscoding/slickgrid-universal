@@ -47,7 +47,7 @@ export default class Example16 {
     this._bindingEventService.bind(
       gridContainerElm,
       'onbeforeexporttoexcel',
-      () => (this.loadingClass = 'mdi mdi-load mdi-spin-1s mdi-22px')
+      () => (this.loadingClass = 'mdi mdi-load mdi-spin-1s font-22px')
     );
     this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => (this.loadingClass = ''));
     this.sgb = new Slicker.GridBundle(
@@ -365,8 +365,7 @@ export default class Example16 {
         minWidth: 55,
         maxWidth: 55,
         cssClass: 'justify-center flex',
-        formatter: () =>
-          `<div class="button-style action-btn"><span class="mdi mdi-chevron-down mdi-22px text-color-primary"></span></div>`,
+        formatter: () => `<div class="button-style action-btn"><span class="mdi mdi-chevron-down font-22px color-primary"></span></div>`,
         excludeFromExport: true,
         // customTooltip: {
         //   formatter: () => `Click to open Cell Menu`, // return empty so it won't show any pre-tooltip
@@ -584,7 +583,7 @@ export default class Example16 {
       dataContext,
       grid
     ) as HTMLElement;
-    const out = `<div class="text-color-primary header-tooltip-title">${tooltipTitle}</div>
+    const out = `<div class="color-primary header-tooltip-title">${tooltipTitle}</div>
       <div class="tooltip-2cols-row"><div>Completion:</div> <div>${completionBar.outerHTML || ''}</div></div>
       <div class="tooltip-2cols-row"><div>Lifespan:</div> <div>${dataContext.__params.lifespan.toFixed(2)}</div></div>
       <div class="tooltip-2cols-row"><div>Ratio:</div> <div>${dataContext.__params.ratio.toFixed(2)}</div></div>
@@ -607,8 +606,7 @@ export default class Example16 {
       iconCount = 5;
     }
     for (let i = 0; i < iconCount; i++) {
-      const iconColor =
-        iconCount === 5 ? 'text-color-success' : iconCount >= 3 ? 'text-color-alt-warning' : 'text-color-se-secondary-light';
+      const iconColor = iconCount === 5 ? 'color-success' : iconCount >= 3 ? 'color-alt-warning' : 'color-se-secondary-light';
       output += `<span class="mdi mdi-check-circle-outline ${iconColor}"></span>`;
     }
     return output;

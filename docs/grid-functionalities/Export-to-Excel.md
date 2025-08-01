@@ -225,7 +225,7 @@ If you have lots of data, you might want to show a spinner telling the user that
 ##### View
 ```html
 <span if.bind="!processing">
-   <i class="mdi mdi-load mdi-spin-1s mdi-22px"></i>
+   <i class="mdi mdi-load mdi-spin-1s font-22px"></i>
 </span>
 
 <div class="grid2">

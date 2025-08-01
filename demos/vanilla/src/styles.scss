@@ -17,9 +17,10 @@ $link-color: #006dcc;
   .ms-drop.ms-dark-mode,
   .slick-dark-mode .ms-dark-mode,
   .slick-dark-mode,
-  .dark-mode .text-color-primary {
+  .dark-mode .text-color-primary,
+  .dark-mode .color-primary {
     --slick-primary-color: #66b8ff;
-    --text-color-primary: #66b8ff;
+    --color-primary: #66b8ff;
   }
 }
 
