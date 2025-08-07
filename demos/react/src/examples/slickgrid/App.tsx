@@ -46,6 +46,7 @@ import Example42 from './Example42.js';
 import Example43 from './Example43.js';
 import Example44 from './Example44.js';
 import Example45 from './Example45.js';
+import Example46 from './Example46.js';
 
 const routes: Array<{ path: string; route: string; component: any; title: string }> = [
   { path: 'example1', route: '/example1', component: <Example1 />, title: '1- Basic Grid / 2 Grids' },
@@ -92,6 +93,7 @@ const routes: Array<{ path: string; route: string; component: any; title: string
   { path: 'example43', route: '/example43', component: <Example43 />, title: '43- Colspan/Rowspan (timesheets)' },
   { path: 'example44', route: '/example44', component: <Example44 />, title: '44- Colspan/Rowspan (large data)' },
   { path: 'example45', route: '/example45', component: <Example45 />, title: '45- Row Detail with inner Grid' },
+  { path: 'example46', route: '/example46', component: <Example46 />, title: '46- Tree Data with Lazy Loading' },
 ];
 
 export default function Routes() {

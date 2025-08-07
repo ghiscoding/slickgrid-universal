@@ -3,6 +3,8 @@ import type { SortDirection, SortDirectionString } from '../enums/index.js';
 import type { Aggregator } from './aggregator.interface.js';
 import type { Formatter } from './formatter.interface.js';
 
+export type LAZY_TYPES = 'loading' | 'load-fail' | 'done' | undefined;
+
 export interface TreeDataOption extends TreeDataPropNames {
   /** Tree Data Aggregators array that can be provided to aggregate the tree (avg, sum, ...) */
   aggregators?: Aggregator[];
@@ -71,8 +73,20 @@ export interface TreeDataOption extends TreeDataPropNames {
    */
   exportIndentationLeadingSpaceCount?: number;
 
+  /** Defaults to False, should we load the tree data lazily (on demand) */
+  lazy?: boolean;
+
   /** Optional Title Formatter (allows you to format/style the title text differently) */
   titleFormatter?: Formatter;
+
+  /**
+   * Lazy load callback that should resolve the data that you're fetching lazily
+   * @param {*} node - node item that is being expanded
+   * @param {(value: T[]) => void} resolve - callback to resolve node children data
+   * @param {() => void} reject - callback to execute when fetch fails
+   * @returns
+   */
+  onLazyLoad?: (node: any, resolve: (value: any[]) => void, reject: () => void) => void;
 }
 
 export interface TreeDataPropNames {
@@ -90,6 +104,9 @@ export interface TreeDataPropNames {
    * NOTE: by default it will read the `datasetIdPropertyName` from the grid option, so it's typically better NOT to override this property.
    */
   identifierPropName?: string;
+
+  /** Defaults to "__lazyLoading", object property name used to designate the Lazy Collapsed flag */
+  lazyLoadingPropName?: string;
 
   /** Defaults to "__treeLevel", object property name used to designate the Tree Level depth number */
   levelPropName?: string;

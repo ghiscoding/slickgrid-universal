@@ -4,15 +4,6 @@
   transform: scaleX(var(--scale-x)) scaleY(var(--scale-y));
 }
 
-@keyframes sg-spin {
-  0% {
-    transform: rotate(0deg) scaleX(var(--scale-x, 1)) scaleY(var(--scale-y, 1));
-  }
-  100% {
-    transform: rotate(360deg) scaleX(var(--scale-x, 1)) scaleY(var(--scale-y, 1));
-  }
-}
-
 .mdi-flip-h {
   --scale-x: -1;
 }

@@ -1,9 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import type { Column, GridOption, BackendService } from '../../interfaces/index.js';
+import type { Column, GridOption, BackendService, CurrentFilter } from '../../interfaces/index.js';
 import { SumAggregator } from '../../aggregators/sumAggregator.js';
 import { SharedService } from '../shared.service.js';
+import type { FilterService } from '../filter.service.js';
 import type { SortService } from '../sort.service.js';
 import { TreeDataService } from '../treeData.service.js';
 import { type SlickDataView, SlickEvent, SlickEventData, type SlickEventHandler, type SlickGrid } from '../../core/index.js';
@@ -78,8 +79,15 @@ vi.mock('@slickgrid-universal/event-pub-sub', () => ({
   PubSubService: () => mockPubSub,
 }));
 
+const filterServiceStub = {
+  getPreviousFilters: vi.fn(),
+  refreshTreeDataFilters: vi.fn(),
+  updateFilters: vi.fn(),
+} as unknown as FilterService;
+
 const sortServiceStub = {
   clearSorting: vi.fn(),
+  getCurrentColumnSorts: vi.fn(),
   loadGridSorters: vi.fn(),
   sortHierarchicalDataset: vi.fn(),
 } as unknown as SortService;
@@ -97,9 +105,10 @@ describe('TreeData Service', () => {
     gridOptionsMock.treeDataOptions = {
       columnId: 'file',
     };
-    service = new TreeDataService(mockPubSub, sharedService, sortServiceStub);
+    service = new TreeDataService(mockPubSub, filterServiceStub, sharedService, sortServiceStub);
     slickgridEventHandler = service.eventHandler;
     vi.spyOn(gridStub, 'getData').mockReturnValue(dataViewStub);
+    vi.spyOn(filterServiceStub, 'getPreviousFilters').mockReturnValue([]);
     (unflattenParentChildArrayToTree as Mock).mockImplementationOnce(unflattenActual);
   });
 
@@ -335,6 +344,224 @@ describe('TreeData Service', () => {
         toggledItems: [{ isCollapsed: false, itemId: 123 }],
       });
       expect(spyUptItem).toHaveBeenCalledWith(123, { ...mockRowData, customCollapsed: false });
+    });
+
+    it('should toggle a collapsed item and execute lazy loading call and not add any children when resolving empty array', () => {
+      mockRowData.__collapsed = true;
+      vi.spyOn(gridStub, 'getData').mockReturnValue(dataViewStub);
+      const spyGetItem = vi.spyOn(dataViewStub, 'getItem').mockReturnValue(mockRowData);
+      vi.spyOn(SharedService.prototype, 'hierarchicalDataset', 'get')
+        .mockReturnValueOnce([mockRowData])
+        .mockReturnValueOnce([mockRowData])
+        .mockReturnValueOnce([mockRowData]);
+      const spyUptItem = vi.spyOn(dataViewStub, 'updateItem');
+      const spyInvalidate = vi.spyOn(gridStub, 'invalidate');
+      const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
+
+      gridOptionsMock.treeDataOptions!.lazy = true;
+      gridOptionsMock.treeDataOptions!.onLazyLoad = (_node, resolve) => {
+        resolve([]);
+      };
+
+      service.init(gridStub);
+      const eventData = new SlickEventData();
+      div.className = 'toggle';
+      Object.defineProperty(eventData, 'target', { writable: true, value: div });
+      service.currentToggledItems = [{ itemId: 123, isCollapsed: true }];
+
+      gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, eventData, gridStub);
+
+      expect(service.getToggledItems().length).toBe(1);
+      expect(spyGetItem).toHaveBeenCalled();
+      expect(spyInvalidate).toHaveBeenCalled();
+      expect(service.getCurrentToggleState()).toEqual({
+        type: 'toggle-expand',
+        previousFullToggleType: 'full-expand',
+        toggledItems: [{ isCollapsed: false, itemId: 123 }],
+      });
+      expect(spyUptItem).toHaveBeenCalledWith(123, { ...mockRowData, __collapsed: false });
+      expect(spyUptItem).toHaveBeenCalledWith(123, { ...mockRowData, __collapsed: false, __lazyLoading: 'done', __hasChildren: true });
+      expect(service.getToggledItems()).toEqual([{ itemId: 123, isCollapsed: false }]);
+      expect(SharedService.prototype.hierarchicalDataset![0].file).toBe('myFile.txt');
+      expect(SharedService.prototype.hierarchicalDataset![0].__collapsed).toBe(false);
+      expect(pubSubSpy).not.toHaveBeenCalledWith(`onTreeItemToggled`);
+    });
+
+    it('should toggle a collapsed item and execute lazy loading error when not add any children when callback fails', () => {
+      mockRowData.__collapsed = true;
+      vi.spyOn(gridStub, 'getData').mockReturnValue(dataViewStub);
+      const spyGetItem = vi.spyOn(dataViewStub, 'getItem').mockReturnValue(mockRowData);
+      vi.spyOn(SharedService.prototype, 'hierarchicalDataset', 'get')
+        .mockReturnValueOnce([mockRowData])
+        .mockReturnValueOnce([mockRowData])
+        .mockReturnValueOnce([mockRowData]);
+      const spyUptItem = vi.spyOn(dataViewStub, 'updateItem');
+      const spyInvalidate = vi.spyOn(gridStub, 'invalidate');
+      const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
+
+      gridOptionsMock.treeDataOptions!.lazy = true;
+      gridOptionsMock.treeDataOptions!.onLazyLoad = (_node, _resolve, fail) => {
+        fail();
+      };
+
+      service.init(gridStub);
+      const eventData = new SlickEventData();
+      div.className = 'toggle';
+      Object.defineProperty(eventData, 'target', { writable: true, value: div });
+      service.currentToggledItems = [{ itemId: 123, isCollapsed: true }];
+
+      gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, eventData, gridStub);
+
+      expect(service.getToggledItems().length).toBe(1);
+      expect(spyGetItem).toHaveBeenCalled();
+      expect(spyInvalidate).toHaveBeenCalled();
+      expect(service.getCurrentToggleState()).toEqual({
+        type: 'toggle-expand',
+        previousFullToggleType: 'full-expand',
+        toggledItems: [{ isCollapsed: false, itemId: 123 }],
+      });
+      expect(spyUptItem).toHaveBeenCalledWith(123, { ...mockRowData, __collapsed: false });
+      expect(spyUptItem).toHaveBeenCalledWith(123, { ...mockRowData, __collapsed: false, __lazyLoading: 'load-fail', __hasChildren: true });
+      expect(service.getToggledItems()).toEqual([{ itemId: 123, isCollapsed: false }]);
+      expect(SharedService.prototype.hierarchicalDataset![0].file).toBe('myFile.txt');
+      expect(SharedService.prototype.hierarchicalDataset![0].__collapsed).toBe(false);
+      expect(pubSubSpy).not.toHaveBeenCalledWith(`onTreeItemToggled`);
+    });
+
+    it('should toggle a collapsed item and execute lazy loading call and add children when resolving array with items', () => {
+      const mockFlatDataset = [
+        { id: 0, file: 'TXT', size: 5.8, __hasChildren: true, __treeLevel: 0 },
+        { id: 1, file: 'myFile.txt', size: 0.5, __treeLevel: 1, __parentId: 0 },
+        { id: 2, file: 'myMusic.txt', size: 5.3, __treeLevel: 1, __parentId: 0 },
+        { id: 5, file: 'travel', __hasChildren: true, __treeLevel: 1, __parentId: 0 },
+        { id: 6, file: 'holiday2025.txt', size: 0.22, __treeLevel: 2, __parentId: 2 },
+        { id: 7, file: 'MP3', size: 3.4, __hasChildren: true, __treeLevel: 0 },
+      ];
+      const mockHierarchical = [
+        {
+          id: 0,
+          file: 'TXT',
+          files: [
+            { id: 1, file: 'myFile.txt', size: 0.5 },
+            { id: 2, file: 'myMusic.txt', size: 5.3 },
+            { id: 5, file: 'travel', files: [{ id: 6, file: 'holiday2025.txt', size: 0.22, __treeLevel: 2, __parentId: 2 }], __treeLevel: 1, __parentId: 0 },
+          ],
+        },
+        { id: 7, file: 'MP3', files: [] },
+      ];
+
+      mockRowData.__collapsed = true;
+      vi.spyOn(gridStub, 'getData').mockReturnValue(dataViewStub);
+      const spyGetItem = vi.spyOn(dataViewStub, 'getItem').mockReturnValue(mockRowData);
+      vi.spyOn(SharedService.prototype, 'hierarchicalDataset', 'get')
+        .mockReturnValueOnce([mockRowData])
+        .mockReturnValueOnce([mockRowData])
+        .mockReturnValueOnce([mockRowData]);
+      const spyUptItem = vi.spyOn(dataViewStub, 'updateItem');
+      const spyInvalidate = vi.spyOn(gridStub, 'invalidate');
+      const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
+      vi.spyOn(sortServiceStub, 'sortHierarchicalDataset').mockReturnValueOnce({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
+
+      gridOptionsMock.treeDataOptions!.lazy = true;
+      gridOptionsMock.treeDataOptions!.childrenPropName = 'files';
+      gridOptionsMock.treeDataOptions!.onLazyLoad = (node, resolve) => {
+        resolve([
+          { id: 1, file: 'myFile.txt', size: 0.5, __treeLevel: 1, __parentId: 0 },
+          { id: 2, file: 'myMusic.txt', size: 5.3, __treeLevel: 1, __parentId: 0 },
+          { id: 3, file: 'travel', files: [{ id: 4, file: 'holiday2025.txt', size: 0.22, __treeLevel: 2, __parentId: 2 }], __treeLevel: 1, __parentId: 0 },
+        ]);
+      };
+
+      service.init(gridStub);
+      const eventData = new SlickEventData();
+      div.className = 'toggle';
+      Object.defineProperty(eventData, 'target', { writable: true, value: div });
+      service.currentToggledItems = [{ itemId: 123, isCollapsed: true }];
+
+      gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, eventData, gridStub);
+
+      expect(service.getToggledItems().length).toBe(1);
+      expect(spyGetItem).toHaveBeenCalled();
+      expect(spyInvalidate).toHaveBeenCalled();
+      expect(service.getCurrentToggleState()).toEqual({
+        type: 'toggle-expand',
+        previousFullToggleType: 'full-expand',
+        toggledItems: [{ isCollapsed: false, itemId: 123 }],
+      });
+      expect(spyUptItem).toHaveBeenCalledWith(123, { ...mockRowData, __collapsed: false, __lazyLoading: 'done' });
+      expect(service.getToggledItems()).toEqual([{ itemId: 123, isCollapsed: false }]);
+      expect(SharedService.prototype.hierarchicalDataset![0].file).toBe('myFile.txt');
+      expect(pubSubSpy).not.toHaveBeenCalledWith(`onTreeItemToggled`);
+    });
+
+    it('should toggle a collapsed item and execute lazy loading call and reapply any previous Filter when assigned and add children when resolving array with items', () => {
+      const mockFlatDataset = [
+        { id: 0, file: 'TXT', size: 5.8, __hasChildren: true, __treeLevel: 0 },
+        { id: 1, file: 'myFile.txt', size: 0.5, __treeLevel: 1, __parentId: 0 },
+        { id: 2, file: 'myMusic.txt', size: 5.3, __treeLevel: 1, __parentId: 0 },
+        { id: 5, file: 'travel', __hasChildren: true, __treeLevel: 1, __parentId: 0 },
+        { id: 6, file: 'holiday2025.txt', size: 0.22, __treeLevel: 2, __parentId: 2 },
+        { id: 7, file: 'MP3', size: 3.4, __hasChildren: true, __treeLevel: 0 },
+      ];
+      const mockHierarchical = [
+        {
+          id: 0,
+          file: 'TXT',
+          files: [
+            { id: 1, file: 'myFile.txt', size: 0.5 },
+            { id: 2, file: 'myMusic.txt', size: 5.3 },
+            { id: 5, file: 'travel', files: [{ id: 6, file: 'holiday2025.txt', size: 0.22, __treeLevel: 2, __parentId: 2 }], __treeLevel: 1, __parentId: 0 },
+          ],
+        },
+        { id: 7, file: 'MP3', files: [] },
+      ];
+      const prevFiltersMock = [{ columnId: 'size', operator: '<', searchTerms: ['5'] }] as CurrentFilter[];
+
+      mockRowData.__collapsed = true;
+      vi.spyOn(gridStub, 'getData').mockReturnValue(dataViewStub);
+      const spyGetItem = vi.spyOn(dataViewStub, 'getItem').mockReturnValue(mockRowData);
+      const updateFilterSpy = vi.spyOn(filterServiceStub, 'updateFilters');
+      vi.spyOn(filterServiceStub, 'getPreviousFilters').mockReturnValueOnce(prevFiltersMock);
+      vi.spyOn(SharedService.prototype, 'hierarchicalDataset', 'get')
+        .mockReturnValueOnce([mockRowData])
+        .mockReturnValueOnce([mockRowData])
+        .mockReturnValueOnce([mockRowData]);
+      const spyUptItem = vi.spyOn(dataViewStub, 'updateItem');
+      const spyInvalidate = vi.spyOn(gridStub, 'invalidate');
+      const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
+      vi.spyOn(sortServiceStub, 'sortHierarchicalDataset').mockReturnValueOnce({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
+
+      gridOptionsMock.treeDataOptions!.lazy = true;
+      gridOptionsMock.treeDataOptions!.childrenPropName = 'files';
+      gridOptionsMock.treeDataOptions!.onLazyLoad = (_node, resolve) => {
+        resolve([
+          { id: 1, file: 'myFile.txt', size: 0.5, __treeLevel: 1, __parentId: 0 },
+          { id: 2, file: 'myMusic.txt', size: 5.3, __treeLevel: 1, __parentId: 0 },
+          { id: 3, file: 'travel', files: [{ id: 4, file: 'holiday2025.txt', size: 0.22, __treeLevel: 2, __parentId: 2 }], __treeLevel: 1, __parentId: 0 },
+        ]);
+      };
+
+      service.init(gridStub);
+      const eventData = new SlickEventData();
+      div.className = 'toggle';
+      Object.defineProperty(eventData, 'target', { writable: true, value: div });
+      service.currentToggledItems = [{ itemId: 123, isCollapsed: true }];
+
+      gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, eventData, gridStub);
+
+      expect(updateFilterSpy).toHaveBeenCalledWith(prevFiltersMock);
+      expect(service.getToggledItems().length).toBe(1);
+      expect(spyGetItem).toHaveBeenCalled();
+      expect(spyInvalidate).toHaveBeenCalled();
+      expect(service.getCurrentToggleState()).toEqual({
+        type: 'toggle-expand',
+        previousFullToggleType: 'full-expand',
+        toggledItems: [{ isCollapsed: false, itemId: 123 }],
+      });
+      expect(spyUptItem).toHaveBeenCalledWith(123, { ...mockRowData, __collapsed: false, __lazyLoading: 'done' });
+      expect(service.getToggledItems()).toEqual([{ itemId: 123, isCollapsed: false }]);
+      expect(SharedService.prototype.hierarchicalDataset![0].file).toBe('myFile.txt');
+      expect(pubSubSpy).not.toHaveBeenCalledWith(`onTreeItemToggled`);
     });
   });
 

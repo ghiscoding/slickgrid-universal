@@ -134,7 +134,7 @@ const filterFactory = new FilterFactory(slickgridConfig, translaterService, coll
 const filterService = new FilterService(filterFactory as any, eventPubSubService, sharedService, backendUtilityService);
 const resizerService = new ResizerService(eventPubSubService);
 const sortService = new SortService(collectionService, sharedService, eventPubSubService, backendUtilityService);
-const treeDataService = new TreeDataService(eventPubSubService, sharedService, sortService);
+const treeDataService = new TreeDataService(eventPubSubService, filterService, sharedService, sortService);
 const paginationService = new PaginationService(eventPubSubService, sharedService, backendUtilityService);
 const extensionService: ExtensionService = new ExtensionService(
   extensionUtility,

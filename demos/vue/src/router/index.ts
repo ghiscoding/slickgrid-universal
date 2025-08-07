@@ -46,6 +46,7 @@ import Example42 from '../components/Example42.vue';
 import Example43 from '../components/Example43.vue';
 import Example44 from '../components/Example44.vue';
 import Example45 from '../components/Example45.vue';
+import Example46 from '../components/Example46.vue';
 import Home from '../Home.vue';
 
 export const routes: RouteRecordRaw[] = [
@@ -96,6 +97,7 @@ export const routes: RouteRecordRaw[] = [
   { path: '/example43', name: '43- Colspan/Rowspan (timesheets)', component: Example43 },
   { path: '/example44', name: '44- Colspan/Rowspan (large data)', component: Example44 },
   { path: '/example45', name: '45- Row Detail with inner Grid', component: Example45 },
+  { path: '/example46', name: '46- Tree Data with Lazy Loading', component: Example46 },
 ];
 
 export const router = createRouter({

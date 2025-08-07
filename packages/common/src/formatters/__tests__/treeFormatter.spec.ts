@@ -235,4 +235,70 @@ describe('Tree Formatter', () => {
       `<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle" aria-expanded="false"></div><span class="slick-tree-title" level="0">444444</span>`
     );
   });
+
+  describe('lazy loading', () => {
+    beforeEach(() => {
+      dataset = [
+        {
+          id: 0,
+          firstName: 'John',
+          lastName: 'Smith',
+          fullName: 'John Smith',
+          email: 'john.smith@movie.com',
+          address: { zip: 123456 },
+          parentId: null,
+          indent: 0,
+          __collapsed: false,
+          __hasChildren: true,
+          __lazyLoading: 'load-fail',
+        },
+        {
+          id: 1,
+          firstName: 'Jane',
+          lastName: 'Doe',
+          fullName: 'Jane Doe',
+          email: 'jane.doe@movie.com',
+          address: { zip: 222222 },
+          parentId: 0,
+          indent: 1,
+          __collapsed: false,
+          __hasChildren: true,
+          __lazyLoading: 'done',
+        },
+        {
+          id: 2,
+          firstName: 'Bob',
+          lastName: 'Cane',
+          fullName: 'Bob Cane',
+          email: 'bob.cane@movie.com',
+          address: { zip: 333333 },
+          parentId: 1,
+          indent: 2,
+          __collapsed: true,
+          __hasChildren: true,
+        },
+      ];
+      mockGridOptions = {
+        treeDataOptions: { levelPropName: 'indent' },
+      } as GridOption;
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
+    });
+    it('should return a span with collapsed icon and class name of "slick-tree-load-fail" when lazy loading failed', () => {
+      const output = treeFormatter(0, 1, dataset[0]['firstName'], {} as Column, dataset[0], gridStub) as FormatterResultWithHtml;
+
+      expect(output.addClasses).toBe('slick-tree-level-0');
+      expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
+        `<span style="display: inline-block; width: 0px;"></span><div class="slick-group-toggle load-fail" aria-expanded="false"></div><span class="slick-tree-load-fail"></span><span class="slick-tree-title" level="0">John</span>`
+      );
+    });
+
+    it('should return a span with expanded icon and 15px indentation when item is a parent and lazy loading resolved successfully', () => {
+      const output = treeFormatter(1, 1, dataset[1]['firstName'], {} as Column, dataset[1], gridStub) as FormatterResultWithHtml;
+
+      expect(output.addClasses).toBe('slick-tree-level-1');
+      expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
+        `<span style="display: inline-block; width: 15px;"></span><div class="slick-group-toggle expanded" aria-expanded="true"></div><span class="slick-tree-title" level="1">Jane</span>`
+      );
+    });
+  });
 });

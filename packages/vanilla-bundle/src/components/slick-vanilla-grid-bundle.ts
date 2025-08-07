@@ -371,8 +371,8 @@ export class SlickVanillaGridBundle<TData = any> {
     this.resizerService = services?.resizerService ?? new ResizerService(this._eventPubSubService);
     // prettier-ignore
     this.sortService = services?.sortService ?? new SortService(this.collectionService, this.sharedService, this._eventPubSubService, this.backendUtilityService);
-    this.treeDataService = services?.treeDataService ?? new TreeDataService(this._eventPubSubService, this.sharedService, this.sortService);
-
+    // prettier-ignore
+    this.treeDataService = services?.treeDataService ?? new TreeDataService(this._eventPubSubService, this.filterService, this.sharedService, this.sortService);
     // prettier-ignore
     this.paginationService = services?.paginationService ?? new PaginationService(this._eventPubSubService, this.sharedService, this.backendUtilityService);
 

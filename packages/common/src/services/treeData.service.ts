@@ -5,6 +5,7 @@ import type {
   Column,
   ColumnSort,
   GridOption,
+  LAZY_TYPES,
   OnClickEventArgs,
   TreeDataOption,
   TreeToggledItem,
@@ -16,6 +17,7 @@ import {
   getTreeDataOptionPropName,
   unflattenParentChildArrayToTree,
 } from './utilities.js';
+import type { FilterService } from './filter.service.js';
 import type { SharedService } from './shared.service.js';
 import type { SortService } from './sort.service.js';
 import { type SlickDataView, SlickEventHandler, type SlickGrid, type SlickEventData } from '../core/index.js';
@@ -34,6 +36,7 @@ export class TreeDataService {
 
   constructor(
     protected readonly pubSubService: BasePubSubService,
+    protected readonly filterService: FilterService,
     protected readonly sharedService: SharedService,
     protected readonly sortService: SortService
   ) {
@@ -64,6 +67,10 @@ export class TreeDataService {
 
   get gridOptions(): GridOption {
     return this._grid?.getOptions() ?? {};
+  }
+
+  get datasetIdPropName(): string {
+    return this.gridOptions.datasetIdPropertyName || 'id';
   }
 
   get treeDataOptions(): TreeDataOption | undefined {
@@ -341,11 +348,10 @@ export class TreeDataService {
     flatDataset: P[],
     gridOptions: GridOption
   ): T[] {
-    const dataViewIdIdentifier = gridOptions?.datasetIdPropertyName ?? 'id';
     const treeDataOpt: TreeDataOption = gridOptions?.treeDataOptions ?? { columnId: 'id' };
     const treeDataOptions = {
       ...treeDataOpt,
-      identifierPropName: treeDataOpt.identifierPropName ?? dataViewIdIdentifier,
+      identifierPropName: treeDataOpt.identifierPropName ?? this.datasetIdPropName,
       initiallyCollapsed: this._isLastFullToggleCollapsed, // use the last full toggled flag so that if we replace the entire dataset we will still use the last toggled flag (this flag is also initialized with `initiallyCollapsed` when provided)
     };
     return unflattenParentChildArrayToTree(flatDataset, treeDataOptions);
@@ -407,6 +413,7 @@ export class TreeDataService {
   async toggleTreeDataCollapse(collapsing: boolean, shouldTriggerEvent = true): Promise<void> {
     if (this.gridOptions?.enableTreeData) {
       const hasChildrenPropName = getTreeDataOptionPropName(this.treeDataOptions, 'hasChildrenPropName');
+      const lazyLoadingPropName = getTreeDataOptionPropName(this.treeDataOptions, 'lazyLoadingPropName');
 
       // emit an event when full toggle starts (useful to show a spinner)
       if (shouldTriggerEvent) {
@@ -419,7 +426,11 @@ export class TreeDataService {
       // toggle the collapsed flag but only when it's a parent item with children
       const flatDataItems = this.dataView.getItems() || [];
       flatDataItems.forEach((item: any) => {
-        if (item[hasChildrenPropName]) {
+        if (
+          item[hasChildrenPropName] &&
+          // allow expand if it isn't using lazy loading OR it the lazy node was already loaded
+          (!this.treeDataOptions?.lazy || collapsing || (!collapsing && !(this.treeDataOptions.lazy && !item[lazyLoadingPropName])))
+        ) {
           this.updateToggledItem(item, collapsing, false);
         }
       });
@@ -454,9 +465,10 @@ export class TreeDataService {
   protected handleOnCellClick(event: SlickEventData, args: OnClickEventArgs): void {
     if (event && args) {
       const targetElm: any = event.target || {};
-      const idPropName = this.gridOptions.datasetIdPropertyName ?? 'id';
       const collapsedPropName = getTreeDataOptionPropName(this.treeDataOptions, 'collapsedPropName');
       const childrenPropName = getTreeDataOptionPropName(this.treeDataOptions, 'childrenPropName');
+      const hasChildrenPropName = getTreeDataOptionPropName(this.treeDataOptions, 'hasChildrenPropName');
+      const lazyLoadingPropName = getTreeDataOptionPropName(this.treeDataOptions, 'lazyLoadingPropName');
 
       if (typeof targetElm?.className === 'string') {
         const hasToggleClass = targetElm.className.indexOf('toggle') >= 0 || false;
@@ -465,7 +477,7 @@ export class TreeDataService {
           if (item) {
             item[collapsedPropName] = !item[collapsedPropName]; // toggle the collapsed flag
             const isCollapsed = item[collapsedPropName];
-            const itemId = item[idPropName];
+            const itemId = item[this.datasetIdPropName];
             const parentFoundIdx = this._currentToggledItems.findIndex((treeChange) => treeChange.itemId === itemId);
             if (parentFoundIdx >= 0) {
               this._currentToggledItems[parentFoundIdx].isCollapsed = isCollapsed;
@@ -477,14 +489,83 @@ export class TreeDataService {
 
             // since we always keep 2 arrays as reference (flat + hierarchical)
             // we also need to update the hierarchical array with the new toggle flag
-            const searchTreePredicate = (treeItemToSearch: any) => treeItemToSearch[idPropName] === itemId;
+            const searchTreePredicate = (treeItemToSearch: any) => treeItemToSearch[this.datasetIdPropName] === itemId;
             const treeItemFound = findItemInTreeStructure(
               this.sharedService.hierarchicalDataset || [],
               searchTreePredicate,
               childrenPropName
             );
             if (treeItemFound) {
-              treeItemFound[collapsedPropName] = isCollapsed;
+              if (!this.treeDataOptions?.lazy) {
+                treeItemFound[collapsedPropName] = isCollapsed;
+              } else if (typeof this.treeDataOptions.onLazyLoad === 'function' && !isCollapsed) {
+                // execute lazy fetch but only if there wasn't any "__lazyLoading" props on the item
+                if (!treeItemFound?.[lazyLoadingPropName] || (treeItemFound[lazyLoadingPropName] as LAZY_TYPES) === 'load-fail') {
+                  // 1. change execution to "loading" which is used to show a "loading" icon instead of the open toggle group icon
+                  this.dataView?.updateItem(treeItemFound[this.datasetIdPropName], {
+                    ...treeItemFound,
+                    [lazyLoadingPropName]: 'loading' as LAZY_TYPES,
+                    [collapsedPropName]: true, // keep parent collapse until fetch resolves
+                    [hasChildrenPropName]: true,
+                  });
+
+                  // 2. execute end user lazy fetching of children items
+                  //    the 2nd arg callback is the data resolver which we'll use to push the data to the node children prop
+                  //    the 3rd arg callback is executed when lazy fetch fails
+                  const previousFilters = this.filterService.getPreviousFilters();
+                  this.treeDataOptions.onLazyLoad(
+                    treeItemFound,
+                    // 2.1 resolve callback (lazily fetch node children)
+                    (data) => {
+                      // time to expand the parent
+                      treeItemFound[collapsedPropName] = false;
+
+                      if (data.length) {
+                        // we need to collapse all nodes of that new data tree for next lazy node to work
+                        data.forEach((newItem) => {
+                          if (newItem[childrenPropName]) {
+                            newItem[collapsedPropName] = true;
+                          }
+                        });
+
+                        // we got data, we need to resort hierarchical data then re-update the flat dataset
+                        treeItemFound[childrenPropName] ??= [];
+                        treeItemFound[childrenPropName].push(...data);
+                        treeItemFound[lazyLoadingPropName] = 'done' as LAZY_TYPES;
+                        const sortColumns = this.sortService.getCurrentColumnSorts();
+                        const updatedCollection = this.sortService.sortHierarchicalDataset(
+                          this.sharedService.hierarchicalDataset || [],
+                          sortColumns
+                        );
+                        this.dataView?.setItems(updatedCollection.flat, this.datasetIdPropName);
+                      } else {
+                        // no data to push to children array, we can simply update the item to replace loading icon back to the toggle group icon
+                        this.dataView?.updateItem(treeItemFound[this.datasetIdPropName], {
+                          ...treeItemFound,
+                          [lazyLoadingPropName]: 'done' as LAZY_TYPES,
+                          [hasChildrenPropName]: true,
+                        });
+                      }
+
+                      // if there's any filters prior to lazily open the tree node, we need to reapply them
+                      // otherwise call the Tree Data refresh
+                      if (previousFilters.length) {
+                        this.filterService.updateFilters(previousFilters);
+                      } else {
+                        this.filterService.refreshTreeDataFilters();
+                      }
+                    },
+                    // 2.2 reject failure callback (lazy fetch fails)
+                    () => {
+                      this.dataView?.updateItem(treeItemFound[this.datasetIdPropName], {
+                        ...treeItemFound,
+                        [lazyLoadingPropName]: 'load-fail' as LAZY_TYPES,
+                        [hasChildrenPropName]: true,
+                      });
+                    }
+                  );
+                }
+              }
             }
 
             // and finally we can invalidate the grid to re-render the UI
@@ -512,18 +593,17 @@ export class TreeDataService {
    * however for toggle a batch (i.e. collapse all), we'll want to convert skip updating the tree but rather convert from flat to tree which is much quicker to execute.
    */
   protected updateToggledItem(item: any, isCollapsed: boolean, shouldUpdateTree: boolean): void {
-    const dataViewIdIdentifier = this.gridOptions?.datasetIdPropertyName ?? 'id';
     const childrenPropName = getTreeDataOptionPropName(this.treeDataOptions, 'childrenPropName');
     const collapsedPropName = getTreeDataOptionPropName(this.treeDataOptions, 'collapsedPropName');
 
     if (item) {
       // update the flat dataset item
       item[collapsedPropName] = isCollapsed;
-      this.dataView.updateItem(item[dataViewIdIdentifier], item);
+      this.dataView.updateItem(item[this.datasetIdPropName], item);
 
       // also update the hierarchical tree item
       if (shouldUpdateTree) {
-        const searchTreePredicate = (treeItemToSearch: any) => treeItemToSearch[dataViewIdIdentifier] === item[dataViewIdIdentifier];
+        const searchTreePredicate = (treeItemToSearch: any) => treeItemToSearch[this.datasetIdPropName] === item[this.datasetIdPropName];
         const treeItemFound = findItemInTreeStructure(this.sharedService.hierarchicalDataset || [], searchTreePredicate, childrenPropName);
         if (treeItemFound) {
           treeItemFound[collapsedPropName] = isCollapsed;

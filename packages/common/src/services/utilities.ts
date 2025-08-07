@@ -191,6 +191,9 @@ export function getTreeDataOptionPropName(
     case 'identifierPropName':
       propName = treeDataOptions?.identifierPropName ?? defaultDataIdPropName;
       break;
+    case 'lazyLoadingPropName':
+      propName = treeDataOptions?.lazyLoadingPropName ?? Constants.treeDataProperties.LAZY_LOADING_PROP;
+      break;
     case 'levelPropName':
       propName = treeDataOptions?.levelPropName ?? Constants.treeDataProperties.TREE_LEVEL_PROP;
       break;
@@ -260,7 +263,7 @@ export function unflattenParentChildArrayToTree<P, T extends P & { [childrenProp
 }
 
 /**
- * Find an item from a tree (hierarchical) view structure (a parent that can have children array which themseleves can children and so on)
+ * Find an item from a tree (hierarchical) view structure (a parent that can have children array which themseleves can have children and so on)
  * @param {Array<Object>} treeArray - hierarchical tree dataset
  * @param {Function} predicate - search predicate to find the item in the hierarchical tree structure
  * @param {String} childrenPropertyName - children property name to use in the tree (defaults to "children")

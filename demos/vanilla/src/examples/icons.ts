@@ -107,6 +107,8 @@ export default class Icons {
       '.mdi.mdi-chevron-down-box-outline',
       '.mdi.mdi-chevron-down-circle',
       '.mdi.mdi-chevron-down-circle-outline',
+      '.mdi.mdi-circle',
+      '.mdi.mdi-circle-outline',
       '.mdi.mdi-clipboard-check',
       '.mdi.mdi-clipboard-check-outline',
       '.mdi.mdi-clipboard-edit',

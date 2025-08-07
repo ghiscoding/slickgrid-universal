@@ -1,5 +1,14 @@
 $svg-icon-vertical-align: bottom !default;
 
+@keyframes sg-spin {
+  0% {
+    transform: rotate(0deg) scaleX(var(--scale-x, 1)) scaleY(var(--scale-y, 1));
+  }
+  100% {
+    transform: rotate(360deg) scaleX(var(--scale-x, 1)) scaleY(var(--scale-y, 1));
+  }
+}
+
 // credit goes to UnoCSS https://antfu.me/posts/icons-in-pure-css
 @mixin generateSvgClass($cssVarName, $svgPath) {
   .#{$cssVarName} {

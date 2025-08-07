@@ -1,0 +1,93 @@
+<h2>
+  <span>
+    Example 46: Tree Data with Lazy Loading
+    <small>
+      <span class="mdi mdi-file-tree mdi-27px"></span> (from a Hierarchical Dataset -
+      <a href="https://ghiscoding.gitbook.io/aurelia-slickgrid/grid-functionalities/tree-data-grid" target="_blank">Wiki</a>)</small
+    >
+  </span>
+  <span class="float-end">
+    <a
+      style="font-size: 18px"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example46.ts"
+    >
+      <span class="mdi mdi-link mdi-v-align-sub"></span> code
+    </a>
+  </span>
+  <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" click.trigger="toggleSubTitle()">
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
+</h2>
+
+<div class="subtitle">
+  <ul>
+    <li>
+      Lazy Loading only works with Hierarchical Tree Data, also when creating a Lazy Tree Data grid, you would typically assign the
+      <code>data</code> as the root collection but with empty children items.
+    </li>
+    <li>
+      However please note that Parents do require the children arrays to be defined but can be left as empty arrays (e.g.
+      <code>chapters: []</code> in our example). Parents without empty children arrays defined <b>will not</b> be detected as parents.
+    </li>
+    <li>
+      Calling the "Expand All" command will <b>only</b> expand the nodes that were already lazily loaded (the other ones will remain as
+      collapsed). Aggregators will also be lazily calculated and aggregate only the data that it currently has loaded.
+    </li>
+    <li>In the example below, clicking on the last <b>"Chapter X"</b> will demo an API call failure</li>
+  </ul>
+</div>
+
+<div class="row">
+  <div class="col-md-7">
+    <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="clear-filters-btn" click.trigger="clearFilters()">
+      <span class="mdi mdi-close"></span>
+      <span>Clear Filters</span>
+    </button>
+    <button click.trigger="collapseAll()" data-test="collapse-all-btn" class="btn btn-outline-secondary btn-xs btn-icon">
+      <span class="mdi mdi-arrow-collapse"></span>
+      <span>Collapse All</span>
+    </button>
+    <button click.trigger="expandAll()" data-test="expand-all-btn" class="btn btn-outline-secondary btn-xs btn-icon">
+      <span class="mdi mdi-arrow-expand"></span>
+      <span>Expand All</span>
+    </button>
+    <span class="ml-2">
+      <label for="pinned-rows">Simulated Server Delay (ms): </label>
+      <input type="number" id="server-delay" data-test="server-delay" style="width: 60px" value.bind="serverApiDelay" />
+    </span>
+  </div>
+
+  <div class="col-md-5">
+    <div class="input-group input-group-sm">
+      <input
+        type="text"
+        class="form-control search-string"
+        placeholder="search value"
+        autocomplete="off"
+        data-test="search-string"
+        value.bind="searchString"
+      />
+      <button
+        class="btn btn-sm btn-outline-secondary d-flex align-items-center"
+        data-test="clear-search-string"
+        click.trigger="clearSearch()"
+      >
+        <span class="icon mdi mdi-close-thick"></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<br />
+
+<div id="grid-container" class="col-sm-12">
+  <aurelia-slickgrid
+    grid-id="grid46"
+    columns.bind="columnDefinitions"
+    options.bind="gridOptions"
+    dataset-hierarchical.bind="datasetHierarchical"
+    instances.bind="aureliaGrid"
+  >
+  </aurelia-slickgrid>
+</div>
