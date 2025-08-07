@@ -16,6 +16,7 @@ catalog:
   '@types/fnando__sparkline': ^0.3.7
   '@types/node': ^22.16.5
   '@types/sortablejs': ^1.15.8
+  '@vitejs/plugin-react': ^5.0.0
   '@vitejs/plugin-vue': ^6.0.0
   '@vitest/coverage-v8': ^3.2.4
   '@vitest/ui': ^3.2.4

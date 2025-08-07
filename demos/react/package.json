@@ -61,7 +61,7 @@
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@types/sortablejs": "catalog:",
-    "@vitejs/plugin-react": "^5.0.0",
+    "@vitejs/plugin-react": "catalog:",
     "cross-env": "catalog:",
     "globals": "catalog:",
     "regenerator-runtime": "^0.14.1",
