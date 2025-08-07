@@ -15,9 +15,11 @@ import {
 } from 'slickgrid-react';
 import React, { useEffect, useRef, useState } from 'react';
 
+const NB_ITEMS = 1000;
+
 const Example13: React.FC = () => {
   const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
-  const [dataset, setDataset] = useState<any[]>(loadData(500));
+  const [dataset, setDataset] = useState<any[]>(loadData(NB_ITEMS));
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
   const reactGridRef = useRef<SlickgridReactInstance | null>(null);
   const [processing, setProcessing] = useState(false);
@@ -414,11 +416,11 @@ const Example13: React.FC = () => {
 
       <div className="row">
         <div className="col-sm-12">
-          <button className="btn btn-outline-secondary btn-xs btn-icon" data-test="add-500-rows-btn" onClick={() => updateData(500)}>
-            500 rows
+          <button className="btn btn-outline-secondary btn-xs btn-icon" data-test="add-1k-rows-btn" onClick={() => updateData(1000)}>
+            1K rows
           </button>
           <button className="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="add-50k-rows-btn" onClick={() => updateData(50000)}>
-            50k rows
+            50K rows
           </button>
           <button className="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="clear-grouping-btn" onClick={() => clearGrouping()}>
             <i className="mdi mdi-close"></i> Clear grouping

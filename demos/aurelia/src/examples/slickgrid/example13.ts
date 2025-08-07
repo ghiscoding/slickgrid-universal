@@ -15,6 +15,8 @@ import {
   type SlickGrid,
 } from 'aurelia-slickgrid';
 
+const NB_ITEMS = 1000;
+
 export class Example13 {
   aureliaGrid!: AureliaGridInstance;
   columnDefinitions: Column[] = [];
@@ -34,7 +36,7 @@ export class Example13 {
 
   attached() {
     // populate the dataset once the grid is ready
-    this.loadData(500);
+    this.loadData(NB_ITEMS);
   }
 
   aureliaGridReady(aureliaGrid: AureliaGridInstance) {
