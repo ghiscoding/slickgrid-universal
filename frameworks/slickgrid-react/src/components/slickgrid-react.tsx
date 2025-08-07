@@ -284,7 +284,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     );
     this.resizerService = new ResizerService(this._eventPubSubService);
     this.sortService = new SortService(this.collectionService, this.sharedService, this._eventPubSubService, this.backendUtilityService);
-    this.treeDataService = new TreeDataService(this._eventPubSubService, this.sharedService, this.sortService);
+    this.treeDataService = new TreeDataService(this._eventPubSubService, this.filterService, this.sharedService, this.sortService);
     this.paginationService = new PaginationService(this._eventPubSubService, this.sharedService, this.backendUtilityService);
 
     this.extensionService = new ExtensionService(

@@ -294,6 +294,18 @@ $slick-row-based-edit-editmode-active-hover-bgcolor:        color.adjust($slick-
 $slick-row-based-edit-editmode-bgcolor:                     color.adjust($slick-grid-cell-color, $lightness: -15%) !default;
 $slick-row-based-edit-editmode-hover-bgcolor:               color.adjust($slick-grid-cell-color, $lightness: -10%) !default;
 
+/** Tree Data */
+$slick-icon-tree-loading-animation:                         1.5s infinite linear !default;
+$slick-icon-tree-loading-svg-path:                          "M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z" !default;
+$slick-icon-tree-load-fail-svg-path:                        $slick-icon-group-collapsed-svg-path !default;
+$slick-icon-tree-load-fail-color:                           $slick-primary-color !default;
+$slick-icon-tree-load-fail-sup-svg-path:                    "M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" !default;
+$slick-icon-tree-load-fail-sup-top:                         6px !default;
+$slick-icon-tree-load-fail-sup-left:                        21px !default;
+$slick-icon-tree-load-fail-sup-font-size:                   8px !default;
+$slick-icon-tree-load-fail-sup-right:                       8px !default;
+$slick-icon-tree-load-fail-sup-color:                       red !default;
+
 /* Excel copy plugin */
 $slick-copied-cell-bg-color-transition:                     rgba(0, 0, 255, 0.2) !default;
 $slick-copied-cell-transition:                              0.5s background !default;

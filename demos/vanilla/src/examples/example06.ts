@@ -26,7 +26,6 @@ export default class Example06 {
   datasetFlat: any[];
   datasetHierarchical: any[] = [];
   sgb: SlickVanillaGridBundle;
-  durationOrderByCount = false;
   isExcludingChildWhenFiltering = false;
   isAutoApproveParentItemWhenTreeColumnIsValid = true;
   isAutoRecalcTotalsOnFilterChange = false;
@@ -235,22 +234,6 @@ export default class Example06 {
   clearSearch() {
     this.searchFile(new KeyboardEvent('keyup', { code: '', bubbles: true, cancelable: true }));
     (document.querySelector('input.search') as HTMLInputElement).value = '';
-  }
-
-  executeCommand(_e, args) {
-    // const columnDef = args.column;
-    const command = args.command;
-
-    switch (command) {
-      case 'exports-csv':
-      case 'exports-txt':
-      case 'exports-xlsx':
-        alert(`Exporting as ${args.item.title}`);
-        break;
-      default:
-        alert('Command: ' + args.command);
-        break;
-    }
   }
 
   searchFile(event: KeyboardEvent) {

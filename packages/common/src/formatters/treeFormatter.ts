@@ -1,7 +1,7 @@
 import { createDomElement } from '@slickgrid-universal/utils';
 
 import { Constants } from '../constants.js';
-import { type Formatter, type TreeDataOption } from './../interfaces/index.js';
+import { type Formatter, type LAZY_TYPES, type TreeDataOption } from './../interfaces/index.js';
 import { parseFormatterWhenExist } from './formatterUtilities.js';
 import { createDocumentFragmentOrElement, getCellValueFromQueryFieldGetter } from '../services/utilities.js';
 
@@ -13,6 +13,7 @@ export const treeFormatter: Formatter = (row, cell, value, columnDef, dataContex
   const collapsedPropName = treeDataOptions.collapsedPropName ?? Constants.treeDataProperties.COLLAPSED_PROP;
   const hasChildrenPropName = treeDataOptions.hasChildrenPropName ?? Constants.treeDataProperties.HAS_CHILDREN_PROP;
   const treeLevelPropName = treeDataOptions.levelPropName ?? Constants.treeDataProperties.TREE_LEVEL_PROP;
+  const lazyLoadingPropName = treeDataOptions.lazyLoadingPropName ?? Constants.treeDataProperties.LAZY_LOADING_PROP;
 
   // when a queryFieldNameGetterFn is defined, then get the value from that getter callback function
   let outputValue = getCellValueFromQueryFieldGetter(columnDef, dataContext, value);
@@ -26,30 +27,32 @@ export const treeFormatter: Formatter = (row, cell, value, columnDef, dataContex
     );
   }
 
-  const treeLevel = dataContext?.[treeLevelPropName] ?? 0;
-  const indentSpacerElm = document.createElement('span');
-  indentSpacerElm.style.display = 'inline-block';
-  indentSpacerElm.style.width = `${indentMarginLeft * treeLevel}px`;
+  const lazyLoading = dataContext[lazyLoadingPropName] as LAZY_TYPES;
+  const treeLevel = dataContext[treeLevelPropName] ?? 0;
   const slickTreeLevelClass = `slick-tree-level-${treeLevel}`;
-  let toggleClass = '';
 
+  let toggleClass = '';
   if (dataContext[hasChildrenPropName]) {
-    toggleClass = dataContext?.[collapsedPropName] ? 'collapsed' : 'expanded'; // parent with child will have a toggle icon
+    toggleClass = lazyLoading && lazyLoading !== 'done' ? lazyLoading : dataContext[collapsedPropName] ? 'collapsed' : 'expanded';
+  }
+
+  const indentSpacerElm = createDomElement('span', { style: { display: 'inline-block', width: `${indentMarginLeft * treeLevel}px` } });
+  const spanToggleClass = `slick-group-toggle ${toggleClass}`.trim();
+  const spanIconElm = createDomElement('div', { className: spanToggleClass, ariaExpanded: String(toggleClass === 'expanded') });
+
+  const containerElm = createDocumentFragmentOrElement(gridOptions);
+  containerElm.appendChild(indentSpacerElm);
+  containerElm.appendChild(spanIconElm);
+  if (lazyLoading === 'load-fail') {
+    containerElm.appendChild(createDomElement('span', { className: 'slick-tree-load-fail' }));
   }
 
   if (treeDataOptions.titleFormatter) {
     outputValue = parseFormatterWhenExist(treeDataOptions.titleFormatter, row, cell, columnDef, dataContext, grid);
   }
-  const spanToggleClass = `slick-group-toggle ${toggleClass}`.trim();
-
-  const spanIconElm = createDomElement('div', { className: spanToggleClass, ariaExpanded: String(toggleClass === 'expanded') });
   const spanTitleElm = createDomElement('span', { className: 'slick-tree-title' });
   grid.applyHtmlCode(spanTitleElm, outputValue);
   spanTitleElm.setAttribute('level', treeLevel);
-
-  const containerElm = createDocumentFragmentOrElement(gridOptions);
-  containerElm.appendChild(indentSpacerElm);
-  containerElm.appendChild(spanIconElm);
   containerElm.appendChild(spanTitleElm);
 
   return { addClasses: slickTreeLevelClass, html: containerElm };

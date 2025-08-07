@@ -362,7 +362,7 @@ this.columnDefinitions = [
 
     // you can add extra settings to your regular GroupTotalFormatters via the `params`
     params: {
-      formatters: [
+      formatters: [ /*...*/ ],
       groupFormatterSuffix: ' MB',
       minDecimal: 0,
       maxDecimal: 2,
@@ -401,4 +401,86 @@ this.columnDefinitions = [
     },
   },
 ];
+```
+
+### Lazy Loading Tree Data
+
+You can lazy load children on parent nodes, it does have certain requirements that must be followed:
+- parent nodes must provide define and provide children as empty array (e.g.: `children: []` or `files: []` depending on your `childrenPropName`)
+  - this is required to identify which are the parent nodes that are lazily available
+- it only works with hierarchical data
+- you must enable the `lazy` flag and provide `onLazyLoading` callback
+
+There are also some important notes about using Lazy Loading of Tree Data children:
+- calling "Expand All" of the Tree Data will **only** expand the nodes that were already lazily loaded
+  - the other ones will remain as collapsed
+- Aggregators will be lazily calculated and aggregate only the data that it currently has loaded (only what got lazily loaded).
+
+For example, let say our hierarchical dataset is a list of files and `files` being the children props.
+
+```ts
+this.gridOptions = {
+  treeDataOptions: {
+    columnId: 'file',
+    childrenPropName: 'files',
+    // ...
+
+    // lazy loading function
+    lazy: true,
+    onLazyLoad: (node: any, resolve: (value: any[]) => void, reject: () => void) => {
+      // backend fetch, the setTimeout is only here for demo purposes
+      setTimeout(() => {
+        if (node.file === 'lazy will FAIL') {
+          // you need to call `reject()` when your API fetching fails
+          reject();
+        } else {
+          // you must call `resolve(...)` via your fetch API
+          resolve(this.getFilesByParentId(node.id));
+        }
+      }, 500);
+    },
+  },
+};
+```
+
+You need to call `resolve(...)` with your hierarchical data which might include other nodes that also have children, if that is the case then you could another array of nodes with empty `children: []` arrays (which would again be lazily loaded) or return the full tree node with all children, it's really up to you to decide how lazily you want to go.
+
+For example
+
+```ts
+this.gridOptions = {
+  treeDataOptions: {
+    // ...
+
+    // lazy loading function
+    lazy: true,
+    onLazyLoad: (node: any, resolve: (value: any[]) => void, reject: () => void) => {
+      fetchDataByNodeId(node.id)
+        .then(data => {
+          // 1. calling resolve with data fetched, will update the grid
+          resolve(data);
+
+          // 2. or an example with plain data with more lazy nodes
+          resolve([
+            { id: 32, node: 'Topic 32' },
+            { id: 33, node: 'Topics 33', children: [] }, // another lazy node
+          ]);
+
+          // 3. or an example with data including all children nodes
+          resolve([
+            { id: 44, node: 'Topic 44' },
+            { id: 45, node: 'Topics 45', children: [
+                { id: 46, node: 'Topic 45.1' },
+                { id: 47, node: 'Topic 45.2' },
+              ]
+            },
+          ]);
+        })
+        .catch(err => {
+          console.error('Fetch error:', err);
+          reject();
+        });
+    },
+  },
+};
 ```

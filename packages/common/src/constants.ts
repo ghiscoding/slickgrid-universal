@@ -80,6 +80,7 @@ export class Constants {
     CHILDREN_PROP: 'children',
     COLLAPSED_PROP: '__collapsed',
     HAS_CHILDREN_PROP: '__hasChildren',
+    LAZY_LOADING_PROP: '__lazyLoading',
     TREE_LEVEL_PROP: '__treeLevel',
     PARENT_PROP: '__parentId',
   };

@@ -549,12 +549,14 @@
         line-height: var(--slick-draggable-group-title-line-height, v.$slick-draggable-group-title-line-height);
         vertical-align: var(--slick-draggable-group-title-vertical-align, v.$slick-draggable-group-title-vertical-align);
       }
-
-      .slick-group-toggle {
+      .slick-group-toggle,
+      .slick-tree-load-fail {
         cursor: pointer;
         display: inline-block;
         width: 1em;
         height: 1em;
+      }
+      .slick-group-toggle {
         color: var(--slick-icon-group-color, v.$slick-icon-group-color);
         font-size: var(--slick-icon-group-font-size, v.$slick-icon-group-font-size);
         margin-right: var(--slick-icon-group-margin-right, v.$slick-icon-group-margin-right);
@@ -565,10 +567,30 @@
         &.collapsed {
           @include svg.generateSvgStyle('slick-icon-group-collapsed-svg', v.$slick-icon-group-collapsed-svg-path);
         }
+        &.loading {
+          @include svg.generateSvgStyle('slick-icon-loading-svg', v.$slick-icon-tree-loading-svg-path);
+          animation: sg-spin var(--slick-icon-tree-loading-animation, v.$slick-icon-tree-loading-animation);
+        }
+        &.load-fail {
+          @include svg.generateSvgStyle('slick-icon-load-fail-svg', v.$slick-icon-tree-load-fail-svg-path);
+          color: var(--slick-icon-tree-load-fail-color, v.$slick-icon-tree-load-fail-color);
+        }
+        &.loading,
+        &.load-fail,
         &.expanded,
         &.collapsed {
           background-color: currentColor;
         }
+      }
+      .slick-tree-load-fail {
+        background-color: currentColor;
+        position: absolute;
+        top: var(--slick-icon-tree-load-fail-sup-top, v.$slick-icon-tree-load-fail-sup-top);
+        left: var(--slick-icon-tree-load-fail-sup-left, v.$slick-icon-tree-load-fail-sup-left);
+        font-size: var(--slick-icon-tree-load-fail-sup-font-size, v.$slick-icon-tree-load-fail-sup-font-size);
+        right: var(--slick-icon-tree-load-fail-sup-right, v.$slick-icon-tree-load-fail-sup-right);
+        color: var(--slick-icon-tree-load-fail-sup-color, v.$slick-icon-tree-load-fail-sup-color);
+        @include svg.generateSvgStyle('slick-icon-load-fail-sup-svg', v.$slick-icon-tree-load-fail-sup-svg-path);
       }
       // fix alignment when slick-cell includes slickgrid icons (align bottom will in fact center the icon & text), for example Tree Data/Grouping
       .slick-group-toggle,
