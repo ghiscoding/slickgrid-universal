@@ -70,7 +70,7 @@ export default class Example02 {
     );
 
     // you could group by duration on page load (must be AFTER the DataView is created, so after GridBundle)
-    // this.groupByDuration();
+    this.groupByDuration();
 
     // override CSS template to be Material Design
     // await import('@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-material.scss');

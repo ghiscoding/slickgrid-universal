@@ -20,14 +20,14 @@ export default defineConfig({
     }) as PluginOption,
   ],
   preview: {
-    port: 9000,
+    port: 7900,
   },
   server: {
-    port: 9000,
+    port: 7900,
     cors: true,
     host: 'localhost',
     hmr: {
-      clientPort: 9000,
+      clientPort: 7900,
     },
   },
   build: {

@@ -14,6 +14,29 @@ describe('Example 13 - Grouping & Aggregators', () => {
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
   });
 
+  it('should expect grid to be Grouped by "Duration" when loaded', () => {
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should(
+      'have.length',
+      1
+    );
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0) .slick-group-title`).should(
+      'contain',
+      'Duration: 0'
+    );
+
+    // 2nd row should be a regular row
+    cy.get('[data-row="1"] > .slick-cell.l1').contains(/Task [0-9]*/);
+    cy.get('[data-row="1"] > .slick-cell.l2').contains('0');
+  });
+
+  it('should clear all Groupings', () => {
+    cy.get('[data-test="clear-grouping-btn"]').click();
+
+    // 1st and 2nd row should now be a regular row
+    cy.get('[data-row="0"] > .slick-cell.l1').contains(/Task [0-9]*/);
+    cy.get('[data-row="1"] > .slick-cell.l1').contains(/Task [0-9]*/);
+  });
+
   describe('Grouping Tests', () => {
     it('should "Group by Duration & sort groups by value" then Collapse All and expect only group titles', () => {
       cy.get('[data-test="add-50k-rows-btn"]').click();

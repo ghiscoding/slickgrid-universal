@@ -360,6 +360,7 @@ function toggleSubTitle() {
 
 function vueGridReady(grid: SlickgridVueInstance) {
   vueGrid = grid;
+  groupByDuration(); // group by duration on page load
 }
 </script>
 
