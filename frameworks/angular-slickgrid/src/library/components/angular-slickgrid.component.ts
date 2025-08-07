@@ -315,9 +315,8 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
     this.resizerService = externalServices?.resizerService ?? new ResizerService(this._eventPubSubService);
     // prettier-ignore
     this.sortService = externalServices?.sortService ?? new SortService(this.collectionService, this.sharedService, this._eventPubSubService, this.backendUtilityService);
-    this.treeDataService =
-      externalServices?.treeDataService ??
-      new TreeDataService(this._eventPubSubService, this.filterService, this.sharedService, this.sortService);
+    // prettier-ignore
+    this.treeDataService = externalServices?.treeDataService ?? new TreeDataService(this._eventPubSubService, this.filterService, this.sharedService, this.sortService);
     // prettier-ignore
     this.paginationService = externalServices?.paginationService ?? new PaginationService(this._eventPubSubService, this.sharedService, this.backendUtilityService);
 
