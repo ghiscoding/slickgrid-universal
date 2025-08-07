@@ -11,7 +11,8 @@
   - [Example of Custom Formatter with Native DOM Element](#example-of-custom-formatter-with-native-dom-element)
 * [Common Formatter Options](#common-formatter-options)
 * [PostRenderer Formatter (async)](#postrender-formatter-async)
-* [Vue Component Formatter](#vue-component-formatter)
+* [Custom Date Formatter](#custom-date-formatter)
+- [PostRenderer Formatter (async)](#postrender-formatter-async)
 
 ### Demo
 [Demo Page](https://ghiscoding.github.io/slickgrid-vue-demos/#/Example2) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example2.vue)
@@ -272,6 +273,20 @@ function loadGrid() {
   }
 }
 ```
+
+### Custom Date Formatter
+
+There many built-in Date Formatters available for dates (see list above) and if that is not sufficient and you might want to use your own custom date format. When that hapens you can use the built-in `Formatters.date` (which is a base Date Formatter) and provide a custom format via `params.dateFormat`. 
+
+For example, if you wish to display date like `"March 12, 2025"`, you could add this to your column definition:
+
+```ts
+const columnDefinitions = [
+  { id: 'finish', name: 'Finish', field: 'finish', type: 'date', formatter: Formatters.date, params: { dateFormat: 'MMM DD, YYYY' } }
+];
+```
+
+> **Note** all Date formatters are formatted using [Tempo](https://tempo.formkit.com/#format-tokens) tokens. Visit their website to find out which format to use.
 
 ### PostRender Formatter (async)
 SlickGrid also support Post Render Formatter (asynchronously) via the Column property `asyncPostRender` (you will also need to enable in the grid options via `enableAsyncPostRender`). When would you want to use this? It's useful if your formatter is expected to take a while to render, like showing a graph with Sparklines, and you don't want to delay rendering your grid, the Post Render will happen after all the grid is loaded.

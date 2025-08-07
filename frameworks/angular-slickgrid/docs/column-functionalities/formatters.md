@@ -2,15 +2,16 @@
 
 #### Index
 
-* [Built-in Formatter](#list-of-provided-formatters)
-* [Extra Params/Arguments](#extra-argumentsparams)
-* [Using Multiple Formatters](#using-multiple-formatters)
-* [Custom Formatter](#custom-formatter)
+- [Built-in Formatter](#list-of-provided-formatters)
+- [Extra Params/Arguments](#extra-argumentsparams)
+- [Using Multiple Formatters](#using-multiple-formatters)
+- [Custom Formatter](#custom-formatter)
   - [Example of a Custom Formatter with HTML string](#example-of-a-custom-formatter-with-html-string)
   - [Example with `FormatterResultObject` instead of a string](#example-with-formatterresultobject-instead-of-a-string)
   - [Example of Custom Formatter with Native DOM Element](#example-of-custom-formatter-with-native-dom-element)
-* [Common Formatter Options](#common-formatter-options)
-* [PostRenderer Formatter](#postrender-formatter)
+- [Common Formatter Options](#common-formatter-options)
+- [Custom Date Formatter](#custom-date-formatter)
+- [PostRenderer Formatter (async)](#postrender-formatter-async)
 
 #### Definition
 
@@ -264,7 +265,22 @@ loadGrid() {
 }
 ```
 
-### Using Angular Component with `asyncPostRenderer`
+### Custom Date Formatter
+
+There many built-in Date Formatters available for dates (see list above) and if that is not sufficient and you might want to use your own custom date format. When that hapens you can use the built-in `Formatters.date` (which is a base Date Formatter) and provide a custom format via `params.dateFormat`. 
+
+For example, if you wish to display date like `"March 12, 2025"`, you could add this to your column definition:
+
+```ts
+const columnDefinitions = [
+  { id: 'finish', name: 'Finish', field: 'finish', type: 'date', formatter: Formatters.date, params: { dateFormat: 'MMM DD, YYYY' } }
+];
+```
+
+> **Note** all Date formatters are formatted using [Tempo](https://tempo.formkit.com/#format-tokens) tokens. Visit their website to find out which format to use.
+
+### PostRender Formatter (async)
+##### Using Angular Component with `asyncPostRenderer`
 
 First of... Why can't we use Angular Component with Customer Formatters? Because of how Angular is built, it requires a full cycle for the component to be rendered with data, however SlickGrid Formatter requires only string output and it must be right away (synchronous) and Angular Component can only be returned in an async fashion (you could return it right away but the data won't be populated). That is the reason that it's not doable with a Formatter, however SlickGrid offers `asyncPostRender` which is similar to a Formatter and works in an async fashion. So that works, but it has some drawback, since it's async, it is slightly slower to render (you might visually see it rendering on the screen). All that to say, regular Formatters with jQuery and/or HTML is still the preferred way (at least to me)... but hey, if you really wish to use Angular Component, well then it's possible, just remember it's async though and slightly slower to render.
 

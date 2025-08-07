@@ -2,15 +2,16 @@
 
 #### Index
 
-* [Built-in Formatter](#list-of-provided-formatters)
-* [Extra Params/Arguments](#extra-argumentsparams)
-* [Using Multiple Formatters](#using-multiple-formatters)
-* [Custom Formatter](#custom-formatter)
+- [Built-in Formatter](#list-of-provided-formatters)
+- [Extra Params/Arguments](#extra-argumentsparams)
+- [Using Multiple Formatters](#using-multiple-formatters)
+- [Custom Formatter](#custom-formatter)
   - [Example of a Custom Formatter with HTML string](#example-of-a-custom-formatter-with-html-string)
   - [Example with `FormatterResultObject` instead of a string](#example-with-formatterresultobject-instead-of-a-string)
   - [Example of Custom Formatter with Native DOM Element](#example-of-custom-formatter-with-native-dom-element)
-* [Common Formatter Options](#common-formatter-options)
-* [PostRenderer Formatter](#postrender-formatter)
+- [Common Formatter Options](#common-formatter-options)
+- [Custom Date Formatter](#custom-date-formatter)
+- [PostRenderer Formatter (async)](#postrender-formatter-async)
 
 ### Demo
 [Demo Page](https://ghiscoding.github.io/slickgrid-react-demos/#/Example2) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example2.tsx)
@@ -269,7 +270,21 @@ function defineGrid() {
 }
 ```
 
-### PostRender Formatter
+### Custom Date Formatter
+
+There many built-in Date Formatters available for dates (see list above) and if that is not sufficient and you might want to use your own custom date format. When that hapens you can use the built-in `Formatters.date` (which is a base Date Formatter) and provide a custom format via `params.dateFormat`. 
+
+For example, if you wish to display date like `"March 12, 2025"`, you could add this to your column definition:
+
+```ts
+const columnDefinitions = [
+  { id: 'finish', name: 'Finish', field: 'finish', type: 'date', formatter: Formatters.date, params: { dateFormat: 'MMM DD, YYYY' } }
+];
+```
+
+> **Note** all Date formatters are formatted using [Tempo](https://tempo.formkit.com/#format-tokens) tokens. Visit their website to find out which format to use.
+
+### PostRender Formatter (async)
 SlickGrid also support Post Render Formatter (asynchronously) via the Column property `asyncPostRender` (you will also need to enable in the grid options via `enableAsyncPostRender`). When would you want to use this? It's useful if your formatter is expected to take a while to render, like showing a graph with Sparklines, and you don't want to delay rendering your grid, the Post Render will happen after all the grid is loaded.
 
 To see it in action, from the 6pac samples, click [here](http://6pac.github.io/SlickGrid/examples/example10-async-post-render.html)
