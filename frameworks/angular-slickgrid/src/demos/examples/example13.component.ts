@@ -16,6 +16,8 @@ import {
   SortComparers,
 } from '../../library';
 
+const NB_ITEMS = 1000;
+
 @Component({
   templateUrl: './example13.component.html',
   standalone: false,
@@ -218,7 +220,7 @@ export class Example13Component implements OnInit {
       },
     };
 
-    this.loadData(500);
+    this.loadData(NB_ITEMS);
   }
 
   angularGridReady(angularGrid: AngularGridInstance) {

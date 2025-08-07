@@ -19,7 +19,7 @@ import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanil
 import { ExampleGridOptions } from './example-grid-options.js';
 import '../material-styles.scss';
 
-const NB_ITEMS = 500;
+const NB_ITEMS = 1000;
 
 function randomBetween(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);

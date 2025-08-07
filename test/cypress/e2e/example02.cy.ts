@@ -23,7 +23,7 @@ describe('Example 02 - Grouping & Aggregators', () => {
       .find('.right-footer')
       .should(($span) => {
         const text = removeExtraSpaces($span.text()); // remove all white spaces
-        expect(text).to.eq(`Last Update ${currentTimestamp} | 500 of 500 items`);
+        expect(text).to.eq(`Last Update ${currentTimestamp} | 1000 of 1000 items`);
       });
   });
 
@@ -86,11 +86,11 @@ describe('Example 02 - Grouping & Aggregators', () => {
       .find('.right-footer')
       .should(($span) => {
         const text = removeExtraSpaces($span.text()); // remove all white spaces
-        expect(text).to.include('111 of 500 items');
+        expect(text).to.include('111 of 1000 items');
       });
   });
 
-  it('should type a filter in the Title and expect 176 items shown in the footer', () => {
+  it('should type a filter in the Title and expect 271 items shown in the footer', () => {
     cy.get('.search-filter.filter-title').clear().type('2');
 
     cy.get('.grid2')
@@ -98,11 +98,11 @@ describe('Example 02 - Grouping & Aggregators', () => {
       .find('.right-footer')
       .should(($span) => {
         const text = removeExtraSpaces($span.text()); // remove all white spaces
-        expect(text).to.eq(`Last Update ${format(new Date(), 'YYYY-MM-DD, hh:mm a')} | 176 of 500 items`);
+        expect(text).to.eq(`Last Update ${format(new Date(), 'YYYY-MM-DD, hh:mm a')} | 271 of 1000 items`);
       });
   });
 
-  it('should add another filter "Effort-Driven" set to True and expect 28 items shown in the footer', () => {
+  it('should add another filter "Effort-Driven" set to True and expect 38 items shown in the footer', () => {
     cy.get('div.ms-filter.filter-effortDriven').trigger('click');
 
     cy.get('.ms-drop').find('span:nth(1)').click();
@@ -113,11 +113,11 @@ describe('Example 02 - Grouping & Aggregators', () => {
       .find('.right-footer')
       .should(($span) => {
         const text = removeExtraSpaces($span.text()); // remove all white spaces
-        expect(text).to.eq(`Last Update ${currentDateTime} | 28 of 500 items`);
+        expect(text).to.eq(`Last Update ${currentDateTime} | 38 of 1000 items`);
       });
   });
 
-  it('should change filter "Effort-Driven" to False and expect 148 items shown in the footer', () => {
+  it('should change filter "Effort-Driven" to False and expect 233 items shown in the footer', () => {
     cy.get('div.ms-filter.filter-effortDriven').trigger('click');
 
     cy.get('.ms-drop').find('span:nth(2)').click();
@@ -127,11 +127,11 @@ describe('Example 02 - Grouping & Aggregators', () => {
       .find('.right-footer')
       .should(($span) => {
         const text = removeExtraSpaces($span.text()); // remove all white spaces
-        expect(text).to.eq(`Last Update ${format(new Date(), 'YYYY-MM-DD, hh:mm a')} | 148 of 500 items`);
+        expect(text).to.eq(`Last Update ${format(new Date(), 'YYYY-MM-DD, hh:mm a')} | 233 of 1000 items`);
       });
   });
 
-  it('should change filter "Effort-Driven" to the null option and expect 176 items shown in the footer and also no label to show in the drop parent', () => {
+  it('should change filter "Effort-Driven" to the null option and expect 271 items shown in the footer and also no label to show in the drop parent', () => {
     cy.get('div.ms-filter.filter-effortDriven').trigger('click');
 
     cy.get('.ms-drop').find('li:nth(0)').click();
@@ -141,7 +141,7 @@ describe('Example 02 - Grouping & Aggregators', () => {
       .find('.right-footer')
       .should(($span) => {
         const text = removeExtraSpaces($span.text()); // remove all white spaces
-        expect(text).to.eq(`Last Update ${format(new Date(), 'YYYY-MM-DD, hh:mm a')} | 176 of 500 items`);
+        expect(text).to.eq(`Last Update ${format(new Date(), 'YYYY-MM-DD, hh:mm a')} | 271 of 1000 items`);
       });
 
     cy.get('.ms-drop').should('contain', '');
