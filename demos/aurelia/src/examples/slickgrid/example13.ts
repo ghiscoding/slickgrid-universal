@@ -41,6 +41,7 @@ export class Example13 {
     this.aureliaGrid = aureliaGrid;
     this.dataviewObj = aureliaGrid.dataView;
     this.gridObj = aureliaGrid.slickGrid;
+    this.groupByDuration(); // group by duration on page load
   }
 
   /* Define grid Options and Columns */

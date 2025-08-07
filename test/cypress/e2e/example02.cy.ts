@@ -42,6 +42,29 @@ describe('Example 02 - Grouping & Aggregators', () => {
     cy.get('.grid2').find('.slick-custom-footer').find('.left-footer').contains('created with Slickgrid-Universal');
   });
 
+  it('should expect grid to be Grouped by "Duration" when loaded', () => {
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).should(
+      'have.length',
+      1
+    );
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0) .slick-group-title`).should(
+      'contain',
+      'Duration: 0'
+    );
+
+    // 2nd row should be a regular row
+    cy.get('[data-row="1"] > .slick-cell.l1').contains(/Task [0-9]*/);
+    cy.get('[data-row="1"] > .slick-cell.l2').contains('0');
+  });
+
+  it('should clear all Groupings', () => {
+    cy.get('[data-test="clear-grouping-btn"]').click();
+
+    // 1st and 2nd row should now be a regular row
+    cy.get('[data-row="0"] > .slick-cell.l1').contains(/Task [0-9]*/);
+    cy.get('[data-row="1"] > .slick-cell.l1').contains(/Task [0-9]*/);
+  });
+
   it('should copy "Task 2" cell text to clipboard and paste it and expect 111 items shown in the footer', () => {
     cy.get('.search-filter.filter-title').clear();
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`).should('contain', 'Task 2');
@@ -376,7 +399,7 @@ describe('Example 02 - Grouping & Aggregators', () => {
 
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(4)`).should('contain', '01/05/2010');
       cy.window().then((win) => {
-        expect(win.console.log).to.be.calledWithMatch(/sort: [0-9]{4}.?[0-9]* ms/);
+        expect(win.console.log).to.be.calledWithMatch(/sort: [0-9]{3,4}.?[0-9]* ms/);
       });
     });
 

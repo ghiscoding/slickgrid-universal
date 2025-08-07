@@ -225,6 +225,7 @@ export class Example13Component implements OnInit {
     this.angularGrid = angularGrid;
     this.gridObj = angularGrid.slickGrid;
     this.dataviewObj = angularGrid.dataView;
+    this.groupByDuration(); // group by duration on page load
   }
 
   loadData(rowCount: number) {

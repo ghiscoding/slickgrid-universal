@@ -38,7 +38,7 @@
       "type": "chrome",
       "request": "launch",
       "name": "Aurelia - Chrome Debugger",
-      "url": "http://localhost:9000",
+      "url": "http://localhost:7900",
       "webRoot": "${workspaceFolder}/demos/aurelia",
       "pathMapping": {
         "/@fs/": ""

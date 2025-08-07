@@ -32,6 +32,7 @@ const Example13: React.FC = () => {
 
   function reactGridReady(reactGrid: SlickgridReactInstance) {
     reactGridRef.current = reactGrid;
+    groupByDuration(); // group by duration on page load
   }
 
   /* Define grid Options and Columns */
