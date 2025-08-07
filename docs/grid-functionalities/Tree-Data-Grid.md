@@ -11,6 +11,8 @@
 - [Tree Data Service Methods](#tree-data-service-methods) - extra methods to work with Tree Data
   - `getItemCount(x)`, `getToggledItems()`, `getCurrentToggleState()`, `dynamicallyToggleItemState(x)`, `applyToggledItemStateChanges(x)`, ...
 - [Tree Totals with Aggregators](#tree-totals-with-aggregators)
+- [Tree Totals Formatter](#tree-totals-formatter)
+- [Lazy Loading Tree Data](#lazy-loading-tree-data)
 
 ## Description
 Tree Data allows you to display a hierarchical (tree) dataset into the grid, it is visually very similar to Grouping but also very different in its implementation. A hierarchical dataset is commonly used for a parent/child relation and a great example is a Bill of Material (BOM), which you can't do with Grouping because parent/child relationship could be infinite tree level while Grouping is a defined and known level of Grouping.
