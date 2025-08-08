@@ -1,4 +1,4 @@
-### Index
+##### Index
 - [Built-in Formatter](#list-of-provided-formatters)
 - [Extra Params/Arguments](#extra-argumentsparams)
 - [Using Multiple Formatters](#using-multiple-formatters)
@@ -257,9 +257,9 @@ loadGrid() {
 
 ### Custom Date Formatter
 
-There many built-in Date Formatters available for dates (see list above) and if that is not sufficient and you might want to use your own custom date format. When that hapens you can use the built-in `Formatters.date` (which is a base Date Formatter) and provide a custom format via `params.dateFormat`. 
+There many built-in Date Formatters that are already available (see [list](#list-of-provided-formatters) above), but sometime those are not sufficient and perhaps you wish to use your own custom date format. For these times, the `Formatters.date` can come handy (which is a base Date Formatter), it allows to provide a custom format via `params.dateFormat`.
 
-For example, if you wish to display date like `"March 12, 2025"`, you could add this to your column definition:
+For example, if you wish to display a date like `"March 12, 2025"`, you could add this to your column definition:
 
 ```ts
 const columnDefinitions = [
