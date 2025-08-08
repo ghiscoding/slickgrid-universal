@@ -116,7 +116,6 @@ export class BindingService {
       this.unbind(element, eventName, listener, undefined, uid);
       boundedEvent = this._boundedEventWithListeners.pop();
     }
-    this._boundedEventWithListeners = [];
   }
 
   /**

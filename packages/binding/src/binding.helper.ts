@@ -21,7 +21,6 @@ export class BindingHelper {
       observer.dispose();
       observer = this._observers.pop();
     }
-    this._observers = [];
   }
 
   addElementBinding<T extends Element = Element>(
