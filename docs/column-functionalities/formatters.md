@@ -263,7 +263,12 @@ For example, if you wish to display a date like `"March 12, 2025"`, you could ad
 
 ```ts
 const columnDefinitions = [
-  { id: 'finish', name: 'Finish', field: 'finish', type: 'date', formatter: Formatters.date, params: { dateFormat: 'MMM DD, YYYY' } }
+  { 
+    id: 'finish', name: 'Finish', field: 'finish', 
+    type: 'date', 
+    formatter: Formatters.date, 
+    params: { dateFormat: 'MMM DD, YYYY' } 
+  }
 ];
 ```
 
