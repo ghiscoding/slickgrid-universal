@@ -59,7 +59,7 @@
     "sass:watch-all": "run-p \"sass-build-task:scss-compile:* --watch\" --"
   },
   "browserslist": [
-    "last 2 version",
+    "last 2 versions",
     "> 1%",
     "not dead"
   ],
