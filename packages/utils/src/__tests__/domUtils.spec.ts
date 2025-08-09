@@ -340,6 +340,11 @@ describe('Service/domUtilies', () => {
       const result = htmlDecode(`&#83;&#97;&#109;&#39;&#115;&#32;&#55357;&#56960;&#55358;&#56708;&#32;&#101;&#115;&#112;&#97;&#241;&#111;&#108;`);
       expect(result).toBe(`Sam's 🚀🦄 español`);
     });
+
+    it('should be able to decode unicode and other locale like Japanese', () => {
+      const result = htmlDecode(`&#x30cf;&#x30ed;&#x30fc;&#x30ef;&#x30fc;&#x30eb;&#x30c9;`);
+      expect(result).toBe(`ハローワールド`);
+    });
   });
 
   describe('htmlEncode() method', () => {
