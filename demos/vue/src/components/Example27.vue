@@ -423,7 +423,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
   <div class="row" style="margin-bottom: 4px">
     <div class="col-md-12">
       <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="add-500-rows-btn" @click="loadData(500)">500 rows</button>
-      <button class="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="add-50k-rows-btn" @click="loadData(25000)">25k rows</button>
+      <button class="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="add-75k-rows-btn" @click="loadData(75000)">75k rows</button>
       <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="change-filter-dynamically" @click="dynamicallyChangeFilter()">
         <span class="mdi mdi-filter-outline"></span>
         <span>Dynamically Change Filter (% complete &lt; 40)</span>
