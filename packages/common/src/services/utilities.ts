@@ -180,25 +180,25 @@ export function getTreeDataOptionPropName(
   let propName = '';
   switch (optionName) {
     case 'childrenPropName':
-      propName = treeDataOptions?.childrenPropName ?? Constants.treeDataProperties.CHILDREN_PROP;
+      propName = treeDataOptions?.[optionName] ?? Constants.treeDataProperties.CHILDREN_PROP;
       break;
     case 'collapsedPropName':
-      propName = treeDataOptions?.collapsedPropName ?? Constants.treeDataProperties.COLLAPSED_PROP;
+      propName = treeDataOptions?.[optionName] ?? Constants.treeDataProperties.COLLAPSED_PROP;
       break;
     case 'hasChildrenPropName':
-      propName = treeDataOptions?.hasChildrenPropName ?? Constants.treeDataProperties.HAS_CHILDREN_PROP;
+      propName = treeDataOptions?.[optionName] ?? Constants.treeDataProperties.HAS_CHILDREN_PROP;
       break;
     case 'identifierPropName':
-      propName = treeDataOptions?.identifierPropName ?? defaultDataIdPropName;
+      propName = treeDataOptions?.[optionName] ?? defaultDataIdPropName;
       break;
     case 'lazyLoadingPropName':
-      propName = treeDataOptions?.lazyLoadingPropName ?? Constants.treeDataProperties.LAZY_LOADING_PROP;
+      propName = treeDataOptions?.[optionName] ?? Constants.treeDataProperties.LAZY_LOADING_PROP;
       break;
     case 'levelPropName':
-      propName = treeDataOptions?.levelPropName ?? Constants.treeDataProperties.TREE_LEVEL_PROP;
+      propName = treeDataOptions?.[optionName] ?? Constants.treeDataProperties.TREE_LEVEL_PROP;
       break;
     case 'parentPropName':
-      propName = treeDataOptions?.parentPropName ?? Constants.treeDataProperties.PARENT_PROP;
+      propName = treeDataOptions?.[optionName] ?? Constants.treeDataProperties.PARENT_PROP;
       break;
   }
   return propName;
