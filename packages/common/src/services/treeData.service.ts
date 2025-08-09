@@ -146,27 +146,14 @@ export class TreeDataService {
   /** init the hierarchical tree when necessary (e.g. `initiallyCollapsed` requires to collapse all items) */
   initHierarchicalTree(): void {
     if (this.gridOptions?.treeDataOptions?.initiallyCollapsed) {
-      const collapsedPropName = getTreeDataOptionPropName(this.treeDataOptions, 'collapsedPropName');
-      const childrenPropName = getTreeDataOptionPropName(this.treeDataOptions, 'childrenPropName');
-      this.toggleAllHierarchicalTree(this.datasetHierarchical || [], true, childrenPropName, collapsedPropName);
+      this.toggleAllHierarchicalTree(
+        this.datasetHierarchical || [],
+        true,
+        getTreeDataOptionPropName(this.treeDataOptions, 'childrenPropName'),
+        getTreeDataOptionPropName(this.treeDataOptions, 'collapsedPropName'),
+        getTreeDataOptionPropName(this.treeDataOptions, 'lazyLoadingPropName')
+      );
     }
-  }
-
-  /**
-   * Toggle all items of a hierarchical (tree) dataset, user must provide the children & collapsed property names
-   * NOTE: this does NOT change or update the flat dataset, it only changes the collapsed flag in the hierarchical tree only.
-   * @param {Array<any>} hierarchicalData - hierarchical data to collapse/expand
-   * @param {Boolean} collapsing - optionally force a collapse/expand (True => collapse all, False => expand all)
-   * @param {String} childrenPropName - name of the property that holds the children array (defaults to "children")
-   * @param {String} collapsedPropName - name of the property that holds the collapsed state (defaults to "__collapsed")
-   */
-  toggleAllHierarchicalTree(hierarchicalData: any[], collapsing: boolean, childrenPropName: string, collapsedPropName: string): void {
-    hierarchicalData.forEach((item) => {
-      if (childrenPropName in item) {
-        item[collapsedPropName] = collapsing;
-        this.toggleAllHierarchicalTree(item[childrenPropName], collapsing, childrenPropName, collapsedPropName);
-      }
-    });
   }
 
   /**
@@ -412,6 +399,8 @@ export class TreeDataService {
    */
   async toggleTreeDataCollapse(collapsing: boolean, shouldTriggerEvent = true): Promise<void> {
     if (this.gridOptions?.enableTreeData) {
+      const collapsedPropName = getTreeDataOptionPropName(this.treeDataOptions, 'collapsedPropName');
+      const childrenPropName = getTreeDataOptionPropName(this.treeDataOptions, 'childrenPropName');
       const hasChildrenPropName = getTreeDataOptionPropName(this.treeDataOptions, 'hasChildrenPropName');
       const lazyLoadingPropName = getTreeDataOptionPropName(this.treeDataOptions, 'lazyLoadingPropName');
 
@@ -423,21 +412,15 @@ export class TreeDataService {
       // do a bulk change data update to toggle all necessary parents (the ones with children) to the new collapsed flag value
       this.dataView.beginUpdate(true);
 
-      // toggle the collapsed flag but only when it's a parent item with children
-      const flatDataItems = this.dataView.getItems() || [];
-      flatDataItems.forEach((item: any) => {
-        if (
-          item[hasChildrenPropName] &&
-          // allow expand if it isn't using lazy loading OR it the lazy node was already loaded
-          (!this.treeDataOptions?.lazy || collapsing || (!collapsing && !(this.treeDataOptions.lazy && !item[lazyLoadingPropName])))
-        ) {
-          this.updateToggledItem(item, collapsing, false);
-        }
-      });
-
-      // instead of finding each tree item and update their collapse flag one-by-one, we can simply recreate the tree dataset
-      // since the flat dataset already has collapse flag updated from previous step
-      this.sharedService.hierarchicalDataset = this.convertFlatParentChildToTreeDataset(flatDataItems, this.gridOptions);
+      // collapse/expand all items in both hierarchical/flat datasets
+      this.toggleAllHierarchicalTree(
+        this.sharedService.hierarchicalDataset || [],
+        collapsing,
+        childrenPropName,
+        collapsedPropName,
+        lazyLoadingPropName
+      );
+      this.toggleAllFlatDataItems(collapsing, hasChildrenPropName, lazyLoadingPropName);
 
       this.dataView.endUpdate();
       this.dataView.refresh();
@@ -461,6 +444,11 @@ export class TreeDataService {
   // --
   // protected functions
   // ------------------
+
+  // allow expand if it isn't using lazy loading OR it the lazy node was already loaded
+  protected checkIsLazyParentLoaded(item: any, collapsing: boolean, lazyLoadingPropName: string): boolean {
+    return collapsing || !this.treeDataOptions?.lazy || (!collapsing && !(this.treeDataOptions.lazy && !item[lazyLoadingPropName]));
+  }
 
   protected handleOnCellClick(event: SlickEventData, args: OnClickEventArgs): void {
     if (event && args) {
@@ -626,5 +614,38 @@ export class TreeDataService {
       return this.recalculateTreeTotals.bind(this, gridOptions);
     }
     return null;
+  }
+
+  /**
+   * Toggle all items of a hierarchical (tree) dataset, user must provide the children, collapsed & lazyCollapsing property names
+   * NOTE: this does NOT change or update the flat dataset, it only changes the collapsed flag in the hierarchical tree only without updating the grid.
+   */
+  protected toggleAllHierarchicalTree(
+    hierarchicalData: any[],
+    collapsing: boolean,
+    childrenPropName: string,
+    collapsedPropName: string,
+    lazyLoadingPropName: string
+  ): void {
+    hierarchicalData.forEach((item) => {
+      if (childrenPropName in item && this.checkIsLazyParentLoaded(item, collapsing, lazyLoadingPropName)) {
+        item[collapsedPropName] = collapsing;
+        this.toggleAllHierarchicalTree(item[childrenPropName], collapsing, childrenPropName, collapsedPropName, lazyLoadingPropName);
+      }
+    });
+  }
+
+  /**
+   * Toggle all items of a flat dataset, user must provide the hasChildrenPropName & lazyLoadingPropName property names
+   * NOTE: this does NOT change or update the hierarchical dataset, it only changes the collapsed flag in the flat dataset only without updating the grid.
+   */
+  protected toggleAllFlatDataItems(collapsing: boolean, hasChildrenPropName: string, lazyLoadingPropName: string): void {
+    // toggle the collapsed flag but only when it's a parent item with children
+    const flatDataItems = this.dataView.getItems() || [];
+    flatDataItems.forEach((item: any) => {
+      if (item[hasChildrenPropName] && this.checkIsLazyParentLoaded(item, collapsing, lazyLoadingPropName)) {
+        this.updateToggledItem(item, collapsing, false);
+      }
+    });
   }
 }
