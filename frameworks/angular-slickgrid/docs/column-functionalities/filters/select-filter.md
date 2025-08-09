@@ -91,10 +91,10 @@ If you want to load the grid with certain default filter(s), you can use the fol
 - `searchTerms` (array of values)
 
 #### Note
-Even though the option of `searchTerms` it is much better to use the more powerful `presets` grid options, please refer to the [Grid State & Presets](../../grid-functionalities/Grid-State-&-Preset#grid-presets) for more info.
+Even though the option of `searchTerms` it is much better to use the more powerful `presets` grid options, please refer to the [Grid State & Presets](../../grid-functionalities/grid-state-preset#grid-presets) for more info.
 
 **NOTE**
-If you also have `presets` in the grid options, then your `searchTerms` will be ignored completely (even if it's a different column) since `presets` have higher priority over `searchTerms`. See [Grid State & Grid Presets](../../grid-functionalities/Grid-State-&-Preset.md) from more info.
+If you also have `presets` in the grid options, then your `searchTerms` will be ignored completely (even if it's a different column) since `presets` have higher priority over `searchTerms`. See [Grid State & Grid Presets](../../grid-functionalities/grid-state-preset.md) from more info.
 
 #### Sample
 ```ts
@@ -207,7 +207,7 @@ Note: the defaults for single & multiple select filters are different
 ```ts
 // define you columns, in this demo Effort Driven will use a Select Filter
 this.columnDefinitions = [
-  { 
+  {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
     type: 'boolean',
