@@ -21,7 +21,7 @@ import {
   // utility functions
   exportWithFormatterWhenDefined,
   getTranslationPrefix,
-  htmlEntityDecode,
+  htmlDecode,
 } from '@slickgrid-universal/common';
 import { addWhiteSpaces, extend, getHtmlStringOutput, stripTags, titleCase } from '@slickgrid-universal/utils';
 
@@ -149,7 +149,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
    */
   startDownloadFile(options: ExportTextDownloadOption): void {
     // make sure no html entities exist in the data
-    const csvContent = htmlEntityDecode(options.content);
+    const csvContent = htmlDecode(options.content);
 
     // dealing with Excel CSV export and UTF-8 is a little tricky.. We will use Option #2 to cover older Excel versions
     // Option #1: we need to make Excel knowing that it's dealing with an UTF-8, A correctly formatted UTF8 file can have a Byte Order Mark as its first three octets
