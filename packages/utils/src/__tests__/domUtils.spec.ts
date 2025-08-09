@@ -15,7 +15,6 @@ import {
   getInnerSize,
   htmlDecode,
   htmlEncode,
-  htmlEntityDecode,
   htmlEncodeWithPadding,
   insertAfterElement,
 } from '../domUtils.js';
@@ -315,16 +314,31 @@ describe('Service/domUtilies', () => {
     });
 
     it('should return stringified value when input is a boolean', () => {
-      const result1 = htmlDecode(false as any);
-      const result2 = htmlDecode(true as any);
+      const result1 = htmlDecode(false);
+      const result2 = htmlDecode(true);
 
       expect(result1).toBe('false');
       expect(result2).toBe('true');
     });
 
     it('should return stringified number when input is a number', () => {
-      const result = htmlDecode(0 as any);
+      const result = htmlDecode(0);
       expect(result).toBe('0');
+    });
+
+    it('should be able to decode HTML entity and tags decode of an HTML string', () => {
+      const result = htmlDecode(`&lt;div&gt;Hablar espa&#241;ol? &#55358;&#56708;&lt;/div&gt;`);
+      expect(result).toBe(`<div>Hablar español? 🦄</div>`);
+    });
+
+    it('should be able to decode HTML entity of an HTML string', () => {
+      const result = htmlDecode(`&#60;&#100;&#105;&#118;&#62;&#97;&#60;&#47;&#100;&#105;&#118;&#62;`);
+      expect(result).toBe(`<div>a</div>`);
+    });
+
+    it('should be able to decode unicode characters and also latin accents', () => {
+      const result = htmlDecode(`&#83;&#97;&#109;&#39;&#115;&#32;&#55357;&#56960;&#55358;&#56708;&#32;&#101;&#115;&#112;&#97;&#241;&#111;&#108;`);
+      expect(result).toBe(`Sam's 🚀🦄 español`);
     });
   });
 
@@ -337,18 +351,6 @@ describe('Service/domUtilies', () => {
     it('should return a encoded HTML string with single quotes encoded as well', () => {
       const result = htmlEncode(`<div class='color: blue'>Something</div>`);
       expect(result).toBe(`&lt;div class=&#39;color: blue&#39;&gt;Something&lt;/div&gt;`);
-    });
-  });
-
-  describe('htmlEntityDecode() method', () => {
-    it('should be able to decode HTML entity of an HTML string', () => {
-      const result = htmlEntityDecode(`&#60;&#100;&#105;&#118;&#62;&#97;&#60;&#47;&#100;&#105;&#118;&#62;`);
-      expect(result).toBe(`<div>a</div>`);
-    });
-
-    it('should be able to decode unicode characters and also latin accents', () => {
-      const result = htmlEntityDecode(`&#83;&#97;&#109;&#39;&#115;&#32;&#55357;&#56960;&#55358;&#56708;&#32;&#101;&#115;&#112;&#97;&#241;&#111;&#108;`);
-      expect(result).toBe(`Sam's 🚀🦄 español`);
     });
   });
 
