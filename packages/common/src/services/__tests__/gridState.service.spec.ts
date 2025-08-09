@@ -440,19 +440,25 @@ describe('GridStateService', () => {
     it('should call "getCurrentGrouping" and return grouped column Ids when enabled and Grouping getter are defined as strings', () => {
       const gridOptionsMock = { enableGrouping: true, enableDraggableGrouping: false } as GridOption;
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
-      vi.spyOn(dataViewStub, 'getGrouping').mockReturnValueOnce([{ getter: 'duration' }, { getter: 'active' }]);
+      vi.spyOn(dataViewStub, 'getGrouping').mockReturnValue([{ getter: 'duration' }, { getter: 'active' }]);
 
       const output = service.getCurrentGrouping();
+      const gridState = service.getCurrentGridState();
+
       expect(output).toEqual(['duration', 'active']);
+      expect(gridState.grouping).toEqual(['duration', 'active']);
     });
 
     it('should call "getCurrentGrouping" and return grouped column Ids when enabled and DraggableGrouping getter are defined as strings', () => {
       const gridOptionsMock = { enableGrouping: false, enableDraggableGrouping: true } as GridOption;
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
-      vi.spyOn(dataViewStub, 'getGrouping').mockReturnValueOnce([{ getter: 'duration' }, { getter: 'active' }]);
+      vi.spyOn(dataViewStub, 'getGrouping').mockReturnValue([{ getter: 'duration' }, { getter: 'active' }]);
 
       const output = service.getCurrentGrouping();
+      const gridState = service.getCurrentGridState();
+
       expect(output).toEqual(['duration', 'active']);
+      expect(gridState.grouping).toEqual(['duration', 'active']);
     });
   });
 

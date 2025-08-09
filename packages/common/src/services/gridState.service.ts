@@ -269,6 +269,10 @@ export class GridStateService {
     return null;
   }
 
+  /**
+   * Get the Grouping column IDs or null when there are no Grouping set
+   * @returns current Grouping column IDs
+   */
   getCurrentGrouping(): string[] | null {
     if (this._gridOptions?.enableGrouping || this._gridOptions.enableDraggableGrouping) {
       return this._dataView.getGrouping().map((g) => g.getter?.toString() || '');
@@ -387,8 +391,7 @@ export class GridStateService {
   resetRowSelectionWhenRequired(): void {
     if (!this.needToPreserveRowSelection() && (this._gridOptions.enableRowSelection || this._gridOptions.enableCheckboxSelector)) {
       // this also requires the Row Selection Model to be registered as well
-      const rowSelectionExtension = this.extensionService?.getExtensionByName?.(ExtensionName.rowSelection);
-      if (rowSelectionExtension?.instance) {
+      if (this.extensionService?.getExtensionByName?.(ExtensionName.rowSelection)?.instance) {
         this._grid.setSelectedRows([]);
       }
     }
