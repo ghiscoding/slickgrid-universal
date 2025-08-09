@@ -21,5 +21,5 @@ export type * from './slickPluginList.enum.js';
 export * from './sortDirection.enum.js';
 export * from './sortDirectionNumber.enum.js';
 export type * from './sortDirectionString.type.js';
-export * from './toggleStateChangeType.js';
+export type * from './toggleStateChangeType.js';
 export type * from './usabilityOverrideFn.type.js';

@@ -1,6 +1,6 @@
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 
-import { ToggleStateChangeType, type ToggleStateChangeTypeString } from '../enums/index.js';
+import { type ToggleStateChangeType } from '../enums/index.js';
 import type {
   Column,
   ColumnSort,
@@ -166,9 +166,7 @@ export class TreeDataService {
    */
   applyToggledItemStateChanges(
     treeToggledItems: TreeToggledItem[],
-    previousFullToggleType?:
-      | Extract<ToggleStateChangeType, 'full-collapse' | 'full-expand'>
-      | Extract<ToggleStateChangeTypeString, 'full-collapse' | 'full-expand'>,
+    previousFullToggleType?: Extract<ToggleStateChangeType, 'full-collapse' | 'full-expand'>,
     shouldPreProcessFullToggle = true,
     shouldTriggerEvent = false
   ): void {
@@ -236,7 +234,7 @@ export class TreeDataService {
             ...this._lastToggleStateChange,
             fromItemId: collapsedItem.itemId,
             toggledItems: this._currentToggledItems,
-            type: collapsedItem.isCollapsed ? ToggleStateChangeType.toggleCollapse : ToggleStateChangeType.toggleExpand,
+            type: collapsedItem.isCollapsed ? 'toggle-collapse' : 'toggle-expand',
           } as TreeToggleStateChange);
         }
       });
@@ -427,7 +425,7 @@ export class TreeDataService {
       this._isLastFullToggleCollapsed = collapsing;
     }
 
-    const toggleType = collapsing ? ToggleStateChangeType.fullCollapse : ToggleStateChangeType.fullExpand;
+    const toggleType: ToggleStateChangeType = collapsing ? 'full-collapse' : 'full-expand';
 
     this._lastToggleStateChange = {
       type: toggleType,
@@ -560,7 +558,7 @@ export class TreeDataService {
             this._grid.invalidate();
 
             this._lastToggleStateChange = {
-              type: isCollapsed ? ToggleStateChangeType.toggleCollapse : ToggleStateChangeType.toggleExpand,
+              type: isCollapsed ? 'toggle-collapse' : 'toggle-expand',
               previousFullToggleType: this._isLastFullToggleCollapsed ? 'full-collapse' : 'full-expand',
               toggledItems: this._currentToggledItems,
             };

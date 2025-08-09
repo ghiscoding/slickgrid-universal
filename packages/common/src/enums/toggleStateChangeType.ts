@@ -1,15 +1,12 @@
-export type ToggleStateChangeTypeString = 'toggle-collapse' | 'toggle-expand' | 'full-collapse' | 'full-expand';
-
-export enum ToggleStateChangeType {
-  /** full tree collapse */
-  toggleCollapse = 'toggle-collapse',
-
-  /** full tree expand */
-  fullExpand = 'full-expand',
-
+export type ToggleStateChangeType =
   /** item toggle collapse */
-  fullCollapse = 'full-collapse',
+  | 'toggle-collapse'
 
   /** item toggle expand */
-  toggleExpand = 'toggle-expand',
-}
+  | 'toggle-expand'
+
+  /** full tree collapse */
+  | 'full-collapse'
+
+  /** full tree expand */
+  | 'full-expand';
