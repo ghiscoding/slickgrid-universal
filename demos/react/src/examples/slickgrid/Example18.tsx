@@ -240,9 +240,8 @@ const Example18: React.FC = () => {
         sortAscIconCssClass: 'mdi mdi-arrow-up',
         sortDescIconCssClass: 'mdi mdi-arrow-down',
         onGroupChanged: (_e, args) => onGroupChanged(args),
-        onExtensionRegistered: (extension) => {
-          setDraggableGroupingPlugin(extension);
-        },
+        onExtensionRegistered: (extension) => setDraggableGroupingPlugin(extension),
+        initialGroupBy: ['duration'],
       },
       darkMode,
       enableTextExport: true,

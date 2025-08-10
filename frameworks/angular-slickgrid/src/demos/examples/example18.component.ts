@@ -270,6 +270,7 @@ export class Example18Component implements OnInit, OnDestroy {
         sortDescIconCssClass: 'mdi mdi-arrow-down',
         onGroupChanged: (e, args) => this.onGroupChanged(args),
         onExtensionRegistered: (extension) => (this.draggableGroupingPlugin = extension),
+        initialGroupBy: ['duration'],
       },
       darkMode: this._darkMode,
       enableTextExport: true,

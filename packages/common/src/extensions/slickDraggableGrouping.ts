@@ -399,8 +399,9 @@ export class SlickDraggableGrouping {
     );
 
     // user can optionally provide initial groupBy columns
-    if (this._addonOptions.initialGroupBy && !this._isInitialized) {
-      this.setDroppedGroups(this._addonOptions.initialGroupBy);
+    const initialGroupIds = this._addonOptions.initialGroupBy ?? this.gridOptions.presets?.grouping;
+    if (initialGroupIds && !this._isInitialized) {
+      this.setDroppedGroups(initialGroupIds);
     }
     this._isInitialized = true;
 

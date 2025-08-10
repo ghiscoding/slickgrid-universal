@@ -111,6 +111,9 @@ export interface GridState {
 }
 ```
 
+> [!NOTE]
+> You can get Grouping column Ids as Grid State but it is limited to Draggable Grouping **only** via Grid Presets and it will not work with regular Grouping.
+
 #### Example
 For example, we can set `presets` on a grid like so:
 
@@ -193,7 +196,7 @@ function gridStateChanged(gridState) {
 ```
 
 ## How to Load Grid with certain Columns Preset (example hide certain Column(s) on load)
-You can show/hide or even change a column position via the `presets`, yes `presets` is that powerful. All you need to do is to pass all Columns that you want to show as part of the `columns` property of `presets`. Typically you already have the entire columns definition since you just defined it, so you can loop through it and just use `map` to list the `columns` according to the structure needed (see [preset structure](Grid-State-&-Preset#structure.md)). What you have to know is that whatever array you provide to `presets`, that will equal to what the user will see and also in which order the columns will show (the array order does matter in this case). If a Columns is omitted from that array, then it will be considered to be a hidden column (you can still show it through Grid Menu and/or Column Picker).
+You can show/hide or even change a column position via the `presets`, yes `presets` is that powerful. All you need to do is to pass all Columns that you want to show as part of the `columns` property of `presets`. Typically you already have the entire columns definition since you just defined it, so you can loop through it and just use `map` to list the `columns` according to the structure needed (see [preset structure](grid-state-preset#structure.md)). What you have to know is that whatever array you provide to `presets`, that will equal to what the user will see and also in which order the columns will show (the array order does matter in this case). If a Columns is omitted from that array, then it will be considered to be a hidden column (you can still show it through Grid Menu and/or Column Picker).
 
 So let say that we want to hide the last Column on page load, we can just find the column by it's `id` that you want to hide and pass the new column definition to the `presets` (again make sure to follow the correct preset structure).
 

@@ -15,6 +15,12 @@ export interface GridState {
   /** Filters (and their state, columnId, searchTerm(s)) that are currently applied in the grid */
   filters?: CurrentFilter[] | null;
 
+  /**
+   * List of Current Grouping column IDs (it won't work when `getter` is a function).
+   * NOTE: Grid Presets for Grouping is only available when using `DraggableGrouping`
+   */
+  grouping?: string[] | null;
+
   /** Sorters (and their state, columnId, direction) that are currently applied in the grid */
   sorters?: CurrentSorter[] | null;
 

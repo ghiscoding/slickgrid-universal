@@ -15,6 +15,8 @@ export type GridStateTypeString =
   | 'columns'
   /** List of Current Filters including these props (`columnId`, `operator`, `searchTerms`, `targetSelector`, `verbatimSearchTerms`) */
   | 'filter'
+  /** List of Current Grouping column IDs. NOTE: Grid Presets for Grouping is only available when using `DraggableGrouping` */
+  | 'grouping'
   /** List of Current Pagination including these props (`pageNumber`, `pageSize`) */
   | 'pagination'
   /** List of Current Pinning including these props (`frozenBottom`, `frozenColumn`, `frozenRow`) */
