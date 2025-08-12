@@ -407,8 +407,8 @@ const Example27: React.FC = () => {
           <button className="btn btn-outline-secondary btn-xs btn-icon" data-test="add-500-rows-btn" onClick={() => setData(500)}>
             500 rows
           </button>
-          <button className="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="add-50k-rows-btn" onClick={() => setData(25000)}>
-            25k rows
+          <button className="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="add-75k-rows-btn" onClick={() => setData(75000)}>
+            75k rows
           </button>
           <button
             onClick={() => dynamicallyChangeFilter()}

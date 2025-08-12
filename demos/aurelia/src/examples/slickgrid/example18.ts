@@ -246,6 +246,7 @@ export class Example18 {
         sortDescIconCssClass: 'mdi mdi-arrow-down',
         onGroupChanged: (_e, args) => this.onGroupChanged(args),
         onExtensionRegistered: (extension) => (this.draggableGroupingPlugin = extension),
+        initialGroupBy: ['duration'],
       },
       darkMode: this._darkMode,
       enableTextExport: true,

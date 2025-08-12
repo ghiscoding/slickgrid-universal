@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.6.1...v9.7.0) (2025-08-12)
+
+### Bug Fixes
+
+* deprecate `mdi-...px` (icon size) and `text-color-...` ([#2089](https://github.com/ghiscoding/slickgrid-universal/issues/2089)) ([3b24a18](https://github.com/ghiscoding/slickgrid-universal/commit/3b24a187503dfb0b71b3adf3faa9a4622bf2b962)) - by @ghiscoding
+* htmlDecode should be able to decode everything (entities/tags) ([#2100](https://github.com/ghiscoding/slickgrid-universal/issues/2100)) ([f6763e3](https://github.com/ghiscoding/slickgrid-universal/commit/f6763e3e64a2a3593c8a048bb1bd3f7d46e8c081)) - by @ghiscoding
+* regression with copy to clipboard with native API ([#2088](https://github.com/ghiscoding/slickgrid-universal/issues/2088)) ([0871e97](https://github.com/ghiscoding/slickgrid-universal/commit/0871e9796274e7c388faa7b378e8cccbb3baf0a4)) - by @ghiscoding
+
+### Performance Improvements
+
+* remove any IE specific code ([#2082](https://github.com/ghiscoding/slickgrid-universal/issues/2082)) ([df942aa](https://github.com/ghiscoding/slickgrid-universal/commit/df942aad51c4ea8dacbe805242cd90d11aade3fe)) - by @ghiscoding
+
 ## [9.6.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.5.0...v9.6.0) (2025-07-27)
 
 ### Bug Fixes

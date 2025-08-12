@@ -1,4 +1,4 @@
-import type { ToggleStateChangeType, ToggleStateChangeTypeString } from '../enums/toggleStateChangeType.js';
+import type { ToggleStateChangeType } from '../enums/toggleStateChangeType.js';
 import type { TreeToggledItem } from './treeToggledItem.interface.js';
 
 export interface TreeToggleStateChange {
@@ -6,7 +6,7 @@ export interface TreeToggleStateChange {
   fromItemId: number | string;
 
   /** What is the Type of toggle that just triggered the change event? */
-  type: ToggleStateChangeType | ToggleStateChangeTypeString;
+  type: ToggleStateChangeType;
 
   /** What are the toggled items? This will be `null` when a full toggle is requested. */
   toggledItems: TreeToggledItem[] | null;
@@ -15,7 +15,5 @@ export interface TreeToggleStateChange {
    * What was the previous/last full toggle type?
    * This will help us identify if the tree was fully collapsed or expanded when toggling items in the grid.
    */
-  previousFullToggleType:
-    | Extract<ToggleStateChangeType, 'full-collapse' | 'full-expand'>
-    | Extract<ToggleStateChangeTypeString, 'full-collapse' | 'full-expand'>;
+  previousFullToggleType: Extract<ToggleStateChangeType, 'full-collapse' | 'full-expand'>;
 }

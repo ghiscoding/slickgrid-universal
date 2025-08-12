@@ -7,7 +7,7 @@ export function calculateAvailableSpace(element: HTMLElement): { top: number; bo
   const vh = window.innerHeight || 0;
   const vw = window.innerWidth || 0;
   const { top: pageScrollTop, left: pageScrollLeft } = windowScrollPosition();
-  const { top: elementOffsetTop, left: elementOffsetLeft } = getOffset(element) || {};
+  const { top: elementOffsetTop = 0, left: elementOffsetLeft = 0 } = getOffset(element) || {};
 
   const top = elementOffsetTop - pageScrollTop;
   const left = elementOffsetLeft - pageScrollLeft;
@@ -220,28 +220,19 @@ export function htmlEncode(inputValue: string): string {
 
 /**
  * Simple function to decode the most common HTML entities.
- * For example: "&lt;div&gt;Hablar espa&#241;ol?&lt;/div&gt;" => "<div>Hablar español?</div>"
+ * For example: "&lt;div&gt;Hablar espa&#241;ol? &#55358;&#56708;&lt;/div&gt;" => "<div>Hablar español? 🦄</div>"
  * @param {String} inputValue - input value to be decoded
  * @return {String}
  */
-export function htmlDecode(input?: string): string {
+export function htmlDecode(input?: string | boolean | number): string {
   if (isDefined(input)) {
+    // 1. decode html entities (e.g. `&#39;` => single quote)
+    // 2. use textarea to decode the rest (e.g. html tags and symbols, `&lt;div&gt;` => `<div>`)
     const txt = document.createElement('textarea');
-    txt.innerHTML = input;
+    txt.innerHTML = input.toString().replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(dec));
     return txt.value;
   }
   return '';
-}
-
-/**
- * Decode text into html entity
- * @param string text: input text
- * @param string text: output text
- */
-export function htmlEntityDecode(input: string): string {
-  return input.replace(/&#(\d+);/g, (_match, dec) => {
-    return String.fromCharCode(dec);
-  });
 }
 
 /**

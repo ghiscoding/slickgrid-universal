@@ -4,6 +4,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.6.1...v9.7.0) (2025-08-12)
+
+### Features
+
+* add Grouping to Grid State ([#2101](https://github.com/ghiscoding/slickgrid-universal/issues/2101)) ([df23257](https://github.com/ghiscoding/slickgrid-universal/commit/df23257d8435fa4f14a5bfec732fe00ad11a0606)) - by @ghiscoding
+* add Tree Data Lazy Loading option ([#2090](https://github.com/ghiscoding/slickgrid-universal/issues/2090)) ([ae7bde8](https://github.com/ghiscoding/slickgrid-universal/commit/ae7bde8b6827fdb07839222cd97d8bcc33c77d49)) - by @ghiscoding
+
+### Bug Fixes
+
+* `initiallyCollapsed` should work with hierarchical tree dataset ([#2083](https://github.com/ghiscoding/slickgrid-universal/issues/2083)) ([e676246](https://github.com/ghiscoding/slickgrid-universal/commit/e676246d0f1305eb17b9ba6818cd81783eab8cce)) - by @ghiscoding
+* deprecate `mdi-...px` (icon size) and `text-color-...` ([#2089](https://github.com/ghiscoding/slickgrid-universal/issues/2089)) ([3b24a18](https://github.com/ghiscoding/slickgrid-universal/commit/3b24a187503dfb0b71b3adf3faa9a4622bf2b962)) - by @ghiscoding
+
+### Performance Improvements
+
+* improve expand/collapse all tree data items ([#2098](https://github.com/ghiscoding/slickgrid-universal/issues/2098)) ([45c6ead](https://github.com/ghiscoding/slickgrid-universal/commit/45c6ead12b1bc638c10f14134ff1d268d480df75)) - by @ghiscoding
+
 ## [9.6.1](https://github.com/ghiscoding/slickgrid-universal/compare/v9.6.0...v9.6.1) (2025-07-27)
 
 ### Bug Fixes

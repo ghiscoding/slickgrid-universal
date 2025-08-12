@@ -56,7 +56,7 @@
 * [Export to Excel](grid-functionalities/Export-to-Excel.md)
 * [Export to File (csv/txt)](grid-functionalities/Export-to-Text-File.md)
 * [Grid Menu](grid-functionalities/Grid-Menu.md)
-* [Grid State & Presets](grid-functionalities/Grid-State-&-Preset.md)
+* [Grid State & Presets](grid-functionalities/grid-state-preset.md)
 * [Grouping & Aggregators](grid-functionalities/grouping-and-aggregators.md)
 * [Header & Footer Slots](grid-functionalities/header-footer-slots.md)
 * [Header Menu & Header Buttons](grid-functionalities/Header-Menu-&-Header-Buttons.md)

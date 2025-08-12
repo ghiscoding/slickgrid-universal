@@ -154,6 +154,12 @@ export class GridStateService {
       pinning: { frozenColumn, frozenRow, frozenBottom },
     };
 
+    // optional Grouping
+    const currentGrouping = this.getCurrentGrouping();
+    if (currentGrouping) {
+      gridState.grouping = currentGrouping;
+    }
+
     // optional Pagination
     const currentPagination = this.getCurrentPagination();
     if (currentPagination) {
@@ -264,6 +270,17 @@ export class GridStateService {
   }
 
   /**
+   * Get the Grouping column IDs or null when there are no Grouping set
+   * @returns current Grouping column IDs
+   */
+  getCurrentGrouping(): string[] | null {
+    if (this._gridOptions?.enableGrouping || this._gridOptions.enableDraggableGrouping) {
+      return this._dataView.getGrouping().map((g) => g.getter?.toString() || '');
+    }
+    return null;
+  }
+
+  /**
    * Get current Pagination (and its state, pageNumber, pageSize) that are currently applied in the grid
    * @return current pagination state
    */
@@ -274,9 +291,8 @@ export class GridStateService {
         if (backendService?.getCurrentPagination) {
           return backendService.getCurrentPagination();
         }
-      } else {
-        return this.sharedService.currentPagination;
       }
+      return this.sharedService.currentPagination;
     }
     return null;
   }
@@ -375,8 +391,7 @@ export class GridStateService {
   resetRowSelectionWhenRequired(): void {
     if (!this.needToPreserveRowSelection() && (this._gridOptions.enableRowSelection || this._gridOptions.enableCheckboxSelector)) {
       // this also requires the Row Selection Model to be registered as well
-      const rowSelectionExtension = this.extensionService?.getExtensionByName?.(ExtensionName.rowSelection);
-      if (rowSelectionExtension?.instance) {
+      if (this.extensionService?.getExtensionByName?.(ExtensionName.rowSelection)?.instance) {
         this._grid.setSelectedRows([]);
       }
     }

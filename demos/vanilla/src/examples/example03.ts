@@ -383,6 +383,11 @@ export default class Example03 {
         // groupIconCssClass: 'mdi mdi-drag-vertical',
         initialGroupBy: ['duration'],
       },
+      // Grouping Grid Presets only works with DraggableGrouping plugin (not regular Grouping),
+      // however, it's typically better to use `initialGroupBy: []`
+      presets: {
+        grouping: ['duration'],
+      },
       enableCheckboxSelector: true,
       enableRowSelection: true,
       checkboxSelector: {

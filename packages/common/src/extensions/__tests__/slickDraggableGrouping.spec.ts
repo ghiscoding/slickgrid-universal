@@ -546,6 +546,19 @@ describe('Draggable Grouping Plugin', () => {
           expect(setGroupedSpy).toHaveBeenCalledWith(['duration']);
         });
 
+        it('should initialize the Draggable Grouping with initial grid option presets when provided to the plugin', () => {
+          const setGroupedSpy = vi.spyOn(plugin, 'setDroppedGroups');
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({ ...gridOptionsMock, presets: { grouping: ['duration', 'active'] } });
+          plugin.init(gridStub, addonOptions);
+          plugin.isInitialized = false;
+          vi.spyOn(gridStub, 'getHeaderColumn').mockReturnValue(mockHeaderColumnDiv1);
+          plugin.setupColumnReorder(gridStub, mockHeaderLeftDiv1, {}, setColumnsSpy, setColumnResizeSpy, mockColumns, getColumnIndexSpy, GRID_UID, triggerSpy);
+
+          const preHeaderElm = document.querySelector('.slick-preheader-panel') as HTMLDivElement;
+          expect(preHeaderElm).toBeTruthy();
+          expect(setGroupedSpy).toHaveBeenCalledWith(['duration', 'active']);
+        });
+
         it('should call sortable "update" from setupColumnDropbox and expect "updateGroupBy" to be called with a sort-group', () => {
           expect(plugin.dropboxElement).toEqual(dropzoneElm);
           expect(plugin.columnsGroupBy.length).toBeGreaterThan(0);

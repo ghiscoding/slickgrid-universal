@@ -60,7 +60,6 @@
     background-color: var(--slick-form-control-bg-color, v.$slick-form-control-bg-color);
     border: var(--slick-form-control-border, v.$slick-form-control-border);
     color: var(--slick-font-color, v.$slick-font-color);
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
     transition:
       border-color ease-in-out 0.15s,
       box-shadow ease-in-out 0.15s;

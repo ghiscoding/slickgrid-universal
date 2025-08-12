@@ -4,6 +4,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.6.1...v9.7.0) (2025-08-12)
+
+### Features
+
+* add Tree Data Lazy Loading option ([#2090](https://github.com/ghiscoding/slickgrid-universal/issues/2090)) ([ae7bde8](https://github.com/ghiscoding/slickgrid-universal/commit/ae7bde8b6827fdb07839222cd97d8bcc33c77d49)) - by @ghiscoding
+
+### Bug Fixes
+
+* `initiallyCollapsed` should work with hierarchical tree dataset ([#2083](https://github.com/ghiscoding/slickgrid-universal/issues/2083)) ([e676246](https://github.com/ghiscoding/slickgrid-universal/commit/e676246d0f1305eb17b9ba6818cd81783eab8cce)) - by @ghiscoding
+
 ## [9.6.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.5.0...v9.6.0) (2025-07-27)
 
 **Note:** Version bump only for package @slickgrid-universal/vanilla-bundle

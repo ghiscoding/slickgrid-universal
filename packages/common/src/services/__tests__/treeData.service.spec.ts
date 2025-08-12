@@ -602,6 +602,7 @@ describe('TreeData Service', () => {
       const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
 
       service.init(gridStub);
+      sharedService.hierarchicalDataset = service.convertFlatParentChildToTreeDataset(mockFlatDataset, gridOptionsMock);
       await service.toggleTreeDataCollapse(true);
 
       expect(pubSubSpy).toHaveBeenCalledWith(`onTreeFullToggleStart`, { collapsing: true });
@@ -667,6 +668,7 @@ describe('TreeData Service', () => {
       const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
 
       service.init(gridStub);
+      sharedService.hierarchicalDataset = service.convertFlatParentChildToTreeDataset(mockFlatDataset, gridOptionsMock);
       await service.toggleTreeDataCollapse(true);
 
       expect(pubSubSpy).toHaveBeenCalledWith(`onTreeFullToggleStart`, { collapsing: true });
@@ -706,6 +708,7 @@ describe('TreeData Service', () => {
       const pubSubSpy = vi.spyOn(mockPubSub, 'publish');
 
       service.init(gridStub);
+      sharedService.hierarchicalDataset = service.convertFlatParentChildToTreeDataset(mockFlatDataset, gridOptionsMock);
       await service.toggleTreeDataCollapse(false);
 
       expect(pubSubSpy).toHaveBeenCalledWith(`onTreeFullToggleStart`, { collapsing: false });
@@ -951,8 +954,7 @@ describe('TreeData Service', () => {
       await service.toggleTreeDataCollapse(true);
       const result2 = service.convertFlatParentChildToTreeDatasetAndSort(mockFlatDataset, mockColumns, gridOptionsMock);
       expect(result2).toEqual({ flat: mockFlatDataset as any[], hierarchical: mockHierarchical as any[] });
-      expect(unflattenParentChildArrayToTree).toHaveBeenNthCalledWith(3, mockFlatDataset, {
-        // 3rd call because toggleTreeDataCollapse() made the 2nd call
+      expect(unflattenParentChildArrayToTree).toHaveBeenNthCalledWith(2, mockFlatDataset, {
         columnId: 'file',
         identifierPropName: 'id',
         initiallyCollapsed: true, // changed to True

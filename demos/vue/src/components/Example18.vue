@@ -238,6 +238,7 @@ function defineGrid() {
       sortDescIconCssClass: 'mdi mdi-arrow-down',
       onGroupChanged: (_e, args) => onGroupChanged(args),
       onExtensionRegistered: (extension) => (draggableGroupingPlugin = extension),
+      initialGroupBy: ['duration'],
     },
     darkMode: darkMode.value,
     enableTextExport: true,
