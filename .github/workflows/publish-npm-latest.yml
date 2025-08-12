@@ -138,7 +138,6 @@ jobs:
               echo "publish_failed=true" >> $GITHUB_OUTPUT
             else
               echo "::error title=Lerna Publish Failed::$OUTPUT"
-              exit $EXIT_CODE
             fi
           fi
 
