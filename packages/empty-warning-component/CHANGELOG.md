@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.6.1...v9.7.0) (2025-08-12)
+
+### Bug Fixes
+
+* deprecate `mdi-...px` (icon size) and `text-color-...` ([#2089](https://github.com/ghiscoding/slickgrid-universal/issues/2089)) ([3b24a18](https://github.com/ghiscoding/slickgrid-universal/commit/3b24a187503dfb0b71b3adf3faa9a4622bf2b962)) - by @ghiscoding
+
 ## [9.6.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.5.0...v9.6.0) (2025-07-27)
 
 **Note:** Version bump only for package @slickgrid-universal/empty-warning-component

@@ -1,7 +1,7 @@
 {
   "name": "slickgrid-vue-demo",
   "private": true,
-  "version": "9.6.1",
+  "version": "9.7.0",
   "type": "module",
   "author": {
     "name": "Ghislain B."

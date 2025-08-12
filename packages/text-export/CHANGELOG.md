@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.6.1...v9.7.0) (2025-08-12)
+
+### Bug Fixes
+
+* htmlDecode should be able to decode everything (entities/tags) ([#2100](https://github.com/ghiscoding/slickgrid-universal/issues/2100)) ([f6763e3](https://github.com/ghiscoding/slickgrid-universal/commit/f6763e3e64a2a3593c8a048bb1bd3f7d46e8c081)) - by @ghiscoding
+
 ## [9.6.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.5.0...v9.6.0) (2025-07-27)
 
 **Note:** Version bump only for package @slickgrid-universal/text-export
