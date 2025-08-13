@@ -63,9 +63,9 @@ A good example of a `Formatter` could be a timestamp or a `Date` object that we 
 * `Formatters.dollar`: Display the value as 2 decimals formatted with dollar sign '$' at the end of of the value.
 * `Formatters.dollarColored`: Display the value as 2 decimals formatted with dollar sign '$' at the end of of the value, change color of text to red/green on negative/positive value
 * `Formatters.dollarColoredBoldFormatter`: Display the value as 2 decimals formatted with dollar sign '$' at the end of of the value, change color of text to red/green on negative/positive value, show it in bold font weight as well
+* `Formatters.htmlDecode`: display a decoded HTML string (e.g. `&lt;div&gt;Hello&lt;/div&gt;` => `<div>Hello</div>`)
 * `Formatters.hyperlink`: takes a URL cell value and wraps it into a clickable hyperlink `<a href="value">value</a>`
   * the cell value **must contain** (`ftp://abc`, `http://abc` or `https://abc`), if it doesn't then use `fakeHyperlink`
-* `Formatters.hyperlinkUriPrefix`: format a URI prefix into an hyperlink
 * `Formatters.icon`: to display an icon with defined CSS class name, use `params` to pass a `cssClass` property
 * `Formatters.iconBoolean`: similar to `icon` but will only be displayed on a Boolean truthy value, use `params` to pass a `cssClass` property
 * `Formatters.mask`: to change the string output using a mask, use `params` to pass a `mask` property
@@ -82,6 +82,8 @@ A good example of a `Formatter` could be a timestamp or a `Date` object that we 
 * `Formatters.translate`: Takes a cell value and translates it (i18n). Requires an instance of the Translate Service:: \`i18n: translate
 * `Formatters.translateBoolean`: Takes a boolean value, cast it to upperCase string and finally translates it (i18n).
 * `Formatters.tree`: Formatter that must be used when the column is a Tree Data column
+* `Formatters.treeParseTotals`: allows the use of the Tree Formatter in combo with a `GroupTotalsFormatter`
+* `Formatters.treeExport`: Formatter to use when exporting to CSV/Excel, e.g. `exportCustomFormatter: Formatters.treeExport`
 
 > **Note:** The list might not be up to date (especially for Dates), please refer to the [Formatters export](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/formatters/index.ts#L37) to know exactly which formatters are available.
 
