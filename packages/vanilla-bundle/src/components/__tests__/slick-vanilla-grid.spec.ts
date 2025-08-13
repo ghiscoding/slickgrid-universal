@@ -1190,7 +1190,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
       it('should refresh a local grid defined and change pagination options pagination when a preset is defined in grid options and total rows is different when Filters are applied', () => {
         const expectedPageNumber = 3;
-        const expectedTotalItems = 15;
+        const expectedTotalItems = 2;
         const refreshSpy = vi.spyOn(component, 'refreshGridData');
         const getPagingSpy = vi
           .spyOn(mockDataView, 'getPagingInfo')

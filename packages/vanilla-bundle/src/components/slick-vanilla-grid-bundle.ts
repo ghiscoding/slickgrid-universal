@@ -708,7 +708,7 @@ export class SlickVanillaGridBundle<TData = any> {
     // local grid, check if we need to show the Pagination
     // if so then also check if there's any presets and finally initialize the PaginationService
     // a local grid with Pagination presets will potentially have a different total of items, we'll need to get it from the DataView and update our total
-    if (this.gridOptions?.enablePagination && this._isLocalGrid) {
+    if (!this._isPaginationInitialized && !this.datasetHierarchical && this.gridOptions?.enablePagination && this._isLocalGrid) {
       this.showPagination = true;
       this.loadLocalGridPagination(this.dataset);
     }
@@ -1125,6 +1125,11 @@ export class SlickVanillaGridBundle<TData = any> {
     // if so then also check if there's any presets and finally initialize the PaginationService
     // a local grid with Pagination presets will potentially have a different total of items, we'll need to get it from the DataView and update our total
     if (this.slickGrid && this._gridOptions) {
+      if (this._gridOptions.enablePagination && this._isLocalGrid) {
+        this.showPagination = true;
+        this.loadLocalGridPagination(dataset);
+      }
+
       if (this._gridOptions.enableEmptyDataWarningMessage && Array.isArray(dataset)) {
         const finalTotalCount = totalCount || dataset.length;
         this.displayEmptyDataWarning(finalTotalCount < 1);

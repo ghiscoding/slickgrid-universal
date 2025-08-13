@@ -440,15 +440,10 @@ describe('Example 01 - Basic Grids', () => {
       .find('[data-test=page-number-input]')
       .invoke('val')
       .then((pageNumber) => expect(pageNumber).to.eq('1'));
-
     cy.get('.grid2').find('[data-test=page-number-input]').click();
-
     cy.get('.grid2').find('[data-test=page-count]').contains('4');
-
     cy.get('.grid2').find('[data-test=item-from]').contains('1');
-
     cy.get('.grid2').find('[data-test=item-to]').contains('5');
-
     cy.get('.grid2').find('[data-test=total-items]').contains('19');
   });
 
@@ -558,6 +553,28 @@ describe('Example 01 - Basic Grids', () => {
         .then(() => expect(stub.getCall(0)).to.be.calledWith('Command: contact-chat'));
 
       cy.get('.slick-submenu').should('have.length', 0);
+    });
+  });
+
+  describe('Change 2nd grid dataset', () => {
+    it('should change dataset of 2nd grid and expect 285 total items with 5 visible items', () => {
+      cy.get('[data-test="change-data2"]').click();
+
+      cy.get('[data-test=page-number-input]')
+        .invoke('val')
+        .then((pageNumber) => expect(pageNumber).to.eq('1'));
+      cy.get('[data-test=page-count]').contains('4');
+      cy.get('[data-test=item-from]').contains('1');
+      cy.get('[data-test=item-to]').contains('5');
+      cy.get('[data-test=total-items]').contains('20');
+    });
+
+    it('should display all rows that ends with 44', () => {
+      cy.get('.grid2 [data-row="0"] > .slick-cell:nth(0)').should('contain', 'Task 1044');
+      cy.get('.grid2 [data-row="1"] > .slick-cell:nth(0)').should('contain', 'Task 144');
+      cy.get('.grid2 [data-row="2"] > .slick-cell:nth(0)').should('contain', 'Task 244');
+      cy.get('.grid2 [data-row="3"] > .slick-cell:nth(0)').should('contain', 'Task 344');
+      cy.get('.grid2 [data-row="4"] > .slick-cell:nth(0)').should('contain', 'Task 44');
     });
   });
 });
