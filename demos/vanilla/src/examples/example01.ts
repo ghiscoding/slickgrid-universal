@@ -40,12 +40,13 @@ export default class Example01 {
       { ...ExampleGridOptions, ...this.gridOptions1 },
       this.dataset1
     );
-    this.sgb2 = new Slicker.GridBundle(
-      document.querySelector(`.grid2`) as HTMLDivElement,
-      this.columnDefinitions2,
-      { ...ExampleGridOptions, ...this.gridOptions2 },
-      this.dataset2
-    );
+    this.sgb2 = new Slicker.GridBundle(document.querySelector(`.grid2`) as HTMLDivElement, this.columnDefinitions2, {
+      ...ExampleGridOptions,
+      ...this.gridOptions2,
+    });
+
+    // load 2nd dataset in a delay to make sure Pagination work as expected (which was previously a bug)
+    setTimeout(() => (this.sgb2.dataset = this.dataset2), 0);
   }
 
   dispose() {
@@ -211,6 +212,15 @@ export default class Example01 {
         },
       },
     };
+  }
+
+  // use new data on 2nd grid
+  changeDataset2() {
+    document.querySelector('.icon-data2')?.classList.add('mdi-spin', 'mdi-vanish');
+    setTimeout(() => {
+      this.sgb2.dataset = this.mockData(NB_ITEMS + 55);
+      document.querySelector('.icon-data2')?.classList.remove('mdi-spin', 'mdi-vanish');
+    }, 750);
   }
 
   mockData(count: number) {
