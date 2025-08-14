@@ -530,7 +530,7 @@ export class ResizerService {
     const columnDefinitions = Array.isArray(columnOrColumns) ? columnOrColumns : [columnOrColumns];
     const dataset = this.dataView.getItems() as any[];
     if (!this._singleCharWidth) {
-      this._singleCharWidth = this.getCharWidthByFont();
+      this._singleCharWidth = this.getAverageCharWidthByFont();
     }
 
     // Track the largest sanitized formatted text for each column
@@ -580,31 +580,35 @@ export class ResizerService {
     return readItemCount;
   }
 
-  /** Get an approximate width in pixel of a character, we'll approximate by using all alphabetical chars and common symbols. */
-  protected getCharWidthByFont(): number {
-    const gridCanvas = document.querySelector('.slickgrid-container .grid-canvas');
-    if (gridCanvas) {
-      let addedFakeCell = false;
-      let firstSlickCell = gridCanvas.querySelector('.slick-cell');
-      if (!firstSlickCell) {
+  /** Get an average width in pixel of a single character, we'll make an average by using all alphabetical chars and common symbols and calculate the average. */
+  protected getAverageCharWidthByFont(): number {
+    const gCanvas = document.querySelector('.slickgrid-container .grid-canvas');
+    let charWidth = 0;
+    if (gCanvas) {
+      let isTmpCellCreated = false;
+      let sCell = gCanvas.querySelector('.slick-cell');
+      if (!sCell) {
         // if we don't have any grid cells yet, let's create a fake one and add it to the grid
-        const slickRow = createDomElement('div', { className: 'slick-row' });
-        firstSlickCell = createDomElement('div', { className: 'slick-cell' });
-        slickRow.appendChild(firstSlickCell);
-        gridCanvas.appendChild(slickRow);
-        addedFakeCell = true;
+        const sRow = createDomElement('div', { className: 'slick-row' });
+        sCell = createDomElement('div', { className: 'slick-cell' });
+        sRow.appendChild(sCell);
+        gCanvas.appendChild(sRow);
+        isTmpCellCreated = true;
       }
-      if (firstSlickCell) {
-        const { fontFamily, fontSize } = window.getComputedStyle(firstSlickCell);
-        const ctx = document.createElement('canvas').getContext('2d') as CanvasRenderingContext2D;
+      if (sCell) {
+        const { fontFamily, fontSize } = window.getComputedStyle(sCell);
+        const ctx = this.getBrowserCanvas();
         ctx.font = `${fontSize} ${fontFamily}`;
         const text = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-={}:<>?,./ ';
-        const textWidth = ctx.measureText(text).width;
-        addedFakeCell && gridCanvas.querySelector('.slick-row')?.remove();
-        return textWidth / text.length;
+        charWidth = ctx.measureText(text).width / text.length;
+        isTmpCellCreated && gCanvas.querySelector('.slick-row')?.remove();
       }
     }
-    return 0;
+    return charWidth;
+  }
+
+  getBrowserCanvas(): CanvasRenderingContext2D {
+    return document.createElement('canvas').getContext('2d') as CanvasRenderingContext2D;
   }
 
   /**

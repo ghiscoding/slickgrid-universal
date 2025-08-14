@@ -19,8 +19,11 @@ const CONTAINER_ID = 'demo-container';
 const template = `<div id="${CONTAINER_ID}" style="height: 800px; width: 600px; overflow: hidden; display: block;">
     <div id="slickGridContainer-${GRID_ID}" class="gridPane" style="width: 100%;">
       <div id="${GRID_ID}" class="${GRID_UID}" style="width: 100%">
-        <div class="slick-viewport">
-          <div class="slick-header"></div>
+       <div class="slickgrid-container">
+          <div class="slick-viewport">
+            <div class="slick-header"></div>
+            <div class="grid-canvas"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -658,6 +661,9 @@ describe('Resizer Service', () => {
 
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColDefs);
         vi.spyOn(mockDataView, 'getItems').mockReturnValue(mockData);
+        vi.spyOn(service, 'getBrowserCanvas').mockReturnValue({
+          measureText: vi.fn().mockReturnValue({ width: 613 }), // mock canvas measureText for `getAverageCharWidthByFont()`
+        } as unknown as CanvasRenderingContext2D);
       });
 
       it('should call handleSingleColumnResizeByContent when "onHeaderMenuColumnResizeByContent" gets triggered', () => {
