@@ -134,6 +134,7 @@ describe('Resizer Service', () => {
       service.init(gridStub, divContainer);
 
       expect(bindAutoResizeDataGridSpy).toHaveBeenCalled();
+      expect(service.getBrowserCanvas()).toBeDefined();
     });
 
     it('should not call "bindAutoResizeDataGrid" when autoResize is not enabled', () => {
