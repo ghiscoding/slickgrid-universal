@@ -582,13 +582,13 @@ export class ResizerService {
 
   /** Get an average width in pixel of a single character, we'll make an average by using all alphabetical chars and common symbols and calculate the average. */
   protected getAverageCharWidthByFont(): number {
-    const gCanvas = document.querySelector('.slickgrid-container .grid-canvas');
     let charWidth = 0;
+    const gCanvas = this._gridContainerElm.querySelector('.grid-canvas');
     if (gCanvas) {
       let isTmpCellCreated = false;
       let sCell = gCanvas.querySelector('.slick-cell');
       if (!sCell) {
-        // if we don't have any grid cells yet, let's create a fake one and add it to the grid
+        // if we don't have any grid cells yet, let's create a temp one and add it to the grid which we'll remove later
         const sRow = createDomElement('div', { className: 'slick-row' });
         sCell = createDomElement('div', { className: 'slick-cell' });
         sRow.appendChild(sCell);
