@@ -1,6 +1,6 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
-import { getInnerSize, getOffset, isPrimitiveOrHTML, stripTags } from '@slickgrid-universal/utils';
+import { createDomElement, getInnerSize, getOffset, isPrimitiveOrHTML, stripTags } from '@slickgrid-universal/utils';
 
 import { FieldType } from '../enums/index.js';
 import type { AutoResizeOption, Column, GridOption, GridSize, ResizeByContentOption } from '../interfaces/index.js';
@@ -37,6 +37,7 @@ export class ResizerService {
   protected _resizePaused = false;
   protected _resizeObserver!: ResizeObserver;
   protected _subscriptions: EventSubscription[] = [];
+  protected _singleCharWidth = 0; // single char text width
 
   get autoHeightRecalcRow(): number {
     return this._autoHeightRecalcRow || 100;
@@ -528,69 +529,82 @@ export class ResizerService {
   ): number {
     const columnDefinitions = Array.isArray(columnOrColumns) ? columnOrColumns : [columnOrColumns];
     const dataset = this.dataView.getItems() as any[];
+    if (!this._singleCharWidth) {
+      this._singleCharWidth = this.getCharWidthByFont();
+    }
 
+    // Track the largest sanitized formatted text for each column
     let readItemCount = 0;
+    const maxSanitizedTextMap: { [columnId: string]: string } = {};
     for (const [rowIdx, item] of dataset.entries()) {
       if (rowIdx > maxItemToInspect) {
         break;
       }
-      if (Array.isArray(columnDefinitions)) {
-        if (typeof columnWidths === 'object') {
-          columnDefinitions.forEach((columnDef, colIdx) => {
-            const newColumnWidth = this.calculateCellWidthByContent(
-              item,
-              columnDef,
-              rowIdx,
-              columnIndexOverride ?? colIdx,
-              columnWidths[columnDef.id]
-            );
-            if (newColumnWidth !== undefined) {
-              columnWidths[columnDef.id] = newColumnWidth;
-            }
-          });
+      columnDefinitions.forEach((columnDef, colIdx) => {
+        const formattedData = parseFormatterWhenExist(
+          columnDef?.formatter,
+          rowIdx,
+          columnIndexOverride ?? colIdx,
+          columnDef,
+          item,
+          this._grid
+        );
+        const formattedDataSanitized = isPrimitiveOrHTML(formattedData) ? stripTags(formattedData) : '';
+        if (!maxSanitizedTextMap[columnDef.id] || formattedDataSanitized.length > maxSanitizedTextMap[columnDef.id].length) {
+          maxSanitizedTextMap[columnDef.id] = formattedDataSanitized;
         }
-      }
+      });
       readItemCount = rowIdx + 1;
     }
+
+    // After the loop, calculate the pixel width for the largest string per column
+    columnDefinitions.forEach((columnDef) => {
+      const resizeCellCharWidthInPx = this.resizeByContentOptions.cellCharWidthInPx ?? this._singleCharWidth;
+      const charWidthPx = columnDef?.resizeCharWidthInPx ?? resizeCellCharWidthInPx;
+      const maxSanitizedText = maxSanitizedTextMap[columnDef.id] || '';
+      const formattedTextWidthInPx = Math.ceil(maxSanitizedText.length * charWidthPx);
+      const resizeMaxWidthThreshold = columnDef.resizeMaxWidthThreshold;
+      let finalWidth = formattedTextWidthInPx;
+      if (resizeMaxWidthThreshold !== undefined && formattedTextWidthInPx > resizeMaxWidthThreshold) {
+        finalWidth = resizeMaxWidthThreshold;
+      } else if (columnDef.maxWidth !== undefined && formattedTextWidthInPx > columnDef.maxWidth) {
+        finalWidth = columnDef.maxWidth;
+      }
+      // Use minWidth if larger
+      if (columnDef.minWidth !== undefined && finalWidth < columnDef.minWidth) {
+        finalWidth = columnDef.minWidth;
+      }
+      columnWidths[columnDef.id] = finalWidth;
+    });
 
     return readItemCount;
   }
 
-  /**
-   * Step 2 - This step will parse any Formatter(s) if defined, it will then sanitize any HTML tags and calculate the max width from that cell content.
-   * This function will be executed on every cell of the grid data.
-   * @param {Object} item - item data context object
-   * @param {Object} columnDef - column definition
-   * @param {Number} rowIdx - row index
-   * @param {Number} colIdx - column (cell) index
-   * @param {Number} initialMininalColumnWidth - initial width, could be coming from `minWidth` or a default `width`
-   * @returns - column width
-   */
-  protected calculateCellWidthByContent(
-    item: any,
-    columnDef: Column,
-    rowIdx: number,
-    colIdx: number,
-    initialMininalColumnWidth?: number
-  ): number | undefined {
-    const resizeCellCharWidthInPx = this.resizeByContentOptions.cellCharWidthInPx ?? 7; // width in pixels of a string character, this can vary depending on which font family/size is used & cell padding
-
-    if (!columnDef.originalWidth) {
-      const charWidthPx = columnDef?.resizeCharWidthInPx ?? resizeCellCharWidthInPx;
-      const formattedData = parseFormatterWhenExist(columnDef?.formatter, rowIdx, colIdx, columnDef, item, this._grid);
-      const formattedDataSanitized = isPrimitiveOrHTML(formattedData) ? stripTags(formattedData) : '';
-      const formattedTextWidthInPx = Math.ceil(formattedDataSanitized.length * charWidthPx);
-      const resizeMaxWidthThreshold = columnDef.resizeMaxWidthThreshold;
-      if (columnDef && (initialMininalColumnWidth === undefined || formattedTextWidthInPx > initialMininalColumnWidth)) {
-        initialMininalColumnWidth =
-          resizeMaxWidthThreshold !== undefined && formattedTextWidthInPx > resizeMaxWidthThreshold
-            ? resizeMaxWidthThreshold
-            : columnDef.maxWidth !== undefined && formattedTextWidthInPx > columnDef.maxWidth
-              ? columnDef.maxWidth
-              : formattedTextWidthInPx;
+  /** Get an approximate width in pixel of a character, we'll approximate by using all alphabetical chars and common symbols. */
+  protected getCharWidthByFont(): number {
+    const gridCanvas = document.querySelector('.slickgrid-container .grid-canvas');
+    if (gridCanvas) {
+      let addedFakeCell = false;
+      let firstSlickCell = gridCanvas.querySelector('.slick-cell');
+      if (!firstSlickCell) {
+        // if we don't have any grid cells yet, let's create a fake one and add it to the grid
+        const slickRow = createDomElement('div', { className: 'slick-row' });
+        firstSlickCell = createDomElement('div', { className: 'slick-cell' });
+        slickRow.appendChild(firstSlickCell);
+        gridCanvas.appendChild(slickRow);
+        addedFakeCell = true;
+      }
+      if (firstSlickCell) {
+        const { fontFamily, fontSize } = window.getComputedStyle(firstSlickCell);
+        const ctx = document.createElement('canvas').getContext('2d') as CanvasRenderingContext2D;
+        ctx.font = `${fontSize} ${fontFamily}`;
+        const text = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-={}:<>?,./ ';
+        const textWidth = ctx.measureText(text).width;
+        addedFakeCell && gridCanvas.querySelector('.slick-row')?.remove();
+        return textWidth / text.length;
       }
     }
-    return initialMininalColumnWidth;
+    return 0;
   }
 
   /**
