@@ -101,14 +101,14 @@ export class InnerGridExample {
     //   `;
     const fragment = new DocumentFragment();
     const rowDetailContainer = createDomElement('div', { className: this.innerGridClass });
-    rowDetailContainer.appendChild(
+    const innerGrid = createDomElement('div', { className: `innergrid innergrid-${this.itemDetail.id}` });
+    const gridContainer = createDomElement('div', { className: 'container' });
+    gridContainer.appendChild(
       createDomElement('h4', {
         className: 'title is-4',
         textContent: `${this.itemDetail.companyName} - Order Details (id: ${this.itemDetail.id})`,
       })
     );
-    const innerGrid = createDomElement('div', { className: `innergrid innergrid-${this.itemDetail.id}` });
-    const gridContainer = createDomElement('div', { className: 'container' });
     gridContainer.appendChild(innerGrid);
     rowDetailContainer.appendChild(gridContainer);
     fragment.appendChild(rowDetailContainer);
