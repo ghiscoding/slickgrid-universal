@@ -613,7 +613,7 @@ describe('Resizer Service', () => {
           { id: 'age', field: 'age', type: FieldType.number, resizeExtraWidthPadding: 2 },
           { id: 'street', field: 'street', maxWidth: 15 },
           { id: 'country', field: 'country', maxWidth: 15, resizeMaxWidthThreshold: 14, rerenderOnResize: true },
-          { id: 'zip', field: 'zip', minWidth: 45, width: 70, type: 'number' },
+          { id: 'zip', field: 'zip', minWidth: 35, width: 30, type: 'number' },
         ] as Column[];
         mockData = [
           {
@@ -685,7 +685,7 @@ describe('Resizer Service', () => {
 
         const viewportRight = document.createElement('div');
         viewportRight.className = 'slick-viewport-right';
-        Object.defineProperty(viewportRight, 'clientWidth', { writable: true, configurable: true, value: 27 });
+        Object.defineProperty(viewportRight, 'clientWidth', { writable: true, configurable: true, value: 7 });
 
         vi.spyOn(gridStub, 'getViewports').mockReturnValue([viewportLeft, viewportRight]);
         const reRenderSpy = vi.spyOn(gridStub, 'reRenderColumns');
@@ -736,7 +736,7 @@ describe('Resizer Service', () => {
           expect.objectContaining({ id: 'age', width: 29 }), // longest number 100 (length 3 * charWidth(7) * ratio(1)) + cellPadding(6) + extraPadding(2) = 44.96 ceil to 45
           expect.objectContaining({ id: 'street', width: 15 }), // longest text "20229 Tia Turnpike" goes over maxWidth so we fallback to it
           expect.objectContaining({ id: 'country', width: 14 }), // longest text "United States of America" goes over resizeMaxWidthThreshold so we fallback to it
-          expect.objectContaining({ id: 'zip', minWidth: 45, width: 51 }), // longest number "777555"
+          expect.objectContaining({ id: 'zip', minWidth: 35, width: 48 }), // longest number "777555"
         ]);
         expect(reRenderColumnsSpy).toHaveBeenCalledWith(true);
       });
@@ -777,7 +777,7 @@ describe('Resizer Service', () => {
           expect.objectContaining({ id: 'age', width: 29 }), // longest number 100 (length 3 * charWidth(7) * ratio(1)) + cellPadding(6) + extraPadding(2) = 44.96 ceil to 45
           expect.objectContaining({ id: 'street', width: 15 }), // longest text "20229 Tia Turnpike" goes over maxWidth so we fallback to it
           expect.objectContaining({ id: 'country', width: 14 }), // longest text "United States of America" goes over resizeMaxWidthThreshold so we fallback to it
-          expect.objectContaining({ id: 'zip', minWidth: 45, width: 51 }), // longest number "777555"
+          expect.objectContaining({ id: 'zip', minWidth: 35, width: 48 }), // longest number "777555"
         ]);
         expect(reRenderColumnsSpy).toHaveBeenCalledWith(true);
       });
