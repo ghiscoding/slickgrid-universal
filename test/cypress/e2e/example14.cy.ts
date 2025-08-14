@@ -31,12 +31,12 @@ describe('Example 14 - Columns Resize by Content', () => {
       cy.get('.slick-row').find('.slick-cell:nth(2)').invoke('width').should('be.approximately', 98, 1);
       cy.get('.slick-row').find('.slick-cell:nth(3)').invoke('width').should('be.approximately', 67, 1);
       cy.get('.slick-row').find('.slick-cell:nth(4)').invoke('width').should('be.approximately', 160, 1);
-      cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('be.approximately', 106, 1);
-      cy.get('.slick-row').find('.slick-cell:nth(6)').invoke('width').should('be.approximately', 88, 1);
+      cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('be.approximately', 98, 1);
+      cy.get('.slick-row').find('.slick-cell:nth(6)').invoke('width').should('be.approximately', 82, 1);
       cy.get('.slick-row').find('.slick-cell:nth(7)').invoke('width').should('be.approximately', 68, 1);
-      cy.get('.slick-row').find('.slick-cell:nth(8)').invoke('width').should('be.approximately', 88, 1);
-      cy.get('.slick-row').find('.slick-cell:nth(9)').invoke('width').should('be.approximately', 173, 1);
-      cy.get('.slick-row').find('.slick-cell:nth(10)').invoke('width').should('be.approximately', 100, 1);
+      cy.get('.slick-row').find('.slick-cell:nth(8)').invoke('width').should('be.approximately', 82, 1);
+      cy.get('.slick-row').find('.slick-cell:nth(9)').invoke('width').should('be.approximately', 162, 1);
+      cy.get('.slick-row').find('.slick-cell:nth(10)').invoke('width').should('be.approximately', 98, 1);
       cy.get('.slick-row').find('.slick-cell:nth(11)').invoke('width').should('be.approximately', 58, 1);
     });
 
@@ -47,12 +47,12 @@ describe('Example 14 - Columns Resize by Content', () => {
       cy.get('.slick-row').find('.slick-cell:nth(2)').invoke('width').should('be.approximately', 98, 1);
       cy.get('.slick-row').find('.slick-cell:nth(3)').invoke('width').should('be.approximately', 67, 1);
       cy.get('.slick-row').find('.slick-cell:nth(4)').invoke('width').should('be.approximately', 152, 1);
-      cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('be.approximately', 98, 1);
-      cy.get('.slick-row').find('.slick-cell:nth(6)').invoke('width').should('be.approximately', 80, 1);
+      cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('be.approximately', 91, 1);
+      cy.get('.slick-row').find('.slick-cell:nth(6)').invoke('width').should('be.approximately', 74, 1);
       cy.get('.slick-row').find('.slick-cell:nth(7)').invoke('width').should('be.approximately', 68, 1);
-      cy.get('.slick-row').find('.slick-cell:nth(8)').invoke('width').should('be.approximately', 80, 1);
-      cy.get('.slick-row').find('.slick-cell:nth(9)').invoke('width').should('be.approximately', 165, 1);
-      cy.get('.slick-row').find('.slick-cell:nth(10)').invoke('width').should('be.approximately', 92, 1);
+      cy.get('.slick-row').find('.slick-cell:nth(8)').invoke('width').should('be.approximately', 74, 1);
+      cy.get('.slick-row').find('.slick-cell:nth(9)').invoke('width').should('be.approximately', 154, 1);
+      cy.get('.slick-row').find('.slick-cell:nth(10)').invoke('width').should('be.approximately', 90, 1);
       cy.get('.slick-row').find('.slick-cell:nth(11)').invoke('width').should('be.approximately', 58, 1);
     });
 
@@ -60,7 +60,7 @@ describe('Example 14 - Columns Resize by Content', () => {
       cy.get('[data-test="autosize-columns-btn"]').click();
 
       cy.get('.slick-row').find('.slick-cell:nth(1)').invoke('width').should('be.lt', 75);
-      cy.get('.slick-row').find('.slick-cell:nth(2)').invoke('width').should('be.lt', 95);
+      cy.get('.slick-row').find('.slick-cell:nth(2)').invoke('width').should('be.lt', 91);
       cy.get('.slick-row').find('.slick-cell:nth(3)').invoke('width').should('be.lt', 70);
       cy.get('.slick-row').find('.slick-cell:nth(4)').invoke('width').should('be.lt', 150);
       cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('be.lt', 100);
@@ -77,7 +77,7 @@ describe('Example 14 - Columns Resize by Content', () => {
 
       cy.get('.slick-header-column:nth-of-type(6) .slick-resizable-handle').dblclick();
 
-      cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('be.gt', 95);
+      cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('be.gt', 90);
     });
 
     it('should open the "Product" header menu and click on "Resize by Content" and expect the column to become wider and show all text', () => {
@@ -141,7 +141,7 @@ describe('Example 14 - Columns Resize by Content', () => {
     });
 
     it('should uncheck 1 row and expect current and next page to have "Select All" uncheck', () => {
-      cy.get('.slick-row:nth(0) .slick-cell:nth(0) input[type=checkbox]').click({ force: true });
+      cy.get('.slick-row:nth(1) .slick-cell:nth(0) input[type=checkbox]').click({ force: true });
 
       cy.get('#filter-checkbox-selectall-container input[type=checkbox]').should('not.be.checked', true);
 
@@ -153,7 +153,7 @@ describe('Example 14 - Columns Resize by Content', () => {
     it('should go back to previous page, select the row that was unchecked and expect "Select All" to be selected again', () => {
       cy.get('.icon-seek-prev').click();
 
-      cy.get('.slick-row:nth(0) .slick-cell:nth(0) input[type=checkbox]').click({ force: true });
+      cy.get('.slick-row:nth(1) .slick-cell:nth(0) input[type=checkbox]').click({ force: true });
 
       cy.get('#filter-checkbox-selectall-container input[type=checkbox]').should('be.checked', true);
 

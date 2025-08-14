@@ -19,8 +19,11 @@ const CONTAINER_ID = 'demo-container';
 const template = `<div id="${CONTAINER_ID}" style="height: 800px; width: 600px; overflow: hidden; display: block;">
     <div id="slickGridContainer-${GRID_ID}" class="gridPane" style="width: 100%;">
       <div id="${GRID_ID}" class="${GRID_UID}" style="width: 100%">
-        <div class="slick-viewport">
-          <div class="slick-header"></div>
+       <div class="slickgrid-container">
+          <div class="slick-viewport">
+            <div class="slick-header"></div>
+            <div class="grid-canvas"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -131,6 +134,7 @@ describe('Resizer Service', () => {
       service.init(gridStub, divContainer);
 
       expect(bindAutoResizeDataGridSpy).toHaveBeenCalled();
+      expect(service.getBrowserCanvas()).toBeDefined();
     });
 
     it('should not call "bindAutoResizeDataGrid" when autoResize is not enabled', () => {
@@ -609,7 +613,7 @@ describe('Resizer Service', () => {
           { id: 'age', field: 'age', type: FieldType.number, resizeExtraWidthPadding: 2 },
           { id: 'street', field: 'street', maxWidth: 15 },
           { id: 'country', field: 'country', maxWidth: 15, resizeMaxWidthThreshold: 14, rerenderOnResize: true },
-          { id: 'zip', field: 'zip', width: 20, type: 'number' },
+          { id: 'zip', field: 'zip', minWidth: 44, width: 30, type: 'number' },
         ] as Column[];
         mockData = [
           {
@@ -658,6 +662,9 @@ describe('Resizer Service', () => {
 
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColDefs);
         vi.spyOn(mockDataView, 'getItems').mockReturnValue(mockData);
+        vi.spyOn(service, 'getBrowserCanvas').mockReturnValue({
+          measureText: vi.fn().mockReturnValue({ width: 613 }), // mock canvas measureText for `getAverageCharWidthByFont()`
+        } as unknown as CanvasRenderingContext2D);
       });
 
       it('should call handleSingleColumnResizeByContent when "onHeaderMenuColumnResizeByContent" gets triggered', () => {
@@ -678,7 +685,7 @@ describe('Resizer Service', () => {
 
         const viewportRight = document.createElement('div');
         viewportRight.className = 'slick-viewport-right';
-        Object.defineProperty(viewportRight, 'clientWidth', { writable: true, configurable: true, value: 27 });
+        Object.defineProperty(viewportRight, 'clientWidth', { writable: true, configurable: true, value: 7 });
 
         vi.spyOn(gridStub, 'getViewports').mockReturnValue([viewportLeft, viewportRight]);
         const reRenderSpy = vi.spyOn(gridStub, 'reRenderColumns');
@@ -690,7 +697,7 @@ describe('Resizer Service', () => {
         gridStub.onColumnsResizeDblClick.notify({ triggeredByColumn: 'zip', grid: gridStub });
 
         expect(reRenderSpy).toHaveBeenCalledWith(false);
-        expect(mockColDefs[7].width).toBeLessThan(30);
+        expect(mockColDefs[7].width).toBeLessThan(55);
       });
 
       it('should recalculate header totals when onAutosizeColumns is trigged', () => {
@@ -729,7 +736,7 @@ describe('Resizer Service', () => {
           expect.objectContaining({ id: 'age', width: 29 }), // longest number 100 (length 3 * charWidth(7) * ratio(1)) + cellPadding(6) + extraPadding(2) = 44.96 ceil to 45
           expect.objectContaining({ id: 'street', width: 15 }), // longest text "20229 Tia Turnpike" goes over maxWidth so we fallback to it
           expect.objectContaining({ id: 'country', width: 14 }), // longest text "United States of America" goes over resizeMaxWidthThreshold so we fallback to it
-          expect.objectContaining({ id: 'zip', width: 48 }), // longest number "777555"
+          expect.objectContaining({ id: 'zip', minWidth: 44, width: 50 }), // longest number "777555"
         ]);
         expect(reRenderColumnsSpy).toHaveBeenCalledWith(true);
       });
@@ -770,7 +777,7 @@ describe('Resizer Service', () => {
           expect.objectContaining({ id: 'age', width: 29 }), // longest number 100 (length 3 * charWidth(7) * ratio(1)) + cellPadding(6) + extraPadding(2) = 44.96 ceil to 45
           expect.objectContaining({ id: 'street', width: 15 }), // longest text "20229 Tia Turnpike" goes over maxWidth so we fallback to it
           expect.objectContaining({ id: 'country', width: 14 }), // longest text "United States of America" goes over resizeMaxWidthThreshold so we fallback to it
-          expect.objectContaining({ id: 'zip', width: 48 }), // longest number "777555"
+          expect.objectContaining({ id: 'zip', minWidth: 44, width: 50 }), // longest number "777555"
         ]);
         expect(reRenderColumnsSpy).toHaveBeenCalledWith(true);
       });

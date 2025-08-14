@@ -1,3 +1,5 @@
+import { format, addDay } from '@formkit/tempo';
+
 describe('Example 32 - Columns Resize by Content', () => {
   const GRID_ROW_HEIGHT = 33;
 
@@ -48,9 +50,9 @@ describe('Example 32 - Columns Resize by Content', () => {
       cy.get('[data-test="autosize-columns-btn"]').click();
 
       cy.get('.slick-row').find('.slick-cell:nth(1)').invoke('width').should('be.lt', 75);
-      cy.get('.slick-row').find('.slick-cell:nth(2)').invoke('width').should('be.lt', 95);
+      cy.get('.slick-row').find('.slick-cell:nth(2)').invoke('width').should('be.lt', 91);
       cy.get('.slick-row').find('.slick-cell:nth(3)').invoke('width').should('be.lt', 70);
-      cy.get('.slick-row').find('.slick-cell:nth(4)').invoke('width').should('be.lt', 100);
+      cy.get('.slick-row').find('.slick-cell:nth(4)').invoke('width').should('be.lt', 150);
       cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('be.lt', 100);
       cy.get('.slick-row').find('.slick-cell:nth(6)').invoke('width').should('be.lt', 85);
       cy.get('.slick-row').find('.slick-cell:nth(7)').invoke('width').should('be.lt', 70);
@@ -65,14 +67,14 @@ describe('Example 32 - Columns Resize by Content', () => {
 
       cy.get('.slick-header-column:nth-child(6) .slick-resizable-handle').dblclick();
 
-      cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('be.gt', 95);
+      cy.get('.slick-row').find('.slick-cell:nth(5)').invoke('width').should('be.gt', 90);
     });
 
     it('should open the "Product" header menu and click on "Resize by Content" and expect the column to become wider and show all text', () => {
       cy.get('.slick-row').find('.slick-cell:nth(9)').invoke('width').should('be.lt', 120);
 
       cy.get('#grid32')
-        .find('.slick-header-column:nth-child(10)')
+        .find('.slick-header-column:nth-of-type(10)')
         .trigger('mouseover')
         .children('.slick-header-menu-button')
         .invoke('show')
@@ -129,7 +131,7 @@ describe('Example 32 - Columns Resize by Content', () => {
     });
 
     it('should uncheck 1 row and expect current and next page to have "Select All" uncheck', () => {
-      cy.get('.slick-row:nth(0) .slick-cell:nth(0) input[type=checkbox]').click({ force: true });
+      cy.get('.slick-row:nth(1) .slick-cell:nth(0) input[type=checkbox]').click({ force: true });
 
       cy.get('#filter-checkbox-selectall-container input[type=checkbox]').should('not.be.checked', true);
 
@@ -141,7 +143,7 @@ describe('Example 32 - Columns Resize by Content', () => {
     it('should go back to previous page, select the row that was unchecked and expect "Select All" to be selected again', () => {
       cy.get('.icon-seek-prev').click();
 
-      cy.get('.slick-row:nth(0) .slick-cell:nth(0) input[type=checkbox]').click({ force: true });
+      cy.get('.slick-row:nth(1) .slick-cell:nth(0) input[type=checkbox]').click({ force: true });
 
       cy.get('#filter-checkbox-selectall-container input[type=checkbox]').should('be.checked', true);
 
@@ -162,6 +164,28 @@ describe('Example 32 - Columns Resize by Content', () => {
       cy.get('.icon-seek-prev').click();
 
       cy.get('.slick-cell-checkboxsel input:checked').should('have.length', 0);
+    });
+
+    it('should NOT be able to choose a Finish date older than today', () => {
+      // make grid editable
+      cy.get('[data-test="toggle-readonly-btn"]').click();
+
+      // 1st click on "Completed" to enable "Finish" date
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(7)`).click();
+      cy.get('.editor-completed').check();
+
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(8)`)
+        .should('contain', '')
+        .click(); // this date should also always be initially empty
+
+      const yesterdayDate = format(addDay(new Date(), -1), 'YYYY-MM-DD');
+      const todayDate = format(new Date(), 'YYYY-MM-DD');
+
+      cy.get(`[data-vc-date=${yesterdayDate}]`).should('have.attr', 'data-vc-date-disabled');
+      cy.get(`[data-vc-date=${todayDate}]`).should('not.have.attr', 'data-vc-date-disabled');
+
+      // make grid readonly again
+      cy.get('[data-test="toggle-readonly-btn"]').click();
     });
   });
 
@@ -267,6 +291,75 @@ describe('Example 32 - Columns Resize by Content', () => {
       cy.get('[data-test="total-items"]').should('not.have.text', 0);
 
       cy.get('[data-test="total-items"]').should('not.have.text', 400);
+    });
+  });
+
+  describe('Custom Header Menu & sub-menus tests', () => {
+    it('should open Hello sub-menu with 2 options expect it to be aligned to right then trigger alert when command is clicked', () => {
+      const subCommands = ['Hello World', 'Hello SlickGrid', `Let's play`];
+
+      cy.get('#grid32')
+        .find('.slick-header-column:nth-of-type(2).slick-header-sortable')
+        .trigger('mouseover')
+        .children('.slick-header-menu-button')
+        .invoke('show')
+        .click();
+
+      cy.get('.slick-menu-item.slick-menu-item').contains('Hello').should('exist').trigger('mouseover'); // mouseover or click should work
+
+      cy.get('.slick-header-menu.slick-menu-level-1.dropright')
+        .should('exist')
+        .find('.slick-menu-item')
+        .each(($command, index) => expect($command.text()).to.contain(subCommands[index]));
+
+      cy.get('.slick-header-menu.slick-menu-level-1').find('.slick-menu-item').contains('Hello SlickGrid').click();
+    });
+
+    it(`should open Hello sub-menu and expect 3 options, then open Feedback->ContactUs sub-menus and expect previous Hello menu to no longer exists`, () => {
+      const subCommands1 = ['Hello World', 'Hello SlickGrid', `Let's play`];
+      const subCommands2 = ['Request update from supplier', '', 'Contact Us'];
+      const subCommands2_1 = ['Email us', 'Chat with us', 'Book an appointment'];
+
+      cy.get('#grid32')
+        .find('.slick-header-column:nth-of-type(7).slick-header-sortable')
+        .trigger('mouseover')
+        .children('.slick-header-menu-button')
+        .invoke('show')
+        .click();
+
+      cy.get('.slick-header-menu.slick-menu-level-0').find('.slick-menu-item.slick-menu-item').contains('Hello').should('exist').click();
+
+      cy.get('.slick-submenu').should('have.length', 1);
+      cy.get('.slick-header-menu.slick-menu-level-1.dropleft') // left align
+        .should('exist')
+        .find('.slick-menu-item')
+        .each(($command, index) => expect($command.text()).to.contain(subCommands1[index]));
+
+      // click different sub-menu
+      cy.get('.slick-header-menu.slick-menu-level-0').find('.slick-menu-item.slick-menu-item').contains('Feedback').should('exist').click();
+
+      cy.get('.slick-submenu').should('have.length', 1);
+      cy.get('.slick-header-menu.slick-menu-level-1')
+        .should('exist')
+        .find('.slick-menu-item')
+        .each(($command, index) => expect($command.text()).to.contain(subCommands2[index]));
+
+      // click on Feedback->ContactUs
+      cy.get('.slick-header-menu.slick-menu-level-1.dropleft') // left align
+        .find('.slick-menu-item.slick-menu-item')
+        .contains('Contact Us')
+        .should('exist')
+        .trigger('mouseover'); // mouseover or click should work
+
+      cy.get('.slick-submenu').should('have.length', 2);
+      cy.get('.slick-header-menu.slick-menu-level-2.dropleft') // left align
+        .should('exist')
+        .find('.slick-menu-item')
+        .each(($command, index) => expect($command.text()).to.contain(subCommands2_1[index]));
+
+      cy.get('.slick-header-menu.slick-menu-level-2').find('.slick-menu-item').contains('Chat with us').click();
+
+      cy.get('.slick-submenu').should('have.length', 0);
     });
   });
 });

@@ -248,7 +248,6 @@ export const GlobalGridOptions: Partial<GridOption> = {
   resizeByContentOnlyOnFirstLoad: true,
   resizeByContentOptions: {
     alwaysRecalculateColumnWidth: false,
-    cellCharWidthInPx: 7.8,
     cellPaddingWidthInPx: 14,
     defaultRatioForStringType: 0.88,
     formatterPaddingWidthInPx: 0,
