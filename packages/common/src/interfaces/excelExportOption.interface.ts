@@ -49,6 +49,13 @@ export interface ExcelExportOption {
   /** Defaults to "Sheet1", Excel Sheet Name */
   sheetName?: string;
 
+  /**
+   * If true (default), use the Streaming export API for large .xlsx files.
+   * If false, always use the legacy export method (non-streaming).
+   * Useful for debugging, compatibility, or environments where streaming is not desired or supported.
+   */
+  useStreamingExport?: boolean;
+
   /** Add a Custom Excel Header on first row of the Excel Sheet */
   customExcelHeader?: (workbook: Workbook, sheet: Worksheet) => void;
 }
