@@ -210,7 +210,7 @@ const Example2: React.FC = () => {
       item.completed = !item.completed;
 
       // simulate a backend http call and refresh the grid row after delay
-      window.setTimeout(() => {
+      setTimeout(() => {
         reactGrid?.gridService.updateItemById(item.id, item, { highlightRow: false });
       }, 250);
     }

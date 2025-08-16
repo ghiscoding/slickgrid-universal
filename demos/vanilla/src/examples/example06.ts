@@ -315,7 +315,7 @@ export default class Example06 {
       this.sgb.datasetHierarchical = this.datasetHierarchical;
 
       // scroll into the position where the item was added with a delay since it needs to recreate the tree grid
-      window.setTimeout(() => {
+      setTimeout(() => {
         const rowIndex = this.sgb.dataView?.getRowById(newId) as number;
         this.sgb.slickGrid?.scrollRowIntoView(rowIndex + 3);
       }, 0);

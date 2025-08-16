@@ -92,7 +92,7 @@ export default class Example16 {
           formatter: () => `<div><span class="mdi mdi-load mdi-spin-1s"></span> loading...</div>`,
           asyncProcess: () =>
             new Promise((resolve) => {
-              window.setTimeout(() => resolve({ ratio: (Math.random() * 10) / 10, lifespan: Math.random() * 100 }), this.serverApiDelay);
+              setTimeout(() => resolve({ ratio: (Math.random() * 10) / 10, lifespan: Math.random() * 100 }), this.serverApiDelay);
             }),
           asyncPostFormatter: this.tooltipTaskAsyncFormatter,
 
@@ -239,7 +239,7 @@ export default class Example16 {
           // 2- delay the opening by a simple Promise and `setTimeout`
           asyncProcess: () =>
             new Promise((resolve) => {
-              window.setTimeout(() => resolve({}), this.serverApiDelay); // delayed by half a second
+              setTimeout(() => resolve({}), this.serverApiDelay); // delayed by half a second
             }),
           asyncPostFormatter: this.tooltipFormatter.bind(this),
         },
@@ -312,7 +312,7 @@ export default class Example16 {
 
           // OR 2- use a Promise
           collectionAsync: new Promise<any>((resolve) => {
-            window.setTimeout(() => {
+            setTimeout(() => {
               resolve(
                 Array.from(Array((this.dataset || []).length).keys()).map((k) => ({
                   value: k,
@@ -339,7 +339,7 @@ export default class Example16 {
             this.notificationContainerClass = 'column is-4';
 
             return new Promise((resolve) => {
-              window.setTimeout(() => {
+              setTimeout(() => {
                 this.notificationContainerClass = 'column invisible is-4';
                 resolve(Array.from(Array((this.dataset || []).length).keys()).map((k) => ({ value: k, label: `Task ${k}` })));
               }, this.serverApiDelay);

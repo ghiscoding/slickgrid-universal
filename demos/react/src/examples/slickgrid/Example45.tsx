@@ -142,7 +142,7 @@ const Example45: React.FC = () => {
     }
 
     return new Promise((resolve) => {
-      window.setTimeout(() => {
+      setTimeout(() => {
         const itemDetail = item;
         itemDetail.orderData = orderData;
         itemDetail.isUsingInnerGridStatePresets = isUsingInnerGridStatePresetsRef.current;

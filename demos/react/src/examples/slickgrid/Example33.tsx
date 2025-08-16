@@ -70,10 +70,7 @@ const Example33: React.FC = () => {
           formatter: () => `<div><span class="mdi mdi-load mdi-spin"></span> loading...</div>`,
           asyncProcess: () =>
             new Promise((resolve) => {
-              window.setTimeout(
-                () => resolve({ ratio: (Math.random() * 10) / 10, lifespan: Math.random() * 100 }),
-                serverWaitDelayRef.current
-              );
+              setTimeout(() => resolve({ ratio: (Math.random() * 10) / 10, lifespan: Math.random() * 100 }), serverWaitDelayRef.current);
             }),
           asyncPostFormatter: tooltipTaskAsyncFormatter as Formatter,
 
@@ -209,7 +206,7 @@ const Example33: React.FC = () => {
           // 2- delay the opening by a simple Promise and `setTimeout`
           asyncProcess: () =>
             new Promise((resolve) => {
-              window.setTimeout(() => resolve({}), serverWaitDelayRef.current); // delayed by half a second
+              setTimeout(() => resolve({}), serverWaitDelayRef.current); // delayed by half a second
             }),
           asyncPostFormatter: tooltipFormatter as Formatter,
         },
@@ -282,7 +279,7 @@ const Example33: React.FC = () => {
 
           // OR 2- use a Promise
           collectionAsync: new Promise<any>((resolve) => {
-            window.setTimeout(() => {
+            setTimeout(() => {
               resolve(Array.from(Array(dataset?.length).keys()).map((k) => ({ value: k, label: k, prefix: 'Task', suffix: 'days' })));
             }, 500);
           }),
@@ -299,7 +296,7 @@ const Example33: React.FC = () => {
         filter: {
           // collectionAsync: fetch(SAMPLE_COLLECTION_DATA_URL),
           // collectionAsync: new Promise((resolve) => {
-          //   window.setTimeout(() => {
+          //   setTimeout(() => {
           //     resolve(Array.from(Array(dataset.value?.length).keys()).map((k) => ({ value: k, label: `Task ${k}` })));
           //   });
           // }),
@@ -307,7 +304,7 @@ const Example33: React.FC = () => {
             setShowLazyLoading(true);
 
             return new Promise((resolve) => {
-              window.setTimeout(() => {
+              setTimeout(() => {
                 setShowLazyLoading(false);
                 resolve(Array.from(Array((dataset || []).length).keys()).map((k) => ({ value: k, label: `Task ${k}` })));
               }, serverWaitDelayRef.current);

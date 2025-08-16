@@ -27,7 +27,7 @@ export class Example {
 
     // not sure why but ShadowDOM seems a little slower to render,
     // let's wrap the grid resize in a delay & show the grid only after the resize
-    window.setTimeout(async () => {
+    setTimeout(async () => {
       this.sgb = new Slicker.GridBundle(
         shadowObj.gridContainer as HTMLDivElement,
         this.columnDefinitions,

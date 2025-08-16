@@ -11,7 +11,7 @@ export interface PubSubEvent<T = any> {
 export class EventPubSubService implements BasePubSubService {
   protected _elementSource: Element;
   protected _subscribedEvents: PubSubEvent[] = [];
-  protected _timer?: number;
+  protected _timer?: any;
 
   eventNamingStyle: EventNamingStyle = EventNamingStyle.camelCase;
 
@@ -39,7 +39,7 @@ export class EventPubSubService implements BasePubSubService {
   dispose(): void {
     this.unsubscribeAll();
     this._subscribedEvents = [];
-    window.clearTimeout(this._timer);
+    clearTimeout(this._timer);
     this._elementSource?.remove();
     this._elementSource = null as any;
   }
@@ -119,8 +119,8 @@ export class EventPubSubService implements BasePubSubService {
 
     if (delay) {
       return new Promise((resolve) => {
-        window.clearTimeout(this._timer);
-        this._timer = window.setTimeout(
+        clearTimeout(this._timer);
+        this._timer = setTimeout(
           () => resolve(this.dispatchCustomEvent<T>(eventNameByConvention, data, false, true, externalizeEventCallback)),
           delay
         );

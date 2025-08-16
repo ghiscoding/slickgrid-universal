@@ -331,7 +331,7 @@ function getCustomerDataApiMock(query: string): Promise<any> {
           },
         };
 
-        window.setTimeout(() => {
+        setTimeout(() => {
           graphqlQuery.value = gridOptions.value!.backendServiceApi!.service.buildQuery();
           resolve(mockedResult);
         }, serverWaitDelay.value);

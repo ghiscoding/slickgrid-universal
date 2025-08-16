@@ -73,7 +73,7 @@ export class Example33Component implements OnInit {
           formatter: () => `<div><span class="mdi mdi-load mdi-spin-1s"></span> loading...</div>`,
           asyncProcess: () =>
             new Promise((resolve) => {
-              window.setTimeout(() => resolve({ ratio: (Math.random() * 10) / 10, lifespan: Math.random() * 100 }), this.serverApiDelay);
+              setTimeout(() => resolve({ ratio: (Math.random() * 10) / 10, lifespan: Math.random() * 100 }), this.serverApiDelay);
             }),
           asyncPostFormatter: this.tooltipTaskAsyncFormatter as Formatter,
 
@@ -209,7 +209,7 @@ export class Example33Component implements OnInit {
           // 2- delay the opening by a simple Promise and `setTimeout`
           asyncProcess: () =>
             new Promise((resolve) => {
-              window.setTimeout(() => resolve({}), this.serverApiDelay); // delayed by half a second
+              setTimeout(() => resolve({}), this.serverApiDelay); // delayed by half a second
             }),
           asyncPostFormatter: this.tooltipFormatter.bind(this) as Formatter,
         },
@@ -282,7 +282,7 @@ export class Example33Component implements OnInit {
 
           // OR 2- use a Promise
           collectionAsync: new Promise<any>((resolve) => {
-            window.setTimeout(() => {
+            setTimeout(() => {
               resolve(Array.from(Array(this.dataset.length).keys()).map((k) => ({ value: k, label: k, prefix: 'Task', suffix: 'days' })));
             }, 500);
           }),
@@ -299,7 +299,7 @@ export class Example33Component implements OnInit {
         filter: {
           // collectionAsync: fetch(SAMPLE_COLLECTION_DATA_URL),
           // collectionAsync: new Promise((resolve) => {
-          //   window.setTimeout(() => {
+          //   setTimeout(() => {
           //     resolve(Array.from(Array(dataset.value?.length).keys()).map((k) => ({ value: k, label: `Task ${k}` })));
           //   });
           // }),
@@ -307,7 +307,7 @@ export class Example33Component implements OnInit {
             this.showLazyLoading = true;
 
             return new Promise((resolve) => {
-              window.setTimeout(() => {
+              setTimeout(() => {
                 this.showLazyLoading = false;
                 resolve(Array.from(Array((this.dataset || []).length).keys()).map((k) => ({ value: k, label: `Task ${k}` })));
               }, this.serverApiDelay);

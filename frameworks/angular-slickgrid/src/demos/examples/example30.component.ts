@@ -735,7 +735,7 @@ export class Example30Component implements OnDestroy, OnInit {
         // when processing a mass update or mass selection
         if (modalType === 'mass-update' || modalType === 'mass-selection') {
           return new Promise((resolve, reject) => {
-            window.setTimeout(() => {
+            setTimeout(() => {
               if (formValues.percentComplete >= 50) {
                 resolve(true);
               } else {
@@ -748,7 +748,7 @@ export class Example30Component implements OnDestroy, OnInit {
           // we'll just apply the change without any rejection from the server and
           // note that we also have access to the "dataContext" which is only available for these modal
           console.log(`${modalType} item data context`, dataContext);
-          return new Promise((resolve) => window.setTimeout(() => resolve(true), serverResponseDelay));
+          return new Promise((resolve) => setTimeout(() => resolve(true), serverResponseDelay));
         }
       },
     });

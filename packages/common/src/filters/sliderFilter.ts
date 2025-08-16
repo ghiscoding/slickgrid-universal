@@ -118,7 +118,7 @@ export class SliderFilter implements Filter {
 
     // get slider track filled color from CSS variable when exist
     this._sliderTrackFilledColor =
-      window.getComputedStyle(document.documentElement).getPropertyValue('--slick-slider-filter-filled-track-color') ||
+      getComputedStyle(document.documentElement).getPropertyValue('--slick-slider-filter-filled-track-color') ||
       DEFAULT_SLIDER_TRACK_FILLED_COLOR;
 
     // step 1, create the DOM Element of the filter & initialize it if searchTerm is filled

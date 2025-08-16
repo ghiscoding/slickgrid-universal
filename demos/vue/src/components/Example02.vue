@@ -213,7 +213,7 @@ function toggleCompletedProperty(item: any) {
     item.completed = !item.completed;
 
     // simulate a backend http call and refresh the grid row after delay
-    window.setTimeout(() => {
+    setTimeout(() => {
       vueGrid.gridService.updateItemById(item.id, item, { highlightRow: false });
     }, 250);
   }

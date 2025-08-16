@@ -225,7 +225,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
             this.redrawAllViewComponents.bind(this, false)
           ),
           this.eventPubSubService?.subscribe(['onGridMenuClearAllFilters', 'onGridMenuClearAllSorting'], () =>
-            window.setTimeout(() => this.redrawAllViewComponents())
+            setTimeout(() => this.redrawAllViewComponents())
           )
         );
       }

@@ -294,7 +294,7 @@ export class Example28 {
       this.datasetHierarchical = tmpDatasetHierarchical;
 
       // scroll into the position, after insertion cycle, where the item was added
-      window.setTimeout(() => {
+      setTimeout(() => {
         const rowIndex = this.aureliaGrid.dataView.getRowById(popFolderItem.id) as number;
         this.aureliaGrid.slickGrid.scrollRowIntoView(rowIndex + 3);
       }, 10);

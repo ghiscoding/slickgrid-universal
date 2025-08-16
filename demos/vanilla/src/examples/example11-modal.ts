@@ -39,7 +39,7 @@ export default class Example11Modal {
         );
 
         // force editor to open (top-left)
-        window.setTimeout(() => this.sgb.slickGrid?.gotoCell(0, 0, true), 50);
+        setTimeout(() => this.sgb.slickGrid?.gotoCell(0, 0, true), 50);
       }
       this.remoteCallbackFn = bindings.remoteCallback;
       this.selectedIds = bindings.selectedIds || [];

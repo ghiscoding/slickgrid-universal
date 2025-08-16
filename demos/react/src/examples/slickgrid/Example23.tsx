@@ -260,7 +260,7 @@ const Example23: React.FC = () => {
 
   function refreshMetrics(_e: Event, args: any) {
     if (args?.current >= 0) {
-      window.setTimeout(() => {
+      setTimeout(() => {
         setMetrics({
           startTime: new Date(),
           itemCount: args?.current ?? 0,

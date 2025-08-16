@@ -337,7 +337,7 @@ function getCustomerDataApiMock(query: string): Observable<any> {
     }
     const updatedData = filteredData.slice(firstRow, firstRow + top!);
 
-    window.setTimeout(() => {
+    setTimeout(() => {
       const backendResult: any = { query };
       if (!isCountEnabled.value) {
         backendResult['totalRecordCount'] = countTotalItems;

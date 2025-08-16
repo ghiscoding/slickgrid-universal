@@ -62,7 +62,7 @@ export class MyApp {
     this.addGitHubStarsLogo();
 
     // scroll to active link route, there's probably a better way to do this but couldn't find lifecycle for it
-    window.setTimeout(() => {
+    setTimeout(() => {
       const linkElm = document.querySelector('.nav-link.active');
       linkElm?.scrollIntoView({ block: 'nearest' });
     }, 45);

@@ -112,7 +112,7 @@ export function SlickCompositeEditor(
       }
 
       // focus on first input
-      window.setTimeout(() => {
+      setTimeout(() => {
         if (Array.isArray(editors) && editors.length > 0 && typeof editors[0].focus === 'function') {
           editors[0].focus();
         }

@@ -315,7 +315,7 @@ export class Example4 {
 
   refreshMetrics(_e: Event, args: any) {
     if (args && args.current >= 0) {
-      window.setTimeout(() => {
+      setTimeout(() => {
         this.metrics = {
           startTime: new Date(),
           endTime: new Date(),
