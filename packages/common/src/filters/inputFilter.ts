@@ -13,7 +13,7 @@ export class InputFilter implements Filter {
   protected _debounceTypingDelay = 0;
   protected _shouldTriggerQuery = true;
   protected _inputType = 'text';
-  protected _timer?: number;
+  protected _timer?: any;
   protected _cellContainerElm!: HTMLElement;
   protected _filterContainerElm!: HTMLElement;
   protected _filterInputElm!: HTMLInputElement;
@@ -383,8 +383,8 @@ export class InputFilter implements Filter {
 
       if (!this.isCompoundFilter || !skipNullInput || hasSkipNullValChanged) {
         if (typingDelay > 0) {
-          window.clearTimeout(this._timer);
-          this._timer = window.setTimeout(() => this.callback(event, callbackArgs), typingDelay);
+          clearTimeout(this._timer);
+          this._timer = setTimeout(() => this.callback(event, callbackArgs), typingDelay);
         } else {
           this.callback(event, callbackArgs);
         }

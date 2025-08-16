@@ -400,7 +400,7 @@ const Example3: React.FC = () => {
         collectionAsync: fetch(SAMPLE_COLLECTION_DATA_URL),
         // collectionAsync: Promise.resolve(SAMPLE_COLLECTION_DATA),
         // collectionAsync: new Promise((resolve) => {
-        //   window.setTimeout(() => {
+        //   setTimeout(() => {
         //     resolve(Array.from(Array(dataset.length).keys()).map(k => ({ value: k, label: `Task ${k}` })));
         //   });
         // }),
@@ -450,7 +450,7 @@ const Example3: React.FC = () => {
     const newRows = getData(1, lastRowIndex);
 
     // wrap into a timer to simulate a backend async call
-    window.setTimeout(() => {
+    setTimeout(() => {
       // at any time, we can poke the 'collection' property and modify it
       const requisiteColumnDef = columnDefinitions?.find((column: Column) => column.id === 'prerequisites');
       if (requisiteColumnDef) {

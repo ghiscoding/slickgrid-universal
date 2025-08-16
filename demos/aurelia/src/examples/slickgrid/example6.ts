@@ -322,7 +322,7 @@ export class Example6 {
     };
 
     return new Promise((resolve) => {
-      window.setTimeout(() => {
+      setTimeout(() => {
         this.graphqlQuery = this.graphqlService.buildQuery();
         // this.graphqlQuery = this.gridOptions.backendServiceApi!.service.buildQuery();
         if (this.isWithCursor) {
@@ -396,7 +396,7 @@ export class Example6 {
       { columnId: 'name', direction: 'asc' },
       { columnId: 'company', direction: SortDirection.DESC },
     ]);
-    window.setTimeout(() => {
+    setTimeout(() => {
       this.aureliaGrid.paginationService?.changeItemPerPage(20);
       this.aureliaGrid.paginationService?.goToPageNumber(2);
     });

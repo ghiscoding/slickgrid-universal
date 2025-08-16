@@ -330,7 +330,7 @@ const Example39: React.FC = () => {
             },
           };
 
-          window.setTimeout(() => {
+          setTimeout(() => {
             setGraphqlQuery(gridOptionsRef.current!.backendServiceApi!.service.buildQuery());
             resolve(mockedResult);
           }, serverWaitDelayRef.current);

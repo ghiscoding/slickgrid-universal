@@ -173,7 +173,7 @@ export function getInnerSize(elm: HTMLElement, type: 'height' | 'width'): number
 /** Get a DOM element style property value by calling getComputedStyle() on the element */
 export function getStyleProp(elm: HTMLElement, property: string): string | null {
   if (elm) {
-    return window.getComputedStyle(elm).getPropertyValue(property);
+    return getComputedStyle(elm).getPropertyValue(property);
   }
   return null;
 }

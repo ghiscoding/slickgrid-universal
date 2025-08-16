@@ -416,7 +416,7 @@ function defineGrid() {
         collectionAsync: fetch(SAMPLE_COLLECTION_DATA_URL),
         // collectionAsync: Promise.resolve(SAMPLE_COLLECTION_DATA),
         // collectionAsync: new Promise((resolve) => {
-        //   window.setTimeout(() => {
+        //   setTimeout(() => {
         //     resolve(Array.from(Array(this.dataset.length).keys()).map(k => ({ value: k, label: `Task ${k}` })));
         //   });
         // }),
@@ -449,7 +449,7 @@ function addItem() {
   const newRows = mockData(1, lastRowIndex);
 
   // wrap into a timer to simulate a backend async call
-  window.setTimeout(() => {
+  setTimeout(() => {
     // at any time, we can poke the "collection" property and modify it
     const requisiteColumnDef = columnDefinitions.value.find((column) => column.id === 'prerequisites');
     console.log('requisiteColumnDef', requisiteColumnDef);

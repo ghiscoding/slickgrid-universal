@@ -239,7 +239,7 @@ const Example27: React.FC = () => {
   }
 
   function hideSpinner() {
-    window.setTimeout(() => {
+    setTimeout(() => {
       setLoadingClass('');
     }, 200); // delay the hide spinner a bit to avoid show/hide too quickly
   }

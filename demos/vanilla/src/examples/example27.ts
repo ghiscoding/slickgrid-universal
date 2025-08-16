@@ -339,7 +339,7 @@ export default class Example27 {
     };
 
     return new Promise<GraphqlPaginatedResult>((resolve) => {
-      window.setTimeout(() => {
+      setTimeout(() => {
         this.graphqlQuery = this.gridOptions.backendServiceApi!.service.buildQuery();
         resolve(mockedResult);
       }, this.serverWaitDelay);

@@ -76,7 +76,7 @@ export class HeaderGroupingService {
 
   /** call "renderPreHeaderRowGroupingTitles()" with a setTimeout delay */
   delayRenderPreHeaderRowGroupingTitles(delay = 0): void {
-    window.setTimeout(() => this.renderPreHeaderRowGroupingTitles(), delay);
+    setTimeout(() => this.renderPreHeaderRowGroupingTitles(), delay);
   }
 
   /** Create or Render the Pre-Header Row Grouping Titles */

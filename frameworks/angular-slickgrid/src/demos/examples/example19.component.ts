@@ -281,7 +281,7 @@ export class Example19Component implements OnDestroy, OnInit {
 
     // fill the template on async delay
     return new Promise((resolve) => {
-      window.setTimeout(() => {
+      setTimeout(() => {
         const itemDetail = item;
 
         // let's add some extra properties to our item for a better async simulation

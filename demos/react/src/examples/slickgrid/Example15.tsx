@@ -56,7 +56,7 @@ const Example15: React.FC = () => {
     // reactGridRef.current?.slickGrid.autosizeColumns();
     reactGridRef.current?.gridService.resetGrid(getColumnDefinitions());
     reactGridRef.current?.paginationService!.changeItemPerPage(DEFAULT_PAGE_SIZE);
-    window.setTimeout(() => (localStorage[LOCAL_STORAGE_KEY] = null));
+    setTimeout(() => (localStorage[LOCAL_STORAGE_KEY] = null));
   }
 
   /* Define grid Options and Columns */

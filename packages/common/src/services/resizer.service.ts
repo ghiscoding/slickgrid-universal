@@ -27,13 +27,13 @@ export class ResizerService {
   protected _gridDomElm!: HTMLElement;
   protected _gridContainerElm!: HTMLElement;
   protected _pageContainerElm!: HTMLElement;
-  protected _intervalId?: number;
+  protected _intervalId?: any;
   protected _intervalRetryDelay: number = DEFAULT_INTERVAL_RETRY_DELAY;
   protected _isStopResizeIntervalRequested = false;
   protected _hasResizedByContentAtLeastOnce = false;
   protected _lastDimensions?: GridSize;
   protected _totalColumnsWidthByContent = 0;
-  protected _timer?: number;
+  protected _timer?: any;
   protected _resizePaused = false;
   protected _resizeObserver!: ResizeObserver;
   protected _subscriptions: EventSubscription[] = [];
@@ -90,8 +90,8 @@ export class ResizerService {
     // unsubscribe all SlickGrid events
     this._eventHandler?.unsubscribeAll();
     this.pubSubService.unsubscribeAll(this._subscriptions);
-    window.clearInterval(this._intervalId);
-    window.clearTimeout(this._timer);
+    clearInterval(this._intervalId);
+    clearTimeout(this._timer);
 
     if (this.gridOptions.autoResize?.resizeDetection === 'container' && this._resizeObserver) {
       this._resizeObserver.disconnect();
@@ -337,8 +337,8 @@ export class ResizerService {
       delay = delay || 0;
 
       if (delay > 0) {
-        window.clearTimeout(this._timer);
-        this._timer = window.setTimeout(() => resolve(this.resizeGridCallback(newSizes)), delay);
+        clearTimeout(this._timer);
+        this._timer = setTimeout(() => resolve(this.resizeGridCallback(newSizes)), delay);
       } else {
         resolve(this.resizeGridCallback(newSizes));
       }
@@ -596,7 +596,7 @@ export class ResizerService {
         isTmpCellCreated = true;
       }
       if (sCell) {
-        const { fontFamily, fontSize } = window.getComputedStyle(sCell);
+        const { fontFamily, fontSize } = getComputedStyle(sCell);
         const ctx = this.getBrowserCanvas();
         ctx.font = `${fontSize} ${fontFamily}`;
         const text = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-={}:<>?,./ ';
@@ -747,7 +747,7 @@ export class ResizerService {
       const dataLn = this.dataView.getItemCount();
       const columns = this._grid.getColumns() || [];
 
-      this._intervalId = window.setInterval(async () => {
+      this._intervalId = setInterval(async () => {
         const headerTitleRowHeight = 44; // this one is set by SASS/CSS so let's hard code it
         const headerPos = getOffset(headerElm);
         let headerOffsetTop = headerPos.top;
@@ -808,7 +808,7 @@ export class ResizerService {
           !isResizeRequired &&
           (resizeGoodCount >= autoFixResizeRequiredGoodCount || intervalExecutionCounter++ >= autoFixResizeTimeout)
         ) {
-          window.clearInterval(this._intervalId); // stop the interval if we don't need resize or if we passed let say 70min
+          clearInterval(this._intervalId); // stop the interval if we don't need resize or if we passed let say 70min
         }
       }, this.intervalRetryDelay);
     }

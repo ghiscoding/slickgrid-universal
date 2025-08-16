@@ -38,7 +38,7 @@ export class CustomInputEditor implements Editor {
 
     this.inputElm.addEventListener('keydown', this.handleKeydown.bind(this));
 
-    window.setTimeout(() => {
+    setTimeout(() => {
       this.inputElm.focus();
       this.inputElm.select();
     }, 50);

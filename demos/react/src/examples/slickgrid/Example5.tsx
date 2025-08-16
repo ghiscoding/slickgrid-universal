@@ -391,7 +391,7 @@ const Example5: React.FC = () => {
       }
       const updatedData = filteredData.slice(firstRow, firstRow + top!);
 
-      window.setTimeout(() => {
+      setTimeout(() => {
         const backendResult: any = { query };
         if (!isCountEnabled) {
           backendResult['totalRecordCount'] = countTotalItems;
