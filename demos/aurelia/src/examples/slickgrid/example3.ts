@@ -388,7 +388,7 @@ export class Example3 {
 
           // OR 3- use a Promise
           // collectionAsync: new Promise<any>((resolve) => {
-          //   window.setTimeout(() => {
+          //   setTimeout(() => {
           //     resolve(Array.from(Array(NB_ITEMS).keys()).map(k => ({ value: k, label: k, prefix: 'Task', suffix: 'days' })));
           //   }, 500);
           // }),
@@ -413,7 +413,7 @@ export class Example3 {
         filter: {
           collectionAsync: this.http.fetch(SAMPLE_COLLECTION_DATA_URL),
           // collectionAsync: new Promise((resolve) => {
-          //   window.setTimeout(() => {
+          //   setTimeout(() => {
           //     resolve(Array.from(Array(this.dataset.length).keys()).map(k => ({ value: k, label: `Task ${k}` })));
           //   });
           // }),
@@ -464,7 +464,7 @@ export class Example3 {
     const newRows = this.mockData(1, lastRowIndex);
 
     // wrap into a timer to simulate a backend async call
-    window.setTimeout(() => {
+    setTimeout(() => {
       // at any time, we can poke the "collection" property and modify it
       const requisiteColumnDef = this.columnDefinitions.find((column: Column) => column.id === 'prerequisites');
       if (requisiteColumnDef) {

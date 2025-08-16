@@ -88,7 +88,7 @@ export default class Example18 {
   minChangePerCycle = 0;
   maxChangePerCycle = 10;
   refreshRate = 75;
-  timer: number;
+  timer: any;
   toggleClassName = this.isFullScreen ? 'mdi mdi-arrow-collapse' : 'mdi mdi-arrow-expand';
   sgb: SlickVanillaGridBundle;
 
@@ -105,7 +105,7 @@ export default class Example18 {
       this.dataset
     );
 
-    window.setTimeout(() => {
+    setTimeout(() => {
       this.startSimulation();
     }, this.refreshRate);
     document.body.classList.add('material-theme');
@@ -378,11 +378,11 @@ export default class Example18 {
       // but the cell highlight actually does that for us so we can skip it
     }
 
-    this.timer = window.setTimeout(this.startSimulation.bind(this), this.refreshRate || 0);
+    this.timer = setTimeout(this.startSimulation.bind(this), this.refreshRate || 0);
   }
 
   stopSimulation() {
-    window.clearTimeout(this.timer);
+    clearTimeout(this.timer);
   }
 
   findColumnById(columnName: string): Column {
@@ -397,7 +397,7 @@ export default class Example18 {
         this.sgb.slickGrid?.setCellCssStyles(`highlight_${[column.id]}${row}`, hash);
 
         // remove highlight after x amount of time
-        window.setTimeout(() => this.removeCellStyling(item, column, row), this.highlightDuration);
+        setTimeout(() => this.removeCellStyling(item, column, row), this.highlightDuration);
       }
     }
   }

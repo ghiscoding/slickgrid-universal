@@ -148,7 +148,7 @@ export class CustomAureliaViewModelEditor implements Editor {
     this.defaultItem = itemObject;
 
     // add a delay so that the editor has time to be enhanced (created) prior to changing the value
-    window.setTimeout(() => {
+    setTimeout(() => {
       this.focus();
       if (this.elmBindingContext) {
         this.elmBindingContext.selectedItem = itemObject;

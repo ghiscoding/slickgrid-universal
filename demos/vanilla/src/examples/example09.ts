@@ -429,7 +429,7 @@ export default class Example09 {
       }
       const updatedData = filteredData.slice(firstRow, firstRow + top);
 
-      window.setTimeout(() => {
+      setTimeout(() => {
         const backendResult = { query };
         if (!this.isCountEnabled) {
           backendResult['totalRecordCount'] = countTotalItems;

@@ -306,7 +306,7 @@ const Example28: React.FC = () => {
       setDatasetHierarchical(tmpDatasetHierarchical);
 
       // scroll into the position, after insertion cycle, where the item was added
-      window.setTimeout(() => {
+      setTimeout(() => {
         const rowIndex = reactGridRef.current?.dataView.getRowById(popFolderItem.id) as number;
         reactGridRef.current?.slickGrid.scrollRowIntoView(rowIndex + 3);
       }, 10);

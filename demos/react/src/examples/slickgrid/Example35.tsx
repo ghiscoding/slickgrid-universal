@@ -10,7 +10,7 @@ const NB_ITEMS = 20;
 
 function fakeFetch(_input: string | URL | Request, _init?: RequestInit | undefined): Promise<Response> {
   return new Promise((resolve) => {
-    window.setTimeout(
+    setTimeout(
       () => {
         resolve(new Response(JSON.stringify({ status: 200, message: 'success' })));
         // reduces the delay for automated Cypress tests

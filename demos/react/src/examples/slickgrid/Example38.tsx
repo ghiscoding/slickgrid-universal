@@ -358,7 +358,7 @@ const Example38: React.FC = () => {
       }
       const updatedData = filteredData.slice(firstRow, firstRow + top!);
 
-      window.setTimeout(() => {
+      setTimeout(() => {
         const backendResult: any = { query };
         backendResult['value'] = updatedData;
         backendResult['@odata.count'] = countTotalItems;

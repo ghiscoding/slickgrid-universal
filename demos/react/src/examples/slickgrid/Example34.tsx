@@ -98,7 +98,7 @@ const Example34: React.FC = () => {
 
   useEffect(() => {
     defineGrid();
-    window.setTimeout(() => {
+    setTimeout(() => {
       startSimulation();
     }, refreshRateRef.current);
 
@@ -370,11 +370,11 @@ const Example34: React.FC = () => {
       // but the cell highlight actually does that for us so we can skip it
     }
 
-    timerRef.current = window.setTimeout(startSimulation, refreshRateRef.current || 0);
+    timerRef.current = setTimeout(startSimulation, refreshRateRef.current || 0);
   }
 
   function stopSimulation() {
-    window.clearTimeout(timerRef.current);
+    clearTimeout(timerRef.current);
   }
 
   function findColumnById(columnName: string): Column {
@@ -416,7 +416,7 @@ const Example34: React.FC = () => {
         reactGridRef.current?.slickGrid.setCellCssStyles(`highlight_${[column.id]}${row}`, hash);
 
         // remove highlight after x amount of time
-        window.setTimeout(() => removeUnsavedStylingFromCell(item, column, row), highlightDurationRef.current);
+        setTimeout(() => removeUnsavedStylingFromCell(item, column, row), highlightDurationRef.current);
       }
     }
   }

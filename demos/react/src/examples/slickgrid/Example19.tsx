@@ -152,7 +152,7 @@ const Example19: React.FC = () => {
     ];
 
     return new Promise((resolve) => {
-      window.setTimeout(() => {
+      setTimeout(() => {
         const itemDetail = item;
         itemDetail.assignee = randomNames[randomNumber(0, 9)] || '';
         itemDetail.reporter = randomNames[randomNumber(0, 9)] || '';

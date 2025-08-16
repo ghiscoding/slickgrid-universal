@@ -328,7 +328,7 @@ function getCustomerApiCall(_query: string): Promise<GraphqlPaginatedResult> {
   };
 
   return new Promise((resolve) => {
-    window.setTimeout(() => {
+    setTimeout(() => {
       graphqlQuery.value = vueGrid.backendService!.buildQuery();
       if (isWithCursor.value) {
         // When using cursor pagination, the pagination service needs to be updated with the PageInfo data from the latest request
@@ -409,7 +409,7 @@ function resetToOriginalPresets() {
     { columnId: 'name', direction: 'asc' },
     { columnId: 'company', direction: SortDirection.DESC },
   ]);
-  window.setTimeout(() => {
+  setTimeout(() => {
     vueGrid.paginationService?.changeItemPerPage(20);
     vueGrid.paginationService?.goToPageNumber(2);
   });

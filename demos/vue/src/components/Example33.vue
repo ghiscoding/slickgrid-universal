@@ -108,7 +108,7 @@ function defineGrid() {
         formatter: () => `<div><span class="mdi mdi-load mdi-spin"></span> loading...</div>`,
         asyncProcess: () =>
           new Promise((resolve) => {
-            window.setTimeout(() => resolve({ ratio: (Math.random() * 10) / 10, lifespan: Math.random() * 100 }), serverApiDelay.value);
+            setTimeout(() => resolve({ ratio: (Math.random() * 10) / 10, lifespan: Math.random() * 100 }), serverApiDelay.value);
           }),
         asyncPostFormatter: tooltipTaskAsyncFormatter as Formatter,
 
@@ -244,7 +244,7 @@ function defineGrid() {
         // 2- delay the opening by a simple Promise and `setTimeout`
         asyncProcess: () =>
           new Promise((resolve) => {
-            window.setTimeout(() => resolve({}), serverApiDelay.value); // delayed by half a second
+            setTimeout(() => resolve({}), serverApiDelay.value); // delayed by half a second
           }),
         asyncPostFormatter: tooltipFormatter,
       },
@@ -317,7 +317,7 @@ function defineGrid() {
 
         // OR 2- use a Promise
         collectionAsync: new Promise<any>((resolve) => {
-          window.setTimeout(() => {
+          setTimeout(() => {
             resolve(Array.from(Array(dataset.value?.length).keys()).map((k) => ({ value: k, label: k, prefix: 'Task', suffix: 'days' })));
           }, 500);
         }),
@@ -334,7 +334,7 @@ function defineGrid() {
       filter: {
         // collectionAsync: fetch(SAMPLE_COLLECTION_DATA_URL),
         // collectionAsync: new Promise((resolve) => {
-        //   window.setTimeout(() => {
+        //   setTimeout(() => {
         //     resolve(Array.from(Array(dataset.value?.length).keys()).map((k) => ({ value: k, label: `Task ${k}` })));
         //   });
         // }),
@@ -342,7 +342,7 @@ function defineGrid() {
           showLazyLoading.value = true;
 
           return new Promise((resolve) => {
-            window.setTimeout(() => {
+            setTimeout(() => {
               showLazyLoading.value = false;
               resolve(Array.from(Array((dataset.value || []).length).keys()).map((k) => ({ value: k, label: `Task ${k}` })));
             }, serverApiDelay.value);

@@ -307,7 +307,7 @@ const Example6: React.FC = () => {
     };
 
     return new Promise((resolve) => {
-      window.setTimeout(() => {
+      setTimeout(() => {
         setGraphqlQuery(graphqlService.buildQuery());
         if (isWithCursorRef.current) {
           reactGridRef.current?.paginationService?.setCursorPageInfo(mockedResult.data[GRAPHQL_QUERY_DATASET_NAME].pageInfo);
@@ -369,7 +369,7 @@ const Example6: React.FC = () => {
       { columnId: 'name', direction: 'asc' },
       { columnId: 'company', direction: SortDirection.DESC },
     ]);
-    window.setTimeout(() => {
+    setTimeout(() => {
       reactGridRef.current?.paginationService?.changeItemPerPage(20);
       reactGridRef.current?.paginationService?.goToPageNumber(2);
     });

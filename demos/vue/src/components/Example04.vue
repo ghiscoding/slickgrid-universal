@@ -311,7 +311,7 @@ function setSortingDynamically() {
 
 function refreshMetrics(_e: Event, args: any) {
   if (args && args.current >= 0) {
-    window.setTimeout(() => {
+    setTimeout(() => {
       metrics.value = {
         startTime: new Date(),
         endTime: new Date(),

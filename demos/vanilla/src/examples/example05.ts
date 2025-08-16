@@ -70,7 +70,7 @@ export default class Example05 {
   }
 
   hideSpinner() {
-    window.setTimeout(() => (this.loadingClass = ''), 200); // delay the hide spinner a bit to avoid show/hide too quickly
+    setTimeout(() => (this.loadingClass = ''), 200); // delay the hide spinner a bit to avoid show/hide too quickly
   }
 
   showSpinner() {

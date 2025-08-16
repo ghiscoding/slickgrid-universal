@@ -43,7 +43,7 @@ export class SlickCellExternalCopyManager {
   onBeforePasteCell: SlickEvent<{ cell: number; row: number; item: any; columnDef: Column; value: any }>;
 
   protected _addonOptions!: ExcelCopyBufferOption;
-  protected _clearCopyTI?: number;
+  protected _clearCopyTI?: any;
   protected _copiedCellStyle = 'copied';
   protected _copiedCellStyleLayerKey = 'copy-manager';
   protected _copiedRanges: SlickRange[] | null = null;
@@ -533,8 +533,8 @@ export class SlickCellExternalCopyManager {
       }
     }
     this._grid.setCellCssStyles(this._copiedCellStyleLayerKey, hash);
-    window.clearTimeout(this._clearCopyTI as number);
-    this._clearCopyTI = window.setTimeout(
+    clearTimeout(this._clearCopyTI as number);
+    this._clearCopyTI = setTimeout(
       () => this.clearCopySelection(),
       this.addonOptions?.clearCopySelectionDelay || CLEAR_COPY_SELECTION_DELAY
     );

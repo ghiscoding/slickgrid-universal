@@ -196,7 +196,7 @@ function simulateServerAsyncCall(item: Distributor) {
 
   // fill the template on async delay
   return new Promise((resolve) => {
-    window.setTimeout(() => {
+    setTimeout(() => {
       const itemDetail = item;
       itemDetail.orderData = orderData;
       itemDetail.isUsingInnerGridStatePresets = isUsingInnerGridStatePresets.value;

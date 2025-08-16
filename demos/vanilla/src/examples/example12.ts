@@ -1079,7 +1079,7 @@ export default class Example12 {
         break;
     }
 
-    window.setTimeout(() => {
+    setTimeout(() => {
       this.compositeEditorInstance?.openDetails({
         headerTitle: modalTitle,
         modalType,
@@ -1112,7 +1112,7 @@ export default class Example12 {
 
             // simulate a backend server call which will reject if the "% Complete" is below 50%
             return new Promise((resolve, reject) => {
-              window.setTimeout(
+              setTimeout(
                 () =>
                   formValues.percentComplete >= 50 ? resolve(true) : reject('Unfortunately we only accept a minimum of 50% Completion...'),
                 serverResponseDelay
@@ -1123,7 +1123,7 @@ export default class Example12 {
             // we'll just apply the change without any rejection from the server and
             // note that we also have access to the "dataContext" which is only available for these modal
             console.log(`${modalType} item data context`, dataContextOrUpdatedDatasetPreview);
-            return new Promise((resolve) => window.setTimeout(() => resolve(true), serverResponseDelay));
+            return new Promise((resolve) => setTimeout(() => resolve(true), serverResponseDelay));
           }
         },
       });

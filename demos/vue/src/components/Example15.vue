@@ -207,7 +207,7 @@ function defineGrid(gridStatePresets?: GridState) {
 function clearGridStateFromLocalStorage() {
   vueGrid.gridService.resetGrid(columnDefinitions.value as Column[]);
   vueGrid.paginationService!.changeItemPerPage(DEFAULT_PAGE_SIZE);
-  window.setTimeout(() => (localStorage[LOCAL_STORAGE_KEY] = null));
+  setTimeout(() => (localStorage[LOCAL_STORAGE_KEY] = null));
 }
 
 function getData(count: number) {

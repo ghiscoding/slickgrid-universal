@@ -292,7 +292,7 @@ function addNewFile() {
     datasetHierarchical.value = tmpDatasetHierarchical;
 
     // scroll into the position, after insertion cycle, where the item was added
-    window.setTimeout(() => {
+    setTimeout(() => {
       const rowIndex = vueGrid.dataView.getRowById(popFolderItem.id) as number;
       vueGrid.slickGrid.scrollRowIntoView(rowIndex + 3);
     }, 10);

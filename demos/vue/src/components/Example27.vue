@@ -261,7 +261,7 @@ function logFlatStructure() {
 }
 
 function hideSpinner() {
-  window.setTimeout(() => (loadingClass.value = ''), 200); // delay the hide spinner a bit to avoid show/hide too quickly
+  setTimeout(() => (loadingClass.value = ''), 200); // delay the hide spinner a bit to avoid show/hide too quickly
 }
 
 function showSpinner() {

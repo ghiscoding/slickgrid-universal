@@ -95,7 +95,7 @@ onBeforeMount(() => {
 onMounted(() => {
   // populate the dataset once the grid is ready
   getData();
-  window.setTimeout(() => {
+  setTimeout(() => {
     startSimulation();
   }, refreshRate.value);
 });
@@ -361,11 +361,11 @@ function startSimulation() {
     // but the cell highlight actually does that for us so we can skip it
   }
 
-  timer = window.setTimeout(startSimulation, refreshRate.value || 0);
+  timer = setTimeout(startSimulation, refreshRate.value || 0);
 }
 
 function stopSimulation() {
-  window.clearTimeout(timer);
+  clearTimeout(timer);
 }
 
 function findColumnById(columnName: string): Column {
@@ -380,7 +380,7 @@ function renderCellHighlighting(item: any, column: Column, priceChange: number) 
       vueGrid.slickGrid.setCellCssStyles(`highlight_${[column.id]}${row}`, hash);
 
       // remove highlight after x amount of time
-      window.setTimeout(() => removeUnsavedStylingFromCell(item, column, row), highlightDuration.value);
+      setTimeout(() => removeUnsavedStylingFromCell(item, column, row), highlightDuration.value);
     }
   }
 }
