@@ -56,6 +56,12 @@ export class TranslateService implements TranslaterService {
     return typeof value !== 'undefined' && value !== null;
   }
 
+  /**
+   * interpolate a string that could have token(s) and replace them with their corresponding values provided as object argument(s).
+   * @param expr
+   * @param params
+   * @returns
+   */
   interpolateString(expr, params) {
     if (!params) {
       return expr;
