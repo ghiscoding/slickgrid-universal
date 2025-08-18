@@ -39,12 +39,7 @@ import { GridOption } from '../../library';
         <nav aria-label="Page navigation">
           <ul class="pagination">
             <li class="page-item" [ngClass]="pageNumber === pageCount ? 'disabled' : ''">
-              <a
-                class="page-link icon-seek-next text-center mdi-chevron-down mdi-rotate-90"
-                aria-label="Next"
-                (click)="changeToNextPage($event)"
-              >
-              </a>
+              <a class="page-link icon-seek-next text-center mdi-chevron-down" aria-label="Next" (click)="changeToNextPage($event)"> </a>
             </li>
             <li class="page-item" [ngClass]="pageNumber === pageCount ? 'disabled' : ''">
               <a class="page-link icon-seek-end mdi mdi-page-last" aria-label="Last" (click)="changeToLastPage($event)"> </a>
