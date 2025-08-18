@@ -132,7 +132,7 @@ describe('SlickRowMoveManager Plugin', () => {
       rowMoveShadowOpacity: 0.9,
       rowMoveShadowScale: 0.75,
       singleRowMove: false,
-      width: 40,
+      width: 44,
     });
   });
 
@@ -151,9 +151,9 @@ describe('SlickRowMoveManager Plugin', () => {
       behavior: 'selectAndMove',
       reorderable: false,
       resizable: false,
-      minWidth: 40,
-      width: 40,
-      maxWidth: 40,
+      minWidth: 44,
+      width: 44,
+      maxWidth: 44,
     };
 
     plugin.create(mockColumns, { rowMoveManager: { columnId: 'move-id' } });
@@ -213,9 +213,9 @@ describe('SlickRowMoveManager Plugin', () => {
       name: '',
       reorderable: false,
       resizable: false,
-      minWidth: 40,
-      width: 40,
-      maxWidth: 40,
+      minWidth: 44,
+      width: 44,
+      maxWidth: 44,
     });
   });
 
