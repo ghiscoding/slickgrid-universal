@@ -47,7 +47,7 @@ export class SlickRowMoveManager {
     rowMoveShadowOpacity: 0.9,
     rowMoveShadowScale: 0.75,
     singleRowMove: false,
-    width: 40,
+    width: 44,
   } as RowMoveManagerOption;
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
