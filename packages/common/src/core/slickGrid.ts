@@ -6268,47 +6268,27 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected absBox(elem: HTMLElement): ElementPosition {
+    const rect = elem.getBoundingClientRect();
+    // Get grid container (assume this._container exists and is the grid root)
+    const gridRect = this._container?.getBoundingClientRect?.() || { top: 0, left: 0, bottom: 0, right: 0 };
     const box = {
-      top: elem.offsetTop,
-      left: elem.offsetLeft,
-      bottom: 0,
-      right: 0,
-      width: elem.offsetWidth,
-      height: elem.offsetWidth,
+      top: rect.top - gridRect.top,
+      left: rect.left - gridRect.left,
+      bottom: rect.bottom - gridRect.top,
+      right: rect.right - gridRect.left,
+      width: rect.width,
+      height: rect.height,
       visible: true,
     };
-    box.bottom = box.top + box.height;
-    box.right = box.left + box.width;
-
-    // walk up the tree
-    let offsetParent = elem.offsetParent;
-    while ((elem = elem.parentNode as HTMLElement) !== document.body) {
-      if (!elem || !elem.parentNode) {
-        break;
-      }
-
-      const styles = getComputedStyle(elem);
-      if (box.visible && elem.scrollHeight !== elem.offsetHeight && styles['overflowY'] !== 'visible') {
-        box.visible = box.bottom > elem.scrollTop && box.top < elem.scrollTop + elem.clientHeight;
-      }
-
-      if (box.visible && elem.scrollWidth !== elem.offsetWidth && styles['overflowX'] !== 'visible') {
-        box.visible = box.right > elem.scrollLeft && box.left < elem.scrollLeft + elem.clientWidth;
-      }
-
-      box.left -= elem.scrollLeft;
-      box.top -= elem.scrollTop;
-
-      if (elem === offsetParent) {
-        box.left += elem.offsetLeft;
-        box.top += elem.offsetTop;
-        offsetParent = elem.offsetParent;
-      }
-
-      box.bottom = box.top + box.height;
-      box.right = box.left + box.width;
+    // Check if the element is visible within the grid viewport
+    if (
+      box.bottom < 0 ||
+      box.top > (this._container?.clientHeight ?? window.innerHeight) ||
+      box.right < 0 ||
+      box.left > (this._container?.clientWidth ?? window.innerWidth)
+    ) {
+      box.visible = false;
     }
-
     return box;
   }
 

@@ -5265,99 +5265,90 @@ describe('SlickGrid core file', () => {
         grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
 
         grid.setActiveCell(0, 1);
-        vi.spyOn(window, 'getComputedStyle').mockReturnValueOnce({ overflowX: 'hidden', overflowY: 'hidden' } as any);
         const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
-        Object.defineProperty(slickCellElm, 'parentNode', { writable: true, value: null });
-        Object.defineProperty(slickCellElm, 'offsetTop', { writable: true, value: 11 });
-        const result = grid.getActiveCellPosition();
+        const gridContainer = grid['_container'];
 
+        // Cell is inside grid
+        slickCellElm.getBoundingClientRect = vi.fn(() => ({ top: 10, left: 10, bottom: 30, right: 30, width: 20, height: 20 }) as DOMRect);
+        gridContainer.getBoundingClientRect = vi.fn(() => ({ top: 0, left: 0, bottom: 100, right: 100, width: 100, height: 100 }) as DOMRect);
+
+        const result = grid.getActiveCellPosition();
         expect(result).toEqual({
-          bottom: 11,
-          height: 0,
-          left: 0,
-          right: 0,
-          top: 11,
-          width: 0,
+          top: 10,
+          left: 10,
+          bottom: 30,
+          right: 30,
+          width: 20,
+          height: 20,
           visible: true,
         });
       });
 
-      it('should expect abs box to not be visible when top position is lower than scrollTop', () => {
+      it('should expect abs box to not be visible when top position is lower than grid container', () => {
         grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
 
         grid.setActiveCell(0, 1);
-        vi.spyOn(window, 'getComputedStyle').mockReturnValueOnce({ overflowX: 'hidden', overflowY: 'hidden' } as any);
         const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
-        const slickRowElm = slickCellElm.parentNode as HTMLDivElement;
-        Object.defineProperty(slickRowElm, 'clientHeight', { writable: true, value: 8 });
-        Object.defineProperty(slickRowElm, 'offsetHeight', { writable: true, value: 11 });
-        Object.defineProperty(slickRowElm, 'scrollHeight', { writable: true, value: 23 });
-        Object.defineProperty(slickCellElm, 'offsetTop', { writable: true, value: 11 });
-        Object.defineProperty(slickRowElm, 'scrollTop', { writable: true, value: 44 });
-        const result = grid.getActiveCellPosition();
+        const gridContainer = grid['_container'];
 
+        // Cell is above grid
+        slickCellElm.getBoundingClientRect = vi.fn(() => ({ top: -50, left: 10, bottom: -30, right: 30, width: 20, height: 20 }) as DOMRect);
+        gridContainer.getBoundingClientRect = vi.fn(() => ({ top: 0, left: 0, bottom: 100, right: 100, width: 100, height: 100 }) as DOMRect);
+
+        const result = grid.getActiveCellPosition();
         expect(result).toEqual({
-          bottom: -58,
-          height: 0,
-          left: -80,
-          right: -80,
-          top: -58,
-          width: 0,
+          top: -50,
+          left: 10,
+          bottom: -30,
+          right: 30,
+          width: 20,
+          height: 20,
           visible: false,
         });
       });
 
-      it('should expect abs box to not be visible when left position is lower than scrollLeft', () => {
+      it('should expect abs box to not be visible when left position is lower than grid container', () => {
         grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
 
         grid.setActiveCell(0, 1);
-        vi.spyOn(window, 'getComputedStyle').mockReturnValueOnce({ overflowX: 'hidden', overflowY: 'hidden' } as any);
         const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
-        const slickRowElm = slickCellElm.parentNode as HTMLDivElement;
-        Object.defineProperty(slickCellElm, 'offsetLeft', { writable: true, value: 11 });
-        Object.defineProperty(slickRowElm, 'clientHeight', { writable: true, value: 8 });
-        Object.defineProperty(slickRowElm, 'offsetWidth', { writable: true, value: 11 });
-        Object.defineProperty(slickRowElm, 'scrollWidth', { writable: true, value: 23 });
-        Object.defineProperty(slickRowElm, 'offsetLeft', { writable: true, value: 6 });
-        Object.defineProperty(slickRowElm, 'offsetTop', { writable: true, value: 7 });
-        Object.defineProperty(slickRowElm, 'scrollLeft', { writable: true, value: 44 });
-        const result = grid.getActiveCellPosition();
+        const gridContainer = grid['_container'];
 
+        // Cell is left of grid
+        slickCellElm.getBoundingClientRect = vi.fn(() => ({ top: 10, left: -50, bottom: 30, right: -30, width: 20, height: 20 }) as DOMRect);
+        gridContainer.getBoundingClientRect = vi.fn(() => ({ top: 0, left: 0, bottom: 100, right: 100, width: 100, height: 100 }) as DOMRect);
+
+        const result = grid.getActiveCellPosition();
         expect(result).toEqual({
-          bottom: -25,
-          height: 0,
-          left: -113,
-          right: -113,
-          top: -25,
-          width: 0,
+          top: 10,
+          left: -50,
+          bottom: 30,
+          right: -30,
+          width: 20,
+          height: 20,
           visible: false,
         });
       });
 
-      it('should expect abs box to not be visible when left position is lower than scrollLeft and also increase left/top position when offsetParent is same as slick-row element', () => {
+      it('should expect abs box to not be visible when left position is lower than grid container and also increase left/top position when offsetParent is same as slick-row element', () => {
         grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
 
         grid.setActiveCell(0, 1);
-        vi.spyOn(window, 'getComputedStyle').mockReturnValueOnce({ overflowX: 'hidden', overflowY: 'hidden' } as any);
         const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
-        const slickRowElm = slickCellElm.parentNode as HTMLDivElement;
-        Object.defineProperty(slickCellElm, 'offsetLeft', { writable: true, value: 11 });
-        Object.defineProperty(slickCellElm, 'offsetParent', { writable: true, value: slickRowElm });
-        Object.defineProperty(slickRowElm, 'clientHeight', { writable: true, value: 8 });
-        Object.defineProperty(slickRowElm, 'offsetWidth', { writable: true, value: 11 });
-        Object.defineProperty(slickRowElm, 'scrollWidth', { writable: true, value: 23 });
-        Object.defineProperty(slickRowElm, 'offsetLeft', { writable: true, value: 6 });
-        Object.defineProperty(slickRowElm, 'offsetTop', { writable: true, value: 7 });
-        Object.defineProperty(slickRowElm, 'scrollLeft', { writable: true, value: 44 });
-        const result = grid.getActiveCellPosition();
+        const gridContainer = grid['_container'];
 
+        // Cell is left of grid, with offsetParent logic
+        slickCellElm.getBoundingClientRect = vi.fn(() => ({ top: 10, left: -60, bottom: 30, right: -40, width: 20, height: 20 }) as DOMRect);
+        gridContainer.getBoundingClientRect = vi.fn(() => ({ top: 0, left: 0, bottom: 100, right: 100, width: 100, height: 100 }) as DOMRect);
+
+        const result = grid.getActiveCellPosition();
         expect(result).toEqual({
-          bottom: -18,
-          height: 0,
-          left: -107,
-          right: -107,
-          top: -18,
-          width: 0,
+          top: 10,
+          left: -60,
+          bottom: 30,
+          right: -40,
+          width: 20,
+          height: 20,
           visible: false,
         });
       });
