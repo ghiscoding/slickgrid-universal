@@ -1225,4 +1225,32 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       .children()
       .each(($child, index) => expect($child.text()).to.eq(expectedTitles[index]));
   });
+
+  it('should scroll to "Task 45", open "Title" editor and expect the editor to follow scroll until it goes outside the viewport', () => {
+    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 1500);
+    cy.wait(10);
+    cy.get('[data-row="35"] > .slick-cell:nth(2)').should('contain', 'Task 35');
+
+    cy.get('[data-row="35"] > .slick-cell:nth(2)').click();
+    cy.wait(10);
+    cy.get('.slick-large-editor-text.editor-title').should('be.visible');
+
+    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 1300).wait(10);
+    cy.get('.slick-large-editor-text.editor-title').should('be.visible');
+
+    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 1150).wait(10);
+    cy.get('.slick-large-editor-text.editor-title').should('be.visible');
+
+    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 1000).wait(10);
+    cy.get('.slick-large-editor-text.editor-title').should('be.visible');
+
+    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 1600).wait(10);
+    cy.get('.slick-large-editor-text.editor-title').should('be.visible');
+
+    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 2000).wait(10);
+    cy.get('.slick-large-editor-text.editor-title').should('not.be.visible');
+
+    cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 0).wait(10);
+    cy.get('.slick-large-editor-text.editor-title').should('not.be.visible');
+  });
 });
