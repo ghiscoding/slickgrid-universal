@@ -1,5 +1,5 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { downloadExcelFile } from 'excel-builder-vanilla';
+import { createExcelFileStream, downloadExcelFile, Workbook } from 'excel-builder-vanilla';
+import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import {
   type Column,
@@ -26,6 +26,14 @@ import { getExcelSameInputDataCallback, useCellFormatByFieldType } from './excel
 vi.mock('excel-builder-vanilla', async (importOriginal) => ({
   ...((await importOriginal()) as any),
   downloadExcelFile: vi.fn().mockResolvedValue(true),
+  createExcelFileStream: vi.fn(() => {
+    return new ReadableStream({
+      async pull(controller) {
+        controller.enqueue('streaming content');
+        controller.close();
+      },
+    });
+  }),
 }));
 
 const pubSubServiceStub = {
@@ -36,7 +44,9 @@ const pubSubServiceStub = {
 } as BasePubSubService;
 
 // URL object is not supported in JSDOM, we can simply mock it
-(global as any).URL.createObjectURL = vi.fn();
+const createObjectMock = vi.fn();
+(global as any).URL.createObjectURL = createObjectMock;
+(global as any).URL.revokeObjectURL = vi.fn();
 
 const myBoldHtmlFormatter: Formatter = (_row, _cell, value) => (value !== null ? { text: `<b>${value}</b>` } : (null as any));
 const myUppercaseFormatter: Formatter = (_row, _cell, value) => (value ? { text: value.toUpperCase() } : (null as any));
@@ -120,7 +130,7 @@ describe('ExcelExportService', () => {
       const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       service.init(gridStub, container);
-      const result = await service.exportToExcel(mockExportExcelOptions);
+      const result = await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
       expect(result).toBeTruthy();
       expect(pubSubSpy).toHaveBeenNthCalledWith(1, `onBeforeExportToExcel`, true);
@@ -132,7 +142,7 @@ describe('ExcelExportService', () => {
       const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       service.init(gridStub, container);
-      const result = await service.exportToExcel({ ...mockExportExcelOptions, format: 'xls' });
+      const result = await service.exportToExcel({ ...mockExportExcelOptions, format: 'xls', useStreamingExport: false });
 
       expect(result).toBeTruthy();
       expect(pubSubSpy).toHaveBeenNthCalledWith(1, `onBeforeExportToExcel`, true);
@@ -173,6 +183,41 @@ describe('ExcelExportService', () => {
         vi.clearAllMocks();
       });
 
+      it('should export using streaming API `createExcelFileStream()` when useStreamingExport is true and API is available', () =>
+        new Promise(async (done: any) => {
+          const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+          service.init(gridStub, container);
+          const result = await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: true });
+          expect(result).toBeTruthy();
+          expect(pubSubSpy).toHaveBeenNthCalledWith(1, 'onBeforeExportToExcel', true);
+          expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+
+          const streamArgs = (createExcelFileStream as any).mock.calls[0];
+          const createObjArgs = (createObjectMock as any).mock.calls[0];
+          const blob = createObjArgs[0];
+          expect(streamArgs[0]).toBeInstanceOf(Workbook);
+          expect(createObjectMock).toHaveBeenCalled();
+          expect(blob.size).toBeGreaterThan(0);
+          expect(blob.type).toBe('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+
+          done();
+        }));
+
+      it('should fallback to legacy export `downloadExcelFile()` if streaming API throws and still trigger spinner events', () =>
+        new Promise(async (done: any) => {
+          (createExcelFileStream as Mock).mockImplementationOnce(() => {
+            throw new Error('Streaming not supported');
+          });
+          const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+          service.init(gridStub, container);
+          const result = await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: true });
+          expect(result).toBeTruthy();
+          expect(pubSubSpy).toHaveBeenNthCalledWith(1, 'onBeforeExportToExcel', true);
+          expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+          expect(downloadExcelFile).toHaveBeenCalledWith(expect.anything(), 'export.xlsx', { mimeType: mimeTypeXLSX });
+          done();
+        }));
+
       it('should throw an error when trying call exportToExcel" without a grid and/or dataview object initialized', async () => {
         try {
           service.init(null as any, container);
@@ -188,7 +233,7 @@ describe('ExcelExportService', () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
-        const result = await service.exportToExcel(mockExportExcelOptions);
+        const result = await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
         expect(result).toBeTruthy();
         expect(pubSubSpy).toHaveBeenNthCalledWith(1, `onBeforeExportToExcel`, true);
@@ -198,7 +243,7 @@ describe('ExcelExportService', () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
-        const result = await service.exportToExcel(mockExportExcelOptions);
+        const result = await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
         expect(result).toBeTruthy();
         expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', expect.anything());
@@ -208,7 +253,7 @@ describe('ExcelExportService', () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
-        const result = await service.exportToExcel(mockExportExcelOptions);
+        const result = await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
         expect(result).toBeTruthy();
         expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
@@ -220,7 +265,7 @@ describe('ExcelExportService', () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
-        const result = await service.exportToExcel(mockExportExcelOptions);
+        const result = await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
         expect(result).toBeTruthy();
         expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: '' });
@@ -232,7 +277,7 @@ describe('ExcelExportService', () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
-        const result = await service.exportToExcel(mockExportExcelOptions);
+        const result = await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
         expect(result).toBeTruthy();
         expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLS });
@@ -258,7 +303,7 @@ describe('ExcelExportService', () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
+        await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
         expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
@@ -290,7 +335,7 @@ describe('ExcelExportService', () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
+        await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
         expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
@@ -322,7 +367,7 @@ describe('ExcelExportService', () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
+        await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
         expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
@@ -354,7 +399,7 @@ describe('ExcelExportService', () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
+        await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
         expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
@@ -386,7 +431,7 @@ describe('ExcelExportService', () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
+        await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
         expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
@@ -418,7 +463,7 @@ describe('ExcelExportService', () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
+        await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
         expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
@@ -451,7 +496,7 @@ describe('ExcelExportService', () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
+        await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
         expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
@@ -484,7 +529,7 @@ describe('ExcelExportService', () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
+        await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
         expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
@@ -537,7 +582,7 @@ describe('ExcelExportService', () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
+        await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
         expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
@@ -608,7 +653,7 @@ describe('ExcelExportService', () => {
         vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]).mockReturnValueOnce(mockCollection[1]);
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
         service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
+        await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
         expect(service.stylesheet).toBeTruthy();
         expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
@@ -663,7 +708,7 @@ describe('ExcelExportService', () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
+        await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
         expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
@@ -696,7 +741,7 @@ describe('ExcelExportService', () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
+        await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
         expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
@@ -770,7 +815,7 @@ describe('ExcelExportService', () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
+        await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
         expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
@@ -884,7 +929,7 @@ describe('ExcelExportService', () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
+        await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
         expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
@@ -912,6 +957,25 @@ describe('ExcelExportService', () => {
           { mimeType: mimeTypeXLSX }
         );
       });
+
+      it('should export grouping using streaming API when useStreamingExport is true and API is available', () =>
+        new Promise(async (done: any) => {
+          const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+          service.init(gridStub, container);
+          const result = await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: true });
+          expect(result).toBeTruthy();
+          expect(pubSubSpy).toHaveBeenNthCalledWith(1, 'onBeforeExportToExcel', true);
+          expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+
+          const streamArgs = (createExcelFileStream as any).mock.calls[0];
+          const createObjArgs = (createObjectMock as any).mock.calls[0];
+          const blob = createObjArgs[0];
+          expect(streamArgs[0]).toBeInstanceOf(Workbook);
+          expect(createObjectMock).toHaveBeenCalled();
+          expect(blob.size).toBeGreaterThan(0);
+          expect(blob.type).toBe('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+          done();
+        }));
     });
 
     describe('with Grouping and export with Excel custom format', () => {
@@ -1014,7 +1078,7 @@ describe('ExcelExportService', () => {
         groupTotalParserCallbackSpy.mockReturnValueOnce(9999);
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
         service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
+        await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
         expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
@@ -1146,7 +1210,7 @@ describe('ExcelExportService', () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
+        await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
         expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
@@ -1312,7 +1376,7 @@ describe('ExcelExportService', () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
+        await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
         expect(groupTotalParserCallbackSpy).toHaveBeenCalled();
         expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
@@ -1364,7 +1428,7 @@ describe('ExcelExportService', () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
+        await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
         expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
@@ -1474,7 +1538,7 @@ describe('ExcelExportService', () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
+        await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
         expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
@@ -1562,7 +1626,7 @@ describe('ExcelExportService', () => {
           const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
           service.init(gridStub, container);
-          await service.exportToExcel(mockExportExcelOptions);
+          await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
           expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
           expect(downloadExcelFile).toHaveBeenCalledWith(
@@ -1664,7 +1728,7 @@ describe('ExcelExportService', () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
+        await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
         expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
@@ -1784,7 +1848,7 @@ describe('ExcelExportService', () => {
           .mockReturnValueOnce(null);
 
         service.init(gridStub, container);
-        await service.exportToExcel(mockExportExcelOptions);
+        await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
 
         expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(

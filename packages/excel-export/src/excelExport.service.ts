@@ -1,5 +1,6 @@
 import {
   downloadExcelFile,
+  createExcelFileStream,
   type ExcelColumnMetadata,
   type ExcelMetadata,
   type StyleSheet,
@@ -32,13 +33,14 @@ import {
   getTranslationPrefix,
   isColumnDateType,
 } from '@slickgrid-universal/common';
-import { addWhiteSpaces, extend, getHtmlStringOutput, stripTags, titleCase } from '@slickgrid-universal/utils';
+import { addWhiteSpaces, createDomElement, extend, getHtmlStringOutput, stripTags, titleCase } from '@slickgrid-universal/utils';
 
 import { type ExcelFormatter, getGroupTotalValue, getExcelFormatFromGridFormatter, useCellFormatByFieldType } from './excelUtils.js';
 
 const DEFAULT_EXPORT_OPTIONS: ExcelExportOption = {
   filename: 'export',
   format: FileType.xlsx,
+  useStreamingExport: true, // new option, default true
 };
 
 export class ExcelExportService implements ExternalResource, BaseExcelExportService {
@@ -137,16 +139,17 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         '[Slickgrid-Universal] it seems that the SlickGrid & DataView objects and/or PubSubService are not initialized did you forget to enable the grid option flag "enableExcelExport"?'
       );
     }
-    this._pubSubService?.publish(`onBeforeExportToExcel`, true);
-    this._excelExportOptions = extend(true, {}, { ...DEFAULT_EXPORT_OPTIONS, ...this._gridOptions.excelExportOptions, ...options });
-    this._fileFormat = this._excelExportOptions.format || FileType.xlsx;
-
-    // reset references of detected Excel formats
-    this._regularCellExcelFormats = {};
-    this._groupTotalExcelFormats = {};
-
     // wrap in a Promise so that we can add loading spinner
     return new Promise((resolve) => {
+      this._pubSubService?.publish('onBeforeExportToExcel', true);
+      this._excelExportOptions = extend(true, {}, { ...DEFAULT_EXPORT_OPTIONS, ...this._gridOptions.excelExportOptions, ...options });
+      this._fileFormat = this._excelExportOptions.format || FileType.xlsx;
+      const useStreamingExport = !!this._excelExportOptions.useStreamingExport;
+
+      // reset references of detected Excel formats
+      this._regularCellExcelFormats = {};
+      this._groupTotalExcelFormats = {};
+
       // prepare the Excel Workbook & Sheet
       const worksheetOptions = { name: this._excelExportOptions.sheetName || 'Sheet1' };
       this._workbook = new Workbook();
@@ -162,12 +165,11 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       this._stylesheetFormats = { boldFormat, numberFormat, stringFormat };
       this._sheet.setColumnFormats([boldFormat]);
 
-      // get all data by reading all DataView rows
-      const dataOutput = this.getDataOutput();
+      // Add a short delay to ensure spinner/UI updates before heavy export work begins
+      setTimeout(async () => {
+        // get all data by reading all DataView rows
+        const dataOutput = this.getDataOutput();
 
-      // trigger a download file
-      // wrap it into a setTimeout so that the EventAggregator has enough time to start a pre-process like showing a spinner
-      window.setTimeout(async () => {
         if (this._gridOptions?.excelExportOptions?.customExcelHeader) {
           this._gridOptions.excelExportOptions.customExcelHeader(this._workbook, this._sheet);
         }
@@ -195,11 +197,34 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         }
 
         const filename = `${this._excelExportOptions.filename}.${this._fileFormat}`;
-        downloadExcelFile(this._workbook, filename, { mimeType }).then(() => {
-          this._pubSubService?.publish(`onAfterExportToExcel`, { filename, mimeType });
-          resolve(true);
-        });
-      });
+
+        if (this._fileFormat === FileType.xlsx && useStreamingExport) {
+          try {
+            const stream = createExcelFileStream(this._workbook, { chunkSize: 1000 });
+            const chunks: Uint8Array[] = [];
+            for await (const chunk of stream as AsyncIterable<Uint8Array>) {
+              chunks.push(chunk);
+            }
+
+            const blob = new Blob(chunks as BlobPart[], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+
+            // download with anchor tag
+            const a = createDomElement('a', { href: url, download: filename }, document.body);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            this._pubSubService?.publish('onAfterExportToExcel', { filename, mimeType });
+            resolve(true);
+          } catch (err) {
+            // fallback to legacy export if streaming is not supported
+            this.legacyExcelExport(filename, mimeType, resolve);
+          }
+        } else {
+          // fallback to legacy export for non-xlsx or if useStreamingExport is false
+          this.legacyExcelExport(filename, mimeType, resolve);
+        }
+      }, 50); // delay to allow spinner to show
     });
   }
 
@@ -688,5 +713,13 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     });
 
     return outputStrings;
+  }
+
+  /** Legacy (non-streaming) Excel export fallback method */
+  protected legacyExcelExport(filename: string, mimeType: string, resolve: (value: boolean) => void): void {
+    downloadExcelFile(this._workbook, filename, { mimeType }).then(() => {
+      this._pubSubService?.publish(`onAfterExportToExcel`, { filename, mimeType });
+      resolve(true);
+    });
   }
 }

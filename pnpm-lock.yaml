@@ -1142,8 +1142,8 @@ importers:
   packages/common:
     dependencies:
       '@excel-builder-vanilla/types':
-        specifier: ^4.0.1
-        version: 4.0.1
+        specifier: ^4.1.0
+        version: 4.1.0
       '@formkit/tempo':
         specifier: 'catalog:'
         version: 0.1.2
@@ -1261,8 +1261,8 @@ importers:
         specifier: workspace:*
         version: link:../utils
       excel-builder-vanilla:
-        specifier: ^4.0.1
-        version: 4.0.1
+        specifier: ^4.1.0
+        version: 4.1.0
     devDependencies:
       '@slickgrid-universal/event-pub-sub':
         specifier: workspace:*
@@ -2957,8 +2957,8 @@ packages:
     resolution: {integrity: sha512-Z5kJ+wU3oA7MMIqVR9tyZRtjYPr4OC004Q4Rw7pgOKUOKkJfZ3O24nz3WYfGRpMDNmcOi3TwQOmgm7B7Tpii0w==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@excel-builder-vanilla/types@4.0.1':
-    resolution: {integrity: sha512-jUeMSeKDavKPArdfNroST4P6oJ9rBqp9SwgQxjdlahLcLU9dsM9teHuKpdop7q6apykou1Tf8pGd0b5rt5MYbw==}
+  '@excel-builder-vanilla/types@4.1.0':
+    resolution: {integrity: sha512-CwZa5CVzC2eo6fye5FW8VeyFl3voQ2aw63T5zG2NssfOD0tIW+l+oc/xDBLRkVvPGRVPNRhzqMPC9c6e2nglsA==}
 
   '@faker-js/faker@9.9.0':
     resolution: {integrity: sha512-OEl393iCOoo/z8bMezRlJu+GlRGlsKbUAN7jKB6LhnKoqKve5DXRpalbItIIcwnCjs1k/FOPjFzcA6Qn+H+YbA==}
@@ -6626,8 +6626,8 @@ packages:
     resolution: {integrity: sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==}
     engines: {node: '>=0.8.x'}
 
-  excel-builder-vanilla@4.0.1:
-    resolution: {integrity: sha512-WVG7KAO0VQS6qxFW93mRNFICmOt9q2xaHve+W3Um5kzRfd02949JRF0PduaFtm3OLj/D78tUR01HCApO3USXeg==}
+  excel-builder-vanilla@4.1.0:
+    resolution: {integrity: sha512-kLN7EdtOc2DewvY3ibFemkmEWS5d2q8iW1ghUzI6w/hpsplBSRHzqqMME57pyyJijcl+cgO0J5+/0Y5LwlwtTg==}
 
   execa@4.1.0:
     resolution: {integrity: sha512-j5W0//W7f8UxAn8hXVnwG8tLwdiUy4FJLcSupCg6maBYZDpyBvTApK7KyuI4bKj8KOh1r2YH+6ucuYtJv1bTZA==}
@@ -13747,7 +13747,7 @@ snapshots:
       '@eslint/core': 0.15.2
       levn: 0.4.1
 
-  '@excel-builder-vanilla/types@4.0.1':
+  '@excel-builder-vanilla/types@4.1.0':
     dependencies:
       fflate: 0.8.2
 
@@ -18377,7 +18377,7 @@ snapshots:
 
   events@3.3.0: {}
 
-  excel-builder-vanilla@4.0.1:
+  excel-builder-vanilla@4.1.0:
     dependencies:
       fflate: 0.8.2
 
