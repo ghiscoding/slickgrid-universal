@@ -605,7 +605,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   applyHtmlCode(
     target: HTMLElement,
     val: string | boolean | number | HTMLElement | DocumentFragment = '',
-    options?: { emptyTarget?: boolean; sanitizerOptions?: unknown; skipEmptyReassignment?: boolean }
+    options?: {
+      emptyTarget?: boolean;
+      enableHtmlRendering?: boolean;
+      skipEmptyReassignment?: boolean;
+      sanitizer?: (dirtyHtml: string) => TrustedHTML | string;
+    }
   ): void {
     applyHtmlToElement(target, val, { ...this._options, ...options });
   }
@@ -7244,6 +7249,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /**
+   * @deprecated @use `runOptionalHtmlSanitizer` from `@slickgrid-universal/common`
    * Sanitize possible dirty html string (remove any potential XSS code like scripts and others) when a `sanitizer` is provided via grid options.
    * The logic will only call the sanitizer if it exists and the value is a defined string, anything else will be skipped (number, boolean, TrustedHTML will all be skipped)
    * @param {*} dirtyHtml: dirty html string

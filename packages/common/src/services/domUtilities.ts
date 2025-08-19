@@ -3,7 +3,7 @@ import type { OptionRowData } from 'multiple-select-vanilla';
 
 import type { SearchTerm } from '../enums/index.js';
 import type { Column, SelectOption } from '../interfaces/index.js';
-import type { SlickGrid } from '../core/index.js';
+import { runOptionalHtmlSanitizer, type SlickGrid } from '../core/index.js';
 import type { TranslaterService } from './translater.service.js';
 
 /**
@@ -103,7 +103,7 @@ export function buildMsSelectCollectionList(
         if (isRenderHtmlEnabled) {
           // sanitize any unauthorized html tags like script and others
           // for the remaining allowed tags we'll permit all attributes
-          optionText = grid.sanitizeHtmlString<string>(optionText);
+          optionText = runOptionalHtmlSanitizer<string>(optionText, gridOptions);
         }
         selectOption.text = optionText;
 

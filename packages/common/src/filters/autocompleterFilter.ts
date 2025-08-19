@@ -32,7 +32,7 @@ import {
   getCollectionFromObjectWhenEnabled,
   sortCollectionWithOptions,
 } from '../commonEditorFilter/commonEditorFilterUtils.js';
-import { applyHtmlToElement } from '../core/utils.js';
+import { applyHtmlToElement, runOptionalHtmlSanitizer } from '../core/utils.js';
 import type { CollectionService } from '../services/collection.service.js';
 import { collectionObserver, propertyObserver } from '../services/observers.js';
 import { unsubscribeAll } from '../services/utilities.js';
@@ -581,7 +581,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
 
     // sanitize any unauthorized html tags like script and others
     // for the remaining allowed tags we'll permit all attributes
-    const sanitizedText = this.grid.sanitizeHtmlString<string>(finalText) || '';
+    const sanitizedText = runOptionalHtmlSanitizer<string>(finalText, this.gridOptions) || '';
 
     const div = document.createElement('div');
     div[isRenderHtmlEnabled ? 'innerHTML' : 'textContent'] = sanitizedText;

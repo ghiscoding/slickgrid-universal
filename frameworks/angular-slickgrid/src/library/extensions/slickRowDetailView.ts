@@ -10,6 +10,7 @@ import {
   addToArrayWhenNotExists,
   castObservableToPromise,
   createDomElement,
+  runOptionalHtmlSanitizer,
   SlickEventData,
   SlickRowSelectionModel,
   unsubscribeAll,
@@ -260,7 +261,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
         this._preloadComponent,
         containerElement,
         {},
-        { sanitizer: this._grid.sanitizeHtmlString }
+        { sanitizer: (html: string) => runOptionalHtmlSanitizer(html, this.gridOptions) }
       );
       this._preloadCompRef = preloadComp.componentRef;
     }
@@ -282,7 +283,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
           parentRef: this.rowDetailViewOptions?.parentRef,
         },
         {
-          sanitizer: this._grid.sanitizeHtmlString,
+          sanitizer: (html: string) => runOptionalHtmlSanitizer(html, this.gridOptions),
         }
       );
 

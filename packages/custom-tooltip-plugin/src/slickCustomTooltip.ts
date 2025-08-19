@@ -24,6 +24,7 @@ import {
   getOffset,
   SlickEventHandler,
   applyHtmlToElement,
+  runOptionalHtmlSanitizer,
 } from '@slickgrid-universal/common';
 import { classNameToList, isPrimitiveOrHTML } from '@slickgrid-universal/utils';
 
@@ -357,11 +358,12 @@ export class SlickCustomTooltip {
       const tooltipResult = formatterOrText(cell.row, cell.cell, value, columnDef, item, this._grid);
       // prettier-ignore
       const formatterText = isPrimitiveOrHTML(tooltipResult) ? tooltipResult : (tooltipResult as FormatterResultWithHtml).html || (tooltipResult as FormatterResultWithText).text;
-      return this._grid.sanitizeHtmlString(
-        (formatterText instanceof HTMLElement ? formatterText.textContent : (formatterText as string)) || ''
+      return runOptionalHtmlSanitizer(
+        (formatterText instanceof HTMLElement ? formatterText.textContent : (formatterText as string)) || '',
+        this.gridOptions
       );
     } else if (typeof formatterOrText === 'string') {
-      return this._grid.sanitizeHtmlString(formatterOrText);
+      return runOptionalHtmlSanitizer(formatterOrText, this.gridOptions);
     }
     return '';
   }
@@ -462,7 +464,7 @@ export class SlickCustomTooltip {
 
     let finalOutputText = '';
     if (!tooltipText || this._cellAddonOptions?.renderRegularTooltipAsHtml) {
-      finalOutputText = this._grid.sanitizeHtmlString(outputText);
+      finalOutputText = runOptionalHtmlSanitizer(outputText, this.gridOptions);
       applyHtmlToElement(this._tooltipBodyElm, finalOutputText, this.gridOptions);
       this._tooltipBodyElm.style.whiteSpace = this._cellAddonOptions?.whiteSpace ?? (this._defaultOptions.whiteSpace as string);
     } else {
