@@ -15,7 +15,7 @@ import {
 } from 'slickgrid-react';
 import React, { useEffect, useRef, useState } from 'react';
 
-const NB_ITEMS = 1000;
+const NB_ITEMS = 5000;
 
 const Example13: React.FC = () => {
   const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
@@ -416,8 +416,8 @@ const Example13: React.FC = () => {
 
       <div className="row">
         <div className="col-sm-12">
-          <button className="btn btn-outline-secondary btn-xs btn-icon" data-test="add-1k-rows-btn" onClick={() => updateData(1000)}>
-            1K rows
+          <button className="btn btn-outline-secondary btn-xs btn-icon" data-test="add-5k-rows-btn" onClick={() => updateData(5000)}>
+            5K rows
           </button>
           <button className="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="add-50k-rows-btn" onClick={() => updateData(50000)}>
             50K rows

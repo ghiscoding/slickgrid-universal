@@ -53,7 +53,7 @@ export default class Example03 {
 
   attached() {
     this.initializeGrid();
-    this.dataset = this.loadData(2000);
+    this.dataset = this.loadData(5000);
     const gridContainerElm = document.querySelector(`.grid3`) as HTMLDivElement;
 
     this._bindingEventService.bind(gridContainerElm, 'onclick', this.handleOnClick.bind(this));

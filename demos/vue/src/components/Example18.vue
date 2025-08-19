@@ -17,7 +17,7 @@ import {
 } from 'slickgrid-vue';
 import { onBeforeMount, onUnmounted, ref, type Ref } from 'vue';
 
-const NB_ITEMS = 500;
+const NB_ITEMS = 5000;
 const darkMode = ref(false);
 const gridOptions = ref<GridOption>();
 const columnDefinitions: Ref<Column[]> = ref([]);
@@ -456,9 +456,9 @@ function vueGridReady(grid: SlickgridVueInstance) {
   <div class="form-inline">
     <div class="row">
       <div class="col-sm-12">
-        <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="add-500-rows-btn" @click="loadData(500)">500 rows</button>
+        <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="add-5k-rows-btn" @click="loadData(5000)">5K rows</button>
         <button class="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="add-50k-rows-btn" @click="loadData(50000)">
-          50k rows
+          50K rows
         </button>
         <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="clear-grouping-btn" @click="clearGroupsAndSelects()">
           <i class="mdi mdi-close"></i> Clear grouping
