@@ -1588,6 +1588,7 @@ describe('Grid Service', () => {
       const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
       const autosizeColumnsSpy = vi.spyOn(gridStub, 'autosizeColumns');
       const gridOptionSetterSpy = vi.spyOn(SharedService.prototype, 'gridOptions', 'set');
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
 
       service.setPinning(mockPinning);
 
@@ -1602,6 +1603,7 @@ describe('Grid Service', () => {
       const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
       const autosizeColumnsSpy = vi.spyOn(gridStub, 'autosizeColumns');
       const gridOptionSetterSpy = vi.spyOn(SharedService.prototype, 'gridOptions', 'set');
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
 
       service.setPinning(mockPinning, false);
 
