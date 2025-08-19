@@ -16,7 +16,7 @@ import {
   SortComparers,
 } from '../../library';
 
-const NB_ITEMS = 1000;
+const NB_ITEMS = 5000;
 
 @Component({
   templateUrl: './example13.component.html',
