@@ -98,7 +98,7 @@ import type {
 } from '../interfaces/index.js';
 import type { SlickDataView } from './slickDataview.js';
 import { copyCellToClipboard } from '../formatters/formatterUtilities.js';
-import { applyHtmlToElement } from './utils.js';
+import { applyHtmlToElement, runOptionalHtmlSanitizer } from './utils.js';
 
 /**
  * @license
@@ -7249,15 +7249,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /**
-   * @deprecated @use `runOptionalHtmlSanitizer` from `@slickgrid-universal/common`
    * Sanitize possible dirty html string (remove any potential XSS code like scripts and others) when a `sanitizer` is provided via grid options.
    * The logic will only call the sanitizer if it exists and the value is a defined string, anything else will be skipped (number, boolean, TrustedHTML will all be skipped)
    * @param {*} dirtyHtml: dirty html string
    */
   sanitizeHtmlString<T extends string | TrustedHTML>(dirtyHtml: unknown): T {
-    if (typeof this._options?.sanitizer !== 'function' || !dirtyHtml || typeof dirtyHtml !== 'string') {
-      return dirtyHtml as T;
-    }
-    return this._options.sanitizer(dirtyHtml) as T;
+    return runOptionalHtmlSanitizer<T>(dirtyHtml, this._options?.sanitizer);
   }
 }

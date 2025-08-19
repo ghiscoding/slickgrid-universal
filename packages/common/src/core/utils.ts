@@ -1,7 +1,7 @@
 import { emptyElement, isDefined } from '@slickgrid-universal/utils';
 import type { TrustedHTML } from 'trusted-types/lib/index.js';
 
-import type { GridOption } from '../interfaces/gridOption.interface.js';
+import type { Sanitizer } from '../interfaces/gridOption.interface.js';
 
 /**
  * Apply HTML code by 3 different ways depending on what is provided as input and what options are enabled.
@@ -68,10 +68,11 @@ export function applyHtmlToElement(
  * Sanitize possible dirty html string (remove any potential XSS code like scripts and others) when a `sanitizer` is provided via grid options.
  * The logic will only call the sanitizer if it exists and the value is a defined string, anything else will be skipped (number, boolean, TrustedHTML will all be skipped)
  * @param {*} dirtyHtml: dirty html string
+ * @param {(dirtyHtml: String) => string | TrustedHTML} [sanitizer] - optional sanitizer function
  */
-export function runOptionalHtmlSanitizer<T extends string | TrustedHTML>(dirtyHtml: unknown, gridOptions: GridOption): T {
-  if (typeof gridOptions?.sanitizer !== 'function' || !dirtyHtml || typeof dirtyHtml !== 'string') {
+export function runOptionalHtmlSanitizer<T extends string | TrustedHTML>(dirtyHtml: unknown, sanitizer?: Sanitizer): T {
+  if (typeof sanitizer !== 'function' || !dirtyHtml || typeof dirtyHtml !== 'string') {
     return dirtyHtml as T;
   }
-  return gridOptions.sanitizer(dirtyHtml) as T;
+  return sanitizer(dirtyHtml) as T;
 }

@@ -25,7 +25,7 @@ import { collectionObserver, propertyObserver } from '../services/observers.js';
 import { getTranslationPrefix, fetchAsPromise, unsubscribeAll } from '../services/utilities.js';
 import { buildMsSelectCollectionList, type RxJsFacade, type Subscription, type TranslaterService } from '../services/index.js';
 import { renderCollectionOptionsAsync } from './filterUtilities.js';
-import { runOptionalHtmlSanitizer, type SlickGrid } from '../core/index.js';
+import type { SlickGrid } from '../core/index.js';
 
 export class SelectFilter implements Filter {
   protected _isMultipleSelect = true;
@@ -437,7 +437,7 @@ export class SelectFilter implements Filter {
       singleRadio: true,
       showSearchClear: true,
       renderOptionLabelAsHtml: this.columnFilter?.enableRenderHtml ?? false,
-      sanitizer: (dirtyHtml: string) => runOptionalHtmlSanitizer(dirtyHtml, this.gridOptions),
+      sanitizer: (dirtyHtml: string) => this.grid.sanitizeHtmlString(dirtyHtml),
       // we will subscribe to the onClose event for triggering our callback
       // also add/remove "filled" class for styling purposes
       onClose: () => this.onTriggerEvent(),

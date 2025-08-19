@@ -11,7 +11,6 @@ import { mapOperatorToShorthandDesignation } from '../services/utilities.js';
 import type { TranslaterService } from '../services/translater.service.js';
 import type { SlickGrid } from '../core/slickGrid.js';
 import { resetDatePicker, setPickerDates } from '../commonEditorFilter/commonEditorFilterUtils.js';
-import { runOptionalHtmlSanitizer } from '../core/utils.js';
 
 export class DateFilter implements Filter {
   protected _bindEventService: BindingEventService;
@@ -280,7 +279,7 @@ export class DateFilter implements Filter {
       locale: currentLocale,
       selectedTheme: this.gridOptions?.darkMode ? 'dark' : 'light',
       positionToInput: 'auto',
-      sanitizerHTML: (dirtyHtml) => runOptionalHtmlSanitizer(dirtyHtml, this.gridOptions),
+      sanitizerHTML: (dirtyHtml) => this.grid.sanitizeHtmlString(dirtyHtml),
       selectedWeekends: [],
       type: this.inputFilterType === 'range' ? 'multiple' : 'default',
       onClickDate: () => {

@@ -1,10 +1,4 @@
-import {
-  createDomElement,
-  runOptionalHtmlSanitizer,
-  SlickEvent,
-  SlickEventHandler,
-  Utils as SlickUtils,
-} from '@slickgrid-universal/common';
+import { createDomElement, SlickEvent, SlickEventHandler, Utils as SlickUtils } from '@slickgrid-universal/common';
 import type {
   Column,
   ExternalResource,
@@ -696,7 +690,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
         if (dataContext[`${this._keyPrefix}detailContent`] instanceof HTMLElement) {
           innerDetailViewElm.appendChild(dataContext[`${this._keyPrefix}detailContent`]);
         } else {
-          innerDetailViewElm.innerHTML = runOptionalHtmlSanitizer(dataContext[`${this._keyPrefix}detailContent`], this.gridOptions);
+          innerDetailViewElm.innerHTML = this._grid.sanitizeHtmlString(dataContext[`${this._keyPrefix}detailContent`]);
         }
 
         innerContainerElm.appendChild(innerDetailViewElm);

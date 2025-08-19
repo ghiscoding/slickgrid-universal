@@ -18,7 +18,7 @@ import type {
 } from './../interfaces/index.js';
 import { getDescendantProperty } from './../services/utilities.js';
 import type { TranslaterService } from '../services/translater.service.js';
-import { runOptionalHtmlSanitizer, SlickEventData, type SlickGrid } from '../core/index.js';
+import { SlickEventData, type SlickGrid } from '../core/index.js';
 import { resetDatePicker, setPickerDates } from '../commonEditorFilter/commonEditorFilterUtils.js';
 import { formatDateByFieldType, mapTempoDateFormatWithFieldType } from '../services/dateUtils.js';
 
@@ -124,7 +124,7 @@ export class DateEditor implements Editor {
         locale: currentLocale,
         selectedTheme: this.gridOptions?.darkMode ? 'dark' : 'light',
         positionToInput: 'auto',
-        sanitizerHTML: (dirtyHtml) => runOptionalHtmlSanitizer(dirtyHtml, this.gridOptions),
+        sanitizerHTML: (dirtyHtml) => this.grid.sanitizeHtmlString(dirtyHtml),
         selectedWeekends: [],
         onClickDate: () => {
           this._lastClickIsDate = true;

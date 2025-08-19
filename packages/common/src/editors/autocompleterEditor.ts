@@ -24,7 +24,7 @@ import { textValidator } from '../editorValidators/textValidator.js';
 import { addAutocompleteLoadingByOverridingFetch } from '../commonEditorFilter/commonEditorFilterUtils.js';
 import { findOrDefault, getDescendantProperty } from '../services/utilities.js';
 import type { TranslaterService } from '../services/translater.service.js';
-import { applyHtmlToElement, runOptionalHtmlSanitizer, SlickEventData, type SlickGrid } from '../core/index.js';
+import { applyHtmlToElement, SlickEventData, type SlickGrid } from '../core/index.js';
 
 // minimum length of chars to type before starting to start querying
 const MIN_LENGTH = 3;
@@ -549,7 +549,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
 
     // sanitize any unauthorized html tags like script and others
     // for the remaining allowed tags we'll permit all attributes
-    const sanitizedText = runOptionalHtmlSanitizer<string>(finalText, this.gridOptions) || '';
+    const sanitizedText = this.grid.sanitizeHtmlString<string>(finalText) || '';
 
     const div = document.createElement('div');
     div[isRenderHtmlEnabled ? 'innerHTML' : 'textContent'] = sanitizedText;

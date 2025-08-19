@@ -15,12 +15,12 @@ describe('Sanitizer', () => {
     const dirtyHtml = '<div class="some-class"><script>alert("hello world")</script></div>';
     const cleanHtml = '<div class="some-class"></div>';
 
-    expect(runOptionalHtmlSanitizer(dirtyHtml, { sanitizer })).toBe(cleanHtml);
+    expect(runOptionalHtmlSanitizer(dirtyHtml, sanitizer)).toBe(cleanHtml);
   });
 
   it('should return same input string when no sanitizer provided', () => {
     const dirtyHtml = '<div class="some-class"><script>alert("hello world")</script></div>';
 
-    expect(runOptionalHtmlSanitizer(dirtyHtml, { sanitizer: undefined })).toBe(dirtyHtml);
+    expect(runOptionalHtmlSanitizer(dirtyHtml, undefined)).toBe(dirtyHtml);
   });
 });

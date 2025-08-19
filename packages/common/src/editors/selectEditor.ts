@@ -27,7 +27,7 @@ import {
 } from '../commonEditorFilter/commonEditorFilterUtils.js';
 import { buildMsSelectCollectionList, CollectionService, findOrDefault, type TranslaterService } from '../services/index.js';
 import { getDescendantProperty, getTranslationPrefix } from '../services/utilities.js';
-import { runOptionalHtmlSanitizer, SlickEventData, type SlickGrid } from '../core/index.js';
+import { SlickEventData, type SlickGrid } from '../core/index.js';
 
 /**
  * Slickgrid editor class for multiple/single select lists
@@ -126,7 +126,7 @@ export class SelectEditor implements Editor {
       single: true,
       singleRadio: true,
       renderOptionLabelAsHtml: this.columnEditor?.enableRenderHtml ?? false,
-      sanitizer: (dirtyHtml: string) => runOptionalHtmlSanitizer(dirtyHtml, this.gridOptions),
+      sanitizer: (dirtyHtml: string) => this.grid.sanitizeHtmlString(dirtyHtml),
       onClick: () => (this._isValueTouched = true),
       onCheckAll: () => (this._isValueTouched = true),
       onUncheckAll: () => (this._isValueTouched = true),

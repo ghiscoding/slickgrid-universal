@@ -14,16 +14,14 @@ const gridStub = {
 describe('the Hyperlink Formatter', () => {
   beforeEach(() => {
     vi.spyOn(gridStub, 'getOptions').mockReturnValue(undefined as any);
-    vi.spyOn(utils, 'runOptionalHtmlSanitizer').mockImplementation(
-      (dirtyHtml: unknown, gridOptions?: { sanitizer?: (str: string) => string | TrustedHTML }) => {
-        if (gridOptions?.sanitizer) {
-          // Coerce TrustedHTML to string for testing
-          const result = gridOptions.sanitizer(String(dirtyHtml));
-          return typeof result === 'string' ? result : String(result);
-        }
-        return String(dirtyHtml);
+    vi.spyOn(utils, 'runOptionalHtmlSanitizer').mockImplementation((dirtyHtml: unknown, sanitizer?: (str: string) => string | TrustedHTML) => {
+      if (sanitizer) {
+        // Coerce TrustedHTML to string for testing
+        const result = sanitizer(String(dirtyHtml));
+        return typeof result === 'string' ? result : String(result);
       }
-    );
+      return String(dirtyHtml);
+    });
   });
 
   it('should return empty string when value is not an hyperlink and is empty', () => {

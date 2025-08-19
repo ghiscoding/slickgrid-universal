@@ -103,7 +103,7 @@ export function buildMsSelectCollectionList(
         if (isRenderHtmlEnabled) {
           // sanitize any unauthorized html tags like script and others
           // for the remaining allowed tags we'll permit all attributes
-          optionText = runOptionalHtmlSanitizer<string>(optionText, gridOptions);
+          optionText = runOptionalHtmlSanitizer<string>(optionText, gridOptions.sanitizer);
         }
         selectOption.text = optionText;
 

@@ -14,10 +14,10 @@ import { runOptionalHtmlSanitizer } from '../core/utils.js';
  * For example: { id: 'link', field: 'link', params: {  hyperlinkText: 'Company Website', hyperlinkUrl: 'http://www.somewhere.com' } } will display "<a href="http://www.somewhere.com">Company Website</a>"
  */
 export const hyperlinkFormatter: Formatter = (_row, _cell, value, columnDef, _dataContext, grid) => {
-  const gridOptions = grid.getOptions();
+  const gridOptions = grid.getOptions() ?? {};
   const columnParams = columnDef?.params ?? {};
-  const displayedText = runOptionalHtmlSanitizer(columnParams.hyperlinkText || value, gridOptions) as string;
-  const outputLink = runOptionalHtmlSanitizer(columnParams.hyperlinkUrl || value, gridOptions) as string;
+  const displayedText = runOptionalHtmlSanitizer(columnParams.hyperlinkText || value, gridOptions.sanitizer) as string;
+  const outputLink = runOptionalHtmlSanitizer(columnParams.hyperlinkUrl || value, gridOptions.sanitizer) as string;
 
   const matchUrl = outputLink.match(/^(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-.,@?^=%&amp;:/~+#]*[\w\-@?^=%&amp;/~+#])?/i);
 
