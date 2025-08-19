@@ -260,10 +260,10 @@ describe('Example 18 - Draggable Grouping & Aggregators', () => {
         .should('have.text', 'Drop a column header here to group by the column');
     });
 
-    it('should add 500 items and expect 500 of 500 items displayed', () => {
-      cy.get('[data-test="add-500-rows-btn"]').click();
+    it('should add 5000 items and expect 5000 of 5000 items displayed', () => {
+      cy.get('[data-test="add-5k-rows-btn"]').click();
 
-      cy.get('.right-footer').contains('500 of 500 items');
+      cy.get('.right-footer').contains('5000 of 5000 items');
     });
 
     it('should clear all grouping and expect all select dropdown to be cleared too', () => {

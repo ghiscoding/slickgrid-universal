@@ -31,7 +31,7 @@ const Example18: React.FC = () => {
 
   useEffect(() => {
     defineGrid();
-    setDataset(loadData(500));
+    setDataset(loadData(5000));
 
     // reset to light mode before unmounting
     return () => {
@@ -502,11 +502,11 @@ const Example18: React.FC = () => {
       <form className="form-inline" onSubmit={(e) => e.preventDefault()}>
         <div className="row">
           <div className="col-sm-12">
-            <button className="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="add-500-rows-btn" onClick={() => setData(500)}>
-              500 rows
+            <button className="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="add-5k-rows-btn" onClick={() => setData(5000)}>
+              5K rows
             </button>
             <button className="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="add-50k-rows-btn" onClick={() => setData(50000)}>
-              50k rows
+              50K rows
             </button>
             <button
               className="btn btn-outline-secondary btn-xs btn-icon mx-1"

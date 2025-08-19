@@ -18,6 +18,8 @@ import {
   SortComparers,
 } from '../../library';
 
+const NB_ITEMS = 5000;
+
 @Component({
   templateUrl: './example18.component.html',
   standalone: false,
@@ -40,7 +42,7 @@ export class Example18Component implements OnInit, OnDestroy {
 
   constructor() {
     // define the grid options & columns and then create the grid itself
-    this.loadData(500);
+    this.loadData(NB_ITEMS);
     this.defineGrid();
   }
 

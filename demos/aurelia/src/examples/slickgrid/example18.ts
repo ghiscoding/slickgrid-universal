@@ -16,6 +16,8 @@ import {
   type SlickGrid,
 } from 'aurelia-slickgrid';
 
+const NB_ITEMS = 5000;
+
 export class Example18 {
   private _darkMode = false;
   aureliaGrid!: AureliaGridInstance;
@@ -34,7 +36,7 @@ export class Example18 {
 
   constructor() {
     // define the grid options & columns and then create the grid itself
-    this.loadData(500);
+    this.loadData(NB_ITEMS);
     this.defineGrid();
   }
 
