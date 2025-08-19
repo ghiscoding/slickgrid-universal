@@ -5,6 +5,7 @@ import { Filters } from '../index.js';
 import { CompoundInputPasswordFilter } from '../compoundInputPasswordFilter.js';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import type { SlickGrid } from '../../core/index.js';
+import * as utils from '../../core/utils.js';
 
 const containerId = 'demo-container';
 
@@ -17,7 +18,6 @@ const gridOptionMock = {
 } as GridOption;
 
 const gridStub = {
-  applyHtmlCode: (elm, val) => (elm.innerHTML = val || ''),
   getOptions: () => gridOptionMock,
   getColumns: vi.fn(),
   getHeaderRowColumn: vi.fn(),
@@ -39,6 +39,9 @@ describe('CompoundInputPasswordFilter', () => {
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);
     spyGetHeaderRow = vi.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
+    vi.spyOn(utils, 'applyHtmlToElement').mockImplementation((elm, val) => {
+      elm.innerHTML = `${val || ''}`;
+    });
 
     mockColumn = { id: 'duration', field: 'duration', filterable: true, filter: { model: Filters.input, operator: 'EQ' } };
     filterArguments = {

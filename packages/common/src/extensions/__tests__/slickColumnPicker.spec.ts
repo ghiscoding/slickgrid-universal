@@ -3,6 +3,7 @@ import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement } from '@slickgrid-universal/utils';
 
 import { SlickEvent, SlickEventData, type SlickGrid } from '../../core/index.js';
+import * as utils from '../../core/utils.js';
 import type { Column, ColumnPicker, GridOption } from '../../interfaces/index.js';
 import { SlickColumnPicker } from '../slickColumnPicker.js';
 import { ExtensionUtility } from '../extensionUtility.js';
@@ -13,7 +14,6 @@ import { BackendUtilityService } from '../../services/backendUtility.service.js'
 const gridUid = 'slickgrid_124343';
 
 const gridStub = {
-  applyHtmlCode: (elm, val) => (elm.innerHTML = val || ''),
   getColumnIndex: vi.fn(),
   getColumns: vi.fn(),
   getGridPosition: vi.fn(),
@@ -70,6 +70,9 @@ describe('ColumnPickerControl', () => {
     extensionUtility = new ExtensionUtility(sharedService, backendUtilityService, translateService);
     sharedService.slickGrid = gridStub;
 
+    vi.spyOn(utils, 'applyHtmlToElement').mockImplementation((elm, val) => {
+      elm.innerHTML = `${val || ''}`;
+    });
     vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
     vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
     vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock.slice(0, 1));

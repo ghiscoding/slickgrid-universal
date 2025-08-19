@@ -5,7 +5,6 @@ import type { Column } from '../../interfaces/index.js';
 import { maskFormatter } from '../maskFormatter.js';
 
 const gridStub = {
-  applyHtmlCode: (elm, val) => (elm.innerHTML = val || ''),
   focus: vi.fn(),
   getActiveCell: vi.fn(),
   getOptions: vi.fn(),

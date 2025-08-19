@@ -15,6 +15,7 @@ import {
 import { type SlickDataView, SlickEvent, SlickEventData, type SlickGrid } from '../../core/index.js';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import { ExtensionUtility } from '../../extensions/extensionUtility.js';
+import * as utils from '../../core/utils.js';
 
 const gridId = 'grid1';
 const gridUid = 'slickgrid_124343';
@@ -51,7 +52,6 @@ const dataViewStub = {
 } as unknown as SlickDataView;
 
 const gridStub = {
-  applyHtmlCode: (elm, val) => (elm.innerHTML = val || ''),
   autosizeColumns: vi.fn(),
   getColumnIndex: vi.fn(),
   getColumns: vi.fn(),
@@ -169,6 +169,9 @@ describe('GridMenuControl', () => {
 
       parentContainer = document.createElement('div');
       sharedService.gridContainerElement = parentContainer;
+      vi.spyOn(utils, 'applyHtmlToElement').mockImplementation((elm, val) => {
+        elm.innerHTML = `${val || ''}`;
+      });
       vi.spyOn(gridStub, 'getContainerNode').mockReturnValue(document.body as HTMLDivElement);
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);

@@ -1,6 +1,7 @@
 import { createDomElement } from '@slickgrid-universal/utils';
 
 import { Constants } from '../constants.js';
+import { applyHtmlToElement } from '../core/utils.js';
 import { type Formatter, type LAZY_TYPES, type TreeDataOption } from './../interfaces/index.js';
 import { parseFormatterWhenExist } from './formatterUtilities.js';
 import { createDocumentFragmentOrElement, getCellValueFromQueryFieldGetter } from '../services/utilities.js';
@@ -51,7 +52,7 @@ export const treeFormatter: Formatter = (row, cell, value, columnDef, dataContex
     outputValue = parseFormatterWhenExist(treeDataOptions.titleFormatter, row, cell, columnDef, dataContext, grid);
   }
   const spanTitleElm = createDomElement('span', { className: 'slick-tree-title' });
-  grid.applyHtmlCode(spanTitleElm, outputValue);
+  applyHtmlToElement(spanTitleElm, outputValue, gridOptions);
   spanTitleElm.setAttribute('level', treeLevel);
   containerElm.appendChild(spanTitleElm);
 

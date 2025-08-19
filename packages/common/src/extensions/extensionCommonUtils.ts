@@ -4,6 +4,7 @@ import { createDomElement, titleCase } from '@slickgrid-universal/utils';
 import type { Column, ColumnPickerOption, DOMEvent, GridMenuOption } from '../interfaces/index.js';
 import { SlickColumnPicker } from './slickColumnPicker.js';
 import { SlickGridMenu } from './slickGridMenu.js';
+import { applyHtmlToElement } from '../core/utils.js';
 
 const PICKER_CHECK_ICON = 'mdi-icon-picker-check';
 const PICKER_UNCHECK_ICON = 'mdi-icon-picker-uncheck';
@@ -189,7 +190,7 @@ export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, ad
         : context._defaults.headerColumnValueExtractor;
     const columnLabel = headerColumnValueExtractorFn(column, context.gridOptions);
 
-    this.grid.applyHtmlCode(labelSpanElm, columnLabel);
+    applyHtmlToElement(labelSpanElm, columnLabel, this.gridOptions);
     columnLiElm.appendChild(labelElm);
     context._listElm.appendChild(columnLiElm);
   }

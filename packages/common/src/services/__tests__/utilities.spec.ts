@@ -2,6 +2,7 @@ import type { EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { of } from 'rxjs';
 
+import { applyHtmlToElement } from '../../core/utils.js';
 import { FieldType, OperatorType } from '../../enums/index.js';
 import type { Column, GridOption, TreeDataPropNames } from '../../interfaces/index.js';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
@@ -32,6 +33,104 @@ import {
 import { SumAggregator } from '../../aggregators/sumAggregator.js';
 import { Constants } from '../../constants.js';
 import { HttpStub } from '../../../../../test/httpClientStub.js';
+
+describe('applyHtmlToElement() method', () => {
+  const defaultOptions: GridOption = {
+    enableCellNavigation: true,
+    columnResizingDelay: 1,
+    scrollRenderThrottling: 1,
+    asyncEditorLoadDelay: 1,
+    asyncPostRenderDelay: 1,
+    asyncPostRenderCleanupDelay: 2,
+    devMode: { ownerNodeIndex: 0 },
+  };
+
+  it('should be able to apply HTMLElement to a HTMLElement target and empty its content by default', () => {
+    const divElm = document.createElement('div');
+    divElm.textContent = 'text to be erased';
+    const spanElm = document.createElement('span');
+    spanElm.textContent = 'some text';
+
+    applyHtmlToElement(divElm, spanElm, defaultOptions);
+
+    expect(divElm.outerHTML).toBe('<div><span>some text</span></div>');
+  });
+
+  it('should be able to apply HTMLElement to a HTMLElement target but not empty its content when defined', () => {
+    const divElm = document.createElement('div');
+    divElm.textContent = 'text not erased';
+    const spanElm = document.createElement('span');
+    spanElm.textContent = 'some text';
+
+    applyHtmlToElement(divElm, spanElm, { emptyTarget: false });
+
+    expect(divElm.outerHTML).toBe('<div>text not erased<span>some text</span></div>');
+  });
+
+  it('should be able to skip empty text content assignment to HTMLElement', () => {
+    const divElm = document.createElement('div');
+    divElm.textContent = 'text not erased';
+    const spanElm = document.createElement('span');
+    spanElm.textContent = '';
+
+    applyHtmlToElement(divElm, spanElm, { emptyTarget: false, skipEmptyReassignment: true });
+
+    expect(divElm.outerHTML).toBe('<div>text not erased<span></span></div>');
+  });
+
+  it('should be able to apply DocumentFragment to a HTMLElement target', () => {
+    const fragment = document.createDocumentFragment();
+    const divElm = document.createElement('div');
+    const spanElm = document.createElement('span');
+    spanElm.textContent = 'some text';
+    divElm.appendChild(spanElm);
+    fragment.appendChild(spanElm);
+
+    applyHtmlToElement(divElm, fragment);
+
+    expect(divElm.outerHTML).toBe('<div><span>some text</span></div>');
+  });
+
+  it('should be able to apply a number and not expect it to be sanitized but parsed as string', () => {
+    const divElm = document.createElement('div');
+
+    applyHtmlToElement(divElm, 123);
+
+    expect(divElm.outerHTML).toBe('<div>123</div>');
+  });
+
+  it('should be able to apply a boolean and not expect it to be sanitized but parsed as string', () => {
+    const divElm = document.createElement('div');
+    applyHtmlToElement(divElm, false);
+
+    expect(divElm.outerHTML).toBe('<div>false</div>');
+  });
+
+  it('should be able to supply a custom sanitizer to use before applying html code', () => {
+    const sanitizer = (dirtyHtml: string) =>
+      typeof dirtyHtml === 'string'
+        ? dirtyHtml.replace(
+            /(\b)(on[a-z]+)(\s*)=|javascript:([^>]*)[^>]*|(<\s*)(\/*)script([<>]*).*(<\s*)(\/*)script(>*)|(&lt;)(\/*)(script|script defer)(.*)(&gt;|&gt;">)/gi,
+            ''
+          )
+        : dirtyHtml;
+    const divElm = document.createElement('div');
+    const htmlStr = '<span><script>alert("hello")</script>only text kept</span>';
+
+    applyHtmlToElement(divElm, htmlStr, { ...defaultOptions, sanitizer, enableHtmlRendering: true });
+
+    expect(divElm.outerHTML).toBe('<div><span>only text kept</span></div>');
+  });
+
+  it('should expect HTML string to be kept as a string and not be converted (but html escaped) when "enableHtmlRendering" grid option is disabled', () => {
+    const divElm = document.createElement('div');
+    const htmlStr = '<span aria-label="some aria label">only text kept</span>';
+
+    applyHtmlToElement(divElm, htmlStr, { ...defaultOptions, enableHtmlRendering: false });
+
+    expect(divElm.outerHTML).toBe('<div>&lt;span aria-label="some aria label"&gt;only text kept&lt;/span&gt;</div>');
+  });
+});
 
 describe('Service/Utilies', () => {
   describe('unflattenParentChildArrayToTree method', () => {

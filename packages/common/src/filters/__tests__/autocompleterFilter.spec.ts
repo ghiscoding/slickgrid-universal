@@ -10,6 +10,7 @@ import { HttpStub } from '../../../../../test/httpClientStub.js';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import type { SlickGrid } from '../../core/index.js';
+import * as utils from '../../core/utils.js';
 
 vi.useFakeTimers();
 
@@ -24,7 +25,6 @@ const gridOptionMock = {
 } as GridOption;
 
 const gridStub = {
-  applyHtmlCode: (elm, val) => (elm.innerHTML = val || ''),
   getOptions: () => gridOptionMock,
   getColumns: vi.fn(),
   getHeaderRowColumn: vi.fn(),
@@ -46,6 +46,9 @@ describe('AutocompleterFilter', () => {
     translaterService = new TranslateServiceStub();
     collectionService = new CollectionService(translaterService);
 
+    vi.spyOn(utils, 'applyHtmlToElement').mockImplementation((elm, val) => {
+      elm.innerHTML = `${val || ''}`;
+    });
     divContainer = document.createElement('div');
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);

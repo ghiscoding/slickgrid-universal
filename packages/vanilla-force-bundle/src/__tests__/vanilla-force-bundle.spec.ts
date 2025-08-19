@@ -38,6 +38,14 @@ import { RxJsResourceStub } from '../../../../test/rxjsResourceStub.js';
 
 vi.useFakeTimers();
 
+// mocked modules
+vi.mock('@slickgrid-universal/common', async (importOriginal) => ({
+  ...((await importOriginal()) as any),
+  applyHtmlToElement: (elm: HTMLElement, val: any) => {
+    elm.innerHTML = `${val || ''}`;
+  },
+}));
+
 const extensionServiceStub = {
   addRxJsResource: vi.fn(),
   bindDifferentExtensions: vi.fn(),
@@ -191,7 +199,6 @@ const mockGetEditorLock = {
 } as unknown as SlickEditorLock;
 
 const mockGrid = {
-  applyHtmlCode: (elm, val) => (elm.innerHTML = val || ''),
   autosizeColumns: vi.fn(),
   destroy: vi.fn(),
   init: vi.fn(),

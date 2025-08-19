@@ -23,6 +23,7 @@ import {
   findFirstAttribute,
   getOffset,
   SlickEventHandler,
+  applyHtmlToElement,
 } from '@slickgrid-universal/common';
 import { classNameToList, isPrimitiveOrHTML } from '@slickgrid-universal/utils';
 
@@ -378,7 +379,7 @@ export class SlickCustomTooltip {
     item: any
   ): void {
     const tmpDiv = document.createElement('div');
-    this._grid.applyHtmlCode(tmpDiv, this.parseFormatterAndSanitize(formatterOrText, cell, value, columnDef, item));
+    applyHtmlToElement(tmpDiv, this.parseFormatterAndSanitize(formatterOrText, cell, value, columnDef, item), this.gridOptions);
     this._hasMultipleTooltips = (this._cellNodeElm?.querySelectorAll(SELECTOR_CLOSEST_TOOLTIP_ATTR).length || 0) > 1;
 
     let tmpTitleElm: HTMLElement | null | undefined;
@@ -462,7 +463,7 @@ export class SlickCustomTooltip {
     let finalOutputText = '';
     if (!tooltipText || this._cellAddonOptions?.renderRegularTooltipAsHtml) {
       finalOutputText = this._grid.sanitizeHtmlString(outputText);
-      this._grid.applyHtmlCode(this._tooltipBodyElm, finalOutputText);
+      applyHtmlToElement(this._tooltipBodyElm, finalOutputText, this.gridOptions);
       this._tooltipBodyElm.style.whiteSpace = this._cellAddonOptions?.whiteSpace ?? (this._defaultOptions.whiteSpace as string);
     } else {
       finalOutputText = outputText || '';

@@ -5,9 +5,9 @@ import { getHtmlStringOutput } from '@slickgrid-universal/utils';
 import type { Column, FormatterResultWithHtml, GridOption } from '../../interfaces/index.js';
 import { treeFormatter } from '../treeFormatter.js';
 import type { SlickGrid } from '../../core/index.js';
+import * as utils from '../../core/utils.js';
 
 const gridStub = {
-  applyHtmlCode: (elm, val) => (elm.innerHTML = val || ''),
   getData: vi.fn(),
   getOptions: vi.fn(),
 } as unknown as SlickGrid;
@@ -104,6 +104,9 @@ describe('Tree Formatter', () => {
       treeDataOptions: { levelPropName: 'indent' },
     } as GridOption;
     vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
+    vi.spyOn(utils, 'applyHtmlToElement').mockImplementation((elm, val) => {
+      elm.innerHTML = `${val || ''}`;
+    });
   });
 
   it('should throw an error when oarams are mmissing', () => {
