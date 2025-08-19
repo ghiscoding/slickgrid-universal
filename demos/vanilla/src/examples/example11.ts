@@ -827,8 +827,8 @@ export default class Example11 {
       const pinning = selectedView?.pinning ?? { frozenBottom: false, frozenColumn: -1, frozenRow: -1 };
       this.sgb.filterService.updateFilters(filters as CurrentFilter[]);
       this.sgb.sortService.updateSorting(sorters as CurrentSorter[]);
-      this.sgb.gridService.setPinning(pinning);
       this.sgb.gridStateService.changeColumnsArrangement(columns);
+      this.sgb.gridService.setPinning(pinning);
     } else {
       this.sgb.gridService.clearPinning();
       this.sgb.filterService.clearFilters();

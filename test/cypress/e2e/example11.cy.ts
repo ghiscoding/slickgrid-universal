@@ -504,7 +504,7 @@ describe('Example 11 - Batch Editing', () => {
         .find('input[type="checkbox"]:checked')
         .should('have.length', 11 - 2);
 
-      cy.get('.slick-column-picker > button.close').click();
+      cy.get('.slick-column-picker button.close').click();
     });
 
     it('should create a new View based on "Tasks Finished in Previous Years" that was already selected', () => {
@@ -774,7 +774,7 @@ describe('Example 11 - Batch Editing', () => {
 
       cy.get('.slick-column-picker-list').find('input[type="checkbox"]:checked').should('have.length', 11);
 
-      cy.get('.slick-column-picker > button.close').click();
+      cy.get('.slick-column-picker button.close').click();
     });
 
     it('should be able to click on the delete button from the "Action" column of the 2nd row and expect "Task 1" to be delete', () => {
@@ -1084,6 +1084,88 @@ describe('Example 11 - Batch Editing', () => {
       cy.get(`.input-group-editor`).focus().type('{backspace}'.repeat(10)).type('1970-01-01').type('{enter}');
 
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(5)`).should('contain', '1970-01-01');
+    });
+  });
+
+  describe('with hidden & frozen columns', () => {
+    it('should reset defined views before next View test', () => {
+      cy.get('[data-test="clear-storage-btn"]').click({ force: true });
+    });
+
+    it('should be able to freeze/pin "Cost" column', () => {
+      cy.get('.grid11')
+        .find('.slick-header-columns')
+        .find('.slick-header-column:nth(3)')
+        .trigger('mouseover')
+        .children('.slick-header-menu-button')
+        .invoke('show')
+        .click();
+
+      cy.get('.slick-header-menu .slick-menu-command-list')
+        .should('be.visible')
+        .children('.slick-menu-item:nth-of-type(1)')
+        .children('.slick-menu-content')
+        .should('contain', 'Freeze Column')
+        .click();
+    });
+
+    it('should hide "Duration" and "Country of Origin" columns and Save as a New View', () => {
+      const viewName = 'Hidden Columns Test';
+      const winPromptStub = () => viewName;
+      cy.get('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
+      cy.get('.slick-column-picker-list li:nth(2)').click();
+      cy.get('.slick-column-picker-list li:nth(9)').click();
+      cy.get('.slick-column-picker button.close').click();
+
+      cy.window().then((win) => {
+        (cy.stub(win, 'prompt').callsFake(winPromptStub) as any).as('winPromptStubReturnHiddenTest');
+      });
+
+      cy.get('.action.dropdown').click();
+      cy.get('.action.dropdown .dropdown-item').contains('Create New View').click({ force: true });
+      cy.get('@winPromptStubReturnHiddenTest').should('be.calledOnce').and('be.calledWith', 'Please provide a name for the new View.');
+
+      cy.get('.selected-view').should('have.value', 'HiddenColumnsTest');
+      cy.get('.grid11').find('button.slick-grid-menu-button').click({ force: true });
+      cy.get('.slick-grid-menu .slick-column-picker-list li:not(.hidden)').find('input[type="checkbox"]:checked').should('have.length', 8);
+      cy.get('.slick-grid-menu:visible').find('.close').click({ force: true });
+
+      cy.get('.slick-header-left .slick-header-column').should('have.length', 3);
+      cy.get('.slick-header-right .slick-header-column').should('have.length', 6);
+      cy.get('.slick-header-left .slick-header-column').last().get('.slick-column-name').should('contain', 'Cost');
+
+      cy.get('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
+      cy.get('.slick-column-picker-list li:nth(2)').click();
+      cy.get('.slick-column-picker-list li:nth(9)').click();
+      cy.get('.slick-column-picker button.close').click();
+
+      cy.get('.slick-header-left .slick-header-column').should('have.length', 4);
+      cy.get('.slick-header-right .slick-header-column').should('have.length', 7);
+      cy.get('.slick-header-left .slick-header-column').last().get('.slick-column-name').should('contain', 'Cost');
+    });
+
+    it('should reload the page and expect Cost column to still be pinned and the other 2 columns to still be hidden', () => {
+      cy.reload();
+      cy.wait(50);
+
+      cy.get('.grid11').find('button.slick-grid-menu-button').click({ force: true });
+      cy.get('.slick-grid-menu .slick-column-picker-list li:not(.hidden)').find('input[type="checkbox"]:checked').should('have.length', 8);
+      cy.get('.slick-grid-menu:visible').find('.close').click({ force: true });
+
+      cy.get('.slick-header-left .slick-header-column').should('have.length', 3);
+      cy.get('.slick-header-right .slick-header-column').should('have.length', 6);
+      cy.get('.slick-header-left .slick-header-column').last().get('.slick-column-name').should('contain', 'Cost');
+    });
+
+    it('should display both hidden columns and still expect Cost to be the pinned column', () => {
+      cy.get('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
+      cy.get('.slick-column-picker-list li:nth(2)').click();
+      cy.get('.slick-column-picker-list li:nth(9)').click();
+      cy.get('.slick-column-picker button.close').click();
+
+      cy.get('.slick-header-left .slick-header-column').should('have.length', 4);
+      cy.get('.slick-header-right .slick-header-column').should('have.length', 7);
+      cy.get('.slick-header-left .slick-header-column').last().get('.slick-column-name').should('contain', 'Cost');
     });
   });
 });

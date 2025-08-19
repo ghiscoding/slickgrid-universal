@@ -603,8 +603,12 @@ export class SlickVanillaGridBundle<TData = any> {
 
     // when it's a frozen grid, we need to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward
     const frozenColumnIndex = this._gridOptions?.frozenColumn ?? -1;
-    if (frozenColumnIndex >= 0 && frozenColumnIndex <= this._columns.length && this._columns.length > 0) {
-      this.sharedService.frozenVisibleColumnId = this._columns[frozenColumnIndex]?.id ?? '';
+    if (
+      frozenColumnIndex >= 0 &&
+      frozenColumnIndex <= this.sharedService.visibleColumns.length &&
+      this.sharedService.visibleColumns.length > 0
+    ) {
+      this.sharedService.frozenVisibleColumnId = this.sharedService.visibleColumns[frozenColumnIndex]?.id ?? '';
     }
 
     // get any possible Services that user want to register
