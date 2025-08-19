@@ -24,7 +24,7 @@ import { textValidator } from '../editorValidators/textValidator.js';
 import { addAutocompleteLoadingByOverridingFetch } from '../commonEditorFilter/commonEditorFilterUtils.js';
 import { findOrDefault, getDescendantProperty } from '../services/utilities.js';
 import type { TranslaterService } from '../services/translater.service.js';
-import { SlickEventData, type SlickGrid } from '../core/index.js';
+import { applyHtmlToElement, SlickEventData, type SlickGrid } from '../core/index.js';
 
 // minimum length of chars to type before starting to start querying
 const MIN_LENGTH = 3;
@@ -536,7 +536,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
 
     // sanitize any unauthorized html tags like script and others
     const tmpElm = document.createElement('div');
-    this.grid.applyHtmlCode(tmpElm, templateString);
+    applyHtmlToElement(tmpElm, templateString, this.gridOptions);
     return tmpElm;
   }
 

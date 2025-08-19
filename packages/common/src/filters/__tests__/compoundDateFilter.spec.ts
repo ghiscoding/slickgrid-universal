@@ -9,6 +9,7 @@ import { CompoundDateFilter } from '../compoundDateFilter.js';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import type { SlickGrid } from '../../core/index.js';
 import { mapTempoDateFormatWithFieldType } from '../../services/dateUtils.js';
+import * as utils from '../../core/utils.js';
 
 const containerId = 'demo-container';
 
@@ -25,7 +26,6 @@ let gridOptionMock = {
 } as GridOption;
 
 const gridStub = {
-  applyHtmlCode: (elm, val) => (elm.innerHTML = val || ''),
   getOptions: vi.fn(),
   getColumns: vi.fn(),
   getHeaderRowColumn: vi.fn(),
@@ -64,6 +64,9 @@ describe('CompoundDateFilter', () => {
       enableFilterTrimWhiteSpace: true,
     };
     vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionMock);
+    vi.spyOn(utils, 'applyHtmlToElement').mockImplementation((elm, val) => {
+      elm.innerHTML = `${val || ''}`;
+    });
 
     filter = new CompoundDateFilter(translateService);
   });

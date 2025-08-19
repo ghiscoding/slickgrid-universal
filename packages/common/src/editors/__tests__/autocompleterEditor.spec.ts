@@ -6,6 +6,7 @@ import { FieldType } from '../../enums/index.js';
 import type { AutocompleterOption, Column, Editor, EditorArguments, GridOption } from '../../interfaces/index.js';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import { type SlickDataView, SlickEvent, type SlickGrid } from '../../core/index.js';
+import * as utils from '../../core/utils.js';
 
 const containerId = 'demo-container';
 
@@ -28,7 +29,6 @@ const getEditorLockMock = {
 };
 
 const gridStub = {
-  applyHtmlCode: (elm, val) => (elm.innerHTML = val || ''),
   focus: vi.fn(),
   getActiveCell: vi.fn(),
   getOptions: () => gridOptionMock,
@@ -54,6 +54,9 @@ describe('AutocompleterEditor', () => {
     divContainer = document.createElement('div');
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);
+    vi.spyOn(utils, 'applyHtmlToElement').mockImplementation((elm, val) => {
+      elm.innerHTML = `${val || ''}`;
+    });
 
     mockColumn = { id: 'gender', field: 'gender', editable: true, editor: { model: Editors.autocompleter }, editorClass: {} as Editor } as Column;
 

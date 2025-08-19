@@ -57,6 +57,14 @@ import { GridOption } from '../../models/index.js';
 import { MockSlickEvent, MockSlickEventHandler } from '../../../../test/mockSlickEvent.js';
 import { RxJsResourceStub } from '../../../../test/rxjsResourceStub.js';
 
+// mocked modules
+vi.mock('@slickgrid-universal/common', async (importOriginal) => ({
+  ...((await importOriginal()) as any),
+  applyHtmlToElement: (elm: HTMLElement, val: any) => {
+    elm.innerHTML = `${val || ''}`;
+  },
+}));
+
 const addVanillaEventPropagation = function (event: Event) {
   Object.defineProperty(event, 'isPropagationStopped', { writable: true, configurable: true, value: vi.fn() });
   Object.defineProperty(event, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: vi.fn() });
@@ -241,7 +249,6 @@ const mockGetEditorLock = {
 };
 
 const mockGrid = {
-  applyHtmlCode: (elm: HTMLElement, val: string) => (elm.innerHTML = val || ''),
   autosizeColumns: vi.fn(),
   destroy: vi.fn(),
   init: vi.fn(),

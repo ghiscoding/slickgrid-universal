@@ -1,6 +1,13 @@
 import { createDomElement, extend } from '@slickgrid-universal/utils';
 
-import { SlickEventHandler, type SlickDataView, SlickGroup, type SlickGrid, type SlickEventData } from '../core/index.js';
+import {
+  applyHtmlToElement,
+  SlickEventHandler,
+  type SlickDataView,
+  SlickGroup,
+  type SlickGrid,
+  type SlickEventData,
+} from '../core/index.js';
 import type {
   Column,
   Formatter,
@@ -150,7 +157,7 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
     groupTitleElm.setAttribute('level', groupLevel);
     item.title instanceof HTMLElement || item.title instanceof DocumentFragment
       ? groupTitleElm.appendChild(item.title)
-      : this._grid.applyHtmlCode(groupTitleElm, item.title ?? '');
+      : applyHtmlToElement(groupTitleElm, item.title ?? '', this.gridOptions);
     containerElm.appendChild(groupTitleElm);
 
     return containerElm;

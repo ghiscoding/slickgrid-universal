@@ -3,16 +3,25 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Column } from '../../interfaces/index.js';
 import { hyperlinkFormatter } from '../hyperlinkFormatter.js';
 import type { SlickGrid } from '../../core/index.js';
+import * as utils from '../../core/utils.js';
+import type { TrustedHTML } from 'trusted-types/lib/index.js';
 
 const gridStub = {
   getData: vi.fn(),
   getOptions: vi.fn(),
-  sanitizeHtmlString: (str) => str,
 } as unknown as SlickGrid;
 
 describe('the Hyperlink Formatter', () => {
   beforeEach(() => {
     vi.spyOn(gridStub, 'getOptions').mockReturnValue(undefined as any);
+    vi.spyOn(utils, 'runOptionalHtmlSanitizer').mockImplementation((dirtyHtml: unknown, sanitizer?: (str: string) => string | TrustedHTML) => {
+      if (sanitizer) {
+        // Coerce TrustedHTML to string for testing
+        const result = sanitizer(String(dirtyHtml));
+        return typeof result === 'string' ? result : String(result);
+      }
+      return String(dirtyHtml);
+    });
   });
 
   it('should return empty string when value is not an hyperlink and is empty', () => {
@@ -106,5 +115,30 @@ describe('the Hyperlink Formatter', () => {
     expect((result1 as HTMLElement).outerHTML).toBe(`<a href="${hyperlinkUrl1}">${linkText1}</a>`);
     expect((result2 as HTMLElement).outerHTML).toBe(`<a href="${hyperlinkUrl2}">${linkText2}</a>`);
     expect((result3 as HTMLElement).outerHTML).toBe(`<a href="${hyperlinkUrl3}">${linkText3}</a>`);
+  });
+
+  it('should sanitize href link when sanitizer is provided in grid options', () => {
+    const hyperlinkText = 'Company ABC';
+    const hyperlinkUrl = 'http://something.com';
+    const linkText = 'Company ABC';
+    const inputValue = 'anything';
+    const gridOptions = { sanitizer: (str: string) => `${str}-sanitized` };
+
+    const result = hyperlinkFormatter(0, 0, inputValue, { params: { hyperlinkUrl, hyperlinkText } } as Column, {}, {
+      getOptions: () => gridOptions,
+    } as SlickGrid);
+
+    expect((result as HTMLElement).outerHTML).toBe(`<a href="${hyperlinkUrl}-sanitized">${linkText}-sanitized</a>`);
+  });
+
+  it('should not sanitize href link when no sanitizer is provided in grid options', () => {
+    const hyperlinkText = 'Company ABC';
+    const hyperlinkUrl = 'http://something.com';
+    const linkText = 'Company ABC';
+    const inputValue = 'anything';
+
+    const result = hyperlinkFormatter(0, 0, inputValue, { params: { hyperlinkUrl, hyperlinkText } } as Column, {}, gridStub);
+
+    expect((result as HTMLElement).outerHTML).toBe(`<a href="${hyperlinkUrl}">${linkText}</a>`);
   });
 });

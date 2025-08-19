@@ -32,6 +32,7 @@ import {
   getCollectionFromObjectWhenEnabled,
   sortCollectionWithOptions,
 } from '../commonEditorFilter/commonEditorFilterUtils.js';
+import { applyHtmlToElement } from '../core/utils.js';
 import type { CollectionService } from '../services/collection.service.js';
 import { collectionObserver, propertyObserver } from '../services/observers.js';
 import { unsubscribeAll } from '../services/utilities.js';
@@ -567,7 +568,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
 
     // sanitize any unauthorized html tags like script and others
     const tmpElm = document.createElement('div');
-    this.grid.applyHtmlCode(tmpElm, templateString);
+    applyHtmlToElement(tmpElm, templateString, this.gridOptions);
     return tmpElm;
   }
 

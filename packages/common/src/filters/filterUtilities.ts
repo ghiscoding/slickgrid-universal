@@ -7,6 +7,7 @@ import type { Observable, RxJsFacade, Subject, Subscription } from '../services/
 import { fetchAsPromise, getTranslationPrefix } from '../services/utilities.js';
 import type { TranslaterService } from '../services/translater.service.js';
 import type { SlickGrid } from '../core/slickGrid.js';
+import { applyHtmlToElement } from '../core/utils.js';
 
 /**
  * Create and return a select dropdown HTML element with a list of Operators with descriptions
@@ -19,7 +20,11 @@ export function buildSelectOperator(optionValues: OperatorDetail[], grid: SlickG
   for (const option of optionValues) {
     const optionElm = document.createElement('option');
     optionElm.value = option.operator;
-    grid.applyHtmlCode(optionElm, `${htmlEncodeWithPadding(option.operatorAlt || option.operator, 3)}${option.descAlt || option.desc}`);
+    applyHtmlToElement(
+      optionElm,
+      `${htmlEncodeWithPadding(option.operatorAlt || option.operator, 3)}${option.descAlt || option.desc}`,
+      grid.getOptions()
+    );
     selectElm.appendChild(optionElm);
   }
 

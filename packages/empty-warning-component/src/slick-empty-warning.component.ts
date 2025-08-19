@@ -1,4 +1,5 @@
 import {
+  applyHtmlToElement,
   classNameToList,
   type ContainerService,
   type EmptyWarning,
@@ -94,7 +95,7 @@ export class SlickEmptyWarningComponent implements ExternalResource {
     if (!this._warningLeftElement && gridCanvasLeftElm && gridCanvasRightElm) {
       this._warningLeftElement = document.createElement('div');
       this._warningLeftElement.classList.add(...classNameToList(emptyDataClassName), 'left');
-      this._grid.applyHtmlCode(this._warningLeftElement, warningMessage);
+      applyHtmlToElement(this._warningLeftElement, warningMessage, this.gridOptions);
 
       // clone the warning element and add the "right" class to it so we can distinguish
       this._warningRightElement = this._warningLeftElement.cloneNode(true) as HTMLDivElement;

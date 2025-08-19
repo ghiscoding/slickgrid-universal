@@ -16,6 +16,14 @@ import { SlickCompositeEditorComponent } from './slick-composite-editor.componen
 import { TranslateServiceStub } from '../../../test/translateServiceStub.js';
 import { ContainerServiceStub } from '../../../test/containerServiceStub.js';
 
+// mocked modules
+vi.mock('@slickgrid-universal/common', async (importOriginal) => ({
+  ...((await importOriginal()) as any),
+  applyHtmlToElement: (elm, val) => {
+    elm.innerHTML = `${val || ''}`;
+  },
+}));
+
 vi.useFakeTimers();
 
 const gridOptionsMock = {
@@ -78,7 +86,6 @@ const gridServiceStub = {
 } as unknown as GridService;
 
 const gridStub = {
-  applyHtmlCode: (elm, val) => (elm.innerHTML = val || ''),
   autosizeColumns: vi.fn(),
   editActiveCell: vi.fn(),
   getColumnIndex: vi.fn(),

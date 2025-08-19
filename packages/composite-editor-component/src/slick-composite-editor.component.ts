@@ -24,6 +24,7 @@ import type {
   TranslaterService,
 } from '@slickgrid-universal/common';
 import {
+  applyHtmlToElement,
   Constants,
   createDomElement,
   getDescendantProperty,
@@ -421,7 +422,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         }
 
         const modalHeaderTitleElm = createDomElement('div', { className: 'slick-editor-modal-title' });
-        this.grid.applyHtmlCode(modalHeaderTitleElm, parsedHeaderTitle);
+        applyHtmlToElement(modalHeaderTitleElm, parsedHeaderTitle, this.gridOptions);
 
         const modalCloseButtonElm = createDomElement('button', {
           type: 'button',
@@ -511,7 +512,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
             }
 
             const templateItemLabelElm = createDomElement('div', { className: `item-details-label editor-${columnDef.id}` });
-            this.grid.applyHtmlCode(templateItemLabelElm, this.getColumnLabel(columnDef) || 'n/a');
+            applyHtmlToElement(templateItemLabelElm, this.getColumnLabel(columnDef) || 'n/a', this.gridOptions);
             const templateItemEditorElm = createDomElement('div', {
               className: 'item-details-editor-container slick-cell',
               dataset: { editorid: `${columnDef.id}` },

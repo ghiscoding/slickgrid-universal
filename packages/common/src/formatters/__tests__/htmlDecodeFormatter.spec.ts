@@ -5,7 +5,6 @@ import type { Column, FormatterResultWithHtml } from '../../interfaces/index.js'
 import { htmlDecodeFormatter } from '../htmlDecodeFormatter.js';
 
 const gridStub = {
-  applyHtmlCode: (elm, val) => (elm.innerHTML = val || ''),
   focus: vi.fn(),
   getActiveCell: vi.fn(),
   getOptions: vi.fn(),

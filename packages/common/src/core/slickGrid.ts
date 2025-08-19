@@ -98,6 +98,7 @@ import type {
 } from '../interfaces/index.js';
 import type { SlickDataView } from './slickDataview.js';
 import { copyCellToClipboard } from '../formatters/formatterUtilities.js';
+import { applyHtmlToElement, runOptionalHtmlSanitizer } from './utils.js';
 
 /**
  * @license
@@ -600,53 +601,18 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.finishInitialization();
   }
 
-  /**
-   * Apply HTML code by 3 different ways depending on what is provided as input and what options are enabled.
-   * 1. value is an HTMLElement or DocumentFragment, then first empty the target and simply append the HTML to the target element.
-   * 2. value is string and `enableHtmlRendering` is enabled, then use `target.innerHTML = value;`
-   * 3. value is string and `enableHtmlRendering` is disabled, then use `target.textContent = value;`
-   * @param target - target element to apply to
-   * @param val - input value can be either a string or an HTMLElement
-   * @param options -
-   *   `emptyTarget`, defaults to true, will empty the target.
-   *   `sanitizerOptions` is to provide extra options when using `innerHTML` and the sanitizer.
-   *   `skipEmptyReassignment`, defaults to true, when enabled it will not try to reapply an empty value when the target is already empty
-   */
+  /** @deprecated @use `applyHtmlToElement` from `@slickgrid-universal/common` */
   applyHtmlCode(
     target: HTMLElement,
     val: string | boolean | number | HTMLElement | DocumentFragment = '',
-    options?: { emptyTarget?: boolean; sanitizerOptions?: unknown; skipEmptyReassignment?: boolean }
-  ): void {
-    if (target) {
-      if (val instanceof HTMLElement || val instanceof DocumentFragment) {
-        // first empty target and then append new HTML element
-        const emptyTarget = options?.emptyTarget !== false;
-        if (emptyTarget) {
-          emptyElement(target);
-        }
-        target.appendChild(val);
-      } else {
-        // when it's already empty and we try to reassign empty, it's probably ok to skip the assignment
-        const skipEmptyReassignment = options?.skipEmptyReassignment !== false;
-        if (skipEmptyReassignment && !isDefined(val) && !target.innerHTML) {
-          return; // same result, just skip it
-        }
-
-        if (typeof val === 'number' || typeof val === 'boolean') {
-          target.textContent = String(val);
-        } else {
-          const sanitizedText = this.sanitizeHtmlString(val);
-
-          // apply HTML when enableHtmlRendering is enabled
-          // but make sure we do have a value (without a value, it will simply use `textContent` to clear text content)
-          if (this._options.enableHtmlRendering && sanitizedText) {
-            target.innerHTML = sanitizedText as unknown as string;
-          } else {
-            target.textContent = sanitizedText as unknown as string;
-          }
-        }
-      }
+    options?: {
+      emptyTarget?: boolean;
+      enableHtmlRendering?: boolean;
+      skipEmptyReassignment?: boolean;
+      sanitizer?: (dirtyHtml: string) => TrustedHTML | string;
     }
+  ): void {
+    applyHtmlToElement(target, val, { ...this._options, ...options });
   }
 
   protected initialize(options: Partial<O>): void {
@@ -1591,7 +1557,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
         header.setAttribute('title', toolTip || '');
         if (title !== undefined) {
-          this.applyHtmlCode(header.children[0] as HTMLElement, title);
+          applyHtmlToElement(header.children[0] as HTMLElement, title, this._options);
         }
 
         this.triggerEvent(this.onHeaderCellRendered, {
@@ -1857,7 +1823,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         header.classList.add(this._options.unorderableColumnCssClass!);
       }
       const colNameElm = createDomElement('span', { className: 'slick-column-name' }, header);
-      this.applyHtmlCode(colNameElm, m.name);
+      applyHtmlToElement(colNameElm, m.name, this._options);
 
       Utils.width(header, m.width! - this.headerColumnWidthDiff);
 
@@ -3872,7 +3838,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       const cellResult = isPrimitiveOrHTML(formatterResult)
         ? formatterResult
         : (formatterResult as FormatterResultWithHtml).html || (formatterResult as FormatterResultWithText).text;
-      this.applyHtmlCode(cellDiv, cellResult as string | HTMLElement);
+      applyHtmlToElement(cellDiv, cellResult as string | HTMLElement, this._options);
     }
     divRow.appendChild(cellDiv);
 
@@ -4215,13 +4181,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       formatterResult = '';
     }
     if (isPrimitiveOrHTML(formatterResult)) {
-      this.applyHtmlCode(cellNode, formatterResult as string | HTMLElement);
+      applyHtmlToElement(cellNode, formatterResult as string | HTMLElement, this._options);
       return;
     }
 
     const formatterVal: HTMLElement | DocumentFragment | string =
       (formatterResult as FormatterResultWithHtml).html || (formatterResult as FormatterResultWithText).text;
-    this.applyHtmlCode(cellNode, formatterVal);
+    applyHtmlToElement(cellNode, formatterVal, this._options);
 
     if ((formatterResult as FormatterResultObject).removeClasses && !suppressRemove) {
       cellNode.classList.remove(...classNameToList((formatterResult as FormatterResultObject).removeClasses));
@@ -7288,9 +7254,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param {*} dirtyHtml: dirty html string
    */
   sanitizeHtmlString<T extends string | TrustedHTML>(dirtyHtml: unknown): T {
-    if (typeof this._options?.sanitizer !== 'function' || !dirtyHtml || typeof dirtyHtml !== 'string') {
-      return dirtyHtml as T;
-    }
-    return this._options.sanitizer(dirtyHtml) as T;
+    return runOptionalHtmlSanitizer<T>(dirtyHtml, this._options?.sanitizer);
   }
 }

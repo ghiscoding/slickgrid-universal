@@ -5,6 +5,14 @@ import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickFooterComponent } from './slick-footer.component.js';
 import { TranslateServiceStub } from '../../../test/translateServiceStub.js';
 
+// mocked modules
+vi.mock('@slickgrid-universal/common', async (importOriginal) => ({
+  ...((await importOriginal()) as any),
+  applyHtmlToElement: (elm: HTMLElement, val: any) => {
+    elm.innerHTML = `${val || ''}`;
+  },
+}));
+
 function removeExtraSpaces(text: string) {
   return `${text}`.replace(/\s{2,}/g, '');
 }
@@ -15,7 +23,6 @@ const mockGridOptions = {
 } as GridOption;
 
 const gridStub = {
-  applyHtmlCode: (elm, val) => (elm.innerHTML = val || ''),
   getOptions: () => mockGridOptions,
   getUID: () => 'slickgrid_123456',
   onSelectedRowsChanged: new SlickEvent(),

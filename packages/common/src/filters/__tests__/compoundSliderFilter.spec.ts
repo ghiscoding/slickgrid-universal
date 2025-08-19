@@ -5,6 +5,7 @@ import type { Column, FilterArguments, GridOption, SliderOption } from '../../in
 import { Filters } from '../index.js';
 import { CompoundSliderFilter } from '../compoundSliderFilter.js';
 import { SlickEvent, type SlickGrid } from '../../core/index.js';
+import * as utils from '../../core/utils.js';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 
 vi.useFakeTimers();
@@ -24,7 +25,6 @@ let gridOptionMock = {
 } as GridOption;
 
 const gridStub = {
-  applyHtmlCode: (elm, val) => (elm.innerHTML = val || ''),
   getOptions: () => gridOptionMock,
   getColumns: vi.fn(),
   getHeaderRowColumn: vi.fn(),
@@ -48,6 +48,9 @@ describe('CompoundSliderFilter', () => {
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);
     spyGetHeaderRow = vi.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
+    vi.spyOn(utils, 'applyHtmlToElement').mockImplementation((elm, val) => {
+      elm.innerHTML = `${val || ''}`;
+    });
 
     mockColumn = { id: 'duration', field: 'duration', filterable: true, filter: { model: Filters.compoundSlider } };
     filterArguments = {

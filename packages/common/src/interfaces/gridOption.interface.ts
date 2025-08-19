@@ -73,6 +73,8 @@ export type DevModeOption = {
   containerClientWidth?: number;
 };
 
+export type Sanitizer = ((dirtyHtml: string) => string) | ((dirtyHtml: string) => TrustedHTML);
+
 export interface GridOption<C extends Column = Column> {
   /** Defaults to true, should we always allow the use of horizontal scrolling? */
   alwaysAllowHorizontalScroll?: boolean;
@@ -780,7 +782,7 @@ export interface GridOption<C extends Column = Column> {
    * Provide an optional sanitizer, a recommendation is to use DOMPurify to sanitize any HTML strings before passing them to `innerHTML`.
    * see https://github.com/cure53/DOMPurify
    */
-  sanitizer?: ((dirtyHtml: string) => string) | ((dirtyHtml: string) => TrustedHTML);
+  sanitizer?: Sanitizer;
 
   /** Defaults to 10(ms), render throttling when using virtual scroll on large dataset */
   scrollRenderThrottling?: number;

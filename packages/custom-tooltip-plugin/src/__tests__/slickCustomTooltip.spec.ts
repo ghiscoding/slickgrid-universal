@@ -10,6 +10,9 @@ import { RxJsResourceStub } from '../../../../test/rxjsResourceStub.js';
 vi.mock('@slickgrid-universal/common', async (importOriginal) => ({
   ...((await importOriginal()) as any),
   getOffset: vi.fn(),
+  applyHtmlToElement: (elm, val) => {
+    elm.innerHTML = `${val || ''}`;
+  },
 }));
 
 vi.useFakeTimers();
@@ -27,7 +30,6 @@ const getEditorLockMock = {
 };
 
 const gridStub = {
-  applyHtmlCode: (elm, val) => (elm.innerHTML = val || ''),
   getCellFromEvent: vi.fn(),
   getCellNode: vi.fn(),
   getColumns: vi.fn(),

@@ -7,19 +7,24 @@ import { TranslateServiceStub } from '../../../test/translateServiceStub.js';
 
 const GRID_UID = 'slickgrid_123456';
 
-const mockGridOptions = {
-  enableTranslate: false,
-  frozenColumn: 0,
-} as GridOption;
-
-const gridStub = {
-  applyHtmlCode: (elm, val) => {
+// mocked modules
+vi.mock('@slickgrid-universal/common', async (importOriginal) => ({
+  ...((await importOriginal()) as any),
+  applyHtmlToElement: (elm: HTMLElement, val: any) => {
     if (val instanceof HTMLElement || val instanceof DocumentFragment) {
       elm.appendChild(val);
     } else {
       elm.innerHTML = val || '';
     }
   },
+}));
+
+const mockGridOptions = {
+  enableTranslate: false,
+  frozenColumn: 0,
+} as GridOption;
+
+const gridStub = {
   getGridPosition: () => mockGridOptions,
   getOptions: () => mockGridOptions,
   getUID: () => GRID_UID,

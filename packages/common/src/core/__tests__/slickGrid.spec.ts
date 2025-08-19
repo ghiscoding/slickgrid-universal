@@ -1227,6 +1227,7 @@ describe('SlickGrid core file', () => {
     });
   });
 
+  // @deprecated
   describe('applyHtmlCode() method', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
     const dv = new SlickDataView({});
@@ -5525,6 +5526,7 @@ describe('SlickGrid core file', () => {
     });
   });
 
+  // @deprecated
   describe('Sanitizer', () => {
     const columns = [
       { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
