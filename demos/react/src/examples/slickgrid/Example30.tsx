@@ -36,11 +36,10 @@ const NB_ITEMS = 500;
  * @param {*} grid - slickgrid grid object
  * @returns {boolean} isEditable
  */
-function checkItemIsEditable(dataContext: any, columnDef: Column, grid: SlickGrid) {
-  const gridOptions = grid.getOptions() as GridOption;
+function checkItemIsEditable(dataContext: any, columnDef: Column, gridOptions: GridOption) {
   const hasEditor = columnDef.editor;
   const isGridEditable = gridOptions.editable;
-  let isEditable = Boolean(isGridEditable && hasEditor);
+  let isEditable = !!(isGridEditable && hasEditor);
 
   if (dataContext && columnDef && gridOptions?.editable) {
     switch (columnDef.id) {
@@ -609,7 +608,7 @@ const Example30: React.FC = () => {
   function handleOnBeforeEditCell(e: Event, args: any) {
     const { column, item, grid } = args;
 
-    if (column && item && !checkItemIsEditable(item, column, grid)) {
+    if (column && item && !checkItemIsEditable(item, column, grid.getOptions())) {
       e.preventDefault(); // OR eventData.preventDefault();
       return false;
     }

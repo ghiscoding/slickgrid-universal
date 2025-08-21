@@ -162,7 +162,7 @@ You could also create your own custom `Formatter` by simply following the struct
 #### TypeScript function signature
 
 ```ts
-export type Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid?: any) => string | FormatterResultObject;
+export type Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any, gridOptions: GridOption) => string | FormatterResultObject;
 ```
 
 #### FormatterResultObject
@@ -184,7 +184,7 @@ For example, we will use our optional SVG icons `.mdi` with a `boolean` as input
 
 ```ts
 // create a custom Formatter with the Formatter type
-const myCustomCheckboxFormatter: Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid?: any) =>
+const myCustomCheckboxFormatter: Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any, gridOptions: GridOption) =>
   value ? { addClasses: 'mdi mdi-fire', text: '', tooltip: 'burning fire' } : '<i class="mdi mdi-snowflake" aria-hidden="true"></i>';
 ```
 
@@ -194,7 +194,7 @@ Using this object return type will provide the user the same look and feel, it w
 
 ```ts
 // create a custom Formatter and returning a string and/or an object of type FormatterResultObject
-const myCustomCheckboxFormatter: Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid?: any) =>
+const myCustomCheckboxFormatter: Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any, gridOptions: GridOption) =>
   value ? { addClasses: 'mdi mdi-fire', text: '', tooltip: 'burning fire' } : '<i class="mdi mdi-snowflake" aria-hidden="true"></i>';
 ```
 

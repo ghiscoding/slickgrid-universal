@@ -634,7 +634,7 @@ handleOnBeforeEditCell(event) {
   const { column, item, grid } = args;
 
   if (column && item) {
-    if (!checkItemIsEditable(item, column, grid)) {
+    if (!checkItemIsEditable(item, column, grid.getOptions())) {
       event.preventDefault(); // OR eventData.preventDefault();
       return false;
     }
@@ -642,11 +642,10 @@ handleOnBeforeEditCell(event) {
   return false;
 }
 
-checkItemIsEditable(dataContext: any, columnDef: Column, grid: SlickGrid) {
-  const gridOptions = grid?.getOptions();
+checkItemIsEditable(dataContext: any, columnDef: Column, gridOptions: GridOption) {
   const hasEditor = columnDef.editor;
   const isGridEditable = gridOptions.editable;
-  let isEditable = (isGridEditable && hasEditor);
+  let isEditable = !!(isGridEditable && hasEditor);
 
   if (dataContext && columnDef && gridOptions && gridOptions.editable) {
     switch (columnDef.id) {
@@ -671,7 +670,7 @@ handleOnBeforeEditCell(event) {
   const { column, item, grid, target } = args;
 
   if (column && item) {
-    if (!checkItemIsEditable(item, column, grid, target )) {
+    if (!checkItemIsEditable(item, column, grid.getOptions(), target)) {
       event.preventDefault();
       eventData.stopImmediatePropagation();
     }
@@ -679,11 +678,10 @@ handleOnBeforeEditCell(event) {
   return false;
 }
 
-checkItemIsEditable(dataContext: any, columnDef: Column, grid: SlickGrid, target: 'grid' | 'composite') {
-  const gridOptions = grid?.getOptions();
+checkItemIsEditable(dataContext: any, columnDef: Column, gridOptions: GridOption, target: 'grid' | 'composite') {
   const hasEditor = columnDef.editor;
   const isGridEditable = gridOptions.editable;
-  let isEditable = (isGridEditable && hasEditor);
+  let isEditable = !!(isGridEditable && hasEditor);
 
   if (target === 'composite') {
     // ... do composite checks

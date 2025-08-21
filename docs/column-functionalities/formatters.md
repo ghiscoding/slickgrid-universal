@@ -151,7 +151,7 @@ You could also create your own custom `Formatter` by simply following the struct
 
 ### TypeScript function signature
 ```ts
-export type Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid?: any) => string | FormatterResultObject;
+export type Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any, gridOptions: GridOption) => string | FormatterResultObject;
 ```
 
 ### FormatterResultObject
@@ -179,7 +179,7 @@ const myCustomCheckboxFormatter: Formatter = (row: number, cell: number, value: 
 Using this object return type will provide the user the same look and feel, it will actually be quite different. The major difference is that all of the options (`addClasses`, `tooltip`, ...) will be added the CSS container of the cell instead of the content of that container. For example a typically cell looks like the following `<div class="slick-cell l4 r4">Task 4</div>` and if use `addClasses: 'red'`, it will end up being `<div class="slick-cell l4 r4 red">Task 4</div>` while if we use a string output of let say `<span class="red">${value></span>`, then our final result of the cell will be `<div class="slick-cell l4 r4"><span class="red">Task 4</span></div>`. This can be useful if you plan to use multiple Formatters and don't want to lose or overwrite the previous Formatter result (we do that in our project).
 ```ts
 // create a custom Formatter and returning a string and/or an object of type FormatterResultObject
-const myCustomCheckboxFormatter: Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any, grid?: any) =>
+const myCustomCheckboxFormatter: Formatter = (row: number, cell: number, value: any, columnDef: Column, dataContext: any, gridOptions: GridOption) =>
   value ? { addClasses: 'mdi mdi-fire', text: '', tooltip: 'burning fire' } : '<i class="mdi mdi-snowflake" aria-hidden="true"></i>';
 ```
 

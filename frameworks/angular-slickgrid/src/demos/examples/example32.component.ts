@@ -15,7 +15,6 @@ import {
   type EditCommand,
   formatNumber,
   SortComparers,
-  type SlickGrid,
   SlickGlobalEditorLock,
   type VanillaCalendarOption,
   type SearchTerm,
@@ -30,8 +29,7 @@ const URL_COUNTRIES_COLLECTION = 'assets/data/countries.json';
  * @param {*} grid - slickgrid grid object
  * @returns {boolean} isEditable
  */
-function checkItemIsEditable(dataContext: any, columnDef: Column, grid: SlickGrid) {
-  const gridOptions = grid && grid.getOptions && grid.getOptions();
+function checkItemIsEditable(dataContext: any, columnDef: Column, gridOptions: GridOption) {
   const hasEditor = columnDef.editor;
   const isGridEditable = gridOptions.editable;
   let isEditable = !!(isGridEditable && hasEditor);
@@ -621,7 +619,7 @@ export class Example32Component implements OnInit {
     const { column, item, grid } = args;
 
     if (column && item) {
-      if (!checkItemIsEditable(item, column, grid)) {
+      if (!checkItemIsEditable(item, column, grid.getOptions())) {
         e.preventDefault(); // OR eventData.preventDefault();
         return false;
       }

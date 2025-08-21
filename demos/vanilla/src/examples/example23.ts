@@ -34,12 +34,12 @@ interface GroceryItem {
 function checkItemIsEditable(_dataContext: GroceryItem, columnDef: Column, gridOptions: GridOption) {
   const hasEditor = columnDef.editor;
   const isGridEditable = gridOptions.editable;
-  const isEditable = isGridEditable && hasEditor;
+  const isEditable = !!(isGridEditable && hasEditor);
 
   return isEditable;
 }
 
-const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef, dataContext: GroceryItem, gridOptions) => {
+const customEditableInputFormatter: Formatter<GroceryItem> = (_row, _cell, value, columnDef, dataContext, gridOptions) => {
   const isEditableItem = checkItemIsEditable(dataContext, columnDef, gridOptions);
   value = value === null || value === undefined ? '' : value;
   const divElm = document.createElement('div');

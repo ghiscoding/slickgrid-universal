@@ -49,11 +49,10 @@ const myCustomTitleValidator = (value) => {
  * @param {*} grid - slickgrid grid object
  * @returns {boolean} isEditable
  */
-function checkItemIsEditable(dataContext, columnDef, grid) {
-  const gridOptions = grid.getOptions();
+function checkItemIsEditable(dataContext: any, columnDef: Column, gridOptions: GridOption) {
   const hasEditor = columnDef.editor;
   const isGridEditable = gridOptions.editable;
-  let isEditable = isGridEditable && hasEditor;
+  let isEditable = !!(isGridEditable && hasEditor);
 
   if (dataContext && columnDef && gridOptions && gridOptions.editable) {
     switch (columnDef.id) {
@@ -73,8 +72,8 @@ function checkItemIsEditable(dataContext, columnDef, grid) {
   return isEditable;
 }
 
-const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef, dataContext, grid) => {
-  const isEditableItem = checkItemIsEditable(dataContext, columnDef, grid);
+const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef, dataContext, gridOptions) => {
+  const isEditableItem = checkItemIsEditable(dataContext, columnDef, gridOptions);
   value = value === null || value === undefined ? '' : value;
   const divElm = document.createElement('div');
   divElm.className = 'editing-field';
@@ -736,7 +735,7 @@ export default class Example14 {
     const { column, item, grid } = args;
 
     if (column && item) {
-      if (!checkItemIsEditable(item, column, grid)) {
+      if (!checkItemIsEditable(item, column, grid.getOptions())) {
         event.preventDefault(); // OR eventData.preventDefault();
         return false;
       }

@@ -20,7 +20,6 @@ import {
   type LongTextEditorOption,
   type OnCompositeEditorChangeEventArgs,
   SlickGlobalEditorLock,
-  type SlickGrid,
   SortComparers,
   type VanillaCalendarOption,
 } from '../../library';
@@ -35,8 +34,7 @@ const URL_COUNTRIES_COLLECTION = 'assets/data/countries.json';
  * @param {*} grid - slickgrid grid object
  * @returns {boolean} isEditable
  */
-function checkItemIsEditable(dataContext: any, columnDef: Column, grid: SlickGrid) {
-  const gridOptions = grid?.getOptions();
+function checkItemIsEditable(dataContext: any, columnDef: Column, gridOptions: GridOption) {
   const hasEditor = columnDef.editor;
   const isGridEditable = gridOptions.editable;
   let isEditable = !!(isGridEditable && hasEditor);
@@ -615,7 +613,7 @@ export class Example30Component implements OnDestroy, OnInit {
     const { column, item, grid } = args;
 
     if (column && item) {
-      if (!checkItemIsEditable(item, column, grid)) {
+      if (!checkItemIsEditable(item, column, grid.getOptions())) {
         e.preventDefault(); // OR eventData.preventDefault();
         return false;
       }

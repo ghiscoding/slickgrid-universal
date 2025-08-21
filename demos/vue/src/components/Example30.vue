@@ -11,7 +11,6 @@ import {
   type GridStateChange,
   type LongTextEditorOption,
   type OnCompositeEditorChangeEventArgs,
-  type SlickGrid,
   type SlickgridVueInstance,
   type VanillaCalendarOption,
   type Column,
@@ -49,8 +48,7 @@ const complexityLevelList = ref([
 const showSubTitle = ref(true);
 let vueGrid!: SlickgridVueInstance;
 
-const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef, _dataContext, grid) => {
-  const gridOptions = grid.getOptions() as GridOption;
+const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef, _dataContext, gridOptions) => {
   const isEditableLine = gridOptions.editable && columnDef.editor;
   value = value === null || value === undefined ? '' : value;
   return isEditableLine ? { text: value, addClasses: 'editable-field', toolTip: 'Click to Edit' } : value;
@@ -506,8 +504,7 @@ function defineGrid() {
  * @param {*} grid - slickgrid grid object
  * @returns {boolean} isEditable
  */
-function checkItemIsEditable(dataContext: any, columnDef: Column, grid: SlickGrid) {
-  const gridOptions = grid?.getOptions();
+function checkItemIsEditable(dataContext: any, columnDef: Column, gridOptions: GridOption) {
   const hasEditor = columnDef.editor;
   const isGridEditable = gridOptions.editable;
   let isEditable = !!(isGridEditable && hasEditor);
@@ -562,7 +559,7 @@ function handleOnBeforeEditCell(e: Event, args: any) {
   const { column, item, grid } = args;
 
   if (column && item) {
-    if (!checkItemIsEditable(item, column, grid)) {
+    if (!checkItemIsEditable(item, column, grid.getOptions())) {
       e.preventDefault(); // OR eventData.preventDefault();
       return false;
     }

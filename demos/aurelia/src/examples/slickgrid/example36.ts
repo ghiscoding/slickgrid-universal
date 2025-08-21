@@ -32,7 +32,7 @@ interface GroceryItem {
 function checkItemIsEditable(_dataContext: GroceryItem, columnDef: Column, gridOptions: GridOption) {
   const hasEditor = columnDef.editor;
   const isGridEditable = gridOptions.editable;
-  const isEditable = isGridEditable && hasEditor;
+  const isEditable = !!(isGridEditable && hasEditor);
 
   return isEditable;
 }
