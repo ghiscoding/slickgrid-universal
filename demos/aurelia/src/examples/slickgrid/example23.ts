@@ -18,7 +18,6 @@ import {
   type Metrics,
   type MultipleSelectOption,
   OperatorType,
-  type SlickGrid,
   type SliderRangeOption,
 } from 'aurelia-slickgrid';
 import { resolve } from 'aurelia';
@@ -30,10 +29,8 @@ function randomBetween(min: number, max: number): number {
 }
 
 // create a custom translate Formatter (typically you would move that a separate file, for separation of concerns)
-const taskTranslateFormatter: Formatter = (_row, _cell, value, _columnDef, _dataContext, grid: SlickGrid) => {
-  const gridOptions = grid.getOptions() as GridOption;
+const taskTranslateFormatter: Formatter = (_row, _cell, value, _columnDef, _dataContext, gridOptions) => {
   const i18n = gridOptions.i18n;
-
   return i18n?.tr('TASK_X', { x: value } as any) ?? '';
 };
 

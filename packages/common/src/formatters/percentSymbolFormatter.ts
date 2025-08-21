@@ -5,10 +5,10 @@ import { formatNumber } from './../services/utilities.js';
 import { retrieveFormatterOptions } from './formatterUtilities.js';
 
 /** Takes a cell value number (between 0-100) and add the "%" after the number */
-export const percentSymbolFormatter: Formatter = (_row, _cell, value, columnDef, _dataContext, grid) => {
+export const percentSymbolFormatter: Formatter = (_row, _cell, value, columnDef, _dataContext, gridOptions) => {
   const { minDecimal, maxDecimal, decimalSeparator, thousandSeparator, wrapNegativeNumber } = retrieveFormatterOptions(
     columnDef,
-    grid,
+    gridOptions,
     'percent',
     'cell'
   );

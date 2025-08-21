@@ -4,17 +4,10 @@ import { getHtmlStringOutput } from '@slickgrid-universal/utils';
 
 import type { Column, FormatterResultWithHtml, GridOption } from '../../interfaces/index.js';
 import { treeFormatter } from '../treeFormatter.js';
-import type { SlickGrid } from '../../core/index.js';
 import * as utils from '../../core/utils.js';
-
-const gridStub = {
-  getData: vi.fn(),
-  getOptions: vi.fn(),
-} as unknown as SlickGrid;
 
 describe('Tree Formatter', () => {
   let dataset;
-  let mockGridOptions: GridOption;
 
   beforeEach(() => {
     dataset = [
@@ -100,38 +93,36 @@ describe('Tree Formatter', () => {
         __hasChildren: false,
       },
     ];
-    mockGridOptions = {
-      treeDataOptions: { levelPropName: 'indent' },
-    } as GridOption;
-    vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
     vi.spyOn(utils, 'applyHtmlToElement').mockImplementation((elm, val) => {
       elm.innerHTML = `${val || ''}`;
     });
   });
 
-  it('should throw an error when oarams are mmissing', () => {
-    expect(() => treeFormatter(1, 1, 'blah', {} as Column, {}, gridStub)).toThrow(
+  it('should throw an error when params are mmissing', () => {
+    expect(() => treeFormatter(1, 1, 'blah', {} as Column, {}, { treeDataOptions: { levelPropName: 'indent' } } as GridOption)).toThrow(
       '[Slickgrid-Universal] You must provide valid "treeDataOptions" in your Grid Options, however it seems that we could not find any tree level info on the current item datacontext row.'
     );
   });
 
   it('should return empty string when value is null', () => {
-    const output = treeFormatter(1, 1, null, {} as Column, dataset[1], gridStub);
+    const output = treeFormatter(1, 1, null, {} as Column, dataset[1], { treeDataOptions: { levelPropName: 'indent' } } as GridOption);
     expect(output).toBe('');
   });
 
   it('should return empty string when value is undefined', () => {
-    const output = treeFormatter(1, 1, undefined, {} as Column, dataset[1], gridStub);
+    const output = treeFormatter(1, 1, undefined, {} as Column, dataset[1], { treeDataOptions: { levelPropName: 'indent' } } as GridOption);
     expect(output).toBe('');
   });
 
   it('should return empty string when item is undefined', () => {
-    const output = treeFormatter(1, 1, 'blah', {} as Column, undefined, gridStub);
+    const output = treeFormatter(1, 1, 'blah', {} as Column, undefined, { treeDataOptions: { levelPropName: 'indent' } } as GridOption);
     expect(output).toBe('');
   });
 
   it('should return a span without any toggle icon when item is not a parent item', () => {
-    const output = treeFormatter(1, 1, dataset[3]['firstName'], {} as Column, dataset[3], gridStub) as FormatterResultWithHtml;
+    const output = treeFormatter(1, 1, dataset[3]['firstName'], {} as Column, dataset[3], {
+      treeDataOptions: { levelPropName: 'indent' },
+    } as GridOption) as FormatterResultWithHtml;
 
     expect(output.addClasses).toBe('slick-tree-level-0');
     expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
@@ -140,8 +131,10 @@ describe('Tree Formatter', () => {
   });
 
   it('should return the Tree content wrapped inside a span HTML element when "allowDocumentFragmentUsage" grid option is disabled', () => {
-    vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ ...mockGridOptions, preventDocumentFragmentUsage: true });
-    const output = treeFormatter(1, 1, dataset[3]['firstName'], {} as Column, dataset[3], gridStub) as FormatterResultWithHtml;
+    const output = treeFormatter(1, 1, dataset[3]['firstName'], {} as Column, dataset[3], {
+      treeDataOptions: { levelPropName: 'indent' },
+      preventDocumentFragmentUsage: true,
+    } as GridOption) as FormatterResultWithHtml;
 
     expect(output.addClasses).toBe('slick-tree-level-0');
     expect((output.html as HTMLElement).outerHTML).toEqual(
@@ -150,7 +143,9 @@ describe('Tree Formatter', () => {
   });
 
   it('should return a span without any toggle icon and have a 15px indentation with tree level 3', () => {
-    const output = treeFormatter(1, 1, dataset[6]['firstName'], {} as Column, dataset[6], gridStub) as FormatterResultWithHtml;
+    const output = treeFormatter(1, 1, dataset[6]['firstName'], {} as Column, dataset[6], {
+      treeDataOptions: { levelPropName: 'indent' },
+    } as GridOption) as FormatterResultWithHtml;
 
     expect(output.addClasses).toBe('slick-tree-level-1');
     expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
@@ -159,7 +154,9 @@ describe('Tree Formatter', () => {
   });
 
   it('should return a span without any toggle icon and have a 45px indentation of a tree level 3', () => {
-    const output = treeFormatter(1, 1, dataset[5]['firstName'], {} as Column, dataset[5], gridStub) as FormatterResultWithHtml;
+    const output = treeFormatter(1, 1, dataset[5]['firstName'], {} as Column, dataset[5], {
+      treeDataOptions: { levelPropName: 'indent' },
+    } as GridOption) as FormatterResultWithHtml;
 
     expect(output.addClasses).toBe('slick-tree-level-3');
     expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
@@ -168,7 +165,9 @@ describe('Tree Formatter', () => {
   });
 
   it('should return a span with expanded icon and 15px indentation when item is a parent and is not collapsed', () => {
-    const output = treeFormatter(1, 1, dataset[1]['firstName'], {} as Column, dataset[1], gridStub) as FormatterResultWithHtml;
+    const output = treeFormatter(1, 1, dataset[1]['firstName'], {} as Column, dataset[1], {
+      treeDataOptions: { levelPropName: 'indent' },
+    } as GridOption) as FormatterResultWithHtml;
 
     expect(output.addClasses).toBe('slick-tree-level-1');
     expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
@@ -177,7 +176,9 @@ describe('Tree Formatter', () => {
   });
 
   it('should return a span with collapsed icon and 0px indentation of a tree level 0 when item is a parent and is collapsed', () => {
-    const output = treeFormatter(1, 1, dataset[4]['firstName'], {} as Column, dataset[4], gridStub) as FormatterResultWithHtml;
+    const output = treeFormatter(1, 1, dataset[4]['firstName'], {} as Column, dataset[4], {
+      treeDataOptions: { levelPropName: 'indent' },
+    } as GridOption) as FormatterResultWithHtml;
 
     expect(output.addClasses).toBe('slick-tree-level-0');
     expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
@@ -186,12 +187,17 @@ describe('Tree Formatter', () => {
   });
 
   it('should return a span with expanded icon and 15px indentation of a tree level 1 with a value prefix when provided', () => {
-    mockGridOptions.treeDataOptions!.levelPropName = 'indent';
-    mockGridOptions.treeDataOptions!.titleFormatter = (_row, _cell, value, _def, dataContext) => {
-      if (dataContext.indent > 0) {
-        return `<span class="mdi mdi-subdirectory-arrow-right"></span>${value}`;
-      }
-      return value || '';
+    const gridOptions: GridOption = {
+      treeDataOptions: {
+        columnId: 'firstName',
+        levelPropName: 'indent',
+        titleFormatter: (_row, _cell, value, _def, dataContext) => {
+          if (dataContext.indent > 0) {
+            return `<span class="mdi mdi-subdirectory-arrow-right"></span>${value}`;
+          }
+          return value || '';
+        },
+      },
     };
 
     const output = treeFormatter(
@@ -200,7 +206,7 @@ describe('Tree Formatter', () => {
       { ...dataset[1]['firstName'], indent: 1 },
       { field: 'firstName' } as Column,
       dataset[1],
-      gridStub
+      gridOptions
     ) as FormatterResultWithHtml;
 
     expect(output.addClasses).toBe('slick-tree-level-1');
@@ -211,7 +217,9 @@ describe('Tree Formatter', () => {
 
   it('should execute "queryFieldNameGetterFn" callback to get field name to use when it is defined', () => {
     const mockColumn = { id: 'firstName', field: 'firstName', queryFieldNameGetterFn: () => 'fullName' } as Column;
-    const output = treeFormatter(1, 1, null, mockColumn as Column, dataset[3], gridStub) as FormatterResultWithHtml;
+    const output = treeFormatter(1, 1, null, mockColumn as Column, dataset[3], {
+      treeDataOptions: { levelPropName: 'indent' },
+    } as GridOption) as FormatterResultWithHtml;
 
     expect(output.addClasses).toBe('slick-tree-level-0');
     expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
@@ -221,7 +229,9 @@ describe('Tree Formatter', () => {
 
   it('should execute "queryFieldNameGetterFn" callback to get field name and also apply html encoding when output value includes a character that should be encoded', () => {
     const mockColumn = { id: 'firstName', field: 'firstName', queryFieldNameGetterFn: () => 'fullName' } as Column;
-    const output = treeFormatter(1, 1, null, mockColumn as Column, dataset[4], gridStub) as FormatterResultWithHtml;
+    const output = treeFormatter(1, 1, null, mockColumn as Column, dataset[4], {
+      treeDataOptions: { levelPropName: 'indent' },
+    } as GridOption) as FormatterResultWithHtml;
 
     expect(output.addClasses).toBe('slick-tree-level-0');
     expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
@@ -231,7 +241,9 @@ describe('Tree Formatter', () => {
 
   it('should execute "queryFieldNameGetterFn" callback to get field name, which has (.) dot notation reprensenting complex object', () => {
     const mockColumn = { id: 'zip', field: 'zip', queryFieldNameGetterFn: () => 'address.zip' } as Column;
-    const output = treeFormatter(1, 1, null, mockColumn as Column, dataset[3], gridStub) as FormatterResultWithHtml;
+    const output = treeFormatter(1, 1, null, mockColumn as Column, dataset[3], {
+      treeDataOptions: { levelPropName: 'indent' },
+    } as GridOption) as FormatterResultWithHtml;
 
     expect(output.addClasses).toBe('slick-tree-level-0');
     expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
@@ -281,13 +293,11 @@ describe('Tree Formatter', () => {
           __hasChildren: true,
         },
       ];
-      mockGridOptions = {
-        treeDataOptions: { levelPropName: 'indent' },
-      } as GridOption;
-      vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
     });
     it('should return a span with collapsed icon and class name of "slick-tree-load-fail" when lazy loading failed', () => {
-      const output = treeFormatter(0, 1, dataset[0]['firstName'], {} as Column, dataset[0], gridStub) as FormatterResultWithHtml;
+      const output = treeFormatter(0, 1, dataset[0]['firstName'], {} as Column, dataset[0], {
+        treeDataOptions: { levelPropName: 'indent' },
+      } as GridOption) as FormatterResultWithHtml;
 
       expect(output.addClasses).toBe('slick-tree-level-0');
       expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(
@@ -296,7 +306,9 @@ describe('Tree Formatter', () => {
     });
 
     it('should return a span with expanded icon and 15px indentation when item is a parent and lazy loading resolved successfully', () => {
-      const output = treeFormatter(1, 1, dataset[1]['firstName'], {} as Column, dataset[1], gridStub) as FormatterResultWithHtml;
+      const output = treeFormatter(1, 1, dataset[1]['firstName'], {} as Column, dataset[1], {
+        treeDataOptions: { levelPropName: 'indent' },
+      } as GridOption) as FormatterResultWithHtml;
 
       expect(output.addClasses).toBe('slick-tree-level-1');
       expect(getHtmlStringOutput(output.html as DocumentFragment, 'outerHTML')).toEqual(

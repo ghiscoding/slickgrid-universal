@@ -1,49 +1,43 @@
-import { describe, expect, it, type Mock, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import type { Column, GridOption } from '../../interfaces/index.js';
 import { sumTotalsCurrencyColoredFormatter } from '../sumTotalsCurrencyColoredFormatter.js';
-import { type SlickGrid } from '../../core/index.js';
 
 describe('sumTotalsCurrencyColoredFormatter', () => {
-  // stub some methods of the SlickGrid Grid instance
-  const gridStub = {
-    getOptions: vi.fn(),
-  } as unknown as SlickGrid;
-
   it('should display an empty string when no value is provided', () => {
-    const output = sumTotalsCurrencyColoredFormatter({}, {} as Column, {} as SlickGrid);
+    const output = sumTotalsCurrencyColoredFormatter({}, {} as Column, {} as GridOption);
     expect(output).toBe('');
   });
 
   it('should display an empty string when the "sum" does not find the field property in its object', () => {
     const columnDef = { id: 'column3', field: 'column3' } as Column;
     const totals = { sum: { column1: 123, column2: 345 } };
-    const output = sumTotalsCurrencyColoredFormatter(totals, columnDef, {} as SlickGrid);
+    const output = sumTotalsCurrencyColoredFormatter(totals, columnDef, {} as GridOption);
     expect(output).toBe('');
   });
 
   it('should display an empty string when the sum property is null', () => {
     const columnDef = { id: 'column1', field: 'column1' } as Column;
     const totals = { sum: { column1: null } };
-    const output = sumTotalsCurrencyColoredFormatter(totals, columnDef, {} as SlickGrid);
+    const output = sumTotalsCurrencyColoredFormatter(totals, columnDef, {} as GridOption);
     expect(output).toBe('');
   });
 
   it('should display an empty string when the average input is not a number', () => {
     const columnDef = { id: 'column1', field: 'column1' } as Column;
     const totals = { sum: { column1: 'abc' } };
-    const output = sumTotalsCurrencyColoredFormatter(totals, columnDef, {} as SlickGrid);
+    const output = sumTotalsCurrencyColoredFormatter(totals, columnDef, {} as GridOption);
     expect(output).toBe('');
   });
 
   it('should display a negative sum with at least 2 decimals in red when its input is negative', () => {
     const totals = { sum: { column1: -123, column2: -34.5678, column3: -2.4 } };
 
-    const output1 = sumTotalsCurrencyColoredFormatter(totals, { id: 'column1', field: 'column1' } as Column, {} as SlickGrid);
+    const output1 = sumTotalsCurrencyColoredFormatter(totals, { id: 'column1', field: 'column1' } as Column, {} as GridOption);
     const output2 = sumTotalsCurrencyColoredFormatter(
       totals,
       { id: 'column2', field: 'column2', params: { groupFormatterCurrencyPrefix: '€', maxDecimal: 2 } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
 
     expect((output1 as HTMLElement).outerHTML).toBe('<span style="color: red;">-123.00</span>');
@@ -56,12 +50,12 @@ describe('sumTotalsCurrencyColoredFormatter', () => {
     const output1 = sumTotalsCurrencyColoredFormatter(
       totals,
       { id: 'column1', field: 'column1', params: { groupFormatterCurrencyPrefix: '€', thousandSeparator: ',' } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output2 = sumTotalsCurrencyColoredFormatter(
       totals,
       { id: 'column2', field: 'column2', params: { groupFormatterCurrencyPrefix: '€', maxDecimal: 2, thousandSeparator: ',' } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output3 = sumTotalsCurrencyColoredFormatter(
       totals,
@@ -70,7 +64,7 @@ describe('sumTotalsCurrencyColoredFormatter', () => {
         field: 'column2',
         params: { groupFormatterCurrencyPrefix: '€', maxDecimal: 2, decimalSeparator: ',', thousandSeparator: '_' },
       } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
 
     expect((output1 as HTMLElement).outerHTML).toBe('<span style="color: red;">-€12,345,678.00</span>');
@@ -84,12 +78,12 @@ describe('sumTotalsCurrencyColoredFormatter', () => {
     const output1 = sumTotalsCurrencyColoredFormatter(
       totals,
       { id: 'column1', field: 'column1', params: { groupFormatterCurrencyPrefix: '€', displayNegativeNumberWithParentheses: true } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output2 = sumTotalsCurrencyColoredFormatter(
       totals,
       { id: 'column2', field: 'column2', params: { groupFormatterCurrencyPrefix: '€', maxDecimal: 2, displayNegativeNumberWithParentheses: true } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
 
     expect((output1 as HTMLElement).outerHTML).toBe('<span style="color: red;">(€123.00)</span>');
@@ -106,12 +100,12 @@ describe('sumTotalsCurrencyColoredFormatter', () => {
         field: 'column1',
         params: { groupFormatterCurrencyPrefix: '€', displayNegativeNumberWithParentheses: true, thousandSeparator: ',' },
       } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output2 = sumTotalsCurrencyColoredFormatter(
       totals,
       { id: 'column2', field: 'column2', params: { maxDecimal: 2, displayNegativeNumberWithParentheses: true, thousandSeparator: ',' } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output3 = sumTotalsCurrencyColoredFormatter(
       totals,
@@ -120,7 +114,7 @@ describe('sumTotalsCurrencyColoredFormatter', () => {
         field: 'column2',
         params: { groupFormatterCurrencyPrefix: '€', maxDecimal: 2, displayNegativeNumberWithParentheses: true, decimalSeparator: ',', thousandSeparator: '_' },
       } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
 
     expect((output1 as HTMLElement).outerHTML).toBe('<span style="color: red;">(€12,345,678.00)</span>');
@@ -129,10 +123,10 @@ describe('sumTotalsCurrencyColoredFormatter', () => {
   });
 
   it('should display a negative sum with parentheses when input is negative and "displayNegativeNumberWithParentheses" is enabled in the Formatter Options', () => {
-    (gridStub.getOptions as Mock).mockReturnValue({ formatterOptions: { displayNegativeNumberWithParentheses: true } } as GridOption);
+    const gridOptions: GridOption = { formatterOptions: { displayNegativeNumberWithParentheses: true } };
     const columnDef = { id: 'column3', field: 'column3', params: { groupFormatterCurrencyPrefix: '€' } } as Column;
     const totals = { sum: { column1: 123, column2: 345, column3: -2.4 } };
-    const output = sumTotalsCurrencyColoredFormatter(totals, columnDef, gridStub);
+    const output = sumTotalsCurrencyColoredFormatter(totals, columnDef, gridOptions);
     expect((output as HTMLElement).outerHTML).toBe('<span style="color: red;">(€2.40)</span>');
   });
 
@@ -142,12 +136,12 @@ describe('sumTotalsCurrencyColoredFormatter', () => {
     const output1 = sumTotalsCurrencyColoredFormatter(
       totals,
       { id: 'column1', field: 'column1', params: { groupFormatterCurrencyPrefix: '€', displayNegativeNumberWithParentheses: true } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output2 = sumTotalsCurrencyColoredFormatter(
       totals,
       { id: 'column2', field: 'column2', params: { groupFormatterCurrencyPrefix: '€', maxDecimal: 2, displayNegativeNumberWithParentheses: true } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
 
     expect((output1 as HTMLElement).outerHTML).toBe('<span style="color: green;">€123.00</span>');
@@ -157,11 +151,11 @@ describe('sumTotalsCurrencyColoredFormatter', () => {
   it('should display the same sum value in green with at least 2 decimals when a number with decimals is provided', () => {
     const totals = { sum: { column1: 123.55678, column2: 345.2, column3: -2.45 } };
 
-    const output1 = sumTotalsCurrencyColoredFormatter(totals, { id: 'column1', field: 'column1' } as Column, {} as SlickGrid);
+    const output1 = sumTotalsCurrencyColoredFormatter(totals, { id: 'column1', field: 'column1' } as Column, {} as GridOption);
     const output2 = sumTotalsCurrencyColoredFormatter(
       totals,
       { id: 'column2', field: 'column2', params: { groupFormatterCurrencyPrefix: '€' } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
 
     expect((output1 as HTMLElement).outerHTML).toBe('<span style="color: green;">123.5568</span>');
@@ -169,21 +163,19 @@ describe('sumTotalsCurrencyColoredFormatter', () => {
   });
 
   it('should display an sum number with user defined minimum & maximum decimal count in his grid option', () => {
-    (gridStub.getOptions as Mock).mockReturnValue({
-      formatterOptions: { minDecimal: 0, maxDecimal: 3, displayNegativeNumberWithParentheses: true },
-    } as GridOption);
+    const gridOptions: GridOption = { formatterOptions: { minDecimal: 0, maxDecimal: 3, displayNegativeNumberWithParentheses: true } };
     const totals = { sum: { column1: 123.45678, column2: 345, column3: -2.45 } };
 
     const output1 = sumTotalsCurrencyColoredFormatter(
       totals,
       { id: 'column1', field: 'column1', params: { groupFormatterCurrencyPrefix: '€' } } as Column,
-      gridStub
+      gridOptions
     );
-    const output2 = sumTotalsCurrencyColoredFormatter(totals, { id: 'column2', field: 'column2' } as Column, gridStub);
+    const output2 = sumTotalsCurrencyColoredFormatter(totals, { id: 'column2', field: 'column2' } as Column, gridOptions);
     const output3 = sumTotalsCurrencyColoredFormatter(
       totals,
       { id: 'column3', field: 'column3', params: { groupFormatterCurrencyPrefix: '€' } } as Column,
-      gridStub
+      gridOptions
     );
 
     expect((output1 as HTMLElement).outerHTML).toBe('<span style="color: green;">€123.457</span>');
@@ -197,13 +189,13 @@ describe('sumTotalsCurrencyColoredFormatter', () => {
     const output1 = sumTotalsCurrencyColoredFormatter(
       totals,
       { id: 'column1', field: 'column1', params: { groupFormatterCurrencyPrefix: '€', maxDecimal: 2 } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
-    const output2 = sumTotalsCurrencyColoredFormatter(totals, { id: 'column2', field: 'column2', params: { minDecimal: 0 } } as Column, {} as SlickGrid);
+    const output2 = sumTotalsCurrencyColoredFormatter(totals, { id: 'column2', field: 'column2', params: { minDecimal: 0 } } as Column, {} as GridOption);
     const output3 = sumTotalsCurrencyColoredFormatter(
       totals,
       { id: 'column3', field: 'column3', params: { groupFormatterCurrencyPrefix: '€', minDecimal: 3, displayNegativeNumberWithParentheses: true } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
 
     expect((output1 as HTMLElement).outerHTML).toBe('<span style="color: green;">€123.46</span>');
@@ -217,12 +209,12 @@ describe('sumTotalsCurrencyColoredFormatter', () => {
     const output1 = sumTotalsCurrencyColoredFormatter(
       totals,
       { id: 'column1', field: 'column1', params: { groupFormatterCurrencyPrefix: '€', maxDecimal: 2, groupFormatterPrefix: 'sum: ' } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output2 = sumTotalsCurrencyColoredFormatter(
       totals,
       { id: 'column2', field: 'column2', params: { groupFormatterCurrencyPrefix: '€', minDecimal: 0, groupFormatterSuffix: ' (max)' } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output3 = sumTotalsCurrencyColoredFormatter(
       totals,
@@ -237,7 +229,7 @@ describe('sumTotalsCurrencyColoredFormatter', () => {
           groupFormatterSuffix: '/item',
         },
       } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
 
     expect((output1 as HTMLElement).outerHTML).toBe('<span style="color: green;">sum: €123.46</span>');
@@ -255,7 +247,7 @@ describe('sumTotalsCurrencyColoredFormatter', () => {
         field: 'column1',
         params: { maxDecimal: 2, groupFormatterCurrencyPrefix: '€', groupFormatterPrefix: 'Sum: ', decimalSeparator: ',', thousandSeparator: '_' },
       } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output2 = sumTotalsCurrencyColoredFormatter(
       totals,
@@ -264,7 +256,7 @@ describe('sumTotalsCurrencyColoredFormatter', () => {
         field: 'column2',
         params: { minDecimal: 0, groupFormatterCurrencyPrefix: '€', groupFormatterSuffix: ' (sum)', decimalSeparator: ',', thousandSeparator: '_' },
       } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output3 = sumTotalsCurrencyColoredFormatter(
       totals,
@@ -281,7 +273,7 @@ describe('sumTotalsCurrencyColoredFormatter', () => {
           thousandSeparator: '_',
         },
       } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
 
     expect((output1 as HTMLElement).outerHTML).toBe('<span style="color: green;">Sum: €12_345_678,46</span>');

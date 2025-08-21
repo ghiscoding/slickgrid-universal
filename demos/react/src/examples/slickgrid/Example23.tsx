@@ -15,7 +15,6 @@ import {
   type Metrics,
   type MultipleSelectOption,
   OperatorType,
-  type SlickGrid,
   type SliderRangeOption,
   SlickgridReact,
   type SlickgridReactInstance,
@@ -30,9 +29,7 @@ function randomBetween(min: number, max: number): number {
 }
 
 // create a custom translate Formatter (typically you would move that a separate file, for separation of concerns)
-const taskTranslateFormatter: Formatter = (_row, _cell, value, _columnDef, _dataContext, grid: SlickGrid) => {
-  const gridOptions = grid.getOptions() as GridOption;
-
+const taskTranslateFormatter: Formatter = (_row, _cell, value, _columnDef, _dataContext, gridOptions) => {
   return gridOptions.i18n?.t('TASK_X', { x: value }) ?? '';
 };
 

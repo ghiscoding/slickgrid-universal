@@ -1,11 +1,10 @@
 import { isNumber } from '@slickgrid-universal/utils';
 
-import type { Column, GroupTotalsFormatter } from './../interfaces/index.js';
+import type { GroupTotalsFormatter } from './../interfaces/index.js';
 import { formatNumber } from '../services/utilities.js';
 import { retrieveFormatterOptions } from '../formatters/formatterUtilities.js';
-import { type SlickGrid } from '../core/index.js';
 
-export const minTotalsFormatter: GroupTotalsFormatter = (totals: any, columnDef: Column, grid: SlickGrid) => {
+export const minTotalsFormatter: GroupTotalsFormatter = (totals, columnDef, gridOptions) => {
   const field = columnDef.field ?? '';
   const val = totals.min?.[field];
   const params = columnDef?.params ?? {};
@@ -13,7 +12,7 @@ export const minTotalsFormatter: GroupTotalsFormatter = (totals: any, columnDef:
   const suffix = params.groupFormatterSuffix || '';
   const { minDecimal, maxDecimal, decimalSeparator, thousandSeparator, wrapNegativeNumber } = retrieveFormatterOptions(
     columnDef,
-    grid,
+    gridOptions,
     'regular',
     'group'
   );

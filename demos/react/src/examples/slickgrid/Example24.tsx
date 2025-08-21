@@ -11,7 +11,6 @@ import {
   type Formatter,
   Formatters,
   type GridOption,
-  type SlickGrid,
   SlickgridReact,
   type SlickgridReactInstance,
 } from 'slickgrid-react';
@@ -41,11 +40,10 @@ const priorityFormatter: Formatter = (_row, _cell, value) => {
   return output;
 };
 
-const priorityExportFormatter: Formatter = (_row, _cell, value, _columnDef, _dataContext, grid) => {
+const priorityExportFormatter: Formatter = (_row, _cell, value, _columnDef, _dataContext, gridOptions) => {
   if (!value) {
     return '';
   }
-  const gridOptions = grid.getOptions() as GridOption;
   const i18n = gridOptions.i18n;
   const count = +(value >= 3 ? 3 : value);
   const key = count === 3 ? 'HIGH' : count === 2 ? 'MEDIUM' : 'LOW';
@@ -54,10 +52,8 @@ const priorityExportFormatter: Formatter = (_row, _cell, value, _columnDef, _dat
 };
 
 // create a custom translate Formatter (typically you would move that a separate file, for separation of concerns)
-const taskTranslateFormatter: Formatter = (_row, _cell, value, _columnDef, _dataContext, grid: SlickGrid) => {
-  const gridOptions = grid.getOptions() as GridOption;
+const taskTranslateFormatter: Formatter = (_row, _cell, value, _columnDef, _dataContext, gridOptions) => {
   const i18n = gridOptions.i18n;
-
   return i18n?.t('TASK_X', { x: value }) ?? '';
 };
 

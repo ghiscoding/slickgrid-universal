@@ -153,7 +153,7 @@ export class SlickCellExcelCopyManager {
           // prettier-ignore
           const isEvaluatingFormatter = (columnDef.exportWithFormatter !== undefined) ? columnDef.exportWithFormatter : (this.gridOptions.textExportOptions?.exportWithFormatter);
           if (columnDef.formatter && isEvaluatingFormatter) {
-            const formattedOutput = columnDef.formatter(row, cell, item[columnDef.field], columnDef, item, this._grid);
+            const formattedOutput = columnDef.formatter(row, cell, item[columnDef.field], columnDef, item, this.gridOptions);
             // prettier-ignore
             const cellResult = isPrimitiveOrHTML(formattedOutput) ? formattedOutput : (formattedOutput as FormatterResultWithHtml).html || (formattedOutput as FormatterResultWithText).text;
             if (columnDef.sanitizeDataExport || this.gridOptions.textExportOptions?.sanitizeDataExport) {

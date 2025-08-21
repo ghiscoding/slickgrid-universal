@@ -549,7 +549,7 @@ export class FilterService {
       const idPropName = this._gridOptions.datasetIdPropertyName || 'id';
       const rowIndex = this._dataView && typeof this._dataView.getIdxById === 'function' ? this._dataView.getIdxById(item[idPropName]) : 0;
       // prettier-ignore
-      const formattedCellValue = (columnDef && typeof columnDef.formatter === 'function') ? columnDef.formatter(rowIndex || 0, columnIndex, cellValue, columnDef, item, this._grid) : '';
+      const formattedCellValue = (columnDef && typeof columnDef.formatter === 'function') ? columnDef.formatter(rowIndex || 0, columnIndex, cellValue, columnDef, item, this._gridOptions) : '';
       cellValue = stripTags(formattedCellValue as string);
     }
 

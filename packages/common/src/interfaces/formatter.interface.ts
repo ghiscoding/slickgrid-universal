@@ -1,5 +1,4 @@
-import type { SlickGrid } from '../core/index.js';
-import type { Column, FormatterResultWithHtml, FormatterResultWithText } from './index.js';
+import type { Column, FormatterResultWithHtml, FormatterResultWithText, GridOption } from './index.js';
 
 export declare type Formatter<T = any> = (
   row: number,
@@ -7,7 +6,7 @@ export declare type Formatter<T = any> = (
   value: any,
   columnDef: Column<T>,
   dataContext: T,
-  grid: SlickGrid
+  gridOptions: GridOption<Column<T> | any>
 ) => string | HTMLElement | DocumentFragment | FormatterResultWithHtml | FormatterResultWithText;
 
 /**

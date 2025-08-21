@@ -13,8 +13,7 @@ import { runOptionalHtmlSanitizer } from '../core/utils.js';
  * You can also optionally provide the hyperlink URL by using the generic params "hyperlinkUrl" in the column definition
  * For example: { id: 'link', field: 'link', params: {  hyperlinkText: 'Company Website', hyperlinkUrl: 'http://www.somewhere.com' } } will display "<a href="http://www.somewhere.com">Company Website</a>"
  */
-export const hyperlinkFormatter: Formatter = (_row, _cell, value, columnDef, _dataContext, grid) => {
-  const gridOptions = grid.getOptions() ?? {};
+export const hyperlinkFormatter: Formatter = (_row, _cell, value, columnDef, _dataContext, gridOptions) => {
   const columnParams = columnDef?.params ?? {};
   const displayedText = runOptionalHtmlSanitizer(columnParams.hyperlinkText || value, gridOptions.sanitizer) as string;
   const outputLink = runOptionalHtmlSanitizer(columnParams.hyperlinkUrl || value, gridOptions.sanitizer) as string;

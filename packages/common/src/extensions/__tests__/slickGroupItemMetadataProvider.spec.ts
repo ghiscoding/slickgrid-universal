@@ -117,21 +117,21 @@ describe('GroupItemMetadataProvider Service', () => {
   describe('Group Formatter', () => {
     it('should return item title when calling "defaultGroupCellFormatter" with option "enableExpandCollapse" set to False', () => {
       service.setOptions({ enableExpandCollapse: false });
-      const output = service.getOptions().groupFormatter!(0, 0, 'test', mockColumns[0], { title: 'Some Title' }, gridStub);
+      const output = service.getOptions().groupFormatter!(0, 0, 'test', mockColumns[0], { title: 'Some Title' }, {} as GridOption);
       expect(output).toBe('Some Title');
     });
     it('should provide HTMLElement and expect item title HTMLElement returned when calling "defaultGroupCellFormatter" with option "enableExpandCollapse" set to False', () => {
       service.setOptions({ enableExpandCollapse: false });
       const spanElm = document.createElement('span');
       spanElm.textContent = 'Another Title';
-      const output = service.getOptions().groupFormatter!(0, 0, 'test', mockColumns[0], { title: spanElm }, gridStub);
+      const output = service.getOptions().groupFormatter!(0, 0, 'test', mockColumns[0], { title: spanElm }, {} as GridOption);
       expect(output).toBe(spanElm);
     });
 
     it('should return Grouping info formatted with a group level 0 without indentation when calling "defaultGroupCellFormatter" with option "enableExpandCollapse" set to True', () => {
       service.init(gridStub);
       service.setOptions({ enableExpandCollapse: true });
-      const output = service.getOptions().groupFormatter!(0, 0, 'test', mockColumns[0], { title: 'Some Title' }, gridStub) as DocumentFragment;
+      const output = service.getOptions().groupFormatter!(0, 0, 'test', mockColumns[0], { title: 'Some Title' }, {} as GridOption) as DocumentFragment;
       const htmlContent = [].map.call(output.childNodes, (x) => x.outerHTML).join('');
       expect(htmlContent).toBe(
         '<span class="slick-group-toggle expanded" aria-expanded="true" style="margin-left: 0px;"></span><span class="slick-group-title" level="0">Some Title</span>'
@@ -143,7 +143,7 @@ describe('GroupItemMetadataProvider Service', () => {
       service.setOptions({ enableExpandCollapse: true });
       const spanElm = document.createElement('span');
       spanElm.textContent = 'Another Title';
-      const output = service.getOptions().groupFormatter!(0, 0, 'test', mockColumns[0], { title: spanElm }, gridStub) as DocumentFragment;
+      const output = service.getOptions().groupFormatter!(0, 0, 'test', mockColumns[0], { title: spanElm }, {} as GridOption) as DocumentFragment;
       const htmlContent = getHtmlStringOutput(output, 'outerHTML');
       expect(htmlContent).toBe(
         '<span class="slick-group-toggle expanded" aria-expanded="true" style="margin-left: 0px;"></span><span class="slick-group-title" level="0"><span>Another Title</span></span>'
@@ -155,7 +155,7 @@ describe('GroupItemMetadataProvider Service', () => {
       service.setOptions({ enableExpandCollapse: true });
       const fragment = document.createDocumentFragment();
       fragment.textContent = 'Fragment Title';
-      const output = service.getOptions().groupFormatter!(0, 0, 'test', mockColumns[0], { title: fragment }, gridStub) as DocumentFragment;
+      const output = service.getOptions().groupFormatter!(0, 0, 'test', mockColumns[0], { title: fragment }, {} as GridOption) as DocumentFragment;
       const htmlContent = getHtmlStringOutput(output, 'outerHTML');
       expect(htmlContent).toBe(
         '<span class="slick-group-toggle expanded" aria-expanded="true" style="margin-left: 0px;"></span><span class="slick-group-title" level="0">Fragment Title</span>'
@@ -165,7 +165,14 @@ describe('GroupItemMetadataProvider Service', () => {
     it('should return Grouping info formatted with a group level 2 with indentation of 30px when calling "defaultGroupCellFormatter" with option "enableExpandCollapse" set to True and level 2', () => {
       service.init(gridStub);
       service.setOptions({ enableExpandCollapse: true, toggleCssClass: 'groupy-toggle', toggleExpandedCssClass: 'groupy-expanded' });
-      const output = service.getOptions().groupFormatter!(0, 0, 'test', mockColumns[0], { level: 2, title: 'Some Title' }, gridStub) as DocumentFragment;
+      const output = service.getOptions().groupFormatter!(
+        0,
+        0,
+        'test',
+        mockColumns[0],
+        { level: 2, title: 'Some Title' },
+        {} as GridOption
+      ) as DocumentFragment;
       const htmlContent = getHtmlStringOutput(output, 'outerHTML');
       expect(htmlContent).toBe(
         '<span class="groupy-toggle groupy-expanded" aria-expanded="true" style="margin-left: 30px;"></span><span class="slick-group-title" level="2">Some Title</span>'
@@ -181,7 +188,7 @@ describe('GroupItemMetadataProvider Service', () => {
         'test',
         mockColumns[0],
         { collapsed: true, level: 3, title: 'Some Title' },
-        gridStub
+        gridOptionMock
       ) as DocumentFragment;
       const htmlContent = [].map.call(output.childNodes, (x) => x.outerHTML).join('');
       expect(htmlContent).toBe(
@@ -193,13 +200,13 @@ describe('GroupItemMetadataProvider Service', () => {
   describe('Group Totals Formatter', () => {
     it('should return Grouping Totals formatted with column definition "groupTotalsFormatter" called when defined', () => {
       const mockDataContext = { sum: 152, avg: 33 };
-      const output = service.getOptions().totalsFormatter!(0, 0, 'some value', mockColumns[2], mockDataContext, gridStub);
+      const output = service.getOptions().totalsFormatter!(0, 0, 'some value', mockColumns[2], mockDataContext, {} as GridOption);
       expect(output).toBe('<strong>Totals:</strong> 152');
     });
 
     it('should return empty string when column definition does not include grouping info formatter', () => {
       const mockDataContext = { sum: 152, avg: 33 };
-      const output = service.getOptions().totalsFormatter!(0, 0, 'some value', mockColumns[0], mockDataContext, gridStub);
+      const output = service.getOptions().totalsFormatter!(0, 0, 'some value', mockColumns[0], mockDataContext, {} as GridOption);
       expect(output).toBe('');
     });
   });

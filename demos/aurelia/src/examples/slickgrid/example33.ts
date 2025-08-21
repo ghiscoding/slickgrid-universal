@@ -13,7 +13,6 @@ import {
   type MenuCommandItemCallbackArgs,
   type MultipleSelectOption,
   OperatorType,
-  type SlickGrid,
   type VanillaCalendarOption,
 } from 'aurelia-slickgrid';
 import './example33.scss';
@@ -506,9 +505,16 @@ export class Example33 {
     <div class="tooltip-2cols-row"><div>Column:</div> <div>${column.field}</div></div>`;
   };
 
-  tooltipFormatter: Formatter = (row, cell, _value: any, column: Column, dataContext: any, grid: SlickGrid) => {
+  tooltipFormatter: Formatter = (row, cell, _value, column, dataContext, gridOptions) => {
     const tooltipTitle = 'Custom Tooltip';
-    const effortDrivenHtml = Formatters.checkmarkMaterial(row, cell, dataContext.effortDriven, column, dataContext, grid) as HTMLElement;
+    const effortDrivenHtml = Formatters.checkmarkMaterial(
+      row,
+      cell,
+      dataContext.effortDriven,
+      column,
+      dataContext,
+      gridOptions
+    ) as HTMLElement;
 
     return `<div class="header-tooltip-title">${tooltipTitle}</div>
     <div class="tooltip-2cols-row"><div>Id:</div> <div>${dataContext.id}</div></div>
@@ -518,7 +524,7 @@ export class Example33 {
     `;
   };
 
-  tooltipTaskAsyncFormatter: Formatter = (row, cell, _value, column: Column, dataContext: any, grid: SlickGrid) => {
+  tooltipTaskAsyncFormatter: Formatter = (row, cell, _value, column, dataContext, gridOptions) => {
     const tooltipTitle = `Task ${dataContext.id} - (async tooltip)`;
 
     // use a 2nd Formatter to get the percent completion
@@ -529,7 +535,7 @@ export class Example33 {
       dataContext.percentComplete,
       column,
       dataContext,
-      grid
+      gridOptions
     ) as HTMLElement;
     const out = `<div class="color-sf-primary-dark header-tooltip-title">${tooltipTitle}</div>
       <div class="tooltip-2cols-row"><div>Completion:</div> <div>${completionBar.outerHTML || ''}</div></div>

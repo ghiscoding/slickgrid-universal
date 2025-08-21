@@ -410,7 +410,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
         }
       } else {
         // get the output by analyzing if we'll pull the value from the cell or from a formatter
-        let itemData = exportWithFormatterWhenDefined(row, col, columnDef, itemObj, this._grid, this._exportOptions);
+        let itemData = exportWithFormatterWhenDefined(row, col, columnDef, itemObj, this._gridOptions, this._exportOptions);
 
         // does the user want to sanitize the output data (remove HTML tags)?
         if (columnDef.sanitizeDataExport || this._exportOptions.sanitizeDataExport) {
@@ -471,7 +471,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
 
       // if there's a groupTotalsFormatter, we will re-run it to get the exact same output as what is shown in UI
       if (columnDef.groupTotalsFormatter) {
-        const totalResult = columnDef.groupTotalsFormatter(itemObj, columnDef, this._grid);
+        const totalResult = columnDef.groupTotalsFormatter(itemObj, columnDef, this._gridOptions);
         itemData = totalResult instanceof HTMLElement ? totalResult.textContent || '' : totalResult;
       }
 

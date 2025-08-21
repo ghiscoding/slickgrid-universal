@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 import {
   autoAddEditorFormatterToColumnsWithEditor,
@@ -12,13 +12,8 @@ import { Editors } from '../../editors/index.js';
 import type { Column, Formatter, GridOption } from '../../interfaces/index.js';
 import { complexObjectFormatter } from '../complexObjectFormatter.js';
 import { multipleFormatter } from '../multipleFormatter.js';
-import { type SlickGrid } from '../../core/index.js';
 
 describe('formatterUtilities', () => {
-  const gridStub = {
-    getOptions: vi.fn(),
-  } as unknown as SlickGrid;
-
   describe('autoAddEditorFormatterToColumnsWithEditor', () => {
     let columnDefinitions: Column[];
     const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef) => {
@@ -128,22 +123,19 @@ describe('formatterUtilities', () => {
 
     it('should return a formatted Date when calling the Formatter function', () => {
       const formatterFn = getAssociatedDateFormatter(FieldType.dateIso, '-');
-      const gridSpy = vi.spyOn(gridStub, 'getOptions');
 
-      const output = formatterFn(1, 1, '2002-01-01T00:01:01', { type: FieldType.dateIso } as Column, {}, gridStub);
+      const output = formatterFn(1, 1, '2002-01-01T00:01:01', { type: FieldType.dateIso } as Column, {}, {} as GridOption);
 
-      expect(gridSpy).toHaveBeenCalled();
       expect(output).toBe('2002-01-01');
     });
 
     it('should return a formatted Date with a different separator when changing setting the "dateSeparator" in "formatterOptions"', () => {
       const formatterFn = getAssociatedDateFormatter(FieldType.dateIso, '-');
-      const gridOptions = { formatterOptions: { dateSeparator: '.' } } as GridOption;
-      const gridSpy = (gridStub.getOptions as Mock).mockReturnValue(gridOptions);
 
-      const output = formatterFn(1, 1, '2002-01-01T00:01:01', { type: FieldType.dateIso } as Column, {}, gridStub);
+      const output = formatterFn(1, 1, '2002-01-01T00:01:01', { type: FieldType.dateIso } as Column, {}, {
+        formatterOptions: { dateSeparator: '.' },
+      } as GridOption);
 
-      expect(gridSpy).toHaveBeenCalled();
       expect(output).toBe('2002.01.01');
     });
   });
@@ -158,7 +150,7 @@ describe('formatterUtilities', () => {
     it('should throw when missing "params.outputFormat" when calling the Formatter function', () => {
       const formatterFn = getBaseDateFormatter();
 
-      expect(() => formatterFn(1, 1, '2002-01-01T00:01:01', { type: FieldType.dateIso } as Column, {}, gridStub)).toThrow(
+      expect(() => formatterFn(1, 1, '2002-01-01T00:01:01', { type: FieldType.dateIso } as Column, {}, {} as GridOption)).toThrow(
         '[Slickgrid-Universal] Using the base "Formatter.date" requires "params.outputFormat" defined'
       );
     });
@@ -167,7 +159,7 @@ describe('formatterUtilities', () => {
       const formatterFn = getBaseDateFormatter();
       const mockColumn = { type: FieldType.date, params: { dateFormat: 'MMM DD, YYYY' } } as Column;
 
-      const output = formatterFn(1, 1, '2002-01-01T00:01:01', mockColumn, {}, gridStub);
+      const output = formatterFn(1, 1, '2002-01-01T00:01:01', mockColumn, {}, {} as GridOption);
 
       expect(output).toBe('Jan 01, 2002');
     });
@@ -192,22 +184,22 @@ describe('formatterUtilities', () => {
 
     describe('exportWithFormatterWhenDefined method', () => {
       it('should NOT enable exportWithFormatter and expect the firstName to returned', () => {
-        const output = exportWithFormatterWhenDefined(1, 1, mockColumn, mockItem, gridStub as SlickGrid, { exportWithFormatter: false });
+        const output = exportWithFormatterWhenDefined(1, 1, mockColumn, mockItem, {} as GridOption, { exportWithFormatter: false });
         expect(output).toBe('John');
       });
 
       it('should provide a column definition field defined with a dot (.) notation and expect a complex object result', () => {
-        const output = exportWithFormatterWhenDefined(1, 1, { ...mockColumn, field: 'address.zip' }, mockItem, gridStub as SlickGrid, {});
+        const output = exportWithFormatterWhenDefined(1, 1, { ...mockColumn, field: 'address.zip' }, mockItem, {} as GridOption, {});
         expect(output).toEqual({ zip: 12345 });
       });
 
       it('should provide a column definition field defined with a dot (.) notation and expect an empty string when the complex result is an empty object', () => {
-        const output = exportWithFormatterWhenDefined(1, 1, { ...mockColumn, field: 'empty' }, mockItem, gridStub as SlickGrid, {});
+        const output = exportWithFormatterWhenDefined(1, 1, { ...mockColumn, field: 'empty' }, mockItem, {} as GridOption, {});
         expect(output).toEqual('');
       });
 
       it('should provide a exportCustomFormatter in the column definition and expect the output to be formatted', () => {
-        const output = exportWithFormatterWhenDefined(1, 1, { ...mockColumn, exportCustomFormatter: myBoldHtmlFormatter }, mockItem, gridStub as SlickGrid, {
+        const output = exportWithFormatterWhenDefined(1, 1, { ...mockColumn, exportCustomFormatter: myBoldHtmlFormatter }, mockItem, {} as GridOption, {
           exportWithFormatter: true,
         });
         expect(output).toBe('<b>John</b>');
@@ -219,7 +211,7 @@ describe('formatterUtilities', () => {
           1,
           { ...mockColumn, exportCustomFormatter: myBoldHtmlFormatter },
           { ...mockItem, firstName: null },
-          gridStub as SlickGrid,
+          {} as GridOption,
           { exportWithFormatter: true }
         );
         expect(output).toBe('');
@@ -231,39 +223,39 @@ describe('formatterUtilities', () => {
           1,
           { ...mockColumn, exportCustomFormatter: myBoldHtmlFormatter },
           { ...mockItem, firstName: undefined },
-          gridStub as SlickGrid,
+          {} as GridOption,
           { exportWithFormatter: true }
         );
         expect(output).toBe('');
       });
 
       it('should enable exportWithFormatter as an exportOption and expect the firstName to be formatted', () => {
-        const output = exportWithFormatterWhenDefined(1, 1, mockColumn, mockItem, gridStub as SlickGrid, { exportWithFormatter: true });
+        const output = exportWithFormatterWhenDefined(1, 1, mockColumn, mockItem, {} as GridOption, { exportWithFormatter: true });
         expect(output).toBe('JOHN');
       });
 
       it('should enable exportWithFormatter as a grid option and expect the firstName to be formatted', () => {
         mockColumn.exportWithFormatter = true;
-        const output = exportWithFormatterWhenDefined(1, 1, mockColumn, mockItem, gridStub as SlickGrid, { exportWithFormatter: true });
+        const output = exportWithFormatterWhenDefined(1, 1, mockColumn, mockItem, {} as GridOption, { exportWithFormatter: true });
         expect(output).toBe('JOHN');
       });
 
       it('should enable exportWithFormatter as a grid option and expect empty string when associated item property is null', () => {
         mockColumn.exportWithFormatter = true;
-        const output = exportWithFormatterWhenDefined(1, 1, mockColumn, { ...mockItem, firstName: null }, gridStub as SlickGrid, { exportWithFormatter: true });
+        const output = exportWithFormatterWhenDefined(1, 1, mockColumn, { ...mockItem, firstName: null }, {} as GridOption, { exportWithFormatter: true });
         expect(output).toBe('');
       });
 
       it('should enable exportWithFormatter as a grid option and expect empty string when associated item property is undefined', () => {
         mockColumn.exportWithFormatter = true;
-        const output = exportWithFormatterWhenDefined(1, 1, mockColumn, { ...mockItem, firstName: undefined }, gridStub as SlickGrid, {
+        const output = exportWithFormatterWhenDefined(1, 1, mockColumn, { ...mockItem, firstName: undefined }, {} as GridOption, {
           exportWithFormatter: true,
         });
         expect(output).toBe('');
       });
 
       it('should expect empty string when associated item property is undefined and has no formatter defined', () => {
-        const output = exportWithFormatterWhenDefined(1, 1, mockColumn, { ...mockItem, firstName: undefined }, gridStub as SlickGrid, {});
+        const output = exportWithFormatterWhenDefined(1, 1, mockColumn, { ...mockItem, firstName: undefined }, {} as GridOption, {});
         expect(output).toBe('');
       });
     });

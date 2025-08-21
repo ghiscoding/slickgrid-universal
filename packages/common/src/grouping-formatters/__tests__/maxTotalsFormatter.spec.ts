@@ -1,46 +1,41 @@
-import { describe, expect, it, type Mock, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import type { Column, GridOption } from '../../interfaces/index.js';
 import { maxTotalsFormatter } from '../maxTotalsFormatter.js';
-import { type SlickGrid } from '../../core/index.js';
 
 describe('maxTotalsFormatter', () => {
   // stub some methods of the SlickGrid Grid instance
-  const gridStub = {
-    getOptions: vi.fn(),
-  } as unknown as SlickGrid;
-
   it('should display an empty string when no value is provided', () => {
-    const output = maxTotalsFormatter({}, {} as Column, {} as SlickGrid);
+    const output = maxTotalsFormatter({}, {} as Column, {} as GridOption);
     expect(output).toBe('');
   });
 
   it('should display an empty string when the "max" does not find the field property in its object', () => {
     const columnDef = { id: 'column3', field: 'column3' } as Column;
     const totals = { max: { column1: 123, column2: 345 } };
-    const output = maxTotalsFormatter(totals, columnDef, {} as SlickGrid);
+    const output = maxTotalsFormatter(totals, columnDef, {} as GridOption);
     expect(output).toBe('');
   });
 
   it('should display an empty string when the maximum number is null', () => {
     const columnDef = { id: 'column1', field: 'column1' } as Column;
     const totals = { max: { column1: null } };
-    const output = maxTotalsFormatter(totals, columnDef, {} as SlickGrid);
+    const output = maxTotalsFormatter(totals, columnDef, {} as GridOption);
     expect(output).toBe('');
   });
 
   it('should display an empty string when the average input is not a number', () => {
     const columnDef = { id: 'column1', field: 'column1' } as Column;
     const totals = { max: { column1: 'abc' } };
-    const output = maxTotalsFormatter(totals, columnDef, {} as SlickGrid);
+    const output = maxTotalsFormatter(totals, columnDef, {} as GridOption);
     expect(output).toBe('');
   });
 
   it('should display a negative maximum when its input is negative', () => {
     const totals = { max: { column1: -123, column2: -34.5678, column3: -2.4 } };
 
-    const output1 = maxTotalsFormatter(totals, { id: 'column1', field: 'column1' } as Column, {} as SlickGrid);
-    const output2 = maxTotalsFormatter(totals, { id: 'column2', field: 'column2', params: { maxDecimal: 2 } } as Column, {} as SlickGrid);
+    const output1 = maxTotalsFormatter(totals, { id: 'column1', field: 'column1' } as Column, {} as GridOption);
+    const output2 = maxTotalsFormatter(totals, { id: 'column2', field: 'column2', params: { maxDecimal: 2 } } as Column, {} as GridOption);
 
     expect(output1).toBe('-123');
     expect(output2).toBe('-34.57');
@@ -49,16 +44,16 @@ describe('maxTotalsFormatter', () => {
   it('should display a negative maximum and thousand separator when its input is negative', () => {
     const totals = { max: { column1: -12345678, column2: -345678.5678, column3: -2.4 } };
 
-    const output1 = maxTotalsFormatter(totals, { id: 'column1', field: 'column1', params: { thousandSeparator: ',' } } as Column, {} as SlickGrid);
+    const output1 = maxTotalsFormatter(totals, { id: 'column1', field: 'column1', params: { thousandSeparator: ',' } } as Column, {} as GridOption);
     const output2 = maxTotalsFormatter(
       totals,
       { id: 'column2', field: 'column2', params: { maxDecimal: 2, thousandSeparator: ',' } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output3 = maxTotalsFormatter(
       totals,
       { id: 'column2', field: 'column2', params: { maxDecimal: 2, decimalSeparator: ',', thousandSeparator: '_' } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
 
     expect(output1).toBe('-12,345,678');
@@ -72,12 +67,12 @@ describe('maxTotalsFormatter', () => {
     const output1 = maxTotalsFormatter(
       totals,
       { id: 'column1', field: 'column1', params: { displayNegativeNumberWithParentheses: true } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output2 = maxTotalsFormatter(
       totals,
       { id: 'column2', field: 'column2', params: { maxDecimal: 2, displayNegativeNumberWithParentheses: true } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
 
     expect(output1).toBe('(123)');
@@ -90,12 +85,12 @@ describe('maxTotalsFormatter', () => {
     const output1 = maxTotalsFormatter(
       totals,
       { id: 'column1', field: 'column1', params: { displayNegativeNumberWithParentheses: true, thousandSeparator: ',' } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output2 = maxTotalsFormatter(
       totals,
       { id: 'column2', field: 'column2', params: { maxDecimal: 2, displayNegativeNumberWithParentheses: true, thousandSeparator: ',' } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output3 = maxTotalsFormatter(
       totals,
@@ -104,7 +99,7 @@ describe('maxTotalsFormatter', () => {
         field: 'column2',
         params: { maxDecimal: 2, displayNegativeNumberWithParentheses: true, decimalSeparator: ',', thousandSeparator: '_' },
       } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
 
     expect(output1).toBe('(12,345,678)');
@@ -113,10 +108,10 @@ describe('maxTotalsFormatter', () => {
   });
 
   it('should display a negative sum with parentheses when input is negative and "displayNegativeNumberWithParentheses" is enabled in the Formatter Options', () => {
-    (gridStub.getOptions as Mock).mockReturnValue({ formatterOptions: { displayNegativeNumberWithParentheses: true } } as GridOption);
+    const gridOptions: GridOption = { formatterOptions: { displayNegativeNumberWithParentheses: true } };
     const columnDef = { id: 'column3', field: 'column3' } as Column;
     const totals = { max: { column1: 123, column2: 345, column3: -2.4 } };
-    const output = maxTotalsFormatter(totals, columnDef, gridStub);
+    const output = maxTotalsFormatter(totals, columnDef, gridOptions);
     expect(output).toBe('(2.4)');
   });
 
@@ -126,12 +121,12 @@ describe('maxTotalsFormatter', () => {
     const output1 = maxTotalsFormatter(
       totals,
       { id: 'column1', field: 'column1', params: { displayNegativeNumberWithParentheses: true } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output2 = maxTotalsFormatter(
       totals,
       { id: 'column2', field: 'column2', params: { maxDecimal: 2, displayNegativeNumberWithParentheses: true } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
 
     expect(output1).toBe('123');
@@ -141,22 +136,20 @@ describe('maxTotalsFormatter', () => {
   it('should display the same maximum value when a number with decimals is provided', () => {
     const totals = { max: { column1: 123.55678, column2: 345.2, column3: -2.45 } };
 
-    const output1 = maxTotalsFormatter(totals, { id: 'column1', field: 'column1' } as Column, {} as SlickGrid);
-    const output2 = maxTotalsFormatter(totals, { id: 'column2', field: 'column2' } as Column, {} as SlickGrid);
+    const output1 = maxTotalsFormatter(totals, { id: 'column1', field: 'column1' } as Column, {} as GridOption);
+    const output2 = maxTotalsFormatter(totals, { id: 'column2', field: 'column2' } as Column, {} as GridOption);
 
     expect(output1).toBe('123.55678');
     expect(output2).toBe('345.2');
   });
 
   it('should display an sum number with user defined minimum & maximum decimal count in his grid option', () => {
-    (gridStub.getOptions as Mock).mockReturnValue({
-      formatterOptions: { minDecimal: 0, maxDecimal: 3, displayNegativeNumberWithParentheses: true },
-    } as GridOption);
+    const gridOptions: GridOption = { formatterOptions: { minDecimal: 0, maxDecimal: 3, displayNegativeNumberWithParentheses: true } };
     const totals = { max: { column1: 123.45678, column2: 345, column3: -2.45 } };
 
-    const output1 = maxTotalsFormatter(totals, { id: 'column1', field: 'column1' } as Column, gridStub);
-    const output2 = maxTotalsFormatter(totals, { id: 'column2', field: 'column2' } as Column, gridStub);
-    const output3 = maxTotalsFormatter(totals, { id: 'column3', field: 'column3' } as Column, gridStub);
+    const output1 = maxTotalsFormatter(totals, { id: 'column1', field: 'column1' } as Column, gridOptions);
+    const output2 = maxTotalsFormatter(totals, { id: 'column2', field: 'column2' } as Column, gridOptions);
+    const output3 = maxTotalsFormatter(totals, { id: 'column3', field: 'column3' } as Column, gridOptions);
 
     expect(output1).toBe('123.457');
     expect(output2).toBe('345');
@@ -166,12 +159,12 @@ describe('maxTotalsFormatter', () => {
   it('should display a maximum number with user defined minimum & maximum decimal count', () => {
     const totals = { max: { column1: 123.45678, column2: 345.2, column3: -2.45 } };
 
-    const output1 = maxTotalsFormatter(totals, { id: 'column1', field: 'column1', params: { maxDecimal: 2 } } as Column, {} as SlickGrid);
-    const output2 = maxTotalsFormatter(totals, { id: 'column2', field: 'column2', params: { minDecimal: 0 } } as Column, {} as SlickGrid);
+    const output1 = maxTotalsFormatter(totals, { id: 'column1', field: 'column1', params: { maxDecimal: 2 } } as Column, {} as GridOption);
+    const output2 = maxTotalsFormatter(totals, { id: 'column2', field: 'column2', params: { minDecimal: 0 } } as Column, {} as GridOption);
     const output3 = maxTotalsFormatter(
       totals,
       { id: 'column3', field: 'column3', params: { minDecimal: 3, displayNegativeNumberWithParentheses: true } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
 
     expect(output1).toBe('123.46');
@@ -185,12 +178,12 @@ describe('maxTotalsFormatter', () => {
     const output1 = maxTotalsFormatter(
       totals,
       { id: 'column1', field: 'column1', params: { maxDecimal: 2, groupFormatterPrefix: 'Max: ' } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output2 = maxTotalsFormatter(
       totals,
       { id: 'column2', field: 'column2', params: { minDecimal: 0, groupFormatterSuffix: ' (max)' } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output3 = maxTotalsFormatter(
       totals,
@@ -199,7 +192,7 @@ describe('maxTotalsFormatter', () => {
         field: 'column3',
         params: { minDecimal: 3, displayNegativeNumberWithParentheses: true, groupFormatterPrefix: 'Max: ', groupFormatterSuffix: '/item' },
       } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
 
     expect(output1).toBe('Max: 123.46');
@@ -213,12 +206,12 @@ describe('maxTotalsFormatter', () => {
     const output1 = maxTotalsFormatter(
       totals,
       { id: 'column1', field: 'column1', params: { maxDecimal: 2, groupFormatterPrefix: 'Max: ', decimalSeparator: ',', thousandSeparator: '_' } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output2 = maxTotalsFormatter(
       totals,
       { id: 'column2', field: 'column2', params: { minDecimal: 0, groupFormatterSuffix: ' (max)', decimalSeparator: ',', thousandSeparator: '_' } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output3 = maxTotalsFormatter(
       totals,
@@ -234,7 +227,7 @@ describe('maxTotalsFormatter', () => {
           thousandSeparator: '_',
         },
       } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
 
     expect(output1).toBe('Max: 12_345_678,46');

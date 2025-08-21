@@ -4,10 +4,10 @@ import { type Formatter } from './../interfaces/index.js';
 import { createDocumentFragmentOrElement } from '../services/utilities.js';
 
 /** Display a decoded HTML string (e.g. "&lt;div&gt;Hello&lt;/div&gt;" => "<div>Hello</div>") */
-export const htmlDecodeFormatter: Formatter = (_row, _cell, value, _col, _item, grid) => {
+export const htmlDecodeFormatter: Formatter = (_row, _cell, value, _col, _item, gridOptions) => {
   const decodedVal = htmlDecode(value);
   if (decodedVal) {
-    const containerElm = createDocumentFragmentOrElement(grid.getOptions());
+    const containerElm = createDocumentFragmentOrElement(gridOptions);
     containerElm.textContent = decodedVal; // use textContent to avoid XSS
     return { html: containerElm };
   }

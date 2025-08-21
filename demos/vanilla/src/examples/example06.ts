@@ -9,7 +9,6 @@ import {
   Formatters,
   type GridOption,
   isNumber,
-  type SlickDataView,
   // GroupTotalFormatters,
   // italicFormatter,
 } from '@slickgrid-universal/common';
@@ -245,16 +244,15 @@ export default class Example06 {
     this.sgb.filterService.updateFilters([{ columnId: 'file', searchTerms: [this.searchString] }], true, false, true);
   }
 
-  treeFormatter: Formatter = (_row, _cell, value, _columnDef, dataContext, grid) => {
-    const gridOptions = grid.getOptions();
+  treeFormatter: Formatter = (_row, _cell, value, _columnDef, dataContext, gridOptions) => {
     const treeLevelPropName = gridOptions?.treeDataOptions?.levelPropName || '__treeLevel';
     if (value === null || value === undefined || dataContext === undefined) {
       return '';
     }
-    const dataView = grid.getData<SlickDataView>();
-    const data = dataView.getItems();
-    const identifierPropName = dataView.getIdPropertyName() || 'id';
-    const idx = dataView.getIdxById(dataContext[identifierPropName]) as number;
+
+    const data = this.sgb.dataView!.getItems();
+    const identifierPropName = this.sgb.dataView!.getIdPropertyName() || 'id';
+    const idx = this.sgb.dataView!.getIdxById(dataContext[identifierPropName]) as number;
     const prefix = this.getFileIcon(value);
     const treeLevel = dataContext[treeLevelPropName];
     const exportIndentationLeadingChar = '.';

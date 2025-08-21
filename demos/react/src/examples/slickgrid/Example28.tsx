@@ -10,7 +10,6 @@ import {
   Formatters,
   type GridOption,
   isNumber,
-  type SlickDataView,
   SlickgridReact,
   type SlickgridReactInstance,
 } from 'slickgrid-react';
@@ -236,16 +235,14 @@ const Example28: React.FC = () => {
     reactGridRef.current?.filterService.updateFilters([{ columnId: 'file', searchTerms: [val] }], true, false, true);
   }
 
-  const treeFormatter: Formatter = (_row, _cell, value, _columnDef, dataContext, grid) => {
-    const gridOptions = grid.getOptions();
+  const treeFormatter: Formatter = (_row, _cell, value, _columnDef, dataContext, gridOptions) => {
     const treeLevelPropName = (gridOptions.treeDataOptions && gridOptions.treeDataOptions.levelPropName) || '__treeLevel';
     if (value === null || value === undefined || dataContext === undefined) {
       return '';
     }
-    const dataView = grid.getData<SlickDataView>();
-    const data = dataView.getItems();
-    const identifierPropName = dataView.getIdPropertyName() || 'id';
-    const idx = dataView.getIdxById(dataContext[identifierPropName]) as number;
+    const data = reactGridRef.current?.dataView.getItems() || [];
+    const identifierPropName = reactGridRef.current?.dataView.getIdPropertyName() || 'id';
+    const idx = reactGridRef.current?.dataView.getIdxById(dataContext[identifierPropName]) as number;
     const prefix = getFileIcon(value);
     const treeLevel = dataContext[treeLevelPropName];
     const exportIndentationLeadingChar = '.';

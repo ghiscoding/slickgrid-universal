@@ -2,13 +2,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { Column, GridOption } from '../../interfaces/index.js';
 import { decimalFormatter } from '../decimalFormatter.js';
-import type { SlickGrid } from '../../core/index.js';
 
 describe('the Decimal Formatter', () => {
-  const gridStub = {
-    getOptions: vi.fn(),
-  } as unknown as SlickGrid;
-
   beforeEach(() => {
     vi.spyOn(global.console, 'warn').mockReturnValue();
   });
@@ -116,17 +111,18 @@ describe('the Decimal Formatter', () => {
   });
 
   it('should display a negative average with parentheses when input is negative and "displayNegativeNumberWithParentheses" is enabled in the Formatter Options', () => {
-    gridStub.getOptions = () => ({ formatterOptions: { displayNegativeNumberWithParentheses: true, minDecimal: 2 } }) as GridOption;
     const input = -2.4;
-    const output = decimalFormatter(1, 1, input, {} as Column, {}, gridStub);
+    const output = decimalFormatter(1, 1, input, {} as Column, {}, {
+      formatterOptions: { displayNegativeNumberWithParentheses: true, minDecimal: 2 },
+    } as GridOption);
     expect(output).toBe(`(2.40)`);
   });
 
   it('should display a negative average with parentheses when input is negative and "displayNegativeNumberWithParentheses" is enabled and thousand separator in the Formatter Options', () => {
-    gridStub.getOptions = () =>
-      ({ formatterOptions: { displayNegativeNumberWithParentheses: true, decimalSeparator: ',', thousandSeparator: ' ' } }) as GridOption;
     const input = -12345678.4;
-    const output = decimalFormatter(1, 1, input, {} as Column, {}, gridStub);
+    const output = decimalFormatter(1, 1, input, {} as Column, {}, {
+      formatterOptions: { displayNegativeNumberWithParentheses: true, decimalSeparator: ',', thousandSeparator: ' ' },
+    } as GridOption);
     expect(output).toBe(`(12 345 678,40)`);
   });
 });

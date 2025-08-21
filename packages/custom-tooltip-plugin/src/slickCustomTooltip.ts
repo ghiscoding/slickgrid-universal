@@ -354,7 +354,7 @@ export class SlickCustomTooltip {
     item: unknown
   ): string {
     if (typeof formatterOrText === 'function') {
-      const tooltipResult = formatterOrText(cell.row, cell.cell, value, columnDef, item, this._grid);
+      const tooltipResult = formatterOrText(cell.row, cell.cell, value, columnDef, item, this.gridOptions);
       // prettier-ignore
       const formatterText = isPrimitiveOrHTML(tooltipResult) ? tooltipResult : (tooltipResult as FormatterResultWithHtml).html || (tooltipResult as FormatterResultWithText).text;
       return this._grid.sanitizeHtmlString(

@@ -9,7 +9,6 @@ import {
   type MenuCommandItemCallbackArgs,
   type MultipleSelectOption,
   OperatorType,
-  type SlickGrid,
   SlickgridReact,
   type SlickgridReactInstance,
   type VanillaCalendarOption,
@@ -513,9 +512,16 @@ const Example33: React.FC = () => {
     <div class="tooltip-2cols-row"><div>Column:</div> <div>${column.field}</div></div>`;
   }
 
-  function tooltipFormatter(row: number, cell: number, value: any, column: Column, dataContext: any, grid: SlickGrid) {
+  const tooltipFormatter: Formatter = (row, cell, value, column, dataContext, gridOptions) => {
     const tooltipTitle = 'Custom Tooltip';
-    const effortDrivenHtml = Formatters.checkmarkMaterial(row, cell, dataContext.effortDriven, column, dataContext, grid) as HTMLElement;
+    const effortDrivenHtml = Formatters.checkmarkMaterial(
+      row,
+      cell,
+      dataContext.effortDriven,
+      column,
+      dataContext,
+      gridOptions
+    ) as HTMLElement;
 
     return `<div class="header-tooltip-title">${tooltipTitle}</div>
     <div class="tooltip-2cols-row"><div>Id:</div> <div>${dataContext.id}</div></div>
@@ -523,9 +529,9 @@ const Example33: React.FC = () => {
     <div class="tooltip-2cols-row"><div>Effort Driven:</div> <div>${effortDrivenHtml.outerHTML || ''}</div></div>
     <div class="tooltip-2cols-row"><div>Completion:</div> <div>${loadCompletionIcons(dataContext.percentComplete)}</div></div>
     `;
-  }
+  };
 
-  function tooltipTaskAsyncFormatter(row: number, cell: number, value: any, column: Column, dataContext: any, grid: SlickGrid) {
+  const tooltipTaskAsyncFormatter: Formatter = (row, cell, _value, column, dataContext, gridOptions) => {
     const tooltipTitle = `Task ${dataContext.id} - (async tooltip)`;
 
     // use a 2nd Formatter to get the percent completion
@@ -536,7 +542,7 @@ const Example33: React.FC = () => {
       dataContext.percentComplete,
       column,
       dataContext,
-      grid
+      gridOptions
     ) as HTMLElement;
     const out = `<div class="color-sf-primary-dark header-tooltip-title">${tooltipTitle}</div>
       <div class="tooltip-2cols-row"><div>Completion:</div> <div>${completionBar.outerHTML || ''}</div></div>
@@ -544,7 +550,7 @@ const Example33: React.FC = () => {
       <div class="tooltip-2cols-row"><div>Ratio:</div> <div>${dataContext.__params.ratio.toFixed(2)}</div></div>
     `;
     return out;
-  }
+  };
 
   function loadCompletionIcons(percentComplete: number) {
     let output = '';

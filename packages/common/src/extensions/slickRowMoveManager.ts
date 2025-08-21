@@ -229,7 +229,7 @@ export class SlickRowMoveManager {
         // if there's a UsabilityOverride defined, we also need to verify that the condition is valid
         if (this._usabilityOverride && dd.canMove) {
           const insertBeforeDataContext = this._grid.getDataItem(insertBefore);
-          dd.canMove = this.checkUsabilityOverride(insertBefore, insertBeforeDataContext, this._grid);
+          dd.canMove = this.checkUsabilityOverride(insertBefore, insertBeforeDataContext, this.gridOptions);
         }
 
         // if the new target is possible we'll display the dark blue bar (representing the acceptability) at the target position
@@ -250,7 +250,7 @@ export class SlickRowMoveManager {
     const currentRow = cell.row;
     const dataContext = this._grid.getDataItem(currentRow);
 
-    if (this.checkUsabilityOverride(currentRow, dataContext, this._grid)) {
+    if (this.checkUsabilityOverride(currentRow, dataContext, this.gridOptions)) {
       if (this._addonOptions.cancelEditOnDrag && this._grid.getEditorLock().isActive()) {
         this._grid.getEditorLock().cancelCurrentEdit();
       }
@@ -321,9 +321,9 @@ export class SlickRowMoveManager {
     }
   }
 
-  protected checkUsabilityOverride(row: number, dataContext: any, grid: SlickGrid): boolean {
+  protected checkUsabilityOverride(row: number, dataContext: any, gridOptions: GridOption): boolean {
     if (typeof this._usabilityOverride === 'function') {
-      return this._usabilityOverride(row, dataContext, grid);
+      return this._usabilityOverride(row, dataContext, gridOptions);
     }
     return true;
   }
@@ -334,9 +334,9 @@ export class SlickRowMoveManager {
     _val: any,
     _col: Column,
     dataContext: any,
-    grid: SlickGrid
+    gridOptions: GridOption
   ): FormatterResultWithHtml | string {
-    if (!this.checkUsabilityOverride(row, dataContext, grid)) {
+    if (!this.checkUsabilityOverride(row, dataContext, gridOptions)) {
       return '';
     } else {
       return {

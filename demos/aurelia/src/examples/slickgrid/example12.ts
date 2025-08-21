@@ -20,10 +20,8 @@ import { resolve } from 'aurelia';
 const NB_ITEMS = 1500;
 
 // create a custom translate Formatter (typically you would move that a separate file, for separation of concerns)
-const taskTranslateFormatter: Formatter = (_row, _cell, value, _columnDef, _dataContext, grid) => {
-  const gridOptions = grid.getOptions() as GridOption;
+const taskTranslateFormatter: Formatter = (_row, _cell, value, _columnDef, _dataContext, gridOptions) => {
   const i18n = gridOptions.i18n;
-
   return i18n?.tr('TASK_X', { x: value } as any) ?? '';
 };
 

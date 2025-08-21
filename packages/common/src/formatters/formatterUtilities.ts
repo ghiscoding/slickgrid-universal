@@ -68,7 +68,7 @@ export async function copyCellToClipboard(args: {
     const columnDef = args?.column;
     const dataContext = args?.dataContext;
     const exportOptions = gridOptions && (gridOptions.excelExportOptions || gridOptions.textExportOptions);
-    let textToCopy = exportWithFormatterWhenDefined(row, cell, columnDef, dataContext, grid, exportOptions);
+    let textToCopy = exportWithFormatterWhenDefined(row, cell, columnDef, dataContext, gridOptions, exportOptions);
     if (typeof columnDef.queryFieldNameGetterFn === 'function') {
       textToCopy = getCellValueFromQueryFieldGetter(columnDef, dataContext, '');
     }
@@ -94,7 +94,7 @@ export async function copyCellToClipboard(args: {
 
 export function retrieveFormatterOptions(
   columnDef: Column,
-  grid: SlickGrid,
+  gridOptions: GridOption,
   numberType: NumberType,
   formatterType: FormatterType
 ): {
@@ -129,7 +129,6 @@ export function retrieveFormatterOptions(
     default:
       break;
   }
-  const gridOptions = (grid.getOptions?.() ?? {}) as GridOption;
   const minDecimal = getValueFromParamsOrFormatterOptions('minDecimal', columnDef, gridOptions, defaultMinDecimal);
   const maxDecimal = getValueFromParamsOrFormatterOptions('maxDecimal', columnDef, gridOptions, defaultMaxDecimal);
   const decimalSeparator = getValueFromParamsOrFormatterOptions(
@@ -196,8 +195,7 @@ export function getValueFromParamsOrFormatterOptions(
 export function getAssociatedDateFormatter(fieldType: (typeof FieldType)[keyof typeof FieldType], defaultSeparator: string): Formatter {
   const defaultDateFormat = mapTempoDateFormatWithFieldType(fieldType, { withZeroPadding: true });
 
-  return (_row, _cell, value, columnDef, _dataContext, grid) => {
-    const gridOptions = (grid.getOptions?.() ?? {}) as GridOption;
+  return (_row, _cell, value, columnDef, _dataContext, gridOptions) => {
     const customSeparator = gridOptions?.formatterOptions?.dateSeparator ?? defaultSeparator;
     const inputType = columnDef?.type ?? FieldType.date;
     const inputDateFormat = mapTempoDateFormatWithFieldType(inputType, { withDefaultIso8601: true });
@@ -250,7 +248,7 @@ export function exportWithFormatterWhenDefined<T = any>(
   col: number,
   columnDef: Column<T>,
   dataContext: T,
-  grid: SlickGrid,
+  gridOptions: GridOption,
   exportOptions?: TextExportOption | ExcelExportOption
 ): string {
   let isEvaluatingFormatter = false;
@@ -272,7 +270,7 @@ export function exportWithFormatterWhenDefined<T = any>(
     formatter = columnDef.formatter;
   }
 
-  const output = parseFormatterWhenExist(formatter, row, col, columnDef, dataContext, grid);
+  const output = parseFormatterWhenExist(formatter, row, col, columnDef, dataContext, gridOptions);
   return exportOptions?.sanitizeDataExport && typeof output === 'string' ? stripTags(output) : output;
 }
 
@@ -292,7 +290,7 @@ export function parseFormatterWhenExist<T = any>(
   col: number,
   columnDef: Column<T>,
   dataContext: T,
-  grid: SlickGrid
+  gridOptions: GridOption
 ): string {
   let output = '';
 
@@ -307,7 +305,7 @@ export function parseFormatterWhenExist<T = any>(
   const cellValue = dataContext?.hasOwnProperty(fieldProperty as keyof T) ? dataContext[fieldProperty as keyof T] : null;
 
   if (typeof formatter === 'function') {
-    const formattedData = formatter(row, col, cellValue, columnDef, dataContext, grid);
+    const formattedData = formatter(row, col, cellValue, columnDef, dataContext, gridOptions);
     const cellResult = isPrimitiveOrHTML(formattedData)
       ? formattedData
       : (formattedData as FormatterResultWithHtml).html || (formattedData as FormatterResultWithText).text;

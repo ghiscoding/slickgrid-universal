@@ -1,4 +1,3 @@
-import type { Column } from './index.js';
-import type { SlickGrid } from '../core/index.js';
+import type { Column, GridOption } from './index.js';
 
-export type GroupTotalsFormatter = (totals: any, columnDef: Column, grid: SlickGrid) => string | HTMLElement;
+export type GroupTotalsFormatter = (totals: any, columnDef: Column, gridOptions: GridOption) => string | HTMLElement;

@@ -1,46 +1,40 @@
-import { describe, expect, it, type Mock, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import type { Column, GridOption } from '../../interfaces/index.js';
 import { sumTotalsBoldFormatter } from '../sumTotalsBoldFormatter.js';
-import { type SlickGrid } from '../../core/index.js';
 
 describe('sumTotalsBoldFormatter', () => {
-  // stub some methods of the SlickGrid Grid instance
-  const gridStub = {
-    getOptions: vi.fn(),
-  } as unknown as SlickGrid;
-
   it('should display an empty string when no value is provided', () => {
-    const output = sumTotalsBoldFormatter({}, {} as Column, {} as SlickGrid);
+    const output = sumTotalsBoldFormatter({}, {} as Column, {} as GridOption);
     expect(output).toBe('');
   });
 
   it('should display an empty string when the "sum" does not find the field property in its object', () => {
     const columnDef = { id: 'column3', field: 'column3' } as Column;
     const totals = { sum: { column1: 123, column2: 345 } };
-    const output = sumTotalsBoldFormatter(totals, columnDef, {} as SlickGrid);
+    const output = sumTotalsBoldFormatter(totals, columnDef, {} as GridOption);
     expect(output).toBe('');
   });
 
   it('should display an empty string when the sum property is null', () => {
     const columnDef = { id: 'column1', field: 'column1' } as Column;
     const totals = { sum: { column1: null } };
-    const output = sumTotalsBoldFormatter(totals, columnDef, {} as SlickGrid);
+    const output = sumTotalsBoldFormatter(totals, columnDef, {} as GridOption);
     expect(output).toBe('');
   });
 
   it('should display an empty string when the average input is not a number', () => {
     const columnDef = { id: 'column1', field: 'column1' } as Column;
     const totals = { sum: { column1: 'abc' } };
-    const output = sumTotalsBoldFormatter(totals, columnDef, {} as SlickGrid);
+    const output = sumTotalsBoldFormatter(totals, columnDef, {} as GridOption);
     expect(output).toBe('');
   });
 
   it('should display a negative sum when its input is negative', () => {
     const totals = { sum: { column1: -123, column2: -34.5678, column3: -2.4 } };
 
-    const output1 = sumTotalsBoldFormatter(totals, { id: 'column1', field: 'column1' } as Column, {} as SlickGrid);
-    const output2 = sumTotalsBoldFormatter(totals, { id: 'column2', field: 'column2', params: { maxDecimal: 2 } } as Column, {} as SlickGrid);
+    const output1 = sumTotalsBoldFormatter(totals, { id: 'column1', field: 'column1' } as Column, {} as GridOption);
+    const output2 = sumTotalsBoldFormatter(totals, { id: 'column2', field: 'column2', params: { maxDecimal: 2 } } as Column, {} as GridOption);
 
     expect((output1 as HTMLElement).style.fontWeight).toBe('bold');
     expect((output2 as HTMLElement).style.fontWeight).toBe('bold');
@@ -51,16 +45,16 @@ describe('sumTotalsBoldFormatter', () => {
   it('should display a negative sum with parentheses and thousand separator when its input is negative', () => {
     const totals = { sum: { column1: -12345678, column2: -345678.5678, column3: -2.4 } };
 
-    const output1 = sumTotalsBoldFormatter(totals, { id: 'column1', field: 'column1', params: { thousandSeparator: ',' } } as Column, {} as SlickGrid);
+    const output1 = sumTotalsBoldFormatter(totals, { id: 'column1', field: 'column1', params: { thousandSeparator: ',' } } as Column, {} as GridOption);
     const output2 = sumTotalsBoldFormatter(
       totals,
       { id: 'column2', field: 'column2', params: { maxDecimal: 2, thousandSeparator: ',' } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output3 = sumTotalsBoldFormatter(
       totals,
       { id: 'column2', field: 'column2', params: { maxDecimal: 2, decimalSeparator: ',', thousandSeparator: '_' } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
 
     expect((output1 as HTMLElement).innerHTML).toBe('-12,345,678');
@@ -74,12 +68,12 @@ describe('sumTotalsBoldFormatter', () => {
     const output1 = sumTotalsBoldFormatter(
       totals,
       { id: 'column1', field: 'column1', params: { displayNegativeNumberWithParentheses: true } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output2 = sumTotalsBoldFormatter(
       totals,
       { id: 'column2', field: 'column2', params: { maxDecimal: 2, displayNegativeNumberWithParentheses: true } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
 
     expect((output1 as HTMLElement).innerHTML).toBe('(123)');
@@ -92,12 +86,12 @@ describe('sumTotalsBoldFormatter', () => {
     const output1 = sumTotalsBoldFormatter(
       totals,
       { id: 'column1', field: 'column1', params: { displayNegativeNumberWithParentheses: true, thousandSeparator: ',' } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output2 = sumTotalsBoldFormatter(
       totals,
       { id: 'column2', field: 'column2', params: { maxDecimal: 2, displayNegativeNumberWithParentheses: true, thousandSeparator: ',' } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output3 = sumTotalsBoldFormatter(
       totals,
@@ -106,7 +100,7 @@ describe('sumTotalsBoldFormatter', () => {
         field: 'column2',
         params: { maxDecimal: 2, displayNegativeNumberWithParentheses: true, decimalSeparator: ',', thousandSeparator: '_' },
       } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
 
     expect((output1 as HTMLElement).innerHTML).toBe('(12,345,678)');
@@ -115,10 +109,10 @@ describe('sumTotalsBoldFormatter', () => {
   });
 
   it('should display a negative sum with parentheses when input is negative and "displayNegativeNumberWithParentheses" is enabled in the Formatter Options', () => {
-    (gridStub.getOptions as Mock).mockReturnValue({ formatterOptions: { displayNegativeNumberWithParentheses: true } } as GridOption);
+    const gridOptions: GridOption = { formatterOptions: { displayNegativeNumberWithParentheses: true } };
     const columnDef = { id: 'column3', field: 'column3' } as Column;
     const totals = { sum: { column1: 123, column2: 345, column3: -2.4 } };
-    const output = sumTotalsBoldFormatter(totals, columnDef, gridStub);
+    const output = sumTotalsBoldFormatter(totals, columnDef, gridOptions);
     expect((output as HTMLElement).innerHTML).toBe('(2.4)');
   });
 
@@ -128,12 +122,12 @@ describe('sumTotalsBoldFormatter', () => {
     const output1 = sumTotalsBoldFormatter(
       totals,
       { id: 'column1', field: 'column1', params: { displayNegativeNumberWithParentheses: true } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output2 = sumTotalsBoldFormatter(
       totals,
       { id: 'column2', field: 'column2', params: { maxDecimal: 2, displayNegativeNumberWithParentheses: true } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
 
     expect((output1 as HTMLElement).innerHTML).toBe('123');
@@ -143,22 +137,20 @@ describe('sumTotalsBoldFormatter', () => {
   it('should display the same sum value when a number with decimals is provided', () => {
     const totals = { sum: { column1: 123.55678, column2: 345.2, column3: -2.45 } };
 
-    const output1 = sumTotalsBoldFormatter(totals, { id: 'column1', field: 'column1' } as Column, {} as SlickGrid);
-    const output2 = sumTotalsBoldFormatter(totals, { id: 'column2', field: 'column2' } as Column, {} as SlickGrid);
+    const output1 = sumTotalsBoldFormatter(totals, { id: 'column1', field: 'column1' } as Column, {} as GridOption);
+    const output2 = sumTotalsBoldFormatter(totals, { id: 'column2', field: 'column2' } as Column, {} as GridOption);
 
     expect((output1 as HTMLElement).innerHTML).toBe('123.55678');
     expect((output2 as HTMLElement).innerHTML).toBe('345.2');
   });
 
   it('should display an sum number with user defined minimum & maximum decimal count in his grid option', () => {
-    (gridStub.getOptions as Mock).mockReturnValue({
-      formatterOptions: { minDecimal: 0, maxDecimal: 3, displayNegativeNumberWithParentheses: true },
-    } as GridOption);
+    const gridOptions: GridOption = { formatterOptions: { minDecimal: 0, maxDecimal: 3, displayNegativeNumberWithParentheses: true } };
     const totals = { sum: { column1: 123.45678, column2: 345, column3: -2.45 } };
 
-    const output1 = sumTotalsBoldFormatter(totals, { id: 'column1', field: 'column1' } as Column, gridStub);
-    const output2 = sumTotalsBoldFormatter(totals, { id: 'column2', field: 'column2' } as Column, gridStub);
-    const output3 = sumTotalsBoldFormatter(totals, { id: 'column3', field: 'column3' } as Column, gridStub);
+    const output1 = sumTotalsBoldFormatter(totals, { id: 'column1', field: 'column1' } as Column, gridOptions);
+    const output2 = sumTotalsBoldFormatter(totals, { id: 'column2', field: 'column2' } as Column, gridOptions);
+    const output3 = sumTotalsBoldFormatter(totals, { id: 'column3', field: 'column3' } as Column, gridOptions);
 
     expect((output1 as HTMLElement).innerHTML).toBe('123.457');
     expect((output2 as HTMLElement).innerHTML).toBe('345');
@@ -168,12 +160,12 @@ describe('sumTotalsBoldFormatter', () => {
   it('should display a sum number with user defined minimum & maximum decimal count', () => {
     const totals = { sum: { column1: 123.45678, column2: 345.2, column3: -2.45 } };
 
-    const output1 = sumTotalsBoldFormatter(totals, { id: 'column1', field: 'column1', params: { maxDecimal: 2 } } as Column, {} as SlickGrid);
-    const output2 = sumTotalsBoldFormatter(totals, { id: 'column2', field: 'column2', params: { minDecimal: 0 } } as Column, {} as SlickGrid);
+    const output1 = sumTotalsBoldFormatter(totals, { id: 'column1', field: 'column1', params: { maxDecimal: 2 } } as Column, {} as GridOption);
+    const output2 = sumTotalsBoldFormatter(totals, { id: 'column2', field: 'column2', params: { minDecimal: 0 } } as Column, {} as GridOption);
     const output3 = sumTotalsBoldFormatter(
       totals,
       { id: 'column3', field: 'column3', params: { minDecimal: 3, displayNegativeNumberWithParentheses: true } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
 
     expect((output1 as HTMLElement).innerHTML).toBe('123.46');
@@ -187,12 +179,12 @@ describe('sumTotalsBoldFormatter', () => {
     const output1 = sumTotalsBoldFormatter(
       totals,
       { id: 'column1', field: 'column1', params: { maxDecimal: 2, groupFormatterPrefix: 'Sum: ' } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output2 = sumTotalsBoldFormatter(
       totals,
       { id: 'column2', field: 'column2', params: { minDecimal: 0, groupFormatterSuffix: ' (sum)' } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output3 = sumTotalsBoldFormatter(
       totals,
@@ -201,7 +193,7 @@ describe('sumTotalsBoldFormatter', () => {
         field: 'column3',
         params: { minDecimal: 3, displayNegativeNumberWithParentheses: true, groupFormatterPrefix: 'Sum: ', groupFormatterSuffix: '/item' },
       } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
 
     expect((output1 as HTMLElement).innerHTML).toBe('Sum: 123.46');
@@ -215,12 +207,12 @@ describe('sumTotalsBoldFormatter', () => {
     const output1 = sumTotalsBoldFormatter(
       totals,
       { id: 'column1', field: 'column1', params: { maxDecimal: 2, groupFormatterPrefix: 'Sum: ', decimalSeparator: ',', thousandSeparator: '_' } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output2 = sumTotalsBoldFormatter(
       totals,
       { id: 'column2', field: 'column2', params: { minDecimal: 0, groupFormatterSuffix: ' (sum)', decimalSeparator: ',', thousandSeparator: '_' } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output3 = sumTotalsBoldFormatter(
       totals,
@@ -236,7 +228,7 @@ describe('sumTotalsBoldFormatter', () => {
           thousandSeparator: '_',
         },
       } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
 
     expect((output1 as HTMLElement).innerHTML).toBe('Sum: 12_345_678,46');

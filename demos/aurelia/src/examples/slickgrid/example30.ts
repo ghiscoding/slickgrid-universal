@@ -61,8 +61,7 @@ function checkItemIsEditable(dataContext: any, columnDef: Column, grid: SlickGri
   return isEditable;
 }
 
-const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef, _dataContext, grid) => {
-  const gridOptions = grid.getOptions() as GridOption;
+const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef, _dataContext, gridOptions) => {
   const isEditableLine = gridOptions.editable && columnDef.editor;
   value = value === null || value === undefined ? '' : value;
   return isEditableLine ? { text: value, addClasses: 'editable-field', toolTip: 'Click to Edit' } : value;

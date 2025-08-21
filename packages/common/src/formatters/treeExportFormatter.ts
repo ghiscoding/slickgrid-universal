@@ -6,8 +6,7 @@ import { getCellValueFromQueryFieldGetter } from '../services/utilities.js';
 import { parseFormatterWhenExist } from './formatterUtilities.js';
 
 /** Formatter that must be use with a Tree Data column */
-export const treeExportFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid) => {
-  const gridOptions = grid.getOptions();
+export const treeExportFormatter: Formatter = (row, cell, value, columnDef, dataContext, gridOptions) => {
   const treeDataOptions = gridOptions?.treeDataOptions;
   const collapsedPropName = treeDataOptions?.collapsedPropName ?? Constants.treeDataProperties.COLLAPSED_PROP;
   const hasChildrenPropName = treeDataOptions?.hasChildrenPropName ?? Constants.treeDataProperties.HAS_CHILDREN_PROP;
@@ -45,7 +44,7 @@ export const treeExportFormatter: Formatter = (row, cell, value, columnDef, data
   const indentSpacer = addWhiteSpaces(indentation);
 
   if (treeDataOptions?.titleFormatter) {
-    outputValue = parseFormatterWhenExist(treeDataOptions.titleFormatter, row, cell, columnDef, dataContext, grid);
+    outputValue = parseFormatterWhenExist(treeDataOptions.titleFormatter, row, cell, columnDef, dataContext, gridOptions);
   }
 
   const leadingChar =

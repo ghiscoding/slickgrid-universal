@@ -605,9 +605,9 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     }
   }
 
-  protected checkExpandableOverride(row: number, dataContext: any, grid: SlickGrid): boolean {
+  protected checkExpandableOverride(row: number, dataContext: any, gridOptions: GridOption): boolean {
     if (typeof this._expandableOverride === 'function') {
-      return this._expandableOverride(row, dataContext, grid);
+      return this._expandableOverride(row, dataContext, gridOptions);
     }
     return true;
   }
@@ -639,9 +639,9 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     _val: any,
     _colDef: Column,
     dataContext: any,
-    grid: SlickGrid
+    gridOptions: GridOption
   ): FormatterResultWithHtml | HTMLElement | '' {
-    if (!this.checkExpandableOverride(row, dataContext, grid)) {
+    if (!this.checkExpandableOverride(row, dataContext, gridOptions)) {
       return '';
     } else {
       if (dataContext[`${this._keyPrefix}collapsed`] === undefined) {
@@ -723,7 +723,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   protected handleClick(e: SlickEventData, args: { row: number; cell: number }): void {
     const dataContext = this._grid.getDataItem(args.row);
 
-    if (this.checkExpandableOverride(args.row, dataContext, this._grid)) {
+    if (this.checkExpandableOverride(args.row, dataContext, this.gridOptions)) {
       // clicking on a row select checkbox
       const columnDef = this._grid.getColumns()[args.cell];
       // prettier-ignore
@@ -873,7 +873,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   }
 
   protected toggleRowSelection(rowNumber: number, dataContext: any): void {
-    if (this.checkExpandableOverride(rowNumber, dataContext, this._grid)) {
+    if (this.checkExpandableOverride(rowNumber, dataContext, this.gridOptions)) {
       this.dataView.beginUpdate();
       this.handleAccordionShowHide(dataContext);
       this.dataView.endUpdate();

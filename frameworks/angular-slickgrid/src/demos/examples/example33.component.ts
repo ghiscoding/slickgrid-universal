@@ -13,7 +13,6 @@ import {
   type MenuCommandItemCallbackArgs,
   type MultipleSelectOption,
   OperatorType,
-  type SlickGrid,
   type VanillaCalendarOption,
 } from '../../library';
 
@@ -508,9 +507,16 @@ export class Example33Component implements OnInit {
     <div class="tooltip-2cols-row"><div>Column:</div> <div>${column.field}</div></div>`;
   }
 
-  tooltipFormatter(row: number, cell: number, value: any, column: Column, dataContext: any, grid: SlickGrid) {
+  tooltipFormatter: Formatter = (row, cell, value, column, dataContext, gridOptions) => {
     const tooltipTitle = 'Custom Tooltip';
-    const effortDrivenHtml = Formatters.checkmarkMaterial(row, cell, dataContext.effortDriven, column, dataContext, grid) as HTMLElement;
+    const effortDrivenHtml = Formatters.checkmarkMaterial(
+      row,
+      cell,
+      dataContext.effortDriven,
+      column,
+      dataContext,
+      gridOptions
+    ) as HTMLElement;
 
     return `<div class="header-tooltip-title">${tooltipTitle}</div>
     <div class="tooltip-2cols-row"><div>Id:</div> <div>${dataContext.id}</div></div>
@@ -518,9 +524,9 @@ export class Example33Component implements OnInit {
     <div class="tooltip-2cols-row"><div>Effort Driven:</div> <div>${effortDrivenHtml.outerHTML || ''}</div></div>
     <div class="tooltip-2cols-row"><div>Completion:</div> <div>${this.loadCompletionIcons(dataContext.percentComplete)}</div></div>
     `;
-  }
+  };
 
-  tooltipTaskAsyncFormatter(row: number, cell: number, value: any, column: Column, dataContext: any, grid: SlickGrid) {
+  tooltipTaskAsyncFormatter: Formatter = (row, cell, value, column, dataContext, gridOptions) => {
     const tooltipTitle = `Task ${dataContext.id} - (async tooltip)`;
 
     // use a 2nd Formatter to get the percent completion
@@ -531,7 +537,7 @@ export class Example33Component implements OnInit {
       dataContext.percentComplete,
       column,
       dataContext,
-      grid
+      gridOptions
     ) as HTMLElement;
     const out = `<div class="color-sf-primary-dark header-tooltip-title">${tooltipTitle}</div>
       <div class="tooltip-2cols-row"><div>Completion:</div> <div>${completionBar.outerHTML || ''}</div></div>
@@ -539,7 +545,7 @@ export class Example33Component implements OnInit {
       <div class="tooltip-2cols-row"><div>Ratio:</div> <div>${dataContext.__params.ratio.toFixed(2)}</div></div>
     `;
     return out;
-  }
+  };
 
   loadCompletionIcons(percentComplete: number) {
     let output = '';

@@ -635,6 +635,9 @@ export interface GridOption<C extends Column = Column> {
   /** Header menu options */
   headerMenu?: HeaderMenu;
 
+  /** optional I18N translate service (only available in framework wrappers) */
+  i18n?: any;
+
   /**
    * Defaults to false, should we ignore any accent while filtering and sorting text?
    * For example if our text is "José" and we type "Jose" then it won't return unless we use this flag because "é" is not equal to "e"

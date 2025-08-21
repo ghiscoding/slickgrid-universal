@@ -11,7 +11,7 @@ import { retrieveFormatterOptions } from './formatterUtilities.js';
  * For example:: `{ formatter: Formatters.decimal, params: { minDecimal: 2, maxDecimal: 4, prefix: 'Price ', currencyPrefix: '€', currencySuffix: ' EUR' }}`
  * with value of 33.45 would result into: "Price €33.45 EUR"
  */
-export const currencyFormatter: Formatter = (_row, _cell, value, columnDef, _dataContext, grid) => {
+export const currencyFormatter: Formatter = (_row, _cell, value, columnDef, _dataContext, gridOptions) => {
   const {
     currencyPrefix,
     currencySuffix,
@@ -22,7 +22,7 @@ export const currencyFormatter: Formatter = (_row, _cell, value, columnDef, _dat
     decimalSeparator,
     thousandSeparator,
     wrapNegativeNumber,
-  } = retrieveFormatterOptions(columnDef, grid, 'decimal', 'cell');
+  } = retrieveFormatterOptions(columnDef, gridOptions, 'decimal', 'cell');
 
   if (isNumber(value)) {
     const formattedNumber = formatNumber(

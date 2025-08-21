@@ -1,46 +1,40 @@
-import { describe, expect, it, type Mock, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import type { Column, GridOption } from '../../interfaces/index.js';
 import { avgTotalsPercentageFormatter } from '../avgTotalsPercentageFormatter.js';
-import { type SlickGrid } from '../../core/index.js';
 
 describe('avgTotalsPercentageFormatter', () => {
-  // stub some methods of the SlickGrid Grid instance
-  const gridStub = {
-    getOptions: vi.fn(),
-  } as unknown as SlickGrid;
-
   it('should display an empty string when no value is provided', () => {
-    const output = avgTotalsPercentageFormatter({}, {} as Column, {} as SlickGrid);
+    const output = avgTotalsPercentageFormatter({}, {} as Column, {} as GridOption);
     expect(output).toBe('');
   });
 
   it('should display an empty string when the "avg" does not find the field property in its object', () => {
     const columnDef = { id: 'column3', field: 'column3' } as Column;
     const totals = { avg: { column1: 123, column2: 345 } };
-    const output = avgTotalsPercentageFormatter(totals, columnDef, {} as SlickGrid);
+    const output = avgTotalsPercentageFormatter(totals, columnDef, {} as GridOption);
     expect(output).toBe('');
   });
 
   it('should display an empty string when the average number is null', () => {
     const columnDef = { id: 'column1', field: 'column1' } as Column;
     const totals = { avg: { column1: null } };
-    const output = avgTotalsPercentageFormatter(totals, columnDef, {} as SlickGrid);
+    const output = avgTotalsPercentageFormatter(totals, columnDef, {} as GridOption);
     expect(output).toBe('');
   });
 
   it('should display an empty string when the average input is not a number', () => {
     const columnDef = { id: 'column1', field: 'column1' } as Column;
     const totals = { avg: { column1: 'abc' } };
-    const output = avgTotalsPercentageFormatter(totals, columnDef, {} as SlickGrid);
+    const output = avgTotalsPercentageFormatter(totals, columnDef, {} as GridOption);
     expect(output).toBe('');
   });
 
   it('should display a negative percentage average when its input is negative', () => {
     const totals = { avg: { column1: -123, column2: -34.5678, column3: -2.4 } };
 
-    const output1 = avgTotalsPercentageFormatter(totals, { id: 'column1', field: 'column1' } as Column, {} as SlickGrid);
-    const output2 = avgTotalsPercentageFormatter(totals, { id: 'column2', field: 'column2', params: { maxDecimal: 2 } } as Column, {} as SlickGrid);
+    const output1 = avgTotalsPercentageFormatter(totals, { id: 'column1', field: 'column1' } as Column, {} as GridOption);
+    const output2 = avgTotalsPercentageFormatter(totals, { id: 'column2', field: 'column2', params: { maxDecimal: 2 } } as Column, {} as GridOption);
 
     expect(output1).toBe('-123%');
     expect(output2).toBe('-34.57%');
@@ -49,16 +43,16 @@ describe('avgTotalsPercentageFormatter', () => {
   it('should display a negative percentage average and thousand separator when its input is negative', () => {
     const totals = { avg: { column1: -12345678, column2: -345678.5678, column3: -2.4 } };
 
-    const output1 = avgTotalsPercentageFormatter(totals, { id: 'column1', field: 'column1', params: { thousandSeparator: ',' } } as Column, {} as SlickGrid);
+    const output1 = avgTotalsPercentageFormatter(totals, { id: 'column1', field: 'column1', params: { thousandSeparator: ',' } } as Column, {} as GridOption);
     const output2 = avgTotalsPercentageFormatter(
       totals,
       { id: 'column2', field: 'column2', params: { maxDecimal: 2, thousandSeparator: ',' } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output3 = avgTotalsPercentageFormatter(
       totals,
       { id: 'column2', field: 'column2', params: { maxDecimal: 2, decimalSeparator: ',', thousandSeparator: '_' } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
 
     expect(output1).toBe('-12,345,678%');
@@ -72,12 +66,12 @@ describe('avgTotalsPercentageFormatter', () => {
     const output1 = avgTotalsPercentageFormatter(
       totals,
       { id: 'column1', field: 'column1', params: { displayNegativeNumberWithParentheses: true } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output2 = avgTotalsPercentageFormatter(
       totals,
       { id: 'column2', field: 'column2', params: { maxDecimal: 2, displayNegativeNumberWithParentheses: true } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
 
     expect(output1).toBe('(123%)');
@@ -90,12 +84,12 @@ describe('avgTotalsPercentageFormatter', () => {
     const output1 = avgTotalsPercentageFormatter(
       totals,
       { id: 'column1', field: 'column1', params: { displayNegativeNumberWithParentheses: true, thousandSeparator: ',' } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output2 = avgTotalsPercentageFormatter(
       totals,
       { id: 'column2', field: 'column2', params: { maxDecimal: 2, displayNegativeNumberWithParentheses: true, thousandSeparator: ',' } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output3 = avgTotalsPercentageFormatter(
       totals,
@@ -104,7 +98,7 @@ describe('avgTotalsPercentageFormatter', () => {
         field: 'column2',
         params: { maxDecimal: 2, displayNegativeNumberWithParentheses: true, decimalSeparator: ',', thousandSeparator: '_' },
       } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
 
     expect(output1).toBe('(12,345,678%)');
@@ -113,18 +107,18 @@ describe('avgTotalsPercentageFormatter', () => {
   });
 
   it('should display a negative average with parentheses when input is negative and "displayNegativeNumberWithParentheses" is enabled in the Formatter Options', () => {
-    (gridStub.getOptions as Mock).mockReturnValue({ formatterOptions: { displayNegativeNumberWithParentheses: true } } as GridOption);
+    const gridOptions: GridOption = { formatterOptions: { displayNegativeNumberWithParentheses: true } };
     const columnDef = { id: 'column3', field: 'column3' } as Column;
     const totals = { avg: { column1: 123, column2: 345, column3: -2.4 } };
-    const output = avgTotalsPercentageFormatter(totals, columnDef, gridStub);
+    const output = avgTotalsPercentageFormatter(totals, columnDef, gridOptions);
     expect(output).toBe('(2%)');
   });
 
   it('should display a rounded percentage average number without decimals when no min/maxDecimal is defined and a number with decimals is provided', () => {
     const totals = { avg: { column1: 123.55678, column2: 345.2, column3: -2.45 } };
 
-    const output1 = avgTotalsPercentageFormatter(totals, { id: 'column1', field: 'column1' } as Column, {} as SlickGrid);
-    const output2 = avgTotalsPercentageFormatter(totals, { id: 'column2', field: 'column2' } as Column, {} as SlickGrid);
+    const output1 = avgTotalsPercentageFormatter(totals, { id: 'column1', field: 'column1' } as Column, {} as GridOption);
+    const output2 = avgTotalsPercentageFormatter(totals, { id: 'column2', field: 'column2' } as Column, {} as GridOption);
 
     expect(output1).toBe('124%');
     expect(output2).toBe('345%');
@@ -133,12 +127,12 @@ describe('avgTotalsPercentageFormatter', () => {
   it('should display a percentage average number with user defined minimum & maximum decimal count', () => {
     const totals = { avg: { column1: 123.45678, column2: 345.2, column3: -2.45 } };
 
-    const output1 = avgTotalsPercentageFormatter(totals, { id: 'column1', field: 'column1', params: { maxDecimal: 2 } } as Column, {} as SlickGrid);
-    const output2 = avgTotalsPercentageFormatter(totals, { id: 'column2', field: 'column2', params: { minDecimal: 0 } } as Column, {} as SlickGrid);
+    const output1 = avgTotalsPercentageFormatter(totals, { id: 'column1', field: 'column1', params: { maxDecimal: 2 } } as Column, {} as GridOption);
+    const output2 = avgTotalsPercentageFormatter(totals, { id: 'column2', field: 'column2', params: { minDecimal: 0 } } as Column, {} as GridOption);
     const output3 = avgTotalsPercentageFormatter(
       totals,
       { id: 'column3', field: 'column3', params: { minDecimal: 3, displayNegativeNumberWithParentheses: true } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
 
     expect(output1).toBe('123.46%');
@@ -147,14 +141,12 @@ describe('avgTotalsPercentageFormatter', () => {
   });
 
   it('should display an average number with user defined minimum & maximum decimal count in his grid option', () => {
-    (gridStub.getOptions as Mock).mockReturnValue({
-      formatterOptions: { minDecimal: 0, maxDecimal: 3, displayNegativeNumberWithParentheses: true },
-    } as GridOption);
+    const gridOptions: GridOption = { formatterOptions: { minDecimal: 0, maxDecimal: 3, displayNegativeNumberWithParentheses: true } };
     const totals = { avg: { column1: 123.45678, column2: 345, column3: -2.45 } };
 
-    const output1 = avgTotalsPercentageFormatter(totals, { id: 'column1', field: 'column1' } as Column, gridStub);
-    const output2 = avgTotalsPercentageFormatter(totals, { id: 'column2', field: 'column2' } as Column, gridStub);
-    const output3 = avgTotalsPercentageFormatter(totals, { id: 'column3', field: 'column3' } as Column, gridStub);
+    const output1 = avgTotalsPercentageFormatter(totals, { id: 'column1', field: 'column1' } as Column, gridOptions);
+    const output2 = avgTotalsPercentageFormatter(totals, { id: 'column2', field: 'column2' } as Column, gridOptions);
+    const output3 = avgTotalsPercentageFormatter(totals, { id: 'column3', field: 'column3' } as Column, gridOptions);
 
     expect(output1).toBe('123.457%');
     expect(output2).toBe('345%');
@@ -167,12 +159,12 @@ describe('avgTotalsPercentageFormatter', () => {
     const output1 = avgTotalsPercentageFormatter(
       totals,
       { id: 'column1', field: 'column1', params: { maxDecimal: 2, groupFormatterPrefix: 'Avg: ' } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output2 = avgTotalsPercentageFormatter(
       totals,
       { id: 'column2', field: 'column2', params: { minDecimal: 0, groupFormatterSuffix: ' (avg)' } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output3 = avgTotalsPercentageFormatter(
       totals,
@@ -181,7 +173,7 @@ describe('avgTotalsPercentageFormatter', () => {
         field: 'column3',
         params: { minDecimal: 3, displayNegativeNumberWithParentheses: true, groupFormatterPrefix: 'Avg: ', groupFormatterSuffix: '/item' },
       } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
 
     expect(output1).toBe('Avg: 123.46%');
@@ -195,12 +187,12 @@ describe('avgTotalsPercentageFormatter', () => {
     const output1 = avgTotalsPercentageFormatter(
       totals,
       { id: 'column1', field: 'column1', params: { maxDecimal: 2, groupFormatterPrefix: 'Avg: ', decimalSeparator: ',', thousandSeparator: '_' } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output2 = avgTotalsPercentageFormatter(
       totals,
       { id: 'column2', field: 'column2', params: { minDecimal: 0, groupFormatterSuffix: ' (avg)', decimalSeparator: ',', thousandSeparator: '_' } } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
     const output3 = avgTotalsPercentageFormatter(
       totals,
@@ -216,7 +208,7 @@ describe('avgTotalsPercentageFormatter', () => {
           thousandSeparator: '_',
         },
       } as Column,
-      {} as SlickGrid
+      {} as GridOption
     );
 
     expect(output1).toBe('Avg: 12_345_678,46%');

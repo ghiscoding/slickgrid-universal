@@ -7,8 +7,7 @@ import { parseFormatterWhenExist } from './formatterUtilities.js';
 import { createDocumentFragmentOrElement, getCellValueFromQueryFieldGetter } from '../services/utilities.js';
 
 /** Formatter that must be use with a Tree Data column */
-export const treeFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid) => {
-  const gridOptions = grid.getOptions();
+export const treeFormatter: Formatter = (row, cell, value, columnDef, dataContext, gridOptions) => {
   const treeDataOptions = (gridOptions.treeDataOptions ?? {}) as TreeDataOption;
   const indentMarginLeft = treeDataOptions.indentMarginLeft ?? 15;
   const collapsedPropName = treeDataOptions.collapsedPropName ?? Constants.treeDataProperties.COLLAPSED_PROP;
@@ -49,7 +48,7 @@ export const treeFormatter: Formatter = (row, cell, value, columnDef, dataContex
   }
 
   if (treeDataOptions.titleFormatter) {
-    outputValue = parseFormatterWhenExist(treeDataOptions.titleFormatter, row, cell, columnDef, dataContext, grid);
+    outputValue = parseFormatterWhenExist(treeDataOptions.titleFormatter, row, cell, columnDef, dataContext, gridOptions);
   }
   const spanTitleElm = createDomElement('span', { className: 'slick-tree-title' });
   applyHtmlToElement(spanTitleElm, outputValue, gridOptions);

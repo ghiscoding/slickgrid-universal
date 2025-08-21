@@ -38,11 +38,10 @@ const priorityFormatter: Formatter = (_row, _cell, value) => {
   return output;
 };
 
-const priorityExportFormatter: Formatter = (_row, _cell, value, _columnDef, _dataContext, grid) => {
+const priorityExportFormatter: Formatter = (_row, _cell, value, _columnDef, _dataContext, gridOptions) => {
   if (!value) {
     return '';
   }
-  const gridOptions = grid.getOptions() as GridOption;
   const translate = gridOptions.i18n;
   const count = +(value >= 3 ? 3 : value);
   const key = count === 3 ? 'HIGH' : count === 2 ? 'MEDIUM' : 'LOW';
@@ -50,10 +49,8 @@ const priorityExportFormatter: Formatter = (_row, _cell, value, _columnDef, _dat
   return translate && translate.instant && translate.instant(key);
 };
 
-const taskTranslateFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid) => {
-  const gridOptions = grid.getOptions() as GridOption;
+const taskTranslateFormatter: Formatter = (_row, _cell, value, _columnDef, _dataContext, gridOptions) => {
   const translate = gridOptions.i18n;
-
   return translate && translate.instant && translate.instant('TASK_X', { x: value });
 };
 

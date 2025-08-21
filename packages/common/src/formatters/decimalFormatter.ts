@@ -9,9 +9,9 @@ import { retrieveFormatterOptions } from './formatterUtilities.js';
  * You can pass "minDecimal" and/or "maxDecimal" to the "params" property.
  * For example:: `{ formatter: Formatters.decimal, params: { minDecimal: 2, maxDecimal: 4 }}`
  */
-export const decimalFormatter: Formatter = (_row, _cell, value, columnDef, _dataContext, grid) => {
+export const decimalFormatter: Formatter = (_row, _cell, value, columnDef, _dataContext, gridOptions) => {
   const { minDecimal, maxDecimal, numberPrefix, numberSuffix, decimalSeparator, thousandSeparator, wrapNegativeNumber } =
-    retrieveFormatterOptions(columnDef, grid, 'decimal', 'cell');
+    retrieveFormatterOptions(columnDef, gridOptions, 'decimal', 'cell');
 
   if (isNumber(value)) {
     return formatNumber(value, minDecimal, maxDecimal, wrapNegativeNumber, numberPrefix, numberSuffix, decimalSeparator, thousandSeparator);

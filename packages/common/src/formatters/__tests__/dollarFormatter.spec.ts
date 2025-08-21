@@ -1,90 +1,91 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import type { Column, GridOption } from '../../interfaces/index.js';
 import { dollarFormatter } from '../dollarFormatter.js';
-import type { SlickGrid } from '../../core/index.js';
 
 describe('the Dollar Formatter', () => {
-  const gridStub = {
-    getOptions: vi.fn(),
-  } as unknown as SlickGrid;
-
   it('should display an empty string when no value is provided', () => {
-    const output = dollarFormatter(1, 1, '', {} as Column, {}, {} as any);
+    const output = dollarFormatter(1, 1, '', {} as Column, {}, {} as GridOption);
     expect(output).toBe('');
   });
 
   it('should display original string when non-numeric value is provided', () => {
-    const output = dollarFormatter(1, 1, 'hello', {} as Column, {}, {} as any);
+    const output = dollarFormatter(1, 1, 'hello', {} as Column, {}, {} as GridOption);
     expect(output).toBe('hello');
   });
 
   it('should display $0 when number 0 is provided', () => {
     const input = 0;
-    const output = dollarFormatter(1, 1, input, {} as Column, {}, {} as any);
+    const output = dollarFormatter(1, 1, input, {} as Column, {}, {} as GridOption);
     expect(output).toBe(`$0.00`);
   });
 
   it('should display a number with negative dollar sign when a negative number is provided', () => {
     const input = -15;
-    const output = dollarFormatter(1, 1, input, {} as Column, {}, {} as any);
+    const output = dollarFormatter(1, 1, input, {} as Column, {}, {} as GridOption);
     expect(output).toBe(`-$15.00`);
   });
 
   it('should display a number with negative dollar sign when a negative number and thousand separator is provided', () => {
     const input = -12345678;
-    const output = dollarFormatter(1, 1, input, { params: { thousandSeparator: ',' } } as Column, {}, {} as any);
+    const output = dollarFormatter(1, 1, input, { params: { thousandSeparator: ',' } } as Column, {}, {} as GridOption);
     expect(output).toBe(`-$12,345,678.00`);
   });
 
   it('should display a number with dollar sign when a number is provided', () => {
     const input = 99;
-    const output = dollarFormatter(1, 1, input, {} as Column, {}, {} as any);
+    const output = dollarFormatter(1, 1, input, {} as Column, {}, {} as GridOption);
     expect(output).toBe(`$99.00`);
   });
 
   it('should display a number with dollar sign when a string number is provided', () => {
     const input = '99';
-    const output = dollarFormatter(1, 1, input, {} as Column, {}, {} as any);
+    const output = dollarFormatter(1, 1, input, {} as Column, {}, {} as GridOption);
     expect(output).toBe(`$99.00`);
   });
 
   it('should display a number with dollar sign and use minimum decimal set', () => {
     const input = 99.1;
-    const output = dollarFormatter(1, 1, input, { params: { minDecimal: 2 } } as Column, {}, {} as any);
+    const output = dollarFormatter(1, 1, input, { params: { minDecimal: 2 } } as Column, {}, {} as GridOption);
     expect(output).toBe(`$99.10`);
   });
 
   it('should display a number with dollar sign and use maximum decimal set', () => {
     const input = 88.156789;
-    const output = dollarFormatter(1, 1, input, { params: { maxDecimal: 3 } } as Column, {}, {} as any);
+    const output = dollarFormatter(1, 1, input, { params: { maxDecimal: 3 } } as Column, {}, {} as GridOption);
     expect(output).toBe(`$88.157`);
   });
 
   it('should display a negative number with parentheses when "displayNegativeNumberWithParentheses" is enabled in the "params"', () => {
     const input = -2.4;
-    const output = dollarFormatter(1, 1, input, { params: { displayNegativeNumberWithParentheses: true } } as Column, {}, {} as any);
+    const output = dollarFormatter(1, 1, input, { params: { displayNegativeNumberWithParentheses: true } } as Column, {}, {} as GridOption);
     expect(output).toBe(`($2.40)`);
   });
 
   it('should display a negative number with parentheses when "displayNegativeNumberWithParentheses" is enabled and thousand separator in the "params"', () => {
     const input = -12345678.4;
-    const output = dollarFormatter(1, 1, input, { params: { displayNegativeNumberWithParentheses: true, thousandSeparator: ',' } } as Column, {}, {} as any);
+    const output = dollarFormatter(
+      1,
+      1,
+      input,
+      { params: { displayNegativeNumberWithParentheses: true, thousandSeparator: ',' } } as Column,
+      {},
+      {} as GridOption
+    );
     expect(output).toBe(`($12,345,678.40)`);
   });
 
   it('should display a negative average with parentheses when input is negative and "displayNegativeNumberWithParentheses" is enabled in the Formatter Options', () => {
-    gridStub.getOptions = () => ({ formatterOptions: { displayNegativeNumberWithParentheses: true } }) as GridOption;
     const input = -2.4;
-    const output = dollarFormatter(1, 1, input, {} as Column, {}, gridStub);
+    const output = dollarFormatter(1, 1, input, {} as Column, {}, { formatterOptions: { displayNegativeNumberWithParentheses: true } } as GridOption);
     expect(output).toBe(`($2.40)`);
   });
 
   it('should display a negative average with parentheses when input is negative and "displayNegativeNumberWithParentheses" is enabled and thousand separator in the Formatter Options', () => {
-    gridStub.getOptions = () =>
-      ({ formatterOptions: { displayNegativeNumberWithParentheses: true, decimalSeparator: ',', thousandSeparator: ' ' } }) as GridOption;
     const input = -12345678.4;
-    const output = dollarFormatter(1, 1, input, {} as Column, {}, gridStub);
+    const output = dollarFormatter(1, 1, input, {} as Column, {}, {
+      formatterOptions: { displayNegativeNumberWithParentheses: true, decimalSeparator: ',', thousandSeparator: ' ' },
+    } as GridOption);
     expect(output).toBe(`($12 345 678,40)`);
   });
 });

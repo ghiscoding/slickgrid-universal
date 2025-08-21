@@ -17,8 +17,7 @@ import { withTranslation } from 'react-i18next';
 
 const NB_ITEMS = 1500;
 
-const taskTranslateFormatter: Formatter = (_row, _cell, value, _columnDef, _dataContext, grid) => {
-  const gridOptions = grid.getOptions() as GridOption;
+const taskTranslateFormatter: Formatter = (_row, _cell, value, _columnDef, _dataContext, gridOptions) => {
   return gridOptions.i18n?.t('TASK_X', { x: value }) ?? '';
 };
 

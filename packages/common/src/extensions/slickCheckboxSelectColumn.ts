@@ -300,7 +300,7 @@ export class SlickCheckboxSelectColumn<T = any> {
    */
   toggleRowSelectionWithEvent(event: SlickEventData | null, row: number): void {
     const dataContext = this._grid.getDataItem(row);
-    if (!this.checkSelectableOverride(row, dataContext, this._grid)) {
+    if (!this.checkSelectableOverride(row, dataContext, this.gridOptions)) {
       return;
     }
 
@@ -363,18 +363,18 @@ export class SlickCheckboxSelectColumn<T = any> {
     _val: any,
     _columnDef: Column,
     dataContext: any,
-    grid: SlickGrid
+    gridOptions: GridOption
   ): DocumentFragment | HTMLSpanElement | null {
-    if (dataContext && this.checkSelectableOverride(row, dataContext, grid)) {
+    if (dataContext && this.checkSelectableOverride(row, dataContext, gridOptions)) {
       const UID = this.createUID() + row;
       return this.createCheckboxElement(`selector${UID}`, !!this._selectedRowsLookup[row]);
     }
     return null;
   }
 
-  protected checkSelectableOverride(row: number, dataContext: any, grid: SlickGrid): boolean {
+  protected checkSelectableOverride(row: number, dataContext: any, gridOptions: GridOption): boolean {
     if (typeof this._selectableOverride === 'function') {
-      return this._selectableOverride(row, dataContext, grid);
+      return this._selectableOverride(row, dataContext, gridOptions);
     }
     return true;
   }
@@ -408,7 +408,7 @@ export class SlickCheckboxSelectColumn<T = any> {
         const idProperty = this._dataView.getIdPropertyName();
         const dataItemId = dataItem[idProperty];
         const foundItemIdx = filteredItems.findIndex((item) => item[idProperty] === dataItemId);
-        if (foundItemIdx >= 0 && !this.checkSelectableOverride(k, dataItem, this._grid)) {
+        if (foundItemIdx >= 0 && !this.checkSelectableOverride(k, dataItem, this.gridOptions)) {
           disabledCount++;
         }
       }
@@ -478,7 +478,7 @@ export class SlickCheckboxSelectColumn<T = any> {
         for (let i = 0; i < this._grid.getDataLength(); i++) {
           // Get the row and check it's a selectable row before pushing it onto the stack
           const rowItem = this._grid.getDataItem(i);
-          if (!rowItem.__group && !rowItem.__groupTotals && this.checkSelectableOverride(i, rowItem, this._grid)) {
+          if (!rowItem.__group && !rowItem.__groupTotals && this.checkSelectableOverride(i, rowItem, this.gridOptions)) {
             rows.push(i);
           }
         }
@@ -492,7 +492,7 @@ export class SlickCheckboxSelectColumn<T = any> {
         for (let j = 0; j < filteredItems.length; j++) {
           // Get the row and check it's a selectable ID (it could be in a different page) before pushing it onto the stack
           const dataviewRowItem = filteredItems[j];
-          if (this.checkSelectableOverride(j, dataviewRowItem, this._grid)) {
+          if (this.checkSelectableOverride(j, dataviewRowItem, this.gridOptions)) {
             ids.push(dataviewRowItem[this._dataView.getIdPropertyName()]);
           }
         }
@@ -536,7 +536,7 @@ export class SlickCheckboxSelectColumn<T = any> {
       for (k = 0; k < this._grid.getDataLength(); k++) {
         // If we are allowed to select the row
         const dataItem = this._grid.getDataItem(k);
-        if (!this.checkSelectableOverride(i, dataItem, this._grid)) {
+        if (!this.checkSelectableOverride(i, dataItem, this.gridOptions)) {
           disabledCount++;
         }
       }
@@ -548,7 +548,7 @@ export class SlickCheckboxSelectColumn<T = any> {
 
       // If we are allowed to select the row
       const rowItem = this._grid.getDataItem(row);
-      if (this.checkSelectableOverride(i, rowItem, this._grid)) {
+      if (this.checkSelectableOverride(i, rowItem, this.gridOptions)) {
         lookup[row] = true;
         if (lookup[row] !== this._selectedRowsLookup[row]) {
           this._grid.invalidateRow(row);

@@ -12,7 +12,6 @@ import {
   type GridOption,
   GroupTotalFormatters,
   type Grouping,
-  type SlickGrid,
   type SlickGroupTotals,
 } from '../../library';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
@@ -29,8 +28,7 @@ interface GroceryItem {
 }
 
 /** Check if the current item (cell) is editable or not */
-function checkItemIsEditable(_dataContext: GroceryItem, columnDef: Column, grid: SlickGrid) {
-  const gridOptions = grid.getOptions();
+function checkItemIsEditable(_dataContext: GroceryItem, columnDef: Column, gridOptions: GridOption) {
   const hasEditor = columnDef.editor;
   const isGridEditable = gridOptions.editable;
   const isEditable = isGridEditable && hasEditor;
@@ -38,8 +36,8 @@ function checkItemIsEditable(_dataContext: GroceryItem, columnDef: Column, grid:
   return isEditable;
 }
 
-const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef, dataContext: GroceryItem, grid) => {
-  const isEditableItem = checkItemIsEditable(dataContext, columnDef, grid);
+const customEditableInputFormatter: Formatter<GroceryItem> = (_row, _cell, value, columnDef, dataContext, gridOptions) => {
+  const isEditableItem = checkItemIsEditable(dataContext, columnDef, gridOptions as GridOption);
   value = value === null || value === undefined ? '' : value;
   const divElm = document.createElement('div');
   divElm.className = 'editing-field';

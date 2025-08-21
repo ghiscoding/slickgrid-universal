@@ -1,5 +1,5 @@
 import type { StyleSheet } from 'excel-builder-vanilla';
-import type { Column, Formatter, FormatterType, GetDataValueCallback, GridOption, SlickGrid } from '@slickgrid-universal/common';
+import type { Column, Formatter, FormatterType, GetDataValueCallback, GridOption } from '@slickgrid-universal/common';
 import {
   Constants,
   FieldType,
@@ -44,7 +44,7 @@ export function useCellFormatByFieldType(
   stylesheet: StyleSheet,
   excelFormats: any,
   columnDef: Column,
-  grid: SlickGrid,
+  gridOptions: GridOption,
   autoDetect = true
 ): {
   excelFormatId: number | undefined;
@@ -55,7 +55,7 @@ export function useCellFormatByFieldType(
   let callback: GetDataValueCallback = getExcelSameInputDataCallback;
 
   if (fieldType === FieldType.number && autoDetect) {
-    excelFormatId = getExcelFormatFromGridFormatter(stylesheet, excelFormats, columnDef, grid, 'cell').excelFormat.id;
+    excelFormatId = getExcelFormatFromGridFormatter(stylesheet, excelFormats, columnDef, gridOptions, 'cell').excelFormat.id;
     callback = getExcelNumberCallback;
   }
   return { excelFormatId, getDataValueParser: callback };
@@ -68,7 +68,7 @@ export function getGroupTotalValue(totals: any, args: { columnDef: Column; group
 /** Get numeric formatter options when defined or use default values (minDecimal, maxDecimal, thousandSeparator, decimalSeparator, wrapNegativeNumber) */
 export function getNumericFormatterOptions(
   columnDef: Column,
-  grid: SlickGrid,
+  gridOptions: GridOption,
   formatterType: FormatterType
 ): {
   minDecimal: number;
@@ -124,7 +124,7 @@ export function getNumericFormatterOptions(
       dataType = getFormatterNumericDataType(columnDef.formatter);
     }
   }
-  return retrieveFormatterOptions(columnDef, grid, dataType!, formatterType);
+  return retrieveFormatterOptions(columnDef, gridOptions, dataType!, formatterType);
 }
 
 export function getFormatterNumericDataType(formatter?: Formatter): 'currency' | 'decimal' | 'percent' {
@@ -157,7 +157,7 @@ export function getExcelFormatFromGridFormatter(
   stylesheet: StyleSheet,
   excelFormats: any,
   columnDef: Column,
-  grid: SlickGrid,
+  gridOptions: GridOption,
   formatterType: FormatterType
 ): {
   excelFormat: ExcelFormatter;
@@ -209,7 +209,7 @@ export function getExcelFormatFromGridFormatter(
                   stylesheet,
                   excelFormats,
                   { ...columnDef, formatter } as Column,
-                  grid,
+                  gridOptions,
                   formatterType
                 );
                 if (excelFormatResult !== excelFormats.numberFormat) {
@@ -232,7 +232,7 @@ export function getExcelFormatFromGridFormatter(
           case Formatters.percentCompleteBar:
           case Formatters.percentCompleteBarWithText:
           case Formatters.percentSymbol:
-            format = createExcelFormatFromGridFormatter(columnDef, grid, 'cell');
+            format = createExcelFormatFromGridFormatter(columnDef, gridOptions, 'cell');
             break;
           default:
             excelFormat = excelFormats.numberFormat;
@@ -243,7 +243,7 @@ export function getExcelFormatFromGridFormatter(
   }
 
   if (!excelFormat && (columnDef.formatter || columnDef.groupTotalsFormatter)) {
-    format = createExcelFormatFromGridFormatter(columnDef, grid, formatterType, groupType);
+    format = createExcelFormatFromGridFormatter(columnDef, gridOptions, formatterType, groupType);
     if (!excelFormats.hasOwnProperty(format)) {
       excelFormats[format] = stylesheet.createFormat({ format }); // save new formatter with its format as a prop key
     }
@@ -278,20 +278,20 @@ function createFormatFromNumber(formattedVal: string) {
   return format.replace(',', ',');
 }
 
-function createExcelFormatFromGridFormatter(columnDef: Column, grid: SlickGrid, formatterType: FormatterType, groupType = '') {
+function createExcelFormatFromGridFormatter(columnDef: Column, gridOptions: GridOption, formatterType: FormatterType, groupType = '') {
   let outputFormat = '';
   let positiveFormat = '';
   let negativeFormat = '';
-  const { minDecimal, maxDecimal, thousandSeparator } = getNumericFormatterOptions(columnDef, grid, formatterType);
+  const { minDecimal, maxDecimal, thousandSeparator } = getNumericFormatterOptions(columnDef, gridOptions, formatterType);
   const leftInteger = thousandSeparator ? '2220' : '0';
   const testingNo = parseFloat(`${leftInteger}.${excelTestingDecimalNumberPadding(minDecimal, maxDecimal)}`);
 
   if (formatterType === 'group' && columnDef.groupTotalsFormatter) {
-    positiveFormat = stripTags(columnDef.groupTotalsFormatter({ [groupType]: { [columnDef.field]: testingNo } }, columnDef, grid));
-    negativeFormat = stripTags(columnDef.groupTotalsFormatter({ [groupType]: { [columnDef.field]: -testingNo } }, columnDef, grid));
+    positiveFormat = stripTags(columnDef.groupTotalsFormatter({ [groupType]: { [columnDef.field]: testingNo } }, columnDef, gridOptions));
+    negativeFormat = stripTags(columnDef.groupTotalsFormatter({ [groupType]: { [columnDef.field]: -testingNo } }, columnDef, gridOptions));
   } else if (columnDef.formatter) {
-    positiveFormat = stripTags(columnDef.formatter(0, 0, testingNo, columnDef, {}, grid) as string);
-    negativeFormat = stripTags(columnDef.formatter(0, 0, -testingNo, columnDef, {}, grid) as string);
+    positiveFormat = stripTags(columnDef.formatter(0, 0, testingNo, columnDef, {}, gridOptions) as string);
+    negativeFormat = stripTags(columnDef.formatter(0, 0, -testingNo, columnDef, {}, gridOptions) as string);
   }
   if (positiveFormat && negativeFormat) {
     outputFormat = createFormatFromNumber(positiveFormat) + ';' + createFormatFromNumber(negativeFormat);

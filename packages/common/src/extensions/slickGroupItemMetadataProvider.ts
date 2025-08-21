@@ -169,9 +169,9 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
     _value: any,
     columnDef: Column,
     item: any,
-    grid: SlickGrid
+    gridOptions: GridOption
   ): string | HTMLElement {
-    return columnDef?.groupTotalsFormatter?.(item, columnDef, grid) ?? '';
+    return columnDef?.groupTotalsFormatter?.(item, columnDef, gridOptions) ?? '';
   }
 
   /** Handle a grid cell clicked, it could be a Group that is being collapsed/expanded or do nothing when it's not */

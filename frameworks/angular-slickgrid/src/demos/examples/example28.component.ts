@@ -13,7 +13,6 @@ import {
   Formatters,
   type GridOption,
   isNumber,
-  type SlickDataView,
 } from '../../library';
 
 @Component({
@@ -265,16 +264,14 @@ export class Example28Component implements OnInit {
     this.angularGrid.filterService.updateFilters([{ columnId: 'file', searchTerms: [this.searchString] }], true, false, true);
   }
 
-  treeFormatter: Formatter = (_row, _cell, value, _columnDef, dataContext, grid) => {
-    const gridOptions = grid.getOptions();
-    const treeLevelPropName = (gridOptions.treeDataOptions && gridOptions.treeDataOptions.levelPropName) || '__treeLevel';
+  treeFormatter: Formatter = (_row, _cell, value, _columnDef, dataContext, gridOptions) => {
+    const treeLevelPropName = gridOptions.treeDataOptions?.levelPropName || '__treeLevel';
     if (value === null || value === undefined || dataContext === undefined) {
       return '';
     }
-    const dataView = grid.getData<SlickDataView>();
-    const data = dataView.getItems();
-    const identifierPropName = dataView.getIdPropertyName() || 'id';
-    const idx = dataView.getIdxById(dataContext[identifierPropName]) as number;
+    const data = this.angularGrid.dataView.getItems();
+    const identifierPropName = this.angularGrid.dataView.getIdPropertyName() || 'id';
+    const idx = this.angularGrid.dataView.getIdxById(dataContext[identifierPropName]) as number;
     const prefix = this.getFileIcon(value);
     const treeLevel = dataContext[treeLevelPropName];
     const exportIndentationLeadingChar = '.';

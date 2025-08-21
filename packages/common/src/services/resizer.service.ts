@@ -547,7 +547,7 @@ export class ResizerService {
           columnIndexOverride ?? colIdx,
           columnDef,
           item,
-          this._grid
+          this.gridOptions
         );
         const formattedDataSanitized = isPrimitiveOrHTML(formattedData) ? stripTags(formattedData) : '';
         if (!maxSanitizedTextMap[columnDef.id] || formattedDataSanitized.length > maxSanitizedTextMap[columnDef.id].length) {

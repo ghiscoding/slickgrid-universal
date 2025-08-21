@@ -3793,7 +3793,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     let formatterResult: FormatterResultWithHtml | FormatterResultWithText | HTMLElement | DocumentFragment | string = '';
     if (item) {
       value = this.getDataItemValueForColumn(item, m);
-      formatterResult = this.getFormatter(row, m)(row, cell, value, m, item, this as unknown as SlickGrid);
+      formatterResult = this.getFormatter(row, m)(row, cell, value, m, item, this._options);
       if (formatterResult === null || formatterResult === undefined) {
         formatterResult = '';
       }
@@ -4219,9 +4219,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         //   this.updateCell(spans[0], spans[1]);
         //   return;
         // }
-        const formatterResult = d
-          ? this.getFormatter(row, m)(row, cell, this.getDataItemValueForColumn(d, m), m, d, this as unknown as SlickGrid)
-          : '';
+        const formatterResult = d ? this.getFormatter(row, m)(row, cell, this.getDataItemValueForColumn(d, m), m, d, this._options) : '';
         this.applyFormatResultToCellNode(formatterResult, cellNode);
         this.invalidatePostProcessingResults(row);
       }
@@ -4252,14 +4250,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         if (this.currentEditor && row === this.activeRow && columnIdx === this.activeCell) {
           this.currentEditor.loadValue(d);
         } else if (d) {
-          formatterResult = this.getFormatter(row, m)(
-            row,
-            columnIdx,
-            this.getDataItemValueForColumn(d, m),
-            m,
-            d,
-            this as unknown as SlickGrid
-          );
+          formatterResult = this.getFormatter(row, m)(row, columnIdx, this.getDataItemValueForColumn(d, m), m, d, this._options);
           this.applyFormatResultToCellNode(formatterResult, node as HTMLDivElement);
         } else {
           emptyElement(node);
@@ -6121,7 +6112,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             this.getDataItemValueForColumn(d, column),
             column,
             d,
-            this as unknown as SlickGrid
+            this._options
           );
           this.applyFormatResultToCellNode(formatterResult, this.activeCellNode);
           this.invalidatePostProcessingResults(this.activeRow);

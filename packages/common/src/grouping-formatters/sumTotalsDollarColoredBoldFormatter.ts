@@ -1,16 +1,15 @@
 import { createDomElement, isNumber } from '@slickgrid-universal/utils';
 
-import type { Column, GroupTotalsFormatter } from './../interfaces/index.js';
-import { type SlickGrid } from '../core/index.js';
+import type { GroupTotalsFormatter } from './../interfaces/index.js';
 import { sumTotalsDollarFormatter } from './sumTotalsDollarFormatter.js';
 
-export const sumTotalsDollarColoredBoldFormatter: GroupTotalsFormatter = (totals: any, columnDef: Column, grid: SlickGrid) => {
+export const sumTotalsDollarColoredBoldFormatter: GroupTotalsFormatter = (totals, columnDef, gridOptions) => {
   const field = columnDef.field ?? '';
   const val = totals.sum?.[field];
 
   if (isNumber(val)) {
     const color = val >= 0 ? 'green' : 'red';
-    const textContent = sumTotalsDollarFormatter(totals, columnDef, grid) as string;
+    const textContent = sumTotalsDollarFormatter(totals, columnDef, gridOptions) as string;
     return createDomElement('span', {
       style: {
         color,

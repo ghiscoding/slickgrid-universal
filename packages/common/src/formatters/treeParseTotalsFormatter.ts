@@ -1,8 +1,7 @@
 import { Constants } from '../constants.js';
-import type { Formatter, GridOption, GroupTotalsFormatter } from '../interfaces/index.js';
+import type { Formatter, GroupTotalsFormatter } from '../interfaces/index.js';
 
-export const treeParseTotalsFormatter: Formatter = (row, cell, value, columnDef, dataContext, grid) => {
-  const gridOptions = grid.getOptions() as GridOption;
+export const treeParseTotalsFormatter: Formatter = (row, cell, value, columnDef, dataContext, gridOptions) => {
   const hasChildrenPropName = gridOptions.treeDataOptions?.hasChildrenPropName ?? Constants.treeDataProperties.HAS_CHILDREN_PROP;
   const { groupTotalsFormatter, treeTotalsFormatter, params } = columnDef;
 
@@ -16,14 +15,14 @@ export const treeParseTotalsFormatter: Formatter = (row, cell, value, columnDef,
   // treeParseTotalsFormatter will auto-detect if it should execute GroupTotalsFormatter or a list of regular Formatters (it has to be either/or, never both at same time)
   if (dataContext[hasChildrenPropName] && dataContext?.__treeTotals && (groupTotalsFormatter || treeTotalsFormatter)) {
     const totalFormatter = (treeTotalsFormatter ?? groupTotalsFormatter) as GroupTotalsFormatter;
-    return totalFormatter(dataContext?.__treeTotals, columnDef, grid);
+    return totalFormatter(dataContext?.__treeTotals, columnDef, gridOptions);
   } else if (params.formatters) {
     // loop through all Formatters, the value of 1st formatter will be used by 2nd formatter and so on.
     // they are piped and executed in sequences
     let currentValue = value;
     for (const formatter of params.formatters) {
       if (!dataContext[hasChildrenPropName] && !dataContext?.__treeTotals && typeof formatter === 'function') {
-        currentValue = (formatter as Formatter)(row, cell, currentValue, columnDef, dataContext, grid) || value;
+        currentValue = (formatter as Formatter)(row, cell, currentValue, columnDef, dataContext, gridOptions) || value;
       }
     }
     return currentValue;

@@ -1,19 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { Column } from '../../interfaces/index.js';
+import type { Column, GridOption } from '../../interfaces/index.js';
 import { hyperlinkFormatter } from '../hyperlinkFormatter.js';
-import type { SlickGrid } from '../../core/index.js';
 import * as utils from '../../core/utils.js';
 import type { TrustedHTML } from 'trusted-types/lib/index.js';
 
-const gridStub = {
-  getData: vi.fn(),
-  getOptions: vi.fn(),
-} as unknown as SlickGrid;
-
 describe('the Hyperlink Formatter', () => {
   beforeEach(() => {
-    vi.spyOn(gridStub, 'getOptions').mockReturnValue(undefined as any);
     vi.spyOn(utils, 'runOptionalHtmlSanitizer').mockImplementation((dirtyHtml: unknown, sanitizer?: (str: string) => string | TrustedHTML) => {
       if (sanitizer) {
         // Coerce TrustedHTML to string for testing
@@ -25,19 +18,19 @@ describe('the Hyperlink Formatter', () => {
   });
 
   it('should return empty string when value is not an hyperlink and is empty', () => {
-    const result = hyperlinkFormatter(0, 0, '', {} as Column, {}, gridStub);
+    const result = hyperlinkFormatter(0, 0, '', {} as Column, {}, {} as GridOption);
     expect(result).toBe('');
   });
 
   it('should return original value when value is not an hyperlink', () => {
-    const result = hyperlinkFormatter(0, 0, 'anything', {} as Column, {}, gridStub);
+    const result = hyperlinkFormatter(0, 0, 'anything', {} as Column, {}, {} as GridOption);
     expect(result).toBe('anything');
   });
 
   it('should return original value when URL passed through the generic params "hyperlinkUrl" is not a valid hyperlink', () => {
     const hyperlinkUrl1 = '';
     const inputValue = 'Company Name';
-    const result1 = hyperlinkFormatter(0, 0, inputValue, { params: { hyperlinkUrl: hyperlinkUrl1 } } as Column, {}, gridStub);
+    const result1 = hyperlinkFormatter(0, 0, inputValue, { params: { hyperlinkUrl: hyperlinkUrl1 } } as Column, {}, {} as GridOption);
     expect(result1).toBe(inputValue);
   });
 
@@ -46,9 +39,9 @@ describe('the Hyperlink Formatter', () => {
     const inputValue2 = 'https//something.com';
     const inputValue3 = 'ftpp://something.com';
 
-    const result1 = hyperlinkFormatter(0, 0, inputValue1, {} as Column, {}, gridStub);
-    const result2 = hyperlinkFormatter(0, 0, inputValue2, {} as Column, {}, gridStub);
-    const result3 = hyperlinkFormatter(0, 0, inputValue3, {} as Column, {}, gridStub);
+    const result1 = hyperlinkFormatter(0, 0, inputValue1, {} as Column, {}, {} as GridOption);
+    const result2 = hyperlinkFormatter(0, 0, inputValue2, {} as Column, {}, {} as GridOption);
+    const result3 = hyperlinkFormatter(0, 0, inputValue3, {} as Column, {}, {} as GridOption);
 
     expect(result1).toBe(inputValue1);
     expect(result2).toBe(inputValue2);
@@ -60,9 +53,9 @@ describe('the Hyperlink Formatter', () => {
     const inputValue2 = 'https://something.com';
     const inputValue3 = 'ftp://something.com';
 
-    const result1 = hyperlinkFormatter(0, 0, inputValue1, {} as Column, {}, gridStub);
-    const result2 = hyperlinkFormatter(0, 0, inputValue2, {} as Column, {}, gridStub);
-    const result3 = hyperlinkFormatter(0, 0, inputValue3, {} as Column, {}, gridStub);
+    const result1 = hyperlinkFormatter(0, 0, inputValue1, {} as Column, {}, {} as GridOption);
+    const result2 = hyperlinkFormatter(0, 0, inputValue2, {} as Column, {}, {} as GridOption);
+    const result3 = hyperlinkFormatter(0, 0, inputValue3, {} as Column, {}, {} as GridOption);
 
     expect((result1 as HTMLElement).outerHTML).toBe(`<a href="${inputValue1}">${inputValue1}</a>`);
     expect((result2 as HTMLElement).outerHTML).toBe(`<a href="${inputValue2}">${inputValue2}</a>`);
@@ -75,9 +68,9 @@ describe('the Hyperlink Formatter', () => {
     const inputValue3 = 'ftp://something.com';
     const linkText = 'Company Website';
 
-    const result1 = hyperlinkFormatter(0, 0, inputValue1, { params: { hyperlinkText: linkText } } as Column, {}, gridStub);
-    const result2 = hyperlinkFormatter(0, 0, inputValue2, { params: { hyperlinkText: linkText } } as Column, {}, gridStub);
-    const result3 = hyperlinkFormatter(0, 0, inputValue3, { params: { hyperlinkText: linkText } } as Column, {}, gridStub);
+    const result1 = hyperlinkFormatter(0, 0, inputValue1, { params: { hyperlinkText: linkText } } as Column, {}, {} as GridOption);
+    const result2 = hyperlinkFormatter(0, 0, inputValue2, { params: { hyperlinkText: linkText } } as Column, {}, {} as GridOption);
+    const result3 = hyperlinkFormatter(0, 0, inputValue3, { params: { hyperlinkText: linkText } } as Column, {}, {} as GridOption);
 
     expect((result1 as HTMLElement).outerHTML).toBe(`<a href="${inputValue1}">${linkText}</a>`);
     expect((result2 as HTMLElement).outerHTML).toBe(`<a href="${inputValue2}">${linkText}</a>`);
@@ -90,9 +83,9 @@ describe('the Hyperlink Formatter', () => {
     const hyperlinkUrl3 = 'ftp://something.com';
     const inputValue = 'Company Name';
 
-    const result1 = hyperlinkFormatter(0, 0, inputValue, { params: { hyperlinkUrl: hyperlinkUrl1 } } as Column, {}, gridStub);
-    const result2 = hyperlinkFormatter(0, 0, inputValue, { params: { hyperlinkUrl: hyperlinkUrl2 } } as Column, {}, gridStub);
-    const result3 = hyperlinkFormatter(0, 0, inputValue, { params: { hyperlinkUrl: hyperlinkUrl3 } } as Column, {}, gridStub);
+    const result1 = hyperlinkFormatter(0, 0, inputValue, { params: { hyperlinkUrl: hyperlinkUrl1 } } as Column, {}, {} as GridOption);
+    const result2 = hyperlinkFormatter(0, 0, inputValue, { params: { hyperlinkUrl: hyperlinkUrl2 } } as Column, {}, {} as GridOption);
+    const result3 = hyperlinkFormatter(0, 0, inputValue, { params: { hyperlinkUrl: hyperlinkUrl3 } } as Column, {}, {} as GridOption);
 
     expect((result1 as HTMLElement).outerHTML).toBe(`<a href="${hyperlinkUrl1}">${inputValue}</a>`);
     expect((result2 as HTMLElement).outerHTML).toBe(`<a href="${hyperlinkUrl2}">${inputValue}</a>`);
@@ -108,9 +101,9 @@ describe('the Hyperlink Formatter', () => {
     const linkText3 = 'Company XYZ';
     const inputValue = 'anything';
 
-    const result1 = hyperlinkFormatter(0, 0, inputValue, { params: { hyperlinkUrl: hyperlinkUrl1, hyperlinkText: linkText1 } } as Column, {}, gridStub);
-    const result2 = hyperlinkFormatter(0, 0, inputValue, { params: { hyperlinkUrl: hyperlinkUrl2, hyperlinkText: linkText2 } } as Column, {}, gridStub);
-    const result3 = hyperlinkFormatter(0, 0, inputValue, { params: { hyperlinkUrl: hyperlinkUrl3, hyperlinkText: linkText3 } } as Column, {}, gridStub);
+    const result1 = hyperlinkFormatter(0, 0, inputValue, { params: { hyperlinkUrl: hyperlinkUrl1, hyperlinkText: linkText1 } } as Column, {}, {} as GridOption);
+    const result2 = hyperlinkFormatter(0, 0, inputValue, { params: { hyperlinkUrl: hyperlinkUrl2, hyperlinkText: linkText2 } } as Column, {}, {} as GridOption);
+    const result3 = hyperlinkFormatter(0, 0, inputValue, { params: { hyperlinkUrl: hyperlinkUrl3, hyperlinkText: linkText3 } } as Column, {}, {} as GridOption);
 
     expect((result1 as HTMLElement).outerHTML).toBe(`<a href="${hyperlinkUrl1}">${linkText1}</a>`);
     expect((result2 as HTMLElement).outerHTML).toBe(`<a href="${hyperlinkUrl2}">${linkText2}</a>`);
@@ -122,11 +115,9 @@ describe('the Hyperlink Formatter', () => {
     const hyperlinkUrl = 'http://something.com';
     const linkText = 'Company ABC';
     const inputValue = 'anything';
-    const gridOptions = { sanitizer: (str: string) => `${str}-sanitized` };
+    const gridOptions: GridOption = { sanitizer: (str: string) => `${str}-sanitized` };
 
-    const result = hyperlinkFormatter(0, 0, inputValue, { params: { hyperlinkUrl, hyperlinkText } } as Column, {}, {
-      getOptions: () => gridOptions,
-    } as SlickGrid);
+    const result = hyperlinkFormatter(0, 0, inputValue, { params: { hyperlinkUrl, hyperlinkText } } as Column, {}, gridOptions);
 
     expect((result as HTMLElement).outerHTML).toBe(`<a href="${hyperlinkUrl}-sanitized">${linkText}-sanitized</a>`);
   });
@@ -137,7 +128,7 @@ describe('the Hyperlink Formatter', () => {
     const linkText = 'Company ABC';
     const inputValue = 'anything';
 
-    const result = hyperlinkFormatter(0, 0, inputValue, { params: { hyperlinkUrl, hyperlinkText } } as Column, {}, gridStub);
+    const result = hyperlinkFormatter(0, 0, inputValue, { params: { hyperlinkUrl, hyperlinkText } } as Column, {}, {} as GridOption);
 
     expect((result as HTMLElement).outerHTML).toBe(`<a href="${hyperlinkUrl}">${linkText}</a>`);
   });
