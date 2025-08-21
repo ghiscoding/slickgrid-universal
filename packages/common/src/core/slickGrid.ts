@@ -12,7 +12,6 @@ import {
   isDefinedNumber,
   isPrimitiveOrHTML,
 } from '@slickgrid-universal/utils';
-import { dequal } from 'dequal';
 import Sortable from 'sortablejs/modular/sortable.core.esm.js';
 import type { Options as SortableOptions, SortableEvent } from 'sortablejs';
 import type { TrustedHTML } from 'trusted-types/lib';
@@ -2101,7 +2100,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         }
 
         e.stopPropagation();
-        if (!dequal(prevColumnIds, reorderedIds)) {
+        if (!this.arrayEquals(prevColumnIds, reorderedIds)) {
           this.setColumns(reorderedColumns);
           this.triggerEvent(this.onColumnsReordered, { impactedColumns: this.columns, previousColumnOrder: prevColumnIds });
           this.setupColumnResize();
@@ -3190,7 +3189,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.setCellCssStyles(this._options.selectedCellCssClass || '', hash);
 
     // check if the selected rows have changed (index order isn't important, so we'll sort them both before comparing them)
-    if (!dequal(previousSelectedRows.sort(), this.selectedRows.sort())) {
+    if (!this.arrayEquals(previousSelectedRows.sort(), this.selectedRows.sort())) {
       const caller = ne?.detail?.caller ?? 'click';
       // Use Set for faster performance
       const selectedRowsSet = new Set(this.getSelectedRows());
@@ -3211,6 +3210,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         e
       );
     }
+  }
+
+  // compare 2 primitive type arrays, do not use to compare object arrays)
+  arrayEquals<T extends boolean | string | number>(arr1: Array<T>, arr2: Array<T>): boolean {
+    return Array.isArray(arr1) && Array.isArray(arr2) && arr2.toString() === arr1.toString();
   }
 
   /** Returns an array of column definitions. */
