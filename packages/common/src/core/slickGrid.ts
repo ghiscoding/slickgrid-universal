@@ -2047,6 +2047,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     // add/remove extra scroll padding for calculation
     const scrollColumnsRight = () => (this._viewportScrollContainerX.scrollLeft += 10);
     const scrollColumnsLeft = () => (this._viewportScrollContainerX.scrollLeft -= 10);
+    let prevColumnIds: Array<string | number> = [];
 
     let canDragScroll = false;
     const sortableOptions = {
@@ -2080,6 +2081,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         } else {
           clearInterval(columnScrollTimer);
         }
+        prevColumnIds = this.columns.map((c) => c.id);
       },
       onEnd: (e) => {
         e.item.classList.remove('slick-header-column-active');
@@ -2096,11 +2098,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         for (let i = 0; i < reorderedIds.length; i++) {
           reorderedColumns.push(this.columns[this.getColumnIndex(reorderedIds[i])]);
         }
-        this.setColumns(reorderedColumns);
 
-        this.triggerEvent(this.onColumnsReordered, { impactedColumns: this.columns });
         e.stopPropagation();
-        this.setupColumnResize();
+        if (!this.arrayEquals(prevColumnIds, reorderedIds)) {
+          this.setColumns(reorderedColumns);
+          this.triggerEvent(this.onColumnsReordered, { impactedColumns: this.columns, previousColumnOrder: prevColumnIds });
+          this.setupColumnResize();
+        }
         if (this.activeCellNode) {
           this.setFocus(); // refocus on active cell
         }
@@ -3184,7 +3188,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     this.setCellCssStyles(this._options.selectedCellCssClass || '', hash);
 
-    if (this.simpleArrayEquals(previousSelectedRows, this.selectedRows)) {
+    // check if the selected rows have changed (index order isn't important, so we'll sort them both before comparing them)
+    if (!this.arrayEquals(previousSelectedRows.sort(), this.selectedRows.sort())) {
       const caller = ne?.detail?.caller ?? 'click';
       // Use Set for faster performance
       const selectedRowsSet = new Set(this.getSelectedRows());
@@ -3207,9 +3212,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
   }
 
-  // compare 2 simple arrays (integers or strings only, do not use to compare object arrays)
-  simpleArrayEquals(arr1: any[], arr2: any[]): boolean {
-    return Array.isArray(arr1) && Array.isArray(arr2) && arr2.sort().toString() !== arr1.sort().toString();
+  // compare 2 primitive type arrays, do not use to compare object arrays)
+  arrayEquals<T extends boolean | string | number>(arr1: Array<T>, arr2: Array<T>): boolean {
+    return Array.isArray(arr1) && Array.isArray(arr2) && arr2.toString() === arr1.toString();
   }
 
   /** Returns an array of column definitions. */

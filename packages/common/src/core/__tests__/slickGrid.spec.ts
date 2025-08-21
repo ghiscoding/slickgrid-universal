@@ -2717,6 +2717,7 @@ describe('SlickGrid core file', () => {
       Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
       Object.defineProperty(headerColumnElms[0], 'clientLeft', { writable: true, value: 25 });
       Object.defineProperty(viewportTopLeft, 'clientLeft', { writable: true, value: 25 });
+      vi.spyOn(sortInstance, 'toArray').mockReturnValueOnce(['firstName', 'age', 'lastName']); // simulate column order change
 
       expect(sortInstance).toBeTruthy();
       sortInstance.options.onStart(dragEvent);
@@ -2748,6 +2749,7 @@ describe('SlickGrid core file', () => {
       Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
       Object.defineProperty(headerColumnElms[0], 'clientLeft', { writable: true, value: 25 });
       Object.defineProperty(viewportTopLeft, 'clientLeft', { writable: true, value: 25 });
+      vi.spyOn(sortInstance, 'toArray').mockReturnValueOnce(['firstName', 'age', 'lastName']); // simulate column order change
 
       expect(sortInstance).toBeTruthy();
       sortInstance.options.onStart(dragEvent);
@@ -2758,6 +2760,37 @@ describe('SlickGrid core file', () => {
       expect(viewportTopLeft.scrollLeft).toBe(10);
       sortInstance.options.onEnd(dragEvent);
       expect(onColumnsReorderedSpy).toHaveBeenCalled();
+    });
+
+    it('should not trigger "onColumnsReordered" neither reorder column when column order is the same', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+      const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as HTMLDivElement;
+      Object.keys(headerColumnsElm).forEach((prop) => {
+        if (prop.startsWith('Sortable')) {
+          sortInstance = headerColumnsElm[prop];
+        }
+      });
+      const onColumnsReorderedSpy = vi.spyOn(grid.onColumnsReordered, 'notify');
+      const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
+      const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+
+      const dragEvent = new CustomEvent('DragEvent');
+      vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
+      Object.defineProperty(dragEvent, 'originalEvent', { writable: true, value: { pageX: DEFAULT_GRID_WIDTH + 11 } });
+      Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
+      Object.defineProperty(headerColumnElms[0], 'clientLeft', { writable: true, value: 25 });
+      Object.defineProperty(viewportTopLeft, 'clientLeft', { writable: true, value: 25 });
+      vi.spyOn(sortInstance, 'toArray').mockReturnValueOnce(['firstName', 'lastName', 'age']); // simulate same column order as before
+
+      expect(sortInstance).toBeTruthy();
+      sortInstance.options.onStart(dragEvent);
+      expect(viewportTopLeft.scrollLeft).toBe(0);
+
+      vi.advanceTimersByTime(100);
+
+      expect(viewportTopLeft.scrollLeft).toBe(10);
+      sortInstance.options.onEnd(dragEvent);
+      expect(onColumnsReorderedSpy).not.toHaveBeenCalled(); // same order won't call event
     });
 
     it('should try reordering column but stay at same scroll position when grid has frozen columns', () => {
@@ -2788,7 +2821,7 @@ describe('SlickGrid core file', () => {
 
       expect(viewportTopLeft.scrollLeft).toBe(0); // same position
       sortInstance.options.onEnd(dragEvent);
-      expect(onColumnsReorderedSpy).toHaveBeenCalled();
+      expect(onColumnsReorderedSpy).not.toHaveBeenCalled();
     });
 
     it('should not allow column reordering when Editor Lock commitCurrentEdit() is failing', () => {

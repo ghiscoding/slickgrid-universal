@@ -81,6 +81,7 @@ export interface OnColumnsDragEventArgs extends SlickGridArg {
 }
 export interface OnColumnsReorderedEventArgs extends SlickGridArg {
   impactedColumns: Column[];
+  previousColumnOrder: Array<string | number>;
 }
 export interface OnColumnsResizedEventArgs extends SlickGridArg {
   triggeredByColumn: string;
