@@ -2105,9 +2105,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           this.setColumns(reorderedColumns);
           this.triggerEvent(this.onColumnsReordered, { impactedColumns: this.columns, previousColumnOrder: prevColumnIds });
           this.setupColumnResize();
-          if (this.activeCellNode) {
-            this.setFocus(); // refocus on active cell
-          }
+        }
+        if (this.activeCellNode) {
+          this.setFocus(); // refocus on active cell
         }
       },
     } as SortableOptions;
