@@ -3189,7 +3189,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     this.setCellCssStyles(this._options.selectedCellCssClass || '', hash);
 
-    if (!dequal(previousSelectedRows, this.selectedRows)) {
+    // check if the selected rows have changed (index order isn't important, so we'll sort them both before comparing them)
+    if (!dequal(previousSelectedRows.sort(), this.selectedRows.sort())) {
       const caller = ne?.detail?.caller ?? 'click';
       // Use Set for faster performance
       const selectedRowsSet = new Set(this.getSelectedRows());
