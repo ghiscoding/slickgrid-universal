@@ -126,20 +126,37 @@ jobs:
         run: |
           set -o pipefail
           OUTPUT_FILE=$(mktemp)
+
+          # Capture both stdout and stderr
           pnpm exec lerna publish from-package --force-publish --yes --otp ${{ steps.wait-for-secrets.outputs.OTP }} 2>&1 | tee $OUTPUT_FILE
           EXIT_CODE=${PIPESTATUS[0]}
+
+          # Capture the full output
           OUTPUT=$(cat $OUTPUT_FILE)
-          echo "publish_failed=false" >> $GITHUB_OUTPUT
-          echo "publish_output<<EOF" >> $GITHUB_OUTPUT
-          echo "$OUTPUT" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-          if [ $EXIT_CODE -ne 0 ]; then
-            if echo "$OUTPUT" | grep -E -q 'HttpErrorAuthOTP|EOTP|OTP required for authentication'; then
-              echo "publish_failed=true" >> $GITHUB_OUTPUT
-            else
-              echo "::error title=Lerna Publish Failed::$OUTPUT"
-            fi
+
+          # Check specifically for OTP-related errors
+          if echo "$OUTPUT" | grep -qE "HttpErrorAuthOTP|EOTP|OTP expired|OTP required for authentication"; then
+            echo "publish_failed=true" >> $GITHUB_OUTPUT
+            echo "error_type=otp" >> $GITHUB_OUTPUT
+            exit 0  # Exit successfully to allow workflow to continue
+          elif [ $EXIT_CODE -ne 0 ]; then
+            echo "publish_failed=true" >> $GITHUB_OUTPUT
+            echo "error_type=general" >> $GITHUB_OUTPUT
+            exit 0  # Exit successfully to allow workflow to continue
           fi
+
+      - name: Diagnostic Output Check
+        if: always() # This ensures the step runs even if previous steps fail
+        shell: bash
+        run: |
+          echo "Lerna Publish Outputs:"
+          echo "publish_failed: ${{ steps.lerna-publish.outputs.publish_failed }}"
+          echo "Full context of lerna-publish step:"
+          echo "Conclusion: ${{ steps.lerna-publish.conclusion }}"
+          echo "Outcome: ${{ steps.lerna-publish.outcome }}"
+
+          # Additional context
+          echo "Job Status: ${{ job.status }}"
 
       - name: Check for EOTP and Prompt for New OTP
         if: ${{ steps.lerna-publish.outputs.publish_failed == 'true' }}
@@ -159,6 +176,7 @@ jobs:
           NPM_CONFIG_PROVENANCE: true
         shell: bash
         run: |
+          # Retry publish with new OTP
           pnpm exec lerna publish from-package --force-publish --yes --otp ${{ steps.wait-for-new-otp.outputs.OTP }} || {
             echo "::error title=Publish Failed::Publishing failed even after providing a new OTP."
             exit 1
