@@ -92,6 +92,7 @@ const gridStub = {
   setOptions: vi.fn(),
   setSelectedRows: vi.fn(),
   scrollRowIntoView: vi.fn(),
+  updateColumns: vi.fn(),
   updateRow: vi.fn(),
 } as unknown as SlickGrid;
 

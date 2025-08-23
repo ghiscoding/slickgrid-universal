@@ -828,7 +828,7 @@ export default class Example11 {
       this.sgb.filterService.updateFilters(filters as CurrentFilter[]);
       this.sgb.sortService.updateSorting(sorters as CurrentSorter[]);
       this.sgb.gridStateService.changeColumnsArrangement(columns);
-      this.sgb.gridService.setPinning(pinning);
+      this.sgb.gridService.setPinning(pinning); // make sure to set pinning last in case some columns were hidden which would offset the pinning
     } else {
       this.sgb.gridService.clearPinning();
       this.sgb.filterService.clearFilters();

@@ -106,11 +106,18 @@ export class GridService {
   /**
    * Set pinning (frozen) grid options
    * @param  {Object} pinningOptions - which pinning/frozen options to modify
-   * @param {Boolean} shouldAutosizeColumns - defaults to True, should we call an autosizeColumns after the pinning is done?
+   * @param {Boolean} shouldAutosizeColumns - defaults to True, should we call an `autosizeColumns()` after the pinning is done?
    * @param {Boolean} suppressRender - do we want to supress the grid re-rendering? (defaults to false)
-   * @param {Boolean} suppressColumnSet - do we want to supress the columns set, via "setColumns()" method? (defaults to false)
+   * @param {Boolean} suppressColumnSet - do we want to supress the columns set, via `setColumns()` method? (defaults to true)
+   * @param {Boolean} suppressUpdateColumns - do we want to supress the columns update, via `updateColumns()` method? (defaults to false, if you're calling `grid.setColumns()` afterward then you should suppress this)
    */
-  setPinning(pinningOptions: CurrentPinning, shouldAutosizeColumns = true, suppressRender = false, suppressColumnSet = true): void {
+  setPinning(
+    pinningOptions: CurrentPinning,
+    shouldAutosizeColumns = true,
+    suppressRender = false,
+    suppressColumnSet = true,
+    suppressUpdateColumns = false
+  ): void {
     if (isObjectEmpty(pinningOptions)) {
       this.clearPinning();
     } else {
@@ -123,6 +130,9 @@ export class GridService {
 
     if (shouldAutosizeColumns) {
       this.sharedService.slickGrid.autosizeColumns();
+    }
+    if (!suppressUpdateColumns) {
+      this._grid.updateColumns();
     }
   }
 
