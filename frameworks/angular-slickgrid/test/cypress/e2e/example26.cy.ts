@@ -104,27 +104,24 @@ describe('Example 26 - Use of Angular Components', () => {
   });
 
   it('should render the Custom Tooltip on top of the ng-select multi value component', () => {
-    cy.get('.slick-headerrow-column:nth(2)').find('ng-select').click();
+    cy.get('.slick-headerrow-column:nth(2)').find('ng-select').as('ng-select-filter');
+
+    // 1st select value
+    cy.get('@ng-select-filter').click();
     cy.get('.ng-option:nth(1)').click();
 
-    cy.get('.slick-headerrow-column:nth(2)').find('ng-select').click();
+    // 2nd select value
+    cy.get('@ng-select-filter').click();
     cy.get('.ng-option:nth(2)').click();
 
-    cy.wait(1000);
+    cy.wait(100);
 
-    cy.get('.ng-value:nth(1)')
-      .realHover()
-      .then(() => {
-        cy.get('.slick-custom-tooltip').should('exist');
-        cy.get('.slick-custom-tooltip').should('contain', 'Pierre');
-      });
+    // show tooltip hover multi select values
+    cy.get('.ng-value:nth(1)').trigger('mouseover');
+    cy.get('.slick-custom-tooltip').should('contain', 'Pierre');
 
-    cy.get('.ng-value:nth(0)')
-      .realHover()
-      .then(() => {
-        cy.get('.slick-custom-tooltip').should('exist');
-        cy.get('.slick-custom-tooltip').should('contain', 'John');
-      });
+    cy.get('.ng-value:nth(0)').trigger('mouseover');
+    cy.get('.slick-custom-tooltip').should('contain', 'John');
   });
 
   it('should remove Angular Component rendered for AsyncPostRender once content is copied', () => {
