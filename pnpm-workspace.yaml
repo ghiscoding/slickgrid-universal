@@ -22,7 +22,7 @@ catalog:
   '@vitest/ui': ^3.2.4
   bootstrap: ^5.3.7
   cross-env: ^10.0.0
-  cypress: ^14.5.4
+  cypress: ^15.0.0
   cypress-real-events: ^1.14.0
   dequal: ^2.0.3
   dompurify: ^3.2.6
