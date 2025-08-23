@@ -25,7 +25,7 @@ describe('Example 40 - Infinite Scroll from JSON data', () => {
   it('should scroll to bottom of the grid and expect next batch of 50 items appended to current dataset for a total of 100 items', () => {
     cy.get('[data-test="totalItemCount"]').should('have.text', '50');
 
-    cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('bottom');
+    cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('bottom', { timeout: 100 });
 
     cy.get('[data-test="totalItemCount"]').should('have.text', '100');
   });
@@ -33,7 +33,7 @@ describe('Example 40 - Infinite Scroll from JSON data', () => {
   it('should scroll to bottom of the grid again and expect 50 more items for a total of now 150 items', () => {
     cy.get('[data-test="totalItemCount"]').should('have.text', '100');
 
-    cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('bottom');
+    cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('bottom', { timeout: 100 });
 
     cy.get('[data-test="totalItemCount"]').should('have.text', '150');
   });
@@ -80,7 +80,7 @@ describe('Example 40 - Infinite Scroll from JSON data', () => {
   });
 
   it('should scroll to the bottom "Group by Duration" and expect 50 more items for a total of 100 items grouped', () => {
-    cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('bottom');
+    cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('bottom', { timeout: 100 });
 
     cy.get('[data-test="totalItemCount"]').should('have.text', '100');
 
@@ -111,9 +111,9 @@ describe('Example 40 - Infinite Scroll from JSON data', () => {
 
   it('should load 200 items and filter "Start" column with <=2020-08-25', () => {
     cy.get('[data-test="set-dynamic-filter"]').click();
-    cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('bottom');
-    cy.wait(10);
-    cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('bottom');
+    cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('bottom', { timeout: 100 });
+    cy.get('[data-test="totalItemCount"]').should('have.text', '150');
+    cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('bottom', { timeout: 100 });
     cy.get('[data-test="totalItemCount"]').should('have.text', '200');
 
     cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('top');
