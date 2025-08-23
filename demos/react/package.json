@@ -43,8 +43,8 @@
     "i18next": "catalog:",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-i18next": "^15.6.1",
-    "react-router-dom": "^7.8.1",
+    "react-i18next": "^15.7.1",
+    "react-router-dom": "^7.8.2",
     "slickgrid-react": "workspace:*"
   },
   "peerDependencies": {
@@ -58,7 +58,7 @@
     "@popperjs/core": "catalog:",
     "@types/fnando__sparkline": "catalog:",
     "@types/node": "catalog:",
-    "@types/react": "^19.1.10",
+    "@types/react": "^19.1.11",
     "@types/react-dom": "^19.1.7",
     "@types/sortablejs": "catalog:",
     "@vitejs/plugin-react": "catalog:",
