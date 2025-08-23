@@ -5237,6 +5237,27 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return false;
   }
 
+  protected handleActiveCellPositionChange(): void {
+    if (this.activeCellNode) {
+      this.triggerEvent(this.onActiveCellPositionChanged, {});
+
+      if (this.currentEditor) {
+        const cellBox = this.getActiveCellPosition();
+        if (this.currentEditor.show && this.currentEditor.hide) {
+          if (!cellBox.visible) {
+            this.currentEditor.hide();
+          } else {
+            this.currentEditor.show();
+          }
+        }
+
+        if (this.currentEditor.position) {
+          this.currentEditor.position(cellBox);
+        }
+      }
+    }
+  }
+
   /**
    * limits the frequency at which the provided action is executed.
    * call enqueue to execute the action - it will execute either immediately or, if it was executed less than minPeriod_ms in the past, as soon as minPeriod_ms has expired.
@@ -6238,6 +6259,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
   }
 
+  /**
+   * Computes the absolute position of an element relative to the document,
+   * taking into account offsets, scrolling, and visibility within scrollable containers.
+   */
   protected absBox(elem: HTMLElement): ElementPosition {
     const rect = elem.getBoundingClientRect();
     // Get grid container (assume this._container exists and is the grid root)
@@ -6271,27 +6296,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   /** Get the Grid Position */
   getGridPosition(): ElementPosition {
     return this.absBox(this._container);
-  }
-
-  protected handleActiveCellPositionChange(): void {
-    if (this.activeCellNode) {
-      this.triggerEvent(this.onActiveCellPositionChanged, {});
-
-      if (this.currentEditor) {
-        const cellBox = this.getActiveCellPosition();
-        if (this.currentEditor.show && this.currentEditor.hide) {
-          if (!cellBox.visible) {
-            this.currentEditor.hide();
-          } else {
-            this.currentEditor.show();
-          }
-        }
-
-        if (this.currentEditor.position) {
-          this.currentEditor.position(cellBox);
-        }
-      }
-    }
   }
 
   /** Returns the active cell editor. If there is no actively edited cell, null is returned.   */
