@@ -1,7 +1,7 @@
 {
   "name": "slickgrid-react-demo",
   "private": true,
-  "version": "9.7.0",
+  "version": "9.8.0",
   "description": "Slickgrid-React demo",
   "keywords": [
     "react",
@@ -62,9 +62,9 @@
     "@types/react-dom": "^19.1.7",
     "@types/sortablejs": "catalog:",
     "@vitejs/plugin-react": "catalog:",
+    "cross-env": "catalog:",
     "cypress": "catalog:",
     "cypress-real-events": "catalog:",
-    "cross-env": "catalog:",
     "globals": "catalog:",
     "regenerator-runtime": "^0.14.1",
     "rxjs": "catalog:",

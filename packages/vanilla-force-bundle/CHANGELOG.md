@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.8.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.7.0...v9.8.0) (2025-08-23)
+
+### Bug Fixes
+
+* changing preset views with hidden cols should render properly ([#2119](https://github.com/ghiscoding/slickgrid-universal/issues/2119)) ([a2a7653](https://github.com/ghiscoding/slickgrid-universal/commit/a2a7653ea3d9ad03459f9a469149d0de045dffc8)) - by @ghiscoding
+* column freeze + reorder same order could cause columns misalignment ([#2118](https://github.com/ghiscoding/slickgrid-universal/issues/2118)) ([4c101e3](https://github.com/ghiscoding/slickgrid-universal/commit/4c101e3d9f83b230abaf2d335a515e2c32ab283b)) - by @ghiscoding
+* delayed data with Pagination not showing, regressed in [#1363](https://github.com/ghiscoding/slickgrid-universal/issues/1363) ([#2104](https://github.com/ghiscoding/slickgrid-universal/issues/2104)) ([307a078](https://github.com/ghiscoding/slickgrid-universal/commit/307a0784995b3a3bcaa5869e687d311a7fae5fd9)) - by @ghiscoding
+* hiding a column, freezing another column should keep freeze index ([#2114](https://github.com/ghiscoding/slickgrid-universal/issues/2114)) ([424a86b](https://github.com/ghiscoding/slickgrid-universal/commit/424a86b4677d6b66e622161693c5b151acb67f80)) - by @ghiscoding
+
 ## [9.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.6.1...v9.7.0) (2025-08-12)
 
 ### Bug Fixes

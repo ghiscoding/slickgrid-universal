@@ -4,6 +4,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.8.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.7.0...v9.8.0) (2025-08-23)
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#2108](https://github.com/ghiscoding/slickgrid-universal/issues/2108)) ([816e329](https://github.com/ghiscoding/slickgrid-universal/commit/816e329cda60c637fccac3e17707669559a8177b)) - by @renovate-bot
+* **deps:** update all non-major dependencies ([#2122](https://github.com/ghiscoding/slickgrid-universal/issues/2122)) ([fe0a878](https://github.com/ghiscoding/slickgrid-universal/commit/fe0a8788ab8942edd19f33751baa952b22fa8154)) - by @renovate-bot
+* hiding a column, freezing another column should keep freeze index ([#2114](https://github.com/ghiscoding/slickgrid-universal/issues/2114)) ([424a86b](https://github.com/ghiscoding/slickgrid-universal/commit/424a86b4677d6b66e622161693c5b151acb67f80)) - by @ghiscoding
+
 ## [9.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.6.1...v9.7.0) (2025-08-12)
 
 ### Features

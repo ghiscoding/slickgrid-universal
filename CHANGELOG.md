@@ -4,6 +4,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.8.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.7.0...v9.8.0) (2025-08-23)
+
+### Features
+
+* use new Excel Export Streaming API ([#2110](https://github.com/ghiscoding/slickgrid-universal/issues/2110)) ([c05d400](https://github.com/ghiscoding/slickgrid-universal/commit/c05d4004f06e9eab61f56e4b845a9286f1472090)) - by @ghiscoding
+
+### Bug Fixes
+
+* changing preset views with hidden cols should render properly ([#2119](https://github.com/ghiscoding/slickgrid-universal/issues/2119)) ([a2a7653](https://github.com/ghiscoding/slickgrid-universal/commit/a2a7653ea3d9ad03459f9a469149d0de045dffc8)) - by @ghiscoding
+* column freeze + reorder same order could cause columns misalignment ([#2118](https://github.com/ghiscoding/slickgrid-universal/issues/2118)) ([4c101e3](https://github.com/ghiscoding/slickgrid-universal/commit/4c101e3d9f83b230abaf2d335a515e2c32ab283b)) - by @ghiscoding
+* delayed data with Pagination not showing, regressed in [#1363](https://github.com/ghiscoding/slickgrid-universal/issues/1363) ([#2104](https://github.com/ghiscoding/slickgrid-universal/issues/2104)) ([307a078](https://github.com/ghiscoding/slickgrid-universal/commit/307a0784995b3a3bcaa5869e687d311a7fae5fd9)) - by @ghiscoding
+* **deps:** update all non-major dependencies ([#2108](https://github.com/ghiscoding/slickgrid-universal/issues/2108)) ([816e329](https://github.com/ghiscoding/slickgrid-universal/commit/816e329cda60c637fccac3e17707669559a8177b)) - by @renovate-bot
+* **deps:** update all non-major dependencies ([#2122](https://github.com/ghiscoding/slickgrid-universal/issues/2122)) ([fe0a878](https://github.com/ghiscoding/slickgrid-universal/commit/fe0a8788ab8942edd19f33751baa952b22fa8154)) - by @renovate-bot
+* hiding a column, freezing another column should keep freeze index ([#2114](https://github.com/ghiscoding/slickgrid-universal/issues/2114)) ([424a86b](https://github.com/ghiscoding/slickgrid-universal/commit/424a86b4677d6b66e622161693c5b151acb67f80)) - by @ghiscoding
+* the Editors.longText wasn't always visible depending on scroll position ([#2113](https://github.com/ghiscoding/slickgrid-universal/issues/2113)) ([afa9073](https://github.com/ghiscoding/slickgrid-universal/commit/afa9073e8bb7b9077d0b403d49a35590b255ba72)) - by @ghiscoding
+
 ## [9.7.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.6.1...v9.7.0) (2025-08-12)
 
 ### Features
