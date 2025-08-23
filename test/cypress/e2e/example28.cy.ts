@@ -26,7 +26,6 @@ describe('Example 28 - Infinite Scroll from JSON data', () => {
     cy.get('[data-test="totalItemCount"]').should('have.text', '50');
 
     cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('bottom', { timeout: 100 });
-
     cy.get('[data-test="totalItemCount"]').should('have.text', '100');
   });
 
@@ -40,9 +39,7 @@ describe('Example 28 - Infinite Scroll from JSON data', () => {
 
   it('should disable onSort for data reset and expect same dataset length of 150 items after sorting by Title', () => {
     cy.get('[data-test="onsort-off"]').click();
-
     cy.get('[data-id="title"]').click();
-
     cy.get('[data-test="totalItemCount"]').should('have.text', '150');
 
     cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('top');
@@ -55,11 +52,9 @@ describe('Example 28 - Infinite Scroll from JSON data', () => {
 
   it('should enable onSort for data reset and expect dataset to be reset to 50 items after sorting by Title', () => {
     cy.get('[data-test="onsort-on"]').click();
-
     cy.get('[data-id="title"]').click();
 
     cy.get('[data-test="totalItemCount"]').should('have.text', '50');
-
     cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('top');
 
     cy.get('[data-row="0"] > .slick-cell:nth(0)').should('contain', 'Task 9');
@@ -81,18 +76,15 @@ describe('Example 28 - Infinite Scroll from JSON data', () => {
 
   it('should scroll to the bottom "Group by Duration" and expect 50 more items for a total of 100 items grouped', () => {
     cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('bottom', { timeout: 100 });
-
     cy.get('[data-test="totalItemCount"]').should('have.text', '100');
 
     cy.get('.slick-viewport.slick-viewport-top.slick-viewport-left').scrollTo('top');
-
     cy.get('[data-row="0"] > .slick-cell:nth(0) .slick-group-toggle.expanded').should('have.length', 1);
     cy.get('[data-row="0"] > .slick-cell:nth(0) .slick-group-title').contains(/Duration: [0-9]/);
   });
 
   it('should clear all grouping', () => {
     cy.get('.grid28').find('.slick-row .slick-cell:nth(1)').rightclick({ force: true });
-
     cy.get('.slick-context-menu.dropright .slick-menu-command-list')
       .find('.slick-menu-item')
       .find('.slick-menu-content')
