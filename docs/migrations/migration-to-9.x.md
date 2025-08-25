@@ -1,12 +1,12 @@
 ## Embracing ESM-only builds ⚡
 
-This new release is focused around 2 things, we now ship ESM-only builds (in other words, CommonJS builds are fully dropped and only ESM will remain), this move will cut the npm download size by half. The other big change is an internal one which is an organizational one, I'm moving all framework wrappers directly into Slickgrid-Universal (Angular, Aurelia, React and Vue wrappers are now **all** located under the Slickgrid-Universal [frameworks/](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/) folder). This change will help tremendously with the project maintenance (any new PR will now run against all frameworks all at once (catching bugs early), publishing a new version is now a single click execution for all frameworks all at once, and finally having a single codebase to test & troubleshoot all wrappers, etc... will be so much easier to handle). With this new structure change, Slickgrid-Universal name now makes so much more sense. 🌐
+This new release is focused around 2 things, now shipping ESM-only builds (in other words, CommonJS builds are fully dropped and only ESM will remain), this move will cut the npm download size by half. The other big change is an internal one which is an organizational one, I'm moving all framework wrappers directly into Slickgrid-Universal (Angular, Aurelia, React and Vue wrappers are now **all** located under the Slickgrid-Universal [frameworks/](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/) folder). This change will help tremendously with the project maintenance (any new PR will now run against all frameworks all at once (catching bugs early), publishing a new version is now a single click execution for all frameworks all at once, and finally having a single codebase to test & troubleshoot all wrappers, etc... will be so much easier to handle). With this new structure change, Slickgrid-Universal name now makes so much more sense. 🌐
 
 The other great thing about having everything under the same roof/project is that every package will now be released at the same time with the exact same version number across the board. Everything will be released under v9.0 and whenever any new feature/bugfix comes in, then every package will be bumped to v9.1 and so on (no more version discrepancies).
 
 Wait, what happened to version 6 to 8?
 
-I'm skipping versions 6-8 and going straight to v9.0 because some of the wrappers (Angular-Slickgrid, Aurelia-Slickgrid) were already at v8.x and so the next available major version bump for everything was v9.0
+I'm skipping versions 6-8 and going straight to v9.0 because some of the framework wrappers (Angular-Slickgrid, Aurelia-Slickgrid) were already at v8.x and so the next available major version bump for everything was v9.0. If the project is useful to you, give it a ⭐ and perhaps buy me a [☕ (ko-fi)](https://ko-fi.com/ghiscoding), thanks.
 
 #### Major Changes - Quick Summary
 - minimum requirements bump
@@ -14,9 +14,9 @@ I'm skipping versions 6-8 and going straight to v9.0 because some of the wrapper
 - upgrade Vanilla-Calendar-Pro to v3 with [flat config](#date-editorfilter-flat-config)
 - skipping v6-8 and going straight to v9.0
 - now using `clipboard` API, used in ExcelCopyBuffer/ContextMenu/CellCopy, which might require end user permissions (an override is available)
-- removing Arrow pointer from Custom Tooltip addon (because it was often offset with the cell text)
+- removing arrow pointer from Custom Tooltip addon (because it was often offset with the cell text)
 
-> **Note:** if you come from an earlier version, please make sure to follow each migrations in their respected order (review previous migration guides)
+> **Note:** if you come from an earlier version, please make sure to follow each migration in their respected order (review previous migration guides).
 
 ## Changes
 
@@ -81,25 +81,25 @@ this.gridOptions = {
 
 ### Grid Options
 
-`rowTopOffsetRenderType` default is changing from `'top'` to `'transform'` and the reason is because `transform` is known to have better styling perf,  especially on large dataset, and that is also what Ag-Grid uses by default.
+`rowTopOffsetRenderType` default is changing from `'top'` to `'transform'` and the reason is that `transform` is known to have better styling perf, especially on large datasets, and that is also what Ag-Grid uses by default.
 
 | previous default | new default |
 | --------------- | ------------ |
 | `rowTopOffsetRenderType: 'top'` | `rowTopOffsetRenderType: 'transform'` |
 
-- if you are using Cypress to get to the row X in the grid, which is what we do ourselves, then you will need to adjust your E2E tests
+- if you are using Cypress to get to the row number X in the grid, which is what I do myself, then you will need to adjust your E2E tests
 
 | Cypress before | Cypress after  |
 | -------------- | -------------- |
 | `cy.get([style="top: ${GRID_ROW_HEIGHT * 0}px;"])` | `cy.get([style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"])` |
 | | OR `cy.get([data-row=0])` |
 
-> Please note that you will have to change the option back to `rowTopOffsetRenderType: 'top'` when using either RowSpan and/or Row Detail features.
+> Please note that you will have to change the grid option back to `rowTopOffsetRenderType: 'top'` when using RowSpan and/or Row Detail features.
 
 ## Column Functionalities
 
 ### Date Editor/Filter
-Vanilla-Calendar-Pro was upgraded to v3.0 and their main breaking change was the move to flat config (instead of complex object config) and this mean that if you use any of their options, you'll have to update them to use their new flat options.
+Vanilla-Calendar-Pro was upgraded to v3.0 and with that comes a breaking change that migrates their options to flat config (instead of complex object config) and this mean that if you use any of their options, you'll have to update them to use their new flat config.
 
 The biggest change that you will most probably have to update is the min/max date setting when using the `'today'` shortcut as shown below:
 
@@ -119,13 +119,13 @@ prepareGrid() {
 ```
 
 > [!NOTE]
-> for a complete list of option changes, visit the Vanilla-Calendar-Pro [migration](https://github.com/uvarov-frontend/vanilla-calendar-pro/wiki/%5BMigration-from-v2.*.*%5D-New-API-for-all-options-and-actions-in-v3.0.0) page, which details every single options with their new associated option names.
+> for a complete list of option changes, visit the Vanilla-Calendar-Pro [migration](https://github.com/uvarov-frontend/vanilla-calendar-pro/wiki/%5BMigration-from-v2.*.*%5D-New-API-for-all-options-and-actions-in-v3.0.0) page, which details every single option and new associated option name.
 
 ## Grid Functionalities
 
 ## Services
 
-The `GridService` has CRUD methods that were sometime returning a single item and other times an array of items and for that reason we had to rely on code like `onItemAdded.subscribe(item => { const items = Array.isArray(item) ? item : [item] }`. So for that reason, I decided to change the event names to plural and always return an array of items which is a lot more predictable.
+The `GridService` has CRUD methods which was sometime returning a single item and other times an array of items, and so for that reason we had to rely on code like `onItemAdded.subscribe(item => { const items = Array.isArray(item) ? item : [item] }`. So, I decided to change all the event names to plural and always return an array of items which is a lot more predictable.
 
 - `onItemAdded` renamed to `onItemsAdded`
 - `onItemDeleted` renamed to `onItemsDeleted`
@@ -136,7 +136,7 @@ The `GridService` has CRUD methods that were sometime returning a single item an
 
 ## Future Changes (next major to be expected around Node 20 EOL)
 ### Code being `@deprecated` (to be removed in the future, but not until another year)
-#### You can start using these new properties and options (shown below) in v9.0 and above.
+#### You can start using these new options and properties (shown below) in v9.0 and above.
 
 So when I created the project, I used a few TypeScript Enums and I thought that was pretty good, but what I didn't know at the time was that all of these Enums were ending up in the final transpiled JS bundle and that ends up taking space (but `type` do not). So in the next major, I'm planning to remove most of these Enums and replace them with string literal types (`type` instead of `enum` because `type` aren't transpiled and `enum` are). So you should consider using string types as much, and as soon, as possible in all your new grids and eventually make the changes in your older grids. Note that at the moment, these are only tagged as deprecations and they will only be dropped in the future (not now, but still, you should consider making this change in the near future), for example:
 
@@ -175,9 +175,9 @@ Below is a list of Enums being deprecated and you should think about migrating s
 |             | `SortDirection.DESC`   | `'DESC'` or `'desc'`  |
 | - | - | - |
 
-##### deprecating `editorOptions` and `filterOptions`, they are being renamed as a more generic `options` names
+##### deprecating `editorOptions` and `filterOptions`, they are being renamed as a more generic `options` name
 
-in order to make it easier to merge and simplify editor/filter options, I'm renaming these props to a single `options` property name which will make them more easily transportable (you will be able to reuse the same `options` for both the editor/filter if you wanted too). You can start using `options` in v9.0 and above (or keep using `editorOptions`, `filterOptions` until v10).
+So, in order to make it easier to merge and simplify Editor/Filter options, I'm renaming the props to a single `options` property name which will make it more easily transportable (you will be able to reuse the same `options` for both the editor/filter if you wanted too). You can start using `options` in v9.0 and above (or keep using `editorOptions`, `filterOptions` until v10).
 
 ```diff
 import { type MultipleSelectOption } from '@slickgrid-universal/common';
@@ -230,7 +230,7 @@ For example:
 
 ##### deprecating `mdi-[0-9]px` and keeping only `font-[0-9]px`
 
-Since I have 2 CSS utilities that do exactly the same, I'm dropping `mdi-..px` in favor of `font-..px` since that makes more sense to represent font sizes since it works on any type of elements (not just icons). 
+Since I have 2 CSS utilities that do exactly the same, I'm dropping `mdi-..px` in favor of `font-..px` since that makes more sense to represent font sizes which works on any type of elements (not just icons).
 
 You can do a "Search and Replace" in VSCode via Regular Expressions to replace them all easily (**make sure to use `regex` in VSCode Search & Replace**):
 
