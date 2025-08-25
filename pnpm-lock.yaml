@@ -13,8 +13,8 @@ catalogs:
       specifier: ^9.34.0
       version: 9.34.0
     '@faker-js/faker':
-      specifier: ^9.9.0
-      version: 9.9.0
+      specifier: ^10.0.0
+      version: 10.0.0
     '@fnando/sparkline':
       specifier: ^0.3.10
       version: 0.3.10
@@ -253,7 +253,7 @@ importers:
         version: 2.0.0-beta.25
       '@faker-js/faker':
         specifier: 'catalog:'
-        version: 9.9.0
+        version: 10.0.0
       '@fnando/sparkline':
         specifier: 'catalog:'
         version: 0.3.10
@@ -423,7 +423,7 @@ importers:
         version: 2.3.0(cypress@15.0.0)
       '@faker-js/faker':
         specifier: 'catalog:'
-        version: 9.9.0
+        version: 10.0.0
       '@fnando/sparkline':
         specifier: 'catalog:'
         version: 0.3.10
@@ -486,7 +486,7 @@ importers:
     dependencies:
       '@faker-js/faker':
         specifier: 'catalog:'
-        version: 9.9.0
+        version: 10.0.0
       '@fnando/sparkline':
         specifier: 'catalog:'
         version: 0.3.10
@@ -562,7 +562,7 @@ importers:
     dependencies:
       '@faker-js/faker':
         specifier: 'catalog:'
-        version: 9.9.0
+        version: 10.0.0
       '@fnando/sparkline':
         specifier: 'catalog:'
         version: 0.3.10
@@ -759,7 +759,7 @@ importers:
         version: 9.34.0
       '@faker-js/faker':
         specifier: 'catalog:'
-        version: 9.9.0
+        version: 10.0.0
       '@fnando/sparkline':
         specifier: 'catalog:'
         version: 0.3.10
@@ -3153,9 +3153,9 @@ packages:
   '@excel-builder-vanilla/types@4.1.0':
     resolution: {integrity: sha512-CwZa5CVzC2eo6fye5FW8VeyFl3voQ2aw63T5zG2NssfOD0tIW+l+oc/xDBLRkVvPGRVPNRhzqMPC9c6e2nglsA==}
 
-  '@faker-js/faker@9.9.0':
-    resolution: {integrity: sha512-OEl393iCOoo/z8bMezRlJu+GlRGlsKbUAN7jKB6LhnKoqKve5DXRpalbItIIcwnCjs1k/FOPjFzcA6Qn+H+YbA==}
-    engines: {node: '>=18.0.0', npm: '>=9.0.0'}
+  '@faker-js/faker@10.0.0':
+    resolution: {integrity: sha512-UollFEUkVXutsaP+Vndjxar40Gs5JL2HeLcl8xO1QAjJgOdhc3OmBFWyEylS+RddWaaBiAzH+5/17PLQJwDiLw==}
+    engines: {node: ^20.19.0 || ^22.13.0 || ^23.5.0 || >=24.0.0, npm: '>=10'}
 
   '@fastify/busboy@3.1.1':
     resolution: {integrity: sha512-5DGmA8FTdB2XbDeEwc/5ZXBl6UbBAyBOOLlPuBnZ/N1SwdH9Ii+cOX3tBROlDgcTXxjOYnLMVoKk9+FXAw0CJw==}
@@ -14228,7 +14228,7 @@ snapshots:
     dependencies:
       fflate: 0.8.2
 
-  '@faker-js/faker@9.9.0': {}
+  '@faker-js/faker@10.0.0': {}
 
   '@fastify/busboy@3.1.1': {}
 
