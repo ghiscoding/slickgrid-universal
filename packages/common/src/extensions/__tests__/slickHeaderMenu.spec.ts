@@ -8,7 +8,7 @@ import { ExtensionUtility } from '../../extensions/extensionUtility.js';
 import { type SlickDataView, SlickEvent, SlickEventData, type SlickGrid } from '../../core/index.js';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 
-const removeExtraSpaces = (textS) => `${textS}`.replace(/[\n\r]\s+/g, '');
+const removeExtraSpaces = (inputText: string) => `${inputText}`.replace(/[\n\r]\s+/g, '');
 
 const mockEventCallback = () => {};
 const gridOptionsMock = {
@@ -58,6 +58,7 @@ const gridStub = {
   setOptions: vi.fn(),
   setSortColumns: vi.fn(),
   updateColumnHeader: vi.fn(),
+  updateColumns: vi.fn(),
   onBeforeSetColumns: new SlickEvent(),
   onBeforeHeaderCellDestroy: new SlickEvent(),
   onClick: new SlickEvent(),
@@ -977,6 +978,7 @@ describe('HeaderMenu Plugin', () => {
           ...gridOptionsMock,
           headerMenu: { hideFreezeColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
         });
+        vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ frozenColumn: -1 } as GridOption);
 
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
         gridStub.onHeaderCellRendered.notify({ column: columnsMock[2], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
@@ -1370,6 +1372,7 @@ describe('HeaderMenu Plugin', () => {
         ];
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         const setColSpy = vi.spyOn(gridStub, 'setColumns');
+        vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ frozenColumn: 0 } as GridOption);
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(originalColumnDefinitions);
         vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(originalColumnDefinitions);
         sharedService.hasColumnsReordered = false;

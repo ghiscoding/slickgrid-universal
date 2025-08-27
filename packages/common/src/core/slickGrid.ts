@@ -205,6 +205,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   // settings
   protected _options!: O;
   protected _defaults: BaseGridOption = {
+    alertWhenFrozenNotAllViewable: true,
     alwaysShowVerticalScroll: false,
     alwaysAllowHorizontalScroll: false,
     explicitInitialization: false,
@@ -1359,11 +1360,20 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       if (this.hasFrozenColumns()) {
         const cWidth = Utils.width(this._container) || 0;
-        if (cWidth > 0 && this.canvasWidthL > cWidth && this._options.throwWhenFrozenNotAllViewable) {
-          throw new Error(
-            '[SlickGrid] Frozen columns cannot be wider than the actual grid container width. ' +
-              'Make sure to have less columns freezed or make your grid container wider'
-          );
+        if (cWidth > 0 && this.canvasWidthL > cWidth) {
+          this.setOptions({ frozenColumn: -1 } as O); // in any case, we need to revert the frozen column change
+          const errorMsg =
+            '[SlickGrid] Frozen/pinned columns cannot be wider than the actual grid container width. ' +
+            'Make sure to have less columns frozen or change your grid container to be wider.';
+
+          if (this._options.throwWhenFrozenNotAllViewable) {
+            throw new Error(errorMsg);
+          }
+          if (this._options.alertWhenFrozenNotAllViewable) {
+            alert(errorMsg);
+          }
+          console.error(errorMsg);
+          return;
         }
         Utils.width(this._canvasTopR, this.canvasWidthR);
 

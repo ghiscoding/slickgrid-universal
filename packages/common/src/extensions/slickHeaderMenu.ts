@@ -515,31 +515,34 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     // the bug is highlighted in this issue comment:: https://github.com/6pac/SlickGrid/issues/592#issuecomment-822885069
     const previousColumnDefinitions = this.sharedService.slickGrid.getColumns();
 
-    this.sharedService.slickGrid.setOptions(newGridOptions, false, true); // suppress the setColumns (3rd argument) since we'll do that ourselves
-    this.sharedService.gridOptions.frozenColumn = newGridOptions.frozenColumn;
-    this.sharedService.gridOptions.enableMouseWheelScrollHandler = newGridOptions.enableMouseWheelScrollHandler;
-    this.sharedService.frozenVisibleColumnId = column.id;
+    this.grid.setOptions(newGridOptions, false, true); // suppress the setColumns (3rd argument) since we'll do that ourselves
 
-    let finalVisibleColumns = [];
-    if (command === 'freeze-columns') {
-      // to freeze columns, we need to take only the visible columns and we also need to use setColumns() when some of them are hidden
-      // to make sure that we only use the visible columns, not doing this will have the undesired effect of showing back some of the hidden columns
-      // prettier-ignore
-      if (this.sharedService.hasColumnsReordered || (Array.isArray(visibleColumns) && Array.isArray(this.sharedService.allColumns) && visibleColumns.length !== this.sharedService.allColumns.length)) {
-        finalVisibleColumns = visibleColumns;
-      } else {
-        // to circumvent a bug in SlickGrid core lib re-apply same column definitions that were backed up before calling setOptions()
-        finalVisibleColumns = previousColumnDefinitions;
+    // make sure it's really assigned (it could have failed when freezing columns wider than viewport, see `throwWhenFrozenNotAllViewable`)
+    this.grid.updateColumns(); // call this to force freeze vs viewport check, if wider it will reset frozen column to -1 and we should consider this a failure
+    if (this.grid.getOptions().frozenColumn === newGridOptions.frozenColumn) {
+      this.sharedService.gridOptions.frozenColumn = newGridOptions.frozenColumn;
+      this.sharedService.gridOptions.enableMouseWheelScrollHandler = newGridOptions.enableMouseWheelScrollHandler;
+      this.sharedService.frozenVisibleColumnId = column.id;
+
+      let finalVisibleColumns = visibleColumns || [];
+      if (command === 'freeze-columns') {
+        // to freeze columns, we need to take only the visible columns and we also need to use setColumns() when some of them are hidden
+        // to make sure that we only use the visible columns, not doing this will have the undesired effect of showing back some of the hidden columns
+        // prettier-ignore
+        if (this.sharedService.hasColumnsReordered || (Array.isArray(visibleColumns) && Array.isArray(this.sharedService.allColumns) && visibleColumns.length !== this.sharedService.allColumns.length)) {
+          finalVisibleColumns = visibleColumns;
+        } else {
+          // to circumvent a bug in SlickGrid core lib re-apply same column definitions that were backed up before calling setOptions()
+          finalVisibleColumns = previousColumnDefinitions;
+        }
       }
-    } else {
-      finalVisibleColumns = visibleColumns;
-    }
-    this.sharedService.slickGrid.setColumns(finalVisibleColumns);
+      this.sharedService.slickGrid.setColumns(finalVisibleColumns);
 
-    // we also need to autosize columns if the option is enabled
-    const gridOptions = this.sharedService.slickGrid.getOptions();
-    if (gridOptions.enableAutoSizeColumns) {
-      this.sharedService.slickGrid.autosizeColumns();
+      // we also need to autosize columns if the option is enabled
+      const gridOptions = this.sharedService.slickGrid.getOptions();
+      if (gridOptions.enableAutoSizeColumns) {
+        this.sharedService.slickGrid.autosizeColumns();
+      }
     }
   }
 
