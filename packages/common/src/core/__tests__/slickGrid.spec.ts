@@ -388,7 +388,7 @@ describe('SlickGrid core file', () => {
 
   it('should be add rowspan metadata, invalidate all rowspan and expect cells/rows intersect', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', editorClass: InputEditor }] as Column[];
-    const metadata = {
+    const metadata: any = {
       0: { columns: { 0: { colspan: 2, rowspan: 2 } } },
     };
     const customDV = { getItemMetadata: (row) => metadata[row], getLength: () => 2 } as CustomDataView;
@@ -635,7 +635,7 @@ describe('SlickGrid core file', () => {
       expect(grid.getPreHeaderPanelRight().outerHTML).toBe('<div></div>');
     });
 
-    it('should throw when frozen column is wider than actual grid width', () => {
+    it('should throw when frozen column is wider than actual grid width and throwWhenFrozenNotAllViewable is enabled', () => {
       const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
       const gridOptions = {
         ...defaultOptions,
@@ -656,7 +656,36 @@ describe('SlickGrid core file', () => {
 
       skipGridDestroy = true;
       expect(() => new SlickGrid<any, Column>(container, data, columns, gridOptions)).toThrow(
-        '[SlickGrid] Frozen columns cannot be wider than the actual grid container width.'
+        '[SlickGrid] Frozen/pinned columns cannot be wider than the actual grid container width.'
+      );
+    });
+
+    it('should show an alert when frozen column is wider than actual grid width and alertWhenFrozenNotAllViewable is enabled', () => {
+      const alertSpy = vi.spyOn(global, 'alert').mockReturnValue();
+      const consoleSpy = vi.spyOn(global.console, 'error').mockReturnValue();
+      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+      const gridOptions = {
+        ...defaultOptions,
+        enableColumnReorder: false,
+        enableCellNavigation: true,
+        preHeaderPanelHeight: 30,
+        showPreHeaderPanel: true,
+        frozenColumn: 0,
+        createPreHeaderPanel: true,
+        alertWhenFrozenNotAllViewable: true,
+      } as GridOption;
+      const data = [
+        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+      ];
+      Object.defineProperty(container, 'clientWidth', { writable: true, value: 40 });
+      vi.spyOn(container, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0, width: 40 } as DOMRect);
+
+      skipGridDestroy = true;
+      grid = new SlickGrid<any, Column>(container, data, columns, gridOptions);
+      expect(alertSpy).toHaveBeenCalledWith(expect.stringContaining('[SlickGrid] Frozen/pinned columns cannot be wider than the actual grid container width.'));
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringContaining('[SlickGrid] Frozen/pinned columns cannot be wider than the actual grid container width.')
       );
     });
 
@@ -897,7 +926,7 @@ describe('SlickGrid core file', () => {
       vi.spyOn(dv, 'getItemMetadata').mockReturnValue({
         cssClasses: 'text-bold',
         focusable: true,
-        formatter: (r, c, val) => val,
+        formatter: (_r: number, _c: number, val: any) => val,
         columns: { 0: { colspan: '*' } },
       });
 
@@ -1403,7 +1432,7 @@ describe('SlickGrid core file', () => {
   describe('dataItemColumnValueExtractor', () => {
     it('should use dataItemColumnValueExtractor when provided to retrieve value to show in grid cell', () => {
       const columns = [
-        { id: 'title', name: 'Name', field: 'name', asyncPostRender: (node) => (node.textContent = 'Item ' + Math.random()) },
+        { id: 'title', name: 'Name', field: 'name', asyncPostRender: (node: Node) => (node.textContent = 'Item ' + Math.random()) },
         { id: 'field1', name: 'Field1', field: 'values', fieldIdx: 0 },
         { id: 'field2', name: 'Field2', field: 'values', fieldIdx: 1 },
         { id: 'field3', name: 'Field3', field: 'values', fieldIdx: 2 },
@@ -1479,7 +1508,7 @@ describe('SlickGrid core file', () => {
       vi.spyOn(dv, 'getItemMetadata').mockReturnValue({
         cssClasses: 'text-bold',
         focusable: true,
-        formatter: (r, c, val) => val,
+        formatter: (_row: number, _col: number, val: any) => val,
         columns: { 0: { colspan: '*' } },
       });
       grid = new SlickGrid<any, Column>(container, dv, columns, { ...defaultOptions, ...gridOptions });
@@ -1738,9 +1767,9 @@ describe('SlickGrid core file', () => {
         ] as Column[];
         grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, fullWidthRows: true, frozenColumn: 1 });
 
-        expect(grid.getHeader()[0]).toBeInstanceOf(HTMLDivElement);
-        expect((grid.getHeader()[0] as HTMLDivElement).className).toBe('slick-header-columns slick-header-columns-left');
-        expect((grid.getHeader()[1] as HTMLDivElement).className).toBe('slick-header-columns slick-header-columns-right');
+        expect((grid.getHeader() as HTMLDivElement[])[0]).toBeInstanceOf(HTMLDivElement);
+        expect(((grid.getHeader() as HTMLDivElement[])[0] as HTMLDivElement).className).toBe('slick-header-columns slick-header-columns-left');
+        expect(((grid.getHeader() as HTMLDivElement[])[1] as HTMLDivElement).className).toBe('slick-header-columns slick-header-columns-right');
       });
     });
 
@@ -1991,7 +2020,7 @@ describe('SlickGrid core file', () => {
       grid.render();
       grid.updateColumnHeader(1);
 
-      expect(grid.getHeader()[0]).toBeInstanceOf(HTMLDivElement);
+      expect((grid.getHeader() as HTMLDivElement[])[0]).toBeInstanceOf(HTMLDivElement);
       expect(grid.getHeader(columns[0])).toBeInstanceOf(HTMLDivElement);
       expect(grid.getVisibleColumns().length).toBe(2);
       expect(result).toBe(80 * 2);
@@ -2013,7 +2042,7 @@ describe('SlickGrid core file', () => {
       grid.render();
       grid.updateColumnHeader(1);
 
-      expect(grid.getHeader()[0]).toBeInstanceOf(HTMLDivElement);
+      expect((grid.getHeader() as HTMLDivElement[])[0]).toBeInstanceOf(HTMLDivElement);
       expect(grid.getHeader(columns[0])).toBeInstanceOf(HTMLDivElement);
       expect(grid.getVisibleColumns().length).toBe(3);
       expect(result).toBe(1012);
@@ -2045,7 +2074,7 @@ describe('SlickGrid core file', () => {
       grid.setColumns(newColumns);
 
       expect(updateSpy).toHaveBeenCalled();
-      expect(grid.getHeader()[0]).toBeInstanceOf(HTMLDivElement);
+      expect((grid.getHeader() as HTMLDivElement[])[0]).toBeInstanceOf(HTMLDivElement);
       expect(grid.getVisibleColumns().length).toBe(1);
     });
 
@@ -2060,9 +2089,9 @@ describe('SlickGrid core file', () => {
 
       expect(grid.getVisibleColumns().length).toBe(2);
       expect(result).toBe(DEFAULT_GRID_WIDTH);
-      expect(grid.getHeader()[0]).toBeInstanceOf(HTMLDivElement);
-      expect((grid.getHeader()[0] as HTMLDivElement).className).toBe('slick-header-columns slick-header-columns-left');
-      expect((grid.getHeader()[1] as HTMLDivElement).className).toBe('slick-header-columns slick-header-columns-right');
+      expect((grid.getHeader() as HTMLDivElement[])[0]).toBeInstanceOf(HTMLDivElement);
+      expect(((grid.getHeader() as HTMLDivElement[])[0] as HTMLDivElement).className).toBe('slick-header-columns slick-header-columns-left');
+      expect(((grid.getHeader() as HTMLDivElement[])[1] as HTMLDivElement).className).toBe('slick-header-columns slick-header-columns-right');
     });
 
     it('should return viewport element when calling the function when found in the grid container', () => {
@@ -2099,7 +2128,7 @@ describe('SlickGrid core file', () => {
     });
 
     it('should define rowspan and test mandatory rows are always rendered', () => {
-      const metadata = {
+      const metadata: any = {
         0: { columns: { 0: { colspan: 2, rowspan: 28 } } },
       };
       const columns = [
@@ -2127,7 +2156,7 @@ describe('SlickGrid core file', () => {
       vi.spyOn(dv, 'getItemMetadata').mockReturnValue({
         cssClasses: 'text-bold',
         focusable: true,
-        formatter: (r, c, val) => val,
+        formatter: (_row: number, _col: number, val: any) => val,
         columns: { 0: { colspan: '2:30' } },
       });
 
@@ -2553,7 +2582,7 @@ describe('SlickGrid core file', () => {
           grid.invalidate();
         }
       };
-      const editCommandHandler = (item, column, editCommand) => {
+      const editCommandHandler = (item: any, column: Column, editCommand: EditCommand) => {
         if (editCommand.prevSerializedValue !== editCommand.serializedValue) {
           editQueue.push({ item, column, editCommand });
           grid.invalidate();
@@ -2696,11 +2725,11 @@ describe('SlickGrid core file', () => {
       { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
       { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
     ];
-    let sortInstance;
+    let sortInstance: any;
 
     it('should reorder column to the left when current column pageX is lower than viewport left position', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
-      const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as HTMLDivElement;
+      const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as any;
       Object.keys(headerColumnsElm).forEach((prop) => {
         if (prop.startsWith('Sortable')) {
           sortInstance = headerColumnsElm[prop];
@@ -2708,7 +2737,7 @@ describe('SlickGrid core file', () => {
       });
       const onColumnsReorderedSpy = vi.spyOn(grid.onColumnsReordered, 'notify');
       const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
-      const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+      const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as any;
 
       const dragEvent = new CustomEvent('DragEvent');
       vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
@@ -2733,7 +2762,7 @@ describe('SlickGrid core file', () => {
 
     it('should reorder column to the right when current column pageX is greater than container width', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
-      const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as HTMLDivElement;
+      const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as any;
       Object.keys(headerColumnsElm).forEach((prop) => {
         if (prop.startsWith('Sortable')) {
           sortInstance = headerColumnsElm[prop];
@@ -2764,7 +2793,7 @@ describe('SlickGrid core file', () => {
 
     it('should not trigger "onColumnsReordered" neither reorder column when column order is the same', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
-      const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as HTMLDivElement;
+      const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as any;
       Object.keys(headerColumnsElm).forEach((prop) => {
         if (prop.startsWith('Sortable')) {
           sortInstance = headerColumnsElm[prop];
@@ -2796,7 +2825,7 @@ describe('SlickGrid core file', () => {
     it('should try reordering column but stay at same scroll position when grid has frozen columns', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenColumn: 0 });
       grid.setActiveCell(0, 1);
-      const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as HTMLDivElement;
+      const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as any;
       Object.keys(headerColumnsElm).forEach((prop) => {
         if (prop.startsWith('Sortable')) {
           sortInstance = headerColumnsElm[prop];
@@ -2827,7 +2856,7 @@ describe('SlickGrid core file', () => {
     it('should not allow column reordering when Editor Lock commitCurrentEdit() is failing', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenColumn: 0 });
       vi.spyOn(grid.getEditorLock(), 'commitCurrentEdit').mockReturnValueOnce(false);
-      const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as HTMLDivElement;
+      const headerColumnsElm: any = document.querySelector('.slick-header-columns.slick-header-columns-left');
       Object.keys(headerColumnsElm).forEach((prop) => {
         if (prop.startsWith('Sortable')) {
           sortInstance = headerColumnsElm[prop];
@@ -4649,7 +4678,7 @@ describe('SlickGrid core file', () => {
         { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
         { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
       ];
-      const metadata = {
+      const metadata: any = {
         0: { columns: { 0: { colspan: 2, rowspan: 2 } } },
         3: { columns: { 1: { colspan: 2, rowspan: 3 } } },
       };
@@ -5597,7 +5626,7 @@ describe('SlickGrid core file', () => {
       it('should change an item property then call updateCell() and expect it to be updated in the UI with Formatter result', () => {
         const columns = [
           { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', formatter: (row, cell, val) => (val > 20 ? `<strong>${val}</strong>` : null) } as any,
+          { id: 'age', field: 'age', name: 'Age', formatter: (_row: number, _cell: number, val: any) => (val > 20 ? `<strong>${val}</strong>` : null) } as any,
         ];
         const items = [
           { id: 0, name: 'Avery', age: 44 },
@@ -5619,7 +5648,7 @@ describe('SlickGrid core file', () => {
       it('should change an item property then call updateCell() on a cell that does not exist and expect it to be an empty string cell', () => {
         const columns = [
           { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', formatter: (row, cell, val) => (val > 20 ? `<strong>${val}</strong>` : null) } as any,
+          { id: 'age', field: 'age', name: 'Age', formatter: (_row: number, _cell: number, val: any) => (val > 20 ? `<strong>${val}</strong>` : null) } as any,
         ];
         const items = [
           { id: 0, name: 'Avery', age: 44 },
@@ -5759,7 +5788,7 @@ describe('SlickGrid core file', () => {
       it('should call the method but expect nothing to happen when row number is invalid', () => {
         const columns = [
           { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', formatter: (row, cell, val) => `<strong>${val}</strong>` },
+          { id: 'age', field: 'age', name: 'Age', formatter: (_row: number, _cell: number, val: any) => `<strong>${val}</strong>` },
         ];
 
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
@@ -5789,7 +5818,7 @@ describe('SlickGrid core file', () => {
       it('should change an item property then call updateRow() and expect it to be updated in the UI with Formatter result', () => {
         const columns = [
           { id: 'name', field: 'name', name: 'Name' },
-          { id: 'age', field: 'age', name: 'Age', formatter: (row, cell, val) => `<strong>${val}</strong>` },
+          { id: 'age', field: 'age', name: 'Age', formatter: (_row: number, _cell: number, val: any) => `<strong>${val}</strong>` },
         ];
 
         grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
