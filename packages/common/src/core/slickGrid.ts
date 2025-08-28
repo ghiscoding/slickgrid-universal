@@ -393,6 +393,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected currentEditor: Editor | null = null;
   protected serializedEditorValue: any;
   protected editController?: EditController;
+  protected _prevFrozenColumn = -1;
   protected _prevDataLength = 0;
   protected _prevInvalidatedRowsCount = 0;
   protected _rowSpanIsCached = false;
@@ -631,6 +632,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.maxSupportedCssHeight = this.maxSupportedCssHeight || this.getMaxSupportedCssHeight();
     this.validateAndEnforceOptions();
     this._columnDefaults.width = this._options.defaultColumnWidth;
+    this._prevFrozenColumn = options.frozenColumn ?? -1;
 
     if (!this._options.suppressCssChangesOnHiddenInit) {
       this.cacheCssForHiddenInit();
@@ -1360,11 +1362,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       if (this.hasFrozenColumns()) {
         const cWidth = Utils.width(this._container) || 0;
-        if (cWidth > 0 && this.canvasWidthL > cWidth) {
-          this.setOptions({ frozenColumn: -1 } as O); // in any case, we need to revert the frozen column change
+        if (cWidth > 0 && (this.canvasWidthL > cWidth || this._options.frozenColumn! >= this.columns.length)) {
+          // in any case, we need to revert to previous frozen column setting
+          this.setOptions({ frozenColumn: this._prevFrozenColumn } as O);
+
+          // then warn the user when enabled or show console error and abort the operation
           const errorMsg =
-            '[SlickGrid] Frozen/pinned columns cannot be wider than the actual grid container width. ' +
-            'Make sure to have less columns frozen or change your grid container to be wider.';
+            '[SlickGrid] You are trying to freeze/pin more columns than the grid can support. ' +
+            'Make sure to have less columns pinned (on the left) than the actual visible grid width. ' +
+            'Also, please remember that only the columns on the right are scrollable and the pinned columns are not.';
 
           if (this._options.throwWhenFrozenNotAllViewable) {
             throw new Error(errorMsg);
@@ -3326,6 +3332,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param {Boolean} [suppressSetOverflow] - do we want to suppress the call to `setOverflow`
    */
   setOptions(newOptions: Partial<O>, suppressRender?: boolean, suppressColumnSet?: boolean, suppressSetOverflow?: boolean): void {
+    this._prevFrozenColumn = this._options.frozenColumn ?? -1;
     this.prepareForOptionsChange();
 
     if (this._options.enableAddRow !== newOptions.enableAddRow) {

@@ -33,6 +33,7 @@ export default class Example17 {
   minInterval = 30;
   maxInterval = 600;
   delayCursor = 5;
+  frozenColumnCount = -1;
 
   attached() {
     this.defineGrids();
@@ -158,6 +159,9 @@ export default class Example17 {
       frozenColumn: -1,
       frozenRow: -1,
       // enableExcelCopyBuffer: true,
+      headerMenu: {
+        hideFreezeColumnsCommand: false,
+      },
     };
 
     // copy the same Grid Options and Column Definitions to 2nd grid
@@ -190,6 +194,15 @@ export default class Example17 {
     }
 
     return mockDataset;
+  }
+
+  /** change dynamically, through slickgrid "setOptions()" the number of pinned columns */
+  changeFrozenColumnCount() {
+    if (this.sgb1?.slickGrid?.setOptions) {
+      this.sgb1?.slickGrid.setOptions({
+        frozenColumn: +this.frozenColumnCount,
+      });
+    }
   }
 
   groupByDuration1() {

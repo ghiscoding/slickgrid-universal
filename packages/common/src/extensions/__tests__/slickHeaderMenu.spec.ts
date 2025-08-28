@@ -1404,6 +1404,49 @@ describe('HeaderMenu Plugin', () => {
         expect(setColSpy).toHaveBeenCalledWith(originalColumnDefinitions);
       });
 
+      it('should expect menu related to Freeze Columns when "hideFreezeColumnsCommand" is disabled and also expect "setColumns" to be called with previous visible columns when hasColumnsReordered returns true', () => {
+        const originalColumnDefinitions = [
+          { id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' },
+          { id: 'field2', field: 'field2', width: 75 },
+        ];
+        const visibleColumnDefinitions = [
+          { id: 'field2', field: 'field2', width: 75 },
+          { id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' },
+        ];
+        const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
+        const setColSpy = vi.spyOn(gridStub, 'setColumns');
+        vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ frozenColumn: 0 } as GridOption);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(originalColumnDefinitions);
+        vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(visibleColumnDefinitions);
+        sharedService.hasColumnsReordered = true;
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
+          ...gridOptionsMock,
+          headerMenu: { hideFreezeColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
+        });
+
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: visibleColumnDefinitions, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: visibleColumnDefinitions[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
+        const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
+        headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+
+        const commandDivElm = gridContainerDiv.querySelector('[data-command="freeze-columns"]') as HTMLDivElement;
+        expect((visibleColumnDefinitions[1] as any).header!.menu!.commandItems!).toEqual([
+          {
+            _orgTitle: '',
+            iconCssClass: 'mdi mdi-pin-outline',
+            title: 'Freeze Columns',
+            titleKey: 'FREEZE_COLUMNS',
+            command: 'freeze-columns',
+            positionOrder: 45,
+          },
+          { divider: true, command: '', positionOrder: 48 },
+        ]);
+
+        commandDivElm.dispatchEvent(new Event('click')); // execute command
+        expect(setOptionsSpy).toHaveBeenCalledWith({ frozenColumn: 0, enableMouseWheelScrollHandler: true }, false, true);
+        expect(setColSpy).toHaveBeenCalledWith(visibleColumnDefinitions);
+      });
+
       it('should trigger the command "sort-asc" and expect Sort Service to call "onBackendSortChanged" being called without the sorted column', () => {
         const mockSortedCols: ColumnSort[] = [
           { columnId: 'field1', sortAsc: true, sortCol: { id: 'field1', field: 'field1' } },
