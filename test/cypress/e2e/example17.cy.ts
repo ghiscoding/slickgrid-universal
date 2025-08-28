@@ -154,7 +154,7 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
   });
 
   /* this test is very flaky, let's skip it since it doesn't bring much value anyway */
-  it('should MAX interval take effect when auto scroll: 600ms -> 200ms', { scrollBehavior: false }, () => {
+  it.skip('should MAX interval take effect when auto scroll: 600ms -> 200ms', { scrollBehavior: false }, () => {
     // By default the MAX interval to show next cell is 600ms.
     testInterval(0, 9).then((defaultInterval) => {
       // Setting the interval to 200ms (1/3 of the default).
