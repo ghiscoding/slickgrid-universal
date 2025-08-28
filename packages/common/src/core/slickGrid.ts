@@ -374,6 +374,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected hasFrozenRows = false;
   protected frozenRowsHeight = 0;
   protected actualFrozenRow = -1;
+  protected _prevFrozenColumn = -1;
   protected paneTopH = 0;
   protected paneBottomH = 0;
   protected viewportTopH = 0;
@@ -393,7 +394,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected currentEditor: Editor | null = null;
   protected serializedEditorValue: any;
   protected editController?: EditController;
-  protected _prevFrozenColumn = -1;
   protected _prevDataLength = 0;
   protected _prevInvalidatedRowsCount = 0;
   protected _rowSpanIsCached = false;
@@ -632,7 +632,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.maxSupportedCssHeight = this.maxSupportedCssHeight || this.getMaxSupportedCssHeight();
     this.validateAndEnforceOptions();
     this._columnDefaults.width = this._options.defaultColumnWidth;
-    this._prevFrozenColumn = options.frozenColumn ?? -1;
+    this._prevFrozenColumn = this._options.frozenColumn ?? -1;
 
     if (!this._options.suppressCssChangesOnHiddenInit) {
       this.cacheCssForHiddenInit();
@@ -2488,7 +2488,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.hasFrozenRows = true;
       this.frozenRowsHeight = this._options.frozenRow! * this._options.rowHeight!;
       const dataLength = this.getDataLength();
-
       this.actualFrozenRow = this._options.frozenBottom ? dataLength - this._options.frozenRow! : this._options.frozenRow!;
     } else {
       this.hasFrozenRows = false;
@@ -3332,7 +3331,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param {Boolean} [suppressSetOverflow] - do we want to suppress the call to `setOverflow`
    */
   setOptions(newOptions: Partial<O>, suppressRender?: boolean, suppressColumnSet?: boolean, suppressSetOverflow?: boolean): void {
-    this._prevFrozenColumn = this._options.frozenColumn ?? -1;
     this.prepareForOptionsChange();
 
     if (this._options.enableAddRow !== newOptions.enableAddRow) {
@@ -3341,6 +3339,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     // before applying column freeze, we need our viewports to be scrolled back to left to avoid misaligned column headers
     if (newOptions.frozenColumn !== undefined && newOptions.frozenColumn >= 0) {
+      this._prevFrozenColumn = this._options.frozenColumn ?? -1; // keep ref of previous frozen column for later usage
       this.getViewports().forEach((vp) => (vp.scrollLeft = 0));
       this.handleScroll(); // trigger scroll to realign column headers as well
     }
