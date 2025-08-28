@@ -583,7 +583,7 @@ export default class Example04 {
 
   /** change dynamically, through slickgrid "setOptions()" the number of pinned columns */
   changeFrozenColumnCount() {
-    if (this.sgb?.slickGrid && this.sgb?.slickGrid.setOptions) {
+    if (this.sgb?.slickGrid?.setOptions) {
       this.sgb?.slickGrid.setOptions({
         frozenColumn: +this.frozenColumnCount,
       });
@@ -592,7 +592,7 @@ export default class Example04 {
 
   /** change dynamically, through slickgrid "setOptions()" the number of pinned rows */
   changeFrozenRowCount() {
-    if (this.sgb?.slickGrid && this.sgb?.slickGrid.setOptions) {
+    if (this.sgb?.slickGrid?.setOptions) {
       this.sgb?.slickGrid.setOptions({
         frozenRow: +this.frozenRowCount,
       });

@@ -11,6 +11,15 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
     fullTitles.push(`Mock${i}`);
   }
 
+  beforeEach(() => {
+    // add a serve mode to avoid adding the GitHub Stars link since that can slowdown Cypress considerably
+    // because it keeps waiting for it to load, we also preserve the cookie for all other tests
+    cy.setCookie('serve-mode', 'cypress');
+
+    // create a console.log spy for later use
+    cy.window().then((win) => cy.spy(win.console, 'log'));
+  });
+
   it('should display Example title', () => {
     cy.visit(`${Cypress.config('baseUrl')}/example17`);
     cy.get('h3').should('contain', 'Example 17 - Auto-Scroll with Range Selector');
@@ -145,7 +154,7 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
   });
 
   /* this test is very flaky, let's skip it since it doesn't bring much value anyway */
-  it.skip('should MAX interval take effect when auto scroll: 600ms -> 200ms', { scrollBehavior: false }, () => {
+  it('should MAX interval take effect when auto scroll: 600ms -> 200ms', { scrollBehavior: false }, () => {
     // By default the MAX interval to show next cell is 600ms.
     testInterval(0, 9).then((defaultInterval) => {
       // Setting the interval to 200ms (1/3 of the default).
@@ -310,5 +319,34 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
     cy.get('[data-test="set-clear-grouping-btn"]').trigger('click');
     cy.get(`.grid17-1 [style="transform: translateY(${CELL_HEIGHT * 0}px);"]`).should('have.length', 1);
     cy.get(`.grid17-2 [style="transform: translateY(${CELL_HEIGHT * 0}px);"]`).should('have.length', 1);
+  });
+
+  describe('Frozen Columns', () => {
+    it('should set 3 frozen columns in first grid', () => {
+      cy.get('[data-test="frozen-column-count"]').clear().type('3');
+      cy.get('[data-test="set-frozen-columns-btn"]').click();
+
+      cy.get('.grid17-1 .slick-pane-left .slick-header-column').should('have.length', 4);
+      cy.get('.grid17-1 .slick-pane-right .slick-header-column').should('have.length', 34);
+    });
+
+    it('should try to set frozen columns wider than possible and expect an error and abort of the execution', () => {
+      const stub = cy.stub();
+      cy.on('window:alert', stub);
+      cy.get('[data-test="frozen-column-count"]').clear().type('12');
+      cy.get('[data-test="set-frozen-columns-btn"]')
+        .click()
+        .then(() => {
+          expect(stub.getCall(0)).to.be.calledWith(
+            '[SlickGrid] You are trying to freeze/pin more columns than the grid can support. ' +
+              'Make sure to have less columns pinned (on the left) than the actual visible grid width. ' +
+              'Also, please remember that only the columns on the right are scrollable and the pinned columns are not.'
+          );
+
+          // it should still have previous pinning
+          cy.get('.grid17-1 .slick-pane-left .slick-header-column').should('have.length', 4);
+          cy.get('.grid17-1 .slick-pane-right .slick-header-column').should('have.length', 34);
+        });
+    });
   });
 });

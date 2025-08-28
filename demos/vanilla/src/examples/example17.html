@@ -15,6 +15,18 @@
 <h6 class="italic content example-details">Dragging from 2nd column to make a selection, and the viewport will auto scroll.</h6>
 
 <div>
+  <span class="ml-1 mb-2">
+    <label for="">Grid 1 - Pinned Columns: </label>
+    <input
+      type="number"
+      data-test="frozen-column-count"
+      class="frozen-column-count is-narrow input is-small"
+      value.bind="frozenColumnCount"
+    />
+    <button class="button is-small" data-test="set-frozen-columns-btn" onclick.trigger="changeFrozenColumnCount()">Set</button>
+  </span>
+</div>
+<div>
   <div class="row scroll-configs">
     <span>
       <label for="min-internal">MIN interval to show next cell (ms): </label>

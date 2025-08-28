@@ -652,11 +652,11 @@ describe('SlickGrid core file', () => {
         { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
       ];
       Object.defineProperty(container, 'clientWidth', { writable: true, value: 40 });
-      vi.spyOn(container, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0, width: 40 } as DOMRect);
+      vi.spyOn(container, 'getBoundingClientRect').mockReturnValueOnce({ left: 25, top: 10, right: 0, bottom: 0, width: 40 } as DOMRect);
 
       skipGridDestroy = true;
       expect(() => new SlickGrid<any, Column>(container, data, columns, gridOptions)).toThrow(
-        '[SlickGrid] Frozen/pinned columns cannot be wider than the grid container width.'
+        '[SlickGrid] You are trying to freeze/pin more columns than the grid can support.'
       );
     });
 
@@ -679,12 +679,12 @@ describe('SlickGrid core file', () => {
         { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
       ];
       Object.defineProperty(container, 'clientWidth', { writable: true, value: 40 });
-      vi.spyOn(container, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0, width: 40 } as DOMRect);
+      vi.spyOn(container, 'getBoundingClientRect').mockReturnValueOnce({ left: 25, top: 10, right: 0, bottom: 0, width: 40 } as DOMRect);
 
       skipGridDestroy = true;
       grid = new SlickGrid<any, Column>(container, data, columns, gridOptions);
-      expect(alertSpy).toHaveBeenCalledWith(expect.stringContaining('[SlickGrid] Frozen/pinned columns cannot be wider than the grid container width.'));
-      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('[SlickGrid] Frozen/pinned columns cannot be wider than the grid container width.'));
+      expect(alertSpy).toHaveBeenCalledWith(expect.stringContaining('[SlickGrid] You are trying to freeze/pin more columns than the grid can support.'));
+      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('[SlickGrid] You are trying to freeze/pin more columns than the grid can support.'));
     });
 
     it('should hide column headers div when "showPreHeaderPanel" is disabled', () => {

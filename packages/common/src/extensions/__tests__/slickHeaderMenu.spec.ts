@@ -1371,7 +1371,6 @@ describe('HeaderMenu Plugin', () => {
           { id: 'field2', field: 'field2', width: 75 },
         ];
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
-        const setColSpy = vi.spyOn(gridStub, 'setColumns');
         vi.spyOn(gridStub, 'getOptions')
           .mockReturnValueOnce({ frozenColumn: -1 } as GridOption)
           .mockReturnValueOnce({ frozenColumn: 0 } as GridOption);
@@ -1403,7 +1402,6 @@ describe('HeaderMenu Plugin', () => {
 
         commandDivElm.dispatchEvent(new Event('click')); // execute command
         expect(setOptionsSpy).toHaveBeenCalledWith({ frozenColumn: 0, enableMouseWheelScrollHandler: true }, false, true);
-        expect(setColSpy).toHaveBeenCalledWith(originalColumnDefinitions);
       });
 
       it('should expect menu related to Freeze Columns when "hideFreezeColumnsCommand" is disabled and also expect "setColumns" to be called with previous visible columns when hasColumnsReordered returns true', () => {
