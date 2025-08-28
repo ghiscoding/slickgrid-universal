@@ -656,7 +656,7 @@ describe('SlickGrid core file', () => {
 
       skipGridDestroy = true;
       expect(() => new SlickGrid<any, Column>(container, data, columns, gridOptions)).toThrow(
-        '[SlickGrid] Frozen/pinned columns cannot be wider than the actual grid container width.'
+        '[SlickGrid] Frozen/pinned columns cannot be wider than the grid container width.'
       );
     });
 
@@ -683,10 +683,8 @@ describe('SlickGrid core file', () => {
 
       skipGridDestroy = true;
       grid = new SlickGrid<any, Column>(container, data, columns, gridOptions);
-      expect(alertSpy).toHaveBeenCalledWith(expect.stringContaining('[SlickGrid] Frozen/pinned columns cannot be wider than the actual grid container width.'));
-      expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('[SlickGrid] Frozen/pinned columns cannot be wider than the actual grid container width.')
-      );
+      expect(alertSpy).toHaveBeenCalledWith(expect.stringContaining('[SlickGrid] Frozen/pinned columns cannot be wider than the grid container width.'));
+      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('[SlickGrid] Frozen/pinned columns cannot be wider than the grid container width.'));
     });
 
     it('should hide column headers div when "showPreHeaderPanel" is disabled', () => {

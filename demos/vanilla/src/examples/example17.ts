@@ -158,6 +158,9 @@ export default class Example17 {
       frozenColumn: -1,
       frozenRow: -1,
       // enableExcelCopyBuffer: true,
+      headerMenu: {
+        hideFreezeColumnsCommand: false,
+      },
     };
 
     // copy the same Grid Options and Column Definitions to 2nd grid

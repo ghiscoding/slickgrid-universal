@@ -1363,8 +1363,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         if (cWidth > 0 && this.canvasWidthL > cWidth) {
           this.setOptions({ frozenColumn: -1 } as O); // in any case, we need to revert the frozen column change
           const errorMsg =
-            '[SlickGrid] Frozen/pinned columns cannot be wider than the actual grid container width. ' +
-            'Make sure to have less columns frozen or change your grid container to be wider.';
+            '[SlickGrid] Frozen/pinned columns cannot be wider than the grid container width. ' +
+            'Make sure to have less columns pinned (on the left) than the actual visible grid width. ' +
+            'Also, please remember that only the columns on the right are scrollable and the pinned columns are not.';
 
           if (this._options.throwWhenFrozenNotAllViewable) {
             throw new Error(errorMsg);
