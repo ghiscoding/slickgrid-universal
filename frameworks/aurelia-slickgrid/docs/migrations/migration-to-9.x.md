@@ -149,7 +149,7 @@ prepareGrid() {
 
 ## Services
 
-The `GridService` has CRUD methods which was sometime returning a single item and other times an array of items, and so for that reason we had to rely on code like `onItemAdded.subscribe(item => { const items = Array.isArray(item) ? item : [item] }`. So, I decided to change all the event names to plural and always return an array of items which is a lot more predictable.
+The `GridService` has CRUD method events which were sometime returning a single item and other times an array of items, and so for that reason we had to rely on auto-detection code like `onItemAdded.subscribe(item => { const items = Array.isArray(item) ? item : [item] }`. So, I decided to change all the event names to plural and always return an array of items which is a lot more predictable.
 
 - `onItemAdded` renamed to `onItemsAdded`
 - `onItemDeleted` renamed to `onItemsDeleted`
@@ -159,10 +159,10 @@ The `GridService` has CRUD methods which was sometime returning a single item an
 ---
 
 ## Future Changes (next major to be expected around Node 20 EOL)
-### Code being `@deprecated` (to be removed in the future, but not until another year)
-#### You can start using these new options and properties (shown below) in v9.0 and above.
+### Code being `@deprecated` (to be removed in the future, next year)
+#### You can already start using these new options and props (shown below) in v9.0 and above.
 
-So when I created the project, I used a few TypeScript Enums and I thought that was pretty good, but what I didn't know at the time was that all of these Enums were ending up in the final transpiled JS bundle and that ends up taking space (but `type` do not). So in the next major, I'm planning to remove most of these Enums and replace them with string literal types (`type` instead of `enum` because `type` aren't transpiled and `enum` are). So you should consider using string types as much, and as soon, as possible in all your new grids and eventually make the changes in your older grids. Note that at the moment, these are only tagged as deprecations and they will only be dropped in the future (not now, but still, you should consider making this change in the near future), for example:
+When I created the project, I started using a few TypeScript Enums and I thought that was pretty nice, but little did I know that all of these Enums were ending up in the final transpiled JS bundle which ends up taking extra space (but `type` do not). So in the next major, I'm planning to remove most of these Enums and replace them with string literal types (`type` instead of `enum` because again `type` aren't transpiled and `enum` are). So you should consider using string types as much, and as soon, as possible in all of your new grids and eventually make the changes in your older grids. At the moment, these are all tagged as deprecations and they will only be dropped in the future (not now, but still, you should consider making this change sooner rather than later), for example:
 
 ```diff
 columns = [{
@@ -172,9 +172,9 @@ columns = [{
 }];
 ```
 
-> Note that using the string types (ie: `'number'`) instead of `FieldType.number`, ... was already doable for the past couple years, so this is far from being something new.
+> Note that using the string types (e.g.: `'number'`) instead of `FieldType.number`, ... which was already doable for the past couple years, so this is far from being something new.
 
-Below is a list of Enums being deprecated and you should think about migrating sooner than later, or at the minimum use them in your new grids, because they will be removed in the next major release (whenever that happens, but that won't be before another year). Note that the list below is only a summary of these deprecations and replacements (a suggestion is to do a Search on any of these group name prefixes, e.g.: `FieldType.` and start replacing them).
+Below is a list of Enums being deprecated and you should think about migrating them sooner than later, or at the minimum use them in your new grids, because they will be removed in the next major release (whenever that happens, probably next year). Please note that the list below is only a summary of all deprecations and replacements (a suggestion is to do a Search on any of these group name prefixes, e.g.: `FieldType.` and start replacing them).
 
 | Enum Name   | from `enum`         | to string `type`    | Note |
 | ----------- | ------------------- | ------------------- | ---- |
@@ -201,7 +201,7 @@ Below is a list of Enums being deprecated and you should think about migrating s
 
 ##### deprecating `editorOptions` and `filterOptions`, they are being renamed as a more generic `options` name
 
-So, in order to make it easier to merge and simplify Editor/Filter options, I'm renaming the props to a single `options` property name which will make it more easily transportable (you will be able to reuse the same `options` for both the editor/filter if you wanted too). You can start using `options` in v9.0 and above (or keep using `editorOptions`, `filterOptions` until v10).
+So, in order to make it easier to merge and simplify Editor/Filter options, I'm renaming the props to a single `options` property name which will make them more easily transportable (you will be able to reuse the same `options` for both the editor/filter if you wanted too). You can start using `options` in v9.0 and above (or keep using `editorOptions`, `filterOptions` until v10).
 
 ```diff
 import { type MultipleSelectOption } from '@slickgrid-universal/common';

@@ -7,7 +7,12 @@ This new major release is dropping SlickGrid dependency (`6pac/slickgrid`) depen
 
 Another great feature of this new major release is that I made a lot of improvements on the library for CSP (Content Security Policy) compliance, or at least provide ways to be compliant. One of the biggest change in that regard is that you can now create custom Formatters to return native HTML element (I rewrote a few built-in Formatters with that approach) and this is mostly to avoid the use of `innerHTML` which is not CSP safe by default.
 
-With this new major version release, we can now say that the journey to modernize the project is now, for the most part, completed (in summary the following was achieved in Slickgrid-Universal: 1. dropped jQueryUI in v2, dropped jQuery v3 and now in v4 Slickgrid-Universal is no longer relying on external 6pac/SlickGrid dependency and is fully written in TypeScript with full ESM builds) and with that said, I do not expect any major changes (aka breaking) for the foreseeable future... we're pretty much done with the big changes!!! This new release should be a little more performant too with more native code, e.g. some Formatters were rewritten as native.
+With this new major version release, we can now say that the journey to modernize the project is now, for the most part, completed, in summary the following was achieved in Slickgrid-Universal: 
+1. dropped jQueryUI in v2
+2. dropped jQuery v3
+3. no longer relying on external 6pac/SlickGrid dependency in v4 
+
+Slickgrid-Universal is now fully standalone and entirely written in TypeScript with full ESM builds and with that being said, I do not expect any major changes (aka breaking) for the foreseeable future... we're pretty much done with the big changes!!! This new release should be a little more performant too with more native code (e.g. some Formatters were rewritten as native).
 
 #### Major Changes - Quick Summary
 - minimum requirements bump
@@ -175,7 +180,7 @@ Some of the DomUtils Service function were renamed, if you use any of them then 
 ### Excel Export
 _requires version >=7.4.0_
 
-Migrate to a new [Excel-Builder-Vanilla](https://github.com/ghiscoding/excel-builder-vanilla) which is a fork of the `excel-builder.js` library. The new fork is all about modernizing Excel-Builder, it drops `Q`, `Lodash` and also replace `JSZip` to `fflate`.
+Migrate to a new [Excel-Builder-Vanilla](https://github.com/ghiscoding/excel-builder-vanilla) library which is a fork of the `excel-builder.js` lib. The new fork is all about modernizing Excel-Builder, it drops `Q`, `Lodash` and also replaces `JSZip` with `fflate` which decreases its size a lot.
 
 By migrating from `JSZip` to `fflate`, the users should remove any `JSZip` references (like `tsconfig.json`)
 
@@ -195,7 +200,7 @@ Also note that `fflate` could use Web Worker for performance reasons and by doin
 
 ## Formatters / CSP (Content Security Policy) Compliance
 ### Formatters Cleanup & Removals
-I decided to remove a bunch of Formatters (like `Formatters.bold`, `Formatters.uppercase`, ...) because they could and should be using the column `cssClass` option. Basically, I did not myself use the best practice available when creating soo many Formatters and I did not realized that we could simply use `cssClass` which is a much more efficient way and so I'm correcting this inadvertence in this new release. With that in mind, I decided to do a big cleanup in the list of Formatters to make the project a little more lightweight with less code to support and replace some of them with more generic alternatives (see below).
+I decided to remove a bunch of Formatters (like `Formatters.bold`, `Formatters.uppercase`, ...) because they could and should be using the column `cssClass` option. Basically, I did not even use myself the best practice available when I created soo many Formatters in the past and I did not realized that we could simply use `cssClass` which is a much more efficient way and so I'm correcting this inadvertence in this new release. With that in mind, I decided to do a big cleanup in the list of Formatters to make the project a little more lightweight with less code to support and replace some of them with more generic alternatives (see below).
 
 The benefits of using `cssClass` are non negligible since it will slightly decrease the project size and code to support, but most importantly it is a lot more efficient, because applying CSS is a lot quicker in comparison to parse and apply a formatter on each cell. See below for the list of deleted (or replaced) Formatters and their equivalent Column `cssClass` property to use (when available).
 
@@ -267,7 +272,7 @@ init() {
   }
 }
 ```
-here's also another use case from [Example 18](https://ghiscoding.github.io/slickgrid-universal/#/example18) using a `DocumentFragment`
+here's also another use case from [Example 18](https://ghiscoding.github.io/slickgrid-universal/#/example18) using a `DocumentFragment` which is also accepted
 ```diff
 const priceFormatter: Formatter = (_cell, _row, value, _col, dataContext) => {
   const direction = dataContext.priceChange >= 0 ? 'up' : 'down';
@@ -297,4 +302,4 @@ init() {
 ];
 ```
 
-> **Note** you might be wondering, why do we use a `DocumentFragment` and not just `HTMLElement`? The reason is simply because in some cases you might just want to return multiple elements but without having to wrap them inside a div container... and so you probably guessed it that a `DocumentFragment` allows you to do just that. However please note that it might not be supported by all environment (e.g. Salesforce doesn't support it yet), so a grid option `preventDocumentFragmentUsage` flag was provided and it will instead wrap the elements inside a `span` instead of the fragment (e.g. Tree Formatter uses this technique).
+> **Note** you might be wondering, why do we use a `DocumentFragment` and not just `HTMLElement`? The reason is simply because in some cases you might just want to return multiple elements but without having to wrap them inside a div container... and so you have probably guessed it by now that `DocumentFragment` allows you to do just that. However please note that it might not be supported in all environment (e.g. Salesforce doesn't support it yet), so a grid option `preventDocumentFragmentUsage` flag was created and when enabled, it will rather wrap the elements inside a `span` instead of a fragment (e.g. Tree Formatter uses this technique).

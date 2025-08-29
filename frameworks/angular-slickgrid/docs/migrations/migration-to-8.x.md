@@ -20,7 +20,7 @@ Another noticeable UI change is the migration from [Flatpickr](https://flatpickr
       - for example Flatpickr `minDate: 'today'` becomes `range: { min: 'today' }` in VC
     - some settings were missing, like the `'today'` shortcut, so I also contributed back to that project.
 
-To summarize, the goal of this new release was mainly to improve UI/UX (mostly for Dark Mode) and also to make it fully ESM ready. Also noteworthy, the project is smaller in size (~100Kb smaller) compared to what it was in v2.x (that was when the user had to install jQuery/jQueryUI separately). So, considering that we're no longer requiring the install of jQuery/jQueryUI, and also considering that these 2 dependencies had a total of well over 200kb. We can safely assume that our project build size is in fact a lot smaller than it was 2 years ago, that is really nice to know considering that we kept adding features (like Dark Mode and other features) while still decreasing its size over the years :)
+To summarize, the goal of this new release was mainly to improve UI/UX (mostly for Dark Mode) and also to make it fully ESM ready. Also noteworthy, the project is smaller in size (~100Kb smaller) compared to what it was in v2.x (that was when the user had to install jQuery/jQueryUI separately). So, considering that we're no longer requiring the install of jQuery/jQueryUI, and also considering that these 2 dependencies had a total of well over 200kb. We can safely assume that our project build size is in fact a lot smaller than it was 2 years ago, that is really nice to know considering that we kept adding features (like Dark Mode and other things) while still decreasing its size over the years :)
 
 With this release, and after 7 years of development as a single developer (myself @ghiscoding), I believe that I have achieved all goals and even more than I originally planned. So with that being said, I am not foreseeing any new major releases for a while. As a recap, I think that the biggest challenge was the removal of jQuery/jQueryUI and transitioning to native code, that took 2-3 years to accomplish which I am of course very proud to have achieved. All dependencies are now also all ESM and the project is now CSP compliant as well. If the project is useful to you, give it a ⭐ and perhaps buy me a [☕ (ko-fi)](https://ko-fi.com/ghiscoding), thanks.
 
@@ -31,12 +31,11 @@ With this release, and after 7 years of development as a single developer (mysel
   - Bootstrap v5.0+ (or any other UI framework)
   - SASS v1.35+ (`dart-sass`)
   - migrated from Flatpickr to Vanilla-Calendar-Pro (visit [Vanilla-Calendar-Pro](https://vanilla-calendar.pro/) for demos and docs)
-  - migrated from MomentJS to [Tempo](https://tempo.formkit.com/) (by the FormKit
-team)
+  - migrated from MomentJS to [Tempo](https://tempo.formkit.com/) (by the FormKit team)
 
 > **Note** for the entire list of tasks & code changes applied in this release, you may want to take a look at the [Roadmap to 5.0](https://github.com/ghiscoding/slickgrid-universal/discussions/1482) Discussion.
 
-For most breaking changes, a quick Search & Replace in your code editor should suffice.
+For most of breaking changes, a quick Search & Replace in your code editor should suffice.
 
 > **Note:** if you come from an earlier version, please make sure to follow each migrations in their respected order (review previous migration guides)
 
@@ -61,6 +60,8 @@ If you use any of the Slickgrid-Universal extra dependencies then also make sure
 
 Since the SVG icons are now pure CSS, we can now colorize any of them the same way that we would do for any other text via the `color` CSS property 🌈. For that reason, we no longer need any of the `.color-xx` CSS classes (which were created via CSS [filter](https://developer.mozilla.org/en-US/docs/Web/CSS/filter)). They were useful to override the SVG icon colors (by using CSS `filter`), but since we can now use the regular CSS `color` property, the `color-xx` are no longer necessary and were all removed (just use `text-color-xx` instead or plain CSS `color`s).
 
+> **NOTE** `.text-color-xx` were actually renamed back to `.color-xx` in v9.x, so if you are migrating to v9 right after then use `.color-xx` instead.
+
 ```diff
 <button class="button is-small">
 -  <span class="mdi mdi-undo color-primary"></span>
@@ -78,7 +79,7 @@ or move the class to the parent container and have both the icon & the text `inh
 ```
 
 #### SASS variables
-A lot of SASS variables got changed, we recommend that you take a look at the [_variables.scss](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) file to compare them with your SASS overrides and fix any SASS build issues. For example a lot of the ms-select variables and all Flatpickr related variables were deleted (note that Vanilla-Calendar doesn't actually have any variables). Also a lot of the icon related variables were renamed and updated (all icons now have the suffix `-icon-svg-path` for the SVG vector path, you can easily change them with SASS).
+A lot of SASS variables were also changed, we recommend that you take a look at the [_variables.scss](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) file to compare them with your SASS overrides and fix any SASS build issues. For example a lot of the ms-select variables and all Flatpickr related variables were deleted (note that Vanilla-Calendar doesn't actually have any variables). Also a lot of the icon related variables were renamed and updated (all icons now have the suffix `-icon-svg-path` for the SVG vector path, you can easily change them with SASS).
 
 > **Note** if you want to create your own SVGs icons in pure CSS, you could use the `generateSvgStyle()` SASS function from Slickgrid-Universal [`svg-utilities.scss`](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/svg-utilities.scss) (take a look at the [`slickgrid-icons.scss`](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/slickgrid-icons.scss) for some usage)
 
@@ -246,7 +247,7 @@ if you want to reference the Editor class (e.g. `Editors.longText`), you can now
 ## Grid Functionalities
 
 ### Sanitizer (DOMPurify)
-`DOMPurify` is now completely optional via the `sanitizer` grid option and you must now provide it yourself. The main reason to make it optional is because even though most users would prefer to use `dompurify`, some might prefer to use `isomorphic-dompurify` for SSR support. Consider that it is now optional, you could also technically speaking skip the `sanitizer` configuration completely, but that is not at all recommended.
+`DOMPurify` is now completely optional via the `sanitizer` grid option and you must now provide it yourself. The main reason to make it optional is because even though most users would prefer to use `dompurify`, some might prefer to use `isomorphic-dompurify` for SSR support. Considering that it is now optional, you could also technically speaking, skip the `sanitizer` configuration completely, but that is not at all recommended and is risky business nowadays.
 
 > **⚠ Note** even if the `sanitizer` is now optional, we **strongly suggest** that you configure it as a global grid option to avoid any XSS attacks from your data and also to remain CSP compliant. Also note that for Salesforce users, you do not have to configure it since Salesforce already use DOMPurify internally.
 
