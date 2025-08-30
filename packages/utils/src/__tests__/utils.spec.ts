@@ -179,7 +179,7 @@ describe('Service/Utilies', () => {
       expect(result.isAsync).toBe(false);
       expect(removeExtraSpaces(result.body)).toContain(
         removeExtraSpaces(`
-        return { status: 200, body: "hello world" }
+        () => ({ status: 200, body: "hello world" })
       `)
       );
     });
