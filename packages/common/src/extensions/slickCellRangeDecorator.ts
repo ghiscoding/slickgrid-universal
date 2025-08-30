@@ -17,10 +17,15 @@ export class SlickCellRangeDecorator {
 
   protected _options: CellRangeDecoratorOption;
   protected _elem?: HTMLDivElement | null;
+  protected _selectionCss: CSSStyleDeclaration;
   protected _defaults = {
     selectionCssClass: 'slick-range-decorator',
     selectionCss: {
       border: '2px dashed red',
+      zIndex: '9999',
+    },
+    copyToSelectionCss: {
+      border: '2px dashed blue',
       zIndex: '9999',
     },
     offset: { top: -1, left: -1, height: -2, width: -2 },
@@ -31,6 +36,7 @@ export class SlickCellRangeDecorator {
     options?: Partial<CellRangeDecoratorOption>
   ) {
     this._options = deepMerge(this._defaults, options);
+    this._selectionCss = options?.selectionCss || ({} as CSSStyleDeclaration);
   }
 
   get addonOptions(): CellRangeDecoratorOption {
@@ -48,22 +54,32 @@ export class SlickCellRangeDecorator {
 
   init(): void {}
 
+  getSelectionCss(): CSSStyleDeclaration {
+    return this._selectionCss;
+  }
+
+  setSelectionCss(cssProps: CSSStyleDeclaration): void {
+    this._selectionCss = cssProps;
+  }
+
   hide(): void {
     this._elem?.remove();
     this._elem = null;
   }
 
-  show(range: SlickRange): HTMLDivElement {
+  show(range: SlickRange, isCopyTo?: boolean): HTMLDivElement {
     if (!this._elem) {
       this._elem = createDomElement('div', { className: this._options.selectionCssClass });
-      Object.keys(this._options.selectionCss as CSSStyleDeclaration).forEach((cssStyleKey) => {
-        this._elem!.style[cssStyleKey as CSSStyleDeclarationWritable] =
-          this._options.selectionCss[cssStyleKey as CSSStyleDeclarationWritable];
-      });
       this._elem.style.position = 'absolute';
       this.grid.getActiveCanvasNode()?.appendChild(this._elem);
     }
 
+    const css = isCopyTo && this._options.copyToSelectionCss ? this._options.copyToSelectionCss : this._options.selectionCss;
+    Object.keys(css).forEach((cssStyleKey) => {
+      if (this._elem!.style[cssStyleKey as CSSStyleDeclarationWritable] !== css[cssStyleKey as CSSStyleDeclarationWritable]) {
+        this._elem!.style[cssStyleKey as CSSStyleDeclarationWritable] = css[cssStyleKey as CSSStyleDeclarationWritable];
+      }
+    });
     const from = this.grid.getCellNodeBox(range.fromRow, range.fromCell);
     const to = this.grid.getCellNodeBox(range.toRow, range.toCell);
 
