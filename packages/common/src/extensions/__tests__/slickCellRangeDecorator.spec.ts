@@ -28,6 +28,10 @@ describe('CellRangeDecorator Plugin', () => {
         border: '2px dashed red',
         zIndex: '9999',
       },
+      copyToSelectionCss: {
+        border: '2px dashed blue',
+        zIndex: '9999',
+      },
       offset: { top: -1, left: -1, height: -2, width: -2 },
     });
   });
@@ -67,5 +71,12 @@ describe('CellRangeDecorator Plugin', () => {
     expect(plugin.addonElement!.style.left).toEqual('31px'); // 26 + 5px
     expect(plugin.addonElement!.style.height).toEqual('20px'); // 12 - 25 + 33px
     expect(plugin.addonElement!.style.width).toEqual('13px'); // 27 - 26 + 12px
+  });
+
+  it('should be able to set selection CSS', () => {
+    plugin = new SlickCellRangeDecorator(gridStub, { offset: { top: 20, left: 5, width: 12, height: 33 } });
+    plugin.setSelectionCss({ border: '2px solid green', zIndex: '9998' } as CSSStyleDeclaration);
+
+    expect(plugin.getSelectionCss()).toEqual({ border: '2px solid green', zIndex: '9998' } as CSSStyleDeclaration);
   });
 });
