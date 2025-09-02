@@ -25,7 +25,7 @@
 - [Filter Shortcuts](input-filter.md#filter-shortcuts)
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example10) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example10.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example10) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example10.ts)
 
 ### Description
 Multiple Select (dropdown) filter is useful when we want to filter the grid 1 or more search term value.

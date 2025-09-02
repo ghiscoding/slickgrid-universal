@@ -2,7 +2,7 @@
 The project has a built-in Pagination Component but in some cases, users might want to provide their own Custom Pagination Component.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example30) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example30.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example30) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example30.ts)
 
 #### Custom Pagination
 When providing a custom pagination component as a `customPaginationComponent`, that class will be instantiated instead of the regular `SlickPaginationComponent`.

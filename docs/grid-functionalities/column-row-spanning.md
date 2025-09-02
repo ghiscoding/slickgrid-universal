@@ -10,9 +10,9 @@ You can use Colspan and/or Rowspan by using the DataView Item Metadata Provider,
 ### Demo
 
 #### Colspan / Rowspan
-[Employee Timesheets](https://ghiscoding.github.io/slickgrid-universal/#/example32) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example32.ts)
+[Employee Timesheets](https://ghiscoding.github.io/slickgrid-universal/#/example32) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example32.ts)
 
-[Large Dataset](https://ghiscoding.github.io/slickgrid-universal/#/example33) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example33.ts)
+[Large Dataset](https://ghiscoding.github.io/slickgrid-universal/#/example33) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example33.ts)
 
 ### Basic Usage
 

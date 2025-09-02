@@ -15,7 +15,7 @@
 Input text filter is the default filter that will be used when the user ommits the `filter.model`.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example02) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/webpack-demo-vanilla-bundle/src/examples/example02.ts)
+[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example02) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example02.ts)
 
 ### UI Usage
 All column types support the following operators: (`>`, `>=`, `<`, `<=`, `<>`, `!=`, `=`, `==`, `*`) that can be typed directly into the text filter, range filters can also have 1 of these options (`rangeInclusive` (default) or `rangeExclusive`). Also note that `<>` and `!=` are aliases and are equivalent, the same applies to `=` and `==`.

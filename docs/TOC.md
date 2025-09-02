@@ -39,18 +39,18 @@
 
 ## Grid Functionalities
 
-* [Auto-Resize / Resizer Service](grid-functionalities/Grid-Auto-Resize.md)
-* [Resize by Cell Content](grid-functionalities/Resize-by-Cell-Content.md)
-* [Column Picker](grid-functionalities/Column-Picker.md)
-* [Composite Editor Modal](grid-functionalities/Composite-Editor-Modal.md)
+* [Auto-Resize / Resizer Service](grid-functionalities/grid-auto-resize.md)
+* [Resize by Cell Content](grid-functionalities/resize-by-cell-content.md)
+* [Column Picker](grid-functionalities/column-picker.md)
+* [Composite Editor Modal](grid-functionalities/composite-editor-modal.md)
 * [Custom Tooltip](grid-functionalities/custom-tooltip.md)
 * [Column & Row Spanning](grid-functionalities/column-row-spanning.md)
-* [Context Menu](grid-functionalities/Context-Menu.md)
-* [Custom Footer](grid-functionalities/Custom-Footer.md)
+* [Context Menu](grid-functionalities/context-menu.md)
+* [Custom Footer](grid-functionalities/custom-footer.md)
 * [Excel Copy Buffer Plugin](grid-functionalities/excel-copy-buffer.md)
-* [Export to Excel](grid-functionalities/Export-to-Excel.md)
-* [Export to File (csv/txt)](grid-functionalities/Export-to-Text-File.md)
-* [Grid Menu](grid-functionalities/Grid-Menu.md)
+* [Export to Excel](grid-functionalities/export-to-excel.md)
+* [Export to File (csv/txt)](grid-functionalities/export-to-text-file.md)
+* [Grid Menu](grid-functionalities/grid-menu.md)
 * [Grid State & Presets](grid-functionalities/grid-state-preset.md)
 * [Grouping & Aggregators](grid-functionalities/grouping-aggregators.md)
 * [Header Menu & Header Buttons](grid-functionalities/header-menu-header-buttons.md)
@@ -58,9 +58,9 @@
 * [Infinite Scroll](grid-functionalities/infinite-scroll.md)
 * [Pinning (frozen) of Columns/Rows](grid-functionalities/frozen-columns-rows.md)
 * [Row Detail](grid-functionalities/row-detail.md)
-* [Row Selection](grid-functionalities/Row-Selection.md)
-* [Tree Data Grid](grid-functionalities/Tree-Data-Grid.md)
-* [Row Based Editing Plugin](grid-functionalities/Row-based-edit.md)
+* [Row Selection](grid-functionalities/row-selection.md)
+* [Tree Data Grid](grid-functionalities/tree-data-grid.md)
+* [Row Based Editing Plugin](grid-functionalities/row-based-edit.md)
 
 ## Developer Guides
 
