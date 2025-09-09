@@ -46,6 +46,9 @@ jobs:
 
       - run: pnpm --version
 
+      - name: Install pnpm dependencies
+        run: pnpm install
+
       - name: Build Slickgrid-Universal packages
         run: pnpm build:universal
 
