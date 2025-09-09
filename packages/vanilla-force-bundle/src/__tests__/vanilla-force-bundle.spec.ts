@@ -271,7 +271,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
   let eventPubSubService: EventPubSubService;
   let translateService: TranslateServiceStub;
   const container = new UniversalContainerService();
-  let dataset = [];
+  let dataset: any[] = [];
 
   beforeEach(() => {
     dataset = [];

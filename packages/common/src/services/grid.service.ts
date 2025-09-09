@@ -121,11 +121,17 @@ export class GridService {
     if (isObjectEmpty(pinningOptions)) {
       this.clearPinning();
     } else {
+      let isFreezeAllowed = true;
       if (pinningOptions.frozenColumn !== undefined) {
-        this.sharedService.frozenVisibleColumnId = this._grid.getColumns()[pinningOptions.frozenColumn]?.id || '';
+        isFreezeAllowed = this._grid.validateColumnFreeze(pinningOptions.frozenColumn);
+        if (isFreezeAllowed) {
+          this.sharedService.frozenVisibleColumnId = this._grid.getColumns()[pinningOptions.frozenColumn]?.id || '';
+        }
       }
-      this.sharedService.slickGrid.setOptions(pinningOptions, suppressRender, suppressColumnSet);
-      this.sharedService.gridOptions = { ...this.sharedService.gridOptions, ...pinningOptions };
+      if (isFreezeAllowed) {
+        this.sharedService.slickGrid.setOptions(pinningOptions, suppressRender, suppressColumnSet);
+        this.sharedService.gridOptions = { ...this.sharedService.gridOptions, ...pinningOptions };
+      }
     }
 
     if (shouldAutosizeColumns) {

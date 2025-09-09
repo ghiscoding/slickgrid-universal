@@ -846,12 +846,14 @@ export interface GridOption<C extends Column = Column> {
   textExportOptions?: TextExportOption;
 
   /**
-   * Defaults to false, should we throw an erro when frozenColumn is wider than the grid viewport width.
-   * When that happens the unfrozen section on the right is in a phantom area that is not viewable neither clickable unless we enable double-scroll on the grid container.
+   * @deprecated @use `alertWhenFrozenNotAllViewable` Defaults to false, should we throw an error when frozenColumn is wider than the grid viewport width.
    */
   throwWhenFrozenNotAllViewable?: boolean;
 
-  /** Defaults to true, show a browser alert to advise the user when frozenColumn is wider than the grid viewport width (same as `throwWhenFrozenNotAllViewable` but uses an alert instead of throwing) */
+  /**
+   * Defaults to true, show a browser alert when the user tries to set a frozenColumn that is wider than the visible grid viewport width in the browser.
+   * We can't freeze wider than the viewport because the right canvas will never be visible and left canvas will not be scrollable which breaks the UX.
+   */
   alertWhenFrozenNotAllViewable?: boolean;
 
   /** What is the top panel height in pixels (only type the number) */

@@ -94,6 +94,7 @@ const gridStub = {
   scrollRowIntoView: vi.fn(),
   updateColumns: vi.fn(),
   updateRow: vi.fn(),
+  validateColumnFreeze: vi.fn(),
 } as unknown as SlickGrid;
 
 const paginationServiceStub = {
@@ -1590,6 +1591,7 @@ describe('Grid Service', () => {
       const autosizeColumnsSpy = vi.spyOn(gridStub, 'autosizeColumns');
       const gridOptionSetterSpy = vi.spyOn(SharedService.prototype, 'gridOptions', 'set');
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+      vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValue(true);
 
       service.setPinning(mockPinning);
 
@@ -1605,6 +1607,7 @@ describe('Grid Service', () => {
       const autosizeColumnsSpy = vi.spyOn(gridStub, 'autosizeColumns');
       const gridOptionSetterSpy = vi.spyOn(SharedService.prototype, 'gridOptions', 'set');
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+      vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValue(true);
 
       service.setPinning(mockPinning, false);
 

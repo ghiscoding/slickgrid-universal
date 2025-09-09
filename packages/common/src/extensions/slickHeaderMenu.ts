@@ -97,22 +97,22 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
   /** Hide a column from the grid */
   hideColumn(column: Column): void {
-    if (this.sharedService?.slickGrid?.getColumnIndex) {
-      const columnIndex = this.sharedService.slickGrid.getColumnIndex(column.id);
-      const currentVisibleColumns = this.sharedService.slickGrid.getColumns();
+    if (this.grid?.getColumnIndex) {
+      const columnIndex = this.grid.getColumnIndex(column.id);
+      const currentVisibleColumns = this.grid.getColumns();
 
       // if we're using frozen columns, we need to readjust pinning when the new hidden column is on the left pinning container
       // we need to do this because SlickGrid freezes by index and has no knowledge of the columns themselves
       const frozenColumnIndex = this.sharedService.gridOptions.frozenColumn ?? -1;
       if (frozenColumnIndex >= 0 && frozenColumnIndex >= columnIndex) {
         this.sharedService.gridOptions.frozenColumn = frozenColumnIndex - 1;
-        this.sharedService.slickGrid.setOptions({ frozenColumn: this.sharedService.gridOptions.frozenColumn });
+        this.grid.setOptions({ frozenColumn: this.sharedService.gridOptions.frozenColumn });
       }
 
       // then proceed with hiding the column in SlickGrid & trigger an event when done
       const visibleColumns = arrayRemoveItemByIndex<Column>(currentVisibleColumns, columnIndex);
       this.sharedService.visibleColumns = visibleColumns;
-      this.sharedService.slickGrid.setColumns(visibleColumns);
+      this.grid.setColumns(visibleColumns);
       this.pubSubService.publish('onHideColumns', { columns: visibleColumns, hiddenColumn: column });
     }
   }
@@ -509,16 +509,13 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
     // to circumvent a bug in SlickGrid core lib, let's keep the columns positions ref and re-apply them after calling setOptions
     // the bug is highlighted in this issue comment:: https://github.com/6pac/SlickGrid/issues/592#issuecomment-822885069
-    const previousColumns = this.sharedService.slickGrid.getColumns();
+    const previousColumns = this.grid.getColumns();
 
-    this.grid.setOptions(newGridOptions, false, true); // suppress the setColumns (3rd argument) since we'll do that ourselves
-    let finalVisibleColumns = visibleColumns || [];
+    // make sure column freeze is allowed before applying the change
+    if (this.grid.validateColumnFreeze(newGridOptions.frozenColumn)) {
+      this.grid.setOptions(newGridOptions, false, true); // suppress the setColumns (3rd argument) since we'll do that ourselves
+      let finalVisibleColumns = visibleColumns || [];
 
-    // make sure it's really assigned (it could have failed when freezing columns wider than viewport, see `throwWhenFrozenNotAllViewable`)
-    // call `updateColumns()` to force a "freeze vs viewport" condition check, if wider it will reset frozen column to -1 and we should consider this a failure and abort
-    this.grid.updateColumns();
-    const isFreezeAllowed = this.grid.getOptions().frozenColumn === newGridOptions.frozenColumn; // when it fails, it would reset to -1 and not equal new frozen column
-    if (isFreezeAllowed) {
       // remove the last freeze/unfreeze command called from Header Menu since it will be replaced by the other one when reopening the menu
       const columnHeaderMenuItems: Array<MenuCommandItem | 'divider'> = column?.header?.menu?.commandItems ?? [];
       this.removeCommandWhenFound(columnHeaderMenuItems, command);
@@ -558,7 +555,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
         case 'hide-column':
           this.hideColumn(args.column);
           if (this.sharedService.gridOptions?.enableAutoSizeColumns) {
-            this.sharedService.slickGrid.autosizeColumns();
+            this.grid.autosizeColumns();
           }
           break;
         case 'clear-filter':
@@ -737,11 +734,11 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
         this.sortService.onBackendSortChanged(event, {
           multiColumnSort: true,
           sortCols: tmpSortedColumns,
-          grid: this.sharedService.slickGrid,
+          grid: this.grid,
         });
         emitterType = 'remote';
       } else if (this.sharedService.dataView) {
-        this.sortService.onLocalSortChanged(this.sharedService.slickGrid, tmpSortedColumns);
+        this.sortService.onLocalSortChanged(this.grid, tmpSortedColumns);
         emitterType = 'local';
       } else {
         // when using customDataView, we will simply send it as a onSort event with notify
@@ -757,7 +754,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
       });
 
       // add sort icon in UI
-      this.sharedService.slickGrid.setSortColumns(newSortColumns);
+      this.grid.setSortColumns(newSortColumns);
 
       // if we have an emitter type set, we will emit a sort changed
       // for the Grid State Service to see the change.

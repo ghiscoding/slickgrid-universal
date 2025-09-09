@@ -410,7 +410,8 @@ export class AureliaSlickgridCustomElement {
     if (
       frozenColumnIndex >= 0 &&
       frozenColumnIndex <= this.sharedService.visibleColumns.length &&
-      this.sharedService.visibleColumns.length > 0
+      this.sharedService.visibleColumns.length > 0 &&
+      this.grid.validateColumnFreeze(frozenColumnIndex)
     ) {
       this.sharedService.frozenVisibleColumnId = this.sharedService.visibleColumns[frozenColumnIndex]?.id ?? '';
     }
