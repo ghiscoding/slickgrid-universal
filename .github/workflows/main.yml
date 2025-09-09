@@ -33,32 +33,20 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set NodeJS
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node }}
-
       - name: Install pnpm
         uses: pnpm/action-setup@v3
         with:
           version: 10
           run_install: false
 
+      - name: Set NodeJS
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ matrix.node }}
+          cache: 'pnpm'
+
       - run: node --version
       - run: pnpm --version
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
 
       - name: Run pnpm install dependencies
         run: pnpm install
