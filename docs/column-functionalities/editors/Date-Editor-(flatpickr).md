@@ -58,7 +58,7 @@ initializeGrid() {
         model: Editors.date,
         required: true,
         validator: (value, args) => {
-          const dataContext = args && args.item;
+          const dataContext = args?.item;
           if (dataContext && (dataContext.completed && !value)) {
             return { valid: false, msg: 'You must provide a "Finish" date when "Completed" is checked.' };
           }

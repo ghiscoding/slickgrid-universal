@@ -171,7 +171,8 @@ export default class Example12 {
         filter: { model: Filters.compoundInputText },
         editor: {
           model: Editors.longText,
-          massUpdate: true,
+          massUpdate: false,
+          compositeEditorFormOrder: 0, // you can use this option to always keep same order and make this the 1st input
           required: true,
           alwaysSaveOnEnterKey: true,
           maxLength: 12,
@@ -203,6 +204,7 @@ export default class Example12 {
         },
         editor: {
           model: Editors.float,
+          compositeEditorFormOrder: 2, // inverse order of Duration & Percent Complete in the form
           massUpdate: true,
           decimal: 2,
           valueStep: 1,
@@ -238,6 +240,7 @@ export default class Example12 {
         editor: {
           model: Editors.slider,
           massUpdate: true,
+          compositeEditorFormOrder: 1, // inverse order of Duration & Percent Complete in the form
           minValue: 0,
           maxValue: 100,
         },
@@ -359,7 +362,7 @@ export default class Example12 {
           } as VanillaCalendarOption,
           massUpdate: true,
           validator: (value, args) => {
-            const dataContext = args && args.item;
+            const dataContext = args?.item;
             if (dataContext && dataContext.completed && !value) {
               return { valid: false, msg: 'You must provide a "Finish" date when "Completed" is checked.' };
             }

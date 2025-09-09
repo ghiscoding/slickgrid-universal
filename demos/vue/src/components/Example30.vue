@@ -4,17 +4,19 @@ import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
   type AutocompleterOption,
+  type Column,
   type CompositeEditorModalType,
   type EditCommand,
   type Formatter,
   type GridOption,
   type GridStateChange,
   type LongTextEditorOption,
+  type MultipleSelectOption,
   type OnCompositeEditorChangeEventArgs,
   type SlickGrid,
   type SlickgridVueInstance,
+  type SliderOption,
   type VanillaCalendarOption,
-  type Column,
   Editors,
   Filters,
   formatNumber,
@@ -98,6 +100,7 @@ function defineGrid() {
       editor: {
         model: Editors.longText,
         massUpdate: false,
+        compositeEditorFormOrder: 0, // you can use this option to always keep same order and make this the 1st input
         required: true,
         alwaysSaveOnEnterKey: true,
         maxLength: 12,
@@ -129,6 +132,7 @@ function defineGrid() {
       },
       editor: {
         model: Editors.float,
+        compositeEditorFormOrder: 2, // inverse order of Duration & Percent Complete in the form
         massUpdate: true,
         decimal: 2,
         valueStep: 1,
@@ -164,6 +168,7 @@ function defineGrid() {
       editor: {
         model: Editors.slider,
         massUpdate: true,
+        compositeEditorFormOrder: 1, // inverse order of Duration & Percent Complete in the form
         minValue: 0,
         maxValue: 100,
       },
@@ -208,6 +213,7 @@ function defineGrid() {
       filter: {
         model: Filters.multipleSelect,
         collection: complexityLevelList.value,
+        options: { showClear: true } as MultipleSelectOption,
       },
       editor: {
         model: Editors.singleSelect,
@@ -229,7 +235,7 @@ function defineGrid() {
       saveOutputType: 'dateUtc',
       filterable: true,
       filter: { model: Filters.compoundDate },
-      editor: { model: Editors.date, massUpdate: true, options: { hideClearButton: false } },
+      editor: { model: Editors.date, massUpdate: true, options: { hideClearButton: false } as SliderOption },
     },
     {
       id: 'completed',
@@ -251,6 +257,7 @@ function defineGrid() {
           { value: false, label: 'False' },
         ],
         model: Filters.singleSelect,
+        options: { showClear: true } as MultipleSelectOption,
       },
       editor: { model: Editors.checkbox, massUpdate: true },
       // editor: { model: Editors.singleSelect, collection: [{ value: true, label: 'Yes' }, { value: false, label: 'No' }], },
@@ -272,7 +279,7 @@ function defineGrid() {
       editor: {
         model: Editors.date,
         options: {
-          displayDateMin: 'today',
+          displayDateMin: 'today', // set minimum date as today
 
           // if we want to preload the date picker with a different date,
           // we could do it by assigning `selectedDates: []`
@@ -329,6 +336,7 @@ function defineGrid() {
       filter: {
         model: Filters.inputText,
         // placeholder: '🔎︎ search product',
+        type: 'string',
         queryField: 'product.itemName',
       },
     },
@@ -355,6 +363,7 @@ function defineGrid() {
       },
       filter: {
         model: Filters.inputText,
+        type: 'string',
         queryField: 'origin.name',
       },
     },
