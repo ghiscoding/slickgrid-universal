@@ -66,7 +66,7 @@ vi.mock('@slickgrid-universal/common', async (importOriginal) => ({
   },
 }));
 
-const addVanillaEventPropagation = function (event) {
+const addVanillaEventPropagation = function (event: any) {
   Object.defineProperty(event, 'isPropagationStopped', { writable: true, configurable: true, value: vi.fn() });
   Object.defineProperty(event, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: vi.fn() });
   return event;
@@ -271,6 +271,7 @@ const mockGrid = {
   setHeaderRowVisibility: vi.fn(),
   setOptions: vi.fn(),
   setSelectedRows: vi.fn(),
+  validateColumnFreezeAllowed: vi.fn(),
   onClick: new MockSlickEvent(),
   onClicked: new MockSlickEvent(),
   onColumnsReordered: new MockSlickEvent(),
@@ -305,7 +306,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
   let translateService: TranslateServiceStub;
   const http = new HttpStub();
   const container = new UniversalContainerService();
-  let dataset = [];
+  let dataset: any[] = [];
 
   beforeEach(() => {
     divContainer = document.createElement('div');
@@ -399,6 +400,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
   });
 
   it('should keep frozen column index reference (via frozenVisibleColumnId) when grid is a frozen grid', () => {
+    vi.spyOn(mockGrid, 'validateColumnFreezeAllowed').mockReturnValue(true);
     component.gridOptions.frozenColumn = 0;
     component.initialization(divContainer, slickEventHandler);
 
@@ -414,7 +416,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
     component.gridOptions = { enableFiltering: true };
     component.initialization(divContainer, slickEventHandler);
-    mockGrid.onColumnsReordered.notify({ impactedColumns: newVisibleColumns, grid: mockGrid });
+    mockGrid.onColumnsReordered.notify({ impactedColumns: newVisibleColumns, grid: mockGrid, previousColumnOrder: ['firstName', 'lastName'] });
 
     expect(component.eventHandler).toEqual(slickEventHandler);
     expect(sharedService.hasColumnsReordered).toBe(true);
@@ -725,7 +727,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
           try {
             component.initialization(divContainer, slickEventHandler);
             component.dataset = mockData;
-          } catch (e) {
+          } catch (e: any) {
             expect(e.toString()).toContain(
               '[Slickgrid-Universal] You cannot enable both autosize/fit viewport & resize by content, you must choose which resize technique to use.'
             );
@@ -747,7 +749,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
           try {
             component.initialization(divContainer, slickEventHandler);
             component.dataset = mockData;
-          } catch (e) {
+          } catch (e: any) {
             expect(e.toString()).toContain(
               '[Slickgrid-Universal] You cannot enable both autosize/fit viewport & resize by content, you must choose which resize technique to use.'
             );
@@ -2531,9 +2533,9 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with 
   let sharedService: SharedService;
   let eventPubSubService: EventPubSubService;
   let translateService: TranslateServiceStub;
-  let dataset = [];
+  let dataset: any[] = [];
   let hierarchicalDataset: any = null;
-  let hierarchicalSpy;
+  let hierarchicalSpy: any;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -2603,7 +2605,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor with 
   let sharedService: SharedService;
   let eventPubSubService: EventPubSubService;
   let translateService: TranslateServiceStub;
-  let dataset = [];
+  let dataset: any[] = [];
 
   beforeEach(() => {
     divContainer = document.createElement('div');
