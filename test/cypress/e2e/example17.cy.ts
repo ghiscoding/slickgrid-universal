@@ -329,5 +329,24 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
       cy.get('.grid17-1 .slick-pane-left .slick-header-column').should('have.length', 4);
       cy.get('.grid17-1 .slick-pane-right .slick-header-column').should('have.length', 34);
     });
+
+    it('should try to set frozen columns wider than possible and expect an error and abort of the execution', () => {
+      const stub = cy.stub();
+      cy.on('window:alert', stub);
+      cy.get('[data-test="frozen-column-count"]').clear().type('12');
+      cy.get('[data-test="set-frozen-columns-btn"]')
+        .click()
+        .then(() => {
+          expect(stub.getCall(0)).to.be.calledWith(
+            '[SlickGrid] You are trying to freeze/pin more columns than the grid can support. ' +
+              'Make sure to have less columns pinned (on the left) than the actual visible grid width. ' +
+              'Also, please remember that only the columns on the right are scrollable and the pinned columns are not.'
+          );
+
+          // it should still have previous pinning
+          cy.get('.grid17-1 .slick-pane-left .slick-header-column').should('have.length', 4);
+          cy.get('.grid17-1 .slick-pane-right .slick-header-column').should('have.length', 34);
+        });
+    });
   });
 });

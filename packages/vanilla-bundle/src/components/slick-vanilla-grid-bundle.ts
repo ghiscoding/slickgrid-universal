@@ -608,7 +608,10 @@ export class SlickVanillaGridBundle<TData = any> {
       frozenColumnIndex <= this.sharedService.visibleColumns.length &&
       this.sharedService.visibleColumns.length > 0
     ) {
-      this.sharedService.frozenVisibleColumnId = this.sharedService.visibleColumns[frozenColumnIndex]?.id ?? '';
+      const isFreezeAllowed = this.slickGrid.validateColumnFreezeAllowed(frozenColumnIndex);
+      if (isFreezeAllowed) {
+        this.sharedService.frozenVisibleColumnId = this.sharedService.visibleColumns[frozenColumnIndex]?.id ?? '';
+      }
     }
 
     // get any possible Services that user want to register

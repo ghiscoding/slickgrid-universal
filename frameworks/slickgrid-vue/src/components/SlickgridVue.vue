@@ -483,7 +483,10 @@ function initialization() {
   // when it's a frozen grid, we need to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward
   const frozenColumnIndex = _gridOptions.value?.frozenColumn ?? -1;
   if (frozenColumnIndex >= 0 && frozenColumnIndex <= sharedService.visibleColumns.length && sharedService.visibleColumns.length > 0) {
-    sharedService.frozenVisibleColumnId = sharedService.visibleColumns[frozenColumnIndex]?.id ?? '';
+    const isFreezeAllowed = grid.validateColumnFreezeAllowed(frozenColumnIndex);
+    if (isFreezeAllowed) {
+      sharedService.frozenVisibleColumnId = sharedService.visibleColumns[frozenColumnIndex]?.id ?? '';
+    }
   }
 
   // get any possible Services that user want to register
