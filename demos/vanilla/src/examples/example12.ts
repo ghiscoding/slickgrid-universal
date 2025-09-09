@@ -67,6 +67,7 @@ function checkItemIsEditable(dataContext, columnDef, grid) {
       // case 'completed':
       // case 'duration':
       // case 'title':
+      //   isEditable = !!dataContext?.completed;
       // case 'product':
       // case 'origin':
       // isEditable = dataContext.percentComplete < 50;
@@ -170,7 +171,7 @@ export default class Example12 {
         filter: { model: Filters.compoundInputText },
         editor: {
           model: Editors.longText,
-          massUpdate: false,
+          massUpdate: true,
           required: true,
           alwaysSaveOnEnterKey: true,
           maxLength: 12,

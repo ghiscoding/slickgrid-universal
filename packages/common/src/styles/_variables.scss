@@ -503,7 +503,7 @@ $slick-text-editor-focus-box-shadow:                        $slick-input-focus-b
 $slick-text-editor-readonly-color:                          #f0f0f0 !default;
 $slick-large-editor-background-color:                       #ffffff !default;
 $slick-large-editor-border:                                 2px solid #a0a0a0 !default;
-$slick-large-editor-disabled:                               $slick-text-editor-readonly-color !default;
+$slick-large-editor-disabled:                               $slick-editor-input-disabled-color !default;
 $slick-large-editor-text-padding:                           5px !default;
 $slick-large-editor-border-radius:                          6px !default;
 $slick-large-editor-button-border-radius:                   4px !default;
@@ -1129,6 +1129,7 @@ $slick-dark-text-color:                                   #d4d4d4 !default;
   --slick-editor-modal-text-color:                        var(--slick-base-dark-text-color);
   --slick-large-editor-background-color:                  var(--slick-base-dark-menu-bg-color);
   --slick-large-editor-border:                            2px solid #565656;
+  --slick-large-editor-disabled:                          #404040;
   --slick-large-editor-text-color:                        var(--slick-base-dark-text-color);
   --slick-slider-editor-border:                           1px solid #565656;
   --slick-text-editor-border:                             1px solid #565656;
