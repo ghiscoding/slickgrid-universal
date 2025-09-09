@@ -549,12 +549,10 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     if (
       frozenColumnIndex >= 0 &&
       frozenColumnIndex <= this.sharedService.visibleColumns.length &&
-      this.sharedService.visibleColumns.length > 0
+      this.sharedService.visibleColumns.length > 0 &&
+      this.grid.validateColumnFreeze(frozenColumnIndex)
     ) {
-      const isFreezeAllowed = this.grid.validateColumnFreezeAllowed(frozenColumnIndex);
-      if (isFreezeAllowed) {
-        this.sharedService.frozenVisibleColumnId = this.sharedService.visibleColumns[frozenColumnIndex]?.id ?? '';
-      }
+      this.sharedService.frozenVisibleColumnId = this.sharedService.visibleColumns[frozenColumnIndex]?.id ?? '';
     }
 
     // get any possible Services that user want to register

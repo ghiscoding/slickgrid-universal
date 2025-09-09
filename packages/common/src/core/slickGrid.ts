@@ -1345,7 +1345,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param {Number} frozenColumn the column index to freeze at
    * @param {Boolean} displayAlert optional flag to indicate if an alert should be displayed when not valid (default to True)
    */
-  validateColumnFreezeAllowed(frozenColumn = -1): boolean {
+  validateColumnFreeze(frozenColumn = -1): boolean {
     if (frozenColumn >= 0) {
       let canvasWidthL = 0;
       this.columns.forEach((col, i) => {
@@ -3355,7 +3355,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this._prevFrozenColumn = this._options.frozenColumn ?? -1; // keep ref of previous frozen column for later usage
 
       // make sure the freeze is also valid without breaking the UI (e.g. we can't freeze columns on left canvas wider than visible canvas width in the browser)
-      if (this.validateColumnFreezeAllowed(newOptions.frozenColumn)) {
+      if (this.validateColumnFreeze(newOptions.frozenColumn)) {
         this.getViewports().forEach((vp) => (vp.scrollLeft = 0));
         this.handleScroll(); // trigger scroll to realign column headers as well
       } else {
@@ -3443,7 +3443,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this._options.leaveSpaceForNewRows = false;
     }
     // make sure the freeze is also valid without breaking the UI (e.g. we can't left freeze columns wider than visible left canvas width)
-    if (!this.validateColumnFreezeAllowed(this._options.frozenColumn ?? -1)) {
+    if (!this.validateColumnFreeze(this._options.frozenColumn)) {
       this._options.frozenColumn = this._prevFrozenColumn;
     }
   }

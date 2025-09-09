@@ -271,7 +271,7 @@ const mockGrid = {
   setHeaderRowVisibility: vi.fn(),
   setOptions: vi.fn(),
   setSelectedRows: vi.fn(),
-  validateColumnFreezeAllowed: vi.fn(),
+  validateColumnFreeze: vi.fn(),
   onClick: new MockSlickEvent(),
   onClicked: new MockSlickEvent(),
   onColumnsReordered: new MockSlickEvent(),
@@ -400,7 +400,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
   });
 
   it('should keep frozen column index reference (via frozenVisibleColumnId) when grid is a frozen grid', () => {
-    vi.spyOn(mockGrid, 'validateColumnFreezeAllowed').mockReturnValue(true);
+    vi.spyOn(mockGrid, 'validateColumnFreeze').mockReturnValue(true);
     component.gridOptions.frozenColumn = 0;
     component.initialization(divContainer, slickEventHandler);
 

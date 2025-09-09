@@ -511,9 +511,8 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     // the bug is highlighted in this issue comment:: https://github.com/6pac/SlickGrid/issues/592#issuecomment-822885069
     const previousColumns = this.grid.getColumns();
 
-    // make sure it's really that the column freeze is allowed before doing anything
-    const isFreezeAllowed = this.grid.validateColumnFreezeAllowed(newGridOptions.frozenColumn);
-    if (isFreezeAllowed) {
+    // make sure column freeze is allowed before applying the change
+    if (this.grid.validateColumnFreeze(newGridOptions.frozenColumn)) {
       this.grid.setOptions(newGridOptions, false, true); // suppress the setColumns (3rd argument) since we'll do that ourselves
       let finalVisibleColumns = visibleColumns || [];
 

@@ -686,7 +686,7 @@ describe('SlickGrid core file', () => {
 
       skipGridDestroy = true;
       grid = new SlickGrid<any, Column>(container, data, columns, gridOptions);
-      grid.validateColumnFreezeAllowed(gridOptions.frozenColumn);
+      grid.validateColumnFreeze(gridOptions.frozenColumn);
       expect(alertSpy).toHaveBeenCalledWith(expect.stringContaining('[SlickGrid] You are trying to freeze/pin more columns than the grid can support.'));
       expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('[SlickGrid] You are trying to freeze/pin more columns than the grid can support.'));
     });

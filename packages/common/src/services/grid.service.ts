@@ -123,7 +123,7 @@ export class GridService {
     } else {
       let isFreezeAllowed = true;
       if (pinningOptions.frozenColumn !== undefined) {
-        isFreezeAllowed = this._grid.validateColumnFreezeAllowed(pinningOptions.frozenColumn);
+        isFreezeAllowed = this._grid.validateColumnFreeze(pinningOptions.frozenColumn);
         if (isFreezeAllowed) {
           this.sharedService.frozenVisibleColumnId = this._grid.getColumns()[pinningOptions.frozenColumn]?.id || '';
         }
