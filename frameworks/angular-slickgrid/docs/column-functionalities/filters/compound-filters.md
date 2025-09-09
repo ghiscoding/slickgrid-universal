@@ -79,9 +79,9 @@ this.gridOptions = {
 
 #### Dealing with different input/ouput dates (example: UTC)
 What if your date input (from your dataset) has a different output on the screen (UI)?
-In that case, you will most probably have a Formatter and type representing the input type, we also provided an `outputType` that can be used to deal with that case.
+In that case, you will most probably have a Formatter and type representing the input type, we also provided an `outputType` that can be used to deal with that use case.
 
-For example, if we have an input date in UTC format and we want to display a Date ISO format to the screen (UI) in the date picker.
+For example, if we have an input date in UTC format and we want to display a Date ISO format to the screen (UI) in the date picker filter/editor.
 
 ```ts
 // define you columns, in this demo Effort Driven will use a Select Filter
@@ -91,7 +91,7 @@ this.columnDefinitions = [
   { id: 'utcDate', name: 'UTC Date', field: 'utcDate',
     type: 'dateUtc',           // format used in the dataset (input)
     formatter: Formatters.dateTimeIso, // format to show in the cell on each row (formatter)
-    outputType: 'dateTimeIso', // format to show in the date picker
+    outputType: 'dateTimeIso', // format to show in the date picker, it is also used as Filter comparison
     filterable: true, filter: { model: Filters.compoundDate }
   }
 ];
@@ -103,7 +103,7 @@ this.gridOptions = {
 ```
 
 #### Date and Time
-The date picker will automatically detect if the `type` or `outputType` has time inside, if it does then it will add a time picker at the bottom of the date picker.
+The date picker will automatically detect if the `type` or `outputType` has time inside, if it does then it will add a time picker at the bottom of the date picker and also note that the `'='` will also filter the value including that time (and it also includes seconds even if it isn't displayed in the picker). But what if you would like to show a date+time in the grid but filter with only a date? In that case you can show your date with a formatter that includes the time (e.g. `Formatters.dateUsAmPm`) and then make sure to add the output type that the picker will use in the UI but also in its filtering comparison (e.g. `outputType: 'dateUs'`) 
 
 For example, if we have an input date in UTC format and we want to display a Date ISO format with time to the screen (UI) and the date picker.
 
@@ -115,7 +115,7 @@ this.columnDefinitions = [
   { id: 'utcDate', name: 'UTC Date', field: 'utcDate', // if your type has hours/minutes, then the date picker will include date+time
     type: 'dateUtc',
     formatter: Formatters.dateTimeIsoAmPm,
-    outputType: 'dateTimeIsoAmPm',
+    outputType: 'dateTimeIsoAmPm', // or `outputType: 'dateIso'` if you want to exclude time when filtering
     filterable: true, filter: { model: Filters.compoundDate }
   }
 ];
