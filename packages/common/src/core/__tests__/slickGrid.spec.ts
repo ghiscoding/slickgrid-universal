@@ -660,33 +660,6 @@ describe('SlickGrid core file', () => {
       );
     });
 
-    it('should show an alert when frozen column is wider than actual grid width and alertWhenFrozenNotAllViewable is enabled', () => {
-      const alertSpy = vi.spyOn(global, 'alert').mockReturnValue();
-      const consoleSpy = vi.spyOn(global.console, 'error').mockReturnValue();
-      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
-      const gridOptions = {
-        ...defaultOptions,
-        enableColumnReorder: false,
-        enableCellNavigation: true,
-        preHeaderPanelHeight: 30,
-        showPreHeaderPanel: true,
-        frozenColumn: 0,
-        createPreHeaderPanel: true,
-        alertWhenFrozenNotAllViewable: true,
-      } as GridOption;
-      const data = [
-        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
-        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
-      ];
-      Object.defineProperty(container, 'clientWidth', { writable: true, value: 40 });
-      vi.spyOn(container, 'getBoundingClientRect').mockReturnValueOnce({ left: 25, top: 10, right: 0, bottom: 0, width: 40 } as DOMRect);
-
-      skipGridDestroy = true;
-      grid = new SlickGrid<any, Column>(container, data, columns, gridOptions);
-      expect(alertSpy).toHaveBeenCalledWith(expect.stringContaining('[SlickGrid] You are trying to freeze/pin more columns than the grid can support.'));
-      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('[SlickGrid] You are trying to freeze/pin more columns than the grid can support.'));
-    });
-
     it('should hide column headers div when "showPreHeaderPanel" is disabled', () => {
       const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
       const gridOptions = {

@@ -851,9 +851,6 @@ export interface GridOption<C extends Column = Column> {
    */
   throwWhenFrozenNotAllViewable?: boolean;
 
-  /** Defaults to true, show a browser alert to advise the user when frozenColumn is wider than the grid viewport width (same as `throwWhenFrozenNotAllViewable` but uses an alert instead of throwing) */
-  alertWhenFrozenNotAllViewable?: boolean;
-
   /** What is the top panel height in pixels (only type the number) */
   topPanelHeight?: number;
 

@@ -205,7 +205,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   // settings
   protected _options!: O;
   protected _defaults: BaseGridOption = {
-    alertWhenFrozenNotAllViewable: true,
     alwaysShowVerticalScroll: false,
     alwaysAllowHorizontalScroll: false,
     explicitInitialization: false,
@@ -1362,24 +1361,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       if (this.hasFrozenColumns()) {
         const cWidth = Utils.width(this._container) || 0;
-        if (cWidth > 0 && (this.canvasWidthL > cWidth || this._options.frozenColumn! >= this.columns.length)) {
-          // in any case, we need to revert to previous frozen column setting
-          this.setOptions({ frozenColumn: this._prevFrozenColumn } as O);
-
-          // then warn the user when enabled or show console error and abort the operation
-          const errorMsg =
+        if (cWidth > 0 && this.canvasWidthL > cWidth && this._options.throwWhenFrozenNotAllViewable) {
+          throw new Error(
             '[SlickGrid] You are trying to freeze/pin more columns than the grid can support. ' +
-            'Make sure to have less columns pinned (on the left) than the actual visible grid width. ' +
-            'Also, please remember that only the columns on the right are scrollable and the pinned columns are not.';
-
-          if (this._options.throwWhenFrozenNotAllViewable) {
-            throw new Error(errorMsg);
-          }
-          if (this._options.alertWhenFrozenNotAllViewable) {
-            alert(errorMsg);
-          }
-          console.error(errorMsg);
-          return;
+              'Make sure to have less columns pinned (on the left) than the actual visible grid width. ' +
+              'Also, please remember that only the columns on the right are scrollable and the pinned columns are not.'
+          );
         }
         Utils.width(this._canvasTopR, this.canvasWidthR);
 
