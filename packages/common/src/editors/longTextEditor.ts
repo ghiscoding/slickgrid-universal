@@ -189,10 +189,9 @@ export class LongTextEditor implements Editor {
   }
 
   show(): void {
+    this._wrapperElm.style.display = 'block';
     const isCompositeEditor = !!this.args?.compositeEditorOptions;
-    if (!isCompositeEditor) {
-      this._wrapperElm.style.display = 'block';
-    } else {
+    if (isCompositeEditor) {
       // when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor
       this.applyInputUsabilityState();
     }
