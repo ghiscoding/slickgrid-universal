@@ -892,6 +892,17 @@ describe('LongTextEditor', () => {
       vi.clearAllMocks();
     });
 
+    it('should show the DOM element div wrapper in Composite Modal when the "show" method is called', () => {
+      editor = new LongTextEditor(editorArguments);
+      const wrapperElm = document.body.querySelector('.slick-large-editor-text.editor-title') as HTMLDivElement;
+
+      editor.hide();
+      expect(wrapperElm.style.display).toBe('none');
+
+      editor.show();
+      expect(wrapperElm.style.display).toBe('block');
+    });
+
     it('should call "setValue" with value & apply value flag and expect the DOM element to have same value and also expect the value to be applied to the item object', () => {
       const activeCellMock = { row: 0, cell: 0 };
       vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
