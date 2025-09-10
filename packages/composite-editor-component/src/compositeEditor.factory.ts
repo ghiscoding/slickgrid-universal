@@ -96,22 +96,21 @@ export function SlickCompositeEditor(
     let editors: Array<Editor & { args: EditorArguments }> = [];
 
     function init() {
-      let newArgs = {} as CompositeEditorArguments;
       let idx = 0;
       while (idx < columns.length) {
         if (columns[idx].editorClass) {
           const column = columns[idx];
-          newArgs = { ...args } as CompositeEditorArguments;
-          newArgs.container = containers[idx];
-          newArgs.column = column;
-          newArgs.position = getContainerBox(idx);
-          newArgs.commitChanges = noop;
-          newArgs.cancelChanges = noop;
-          newArgs.compositeEditorOptions = options;
-          newArgs.formValues = {};
-          newArgs.isCompositeEditor = true;
-
-          const currentEditor = new (column.editorClass as EditorConstructor)(newArgs);
+          const currentEditor = new (column.editorClass as EditorConstructor)({
+            ...args,
+            container: containers[idx],
+            column,
+            position: getContainerBox(idx),
+            commitChanges: noop,
+            cancelChanges: noop,
+            compositeEditorOptions: options,
+            isCompositeEditor: true,
+            formValues: {},
+          } as CompositeEditorArguments);
           options.editors[column.id] = currentEditor; // add every Editor instance refs
           editors.push(currentEditor as Editor & { args: EditorArguments });
         }
