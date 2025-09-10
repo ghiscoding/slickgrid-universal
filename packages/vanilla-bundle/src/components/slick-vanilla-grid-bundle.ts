@@ -234,7 +234,7 @@ export class SlickVanillaGridBundle<TData = any> {
 
     if (this.sharedService?.gridOptions && this.slickGrid?.setOptions) {
       this.sharedService.gridOptions = mergedOptions;
-      this.slickGrid.setOptions(mergedOptions as any, false, true); // make sure to supressColumnCheck (3rd arg) to avoid problem with changeColumnsArrangement() and custom grid view
+      this.slickGrid.setOptions(mergedOptions, false, true); // make sure to supressColumnCheck (3rd arg) to avoid problem with changeColumnsArrangement() and custom grid view
       this.slickGrid.reRenderColumns(true); // then call a re-render since we did supressColumnCheck on previous setOptions
     }
 
@@ -602,15 +602,7 @@ export class SlickVanillaGridBundle<TData = any> {
     this._slickgridInitialized = true;
 
     // when it's a frozen grid, we need to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward
-    const frozenColumnIndex = this._gridOptions?.frozenColumn ?? -1;
-    if (
-      frozenColumnIndex >= 0 &&
-      frozenColumnIndex <= this.sharedService.visibleColumns.length &&
-      this.sharedService.visibleColumns.length > 0 &&
-      this.slickGrid.validateColumnFreeze(frozenColumnIndex)
-    ) {
-      this.sharedService.frozenVisibleColumnId = this.sharedService.visibleColumns[frozenColumnIndex]?.id ?? '';
-    }
+    this.sharedService.frozenVisibleColumnId = this.slickGrid.getFrozenColumnId();
 
     // get any possible Services that user want to register
     this.registerResources();

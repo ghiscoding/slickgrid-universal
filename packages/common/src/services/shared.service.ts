@@ -22,7 +22,7 @@ export class SharedService {
   isItemsDateParsed = false;
 
   /** Frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward */
-  frozenVisibleColumnId: string | number = '';
+  frozenVisibleColumnId: string | number | null = null;
 
   /** Grid Container HTML Element */
   gridContainerElement!: HTMLElement;

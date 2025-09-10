@@ -254,6 +254,7 @@ const mockGrid = {
   getEditorLock: () => mockGetEditorLock,
   getViewportNode: () => viewportElm,
   getUID: () => 'slickgrid_12345',
+  getFrozenColumnId: vi.fn(),
   getContainerNode: vi.fn(),
   getGridPosition: vi.fn(),
   getOptions: vi.fn(),
@@ -400,7 +401,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
   });
 
   it('should keep frozen column index reference (via frozenVisibleColumnId) when grid is a frozen grid', () => {
-    vi.spyOn(mockGrid, 'validateColumnFreeze').mockReturnValue(true);
+    vi.spyOn(mockGrid, 'getFrozenColumnId').mockReturnValueOnce('name');
     component.gridOptions.frozenColumn = 0;
     component.initialization(divContainer, slickEventHandler);
 

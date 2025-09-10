@@ -406,15 +406,7 @@ export class AureliaSlickgridCustomElement {
     this.bindDifferentHooks(this.grid, this.options, this.dataview);
 
     // when it's a frozen grid, we need to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward
-    const frozenColumnIndex = this.options?.frozenColumn ?? -1;
-    if (
-      frozenColumnIndex >= 0 &&
-      frozenColumnIndex <= this.sharedService.visibleColumns.length &&
-      this.sharedService.visibleColumns.length > 0 &&
-      this.grid.validateColumnFreeze(frozenColumnIndex)
-    ) {
-      this.sharedService.frozenVisibleColumnId = this.sharedService.visibleColumns[frozenColumnIndex]?.id ?? '';
-    }
+    this.sharedService.frozenVisibleColumnId = this.grid.getFrozenColumnId();
 
     // get any possible Services that user want to register
     this.registerResources();

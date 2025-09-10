@@ -50,6 +50,7 @@ const gridStub = {
   getColumns: vi.fn(),
   getColumnIndex: vi.fn(),
   getContainerNode: vi.fn(),
+  getFrozenColumnId: vi.fn(),
   getGridPosition: () => ({ width: 10, left: 0 }),
   getUID: () => 'slickgrid12345',
   getOptions: () => gridOptionsMock,

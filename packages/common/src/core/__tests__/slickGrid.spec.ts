@@ -82,6 +82,7 @@ describe('SlickGrid core file', () => {
     expect(grid.getActiveCanvasNode()).toBeTruthy();
     expect(grid.getContainerNode()).toEqual(container);
     expect(grid.getGridPosition()).toBeTruthy();
+    expect(grid.getFrozenColumnId()).toBe(null);
   });
 
   it('should be able to instantiate SlickGrid without DataView and always show vertical scroll', () => {
@@ -664,8 +665,8 @@ describe('SlickGrid core file', () => {
       const alertSpy = vi.spyOn(global, 'alert').mockReturnValue();
       const consoleSpy = vi.spyOn(global.console, 'error').mockReturnValue();
       const columns = [
-        { id: 'firstName', field: 'firstName', name: 'First Name' },
-        { id: 'lastName', field: 'lastName', name: 'Last Name' },
+        { id: 'firstName', field: 'firstName', name: 'First Name', minWidth: 40, maxWidth: 70 },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', minWidth: 40 },
       ] as Column[];
       const gridOptions = {
         ...defaultOptions,
@@ -786,6 +787,7 @@ describe('SlickGrid core file', () => {
       const paneTopLeftElm = container.querySelector('.slick-pane-top.slick-pane-left') as HTMLDivElement;
 
       expect(paneTopLeftElm.style.top).toBe(`${paneHeight + topHeaderPanelHeight}px`);
+      expect(grid.getFrozenColumnId()).toBe('firstName');
     });
 
     it('should hide column headers div when "showTopHeaderPanel" is disabled', () => {

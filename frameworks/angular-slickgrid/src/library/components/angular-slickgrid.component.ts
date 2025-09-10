@@ -627,14 +627,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
     this.bindDifferentHooks(this.slickGrid, this.options, this.dataView);
 
     // when it's a frozen grid, we need to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward
-    const frozenColumnIndex = this.options.frozenColumn !== undefined ? this.options.frozenColumn : -1;
-    if (
-      frozenColumnIndex >= 0 &&
-      frozenColumnIndex <= this.sharedService.visibleColumns.length &&
-      this.slickGrid.validateColumnFreeze(frozenColumnIndex)
-    ) {
-      this.sharedService.frozenVisibleColumnId = this.sharedService.visibleColumns[frozenColumnIndex].id || '';
-    }
+    this.sharedService.frozenVisibleColumnId = this.slickGrid.getFrozenColumnId();
 
     // get any possible Services that user want to register
     this.registerResources();
