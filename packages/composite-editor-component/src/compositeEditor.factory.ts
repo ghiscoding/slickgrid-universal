@@ -108,6 +108,7 @@ export function SlickCompositeEditor(
             commitChanges: noop,
             cancelChanges: noop,
             compositeEditorOptions: options,
+            isCompositeEditor: true,
             formValues: {},
           } as CompositeEditorArguments);
           options.editors[column.id] = currentEditor; // add every Editor instance refs
