@@ -184,7 +184,7 @@ export class LongTextEditor implements Editor {
   }
 
   hide(): void {
-    // only hide only when it's an inline editor (prevent hiding on Composite Editor)
+    // hide only when it's an inline editor (prevent hiding on Composite Editor)
     if (!this.args.isCompositeEditor) {
       this._wrapperElm.style.display = 'none';
     }
