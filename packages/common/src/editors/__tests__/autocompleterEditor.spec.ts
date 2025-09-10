@@ -38,7 +38,7 @@ const gridStub = {
   render: vi.fn(),
   onBeforeEditCell: new SlickEvent(),
   onCompositeEditorChange: new SlickEvent(),
-  sanitizeHtmlString: (str) => str,
+  sanitizeHtmlString: (str: string) => str,
 } as unknown as SlickGrid;
 
 describe('AutocompleterEditor', () => {
@@ -911,6 +911,7 @@ describe('AutocompleterEditor', () => {
       editorArguments = {
         ...editorArguments,
         compositeEditorOptions: { headerTitle: 'Test', modalType: 'edit', formValues: {}, editors: {} },
+        isCompositeEditor: true,
       } as EditorArguments;
     });
 

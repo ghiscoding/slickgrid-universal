@@ -33,7 +33,7 @@ export class IntegerEditor extends InputEditor {
 
   validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
-    if (this.args.compositeEditorOptions) {
+    if (this.args.isCompositeEditor) {
       this.applyInputUsabilityState();
     }
 
@@ -49,7 +49,7 @@ export class IntegerEditor extends InputEditor {
       minValue: this.columnEditor.minValue,
       maxValue: this.columnEditor.maxValue,
       operatorConditionalType: this.columnEditor.operatorConditionalType,
-      required: this.args?.compositeEditorOptions ? false : this.columnEditor.required,
+      required: this.args.isCompositeEditor ? false : this.columnEditor.required,
       validator: this.validator,
     });
   }

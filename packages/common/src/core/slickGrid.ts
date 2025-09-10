@@ -6260,6 +6260,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         column: columnDef,
         columnMetaData,
         item: item || {},
+        isCompositeEditor: false,
         event: e as Event,
         commitChanges: this.commitEditAndSetFocus.bind(this),
         cancelChanges: this.cancelEditAndSetFocus.bind(this),
@@ -6304,17 +6305,26 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    */
   protected absBox(elem: HTMLElement): ElementPosition {
     const rect = elem.getBoundingClientRect();
-    // Get grid container (assume this._container exists and is the grid root)
-    const gridRect = this._container?.getBoundingClientRect?.() || { top: 0, left: 0, bottom: 0, right: 0 };
     const box = {
-      top: rect.top - gridRect.top,
-      left: rect.left - gridRect.left,
-      bottom: rect.bottom - gridRect.top,
-      right: rect.right - gridRect.left,
+      top: rect.top,
+      left: rect.left,
+      bottom: rect.bottom,
+      right: rect.right,
       width: rect.width,
       height: rect.height,
       visible: true,
     };
+    if (rect.bottom === 0 && rect.top === 0) {
+      return box; // assume element is visible when we can't determine it's position & size
+    }
+
+    // then calculation position relative to the grid container (assume container exists and is the grid root)
+    const gridRect = this._container?.getBoundingClientRect() || { top: 0, left: 0, bottom: 0, right: 0 };
+    box.top = rect.top - gridRect.top;
+    box.left = rect.left - gridRect.left;
+    box.bottom = rect.bottom - gridRect.top;
+    box.right = rect.right - gridRect.left;
+
     // Check if the element is visible within the grid viewport
     if (
       box.bottom < 0 ||

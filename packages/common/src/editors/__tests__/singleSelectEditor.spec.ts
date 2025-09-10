@@ -36,7 +36,7 @@ const gridStub = {
   navigateNext: vi.fn(),
   navigatePrev: vi.fn(),
   render: vi.fn(),
-  sanitizeHtmlString: (str) => str,
+  sanitizeHtmlString: (str: string) => str,
 } as unknown as SlickGrid;
 
 describe('SingleSelectEditor', () => {

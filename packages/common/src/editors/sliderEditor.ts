@@ -158,8 +158,7 @@ export class SliderEditor implements Editor {
   }
 
   show(): void {
-    const isCompositeEditor = !!this.args?.compositeEditorOptions;
-    if (isCompositeEditor) {
+    if (this.args.isCompositeEditor) {
       // when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor
       this.applyInputUsabilityState();
     }
@@ -315,7 +314,7 @@ export class SliderEditor implements Editor {
 
   validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
-    if (this.args.compositeEditorOptions) {
+    if (this.args.isCompositeEditor) {
       this.applyInputUsabilityState();
     }
 
@@ -330,7 +329,7 @@ export class SliderEditor implements Editor {
       errorMessage: this.columnEditor.errorMessage,
       minValue: this.columnEditor.minValue,
       maxValue: this.columnEditor.maxValue,
-      required: this.args?.compositeEditorOptions ? false : this.columnEditor.required,
+      required: this.args.isCompositeEditor ? false : this.columnEditor.required,
       validator: this.validator,
     });
   }

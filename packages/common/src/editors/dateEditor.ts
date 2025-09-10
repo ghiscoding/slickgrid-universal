@@ -102,7 +102,6 @@ export class DateEditor implements Editor {
 
   async init(): Promise<void> {
     if (this.args && this.columnDef) {
-      const compositeEditorOptions = this.args.compositeEditorOptions;
       const columnId = this.columnDef?.id ?? '';
       const gridOptions: GridOption = this.args.grid.getOptions() || {};
       this.defaultDate = this.args.item?.[this.columnDef.field];
@@ -209,7 +208,7 @@ export class DateEditor implements Editor {
       queueMicrotaskOrSetTimeout(() => {
         this.calendarInstance = new Calendar(this._inputElm, this._pickerMergedOptions);
         this.calendarInstance.init();
-        if (!compositeEditorOptions) {
+        if (!this.args.isCompositeEditor) {
           this.show();
           this.focus();
         }
@@ -293,10 +292,9 @@ export class DateEditor implements Editor {
   }
 
   show(): void {
-    const isCompositeEditor = !!this.args?.compositeEditorOptions;
-    if (!isCompositeEditor && this.calendarInstance) {
+    if (!this.args.isCompositeEditor && this.calendarInstance) {
       this.calendarInstance.show();
-    } else if (isCompositeEditor) {
+    } else if (this.args.isCompositeEditor) {
       // when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor
       this.applyInputUsabilityState();
     }

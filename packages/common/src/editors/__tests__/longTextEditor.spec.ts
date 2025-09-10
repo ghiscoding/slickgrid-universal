@@ -885,6 +885,7 @@ describe('LongTextEditor', () => {
       editorArguments = {
         ...editorArguments,
         compositeEditorOptions: { headerTitle: 'Test', modalType: 'edit', formValues: {}, editors: {} },
+        isCompositeEditor: true,
       } as EditorArguments;
     });
 
@@ -897,7 +898,7 @@ describe('LongTextEditor', () => {
       const wrapperElm = document.body.querySelector('.slick-large-editor-text.editor-title') as HTMLDivElement;
 
       editor.hide();
-      expect(wrapperElm.style.display).toBe('none');
+      expect(wrapperElm.style.display).not.toBe('none'); // won't hide when composite editor
 
       editor.show();
       expect(wrapperElm.style.display).toBe('block');

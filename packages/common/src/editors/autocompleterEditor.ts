@@ -202,7 +202,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
 
         // clear value when it's newly disabled and not empty
         const currentValue = this.getValue();
-        if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions && currentValue !== '') {
+        if (prevIsDisabled !== isDisabled && this.args.isCompositeEditor && currentValue !== '') {
           this.clear(true);
         }
       } else {
@@ -222,8 +222,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
   }
 
   show(): void {
-    const isCompositeEditor = !!this.args?.compositeEditorOptions;
-    if (isCompositeEditor) {
+    if (this.args.isCompositeEditor) {
       // when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor
       this.applyInputUsabilityState();
     }
@@ -410,7 +409,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
 
   validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
-    if (this.args.compositeEditorOptions) {
+    if (this.args.isCompositeEditor) {
       this.applyInputUsabilityState();
     }
 
@@ -426,7 +425,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
       minLength: this.columnEditor.minLength,
       maxLength: this.columnEditor.maxLength,
       operatorConditionalType: this.columnEditor.operatorConditionalType,
-      required: this.args?.compositeEditorOptions ? false : this.columnEditor.required,
+      required: this.args.isCompositeEditor ? false : this.columnEditor.required,
       validator: this.validator,
     });
   }
@@ -713,7 +712,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     this.args.container.appendChild(this._editorInputGroupElm);
     this.columnEditor.onInstantiated?.(this._instance);
 
-    if (!this.args.compositeEditorOptions) {
+    if (!this.args.isCompositeEditor) {
       setTimeout(() => this.focus(), 50);
     }
   }

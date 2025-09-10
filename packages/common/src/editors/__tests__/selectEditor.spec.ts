@@ -43,7 +43,7 @@ const gridStub = {
   render: vi.fn(),
   onBeforeEditCell: new SlickEvent(),
   onCompositeEditorChange: new SlickEvent(),
-  sanitizeHtmlString: (str) => str,
+  sanitizeHtmlString: (str: string) => str,
 } as unknown as SlickGrid;
 
 describe('SelectEditor', () => {
@@ -85,7 +85,7 @@ describe('SelectEditor', () => {
         try {
           mockColumn.editor!.collection = undefined;
           editor = new SelectEditor(editorArguments, true);
-        } catch (e) {
+        } catch (e: any) {
           expect(e.toString()).toContain(
             `[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") inside Column Definition Editor for the MultipleSelect/SingleSelect Editor to work correctly.`
           );
@@ -98,7 +98,7 @@ describe('SelectEditor', () => {
         try {
           mockColumn.editor!.collection = { hello: 'world' } as any;
           editor = new SelectEditor(editorArguments, true);
-        } catch (e) {
+        } catch (e: any) {
           expect(e.toString()).toContain(`The "collection" passed to the Select Editor is not a valid array.`);
           done();
         }
@@ -109,7 +109,7 @@ describe('SelectEditor', () => {
         try {
           mockColumn.editor!.collection = [{ hello: 'world' }];
           editor = new SelectEditor(editorArguments, true);
-        } catch (e) {
+        } catch (e: any) {
           expect(e.toString()).toContain(
             `[Slickgrid-Universal] Select Filter/Editor collection with value/label (or value/labelKey when using Locale) is required to populate the Select list`
           );
@@ -127,7 +127,7 @@ describe('SelectEditor', () => {
             { value: 'female', label: 'female' },
           ];
           editor = new SelectEditor(editorArguments, true);
-        } catch (e) {
+        } catch (e: any) {
           expect(e.toString()).toContain(
             `[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.`
           );
@@ -201,7 +201,10 @@ describe('SelectEditor', () => {
         { value: 'female', label: 'female' },
       ];
       gridOptionMock.translater = translateService;
-      editor = new SelectEditor({ ...editorArguments, compositeEditorOptions: { modalType: 'auto-mass', editors: {}, formValues: {} } }, true);
+      editor = new SelectEditor(
+        { ...editorArguments, compositeEditorOptions: { modalType: 'auto-mass', editors: {}, formValues: {} }, isCompositeEditor: true },
+        true
+      );
       editor.msInstance?.open(null);
       const keyEvent = new (window.window as any).KeyboardEvent('keydown', { key: 'Tab', shiftKey: false, bubbles: true, cancelable: true });
       editor.msInstance?.getOptions().onBlur(keyEvent);
@@ -1064,6 +1067,7 @@ describe('SelectEditor', () => {
       editorArguments = {
         ...editorArguments,
         compositeEditorOptions: { headerTitle: 'Test', modalType: 'edit', formValues: {}, editors: {} },
+        isCompositeEditor: true,
       } as EditorArguments;
 
       mockItemData = { id: 1, gender: 'male', isActive: true };

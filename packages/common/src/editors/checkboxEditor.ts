@@ -153,8 +153,7 @@ export class CheckboxEditor implements Editor {
   }
 
   show(): void {
-    const isCompositeEditor = !!this.args?.compositeEditorOptions;
-    if (isCompositeEditor) {
+    if (this.args.isCompositeEditor) {
       // when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor
       this.applyInputUsabilityState();
     }
@@ -260,12 +259,12 @@ export class CheckboxEditor implements Editor {
   }
 
   validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
-    const isRequired = this.args?.compositeEditorOptions ? false : this.columnEditor.required;
+    const isRequired = this.args.isCompositeEditor ? false : this.columnEditor.required;
     const isChecked = inputValue !== undefined ? inputValue : this._input?.checked;
     const errorMsg = this.columnEditor.errorMessage;
 
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
-    if (this.args.compositeEditorOptions) {
+    if (this.args.isCompositeEditor) {
       this.applyInputUsabilityState();
     }
 

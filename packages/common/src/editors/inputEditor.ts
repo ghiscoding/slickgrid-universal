@@ -91,7 +91,6 @@ export class InputEditor implements Editor {
 
   init(): void {
     const columnId = this.columnDef?.id ?? '';
-    const compositeEditorOptions = this.args.compositeEditorOptions;
 
     this._input = createDomElement('input', {
       type: this._inputType || 'text',
@@ -123,14 +122,14 @@ export class InputEditor implements Editor {
     }) as EventListener);
 
     // listen to focusout or blur to automatically call a save
-    if (this.hasAutoCommitEdit && !compositeEditorOptions) {
+    if (this.hasAutoCommitEdit && !this.args.isCompositeEditor) {
       this._bindEventService.bind(this._input, ['focusout', 'blur'], () => {
         this._isValueTouched = true;
         this.save();
       });
     }
 
-    if (compositeEditorOptions) {
+    if (this.args.isCompositeEditor) {
       this._bindEventService.bind(this._input, ['input', 'paste'], this.handleOnInputChange.bind(this) as EventListener);
 
       // add an extra mousewheel listener when editor type is integer/float
@@ -155,7 +154,7 @@ export class InputEditor implements Editor {
 
         // clear value when it's newly disabled and not empty
         const currentValue = this.getValue();
-        if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions && currentValue !== '') {
+        if (prevIsDisabled !== isDisabled && this.args.isCompositeEditor && currentValue !== '') {
           this.reset('', true, true);
         }
       } else {
@@ -195,8 +194,7 @@ export class InputEditor implements Editor {
   }
 
   show(): void {
-    const isCompositeEditor = !!this.args?.compositeEditorOptions;
-    if (isCompositeEditor) {
+    if (this.args.isCompositeEditor) {
       // when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor
       this.applyInputUsabilityState();
     }
@@ -308,7 +306,7 @@ export class InputEditor implements Editor {
 
   validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
-    if (this.args.compositeEditorOptions) {
+    if (this.args.isCompositeEditor) {
       this.applyInputUsabilityState();
     }
 
@@ -324,7 +322,7 @@ export class InputEditor implements Editor {
       minLength: this.columnEditor.minLength,
       maxLength: this.columnEditor.maxLength,
       operatorConditionalType: this.columnEditor.operatorConditionalType,
-      required: this.args?.compositeEditorOptions ? false : this.columnEditor.required,
+      required: this.args.isCompositeEditor ? false : this.columnEditor.required,
       validator: this.validator,
     });
   }

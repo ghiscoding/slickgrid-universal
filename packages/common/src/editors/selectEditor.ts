@@ -119,7 +119,7 @@ export class SelectEditor implements Editor {
       container: 'body',
       darkMode: !!this.gridOptions.darkMode,
       filter: false,
-      isOpen: !this.isCompositeEditor,
+      isOpen: !this.args.isCompositeEditor,
       maxHeight: 275,
       minHeight: 25,
       name: this.elementName,
@@ -135,7 +135,7 @@ export class SelectEditor implements Editor {
         if (keyEvt?.key === 'Tab' && this._msInstance?.getOptions().isOpen) {
           keyEvt.preventDefault();
           this._msInstance.close('blur');
-          if (!this.isCompositeEditor) {
+          if (!this.args.isCompositeEditor) {
             keyEvt.shiftKey ? this.grid.navigatePrev() : this.grid.navigateNext();
           }
         }
@@ -207,10 +207,6 @@ export class SelectEditor implements Editor {
 
   get editorOptions(): MultipleSelectOption {
     return { ...this.gridOptions.defaultEditorOptions?.select, ...this.columnEditor?.editorOptions, ...this.columnEditor?.options };
-  }
-
-  get isCompositeEditor(): boolean {
-    return !!this.args?.compositeEditorOptions;
   }
 
   /** Getter for the Custom Structure if exist */
@@ -397,9 +393,9 @@ export class SelectEditor implements Editor {
   }
 
   show(openDelay?: number | null): void {
-    if (!this.isCompositeEditor && this._msInstance) {
+    if (!this.args.isCompositeEditor && this._msInstance) {
       this._msInstance.open(openDelay);
-    } else if (this.isCompositeEditor) {
+    } else if (this.args.isCompositeEditor) {
       // when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor
       this.applyInputUsabilityState();
     }
@@ -447,7 +443,13 @@ export class SelectEditor implements Editor {
   destroy(): void {
     // when autoCommitEdit is enabled, we might end up leaving an editor without it being saved, if so do call a save before destroying
     // this mainly happens doing a blur or focusing on another cell in the grid (it won't come here if we click outside the grid, in the body)
-    if (this._msInstance && this.hasAutoCommitEdit && this.isValueChanged() && !this._isDisposingOrCallingSave && !this.isCompositeEditor) {
+    if (
+      this._msInstance &&
+      this.hasAutoCommitEdit &&
+      this.isValueChanged() &&
+      !this._isDisposingOrCallingSave &&
+      !this.args.isCompositeEditor
+    ) {
       this._isDisposingOrCallingSave = true; // change destroying flag to avoid infinite loop
       this.save(true);
     }
@@ -538,7 +540,7 @@ export class SelectEditor implements Editor {
         // clear select when it's newly disabled and not yet empty
         const currentValues: string | number | Array<string | number> = this.getValue();
         const isValueBlank = Array.isArray(currentValues) && this.isMultipleSelect ? currentValues?.[0] === '' : currentValues === '';
-        if (prevIsDisabled !== isDisabled && this.isCompositeEditor && !isValueBlank) {
+        if (prevIsDisabled !== isDisabled && this.args.isCompositeEditor && !isValueBlank) {
           this.reset('', true, true);
         }
       } else {
@@ -601,12 +603,12 @@ export class SelectEditor implements Editor {
   }
 
   validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
-    const isRequired = this.isCompositeEditor ? false : this.columnEditor?.required;
+    const isRequired = this.args.isCompositeEditor ? false : this.columnEditor?.required;
     const elmValue = inputValue !== undefined ? inputValue : this._msInstance?.getSelects(); // && this.$editorElm.val && this.$editorElm.val();
     const errorMsg = this.columnEditor?.errorMessage;
 
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
-    if (this.isCompositeEditor) {
+    if (this.args.isCompositeEditor) {
       this.applyInputUsabilityState();
     }
 

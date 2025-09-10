@@ -73,7 +73,7 @@ describe('DualInputEditor', () => {
       new Promise((done: any) => {
         try {
           editor = new DualInputEditor({ grid: gridStub } as any);
-        } catch (e) {
+        } catch (e: any) {
           expect(e.toString()).toContain(
             `[Slickgrid-Universal] Please make sure that your Combo Input Editor has params defined with "leftInput" and "rightInput"`
           );
@@ -837,6 +837,7 @@ describe('DualInputEditor', () => {
       editorArguments = {
         ...editorArguments,
         compositeEditorOptions: { headerTitle: 'Test', modalType: 'edit', formValues: {}, editors: {} },
+        isCompositeEditor: true,
       } as EditorArguments;
 
       const editorParams = { leftInput: { field: 'from', type: 'float' }, rightInput: { field: 'to', type: 'float' } } as ColumnEditorDualInput;
