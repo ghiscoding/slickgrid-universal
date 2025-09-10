@@ -209,6 +209,7 @@ const mockGrid = {
   getEditorLock: () => mockGetEditorLock,
   getUID: () => 'slickgrid_12345',
   getContainerNode: vi.fn(),
+  getFrozenColumnId: vi.fn(),
   getGridPosition: vi.fn(),
   getOptions: vi.fn(),
   getSelectionModel: vi.fn(),

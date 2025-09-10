@@ -512,7 +512,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     const previousColumns = this.grid.getColumns();
 
     // make sure column freeze is allowed before applying the change
-    if (this.grid.validateColumnFreeze(newGridOptions.frozenColumn)) {
+    if (this.grid.validateColumnFreeze(newGridOptions.frozenColumn, true)) {
       this.grid.setOptions(newGridOptions, false, true); // suppress the setColumns (3rd argument) since we'll do that ourselves
       let finalVisibleColumns = visibleColumns || [];
 
@@ -522,7 +522,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
       this.sharedService.gridOptions.frozenColumn = newGridOptions.frozenColumn;
       this.sharedService.gridOptions.enableMouseWheelScrollHandler = newGridOptions.enableMouseWheelScrollHandler;
-      this.sharedService.frozenVisibleColumnId = newGridOptions.frozenColumn >= 0 ? column.id : '';
+      this.sharedService.frozenVisibleColumnId = this.grid.getFrozenColumnId();
 
       if (command === 'freeze-columns') {
         // to freeze columns, we need to take only the visible columns and we also need to use setColumns() when some of them are hidden
