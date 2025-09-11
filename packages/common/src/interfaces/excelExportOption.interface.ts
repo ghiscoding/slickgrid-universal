@@ -43,6 +43,9 @@ export interface ExcelExportOption {
   /** Symbol use to show that the group title is expanded (you can use unicode like '⮟' or '\u25BD') */
   groupExpandedSymbol?: string;
 
+  /** Defaults to true, when enabled it will decode any HTML entities (e.g. "&lt;div&gt;John &amp; Jane &lt;/div&gt;" => "<div>John &amp; Jane</div>") */
+  htmlDecode?: boolean;
+
   /** Defaults to false, which leads to Sanitizing all data (striping out any HTML tags) when being evaluated on export. */
   sanitizeDataExport?: boolean;
 
