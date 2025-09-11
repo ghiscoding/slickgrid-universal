@@ -206,6 +206,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected _options!: O;
   protected _defaults: BaseGridOption = {
     alertWhenFrozenNotAllViewable: true,
+    skipFreezeColumnValidation: false,
     alwaysShowVerticalScroll: false,
     alwaysAllowHorizontalScroll: false,
     explicitInitialization: false,
@@ -1366,11 +1367,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       });
 
       const cWidth = Utils.width(this._container) || 0;
-      if (
-        cWidth > 0 &&
-        canvasWidthL > cWidth &&
-        (this._options.alertWhenFrozenNotAllViewable || this._options.throwWhenFrozenNotAllViewable)
-      ) {
+      if (cWidth > 0 && canvasWidthL > cWidth && !this._options.skipFreezeColumnValidation) {
         if ((forceAlert !== false && !this._invalidfrozenAlerted) || forceAlert === true) {
           const errorMsg =
             '[SlickGrid] You are trying to freeze/pin more columns than the grid can support. ' +
