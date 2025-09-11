@@ -33,14 +33,23 @@ import {
   getTranslationPrefix,
   isColumnDateType,
 } from '@slickgrid-universal/common';
-import { addWhiteSpaces, createDomElement, extend, getHtmlStringOutput, stripTags, titleCase } from '@slickgrid-universal/utils';
+import {
+  addWhiteSpaces,
+  createDomElement,
+  extend,
+  getHtmlStringOutput,
+  htmlDecode,
+  stripTags,
+  titleCase,
+} from '@slickgrid-universal/utils';
 
 import { type ExcelFormatter, getGroupTotalValue, getExcelFormatFromGridFormatter, useCellFormatByFieldType } from './excelUtils.js';
 
 const DEFAULT_EXPORT_OPTIONS: ExcelExportOption = {
   filename: 'export',
   format: FileType.xlsx,
-  useStreamingExport: true, // new option, default true
+  htmlDecode: true,
+  useStreamingExport: true,
 };
 
 export class ExcelExportService implements ExternalResource, BaseExcelExportService {
@@ -354,7 +363,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     this._columnHeaders = this.getColumnHeaders(columns) || [];
     if (this._columnHeaders && Array.isArray(this._columnHeaders) && this._columnHeaders.length > 0) {
       // add the header row + add a new line at the end of the row
-      outputHeaderTitles = this._columnHeaders.map((header) => ({ value: stripTags(header.title), metadata }));
+      outputHeaderTitles = this._columnHeaders.map((header) => ({ value: htmlDecode(stripTags(header.title)), metadata }));
     }
 
     // do we have a Group by title?
@@ -611,8 +620,13 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         }
 
         // sanitize early, when enabled, any HTML tags (remove HTML tags)
-        if (typeof itemData === 'string' && (columnDef.sanitizeDataExport || this._excelExportOptions.sanitizeDataExport)) {
-          itemData = stripTags(itemData as string);
+        if (typeof itemData === 'string') {
+          if (columnDef.sanitizeDataExport || this._excelExportOptions.sanitizeDataExport) {
+            itemData = stripTags(itemData as string);
+          }
+          if (this._excelExportOptions.htmlDecode) {
+            itemData = htmlDecode(itemData);
+          }
         }
 
         const { excelFormatId, getDataValueParser } = this._regularCellExcelFormats[columnDef.id];
@@ -638,7 +652,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
    * @param itemObj
    */
   protected readGroupedRowTitle(itemObj: any): string {
-    const groupName = stripTags(itemObj.title);
+    const groupName = htmlDecode(stripTags(itemObj.title));
 
     if (this._excelExportOptions?.addGroupIndentation) {
       const collapsedSymbol = this._excelExportOptions?.groupCollapsedSymbol || '⮞';
@@ -702,8 +716,13 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       }
 
       // does the user want to sanitize the output data (remove HTML tags)?
-      if (typeof itemData === 'string' && (columnDef.sanitizeDataExport || this._excelExportOptions.sanitizeDataExport)) {
-        itemData = stripTags(itemData);
+      if (typeof itemData === 'string') {
+        if (columnDef.sanitizeDataExport || this._excelExportOptions.sanitizeDataExport) {
+          itemData = stripTags(itemData);
+        }
+        if (this._excelExportOptions.htmlDecode) {
+          itemData = htmlDecode(itemData);
+        }
       }
 
       // add the column (unless user wants to skip it)

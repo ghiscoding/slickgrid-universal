@@ -15,6 +15,8 @@ import {
   type SlickGrid,
   SortComparers,
   SortDirectionNumber,
+  type GroupingComparerItem,
+  type GroupingFormatterItem,
 } from '@slickgrid-universal/common';
 
 import { ContainerServiceStub } from '../../../test/containerServiceStub.js';
@@ -222,7 +224,7 @@ describe('ExcelExportService', () => {
         try {
           service.init(null as any, container);
           await service.exportToExcel(mockExportExcelOptions);
-        } catch (e) {
+        } catch (e: any) {
           expect(e.toString()).toContain(
             '[Slickgrid-Universal] it seems that the SlickGrid & DataView objects and/or PubSubService are not initialized did you forget to enable the grid option flag "enableExcelExport"?'
           );
@@ -488,9 +490,9 @@ describe('ExcelExportService', () => {
         );
       });
 
-      it(`should have the Order without html tags when the grid option has "sanitizeDataExport" is enabled`, async () => {
-        mockGridOptions.excelExportOptions = { sanitizeDataExport: true };
-        mockCollection = [{ id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe', position: 'FINANCE_MANAGER', order: 1 }];
+      it(`should have the Order without html tags when the grid option has both "htmlDecode" and "sanitizeDataExport" enabled`, async () => {
+        mockGridOptions.excelExportOptions = { htmlDecode: true, sanitizeDataExport: true };
+        mockCollection = [{ id: 1, userId: '2B02', firstName: 'Jane', lastName: 'Doe &amp; McFly', position: 'FINANCE_MANAGER', order: 1 }];
         vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
@@ -511,7 +513,7 @@ describe('ExcelExportService', () => {
                     { metadata: { style: 1 }, value: 'Position' },
                     { metadata: { style: 1 }, value: 'Order' },
                   ],
-                  ['2B02', 'Jane', 'DOE', 'FINANCE_MANAGER', '1'],
+                  ['2B02', 'Jane', 'DOE & MCFLY', 'FINANCE_MANAGER', '1'],
                 ],
               }),
             ],
@@ -843,7 +845,7 @@ describe('ExcelExportService', () => {
 
     describe('with Grouping', () => {
       let mockCollection: any[];
-      let mockOrderGrouping;
+      let mockOrderGrouping: any;
       let mockItem1;
       let mockItem2;
       let mockGroup1;
@@ -889,10 +891,10 @@ describe('ExcelExportService', () => {
           aggregateEmpty: false,
           aggregators: [{ _count: 2, _field: 'order', _nonNullCount: 2, _sum: 4 }],
           collapsed: false,
-          comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
+          comparer: (a: GroupingComparerItem, b: GroupingComparerItem) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
           compiledAccumulators: [vi.fn(), vi.fn()],
           displayTotalsRow: true,
-          formatter: (g) => `Order:  ${g.value} <span class="text-green">(${g.count} items)</span>`,
+          formatter: (g: GroupingFormatterItem) => `Order:  ${g.value} <span class="text-green">(${g.count} items)</span>`,
           getter: 'order',
           getterIsAFn: false,
           lazyTotalsCalculation: true,
@@ -980,7 +982,7 @@ describe('ExcelExportService', () => {
 
     describe('with Grouping and export with Excel custom format', () => {
       let mockCollection: any[];
-      let mockOrderGrouping;
+      let mockOrderGrouping: any;
       let mockItem1;
       let mockItem2;
       let mockGroup1;
@@ -1037,10 +1039,10 @@ describe('ExcelExportService', () => {
           aggregateEmpty: false,
           aggregators: [{ _count: 2, _field: 'order', _nonNullCount: 2, _sum: 4 }],
           collapsed: false,
-          comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
+          comparer: (a: GroupingComparerItem, b: GroupingComparerItem) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
           compiledAccumulators: [vi.fn(), vi.fn()],
           displayTotalsRow: true,
-          formatter: (g) => `Order:  ${g.value} <span class="text-green">(${g.count} items)</span>`,
+          formatter: (g: GroupingFormatterItem) => `Order:  ${g.value} <span class="text-green">(${g.count} items)</span>`,
           getter: 'order',
           getterIsAFn: false,
           lazyTotalsCalculation: true,
@@ -1120,7 +1122,7 @@ describe('ExcelExportService', () => {
 
     describe('with Grouping and Translation', () => {
       let mockCollection: any[];
-      let mockOrderGrouping;
+      let mockOrderGrouping: any;
       let mockItem1;
       let mockItem2;
       let mockGroup1;
@@ -1170,10 +1172,10 @@ describe('ExcelExportService', () => {
           aggregateEmpty: false,
           aggregators: [{ _count: 2, _field: 'order', _nonNullCount: 2, _sum: 4 }],
           collapsed: false,
-          comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
+          comparer: (a: GroupingComparerItem, b: GroupingComparerItem) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
           compiledAccumulators: [vi.fn(), vi.fn()],
           displayTotalsRow: true,
-          formatter: (g) => `Order:  ${g.value} <span class="text-green">(${g.count} items)</span>`,
+          formatter: (g: GroupingFormatterItem) => `Order:  ${g.value} <span class="text-green">(${g.count} items)</span>`,
           getter: 'order',
           getterIsAFn: false,
           lazyTotalsCalculation: true,
@@ -1242,7 +1244,7 @@ describe('ExcelExportService', () => {
 
     describe('with Multiple Columns Grouping (by Order then by LastName) and Translation', () => {
       let mockCollection: any[];
-      let mockOrderGrouping;
+      let mockOrderGrouping: any;
       let mockItem1;
       let mockItem2;
       let mockGroup1;
@@ -1289,10 +1291,10 @@ describe('ExcelExportService', () => {
           aggregateEmpty: false,
           aggregators: [{ _count: 2, _field: 'order', _nonNullCount: 2, _sum: 4 }],
           collapsed: false,
-          comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
+          comparer: (a: GroupingComparerItem, b: GroupingComparerItem) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
           compiledAccumulators: [vi.fn(), vi.fn()],
           displayTotalsRow: true,
-          formatter: (g) => `Order:  ${g.value} <span class="text-green">(${g.count} items)</span>`,
+          formatter: (g: GroupingFormatterItem) => `Order:  ${g.value} <span class="text-green">(${g.count} items)</span>`,
           getter: 'order',
           getterIsAFn: false,
           lazyTotalsCalculation: true,
