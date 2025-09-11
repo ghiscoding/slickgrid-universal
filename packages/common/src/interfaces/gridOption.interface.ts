@@ -845,6 +845,9 @@ export interface GridOption<C extends Column = Column> {
   /** Some default options to set for the text file export service */
   textExportOptions?: TextExportOption;
 
+  /** When set to true, it will skip the validation check to make sure frozen columns are not wider than the grid visible canvas width */
+  skipFreezeColumnValidation?: boolean;
+
   /**
    * @deprecated @use `alertWhenFrozenNotAllViewable` Defaults to false, should we throw an error when frozenColumn is wider than the grid viewport width.
    */

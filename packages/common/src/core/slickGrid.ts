@@ -206,6 +206,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected _options!: O;
   protected _defaults: BaseGridOption = {
     alertWhenFrozenNotAllViewable: true,
+    skipFreezeColumnValidation: false,
     alwaysShowVerticalScroll: false,
     alwaysAllowHorizontalScroll: false,
     explicitInitialization: false,
@@ -1344,6 +1345,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /**
    * Validate that the column freeze is allowed in the browser by making sure that the frozen column is not exceeding the available and visible left canvas width.
+   * Note that it will only validate when `alertWhenFrozenNotAllViewable` or `throwWhenFrozenNotAllViewable` grid option is enabled.
    * @param {Number} frozenColumn the column index to freeze at
    * @param {Boolean} [forceAlert] tri-state flag to alert when frozen column is invalid
    *  - if `undefined` it will alert only once
@@ -1365,7 +1367,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       });
 
       const cWidth = Utils.width(this._container) || 0;
-      if (cWidth > 0 && canvasWidthL > cWidth) {
+      if (cWidth > 0 && canvasWidthL > cWidth && !this._options.skipFreezeColumnValidation) {
         if ((forceAlert !== false && !this._invalidfrozenAlerted) || forceAlert === true) {
           const errorMsg =
             '[SlickGrid] You are trying to freeze/pin more columns than the grid can support. ' +
