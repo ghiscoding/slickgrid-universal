@@ -49,6 +49,9 @@ function defineGrid() {
 </template>
 ```
 
+> **Caution**
+> Please be aware that `frozenColumn` (left canvas) **cannot** be wider than the actual grid viewport width and you will get an alert when you try to do this. You can disable it by setting `alertWhenFrozenNotAllViewable` (it will still do the validation but won't show an alert to the end user) or set `skipFreezeColumnValidation` to completely skip the validation. Also note that if the condition is invalid, it will cancel the action and reapply previous `frozenColumn` value (unless skip validation is enabled).
+
 ## Rows Pinning starting from bottom
 This is basically the same thing as previous code sample, except that you will set the Grid Option property `frozenBottom` to true and that it's.
 ##### Component
