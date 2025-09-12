@@ -1,10 +1,10 @@
-import { type AureliaGridInstance, type Column, Editors, Formatters, type GridOption } from 'aurelia-slickgrid';
 import { I18N } from '@aurelia/i18n';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 // import { TOptions as I18NOptions } from 'i18next';
+import { resolve } from 'aurelia';
+import { type AureliaGridInstance, type Column, Editors, Formatters, type GridOption } from 'aurelia-slickgrid';
 
 import './example35.scss';
-import { resolve } from 'aurelia';
 
 const NB_ITEMS = 20;
 

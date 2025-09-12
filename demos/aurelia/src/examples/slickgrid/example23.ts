@@ -1,11 +1,9 @@
 import { I18N } from '@aurelia/i18n';
 // import { TOptions as I18NOptions } from 'i18next';
 import { addDay, format } from '@formkit/tempo';
-
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-
-import { CustomInputFilter } from './custom-inputFilter.js';
+import { resolve } from 'aurelia';
 import {
   type AureliaGridInstance,
   type Column,
@@ -21,7 +19,8 @@ import {
   type SlickGrid,
   type SliderRangeOption,
 } from 'aurelia-slickgrid';
-import { resolve } from 'aurelia';
+
+import { CustomInputFilter } from './custom-inputFilter.js';
 
 const NB_ITEMS = 1500;
 

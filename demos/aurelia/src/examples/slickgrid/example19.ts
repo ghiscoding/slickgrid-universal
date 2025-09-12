@@ -1,5 +1,6 @@
 import { bindable } from 'aurelia';
 import { type AureliaGridInstance, type Column, Editors, ExtensionName, Filters, Formatters, type GridOption } from 'aurelia-slickgrid';
+
 import { Example19Preload } from './example19-preload.js';
 import { Example19DetailView } from './example19-detail-view.js';
 

@@ -14,6 +14,7 @@ import {
   type SliderOption,
   type ViewModelBindableInputData,
 } from 'aurelia-slickgrid';
+
 import { CustomAureliaViewModelEditor } from './custom-aureliaViewModelEditor.js';
 import { CustomAureliaViewModelFilter } from './custom-aureliaViewModelFilter.js';
 import { CustomTitleFormatter } from './custom-title-formatter.js';

@@ -1,7 +1,6 @@
 import { IHttpClient } from '@aurelia/fetch-client';
 import { newInstanceOf, resolve } from '@aurelia/kernel';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-
 import {
   type AureliaGridInstance,
   type AutocompleterOption,

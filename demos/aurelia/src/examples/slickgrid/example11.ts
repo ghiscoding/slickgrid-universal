@@ -9,6 +9,7 @@ import {
   type SlickDataView,
   type SlickGrid,
 } from 'aurelia-slickgrid';
+
 import './example11.scss';
 
 export class Example11 {
