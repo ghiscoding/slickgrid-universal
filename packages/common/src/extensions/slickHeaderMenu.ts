@@ -512,7 +512,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     const previousColumns = this.grid.getColumns();
 
     // make sure column freeze is allowed before applying the change
-    if (this.grid.validateColumnFreeze(newGridOptions.frozenColumn, true)) {
+    if (this.grid.validateColumnFreezeWidth(newGridOptions.frozenColumn, true)) {
       this.grid.setOptions(newGridOptions, false, true); // suppress the setColumns (3rd argument) since we'll do that ourselves
       let finalVisibleColumns = visibleColumns || [];
 

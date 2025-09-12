@@ -849,15 +849,29 @@ export interface GridOption<C extends Column = Column> {
   skipFreezeColumnValidation?: boolean;
 
   /**
-   * @deprecated @use `alertWhenFrozenNotAllViewable` Defaults to false, should we throw an error when frozenColumn is wider than the grid viewport width.
+   * @deprecated @use `invalidColumnFreezeWidthCallback` Defaults to false, should we throw an error when frozenColumn is wider than the grid viewport width.
    */
   throwWhenFrozenNotAllViewable?: boolean;
 
+  /** Message to show when the frozen column is invalid and `invalidColumnFreezeWidthCallbackPicker` is enabled */
+  invalidColumnFreezePickerMessage?: string;
+
   /**
-   * Defaults to true, show a browser alert when the user tries to set a frozenColumn that is wider than the visible grid viewport width in the browser.
-   * We can't freeze wider than the viewport because the right canvas will never be visible and left canvas will not be scrollable which breaks the UX.
+   * Defaults to `alert(error)`, which will trigger when the user tries to uncheck too many columns via ColumnPicker/GridMenu.
+   * We need to have 1 or more columns visible on the right side of the frozen column.
+   * NOTE: the error is **always** logged via `console.error` even when this callback is unset.
    */
-  alertWhenFrozenNotAllViewable?: boolean;
+  invalidColumnFreezePickerCallback?: (error: string) => void;
+
+  /** Message to show when the frozen column width is invalid and `invalidColumnFreezeWidthCallbackWidth` or `throwWhenFrozenNotAllViewable` is enabled */
+  invalidColumnFreezeWidthMessage?: string;
+
+  /**
+   * Defaults to `alert(error)`, which will trigger when the user tries to set a `frozenColumn` that is wider than the visible grid viewport width in the browser.
+   * We can't freeze wider than the viewport because the right canvas will never be visible and since the left canvas is never scrollable this would break the UX.
+   * NOTE: the error is **always** logged via `console.error` even when this callback is unset.
+   */
+  invalidColumnFreezeWidthCallback?: (error: string) => void;
 
   /** What is the top panel height in pixels (only type the number) */
   topPanelHeight?: number;
