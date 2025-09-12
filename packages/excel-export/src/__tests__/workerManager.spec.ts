@@ -491,4 +491,232 @@ describe('WorkerManager - Unit Tests', () => {
       global.Worker = originalWorker;
     });
   });
+
+  describe('Additional Coverage Tests', () => {
+    it('should handle worker not supported in initializeWorker', async () => {
+      // Mock Worker to be undefined
+      const originalWorker = global.Worker;
+      (global as any).Worker = undefined;
+
+      const manager = new WorkerManager();
+      const result = await manager.initializeWorker();
+
+      expect(result).toBe(false);
+
+      // Restore Worker
+      global.Worker = originalWorker;
+    });
+
+    it('should handle worker onerror event', async () => {
+      const manager = new WorkerManager();
+      await manager.initializeWorker();
+
+      // Simulate worker error
+      const error = new Error('Worker runtime error');
+      if (manager['worker']) {
+        manager['worker'].onerror!(error as any);
+      }
+
+      // The error should be handled gracefully
+      expect(manager.isSupported()).toBe(true);
+    });
+
+    it('should handle worker onmessageerror event', async () => {
+      const manager = new WorkerManager();
+      await manager.initializeWorker();
+
+      // Simulate worker message error
+      const error = new MessageEvent('messageerror');
+      if (manager['worker']) {
+        manager['worker'].onmessageerror!(error);
+      }
+
+      // The error should be handled gracefully
+      expect(manager.isSupported()).toBe(true);
+    });
+
+    it('should handle DataCloneError in postMessage', async () => {
+      const manager = new WorkerManager();
+      await manager.initializeWorker();
+
+      // Mock postMessage to throw DataCloneError
+      if (manager['worker']) {
+        const originalPostMessage = manager['worker'].postMessage;
+        manager['worker'].postMessage = vi.fn().mockImplementation(() => {
+          const error = new Error('Data could not be cloned');
+          error.name = 'DataCloneError';
+          throw error;
+        });
+
+        try {
+          await manager['sendMessage']({ type: 'INIT_WORKER', payload: {} });
+          expect(true).toBe(false); // Should not reach here
+        } catch (error: any) {
+          expect(error.message).toContain('Failed to serialize data for worker');
+        }
+
+        // Restore original postMessage
+        manager['worker'].postMessage = originalPostMessage;
+      }
+    });
+
+    it('should handle generic error in postMessage', async () => {
+      const manager = new WorkerManager();
+      await manager.initializeWorker();
+
+      // Mock postMessage to throw generic error
+      if (manager['worker']) {
+        const originalPostMessage = manager['worker'].postMessage;
+        manager['worker'].postMessage = vi.fn().mockImplementation(() => {
+          throw new Error('Generic postMessage error');
+        });
+
+        try {
+          await manager['sendMessage']({ type: 'INIT_WORKER', payload: {} });
+          expect(true).toBe(false); // Should not reach here
+        } catch (error: any) {
+          expect(error.message).toBe('Generic postMessage error');
+        }
+
+        // Restore original postMessage
+        manager['worker'].postMessage = originalPostMessage;
+      }
+    });
+
+    it('should throw error when trying to send message without initialized worker', async () => {
+      const manager = new WorkerManager();
+      // Don't initialize worker
+
+      try {
+        await manager['sendMessage']({ type: 'INIT_WORKER', payload: {} });
+        expect(true).toBe(false); // Should not reach here
+      } catch (error: any) {
+        expect(error.message).toBe('Worker not initialized');
+      }
+    });
+
+    it('should handle worker error with pending chunks', async () => {
+      const manager = new WorkerManager();
+      await manager.initializeWorker();
+
+      // Add some pending chunks with proper WorkerChunk structure
+      const chunk1 = {
+        chunkId: 'chunk1',
+        startRow: 0,
+        endRow: 10,
+        rows: [],
+        columns: [],
+        options: {},
+        serializedFormatters: {},
+        gridOptions: {},
+        exportOptions: {}
+      };
+      const chunk2 = {
+        chunkId: 'chunk2',
+        startRow: 11,
+        endRow: 20,
+        rows: [],
+        columns: [],
+        options: {},
+        serializedFormatters: {},
+        gridOptions: {},
+        exportOptions: {}
+      };
+
+      // Start processing chunks but don't let them complete
+      const promise1 = manager.processChunk(chunk1);
+      const promise2 = manager.processChunk(chunk2);
+
+      // Simulate worker error
+      const error = new Error('Worker crashed');
+      if (manager['worker']) {
+        manager['worker'].onerror!(error as any);
+      }
+
+      // Both promises should reject
+      await expect(promise1).rejects.toThrow('Worker error: Worker crashed');
+      await expect(promise2).rejects.toThrow('Worker error: Worker crashed');
+    });
+
+    it('should handle cleanup with pending chunks', async () => {
+      const manager = new WorkerManager();
+      await manager.initializeWorker();
+
+      // Add some pending chunks with proper WorkerChunk structure
+      const chunk1 = {
+        chunkId: 'chunk1',
+        startRow: 0,
+        endRow: 10,
+        rows: [],
+        columns: [],
+        options: {},
+        serializedFormatters: {},
+        gridOptions: {},
+        exportOptions: {}
+      };
+      const chunk2 = {
+        chunkId: 'chunk2',
+        startRow: 11,
+        endRow: 20,
+        rows: [],
+        columns: [],
+        options: {},
+        serializedFormatters: {},
+        gridOptions: {},
+        exportOptions: {}
+      };
+
+      // Start processing chunks but don't let them complete
+      const promise1 = manager.processChunk(chunk1);
+      const promise2 = manager.processChunk(chunk2);
+
+      // Cleanup worker
+      manager.cleanup();
+
+      // Both promises should reject
+      await expect(promise1).rejects.toThrow('Worker cleanup');
+      await expect(promise2).rejects.toThrow('Worker cleanup');
+    });
+
+    it('should handle constructor error when checking worker support', () => {
+      // Mock Worker constructor to throw an error
+      const originalWorker = global.Worker;
+
+      Object.defineProperty(global, 'Worker', {
+        get: () => {
+          throw new Error('Worker access error');
+        },
+        configurable: true
+      });
+
+      const manager = new WorkerManager();
+      expect(manager.isSupported()).toBe(false);
+
+      // Restore original
+      Object.defineProperty(global, 'Worker', {
+        value: originalWorker,
+        configurable: true,
+        writable: true
+      });
+    });
+
+    it('should throw error when processing chunk without initialized worker', async () => {
+      const manager = new WorkerManager();
+      // Don't initialize worker
+
+      const chunk = {
+        chunkId: 'test-chunk',
+        startRow: 0,
+        endRow: 10,
+        rows: [],
+        columns: [],
+        options: {},
+        serializedFormatters: {},
+        gridOptions: {},
+        exportOptions: {}
+      };
+
+      await expect(manager.processChunk(chunk)).rejects.toThrow('Worker not initialized');
+    });
+  });
 });

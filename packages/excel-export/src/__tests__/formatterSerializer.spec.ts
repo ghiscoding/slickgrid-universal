@@ -459,4 +459,220 @@ describe('FormatterSerializer - Unit Tests', () => {
       expect(serialized.groupTotalsExcelExportOptions).toBeDefined();
     });
   });
+
+  describe('Additional Coverage Tests', () => {
+    it('should handle objects with custom constructor names', () => {
+      class CustomClass {
+        value = 'test';
+      }
+
+      const customObj = new CustomClass();
+      const result = FormatterSerializer.sanitizeDataForWorker(customObj);
+
+      expect(result).toEqual({ value: 'test' });
+    });
+
+    it('should handle objects with meaningful toString', () => {
+      const objWithToString = {
+        value: 42,
+        toString: () => 'Meaningful String Representation'
+      };
+
+      const result = FormatterSerializer.sanitizeDataForWorker(objWithToString);
+
+      // The function will be serialized as a string, so we expect an object
+      expect(result).toEqual(expect.objectContaining({ value: 42 }));
+    });
+
+    it('should handle group totals data with group property', () => {
+      const groupTotalsData = {
+        __groupTotals: true,
+        sum: { price: 100 },
+        avg: { price: 50 },
+        group: {
+          level: 1,
+          value: 'Category A',
+          count: 5,
+          collapsed: false
+        }
+      };
+
+      const result = FormatterSerializer.sanitizeDataForWorker(groupTotalsData);
+
+      expect(result).toEqual(expect.objectContaining({
+        sum: { price: 100 },
+        avg: { price: 50 },
+        group: {
+          level: 1,
+          value: 'Category A',
+          count: 5,
+          collapsed: false
+        }
+      }));
+    });
+
+    it('should handle JSON.stringify success case', () => {
+      const validData = { name: 'test', value: 42 };
+
+      const result = FormatterSerializer.isSerializable(validData);
+
+      expect(result).toBe(true);
+    });
+
+    it('should find non-serializable properties in nested objects', () => {
+      const dataWithFunction = {
+        name: 'test',
+        nested: {
+          callback: () => 'function'
+        }
+      };
+
+      const issues = FormatterSerializer.findNonSerializableProperties(dataWithFunction);
+
+      expect(issues.length).toBeGreaterThan(0);
+      // The function gets converted to string, so we check for the presence of issues
+      expect(issues.some(issue => issue.includes('nested'))).toBe(true);
+    });
+
+    it('should handle primitive non-serializable values', () => {
+      const symbol = Symbol('test');
+
+      const issues = FormatterSerializer.findNonSerializableProperties(symbol, 'root');
+
+      expect(issues).toContain('root: symbol value is not serializable');
+    });
+  });
+
+
+
+  describe('Group Totals Data Handling', () => {
+    it('should handle group totals data with group property', () => {
+      const groupTotalsData = {
+        __groupTotals: true,
+        sum: { price: 100 },
+        avg: { price: 50 },
+        group: {
+          level: 1,
+          value: 'Category A',
+          count: 5,
+          collapsed: false
+        }
+      };
+
+      const result = FormatterSerializer.sanitizeDataForWorker(groupTotalsData);
+
+      expect(result).toEqual(expect.objectContaining({
+        sum: { price: 100 },
+        avg: { price: 50 },
+        group: {
+          level: 1,
+          value: 'Category A',
+          count: 5,
+          collapsed: false
+        }
+      }));
+    });
+  });
+
+  describe('Serialization Validation Edge Cases', () => {
+    it('should handle JSON.stringify success case', () => {
+      const validData = { name: 'test', value: 42 };
+
+      const result = FormatterSerializer.isSerializable(validData);
+
+      expect(result).toBe(true);
+    });
+
+    it('should find non-serializable properties in nested objects', () => {
+      const dataWithFunction = {
+        name: 'test',
+        nested: {
+          callback: () => 'function'
+        }
+      };
+
+      const issues = FormatterSerializer.findNonSerializableProperties(dataWithFunction);
+
+      expect(issues.length).toBeGreaterThan(0);
+      // The function gets converted to string, so we check for the presence of issues
+      expect(issues.some(issue => issue.includes('nested'))).toBe(true);
+    });
+
+    it('should handle primitive non-serializable values', () => {
+      const symbol = Symbol('test');
+
+      const issues = FormatterSerializer.findNonSerializableProperties(symbol, 'root');
+
+      expect(issues).toContain('root: symbol value is not serializable');
+    });
+  });
+
+  describe('Edge Case Coverage Tests', () => {
+    it('should handle SlickGroup objects', () => {
+      const groupData = {
+        __group: true,
+        level: 1,
+        value: 'Test Group',
+        count: 10,
+        collapsed: false,
+        groupingKey: 'category'
+      };
+
+      const result = FormatterSerializer.sanitizeDataForWorker(groupData);
+
+      expect(result).toEqual(expect.objectContaining({
+        level: 1,
+        value: 'Test Group',
+        count: 10,
+        collapsed: false,
+        groupingKey: 'category'
+      }));
+    });
+
+    it('should handle objects with constructor names', () => {
+      const customObj = {
+        constructor: { name: 'CustomObject' },
+        value: 'test',
+        toString: () => 'custom string'
+      };
+
+      const result = FormatterSerializer.sanitizeDataForWorker(customObj);
+
+      expect(result).toBe('custom string');
+    });
+
+    it('should handle objects with [object Object] toString', () => {
+      const objWithDefaultToString = {
+        value: 42,
+        toString: () => '[object Object]'
+      };
+
+      const result = FormatterSerializer.sanitizeDataForWorker(objWithDefaultToString);
+
+      expect(result).toEqual(expect.objectContaining({ value: 42 }));
+    });
+
+    it('should handle objects with failing toString', () => {
+      const objWithFailingToString = {
+        value: 42,
+        toString: () => {
+          throw new Error('toString failed');
+        }
+      };
+
+      const result = FormatterSerializer.sanitizeDataForWorker(objWithFailingToString);
+
+      expect(result).toEqual(expect.objectContaining({ value: 42 }));
+    });
+
+    it('should handle serialization errors gracefully', () => {
+      const result = FormatterSerializer.serializeFormatter(undefined);
+      expect(result).toBeNull();
+    });
+
+    it('should handle deserialization errors gracefully', () => {
+      const result = FormatterSerializer.deserializeFormatter('invalid javascript');
+      expect(result).toBeNull();
+    });
+  });
 });
