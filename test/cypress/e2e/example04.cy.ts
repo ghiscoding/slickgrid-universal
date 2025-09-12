@@ -560,6 +560,66 @@ describe('Example 04 - Frozen Grid', () => {
       .each(($child, index) => expect($child.text()).to.eq(withoutTitleRowTitles[index]));
   });
 
+  it('should open Column Picker and try unchecked all the columns on the right of the column pinning and expect an error and abort of the execution', () => {
+    const stub = cy.stub();
+    cy.on('window:alert', stub);
+    cy.get('[data-test=set-3frozen-columns]').click({ force: true });
+
+    const leftColumns = ['', 'Title', '% Complete'];
+    const rightColumns = ['Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
+    cy.get('.grid4').find('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
+
+    cy.get('.slick-column-picker')
+      .find('.slick-column-picker-list')
+      .children()
+      .each(($child, index) => {
+        if (index >= leftColumns.length) {
+          if ($child.text() === rightColumns[index - leftColumns.length]) {
+            expect($child.text()).to.eq(rightColumns[index - leftColumns.length]);
+            if (index <= rightColumns.length + 1) {
+              cy.wrap($child).children('label').click();
+            } else {
+              cy.wrap($child)
+                .children('label')
+                .click()
+                .then(() => {
+                  expect(stub.getCall(0)).to.be.calledWith(
+                    '[SlickGrid] Action not allowed and cancelled, you need to have at least 1 or more column on the right section of the frozen column. ' +
+                      'You could alternatively "Unfreeze all the columns" before trying again.'
+                  );
+                });
+            }
+          }
+        }
+      });
+  });
+
+  it('should reset hidden column from the Column Picker and expect all columns to be back', () => {
+    const leftColumns = ['', 'Title', '% Complete'];
+    const rightColumns = ['Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
+
+    cy.get('.slick-column-picker')
+      .find('.slick-column-picker-list')
+      .children()
+      .each(($child, index) => {
+        if (index >= leftColumns.length) {
+          if ($child.text() === rightColumns[index - leftColumns.length]) {
+            expect($child.text()).to.eq(rightColumns[index - leftColumns.length]);
+            if (index <= rightColumns.length + 1) {
+              cy.wrap($child).children('label').click();
+            }
+          }
+        }
+      });
+
+    cy.get('.slick-column-picker:visible').find('.close').trigger('click').click();
+
+    cy.get('.grid4')
+      .find('.slick-header-columns')
+      .children()
+      .each(($child, index) => expect($child.text()).to.eq(withoutTitleRowTitles[index]));
+  });
+
   describe('Test UI rendering after Scrolling with large columns', () => {
     it('should unfreeze all columns/rows', () => {
       cy.get('.grid4').find('button.slick-grid-menu-button').click({ force: true });
