@@ -14,6 +14,7 @@ import {
   isNumber,
   type SlickDataView,
 } from 'aurelia-slickgrid';
+
 import './example28.scss'; // provide custom CSS/SASS styling
 
 export class Example28 {

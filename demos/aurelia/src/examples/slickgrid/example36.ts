@@ -1,3 +1,4 @@
+import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
   type Aggregator,
   Aggregators,
@@ -14,7 +15,6 @@ import {
   type SlickGrid,
   type SlickGroupTotals,
 } from 'aurelia-slickgrid';
-import { ExcelExportService } from '@slickgrid-universal/excel-export';
 
 import './example36.scss';
 
