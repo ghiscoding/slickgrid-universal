@@ -32,24 +32,24 @@ class BrowserEnvironmentSimulator {
     global.Worker = class MockWorker {
       onmessage: ((event: MessageEvent) => void) | null = null;
       onerror: ((event: ErrorEvent) => void) | null = null;
-      
-      constructor(public scriptURL: string) {}
-      
+
+      constructor(public scriptURL: string) { }
+
       postMessage(data: any) {
         setTimeout(() => {
           if (this.onmessage) {
-            this.onmessage(new MessageEvent('message', { 
-              data: { 
-                type: 'CHUNK_PROCESSED', 
-                chunkId: data.chunkId, 
-                processedRows: data.rows.map((row: any[]) => row.map(String)) 
-              } 
+            this.onmessage(new MessageEvent('message', {
+              data: {
+                type: 'CHUNK_PROCESSED',
+                chunkId: data.chunkId,
+                processedRows: data.rows.map((row: any[]) => row.map(String))
+              }
             }));
           }
         }, 10);
       }
-      
-      terminate() {}
+
+      terminate() { }
     } as any;
 
     global.URL = {
@@ -74,9 +74,9 @@ class BrowserEnvironmentSimulator {
     global.Worker = class ErrorWorker {
       onmessage: ((event: MessageEvent) => void) | null = null;
       onerror: ((event: ErrorEvent) => void) | null = null;
-      
-      constructor() {}
-      
+
+      constructor() { }
+
       postMessage() {
         setTimeout(() => {
           if (this.onerror) {
@@ -84,8 +84,8 @@ class BrowserEnvironmentSimulator {
           }
         }, 10);
       }
-      
-      terminate() {}
+
+      terminate() { }
     } as any;
   }
 
@@ -175,8 +175,8 @@ describe('Browser Compatibility Tests', () => {
 
     it('should process data using web workers in modern browsers', async () => {
       const outputData: any[] = [];
-      
-      const result = await (service as any).pushAllGridRowDataToArray(outputData, testColumns, {
+
+      await (service as any).pushAllGridRowDataToArray(outputData, testColumns, {
         useWebWorker: true,
         workerChunkSize: 500,
         exportWithFormatter: true
@@ -198,7 +198,7 @@ describe('Browser Compatibility Tests', () => {
 
     it('should fall back to synchronous processing in old browsers', async () => {
       const outputData: any[] = [];
-      
+
       // Should not throw and should fall back to sync processing
       await expect(
         (service as any).pushAllGridRowDataToArray(outputData, testColumns, {
@@ -230,7 +230,7 @@ describe('Browser Compatibility Tests', () => {
 
     it('should fall back to main thread when CSP blocks workers', async () => {
       const outputData: any[] = [];
-      
+
       await expect(
         (service as any).pushAllGridRowDataToArray(outputData, testColumns, {
           useWebWorker: true,
@@ -265,7 +265,7 @@ describe('Browser Compatibility Tests', () => {
 
     it('should fall back when worker processing fails', async () => {
       const outputData: any[] = [];
-      
+
       // Mock the service to simulate worker failure and fallback
       const originalShouldUse = (service as any).shouldUseWebWorker;
       (service as any).shouldUseWebWorker = vi.fn().mockResolvedValue(false);
@@ -279,7 +279,7 @@ describe('Browser Compatibility Tests', () => {
       ).resolves.not.toThrow();
 
       expect(outputData.length).toBe(testData.length);
-      
+
       (service as any).shouldUseWebWorker = originalShouldUse;
     });
   });
@@ -296,7 +296,7 @@ describe('Browser Compatibility Tests', () => {
       userAgents.forEach(userAgent => {
         (global as any).navigator = { userAgent };
         browserSim.simulateModernBrowser();
-        
+
         const workerManager = new WorkerManager();
         expect(workerManager.isSupported()).toBe(true);
       });
@@ -304,7 +304,7 @@ describe('Browser Compatibility Tests', () => {
 
     it('should handle memory constraints in different browsers', async () => {
       browserSim.simulateModernBrowser();
-      
+
       // Simulate memory-constrained environment
       const originalMemory = (performance as any).memory;
       (performance as any).memory = {
@@ -314,7 +314,7 @@ describe('Browser Compatibility Tests', () => {
       };
 
       const outputData: any[] = [];
-      
+
       await expect(
         (service as any).pushAllGridRowDataToArray(outputData, testColumns, {
           useWebWorker: true,
@@ -325,7 +325,7 @@ describe('Browser Compatibility Tests', () => {
       ).resolves.not.toThrow();
 
       expect(outputData.length).toBe(testData.length);
-      
+
       (performance as any).memory = originalMemory;
     });
   });
@@ -345,7 +345,7 @@ describe('Browser Compatibility Tests', () => {
 
     it('should handle partial API support', () => {
       // Simulate environment with Worker but no URL.createObjectURL
-      global.Worker = class MockWorker {} as any;
+      global.Worker = class MockWorker { } as any;
       delete (global as any).URL;
 
       const workerManager = new WorkerManager();
@@ -356,14 +356,14 @@ describe('Browser Compatibility Tests', () => {
   describe('Performance Across Browsers', () => {
     it('should maintain consistent performance characteristics', async () => {
       const browsers = ['Chrome', 'Firefox', 'Safari', 'Edge'];
-      const results: { browser: string; time: number }[] = [];
+      const results: { browser: string; time: number; }[] = [];
 
       for (const browser of browsers) {
         browserSim.simulateModernBrowser();
         (global as any).navigator = { userAgent: `Mock ${browser}` };
 
         const startTime = performance.now();
-        
+
         const outputData: any[] = [];
         await (service as any).pushAllGridRowDataToArray(outputData, testColumns, {
           useWebWorker: true,

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import type { Column, GridOption } from '@slickgrid-universal/common';
+import type { Column } from '@slickgrid-universal/common';
 import { Formatters } from '@slickgrid-universal/common';
 
 import { ExcelExportService } from '../excelExport.service.js';

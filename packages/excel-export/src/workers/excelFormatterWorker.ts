@@ -82,26 +82,7 @@ function processFormatterForCell(
   }
 }
 
-/**
- * Determine if formatter should be applied based on export options
- */
-function shouldApplyFormatter(
-  column: SerializableColumn,
-  exportOptions: any
-): boolean {
-  // Check column-level exportWithFormatter setting first
-  if (column.hasOwnProperty('exportWithFormatter')) {
-    return !!column.exportWithFormatter;
-  }
 
-  // Check export options
-  if (exportOptions?.hasOwnProperty('exportWithFormatter')) {
-    return !!exportOptions.exportWithFormatter;
-  }
-
-  // Default to false if not specified
-  return false;
-}
 
 /**
  * Get the field value from data context, handling complex field paths
@@ -142,7 +123,7 @@ function processRow(
       continue;
     }
 
-    const fieldValue = getFieldValue(rowData, column.field);
+    getFieldValue(rowData, column.field);
     let cellValue: string | number;
 
     // Apply formatter logic similar to main thread exportWithFormatterWhenDefined
@@ -229,52 +210,9 @@ function convertToSimpleValue(value: any): string | number {
   return String(value);
 }
 
-/**
- * Get basic Excel number format ID based on column formatter
- */
-function getRegularCellExcelFormatId(column: SerializableColumn): number | undefined {
-  // Enhanced Excel format detection based on formatter and parameters
-  if (column.formatter) {
-    const formatterStr = column.formatter;
-    if (typeof formatterStr === 'string') {
-      // Currency formatters
-      if (formatterStr.includes('currency')) {
-        // Check for custom currency prefix in params
-        if (column.params?.currencyPrefix === '€') {
-          return 165; // Euro currency format
-        }
-        return 164; // Default currency format
-      }
-      if (formatterStr.includes('dollar')) {
-        return 164; // Dollar currency format
-      }
-      if (formatterStr.includes('percent')) {
-        return 10; // Percentage format
-      }
-      if (formatterStr.includes('decimal')) {
-        return 2; // Number with 2 decimal places
-      }
-    }
-  }
 
-  // Check field type for additional hints
-  if (column.type === 'number') {
-    return 1; // Default number format
-  }
 
-  return undefined; // No specific format
-}
 
-function getBasicExcelNumberFormatId(column: SerializableColumn): number | undefined {
-  return getRegularCellExcelFormatId(column) || 1;
-}
-
-/**
- * Get column field type (simplified version for worker)
- */
-function getColumnFieldType(column: SerializableColumn): string {
-  return column.type || 'string';
-}
 
 /**
  * Process group header row
@@ -474,71 +412,11 @@ function processGroupTotalsFormatter(
 
 
 
-/**
- * Create a worker-side Excel format ID from style object
- */
-function createWorkerExcelFormatId(style: any): number {
-  // Simplified approach: create a hash-based ID from the style object
-  // In a full implementation, this would integrate with the main thread's stylesheet system
-  let hash = 0;
-  const styleStr = JSON.stringify(style);
-  for (let i = 0; i < styleStr.length; i++) {
-    const char = styleStr.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32-bit integer
-  }
-  return Math.abs(hash) % 1000 + 1000; // Ensure positive ID in range 1000-1999
-}
 
-/**
- * Get advanced Excel format ID for group totals based on column and group type
- */
-function getAdvancedGroupTotalsExcelFormatId(columnDef: SerializableColumn, groupType: string): number | undefined {
-  // Enhanced format detection for group totals
-  if (columnDef.groupTotalsFormatter) {
-    const formatterStr = columnDef.groupTotalsFormatter;
-    if (typeof formatterStr === 'string') {
-      // Detect currency formatters
-      if (formatterStr.includes('sumTotalsCurrency') || formatterStr.includes('avgTotalsCurrency')) {
-        // Check for custom currency prefix in params
-        if (columnDef.params?.groupFormatterCurrencyPrefix === '€') {
-          return 165; // Euro currency format
-        }
-        return 164; // Default currency format
-      }
-      if (formatterStr.includes('dollar')) {
-        return 164; // Dollar currency format
-      }
-      if (formatterStr.includes('percent')) {
-        return 10; // Percentage format
-      }
-    }
-  }
 
-  // Check regular formatter for additional hints
-  if (columnDef.formatter) {
-    const formatterStr = columnDef.formatter;
-    if (typeof formatterStr === 'string') {
-      if (formatterStr.includes('currency')) {
-        return columnDef.params?.currencyPrefix === '€' ? 165 : 164;
-      }
-    }
-  }
 
-  // Default number format based on group type
-  if (groupType === 'avg') {
-    return 2; // Number with 2 decimal places
-  }
 
-  return undefined; // No specific format
-}
 
-/**
- * Get Excel format ID for group totals based on column and group type (legacy function)
- */
-function getGroupTotalsExcelFormatId(columnDef: SerializableColumn, groupType: string): number | undefined {
-  return getAdvancedGroupTotalsExcelFormatId(columnDef, groupType);
-}
 
 /**
  * CSP-compliant group totals formatter deserialization
@@ -595,13 +473,13 @@ function deserializeGroupTotalsFormatterSafe(serializedFormatter: string): any {
  */
 function formatWorkerNumber(
   input: number,
-  minDecimal: number = 2,
-  maxDecimal: number = 4,
-  wrapNegativeNumber: boolean = false,
-  symbolPrefix: string = '',
-  symbolSuffix: string = '',
-  decimalSeparator: string = '.',
-  thousandSeparator: string = ''
+  minDecimal = 2,
+  maxDecimal = 4,
+  wrapNegativeNumber = false,
+  symbolPrefix = '',
+  symbolSuffix = '',
+  decimalSeparator = '.',
+  thousandSeparator = ''
 ): string {
   if (isNaN(input)) {
     return String(input);
@@ -643,7 +521,7 @@ function formatWorkerNumber(
  * Create CSP-compliant sum totals currency formatter (enhanced)
  */
 function createSumTotalsCurrencyFormatter() {
-  return (totals: any, columnDef: SerializableColumn, grid: MockSlickGrid) => {
+  return (totals: any, columnDef: SerializableColumn, _grid: MockSlickGrid) => {
     const field = columnDef.field || '';
     const val = totals.sum?.[field];
 
@@ -700,7 +578,7 @@ function createSumTotalsCurrencyFormatter() {
  * Create CSP-compliant sum totals dollar formatter
  */
 function createSumTotalsDollarFormatter() {
-  return (totals: any, columnDef: SerializableColumn, grid: MockSlickGrid) => {
+  return (totals: any, columnDef: SerializableColumn, _grid: MockSlickGrid) => {
     const field = columnDef.field || '';
     const val = totals.sum?.[field];
     if (val == null || isNaN(val)) return '';
@@ -718,7 +596,7 @@ function createSumTotalsDollarFormatter() {
  * Create CSP-compliant avg totals currency formatter
  */
 function createAvgTotalsCurrencyFormatter() {
-  return (totals: any, columnDef: SerializableColumn, grid: MockSlickGrid) => {
+  return (totals: any, columnDef: SerializableColumn, _grid: MockSlickGrid) => {
     const field = columnDef.field || '';
     const val = totals.avg?.[field];
     if (val == null || isNaN(val)) return '';
@@ -741,7 +619,7 @@ function createAvgTotalsCurrencyFormatter() {
  * Create fallback group totals formatter
  */
 function createFallbackGroupTotalsFormatter() {
-  return (totals: any, columnDef: SerializableColumn, grid: MockSlickGrid) => {
+  return (totals: any, columnDef: SerializableColumn, _grid: MockSlickGrid) => {
     return getWorkerGroupTotalValue(totals, columnDef);
   };
 }
@@ -937,9 +815,9 @@ self.onerror = function (error) {
     type: 'WORKER_ERROR',
     payload: {
       message: errorMessage,
-      filename: filename,
-      lineno: lineno,
-      colno: colno
+      filename,
+      lineno,
+      colno
     }
   });
 };

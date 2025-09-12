@@ -251,7 +251,7 @@ export class FormatterSerializer {
   /**
    * Sanitize SlickGroup data to avoid circular references
    */
-  static sanitizeGroupData(data: any, visited: WeakSet<object>): any {
+  static sanitizeGroupData(data: any, _visited: WeakSet<object>): any {
     const sanitized: any = {
       __group: true,
       level: data.level,
@@ -297,7 +297,7 @@ export class FormatterSerializer {
   /**
    * Find non-serializable properties in an object
    */
-  static findNonSerializableProperties(obj: any, path: string = ''): string[] {
+  static findNonSerializableProperties(obj: any, path = ''): string[] {
     const issues: string[] = [];
 
     if (obj === null || obj === undefined) {

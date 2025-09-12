@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import type { Column } from '@slickgrid-universal/common';
 import { Formatters } from '@slickgrid-universal/common';
 import { FormatterSerializer, type SerializableColumn } from '../utils/formatterSerializer.js';
@@ -59,7 +59,7 @@ describe('FormatterSerializer - Unit Tests', () => {
     it('should serialize custom formatter function', () => {
       const customFormatter = (row: number, cell: number, value: any) => `Custom: ${value}`;
       const serialized = FormatterSerializer.serializeFormatter(customFormatter);
-      
+
       expect(serialized).toContain('CUSTOM:');
       expect(serialized).toContain('Custom: ${value}');
     });
@@ -68,7 +68,7 @@ describe('FormatterSerializer - Unit Tests', () => {
       const originalFormatter = (row: number, cell: number, value: any) => `Test: ${value}`;
       const serialized = FormatterSerializer.serializeFormatter(originalFormatter);
       const deserialized = FormatterSerializer.deserializeFormatter(serialized!);
-      
+
       expect(typeof deserialized).toBe('function');
       // Test the deserialized function works
       const result = deserialized!(0, 0, 'hello', {} as any, {} as any, {} as any);
@@ -79,7 +79,7 @@ describe('FormatterSerializer - Unit Tests', () => {
       const prefix = 'PREFIX';
       const customFormatter = (row: number, cell: number, value: any) => `${prefix}: ${value}`;
       const serialized = FormatterSerializer.serializeFormatter(customFormatter);
-      
+
       expect(serialized).toContain('CUSTOM:');
       // Note: Closures won't work in serialized form, this tests the limitation
     });
@@ -97,7 +97,7 @@ describe('FormatterSerializer - Unit Tests', () => {
       };
 
       const serialized = FormatterSerializer.serializeColumn(column);
-      
+
       expect(serialized.id).toBe('price');
       expect(serialized.field).toBe('price');
       expect(serialized.name).toBe('Price');
@@ -116,7 +116,7 @@ describe('FormatterSerializer - Unit Tests', () => {
       };
 
       const serialized = FormatterSerializer.serializeColumn(column);
-      
+
       expect(serialized.formatter).toBe('BUILTIN:translateBoolean');
       expect(serialized.exportCustomFormatter).toBe('BUILTIN:checkmarkMaterial');
     });
@@ -129,7 +129,7 @@ describe('FormatterSerializer - Unit Tests', () => {
       };
 
       const serialized = FormatterSerializer.serializeColumn(column);
-      
+
       expect(serialized.id).toBe('name');
       expect(serialized.field).toBe('name');
       expect(serialized.formatter).toBeNull();
@@ -149,7 +149,7 @@ describe('FormatterSerializer - Unit Tests', () => {
       };
 
       const deserialized = FormatterSerializer.deserializeColumn(serializableColumn);
-      
+
       expect(deserialized.id).toBe('price');
       expect(deserialized.field).toBe('price');
       expect(deserialized.formatter).toBe(Formatters.currency);
@@ -166,7 +166,7 @@ describe('FormatterSerializer - Unit Tests', () => {
       };
 
       const serialized = FormatterSerializer.serializeGridOptions(gridOptions as any);
-      
+
       expect(serialized.formatterOptions).toEqual({ dateFormat: 'YYYY-MM-DD' });
       expect(serialized.locale).toBe('en-US');
     });
@@ -176,7 +176,7 @@ describe('FormatterSerializer - Unit Tests', () => {
     it('should identify built-in formatters correctly', () => {
       expect(FormatterSerializer.isBuiltInFormatter(Formatters.currency)).toBe(true);
       expect(FormatterSerializer.isBuiltInFormatter(Formatters.decimal)).toBe(true);
-      
+
       const customFormatter = () => 'custom';
       expect(FormatterSerializer.isBuiltInFormatter(customFormatter)).toBe(false);
     });
@@ -196,7 +196,7 @@ describe('FormatterSerializer - Unit Tests', () => {
   describe('Error Handling', () => {
     it('should handle serialization errors gracefully', () => {
       // Test with a function that can't be serialized properly
-      const problematicFormatter = function() { throw new Error('Cannot serialize'); };
+      const problematicFormatter = function () { throw new Error('Cannot serialize'); };
       Object.defineProperty(problematicFormatter, 'toString', {
         value: () => { throw new Error('toString failed'); }
       });

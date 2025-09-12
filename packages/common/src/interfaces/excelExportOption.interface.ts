@@ -59,6 +59,18 @@ export interface ExcelExportOption {
    */
   useStreamingExport?: boolean;
 
+  /** Defaults to true, enable web worker for processing large datasets */
+  useWebWorker?: boolean;
+
+  /** Defaults to 1000, number of rows to process per chunk in web worker */
+  workerChunkSize?: number;
+
+  /** Defaults to 4, maximum number of concurrent chunks to process */
+  maxConcurrentChunks?: number;
+
+  /** Defaults to true, fallback to main thread if web worker fails */
+  workerFallback?: boolean;
+
   /** Add a Custom Excel Header on first row of the Excel Sheet */
   customExcelHeader?: (workbook: Workbook, sheet: Worksheet) => void;
 }

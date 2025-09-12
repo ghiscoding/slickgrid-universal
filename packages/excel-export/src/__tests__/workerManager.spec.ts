@@ -1,13 +1,13 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { WorkerManager, type WorkerChunk, type WorkerChunkResult } from '../utils/workerManager.js';
+import { WorkerManager, type WorkerChunk } from '../utils/workerManager.js';
 
 // Mock Worker for testing
 class MockWorker {
   onmessage: ((event: MessageEvent) => void) | null = null;
   onerror: ((event: ErrorEvent) => void) | null = null;
-  
-  constructor(public scriptURL: string) {}
-  
+
+  constructor(public scriptURL: string) { }
+
   postMessage(data: any) {
     // Simulate async worker response
     setTimeout(() => {
@@ -16,17 +16,17 @@ class MockWorker {
       }
     }, 10);
   }
-  
+
   terminate() {
     // Mock termination
   }
-  
+
   private mockResponse(data: any) {
     if (data.type === 'PROCESS_CHUNK') {
       return {
         type: 'CHUNK_PROCESSED',
         chunkId: data.chunkId,
-        processedRows: data.rows.map((row: any[]) => 
+        processedRows: data.rows.map((row: any[]) =>
           row.map(cell => typeof cell === 'number' ? `$${cell.toFixed(2)}` : String(cell))
         )
       };
@@ -62,10 +62,10 @@ describe('WorkerManager - Unit Tests', () => {
     it('should handle missing Worker constructor', () => {
       const originalWorker = global.Worker;
       delete (global as any).Worker;
-      
+
       const manager = new WorkerManager();
       expect(manager.isSupported()).toBe(false);
-      
+
       global.Worker = originalWorker;
     });
   });
@@ -92,9 +92,9 @@ describe('WorkerManager - Unit Tests', () => {
     it('should not reinitialize if already initialized', async () => {
       await workerManager.initializeWorker();
       const createObjectURLSpy = vi.spyOn(URL, 'createObjectURL');
-      
+
       await workerManager.initializeWorker();
-      
+
       // Should not create another blob URL
       expect(createObjectURLSpy).not.toHaveBeenCalled();
     });
@@ -120,7 +120,7 @@ describe('WorkerManager - Unit Tests', () => {
       };
 
       const result = await workerManager.processChunk(chunk);
-      
+
       expect(result.chunkId).toBe('test-chunk-1');
       expect(result.processedRows).toHaveLength(2);
       expect(result.processedRows[0]).toEqual(['$100.00', 'Product A']);
@@ -165,12 +165,12 @@ describe('WorkerManager - Unit Tests', () => {
         postMessage(data: any) {
           setTimeout(() => {
             if (this.onmessage) {
-              this.onmessage(new MessageEvent('message', { 
-                data: { 
-                  type: 'CHUNK_ERROR', 
-                  chunkId: data.chunkId, 
-                  error: 'Processing failed' 
-                } 
+              this.onmessage(new MessageEvent('message', {
+                data: {
+                  type: 'CHUNK_ERROR',
+                  chunkId: data.chunkId,
+                  error: 'Processing failed'
+                }
               }));
             }
           }, 10);
@@ -214,7 +214,7 @@ describe('WorkerManager - Unit Tests', () => {
       ];
 
       const results = await workerManager.processChunks(chunks, 2);
-      
+
       expect(results).toHaveLength(2);
       expect(results[0].chunkId).toBe('chunk-1');
       expect(results[1].chunkId).toBe('chunk-2');
@@ -266,12 +266,12 @@ describe('WorkerManager - Unit Tests', () => {
           setTimeout(() => {
             if (this.onmessage) {
               if (data.chunkId === 'error-chunk') {
-                this.onmessage(new MessageEvent('message', { 
-                  data: { 
-                    type: 'CHUNK_ERROR', 
-                    chunkId: data.chunkId, 
-                    error: 'Simulated error' 
-                  } 
+                this.onmessage(new MessageEvent('message', {
+                  data: {
+                    type: 'CHUNK_ERROR',
+                    chunkId: data.chunkId,
+                    error: 'Simulated error'
+                  }
                 }));
               } else {
                 this.onmessage(new MessageEvent('message', { data: this.mockResponse(data) }));
@@ -294,9 +294,9 @@ describe('WorkerManager - Unit Tests', () => {
     it('should cleanup worker resources properly', async () => {
       await workerManager.initializeWorker();
       const revokeObjectURLSpy = vi.spyOn(URL, 'revokeObjectURL');
-      
+
       workerManager.cleanup();
-      
+
       expect(revokeObjectURLSpy).toHaveBeenCalled();
     });
 
@@ -306,7 +306,7 @@ describe('WorkerManager - Unit Tests', () => {
 
     it('should handle multiple cleanup calls', async () => {
       await workerManager.initializeWorker();
-      
+
       expect(() => {
         workerManager.cleanup();
         workerManager.cleanup();

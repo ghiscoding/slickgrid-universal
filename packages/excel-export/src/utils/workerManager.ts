@@ -216,7 +216,7 @@ export class WorkerManager {
    */
   private handleWorkerError(error: any): void {
     // Reject all pending chunks
-    for (const [chunkId, pending] of this.pendingChunks) {
+    for (const [_chunkId, pending] of this.pendingChunks) {
       clearTimeout(pending.timeout);
       pending.reject(new Error(`Worker error: ${error.message || error}`));
     }
@@ -435,7 +435,7 @@ function formatInlineWorkerNumber(
   // Add thousand separators if specified
   if (thousandSeparator) {
     const parts = formattedNumber.split('.');
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, thousandSeparator);
+    parts[0] = parts[0].replace(/(?=(\\d{3})+(?!\\d))/g, thousandSeparator);
     formattedNumber = parts.join(decimalSeparator);
   } else if (decimalSeparator !== '.') {
     formattedNumber = formattedNumber.replace('.', decimalSeparator);

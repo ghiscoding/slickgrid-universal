@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { FormatterSerializer } from '../utils/formatterSerializer.js';
 
 describe('Data Sanitization for Web Workers', () => {
@@ -218,7 +218,7 @@ describe('Data Sanitization for Web Workers', () => {
         ],
         exportOptions: {
           filename: 'test.xlsx',
-          customHandler: function () { }
+          customHandler() { }
         }
       };
 

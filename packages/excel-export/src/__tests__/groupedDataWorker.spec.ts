@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { FormatterSerializer, WorkerChunk, WorkerRowData } from '../utils/formatterSerializer.js';
+import { describe, it, expect, vi } from 'vitest';
+import { FormatterSerializer, type WorkerChunk, type WorkerRowData } from '../utils/formatterSerializer.js';
 
 describe('Grouped Data Web Worker Processing', () => {
   describe('WorkerRowData Structure', () => {
