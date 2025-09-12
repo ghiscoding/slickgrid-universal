@@ -33,23 +33,20 @@ import {
   getTranslationPrefix,
   isColumnDateType,
 } from '@slickgrid-universal/common';
-import {
-  addWhiteSpaces,
-  createDomElement,
-  extend,
-  getHtmlStringOutput,
-  htmlDecode,
-  stripTags,
-  titleCase,
-} from '@slickgrid-universal/utils';
+import { addWhiteSpaces, createDomElement, extend, getHtmlStringOutput, stripTags, titleCase } from '@slickgrid-universal/utils';
 
 import { type ExcelFormatter, getGroupTotalValue, getExcelFormatFromGridFormatter, useCellFormatByFieldType } from './excelUtils.js';
+import { WorkerManager, type WorkerManagerOptions } from './utils/workerManager.js';
+import { FormatterSerializer, type WorkerChunk, type WorkerChunkResult, type WorkerProcessedRow, type WorkerRowData } from './utils/formatterSerializer.js';
 
 const DEFAULT_EXPORT_OPTIONS: ExcelExportOption = {
   filename: 'export',
   format: FileType.xlsx,
-  htmlDecode: true,
-  useStreamingExport: true,
+  useStreamingExport: true, // new option, default true
+  useWebWorker: true, // enable web worker by default
+  workerChunkSize: 1000, // process 1000 rows per chunk
+  maxConcurrentChunks: 4, // max 4 concurrent chunks
+  workerFallback: true, // fallback to main thread if worker fails
 };
 
 export class ExcelExportService implements ExternalResource, BaseExcelExportService {
@@ -70,11 +67,15 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
   // references of each detected cell and/or group total formats
   protected _regularCellExcelFormats: {
-    [fieldId: string]: { excelFormatId?: number; getDataValueParser: GetDataValueCallback };
+    [fieldId: string]: { excelFormatId?: number; getDataValueParser: GetDataValueCallback; };
   } = {};
   protected _groupTotalExcelFormats: {
-    [fieldId: string]: { groupType: string; excelFormat?: ExcelFormatter; getGroupTotalParser?: GetGroupTotalValueCallback };
+    [fieldId: string]: { groupType: string; excelFormat?: ExcelFormatter; getGroupTotalParser?: GetGroupTotalValueCallback; };
   } = {};
+
+  // web worker related properties
+  protected _workerManager: WorkerManager | null = null;
+  protected _isWorkerInitialized = false;
 
   /** ExcelExportService class name which is use to find service instance in the external registered services */
   readonly className = 'ExcelExportService';
@@ -111,6 +112,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
   dispose(): void {
     this._pubSubService?.unsubscribeAll();
+    this.cleanupWorker();
   }
 
   /**
@@ -177,7 +179,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       // Add a short delay to ensure spinner/UI updates before heavy export work begins
       setTimeout(async () => {
         // get all data by reading all DataView rows
-        const dataOutput = this.getDataOutput();
+        const dataOutput = await this.getDataOutput();
 
         if (this._gridOptions?.excelExportOptions?.customExcelHeader) {
           this._gridOptions.excelExportOptions.customExcelHeader(this._workbook, this._sheet);
@@ -265,7 +267,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   // protected functions
   // -----------------------
 
-  protected getDataOutput(): Array<string[] | ExcelColumnMetadata[]> {
+  protected async getDataOutput(): Promise<Array<string[] | ExcelColumnMetadata[]>> {
     const columns = this._grid?.getColumns() || [];
 
     // data variable which will hold all the fields data of a row
@@ -290,7 +292,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     outputData.push(this.getColumnHeaderData(columns, { style: columnHeaderStyleId }));
 
     // Populate the rest of the Grid Data
-    this.pushAllGridRowDataToArray(outputData, columns);
+    await this.pushAllGridRowDataToArray(outputData, columns);
 
     return outputData;
   }
@@ -363,7 +365,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     this._columnHeaders = this.getColumnHeaders(columns) || [];
     if (this._columnHeaders && Array.isArray(this._columnHeaders) && this._columnHeaders.length > 0) {
       // add the header row + add a new line at the end of the row
-      outputHeaderTitles = this._columnHeaders.map((header) => ({ value: htmlDecode(stripTags(header.title)), metadata }));
+      outputHeaderTitles = this._columnHeaders.map((header) => ({ value: stripTags(header.title), metadata }));
     }
 
     // do we have a Group by title?
@@ -458,14 +460,26 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
   /**
    * Get all the grid row data and return that as an output string
+   * Now supports async processing with web workers for better performance
    */
-  protected pushAllGridRowDataToArray(
+  protected async pushAllGridRowDataToArray(
     originalDaraArray: Array<Array<string | ExcelColumnMetadata | number>>,
     columns: Column[]
-  ): Array<Array<string | ExcelColumnMetadata | number>> {
+  ): Promise<Array<Array<string | ExcelColumnMetadata | number>>> {
     const lineCount = this._dataView.getLength();
 
-    // loop through all the grid rows of data
+    // Check if we should use web worker processing
+    if (await this.shouldUseWebWorker(lineCount)) {
+      try {
+        await this.processDataWithWorker(originalDaraArray, columns);
+        return originalDaraArray;
+      } catch (error) {
+        console.warn('Web worker processing failed, falling back to main thread:', error);
+        // Fall back to main thread processing
+      }
+    }
+
+    // Main thread processing (original implementation)
     for (let rowNumber = 0; rowNumber < lineCount; rowNumber++) {
       const itemObj = this._dataView.getItem(rowNumber);
 
@@ -620,13 +634,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         }
 
         // sanitize early, when enabled, any HTML tags (remove HTML tags)
-        if (typeof itemData === 'string') {
-          if (columnDef.sanitizeDataExport || this._excelExportOptions.sanitizeDataExport) {
-            itemData = stripTags(itemData as string);
-          }
-          if (this._excelExportOptions.htmlDecode) {
-            itemData = htmlDecode(itemData);
-          }
+        if (typeof itemData === 'string' && (columnDef.sanitizeDataExport || this._excelExportOptions.sanitizeDataExport)) {
+          itemData = stripTags(itemData as string);
         }
 
         const { excelFormatId, getDataValueParser } = this._regularCellExcelFormats[columnDef.id];
@@ -652,7 +661,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
    * @param itemObj
    */
   protected readGroupedRowTitle(itemObj: any): string {
-    const groupName = htmlDecode(stripTags(itemObj.title));
+    const groupName = stripTags(itemObj.title);
 
     if (this._excelExportOptions?.addGroupIndentation) {
       const collapsedSymbol = this._excelExportOptions?.groupCollapsedSymbol || '⮞';
@@ -674,7 +683,6 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
     columns.forEach((columnDef) => {
       let itemData: number | string | ExcelColumnMetadata = '';
-      const fieldType = getColumnFieldType(columnDef);
       const skippedField = columnDef.excludeFromExport || false;
 
       // if there's a exportCustomGroupTotalsFormatter or groupTotalsFormatter, we will re-run it to get the exact same output as what is shown in UI
@@ -683,46 +691,18 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         itemData = totalResult instanceof HTMLElement ? totalResult.textContent || '' : totalResult;
       }
 
-      // auto-detect best possible Excel format for Group Totals, unless the user provide his own formatting,
-      // we only do this check once per column (everything after that will be pull from temp ref)
-      const autoDetectCellFormat = columnDef.excelExportOptions?.autoDetectCellFormat ?? this._excelExportOptions?.autoDetectCellFormat;
-      if (fieldType === 'number' && autoDetectCellFormat !== false) {
-        let groupCellFormat = this._groupTotalExcelFormats[columnDef.id];
-        if (!groupCellFormat?.groupType) {
-          groupCellFormat = getExcelFormatFromGridFormatter(this._stylesheet, this._stylesheetFormats, columnDef, this._grid, 'group');
-          if (columnDef.groupTotalsExcelExportOptions?.style) {
-            groupCellFormat.excelFormat = this._stylesheet.createFormat(columnDef.groupTotalsExcelExportOptions.style);
-          }
-          this._groupTotalExcelFormats[columnDef.id] = groupCellFormat;
-        }
+      // Apply Excel formatting using shared logic
+      itemData = this.applyGroupTotalExcelFormatting(columnDef, itemData, itemObj, dataRowIdx);
 
-        const groupTotalParser = columnDef.groupTotalsExcelExportOptions?.valueParserCallback ?? getGroupTotalValue;
-        if (itemObj[groupCellFormat.groupType]?.[columnDef.field] !== undefined) {
-          const groupData = groupTotalParser(itemObj, {
-            columnDef,
-            groupType: groupCellFormat.groupType,
-            excelFormatId: groupCellFormat.excelFormat?.id,
-            stylesheet: this._stylesheet,
-            dataRowIdx,
-          } as ExcelGroupValueParserArgs);
-          itemData =
-            typeof groupData === 'object' && groupData.hasOwnProperty('metadata')
-              ? groupData
-              : (itemData = { value: groupData, metadata: { style: groupCellFormat.excelFormat?.id } });
-        }
-      } else if (columnDef.groupTotalsFormatter) {
+      // Fallback to basic groupTotalsFormatter if no Excel formatting was applied
+      if (!itemData && columnDef.groupTotalsFormatter) {
         const totalResult = columnDef.groupTotalsFormatter(itemObj, columnDef, this._grid);
         itemData = totalResult instanceof HTMLElement ? totalResult.textContent || '' : totalResult;
       }
 
       // does the user want to sanitize the output data (remove HTML tags)?
-      if (typeof itemData === 'string') {
-        if (columnDef.sanitizeDataExport || this._excelExportOptions.sanitizeDataExport) {
-          itemData = stripTags(itemData);
-        }
-        if (this._excelExportOptions.htmlDecode) {
-          itemData = htmlDecode(itemData);
-        }
+      if (typeof itemData === 'string' && (columnDef.sanitizeDataExport || this._excelExportOptions.sanitizeDataExport)) {
+        itemData = stripTags(itemData);
       }
 
       // add the column (unless user wants to skip it)
@@ -740,5 +720,414 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       this._pubSubService?.publish(`onAfterExportToExcel`, { filename, mimeType });
       resolve(true);
     });
+  }
+
+  // -----------------------
+  // Web Worker Methods
+  // -----------------------
+
+  /**
+   * Initialize the web worker for formatter processing
+   */
+  protected async initializeWorker(): Promise<boolean> {
+    if (this._isWorkerInitialized || !this._excelExportOptions?.useWebWorker) {
+      return this._isWorkerInitialized;
+    }
+
+    try {
+      const workerOptions: WorkerManagerOptions = {
+        maxConcurrentChunks: this._excelExportOptions.maxConcurrentChunks || 4,
+        workerTimeout: 30000, // 30 seconds
+        enableFallback: this._excelExportOptions.workerFallback !== false,
+      };
+
+      this._workerManager = new WorkerManager(workerOptions);
+      this._isWorkerInitialized = await this._workerManager.initializeWorker();
+
+      return this._isWorkerInitialized;
+    } catch (error) {
+      console.warn('Failed to initialize web worker:', error);
+      this._isWorkerInitialized = false;
+      return false;
+    }
+  }
+
+  /**
+   * Clean up web worker resources
+   */
+  protected cleanupWorker(): void {
+    if (this._workerManager) {
+      this._workerManager.cleanup();
+      this._workerManager = null;
+    }
+    this._isWorkerInitialized = false;
+  }
+
+  /**
+   * Determine if web worker should be used for processing
+   */
+  protected async shouldUseWebWorker(lineCount: number): Promise<boolean> {
+    // Don't use worker for small datasets
+    const minRowsForWorker = 500;
+    if (lineCount < minRowsForWorker) {
+      return false;
+    }
+
+    // Check if web worker is enabled in options
+    if (!this._excelExportOptions?.useWebWorker) {
+      return false;
+    }
+
+    // Check if we have formatters that would benefit from worker processing
+    const columns = this._grid?.getColumns() || [];
+    const hasFormatters = columns.some(col =>
+      col.formatter || col.exportCustomFormatter ||
+      (this._excelExportOptions?.exportWithFormatter && col.exportWithFormatter !== false)
+    );
+
+    if (!hasFormatters) {
+      return false;
+    }
+
+    // Initialize worker if needed
+    return await this.initializeWorker();
+  }
+
+  /**
+   * Process data using web worker
+   */
+  protected async processDataWithWorker(
+    outputData: Array<Array<string | ExcelColumnMetadata | number>>,
+    columns: Column[]
+  ): Promise<void> {
+    if (!this._workerManager) {
+      throw new Error('Worker manager not initialized');
+    }
+
+    const lineCount = this._dataView.getLength();
+    const chunkSize = this._excelExportOptions?.workerChunkSize || 1000;
+
+    // Create chunks of data to process
+    const chunks: WorkerChunk[] = [];
+    const serializableColumns = columns.map(col => FormatterSerializer.serializeColumn(col));
+    const serializableGridOptions = FormatterSerializer.serializeGridOptions(this._gridOptions);
+    const serializableExportOptions = FormatterSerializer.sanitizeDataForWorker(this._excelExportOptions);
+
+    for (let startRow = 0; startRow < lineCount; startRow += chunkSize) {
+      const endRow = Math.min(startRow + chunkSize, lineCount);
+      const chunkRows: any[] = [];
+
+      // Collect rows for this chunk, including grouped data and sanitizing data
+      for (let rowNumber = startRow; rowNumber < endRow; rowNumber++) {
+        const itemObj = this._dataView.getItem(rowNumber);
+
+        // Skip invalid items (like opened Row Detail)
+        if (!itemObj || itemObj.hasOwnProperty('getItem')) {
+          continue;
+        }
+
+        let rowData: WorkerRowData;
+
+        // Determine row type and create appropriate WorkerRowData
+        if (itemObj[this._datasetIdPropName] !== null && itemObj[this._datasetIdPropName] !== undefined) {
+          // Regular data row
+          rowData = {
+            type: 'regular',
+            data: FormatterSerializer.sanitizeRowData(itemObj),
+            originalRowIndex: rowNumber,
+            isGrouped: false
+          };
+        } else if (this._hasGroupedItems && itemObj.__groupTotals === undefined) {
+          // Group header row
+          rowData = {
+            type: 'group',
+            data: FormatterSerializer.sanitizeRowData(itemObj),
+            originalRowIndex: rowNumber,
+            isGrouped: true,
+            groupLevel: itemObj.level || 0,
+            groupTitle: itemObj.title || '',
+            groupCollapsed: itemObj.collapsed || false
+          };
+        } else if (itemObj.__groupTotals) {
+          // Group totals row
+          rowData = {
+            type: 'groupTotals',
+            data: FormatterSerializer.sanitizeRowData(itemObj),
+            originalRowIndex: rowNumber,
+            isGrouped: true,
+            groupLevel: itemObj.group?.level || 0
+          };
+        } else {
+          // Skip unknown row types
+          continue;
+        }
+
+        chunkRows.push(rowData);
+      }
+
+      if (chunkRows.length > 0) {
+        const chunk: WorkerChunk = {
+          chunkId: `chunk_${startRow}_${endRow}`,
+          startRow,
+          endRow,
+          rows: chunkRows,
+          columns: serializableColumns,
+          gridOptions: serializableGridOptions,
+          exportOptions: serializableExportOptions,
+          hasGroupedItems: this._hasGroupedItems,
+          datasetIdPropName: this._datasetIdPropName
+        };
+
+        // Validate chunk data before adding to processing queue
+        const validation = FormatterSerializer.validateChunkData(chunk);
+        if (!validation.isValid) {
+          console.warn(`Chunk ${chunk.chunkId} validation failed:`, validation.errors);
+          console.warn('Problematic chunk data:', {
+            rowsCount: chunk.rows.length,
+            columnsCount: chunk.columns.length,
+            gridOptions: chunk.gridOptions,
+            exportOptions: chunk.exportOptions
+          });
+
+          // Try to sanitize the chunk data more aggressively
+          console.log('Attempting aggressive sanitization...');
+          chunk.rows = chunk.rows.map(row => FormatterSerializer.sanitizeDataForWorker(row));
+          chunk.columns = chunk.columns.map(col => FormatterSerializer.sanitizeDataForWorker(col));
+          chunk.gridOptions = FormatterSerializer.sanitizeDataForWorker(chunk.gridOptions);
+          chunk.exportOptions = FormatterSerializer.sanitizeDataForWorker(chunk.exportOptions);
+
+          // Re-validate after sanitization
+          const revalidation = FormatterSerializer.validateChunkData(chunk);
+          if (!revalidation.isValid) {
+            console.error(`Chunk ${chunk.chunkId} still invalid after sanitization:`, revalidation.errors);
+            // Skip this chunk to prevent worker failure
+            continue;
+          } else {
+            console.log(`Chunk ${chunk.chunkId} successfully sanitized`);
+          }
+        }
+
+        chunks.push(chunk);
+      }
+    }
+
+    // Process chunks using worker
+    const results = await this._workerManager.processChunks(chunks);
+
+    // Merge results back into output data
+    this.mergeWorkerResults(outputData, results, columns);
+  }
+
+  /**
+   * Merge worker results back into the main output data array
+   */
+  protected mergeWorkerResults(
+    outputData: Array<Array<string | ExcelColumnMetadata | number>>,
+    results: WorkerChunkResult[],
+    columns: Column[]
+  ): void {
+    // Sort results by chunk ID to maintain order
+    results.sort((a, b) => {
+      const aStart = parseInt(a.chunkId.split('_')[1]);
+      const bStart = parseInt(b.chunkId.split('_')[1]);
+      return aStart - bStart;
+    });
+
+    // Add processed rows to output data
+    for (const result of results) {
+      if (result.error) {
+        console.error(`Error processing chunk ${result.chunkId}:`, result.error);
+        continue;
+      }
+
+      for (const processedRow of result.processedRows) {
+        // Convert processed row data to the format expected by Excel export
+        const formattedRow = this.formatWorkerRowForExcel(processedRow, columns);
+        outputData.push(formattedRow);
+      }
+    }
+  }
+
+  /**
+   * Format a worker-processed row for Excel export
+   */
+  protected formatWorkerRowForExcel(
+    processedRow: WorkerProcessedRow,
+    columns: Column[]
+  ): Array<string | ExcelColumnMetadata | number> {
+    // Handle different row types
+    if (processedRow.type === 'group') {
+      // For group rows, return the group title as a single cell spanning all columns
+      return [processedRow.data[0] || ''];
+    }
+
+    if (processedRow.type === 'groupTotals') {
+      // For group totals, apply Excel styling if configured
+      return this.formatGroupTotalsRowForExcel(processedRow.data, columns);
+    }
+
+    // For regular rows, process each column
+    const formattedRow: Array<string | ExcelColumnMetadata | number> = [];
+    const rowData = processedRow.data;
+
+    for (let colIndex = 0; colIndex < rowData.length && colIndex < columns.length; colIndex++) {
+      const columnDef = columns[colIndex];
+      let cellValue: string | number | Date | ExcelColumnMetadata = rowData[colIndex];
+
+      // Apply Excel formatting if needed
+      if (!this._regularCellExcelFormats.hasOwnProperty(columnDef.id)) {
+        const autoDetectCellFormat = columnDef.excelExportOptions?.autoDetectCellFormat ?? this._excelExportOptions?.autoDetectCellFormat;
+        const cellStyleFormat = useCellFormatByFieldType(
+          this._stylesheet,
+          this._stylesheetFormats,
+          columnDef,
+          this._grid,
+          autoDetectCellFormat
+        );
+
+        if (columnDef.excelExportOptions?.style) {
+          cellStyleFormat.excelFormatId = this._stylesheet.createFormat(columnDef.excelExportOptions.style).id;
+        }
+        if (columnDef.excelExportOptions?.valueParserCallback) {
+          cellStyleFormat.getDataValueParser = columnDef.excelExportOptions.valueParserCallback;
+        }
+        this._regularCellExcelFormats[columnDef.id] = cellStyleFormat;
+      }
+
+      const { excelFormatId, getDataValueParser } = this._regularCellExcelFormats[columnDef.id];
+      cellValue = getDataValueParser(cellValue, {
+        columnDef,
+        excelFormatId,
+        stylesheet: this._stylesheet,
+        gridOptions: this._gridOptions,
+        dataRowIdx: 0, // Not used in this context
+        dataContext: {}, // Not available in worker context
+      });
+
+      formattedRow.push(cellValue as string | ExcelColumnMetadata | number);
+    }
+
+    return formattedRow;
+  }
+
+  /**
+   * Format a group totals row with Excel styling support
+   * This replicates the logic from readGroupedTotalRows for worker-processed data
+   */
+  protected formatGroupTotalsRowForExcel(
+    groupTotalsData: Array<string | number>,
+    columns: Column[]
+  ): Array<string | ExcelColumnMetadata | number> {
+    const formattedRow: Array<string | ExcelColumnMetadata | number> = [];
+
+    // First element is the group aggregator text (e.g., "Totals")
+    const groupingAggregatorRowText = groupTotalsData[0] || '';
+    formattedRow.push(groupingAggregatorRowText);
+
+    // Create a map of worker data (excluding the first aggregator text element)
+    const workerDataMap = new Map<string, string | number>();
+    let workerDataIndex = 1; // Start after the aggregator text
+
+    // Build map of column field to worker data value (only for non-excluded columns)
+    columns.forEach((columnDef) => {
+      const skippedField = columnDef.excludeFromExport || false;
+      if (!skippedField && (columnDef.width === undefined || columnDef.width > 0)) {
+        if (workerDataIndex < groupTotalsData.length) {
+          const fieldKey = (columnDef.field || columnDef.id) as string;
+          workerDataMap.set(fieldKey, groupTotalsData[workerDataIndex]);
+          workerDataIndex++;
+        }
+      }
+    });
+
+    console.log('Worker data map:', workerDataMap);
+
+    // Now process each column in order, applying Excel formatting
+    columns.forEach((columnDef) => {
+      let itemData: ExcelColumnMetadata | string | number = '';
+      const skippedField = columnDef.excludeFromExport || false;
+
+      if (!skippedField) {
+        // Get the value from worker data map
+        const fieldKey = (columnDef.field || columnDef.id) as string;
+        const cellValue = workerDataMap.get(fieldKey) || '';
+        itemData = cellValue;
+
+        // Apply Excel formatting using shared logic
+        itemData = this.applyGroupTotalExcelFormatting(columnDef, cellValue);
+
+        // Log the formatting result
+        if (typeof itemData === 'object' && itemData.metadata) {
+          console.log(`Applied Excel styling to group total for column ${columnDef.field}:`, {
+            value: itemData.value,
+            formatId: itemData.metadata.style,
+            style: columnDef.groupTotalsExcelExportOptions?.style
+          });
+        }
+      }
+
+      // Add the column data (unless user wants to skip it)
+      if ((columnDef.width === undefined || columnDef.width > 0) && !skippedField) {
+        formattedRow.push(itemData);
+      }
+    });
+
+    return formattedRow;
+  }
+
+  /**
+   * Apply Excel formatting to group total cell data
+   * Shared logic used by both main thread and worker processing paths
+   */
+  protected applyGroupTotalExcelFormatting(
+    columnDef: Column,
+    cellValue: string | number | ExcelColumnMetadata,
+    itemObj?: any,
+    dataRowIdx?: number
+  ): string | number | ExcelColumnMetadata {
+    const fieldType = getColumnFieldType(columnDef);
+    let itemData: string | number | ExcelColumnMetadata = cellValue;
+
+    // Auto-detect best possible Excel format for Group Totals, unless the user provides their own formatting
+    const autoDetectCellFormat = columnDef.excelExportOptions?.autoDetectCellFormat ?? this._excelExportOptions?.autoDetectCellFormat;
+    if (fieldType === 'number' && autoDetectCellFormat !== false) {
+      let groupCellFormat = this._groupTotalExcelFormats[columnDef.id];
+      if (!groupCellFormat?.groupType) {
+        groupCellFormat = getExcelFormatFromGridFormatter(this._stylesheet, this._stylesheetFormats, columnDef, this._grid, 'group');
+        if (columnDef.groupTotalsExcelExportOptions?.style) {
+          groupCellFormat.excelFormat = this._stylesheet.createFormat(columnDef.groupTotalsExcelExportOptions.style);
+        }
+        this._groupTotalExcelFormats[columnDef.id] = groupCellFormat;
+      }
+
+      // For main thread processing with SlickGrid objects
+      if (itemObj && dataRowIdx !== undefined) {
+        const groupTotalParser = columnDef.groupTotalsExcelExportOptions?.valueParserCallback ?? getGroupTotalValue;
+        if (itemObj[groupCellFormat.groupType]?.[columnDef.field] !== undefined) {
+          const groupData = groupTotalParser(itemObj, {
+            columnDef,
+            groupType: groupCellFormat.groupType,
+            excelFormatId: groupCellFormat.excelFormat?.id,
+            stylesheet: this._stylesheet,
+            dataRowIdx,
+          } as ExcelGroupValueParserArgs);
+          itemData =
+            typeof groupData === 'object' && groupData.hasOwnProperty('metadata')
+              ? groupData
+              : { value: groupData, metadata: { style: groupCellFormat.excelFormat?.id } };
+        }
+      } else {
+        // For worker processing with pre-formatted values
+        if (groupCellFormat.excelFormat?.id) {
+          itemData = { value: cellValue, metadata: { style: groupCellFormat.excelFormat.id } };
+        }
+      }
+    } else if (columnDef.groupTotalsExcelExportOptions?.style) {
+      // Handle non-number fields with custom styling
+      const excelFormatId = this._stylesheet.createFormat(columnDef.groupTotalsExcelExportOptions.style);
+      itemData = { value: cellValue, metadata: { style: excelFormatId } };
+    }
+
+    return itemData;
   }
 }
