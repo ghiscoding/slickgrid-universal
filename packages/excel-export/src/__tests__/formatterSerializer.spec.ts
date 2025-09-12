@@ -211,4 +211,252 @@ describe('FormatterSerializer - Unit Tests', () => {
       expect(deserialized).toBeNull();
     });
   });
+
+  describe('Data Sanitization', () => {
+    it('should sanitize data for worker communication', () => {
+      const testData = {
+        string: 'test',
+        number: 42,
+        boolean: true,
+        null: null,
+        undefined: undefined,
+        function: () => 'test',
+        date: new Date('2023-01-01'),
+        array: [1, 2, 3],
+        object: { nested: 'value' }
+      };
+
+      const sanitized = FormatterSerializer.sanitizeDataForWorker(testData);
+
+      expect(sanitized.string).toBe('test');
+      expect(sanitized.number).toBe(42);
+      expect(sanitized.boolean).toBe(true);
+      expect(sanitized.null).toBeNull();
+      expect(sanitized.undefined).toBeUndefined();
+      expect(typeof sanitized.function).toBe('string');
+      // Date gets serialized to ISO string during sanitization
+      expect(typeof sanitized.date).toBe('string');
+      expect(Array.isArray(sanitized.array)).toBe(true);
+      expect(typeof sanitized.object).toBe('object');
+    });
+
+    it('should handle circular references', () => {
+      const circularData: any = { name: 'test' };
+      circularData.self = circularData;
+
+      const sanitized = FormatterSerializer.sanitizeDataForWorker(circularData);
+
+      expect(sanitized.name).toBe('test');
+      expect(sanitized.self).toBe('[Circular Reference]');
+    });
+
+    it('should sanitize group totals data', () => {
+      const groupTotalsData = {
+        __groupTotals: true,
+        initialized: true,
+        sum: { price: 100 },
+        avg: { price: 50 },
+        count: 2,
+        min: { price: 25 },
+        max: { price: 75 }
+      };
+
+      const sanitized = FormatterSerializer.sanitizeGroupTotalsData(groupTotalsData, new WeakSet());
+
+      expect(sanitized.__groupTotals).toBe(true);
+      expect(sanitized.initialized).toBe(true);
+      expect(sanitized.sum).toEqual({ price: 100 });
+      expect(sanitized.avg).toEqual({ price: 50 });
+      expect(sanitized.count).toBe(2);
+      expect(sanitized.min).toEqual({ price: 25 });
+      expect(sanitized.max).toEqual({ price: 75 });
+    });
+
+    it('should sanitize group data', () => {
+      const groupData = {
+        __group: true,
+        level: 0,
+        count: 5,
+        value: 'Category A',
+        title: 'Group: Category A',
+        collapsed: false,
+        groupingKey: 'category',
+        selectTotals: {},
+        totals: { sum: { price: 250 } }
+      };
+
+      const sanitized = FormatterSerializer.sanitizeGroupData(groupData, new WeakSet());
+
+      expect(sanitized.__group).toBe(true);
+      expect(sanitized.level).toBe(0);
+      expect(sanitized.count).toBe(5);
+      expect(sanitized.value).toBe('Category A');
+      expect(sanitized.title).toBe('Group: Category A');
+      expect(sanitized.collapsed).toBe(false);
+      expect(sanitized.groupingKey).toBe('category');
+      // selectTotals and totals are not included to avoid circular references
+      expect(sanitized.selectTotals).toBeUndefined();
+      expect(sanitized.totals).toBeUndefined();
+    });
+
+    it('should sanitize row data', () => {
+      const rowData = {
+        id: 1,
+        name: 'Test',
+        callback: () => 'test',
+        nested: { deep: { value: 'test' } }
+      };
+
+      const sanitized = FormatterSerializer.sanitizeRowData(rowData);
+
+      expect(sanitized.id).toBe(1);
+      expect(sanitized.name).toBe('Test');
+      expect(typeof sanitized.callback).toBe('string');
+      expect(sanitized.nested.deep.value).toBe('test');
+    });
+  });
+
+  describe('Serialization Validation', () => {
+    it('should check if data is serializable', () => {
+      expect(FormatterSerializer.isSerializable('string')).toBe(true);
+      expect(FormatterSerializer.isSerializable(42)).toBe(true);
+      expect(FormatterSerializer.isSerializable(true)).toBe(true);
+      expect(FormatterSerializer.isSerializable(null)).toBe(true);
+      expect(FormatterSerializer.isSerializable(undefined)).toBe(true);
+      expect(FormatterSerializer.isSerializable([])).toBe(true);
+      expect(FormatterSerializer.isSerializable({})).toBe(true);
+      expect(FormatterSerializer.isSerializable(new Date())).toBe(true);
+    });
+
+    it('should identify non-serializable data', () => {
+      const func = () => 'test';
+      expect(FormatterSerializer.isSerializable(func)).toBe(false);
+    });
+
+    it('should find non-serializable properties', () => {
+      const obj = {
+        valid: 'string',
+        invalid: () => 'function',
+        nested: {
+          valid: 42,
+          invalid: function () { return 'test'; }
+        }
+      };
+
+      const issues = FormatterSerializer.findNonSerializableProperties(obj);
+      expect(issues.length).toBeGreaterThan(0);
+      expect(issues.some(issue => issue.includes('invalid'))).toBe(true);
+    });
+
+    it('should handle null/undefined in property validation', () => {
+      const issues1 = FormatterSerializer.findNonSerializableProperties(null);
+      expect(issues1).toEqual([]);
+
+      const issues2 = FormatterSerializer.findNonSerializableProperties(undefined);
+      expect(issues2).toEqual([]);
+    });
+
+    it('should validate chunk data', () => {
+      const validChunk = {
+        chunkId: 'test',
+        rows: [{ id: 1, name: 'test' }],
+        columns: [{ id: 'id', field: 'id' }]
+      };
+
+      const validation = FormatterSerializer.validateChunkData(validChunk);
+      expect(validation).toHaveProperty('isValid');
+      expect(validation).toHaveProperty('errors');
+      expect(typeof validation.isValid).toBe('boolean');
+      expect(Array.isArray(validation.errors)).toBe(true);
+    });
+
+    it('should validate chunk with non-serializable data', () => {
+      const invalidChunk = {
+        chunkId: 'test',
+        rows: [{ id: 1, callback: () => 'test' }],
+        columns: [{ id: 'id', field: 'id' }]
+      };
+
+      const validation = FormatterSerializer.validateChunkData(invalidChunk);
+      expect(validation.isValid).toBe(false);
+      expect(validation.errors.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Group Totals Formatter Serialization', () => {
+    it('should serialize group totals formatter', () => {
+      const groupTotalsFormatter = (totals: any, columnDef: any) => `Total: ${totals.sum[columnDef.field]}`;
+      const serialized = FormatterSerializer.serializeGroupTotalsFormatter(groupTotalsFormatter);
+
+      expect(serialized).toContain('CUSTOM:');
+      expect(serialized).toContain('totals.sum');
+    });
+
+    it('should return null for undefined group totals formatter', () => {
+      const serialized = FormatterSerializer.serializeGroupTotalsFormatter(undefined);
+      expect(serialized).toBeNull();
+    });
+
+    it('should handle group totals formatter serialization errors', () => {
+      const problematicFormatter = function () { return 'test'; };
+      Object.defineProperty(problematicFormatter, 'toString', {
+        value: () => { throw new Error('toString failed'); }
+      });
+
+      const serialized = FormatterSerializer.serializeGroupTotalsFormatter(problematicFormatter);
+      expect(serialized).toBeNull();
+    });
+  });
+
+  describe('Complex Column Serialization', () => {
+    it('should serialize column with all properties', () => {
+      const column: Column = {
+        id: 'complex',
+        field: 'complex',
+        name: 'Complex Column',
+        formatter: Formatters.currency,
+        exportCustomFormatter: Formatters.decimal,
+        exportCustomGroupTotalsFormatter: Formatters.sumTotals,
+        groupTotalsFormatter: Formatters.avgTotals,
+        exportWithFormatter: true,
+        excludeFromExport: false,
+        sanitizeDataExport: true,
+        params: { decimalPlaces: 2, prefix: '$' },
+        type: 'number',
+        width: 100,
+        queryField: 'complex_field',
+        queryFieldFilter: 'complex_filter',
+        queryFieldSorter: 'complex_sorter',
+        excelExportOptions: {
+          autoDetectCellFormat: true,
+          style: { font: { bold: true } },
+          valueParserCallback: 'parseValue'
+        },
+        groupTotalsExcelExportOptions: {
+          groupType: 'sum',
+          style: { font: { italic: true } },
+          valueParserCallback: 'parseGroupValue'
+        }
+      };
+
+      const serialized = FormatterSerializer.serializeColumn(column);
+
+      expect(serialized.id).toBe('complex');
+      expect(serialized.field).toBe('complex');
+      expect(serialized.name).toBe('Complex Column');
+      expect(serialized.formatter).toBe('BUILTIN:currency');
+      expect(serialized.exportCustomFormatter).toBe('BUILTIN:decimal');
+      expect(serialized.exportWithFormatter).toBe(true);
+      expect(serialized.excludeFromExport).toBe(false);
+      expect(serialized.sanitizeDataExport).toBe(true);
+      expect(serialized.params).toEqual({ decimalPlaces: 2, prefix: '$' });
+      expect(serialized.type).toBe('number');
+      expect(serialized.width).toBe(100);
+      expect(serialized.queryField).toBe('complex_field');
+      expect(serialized.queryFieldFilter).toBe('complex_filter');
+      expect(serialized.queryFieldSorter).toBe('complex_sorter');
+      expect(serialized.excelExportOptions).toBeDefined();
+      expect(serialized.groupTotalsExcelExportOptions).toBeDefined();
+    });
+  });
 });
