@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Worker Excel Export Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .demo-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .primary { background: #007cba; color: white; }
+        .secondary { background: #6c757d; color: white; }
+        .success { background: #28a745; color: white; }
+        .warning { background: #ffc107; color: black; }
+        .danger { background: #dc3545; color: white; }
+        
+        .progress {
+            width: 100%;
+            height: 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-bar {
+            height: 100%;
+            background: #007cba;
+            transition: width 0.3s ease;
+        }
+        
+        .results {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        
+        .config-panel {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        
+        .config-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 5px 0;
+        }
+        
+        .config-row label {
+            min-width: 150px;
+        }
+        
+        input[type="number"], input[type="checkbox"], select {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .status.info { background: #d1ecf1; color: #0c5460; }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.warning { background: #fff3cd; color: #856404; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        
+        .performance-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        
+        .metric-card {
+            background: white;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .metric-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007cba;
+        }
+        
+        .metric-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚀 Web Worker Excel Export Demo</h1>
+    <p>This demo allows you to test the web worker functionality for Excel export performance optimization in SlickGrid Universal.</p>
+
+    <!-- Configuration Panel -->
+    <div class="demo-section">
+        <h2>⚙️ Configuration</h2>
+        <div class="config-panel">
+            <div class="config-row">
+                <label>Dataset Size:</label>
+                <select id="datasetSize">
+                    <option value="1000">1,000 rows</option>
+                    <option value="5000">5,000 rows</option>
+                    <option value="10000">10,000 rows</option>
+                    <option value="25000">25,000 rows</option>
+                    <option value="50000" selected>50,000 rows</option>
+                    <option value="100000">100,000 rows</option>
+                </select>
+            </div>
+            <div class="config-row">
+                <label>Use Web Worker:</label>
+                <input type="checkbox" id="useWebWorker" checked>
+            </div>
+            <div class="config-row">
+                <label>Worker Chunk Size:</label>
+                <input type="number" id="workerChunkSize" value="1000" min="100" max="10000" step="100">
+            </div>
+            <div class="config-row">
+                <label>Max Concurrent Chunks:</label>
+                <input type="number" id="maxConcurrentChunks" value="4" min="1" max="8">
+            </div>
+            <div class="config-row">
+                <label>Include Formatters:</label>
+                <input type="checkbox" id="includeFormatters" checked>
+            </div>
+            <div class="config-row">
+                <label>Complex Formatters:</label>
+                <input type="checkbox" id="complexFormatters" checked>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test Controls -->
+    <div class="demo-section">
+        <h2>🧪 Test Controls</h2>
+        <div class="controls">
+            <button class="primary" onclick="runPerformanceTest()">Run Performance Test</button>
+            <button class="secondary" onclick="runCompatibilityTest()">Test Browser Compatibility</button>
+            <button class="success" onclick="runStressTest()">Stress Test</button>
+            <button class="warning" onclick="testFallbackMechanism()">Test Fallback</button>
+            <button class="danger" onclick="clearResults()">Clear Results</button>
+        </div>
+        
+        <div class="progress" id="progressContainer" style="display: none;">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div id="status" class="status info" style="display: none;">
+            Ready to run tests...
+        </div>
+    </div>
+
+    <!-- Performance Metrics -->
+    <div class="demo-section">
+        <h2>📊 Performance Metrics</h2>
+        <div class="performance-metrics">
+            <div class="metric-card">
+                <div class="metric-value" id="processingTime">--</div>
+                <div class="metric-label">Processing Time (ms)</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="rowsPerSecond">--</div>
+                <div class="metric-label">Rows/Second</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="memoryUsage">--</div>
+                <div class="metric-label">Memory Usage (MB)</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="uiResponsiveness">--</div>
+                <div class="metric-label">UI Updates</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results -->
+    <div class="demo-section">
+        <h2>📋 Test Results</h2>
+        <div id="results" class="results">
+No tests run yet. Click a test button above to begin.
+        </div>
+    </div>
+
+    <!-- Browser Information -->
+    <div class="demo-section">
+        <h2>🌐 Browser Information</h2>
+        <div id="browserInfo" class="results"></div>
+    </div>
+
+    <script>
+        // Initialize browser information
+        function initializeBrowserInfo() {
+            const info = {
+                userAgent: navigator.userAgent,
+                webWorkerSupported: typeof Worker !== 'undefined',
+                urlCreateObjectURLSupported: typeof URL !== 'undefined' && typeof URL.createObjectURL === 'function',
+                performanceSupported: typeof performance !== 'undefined' && typeof performance.now === 'function',
+                memoryInfoSupported: typeof performance !== 'undefined' && typeof performance.memory !== 'undefined'
+            };
+            
+            document.getElementById('browserInfo').textContent = JSON.stringify(info, null, 2);
+        }
+
+        // Generate test data
+        function generateTestData(size) {
+            const categories = ['Electronics', 'Clothing', 'Books', 'Home', 'Sports'];
+            const statuses = ['Active', 'Inactive', 'Pending'];
+            
+            return Array.from({ length: size }, (_, i) => ({
+                id: i + 1,
+                name: `Product ${i + 1}`,
+                category: categories[Math.floor(Math.random() * categories.length)],
+                price: Math.round((Math.random() * 999.99 + 0.01) * 100) / 100,
+                cost: Math.round((Math.random() * 499.99 + 0.01) * 100) / 100,
+                stock: Math.floor(Math.random() * 1000),
+                active: Math.random() > 0.3,
+                status: statuses[Math.floor(Math.random() * statuses.length)],
+                date: new Date(2020 + Math.floor(Math.random() * 4), Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1),
+                rating: Math.round(Math.random() * 5 * 10) / 10,
+                description: `This is a detailed description for product ${i + 1}. `.repeat(Math.floor(Math.random() * 3) + 1)
+            }));
+        }
+
+        // Mock Excel Export Service for demo
+        class MockExcelExportService {
+            async processData(data, columns, options) {
+                const startTime = performance.now();
+                let processedRows = 0;
+                const totalRows = data.length;
+                
+                // Simulate processing with progress updates
+                if (options.useWebWorker) {
+                    // Simulate web worker processing
+                    const chunkSize = options.workerChunkSize || 1000;
+                    const chunks = Math.ceil(totalRows / chunkSize);
+                    
+                    for (let i = 0; i < chunks; i++) {
+                        const chunkStart = i * chunkSize;
+                        const chunkEnd = Math.min(chunkStart + chunkSize, totalRows);
+                        const chunkData = data.slice(chunkStart, chunkEnd);
+                        
+                        // Simulate worker processing time
+                        await new Promise(resolve => setTimeout(resolve, Math.random() * 50 + 10));
+                        
+                        // Process chunk (simulate formatter application)
+                        chunkData.forEach(row => {
+                            if (options.includeFormatters) {
+                                // Simulate formatter processing
+                                row.formattedPrice = `$${row.price.toFixed(2)}`;
+                                row.formattedDate = row.date.toISOString().split('T')[0];
+                                row.formattedActive = row.active ? 'Yes' : 'No';
+                            }
+                        });
+                        
+                        processedRows += chunkData.length;
+                        updateProgress(processedRows / totalRows * 100);
+                    }
+                } else {
+                    // Simulate synchronous processing
+                    for (let i = 0; i < totalRows; i++) {
+                        const row = data[i];
+                        
+                        if (options.includeFormatters) {
+                            // Simulate formatter processing (blocking)
+                            row.formattedPrice = `$${row.price.toFixed(2)}`;
+                            row.formattedDate = row.date.toISOString().split('T')[0];
+                            row.formattedActive = row.active ? 'Yes' : 'No';
+                        }
+                        
+                        processedRows++;
+                        
+                        // Update progress less frequently for sync processing
+                        if (i % 1000 === 0) {
+                            updateProgress(processedRows / totalRows * 100);
+                            // Yield to UI occasionally
+                            await new Promise(resolve => setTimeout(resolve, 1));
+                        }
+                    }
+                }
+                
+                const endTime = performance.now();
+                return {
+                    processingTime: endTime - startTime,
+                    processedRows: processedRows,
+                    data: data
+                };
+            }
+        }
+
+        const mockService = new MockExcelExportService();
+
+        // UI Helper functions
+        function updateStatus(message, type = 'info') {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = message;
+            statusEl.className = `status ${type}`;
+            statusEl.style.display = 'block';
+        }
+
+        function updateProgress(percentage) {
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            
+            progressContainer.style.display = 'block';
+            progressBar.style.width = `${percentage}%`;
+            
+            if (percentage >= 100) {
+                setTimeout(() => {
+                    progressContainer.style.display = 'none';
+                }, 1000);
+            }
+        }
+
+        function updateMetrics(metrics) {
+            document.getElementById('processingTime').textContent = metrics.processingTime?.toFixed(2) || '--';
+            document.getElementById('rowsPerSecond').textContent = metrics.rowsPerSecond?.toFixed(0) || '--';
+            document.getElementById('memoryUsage').textContent = metrics.memoryUsage?.toFixed(2) || '--';
+            document.getElementById('uiResponsiveness').textContent = metrics.uiUpdates || '--';
+        }
+
+        function appendResults(text) {
+            const resultsEl = document.getElementById('results');
+            const timestamp = new Date().toLocaleTimeString();
+            resultsEl.textContent += `[${timestamp}] ${text}\n`;
+            resultsEl.scrollTop = resultsEl.scrollHeight;
+        }
+
+        function clearResults() {
+            document.getElementById('results').textContent = 'Results cleared.\n';
+            updateMetrics({});
+        }
+
+        // Test functions
+        async function runPerformanceTest() {
+            const config = getConfiguration();
+            updateStatus('Generating test data...', 'info');
+            appendResults(`Starting performance test with ${config.datasetSize} rows`);
+            
+            const testData = generateTestData(config.datasetSize);
+            const memoryBefore = performance.memory?.usedJSHeapSize || 0;
+            
+            // Monitor UI responsiveness
+            let uiUpdateCount = 0;
+            const uiMonitor = setInterval(() => uiUpdateCount++, 10);
+            
+            try {
+                updateStatus('Processing data...', 'info');
+                const result = await mockService.processData(testData, [], config);
+                
+                clearInterval(uiMonitor);
+                const memoryAfter = performance.memory?.usedJSHeapSize || 0;
+                const memoryUsed = (memoryAfter - memoryBefore) / 1024 / 1024;
+                
+                const metrics = {
+                    processingTime: result.processingTime,
+                    rowsPerSecond: result.processedRows / (result.processingTime / 1000),
+                    memoryUsage: memoryUsed,
+                    uiUpdates: uiUpdateCount
+                };
+                
+                updateMetrics(metrics);
+                updateStatus('Performance test completed successfully!', 'success');
+                appendResults(`Completed in ${result.processingTime.toFixed(2)}ms`);
+                appendResults(`Processed ${result.processedRows} rows`);
+                appendResults(`Rate: ${metrics.rowsPerSecond.toFixed(0)} rows/second`);
+                appendResults(`Memory used: ${memoryUsed.toFixed(2)} MB`);
+                appendResults(`UI updates: ${uiUpdateCount}`);
+                
+            } catch (error) {
+                clearInterval(uiMonitor);
+                updateStatus(`Performance test failed: ${error.message}`, 'error');
+                appendResults(`Error: ${error.message}`);
+            }
+        }
+
+        async function runCompatibilityTest() {
+            updateStatus('Running compatibility tests...', 'info');
+            appendResults('Starting browser compatibility test');
+            
+            const tests = [
+                { name: 'Web Worker Support', test: () => typeof Worker !== 'undefined' },
+                { name: 'URL.createObjectURL Support', test: () => typeof URL !== 'undefined' && typeof URL.createObjectURL === 'function' },
+                { name: 'Performance API Support', test: () => typeof performance !== 'undefined' && typeof performance.now === 'function' },
+                { name: 'Memory Info Support', test: () => typeof performance !== 'undefined' && typeof performance.memory !== 'undefined' }
+            ];
+            
+            let passedTests = 0;
+            
+            tests.forEach(test => {
+                const result = test.test();
+                appendResults(`${test.name}: ${result ? 'PASS' : 'FAIL'}`);
+                if (result) passedTests++;
+            });
+            
+            const compatibility = (passedTests / tests.length) * 100;
+            updateStatus(`Compatibility test completed: ${compatibility.toFixed(0)}% compatible`, compatibility > 75 ? 'success' : 'warning');
+            appendResults(`Overall compatibility: ${compatibility.toFixed(0)}%`);
+        }
+
+        async function runStressTest() {
+            updateStatus('Running stress test...', 'warning');
+            appendResults('Starting stress test with maximum dataset');
+            
+            const config = getConfiguration();
+            config.datasetSize = 100000; // Force large dataset
+            config.useWebWorker = true;
+            config.workerChunkSize = 2000;
+            
+            try {
+                const testData = generateTestData(config.datasetSize);
+                const result = await mockService.processData(testData, [], config);
+                
+                updateStatus('Stress test completed successfully!', 'success');
+                appendResults(`Stress test completed: ${result.processedRows} rows in ${result.processingTime.toFixed(2)}ms`);
+                
+            } catch (error) {
+                updateStatus(`Stress test failed: ${error.message}`, 'error');
+                appendResults(`Stress test error: ${error.message}`);
+            }
+        }
+
+        async function testFallbackMechanism() {
+            updateStatus('Testing fallback mechanism...', 'warning');
+            appendResults('Testing fallback to synchronous processing');
+            
+            const config = getConfiguration();
+            config.useWebWorker = false; // Force fallback
+            
+            try {
+                const testData = generateTestData(config.datasetSize);
+                const result = await mockService.processData(testData, [], config);
+                
+                updateStatus('Fallback test completed successfully!', 'success');
+                appendResults(`Fallback test completed: ${result.processedRows} rows in ${result.processingTime.toFixed(2)}ms`);
+                
+            } catch (error) {
+                updateStatus(`Fallback test failed: ${error.message}`, 'error');
+                appendResults(`Fallback test error: ${error.message}`);
+            }
+        }
+
+        function getConfiguration() {
+            return {
+                datasetSize: parseInt(document.getElementById('datasetSize').value),
+                useWebWorker: document.getElementById('useWebWorker').checked,
+                workerChunkSize: parseInt(document.getElementById('workerChunkSize').value),
+                maxConcurrentChunks: parseInt(document.getElementById('maxConcurrentChunks').value),
+                includeFormatters: document.getElementById('includeFormatters').checked,
+                complexFormatters: document.getElementById('complexFormatters').checked
+            };
+        }
+
+        // Initialize the demo
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeBrowserInfo();
+            updateStatus('Demo initialized. Ready to run tests.', 'info');
+        });
+    </script>
+</body>
+</html>
