@@ -339,8 +339,7 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
         .then(() => {
           expect(stub.getCall(0)).to.be.calledWith(
             '[SlickGrid] You are trying to freeze/pin more columns than the grid can support. ' +
-              'Make sure to have less columns pinned (on the left) than the actual visible grid width. ' +
-              'Also, please remember that only the columns on the right are scrollable and the pinned columns are not.'
+              'Make sure to have less columns pinned (on the left) than the actual visible grid width.'
           );
 
           // it should still have previous pinning

@@ -60,7 +60,7 @@ const gridStub = {
   setSortColumns: vi.fn(),
   updateColumnHeader: vi.fn(),
   updateColumns: vi.fn(),
-  validateColumnFreeze: vi.fn(),
+  validateColumnFreezeWidth: vi.fn(),
   onBeforeSetColumns: new SlickEvent(),
   onBeforeHeaderCellDestroy: new SlickEvent(),
   onClick: new SlickEvent(),
@@ -869,7 +869,7 @@ describe('HeaderMenu Plugin', () => {
       });
 
       it('should expect menu related to Freeze Columns when "hideFreezeColumnsCommand" is disabled and also expect grid "setOptions" method to be called with current column position', async () => {
-        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValue(true);
+        vi.spyOn(gridStub, 'validateColumnFreezeWidth').mockReturnValue(true);
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
@@ -920,7 +920,7 @@ describe('HeaderMenu Plugin', () => {
       });
 
       it('should expect menu related to Unfreeze Columns when "hideFreezeColumnsCommand" is disabled and column is already frozen to that index and then also expect grid "setOptions" method to be called with current column position', async () => {
-        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValue(true);
+        vi.spyOn(gridStub, 'validateColumnFreezeWidth').mockReturnValue(true);
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
@@ -978,7 +978,7 @@ describe('HeaderMenu Plugin', () => {
         sharedService.hasColumnsReordered = true;
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         const setColSpy = vi.spyOn(gridStub, 'setColumns');
-        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValue(true);
+        vi.spyOn(gridStub, 'validateColumnFreezeWidth').mockReturnValue(true);
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
           headerMenu: { hideFreezeColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
@@ -1379,7 +1379,7 @@ describe('HeaderMenu Plugin', () => {
         const setColSpy = vi.spyOn(gridStub, 'setColumns');
         vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ frozenColumn: 0 } as GridOption);
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(originalColumnDefinitions);
-        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValue(true);
+        vi.spyOn(gridStub, 'validateColumnFreezeWidth').mockReturnValue(true);
         vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(originalColumnDefinitions);
         sharedService.hasColumnsReordered = false;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
@@ -1423,7 +1423,7 @@ describe('HeaderMenu Plugin', () => {
         const setColSpy = vi.spyOn(gridStub, 'setColumns');
         vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ frozenColumn: 0 } as GridOption);
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(originalColumnDefinitions);
-        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValue(true);
+        vi.spyOn(gridStub, 'validateColumnFreezeWidth').mockReturnValue(true);
         vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(visibleColumnDefinitions);
         sharedService.hasColumnsReordered = true;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({

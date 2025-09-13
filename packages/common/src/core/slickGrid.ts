@@ -134,6 +134,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   // Events
   onActiveCellChanged: SlickEvent<OnActiveCellChangedEventArgs>;
   onActiveCellPositionChanged: SlickEvent<{ grid: SlickGrid }>;
+  onActivateChangedOptions: SlickEvent<OnActivateChangedOptionsEventArgs>;
   onAddNewRow: SlickEvent<OnAddNewRowEventArgs>;
   onAfterSetColumns: SlickEvent<OnAfterSetColumnsEventArgs>;
   onAutosizeColumns: SlickEvent<OnAutosizeColumnsEventArgs>;
@@ -187,7 +188,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   onScroll: SlickEvent<OnScrollEventArgs>;
   onSelectedRowsChanged: SlickEvent<OnSelectedRowsChangedEventArgs>;
   onSetOptions: SlickEvent<OnSetOptionsEventArgs>;
-  onActivateChangedOptions: SlickEvent<OnActivateChangedOptionsEventArgs>;
   onSort: SlickEvent<SingleColumnSort | MultiColumnSort>;
   onValidationError: SlickEvent<OnValidationErrorEventArgs>;
   onViewportChanged: SlickEvent<{ grid: SlickGrid }>;
@@ -205,7 +205,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   // settings
   protected _options!: O;
   protected _defaults: BaseGridOption = {
-    alertWhenFrozenNotAllViewable: true,
+    invalidColumnFreezePickerCallback: (error) => alert(error),
+    invalidColumnFreezeWidthCallback: (error) => alert(error),
+    invalidColumnFreezeWidthMessage:
+      '[SlickGrid] You are trying to freeze/pin more columns than the grid can support. ' +
+      'Make sure to have less columns pinned (on the left) than the actual visible grid width.',
+    invalidColumnFreezePickerMessage:
+      '[SlickGrid] Action not allowed and aborted, you need to have at least one or more column on the right section of the column freeze/pining. ' +
+      'You could alternatively "Unfreeze all the columns" before trying again.',
     skipFreezeColumnValidation: false,
     alwaysShowVerticalScroll: false,
     alwaysAllowHorizontalScroll: false,
@@ -1345,14 +1352,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /**
    * Validate that the column freeze is allowed in the browser by making sure that the frozen column is not exceeding the available and visible left canvas width.
-   * Note that it will only validate when `alertWhenFrozenNotAllViewable` or `throwWhenFrozenNotAllViewable` grid option is enabled.
+   * Note that it will only validate when `invalidColumnFreezeWidthCallback` or `throwWhenFrozenNotAllViewable` grid option is enabled.
    * @param {Number} frozenColumn the column index to freeze at
    * @param {Boolean} [forceAlert] tri-state flag to alert when frozen column is invalid
-   *  - if `undefined` it will alert only once
-   *  - if `true` it will always alert even if it was called before
-   *  - if `false` it will always skip the alert and only do the condition check
+   *  - if `undefined` it will do the condition check and never alert more than once
+   *  - if `true` it will do the condition check and always alert even if it was called before
+   *  - if `false` it will do the condition check but always skip the alert
    */
-  validateColumnFreeze(frozenColumn = -1, forceAlert?: boolean): boolean {
+  validateColumnFreezeWidth(frozenColumn = -1, forceAlert?: boolean): boolean {
     if (frozenColumn >= 0) {
       let canvasWidthL = 0;
       this.columns.forEach((col, i) => {
@@ -1369,21 +1376,37 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       const cWidth = Utils.width(this._container) || 0;
       if (cWidth > 0 && canvasWidthL > cWidth && !this._options.skipFreezeColumnValidation) {
         if ((forceAlert !== false && !this._invalidfrozenAlerted) || forceAlert === true) {
-          const errorMsg =
-            '[SlickGrid] You are trying to freeze/pin more columns than the grid can support. ' +
-            'Make sure to have less columns pinned (on the left) than the actual visible grid width. ' +
-            'Also, please remember that only the columns on the right are scrollable and the pinned columns are not.';
-          if (this._options.alertWhenFrozenNotAllViewable || this._options.throwWhenFrozenNotAllViewable) {
+          if (this._options.invalidColumnFreezeWidthCallback || this._options.throwWhenFrozenNotAllViewable) {
             if (this._options.throwWhenFrozenNotAllViewable) {
-              throw new Error(errorMsg);
+              throw new Error(this._options.invalidColumnFreezeWidthMessage);
             }
-            alert(errorMsg);
+            this._options.invalidColumnFreezeWidthCallback?.(this._options.invalidColumnFreezeWidthMessage!);
             this._invalidfrozenAlerted = true;
           }
-          console.error(errorMsg); // always log the error
         }
         return false;
       }
+    }
+    return true;
+  }
+
+  /**
+   * Validate that there is at least 1, or more, column to the right of the frozen column otherwise show an error (we do this check before calling `setColumns()`).
+   * Note that it will only validate when `invalidColumnFreezePickerCallback` grid option is enabled.
+   * @param {Column[]} newColumns the new columns that will later be provided to `setColumns()`
+   * @param {Boolean} [forceAlert] tri-state flag to alert when frozen column is invalid
+   *  - if `undefined` it will do the condition check and never alert more than once
+   *  - if `true` it will do the condition check and always alert even if it was called before
+   *  - if `false` it will do the condition check but always skip the alert
+   */
+  validateSetColumnFreeze(newColumns: C[], forceAlert?: boolean): boolean {
+    const frozenColumn = this._options.frozenColumn ?? -1;
+    if (frozenColumn >= 0 && frozenColumn > newColumns.length - 2 && !this._options.skipFreezeColumnValidation) {
+      if ((forceAlert !== false && !this._invalidfrozenAlerted) || forceAlert === true) {
+        this._options.invalidColumnFreezePickerCallback?.(this._options.invalidColumnFreezePickerMessage!);
+        this._invalidfrozenAlerted = true;
+      }
+      return false;
     }
     return true;
   }
@@ -3314,6 +3337,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    */
   setColumns(columns: C[]): void {
     this.triggerEvent(this.onBeforeSetColumns, { previousColumns: this.columns, newColumns: columns, grid: this });
+    const isValidFreeze = this.validateSetColumnFreeze(columns);
+    if (!isValidFreeze) {
+      return; // exit early if freeze is invalid
+    }
     this.columns = columns;
     this.updateColumnsInternal();
     this.triggerEvent(this.onAfterSetColumns, { newColumns: columns, grid: this });
@@ -3385,7 +3412,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (!suppressColumnSet) {
         this._invalidfrozenAlerted = false; // reset frozen alert
       }
-      if (this.validateColumnFreeze(newOptions.frozenColumn)) {
+      if (this.validateColumnFreezeWidth(newOptions.frozenColumn)) {
         this.getViewports().forEach((vp) => (vp.scrollLeft = 0));
         this.handleScroll(); // trigger scroll to realign column headers as well
       } else {
@@ -3473,7 +3500,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this._options.leaveSpaceForNewRows = false;
     }
     // make sure the freeze is also valid without breaking the UI (e.g. we can't left freeze columns wider than visible left canvas width)
-    if (!this.validateColumnFreeze(this._options.frozenColumn)) {
+    if (!this.validateColumnFreezeWidth(this._options.frozenColumn)) {
       this._options.frozenColumn = this._prevFrozenColumn < this._options.frozenColumn! ? this._prevFrozenColumn : -1;
     }
   }
