@@ -751,12 +751,12 @@ describe('SlickGrid core file', () => {
       grid.setColumns(columns.slice(0, 2)); // remove last column to cause the error
       expect(alertSpy).toHaveBeenCalledWith(
         expect.stringContaining(
-          '[SlickGrid] Action not allowed and cancelled, you need to have at least 1 or more column on the right section of the frozen column.'
+          '[SlickGrid] Action not allowed and aborted, you need to have at least one or more column on the right section of the column freeze/pining.'
         )
       );
       expect(consoleSpy).toHaveBeenCalledWith(
         expect.stringContaining(
-          '[SlickGrid] Action not allowed and cancelled, you need to have at least 1 or more column on the right section of the frozen column.'
+          '[SlickGrid] Action not allowed and aborted, you need to have at least one or more column on the right section of the column freeze/pining.'
         )
       );
       expect(onAfterSetColumnsSpy).not.toHaveBeenCalled();

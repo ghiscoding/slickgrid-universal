@@ -584,7 +584,7 @@ describe('Example 04 - Frozen Grid', () => {
                 .click()
                 .then(() => {
                   expect(stub.getCall(0)).to.be.calledWith(
-                    '[SlickGrid] Action not allowed and cancelled, you need to have at least 1 or more column on the right section of the frozen column. ' +
+                    '[SlickGrid] Action not allowed and aborted, you need to have at least one or more column on the right section of the column freeze/pining. ' +
                       'You could alternatively "Unfreeze all the columns" before trying again.'
                   );
                 });

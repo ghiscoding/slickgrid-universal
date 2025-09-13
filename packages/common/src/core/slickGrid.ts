@@ -211,7 +211,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       '[SlickGrid] You are trying to freeze/pin more columns than the grid can support. ' +
       'Make sure to have less columns pinned (on the left) than the actual visible grid width.',
     invalidColumnFreezePickerMessage:
-      '[SlickGrid] Action not allowed and cancelled, you need to have at least 1 or more column on the right section of the frozen column. ' +
+      '[SlickGrid] Action not allowed and aborted, you need to have at least one or more column on the right section of the column freeze/pining. ' +
       'You could alternatively "Unfreeze all the columns" before trying again.',
     skipFreezeColumnValidation: false,
     alwaysShowVerticalScroll: false,
