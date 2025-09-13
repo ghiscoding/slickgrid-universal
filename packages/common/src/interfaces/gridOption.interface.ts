@@ -859,7 +859,6 @@ export interface GridOption<C extends Column = Column> {
   /**
    * Defaults to `alert(error)`, which will trigger when the user tries to uncheck too many columns via ColumnPicker/GridMenu.
    * We need to have 1 or more columns visible on the right side of the frozen column.
-   * NOTE: the error is **always** logged via `console.error` even when this callback is unset.
    */
   invalidColumnFreezePickerCallback?: (error: string) => void;
 
@@ -869,7 +868,6 @@ export interface GridOption<C extends Column = Column> {
   /**
    * Defaults to `alert(error)`, which will trigger when the user tries to set a `frozenColumn` that is wider than the visible grid viewport width in the browser.
    * We can't freeze wider than the viewport because the right canvas will never be visible and since the left canvas is never scrollable this would break the UX.
-   * NOTE: the error is **always** logged via `console.error` even when this callback is unset.
    */
   invalidColumnFreezeWidthCallback?: (error: string) => void;
 

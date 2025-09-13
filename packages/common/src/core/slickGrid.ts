@@ -1383,7 +1383,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             this._options.invalidColumnFreezeWidthCallback?.(this._options.invalidColumnFreezeWidthMessage!);
             this._invalidfrozenAlerted = true;
           }
-          console.error(this._options.invalidColumnFreezeWidthMessage); // always log the error
         }
         return false;
       }
@@ -1406,7 +1405,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if ((forceAlert !== false && !this._invalidfrozenAlerted) || forceAlert === true) {
         this._options.invalidColumnFreezePickerCallback?.(this._options.invalidColumnFreezePickerMessage!);
         this._invalidfrozenAlerted = true;
-        console.error(this._options.invalidColumnFreezePickerMessage); // always log the error
       }
       return false;
     }
