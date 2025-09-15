@@ -33,6 +33,7 @@ export class ResizerService {
   protected _hasResizedByContentAtLeastOnce = false;
   protected _lastGridSizes?: GridSize;
   protected _lastWindowSize?: GridSize;
+  protected _cResizeCheckRequired = false;
   protected _totalColumnsWidthByContent = 0;
   protected _timer?: any;
   protected _resizePaused = false;
@@ -717,11 +718,11 @@ export class ResizerService {
   }
 
   /**
-   * Just check if the grid is still shown in the DOM
+   * Just check if the grid is still shown in the DOM/UI (visible to the end user and not hidden by a parent element, e.g. Tab, Accordion, etc.)
    * @returns is grid shown
    */
-  protected checkIsGridShown(): boolean {
-    return !!(document.querySelector<HTMLDivElement>(`${this.gridUidSelector}`)?.offsetParent ?? false);
+  protected isGridVisibleInUI(): boolean {
+    return !!document.querySelector<HTMLDivElement>(`${this.gridUidSelector}`)?.offsetParent;
   }
 
   /**
@@ -751,15 +752,20 @@ export class ResizerService {
       const columns = this._grid.getColumns() || [];
 
       this._intervalId = setInterval(async () => {
+        if (!this.isGridVisibleInUI()) {
+          this._cResizeCheckRequired = true; // needs to be resized when it becomes visible again
+        }
         const headerTitleRowHeight = 44; // this one is set by SASS/CSS so let's hard code it
         const headerPos = getOffset(headerElm);
         let headerOffsetTop = headerPos.top;
 
         // make sure that there's actual window sizes difference before executing a recalc, otherwise there's no need to go further
         if (
-          !this._lastWindowSize ||
-          this._lastWindowSize.height !== window.innerHeight ||
-          this._lastWindowSize.width !== window.innerWidth
+          this.isGridVisibleInUI() &&
+          (this._cResizeCheckRequired ||
+            !this._lastWindowSize ||
+            this._lastWindowSize.height !== window.innerHeight ||
+            this._lastWindowSize.width !== window.innerWidth)
         ) {
           if (this.gridOptions?.enableFiltering && this.gridOptions.headerRowHeight) {
             headerOffsetTop += this.gridOptions.headerRowHeight; // filter row height
@@ -797,26 +803,27 @@ export class ResizerService {
           }
 
           // visible grid (shown to the user and not hidden in another Tab will have an offsetParent defined)
-          if (this.checkIsGridShown() && (isResizeRequired || containerElmOffset.left === 0 || containerElmOffset.top === 0)) {
+          if (this.isGridVisibleInUI() && (isResizeRequired || containerElmOffset.left === 0 || containerElmOffset.top === 0)) {
             await this.resizeGrid();
             if (resizeGoodCount < 5) {
               this._grid.updateColumns(); // also refresh header titles after grid becomes visible in new tab, this fixes an issue observed in Salesforce
             }
 
             // make sure the grid is still visible after doing the resize
-            if (this.checkIsGridShown()) {
+            if (this.isGridVisibleInUI()) {
               isResizeRequired = false;
+              this._cResizeCheckRequired = false;
             }
           }
 
           // make sure the grid is still visible after optionally doing a resize
           // if it visible then we can consider it a good resize (it might not be visible if user quickly switch to another Tab)
-          if (this.checkIsGridShown()) {
+          if (this.isGridVisibleInUI()) {
             resizeGoodCount++;
           }
 
           if (
-            this.checkIsGridShown() &&
+            this.isGridVisibleInUI() &&
             !isResizeRequired &&
             (resizeGoodCount >= autoFixResizeRequiredGoodCount || intervalExecutionCounter++ >= autoFixResizeTimeout)
           ) {
