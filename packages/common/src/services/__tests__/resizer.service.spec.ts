@@ -881,6 +881,39 @@ describe('Resizer Service', () => {
           }, 10);
         }));
 
+      it('should try to resize grid when its UI is deemed broken and the grid was previously hidden by a tab and becomes visible again', () =>
+        new Promise((done: any) => {
+          const resizeSpy = vi.spyOn(service, 'resizeGrid').mockReturnValue(Promise.resolve({ height: 150, width: 350 }));
+
+          mockGridOptions.autoFixResizeWhenBrokenStyleDetected = true;
+          service.intervalRetryDelay = 1;
+
+          const gridElm = document.querySelector<HTMLDivElement>(`.${GRID_UID}`) as HTMLDivElement;
+          service.init(gridStub, divContainer);
+          Object.defineProperty(gridElm, 'offsetParent', { writable: true, configurable: true, value: 0 });
+
+          const divHeaderElm = divContainer.querySelector('.slick-header') as HTMLDivElement;
+          vi.spyOn(divContainer, 'getBoundingClientRect').mockReturnValue({ top: 10, left: 20 } as unknown as DOMRect);
+          vi.spyOn(divHeaderElm, 'getBoundingClientRect').mockReturnValue({ top: 30, left: 25 } as unknown as DOMRect);
+          divHeaderElm.style.top = '30px';
+          divHeaderElm.style.left = '25px';
+          divContainer.style.top = '10px';
+          divContainer.style.left = '20px';
+
+          setTimeout(() => {
+            Object.defineProperty(gridElm, 'offsetParent', { writable: true, configurable: true, value: 100 });
+          }, 5);
+
+          service.requestStopOfAutoFixResizeGrid();
+          expect(resizeSpy).toHaveBeenCalled();
+
+          setTimeout(() => {
+            expect(divContainer.outerHTML).toBeTruthy();
+            expect(resizeSpy).toHaveBeenCalled();
+            done();
+          }, 10);
+        }));
+
       it('should try to resize grid when its UI is deemed broken and expect "resizeGridWhenStylingIsBrokenUntilCorrected" and then stops after manually requesting a stop', () =>
         new Promise((done: any) => {
           const resizeSpy = vi.spyOn(service, 'resizeGrid').mockReturnValue(Promise.resolve({ height: 150, width: 350 }));
