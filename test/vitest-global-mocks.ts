@@ -39,3 +39,13 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: vi.fn(),
   })),
 });
+
+(HTMLCanvasElement.prototype as any).getContext = () => {
+  return {
+    // mock the methods you need
+    getImageData: () => ({
+      data: new Uint8ClampedArray(4),
+    }),
+    putImageData: () => {},
+  };
+};

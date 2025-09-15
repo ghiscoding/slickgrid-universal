@@ -31,7 +31,8 @@ export class ResizerService {
   protected _intervalRetryDelay: number = DEFAULT_INTERVAL_RETRY_DELAY;
   protected _isStopResizeIntervalRequested = false;
   protected _hasResizedByContentAtLeastOnce = false;
-  protected _lastDimensions?: GridSize;
+  protected _lastGridSizes?: GridSize;
+  protected _lastWindowSize?: GridSize;
   protected _totalColumnsWidthByContent = 0;
   protected _timer?: any;
   protected _resizePaused = false;
@@ -167,6 +168,7 @@ export class ResizerService {
    * Options: we could also provide a % factor to resize on each height/width independently
    */
   bindAutoResizeDataGrid(newSizes?: GridSize): null | void {
+    this.saveLastWindowSize();
     if (this.gridOptions.autoResize?.resizeDetection === 'container') {
       if (!this._pageContainerElm || !this._pageContainerElm) {
         throw new Error(`
@@ -201,6 +203,7 @@ export class ResizerService {
 
   handleResizeGrid(newSizes?: GridSize): void {
     this.pubSubService.publish('onGridBeforeResize');
+    this.saveLastWindowSize();
     if (!this._resizePaused) {
       // for some yet unknown reason, calling the resize twice removes any stuttering/flickering
       // when changing the height and makes it much smoother experience
@@ -313,7 +316,7 @@ export class ResizerService {
    * @return {object} last dimensions (height, width)
    */
   getLastResizeDimensions(): GridSize | undefined {
-    return this._lastDimensions;
+    return this._lastGridSizes;
   }
 
   /**
@@ -353,11 +356,11 @@ export class ResizerService {
     // since the core SlickResizer plugin only supports the "autosizeColumns"
     if (
       this.gridOptions.enableAutoResizeColumnsByCellContent &&
-      (!this._lastDimensions?.width || dimensions?.width !== this._lastDimensions?.width)
+      (!this._lastGridSizes?.width || dimensions?.width !== this._lastGridSizes.width)
     ) {
       this.resizeColumnsByCellContent(false);
     }
-    this._lastDimensions = dimensions;
+    this._lastGridSizes = dimensions;
 
     return dimensions;
   }
@@ -392,13 +395,13 @@ export class ResizerService {
         // make sure that the grid still exist (by looking if the Grid UID is found in the DOM tree) to avoid SlickGrid error "missing stylesheet"
         if (this.gridUid && document.querySelector(this.gridUidSelector)) {
           // don't call autosize unless dimension really changed
-          if (!this._lastDimensions || this._lastDimensions.height !== newHeight || this._lastDimensions.width !== newWidth) {
+          if (!this._lastGridSizes || this._lastGridSizes.height !== newHeight || this._lastGridSizes.width !== newWidth) {
             this._grid.autosizeColumns();
           }
         }
       } else if (
         this.gridOptions.enableAutoResizeColumnsByCellContent &&
-        (!this._lastDimensions?.width || newWidth !== this._lastDimensions?.width)
+        (!this._lastGridSizes?.width || newWidth !== this._lastGridSizes.width)
       ) {
         // we can call our resize by content here (when enabled)
         // since the core SlickResizer plugin only supports the "autosizeColumns"
@@ -411,13 +414,13 @@ export class ResizerService {
       this._gridDomElm.style.width = typeof newWidth === 'string' ? newWidth : `${(newWidth || 1) + 0.2}px`;
 
       // keep last resized dimensions & resolve them to the Promise
-      this._lastDimensions = {
+      this._lastGridSizes = {
         height: newHeight || 0,
         width: newWidth || 0,
       };
     }
 
-    return this._lastDimensions;
+    return this._lastGridSizes;
   }
 
   requestStopOfAutoFixResizeGrid(isStopRequired = true): void {
@@ -751,66 +754,84 @@ export class ResizerService {
         const headerTitleRowHeight = 44; // this one is set by SASS/CSS so let's hard code it
         const headerPos = getOffset(headerElm);
         let headerOffsetTop = headerPos.top;
-        if (this.gridOptions?.enableFiltering && this.gridOptions.headerRowHeight) {
-          headerOffsetTop += this.gridOptions.headerRowHeight; // filter row height
-        }
-        if (this.gridOptions?.createPreHeaderPanel && this.gridOptions.showPreHeaderPanel && this.gridOptions.preHeaderPanelHeight) {
-          headerOffsetTop += this.gridOptions.preHeaderPanelHeight; // header grouping titles row height
-        }
-        headerOffsetTop += headerTitleRowHeight; // header title row height
 
-        const viewportPos = getOffset(viewportElm);
-        const viewportOffsetTop = viewportPos.top;
-
-        // if header row is Y coordinate 0 (happens when user is not in current Tab) or when header titles are lower than the viewport of dataset (this can happen when user change Tab and DOM is not shown)
-        // another resize condition could be that if the grid location is at coordinate x/y 0/0, we assume that it's in a hidden tab and we'll need to resize whenever that tab becomes active
-        // for these cases we'll resize until it's no longer true or until we reach a max time limit (70min)
-        const containerElmOffset = getOffset(this._gridContainerElm);
-        let isResizeRequired =
-          headerPos?.top === 0 || headerOffsetTop - viewportOffsetTop > 2 || (containerElmOffset.left === 0 && containerElmOffset.top === 0)
-            ? true
-            : false;
-
-        // another condition for a required resize is when the grid is hidden (not in current tab) then its "rightPx" rendered range will be 0px
-        // if that's the case then we know the grid is still hidden and we need to resize it whenever it becomes visible (when its "rightPx" becomes greater than 0 then it's visible)
-        const renderedRangeRightPx = this._grid.getRenderedRange()?.rightPx ?? 0;
-        if (!isResizeRequired && dataLn > 0 && renderedRangeRightPx === 0 && columns.length > 1) {
-          isResizeRequired = true;
-        }
-
-        // user could choose to manually stop the looped of auto resize fix
-        if (this._isStopResizeIntervalRequested) {
-          isResizeRequired = false;
-          intervalExecutionCounter = autoFixResizeTimeout;
-        }
-
-        // visible grid (shown to the user and not hidden in another Tab will have an offsetParent defined)
-        if (this.checkIsGridShown() && (isResizeRequired || containerElmOffset.left === 0 || containerElmOffset.top === 0)) {
-          await this.resizeGrid();
-          if (resizeGoodCount < 5) {
-            this._grid.updateColumns(); // also refresh header titles after grid becomes visible in new tab, this fixes an issue observed in Salesforce
-          }
-
-          // make sure the grid is still visible after doing the resize
-          if (this.checkIsGridShown()) {
-            isResizeRequired = false;
-          }
-        }
-
-        // make sure the grid is still visible after optionally doing a resize
-        // if it visible then we can consider it a good resize (it might not be visible if user quickly switch to another Tab)
-        if (this.checkIsGridShown()) {
-          resizeGoodCount++;
-        }
-
+        // make sure that there's actual window sizes difference before executing a recalc, otherwise there's no need to go further
         if (
-          this.checkIsGridShown() &&
-          !isResizeRequired &&
-          (resizeGoodCount >= autoFixResizeRequiredGoodCount || intervalExecutionCounter++ >= autoFixResizeTimeout)
+          !this._lastWindowSize ||
+          this._lastWindowSize.height !== window.innerHeight ||
+          this._lastWindowSize.width !== window.innerWidth
         ) {
-          clearInterval(this._intervalId); // stop the interval if we don't need resize or if we passed let say 70min
+          if (this.gridOptions?.enableFiltering && this.gridOptions.headerRowHeight) {
+            headerOffsetTop += this.gridOptions.headerRowHeight; // filter row height
+          }
+          if (this.gridOptions?.createPreHeaderPanel && this.gridOptions.showPreHeaderPanel && this.gridOptions.preHeaderPanelHeight) {
+            headerOffsetTop += this.gridOptions.preHeaderPanelHeight; // header grouping titles row height
+          }
+          headerOffsetTop += headerTitleRowHeight; // header title row height
+
+          const viewportPos = getOffset(viewportElm);
+          const viewportOffsetTop = viewportPos.top;
+
+          // if header row is Y coordinate 0 (happens when user is not in current Tab) or when header titles are lower than the viewport of dataset (this can happen when user change Tab and DOM is not shown)
+          // another resize condition could be that if the grid location is at coordinate x/y 0/0, we assume that it's in a hidden tab and we'll need to resize whenever that tab becomes active
+          // for these cases we'll resize until it's no longer true or until we reach a max time limit (70min)
+          const containerElmOffset = getOffset(this._gridContainerElm);
+          let isResizeRequired =
+            headerPos?.top === 0 ||
+            headerOffsetTop - viewportOffsetTop > 2 ||
+            (containerElmOffset.left === 0 && containerElmOffset.top === 0)
+              ? true
+              : false;
+
+          // another condition for a required resize is when the grid is hidden (not in current tab) then its "rightPx" rendered range will be 0px
+          // if that's the case then we know the grid is still hidden and we need to resize it whenever it becomes visible (when its "rightPx" becomes greater than 0 then it's visible)
+          const renderedRangeRightPx = this._grid.getRenderedRange()?.rightPx ?? 0;
+          if (!isResizeRequired && dataLn > 0 && renderedRangeRightPx === 0 && columns.length > 1) {
+            isResizeRequired = true;
+          }
+
+          // user could choose to manually stop the looped of auto resize fix
+          if (this._isStopResizeIntervalRequested) {
+            isResizeRequired = false;
+            intervalExecutionCounter = autoFixResizeTimeout;
+          }
+
+          // visible grid (shown to the user and not hidden in another Tab will have an offsetParent defined)
+          if (this.checkIsGridShown() && (isResizeRequired || containerElmOffset.left === 0 || containerElmOffset.top === 0)) {
+            await this.resizeGrid();
+            if (resizeGoodCount < 5) {
+              this._grid.updateColumns(); // also refresh header titles after grid becomes visible in new tab, this fixes an issue observed in Salesforce
+            }
+
+            // make sure the grid is still visible after doing the resize
+            if (this.checkIsGridShown()) {
+              isResizeRequired = false;
+            }
+          }
+
+          // make sure the grid is still visible after optionally doing a resize
+          // if it visible then we can consider it a good resize (it might not be visible if user quickly switch to another Tab)
+          if (this.checkIsGridShown()) {
+            resizeGoodCount++;
+          }
+
+          if (
+            this.checkIsGridShown() &&
+            !isResizeRequired &&
+            (resizeGoodCount >= autoFixResizeRequiredGoodCount || intervalExecutionCounter++ >= autoFixResizeTimeout)
+          ) {
+            clearInterval(this._intervalId); // stop the interval if we don't need resize or if we passed let say 70min
+          }
         }
       }, this.intervalRetryDelay);
     }
+  }
+
+  /** keep reference of the last window size for possible comparisons */
+  protected saveLastWindowSize(): void {
+    this._lastWindowSize = {
+      height: window.innerHeight,
+      width: window.innerWidth,
+    };
   }
 }
