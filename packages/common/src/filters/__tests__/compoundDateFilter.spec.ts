@@ -30,7 +30,7 @@ const gridStub = {
   getColumns: vi.fn(),
   getHeaderRowColumn: vi.fn(),
   render: vi.fn(),
-  sanitizeHtmlString: (str) => str,
+  sanitizeHtmlString: (str: string) => str,
 } as unknown as SlickGrid;
 
 vi.useFakeTimers();
@@ -39,7 +39,7 @@ describe('CompoundDateFilter', () => {
   let divContainer: HTMLDivElement;
   let filter: CompoundDateFilter;
   let filterArguments: FilterArguments;
-  let spyGetHeaderRow;
+  let spyGetHeaderRow: any;
   let mockColumn: Column;
   let translateService: TranslateServiceStub;
 
@@ -371,7 +371,7 @@ describe('CompoundDateFilter', () => {
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
-    expect(filter.currentDateOrDates![0].toISOString()).toBe('2000-01-01T05:00:00.000Z');
+    expect((filter.currentDateOrDates as any)[0].toISOString()).toBe('2000-01-01T05:00:00.000Z');
     expect(filterInputElm.value).toBe('2000-01-01T05:00:00.000Z');
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), {
       columnDef: mockColumn,
@@ -399,7 +399,7 @@ describe('CompoundDateFilter', () => {
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
-    expect(format(filter.currentDateOrDates![0], mapTempoDateFormatWithFieldType(FieldType.dateTimeIso))).toBe('2000-01-02 00:00:00');
+    expect(format((filter.currentDateOrDates as any)[0], mapTempoDateFormatWithFieldType(FieldType.dateTimeIso))).toBe('2000-01-02 00:00:00');
     expect(filterInputElm.value).toBe('2000-01-02');
     expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-02'], shouldTriggerQuery: true });
   });
@@ -422,7 +422,7 @@ describe('CompoundDateFilter', () => {
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
-    expect(format(filter.currentDateOrDates![0], mapTempoDateFormatWithFieldType(FieldType.dateTimeIso))).toBe('2000-01-02 00:00:00');
+    expect(format((filter.currentDateOrDates as any)[0], mapTempoDateFormatWithFieldType(FieldType.dateTimeIso))).toBe('2000-01-02 00:00:00');
     expect(filterInputElm.value).toBe('2000-01-02');
     expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-02'], shouldTriggerQuery: true });
   });
@@ -445,7 +445,7 @@ describe('CompoundDateFilter', () => {
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
-    expect(format(filter.currentDateOrDates![0], mapTempoDateFormatWithFieldType(FieldType.dateTimeIso))).toBe('2000-01-02 00:00:00');
+    expect(format((filter.currentDateOrDates as any)[0], mapTempoDateFormatWithFieldType(FieldType.dateTimeIso))).toBe('2000-01-02 00:00:00');
     expect(filterInputElm.value).toBe('2000-01-02');
     expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-02'], shouldTriggerQuery: true });
   });
@@ -475,14 +475,14 @@ describe('CompoundDateFilter', () => {
     const mockDate = '2001-01-02T16:02:02.239Z';
     filter.init(filterArguments);
     filter.setValues(mockDate);
-    let filledInputElm = divContainer.querySelector('.search-filter.filter-finish.filled') as HTMLInputElement;
+    let filledInputElm = divContainer.querySelector('.search-filter.filter-finish') as HTMLInputElement;
 
     expect(filter.currentDateOrDates).toEqual(mockDate);
-    expect(filledInputElm).toBeTruthy();
+    expect(filledInputElm.classList.contains('filled')).toBeTruthy();
 
     filter.setValues('');
-    filledInputElm = divContainer.querySelector('.search-filter.filter-finish.filled') as HTMLInputElement;
-    expect(filledInputElm).toBeFalsy();
+    filledInputElm = divContainer.querySelector('.search-filter.filter-finish') as HTMLInputElement;
+    expect(filledInputElm.classList.contains('filled')).toBeFalsy();
   });
 
   it('should work with different locale when locale is changed', async () => {
@@ -514,7 +514,7 @@ describe('CompoundDateFilter', () => {
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
-    expect(filter.currentDateOrDates![0].toISOString()).toBe('2000-01-01T05:00:00.000Z');
+    expect((filter.currentDateOrDates as any)[0].toISOString()).toBe('2000-01-01T05:00:00.000Z');
     expect(filterInputElm.value).toBe('2000-01-01T05:00:00.000Z');
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), {
       columnDef: mockColumn,
@@ -606,7 +606,7 @@ describe('CompoundDateFilter', () => {
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
-    expect(filter.currentDateOrDates![0].toISOString()).toBe('2000-01-01T05:00:00.000Z');
+    expect((filter.currentDateOrDates as any)[0].toISOString()).toBe('2000-01-01T05:00:00.000Z');
     expect(filterInputElm.value).toBe('2000-01-01T05:00:00.000Z');
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), {
       columnDef: mockColumn,

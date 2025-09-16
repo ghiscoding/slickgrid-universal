@@ -5,7 +5,7 @@ vi.mock('sortablejs', () => ({
     el: undefined,
     options: {} as SortableOptions,
     constructor: vi.fn(),
-    create: (el, options) => {
+    create: (el: Element, options: any) => {
       return {
         el,
         options,
@@ -14,7 +14,7 @@ vi.mock('sortablejs', () => ({
       };
     },
     utils: {
-      clone: (el) => el.cloneNode(true),
+      clone: (el: Element) => el.cloneNode(true),
     },
   },
 }));
@@ -758,33 +758,28 @@ describe('Draggable Grouping Plugin', () => {
           plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
 
           const groupBySortElm = preHeaderDiv.querySelector('.slick-groupby-sort') as HTMLDivElement;
-          let groupBySortAscIconElm = preHeaderDiv.querySelector('.slick-groupby-sort-asc-icon') as HTMLDivElement;
 
           expect(fn.sortableLeftInstance).toEqual(plugin.sortableLeftInstance);
           expect(fn.sortableRightInstance).toEqual(plugin.sortableRightInstance);
           expect(fn.sortableLeftInstance.destroy).toBeTruthy();
           expect(groupBySortElm).toBeTruthy();
-          expect(groupBySortAscIconElm).toBeTruthy();
+          expect(groupBySortElm.classList.contains('slick-groupby-sort-asc-icon')).toBeTruthy();
 
-          groupBySortAscIconElm.dispatchEvent(new Event('click'));
+          groupBySortElm.dispatchEvent(new Event('click'));
           const toggleAllElm = document.querySelector('.slick-group-toggle-all') as HTMLDivElement;
           const toggleAllIconElm = toggleAllElm.querySelector('.slick-group-toggle-all-icon') as HTMLDivElement;
-          groupBySortAscIconElm = preHeaderDiv.querySelector('.slick-groupby-sort-asc-icon') as HTMLDivElement;
-          let groupBySortDescIconElm = preHeaderDiv.querySelector('.slick-groupby-sort-desc-icon') as HTMLDivElement;
 
           expect(setGroupingSpy).toHaveBeenCalledWith(expect.any(Array));
           expect(toggleAllIconElm.classList.contains('expanded')).toBeTruthy();
-          expect(groupBySortAscIconElm).toBeFalsy();
-          expect(groupBySortDescIconElm).toBeTruthy();
+          expect(groupBySortElm.classList.contains('slick-groupby-sort-asc-icon')).toBeFalsy();
+          expect(groupBySortElm.classList.contains('slick-groupby-sort-desc-icon')).toBeTruthy();
 
-          groupBySortDescIconElm.dispatchEvent(new Event('click'));
-          groupBySortAscIconElm = preHeaderDiv.querySelector('.slick-groupby-sort-asc-icon') as HTMLDivElement;
-          groupBySortDescIconElm = preHeaderDiv.querySelector('.slick-groupby-sort-desc-icon') as HTMLDivElement;
+          groupBySortElm.dispatchEvent(new Event('click'));
 
           expect(setGroupingSpy).toHaveBeenCalledWith(expect.any(Array));
           expect(toggleAllIconElm.classList.contains('expanded')).toBeTruthy();
-          expect(groupBySortAscIconElm).toBeTruthy();
-          expect(groupBySortDescIconElm).toBeFalsy();
+          expect(groupBySortElm.classList.contains('slick-groupby-sort-asc-icon')).toBeTruthy();
+          expect(groupBySortElm.classList.contains('slick-groupby-sort-desc-icon')).toBeFalsy();
           expect(invalidateSpy).toHaveBeenCalledTimes(2);
           expect(onGroupChangedCallbackSpy).toHaveBeenCalledWith(expect.anything(), { caller: 'sort-group', groupColumns: expect.any(Array) });
           expect(groupChangedSpy).toHaveBeenCalledWith({ caller: 'sort-group', groupColumns: expect.any(Array) });
@@ -817,29 +812,24 @@ describe('Draggable Grouping Plugin', () => {
           plugin.droppableInstance!.options.onAdd!({ item: headerColumnDiv3, clone: headerColumnDiv3.cloneNode(true) } as any);
 
           const groupBySortElm = preHeaderDiv.querySelector('.slick-groupby-sort') as HTMLDivElement;
-          let groupBySortAscIconElm = preHeaderDiv.querySelector('.mdi-arrow-up') as HTMLDivElement;
 
           expect(fn.sortableLeftInstance).toEqual(plugin.sortableLeftInstance);
           expect(fn.sortableRightInstance).toEqual(plugin.sortableRightInstance);
           expect(fn.sortableLeftInstance.destroy).toBeTruthy();
           expect(groupBySortElm).toBeTruthy();
-          expect(groupBySortAscIconElm).toBeTruthy();
+          expect(groupBySortElm.classList.contains('mdi-arrow-up')).toBeTruthy();
 
-          groupBySortAscIconElm.dispatchEvent(new Event('click'));
-          groupBySortAscIconElm = preHeaderDiv.querySelector('.mdi-arrow-up') as HTMLDivElement;
-          let groupBySortDescIconElm = preHeaderDiv.querySelector('.mdi-arrow-down') as HTMLDivElement;
+          groupBySortElm.dispatchEvent(new Event('click'));
 
           expect(setGroupingSpy).toHaveBeenCalledWith(expect.any(Array));
-          expect(groupBySortAscIconElm).toBeFalsy();
-          expect(groupBySortDescIconElm).toBeTruthy();
+          expect(groupBySortElm.classList.contains('mdi-arrow-up')).toBeFalsy();
+          expect(groupBySortElm.classList.contains('mdi-arrow-down')).toBeTruthy();
 
-          groupBySortDescIconElm.dispatchEvent(new Event('click'));
-          groupBySortAscIconElm = preHeaderDiv.querySelector('.mdi-arrow-up') as HTMLDivElement;
-          groupBySortDescIconElm = preHeaderDiv.querySelector('.mdi-arrow-down') as HTMLDivElement;
+          groupBySortElm.dispatchEvent(new Event('click'));
 
           expect(setGroupingSpy).toHaveBeenCalledWith(expect.any(Array));
-          expect(groupBySortAscIconElm).toBeTruthy();
-          expect(groupBySortDescIconElm).toBeFalsy();
+          expect(groupBySortElm.classList.contains('mdi-arrow-up')).toBeTruthy();
+          expect(groupBySortElm.classList.contains('mdi-arrow-down')).toBeFalsy();
           expect(invalidateSpy).toHaveBeenCalledTimes(2);
           expect(onGroupChangedCallbackSpy).toHaveBeenCalledWith(expect.anything(), { caller: 'sort-group', groupColumns: expect.any(Array) });
           expect(groupChangedSpy).toHaveBeenCalledWith({ caller: 'sort-group', groupColumns: expect.any(Array) });

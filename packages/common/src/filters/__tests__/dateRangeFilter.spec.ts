@@ -23,14 +23,14 @@ const gridStub = {
   getColumns: vi.fn(),
   getHeaderRowColumn: vi.fn(),
   render: vi.fn(),
-  sanitizeHtmlString: (str) => str,
+  sanitizeHtmlString: (str: string) => str,
 } as unknown as SlickGrid;
 
 describe('DateRangeFilter', () => {
   let divContainer: HTMLDivElement;
   let filter: DateRangeFilter;
   let filterArguments: FilterArguments;
-  let spyGetHeaderRow;
+  let spyGetHeaderRow: any;
   let mockColumn: Column;
   let translateService: TranslateServiceStub;
 
@@ -304,14 +304,14 @@ describe('DateRangeFilter', () => {
     const mockDates = ['2001-01-02T05:00:00.000Z', '2001-01-13T05:00:00.000Z'];
     filter.init(filterArguments);
     filter.setValues(mockDates);
-    let filledInputElm = divContainer.querySelector('.search-filter.filter-finish.filled') as HTMLInputElement;
+    let filledInputElm = divContainer.querySelector('.search-filter.filter-finish') as HTMLInputElement;
 
     expect(filter.currentDateOrDates).toEqual(mockDates);
-    expect(filledInputElm).toBeTruthy();
+    expect(filledInputElm.classList.contains('filled')).toBeTruthy();
 
     filter.setValues('');
-    filledInputElm = divContainer.querySelector('.search-filter.filter-finish.filled') as HTMLInputElement;
-    expect(filledInputElm).toBeFalsy();
+    filledInputElm = divContainer.querySelector('.search-filter.filter-finish') as HTMLInputElement;
+    expect(filledInputElm.classList.contains('filled')).toBeFalsy();
   });
 
   it('should work with different locale when locale is changed', async () => {
