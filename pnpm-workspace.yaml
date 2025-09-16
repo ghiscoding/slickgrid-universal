@@ -14,7 +14,7 @@ catalog:
   '@formkit/tempo': ^0.1.2
   '@popperjs/core': ^2.11.8
   '@types/fnando__sparkline': ^0.3.7
-  '@types/node': ^22.18.4
+  '@types/node': ^24.5.0
   '@types/sortablejs': ^1.15.8
   '@vitejs/plugin-react': ^5.0.2
   '@vitejs/plugin-vue': ^6.0.1
