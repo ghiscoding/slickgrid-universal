@@ -257,8 +257,8 @@ describe('CellRangeSelector Plugin', () => {
     gridStub.onDragStart.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventStart, gridStub);
 
     const dragEvent = addVanillaEventPropagation(new DragEvent('drag'));
-    Object.defineProperty(dragEvent, 'pageX', { writable: true, configurable: true, value: 0 });
-    Object.defineProperty(dragEvent, 'pageY', { writable: true, configurable: true, value: 0 });
+    (dragEvent as any).pageX = -2;
+    (dragEvent as any).pageY = -156;
     gridStub.onDrag.notify(
       { startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any,
       dragEvent,
