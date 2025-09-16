@@ -10,7 +10,7 @@ import { RxJsResourceStub } from '../../../../test/rxjsResourceStub.js';
 vi.mock('@slickgrid-universal/common', async (importOriginal) => ({
   ...((await importOriginal()) as any),
   getOffset: vi.fn(),
-  applyHtmlToElement: (elm, val) => {
+  applyHtmlToElement: (elm: Element, val: string) => {
     elm.innerHTML = `${val || ''}`;
   },
 }));
@@ -38,7 +38,7 @@ const gridStub = {
   getOptions: () => gridOptionsMock,
   getUID: () => GRID_UID,
   registerPlugin: vi.fn(),
-  sanitizeHtmlString: (s) => s,
+  sanitizeHtmlString: (text: string) => text,
   onMouseEnter: new SlickEvent(),
   onHeaderMouseOver: new SlickEvent(),
   onHeaderRowMouseEnter: new SlickEvent(),

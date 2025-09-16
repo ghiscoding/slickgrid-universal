@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { CountAggregator } from '../countAggregator.js';
+import type { GroupTotals } from '../../interfaces/grouping.interface.js';
 
 describe('CountAggregator', () => {
   let aggregator: CountAggregator;
@@ -20,7 +21,7 @@ describe('CountAggregator', () => {
     it('should return a length of 1 when the dataset found 1 item', () => {
       // arrange
       const fieldName = 'title';
-      const groupTotals = {
+      const groupTotals: GroupTotals = {
         group: {
           rows: dataset.filter((item) => item['title'] === 'Product 1'),
         },
@@ -29,7 +30,7 @@ describe('CountAggregator', () => {
       aggregator.init();
 
       // act
-      aggregator.storeResult(groupTotals);
+      aggregator.storeResult(groupTotals as GroupTotals<number | number[]>);
 
       // assert
       expect(aggregator.isInitialized).toBeTruthy();
@@ -38,7 +39,7 @@ describe('CountAggregator', () => {
 
     it('should return a count of the full dataset length when the group has all the same data', () => {
       const fieldName = 'productGroup';
-      const groupTotals = {
+      const groupTotals: GroupTotals<number | number[]> = {
         count: {},
         group: {
           rows: dataset,
@@ -72,7 +73,7 @@ describe('CountAggregator', () => {
       aggregator.init({}, true);
 
       // accumulate child to current groupTotals
-      const groupTotals = { count: { percentComplete: 4 } };
+      const groupTotals: GroupTotals<number> = { count: { percentComplete: 4 } };
       aggregator.accumulate(dataset[4]);
       aggregator.storeResult(groupTotals);
 
@@ -87,7 +88,7 @@ describe('CountAggregator', () => {
       aggregator.init({}, true);
 
       // will not accumulate since it's a parent item
-      const groupTotals = { count: { percentComplete: 4 } };
+      const groupTotals: GroupTotals<number> = { count: { percentComplete: 4 } };
       aggregator.accumulate(dataset[4], true);
       aggregator.storeResult(groupTotals);
 

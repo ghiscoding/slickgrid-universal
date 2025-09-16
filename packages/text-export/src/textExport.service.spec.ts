@@ -8,6 +8,7 @@ import {
   type Formatter,
   Formatters,
   type GridOption,
+  type GroupingComparerItem,
   GroupTotalFormatters,
   type ItemMetadata,
   type SlickDataView,
@@ -76,7 +77,7 @@ describe('ExportService', () => {
   let translateService: TranslateServiceStub;
   let mockColumns: Column[];
   let mockExportCsvOptions: TextExportOption;
-  let mockExportTxtOptions;
+  let mockExportTxtOptions: TextExportOption;
   let mockCsvBlob: Blob;
   let mockTxtBlob: Blob;
 
@@ -168,7 +169,7 @@ describe('ExportService', () => {
           try {
             service.init(null as any, container);
             service.exportToFile(mockExportTxtOptions);
-          } catch (e) {
+          } catch (e: any) {
             expect(e.toString()).toContain(
               '[Slickgrid-Universal] it seems that the SlickGrid & DataView objects and/or PubSubService are not initialized did you forget to enable the grid option flag "enableTextExport"?'
             );
@@ -576,7 +577,7 @@ describe('ExportService', () => {
 
     describe('with Grouping', () => {
       let mockCollection: any[];
-      let mockOrderGrouping;
+      let mockOrderGrouping: any;
       let mockItem1;
       let mockItem2;
       let mockGroup1;
@@ -617,10 +618,10 @@ describe('ExportService', () => {
           aggregateEmpty: false,
           aggregators: [{ _count: 2, _field: 'order', _nonNullCount: 2, _sum: 4 }],
           collapsed: false,
-          comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
+          comparer: (a: GroupingComparerItem, b: GroupingComparerItem) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
           compiledAccumulators: [vi.fn(), vi.fn()],
           displayTotalsRow: true,
-          formatter: (g) => `Order:  ${g.value} <span class="text-green">(${g.count} items)</span>`,
+          formatter: (g: GroupingComparerItem) => `Order:  ${g.value} <span class="text-green">(${g.count} items)</span>`,
           getter: 'order',
           getterIsAFn: false,
           lazyTotalsCalculation: true,
@@ -696,10 +697,10 @@ describe('ExportService', () => {
 
     describe('with Grouping and Translation', () => {
       let mockCollection: any[];
-      let mockOrderGrouping;
-      let mockItem1;
-      let mockItem2;
-      let mockGroup1;
+      let mockOrderGrouping: any;
+      let mockItem1: any;
+      let mockItem2: any;
+      let mockGroup1: any;
 
       beforeEach(() => {
         mockGridOptions.enableGrouping = true;
@@ -738,10 +739,10 @@ describe('ExportService', () => {
           aggregateEmpty: false,
           aggregators: [{ _count: 2, _field: 'order', _nonNullCount: 2, _sum: 4 }],
           collapsed: false,
-          comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
+          comparer: (a: GroupingComparerItem, b: GroupingComparerItem) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
           compiledAccumulators: [vi.fn(), vi.fn()],
           displayTotalsRow: true,
-          formatter: (g) => `Order:  ${g.value} <span class="text-green">(${g.count} items)</span>`,
+          formatter: (g: GroupingComparerItem) => `Order:  ${g.value} <span class="text-green">(${g.count} items)</span>`,
           getter: 'order',
           getterIsAFn: false,
           lazyTotalsCalculation: true,
@@ -817,12 +818,12 @@ describe('ExportService', () => {
 
     describe('with Multiple Columns Grouping (by Order then by LastName) and Translation', () => {
       let mockCollection: any[];
-      let mockOrderGrouping;
-      let mockItem1;
-      let mockItem2;
-      let mockGroup1;
-      let mockGroup2;
-      let mockGroup3;
+      let mockOrderGrouping: any;
+      let mockItem1: any;
+      let mockItem2: any;
+      let mockGroup1: any;
+      let mockGroup2: any;
+      let mockGroup3: any;
 
       beforeEach(() => {
         mockGridOptions.enableGrouping = true;
@@ -861,10 +862,10 @@ describe('ExportService', () => {
           aggregateEmpty: false,
           aggregators: [{ _count: 2, _field: 'order', _nonNullCount: 2, _sum: 4 }],
           collapsed: false,
-          comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
+          comparer: (a: GroupingComparerItem, b: GroupingComparerItem) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
           compiledAccumulators: [vi.fn(), vi.fn()],
           displayTotalsRow: true,
-          formatter: (g) => `Order:  ${g.value} <span class="text-green">(${g.count} items)</span>`,
+          formatter: (g: GroupingComparerItem) => `Order:  ${g.value} <span class="text-green">(${g.count} items)</span>`,
           getter: 'order',
           getterIsAFn: false,
           lazyTotalsCalculation: true,

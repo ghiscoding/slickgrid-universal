@@ -11,7 +11,7 @@ describe('the ArrayToCsv Formatter', () => {
   });
 
   it('should return an empty array when value passed is an empty array', () => {
-    const valueArray = [];
+    const valueArray: any[] = [];
     const result = arrayToCsvFormatter(0, 0, valueArray, {} as Column, {}, {} as any);
     expect(result).toEqual([]);
   });

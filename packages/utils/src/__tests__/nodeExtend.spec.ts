@@ -11,9 +11,9 @@ describe('extend()', () => {
   const arr = [1, 'what', new Date(81, 8, 4)];
   const date = new Date(81, 4, 13);
 
-  const Foo = function () {};
+  class Foo {}
 
-  const obj = {
+  const obj: any = {
     str,
     integer,
     arr,
@@ -610,7 +610,7 @@ describe('extend()', () => {
   describe('works without Array.isArray', () => {
     const savedIsArray = Array.isArray;
     Array.isArray = false as any; // don't delete, to preserve enumerability
-    const target = [];
+    const target: any[] = [];
     const source = [1, [2], { 3: true }];
 
     test('It works without Array.isArray', () => expect(extend(true, target, source)).toEqual([1, [2], { 3: true }]));

@@ -25,7 +25,7 @@ describe('InputMaskFilter', () => {
   let divContainer: HTMLDivElement;
   let filter: InputMaskFilter;
   let filterArguments: FilterArguments;
-  let spyGetHeaderRow;
+  let spyGetHeaderRow: any;
   let mockColumn: Column;
 
   beforeEach(() => {

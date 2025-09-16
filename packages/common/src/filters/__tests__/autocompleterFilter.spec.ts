@@ -29,7 +29,7 @@ const gridStub = {
   getColumns: vi.fn(),
   getHeaderRowColumn: vi.fn(),
   render: vi.fn(),
-  sanitizeHtmlString: (str) => str,
+  sanitizeHtmlString: (text: string) => text,
 } as unknown as SlickGrid;
 
 describe('AutocompleterFilter', () => {
@@ -37,7 +37,7 @@ describe('AutocompleterFilter', () => {
   let divContainer: HTMLDivElement;
   let filter: AutocompleterFilter;
   let filterArguments: FilterArguments;
-  let spyGetHeaderRow;
+  let spyGetHeaderRow: any;
   let mockColumn: Column & { filter: ColumnFilter };
   let collectionService: CollectionService;
   const http = new HttpStub();
@@ -82,7 +82,7 @@ describe('AutocompleterFilter', () => {
       try {
         mockColumn.filter.collection = undefined;
         filter.init(filterArguments);
-      } catch (e) {
+      } catch (e: any) {
         expect(e.toString()).toContain(
           `[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") for the AutoComplete Filter to work correctly.`
         );
@@ -375,7 +375,7 @@ describe('AutocompleterFilter', () => {
       options: {
         triggerOnEveryKeyStroke: true,
         showOnFocus: true,
-        fetch: (searchText) => {
+        fetch: (searchText: string) => {
           callbackMock(searchText);
         },
       },
@@ -402,7 +402,7 @@ describe('AutocompleterFilter', () => {
     mockColumn.filter = {
       filterOptions: {
         showOnFocus: true,
-        fetch: (_, updateCallback) => updateCallback(mockDataResponse),
+        fetch: (_: string, updateCallback: (data: any) => void) => updateCallback(mockDataResponse),
       },
     };
 
@@ -431,7 +431,7 @@ describe('AutocompleterFilter', () => {
     mockColumn.filter = {
       options: {
         showOnFocus: true,
-        fetch: (_, updateCallback) => updateCallback(mockDataResponse),
+        fetch: (_: string, updateCallback: (data: any) => void) => updateCallback(mockDataResponse),
       },
     };
 
@@ -625,7 +625,7 @@ describe('AutocompleterFilter', () => {
       expect(filterCollection[0]).toEqual({ value: 'other', description: 'other' });
       expect(filterCollection[1]).toEqual({ value: 'male', description: 'male' });
       expect(filterCollection[2]).toEqual({ value: 'female', description: 'female' });
-    } catch (e) {
+    } catch (e: any) {
       console.log('ERROR', e);
     }
   });

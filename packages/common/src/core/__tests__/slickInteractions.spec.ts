@@ -233,7 +233,7 @@ describe('MouseWheel class', () => {
 
 describe('Resizable class', () => {
   let rsz: any;
-  let containerElement;
+  let containerElement: HTMLDivElement;
 
   beforeEach(() => {
     containerElement = document.createElement('div');

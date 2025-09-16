@@ -221,7 +221,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
           await (collectionOutput ?? collectionAsync);
           this.watchCollectionChanges();
         }
-      } catch (e) {
+      } catch (e: any) {
         reject(e);
       }
     });

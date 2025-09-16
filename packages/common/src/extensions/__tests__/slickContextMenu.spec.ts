@@ -10,7 +10,7 @@ import { ExtensionUtility } from '../../extensions/extensionUtility.js';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import { SlickContextMenu } from '../slickContextMenu.js';
 
-const removeExtraSpaces = (textS) => `${textS}`.replace(/[\n\r]\s+/g, '');
+const removeExtraSpaces = (text: string) => `${text}`.replace(/[\n\r]\s+/g, '');
 
 const commandItemsMock = [
   { command: 'command2', title: 'Command 2', positionOrder: 62 },

@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { MinAggregator } from '../minAggregator.js';
+import type { GroupTotals } from '../../interfaces/grouping.interface.js';
 
 describe('minAggregator', () => {
   let aggregator: MinAggregator;
@@ -20,7 +21,7 @@ describe('minAggregator', () => {
     it('should return null when the field provided does not exist', () => {
       // arrange
       const fieldName = 'invalid';
-      const groupTotals = {};
+      const groupTotals: GroupTotals = {};
       aggregator = new MinAggregator(fieldName);
       aggregator.init();
 
@@ -35,7 +36,7 @@ describe('minAggregator', () => {
 
     it('should return the minimum value when the chosen field from the dataset contains only numbers', () => {
       const fieldName = 'percentComplete';
-      const groupTotals = { min: {} };
+      const groupTotals: GroupTotals = { min: {} };
       aggregator = new MinAggregator(fieldName);
       aggregator.init();
 
@@ -49,7 +50,7 @@ describe('minAggregator', () => {
 
     it('should return the minimum valid number when dataset contains numbers provided as string and other and invalid char', () => {
       const fieldName = 'duration';
-      const groupTotals = { min: {} };
+      const groupTotals: GroupTotals = { min: {} };
       aggregator = new MinAggregator(fieldName);
       aggregator.init();
 
@@ -73,7 +74,7 @@ describe('minAggregator', () => {
 
     it('should return the tree data maximum value when the chosen field from the dataset contains only numbers', () => {
       const fieldName = 'percentComplete';
-      const groupTotals = { min: {} };
+      const groupTotals: GroupTotals = { min: {} };
       aggregator = new MinAggregator(fieldName);
       aggregator.init({}, true);
 
@@ -101,7 +102,7 @@ describe('minAggregator', () => {
 
     it('should return 88 which is the minimum value found in the Tree on a datacontext parent item', () => {
       const fieldName = 'percentComplete';
-      const groupTotals = { min: { percentComplete: 55 } };
+      const groupTotals: GroupTotals = { min: { percentComplete: 55 } };
       aggregator = new MinAggregator(fieldName);
       aggregator.init({ __treeTotals: { min: { percentComplete: 22 } } }, true);
       dataset[1].__treeTotals = { min: { percentComplete: 99 } };

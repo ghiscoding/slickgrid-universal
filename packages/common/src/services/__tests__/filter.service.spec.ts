@@ -364,7 +364,7 @@ describe('FilterService', () => {
   // this is a private method test, but we can access it by triggering a Filter Search event or through the Filter metadata
   describe('callbackSearchEvent (private) method', () => {
     let mockColumn: Column;
-    let mockArgs;
+    let mockArgs: any;
 
     beforeEach(() => {
       gridOptionMock.backendServiceApi = undefined;
@@ -752,7 +752,7 @@ describe('FilterService', () => {
   });
 
   describe('customLocalFilter method', () => {
-    let mockItem1;
+    let mockItem1: any;
 
     beforeEach(() => {
       vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(0);
@@ -768,7 +768,7 @@ describe('FilterService', () => {
         filterable: true,
         filter: {
           model: Filters.inputText,
-          filterPredicate: (dataContext, searchFilterArgs) => {
+          filterPredicate: (dataContext: any, searchFilterArgs: any) => {
             return dataContext[columnId] === searchFilterArgs.parsedSearchTerms![0];
           },
         },
@@ -794,7 +794,7 @@ describe('FilterService', () => {
         filterable: true,
         filter: {
           model: Filters.inputText,
-          filterPredicate: (dataContext, searchFilterArgs) => {
+          filterPredicate: (dataContext: any, searchFilterArgs: any) => {
             return dataContext[columnId] === searchFilterArgs.parsedSearchTerms![0];
           },
         },
@@ -1487,8 +1487,8 @@ describe('FilterService', () => {
   describe('updateFilters method', () => {
     let mockColumn1: Column;
     let mockColumn2: Column;
-    let mockArgs1;
-    let mockArgs2;
+    let mockArgs1: any;
+    let mockArgs2: any;
     let mockNewFilters: CurrentFilter[];
 
     beforeEach(() => {
@@ -1525,7 +1525,7 @@ describe('FilterService', () => {
         service.init(gridStub);
         service.bindLocalOnFilter(gridStub);
         await service.updateFilters([{ columnId: 'firstName', searchTerms: ['John'] }]);
-      } catch (e) {
+      } catch (e: any) {
         expect(e.toString()).toContain(
           '[Slickgrid-Universal] in order to use "updateFilters" method, you need to have Filterable Columns defined in your grid'
         );
@@ -1777,8 +1777,8 @@ describe('FilterService', () => {
   describe('updateSingleFilter method', () => {
     let mockColumn1: Column;
     let mockColumn2: Column;
-    let mockArgs1;
-    let mockArgs2;
+    let mockArgs1: any;
+    let mockArgs2: any;
 
     beforeEach(() => {
       gridOptionMock.enableFiltering = true;
@@ -2045,8 +2045,8 @@ describe('FilterService', () => {
     let mockColumn1: Column;
     let mockColumn2: Column;
     let mockColumn3: Column;
-    let mockArgs1;
-    let mockArgs2;
+    let mockArgs1: any;
+    let mockArgs2: any;
     let mockNewFilters: CurrentFilter[];
 
     beforeEach(() => {
@@ -2177,12 +2177,12 @@ describe('FilterService', () => {
     describe('bindLocalOnFilter method', () => {
       let dataset: any[] = [];
       let datasetHierarchical: any[] = [];
-      let mockColumn1;
-      let mockColumn2;
-      let mockColumn3;
-      let mockArgs1;
-      let mockArgs2;
-      let mockArgs3;
+      let mockColumn1: Column;
+      let mockColumn2: Column;
+      let mockColumn3: Column;
+      let mockArgs1: any;
+      let mockArgs2: any;
+      let mockArgs3: any;
 
       beforeEach(() => {
         gridStub.getColumns = vi.fn();
