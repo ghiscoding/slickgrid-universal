@@ -163,7 +163,7 @@ describe('GraphqlService', () => {
 
     it('should return a simple query with pagination set and nodes that includes at least "id" when the column definitions is an empty array', () => {
       const expectation = `query{ users(first:10, offset:0){ totalCount, nodes{ id }}}`;
-      const columns = [];
+      const columns: Column[] = [];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ datasetName: 'users' }, paginationOptions, gridStub);
@@ -230,7 +230,7 @@ describe('GraphqlService', () => {
 
     it('should return a simple query with pagination set and nodes that includes at least "id" when the column definitions is an empty array when using cursor', () => {
       const expectation = `query{users(first:20) { totalCount, nodes{id}, pageInfo{ hasNextPage,hasPreviousPage,endCursor,startCursor }, edges{ cursor }}}`;
-      const columns = [];
+      const columns: Column[] = [];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init({ datasetName: 'users', useCursor: true }, paginationOptions, gridStub);

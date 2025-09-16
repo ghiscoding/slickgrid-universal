@@ -1451,8 +1451,8 @@ describe('SlickDatView core file', () => {
           { id: 1, name: 'Jane', age: 24 },
         ];
         const newItem = { id: 2, name: 'Bob', age: 30 };
-        // const comparer = (a, b) => SortComparers.numeric(a.id, b.id, SortDirectionNumber.asc);
-        const comparer = (a, b) => (a.id === b.id ? 0 : a.id > b.id ? 1 : -1);
+        // const comparer = (a: any, b: any) => SortComparers.numeric(a.id, b.id, SortDirectionNumber.asc);
+        const comparer = (a: any, b: any) => (a.id === b.id ? 0 : a.id > b.id ? 1 : -1);
         const sortSpy = vi.spyOn(dv, 'sort');
 
         dv.setItems(items);
@@ -1485,7 +1485,7 @@ describe('SlickDatView core file', () => {
           { id: 1, name: 'Jane', age: 24 },
         ];
         const newItem = { id: 2, name: 'Bob', age: 30 };
-        const comparer = (a, b) => SortComparers.numeric(a.id, b.id, SortDirectionNumber.asc);
+        const comparer = (a: any, b: any) => SortComparers.numeric(a.id, b.id, SortDirectionNumber.asc);
 
         dv.setItems(items);
         dv.sort(comparer, false);
@@ -1519,7 +1519,7 @@ describe('SlickDatView core file', () => {
           { id: 0, name: 'John', age: 20 },
           { id: 1, name: 'Jane', age: 24 },
         ];
-        const comparer = (a, b) => SortComparers.numeric(a.id, b.id, SortDirectionNumber.asc);
+        const comparer = (a: any, b: any) => SortComparers.numeric(a.id, b.id, SortDirectionNumber.asc);
         dv.setItems(items);
         dv.sort(comparer);
 
@@ -1531,7 +1531,7 @@ describe('SlickDatView core file', () => {
           { id: 0, name: 'John', age: 20 },
           { id: 1, name: 'Jane', age: 24 },
         ];
-        const comparer = (a, b) => SortComparers.numeric(a.id, b.id, SortDirectionNumber.asc);
+        const comparer = (a: any, b: any) => SortComparers.numeric(a.id, b.id, SortDirectionNumber.asc);
         dv.setItems(items);
         dv.sort(comparer);
 
@@ -1555,7 +1555,7 @@ describe('SlickDatView core file', () => {
           { id: 1, name: 'Jane', age: 24 },
         ];
         const updatedItem = { id: 1, name: 'Bob', age: 30 };
-        const comparer = (a, b) => SortComparers.numeric(a.id, b.id, SortDirectionNumber.asc);
+        const comparer = (a: any, b: any) => SortComparers.numeric(a.id, b.id, SortDirectionNumber.asc);
         const sortSpy = vi.spyOn(dv, 'sort');
 
         dv.setItems(items);
@@ -1618,7 +1618,7 @@ describe('SlickDatView core file', () => {
         { id: 4, name: 'John', age: 20 },
         { id: 3, name: 'Jane', age: 24 },
       ];
-      const filter = (item) => item.id >= 2;
+      const filter = (item: any) => item.id >= 2;
       dv.setItems(items);
       dv.setFilter(filter);
 
@@ -1640,7 +1640,7 @@ describe('SlickDatView core file', () => {
         { id: 4, name: 'John', age: 20 },
         { id: 3, name: 'Jane', age: 24 },
       ];
-      const filter = (item) => item.id >= 2;
+      const filter = (item: any) => item.id >= 2;
       dv.setItems(items);
       dv.setFilter(filter);
 
@@ -1660,7 +1660,7 @@ describe('SlickDatView core file', () => {
         { id: 4, name: 'John', age: 20 },
         { id: 3, name: 'Jane', age: 24 },
       ];
-      const filter = (item) => item.id >= 2;
+      const filter = (item: any) => item.id >= 2;
 
       dv = new SlickDataView({ useCSPSafeFilter: true });
       dv.setItems(items);
@@ -1677,7 +1677,7 @@ describe('SlickDatView core file', () => {
 
     it('should be able to set a filter and extra filter arguments and expect items to be filtered', () => {
       const searchString = 'Ob'; // we'll provide "searchString" as filter args
-      function myFilter(item, args) {
+      function myFilter(item: any, args: any) {
         return item.name.toLowerCase().includes(args.searchString?.toLowerCase());
       }
       const items = [
@@ -1704,7 +1704,7 @@ describe('SlickDatView core file', () => {
 
     it('should be able to set a filter as CSP Safe and extra filter arguments and expect items to be filtered', () => {
       const searchString = 'Ob'; // we'll provide "searchString" as filter args
-      const myFilter = (item, args) => item.name.toLowerCase().includes(args.searchString?.toLowerCase());
+      const myFilter = (item: any, args: any) => item.name.toLowerCase().includes(args.searchString?.toLowerCase());
       const items = [
         { id: 1, name: 'Bob', age: 33 },
         { id: 0, name: 'Hobby', age: 44 },
@@ -1740,7 +1740,7 @@ describe('SlickDatView core file', () => {
         { id: 4, name: 'John', age: 20 },
         { id: 3, name: 'Jane', age: 24 },
       ];
-      const filter = (item) => item.id >= 2;
+      const filter = (item: any) => item.id >= 2;
 
       dv = new SlickDataView({ inlineFilters: false, useCSPSafeFilter: false });
       const onPagingInfoSpy = vi.spyOn(dv.onPagingInfoChanged, 'notify');
@@ -1766,7 +1766,7 @@ describe('SlickDatView core file', () => {
         { id: 4, name: 'John', age: 20 },
         { id: 3, name: 'Jane', age: 24 },
       ];
-      const filter = (item) => item.id >= 2;
+      const filter = (item: any) => item.id >= 2;
 
       dv = new SlickDataView({ inlineFilters: true, useCSPSafeFilter: true });
       const onPagingInfoSpy = vi.spyOn(dv.onPagingInfoChanged, 'notify');
@@ -1794,7 +1794,7 @@ describe('SlickDatView core file', () => {
         { id: 5, name: 'Alpha', age: 12 },
         { id: 6, name: 'Omega', age: 24 },
       ];
-      function myFilter(item) {
+      function myFilter(item: any) {
         return item.id >= 2;
       }
 
@@ -1860,7 +1860,7 @@ describe('SlickDatView core file', () => {
         { id: 5, name: 'Alpha', age: 12 },
         { id: 6, name: 'Omega', age: 24 },
       ];
-      function myFilter(item) {
+      function myFilter(item: any) {
         return item.id >= 2;
       }
 

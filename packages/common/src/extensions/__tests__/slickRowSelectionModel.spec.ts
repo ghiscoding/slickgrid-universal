@@ -8,7 +8,7 @@ import { SlickRowSelectionModel } from '../slickRowSelectionModel.js';
 
 const GRID_UID = 'slickgrid_12345';
 
-const addVanillaEventPropagation = function (event, commandKey = '', keyName = '') {
+const addVanillaEventPropagation = function <T = any>(event: T, commandKey = '', keyName = '') {
   Object.defineProperty(event, 'isPropagationStopped', { writable: true, configurable: true, value: vi.fn() });
   Object.defineProperty(event, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: vi.fn() });
   if (commandKey) {

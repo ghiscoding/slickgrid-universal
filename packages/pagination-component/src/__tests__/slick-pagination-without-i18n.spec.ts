@@ -87,7 +87,7 @@ describe('Slick-Pagination Component', () => {
           component = new SlickPaginationComponent();
           component.init(gridStub, paginationServiceStub, eventPubSubService, translateService);
           component.renderPagination(div);
-        } catch (e) {
+        } catch (e: any) {
           expect(e.toString()).toContain(
             '[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.'
           );

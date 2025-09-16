@@ -10,10 +10,10 @@ import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
 
 vi.useFakeTimers();
 
-const fnCallbacks = {};
+const fnCallbacks: any = {};
 const mockPubSub = {
   publish: vi.fn(),
-  subscribe: (eventName, fn) => {
+  subscribe: (eventName: string, fn: Function) => {
     const eventNames = Array.isArray(eventName) ? eventName : [eventName];
     eventNames.forEach((eventName) => (fnCallbacks[eventName] = fn));
   },
@@ -523,7 +523,7 @@ describe('PaginationService', () => {
       try {
         service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
         await service.processOnPageChanged(1);
-      } catch (e) {
+      } catch (e: any) {
         expect(backendErrorSpy).toHaveBeenCalledWith(mockError, mockGridOption.backendServiceApi);
       }
     });
@@ -540,7 +540,7 @@ describe('PaginationService', () => {
       try {
         service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
         await service.processOnPageChanged(1);
-      } catch (e) {
+      } catch (e: any) {
         expect(backendErrorSpy).toHaveBeenCalledWith(mockError, mockGridOption.backendServiceApi);
       }
     });
@@ -663,7 +663,7 @@ describe('PaginationService', () => {
           mockGridOption.backendServiceApi = {} as BackendServiceApi;
           service.init(gridStub, mockGridOption.pagination as Pagination, mockGridOption.backendServiceApi);
           service.refreshPagination();
-        } catch (e) {
+        } catch (e: any) {
           expect(e.toString()).toContain('BackendServiceApi requires the following 2 properties "process" and "service" to be defined.');
           done();
         }

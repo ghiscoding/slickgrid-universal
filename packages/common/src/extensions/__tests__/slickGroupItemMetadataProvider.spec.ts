@@ -132,7 +132,7 @@ describe('GroupItemMetadataProvider Service', () => {
       service.init(gridStub);
       service.setOptions({ enableExpandCollapse: true });
       const output = service.getOptions().groupFormatter!(0, 0, 'test', mockColumns[0], { title: 'Some Title' }, gridStub) as DocumentFragment;
-      const htmlContent = [].map.call(output.childNodes, (x) => x.outerHTML).join('');
+      const htmlContent = [].map.call(output.childNodes, (x: HTMLElement) => x.outerHTML).join('');
       expect(htmlContent).toBe(
         '<span class="slick-group-toggle expanded" aria-expanded="true" style="margin-left: 0px;"></span><span class="slick-group-title" level="0">Some Title</span>'
       );
@@ -183,7 +183,7 @@ describe('GroupItemMetadataProvider Service', () => {
         { collapsed: true, level: 3, title: 'Some Title' },
         gridStub
       ) as DocumentFragment;
-      const htmlContent = [].map.call(output.childNodes, (x) => x.outerHTML).join('');
+      const htmlContent = [].map.call(output.childNodes, (x: HTMLElement) => x.outerHTML).join('');
       expect(htmlContent).toBe(
         '<span class="groupy-toggle groupy-collapsed" aria-expanded="false" style="margin-left: 45px;"></span><span class="slick-group-title" level="3">Some Title</span>'
       );
@@ -274,11 +274,11 @@ describe('GroupItemMetadataProvider Service', () => {
   });
 
   describe('onClick - grid cell clicked event handler', () => {
-    let refreshHintSpy;
-    let collapseGroupSpy;
-    let preventDefaultSpy;
-    let stopPropagationSpy;
-    let expandGroupSpy;
+    let refreshHintSpy: any;
+    let collapseGroupSpy: any;
+    let preventDefaultSpy: any;
+    let stopPropagationSpy: any;
+    let expandGroupSpy: any;
     let clickEvent: Event;
     const group = new SlickGroup();
     const mockRange = { top: 10, bottom: 25 } as any;
@@ -336,11 +336,11 @@ describe('GroupItemMetadataProvider Service', () => {
   });
 
   describe('onKeyDown - grid cell keyboard typing handler', () => {
-    let refreshHintSpy;
-    let collapseGroupSpy;
-    let preventDefaultSpy;
-    let stopPropagationSpy;
-    let expandGroupSpy;
+    let refreshHintSpy: any;
+    let collapseGroupSpy: any;
+    let preventDefaultSpy: any;
+    let stopPropagationSpy: any;
+    let expandGroupSpy: any;
     let keyDownEvent: Event;
     const group = new SlickGroup();
     const mockActiveCell = { row: 0, cell: 3 };

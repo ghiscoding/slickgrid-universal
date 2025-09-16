@@ -27,7 +27,7 @@ const gridStub = {
   getColumns: vi.fn(),
   getHeaderRowColumn: vi.fn(),
   render: vi.fn(),
-  sanitizeHtmlString: (str) => str,
+  sanitizeHtmlString: (text: string) => text,
 } as unknown as SlickGrid;
 
 describe('SelectFilter', () => {
@@ -35,7 +35,7 @@ describe('SelectFilter', () => {
   let divContainer: HTMLDivElement;
   let filter: SelectFilter;
   let filterArguments: FilterArguments;
-  let spyGetHeaderRow;
+  let spyGetHeaderRow: any;
   let mockColumn: Column;
   let collectionService: CollectionService;
   const http = new HttpStub();
@@ -78,7 +78,7 @@ describe('SelectFilter', () => {
     new Promise((done: any) => {
       try {
         filter.init(filterArguments);
-      } catch (e) {
+      } catch (e: any) {
         expect(e.message).toContain(
           `[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") for the MultipleSelect/SingleSelect Filter to work correctly.`
         );
@@ -106,7 +106,7 @@ describe('SelectFilter', () => {
         ];
         filter = new SelectFilter(translateService, collectionService);
         filter.init(filterArguments);
-      } catch (e) {
+      } catch (e: any) {
         expect(e.toString()).toContain(
           `[select-filter] The Translate Service is required for the Select Filter to work correctly when "enableTranslateLabel" is set.`
         );

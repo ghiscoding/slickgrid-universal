@@ -13,7 +13,7 @@ const gridStub = {
 } as unknown as SlickGrid;
 
 describe('Tree Formatter', () => {
-  let dataset;
+  let dataset: any[];
   let mockGridOptions: GridOption;
 
   beforeEach(() => {

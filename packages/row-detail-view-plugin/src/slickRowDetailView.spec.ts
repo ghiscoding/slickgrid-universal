@@ -54,7 +54,7 @@ const gridStub = {
   invalidateRows: vi.fn(),
   registerPlugin: vi.fn(),
   render: vi.fn(),
-  sanitizeHtmlString: (s) => s,
+  sanitizeHtmlString: (text: string) => text,
   updateRowCount: vi.fn(),
   onBeforeEditCell: new SlickEvent(),
   onBeforeRemoveCachedRow: new SlickEvent(),
@@ -126,7 +126,7 @@ describe('SlickRowDetailView plugin', () => {
     new Promise((done: any) => {
       try {
         plugin.init(null as any);
-      } catch (e) {
+      } catch (e: any) {
         expect(e.message).toBe('[Slickgrid-Universal] RowDetailView Plugin requires the Grid instance to be passed as argument to the "init()" method.');
         done();
       }
@@ -347,7 +347,7 @@ describe('SlickRowDetailView plugin', () => {
   it('should trigger "onAsyncResponse" but throw an error when there is no item provided', () => {
     const consoleSpy = vi.spyOn(global.console, 'error').mockReturnValue();
     const updateItemSpy = vi.spyOn(dataviewStub, 'updateItem');
-    const postViewMock = (item) => `<span>Post ${item.id}</span>`;
+    const postViewMock = (item: any) => `<span>Post ${item.id}</span>`;
     vi.spyOn(gridStub, 'getOptions').mockReturnValue({ ...gridOptionsMock, rowDetailView: { postTemplate: postViewMock } as any });
 
     plugin.init(gridStub);
@@ -361,7 +361,7 @@ describe('SlickRowDetailView plugin', () => {
     const updateItemSpy = vi.spyOn(dataviewStub, 'updateItem');
     const asyncEndUpdateSpy = vi.spyOn(plugin.onAsyncEndUpdate, 'notify');
     const itemMock = { id: 123, firstName: 'John', lastName: 'Doe' };
-    const postViewMock = (item) => `<span>Post ${item.id}</span>`;
+    const postViewMock = (item: any) => `<span>Post ${item.id}</span>`;
     vi.spyOn(gridStub, 'getOptions').mockReturnValue({ ...gridOptionsMock, rowDetailView: { postTemplate: postViewMock } as any });
 
     plugin.init(gridStub);
@@ -405,7 +405,7 @@ describe('SlickRowDetailView plugin', () => {
     const updateItemSpy = vi.spyOn(dataviewStub, 'updateItem');
     const asyncEndUpdateSpy = vi.spyOn(plugin.onAsyncEndUpdate, 'notify');
     const itemMock = { id: 123, firstName: 'John', lastName: 'Doe' };
-    const postViewMock = (item) => createDomElement('span', { textContent: `Post ${item.id}` });
+    const postViewMock = (item: any) => createDomElement('span', { textContent: `Post ${item.id}` });
     vi.spyOn(gridStub, 'getOptions').mockReturnValue({ ...gridOptionsMock, rowDetailView: { postTemplate: postViewMock } as any });
 
     plugin.init(gridStub);

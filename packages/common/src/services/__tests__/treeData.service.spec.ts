@@ -68,10 +68,10 @@ const gridStub = {
   setSortColumns: vi.fn(),
 } as unknown as SlickGrid;
 
-const fnCallbacks = {};
+const fnCallbacks: any = {};
 const mockPubSub = {
   publish: vi.fn(),
-  subscribe: (eventName, fn) => (fnCallbacks[eventName as string] = fn),
+  subscribe: (eventName: string, fn: Function) => (fnCallbacks[eventName] = fn),
   unsubscribe: vi.fn(),
   unsubscribeAll: vi.fn(),
 } as BasePubSubService;
@@ -126,7 +126,7 @@ describe('TreeData Service', () => {
       try {
         gridOptionsMock.multiColumnSort = true;
         service.init(gridStub);
-      } catch (e) {
+      } catch (e: any) {
         expect(e.toString()).toContain('[Slickgrid-Universal] It looks like you are trying to use Tree Data with multi-column sorting');
         done();
       }
@@ -137,7 +137,7 @@ describe('TreeData Service', () => {
       try {
         gridOptionsMock.enableFiltering = false;
         service.init(gridStub);
-      } catch (e) {
+      } catch (e: any) {
         expect(e.toString()).toContain('[Slickgrid-Universal] It looks like you are trying to use Tree Data without using the filtering option');
         done();
       }
@@ -148,7 +148,7 @@ describe('TreeData Service', () => {
       try {
         gridOptionsMock.enablePagination = true;
         service.init(gridStub);
-      } catch (e) {
+      } catch (e: any) {
         expect(e.toString()).toContain(
           '[Slickgrid-Universal] It looks like you are trying to use Tree Data with Pagination and/or a Backend Service (OData, GraphQL) but unfortunately that is simply not supported because of its complexity.'
         );
@@ -165,7 +165,7 @@ describe('TreeData Service', () => {
           process: () => new Promise((resolve) => resolve(vi.fn())),
         };
         service.init(gridStub);
-      } catch (e) {
+      } catch (e: any) {
         expect(e.toString()).toContain(
           '[Slickgrid-Universal] It looks like you are trying to use Tree Data with Pagination and/or a Backend Service (OData, GraphQL) but unfortunately that is simply not supported because of its complexity.'
         );
@@ -178,7 +178,7 @@ describe('TreeData Service', () => {
       try {
         gridOptionsMock.treeDataOptions = {} as any;
         service.init(gridStub);
-      } catch (e) {
+      } catch (e: any) {
         expect(e.toString()).toContain(
           '[Slickgrid-Universal] When enabling tree data, you must also provide the "treeDataOption" property in your Grid Options with "childrenPropName" or "parentPropName"'
         );
@@ -210,9 +210,9 @@ describe('TreeData Service', () => {
   });
 
   describe('handleOnCellClick method', () => {
-    let div;
-    let mockColumn;
-    let mockRowData;
+    let div: HTMLDivElement;
+    let mockColumn: Column;
+    let mockRowData: any;
 
     beforeEach(() => {
       div = document.createElement('div');
@@ -901,7 +901,7 @@ describe('TreeData Service', () => {
 
   describe('convertFlatParentChildToTreeDatasetAndSort method', () => {
     let mockColumns: Column[];
-    let mockFlatDataset;
+    let mockFlatDataset: any[];
 
     beforeEach(() => {
       mockColumns = [

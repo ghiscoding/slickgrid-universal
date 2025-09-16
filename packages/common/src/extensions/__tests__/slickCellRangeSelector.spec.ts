@@ -9,7 +9,7 @@ vi.useFakeTimers();
 
 const GRID_UID = 'slickgrid_12345';
 
-const addVanillaEventPropagation = function (event) {
+const addVanillaEventPropagation = function <T = any>(event: T) {
   Object.defineProperty(event, 'isPropagationStopped', { writable: true, configurable: true, value: vi.fn() });
   Object.defineProperty(event, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: vi.fn() });
   return event;
@@ -209,9 +209,9 @@ describe('CellRangeSelector Plugin', () => {
     const dragEventStart = addVanillaEventPropagation(new Event('dragStart'));
     gridStub.onDragStart.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventStart, gridStub);
 
-    const dragEvent = addVanillaEventPropagation(new Event('drag'));
-    dragEvent.pageX = 0;
-    dragEvent.pageY = 0;
+    const dragEvent = addVanillaEventPropagation(new DragEvent('drag'));
+    Object.defineProperty(dragEvent, 'pageX', { writable: true, configurable: true, value: 0 });
+    Object.defineProperty(dragEvent, 'pageY', { writable: true, configurable: true, value: 0 });
     gridStub.onDrag.notify(
       { startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any,
       dragEvent,
@@ -256,9 +256,9 @@ describe('CellRangeSelector Plugin', () => {
     const dragEventStart = addVanillaEventPropagation(new Event('dragStart'));
     gridStub.onDragStart.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventStart, gridStub);
 
-    const dragEvent = addVanillaEventPropagation(new Event('drag'));
-    dragEvent.pageX = -2;
-    dragEvent.pageY = -156;
+    const dragEvent = addVanillaEventPropagation(new DragEvent('drag'));
+    Object.defineProperty(dragEvent, 'pageX', { writable: true, configurable: true, value: 0 });
+    Object.defineProperty(dragEvent, 'pageY', { writable: true, configurable: true, value: 0 });
     gridStub.onDrag.notify(
       { startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any,
       dragEvent,
@@ -810,9 +810,9 @@ describe('CellRangeSelector Plugin', () => {
     const dragEventStart = addVanillaEventPropagation(new Event('dragStart'));
     gridStub.onDragStart.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventStart, gridStub);
 
-    const dragEvent = addVanillaEventPropagation(new Event('drag'));
-    dragEvent.pageX = 0;
-    dragEvent.pageY = 0;
+    const dragEvent = addVanillaEventPropagation(new DragEvent('drag'));
+    Object.defineProperty(dragEvent, 'pageX', { writable: true, configurable: true, value: 0 });
+    Object.defineProperty(dragEvent, 'pageY', { writable: true, configurable: true, value: 0 });
     gridStub.onDrag.notify(
       { startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any,
       dragEvent,
@@ -863,9 +863,9 @@ describe('CellRangeSelector Plugin', () => {
     const dragEventStart = addVanillaEventPropagation(new Event('dragStart'));
     gridStub.onDragStart.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventStart, gridStub);
 
-    const dragEvent = addVanillaEventPropagation(new Event('drag'));
-    dragEvent.pageX = 0;
-    dragEvent.pageY = 0;
+    const dragEvent = addVanillaEventPropagation(new DragEvent('drag'));
+    Object.defineProperty(dragEvent, 'pageX', { writable: true, configurable: true, value: 0 });
+    Object.defineProperty(dragEvent, 'pageY', { writable: true, configurable: true, value: 0 });
     gridStub.onDrag.notify(
       { startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any,
       dragEvent,

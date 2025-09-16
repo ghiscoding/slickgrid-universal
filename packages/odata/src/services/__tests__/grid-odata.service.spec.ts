@@ -131,7 +131,7 @@ describe('GridOdataService', () => {
 
     it('should return a simple query with pagination $top and $skip when using "updatePagination" method', () => {
       const expectation = `$top=20&$skip=40`;
-      const columns = [];
+      const columns: Column[] = [];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
       service.init(null as any, paginationOptions, gridStub);
@@ -224,7 +224,7 @@ describe('GridOdataService', () => {
 
       it('should not do anything when calling "updatePagination" method with "enablePagination" set to False', () => {
         const expectation = '';
-        const columns = [];
+        const columns: Column[] = [];
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
 
         service.init(null as any, paginationOptions, gridStub);
@@ -2152,8 +2152,8 @@ describe('GridOdataService', () => {
 
       expect(spy).toHaveBeenCalled();
       expect(processResult.d.results[0].nav).toBeUndefined();
-      expect(processResult.d.results[0]['nav/fld1']).toBe('val1');
-      expect(processResult.d.results[0]['nav/fld2']).toBe('val2');
+      expect((processResult.d.results[0] as any)['nav/fld1']).toBe('val1');
+      expect((processResult.d.results[0] as any)['nav/fld2']).toBe('val2');
     });
 
     it('should not flatten navigation fields when "enableExpand" is not set', () => {
@@ -2170,8 +2170,8 @@ describe('GridOdataService', () => {
 
       expect(spy).toHaveBeenCalled();
       expect(processResult.d.results[0].nav).toBeDefined();
-      expect(processResult.d.results[0]['nav/fld1']).toBeUndefined();
-      expect(processResult.d.results[0]['nav/fld2']).toBeUndefined();
+      expect((processResult.d.results[0] as any)['nav/fld1']).toBeUndefined();
+      expect((processResult.d.results[0] as any)['nav/fld2']).toBeUndefined();
     });
 
     it('should flatten navigation fields when oData version is v2', () => {
@@ -2189,8 +2189,8 @@ describe('GridOdataService', () => {
 
       expect(spy).toHaveBeenCalled();
       expect(processResult.d.results[0].nav).toBeUndefined();
-      expect(processResult.d.results[0]['nav/fld1']).toBe('val1');
-      expect(processResult.d.results[0]['nav/fld2']).toBe('val2');
+      expect((processResult.d.results[0] as any)['nav/fld1']).toBe('val1');
+      expect((processResult.d.results[0] as any)['nav/fld2']).toBe('val2');
     });
 
     it('should flatten navigation fields when oData version is v3', () => {
@@ -2208,8 +2208,8 @@ describe('GridOdataService', () => {
 
       expect(spy).toHaveBeenCalled();
       expect(processResult.results[0].nav).toBeUndefined();
-      expect(processResult.results[0]['nav/fld1']).toBe('val1');
-      expect(processResult.results[0]['nav/fld2']).toBe('val2');
+      expect((processResult.results[0] as any)['nav/fld1']).toBe('val1');
+      expect((processResult.results[0] as any)['nav/fld2']).toBe('val2');
     });
 
     it('should flatten navigation fields when oData version is v4', () => {
@@ -2227,8 +2227,8 @@ describe('GridOdataService', () => {
 
       expect(spy).toHaveBeenCalled();
       expect(processResult.value[0].nav).toBeUndefined();
-      expect(processResult.value[0]['nav/fld1']).toBe('val1');
-      expect(processResult.value[0]['nav/fld2']).toBe('val2');
+      expect((processResult.value[0] as any)['nav/fld1']).toBe('val1');
+      expect((processResult.value[0] as any)['nav/fld2']).toBe('val2');
     });
 
     it('should flatten navigation fields within navigations', () => {
@@ -2243,7 +2243,7 @@ describe('GridOdataService', () => {
 
       expect(spy).toHaveBeenCalled();
       expect(processResult.value[0].nav).toBeUndefined();
-      expect(processResult.value[0]['nav/subnav/fld1']).toBe('val1');
+      expect((processResult.value[0] as any)['nav/subnav/fld1']).toBe('val1');
     });
 
     it('should not flatten non navigation fields', () => {
