@@ -50,10 +50,14 @@ const mockCellSelectionModel = {
 } as unknown as SlickCellSelectionModel;
 
 vi.mock('../slickCellSelectionModel', () => ({
-  SlickCellSelectionModel: vi.fn().mockImplementation(() => mockCellSelectionModel),
+  SlickCellSelectionModel: vi.fn().mockImplementation(function () {
+    return mockCellSelectionModel;
+  }),
 }));
 vi.mock('../slickCellExternalCopyManager', () => ({
-  SlickCellExternalCopyManager: vi.fn().mockImplementation(() => mockCellExternalCopyManager),
+  SlickCellExternalCopyManager: vi.fn().mockImplementation(function () {
+    return mockCellExternalCopyManager;
+  }),
 }));
 
 describe('CellExcelCopyManager', () => {

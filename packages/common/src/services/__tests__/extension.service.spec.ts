@@ -49,7 +49,9 @@ const mockRowSelectionModel = {
   onSelectedRangesChanged: new SlickEvent(),
 } as unknown as SlickRowSelectionModel;
 vi.mock('../../extensions/slickRowSelectionModel', () => ({
-  SlickRowSelectionModel: vi.fn().mockImplementation(() => mockRowSelectionModel),
+  SlickRowSelectionModel: vi.fn().mockImplementation(function () {
+    return mockRowSelectionModel;
+  }),
 }));
 
 const mockCheckboxSelectColumn = {
@@ -60,7 +62,9 @@ const mockCheckboxSelectColumn = {
   dispose: vi.fn(),
 } as unknown as SlickCheckboxSelectColumn;
 vi.mock('../../extensions/slickCheckboxSelectColumn', () => ({
-  SlickCheckboxSelectColumn: vi.fn().mockImplementation(() => mockCheckboxSelectColumn),
+  SlickCheckboxSelectColumn: vi.fn().mockImplementation(function () {
+    return mockCheckboxSelectColumn;
+  }),
 }));
 
 const mockRowMoveManager = {
@@ -71,24 +75,10 @@ const mockRowMoveManager = {
   dispose: vi.fn(),
 } as unknown as SlickRowMoveManager;
 vi.mock('../../extensions/slickRowMoveManager', () => ({
-  SlickRowMoveManager: vi.fn().mockImplementation(() => mockRowMoveManager),
+  SlickRowMoveManager: vi.fn().mockImplementation(function () {
+    return mockRowMoveManager;
+  }),
 }));
-
-// (SlickCheckboxSelectColumn as Mock).mockImplementation(() => ({
-//   constructor: vi.fn(),
-//   init: vi.fn(),
-//   create: vi.fn(),
-//   destroy: vi.fn(),
-//   dispose: vi.fn(),
-// }));
-
-// (SlickRowMoveManager as Mock).mockImplementation(() => ({
-//   constructor: vi.fn(),
-//   init: vi.fn(),
-//   create: vi.fn(),
-//   destroy: vi.fn(),
-//   dispose: vi.fn(),
-// }));
 
 const pubSubServiceStub = {
   publish: vi.fn(),
@@ -284,7 +274,7 @@ describe('ExtensionService', () => {
     });
 
     describe('bindDifferentExtensions method', () => {
-      const instanceMock = { onColumnsChanged: vi.fn() };
+      const instanceMock: any = { onColumnsChanged: vi.fn() };
 
       beforeEach(() => {
         vi.clearAllMocks();
@@ -360,7 +350,9 @@ describe('ExtensionService', () => {
         } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-        vi.spyOn(SlickRowBasedEdit.prototype, 'init').mockImplementation(() => null);
+        vi.spyOn(SlickRowBasedEdit.prototype, 'init').mockImplementation(function () {
+          return null;
+        });
 
         service = new ExtensionService(
           extensionUtility,
@@ -930,7 +922,7 @@ describe('ExtensionService', () => {
           { id: 'field1', field: 'field1', nameKey: 'HELLO' },
           { id: 'field2', field: 'field2', nameKey: 'WORLD' },
         ] as Column[];
-        const instanceMock = { translateColumnPicker: vi.fn() };
+        const instanceMock: any = { translateColumnPicker: vi.fn() };
         const gridOptionsMock = { enableColumnPicker: true } as GridOption;
         vi.spyOn(extensionColumnPickerStub, 'register').mockReturnValueOnce(instanceMock);
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
@@ -949,7 +941,7 @@ describe('ExtensionService', () => {
           { id: 'field1', field: 'field1', nameKey: 'HELLO' },
           { id: 'field2', field: 'field2', nameKey: 'WORLD' },
         ] as Column[];
-        const instanceMock = { translateGridMenu: vi.fn() };
+        const instanceMock: any = { translateGridMenu: vi.fn() };
         const gridOptionsMock = { enableGridMenu: true } as GridOption;
         vi.spyOn(extensionGridMenuStub, 'register').mockReturnValueOnce(instanceMock);
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);

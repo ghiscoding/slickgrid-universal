@@ -237,7 +237,9 @@ const mockSlickCustomTooltip = {
 } as unknown as SlickCustomTooltip;
 
 vi.mock('@slickgrid-universal/custom-tooltip-plugin', () => ({
-  SlickCustomTooltip: vi.fn().mockImplementation(() => mockSlickCustomTooltip),
+  SlickCustomTooltip: vi.fn().mockImplementation(function () {
+    return mockSlickCustomTooltip;
+  }),
 }));
 
 const mockTextExportService = {
@@ -245,7 +247,9 @@ const mockTextExportService = {
 } as unknown as TextExportService;
 
 vi.mock('@slickgrid-universal/text-export', () => ({
-  TextExportService: vi.fn().mockImplementation(() => mockTextExportService),
+  TextExportService: vi.fn().mockImplementation(function () {
+    return mockTextExportService;
+  }),
 }));
 
 const template = `<div class="demo-container"><div class="grid1"></div></div>`;
@@ -256,9 +260,15 @@ vi.mock('@slickgrid-universal/common', async (importOriginal) => {
   return {
     ...actual,
     autoAddEditorFormatterToColumnsWithEditor: vi.fn(),
-    SlickGrid: vi.fn().mockImplementation(() => mockGrid),
-    SlickEventHandler: vi.fn().mockImplementation(() => mockSlickEventHandler),
-    SlickDataView: vi.fn().mockImplementation(() => mockDataView),
+    SlickGrid: vi.fn().mockImplementation(function () {
+      return mockGrid;
+    }),
+    SlickEventHandler: vi.fn().mockImplementation(function () {
+      return mockSlickEventHandler;
+    }),
+    SlickDataView: vi.fn().mockImplementation(function () {
+      return mockDataView;
+    }),
   };
 });
 

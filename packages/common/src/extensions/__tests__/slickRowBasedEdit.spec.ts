@@ -65,12 +65,14 @@ const gridStubBlueprint = {
   }),
   getCellEditor: vi.fn().mockReturnValue({}),
   getActiveCell: vi.fn().mockReturnValue({ row: 0, cell: 0 }),
-  setColumns: vi.fn().mockImplementation((columns) => {
+  setColumns: vi.fn().mockImplementation(function (columns) {
     (gridStubBlueprint as any).columns = columns;
   }),
   invalidate: vi.fn(),
   render: vi.fn(),
-  getColumns: vi.fn().mockImplementation(() => (gridStubBlueprint as any).columns || []),
+  getColumns: vi.fn().mockImplementation(function () {
+    return (gridStubBlueprint as any).columns || [];
+  }),
 } as unknown as SlickGrid;
 
 const extensionUtilityStub = {} as ExtensionUtility;

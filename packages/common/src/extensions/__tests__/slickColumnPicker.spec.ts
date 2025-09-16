@@ -439,7 +439,7 @@ describe('ColumnPickerControl', () => {
         { ...new SlickEventData(), preventDefault: vi.fn(), target: groupElm, pageX: 305 } as any,
         gridStub
       );
-      vi.spyOn(control, 'createPickerMenu').mockImplementation(() => {
+      vi.spyOn(control, 'createPickerMenu').mockImplementation(function () {
         if (control.menuElement) {
           Object.defineProperty(control.menuElement, 'clientWidth', { writable: true, value: 122 });
           return control.menuElement;

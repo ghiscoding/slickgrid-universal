@@ -1556,10 +1556,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       Utils.height(div, test);
       const height = Utils.height(div);
 
+      /* v8 ignore else */
       if (test > testUpTo! || height !== test) {
         condition = false;
         break;
-        /* v8 ignore next 3 */
       } else {
         supportedHeight = test;
       }
@@ -2252,7 +2252,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     for (let i = 0; i < children.length; i++) {
       const colElm = children[i];
 
-      /* v8 ignore next 3 */
+      /* v8 ignore if */
       if (i >= vc.length || !vc[i]) {
         continue;
       }
@@ -2312,8 +2312,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
               c = vc[j];
               if (c?.resizable) {
                 if (stretchLeewayOnLeft !== null) {
+                  /* v8 ignore if */
                   if (c.maxWidth) {
-                    /* v8 ignore next */
                     stretchLeewayOnLeft += c.maxWidth - (c.previousWidth || 0);
                   } else {
                     stretchLeewayOnLeft = null;
@@ -2344,8 +2344,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
                 c = vc[j];
                 if (c && c.resizable && !c.hidden) {
                   actualMinWidth = Math.max(c.minWidth || 0, this.absoluteColumnMinWidth);
+                  /* v8 ignore if */
                   if (x && (c.previousWidth || 0) + x < actualMinWidth) {
-                    /* v8 ignore next 2 */
                     x += (c.previousWidth || 0) - actualMinWidth;
                     c.width = actualMinWidth;
                   } else {
@@ -2406,8 +2406,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
                 for (j = i + 1; j < vc.length; j++) {
                   c = vc[j];
                   if (c && !c.hidden && c.resizable) {
+                    /* v8 ignore if */
                     if (x && c.maxWidth && c.maxWidth - (c.previousWidth || 0) < x) {
-                      /* v8 ignore next 2 */
                       x -= c.maxWidth - (c.previousWidth || 0);
                       c.width = c.maxWidth;
                     } else {
@@ -2467,8 +2467,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
                   c = vc[j];
                   if (c && !c.hidden && c.resizable) {
                     actualMinWidth = Math.max(c.minWidth || 0, this.absoluteColumnMinWidth);
+                    /* v8 ignore if */
                     if (x && (c.previousWidth || 0) + x < actualMinWidth) {
-                      /* v8 ignore next 2 */
                       x += (c.previousWidth || 0) - actualMinWidth;
                       c.width = actualMinWidth;
                     } else {
@@ -2771,6 +2771,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     const sheet = this._style.sheet;
 
+    /* v8 ignore else */
     if (sheet) {
       rules.forEach((rule) => sheet.insertRule(rule));
 
@@ -2780,7 +2781,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           sheet.insertRule(`.${this.uid} .r${i} { }`);
         }
       }
-      /* v8 ignore next 4 */
     } else {
       // fallback in case the 1st approach doesn't work, let's use our previous way of creating the css rules which is what works in Salesforce :(
       this.createCssRulesAlternative(rules);
@@ -2788,7 +2788,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /** Create CSS rules via template in case the first approach with createElement('style') doesn't work */
-  /* v8 ignore next 21 */
+  /* v8 ignore next */
   protected createCssRulesAlternative(rules: string[]): void {
     const template = document.createElement('template');
     template.innerHTML = '<style type="text/css" rel="stylesheet" />';
@@ -2826,7 +2826,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         }
       }
 
-      /* v8 ignore next 3 */
+      /* v8 ignore if */
       if (!this.stylesheet) {
         throw new Error('SlickGrid Cannot find stylesheet.');
       }
@@ -3038,7 +3038,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           widths[i] -= shrinkSize;
         }
       }
-      /* v8 ignore next 3 - avoid infinite loop */
+      /* v8 ignore if - avoid infinite loop */
       if (prevTotal <= total) {
         break;
       }
@@ -3064,7 +3064,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           widths[i] += total <= availWidth ? growSize : 0;
         }
       }
-      /* v8 ignore next 3 - avoid infinite loop */
+      /* v8 ignore if - avoid infinite loop */
       if (prevTotal >= total) {
         break;
       }
@@ -4296,7 +4296,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       });
     }
 
-    /* v8 ignore next 3 */
+    /* v8 ignore if */
     if (!cacheEntry.rowNode) {
       cacheEntry.rowNode = [];
     }
@@ -4308,7 +4308,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     cacheEntry.rowNode?.forEach((node) => node.remove());
   }
 
-  /* v8 ignore next 10 */
+  /* v8 ignore next */
   protected queuePostProcessedCellForCleanup(cellnode: HTMLElement, columnIdx: number, rowIdx: number): void {
     this.postProcessedCleanupQueue.push({
       actionType: 'C',
@@ -4443,7 +4443,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       cellHeight = this.getRowBottom(rowSpanBottomIdx) - this.getRowTop(row);
     } else {
       const rowHeight = this.getRowHeight();
-      /* v8 ignore next 3 */
+      /* v8 ignore if */
       if (rowHeight !== cellHeight - this.cellHeightDiff) {
         cellHeight = rowHeight;
       }
@@ -4750,13 +4750,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       const oldScrollTopInRange = this.scrollTop + this.offset <= this.th - tempViewportH;
 
+      /* v8 ignore else */
       if (this.th === 0 || this.scrollTop === 0) {
         this.page = this.offset = 0;
       } else if (oldScrollTopInRange) {
         // maintain virtual position
         this.scrollTo(this.scrollTop + this.offset);
       } else {
-        /* v8 ignore next 2 - scroll to bottom */
+        // scroll to bottom
         this.scrollTo(this.th - tempViewportH + (this.scrollbarDimensions?.height || 0));
       }
 
@@ -4877,7 +4878,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const cellsToRemove: number[] = [];
     Object.keys(cacheEntry.cellNodesByColumnIdx).forEach((cellNodeIdx) => {
       // I really hate it when people mess with Array.prototype.
-      /* v8 ignore next 3 */
+      /* v8 ignore if */
       if (!cacheEntry.cellNodesByColumnIdx.hasOwnProperty(cellNodeIdx)) {
         return;
       }
@@ -4911,7 +4912,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     while (isDefined((cellToRemove = cellsToRemove.pop()))) {
       cellNode = cacheEntry.cellNodesByColumnIdx[cellToRemove];
 
-      /* v8 ignore next 2 */
+      /* v8 ignore if */
       if (this._options.enableAsyncPostRenderCleanup && this.postProcessedRows[row]?.[cellToRemove]) {
         this.queuePostProcessedCellForCleanup(cellNode, cellToRemove, row);
       } else {
@@ -4920,7 +4921,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       delete cacheEntry.cellColSpans[cellToRemove];
       delete cacheEntry.cellNodesByColumnIdx[cellToRemove];
-      /* v8 ignore next 3 */
+      /* v8 ignore if */
       if (this.postProcessedRows[row]) {
         delete this.postProcessedRows[row][cellToRemove];
       }
@@ -5019,8 +5020,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
         // no idea why node would be null here but apparently it could be..
         if (node) {
+          /* v8 ignore if */
           if (this.hasFrozenColumns() && columnIdx > this._options.frozenColumn!) {
-            /* v8 ignore next */
             cacheEntry.rowNode![1].appendChild(node);
           } else {
             cacheEntry.rowNode![0].appendChild(node);
@@ -5421,7 +5422,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     };
 
     const unblock = () => {
-      /* v8 ignore next 3 */
+      /* v8 ignore if */
       if (queued) {
         dequeue();
         blockAndExecute();
@@ -6600,7 +6601,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       return false;
     }
 
-    /* v8 ignore next 5 */
+    /* v8 ignore if */
     if (row < 0) {
       row = 0;
     } else if (row >= num_rows) {
@@ -6809,7 +6810,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (pos.cell >= cell) {
         // when right cell is within a rowspan, we need to use original row (posY)
         const nextRow = this.findFocusableRow(posY, prev.cell, 'up');
-        /* v8 ignore next 3 */
+        /* v8 ignore if */
         if (nextRow !== prev.row) {
           prev.row = nextRow;
         }
@@ -7119,8 +7120,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           return this.rowsCache[row].cellNodesByColumnIdx[cell] as HTMLDivElement | null;
         }
         return null;
-        /* v8 ignore next 3 */
-      } catch (e: any) {
+      } /* v8 ignore next */ catch (e: any) {
         return this.rowsCache[row].cellNodesByColumnIdx[cell] as HTMLDivElement | null;
       }
     }

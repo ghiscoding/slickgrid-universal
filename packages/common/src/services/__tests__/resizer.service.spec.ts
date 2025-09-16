@@ -129,7 +129,9 @@ describe('Resizer Service', () => {
     it('should call "bindAutoResizeDataGrid" when autoResize is enabled', () => {
       mockGridOptions.enableAutoResize = true;
       vi.spyOn(gridStub, 'getContainerNode').mockReturnValueOnce(null as any);
-      const bindAutoResizeDataGridSpy = vi.spyOn(service, 'bindAutoResizeDataGrid').mockImplementation(() => null);
+      const bindAutoResizeDataGridSpy = vi.spyOn(service, 'bindAutoResizeDataGrid').mockImplementation(function () {
+        return null;
+      });
 
       service.init(gridStub, divContainer);
 
@@ -140,7 +142,9 @@ describe('Resizer Service', () => {
     it('should not call "bindAutoResizeDataGrid" when autoResize is not enabled', () => {
       mockGridOptions.enableAutoResize = false;
       vi.spyOn(gridStub, 'getContainerNode').mockReturnValueOnce(null as any);
-      const bindAutoResizeDataGridSpy = vi.spyOn(service, 'bindAutoResizeDataGrid').mockImplementation(() => null);
+      const bindAutoResizeDataGridSpy = vi.spyOn(service, 'bindAutoResizeDataGrid').mockImplementation(function () {
+        return null;
+      });
 
       service.init(gridStub, divContainer);
 

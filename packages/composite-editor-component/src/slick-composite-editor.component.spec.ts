@@ -1818,7 +1818,7 @@ describe('CompositeEditorService', () => {
       });
 
       it('should expect that any error that are not defined as the built-in errors to still be caught then sent to the "onError"', () => {
-        (gridStub.getColumns as Mock).mockImplementation(() => {
+        (gridStub.getColumns as Mock).mockImplementation(function () {
           throw new Error('some error');
         });
         const mockOnError = vi.fn();
