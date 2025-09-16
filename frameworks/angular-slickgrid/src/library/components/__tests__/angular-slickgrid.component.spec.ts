@@ -81,7 +81,9 @@ const mockSlickRowDetailView = {
 } as unknown as SlickRowDetailView;
 
 vi.mock('../../extensions/slickRowDetailView', () => ({
-  SlickRowDetailView: vi.fn().mockImplementation(() => mockSlickRowDetailView),
+  SlickRowDetailView: vi.fn().mockImplementation(function () {
+    return mockSlickRowDetailView;
+  }),
 }));
 
 const angularUtilServiceStub = {
@@ -300,9 +302,15 @@ const slickEventHandler = new MockSlickEventHandler() as unknown as SlickEventHa
 vi.mock('@slickgrid-universal/common', async () => ({
   ...((await vi.importActual('@slickgrid-universal/common')) as any),
   autoAddEditorFormatterToColumnsWithEditor: vi.fn(),
-  SlickGrid: vi.fn().mockImplementation(() => mockGrid),
-  SlickEventHandler: vi.fn().mockImplementation(() => mockSlickEventHandler),
-  SlickDataView: vi.fn().mockImplementation(() => mockDataView),
+  SlickGrid: vi.fn().mockImplementation(function () {
+    return mockGrid;
+  }),
+  SlickEventHandler: vi.fn().mockImplementation(function () {
+    return mockSlickEventHandler;
+  }),
+  SlickDataView: vi.fn().mockImplementation(function () {
+    return mockDataView;
+  }),
 }));
 
 @Component({ template: `<h1>Some Title</h1>` })

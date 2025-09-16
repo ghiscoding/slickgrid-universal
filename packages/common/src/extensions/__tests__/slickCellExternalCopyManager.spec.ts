@@ -82,7 +82,9 @@ const mockTextEditor = {
   validate: vi.fn().mockReturnValue({ valid: true, msg: null }),
 } as unknown as InputEditor;
 
-const mockTextEditorImplementation = vi.fn().mockImplementation(() => mockTextEditor);
+const mockTextEditorImplementation = vi.fn().mockImplementation(function () {
+  return mockTextEditor;
+});
 
 const Editors = {
   text: mockTextEditorImplementation,
