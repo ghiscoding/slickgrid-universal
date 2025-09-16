@@ -28,7 +28,7 @@ describe('InputFilter', () => {
   let divContainer: HTMLDivElement;
   let filter: InputFilter;
   let filterArguments: FilterArguments;
-  let spyGetHeaderRow;
+  let spyGetHeaderRow: any;
   let mockColumn: Column;
 
   beforeEach(() => {
@@ -151,22 +151,22 @@ describe('InputFilter', () => {
     it('should be able to call "setValues" and set empty values and the input to not have the "filled" css class', () => {
       filter.init(filterArguments);
       filter.setValues('9');
-      let filledInputElm = divContainer.querySelector('.search-filter.filter-duration.filled') as HTMLInputElement;
+      let filledInputElm = divContainer.querySelector('.search-filter.filter-duration') as HTMLInputElement;
 
-      expect(filledInputElm).toBeTruthy();
+      expect(filledInputElm.classList.contains('filled')).toBeTruthy();
 
       filter.setValues('');
-      filledInputElm = divContainer.querySelector('.search-filter.filter-duration.filled') as HTMLInputElement;
-      expect(filledInputElm).toBeFalsy();
+      filledInputElm = divContainer.querySelector('.search-filter.filter-duration') as HTMLInputElement;
+      expect(filledInputElm.classList.contains('filled')).toBeFalsy();
     });
 
     it('should be able to call "setValues" and call an event trigger', () => {
       const spyCallback = vi.spyOn(filterArguments, 'callback');
       filter.init(filterArguments);
       filter.setValues('9', '>', true);
-      const filledInputElm = divContainer.querySelector('.search-filter.filter-duration.filled') as HTMLInputElement;
+      const filledInputElm = divContainer.querySelector('.search-filter.filter-duration') as HTMLInputElement;
 
-      expect(filledInputElm).toBeTruthy();
+      expect(filledInputElm.classList.contains('filled')).toBeTruthy();
       expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: '', searchTerms: ['>9'], shouldTriggerQuery: true });
     });
 

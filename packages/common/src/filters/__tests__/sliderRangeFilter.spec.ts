@@ -32,7 +32,7 @@ describe('SliderRangeFilter', () => {
   let divContainer: HTMLDivElement;
   let filter: SliderRangeFilter;
   let filterArguments: FilterArguments;
-  let spyGetHeaderRow;
+  let spyGetHeaderRow: any;
   let mockColumn: Column;
 
   beforeEach(() => {
@@ -294,13 +294,13 @@ describe('SliderRangeFilter', () => {
   it('should be able to call "setValues" and set empty values and the input to not have the "filled" css class', () => {
     filter.init(filterArguments);
     filter.setValues([3, 80]);
-    let filledInputElm = divContainer.querySelector('.search-filter.slider-container.filter-duration.filled') as HTMLInputElement;
+    let filledInputElm = divContainer.querySelector('.search-filter.slider-container.filter-duration') as HTMLInputElement;
 
-    expect(filledInputElm).toBeTruthy();
+    expect(filledInputElm.classList.contains('filled')).toBeTruthy();
 
     filter.setValues('');
-    filledInputElm = divContainer.querySelector('.search-filter.slider-container.filter-duration.filled') as HTMLInputElement;
-    expect(filledInputElm).toBeFalsy();
+    filledInputElm = divContainer.querySelector('.search-filter.slider-container.filter-duration') as HTMLInputElement;
+    expect(filledInputElm.classList.contains('filled')).toBeFalsy();
   });
 
   it('should create the input filter with default search terms range when passed as a filter argument', () => {
