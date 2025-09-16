@@ -117,9 +117,6 @@ catalogs:
     typescript-eslint:
       specifier: ^8.44.0
       version: 8.44.0
-    vite:
-      specifier: ^7.1.5
-      version: 7.1.5
     vite-tsconfig-paths:
       specifier: ^5.1.4
       version: 5.1.4
@@ -132,6 +129,7 @@ catalogs:
 
 overrides:
   tmp: ^0.2.5
+  vite: ^7.1.5
 
 importers:
 
@@ -349,7 +347,7 @@ importers:
         specifier: 'catalog:'
         version: 5.8.3
       vite:
-        specifier: 'catalog:'
+        specifier: ^7.1.5
         version: 7.1.5(@types/node@22.18.4)(jiti@2.5.1)(less@4.4.1)(sass-embedded@1.92.1)(sass@1.92.1)(terser@5.43.1)(yaml@2.8.1)
       vite-plugin-sass-dts:
         specifier: ^1.3.31
@@ -479,7 +477,7 @@ importers:
         specifier: 'catalog:'
         version: 5.8.3
       vite:
-        specifier: 'catalog:'
+        specifier: ^7.1.5
         version: 7.1.5(@types/node@22.18.4)(jiti@2.5.1)(less@4.4.1)(sass-embedded@1.92.1)(sass@1.92.1)(terser@5.43.1)(yaml@2.8.1)
       vite-tsconfig-paths:
         specifier: 'catalog:'
@@ -561,7 +559,7 @@ importers:
         specifier: 'catalog:'
         version: 5.8.3
       vite:
-        specifier: 'catalog:'
+        specifier: ^7.1.5
         version: 7.1.5(@types/node@22.18.4)(jiti@2.5.1)(less@4.4.1)(sass-embedded@1.92.1)(sass@1.92.1)(terser@5.43.1)(yaml@2.8.1)
 
   demos/vue:
@@ -655,7 +653,7 @@ importers:
         specifier: 'catalog:'
         version: 5.8.3
       vite:
-        specifier: 'catalog:'
+        specifier: ^7.1.5
         version: 7.1.5(@types/node@24.1.0)(jiti@2.5.1)(less@4.4.1)(sass-embedded@1.92.1)(sass@1.92.1)(terser@5.43.1)(yaml@2.8.1)
 
   frameworks/angular-slickgrid:
@@ -884,7 +882,7 @@ importers:
         specifier: 'catalog:'
         version: 8.44.0(eslint@9.35.0(jiti@2.5.1))(typescript@5.8.3)
       vite:
-        specifier: 'catalog:'
+        specifier: ^7.1.5
         version: 7.1.5(@types/node@22.18.4)(jiti@2.5.1)(less@4.4.1)(sass-embedded@1.92.1)(sass@1.92.1)(terser@5.43.1)(yaml@2.8.1)
       vite-tsconfig-paths:
         specifier: 'catalog:'
@@ -1073,7 +1071,7 @@ importers:
         specifier: 'catalog:'
         version: 5.8.3
       vite:
-        specifier: 'catalog:'
+        specifier: ^7.1.5
         version: 7.1.5(@types/node@22.18.4)(jiti@2.5.1)(less@4.4.1)(sass-embedded@1.92.1)(sass@1.92.1)(terser@5.43.1)(yaml@2.8.1)
       vite-tsconfig-paths:
         specifier: 'catalog:'
@@ -1131,7 +1129,7 @@ importers:
         specifier: 'catalog:'
         version: 5.8.3
       vite:
-        specifier: 'catalog:'
+        specifier: ^7.1.5
         version: 7.1.5(@types/node@24.1.0)(jiti@2.5.1)(less@4.4.1)(sass-embedded@1.92.1)(sass@1.92.1)(terser@5.43.1)(yaml@2.8.1)
       vite-plugin-dts:
         specifier: ^4.5.4
@@ -1434,7 +1432,7 @@ importers:
         specifier: ^0.2.15
         version: 0.2.15
       vite:
-        specifier: 'catalog:'
+        specifier: ^7.1.5
         version: 7.1.5(@types/node@24.1.0)(jiti@2.5.1)(less@4.4.1)(sass-embedded@1.92.1)(sass@1.92.1)(terser@5.43.1)(yaml@2.8.1)
 
 packages:
@@ -1461,7 +1459,7 @@ packages:
       marked-shiki: ^1.1.0
       prismjs: '*'
       shiki: ^1.6.1
-      vite: ^5.0.0 || ^6.0.0 || ^7.0.0
+      vite: ^7.1.5
     peerDependenciesMeta:
       '@nx/angular':
         optional: true
@@ -4046,7 +4044,7 @@ packages:
   '@nx/vite@21.5.2':
     resolution: {integrity: sha512-YQJDqr5DoA1iOL6B+1rg2SxQN03bD4sRisDQCU6l9zGkwVQv08fKeka8gkJGtJWWk4QX02HHObQvlQYelfZ+vw==}
     peerDependencies:
-      vite: ^5.0.0 || ^6.0.0 || ^7.0.0
+      vite: ^7.1.5
       vitest: ^1.3.1 || ^2.0.0 || ^3.0.0
 
   '@nx/web@21.5.2':
@@ -5148,19 +5146,19 @@ packages:
     resolution: {integrity: sha512-mkQnxTkcldAzIsomk1UuLfAu9n+kpQ3JbHcpCp7d2Oo6ITtji8pHS3QToOWjhPFvNQSnhlkAjmGbhv2QvwO/7Q==}
     engines: {node: '>=14.21.3'}
     peerDependencies:
-      vite: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0
+      vite: ^7.1.5
 
   '@vitejs/plugin-react@5.0.2':
     resolution: {integrity: sha512-tmyFgixPZCx2+e6VO9TNITWcCQl8+Nl/E8YbAyPVv85QCc7/A3JrdfG2A8gIzvVhWuzMOVrFW1aReaNxrI6tbw==}
     engines: {node: ^20.19.0 || >=22.12.0}
     peerDependencies:
-      vite: ^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0
+      vite: ^7.1.5
 
   '@vitejs/plugin-vue@6.0.1':
     resolution: {integrity: sha512-+MaE752hU0wfPFJEUAIxqw18+20euHHdxVtMvbFcOEpjEyfqXH/5DCoTHiVJ0J29EhTJdoTkjEv5YBKU9dnoTw==}
     engines: {node: ^20.19.0 || >=22.12.0}
     peerDependencies:
-      vite: ^5.0.0 || ^6.0.0 || ^7.0.0
+      vite: ^7.1.5
       vue: ^3.2.25
 
   '@vitest/coverage-v8@3.2.4':
@@ -5191,7 +5189,7 @@ packages:
     resolution: {integrity: sha512-46ryTE9RZO/rfDd7pEqFl7etuyzekzEhUbTW3BvmeO/BcCMEgq59BKhek3dXDWgAj4oMK6OZi+vRr1wPW6qjEQ==}
     peerDependencies:
       msw: ^2.4.9
-      vite: ^5.0.0 || ^6.0.0 || ^7.0.0-0
+      vite: ^7.1.5
     peerDependenciesMeta:
       msw:
         optional: true
@@ -11434,7 +11432,7 @@ packages:
     resolution: {integrity: sha512-d4sOM8M/8z7vRXHHq/ebbblfaxENjogAAekcfcDCCwAyvGqnPrc7f4NZbvItS+g4WTgerW0xDwSz5qz11JT3vg==}
     peerDependencies:
       typescript: '*'
-      vite: '*'
+      vite: ^7.1.5
     peerDependenciesMeta:
       vite:
         optional: true
@@ -11446,54 +11444,14 @@ packages:
       postcss: ^8
       prettier: ^2.7 || ^3
       sass-embedded: ^1.78.0
-      vite: '>=3'
+      vite: ^7.1.5
 
   vite-tsconfig-paths@5.1.4:
     resolution: {integrity: sha512-cYj0LRuLV2c2sMqhqhGpaO3LretdtMn/BVX4cPLanIZuwwrkVl+lK84E/miEXkCHWXuq65rhNN4rXsBcOB3S4w==}
     peerDependencies:
-      vite: '*'
+      vite: ^7.1.5
     peerDependenciesMeta:
       vite:
-        optional: true
-
-  vite@6.2.7:
-    resolution: {integrity: sha512-qg3LkeuinTrZoJHHF94coSaTfIPyBYoywp+ys4qu20oSJFbKMYoIJo0FWJT9q6Vp49l6z9IsJRbHdcGtiKbGoQ==}
-    engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
-    hasBin: true
-    peerDependencies:
-      '@types/node': ^18.0.0 || ^20.0.0 || >=22.0.0
-      jiti: '>=1.21.0'
-      less: '*'
-      lightningcss: ^1.21.0
-      sass: '*'
-      sass-embedded: '*'
-      stylus: '*'
-      sugarss: '*'
-      terser: ^5.16.0
-      tsx: ^4.8.1
-      yaml: ^2.4.2
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      jiti:
-        optional: true
-      less:
-        optional: true
-      lightningcss:
-        optional: true
-      sass:
-        optional: true
-      sass-embedded:
-        optional: true
-      stylus:
-        optional: true
-      sugarss:
-        optional: true
-      terser:
-        optional: true
-      tsx:
-        optional: true
-      yaml:
         optional: true
 
   vite@7.1.5:
@@ -11539,7 +11497,7 @@ packages:
   vitefu@1.1.1:
     resolution: {integrity: sha512-B/Fegf3i8zh0yFbpzZ21amWzHmuNlLlmJT6n7bu5e+pCHUKQIfXSYokrqOBGEMMe9UG2sostKQF9mml/vYaWJQ==}
     peerDependencies:
-      vite: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0-beta.0
+      vite: ^7.1.5
     peerDependenciesMeta:
       vite:
         optional: true
@@ -12273,7 +12231,7 @@ snapshots:
       '@babel/helper-split-export-declaration': 7.24.7
       '@babel/plugin-syntax-import-attributes': 7.26.0(@babel/core@7.26.10)
       '@inquirer/confirm': 5.1.6(@types/node@22.18.4)
-      '@vitejs/plugin-basic-ssl': 1.2.0(vite@6.2.7(@types/node@22.18.4)(jiti@2.5.1)(less@4.2.2)(sass-embedded@1.92.1)(sass@1.85.0)(terser@5.39.0)(yaml@2.8.1))
+      '@vitejs/plugin-basic-ssl': 1.2.0(vite@7.1.5(@types/node@22.18.4)(jiti@2.5.1)(less@4.4.1)(sass-embedded@1.92.1)(sass@1.92.1)(terser@5.43.1)(yaml@2.8.1))
       beasties: 0.3.2
       browserslist: 4.25.4
       esbuild: 0.25.4
@@ -12291,7 +12249,7 @@ snapshots:
       semver: 7.7.1
       source-map-support: 0.5.21
       typescript: 5.8.3
-      vite: 6.2.7(@types/node@22.18.4)(jiti@2.5.1)(less@4.2.2)(sass-embedded@1.92.1)(sass@1.85.0)(terser@5.39.0)(yaml@2.8.1)
+      vite: 7.1.5(@types/node@22.18.4)(jiti@2.5.1)(less@4.2.2)(sass-embedded@1.92.1)(sass@1.85.0)(terser@5.39.0)(yaml@2.8.1)
       watchpack: 2.4.2
     optionalDependencies:
       less: 4.2.2
@@ -12322,7 +12280,7 @@ snapshots:
       '@babel/helper-split-export-declaration': 7.24.7
       '@babel/plugin-syntax-import-attributes': 7.26.0(@babel/core@7.26.10)
       '@inquirer/confirm': 5.1.6(@types/node@22.18.4)
-      '@vitejs/plugin-basic-ssl': 1.2.0(vite@6.2.7(@types/node@22.18.4)(jiti@2.5.1)(less@4.4.1)(sass-embedded@1.92.1)(sass@1.85.0)(terser@5.43.1)(yaml@2.8.1))
+      '@vitejs/plugin-basic-ssl': 1.2.0(vite@7.1.5(@types/node@22.18.4)(jiti@2.5.1)(less@4.4.1)(sass-embedded@1.92.1)(sass@1.92.1)(terser@5.43.1)(yaml@2.8.1))
       beasties: 0.3.2
       browserslist: 4.25.4
       esbuild: 0.25.4
@@ -12340,7 +12298,7 @@ snapshots:
       semver: 7.7.1
       source-map-support: 0.5.21
       typescript: 5.8.3
-      vite: 6.2.7(@types/node@22.18.4)(jiti@2.5.1)(less@4.4.1)(sass-embedded@1.92.1)(sass@1.85.0)(terser@5.43.1)(yaml@2.8.1)
+      vite: 7.1.5(@types/node@22.18.4)(jiti@2.5.1)(less@4.4.1)(sass-embedded@1.92.1)(sass@1.85.0)(terser@5.43.1)(yaml@2.8.1)
       watchpack: 2.4.2
     optionalDependencies:
       less: 4.4.1
@@ -16920,14 +16878,6 @@ snapshots:
       - encoding
       - rollup
       - supports-color
-
-  '@vitejs/plugin-basic-ssl@1.2.0(vite@6.2.7(@types/node@22.18.4)(jiti@2.5.1)(less@4.2.2)(sass-embedded@1.92.1)(sass@1.85.0)(terser@5.39.0)(yaml@2.8.1))':
-    dependencies:
-      vite: 6.2.7(@types/node@22.18.4)(jiti@2.5.1)(less@4.2.2)(sass-embedded@1.92.1)(sass@1.85.0)(terser@5.39.0)(yaml@2.8.1)
-
-  '@vitejs/plugin-basic-ssl@1.2.0(vite@6.2.7(@types/node@22.18.4)(jiti@2.5.1)(less@4.4.1)(sass-embedded@1.92.1)(sass@1.85.0)(terser@5.43.1)(yaml@2.8.1))':
-    dependencies:
-      vite: 6.2.7(@types/node@22.18.4)(jiti@2.5.1)(less@4.4.1)(sass-embedded@1.92.1)(sass@1.85.0)(terser@5.43.1)(yaml@2.8.1)
 
   '@vitejs/plugin-basic-ssl@1.2.0(vite@7.1.5(@types/node@22.18.4)(jiti@2.5.1)(less@4.4.1)(sass-embedded@1.92.1)(sass@1.92.1)(terser@5.43.1)(yaml@2.8.1))':
     dependencies:
@@ -24177,11 +24127,14 @@ snapshots:
       - supports-color
       - typescript
 
-  vite@6.2.7(@types/node@22.18.4)(jiti@2.5.1)(less@4.2.2)(sass-embedded@1.92.1)(sass@1.85.0)(terser@5.39.0)(yaml@2.8.1):
+  vite@7.1.5(@types/node@22.18.4)(jiti@2.5.1)(less@4.2.2)(sass-embedded@1.92.1)(sass@1.85.0)(terser@5.39.0)(yaml@2.8.1):
     dependencies:
       esbuild: 0.25.9
+      fdir: 6.5.0(picomatch@4.0.3)
+      picomatch: 4.0.3
       postcss: 8.5.6
       rollup: 4.50.1
+      tinyglobby: 0.2.15
     optionalDependencies:
       '@types/node': 22.18.4
       fsevents: 2.3.3
@@ -24192,11 +24145,14 @@ snapshots:
       terser: 5.39.0
       yaml: 2.8.1
 
-  vite@6.2.7(@types/node@22.18.4)(jiti@2.5.1)(less@4.4.1)(sass-embedded@1.92.1)(sass@1.85.0)(terser@5.43.1)(yaml@2.8.1):
+  vite@7.1.5(@types/node@22.18.4)(jiti@2.5.1)(less@4.4.1)(sass-embedded@1.92.1)(sass@1.85.0)(terser@5.43.1)(yaml@2.8.1):
     dependencies:
       esbuild: 0.25.9
+      fdir: 6.5.0(picomatch@4.0.3)
+      picomatch: 4.0.3
       postcss: 8.5.6
       rollup: 4.50.1
+      tinyglobby: 0.2.15
     optionalDependencies:
       '@types/node': 22.18.4
       fsevents: 2.3.3
