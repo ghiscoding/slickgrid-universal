@@ -29,7 +29,7 @@ describe('CompoundInputNumberFilter', () => {
   let divContainer: HTMLDivElement;
   let filter: CompoundInputNumberFilter;
   let filterArguments: FilterArguments;
-  let spyGetHeaderRow;
+  let spyGetHeaderRow: any;
   let mockColumn: Column;
 
   beforeEach(() => {

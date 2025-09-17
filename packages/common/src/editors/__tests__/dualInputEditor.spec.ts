@@ -73,7 +73,7 @@ describe('DualInputEditor', () => {
       new Promise((done: any) => {
         try {
           editor = new DualInputEditor({ grid: gridStub } as any);
-        } catch (e) {
+        } catch (e: any) {
           expect(e.toString()).toContain(
             `[Slickgrid-Universal] Please make sure that your Combo Input Editor has params defined with "leftInput" and "rightInput"`
           );

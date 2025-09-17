@@ -43,7 +43,7 @@ const gridStub = {
   render: vi.fn(),
   onBeforeEditCell: new SlickEvent(),
   onCompositeEditorChange: new SlickEvent(),
-  sanitizeHtmlString: (str) => str,
+  sanitizeHtmlString: (str: string) => str,
 } as unknown as SlickGrid;
 
 describe('SelectEditor', () => {
@@ -85,7 +85,7 @@ describe('SelectEditor', () => {
         try {
           mockColumn.editor!.collection = undefined;
           editor = new SelectEditor(editorArguments, true);
-        } catch (e) {
+        } catch (e: any) {
           expect(e.toString()).toContain(
             `[Slickgrid-Universal] You need to pass a "collection" (or "collectionAsync") inside Column Definition Editor for the MultipleSelect/SingleSelect Editor to work correctly.`
           );
@@ -98,7 +98,7 @@ describe('SelectEditor', () => {
         try {
           mockColumn.editor!.collection = { hello: 'world' } as any;
           editor = new SelectEditor(editorArguments, true);
-        } catch (e) {
+        } catch (e: any) {
           expect(e.toString()).toContain(`The "collection" passed to the Select Editor is not a valid array.`);
           done();
         }
@@ -109,7 +109,7 @@ describe('SelectEditor', () => {
         try {
           mockColumn.editor!.collection = [{ hello: 'world' }];
           editor = new SelectEditor(editorArguments, true);
-        } catch (e) {
+        } catch (e: any) {
           expect(e.toString()).toContain(
             `[Slickgrid-Universal] Select Filter/Editor collection with value/label (or value/labelKey when using Locale) is required to populate the Select list`
           );
@@ -127,7 +127,7 @@ describe('SelectEditor', () => {
             { value: 'female', label: 'female' },
           ];
           editor = new SelectEditor(editorArguments, true);
-        } catch (e) {
+        } catch (e: any) {
           expect(e.toString()).toContain(
             `[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.`
           );
@@ -793,7 +793,7 @@ describe('SelectEditor', () => {
       it('should return False when field is required and field is empty', () => {
         mockColumn.editor!.required = true;
         editor = new SelectEditor(editorArguments, true);
-        const validation = editor.validate(null as any, '');
+        const validation = editor.validate(null as any, { inputValue: '' });
 
         expect(validation).toEqual({ valid: false, msg: 'Field is required' });
       });
@@ -801,7 +801,7 @@ describe('SelectEditor', () => {
       it('should return True when field is required and input is a valid input value', () => {
         mockColumn.editor!.required = true;
         editor = new SelectEditor(editorArguments, true);
-        const validation = editor.validate(null as any, 'text');
+        const validation = editor.validate(null as any, { inputValue: 'text' });
 
         expect(validation).toEqual({ valid: true, msg: null });
       });

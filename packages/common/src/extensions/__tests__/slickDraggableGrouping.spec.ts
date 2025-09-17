@@ -5,7 +5,7 @@ vi.mock('sortablejs', () => ({
     el: undefined,
     options: {} as SortableOptions,
     constructor: vi.fn(),
-    create: (el, options) => {
+    create: (el: HTMLElement, options: SortableOptions) => {
       return {
         el,
         options,
@@ -14,7 +14,7 @@ vi.mock('sortablejs', () => ({
       };
     },
     utils: {
-      clone: (el) => el.cloneNode(true),
+      clone: (el: HTMLElement) => el.cloneNode(true),
     },
   },
 }));

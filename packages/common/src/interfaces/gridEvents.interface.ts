@@ -7,7 +7,7 @@ import type {
   EditorValidationResult,
   GridOption,
 } from './index.js';
-import type { SlickGrid } from '../core/index.js';
+import type { SlickGrid, SlickRange } from '../core/index.js';
 
 export interface SlickGridArg {
   grid: SlickGrid;
@@ -194,4 +194,9 @@ export interface OnDragEventArgs extends SlickGridArg {
   rows: number[];
   startX: number;
   startY: number;
+}
+export interface OnDragReplaceCellsEventArgs extends SlickGridArg {
+  prevSelectedRange: SlickRange;
+  selectedRange: SlickRange;
+  copyToRange?: SlickRange;
 }

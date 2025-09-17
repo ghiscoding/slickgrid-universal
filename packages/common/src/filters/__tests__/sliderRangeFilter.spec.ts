@@ -32,7 +32,7 @@ describe('SliderRangeFilter', () => {
   let divContainer: HTMLDivElement;
   let filter: SliderRangeFilter;
   let filterArguments: FilterArguments;
-  let spyGetHeaderRow;
+  let spyGetHeaderRow: any;
   let mockColumn: Column;
 
   beforeEach(() => {

@@ -32,7 +32,7 @@ describe('SingleSliderFilter', () => {
   let divContainer: HTMLDivElement;
   let filter: SingleSliderFilter;
   let filterArgs: FilterArguments;
-  let spyGetHeaderRow;
+  let spyGetHeaderRow: any;
   let mockColumn: Column;
 
   beforeEach(() => {

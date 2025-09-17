@@ -26,7 +26,7 @@ describe('InputNumberFilter', () => {
   let divContainer: HTMLDivElement;
   let filter: InputNumberFilter;
   let filterArguments: FilterArguments;
-  let spyGetHeaderRow;
+  let spyGetHeaderRow: any;
   let mockColumn: Column;
 
   beforeEach(() => {

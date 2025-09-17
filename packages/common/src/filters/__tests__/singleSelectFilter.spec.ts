@@ -31,7 +31,7 @@ describe('SelectFilter', () => {
   let divContainer: HTMLDivElement;
   let filter: SingleSelectFilter;
   let filterArguments: FilterArguments;
-  let spyGetHeaderRow;
+  let spyGetHeaderRow: any;
   let mockColumn: Column;
   let collectionService: CollectionService;
 

@@ -26,7 +26,7 @@ describe('InputPasswordFilter', () => {
   let divContainer: HTMLDivElement;
   let filter: InputPasswordFilter;
   let filterArguments: FilterArguments;
-  let spyGetHeaderRow;
+  let spyGetHeaderRow: any;
   let mockColumn: Column;
 
   beforeEach(() => {

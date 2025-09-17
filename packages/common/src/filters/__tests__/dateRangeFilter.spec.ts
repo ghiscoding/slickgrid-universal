@@ -23,14 +23,14 @@ const gridStub = {
   getColumns: vi.fn(),
   getHeaderRowColumn: vi.fn(),
   render: vi.fn(),
-  sanitizeHtmlString: (str) => str,
+  sanitizeHtmlString: (str: string) => str,
 } as unknown as SlickGrid;
 
 describe('DateRangeFilter', () => {
   let divContainer: HTMLDivElement;
   let filter: DateRangeFilter;
   let filterArguments: FilterArguments;
-  let spyGetHeaderRow;
+  let spyGetHeaderRow: any;
   let mockColumn: Column;
   let translateService: TranslateServiceStub;
 

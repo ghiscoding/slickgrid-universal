@@ -29,7 +29,7 @@ describe('CompoundInputPasswordFilter', () => {
   let divContainer: HTMLDivElement;
   let filter: CompoundInputPasswordFilter;
   let filterArguments: FilterArguments;
-  let spyGetHeaderRow;
+  let spyGetHeaderRow: any;
   let mockColumn: Column;
 
   beforeEach(() => {

@@ -9,7 +9,7 @@ vi.useFakeTimers();
 
 const GRID_UID = 'slickgrid_12345';
 
-const addVanillaEventPropagation = function (event) {
+const addVanillaEventPropagation = function (event: any) {
   Object.defineProperty(event, 'isPropagationStopped', { writable: true, configurable: true, value: vi.fn() });
   Object.defineProperty(event, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: vi.fn() });
   return event;
@@ -267,12 +267,15 @@ describe('CellRangeSelector Plugin', () => {
 
     expect(focusSpy).toHaveBeenCalled();
     expect(onBeforeCellSpy).toHaveBeenCalled();
-    expect(decoratorShowSpy).toHaveBeenCalledWith({
-      fromCell: 4,
-      fromRow: 5,
-      toCell: 4,
-      toRow: 5,
-    });
+    expect(decoratorShowSpy).toHaveBeenCalledWith(
+      {
+        fromCell: 4,
+        fromRow: 5,
+        toCell: 4,
+        toRow: 5,
+      },
+      false
+    );
     expect(plugin.getCurrentRange()).toEqual({ start: { cell: 4, row: 5 }, end: {} });
   });
 
@@ -334,14 +337,19 @@ describe('CellRangeSelector Plugin', () => {
         toCell: 4,
         toRow: 5,
       },
+      allowAutoEdit: false,
+      selectionMode: 'SEL',
     });
     expect(decoratorHideSpy).toHaveBeenCalled();
-    expect(decoratorShowSpy).toHaveBeenCalledWith({
-      fromCell: 4,
-      fromRow: 5,
-      toCell: 4,
-      toRow: 5,
-    });
+    expect(decoratorShowSpy).toHaveBeenCalledWith(
+      {
+        fromCell: 4,
+        fromRow: 5,
+        toCell: 4,
+        toRow: 5,
+      },
+      false
+    );
     expect(plugin.getCurrentRange()).toEqual({ start: { cell: 4, row: 5 }, end: {} });
   });
 
@@ -394,12 +402,15 @@ describe('CellRangeSelector Plugin', () => {
     expect(onBeforeCellRangeSpy).toHaveBeenCalled();
     expect(onCellRangeSpy).not.toHaveBeenCalled();
     expect(decoratorHideSpy).not.toHaveBeenCalled();
-    expect(decoratorShowSpy).toHaveBeenCalledWith({
-      fromCell: 4,
-      fromRow: 5,
-      toCell: 4,
-      toRow: 5,
-    });
+    expect(decoratorShowSpy).toHaveBeenCalledWith(
+      {
+        fromCell: 4,
+        fromRow: 5,
+        toCell: 4,
+        toRow: 5,
+      },
+      false
+    );
     expect(plugin.getCurrentRange()).toEqual({ start: { cell: 4, row: 5 }, end: {} });
     expect(scrollSpy).toHaveBeenCalledWith(5, 4);
     expect(onCellRangeSelectingSpy).not.toHaveBeenCalled();
@@ -454,13 +465,16 @@ describe('CellRangeSelector Plugin', () => {
     expect(onBeforeCellRangeSpy).toHaveBeenCalled();
     expect(onCellRangeSpy).not.toHaveBeenCalled();
     expect(decoratorHideSpy).not.toHaveBeenCalled();
-    expect(decoratorShowSpy).toHaveBeenCalledWith({
-      fromCell: 4,
-      fromRow: 5,
-      toCell: 4,
-      toRow: 5,
-    });
-    expect(plugin.getCurrentRange()).toEqual({ start: { cell: 4, row: 5 }, end: {} });
+    expect(decoratorShowSpy).toHaveBeenCalledWith(
+      {
+        fromCell: 4,
+        fromRow: 5,
+        toCell: 4,
+        toRow: 5,
+      },
+      false
+    );
+    expect(plugin.getCurrentRange()).toEqual({ start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } });
     expect(scrollSpy).toHaveBeenCalledWith(5, 4);
     expect(onCellRangeSelectingSpy).toHaveBeenCalledWith({
       range: {
@@ -469,6 +483,8 @@ describe('CellRangeSelector Plugin', () => {
         toCell: 4,
         toRow: 5,
       },
+      allowAutoEdit: false,
+      selectionMode: '',
     });
   });
 
@@ -571,12 +587,15 @@ describe('CellRangeSelector Plugin', () => {
       toCell: 4,
       toRow: 5, // from handleDrag
     });
-    expect(decoratorShowSpy).toHaveBeenCalledWith({
-      fromCell: 4,
-      fromRow: 0,
-      toCell: 4,
-      toRow: 0, // from handleDragStart
-    });
+    expect(decoratorShowSpy).toHaveBeenCalledWith(
+      {
+        fromCell: 4,
+        fromRow: 0,
+        toCell: 4,
+        toRow: 0, // from handleDragStart
+      },
+      false
+    );
   });
 
   it('should call onDrag and handle drag outside the viewport when drag is detected as outside the viewport', () => {
@@ -594,7 +613,7 @@ describe('CellRangeSelector Plugin', () => {
     vi.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
     vi.spyOn(plugin, 'getMouseOffsetViewport').mockReturnValue({
       e: new MouseEvent('dragstart'),
-      dd: { startX: 5, startY: 15, range: { start: { row: 2, cell: 22 }, end: { row: 5, cell: 22 } } },
+      dd: { startX: 5, startY: 15, range: { start: { row: 2, cell: 22 }, end: { row: 5, cell: 22 } }, matchClassTag: '' },
       viewport: { left: 23, top: 24, right: 25, bottom: 26, offset: { left: 27, top: 28, right: 29, bottom: 30 } },
       offset: { x: 0, y: 0 },
       isOutsideViewport: true,
@@ -658,7 +677,7 @@ describe('CellRangeSelector Plugin', () => {
     vi.spyOn(gridStub, 'getCellFromPoint').mockReturnValue({ cell: 4, row: 5 });
     vi.spyOn(plugin, 'getMouseOffsetViewport').mockReturnValue({
       e: new MouseEvent('dragstart'),
-      dd: { startX: 5, startY: 15, range: { start: { row: 2, cell: 22 }, end: { row: 5, cell: 22 } } },
+      dd: { startX: 5, startY: 15, range: { start: { row: 2, cell: 22 }, end: { row: 5, cell: 22 } }, matchClassTag: '' },
       viewport: { left: 23, top: 24, right: 25, bottom: 26, offset: { left: 27, top: 28, right: 29, bottom: 30 } },
       offset: { x: 1, y: 1 },
       isOutsideViewport: true,
@@ -699,12 +718,14 @@ describe('CellRangeSelector Plugin', () => {
     vi.advanceTimersByTime(7);
 
     expect(onCellRangeSelectingSpy).toHaveBeenCalledWith({
+      allowAutoEdit: false,
       range: {
         fromCell: 4,
         fromRow: 2,
         toCell: 22,
         toRow: 5,
       },
+      selectionMode: '',
     });
   });
 
@@ -723,7 +744,7 @@ describe('CellRangeSelector Plugin', () => {
     vi.spyOn(gridStub, 'canCellBeSelected').mockReturnValueOnce(true);
     vi.spyOn(plugin, 'getMouseOffsetViewport').mockReturnValue({
       e: new MouseEvent('dragstart'),
-      dd: { startX: 5, startY: 15, range: { start: { row: 2, cell: 22 }, end: { row: 5, cell: 22 } } },
+      dd: { startX: 5, startY: 15, range: { start: { row: 2, cell: 22 }, end: { row: 5, cell: 22 } }, matchClassTag: '' },
       viewport: { left: 23, top: 24, right: 25, bottom: 26, offset: { left: 27, top: 28, right: 29, bottom: 30 } },
       offset: { x: -2, y: -4 },
       isOutsideViewport: true,
@@ -764,12 +785,14 @@ describe('CellRangeSelector Plugin', () => {
     vi.advanceTimersByTime(7);
 
     expect(onCellRangeSelectingSpy).toHaveBeenCalledWith({
+      allowAutoEdit: false,
       range: {
         fromCell: 4,
         fromRow: 2,
         toCell: 22,
         toRow: 5,
       },
+      selectionMode: '',
     });
   });
 

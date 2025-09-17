@@ -39,7 +39,7 @@ describe('CompoundSliderFilter', () => {
   let divContainer: HTMLDivElement;
   let filter: CompoundSliderFilter;
   let filterArguments: FilterArguments;
-  let spyGetHeaderRow;
+  let spyGetHeaderRow: any;
   let mockColumn: Column;
 
   beforeEach(() => {

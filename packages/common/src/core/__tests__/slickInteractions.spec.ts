@@ -111,6 +111,7 @@ describe('Draggable class', () => {
       deltaY: 0,
       dragHandle: containerElement,
       dragSource: containerElement,
+      matchClassTag: '',
       target: window,
     });
     expect(dragStartSpy).toHaveBeenCalled(); // TODO: revisit calledWith X/Y pos, after migrating to TS class
@@ -233,7 +234,7 @@ describe('MouseWheel class', () => {
 
 describe('Resizable class', () => {
   let rsz: any;
-  let containerElement;
+  let containerElement: HTMLElement;
 
   beforeEach(() => {
     containerElement = document.createElement('div');
