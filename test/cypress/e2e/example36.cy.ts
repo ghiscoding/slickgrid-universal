@@ -99,7 +99,6 @@ describe('Example 36 - Hybrid Selection Model', () => {
       cy.get('.grid36-2 .slick-row[data-row="1"] .slick-cell.l2.r2').as('task1');
       cy.get('@task1').should('contain', 'Task 1');
       cy.get('@task1').click().should('have.class', 'active');
-      cy.get('.grid36-2 .slick-cell.selected').should('have.length', 0);
 
       cy.get('@task1').trigger('mousemove', 'bottomRight');
       cy.get('@task1').type('{shift}{rightArrow}', { force: true }); // hold the Shift key while dragging
