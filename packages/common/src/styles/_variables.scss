@@ -98,6 +98,8 @@ $slick-cell-odd-active-background-color:                    color.adjust($slick-
 $slick-cell-padding-top-bottom:                             5px !default;
 $slick-cell-padding-left-right:                             6px !default;
 $slick-cell-padding:                                        $slick-cell-padding-top-bottom $slick-cell-padding-left-right !default;
+$slick-cell-selected-editable-color:                        #ffffff !default;
+$slick-cell-selected-color:                                 #dae8f1 !default;
 $slick-icon-with-text-valign:                               middle !default;
 
 /** 4x available slick-pane (top, bottom, left, right) */
@@ -107,7 +109,7 @@ $slick-pane-top-border-top:                                 none !default;
 $slick-row-mouse-hover-color:                               #eff5fc !default;
 $slick-row-mouse-hover-box-shadow:                          none !default;
 $slick-row-mouse-hover-z-index:                             5 !default;
-$slick-row-selected-color:                                  #dae8f1 !default;
+$slick-row-selected-color:                                  $slick-cell-selected-color !default;
 $slick-row-highlight-background-color:                      color.adjust($slick-row-selected-color, $lightness: -5%) !default;
 $slick-row-highlight-fade-animation:                        1s linear !default;
 $slick-row-checkbox-selector-background:                    inherit !default;
@@ -1148,6 +1150,7 @@ $slick-dark-text-color:                                   #d4d4d4 !default;
   --slick-pagination-page-input-bgcolor:                  #2b2f34;
   --slick-pagination-page-select-bg-color:                #1c1c1c;
   --slick-pagination-text-color:                          #cfcfcf;
+  --slick-cell-selected-color:                             #474747;
   --slick-row-selected-color:                             #474747;
   --slick-scrollbar-color:                                #828282 #424242;
   --slick-sorting-header-color:                           var(--slick-base-dark-text-color);

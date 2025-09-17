@@ -110,6 +110,7 @@ describe('Draggable class', () => {
       deltaY: 0,
       dragHandle: containerElement,
       dragSource: containerElement,
+      matchClassTag: '',
       target: window,
     });
     expect(dragStartSpy).toHaveBeenCalled(); // TODO: revisit calledWith X/Y pos, after migrating to TS class

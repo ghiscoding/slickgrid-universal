@@ -9,6 +9,8 @@ export interface CellSelectionModelOption {
   cellRangeSelector: SlickCellRangeSelector;
 }
 
+export type CellSelectionMode = 'SEL' | 'REP';
+
 export class SlickCellSelectionModel implements SelectionModel {
   onSelectedRangesChanged: SlickEvent<SlickRange[]>;
   pluginName: 'CellSelectionModel' = 'CellSelectionModel' as const;
