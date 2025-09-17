@@ -1,5 +1,13 @@
 import { deepMerge, emptyElement, getOffset } from '@slickgrid-universal/utils';
-import { SlickEvent, SlickEventHandler, SlickRange, Utils as SlickUtils, type SlickEventData, type SlickGrid } from '../core/index.js';
+import {
+  SlickEvent,
+  SlickEventHandler,
+  SlickRange,
+  SlickSelectionUtils,
+  Utils as SlickUtils,
+  type SlickEventData,
+  type SlickGrid,
+} from '../core/index.js';
 import type {
   CellRangeSelectorOption,
   DragPosition,
@@ -9,17 +17,18 @@ import type {
   MouseOffsetViewport,
   OnScrollEventArgs,
 } from '../interfaces/index.js';
-import { SlickCellRangeDecorator } from './index.js';
+import { SlickCellRangeDecorator, type CellSelectionMode } from './index.js';
 
 export class SlickCellRangeSelector {
   pluginName: 'CellRangeSelector' = 'CellRangeSelector' as const;
   onBeforeCellRangeSelected: SlickEvent<{ row: number; cell: number }>;
-  onCellRangeSelecting: SlickEvent<{ range: SlickRange }>;
-  onCellRangeSelected: SlickEvent<{ range: SlickRange }>;
+  onCellRangeSelecting: SlickEvent<{ range: SlickRange; selectionMode: string; allowAutoEdit: boolean }>;
+  onCellRangeSelected: SlickEvent<{ range: SlickRange; selectionMode: string; allowAutoEdit: boolean }>;
 
   protected _activeCanvas!: HTMLElement;
   protected _options!: CellRangeSelectorOption;
   protected _currentlySelectedRange: DragRange | null = null;
+  protected _previousSelectedRange: DragRange | null = null;
   protected _canvas: HTMLElement | null = null;
   protected _decorator!: SlickCellRangeDecorator;
   protected _dragging = false;
@@ -27,6 +36,9 @@ export class SlickCellRangeSelector {
   protected _grid!: SlickGrid;
   protected _gridOptions!: GridOption;
   protected _gridUid = '';
+  protected _dragReplaceHandleCell: { row: number; cell: number } | null = null;
+  protected _selectionMode: CellSelectionMode = 'SEL';
+  protected _dragReplaceHandleActive = false;
 
   // Frozen row & column variables
   protected _columnOffset = 0;
@@ -60,8 +72,10 @@ export class SlickCellRangeSelector {
 
   constructor(options?: Partial<CellRangeSelectorOption>) {
     this.onBeforeCellRangeSelected = new SlickEvent<{ row: number; cell: number }>('onBeforeCellRangeSelected');
-    this.onCellRangeSelecting = new SlickEvent<{ range: SlickRange }>('onCellRangeSelecting');
-    this.onCellRangeSelected = new SlickEvent<{ range: SlickRange }>('onCellRangeSelected');
+    this.onCellRangeSelecting = new SlickEvent<{ range: SlickRange; selectionMode: string; allowAutoEdit: boolean }>(
+      'onCellRangeSelecting'
+    );
+    this.onCellRangeSelected = new SlickEvent<{ range: SlickRange; selectionMode: string; allowAutoEdit: boolean }>('onCellRangeSelected');
     this._eventHandler = new SlickEventHandler();
     this._options = deepMerge(this._defaults, options);
   }
@@ -124,6 +138,10 @@ export class SlickCellRangeSelector {
     return this._currentlySelectedRange;
   }
 
+  getPreviousRange(): DragRange | null {
+    return this._previousSelectedRange;
+  }
+
   getMouseOffsetViewport(e: MouseEvent | TouchEvent, dd: DragPosition): MouseOffsetViewport {
     const targetEvent: MouseEvent | Touch = (e as TouchEvent)?.touches?.[0] ?? e;
     const viewportLeft = this._activeViewport.scrollLeft;
@@ -167,6 +185,14 @@ export class SlickCellRangeSelector {
     }
     result.isOutsideViewport = !!result.offset.x || !!result.offset.y;
     return result;
+  }
+
+  getSelectionMode(): string {
+    return this._selectionMode;
+  }
+
+  setSelectionMode(mode: CellSelectionMode): void {
+    this._selectionMode = mode;
   }
 
   stopIntervalTimer(): void {
@@ -310,9 +336,19 @@ export class SlickCellRangeSelector {
 
       if (dd?.range) {
         dd.range.end = end;
-        const range = new SlickRange(dd.range.start.row ?? 0, dd.range.start.cell ?? 0, end.row, end.cell);
-        this._decorator.show(range);
-        this.onCellRangeSelecting.notify({ range });
+        const cornerCell = !this._previousSelectedRange
+          ? dd.range.start
+          : SlickSelectionUtils.normalRangeOppositeCellFromCopy(this._previousSelectedRange, end);
+        this._currentlySelectedRange = dd.range;
+
+        const range = new SlickRange(cornerCell.row!, cornerCell.cell!, end.row, end.cell);
+
+        this._decorator.show(range, this._dragReplaceHandleActive);
+        this.onCellRangeSelecting.notify({
+          range,
+          selectionMode: '',
+          allowAutoEdit: false,
+        });
       }
     }
   }
@@ -320,20 +356,27 @@ export class SlickCellRangeSelector {
   protected handleDragEnd(e: any, dd: DragRowMove): void {
     this._decorator.hide();
 
-    if (this._dragging && dd.range) {
-      this._dragging = false;
-      e.stopImmediatePropagation();
-
-      this.stopIntervalTimer();
-      this.onCellRangeSelected.notify({
-        range: new SlickRange(dd.range.start.row ?? 0, dd.range.start.cell ?? 0, dd.range.end.row, dd.range.end.cell),
-      });
-    } else if (this._autoScrollTimerId) {
-      this.stopIntervalTimer(); // stop the auto-scroll timer if it was running
+    if (!this._dragging || !dd.range) {
+      if (this._autoScrollTimerId) {
+        this.stopIntervalTimer(); // stop the auto-scroll timer if it was running
+      }
+      return;
     }
+    this._dragging = false;
+    e.stopImmediatePropagation();
+
+    this.stopIntervalTimer();
+    const r = new SlickRange(dd.range.start.row ?? 0, dd.range.start.cell ?? 0, dd.range.end.row, dd.range.end.cell);
+
+    this.onCellRangeSelected.notify({
+      range: r,
+      selectionMode: this._selectionMode,
+      allowAutoEdit: this._selectionMode === 'SEL' && r.isSingleCell(),
+    });
+    this._previousSelectedRange = SlickSelectionUtils.normaliseDragRange(dd.range);
   }
 
-  protected handleDragInit(e: SlickEventData): void {
+  protected handleDragInit(e: SlickEventData, dd: DragRowMove): void {
     // Set the active canvas node because the decorator needs to append its
     // box to the correct canvas
     this._activeCanvas = this._grid.getActiveCanvasNode(e);
@@ -363,6 +406,13 @@ export class SlickCellRangeSelector {
       this._columnOffset = document.querySelector(`${this.gridUidSelector} .grid-canvas-left`)?.clientWidth ?? 0;
     }
 
+    this._dragReplaceHandleActive = dd.matchClassTag === 'dragReplaceHandle';
+    if (this._dragReplaceHandleActive) {
+      this._dragReplaceHandleCell = this._grid.getCellFromEvent(e);
+    } else {
+      this._previousSelectedRange = null;
+    }
+
     // prevent the grid from cancelling drag'n'drop by default
     // unless an editor is open on the current cell.
     // if so keep bubbling the event to avoid breaking editor inputs focusing/selecting
@@ -376,7 +426,10 @@ export class SlickCellRangeSelector {
   }
 
   protected handleDragStart(e: SlickEventData, dd: DragRowMove): HTMLDivElement | undefined {
-    const cellObj = this._grid.getCellFromEvent(e);
+    let cellObj = this._grid.getCellFromEvent(e);
+    if (this._dragReplaceHandleActive) {
+      cellObj = this._dragReplaceHandleCell;
+    }
     if (
       cellObj &&
       this.onBeforeCellRangeSelected.notify(cellObj).getReturnValue() !== false &&
@@ -403,10 +456,16 @@ export class SlickCellRangeSelector {
       startY += this._scrollTop;
     }
 
-    const start = this._grid.getCellFromPoint(startX, startY);
+    let start: { row: number | undefined; cell: number | undefined } | null;
+    this._selectionMode = this._dragReplaceHandleActive ? 'REP' : 'SEL';
+    if (!this._dragReplaceHandleActive) {
+      start = this._grid.getCellFromPoint(startX, startY);
+    } else {
+      start = this._grid.getActiveCell() || { row: undefined, cell: undefined };
+    }
     dd.range = { start, end: {} };
     this._currentlySelectedRange = dd.range;
-    return this._decorator.show(new SlickRange(start.row, start.cell));
+    return this._decorator.show(new SlickRange(start.row ?? 0, start.cell ?? 0), this._dragReplaceHandleActive);
   }
 
   protected handleScroll(_e: SlickEventData, args: OnScrollEventArgs): void {

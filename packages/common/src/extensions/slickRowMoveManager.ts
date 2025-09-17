@@ -90,6 +90,10 @@ export class SlickRowMoveManager {
       .subscribe(this._grid.onDragEnd, this.handleDragEnd.bind(this));
   }
 
+  destroy(): void {
+    this.dispose();
+  }
+
   /** Dispose (destroy) the SlickGrid 3rd party plugin */
   dispose(): void {
     this._eventHandler?.unsubscribeAll();
@@ -160,6 +164,10 @@ export class SlickRowMoveManager {
 
   setOptions(newOptions: RowMoveManagerOption): void {
     this._addonOptions = { ...this._addonOptions, ...newOptions };
+  }
+
+  isHandlerColumn(columnIndex: number | string): boolean {
+    return /move|selectAndMove/.test(this._grid.getColumns()[+columnIndex].behavior || '');
   }
 
   // --

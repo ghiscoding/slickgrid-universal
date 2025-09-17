@@ -1,4 +1,4 @@
-import type { SlickGrid } from '../core/index.js';
+import type { SlickGrid, SlickRange } from '../core/index.js';
 import type {
   Column,
   CompositeEditorOption,
@@ -194,4 +194,9 @@ export interface OnDragEventArgs extends SlickGridArg {
   rows: number[];
   startX: number;
   startY: number;
+}
+export interface OnDragReplaceCellsEventArgs extends SlickGridArg {
+  prevSelectedRange: SlickRange;
+  selectedRange: SlickRange;
+  copyToRange?: SlickRange;
 }

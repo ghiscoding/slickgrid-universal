@@ -7,6 +7,17 @@ export interface InteractionBase {
   destroy: () => void;
 }
 
+export interface ClassDetectElement {
+  /** element id to match */
+  id?: string;
+
+  /** element cssSelector to match */
+  cssSelector?: string;
+
+  /** tag to be returned on match */
+  tag: string;
+}
+
 export interface DraggableOption {
   /** container DOM element, defaults to "document" */
   containerElement?: HTMLElement | Document;
@@ -16,6 +27,9 @@ export interface DraggableOption {
 
   /** when defined, will allow dragging from a specific element or its closest parent by using the .closest() query selector. */
   allowDragFromClosest?: string;
+
+  /** array of elements to match for drag start */
+  dragFromClassDetectArr?: Array<ClassDetectElement>;
 
   /** Defaults to `['ctrlKey', 'metaKey']`, list of keys that when pressed will prevent Draggable events from triggering (e.g. prevent onDrag when Ctrl key is pressed while dragging) */
   preventDragFromKeys?: Array<'altKey' | 'ctrlKey' | 'metaKey' | 'shiftKey'>;

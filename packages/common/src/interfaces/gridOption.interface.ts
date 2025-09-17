@@ -343,6 +343,9 @@ export interface GridOption<C extends Column = Column> {
   /** Defaults to false, editor cell navigation left/right keys */
   editorCellNavOnLRKeys?: boolean;
 
+  /** Defaults to false, when enabled will allow editor navigation using arrow keys */
+  editorNavigateOnArrows?: boolean;
+
   /** option to intercept edit commands and implement undo support. */
   editCommandHandler?: (item: any, column: C, command: EditCommand) => void;
 

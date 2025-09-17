@@ -14,6 +14,7 @@ import type {
   EditorValidator,
   GridOption,
   SliderOption,
+  ValidateOption,
 } from '../interfaces/index.js';
 import { getDescendantProperty } from '../services/utilities.js';
 
@@ -311,7 +312,7 @@ export class SliderEditor implements Editor {
     return elmValue !== '' ? parseInt(elmValue, 10) : this._originalValue;
   }
 
-  validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
+  validate(_targetElm?: any, options?: ValidateOption): EditorValidationResult {
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
     if (this.args.isCompositeEditor) {
       this.applyInputUsabilityState();
@@ -322,7 +323,7 @@ export class SliderEditor implements Editor {
       return { valid: true, msg: '' };
     }
 
-    const elmValue = inputValue !== undefined ? inputValue : this._inputElm?.value;
+    const elmValue = options?.inputValue ?? this._inputElm?.value;
     return sliderValidator(elmValue, {
       editorArgs: this.args,
       errorMessage: this.columnEditor.errorMessage,

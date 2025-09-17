@@ -18,6 +18,7 @@ import type {
   EditorValidator,
   GridOption,
   VanillaCalendarOption,
+  ValidateOption,
 } from './../interfaces/index.js';
 import { getDescendantProperty } from './../services/utilities.js';
 
@@ -432,9 +433,9 @@ export class DateEditor implements Editor {
     return domValue;
   }
 
-  validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
+  validate(_targetElm?: any, options?: ValidateOption): EditorValidationResult {
     const isRequired = this.args?.compositeEditorOptions ? false : this.columnEditor.required;
-    const elmValue = inputValue ?? this._inputElm?.value;
+    const elmValue = options?.inputValue ?? this._inputElm?.value;
     const errorMsg = this.columnEditor.errorMessage;
 
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form

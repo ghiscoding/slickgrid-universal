@@ -20,6 +20,7 @@ import type {
   EditorValidator,
   GridOption,
   Locale,
+  ValidateOption,
 } from '../interfaces/index.js';
 import type { TranslaterService } from '../services/translater.service.js';
 import { findOrDefault, getDescendantProperty } from '../services/utilities.js';
@@ -406,7 +407,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     return this._currentValue;
   }
 
-  validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
+  validate(_targetElm?: any, options?: ValidateOption): EditorValidationResult {
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
     if (this.args.isCompositeEditor) {
       this.applyInputUsabilityState();
@@ -417,7 +418,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
       return { valid: true, msg: '' };
     }
 
-    const val = inputValue !== undefined ? inputValue : this._inputElm?.value;
+    const val = options?.inputValue ?? this._inputElm?.value;
     return textValidator(val, {
       editorArgs: this.args,
       errorMessage: this.columnEditor.errorMessage,

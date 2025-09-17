@@ -11,6 +11,7 @@ import type {
   EditorValidationResult,
   EditorValidator,
   GridOption,
+  ValidateOption,
 } from '../interfaces/index.js';
 import { getDescendantProperty } from '../services/utilities.js';
 
@@ -115,7 +116,13 @@ export class InputEditor implements Editor {
     this._bindEventService.bind(this._input, 'keydown', ((event: KeyboardEvent) => {
       this._isValueTouched = true;
       this._lastInputKeyEvent = event;
-      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Home' || event.key === 'End') {
+
+      // by default arrow usage will move the cursor within the input text
+      // unless `editorNavigateOnArrows` is enabled which will instead move to the cell following the arrow direction
+      if (
+        !this.gridOptions.editorNavigateOnArrows &&
+        (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'Home' || event.key === 'End')
+      ) {
         event.stopImmediatePropagation();
       }
     }) as EventListener);
@@ -303,7 +310,7 @@ export class InputEditor implements Editor {
     return this._input?.value ?? '';
   }
 
-  validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
+  validate(_targetElm?: any, options?: ValidateOption): EditorValidationResult {
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
     if (this.args.isCompositeEditor) {
       this.applyInputUsabilityState();
@@ -314,7 +321,7 @@ export class InputEditor implements Editor {
       return { valid: true, msg: '' };
     }
 
-    const elmValue = inputValue !== undefined ? inputValue : this._input && this._input.value;
+    const elmValue = options?.inputValue ?? this._input?.value;
     return textValidator(elmValue, {
       editorArgs: this.args,
       errorMessage: this.columnEditor.errorMessage,
