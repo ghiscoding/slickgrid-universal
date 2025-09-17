@@ -2,7 +2,6 @@ import { GridOdataService, type OdataServiceApi, type OdataOption } from '@slick
 import { RxJsResource } from '@slickgrid-universal/rxjs-observable';
 import { IHttpClient } from '@aurelia/fetch-client';
 import { newInstanceOf, resolve } from '@aurelia/kernel';
-import { Observable, of, type Subject } from 'rxjs';
 import {
   type AureliaGridInstance,
   type Column,
@@ -14,6 +13,7 @@ import {
   OperatorType,
   type Pagination,
 } from 'aurelia-slickgrid';
+import { Observable, of, type Subject } from 'rxjs';
 
 import './example31.scss'; // provide custom CSS/SASS styling
 import SAMPLE_DATA_URL from './data/customers_100.json?url';

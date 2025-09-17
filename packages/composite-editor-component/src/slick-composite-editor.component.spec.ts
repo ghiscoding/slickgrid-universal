@@ -19,7 +19,7 @@ import { ContainerServiceStub } from '../../../test/containerServiceStub.js';
 // mocked modules
 vi.mock('@slickgrid-universal/common', async (importOriginal) => ({
   ...((await importOriginal()) as any),
-  applyHtmlToElement: (elm, val) => {
+  applyHtmlToElement: (elm: Element, val: string) => {
     elm.innerHTML = `${val || ''}`;
   },
 }));
@@ -210,7 +210,7 @@ describe('CompositeEditorService', () => {
           container.registerInstance('GridService', null);
           component = new SlickCompositeEditorComponent();
           component.init(gridStub, container);
-        } catch (e) {
+        } catch (e: any) {
           expect(e.toString()).toContain(
             '[Slickgrid-Universal] it seems that the GridService is not being loaded properly, make sure the Container Service is properly implemented.'
           );
@@ -227,7 +227,7 @@ describe('CompositeEditorService', () => {
           translateService = undefined as any;
           component = new SlickCompositeEditorComponent();
           component.init(gridStub, container);
-        } catch (e) {
+        } catch (e: any) {
           expect(e.toString()).toContain(
             `[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.`
           );
@@ -1640,7 +1640,7 @@ describe('CompositeEditorService', () => {
 
           try {
             component.changeFormInputValue('field4', 'Field 4 different text');
-          } catch (e) {
+          } catch (e: any) {
             expect(e.toString()).toContain(`Composite Editor with column id "field4" not found`);
             done();
           }
@@ -1747,7 +1747,7 @@ describe('CompositeEditorService', () => {
 
           try {
             component.changeFormEditorOption('field4', 'minDate', 'today');
-          } catch (e) {
+          } catch (e: any) {
             expect(e.toString()).toContain(`Editor with column id "field4" not found OR the Editor does not support "changeEditorOption"`);
             done();
           }

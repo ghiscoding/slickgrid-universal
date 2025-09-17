@@ -121,11 +121,9 @@ export class GridService {
     if (isObjectEmpty(pinningOptions)) {
       this.clearPinning();
     } else {
-      if (pinningOptions.frozenColumn !== undefined) {
-        this.sharedService.frozenVisibleColumnId = this._grid.getColumns()[pinningOptions.frozenColumn]?.id || '';
-      }
       this.sharedService.slickGrid.setOptions(pinningOptions, suppressRender, suppressColumnSet);
-      this.sharedService.gridOptions = { ...this.sharedService.gridOptions, ...pinningOptions };
+      this.sharedService.frozenVisibleColumnId = this._grid.getFrozenColumnId();
+      this.sharedService.gridOptions = this._grid.getOptions();
     }
 
     if (shouldAutosizeColumns) {

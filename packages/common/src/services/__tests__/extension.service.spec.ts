@@ -997,7 +997,7 @@ describe('ExtensionService', () => {
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
           service.bindDifferentExtensions();
-        } catch (e) {
+        } catch (e: any) {
           expect(e.message).toContain('[Slickgrid-Universal] requires a Translate Service to be installed and configured');
           done();
         }

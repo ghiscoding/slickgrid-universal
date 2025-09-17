@@ -10,7 +10,7 @@ import { ExtensionUtility } from '../../extensions/extensionUtility.js';
 import { SlickEvent, SlickEventData, type SlickGrid } from '../../core/index.js';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 
-const removeExtraSpaces = (textS) => `${textS}`.replace(/[\n\r]\s+/g, '');
+const removeExtraSpaces = (text: string) => `${text}`.replace(/[\n\r]\s+/g, '');
 
 const gridOptionsMock = {
   enableAutoSizeColumns: true,

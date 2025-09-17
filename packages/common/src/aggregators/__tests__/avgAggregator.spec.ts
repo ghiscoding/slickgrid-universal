@@ -21,7 +21,7 @@ describe('avgAggregator', () => {
     it('should return undefined when the field provided does not exist', () => {
       // arrange
       const fieldName = 'invalid';
-      const groupTotals = {} as GroupTotals;
+      const groupTotals: GroupTotals = {};
       aggregator = new AvgAggregator(fieldName);
       aggregator.init();
 
@@ -36,7 +36,7 @@ describe('avgAggregator', () => {
 
     it('should calculate an average when the chosen field from the dataset contains only numbers', () => {
       const fieldName = 'percentComplete';
-      const groupTotals = { avg: {} } as GroupTotals;
+      const groupTotals: GroupTotals = { avg: {} };
       aggregator = new AvgAggregator(fieldName);
       aggregator.init();
 
@@ -51,7 +51,7 @@ describe('avgAggregator', () => {
 
     it('should calculate an average with only the valid numbers when dataset contains numbers provided as string and other and invalid char', () => {
       const fieldName = 'duration';
-      const groupTotals = { avg: {} } as GroupTotals;
+      const groupTotals: GroupTotals = { avg: {} };
       aggregator = new AvgAggregator(fieldName);
       aggregator.init();
 
@@ -80,7 +80,7 @@ describe('avgAggregator', () => {
       aggregator.init({}, true);
 
       // accumulate child to current groupTotals
-      const groupTotals = { avg: { percentComplete: 55 }, sum: { percentComplete: 200 }, count: { percentComplete: 4 } } as GroupTotals;
+      const groupTotals: GroupTotals = { avg: { percentComplete: 55 }, sum: { percentComplete: 200 }, count: { percentComplete: 4 } };
       aggregator.accumulate(dataset[4]);
       aggregator.storeResult(groupTotals);
 
@@ -97,7 +97,7 @@ describe('avgAggregator', () => {
       aggregator.init({}, true);
 
       // will not accumulate since it's a parent item
-      const groupTotals = { avg: { percentComplete: 55 }, sum: { percentComplete: 200 }, count: { percentComplete: 4 } } as GroupTotals;
+      const groupTotals: GroupTotals = { avg: { percentComplete: 55 }, sum: { percentComplete: 200 }, count: { percentComplete: 4 } };
       aggregator.accumulate(dataset[4], true);
       aggregator.storeResult(groupTotals);
 

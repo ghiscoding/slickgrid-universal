@@ -433,7 +433,7 @@ describe('Service/Utilies', () => {
   });
 
   describe('flattenToParentChildArray method', () => {
-    let mockTreeArray;
+    let mockTreeArray: any[] = [];
 
     beforeEach(() => {
       mockTreeArray = [
@@ -538,7 +538,7 @@ describe('Service/Utilies', () => {
   });
 
   describe('findItemInTreeStructure method', () => {
-    let mockColumns;
+    let mockColumns: any[] = [];
 
     beforeEach(() => {
       mockColumns = [
@@ -885,7 +885,7 @@ describe('Service/Utilies', () => {
   });
 
   describe('getDescendantProperty() method', () => {
-    let obj = {};
+    let obj: any = {};
     beforeEach(() => {
       obj = { id: 1, user: { firstName: 'John', lastName: 'Doe', address: { number: 123, street: 'Broadway' } } };
     });

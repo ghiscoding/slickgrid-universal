@@ -134,8 +134,7 @@ export class DualInputEditor implements Editor {
         this.handleFocusOut(event, 'rightInput')) as EventListener);
     }
 
-    const compositeEditorOptions = this.args?.compositeEditorOptions;
-    if (compositeEditorOptions) {
+    if (this.args.isCompositeEditor) {
       this._bindEventService.bind(this._leftInput, 'input', this.handleChangeOnCompositeEditorDebounce.bind(this) as EventListener);
       this._bindEventService.bind(this._rightInput, 'input', this.handleChangeOnCompositeEditorDebounce.bind(this) as EventListener);
     } else {
@@ -146,9 +145,8 @@ export class DualInputEditor implements Editor {
   handleFocusOut(event: DOMEvent<HTMLInputElement>, position: 'leftInput' | 'rightInput'): void {
     // when clicking outside the editable cell OR when focusing out of it
     const targetClassNames = event.relatedTarget?.className || '';
-    const compositeEditorOptions = this.args.compositeEditorOptions;
 
-    if (!compositeEditorOptions && targetClassNames.indexOf('dual-editor') === -1 && this._lastEventType !== 'focusout-right') {
+    if (!this.args.isCompositeEditor && targetClassNames.indexOf('dual-editor') === -1 && this._lastEventType !== 'focusout-right') {
       if (position === 'rightInput' || (position === 'leftInput' && this._lastEventType !== 'focusout-left')) {
         if (position === 'leftInput') {
           this._isLeftValueTouched = true;
@@ -225,7 +223,7 @@ export class DualInputEditor implements Editor {
         this._rightInput.setAttribute('disabled', 'disabled');
 
         // clear the checkbox when it's newly disabled
-        if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions) {
+        if (prevIsDisabled !== isDisabled && this.args.isCompositeEditor) {
           this.reset('', true, true);
         }
       } else {
@@ -241,8 +239,7 @@ export class DualInputEditor implements Editor {
   }
 
   show(): void {
-    const isCompositeEditor = !!this.args?.compositeEditorOptions;
-    if (isCompositeEditor) {
+    if (this.args.isCompositeEditor) {
       // when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor
       this.applyInputUsabilityState();
     }
@@ -457,7 +454,7 @@ export class DualInputEditor implements Editor {
 
   validate(_targetElm?: HTMLElement | null, options?: ValidateOption & { position?: 'leftInput' | 'rightInput' }): EditorValidationResult {
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
-    if (this.args.compositeEditorOptions) {
+    if (this.args.isCompositeEditor) {
       this.applyInputUsabilityState();
     }
 
@@ -506,7 +503,7 @@ export class DualInputEditor implements Editor {
     const baseValidatorOptions = {
       editorArgs: this.args,
       errorMessage: positionEditorParams.errorMessage,
-      required: this.args?.compositeEditorOptions ? false : positionEditorParams.required,
+      required: this.args.isCompositeEditor ? false : positionEditorParams.required,
       validator: typeof commonValidator === 'function' ? commonValidator : positionEditorParams.validator,
     };
 

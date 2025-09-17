@@ -82,6 +82,7 @@ describe('SlickGrid core file', () => {
     expect(grid.getActiveCanvasNode()).toBeTruthy();
     expect(grid.getContainerNode()).toEqual(container);
     expect(grid.getGridPosition()).toBeTruthy();
+    expect(grid.getFrozenColumnId()).toBe(null);
   });
 
   it('should be able to instantiate SlickGrid without DataView and always show vertical scroll', () => {
@@ -652,7 +653,7 @@ describe('SlickGrid core file', () => {
         { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
       ];
       Object.defineProperty(container, 'clientWidth', { writable: true, value: 40 });
-      vi.spyOn(container, 'getBoundingClientRect').mockReturnValueOnce({ left: 25, top: 10, right: 0, bottom: 0, width: 40 } as DOMRect);
+      vi.spyOn(container, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0, width: 40 } as DOMRect);
 
       skipGridDestroy = true;
       expect(() => new SlickGrid<any, Column>(container, data, columns, gridOptions)).toThrow(
@@ -660,10 +661,12 @@ describe('SlickGrid core file', () => {
       );
     });
 
-    it('should show an alert when frozen column is wider than actual grid width and alertWhenFrozenNotAllViewable is enabled', () => {
+    it('should show an alert when frozen column is wider than actual grid width and invalidColumnFreezeWidthCallback is defined', () => {
       const alertSpy = vi.spyOn(global, 'alert').mockReturnValue();
-      const consoleSpy = vi.spyOn(global.console, 'error').mockReturnValue();
-      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name', minWidth: 40, maxWidth: 70 },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', minWidth: 40 },
+      ] as Column[];
       const gridOptions = {
         ...defaultOptions,
         enableColumnReorder: false,
@@ -672,7 +675,7 @@ describe('SlickGrid core file', () => {
         showPreHeaderPanel: true,
         frozenColumn: 0,
         createPreHeaderPanel: true,
-        alertWhenFrozenNotAllViewable: true,
+        invalidColumnFreezeWidthCallback: (error) => alert(error),
       } as GridOption;
       const data = [
         { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
@@ -683,8 +686,70 @@ describe('SlickGrid core file', () => {
 
       skipGridDestroy = true;
       grid = new SlickGrid<any, Column>(container, data, columns, gridOptions);
+      grid.validateColumnFreezeWidth(gridOptions.frozenColumn);
       expect(alertSpy).toHaveBeenCalledWith(expect.stringContaining('[SlickGrid] You are trying to freeze/pin more columns than the grid can support.'));
-      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('[SlickGrid] You are trying to freeze/pin more columns than the grid can support.'));
+    });
+
+    it('should show an alert when trying to use setOptions with frozen column that is wider than actual grid width and invalidColumnFreezeWidthCallback is defined', () => {
+      const alertSpy = vi.spyOn(global, 'alert').mockReturnValue();
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name' },
+        { id: 'lastName', field: 'lastName', name: 'Last Name' },
+      ] as Column[];
+      const gridOptions = {
+        ...defaultOptions,
+        enableColumnReorder: false,
+        enableCellNavigation: true,
+        preHeaderPanelHeight: 30,
+        showPreHeaderPanel: true,
+        createPreHeaderPanel: true,
+        invalidColumnFreezeWidthCallback: (error) => alert(error),
+      } as GridOption;
+      const data = [
+        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+      ];
+      Object.defineProperty(container, 'clientWidth', { writable: true, value: 40 });
+      vi.spyOn(container, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0, width: 40 } as DOMRect);
+
+      skipGridDestroy = true;
+      grid = new SlickGrid<any, Column>(container, data, columns, gridOptions);
+      grid.setOptions({ frozenColumn: 0 });
+      expect(alertSpy).toHaveBeenCalledWith(expect.stringContaining('[SlickGrid] You are trying to freeze/pin more columns than the grid can support.'));
+    });
+
+    it('should show an alert when trying to call setColumn() with less than 1 column on the right section of the column freeze and when invalidColumnFreezePickerCallback is defined', () => {
+      const alertSpy = vi.spyOn(global, 'alert').mockReturnValue();
+      const onAfterSetColumnsSpy = vi.spyOn(grid.onAfterSetColumns, 'notify');
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name' },
+        { id: 'lastName', field: 'lastName', name: 'Last Name' },
+        { id: 'age', field: 'age', name: 'Age' },
+      ] as Column[];
+      const gridOptions = {
+        ...defaultOptions,
+        enableColumnReorder: false,
+        enableCellNavigation: true,
+        preHeaderPanelHeight: 30,
+        showPreHeaderPanel: true,
+        createPreHeaderPanel: true,
+        frozenColumn: 1,
+        invalidColumnFreezePickerCallback: (error) => alert(error),
+      } as GridOption;
+      const data = [
+        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+      ];
+
+      skipGridDestroy = true;
+      grid = new SlickGrid<any, Column>(container, data, columns, gridOptions);
+      grid.setColumns(columns.slice(0, 2)); // remove last column to cause the error
+      expect(alertSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          '[SlickGrid] Action not allowed and aborted, you need to have at least one or more column on the right section of the column freeze/pining.'
+        )
+      );
+      expect(onAfterSetColumnsSpy).not.toHaveBeenCalled();
     });
 
     it('should hide column headers div when "showPreHeaderPanel" is disabled', () => {
@@ -752,6 +817,7 @@ describe('SlickGrid core file', () => {
       const paneTopLeftElm = container.querySelector('.slick-pane-top.slick-pane-left') as HTMLDivElement;
 
       expect(paneTopLeftElm.style.top).toBe(`${paneHeight + topHeaderPanelHeight}px`);
+      expect(grid.getFrozenColumnId()).toBe('firstName');
     });
 
     it('should hide column headers div when "showTopHeaderPanel" is disabled', () => {

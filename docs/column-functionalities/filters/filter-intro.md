@@ -1,6 +1,5 @@
 #### Index
 - [How to use Filter?](#how-to-use-filter)
-- [Filtering with Localization](input-filter.md#how-to-hide-filter-header-row)
 - [Filtering with Localization](input-filter.md#filtering-with-localization-i18n)
 - [Filter Complex Object](input-filter.md#how-to-filter-complex-objects)
 - [Update Filters Dynamically](input-filter.md#update-filters-dynamically)

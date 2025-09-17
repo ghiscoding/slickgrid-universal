@@ -475,14 +475,14 @@ describe('CompoundDateFilter', () => {
     const mockDate = '2001-01-02T16:02:02.239Z';
     filter.init(filterArguments);
     filter.setValues(mockDate);
-    let filledInputElm = divContainer.querySelector('.search-filter.filter-finish.filled') as HTMLInputElement;
+    let filledInputElm = divContainer.querySelector('.search-filter.filter-finish') as HTMLInputElement;
 
     expect(filter.currentDateOrDates).toEqual(mockDate);
-    expect(filledInputElm).toBeTruthy();
+    expect(filledInputElm.classList.contains('filled')).toBeTruthy();
 
     filter.setValues('');
-    filledInputElm = divContainer.querySelector('.search-filter.filter-finish.filled') as HTMLInputElement;
-    expect(filledInputElm).toBeFalsy();
+    filledInputElm = divContainer.querySelector('.search-filter.filter-finish') as HTMLInputElement;
+    expect(filledInputElm.classList.contains('filled')).toBeFalsy();
   });
 
   it('should work with different locale when locale is changed', async () => {

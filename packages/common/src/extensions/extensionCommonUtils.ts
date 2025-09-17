@@ -5,6 +5,7 @@ import type { Column, ColumnPickerOption, DOMEvent, GridMenuOption } from '../in
 import { SlickColumnPicker } from './slickColumnPicker.js';
 import { SlickGridMenu } from './slickGridMenu.js';
 import { applyHtmlToElement } from '../core/utils.js';
+import type { SlickGrid } from '../core/slickGrid.js';
 
 const PICKER_CHECK_ICON = 'mdi-icon-picker-check';
 const PICKER_UNCHECK_ICON = 'mdi-icon-picker-uncheck';
@@ -75,7 +76,9 @@ export function handleColumnPickerItemClick(this: SlickColumnPicker | SlickGridM
       }
     });
 
-    if (!visibleColumns.length) {
+    // validate that the checkbox changes is allowed before going any further
+    const isFrozenAllowed = (context.grid as SlickGrid).validateSetColumnFreeze(visibleColumns, true);
+    if (!isFrozenAllowed || !visibleColumns.length) {
       event.target.checked = true;
       togglePickerCheckbox(iconElm, true);
       return;

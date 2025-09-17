@@ -10,6 +10,7 @@ import {
   SlickEventHandler,
   type SlickGrid,
 } from 'aurelia-slickgrid';
+
 import './example20.scss'; // provide custom CSS/SASS styling
 
 export class Example20 {

@@ -6,7 +6,7 @@ import { executeFilterConditionTest } from '../filterConditions.index.js';
 import { executeObjectFilterCondition, getFilterParsedObjectResult } from '../objectFilterCondition.js';
 
 describe('executeObjectFilterCondition method', () => {
-  let mockRow;
+  let mockRow: any;
 
   beforeEach(() => {
     mockRow = { name: 'Canada', code: 'CA' };
@@ -41,7 +41,7 @@ describe('executeObjectFilterCondition method', () => {
   });
 
   it('should return False when any cell input value is provided without any search terms', () => {
-    const searchTerms = [];
+    const searchTerms: string[] = [];
     const options = { dataKey: '', operator: 'EQ', cellValue: mockRow, fieldType: FieldType.object } as FilterConditionOption;
     const output = executeObjectFilterCondition(options, getFilterParsedObjectResult(searchTerms));
     expect(output).toBe(false);

@@ -1,6 +1,5 @@
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-
 import {
   type AureliaGridInstance,
   type Column,
@@ -16,6 +15,7 @@ import {
   type SlickGrid,
   type VanillaCalendarOption,
 } from 'aurelia-slickgrid';
+
 import './example33.scss';
 
 const NB_ITEMS = 1000;

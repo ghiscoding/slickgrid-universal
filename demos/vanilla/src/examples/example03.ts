@@ -423,7 +423,7 @@ export default class Example03 {
 
     for (let i = 0; i < count; i++) {
       const randomFinishYear = new Date().getFullYear() - 3 + Math.floor(Math.random() * 10); // use only years not lower than 3 years ago
-      const randomMonth = Math.floor(Math.random() * 11);
+      const randomMonth = Math.floor(Math.random() * 10);
       const randomDay = Math.floor(Math.random() * 29);
       const randomFinish = new Date(randomFinishYear, randomMonth + 1, randomDay);
       const randomCost = Math.round(Math.random() * 10000) / 100;

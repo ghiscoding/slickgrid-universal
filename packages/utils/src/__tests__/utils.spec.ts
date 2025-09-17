@@ -117,7 +117,7 @@ describe('Service/Utilies', () => {
     });
 
     test('regular function with defined arguments and body', () => {
-      function fn(input: string, args: any) {
+      function fn(input: any, args: any) {
         if (input.length > 1) {
           return true;
         }
@@ -138,7 +138,7 @@ describe('Service/Utilies', () => {
     });
 
     test('regular async function with arguments', () => {
-      async function fn(input: string, args: any) {
+      async function fn(input: any, args: any) {
         if (input.length > 1) {
           return true;
         }
@@ -159,7 +159,7 @@ describe('Service/Utilies', () => {
     });
 
     test('nested ES6 arrow async functions with arguments', () => {
-      const fn = async (x) => async (y) => async (z) => z(x)(y);
+      const fn = async (x: any) => async (y: any) => async (z: any) => z(x)(y);
       const result = getFunctionDetails(fn);
 
       expect(result.params).toEqual(['x']);
@@ -229,16 +229,16 @@ describe('Service/Utilies', () => {
     });
 
     test('one liner ES6 arrow function with arguments', () => {
-      const fn = (input) => (input ? input.lenght > 1 : false);
+      const fn = (input: any) => (input ? input.length > 1 : false);
       const result = getFunctionDetails(fn);
 
       expect(result.params).toEqual(['input']);
       expect(result.isAsync).toBe(false);
-      expect(result.body).toContain('return input ? input.lenght > 1 : false');
+      expect(result.body).toContain('return input ? input.length > 1 : false');
     });
 
     test('ES6 arrow function written in TypeScript', () => {
-      const fn = (input: string, args: any) => {
+      const fn = (input: any, args: any) => {
         if (input.length > 1) {
           return true;
         }

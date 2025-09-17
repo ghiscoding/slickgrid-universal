@@ -43,4 +43,4 @@ export interface Grouping<T = any> {
   sortAsc?: boolean;
 }
 
-export type GroupTotals<T = string | number | null> = Record<string, Record<number | string, T>>;
+export type GroupTotals<T = string | number | null | Array<string | number>> = Record<string, Record<number | string, T>>;

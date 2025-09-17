@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { SumAggregator } from '../sumAggregator.js';
+import type { GroupTotals } from '../../interfaces/grouping.interface.js';
 
 describe('sumAggregator', () => {
   let aggregator: SumAggregator;
@@ -20,7 +21,7 @@ describe('sumAggregator', () => {
     it('should return null when the field provided does not exist', () => {
       // arrange
       const fieldName = 'invalid';
-      const groupTotals = {};
+      const groupTotals: GroupTotals = {};
       aggregator = new SumAggregator(fieldName);
       aggregator.init();
 
@@ -37,7 +38,7 @@ describe('sumAggregator', () => {
 
     it('should return the sum value when the chosen field from the dataset contains only numbers', () => {
       const fieldName = 'percentComplete';
-      const groupTotals = { sum: {} };
+      const groupTotals: GroupTotals = { sum: {} };
       aggregator = new SumAggregator(fieldName);
       aggregator.init();
 
@@ -50,7 +51,7 @@ describe('sumAggregator', () => {
 
     it('should return the sum valid number when dataset contains numbers provided as string and other and invalid char', () => {
       const fieldName = 'duration';
-      const groupTotals = { sum: {} };
+      const groupTotals: GroupTotals = { sum: {} };
       aggregator = new SumAggregator(fieldName);
       aggregator.init();
 
@@ -79,7 +80,7 @@ describe('sumAggregator', () => {
       aggregator.init({}, true);
 
       // accumulate child to current groupTotals
-      const groupTotals = { sum: { percentComplete: 200 }, count: { percentComplete: 4 } };
+      const groupTotals: GroupTotals = { sum: { percentComplete: 200 }, count: { percentComplete: 4 } };
       aggregator.accumulate(dataset[4]);
       aggregator.storeResult(groupTotals);
 
@@ -95,7 +96,7 @@ describe('sumAggregator', () => {
       aggregator.init({}, true);
 
       // will not accumulate since it's a parent item
-      const groupTotals = { sum: { percentComplete: 200 }, count: { percentComplete: 4 } };
+      const groupTotals: GroupTotals = { sum: { percentComplete: 200 }, count: { percentComplete: 4 } };
       aggregator.accumulate(dataset[4], true);
       aggregator.storeResult(groupTotals);
 

@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { CloneAggregator } from '../cloneAggregator.js';
+import type { GroupTotals } from '../../interfaces/grouping.interface.js';
 
 describe('CloneAggregator', () => {
   let aggregator: CloneAggregator;
@@ -20,7 +21,7 @@ describe('CloneAggregator', () => {
     it('should return empty string when the field provided does not exist', () => {
       // arrange
       const fieldName = 'invalid';
-      const groupTotals = {};
+      const groupTotals: GroupTotals = {};
       aggregator = new CloneAggregator(fieldName);
       aggregator.init();
 
@@ -36,7 +37,7 @@ describe('CloneAggregator', () => {
     it('should return last text analyzed by the aggregator when the chosen field is the product group', () => {
       const fieldName = 'productGroup';
       const lastGroupName = 'Sub-Cat2';
-      const groupTotals = { clone: {} };
+      const groupTotals: GroupTotals = { clone: {} };
       aggregator = new CloneAggregator(fieldName);
       aggregator.init();
 

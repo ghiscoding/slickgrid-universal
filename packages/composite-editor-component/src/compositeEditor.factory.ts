@@ -1,6 +1,7 @@
 import { emptyElement, getOffset } from '@slickgrid-universal/common';
 import type {
   Column,
+  CompositeEditorError,
   CompositeEditorOption,
   Editor,
   EditorArguments,
@@ -12,6 +13,11 @@ import type { HtmlElementPosition } from '@slickgrid-universal/utils';
 
 export interface CompositeEditorArguments extends EditorArguments {
   formValues: any;
+  isCompositeEditor: true;
+}
+
+export interface CompositeEditor extends Editor {
+  getEditors: () => Array<Editor & { args: EditorArguments }>;
 }
 
 /**
@@ -41,12 +47,12 @@ export interface CompositeEditorArguments extends EditorArguments {
  *  destroy                 -   A function to be called when the editor is destroyed.
  */
 export function SlickCompositeEditor(
-  this: any,
+  this: CompositeEditor,
   columns: Column[],
   containers: Array<HTMLDivElement>,
   options: CompositeEditorOption
 ): {
-  (this: any, args: EditorArguments): void;
+  (this: CompositeEditor, args: EditorArguments): void;
   prototype: any;
 } {
   let firstInvalidEditor: Editor | null;
@@ -84,27 +90,27 @@ export function SlickCompositeEditor(
   };
 
   /* Editor prototype that will get instantiated dynamically by looping through each Editors */
-  function editor(this: any, args: EditorArguments) {
+  function editor(this: CompositeEditor, args: EditorArguments) {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const context: any = this;
+    const context: CompositeEditor = this;
     let editors: Array<Editor & { args: EditorArguments }> = [];
 
     function init() {
-      let newArgs = {} as CompositeEditorArguments;
       let idx = 0;
       while (idx < columns.length) {
         if (columns[idx].editorClass) {
           const column = columns[idx];
-          newArgs = { ...args } as CompositeEditorArguments;
-          newArgs.container = containers[idx];
-          newArgs.column = column;
-          newArgs.position = getContainerBox(idx);
-          newArgs.commitChanges = noop;
-          newArgs.cancelChanges = noop;
-          newArgs.compositeEditorOptions = options;
-          newArgs.formValues = {};
-
-          const currentEditor = new (column.editorClass as EditorConstructor)(newArgs);
+          const currentEditor = new (column.editorClass as EditorConstructor)({
+            ...args,
+            container: containers[idx],
+            column,
+            position: getContainerBox(idx),
+            commitChanges: noop,
+            cancelChanges: noop,
+            compositeEditorOptions: options,
+            isCompositeEditor: true,
+            formValues: {},
+          } as CompositeEditorArguments);
           options.editors[column.id] = currentEditor; // add every Editor instance refs
           editors.push(currentEditor as Editor & { args: EditorArguments });
         }
@@ -185,10 +191,10 @@ export function SlickCompositeEditor(
       }
     };
 
-    context.validate = (targetElm: HTMLElement | null) => {
+    context.validate = (targetElm?: HTMLElement | null): EditorValidationResult => {
       let validationResults: EditorValidationResult;
       firstInvalidEditor = null;
-      const errors = [];
+      const errors: CompositeEditorError[] = [];
 
       let idx = 0;
       while (idx < editors.length) {
@@ -209,7 +215,7 @@ export function SlickCompositeEditor(
                 index: idx,
                 editor: editors[idx],
                 container: containers[idx],
-                msg: validationResults.msg,
+                msg: validationResults.msg || '',
               });
 
               if (validationElm) {

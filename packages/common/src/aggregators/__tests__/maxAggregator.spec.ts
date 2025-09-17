@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { MaxAggregator } from '../maxAggregator.js';
+import type { GroupTotals } from '../../interfaces/grouping.interface.js';
 
 describe('maxAggregator', () => {
   let aggregator: MaxAggregator;
@@ -20,7 +21,7 @@ describe('maxAggregator', () => {
     it('should return null when the field provided does not exist', () => {
       // arrange
       const fieldName = 'invalid';
-      const groupTotals = {};
+      const groupTotals: GroupTotals = {};
       aggregator = new MaxAggregator(fieldName);
       aggregator.init();
 
@@ -35,7 +36,7 @@ describe('maxAggregator', () => {
 
     it('should return the maximum value when the chosen field from the dataset contains only numbers', () => {
       const fieldName = 'percentComplete';
-      const groupTotals = { max: {} };
+      const groupTotals: GroupTotals = { max: {} };
       aggregator = new MaxAggregator(fieldName);
       aggregator.init();
 
@@ -49,7 +50,7 @@ describe('maxAggregator', () => {
 
     it('should return the maximum valid number when dataset contains numbers provided as string and other and invalid char', () => {
       const fieldName = 'duration';
-      const groupTotals = { max: {} };
+      const groupTotals: GroupTotals = { max: {} };
       aggregator = new MaxAggregator(fieldName);
       aggregator.init();
 
@@ -73,7 +74,7 @@ describe('maxAggregator', () => {
 
     it('should return the tree data maximum value when the chosen field from the dataset contains only numbers', () => {
       const fieldName = 'percentComplete';
-      const groupTotals = { max: {} };
+      const groupTotals: GroupTotals = { max: {} };
       aggregator = new MaxAggregator(fieldName);
       aggregator.init({}, true);
 
@@ -101,7 +102,7 @@ describe('maxAggregator', () => {
 
     it('should return 99 which is the maximum value found in the Tree on a datacontext parent item', () => {
       const fieldName = 'percentComplete';
-      const groupTotals = { max: { percentComplete: 99 } };
+      const groupTotals: GroupTotals = { max: { percentComplete: 99 } };
       aggregator = new MaxAggregator(fieldName);
       aggregator.init({ __treeTotals: { max: { percentComplete: 22 } } }, true);
       dataset[1].__treeTotals = { max: { percentComplete: 88 } };

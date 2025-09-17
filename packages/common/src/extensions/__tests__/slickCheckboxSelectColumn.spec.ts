@@ -9,7 +9,7 @@ import { SlickEvent, type SlickGrid } from '../../core/index.js';
 
 vi.useFakeTimers();
 
-const addVanillaEventPropagation = function (event, commandKey = '', keyName = '', target?: HTMLElement, which: string | number = '') {
+const addVanillaEventPropagation = function <T = any>(event: T, commandKey = '', keyName = '', target?: HTMLElement, which: string | number = '') {
   Object.defineProperty(event, 'isPropagationStopped', { writable: true, configurable: true, value: vi.fn() });
   Object.defineProperty(event, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: vi.fn() });
   if (commandKey) {

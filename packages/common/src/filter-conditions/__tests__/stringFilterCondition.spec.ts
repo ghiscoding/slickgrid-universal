@@ -7,14 +7,14 @@ import { executeStringFilterCondition, getFilterParsedText } from '../stringFilt
 
 describe('executeStringFilterCondition method', () => {
   it('should return True when no cell input value is provided which is equal to the default search term, neither search terms', () => {
-    const searchTerms = [];
+    const searchTerms: string[] = [];
     const options = { dataKey: '', operator: 'EQ', cellValue: '', fieldType: FieldType.string } as FilterConditionOption;
     const output = executeStringFilterCondition(options, getFilterParsedText(searchTerms));
     expect(output).toBe(true);
   });
 
   it('should return True when cell input value is null and is equal to the default search term, neither search terms', () => {
-    const searchTerms = [];
+    const searchTerms: string[] = [];
     const options = { dataKey: '', operator: 'EQ', cellValue: null, fieldType: FieldType.string } as FilterConditionOption;
     const output = executeStringFilterCondition(options, getFilterParsedText(searchTerms));
     expect(output).toBe(true);
@@ -28,7 +28,7 @@ describe('executeStringFilterCondition method', () => {
   });
 
   it('should return False when any cell input value is provided without any search terms', () => {
-    const searchTerms = [];
+    const searchTerms: string[] = [];
     const options = { dataKey: '', operator: 'EQ', cellValue: 'foo', fieldType: FieldType.string } as FilterConditionOption;
     const output = executeStringFilterCondition(options, getFilterParsedText(searchTerms));
     expect(output).toBe(false);
@@ -63,7 +63,7 @@ describe('executeStringFilterCondition method', () => {
   });
 
   it('should return False when the cell value is equal to at least 1 of the searchTerms', () => {
-    const searchTerms = [];
+    const searchTerms: string[] = [];
     const options = {
       dataKey: '',
       operator: 'EQ',

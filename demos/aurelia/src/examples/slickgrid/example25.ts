@@ -11,6 +11,7 @@ import {
   type MultipleSelectOption,
   OperatorType,
 } from 'aurelia-slickgrid';
+
 import './example25.scss'; // provide custom CSS/SASS styling
 
 const COUNTRIES_API = 'https://countries.trevorblades.com/';

@@ -303,7 +303,7 @@ export class Example32Component implements OnInit {
           model: Editors.date,
           options: { displayDateMin: 'today' } as VanillaCalendarOption,
           validator: (value, args) => {
-            const dataContext = args && args.item;
+            const dataContext = args?.item;
             if (dataContext && dataContext.completed && !value) {
               return { valid: false, msg: 'You must provide a "Finish" date when "Completed" is checked.' };
             }

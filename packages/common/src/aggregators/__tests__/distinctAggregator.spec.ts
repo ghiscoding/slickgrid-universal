@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { DistinctAggregator } from '../distinctAggregator.js';
+import type { GroupTotals } from '../../interfaces/grouping.interface.js';
 
 describe('disctinctAggregator', () => {
   let aggregator: DistinctAggregator;
@@ -22,7 +23,7 @@ describe('disctinctAggregator', () => {
     it('should return empty array when the field provided does not exist', () => {
       // arrange
       const fieldName = 'invalid';
-      const groupTotals = {};
+      const groupTotals: GroupTotals<any[]> = {};
       aggregator = new DistinctAggregator(fieldName);
       aggregator.init();
 
@@ -37,7 +38,7 @@ describe('disctinctAggregator', () => {
 
     it('should return the distinct number values when provided field property values are all numbers', () => {
       const fieldName = 'percentComplete';
-      const groupTotals = { distinct: {} };
+      const groupTotals: GroupTotals<any[]> = { distinct: {} };
       aggregator = new DistinctAggregator(fieldName);
       aggregator.init();
 
@@ -51,7 +52,7 @@ describe('disctinctAggregator', () => {
 
     it('should return the distinct mixed values when provided field property values are all mixed types', () => {
       const fieldName = 'duration';
-      const groupTotals = { distinct: {} };
+      const groupTotals: GroupTotals<any[]> = { distinct: {} };
       aggregator = new DistinctAggregator(fieldName);
       aggregator.init();
 

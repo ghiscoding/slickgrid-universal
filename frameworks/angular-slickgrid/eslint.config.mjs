@@ -1,11 +1,12 @@
-import angular from 'angular-eslint';
 import eslint from '@eslint/js';
+import angular from 'angular-eslint';
+import { defineConfig } from 'eslint/config';
 import cypress from 'eslint-plugin-cypress';
-import globals from 'globals';
 import n from 'eslint-plugin-n';
+import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
-export default tseslint.config(
+export default defineConfig(
   {
     ignores: [
       '**/*.spec.ts',

@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 
 import type { SelectionModel } from '../../enums/index.js';
-import type { Column, GridOption, OnEventArgs } from '../../interfaces/index.js';
+import type { Column, EditCommand, GridOption, OnEventArgs } from '../../interfaces/index.js';
 import type { SlickCellSelectionModel } from '../slickCellSelectionModel.js';
 import { SlickCellExternalCopyManager } from '../slickCellExternalCopyManager.js';
 import type { InputEditor } from '../../editors/inputEditor.js';
@@ -145,7 +145,7 @@ describe('CellExternalCopyManager', () => {
         vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(null as any);
         try {
           plugin.init(gridStub);
-        } catch (error) {
+        } catch (error: any) {
           expect(error.message).toBe(
             'Selection model is mandatory for this plugin. Please set a selection model on the grid before adding this plugin: grid.setSelectionModel(new SlickCellSelectionModel())'
           );
@@ -341,8 +341,8 @@ describe('CellExternalCopyManager', () => {
 
       it('should Copy, Paste and run Execute clip command', () =>
         new Promise((done: any) => {
-          let clipCommand;
-          const clipboardCommandHandler = (cmd) => {
+          let clipCommand: EditCommand;
+          const clipboardCommandHandler = (cmd: EditCommand) => {
             clipCommand = cmd;
             cmd.execute();
           };
@@ -390,8 +390,8 @@ describe('CellExternalCopyManager', () => {
 
       it('should not paste on cells where onBeforePasteCell handler returns false', () =>
         new Promise((done: any) => {
-          let clipCommand;
-          const clipboardCommandHandler = (cmd) => {
+          let clipCommand: EditCommand;
+          const clipboardCommandHandler = (cmd: EditCommand) => {
             clipCommand = cmd;
             cmd.execute();
           };
@@ -451,8 +451,8 @@ describe('CellExternalCopyManager', () => {
           vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges')
             .mockReturnValueOnce([new SlickRange(0, 1, 1, 2)])
             .mockReturnValueOnce([new SlickRange(0, 1, 1, 2)]);
-          let clipCommand;
-          const clipboardCommandHandler = (cmd) => {
+          let clipCommand: EditCommand;
+          const clipboardCommandHandler = (cmd: EditCommand) => {
             clipCommand = cmd;
             cmd.execute();
           };
@@ -502,8 +502,8 @@ describe('CellExternalCopyManager', () => {
           vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges')
             .mockReturnValueOnce([new SlickRange(0, 1, 1, 2)])
             .mockReturnValueOnce([new SlickRange(0, 1, 1, 2)]);
-          let clipCommand;
-          const clipboardCommandHandler = (cmd) => {
+          let clipCommand: EditCommand;
+          const clipboardCommandHandler = (cmd: EditCommand) => {
             clipCommand = cmd;
             cmd.execute();
           };
@@ -560,8 +560,8 @@ describe('CellExternalCopyManager', () => {
           vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges')
             .mockReturnValueOnce([new SlickRange(0, 1, 1, 2)])
             .mockReturnValueOnce([new SlickRange(0, 1, 1, 2)]);
-          let clipCommand;
-          const clipboardCommandHandler = (cmd) => {
+          let clipCommand: EditCommand;
+          const clipboardCommandHandler = (cmd: EditCommand) => {
             clipCommand = cmd;
             cmd.execute();
           };
@@ -711,8 +711,8 @@ describe('CellExternalCopyManager', () => {
             .mockReturnValueOnce([new SlickRange(0, 1, 2, 2)])
             .mockReturnValueOnce(null as any);
 
-          let clipCommand;
-          const clipboardCommandHandler = (cmd) => {
+          let clipCommand: EditCommand;
+          const clipboardCommandHandler = (cmd: EditCommand) => {
             clipCommand = cmd;
             cmd.execute();
           };
@@ -763,7 +763,7 @@ describe('CellExternalCopyManager', () => {
           vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges')
             .mockReturnValueOnce([new SlickRange(0, 1, 2, 2)])
             .mockReturnValueOnce(null as any);
-          const clipboardCommandHandler = (cmd) => {
+          const clipboardCommandHandler = (cmd: EditCommand) => {
             cmd.execute();
           };
           const getDataItemSpy = vi.spyOn(gridStub, 'getDataItem');
@@ -804,8 +804,8 @@ describe('CellExternalCopyManager', () => {
 
       it('should copy selection but skip hidden column and then use window.clipboard when exist and Paste is performed', () =>
         new Promise((done: any) => {
-          let clipCommand;
-          const clipboardCommandHandler = (cmd) => {
+          let clipCommand: EditCommand;
+          const clipboardCommandHandler = (cmd: EditCommand) => {
             clipCommand = cmd;
             cmd.execute();
           };

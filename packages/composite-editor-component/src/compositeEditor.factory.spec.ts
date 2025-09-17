@@ -2,6 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   type Column,
   type CompositeEditorOption,
+  type Editor,
+  type EditorArguments,
   Editors,
   type ElementPosition,
   type GridOption,
@@ -119,10 +121,10 @@ describe('Composite Editor Factory', () => {
   let cancelChangeMock;
   let commitChangeMock;
   let destroyMock;
-  let editors;
-  let compositeOptions;
-  let textEditorArgs;
-  let containers;
+  let editors: any;
+  let compositeOptions: CompositeEditorOption;
+  let textEditorArgs: EditorArguments;
+  let containers: HTMLElement[];
 
   beforeEach(() => {
     cancelChangeMock = vi.fn();
@@ -364,15 +366,14 @@ describe('Composite Editor Factory', () => {
 
     const output = new factory(textEditorArgs);
     const editorValidateSpy = vi.spyOn(output, 'validate');
-    let editorIdx = 0;
-    for (const editor of output.getEditors()) {
+    output.getEditors().forEach((editor: Editor, idx: number) => {
       // make 1st editor invalid, everything else as valid
-      if (editorIdx++ === 0) {
+      if (idx === 0) {
         vi.spyOn(editor, 'validate').mockReturnValue({ valid: false, msg: 'invalid product' });
       } else {
         vi.spyOn(editor, 'validate').mockReturnValue({ valid: true, msg: '' });
       }
-    }
+    });
 
     expect(factory).toBeTruthy();
     expect(output).toBeTruthy();
@@ -388,11 +389,11 @@ describe('Composite Editor Factory', () => {
         {
           index: 0,
           editor: output.getEditors()[0],
-          container: containers[0],
+          container: containers![0],
           msg: 'invalid product',
         },
       ],
     });
-    expect(document.body.querySelectorAll('.invalid').length).toBe(2);
+    expect(document.body.querySelectorAll('.invalid').length).toBe(1);
   });
 });

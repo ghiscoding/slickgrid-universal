@@ -156,13 +156,13 @@ describe('CompoundInputFilter', () => {
   it('should be able to call "setValues" and set empty values and the input to not have the "filled" css class', () => {
     filter.init(filterArguments);
     filter.setValues('9');
-    let filledInputElm = divContainer.querySelector('.search-filter.filter-duration .filled') as HTMLInputElement;
+    let filledInputElm = divContainer.querySelector('.search-filter.filter-duration') as HTMLInputElement;
 
-    expect(filledInputElm).toBeTruthy();
+    expect(filledInputElm.classList.contains('filled')).toBeTruthy();
 
     filter.setValues('');
-    filledInputElm = divContainer.querySelector('.search-filter.filter-duration .filled') as HTMLInputElement;
-    expect(filledInputElm).toBeFalsy();
+    filledInputElm = divContainer.querySelector('.search-filter.filter-duration') as HTMLInputElement;
+    expect(filledInputElm.classList.contains('filled')).toBeFalsy();
   });
 
   it('should trigger an operator change event and expect the callback to be called with the searchTerms and operator defined', () => {

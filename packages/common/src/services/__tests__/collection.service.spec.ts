@@ -19,7 +19,7 @@ const gridStub: SlickGrid = {
 } as unknown as SlickGrid;
 
 describe('CollectionService', () => {
-  let collection = [];
+  let collection: any[] = [];
   let stringCollection: any[] = [];
   let service: CollectionService;
   let translateService: TranslateServiceStub;

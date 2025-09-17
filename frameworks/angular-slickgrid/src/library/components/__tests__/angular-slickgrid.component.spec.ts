@@ -261,6 +261,7 @@ const mockGrid = {
   getViewportNode: () => viewportElm,
   getUID: () => 'slickgrid_12345',
   getContainerNode: vi.fn(),
+  getFrozenColumnId: vi.fn(),
   getGridPosition: vi.fn(),
   getOptions: vi.fn(),
   getRenderedRange: vi.fn(),
@@ -275,6 +276,7 @@ const mockGrid = {
   setHeaderRowVisibility: vi.fn(),
   setOptions: vi.fn(),
   setSelectedRows: vi.fn(),
+  validateColumnFreeze: vi.fn(),
   onClick: new MockSlickEvent(),
   onClicked: new MockSlickEvent(),
   onColumnsReordered: new MockSlickEvent(),
@@ -477,6 +479,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
     }));
 
   it('should keep frozen column index reference (via frozenVisibleColumnId) when grid is a frozen grid', () => {
+    vi.spyOn(mockGrid, 'getFrozenColumnId').mockReturnValue('name');
     component.columns = columnDefinitions;
     component.options = gridOptions;
     component.options.frozenColumn = 0;
@@ -491,12 +494,12 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
     const sharedVisibleColumnsSpy = vi.spyOn(SharedService.prototype, 'visibleColumns', 'set');
     const newVisibleColumns = [
       { id: 'lastName', field: 'lastName' },
-      { id: 'fristName', field: 'fristName' },
+      { id: 'firstName', field: 'firstName' },
     ];
 
     component.options = { enableFiltering: true };
     component.initialization(slickEventHandler);
-    mockGrid.onColumnsReordered.notify({ impactedColumns: newVisibleColumns, grid: mockGrid });
+    mockGrid.onColumnsReordered.notify({ impactedColumns: newVisibleColumns, grid: mockGrid, previousColumnOrder: ['firstName', 'lastName'] });
 
     expect(component.eventHandler).toEqual(slickEventHandler);
     expect(sharedService.hasColumnsReordered).toBe(true);

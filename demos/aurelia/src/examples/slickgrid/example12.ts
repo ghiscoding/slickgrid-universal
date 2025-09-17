@@ -2,7 +2,6 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { I18N } from '@aurelia/i18n';
 // import { TOptions as I18NOptions } from 'i18next';
-
 import {
   type AureliaGridInstance,
   type Column,

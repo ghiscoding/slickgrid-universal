@@ -24,7 +24,7 @@ export class NavBar extends React.Component {
             <span className="navbar-toggler-icon"></span>
           </button>
           <div className="github-button-container">
-            <a href="https://github.com/ghiscoding/slickgrid-react">
+            <a href="https://github.com/ghiscoding/slickgrid-universal">
               <img src="https://img.shields.io/github/stars/slickgrid-universal/slickgrid-react?style=social" />
             </a>
           </div>

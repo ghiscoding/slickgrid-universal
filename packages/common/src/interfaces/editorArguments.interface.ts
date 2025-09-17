@@ -24,6 +24,9 @@ export interface EditorArguments {
   /** Grid Position */
   gridPosition: ElementPosition;
 
+  /** Editor might be a Composite Editor (true when created by CompositeEditor Factory) */
+  isCompositeEditor?: boolean;
+
   /** Item DataContext */
   item?: any;
 

@@ -10,7 +10,7 @@ const GRID_UID = 'slickgrid_12345';
 const NB_ITEMS = 200;
 const CALCULATED_PAGE_ROW_COUNT = 23; // pageRowCount with our mocked sizes is 23 => ((600 - 17) / 25)
 
-const addVanillaEventPropagation = function (event, commandKeys: string[] = [], keyName = '') {
+const addVanillaEventPropagation = function <T = any>(event: T, commandKeys: string[] = [], keyName = '') {
   Object.defineProperty(event, 'isPropagationStopped', { writable: true, configurable: true, value: vi.fn() });
   Object.defineProperty(event, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: vi.fn() });
   if (commandKeys.length) {

@@ -99,7 +99,7 @@ export class LongTextEditor implements Editor {
   init(): void {
     let cancelText = '';
     let saveText = '';
-    if (this._translater && this._translater.translate && this.gridOptions.enableTranslate) {
+    if (this._translater?.translate && this.gridOptions.enableTranslate) {
       const translationPrefix = getTranslationPrefix(this.gridOptions);
       const cancelKey = this.editorOptions.buttonTexts?.cancelKey ?? `${translationPrefix}CANCEL`;
       const saveKey = this.editorOptions.buttonTexts?.saveKey ?? `${translationPrefix}SAVE`;
@@ -110,15 +110,14 @@ export class LongTextEditor implements Editor {
       saveText = this.editorOptions.buttonTexts?.save ?? this._locales?.TEXT_SAVE ?? 'Save';
     }
 
-    const compositeEditorOptions = this.args.compositeEditorOptions;
     const columnId = this.columnDef?.id ?? '';
     const maxLength = this.columnEditor?.maxLength;
     const textAreaRows = this.editorOptions?.rows ?? 4;
 
-    const containerElm = compositeEditorOptions ? this.args.container : document.body;
+    const containerElm = this.args.isCompositeEditor ? this.args.container : document.body;
     this._wrapperElm = createDomElement('div', {
       className: `slick-large-editor-text editor-${columnId}`,
-      style: { position: compositeEditorOptions ? 'relative' : 'absolute' },
+      style: { position: this.args.isCompositeEditor ? 'relative' : 'absolute' },
     });
 
     // add dark mode CSS class when enabled
@@ -133,7 +132,7 @@ export class LongTextEditor implements Editor {
       {
         ariaLabel: this.columnEditor?.ariaLabel ?? `${toSentenceCase(columnId + '')} Text Editor`,
         cols: this.editorOptions?.cols ?? 40,
-        rows: compositeEditorOptions && textAreaRows > 3 ? 3 : textAreaRows,
+        rows: this.args.isCompositeEditor && textAreaRows > 3 ? 3 : textAreaRows,
         placeholder: this.columnEditor?.placeholder ?? '',
         title: this.columnEditor?.title ?? '',
       },
@@ -151,7 +150,7 @@ export class LongTextEditor implements Editor {
     }
     editorFooterElm.appendChild(countContainerElm);
 
-    if (!compositeEditorOptions) {
+    if (!this.args.isCompositeEditor) {
       const cancelBtnElm = createDomElement('button', { className: 'btn btn-cancel btn-default btn-xs', textContent: cancelText });
       const saveBtnElm = createDomElement('button', { className: 'btn btn-save btn-primary btn-xs', textContent: saveText });
 
@@ -186,14 +185,15 @@ export class LongTextEditor implements Editor {
   }
 
   hide(): void {
-    this._wrapperElm.style.display = 'none';
+    // hide only when it's an inline editor (prevent hiding on Composite Editor)
+    if (!this.args.isCompositeEditor) {
+      this._wrapperElm.style.display = 'none';
+    }
   }
 
   show(): void {
-    const isCompositeEditor = !!this.args?.compositeEditorOptions;
-    if (!isCompositeEditor) {
-      this._wrapperElm.style.display = 'block';
-    } else {
+    this._wrapperElm.style.display = 'block';
+    if (this.args.isCompositeEditor) {
       // when it's a Composite Editor, we'll check if the Editor is editable (by checking onBeforeEditCell) and if not Editable we'll disable the Editor
       this.applyInputUsabilityState();
     }
@@ -215,7 +215,7 @@ export class LongTextEditor implements Editor {
 
         // clear value when it's newly disabled and not empty
         const currentValue = this.getValue();
-        if (prevIsDisabled !== isDisabled && this.args?.compositeEditorOptions && currentValue !== '') {
+        if (prevIsDisabled !== isDisabled && this.args.isCompositeEditor && currentValue !== '') {
           this.reset('', true, true);
         }
       } else {
@@ -380,7 +380,7 @@ export class LongTextEditor implements Editor {
 
   validate(_targetElm?: HTMLElement, options?: ValidateOption): EditorValidationResult {
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
-    if (this.args.compositeEditorOptions) {
+    if (this.args.isCompositeEditor) {
       this.applyInputUsabilityState();
     }
 
@@ -396,7 +396,7 @@ export class LongTextEditor implements Editor {
       minLength: this.columnEditor.minLength,
       maxLength: this.columnEditor.maxLength,
       operatorConditionalType: this.columnEditor.operatorConditionalType,
-      required: this.args?.compositeEditorOptions ? false : this.columnEditor.required,
+      required: this.args.isCompositeEditor ? false : this.columnEditor.required,
       validator: this.validator,
     });
   }
@@ -425,7 +425,7 @@ export class LongTextEditor implements Editor {
     const key = e.key;
     this._isValueTouched = true;
 
-    if (!this.args.compositeEditorOptions) {
+    if (!this.args.isCompositeEditor) {
       if ((key === 'Enter' && e.ctrlKey) || (e.ctrlKey && e.key.toUpperCase() === 'S')) {
         e.preventDefault();
         this.save();

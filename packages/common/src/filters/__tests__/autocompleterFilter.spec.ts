@@ -29,7 +29,7 @@ const gridStub = {
   getColumns: vi.fn(),
   getHeaderRowColumn: vi.fn(),
   render: vi.fn(),
-  sanitizeHtmlString: (str: string) => str,
+  sanitizeHtmlString: (text: string) => text,
 } as unknown as SlickGrid;
 
 describe('AutocompleterFilter', () => {
@@ -625,7 +625,7 @@ describe('AutocompleterFilter', () => {
       expect(filterCollection[0]).toEqual({ value: 'other', description: 'other' });
       expect(filterCollection[1]).toEqual({ value: 'male', description: 'male' });
       expect(filterCollection[2]).toEqual({ value: 'female', description: 'female' });
-    } catch (e) {
+    } catch (e: any) {
       console.log('ERROR', e);
     }
   });

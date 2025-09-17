@@ -1,11 +1,12 @@
 import eslint from '@eslint/js';
-import cypress from 'eslint-plugin-cypress';
-import globals from 'globals';
 import vitest from '@vitest/eslint-plugin';
+import { defineConfig } from 'eslint/config';
+import cypress from 'eslint-plugin-cypress';
 import n from 'eslint-plugin-n';
+import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
-export default tseslint.config(
+export default defineConfig(
   {
     ignores: ['**/*.{js,mjs}', '**/*/*.d.ts', '**/dist', '**/demos/angular/**', '**/frameworks/angular-slickgrid/**'],
   },

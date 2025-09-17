@@ -63,7 +63,7 @@ describe('extensionUtility', () => {
     });
 
     describe('refreshBackendDataset method', () => {
-      let gridOptionsMock;
+      let gridOptionsMock: GridOption;
 
       beforeEach(() => {
         gridOptionsMock = { enableTranslate: true, enableGridMenu: true } as GridOption;

@@ -1,5 +1,6 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { type AureliaGridInstance, type Column, type GridOption, type ItemMetadata } from 'aurelia-slickgrid';
+
 import './example14.scss'; // provide custom CSS/SASS styling
 
 export class Example14 {

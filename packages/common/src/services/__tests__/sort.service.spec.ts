@@ -1042,7 +1042,7 @@ describe('SortService', () => {
   });
 
   describe('sortComparer method', () => {
-    let dataset = [];
+    let dataset: any[] = [];
 
     beforeEach(() => {
       const mockColumns = [
@@ -1244,7 +1244,7 @@ describe('SortService', () => {
           gridOptionMock.enableSorting = false;
           service.bindLocalOnSort(gridStub);
           service.updateSorting([{ columnId: 'firstName', direction: 'ASC' }]);
-        } catch (e) {
+        } catch (e: any) {
           expect(e.toString()).toContain(
             '[Slickgrid-Universal] in order to use "updateSorting" method, you need to have Sortable Columns defined in your grid'
           );
@@ -1388,7 +1388,7 @@ describe('SortService', () => {
     });
 
     describe('Hierarchical Dataset', () => {
-      let dataset = [];
+      let dataset: any[] = [];
       const expectedSortedAscDataset = [
         { __parentId: null, __hasChildren: false, __treeLevel: 0, dateModified: '2012-03-05T12:44:00.123Z', file: 'bucket-list.txt', id: 24, size: 0.5 },
         { __parentId: null, __hasChildren: true, __treeLevel: 0, file: 'documents', id: 21 },

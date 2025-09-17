@@ -24,6 +24,7 @@ const gridStub = {
   setColumns: vi.fn(),
   setOptions: vi.fn(),
   setSelectedRows: vi.fn(),
+  validateSetColumnFreeze: vi.fn(),
   onClick: new SlickEvent(),
   onColumnsReordered: new SlickEvent(),
   onHeaderContextMenu: new SlickEvent(),
@@ -100,8 +101,33 @@ describe('ColumnPickerControl', () => {
       expect(control).toBeTruthy();
     });
 
+    it('should query an input checkbox change event and expect it to cancel the uncheck column when "validateSetColumnFreeze()" returns false', () => {
+      const mockRowSelection = [0, 3, 5];
+      vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(false);
+      vi.spyOn(control.eventHandler, 'subscribe');
+      vi.spyOn(gridStub, 'getColumnIndex')
+        .mockReturnValue(undefined as any)
+        .mockReturnValue(1);
+      vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue(mockRowSelection);
+      const setColumnSpy = vi.spyOn(gridStub, 'setColumns');
+      const setSelectionSpy = vi.spyOn(gridStub, 'setSelectedRows');
+
+      gridOptionsMock.enableRowSelection = true;
+      control.columns = columnsMock;
+
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() } as any;
+      gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData as any, gridStub);
+      const inputElm = control.menuElement!.querySelector('input[type="checkbox"]') as HTMLInputElement;
+      inputElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+
+      expect(control.menuElement!.style.display).toBe('block');
+      expect(setColumnSpy).not.toHaveBeenCalled();
+      expect(setSelectionSpy).not.toHaveBeenCalled();
+    });
+
     it('should query an input checkbox change event and expect "setSelectedRows" method to be called using Row Selection when enabled', () => {
       const mockRowSelection = [0, 3, 5];
+      vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
       vi.spyOn(control.eventHandler, 'subscribe');
       vi.spyOn(gridStub, 'getColumnIndex')
         .mockReturnValue(undefined as any)
@@ -150,6 +176,7 @@ describe('ColumnPickerControl', () => {
 
     it('should query an input checkbox change event and expect "readjustFrozenColumnIndexWhenNeeded" method to be called when the grid is detected to be a frozen grid', () => {
       const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
+      vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
       vi.spyOn(gridStub, 'getColumnIndex')
         .mockReturnValue(undefined as any)
         .mockReturnValue(1);
@@ -175,6 +202,7 @@ describe('ColumnPickerControl', () => {
 
     it('should query an input checkbox change event and expect "headerColumnValueExtractor" method to be called when defined', () => {
       const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
+      vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
       vi.spyOn(gridStub, 'getColumnIndex')
         .mockReturnValue(undefined as any)
         .mockReturnValue(1);
@@ -196,6 +224,7 @@ describe('ColumnPickerControl', () => {
     });
 
     it('should return custom label when columnPickerLabel is defined', () => {
+      vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
       const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
       vi.spyOn(gridStub, 'getColumnIndex')
         .mockReturnValue(undefined as any)
@@ -297,6 +326,7 @@ describe('ColumnPickerControl', () => {
     it('should open the column picker via "onHeaderContextMenu" and expect "onColumnsChanged" to be called when defined', () => {
       const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
       const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+      vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
       const onColChangedMock = vi.fn();
       vi.spyOn(gridStub, 'getColumnIndex')
         .mockReturnValue(undefined as any)
@@ -448,7 +478,7 @@ describe('ColumnPickerControl', () => {
         control.init();
 
         gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData as any, gridStub);
-        gridStub.onColumnsReordered.notify({ impactedColumns: columnsUnorderedMock, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onColumnsReordered.notify({ impactedColumns: columnsUnorderedMock, previousColumnOrder: [], grid: gridStub }, eventData as any, gridStub);
         control.menuElement!.querySelector<HTMLInputElement>('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
         const col4 = control.menuElement!.querySelector<HTMLInputElement>('li.hidden input[data-columnid=field4]');
 

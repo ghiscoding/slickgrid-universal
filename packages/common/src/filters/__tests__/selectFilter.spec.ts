@@ -27,7 +27,7 @@ const gridStub = {
   getColumns: vi.fn(),
   getHeaderRowColumn: vi.fn(),
   render: vi.fn(),
-  sanitizeHtmlString: (str: string) => str,
+  sanitizeHtmlString: (text: string) => text,
 } as unknown as SlickGrid;
 
 describe('SelectFilter', () => {

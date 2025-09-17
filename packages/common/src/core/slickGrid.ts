@@ -138,6 +138,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   // Events
   onActiveCellChanged: SlickEvent<OnActiveCellChangedEventArgs>;
   onActiveCellPositionChanged: SlickEvent<{ grid: SlickGrid }>;
+  onActivateChangedOptions: SlickEvent<OnActivateChangedOptionsEventArgs>;
   onAddNewRow: SlickEvent<OnAddNewRowEventArgs>;
   onAfterSetColumns: SlickEvent<OnAfterSetColumnsEventArgs>;
   onAutosizeColumns: SlickEvent<OnAutosizeColumnsEventArgs>;
@@ -191,7 +192,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   onScroll: SlickEvent<OnScrollEventArgs>;
   onSelectedRowsChanged: SlickEvent<OnSelectedRowsChangedEventArgs>;
   onSetOptions: SlickEvent<OnSetOptionsEventArgs>;
-  onActivateChangedOptions: SlickEvent<OnActivateChangedOptionsEventArgs>;
   onSort: SlickEvent<SingleColumnSort | MultiColumnSort>;
   onValidationError: SlickEvent<OnValidationErrorEventArgs>;
   onViewportChanged: SlickEvent<{ grid: SlickGrid }>;
@@ -210,7 +210,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   // settings
   protected _options!: O;
   protected _defaults: BaseGridOption = {
-    alertWhenFrozenNotAllViewable: true,
+    invalidColumnFreezePickerCallback: (error) => alert(error),
+    invalidColumnFreezeWidthCallback: (error) => alert(error),
+    invalidColumnFreezeWidthMessage:
+      '[SlickGrid] You are trying to freeze/pin more columns than the grid can support. ' +
+      'Make sure to have less columns pinned (on the left) than the actual visible grid width.',
+    invalidColumnFreezePickerMessage:
+      '[SlickGrid] Action not allowed and aborted, you need to have at least one or more column on the right section of the column freeze/pining. ' +
+      'You could alternatively "Unfreeze all the columns" before trying again.',
+    skipFreezeColumnValidation: false,
     alwaysShowVerticalScroll: false,
     alwaysAllowHorizontalScroll: false,
     explicitInitialization: false,
@@ -381,6 +389,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected frozenRowsHeight = 0;
   protected actualFrozenRow = -1;
   protected _prevFrozenColumn = -1;
+  /** flag to indicate if invalid frozen alert has been shown already or not? This is to avoid showing it more than once */
+  protected _invalidfrozenAlerted = false;
   protected paneTopH = 0;
   protected paneBottomH = 0;
   protected viewportTopH = 0;
@@ -1351,6 +1361,67 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return totalRowWidth;
   }
 
+  /**
+   * Validate that the column freeze is allowed in the browser by making sure that the frozen column is not exceeding the available and visible left canvas width.
+   * Note that it will only validate when `invalidColumnFreezeWidthCallback` or `throwWhenFrozenNotAllViewable` grid option is enabled.
+   * @param {Number} frozenColumn the column index to freeze at
+   * @param {Boolean} [forceAlert] tri-state flag to alert when frozen column is invalid
+   *  - if `undefined` it will do the condition check and never alert more than once
+   *  - if `true` it will do the condition check and always alert even if it was called before
+   *  - if `false` it will do the condition check but always skip the alert
+   */
+  validateColumnFreezeWidth(frozenColumn = -1, forceAlert?: boolean): boolean {
+    if (frozenColumn >= 0) {
+      let canvasWidthL = 0;
+      this.columns.forEach((col, i) => {
+        if (!col.hidden && i <= frozenColumn) {
+          const { minWidth = 0, maxWidth = 0, width = this._options.defaultColumnWidth! } = col;
+          let fwidth = width < minWidth ? minWidth : width;
+          if (maxWidth > 0 && fwidth > maxWidth) {
+            fwidth = maxWidth;
+          }
+          canvasWidthL += fwidth;
+        }
+      });
+
+      const cWidth = Utils.width(this._container) || 0;
+      if (cWidth > 0 && canvasWidthL > cWidth && !this._options.skipFreezeColumnValidation) {
+        if ((forceAlert !== false && !this._invalidfrozenAlerted) || forceAlert === true) {
+          if (this._options.invalidColumnFreezeWidthCallback || this._options.throwWhenFrozenNotAllViewable) {
+            if (this._options.throwWhenFrozenNotAllViewable) {
+              throw new Error(this._options.invalidColumnFreezeWidthMessage);
+            }
+            this._options.invalidColumnFreezeWidthCallback?.(this._options.invalidColumnFreezeWidthMessage!);
+            this._invalidfrozenAlerted = true;
+          }
+        }
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Validate that there is at least 1, or more, column to the right of the frozen column otherwise show an error (we do this check before calling `setColumns()`).
+   * Note that it will only validate when `invalidColumnFreezePickerCallback` grid option is enabled.
+   * @param {Column[]} newColumns the new columns that will later be provided to `setColumns()`
+   * @param {Boolean} [forceAlert] tri-state flag to alert when frozen column is invalid
+   *  - if `undefined` it will do the condition check and never alert more than once
+   *  - if `true` it will do the condition check and always alert even if it was called before
+   *  - if `false` it will do the condition check but always skip the alert
+   */
+  validateSetColumnFreeze(newColumns: C[], forceAlert?: boolean): boolean {
+    const frozenColumn = this._options.frozenColumn ?? -1;
+    if (frozenColumn >= 0 && frozenColumn > newColumns.length - 2 && !this._options.skipFreezeColumnValidation) {
+      if ((forceAlert !== false && !this._invalidfrozenAlerted) || forceAlert === true) {
+        this._options.invalidColumnFreezePickerCallback?.(this._options.invalidColumnFreezePickerMessage!);
+        this._invalidfrozenAlerted = true;
+      }
+      return false;
+    }
+    return true;
+  }
+
   protected updateCanvasWidth(forceColumnWidthsUpdate?: boolean): void {
     const oldCanvasWidth = this.canvasWidth;
     const oldCanvasWidthL = this.canvasWidthL;
@@ -1372,26 +1443,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       Utils.width(this._headerR, this.headersWidthR);
 
       if (this.hasFrozenColumns()) {
-        const cWidth = Utils.width(this._container) || 0;
-        if (cWidth > 0 && (this.canvasWidthL > cWidth || this._options.frozenColumn! >= this.columns.length)) {
-          // in any case, we need to revert to previous frozen column setting
-          this.setOptions({ frozenColumn: this._prevFrozenColumn } as O);
-
-          // then warn the user when enabled or show console error and abort the operation
-          const errorMsg =
-            '[SlickGrid] You are trying to freeze/pin more columns than the grid can support. ' +
-            'Make sure to have less columns pinned (on the left) than the actual visible grid width. ' +
-            'Also, please remember that only the columns on the right are scrollable and the pinned columns are not.';
-
-          if (this._options.throwWhenFrozenNotAllViewable) {
-            throw new Error(errorMsg);
-          }
-          if (this._options.alertWhenFrozenNotAllViewable) {
-            alert(errorMsg);
-          }
-          console.error(errorMsg);
-          return;
-        }
         Utils.width(this._canvasTopR, this.canvasWidthR);
 
         Utils.width(this._paneHeaderL, this.canvasWidthL);
@@ -2113,6 +2164,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       onEnd: (e) => {
         e.item.classList.remove('slick-header-column-active');
         clearInterval(columnScrollTimer);
+        const prevScrollLeft = this.scrollLeft;
 
         if (!this.getEditorLock()?.commitCurrentEdit()) {
           return;
@@ -2129,6 +2181,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         e.stopPropagation();
         if (!this.arrayEquals(prevColumnIds, reorderedIds)) {
           this.setColumns(reorderedColumns);
+          // reapply previous scroll position since it might move back to x=0 after calling `setColumns()` (especially when `frozenColumn` is set)
+          this.scrollToX(prevScrollLeft);
           this.triggerEvent(this.onColumnsReordered, { impactedColumns: this.columns, previousColumnOrder: prevColumnIds });
           this.setupColumnResize();
         }
@@ -3329,6 +3383,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    */
   setColumns(columns: C[]): void {
     this.triggerEvent(this.onBeforeSetColumns, { previousColumns: this.columns, newColumns: columns, grid: this });
+    const isValidFreeze = this.validateSetColumnFreeze(columns);
+    if (!isValidFreeze) {
+      return; // exit early if freeze is invalid
+    }
     this.columns = columns;
     this.updateColumnsInternal();
     this.triggerEvent(this.onAfterSetColumns, { newColumns: columns, grid: this });
@@ -3367,6 +3425,18 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /**
+   * Get the Column ID of the currently frozen column or `null` when not frozen
+   * @returns {String|Number|null} Frozen Column ID
+   */
+  getFrozenColumnId(): string | number | null {
+    const frozenColIndex = this._options.frozenColumn ?? -1;
+    if (frozenColIndex >= 0 && this.columns[frozenColIndex]) {
+      return this.columns[frozenColIndex].id;
+    }
+    return null;
+  }
+
+  /**
    * Extends grid options with a given hash. If an there is an active edit, the grid will attempt to commit the changes and only continue if the attempt succeeds.
    * @param {Object} options - an object with configuration options.
    * @param {Boolean} [suppressRender] - do we want to supress the grid re-rendering? (defaults to false)
@@ -3383,8 +3453,17 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     // before applying column freeze, we need our viewports to be scrolled back to left to avoid misaligned column headers
     if (newOptions.frozenColumn !== undefined && newOptions.frozenColumn >= 0) {
       this._prevFrozenColumn = this._options.frozenColumn ?? -1; // keep ref of previous frozen column for later usage
-      this.getViewports().forEach((vp) => (vp.scrollLeft = 0));
-      this.handleScroll(); // trigger scroll to realign column headers as well
+
+      // make sure the freeze is also valid without breaking the UI (e.g. we can't freeze columns on left canvas wider than visible canvas width in the browser)
+      if (!suppressColumnSet) {
+        this._invalidfrozenAlerted = false; // reset frozen alert
+      }
+      if (this.validateColumnFreezeWidth(newOptions.frozenColumn)) {
+        this.getViewports().forEach((vp) => (vp.scrollLeft = 0));
+        this.handleScroll(); // trigger scroll to realign column headers as well
+      } else {
+        newOptions.frozenColumn = this._prevFrozenColumn < newOptions.frozenColumn ? this._prevFrozenColumn : -1;
+      }
     }
 
     const originalOptions = extend(true, {}, this._options);
@@ -3465,6 +3544,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected validateAndEnforceOptions(): void {
     if (this._options.autoHeight) {
       this._options.leaveSpaceForNewRows = false;
+    }
+    // make sure the freeze is also valid without breaking the UI (e.g. we can't left freeze columns wider than visible left canvas width)
+    if (!this.validateColumnFreezeWidth(this._options.frozenColumn)) {
+      this._options.frozenColumn = this._prevFrozenColumn < this._options.frozenColumn! ? this._prevFrozenColumn : -1;
     }
   }
 
@@ -3662,6 +3745,41 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
 
       this.triggerEvent(this.onViewportChanged, {});
+    }
+  }
+
+  /**
+   * Scroll to an X coordinate position in the grid
+   * @param {Number} x
+   */
+  scrollToX(x: number): void {
+    this._viewportScrollContainerX.scrollLeft = x;
+    this._headerScrollContainer.scrollLeft = x;
+    this._topPanelScrollers[0].scrollLeft = x;
+    if (this._options.createFooterRow) {
+      this._footerRowScrollContainer.scrollLeft = x;
+    }
+    if (this._options.createPreHeaderPanel) {
+      if (this.hasFrozenColumns()) {
+        this._preHeaderPanelScrollerR.scrollLeft = x;
+      } else {
+        this._preHeaderPanelScroller.scrollLeft = x;
+      }
+    }
+    if (this._options.createTopHeaderPanel) {
+      this._topHeaderPanelScroller.scrollLeft = x;
+    }
+
+    if (this.hasFrozenColumns()) {
+      if (this.hasFrozenRows) {
+        this._viewportTopR.scrollLeft = x;
+      }
+      this._headerRowScrollerR.scrollLeft = x; // right header row scrolling with frozen grid
+    } else {
+      if (this.hasFrozenRows) {
+        this._viewportTopL.scrollLeft = x;
+      }
+      this._headerRowScrollerL.scrollLeft = x; // left header row scrolling with regular grid
     }
   }
 
@@ -5207,34 +5325,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.prevScrollLeft = this.scrollLeft;
 
       // adjust scroll position of all div containers when scrolling the grid
-      this._viewportScrollContainerX.scrollLeft = this.scrollLeft;
-      this._headerScrollContainer.scrollLeft = this.scrollLeft;
-      this._topPanelScrollers[0].scrollLeft = this.scrollLeft;
-      if (this._options.createFooterRow) {
-        this._footerRowScrollContainer.scrollLeft = this.scrollLeft;
-      }
-      if (this._options.createPreHeaderPanel) {
-        if (this.hasFrozenColumns()) {
-          this._preHeaderPanelScrollerR.scrollLeft = this.scrollLeft;
-        } else {
-          this._preHeaderPanelScroller.scrollLeft = this.scrollLeft;
-        }
-      }
-      if (this._options.createTopHeaderPanel) {
-        this._topHeaderPanelScroller.scrollLeft = this.scrollLeft;
-      }
-
-      if (this.hasFrozenColumns()) {
-        if (this.hasFrozenRows) {
-          this._viewportTopR.scrollLeft = this.scrollLeft;
-        }
-        this._headerRowScrollerR.scrollLeft = this.scrollLeft; // right header row scrolling with frozen grid
-      } else {
-        if (this.hasFrozenRows) {
-          this._viewportTopL.scrollLeft = this.scrollLeft;
-        }
-        this._headerRowScrollerL.scrollLeft = this.scrollLeft; // left header row scrolling with regular grid
-      }
+      this.scrollToX(this.scrollLeft);
     }
 
     // autoheight suppresses vertical scrolling, but editors can create a div larger than
@@ -6289,6 +6380,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         column: columnDef,
         columnMetaData,
         item: item || {},
+        isCompositeEditor: false,
         event: e as Event,
         commitChanges: this.commitEditAndSetFocus.bind(this),
         cancelChanges: this.cancelEditAndSetFocus.bind(this),
@@ -6333,17 +6425,26 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    */
   protected absBox(elem: HTMLElement): ElementPosition {
     const rect = elem.getBoundingClientRect();
-    // Get grid container (assume this._container exists and is the grid root)
-    const gridRect = this._container?.getBoundingClientRect?.() || { top: 0, left: 0, bottom: 0, right: 0 };
     const box = {
-      top: rect.top - gridRect.top,
-      left: rect.left - gridRect.left,
-      bottom: rect.bottom - gridRect.top,
-      right: rect.right - gridRect.left,
+      top: rect.top,
+      left: rect.left,
+      bottom: rect.bottom,
+      right: rect.right,
       width: rect.width,
       height: rect.height,
       visible: true,
     };
+    if (rect.bottom === 0 && rect.top === 0) {
+      return box; // assume element is visible when we can't determine it's position & size
+    }
+
+    // then calculation position relative to the grid container (assume container exists and is the grid root)
+    const gridRect = this._container?.getBoundingClientRect() || { top: 0, left: 0, bottom: 0, right: 0 };
+    box.top = rect.top - gridRect.top;
+    box.left = rect.left - gridRect.left;
+    box.bottom = rect.bottom - gridRect.top;
+    box.right = rect.right - gridRect.left;
+
     // Check if the element is visible within the grid viewport
     if (
       box.bottom < 0 ||
@@ -7044,7 +7145,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         }
         return null;
         /* v8 ignore next 3 */
-      } catch (e) {
+      } catch (e: any) {
         return this.rowsCache[row].cellNodesByColumnIdx[cell] as HTMLDivElement | null;
       }
     }

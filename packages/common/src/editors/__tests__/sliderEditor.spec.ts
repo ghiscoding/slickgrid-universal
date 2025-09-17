@@ -629,6 +629,7 @@ describe('SliderEditor', () => {
       editorArguments = {
         ...editorArguments,
         compositeEditorOptions: { headerTitle: 'Test', modalType: 'edit', formValues: {}, editors: {} },
+        isCompositeEditor: true,
       } as EditorArguments;
     });
 

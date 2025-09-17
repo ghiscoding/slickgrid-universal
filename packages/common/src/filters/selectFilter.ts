@@ -213,7 +213,7 @@ export class SelectFilter implements Filter {
           await (collectionOutput ?? this.columnFilter.collectionAsync);
           this.watchCollectionChanges();
         }
-      } catch (e) {
+      } catch (e: any) {
         reject(e);
       }
     });

@@ -209,6 +209,7 @@ const mockGrid = {
   getEditorLock: () => mockGetEditorLock,
   getUID: () => 'slickgrid_12345',
   getContainerNode: vi.fn(),
+  getFrozenColumnId: vi.fn(),
   getGridPosition: vi.fn(),
   getOptions: vi.fn(),
   getSelectionModel: vi.fn(),
@@ -271,7 +272,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
   let eventPubSubService: EventPubSubService;
   let translateService: TranslateServiceStub;
   const container = new UniversalContainerService();
-  let dataset = [];
+  let dataset: any[] = [];
 
   beforeEach(() => {
     dataset = [];

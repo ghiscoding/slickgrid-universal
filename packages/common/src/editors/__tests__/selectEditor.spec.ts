@@ -201,7 +201,10 @@ describe('SelectEditor', () => {
         { value: 'female', label: 'female' },
       ];
       gridOptionMock.translater = translateService;
-      editor = new SelectEditor({ ...editorArguments, compositeEditorOptions: { modalType: 'auto-mass', editors: {}, formValues: {} } }, true);
+      editor = new SelectEditor(
+        { ...editorArguments, compositeEditorOptions: { modalType: 'auto-mass', editors: {}, formValues: {} }, isCompositeEditor: true },
+        true
+      );
       editor.msInstance?.open(null);
       const keyEvent = new (window.window as any).KeyboardEvent('keydown', { key: 'Tab', shiftKey: false, bubbles: true, cancelable: true });
       editor.msInstance?.getOptions().onBlur(keyEvent);
@@ -1064,6 +1067,7 @@ describe('SelectEditor', () => {
       editorArguments = {
         ...editorArguments,
         compositeEditorOptions: { headerTitle: 'Test', modalType: 'edit', formValues: {}, editors: {} },
+        isCompositeEditor: true,
       } as EditorArguments;
 
       mockItemData = { id: 1, gender: 'male', isActive: true };

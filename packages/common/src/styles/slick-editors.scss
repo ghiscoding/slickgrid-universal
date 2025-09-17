@@ -148,6 +148,10 @@
       margin: var(--slick-large-editor-count-separator-margin, v.$slick-large-editor-count-separator-margin);
     }
   }
+  &.disabled,
+  &.disabled textarea {
+    background-color: var(--slick-large-editor-disabled, v.$slick-large-editor-disabled);
+  }
 }
 
 /* Slick Composite Editor Modal */

@@ -6,6 +6,7 @@
   - [Mass Update](#mass-update)
   - [Mass Selection](#mass-selection) _(similar to Mass Update but apply changes only to selected rows)_
 - Modal Options
+  - [Form Input Order Index](#form-input-order-index)
   - [Customize Text Labels](#customize-text-labels)
   - [UI Options & Responsive Design](#ui-options--responsive-design)
 - Callback Functions
@@ -323,6 +324,33 @@ this.compositeEditorInstance.openDetails({
 With that same use case, let say that we try changing the first 4 rows with a "Duration" of 4 days, it will apply the changes to all the rows except the first row where the change is skipped because its complexity is set to "Complex" and we don't want a duration to be below 5 days for our use case.
 
 ![image](https://user-images.githubusercontent.com/643976/171494716-60d32059-c212-4b13-b90d-1342d0999e38.png)
+
+### Form Input Order Index
+
+When using Composite Editor Modal, the inputs will show up with the order that they were entered in the column definitions array. You can use `compositeEditorFormOrder` editor option to provide a specific order to show these inputs in the form.
+
+```ts
+export class GridExample {
+  compositeEditorInstance: SlickCompositeEditorComponent;
+
+  prepareGrid() {
+    this.columnDefinitions = [
+      {
+        id: 'firstName', name: 'First Name', field: 'firstName', sortable: true, filterable: true,
+        editor: { model: Editors.text, compositeEditorFormOrder: 1, required: true }, // make this the 2nd input (1)
+      },
+      {
+        id: 'lastName', name: 'Last Name', field: 'lastName', sortable: true, filterable: true,
+        editor: { model: Editors.text, compositeEditorFormOrder: 0, required: true }, // make this the 1st input (0)
+      },
+      {
+        id: 'age', name: 'Age', field: 'age', sortable: true, filterable: true, type: 'number',
+        editor: { model: Editors.integer, compositeEditorFormOrder: 2, required: true },
+      },
+    ];
+  }
+}
+```
 
 ## Customize Text Labels
 You can customize many of the text labels used in the modal window, they are all regrouped under the `labels` options

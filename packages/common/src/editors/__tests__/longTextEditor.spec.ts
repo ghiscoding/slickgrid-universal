@@ -885,11 +885,23 @@ describe('LongTextEditor', () => {
       editorArguments = {
         ...editorArguments,
         compositeEditorOptions: { headerTitle: 'Test', modalType: 'edit', formValues: {}, editors: {} },
+        isCompositeEditor: true,
       } as EditorArguments;
     });
 
     afterEach(() => {
       vi.clearAllMocks();
+    });
+
+    it('should show the DOM element div wrapper in Composite Modal when the "show" method is called', () => {
+      editor = new LongTextEditor(editorArguments);
+      const wrapperElm = document.body.querySelector('.slick-large-editor-text.editor-title') as HTMLDivElement;
+
+      editor.hide();
+      expect(wrapperElm.style.display).not.toBe('none'); // won't hide when composite editor
+
+      editor.show();
+      expect(wrapperElm.style.display).toBe('block');
     });
 
     it('should call "setValue" with value & apply value flag and expect the DOM element to have same value and also expect the value to be applied to the item object', () => {

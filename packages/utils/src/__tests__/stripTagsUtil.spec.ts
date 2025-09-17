@@ -99,7 +99,7 @@ describe('stripTags()', () => {
   describe('with tag_replacement parameter', () => {
     it('should replace tags with that parameter', () => {
       const html = 'Line One<br>Line Two';
-      const allowed_tags = [];
+      const allowed_tags: string[] = [];
       const tag_replacement = '\n';
       const text = 'Line One\nLine Two';
 

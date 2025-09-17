@@ -355,7 +355,7 @@ export default class Example14 {
           model: Editors.date,
           options: { displayDateMin: 'today' } as VanillaCalendarOption,
           validator: (value, args) => {
-            const dataContext = args && args.item;
+            const dataContext = args?.item;
             if (dataContext && dataContext.completed && !value) {
               return { valid: false, msg: 'You must provide a "Finish" date when "Completed" is checked.' };
             }
@@ -746,7 +746,7 @@ export default class Example14 {
 
   handleOnCellChange(event) {
     const args = event?.detail?.args;
-    const dataContext = args && args.item;
+    const dataContext = args?.item;
 
     // when the field "completed" changes to false, we also need to blank out the "finish" date
     if (dataContext && !dataContext.completed) {

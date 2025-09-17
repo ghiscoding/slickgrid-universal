@@ -2,56 +2,56 @@ import { describe, expect, it } from 'vitest';
 
 import GraphqlQueryBuilder from '../graphqlQueryBuilder.js';
 
-function removeSpaces(textS) {
-  return `${textS}`.replace(/\s+/g, '');
+function removeSpaces(text: string) {
+  return `${text}`.replace(/\s+/g, '');
 }
 
 describe('GraphqlQueryBuilder', () => {
   it('should accept a single find value', () => {
     const expectation = `user{age}`;
-    const user = new GraphqlQueryBuilder('user').find('age');
+    const user = new GraphqlQueryBuilder('user').find('age').toString();
 
     expect(removeSpaces(expectation)).toBe(removeSpaces(user));
   });
 
   it('should create a Query with function name & alia', () => {
     const expectation = `sam: user{name}`;
-    const user = new GraphqlQueryBuilder('user', 'sam').find('name');
+    const user = new GraphqlQueryBuilder('user', 'sam').find('name').toString();
 
     expect(removeSpaces(expectation)).toBe(removeSpaces(user));
   });
 
   it('should create a Query with function name & input', () => {
     const expectation = `user(id:12345){name}`;
-    const user = new GraphqlQueryBuilder('user', { id: 12345 }).find('name');
+    const user = new GraphqlQueryBuilder('user', { id: 12345 }).find('name').toString();
 
     expect(removeSpaces(expectation)).toBe(removeSpaces(user));
   });
 
   it('should create a Query with function name & input(s)', () => {
     const expectation = `user(id:12345, age:34){name}`;
-    const user = new GraphqlQueryBuilder('user', { id: 12345, age: 34 }).find('name');
+    const user = new GraphqlQueryBuilder('user', { id: 12345, age: 34 }).find('name').toString();
 
     expect(removeSpaces(expectation)).toBe(removeSpaces(user));
   });
 
   it('should accept a single find value with alia', () => {
     const expectation = `user{nickname:name}`;
-    const user = new GraphqlQueryBuilder('user').find({ nickname: 'name' });
+    const user = new GraphqlQueryBuilder('user').find({ nickname: 'name' }).toString();
 
     expect(removeSpaces(expectation)).toBe(removeSpaces(user));
   });
 
   it('should accept a multiple find values', () => {
     const expectation = `user{firstname, lastname}`;
-    const user = new GraphqlQueryBuilder('user').find('firstname', 'lastname');
+    const user = new GraphqlQueryBuilder('user').find('firstname', 'lastname').toString();
 
     expect(removeSpaces(expectation)).toBe(removeSpaces(user));
   });
 
   it('should accept an array find values', () => {
     const expectation = `user{firstname, lastname}`;
-    const user = new GraphqlQueryBuilder('user').find(['firstname', 'lastname']);
+    const user = new GraphqlQueryBuilder('user').find(['firstname', 'lastname']).toString();
 
     expect(removeSpaces(expectation)).toBe(removeSpaces(user));
   });
@@ -65,8 +65,7 @@ describe('GraphqlQueryBuilder', () => {
     const profilePicture = new GraphqlQueryBuilder('profilePicture', { size: 50 });
     profilePicture.find('uri', 'width', 'height');
 
-    const user = new GraphqlQueryBuilder('user', { id: 12345 });
-    user.find(['id', { nickname: 'name' }, 'isViewerFriend', { image: profilePicture }]);
+    const user = new GraphqlQueryBuilder('user', { id: 12345 }).find(['id', { nickname: 'name' }, 'isViewerFriend', { image: profilePicture }]).toString();
 
     expect(removeSpaces(expectation)).toBe(removeSpaces(user));
   });
@@ -74,8 +73,7 @@ describe('GraphqlQueryBuilder', () => {
   it('should work with simple nesting Querys', () => {
     const expectation = `user { profilePicture { uri, width, height } }`;
 
-    const user = new GraphqlQueryBuilder('user');
-    user.find({ profilePicture: ['uri', 'width', 'height'] });
+    const user = new GraphqlQueryBuilder('user').find({ profilePicture: ['uri', 'width', 'height'] }).toString();
 
     expect(removeSpaces(expectation)).toBe(removeSpaces(user));
   });
@@ -95,9 +93,9 @@ describe('GraphqlQueryBuilder', () => {
     sam.filter({ modified: now });
     sam.find(['name', 'modified']);
 
-    fetchLeeAndSam.find(lee, sam);
+    const output = fetchLeeAndSam.find(lee, sam).toString();
 
-    expect(removeSpaces(fetchLeeAndSam)).toBe(removeSpaces(expectation));
+    expect(removeSpaces(output)).toBe(removeSpaces(expectation));
   });
 
   it('should be able to group Querys', () => {
@@ -113,9 +111,9 @@ describe('GraphqlQueryBuilder', () => {
     sam.filter({ id: '2' });
     sam.find('name');
 
-    fetchLeeAndSam.find(lee, sam);
+    const output = fetchLeeAndSam.find(lee, sam).toString();
 
-    expect(removeSpaces(fetchLeeAndSam)).toBe(removeSpaces(expectation));
+    expect(removeSpaces(output)).toBe(removeSpaces(expectation));
   });
 
   it('should work with nasted objects and lists', () => {
@@ -137,9 +135,7 @@ describe('GraphqlQueryBuilder', () => {
       ],
     };
 
-    const messageQuery = new GraphqlQueryBuilder('Message', 'myPost');
-    messageQuery.filter(messageRequest);
-    messageQuery.find({ messageId: 'id' }, { postedTime: 'createTime' });
+    const messageQuery = new GraphqlQueryBuilder('Message', 'myPost').filter(messageRequest).find({ messageId: 'id' }, { postedTime: 'createTime' }).toString();
 
     expect(removeSpaces(messageQuery)).toBe(removeSpaces(expectation));
   });
@@ -149,8 +145,7 @@ describe('GraphqlQueryBuilder', () => {
     const childsToy = { toy: 'jack in the box', getState: () => {} };
 
     childsToy.getState(); // for v8 coverage to get all fn be called
-    const itemQuery = new GraphqlQueryBuilder('inventory', childsToy);
-    itemQuery.find('id');
+    const itemQuery = new GraphqlQueryBuilder('inventory', childsToy).find('id').toString();
 
     expect(removeSpaces(itemQuery)).toBe(removeSpaces(expectation));
   });
@@ -160,8 +155,7 @@ describe('GraphqlQueryBuilder', () => {
     const childsToy = { toy: 'jack in the box', utils: { getState: () => {} } };
 
     childsToy.utils.getState(); // for v8 coverage to get all fn be called
-    const itemQuery = new GraphqlQueryBuilder('inventory', childsToy);
-    itemQuery.find('id');
+    const itemQuery = new GraphqlQueryBuilder('inventory', childsToy).find('id').toString();
 
     expect(removeSpaces(itemQuery)).toBe(removeSpaces(expectation));
   });
@@ -170,8 +164,7 @@ describe('GraphqlQueryBuilder', () => {
     const expectation = 'inventory(toy:"jack in the box") { id }';
     const childsToy = { toy: 'jack in the box', utils: {} };
 
-    const itemQuery = new GraphqlQueryBuilder('inventory', childsToy);
-    itemQuery.find('id');
+    const itemQuery = new GraphqlQueryBuilder('inventory', childsToy).find('id').toString();
 
     expect(removeSpaces(itemQuery)).toBe(removeSpaces(expectation));
   });

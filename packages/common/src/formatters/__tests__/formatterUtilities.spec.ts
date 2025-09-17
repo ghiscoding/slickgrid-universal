@@ -174,7 +174,7 @@ describe('formatterUtilities', () => {
   });
 
   describe('Export Utilities', () => {
-    let mockItem;
+    let mockItem: any;
     let mockColumn: Column;
     const myBoldHtmlFormatter: Formatter = (_row, _cell, value) => (value !== null ? { text: value ? `<b>${value}</b>` : '' } : (null as any));
     const myUppercaseFormatter: Formatter = (_row, _cell, value) => {

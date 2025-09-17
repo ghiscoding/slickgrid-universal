@@ -28,7 +28,7 @@ describe('executeNumberFilterCondition method', () => {
   });
 
   it('should return False when any cell value is provided without any search terms', () => {
-    const searchTerms = [];
+    const searchTerms: string[] = [];
     const options = { dataKey: '', operator: 'EQ', cellValue: 'foo', fieldType: FieldType.number } as FilterConditionOption;
     const output = executeNumberFilterCondition(options, getFilterParsedNumbers(searchTerms));
     expect(output).toBe(false);

@@ -31,7 +31,7 @@ import type { SlickColumnPicker } from '../../extensions/slickColumnPicker.js';
 
 vi.useFakeTimers();
 
-const fnCallbacks = {};
+const fnCallbacks: any = {};
 const mockPubSub = {
   publish: vi.fn(),
   subscribe: (eventName, fn) => {
@@ -133,7 +133,7 @@ describe('GridStateService', () => {
   });
 
   describe('init method', () => {
-    let slickgridEvent;
+    let slickgridEvent: SlickEvent;
 
     beforeEach(() => {
       slickgridEvent = new SlickEvent();
@@ -334,7 +334,7 @@ describe('GridStateService', () => {
 
         service.init(gridStub);
         vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(rowSelectionModelStub);
-        gridStub.onColumnsReordered.notify({ impactedColumns: columnsMock, grid: gridStub }, new SlickEventData(), gridStub);
+        gridStub.onColumnsReordered.notify({ impactedColumns: columnsMock, previousColumnOrder: [], grid: gridStub }, new SlickEventData(), gridStub);
         service.resetColumns();
 
         expect(gridColumnSpy).toHaveBeenCalled();

@@ -12,6 +12,7 @@ import {
   type GridOption,
   GroupTotalFormatters,
 } from 'aurelia-slickgrid';
+
 import './example34.scss';
 
 const NB_ROWS = 200;

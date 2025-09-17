@@ -58,7 +58,9 @@ describe('Example 33 - Regular & Custom Tooltips', () => {
     cy.get('.tooltip-2cols-row:nth(2)').find('div:nth(0)').contains('Ratio:');
     cy.get('.tooltip-2cols-row:nth(2)').find('div:nth(1)').contains(/\d+$/); // use regexp to make sure it's a number
 
-    cy.get('@task1-cell').trigger('mouseout');
+    cy.get('@task1-cell').trigger('mouseleave').trigger('mouseout');
+    cy.get('h2').trigger('mouseover');
+    cy.wait(10);
   });
 
   it('should mouse over Task 6 cell and expect async tooltip to show', () => {
@@ -77,7 +79,9 @@ describe('Example 33 - Regular & Custom Tooltips', () => {
     cy.get('.tooltip-2cols-row:nth(2)').find('div:nth(0)').contains('Ratio:');
     cy.get('.tooltip-2cols-row:nth(2)').find('div:nth(1)').contains(/\d+$/); // use regexp to make sure it's a number
 
-    cy.get('@task6-cell').trigger('mouseout');
+    cy.get('@task6-cell').trigger('mouseleave').trigger('mouseout');
+    cy.get('h2').trigger('mouseover');
+    cy.wait(10);
   });
 
   it('should mouse over Task 6 cell on "Start" column and expect a delayed tooltip opening via async process', () => {

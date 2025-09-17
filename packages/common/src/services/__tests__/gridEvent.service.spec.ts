@@ -37,11 +37,11 @@ describe('GridEventService', () => {
   });
 
   describe('bindOnBeforeEditCell method', () => {
-    let mockColumn;
-    let mockRowData;
+    let mockColumn: Column;
+    let mockRowData: any;
 
     beforeEach(() => {
-      mockColumn = { id: 'firstName', field: 'firstName', onBeforeEditCell: vi.fn() } as Column;
+      mockColumn = { id: 'firstName', field: 'firstName', onBeforeEditCell: vi.fn() };
       mockRowData = { firstName: 'John', lastName: 'Doe' };
     });
 
@@ -93,8 +93,8 @@ describe('GridEventService', () => {
   });
 
   describe('bindOnCellChange method', () => {
-    let mockColumn;
-    let mockRowData;
+    let mockColumn: Column;
+    let mockRowData: any;
 
     beforeEach(() => {
       mockColumn = { id: 'firstName', field: 'firstName', onCellChange: vi.fn() } as Column;
@@ -145,8 +145,8 @@ describe('GridEventService', () => {
   });
 
   describe('bindOnClick method', () => {
-    let mockColumn;
-    let mockRowData;
+    let mockColumn: Column;
+    let mockRowData: any;
 
     beforeEach(() => {
       mockColumn = { id: 'firstName', field: 'firstName', onCellClick: vi.fn() } as Column;

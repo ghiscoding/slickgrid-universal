@@ -1,7 +1,7 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { I18N } from '@aurelia/i18n';
 // import { TOptions as I18NOptions } from 'i18next';
-
+import { resolve } from 'aurelia';
 import {
   type AureliaGridInstance,
   type Column,
@@ -13,8 +13,8 @@ import {
   type GridOption,
   type SlickGrid,
 } from 'aurelia-slickgrid';
+
 import './example24.scss'; // provide custom CSS/SASS styling
-import { resolve } from 'aurelia';
 
 const actionFormatter: Formatter = (_row, _cell, _value, _columnDef, dataContext) => {
   if (dataContext.priority === 3) {

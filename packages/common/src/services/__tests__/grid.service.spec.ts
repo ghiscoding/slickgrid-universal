@@ -76,6 +76,7 @@ const gridStub = {
   autosizeColumns: vi.fn(),
   insertItem: vi.fn(),
   invalidate: vi.fn(),
+  getFrozenColumnId: vi.fn(),
   getColumnIndex: vi.fn(),
   getData: () => dataviewStub,
   getDataItem: vi.fn(),
@@ -94,6 +95,7 @@ const gridStub = {
   scrollRowIntoView: vi.fn(),
   updateColumns: vi.fn(),
   updateRow: vi.fn(),
+  validateColumnFreezeWidth: vi.fn(),
 } as unknown as SlickGrid;
 
 const paginationServiceStub = {
@@ -1588,13 +1590,12 @@ describe('Grid Service', () => {
       sharedService.slickGrid = gridStub;
       const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
       const autosizeColumnsSpy = vi.spyOn(gridStub, 'autosizeColumns');
-      const gridOptionSetterSpy = vi.spyOn(SharedService.prototype, 'gridOptions', 'set');
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+      vi.spyOn(gridStub, 'validateColumnFreezeWidth').mockReturnValue(true);
 
       service.setPinning(mockPinning);
 
       expect(setOptionsSpy).toHaveBeenCalledWith(mockPinning, false, true);
-      expect(gridOptionSetterSpy).toHaveBeenCalledWith(mockPinning);
       expect(autosizeColumnsSpy).toHaveBeenCalled();
     });
 
@@ -1603,13 +1604,12 @@ describe('Grid Service', () => {
       sharedService.slickGrid = gridStub;
       const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
       const autosizeColumnsSpy = vi.spyOn(gridStub, 'autosizeColumns');
-      const gridOptionSetterSpy = vi.spyOn(SharedService.prototype, 'gridOptions', 'set');
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+      vi.spyOn(gridStub, 'validateColumnFreezeWidth').mockReturnValue(true);
 
       service.setPinning(mockPinning, false);
 
       expect(setOptionsSpy).toHaveBeenCalledWith(mockPinning, false, true);
-      expect(gridOptionSetterSpy).toHaveBeenCalledWith(mockPinning);
       expect(autosizeColumnsSpy).not.toHaveBeenCalled();
     });
   });

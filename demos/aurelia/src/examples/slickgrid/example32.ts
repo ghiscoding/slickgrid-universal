@@ -1,7 +1,6 @@
 import { IHttpClient } from '@aurelia/fetch-client';
 import { newInstanceOf, resolve } from '@aurelia/kernel';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-
 import {
   type AureliaGridInstance,
   type AutocompleterOption,
@@ -277,7 +276,7 @@ export class Example32 {
           model: Editors.date,
           options: { displayDateMin: 'today' } as VanillaCalendarOption,
           validator: (value, args) => {
-            const dataContext = args && args.item;
+            const dataContext = args?.item;
             if (dataContext && dataContext.completed && !value) {
               return { valid: false, msg: 'You must provide a "Finish" date when "Completed" is checked.' };
             }

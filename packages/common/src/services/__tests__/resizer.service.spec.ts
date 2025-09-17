@@ -76,7 +76,7 @@ describe('Resizer Service', () => {
     divContainer.innerHTML = template;
     document.body.appendChild(divContainer);
 
-    resizeObserverMock = vi.fn(function (callback: ResizeObserverCallback): ResizeObserver {
+    resizeObserverMock = vi.fn(function (this: ResizeObserver, callback: ResizeObserverCallback): ResizeObserver {
       this.observe = vi.fn().mockImplementation(() => {
         callback([], this); // Execute the callback on observe, similar to the window.ResizeObserver.
       });
@@ -793,11 +793,25 @@ describe('Resizer Service', () => {
     });
 
     describe('AutoFix broken resize styling UI', () => {
+      let mockColDefs: Column[];
+
       afterEach(() => {
         vi.clearAllMocks();
         service.dispose();
         service.intervalRetryDelay = 1;
         service.requestStopOfAutoFixResizeGrid(true);
+        mockColDefs = [
+          // typically the `originalWidth` is set by the columnDefinitiosn setter in vanilla grid bundle but we can mock it for our test
+          { id: 'userId', field: 'userId', width: 30, originalWidth: 30 },
+          { id: 'firstName', field: 'firstName', editor: { model: Editors.text }, minWidth: 50 },
+          { id: 'lastName', field: 'lastName', editor: { model: Editors.text }, minWidth: 50 },
+          { id: 'gender', field: 'gender', resizeCalcWidthRatio: 1.2 },
+          { id: 'age', field: 'age', type: FieldType.number, resizeExtraWidthPadding: 2 },
+          { id: 'street', field: 'street', maxWidth: 15 },
+          { id: 'country', field: 'country', maxWidth: 15, resizeMaxWidthThreshold: 14, rerenderOnResize: true },
+          { id: 'zip', field: 'zip', minWidth: 44, width: 30, type: 'number' },
+        ] as Column[];
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColDefs);
       });
 
       it('should try to resize grid when its UI is deemed broken and expect "resizeGridWhenStylingIsBrokenUntilCorrected" to be called on interval', () =>
@@ -819,11 +833,17 @@ describe('Resizer Service', () => {
           divContainer.style.top = '10px';
           divContainer.style.left = '20px';
 
+          const intervalId = setInterval(() => {
+            Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: Math.random() * 1000 });
+            Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: Math.random() * 1000 });
+          }, service.intervalRetryDelay);
+
           setTimeout(() => {
             expect(divContainer.outerHTML).toBeTruthy();
             expect(resizeSpy).toHaveBeenCalled();
             expect(resizeSpy).toHaveBeenNthCalledWith(2, 10, undefined);
             expect(resizeSpy).toHaveBeenNthCalledWith(3);
+            clearInterval(intervalId);
             done();
           }, 25);
         }));
@@ -844,8 +864,47 @@ describe('Resizer Service', () => {
           divContainer.style.top = '10px';
           divContainer.style.left = '20px';
 
+          const intervalId = setInterval(() => {
+            Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: Math.random() * 1000 });
+            Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: Math.random() * 1000 });
+          }, service.intervalRetryDelay);
+
           service.requestStopOfAutoFixResizeGrid();
           // expect(divContainer.outerHTML).toBeTruthy();
+          expect(resizeSpy).toHaveBeenCalled();
+
+          setTimeout(() => {
+            expect(divContainer.outerHTML).toBeTruthy();
+            expect(resizeSpy).toHaveBeenCalled();
+            clearInterval(intervalId);
+            done();
+          }, 10);
+        }));
+
+      it('should try to resize grid when its UI is deemed broken and the grid was previously hidden by a tab and becomes visible again', () =>
+        new Promise((done: any) => {
+          const resizeSpy = vi.spyOn(service, 'resizeGrid').mockReturnValue(Promise.resolve({ height: 150, width: 350 }));
+
+          mockGridOptions.autoFixResizeWhenBrokenStyleDetected = true;
+          service.intervalRetryDelay = 1;
+
+          const gridElm = document.querySelector<HTMLDivElement>(`.${GRID_UID}`) as HTMLDivElement;
+          service.init(gridStub, divContainer);
+          Object.defineProperty(gridElm, 'offsetParent', { writable: true, configurable: true, value: 0 });
+
+          const divHeaderElm = divContainer.querySelector('.slick-header') as HTMLDivElement;
+          vi.spyOn(divContainer, 'getBoundingClientRect').mockReturnValue({ top: 10, left: 20 } as unknown as DOMRect);
+          vi.spyOn(divHeaderElm, 'getBoundingClientRect').mockReturnValue({ top: 30, left: 25 } as unknown as DOMRect);
+          divHeaderElm.style.top = '30px';
+          divHeaderElm.style.left = '25px';
+          divContainer.style.top = '10px';
+          divContainer.style.left = '20px';
+
+          setTimeout(() => {
+            Object.defineProperty(gridElm, 'offsetParent', { writable: true, configurable: true, value: 100 });
+          }, 5);
+
+          service.requestStopOfAutoFixResizeGrid();
           expect(resizeSpy).toHaveBeenCalled();
 
           setTimeout(() => {
@@ -887,6 +946,8 @@ describe('Resizer Service', () => {
           Object.defineProperty(document.querySelector(`.${GRID_UID}`), 'offsetParent', { writable: true, configurable: true, value: 55 });
           vi.spyOn(mockDataView, 'getItemCount').mockReturnValue(99);
           vi.spyOn(gridStub, 'getRenderedRange').mockReturnValue({ top: 0, bottom: 0, leftPx: 0, rightPx: 0 });
+          Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: null });
+          Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: null });
 
           mockGridOptions.autoFixResizeTimeout = 10;
           mockGridOptions.autoFixResizeRequiredGoodCount = 5;
@@ -904,12 +965,20 @@ describe('Resizer Service', () => {
           divContainer.style.left = '20px';
           service.init(gridStub, divContainer);
 
+          const intervalId = setInterval(() => {
+            if (window) {
+              Object.defineProperty(window, 'innerHeight', { writable: true, configurable: true, value: Math.random() * 1000 });
+              Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: Math.random() * 1000 });
+            }
+          }, service.intervalRetryDelay);
+
           setTimeout(() => {
             expect(divContainer.outerHTML).toBeTruthy();
             expect(resizeSpy).toHaveBeenCalled();
             expect(resizeSpy).toHaveBeenNthCalledWith(2, 10, undefined);
             expect(resizeSpy).toHaveBeenNthCalledWith(3);
             expect(resizeSpy).toHaveBeenNthCalledWith(4);
+            clearInterval(intervalId);
             done();
             service.requestStopOfAutoFixResizeGrid();
           }, 25);

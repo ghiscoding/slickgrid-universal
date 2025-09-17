@@ -160,7 +160,7 @@ describe('Backend Utility Service', () => {
         try {
           gridOptionMock.backendServiceApi = undefined;
           service.refreshBackendDataset(undefined as any);
-        } catch (e) {
+        } catch (e: any) {
           expect(e.toString()).toContain('BackendServiceApi requires at least a "process" function and a "service" defined');
           done();
         }
