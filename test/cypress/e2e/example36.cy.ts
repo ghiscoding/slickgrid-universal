@@ -153,7 +153,8 @@ describe('Example 36 - Hybrid Selection Model', () => {
       cy.get('.grid36-2 .slick-row[data-row="4"] .slick-cell.l0.r0').as('task4');
       cy.get('.grid36-2 .slick-row[data-row="4"] .slick-cell.l1.r1').should('contain', '4');
       cy.get('@task4').click();
-      cy.get('@task4').should('have.class', 'selected');
+      cy.get('.grid36-2 .slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('.grid36-2 .slick-row[data-row="4"] .slick-cell.l0.r0').should('have.class', 'selected');
       cy.get('.grid36-2 .slick-cell.selected').should('have.length', 8 * 4);
 
       // select another row
