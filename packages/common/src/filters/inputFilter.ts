@@ -1,11 +1,21 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, emptyElement, isDefined, toSentenceCase } from '@slickgrid-universal/utils';
 
-import type { Column, ColumnFilter, Filter, FilterArguments, FilterCallback, GridOption, OperatorDetail } from '../interfaces/index.js';
+import type {
+  Column,
+  ColumnFilter,
+  Filter,
+  FilterArguments,
+  FilterCallback,
+  GridOption,
+  OperatorDetail,
+  SearchColumnFilter,
+} from '../interfaces/index.js';
 import { FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
 import { applyOperatorAltTextWhenExists, buildSelectOperator, compoundOperatorNumeric, compoundOperatorString } from './filterUtilities.js';
+import { parseFormInputFilterConditions } from '../commonEditorFilter/commonEditorFilterUtils.js';
 import { mapOperatorToShorthandDesignation, type TranslaterService } from '../services/index.js';
-import { type SlickGrid } from '../core/index.js';
+import { type SlickGrid } from '../core/slickGrid.js';
 
 export class InputFilter implements Filter {
   protected _bindEventService: BindingEventService;
@@ -380,10 +390,22 @@ export class InputFilter implements Filter {
         this.columnFilter.skipCompoundOperatorFilterWithNullInput ??
         this.gridOptions.skipCompoundOperatorFilterWithNullInput ??
         this.gridOptions.skipCompoundOperatorFilterWithNullInput === undefined;
-      const hasSkipNullValChanged =
-        (skipNullInput && isDefined(this._currentValue)) || (this._currentValue === '' && isDefined(this._lastSearchValue));
 
-      if (!this.isCompoundFilter || !skipNullInput || hasSkipNullValChanged) {
+      const colFilter: Omit<SearchColumnFilter, 'searchTerms'> = {
+        columnId: this.columnDef.id as string | number,
+        columnDef: this.columnDef,
+        parsedSearchTerms: [],
+        type: this.columnDef.type ?? 'string',
+      };
+      const { plainSearchValue } = parseFormInputFilterConditions(
+        this._currentValue ? [this._currentValue] : [],
+        colFilter,
+        this.gridOptions
+      );
+      const hasSkipNullValChanged =
+        (skipNullInput && isDefined(plainSearchValue)) || (plainSearchValue === '' && isDefined(this._lastSearchValue));
+
+      if (!skipNullInput || hasSkipNullValChanged) {
         if (typingDelay > 0) {
           clearTimeout(this._timer);
           this._timer = setTimeout(() => this.callback(event, callbackArgs), typingDelay);

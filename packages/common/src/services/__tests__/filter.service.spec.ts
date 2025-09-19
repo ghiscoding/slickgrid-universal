@@ -25,6 +25,7 @@ import { CollectionService } from '../collection.service.js';
 import { type SlickDataView, SlickEvent, SlickEventData, type SlickEventHandler, type SlickGrid } from '../../core/index.js';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
+import { parseFormInputFilterConditions } from '../../commonEditorFilter/commonEditorFilterUtils.js';
 
 vi.useFakeTimers();
 
@@ -911,7 +912,7 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
-      const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
+      const filterCondition = parseFormInputFilterConditions(searchTerms, columnFilter, gridOptionMock);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
       const columnFilters = {
         firstName: { ...columnFilter, operator: filterCondition.operator, searchTerms: filterCondition.searchTerms, parsedSearchTerms },
@@ -929,7 +930,7 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
-      const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
+      const filterCondition = parseFormInputFilterConditions(searchTerms, columnFilter, gridOptionMock);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
       const columnFilters = {
         firstName: { ...columnFilter, operator: filterCondition.operator, searchTerms: filterCondition.searchTerms, parsedSearchTerms },
@@ -946,7 +947,7 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       const columnFilter = { columnDef: mockColumn1, columnId: 'age', type: FieldType.number };
-      const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
+      const filterCondition = parseFormInputFilterConditions(searchTerms, columnFilter, gridOptionMock);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'number');
       const columnFilters = {
         age: { ...columnFilter, operator: 'EQ', searchTerms: filterCondition.searchTerms, parsedSearchTerms, type: FieldType.string },
@@ -963,7 +964,7 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       const columnFilter = { columnDef: mockColumn1, columnId: 'age', type: FieldType.string };
-      const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
+      const filterCondition = parseFormInputFilterConditions(searchTerms, columnFilter, gridOptionMock);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'number');
       const columnFilters = {
         age: { ...columnFilter, operator: 'EQ', searchTerms: filterCondition.searchTerms, parsedSearchTerms, type: FieldType.string },
@@ -980,7 +981,7 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
-      const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
+      const filterCondition = parseFormInputFilterConditions(searchTerms, columnFilter, gridOptionMock);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
       const columnFilters = {
         firstName: { ...columnFilter, operator: filterCondition.operator, searchTerms: filterCondition.searchTerms, parsedSearchTerms },
@@ -997,7 +998,7 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
-      const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
+      const filterCondition = parseFormInputFilterConditions(searchTerms, columnFilter, gridOptionMock);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
       const columnFilters = {
         firstName: { ...columnFilter, operator: filterCondition.operator, searchTerms: filterCondition.searchTerms, parsedSearchTerms },
@@ -1014,7 +1015,7 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
-      const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
+      const filterCondition = parseFormInputFilterConditions(searchTerms, columnFilter, gridOptionMock);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
       const columnFilters = {
         firstName: { ...columnFilter, operator: filterCondition.operator, searchTerms: filterCondition.searchTerms, parsedSearchTerms },
@@ -1031,7 +1032,7 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
-      const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
+      const filterCondition = parseFormInputFilterConditions(searchTerms, columnFilter, gridOptionMock);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
       const columnFilters = {
         firstName: { ...columnFilter, operator: filterCondition.operator, searchTerms: filterCondition.searchTerms, parsedSearchTerms },
@@ -1064,7 +1065,7 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
-      const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
+      const filterCondition = parseFormInputFilterConditions(searchTerms, columnFilter, gridOptionMock);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
       const columnFilters = {
         firstName: { ...columnFilter, operator: filterCondition.operator, searchTerms: filterCondition.searchTerms, parsedSearchTerms },
@@ -1081,7 +1082,7 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
-      const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
+      const filterCondition = parseFormInputFilterConditions(searchTerms, columnFilter, gridOptionMock);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
       const columnFilters = {
         firstName: { ...columnFilter, operator: filterCondition.operator, searchTerms: filterCondition.searchTerms, parsedSearchTerms },
@@ -1098,7 +1099,7 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
-      const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
+      const filterCondition = parseFormInputFilterConditions(searchTerms, columnFilter, gridOptionMock);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
       const columnFilters = {
         firstName: { ...columnFilter, operator: filterCondition.operator, searchTerms: filterCondition.searchTerms, parsedSearchTerms },
@@ -1115,7 +1116,7 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
-      const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
+      const filterCondition = parseFormInputFilterConditions(searchTerms, columnFilter, gridOptionMock);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
       const columnFilters = {
         firstName: { ...columnFilter, operator: filterCondition.operator, searchTerms: filterCondition.searchTerms, parsedSearchTerms },
@@ -1153,7 +1154,7 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       const columnFilter = { columnDef: mockColumn1, columnId: 'age', type: FieldType.number };
-      const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
+      const filterCondition = parseFormInputFilterConditions(searchTerms, columnFilter, gridOptionMock);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'number');
       const columnFilters = {
         age: { ...columnFilter, operator: filterCondition.operator, searchTerms: filterCondition.searchTerms, parsedSearchTerms },
@@ -1170,7 +1171,7 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
-      const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
+      const filterCondition = parseFormInputFilterConditions(searchTerms, columnFilter, gridOptionMock);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
       const columnFilters = {
         firstname: { ...columnFilter, operator: filterCondition.operator, searchTerms: filterCondition.searchTerms, parsedSearchTerms },
@@ -1187,7 +1188,7 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       const columnFilter = { columnDef: mockColumn1, columnId: 'age', type: FieldType.string };
-      const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
+      const filterCondition = parseFormInputFilterConditions(searchTerms, columnFilter, gridOptionMock);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'string');
       const columnFilters = {
         age: { ...columnFilter, operator: filterCondition.operator, searchTerms: filterCondition.searchTerms, parsedSearchTerms },

@@ -5,7 +5,7 @@ import { dequal } from 'dequal/lite';
 import { Constants } from '../constants.js';
 import { FilterConditions, getParsedSearchTermsByFieldType } from './../filter-conditions/index.js';
 import { type FilterFactory } from './../filters/filterFactory.js';
-import { type EmitterType, FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
+import { type EmitterType, FieldType, type OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
 import type {
   Column,
   ColumnFilters,
@@ -21,6 +21,7 @@ import type {
 } from './../interfaces/index.js';
 import type { BackendUtilityService } from './backendUtility.service.js';
 import { findItemInTreeStructure, getDescendantProperty, mapOperatorByFieldType } from './utilities.js';
+import { parseFormInputFilterConditions } from '../commonEditorFilter/commonEditorFilterUtils.js';
 import type { SharedService } from './shared.service.js';
 import type { RxJsFacade, Subject } from './rxjsFacade.js';
 import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index.js';
@@ -412,74 +413,6 @@ export class FilterService {
   }
 
   /**
-   * Loop through each form input search filter and parse their searchTerms, for example a CompoundDate Filter will be parsed as a Date object.
-   * Also if we are dealing with a text filter input, an operator can optionally be part of the filter itself and we need to extract it from there,
-   * for example a filter of "John*" will be analyzed as { operator: StartsWith, searchTerms: ['John'] }
-   * @param inputSearchTerms - filter search terms
-   * @param columnFilter - column filter object (the object properties represent each column id and the value is the filter metadata)
-   * @returns FilterConditionOption
-   */
-  parseFormInputFilterConditions(
-    inputSearchTerms: SearchTerm[] | undefined,
-    columnFilter: Omit<SearchColumnFilter, 'searchTerms'>
-  ): Omit<FilterConditionOption, 'cellValue'> {
-    const searchValues: SearchTerm[] = deepCopy(inputSearchTerms) || [];
-    let fieldSearchValue = Array.isArray(searchValues) && searchValues.length === 1 ? searchValues[0] : '';
-    const columnDef = columnFilter.columnDef;
-    const fieldType = columnDef.filter?.type ?? columnDef.type ?? FieldType.string;
-
-    let matches = null;
-    if (fieldType !== FieldType.object) {
-      fieldSearchValue = fieldSearchValue === undefined || fieldSearchValue === null ? '' : `${fieldSearchValue}`; // make sure it's a string
-
-      // run regex to find possible filter operators unless the user disabled the feature
-      const autoParseInputFilterOperator = columnDef.autoParseInputFilterOperator ?? this._gridOptions.autoParseInputFilterOperator;
-
-      // group (2): comboStartsWith, (3): comboEndsWith, (4): Operator, (1 or 5): searchValue, (6): last char is '*' (meaning starts with, ex.: abc*)
-      matches =
-        autoParseInputFilterOperator !== false
-          ? fieldSearchValue.match(/^((.*[^\\*\r\n])[*]{1}(.*[^*\r\n]))|^([<>!=*]{0,2})(.*[^<>!=*])?([*])*$/) || []
-          : [fieldSearchValue, '', '', '', '', fieldSearchValue, ''];
-    }
-
-    const comboStartsWith = matches?.[2] || '';
-    const comboEndsWith = matches?.[3] || '';
-    let operator = matches?.[4] || columnFilter.operator;
-    let searchTerm = matches?.[1] || matches?.[5] || '';
-    const inputLastChar = matches?.[6] || (operator === '*z' ? '*' : '');
-
-    if (typeof fieldSearchValue === 'string') {
-      fieldSearchValue = fieldSearchValue.replace(`'`, `''`); // escape any single quotes by doubling them
-      if (comboStartsWith && comboEndsWith) {
-        searchTerm = fieldSearchValue;
-        operator = OperatorType.startsWithEndsWith;
-      } else if (operator === '*' || operator === '*z') {
-        operator = OperatorType.endsWith;
-      } else if (operator === 'a*' || inputLastChar === '*') {
-        operator = OperatorType.startsWith;
-      }
-    }
-
-    // if search value has a regex match we will only keep the value without the operator
-    // in this case we need to overwrite the returned search values to truncate operator from the string search
-    if (Array.isArray(matches) && matches.length >= 1 && Array.isArray(searchValues) && searchValues.length === 1) {
-      // string starts with a whitespace we'll trim only the first whitespace char
-      // e.g. " " becomes "" and " slick grid " becomes "slick grid " (notice last whitespace is kept)
-      searchValues[0] = searchTerm.length > 0 && searchTerm.substring(0, 1) === ' ' ? searchTerm.substring(1) : searchTerm;
-    }
-
-    return {
-      dataKey: columnDef.dataKey,
-      fieldType,
-      searchTerms: searchValues || [],
-      operator: operator as OperatorString,
-      searchInputLastChar: inputLastChar,
-      filterSearchType: columnDef.filterSearchType,
-      defaultFilterRangeOperator: this._gridOptions.defaultFilterRangeOperator,
-    } as FilterConditionOption;
-  }
-
-  /**
    * PreProcess the filter(s) condition(s) on each item data context, the result might be a boolean or a FilterConditionOption object.
    * It will be a boolean when the searchTerms are invalid or the column is not found (if so it will return True and the item won't be filtered out from the grid)
    * or else return a FilterConditionOption object with the necessary info for the test condition needs to be processed in a further stage.
@@ -612,7 +545,7 @@ export class FilterService {
         Object.keys(columnFilters).forEach((columnId) => {
           const columnFilter = columnFilters[columnId] as SearchColumnFilter;
           const searchValues: SearchTerm[] = columnFilter?.searchTerms ? deepCopy(columnFilter.searchTerms) : [];
-          const inputSearchConditions = this.parseFormInputFilterConditions(searchValues, columnFilter);
+          const inputSearchConditions = parseFormInputFilterConditions(searchValues, columnFilter, this._gridOptions);
 
           const columnDef = columnFilter.columnDef;
           const fieldType = columnDef?.filter?.type ?? columnDef?.type ?? FieldType.string;
@@ -1223,7 +1156,7 @@ export class FilterService {
             type: fieldType,
             targetSelector: this.getSelectorStringFromElement(event?.target as HTMLElement | undefined),
           };
-          const inputSearchConditions = this.parseFormInputFilterConditions(searchTerms, colFilter);
+          const inputSearchConditions = parseFormInputFilterConditions(searchTerms, colFilter, this._gridOptions);
           colFilter.operator = operator || inputSearchConditions.operator || mapOperatorByFieldType(fieldType);
           parsedSearchTerms = getParsedSearchTermsByFieldType(inputSearchConditions.searchTerms, fieldType);
           if (parsedSearchTerms !== undefined) {
