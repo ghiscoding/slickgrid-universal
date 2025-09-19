@@ -377,7 +377,9 @@ export class InputFilter implements Filter {
       const typingDelay = eventType === 'keyup' && (event as KeyboardEvent)?.key !== 'Enter' ? this._debounceTypingDelay : 0;
 
       const skipNullInput =
-        this.columnFilter.skipCompoundOperatorFilterWithNullInput ?? this.gridOptions.skipCompoundOperatorFilterWithNullInput;
+        this.columnFilter.skipCompoundOperatorFilterWithNullInput ??
+        this.gridOptions.skipCompoundOperatorFilterWithNullInput ??
+        this.gridOptions.skipCompoundOperatorFilterWithNullInput === undefined;
       const hasSkipNullValChanged =
         (skipNullInput && isDefined(this._currentValue)) || (this._currentValue === '' && isDefined(this._lastSearchValue));
 

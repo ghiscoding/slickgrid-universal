@@ -743,9 +743,9 @@ export interface GridOption<C extends Column = Column> {
   resizeByContentOptions?: ResizeByContentOption;
 
   /**
-   * Should we skip filtering when the Operator is changed before the Compound Filter input.
+   * Should we skip filtering when the Operator is changed without a search value.
    * For example, with a CompoundDate Filter it's probably better to wait until we have a date filled before filtering even if we start with the operator.
-   * Defaults to True only for the Compound Date Filter (all other compound filters will still filter even when operator is first changed).
+   * Defaults to True for all Compound Filters except for Compound Slider.
    */
   skipCompoundOperatorFilterWithNullInput?: boolean;
 

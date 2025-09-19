@@ -193,6 +193,20 @@ describe('CompoundInputFilter', () => {
     expect(callbackSpy).not.toHaveBeenCalled();
   });
 
+  it('should change operator dropdown without a value entered and not expect the callback to be called when "skipCompoundOperatorFilterWithNullInput" is defined as undefined and value is also undefined', () => {
+    mockColumn.filter!.skipCompoundOperatorFilterWithNullInput = undefined;
+    mockColumn.type = FieldType.number;
+    const callbackSpy = vi.spyOn(filterArguments, 'callback');
+
+    filter.init(filterArguments);
+    const filterSelectElm = divContainer.querySelector('.search-filter.filter-duration select') as HTMLInputElement;
+
+    filterSelectElm.value = '<=';
+    filterSelectElm.dispatchEvent(new Event('change'));
+
+    expect(callbackSpy).not.toHaveBeenCalled();
+  });
+
   it('should change operator dropdown without a value entered and not expect the callback to be called when "skipCompoundOperatorFilterWithNullInput" is defined as True and value is empty string', () => {
     mockColumn.filter!.skipCompoundOperatorFilterWithNullInput = true;
     mockColumn.type = FieldType.number;

@@ -271,6 +271,23 @@ describe('CompoundDateFilter', () => {
     expect(callbackSpy).not.toHaveBeenCalled();
   });
 
+  it('should change operator dropdown without a value entered and not expect the callback to be called when "skipCompoundOperatorFilterWithNullInput" is undefined and value is also undefined', () => {
+    mockColumn.filter!.operator = '>';
+    mockColumn.filter!.skipCompoundOperatorFilterWithNullInput = undefined;
+    const callbackSpy = vi.spyOn(filterArguments, 'callback');
+
+    filter.init(filterArguments);
+    filter.setValues(['']);
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish input.date-picker') as HTMLInputElement;
+    const filterSelectElm = divContainer.querySelector('.search-filter.filter-finish select') as HTMLInputElement;
+
+    filterInputElm.value = undefined as any;
+    filterSelectElm.value = '<=';
+    filterSelectElm.dispatchEvent(new Event('change'));
+
+    expect(callbackSpy).not.toHaveBeenCalled();
+  });
+
   it('should change operator dropdown without a value entered and not expect the callback to be called when "skipCompoundOperatorFilterWithNullInput" is defined as True and value is empty string', () => {
     mockColumn.filter!.operator = '>';
     mockColumn.filter!.skipCompoundOperatorFilterWithNullInput = true;
