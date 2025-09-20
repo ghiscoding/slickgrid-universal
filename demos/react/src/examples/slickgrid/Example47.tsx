@@ -8,7 +8,7 @@ import {
   Filters,
   Formatters,
   type GridOption,
-  Grouping,
+  type Grouping,
   GroupTotalFormatters,
   SlickgridReact,
   type SlickgridReactInstance,
@@ -40,7 +40,6 @@ const Example47: React.FC = () => {
   const [dataset] = useState<Item[]>(loadData());
   const [detailViewRowCount, setDetailViewRowCount] = useState<number>(9);
   const [serverWaitDelay, setServerWaitDelay] = useState<number>(FAKE_SERVER_DELAY);
-  const [message, setMessage] = useState<string>('');
   const [darkMode, setDarkMode] = useState<boolean>(false);
   const [hideSubTitle, setHideSubTitle] = useState(false);
 
@@ -374,7 +373,7 @@ const Example47: React.FC = () => {
         </h2>
 
         <div className="subtitle">
-          Add functionality to show extra information with a Row Detail View, (
+          Provide ability for Row Detail to work with Grouping, see (
           <a href="https://ghiscoding.gitbook.io/slickgrid-react/grid-functionalities/row-detail" target="_blank">
             Wiki docs
           </a>
@@ -384,23 +383,23 @@ const Example47: React.FC = () => {
         <div className="row">
           <div className="col-sm-12 d-flex gap-4px">
             <button
-              className="btn btn-outline-secondary btn-xs btn-icon"
+              className="btn btn-outline-secondary btn-sm btn-icon"
               onClick={closeAllRowDetail}
               data-test="collapse-all-rowdetail-btn"
             >
               Close all Row Details
             </button>
-            <button className="btn btn-outline-secondary btn-xs btn-icon" data-test="clear-grouping-btn" onClick={() => clearGrouping()}>
+            <button className="btn btn-outline-secondary btn-sm btn-icon" data-test="clear-grouping-btn" onClick={() => clearGrouping()}>
               <i className="mdi mdi-close"></i> Clear grouping
             </button>
             <button
-              className="btn btn-outline-secondary btn-xs btn-icon"
+              className="btn btn-outline-secondary btn-sm btn-icon"
               data-test="collapse-all-group-btn"
               onClick={() => collapseAllGroups()}
             >
               <i className="mdi mdi-arrow-collapse"></i> Collapse all groups
             </button>
-            <button className="btn btn-outline-secondary btn-xs btn-icon" data-test="expand-all-btn" onClick={() => expandAllGroups()}>
+            <button className="btn btn-outline-secondary btn-sm btn-icon" data-test="expand-all-btn" onClick={() => expandAllGroups()}>
               <i className="mdi mdi-arrow-expand"></i> Expand all groups
             </button>
 
@@ -413,7 +412,7 @@ const Example47: React.FC = () => {
               onInput={($event) => detailViewRowCountChanged(($event.target as HTMLInputElement).value)}
             />
             <button
-              className="btn btn-outline-secondary btn-xs btn-icon"
+              className="btn btn-outline-secondary btn-sm btn-icon"
               style={{ height: '26px' }}
               onClick={changeDetailViewRowCount}
               data-test="set-count-btn"
@@ -438,14 +437,14 @@ const Example47: React.FC = () => {
         <div className="row">
           <div className="col-sm-12 d-flex gap-4px">
             <button
-              className="btn btn-outline-secondary btn-xs btn-icon"
+              className="btn btn-outline-secondary btn-sm btn-icon"
               data-test="group-duration-sort-value-btn"
               onClick={() => groupByDuration()}
             >
               Group by Duration
             </button>
             <button
-              className="btn btn-outline-secondary btn-xs btn-icon"
+              className="btn btn-outline-secondary btn-sm btn-icon"
               data-test="group-duration-effort-btn"
               onClick={() => groupByDurationEffortDriven()}
             >

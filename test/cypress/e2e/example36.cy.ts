@@ -13,7 +13,7 @@ describe('Example 36 - Row Detail View + Grouping', () => {
   });
 
   it('should change server delay to 40ms for faster testing', () => {
-    cy.get('[data-test="server-delay"]').type('{backspace}');
+    cy.get('[data-test=server-delay]').type('{backspace}');
   });
 
   it('should expect grid to be Grouped by "Duration" when loaded', () => {
@@ -71,7 +71,7 @@ describe('Example 36 - Row Detail View + Grouping', () => {
 
   it('should be able to collapse all Row Details', () => {
     cy.get('.dynamic-cell-detail').should('have.length', 2);
-    cy.get('[data-test="collapse-all-rowdetail-btn"]').click();
+    cy.get('[data-test=collapse-all-rowdetail-btn]').click();
     cy.get('.dynamic-cell-detail').should('have.length', 0);
   });
 
@@ -79,7 +79,7 @@ describe('Example 36 - Row Detail View + Grouping', () => {
     cy.get('[data-row="2"] > .slick-cell:nth(0)').click();
     cy.get('[data-row="4"] > .slick-cell:nth(0)').click();
 
-    cy.get('[data-test="row-selections"]').contains('2,4');
+    cy.get('[data-test=row-selections]').contains('2,4');
   });
 
   it('should be able to collapse all Groups', () => {
@@ -88,12 +88,12 @@ describe('Example 36 - Row Detail View + Grouping', () => {
     cy.get('[data-row="2"] > .slick-cell:nth(0) .slick-group-title').should('not.exist');
 
     cy.get('.slick-group-toggle.collapsed').should('have.length', 0);
-    cy.get('.slick-group-toggle.expanded').should('have.length.above', 2);
+    cy.get('.slick-group-toggle.expanded').should('have.length.at.least', 2);
 
-    cy.get('[data-test="collapse-all-group-btn"]').click();
+    cy.get('[data-test=collapse-all-group-btn]').click();
 
     cy.get('.slick-group-toggle.expanded').should('have.length', 0);
-    cy.get('.slick-group-toggle.collapsed').should('have.length.above', 2);
+    cy.get('.slick-group-toggle.collapsed').should('have.length.at.least', 2);
   });
 
   it('should re-open the 1st Group and 1st Row Detail of Duration(0) Group and be able to click on the "Delete Row" button and expect row to be deleted from the grid', () => {

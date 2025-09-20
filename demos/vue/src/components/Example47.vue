@@ -365,40 +365,32 @@ function vueGridReady(grid: SlickgridVueInstance) {
     </h2>
 
     <div class="subtitle">
-      Add functionality to show extra information with a Row Detail View, (<a
+      Provide ability for Row Detail to work with Grouping, see (<a
         href="https://ghiscoding.gitbook.io/slickgrid-vue/grid-functionalities/row-detail"
         target="_blank"
         >Wiki docs</a
       >)
-      <ul>
-        <li>Click on the row "+" icon or anywhere on the row to open it (the latter can be changed via property "useRowClick: false")</li>
-        <li>Pass a View/Model as a Template to the Row Detail</li>
-        <li>
-          You can use "expandableOverride()" callback to override logic to display expand icon on every row (for example only show it every
-          2nd row)
-        </li>
-      </ul>
     </div>
 
     <div class="row">
       <div class="col-sm-12 d-flex gap-4px">
-        <button class="btn btn-outline-secondary btn-xs btn-icon ms-1" data-test="collapse-all-rowdetail-btn" @click="closeAllRowDetail()">
+        <button class="btn btn-outline-secondary btn-sm btn-icon ms-1" data-test="collapse-all-rowdetail-btn" @click="closeAllRowDetail()">
           Close all Row Details
         </button>
-        <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="clear-grouping-btn" @click="clearGrouping()">
+        <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="clear-grouping-btn" @click="clearGrouping()">
           <i class="mdi mdi-close"></i> Clear grouping
         </button>
-        <button class="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="collapse-all-group-btn" @click="collapseAllGroups()">
+        <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="collapse-all-group-btn" @click="collapseAllGroups()">
           <i class="mdi mdi-arrow-collapse"></i> Collapse all groups
         </button>
-        <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="expand-all-btn" @click="expandAllGroups()">
+        <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="expand-all-btn" @click="expandAllGroups()">
           <i class="mdi mdi-arrow-expand"></i> Expand all groups
         </button>
 
         <label for="detailViewRowCount">Detail View Rows Shown: </label>
         <input id="detailViewRowCount" v-model="detailViewRowCount" type="number" style="height: 26px; width: 40px" />
         <button
-          class="btn btn-outline-secondary btn-xs btn-icon"
+          class="btn btn-outline-secondary btn-sm btn-icon"
           style="height: 26px"
           data-test="set-count-btn"
           @click="changeDetailViewRowCount()"
@@ -419,11 +411,11 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
       <div class="row">
         <div class="col-sm-12 d-flex gap-4px">
-          <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="group-duration-sort-value-btn" @click="groupByDuration()">
+          <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="group-duration-sort-value-btn" @click="groupByDuration()">
             Group by Duration
           </button>
           <button
-            class="btn btn-outline-secondary btn-xs btn-icon"
+            class="btn btn-outline-secondary btn-sm btn-icon"
             data-test="group-duration-effort-btn"
             @click="groupByDurationEffortDriven()"
           >
