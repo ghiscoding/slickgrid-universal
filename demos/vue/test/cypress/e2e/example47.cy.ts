@@ -89,7 +89,7 @@ describe('Example 47 - Row Detail View + Grouping', () => {
     cy.get('.slick-group-toggle.collapsed').should('have.length.at.least', 2);
   });
 
-  it.skip('should re-open the 1st Group and 1st Row Detail of Duration(0) Group and be able to click on the "Delete Row" button and expect row to be deleted from the grid', () => {
+  it('should re-open the 1st Group and 1st Row Detail of Duration(0) Group and be able to click on the "Delete Row" button and expect row to be deleted from the grid', () => {
     cy.get('[data-row="0"] .slick-group-toggle.collapsed').click();
     cy.get('.slick-cell.l0.r0.detail-view-toggle:nth(0)').click().wait(40);
 
