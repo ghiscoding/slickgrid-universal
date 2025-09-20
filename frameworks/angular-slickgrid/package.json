@@ -30,7 +30,7 @@
     "url": "https://ko-fi.com/ghiscoding"
   },
   "scripts": {
-    "angular:dev": "ng serve --port 4300",
+    "angular:dev": "ng serve --port 4300 --no-hmr",
     "angular:cypress": "cypress open --config-file test/cypress.config.ts",
     "angular:preview": "vite preview --outDir=website --port=4300",
     "prebuild": "pnpm lint",

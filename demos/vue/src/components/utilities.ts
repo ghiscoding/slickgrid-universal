@@ -3,7 +3,7 @@ export function randomNumber(min: number, max: number, floor = true) {
   return floor ? Math.floor(number) : number;
 }
 
-export function showToast(msg: string, type: 'danger' | 'warning', time = 2000) {
+export function showToast(msg: string, type: 'danger' | 'info' | 'warning', time = 2000) {
   const divContainer = document.createElement('div');
   divContainer.className = `toast align-items-center text-bg-${type} border-0`;
   divContainer.style.position = 'absolute';

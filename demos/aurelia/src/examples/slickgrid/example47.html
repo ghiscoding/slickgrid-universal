@@ -1,0 +1,99 @@
+<h2>
+  Example 47: Row Detail View + Grouping
+  <span class="float-end">
+    <a
+      style="font-size: 18px"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example47.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </span>
+  <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" click.trigger="toggleSubTitle()">
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
+  <button class="btn btn-outline-secondary btn-sm btn-icon" click.trigger="toggleDarkMode()" data-test="toggle-dark-mode">
+    <span class="mdi mdi-theme-light-dark"></span>
+    <span>Toggle Dark Mode</span>
+  </button>
+</h2>
+
+<div class="subtitle">
+  Add functionality to show extra information with a Row Detail View, (<a
+    href="https://ghiscoding.gitbook.io/aurelia-slickgrid/grid-functionalities/row-detail"
+    target="_blank"
+    >Wiki docs</a
+  >)
+  <ul>
+    <li>Click on the row "+" icon or anywhere on the row to open it (the latter can be changed via property "useRowClick: false")</li>
+    <li>Pass a View/Model as a Template to the Row Detail</li>
+    <li>
+      You can use "expandableOverride()" callback to override logic to display expand icon on every row (for example only show it every 2nd
+      row)
+    </li>
+  </ul>
+</div>
+
+<div class="row">
+  <div class="col-sm-12 d-flex gap-4px">
+    <button class="btn btn-outline-secondary btn-xs btn-icon" click.trigger="closeAllRowDetail()" data-test="collapse-all-btn">
+      Close all Row Details
+    </button>
+    <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="clear-grouping-btn" click.trigger="clearGrouping()">
+      <i class="mdi mdi-close"></i> Clear grouping
+    </button>
+    <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="collapse-all-btn" click.trigger="collapseAllGroups()">
+      <i class="mdi mdi-arrow-collapse"></i> Collapse all groups
+    </button>
+    <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="expand-all-btn" click.trigger="expandAllGroups()">
+      <i class="mdi mdi-arrow-expand"></i> Expand all groups
+    </button>
+
+    <label for="detailViewRowCount">Detail View Rows Shown: </label>
+    <input id="detailViewRowCount" type="number" value.bind="detailViewRowCount" style="height: 26px; width: 40px" />
+    <button
+      class="btn btn-outline-secondary btn-xs btn-icon"
+      style="height: 26px"
+      click.trigger="changeDetailViewRowCount()"
+      data-test="set-count-btn"
+    >
+      Set
+    </button>
+    <label for="serverdelay" class="ms-2">Server Delay: </label>
+    <input
+      id="serverdelay"
+      value.bind="serverWaitDelay"
+      type="number"
+      data-test="server-delay"
+      style="height: 26px; width: 55px"
+      title="input a fake timer delay to simulate slow server response"
+    />
+  </div>
+
+  <div class="row">
+    <div class="col-sm-12">
+      <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="group-duration-sort-value-btn" click.trigger="groupByDuration()">
+        Group by Duration
+      </button>
+      <button
+        class="btn btn-outline-secondary btn-xs btn-icon"
+        data-test="group-duration-effort-btn"
+        click.trigger="groupByDurationEffortDriven()"
+      >
+        Group by Duration then Effort-Driven
+      </button>
+    </div>
+  </div>
+
+  <hr />
+
+  <aurelia-slickgrid
+    grid-id="grid47"
+    columns.bind="columnDefinitions"
+    options.bind="gridOptions"
+    dataset.bind="dataset"
+    extensions.bind="extensions"
+    on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"
+  >
+  </aurelia-slickgrid>
+</div>

@@ -48,6 +48,7 @@ import { Example43Component } from './examples/example43.component';
 import { Example44Component } from './examples/example44.component';
 import { Example45Component } from './examples/example45.component';
 import { Example46Component } from './examples/example46.component';
+import { Example47Component } from './examples/example47.component';
 import { SwtCommonGridTestComponent } from './examples/swt-common-grid-test.component';
 
 const routes: Routes = [
@@ -98,6 +99,7 @@ const routes: Routes = [
   { path: 'example44', component: Example44Component },
   { path: 'example45', component: Example45Component },
   { path: 'example46', component: Example46Component },
+  { path: 'example47', component: Example47Component },
   { path: '', redirectTo: '/example34', pathMatch: 'full' },
   { path: '**', redirectTo: '/example34', pathMatch: 'full' },
 ];

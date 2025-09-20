@@ -1,30 +1,45 @@
 import { type EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import React, { useState, useEffect, useRef } from 'react';
 import {
+  Aggregators,
   type Column,
   Editors,
   ExtensionName,
   Filters,
   Formatters,
   type GridOption,
+  Grouping,
+  GroupTotalFormatters,
   SlickgridReact,
   type SlickgridReactInstance,
   SlickRowDetailView,
+  SortComparers,
+  SortDirectionNumber,
 } from 'slickgrid-react';
 
 import { ExampleDetailPreload } from './Example-detail-preload.js';
-import Example19DetailView from './Example19-detail-view.js';
+import Example47DetailView from './Example47-detail-view.js';
+
+export interface Item {
+  id: number;
+  title: string;
+  duration: number;
+  cost: number;
+  percentComplete: number;
+  start: Date;
+  finish: Date;
+  effortDriven: boolean;
+}
 
 const FAKE_SERVER_DELAY = 250;
-const NB_ITEMS = 1000;
+const NB_ITEMS = 1200;
 
-const Example19: React.FC = () => {
+const Example47: React.FC = () => {
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
-  const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
-  const [dataset] = useState<any[]>(loadData());
+  const [columnDefinitions, setColumnDefinitions] = useState<Column<Item>[]>([]);
+  const [dataset] = useState<Item[]>(loadData());
   const [detailViewRowCount, setDetailViewRowCount] = useState<number>(9);
   const [serverWaitDelay, setServerWaitDelay] = useState<number>(FAKE_SERVER_DELAY);
-  const [flashAlertType, setFlashAlertType] = useState<string>('info');
   const [message, setMessage] = useState<string>('');
   const [darkMode, setDarkMode] = useState<boolean>(false);
   const [hideSubTitle, setHideSubTitle] = useState(false);
@@ -41,11 +56,16 @@ const Example19: React.FC = () => {
     };
   }, []);
 
+  function reactGridReady(reactGrid: SlickgridReactInstance) {
+    reactGridRef.current = reactGrid;
+    groupByDuration(); // group by duration on page load
+  }
+
   function rowDetailInstance() {
     return reactGridRef.current?.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView) as SlickRowDetailView;
   }
 
-  const getColumnsDefinition = (): Column[] => {
+  const getColumnsDefinition = (): Column<Item>[] => {
     return [
       {
         id: 'title',
@@ -60,24 +80,24 @@ const Example19: React.FC = () => {
         id: 'duration',
         name: 'Duration (days)',
         field: 'duration',
-        formatter: Formatters.decimal,
-        params: { minDecimal: 1, maxDecimal: 2 },
         sortable: true,
         type: 'number',
         minWidth: 90,
         filterable: true,
       },
       {
-        id: 'percent2',
+        id: '%',
         name: '% Complete',
-        field: 'percentComplete2',
-        editor: { model: Editors.slider },
-        formatter: Formatters.progressBar,
-        type: 'number',
-        sortable: true,
-        minWidth: 100,
+        field: 'percentComplete',
+        minWidth: 200,
+        width: 250,
+        resizable: false,
         filterable: true,
-        filter: { model: Filters.slider, operator: '>' },
+        sortable: true,
+        type: 'number',
+        formatter: Formatters.percentCompleteBar,
+        groupTotalsFormatter: GroupTotalFormatters.avgTotalsPercentage,
+        params: { groupFormatterPrefix: '<i>Avg</i>: ' },
       },
       {
         id: 'start',
@@ -102,6 +122,19 @@ const Example19: React.FC = () => {
         exportWithFormatter: true,
         filterable: true,
         filter: { model: Filters.compoundDate },
+      },
+      {
+        id: 'cost',
+        name: 'Cost',
+        field: 'cost',
+        minWidth: 70,
+        width: 80,
+        sortable: true,
+        filterable: true,
+        filter: { model: Filters.compoundInputNumber },
+        type: 'number',
+        formatter: Formatters.dollar,
+        groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollarBold,
       },
       {
         id: 'effort-driven',
@@ -130,11 +163,6 @@ const Example19: React.FC = () => {
 
     setColumnDefinitions(columnDefinitions);
     setGridOptions(gridOptions);
-  }
-
-  function showFlashMessage(message: string, alertType = 'info') {
-    setMessage(message);
-    setFlashAlertType(alertType);
   }
 
   function simulateServerAsyncCall(item: any) {
@@ -169,10 +197,10 @@ const Example19: React.FC = () => {
         rightPadding: 10,
       },
       enableFiltering: true,
+      enableGrouping: true,
       enableRowDetailView: true,
       rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
       darkMode,
-      datasetIdPropertyName: 'rowId',
       preRegisterExternalExtensions: (pubSubService) => {
         const rowDetail = new SlickRowDetailView(pubSubService as EventPubSubService);
         return [{ name: ExtensionName.rowDetailView, instance: rowDetail }];
@@ -181,17 +209,9 @@ const Example19: React.FC = () => {
         process: (item) => simulateServerAsyncCall(item),
         loadOnce: true,
         singleRowExpand: false,
-        useRowClick: true,
         panelRows: detailViewRowCount,
         preloadComponent: ExampleDetailPreload,
-        viewComponent: Example19DetailView,
-        parentRef: {
-          showFlashMessage,
-        },
-        onBeforeRowDetailToggle: (e, args) => {
-          console.log('before toggling row detail', args.item);
-          return true;
-        },
+        viewComponent: Example47DetailView,
       },
       rowSelectionOptions: {
         selectActiveRow: true,
@@ -200,22 +220,22 @@ const Example19: React.FC = () => {
   }
 
   function loadData() {
-    const tmpData: any[] = [];
+    const tmpData: Item[] = [];
     for (let i = 0; i < NB_ITEMS; i++) {
       const randomYear = 2000 + Math.floor(Math.random() * 10);
       const randomMonth = Math.floor(Math.random() * 11);
       const randomDay = Math.floor(Math.random() * 29);
       const randomPercent = Math.round(Math.random() * 100);
+      const randomCost = Math.round(Math.random() * 10000) / 100;
 
       tmpData[i] = {
-        rowId: i,
+        id: i,
         title: 'Task ' + i,
-        duration: i % 33 === 0 ? null : Math.random() * 100 + '',
+        duration: Math.floor(Math.random() * 100),
         percentComplete: randomPercent,
-        percentComplete2: randomPercent,
-        percentCompleteNumber: randomPercent,
         start: new Date(randomYear, randomMonth, randomDay),
         finish: new Date(randomYear, randomMonth + 1, randomDay),
+        cost: i % 3 ? randomCost : -randomCost,
         effortDriven: i % 5 === 0,
       };
     }
@@ -231,20 +251,62 @@ const Example19: React.FC = () => {
     }
   }
 
-  function changeEditableGrid() {
-    rowDetailInstance().collapseAll();
-    (rowDetailInstance() as any).addonOptions.useRowClick = false;
-    gridOptions!.autoCommitEdit = !gridOptions!.autoCommitEdit;
-    reactGridRef.current?.slickGrid.setOptions({
-      editable: true,
-      autoEdit: true,
-      enableCellNavigation: true,
-    });
-    return true;
-  }
-
   function closeAllRowDetail() {
     rowDetailInstance().collapseAll();
+  }
+
+  function clearGrouping() {
+    reactGridRef.current?.dataView.setGrouping([]);
+  }
+
+  function collapseAllGroups() {
+    reactGridRef.current?.dataView.collapseAllGroups();
+  }
+
+  function expandAllGroups() {
+    reactGridRef.current?.dataView.expandAllGroups();
+  }
+
+  function groupByDuration() {
+    // you need to manually add the sort icon(s) in UI
+    reactGridRef.current?.filterService.setSortColumnIcons([{ columnId: 'duration', sortAsc: true }]);
+    reactGridRef.current?.dataView.setGrouping({
+      getter: 'duration',
+      formatter: (g) => `Duration: ${g.value} <span style="color:green">(${g.count} items)</span>`,
+      comparer: (a, b) => {
+        return SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc);
+      },
+      aggregators: [new Aggregators.Avg('percentComplete'), new Aggregators.Sum('cost')],
+      aggregateCollapsed: false,
+      lazyTotalsCalculation: true,
+    } as Grouping);
+    reactGridRef.current?.slickGrid.invalidate(); // invalidate all rows and re-render
+  }
+
+  function groupByDurationEffortDriven() {
+    // you need to manually add the sort icon(s) in UI
+    const sortColumns = [
+      { columnId: 'duration', sortAsc: true },
+      { columnId: 'effortDriven', sortAsc: true },
+    ];
+    reactGridRef.current?.filterService.setSortColumnIcons(sortColumns);
+    reactGridRef.current?.dataView.setGrouping([
+      {
+        getter: 'duration',
+        formatter: (g) => `Duration: ${g.value} <span style="color:green">(${g.count} items)</span>`,
+        aggregators: [new Aggregators.Sum('duration'), new Aggregators.Sum('cost')],
+        aggregateCollapsed: true,
+        lazyTotalsCalculation: true,
+      },
+      {
+        getter: 'effortDriven',
+        formatter: (g) => `Effort-Driven: ${g.value ? 'True' : 'False'} <span style="color:green">(${g.count} items)</span>`,
+        aggregators: [new Aggregators.Avg('percentComplete'), new Aggregators.Sum('cost')],
+        collapsed: true,
+        lazyTotalsCalculation: true,
+      },
+    ] as Grouping[]);
+    reactGridRef.current?.slickGrid.invalidate(); // invalidate all rows and re-render
   }
 
   const detailViewRowCountChanged = (val: number | string) => {
@@ -284,15 +346,15 @@ const Example19: React.FC = () => {
   }
 
   return !gridOptions ? null : (
-    <div className="demo19">
+    <div className="demo47">
       <div id="demo-container" className="container-fluid">
         <h2>
-          Example 19: Row Detail View
+          Example 47: Row Detail View + Grouping
           <span className="float-end font18">
             see&nbsp;
             <a
               target="_blank"
-              href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example19.tsx"
+              href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example47.tsx"
             >
               <span className="mdi mdi-link-variant"></span> code
             </a>
@@ -317,75 +379,89 @@ const Example19: React.FC = () => {
             Wiki docs
           </a>
           )
-          <ul>
-            <li>
-              Click on the row "+" icon or anywhere on the row to open it (the latter can be changed via property "useRowClick: false")
-            </li>
-            <li>Pass a View/Model as a Template to the Row Detail</li>
-            <li>
-              You can use "expandableOverride()" callback to override logic to display expand icon on every row (for example only show it
-              every 2nd row)
-            </li>
-          </ul>
         </div>
 
         <div className="row">
-          <div className="col-sm-6">
-            <button className="btn btn-outline-secondary btn-sm btn-icon mx-1" onClick={changeEditableGrid} data-test="editable-grid-btn">
-              Make Grid Editable
-            </button>
-            <button className="btn btn-outline-secondary btn-sm btn-icon" onClick={closeAllRowDetail} data-test="collapse-all-btn">
+          <div className="col-sm-12 d-flex gap-4px">
+            <button
+              className="btn btn-outline-secondary btn-xs btn-icon"
+              onClick={closeAllRowDetail}
+              data-test="collapse-all-rowdetail-btn"
+            >
               Close all Row Details
             </button>
-            &nbsp;&nbsp;
-            <span className="d-inline-flex gap-4px">
-              <label htmlFor="detailViewRowCount">Detail View Rows Shown: </label>
-              <input
-                id="detailViewRowCount"
-                type="number"
-                value={detailViewRowCount}
-                style={{ height: '26px', width: '40px' }}
-                onInput={($event) => detailViewRowCountChanged(($event.target as HTMLInputElement).value)}
-              />
-              <button
-                className="btn btn-outline-secondary btn-xs btn-icon"
-                style={{ height: '26px' }}
-                onClick={changeDetailViewRowCount}
-                data-test="set-count-btn"
-              >
-                Set
-              </button>
-              <label htmlFor="serverdelay" className="ms-2">
-                Server Delay:{' '}
-              </label>
-              <input
-                id="serverdelay"
-                type="number"
-                defaultValue={serverWaitDelay}
-                data-test="server-delay"
-                style={{ width: '55px' }}
-                onInput={serverDelayChanged}
-                title="input a fake timer delay to simulate slow server response"
-              />
-            </span>
+            <button className="btn btn-outline-secondary btn-xs btn-icon" data-test="clear-grouping-btn" onClick={() => clearGrouping()}>
+              <i className="mdi mdi-close"></i> Clear grouping
+            </button>
+            <button
+              className="btn btn-outline-secondary btn-xs btn-icon"
+              data-test="collapse-all-group-btn"
+              onClick={() => collapseAllGroups()}
+            >
+              <i className="mdi mdi-arrow-collapse"></i> Collapse all groups
+            </button>
+            <button className="btn btn-outline-secondary btn-xs btn-icon" data-test="expand-all-btn" onClick={() => expandAllGroups()}>
+              <i className="mdi mdi-arrow-expand"></i> Expand all groups
+            </button>
+
+            <label htmlFor="detailViewRowCount">Detail View Rows Shown: </label>
+            <input
+              id="detailViewRowCount"
+              type="number"
+              value={detailViewRowCount}
+              style={{ height: '26px', width: '40px' }}
+              onInput={($event) => detailViewRowCountChanged(($event.target as HTMLInputElement).value)}
+            />
+            <button
+              className="btn btn-outline-secondary btn-xs btn-icon"
+              style={{ height: '26px' }}
+              onClick={changeDetailViewRowCount}
+              data-test="set-count-btn"
+            >
+              Set
+            </button>
+            <label htmlFor="serverdelay" className="ms-2">
+              Server Delay:{' '}
+            </label>
+            <input
+              id="serverdelay"
+              type="number"
+              defaultValue={serverWaitDelay}
+              data-test="server-delay"
+              style={{ width: '55px' }}
+              onInput={serverDelayChanged}
+              title="input a fake timer delay to simulate slow server response"
+            />
           </div>
-          {message ? (
-            <div className={'alert alert-' + flashAlertType + ' col-sm-6'} data-test="flash-msg">
-              {message}
-            </div>
-          ) : (
-            ''
-          )}
+        </div>
+
+        <div className="row">
+          <div className="col-sm-12 d-flex gap-4px">
+            <button
+              className="btn btn-outline-secondary btn-xs btn-icon"
+              data-test="group-duration-sort-value-btn"
+              onClick={() => groupByDuration()}
+            >
+              Group by Duration
+            </button>
+            <button
+              className="btn btn-outline-secondary btn-xs btn-icon"
+              data-test="group-duration-effort-btn"
+              onClick={() => groupByDurationEffortDriven()}
+            >
+              Group by Duration then Effort-Driven
+            </button>
+          </div>
         </div>
 
         <hr />
 
         <SlickgridReact
-          gridId="grid19"
+          gridId="grid47"
           columns={columnDefinitions}
           options={gridOptions}
           dataset={dataset}
-          onReactGridCreated={($event) => (reactGridRef.current = $event.detail)}
+          onReactGridCreated={($event) => reactGridReady($event.detail)}
         />
       </div>
     </div>
@@ -396,4 +472,4 @@ function randomNumber(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-export default Example19;
+export default Example47;
