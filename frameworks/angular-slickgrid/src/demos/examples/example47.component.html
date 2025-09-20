@@ -1,0 +1,102 @@
+<div class="container-fluid">
+  <h2>
+    Example 47: Row Detail View + Grouping
+    <span class="float-end">
+      <a
+        style="font-size: 18px"
+        target="_blank"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example47.component.ts"
+      >
+        <span class="mdi mdi-link-variant"></span> code
+      </a>
+    </span>
+    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" (click)="toggleSubTitle()">
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+    <button class="btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-dark-mode" (click)="toggleDarkMode()">
+      <span class="mdi mdi-theme-light-dark"></span>
+      <span>Toggle Dark Mode</span>
+    </button>
+  </h2>
+
+  <div class="subtitle">
+    Provide ability for Row Detail to work with Grouping, see (<a
+      href="https://ghiscoding.gitbook.io/angular-slickgrid/grid-functionalities/row-detail"
+      target="_blank"
+      >Wiki docs</a
+    >)
+  </div>
+
+  <div className="row">
+    <div className="col-sm-12 d-flex gap-4px">
+      <button
+        class="btn btn-outline-secondary btn-sm btn-icon"
+        type="button"
+        data-test="collapse-all-rowdetail-btn"
+        (click)="closeAllRowDetail()"
+      >
+        Close All Row Details
+      </button>
+      <button class="btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="clear-grouping-btn" (click)="clearGrouping()">
+        <i class="mdi mdi-close"></i> Clear grouping
+      </button>
+      <button
+        class="btn btn-outline-secondary btn-sm btn-icon"
+        type="button"
+        data-test="collapse-all-group-btn"
+        (click)="collapseAllGroups()"
+      >
+        <i class="mdi mdi-arrow-collapse"></i> Collapse all groups
+      </button>
+      <button class="btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="expand-all-btn" (click)="expandAllGroups()">
+        <i class="mdi mdi-arrow-expand"></i> Expand all groups
+      </button>
+
+      <label for="detailViewRowCount">Detail View Rows Shown: </label>
+      <input id="detailViewRowCount" type="number" style="height: 22px; width: 40px" [(ngModel)]="detailViewRowCount" />
+      <button
+        class="btn btn-outline-secondary btn-sm btn-icon"
+        type="button"
+        data-test="set-count-btn"
+        (click)="changeDetailViewRowCount()"
+      >
+        Set
+      </button>
+      <label for="serverdelay" class="ms-2">Server Delay: </label>
+      <input
+        id="serverdelay"
+        [(ngModel)]="serverWaitDelay"
+        type="number"
+        data-test="server-delay"
+        style="height: 26px; width: 55px"
+        title="input a fake timer delay to simulate slow server response"
+      />
+    </div>
+
+    <div className="row">
+      <div className="col-sm-12 d-flex gap-4px">
+        <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="group-duration-sort-value-btn" (click)="groupByDuration()">
+          Group by Duration
+        </button>
+        <button
+          class="btn btn-outline-secondary btn-sm btn-icon"
+          data-test="group-duration-effort-btn"
+          (click)="groupByDurationEffortDriven()"
+        >
+          Group by Duration then Effort-Driven
+        </button>
+      </div>
+    </div>
+
+    <hr />
+
+    <angular-slickgrid
+      gridId="grid47"
+      [columns]="columnDefinitions"
+      [options]="gridOptions"
+      [dataset]="dataset"
+      (onAngularGridCreated)="angularGridReady($event.detail)"
+    >
+    </angular-slickgrid>
+  </div>
+</div>

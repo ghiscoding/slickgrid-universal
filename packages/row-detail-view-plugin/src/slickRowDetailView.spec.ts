@@ -64,7 +64,7 @@ const gridStub = {
   onSort: new SlickEvent(),
 } as unknown as SlickGrid;
 
-let mockColumns: Column[];
+let mockColumns: Column[] = [];
 
 describe('SlickRowDetailView plugin', () => {
   let eventPubSubService: EventPubSubService;
@@ -76,12 +76,13 @@ describe('SlickRowDetailView plugin', () => {
   beforeEach(() => {
     mockColumns = [
       { id: 'firstName', name: 'First Name', field: 'firstName', width: 100 },
-      { id: 'lasstName', name: 'Last Name', field: 'lasstName', width: 100 },
+      { id: 'lastName', name: 'Last Name', field: 'lastName', width: 100 },
     ];
     eventPubSubService = new EventPubSubService();
     plugin = new SlickRowDetailView(eventPubSubService);
     divContainer.className = `slickgrid-container ${GRID_UID}`;
     document.body.appendChild(divContainer);
+    vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
   });
 
   afterEach(() => {

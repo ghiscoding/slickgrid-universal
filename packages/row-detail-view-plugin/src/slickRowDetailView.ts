@@ -280,71 +280,75 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
   /** Collapse an Item so it is not longer seen */
   collapseDetailView(itemId: number | string, isMultipleCollapsing = false): void {
-    if (!isMultipleCollapsing) {
-      this.dataView.beginUpdate();
-    }
     const item = this.dataView.getItemById(itemId);
-    // Save the details on the collapse assuming onetime loading
-    if (this._addonOptions.loadOnce) {
-      this.saveDetailView(item);
-    }
+    if (item) {
+      if (!isMultipleCollapsing) {
+        this.dataView.beginUpdate();
+      }
+      // Save the details on the collapse assuming onetime loading
+      if (this._addonOptions.loadOnce) {
+        this.saveDetailView(item);
+      }
 
-    item[`${this._keyPrefix}collapsed`] = true;
-    for (let idx = 1; idx <= item[`${this._keyPrefix}sizePadding`]; idx++) {
-      this.dataView.deleteItem(`${item[this._dataViewIdProperty]}.${idx}`);
-    }
-    item[`${this._keyPrefix}sizePadding`] = 0;
-    this.dataView.updateItem(item[this._dataViewIdProperty], item);
+      item[`${this._keyPrefix}collapsed`] = true;
+      for (let idx = 1; idx <= item[`${this._keyPrefix}sizePadding`]; idx++) {
+        this.dataView.deleteItem(`${item[this._dataViewIdProperty]}.${idx}`);
+      }
+      item[`${this._keyPrefix}sizePadding`] = 0;
+      this.dataView.updateItem(item[this._dataViewIdProperty], item);
 
-    // Remove the item from the expandedRows & renderedIds
-    this._expandedRowIds = new Set(Array.from(this._expandedRowIds).filter((expItemId) => expItemId !== item[this._dataViewIdProperty]));
-    this._renderedIds.delete(item[this._dataViewIdProperty]);
+      // Remove the item from the expandedRows & renderedIds
+      this._expandedRowIds = new Set(Array.from(this._expandedRowIds).filter((expItemId) => expItemId !== item[this._dataViewIdProperty]));
+      this._renderedIds.delete(item[this._dataViewIdProperty]);
 
-    // we need to reevaluate & invalidate any row detail that are shown on top of the row that we're closing
-    this.reevaluateRenderedRowIds(item);
+      // we need to reevaluate & invalidate any row detail that are shown on top of the row that we're closing
+      this.reevaluateRenderedRowIds(item);
 
-    if (!isMultipleCollapsing) {
-      this.dataView.endUpdate();
+      if (!isMultipleCollapsing) {
+        this.dataView.endUpdate();
+      }
     }
   }
 
   /** Expand a row given the dataview item that is to be expanded */
   expandDetailView(itemId: number | string): void {
-    if (this._addonOptions?.singleRowExpand) {
-      this.collapseAll();
-    }
     const item = this.dataView.getItemById(itemId);
+    if (item) {
+      if (this._addonOptions?.singleRowExpand) {
+        this.collapseAll();
+      }
 
-    // we need to reevaluate & invalidate any row detail that are shown on top of the row that we're closing
-    this.reevaluateRenderedRowIds(item);
+      // we need to reevaluate & invalidate any row detail that are shown on top of the row that we're closing
+      this.reevaluateRenderedRowIds(item);
 
-    item[`${this._keyPrefix}collapsed`] = false;
-    this._expandedRowIds.add(itemId);
+      item[`${this._keyPrefix}collapsed`] = false;
+      this._expandedRowIds.add(itemId);
 
-    // in the case something went wrong loading it the first time such a scroll of screen before loaded
-    if (!item[`${this._keyPrefix}detailContent`]) {
-      item[`${this._keyPrefix}detailViewLoaded`] = false;
-    }
+      // in the case something went wrong loading it the first time such a scroll of screen before loaded
+      if (!item[`${this._keyPrefix}detailContent`]) {
+        item[`${this._keyPrefix}detailViewLoaded`] = false;
+      }
 
-    // display pre-loading template
-    if (!item[`${this._keyPrefix}detailViewLoaded`] || this._addonOptions.loadOnce !== true) {
-      item[`${this._keyPrefix}detailContent`] = this._addonOptions?.preTemplate?.(item);
-    } else {
-      this.onAsyncResponse.notify({
-        item,
-        detailView: item[`${this._keyPrefix}detailContent`],
-        grid: this._grid,
-      });
+      // display pre-loading template
+      if (!item[`${this._keyPrefix}detailViewLoaded`] || this._addonOptions.loadOnce !== true) {
+        item[`${this._keyPrefix}detailContent`] = this._addonOptions?.preTemplate?.(item);
+      } else {
+        this.onAsyncResponse.notify({
+          item,
+          detailView: item[`${this._keyPrefix}detailContent`],
+          grid: this._grid,
+        });
+        this.applyTemplateNewLineHeight(item);
+        this.dataView.updateItem(item[this._dataViewIdProperty], item);
+        return;
+      }
+
       this.applyTemplateNewLineHeight(item);
       this.dataView.updateItem(item[this._dataViewIdProperty], item);
-      return;
+
+      // async server call
+      this._addonOptions.process(item);
     }
-
-    this.applyTemplateNewLineHeight(item);
-    this.dataView.updateItem(item[this._dataViewIdProperty], item);
-
-    // async server call
-    this._addonOptions.process(item);
   }
 
   /** reset all Set rows/ids cache and start empty (but keep expanded rows ref) */
@@ -355,7 +359,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
   /** Saves the current state of the detail view */
   saveDetailView(item: any): void {
-    if (this._addonOptions.loadOnce) {
+    if (this._addonOptions.loadOnce && item) {
       const view = document.querySelector(`.${this.gridUid} .innerDetailView_${item[this._dataViewIdProperty]}`);
       if (view) {
         const html = view.innerHTML;
@@ -522,7 +526,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
     const calculateFn = () =>
       this._expandedRowIds.forEach((itemId) => {
-        const item = this.dataView.getItemById(itemId);
+        const item = this.dataView.getItemById(itemId) ?? {};
         const rowIdx = this.dataView.getRowById(itemId) as number;
         const cachedRows = Object.keys(this._grid.getRowCache()).map(Number);
 
@@ -615,6 +619,12 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   /** Get the Row Detail padding (which are the rows dedicated to the detail panel) */
   protected getPaddingItem(parent: any, offset: any): any {
     const item: any = {};
+
+    // to make it work with Grouping,
+    // copy the parent's columns field values so that padding rows can follow the parent's group and be filtered/sorted with it
+    this._grid.getColumns().forEach(({ field }) => {
+      item[field] = parent[field];
+    });
 
     Object.keys(this.dataView).forEach((prop) => {
       if (prop) {
@@ -754,7 +764,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
         this._expandedRowIds.forEach((itemId) => {
           const row = this.dataView.getRowById(itemId);
           if (row !== undefined && row > args.row && row >= visible.top && row <= visible.bottom) {
-            const item = this.dataView.getItemById(itemId);
+            const item = this.dataView.getItemById(itemId)??{};
             toReRenderItems.push(item);
             this.notifyOutOfViewport(item);
           }

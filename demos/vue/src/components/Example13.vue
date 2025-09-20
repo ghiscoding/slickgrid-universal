@@ -301,7 +301,7 @@ function groupByDurationEffortDriven() {
   vueGrid.dataView.setGrouping([
     {
       getter: 'duration',
-      formatter: (g) => `Duration: ${g.value}  <span style="color:green">(${g.count} items)</span>`,
+      formatter: (g) => `Duration: ${g.value} <span style="color:green">(${g.count} items)</span>`,
       aggregators: [new Aggregators.Sum('duration'), new Aggregators.Sum('cost')],
       aggregateCollapsed: true,
       lazyTotalsCalculation: true,
@@ -328,7 +328,7 @@ function groupByDurationEffortDrivenPercent() {
   vueGrid.dataView.setGrouping([
     {
       getter: 'duration',
-      formatter: (g) => `Duration: ${g.value}  <span style="color:green">(${g.count} items)</span>`,
+      formatter: (g) => `Duration: ${g.value} <span style="color:green">(${g.count} items)</span>`,
       aggregators: [new Aggregators.Sum('duration'), new Aggregators.Sum('cost')],
       aggregateCollapsed: true,
       lazyTotalsCalculation: true,
