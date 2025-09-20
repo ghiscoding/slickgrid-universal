@@ -19,9 +19,11 @@
   </div>
 </h3>
 
-  <section class="mb-2">
-    <div class="row">
-    <button class="button is-small" onclick.trigger="closeAllRowDetail()" data-test="collapse-all-rowdetail-btn">Close All Row Details</button>
+<section class="mb-2">
+  <div class="row">
+    <button class="button is-small" onclick.trigger="closeAllRowDetail()" data-test="collapse-all-rowdetail-btn">
+      Close All Row Details
+    </button>
     &nbsp;&nbsp;
     <label for="">Detail View Rows Shown: </label>
     <input
@@ -42,11 +44,11 @@
       <span textcontent.bind="selectedRowString" data-test="row-selections"></span>
     </span>
   </div>
-  </section>
+</section>
 
-  <section class="mb-2">
-    <div class="row">
-      <button class="button is-small" data-test="collapse-all-group-btn" onclick.trigger="collapseAllGroups()">
+<section class="mb-2">
+  <div class="row">
+    <button class="button is-small" data-test="collapse-all-group-btn" onclick.trigger="collapseAllGroups()">
       <span class="mdi mdi-arrow-collapse"></span>
       <span>Collapse all groups</span>
     </button>
@@ -54,15 +56,12 @@
       <span class="mdi mdi-arrow-expand"></span>
       <span>Expand all groups</span>
     </button>
-      <button class="button is-small" data-test="group-duration-sort-value-btn" onclick.trigger="groupByDuration()">
-        Group by Duration
-      </button>
-      <button class="button is-small" data-test="group-duration-effort-btn" onclick.trigger="groupByDurationEffortDriven()">
-        Group by Duration then Effort-Driven
-      </button>
-      <span class.bind="loadingClass"></span>
-    </div>
-  </section>
-</div>
+    <button class="button is-small" data-test="group-duration-sort-value-btn" onclick.trigger="groupByDuration()">Group by Duration</button>
+    <button class="button is-small" data-test="group-duration-effort-btn" onclick.trigger="groupByDurationEffortDriven()">
+      Group by Duration then Effort-Driven
+    </button>
+    <span class.bind="loadingClass"></span>
+  </div>
+</section>
 
 <div class="grid36"></div>
