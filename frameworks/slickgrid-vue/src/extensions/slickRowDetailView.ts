@@ -1,5 +1,6 @@
 import {
   createDomElement,
+  emptyElement,
   type EventSubscription,
   type OnBeforeRowDetailToggleArgs,
   type OnRowBackOrOutOfViewportRangeArgs,
@@ -299,7 +300,8 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
 
       this.unmountViewWhenExists(item[this.datasetIdPropName]);
 
-      // load our Row Detail Vue Component dynamically
+      // empty container & load our Row Detail Vue Component dynamically
+      emptyElement(containerElement);
       const tmpDiv = document.createElement('div');
       const app = createApp(this._component, bindableData);
       const instance = app.mount(tmpDiv) as ComponentPublicInstance;
