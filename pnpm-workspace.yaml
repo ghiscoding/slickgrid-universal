@@ -8,7 +8,7 @@ packages:
 
 catalog:
   '@4tw/cypress-drag-drop': ^2.3.0
-  '@eslint/js': ^9.35.0
+  '@eslint/js': ^9.36.0
   '@faker-js/faker': ^10.0.0
   '@fnando/sparkline': ^0.3.10
   '@formkit/tempo': ^0.1.2
@@ -26,7 +26,7 @@ catalog:
   cypress-real-events: ^1.15.0
   dequal: ^2.0.3
   dompurify: ^3.2.7
-  eslint: ^9.35.0
+  eslint: ^9.36.0
   eslint-plugin-cypress: ^5.1.1
   eslint-plugin-n: ^17.23.1
   globals: ^16.4.0
@@ -39,7 +39,7 @@ catalog:
   npm-run-all2: ^8.0.4
   remove-glob: ^0.4.0
   rxjs: ^7.8.2
-  sass: ^1.92.1
+  sass: ^1.93.0
   sortablejs: ^1.15.6
   tslib: ^2.8.1
   typescript: ^5.8.3
