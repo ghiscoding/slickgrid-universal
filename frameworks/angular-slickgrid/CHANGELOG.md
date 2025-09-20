@@ -1,8 +1,17 @@
 # Change Log
-## All-in-One SlickGrid framework agnostic wrapper, visit [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) 📦🚀
+## All-in-One SlickGrid agnostic library, visit [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) 📦🚀
 
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+## [9.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.8.0...v9.9.0) (2025-09-20)
+
+### Bug Fixes
+
+* make Row Detail plugin work with Grouping ([#2165](https://github.com/ghiscoding/slickgrid-universal/issues/2165)) ([af51395](https://github.com/ghiscoding/slickgrid-universal/commit/af51395d3c73fab7afdcfc2abe0282847b442f71)) - by @ghiscoding
+* validate allowed frozen column only when setting grid options ([#2139](https://github.com/ghiscoding/slickgrid-universal/issues/2139)) ([9d74f01](https://github.com/ghiscoding/slickgrid-universal/commit/9d74f0146cc0dbbea549d11a25325edb38fc40fb)) - by @ghiscoding
+* validate allowed frozen column or alert when setting option ([#2145](https://github.com/ghiscoding/slickgrid-universal/issues/2145)) ([f550a99](https://github.com/ghiscoding/slickgrid-universal/commit/f550a99a40a5453c3c9a18e159720a1f6db6fb60)) - by @ghiscoding
+* validate to always have 1 or more column on right freeze section ([#2154](https://github.com/ghiscoding/slickgrid-universal/issues/2154)) ([cacfb70](https://github.com/ghiscoding/slickgrid-universal/commit/cacfb704adbc16844ba9ce5564f0a4354054a749)) - by @ghiscoding
 
 ## [9.8.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.7.0...v9.8.0) (2025-08-23)
 

@@ -1,8 +1,16 @@
 # Change Log
-## All-in-One SlickGrid framework agnostic wrapper, visit [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) 📦🚀
+## All-in-One SlickGrid agnostic library, visit [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) 📦🚀
 
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+## [9.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.8.0...v9.9.0) (2025-09-20)
+
+### Bug Fixes
+
+* LongText Editors should always show and also show gray w/disabled ([#2141](https://github.com/ghiscoding/slickgrid-universal/issues/2141)) ([7057911](https://github.com/ghiscoding/slickgrid-universal/commit/705791169d0e08c83f7af83bb4c94e01a428b3b0)) - by @ghiscoding
+* make Row Detail plugin work with Grouping ([#2165](https://github.com/ghiscoding/slickgrid-universal/issues/2165)) ([af51395](https://github.com/ghiscoding/slickgrid-universal/commit/af51395d3c73fab7afdcfc2abe0282847b442f71)) - by @ghiscoding
+* rollback to previous column freeze when new freeze index is invalid ([#2130](https://github.com/ghiscoding/slickgrid-universal/issues/2130)) ([1af82fc](https://github.com/ghiscoding/slickgrid-universal/commit/1af82fcac662852b4acf5f13195ad07bb08cb579)) - by @ghiscoding
 
 ## [9.8.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.7.0...v9.8.0) (2025-08-23)
 

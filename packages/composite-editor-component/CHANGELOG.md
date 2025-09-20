@@ -1,8 +1,15 @@
 # Change Log
-## All-in-One SlickGrid framework agnostic wrapper, visit [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) 📦🚀
+## All-in-One SlickGrid agnostic library, visit [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) 📦🚀
 
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+## [9.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.8.0...v9.9.0) (2025-09-20)
+
+### Bug Fixes
+
+* never hide `Editors.longText` in Composite Editor modal ([#2144](https://github.com/ghiscoding/slickgrid-universal/issues/2144)) ([43f0318](https://github.com/ghiscoding/slickgrid-universal/commit/43f0318da45de9d96e8ef3bc43749c1b12d0d460)) - by @ghiscoding
+* never hide Editors.longText in Composite Editor modal ([9a31cf3](https://github.com/ghiscoding/slickgrid-universal/commit/9a31cf39acfa57239cbfeeb70edd042a1d3c63e0)) - by @ghiscoding
 
 ## [9.8.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.7.0...v9.8.0) (2025-08-23)
 
