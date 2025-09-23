@@ -66,6 +66,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   protected _disposedRows: Set<number> = new Set();
   protected _rowIdsOutOfViewport: Set<number | string> = new Set();
   protected _renderedViewportRowIds: Set<number | string> = new Set();
+  protected _renderedCollapsedGroupIds: Set<number | string> = new Set();
   protected _renderedIds: Set<number | string> = new Set();
   protected _visibleRenderedCell?: { startRow: number; endRow: number };
   protected _backViewportTimer: any;
@@ -105,7 +106,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
   /** Getter of SlickGrid DataView object */
   get dataView(): SlickDataView {
-    return this._grid?.getData<SlickDataView>();
+    return this._grid?.getData<SlickDataView>() || {};
   }
 
   get dataViewIdProperty(): string {
@@ -157,7 +158,11 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       .subscribe(this._grid.onClick, this.handleClick.bind(this))
       .subscribe(this._grid.onBeforeEditCell, () => this.collapseAll())
       .subscribe(this._grid.onScroll, () => this.recalculateOutOfRangeViews(true, 0))
-      .subscribe(this._grid.onBeforeRemoveCachedRow, (_e, args) => this.handleRemoveRow(args.row));
+      .subscribe(this._grid.onBeforeRemoveCachedRow, (_e, args) => this.handleRemoveRow(args.row))
+
+      // Grouping events should trigger `onRowOutOfViewportRange` or `onRowBackToViewportRange`
+      .subscribe(this.dataView.onGroupCollapsed, (_e, { groupingKey }) => this.handleGroupCollapsed(groupingKey))
+      .subscribe(this.dataView.onGroupExpanded, (_e, { groupingKey }) => this.handleGroupExpanded(groupingKey));
 
     // Sort will, by default, Collapse all of the open items (unless user implements his own onSort which deals with open row and padding)
     if (this._addonOptions.collapseAllOnSort) {
@@ -204,7 +209,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
     // after data is set, let's get the DataView Id Property name used (defaults to "id")
     this._eventHandler.subscribe(this.dataView.onSetItemsCalled, () => {
-      this._dataViewIdProperty = this.dataView?.getIdPropertyName() || 'id';
+      this._dataViewIdProperty = this.dataView.getIdPropertyName() || 'id';
     });
   }
 
@@ -626,11 +631,6 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       item[field] = parent[field];
     });
 
-    Object.keys(this.dataView).forEach((prop) => {
-      if (prop) {
-        item[prop] = null;
-      }
-    });
     item[this._dataViewIdProperty] = `${parent[this._dataViewIdProperty]}.${offset}`;
 
     // additional hidden padding metadata fields
@@ -747,10 +747,9 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
         // trigger an event before toggling
         // user could cancel the Row Detail opening when event is returning false
-        const ignorePrevEventDataValue = true; // click event might return false from Row Selection canCellBeActive() validation, we need to ignore that
         if (
           this.onBeforeRowDetailToggle
-            .notify({ grid: this._grid, item: dataContext }, e, this, ignorePrevEventDataValue)
+            .notify({ grid: this._grid, item: dataContext }, e, this, true) // last argument is to ignore click event might return false from Row Selection canCellBeActive() validation
             .getReturnValue() === false
         ) {
           return;
@@ -764,7 +763,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
         this._expandedRowIds.forEach((itemId) => {
           const row = this.dataView.getRowById(itemId);
           if (row !== undefined && row > args.row && row >= visible.top && row <= visible.bottom) {
-            const item = this.dataView.getItemById(itemId)??{};
+            const item = this.dataView.getItemById(itemId) ?? {};
             toReRenderItems.push(item);
             this.notifyOutOfViewport(item);
           }
@@ -792,6 +791,42 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     }
   }
 
+  /** Triggered when a one or all data Groups are collapsed */
+  protected handleGroupCollapsed(groupingKey: number | string | null): void {
+    if (groupingKey) {
+      this.getGroupItemIds(groupingKey).forEach((rowId) => {
+        if (this._renderedViewportRowIds.has(rowId)) {
+          this.notifyViewportChange(this.dataView.getItemById(rowId), 'remove');
+        }
+      });
+    } else {
+      // no grouping key means all groups are being collapsed
+      this._expandedRowIds.forEach((rowId) => {
+        this._renderedCollapsedGroupIds.add(rowId);
+        this.notifyViewportChange(this.dataView.getItemById(rowId), 'remove');
+      });
+      this._expandedRowIds.clear();
+    }
+  }
+
+  /** Triggered when a one or all data Groups are expanded */
+  protected handleGroupExpanded(groupingKey: number | string | null): void {
+    if (groupingKey) {
+      this.getGroupItemIds(groupingKey).forEach((rowId) => {
+        if (this._expandedRowIds.has(rowId)) {
+          this.notifyViewportChange(this.dataView.getItemById(rowId), 'add');
+        }
+      });
+    } else {
+      // no grouping key means all groups are being expanded
+      this._renderedCollapsedGroupIds.forEach((rowId) => {
+        this._expandedRowIds.add(rowId);
+      });
+      this.recalculateOutOfRangeViews(true, 0);
+      this._renderedCollapsedGroupIds.clear();
+    }
+  }
+
   protected handleRemoveRow(rowIndex: number): void {
     const item = this.dataView.getItemByIdx(rowIndex);
 
@@ -814,6 +849,16 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
         this._disposedRows.add(rowIndex);
       }
     }
+  }
+
+  /** Get the item IDs of the Row Details that are expanded and under a specific Group */
+  protected getGroupItemIds(groupingKey: string | number): Array<number | string> {
+    return (
+      this.dataView
+        .getItemsByGroupingKey(groupingKey)
+        .filter((item) => !item[`${this._keyPrefix}isPadding`])
+        .map((item) => item[this._dataViewIdProperty]) || []
+    );
   }
 
   protected notifyOutOfViewport(item: any): void {

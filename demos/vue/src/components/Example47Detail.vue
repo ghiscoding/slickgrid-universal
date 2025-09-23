@@ -44,7 +44,7 @@ function showNotification(model: Item) {
   <div class="container-fluid" style="margin-top: 10px">
     <h3>{{ model.title }}</h3>
     <div class="row">
-      <div class="col-3 detail-label"><label>Assignee:</label> <input :value="model.assignee" class="form-control" /></div>
+      <div class="col-3 detail-label"><label>Assignee:</label> <input :value="model.assignee" class="form-control assignee" /></div>
       <div class="col-3 detail-label">
         <label>Reporter:</label> <span>{{ model.reporter }}</span>
       </div>
