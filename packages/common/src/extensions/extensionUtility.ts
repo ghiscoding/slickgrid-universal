@@ -65,11 +65,8 @@ export class ExtensionUtility {
    */
   readjustFrozenColumnIndexWhenNeeded(frozenColumnIndex: number, allColumns: Column[], visibleColumns: Column[]): void {
     if (frozenColumnIndex >= 0) {
-      const recalculatedFrozenColumnIndex = visibleColumns.findIndex((col) => col.id === this.sharedService.frozenVisibleColumnId);
-      if (recalculatedFrozenColumnIndex >= 0 && recalculatedFrozenColumnIndex !== frozenColumnIndex) {
-        this.sharedService.gridOptions.frozenColumn = recalculatedFrozenColumnIndex;
-        this.sharedService.slickGrid.setOptions({ frozenColumn: recalculatedFrozenColumnIndex });
-      }
+      // recalculate and apply changes when `frozenColumn` index changes
+      this.sharedService.slickGrid.calculateFrozenColumnIndexById(visibleColumns, this.sharedService.frozenVisibleColumnId, true);
 
       // to freeze columns, we need to take only the visible columns and we also need to use setColumns() when some of them are hidden
       // to make sure that we only use the visible columns, not doing this would show back some of the hidden columns
