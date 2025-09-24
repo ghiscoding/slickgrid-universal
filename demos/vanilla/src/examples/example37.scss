@@ -1,20 +1,6 @@
 /** override slick-cell to make it look like Excel sheet */
-.grid37 {
-  --slick-border-color: #d4d4d4;
-  --slick-cell-odd-background-color: #fbfbfb;
-  --slick-cell-border-left: 1px solid var(--slick-border-color);
-  --slick-header-menu-display: none;
-  --slick-header-column-height: 20px;
-  --slick-grid-border-color: #d4d4d4;
-  --slick-cell-selected-color: #d4ebfd;
-  --slick-row-selected-color: #d4ebfd;
-  --slick-text-editor-border: 0px;
-  --slick-text-editor-background: white;
-  --slick-text-editor-focus-box-shadow: none;
-
-  .slick-cell.copied {
-    background: blue;
-    background: rgba(0, 0, 255, 0.2);
-    transition: 0.5s background;
+.grid37-1 {
+  .slick-row .slick-cell:first-child {
+    border-right: 1px solid #d4d4d4;
   }
 }
