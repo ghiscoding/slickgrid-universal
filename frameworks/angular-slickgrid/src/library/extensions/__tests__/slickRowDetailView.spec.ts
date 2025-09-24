@@ -84,6 +84,8 @@ const dataViewStub = {
   getItem: vi.fn(),
   getItems: vi.fn(),
   getItemCount: vi.fn(),
+  onGroupCollapsed: new SlickEvent(),
+  onGroupExpanded: new SlickEvent(),
   onRowCountChanged: new SlickEvent(),
   onRowsChanged: new SlickEvent(),
   onSetItemsCalled: new SlickEvent(),

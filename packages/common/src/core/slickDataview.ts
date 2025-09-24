@@ -851,7 +851,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
 
   /** Get all data items for a specific grouping key */
   getItemsByGroupingKey(groupingKey: string | number): TData[] {
-    return this.groups[(groupingKey as any) || '']?.rows || [];
+    return this.groups.find((g) => g.groupingKey === groupingKey)?.rows || [];
   }
 
   /**
