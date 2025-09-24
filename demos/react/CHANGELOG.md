@@ -1,8 +1,16 @@
 # Change Log
-## All-in-One SlickGrid framework agnostic wrapper, visit [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) 📦🚀
+## All-in-One SlickGrid agnostic library, visit [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) 📦🚀
 
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+## [9.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.8.0...v9.9.0) (2025-09-20)
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#2126](https://github.com/ghiscoding/slickgrid-universal/issues/2126)) ([3654051](https://github.com/ghiscoding/slickgrid-universal/commit/3654051fafe91e52e7943d836000f72f8d075c91)) - by @renovate-bot
+* **deps:** update all non-major dependencies ([#2151](https://github.com/ghiscoding/slickgrid-universal/issues/2151)) ([36e1b83](https://github.com/ghiscoding/slickgrid-universal/commit/36e1b834aa1c44682f314cea93205dc5b388f1a2)) - by @renovate-bot
+* make Row Detail plugin work with Grouping ([#2165](https://github.com/ghiscoding/slickgrid-universal/issues/2165)) ([af51395](https://github.com/ghiscoding/slickgrid-universal/commit/af51395d3c73fab7afdcfc2abe0282847b442f71)) - by @ghiscoding
 
 ## [9.8.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.7.0...v9.8.0) (2025-08-23)
 

@@ -1,8 +1,31 @@
 # Change Log
-## All-in-One SlickGrid framework agnostic wrapper, visit [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) 📦🚀
+## All-in-One SlickGrid agnostic library, visit [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) 📦🚀
 
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+## [9.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.8.0...v9.9.0) (2025-09-20)
+
+### Features
+
+* add `htmlDecode` (true) to ExcelExportOption to HTML Decode data ([#2148](https://github.com/ghiscoding/slickgrid-universal/issues/2148)) ([0d6d10c](https://github.com/ghiscoding/slickgrid-universal/commit/0d6d10cd47f902e3047691fb76c6fee60d01568a)) - by @ghiscoding
+* add second css property to RangeDecorator plugin ([#2133](https://github.com/ghiscoding/slickgrid-universal/issues/2133)) ([c7bfc16](https://github.com/ghiscoding/slickgrid-universal/commit/c7bfc16e549eed6c0862c45e9eda0468f85d3c79)) - by @ghiscoding
+
+### Bug Fixes
+
+* add missing grid option to `skipFreezeColumnValidation` ([#2147](https://github.com/ghiscoding/slickgrid-universal/issues/2147)) ([890a76c](https://github.com/ghiscoding/slickgrid-universal/commit/890a76cd2117ea8f8ad74de83e6d80f1421b1509)) - by @ghiscoding
+* column header reorder should keep scroll position even frozen grid ([#2156](https://github.com/ghiscoding/slickgrid-universal/issues/2156)) ([d0464b0](https://github.com/ghiscoding/slickgrid-universal/commit/d0464b022c44d315a5b0093613c8d908e67a62f7)) - by @ghiscoding
+* Compound Input Operator w/o SearchVal shouldn't start filtering ([#2164](https://github.com/ghiscoding/slickgrid-universal/issues/2164)) ([dd921de](https://github.com/ghiscoding/slickgrid-universal/commit/dd921de74a0e42dc69032b0e7022b9893fa2c77e)) - by @ghiscoding
+* LongText Editors should always show and also show gray w/disabled ([#2141](https://github.com/ghiscoding/slickgrid-universal/issues/2141)) ([7057911](https://github.com/ghiscoding/slickgrid-universal/commit/705791169d0e08c83f7af83bb4c94e01a428b3b0)) - by @ghiscoding
+* never hide `Editors.longText` in Composite Editor modal ([#2144](https://github.com/ghiscoding/slickgrid-universal/issues/2144)) ([43f0318](https://github.com/ghiscoding/slickgrid-universal/commit/43f0318da45de9d96e8ef3bc43749c1b12d0d460)) - by @ghiscoding
+* never hide Editors.longText in Composite Editor modal ([9a31cf3](https://github.com/ghiscoding/slickgrid-universal/commit/9a31cf39acfa57239cbfeeb70edd042a1d3c63e0)) - by @ghiscoding
+* rollback to previous column freeze when new freeze index is invalid ([#2130](https://github.com/ghiscoding/slickgrid-universal/issues/2130)) ([1af82fc](https://github.com/ghiscoding/slickgrid-universal/commit/1af82fcac662852b4acf5f13195ad07bb08cb579)) - by @ghiscoding
+* Salesforce resize should only recalc when tab or window changed ([#2157](https://github.com/ghiscoding/slickgrid-universal/issues/2157)) ([e584b44](https://github.com/ghiscoding/slickgrid-universal/commit/e584b449204a4c5c50da63d00b286d2a28e8a30b)) - by @ghiscoding
+* Salesforce resize should only recalc when window size changed ([#2155](https://github.com/ghiscoding/slickgrid-universal/issues/2155)) ([008e52b](https://github.com/ghiscoding/slickgrid-universal/commit/008e52bca3ee137d4c796ab5ac73da5bc0b426b3)) - by @ghiscoding
+* show an alert to user when trying to freeze wider than viewport ([#2129](https://github.com/ghiscoding/slickgrid-universal/issues/2129)) ([077168a](https://github.com/ghiscoding/slickgrid-universal/commit/077168a6ee4ac1cc673dcaa5db662305a1520ed5)) - by @ghiscoding
+* validate allowed frozen column only when setting grid options ([#2139](https://github.com/ghiscoding/slickgrid-universal/issues/2139)) ([9d74f01](https://github.com/ghiscoding/slickgrid-universal/commit/9d74f0146cc0dbbea549d11a25325edb38fc40fb)) - by @ghiscoding
+* validate allowed frozen column or alert when setting option ([#2145](https://github.com/ghiscoding/slickgrid-universal/issues/2145)) ([f550a99](https://github.com/ghiscoding/slickgrid-universal/commit/f550a99a40a5453c3c9a18e159720a1f6db6fb60)) - by @ghiscoding
+* validate to always have 1 or more column on right freeze section ([#2154](https://github.com/ghiscoding/slickgrid-universal/issues/2154)) ([cacfb70](https://github.com/ghiscoding/slickgrid-universal/commit/cacfb704adbc16844ba9ce5564f0a4354054a749)) - by @ghiscoding
 
 ## [9.8.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.7.0...v9.8.0) (2025-08-23)
 

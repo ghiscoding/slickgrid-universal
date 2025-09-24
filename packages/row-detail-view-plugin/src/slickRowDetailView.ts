@@ -66,6 +66,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   protected _disposedRows: Set<number> = new Set();
   protected _rowIdsOutOfViewport: Set<number | string> = new Set();
   protected _renderedViewportRowIds: Set<number | string> = new Set();
+  protected _renderedCollapsedGroupIds: Set<number | string> = new Set();
   protected _renderedIds: Set<number | string> = new Set();
   protected _visibleRenderedCell?: { startRow: number; endRow: number };
   protected _backViewportTimer: any;
@@ -105,7 +106,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
   /** Getter of SlickGrid DataView object */
   get dataView(): SlickDataView {
-    return this._grid?.getData<SlickDataView>();
+    return this._grid?.getData<SlickDataView>() || {};
   }
 
   get dataViewIdProperty(): string {
@@ -157,7 +158,11 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       .subscribe(this._grid.onClick, this.handleClick.bind(this))
       .subscribe(this._grid.onBeforeEditCell, () => this.collapseAll())
       .subscribe(this._grid.onScroll, () => this.recalculateOutOfRangeViews(true, 0))
-      .subscribe(this._grid.onBeforeRemoveCachedRow, (_e, args) => this.handleRemoveRow(args.row));
+      .subscribe(this._grid.onBeforeRemoveCachedRow, (_e, args) => this.handleRemoveRow(args.row))
+
+      // Grouping events should trigger `onRowOutOfViewportRange` or `onRowBackToViewportRange`
+      .subscribe(this.dataView.onGroupCollapsed, (_e, { groupingKey }) => this.handleGroupCollapsed(groupingKey))
+      .subscribe(this.dataView.onGroupExpanded, (_e, { groupingKey }) => this.handleGroupExpanded(groupingKey));
 
     // Sort will, by default, Collapse all of the open items (unless user implements his own onSort which deals with open row and padding)
     if (this._addonOptions.collapseAllOnSort) {
@@ -204,7 +209,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
     // after data is set, let's get the DataView Id Property name used (defaults to "id")
     this._eventHandler.subscribe(this.dataView.onSetItemsCalled, () => {
-      this._dataViewIdProperty = this.dataView?.getIdPropertyName() || 'id';
+      this._dataViewIdProperty = this.dataView.getIdPropertyName() || 'id';
     });
   }
 
@@ -280,71 +285,75 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
   /** Collapse an Item so it is not longer seen */
   collapseDetailView(itemId: number | string, isMultipleCollapsing = false): void {
-    if (!isMultipleCollapsing) {
-      this.dataView.beginUpdate();
-    }
     const item = this.dataView.getItemById(itemId);
-    // Save the details on the collapse assuming onetime loading
-    if (this._addonOptions.loadOnce) {
-      this.saveDetailView(item);
-    }
+    if (item) {
+      if (!isMultipleCollapsing) {
+        this.dataView.beginUpdate();
+      }
+      // Save the details on the collapse assuming onetime loading
+      if (this._addonOptions.loadOnce) {
+        this.saveDetailView(item);
+      }
 
-    item[`${this._keyPrefix}collapsed`] = true;
-    for (let idx = 1; idx <= item[`${this._keyPrefix}sizePadding`]; idx++) {
-      this.dataView.deleteItem(`${item[this._dataViewIdProperty]}.${idx}`);
-    }
-    item[`${this._keyPrefix}sizePadding`] = 0;
-    this.dataView.updateItem(item[this._dataViewIdProperty], item);
+      item[`${this._keyPrefix}collapsed`] = true;
+      for (let idx = 1; idx <= item[`${this._keyPrefix}sizePadding`]; idx++) {
+        this.dataView.deleteItem(`${item[this._dataViewIdProperty]}.${idx}`);
+      }
+      item[`${this._keyPrefix}sizePadding`] = 0;
+      this.dataView.updateItem(item[this._dataViewIdProperty], item);
 
-    // Remove the item from the expandedRows & renderedIds
-    this._expandedRowIds = new Set(Array.from(this._expandedRowIds).filter((expItemId) => expItemId !== item[this._dataViewIdProperty]));
-    this._renderedIds.delete(item[this._dataViewIdProperty]);
+      // Remove the item from the expandedRows & renderedIds
+      this._expandedRowIds = new Set(Array.from(this._expandedRowIds).filter((expItemId) => expItemId !== item[this._dataViewIdProperty]));
+      this._renderedIds.delete(item[this._dataViewIdProperty]);
 
-    // we need to reevaluate & invalidate any row detail that are shown on top of the row that we're closing
-    this.reevaluateRenderedRowIds(item);
+      // we need to reevaluate & invalidate any row detail that are shown on top of the row that we're closing
+      this.reevaluateRenderedRowIds(item);
 
-    if (!isMultipleCollapsing) {
-      this.dataView.endUpdate();
+      if (!isMultipleCollapsing) {
+        this.dataView.endUpdate();
+      }
     }
   }
 
   /** Expand a row given the dataview item that is to be expanded */
   expandDetailView(itemId: number | string): void {
-    if (this._addonOptions?.singleRowExpand) {
-      this.collapseAll();
-    }
     const item = this.dataView.getItemById(itemId);
+    if (item) {
+      if (this._addonOptions?.singleRowExpand) {
+        this.collapseAll();
+      }
 
-    // we need to reevaluate & invalidate any row detail that are shown on top of the row that we're closing
-    this.reevaluateRenderedRowIds(item);
+      // we need to reevaluate & invalidate any row detail that are shown on top of the row that we're closing
+      this.reevaluateRenderedRowIds(item);
 
-    item[`${this._keyPrefix}collapsed`] = false;
-    this._expandedRowIds.add(itemId);
+      item[`${this._keyPrefix}collapsed`] = false;
+      this._expandedRowIds.add(itemId);
 
-    // in the case something went wrong loading it the first time such a scroll of screen before loaded
-    if (!item[`${this._keyPrefix}detailContent`]) {
-      item[`${this._keyPrefix}detailViewLoaded`] = false;
-    }
+      // in the case something went wrong loading it the first time such a scroll of screen before loaded
+      if (!item[`${this._keyPrefix}detailContent`]) {
+        item[`${this._keyPrefix}detailViewLoaded`] = false;
+      }
 
-    // display pre-loading template
-    if (!item[`${this._keyPrefix}detailViewLoaded`] || this._addonOptions.loadOnce !== true) {
-      item[`${this._keyPrefix}detailContent`] = this._addonOptions?.preTemplate?.(item);
-    } else {
-      this.onAsyncResponse.notify({
-        item,
-        detailView: item[`${this._keyPrefix}detailContent`],
-        grid: this._grid,
-      });
+      // display pre-loading template
+      if (!item[`${this._keyPrefix}detailViewLoaded`] || this._addonOptions.loadOnce !== true) {
+        item[`${this._keyPrefix}detailContent`] = this._addonOptions?.preTemplate?.(item);
+      } else {
+        this.onAsyncResponse.notify({
+          item,
+          detailView: item[`${this._keyPrefix}detailContent`],
+          grid: this._grid,
+        });
+        this.applyTemplateNewLineHeight(item);
+        this.dataView.updateItem(item[this._dataViewIdProperty], item);
+        return;
+      }
+
       this.applyTemplateNewLineHeight(item);
       this.dataView.updateItem(item[this._dataViewIdProperty], item);
-      return;
+
+      // async server call
+      this._addonOptions.process(item);
     }
-
-    this.applyTemplateNewLineHeight(item);
-    this.dataView.updateItem(item[this._dataViewIdProperty], item);
-
-    // async server call
-    this._addonOptions.process(item);
   }
 
   /** reset all Set rows/ids cache and start empty (but keep expanded rows ref) */
@@ -355,7 +364,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
   /** Saves the current state of the detail view */
   saveDetailView(item: any): void {
-    if (this._addonOptions.loadOnce) {
+    if (this._addonOptions.loadOnce && item) {
       const view = document.querySelector(`.${this.gridUid} .innerDetailView_${item[this._dataViewIdProperty]}`);
       if (view) {
         const html = view.innerHTML;
@@ -522,7 +531,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
     const calculateFn = () =>
       this._expandedRowIds.forEach((itemId) => {
-        const item = this.dataView.getItemById(itemId);
+        const item = this.dataView.getItemById(itemId) ?? {};
         const rowIdx = this.dataView.getRowById(itemId) as number;
         const cachedRows = Object.keys(this._grid.getRowCache()).map(Number);
 
@@ -616,11 +625,12 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
   protected getPaddingItem(parent: any, offset: any): any {
     const item: any = {};
 
-    Object.keys(this.dataView).forEach((prop) => {
-      if (prop) {
-        item[prop] = null;
-      }
+    // to make it work with Grouping,
+    // copy the parent's columns field values so that padding rows can follow the parent's group and be filtered/sorted with it
+    this._grid.getColumns().forEach(({ field }) => {
+      item[field] = parent[field];
     });
+
     item[this._dataViewIdProperty] = `${parent[this._dataViewIdProperty]}.${offset}`;
 
     // additional hidden padding metadata fields
@@ -737,10 +747,9 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
         // trigger an event before toggling
         // user could cancel the Row Detail opening when event is returning false
-        const ignorePrevEventDataValue = true; // click event might return false from Row Selection canCellBeActive() validation, we need to ignore that
         if (
           this.onBeforeRowDetailToggle
-            .notify({ grid: this._grid, item: dataContext }, e, this, ignorePrevEventDataValue)
+            .notify({ grid: this._grid, item: dataContext }, e, this, true) // last argument is to ignore click event might return false from Row Selection canCellBeActive() validation
             .getReturnValue() === false
         ) {
           return;
@@ -754,7 +763,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
         this._expandedRowIds.forEach((itemId) => {
           const row = this.dataView.getRowById(itemId);
           if (row !== undefined && row > args.row && row >= visible.top && row <= visible.bottom) {
-            const item = this.dataView.getItemById(itemId);
+            const item = this.dataView.getItemById(itemId) ?? {};
             toReRenderItems.push(item);
             this.notifyOutOfViewport(item);
           }
@@ -782,6 +791,42 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
     }
   }
 
+  /** Triggered when a one or all data Groups are collapsed */
+  protected handleGroupCollapsed(groupingKey: number | string | null): void {
+    if (groupingKey) {
+      this.getGroupItemIds(groupingKey).forEach((rowId) => {
+        if (this._renderedViewportRowIds.has(rowId)) {
+          this.notifyViewportChange(this.dataView.getItemById(rowId), 'remove');
+        }
+      });
+    } else {
+      // no grouping key means all groups are being collapsed
+      this._expandedRowIds.forEach((rowId) => {
+        this._renderedCollapsedGroupIds.add(rowId);
+        this.notifyViewportChange(this.dataView.getItemById(rowId), 'remove');
+      });
+      this._expandedRowIds.clear();
+    }
+  }
+
+  /** Triggered when a one or all data Groups are expanded */
+  protected handleGroupExpanded(groupingKey: number | string | null): void {
+    if (groupingKey) {
+      this.getGroupItemIds(groupingKey).forEach((rowId) => {
+        if (this._expandedRowIds.has(rowId)) {
+          this.notifyViewportChange(this.dataView.getItemById(rowId), 'add');
+        }
+      });
+    } else {
+      // no grouping key means all groups are being expanded
+      this._renderedCollapsedGroupIds.forEach((rowId) => {
+        this._expandedRowIds.add(rowId);
+      });
+      this.recalculateOutOfRangeViews(true, 0);
+      this._renderedCollapsedGroupIds.clear();
+    }
+  }
+
   protected handleRemoveRow(rowIndex: number): void {
     const item = this.dataView.getItemByIdx(rowIndex);
 
@@ -804,6 +849,16 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
         this._disposedRows.add(rowIndex);
       }
     }
+  }
+
+  /** Get the item IDs of the Row Details that are expanded and under a specific Group */
+  protected getGroupItemIds(groupingKey: string | number): Array<number | string> {
+    return (
+      this.dataView
+        .getItemsByGroupingKey(groupingKey)
+        .filter((item) => !item[`${this._keyPrefix}isPadding`])
+        .map((item) => item[this._dataViewIdProperty]) || []
+    );
   }
 
   protected notifyOutOfViewport(item: any): void {

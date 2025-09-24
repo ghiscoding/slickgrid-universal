@@ -689,6 +689,7 @@ describe('SlickDatView core file', () => {
         formatter: (g) => `Family: ${g.value} <span class="text-green">(${g.count} items)</span>`,
       } as Grouping);
 
+      expect(dv.getItemsByGroupingKey('Doe').length).toBe(2);
       expect(dv.getGroups().length).toBe(1);
       expect(refreshSpy).toHaveBeenCalled();
       expect(dv.getGrouping().length).toBe(1);

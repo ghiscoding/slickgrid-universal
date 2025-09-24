@@ -12,7 +12,7 @@ import {
   SlickRowDetailView,
 } from 'slickgrid-react';
 
-import { Example19Preload } from './Example19-preload.js';
+import { ExampleDetailPreload } from './Example-detail-preload.js';
 import Example19DetailView from './Example19-detail-view.js';
 
 const FAKE_SERVER_DELAY = 250;
@@ -183,7 +183,7 @@ const Example19: React.FC = () => {
         singleRowExpand: false,
         useRowClick: true,
         panelRows: detailViewRowCount,
-        preloadComponent: Example19Preload,
+        preloadComponent: ExampleDetailPreload,
         viewComponent: Example19DetailView,
         parentRef: {
           showFlashMessage,

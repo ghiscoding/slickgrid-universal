@@ -404,7 +404,7 @@ export default class Example02 {
     this.sgb?.dataView?.setGrouping([
       {
         getter: 'duration',
-        formatter: (g) => `Duration: ${g.value}  <span class="text-green">(${g.count} items)</span>`,
+        formatter: (g) => `Duration: ${g.value} <span class="text-green">(${g.count} items)</span>`,
         aggregators: [new Aggregators.Sum('duration'), new Aggregators.Sum('cost')],
         aggregateCollapsed: true,
         lazyTotalsCalculation: true,
@@ -431,7 +431,7 @@ export default class Example02 {
     this.sgb?.dataView?.setGrouping([
       {
         getter: 'duration',
-        formatter: (g) => `Duration: ${g.value}  <span class="text-green">(${g.count} items)</span>`,
+        formatter: (g) => `Duration: ${g.value} <span class="text-green">(${g.count} items)</span>`,
         aggregators: [new Aggregators.Sum('duration'), new Aggregators.Sum('cost')],
         aggregateCollapsed: true,
         lazyTotalsCalculation: true,

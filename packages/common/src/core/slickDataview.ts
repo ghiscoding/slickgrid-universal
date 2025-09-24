@@ -849,6 +849,11 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     this.onGroupCollapsed.notify({ level, groupingKey });
   }
 
+  /** Get all data items for a specific grouping key */
+  getItemsByGroupingKey(groupingKey: string | number): TData[] {
+    return this.groups.find((g) => g.groupingKey === groupingKey)?.rows || [];
+  }
+
   /**
    * @param varArgs Either a SlickGroup's "groupingKey" property, or a
    *     variable argument list of grouping values denoting a unique path to the row.  For

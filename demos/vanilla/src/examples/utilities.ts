@@ -27,7 +27,7 @@ export function randomNumber(min: number, max: number, floor = true) {
   return floor ? Math.floor(number) : number;
 }
 
-export function showToast(msg: string, type: 'danger' | 'warning', time = 2000) {
+export function showToast(msg: string, type: 'danger' | 'info' | 'warning', time = 2000) {
   const div = document.createElement('div');
   div.className = `notification is-light is-${type} is-small is-narrow toast`;
   div.style.position = 'absolute';

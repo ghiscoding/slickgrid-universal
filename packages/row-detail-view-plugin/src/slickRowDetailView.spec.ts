@@ -26,10 +26,13 @@ const dataviewStub = {
   getItem: vi.fn(),
   getItemById: vi.fn(),
   getItemByIdx: vi.fn(),
+  getItemsByGroupingKey: vi.fn(),
   getIdxById: vi.fn(),
   getRowById: vi.fn(),
   insertItem: vi.fn(),
   updateItem: vi.fn(),
+  onGroupCollapsed: new SlickEvent(),
+  onGroupExpanded: new SlickEvent(),
   onRowsChanged: new SlickEvent(),
   onRowCountChanged: new SlickEvent(),
   onSetItemsCalled: new SlickEvent(),
@@ -64,7 +67,7 @@ const gridStub = {
   onSort: new SlickEvent(),
 } as unknown as SlickGrid;
 
-let mockColumns: Column[];
+let mockColumns: Column[] = [];
 
 describe('SlickRowDetailView plugin', () => {
   let eventPubSubService: EventPubSubService;
@@ -76,12 +79,13 @@ describe('SlickRowDetailView plugin', () => {
   beforeEach(() => {
     mockColumns = [
       { id: 'firstName', name: 'First Name', field: 'firstName', width: 100 },
-      { id: 'lasstName', name: 'Last Name', field: 'lasstName', width: 100 },
+      { id: 'lastName', name: 'Last Name', field: 'lastName', width: 100 },
     ];
     eventPubSubService = new EventPubSubService();
     plugin = new SlickRowDetailView(eventPubSubService);
     divContainer.className = `slickgrid-container ${GRID_UID}`;
     document.body.appendChild(divContainer);
+    vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
   });
 
   afterEach(() => {
@@ -1208,6 +1212,75 @@ describe('SlickRowDetailView plugin', () => {
         __height: 150,
         __sizePadding: 6,
       });
+    });
+  });
+
+  describe('with data Grouping', () => {
+    const mockItem = { id: 123, firstName: 'John', lastName: 'Doe' };
+    const detailView = `<span>loading...</span>`;
+
+    beforeEach(() => {
+      const mockProcess = vi.fn();
+      vi.spyOn(dataviewStub, 'getItemsByGroupingKey').mockReturnValue([mockItem]);
+      vi.spyOn(dataviewStub, 'getItemById').mockReturnValue(mockItem);
+      vi.spyOn(dataviewStub, 'getRowById').mockReturnValueOnce(1).mockReturnValueOnce(1);
+      const loadingTemplate = () => `<span>loading...</span>`;
+      vi.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(false);
+      vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockItem);
+      vi.spyOn(dataviewStub, 'getIdxById').mockReturnValue(0);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({
+        ...gridOptionsMock,
+        rowDetailView: { process: mockProcess, preTemplate: loadingTemplate, panelRows: 5, useRowClick: true, singleRowExpand: true, loadOnce: true } as any,
+      });
+    });
+
+    it('should notify out of viewport when "onGroupCollapsed" and then "onGroupExpanded" events are triggered for a single group', () => {
+      const onRowBackViewportSpy = vi.spyOn(plugin.onRowBackToViewportRange, 'notify');
+      const onRowOutOfViewportSpy = vi.spyOn(plugin.onRowOutOfViewportRange, 'notify');
+
+      plugin.init(gridStub);
+      plugin.onAsyncResponse.notify({ item: mockItem, detailView }, new SlickEventData());
+
+      plugin.expandDetailView(mockItem.id);
+
+      const clickEvent = new Event('click');
+      Object.defineProperty(clickEvent, 'target', { writable: true, configurable: true, value: document.createElement('div') });
+      Object.defineProperty(clickEvent, 'isPropagationStopped', { writable: true, configurable: true, value: vi.fn() });
+      Object.defineProperty(clickEvent, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: vi.fn() });
+      vi.spyOn(gridStub, 'getRenderedRange').mockReturnValueOnce({ top: 0, bottom: 20, left: 33, right: 18 } as any);
+      gridStub.onClick.notify({ row: 0, cell: 1, grid: gridStub }, clickEvent);
+
+      dataviewStub.onGroupCollapsed.notify({ level: 0, groupingKey: '1' }, new SlickEventData(), gridStub);
+      expect(onRowOutOfViewportSpy).toHaveBeenCalled();
+
+      plugin.expandDetailView(mockItem.id);
+      dataviewStub.onGroupExpanded.notify({ level: 0, groupingKey: '1' }, new SlickEventData(), gridStub);
+      expect(onRowBackViewportSpy).toHaveBeenCalled();
+    });
+
+    it('should notify out of viewport when "onGroupCollapsed" and then "onGroupExpanded" events are triggered for all groups', () => {
+      const onRowOutOfViewportSpy = vi.spyOn(plugin.onRowOutOfViewportRange, 'notify');
+      const recalOutOfRangeViewSpy = vi.spyOn(plugin, 'recalculateOutOfRangeViews');
+
+      plugin.init(gridStub);
+      plugin.onAsyncResponse.notify({ item: mockItem, detailView }, new SlickEventData());
+
+      const clickEvent = new Event('click');
+      Object.defineProperty(clickEvent, 'target', { writable: true, configurable: true, value: document.createElement('div') });
+      Object.defineProperty(clickEvent, 'isPropagationStopped', { writable: true, configurable: true, value: vi.fn() });
+      Object.defineProperty(clickEvent, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: vi.fn() });
+      vi.spyOn(gridStub, 'getRenderedRange').mockReturnValueOnce({ top: 0, bottom: 20, left: 33, right: 18 } as any);
+      gridStub.onClick.notify({ row: 0, cell: 1, grid: gridStub }, clickEvent);
+      plugin.expandDetailView(mockItem.id);
+
+      dataviewStub.onGroupCollapsed.notify({ level: 0, groupingKey: null }, new SlickEventData(), gridStub);
+      expect(onRowOutOfViewportSpy).toHaveBeenCalled();
+
+      plugin.expandDetailView(mockItem.id);
+      dataviewStub.onGroupExpanded.notify({ level: 0, groupingKey: null }, new SlickEventData(), gridStub);
+      expect(recalOutOfRangeViewSpy).toHaveBeenCalled();
     });
   });
 

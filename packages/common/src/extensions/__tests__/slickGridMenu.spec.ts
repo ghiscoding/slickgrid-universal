@@ -53,6 +53,7 @@ const dataViewStub = {
 
 const gridStub = {
   autosizeColumns: vi.fn(),
+  calculateFrozenColumnIndexById: vi.fn(),
   getColumnIndex: vi.fn(),
   getColumns: vi.fn(),
   getContainerNode: vi.fn(),

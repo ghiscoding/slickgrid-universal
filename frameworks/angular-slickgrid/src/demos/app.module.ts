@@ -58,12 +58,14 @@ import { Example43Component } from './examples/example43.component';
 import { Example44Component } from './examples/example44.component';
 import { Example45Component } from './examples/example45.component';
 import { Example46Component } from './examples/example46.component';
+import { Example47Component } from './examples/example47.component';
 import { Example45DetailComponent } from './examples/example45-detail.component';
 import { EditorNgSelectComponent } from './examples/editor-ng-select.component';
 import { FilterNgSelectComponent } from './examples/filter-ng-select.component';
 import { HomeComponent } from './examples/home.component';
 import { CustomPagerComponent } from './examples/grid-custom-pager.component';
 import { Example19RowDetailComponent } from './examples/example19-rowdetail.component';
+import { Example47RowDetailComponent } from './examples/example47-rowdetail.component';
 import { RowDetailPreloadComponent } from './examples/rowdetail-preload.component';
 
 import { SwtCommonGridTestComponent } from './examples/swt-common-grid-test.component';
@@ -154,6 +156,8 @@ export function appInitializerFactory(translate: TranslateService, injector: Inj
     Example45Component,
     Example45DetailComponent,
     Example46Component,
+    Example47Component,
+    Example47RowDetailComponent,
     FilterNgSelectComponent,
     RowDetailPreloadComponent,
     SwtCommonGridTestComponent,

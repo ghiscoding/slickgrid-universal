@@ -594,10 +594,30 @@ describe('Example 04 - Frozen Grid', () => {
       });
   });
 
+  it('should be able to uncheck "Title" column without any alert', () => {
+    const updatedColumns = ['', '% Complete', 'Action'];
+    cy.get('.slick-column-picker-list li:not(.hidden) .checkbox-picker-label').first().click();
+    cy.get('.slick-column-picker:visible').find('.close').trigger('click').click();
+    cy.get('.slick-header-columns:nth(0)')
+      .children()
+      .each(($child, index) => expect($child.text()).to.eq(updatedColumns[index]));
+  });
+
+  it('should be able to add back hidden "Title" column without any alert', () => {
+    const updatedColumns = ['', 'Title', '% Complete', 'Action'];
+    cy.get('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
+    cy.get('.slick-column-picker-list li:not(.hidden) .checkbox-picker-label').first().click();
+    cy.get('.slick-column-picker:visible').find('.close').trigger('click').click();
+    cy.get('.slick-header-columns:nth(0)')
+      .children()
+      .each(($child, index) => expect($child.text()).to.eq(updatedColumns[index]));
+  });
+
   it('should reset hidden column from the Column Picker and expect all columns to be back', () => {
     const leftColumns = ['', 'Title', '% Complete'];
     const rightColumns = ['Start', 'Finish', 'Completed', 'Cost | Duration', 'City of Origin', 'Action'];
 
+    cy.get('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
     cy.get('.slick-column-picker')
       .find('.slick-column-picker-list')
       .children()

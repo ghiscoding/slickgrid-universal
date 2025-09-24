@@ -1,7 +1,7 @@
 import { bindable } from 'aurelia';
 import { type AureliaGridInstance, type Column, Editors, ExtensionName, Filters, Formatters, type GridOption } from 'aurelia-slickgrid';
 
-import { Example19Preload } from './example19-preload.js';
+import { ExampleDetailPreload } from './example-detail-preload.js';
 import { Example19DetailView } from './example19-detail-view.js';
 
 const FAKE_SERVER_DELAY = 250;
@@ -164,36 +164,18 @@ export class Example19 {
         // expandableOverride: (row: number, dataContext: any) => (dataContext.rowId % 2 === 1),
 
         // Preload View Template
-        preloadViewModel: Example19Preload,
+        preloadViewModel: ExampleDetailPreload,
 
         // ViewModel Template to load when row detail data is ready
         viewModel: Example19DetailView,
 
         // Optionally pass your Parent Component reference to your Child Component (row detail component)
         parentRef: this,
-
-        onBeforeRowDetailToggle: (e, args) => {
-          // you coud cancel opening certain rows
-          // if (args.item.rowId === 1) {
-          //   e.preventDefault();
-          //   return false;
-          // }
-          console.log('before toggling row detail', args.item);
-          return true;
-        },
       },
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: true,
       },
-
-      // You could also enable Row Selection as well, but just make sure to disable `useRowClick: false`
-      // enableCheckboxSelector: true,
-      // enableRowSelection: true,
-      // checkboxSelector: {
-      //   hideInFilterHeaderRow: false,
-      //   hideSelectAllCheckbox: true,
-      // },
     };
   }
 
@@ -209,7 +191,7 @@ export class Example19 {
       dataset[i] = {
         rowId: i,
         title: 'Task ' + i,
-        duration: i % 33 === 0 ? null : Math.random() * 100 + '',
+        duration: Math.ceil(Math.random() * 100),
         percentComplete: randomPercent,
         percentComplete2: randomPercent,
         percentCompleteNumber: randomPercent,

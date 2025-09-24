@@ -12,7 +12,7 @@ import {
 import { computed, onBeforeMount, onUnmounted, ref, type Ref } from 'vue';
 
 import Example19Detail from './Example19Detail.vue';
-import Example19Preload from './Example19Preload.vue';
+import ExampleDetailPreload from './ExampleDetailPreload.vue';
 
 const FAKE_SERVER_DELAY = 250;
 const NB_ITEMS = 500;
@@ -162,7 +162,7 @@ function defineGrid() {
       parentRef: { showFlashMessage },
 
       // Preload View Template
-      preloadComponent: Example19Preload,
+      preloadComponent: ExampleDetailPreload,
 
       // ViewModel Template to load when row detail data is ready
       viewComponent: Example19Detail as any,
