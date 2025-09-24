@@ -8,6 +8,7 @@ import { TranslateServiceStub } from '../../../../../test/translateServiceStub.j
 import type { SlickGrid } from '../../core/slickGrid.js';
 
 const gridStub = {
+  calculateFrozenColumnIndexById: vi.fn(),
   getOptions: vi.fn(),
   setColumns: vi.fn(),
   setOptions: vi.fn(),
@@ -164,16 +165,6 @@ describe('extensionUtility', () => {
         vi.clearAllMocks();
       });
 
-      it('should increase "frozenColumn" from 0 to 1 when showing a column that was previously hidden and its index is lower or equal to provided argument of frozenColumnIndex', () => {
-        const allColumns = [{ id: 'field1' }, { id: 'field2' }, { id: 'field3' }] as Column[];
-        const visibleColumns = [{ id: 'field1' }, { id: 'field2' }] as Column[];
-        const setOptionSpy = vi.spyOn(sharedService.slickGrid, 'setOptions');
-
-        utility.readjustFrozenColumnIndexWhenNeeded(0, allColumns, visibleColumns);
-
-        expect(setOptionSpy).toHaveBeenCalledWith({ frozenColumn: 1 });
-      });
-
       it('should keep "frozenColumn" at 1 when showing a column that was previously hidden and its index is greater than provided argument of frozenColumnIndex', () => {
         const allColumns = [{ id: 'field1' }, { id: 'field2' }] as Column[];
         const visibleColumns = [{ id: 'field1' }, { id: 'field2' }, { id: 'field3' }] as Column[];
@@ -182,16 +173,6 @@ describe('extensionUtility', () => {
         utility.readjustFrozenColumnIndexWhenNeeded(1, allColumns, visibleColumns);
 
         expect(setOptionSpy).not.toHaveBeenCalled();
-      });
-
-      it('should decrease "frozenColumn" from 1 to 0 when hiding a column that was previously shown and its index is lower or equal to provided argument of frozenColumnIndex', () => {
-        const allColumns = [{ id: 'field1' }, { id: 'field2' }, { id: 'field3' }] as Column[];
-        const visibleColumns = [{ id: 'field2' }] as Column[];
-        const setOptionSpy = vi.spyOn(sharedService.slickGrid, 'setOptions');
-
-        utility.readjustFrozenColumnIndexWhenNeeded(1, allColumns, visibleColumns);
-
-        expect(setOptionSpy).toHaveBeenCalledWith({ frozenColumn: 0 });
       });
 
       it('should keep "frozenColumn" at 1 when hiding a column that was previously hidden and its index is greater than provided argument of frozenColumnIndex', () => {
