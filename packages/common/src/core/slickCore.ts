@@ -459,7 +459,7 @@ export class SlickGroup extends SlickNonDataItem {
    * @property rows
    * @type {Array}
    */
-  rows: number[] = [];
+  rows: any[] = [];
 
   /**
    * Sub-groups that are part of the group.
@@ -472,7 +472,7 @@ export class SlickGroup extends SlickNonDataItem {
    * A unique key used to identify the group.
    * This key can be used in calls to DataView `collapseGroup()` or `expandGroup()`.
    * @property groupingKey
-   * @type {Object}
+   * @type {String}
    */
   groupingKey = '';
 

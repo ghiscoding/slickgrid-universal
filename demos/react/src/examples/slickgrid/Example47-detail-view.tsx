@@ -54,7 +54,7 @@ const Example47DetailView: React.FC<RowDetailViewProps<Item, any>> = forwardRef(
         <div className="col-3 detail-label">
           <label>Assignee:</label>{' '}
           <input
-            className="form-control"
+            className="form-control assignee"
             value={assignee}
             onInput={function ($event) {
               assigneeChanged(($event.target as HTMLInputElement).value);
