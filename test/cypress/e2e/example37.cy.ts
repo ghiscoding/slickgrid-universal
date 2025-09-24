@@ -1,132 +1,169 @@
-describe('Example 37 - Spreadsheet Drag-Fill', () => {
-  const titles = [
-    '',
-    'A',
-    'B',
-    'C',
-    'D',
-    'E',
-    'F',
-    'G',
-    'H',
-    'I',
-    'J',
-    'K',
-    'L',
-    'M',
-    'N',
-    'O',
-    'P',
-    'Q',
-    'R',
-    'S',
-    'T',
-    'U',
-    'V',
-    'W',
-    'X',
-    'Y',
-    'Z',
-    'AA',
-    'AB',
-    'AC',
-    'AD',
-    'AE',
-    'AF',
-    'AG',
-    'AH',
-    'AI',
-    'AJ',
-    'AK',
-  ];
+describe('Example 37 - Hybrid Selection Model', () => {
+  const grid1Titles = ['#', 'Title', '% Complete', 'Start', 'Finish', 'Priority', 'Effort Driven'];
+  const grid2Titles = ['', '#', 'Title', '% Complete', 'Start', 'Finish', 'Priority', 'Effort Driven'];
 
   it('should display Example title', () => {
     cy.visit(`${Cypress.config('baseUrl')}/example37`);
-    cy.get('h3').should('contain', 'Example 37 - Spreadsheet Drag-Fill');
+    cy.get('h3').should('contain', 'Example 37 - Hybrid Selection Model');
   });
 
-  it('should have exact column titles on 1st grid', () => {
-    cy.get('.grid37')
-      .find('.slick-header-columns')
-      .children()
-      .each(($child, index) => {
-        if (index > 0 && index < titles.length) {
-          expect($child.text()).to.eq(titles[index]);
-        }
-      });
+  describe('Grid 1', () => {
+    it('should have exact column titles in first grid', () => {
+      cy.get('.grid37-1')
+        .find('.slick-header-columns')
+        .children()
+        .each(($child, index) => {
+          if (index > 0 && index < grid1Titles.length) {
+            expect($child.text()).to.eq(grid1Titles[index]);
+          }
+        });
+    });
+
+    it('should click on Task 1 and be able to drag from bottom right corner to expand the cell selections to include 4 cells', () => {
+      cy.get('.grid37-1 .slick-row[data-row="1"] .slick-cell.l1.r1').as('task1');
+      cy.get('@task1').should('contain', 'Task 1');
+      cy.get('@task1').click().should('have.class', 'selected');
+      cy.get('.grid37-1 .slick-cell.selected').should('have.length', 1);
+
+      cy.get('@task1').find('.slick-drag-replace-handle').trigger('mousedown', { which: 1, force: true });
+
+      cy.get('.grid37-1 .slick-row[data-row="2"] .slick-cell.l2.r2')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+      cy.get('.grid37-1 .slick-cell.selected').should('have.length', 4);
+    });
+
+    it('should be able to expand the cell selections further to the right', () => {
+      cy.get('.grid37-1 .slick-cell.selected').should('have.length', 4);
+      cy.get('.grid37-1 .slick-row[data-row="2"] .slick-cell.l2.r2')
+        .find('.slick-drag-replace-handle')
+        .trigger('mousedown', { which: 1, force: true });
+
+      cy.get('.grid37-1 .slick-row[data-row="2"] .slick-cell.l3.r3')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+      cy.get('.grid37-1 .slick-cell.selected').should('have.length', 6);
+    });
+
+    it('should be able to expand the cell selections further to the bottom', () => {
+      cy.get('.grid37-1 .slick-cell.selected').should('have.length', 6);
+      cy.get('.grid37-1 .slick-row[data-row="2"] .slick-cell.l3.r3')
+        .find('.slick-drag-replace-handle')
+        .trigger('mousedown', { which: 1, force: true });
+
+      cy.get('.grid37-1 .slick-row[data-row="3"] .slick-cell.l3.r3')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+      cy.get('.grid37-1 .slick-cell.selected').should('have.length', 9);
+    });
+
+    it('should click on 1st column and then row 2 and 3, then expect the full (single) row to be selected', () => {
+      cy.get('.grid37-1 .slick-row[data-row="1"] .slick-cell.l0.r0').as('task1');
+      cy.get('@task1').should('contain', '1');
+      cy.get('@task1').click().should('have.class', 'selected');
+      cy.get('.grid37-1 .slick-cell.selected').should('have.length', 7);
+
+      // select another row
+      cy.get('.grid37-1 .slick-row[data-row="2"] .slick-cell.l0.r0').as('task2');
+      cy.get('@task2').should('contain', '2');
+      cy.get('@task2').click().should('have.class', 'selected');
+      cy.get('.grid37-1 .slick-cell.selected').should('have.length', 7);
+    });
+
+    it('should be able to select 3 rows (from Task 4 to 6) when holding Shift key and clicking on the next 2 rows (again on same column index 0)', () => {
+      cy.get('.grid37-1 .slick-row[data-row="4"] .slick-cell.l0.r0').as('task4');
+      cy.get('@task4').should('contain', '4');
+      cy.get('@task4').click().should('have.class', 'selected');
+
+      cy.get('.grid37-1 .slick-row[data-row="6"] .slick-cell.l0.r0').click({ shiftKey: true }).should('have.class', 'selected');
+      cy.get('.grid37-1 .slick-cell.selected').should('have.length', 7 * 3);
+    });
   });
 
-  it('should click on B1 cell, type "1" and then replicate the same on C1 and D1 by increasing the value by +1 (1,2,3)', () => {
-    cy.get('.grid37 .slick-row[data-row="1"] .slick-cell.l2.r2').as('cellB1');
-    cy.get('@cellB1').click().type('1').type('{enter}');
-    cy.get('@cellB1').should('contain', '1');
+  describe('Grid 2', () => {
+    it('should have exact column titles in second grid', () => {
+      cy.get('.grid37-2')
+        .find('.slick-header-columns')
+        .children()
+        .each(($child, index) => {
+          if (index > 0 && index < grid2Titles.length) {
+            expect($child.text()).to.eq(grid2Titles[index]);
+          }
+        });
+    });
 
-    cy.get('.grid37 .slick-row[data-row="1"] .slick-cell.l3.r3').as('cellC1');
-    cy.get('@cellC1').click().type('2').type('{enter}');
-    cy.get('@cellC1').should('contain', '2');
+    it('should click on Task 1 and be able to drag from bottom right corner to expand the cell selections to include 4 cells', () => {
+      cy.get('.grid37-2 .slick-row[data-row="1"] .slick-cell.l2.r2').as('task1');
+      cy.get('@task1').should('contain', 'Task 1');
+      cy.get('@task1').click().should('have.class', 'active');
 
-    cy.get('.grid37 .slick-row[data-row="1"] .slick-cell.l4.r4').as('cellD1');
-    cy.get('@cellD1').click().type('3').type('{enter}');
-    cy.get('@cellD1').should('contain', '3');
-  });
+      cy.get('@task1').trigger('mousemove', 'bottomRight');
+      cy.get('@task1').type('{shift}{rightArrow}', { force: true }); // hold the Shift key while dragging
 
-  it('should click on B2 cell, type "4" and then replicate the same on C2 and D2 by increasing the value by +1 again (4,5,6)', () => {
-    cy.get('.grid37 .slick-row[data-row="2"] .slick-cell.l2.r2').as('cellB2');
-    cy.get('@cellB2').click().type('4').type('{enter}');
-    cy.get('@cellB2').should('contain', '4');
+      cy.get('.grid37-2 .slick-row[data-row="1"] .slick-cell.l3.r3').trigger('mouseup', 'bottomRight', { which: 1, force: true });
 
-    cy.get('.grid37 .slick-row[data-row="2"] .slick-cell.l3.r3').as('cellC2');
-    cy.get('@cellC2').click().type('5').type('{enter}');
-    cy.get('@cellC2').should('contain', '5');
+      cy.get('.grid37-2 .slick-row[data-row="1"] .slick-cell.l3.r3')
+        .find('.slick-drag-replace-handle')
+        .trigger('mousedown', { which: 1, force: true });
 
-    cy.get('.grid37 .slick-row[data-row="2"] .slick-cell.l4.r4').as('cellD2');
-    cy.get('@cellD2').click().type('6').type('{enter}');
-    cy.get('@cellD2').should('contain', '6');
-  });
+      cy.get('.grid37-2 .slick-row[data-row="2"] .slick-cell.l3.r3')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
 
-  it('should click back on B1 cell and expand the cell selections to include all 6 modified cells', () => {
-    cy.get('.grid37 .slick-row[data-row="1"] .slick-cell.l2.r2').as('B1');
-    cy.get('@B1').should('contain', '1');
-    cy.get('@B1')
-      .click()
-      .type('{esc}') // make sure to click Escape to allow dragging
-      .should('have.class', 'selected');
-    cy.get('.grid37 .slick-cell.selected').should('have.length', 1);
+      cy.get('.grid37-2 .slick-cell.selected').should('have.length', 4);
+    });
 
-    cy.get('@B1').trigger('mousedown', { which: 1, force: true }).trigger('mousemove', 'bottomRight');
+    it('should be able to expand the cell selections further to the right', () => {
+      cy.get('.grid37-2 .slick-cell.selected').should('have.length', 4);
+      cy.get('.grid37-2 .slick-row[data-row="2"] .slick-cell.l3.r3')
+        .find('.slick-drag-replace-handle')
+        .trigger('mousedown', { which: 1, force: true });
 
-    cy.get('.grid37 .slick-row[data-row="2"] .slick-cell.l4.r4')
-      .trigger('mousemove', 'bottomRight')
-      .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+      cy.get('.grid37-2 .slick-row[data-row="2"] .slick-cell.l4.r4')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
 
-    cy.get('.grid37 .slick-cell.selected').should('have.length', 6);
-  });
+      cy.get('.grid37-2 .slick-cell.selected').should('have.length', 6);
+    });
 
-  it('should now be able to drag from bottom right corner to expand the cell selections to include an extra row and an extra column', () => {
-    cy.get('.grid37 .slick-row[data-row="2"] .slick-cell.l4.r4').as('D2');
-    cy.get('@D2').find('.slick-drag-replace-handle').trigger('mousedown', { which: 1, force: true });
+    it('should be able to expand the cell selections further to the bottom', () => {
+      cy.get('.grid37-2 .slick-cell.selected').should('have.length', 6);
+      cy.get('.grid37-2 .slick-row[data-row="2"] .slick-cell.l4.r4')
+        .find('.slick-drag-replace-handle')
+        .trigger('mousedown', { which: 1, force: true });
 
-    cy.get('.grid37 .slick-row[data-row="4"] .slick-cell.l6.r6')
-      .trigger('mousemove', 'bottomRight')
-      .trigger('mouseup', 'bottomRight', { which: 1, force: true });
+      cy.get('.grid37-2 .slick-row[data-row="3"] .slick-cell.l4.r4')
+        .trigger('mousemove', 'bottomRight')
+        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
 
-    cy.get('.grid37 .slick-cell.selected').should('have.length', 20);
-  });
+      cy.get('.grid37-2 .slick-cell.selected').should('have.length', 9);
+    });
 
-  it('should expect new cell selections with replicated values', () => {
-    cy.get('.grid37 .slick-cell.selected').should('have.length', 20);
+    it('should click on a cell outside of the selected range and expect previous selection to remain', () => {
+      cy.get('.grid37-2 .slick-row[data-row="4"] .slick-cell.l2.r2').as('task4');
+      cy.get('@task4').should('contain', 'Task 4').click();
+      cy.get('.grid37-2 .slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('.grid37-2 .slick-cell.selected').should('have.length', 9);
+    });
 
-    const filledValues = [
-      [1, 2, 3, 1, 2],
-      [4, 5, 6, 4, 5],
-      [1, 2, 3, 1, 2],
-      [4, 5, 6, 4, 5],
-    ];
+    it('should click on row 4 and 5 row checkbox and expect 5 full rows to be selected', () => {
+      cy.get('.grid37-2 .slick-row[data-row="4"] .slick-cell.l0.r0').as('task4');
+      cy.get('.grid37-2 .slick-row[data-row="4"] .slick-cell.l1.r1').should('contain', '4');
+      cy.get('@task4').click();
+      cy.get('.grid37-2 .slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('.grid37-2 .slick-row[data-row="4"] .slick-cell.l0.r0').should('have.class', 'selected');
+      cy.get('.grid37-2 .slick-cell.selected').should('have.length', 8 * 4);
 
-    for (let i = 0; i < filledValues.length; i++) {
-      for (let j = 0; j < filledValues[i].length; j++) {
-        cy.get(`.grid37 .slick-row[data-row="${i + 1}"] .slick-cell.l${j + 2}.r${j + 2}`).should('contain', filledValues[i][j]);
-      }
-    }
+      // select another row
+      cy.get('.grid37-2 .slick-row[data-row="5"] .slick-cell.l0.r0').as('task5');
+      cy.get('.grid37-2 .slick-row[data-row="5"] .slick-cell.l1.r1').should('contain', '5');
+      cy.get('@task5').click();
+      cy.get('.grid37-2 .slick-viewport-top.slick-viewport-left').scrollTo('top');
+      cy.get('@task5').should('have.class', 'selected');
+      cy.get('.grid37-2 .slick-cell.selected').should('have.length', 8 * 5);
+    });
   });
 });

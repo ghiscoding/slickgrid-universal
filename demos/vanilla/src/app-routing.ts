@@ -34,6 +34,8 @@ import Example33 from './examples/example33.js';
 import Example34 from './examples/example34.js';
 import Example35 from './examples/example35.js';
 import Example36 from './examples/example36.js';
+import Example37 from './examples/example37.js';
+import Example38 from './examples/example38.js';
 import Icons from './examples/icons.js';
 import type { RouterConfig } from './interfaces.js';
 
@@ -78,6 +80,8 @@ export class AppRouting {
       { route: 'example34', name: 'example34', view: './examples/example34.html', viewModel: Example34, title: 'Example34' },
       { route: 'example35', name: 'example35', view: './examples/example35.html', viewModel: Example35, title: 'Example35' },
       { route: 'example36', name: 'example36', view: './examples/example36.html', viewModel: Example36, title: 'Example36' },
+      { route: 'example37', name: 'example37', view: './examples/example37.html', viewModel: Example37, title: 'Example37' },
+      { route: 'example38', name: 'example38', view: './examples/example38.html', viewModel: Example38, title: 'Example38' },
       { route: '', redirect: 'example01' },
       { route: '**', redirect: 'example01' },
     ];
