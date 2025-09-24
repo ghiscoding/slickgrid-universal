@@ -14,6 +14,7 @@ import { BackendUtilityService } from '../../services/backendUtility.service.js'
 const gridUid = 'slickgrid_124343';
 
 const gridStub = {
+  calculateFrozenColumnIndexById: vi.fn(),
   getColumnIndex: vi.fn(),
   getColumns: vi.fn(),
   getGridPosition: vi.fn(),
