@@ -19,11 +19,13 @@ import type { TrustedHTML } from 'trusted-types/lib';
 import {
   type BasePubSub,
   preClickClassName,
+  SlickDragExtendHandle,
   type SlickEditorLock,
   SlickGlobalEditorLock,
   SlickEvent,
   SlickEventData,
   SlickRange,
+  SlickSelectionUtils,
   Utils,
 } from './slickCore.js';
 import { Draggable, MouseWheel, Resizable } from './slickInteractions.js';
@@ -75,6 +77,7 @@ import type {
   OnColumnsResizeDblClickEventArgs,
   OnCompositeEditorChangeEventArgs,
   OnDblClickEventArgs,
+  OnDragReplaceCellsEventArgs,
   OnFooterRowCellRenderedEventArgs,
   OnFooterContextMenuEventArgs,
   OnHeaderCellRenderedEventArgs,
@@ -99,6 +102,7 @@ import type {
 import type { SlickDataView } from './slickDataview.js';
 import { copyCellToClipboard } from '../formatters/formatterUtilities.js';
 import { applyHtmlToElement, runOptionalHtmlSanitizer } from './utils.js';
+import type { CellSelectionMode } from '../extensions/slickCellSelectionModel.js';
 
 /**
  * @license
@@ -191,6 +195,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   onSort: SlickEvent<SingleColumnSort | MultiColumnSort>;
   onValidationError: SlickEvent<OnValidationErrorEventArgs>;
   onViewportChanged: SlickEvent<{ grid: SlickGrid }>;
+  onDragReplaceCells: SlickEvent<OnDragReplaceCellsEventArgs>;
 
   // ---
   // protected variables
@@ -333,6 +338,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected initialized = false;
   protected _container!: HTMLElement;
   protected uid = `slickgrid_${Math.round(1000000 * Math.random())}`;
+  protected dragReplaceEl: SlickDragExtendHandle = new SlickDragExtendHandle(this.uid);
   protected _focusSink!: HTMLDivElement;
   protected _focusSink2!: HTMLDivElement;
   protected _groupHeaders: HTMLDivElement[] = [];
@@ -418,9 +424,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected lastRenderedScrollLeft = 0;
   protected prevScrollLeft = 0;
   protected scrollLeft = 0;
+  protected selectionBottomRow!: number;
+  protected selectionRightCell!: number;
 
   protected selectionModel?: SelectionModel;
   protected selectedRows: number[] = [];
+  protected selectedRanges: SlickRange[] = [];
 
   protected plugins: SlickPlugin[] = [];
   protected cellCssClasses: CssStyleHash = {};
@@ -591,6 +600,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.onSort = new SlickEvent<SingleColumnSort | MultiColumnSort>('onSort', externalPubSub);
     this.onValidationError = new SlickEvent<OnValidationErrorEventArgs>('onValidationError', externalPubSub);
     this.onViewportChanged = new SlickEvent<{ grid: SlickGrid }>('onViewportChanged', externalPubSub);
+    this.onDragReplaceCells = new SlickEvent<OnDragReplaceCellsEventArgs>('onDragReplaceCells', externalPubSub);
 
     this.initialize(options);
   }
@@ -1075,7 +1085,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (Draggable) {
         this.slickDraggableInstance = Draggable({
           containerElement: this._container,
-          allowDragFrom: 'div.slick-cell',
+          allowDragFrom: 'div.slick-cell, div.' + this.dragReplaceEl.cssClass,
+          dragFromClassDetectArr: [{ tag: 'dragReplaceHandle', id: this.dragReplaceEl.id }],
           // the slick cell parent must always contain `.dnd` and/or `.cell-reorder` class to be identified as draggable
           allowDragFromClosest: 'div.slick-cell.dnd, div.slick-cell.cell-reorder',
           preventDragFromKeys: this._options.preventDragFromKeys,
@@ -3260,7 +3271,28 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected handleSelectedRangesChanged(e: SlickEventData, ranges: SlickRange[]): void {
     const ne = e.getNativeEvent<CustomEvent>();
+    const selectionMode: CellSelectionMode = ne?.detail?.selectionMode ?? '';
+    const addDragHandle = !!ne?.detail?.addDragHandle;
+
+    // drag and replace functionality
+    const prevSelectedRanges = this.selectedRanges.slice(0);
+    this.selectedRanges = ranges;
+
+    if (selectionMode === 'REP' && prevSelectedRanges?.length === 1 && this.selectedRanges?.length === 1) {
+      const prevSelectedRange = prevSelectedRanges[0];
+      const selectedRange = this.selectedRanges[0];
+
+      // check range has expanded
+      if (SlickSelectionUtils.copyRangeIsLarger(prevSelectedRange, selectedRange)) {
+        this.triggerEvent(this.onDragReplaceCells, { prevSelectedRange, selectedRange });
+        this.invalidate();
+      }
+    }
+
     const previousSelectedRows = this.selectedRows.slice(0); // shallow copy previously selected rows for later comparison
+    this.selectionBottomRow = -1;
+    this.selectionRightCell = -1;
+    this.dragReplaceEl.removeEl();
     this.selectedRows = [];
     const hash: CssStyleHash = {};
     for (let i = 0; i < ranges.length; i++) {
@@ -3276,9 +3308,20 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           }
         }
       }
+      if (this.selectionBottomRow < ranges[i].toRow) {
+        this.selectionBottomRow = ranges[i].toRow;
+      }
+      if (this.selectionRightCell < ranges[i].toCell) {
+        this.selectionRightCell = ranges[i].toCell;
+      }
     }
 
     this.setCellCssStyles(this._options.selectedCellCssClass || '', hash);
+
+    if (this.selectionBottomRow >= 0 && this.selectionRightCell >= 0 && addDragHandle) {
+      const lowerRightCell = this.getCellNode(this.selectionBottomRow, this.selectionRightCell);
+      this.dragReplaceEl.createEl(lowerRightCell);
+    }
 
     // check if the selected rows have changed (index order isn't important, so we'll sort them both before comparing them)
     if (!this.arrayEquals(previousSelectedRows.sort(), this.selectedRows.sort())) {
@@ -4005,6 +4048,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         ? formatterResult
         : (formatterResult as FormatterResultWithHtml).html || (formatterResult as FormatterResultWithText).text;
       applyHtmlToElement(cellDiv, cellResult as string | HTMLElement, this._options);
+
+      // add drag-to-replace handle
+      if (row === this.selectionBottomRow && cell === this.selectionRightCell && this._options.showCellSelection) {
+        this.dragReplaceEl.createEl(cellDiv);
+      }
     }
     divRow.appendChild(cellDiv);
 
@@ -5668,6 +5716,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       return false;
     }
 
+    if (this.currentEditor && !this.getEditorLock().commitCurrentEdit()) {
+      return false;
+    }
+
     const retval = this.triggerEvent(this.onDragStart, dd, e);
     if (retval.isImmediatePropagationStopped()) {
       return retval.getReturnValue();
@@ -7290,7 +7342,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     if (self.currentEditor) {
       if (self.currentEditor.isValueChanged()) {
-        const validationResults = self.currentEditor.validate();
+        const validationResults = self.currentEditor.validate(undefined, {
+          rowIndex: self.activeRow,
+          cellIndex: self.activeCell,
+        });
 
         if (validationResults.valid) {
           const row = self.activeRow;
