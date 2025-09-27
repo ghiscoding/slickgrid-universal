@@ -394,12 +394,16 @@ const Example47: React.FC = () => {
             </button>
             <button
               className="btn btn-outline-secondary btn-sm btn-icon"
-              data-test="collapse-all-group-btn"
+              data-test="collapse-all-groups-btn"
               onClick={() => collapseAllGroups()}
             >
               <i className="mdi mdi-arrow-collapse"></i> Collapse all groups
             </button>
-            <button className="btn btn-outline-secondary btn-sm btn-icon" data-test="expand-all-btn" onClick={() => expandAllGroups()}>
+            <button
+              className="btn btn-outline-secondary btn-sm btn-icon"
+              data-test="expand-all-groups-btn"
+              onClick={() => expandAllGroups()}
+            >
               <i className="mdi mdi-arrow-expand"></i> Expand all groups
             </button>
 

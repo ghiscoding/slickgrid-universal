@@ -135,7 +135,7 @@
     "overrides": {
       "axios": "^1.12.2",
       "tmp": "^0.2.5",
-      "vite": "^7.1.6"
+      "vite": "catalog:"
     }
   }
 }
