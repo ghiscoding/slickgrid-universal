@@ -46,7 +46,7 @@ describe('Example 18 - Draggable Grouping & Aggregators', () => {
       cy.get('[data-test="group-duration-sort-value-btn"]').click();
       cy.get('[data-test="collapse-all-btn"]').click();
 
-      cy.get('.grouping-selects select:nth(0)').should('have.value', '2: duration');
+      cy.get('.grouping-selects select:nth(0)').should('have.value', 'duration');
       cy.get('.grouping-selects select:nth(1)').should('not.have.value');
       cy.get('.grouping-selects select:nth(2)').should('not.have.value');
       cy.get(`[data-row=0] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).should('have.length', 1);
@@ -72,7 +72,7 @@ describe('Example 18 - Draggable Grouping & Aggregators', () => {
 
     it('should show 1 column title (Duration) shown in the pre-header section', () => {
       cy.get('.slick-dropped-grouping:nth(0) div').contains('Duration');
-      cy.get('.grouping-selects select:nth(0)').should('have.value', '2: duration');
+      cy.get('.grouping-selects select:nth(0)').should('have.value', 'duration');
       cy.get('.grouping-selects select:nth(1)').should('not.have.value');
       cy.get('.grouping-selects select:nth(2)').should('not.have.value');
     });
@@ -93,8 +93,8 @@ describe('Example 18 - Draggable Grouping & Aggregators', () => {
     it('should show 2 column titles (Duration, Effort-Driven) shown in the pre-header section & same select dropdown', () => {
       cy.get('.slick-dropped-grouping:nth(0) div').contains('Duration');
       cy.get('.slick-dropped-grouping:nth(1) div').contains('Effort-Driven');
-      cy.get('.grouping-selects select:nth(0)').should('have.value', '2: duration');
-      cy.get('.grouping-selects select:nth(1)').should('have.value', '7: effortDriven');
+      cy.get('.grouping-selects select:nth(0)').should('have.value', 'duration');
+      cy.get('.grouping-selects select:nth(1)').should('have.value', 'effortDriven');
       cy.get('.grouping-selects select:nth(2)').should('not.have.value');
     });
 
@@ -103,8 +103,8 @@ describe('Example 18 - Draggable Grouping & Aggregators', () => {
 
       cy.get('.slick-dropped-grouping:nth(0) div').contains('Effort-Driven');
       cy.get('.slick-dropped-grouping:nth(1) div').contains('Duration');
-      cy.get('.grouping-selects select:nth(0)').should('have.value', '7: effortDriven');
-      cy.get('.grouping-selects select:nth(1)').should('have.value', '2: duration');
+      cy.get('.grouping-selects select:nth(0)').should('have.value', 'effortDriven');
+      cy.get('.grouping-selects select:nth(1)').should('have.value', 'duration');
       cy.get('.grouping-selects select:nth(2)').should('not.have.value');
     });
 
