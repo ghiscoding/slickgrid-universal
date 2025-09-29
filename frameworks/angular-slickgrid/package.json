@@ -134,5 +134,10 @@
     "vitest": "catalog:",
     "yaml": "^2.8.1",
     "zone.js": "~0.15.1"
+  },
+  "pnpm": {
+    "overrides": {
+      "vite": "catalog:"
+    }
   }
 }

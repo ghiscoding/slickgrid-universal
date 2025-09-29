@@ -675,7 +675,7 @@ describe('SlickGrid core file', () => {
         showPreHeaderPanel: true,
         frozenColumn: 0,
         createPreHeaderPanel: true,
-        invalidColumnFreezeWidthCallback: (error) => alert(error),
+        // invalidColumnFreezeWidthCallback: (error) => alert(error),
       } as GridOption;
       const data = [
         { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
@@ -3890,6 +3890,7 @@ describe('SlickGrid core file', () => {
 
     it('should not trigger onBeforeSort when clicking on slick-header-columns div', () => {
       grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, multiColumnSort: false });
+      container.querySelectorAll<HTMLDivElement>('.slick-header-columns')?.forEach((elm) => elm.classList.add('slick-header-column-sorted'));
       grid.setSortColumns([{ columnId: 'firstName', sortAsc: false }]);
       const onBeforeSortSpy = vi.spyOn(grid.onBeforeSort, 'notify');
 

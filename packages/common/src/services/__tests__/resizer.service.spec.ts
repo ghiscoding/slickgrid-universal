@@ -5,7 +5,7 @@ import { Editors } from '../../editors/index.js';
 import { FieldType } from '../../enums/index.js';
 import type { Column, GridOption } from '../../interfaces/index.js';
 import { ResizerService } from '../resizer.service.js';
-import { SlickEvent, type SlickGrid } from '../../core/index.js';
+import { type SlickDataView, SlickEvent, type SlickGrid } from '../../core/index.js';
 
 const DATAGRID_MIN_HEIGHT = 180;
 const DATAGRID_MIN_WIDTH = 300;
@@ -37,7 +37,7 @@ const mockDataView = {
   getItemCount: vi.fn(),
   getItems: vi.fn(),
   getLength: vi.fn(),
-};
+} as unknown as SlickDataView;
 
 const gridStub = {
   autosizeColumns: vi.fn(),
