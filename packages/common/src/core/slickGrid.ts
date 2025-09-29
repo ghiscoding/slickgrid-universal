@@ -6601,7 +6601,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       return false;
     }
 
-    /* v8 ignore if */
+    /* v8 ignore next */
     if (row < 0) {
       row = 0;
     } else if (row >= num_rows) {
