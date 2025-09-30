@@ -1,11 +1,18 @@
 import { Component, type OnDestroy, type OnInit } from '@angular/core';
-import { type AngularGridInstance, type Column, Editors, type GridOption, type OnCellChangeEventArgs } from '../../library';
+import {
+  type AngularGridInstance,
+  AngularSlickgridModule,
+  type Column,
+  Editors,
+  type GridOption,
+  type OnCellChangeEventArgs,
+} from '../../library';
 
 const NB_ITEMS = 100;
 
 @Component({
   templateUrl: './example37.component.html',
-  standalone: false,
+  imports: [AngularSlickgridModule],
 })
 export class Example37Component implements OnDestroy, OnInit {
   private _darkMode = false;

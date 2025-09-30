@@ -1,8 +1,10 @@
+import { NgIf, DatePipe } from '@angular/common';
 import { Component, type OnInit } from '@angular/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
-  type AngularGridInstance,
   Aggregators,
+  type AngularGridInstance,
+  AngularSlickgridModule,
   type Column,
   Filters,
   Formatters,
@@ -20,7 +22,7 @@ const FETCH_SIZE = 50;
 
 @Component({
   templateUrl: './example40.component.html',
-  standalone: false,
+  imports: [NgIf, AngularSlickgridModule, DatePipe],
 })
 export class Example40Component implements OnInit {
   angularGrid!: AngularGridInstance;

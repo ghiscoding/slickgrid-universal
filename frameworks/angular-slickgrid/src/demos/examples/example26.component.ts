@@ -1,8 +1,10 @@
+import { NgIf, JsonPipe } from '@angular/common';
 import { Component, type OnInit, ViewEncapsulation } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-
+import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import {
   type AngularGridInstance,
+  AngularSlickgridModule,
   AngularUtilService,
   type Column,
   Editors,
@@ -14,13 +16,13 @@ import {
   SlickGlobalEditorLock,
   type SliderOption,
 } from '../../library';
+
 import { EditorNgSelectComponent } from './editor-ng-select.component';
 import { CustomAngularComponentEditor } from './custom-angularComponentEditor';
 import { CustomAngularComponentFilter } from './custom-angularComponentFilter';
 import { CustomTitleFormatterComponent } from './custom-titleFormatter.component';
 import { FilterNgSelectComponent } from './filter-ng-select.component';
 import { CustomButtonFormatterComponent } from './custom-buttonFormatter.component';
-import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 
 const NB_ITEMS = 100;
 
@@ -29,7 +31,7 @@ const NB_ITEMS = 100;
   styleUrls: ['./example26.component.scss'],
   encapsulation: ViewEncapsulation.None,
   providers: [AngularUtilService],
-  standalone: false,
+  imports: [NgIf, AngularSlickgridModule, JsonPipe],
 })
 export class Example26Component implements OnInit {
   private _commandQueue: any[] = [];

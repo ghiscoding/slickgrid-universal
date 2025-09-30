@@ -1,12 +1,11 @@
 import { Component, type OnInit } from '@angular/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-
-import type { AngularGridInstance, Column, GridOption, ItemMetadata } from '../../library';
+import { type AngularGridInstance, AngularSlickgridModule, type Column, type GridOption, type ItemMetadata } from '../../library';
 
 @Component({
   templateUrl: './example14.component.html',
   styleUrls: ['./example14.component.scss'],
-  standalone: false,
+  imports: [AngularSlickgridModule],
 })
 export class Example14Component implements OnInit {
   angularGrid2!: AngularGridInstance;

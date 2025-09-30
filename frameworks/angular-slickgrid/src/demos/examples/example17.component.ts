@@ -1,6 +1,8 @@
+import { NgIf } from '@angular/common';
 import { ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { type AngularGridInstance, type Column, type GridOption, toCamelCase } from '../../library';
+import { type AngularGridInstance, AngularSlickgridModule, type Column, type GridOption, toCamelCase } from '../../library';
 
 const sampleDataRoot = 'assets/data';
 
@@ -8,7 +10,7 @@ const sampleDataRoot = 'assets/data';
   styles: ['.file-upload { max-width: 300px; }'],
   encapsulation: ViewEncapsulation.None,
   templateUrl: './example17.component.html',
-  standalone: false,
+  imports: [FormsModule, NgIf, AngularSlickgridModule],
 })
 export class Example17Component {
   angularGrid!: AngularGridInstance;

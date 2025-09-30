@@ -5,6 +5,5 @@ import { Component } from '@angular/core';
     <i class="mdi mdi-sync mdi-spin-1s font-50px"></i>
     Loading...
   </h4>`,
-  standalone: false,
 })
 export class RowDetailPreloadComponent {}

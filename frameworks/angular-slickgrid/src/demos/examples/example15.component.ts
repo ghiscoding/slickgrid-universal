@@ -4,6 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import type { Subscription } from 'rxjs';
 import {
   type AngularGridInstance,
+  AngularSlickgridModule,
   type Column,
   Filters,
   Formatters,
@@ -23,7 +24,7 @@ const NB_ITEMS = 500;
 
 @Component({
   templateUrl: './example15.component.html',
-  standalone: false,
+  imports: [AngularSlickgridModule],
 })
 export class Example15Component implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];

@@ -1,8 +1,10 @@
-import { GridOdataService, type OdataServiceApi, type OdataOption } from '@slickgrid-universal/odata';
-import { ChangeDetectorRef, Component, type OnInit } from '@angular/core';
+import { NgIf, DatePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { ChangeDetectorRef, Component, type OnInit } from '@angular/core';
+import { GridOdataService, type OdataServiceApi, type OdataOption } from '@slickgrid-universal/odata';
 import {
   type AngularGridInstance,
+  AngularSlickgridModule,
   type Column,
   Filters,
   type GridOption,
@@ -19,7 +21,7 @@ const PERCENT_HTML_ESCAPED = '%25';
 
 @Component({
   templateUrl: './example05.component.html',
-  standalone: false,
+  imports: [NgIf, AngularSlickgridModule, DatePipe],
 })
 export class Example5Component implements OnInit {
   angularGrid!: AngularGridInstance;

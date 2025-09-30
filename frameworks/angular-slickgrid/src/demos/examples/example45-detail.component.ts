@@ -1,5 +1,5 @@
 import { Component, type OnDestroy, type OnInit, ViewEncapsulation } from '@angular/core';
-import type { AngularGridInstance, Column, GridOption, GridState } from '../../library';
+import { type AngularGridInstance, AngularSlickgridModule, type Column, type GridOption, type GridState } from '../../library';
 
 export interface Distributor {
   id: number;
@@ -24,7 +24,7 @@ export interface OrderData {
   styles: ['.innergrid { --slick-header-menu-display: inline-block; }'],
   templateUrl: './example45-detail.component.html',
   encapsulation: ViewEncapsulation.None,
-  standalone: false,
+  imports: [AngularSlickgridModule],
 })
 export class Example45DetailComponent implements OnDestroy, OnInit {
   model!: Distributor;

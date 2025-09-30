@@ -1,5 +1,8 @@
+import { DecimalPipe, DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import type { SlickDataView, SlickGrid } from '../../library';
+
 import type { Example47Component } from './example47.component';
 import { showToast } from './utilities';
 
@@ -18,7 +21,7 @@ interface ItemDetail {
 @Component({
   styles: ['.detail-label { display: inline-flex; align-items: center; gap: 4px; padding: 4px; }', 'label { font-weight: 600; }'],
   templateUrl: './example47-rowdetail.component.html',
-  standalone: false,
+  imports: [FormsModule, DecimalPipe, DatePipe],
 })
 export class Example47RowDetailComponent {
   model!: ItemDetail;

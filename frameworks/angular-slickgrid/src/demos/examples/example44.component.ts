@@ -1,6 +1,14 @@
 import { Component, type OnInit, ViewEncapsulation } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import type { AngularGridInstance, Column, Formatter, GridOption, ItemMetadata } from '../../library';
+import {
+  type AngularGridInstance,
+  AngularSlickgridModule,
+  type Column,
+  type Formatter,
+  type GridOption,
+  type ItemMetadata,
+} from '../../library';
 
 const rowCellValueFormatter: Formatter = (row, cell, value) =>
   `<div class="cellValue">${value.toFixed(2)}</div><div class="valueComment">${row}.${cell}</div>`;
@@ -10,7 +18,7 @@ const rowCellValueExportFormatter: Formatter = (_row, _cell, value) => value.toF
   styleUrls: ['example44.component.scss'],
   templateUrl: './example44.component.html',
   encapsulation: ViewEncapsulation.None,
-  standalone: false,
+  imports: [FormsModule, AngularSlickgridModule],
 })
 export class Example44Component implements OnInit {
   columnDefinitions: Column[] = [];

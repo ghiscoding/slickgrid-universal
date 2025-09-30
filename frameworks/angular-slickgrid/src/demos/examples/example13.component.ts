@@ -1,9 +1,9 @@
 import { Component, type OnInit } from '@angular/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
-
 import {
   type AngularGridInstance,
+  AngularSlickgridModule,
   Aggregators,
   type Column,
   DelimiterType,
@@ -20,7 +20,7 @@ const NB_ITEMS = 5000;
 
 @Component({
   templateUrl: './example13.component.html',
-  standalone: false,
+  imports: [AngularSlickgridModule],
 })
 export class Example13Component implements OnInit {
   angularGrid!: AngularGridInstance;

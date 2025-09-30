@@ -1,6 +1,8 @@
 import { Component, type OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import {
   type AngularGridInstance,
+  AngularSlickgridModule,
   AngularUtilService,
   type Column,
   Filters,
@@ -9,6 +11,7 @@ import {
   type MultipleSelectOption,
   type SliderRangeOption,
 } from '../../library';
+
 import { CustomPagerComponent } from './grid-custom-pager.component';
 
 const NB_ITEMS = 5000;
@@ -20,7 +23,7 @@ function randomBetween(min: number, max: number): number {
 @Component({
   templateUrl: './example42.component.html',
   providers: [AngularUtilService],
-  standalone: false,
+  imports: [FormsModule, AngularSlickgridModule],
 })
 export class Example42Component implements OnInit {
   angularGrid!: AngularGridInstance;

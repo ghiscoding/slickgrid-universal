@@ -14,7 +14,7 @@ import { Logger } from './swt-logger.service';
 @Component({
   selector: 'swt-common-grid-test',
   templateUrl: './swt-common-grid-test.component.html',
-  standalone: false,
+  imports: [SwtCommonGridPaginationComponent, SwtCommonGridComponent],
 })
 export class SwtCommonGridTestComponent implements OnInit, AfterViewInit {
   testurl = 'http://127.0.0.1:8080/grid!display.do?';

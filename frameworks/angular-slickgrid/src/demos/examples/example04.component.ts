@@ -1,9 +1,11 @@
-import { Component, type OnInit } from '@angular/core';
+import { NgIf, DatePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import { Component, type OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
   type AngularGridInstance,
+  AngularSlickgridModule,
   type Column,
   Filters,
   Formatters,
@@ -14,6 +16,7 @@ import {
   OperatorType,
   type VanillaCalendarOption,
 } from '../../library';
+
 import { CustomInputFilter } from './custom-inputFilter';
 
 function randomBetween(min: number, max: number) {
@@ -24,7 +27,7 @@ const URL_SAMPLE_COLLECTION_DATA = 'assets/data/collection_500_numbers.json';
 
 @Component({
   templateUrl: './example04.component.html',
-  standalone: false,
+  imports: [NgIf, AngularSlickgridModule, DatePipe],
 })
 export class Example4Component implements OnInit {
   angularGrid!: AngularGridInstance;
