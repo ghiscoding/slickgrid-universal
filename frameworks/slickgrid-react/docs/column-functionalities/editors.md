@@ -23,7 +23,7 @@
 ## Description
 `slickgrid-react` ships with a few default inline editors (checkbox, dateEditor, float, integer, text, longText). You can see the full list [here](/ghiscoding/slickgrid-react/tree/master/src/slickgrid-react/editors).
 
-**Note:** For the Float Editor, you can provide decimal places with `params: { decimalPlaces: 2 }` to your column definition else it will be 0 decimal places by default.
+**Note:** The Float Editor accepts decimal places via `params: { decimals: 2 }` in your column definition otherwise 0 decimal will be the default.
 
 ### Required Grid Option
 Editors won't work without these 2 flags `enableCellNavigation: true` and `editable: true` enabled in your Grid Options, so make sure to always to always defined them. Also note that you can toggle the grid to read only (not editable) via the `editable` grid option flag.
