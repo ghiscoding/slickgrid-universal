@@ -65,12 +65,14 @@ const gridStubBlueprint = {
   }),
   getCellEditor: vi.fn().mockReturnValue({}),
   getActiveCell: vi.fn().mockReturnValue({ row: 0, cell: 0 }),
-  setColumns: vi.fn().mockImplementation((columns) => {
+  setColumns: vi.fn().mockImplementation(function (columns) {
     (gridStubBlueprint as any).columns = columns;
   }),
   invalidate: vi.fn(),
   render: vi.fn(),
-  getColumns: vi.fn().mockImplementation(() => (gridStubBlueprint as any).columns || []),
+  getColumns: vi.fn().mockImplementation(function () {
+    return (gridStubBlueprint as any).columns || [];
+  }),
 } as unknown as SlickGrid;
 
 const extensionUtilityStub = {} as ExtensionUtility;
@@ -751,10 +753,43 @@ describe('Row Based Edit Plugin', () => {
       expect(gridStub.invalidate).not.toHaveBeenCalled();
     });
 
-    it('should undo row edits', () => {
+    it('should undo row edits when editCommands is defined with some data', () => {
       const { onCellClick } = arrange();
       const fakeItem = { id: 'test' };
       const undoSpy = vi.fn();
+
+      plugin.rowBasedEditCommandHandler(
+        fakeItem,
+        {} as Column,
+        {
+          prevSerializedValue: 'foo',
+          serializedValue: 'bar',
+          execute: () => {},
+          undo: undoSpy,
+        } as unknown as EditCommand
+      );
+      gridStub.invalidate.mockClear();
+      onCellClick(createFakeEvent(BTN_ACTION_CANCEL, true), {
+        row: 0,
+        cell: 0,
+        grid: gridStub,
+        columnDef: {} as Column,
+        dataContext: fakeItem,
+        dataView: gridStub.getData(),
+      });
+
+      expect(gridStub.invalidate).toHaveBeenCalled();
+    });
+
+    it('should undo row edits even when cancelCurrentEdit returns true', () => {
+      vi.spyOn(gridStub.getEditController()!, 'cancelCurrentEdit').mockReturnValue(true);
+      const { onCellClick } = arrange();
+      const fakeItem = { id: 'test' };
+      const undoSpy = vi.fn();
+      gridStub.getData.mockReturnValue({
+        getRowByItem: () => undefined,
+        getRowById: () => undefined,
+      });
 
       plugin.rowBasedEditCommandHandler(
         fakeItem,

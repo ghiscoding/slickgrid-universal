@@ -11,11 +11,13 @@ import { AutocompleterFilter } from '../autocompleterFilter.js';
 
 vi.mock('../autocompleterFilter');
 
-(AutocompleterFilter as Mock).mockImplementation(() => ({
-  constructor: vi.fn(),
-  init: vi.fn(),
-  destroy: vi.fn(),
-}));
+(AutocompleterFilter as Mock).mockImplementation(function () {
+  return {
+    constructor: vi.fn(),
+    init: vi.fn(),
+    destroy: vi.fn(),
+  };
+});
 
 describe('Filter Factory', () => {
   const Filters = {

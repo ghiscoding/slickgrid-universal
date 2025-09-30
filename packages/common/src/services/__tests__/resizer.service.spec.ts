@@ -5,7 +5,7 @@ import { Editors } from '../../editors/index.js';
 import { FieldType } from '../../enums/index.js';
 import type { Column, GridOption } from '../../interfaces/index.js';
 import { ResizerService } from '../resizer.service.js';
-import { SlickEvent, type SlickGrid } from '../../core/index.js';
+import { type SlickDataView, SlickEvent, type SlickGrid } from '../../core/index.js';
 
 const DATAGRID_MIN_HEIGHT = 180;
 const DATAGRID_MIN_WIDTH = 300;
@@ -37,7 +37,7 @@ const mockDataView = {
   getItemCount: vi.fn(),
   getItems: vi.fn(),
   getLength: vi.fn(),
-};
+} as unknown as SlickDataView;
 
 const gridStub = {
   autosizeColumns: vi.fn(),
@@ -129,7 +129,9 @@ describe('Resizer Service', () => {
     it('should call "bindAutoResizeDataGrid" when autoResize is enabled', () => {
       mockGridOptions.enableAutoResize = true;
       vi.spyOn(gridStub, 'getContainerNode').mockReturnValueOnce(null as any);
-      const bindAutoResizeDataGridSpy = vi.spyOn(service, 'bindAutoResizeDataGrid').mockImplementation(() => null);
+      const bindAutoResizeDataGridSpy = vi.spyOn(service, 'bindAutoResizeDataGrid').mockImplementation(function () {
+        return null;
+      });
 
       service.init(gridStub, divContainer);
 
@@ -140,7 +142,9 @@ describe('Resizer Service', () => {
     it('should not call "bindAutoResizeDataGrid" when autoResize is not enabled', () => {
       mockGridOptions.enableAutoResize = false;
       vi.spyOn(gridStub, 'getContainerNode').mockReturnValueOnce(null as any);
-      const bindAutoResizeDataGridSpy = vi.spyOn(service, 'bindAutoResizeDataGrid').mockImplementation(() => null);
+      const bindAutoResizeDataGridSpy = vi.spyOn(service, 'bindAutoResizeDataGrid').mockImplementation(function () {
+        return null;
+      });
 
       service.init(gridStub, divContainer);
 

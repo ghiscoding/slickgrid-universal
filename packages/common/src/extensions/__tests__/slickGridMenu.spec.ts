@@ -1966,7 +1966,7 @@ describe('GridMenuControl', () => {
       const labelForcefitElm = control.menuElement!.querySelector('label[for=slickgrid_124343-gridmenu-colpicker-forcefit]') as HTMLLabelElement;
       const labelSyncElm = control.menuElement!.querySelector('label[for=slickgrid_124343-gridmenu-colpicker-syncresize]') as HTMLLabelElement;
 
-      expect(handlerSpy).toHaveBeenCalledTimes(4);
+      expect(handlerSpy).toHaveBeenCalledTimes(4 * 2);
       // expect(commandTitleElm.textContent).toBe('Custom Command Title');
       expect(columnTitleElm.textContent).toBe('Custom Column Title');
       expect(labelForcefitElm.textContent).toBe('Custom Force Fit Title');

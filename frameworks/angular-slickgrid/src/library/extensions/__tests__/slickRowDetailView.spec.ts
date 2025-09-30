@@ -20,17 +20,19 @@ import { SlickRowDetailView } from '../slickRowDetailView.js';
 
 vi.mock('@slickgrid-universal/common', async () => ({
   ...((await vi.importActual('@slickgrid-universal/common')) as any),
-  SlickRowSelectionModel: vi.fn().mockImplementation(() => ({
-    constructor: vi.fn(),
-    init: vi.fn(),
-    destroy: vi.fn(),
-    dispose: vi.fn(),
-    getSelectedRows: vi.fn(),
-    setSelectedRows: vi.fn(),
-    getSelectedRanges: vi.fn(),
-    setSelectedRanges: vi.fn(),
-    onSelectedRangesChanged: new SlickEvent(),
-  })),
+  SlickRowSelectionModel: vi.fn().mockImplementation(function () {
+    return {
+      constructor: vi.fn(),
+      init: vi.fn(),
+      destroy: vi.fn(),
+      dispose: vi.fn(),
+      getSelectedRows: vi.fn(),
+      setSelectedRows: vi.fn(),
+      getSelectedRanges: vi.fn(),
+      setSelectedRanges: vi.fn(),
+      onSelectedRangesChanged: new SlickEvent(),
+    };
+  }),
 }));
 
 vi.mock('@slickgrid-universal/row-detail-view-plugin', async () => ({

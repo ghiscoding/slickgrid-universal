@@ -27,7 +27,9 @@ const mockRowSelectionModel = {
 } as unknown as SlickRowSelectionModel;
 
 vi.mock('../../extensions/slickRowSelectionModel', () => ({
-  SlickRowSelectionModel: vi.fn().mockImplementation(() => mockRowSelectionModel),
+  SlickRowSelectionModel: vi.fn().mockImplementation(function () {
+    return mockRowSelectionModel;
+  }),
 }));
 
 const filterServiceStub = {

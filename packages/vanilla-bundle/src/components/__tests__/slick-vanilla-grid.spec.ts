@@ -290,9 +290,15 @@ vi.mock('@slickgrid-universal/common', async (importOriginal) => {
   return {
     ...actual,
     autoAddEditorFormatterToColumnsWithEditor: vi.fn(),
-    SlickGrid: vi.fn().mockImplementation(() => mockGrid),
-    SlickEventHandler: vi.fn().mockImplementation(() => mockSlickEventHandler),
-    SlickDataView: vi.fn().mockImplementation(() => mockDataView),
+    SlickGrid: vi.fn().mockImplementation(function () {
+      return mockGrid;
+    }),
+    SlickEventHandler: vi.fn().mockImplementation(function () {
+      return mockSlickEventHandler;
+    }),
+    SlickDataView: vi.fn().mockImplementation(function () {
+      return mockDataView;
+    }),
   };
 });
 
