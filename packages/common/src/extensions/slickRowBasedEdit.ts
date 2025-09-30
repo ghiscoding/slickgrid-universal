@@ -279,11 +279,7 @@ export class SlickRowBasedEdit {
     const idProperty = this.gridOptions.datasetIdPropertyName ?? 'id';
     const targetRow = this._editedRows.get(item[idProperty]);
     const row = this._grid.getData().getRowByItem(item);
-    if (
-      (row !== undefined && targetRow?.editCommands && targetRow.editCommands.length) ||
-      /* v8 ignore next */
-      SlickGlobalEditorLock.cancelCurrentEdit()
-    ) {
+    if ((row !== undefined && targetRow?.editCommands && targetRow.editCommands.length) || SlickGlobalEditorLock.cancelCurrentEdit()) {
       while (targetRow!.editCommands.length > 0) {
         const lastEdit = targetRow!.editCommands.pop();
         if (lastEdit) {
