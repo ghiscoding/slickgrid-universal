@@ -1,7 +1,9 @@
 import { Component, type OnDestroy, type OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import {
   Aggregators,
   type AngularGridInstance,
+  AngularSlickgridComponent,
   type Column,
   Editors,
   Filters,
@@ -13,6 +15,7 @@ import {
   SortComparers,
   SortDirectionNumber,
 } from '../../library';
+
 import { Example47RowDetailComponent } from './example47-rowdetail.component';
 import { RowDetailPreloadComponent } from './rowdetail-preload.component';
 
@@ -32,7 +35,7 @@ export interface Item {
 
 @Component({
   templateUrl: './example47.component.html',
-  standalone: false,
+  imports: [FormsModule, AngularSlickgridComponent],
 })
 export class Example47Component implements OnDestroy, OnInit {
   private _darkMode = false;

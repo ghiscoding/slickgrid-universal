@@ -1,11 +1,19 @@
+import { NgIf } from '@angular/common';
 import { ChangeDetectorRef, Component, type OnInit } from '@angular/core';
-
-import { type AngularGridInstance, type Column, Filters, Formatters, type GridOption, type GridStateChange } from '../../library';
+import {
+  type AngularGridInstance,
+  AngularSlickgridComponent,
+  type Column,
+  Filters,
+  Formatters,
+  type GridOption,
+  type GridStateChange,
+} from '../../library';
 
 @Component({
   templateUrl: './example10.component.html',
   styles: ['.alert { padding: 8px; margin-bottom: 10px }', '.col-sm-1{ max-width: 70px }'],
-  standalone: false,
+  imports: [AngularSlickgridComponent, NgIf],
 })
 export class Example10Component implements OnInit {
   angularGrid1!: AngularGridInstance;

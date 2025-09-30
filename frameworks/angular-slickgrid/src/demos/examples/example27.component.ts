@@ -1,8 +1,8 @@
 import { ChangeDetectorRef, Component, type OnInit, ViewEncapsulation } from '@angular/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-
 import {
   type AngularGridInstance,
+  AngularSlickgridComponent,
   type Column,
   Filters,
   Formatters,
@@ -18,7 +18,7 @@ const NB_ITEMS = 500;
   templateUrl: './example27.component.html',
   styleUrls: ['example27.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  standalone: false,
+  imports: [AngularSlickgridComponent],
 })
 export class Example27Component implements OnInit {
   angularGrid!: AngularGridInstance;

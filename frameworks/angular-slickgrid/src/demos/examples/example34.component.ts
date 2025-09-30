@@ -1,9 +1,11 @@
 import { Component, type OnDestroy, type OnInit, ViewEncapsulation } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { faker } from '@faker-js/faker';
 import sparkline from '@fnando/sparkline';
 import {
   Aggregators,
   type AngularGridInstance,
+  AngularSlickgridComponent,
   type Column,
   createDomElement,
   deepCopy,
@@ -78,7 +80,7 @@ const historicSparklineFormatter: Formatter = (_row, _cell, _value: string, _col
   templateUrl: './example34.component.html',
   styleUrls: ['./example34.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  standalone: false,
+  imports: [FormsModule, AngularSlickgridComponent],
 })
 export class Example34Component implements OnDestroy, OnInit {
   private _darkMode = false;

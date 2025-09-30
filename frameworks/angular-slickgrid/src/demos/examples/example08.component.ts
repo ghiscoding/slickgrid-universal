@@ -1,5 +1,11 @@
 import { Component, type OnDestroy, type OnInit, ViewEncapsulation } from '@angular/core';
-import { type AngularGridInstance, type Column, type GridOption, unsubscribeAllObservables } from '../../library';
+import {
+  type AngularGridInstance,
+  AngularSlickgridComponent,
+  type Column,
+  type GridOption,
+  unsubscribeAllObservables,
+} from '../../library';
 import { TranslateService } from '@ngx-translate/core';
 import type { Subscription } from 'rxjs';
 
@@ -7,7 +13,7 @@ import type { Subscription } from 'rxjs';
   templateUrl: './example08.component.html',
   styleUrls: ['./example08.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  standalone: false,
+  imports: [AngularSlickgridComponent],
 })
 export class Example8Component implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];

@@ -1,7 +1,4 @@
 import { Component } from '@angular/core';
 
-@Component({
-  templateUrl: './home.component.html',
-  standalone: false,
-})
+@Component({ templateUrl: './home.component.html', })
 export class HomeComponent {}

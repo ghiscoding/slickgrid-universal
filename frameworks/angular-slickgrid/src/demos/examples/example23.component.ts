@@ -1,10 +1,13 @@
+import { NgIf, NgFor, DatePipe } from '@angular/common';
 import { Component, type OnInit, type OnDestroy } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { addDay, format } from '@formkit/tempo';
 import { TranslateService } from '@ngx-translate/core';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { CustomInputFilter } from './custom-inputFilter';
 import {
   type AngularGridInstance,
+  AngularSlickgridComponent,
   type Column,
   Filters,
   type Formatter,
@@ -17,8 +20,9 @@ import {
   type SliderRangeOption,
   unsubscribeAllObservables,
 } from '../../library';
-import { addDay, format } from '@formkit/tempo';
 import type { Subscription } from 'rxjs';
+
+import { CustomInputFilter } from './custom-inputFilter';
 
 const NB_ITEMS = 1500;
 
@@ -36,7 +40,7 @@ const taskTranslateFormatter: Formatter = (row, cell, value, columnDef, dataCont
 
 @Component({
   templateUrl: './example23.component.html',
-  standalone: false,
+  imports: [NgIf, FormsModule, NgFor, AngularSlickgridComponent, DatePipe],
 })
 export class Example23Component implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];

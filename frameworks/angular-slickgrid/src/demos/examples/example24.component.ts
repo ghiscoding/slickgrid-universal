@@ -2,9 +2,9 @@ import { Component, type OnInit, type OnDestroy, ViewEncapsulation } from '@angu
 import { TranslateService } from '@ngx-translate/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import type { Subscription } from 'rxjs';
-
 import {
   type AngularGridInstance,
+  AngularSlickgridComponent,
   type Column,
   type ContextMenu,
   ExtensionName,
@@ -15,7 +15,7 @@ import {
   unsubscribeAllObservables,
 } from '../../library';
 
-const actionFormatter: Formatter = (row, cell, value, columnDef, dataContext) => {
+const actionFormatter: Formatter = (_row, _cell, _value, _columnDef, dataContext) => {
   if (dataContext.priority === 3) {
     // option 3 is High
     return `<div class="cell-menu-dropdown-outline">Action<i class="mdi mdi-chevron-down"></i></div>`;
@@ -61,7 +61,7 @@ const taskTranslateFormatter: Formatter = (row, cell, value, columnDef, dataCont
   templateUrl: './example24.component.html',
   styleUrls: ['./example24.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  standalone: false,
+  imports: [AngularSlickgridComponent],
 })
 export class Example24Component implements OnInit, OnDestroy {
   private _darkModeGrid = false;

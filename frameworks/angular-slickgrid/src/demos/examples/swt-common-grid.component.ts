@@ -17,6 +17,7 @@ import type {
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from './swt-logger.service';
 import { SwtCommonGridPaginationComponent } from './swt-common-grid-pagination.component';
+import { AngularSlickgridComponent as AngularSlickgridComponent_1 } from '../../library/components/angular-slickgrid.component';
 
 /**
  * Custom wrapper of angular-slickgrid components, allows easily interacting with SwtCommonGridPaginationComponent
@@ -28,8 +29,8 @@ let timer: any;
 const DEFAULT_FILTER_TYPING_DEBOUNCE = 750;
 
 @Component({
-  selector: 'swt-common-grid',
-  template: `<angular-slickgrid
+    selector: 'swt-common-grid',
+    template: `<angular-slickgrid
     gridId="common-grid"
     #angularSlickGrid
     (onAngularGridCreated)="gridReady($event.detail)"
@@ -38,8 +39,8 @@ const DEFAULT_FILTER_TYPING_DEBOUNCE = 750;
     [dataset]="dataset"
   >
   </angular-slickgrid>`,
-  styles: [
-    `
+    styles: [
+        `
       :host ::ng-deep .gridPane {
         width: 100% !important;
       }
@@ -47,8 +48,8 @@ const DEFAULT_FILTER_TYPING_DEBOUNCE = 750;
         width: 100% !important;
       }
     `,
-  ],
-  standalone: false,
+    ],
+    imports: [AngularSlickgridComponent_1],
 })
 export class SwtCommonGridComponent implements OnInit, AfterViewInit, BackendService {
   private logger: Logger;

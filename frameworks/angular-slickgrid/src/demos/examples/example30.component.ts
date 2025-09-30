@@ -3,9 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { SlickCompositeEditor, SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
-
 import {
   type AngularGridInstance,
+  AngularSlickgridComponent,
   type AutocompleterOption,
   type Column,
   type CompositeEditorModalType,
@@ -87,7 +87,7 @@ const myCustomTitleValidator = (value: any, args: any) => {
   templateUrl: './example30.component.html',
   styleUrls: ['./example30.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  standalone: false,
+  imports: [AngularSlickgridComponent],
 })
 export class Example30Component implements OnDestroy, OnInit {
   private _darkMode = false;

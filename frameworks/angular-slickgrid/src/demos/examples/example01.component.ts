@@ -1,5 +1,5 @@
 import { Component, type OnDestroy, type OnInit } from '@angular/core';
-import { type AngularGridInstance, type Column, type GridOption, Formatters } from '../../library';
+import { type AngularGridInstance, AngularSlickgridComponent, type Column, type GridOption, Formatters } from '../../library';
 
 import { zeroPadding } from './utilities';
 
@@ -7,7 +7,7 @@ const NB_ITEMS = 995;
 
 @Component({
   templateUrl: './example01.component.html',
-  standalone: false,
+  imports: [AngularSlickgridComponent],
 })
 export class Example1Component implements OnDestroy, OnInit {
   private _darkModeGrid1 = false;

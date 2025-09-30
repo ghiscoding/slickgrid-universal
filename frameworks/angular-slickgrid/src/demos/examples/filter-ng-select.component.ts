@@ -1,4 +1,6 @@
 import { Component, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { NgSelectComponent, NgLabelTemplateDirective, NgOptionTemplateDirective } from '@ng-select/ng-select';
 import { SearchTerm } from '@slickgrid-universal/common';
 import { Subject } from 'rxjs';
 
@@ -20,7 +22,7 @@ import { Subject } from 'rxjs';
       <span [title]="item?.name">{{ item?.name }}</span>
     </ng-template>
   </ng-select>`,
-  standalone: false,
+  imports: [NgSelectComponent, FormsModule, NgLabelTemplateDirective, NgOptionTemplateDirective],
 })
 export class FilterNgSelectComponent<T = any> {
   selectedIds = signal<SearchTerm[]>([]);

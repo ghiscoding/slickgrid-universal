@@ -3,6 +3,8 @@ import { SwtCommonGridComponent } from './swt-common-grid.component';
 import { Logger } from './swt-logger.service';
 import { HttpClient } from '@angular/common/http';
 import { GridOption } from '../../library';
+import { NgClass } from '@angular/common';
+import { TranslateDirective } from '@ngx-translate/core';
 /**
  * Custom pagination component: It allows editing the page number manually
  *  << < Page [1] of 5 > >>
@@ -10,8 +12,8 @@ import { GridOption } from '../../library';
  * @author Saber Chebka, saber.chebka@gmail.com
  */
 @Component({
-  selector: 'swt-common-grid-pagination',
-  template: `
+    selector: 'swt-common-grid-pagination',
+    template: `
     <div class="slick-pagination">
       <div class="slick-pagination-nav">
         <nav aria-label="Page navigation">
@@ -58,8 +60,8 @@ import { GridOption } from '../../library';
       </div>
     </div>
   `,
-  styles: [
-    `
+    styles: [
+        `
       .page-spin {
         border: none;
         height: 32px;
@@ -71,8 +73,8 @@ import { GridOption } from '../../library';
         background-color: transparent;
       }
     `,
-  ],
-  standalone: false,
+    ],
+    imports: [NgClass, TranslateDirective],
 })
 export class SwtCommonGridPaginationComponent implements OnInit {
   private logger: Logger;

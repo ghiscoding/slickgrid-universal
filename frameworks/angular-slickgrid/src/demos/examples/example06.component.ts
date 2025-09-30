@@ -1,15 +1,18 @@
+import { NgIf, DatePipe } from '@angular/common';
+import { ChangeDetectorRef, Component, type OnInit, type OnDestroy } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { addDay, format as tempoFormat } from '@formkit/tempo';
+import { TranslateService } from '@ngx-translate/core';
 import {
   GraphqlService,
   type GraphqlPaginatedResult,
   type GraphqlServiceApi,
   type GraphqlServiceOption,
 } from '@slickgrid-universal/graphql';
-import { ChangeDetectorRef, Component, type OnInit, type OnDestroy } from '@angular/core';
-import { addDay, format as tempoFormat } from '@formkit/tempo';
-import { TranslateService } from '@ngx-translate/core';
 import type { Subscription } from 'rxjs';
 import {
   type AngularGridInstance,
+  AngularSlickgridComponent,
   type Column,
   type CursorPageInfo,
   Filters,
@@ -29,7 +32,7 @@ const FAKE_SERVER_DELAY = 250;
 
 @Component({
   templateUrl: './example06.component.html',
-  standalone: false,
+  imports: [FormsModule, NgIf, AngularSlickgridComponent, DatePipe],
 })
 export class Example6Component implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];

@@ -1,9 +1,10 @@
 import { Component, type OnInit, ViewEncapsulation } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-
 import {
   addWhiteSpaces,
   type AngularGridInstance,
+  AngularSlickgridComponent,
   Aggregators,
   type Column,
   decimalFormatted,
@@ -20,7 +21,7 @@ import {
   templateUrl: './example28.component.html',
   styleUrls: ['example28.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  standalone: false,
+  imports: [FormsModule, AngularSlickgridComponent],
 })
 export class Example28Component implements OnInit {
   angularGrid!: AngularGridInstance;

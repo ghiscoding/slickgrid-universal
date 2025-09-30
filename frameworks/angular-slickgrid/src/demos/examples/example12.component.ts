@@ -3,9 +3,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import type { Subscription } from 'rxjs';
-
 import {
   type AngularGridInstance,
+  AngularSlickgridComponent,
   type Column,
   DelimiterType,
   Filters,
@@ -29,7 +29,7 @@ const taskTranslateFormatter: Formatter = (row, cell, value, columnDef, dataCont
 
 @Component({
   templateUrl: './example12.component.html',
-  standalone: false,
+  imports: [AngularSlickgridComponent],
 })
 export class Example12Component implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];

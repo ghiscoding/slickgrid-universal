@@ -1,11 +1,14 @@
-import { ChangeDetectorRef, Component, type OnDestroy, type OnInit, ViewEncapsulation } from '@angular/core';
+import { NgIf, DatePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { ChangeDetectorRef, Component, type OnDestroy, type OnInit, ViewEncapsulation } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { GraphqlService, type GraphqlPaginatedResult, type GraphqlServiceApi } from '@slickgrid-universal/graphql';
 import { Subscription } from 'rxjs';
 
 import {
   type AngularGridInstance,
+  AngularSlickgridComponent,
   type Column,
   Filters,
   type GridOption,
@@ -14,8 +17,8 @@ import {
   type OnRowCountChangedEventArgs,
   unsubscribeAllObservables,
 } from '../../library';
-const sampleDataRoot = 'assets/data';
 
+const sampleDataRoot = 'assets/data';
 const GRAPHQL_QUERY_DATASET_NAME = 'users';
 const FAKE_SERVER_DELAY = 250;
 
@@ -27,7 +30,7 @@ function unescapeAndLowerCase(val: string) {
   styleUrls: ['./example39.component.scss'],
   encapsulation: ViewEncapsulation.None,
   templateUrl: './example39.component.html',
-  standalone: false,
+  imports: [FormsModule, NgIf, AngularSlickgridComponent, DatePipe],
 })
 export class Example39Component implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];

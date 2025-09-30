@@ -1,8 +1,10 @@
 import { Component, type OnInit, ViewEncapsulation } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import {
   type Aggregator,
   Aggregators,
   type AngularGridInstance,
+  AngularSlickgridComponent,
   type Column,
   Editors,
   type ExcelCellValueParserArgs,
@@ -97,7 +99,7 @@ export class CustomSumAggregator implements Aggregator {
   templateUrl: './example36.component.html',
   styleUrls: ['./example36.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  standalone: false,
+  imports: [FormsModule, AngularSlickgridComponent],
 })
 export class Example36Component implements OnInit {
   columnDefinitions: Column<GroceryItem>[] = [];

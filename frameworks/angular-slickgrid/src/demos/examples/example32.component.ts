@@ -1,9 +1,9 @@
 import { Component, type OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-
 import {
   type AngularGridInstance,
+  AngularSlickgridComponent,
   type Column,
   type GridOption,
   Filters,
@@ -68,7 +68,7 @@ const myCustomTitleValidator = (value: any) => {
   templateUrl: './example32.component.html',
   styleUrls: ['./example32.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  standalone: false,
+  imports: [AngularSlickgridComponent],
 })
 export class Example32Component implements OnInit {
   angularGrid!: AngularGridInstance;

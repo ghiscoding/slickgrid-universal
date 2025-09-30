@@ -1,13 +1,13 @@
-import { Component, type OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-
-import { type AngularGridInstance, type Column, type GridOption, Filters } from '../../library';
+import { Component, type OnInit } from '@angular/core';
+import { type AngularGridInstance, AngularSlickgridComponent, type Column, type GridOption, Filters } from '../../library';
+import { TabsetComponent, TabDirective } from 'ngx-bootstrap/tabs';
 
 const URL_CUSTOMERS = 'assets/data/customers_100.json';
 
 @Component({
   templateUrl: './example22.component.html',
-  standalone: false,
+  imports: [TabsetComponent, TabDirective, AngularSlickgridComponent],
 })
 export class Example22Component implements OnInit {
   angularGrid2!: AngularGridInstance;
