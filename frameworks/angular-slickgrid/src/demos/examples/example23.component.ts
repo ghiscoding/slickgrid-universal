@@ -7,7 +7,7 @@ import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
   type AngularGridInstance,
-  AngularSlickgridComponent,
+  AngularSlickgridModule,
   type Column,
   Filters,
   type Formatter,
@@ -40,7 +40,7 @@ const taskTranslateFormatter: Formatter = (row, cell, value, columnDef, dataCont
 
 @Component({
   templateUrl: './example23.component.html',
-  imports: [NgIf, FormsModule, NgFor, AngularSlickgridComponent, DatePipe],
+  imports: [NgIf, FormsModule, NgFor, AngularSlickgridModule, DatePipe],
 })
 export class Example23Component implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];

@@ -1,6 +1,6 @@
 import { Component, type OnInit } from '@angular/core';
 import { NgIf } from '@angular/common';
-import { type AngularGridInstance, AngularSlickgridComponent, type Column, type GridOption, Formatters } from '../../library';
+import { type AngularGridInstance, AngularSlickgridModule, type Column, type GridOption, Formatters } from '../../library';
 
 const NB_ITEMS = 995;
 
@@ -20,7 +20,7 @@ export class CustomFooterComponent {
 
 @Component({
   templateUrl: './example29.component.html',
-  imports: [AngularSlickgridComponent, CustomFooterComponent],
+  imports: [AngularSlickgridModule, CustomFooterComponent],
 })
 export class Example29Component implements OnInit {
   angularGrid!: AngularGridInstance;

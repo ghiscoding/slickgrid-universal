@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
   type AngularGridInstance,
-  AngularSlickgridComponent,
+  AngularSlickgridModule,
   type Column,
   type Formatter,
   type GridOption,
@@ -18,7 +18,7 @@ const rowCellValueExportFormatter: Formatter = (_row, _cell, value) => value.toF
   styleUrls: ['example44.component.scss'],
   templateUrl: './example44.component.html',
   encapsulation: ViewEncapsulation.None,
-  imports: [FormsModule, AngularSlickgridComponent],
+  imports: [FormsModule, AngularSlickgridModule],
 })
 export class Example44Component implements OnInit {
   columnDefinitions: Column[] = [];

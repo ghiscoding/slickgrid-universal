@@ -8,7 +8,7 @@ import { Subscription } from 'rxjs';
 
 import {
   type AngularGridInstance,
-  AngularSlickgridComponent,
+  AngularSlickgridModule,
   type Column,
   Filters,
   type GridOption,
@@ -30,7 +30,7 @@ function unescapeAndLowerCase(val: string) {
   styleUrls: ['./example39.component.scss'],
   encapsulation: ViewEncapsulation.None,
   templateUrl: './example39.component.html',
-  imports: [FormsModule, NgIf, AngularSlickgridComponent, DatePipe],
+  imports: [FormsModule, NgIf, AngularSlickgridModule, DatePipe],
 })
 export class Example39Component implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];

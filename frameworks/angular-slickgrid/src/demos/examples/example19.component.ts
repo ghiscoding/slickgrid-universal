@@ -3,7 +3,7 @@ import { Component, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   type AngularGridInstance,
-  AngularSlickgridComponent,
+  AngularSlickgridModule,
   type Column,
   Editors,
   Filters,
@@ -20,7 +20,7 @@ const NB_ITEMS = 1000;
 
 @Component({
   templateUrl: './example19.component.html',
-  imports: [FormsModule, NgIf, AngularSlickgridComponent],
+  imports: [FormsModule, NgIf, AngularSlickgridModule],
 })
 export class Example19Component implements OnDestroy, OnInit {
   private _darkMode = false;

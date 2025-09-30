@@ -4,7 +4,7 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
   addWhiteSpaces,
   type AngularGridInstance,
-  AngularSlickgridComponent,
+  AngularSlickgridModule,
   Aggregators,
   type Column,
   decimalFormatted,
@@ -21,7 +21,7 @@ import {
   templateUrl: './example28.component.html',
   styleUrls: ['example28.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  imports: [FormsModule, AngularSlickgridComponent],
+  imports: [FormsModule, AngularSlickgridModule],
 })
 export class Example28Component implements OnInit {
   angularGrid!: AngularGridInstance;

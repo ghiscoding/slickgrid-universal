@@ -12,7 +12,7 @@ import {
 import type { Subscription } from 'rxjs';
 import {
   type AngularGridInstance,
-  AngularSlickgridComponent,
+  AngularSlickgridModule,
   type Column,
   type CursorPageInfo,
   Filters,
@@ -32,7 +32,7 @@ const FAKE_SERVER_DELAY = 250;
 
 @Component({
   templateUrl: './example06.component.html',
-  imports: [FormsModule, NgIf, AngularSlickgridComponent, DatePipe],
+  imports: [FormsModule, NgIf, AngularSlickgridModule, DatePipe],
 })
 export class Example6Component implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];

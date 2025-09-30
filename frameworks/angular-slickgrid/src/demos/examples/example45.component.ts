@@ -1,7 +1,7 @@
 import { Component, type OnDestroy, type OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { faker } from '@faker-js/faker';
-import { type AngularGridInstance, AngularSlickgridComponent, type Column, type GridOption, type SlickRowDetailView } from '../../library';
+import { type AngularGridInstance, AngularSlickgridModule, type Column, type GridOption, type SlickRowDetailView } from '../../library';
 
 import { type Distributor, Example45DetailComponent, type OrderData } from './example45-detail.component';
 import { RowDetailPreloadComponent } from './rowdetail-preload.component';
@@ -13,7 +13,7 @@ const NB_ITEMS = 995;
   styleUrls: ['example45.component.scss'],
   templateUrl: './example45.component.html',
   encapsulation: ViewEncapsulation.None,
-  imports: [FormsModule, AngularSlickgridComponent],
+  imports: [FormsModule, AngularSlickgridModule],
 })
 export class Example45Component implements OnDestroy, OnInit {
   private _darkMode = false;

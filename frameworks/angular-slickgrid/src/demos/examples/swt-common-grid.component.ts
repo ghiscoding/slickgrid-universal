@@ -2,9 +2,10 @@
 /* eslint-disable @angular-eslint/no-output-on-prefix */
 import { Component, OnInit, AfterViewInit, Input, EventEmitter, Output, ViewChild, ElementRef, Renderer2 } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import type {
+import {
   AngularGridInstance,
   AngularSlickgridComponent,
+  AngularSlickgridModule,
   Column,
   GridOption,
   BackendService,
@@ -17,7 +18,6 @@ import type {
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from './swt-logger.service';
 import { SwtCommonGridPaginationComponent } from './swt-common-grid-pagination.component';
-import { AngularSlickgridComponent as AngularSlickgridComponent_1 } from '../../library/components/angular-slickgrid.component';
 
 /**
  * Custom wrapper of angular-slickgrid components, allows easily interacting with SwtCommonGridPaginationComponent
@@ -49,7 +49,7 @@ const DEFAULT_FILTER_TYPING_DEBOUNCE = 750;
       }
     `,
   ],
-  imports: [AngularSlickgridComponent_1],
+  imports: [AngularSlickgridModule],
 })
 export class SwtCommonGridComponent implements OnInit, AfterViewInit, BackendService {
   private logger: Logger;

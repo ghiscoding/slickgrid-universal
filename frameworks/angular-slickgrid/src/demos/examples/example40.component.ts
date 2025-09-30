@@ -4,7 +4,7 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
   Aggregators,
   type AngularGridInstance,
-  AngularSlickgridComponent,
+  AngularSlickgridModule,
   type Column,
   Filters,
   Formatters,
@@ -22,7 +22,7 @@ const FETCH_SIZE = 50;
 
 @Component({
   templateUrl: './example40.component.html',
-  imports: [NgIf, AngularSlickgridComponent, DatePipe],
+  imports: [NgIf, AngularSlickgridModule, DatePipe],
 })
 export class Example40Component implements OnInit {
   angularGrid!: AngularGridInstance;

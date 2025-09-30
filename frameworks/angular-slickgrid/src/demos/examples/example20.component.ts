@@ -2,7 +2,7 @@ import { FormsModule } from '@angular/forms';
 import { Component, type OnInit, type OnDestroy, ViewEncapsulation } from '@angular/core';
 import {
   type AngularGridInstance,
-  AngularSlickgridComponent,
+  AngularSlickgridModule,
   type Column,
   type ColumnEditorDualInput,
   Editors,
@@ -17,7 +17,7 @@ import {
   templateUrl: './example20.component.html',
   styleUrls: ['./example20.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  imports: [FormsModule, AngularSlickgridComponent],
+  imports: [FormsModule, AngularSlickgridModule],
 })
 export class Example20Component implements OnInit, OnDestroy {
   angularGrid!: AngularGridInstance;

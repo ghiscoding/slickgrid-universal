@@ -2,7 +2,7 @@ import { NgIf } from '@angular/common';
 import { ChangeDetectorRef, Component, type OnInit } from '@angular/core';
 import {
   type AngularGridInstance,
-  AngularSlickgridComponent,
+  AngularSlickgridModule,
   type Column,
   Filters,
   Formatters,
@@ -13,7 +13,7 @@ import {
 @Component({
   templateUrl: './example10.component.html',
   styles: ['.alert { padding: 8px; margin-bottom: 10px }', '.col-sm-1{ max-width: 70px }'],
-  imports: [AngularSlickgridComponent, NgIf],
+  imports: [AngularSlickgridModule, NgIf],
 })
 export class Example10Component implements OnInit {
   angularGrid1!: AngularGridInstance;

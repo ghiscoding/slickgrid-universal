@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { GraphqlService, type GraphqlResult, type GraphqlServiceApi } from '@slickgrid-universal/graphql';
 import {
   type AngularGridInstance,
-  AngularSlickgridComponent,
+  AngularSlickgridModule,
   type Column,
   Filters,
   Formatters,
@@ -34,7 +34,7 @@ export interface Country {
   templateUrl: './example25.component.html',
   styleUrls: ['./example25.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  imports: [AngularSlickgridComponent],
+  imports: [AngularSlickgridModule],
 })
 export class Example25Component implements OnInit {
   angularGrid!: AngularGridInstance;

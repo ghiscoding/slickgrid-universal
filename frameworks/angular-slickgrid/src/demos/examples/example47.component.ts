@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import {
   Aggregators,
   type AngularGridInstance,
-  AngularSlickgridComponent,
+  AngularSlickgridModule,
   type Column,
   Editors,
   Filters,
@@ -35,7 +35,7 @@ export interface Item {
 
 @Component({
   templateUrl: './example47.component.html',
-  imports: [FormsModule, AngularSlickgridComponent],
+  imports: [FormsModule, AngularSlickgridModule],
 })
 export class Example47Component implements OnDestroy, OnInit {
   private _darkMode = false;

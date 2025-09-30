@@ -5,7 +5,7 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import {
   type AngularGridInstance,
-  AngularSlickgridComponent,
+  AngularSlickgridModule,
   Aggregators,
   type Column,
   DelimiterType,
@@ -24,7 +24,7 @@ const NB_ITEMS = 5000;
 
 @Component({
   templateUrl: './example18.component.html',
-  imports: [FormsModule, NgFor, AngularSlickgridComponent],
+  imports: [FormsModule, NgFor, AngularSlickgridModule],
 })
 export class Example18Component implements AfterViewInit, OnInit, OnDestroy {
   private _darkMode = false;

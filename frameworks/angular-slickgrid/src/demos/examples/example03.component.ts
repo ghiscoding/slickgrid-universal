@@ -4,7 +4,7 @@ import { Component, type OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
   type AngularGridInstance,
-  AngularSlickgridComponent,
+  AngularSlickgridModule,
   type AutocompleterOption,
   type Column,
   Editors,
@@ -65,7 +65,7 @@ const taskFormatter: Formatter = (_row, _cell, value) => {
 };
 @Component({
   templateUrl: './example03.component.html',
-  imports: [NgIf, AngularSlickgridComponent, JsonPipe],
+  imports: [NgIf, AngularSlickgridModule, JsonPipe],
 })
 export class Example3Component implements OnInit {
   private _commandQueue: any = [];

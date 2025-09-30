@@ -5,7 +5,7 @@ import { GridOdataService, type OdataServiceApi } from '@slickgrid-universal/oda
 import {
   Aggregators,
   AngularGridInstance,
-  AngularSlickgridComponent,
+  AngularSlickgridModule,
   Column,
   Filters,
   GridOption,
@@ -23,7 +23,7 @@ const PERCENT_HTML_ESCAPED = '%25';
   styleUrls: ['./example38.component.scss'],
   encapsulation: ViewEncapsulation.None,
   templateUrl: './example38.component.html',
-  imports: [NgIf, AngularSlickgridComponent, DatePipe],
+  imports: [NgIf, AngularSlickgridModule, DatePipe],
 })
 export class Example38Component implements OnInit {
   angularGrid!: AngularGridInstance;

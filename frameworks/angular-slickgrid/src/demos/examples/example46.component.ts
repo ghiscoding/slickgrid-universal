@@ -5,7 +5,7 @@ import { TextExportService } from '@slickgrid-universal/text-export';
 
 import {
   type AngularGridInstance,
-  AngularSlickgridComponent,
+  AngularSlickgridModule,
   type Column,
   Filters,
   Formatter,
@@ -42,7 +42,7 @@ const coloredTextFormatter: Formatter = (_row: number, _cell: number, val: any, 
   templateUrl: './example46.component.html',
   styleUrls: ['example46.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  imports: [FormsModule, AngularSlickgridComponent],
+  imports: [FormsModule, AngularSlickgridModule],
 })
 export class Example46Component implements OnInit {
   angularGrid!: AngularGridInstance;

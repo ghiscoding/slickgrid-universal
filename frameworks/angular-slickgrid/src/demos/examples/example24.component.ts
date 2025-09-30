@@ -4,7 +4,7 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import type { Subscription } from 'rxjs';
 import {
   type AngularGridInstance,
-  AngularSlickgridComponent,
+  AngularSlickgridModule,
   type Column,
   type ContextMenu,
   ExtensionName,
@@ -61,7 +61,7 @@ const taskTranslateFormatter: Formatter = (row, cell, value, columnDef, dataCont
   templateUrl: './example24.component.html',
   styleUrls: ['./example24.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  imports: [AngularSlickgridComponent],
+  imports: [AngularSlickgridModule],
 })
 export class Example24Component implements OnInit, OnDestroy {
   private _darkModeGrid = false;
