@@ -51,9 +51,9 @@
     "aurelia": "^2.0.0-beta.25"
   },
   "dependencies": {
-    "@aurelia/i18n": "^2.0.0-beta.25",
-    "@aurelia/runtime": "^2.0.0-beta.25",
-    "@aurelia/runtime-html": "^2.0.0-beta.25",
+    "@aurelia/i18n": "2.0.0-beta.25",
+    "@aurelia/runtime": "2.0.0-beta.25",
+    "@aurelia/runtime-html": "2.0.0-beta.25",
     "@formkit/tempo": "catalog:",
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/custom-footer-component": "workspace:*",
@@ -66,7 +66,7 @@
     "sortablejs": "catalog:"
   },
   "devDependencies": {
-    "@aurelia/kernel": "^2.0.0-beta.25",
+    "@aurelia/kernel": "2.0.0-beta.25",
     "dompurify": "catalog:",
     "native-copyfiles": "catalog:",
     "remove-glob": "catalog:",
