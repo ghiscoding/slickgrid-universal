@@ -240,25 +240,25 @@ importers:
   demos/aurelia:
     dependencies:
       '@aurelia/fetch-client':
-        specifier: 2.0.0-beta.25
+        specifier: ^2.0.0-beta.25
         version: 2.0.0-beta.25
       '@aurelia/i18n':
-        specifier: 2.0.0-beta.25
+        specifier: ^2.0.0-beta.25
         version: 2.0.0-beta.25(typescript@5.8.3)
       '@aurelia/kernel':
-        specifier: 2.0.0-beta.25
+        specifier: ^2.0.0-beta.25
         version: 2.0.0-beta.25
       '@aurelia/metadata':
-        specifier: 2.0.0-beta.25
+        specifier: ^2.0.0-beta.25
         version: 2.0.0-beta.25
       '@aurelia/router-direct':
-        specifier: 2.0.0-beta.25
+        specifier: ^2.0.0-beta.25
         version: 2.0.0-beta.25
       '@aurelia/runtime':
-        specifier: 2.0.0-beta.25
+        specifier: ^2.0.0-beta.25
         version: 2.0.0-beta.25
       '@aurelia/runtime-html':
-        specifier: 2.0.0-beta.25
+        specifier: ^2.0.0-beta.25
         version: 2.0.0-beta.25
       '@faker-js/faker':
         specifier: 'catalog:'
@@ -300,7 +300,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/text-export
       aurelia:
-        specifier: 2.0.0-beta.25
+        specifier: ^2.0.0-beta.25
         version: 2.0.0-beta.25
       aurelia-slickgrid:
         specifier: workspace:*
@@ -316,7 +316,7 @@ importers:
         version: 7.8.2
     devDependencies:
       '@aurelia/vite-plugin':
-        specifier: 2.0.0-beta.25
+        specifier: ^2.0.0-beta.25
         version: 2.0.0-beta.25(@types/node@24.6.0)(jiti@2.6.0)(less@4.4.1)(lightningcss@1.30.2)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(yaml@2.8.1)
       '@types/fnando__sparkline':
         specifier: 'catalog:'
@@ -909,13 +909,13 @@ importers:
   frameworks/aurelia-slickgrid:
     dependencies:
       '@aurelia/i18n':
-        specifier: 2.0.0-beta.25
+        specifier: ^2.0.0-beta.25
         version: 2.0.0-beta.25(typescript@5.8.3)
       '@aurelia/runtime':
-        specifier: 2.0.0-beta.25
+        specifier: ^2.0.0-beta.25
         version: 2.0.0-beta.25
       '@aurelia/runtime-html':
-        specifier: 2.0.0-beta.25
+        specifier: ^2.0.0-beta.25
         version: 2.0.0-beta.25
       '@formkit/tempo':
         specifier: 'catalog:'
@@ -952,7 +952,7 @@ importers:
         version: 1.15.6
     devDependencies:
       '@aurelia/kernel':
-        specifier: 2.0.0-beta.25
+        specifier: ^2.0.0-beta.25
         version: 2.0.0-beta.25
       dompurify:
         specifier: 'catalog:'
