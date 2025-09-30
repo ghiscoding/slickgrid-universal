@@ -129,7 +129,7 @@
     "tslib": "catalog:",
     "typescript": "~5.8.3",
     "typescript-eslint": "catalog:",
-    "vite": "7.1.7",
+    "vite": "catalog:",
     "vite-tsconfig-paths": "catalog:",
     "vitest": "catalog:",
     "yaml": "^2.8.1",
