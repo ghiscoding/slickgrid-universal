@@ -29,8 +29,8 @@ let timer: any;
 const DEFAULT_FILTER_TYPING_DEBOUNCE = 750;
 
 @Component({
-    selector: 'swt-common-grid',
-    template: `<angular-slickgrid
+  selector: 'swt-common-grid',
+  template: `<angular-slickgrid
     gridId="common-grid"
     #angularSlickGrid
     (onAngularGridCreated)="gridReady($event.detail)"
@@ -39,8 +39,8 @@ const DEFAULT_FILTER_TYPING_DEBOUNCE = 750;
     [dataset]="dataset"
   >
   </angular-slickgrid>`,
-    styles: [
-        `
+  styles: [
+    `
       :host ::ng-deep .gridPane {
         width: 100% !important;
       }
@@ -48,8 +48,8 @@ const DEFAULT_FILTER_TYPING_DEBOUNCE = 750;
         width: 100% !important;
       }
     `,
-    ],
-    imports: [AngularSlickgridComponent_1],
+  ],
+  imports: [AngularSlickgridComponent_1],
 })
 export class SwtCommonGridComponent implements OnInit, AfterViewInit, BackendService {
   private logger: Logger;

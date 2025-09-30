@@ -12,8 +12,8 @@ import { TranslateDirective } from '@ngx-translate/core';
  * @author Saber Chebka, saber.chebka@gmail.com
  */
 @Component({
-    selector: 'swt-common-grid-pagination',
-    template: `
+  selector: 'swt-common-grid-pagination',
+  template: `
     <div class="slick-pagination">
       <div class="slick-pagination-nav">
         <nav aria-label="Page navigation">
@@ -60,8 +60,8 @@ import { TranslateDirective } from '@ngx-translate/core';
       </div>
     </div>
   `,
-    styles: [
-        `
+  styles: [
+    `
       .page-spin {
         border: none;
         height: 32px;
@@ -73,8 +73,8 @@ import { TranslateDirective } from '@ngx-translate/core';
         background-color: transparent;
       }
     `,
-    ],
-    imports: [NgClass, TranslateDirective],
+  ],
+  imports: [NgClass, TranslateDirective],
 })
 export class SwtCommonGridPaginationComponent implements OnInit {
   private logger: Logger;
