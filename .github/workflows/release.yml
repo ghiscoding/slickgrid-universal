@@ -49,7 +49,6 @@ jobs:
         with:
           registry-url: 'https://registry.npmjs.org/'
           node-version: 24
-          cache: 'pnpm'
 
       - run: node --version
       - run: npm --version
@@ -100,12 +99,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         id: lerna-publish
-        continue-on-error: true
         run: |
-          set -o pipefail
-          OUTPUT_FILE=$(mktemp)
-
-          # Capture both stdout and stderr
           pnpm exec lerna publish from-package --force-publish --yes
 
       - name: Diagnostic Output Check
