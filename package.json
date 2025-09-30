@@ -135,8 +135,11 @@
     "overrides": {
       "@angular/build>vite": "catalog:",
       "@vitejs/plugin-basic-ssl>vite": "catalog:",
+      "@vitest/coverage-v8>vite": "npm:rolldown-vite@latest",
+      "@vitest/ui>vite": "npm:rolldown-vite@latest",
       "axios": "^1.12.2",
-      "tmp": "^0.2.5"
+      "tmp": "^0.2.5",
+      "vitest>vite": "npm:rolldown-vite@latest"
     }
   }
 }
