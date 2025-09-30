@@ -93,7 +93,7 @@
     "node": "^20.17.0 || >=22.9.0",
     "pnpm": "10.x"
   },
-  "packageManager": "pnpm@10.10.0",
+  "packageManager": "pnpm@10.17.1",
   "devDependencies": {
     "@4tw/cypress-drag-drop": "catalog:",
     "@eslint/js": "catalog:",
