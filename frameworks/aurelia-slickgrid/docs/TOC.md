@@ -25,6 +25,7 @@
   * [Input Filter (default)](column-functionalities/filters/input-filter.md)
   * [Select Filter (dropdown)](column-functionalities/filters/select-filter.md)
   * [Compound Filters](column-functionalities/filters/compound-filters.md)
+    * [Date Filter](column-functionalities/filters/compound-filters.md#how-to-use-compounddate-filter)
   * [Range Filters](column-functionalities/filters/range-filters.md)
   * [Custom Filter](column-functionalities/filters/custom-filter.md)
   * [Styling Filled Filters](column-functionalities/filters/styling-filled-filters.md)
