@@ -156,7 +156,7 @@ export class SlickCheckboxSelectColumn<T = any> {
         } else {
           columns.unshift(selectionColumn);
         }
-        this.pubSubService.publish(`onPluginColumnsChanged`, {
+        this.pubSubService.publish('onPluginColumnsChanged', {
           columns,
           pluginName: this.pluginName,
         });
