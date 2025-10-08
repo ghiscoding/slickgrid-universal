@@ -25,6 +25,16 @@
         enabled: false,
       },
     },
+    {
+      // Group dev dependencies
+      depTypeList: ['devDependencies'],
+      groupName: 'Dev Dependencies',
+    },
+    {
+      // Group regular dependencies
+      depTypeList: ['dependencies'],
+      groupName: 'Package Dependencies',
+    },
   ],
   ignoreDeps: ['lee-dohm/no-response', 'node', 'pnpm', 'typescript'],
   schedule: ['every 4 weeks on friday'],
