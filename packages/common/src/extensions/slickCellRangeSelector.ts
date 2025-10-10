@@ -138,10 +138,6 @@ export class SlickCellRangeSelector {
     return this._currentlySelectedRange;
   }
 
-  getPreviousRange(): DragRange | null {
-    return this._previousSelectedRange;
-  }
-
   getMouseOffsetViewport(e: MouseEvent | TouchEvent, dd: DragPosition): MouseOffsetViewport {
     const targetEvent: MouseEvent | Touch = (e as TouchEvent)?.touches?.[0] ?? e;
     const viewportLeft = this._activeViewport.scrollLeft;
@@ -185,14 +181,6 @@ export class SlickCellRangeSelector {
     }
     result.isOutsideViewport = !!result.offset.x || !!result.offset.y;
     return result;
-  }
-
-  getSelectionMode(): string {
-    return this._selectionMode;
-  }
-
-  setSelectionMode(mode: CellSelectionMode): void {
-    this._selectionMode = mode;
   }
 
   stopIntervalTimer(): void {
