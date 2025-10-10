@@ -602,7 +602,7 @@ export class SelectEditor implements Editor {
     }
   }
 
-  vvalidate(_targetElm?: any, options?: ValidateOption): EditorValidationResult {
+  validate(_targetElm?: any, options?: ValidateOption): EditorValidationResult {
     const isRequired = this.args.isCompositeEditor ? false : this.columnEditor?.required;
     const elmValue = options?.inputValue ?? this._msInstance?.getSelects(); // && this.$editorElm.val && this.$editorElm.val();
     const errorMsg = this.columnEditor?.errorMessage;
