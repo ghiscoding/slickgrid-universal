@@ -209,7 +209,7 @@ describe('CellRangeSelector Plugin', () => {
     const dragEventStart = addVanillaEventPropagation(new Event('dragStart'));
     gridStub.onDragStart.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventStart, gridStub);
 
-    const dragEvent = addVanillaEventPropagation(new DragEvent('drag'));
+    const dragEvent = addVanillaEventPropagation(new Event('drag'));
     Object.defineProperty(dragEvent, 'pageX', { writable: true, configurable: true, value: 0 });
     Object.defineProperty(dragEvent, 'pageY', { writable: true, configurable: true, value: 0 });
     gridStub.onDrag.notify(
@@ -256,7 +256,7 @@ describe('CellRangeSelector Plugin', () => {
     const dragEventStart = addVanillaEventPropagation(new Event('dragStart'));
     gridStub.onDragStart.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventStart, gridStub);
 
-    const dragEvent = addVanillaEventPropagation(new DragEvent('drag'));
+    const dragEvent = addVanillaEventPropagation(new Event('drag'));
     (dragEvent as any).pageX = -2;
     (dragEvent as any).pageY = -156;
     gridStub.onDrag.notify(
@@ -810,7 +810,7 @@ describe('CellRangeSelector Plugin', () => {
     const dragEventStart = addVanillaEventPropagation(new Event('dragStart'));
     gridStub.onDragStart.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventStart, gridStub);
 
-    const dragEvent = addVanillaEventPropagation(new DragEvent('drag'));
+    const dragEvent = addVanillaEventPropagation(new Event('drag'));
     Object.defineProperty(dragEvent, 'pageX', { writable: true, configurable: true, value: 0 });
     Object.defineProperty(dragEvent, 'pageY', { writable: true, configurable: true, value: 0 });
     gridStub.onDrag.notify(
@@ -863,7 +863,7 @@ describe('CellRangeSelector Plugin', () => {
     const dragEventStart = addVanillaEventPropagation(new Event('dragStart'));
     gridStub.onDragStart.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4 } as any, dragEventStart, gridStub);
 
-    const dragEvent = addVanillaEventPropagation(new DragEvent('drag'));
+    const dragEvent = addVanillaEventPropagation(new Event('drag'));
     Object.defineProperty(dragEvent, 'pageX', { writable: true, configurable: true, value: 0 });
     Object.defineProperty(dragEvent, 'pageY', { writable: true, configurable: true, value: 0 });
     gridStub.onDrag.notify(

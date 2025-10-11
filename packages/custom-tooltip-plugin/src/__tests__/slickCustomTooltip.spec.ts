@@ -1,5 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
-import { type Column, getOffset, type GridOption, type SlickGrid, type SlickDataView, SlickEvent, SlickEventData } from '@slickgrid-universal/common';
+import {
+  type Column,
+  getOffset,
+  type GridOption,
+  type SlickGrid,
+  type SlickDataView,
+  type SlickEditorLock,
+  SlickEvent,
+  SlickEventData,
+} from '@slickgrid-universal/common';
 import { delay, of, throwError } from 'rxjs';
 
 import { SlickCustomTooltip } from '../slickCustomTooltip.js';
@@ -27,7 +36,7 @@ const dataviewStub = {
 
 const getEditorLockMock = {
   isActive: vi.fn(),
-};
+} as unknown as SlickEditorLock;
 
 const gridStub = {
   getCellFromEvent: vi.fn(),

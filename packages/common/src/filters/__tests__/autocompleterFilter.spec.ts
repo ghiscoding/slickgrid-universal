@@ -6,7 +6,7 @@ import { AutocompleterFilter } from '../autocompleterFilter.js';
 import { FieldType, OperatorType } from '../../enums/index.js';
 import type { AutocompleterOption, Column, ColumnFilter, FilterArguments, GridOption } from '../../interfaces/index.js';
 import { CollectionService } from '../../services/collection.service.js';
-import { HttpStub } from '../../../../../test/httpClientStub.js';
+import { basicFetchStub } from '../../../../../test/httpClientStub.js';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import type { SlickGrid } from '../../core/index.js';
@@ -40,7 +40,6 @@ describe('AutocompleterFilter', () => {
   let spyGetHeaderRow: any;
   let mockColumn: Column & { filter: ColumnFilter };
   let collectionService: CollectionService;
-  const http = new HttpStub();
 
   beforeEach(() => {
     translaterService = new TranslateServiceStub();
@@ -470,13 +469,7 @@ describe('AutocompleterFilter', () => {
   it('should create the filter with a default search term when using "collectionAsync" is a Fetch Promise and triggerOnEveryKeyStroke is enabled', async () => {
     const spyCallback = vi.spyOn(filterArguments, 'callback');
     const mockCollection = ['male', 'female'];
-
-    http.status = 200;
-    http.object = mockCollection;
-    http.returnKey = 'date';
-    http.returnValue = '6/24/1984';
-    http.responseHeaders = { accept: 'json' };
-    mockColumn.filter.collectionAsync = http.fetch('http://locahost/api', { method: 'GET' });
+    mockColumn.filter.collectionAsync = basicFetchStub('http://locahost/api', { method: 'GET' }, mockCollection);
     mockColumn.filter.filterOptions = { showOnFocus: true, triggerOnEveryKeyStroke: true } as AutocompleterOption;
 
     filterArguments.searchTerms = ['female'];

@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
-import { SlickEvent, type SlickGrid, SlickRange } from '../../core/index.js';
+import { type SlickEditorLock, SlickEvent, type SlickGrid, SlickRange } from '../../core/index.js';
 import type { Column, GridOption } from '../../interfaces/index.js';
 import { SlickCellRangeSelector } from '../slickCellRangeSelector.js';
 import { SlickRowSelectionModel } from '../slickRowSelectionModel.js';
@@ -36,7 +36,7 @@ const pubSubServiceStub = {
 const getEditorLockMock = {
   commitCurrentEdit: vi.fn(),
   isActive: vi.fn(),
-};
+} as unknown as SlickEditorLock;
 
 const gridStub = {
   canCellBeActive: vi.fn(),
