@@ -132,7 +132,7 @@
   },
   "pnpm": {
     "overrides": {
-      "@angular/build>vite": "catalog:",
+      "@angular/build>vite": "^6.3.6",
       "@vitejs/plugin-basic-ssl>vite": "catalog:",
       "@vitest/coverage-v8>vite": "npm:rolldown-vite@latest",
       "@vitest/ui>vite": "npm:rolldown-vite@latest",
