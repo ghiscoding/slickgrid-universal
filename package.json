@@ -115,7 +115,7 @@
     "eslint-plugin-cypress": "catalog:",
     "eslint-plugin-n": "catalog:",
     "globals": "catalog:",
-    "happy-dom": "^19.0.2",
+    "happy-dom": "^20.0.0",
     "jsdom": "catalog:",
     "jsdom-global": "catalog:",
     "npm-run-all2": "catalog:",
