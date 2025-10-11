@@ -8,7 +8,7 @@ import { CollectionService } from '../../services/collection.service.js';
 import { Filters } from '../filters.index.js';
 import { SelectFilter } from '../selectFilter.js';
 import type { SlickGrid } from '../../core/index.js';
-import { HttpStub } from '../../../../../test/httpClientStub.js';
+import { basicFetchStub } from '../../../../../test/httpClientStub.js';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 
@@ -38,7 +38,6 @@ describe('SelectFilter', () => {
   let spyGetHeaderRow: any;
   let mockColumn: Column;
   let collectionService: CollectionService;
-  const http = new HttpStub();
 
   beforeEach(() => {
     translateService = new TranslateServiceStub();
@@ -904,12 +903,7 @@ describe('SelectFilter', () => {
     const spyCallback = vi.spyOn(filterArguments, 'callback');
     const mockCollection = ['male', 'female'];
 
-    http.status = 200;
-    http.object = mockCollection;
-    http.returnKey = 'date';
-    http.returnValue = '6/24/1984';
-    http.responseHeaders = { accept: 'json' };
-    mockColumn.filter!.collectionAsync = http.fetch('http://locahost/api', { method: 'GET' });
+    mockColumn.filter!.collectionAsync = basicFetchStub('http://locahost/api', { method: 'GET' }, mockCollection);
 
     filterArguments.searchTerms = ['female'];
     await filter.init(filterArguments);
@@ -1084,12 +1078,7 @@ describe('SelectFilter', () => {
       const spyCallback = vi.spyOn(filterArguments, 'callback');
       const mockCollection = ['male', 'female'];
 
-      http.status = 200;
-      http.object = mockCollection;
-      http.returnKey = 'date';
-      http.returnValue = '6/24/1984';
-      http.responseHeaders = { accept: 'json' };
-      mockColumn.filter!.collectionLazy = () => http.fetch('http://locahost/api', { method: 'GET' });
+      mockColumn.filter!.collectionLazy = () => basicFetchStub('http://locahost/api', { method: 'GET' }, mockCollection);
 
       filterArguments.searchTerms = ['female'];
       await filter.init(filterArguments);

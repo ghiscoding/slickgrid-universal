@@ -32,7 +32,7 @@ import {
 } from '../utilities.js';
 import { SumAggregator } from '../../aggregators/sumAggregator.js';
 import { Constants } from '../../constants.js';
-import { HttpStub } from '../../../../../test/httpClientStub.js';
+import { basicFetchStub } from '../../../../../test/httpClientStub.js';
 
 describe('applyHtmlToElement() method', () => {
   const defaultOptions: GridOption = {
@@ -1407,14 +1407,8 @@ describe('Service/Utilies', () => {
     });
 
     it('should be able to load async collection from a Fetch Promise', async () => {
-      const http = new HttpStub();
       const mockCollection = ['male', 'female'];
-      http.status = 200;
-      http.object = mockCollection;
-      http.returnKey = 'date';
-      http.returnValue = '6/24/1984';
-      http.responseHeaders = { accept: 'json' };
-      const collectionAsync = http.fetch('http://locahost/api', { method: 'GET' });
+      const collectionAsync = basicFetchStub('http://locahost/api', { method: 'GET' }, mockCollection);
 
       const output = fetchAsPromise(collectionAsync);
 
@@ -1433,15 +1427,9 @@ describe('Service/Utilies', () => {
     });
 
     it('should throw an error when Fetch Promise response bodyUsed is true', async () => {
-      const http = new HttpStub();
       const consoleSpy = vi.spyOn(global.console, 'warn').mockReturnValue();
       const mockCollection = ['male', 'female'];
-      http.status = 200;
-      http.object = mockCollection;
-      http.returnKey = 'date';
-      http.returnValue = '6/24/1984';
-      http.responseHeaders = { accept: 'json' };
-      const collectionAsync = http.fetch('http://invalid-url', { method: 'GET' });
+      const collectionAsync = basicFetchStub('http://invalid-url', { method: 'GET' }, mockCollection);
 
       await fetchAsPromise(collectionAsync);
       expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('[SlickGrid-Universal] The response body passed to Fetch was already read.'));

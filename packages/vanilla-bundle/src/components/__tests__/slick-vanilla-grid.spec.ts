@@ -51,7 +51,7 @@ import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 
 import { SlickVanillaGridBundle } from '../slick-vanilla-grid-bundle.js';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
-import { HttpStub } from '../../../../../test/httpClientStub.js';
+import { basicFetchStub } from '../../../../../test/httpClientStub.js';
 import { MockSlickEvent, MockSlickEventHandler } from '../../../../../test/mockSlickEvent.js';
 import { UniversalContainerService } from '../../services/universalContainer.service.js';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
@@ -311,7 +311,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
   let sharedService: SharedService;
   let eventPubSubService: EventPubSubService;
   let translateService: TranslateServiceStub;
-  const http = new HttpStub();
   const container = new UniversalContainerService();
   let dataset: any[] = [];
 
@@ -907,12 +906,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
       it('should be able to load async editors with a Fetch Promise', async () => {
         const mockCollection = ['male', 'female'];
-        http.status = 200;
-        http.object = mockCollection;
-        http.returnKey = 'date';
-        http.returnValue = '6/24/1984';
-        http.responseHeaders = { accept: 'json' };
-        const collectionAsync = http.fetch('http://locahost/api', { method: 'GET' });
+        const collectionAsync = basicFetchStub('http://locahost/api', { method: 'GET' }, mockCollection);
         const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync } }] as Column[];
 
         component.columnDefinitions = mockColDefs;
@@ -945,12 +939,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       it('should throw an error when Fetch Promise response bodyUsed is true', async () => {
         const consoleSpy = vi.spyOn(global.console, 'warn').mockReturnValue();
         const mockCollection = ['male', 'female'];
-        http.status = 200;
-        http.object = mockCollection;
-        http.returnKey = 'date';
-        http.returnValue = '6/24/1984';
-        http.responseHeaders = { accept: 'json' };
-        const collectionAsync = http.fetch('http://invalid-url', { method: 'GET' });
+        const collectionAsync = basicFetchStub('http://invalid-url', { method: 'GET' }, mockCollection);
         const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync } }] as Column[];
         component.columnDefinitions = mockColDefs;
 

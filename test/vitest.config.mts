@@ -26,7 +26,15 @@ export default defineConfig({
       reportOnFailure: true,
     },
     exclude: [...configDefaults.exclude, 'frameworks/*'],
-    environment: 'happy-dom',
+    environment: 'jsdom',
+    onUnhandledError: (error) => {
+      // Ignore specific error patterns
+      // not really sure why JSDOM throws these errors but it doesn't impact the tests
+      // see https://github.com/jsdom/jsdom/issues/2156
+      const ignoredErrors = [/removeEventListener/, /invalid EventTarget/];
+
+      return !ignoredErrors.some((pattern) => pattern.test(error.message));
+    },
     fakeTimers: {
       toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'queueMicrotask'],
     },
