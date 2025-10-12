@@ -75,7 +75,7 @@
     "i18next-vue": "catalog:",
     "sass": "catalog:",
     "typescript": "catalog:",
-    "vite": "catalog:",
+    "vite": "catalog:vite7",
     "vite-plugin-dts": "^4.5.4",
     "vue": "catalog:",
     "vue-tsc": "^3.1.0"

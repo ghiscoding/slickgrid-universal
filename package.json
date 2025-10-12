@@ -132,8 +132,8 @@
   },
   "pnpm": {
     "overrides": {
-      "@angular/build>vite": "catalog:",
-      "@vitejs/plugin-basic-ssl>vite": "catalog:",
+      "@angular/build>vite": "catalog:vite6",
+      "@vitejs/plugin-basic-ssl>vite": "catalog:vite7",
       "@vitest/coverage-v8>vite": "npm:rolldown-vite@latest",
       "@vitest/ui>vite": "npm:rolldown-vite@latest",
       "axios": "^1.12.2",
