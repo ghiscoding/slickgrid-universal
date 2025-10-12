@@ -45,6 +45,6 @@
     "cypress-real-events": "catalog:",
     "sass": "catalog:",
     "typescript": "catalog:",
-    "vite": "catalog:"
+    "vite": "catalog:vite7"
   }
 }
