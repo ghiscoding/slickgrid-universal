@@ -5566,6 +5566,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /**
+   * Removes an "overlay" of CSS classes from cell DOM elements matching predicated entries.
+   * @param {String} key A string key.
+   */
+  removeCellCssStylesBatch(predicate: (key: string, hash: CssStyleHash) => boolean): void {
+    Object.entries(this.cellCssClasses).forEach(([k, v]) => predicate(k, v) && this.removeCellCssStyles(k));
+  }
+
+  /**
    * Sets CSS classes to specific grid cells by calling removeCellCssStyles(key) followed by addCellCssStyles(key, hash). key is name for this set of styles so you can reference it later - to modify it or remove it, for example. hash is a per-row-index, per-column-name nested hash of CSS classes to apply.
    * Suppose you have a grid with columns:
    * ["login", "name", "birthday", "age", "likes_icecream", "favorite_cake"]
