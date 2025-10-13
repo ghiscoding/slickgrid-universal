@@ -101,6 +101,7 @@
     "@lerna-lite/cli": "^4.9.0",
     "@lerna-lite/publish": "^4.9.0",
     "@lerna-lite/watch": "^4.9.0",
+    "@prettier/plugin-oxc": "^0.0.4",
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/event-pub-sub": "workspace:*",
     "@types/node": "catalog:",
