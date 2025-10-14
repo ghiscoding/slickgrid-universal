@@ -1,4 +1,3 @@
-// oxlint-disable-next-line consistent-type-imports
 import {
   type AfterViewInit,
   ApplicationRef,
@@ -69,7 +68,6 @@ import { SlickFooterComponent } from '@slickgrid-universal/custom-footer-compone
 import { SlickPaginationComponent } from '@slickgrid-universal/pagination-component';
 import { RxJsResource } from '@slickgrid-universal/rxjs-observable';
 import { extend } from '@slickgrid-universal/utils';
-// oxlint-disable-next-line consistent-type-imports
 import { TranslateService } from '@ngx-translate/core';
 import { dequal } from 'dequal/lite';
 import { Observable } from 'rxjs';
@@ -82,7 +80,6 @@ import { TranslaterService } from '../services/translater.service';
 // Services
 import { AngularUtilService } from '../services/angularUtil.service';
 import { SlickRowDetailView } from '../extensions/slickRowDetailView';
-// oxlint-disable-next-line consistent-type-imports
 import { ContainerService } from '../services/container.service';
 
 const WARN_NO_PREPARSE_DATE_SIZE = 10000; // data size to warn user when pre-parse isn't enabled
