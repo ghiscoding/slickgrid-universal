@@ -673,8 +673,6 @@ describe('Draggable Grouping Plugin', () => {
           vi.clearAllMocks();
         });
 
-        it('should ', () => {});
-
         it('should not expect any sort icons displayed when "hideGroupSortIcons" is set to True', () => {
           plugin.init(gridStub, { ...addonOptions, hideGroupSortIcons: true });
           const fn = plugin.setupColumnReorder(

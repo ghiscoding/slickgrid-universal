@@ -1,7 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgSelectComponent, NgLabelTemplateDirective, NgOptionTemplateDirective } from '@ng-select/ng-select';
-import { SearchTerm } from '@slickgrid-universal/common';
+import { type SearchTerm } from '@slickgrid-universal/common';
 import { Subject } from 'rxjs';
 
 // the appendTo="body" (necessary for SlickGrid filter) requires the body to be position relative like so

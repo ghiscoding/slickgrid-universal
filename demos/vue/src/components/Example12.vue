@@ -8,10 +8,10 @@ import {
   Filters,
   type Formatter,
   Formatters,
-  GridOption,
-  GridStateChange,
+  type GridOption,
+  type GridStateChange,
   SlickgridVue,
-  SlickgridVueInstance,
+  type SlickgridVueInstance,
   type SliderOption,
 } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';

@@ -239,7 +239,7 @@ export class InputFilter implements Filter {
 
   /** Get the available operator option values to populate the operator select dropdown list */
   protected getCompoundOperatorOptionValues(): OperatorDetail[] {
-    const type = this.columnDef.type && this.columnDef.type ? this.columnDef.type : FieldType.string;
+    const type = this.columnDef.type ? this.columnDef.type : FieldType.string;
     let operatorList: OperatorDetail[];
     let listType: 'text' | 'numeric' = 'text';
 

@@ -9,7 +9,7 @@ import {
   Filters,
   Formatters,
   type GridOption,
-  Grouping,
+  type Grouping,
   GroupTotalFormatters,
   type SlickRowDetailView,
   SortComparers,

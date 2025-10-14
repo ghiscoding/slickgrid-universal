@@ -232,12 +232,13 @@ export class Example25 {
 
   /** Calling the GraphQL backend API to get the Countries with the Query created by the "process" method of GraphqlService  */
   getCountries(query: string): Promise<GraphqlResult<Country>> {
-    return new Promise(async (resolve) => {
-      const response = await this.http.fetch(COUNTRIES_API, {
-        method: 'post',
-        body: json({ query }),
-      });
-      resolve(response.json());
+    return new Promise((resolve) => {
+      this.http
+        .fetch(COUNTRIES_API, {
+          method: 'post',
+          body: json({ query }),
+        })
+        .then((response) => resolve(response.json()));
     });
   }
 
@@ -248,12 +249,13 @@ export class Example25 {
    */
   getContinents(): Promise<GraphqlResult<{ code: string; name: string }>> {
     const continentQuery = `query { continents { code, name  }}`;
-    return new Promise(async (resolve) => {
-      const response = await this.http.fetch(COUNTRIES_API, {
-        method: 'post',
-        body: json({ query: continentQuery }),
-      });
-      resolve(response.json());
+    return new Promise((resolve) => {
+      this.http
+        .fetch(COUNTRIES_API, {
+          method: 'post',
+          body: json({ query: continentQuery }),
+        })
+        .then((response) => resolve(response.json()));
     });
   }
 
@@ -264,12 +266,13 @@ export class Example25 {
    */
   getLanguages(): Promise<GraphqlResult<{ code: string; name: string; native: string }>> {
     const languageQuery = `query { languages { code, name, native  }}`;
-    return new Promise(async (resolve) => {
-      const response = await this.http.fetch(COUNTRIES_API, {
-        method: 'post',
-        body: json({ query: languageQuery }),
-      });
-      resolve(response.json());
+    return new Promise((resolve) => {
+      this.http
+        .fetch(COUNTRIES_API, {
+          method: 'post',
+          body: json({ query: languageQuery }),
+        })
+        .then((response) => resolve(response.json()));
     });
   }
 

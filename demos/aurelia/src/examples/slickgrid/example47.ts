@@ -8,10 +8,10 @@ import {
   Filters,
   Formatters,
   type GridOption,
-  Grouping,
+  type Grouping,
   GroupTotalFormatters,
-  SlickDataView,
-  SlickGrid,
+  type SlickDataView,
+  type SlickGrid,
   SortComparers,
   SortDirectionNumber,
 } from 'aurelia-slickgrid';

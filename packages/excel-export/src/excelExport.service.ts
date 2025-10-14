@@ -437,8 +437,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       // Populate the Column Header, pull the name defined
       columns.forEach((columnDef) => {
         let headerTitle = '';
-        if ((columnDef.nameKey || columnDef.nameKey) && this._gridOptions.enableTranslate && this._translaterService?.translate) {
-          headerTitle = this._translaterService.translate(columnDef.nameKey || columnDef.nameKey);
+        if (columnDef.nameKey && this._gridOptions.enableTranslate && this._translaterService?.translate) {
+          headerTitle = this._translaterService.translate(columnDef.nameKey);
         } else {
           headerTitle = getHtmlStringOutput(columnDef.name || '', 'innerHTML') || titleCase(columnDef.field);
         }

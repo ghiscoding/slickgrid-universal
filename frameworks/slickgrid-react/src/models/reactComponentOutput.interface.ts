@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/consistent-type-imports */
+/* oxlint-disable @typescript-eslint/consistent-type-imports */
 import React, { type ReactInstance } from 'react';
 
 export interface SlickgridReactComponentOutput {

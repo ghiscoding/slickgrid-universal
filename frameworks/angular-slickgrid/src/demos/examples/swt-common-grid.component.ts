@@ -1,23 +1,33 @@
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
 /* eslint-disable @angular-eslint/no-output-on-prefix */
-import { Component, OnInit, AfterViewInit, Input, EventEmitter, Output, ViewChild, ElementRef, Renderer2 } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import {
-  AngularGridInstance,
-  AngularSlickgridComponent,
+  type AfterViewInit,
+  Component,
+  type ElementRef,
+  EventEmitter,
+  Input,
+  type OnInit,
+  Output,
+  ViewChild,
+  type Renderer2,
+} from '@angular/core';
+import { type HttpClient } from '@angular/common/http';
+import {
+  type AngularGridInstance,
+  type AngularSlickgridComponent,
   AngularSlickgridModule,
-  Column,
-  GridOption,
-  BackendService,
-  BackendServiceOption,
-  FilterChangedArgs,
-  PaginationChangedArgs,
-  Pagination,
-  SlickDataView,
+  type BackendService,
+  type BackendServiceOption,
+  type Column,
+  type FilterChangedArgs,
+  type GridOption,
+  type PaginationChangedArgs,
+  type Pagination,
+  type SlickDataView,
 } from '../../library';
-import { TranslateService } from '@ngx-translate/core';
+import { type TranslateService } from '@ngx-translate/core';
 import { Logger } from './swt-logger.service';
-import { SwtCommonGridPaginationComponent } from './swt-common-grid-pagination.component';
+import { type SwtCommonGridPaginationComponent } from './swt-common-grid-pagination.component';
 
 /**
  * Custom wrapper of angular-slickgrid components, allows easily interacting with SwtCommonGridPaginationComponent

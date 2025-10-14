@@ -1,6 +1,6 @@
 import { Component, type OnDestroy, type OnInit } from '@angular/core';
 import { format as tempoFormat } from '@formkit/tempo';
-import { TranslateService } from '@ngx-translate/core';
+import { type TranslateService } from '@ngx-translate/core';
 import type { Subscription } from 'rxjs';
 import {
   type AngularGridInstance,

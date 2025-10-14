@@ -2,7 +2,7 @@ import { NgIf, NgFor, DatePipe } from '@angular/common';
 import { Component, type OnInit, type OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { addDay, format } from '@formkit/tempo';
-import { TranslateService } from '@ngx-translate/core';
+import { type TranslateService } from '@ngx-translate/core';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-this-alias */
+/* oxlint-disable @typescript-eslint/no-this-alias */
 import { createDomElement, titleCase } from '@slickgrid-universal/utils';
 
 import type { Column, ColumnPickerOption, DOMEvent, GridMenuOption } from '../interfaces/index.js';

@@ -2,11 +2,11 @@
 import { format as dateFormatter } from '@formkit/tempo';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
-  GridOption,
-  Grouping,
-  Metrics,
-  OnRowCountChangedEventArgs,
-  SlickgridVueInstance,
+  type GridOption,
+  type Grouping,
+  type Metrics,
+  type OnRowCountChangedEventArgs,
+  type SlickgridVueInstance,
   Aggregators,
   type Column,
   Filters,

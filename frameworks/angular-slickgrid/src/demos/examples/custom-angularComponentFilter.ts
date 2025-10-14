@@ -14,7 +14,7 @@ import {
   type SlickGrid,
   unsubscribeAllObservables,
 } from '../../library';
-import { FilterNgSelectComponent } from './filter-ng-select.component';
+import { type FilterNgSelectComponent } from './filter-ng-select.component';
 
 export class CustomAngularComponentFilter implements Filter {
   private _shouldTriggerQuery = true;

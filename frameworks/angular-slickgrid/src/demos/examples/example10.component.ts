@@ -1,5 +1,5 @@
 import { NgIf } from '@angular/common';
-import { ChangeDetectorRef, Component, type OnInit } from '@angular/core';
+import { type ChangeDetectorRef, Component, type OnInit } from '@angular/core';
 import {
   type AngularGridInstance,
   AngularSlickgridModule,

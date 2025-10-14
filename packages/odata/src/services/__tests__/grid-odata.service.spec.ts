@@ -2087,6 +2087,8 @@ describe('GridOdataService', () => {
       service.init(serviceOptions, paginationOptions, gridStub);
 
       service.postProcess([]);
+
+      expect(paginationOptions.totalItems).toBe(100);
     });
 
     it("should extract d.results['__count'] when oData version is not specified", () => {

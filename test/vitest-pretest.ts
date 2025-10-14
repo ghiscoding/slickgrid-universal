@@ -1,3 +1,4 @@
+// oxlint-disable-next-line extensions
 import 'jsdom-global/register';
 
 // (global as any).Storage = window.localStorage;

@@ -12,6 +12,7 @@ import {
   Subject,
   switchMap,
 } from 'rxjs';
+// oxlint-disable-next-line extensions
 import { takeUntil } from 'rxjs/operators';
 
 export class RxJsResource implements RxJsFacade {

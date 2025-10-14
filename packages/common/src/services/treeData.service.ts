@@ -302,7 +302,7 @@ export class TreeDataService {
    * @param {Array<ColumnSort>} [columnSorts] - optional sort columns
    * @returns {Array<Object>} - tree dataset
    */
-  convertFlatParentChildToTreeDatasetAndSort<P, T extends P & { [childrenPropName: string]: T[] }>(
+  convertFlatParentChildToTreeDatasetAndSort<P>(
     flatDataset: P[],
     columns: Column[],
     gridOptions: GridOption,

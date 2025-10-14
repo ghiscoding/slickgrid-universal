@@ -4,11 +4,11 @@ import type { GraphqlPaginatedResult, GraphqlServiceApi } from '@slickgrid-unive
 import { GraphqlService } from '@slickgrid-universal/graphql';
 import { useTranslation } from 'i18next-vue';
 import {
-  GridOption,
-  Metrics,
-  MultipleSelectOption,
-  OnRowCountChangedEventArgs,
-  SlickgridVueInstance,
+  type GridOption,
+  type Metrics,
+  type MultipleSelectOption,
+  type OnRowCountChangedEventArgs,
+  type SlickgridVueInstance,
   type Column,
   Filters,
   SlickgridVue,

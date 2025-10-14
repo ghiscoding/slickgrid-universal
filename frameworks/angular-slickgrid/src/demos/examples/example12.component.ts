@@ -1,5 +1,5 @@
 import { Component, type OnDestroy, type OnInit } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import { type TranslateService } from '@ngx-translate/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import type { Subscription } from 'rxjs';

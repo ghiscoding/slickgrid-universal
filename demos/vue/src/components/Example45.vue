@@ -1,9 +1,16 @@
 <script setup lang="ts">
 import { faker } from '@faker-js/faker';
-import { type Column, ExtensionName, type GridOption, SlickRowDetailView, SlickgridVue, type SlickgridVueInstance } from 'slickgrid-vue';
+import {
+  type Column,
+  ExtensionName,
+  type GridOption,
+  type SlickRowDetailView,
+  SlickgridVue,
+  type SlickgridVueInstance,
+} from 'slickgrid-vue';
 import { computed, onBeforeMount, onUnmounted, ref, type Ref } from 'vue';
 
-import Example45Detail, { OrderData, type Distributor } from './Example45Detail.vue';
+import Example45Detail, { type OrderData, type Distributor } from './Example45Detail.vue';
 import Example45Preload from './Example45Preload.vue';
 
 const FAKE_SERVER_DELAY = 250;

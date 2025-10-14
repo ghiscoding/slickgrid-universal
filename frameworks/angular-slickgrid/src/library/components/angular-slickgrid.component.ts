@@ -1,5 +1,6 @@
+// oxlint-disable-next-line consistent-type-imports
 import {
-  AfterViewInit,
+  type AfterViewInit,
   ApplicationRef,
   ChangeDetectorRef,
   Component,
@@ -8,28 +9,28 @@ import {
   EventEmitter,
   Inject,
   Input,
-  OnDestroy,
+  type OnDestroy,
   Optional,
   Output,
-  TemplateRef,
+  type TemplateRef,
 } from '@angular/core';
 import {
-  AutocompleterEditor,
-  BackendService,
-  BackendServiceApi,
-  BackendServiceOption,
-  BasePaginationComponent,
-  Column,
-  DataViewOption,
-  EventSubscription,
-  ExternalResource,
+  type AutocompleterEditor,
+  type BackendService,
+  type BackendServiceApi,
+  type BackendServiceOption,
+  type BasePaginationComponent,
+  type Column,
+  type DataViewOption,
+  type EventSubscription,
+  type ExternalResource,
   isColumnDateType,
-  Locale,
-  Metrics,
-  Pagination,
-  PaginationMetadata,
-  RxJsFacade,
-  SelectEditor,
+  type Locale,
+  type Metrics,
+  type Pagination,
+  type PaginationMetadata,
+  type RxJsFacade,
+  type SelectEditor,
   SlickDataView,
   SlickEventHandler,
   SlickGrid,
@@ -68,6 +69,7 @@ import { SlickFooterComponent } from '@slickgrid-universal/custom-footer-compone
 import { SlickPaginationComponent } from '@slickgrid-universal/pagination-component';
 import { RxJsResource } from '@slickgrid-universal/rxjs-observable';
 import { extend } from '@slickgrid-universal/utils';
+// oxlint-disable-next-line consistent-type-imports
 import { TranslateService } from '@ngx-translate/core';
 import { dequal } from 'dequal/lite';
 import { Observable } from 'rxjs';
@@ -80,6 +82,7 @@ import { TranslaterService } from '../services/translater.service';
 // Services
 import { AngularUtilService } from '../services/angularUtil.service';
 import { SlickRowDetailView } from '../extensions/slickRowDetailView';
+// oxlint-disable-next-line consistent-type-imports
 import { ContainerService } from '../services/container.service';
 
 const WARN_NO_PREPARSE_DATE_SIZE = 10000; // data size to warn user when pre-parse isn't enabled

@@ -26,7 +26,7 @@ import {
   SlickRange,
   Utils,
 } from './slickCore.js';
-import { Draggable, MouseWheel, Resizable } from './slickInteractions.js';
+import { Draggable, MouseWheel, Resizable } from './slickInteractions';
 import type { SelectionModel } from '../enums/index.js';
 import type {
   CellPosition,
@@ -2333,6 +2333,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             const d = Math.min(maxPageX, Math.max(minPageX, targetPageX)) - pageX;
             let x;
             let newCanvasWidthL = 0;
+            // oxlint-disable-next-line no-unused-vars
             let newCanvasWidthR = 0;
             const viewportWidth = this.getViewportInnerWidth();
 
@@ -4579,7 +4580,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           (this._options.showHeaderRow ? this._options.headerRowHeight! : 0) +
           (this._options.showPreHeaderPanel ? this._options.preHeaderPanelHeight! : 0);
       }
-      Utils.setStyleSize(this._paneTopL, 'top', topHeightOffset || topHeightOffset);
+      Utils.setStyleSize(this._paneTopL, 'top', topHeightOffset);
       Utils.height(this._paneTopL, this.paneTopH);
 
       const paneBottomTop = this._paneTopL.offsetTop + this.paneTopH;
@@ -4871,7 +4872,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       return;
     }
 
-    let totalCellsRemoved = 0;
     const cacheEntry = this.rowsCache[row];
 
     // Remove cells outside the range.
@@ -4925,8 +4925,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (this.postProcessedRows[row]) {
         delete this.postProcessedRows[row][cellToRemove];
       }
-      // eslint-disable-next-line
-      totalCellsRemoved++;
     }
   }
 
@@ -4935,7 +4933,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const divRow: HTMLElement = document.createElement('div');
     const processedRows: number[] = [];
     let cellsAdded: number;
-    let totalCellsAdded = 0;
     let colspan: number | string;
     let columnData: ColumnMetadata | null;
     const columnCount = this.columns.length;
@@ -5000,8 +4997,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         }
 
         if (cellsAdded) {
-          // eslint-disable-next-line
-          totalCellsAdded += cellsAdded;
           processedRows.push(row);
         }
       }
@@ -7120,7 +7115,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           return this.rowsCache[row].cellNodesByColumnIdx[cell] as HTMLDivElement | null;
         }
         return null;
-      } /* v8 ignore next */ catch (e: any) {
+      } /* v8 ignore next */ catch (_e: any) {
         return this.rowsCache[row].cellNodesByColumnIdx[cell] as HTMLDivElement | null;
       }
     }

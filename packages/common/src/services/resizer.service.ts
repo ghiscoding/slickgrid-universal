@@ -171,7 +171,7 @@ export class ResizerService {
   bindAutoResizeDataGrid(newSizes?: GridSize): null | void {
     this.saveLastWindowSize();
     if (this.gridOptions.autoResize?.resizeDetection === 'container') {
-      if (!this._pageContainerElm || !this._pageContainerElm) {
+      if (!this._pageContainerElm) {
         throw new Error(`
           [Slickgrid-Universal] Resizer Service requires a container when gridOption.autoResize.resizeDetection="container"
           You can fix this by setting your gridOption.autoResize.container`);

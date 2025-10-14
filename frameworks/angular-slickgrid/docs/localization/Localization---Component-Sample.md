@@ -9,7 +9,7 @@ For the `Select` Filter, you will use `labelKey` instead of `label`. Anytime a t
 ```typescript
 import { Component, OnInit, Injectable } from '@angular/core';
 import { Column, Editors, Formatter, Formatters, GridExtraService, GridExtraUtils, GridOption, OnEventArgs, ResizerService } from 'angular-slickgrid';
-import { TranslateService } from '@ngx-translate/core';
+import { type TranslateService } from '@ngx-translate/core';
 
 @Component({
   templateUrl: './grid-localization.component.html'

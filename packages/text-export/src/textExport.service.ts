@@ -32,13 +32,13 @@ const DEFAULT_EXPORT_OPTIONS: TextExportOption = {
   useUtf8WithBom: true,
 };
 
-type ExportTextDownloadOption = {
+interface ExportTextDownloadOption {
   filename: string;
   content: string;
   format: FileType | string;
   mimeType: string;
   useUtf8WithBom?: boolean;
-};
+}
 
 export class TextExportService implements ExternalResource, BaseTextExportService {
   protected _delimiter = ',';
@@ -328,12 +328,12 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
       columns.forEach((columnDef) => {
         let headerTitle = '';
         if (
-          (columnDef.nameKey || columnDef.nameKey) &&
+          columnDef.nameKey &&
           this._gridOptions.enableTranslate &&
           this._translaterService?.translate &&
           this._translaterService?.getCurrentLanguage?.()
         ) {
-          headerTitle = this._translaterService.translate(columnDef.nameKey || columnDef.nameKey);
+          headerTitle = this._translaterService.translate(columnDef.nameKey);
         } else {
           headerTitle = getHtmlStringOutput(columnDef.name || '', 'innerHTML') || titleCase(columnDef.field);
         }

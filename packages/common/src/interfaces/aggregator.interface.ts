@@ -18,6 +18,6 @@ export interface Aggregator {
   storeResult: (groupTotals: any | undefined) => void;
 }
 
-export type AggregatorConstructor = {
+export interface AggregatorConstructor {
   new (field: number | string): Aggregator;
-};
+}

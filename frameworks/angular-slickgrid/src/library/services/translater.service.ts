@@ -1,5 +1,5 @@
 import { Injectable, Optional } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import { type TranslateService } from '@ngx-translate/core';
 import type { TranslaterService as UniversalTranslateService } from '@slickgrid-universal/common';
 
 /**

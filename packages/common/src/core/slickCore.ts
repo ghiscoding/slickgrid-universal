@@ -14,7 +14,11 @@ export interface BasePubSub {
   publish<ArgType = any>(_eventName: string | any, _data?: ArgType, delay?: number, assignEventCallback?: any): any;
   subscribe<ArgType = any>(_eventName: string | string[] | Function, _callback: (data: ArgType) => void): any;
 }
-type PubSubPublishType<ArgType = any> = { args: ArgType; eventData?: SlickEventData<ArgType>; nativeEvent?: Event };
+interface PubSubPublishType<ArgType = any> {
+  args: ArgType;
+  eventData?: SlickEventData<ArgType>;
+  nativeEvent?: Event;
+}
 
 /**
  * An event object for passing data to event handlers and letting them control propagation.

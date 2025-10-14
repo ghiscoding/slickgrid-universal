@@ -68,10 +68,10 @@ export interface CssStyleHash {
 }
 
 /** Escape hatch geared towards testing Slickgrid in JSDOM based environments to circumvent the lack of stylesheet.ownerNode and clientWidth calculations */
-export type DevModeOption = {
+export interface DevModeOption {
   ownerNodeIndex?: number;
   containerClientWidth?: number;
-};
+}
 
 export type Sanitizer = ((dirtyHtml: string) => string) | ((dirtyHtml: string) => TrustedHTML);
 

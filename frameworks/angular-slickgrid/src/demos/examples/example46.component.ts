@@ -8,7 +8,7 @@ import {
   AngularSlickgridModule,
   type Column,
   Filters,
-  Formatter,
+  type Formatter,
   Formatters,
   type GridOption,
 } from '../../library';
