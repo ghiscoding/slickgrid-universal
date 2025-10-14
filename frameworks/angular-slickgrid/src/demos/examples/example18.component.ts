@@ -1,5 +1,5 @@
 import { NgFor } from '@angular/common';
-import { type AfterViewInit, type ChangeDetectorRef, Component, type OnDestroy, type OnInit } from '@angular/core';
+import { type AfterViewInit, ChangeDetectorRef, Component, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';

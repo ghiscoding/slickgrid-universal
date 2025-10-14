@@ -1,7 +1,7 @@
-import { type HttpClient } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { LOCATION_INITIALIZED } from '@angular/common';
 import { type Injector } from '@angular/core';
-import { type TranslateService } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 // AoT requires an exported function for factories

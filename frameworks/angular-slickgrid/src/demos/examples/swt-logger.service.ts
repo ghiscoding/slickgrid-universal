@@ -4,7 +4,7 @@
  *
  * @author Saber Chebka, saber.chebka@gmail.com
  */
-import { type HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 export class Logger {
   private _clientLogLevel: LoggerLevel = LoggerLevel.INFO;

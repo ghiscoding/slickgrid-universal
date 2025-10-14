@@ -1,5 +1,5 @@
 import { NgIf } from '@angular/common';
-import { type ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { type AngularGridInstance, AngularSlickgridModule, type Column, type GridOption, toCamelCase } from '../../library';

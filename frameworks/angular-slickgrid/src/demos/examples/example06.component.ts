@@ -1,8 +1,8 @@
 import { NgIf, DatePipe } from '@angular/common';
-import { type ChangeDetectorRef, Component, type OnInit, type OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, type OnInit, type OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { addDay, format as tempoFormat } from '@formkit/tempo';
-import { type TranslateService } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import {
   GraphqlService,
   type GraphqlPaginatedResult,

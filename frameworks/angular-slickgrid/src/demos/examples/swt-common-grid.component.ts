@@ -1,17 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
 /* eslint-disable @angular-eslint/no-output-on-prefix */
-import {
-  type AfterViewInit,
-  Component,
-  type ElementRef,
-  EventEmitter,
-  Input,
-  type OnInit,
-  Output,
-  ViewChild,
-  type Renderer2,
-} from '@angular/core';
-import { type HttpClient } from '@angular/common/http';
+import { type AfterViewInit, Component, ElementRef, EventEmitter, Input, type OnInit, Output, ViewChild, Renderer2 } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import {
   type AngularGridInstance,
   type AngularSlickgridComponent,
@@ -25,7 +15,7 @@ import {
   type Pagination,
   type SlickDataView,
 } from '../../library';
-import { type TranslateService } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { Logger } from './swt-logger.service';
 import { type SwtCommonGridPaginationComponent } from './swt-common-grid-pagination.component';
 

@@ -21,7 +21,7 @@
         "typescript/ban-ts-comment": "off",
         "typescript/consistent-type-definitions": "error",
         "typescript/consistent-type-exports": "error",
-        "typescript/consistent-type-imports": "error",
+        "typescript/consistent-type-imports": "off",
         "typescript/member-ordering": "error",
         "typescript/no-unused-vars": [
           "error",

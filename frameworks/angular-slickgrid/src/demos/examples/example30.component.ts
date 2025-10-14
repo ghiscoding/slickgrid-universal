@@ -1,5 +1,5 @@
 import { Component, type OnDestroy, type OnInit, ViewEncapsulation } from '@angular/core';
-import { type HttpClient } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { SlickCompositeEditor, SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';

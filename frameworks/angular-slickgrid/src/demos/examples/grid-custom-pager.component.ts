@@ -1,4 +1,4 @@
-import { Component, type ElementRef } from '@angular/core';
+import { Component, ElementRef } from '@angular/core';
 import type {
   BasePaginationComponent,
   PaginationMetadata,

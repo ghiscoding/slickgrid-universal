@@ -1,5 +1,5 @@
 import { Component, type OnInit, ViewEncapsulation } from '@angular/core';
-import { type HttpClient } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { GraphqlService, type GraphqlResult, type GraphqlServiceApi } from '@slickgrid-universal/graphql';
 import {
   type AngularGridInstance,

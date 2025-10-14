@@ -1,4 +1,4 @@
-import { type ApplicationRef, type ChangeDetectorRef, Component, type ElementRef } from '@angular/core';
+import { type ApplicationRef, ChangeDetectorRef, Component, ElementRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {

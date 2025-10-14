@@ -1,6 +1,6 @@
 import { NgIf, DatePipe } from '@angular/common';
-import { type HttpClient } from '@angular/common/http';
-import { type ChangeDetectorRef, Component, type OnInit, ViewEncapsulation } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { ChangeDetectorRef, Component, type OnInit, ViewEncapsulation } from '@angular/core';
 import { GridOdataService, type OdataServiceApi } from '@slickgrid-universal/odata';
 import {
   Aggregators,

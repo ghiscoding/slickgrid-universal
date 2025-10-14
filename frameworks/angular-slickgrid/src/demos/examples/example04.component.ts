@@ -1,7 +1,7 @@
 import { NgIf, DatePipe } from '@angular/common';
-import { type HttpClient } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Component, type OnInit } from '@angular/core';
-import { type TranslateService } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
   type AngularGridInstance,

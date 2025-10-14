@@ -1,5 +1,5 @@
 import { type AfterViewInit, Component, type OnInit, ViewChild } from '@angular/core';
-import { type HttpClient } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 
 import { SwtCommonGridComponent } from './swt-common-grid.component';
 import { SwtCommonGridPaginationComponent } from './swt-common-grid-pagination.component';

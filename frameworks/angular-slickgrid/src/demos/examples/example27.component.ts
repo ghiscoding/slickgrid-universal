@@ -1,4 +1,4 @@
-import { type ChangeDetectorRef, Component, type OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, type OnInit, ViewEncapsulation } from '@angular/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
   type AngularGridInstance,

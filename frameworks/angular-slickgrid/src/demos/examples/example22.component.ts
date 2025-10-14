@@ -1,4 +1,4 @@
-import { type HttpClient } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Component, type OnInit } from '@angular/core';
 import { type AngularGridInstance, AngularSlickgridModule, type Column, type GridOption, Filters } from '../../library';
 import { TabsetComponent, TabDirective } from 'ngx-bootstrap/tabs';

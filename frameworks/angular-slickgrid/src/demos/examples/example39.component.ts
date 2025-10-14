@@ -1,8 +1,8 @@
 import { NgIf, DatePipe } from '@angular/common';
-import { type HttpClient } from '@angular/common/http';
-import { type ChangeDetectorRef, Component, type OnDestroy, type OnInit, ViewEncapsulation } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { ChangeDetectorRef, Component, type OnDestroy, type OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { type TranslateService } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { GraphqlService, type GraphqlPaginatedResult, type GraphqlServiceApi } from '@slickgrid-universal/graphql';
 import { type Subscription } from 'rxjs';
 
