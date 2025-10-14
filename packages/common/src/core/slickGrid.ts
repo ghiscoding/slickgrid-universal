@@ -5567,7 +5567,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /**
    * Removes an "overlay" of CSS classes from cell DOM elements matching predicated entries.
-   * @param {String} key A string key.
+   * Useful when you have multiple keys and want to remove them based on a certain criteria.
+   * @param {Function} predicate A callback function that receives the key and hash as arguments and should return true if the entry should be removed.
+   * @example
+   * grid.removeCellCssStylesBatch((key, hash) => key.startsWith('unsaved-changes') && hash[0].includes('highlight'));
    */
   removeCellCssStylesBatch(predicate: (key: string, hash: CssStyleHash) => boolean): void {
     Object.entries(this.cellCssClasses).forEach(([k, v]) => predicate(k, v) && this.removeCellCssStyles(k));
