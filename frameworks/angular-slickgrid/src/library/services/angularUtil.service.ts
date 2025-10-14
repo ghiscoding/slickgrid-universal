@@ -1,4 +1,5 @@
-import { Injectable, type ViewContainerRef } from '@angular/core';
+// oxlint-disable-next-line consistent-type-imports
+import { Injectable, ViewContainerRef } from '@angular/core';
 import type { EmbeddedViewRef, EnvironmentInjector, Injector, NgModuleRef, Type } from '@angular/core';
 
 import type { AngularComponentOutput } from '../models/angularComponentOutput.interface';
