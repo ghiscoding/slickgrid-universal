@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import {
-  type GridOption,
-  type SlickgridVueInstance,
+  Aggregators,
   type Column,
+  type GridOption,
   Editors,
   ExtensionName,
   Filters,
   Formatters,
-  SlickgridVue,
-  Aggregators,
-  Grouping,
+  type Grouping,
   GroupTotalFormatters,
+  SlickgridVue,
+  type SlickgridVueInstance,
   SortComparers,
   SortDirectionNumber,
 } from 'slickgrid-vue';

@@ -57,7 +57,7 @@ import {
   nextTick,
   onBeforeUnmount,
   onMounted,
-  Ref,
+  type Ref,
   ref,
   useAttrs,
   watch,
@@ -213,7 +213,7 @@ watch(
   (newDataset: any[]) => {
     const prevDatasetLn = currentDatasetLength;
     const isDatasetEqual = dequal(newDataset, dataModel.value || []);
-    let data = !!_gridOptions.value?.enableDeepCopyDatasetOnPageLoad ? deepCopy(newDataset) : newDataset;
+    let data = _gridOptions.value?.enableDeepCopyDatasetOnPageLoad ? deepCopy(newDataset) : newDataset;
 
     // when Tree Data is enabled and we don't yet have the hierarchical dataset filled, we can force a convert+sort of the array
     if (
@@ -537,7 +537,8 @@ function initialization() {
       }
     }
 
-    if (dataModel.value?.length || 0 > 0) {
+    const datasetLn = dataModel.value?.length || 0;
+    if (datasetLn > 0) {
       if (!isDatasetInitialized && (_gridOptions.value.enableCheckboxSelector || _gridOptions.value.enableRowSelection)) {
         loadRowSelectionPresetWhenExists();
       }

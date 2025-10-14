@@ -2,7 +2,7 @@
 import { convertPosition } from './common';
 
 declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
+  // oxlint-disable-next-line @typescript-eslint/no-namespace
   namespace Cypress {
     interface Chainable {
       // triggerHover: (elements: NodeListOf<HTMLElement>) => void;

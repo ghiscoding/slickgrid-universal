@@ -1,20 +1,20 @@
-import { ApplicationRef, Component } from '@angular/core';
+import { type ApplicationRef, Component } from '@angular/core';
 import {
-  Column,
-  OnSelectedRowsChangedEventArgs,
+  type Column,
+  type OnSelectedRowsChangedEventArgs,
   SlickEvent,
   SlickEventData,
   SlickEventHandler,
-  SlickGrid,
+  type SlickGrid,
   SlickRowSelectionModel,
 } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { of } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { GridOption } from '../../models/gridOption.interface.js';
-import { AngularUtilService } from '../../services/index.js';
-import { RowDetailView } from '../../models/rowDetailView.interface.js';
+import { type GridOption } from '../../models/gridOption.interface.js';
+import { type AngularUtilService } from '../../services/index.js';
+import { type RowDetailView } from '../../models/rowDetailView.interface.js';
 import { RxJsResourceStub } from '../../../../test/rxjsResourceStub.js';
 import { SlickRowDetailView } from '../slickRowDetailView.js';
 

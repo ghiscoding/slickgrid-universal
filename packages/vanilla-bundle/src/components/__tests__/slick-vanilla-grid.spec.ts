@@ -465,6 +465,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
   });
 
   // TODO: revisit later, this is conflicting with Grid State & Presets
+  // oxlint-disable-next-line no-disabled-tests
   it.skip('should update column definitions when onPluginColumnsChanged event is triggered with updated columns', () => {
     const columnsMock = [
       { id: 'firstName', field: 'firstName', editor: undefined, editorClass: {} },

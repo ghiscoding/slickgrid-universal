@@ -3,7 +3,7 @@ import { useTranslation } from 'i18next-vue';
 import { provide } from 'vue';
 
 import VueLogo from './assets/vue.svg?url';
-import { routes } from './router';
+import { routes } from './router/index.js';
 
 provide('i18next', useTranslation().i18next);
 </script>

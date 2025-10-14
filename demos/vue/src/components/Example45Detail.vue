@@ -1,8 +1,15 @@
 <script setup lang="ts">
-import { type Column, type GridOption, GridState, type RowDetailViewProps, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
+import {
+  type Column,
+  type GridOption,
+  type GridState,
+  type RowDetailViewProps,
+  SlickgridVue,
+  type SlickgridVueInstance,
+} from 'slickgrid-vue';
 import { onBeforeMount, onBeforeUnmount, onMounted, ref, type Ref } from 'vue';
 
-import Example45 from './Example45.vue';
+import type Example45 from './Example45.vue';
 
 export interface Distributor {
   id: number;

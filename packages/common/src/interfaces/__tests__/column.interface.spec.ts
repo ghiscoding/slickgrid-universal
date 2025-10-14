@@ -11,7 +11,7 @@ describe('the Join type', () => {
   it('should concatenate strings with a separator', () => {
     const sut = 'a.b.c';
     type TypeToTest = Join<['a', 'b', 'c'], '.'>;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // oxlint-disable-next-line @typescript-eslint/no-unused-vars
     const value = typeCheckValue<TypeToTest>(sut);
 
     type Check = Equal<typeof value, typeof sut>;
@@ -24,7 +24,7 @@ describe('the Join type', () => {
   it('should concatenate mixed types with a separator', () => {
     const sut = 'hello.10.true';
     type TypeToTest = Join<['hello', 10, true], '.'>;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // oxlint-disable-next-line @typescript-eslint/no-unused-vars
     const value = typeCheckValue<TypeToTest>(sut);
 
     type Check = Equal<typeof value, typeof sut>;
@@ -37,7 +37,7 @@ describe('the Join type', () => {
   it('should construct a string path from flat strings', () => {
     const sut = 'a';
     type TypeToTest = Join<PathsToStringProps<{ a: string; b: number; c: boolean }>, '.'>;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // oxlint-disable-next-line @typescript-eslint/no-unused-vars
     const value = typeCheckValue<TypeToTest>(sut);
 
     type Check = Equal<typeof value, TypeToTest>;
@@ -55,7 +55,7 @@ describe('the Join type', () => {
     // can't assign top level property if its an object
     // @ts-expect-error
     typeCheckValue<TypeToTest>(sut_failed);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // oxlint-disable-next-line @typescript-eslint/no-unused-vars
     const value = typeCheckValue<TypeToTest>(sut_success);
 
     type Check = Equal<typeof value, TypeToTest>;

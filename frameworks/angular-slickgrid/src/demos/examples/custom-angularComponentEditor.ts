@@ -156,8 +156,8 @@ export class CustomAngularComponentEditor implements Editor {
 
   loadValue(item: any) {
     const itemObject = item && item[this.columnDef.field];
-    this.componentRef.instance.selectedId = (itemObject && itemObject.id) || '';
-    this.componentRef.instance.selectedItem = itemObject && itemObject;
+    this.componentRef.instance.selectedId = itemObject?.id ?? '';
+    this.componentRef.instance.selectedItem = itemObject;
   }
 
   serializeValue(): any {

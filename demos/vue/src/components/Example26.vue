@@ -14,7 +14,7 @@ import {
   SlickGlobalEditorLock,
   SlickgridVue,
 } from 'slickgrid-vue';
-import { ComponentPublicInstance, createApp, onBeforeMount, ref, type Ref } from 'vue';
+import { type ComponentPublicInstance, createApp, onBeforeMount, ref, type Ref } from 'vue';
 
 import { CustomVueComponentEditor } from './custom-viewModelEditor';
 import { CustomVueComponentFilter } from './custom-viewModelFilter';
@@ -313,10 +313,10 @@ const vueComponentFormatter: Formatter = (_row: number, _cell: number, _val: any
   return '';
 };
 
-function setAutoEdit(isAutoEdit: boolean) {
-  isAutoEdit = isAutoEdit;
+function setAutoEdit(autoEdit: boolean) {
+  isAutoEdit.value = autoEdit;
   vueGrid.slickGrid.setOptions({
-    autoEdit: isAutoEdit,
+    autoEdit: autoEdit,
   });
   return true;
 }

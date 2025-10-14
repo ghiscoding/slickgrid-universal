@@ -500,7 +500,7 @@ export class DateFilter implements Filter {
         const hasSkipNullValChanged =
           (skipNullInput && isDefined(this._currentDateOrDates)) || (this._currentDateOrDates === '' && isDefined(this._lastSearchValue));
 
-        if (!skipNullInput || !skipNullInput || hasSkipNullValChanged) {
+        if (!skipNullInput || hasSkipNullValChanged) {
           this.callback(e, {
             columnDef: this.columnDef,
             searchTerms: this._currentValue ? [this._currentValue] : null,

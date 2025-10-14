@@ -1,8 +1,8 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { SwtCommonGridComponent } from './swt-common-grid.component';
+import { Component, Input, type OnInit } from '@angular/core';
+import { type SwtCommonGridComponent } from './swt-common-grid.component';
 import { Logger } from './swt-logger.service';
 import { HttpClient } from '@angular/common/http';
-import { GridOption } from '../../library';
+import { type GridOption } from '../../library';
 import { NgClass } from '@angular/common';
 import { TranslateDirective } from '@ngx-translate/core';
 /**

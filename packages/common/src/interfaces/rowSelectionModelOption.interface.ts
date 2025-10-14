@@ -1,6 +1,6 @@
 import type { SlickCellRangeSelector } from '../extensions/slickCellRangeSelector.js';
 
-export type RowSelectionModelOption = {
+export interface RowSelectionModelOption {
   /** Defaults to True, should we auto-scroll when dragging a row */
   autoScrollWhenDrag?: boolean;
 
@@ -12,4 +12,4 @@ export type RowSelectionModelOption = {
 
   /** defaults to True, do we want to select the active row? */
   selectActiveRow?: boolean;
-};
+}

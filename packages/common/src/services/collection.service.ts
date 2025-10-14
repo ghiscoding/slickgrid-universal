@@ -8,11 +8,11 @@ import type { TranslaterService } from './translater.service.js';
 import type { SlickGrid } from '../core/slickGrid.js';
 import { isColumnDateType } from './utilities.js';
 
-type ParsingDateDetails = {
+interface ParsingDateDetails {
   columnId: number | string;
   dateFormat: string;
   queryFieldName: string;
-};
+}
 
 export class CollectionService<T = any> {
   constructor(protected readonly translaterService?: TranslaterService | undefined) {}

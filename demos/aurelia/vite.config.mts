@@ -1,4 +1,4 @@
-import { defineConfig, PluginOption } from 'vite';
+import { defineConfig, type PluginOption } from 'vite';
 import aurelia from '@aurelia/vite-plugin';
 // import { resolve } from 'path';
 

@@ -1,0 +1,64 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["import", "oxc", "regex", "typescript"],
+  "extends": ["recommended"],
+  "ignorePatterns": [
+    "**/*.spec.ts",
+    "**/*.cy.ts",
+    ".angular/*",
+    "dist/",
+    "coverage/",
+    "test/",
+    "**/environment.*.ts",
+    "**/grid-remote.component.ts",
+    "**/public_api.ts"
+  ],
+  "overrides": [
+    {
+      "files": ["**/*.ts"],
+      "rules": {
+        // typescript-eslint rules are not all implemented yet, see https://github.com/oxc-project/oxc/issues/2180
+        "typescript/ban-ts-comment": "off",
+        "typescript/consistent-type-definitions": "error",
+        "typescript/consistent-type-exports": "error",
+        "typescript/consistent-type-imports": "off",
+        "typescript/member-ordering": "error",
+        "typescript/no-unused-vars": [
+          "error",
+          {
+            "argsIgnorePattern": "^_",
+            "destructuredArrayIgnorePattern": "^_",
+            "caughtErrors": "none"
+          }
+        ],
+        "typescript/no-empty-function": "off",
+        "typescript/no-unused-expressions": "off",
+        "typescript/no-explicit-any": "off",
+        "import/extensions": "off",
+        "no-case-declarations": "off"
+      }
+    },
+    {
+      "files": ["**/*.html"],
+      "rules": {
+        // HTML-specific rules (limited in Oxlint)
+        // You may need additional tooling for HTML-specific linting
+      }
+    }
+  ],
+  "rules": {
+    // Angular-specific selector rules (manual implementation)
+    "naming-convention": [
+      "error",
+      {
+        "selector": "directive",
+        "format": ["camelCase"],
+        "prefix": ["app"]
+      },
+      {
+        "selector": "component",
+        "format": ["kebab-case"]
+      }
+    ]
+  }
+}

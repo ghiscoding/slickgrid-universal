@@ -20,11 +20,11 @@ Cypress.on('window:before:load', function (window) {
   const original = window.EventTarget.prototype.addEventListener;
 
   window.EventTarget.prototype.addEventListener = function () {
-    // eslint-disable-next-line prefer-rest-params
+    // oxlint-disable-next-line prefer-rest-params
     if (arguments?.[0] === 'beforeunload') {
       return;
     }
-    // eslint-disable-next-line prefer-rest-params
+    // oxlint-disable-next-line prefer-rest-params
     return original.apply(this, arguments);
   };
 

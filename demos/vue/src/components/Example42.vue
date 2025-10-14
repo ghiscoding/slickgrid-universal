@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {
-  BasePaginationModel,
+  type BasePaginationModel,
   type Column,
   Filters,
   Formatters,
@@ -11,7 +11,7 @@ import {
   type SlickgridVueInstance,
   type SliderRangeOption,
 } from 'slickgrid-vue';
-import { DefineComponent, onBeforeMount, ref, type Ref } from 'vue';
+import { type DefineComponent, onBeforeMount, ref, type Ref } from 'vue';
 
 import CustomPagerComponent from './CustomPagerComponent.vue';
 

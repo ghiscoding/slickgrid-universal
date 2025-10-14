@@ -4,7 +4,7 @@ import { ChangeDetectorRef, Component, type OnDestroy, type OnInit, ViewEncapsul
 import { FormsModule } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { GraphqlService, type GraphqlPaginatedResult, type GraphqlServiceApi } from '@slickgrid-universal/graphql';
-import { Subscription } from 'rxjs';
+import { type Subscription } from 'rxjs';
 
 import {
   type AngularGridInstance,

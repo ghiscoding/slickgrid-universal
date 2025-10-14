@@ -1,59 +1,59 @@
-import { ApplicationRef, ChangeDetectorRef, Component, ElementRef } from '@angular/core';
+import { type ApplicationRef, ChangeDetectorRef, Component, ElementRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   autoAddEditorFormatterToColumnsWithEditor,
-  BackendService,
-  BackendServiceApi,
-  BackendUtilityService,
+  type BackendService,
+  type BackendServiceApi,
+  type BackendUtilityService,
   type BasePaginationComponent,
-  CollectionService,
-  Column,
-  ColumnFilters,
-  CurrentFilter,
-  CurrentPagination,
-  CurrentPinning,
-  CurrentSorter,
-  Editor,
+  type CollectionService,
+  type Column,
+  type ColumnFilters,
+  type CurrentFilter,
+  type CurrentPagination,
+  type CurrentPinning,
+  type CurrentSorter,
+  type Editor,
   Editors,
-  ExtensionList,
-  ExtensionService,
-  ExtensionUtility,
+  type ExtensionList,
+  type ExtensionService,
+  type ExtensionUtility,
   Filters,
-  FilterService,
-  Formatter,
-  GridEventService,
-  GridService,
-  GridState,
-  GridStateService,
-  HeaderGroupingService,
-  OnRowCountChangedEventArgs,
-  OnRowsChangedEventArgs,
-  OnSetItemsCalledEventArgs,
-  Pagination,
-  PaginationMetadata,
-  PaginationService,
-  ResizerService,
+  type FilterService,
+  type Formatter,
+  type GridEventService,
+  type GridService,
+  type GridState,
+  type GridStateService,
+  type HeaderGroupingService,
+  type OnRowCountChangedEventArgs,
+  type OnRowsChangedEventArgs,
+  type OnSetItemsCalledEventArgs,
+  type Pagination,
+  type PaginationMetadata,
+  type PaginationService,
+  type ResizerService,
   SharedService,
   SlickDataView,
-  SlickEventHandler,
-  SlickGrid,
+  type SlickEventHandler,
+  type SlickGrid,
   SlickGroupItemMetadataProvider,
-  SortService,
-  TreeDataService,
+  type SortService,
+  type TreeDataService,
 } from '@slickgrid-universal/common';
-import { SlickFooterComponent } from '@slickgrid-universal/custom-footer-component';
+import { type SlickFooterComponent } from '@slickgrid-universal/custom-footer-component';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
-import { GraphqlPaginatedResult, GraphqlService, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
+import type { GraphqlPaginatedResult, GraphqlService, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
 import { of, throwError } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 
 import { AngularSlickgridComponent } from '../angular-slickgrid.component.js';
-import { SlickRowDetailView } from '../../extensions/slickRowDetailView.js';
+import { type SlickRowDetailView } from '../../extensions/slickRowDetailView.js';
 import { TranslaterServiceStub } from '../../../../test/translaterServiceStub.js';
-import { AngularUtilService, ContainerService, TranslaterService } from '../../services/index.js';
-import { GridOption } from '../../models/index.js';
+import { type AngularUtilService, ContainerService, type TranslaterService } from '../../services/index.js';
+import { type GridOption } from '../../models/index.js';
 import { MockSlickEvent, MockSlickEventHandler } from '../../../../test/mockSlickEvent.js';
 import { RxJsResourceStub } from '../../../../test/rxjsResourceStub.js';
 

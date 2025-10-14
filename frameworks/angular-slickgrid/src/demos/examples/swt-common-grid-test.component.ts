@@ -1,9 +1,9 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { type AfterViewInit, Component, type OnInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { SwtCommonGridComponent } from './swt-common-grid.component';
 import { SwtCommonGridPaginationComponent } from './swt-common-grid-pagination.component';
-import { FilterChangedArgs, PaginationChangedArgs } from '../../library';
+import type { FilterChangedArgs, PaginationChangedArgs } from '../../library';
 
 import { Logger } from './swt-logger.service';
 /**

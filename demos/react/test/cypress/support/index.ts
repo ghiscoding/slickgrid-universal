@@ -1,3 +1,4 @@
+// oxlint-disable extensions
 /* eslint-disable n/file-extension-in-import */
 // ***********************************************************
 // This example support/index.js is processed and

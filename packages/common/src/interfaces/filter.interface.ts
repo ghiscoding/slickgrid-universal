@@ -47,6 +47,6 @@ export interface Filter {
   setValues: (values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString, triggerChange?: boolean) => void;
 }
 
-export type FilterConstructor = {
+export interface FilterConstructor {
   new (translaterService?: TranslaterService, collectionService?: CollectionService, rxjs?: RxJsFacade): Filter;
-};
+}

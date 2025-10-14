@@ -43,10 +43,10 @@ type ApplyChangesCallbackFn = (
   applyToDataview?: boolean
 ) => any[] | void | undefined;
 
-type DataSelection = {
+interface DataSelection {
   gridRowIndexes: number[];
   dataContextIds: Array<number | string>;
-};
+}
 
 export class SlickCompositeEditorComponent implements ExternalResource {
   protected _bindEventService: BindingEventService;

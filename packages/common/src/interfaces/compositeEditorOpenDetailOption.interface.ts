@@ -2,7 +2,7 @@ import type { CompositeEditorModalType } from '../enums/compositeEditorModalType
 import type { CompositeEditorLabel } from './compositeEditorLabel.interface.js';
 import type { GridServiceInsertOption } from './gridServiceInsertOption.interface.js';
 
-export type OnErrorOption = {
+export interface OnErrorOption {
   /** Error code (typically an uppercase error code key like: "NO_RECORD_FOUND") */
   code?: string;
 
@@ -11,7 +11,7 @@ export type OnErrorOption = {
 
   /** Error Type (info, error, warning) */
   type: 'error' | 'info' | 'warning';
-};
+}
 
 export interface CompositeEditorSelection {
   gridRowIndexes: number[];

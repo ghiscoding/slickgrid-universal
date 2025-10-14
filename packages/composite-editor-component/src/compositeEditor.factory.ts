@@ -91,7 +91,7 @@ export function SlickCompositeEditor(
 
   /* Editor prototype that will get instantiated dynamically by looping through each Editors */
   function editor(this: CompositeEditor, args: EditorArguments) {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    // oxlint-disable-next-line @typescript-eslint/no-this-alias
     const context: CompositeEditor = this;
     let editors: Array<Editor & { args: EditorArguments }> = [];
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SlickGrid } from 'slickgrid-vue';
+import { type SlickGrid } from 'slickgrid-vue';
 import { ref } from 'vue';
 
 const props = defineProps<{

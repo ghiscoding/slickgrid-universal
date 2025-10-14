@@ -122,9 +122,9 @@ export interface Editor {
   validate: (targetElm?: HTMLElement, options?: any) => EditorValidationResult;
 }
 
-export type EditorConstructor = {
+export interface EditorConstructor {
   new (args: EditorArguments): Editor;
 
   /** Static flag used in makeActiveCellEditable. */
   suppressClearOnEdit?: boolean;
-};
+}

@@ -1,4 +1,4 @@
-export type MetricTexts = {
+export interface MetricTexts {
   /** Defaults to empty string, optionally pass a text (Last Update) to display before the metrics endTime timestamp. */
   lastUpdate?: string;
 
@@ -26,4 +26,4 @@ export type MetricTexts = {
 
   /** Defaults to "ITEMS_SELECTED", text word that is associated to the row selection count. */
   itemsSelectedKey?: string;
-};
+}

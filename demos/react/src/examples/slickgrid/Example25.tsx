@@ -224,13 +224,12 @@ const Example25: React.FC = () => {
 
   /** Calling the GraphQL backend API to get the Countries with the Query created by the "process" method of GraphqlService  */
   function getCountries(query: string): Promise<GraphqlResult<Country>> {
-    return new Promise(async (resolve) => {
-      const response = await fetch(COUNTRIES_API, {
+    return new Promise((resolve) => {
+      fetch(COUNTRIES_API, {
         method: 'post',
         body: JSON.stringify({ query }),
         headers: { 'Content-type': 'application/json; charset=UTF-8' },
-      });
-      resolve(response.json());
+      }).then((response) => resolve(response.json()));
     });
   }
 
@@ -241,13 +240,12 @@ const Example25: React.FC = () => {
    */
   function getContinents(): Promise<GraphqlResult<{ code: string; name: string }>> {
     const continentQuery = `query { continents { code, name  }}`;
-    return new Promise(async (resolve) => {
-      const response = await fetch(COUNTRIES_API, {
+    return new Promise((resolve) => {
+      fetch(COUNTRIES_API, {
         method: 'post',
         body: JSON.stringify({ query: continentQuery }),
         headers: { 'Content-type': 'application/json; charset=UTF-8' },
-      });
-      resolve(response.json());
+      }).then((response) => resolve(response.json()));
     });
   }
 
@@ -258,13 +256,12 @@ const Example25: React.FC = () => {
    */
   function getLanguages(): Promise<GraphqlResult<{ code: string; name: string; native: string }>> {
     const languageQuery = `query { languages { code, name, native  }}`;
-    return new Promise(async (resolve) => {
-      const response = await fetch(COUNTRIES_API, {
+    return new Promise((resolve) => {
+      fetch(COUNTRIES_API, {
         method: 'post',
         body: JSON.stringify({ query: languageQuery }),
         headers: { 'Content-type': 'application/json; charset=UTF-8' },
-      });
-      resolve(response.json());
+      }).then((response) => resolve(response.json()));
     });
   }
 
