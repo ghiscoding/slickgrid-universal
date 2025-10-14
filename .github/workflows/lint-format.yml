@@ -50,7 +50,7 @@ jobs:
       - name: Run pnpm install dependencies
         run: pnpm install
 
-      - name: ESLint
+      - name: OXLint
         run: pnpm lint
 
       - name: Prettier
