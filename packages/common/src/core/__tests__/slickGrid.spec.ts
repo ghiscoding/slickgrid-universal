@@ -5411,6 +5411,42 @@ describe('SlickGrid core file', () => {
       expect(secondItemAgeCell.textContent).toBe('20');
       expect(secondItemAgeCell.classList.contains('highlight')).toBeFalsy();
     });
+
+    it('should removeCellCssStyles of all matching keys by predicate', () => {
+      grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true });
+      const onCellStyleSpy = vi.spyOn(grid.onCellCssStylesChanged, 'notify');
+
+      // 1. add CSS Cell Style
+      grid.addCellCssStyles('age_greater30_highlight', hash);
+      const toBeDeletedHash = { age: 'to-be-deleted-highlight' };
+      grid.addCellCssStyles('the_deletion_target', { 0: toBeDeletedHash, 1: toBeDeletedHash });
+      grid.addCellCssStyles('also_the_deletion_target', { 0: toBeDeletedHash, 1: toBeDeletedHash });
+      grid.render();
+
+      let firstItemAgeCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
+      let secondItemAgeCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l1.r1') as HTMLDivElement;
+
+      expect(onCellStyleSpy).toHaveBeenNthCalledWith(1, { key: 'age_greater30_highlight', hash, grid }, expect.anything(), grid);
+      expect(firstItemAgeCell.textContent).toBe('44');
+      expect(firstItemAgeCell.classList.contains('highlight')).toBeTruthy();
+      expect(firstItemAgeCell.classList.contains('to-be-deleted-highlight')).toBeTruthy();
+      expect(secondItemAgeCell.textContent).toBe('20');
+      expect(secondItemAgeCell.classList.contains('highlight')).toBeFalsy();
+      expect(secondItemAgeCell.classList.contains('to-be-deleted-highlight')).toBeTruthy();
+
+      // 2. then remove CSS Cell Style
+      grid.removeCellCssStylesBatch((key, _hash) => key.includes('deletion_target'));
+
+      firstItemAgeCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l1.r1') as HTMLDivElement;
+      secondItemAgeCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l1.r1') as HTMLDivElement;
+
+      expect(firstItemAgeCell.textContent).toBe('44');
+      expect(firstItemAgeCell.classList.contains('highlight')).toBeTruthy();
+      expect(firstItemAgeCell.classList.contains('to-be-deleted-highlight')).toBeFalsy();
+      expect(secondItemAgeCell.textContent).toBe('20');
+      expect(secondItemAgeCell.classList.contains('highlight')).toBeFalsy();
+      expect(secondItemAgeCell.classList.contains('to-be-deleted-highlight')).toBeFalsy();
+    });
   });
 
   describe('Slick Cell', () => {
