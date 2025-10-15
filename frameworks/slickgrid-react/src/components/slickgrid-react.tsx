@@ -1,7 +1,5 @@
 import {
-  // utilities
   autoAddEditorFormatterToColumnsWithEditor,
-  // services
   BackendUtilityService,
   collectionObserver,
   CollectionService,
@@ -26,7 +24,6 @@ import {
   SlickGroupItemMetadataProvider,
   SortService,
   TreeDataService,
-  // interfaces/types
   type AutocompleterEditor,
   type BackendService,
   type BackendServiceApi,
