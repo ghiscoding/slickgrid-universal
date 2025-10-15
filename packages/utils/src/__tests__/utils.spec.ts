@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, it, test, vi } from 'vitest';
-
 import {
   addToArrayWhenNotExists,
   addWhiteSpaces,
@@ -12,11 +11,12 @@ import {
   isDefinedNumber,
   isEmptyObject,
   isNumber,
-  isPrimitiveValue,
-  isPrimitiveOrHTML,
   isObject,
   isObjectEmpty,
+  isPrimitiveOrHTML,
+  isPrimitiveValue,
   parseBoolean,
+  queueMicrotaskOrSetTimeout,
   removeAccentFromText,
   setDeepValue,
   titleCase,
@@ -26,7 +26,6 @@ import {
   toSnakeCase,
   uniqueArray,
   uniqueObjectArray,
-  queueMicrotaskOrSetTimeout,
 } from '../utils.js';
 
 function removeExtraSpaces(text: string) {

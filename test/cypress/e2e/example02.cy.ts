@@ -1,5 +1,4 @@
 import { format } from '@formkit/tempo';
-
 // eslint-disable-next-line n/file-extension-in-import
 import { removeExtraSpaces } from '../plugins/utilities';
 

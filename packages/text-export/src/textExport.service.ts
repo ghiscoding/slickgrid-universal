@@ -1,5 +1,5 @@
-import { TextEncoder } from 'text-encoding-utf-8';
 import type {
+  TextExportService as BaseTextExportService,
   Column,
   ContainerService,
   ExternalResource,
@@ -11,19 +11,18 @@ import type {
   SlickDataView,
   SlickGrid,
   TextExportOption,
-  TextExportService as BaseTextExportService,
   TranslaterService,
 } from '@slickgrid-universal/common';
 import {
   Constants,
   DelimiterType,
-
   // utility functions
   exportWithFormatterWhenDefined,
   getTranslationPrefix,
   htmlDecode,
 } from '@slickgrid-universal/common';
 import { addWhiteSpaces, extend, getHtmlStringOutput, stripTags, titleCase } from '@slickgrid-universal/utils';
+import { TextEncoder } from 'text-encoding-utf-8';
 
 const DEFAULT_EXPORT_OPTIONS: TextExportOption = {
   delimiter: DelimiterType.comma,

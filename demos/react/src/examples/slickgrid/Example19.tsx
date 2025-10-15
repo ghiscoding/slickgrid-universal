@@ -1,17 +1,16 @@
 import { type EventPubSubService } from '@slickgrid-universal/event-pub-sub';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
-  type Column,
   Editors,
   ExtensionName,
   Filters,
   Formatters,
-  type GridOption,
   SlickgridReact,
-  type SlickgridReactInstance,
   SlickRowDetailView,
+  type Column,
+  type GridOption,
+  type SlickgridReactInstance,
 } from 'slickgrid-react';
-
 import { ExampleDetailPreload } from './Example-detail-preload.js';
 import Example19DetailView from './Example19-detail-view.js';
 

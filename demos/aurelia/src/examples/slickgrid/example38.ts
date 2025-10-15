@@ -2,17 +2,16 @@ import { IHttpClient } from '@aurelia/fetch-client';
 import { newInstanceOf, resolve } from '@aurelia/kernel';
 import { GridOdataService, type OdataServiceApi } from '@slickgrid-universal/odata';
 import {
-  type AureliaGridInstance,
   Aggregators,
-  type Column,
   Filters,
+  SortComparers,
+  type AureliaGridInstance,
+  type Column,
   type GridOption,
   type Grouping,
   type Metrics,
   type OnRowCountChangedEventArgs,
-  SortComparers,
 } from 'aurelia-slickgrid';
-
 import './example38.scss';
 import SAMPLE_DATA_URL from './data/customers_100.json?url';
 

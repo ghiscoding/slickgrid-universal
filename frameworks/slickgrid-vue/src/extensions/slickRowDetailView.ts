@@ -1,18 +1,17 @@
 import {
   createDomElement,
   emptyElement,
+  SlickEventData,
+  SlickRowSelectionModel,
+  unsubscribeAll,
   type EventSubscription,
   type OnBeforeRowDetailToggleArgs,
   type OnRowBackOrOutOfViewportRangeArgs,
-  SlickEventData,
   type SlickGrid,
-  SlickRowSelectionModel,
-  unsubscribeAll,
 } from '@slickgrid-universal/common';
 import { type EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickRowDetailView as UniversalSlickRowDetailView } from '@slickgrid-universal/row-detail-view-plugin';
-import { type App, type ComponentPublicInstance, createApp } from 'vue';
-
+import { createApp, type App, type ComponentPublicInstance } from 'vue';
 import type { GridOption, RowDetailView, ViewModelBindableInputData } from '../models/index.js';
 
 const ROW_DETAIL_CONTAINER_PREFIX = 'container_';

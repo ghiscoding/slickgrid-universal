@@ -1,7 +1,17 @@
-export * from '@slickgrid-universal/common';
 import type { IContainer } from 'aurelia';
 import { AureliaSlickgridCustomElement } from './custom-elements/aurelia-slickgrid.js';
+import type {
+  AureliaGridInstance,
+  AureliaViewOutput,
+  CreatedView,
+  GridOption,
+  RowDetailView,
+  ViewModelBindableData,
+  ViewModelBindableInputData,
+} from './models/index.js';
 import { SlickgridConfig } from './slickgrid-config.js';
+
+export * from '@slickgrid-universal/common';
 
 export const AureliaSlickGridConfiguration = {
   register(container: IContainer): IContainer {
@@ -20,15 +30,6 @@ export const AureliaSlickGridConfiguration = {
 };
 
 export { AureliaSlickgridCustomElement } from './custom-elements/aurelia-slickgrid.js';
-import type {
-  AureliaGridInstance,
-  AureliaViewOutput,
-  CreatedView,
-  GridOption,
-  RowDetailView,
-  ViewModelBindableData,
-  ViewModelBindableInputData,
-} from './models/index.js';
 
 // re-export only the Aurelia interfaces (models), some of which were overriden from Slickgrid-Universal
 export {

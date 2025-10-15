@@ -1,23 +1,22 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import React, { useEffect, useRef, useState } from 'react';
 import {
-  type Aggregator,
   Aggregators,
-  type Column,
   Editors,
+  Formatters,
+  GroupTotalFormatters,
+  SlickgridReact,
+  type Aggregator,
+  type Column,
   type ExcelCellValueParserArgs,
   type ExcelGroupValueParserArgs,
   type Formatter,
-  Formatters,
   type GridOption,
   type Grouping,
-  GroupTotalFormatters,
   type SlickGrid,
-  type SlickGroupTotals,
-  SlickgridReact,
   type SlickgridReactInstance,
+  type SlickGroupTotals,
 } from 'slickgrid-react';
-import React, { useEffect, useRef, useState } from 'react';
-
 import './example36.scss';
 
 interface GroceryItem {

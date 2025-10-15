@@ -1,5 +1,4 @@
 import { isNumber } from '@slickgrid-universal/utils';
-
 import type { Aggregator } from './../interfaces/aggregator.interface.js';
 import type { GroupTotals } from './../interfaces/grouping.interface.js';
 

@@ -58,7 +58,6 @@ import type {
   SlickRange,
 } from '@slickgrid-universal/common';
 import type { Slot } from 'vue';
-
 import type { SlickgridVueInstance } from '../models/index.js';
 
 export interface SlickgridVueProps {

@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import {
-  type ColumnEditorDualInput,
-  type GridOption,
-  type SlickgridVueInstance,
-  type Column,
   Editors,
   Filters,
   formatNumber,
   Formatters,
   SlickEventHandler,
   SlickgridVue,
+  type Column,
+  type ColumnEditorDualInput,
+  type GridOption,
+  type SlickgridVueInstance,
 } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
 

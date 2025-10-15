@@ -1,8 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
+import { SlickEvent, SlickEventData, type SlickGrid } from '../../core/index.js';
 import type { AutoTooltipOption, Column } from '../../interfaces/index.js';
 import { SlickAutoTooltip } from '../slickAutoTooltip.js';
-import { SlickEvent, SlickEventData, type SlickGrid } from '../../core/index.js';
 
 const addonOptions: AutoTooltipOption = {
   enableForCells: true,

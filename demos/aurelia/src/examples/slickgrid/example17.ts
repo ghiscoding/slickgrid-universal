@@ -1,5 +1,5 @@
-import { type AureliaGridInstance, type Column, type GridOption, toCamelCase } from 'aurelia-slickgrid';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import { toCamelCase, type AureliaGridInstance, type Column, type GridOption } from 'aurelia-slickgrid';
 
 const sampleDataRoot = 'assets/data';
 

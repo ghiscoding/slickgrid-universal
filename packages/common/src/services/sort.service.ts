@@ -1,22 +1,22 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { SlickEventHandler, type SlickDataView, type SlickEventData, type SlickGrid } from '../core/index.js';
+import { FieldType, SortDirection, SortDirectionNumber, type EmitterType, type SortDirectionString } from '../enums/index.js';
 import type {
   Column,
   ColumnSort,
-  GridOption,
   CurrentSorter,
+  DOMMouseOrTouchEvent,
+  GridOption,
   MultiColumnSort,
   SingleColumnSort,
   TreeDataOption,
-  DOMMouseOrTouchEvent,
 } from '../interfaces/index.js';
-import { type EmitterType, FieldType, SortDirection, SortDirectionNumber, type SortDirectionString } from '../enums/index.js';
+import { sortByFieldType } from '../sortComparers/sortUtilities.js';
 import type { BackendUtilityService } from './backendUtility.service.js';
 import type { CollectionService } from './collection.service.js';
-import { getDescendantProperty, flattenToParentChildArray, isColumnDateType } from './utilities.js';
-import { sortByFieldType } from '../sortComparers/sortUtilities.js';
-import type { SharedService } from './shared.service.js';
 import type { RxJsFacade, Subject } from './rxjsFacade.js';
-import { type SlickDataView, type SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index.js';
+import type { SharedService } from './shared.service.js';
+import { flattenToParentChildArray, getDescendantProperty, isColumnDateType } from './utilities.js';
 
 export class SortService {
   protected _currentLocalSorters: CurrentSorter[] = [];

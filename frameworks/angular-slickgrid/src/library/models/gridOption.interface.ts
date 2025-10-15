@@ -1,6 +1,5 @@
 import { TranslateService } from '@ngx-translate/core';
 import type { BasePaginationComponent, Column, GridOption as UniversalGridOption } from '@slickgrid-universal/common';
-
 import type { RowDetailView } from './rowDetailView.interface';
 
 export interface GridOption<C extends Column = Column> extends UniversalGridOption<C> {

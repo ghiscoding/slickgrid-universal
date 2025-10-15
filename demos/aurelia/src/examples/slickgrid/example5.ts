@@ -1,17 +1,16 @@
 import { IHttpClient } from '@aurelia/fetch-client';
 import { newInstanceOf, resolve } from '@aurelia/kernel';
-import { GridOdataService, type OdataServiceApi, type OdataOption } from '@slickgrid-universal/odata';
+import { GridOdataService, type OdataOption, type OdataServiceApi } from '@slickgrid-universal/odata';
 import {
+  Filters,
+  OperatorType,
   type AureliaGridInstance,
   type Column,
-  Filters,
   type GridOption,
   type GridStateChange,
   type Metrics,
-  OperatorType,
   type Pagination,
 } from 'aurelia-slickgrid';
-
 import SAMPLE_DATA_URL from './data/customers_100.json?url';
 
 const defaultPageSize = 20;

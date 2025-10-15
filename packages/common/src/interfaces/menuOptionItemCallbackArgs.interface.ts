@@ -1,5 +1,5 @@
-import type { MenuOptionItem } from './menuOptionItem.interface.js';
 import type { MenuCallbackArgs } from './menuCallbackArgs.interface.js';
+import type { MenuOptionItem } from './menuOptionItem.interface.js';
 
 export interface MenuOptionItemCallbackArgs extends MenuCallbackArgs {
   /** A command identifier to be passed to the onCommand event callback handler (when using "commandItems"). */

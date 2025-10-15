@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { type Column, type GridOption, type SlickEventData, SlickgridReact, type SlickgridReactInstance } from 'slickgrid-react';
+import { SlickgridReact, type Column, type GridOption, type SlickEventData, type SlickgridReactInstance } from 'slickgrid-react';
 import './example7.scss';
 
 const Example7: React.FC = () => {

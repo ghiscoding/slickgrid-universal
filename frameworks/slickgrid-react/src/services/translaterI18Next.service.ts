@@ -1,5 +1,4 @@
 import type { TranslaterService as UniversalTranslateService } from '@slickgrid-universal/common';
-
 import type { I18Next } from '../models/i18next.interface.js';
 
 /**

@@ -1,18 +1,17 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index.js';
+import type { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel.js';
+import type { CellArgs, Column, GridOption, OnEventArgs } from '../../interfaces/index.js';
 import {
-  type FilterService,
   GridService,
+  SharedService,
+  type FilterService,
   type GridStateService,
   type PaginationService,
-  SharedService,
   type SortService,
   type TreeDataService,
 } from '../index.js';
-import type { GridOption, CellArgs, Column, OnEventArgs } from '../../interfaces/index.js';
-import type { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel.js';
-import { type SlickDataView, SlickEvent, type SlickGrid } from '../../core/index.js';
 
 const mockRowSelectionModel = {
   constructor: vi.fn(),

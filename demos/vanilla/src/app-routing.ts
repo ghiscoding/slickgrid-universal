@@ -1,6 +1,3 @@
-import type { RouterConfig } from './interfaces.js';
-
-import Icons from './examples/icons.js';
 import Example01 from './examples/example01.js';
 import Example02 from './examples/example02.js';
 import Example03 from './examples/example03.js';
@@ -37,6 +34,8 @@ import Example33 from './examples/example33.js';
 import Example34 from './examples/example34.js';
 import Example35 from './examples/example35.js';
 import Example36 from './examples/example36.js';
+import Icons from './examples/icons.js';
+import type { RouterConfig } from './interfaces.js';
 
 export class AppRouting {
   constructor(private config: RouterConfig) {

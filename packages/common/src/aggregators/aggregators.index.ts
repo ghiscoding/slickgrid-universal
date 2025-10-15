@@ -1,11 +1,11 @@
+import type { AggregatorConstructor } from '../interfaces/aggregator.interface.js';
 import { AvgAggregator } from './avgAggregator.js';
 import { CloneAggregator } from './cloneAggregator.js';
 import { CountAggregator } from './countAggregator.js';
 import { DistinctAggregator } from './distinctAggregator.js';
-import { MinAggregator } from './minAggregator.js';
 import { MaxAggregator } from './maxAggregator.js';
+import { MinAggregator } from './minAggregator.js';
 import { SumAggregator } from './sumAggregator.js';
-import type { AggregatorConstructor } from '../interfaces/aggregator.interface.js';
 
 /** Provides a list of different Aggregators for the Group Formatter */
 export const Aggregators: Record<string, AggregatorConstructor> = {

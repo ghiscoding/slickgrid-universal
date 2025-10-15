@@ -4,18 +4,18 @@ import type { GraphqlPaginatedResult, GraphqlServiceApi, GraphqlServiceOption } 
 import { GraphqlService } from '@slickgrid-universal/graphql';
 import { useTranslation } from 'i18next-vue';
 import {
-  type Column,
-  type CursorPageInfo,
   Filters,
   Formatters,
+  OperatorType,
+  SlickgridVue,
+  SortDirection,
+  type Column,
+  type CursorPageInfo,
   type GridOption,
   type GridStateChange,
   type Metrics,
   type MultipleSelectOption,
-  OperatorType,
-  SlickgridVue,
   type SlickgridVueInstance,
-  SortDirection,
 } from 'slickgrid-vue';
 import { onBeforeMount, onMounted, onUnmounted, ref, type Ref } from 'vue';
 

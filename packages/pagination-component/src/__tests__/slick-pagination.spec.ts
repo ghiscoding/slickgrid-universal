@@ -1,7 +1,6 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, test, vi } from 'vitest';
 import { type GridOption, type PaginationService, type SlickGrid } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
-
+import { afterEach, beforeAll, beforeEach, describe, expect, it, test, vi } from 'vitest';
 import { TranslateServiceStub } from '../../../../test/translateServiceStub.js';
 import { SlickPaginationComponent } from '../slick-pagination.component.js';
 

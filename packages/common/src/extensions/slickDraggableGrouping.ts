@@ -1,11 +1,11 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
-import { createDomElement, emptyElement, isEmptyObject, classNameToList } from '@slickgrid-universal/utils';
+import { classNameToList, createDomElement, emptyElement, isEmptyObject } from '@slickgrid-universal/utils';
+import type { SortableEvent, Options as SortableOptions } from 'sortablejs';
 import Sortable from 'sortablejs/modular/sortable.core.esm.js';
-import type { Options as SortableOptions, SortableEvent } from 'sortablejs';
-
-import type { ExtensionUtility } from '../extensions/extensionUtility.js';
+import { SlickEvent, SlickEventData, SlickEventHandler, type SlickDataView, type SlickGrid } from '../core/index.js';
 import { SortDirectionNumber } from '../enums/index.js';
+import type { ExtensionUtility } from '../extensions/extensionUtility.js';
 import type {
   Column,
   DOMMouseOrTouchEvent,
@@ -17,7 +17,6 @@ import type {
 } from '../interfaces/index.js';
 import type { SharedService } from '../services/shared.service.js';
 import { sortByFieldType } from '../sortComparers/sortUtilities.js';
-import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index.js';
 
 /**
  *

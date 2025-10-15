@@ -2,16 +2,15 @@ import { IHttpClient, json } from '@aurelia/fetch-client';
 import { newInstanceOf, resolve } from '@aurelia/kernel';
 import { GraphqlService, type GraphqlResult, type GraphqlServiceApi } from '@slickgrid-universal/graphql';
 import {
-  type AureliaGridInstance,
-  type Column,
   Filters,
   Formatters,
+  OperatorType,
+  type AureliaGridInstance,
+  type Column,
   type GridOption,
   type Metrics,
   type MultipleSelectOption,
-  OperatorType,
 } from 'aurelia-slickgrid';
-
 import './example25.scss'; // provide custom CSS/SASS styling
 
 const COUNTRIES_API = 'https://countries.trevorblades.com/';

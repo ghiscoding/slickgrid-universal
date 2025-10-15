@@ -1,4 +1,4 @@
-import { format, addDay } from '@formkit/tempo';
+import { addDay, format } from '@formkit/tempo';
 
 describe('Example 14 - Columns Resize by Content', () => {
   const GRID_ROW_HEIGHT = 33;

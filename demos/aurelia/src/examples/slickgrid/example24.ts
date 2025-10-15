@@ -1,19 +1,18 @@
-import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { I18N } from '@aurelia/i18n';
+import { ExcelExportService } from '@slickgrid-universal/excel-export';
 // import { TOptions as I18NOptions } from 'i18next';
 import { resolve } from 'aurelia';
 import {
+  ExtensionName,
+  Filters,
+  Formatters,
   type AureliaGridInstance,
   type Column,
   type ContextMenu,
-  ExtensionName,
-  Filters,
   type Formatter,
-  Formatters,
   type GridOption,
   type SlickGrid,
 } from 'aurelia-slickgrid';
-
 import './example24.scss'; // provide custom CSS/SASS styling
 
 const actionFormatter: Formatter = (_row, _cell, _value, _columnDef, dataContext) => {

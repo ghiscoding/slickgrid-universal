@@ -1,11 +1,10 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { getHtmlStringOutput } from '@slickgrid-universal/utils';
-
-import { SlickCheckboxSelectColumn } from '../slickCheckboxSelectColumn.js';
-import type { Column, OnSelectedRowsChangedEventArgs } from '../../interfaces/index.js';
-import type { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel.js';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SlickEvent, type SlickGrid } from '../../core/index.js';
+import type { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel.js';
+import type { Column, OnSelectedRowsChangedEventArgs } from '../../interfaces/index.js';
+import { SlickCheckboxSelectColumn } from '../slickCheckboxSelectColumn.js';
 
 vi.useFakeTimers();
 

@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-
-import { CountAggregator } from '../countAggregator.js';
 import type { GroupTotals } from '../../interfaces/grouping.interface.js';
+import { CountAggregator } from '../countAggregator.js';
 
 describe('CountAggregator', () => {
   let aggregator: CountAggregator;

@@ -1,5 +1,4 @@
 import { parseBoolean } from '@slickgrid-universal/utils';
-
 import type { SearchTerm } from '../enums/index.js';
 import type { FilterCondition, FilterConditionOption } from './../interfaces/index.js';
 

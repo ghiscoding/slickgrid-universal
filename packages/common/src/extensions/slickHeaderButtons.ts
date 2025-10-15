@@ -1,6 +1,7 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-
+import { SlickEventHandler, type SlickEventData, type SlickGrid } from '../core/index.js';
+import type { ExtensionUtility } from '../extensions/extensionUtility.js';
 import type {
   Column,
   DOMEvent,
@@ -11,10 +12,8 @@ import type {
   HeaderButtonOption,
   OnHeaderCellRenderedEventArgs,
 } from '../interfaces/index.js';
-import type { ExtensionUtility } from '../extensions/extensionUtility.js';
 import type { SharedService } from '../services/shared.service.js';
-import { type ExtendableItemTypes, type ExtractMenuType, MenuBaseClass, type MenuType } from './menuBaseClass.js';
-import { SlickEventHandler, type SlickEventData, type SlickGrid } from '../core/index.js';
+import { MenuBaseClass, type ExtendableItemTypes, type ExtractMenuType, type MenuType } from './menuBaseClass.js';
 
 /**
  * A plugin to add custom buttons to column headers.

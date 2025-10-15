@@ -1,8 +1,7 @@
 import { describe, expect, it } from 'vitest';
-
 import { SortDirectionNumber } from '../../enums/index.js';
-import { stringSortComparer } from '../stringSortComparer.js';
 import type { Column, GridOption } from '../../interfaces/index.js';
+import { stringSortComparer } from '../stringSortComparer.js';
 
 describe('the String SortComparer', () => {
   it('should return original unsorted array when no direction is provided', () => {

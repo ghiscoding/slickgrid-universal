@@ -1,5 +1,3 @@
-import autocompleter from 'autocompleter';
-import type { AutocompleteItem, AutocompleteSettings } from 'autocompleter';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import {
   classNameToList,
@@ -10,7 +8,17 @@ import {
   toKebabCase,
   toSentenceCase,
 } from '@slickgrid-universal/utils';
-
+import autocompleter from 'autocompleter';
+import type { AutocompleteItem, AutocompleteSettings } from 'autocompleter';
+import {
+  addAutocompleteLoadingByOverridingFetch,
+  filterCollectionWithOptions,
+  getCollectionFromObjectWhenEnabled,
+  sortCollectionWithOptions,
+} from '../commonEditorFilter/commonEditorFilterUtils.js';
+import { Constants } from '../constants.js';
+import { type SlickGrid } from '../core/index.js';
+import { applyHtmlToElement } from '../core/utils.js';
 import { FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
 import type {
   AutocompleterOption,
@@ -26,21 +34,12 @@ import type {
   GridOption,
   Locale,
 } from '../interfaces/index.js';
-import {
-  addAutocompleteLoadingByOverridingFetch,
-  filterCollectionWithOptions,
-  getCollectionFromObjectWhenEnabled,
-  sortCollectionWithOptions,
-} from '../commonEditorFilter/commonEditorFilterUtils.js';
-import { applyHtmlToElement } from '../core/utils.js';
 import type { CollectionService } from '../services/collection.service.js';
 import { collectionObserver, propertyObserver } from '../services/observers.js';
-import { unsubscribeAll } from '../services/utilities.js';
-import type { TranslaterService } from '../services/translater.service.js';
-import { renderCollectionOptionsAsync } from './filterUtilities.js';
 import type { RxJsFacade, Subscription } from '../services/rxjsFacade.js';
-import { Constants } from '../constants.js';
-import { type SlickGrid } from '../core/index.js';
+import type { TranslaterService } from '../services/translater.service.js';
+import { unsubscribeAll } from '../services/utilities.js';
+import { renderCollectionOptionsAsync } from './filterUtilities.js';
 
 export class AutocompleterFilter<T extends AutocompleteItem = any> implements Filter {
   protected _autocompleterOptions!: Partial<AutocompleterOption<T>>;

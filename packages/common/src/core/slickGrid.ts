@@ -12,23 +12,13 @@ import {
   isDefinedNumber,
   isPrimitiveOrHTML,
 } from '@slickgrid-universal/utils';
+import type { SortableEvent, Options as SortableOptions } from 'sortablejs';
 import Sortable from 'sortablejs/modular/sortable.core.esm.js';
-import type { Options as SortableOptions, SortableEvent } from 'sortablejs';
 import type { TrustedHTML } from 'trusted-types/lib';
-
-import {
-  type BasePubSub,
-  preClickClassName,
-  type SlickEditorLock,
-  SlickGlobalEditorLock,
-  SlickEvent,
-  SlickEventData,
-  SlickRange,
-  Utils,
-} from './slickCore.js';
-import { Draggable, MouseWheel, Resizable } from './slickInteractions';
 import type { SelectionModel } from '../enums/index.js';
+import { copyCellToClipboard } from '../formatters/formatterUtilities.js';
 import type {
+  GridOption as BaseGridOption,
   CellPosition,
   CellViewportRange,
   Column,
@@ -44,13 +34,13 @@ import type {
   Editor,
   EditorArguments,
   EditorConstructor,
+  ElementPosition,
   Formatter,
   FormatterResultObject,
   FormatterResultWithHtml,
   FormatterResultWithText,
   InteractionBase,
   ItemMetadata,
-  GridOption as BaseGridOption,
   MultiColumnSort,
   OnActivateChangedOptionsEventArgs,
   OnActiveCellChangedEventArgs,
@@ -71,14 +61,14 @@ import type {
   OnClickEventArgs,
   OnColumnsDragEventArgs,
   OnColumnsReorderedEventArgs,
-  OnColumnsResizedEventArgs,
   OnColumnsResizeDblClickEventArgs,
+  OnColumnsResizedEventArgs,
   OnCompositeEditorChangeEventArgs,
   OnDblClickEventArgs,
-  OnFooterRowCellRenderedEventArgs,
-  OnFooterContextMenuEventArgs,
-  OnHeaderCellRenderedEventArgs,
   OnFooterClickEventArgs,
+  OnFooterContextMenuEventArgs,
+  OnFooterRowCellRenderedEventArgs,
+  OnHeaderCellRenderedEventArgs,
   OnHeaderClickEventArgs,
   OnHeaderContextMenuEventArgs,
   OnHeaderMouseEventArgs,
@@ -94,10 +84,19 @@ import type {
   PagingInfo,
   SingleColumnSort,
   SlickPlugin,
-  ElementPosition,
 } from '../interfaces/index.js';
+import {
+  preClickClassName,
+  SlickEvent,
+  SlickEventData,
+  SlickGlobalEditorLock,
+  SlickRange,
+  Utils,
+  type BasePubSub,
+  type SlickEditorLock,
+} from './slickCore.js';
 import type { SlickDataView } from './slickDataview.js';
-import { copyCellToClipboard } from '../formatters/formatterUtilities.js';
+import { Draggable, MouseWheel, Resizable } from './slickInteractions';
 import { applyHtmlToElement, runOptionalHtmlSanitizer } from './utils.js';
 
 /**

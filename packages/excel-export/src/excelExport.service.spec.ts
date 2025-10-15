@@ -1,24 +1,23 @@
-import { createExcelFileStream, downloadExcelFile, Workbook } from 'excel-builder-vanilla';
-import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
-import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import {
+  FieldType,
+  Formatters,
+  GroupTotalFormatters,
+  SortComparers,
+  SortDirectionNumber,
   type Column,
   type ExcelExportOption,
-  FieldType,
   type Formatter,
-  Formatters,
   type GridOption,
+  type GroupingComparerItem,
+  type GroupingFormatterItem,
   type GroupTotalsFormatter,
-  GroupTotalFormatters,
   type ItemMetadata,
   type SlickDataView,
   type SlickGrid,
-  SortComparers,
-  SortDirectionNumber,
-  type GroupingComparerItem,
-  type GroupingFormatterItem,
 } from '@slickgrid-universal/common';
-
+import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { createExcelFileStream, downloadExcelFile, Workbook } from 'excel-builder-vanilla';
+import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { ContainerServiceStub } from '../../../test/containerServiceStub.js';
 import { TranslateServiceStub } from '../../../test/translateServiceStub.js';
 import { ExcelExportService } from './excelExport.service.js';

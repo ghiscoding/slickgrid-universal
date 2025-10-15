@@ -1,23 +1,22 @@
 import { IHttpClient } from '@aurelia/fetch-client';
-import { newInstanceOf, resolve } from '@aurelia/kernel';
 import { I18N } from '@aurelia/i18n';
+import { newInstanceOf, resolve } from '@aurelia/kernel';
 import {
+  Editors,
+  Filters,
+  Formatters,
+  OperatorType,
+  SlickGlobalEditorLock,
+  SortComparers,
   type AureliaGridInstance,
   type AutocompleterOption,
   type Column,
   type EditCommand,
-  Editors,
   type EditorValidator,
-  Filters,
-  Formatters,
   type GridOption,
   type OnEventArgs,
-  OperatorType,
-  SlickGlobalEditorLock,
-  SortComparers,
   type VanillaCalendarOption,
 } from 'aurelia-slickgrid';
-
 import { CustomInputEditor } from './custom-inputEditor.js';
 import { CustomInputFilter } from './custom-inputFilter.js';
 import SAMPLE_COLLECTION_DATA_URL from './data/collection_100_numbers.json?url';

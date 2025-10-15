@@ -1,6 +1,6 @@
 import type { SlickDataView, SlickGrid } from '../core/index.js';
-import type { Column, CurrentPagination, GridOption } from '../interfaces/index.js';
 import type { SlickGroupItemMetadataProvider } from '../extensions/slickGroupItemMetadataProvider.js';
+import type { Column, CurrentPagination, GridOption } from '../interfaces/index.js';
 
 export class SharedService {
   protected _allColumns!: Column[];

@@ -1,4 +1,4 @@
-import { type AureliaGridInstance, type Column, type GridOption, Editors, type OnCellChangeEventArgs } from 'aurelia-slickgrid';
+import { Editors, type AureliaGridInstance, type Column, type GridOption, type OnCellChangeEventArgs } from 'aurelia-slickgrid';
 
 const NB_ITEMS = 100;
 

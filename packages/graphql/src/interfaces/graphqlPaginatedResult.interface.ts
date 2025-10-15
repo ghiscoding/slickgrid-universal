@@ -1,4 +1,4 @@
-import type { Metrics, CursorPageInfo } from '@slickgrid-universal/common';
+import type { CursorPageInfo, Metrics } from '@slickgrid-universal/common';
 
 export interface GraphqlPaginatedResult {
   data: {

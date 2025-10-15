@@ -2,25 +2,24 @@ import { parse } from '@formkit/tempo';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, emptyElement, extend, queueMicrotaskOrSetTimeout, setDeepValue } from '@slickgrid-universal/utils';
 import { Calendar, type FormatDateString, type Options } from 'vanilla-calendar-pro';
-
-import { Constants } from './../constants.js';
+import { resetDatePicker, setPickerDates } from '../commonEditorFilter/commonEditorFilterUtils.js';
+import { SlickEventData, type SlickGrid } from '../core/index.js';
 import { FieldType } from '../enums/index.js';
+import { formatDateByFieldType, mapTempoDateFormatWithFieldType } from '../services/dateUtils.js';
+import type { TranslaterService } from '../services/translater.service.js';
+import { Constants } from './../constants.js';
 import type {
   Column,
   ColumnEditor,
   CompositeEditorOption,
   Editor,
   EditorArguments,
-  EditorValidator,
   EditorValidationResult,
+  EditorValidator,
   GridOption,
   VanillaCalendarOption,
 } from './../interfaces/index.js';
 import { getDescendantProperty } from './../services/utilities.js';
-import type { TranslaterService } from '../services/translater.service.js';
-import { SlickEventData, type SlickGrid } from '../core/index.js';
-import { resetDatePicker, setPickerDates } from '../commonEditorFilter/commonEditorFilterUtils.js';
-import { formatDateByFieldType, mapTempoDateFormatWithFieldType } from '../services/dateUtils.js';
 
 /*
  * An example of a date picker editor using Vanilla-Calendar-Pro

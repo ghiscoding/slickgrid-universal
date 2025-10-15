@@ -1,4 +1,16 @@
+import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
+import { createDomElement, deepCopy } from '@slickgrid-universal/utils';
+import { type SortableOptions } from 'sortablejs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
+import { Aggregators } from '../../aggregators/aggregators.index.js';
+import { SlickEvent, SlickEventData, type SlickGrid } from '../../core/index.js';
+import { SortDirectionNumber } from '../../enums/index.js';
+import { ExtensionUtility } from '../../extensions/extensionUtility.js';
+import type { Column, DraggableGroupingOption, GridOption } from '../../interfaces/index.js';
+import { BackendUtilityService } from '../../services/backendUtility.service.js';
+import { SharedService } from '../../services/shared.service.js';
+import { SlickDraggableGrouping } from '../slickDraggableGrouping.js';
 
 vi.mock('sortablejs', () => ({
   default: {
@@ -18,20 +30,6 @@ vi.mock('sortablejs', () => ({
     },
   },
 }));
-
-import { type SortableOptions } from 'sortablejs';
-import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
-import { createDomElement, deepCopy } from '@slickgrid-universal/utils';
-
-import { Aggregators } from '../../aggregators/aggregators.index.js';
-import { SlickDraggableGrouping } from '../slickDraggableGrouping.js';
-import { ExtensionUtility } from '../../extensions/extensionUtility.js';
-import type { Column, DraggableGroupingOption, GridOption } from '../../interfaces/index.js';
-import { BackendUtilityService } from '../../services/backendUtility.service.js';
-import { SharedService } from '../../services/shared.service.js';
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
-import { SortDirectionNumber } from '../../enums/index.js';
-import { SlickEvent, SlickEventData, type SlickGrid } from '../../core/index.js';
 
 const GRID_UID = 'slickgrid12345';
 

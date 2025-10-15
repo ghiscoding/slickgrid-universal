@@ -1,21 +1,20 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import {
   Aggregators,
-  type Column,
   createDomElement,
   ExtensionName,
   Filters,
   Formatters,
-  type GridOption,
-  type Grouping,
   GroupTotalFormatters,
   SlickEventHandler,
   SortComparers,
   SortDirectionNumber,
+  type Column,
+  type GridOption,
+  type Grouping,
 } from '@slickgrid-universal/common';
 import { SlickRowDetailView } from '@slickgrid-universal/row-detail-view-plugin';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-
 import { ExampleGridOptions } from './example-grid-options.js';
 import './example36.scss';
 import { showToast } from './utilities.js';

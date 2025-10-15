@@ -1,17 +1,17 @@
 import {
+  emptyElement,
+  OperatorType,
   type Column,
   type ColumnFilter,
-  emptyElement,
   type Filter,
   type FilterArguments,
   type FilterCallback,
   type GridOption,
-  OperatorType,
   type OperatorString,
   type SearchTerm,
   type SlickGrid,
 } from 'slickgrid-vue';
-import { type App, type ComponentPublicInstance, createApp } from 'vue';
+import { createApp, type App, type ComponentPublicInstance } from 'vue';
 
 interface Props {
   focus: () => void;

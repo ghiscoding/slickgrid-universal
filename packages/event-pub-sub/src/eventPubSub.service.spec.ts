@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
 import { EventPubSubService } from './eventPubSub.service.js';
 import { EventNamingStyle } from './types/eventNamingStyle.enum.js';
 

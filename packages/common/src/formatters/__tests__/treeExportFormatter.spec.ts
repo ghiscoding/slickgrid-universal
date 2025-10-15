@@ -1,8 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-
+import type { SlickGrid } from '../../core/slickGrid.js';
 import type { Column, GridOption } from '../../interfaces/index.js';
 import { treeExportFormatter } from '../treeExportFormatter.js';
-import type { SlickGrid } from '../../core/slickGrid.js';
 
 const gridStub = {
   getData: vi.fn(),

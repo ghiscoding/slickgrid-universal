@@ -1,4 +1,5 @@
 import type { TranslaterService, TranslateServiceEventName } from '@slickgrid-universal/common';
+
 export class TranslaterServiceStub implements TranslaterService {
   eventName = 'onLanguageChange' as TranslateServiceEventName;
   private _locale = 'en';

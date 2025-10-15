@@ -1,15 +1,14 @@
 import {
-  type AureliaGridInstance,
-  type Column,
   Editors,
   Formatters,
+  type AureliaGridInstance,
+  type Column,
   type GridOption,
   type GridService,
   type OnEventArgs,
   type SlickDataView,
   type SlickGrid,
 } from 'aurelia-slickgrid';
-
 import './example11.scss';
 
 export class Example11 {

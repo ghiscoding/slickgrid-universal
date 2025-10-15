@@ -1,12 +1,11 @@
-import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
-
+import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
+import { SlickEvent, SlickEventData, SlickRange, type SlickDataView, type SlickGrid } from '../../core/index.js';
+import type { InputEditor } from '../../editors/inputEditor.js';
 import type { SelectionModel } from '../../enums/index.js';
 import type { Column, EditCommand, GridOption, OnEventArgs } from '../../interfaces/index.js';
-import type { SlickCellSelectionModel } from '../slickCellSelectionModel.js';
 import { SlickCellExternalCopyManager } from '../slickCellExternalCopyManager.js';
-import type { InputEditor } from '../../editors/inputEditor.js';
-import { type SlickDataView, SlickEvent, SlickEventData, type SlickGrid, SlickRange } from '../../core/index.js';
-import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import type { SlickCellSelectionModel } from '../slickCellSelectionModel.js';
 
 const pubSubServiceStub = {
   publish: vi.fn(),

@@ -2,7 +2,6 @@ import { BindingEventService } from '@slickgrid-universal/binding';
 import { type Column, type Formatter, type GridOption, type ItemMetadata } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-
 import { ExampleGridOptions } from './example-grid-options.js';
 import './example33.scss';
 

@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-
 import { runOptionalHtmlSanitizer } from '../utils.js';
 
 describe('Sanitizer', () => {

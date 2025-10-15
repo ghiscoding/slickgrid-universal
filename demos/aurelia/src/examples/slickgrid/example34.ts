@@ -2,17 +2,16 @@ import { faker } from '@faker-js/faker';
 import sparkline from '@fnando/sparkline';
 import {
   Aggregators,
-  type AureliaGridInstance,
-  type Column,
   createDomElement,
   deepCopy,
   Filters,
-  type Formatter,
   Formatters,
-  type GridOption,
   GroupTotalFormatters,
+  type AureliaGridInstance,
+  type Column,
+  type Formatter,
+  type GridOption,
 } from 'aurelia-slickgrid';
-
 import './example34.scss';
 
 const NB_ROWS = 200;

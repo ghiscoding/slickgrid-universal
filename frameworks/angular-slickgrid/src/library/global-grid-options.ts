@@ -1,8 +1,8 @@
 import {
-  type Column,
   DelimiterType,
   EventNamingStyle,
   Filters,
+  type Column,
   type GridOption as GridOptionUniversal,
   type TreeDataOption,
 } from '@slickgrid-universal/common';

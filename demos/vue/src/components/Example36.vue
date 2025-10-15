@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
+  Aggregators,
+  Editors,
+  Formatters,
+  GroupTotalFormatters,
+  SlickgridVue,
   type Aggregator,
+  type Column,
   type ExcelCellValueParserArgs,
   type ExcelGroupValueParserArgs,
   type Formatter,
@@ -10,12 +16,6 @@ import {
   type SlickGrid,
   type SlickgridVueInstance,
   type SlickGroupTotals,
-  Aggregators,
-  type Column,
-  Editors,
-  Formatters,
-  GroupTotalFormatters,
-  SlickgridVue,
 } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
 

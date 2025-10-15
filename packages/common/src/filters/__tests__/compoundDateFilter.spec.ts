@@ -1,15 +1,14 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { Calendar } from 'vanilla-calendar-pro';
 import { format } from '@formkit/tempo';
-
-import { Filters } from '../filters.index.js';
-import { FieldType, OperatorType } from '../../enums/index.js';
-import type { Column, FilterArguments, GridOption } from '../../interfaces/index.js';
-import { CompoundDateFilter } from '../compoundDateFilter.js';
+import type { Calendar } from 'vanilla-calendar-pro';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import type { SlickGrid } from '../../core/index.js';
-import { mapTempoDateFormatWithFieldType } from '../../services/dateUtils.js';
 import * as utils from '../../core/utils.js';
+import { FieldType, OperatorType } from '../../enums/index.js';
+import type { Column, FilterArguments, GridOption } from '../../interfaces/index.js';
+import { mapTempoDateFormatWithFieldType } from '../../services/dateUtils.js';
+import { CompoundDateFilter } from '../compoundDateFilter.js';
+import { Filters } from '../filters.index.js';
 
 const containerId = 'demo-container';
 

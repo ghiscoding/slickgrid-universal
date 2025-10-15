@@ -1,13 +1,12 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { format } from '@formkit/tempo';
 import type { Calendar } from 'vanilla-calendar-pro';
-
-import { Editors } from '../index.js';
-import { DateEditor } from '../dateEditor.js';
-import { FieldType } from '../../enums/index.js';
-import type { Column, Editor, EditorArguments, GridOption } from '../../interfaces/index.js';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index.js';
+import { FieldType } from '../../enums/index.js';
+import type { Column, Editor, EditorArguments, GridOption } from '../../interfaces/index.js';
+import { DateEditor } from '../dateEditor.js';
+import { Editors } from '../index.js';
 
 const dataViewStub = {
   refresh: vi.fn(),

@@ -1,18 +1,17 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
-  type AureliaGridInstance,
   Aggregators,
-  type Column,
   Filters,
   Formatters,
+  SortComparers,
+  SortDirectionNumber,
+  type AureliaGridInstance,
+  type Column,
   type GridOption,
   type Grouping,
   type Metrics,
   type OnRowCountChangedEventArgs,
-  SortComparers,
-  SortDirectionNumber,
 } from 'aurelia-slickgrid';
-
 import { randomNumber } from './utilities.js';
 
 const FETCH_SIZE = 50;

@@ -4,6 +4,11 @@ import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { useTranslation } from 'i18next-vue';
 import {
+  Filters,
+  Formatters,
+  OperatorType,
+  SlickgridVue,
+  type Column,
   type CurrentFilter,
   type Formatter,
   type GridOption,
@@ -12,14 +17,8 @@ import {
   type SlickGrid,
   type SlickgridVueInstance,
   type SliderRangeOption,
-  type Column,
-  Filters,
-  Formatters,
-  OperatorType,
-  SlickgridVue,
 } from 'slickgrid-vue';
 import { onBeforeMount, onBeforeUnmount, ref, type Ref } from 'vue';
-
 import { CustomInputFilter } from './custom-inputFilter';
 
 const { i18next } = useTranslation();

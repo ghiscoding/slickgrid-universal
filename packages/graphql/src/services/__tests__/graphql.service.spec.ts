@@ -1,5 +1,7 @@
-import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest';
 import {
+  FieldType,
+  OperatorType,
+  SharedService,
   type BackendService,
   type Column,
   type ColumnFilter,
@@ -7,17 +9,14 @@ import {
   type ColumnSort,
   type CurrentFilter,
   type CurrentSorter,
-  FieldType,
   type FilterChangedArgs,
   type GridOption,
   type MultiColumnSort,
-  OperatorType,
   type Pagination,
-  SharedService,
   type SlickGrid,
   type TranslaterService,
 } from '@slickgrid-universal/common';
-
+import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest';
 import type { GraphqlServiceApi, GraphqlServiceOption } from '../../interfaces/index.js';
 import { GraphqlService } from './../graphql.service.js';
 

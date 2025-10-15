@@ -6,20 +6,20 @@ import {
   type GraphqlServiceApi,
   type GraphqlServiceOption,
 } from '@slickgrid-universal/graphql';
+import { resolve } from 'aurelia';
 import {
+  Filters,
+  Formatters,
+  OperatorType,
+  SortDirection,
   type AureliaGridInstance,
   type Column,
   type CursorPageInfo,
-  Filters,
-  Formatters,
   type GridOption,
   type GridStateChange,
   type Metrics,
   type MultipleSelectOption,
-  OperatorType,
-  SortDirection,
 } from 'aurelia-slickgrid';
-import { resolve } from 'aurelia';
 
 const defaultPageSize = 20;
 const GRAPHQL_QUERY_DATASET_NAME = 'users';

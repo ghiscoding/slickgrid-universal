@@ -1,4 +1,31 @@
 import {
+  // utilities
+  autoAddEditorFormatterToColumnsWithEditor,
+  // services
+  BackendUtilityService,
+  collectionObserver,
+  CollectionService,
+  emptyElement,
+  EventNamingStyle,
+  ExtensionService,
+  ExtensionUtility,
+  FilterFactory,
+  FilterService,
+  GridEventService,
+  GridService,
+  GridStateService,
+  HeaderGroupingService,
+  isColumnDateType,
+  PaginationService,
+  ResizerService,
+  SharedService,
+  SlickDataView,
+  SlickEventHandler,
+  SlickGrid,
+  SlickgridConfig,
+  SlickGroupItemMetadataProvider,
+  SortService,
+  TreeDataService,
   // interfaces/types
   type AutocompleterEditor,
   type BackendService,
@@ -11,57 +38,27 @@ import {
   type ExtensionList,
   type ExternalResource,
   type Metrics,
+  type Observable,
   type Pagination,
   type PaginationMetadata,
-  type SelectEditor,
-  SlickDataView,
-  SlickEventHandler,
-  SlickGrid,
-
-  // services
-  BackendUtilityService,
-  collectionObserver,
-  CollectionService,
-  EventNamingStyle,
-  ExtensionService,
-  ExtensionUtility,
-  FilterFactory,
-  FilterService,
-  GridEventService,
-  GridService,
-  GridStateService,
-  HeaderGroupingService,
-  type Observable,
-  PaginationService,
-  ResizerService,
   type RxJsFacade,
-  SharedService,
-  SlickGroupItemMetadataProvider,
-  SlickgridConfig,
-  SortService,
-  TreeDataService,
-
-  // utilities
-  autoAddEditorFormatterToColumnsWithEditor,
-  emptyElement,
-  isColumnDateType,
+  type SelectEditor,
 } from '@slickgrid-universal/common';
-import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickFooterComponent } from '@slickgrid-universal/custom-footer-component';
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
+import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickPaginationComponent } from '@slickgrid-universal/pagination-component';
 import { deepCopy, extend } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 import React from 'react';
 import type { Subscription } from 'rxjs';
-
 import { I18nextContext } from '../contexts/i18nextContext.js';
 import { GlobalGridOptions } from '../global-grid-options.js';
 import type { GridOption, I18Next, SlickgridReactInstance } from '../models/index.js';
-import { disposeAllSubscriptions } from '../services/utilities.js';
-import { GlobalContainerService } from '../services/singletons.js';
 import { loadReactComponentDynamically } from '../services/reactUtils.js';
+import { GlobalContainerService } from '../services/singletons.js';
 import { TranslaterI18NextService } from '../services/translaterI18Next.service.js';
+import { disposeAllSubscriptions } from '../services/utilities.js';
 import type { SlickgridReactProps } from './slickgridReactProps.js';
 
 const WARN_NO_PREPARSE_DATE_SIZE = 10000; // data size to warn user when pre-parse isn't enabled

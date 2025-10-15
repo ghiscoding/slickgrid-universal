@@ -1,8 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
-
-import { compareObjects, testFilterCondition } from '../filterUtilities.js';
 import { Filters } from '../../filters/filters.index.js';
 import { renderDomElementFromCollectionAsync } from '../../filters/filterUtilities.js';
+import { compareObjects, testFilterCondition } from '../filterUtilities.js';
 
 describe('filterUtilities', () => {
   describe('compareObjects method', () => {

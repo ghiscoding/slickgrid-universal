@@ -1,6 +1,5 @@
-import { type Column, ExtensionName, Formatters, type GridOption } from '@slickgrid-universal/common';
+import { ExtensionName, Formatters, type Column, type GridOption } from '@slickgrid-universal/common';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-
 import { ExampleGridOptions } from './example-grid-options.js';
 import { zeroPadding } from './utilities.js';
 // import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-salesforce.scss?inline';

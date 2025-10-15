@@ -1,5 +1,4 @@
 import { createDomElement } from '@slickgrid-universal/utils';
-
 import type { Formatter } from './../interfaces/index.js';
 
 /**

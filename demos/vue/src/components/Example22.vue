@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { type GridOption, type SlickgridVueInstance, type Column, Filters, SlickgridVue } from 'slickgrid-vue';
+import { Filters, SlickgridVue, type Column, type GridOption, type SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
-
 import CUSTOMERS_URL from './data/customers_100.json?url';
 
 const NB_ITEMS = 500;

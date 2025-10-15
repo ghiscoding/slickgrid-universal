@@ -1,16 +1,15 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import React, { useEffect, useRef, useState } from 'react';
 import {
-  type Column,
   Filters,
   Formatters,
+  SlickgridReact,
+  type Column,
   type GridOption,
+  type SlickgridReactInstance,
   type TreeToggledItem,
   type TreeToggleStateChange,
-  SlickgridReact,
-  type SlickgridReactInstance,
 } from 'slickgrid-react';
-import React, { useEffect, useRef, useState } from 'react';
-
 import './example27.scss'; // provide custom CSS/SASS styling
 
 const NB_ITEMS = 500;

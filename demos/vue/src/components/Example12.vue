@@ -3,14 +3,14 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { useTranslation } from 'i18next-vue';
 import {
-  type Column,
   DelimiterType,
   Filters,
-  type Formatter,
   Formatters,
+  SlickgridVue,
+  type Column,
+  type Formatter,
   type GridOption,
   type GridStateChange,
-  SlickgridVue,
   type SlickgridVueInstance,
   type SliderOption,
 } from 'slickgrid-vue';

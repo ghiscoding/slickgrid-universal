@@ -9,7 +9,8 @@ import {
   getOffsetRelativeToParent,
   isDefined,
 } from '@slickgrid-universal/utils';
-
+import { SlickEventHandler, type SlickEventData, type SlickGrid } from '../core/index.js';
+import type { ExtensionUtility } from '../extensions/extensionUtility.js';
 import type {
   CellMenu,
   Column,
@@ -26,8 +27,6 @@ import type {
   MenuCommandItem,
   MenuOptionItem,
 } from '../interfaces/index.js';
-import { type SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index.js';
-import type { ExtensionUtility } from '../extensions/extensionUtility.js';
 import type { SharedService } from '../services/shared.service.js';
 
 export type MenuType = 'command' | 'option';

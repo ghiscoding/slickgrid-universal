@@ -1,19 +1,19 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import i18next from 'i18next';
-import {
-  type Column,
-  DelimiterType,
-  Filters,
-  type Formatter,
-  Formatters,
-  type GridOption,
-  type GridStateChange,
-  SlickgridReact,
-  type SlickgridReactInstance,
-} from 'slickgrid-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { withTranslation } from 'react-i18next';
+import {
+  DelimiterType,
+  Filters,
+  Formatters,
+  SlickgridReact,
+  type Column,
+  type Formatter,
+  type GridOption,
+  type GridStateChange,
+  type SlickgridReactInstance,
+} from 'slickgrid-react';
 
 const NB_ITEMS = 1500;
 

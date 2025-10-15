@@ -1,6 +1,5 @@
 import type { PaginationMetadata, PaginationService, PubSubService, SlickGrid, Subscription } from '@slickgrid-universal/common';
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
-
 import './Example42-Custom-Pager.scss';
 
 export interface CustomPagerComponentRef {

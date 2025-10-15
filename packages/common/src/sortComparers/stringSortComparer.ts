@@ -1,7 +1,6 @@
 import { removeAccentFromText } from '@slickgrid-universal/utils';
-
-import type { Column, GridOption, SortComparer } from '../interfaces/index.js';
 import { SortDirectionNumber } from '../enums/sortDirectionNumber.enum.js';
+import type { Column, GridOption, SortComparer } from '../interfaces/index.js';
 
 export const stringSortComparer: SortComparer = (
   value1: any,

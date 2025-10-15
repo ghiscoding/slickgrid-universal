@@ -1,8 +1,8 @@
 import { FieldType } from '../enums/fieldType.enum.js';
 import type { ISortComparers, SortComparer } from '../interfaces/sorter.interface.js';
-import { getAssociatedDateSortComparer } from './dateUtilities.js';
 import { getAllDateFieldTypes } from '../services/utilities.js';
 import { booleanSortComparer } from './booleanSortComparer.js';
+import { getAssociatedDateSortComparer } from './dateUtilities.js';
 import { numericSortComparer } from './numericSortComparer.js';
 import { objectStringSortComparer } from './objectStringSortComparer.js';
 import { stringSortComparer } from './stringSortComparer.js';

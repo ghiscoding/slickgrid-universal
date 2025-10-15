@@ -1,4 +1,4 @@
-import type { Column, ColumnEditor, Editor, EditorValidator, EditorValidationResult } from 'aurelia-slickgrid';
+import type { Column, ColumnEditor, Editor, EditorValidationResult, EditorValidator } from 'aurelia-slickgrid';
 
 /*
  * An example of a 'detaching' editor.

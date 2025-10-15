@@ -1,38 +1,37 @@
 import type { EventSubscription } from '@slickgrid-universal/event-pub-sub';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { of } from 'rxjs';
-
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { basicFetchStub } from '../../../../../test/httpClientStub.js';
+import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
+import { SumAggregator } from '../../aggregators/sumAggregator.js';
+import { Constants } from '../../constants.js';
 import { applyHtmlToElement } from '../../core/utils.js';
 import { FieldType, OperatorType } from '../../enums/index.js';
 import type { Column, GridOption, TreeDataPropNames } from '../../interfaces/index.js';
-import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
 import {
-  addTreeLevelByMutation,
   addTreeLevelAndAggregatorsByMutation,
+  addTreeLevelByMutation,
   cancellablePromise,
   CancelledException,
   castObservableToPromise,
-  fetchAsPromise,
-  flattenToParentChildArray,
-  unflattenParentChildArrayToTree,
   decimalFormatted,
+  fetchAsPromise,
   findItemInTreeStructure,
   findOrDefault,
+  flattenToParentChildArray,
   formatNumber,
   getColumnFieldType,
   getDescendantProperty,
   getTranslationPrefix,
+  getTreeDataOptionPropName,
   isColumnDateType,
   mapOperatorByFieldType,
   mapOperatorToShorthandDesignation,
   mapOperatorType,
   thousandSeparatorFormatted,
+  unflattenParentChildArrayToTree,
   unsubscribeAll,
-  getTreeDataOptionPropName,
 } from '../utilities.js';
-import { SumAggregator } from '../../aggregators/sumAggregator.js';
-import { Constants } from '../../constants.js';
-import { basicFetchStub } from '../../../../../test/httpClientStub.js';
 
 describe('applyHtmlToElement() method', () => {
   const defaultOptions: GridOption = {

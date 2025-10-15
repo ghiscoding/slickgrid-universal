@@ -1,11 +1,9 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-
 import { getHtmlStringOutput } from '@slickgrid-universal/utils';
-
-import type { Column, FormatterResultWithHtml, GridOption } from '../../interfaces/index.js';
-import { treeFormatter } from '../treeFormatter.js';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { SlickGrid } from '../../core/index.js';
 import * as utils from '../../core/utils.js';
+import type { Column, FormatterResultWithHtml, GridOption } from '../../interfaces/index.js';
+import { treeFormatter } from '../treeFormatter.js';
 
 const gridStub = {
   getData: vi.fn(),

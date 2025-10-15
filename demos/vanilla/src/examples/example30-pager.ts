@@ -1,14 +1,13 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import type {
   BasePaginationComponent,
+  PaginationMetadata,
   PaginationService,
   PubSubService,
-  PaginationMetadata,
   SlickGrid,
   Subscription,
 } from '@slickgrid-universal/common';
 import { effect, signal } from 'alien-signals';
-
 import './example30-pager.scss';
 
 /**

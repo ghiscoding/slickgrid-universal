@@ -2,20 +2,19 @@
 import { format as tempoFormat } from '@formkit/tempo';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
-  type Column,
   Filters,
   Formatters,
+  OperatorType,
+  SlickgridVue,
+  type Column,
   type GridOption,
   type GridStateChange,
   type Metrics,
   type MultipleSelectOption,
-  OperatorType,
-  SlickgridVue,
   type SlickgridVueInstance,
   type VanillaCalendarOption,
 } from 'slickgrid-vue';
 import { onBeforeMount, onBeforeUnmount, onMounted, ref, type Ref } from 'vue';
-
 import { CustomInputFilter } from './custom-inputFilter';
 import SAMPLE_COLLECTION_DATA from './data/collection_500_numbers.json';
 

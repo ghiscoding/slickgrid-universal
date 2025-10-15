@@ -1,23 +1,22 @@
+import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
+import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import React, { useEffect, useRef, useState } from 'react';
 import {
-  type Column,
-  type EditCommand,
   Editors,
   Filters,
-  type Formatter,
   Formatters,
+  OperatorType,
+  SlickgridReact,
+  type Column,
+  type EditCommand,
+  type Formatter,
   type GridOption,
   type MenuCommandItemCallbackArgs,
   type MultipleSelectOption,
-  OperatorType,
   type SlickGrid,
-  SlickgridReact,
   type SlickgridReactInstance,
   type VanillaCalendarOption,
 } from 'slickgrid-react';
-import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
-import React, { useEffect, useRef, useState } from 'react';
-
 import './example33.scss';
 
 const FAKE_SERVER_DELAY = 500;

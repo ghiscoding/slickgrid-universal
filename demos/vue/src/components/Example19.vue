@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import {
-  type GridOption,
-  type SlickgridVueInstance,
-  type Column,
   Editors,
   ExtensionName,
   Filters,
   Formatters,
   SlickgridVue,
+  type Column,
+  type GridOption,
+  type SlickgridVueInstance,
 } from 'slickgrid-vue';
 import { computed, onBeforeMount, onUnmounted, ref, type Ref } from 'vue';
-
 import Example19Detail from './Example19Detail.vue';
 import ExampleDetailPreload from './ExampleDetailPreload.vue';
 

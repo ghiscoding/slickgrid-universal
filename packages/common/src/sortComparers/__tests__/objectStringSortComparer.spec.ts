@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-
 import { SortDirectionNumber } from '../../enums/sortDirectionNumber.enum.js';
 import { objectStringSortComparer } from '../objectStringSortComparer.js';
 

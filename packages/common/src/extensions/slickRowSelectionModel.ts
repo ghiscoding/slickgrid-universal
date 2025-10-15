@@ -1,7 +1,7 @@
+import { SlickEvent, SlickEventData, SlickEventHandler, SlickRange, type SlickGrid } from '../core/index.js';
 import { type SelectionModel } from '../enums/index.js';
-import type { GridOption, OnActiveCellChangedEventArgs, RowSelectionModelOption } from '../interfaces/index.js';
 import { SlickCellRangeSelector } from '../extensions/slickCellRangeSelector.js';
-import { SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid, SlickRange } from '../core/index.js';
+import type { GridOption, OnActiveCellChangedEventArgs, RowSelectionModelOption } from '../interfaces/index.js';
 
 export class SlickRowSelectionModel implements SelectionModel {
   pluginName: 'RowSelectionModel' = 'RowSelectionModel' as const;

@@ -1,5 +1,5 @@
-import type { Column, MenuCommandItem } from './index.js';
 import type { SlickGrid } from '../core/index.js';
+import type { Column, MenuCommandItem } from './index.js';
 
 export interface GridMenuCallbackArgs {
   grid: SlickGrid;

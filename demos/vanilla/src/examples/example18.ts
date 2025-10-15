@@ -2,17 +2,16 @@ import { faker } from '@faker-js/faker';
 import sparkline from '@fnando/sparkline';
 import {
   Aggregators,
-  type Column,
   createDomElement,
   deepCopy,
   Filters,
-  type Formatter,
   Formatters,
-  type GridOption,
   GroupTotalFormatters,
+  type Column,
+  type Formatter,
+  type GridOption,
 } from '@slickgrid-universal/common';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-
 import { ExampleGridOptions } from './example-grid-options.js';
 import './example18.scss';
 import '../material-styles.scss';

@@ -1,8 +1,18 @@
-import { multipleSelect, type MultipleSelectInstance, type MultipleSelectOption, type OptionRowData } from 'multiple-select-vanilla';
 import { emptyElement, isPrimitiveValue } from '@slickgrid-universal/utils';
-
+import { multipleSelect, type MultipleSelectInstance, type MultipleSelectOption, type OptionRowData } from 'multiple-select-vanilla';
+import {
+  createBlankSelectEntry,
+  filterCollectionWithOptions,
+  getCollectionFromObjectWhenEnabled,
+  sortCollectionWithOptions,
+} from '../commonEditorFilter/commonEditorFilterUtils.js';
 import { Constants } from '../constants.js';
-import { type OperatorString, OperatorType, type SearchTerm } from '../enums/index.js';
+import type { SlickGrid } from '../core/index.js';
+import { OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
+import type { CollectionService } from '../services/collection.service.js';
+import { buildMsSelectCollectionList, type RxJsFacade, type Subscription, type TranslaterService } from '../services/index.js';
+import { collectionObserver, propertyObserver } from '../services/observers.js';
+import { fetchAsPromise, getTranslationPrefix, unsubscribeAll } from '../services/utilities.js';
 import type {
   CollectionCustomStructure,
   CollectionOption,
@@ -14,18 +24,7 @@ import type {
   GridOption,
   Locale,
 } from './../interfaces/index.js';
-import {
-  createBlankSelectEntry,
-  filterCollectionWithOptions,
-  getCollectionFromObjectWhenEnabled,
-  sortCollectionWithOptions,
-} from '../commonEditorFilter/commonEditorFilterUtils.js';
-import type { CollectionService } from '../services/collection.service.js';
-import { collectionObserver, propertyObserver } from '../services/observers.js';
-import { getTranslationPrefix, fetchAsPromise, unsubscribeAll } from '../services/utilities.js';
-import { buildMsSelectCollectionList, type RxJsFacade, type Subscription, type TranslaterService } from '../services/index.js';
 import { renderCollectionOptionsAsync } from './filterUtilities.js';
-import type { SlickGrid } from '../core/index.js';
 
 export class SelectFilter implements Filter {
   protected _isMultipleSelect = true;

@@ -1,9 +1,9 @@
 import {
-  type AureliaGridInstance,
-  type Column,
   ExtensionName,
   Filters,
   Formatters,
+  type AureliaGridInstance,
+  type Column,
   type GridOption,
   type OnEventArgs,
 } from 'aurelia-slickgrid';

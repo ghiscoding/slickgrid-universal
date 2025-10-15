@@ -1,6 +1,6 @@
-import { type Column, type Formatter, Formatters, type GridOption, SlickgridReact, type SlickgridReactInstance } from 'slickgrid-react';
 import DOMPurify from 'dompurify';
 import { useState } from 'react';
+import { Formatters, SlickgridReact, type Column, type Formatter, type GridOption, type SlickgridReactInstance } from 'slickgrid-react';
 
 interface DataItem {
   id: number;

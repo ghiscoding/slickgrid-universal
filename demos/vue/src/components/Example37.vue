@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type GridOption, type OnCellChangeEventArgs, type SlickgridVueInstance, type Column, Editors, SlickgridVue } from 'slickgrid-vue';
+import { Editors, SlickgridVue, type Column, type GridOption, type OnCellChangeEventArgs, type SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, onMounted, onUnmounted, ref, type Ref } from 'vue';
 
 const NB_ITEMS = 100;

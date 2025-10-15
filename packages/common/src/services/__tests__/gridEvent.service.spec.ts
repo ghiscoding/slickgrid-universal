@@ -1,8 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
+import { SlickEvent, SlickEventData, type SlickDataView, type SlickGrid } from '../../core/index.js';
 import type { Column } from '../../interfaces/index.js';
 import { GridEventService } from '../gridEvent.service.js';
-import { type SlickDataView, SlickEvent, SlickEventData, type SlickGrid } from '../../core/index.js';
 
 const dataViewStub = {
   refresh: vi.fn(),

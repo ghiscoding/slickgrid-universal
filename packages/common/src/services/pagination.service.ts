@@ -1,6 +1,7 @@
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
+import { queueMicrotaskOrSetTimeout } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
-
+import { SlickEventHandler, type SlickDataView, type SlickGrid } from '../core/index.js';
 import type {
   BackendServiceApi,
   CurrentPagination,
@@ -10,11 +11,9 @@ import type {
   PaginationMetadata,
 } from '../interfaces/index.js';
 import type { BackendUtilityService } from './backendUtility.service.js';
-import type { SharedService } from './shared.service.js';
 import { propertyObserver } from './observers.js';
 import type { Observable, RxJsFacade } from './rxjsFacade.js';
-import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index.js';
-import { queueMicrotaskOrSetTimeout } from '@slickgrid-universal/utils';
+import type { SharedService } from './shared.service.js';
 
 export class PaginationService {
   protected _eventHandler: SlickEventHandler;

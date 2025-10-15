@@ -1,6 +1,5 @@
 import { removeAccentFromText } from '@slickgrid-universal/utils';
-
-import { type OperatorString, OperatorType, type SearchTerm } from '../enums/index.js';
+import { OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
 import type { FilterCondition, FilterConditionOption } from '../interfaces/index.js';
 import { testFilterCondition } from './filterUtilities.js';
 

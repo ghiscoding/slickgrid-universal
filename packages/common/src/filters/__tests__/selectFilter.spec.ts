@@ -1,16 +1,15 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { MultipleSelectOption } from 'multiple-select-vanilla';
 import { of, type Subject } from 'rxjs';
-
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { basicFetchStub } from '../../../../../test/httpClientStub.js';
+import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
+import type { SlickGrid } from '../../core/index.js';
 import { FieldType, OperatorType } from '../../enums/index.js';
 import type { Column, FilterArguments, GridOption } from '../../interfaces/index.js';
 import { CollectionService } from '../../services/collection.service.js';
 import { Filters } from '../filters.index.js';
 import { SelectFilter } from '../selectFilter.js';
-import type { SlickGrid } from '../../core/index.js';
-import { basicFetchStub } from '../../../../../test/httpClientStub.js';
-import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 
 const containerId = 'demo-container';
 

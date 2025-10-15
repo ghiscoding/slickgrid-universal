@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type GridOption, type SlickgridVueInstance, type Column, Formatters, SlickGlobalEditorLock, SlickgridVue } from 'slickgrid-vue';
+import { Formatters, SlickGlobalEditorLock, SlickgridVue, type Column, type GridOption, type SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();

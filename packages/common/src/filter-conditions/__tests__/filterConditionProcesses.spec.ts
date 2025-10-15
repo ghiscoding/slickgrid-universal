@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-
 import { getParsedSearchTermsByFieldType } from '../filterConditionProcesses.js';
 
 describe('getParsedSearchTermsByFieldType method', () => {

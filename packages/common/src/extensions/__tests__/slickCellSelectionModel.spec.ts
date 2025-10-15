@@ -1,10 +1,9 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { SlickEvent, type SlickGrid, type SlickRange } from '../../core/index.js';
 import type { GridOption } from '../../interfaces/index.js';
 import { SlickCellRangeSelector } from '../slickCellRangeSelector.js';
 import { SlickCellSelectionModel } from '../slickCellSelectionModel.js';
-import { SlickEvent, type SlickGrid, type SlickRange } from '../../core/index.js';
 
 const GRID_UID = 'slickgrid_12345';
 const NB_ITEMS = 200;

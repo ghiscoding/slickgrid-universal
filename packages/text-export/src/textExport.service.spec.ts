@@ -1,23 +1,22 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import {
-  type Column,
   DelimiterType,
   FieldType,
   FileType,
-  type Formatter,
   Formatters,
+  GroupTotalFormatters,
+  SortComparers,
+  SortDirectionNumber,
+  type Column,
+  type Formatter,
   type GridOption,
   type GroupingComparerItem,
-  GroupTotalFormatters,
   type ItemMetadata,
   type SlickDataView,
   type SlickGrid,
-  SortComparers,
-  SortDirectionNumber,
   type TextExportOption,
 } from '@slickgrid-universal/common';
-
+import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ContainerServiceStub } from '../../../test/containerServiceStub.js';
 import { TranslateServiceStub } from '../../../test/translateServiceStub.js';
 import { TextExportService } from './textExport.service.js';

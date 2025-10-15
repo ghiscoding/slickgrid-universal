@@ -1,17 +1,16 @@
-import { I18N } from '@aurelia/i18n';
 import { IHttpClient } from '@aurelia/fetch-client';
+import { I18N } from '@aurelia/i18n';
 import { newInstanceOf, resolve } from '@aurelia/kernel';
 import { GraphqlService, type GraphqlPaginatedResult, type GraphqlServiceApi } from '@slickgrid-universal/graphql';
 import {
+  Filters,
   type AureliaGridInstance,
   type Column,
-  Filters,
   type GridOption,
   type Metrics,
   type MultipleSelectOption,
   type OnRowCountChangedEventArgs,
 } from 'aurelia-slickgrid';
-
 import './example39.scss';
 import SAMPLE_DATA_URL from './data/customers_100.json?url';
 

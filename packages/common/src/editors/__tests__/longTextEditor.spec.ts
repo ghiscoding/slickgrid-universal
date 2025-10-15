@@ -1,17 +1,16 @@
-import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
+import { getOffset } from '@slickgrid-universal/utils';
+import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
+import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index.js';
+import type { Column, Editor, EditorArguments, GridOption, LongTextEditorOption } from '../../interfaces/index.js';
+import { Editors } from '../index.js';
+import { LongTextEditor } from '../longTextEditor.js';
 
 // mocked modules
 vi.mock('@slickgrid-universal/utils', async (importOriginal) => ({
   ...((await importOriginal()) as any),
   getOffset: vi.fn(),
 }));
-
-import { Editors } from '../index.js';
-import { LongTextEditor } from '../longTextEditor.js';
-import type { Column, Editor, EditorArguments, LongTextEditorOption, GridOption } from '../../interfaces/index.js';
-import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index.js';
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
-import { getOffset } from '@slickgrid-universal/utils';
 
 const containerId = 'demo-container';
 

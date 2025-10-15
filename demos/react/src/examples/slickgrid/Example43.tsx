@@ -1,7 +1,6 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { type Column, Editors, type GridOption, type ItemMetadata, SlickgridReact, type SlickgridReactInstance } from 'slickgrid-react';
 import { useRef, useState } from 'react';
-
+import { Editors, SlickgridReact, type Column, type GridOption, type ItemMetadata, type SlickgridReactInstance } from 'slickgrid-react';
 import './example43.scss';
 
 export default function Example43() {

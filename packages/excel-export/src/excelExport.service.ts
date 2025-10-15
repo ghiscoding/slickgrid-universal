@@ -1,16 +1,7 @@
-import {
-  downloadExcelFile,
-  createExcelFileStream,
-  type ExcelColumnMetadata,
-  type ExcelMetadata,
-  type StyleSheet,
-  Workbook,
-  type Worksheet,
-} from 'excel-builder-vanilla';
 import type {
+  ExcelExportService as BaseExcelExportService,
   Column,
   ContainerService,
-  ExcelExportService as BaseExcelExportService,
   ExcelExportOption,
   ExcelGroupValueParserArgs,
   ExternalResource,
@@ -42,8 +33,16 @@ import {
   stripTags,
   titleCase,
 } from '@slickgrid-universal/utils';
-
-import { type ExcelFormatter, getGroupTotalValue, getExcelFormatFromGridFormatter, useCellFormatByFieldType } from './excelUtils.js';
+import {
+  createExcelFileStream,
+  downloadExcelFile,
+  Workbook,
+  type ExcelColumnMetadata,
+  type ExcelMetadata,
+  type StyleSheet,
+  type Worksheet,
+} from 'excel-builder-vanilla';
+import { getExcelFormatFromGridFormatter, getGroupTotalValue, useCellFormatByFieldType, type ExcelFormatter } from './excelUtils.js';
 
 const DEFAULT_EXPORT_OPTIONS: ExcelExportOption = {
   filename: 'export',

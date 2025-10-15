@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-
-import { CloneAggregator } from '../cloneAggregator.js';
 import type { GroupTotals } from '../../interfaces/grouping.interface.js';
+import { CloneAggregator } from '../cloneAggregator.js';
 
 describe('CloneAggregator', () => {
   let aggregator: CloneAggregator;

@@ -1,6 +1,5 @@
 import type { I18N } from '@aurelia/i18n';
 import type { BasePaginationComponent, Column, GridOption as UniversalGridOption } from '@slickgrid-universal/common';
-
 import type { RowDetailView } from './rowDetailView.interface.js';
 
 export interface GridOption<C extends Column = Column> extends UniversalGridOption<C> {

@@ -1,20 +1,19 @@
-import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import {
+  Editors,
+  SlickEvent,
   type Column,
   type CompositeEditorOpenDetailOption,
   type Editor,
-  Editors,
   type GridOption,
   type GridService,
   type SlickDataView,
-  SlickEvent,
-  type SlickRowSelectionModel,
   type SlickGrid,
+  type SlickRowSelectionModel,
 } from '@slickgrid-universal/common';
-
-import { SlickCompositeEditorComponent } from './slick-composite-editor.component.js';
-import { TranslateServiceStub } from '../../../test/translateServiceStub.js';
+import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { ContainerServiceStub } from '../../../test/containerServiceStub.js';
+import { TranslateServiceStub } from '../../../test/translateServiceStub.js';
+import { SlickCompositeEditorComponent } from './slick-composite-editor.component.js';
 
 // mocked modules
 vi.mock('@slickgrid-universal/common', async (importOriginal) => ({

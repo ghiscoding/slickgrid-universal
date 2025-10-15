@@ -16,14 +16,14 @@ import type {
   Subscription,
 } from '@slickgrid-universal/common';
 import {
+  applyHtmlToElement,
   calculateAvailableSpace,
-  CancelledException,
   cancellablePromise,
+  CancelledException,
   createDomElement,
   findFirstAttribute,
   getOffset,
   SlickEventHandler,
-  applyHtmlToElement,
 } from '@slickgrid-universal/common';
 import { classNameToList, isPrimitiveOrHTML } from '@slickgrid-universal/utils';
 

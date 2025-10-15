@@ -1,21 +1,21 @@
-import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import {
   Aggregators,
-  type Column,
-  type Editors,
   Enums,
-  type Filters,
   Formatters,
   GroupTotalFormatters,
   SortComparers,
   Utilities,
+  type Column,
+  type Editors,
+  type Filters,
 } from '@slickgrid-universal/common';
-export * from '@slickgrid-universal/common';
-
+import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import SlickgridVue from './components/SlickgridVue.vue';
 import { SlickRowDetailView } from './extensions/slickRowDetailView.js';
 import type { GridOption, RowDetailView, SlickgridVueInstance, ViewModelBindableInputData } from './models/index.js';
 import type { SlickgridConfig } from './slickgrid-config.js';
+
+export * from '@slickgrid-universal/common';
 
 // expose all public classes
 export type { SlickgridVueProps } from './components/slickgridVueProps.interface.js';

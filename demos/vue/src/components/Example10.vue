@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import {
-  type GridOption,
-  type GridStateChange,
-  type SlickgridVueInstance,
-  type Column,
   Filters,
   Formatters,
   SlickgridVue,
+  type Column,
+  type GridOption,
+  type GridStateChange,
+  type SlickgridVueInstance,
 } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
 

@@ -2,15 +2,15 @@
 import type { GraphqlResult, GraphqlServiceApi } from '@slickgrid-universal/graphql';
 import { GraphqlService } from '@slickgrid-universal/graphql';
 import {
-  type GridOption,
-  type Metrics,
-  type MultipleSelectOption,
-  type SlickgridVueInstance,
-  type Column,
   Filters,
   Formatters,
   OperatorType,
   SlickgridVue,
+  type Column,
+  type GridOption,
+  type Metrics,
+  type MultipleSelectOption,
+  type SlickgridVueInstance,
 } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
 

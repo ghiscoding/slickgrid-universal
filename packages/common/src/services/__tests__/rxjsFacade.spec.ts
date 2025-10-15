@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-
 import { Observable, RxJsFacade, Subject, Subscription } from '../rxjsFacade.js';
 
 describe('RxJsFacade Service', () => {

@@ -1,22 +1,21 @@
 import { type EventPubSubService } from '@slickgrid-universal/event-pub-sub';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Aggregators,
-  type Column,
   Editors,
   ExtensionName,
   Filters,
   Formatters,
-  type GridOption,
-  type Grouping,
   GroupTotalFormatters,
   SlickgridReact,
-  type SlickgridReactInstance,
   SlickRowDetailView,
   SortComparers,
   SortDirectionNumber,
+  type Column,
+  type GridOption,
+  type Grouping,
+  type SlickgridReactInstance,
 } from 'slickgrid-react';
-
 import { ExampleDetailPreload } from './Example-detail-preload.js';
 import Example47DetailView from './Example47-detail-view.js';
 

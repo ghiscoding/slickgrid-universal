@@ -1,19 +1,19 @@
-import { avgTotalsPercentageFormatter } from './avgTotalsPercentageFormatter.js';
-import { avgTotalsDollarFormatter } from './avgTotalsDollarFormatter.js';
+import type { GroupTotalsFormatter } from '../interfaces/groupTotalsFormatter.interface.js';
 import { avgTotalsCurrencyFormatter } from './avgTotalsCurrencyFormatter.js';
+import { avgTotalsDollarFormatter } from './avgTotalsDollarFormatter.js';
 import { avgTotalsFormatter } from './avgTotalsFormatter.js';
-import { minTotalsFormatter } from './minTotalsFormatter.js';
+import { avgTotalsPercentageFormatter } from './avgTotalsPercentageFormatter.js';
 import { maxTotalsFormatter } from './maxTotalsFormatter.js';
+import { minTotalsFormatter } from './minTotalsFormatter.js';
+import { sumTotalsBoldFormatter } from './sumTotalsBoldFormatter.js';
 import { sumTotalsColoredFormatter } from './sumTotalsColoredFormatter.js';
-import { sumTotalsCurrencyFormatter } from './sumTotalsCurrencyFormatter.js';
 import { sumTotalsCurrencyColoredFormatter } from './sumTotalsCurrencyColoredFormatter.js';
+import { sumTotalsCurrencyFormatter } from './sumTotalsCurrencyFormatter.js';
+import { sumTotalsDollarBoldFormatter } from './sumTotalsDollarBoldFormatter.js';
 import { sumTotalsDollarColoredBoldFormatter } from './sumTotalsDollarColoredBoldFormatter.js';
 import { sumTotalsDollarColoredFormatter } from './sumTotalsDollarColoredFormatter.js';
-import { sumTotalsDollarBoldFormatter } from './sumTotalsDollarBoldFormatter.js';
 import { sumTotalsDollarFormatter } from './sumTotalsDollarFormatter.js';
 import { sumTotalsFormatter } from './sumTotalsFormatter.js';
-import { sumTotalsBoldFormatter } from './sumTotalsBoldFormatter.js';
-import type { GroupTotalsFormatter } from '../interfaces/groupTotalsFormatter.interface.js';
 
 /** Provides a list of different Formatters that will change the cell value displayed in the UI */
 export const GroupTotalFormatters: Record<string, GroupTotalsFormatter> = {

@@ -1,6 +1,5 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { type AureliaGridInstance, type Column, type Formatter, type GridOption, type ItemMetadata } from 'aurelia-slickgrid';
-
 import './example44.scss';
 
 const rowCellValueFormatter: Formatter = (row, cell, value) =>

@@ -2,14 +2,14 @@ import type { IBindingContext } from '@aurelia/runtime';
 import type { ICustomElementController } from '@aurelia/runtime-html';
 import {
   AureliaUtilService,
+  emptyElement,
+  OperatorType,
   type Column,
   type ColumnFilter,
-  emptyElement,
   type Filter,
   type FilterArguments,
   type FilterCallback,
   type GridOption,
-  OperatorType,
   type OperatorString,
   type SearchTerm,
   type SlickGrid,

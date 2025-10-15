@@ -1,4 +1,3 @@
-import { dequal } from 'dequal/lite';
 import type {
   BackendService,
   BackendServiceApi,
@@ -11,54 +10,51 @@ import type {
   GridOption,
   Metrics,
   Pagination,
+  PaginationMetadata,
   RxJsFacade,
   SelectEditor,
-  PaginationMetadata,
   Subscription,
 } from '@slickgrid-universal/common';
-
 import {
   autoAddEditorFormatterToColumnsWithEditor,
-  type AutocompleterEditor,
-  GlobalGridOptions,
-  SlickGroupItemMetadataProvider,
-
   // services
   BackendUtilityService,
-  CollectionService,
   collectionObserver,
+  CollectionService,
+  // utilities
+  emptyElement,
   ExtensionService,
   ExtensionUtility,
+  fetchAsPromise,
   FilterFactory,
   FilterService,
+  GlobalGridOptions,
   GridEventService,
   GridService,
   GridStateService,
   HeaderGroupingService,
-  type Observable,
+  isColumnDateType,
   PaginationService,
   ResizerService,
   SharedService,
-  SortService,
-  SlickgridConfig,
-  type TranslaterService,
-  TreeDataService,
-
-  // utilities
-  emptyElement,
-  fetchAsPromise,
-  isColumnDateType,
-  SlickEventHandler,
   SlickDataView,
+  SlickEventHandler,
   SlickGrid,
+  SlickgridConfig,
+  SlickGroupItemMetadataProvider,
+  SortService,
+  TreeDataService,
   unsubscribeAll,
+  type AutocompleterEditor,
+  type Observable,
+  type TranslaterService,
 } from '@slickgrid-universal/common';
-import { deepCopy, extend, queueMicrotaskOrSetTimeout } from '@slickgrid-universal/utils';
-import { EventNamingStyle, EventPubSubService } from '@slickgrid-universal/event-pub-sub';
-import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
 import { SlickFooterComponent } from '@slickgrid-universal/custom-footer-component';
+import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
+import { EventNamingStyle, EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickPaginationComponent } from '@slickgrid-universal/pagination-component';
-
+import { deepCopy, extend, queueMicrotaskOrSetTimeout } from '@slickgrid-universal/utils';
+import { dequal } from 'dequal/lite';
 import { type SlickerGridInstance } from '../interfaces/slickerGridInstance.interface.js';
 import { UniversalContainerService } from '../services/universalContainer.service.js';
 

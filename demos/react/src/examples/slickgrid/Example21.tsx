@@ -1,13 +1,12 @@
+import React, { useEffect, useRef, useState } from 'react';
 import {
-  type Column,
   Formatters,
+  SlickgridReact,
+  type Column,
   type GridOption,
   type OperatorString,
-  SlickgridReact,
   type SlickgridReactInstance,
 } from 'slickgrid-react';
-import React, { useEffect, useRef, useState } from 'react';
-
 import './example21.scss';
 
 const Example21: React.FC = () => {

@@ -1,21 +1,20 @@
 <script setup lang="ts">
 import {
-  type GridOption,
-  type SlickgridVueInstance,
-  type Column,
-  type EditCommand,
   Editors,
   Filters,
-  type Formatter,
   Formatters,
-  type OnEventArgs,
   OperatorType,
-  type SliderOption,
   SlickGlobalEditorLock,
   SlickgridVue,
+  type Column,
+  type EditCommand,
+  type Formatter,
+  type GridOption,
+  type OnEventArgs,
+  type SlickgridVueInstance,
+  type SliderOption,
 } from 'slickgrid-vue';
-import { type ComponentPublicInstance, createApp, onBeforeMount, ref, type Ref } from 'vue';
-
+import { createApp, onBeforeMount, ref, type ComponentPublicInstance, type Ref } from 'vue';
 import { CustomVueComponentEditor } from './custom-viewModelEditor';
 import { CustomVueComponentFilter } from './custom-viewModelFilter';
 import CustomTitleFormatter from './CustomTitleFormatterComponent.vue';

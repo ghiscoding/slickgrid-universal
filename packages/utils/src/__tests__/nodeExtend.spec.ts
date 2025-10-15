@@ -1,5 +1,4 @@
 import { describe, expect, it, test } from 'vitest';
-
 import { extend } from '../nodeExtend.js';
 
 // port of all the node-extend tests

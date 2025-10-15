@@ -1,5 +1,5 @@
-import type { Column } from './index.js';
 import type { SlickDataView, SlickGrid } from '../core/index.js';
+import type { Column } from './index.js';
 
 export interface OnEventArgs {
   row: number;

@@ -1,8 +1,8 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement, emptyElement } from '@slickgrid-universal/utils';
-
-import { type SlickDataView, type SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index.js';
+import { SlickEventHandler, type SlickDataView, type SlickEventData, type SlickGrid } from '../core/index.js';
+import type { SelectionModel } from '../enums/index.js';
 import type {
   CheckboxSelectorOption,
   Column,
@@ -12,9 +12,8 @@ import type {
   OnKeyDownEventArgs,
   SelectableOverrideCallback,
 } from '../interfaces/index.js';
-import { SlickRowSelectionModel } from './slickRowSelectionModel.js';
-import type { SelectionModel } from '../enums/index.js';
 import { createDocumentFragmentOrElement } from '../services/utilities.js';
+import { SlickRowSelectionModel } from './slickRowSelectionModel.js';
 
 export interface RowLookup {
   [row: number]: boolean;

@@ -1,12 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { FieldType, OperatorType } from '../../enums/index.js';
-import type { Column, FilterArguments, GridOption, SliderOption } from '../../interfaces/index.js';
-import { Filters } from '../index.js';
-import { CompoundSliderFilter } from '../compoundSliderFilter.js';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import { SlickEvent, type SlickGrid } from '../../core/index.js';
 import * as utils from '../../core/utils.js';
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
+import { FieldType, OperatorType } from '../../enums/index.js';
+import type { Column, FilterArguments, GridOption, SliderOption } from '../../interfaces/index.js';
+import { CompoundSliderFilter } from '../compoundSliderFilter.js';
+import { Filters } from '../index.js';
 
 vi.useFakeTimers();
 

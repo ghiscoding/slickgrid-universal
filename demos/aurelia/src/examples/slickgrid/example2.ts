@@ -1,4 +1,4 @@
-import { type AureliaGridInstance, type Column, type Formatter, Formatters, type GridOption } from 'aurelia-slickgrid';
+import { Formatters, type AureliaGridInstance, type Column, type Formatter, type GridOption } from 'aurelia-slickgrid';
 
 interface DataItem {
   id: number;

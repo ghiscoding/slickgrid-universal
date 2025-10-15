@@ -1,11 +1,9 @@
 import '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss';
 import 'bootstrap';
 import './styles.scss';
-
 import i18next from 'i18next';
 import I18NextVue from 'i18next-vue';
 import { createApp } from 'vue';
-
 import App from './App.vue';
 import localeEn from './assets/locales/en/translation.json';
 import localeFr from './assets/locales/fr/translation.json';

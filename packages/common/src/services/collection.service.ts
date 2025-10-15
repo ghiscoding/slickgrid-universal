@@ -1,11 +1,10 @@
 import { uniqueArray } from '@slickgrid-universal/utils';
-
-import { type FilterMultiplePassType, FieldType, OperatorType, SortDirectionNumber } from './../enums/index.js';
+import type { SlickGrid } from '../core/slickGrid.js';
+import { sortByFieldType } from '../sortComparers/sortUtilities.js';
+import { FieldType, OperatorType, SortDirectionNumber, type FilterMultiplePassType } from './../enums/index.js';
 import type { CollectionFilterBy, CollectionSortBy, Column } from './../interfaces/index.js';
 import { mapTempoDateFormatWithFieldType, tryParseDate } from './dateUtils.js';
-import { sortByFieldType } from '../sortComparers/sortUtilities.js';
 import type { TranslaterService } from './translater.service.js';
-import type { SlickGrid } from '../core/slickGrid.js';
 import { isColumnDateType } from './utilities.js';
 
 interface ParsingDateDetails {

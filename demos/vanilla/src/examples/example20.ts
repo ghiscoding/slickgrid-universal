@@ -1,17 +1,16 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import {
-  type Column,
   createDomElement,
-  Filters,
-  Formatters,
-  type GridOption,
-  SlickEventHandler,
   Editors,
   ExtensionName,
+  Filters,
+  Formatters,
+  SlickEventHandler,
+  type Column,
+  type GridOption,
 } from '@slickgrid-universal/common';
 import { SlickRowDetailView } from '@slickgrid-universal/row-detail-view-plugin';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-
 import { ExampleGridOptions } from './example-grid-options.js';
 import './example20.scss';
 

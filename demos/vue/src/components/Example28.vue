@@ -1,19 +1,19 @@
 <script setup lang="ts">
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
-  type Formatter,
-  type GridOption,
-  type SlickDataView,
-  type SlickgridVueInstance,
   addWhiteSpaces,
   Aggregators,
-  type Column,
   decimalFormatted,
   Filters,
   findItemInTreeStructure,
   Formatters,
   isNumber,
   SlickgridVue,
+  type Column,
+  type Formatter,
+  type GridOption,
+  type SlickDataView,
+  type SlickgridVueInstance,
 } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
 

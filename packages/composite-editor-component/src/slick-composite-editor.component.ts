@@ -1,5 +1,4 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { classNameToList, deepCopy, deepMerge, emptyObject, getHtmlStringOutput, setDeepValue } from '@slickgrid-universal/utils';
 import type {
   Column,
   CompositeEditorLabel,
@@ -32,7 +31,7 @@ import {
   SlickEventHandler,
   SortDirectionNumber,
 } from '@slickgrid-universal/common';
-
+import { classNameToList, deepCopy, deepMerge, emptyObject, getHtmlStringOutput, setDeepValue } from '@slickgrid-universal/utils';
 import { SlickCompositeEditor } from './compositeEditor.factory.js';
 
 const DEFAULT_ON_ERROR = (error: OnErrorOption) => console.log(error.message);

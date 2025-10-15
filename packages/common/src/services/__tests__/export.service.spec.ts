@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-
 import { TextExportService } from '../textExport.service.js';
 
 describe('Export Service', () => {

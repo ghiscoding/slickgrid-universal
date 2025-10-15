@@ -1,9 +1,8 @@
 import type { EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement, emptyElement } from '@slickgrid-universal/utils';
-
-import type { Column, GridOption } from './../interfaces/index.js';
+import { SlickEventHandler, type SlickDataView, type SlickGrid } from '../core/index.js';
 import type { ExtensionUtility } from '../extensions/extensionUtility.js';
-import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index.js';
+import type { Column, GridOption } from './../interfaces/index.js';
 
 export class HeaderGroupingService {
   protected _eventHandler: SlickEventHandler;

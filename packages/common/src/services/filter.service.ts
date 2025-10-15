@@ -1,11 +1,11 @@
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { deepCopy, extend, queueMicrotaskOrSetTimeout, stripTags } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
-
 import { Constants } from '../constants.js';
+import { SlickEvent, SlickEventData, SlickEventHandler, type SlickDataView, type SlickGrid } from '../core/index.js';
+import { FieldType, OperatorType, type EmitterType, type OperatorString, type SearchTerm } from '../enums/index.js';
 import { FilterConditions, getParsedSearchTermsByFieldType } from './../filter-conditions/index.js';
 import { type FilterFactory } from './../filters/filterFactory.js';
-import { type EmitterType, FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
 import type {
   Column,
   ColumnFilters,
@@ -20,10 +20,9 @@ import type {
   SearchColumnFilter,
 } from './../interfaces/index.js';
 import type { BackendUtilityService } from './backendUtility.service.js';
-import { findItemInTreeStructure, getDescendantProperty, mapOperatorByFieldType } from './utilities.js';
-import type { SharedService } from './shared.service.js';
 import type { RxJsFacade, Subject } from './rxjsFacade.js';
-import { type SlickDataView, SlickEvent, SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index.js';
+import type { SharedService } from './shared.service.js';
+import { findItemInTreeStructure, getDescendantProperty, mapOperatorByFieldType } from './utilities.js';
 
 interface OnSearchChangeEventArgs {
   clearFilterTriggered?: boolean;

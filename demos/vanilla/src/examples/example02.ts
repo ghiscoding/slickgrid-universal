@@ -1,21 +1,20 @@
+import { BindingEventService } from '@slickgrid-universal/binding';
 import {
   Aggregators,
-  type Column,
   Editors,
   Filters,
   Formatters,
-  type GridOption,
-  type Grouping,
   GroupTotalFormatters,
-  type SliderOption,
   SortComparers,
   SortDirectionNumber,
+  type Column,
+  type GridOption,
+  type Grouping,
+  type SliderOption,
 } from '@slickgrid-universal/common';
-import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-
 import { ExampleGridOptions } from './example-grid-options.js';
 import '../material-styles.scss';
 

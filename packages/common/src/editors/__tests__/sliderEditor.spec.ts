@@ -1,9 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
+import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index.js';
+import type { Column, Editor, EditorArguments, GridOption, SliderOption } from '../../interfaces/index.js';
 import { Editors } from '../index.js';
 import { SliderEditor } from '../sliderEditor.js';
-import type { Column, Editor, EditorArguments, GridOption, SliderOption } from '../../interfaces/index.js';
-import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index.js';
 
 vi.useFakeTimers();
 

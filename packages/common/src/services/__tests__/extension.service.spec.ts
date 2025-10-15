@@ -1,27 +1,27 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-
-import { ExtensionName } from '../../enums/index.js';
-import type { Column, ExtensionModel, GridOption } from '../../interfaces/index.js';
-import { ExtensionUtility, SlickRowBasedEdit } from '../../extensions/index.js';
-import { ExtensionService, type FilterService, type GridService, SharedService, type SortService, type TreeDataService } from '../index.js';
-import { SlickEvent, type SlickGrid } from '../../core/index.js';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
+import { SlickEvent, type SlickGrid } from '../../core/index.js';
+import { ExtensionName } from '../../enums/index.js';
 import {
+  ExtensionUtility,
   SlickAutoTooltip,
   SlickCellExcelCopyManager,
   SlickCellMenu,
-  type SlickCellSelectionModel,
-  type SlickCheckboxSelectColumn,
   SlickColumnPicker,
   SlickContextMenu,
   SlickDraggableGrouping,
   SlickGridMenu,
   SlickHeaderButtons,
   SlickHeaderMenu,
-  type SlickRowMoveManager,
+  SlickRowBasedEdit,
   SlickRowSelectionModel,
+  type SlickCellSelectionModel,
+  type SlickCheckboxSelectColumn,
+  type SlickRowMoveManager,
 } from '../../extensions/index.js';
+import type { Column, ExtensionModel, GridOption } from '../../interfaces/index.js';
+import { ExtensionService, SharedService, type FilterService, type GridService, type SortService, type TreeDataService } from '../index.js';
 
 const GRID_UID = 'slickgrid_12345';
 

@@ -1,17 +1,17 @@
 import { format } from '@formkit/tempo';
+import { BindingHelper } from '@slickgrid-universal/binding';
 import type {
   CustomFooterOption,
   GridOption,
   Locale,
   Metrics,
   MetricTexts,
-  Subscription,
   SlickGrid,
+  Subscription,
   TranslaterService,
 } from '@slickgrid-universal/common';
 import { applyHtmlToElement, Constants, createDomElement, SlickEventHandler } from '@slickgrid-universal/common';
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { BindingHelper } from '@slickgrid-universal/binding';
 
 export class SlickFooterComponent {
   protected _bindingHelper: BindingHelper;

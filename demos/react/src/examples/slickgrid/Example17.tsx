@@ -1,6 +1,6 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { type Column, type GridOption, SlickgridReact, toCamelCase } from 'slickgrid-react';
 import { useState } from 'react';
+import { SlickgridReact, toCamelCase, type Column, type GridOption } from 'slickgrid-react';
 
 const Example17: React.FC = () => {
   const [gridCreated, setGridCreated] = useState(false);

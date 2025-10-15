@@ -1,8 +1,7 @@
 import { describe, expect, it } from 'vitest';
-
 import { SortDirectionNumber } from '../../enums/sortDirectionNumber.enum.js';
-import { numericSortComparer } from '../numericSortComparer.js';
 import type { Column } from '../../interfaces/column.interface.js';
+import { numericSortComparer } from '../numericSortComparer.js';
 
 describe('the Numeric Sorter', () => {
   it('should return an array of numbers sorted ascending when only numbers are provided', () => {

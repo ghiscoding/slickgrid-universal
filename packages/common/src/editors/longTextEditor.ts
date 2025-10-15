@@ -1,24 +1,23 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { createDomElement, getOffset, type HtmlElementPosition, setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
-
-import { Constants } from './../constants.js';
+import { createDomElement, getOffset, setDeepValue, toSentenceCase, type HtmlElementPosition } from '@slickgrid-universal/utils';
+import { SlickEventData, type SlickGrid } from '../core/index.js';
+import { textValidator } from '../editorValidators/textValidator.js';
 import type {
   Column,
   ColumnEditor,
   CompositeEditorOption,
   Editor,
   EditorArguments,
-  EditorValidator,
   EditorValidationResult,
+  EditorValidator,
   ElementPosition,
   GridOption,
   Locale,
   LongTextEditorOption,
 } from '../interfaces/index.js';
-import { getDescendantProperty, getTranslationPrefix } from '../services/utilities.js';
 import type { TranslaterService } from '../services/translater.service.js';
-import { textValidator } from '../editorValidators/textValidator.js';
-import { SlickEventData, type SlickGrid } from '../core/index.js';
+import { getDescendantProperty, getTranslationPrefix } from '../services/utilities.js';
+import { Constants } from './../constants.js';
 
 /*
  * An example of a 'detached' editor.

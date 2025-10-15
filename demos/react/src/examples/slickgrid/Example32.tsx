@@ -1,24 +1,23 @@
+import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import React, { useEffect, useRef, useState } from 'react';
 import {
-  type AutocompleterOption,
-  type Column,
-  type EditCommand,
   Editors,
   Filters,
   formatNumber,
-  type Formatter,
   Formatters,
-  type GridOption,
-  type LongTextEditorOption,
   SlickGlobalEditorLock,
-  type SlickgridReactInstance,
   SlickgridReact,
   SortComparers,
-  type VanillaCalendarOption,
+  type AutocompleterOption,
+  type Column,
+  type EditCommand,
+  type Formatter,
+  type GridOption,
+  type LongTextEditorOption,
   type SearchTerm,
+  type SlickgridReactInstance,
+  type VanillaCalendarOption,
 } from 'slickgrid-react';
-import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import React, { useEffect, useRef, useState } from 'react';
-
 import './example32.scss'; // provide custom CSS/SASS styling
 import COUNTRIES_COLLECTION_URL from './data/countries.json?url';
 

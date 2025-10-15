@@ -1,8 +1,11 @@
-import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-
-import type { Column, EditCommand, GridOption, OnBeforeEditCellEventArgs, OnSetOptionsEventArgs, RowBasedEditOptions } from '../../interfaces/index.js';
+import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import { SlickEvent, type SlickGrid } from '../../core/index.js';
+import { Editors } from '../../editors/editors.index.js';
+import type { Column, EditCommand, GridOption, OnBeforeEditCellEventArgs, OnSetOptionsEventArgs, RowBasedEditOptions } from '../../interfaces/index.js';
+import { GridService } from '../../services/grid.service.js';
+import type { ExtensionUtility } from '../extensionUtility.js';
 import {
   BTN_ACTION_CANCEL,
   BTN_ACTION_DELETE,
@@ -11,10 +14,6 @@ import {
   ROW_BASED_EDIT_ROW_HIGHLIGHT_CLASS,
   SlickRowBasedEdit,
 } from '../slickRowBasedEdit.js';
-import { GridService } from '../../services/grid.service.js';
-import { Editors } from '../../editors/editors.index.js';
-import type { ExtensionUtility } from '../extensionUtility.js';
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 
 const addonOptions: RowBasedEditOptions = {
   actionsColumnLabel: 'MyActions',

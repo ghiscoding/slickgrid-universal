@@ -1,14 +1,14 @@
 import {
   addWhiteSpaces,
   Aggregators,
-  type Column,
   decimalFormatted,
   Filters,
   findItemInTreeStructure,
-  type Formatter,
   Formatters,
-  type GridOption,
   isNumber,
+  type Column,
+  type Formatter,
+  type GridOption,
   type SlickDataView,
   // GroupTotalFormatters,
   // italicFormatter,
@@ -16,7 +16,6 @@ import {
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-
 import './example06.scss';
 import { ExampleGridOptions } from './example-grid-options.js';
 

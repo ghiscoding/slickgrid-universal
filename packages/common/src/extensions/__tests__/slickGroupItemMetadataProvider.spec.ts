@@ -1,10 +1,9 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { getHtmlStringOutput } from '@slickgrid-universal/utils';
-
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { SlickEvent, SlickGroup, type SlickDataView, type SlickGrid } from '../../core/index.js';
+import * as utils from '../../core/utils.js';
 import type { Column, GridOption, GroupItemMetadataProviderOption } from '../../interfaces/index.js';
 import { SlickGroupItemMetadataProvider } from '../slickGroupItemMetadataProvider.js';
-import { type SlickDataView, SlickEvent, type SlickGrid, SlickGroup } from '../../core/index.js';
-import * as utils from '../../core/utils.js';
 
 const gridOptionMock = {
   enablePagination: true,

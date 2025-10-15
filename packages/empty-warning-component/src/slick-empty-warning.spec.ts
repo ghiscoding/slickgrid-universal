@@ -1,9 +1,8 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createDomElement, type EmptyWarning, type GridOption, type SlickGrid } from '@slickgrid-universal/common';
-
-import { SlickEmptyWarningComponent } from './slick-empty-warning.component.js';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ContainerServiceStub } from '../../../test/containerServiceStub.js';
 import { TranslateServiceStub } from '../../../test/translateServiceStub.js';
+import { SlickEmptyWarningComponent } from './slick-empty-warning.component.js';
 
 const GRID_UID = 'slickgrid_123456';
 

@@ -1,18 +1,13 @@
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-
-import type { Column, ExtensionModel, GridOption } from '../interfaces/index.js';
 import {
+  ExtensionName,
   type ColumnReorderFunction,
   type ExtensionList,
-  ExtensionName,
   type InferExtensionByName,
   type SlickControlList,
   type SlickPluginList,
 } from '../enums/index.js';
-import type { SharedService } from './shared.service.js';
-import type { TranslaterService } from './translater.service.js';
 import {
-  type ExtensionUtility,
   SlickAutoTooltip,
   SlickCellExcelCopyManager,
   SlickCellMenu,
@@ -21,17 +16,21 @@ import {
   SlickContextMenu,
   SlickDraggableGrouping,
   SlickGridMenu,
-  type SlickGroupItemMetadataProvider,
   SlickHeaderButtons,
   SlickHeaderMenu,
   SlickRowBasedEdit,
   SlickRowMoveManager,
   SlickRowSelectionModel,
+  type ExtensionUtility,
+  type SlickGroupItemMetadataProvider,
 } from '../extensions/index.js';
+import type { Column, ExtensionModel, GridOption } from '../interfaces/index.js';
 import type { FilterService } from './filter.service.js';
-import type { SortService } from './sort.service.js';
-import type { TreeDataService } from './treeData.service.js';
 import type { GridService } from './grid.service.js';
+import type { SharedService } from './shared.service.js';
+import type { SortService } from './sort.service.js';
+import type { TranslaterService } from './translater.service.js';
+import type { TreeDataService } from './treeData.service.js';
 
 export class ExtensionService {
   protected _extensionCreatedList: ExtensionList<any> = {} as ExtensionList<any>;

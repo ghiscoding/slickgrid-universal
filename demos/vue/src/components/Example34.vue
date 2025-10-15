@@ -2,17 +2,17 @@
 import { faker } from '@faker-js/faker';
 import sparkline from '@fnando/sparkline';
 import {
-  type Formatter,
-  type GridOption,
-  type SlickgridVueInstance,
   Aggregators,
-  type Column,
   createDomElement,
   deepCopy,
   Filters,
   Formatters,
   GroupTotalFormatters,
   SlickgridVue,
+  type Column,
+  type Formatter,
+  type GridOption,
+  type SlickgridVueInstance,
 } from 'slickgrid-vue';
 import { onBeforeMount, onMounted, onUnmounted, ref, type Ref } from 'vue';
 

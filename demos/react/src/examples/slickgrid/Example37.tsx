@@ -1,12 +1,12 @@
+import React, { useEffect, useRef, useState } from 'react';
 import {
-  type Column,
   Editors,
+  SlickgridReact,
+  type Column,
   type GridOption,
   type OnCellChangeEventArgs,
-  SlickgridReact,
   type SlickgridReactInstance,
 } from 'slickgrid-react';
-import React, { useEffect, useRef, useState } from 'react';
 
 const NB_ITEMS = 100;
 

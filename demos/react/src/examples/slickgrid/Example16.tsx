@@ -1,13 +1,13 @@
+import React, { useEffect, useRef, useState } from 'react';
 import {
-  type Column,
   Filters,
   Formatters,
+  SlickgridReact,
+  type Column,
   type GridOption,
   type OnEventArgs,
-  SlickgridReact,
   type SlickgridReactInstance,
 } from 'slickgrid-react';
-import React, { useEffect, useRef, useState } from 'react';
 
 const Example16: React.FC = () => {
   const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);

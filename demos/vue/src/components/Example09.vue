@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { useTranslation } from 'i18next-vue';
 import {
-  type GridOption,
-  type SlickgridVueInstance,
-  type Column,
   ExtensionName,
   Filters,
   Formatters,
   SlickgridVue,
+  type Column,
+  type GridOption,
+  type SlickgridVueInstance,
   type SliderRangeOption,
 } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';

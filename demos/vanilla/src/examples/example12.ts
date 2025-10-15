@@ -1,33 +1,31 @@
+import { BindingEventService } from '@slickgrid-universal/binding';
 import {
+  Editors,
+  EventNamingStyle,
+  Filters,
+  // utilities
+  formatNumber,
+  Formatters,
+  SlickGlobalEditorLock,
+  SortComparers,
   type AutocompleterOption,
   type Column,
   type CompositeEditorModalType,
   type EditCommand,
-  Editors,
-  EventNamingStyle,
-  Filters,
   type Formatter,
-  Formatters,
   type GridOption,
   type LongTextEditorOption,
   type OnCompositeEditorChangeEventArgs,
-  SlickGlobalEditorLock,
   type SliderOption,
-  SortComparers,
   type VanillaCalendarOption,
-
-  // utilities
-  formatNumber,
 } from '@slickgrid-universal/common';
-import { BindingEventService } from '@slickgrid-universal/binding';
+import { SlickCompositeEditor, SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { type SlickerGridInstance } from '@slickgrid-universal/vanilla-bundle';
 import { Slicker, type VanillaForceGridBundle } from '@slickgrid-universal/vanilla-force-bundle';
-import { SlickCompositeEditor, SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 import { type MultipleSelectOption } from 'multiple-select-vanilla';
-
-import { ExampleGridOptions } from './example-grid-options.js';
 import countriesJson from './data/countries.json?raw';
+import { ExampleGridOptions } from './example-grid-options.js';
 import './example12.scss';
 
 // you can create custom validator to pass to an inline editor

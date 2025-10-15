@@ -1,9 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { InputMaskFilter } from '../inputMaskFilter.js';
+import type { SlickGrid } from '../../core/index.js';
 import type { Column, FilterArguments, GridOption } from '../../interfaces/index.js';
 import { Filters } from '../filters.index.js';
-import type { SlickGrid } from '../../core/index.js';
+import { InputMaskFilter } from '../inputMaskFilter.js';
 
 const containerId = 'demo-container';
 

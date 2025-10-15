@@ -1,9 +1,8 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { of, Subject, throwError } from 'rxjs';
-
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
 import type { BackendServiceApi, GridOption } from '../../interfaces/index.js';
 import { BackendUtilityService } from '../backendUtility.service.js';
-import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
 
 vi.useFakeTimers();
 

@@ -1,6 +1,5 @@
 import { emptyElement, isDefined } from '@slickgrid-universal/utils';
 import type { TrustedHTML } from 'trusted-types/lib/index.js';
-
 import type { Sanitizer } from '../interfaces/gridOption.interface.js';
 
 /**

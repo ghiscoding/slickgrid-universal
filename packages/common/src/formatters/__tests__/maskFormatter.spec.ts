@@ -1,5 +1,4 @@
 import { describe, expect, it, vi } from 'vitest';
-
 import type { SlickGrid } from '../../core/index.js';
 import type { Column } from '../../interfaces/index.js';
 import { maskFormatter } from '../maskFormatter.js';

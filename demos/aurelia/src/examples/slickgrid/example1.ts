@@ -1,5 +1,4 @@
-import { type AureliaGridInstance, type Column, type GridOption, Formatters } from 'aurelia-slickgrid';
-
+import { Formatters, type AureliaGridInstance, type Column, type GridOption } from 'aurelia-slickgrid';
 import { zeroPadding } from './utilities.js';
 
 const NB_ITEMS = 995;

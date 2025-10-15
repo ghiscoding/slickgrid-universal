@@ -1,5 +1,4 @@
 import { createDomElement } from '@slickgrid-universal/utils';
-
 import { type Formatter } from './../interfaces/index.js';
 
 /** Display whichever icon you want (library agnostic, it could be Font-Awesome, Material or any other icons set) */

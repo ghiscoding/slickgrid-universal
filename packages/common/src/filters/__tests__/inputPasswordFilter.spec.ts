@@ -1,9 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { InputPasswordFilter } from '../inputPasswordFilter.js';
+import type { SlickGrid } from '../../core/index.js';
 import type { Column, FilterArguments, GridOption } from '../../interfaces/index.js';
 import { Filters } from '../filters.index.js';
-import type { SlickGrid } from '../../core/index.js';
+import { InputPasswordFilter } from '../inputPasswordFilter.js';
 
 const containerId = 'demo-container';
 

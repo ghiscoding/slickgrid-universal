@@ -1,11 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
-import type { Column, GridOption, MenuCommandItem } from '../../interfaces/index.js';
-import { ExtensionUtility } from '../extensionUtility.js';
-import { SharedService } from '../../services/shared.service.js';
-import type { BackendUtilityService } from '../../services/backendUtility.service.js';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import type { SlickGrid } from '../../core/slickGrid.js';
+import type { Column, GridOption, MenuCommandItem } from '../../interfaces/index.js';
+import type { BackendUtilityService } from '../../services/backendUtility.service.js';
+import { SharedService } from '../../services/shared.service.js';
+import { ExtensionUtility } from '../extensionUtility.js';
 
 const gridStub = {
   calculateFrozenColumnIndexById: vi.fn(),

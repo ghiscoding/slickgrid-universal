@@ -1,21 +1,20 @@
 <script setup lang="ts">
 import {
   Aggregators,
-  type Column,
-  type GridOption,
   Editors,
   ExtensionName,
   Filters,
   Formatters,
-  type Grouping,
   GroupTotalFormatters,
   SlickgridVue,
-  type SlickgridVueInstance,
   SortComparers,
   SortDirectionNumber,
+  type Column,
+  type GridOption,
+  type Grouping,
+  type SlickgridVueInstance,
 } from 'slickgrid-vue';
 import { computed, onBeforeMount, onUnmounted, ref, type Ref } from 'vue';
-
 import Example47Detail from './Example47Detail.vue';
 import ExampleDetailPreload from './ExampleDetailPreload.vue';
 

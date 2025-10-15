@@ -1,5 +1,5 @@
 import { deepMerge, emptyElement, getOffset } from '@slickgrid-universal/utils';
-
+import { SlickEvent, SlickEventHandler, SlickRange, Utils as SlickUtils, type SlickEventData, type SlickGrid } from '../core/index.js';
 import type {
   CellRangeSelectorOption,
   DragPosition,
@@ -10,7 +10,6 @@ import type {
   OnScrollEventArgs,
 } from '../interfaces/index.js';
 import { SlickCellRangeDecorator } from './index.js';
-import { SlickEvent, type SlickEventData, SlickEventHandler, type SlickGrid, SlickRange, Utils as SlickUtils } from '../core/index.js';
 
 export class SlickCellRangeSelector {
   pluginName: 'CellRangeSelector' = 'CellRangeSelector' as const;
