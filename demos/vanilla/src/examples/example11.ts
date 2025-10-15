@@ -1,7 +1,6 @@
 import { addDay, format as tempoFormat } from '@formkit/tempo';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import {
-  // utilities
   deepCopy,
   Editors,
   Filters,
