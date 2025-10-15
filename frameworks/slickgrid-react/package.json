@@ -95,8 +95,6 @@
     "@types/sortablejs": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "dompurify": "catalog:",
-    "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^6.1.1",
     "globals": "catalog:",
     "native-copyfiles": "catalog:",
     "react": "^19.2.0",
