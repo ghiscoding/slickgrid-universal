@@ -1,16 +1,16 @@
+import { BindingEventService, BindingHelper } from '@slickgrid-universal/binding';
 import type {
+  BasePaginationComponent,
   GridOption,
   Locale,
-  BasePaginationComponent,
+  PaginationMetadata,
   PaginationService,
   PubSubService,
-  PaginationMetadata,
   SlickGrid,
   Subscription,
   TranslaterService,
 } from '@slickgrid-universal/common';
 import { Constants, createDomElement, getTranslationPrefix } from '@slickgrid-universal/common';
-import { BindingEventService, BindingHelper } from '@slickgrid-universal/binding';
 
 export class SlickPaginationComponent implements BasePaginationComponent {
   protected _bindingHelper: BindingHelper;

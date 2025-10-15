@@ -4,17 +4,16 @@ import type { GraphqlPaginatedResult, GraphqlServiceApi } from '@slickgrid-unive
 import { GraphqlService } from '@slickgrid-universal/graphql';
 import { useTranslation } from 'i18next-vue';
 import {
+  Filters,
+  SlickgridVue,
+  type Column,
   type GridOption,
   type Metrics,
   type MultipleSelectOption,
   type OnRowCountChangedEventArgs,
   type SlickgridVueInstance,
-  type Column,
-  Filters,
-  SlickgridVue,
 } from 'slickgrid-vue';
 import { computed, onBeforeMount, ref, type Ref } from 'vue';
-
 import SAMPLE_COLLECTION_DATA_URL from './data/customers_100.json?url';
 
 const { i18next } = useTranslation();

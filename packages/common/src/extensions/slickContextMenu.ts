@@ -1,25 +1,24 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { extend } from '@slickgrid-universal/utils';
-
+import type { SlickEventData, SlickGrid } from '../core/index.js';
+import { DelimiterType } from '../enums/index.js';
+import type { ExtensionUtility } from '../extensions/extensionUtility.js';
+import { copyCellToClipboard } from '../formatters/formatterUtilities.js';
 import type {
+  Column,
   ContextMenu,
   ContextMenuOption,
-  Column,
   MenuCallbackArgs,
   MenuCommandItem,
   MenuCommandItemCallbackArgs,
   MenuOptionItem,
 } from '../interfaces/index.js';
-import type { SlickEventData, SlickGrid } from '../core/index.js';
-import { DelimiterType } from '../enums/index.js';
 import {
-  type ExcelExportService,
   getCellValueFromQueryFieldGetter,
   getTranslationPrefix,
+  type ExcelExportService,
   type TextExportService,
 } from '../services/index.js';
-import { copyCellToClipboard } from '../formatters/formatterUtilities.js';
-import type { ExtensionUtility } from '../extensions/extensionUtility.js';
 import type { SharedService } from '../services/shared.service.js';
 import type { TreeDataService } from '../services/treeData.service.js';
 import { MenuFromCellBaseClass } from './menuFromCellBaseClass.js';

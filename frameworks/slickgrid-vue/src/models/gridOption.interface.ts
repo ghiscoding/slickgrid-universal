@@ -1,6 +1,5 @@
 import type { BasePaginationModel, Column, GridOption as UniversalGridOption } from '@slickgrid-universal/common';
 import type { DefineComponent } from 'vue';
-
 import type { I18Next } from './i18next.interface.js';
 import type { RowDetailView } from './rowDetailView.interface.js';
 

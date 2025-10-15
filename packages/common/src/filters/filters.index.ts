@@ -1,19 +1,19 @@
+import type { FilterConstructor } from '../interfaces/filter.interface.js';
 import { AutocompleterFilter } from './autocompleterFilter.js';
 import { CompoundDateFilter } from './compoundDateFilter.js';
 import { CompoundInputFilter } from './compoundInputFilter.js';
 import { CompoundInputNumberFilter } from './compoundInputNumberFilter.js';
 import { CompoundInputPasswordFilter } from './compoundInputPasswordFilter.js';
 import { CompoundSliderFilter } from './compoundSliderFilter.js';
+import { DateRangeFilter } from './dateRangeFilter.js';
 import { InputFilter } from './inputFilter.js';
 import { InputMaskFilter } from './inputMaskFilter.js';
 import { InputNumberFilter } from './inputNumberFilter.js';
 import { InputPasswordFilter } from './inputPasswordFilter.js';
 import { MultipleSelectFilter } from './multipleSelectFilter.js';
-import { DateRangeFilter } from './dateRangeFilter.js';
 import { SingleSelectFilter } from './singleSelectFilter.js';
 import { SingleSliderFilter } from './singleSliderFilter.js';
 import { SliderRangeFilter } from './sliderRangeFilter.js';
-import type { FilterConstructor } from '../interfaces/filter.interface.js';
 
 export const Filters: Record<string, FilterConstructor> = {
   /** AutoComplete Filter (using https://github.com/kraaden/autocomplete) */

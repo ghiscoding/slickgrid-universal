@@ -1,35 +1,35 @@
 import { FieldType } from '../enums/fieldType.enum.js';
 import type { Formatter, IFormatters } from '../interfaces/formatter.interface.js';
-import { getAssociatedDateFormatter, getBaseDateFormatter } from './formatterUtilities.js';
 import { getAllDateFieldTypes } from '../services/utilities.js';
 import { arrayObjectToCsvFormatter } from './arrayObjectToCsvFormatter.js';
 import { arrayToCsvFormatter } from './arrayToCsvFormatter.js';
 import { checkmarkMaterialFormatter } from './checkmarkMaterialFormatter.js';
-import { currencyFormatter } from './currencyFormatter.js';
-import { collectionFormatter } from './collectionFormatter.js';
 import { collectionEditorFormatter } from './collectionEditorFormatter.js';
+import { collectionFormatter } from './collectionFormatter.js';
 import { complexObjectFormatter } from './complexObjectFormatter.js';
+import { currencyFormatter } from './currencyFormatter.js';
 import { decimalFormatter } from './decimalFormatter.js';
 import { dollarColoredBoldFormatter } from './dollarColoredBoldFormatter.js';
 import { dollarColoredFormatter } from './dollarColoredFormatter.js';
 import { dollarFormatter } from './dollarFormatter.js';
+import { getAssociatedDateFormatter, getBaseDateFormatter } from './formatterUtilities.js';
+import { htmlDecodeFormatter } from './htmlDecodeFormatter.js';
 import { hyperlinkFormatter } from './hyperlinkFormatter.js';
 import { iconBooleanFormatter } from './iconBooleanFormatter.js';
 import { iconFormatter } from './iconFormatter.js';
-import { htmlDecodeFormatter } from './htmlDecodeFormatter.js';
 import { maskFormatter } from './maskFormatter.js';
 import { multipleFormatter } from './multipleFormatter.js';
-import { percentFormatter } from './percentFormatter.js';
 import { percentCompleteBarFormatter } from './percentCompleteBarFormatter.js';
 import { percentCompleteBarWithTextFormatter } from './percentCompleteBarWithTextFormatter.js';
 import { percentCompleteFormatter } from './percentCompleteFormatter.js';
+import { percentFormatter } from './percentFormatter.js';
 import { percentSymbolFormatter } from './percentSymbolFormatter.js';
 import { progressBarFormatter } from './progressBarFormatter.js';
+import { translateBooleanFormatter } from './translateBooleanFormatter.js';
 import { translateFormatter } from './translateFormatter.js';
 import { treeExportFormatter } from './treeExportFormatter.js';
 import { treeFormatter } from './treeFormatter.js';
 import { treeParseTotalsFormatter } from './treeParseTotalsFormatter.js';
-import { translateBooleanFormatter } from './translateBooleanFormatter.js';
 
 /** Provides a list of different Formatters that will change the cell value displayed in the UI */
 const allFormatters: Record<string, Formatter> = {

@@ -1,13 +1,13 @@
 import {
+  emptyElement,
+  OperatorType,
   type Column,
   type ColumnFilter,
-  emptyElement,
   type Filter,
   type FilterArguments,
   type FilterCallback,
   type GridOption,
   type OperatorString,
-  OperatorType,
   type SearchTerm,
   type SlickGrid,
 } from 'slickgrid-vue';

@@ -1,8 +1,7 @@
 import type { EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { flatten } from 'un-flatten-tree';
-
 import { Constants } from '../constants.js';
-import { FieldType, type OperatorString, OperatorType } from '../enums/index.js';
+import { FieldType, OperatorType, type OperatorString } from '../enums/index.js';
 import type { Aggregator, CancellablePromiseWrapper, Column, GridOption, TreeDataPropNames } from '../interfaces/index.js';
 import type { Observable, RxJsFacade, Subject, Subscription } from './rxjsFacade.js';
 

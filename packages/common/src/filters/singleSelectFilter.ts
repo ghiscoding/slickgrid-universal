@@ -1,7 +1,7 @@
-import { SelectFilter } from './selectFilter.js';
-import type { CollectionService } from './../services/collection.service.js';
-import type { TranslaterService } from '../services/translater.service.js';
 import type { RxJsFacade } from '../services/rxjsFacade.js';
+import type { TranslaterService } from '../services/translater.service.js';
+import type { CollectionService } from './../services/collection.service.js';
+import { SelectFilter } from './selectFilter.js';
 
 export class SingleSelectFilter extends SelectFilter {
   /**

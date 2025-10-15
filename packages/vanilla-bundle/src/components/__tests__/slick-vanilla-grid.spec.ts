@@ -1,26 +1,24 @@
-import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
-import { of, throwError } from 'rxjs';
-
-vi.mock('sortablejs');
-
 import {
   autoAddEditorFormatterToColumnsWithEditor,
+  Editors,
+  FieldType,
+  Filters,
+  SharedService,
+  SlickDataView,
+  SlickGroupItemMetadataProvider,
   type BackendServiceApi,
   type BackendUtilityService,
-  type Column,
   type CollectionService,
+  type Column,
   type ColumnFilters,
   type CurrentFilter,
   type CurrentPagination,
   type CurrentPinning,
   type CurrentSorter,
   type Editor,
-  Editors,
   type ExtensionList,
   type ExtensionService,
   type ExtensionUtility,
-  FieldType,
-  Filters,
   type FilterService,
   type Formatter,
   type GridEventService,
@@ -36,25 +34,25 @@ import {
   type PaginationMetadata,
   type PaginationService,
   type ResizerService,
-  SharedService,
-  SlickDataView,
   type SlickEditorLock,
   type SlickEventHandler,
   type SlickGrid,
-  SlickGroupItemMetadataProvider,
   type SortService,
-  type TreeDataService,
   type TranslaterService,
+  type TreeDataService,
 } from '@slickgrid-universal/common';
-import type { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
-
-import { SlickVanillaGridBundle } from '../slick-vanilla-grid-bundle.js';
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
+import type { GraphqlPaginatedResult, GraphqlService, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
+import { of, throwError } from 'rxjs';
+import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { basicFetchStub } from '../../../../../test/httpClientStub.js';
 import { MockSlickEvent, MockSlickEventHandler } from '../../../../../test/mockSlickEvent.js';
-import { UniversalContainerService } from '../../services/universalContainer.service.js';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
+import { UniversalContainerService } from '../../services/universalContainer.service.js';
+import { SlickVanillaGridBundle } from '../slick-vanilla-grid-bundle.js';
+
+vi.mock('sortablejs');
 
 vi.useFakeTimers();
 

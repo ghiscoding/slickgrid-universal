@@ -1,6 +1,7 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { arrayRemoveItemByIndex, isObjectEmpty } from '@slickgrid-universal/utils';
-
+import type { SlickDataView, SlickGrid } from '../core/index.js';
+import { SlickRowSelectionModel } from '../extensions/slickRowSelectionModel.js';
 import type {
   CellArgs,
   Column,
@@ -13,14 +14,12 @@ import type {
   OnEventArgs,
   ShowColumnOption,
 } from '../interfaces/index.js';
+import type { PaginationService } from '../services/pagination.service.js';
 import type { FilterService } from './filter.service.js';
 import type { GridStateService } from './gridState.service.js';
-import type { PaginationService } from '../services/pagination.service.js';
 import type { SharedService } from './shared.service.js';
-import type { SlickDataView, SlickGrid } from '../core/index.js';
 import type { SortService } from './sort.service.js';
 import type { TreeDataService } from './treeData.service.js';
-import { SlickRowSelectionModel } from '../extensions/slickRowSelectionModel.js';
 
 const GridServiceDeleteOptionDefaults: GridServiceDeleteOption = { skipError: false, triggerEvent: true };
 const GridServiceInsertOptionDefaults: GridServiceInsertOption = {

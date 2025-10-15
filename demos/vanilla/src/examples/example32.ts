@@ -1,8 +1,7 @@
-import { Editors, type Column, type GridOption, type ItemMetadata } from '@slickgrid-universal/common';
 import { BindingEventService } from '@slickgrid-universal/binding';
+import { Editors, type Column, type GridOption, type ItemMetadata } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-
 import { ExampleGridOptions } from './example-grid-options.js';
 import './example32.scss';
 

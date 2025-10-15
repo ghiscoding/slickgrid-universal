@@ -1,24 +1,14 @@
 <script setup lang="ts">
 import {
   autoAddEditorFormatterToColumnsWithEditor,
-  type AutocompleterEditor,
-  type BackendServiceApi,
-  type BackendServiceOption,
   BackendUtilityService,
-  type BasePaginationComponent,
-  type BasePaginationModel,
   collectionObserver,
   CollectionService,
-  type Column,
-  type DataViewOption,
   emptyElement,
   EventNamingStyle,
-  type EventSubscription,
-  type ExtensionList,
   ExtensionName,
   ExtensionService,
   ExtensionUtility,
-  type ExternalResource,
   FilterFactory,
   FilterService,
   GridEventService,
@@ -26,14 +16,8 @@ import {
   GridStateService,
   HeaderGroupingService,
   isColumnDateType,
-  type Metrics,
-  type Observable,
-  type Pagination,
-  type PaginationMetadata,
   PaginationService,
   ResizerService,
-  type RxJsFacade,
-  type SelectEditor,
   SharedService,
   SlickDataView,
   SlickEventHandler,
@@ -42,6 +26,22 @@ import {
   SlickGroupItemMetadataProvider,
   SortService,
   TreeDataService,
+  type AutocompleterEditor,
+  type BackendServiceApi,
+  type BackendServiceOption,
+  type BasePaginationComponent,
+  type BasePaginationModel,
+  type Column,
+  type DataViewOption,
+  type EventSubscription,
+  type ExtensionList,
+  type ExternalResource,
+  type Metrics,
+  type Observable,
+  type Pagination,
+  type PaginationMetadata,
+  type RxJsFacade,
+  type SelectEditor,
 } from '@slickgrid-universal/common';
 import { SlickFooterComponent } from '@slickgrid-universal/custom-footer-component';
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
@@ -50,19 +50,18 @@ import { SlickPaginationComponent } from '@slickgrid-universal/pagination-compon
 import { deepCopy, extend } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 import {
-  type ComponentPublicInstance,
   computed,
   createApp,
   inject,
   nextTick,
   onBeforeUnmount,
   onMounted,
-  type Ref,
   ref,
   useAttrs,
   watch,
+  type ComponentPublicInstance,
+  type Ref,
 } from 'vue';
-
 import { SlickRowDetailView } from '../extensions/slickRowDetailView.js';
 import { GlobalGridOptions } from '../global-grid-options.js';
 import type { GridOption, I18Next, SlickgridVueInstance } from '../models/index.js';

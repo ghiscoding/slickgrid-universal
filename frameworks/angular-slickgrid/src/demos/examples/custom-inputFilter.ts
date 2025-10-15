@@ -1,11 +1,11 @@
 import {
+  OperatorType,
   type Column,
   type ColumnFilter,
   type Filter,
   type FilterArguments,
   type FilterCallback,
   type GridOption,
-  OperatorType,
   type OperatorString,
   type SearchTerm,
   type SlickGrid,

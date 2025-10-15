@@ -5,21 +5,20 @@ import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { resolve } from 'aurelia';
 import {
+  Filters,
+  Formatters,
+  OperatorType,
   type AureliaGridInstance,
   type Column,
   type CurrentFilter,
-  Filters,
   type Formatter,
-  Formatters,
   type GridOption,
   type GridStateChange,
   type Metrics,
   type MultipleSelectOption,
-  OperatorType,
   type SlickGrid,
   type SliderRangeOption,
 } from 'aurelia-slickgrid';
-
 import { CustomInputFilter } from './custom-inputFilter.js';
 
 const NB_ITEMS = 1500;

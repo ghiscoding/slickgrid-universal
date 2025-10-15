@@ -12,19 +12,19 @@ import type {
   GridOption,
   InfiniteScrollOption,
   MultiColumnSort,
+  OperatorString,
   Pagination,
   PaginationChangedArgs,
-  SortDirectionString,
-  OperatorString,
   SearchTerm,
   SharedService,
   SingleColumnSort,
   SlickGrid,
+  SortDirectionString,
 } from '@slickgrid-universal/common';
 import { FieldType, mapOperatorByFieldType, OperatorType, parseUtcDate, SortDirection } from '@slickgrid-universal/common';
 import { getHtmlStringOutput, stripTags, titleCase } from '@slickgrid-universal/utils';
-import { OdataQueryBuilderService } from './odataQueryBuilder.service.js';
 import type { OdataOption, OdataSortingOption } from '../interfaces/index.js';
+import { OdataQueryBuilderService } from './odataQueryBuilder.service.js';
 
 const DEFAULT_ITEMS_PER_PAGE = 25;
 const DEFAULT_PAGE_SIZE = 20;

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { type Column, type GridOption, SlickgridVue, toCamelCase } from 'slickgrid-vue';
+import { SlickgridVue, toCamelCase, type Column, type GridOption } from 'slickgrid-vue';
 import { ref, type Ref } from 'vue';
 
 const gridCreated = ref(false);

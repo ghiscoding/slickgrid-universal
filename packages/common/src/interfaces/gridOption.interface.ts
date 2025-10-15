@@ -1,11 +1,13 @@
 import type { BasePubSubService, EventNamingStyle } from '@slickgrid-universal/event-pub-sub';
 import type { MultipleSelectOption } from 'multiple-select-vanilla';
 import type { TrustedHTML } from 'trusted-types/lib';
-
+import type { DataViewOption, SlickEditorLock } from '../core/index.js';
+import type { ColumnReorderFunction, OperatorString, OperatorType } from '../enums/index.js';
+import type { TranslaterService } from '../services/translater.service.js';
 import type {
+  AutocompleterOption,
   AutoResizeOption,
   AutoTooltipOption,
-  AutocompleterOption,
   BackendServiceApi,
   CellMenu,
   CheckboxSelectorOption,
@@ -46,9 +48,6 @@ import type {
   TreeDataOption,
   VanillaCalendarOption,
 } from './index.js';
-import type { ColumnReorderFunction, OperatorString, OperatorType } from '../enums/index.js';
-import type { TranslaterService } from '../services/translater.service.js';
-import type { DataViewOption, SlickEditorLock } from '../core/index.js';
 
 export interface CellViewportRange {
   bottom: number;

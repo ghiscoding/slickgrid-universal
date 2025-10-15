@@ -1,22 +1,21 @@
+import { BindingEventService } from '@slickgrid-universal/binding';
 import {
-  type Aggregator,
   Aggregators,
-  type Column,
   Editors,
+  Formatters,
+  GroupTotalFormatters,
+  type Aggregator,
+  type Column,
   type ExcelCellValueParserArgs,
   type ExcelGroupValueParserArgs,
   type Formatter,
-  Formatters,
   type GridOption,
   type Grouping,
-  GroupTotalFormatters,
   type SlickGrid,
   type SlickGroupTotals,
 } from '@slickgrid-universal/common';
-import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-
+import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options.js';
 import './example23.scss';
 

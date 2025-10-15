@@ -1,5 +1,5 @@
-import type { Formatter } from './formatter.interface.js';
 import type { SlickCheckboxSelectColumn } from '../extensions/slickCheckboxSelectColumn.js';
+import type { Formatter } from './formatter.interface.js';
 
 export interface ItemMetadataProvider {
   getRowMetadata(item: any, row: number): any;

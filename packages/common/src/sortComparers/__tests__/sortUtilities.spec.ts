@@ -1,9 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
-
-import type { Column } from '../../interfaces/index.js';
 import { FieldType, SortDirectionNumber } from '../../enums/index.js';
-import { sortByFieldType } from '../sortUtilities.js';
+import type { Column } from '../../interfaces/index.js';
 import { SortComparers } from '../sortComparers.index.js';
+import { sortByFieldType } from '../sortUtilities.js';
 
 describe('sortUtilities', () => {
   it('should call the SortComparers.boolean when FieldType is boolean', () => {

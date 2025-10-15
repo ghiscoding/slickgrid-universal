@@ -1,18 +1,16 @@
-import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest';
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement } from '@slickgrid-universal/utils';
-
+import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest';
 import { AutocompleterEditor, CheckboxEditor, InputEditor, LongTextEditor } from '../../editors/index.js';
 import { SlickCellSelectionModel, SlickRowSelectionModel } from '../../extensions/index.js';
-import type { Column, Editor, FormatterResultWithHtml, FormatterResultWithText, GridOption, EditCommand, CustomDataView } from '../../interfaces/index.js';
+import { copyCellToClipboard } from '../../formatters/formatterUtilities.js';
+import type { Column, CustomDataView, EditCommand, Editor, FormatterResultWithHtml, FormatterResultWithText, GridOption } from '../../interfaces/index.js';
 import { SlickEventData, SlickGlobalEditorLock } from '../slickCore.js';
 import { SlickDataView } from '../slickDataview.js';
 import { SlickGrid } from '../slickGrid.js';
 
 vi.mock('../../formatters/formatterUtilities.js');
 vi.useFakeTimers();
-
-import { copyCellToClipboard } from '../../formatters/formatterUtilities.js';
 
 const pubSubServiceStub = {
   publish: vi.fn(),

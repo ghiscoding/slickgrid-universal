@@ -1,10 +1,10 @@
 import 'regenerator-runtime/runtime.js';
-export * from '@slickgrid-universal/common';
-
 import { SlickgridReact } from './components/slickgrid-react.js';
 import { SlickRowDetailView } from './extensions/slickRowDetailView.js';
+import type { GridOption, RowDetailView, SlickgridReactComponentOutput, SlickgridReactInstance } from './models/index.js';
 import type { SlickgridConfig } from './slickgrid-config.js';
-import type { SlickgridReactInstance, SlickgridReactComponentOutput, RowDetailView, GridOption } from './models/index.js';
+
+export * from '@slickgrid-universal/common';
 
 // expose all public classes & contexts
 export { TranslaterI18NextService, disposeAllSubscriptions } from './services/index.js';

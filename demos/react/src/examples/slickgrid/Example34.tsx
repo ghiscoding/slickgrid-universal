@@ -1,20 +1,19 @@
-import {
-  Aggregators,
-  type Column,
-  createDomElement,
-  deepCopy,
-  Filters,
-  type Formatter,
-  Formatters,
-  type GridOption,
-  GroupTotalFormatters,
-  SlickgridReact,
-  type SlickgridReactInstance,
-} from 'slickgrid-react';
 import { faker } from '@faker-js/faker';
 import sparkline from '@fnando/sparkline';
 import React, { useEffect, useRef, useState } from 'react';
-
+import {
+  Aggregators,
+  createDomElement,
+  deepCopy,
+  Filters,
+  Formatters,
+  GroupTotalFormatters,
+  SlickgridReact,
+  type Column,
+  type Formatter,
+  type GridOption,
+  type SlickgridReactInstance,
+} from 'slickgrid-react';
 import './example34.scss';
 
 const NB_ROWS = 200;

@@ -1,16 +1,15 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
+  createDomElement,
+  SlickEvent,
+  SlickEventData,
   type Column,
   type FormatterResultWithHtml,
   type GridOption,
   type SlickDataView,
-  SlickEvent,
-  SlickEventData,
   type SlickGrid,
-  createDomElement,
 } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
-
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SlickRowDetailView } from './slickRowDetailView.js';
 
 vi.useFakeTimers();

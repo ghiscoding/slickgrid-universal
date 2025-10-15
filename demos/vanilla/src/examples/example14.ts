@@ -1,30 +1,28 @@
+import { BindingEventService } from '@slickgrid-universal/binding';
 import {
-  type AutocompleterOption,
-  type Column,
-  type EditCommand,
   Editors,
   EventNamingStyle,
   Filters,
-  type Formatter,
+  // utilities
+  formatNumber,
   Formatters,
+  SlickGlobalEditorLock,
+  SortComparers,
+  Utilities,
+  type AutocompleterOption,
+  type Column,
+  type EditCommand,
+  type Formatter,
   type GridOption,
   type GridStateChange,
   type LongTextEditorOption,
   type SearchTerm,
-  SlickGlobalEditorLock,
   type SliderRangeOption,
-  SortComparers,
   type VanillaCalendarOption,
-
-  // utilities
-  formatNumber,
-  Utilities,
 } from '@slickgrid-universal/common';
-import { BindingEventService } from '@slickgrid-universal/binding';
-import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
+import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-
 import countriesJson from './data/countries.json?raw';
 import { ExampleGridOptions } from './example-grid-options.js';
 import './example14.scss';

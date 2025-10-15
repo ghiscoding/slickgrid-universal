@@ -1,20 +1,20 @@
+import { I18N } from '@aurelia/i18n';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
-import { I18N } from '@aurelia/i18n';
+import { resolve } from 'aurelia';
 // import { TOptions as I18NOptions } from 'i18next';
 import {
-  type AureliaGridInstance,
-  type Column,
   DelimiterType,
   Filters,
-  type Formatter,
   Formatters,
+  type AureliaGridInstance,
+  type Column,
+  type Formatter,
   type GridOption,
   type GridStateChange,
   type SlickGrid,
   type SliderOption,
 } from 'aurelia-slickgrid';
-import { resolve } from 'aurelia';
 
 const NB_ITEMS = 1500;
 

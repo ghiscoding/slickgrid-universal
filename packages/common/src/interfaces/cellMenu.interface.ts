@@ -1,6 +1,6 @@
-import type { CellMenuOption, MenuCommandItemCallbackArgs, MenuFromCellCallbackArgs, MenuOptionItemCallbackArgs } from './index.js';
-import type { SlickCellMenu } from '../extensions/slickCellMenu.js';
 import type { SlickEventData } from '../core/slickCore.js';
+import type { SlickCellMenu } from '../extensions/slickCellMenu.js';
+import type { CellMenuOption, MenuCommandItemCallbackArgs, MenuFromCellCallbackArgs, MenuOptionItemCallbackArgs } from './index.js';
 
 export interface CellMenu extends CellMenuOption {
   // --

@@ -1,13 +1,13 @@
+import type { SearchTerm } from '../enums/searchTerm.type.js';
+import type { FilterCondition, FilterConditionOption } from '../interfaces/index.js';
 import { executeBooleanFilterCondition } from './booleanFilterCondition.js';
 import { executeCollectionSearchFilterCondition } from './collectionSearchFilterCondition.js';
-import { executeNumberFilterCondition } from './numberFilterCondition.js';
-import { executeStringFilterCondition } from './stringFilterCondition.js';
-import type { FilterCondition, FilterConditionOption } from '../interfaces/index.js';
-import type { SearchTerm } from '../enums/searchTerm.type.js';
-import { isCollectionOperator } from './filterUtilities.js';
-import { getVarTypeOfByColumnFieldType } from './filterConditionProcesses.js';
 import { executeDateFilterCondition } from './dateFilterCondition.js';
+import { getVarTypeOfByColumnFieldType } from './filterConditionProcesses.js';
+import { isCollectionOperator } from './filterUtilities.js';
+import { executeNumberFilterCondition } from './numberFilterCondition.js';
 import { executeObjectFilterCondition } from './objectFilterCondition.js';
+import { executeStringFilterCondition } from './stringFilterCondition.js';
 
 /** Execute mapped condition (per field type) for each cell in the grid */
 export const executeFilterConditionTest: FilterCondition = ((

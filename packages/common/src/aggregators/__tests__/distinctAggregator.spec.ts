@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-
-import { DistinctAggregator } from '../distinctAggregator.js';
 import type { GroupTotals } from '../../interfaces/grouping.interface.js';
+import { DistinctAggregator } from '../distinctAggregator.js';
 
 describe('disctinctAggregator', () => {
   let aggregator: DistinctAggregator;

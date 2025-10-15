@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type Column, type Formatter, Formatters, type GridOption, SlickgridVue, type SlickgridVueInstance } from 'slickgrid-vue';
+import { Formatters, SlickgridVue, type Column, type Formatter, type GridOption, type SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
 
 const NB_ITEMS = 500;

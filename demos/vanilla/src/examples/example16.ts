@@ -1,23 +1,22 @@
+import { BindingEventService } from '@slickgrid-universal/binding';
 import {
   createDomElement,
-  type Column,
-  type EditCommand,
   Editors,
   Filters,
   Formatters,
-  type GridOption,
   OperatorType,
+  type Column,
+  type EditCommand,
+  type GridOption,
+  type MultipleSelectOption,
   type SliderOption,
   type SliderRangeOption,
   type VanillaCalendarOption,
-  type MultipleSelectOption,
 } from '@slickgrid-universal/common';
-import { BindingEventService } from '@slickgrid-universal/binding';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-
 import { ExampleGridOptions } from './example-grid-options.js';
 import './example16.scss';
 

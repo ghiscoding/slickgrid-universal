@@ -1,5 +1,5 @@
-import type { Editor, EditorConstructor } from './editor.interface.js';
 import type { CompositeEditorModalType } from '../enums/compositeEditorModalType.type.js';
+import type { Editor, EditorConstructor } from './editor.interface.js';
 
 export interface CompositeEditorOption {
   /** Defaults to "edit", what is the type of Composite Editor Modal is used? */

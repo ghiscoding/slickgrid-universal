@@ -2,23 +2,22 @@ import { IHttpClient } from '@aurelia/fetch-client';
 import { newInstanceOf, resolve } from '@aurelia/kernel';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
+  Editors,
+  Filters,
+  formatNumber,
+  Formatters,
+  SlickGlobalEditorLock,
+  SortComparers,
   type AureliaGridInstance,
   type AutocompleterOption,
   type Column,
   type EditCommand,
-  Editors,
-  Filters,
-  formatNumber,
   type Formatter,
-  Formatters,
   type GridOption,
   type LongTextEditorOption,
-  SlickGlobalEditorLock,
-  SortComparers,
   type SearchTerm,
   type VanillaCalendarOption,
 } from 'aurelia-slickgrid';
-
 import './example32.scss'; // provide custom CSS/SASS styling
 import COUNTRIES_COLLECTION_URL from './data/countries.json?url';
 

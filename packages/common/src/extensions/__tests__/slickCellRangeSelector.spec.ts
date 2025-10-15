@@ -1,9 +1,8 @@
+import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
+import { SlickEvent, type SlickGrid } from '../../core/index.js';
 import type { GridOption } from '../../interfaces/index.js';
 import { SlickCellRangeSelector } from '../slickCellRangeSelector.js';
-import { SlickEvent, type SlickGrid } from '../../core/index.js';
-import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 vi.useFakeTimers();
 

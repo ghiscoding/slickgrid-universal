@@ -1,4 +1,4 @@
-import type { Column, ColumnEditor, Editor, EditorValidator, EditorValidationResult } from 'slickgrid-react';
+import type { Column, ColumnEditor, Editor, EditorValidationResult, EditorValidator } from 'slickgrid-react';
 
 /*
  * An example of a 'detached' editor.

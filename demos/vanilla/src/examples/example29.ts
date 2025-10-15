@@ -1,7 +1,6 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { type Column, Editors, Formatters, type GridOption, isDefined, SlickGlobalEditorLock } from '@slickgrid-universal/common';
+import { Editors, Formatters, isDefined, SlickGlobalEditorLock, type Column, type GridOption } from '@slickgrid-universal/common';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-
 import { ExampleGridOptions } from './example-grid-options.js';
 import './example29.scss';
 

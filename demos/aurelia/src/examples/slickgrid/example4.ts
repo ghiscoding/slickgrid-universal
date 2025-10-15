@@ -2,18 +2,17 @@ import { IHttpClient } from '@aurelia/fetch-client';
 import { newInstanceOf, resolve } from '@aurelia/kernel';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
-  type AureliaGridInstance,
-  type Column,
   Filters,
   Formatters,
+  OperatorType,
+  type AureliaGridInstance,
+  type Column,
   type GridOption,
   type GridStateChange,
   type Metrics,
   type MultipleSelectOption,
-  OperatorType,
   type VanillaCalendarOption,
 } from 'aurelia-slickgrid';
-
 import { CustomInputFilter } from './custom-inputFilter.js';
 import SAMPLE_COLLECTION_DATA_URL from './data/collection_500_numbers.json?url';
 

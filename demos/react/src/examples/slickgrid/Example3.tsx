@@ -1,28 +1,25 @@
 import i18next from 'i18next';
-
+import { useState } from 'react';
 import {
+  Editors,
+  Filters,
+  Formatters,
+  OperatorType,
+  SlickGlobalEditorLock,
+  SlickgridReact,
+  SortComparers,
   type AutocompleterOption,
   type Column,
   type EditCommand,
-  Editors,
   type EditorValidator,
-  Filters,
-  Formatters,
   type GridOption,
   type OnEventArgs,
-  OperatorType,
-  SortComparers,
-  SlickGlobalEditorLock,
-  SlickgridReact,
   type SlickgridReactInstance,
   type SliderOption,
   type VanillaCalendarOption,
 } from 'slickgrid-react';
-import { useState } from 'react';
-
 import { CustomInputEditor } from './custom-inputEditor.js';
 import { CustomInputFilter } from './custom-inputFilter.js';
-
 import SAMPLE_COLLECTION_DATA from './data/collection_100_numbers.json';
 import SAMPLE_COLLECTION_DATA_URL from './data/collection_100_numbers.json?url';
 import COUNTRIES_COLLECTION from './data/countries.json';

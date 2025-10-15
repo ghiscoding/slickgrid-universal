@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useTranslation } from 'i18next-vue';
 import { provide } from 'vue';
-
 import VueLogo from './assets/vue.svg?url';
 import { routes } from './router/index.js';
 

@@ -1,6 +1,6 @@
+import type { SlickEventData, SlickGrid } from '../core/index.js';
 import type { SlickHeaderMenu } from '../extensions/slickHeaderMenu.js';
 import type { Column, HeaderMenuOption, MenuCommandItem, MenuCommandItemCallbackArgs } from './index.js';
-import type { SlickGrid, SlickEventData } from '../core/index.js';
 
 export interface HeaderMenuCommandItemCallbackArgs {
   /** Column definition */

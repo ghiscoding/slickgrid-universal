@@ -1,16 +1,15 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { of, type Subject } from 'rxjs';
-
-import { Filters } from '../index.js';
-import { AutocompleterFilter } from '../autocompleterFilter.js';
-import { FieldType, OperatorType } from '../../enums/index.js';
-import type { AutocompleterOption, Column, ColumnFilter, FilterArguments, GridOption } from '../../interfaces/index.js';
-import { CollectionService } from '../../services/collection.service.js';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { basicFetchStub } from '../../../../../test/httpClientStub.js';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import type { SlickGrid } from '../../core/index.js';
 import * as utils from '../../core/utils.js';
+import { FieldType, OperatorType } from '../../enums/index.js';
+import type { AutocompleterOption, Column, ColumnFilter, FilterArguments, GridOption } from '../../interfaces/index.js';
+import { CollectionService } from '../../services/collection.service.js';
+import { AutocompleterFilter } from '../autocompleterFilter.js';
+import { Filters } from '../index.js';
 
 vi.useFakeTimers();
 

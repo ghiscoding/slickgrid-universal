@@ -1,9 +1,9 @@
+import * as Utils from '@slickgrid-universal/utils';
 import * as BackendUtilities from './services/backendUtility.service.js';
 import * as Observers from './services/observers.js';
 import * as ServiceUtilities from './services/utilities.js';
 import * as SortUtilities from './sortComparers/sortUtilities.js';
 
-import * as Utils from '@slickgrid-universal/utils';
 export * from '@slickgrid-universal/utils';
 export {
   // export nearly everything except the EventPubSubService because we want to force users to import from '@slickgrid-universal/event-pub-sub

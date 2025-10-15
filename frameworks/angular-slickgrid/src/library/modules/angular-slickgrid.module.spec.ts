@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-
 import { AngularSlickgridModule } from './angular-slickgrid.module.js';
 
 describe('AppComponent', () => {

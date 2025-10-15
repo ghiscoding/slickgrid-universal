@@ -1,9 +1,8 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { type CustomFooterOption, type GridOption, SlickEvent, type SlickGrid } from '@slickgrid-universal/common';
+import { SlickEvent, type CustomFooterOption, type GridOption, type SlickGrid } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
-
-import { SlickFooterComponent } from './slick-footer.component.js';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TranslateServiceStub } from '../../../test/translateServiceStub.js';
+import { SlickFooterComponent } from './slick-footer.component.js';
 
 // mocked modules
 vi.mock('@slickgrid-universal/common', async (importOriginal) => ({

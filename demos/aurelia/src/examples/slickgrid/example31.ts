@@ -1,20 +1,19 @@
-import { GridOdataService, type OdataServiceApi, type OdataOption } from '@slickgrid-universal/odata';
-import { RxJsResource } from '@slickgrid-universal/rxjs-observable';
 import { IHttpClient } from '@aurelia/fetch-client';
 import { newInstanceOf, resolve } from '@aurelia/kernel';
+import { GridOdataService, type OdataOption, type OdataServiceApi } from '@slickgrid-universal/odata';
+import { RxJsResource } from '@slickgrid-universal/rxjs-observable';
 import {
-  type AureliaGridInstance,
-  type Column,
   Editors,
   Filters,
+  OperatorType,
+  type AureliaGridInstance,
+  type Column,
   type GridOption,
   type GridStateChange,
   type Metrics,
-  OperatorType,
   type Pagination,
 } from 'aurelia-slickgrid';
 import { Observable, of, type Subject } from 'rxjs';
-
 import './example31.scss'; // provide custom CSS/SASS styling
 import SAMPLE_DATA_URL from './data/customers_100.json?url';
 

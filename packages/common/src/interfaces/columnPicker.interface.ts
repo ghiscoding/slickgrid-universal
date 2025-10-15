@@ -1,6 +1,6 @@
-import type { Column, GridOption } from './index.js';
-import type { SlickColumnPicker } from '../extensions/slickColumnPicker.js';
 import type { SlickGrid } from '../core/index.js';
+import type { SlickColumnPicker } from '../extensions/slickColumnPicker.js';
+import type { Column, GridOption } from './index.js';
 
 export interface ColumnPicker extends ColumnPickerOption {
   // --

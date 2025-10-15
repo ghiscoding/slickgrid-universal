@@ -1,19 +1,18 @@
-import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import {
-  type Column,
   getOffset,
-  type GridOption,
-  type SlickGrid,
-  type SlickDataView,
-  type SlickEditorLock,
   SlickEvent,
   SlickEventData,
+  type Column,
+  type GridOption,
+  type SlickDataView,
+  type SlickEditorLock,
+  type SlickGrid,
 } from '@slickgrid-universal/common';
 import { delay, of, throwError } from 'rxjs';
-
-import { SlickCustomTooltip } from '../slickCustomTooltip.js';
+import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { ContainerServiceStub } from '../../../../test/containerServiceStub.js';
 import { RxJsResourceStub } from '../../../../test/rxjsResourceStub.js';
+import { SlickCustomTooltip } from '../slickCustomTooltip.js';
 
 // mocked modules
 vi.mock('@slickgrid-universal/common', async (importOriginal) => ({

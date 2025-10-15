@@ -1,6 +1,6 @@
-import type { Column, FormatterResultWithHtml, FormatterResultWithText, OnEventArgs } from './index.js';
-import type { SlickCellExcelCopyManager } from '../extensions/slickCellExcelCopyManager.js';
 import type { SlickEventData, SlickRange } from '../core/index.js';
+import type { SlickCellExcelCopyManager } from '../extensions/slickCellExcelCopyManager.js';
+import type { Column, FormatterResultWithHtml, FormatterResultWithText, OnEventArgs } from './index.js';
 
 export interface ExcelCopyBufferOption<T = any> {
   /** defaults to 2000(ms), delay in ms to wait before clearing the selection after a paste action */

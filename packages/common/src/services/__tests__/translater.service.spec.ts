@@ -1,6 +1,5 @@
-import { describe, expect, it } from 'vitest';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-
+import { describe, expect, it } from 'vitest';
 import { TranslaterService } from '../translater.service.js';
 
 describe('Translater Service', () => {

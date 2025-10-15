@@ -1,3 +1,6 @@
+import type { SlickEvent, SlickGrid } from '../core/index.js';
+import type { UsabilityOverrideFn } from '../enums/index.js';
+import type { ContainerService } from '../services/container.service.js';
 import type {
   Column,
   GridOption,
@@ -8,9 +11,6 @@ import type {
   OnRowDetailAsyncResponseArgs,
   RowDetailViewOption,
 } from './index.js';
-import type { ContainerService } from '../services/container.service.js';
-import type { UsabilityOverrideFn } from '../enums/index.js';
-import type { SlickEvent, SlickGrid } from '../core/index.js';
 
 /** A plugin to add row detail panel. */
 export interface SlickRowDetailView {

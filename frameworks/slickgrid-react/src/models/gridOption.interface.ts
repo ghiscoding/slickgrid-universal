@@ -1,6 +1,5 @@
 import type { BasePaginationComponent, BasePaginationModel, GridOption as UniversalGridOption } from '@slickgrid-universal/common';
 import type { ForwardRefExoticComponent, RefAttributes } from 'react';
-
 import type { I18Next } from './i18next.interface.js';
 import type { RowDetailView } from './rowDetailView.interface.js';
 

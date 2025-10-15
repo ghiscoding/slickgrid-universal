@@ -1,24 +1,23 @@
 <script setup lang="ts">
 import {
-  type AutocompleterOption,
-  type Column,
-  type EditCommand,
   Editors,
-  type EditorValidator,
   Filters,
   Formatters,
-  type GridOption,
-  type OnEventArgs,
   OperatorType,
   SlickGlobalEditorLock,
   SlickgridVue,
+  SortComparers,
+  type AutocompleterOption,
+  type Column,
+  type EditCommand,
+  type EditorValidator,
+  type GridOption,
+  type OnEventArgs,
   type SlickgridVueInstance,
   type SliderOption,
-  SortComparers,
   type VanillaCalendarOption,
 } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
-
 import { CustomInputEditor } from './custom-inputEditor';
 import { CustomInputFilter } from './custom-inputFilter';
 import SAMPLE_COLLECTION_DATA from './data/collection_100_numbers.json';

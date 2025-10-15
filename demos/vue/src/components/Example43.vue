@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { type Column, Editors, type GridOption, type ItemMetadata, SlickgridVue, type SlickgridVueInstance } from 'slickgrid-vue';
+import { Editors, SlickgridVue, type Column, type GridOption, type ItemMetadata, type SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
 
 const isEditable = ref(false);

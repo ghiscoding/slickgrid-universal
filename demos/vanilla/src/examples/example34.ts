@@ -1,18 +1,17 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
   Aggregators,
-  type Column,
   Filters,
   Formatters,
+  SortComparers,
+  SortDirectionNumber,
+  type Column,
   type GridOption,
   type Grouping,
   type OnRowCountChangedEventArgs,
-  SortComparers,
-  SortDirectionNumber,
 } from '@slickgrid-universal/common';
+import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-
 import { ExampleGridOptions } from './example-grid-options.js';
 import { randomNumber } from './utilities.js';
 

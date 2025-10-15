@@ -2,7 +2,6 @@ import { format } from '@formkit/tempo';
 import { isObject } from '@slickgrid-universal/utils';
 import type { AutocompleteItem } from 'autocompleter';
 import { Calendar, type FormatDateString, type Options, type Range } from 'vanilla-calendar-pro';
-
 import { FieldType } from '../enums/fieldType.enum.js';
 import type {
   AutocompleterOption,
@@ -13,9 +12,9 @@ import type {
   ColumnEditor,
   ColumnFilter,
 } from '../interfaces/index.js';
+import type { CollectionService } from '../services/collection.service.js';
 import { formatDateByFieldType, mapTempoDateFormatWithFieldType, tryParseDate } from '../services/dateUtils.js';
 import { getDescendantProperty } from '../services/utilities.js';
-import type { CollectionService } from '../services/collection.service.js';
 
 /**
  * add loading class ".slick-autocomplete-loading" to the Kraaden Autocomplete input element

@@ -1,8 +1,7 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-
+import type { SlickGrid } from '../core/slickGrid.js';
 import type { PaginationService } from '../services/pagination.service.js';
 import type { TranslaterService } from '../services/translater.service.js';
-import type { SlickGrid } from '../core/slickGrid.js';
 
 export interface Pagination {
   /** Current page number that we are we currently displaying. */

@@ -20,9 +20,8 @@ import type {
   SlickGrid,
   SortDirectionString,
 } from '@slickgrid-universal/common';
-import { FieldType, mapOperatorType, mapOperatorByFieldType, OperatorType, SortDirection } from '@slickgrid-universal/common';
+import { FieldType, mapOperatorByFieldType, mapOperatorType, OperatorType, SortDirection } from '@slickgrid-universal/common';
 import { getHtmlStringOutput, stripTags } from '@slickgrid-universal/utils';
-
 import type {
   GraphqlCursorPaginationOption,
   GraphqlCustomFilteringOption,
@@ -33,7 +32,6 @@ import type {
   GraphqlServiceOption,
   GraphqlSortingOption,
 } from '../interfaces/index.js';
-
 import QueryBuilder from './graphqlQueryBuilder.js';
 
 const DEFAULT_ITEMS_PER_PAGE = 25;

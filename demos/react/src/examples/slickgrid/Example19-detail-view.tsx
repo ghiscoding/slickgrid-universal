@@ -1,6 +1,5 @@
 import React, { forwardRef, useState } from 'react';
 import type { RowDetailViewProps } from 'slickgrid-react';
-
 import './example19-detail-view.scss';
 
 interface Item {

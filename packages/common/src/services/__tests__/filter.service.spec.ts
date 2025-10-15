@@ -1,8 +1,13 @@
-import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
-import { of, throwError } from 'rxjs';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-
+import { of, throwError } from 'rxjs';
+import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
+import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
+import { SlickEvent, SlickEventData, type SlickDataView, type SlickEventHandler, type SlickGrid } from '../../core/index.js';
 import { FieldType } from '../../enums/index.js';
+import { getParsedSearchTermsByFieldType } from '../../filter-conditions/index.js';
+import { FilterFactory } from '../../filters/filterFactory.js';
+import { Filters, InputFilter, SingleSelectFilter } from '../../filters/index.js';
 import type {
   BackendService,
   BackendServiceApi,
@@ -14,17 +19,11 @@ import type {
   MenuCommandItem,
   RowDetailView,
 } from '../../interfaces/index.js';
-import { Filters, InputFilter, SingleSelectFilter } from '../../filters/index.js';
-import { FilterService } from '../filter.service.js';
-import { FilterFactory } from '../../filters/filterFactory.js';
-import { getParsedSearchTermsByFieldType } from '../../filter-conditions/index.js';
 import { SlickgridConfig } from '../../slickgrid-config.js';
-import { SharedService } from '../shared.service.js';
 import { BackendUtilityService } from '../backendUtility.service.js';
 import { CollectionService } from '../collection.service.js';
-import { type SlickDataView, SlickEvent, SlickEventData, type SlickEventHandler, type SlickGrid } from '../../core/index.js';
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
-import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
+import { FilterService } from '../filter.service.js';
+import { SharedService } from '../shared.service.js';
 
 vi.useFakeTimers();
 

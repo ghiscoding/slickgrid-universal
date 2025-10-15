@@ -2,15 +2,14 @@ import { format, parse } from '@formkit/tempo';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, emptyElement, extend, isDefined } from '@slickgrid-universal/utils';
 import { Calendar, type Options } from 'vanilla-calendar-pro';
-
+import { resetDatePicker, setPickerDates } from '../commonEditorFilter/commonEditorFilterUtils.js';
+import type { SlickGrid } from '../core/slickGrid.js';
 import { FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
 import type { Column, ColumnFilter, Filter, FilterArguments, FilterCallback, GridOption, OperatorDetail } from '../interfaces/index.js';
-import { applyOperatorAltTextWhenExists, buildSelectOperator, compoundOperatorNumeric } from './filterUtilities.js';
 import { formatDateByFieldType, mapTempoDateFormatWithFieldType } from '../services/dateUtils.js';
-import { mapOperatorToShorthandDesignation } from '../services/utilities.js';
 import type { TranslaterService } from '../services/translater.service.js';
-import type { SlickGrid } from '../core/slickGrid.js';
-import { resetDatePicker, setPickerDates } from '../commonEditorFilter/commonEditorFilterUtils.js';
+import { mapOperatorToShorthandDesignation } from '../services/utilities.js';
+import { applyOperatorAltTextWhenExists, buildSelectOperator, compoundOperatorNumeric } from './filterUtilities.js';
 
 export class DateFilter implements Filter {
   protected _bindEventService: BindingEventService;

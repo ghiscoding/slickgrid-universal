@@ -1,5 +1,5 @@
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
-
+import { SlickEventHandler, type SlickDataView, type SlickEventData, type SlickGrid } from '../core/index.js';
 import { type ToggleStateChangeType } from '../enums/index.js';
 import type {
   Column,
@@ -11,16 +11,15 @@ import type {
   TreeToggledItem,
   TreeToggleStateChange,
 } from '../interfaces/index.js';
+import type { FilterService } from './filter.service.js';
+import type { SharedService } from './shared.service.js';
+import type { SortService } from './sort.service.js';
 import {
   addTreeLevelAndAggregatorsByMutation,
   findItemInTreeStructure,
   getTreeDataOptionPropName,
   unflattenParentChildArrayToTree,
 } from './utilities.js';
-import type { FilterService } from './filter.service.js';
-import type { SharedService } from './shared.service.js';
-import type { SortService } from './sort.service.js';
-import { type SlickDataView, SlickEventHandler, type SlickGrid, type SlickEventData } from '../core/index.js';
 
 export class TreeDataService {
   protected _lastToggleStateChange!: Omit<TreeToggleStateChange, 'fromItemId'>;

@@ -1,17 +1,16 @@
+import { BindingEventService } from '@slickgrid-universal/binding';
 import {
-  type Column,
   Filters,
   Formatters,
+  type Column,
   type GridOption,
   type GridStateChange,
   type OnSelectedRowsChangedEventArgs,
   type TreeToggledItem,
   type TreeToggleStateChange,
 } from '@slickgrid-universal/common';
-import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-
 import { ExampleGridOptions } from './example-grid-options.js';
 import './example05.scss';
 

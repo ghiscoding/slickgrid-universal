@@ -1,6 +1,6 @@
+import type { SlickGrid } from '../core/index.js';
 import type { Observable, Subject } from '../services/rxjsFacade.js';
 import type { Column, Formatter } from './index.js';
-import type { SlickGrid } from '../core/index.js';
 
 type PostProcessOutput<P> = P & { [asyncParamsPropName: string]: any };
 export type AsyncProcess<T = any> = (

@@ -12,10 +12,10 @@ import type {
   PubSubService,
   RowDetailView,
   RowDetailViewOption,
-  SlickGrid,
-  SlickRowDetailView as UniversalRowDetailView,
   SlickDataView,
   SlickEventData,
+  SlickGrid,
+  SlickRowDetailView as UniversalRowDetailView,
   UsabilityOverrideFn,
 } from '@slickgrid-universal/common';
 import { classNameToList, extend } from '@slickgrid-universal/utils';

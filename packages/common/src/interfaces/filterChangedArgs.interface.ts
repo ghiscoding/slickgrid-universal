@@ -1,6 +1,6 @@
+import type { SlickGrid } from '../core/index.js';
 import type { OperatorString, OperatorType, SearchTerm } from '../enums/index.js';
 import type { Column, ColumnFilters } from './index.js';
-import type { SlickGrid } from '../core/index.js';
 
 export interface FilterChangedArgs {
   clearFilterTriggered?: boolean;

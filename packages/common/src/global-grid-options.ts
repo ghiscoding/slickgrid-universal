@@ -1,8 +1,7 @@
 import { EventNamingStyle } from '@slickgrid-universal/event-pub-sub';
-
 import { DelimiterType } from './enums/index.js';
-import type { Column, EmptyWarning, GridOption, RowDetailView, TreeDataOption } from './interfaces/index.js';
 import { Filters } from './filters/index.js';
+import type { Column, EmptyWarning, GridOption, RowDetailView, TreeDataOption } from './interfaces/index.js';
 
 /** Global Grid Options Defaults */
 export const GlobalGridOptions: Partial<GridOption> = {

@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-
 import type { Join, PathsToStringProps } from '../column.interface.js';
 
 type Expect<T extends true> = T;

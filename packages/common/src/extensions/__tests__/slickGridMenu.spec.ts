@@ -1,21 +1,20 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
+import { SlickEvent, SlickEventData, type SlickDataView, type SlickGrid } from '../../core/index.js';
+import * as utils from '../../core/utils.js';
 import { DelimiterType } from '../../enums/index.js';
+import { ExtensionUtility } from '../../extensions/extensionUtility.js';
 import type { Column, DOMEvent, GridMenu, GridOption } from '../../interfaces/index.js';
-import { SlickGridMenu } from '../slickGridMenu.js';
 import {
   BackendUtilityService,
+  SharedService,
   type ExcelExportService,
   type FilterService,
-  SharedService,
   type SortService,
   type TextExportService,
 } from '../../services/index.js';
-import { type SlickDataView, SlickEvent, SlickEventData, type SlickGrid } from '../../core/index.js';
-import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
-import { ExtensionUtility } from '../../extensions/extensionUtility.js';
-import * as utils from '../../core/utils.js';
+import { SlickGridMenu } from '../slickGridMenu.js';
 
 const gridId = 'grid1';
 const gridUid = 'slickgrid_124343';

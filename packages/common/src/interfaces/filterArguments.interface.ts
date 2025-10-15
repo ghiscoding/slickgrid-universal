@@ -1,6 +1,6 @@
-import type { Column, FilterCallback } from './index.js';
-import type { OperatorString, OperatorType, SearchTerm } from '../enums/index.js';
 import type { SlickGrid } from '../core/index.js';
+import type { OperatorString, OperatorType, SearchTerm } from '../enums/index.js';
+import type { Column, FilterCallback } from './index.js';
 
 export interface FilterArguments {
   grid: SlickGrid;

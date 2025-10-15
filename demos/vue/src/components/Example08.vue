@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useTranslation } from 'i18next-vue';
-import { type GridOption, type SlickgridVueInstance, type Column, Formatters, SlickgridVue } from 'slickgrid-vue';
+import { Formatters, SlickgridVue, type Column, type GridOption, type SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
 
 const { i18next } = useTranslation();

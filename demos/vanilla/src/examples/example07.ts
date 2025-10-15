@@ -1,11 +1,10 @@
-import { type Column, Editors, Filters, Formatters, type GridOption, OperatorType } from '@slickgrid-universal/common';
 import { BindingEventService } from '@slickgrid-universal/binding';
+import { Editors, Filters, Formatters, OperatorType, type Column, type GridOption } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import DOMPurify from 'dompurify';
-
-import { ExampleGridOptions } from './example-grid-options.js';
 import type { TranslateService } from '../translate.service.js';
+import { ExampleGridOptions } from './example-grid-options.js';
 import './example07.scss';
 import '../material-styles.scss';
 

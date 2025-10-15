@@ -1,21 +1,19 @@
 import { format as dateFormatter } from '@formkit/tempo';
 import { GridOdataService, type OdataServiceApi } from '@slickgrid-universal/odata';
 import React, { useEffect, useRef, useState } from 'react';
-
 import {
   Aggregators,
-  type Column,
   Filters,
+  SlickgridReact,
+  SortComparers,
+  type Column,
   type GridOption,
   type Grouping,
   type Metrics,
   type OnRowCountChangedEventArgs,
-  SlickgridReact,
   type SlickgridReactInstance,
-  SortComparers,
 } from 'slickgrid-react';
 import Data from './data/customers_100.json';
-
 import './example38.scss';
 
 const CARET_HTML_ESCAPED = '%5E';

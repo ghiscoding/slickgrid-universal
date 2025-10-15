@@ -2,21 +2,20 @@
 import { format as dateFormatter } from '@formkit/tempo';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
-  type GridOption,
-  type Grouping,
-  type Metrics,
-  type OnRowCountChangedEventArgs,
-  type SlickgridVueInstance,
   Aggregators,
-  type Column,
   Filters,
   Formatters,
   SlickgridVue,
   SortComparers,
   SortDirectionNumber,
+  type Column,
+  type GridOption,
+  type Grouping,
+  type Metrics,
+  type OnRowCountChangedEventArgs,
+  type SlickgridVueInstance,
 } from 'slickgrid-vue';
 import { computed, onBeforeMount, ref, type Ref } from 'vue';
-
 import { randomNumber } from './utilities.js';
 
 const FETCH_SIZE = 50;

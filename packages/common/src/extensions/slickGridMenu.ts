@@ -7,7 +7,17 @@ import {
   findWidthOrDefault,
   getHtmlStringOutput,
 } from '@slickgrid-universal/utils';
-
+import { SlickEvent, Utils as SlickUtils } from '../core/index.js';
+import { DelimiterType } from '../enums/index.js';
+import {
+  addCloseButtomElement,
+  addColumnTitleElementWhenDefined,
+  handleColumnPickerItemClick,
+  populateColumnPicker,
+  updateColumnPickerOrder,
+} from '../extensions/extensionCommonUtils.js';
+import type { ExtensionUtility } from '../extensions/extensionUtility.js';
+import { MenuBaseClass, type ExtendableItemTypes, type ExtractMenuType, type MenuType } from '../extensions/menuBaseClass.js';
 import type {
   Column,
   DOMEvent,
@@ -20,23 +30,12 @@ import type {
   GridOption,
   onGridMenuColumnsChangedCallbackArgs,
 } from '../interfaces/index.js';
-import { DelimiterType } from '../enums/index.js';
-import type { ExtensionUtility } from '../extensions/extensionUtility.js';
-import { getTranslationPrefix } from '../services/index.js';
 import type { ExcelExportService } from '../services/excelExport.service.js';
 import type { FilterService } from '../services/filter.service.js';
+import { getTranslationPrefix } from '../services/index.js';
 import type { SharedService } from '../services/shared.service.js';
 import type { SortService } from '../services/sort.service.js';
 import type { TextExportService } from '../services/textExport.service.js';
-import {
-  addColumnTitleElementWhenDefined,
-  addCloseButtomElement,
-  handleColumnPickerItemClick,
-  populateColumnPicker,
-  updateColumnPickerOrder,
-} from '../extensions/extensionCommonUtils.js';
-import { type ExtendableItemTypes, type ExtractMenuType, MenuBaseClass, type MenuType } from '../extensions/menuBaseClass.js';
-import { SlickEvent, Utils as SlickUtils } from '../core/index.js';
 
 /**
  * A control to add a Grid Menu with Extra Commands & Column Picker (hambuger menu on top-right of the grid)

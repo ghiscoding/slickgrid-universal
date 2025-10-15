@@ -1,17 +1,16 @@
 import { faker } from '@faker-js/faker';
 import { type EventPubSubService } from '@slickgrid-universal/event-pub-sub';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
-  type Column,
   ExtensionName,
-  type GridOption,
   SlickgridReact,
-  type SlickgridReactInstance,
   SlickRowDetailView,
+  type Column,
+  type GridOption,
+  type SlickgridReactInstance,
 } from 'slickgrid-react';
-
-import { Example45Preload } from './Example45-preload.js';
 import Example45DetailView, { type Distributor, type OrderData } from './Example45-detail-view.js';
+import { Example45Preload } from './Example45-preload.js';
 
 const FAKE_SERVER_DELAY = 250;
 const NB_ITEMS = 995;

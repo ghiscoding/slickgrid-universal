@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { type GridOption, type ItemMetadata, type SlickgridVueInstance, type Column, SlickgridVue } from 'slickgrid-vue';
+import { SlickgridVue, type Column, type GridOption, type ItemMetadata, type SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
 
 const NB_ITEMS = 500;

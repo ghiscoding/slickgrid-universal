@@ -1,9 +1,10 @@
-import autocompleter from 'autocompleter';
-import type { AutocompleteItem, AutocompleteResult, AutocompleteSettings } from 'autocompleter';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { classNameToList, createDomElement, isObject, isPrimitiveValue, setDeepValue, toKebabCase } from '@slickgrid-universal/utils';
-
-import { Constants } from './../constants.js';
+import autocompleter from 'autocompleter';
+import type { AutocompleteItem, AutocompleteResult, AutocompleteSettings } from 'autocompleter';
+import { addAutocompleteLoadingByOverridingFetch } from '../commonEditorFilter/commonEditorFilterUtils.js';
+import { applyHtmlToElement, SlickEventData, type SlickGrid } from '../core/index.js';
+import { textValidator } from '../editorValidators/textValidator.js';
 import { FieldType } from '../enums/index.js';
 import type {
   AutocompleterOption,
@@ -15,16 +16,14 @@ import type {
   CompositeEditorOption,
   Editor,
   EditorArguments,
-  EditorValidator,
   EditorValidationResult,
+  EditorValidator,
   GridOption,
   Locale,
 } from '../interfaces/index.js';
-import { textValidator } from '../editorValidators/textValidator.js';
-import { addAutocompleteLoadingByOverridingFetch } from '../commonEditorFilter/commonEditorFilterUtils.js';
-import { findOrDefault, getDescendantProperty } from '../services/utilities.js';
 import type { TranslaterService } from '../services/translater.service.js';
-import { applyHtmlToElement, SlickEventData, type SlickGrid } from '../core/index.js';
+import { findOrDefault, getDescendantProperty } from '../services/utilities.js';
+import { Constants } from './../constants.js';
 
 // minimum length of chars to type before starting to start querying
 const MIN_LENGTH = 3;

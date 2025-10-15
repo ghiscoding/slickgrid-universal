@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
-import { type Formatter, type GridOption, type SlickgridVueInstance, type Column, Filters, Formatters, SlickgridVue } from 'slickgrid-vue';
+import { Filters, Formatters, SlickgridVue, type Column, type Formatter, type GridOption, type SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
 import { showToast } from './utilities';
 

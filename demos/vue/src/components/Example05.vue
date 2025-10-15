@@ -3,18 +3,17 @@ import { format as tempoFormat } from '@formkit/tempo';
 import type { OdataOption, OdataServiceApi } from '@slickgrid-universal/odata';
 import { GridOdataService } from '@slickgrid-universal/odata';
 import {
-  type Column,
   Filters,
+  OperatorType,
+  SlickgridVue,
+  type Column,
   type GridOption,
   type GridStateChange,
   type Metrics,
-  OperatorType,
   type Pagination,
-  SlickgridVue,
   type SlickgridVueInstance,
 } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
-
 import Data from './data/customers_100.json';
 
 const defaultPageSize = 20;

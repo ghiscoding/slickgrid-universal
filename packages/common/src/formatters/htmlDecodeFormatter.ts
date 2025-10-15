@@ -1,7 +1,6 @@
 import { htmlDecode } from '@slickgrid-universal/utils';
-
-import { type Formatter } from './../interfaces/index.js';
 import { createDocumentFragmentOrElement } from '../services/utilities.js';
+import { type Formatter } from './../interfaces/index.js';
 
 /** Display a decoded HTML string (e.g. "&lt;div&gt;Hello&lt;/div&gt;" => "<div>Hello</div>") */
 export const htmlDecodeFormatter: Formatter = (_row, _cell, value, _col, _item, grid) => {

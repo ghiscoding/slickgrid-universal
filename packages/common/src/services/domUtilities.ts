@@ -1,9 +1,8 @@
 import { createDomElement } from '@slickgrid-universal/utils';
 import type { OptionRowData } from 'multiple-select-vanilla';
-
+import { runOptionalHtmlSanitizer, type SlickGrid } from '../core/index.js';
 import type { SearchTerm } from '../enums/index.js';
 import type { Column, SelectOption } from '../interfaces/index.js';
-import { runOptionalHtmlSanitizer, type SlickGrid } from '../core/index.js';
 import type { TranslaterService } from './translater.service.js';
 
 /**

@@ -1,19 +1,19 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Aggregators,
-  type Column,
   Filters,
   Formatters,
-  type GridOption,
   GroupTotalFormatters,
+  SlickgridReact,
   SortComparers,
   SortDirectionNumber,
+  type Column,
+  type GridOption,
   type Grouping,
-  SlickgridReact,
   type SlickgridReactInstance,
 } from 'slickgrid-react';
-import React, { useEffect, useRef, useState } from 'react';
 
 const Example18: React.FC = () => {
   const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);

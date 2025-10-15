@@ -1,4 +1,4 @@
-import type { Column, ColumnEditor, Editor, EditorValidator, EditorValidationResult } from '../../library';
+import type { Column, ColumnEditor, Editor, EditorValidationResult, EditorValidator } from '../../library';
 
 /*
  * An example of a 'detached' editor.

@@ -1,17 +1,16 @@
 import { I18N } from '@aurelia/i18n';
+import { resolve } from 'aurelia';
 import {
-  type AureliaGridInstance,
-  type Column,
   ExtensionName,
   Filters,
   Formatters,
+  type AureliaGridInstance,
+  type Column,
   type GridOption,
   type SlickDataView,
   type SlickGrid,
   type SliderOption,
 } from 'aurelia-slickgrid';
-import { resolve } from 'aurelia';
-
 import './example9.scss'; // provide custom CSS/SASS styling
 
 export class Example9 {

@@ -1,6 +1,6 @@
 import type { FieldType, OperatorString, OperatorType } from '../enums/index.js';
-import type { Column } from './index.js';
 import type { SearchTerm } from '../enums/searchTerm.type.js';
+import type { Column } from './index.js';
 
 export interface SearchColumnFilter {
   /** Column definition Id */

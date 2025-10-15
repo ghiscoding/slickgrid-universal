@@ -2,19 +2,18 @@
 import { format as dateFormatter } from '@formkit/tempo';
 import { GridOdataService, type OdataServiceApi } from '@slickgrid-universal/odata';
 import {
+  Aggregators,
+  Filters,
+  SlickgridVue,
+  SortComparers,
+  type Column,
   type GridOption,
   type Grouping,
   type Metrics,
   type OnRowCountChangedEventArgs,
   type SlickgridVueInstance,
-  Aggregators,
-  type Column,
-  Filters,
-  SlickgridVue,
-  SortComparers,
 } from 'slickgrid-vue';
 import { computed, onBeforeMount, ref, type Ref } from 'vue';
-
 import Data from './data/customers_100.json';
 
 const CARET_HTML_ESCAPED = '%5E';

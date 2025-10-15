@@ -2,26 +2,25 @@ import { addDay, format } from '@formkit/tempo';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import i18next from 'i18next';
-
-import { CustomInputFilter } from './custom-inputFilter.js';
+import React, { useEffect, useRef, useState } from 'react';
+import { withTranslation } from 'react-i18next';
 import {
+  Filters,
+  Formatters,
+  OperatorType,
+  SlickgridReact,
   type Column,
   type CurrentFilter,
-  Filters,
   type Formatter,
-  Formatters,
   type GridOption,
   type GridStateChange,
   type Metrics,
   type MultipleSelectOption,
-  OperatorType,
   type SlickGrid,
-  type SliderRangeOption,
-  SlickgridReact,
   type SlickgridReactInstance,
+  type SliderRangeOption,
 } from 'slickgrid-react';
-import React, { useEffect, useRef, useState } from 'react';
-import { withTranslation } from 'react-i18next';
+import { CustomInputFilter } from './custom-inputFilter.js';
 
 const NB_ITEMS = 1500;
 

@@ -1,15 +1,14 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import React, { useEffect, useRef, useState } from 'react';
 import {
-  type Column,
   Filters,
-  type Formatter,
   Formatters,
-  type GridOption,
   SlickgridReact,
+  type Column,
+  type Formatter,
+  type GridOption,
   type SlickgridReactInstance,
 } from 'slickgrid-react';
-import React, { useEffect, useRef, useState } from 'react';
-
 import './example46.scss'; // provide custom CSS/SASS styling
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { showToast } from './utilities.js';

@@ -1,13 +1,12 @@
-import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import {
+  SlickgridReact,
   type Column,
   type GridOption,
   type GridState,
   type RowDetailViewProps,
-  SlickgridReact,
   type SlickgridReactInstance,
 } from 'slickgrid-react';
-
 import type Example45 from './Example45.js';
 import './example45-detail-view.scss';
 

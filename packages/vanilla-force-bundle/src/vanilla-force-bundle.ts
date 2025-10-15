@@ -1,13 +1,13 @@
 import type {
-  Column,
-  GridOption,
   // services
   BackendUtilityService,
   CollectionService,
+  Column,
   ExtensionService,
   ExtensionUtility,
   FilterService,
   GridEventService,
+  GridOption,
   GridService,
   GridStateService,
   HeaderGroupingService,
@@ -20,15 +20,14 @@ import type {
   TreeDataService,
 } from '@slickgrid-universal/common';
 import { GlobalGridOptions } from '@slickgrid-universal/common';
+import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
+import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
+import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
 import type { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
-import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
-import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { extend } from '@slickgrid-universal/utils';
 import { SlickVanillaGridBundle, type UniversalContainerService } from '@slickgrid-universal/vanilla-bundle';
-
 import { SalesforceGlobalGridOptions } from './salesforce-global-grid-options.js';
 
 export class VanillaForceGridBundle extends SlickVanillaGridBundle {

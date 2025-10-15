@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-
-import { MaxAggregator } from '../maxAggregator.js';
 import type { GroupTotals } from '../../interfaces/grouping.interface.js';
+import { MaxAggregator } from '../maxAggregator.js';
 
 describe('maxAggregator', () => {
   let aggregator: MaxAggregator;

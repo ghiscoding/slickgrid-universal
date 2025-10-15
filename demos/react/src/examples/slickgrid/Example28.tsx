@@ -1,21 +1,20 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   addWhiteSpaces,
   Aggregators,
-  type Column,
   decimalFormatted,
   Filters,
   findItemInTreeStructure,
-  type Formatter,
   Formatters,
-  type GridOption,
   isNumber,
-  type SlickDataView,
   SlickgridReact,
+  type Column,
+  type Formatter,
+  type GridOption,
+  type SlickDataView,
   type SlickgridReactInstance,
 } from 'slickgrid-react';
-import React, { useEffect, useRef, useState } from 'react';
-
 import './example28.scss'; // provide custom CSS/SASS styling
 
 const Example28: React.FC = () => {

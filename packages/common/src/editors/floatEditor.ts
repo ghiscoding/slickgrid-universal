@@ -1,7 +1,7 @@
-import type { EditorArguments, EditorValidationResult } from '../interfaces/index.js';
 import { floatValidator } from '../editorValidators/floatValidator.js';
-import { InputEditor } from './inputEditor.js';
+import type { EditorArguments, EditorValidationResult } from '../interfaces/index.js';
 import { getDescendantProperty } from '../services/utilities.js';
+import { InputEditor } from './inputEditor.js';
 
 export class FloatEditor extends InputEditor {
   constructor(protected readonly args: EditorArguments) {

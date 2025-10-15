@@ -1,8 +1,7 @@
 import type { ExcelColumnMetadata, ExcelStyleInstruction, StyleSheet } from '@excel-builder-vanilla/types';
-
+import type { SlickGroupTotals } from '../core/index.js';
 import type { Column } from './column.interface.js';
 import type { GridOption } from './gridOption.interface.js';
-import type { SlickGroupTotals } from '../core/index.js';
 
 /** Excel custom export options (formatting & width) that can be applied to a column */
 export interface ColumnExcelExportOption {

@@ -1,18 +1,17 @@
 import {
   addToArrayWhenNotExists,
   createDomElement,
+  SlickEventData,
+  SlickRowSelectionModel,
+  unsubscribeAll,
   type EventSubscription,
   type OnBeforeRowDetailToggleArgs,
   type OnRowBackOrOutOfViewportRangeArgs,
-  SlickEventData,
   type SlickGrid,
-  SlickRowSelectionModel,
-  unsubscribeAll,
 } from '@slickgrid-universal/common';
 import { type EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickRowDetailView as UniversalSlickRowDetailView } from '@slickgrid-universal/row-detail-view-plugin';
 import type { Root } from 'react-dom/client';
-
 import type { GridOption, RowDetailView, ViewModelBindableInputData } from '../models/index.js';
 import { createReactComponentDynamically } from '../services/reactUtils.js';
 

@@ -1,21 +1,20 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
-
+import { SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index.js';
+import { floatValidator, integerValidator, textValidator } from '../editorValidators/index.js';
 import type {
-  DOMEvent,
   Column,
   ColumnEditor,
   ColumnEditorDualInput,
   CompositeEditorOption,
+  DOMEvent,
   Editor,
   EditorArguments,
-  EditorValidator,
   EditorValidationResult,
+  EditorValidator,
   GridOption,
 } from '../interfaces/index.js';
 import { getDescendantProperty } from '../services/utilities.js';
-import { floatValidator, integerValidator, textValidator } from '../editorValidators/index.js';
-import { SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index.js';
 
 /*
  * An example of a 'detached' editor.

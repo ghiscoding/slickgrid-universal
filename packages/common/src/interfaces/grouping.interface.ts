@@ -1,7 +1,7 @@
+import type { SortDirectionNumber } from '../enums/sortDirectionNumber.enum.js';
 import type { Aggregator } from './aggregator.interface.js';
 import type { GroupingComparerItem } from './groupingComparerItem.interface.js';
 import type { GroupingFormatterItem } from './groupingFormatterItem.interface.js';
-import type { SortDirectionNumber } from '../enums/sortDirectionNumber.enum.js';
 
 export type GroupingGetterFunction<T = any> = (value: T) => any;
 

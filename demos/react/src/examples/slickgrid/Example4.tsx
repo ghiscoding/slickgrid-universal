@@ -2,21 +2,19 @@ import { format } from '@formkit/tempo';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { useEffect, useState } from 'react';
 import {
-  type Column,
   Filters,
   Formatters,
+  OperatorType,
+  SlickgridReact,
+  type Column,
   type GridOption,
   type GridStateChange,
   type Metrics,
   type MultipleSelectOption,
-  OperatorType,
-  SlickgridReact,
   type SlickgridReactInstance,
   type VanillaCalendarOption,
 } from 'slickgrid-react';
-
 import { CustomInputFilter } from './custom-inputFilter.js';
-
 import SAMPLE_COLLECTION_DATA from './data/collection_500_numbers.json';
 
 const NB_ITEMS = 10500;

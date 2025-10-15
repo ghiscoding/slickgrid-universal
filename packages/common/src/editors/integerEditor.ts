@@ -1,7 +1,7 @@
-import type { EditorArguments, EditorValidationResult } from '../interfaces/index.js';
 import { integerValidator } from '../editorValidators/integerValidator.js';
-import { InputEditor } from './inputEditor.js';
+import type { EditorArguments, EditorValidationResult } from '../interfaces/index.js';
 import { getDescendantProperty } from '../services/utilities.js';
+import { InputEditor } from './inputEditor.js';
 
 export class IntegerEditor extends InputEditor {
   constructor(protected readonly args: EditorArguments) {

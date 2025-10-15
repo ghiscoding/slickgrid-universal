@@ -1,3 +1,4 @@
+import { BindingService } from '@slickgrid-universal/binding';
 import {
   Aggregators,
   Editors,
@@ -9,10 +10,9 @@ import {
   SortComparers,
   Utilities,
 } from '@slickgrid-universal/common';
-import { BindingService } from '@slickgrid-universal/binding';
-import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
+import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickPaginationComponent } from '@slickgrid-universal/pagination-component';
 import { VanillaForceGridBundle } from './vanilla-force-bundle.js';
 

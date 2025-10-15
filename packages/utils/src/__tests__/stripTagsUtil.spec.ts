@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-
 import { stripTags } from '../stripTagsUtil.js';
 
 describe('stripTags()', () => {

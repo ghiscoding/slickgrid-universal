@@ -2,17 +2,17 @@ import type { ComponentRef } from '@angular/core';
 import type { Subscription } from 'rxjs';
 import {
   AngularUtilService,
+  OperatorType,
+  unsubscribeAllObservables,
   type Column,
   type ColumnFilter,
   type Filter,
   type FilterArguments,
   type FilterCallback,
   type GridOption,
-  OperatorType,
   type OperatorString,
   type SearchTerm,
   type SlickGrid,
-  unsubscribeAllObservables,
 } from '../../library';
 import { type FilterNgSelectComponent } from './filter-ng-select.component';
 

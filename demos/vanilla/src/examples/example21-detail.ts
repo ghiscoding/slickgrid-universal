@@ -1,6 +1,5 @@
-import { createDomElement, emptyElement, type GridState, type Column, type GridOption } from '@slickgrid-universal/common';
+import { createDomElement, emptyElement, type Column, type GridOption, type GridState } from '@slickgrid-universal/common';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-
 import './example21-detail.scss';
 
 export interface Distributor {

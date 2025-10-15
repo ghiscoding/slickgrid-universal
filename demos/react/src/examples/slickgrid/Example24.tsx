@@ -2,20 +2,18 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import i18next from 'i18next';
 import React, { useEffect, useRef, useState } from 'react';
 import { withTranslation } from 'react-i18next';
-
 import {
-  type Column,
-  type ContextMenu,
   ExtensionName,
   Filters,
-  type Formatter,
   Formatters,
+  SlickgridReact,
+  type Column,
+  type ContextMenu,
+  type Formatter,
   type GridOption,
   type SlickGrid,
-  SlickgridReact,
   type SlickgridReactInstance,
 } from 'slickgrid-react';
-
 import './example24.scss'; // provide custom CSS/SASS styling
 
 const actionFormatter: Formatter = (_row, _cell, _value, _columnDef, dataContext) => {

@@ -1,6 +1,13 @@
 import { getHtmlStringOutput, stripTags } from '@slickgrid-universal/utils';
-
-import { DataWrapperService } from '../services/dataWrapperService.js';
+import {
+  SlickEvent,
+  SlickEventData,
+  SlickEventHandler,
+  SlickRange,
+  Utils as SlickUtils,
+  type SlickDataView,
+  type SlickGrid,
+} from '../core/index.js';
 import type {
   Column,
   CssStyleHash,
@@ -11,15 +18,7 @@ import type {
   ExternalCopyClipCommand,
   OnEventArgs,
 } from '../interfaces/index.js';
-import {
-  type SlickDataView,
-  SlickEvent,
-  SlickEventData,
-  SlickEventHandler,
-  type SlickGrid,
-  SlickRange,
-  Utils as SlickUtils,
-} from '../core/index.js';
+import { DataWrapperService } from '../services/dataWrapperService.js';
 
 // using external SlickGrid JS libraries
 const CLEAR_COPY_SELECTION_DELAY = 2000;

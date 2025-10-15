@@ -1,19 +1,18 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
-
+import { SlickEventData, type SlickGrid } from '../core/index.js';
+import { textValidator } from '../editorValidators/textValidator.js';
 import type {
   Column,
   ColumnEditor,
   CompositeEditorOption,
   Editor,
   EditorArguments,
-  EditorValidator,
   EditorValidationResult,
+  EditorValidator,
   GridOption,
 } from '../interfaces/index.js';
 import { getDescendantProperty } from '../services/utilities.js';
-import { textValidator } from '../editorValidators/textValidator.js';
-import { SlickEventData, type SlickGrid } from '../core/index.js';
 
 const DEFAULT_DECIMAL_PLACES = 0;
 

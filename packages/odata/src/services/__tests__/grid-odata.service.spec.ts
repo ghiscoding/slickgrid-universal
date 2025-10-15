@@ -1,24 +1,23 @@
-import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest';
 import {
+  FieldType,
+  OperatorType,
+  SharedService,
   type BackendService,
   type Column,
   type ColumnFilter,
   type ColumnFilters,
   type ColumnSort,
-  type CurrentSorter,
   type CurrentFilter,
-  FieldType,
+  type CurrentSorter,
   type FilterChangedArgs,
   type GridOption,
   type MultiColumnSort,
-  OperatorType,
   type Pagination,
-  SharedService,
   type SlickGrid,
 } from '@slickgrid-universal/common';
-
-import { GridOdataService } from '../grid-odata.service.js';
+import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest';
 import type { OdataOption } from '../../interfaces/odataOption.interface.js';
+import { GridOdataService } from '../grid-odata.service.js';
 
 const DEFAULT_ITEMS_PER_PAGE = 25;
 const DEFAULT_PAGE_SIZE = 20;

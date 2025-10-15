@@ -2,16 +2,15 @@ import { format as tempoFormat } from '@formkit/tempo';
 import i18next from 'i18next';
 import React, { useEffect, useRef, useState } from 'react';
 import { withTranslation } from 'react-i18next';
-
 import {
-  type Column,
   Filters,
   Formatters,
+  SlickgridReact,
+  type Column,
   type GridOption,
   type GridState,
   type GridStateChange,
   type MultipleSelectOption,
-  SlickgridReact,
   type SlickgridReactInstance,
 } from 'slickgrid-react';
 

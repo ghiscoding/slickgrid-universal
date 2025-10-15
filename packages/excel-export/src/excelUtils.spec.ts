@@ -1,7 +1,6 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { type Column, FieldType, type Formatter, Formatters, type GridOption, GroupTotalFormatters, type SlickGrid } from '@slickgrid-universal/common';
+import { FieldType, Formatters, GroupTotalFormatters, type Column, type Formatter, type GridOption, type SlickGrid } from '@slickgrid-universal/common';
 import { type StyleSheet } from 'excel-builder-vanilla';
-
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { getExcelFormatFromGridFormatter, getExcelNumberCallback, getNumericFormatterOptions, useCellFormatByFieldType } from './excelUtils.js';
 
 const mockGridOptions = {

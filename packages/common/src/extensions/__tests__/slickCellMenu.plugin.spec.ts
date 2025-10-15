@@ -1,14 +1,12 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { deepCopy } from '@slickgrid-universal/utils';
-
-import type { CellMenu, Column, ElementPosition, GridOption, MenuCommandItem, MenuOptionItem } from '../../interfaces/index.js';
-import { SlickCellMenu } from '../slickCellMenu.js';
-import { BackendUtilityService, SharedService } from '../../services/index.js';
-import { ExtensionUtility } from '../../extensions/extensionUtility.js';
-import { SlickEvent, SlickEventData, type SlickGrid } from '../../core/index.js';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
+import { SlickEvent, SlickEventData, type SlickGrid } from '../../core/index.js';
+import { ExtensionUtility } from '../../extensions/extensionUtility.js';
+import type { CellMenu, Column, ElementPosition, GridOption, MenuCommandItem, MenuOptionItem } from '../../interfaces/index.js';
+import { BackendUtilityService, SharedService } from '../../services/index.js';
+import { SlickCellMenu } from '../slickCellMenu.js';
 
 const removeExtraSpaces = (text: string) => `${text}`.replace(/[\n\r]\s+/g, '');
 

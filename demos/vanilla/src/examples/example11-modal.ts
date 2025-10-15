@@ -1,7 +1,6 @@
-import { type Column, type DOMEvent, type Formatter, Formatters, type GridOption } from '@slickgrid-universal/common';
 import { BindingEventService } from '@slickgrid-universal/binding';
+import { Formatters, type Column, type DOMEvent, type Formatter, type GridOption } from '@slickgrid-universal/common';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-
 import { ExampleGridOptions } from './example-grid-options.js';
 import './example11-modal.scss';
 

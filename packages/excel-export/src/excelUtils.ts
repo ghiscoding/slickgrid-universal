@@ -1,4 +1,3 @@
-import type { StyleSheet } from 'excel-builder-vanilla';
 import type { Column, Formatter, FormatterType, GetDataValueCallback, GridOption, SlickGrid } from '@slickgrid-universal/common';
 import {
   Constants,
@@ -10,6 +9,7 @@ import {
   retrieveFormatterOptions,
 } from '@slickgrid-universal/common';
 import { stripTags } from '@slickgrid-universal/utils';
+import type { StyleSheet } from 'excel-builder-vanilla';
 
 export type ExcelFormatter = object & { id: number };
 

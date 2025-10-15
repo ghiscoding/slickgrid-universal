@@ -1,5 +1,4 @@
-import { type AureliaGridInstance, type Column, Formatters, type GridOption, SlickGlobalEditorLock } from 'aurelia-slickgrid';
-
+import { Formatters, SlickGlobalEditorLock, type AureliaGridInstance, type Column, type GridOption } from 'aurelia-slickgrid';
 import './example41.scss';
 
 export class Example41 {

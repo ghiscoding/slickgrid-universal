@@ -1,5 +1,5 @@
-import type { Column } from './index.js';
 import type { OperatorString, OperatorType, SearchTerm } from '../enums/index.js';
+import type { Column } from './index.js';
 
 export interface FilterCallbackArg {
   /** Was the last event a Clear Filter that was triggered? */

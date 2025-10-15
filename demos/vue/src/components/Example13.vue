@@ -2,17 +2,17 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import {
-  type GridOption,
-  type Grouping,
-  type SlickgridVueInstance,
   Aggregators,
-  type Column,
   Filters,
   Formatters,
   GroupTotalFormatters,
   SlickgridVue,
   SortComparers,
   SortDirectionNumber,
+  type Column,
+  type GridOption,
+  type Grouping,
+  type SlickgridVueInstance,
 } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
 

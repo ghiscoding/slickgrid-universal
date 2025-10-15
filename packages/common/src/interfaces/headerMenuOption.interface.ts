@@ -1,6 +1,6 @@
-import type { Column } from './index.js';
 import type { SlickGrid } from '../core/index.js';
 import type { HeaderMenuLabel } from './headerMenuLabel.interface.js';
+import type { Column } from './index.js';
 
 export interface HeaderMenuOption {
   /** Auto-align drop menu to the left when not enough viewport space to show on the right */

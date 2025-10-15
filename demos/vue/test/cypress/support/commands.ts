@@ -25,7 +25,6 @@
 // -- This will overwrite an existing command --
 import '@4tw/cypress-drag-drop';
 import 'cypress-real-events';
-
 import { convertPosition } from './common';
 
 declare global {

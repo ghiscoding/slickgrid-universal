@@ -2,15 +2,15 @@
 import { format as tempoFormat } from '@formkit/tempo';
 import { useTranslation } from 'i18next-vue';
 import {
+  Filters,
+  Formatters,
+  SlickgridVue,
+  type Column,
   type GridOption,
   type GridState,
   type GridStateChange,
   type MultipleSelectOption,
   type SlickgridVueInstance,
-  type Column,
-  Filters,
-  Formatters,
-  SlickgridVue,
 } from 'slickgrid-vue';
 import { onBeforeMount, onMounted, onUnmounted, ref, type Ref } from 'vue';
 

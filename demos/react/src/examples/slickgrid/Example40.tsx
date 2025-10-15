@@ -3,19 +3,18 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Aggregators,
-  type Column,
   Filters,
   Formatters,
+  SlickgridReact,
+  SortComparers,
+  SortDirectionNumber,
+  type Column,
   type GridOption,
   type Grouping,
   type Metrics,
   type OnRowCountChangedEventArgs,
-  SlickgridReact,
   type SlickgridReactInstance,
-  SortComparers,
-  SortDirectionNumber,
 } from 'slickgrid-react';
-
 import './example39.scss';
 import { randomNumber } from './utilities.js';
 

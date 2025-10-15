@@ -1,10 +1,9 @@
+import type { TrustedHTML } from 'trusted-types/lib/index.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-
-import type { Column } from '../../interfaces/index.js';
-import { hyperlinkFormatter } from '../hyperlinkFormatter.js';
 import type { SlickGrid } from '../../core/index.js';
 import * as utils from '../../core/utils.js';
-import type { TrustedHTML } from 'trusted-types/lib/index.js';
+import type { Column } from '../../interfaces/index.js';
+import { hyperlinkFormatter } from '../hyperlinkFormatter.js';
 
 const gridStub = {
   getData: vi.fn(),

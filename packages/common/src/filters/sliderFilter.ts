@@ -1,9 +1,8 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, emptyElement, isDefined, toSentenceCase } from '@slickgrid-universal/utils';
-
-import { SlickEventData, type SlickGrid } from '../core/index.js';
 import { Constants } from '../constants.js';
-import { type OperatorString, OperatorType, type SearchTerm } from '../enums/index.js';
+import { SlickEventData, type SlickGrid } from '../core/index.js';
+import { OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
 import type {
   Column,
   ColumnFilter,

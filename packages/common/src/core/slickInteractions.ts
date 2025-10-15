@@ -1,6 +1,5 @@
 import { windowScrollPosition } from '@slickgrid-universal/utils';
-
-import type { DragItem, DragPosition, DraggableOption, MouseWheelOption, ResizableOption } from '../interfaces/index.js';
+import type { DraggableOption, DragItem, DragPosition, MouseWheelOption, ResizableOption } from '../interfaces/index.js';
 
 /***
  * Interactions, add basic behaviors to any element.

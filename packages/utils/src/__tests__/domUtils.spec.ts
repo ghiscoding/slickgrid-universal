@@ -1,5 +1,4 @@
 import { describe, expect, it, vi } from 'vitest';
-
 import {
   calculateAvailableSpace,
   classNameToList,
@@ -9,10 +8,10 @@ import {
   findFirstAttribute,
   findWidthOrDefault,
   getHtmlStringOutput,
+  getInnerSize,
+  getOffset,
   getOffsetRelativeToParent,
   getStyleProp,
-  getOffset,
-  getInnerSize,
   htmlDecode,
   htmlEncode,
   htmlEncodeWithPadding,

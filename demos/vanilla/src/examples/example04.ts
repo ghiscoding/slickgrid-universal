@@ -1,21 +1,20 @@
+import { BindingEventService } from '@slickgrid-universal/binding';
 import {
+  Editors,
+  Filters,
+  Formatters,
+  OperatorType,
   type AutocompleterOption,
   type Column,
   type ColumnEditorDualInput,
   type EditCommand,
-  Editors,
-  Filters,
   type Formatter,
-  Formatters,
   type GridOption,
-  OperatorType,
-  type SlickDataView,
   type SlickCheckboxSelectColumn,
+  type SlickDataView,
 } from '@slickgrid-universal/common';
-import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-
 import { ExampleGridOptions } from './example-grid-options.js';
 import fetchJsonp from './jsonp.js';
 import './example04.scss';

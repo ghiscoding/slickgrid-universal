@@ -1,8 +1,8 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
+  SharedService,
   type BackendUtilityService,
-  type Column,
   type CollectionService,
+  type Column,
   type ExtensionService,
   type ExtensionUtility,
   type FilterService,
@@ -16,25 +16,24 @@ import {
   type OnSetItemsCalledEventArgs,
   type PaginationService,
   type ResizerService,
-  SharedService,
   type SlickDataView,
   type SlickEditorLock,
   type SlickEventHandler,
   type SlickGrid,
   type SortService,
-  type TreeDataService,
   type TranslaterService,
+  type TreeDataService,
 } from '@slickgrid-universal/common';
-import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
+import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { UniversalContainerService } from '@slickgrid-universal/vanilla-bundle';
-
-import { VanillaForceGridBundle } from '../vanilla-force-bundle.js';
-import { TranslateServiceStub } from '../../../../test/translateServiceStub.js';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { MockSlickEvent, MockSlickEventHandler } from '../../../../test/mockSlickEvent.js';
 import { RxJsResourceStub } from '../../../../test/rxjsResourceStub.js';
+import { TranslateServiceStub } from '../../../../test/translateServiceStub.js';
+import { VanillaForceGridBundle } from '../vanilla-force-bundle.js';
 
 vi.useFakeTimers();
 

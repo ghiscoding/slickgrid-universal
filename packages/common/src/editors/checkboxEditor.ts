@@ -1,6 +1,7 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, setDeepValue, toSentenceCase } from '@slickgrid-universal/utils';
-
+import { SlickEventData, type SlickGrid } from '../core/index.js';
+import { getDescendantProperty } from '../services/utilities.js';
 import { Constants } from './../constants.js';
 import type {
   Column,
@@ -8,12 +9,10 @@ import type {
   CompositeEditorOption,
   Editor,
   EditorArguments,
-  EditorValidator,
   EditorValidationResult,
+  EditorValidator,
   GridOption,
 } from './../interfaces/index.js';
-import { getDescendantProperty } from '../services/utilities.js';
-import { SlickEventData, type SlickGrid } from '../core/index.js';
 
 /*
  * An example of a 'detached' editor.

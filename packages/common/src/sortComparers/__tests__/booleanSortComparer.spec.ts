@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-
 import { SortDirectionNumber } from '../../enums/index.js';
 import { SortComparers } from '../index.js';
 

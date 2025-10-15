@@ -1,11 +1,10 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement, getInnerSize, getOffset, isPrimitiveOrHTML, stripTags } from '@slickgrid-universal/utils';
-
+import { SlickEventHandler, type SlickDataView, type SlickGrid } from '../core/index.js';
 import { FieldType } from '../enums/index.js';
-import type { AutoResizeOption, Column, GridOption, GridSize, ResizeByContentOption } from '../interfaces/index.js';
 import { parseFormatterWhenExist } from '../formatters/formatterUtilities.js';
-import { type SlickDataView, SlickEventHandler, type SlickGrid } from '../core/index.js';
+import type { AutoResizeOption, Column, GridOption, GridSize, ResizeByContentOption } from '../interfaces/index.js';
 
 // using external non-typed js libraries
 const DATAGRID_BOTTOM_PADDING = 20;

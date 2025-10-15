@@ -1,3 +1,4 @@
+import type { SlickGrid } from '../core/index.js';
 import type {
   Column,
   CompositeEditorOption,
@@ -7,7 +8,6 @@ import type {
   EditorValidationResult,
   GridOption,
 } from './index.js';
-import type { SlickGrid } from '../core/index.js';
 
 export interface SlickGridArg {
   grid: SlickGrid;

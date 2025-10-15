@@ -1,21 +1,20 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
-  type Aggregator,
   Aggregators,
+  Editors,
+  Formatters,
+  GroupTotalFormatters,
+  type Aggregator,
   type AureliaGridInstance,
   type Column,
-  Editors,
   type ExcelCellValueParserArgs,
   type ExcelGroupValueParserArgs,
   type Formatter,
-  Formatters,
   type GridOption,
-  GroupTotalFormatters,
   type Grouping,
   type SlickGrid,
   type SlickGroupTotals,
 } from 'aurelia-slickgrid';
-
 import './example36.scss';
 
 interface GroceryItem {

@@ -1,12 +1,11 @@
 import { createDomElement, extend } from '@slickgrid-universal/utils';
-
 import {
   applyHtmlToElement,
   SlickEventHandler,
-  type SlickDataView,
   SlickGroup,
-  type SlickGrid,
+  type SlickDataView,
   type SlickEventData,
+  type SlickGrid,
 } from '../core/index.js';
 import type {
   Column,

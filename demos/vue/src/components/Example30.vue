@@ -3,6 +3,13 @@ import { SlickCompositeEditor, SlickCompositeEditorComponent } from '@slickgrid-
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
+  Editors,
+  Filters,
+  formatNumber,
+  Formatters,
+  SlickGlobalEditorLock,
+  SlickgridVue,
+  SortComparers,
   type AutocompleterOption,
   type Column,
   type CompositeEditorModalType,
@@ -17,16 +24,8 @@ import {
   type SlickgridVueInstance,
   type SliderOption,
   type VanillaCalendarOption,
-  Editors,
-  Filters,
-  formatNumber,
-  Formatters,
-  SlickGlobalEditorLock,
-  SlickgridVue,
-  SortComparers,
 } from 'slickgrid-vue';
 import { onBeforeMount, onUnmounted, ref, type Ref } from 'vue';
-
 import COUNTRIES_COLLECTION from './data/countries.json';
 
 const NB_ITEMS = 500;

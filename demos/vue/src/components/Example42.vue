@@ -1,18 +1,17 @@
 <script setup lang="ts">
 import {
-  type BasePaginationModel,
-  type Column,
   Filters,
   Formatters,
-  type GridOption,
-  type MultipleSelectOption,
   OperatorType,
   SlickgridVue,
+  type BasePaginationModel,
+  type Column,
+  type GridOption,
+  type MultipleSelectOption,
   type SlickgridVueInstance,
   type SliderRangeOption,
 } from 'slickgrid-vue';
-import { type DefineComponent, onBeforeMount, ref, type Ref } from 'vue';
-
+import { onBeforeMount, ref, type DefineComponent, type Ref } from 'vue';
 import CustomPagerComponent from './CustomPagerComponent.vue';
 
 const NB_ITEMS = 5000;

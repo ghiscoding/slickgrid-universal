@@ -1,5 +1,4 @@
 import { describe, expect, it, vi } from 'vitest';
-
 import type { SlickGrid } from '../../core/index.js';
 import type { Column, FormatterResultWithHtml } from '../../interfaces/index.js';
 import { htmlDecodeFormatter } from '../htmlDecodeFormatter.js';

@@ -1,3 +1,5 @@
+import type { SlickGrid } from '../core/index.js';
+import type { SharedService } from '../services/shared.service.js';
 import type {
   BackendServiceOption,
   ColumnFilters,
@@ -11,8 +13,6 @@ import type {
   PaginationCursorChangedArgs,
   SingleColumnSort,
 } from './index.js';
-import type { SharedService } from '../services/shared.service.js';
-import type { SlickGrid } from '../core/index.js';
 
 export interface BackendService {
   /** Backend Service options */

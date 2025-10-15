@@ -2,16 +2,16 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { useTranslation } from 'i18next-vue';
 import {
+  ExtensionName,
+  Filters,
+  Formatters,
+  SlickgridVue,
+  type Column,
   type ContextMenu,
   type Formatter,
   type GridOption,
   type SlickGrid,
   type SlickgridVueInstance,
-  type Column,
-  ExtensionName,
-  Filters,
-  Formatters,
-  SlickgridVue,
 } from 'slickgrid-vue';
 import { onBeforeMount, onUnmounted, ref, type Ref } from 'vue';
 

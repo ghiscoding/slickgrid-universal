@@ -1,9 +1,8 @@
-import i18next from 'i18next';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
-import { type Column, Editors, Formatters, type GridOption, SlickgridReact, type SlickgridReactInstance } from 'slickgrid-react';
+import i18next from 'i18next';
 import React, { useEffect, useRef, useState } from 'react';
 import { withTranslation } from 'react-i18next';
-
+import { Editors, Formatters, SlickgridReact, type Column, type GridOption, type SlickgridReactInstance } from 'slickgrid-react';
 import './example35.scss';
 
 const NB_ITEMS = 20;

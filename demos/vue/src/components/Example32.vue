@@ -1,15 +1,6 @@
 <script setup lang="ts">
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
-  type AutocompleterOption,
-  type EditCommand,
-  type Formatter,
-  type GridOption,
-  type LongTextEditorOption,
-  type SearchTerm,
-  type SlickgridVueInstance,
-  type VanillaCalendarOption,
-  type Column,
   Editors,
   Filters,
   formatNumber,
@@ -17,9 +8,17 @@ import {
   SlickGlobalEditorLock,
   SlickgridVue,
   SortComparers,
+  type AutocompleterOption,
+  type Column,
+  type EditCommand,
+  type Formatter,
+  type GridOption,
+  type LongTextEditorOption,
+  type SearchTerm,
+  type SlickgridVueInstance,
+  type VanillaCalendarOption,
 } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
-
 import COUNTRIES_COLLECTION_URL from './data/countries.json?url';
 
 const NB_ITEMS = 400;

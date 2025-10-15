@@ -1,21 +1,20 @@
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
+  Editors,
+  Filters,
+  Formatters,
+  OperatorType,
   type AureliaGridInstance,
   type Column,
   type EditCommand,
-  Editors,
-  Filters,
   type Formatter,
-  Formatters,
   type GridOption,
   type MenuCommandItemCallbackArgs,
   type MultipleSelectOption,
-  OperatorType,
   type SlickGrid,
   type VanillaCalendarOption,
 } from 'aurelia-slickgrid';
-
 import './example33.scss';
 
 const NB_ITEMS = 1000;

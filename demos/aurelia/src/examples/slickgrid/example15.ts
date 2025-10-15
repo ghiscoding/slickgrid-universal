@@ -2,10 +2,10 @@ import { I18N } from '@aurelia/i18n';
 import { format as tempoFormat } from '@formkit/tempo';
 import { resolve } from 'aurelia';
 import {
-  type AureliaGridInstance,
-  type Column,
   Filters,
   Formatters,
+  type AureliaGridInstance,
+  type Column,
   type GridOption,
   type GridState,
   type GridStateChange,

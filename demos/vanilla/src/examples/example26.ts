@@ -2,20 +2,19 @@ import { format } from '@formkit/tempo';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import {
   Aggregators,
-  type Column,
   Filters,
+  OperatorType,
+  SortComparers,
+  type Column,
   type GridOption,
   type Grouping,
   type Metrics,
   type OnRowCountChangedEventArgs,
-  OperatorType,
-  SortComparers,
 } from '@slickgrid-universal/common';
 import { GridOdataService, type OdataServiceApi } from '@slickgrid-universal/odata';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-
-import { ExampleGridOptions } from './example-grid-options.js';
 import Data from './data/customers_100.json';
+import { ExampleGridOptions } from './example-grid-options.js';
 import './example26.scss';
 
 const CARET_HTML_ESCAPED = '%5E';

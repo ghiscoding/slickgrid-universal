@@ -1,7 +1,15 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement, emptyElement, extend, findWidthOrDefault, getHtmlStringOutput } from '@slickgrid-universal/utils';
-
+import { SlickEvent, SlickEventHandler, type SlickEventData, type SlickGrid } from '../core/index.js';
+import {
+  addCloseButtomElement,
+  addColumnTitleElementWhenDefined,
+  handleColumnPickerItemClick,
+  populateColumnPicker,
+  updateColumnPickerOrder,
+} from '../extensions/extensionCommonUtils.js';
+import type { ExtensionUtility } from '../extensions/extensionUtility.js';
 import type {
   Column,
   ColumnPicker,
@@ -10,16 +18,7 @@ import type {
   GridOption,
   OnColumnsChangedArgs,
 } from '../interfaces/index.js';
-import type { ExtensionUtility } from '../extensions/extensionUtility.js';
 import type { SharedService } from '../services/shared.service.js';
-import {
-  addColumnTitleElementWhenDefined,
-  addCloseButtomElement,
-  handleColumnPickerItemClick,
-  populateColumnPicker,
-  updateColumnPickerOrder,
-} from '../extensions/extensionCommonUtils.js';
-import { SlickEvent, type SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index.js';
 
 /**
  * A control to add a Column Picker (right+click on any column header to reveal the column picker)

@@ -1,38 +1,35 @@
+import { addDay, format as tempoFormat } from '@formkit/tempo';
+import { BindingEventService } from '@slickgrid-universal/binding';
 import {
+  deepCopy,
+  Editors,
+  Filters,
+  formatNumber,
+  Formatters,
+  OperatorType,
+  SlickGlobalEditorLock,
+  SortComparers,
   type AutocompleterOption,
-  type DOMEvent,
   type Column,
   type CurrentColumn,
   type CurrentFilter,
   type CurrentPinning,
   type CurrentSorter,
+  type DOMEvent,
   type EditCommand,
-  Editors,
-  Filters,
   type Formatter,
-  Formatters,
   type GridOption,
-  OperatorType,
-  SlickGlobalEditorLock,
   type SliderOption,
-  SortComparers,
   type VanillaCalendarOption,
-
-  // utilities
-  deepCopy,
-  formatNumber,
 } from '@slickgrid-universal/common';
-import { BindingEventService } from '@slickgrid-universal/binding';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import { format as tempoFormat, addDay } from '@formkit/tempo';
 import { type MultipleSelectOption } from 'multiple-select-vanilla';
-
-import exampleModal from './example11-modal.html?raw';
-import Example11Modal from './example11-modal.js';
 import countriesJson from './data/countries.json?raw';
 import { ExampleGridOptions } from './example-grid-options.js';
+import exampleModal from './example11-modal.html?raw';
+import Example11Modal from './example11-modal.js';
 import { loadComponent } from './utilities.js';
 import './example11.scss';
 

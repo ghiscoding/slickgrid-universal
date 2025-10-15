@@ -1,5 +1,5 @@
-import type { SortComparer } from '../interfaces/index.js';
 import { SortDirectionNumber } from '../enums/sortDirectionNumber.enum.js';
+import type { SortComparer } from '../interfaces/index.js';
 
 export const booleanSortComparer: SortComparer = (
   value1: any,

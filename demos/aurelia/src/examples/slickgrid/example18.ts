@@ -2,16 +2,16 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import {
   Aggregators,
-  type AureliaGridInstance,
-  type Column,
   Filters,
   Formatters,
-  type GridOption,
-  type GroupingGetterFunction,
-  type Grouping,
   GroupTotalFormatters,
   SortComparers,
   SortDirectionNumber,
+  type AureliaGridInstance,
+  type Column,
+  type GridOption,
+  type Grouping,
+  type GroupingGetterFunction,
   type SlickDataView,
   type SlickGrid,
 } from 'aurelia-slickgrid';

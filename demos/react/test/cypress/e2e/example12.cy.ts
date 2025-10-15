@@ -1,6 +1,5 @@
 /* eslint-disable n/file-extension-in-import */
 import { format } from '@formkit/tempo';
-
 import { removeExtraSpaces } from '../plugins/utilities';
 
 describe('Example 12: Localization (i18n)', () => {

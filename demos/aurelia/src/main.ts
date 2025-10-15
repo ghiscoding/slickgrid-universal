@@ -5,23 +5,20 @@ import 'bootstrap';
 // import Fetch from 'i18next-fetch-backend';
 import { AureliaSlickGridConfiguration } from 'aurelia-slickgrid';
 import DOMPurify from 'dompurify';
-
-import { MyApp } from './my-app.js';
+import localeEn from './assets/i18n/en/aurelia-slickgrid.json';
+import localeFr from './assets/i18n/fr/aurelia-slickgrid.json';
 import { DateFormatValueConverter, DecimalValueConverter, StringifyValueConverter } from './examples/resources/value-converters/index.js';
-
-// dynamic components that can be enhanced in Example 19, 26
-import { CustomPagerComponent } from './examples/slickgrid/example42-pager.js';
 import { CustomTitleFormatter } from './examples/slickgrid/custom-title-formatter.js';
 import { EditorSelect } from './examples/slickgrid/editor-select.js';
-import { FilterSelect } from './examples/slickgrid/filter-select.js';
+import { ExampleDetailPreload } from './examples/slickgrid/example-detail-preload.js';
 import { Example19DetailView } from './examples/slickgrid/example19-detail-view.js';
+// dynamic components that can be enhanced in Example 19, 26
+import { CustomPagerComponent } from './examples/slickgrid/example42-pager.js';
 import { Example45DetailView } from './examples/slickgrid/example45-detail-view.js';
 import { Example45Preload } from './examples/slickgrid/example45-preload.js';
 import { Example47DetailView } from './examples/slickgrid/example47-detail-view.js';
-import { ExampleDetailPreload } from './examples/slickgrid/example-detail-preload.js';
-
-import localeEn from './assets/i18n/en/aurelia-slickgrid.json';
-import localeFr from './assets/i18n/fr/aurelia-slickgrid.json';
+import { FilterSelect } from './examples/slickgrid/filter-select.js';
+import { MyApp } from './my-app.js';
 
 Aurelia
   /*

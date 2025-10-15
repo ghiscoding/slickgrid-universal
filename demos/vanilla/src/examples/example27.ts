@@ -1,13 +1,12 @@
 import { format } from '@formkit/tempo';
-import { type Column, Filters, type GridOption, type OnRowCountChangedEventArgs } from '@slickgrid-universal/common';
 import { BindingEventService } from '@slickgrid-universal/binding';
+import { Filters, type Column, type GridOption, type OnRowCountChangedEventArgs } from '@slickgrid-universal/common';
 import { GraphqlService, type GraphqlPaginatedResult, type GraphqlServiceApi } from '@slickgrid-universal/graphql';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { type MultipleSelectOption } from 'multiple-select-vanilla';
-
-import { ExampleGridOptions } from './example-grid-options.js';
 import type { TranslateService } from '../translate.service.js';
 import CustomersData from './data/customers_100.json';
+import { ExampleGridOptions } from './example-grid-options.js';
 import './example27.scss';
 import '../material-styles.scss';
 

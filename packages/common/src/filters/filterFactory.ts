@@ -1,8 +1,8 @@
 import type { ColumnFilter, Filter } from '../interfaces/index.js';
-import type { SlickgridConfig } from '../slickgrid-config.js';
 import type { CollectionService } from '../services/collection.service.js';
-import type { TranslaterService } from '../services/translater.service.js';
 import type { RxJsFacade } from '../services/rxjsFacade.js';
+import type { TranslaterService } from '../services/translater.service.js';
+import type { SlickgridConfig } from '../slickgrid-config.js';
 
 export class FilterFactory {
   /** The options from the SlickgridConfig */

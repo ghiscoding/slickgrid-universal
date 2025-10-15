@@ -4,17 +4,16 @@ import i18next from 'i18next';
 import React, { useEffect, useRef, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import {
-  type Column,
   Filters,
+  SlickgridReact,
+  type Column,
   type GridOption,
   type Metrics,
   type MultipleSelectOption,
   type OnRowCountChangedEventArgs,
-  SlickgridReact,
   type SlickgridReactInstance,
 } from 'slickgrid-react';
 import SAMPLE_COLLECTION_DATA_URL from './data/customers_100.json?url';
-
 import './example39.scss';
 
 interface Status {

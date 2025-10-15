@@ -1,5 +1,4 @@
 import { createDomElement, isNumber } from '@slickgrid-universal/utils';
-
 import { type Formatter } from './../interfaces/index.js';
 import { dollarFormatter } from './dollarFormatter.js';
 

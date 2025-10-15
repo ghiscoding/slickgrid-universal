@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-
 import type { Column } from '../../interfaces/index.js';
 import { iconBooleanFormatter } from '../iconBooleanFormatter.js';
 

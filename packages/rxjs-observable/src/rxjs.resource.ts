@@ -1,16 +1,16 @@
 import type { RxJsFacade } from '@slickgrid-universal/common';
 import {
   EMPTY,
+  firstValueFrom,
   iif,
   isObservable,
-  firstValueFrom,
   Observable,
-  type ObservableInput,
   of,
-  type OperatorFunction,
-  type ObservedValueOf,
   Subject,
   switchMap,
+  type ObservableInput,
+  type ObservedValueOf,
+  type OperatorFunction,
 } from 'rxjs';
 // oxlint-disable-next-line extensions
 import { takeUntil } from 'rxjs/operators';

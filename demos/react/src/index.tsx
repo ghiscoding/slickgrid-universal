@@ -4,10 +4,9 @@ import { createRoot } from 'react-dom/client';
 import { initReactI18next } from 'react-i18next';
 import { HashRouter } from 'react-router-dom';
 import { I18nextProvider } from 'slickgrid-react';
-
-import App from './examples/slickgrid/App.js';
 import localeEn from './assets/locales/en/translation.json';
 import localeFr from './assets/locales/fr/translation.json';
+import App from './examples/slickgrid/App.js';
 import './styles.scss';
 
 i18n

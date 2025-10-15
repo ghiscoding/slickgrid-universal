@@ -1,6 +1,5 @@
 import { of, type Subscription } from 'rxjs';
 import { describe, expect, it } from 'vitest';
-
 import { unsubscribeAllObservables } from '../utilities.js';
 
 describe('Service/Utilies', () => {

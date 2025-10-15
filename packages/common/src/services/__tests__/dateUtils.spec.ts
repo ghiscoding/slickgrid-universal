@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-
 import { FieldType } from '../../enums/index.js';
 import { mapTempoDateFormatWithFieldType, parseUtcDate } from '../dateUtils.js';
 

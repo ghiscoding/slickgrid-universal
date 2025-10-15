@@ -1,7 +1,6 @@
 import * as SlickerModule from '@slickgrid-universal/vanilla-bundle';
-
-import { App } from './app.js';
 import AppView from './app.html?raw';
+import { App } from './app.js';
 import { Renderer } from './renderer.js';
 import { TranslateService } from './translate.service.js';
 import './styles.scss';

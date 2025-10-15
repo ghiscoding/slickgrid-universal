@@ -1,17 +1,16 @@
-import { provideHttpClient, withInterceptorsFromDi, HttpClient } from '@angular/common/http';
-import { enableProdMode, provideAppInitializer, Injector, inject, importProvidersFrom } from '@angular/core';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { enableProdMode, importProvidersFrom, inject, Injector, provideAppInitializer } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
+import { bootstrapApplication, BrowserModule } from '@angular/platform-browser';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { TranslateService, TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import DOMPurify from 'dompurify';
-
+import { TabsModule } from 'ngx-bootstrap/tabs';
+import { AppRoutingRoutingModule } from './demos/app-routing.module';
+import { AppComponent } from './demos/app.component';
 import { appInitializerFactory, createTranslateLoader } from './demos/app.module';
 import { environment } from './demos/environments/environment';
-import { AppRoutingRoutingModule } from './demos/app-routing.module';
-import { TabsModule } from 'ngx-bootstrap/tabs';
 import { AngularSlickgridModule } from './library/modules/angular-slickgrid.module';
-import { AppComponent } from './demos/app.component';
 
 if (environment.production) {
   enableProdMode();

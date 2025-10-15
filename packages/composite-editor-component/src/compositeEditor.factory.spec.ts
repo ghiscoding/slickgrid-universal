@@ -1,17 +1,16 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
+  Editors,
+  SlickEvent,
   type Column,
   type CompositeEditorOption,
   type Editor,
   type EditorArguments,
-  Editors,
   type ElementPosition,
   type GridOption,
   type SlickDataView,
-  SlickEvent,
   type SlickGrid,
 } from '@slickgrid-universal/common';
-
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SlickCompositeEditor } from './compositeEditor.factory.js';
 
 vi.useFakeTimers();

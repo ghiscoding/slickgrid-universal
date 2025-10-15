@@ -1,21 +1,20 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import {
-  type Column,
   Editors,
   Filters,
+  OperatorType,
+  type Column,
   type GridOption,
   type GridStateChange,
   type Metrics,
-  OperatorType,
 } from '@slickgrid-universal/common';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
-import { GridOdataService, type OdataServiceApi, type OdataOption } from '@slickgrid-universal/odata';
+import { GridOdataService, type OdataOption, type OdataServiceApi } from '@slickgrid-universal/odata';
 import { RxJsResource } from '@slickgrid-universal/rxjs-observable';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { delay, Observable, of, type Subject } from 'rxjs';
-
-import { ExampleGridOptions } from './example-grid-options.js';
 import Data from './data/customers_100.json';
+import { ExampleGridOptions } from './example-grid-options.js';
 import './example15.scss';
 
 const defaultPageSize = 20;

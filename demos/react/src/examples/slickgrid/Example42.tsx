@@ -1,16 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
-  type Column,
   Filters,
   Formatters,
-  type GridOption,
-  type MultipleSelectOption,
   OperatorType,
   SlickgridReact,
+  type Column,
+  type GridOption,
+  type MultipleSelectOption,
   type SlickgridReactInstance,
   type SliderRangeOption,
 } from 'slickgrid-react';
-
 import CustomPagerComponent from './Example42-Custom-Pager.js';
 
 const NB_ITEMS = 5000;

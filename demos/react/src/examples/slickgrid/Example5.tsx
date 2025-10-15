@@ -1,16 +1,15 @@
 import { format } from '@formkit/tempo';
-import { GridOdataService, type OdataServiceApi, type OdataOption } from '@slickgrid-universal/odata';
-import { useState, useEffect, useRef } from 'react';
-
+import { GridOdataService, type OdataOption, type OdataServiceApi } from '@slickgrid-universal/odata';
+import { useEffect, useRef, useState } from 'react';
 import {
-  type Column,
   Filters,
+  OperatorType,
+  SlickgridReact,
+  type Column,
   type GridOption,
   type GridStateChange,
   type Metrics,
-  OperatorType,
   type Pagination,
-  SlickgridReact,
   type SlickgridReactInstance,
 } from 'slickgrid-react';
 import Data from './data/customers_100.json';

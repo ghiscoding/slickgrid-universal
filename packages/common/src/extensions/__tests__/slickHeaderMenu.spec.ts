@@ -1,12 +1,11 @@
-import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-
-import type { Column, ColumnSort, ElementPosition, Filter, GridOption, HeaderButtonsOrMenu, HeaderMenuItems, MenuCommandItem } from '../../interfaces/index.js';
-import { SlickHeaderMenu } from '../slickHeaderMenu.js';
-import { BackendUtilityService, type FilterService, SharedService, type SortService } from '../../services/index.js';
-import { ExtensionUtility } from '../../extensions/extensionUtility.js';
-import { type SlickDataView, SlickEvent, SlickEventData, type SlickGrid } from '../../core/index.js';
+import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
+import { SlickEvent, SlickEventData, type SlickDataView, type SlickGrid } from '../../core/index.js';
+import { ExtensionUtility } from '../../extensions/extensionUtility.js';
+import type { Column, ColumnSort, ElementPosition, Filter, GridOption, HeaderButtonsOrMenu, HeaderMenuItems, MenuCommandItem } from '../../interfaces/index.js';
+import { BackendUtilityService, SharedService, type FilterService, type SortService } from '../../services/index.js';
+import { SlickHeaderMenu } from '../slickHeaderMenu.js';
 
 const removeExtraSpaces = (inputText: string) => `${inputText}`.replace(/[\n\r]\s+/g, '');
 

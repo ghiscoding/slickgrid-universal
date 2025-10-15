@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-
 import type { Column, Formatter } from '../../interfaces/index.js';
 import { multipleFormatter } from '../multipleFormatter.js';
 

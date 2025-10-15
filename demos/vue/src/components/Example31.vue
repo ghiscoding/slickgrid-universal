@@ -4,19 +4,18 @@ import { GridOdataService } from '@slickgrid-universal/odata';
 import { RxJsResource } from '@slickgrid-universal/rxjs-observable';
 import { Observable, of, type Subject } from 'rxjs';
 import {
+  Editors,
+  Filters,
+  OperatorType,
+  SlickgridVue,
+  type Column,
   type GridOption,
   type GridStateChange,
   type Metrics,
   type Pagination,
   type SlickgridVueInstance,
-  type Column,
-  Editors,
-  Filters,
-  OperatorType,
-  SlickgridVue,
 } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
-
 import Data from './data/customers_100.json';
 
 const defaultPageSize = 20;

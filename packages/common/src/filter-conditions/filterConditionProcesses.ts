@@ -1,10 +1,10 @@
 import { FieldType, type SearchTerm } from '../enums/index.js';
+import { isColumnDateType } from '../services/utilities.js';
 import { getFilterParsedBoolean } from './booleanFilterCondition.js';
-import { getFilterParsedNumbers } from './numberFilterCondition.js';
 import { getFilterParsedDates } from './dateFilterCondition.js';
+import { getFilterParsedNumbers } from './numberFilterCondition.js';
 import { getFilterParsedObjectResult } from './objectFilterCondition.js';
 import { getFilterParsedText } from './stringFilterCondition.js';
-import { isColumnDateType } from '../services/utilities.js';
 
 /**
  * General variable types, just 5x types instead of the multiple FieldType.

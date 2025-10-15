@@ -1,13 +1,12 @@
-import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
-
-import type { Column } from '../../interfaces/index.js';
-import { InputFilter } from '../inputFilter.js';
-import { FilterFactory } from '../filterFactory.js';
-import { SlickgridConfig } from '../../slickgrid-config.js';
-import { CollectionService } from '../../services/collection.service.js';
+import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
+import type { Column } from '../../interfaces/index.js';
+import { CollectionService } from '../../services/collection.service.js';
+import { SlickgridConfig } from '../../slickgrid-config.js';
 import { AutocompleterFilter } from '../autocompleterFilter.js';
+import { FilterFactory } from '../filterFactory.js';
+import { InputFilter } from '../inputFilter.js';
 
 vi.mock('../autocompleterFilter');
 

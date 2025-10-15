@@ -1,5 +1,4 @@
 import { isNumber } from '@slickgrid-universal/utils';
-
 import { OperatorType, type SearchTerm } from '../enums/index.js';
 import type { FilterCondition, FilterConditionOption } from '../interfaces/index.js';
 import { testFilterCondition } from './filterUtilities.js';

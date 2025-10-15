@@ -1,18 +1,16 @@
 import i18next from 'i18next';
 import React, { useEffect, useRef, useState } from 'react';
 import { withTranslation } from 'react-i18next';
-
 import {
-  type Column,
   ExtensionName,
   Filters,
   Formatters,
-  type GridOption,
   SlickgridReact,
+  type Column,
+  type GridOption,
   type SlickgridReactInstance,
   type SliderOption,
 } from 'slickgrid-react';
-
 import './example9.scss'; // provide custom CSS/SASS styling
 
 const Example9: React.FC = () => {

@@ -1,8 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-
+import type { SlickGrid } from '../../core/index.js';
 import type { Column, GridOption } from '../../interfaces/index.js';
 import { currencyFormatter } from '../currencyFormatter.js';
-import type { SlickGrid } from '../../core/index.js';
 
 describe('the Currency Formatter', () => {
   const gridStub = {

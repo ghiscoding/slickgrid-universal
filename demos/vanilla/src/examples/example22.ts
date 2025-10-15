@@ -1,10 +1,9 @@
-import { type Column, Formatters, type GridOption, Editors } from '@slickgrid-universal/common';
+import { BindingEventService } from '@slickgrid-universal/binding';
+import { Editors, Formatters, type Column, type GridOption } from '@slickgrid-universal/common';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import { BindingEventService } from '@slickgrid-universal/binding';
-
-import { ExampleGridOptions } from './example-grid-options.js';
 import type { TranslateService } from '../translate.service.js';
+import { ExampleGridOptions } from './example-grid-options.js';
 import './example22.scss';
 
 const NB_ITEMS = 20;

@@ -2,6 +2,12 @@
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
+  Editors,
+  Filters,
+  Formatters,
+  OperatorType,
+  SlickgridVue,
+  type Column,
   type EditCommand,
   type Formatter,
   type GridOption,
@@ -10,12 +16,6 @@ import {
   type SlickGrid,
   type SlickgridVueInstance,
   type VanillaCalendarOption,
-  type Column,
-  Editors,
-  Filters,
-  Formatters,
-  OperatorType,
-  SlickgridVue,
 } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
 

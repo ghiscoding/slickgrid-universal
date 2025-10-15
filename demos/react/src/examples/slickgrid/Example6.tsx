@@ -6,22 +6,22 @@ import {
   type GraphqlServiceOption,
 } from '@slickgrid-universal/graphql';
 import i18next from 'i18next';
+import React, { useEffect, useRef, useState } from 'react';
+import { withTranslation } from 'react-i18next';
 import {
-  type Column,
-  type CursorPageInfo,
   Filters,
   Formatters,
+  OperatorType,
+  SlickgridReact,
+  SortDirection,
+  type Column,
+  type CursorPageInfo,
   type GridOption,
   type GridStateChange,
   type Metrics,
   type MultipleSelectOption,
-  OperatorType,
-  SortDirection,
-  SlickgridReact,
   type SlickgridReactInstance,
 } from 'slickgrid-react';
-import React, { useState, useEffect, useRef } from 'react';
-import { withTranslation } from 'react-i18next';
 
 interface Status {
   text: string;

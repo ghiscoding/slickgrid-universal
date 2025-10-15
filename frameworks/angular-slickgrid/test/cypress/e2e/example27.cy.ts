@@ -1,5 +1,4 @@
-import { changeTimezone, zeroPadding } from '../plugins/utilities';
-import { removeExtraSpaces } from '../plugins/utilities';
+import { changeTimezone, removeExtraSpaces, zeroPadding } from '../plugins/utilities';
 
 describe('Example 27 - Tree Data (from a flat dataset with parentId references)', () => {
   const GRID_ROW_HEIGHT = 40;

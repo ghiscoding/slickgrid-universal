@@ -1,19 +1,19 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Aggregators,
-  type Column,
   Filters,
   Formatters,
+  GroupTotalFormatters,
+  SlickgridReact,
+  SortComparers,
+  SortDirectionNumber,
+  type Column,
   type GridOption,
   type Grouping,
-  GroupTotalFormatters,
-  SortDirectionNumber,
-  SortComparers,
-  SlickgridReact,
   type SlickgridReactInstance,
 } from 'slickgrid-react';
-import React, { useEffect, useRef, useState } from 'react';
 
 const NB_ITEMS = 5000;
 

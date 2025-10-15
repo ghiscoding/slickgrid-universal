@@ -1,25 +1,24 @@
+import { BindingEventService } from '@slickgrid-universal/binding';
 import {
   Aggregators,
-  type Column,
-  type EditCommand,
   Editors,
   Filters,
   Formatters,
-  type GridOption,
-  type Grouping,
-  type GroupingGetterFunction,
   GroupTotalFormatters,
-  type SlickDraggableGrouping,
   SlickGlobalEditorLock,
   SortComparers,
   SortDirectionNumber,
+  type Column,
+  type EditCommand,
+  type GridOption,
+  type Grouping,
+  type GroupingGetterFunction,
+  type SlickDraggableGrouping,
   type VanillaCalendarOption,
 } from '@slickgrid-universal/common';
-import { BindingEventService } from '@slickgrid-universal/binding';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-
 import { ExampleGridOptions } from './example-grid-options.js';
 
 interface ReportItem {

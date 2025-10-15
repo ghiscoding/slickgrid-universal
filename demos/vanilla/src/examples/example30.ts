@@ -1,15 +1,13 @@
-import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-
 import {
-  type Column,
   Filters,
   Formatters,
+  OperatorType,
+  type Column,
   type GridOption,
   type MultipleSelectOption,
-  OperatorType,
   type SliderRangeOption,
 } from '@slickgrid-universal/common';
-
+import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options.js';
 import { CustomPager } from './example30-pager.js';
 

@@ -1,5 +1,5 @@
-import { type Column, Formatters, type GridOption, SlickgridReact, type SlickgridReactInstance } from 'slickgrid-react';
 import { useState } from 'react';
+import { Formatters, SlickgridReact, type Column, type GridOption, type SlickgridReactInstance } from 'slickgrid-react';
 
 const NB_ITEMS = 995;
 
