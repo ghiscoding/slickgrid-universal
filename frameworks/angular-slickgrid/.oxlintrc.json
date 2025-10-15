@@ -34,6 +34,8 @@
         "typescript/no-empty-function": "off",
         "typescript/no-unused-expressions": "off",
         "typescript/no-explicit-any": "off",
+        "import/no-self-import": "error",
+        "import/no-useless-path-segments": ["error", { "noUselessIndex": true }],
         "import/extensions": "off",
         "no-case-declarations": "off"
       }
