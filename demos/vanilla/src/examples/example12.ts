@@ -3,7 +3,6 @@ import {
   Editors,
   EventNamingStyle,
   Filters,
-  // utilities
   formatNumber,
   Formatters,
   SlickGlobalEditorLock,
