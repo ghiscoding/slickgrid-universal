@@ -1,27 +1,26 @@
-import { NgIf, NgFor, DatePipe } from '@angular/common';
-import { Component, type OnInit, type OnDestroy } from '@angular/core';
+import { DatePipe, NgFor, NgIf } from '@angular/common';
+import { Component, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { addDay, format } from '@formkit/tempo';
 import { TranslateService } from '@ngx-translate/core';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import type { Subscription } from 'rxjs';
 import {
-  type AngularGridInstance,
   AngularSlickgridModule,
-  type Column,
   Filters,
-  type Formatter,
   Formatters,
+  OperatorType,
+  unsubscribeAllObservables,
+  type AngularGridInstance,
+  type Column,
+  type Formatter,
   type GridOption,
   type GridStateChange,
   type Metrics,
   type MultipleSelectOption,
-  OperatorType,
   type SliderRangeOption,
-  unsubscribeAllObservables,
 } from '../../library';
-import type { Subscription } from 'rxjs';
-
 import { CustomInputFilter } from './custom-inputFilter';
 
 const NB_ITEMS = 1500;

@@ -1,16 +1,15 @@
 import { bindable } from 'aurelia';
 import {
+  Filters,
+  Formatters,
+  OperatorType,
   type AureliaGridInstance,
   type Column,
-  Formatters,
   type GridOption,
   type MultipleSelectOption,
-  Filters,
-  OperatorType,
   type Pagination,
   type SliderRangeOption,
 } from 'aurelia-slickgrid';
-
 import { CustomPagerComponent } from './example42-pager.js';
 
 const NB_ITEMS = 5000;

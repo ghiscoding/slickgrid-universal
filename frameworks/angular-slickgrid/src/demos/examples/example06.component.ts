@@ -1,5 +1,5 @@
-import { NgIf, DatePipe } from '@angular/common';
-import { ChangeDetectorRef, Component, type OnInit, type OnDestroy } from '@angular/core';
+import { DatePipe, NgIf } from '@angular/common';
+import { ChangeDetectorRef, Component, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { addDay, format as tempoFormat } from '@formkit/tempo';
 import { TranslateService } from '@ngx-translate/core';
@@ -11,18 +11,18 @@ import {
 } from '@slickgrid-universal/graphql';
 import type { Subscription } from 'rxjs';
 import {
-  type AngularGridInstance,
   AngularSlickgridModule,
-  type Column,
-  type CursorPageInfo,
   Filters,
   Formatters,
+  OperatorType,
+  unsubscribeAllObservables,
+  type AngularGridInstance,
+  type Column,
+  type CursorPageInfo,
   type GridOption,
   type GridStateChange,
   type Metrics,
   type MultipleSelectOption,
-  OperatorType,
-  unsubscribeAllObservables,
 } from '../../library';
 
 const defaultPageSize = 20;

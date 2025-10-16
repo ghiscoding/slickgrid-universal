@@ -4,17 +4,17 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import type { Subscription } from 'rxjs';
 import {
-  type AngularGridInstance,
   AngularSlickgridModule,
-  type Column,
   DelimiterType,
   Filters,
-  type Formatter,
   Formatters,
+  unsubscribeAllObservables,
+  type AngularGridInstance,
+  type Column,
+  type Formatter,
   type GridOption,
   type GridStateChange,
   type SliderOption,
-  unsubscribeAllObservables,
 } from '../../library';
 
 const NB_ITEMS = 1500;

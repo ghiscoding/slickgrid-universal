@@ -1,6 +1,5 @@
 import { Injectable, ViewContainerRef } from '@angular/core';
 import type { EmbeddedViewRef, EnvironmentInjector, Injector, NgModuleRef, Type } from '@angular/core';
-
 import type { AngularComponentOutput } from '../models/angularComponentOutput.interface';
 
 interface CreateComponentOption {

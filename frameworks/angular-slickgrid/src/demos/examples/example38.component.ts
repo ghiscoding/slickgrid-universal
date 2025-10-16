@@ -1,18 +1,18 @@
-import { NgIf, DatePipe } from '@angular/common';
+import { DatePipe, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectorRef, Component, type OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, ViewEncapsulation, type OnInit } from '@angular/core';
 import { GridOdataService, type OdataServiceApi } from '@slickgrid-universal/odata';
 import {
   Aggregators,
-  type AngularGridInstance,
   AngularSlickgridModule,
-  type Column,
   Filters,
+  SortComparers,
+  type AngularGridInstance,
+  type Column,
   type GridOption,
   type Grouping,
   type Metrics,
   type OnRowCountChangedEventArgs,
-  SortComparers,
 } from '../../library';
 
 const sampleDataRoot = 'assets/data';

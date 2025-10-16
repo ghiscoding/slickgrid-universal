@@ -1,8 +1,13 @@
-import { type ApplicationRef, ChangeDetectorRef, Component, ElementRef } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, type ApplicationRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   autoAddEditorFormatterToColumnsWithEditor,
+  Editors,
+  Filters,
+  SharedService,
+  SlickDataView,
+  SlickGroupItemMetadataProvider,
   type BackendService,
   type BackendServiceApi,
   type BackendUtilityService,
@@ -15,11 +20,9 @@ import {
   type CurrentPinning,
   type CurrentSorter,
   type Editor,
-  Editors,
   type ExtensionList,
   type ExtensionService,
   type ExtensionUtility,
-  Filters,
   type FilterService,
   type Formatter,
   type GridEventService,
@@ -34,28 +37,24 @@ import {
   type PaginationMetadata,
   type PaginationService,
   type ResizerService,
-  SharedService,
-  SlickDataView,
   type SlickEventHandler,
   type SlickGrid,
-  SlickGroupItemMetadataProvider,
   type SortService,
   type TreeDataService,
 } from '@slickgrid-universal/common';
 import { type SlickFooterComponent } from '@slickgrid-universal/custom-footer-component';
-import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
+import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import type { GraphqlPaginatedResult, GraphqlService, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
 import { of, throwError } from 'rxjs';
-import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
-
-import { AngularSlickgridComponent } from '../angular-slickgrid.component.js';
-import { type SlickRowDetailView } from '../../extensions/slickRowDetailView.js';
-import { TranslaterServiceStub } from '../../../../test/translaterServiceStub.js';
-import { type AngularUtilService, ContainerService, type TranslaterService } from '../../services/index.js';
-import { type GridOption } from '../../models/index.js';
+import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { MockSlickEvent, MockSlickEventHandler } from '../../../../test/mockSlickEvent.js';
 import { RxJsResourceStub } from '../../../../test/rxjsResourceStub.js';
+import { TranslaterServiceStub } from '../../../../test/translaterServiceStub.js';
+import { type SlickRowDetailView } from '../../extensions/slickRowDetailView.js';
+import { type GridOption } from '../../models/index.js';
+import { ContainerService, type AngularUtilService, type TranslaterService } from '../../services/index.js';
+import { AngularSlickgridComponent } from '../angular-slickgrid.component.js';
 
 // mocked modules
 vi.mock('@slickgrid-universal/common', async (importOriginal) => ({

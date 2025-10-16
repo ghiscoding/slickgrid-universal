@@ -3,16 +3,16 @@ import { format as tempoFormat } from '@formkit/tempo';
 import { TranslateService } from '@ngx-translate/core';
 import type { Subscription } from 'rxjs';
 import {
-  type AngularGridInstance,
   AngularSlickgridModule,
-  type Column,
   Filters,
   Formatters,
+  unsubscribeAllObservables,
+  type AngularGridInstance,
+  type Column,
   type GridOption,
   type GridState,
   type GridStateChange,
   type MultipleSelectOption,
-  unsubscribeAllObservables,
 } from '../../library';
 
 function randomBetween(min: number, max: number) {

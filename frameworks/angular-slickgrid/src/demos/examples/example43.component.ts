@@ -1,6 +1,6 @@
-import { Component, type OnInit, ViewEncapsulation } from '@angular/core';
-import { type AngularGridInstance, AngularSlickgridModule, type Column, Editors, type GridOption, type ItemMetadata } from '../../library';
+import { Component, ViewEncapsulation, type OnInit } from '@angular/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import { AngularSlickgridModule, Editors, type AngularGridInstance, type Column, type GridOption, type ItemMetadata } from '../../library';
 
 @Component({
   styleUrls: ['example43.component.scss'],

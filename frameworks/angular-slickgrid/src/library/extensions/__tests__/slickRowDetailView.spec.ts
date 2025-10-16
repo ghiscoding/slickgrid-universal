@@ -1,21 +1,20 @@
-import { type ApplicationRef, Component } from '@angular/core';
+import { Component, type ApplicationRef } from '@angular/core';
 import {
-  type Column,
-  type OnSelectedRowsChangedEventArgs,
   SlickEvent,
   SlickEventData,
   SlickEventHandler,
-  type SlickGrid,
   SlickRowSelectionModel,
+  type Column,
+  type OnSelectedRowsChangedEventArgs,
+  type SlickGrid,
 } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { of } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { type GridOption } from '../../models/gridOption.interface.js';
-import { type AngularUtilService } from '../../services/index.js';
-import { type RowDetailView } from '../../models/rowDetailView.interface.js';
 import { RxJsResourceStub } from '../../../../test/rxjsResourceStub.js';
+import { type GridOption } from '../../models/gridOption.interface.js';
+import { type RowDetailView } from '../../models/rowDetailView.interface.js';
+import { type AngularUtilService } from '../../services/index.js';
 import { SlickRowDetailView } from '../slickRowDetailView.js';
 
 vi.mock('@slickgrid-universal/common', async () => ({

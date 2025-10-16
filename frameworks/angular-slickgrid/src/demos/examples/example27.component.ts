@@ -1,11 +1,11 @@
-import { ChangeDetectorRef, Component, type OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, ViewEncapsulation, type OnInit } from '@angular/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
-  type AngularGridInstance,
   AngularSlickgridModule,
-  type Column,
   Filters,
   Formatters,
+  type AngularGridInstance,
+  type Column,
   type GridOption,
   type GridStateChange,
   type TreeToggledItem,

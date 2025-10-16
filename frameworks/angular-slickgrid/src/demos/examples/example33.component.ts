@@ -1,21 +1,21 @@
 import { NgClass } from '@angular/common';
-import { Component, type OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
-  type AngularGridInstance,
   AngularSlickgridModule,
-  type Column,
-  type EditCommand,
   Editors,
   Filters,
-  type Formatter,
   Formatters,
+  OperatorType,
+  type AngularGridInstance,
+  type Column,
+  type EditCommand,
+  type Formatter,
   type GridOption,
   type MenuCommandItemCallbackArgs,
   type MultipleSelectOption,
-  OperatorType,
   type SlickGrid,
   type VanillaCalendarOption,
 } from '../../library';

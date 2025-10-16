@@ -2,16 +2,15 @@ import { NgIf } from '@angular/common';
 import { Component, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
-  type AngularGridInstance,
   AngularSlickgridModule,
-  type Column,
   Editors,
   Filters,
   Formatters,
+  type AngularGridInstance,
+  type Column,
   type GridOption,
   type SlickRowDetailView,
 } from '../../library';
-
 import { Example19RowDetailComponent } from './example19-rowdetail.component';
 import { RowDetailPreloadComponent } from './rowdetail-preload.component';
 

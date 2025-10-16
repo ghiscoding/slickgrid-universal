@@ -1,23 +1,23 @@
 import { NgFor } from '@angular/common';
-import { type AfterViewInit, ChangeDetectorRef, Component, type OnDestroy, type OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, type AfterViewInit, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import {
-  type AngularGridInstance,
-  AngularSlickgridModule,
   Aggregators,
-  type Column,
+  AngularSlickgridModule,
   DelimiterType,
   Editors,
   Filters,
   Formatters,
+  GroupTotalFormatters,
+  SortComparers,
+  SortDirectionNumber,
+  type AngularGridInstance,
+  type Column,
   type GridOption,
   type Grouping,
   type GroupingGetterFunction,
-  GroupTotalFormatters,
-  SortDirectionNumber,
-  SortComparers,
 } from '../../library';
 
 const NB_ITEMS = 5000;

@@ -1,29 +1,29 @@
-import { Component, type OnDestroy, type OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
+import { Component, ViewEncapsulation, type OnDestroy, type OnInit } from '@angular/core';
 import { SlickCompositeEditor, SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
+import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
+import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
-  type AngularGridInstance,
   AngularSlickgridModule,
+  Editors,
+  Filters,
+  formatNumber,
+  Formatters,
+  SlickGlobalEditorLock,
+  SortComparers,
+  type AngularGridInstance,
   type AutocompleterOption,
   type Column,
   type CompositeEditorModalType,
   type EditCommand,
-  Editors,
-  Filters,
-  formatNumber,
   type Formatter,
-  Formatters,
   type GridOption,
   type GridStateChange,
   type LongTextEditorOption,
   type MultipleSelectOption,
   type OnCompositeEditorChangeEventArgs,
-  SlickGlobalEditorLock,
   type SlickGrid,
   type SliderOption,
-  SortComparers,
   type VanillaCalendarOption,
 } from '../../library';
 

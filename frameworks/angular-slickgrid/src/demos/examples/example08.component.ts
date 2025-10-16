@@ -1,7 +1,7 @@
-import { Component, type OnDestroy, type OnInit, ViewEncapsulation } from '@angular/core';
-import { type AngularGridInstance, AngularSlickgridModule, type Column, type GridOption, unsubscribeAllObservables } from '../../library';
+import { Component, ViewEncapsulation, type OnDestroy, type OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import type { Subscription } from 'rxjs';
+import { AngularSlickgridModule, unsubscribeAllObservables, type AngularGridInstance, type Column, type GridOption } from '../../library';
 
 @Component({
   templateUrl: './example08.component.html',

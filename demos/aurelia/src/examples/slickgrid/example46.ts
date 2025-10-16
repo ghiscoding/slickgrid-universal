@@ -1,8 +1,7 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { bindable } from 'aurelia';
-import { type AureliaGridInstance, type Column, Filters, Formatters, type GridOption } from 'aurelia-slickgrid';
-
+import { Filters, Formatters, type AureliaGridInstance, type Column, type GridOption } from 'aurelia-slickgrid';
 import { showToast } from './utilities.js';
 import './example46.scss'; // provide custom CSS/SASS styling
 

@@ -7,7 +7,6 @@ import type {
   Subscription,
 } from '@slickgrid-universal/common';
 import { bindable, customElement, resolve } from 'aurelia';
-
 import './example42-pager.scss';
 
 /** Custom Pagination Componnet, please note that you MUST `implements BasePaginationComponent` with required functions */

@@ -2,18 +2,18 @@ import { Component, type OnInit } from '@angular/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import {
-  type AngularGridInstance,
-  AngularSlickgridModule,
   Aggregators,
-  type Column,
+  AngularSlickgridModule,
   DelimiterType,
   Filters,
   Formatters,
+  GroupTotalFormatters,
+  SortComparers,
+  SortDirectionNumber,
+  type AngularGridInstance,
+  type Column,
   type GridOption,
   type Grouping,
-  GroupTotalFormatters,
-  SortDirectionNumber,
-  SortComparers,
 } from '../../library';
 
 const NB_ITEMS = 5000;

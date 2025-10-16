@@ -1,13 +1,13 @@
-import { Component, type OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, type OnInit } from '@angular/core';
 import {
-  type AngularGridInstance,
   AngularSlickgridModule,
-  type Column,
   Editors,
   Formatters,
-  type GridOption,
   isDefined,
   SlickGlobalEditorLock,
+  type AngularGridInstance,
+  type Column,
+  type GridOption,
 } from '../../library';
 
 @Component({

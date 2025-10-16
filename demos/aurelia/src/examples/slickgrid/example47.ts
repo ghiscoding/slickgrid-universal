@@ -1,21 +1,20 @@
 import { bindable } from 'aurelia';
 import {
   Aggregators,
-  type AureliaGridInstance,
-  type Column,
   Editors,
   ExtensionName,
   Filters,
   Formatters,
-  type GridOption,
-  type Grouping,
   GroupTotalFormatters,
-  type SlickDataView,
-  type SlickGrid,
   SortComparers,
   SortDirectionNumber,
+  type AureliaGridInstance,
+  type Column,
+  type GridOption,
+  type Grouping,
+  type SlickDataView,
+  type SlickGrid,
 } from 'aurelia-slickgrid';
-
 import { ExampleDetailPreload } from './example-detail-preload.js';
 import { Example47DetailView } from './example47-detail-view.js';
 

@@ -1,18 +1,18 @@
-import { Component, type OnInit, type OnDestroy, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, type OnDestroy, type OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import type { Subscription } from 'rxjs';
 import {
-  type AngularGridInstance,
   AngularSlickgridModule,
-  type Column,
-  type ContextMenu,
   ExtensionName,
   Filters,
-  type Formatter,
   Formatters,
-  type GridOption,
   unsubscribeAllObservables,
+  type AngularGridInstance,
+  type Column,
+  type ContextMenu,
+  type Formatter,
+  type GridOption,
 } from '../../library';
 
 const actionFormatter: Formatter = (_row, _cell, _value, _columnDef, dataContext) => {

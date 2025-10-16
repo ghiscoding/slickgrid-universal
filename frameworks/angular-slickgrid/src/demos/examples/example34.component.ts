@@ -1,19 +1,19 @@
-import { Component, type OnDestroy, type OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { faker } from '@faker-js/faker';
 import sparkline from '@fnando/sparkline';
 import {
   Aggregators,
-  type AngularGridInstance,
   AngularSlickgridModule,
-  type Column,
   createDomElement,
   deepCopy,
   Filters,
-  type Formatter,
   Formatters,
-  type GridOption,
   GroupTotalFormatters,
+  type AngularGridInstance,
+  type Column,
+  type Formatter,
+  type GridOption,
 } from '../../library';
 
 const NB_ROWS = 200;

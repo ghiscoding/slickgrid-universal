@@ -1,11 +1,11 @@
 import { NgFor } from '@angular/common';
-import { Component, type OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
-  type AngularGridInstance,
   AngularSlickgridModule,
-  type Column,
   Formatters,
+  type AngularGridInstance,
+  type Column,
   type GridOption,
   type OperatorString,
   type SlickDataView,

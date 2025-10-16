@@ -1,19 +1,18 @@
+import type { ICustomElementController } from '@aurelia/runtime-html';
 import {
   addToArrayWhenNotExists,
   createDomElement,
+  SlickEventData,
+  SlickRowSelectionModel,
+  unsubscribeAll,
   type EventSubscription,
   type OnBeforeRowDetailToggleArgs,
   type OnRowBackOrOutOfViewportRangeArgs,
-  SlickEventData,
   type SlickGrid,
-  SlickRowSelectionModel,
-  unsubscribeAll,
 } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickRowDetailView as UniversalSlickRowDetailView } from '@slickgrid-universal/row-detail-view-plugin';
-import type { ICustomElementController } from '@aurelia/runtime-html';
-import { type Constructable, resolve, transient } from 'aurelia';
-
+import { resolve, transient, type Constructable } from 'aurelia';
 import type { CreatedView, GridOption, RowDetailView, ViewModelBindableInputData } from '../models/index.js';
 import { AureliaUtilService } from '../services/aureliaUtil.service.js';
 

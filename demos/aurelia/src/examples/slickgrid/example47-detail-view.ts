@@ -1,7 +1,6 @@
 import type { SlickRowDetailView } from '@slickgrid-universal/row-detail-view-plugin';
 import { bindable } from 'aurelia';
 import type { SlickDataView, SlickGrid } from 'aurelia-slickgrid';
-
 import { showToast } from './utilities.js';
 import './example47-detail-view.scss';
 

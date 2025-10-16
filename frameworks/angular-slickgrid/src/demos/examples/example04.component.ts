@@ -1,22 +1,21 @@
-import { NgIf, DatePipe } from '@angular/common';
+import { DatePipe, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, type OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
-  type AngularGridInstance,
   AngularSlickgridModule,
-  type Column,
   Filters,
   Formatters,
+  OperatorType,
+  type AngularGridInstance,
+  type Column,
   type GridOption,
   type GridStateChange,
   type Metrics,
   type MultipleSelectOption,
-  OperatorType,
   type VanillaCalendarOption,
 } from '../../library';
-
 import { CustomInputFilter } from './custom-inputFilter';
 
 function randomBetween(min: number, max: number) {
