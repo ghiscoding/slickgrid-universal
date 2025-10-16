@@ -4,21 +4,9 @@
   "printWidth": 140,
   "singleQuote": true,
   "trailingComma": "es5",
-  "plugins": ["@prettier/plugin-oxc", "@ianvs/prettier-plugin-sort-imports"],
+  "plugins": ["@ianvs/prettier-plugin-sort-imports"],
   "importOrderParserPlugins": ["typescript", "jsx", "decorators-legacy", "@ianvs/prettier-plugin-sort-imports"],
   "overrides": [
-    {
-      "files": ["**/*.{js,mjs,cjs,jsx}"],
-      "options": {
-        "parser": "oxc"
-      }
-    },
-    {
-      "files": ["**/*.{ts,mts,cts,tsx}"],
-      "options": {
-        "parser": "oxc-ts"
-      }
-    },
     {
       "files": ["**/*.spec.ts"],
       "options": {

@@ -154,9 +154,6 @@ importers:
       '@lerna-lite/watch':
         specifier: ^4.9.0
         version: 4.9.0(@lerna-lite/publish@4.9.0)(@types/node@24.7.2)(babel-plugin-macros@3.1.0)
-      '@prettier/plugin-oxc':
-        specifier: ^0.0.4
-        version: 0.0.4
       '@slickgrid-universal/common':
         specifier: workspace:*
         version: link:packages/common
@@ -15184,7 +15181,8 @@ snapshots:
 
   '@oxc-project/runtime@0.92.0': {}
 
-  '@oxc-project/types@0.74.0': {}
+  '@oxc-project/types@0.74.0':
+    optional: true
 
   '@oxc-project/types@0.94.0': {}
 
@@ -15304,6 +15302,7 @@ snapshots:
   '@prettier/plugin-oxc@0.0.4':
     dependencies:
       oxc-parser: 0.74.0
+    optional: true
 
   '@rolldown/binding-android-arm64@1.0.0-beta.43':
     optional: true
@@ -20184,6 +20183,7 @@ snapshots:
       '@oxc-parser/binding-wasm32-wasi': 0.74.0
       '@oxc-parser/binding-win32-arm64-msvc': 0.74.0
       '@oxc-parser/binding-win32-x64-msvc': 0.74.0
+    optional: true
 
   oxlint@1.23.0:
     optionalDependencies:
