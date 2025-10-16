@@ -1,9 +1,8 @@
-import { Component, type OnDestroy, type OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { faker } from '@faker-js/faker';
-import { type AngularGridInstance, AngularSlickgridModule, type Column, type GridOption, type SlickRowDetailView } from '../../library';
-
-import { type Distributor, Example45DetailComponent, type OrderData } from './example45-detail.component';
+import { AngularSlickgridModule, type AngularGridInstance, type Column, type GridOption, type SlickRowDetailView } from '../../library';
+import { Example45DetailComponent, type Distributor, type OrderData } from './example45-detail.component';
 import { RowDetailPreloadComponent } from './rowdetail-preload.component';
 
 const FAKE_SERVER_DELAY = 250;

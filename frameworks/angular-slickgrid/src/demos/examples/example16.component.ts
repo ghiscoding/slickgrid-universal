@@ -1,11 +1,11 @@
 import { Component, type OnInit } from '@angular/core';
 import {
-  type AngularGridInstance,
   AngularSlickgridModule,
-  type Column,
   ExtensionName,
   Filters,
   Formatters,
+  type AngularGridInstance,
+  type Column,
   type GridOption,
   type OnEventArgs,
 } from '../../library';

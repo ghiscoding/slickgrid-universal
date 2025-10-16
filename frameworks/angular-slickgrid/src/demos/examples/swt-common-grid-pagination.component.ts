@@ -1,10 +1,11 @@
+import { NgClass } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { Component, Input, type OnInit } from '@angular/core';
+import { TranslateDirective } from '@ngx-translate/core';
+import { type GridOption } from '../../library';
 import { type SwtCommonGridComponent } from './swt-common-grid.component';
 import { Logger } from './swt-logger.service';
-import { HttpClient } from '@angular/common/http';
-import { type GridOption } from '../../library';
-import { NgClass } from '@angular/common';
-import { TranslateDirective } from '@ngx-translate/core';
+
 /**
  * Custom pagination component: It allows editing the page number manually
  *  << < Page [1] of 5 > >>

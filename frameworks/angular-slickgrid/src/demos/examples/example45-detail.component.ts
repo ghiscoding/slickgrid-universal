@@ -1,5 +1,5 @@
-import { Component, type OnDestroy, type OnInit, ViewEncapsulation } from '@angular/core';
-import { type AngularGridInstance, AngularSlickgridModule, type Column, type GridOption, type GridState } from '../../library';
+import { Component, ViewEncapsulation, type OnDestroy, type OnInit } from '@angular/core';
+import { AngularSlickgridModule, type AngularGridInstance, type Column, type GridOption, type GridState } from '../../library';
 
 export interface Distributor {
   id: number;

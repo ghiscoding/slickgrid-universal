@@ -1,19 +1,19 @@
-import { Component, type OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
   addWhiteSpaces,
-  type AngularGridInstance,
-  AngularSlickgridModule,
   Aggregators,
-  type Column,
+  AngularSlickgridModule,
   decimalFormatted,
   Filters,
   findItemInTreeStructure,
-  type Formatter,
   Formatters,
-  type GridOption,
   isNumber,
+  type AngularGridInstance,
+  type Column,
+  type Formatter,
+  type GridOption,
   type SlickDataView,
 } from '../../library';
 

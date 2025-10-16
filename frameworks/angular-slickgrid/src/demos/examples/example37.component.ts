@@ -1,9 +1,9 @@
 import { Component, type OnDestroy, type OnInit } from '@angular/core';
 import {
-  type AngularGridInstance,
   AngularSlickgridModule,
-  type Column,
   Editors,
+  type AngularGridInstance,
+  type Column,
   type GridOption,
   type OnCellChangeEventArgs,
 } from '../../library';

@@ -1,5 +1,5 @@
-import { Component, type OnInit, type OnDestroy } from '@angular/core';
-import { type AngularGridInstance, type Column, type Formatter, type GridOption, SlickEventHandler } from '../../library';
+import { Component, type OnDestroy, type OnInit } from '@angular/core';
+import { SlickEventHandler, type AngularGridInstance, type Column, type Formatter, type GridOption } from '../../library';
 
 const brandFormatter: Formatter = (_row, _cell, _value, _columnDef, dataContext) => {
   return (dataContext && dataContext.brand && dataContext.brand.name) || '';

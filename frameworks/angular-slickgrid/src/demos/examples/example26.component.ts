@@ -1,28 +1,27 @@
-import { NgIf, JsonPipe } from '@angular/common';
-import { Component, type OnInit, ViewEncapsulation } from '@angular/core';
+import { JsonPipe, NgIf } from '@angular/common';
+import { Component, ViewEncapsulation, type OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import {
-  type AngularGridInstance,
   AngularSlickgridModule,
   AngularUtilService,
-  type Column,
   Editors,
   Filters,
   Formatters,
+  SlickGlobalEditorLock,
+  type AngularGridInstance,
+  type Column,
   type GridOption,
   type MultipleSelectOption,
   type OnEventArgs,
-  SlickGlobalEditorLock,
   type SliderOption,
 } from '../../library';
-
-import { EditorNgSelectComponent } from './editor-ng-select.component';
 import { CustomAngularComponentEditor } from './custom-angularComponentEditor';
 import { CustomAngularComponentFilter } from './custom-angularComponentFilter';
-import { CustomTitleFormatterComponent } from './custom-titleFormatter.component';
-import { FilterNgSelectComponent } from './filter-ng-select.component';
 import { CustomButtonFormatterComponent } from './custom-buttonFormatter.component';
+import { CustomTitleFormatterComponent } from './custom-titleFormatter.component';
+import { EditorNgSelectComponent } from './editor-ng-select.component';
+import { FilterNgSelectComponent } from './filter-ng-select.component';
 
 const NB_ITEMS = 100;
 

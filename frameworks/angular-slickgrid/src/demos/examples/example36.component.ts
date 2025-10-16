@@ -1,23 +1,23 @@
-import { Component, type OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
-  type Aggregator,
   Aggregators,
-  type AngularGridInstance,
   AngularSlickgridModule,
-  type Column,
   Editors,
+  Formatters,
+  GroupTotalFormatters,
+  type Aggregator,
+  type AngularGridInstance,
+  type Column,
   type ExcelCellValueParserArgs,
   type ExcelGroupValueParserArgs,
   type Formatter,
-  Formatters,
   type GridOption,
-  GroupTotalFormatters,
   type Grouping,
   type SlickGrid,
   type SlickGroupTotals,
 } from '../../library';
-import { ExcelExportService } from '@slickgrid-universal/excel-export';
 
 interface GroceryItem {
   id: number;

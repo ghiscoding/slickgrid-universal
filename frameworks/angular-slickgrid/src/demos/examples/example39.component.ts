@@ -1,21 +1,20 @@
-import { NgIf, DatePipe } from '@angular/common';
+import { DatePipe, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectorRef, Component, type OnDestroy, type OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, ViewEncapsulation, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { GraphqlService, type GraphqlPaginatedResult, type GraphqlServiceApi } from '@slickgrid-universal/graphql';
 import { type Subscription } from 'rxjs';
-
 import {
-  type AngularGridInstance,
   AngularSlickgridModule,
-  type Column,
   Filters,
+  unsubscribeAllObservables,
+  type AngularGridInstance,
+  type Column,
   type GridOption,
   type Metrics,
   type MultipleSelectOption,
   type OnRowCountChangedEventArgs,
-  unsubscribeAllObservables,
 } from '../../library';
 
 const sampleDataRoot = 'assets/data';

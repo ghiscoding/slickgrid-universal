@@ -1,12 +1,10 @@
 import type { ICollectionObserver, ICollectionSubscriber } from '@aurelia/runtime';
-import { bindable, BindingMode, customElement, IContainer, IEventAggregator, type IDisposable, IObserverLocator, resolve } from 'aurelia';
-import { dequal } from 'dequal/lite';
 import type {
-  BackendService,
-  BasePaginationComponent,
   AutocompleterEditor,
+  BackendService,
   BackendServiceApi,
   BackendServiceOption,
+  BasePaginationComponent,
   Column,
   DataViewOption,
   EventSubscription,
@@ -34,10 +32,8 @@ import {
   GridStateService,
   HeaderGroupingService,
   isColumnDateType,
-  type Observable,
   PaginationService,
   ResizerService,
-  type RxJsFacade,
   SharedService,
   SlickDataView,
   SlickEventHandler,
@@ -46,18 +42,21 @@ import {
   SlickGroupItemMetadataProvider,
   SortService,
   TreeDataService,
+  type Observable,
+  type RxJsFacade,
 } from '@slickgrid-universal/common';
-import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickFooterComponent } from '@slickgrid-universal/custom-footer-component';
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
+import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickPaginationComponent } from '@slickgrid-universal/pagination-component';
 import { extend } from '@slickgrid-universal/utils';
-
+import { bindable, BindingMode, customElement, IContainer, IEventAggregator, IObserverLocator, resolve, type IDisposable } from 'aurelia';
+import { dequal } from 'dequal/lite';
 import { Constants } from '../constants.js';
+import { SlickRowDetailView } from '../extensions/slickRowDetailView.js';
 import { GlobalGridOptions } from '../global-grid-options.js';
 import type { AureliaGridInstance, GridOption } from '../models/index.js';
 import { AureliaUtilService, ContainerService, disposeAllSubscriptions, TranslaterService } from '../services/index.js';
-import { SlickRowDetailView } from '../extensions/slickRowDetailView.js';
 
 const WARN_NO_PREPARSE_DATE_SIZE = 10000; // data size to warn user when pre-parse isn't enabled
 

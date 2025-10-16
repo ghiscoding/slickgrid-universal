@@ -1,6 +1,6 @@
-import { Component, type OnInit } from '@angular/core';
 import { NgIf } from '@angular/common';
-import { type AngularGridInstance, AngularSlickgridModule, type Column, type GridOption, Formatters } from '../../library';
+import { Component, type OnInit } from '@angular/core';
+import { AngularSlickgridModule, Formatters, type AngularGridInstance, type Column, type GridOption } from '../../library';
 
 const NB_ITEMS = 995;
 

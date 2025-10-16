@@ -1,6 +1,5 @@
-import { AppTask, type Constructable, CustomElement, type IAppRoot, IAurelia, type INode, resolve, singleton } from 'aurelia';
 import { type Writable } from '@aurelia/kernel';
-
+import { AppTask, CustomElement, IAurelia, resolve, singleton, type Constructable, type IAppRoot, type INode } from 'aurelia';
 import type { ViewModelBindableInputData } from '../models/index.js';
 
 @singleton()

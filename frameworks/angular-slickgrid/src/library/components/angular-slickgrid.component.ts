@@ -1,5 +1,4 @@
 import {
-  type AfterViewInit,
   ApplicationRef,
   ChangeDetectorRef,
   Component,
@@ -8,12 +7,42 @@ import {
   EventEmitter,
   Inject,
   Input,
-  type OnDestroy,
   Optional,
   Output,
+  type AfterViewInit,
+  type OnDestroy,
   type TemplateRef,
 } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import {
+  // utilities
+  autoAddEditorFormatterToColumnsWithEditor,
+  // services
+  BackendUtilityService,
+  CollectionService,
+  emptyElement,
+  EventNamingStyle,
+  ExtensionName,
+  ExtensionService,
+  ExtensionUtility,
+  FilterFactory,
+  FilterService,
+  GridEventService,
+  GridService,
+  GridStateService,
+  HeaderGroupingService,
+  isColumnDateType,
+  PaginationService,
+  ResizerService,
+  SharedService,
+  SlickDataView,
+  SlickEventHandler,
+  SlickGrid,
+  SlickgridConfig,
+  SlickGroupItemMetadataProvider,
+  SortService,
+  TreeDataService,
+  unsubscribeAll,
   type AutocompleterEditor,
   type BackendService,
   type BackendServiceApi,
@@ -23,64 +52,29 @@ import {
   type DataViewOption,
   type EventSubscription,
   type ExternalResource,
-  isColumnDateType,
   type Locale,
   type Metrics,
   type Pagination,
   type PaginationMetadata,
   type RxJsFacade,
   type SelectEditor,
-  SlickDataView,
-  SlickEventHandler,
-  SlickGrid,
 } from '@slickgrid-universal/common';
-import {
-  ExtensionName,
-  ExtensionUtility,
-  SlickGroupItemMetadataProvider,
-
-  // services
-  BackendUtilityService,
-  CollectionService,
-  EventNamingStyle,
-  ExtensionService,
-  FilterFactory,
-  FilterService,
-  GridEventService,
-  GridService,
-  GridStateService,
-  HeaderGroupingService,
-  PaginationService,
-  ResizerService,
-  SharedService,
-  SlickgridConfig,
-  SortService,
-  TreeDataService,
-
-  // utilities
-  autoAddEditorFormatterToColumnsWithEditor,
-  emptyElement,
-  unsubscribeAll,
-} from '@slickgrid-universal/common';
-import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
-import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
 import { SlickFooterComponent } from '@slickgrid-universal/custom-footer-component';
+import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
+import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickPaginationComponent } from '@slickgrid-universal/pagination-component';
 import { RxJsResource } from '@slickgrid-universal/rxjs-observable';
 import { extend } from '@slickgrid-universal/utils';
-import { TranslateService } from '@ngx-translate/core';
 import { dequal } from 'dequal/lite';
 import { Observable } from 'rxjs';
-
 import { Constants } from '../constants';
-import type { AngularGridInstance, ExternalTestingDependencies, GridOption } from '../models/index';
+import { SlickRowDetailView } from '../extensions/slickRowDetailView';
 import { GlobalGridOptions } from '../global-grid-options';
-import { TranslaterService } from '../services/translater.service';
-
+import type { AngularGridInstance, ExternalTestingDependencies, GridOption } from '../models/index';
 // Services
 import { AngularUtilService } from '../services/angularUtil.service';
-import { SlickRowDetailView } from '../extensions/slickRowDetailView';
 import { ContainerService } from '../services/container.service';
+import { TranslaterService } from '../services/translater.service';
 
 const WARN_NO_PREPARSE_DATE_SIZE = 10000; // data size to warn user when pre-parse isn't enabled
 

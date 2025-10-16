@@ -1,6 +1,5 @@
 import { bindable } from 'aurelia';
 import { type AureliaGridInstance, type Column, type GridOption, type GridState } from 'aurelia-slickgrid';
-
 import './example45-detail-view.scss';
 
 export interface Distributor {

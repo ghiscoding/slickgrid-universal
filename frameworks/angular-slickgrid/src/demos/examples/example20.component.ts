@@ -1,16 +1,16 @@
+import { Component, ViewEncapsulation, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Component, type OnInit, type OnDestroy, ViewEncapsulation } from '@angular/core';
 import {
-  type AngularGridInstance,
   AngularSlickgridModule,
-  type Column,
-  type ColumnEditorDualInput,
   Editors,
+  Filters,
   formatNumber,
   Formatters,
-  Filters,
-  type GridOption,
   SlickEventHandler,
+  type AngularGridInstance,
+  type Column,
+  type ColumnEditorDualInput,
+  type GridOption,
 } from '../../library';
 
 @Component({

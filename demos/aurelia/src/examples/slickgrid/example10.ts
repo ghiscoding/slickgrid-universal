@@ -1,6 +1,5 @@
 import { bindable } from 'aurelia';
-import { type AureliaGridInstance, type Column, Filters, Formatters, type GridOption, type GridStateChange } from 'aurelia-slickgrid';
-
+import { Filters, Formatters, type AureliaGridInstance, type Column, type GridOption, type GridStateChange } from 'aurelia-slickgrid';
 import './example10.scss'; // provide custom CSS/SASS styling
 
 export class Example10 {

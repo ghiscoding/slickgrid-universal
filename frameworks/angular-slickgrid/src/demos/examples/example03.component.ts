@@ -1,31 +1,30 @@
-import { NgIf, JsonPipe } from '@angular/common';
+import { JsonPipe, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, type OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { Subject } from 'rxjs';
 import {
-  type AngularGridInstance,
   AngularSlickgridModule,
+  Editors,
+  Filters,
+  Formatters,
+  OperatorType,
+  SlickGlobalEditorLock,
+  SortComparers,
+  type AngularGridInstance,
   type AutocompleterOption,
   type Column,
-  Editors,
   type EditorArguments,
   type EditorValidator,
-  Filters,
   type Formatter,
-  Formatters,
   type GridOption,
   type LongTextEditorOption,
   type MultipleSelectOption,
   type OnEventArgs,
-  OperatorType,
-  SortComparers,
-  SlickGlobalEditorLock,
   type SlickGrid,
   type SliderOption,
   type VanillaCalendarOption,
 } from '../../library';
-import { Subject } from 'rxjs';
-
 import { CustomInputEditor } from './custom-inputEditor';
 import { CustomInputFilter } from './custom-inputFilter';
 import fetchJsonp from './jsonp';

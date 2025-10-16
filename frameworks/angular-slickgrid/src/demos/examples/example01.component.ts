@@ -1,6 +1,5 @@
 import { Component, type OnDestroy, type OnInit } from '@angular/core';
-import { type AngularGridInstance, AngularSlickgridModule, type Column, type GridOption, Formatters } from '../../library';
-
+import { AngularSlickgridModule, Formatters, type AngularGridInstance, type Column, type GridOption } from '../../library';
 import { zeroPadding } from './utilities';
 
 const NB_ITEMS = 995;

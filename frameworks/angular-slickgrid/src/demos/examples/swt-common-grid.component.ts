@@ -1,23 +1,23 @@
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
 /* eslint-disable @angular-eslint/no-output-on-prefix */
-import { type AfterViewInit, Component, ElementRef, EventEmitter, Input, type OnInit, Output, ViewChild, Renderer2 } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Component, ElementRef, EventEmitter, Input, Output, Renderer2, ViewChild, type AfterViewInit, type OnInit } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import {
+  AngularSlickgridModule,
   type AngularGridInstance,
   type AngularSlickgridComponent,
-  AngularSlickgridModule,
   type BackendService,
   type BackendServiceOption,
   type Column,
   type FilterChangedArgs,
   type GridOption,
-  type PaginationChangedArgs,
   type Pagination,
+  type PaginationChangedArgs,
   type SlickDataView,
 } from '../../library';
-import { TranslateService } from '@ngx-translate/core';
-import { Logger } from './swt-logger.service';
 import { type SwtCommonGridPaginationComponent } from './swt-common-grid-pagination.component';
+import { Logger } from './swt-logger.service';
 
 /**
  * Custom wrapper of angular-slickgrid components, allows easily interacting with SwtCommonGridPaginationComponent

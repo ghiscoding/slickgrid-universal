@@ -1,21 +1,20 @@
-import { NgIf, DatePipe } from '@angular/common';
+import { DatePipe, NgIf } from '@angular/common';
 import { Component, type OnInit } from '@angular/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
   Aggregators,
-  type AngularGridInstance,
   AngularSlickgridModule,
-  type Column,
   Filters,
   Formatters,
+  SortComparers,
+  SortDirectionNumber,
+  type AngularGridInstance,
+  type Column,
   type GridOption,
   type Grouping,
   type Metrics,
   type OnRowCountChangedEventArgs,
-  SortComparers,
-  SortDirectionNumber,
 } from '../../library';
-
 import { randomNumber } from './utilities';
 
 const FETCH_SIZE = 50;

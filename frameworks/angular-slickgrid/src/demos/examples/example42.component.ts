@@ -1,17 +1,16 @@
 import { Component, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
-  type AngularGridInstance,
   AngularSlickgridModule,
   AngularUtilService,
-  type Column,
   Filters,
   Formatters,
+  type AngularGridInstance,
+  type Column,
   type GridOption,
   type MultipleSelectOption,
   type SliderRangeOption,
 } from '../../library';
-
 import { CustomPagerComponent } from './grid-custom-pager.component';
 
 const NB_ITEMS = 5000;

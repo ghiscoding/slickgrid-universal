@@ -1,18 +1,18 @@
-import { Component, type OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Component, ViewEncapsulation, type OnInit } from '@angular/core';
 import { GraphqlService, type GraphqlResult, type GraphqlServiceApi } from '@slickgrid-universal/graphql';
+import type { Observable } from 'rxjs';
 import {
-  type AngularGridInstance,
   AngularSlickgridModule,
-  type Column,
   Filters,
   Formatters,
+  OperatorType,
+  type AngularGridInstance,
+  type Column,
   type GridOption,
   type Metrics,
   type MultipleSelectOption,
-  OperatorType,
 } from '../../library';
-import type { Observable } from 'rxjs';
 
 const COUNTRIES_API = 'https://countries.trevorblades.com/';
 

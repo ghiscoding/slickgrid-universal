@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, type OnInit } from '@angular/core';
-import { type AngularGridInstance, AngularSlickgridModule, type Column, type GridOption, Filters } from '../../library';
-import { TabsetComponent, TabDirective } from 'ngx-bootstrap/tabs';
+import { TabDirective, TabsetComponent } from 'ngx-bootstrap/tabs';
+import { AngularSlickgridModule, Filters, type AngularGridInstance, type Column, type GridOption } from '../../library';
 
 const URL_CUSTOMERS = 'assets/data/customers_100.json';
 

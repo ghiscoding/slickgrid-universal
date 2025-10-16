@@ -1,8 +1,7 @@
-import { DecimalPipe, DatePipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import type { SlickDataView, SlickGrid } from '../../library';
-
 import type { Example19Component } from './example19.component';
 
 @Component({

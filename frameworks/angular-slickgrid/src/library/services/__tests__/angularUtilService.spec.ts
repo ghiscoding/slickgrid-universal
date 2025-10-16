@@ -1,7 +1,6 @@
 import { Component, ViewContainerRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
 import { AngularUtilService } from '../angularUtil.service.js';
 
 const DOM_ELEMENT_ID = 'row-detail123';

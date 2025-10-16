@@ -1,6 +1,5 @@
 import { bindable } from 'aurelia';
-import { type AureliaGridInstance, type Column, Formatters, type GridOption, type OperatorString } from 'aurelia-slickgrid';
-
+import { Formatters, type AureliaGridInstance, type Column, type GridOption, type OperatorString } from 'aurelia-slickgrid';
 import './example21.scss';
 
 export class Example21 {

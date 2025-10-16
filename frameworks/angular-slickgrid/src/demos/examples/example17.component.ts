@@ -2,7 +2,7 @@ import { NgIf } from '@angular/common';
 import { ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { type AngularGridInstance, AngularSlickgridModule, type Column, type GridOption, toCamelCase } from '../../library';
+import { AngularSlickgridModule, toCamelCase, type AngularGridInstance, type Column, type GridOption } from '../../library';
 
 const sampleDataRoot = 'assets/data';
 

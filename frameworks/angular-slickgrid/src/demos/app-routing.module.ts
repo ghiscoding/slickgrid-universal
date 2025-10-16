@@ -1,8 +1,6 @@
 import { NgModule } from '@angular/core';
-import { type Routes, RouterModule, provideRouter } from '@angular/router';
+import { provideRouter, RouterModule, type Routes } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-
-import { HomeComponent } from './examples/home.component';
 import { Example1Component } from './examples/example01.component';
 import { Example2Component } from './examples/example02.component';
 import { Example3Component } from './examples/example03.component';
@@ -49,6 +47,7 @@ import { Example44Component } from './examples/example44.component';
 import { Example45Component } from './examples/example45.component';
 import { Example46Component } from './examples/example46.component';
 import { Example47Component } from './examples/example47.component';
+import { HomeComponent } from './examples/home.component';
 import { SwtCommonGridTestComponent } from './examples/swt-common-grid-test.component';
 
 const routes: Routes = [
