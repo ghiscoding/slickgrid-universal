@@ -81,11 +81,7 @@ const WARN_NO_PREPARSE_DATE_SIZE = 10000; // data size to warn user when pre-par
 @Component({
   selector: 'angular-slickgrid',
   templateUrl: './angular-slickgrid.component.html',
-  providers: [
-    // make everything transient (non-singleton)
-    AngularUtilService,
-    TranslaterService,
-  ],
+  providers: [AngularUtilService, TranslaterService], // make everything transient (non-singleton)
   standalone: false,
 })
 export class AngularSlickgridComponent<TData = any> implements AfterViewInit, OnDestroy {
