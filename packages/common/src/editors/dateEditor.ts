@@ -17,8 +17,8 @@ import type {
   EditorValidationResult,
   EditorValidator,
   GridOption,
-  VanillaCalendarOption,
   ValidateOption,
+  VanillaCalendarOption,
 } from './../interfaces/index.js';
 import { getDescendantProperty } from './../services/utilities.js';
 

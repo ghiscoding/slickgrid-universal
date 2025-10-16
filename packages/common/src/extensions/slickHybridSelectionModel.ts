@@ -2,12 +2,12 @@ import { isDefined } from '@slickgrid-universal/utils';
 import { SlickEvent, SlickEventData, SlickRange, Utils as SlickUtils } from '../core/index.js';
 import type { SlickDataView } from '../core/slickDataview.js';
 import type { SlickGrid } from '../core/slickGrid.js';
-import type { CustomDataView, OnActiveCellChangedEventArgs } from '../interfaces/index.js';
-import { SlickCellRangeSelector } from './slickCellRangeSelector.js';
-import { SlickCellRangeDecorator } from './slickCellRangeDecorator.js';
 import { Draggable } from '../core/slickInteractions.js';
-import type { SlickRowMoveManager } from './slickRowMoveManager.js';
 import type { GridOption, SelectionModel } from '../index.js';
+import type { CustomDataView, OnActiveCellChangedEventArgs } from '../interfaces/index.js';
+import { SlickCellRangeDecorator } from './slickCellRangeDecorator.js';
+import { SlickCellRangeSelector } from './slickCellRangeSelector.js';
+import type { SlickRowMoveManager } from './slickRowMoveManager.js';
 
 export declare type RowSelectOverride = (
   data: OnActiveCellChangedEventArgs,
