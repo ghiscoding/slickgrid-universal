@@ -1,15 +1,14 @@
 import {
-  type Column,
   Editors,
-  type GridOption,
   // Handler,
   // OnDragReplaceCellsEventArgs,
   SlickEventHandler,
   SlickHybridSelectionModel,
   SlickSelectionUtils,
+  type Column,
+  type GridOption,
 } from '@slickgrid-universal/common';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-
 import { ExampleGridOptions } from './example-grid-options.js';
 import './example38.scss';
 
