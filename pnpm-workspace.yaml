@@ -49,3 +49,6 @@ catalogs:
     vite: ^6.3.6
   vite7:
     vite: ^7.1.9
+
+onlyBuiltDependencies:
+  - 'cypress'
