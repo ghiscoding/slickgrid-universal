@@ -66,6 +66,7 @@ import type {
   OnColumnsResizedEventArgs,
   OnCompositeEditorChangeEventArgs,
   OnDblClickEventArgs,
+  OnDragReplaceCellsEventArgs,
   OnFooterClickEventArgs,
   OnFooterContextMenuEventArgs,
   OnFooterRowCellRenderedEventArgs,
@@ -88,10 +89,12 @@ import type {
 } from '../interfaces/index.js';
 import {
   preClickClassName,
+  SlickDragExtendHandle,
   SlickEvent,
   SlickEventData,
   SlickGlobalEditorLock,
   SlickRange,
+  SlickSelectionUtils,
   Utils,
   type BasePubSub,
   type SlickEditorLock,
