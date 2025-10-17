@@ -35,7 +35,7 @@ jobs:
       - if: ${{ github.event.pull_request.merged != true && contains('["ghiscoding"]', github.actor) != true }}
         name: Exit early when current actor is not allowed to push new release
         run: |
-          echo "Error: Your GitHub username (${{ github.actor }}) is not on the allowed list of admins for this workflow"
+          echo "Error: Your GitHub username (${{ github.actor }}) is not on the allowed list of Admins that can run this workflow"
           exit 1
 
       - name: Install pnpm
@@ -80,7 +80,7 @@ jobs:
               echo "LERNA_VERSION_QUERY=lerna version --yes" >> $GITHUB_ENV
           fi
 
-      - name: Final version query type - ${{ env.LERNA_VERSION_TYPE }}
+      - name: Final version type → ${{ env.LERNA_VERSION_TYPE }}
         shell: bash
         run: echo "${{ env.LERNA_VERSION_QUERY }}"
 
@@ -99,8 +99,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         id: lerna-publish
-        run: |
-          pnpm exec lerna publish from-package --force-publish --yes
+        run: pnpm exec lerna publish from-package --force-publish --yes
 
       - name: Diagnostic Output Check
         if: always() # This ensures the step runs even if previous steps fail
