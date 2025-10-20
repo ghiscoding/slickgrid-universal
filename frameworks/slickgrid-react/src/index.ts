@@ -1,4 +1,3 @@
-import 'regenerator-runtime/runtime.js';
 import { SlickgridReact } from './components/slickgrid-react.js';
 import { SlickRowDetailView } from './extensions/slickRowDetailView.js';
 import type { GridOption, RowDetailView, SlickgridReactComponentOutput, SlickgridReactInstance } from './models/index.js';
