@@ -9,7 +9,7 @@
     "plugin",
     "slickgrid"
   ],
-  "homepage": "https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/aurelia-slickgrid",
+  "homepage": "https://ghiscoding.github.io/aurelia-slickgrid-demos",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ghiscoding/slickgrid-universal.git",
