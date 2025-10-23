@@ -8,9 +8,7 @@ Wait, what happened to version 6 to 8?
 
 I'm skipping versions 6-8 and going straight to v9.0 because some of the framework wrappers (Angular-Slickgrid & Aurelia-Slickgrid) were already at v8.x and so the next available major version bump for everything was v9.0. 
 
-If the project is useful to you, please give it a ⭐ (on [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal)) and perhaps buy me a coffee thanks.
-
-<a href='https://ko-fi.com/ghiscoding' target='_blank'><img height='36' width='140' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi3.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+If the project is useful to you, please give it a ⭐ (on [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal)) and perhaps buy me a coffee [☕ (Ko-Fi)](https://ko-fi.com/ghiscoding), thanks.
 
 #### Major Changes - Quick Summary
 - minimum requirements bump
