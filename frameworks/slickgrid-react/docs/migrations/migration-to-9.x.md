@@ -1,14 +1,14 @@
 ## Embracing ESM-only builds ⚡
 
-This new release is focused around 2 things, now shipping ESM-only builds (in other words, CommonJS builds are fully dropped and only ESM will remain), this move will cut the npm download size by half. The other big change is an internal one which is an organizational one, I'm moving all framework wrappers directly into Slickgrid-Universal (Angular, Aurelia, React and Vue wrappers are now **all** located under the Slickgrid-Universal [frameworks/](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/) folder). This change will help tremendously with the project maintenance (any new PR will now run against all frameworks all at once (catching bugs early), publishing a new version is now a single click execution for all frameworks all at once, and finally having a single codebase to test & troubleshoot all wrappers, etc... will be so much easier to handle). With this new structure change, Slickgrid-Universal name now makes so much more sense. 🌐
+This new release is focused around 2 things, it is now shipping ESM-only builds (in other words, CommonJS builds are fully dropped and only ESM remains), this move will cut the npm download size by half. The other big change is an internal one which is an organizational one, I'm moving all framework wrappers directly into Slickgrid-Universal (Angular, Aurelia, React and Vue wrappers are now **all** located under the Slickgrid-Universal [frameworks/](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/) folder). This change will help tremendously with the project's maintenance (any new PR will now run against all frameworks all at once (catching bugs early), publishing a new version is now a single click execution for all frameworks all at once, and finally having a single codebase to test & troubleshoot all wrappers, etc... will be so much easier to handle). With this new structure change, the Slickgrid-Universal name now makes so much more sense. 🌐
 
 The other great thing about having everything under the same roof/project is that every package will now be released at the same time with the exact same version number across the board. Everything will be released under v9.0 and whenever any new feature/bugfix comes in, then every package will be bumped to v9.1 and so on (no more version discrepancies).
 
 Wait, what happened to version 6 to 8?
 
-I'm skipping versions 6-8 and going straight to v9.0 because some of the framework wrappers (Angular-Slickgrid, Aurelia-Slickgrid) were already at v8.x and so the next available major version bump for everything was v9.0. 
+I'm skipping versions 6-8 and going straight to v9.0 because some of the framework wrappers (Angular-Slickgrid & Aurelia-Slickgrid) were already at v8.x and so the next available major version bump for everything was v9.0. 
 
-If the project is useful to you, please give it a ⭐ and perhaps buy me a [☕ (ko-fi)](https://ko-fi.com/ghiscoding), thanks.
+If the project is useful to you, please give it a ⭐ (on [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal)) and perhaps buy me a coffee [☕ (Ko-Fi)](https://ko-fi.com/ghiscoding), thanks.
 
 #### Major Changes - Quick Summary
 - minimum requirements bump
@@ -19,7 +19,7 @@ If the project is useful to you, please give it a ⭐ and perhaps buy me a [☕ 
   - requires i18next v25+ (when installed)
 - [shorter attribute names](#shorter-attribute-names)
 - skipping v6-8 and going straight to v9.0
-- now using `clipboard` API, used in ExcelCopyBuffer/ContextMenu/CellCopy, which might require end user permissions (an override is available)
+- now using `clipboard` API, used in ExcelCopyBuffer/ContextMenu/CellCopy, which might require end user permissions (an override is available for any compatibility issues)
 - removing arrow pointer from Custom Tooltip addon (because it was often offset with the cell text)
 - Slickgrid-React project now moved under [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal/) GitHub project
 
@@ -42,7 +42,7 @@ gridOptions = {
 }
 ```
 
-2. `groupingService` from `SlickgridReactInstance` was deprecate and removed, but I would be very surprised if anyone used it. Simply use `headerGroupingService` instead.
+2. `groupingService` from `SlickgridReactInstance` was deprecate and removed, but I would be very surprised if anyone used it. Just use `headerGroupingService` instead.
 
 ```diff
 function reactGridReady(reactGrid: SlickgridReactInstance) {
@@ -129,7 +129,8 @@ We are changing the `columnDefinitions` and `gridOptions` attribute names to muc
 ## Column Functionalities
 
 ### Date Editor/Filter (flat config)
-Vanilla-Calendar-Pro was upgraded to v3.0 and with that comes a breaking change that migrates their options to flat config (instead of complex object config) and this mean that if you use any of their options, you'll have to update them to use their new flat config.
+
+Vanilla-Calendar-Pro was upgraded to v3.0, and it includes a breaking change in which they migrated their options to flat config (instead of complex object config), and this means that if you use any of their config options, you'll have to update them to use their new flat config structure and naming.
 
 The biggest change that you will most probably have to update is the min/max date setting when using the `'today'` shortcut as shown below:
 
@@ -155,7 +156,7 @@ prepareGrid() {
 
 ### `i18next` is now optional
 
-With this new release, I am making the `i18next` dependency totally optional, which can help reduce bundle size for users that only use a single locale. However, for the users who still need `i18next`, then you will need to provide the `i18n` instance to the library as shown in the code change below. Note that if you forget to apply the change, as shown below, then an error will now be thrown to help you fix it.
+The `GridService` has CRUD method events that were sometime returning a single item and other times an array of items, and so for that reason we had to rely on auto-detection code like `onItemAdded.subscribe(item => { const items = Array.isArray(item) ? item : [item] }`. To fix this, I decided to change all the event names to plural and always return an array of items which is a lot more predictable.
 
 ```diff
 // index.tsx
@@ -282,7 +283,7 @@ For example:
 
 ##### deprecating `mdi-[0-9]px` and keeping only `font-[0-9]px`
 
-Since I have 2 CSS utilities that do exactly the same, I'm dropping `mdi-..px` in favor of `font-..px` since that makes more sense to represent font sizes which works on any type of elements (not just icons).
+Since I have 2 CSS utilities that do exactly the same, I'm dropping `mdi-..px` in favor of `font-..px` because it makes more sense to represent font sizes that also work on any type of element (not just icons).
 
 You can do a "Search and Replace" in VSCode via Regular Expressions to replace them all easily (**make sure to use `regex` in VSCode Search & Replace**):
 
