@@ -32,7 +32,7 @@ Side note, I am (`@ghiscoding`) a maintainer in both projects, which are Slickgr
 
 ### Why create this monorepo?
 Below is a list of reasons as to why this project was created and why it was built as a monorepo project:
-1. originally created to remove duplicated code from the first 2 framework wrappers (Angular & Aurelia)
+1. originally created to remove duplicated code from the first 2 supported frameworks (Angular & Aurelia)
 2. many of the Services were also decoupled because no project will ever require all services all at once
    - OData, GraphQL, Export to CSV, Export to Excel, Composite Editor, RxJS, ...
 4. and finally it is framework agnostic
@@ -48,11 +48,11 @@ You could star ⭐ the project and/or support me with caffeine via GitHub [spons
 <a href='https://ko-fi.com/ghiscoding' target='_blank'><img height='36' width='140' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi3.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
 ## Live Demos & Available Framework Wrappers
-The GitHub [live demo](https://ghiscoding.github.io/slickgrid-universal) above shows 2 different UI themes (Material Design / Salesforce), but you could also choose the Bootstrap theme which is demoed in other frameworks with links available in the table shown below. Also please note that even if all the demos are built with either [Bootstrap](https://getbootstrap.com/) or [Bulma](https://bulma.io/), you could in theory use any other UI libraries. The project tries to be as much agnostic as possible and it does so by providing a large set of CSS/SASS variables which are available to you to customize the UI however you want.
+The Slickgrid-Universal [live demo](https://ghiscoding.github.io/slickgrid-universal) shows 2 different UI themes (Material Design / Salesforce) and you can see the Bootstrap theme demoed in all other frameworks with links available in the table shown below. Also please note that even if all the demos are built with either [Bootstrap](https://getbootstrap.com/) or [Bulma](https://bulma.io/), you could in theory use any other UI libraries. The project tries to be as much agnostic as possible and it does so by providing a large set of CSS/SASS variables which are available to customize the UI however you want.
 
 ### Available Framework Wrappers
 
-| Project Repos | Live Demo | Stackblitz | Framework | Downloads | Details | 
+| Project Repos | Live Demo | Stackblitz | Platform | Downloads | Details | 
 | ------------- | --------- | ---------- | :---------: | -------: | ------- | 
 | [Angular-Slickgrid](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/angular-slickgrid) / <br> [Angular-Slickgrid-Demos](https://github.com/ghiscoding/angular-slickgrid-demos)  | [demo](https://ghiscoding.github.io/angular-slickgrid-demos) | [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/angular-slickgrid-demos) | [![Angular](https://avatars.githubusercontent.com/u/139426?s=40&v=4)](https://angular.io/) | [![NPM downloads](https://img.shields.io/npm/dy/angular-slickgrid)](https://npmjs.org/package/angular-slickgrid) <br> [![npm bundle size](https://img.shields.io/bundlephobia/minzip/angular-slickgrid?color=success&label=gzip)](https://bundlephobia.com/result?p=angular-slickgrid) | [docs](https://ghiscoding.gitbook.io/angular-slickgrid/getting-started/quick-start) / <br> [changelog](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/CHANGELOG.md) |
 | [Aurelia-Slickgrid](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/aurelia-slickgrid) / <br> [Aurelia-Slickgrid-Demos](https://github.com/ghiscoding/aurelia-slickgrid-demos) | [demo](https://ghiscoding.github.io/aurelia-slickgrid-demos) | [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/aurelia-slickgrid-demos/tree/master/webpack-bs5-demo) | [![Aurelia](https://avatars.githubusercontent.com/u/9808864?s=40&v=4)](https://aurelia.io/) | [![NPM downloads](https://img.shields.io/npm/dy/aurelia-slickgrid)](https://npmjs.org/package/aurelia-slickgrid) <br> [![npm bundle size](https://img.shields.io/bundlephobia/minzip/aurelia-slickgrid?color=success&label=gzip)](https://bundlephobia.com/result?p=aurelia-slickgrid) | [docs](https://ghiscoding.gitbook.io/aurelia-slickgrid/getting-started/quick-start) / <br> [changelog](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/aurelia-slickgrid/CHANGELOG.md) |
@@ -67,7 +67,7 @@ The Slickgrid-Universal [live demo](https://ghiscoding.github.io/slickgrid-unive
 Dark Mode is also shown in some of the examples (not all), see [Dark Mode](https://ghiscoding.gitbook.io/slickgrid-universal/styling/dark-mode) documentation for more infos.
 
 ### Fully Tested with [Vitest](https://vitest.dev/) (Unit Tests) - [Cypress](https://www.cypress.io/) (E2E Tests)
-Slickgrid-Universal has **100%** Unit Test Coverage, 5,000+ Vitest unit tests including 900+ Cypress E2E tests to cover **all** [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities (each framework implementation also includes roughly the same amount of E2E tests), the goal is to offer peace of mind that pretty much all the code and PR changes are fully tested before releasing anything new. Every time a new Pull Request (PR) is created, it runs all unit tests and all frameworks Cypress E2E tests all at once.
+Slickgrid-Universal has **100%** Unit Test Coverage, 5000+ Vitest unit tests including 950+ Cypress E2E tests to cover **all** [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities (each framework implementation also includes roughly the same amount of E2E tests), the goal is to offer peace of mind that pretty much all the code and PR changes are fully tested before releasing anything new. Every time a new Pull Request (PR) is created, it runs all unit tests and all Cypress E2E tests for all frameworks and they all run in parallel for a complete test suite.
 
 ### Available Public Packages
 
