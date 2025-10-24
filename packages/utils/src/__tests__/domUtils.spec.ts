@@ -344,6 +344,21 @@ describe('Service/domUtilies', () => {
       const result = htmlDecode(`&#x30cf;&#x30ed;&#x30fc;&#x30ef;&#x30fc;&#x30eb;&#x30c9;`);
       expect(result).toBe(`ハローワールド`);
     });
+
+    it('should decode nested/double-encoded entities', () => {
+      const result = htmlDecode('What&amp;#39;s &amp;quot;New&amp;quot;!');
+      expect(result).toBe(`What's "New"!`);
+    });
+
+    it('should decode mixed named and numeric entities in one string', () => {
+      const result = htmlDecode('&lt;span&gt;Tom &amp; Jerry&#39;s &amp;quot;Show&amp;quot;&lt;/span&gt;');
+      expect(result).toBe(`<span>Tom & Jerry's "Show"</span>`);
+    });
+
+    it('should decode multiple layers of encoding', () => {
+      const result = htmlDecode('&amp;amp;lt;div&amp;amp;gt;Test&amp;amp;lt;/div&amp;amp;gt;');
+      expect(result).toBe('<div>Test</div>');
+    });
   });
 
   describe('htmlEncode() method', () => {
