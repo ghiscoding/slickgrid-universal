@@ -226,11 +226,33 @@ export function htmlEncode(inputValue: string): string {
  */
 export function htmlDecode(input?: string | boolean | number): string {
   if (isDefined(input)) {
-    // 1. decode html entities (e.g. `&#39;` => single quote)
-    // 2. use textarea to decode the rest (e.g. html tags and symbols, `&lt;div&gt;` => `<div>`)
-    const txt = document.createElement('textarea');
-    txt.innerHTML = input.toString().replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(dec));
-    return txt.value;
+    let str = input.toString();
+
+    // Decode numeric surrogate pairs (for emoji and some Unicode)
+    str = str.replace(/&#(\d+);&#(\d+);/g, (_, high, low) => {
+      high = parseInt(high, 10);
+      low = parseInt(low, 10);
+      // If both are in surrogate range, combine into one Unicode character
+      if (high >= 0xd800 && high <= 0xdbff && low >= 0xdc00 && low <= 0xdfff) {
+        return String.fromCodePoint((high - 0xd800) * 0x400 + (low - 0xdc00) + 0x10000);
+      }
+      // Otherwise, decode as separate characters
+      return String.fromCharCode(high) + String.fromCharCode(low);
+    });
+
+    // Decode single numeric entities (e.g. &#241; → ñ)
+    str = str.replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(dec));
+
+    // Decode named entities and tags (e.g. &lt;div&gt; → <div>), repeat for double-encoded cases
+    let prev: string;
+    do {
+      prev = str;
+      const txt = document.createElement('textarea');
+      txt.innerHTML = str;
+      str = txt.value;
+    } while (str !== prev);
+
+    return str;
   }
   return '';
 }
