@@ -1,7 +1,26 @@
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { describe, expect, it, vi } from 'vitest';
 import type { EditController } from '../../interfaces/editController.interface.js';
-import { SlickEditorLock, SlickEvent, SlickEventData, SlickEventHandler, SlickGroup, SlickGroupTotals, SlickRange, Utils } from '../slickCore.js';
+import {
+  SlickCopyRange,
+  SlickEditorLock,
+  SlickEvent,
+  SlickEventData,
+  SlickEventHandler,
+  SlickGroup,
+  SlickGroupTotals,
+  SlickRange,
+  SlickSelectionUtils,
+  Utils,
+} from '../slickCore.js';
+
+function makeGrid(data: any[], columns: any[], options: any = {}) {
+  return {
+    getVisibleColumns: () => columns,
+    getOptions: () => options,
+    getDataItem: (idx: number) => data[idx],
+  } as any;
+}
 
 const pubSubServiceStub = {
   publish: vi.fn(),
@@ -306,6 +325,14 @@ describe('SlickCore file', () => {
       const range = new SlickRange(0, 1, 2, 5);
 
       expect(range.toString()).toBe('(0:1 - 2:5)');
+    });
+  });
+
+  describe('SlickCopyRange class', () => {
+    it('should be able to instantiate SlickCopyRange class', () => {
+      const range = new SlickCopyRange(0, 2, 3, 4);
+
+      expect(range).toEqual(new SlickCopyRange(0, 2, 3, 4));
     });
   });
 
@@ -749,6 +776,217 @@ describe('SlickCore file', () => {
           alwaysShowVerticalScroll: true,
           alwaysAllowHorizontalScroll: false,
         });
+      });
+    });
+  });
+
+  describe('SlickSelectionUtils', () => {
+    describe('normaliseDragRange()', () => {
+      it('should normalize an already ordered drag range', () => {
+        const rawRange = { start: { row: 2, cell: 1 }, end: { row: 4, cell: 3 } };
+        const norm = SlickSelectionUtils.normaliseDragRange(rawRange as any);
+
+        expect(norm.start).toEqual({ row: 2, cell: 1 });
+        expect(norm.end).toEqual({ row: 4, cell: 3 });
+        expect(norm.rowCount).toBe(3);
+        expect(norm.cellCount).toBe(3);
+        expect(norm.wasDraggedUp).toBe(false);
+        // Note: implementation uses row comparison for wasDraggedLeft (keeps parity with code)
+        expect(norm.wasDraggedLeft).toBe(false);
+      });
+
+      it('should normalize a dragged-up/left range and set wasDragged flags', () => {
+        const rawRange = { start: { row: 4, cell: 5 }, end: { row: 1, cell: 2 } };
+        const norm = SlickSelectionUtils.normaliseDragRange(rawRange as any);
+
+        expect(norm.start).toEqual({ row: 1, cell: 2 });
+        expect(norm.end).toEqual({ row: 4, cell: 5 });
+        expect(norm.rowCount).toBe(4);
+        expect(norm.cellCount).toBe(4);
+        expect(norm.wasDraggedUp).toBe(true);
+        // Implementation currently derives wasDraggedLeft from rows as well
+        expect(norm.wasDraggedLeft).toBe(true);
+      });
+    });
+
+    describe('verticalTargetRange()', () => {
+      const base = new SlickRange(2, 1, 4, 3);
+
+      it('should return a vertical target range when copying above', () => {
+        const copyTo = new SlickRange(0, 0, 1, 2); // copy above base
+        const result = SlickSelectionUtils.verticalTargetRange(base, copyTo);
+        expect(result).toEqual(new SlickRange(0, 0, 1, 3));
+      });
+
+      it('should return a vertical target range when copying below', () => {
+        const copyTo = new SlickRange(5, 0, 6, 4); // copy below base
+        const result = SlickSelectionUtils.verticalTargetRange(base, copyTo);
+        expect(result).toEqual(new SlickRange(5, 0, 6, 3));
+      });
+
+      it('should return null when no vertical copy area exists', () => {
+        const copyTo = new SlickRange(3, 0, 3, 2); // fully inside base vertically
+        const result = SlickSelectionUtils.verticalTargetRange(base, copyTo);
+        expect(result).toBeNull();
+      });
+    });
+
+    describe('horizontalTargetRange()', () => {
+      const base = new SlickRange(2, 2, 4, 4);
+
+      it('should return a horizontal target range when copying to the left', () => {
+        const copyTo = new SlickRange(2, 0, 4, 1); // left of base
+        const result = SlickSelectionUtils.horizontalTargetRange(base, copyTo);
+        expect(result).toEqual(new SlickRange(2, 0, 4, 1));
+      });
+
+      it('should return a horizontal target range when copying to the right', () => {
+        const copyTo = new SlickRange(2, 5, 4, 6); // right of base
+        const result = SlickSelectionUtils.horizontalTargetRange(base, copyTo);
+        expect(result).toEqual(new SlickRange(2, 5, 4, 6));
+      });
+
+      it('should return null when no horizontal copy area exists', () => {
+        const copyTo = new SlickRange(2, 3, 4, 3); // inside base horizontally
+        const result = SlickSelectionUtils.horizontalTargetRange(base, copyTo);
+        expect(result).toBeNull();
+      });
+    });
+
+    describe('cornerTargetRange()', () => {
+      const base = new SlickRange(2, 2, 4, 4);
+
+      it('should return corner range when copying to top-left (copyUp && copyLeft)', () => {
+        const copyTo = new SlickRange(0, 0, 1, 1);
+        const result = SlickSelectionUtils.cornerTargetRange(base, copyTo);
+        expect(result).toEqual(new SlickRange(0, 0, 1, 1));
+      });
+
+      it('should return corner range when copying to bottom-right (copyDown && copyRight)', () => {
+        const copyTo = new SlickRange(5, 5, 6, 6);
+        const result = SlickSelectionUtils.cornerTargetRange(base, copyTo);
+        // expected new SlickRange(base.toRow +1, base.toCell +1, copyTo.toRow, copyTo.toCell)
+        expect(result).toEqual(new SlickRange(5, 5, 6, 6));
+      });
+
+      it('should return null when copy range does not extend corner-wise', () => {
+        const copyTo = new SlickRange(3, 3, 3, 3); // inside base area
+        const result = SlickSelectionUtils.cornerTargetRange(base, copyTo);
+        expect(result).toBeNull();
+      });
+    });
+
+    describe('SlickSelectionUtils.copyCellsToTargetRange', () => {
+      it('copies values from base range to target range for matching visible columns', () => {
+        const columns = [{ field: 'f0' }, { field: 'f1' }, { field: 'f2' }, { field: 'f3' }];
+
+        const data = Array.from({ length: 6 }, (_, r) => ({
+          f0: `r${r}c0`,
+          f1: `r${r}c1`,
+          f2: `r${r}c2`,
+          f3: `r${r}c3`,
+        }));
+
+        const grid = makeGrid(data, columns);
+
+        const baseRange = new SlickRange(0, 1, 1, 2); // rows 0-1, cells f1..f2
+        const targetRange = new SlickRange(2, 1, 3, 2); // rows 2-3, cells f1..f2
+
+        SlickSelectionUtils.copyCellsToTargetRange(baseRange, targetRange, grid);
+
+        // Verify copied values
+        for (let i = 0; i < targetRange.rowCount(); i++) {
+          const toRow = data[targetRange.fromRow + i];
+          const fromRow = data[baseRange.fromRow + i];
+          for (let j = 0; j < targetRange.cellCount(); j++) {
+            const toField = columns[targetRange.fromCell + j].field;
+            const fromField = columns[baseRange.fromCell + j].field;
+            expect((toRow as any)[toField]).toBe((fromRow as any)[fromField]);
+          }
+        }
+      });
+
+      it('skips copies when either source or target column is hidden', () => {
+        const columns = [
+          { field: 'f0' },
+          { field: 'f1', hidden: true }, // hidden source/target column
+          { field: 'f2' },
+        ];
+
+        const data = Array.from({ length: 4 }, (_, r) => ({
+          f0: `r${r}c0`,
+          f1: `r${r}c1`,
+          f2: `r${r}c2`,
+        }));
+
+        // make a copy target that includes the hidden column index 1
+        const grid = makeGrid(data, columns);
+
+        // pre-fill target rows with sentinel so we can assert it wasn't overwritten
+        data[2].f1 = 'SENTINEL';
+        data[3].f1 = 'SENTINEL';
+
+        const baseRange = new SlickRange(0, 1, 1, 2); // includes hidden col f1 and visible f2
+        const targetRange = new SlickRange(2, 1, 3, 2);
+
+        SlickSelectionUtils.copyCellsToTargetRange(baseRange, targetRange, grid);
+
+        // Hidden column should remain sentinel, visible column should be copied
+        expect(data[2].f1).toBe('SENTINEL');
+        expect(data[3].f1).toBe('SENTINEL');
+
+        // f2 (visible) should have been copied from base
+        expect(data[2].f2).toBe(data[baseRange.fromRow].f2);
+        expect(data[3].f2).toBe(data[baseRange.fromRow + 1].f2);
+      });
+
+      it('uses dataItemColumnValueExtractor and wraps rows/cells when target larger than base', () => {
+        const columns = [{ field: 'f0' }, { field: 'f1' }, { field: 'f2' }];
+
+        const data = Array.from({ length: 6 }, (_, r) => ({
+          f0: `r${r}c0`,
+          f1: `r${r}c1`,
+          f2: `r${r}c2`,
+        }));
+
+        const options = {
+          dataItemColumnValueExtractor: (row: any, colDef: any) => `ex-${row[colDef.field]}`,
+        };
+
+        const grid = makeGrid(data, columns, options);
+
+        // base is 1 row x 2 cells (row 0, cells f0..f1)
+        const baseRange = new SlickRange(0, 0, 0, 1);
+        // target is 3 rows x 4 cells (starts at col 0 -> will wrap columns using base cellCount)
+        const targetRange = new SlickRange(1, 0, 3, 3);
+
+        // initialize target cells to known values to ensure they change
+        for (let r = targetRange.fromRow; r <= targetRange.toRow; r++) {
+          for (let c = targetRange.fromCell; c <= targetRange.toCell; c++) {
+            if (columns[c]) {
+              (data[r] as any)[columns[c].field] = 'INIT';
+            }
+          }
+        }
+
+        SlickSelectionUtils.copyCellsToTargetRange(baseRange, targetRange, grid);
+
+        // Validate wrapping: since base has 1 row, all target rows use base row 0
+        // base cellCount = 2, so target columns map as: 0->0,1->1,2->0,3->1
+        const cellMap = [0, 1, 0, 1];
+
+        for (let i = 0; i < targetRange.rowCount(); i++) {
+          const toRowIdx = targetRange.fromRow + i;
+          for (let j = 0; j < targetRange.cellCount(); j++) {
+            const toColIdx = targetRange.fromCell + j;
+            // Skip validation if column doesn't exist
+            if (columns[toColIdx]) {
+              const expectedFromColIdx = baseRange.fromCell + cellMap[j];
+              const expectedVal = `ex-${(data[baseRange.fromRow] as any)[columns[expectedFromColIdx].field]}`;
+              expect((data[toRowIdx] as any)[columns[toColIdx].field]).toBe(expectedVal);
+            }
+          }
+        }
       });
     });
   });

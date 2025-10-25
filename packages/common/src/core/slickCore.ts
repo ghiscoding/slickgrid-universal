@@ -942,7 +942,8 @@ export class SlickSelectionUtils {
         const toColDef = columns[targetRange.fromCell + j];
         const fromColDef = columns[baseRange.fromCell + fromCellOffset];
 
-        if (!toColDef.hidden && !fromColDef.hidden) {
+        // skip if either column doesn't exist or is hidden
+        if (toColDef && fromColDef && !toColDef.hidden && !fromColDef.hidden) {
           let val = fromRow[fromColDef.field];
           if (options.dataItemColumnValueExtractor) {
             val = options.dataItemColumnValueExtractor(fromRow, fromColDef);
