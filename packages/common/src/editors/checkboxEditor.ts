@@ -12,6 +12,7 @@ import type {
   EditorValidationResult,
   EditorValidator,
   GridOption,
+  ValidateOption,
 } from './../interfaces/index.js';
 
 /*
@@ -257,9 +258,9 @@ export class CheckboxEditor implements Editor {
     return this._input?.checked ?? false;
   }
 
-  validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
-    const isRequired = this.args.isCompositeEditor ? false : this.columnEditor.required;
-    const isChecked = inputValue !== undefined ? inputValue : this._input?.checked;
+  validate(_targetElm?: any, options?: ValidateOption): EditorValidationResult {
+    const isRequired = this.args?.compositeEditorOptions ? false : this.columnEditor.required;
+    const isChecked = options?.inputValue ?? this._input?.checked;
     const errorMsg = this.columnEditor.errorMessage;
 
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form

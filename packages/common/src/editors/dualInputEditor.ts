@@ -13,6 +13,7 @@ import type {
   EditorValidationResult,
   EditorValidator,
   GridOption,
+  ValidateOption,
 } from '../interfaces/index.js';
 import { getDescendantProperty } from '../services/utilities.js';
 
@@ -450,7 +451,7 @@ export class DualInputEditor implements Editor {
     return '1';
   }
 
-  validate(_targetElm?: any, inputValidation?: { position: 'leftInput' | 'rightInput'; inputValue: any }): EditorValidationResult {
+  validate(_targetElm?: HTMLElement | null, options?: ValidateOption & { position?: 'leftInput' | 'rightInput' }): EditorValidationResult {
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
     if (this.args.isCompositeEditor) {
       this.applyInputUsabilityState();
@@ -461,10 +462,12 @@ export class DualInputEditor implements Editor {
       return { valid: true, msg: '' };
     }
 
-    if (inputValidation) {
-      const posValidation = this.validateByPosition(inputValidation.position, inputValidation.inputValue);
+    if (options) {
+      const position = options.position || 'leftInput';
+      const posValidation = this.validateByPosition(position, options.inputValue);
       if (!posValidation.valid) {
-        inputValidation.position === 'leftInput' ? this._leftInput.select() : this._rightInput.select();
+        const input = position === 'leftInput' ? this._leftInput : this._rightInput;
+        input.select();
         return posValidation;
       }
     } else {

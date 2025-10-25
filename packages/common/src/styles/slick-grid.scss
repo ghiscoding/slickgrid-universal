@@ -136,9 +136,6 @@
     }
     &.odd .slick-cell {
       background: inherit;
-      &.selected {
-        background-color: var(--slick-row-selected-color, v.$slick-row-selected-color);
-      }
       &.copied {
         background: var(--slick-copied-cell-bg-color-transition, v.$slick-copied-cell-bg-color-transition);
         transition: var(--slick-copied-cell-transition, v.$slick-copied-cell-transition);
@@ -531,7 +528,10 @@
         text-align: left;
       }
       &.selected {
-        background-color: var(--slick-row-selected-color, v.$slick-row-selected-color);
+        background-color: var(--slick-cell-selected-color, v.$slick-cell-selected-color);
+        &.editable {
+          background-color: var(--slick-cell-selected-editable-color, v.$slick-cell-selected-editable-color);
+        }
       }
       &.copied {
         background: var(--slick-copied-cell-bg-color-transition, v.$slick-copied-cell-bg-color-transition);

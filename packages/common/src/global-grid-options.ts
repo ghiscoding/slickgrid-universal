@@ -120,6 +120,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
     dropPlaceHolderTextKey: 'DROP_COLUMN_HEADER_TO_GROUP_BY',
   },
   editable: false,
+  editorNavigateOnArrows: false,
   editorTypingDebounce: 450,
   filterTypingDebounce: 0,
   enableEmptyDataWarningMessage: true,

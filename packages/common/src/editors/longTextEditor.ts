@@ -14,6 +14,7 @@ import type {
   GridOption,
   Locale,
   LongTextEditorOption,
+  ValidateOption,
 } from '../interfaces/index.js';
 import type { TranslaterService } from '../services/translater.service.js';
 import { getDescendantProperty, getTranslationPrefix } from '../services/utilities.js';
@@ -376,7 +377,7 @@ export class LongTextEditor implements Editor {
     return this._textareaElm.value;
   }
 
-  validate(_targetElm?: HTMLElement, inputValue?: any): EditorValidationResult {
+  validate(_targetElm?: HTMLElement, options?: ValidateOption): EditorValidationResult {
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
     if (this.args.isCompositeEditor) {
       this.applyInputUsabilityState();
@@ -387,7 +388,7 @@ export class LongTextEditor implements Editor {
       return { valid: true, msg: '' };
     }
 
-    const elmValue = inputValue !== undefined ? inputValue : this._textareaElm?.value;
+    const elmValue = options?.inputValue ?? this._textareaElm?.value;
     return textValidator(elmValue, {
       editorArgs: this.args,
       errorMessage: this.columnEditor.errorMessage,

@@ -430,16 +430,20 @@ describe('SlickRowSelectionModel Plugin', () => {
 
       plugin.init(gridStub);
       const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
-      plugin.getCellRangeSelector()!.onCellRangeSelected.notify({ range: new SlickRange(3, 2, 5, 4) }, scrollEvent, gridStub);
+      plugin.getCellRangeSelector()!.onCellRangeSelected.notify({ range: new SlickRange(3, 2, 5, 4) } as any, scrollEvent, gridStub);
 
-      expect(setSelectedRangeSpy).toHaveBeenCalledWith([
-        {
-          fromCell: 0,
-          fromRow: 3,
-          toCell: 2,
-          toRow: 5,
-        },
-      ]);
+      expect(setSelectedRangeSpy).toHaveBeenCalledWith(
+        [
+          {
+            fromCell: 0,
+            fromRow: 3,
+            toCell: 2,
+            toRow: 5,
+          },
+        ],
+        undefined,
+        undefined
+      );
     });
 
     it('should be able to manually create Row Selection and then call "setSelectedRanges" when "onCellRangeSelected" event is triggered', () => {
@@ -457,9 +461,9 @@ describe('SlickRowSelectionModel Plugin', () => {
       });
       plugin.init(gridStub);
       const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
-      plugin.getCellRangeSelector()!.onCellRangeSelected.notify({ range: new SlickRange(3, 2, 5, 4) }, scrollEvent, gridStub);
+      plugin.getCellRangeSelector()!.onCellRangeSelected.notify({ range: new SlickRange(3, 2, 5, 4) } as any, scrollEvent, gridStub);
 
-      expect(setSelectedRangeSpy).toHaveBeenCalledWith([{ fromCell: 0, fromRow: 3, toCell: 2, toRow: 5 }]);
+      expect(setSelectedRangeSpy).toHaveBeenCalledWith([{ fromCell: 0, fromRow: 3, toCell: 2, toRow: 5 }], undefined, undefined);
     });
 
     it('should call "setSelectedRanges" when "onCellRangeSelected" event is triggered', () => {
@@ -468,7 +472,7 @@ describe('SlickRowSelectionModel Plugin', () => {
 
       plugin.init(gridStub);
       const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
-      plugin.getCellRangeSelector()!.onCellRangeSelected.notify({ range: new SlickRange(3, 2, 5, 4) }, scrollEvent, gridStub);
+      plugin.getCellRangeSelector()!.onCellRangeSelected.notify({ range: new SlickRange(3, 2, 5, 4) } as any, scrollEvent, gridStub);
 
       expect(setSelectedRangeSpy).not.toHaveBeenCalled();
     });
