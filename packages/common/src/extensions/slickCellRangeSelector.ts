@@ -354,7 +354,18 @@ export class SlickCellRangeSelector {
     e.stopImmediatePropagation();
 
     this.stopIntervalTimer();
-    const r = new SlickRange(dd.range.start.row ?? 0, dd.range.start.cell ?? 0, dd.range.end.row, dd.range.end.cell);
+    const targetEvent: MouseEvent | Touch = (e as unknown as TouchEvent)?.touches?.[0] ?? e;
+    const canvasOffset = getOffset(this._activeCanvas);
+    const end = this._grid.getCellFromPoint(
+      targetEvent.pageX - (canvasOffset?.left ?? 0) + this._columnOffset,
+      targetEvent.pageY - (canvasOffset?.top ?? 0) + this._rowOffset
+    );
+    const cornerCell =
+      !this._dragReplaceHandleActive || !this._previousSelectedRange
+        ? dd.range.start
+        : SlickSelectionUtils.normalRangeOppositeCellFromCopy(this._previousSelectedRange, end);
+
+    const r = new SlickRange(cornerCell.row ?? 0, cornerCell.cell ?? 0, dd.range.end.row, dd.range.end.cell);
 
     this.onCellRangeSelected.notify({
       range: r,

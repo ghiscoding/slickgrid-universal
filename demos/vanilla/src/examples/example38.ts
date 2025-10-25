@@ -1,12 +1,11 @@
 import {
   Editors,
-  // Handler,
-  // OnDragReplaceCellsEventArgs,
   SlickEventHandler,
   SlickHybridSelectionModel,
   SlickSelectionUtils,
   type Column,
   type GridOption,
+  type OnDragReplaceCellsEventArgs,
 } from '@slickgrid-universal/common';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options.js';
@@ -50,7 +49,7 @@ export default class Example38 {
       this.sgb.slickGrid?.updateRowCount();
       this.sgb.slickGrid?.render();
     });
-    this.sgb.slickGrid?.onDragReplaceCells.subscribe(SlickSelectionUtils.defaultCopyDraggedCellRange);
+    this.sgb.slickGrid?.onDragReplaceCells.subscribe(this.copyDraggedCellRange);
   }
 
   dispose() {
@@ -112,6 +111,22 @@ export default class Example38 {
         replaceNewlinesWith: ' ',
       },
     };
+  }
+
+  copyDraggedCellRange(_e: any, args: OnDragReplaceCellsEventArgs) {
+    const verticalTargetRange = SlickSelectionUtils.verticalTargetRange(args.prevSelectedRange, args.selectedRange);
+    const horizontalTargetRange = SlickSelectionUtils.horizontalTargetRange(args.prevSelectedRange, args.selectedRange);
+    const cornerTargetRange = SlickSelectionUtils.cornerTargetRange(args.prevSelectedRange, args.selectedRange);
+
+    if (verticalTargetRange) {
+      SlickSelectionUtils.copyCellsToTargetRange(args.prevSelectedRange, verticalTargetRange, args.grid);
+    }
+    if (horizontalTargetRange) {
+      SlickSelectionUtils.copyCellsToTargetRange(args.prevSelectedRange, horizontalTargetRange, args.grid);
+    }
+    if (cornerTargetRange) {
+      SlickSelectionUtils.copyCellsToTargetRange(args.prevSelectedRange, cornerTargetRange, args.grid);
+    }
   }
 
   getData(itemCount: number) {

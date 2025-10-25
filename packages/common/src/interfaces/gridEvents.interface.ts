@@ -1,4 +1,4 @@
-import type { SlickGrid, SlickRange } from '../core/index.js';
+import type { SlickCopyRange, SlickGrid, SlickRange } from '../core/index.js';
 import type {
   Column,
   CompositeEditorOption,
@@ -198,5 +198,5 @@ export interface OnDragEventArgs extends SlickGridArg {
 export interface OnDragReplaceCellsEventArgs extends SlickGridArg {
   prevSelectedRange: SlickRange;
   selectedRange: SlickRange;
-  copyToRange?: SlickRange;
+  copyToRange: SlickCopyRange;
 }
