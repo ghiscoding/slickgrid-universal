@@ -163,6 +163,18 @@ describe('HeaderGroupingService', () => {
       expect(setTimeoutSpy).toHaveBeenLastCalledWith(expect.any(Function), 75);
     });
 
+    it('should call the "renderPreHeaderRowGroupingTitles" after triggering a grid "onColumnsReordered"', () => {
+      const renderSpy = vi.spyOn(service, 'renderPreHeaderRowGroupingTitles');
+
+      service.init(gridStub);
+      gridStub.onColumnsReordered.notify({ impactedColumns: [], previousColumnOrder: [], grid: gridStub }, new SlickEventData(), gridStub);
+      vi.runAllTimers(); // fast-forward timer
+
+      expect(renderSpy).toHaveBeenCalledTimes(2);
+      expect(setTimeoutSpy).toHaveBeenCalledTimes(1);
+      expect(setTimeoutSpy).toHaveBeenLastCalledWith(expect.any(Function), 75);
+    });
+
     it('should call the "renderPreHeaderRowGroupingTitles" after triggering a grid "onRendered"', () => {
       const renderSpy = vi.spyOn(service, 'renderPreHeaderRowGroupingTitles');
 
@@ -233,6 +245,26 @@ describe('HeaderGroupingService', () => {
 
       service.init(gridStub);
       gridStub.onSetOptions.notify({ grid: gridStub, optionsBefore: { frozenColumn: -1 }, optionsAfter: { frozenColumn: 1 } }, new SlickEventData(), gridStub);
+      vi.runAllTimers(); // fast-forward timer
+
+      expect(renderSpy).toHaveBeenCalledTimes(2);
+      expect(setTimeoutSpy).toHaveBeenCalledTimes(2);
+      expect(setTimeoutSpy).toHaveBeenLastCalledWith(expect.any(Function), 0);
+      expect(divHeaderColumns.length).toBeGreaterThan(2);
+      expect(divHeaderColumns[0].outerHTML).toEqual(`<div style="width: 2815px; left: -1000px;" class="slick-header-columns">All your colums div here</div>`);
+    });
+
+    it('should render the pre-header row grouping title after changing "frozenColumn" with DataView "onRowCountChanged"', () => {
+      const divHeaderColumns = document.getElementsByClassName('slick-header-columns');
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      const renderSpy = vi.spyOn(service, 'renderPreHeaderRowGroupingTitles');
+
+      service.init(gridStub);
+      dataViewStub.onRowCountChanged.notify(
+        { current: 0, callingOnRowsChanged: false, previous: 0, dataView: dataViewStub, itemCount: 0, changedRows: [] },
+        new SlickEventData(),
+        gridStub
+      );
       vi.runAllTimers(); // fast-forward timer
 
       expect(renderSpy).toHaveBeenCalledTimes(2);
