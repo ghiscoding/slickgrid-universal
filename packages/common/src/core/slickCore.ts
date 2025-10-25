@@ -876,10 +876,10 @@ export class SlickSelectionUtils {
     normalisedDragRange: DragRange,
     targetCell: { row: number; cell: number }
   ): { row: number; cell: number } {
-    const row = targetCell.row < (normalisedDragRange.end.row || 0) ? normalisedDragRange.end.row || 0 : normalisedDragRange.start.row || 0;
-    const cell =
-      targetCell.cell < (normalisedDragRange.end.cell || 0) ? normalisedDragRange.end.cell || 0 : normalisedDragRange.start.cell || 0;
-    return { row, cell };
+    return {
+      row: targetCell.row < (normalisedDragRange.end.row || 0) ? normalisedDragRange.end.row || 0 : normalisedDragRange.start.row || 0,
+      cell: targetCell.cell < (normalisedDragRange.end.cell || 0) ? normalisedDragRange.end.cell || 0 : normalisedDragRange.start.cell || 0,
+    };
   }
 
   /** copy to range above or below - includes corner space target range */

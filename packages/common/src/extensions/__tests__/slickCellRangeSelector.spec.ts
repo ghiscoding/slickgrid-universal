@@ -488,20 +488,19 @@ describe('CellRangeSelector Plugin', () => {
   });
 
   it('should handle drag and cell range selection to be changed and should call normalRangeOppositeCellFromCopy() when "canCellBeSelected" has a previous selected range', () => {
-    mockGridOptions.frozenColumn = 3;
+    mockGridOptions.frozenColumn = -1;
     const divCanvas = document.createElement('div');
     const divViewport = document.createElement('div');
     divViewport.className = 'slick-viewport';
-    divCanvas.className = 'grid-canvas-bottom grid-canvas-right';
+    divCanvas.className = 'grid-canvas-bottom grid-canvas-left';
     divViewport.appendChild(divCanvas);
     vi.spyOn(gridStub, 'getActiveViewportNode').mockReturnValue(divViewport);
     vi.spyOn(gridStub, 'getActiveCanvasNode').mockReturnValue(divCanvas);
     vi.spyOn(gridStub, 'getDisplayedScrollbarDimensions').mockReturnValue({ height: 200, width: 155 });
     vi.spyOn(gridStub, 'getAbsoluteColumnMinWidth').mockReturnValue(47);
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 2, row: 3 });
-    vi.spyOn(gridStub, 'canCellBeSelected').mockReturnValueOnce(true);
+    vi.spyOn(gridStub, 'canCellBeSelected').mockReturnValue(true);
     vi.spyOn(gridStub, 'getCellFromPoint').mockReturnValue({ cell: 4, row: 5 });
-    vi.spyOn(gridStub, 'getCellNodeBox').mockReturnValue({ right: 2, bottom: 3, left: 4, top: 5 });
     vi.spyOn(plugin, 'getMouseOffsetViewport').mockReturnValue({
       e: new MouseEvent('dragstart'),
       dd: { startX: 5, startY: 15, range: { start: { row: 2, cell: 22 }, end: { row: 5, cell: 22 } }, matchClassTag: '' },
@@ -509,9 +508,13 @@ describe('CellRangeSelector Plugin', () => {
       offset: { x: 1, y: 1 },
       isOutsideViewport: false,
     });
-    const onCellRangeSelectingSpy = vi.spyOn(plugin.onCellRangeSelecting, 'notify');
+    vi.spyOn(plugin.onBeforeCellRangeSelected, 'notify').mockReturnValue({
+      getReturnValue: () => true,
+    } as any);
+    const onCellRangeSelectedSpy = vi.spyOn(plugin.onCellRangeSelected, 'notify');
 
     plugin.init(gridStub);
+
     const scrollEvent = addVanillaEventPropagation(new Event('scroll'));
     gridStub.onScroll.notify({ scrollHeight: 10, scrollTop: 10, scrollLeft: 15, grid: gridStub }, scrollEvent, gridStub);
 
@@ -521,12 +524,13 @@ describe('CellRangeSelector Plugin', () => {
     const dragEventStart = addVanillaEventPropagation(new Event('dragStart'));
     gridStub.onDragStart.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4, matchClassTag: 'dragReplaceHandle' } as any, dragEventStart, gridStub);
 
-    const dragEvent = addVanillaEventPropagation(new Event('drag'));
-    gridStub.onDrag.notify(
-      { startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any,
-      dragEvent,
+    // dragEnd assigns to `_previousSelectedRange` var
+    gridStub.onDragEnd.notify(
+      { startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 }, matchClassTag: 'dragReplaceHandle' }, grid: gridStub } as any,
+      addVanillaEventPropagation(new Event('dragEnd')),
       gridStub
     );
+    vi.advanceTimersByTime(7);
 
     // start dragging
     gridStub.onDragStart.notify(
@@ -534,18 +538,15 @@ describe('CellRangeSelector Plugin', () => {
       addVanillaEventPropagation(new Event('dragStart')),
       gridStub
     );
-
-    // then simulate a drag selection grow, will call `normalRangeOppositeCellFromCopy()`
-    const dragToEvent = addVanillaEventPropagation(new Event('drag'));
-    gridStub.onDrag.notify(
-      { startX: 3, startY: 4, matchClassTag: 'dragReplaceHandle', range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any,
-      dragToEvent,
+    gridStub.onDragEnd.notify(
+      { startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 }, matchClassTag: 'dragReplaceHandle' }, grid: gridStub } as any,
+      addVanillaEventPropagation(new Event('dragEnd')),
       gridStub
     );
 
-    expect(onCellRangeSelectingSpy).toHaveBeenCalledWith({
+    expect(onCellRangeSelectedSpy).toHaveBeenCalledWith({
       range: { fromCell: 2, fromRow: 3, toCell: 4, toRow: 5 },
-      selectionMode: '',
+      selectionMode: 'REP',
       allowAutoEdit: false,
     });
   });
@@ -828,7 +829,7 @@ describe('CellRangeSelector Plugin', () => {
     const dragEventStart = addVanillaEventPropagation(new Event('dragStart'));
     gridStub.onDragStart.notify({ offsetX: 6, offsetY: 7, row: 1, startX: 3, startY: 4, matchClassTag: 'dragReplaceHandle' } as any, dragEventStart, gridStub);
 
-    // dragEnd assigns o `_previousSelectedRange` var
+    // dragEnd assigns to `_previousSelectedRange` var
     gridStub.onDragEnd.notify(
       { startX: 3, startY: 4, range: { start: { cell: 2, row: 3 }, end: { cell: 4, row: 5 } }, grid: gridStub } as any,
       addVanillaEventPropagation(new Event('dragEnd')),
