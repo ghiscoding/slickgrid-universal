@@ -781,6 +781,52 @@ describe('SlickCore file', () => {
   });
 
   describe('SlickSelectionUtils', () => {
+    describe('copyRangeIsLarger()', () => {
+      const baseRange = new SlickRange(2, 2, 4, 4);
+
+      it('should return true when copyToRange extends beyond baseRange on any side', () => {
+        // Test each boundary condition
+        expect(SlickSelectionUtils.copyRangeIsLarger(baseRange, new SlickRange(1, 2, 4, 4))).toBe(true); // fromRow < base
+        expect(SlickSelectionUtils.copyRangeIsLarger(baseRange, new SlickRange(2, 1, 4, 4))).toBe(true); // fromCell < base
+        expect(SlickSelectionUtils.copyRangeIsLarger(baseRange, new SlickRange(2, 2, 5, 4))).toBe(true); // toRow > base
+        expect(SlickSelectionUtils.copyRangeIsLarger(baseRange, new SlickRange(2, 2, 4, 5))).toBe(true); // toCell > base
+      });
+
+      it('should return false when copyToRange is within or equal to baseRange', () => {
+        expect(SlickSelectionUtils.copyRangeIsLarger(baseRange, baseRange)).toBe(false); // equal ranges
+        expect(SlickSelectionUtils.copyRangeIsLarger(baseRange, new SlickRange(3, 3, 3, 3))).toBe(false); // fully inside
+      });
+    });
+
+    describe('normalRangeOppositeCellFromCopy()', () => {
+      it('should return correct opposite cell when target is below/right of range', () => {
+        const normRange = { start: { row: 1, cell: 1 }, end: { row: 3, cell: 3 } };
+        const targetBelow = { row: 4, cell: 2 }; // below range
+        const targetRight = { row: 2, cell: 4 }; // right of range
+
+        // When target is below, should return start row
+        const resultBelow = SlickSelectionUtils.normalRangeOppositeCellFromCopy(normRange as any, targetBelow);
+        expect(resultBelow.row).toBe(normRange.start.row);
+
+        // When target is right, should return start cell
+        const resultRight = SlickSelectionUtils.normalRangeOppositeCellFromCopy(normRange as any, targetRight);
+        expect(resultRight.cell).toBe(normRange.start.cell);
+      });
+
+      it('should return correct opposite cell when target is above/left of range', () => {
+        const normRange = { start: { row: 3, cell: 3 }, end: { row: 5, cell: 5 } };
+        const targetAbove = { row: 1, cell: 4 }; // above range
+        const targetLeft = { row: 4, cell: 1 }; // left of range
+
+        // When target is above, should return end row
+        const resultAbove = SlickSelectionUtils.normalRangeOppositeCellFromCopy(normRange as any, targetAbove);
+        expect(resultAbove.row).toBe(normRange.end.row);
+
+        // When target is left, should return end cell
+        const resultLeft = SlickSelectionUtils.normalRangeOppositeCellFromCopy(normRange as any, targetLeft);
+        expect(resultLeft.cell).toBe(normRange.end.cell);
+      });
+    });
     describe('normaliseDragRange()', () => {
       it('should normalize an already ordered drag range', () => {
         const rawRange = { start: { row: 2, cell: 1 }, end: { row: 4, cell: 3 } };
@@ -854,25 +900,46 @@ describe('SlickCore file', () => {
     });
 
     describe('cornerTargetRange()', () => {
-      const base = new SlickRange(2, 2, 4, 4);
+      it('should return null when having (!copyLeft && !copyRight)', () => {
+        const copyTo = new SlickRange(0, 2, 4, 1);
+        const base = new SlickRange(2, 1, 1, 4);
+        const result = SlickSelectionUtils.cornerTargetRange(base, copyTo);
+        expect(result).toBeNull();
+      });
 
-      it('should return corner range when copying to top-left (copyUp && copyLeft)', () => {
+      it('should return null when having (!copyUp && !copyDown)', () => {
+        const copyTo = new SlickRange(2, 0, 1, 1);
+        const base = new SlickRange(1, 2, 4, 4);
+        const result = SlickSelectionUtils.cornerTargetRange(base, copyTo);
+        expect(result).toBeNull();
+      });
+
+      it('should return corner range when copying to top-left (copyLeft && copyUp)', () => {
         const copyTo = new SlickRange(0, 0, 1, 1);
+        const base = new SlickRange(2, 2, 4, 4);
         const result = SlickSelectionUtils.cornerTargetRange(base, copyTo);
         expect(result).toEqual(new SlickRange(0, 0, 1, 1));
       });
 
-      it('should return corner range when copying to bottom-right (copyDown && copyRight)', () => {
-        const copyTo = new SlickRange(5, 5, 6, 6);
+      it('should return corner range when copying to top-left (copyLeft && copyDown)', () => {
+        const copyTo = new SlickRange(2, 0, 4, 4);
+        const base = new SlickRange(0, 2, 1, 1);
         const result = SlickSelectionUtils.cornerTargetRange(base, copyTo);
-        // expected new SlickRange(base.toRow +1, base.toCell +1, copyTo.toRow, copyTo.toCell)
-        expect(result).toEqual(new SlickRange(5, 5, 6, 6));
+        expect(result).toEqual(new SlickRange(2, 0, 4, 0));
       });
 
-      it('should return null when copy range does not extend corner-wise', () => {
-        const copyTo = new SlickRange(3, 3, 3, 3); // inside base area
+      it('should return corner range when copying to bottom-right (copyRight && copyUp)', () => {
+        const copyTo = new SlickRange(2, 5, 6, 6);
+        const base = new SlickRange(5, 2, 4, 4);
         const result = SlickSelectionUtils.cornerTargetRange(base, copyTo);
-        expect(result).toBeNull();
+        expect(result).toEqual(new SlickRange(2, 5, 3, 6));
+      });
+
+      it('should return corner range when copying to bottom-right (copyRight && copyDown)', () => {
+        const copyTo = new SlickRange(5, 5, 6, 6);
+        const base = new SlickRange(2, 2, 4, 4);
+        const result = SlickSelectionUtils.cornerTargetRange(base, copyTo);
+        expect(result).toEqual(new SlickRange(5, 5, 6, 6));
       });
     });
 

@@ -3982,7 +3982,10 @@ describe('SlickGrid core file', () => {
 
     it('should not trigger onBeforeSort when clicking on slick-header-columns div', () => {
       grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, multiColumnSort: false });
-      container.querySelectorAll<HTMLDivElement>('.slick-header-columns')?.forEach((elm) => elm.classList.add('slick-header-column-sorted'));
+      const headerColumns = container.querySelectorAll<HTMLDivElement>('.slick-header-columns');
+      headerColumns?.forEach((elm) => {
+        elm.querySelector('.slick-header-column')?.classList.add('slick-header-column-sorted');
+      });
       grid.setSortColumns([{ columnId: 'firstName', sortAsc: false }]);
       const onBeforeSortSpy = vi.spyOn(grid.onBeforeSort, 'notify');
 
