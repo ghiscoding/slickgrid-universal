@@ -89,9 +89,9 @@ export class SlickCellSelectionModel implements SelectionModel {
     if (this._selector) {
       this._selector.onBeforeCellRangeSelected.unsubscribe(this.handleBeforeCellRangeSelected.bind(this));
       this._selector.onCellRangeSelected.unsubscribe(this.handleCellRangeSelected.bind(this));
+      this._grid?.unregisterPlugin(this._selector);
     }
     this._eventHandler.unsubscribeAll();
-    this._grid?.unregisterPlugin(this._selector);
     this._selector?.dispose();
   }
 

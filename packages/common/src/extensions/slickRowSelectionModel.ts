@@ -187,19 +187,19 @@ export class SlickRowSelectionModel implements SelectionModel {
       selection.push(cell.row);
       this._grid.setActiveCell(cell.row, cell.cell);
     } else if (idx !== -1 && (e.ctrlKey || e.metaKey)) {
-      selection = selection.filter((o: number) => o !== cell.row);
+      selection = selection.filter((o) => o !== cell.row);
       this._grid.setActiveCell(cell.row, cell.cell);
     } else if (selection.length && e.shiftKey) {
-      const last = selection.pop();
-      const from = Math.min(cell.row, last as number);
-      const to = Math.max(cell.row, last as number);
+      const last = selection.pop() as number;
+      const from = Math.min(cell.row, last);
+      const to = Math.max(cell.row, last);
       selection = [];
       for (let i = from; i <= to; i++) {
         if (i !== last) {
           selection.push(i);
         }
       }
-      selection.push(last as number);
+      selection.push(last);
       this._grid.setActiveCell(cell.row, cell.cell);
     }
 
