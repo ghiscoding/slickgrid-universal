@@ -31,7 +31,7 @@ describe('CellRangeDecorator Plugin', () => {
         border: '2px dashed blue',
         zIndex: '9999',
       },
-      offset: { top: -1, left: -1, height: 2, width: 2 },
+      offset: { top: 0, left: 0, height: 1, width: 1 },
     });
   });
 
