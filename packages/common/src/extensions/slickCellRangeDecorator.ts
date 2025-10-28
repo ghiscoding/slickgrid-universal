@@ -27,7 +27,7 @@ export class SlickCellRangeDecorator {
       border: '2px dashed blue',
       zIndex: '9999',
     },
-    offset: { top: -1, left: -1, height: -2, width: -2 },
+    offset: { top: 0, left: 0, height: 1, width: 1 },
   } as CellRangeDecoratorOption;
 
   constructor(
@@ -36,6 +36,7 @@ export class SlickCellRangeDecorator {
   ) {
     this._options = deepMerge(this._defaults, options);
     this._selectionCss = options?.selectionCss || ({} as CSSStyleDeclaration);
+    console.log('SlickCellRangeDecorator options', this._options);
   }
 
   get addonOptions(): CellRangeDecoratorOption {
