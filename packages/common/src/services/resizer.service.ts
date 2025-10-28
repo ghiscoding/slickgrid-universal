@@ -256,26 +256,30 @@ export class ResizerService {
 
     let gridHeight = 0;
     let gridOffsetTop = 0;
+    let gridWidth = 0;
 
     // which DOM element are we using to calculate the available size for the grid?
     if (autoResizeOptions.calculateAvailableSizeBy === 'container') {
-      // uses the container's height to calculate grid height without any top offset
+      // uses the container's height and width to calculate grid's dimensions without any offset
       gridHeight = getInnerSize(this._pageContainerElm, 'height') || 0;
+      gridWidth = getInnerSize(this._pageContainerElm, 'width') || 0;
     } else {
       // uses the browser's window height with its top offset to calculate grid height
       gridHeight = window.innerHeight || 0;
       gridOffsetTop = gridElmOffset.top;
+
+      // uses the browser's window width to calculate grid width
+      gridWidth = window.innerWidth || 0;
     }
 
     const availableHeight = gridHeight - gridOffsetTop - bottomPadding;
-    const availableWidth = getInnerSize(this._pageContainerElm, 'width') || window.innerWidth || 0;
     const maxHeight = autoResizeOptions?.maxHeight;
     const minHeight = autoResizeOptions?.minHeight ?? DATAGRID_MIN_HEIGHT;
     const maxWidth = autoResizeOptions?.maxWidth;
     const minWidth = autoResizeOptions?.minWidth ?? DATAGRID_MIN_WIDTH;
 
     let newHeight = availableHeight;
-    let newWidth = autoResizeOptions?.rightPadding ? availableWidth - autoResizeOptions.rightPadding : availableWidth;
+    let newWidth = autoResizeOptions?.rightPadding ? gridWidth - autoResizeOptions.rightPadding : gridWidth;
 
     // when `autoResize.autoHeight` is enabled, we'll calculate the available height by the data length + header height
     if (gridOptions.enableAutoResize && this.isAutoHeightEnabled) {
