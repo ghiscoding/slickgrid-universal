@@ -2621,12 +2621,13 @@ describe('SlickGrid core file', () => {
       const editor = grid.getCellEditor();
       const updateRowSpy = vi.spyOn(grid, 'updateRow');
       const onCellChangeSpy = vi.spyOn(grid.onCellChange, 'notify');
+      const preClickSpy = vi.spyOn(CheckboxEditor.prototype, 'preClick');
       vi.spyOn(editor!, 'serializeValue').mockReturnValueOnce(newValue);
       grid.editActiveCell(CheckboxEditor as any, true);
 
       const result = grid.getEditController()?.commitCurrentEdit();
 
-      // expect(preClickSpy).toHaveBeenCalled();
+      expect(preClickSpy).toHaveBeenCalled();
       expect(editor).toBeTruthy();
       expect(updateRowSpy).toHaveBeenCalledWith(0);
       expect(onCellChangeSpy).toHaveBeenCalledWith(expect.objectContaining({ command: 'execute', row: 0, cell: 1 }), expect.anything(), grid);
