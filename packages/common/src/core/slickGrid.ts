@@ -5810,7 +5810,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (!this.getEditorLock()?.isActive() || this.getEditorLock()?.commitCurrentEdit()) {
         this.scrollRowIntoView(cell.row, false);
 
-        const preClickModeOn = (e as DOMEvent<HTMLDivElement>).target?.className === preClickClassName;
+        const preClickModeOn = !!(e as DOMEvent<HTMLDivElement>).target?.classList?.contains(preClickClassName);
         const column = this.columns[cell.cell];
         const suppressActiveCellChangedEvent = !!(
           this._options.editable &&
