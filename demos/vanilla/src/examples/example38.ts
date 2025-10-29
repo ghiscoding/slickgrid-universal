@@ -15,6 +15,7 @@ const NB_ITEMS = 100;
 
 export default class Example38 {
   protected _eventHandler: SlickEventHandler;
+  private _darkMode = false;
 
   columnDefinitions: Column[] = [];
   dataset: any[] = [];
@@ -57,6 +58,8 @@ export default class Example38 {
     this.sgb?.dispose();
     this.gridContainerElm.remove();
     document.body.classList.remove('salesforce-theme');
+    document.querySelector('.demo-container')?.classList.remove('dark-mode');
+    document.body.setAttribute('data-theme', 'light');
   }
 
   /* Define grid Options and Columns */
@@ -91,6 +94,7 @@ export default class Example38 {
       enableCellNavigation: true,
       autoEdit: true,
       autoCommitEdit: true,
+      darkMode: this._darkMode,
       editable: true,
       headerRowHeight: 35,
       rowHeight: 30,
@@ -139,5 +143,22 @@ export default class Example38 {
     }
 
     return datasetTmp;
+  }
+
+  toggleDarkMode() {
+    this._darkMode = !this._darkMode;
+    this.toggleBodyBackground();
+    this.sgb.gridOptions = { ...this.sgb.gridOptions, darkMode: this._darkMode };
+    this.sgb.slickGrid?.setOptions({ darkMode: this._darkMode });
+  }
+
+  toggleBodyBackground() {
+    if (this._darkMode) {
+      document.body.setAttribute('data-theme', 'dark');
+      document.querySelector('.demo-container')?.classList.add('dark-mode');
+    } else {
+      document.body.setAttribute('data-theme', 'light');
+      document.querySelector('.demo-container')?.classList.remove('dark-mode');
+    }
   }
 }

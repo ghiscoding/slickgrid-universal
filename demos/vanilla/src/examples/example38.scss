@@ -1,4 +1,5 @@
 /** override slick-cell to make it look like Excel sheet */
+body.salesforce-theme,
 .grid38 {
   --slick-border-color: #d4d4d4;
   --slick-cell-odd-background-color: #fbfbfb;
@@ -16,5 +17,13 @@
     background: blue;
     background: rgba(0, 0, 255, 0.2);
     transition: 0.5s background;
+  }
+  .slick-dark-mode {
+    --slick-border-color: #4d4d4d;
+    --slick-cell-border-left: 1px solid #4d4d4d;
+    --slick-grid-border-color: #434343;
+    --slick-cell-selected-color: #434343;
+    --slick-row-selected-color: #434343;
+    --slick-text-editor-background: #c0c0c0;
   }
 }
