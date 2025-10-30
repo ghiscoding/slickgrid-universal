@@ -1,11 +1,4 @@
-import {
-  Editors,
-  Formatters,
-  SlickEventHandler,
-  SlickHybridSelectionModel,
-  type Column,
-  type GridOption,
-} from '@slickgrid-universal/common';
+import { Editors, Formatters, SlickEventHandler, type Column, type GridOption } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options.js';
@@ -57,24 +50,19 @@ export default class Example37 {
     const cellSelectionModel1 = this.sgb1.slickGrid!.getSelectionModel()!;
     const cellSelectionModel2 = this.sgb2.slickGrid!.getSelectionModel()!;
     this._eventHandler.subscribe(cellSelectionModel1.onSelectedRangesChanged, (_e, args) => {
-      const targetRange = document.querySelector('#selectionRange') as HTMLSpanElement;
+      const targetRange = document.querySelector('#selectionRange1') as HTMLSpanElement;
       targetRange.textContent = '';
       for (const slickRange of args) {
         targetRange.textContent += JSON.stringify(slickRange);
       }
     });
     this._eventHandler.subscribe(cellSelectionModel2.onSelectedRangesChanged, (_e, args) => {
-      const targetRange = document.querySelector('#selectionRange') as HTMLSpanElement;
+      const targetRange = document.querySelector('#selectionRange2') as HTMLSpanElement;
       targetRange.textContent = '';
       for (const slickRange of args) {
         targetRange.textContent += JSON.stringify(slickRange);
       }
     });
-
-    this.sgb1.slickGrid?.setSelectionModel(new SlickHybridSelectionModel({ selectActiveRow: true, rowSelectColumnIdArr: ['id'] }));
-    this.sgb2.slickGrid?.setSelectionModel(
-      new SlickHybridSelectionModel({ selectActiveRow: false, rowSelectColumnIdArr: ['id', '_checkbox_selector'] })
-    );
   }
 
   dispose() {
@@ -143,6 +131,14 @@ export default class Example37 {
       },
       externalResources: [new ExcelExportService()],
 
+      // enable new hybrid selection model (rows & cells)
+      enableHybridSelection: true,
+      rowSelectionOptions: {
+        // True (Single Selection), False (Multiple Selections)
+        selectActiveRow: true,
+        rowSelectColumnIdArr: ['id'],
+      },
+
       // when using the ExcelCopyBuffer, you can see what the selection range is
       enableExcelCopyBuffer: true,
       excelCopyBufferOptions: {
@@ -159,6 +155,7 @@ export default class Example37 {
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
+        rowSelectColumnIdArr: ['id', '_checkbox_selector'],
       },
     };
   }

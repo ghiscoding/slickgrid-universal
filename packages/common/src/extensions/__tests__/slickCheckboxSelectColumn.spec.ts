@@ -2,6 +2,7 @@ import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { getHtmlStringOutput } from '@slickgrid-universal/utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SlickEvent, type SlickGrid } from '../../core/index.js';
+import type { SlickHybridSelectionModel } from '../../extensions/slickHybridSelectionModel.js';
 import type { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel.js';
 import type { Column, OnSelectedRowsChangedEventArgs } from '../../interfaces/index.js';
 import { SlickCheckboxSelectColumn } from '../slickCheckboxSelectColumn.js';
@@ -67,6 +68,17 @@ const gridStub = {
   onSelectedRowsChanged: new SlickEvent(),
 } as unknown as SlickGrid;
 
+const mockHybridSelectionModel = {
+  constructor: vi.fn(),
+  init: vi.fn(),
+  dispose: vi.fn(),
+  getSelectedRows: vi.fn(),
+  setSelectedRows: vi.fn(),
+  getSelectedRanges: vi.fn(),
+  setSelectedRanges: vi.fn(),
+  onSelectedRangesChanged: new SlickEvent(),
+} as unknown as SlickHybridSelectionModel;
+
 const mockRowSelectionModel = {
   constructor: vi.fn(),
   init: vi.fn(),
@@ -84,6 +96,12 @@ const pubSubServiceStub = {
   unsubscribe: vi.fn(),
   unsubscribeAll: vi.fn(),
 } as BasePubSubService;
+
+vi.mock('../../extensions/slickHybridSelectionModel', () => ({
+  SlickHybridSelectionModel: vi.fn().mockImplementation(function () {
+    return mockHybridSelectionModel;
+  }),
+}));
 
 vi.mock('../../extensions/slickRowSelectionModel', () => ({
   SlickRowSelectionModel: vi.fn().mockImplementation(function () {
@@ -344,6 +362,19 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     plugin.deSelectRows([1, 2, 3, 6, -1]);
 
     expect(setSelectedRowSpy).toHaveBeenNthCalledWith(2, [1], 'SlickCheckboxSelectColumn.deSelectRows'); // only 1 is found which was previous false
+  });
+
+  it('should pre-select some rows in a delay when "preselectedRows" is defined with a row selection model', () => {
+    vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(mockHybridSelectionModel);
+    vi.spyOn(gridStub, 'getOptions').mockReturnValue({ preselectedRows: [1, 2], enableHybridSelection: true });
+    vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue([]);
+
+    const selectRowSpy = vi.spyOn(plugin, 'selectRows');
+    plugin.init(gridStub);
+
+    vi.advanceTimersByTime(1);
+
+    expect(selectRowSpy).toHaveBeenCalledWith([1, 2]);
   });
 
   it('should pre-select some rows in a delay when "preselectedRows" is defined with a row selection model', () => {

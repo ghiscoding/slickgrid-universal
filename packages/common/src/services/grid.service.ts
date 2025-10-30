@@ -1,6 +1,7 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { arrayRemoveItemByIndex, isObjectEmpty } from '@slickgrid-universal/utils';
 import type { SlickDataView, SlickGrid } from '../core/index.js';
+import { SlickHybridSelectionModel } from '../extensions/slickHybridSelectionModel.js';
 import { SlickRowSelectionModel } from '../extensions/slickRowSelectionModel.js';
 import type {
   CellArgs,
@@ -48,7 +49,7 @@ const ShowColumnOptionDefaults: ShowColumnOption = { autoResizeColumns: true, tr
 
 export class GridService {
   protected _grid!: SlickGrid;
-  protected _rowSelectionPlugin?: SlickRowSelectionModel;
+  protected _rowSelectionPlugin?: SlickHybridSelectionModel | SlickRowSelectionModel;
 
   constructor(
     protected readonly gridStateService: GridStateService,
@@ -326,7 +327,8 @@ export class GridService {
   highlightRow(rowNumber: number | number[], duration?: number): void {
     // create a SelectionModel if there's not one yet
     if (!this._grid.getSelectionModel()) {
-      this._rowSelectionPlugin = new SlickRowSelectionModel(this._gridOptions.rowSelectionOptions);
+      const SelectionModelClass = this._gridOptions.enableHybridSelection ? SlickHybridSelectionModel : SlickRowSelectionModel;
+      this._rowSelectionPlugin = new SelectionModelClass(this._gridOptions.rowSelectionOptions);
       this._grid.setSelectionModel(this._rowSelectionPlugin);
     }
 
@@ -454,7 +456,7 @@ export class GridService {
       rowNumber !== undefined &&
       insertOptions.selectRow &&
       this._gridOptions &&
-      (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)
+      (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection || this._gridOptions.enableHybridSelection)
     ) {
       this.setSelectedRow(rowNumber);
     }
@@ -535,7 +537,7 @@ export class GridService {
     if (
       insertOptions.selectRow &&
       this._gridOptions &&
-      (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)
+      (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection || this._gridOptions.enableHybridSelection)
     ) {
       this.setSelectedRows(rowNumbers);
     }
@@ -622,7 +624,7 @@ export class GridService {
       !isSyncGridSelectionEnabled &&
       this._grid &&
       this._gridOptions &&
-      (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)
+      (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection || this._gridOptions.enableHybridSelection)
     ) {
       this.setSelectedRows([]);
     }
@@ -739,7 +741,11 @@ export class GridService {
     }
 
     // select the row in the grid
-    if (options.selectRow && this._gridOptions && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
+    if (
+      options.selectRow &&
+      this._gridOptions &&
+      (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection || this._gridOptions.enableHybridSelection)
+    ) {
       this.setSelectedRows(rowNumbers);
     }
 
@@ -797,7 +803,7 @@ export class GridService {
         rowNumber !== undefined &&
         options.selectRow &&
         this._gridOptions &&
-        (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)
+        (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection || this._gridOptions.enableHybridSelection)
       ) {
         this.setSelectedRow(rowNumber);
       }
@@ -862,7 +868,11 @@ export class GridService {
     }
 
     // select the row in the grid
-    if (options.selectRow && this._gridOptions && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
+    if (
+      options.selectRow &&
+      this._gridOptions &&
+      (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection || this._gridOptions.enableHybridSelection)
+    ) {
       this.setSelectedRows(rowNumbers);
     }
 
@@ -952,7 +962,11 @@ export class GridService {
   /** Check wether the grid has the Row Selection enabled */
   protected hasRowSelectionEnabled(): boolean {
     const selectionModel = this._grid.getSelectionModel();
-    const isRowSelectionEnabled = !!(this._gridOptions.enableRowSelection || this._gridOptions.enableCheckboxSelector);
+    const isRowSelectionEnabled = !!(
+      this._gridOptions.enableRowSelection ||
+      this._gridOptions.enableHybridSelection ||
+      this._gridOptions.enableCheckboxSelector
+    );
     return isRowSelectionEnabled && !!selectionModel;
   }
 }

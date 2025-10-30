@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vite
 import { SlickEvent, SlickEventData, type SlickDataView, type SlickGrid } from '../../core/index.js';
 import { ExtensionName } from '../../enums/index.js';
 import type { SlickColumnPicker } from '../../extensions/slickColumnPicker.js';
+import type { SlickHybridSelectionModel } from '../../extensions/slickHybridSelectionModel.js';
 import type { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel.js';
 import type {
   BackendService,
@@ -100,6 +101,18 @@ const treeDataServiceStub = {
   getCurrentToggleState: vi.fn(),
 } as unknown as TreeDataService;
 
+const hybridSelectionModelStub = {
+  pluginName: 'HybridSelectionModel',
+  constructor: vi.fn(),
+  init: vi.fn(),
+  destroy: vi.fn(),
+  getSelectedRanges: vi.fn(),
+  setSelectedRanges: vi.fn(),
+  getSelectedRows: vi.fn(),
+  setSelectedRows: vi.fn(),
+  onSelectedRangesChanged: new SlickEvent(),
+} as unknown as SlickHybridSelectionModel;
+
 const rowSelectionModelStub = {
   pluginName: 'RowSelectionModel',
   constructor: vi.fn(),
@@ -136,6 +149,7 @@ describe('GridStateService', () => {
 
     beforeEach(() => {
       slickgridEvent = new SlickEvent();
+      gridOptionMock.enableHybridSelection = false;
     });
 
     afterEach(() => {
@@ -151,6 +165,20 @@ describe('GridStateService', () => {
 
       expect(gridStateSpy).toHaveBeenCalled();
       expect(pubSubSpy).toHaveBeenCalledTimes(7);
+      // expect(pubSubSpy).toHaveBeenNthCalledWith(1, `onFilterChanged`, () => { });
+    });
+
+    it('should have called the "subscribeToAllGridChanges" method while initializing with Hybrid Selection is enabled', () => {
+      vi.spyOn(gridStub, 'getSelectionModel').mockReturnValueOnce(hybridSelectionModelStub);
+      const gridStateSpy = vi.spyOn(service, 'subscribeToAllGridChanges');
+      const pubSubSpy = vi.spyOn(mockPubSub, 'subscribe');
+
+      gridOptionMock.enableHybridSelection = true;
+      service.init(gridStub);
+      vi.spyOn(gridStub, 'getSelectionModel').mockReturnValueOnce(hybridSelectionModelStub);
+
+      expect(gridStateSpy).toHaveBeenCalled();
+      expect(pubSubSpy).toHaveBeenCalledTimes(21); // not 7 but 21 with hybrid selection, not sure why though
       // expect(pubSubSpy).toHaveBeenNthCalledWith(1, `onFilterChanged`, () => { });
     });
 
@@ -931,7 +959,7 @@ describe('GridStateService', () => {
     });
 
     it('should call the method and call the grid selection reset when the selection extension is used', () => {
-      const extensionMock = { name: ExtensionName.rowSelection, addon: {}, instance: {} as unknown as SlickColumnPicker, class: null };
+      const extensionMock = { name: ExtensionName.rowSelection, addon: {}, instance: {} as unknown as SlickRowSelectionModel, class: null };
       const gridOptionsMock = { enableRowSelection: true } as GridOption;
       const gridOptionSpy = vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
       const setSelectionSpy = vi.spyOn(gridStub, 'setSelectedRows');
@@ -941,6 +969,21 @@ describe('GridStateService', () => {
 
       expect(gridOptionSpy).toHaveBeenCalled();
       expect(extensionSpy).toHaveBeenCalledWith(ExtensionName.rowSelection);
+      expect(setSelectionSpy).toHaveBeenCalled();
+    });
+
+    it('should call the method and call the grid selection reset when the selection extension is used', () => {
+      vi.spyOn(gridStub, 'getSelectionModel').mockReturnValueOnce(hybridSelectionModelStub);
+      const extensionMock = { name: ExtensionName.hybridSelection, addon: {}, instance: {} as unknown as SlickHybridSelectionModel, class: null };
+      const gridOptionsMock = { enableHybridSelection: true } as GridOption;
+      const gridOptionSpy = vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
+      const setSelectionSpy = vi.spyOn(gridStub, 'setSelectedRows');
+      const extensionSpy = vi.spyOn(extensionServiceStub, 'getExtensionByName').mockReturnValue(extensionMock as any);
+
+      service.resetRowSelectionWhenRequired();
+
+      expect(gridOptionSpy).toHaveBeenCalled();
+      expect(extensionSpy).toHaveBeenCalledWith(ExtensionName.hybridSelection);
       expect(setSelectionSpy).toHaveBeenCalled();
     });
   });

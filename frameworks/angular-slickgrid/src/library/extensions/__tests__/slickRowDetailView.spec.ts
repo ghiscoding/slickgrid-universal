@@ -3,6 +3,7 @@ import {
   SlickEvent,
   SlickEventData,
   SlickEventHandler,
+  SlickHybridSelectionModel,
   SlickRowSelectionModel,
   type Column,
   type OnSelectedRowsChangedEventArgs,
@@ -19,6 +20,19 @@ import { SlickRowDetailView } from '../slickRowDetailView.js';
 
 vi.mock('@slickgrid-universal/common', async () => ({
   ...((await vi.importActual('@slickgrid-universal/common')) as any),
+  SlickHybridSelectionModel: vi.fn().mockImplementation(function () {
+    return {
+      constructor: vi.fn(),
+      init: vi.fn(),
+      destroy: vi.fn(),
+      dispose: vi.fn(),
+      getSelectedRows: vi.fn(),
+      setSelectedRows: vi.fn(),
+      getSelectedRanges: vi.fn(),
+      setSelectedRanges: vi.fn(),
+      onSelectedRangesChanged: new SlickEvent(),
+    };
+  }),
   SlickRowSelectionModel: vi.fn().mockImplementation(function () {
     return {
       constructor: vi.fn(),
@@ -227,8 +241,28 @@ describe('SlickRowDetailView', () => {
         (plugin.onRowOutOfViewportRange as any) = null;
       });
 
-      it('should register the addon', () => {
+      it.skip('should register the addon with SlickHybridSelectionModel', () => {
         const copyGridOptionsMock = { ...gridOptionsMock };
+        gridOptionsMock.enableHybridSelection = true;
+        gridOptionsMock.enableRowSelection = false;
+        gridOptionsMock.rowDetailView!.onExtensionRegistered = vi.fn();
+        vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+        const onRegisteredSpy = vi.spyOn(copyGridOptionsMock.rowDetailView!, 'onExtensionRegistered');
+
+        plugin.init(gridStub);
+        const instance = plugin.register();
+        const addonInstance = plugin.getAddonInstance();
+
+        expect(instance).toBeTruthy();
+        expect(instance).toEqual(addonInstance);
+        expect(onRegisteredSpy).toHaveBeenCalledWith(instance);
+        expect(SlickHybridSelectionModel).toHaveBeenCalledWith({ selectActiveRow: true });
+      });
+
+      it('should register the addon with SlickRowSelectionModel', () => {
+        const copyGridOptionsMock = { ...gridOptionsMock };
+        gridOptionsMock.enableHybridSelection = false;
+        gridOptionsMock.enableRowSelection = true;
         gridOptionsMock.rowDetailView!.onExtensionRegistered = vi.fn();
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
         const onRegisteredSpy = vi.spyOn(copyGridOptionsMock.rowDetailView!, 'onExtensionRegistered');

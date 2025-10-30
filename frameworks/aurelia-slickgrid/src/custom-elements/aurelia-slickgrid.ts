@@ -462,7 +462,10 @@ export class AureliaSlickgridCustomElement {
       }
 
       if (this._dataset.length > 0) {
-        if (!this._isDatasetInitialized && (this.options.enableCheckboxSelector || this.options.enableRowSelection)) {
+        if (
+          !this._isDatasetInitialized &&
+          (this.options.enableCheckboxSelector || this.options.enableRowSelection || this.options.enableHybridSelection)
+        ) {
           this.loadRowSelectionPresetWhenExists();
         }
         this.loadFilterPresetsWhenDatasetInitialized();
@@ -1013,7 +1016,7 @@ export class AureliaSlickgridCustomElement {
       this.grid &&
       !isSyncGridSelectionEnabled &&
       this.options?.backendServiceApi &&
-      (this.options.enableRowSelection || this.options.enableCheckboxSelector)
+      (this.options.enableRowSelection || this.options.enableHybridSelection || this.options.enableCheckboxSelector)
     ) {
       this.grid.setSelectedRows([]);
     }
@@ -1385,7 +1388,8 @@ export class AureliaSlickgridCustomElement {
   protected loadRowSelectionPresetWhenExists() {
     // if user entered some Row Selections "presets"
     const presets = this.options?.presets;
-    const enableRowSelection = this.options && (this.options.enableCheckboxSelector || this.options.enableRowSelection);
+    const enableRowSelection =
+      this.options && (this.options.enableCheckboxSelector || this.options.enableRowSelection || this.options.enableHybridSelection);
     if (
       enableRowSelection &&
       this.grid?.getSelectionModel() &&

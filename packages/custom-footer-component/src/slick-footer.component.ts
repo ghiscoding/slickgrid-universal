@@ -267,7 +267,8 @@ export class SlickFooterComponent {
    * @param customFooterOptions
    */
   protected registerOnSelectedRowsChangedWhenEnabled(customFooterOptions: CustomFooterOption): void {
-    const isRowSelectionEnabled = this.gridOptions.enableCheckboxSelector || this.gridOptions.enableRowSelection;
+    const isRowSelectionEnabled =
+      this.gridOptions.enableCheckboxSelector || this.gridOptions.enableRowSelection || this.gridOptions.enableHybridSelection;
     if (isRowSelectionEnabled && customFooterOptions && !customFooterOptions.hideRowSelectionCount && this._isLeftFooterOriginallyEmpty) {
       this._isLeftFooterDisplayingSelectionRowCount = true;
       const selectedCountText = customFooterOptions.metricTexts?.itemsSelected ?? this.localeOrDefault('TEXT_ITEMS_SELECTED');

@@ -2410,6 +2410,30 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
           });
         }));
 
+      it('should call the "setSelectedRows" from the Grid when there are row selection presets with "dataContextIds" array set and Hybrid Selection is enabled', () =>
+        new Promise((done: any) => {
+          const selectedGridRows = [22];
+          const mockData = [
+            { firstName: 'John', lastName: 'Doe' },
+            { firstName: 'Jane', lastName: 'Smith' },
+          ];
+          const selectRowSpy = vi.spyOn(mockGrid, 'setSelectedRows');
+          vi.spyOn(mockGrid, 'getSelectionModel').mockReturnValue(true as any);
+          vi.spyOn(mockDataView, 'getLength').mockReturnValue(mockData.length);
+
+          component.options.enableHybridSelection = true;
+          component.options.presets = { rowSelection: { gridRowIndexes: selectedGridRows } };
+          component.dataset = mockData;
+          component.isDatasetInitialized = false; // it won't call the preset unless we reset this flag
+          component.initialization(slickEventHandler);
+
+          setTimeout(() => {
+            expect(component.isDatasetInitialized).toBe(true);
+            expect(selectRowSpy).toHaveBeenCalledWith(selectedGridRows);
+            done();
+          });
+        }));
+
       it('should call the "setSelectedRows" and "setSelectedIds" when the Grid has Local Pagination and there are row selection presets with "dataContextIds" array set', () => {
         const selectedGridRows = [22];
         const mockData = [

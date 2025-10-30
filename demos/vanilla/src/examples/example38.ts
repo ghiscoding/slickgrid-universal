@@ -1,7 +1,6 @@
 import {
   Editors,
   SlickEventHandler,
-  SlickHybridSelectionModel,
   SlickSelectionUtils,
   type Column,
   type GridOption,
@@ -39,9 +38,6 @@ export default class Example38 {
       this.dataset
     );
     document.body.classList.add('salesforce-theme');
-
-    const cellSelectionModel = new SlickHybridSelectionModel({ selectActiveRow: true, rowSelectColumnIdArr: ['selector'] });
-    this.sgb.slickGrid?.setSelectionModel(cellSelectionModel);
 
     this.sgb.slickGrid?.onAddNewRow.subscribe((_e, args) => {
       const item = args.item;
@@ -100,16 +96,16 @@ export default class Example38 {
       rowHeight: 30,
       editorNavigateOnArrows: true, // enable editor navigation using arrow keys
 
+      // enable new hybrid selection model (rows & cells)
+      enableHybridSelection: true,
+      rowSelectionOptions: {
+        selectActiveRow: true,
+        rowSelectColumnIdArr: ['selector'],
+      },
+
       // when using the ExcelCopyBuffer, you can see what the selection range is
       enableExcelCopyBuffer: true,
       excelCopyBufferOptions: {
-        //   onCopyCells: (e, args: { ranges: SelectedRange[] }) => console.log('onCopyCells', args.ranges),
-        //   onPasteCells: (e, args: { ranges: SelectedRange[] }) => console.log('onPasteCells', args.ranges),
-        //   onCopyCancelled: (e, args: { ranges: SelectedRange[] }) => console.log('onCopyCancelled', args.ranges),
-        onBeforePasteCell: (_e, args) => {
-          // deny the whole first row and the cells C-E of the second row
-          return !(args.row === 0 || (args.row === 1 && args.cell > 2 && args.cell < 6));
-        },
         copyActiveEditorCell: true,
         removeDoubleQuotesOnPaste: true,
         replaceNewlinesWith: ' ',

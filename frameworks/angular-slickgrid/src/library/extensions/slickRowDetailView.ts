@@ -1,18 +1,18 @@
 import type { ApplicationRef, ComponentRef, Type, ViewContainerRef } from '@angular/core';
-import type {
-  EventSubscription,
-  OnBeforeRowDetailToggleArgs,
-  OnRowBackOrOutOfViewportRangeArgs,
-  RxJsFacade,
-  SlickGrid,
-} from '@slickgrid-universal/common';
 import {
   addToArrayWhenNotExists,
   castObservableToPromise,
   createDomElement,
   SlickEventData,
+  SlickHybridSelectionModel,
   SlickRowSelectionModel,
   unsubscribeAll,
+  type EventSubscription,
+  type OnBeforeRowDetailToggleArgs,
+  type OnRowBackOrOutOfViewportRangeArgs,
+  type RxJsFacade,
+  type SelectionModel,
+  type SlickGrid,
 } from '@slickgrid-universal/common';
 import type { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickRowDetailView as UniversalSlickRowDetailView } from '@slickgrid-universal/row-detail-view-plugin';
@@ -94,15 +94,15 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
 
   init(grid: SlickGrid) {
     this._grid = grid;
-    super.init(this._grid);
-    this.register(grid?.getSelectionModel() as SlickRowSelectionModel);
+    super.init(grid);
+    this.register(grid.getSelectionModel());
   }
 
   /**
    * Create the plugin before the Grid creation, else it will behave oddly.
    * Mostly because the column definitions might change after the grid creation
    */
-  register(rowSelectionPlugin?: SlickRowSelectionModel) {
+  register(rowSelectionPlugin?: SelectionModel) {
     if (typeof this.gridOptions.rowDetailView?.process === 'function') {
       // we need to keep the user "process" method and replace it with our own execution method
       // we do this because when we get the item detail, we need to call "onAsyncResponse.notify" for the plugin to work
@@ -116,18 +116,19 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
       // load the Preload & RowDetail Templates (could be straight HTML or Angular View/ViewModel)
       // when those are Angular View/ViewModel, we need to create View Component & provide the html containers to the Plugin (preTemplate/postTemplate methods)
       if (!this.gridOptions.rowDetailView.preTemplate) {
-        this._preloadComponent = this.gridOptions?.rowDetailView?.preloadComponent;
+        this._preloadComponent = this.gridOptions.rowDetailView.preloadComponent;
         this.addonOptions.preTemplate = () => createDomElement('div', { className: `${PRELOAD_CONTAINER_PREFIX}` });
       }
       if (!this.gridOptions.rowDetailView.postTemplate) {
-        this._viewComponent = this.gridOptions?.rowDetailView?.viewComponent;
+        this._viewComponent = this.gridOptions.rowDetailView.viewComponent;
         this.addonOptions.postTemplate = (itemDetail: any) =>
           createDomElement('div', { className: `${ROW_DETAIL_CONTAINER_PREFIX}${itemDetail[this.datasetIdPropName]}` });
       }
 
       // this also requires the Row Selection Model to be registered as well
       if (!rowSelectionPlugin || !this._grid.getSelectionModel()) {
-        rowSelectionPlugin = new SlickRowSelectionModel(this.gridOptions.rowSelectionOptions || { selectActiveRow: true });
+        const SelectionModelClass = this.gridOptions.enableHybridSelection ? SlickHybridSelectionModel : SlickRowSelectionModel;
+        rowSelectionPlugin = new SelectionModelClass(this.gridOptions.rowSelectionOptions || { selectActiveRow: true });
         this._grid.setSelectionModel(rowSelectionPlugin);
       }
 
@@ -210,7 +211,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
         this.eventHandler.subscribe(this._grid.onColumnsReordered, this.redrawAllViewComponents.bind(this, false));
 
         // on row selection changed, we also need to redraw
-        if (this.gridOptions.enableRowSelection || this.gridOptions.enableCheckboxSelector) {
+        if (this.gridOptions.enableRowSelection || this.gridOptions.enableHybridSelection || this.gridOptions.enableCheckboxSelector) {
           this.eventHandler.subscribe(this._grid.onSelectedRowsChanged, this.redrawAllViewComponents.bind(this, false));
         }
 

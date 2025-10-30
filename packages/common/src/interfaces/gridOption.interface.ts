@@ -3,6 +3,7 @@ import type { MultipleSelectOption } from 'multiple-select-vanilla';
 import type { TrustedHTML } from 'trusted-types/lib';
 import type { DataViewOption, SlickEditorLock } from '../core/index.js';
 import type { ColumnReorderFunction, OperatorString, OperatorType } from '../enums/index.js';
+import type { HybridSelectionModelOption } from '../extensions/slickHybridSelectionModel.js';
 import type { TranslaterService } from '../services/translater.service.js';
 import type {
   AutocompleterOption,
@@ -485,6 +486,9 @@ export interface GridOption<C extends Column = Column> {
    */
   enableHtmlRendering?: boolean;
 
+  /** Do we want to enable hybrid selection (cell/row selection)? */
+  enableHybridSelection?: boolean;
+
   /** Do we want to enable a styling effect when hovering any row from the grid? */
   enableMouseHoverHighlightRow?: boolean;
 
@@ -771,7 +775,7 @@ export interface GridOption<C extends Column = Column> {
   rowMoveManager?: RowMoveManager;
 
   /** Row selection options */
-  rowSelectionOptions?: RowSelectionModelOption;
+  rowSelectionOptions?: HybridSelectionModelOption | RowSelectionModelOption;
 
   /**
    * Defaults to "transform", what CSS style to we want to use to render each row top offset (choose between "top" and "transform").

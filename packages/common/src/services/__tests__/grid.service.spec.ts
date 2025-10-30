@@ -1,6 +1,7 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index.js';
+import type { SlickHybridSelectionModel } from '../../extensions/slickHybridSelectionModel.js';
 import type { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel.js';
 import type { CellArgs, Column, GridOption, OnEventArgs } from '../../interfaces/index.js';
 import {
@@ -13,6 +14,18 @@ import {
   type TreeDataService,
 } from '../index.js';
 
+const mockHybridSelectionModel = {
+  constructor: vi.fn(),
+  init: vi.fn(),
+  destroy: vi.fn(),
+  dispose: vi.fn(),
+  getSelectedRows: vi.fn(),
+  setSelectedRows: vi.fn(),
+  getSelectedRanges: vi.fn(),
+  setSelectedRanges: vi.fn(),
+  onSelectedRangesChanged: new SlickEvent(),
+} as unknown as SlickHybridSelectionModel;
+
 const mockRowSelectionModel = {
   constructor: vi.fn(),
   init: vi.fn(),
@@ -24,6 +37,12 @@ const mockRowSelectionModel = {
   setSelectedRanges: vi.fn(),
   onSelectedRangesChanged: new SlickEvent(),
 } as unknown as SlickRowSelectionModel;
+
+vi.mock('../../extensions/slickHybridSelectionModel', () => ({
+  SlickHybridSelectionModel: vi.fn().mockImplementation(function () {
+    return mockHybridSelectionModel;
+  }),
+}));
 
 vi.mock('../../extensions/slickRowSelectionModel', () => ({
   SlickRowSelectionModel: vi.fn().mockImplementation(function () {
@@ -121,6 +140,7 @@ describe('Grid Service', () => {
   vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
 
   beforeEach(() => {
+    mockGridOptions.enableHybridSelection = false;
     service = new GridService(
       gridStateServiceStub,
       filterServiceStub,
@@ -141,7 +161,17 @@ describe('Grid Service', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should dispose of the service', () => {
+  it('should dispose of the service and SlickHybridSelectionModel', () => {
+    vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ enableHybridSelection: true } as GridOption);
+    const disposeSpy = vi.spyOn(mockHybridSelectionModel, 'dispose');
+
+    service.highlightRow(0, 10);
+    service.dispose();
+
+    expect(disposeSpy).toHaveBeenCalled();
+  });
+
+  it('should dispose of the service and SlickRowSelectionModel', () => {
     const disposeSpy = vi.spyOn(mockRowSelectionModel, 'dispose');
 
     service.highlightRow(0, 10);
