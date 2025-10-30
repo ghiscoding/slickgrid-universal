@@ -153,7 +153,7 @@ describe('Row Selection Model Plugin', () => {
       cellRangeSelector: expect.any(SlickCellRangeSelector),
       dragToSelect: false,
       handleRowMoveManagerColumn: true,
-      rowSelectColumnIdArr: [],
+      rowSelectColumnIds: [],
       rowSelectOverride: undefined,
       selectActiveCell: true,
       selectActiveRow: true,
@@ -169,7 +169,7 @@ describe('Row Selection Model Plugin', () => {
       cellRangeSelector: expect.any(SlickCellRangeSelector),
       dragToSelect: false,
       handleRowMoveManagerColumn: true,
-      rowSelectColumnIdArr: [],
+      rowSelectColumnIds: [],
       rowSelectOverride: undefined,
       selectActiveCell: true,
       selectActiveRow: false,
@@ -185,18 +185,18 @@ describe('Row Selection Model Plugin', () => {
       cellRangeSelector: expect.any(SlickCellRangeSelector),
       dragToSelect: false,
       handleRowMoveManagerColumn: true,
-      rowSelectColumnIdArr: [],
+      rowSelectColumnIds: [],
       rowSelectOverride: undefined,
       selectActiveCell: true,
       selectActiveRow: true,
     });
   });
 
-  it('should expect that "setSelectedRows" is being triggered when "refreshSelections" is called with rowSelectColumnIdArr defined with column IDs', () => {
+  it('should expect that "setSelectedRows" is being triggered when "refreshSelections" is called with rowSelectColumnIds defined with column IDs', () => {
     vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValueOnce([{ id: 'firstName', field: 'firstName', name: 'First Name' }]);
     vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(mockColumns);
 
-    plugin = new SlickHybridSelectionModel({ rowSelectColumnIdArr: ['firstName'], selectActiveRow: false });
+    plugin = new SlickHybridSelectionModel({ rowSelectColumnIds: ['firstName'], selectActiveRow: false });
     plugin.init(gridStub);
 
     vi.spyOn(plugin, 'getSelectedRows').mockReturnValue([0, 1]);
@@ -726,7 +726,7 @@ describe('Cell Selection Model Plugin', () => {
       cellRangeSelector: expect.any(SlickCellRangeSelector),
       dragToSelect: false,
       handleRowMoveManagerColumn: true,
-      rowSelectColumnIdArr: [],
+      rowSelectColumnIds: [],
       rowSelectOverride: undefined,
       selectActiveCell: true,
       selectActiveRow: true,
@@ -746,7 +746,7 @@ describe('Cell Selection Model Plugin', () => {
       cellRangeSelector: expect.any(SlickCellRangeSelector),
       dragToSelect: false,
       handleRowMoveManagerColumn: true,
-      rowSelectColumnIdArr: [],
+      rowSelectColumnIds: [],
       rowSelectOverride: undefined,
       selectActiveCell: false,
       selectActiveRow: true,
@@ -770,7 +770,7 @@ describe('Cell Selection Model Plugin', () => {
       cellRangeSelector: mockCellRangeSelector,
       dragToSelect: false,
       handleRowMoveManagerColumn: true,
-      rowSelectColumnIdArr: [],
+      rowSelectColumnIds: [],
       rowSelectOverride: undefined,
       selectActiveCell: true,
       selectActiveRow: true,

@@ -136,7 +136,7 @@ export default class Example37 {
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: true,
-        rowSelectColumnIdArr: ['id'],
+        rowSelectColumnIds: ['id'],
       },
 
       // when using the ExcelCopyBuffer, you can see what the selection range is
@@ -149,13 +149,13 @@ export default class Example37 {
     };
     this.gridOptions2 = {
       ...this.gridOptions1,
-      // you can also enable checkbox selection & row selection, make sure to use `rowSelectColumnIdArr: ['id', '_checkbox_selector']`
+      // you can also enable checkbox selection & row selection, make sure to use `rowSelectColumnIds: ['id', '_checkbox_selector']`
       enableCheckboxSelector: true,
       enableRowSelection: true,
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
-        rowSelectColumnIdArr: ['id', '_checkbox_selector'],
+        rowSelectColumnIds: ['id', '_checkbox_selector'],
       },
     };
   }

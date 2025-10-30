@@ -12,10 +12,6 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
   }
 
   beforeEach(() => {
-    // add a serve mode to avoid adding the GitHub Stars link since that can slowdown Cypress considerably
-    // because it keeps waiting for it to load, we also preserve the cookie for all other tests
-    cy.setCookie('serve-mode', 'cypress');
-
     // create a console.log spy for later use
     cy.window().then((win) => cy.spy(win.console, 'log'));
   });

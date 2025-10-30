@@ -100,7 +100,7 @@ export default class Example38 {
       enableHybridSelection: true,
       rowSelectionOptions: {
         selectActiveRow: true,
-        rowSelectColumnIdArr: ['selector'],
+        rowSelectColumnIds: ['selector'],
       },
 
       // when using the ExcelCopyBuffer, you can see what the selection range is
