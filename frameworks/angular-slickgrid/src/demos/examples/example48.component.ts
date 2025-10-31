@@ -1,54 +1,44 @@
-import { Formatters, SlickEventHandler, type Column, type GridOption } from '@slickgrid-universal/common';
+import { Component, type OnInit } from '@angular/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import { ExampleGridOptions } from './example-grid-options.js';
-import './example37.scss';
+import {
+  AngularSlickgridModule,
+  Formatters,
+  SlickEventHandler,
+  type AngularGridInstance,
+  type Column,
+  type GridOption,
+} from '../../library';
 
-const NB_ITEMS = 1000;
+const NB_ITEMS = 995;
 
-export default class Example37 {
-  protected _eventHandler: SlickEventHandler;
-
+@Component({
+  templateUrl: './example48.component.html',
+  // styles: ['#grid48-1 { .slick-row .slick-cell:first-child { border-right: 1px solid #d4d4d4; } }'],
+  imports: [AngularSlickgridModule],
+})
+export class Example48Component implements OnInit {
+  protected _eventHandler = new SlickEventHandler();
+  angularGrid1!: AngularGridInstance;
+  angularGrid2!: AngularGridInstance;
+  columnDefinitions1: Column[] = [];
+  columnDefinitions2: Column[] = [];
   gridOptions1!: GridOption;
   gridOptions2!: GridOption;
-  columnDefinitions1!: Column[];
-  columnDefinitions2!: Column[];
   dataset1!: any[];
   dataset2!: any[];
-  sgb1!: SlickVanillaGridBundle;
-  sgb2!: SlickVanillaGridBundle;
+  hideSubTitle = false;
 
-  attached() {
-    this._eventHandler = new SlickEventHandler();
-
-    // define the grid options & columns and then create the grid itself
+  ngOnInit(): void {
     this.defineGrids();
-
     // mock some data (different in each dataset)
-    this.dataset1 = this.getData(NB_ITEMS);
-    this.dataset2 = this.getData(NB_ITEMS);
+    this.dataset1 = this.mockData(NB_ITEMS);
+    this.dataset2 = this.mockData(NB_ITEMS);
+  }
 
-    this.sgb1 = new Slicker.GridBundle(
-      document.querySelector('.grid37-1') as HTMLDivElement,
-      this.columnDefinitions1,
-      { ...ExampleGridOptions, ...this.gridOptions1 },
-      this.dataset1
-    );
-    this.sgb2 = new Slicker.GridBundle(
-      document.querySelector('.grid37-2') as HTMLDivElement,
-      this.columnDefinitions2,
-      {
-        ...ExampleGridOptions,
-        ...this.gridOptions2,
-      },
-      this.dataset2
-    );
+  angularGridReady1(angularGrid1: AngularGridInstance) {
+    this.angularGrid1 = angularGrid1;
 
-    document.body.classList.add('material-theme');
-
-    // bind any of the grid events, e.g. onSelectedRangesChanged to show selection range on screen
-    const cellSelectionModel1 = this.sgb1.slickGrid!.getSelectionModel()!;
-    const cellSelectionModel2 = this.sgb2.slickGrid!.getSelectionModel()!;
+    const cellSelectionModel1 = angularGrid1.slickGrid!.getSelectionModel()!;
     this._eventHandler.subscribe(cellSelectionModel1.onSelectedRangesChanged, (_e, args) => {
       const targetRange = document.querySelector('#selectionRange1') as HTMLSpanElement;
       targetRange.textContent = '';
@@ -56,6 +46,12 @@ export default class Example37 {
         targetRange.textContent += JSON.stringify(slickRange);
       }
     });
+  }
+
+  angularGridReady2(angularGrid2: AngularGridInstance) {
+    this.angularGrid2 = angularGrid2;
+
+    const cellSelectionModel2 = angularGrid2.slickGrid!.getSelectionModel()!;
     this._eventHandler.subscribe(cellSelectionModel2.onSelectedRangesChanged, (_e, args) => {
       const targetRange = document.querySelector('#selectionRange2') as HTMLSpanElement;
       targetRange.textContent = '';
@@ -65,14 +61,6 @@ export default class Example37 {
     });
   }
 
-  dispose() {
-    this._eventHandler.unsubscribeAll();
-    this.sgb1?.dispose();
-    this.sgb2?.dispose();
-    document.body.classList.remove('material-theme');
-  }
-
-  /* Define grid Options and Columns */
   defineGrids() {
     this.columnDefinitions1 = [
       { id: 'id', name: '#', field: 'id', width: 32, maxWidth: 40, excludeFromHeaderMenu: true },
@@ -160,8 +148,7 @@ export default class Example37 {
     };
   }
 
-  // mock a dataset
-  getData(itemCount: number) {
+  mockData(itemCount: number) {
     const data: any[] = [];
     for (let i = 0; i < itemCount; i++) {
       const randomYear = 2000 + Math.floor(Math.random() * 10);
@@ -182,5 +169,11 @@ export default class Example37 {
       };
     }
     return data;
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
   }
 }

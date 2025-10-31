@@ -1,54 +1,36 @@
-import { Formatters, SlickEventHandler, type Column, type GridOption } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import { ExampleGridOptions } from './example-grid-options.js';
-import './example37.scss';
+import { Formatters, SlickEventHandler, type AureliaGridInstance, type Column, type GridOption } from 'aurelia-slickgrid';
 
-const NB_ITEMS = 1000;
+const NB_ITEMS = 995;
 
-export default class Example37 {
+export class Example48 {
   protected _eventHandler: SlickEventHandler;
-
+  aureliaGrid1!: AureliaGridInstance;
+  aureliaGrid2!: AureliaGridInstance;
+  columnDefinitions1: Column[] = [];
+  columnDefinitions2: Column[] = [];
   gridOptions1!: GridOption;
   gridOptions2!: GridOption;
-  columnDefinitions1!: Column[];
-  columnDefinitions2!: Column[];
   dataset1!: any[];
   dataset2!: any[];
-  sgb1!: SlickVanillaGridBundle;
-  sgb2!: SlickVanillaGridBundle;
+  hideSubTitle = false;
 
-  attached() {
+  constructor() {
     this._eventHandler = new SlickEventHandler();
-
     // define the grid options & columns and then create the grid itself
     this.defineGrids();
+  }
 
+  attached() {
     // mock some data (different in each dataset)
-    this.dataset1 = this.getData(NB_ITEMS);
-    this.dataset2 = this.getData(NB_ITEMS);
+    this.dataset1 = this.mockData(NB_ITEMS);
+    this.dataset2 = this.mockData(NB_ITEMS);
+  }
 
-    this.sgb1 = new Slicker.GridBundle(
-      document.querySelector('.grid37-1') as HTMLDivElement,
-      this.columnDefinitions1,
-      { ...ExampleGridOptions, ...this.gridOptions1 },
-      this.dataset1
-    );
-    this.sgb2 = new Slicker.GridBundle(
-      document.querySelector('.grid37-2') as HTMLDivElement,
-      this.columnDefinitions2,
-      {
-        ...ExampleGridOptions,
-        ...this.gridOptions2,
-      },
-      this.dataset2
-    );
+  aureliaGridReady1(aureliaGrid1: AureliaGridInstance) {
+    this.aureliaGrid1 = aureliaGrid1;
 
-    document.body.classList.add('material-theme');
-
-    // bind any of the grid events, e.g. onSelectedRangesChanged to show selection range on screen
-    const cellSelectionModel1 = this.sgb1.slickGrid!.getSelectionModel()!;
-    const cellSelectionModel2 = this.sgb2.slickGrid!.getSelectionModel()!;
+    const cellSelectionModel1 = aureliaGrid1.slickGrid!.getSelectionModel()!;
     this._eventHandler.subscribe(cellSelectionModel1.onSelectedRangesChanged, (_e, args) => {
       const targetRange = document.querySelector('#selectionRange1') as HTMLSpanElement;
       targetRange.textContent = '';
@@ -56,6 +38,12 @@ export default class Example37 {
         targetRange.textContent += JSON.stringify(slickRange);
       }
     });
+  }
+
+  aureliaGridReady2(aureliaGrid2: AureliaGridInstance) {
+    this.aureliaGrid2 = aureliaGrid2;
+
+    const cellSelectionModel2 = aureliaGrid2.slickGrid!.getSelectionModel()!;
     this._eventHandler.subscribe(cellSelectionModel2.onSelectedRangesChanged, (_e, args) => {
       const targetRange = document.querySelector('#selectionRange2') as HTMLSpanElement;
       targetRange.textContent = '';
@@ -65,14 +53,6 @@ export default class Example37 {
     });
   }
 
-  dispose() {
-    this._eventHandler.unsubscribeAll();
-    this.sgb1?.dispose();
-    this.sgb2?.dispose();
-    document.body.classList.remove('material-theme');
-  }
-
-  /* Define grid Options and Columns */
   defineGrids() {
     this.columnDefinitions1 = [
       { id: 'id', name: '#', field: 'id', width: 32, maxWidth: 40, excludeFromHeaderMenu: true },
@@ -147,6 +127,7 @@ export default class Example37 {
         replaceNewlinesWith: ' ',
       },
     };
+
     this.gridOptions2 = {
       ...this.gridOptions1,
       // you can also enable checkbox selection & row selection, make sure to use `rowSelectColumnIds: ['id', '_checkbox_selector']`
@@ -160,8 +141,7 @@ export default class Example37 {
     };
   }
 
-  // mock a dataset
-  getData(itemCount: number) {
+  mockData(itemCount: number) {
     const data: any[] = [];
     for (let i = 0; i < itemCount; i++) {
       const randomYear = 2000 + Math.floor(Math.random() * 10);
@@ -182,5 +162,11 @@ export default class Example37 {
       };
     }
     return data;
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
   }
 }

@@ -1,0 +1,44 @@
+<div class="demo49">
+  <h2>
+    <span>Example 49: Spreadsheet Drag-Fill</span>
+    <span class="float-end">
+      <a
+        style="font-size: 18px"
+        target="_blank"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example49.ts"
+      >
+        <span class="mdi mdi-link mdi-v-align-sub"></span> code
+      </a>
+    </span>
+    <button
+      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+      type="button"
+      data-test="toggle-subtitle"
+      click.trigger="toggleSubTitle()"
+    >
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+    <button class="btn btn-outline-secondary btn-sm btn-icon" click.trigger="toggleDarkMode()" data-test="toggle-dark-mode">
+      <span class="mdi mdi-theme-light-dark"></span>
+      <span>Toggle Dark Mode</span>
+    </button>
+  </h2>
+
+  <div class="subtitle">
+    Spreadsheet with drag-fill, hybrid selection model. Type a few values in the grid and then select those cells and use the bottom right
+    drag handle spread the selection and auto-fill the values to other cells. Use <code>onDragReplaceCells</code> event to customize the
+    drag-fill behavior.
+  </div>
+
+  <div id="grid-container" class="col-sm-12">
+    <aurelia-slickgrid
+      grid-id="grid49"
+      columns.bind="columnDefinitions"
+      options.bind="gridOptions"
+      dataset.bind="dataset"
+      on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"
+      on-drag-replace-cells.trigger="copyDraggedCellRange($event.detail.args)"
+    >
+    </aurelia-slickgrid>
+  </div>
+</div>

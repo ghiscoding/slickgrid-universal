@@ -47,6 +47,8 @@ import Example44 from '../components/Example44.vue';
 import Example45 from '../components/Example45.vue';
 import Example46 from '../components/Example46.vue';
 import Example47 from '../components/Example47.vue';
+import Example48 from '../components/Example48.vue';
+import Example49 from '../components/Example49.vue';
 import Home from '../Home.vue';
 
 export const routes: RouteRecordRaw[] = [
@@ -99,6 +101,8 @@ export const routes: RouteRecordRaw[] = [
   { path: '/example45', name: '45- Row Detail with inner Grid', component: Example45 },
   { path: '/example46', name: '46- Tree Data with Lazy Loading', component: Example46 },
   { path: '/example47', name: '47- Row Detail + Grouping', component: Example47 },
+  { path: '/example48', name: '48- Hybrid Selection Model', component: Example48 },
+  { path: '/example49', name: '49- Spreadsheet Drag-Fill', component: Example49 },
 ];
 
 export const router = createRouter({

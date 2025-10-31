@@ -25,26 +25,9 @@
 </h3>
 
 <h5 class="mb-3 italic example-details">
-  Spreadsheet with drag-fill, hybrid selection model and context menu
-  <ul>
-    <li>Select a range of cells with a mouse</li>
-    <li>
-      Drag from the handle at the bottom right of the selected range to fill the dragged-over area with the values from the selected range.
-      Drag-fill can be done in any direction
-    </li>
-    <li>
-      Drag-fill selection border (css) is different to regular selection (uses <code>copyToSelectionCss</code> from CellRangeDecorator
-      rather than the usual <code>selectionCss</code>)
-    </li>
-    <li>
-      By default uses <code>Slick.SelectionUtils.defaultCopyDraggedCellRange</code> to copy dragged cells by subscribing to
-      <code>onDragReplaceCells</code>. Use this event to customise behaviour. The default function is ideal as a starting example.
-    </li>
-    <li>
-      Also uses hybrid selection model plugin to select a row if the left hand cell (containing row index) is selected, or select a cell
-      otherwise.
-    </li>
-  </ul>
+  Spreadsheet with drag-fill, hybrid selection model. Type a few values in the grid and then select those cells and use the bottom right
+  drag handle spread the selection and auto-fill the values to other cells. Use <code>onDragReplaceCells</code> event to customize the
+  drag-fill behavior.
 </h5>
 
 <div class="grid38"></div>

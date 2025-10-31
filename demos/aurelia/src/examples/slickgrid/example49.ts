@@ -1,50 +1,35 @@
-import { BindingEventService } from '@slickgrid-universal/binding';
-import { Editors, SlickSelectionUtils, type Column, type GridOption, type OnDragReplaceCellsEventArgs } from '@slickgrid-universal/common';
-import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import { ExampleGridOptions } from './example-grid-options.js';
-import './example38.scss';
+import { Editors, SlickSelectionUtils, type AureliaGridInstance, type Column, type GridOption } from 'aurelia-slickgrid';
+import './example49.scss';
 
 const NB_ITEMS = 100;
 
-export default class Example38 {
-  private _bindingEventService = new BindingEventService();
+export class Example49 {
   private _darkMode = false;
-
+  aureliaGrid!: AureliaGridInstance;
   columnDefinitions: Column[] = [];
-  dataset: any[] = [];
   gridOptions!: GridOption;
-  gridContainerElm: HTMLDivElement;
-  sgb: SlickVanillaGridBundle;
+  dataset!: any[];
+  hideSubTitle = false;
 
-  attached() {
+  constructor() {
     // define the grid options & columns and then create the grid itself
     this.defineGrid();
+  }
 
+  attached() {
     // mock some data (different in each dataset)
     this.dataset = this.getData(NB_ITEMS);
-    this.gridContainerElm = document.querySelector<HTMLDivElement>('.grid38') as HTMLDivElement;
-    this.sgb = new Slicker.GridBundle(
-      document.querySelector('.grid38') as HTMLDivElement,
-      this.columnDefinitions,
-      { ...ExampleGridOptions, ...this.gridOptions },
-      this.dataset
-    );
-    document.body.classList.add('salesforce-theme');
-
-    // bind any of the grid events
-    this._bindingEventService.bind(this.gridContainerElm, 'ondragreplacecells', this.copyDraggedCellRange.bind(this));
   }
 
-  dispose() {
-    this.sgb?.dispose();
-    this._bindingEventService.unbindAll();
-    this.gridContainerElm.remove();
-    document.body.classList.remove('salesforce-theme');
-    document.querySelector('.demo-container')?.classList.remove('dark-mode');
-    document.body.setAttribute('data-theme', 'light');
+  detaching() {
+    document.querySelector('.panel-wm-content')!.classList.remove('dark-mode');
+    document.querySelector<HTMLDivElement>('#demo-container')!.dataset.bsTheme = 'light';
   }
 
-  /* Define grid Options and Columns */
+  aureliaGridReady(aureliaGrid: AureliaGridInstance) {
+    this.aureliaGrid = aureliaGrid;
+  }
+
   defineGrid() {
     this.columnDefinitions = [
       {
@@ -71,7 +56,8 @@ export default class Example38 {
 
     this.gridOptions = {
       autoResize: {
-        container: '.demo-container',
+        container: '#demo-container',
+        rightPadding: 10,
       },
       enableCellNavigation: true,
       autoEdit: true,
@@ -79,7 +65,7 @@ export default class Example38 {
       darkMode: this._darkMode,
       editable: true,
       headerRowHeight: 35,
-      rowHeight: 30,
+      // rowHeight: 30,
       editorNavigateOnArrows: true, // enable editor navigation using arrow keys
 
       // enable new hybrid selection model (rows & cells)
@@ -99,8 +85,7 @@ export default class Example38 {
     };
   }
 
-  copyDraggedCellRange(event: CustomEvent<OnDragReplaceCellsEventArgs>) {
-    const args = event.detail?.args;
+  copyDraggedCellRange(args: OnDragReplaceCellsEventArgs) {
     const verticalTargetRange = SlickSelectionUtils.verticalTargetRange(args.prevSelectedRange, args.selectedRange);
     const horizontalTargetRange = SlickSelectionUtils.horizontalTargetRange(args.prevSelectedRange, args.selectedRange);
     const cornerTargetRange = SlickSelectionUtils.cornerTargetRange(args.prevSelectedRange, args.selectedRange);
@@ -131,17 +116,23 @@ export default class Example38 {
   toggleDarkMode() {
     this._darkMode = !this._darkMode;
     this.toggleBodyBackground();
-    this.sgb.gridOptions = { ...this.sgb.gridOptions, darkMode: this._darkMode };
-    this.sgb.slickGrid?.setOptions({ darkMode: this._darkMode });
+    this.aureliaGrid.slickGrid?.setOptions({ darkMode: this._darkMode });
   }
 
   toggleBodyBackground() {
     if (this._darkMode) {
-      document.body.setAttribute('data-theme', 'dark');
-      document.querySelector('.demo-container')?.classList.add('dark-mode');
+      document.querySelector<HTMLDivElement>('.panel-wm-content')!.classList.add('dark-mode');
+      document.querySelector<HTMLDivElement>('#demo-container')!.dataset.bsTheme = 'dark';
     } else {
-      document.body.setAttribute('data-theme', 'light');
-      document.querySelector('.demo-container')?.classList.remove('dark-mode');
+      document.querySelector('.panel-wm-content')!.classList.remove('dark-mode');
+      document.querySelector<HTMLDivElement>('#demo-container')!.dataset.bsTheme = 'light';
     }
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    this.aureliaGrid.resizerService.resizeGrid(0);
   }
 }

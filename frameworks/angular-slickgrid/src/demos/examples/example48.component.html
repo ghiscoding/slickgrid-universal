@@ -1,0 +1,67 @@
+<div class="container-fluid">
+  <h2>
+    Example 48: Hybrid Selection Model
+    <span class="float-end">
+      <a
+        style="font-size: 18px"
+        target="_blank"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example48.component.ts"
+      >
+        <span class="mdi mdi-link-variant"></span> code
+      </a>
+    </span>
+    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" (click)="toggleSubTitle()">
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+  </h2>
+
+  <div class="subtitle">
+    <code>SlickHybridSelectionModel</code> This Selection Model is an hybrid approach that uses a combination of the row or cell selections
+    depending on certain conditions.
+    <ul>
+      <li>
+        1. clicking on the first column (<code>id</code>) will use <code>RowSelectionModel</code> because of our configuration of
+        <code>rowSelectColumnIds: ['id']</code> as the columns that will trigger row selection.
+      </li>
+      <li>2. clicking on the any other columns will use <code>CellSelectionModel</code> by default</li>
+    </ul>
+  </div>
+
+  <h3>
+    Grid 1
+    <small class="subtitle ms-3 text-italic">
+      <label>Range Selection</label>
+      <span id="selectionRange1"></span>
+    </small>
+  </h3>
+  <div class="grid-container1">
+    <angular-slickgrid
+      gridId="grid48-1"
+      [columns]="columnDefinitions1"
+      [options]="gridOptions1"
+      [dataset]="dataset1"
+      (onAngularGridCreated)="angularGridReady1($event.detail)"
+    >
+    </angular-slickgrid>
+  </div>
+
+  <hr />
+
+  <h3>
+    Grid 2
+    <small class="subtitle ms-3 text-italic">
+      <label>Range Selection</label>
+      <span id="selectionRange2"></span>
+    </small>
+  </h3>
+  <div class="grid-container">
+    <angular-slickgrid
+      gridId="grid48-2"
+      [columns]="columnDefinitions2"
+      [options]="gridOptions2"
+      [dataset]="dataset2"
+      (onAngularGridCreated)="angularGridReady2($event.detail)"
+    >
+    </angular-slickgrid>
+  </div>
+</div>
