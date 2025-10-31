@@ -242,6 +242,22 @@ describe('Row Selection Model Plugin', () => {
     expect(setSelectedRowsSpy).toHaveBeenCalledWith([0, 1]);
   });
 
+  it('should not call "setSelectedRows" when cell/row are not defined', () => {
+    vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValueOnce([{ id: 'firstName', field: 'firstName', name: 'First Name' }]);
+    vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(mockColumns);
+
+    plugin = new SlickHybridSelectionModel({ rowSelectColumnIds: ['firstName'], selectActiveRow: false });
+    plugin.init(gridStub);
+
+    vi.spyOn(plugin, 'getSelectedRows').mockReturnValueOnce([0, 1]);
+    const setSelectedRowsSpy = vi.spyOn(plugin, 'setSelectedRows');
+    const mouseEvent = addVanillaEventPropagation(new Event('mouseenter'));
+    gridStub.onActiveCellChanged.notify({ cell: null, row: null, grid: gridStub }, mouseEvent, gridStub);
+    plugin.refreshSelections();
+
+    expect(setSelectedRowsSpy).not.toHaveBeenCalled();
+  });
+
   it('should call "setSelectedRanges" when "setSelectedRows" is called', () => {
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
 
