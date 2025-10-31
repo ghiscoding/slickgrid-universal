@@ -113,7 +113,7 @@ const Example47DetailView: React.FC<RowDetailViewProps<Item, any>> = forwardRef(
           Delete Row
         </button>
         <button
-          className="btn btn-outline-secondary btn-sm"
+          className="btn btn-outline-secondary btn-sm btn-icon"
           onClick={function () {
             showNotification(props.model);
           }}

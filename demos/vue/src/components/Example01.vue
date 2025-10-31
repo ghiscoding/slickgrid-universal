@@ -26,7 +26,6 @@ onBeforeMount(() => {
   defineGrids();
   // mock some data (different in each dataset)
   dataset1.value = mockData(NB_ITEMS);
-  dataset1.value = mockData(NB_ITEMS);
   dataset2.value = mockData(NB_ITEMS);
 });
 

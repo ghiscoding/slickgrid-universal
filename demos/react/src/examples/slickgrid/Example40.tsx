@@ -278,7 +278,11 @@ const Example40: React.FC = () => {
             >
               Set Filters Dynamically
             </button>
-            <button className="btn btn-outline-secondary btn-sm" data-test="set-dynamic-sorting" onClick={() => setSortingDynamically()}>
+            <button
+              className="btn btn-outline-secondary btn-sm btn-icon"
+              data-test="set-dynamic-sorting"
+              onClick={() => setSortingDynamically()}
+            >
               Set Sorting Dynamically
             </button>
             <button className="btn btn-outline-secondary btn-sm mx-1" data-test="group-by-duration" onClick={() => groupByDuration()}>
@@ -291,7 +295,7 @@ const Example40: React.FC = () => {
             <button className="btn btn-outline-secondary btn-sm mx-1" data-test="onsort-on" onClick={() => onSortReset(true)}>
               ON
             </button>
-            <button className="btn btn-outline-secondary btn-sm" data-test="onsort-off" onClick={() => onSortReset(false)}>
+            <button className="btn btn-outline-secondary btn-sm btn-icon" data-test="onsort-off" onClick={() => onSortReset(false)}>
               OFF
             </button>
           </div>

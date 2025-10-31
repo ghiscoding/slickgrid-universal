@@ -20,6 +20,9 @@ export class Example1Component implements OnDestroy, OnInit {
 
   ngOnInit(): void {
     this.prepareGrid();
+    // mock some data (different in each dataset)
+    this.dataset1 = this.mockData(NB_ITEMS);
+    this.dataset2 = this.mockData(NB_ITEMS);
   }
 
   ngOnDestroy() {
@@ -67,10 +70,6 @@ export class Example1Component implements OnDestroy, OnInit {
         },
       },
     };
-
-    // mock some data (different in each dataset)
-    this.dataset1 = this.mockData(NB_ITEMS);
-    this.dataset2 = this.mockData(NB_ITEMS);
   }
 
   mockData(count: number) {

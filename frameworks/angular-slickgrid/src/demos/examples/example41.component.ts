@@ -50,7 +50,7 @@ export class Example41Component implements OnInit {
         field: 'name',
         width: 300,
         cssClass: 'cell-title',
-        editor: { model: Editors.Text },
+        editor: { model: Editors.text },
         validator: this.requiredFieldValidator,
       },
       {
