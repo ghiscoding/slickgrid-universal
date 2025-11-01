@@ -801,7 +801,7 @@ describe('ExtensionService', () => {
       service.hideColumn(columnsMock[1]);
 
       expect(sharedService.visibleColumns).toEqual(updatedColumnsMock);
-      expect(setColumnsSpy).toHaveBeenCalledWith(updatedColumnsMock);
+      expect(setColumnsSpy).toHaveBeenCalledWith(updatedColumnsMock, true);
     });
 
     it('should call the refreshBackendDataset method on the GridMenu Extension when service with same method name is called', () => {
