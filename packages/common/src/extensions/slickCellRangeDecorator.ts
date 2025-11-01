@@ -36,7 +36,6 @@ export class SlickCellRangeDecorator {
   ) {
     this._options = deepMerge(this._defaults, options);
     this._selectionCss = options?.selectionCss || ({} as CSSStyleDeclaration);
-    console.log('SlickCellRangeDecorator options', this._options);
   }
 
   get addonOptions(): CellRangeDecoratorOption {
