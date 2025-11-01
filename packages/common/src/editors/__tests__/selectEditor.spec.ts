@@ -793,7 +793,7 @@ describe('SelectEditor', () => {
       it('should return False when field is required and field is empty', () => {
         mockColumn.editor!.required = true;
         editor = new SelectEditor(editorArguments, true);
-        const validation = editor.validate(null as any, '');
+        const validation = editor.validate(null as any, { inputValue: '' });
 
         expect(validation).toEqual({ valid: false, msg: 'Field is required' });
       });
@@ -801,7 +801,7 @@ describe('SelectEditor', () => {
       it('should return True when field is required and input is a valid input value', () => {
         mockColumn.editor!.required = true;
         editor = new SelectEditor(editorArguments, true);
-        const validation = editor.validate(null as any, 'text');
+        const validation = editor.validate(null as any, { inputValue: 'text' });
 
         expect(validation).toEqual({ valid: true, msg: null });
       });

@@ -237,6 +237,31 @@ describe('GridMenuControl', () => {
         expect(setSelectionSpy).not.toHaveBeenCalled();
       });
 
+      it('should query an input checkbox change event and expect it to cancel the uncheck column when "validateSetColumnFreeze()" returns false and Hybrid Selection is enabled', () => {
+        const mockRowSelection = [0, 3, 5];
+        vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(false);
+        vi.spyOn(control.eventHandler, 'subscribe');
+        vi.spyOn(gridStub, 'getColumnIndex')
+          .mockReturnValue(undefined as any)
+          .mockReturnValue(1);
+        vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue(mockRowSelection);
+        const setColumnSpy = vi.spyOn(gridStub, 'setColumns');
+        const setSelectionSpy = vi.spyOn(gridStub, 'setSelectedRows');
+
+        gridOptionsMock.enableHybridSelection = true;
+        control.columns = columnsMock;
+        control.init();
+        control.openGridMenu();
+        const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLDivElement;
+        buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+        const inputElm = control.menuElement!.querySelector('input[type="checkbox"]') as HTMLInputElement;
+        inputElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+
+        expect(control.menuElement!.style.display).toBe('block');
+        expect(setColumnSpy).not.toHaveBeenCalled();
+        expect(setSelectionSpy).not.toHaveBeenCalled();
+      });
+
       it('should query an input checkbox change event and expect "setSelectedRows" method to be called using Row Selection when enabled', () => {
         const mockRowSelection = [0, 3, 5];
         vi.spyOn(control.eventHandler, 'subscribe');
@@ -271,6 +296,38 @@ describe('GridMenuControl', () => {
         vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue(mockRowSelection);
 
         gridOptionsMock.enableRowSelection = true;
+        gridOptionsMock.showHeaderRow = true;
+        gridOptionsMock.gridMenu!.menuWidth = 16;
+        gridOptionsMock.gridMenu!.resizeOnShowHeaderRow = true;
+        control.columns = columnsMock;
+        control.init();
+        const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLDivElement;
+        buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+        const headerRowElm = document.querySelector('.slick-headerrow') as HTMLDivElement;
+
+        expect(control.menuElement!.style.display).toBe('block');
+        expect(headerRowElm.style.width).toBe(`calc(100% - 16px)`);
+
+        // click inside menu shouldn't close it
+        control.menuElement!.dispatchEvent(new Event('mousedown', { bubbles: true }));
+        expect(control.menuElement).toBeTruthy();
+
+        // click anywhere else should close it
+        const bodyElm = document.body;
+        bodyElm.dispatchEvent(new Event('mousedown', { bubbles: true }));
+
+        expect(control.menuElement).toBeFalsy();
+      });
+
+      it('should open the Grid Menu and then expect it to hide when clicking anywhere in the DOM body with Hybrid Selection enabled', () => {
+        const mockRowSelection = [0, 3, 5];
+        vi.spyOn(control.eventHandler, 'subscribe');
+        vi.spyOn(gridStub, 'getColumnIndex')
+          .mockReturnValue(undefined as any)
+          .mockReturnValue(1);
+        vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue(mockRowSelection);
+
+        gridOptionsMock.enableHybridSelection = true;
         gridOptionsMock.showHeaderRow = true;
         gridOptionsMock.gridMenu!.menuWidth = 16;
         gridOptionsMock.gridMenu!.resizeOnShowHeaderRow = true;

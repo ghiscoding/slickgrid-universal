@@ -15,6 +15,7 @@
     --slick-header-menu-display: inline-block;
     --slick-compound-filter-operator-select-border: 1px solid #00c840;
     --slick-row-mouse-hover-color: #ebfaef;
+    --slick-cell-selected-color: #d4f6d7;
     --slick-row-selected-color: #d4f6d7;
     --slick-row-mouse-hover-box-shadow: none;
     --slick-cell-odd-background-color: #f5f5f5;
@@ -175,7 +176,8 @@
       --slick-pagination-icon-color: #66bb6a;
       --slick-row-mouse-hover-box-shadow: none;
       --slick-row-mouse-hover-color: #505050;
-      --slick-row-selected-color: #474747;
+      --slick-cell-selected-color: #474a45;
+      --slick-row-selected-color: #474a45;
       --slick-menu-color: #ededed;
       --slick-menu-bg-color: #212121;
       --slick-menu-border: 1px solid #505050;

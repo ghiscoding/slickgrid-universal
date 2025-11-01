@@ -2,10 +2,10 @@ import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement } from '@slickgrid-universal/utils';
 import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest';
 import { AutocompleterEditor, CheckboxEditor, InputEditor, LongTextEditor } from '../../editors/index.js';
-import { SlickCellSelectionModel, SlickRowSelectionModel } from '../../extensions/index.js';
+import { SlickCellSelectionModel, SlickHybridSelectionModel, SlickRowSelectionModel } from '../../extensions/index.js';
 import { copyCellToClipboard } from '../../formatters/formatterUtilities.js';
 import type { Column, CustomDataView, EditCommand, Editor, FormatterResultWithHtml, FormatterResultWithText, GridOption } from '../../interfaces/index.js';
-import { SlickEventData, SlickGlobalEditorLock } from '../slickCore.js';
+import { SlickEventData, SlickGlobalEditorLock, SlickRange } from '../slickCore.js';
 import { SlickDataView } from '../slickDataview.js';
 import { SlickGrid } from '../slickGrid.js';
 
@@ -545,7 +545,35 @@ describe('SlickGrid core file', () => {
         expect(() => grid.setSelectedRows([0, 1])).toThrow('SlickGrid Selection model is not set');
       });
 
-      it('should call setSelectedRanges() when editor lock isActive() is define and is returning false', () => {
+      it('should call SlickHybridSelectionModel.setSelectedRanges() when editor lock isActive() is define and is returning false', () => {
+        const hybridSelectionModel = new SlickHybridSelectionModel();
+        hybridSelectionModel.activeSelectionIsRow = true;
+        const setRangeSpy = vi.spyOn(hybridSelectionModel, 'setSelectedRanges');
+
+        grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+        grid.setSelectionModel(hybridSelectionModel);
+        vi.spyOn(grid.getEditorLock(), 'isActive').mockReturnValueOnce(false);
+
+        grid.setSelectedRows([1]);
+        grid.invalidateRow(0);
+        grid.invalidateRow(1);
+        grid.render();
+        grid.setSelectedRows([0, 1]);
+        const firstRowItemCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l0.r0') as HTMLDivElement;
+        const secondRowItemCell = container.querySelector('.slick-row:nth-child(2) .slick-cell.l0.r0') as HTMLDivElement;
+
+        expect(setRangeSpy).toHaveBeenCalledWith(
+          [
+            { fromCell: 0, fromRow: 0, toCell: 0, toRow: 0 },
+            { fromCell: 0, fromRow: 1, toCell: 0, toRow: 1 },
+          ],
+          'SlickGrid.setSelectedRows'
+        );
+        expect(firstRowItemCell.classList.contains('selected')).toBeTruthy();
+        expect(secondRowItemCell.classList.contains('selected')).toBeTruthy();
+      });
+
+      it('should call SlickRowSelectionModel.setSelectedRanges() when editor lock isActive() is define and is returning false', () => {
         const rowSelectionModel = new SlickRowSelectionModel();
         const setRangeSpy = vi.spyOn(rowSelectionModel, 'setSelectedRanges');
 
@@ -572,7 +600,108 @@ describe('SlickGrid core file', () => {
         expect(secondRowItemCell.classList.contains('selected')).toBeTruthy();
       });
 
-      it('should not call setSelectedRanges() when editor lock isActive() is define and is returning true', () => {
+      it('should call SlickHybridSelectionModel.onDragReplaceCells() when selection mode is REP and range is expanding', () => {
+        const hybridSelectionModel = new SlickHybridSelectionModel();
+        hybridSelectionModel.activeSelectionIsRow = true;
+        const setRangeSpy = vi.spyOn(hybridSelectionModel, 'setSelectedRanges');
+
+        grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+        grid.setSelectionModel(hybridSelectionModel);
+        const invalidateSpy = vi.spyOn(grid, 'invalidate');
+        const onDragReplaceSpy = vi.spyOn(grid.onDragReplaceCells, 'notify');
+
+        vi.spyOn(grid.getEditorLock(), 'isActive').mockReturnValueOnce(false);
+
+        grid.render();
+        grid.setSelectedRows([0]);
+        const firstRowItemCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l0.r0') as HTMLDivElement;
+
+        expect(setRangeSpy).toHaveBeenCalledWith([{ fromCell: 0, fromRow: 0, toCell: 0, toRow: 0 }], 'SlickGrid.setSelectedRows');
+        expect(firstRowItemCell.classList.contains('selected')).toBeTruthy();
+
+        const slickRange = new SlickRange(1, 2, 3, 4);
+        const prevSelectedRange = new SlickRange(0, 0, 0, 0);
+        const selectedRange = new SlickRange(1, 2, 3, 4);
+        hybridSelectionModel.setSelectedRanges([slickRange], 'SlickHybridSelectionModel.setSelectedRanges', 'REP');
+        expect(onDragReplaceSpy).toHaveBeenCalledWith({ grid, prevSelectedRange, selectedRange }, expect.anything(), grid);
+        expect(invalidateSpy).toHaveBeenCalled();
+      });
+
+      it('should call SlickRowSelectionModel.onDragReplaceCells() when selection mode is REP and range is expanding', () => {
+        const rowSelectionModel = new SlickRowSelectionModel();
+        const setRangeSpy = vi.spyOn(rowSelectionModel, 'setSelectedRanges');
+
+        grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+        grid.setSelectionModel(rowSelectionModel);
+        const invalidateSpy = vi.spyOn(grid, 'invalidate');
+        const onDragReplaceSpy = vi.spyOn(grid.onDragReplaceCells, 'notify');
+
+        vi.spyOn(grid.getEditorLock(), 'isActive').mockReturnValueOnce(false);
+
+        grid.render();
+        grid.setSelectedRows([0]);
+        const firstRowItemCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l0.r0') as HTMLDivElement;
+
+        expect(setRangeSpy).toHaveBeenCalledWith([{ fromCell: 0, fromRow: 0, toCell: 0, toRow: 0 }], 'SlickGrid.setSelectedRows');
+        expect(firstRowItemCell.classList.contains('selected')).toBeTruthy();
+
+        const slickRange = new SlickRange(1, 2, 3, 4);
+        const prevSelectedRange = new SlickRange(0, 0, 0, 0);
+        const selectedRange = new SlickRange(1, 2, 3, 4);
+        rowSelectionModel.setSelectedRanges([slickRange], 'SlickRowSelectionModel.setSelectedRanges', 'REP');
+        expect(onDragReplaceSpy).toHaveBeenCalledWith({ grid, prevSelectedRange, selectedRange }, expect.anything(), grid);
+        expect(invalidateSpy).toHaveBeenCalled();
+      });
+
+      it('should call onSelectedRowsChanged() with Hybrid Selection Mode and addDragHandle', () => {
+        const rowSelectionModel = new SlickHybridSelectionModel();
+        const setRangeSpy = vi.spyOn(rowSelectionModel, 'setSelectedRanges');
+
+        grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+        grid.setSelectionModel(rowSelectionModel);
+        const onSelectedRowChangeSpy = vi.spyOn(grid.onSelectedRowsChanged, 'notify');
+
+        vi.spyOn(grid.getEditorLock(), 'isActive').mockReturnValueOnce(false);
+
+        grid.render();
+        grid.setSelectedRows([0]);
+        const firstRowItemCell = container.querySelector('.slick-row:nth-child(1) .slick-cell.l0.r0') as HTMLDivElement;
+
+        expect(setRangeSpy).toHaveBeenCalledWith([{ fromCell: 0, fromRow: 0, toCell: 0, toRow: 0 }], 'SlickGrid.setSelectedRows');
+        expect(firstRowItemCell.classList.contains('selected')).toBeTruthy();
+
+        const slickRange = new SlickRange(1, 2, 3, 4);
+        rowSelectionModel.setSelectedRanges([slickRange], 'SlickRowSelectionModel.setSelectedRanges', 'REP');
+        expect(onSelectedRowChangeSpy).toHaveBeenCalledWith(
+          {
+            grid,
+            caller: 'SlickGrid.setSelectedRows',
+            changedSelectedRows: [0],
+            changedUnselectedRows: [],
+            previousSelectedRows: [],
+            rows: [0],
+          },
+          expect.anything(),
+          grid
+        );
+      });
+
+      it('should not call SlickHybridSelectionModel.setSelectedRanges() when editor lock isActive() is define and is returning true', () => {
+        const hybridSelectionModel = new SlickHybridSelectionModel();
+        hybridSelectionModel.activeSelectionIsRow = true;
+        const setRangeSpy = vi.spyOn(hybridSelectionModel, 'setSelectedRanges');
+
+        grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+        grid.setSelectionModel(hybridSelectionModel);
+        vi.spyOn(grid.getEditorLock(), 'isActive').mockReturnValueOnce(true);
+
+        grid.setSelectedRows([0, 1]);
+        grid.render();
+
+        expect(setRangeSpy).not.toHaveBeenCalled();
+      });
+
+      it('should not call SlickRowSelectionModel.setSelectedRanges() when editor lock isActive() is define and is returning true', () => {
         const rowSelectionModel = new SlickRowSelectionModel();
         const setRangeSpy = vi.spyOn(rowSelectionModel, 'setSelectedRanges');
 
@@ -586,7 +715,28 @@ describe('SlickGrid core file', () => {
         expect(setRangeSpy).not.toHaveBeenCalled();
       });
 
-      it('should not call setSelectedRanges() when editor lock is undefined', () => {
+      it('should not call SlickHybridSelectionModel.setSelectedRanges() when editor lock is undefined', () => {
+        const hybridSelectionModel = new SlickHybridSelectionModel();
+        hybridSelectionModel.activeSelectionIsRow = true;
+        const setRangeSpy = vi.spyOn(hybridSelectionModel, 'setSelectedRanges');
+        grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, editorLock: undefined });
+        grid.setSelectionModel(hybridSelectionModel);
+
+        vi.spyOn(grid, 'getEditorLock').mockReturnValue(undefined as any);
+        grid.setSelectedRows([0, 1]);
+        grid.render();
+
+        expect(grid.getEditorLock()).toBeUndefined();
+        expect(setRangeSpy).not.toHaveBeenCalledWith(
+          [
+            { fromCell: 0, fromRow: 0, toCell: 0, toRow: 0 },
+            { fromCell: 0, fromRow: 1, toCell: 0, toRow: 1 },
+          ],
+          'SlickGrid.setSelectedRows'
+        );
+      });
+
+      it('should not call SlickRowSelectionModel.setSelectedRanges() when editor lock is undefined', () => {
         const rowSelectionModel = new SlickRowSelectionModel();
         const setRangeSpy = vi.spyOn(rowSelectionModel, 'setSelectedRanges');
         grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, editorLock: undefined });
@@ -1661,7 +1811,28 @@ describe('SlickGrid core file', () => {
   describe('plugins', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
 
-    it('should be able to register a plugin', () => {
+    it('should be able to register SlickHybridSelectionModel plugin', () => {
+      const hybridSelectionModel = new SlickHybridSelectionModel();
+      hybridSelectionModel.activeSelectionIsRow = true;
+      grid = new SlickGrid<any, Column>(container, [], columns, defaultOptions);
+      grid.setSelectionModel(hybridSelectionModel);
+      hybridSelectionModel.init(grid);
+
+      grid.registerPlugin(hybridSelectionModel);
+      let loadedPlugin = grid.getPluginByName<SlickHybridSelectionModel>('HybridSelectionModel');
+      const selectionModel = grid.getSelectionModel();
+      expect(loadedPlugin).toBeTruthy();
+      expect(selectionModel).toBeTruthy();
+
+      grid.unregisterPlugin(loadedPlugin as SlickHybridSelectionModel);
+      loadedPlugin = grid.getPluginByName<SlickHybridSelectionModel>('HybridSelectionModel');
+      expect(loadedPlugin).toBeFalsy();
+
+      const p = grid.getPluginByName('HybridSelectionModel');
+      expect(p).toBeFalsy();
+    });
+
+    it('should be able to register SlickRowSelectionModel plugin', () => {
       const rowSelectionModel = new SlickRowSelectionModel();
       grid = new SlickGrid<any, Column>(container, [], columns, defaultOptions);
       grid.setSelectionModel(rowSelectionModel);
@@ -1681,7 +1852,20 @@ describe('SlickGrid core file', () => {
       expect(p).toBeFalsy();
     });
 
-    it('should clear previous selection model when calling setSelectionModel() with a different model', () => {
+    it('should clear previous selection model when calling setSelectionModel(SlickHybridSelectionModel) with a different model', () => {
+      const hybridSelectionModel = new SlickHybridSelectionModel();
+      hybridSelectionModel.activeSelectionIsRow = true;
+      const rowSelectSpy = vi.spyOn(hybridSelectionModel, 'destroy');
+      const cellSelectionModel = new SlickCellSelectionModel();
+
+      grid = new SlickGrid<any, Column>(container, [], columns, defaultOptions);
+      grid.setSelectionModel(hybridSelectionModel);
+      grid.setSelectionModel(cellSelectionModel);
+
+      expect(rowSelectSpy).toHaveBeenCalled();
+    });
+
+    it('should clear previous selection model when calling setSelectionModel(SlickRowSelectionModel) with a different model', () => {
       const rowSelectionModel = new SlickRowSelectionModel();
       const rowSelectSpy = vi.spyOn(rowSelectionModel, 'destroy');
       const cellSelectionModel = new SlickCellSelectionModel();
@@ -3109,6 +3293,41 @@ describe('SlickGrid core file', () => {
       expect(onDragEndSpy).toHaveBeenCalled();
     });
 
+    it('should not execute onDragStart when cell has an Editor but commitCurrentEdit() returns false', () => {
+      columns[1].editorClass = InputEditor;
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, editable: true });
+      vi.spyOn(grid.getEditorLock(), 'commitCurrentEdit').mockReturnValueOnce(false);
+
+      const cMouseDownEvent = new CustomEvent('mousedown');
+      const sedDragInit = new SlickEventData();
+      const sedDragStart = new SlickEventData();
+      sedDragInit.addReturnValue(true);
+      sedDragStart.addReturnValue(false);
+      sedDragInit.stopImmediatePropagation();
+      sedDragStart.stopImmediatePropagation();
+      const onDragInitSpy = vi.spyOn(grid.onDragInit, 'notify').mockReturnValue(sedDragInit);
+      const onDragSpy = vi.spyOn(grid.onDrag, 'notify');
+      const onDragEndSpy = vi.spyOn(grid.onDragEnd, 'notify');
+      const slickCellElm = container.querySelector('.slick-cell.l1.r1') as HTMLDivElement;
+      slickCellElm.classList.add('dnd', 'cell-reorder');
+
+      const bodyMouseMoveEvent1 = new CustomEvent('mousemove');
+      const bodyMouseUpEvent = new CustomEvent('mouseup');
+      Object.defineProperty(cMouseDownEvent, 'target', { writable: true, value: slickCellElm });
+      Object.defineProperty(bodyMouseMoveEvent1, 'target', { writable: true, value: slickCellElm });
+
+      grid.setActiveCell(0, 1);
+      grid.editActiveCell(InputEditor as any, true);
+      container.dispatchEvent(cMouseDownEvent);
+
+      document.body.dispatchEvent(bodyMouseMoveEvent1);
+      window.dispatchEvent(bodyMouseUpEvent);
+
+      expect(onDragInitSpy).toHaveBeenCalled();
+      expect(onDragSpy).toHaveBeenCalled();
+      expect(onDragEndSpy).toHaveBeenCalled();
+    });
+
     it('should drag from a cell and execute all onDrag events when a slick-cell is dragged and its event is stopped', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
 
@@ -3889,7 +4108,10 @@ describe('SlickGrid core file', () => {
 
     it('should not trigger onBeforeSort when clicking on slick-header-columns div', () => {
       grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, multiColumnSort: false });
-      container.querySelectorAll<HTMLDivElement>('.slick-header-columns')?.forEach((elm) => elm.classList.add('slick-header-column-sorted'));
+      const headerColumns = container.querySelectorAll<HTMLDivElement>('.slick-header-columns');
+      headerColumns?.forEach((elm) => {
+        elm.querySelector('.slick-header-column')?.classList.add('slick-header-column-sorted');
+      });
       grid.setSortColumns([{ columnId: 'firstName', sortAsc: false }]);
       const onBeforeSortSpy = vi.spyOn(grid.onBeforeSort, 'notify');
 

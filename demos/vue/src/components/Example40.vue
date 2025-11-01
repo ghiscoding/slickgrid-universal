@@ -265,7 +265,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <button class="btn btn-outline-secondary btn-sm mx-1" data-test="set-dynamic-filter" @click="setFiltersDynamically()">
         Set Filters Dynamically
       </button>
-      <button class="btn btn-outline-secondary btn-sm" data-test="set-dynamic-sorting" @click="setSortingDynamically()">
+      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="set-dynamic-sorting" @click="setSortingDynamically()">
         Set Sorting Dynamically
       </button>
       <button class="btn btn-outline-secondary btn-sm mx-1" data-test="group-by-duration" @click="groupByDuration()">
@@ -274,7 +274,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
       <label class="ml-4">Reset Dataset <code>onSort</code>:</label>
       <button class="btn btn-outline-secondary btn-sm mx-1" data-test="onsort-on" @click="onSortReset(true)">ON</button>
-      <button class="btn btn-outline-secondary btn-sm" data-test="onsort-off" @click="onSortReset(false)">OFF</button>
+      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="onsort-off" @click="onSortReset(false)">OFF</button>
     </div>
   </div>
 

@@ -101,7 +101,7 @@ describe('SlickRowMoveManager Plugin', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
-    plugin?.dispose();
+    plugin?.destroy();
     mockGridOptions.frozenColumn = -1;
     mockGridOptions.frozenRow = -1;
     mockGridOptions.frozenBottom = false;

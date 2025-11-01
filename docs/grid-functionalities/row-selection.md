@@ -8,6 +8,7 @@
 - [Change Row Selections](#change-row-selections)
 - Troubleshooting
   - [Adding a Column dynamically is removing the Row Selection, why is that?](#adding-a-column-dynamically-is-removing-the-row-selection-why-is-that)
+- [Hybrid Selection Model (cell+row selection)](#hybrid-selection-model-and-drag-fill)
 
 ### Description
 For row selection, you can simply play with couple of grid options (see below) and subscribe to `onSelectedRowsChanged` (a SlickGrid Event that is, it's not an Observable). However please note that `onSelectedRowsChanged` is a function available on the `Grid` object and you will need bind to `(gridChanged)` to get the object when grid is ready. There are 2 types of row selection(s) which you can do.
@@ -31,7 +32,7 @@ export class Example1 {
     this.dataset = this.loadData(500);
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid3`);
 
-    gridContainerElm.addEventListener('onSelectedRows', this.handleOnClick.bind(this));
+    gridContainerElm.addEventListener('onselectedrows', this.handleOnClick.bind(this));
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
 
@@ -92,7 +93,7 @@ export class Example1 {
     this.dataset = this.loadData(500);
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid3`);
 
-    gridContainerElm.addEventListener('onSelectedRows', this.handleOnClick.bind(this));
+    gridContainerElm.addEventListener('onselectedrows', this.handleOnClick.bind(this));
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
 
@@ -258,6 +259,78 @@ export class Example1 {
 
     // OR providing an empty array will clear the row selection
     // this.sgb.slickGrid.setSelectedRows([]);
+  }
+}
+```
+
+### Hybrid Selection Model
+
+Starting with v9.10.0, you can now use the new Hybrid Selection Model, this new model will allow you to do Cell Selection & Row Selection in the same grid. This wasn't previously doable before that version because SlickGrid only ever allows 1 selection model to be loaded at once and so we had to load either `SlickCellSelectionModel` or `SlickRowSelectionModel` but never both of them at the same time. The new Hybrid Selection Model is merging both of these plugins in a single plugin allowing us to do both type of selections.
+
+> [!NOTE]
+> You can use `enableHybridSelection: true` grid option to enable the new Hybrid Model, this new model will eventually replace both cell/row selection model in the future since there's no need to keep all these models when only 1 is more than enough
+
+For example, we could use the Excel Copy Buffer (Cell Selection) and use `rowSelectColumnIds` (Row Selection)
+
+```ts
+this.gridOptions = {
+  // enable new hybrid selection model (rows & cells)
+  enableHybridSelection: true,
+  rowSelectionOptions: {
+    selectActiveRow: true,
+    rowSelectColumnIds: ['selector'],
+  },
+
+  // when using the ExcelCopyBuffer, you can see what the selection range is
+  enableExcelCopyBuffer: true,
+  excelCopyBufferOptions: {
+    copyActiveEditorCell: true,
+    removeDoubleQuotesOnPaste: true,
+    replaceNewlinesWith: ' ',
+  },
+};
+```
+
+#### Hybrid Selection Model and Drag-Fill
+
+You can also `onDragReplaceCells` event to drag and fill cell values to the extended cell selection.
+
+#### ViewModel
+
+```ts
+export class Example1 {
+  attached() {
+    this.initializeGrid();
+    this.dataset = this.loadData(500);
+    const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid3`);
+
+    gridContainerElm.addEventListener('ondragreplacecells', this.handleOnClick.bind(this));
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+  }
+
+  initializeGrid() {
+    this.gridOptions = {
+      // enable new hybrid selection model (rows & cells)
+      enableHybridSelection: true,
+      // ...
+    };
+  }
+
+  /** Copy the dragged cell values to other cells that are part of the extended drag-fill selection */
+  copyDraggedCellRange(args: OnDragReplaceCellsEventArgs) {
+    const verticalTargetRange = SlickSelectionUtils.verticalTargetRange(args.prevSelectedRange, args.selectedRange);
+    const horizontalTargetRange = SlickSelectionUtils.horizontalTargetRange(args.prevSelectedRange, args.selectedRange);
+    const cornerTargetRange = SlickSelectionUtils.cornerTargetRange(args.prevSelectedRange, args.selectedRange);
+
+    if (verticalTargetRange) {
+      SlickSelectionUtils.copyCellsToTargetRange(args.prevSelectedRange, verticalTargetRange, args.grid);
+    }
+    if (horizontalTargetRange) {
+      SlickSelectionUtils.copyCellsToTargetRange(args.prevSelectedRange, horizontalTargetRange, args.grid);
+    }
+    if (cornerTargetRange) {
+      SlickSelectionUtils.copyCellsToTargetRange(args.prevSelectedRange, cornerTargetRange, args.grid);
+    }
   }
 }
 ```

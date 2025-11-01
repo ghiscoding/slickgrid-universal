@@ -660,7 +660,10 @@ export class SlickVanillaGridBundle<TData = any> {
     }
 
     if ((this.dataView?.getLength() ?? 0) > 0) {
-      if (!this._isDatasetInitialized && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection)) {
+      if (
+        !this._isDatasetInitialized &&
+        (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection || this._gridOptions.enableHybridSelection)
+      ) {
         this.loadRowSelectionPresetWhenExists();
       }
       this.loadFilterPresetsWhenDatasetInitialized();
@@ -1095,7 +1098,7 @@ export class SlickVanillaGridBundle<TData = any> {
       this.slickGrid &&
       !isSyncGridSelectionEnabled &&
       this._gridOptions?.backendServiceApi &&
-      (this.gridOptions.enableRowSelection || this.gridOptions.enableCheckboxSelector)
+      (this.gridOptions.enableRowSelection || this.gridOptions.enableHybridSelection || this.gridOptions.enableCheckboxSelector)
     ) {
       this.slickGrid.setSelectedRows([]);
     }
@@ -1463,7 +1466,9 @@ export class SlickVanillaGridBundle<TData = any> {
     // if user entered some Row Selections "presets"
     const presets = this.gridOptions?.presets;
     const selectionModel = this.slickGrid?.getSelectionModel();
-    const enableRowSelection = this.gridOptions && (this.gridOptions.enableCheckboxSelector || this.gridOptions.enableRowSelection);
+    const enableRowSelection =
+      this.gridOptions &&
+      (this.gridOptions.enableCheckboxSelector || this.gridOptions.enableRowSelection || this.gridOptions.enableHybridSelection);
     if (
       this.slickGrid &&
       this.dataView &&

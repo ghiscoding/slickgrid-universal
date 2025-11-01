@@ -1,0 +1,6 @@
+/** override slick-cell to make it look like Excel sheet */
+.grid37-1 {
+  .slick-row .slick-cell:first-child {
+    border-right: 1px solid #d4d4d4;
+  }
+}

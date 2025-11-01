@@ -3,11 +3,13 @@ import {
   addToArrayWhenNotExists,
   createDomElement,
   SlickEventData,
+  SlickHybridSelectionModel,
   SlickRowSelectionModel,
   unsubscribeAll,
   type EventSubscription,
   type OnBeforeRowDetailToggleArgs,
   type OnRowBackOrOutOfViewportRangeArgs,
+  type SelectionModel,
   type SlickGrid,
 } from '@slickgrid-universal/common';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
@@ -76,15 +78,15 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
 
   init(grid: SlickGrid) {
     this._grid = grid;
-    super.init(this._grid);
-    this.register(grid?.getSelectionModel() as SlickRowSelectionModel);
+    super.init(grid);
+    this.register(grid.getSelectionModel());
   }
 
   /**
    * Create the plugin before the Grid creation, else it will behave oddly.
    * Mostly because the column definitions might change after the grid creation
    */
-  register(rowSelectionPlugin?: SlickRowSelectionModel) {
+  register(rowSelectionPlugin?: SelectionModel) {
     if (typeof this.gridOptions.rowDetailView?.process === 'function') {
       // we need to keep the user "process" method and replace it with our own execution method
       // we do this because when we get the item detail, we need to call "onAsyncResponse.notify" for the plugin to work
@@ -98,11 +100,11 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
       // load the Preload & RowDetail Templates (could be straight HTML or Aurelia View/ViewModel)
       // when those are Aurelia View/ViewModel, we need to create View Slot & provide the html containers to the Plugin (preTemplate/postTemplate methods)
       if (!this.gridOptions.rowDetailView.preTemplate) {
-        this._preloadViewModel = this.gridOptions?.rowDetailView?.preloadViewModel;
+        this._preloadViewModel = this.gridOptions.rowDetailView.preloadViewModel;
         this.addonOptions.preTemplate = () => createDomElement('div', { className: `${PRELOAD_CONTAINER_PREFIX}` });
       }
       if (!this.gridOptions.rowDetailView.postTemplate) {
-        this._viewModel = this.gridOptions?.rowDetailView?.viewModel;
+        this._viewModel = this.gridOptions.rowDetailView.viewModel;
         this.addonOptions.postTemplate = (itemDetail: any) =>
           createDomElement('div', { className: `${ROW_DETAIL_CONTAINER_PREFIX}${itemDetail[this.datasetIdPropName]}` });
       }
@@ -110,7 +112,8 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
       if (this._grid && this.gridOptions) {
         // this also requires the Row Selection Model to be registered as well
         if (!rowSelectionPlugin || !this._grid.getSelectionModel()) {
-          rowSelectionPlugin = new SlickRowSelectionModel(this.gridOptions.rowSelectionOptions || { selectActiveRow: true });
+          const SelectionModelClass = this.gridOptions.enableHybridSelection ? SlickHybridSelectionModel : SlickRowSelectionModel;
+          rowSelectionPlugin = new SelectionModelClass(this.gridOptions.rowSelectionOptions || { selectActiveRow: true });
           this._grid.setSelectionModel(rowSelectionPlugin);
         }
 
@@ -190,7 +193,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
           this._eventHandler.subscribe(this._grid.onColumnsReordered, this.redrawAllViewSlots.bind(this, false));
 
           // on row selection changed, we also need to redraw
-          if (this.gridOptions.enableRowSelection || this.gridOptions.enableCheckboxSelector) {
+          if (this.gridOptions.enableRowSelection || this.gridOptions.enableHybridSelection || this.gridOptions.enableCheckboxSelector) {
             this._eventHandler.subscribe(this._grid.onSelectedRowsChanged, this.redrawAllViewSlots.bind(this, false));
           }
 

@@ -54,6 +54,8 @@ export class MyApp {
     { path: 'example45', component: () => import('./examples/slickgrid/example45.js'), title: '45- Row Detail with inner Grid' },
     { path: 'example46', component: () => import('./examples/slickgrid/example46.js'), title: '46- Tree Data with Lazy Loading' },
     { path: 'example47', component: () => import('./examples/slickgrid/example47.js'), title: '47- Row Detail + Grouping' },
+    { path: 'example48', component: () => import('./examples/slickgrid/example48.js'), title: '48- Hybrid Selection Model' },
+    { path: 'example49', component: () => import('./examples/slickgrid/example49.js'), title: '49- Spreadsheet Drag-Fill' },
     { path: 'home', component: () => import('./home-page.js'), title: 'Home' },
   ];
 

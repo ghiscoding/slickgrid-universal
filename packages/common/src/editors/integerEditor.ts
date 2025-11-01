@@ -1,5 +1,5 @@
 import { integerValidator } from '../editorValidators/integerValidator.js';
-import type { EditorArguments, EditorValidationResult } from '../interfaces/index.js';
+import type { EditorArguments, EditorValidationResult, ValidateOption } from '../interfaces/index.js';
 import { getDescendantProperty } from '../services/utilities.js';
 import { InputEditor } from './inputEditor.js';
 
@@ -31,7 +31,7 @@ export class IntegerEditor extends InputEditor {
     return isNaN(+output) ? elmValue : output;
   }
 
-  validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
+  validate(_targetElm?: any, options?: ValidateOption): EditorValidationResult {
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
     if (this.args.isCompositeEditor) {
       this.applyInputUsabilityState();
@@ -42,7 +42,7 @@ export class IntegerEditor extends InputEditor {
       return { valid: true, msg: '' };
     }
 
-    const elmValue = inputValue !== undefined ? inputValue : this.getValue();
+    const elmValue = options?.inputValue ?? this.getValue();
     return integerValidator(elmValue, {
       editorArgs: this.args,
       errorMessage: this.columnEditor.errorMessage,

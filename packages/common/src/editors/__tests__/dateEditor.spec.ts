@@ -734,7 +734,7 @@ describe('DateEditor', () => {
         mockColumn.editor!.required = true;
         editor = new DateEditor(editorArguments);
         vi.runAllTimers();
-        const validation = editor.validate(null, '');
+        const validation = editor.validate(null, { inputValue: '' });
 
         expect(validation).toEqual({ valid: false, msg: 'Field is required' });
       });
@@ -743,7 +743,7 @@ describe('DateEditor', () => {
         mockColumn.editor!.required = true;
         editor = new DateEditor(editorArguments);
         vi.runAllTimers();
-        const validation = editor.validate(null, 'text');
+        const validation = editor.validate(null, { inputValue: 'text' });
 
         expect(validation).toEqual({ valid: true, msg: null });
       });

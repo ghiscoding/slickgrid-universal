@@ -595,7 +595,10 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
       }
 
       if (this._dataset.length > 0) {
-        if (!this._isDatasetInitialized && (this._options.enableCheckboxSelector || this._options.enableRowSelection)) {
+        if (
+          !this._isDatasetInitialized &&
+          (this._options.enableCheckboxSelector || this._options.enableRowSelection || this._options.enableHybridSelection)
+        ) {
           this.loadRowSelectionPresetWhenExists();
         }
         this.loadFilterPresetsWhenDatasetInitialized();
@@ -1110,7 +1113,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
       this.grid &&
       !isSyncGridSelectionEnabled &&
       this.options?.backendServiceApi &&
-      (this.options.enableRowSelection || this.options.enableCheckboxSelector)
+      (this.options.enableRowSelection || this.options.enableHybridSelection || this.options.enableCheckboxSelector)
     ) {
       this.grid.setSelectedRows([]);
     }
@@ -1491,7 +1494,8 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
   protected loadRowSelectionPresetWhenExists() {
     // if user entered some Row Selections "presets"
     const presets = this._options?.presets;
-    const enableRowSelection = this._options && (this._options.enableCheckboxSelector || this._options.enableRowSelection);
+    const enableRowSelection =
+      this._options && (this._options.enableCheckboxSelector || this._options.enableRowSelection || this._options.enableHybridSelection);
     if (
       enableRowSelection &&
       this.grid?.getSelectionModel() &&

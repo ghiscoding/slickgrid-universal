@@ -16,6 +16,7 @@ import type {
   SlickGroupItemMetadataProvider,
   SlickHeaderButtons,
   SlickHeaderMenu,
+  SlickHybridSelectionModel,
   SlickRowBasedEdit,
   SlickRowMoveManager,
   SlickRowSelectionModel,
@@ -37,6 +38,7 @@ export type SlickPluginList =
   | SlickGroupItemMetadataProvider
   | SlickHeaderButtons
   | SlickHeaderMenu
+  | SlickHybridSelectionModel
   | SlickRowBasedEdit
   | SlickRowDetailView
   | SlickRowMoveManager
@@ -62,12 +64,14 @@ export type InferExtensionByName<T extends ExtensionName> = T extends ExtensionN
                   ? SlickHeaderButtons
                   : T extends ExtensionName.headerMenu
                     ? SlickHeaderMenu
-                    : T extends ExtensionName.rowBasedEdit
-                      ? SlickRowBasedEdit
-                      : T extends ExtensionName.rowDetailView
-                        ? SlickRowDetailView
-                        : T extends ExtensionName.rowMoveManager
-                          ? SlickRowMoveManager
-                          : T extends ExtensionName.rowSelection
-                            ? SlickRowSelectionModel
-                            : any;
+                    : T extends ExtensionName.hybridSelection
+                      ? SlickHybridSelectionModel
+                      : T extends ExtensionName.rowBasedEdit
+                        ? SlickRowBasedEdit
+                        : T extends ExtensionName.rowDetailView
+                          ? SlickRowDetailView
+                          : T extends ExtensionName.rowMoveManager
+                            ? SlickRowMoveManager
+                            : T extends ExtensionName.rowSelection
+                              ? SlickRowSelectionModel
+                              : any;

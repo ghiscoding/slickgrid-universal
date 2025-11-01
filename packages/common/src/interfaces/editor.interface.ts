@@ -1,5 +1,11 @@
 import type { EditorArguments, EditorValidationResult } from './index.js';
 
+export interface ValidateOption {
+  rowIndex?: number;
+  cellIndex?: number;
+  inputValue?: number | string | boolean | null;
+}
+
 /**
  * SlickGrid Editor interface, more info can be found on the SlickGrid repo
  * https://github.com/6pac/SlickGrid/wiki/Writing-custom-cell-editors
@@ -119,7 +125,7 @@ export interface Editor {
    * if the input is valid then the validation result output would be returning { valid:true, msg:null }
    * The first argument "targetElm" is ONLY used internally by the Composite Editor in most cases you want to make this null or undefined
    */
-  validate: (targetElm?: HTMLElement, options?: any) => EditorValidationResult;
+  validate: (targetElm?: HTMLElement, options?: ValidateOption) => EditorValidationResult;
 }
 
 export interface EditorConstructor {
