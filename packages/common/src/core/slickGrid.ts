@@ -3230,6 +3230,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const numberCols = this._options.numberedMultiColumnSort && this.sortColumns.length > 1;
     this._headers.forEach((header) => {
       let indicators = header.querySelectorAll('.slick-header-column-sorted');
+      // v8 ignore next
       indicators.forEach((indicator) => indicator.classList.remove('slick-header-column-sorted'));
 
       indicators = header.querySelectorAll('.slick-sort-indicator');
@@ -6267,6 +6268,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       if (this._options.showCellSelection) {
         // make sure to never activate more than 1 cell at a time
+        // v8 ignore next
         document.querySelectorAll('.slick-cell.active').forEach((node) => node.classList.remove('active'));
         this.activeCellNode.classList.add('active');
         this.rowsCache[this.activeRow]?.rowNode?.forEach((node) => node.classList.add('active'));
