@@ -29,6 +29,7 @@ import type {
   OnColumnsResizedEventArgs,
   OnCompositeEditorChangeEventArgs,
   OnDblClickEventArgs,
+  OnDragReplaceCellsEventArgs,
   OnFooterClickEventArgs,
   OnFooterContextMenuEventArgs,
   OnFooterRowCellRenderedEventArgs,
@@ -101,6 +102,7 @@ export interface SlickgridVueProps {
   onOnDragEnd?: (e: CustomEvent<{ eventData: any; args: DragRowMove }>) => void;
   onOnDragInit?: (e: CustomEvent<{ eventData: any; args: DragRowMove }>) => void;
   onOnDragStart?: (e: CustomEvent<{ eventData: any; args: DragRowMove }>) => void;
+  onOnDragReplaceCells?: (e: CustomEvent<{ eventData: any; args: OnDragReplaceCellsEventArgs }>) => void;
   onOnDblClick?: (e: CustomEvent<{ eventData: any; args: OnDblClickEventArgs }>) => void;
   onOnFooterContextMenu?: (e: CustomEvent<{ eventData: any; args: OnFooterContextMenuEventArgs }>) => void;
   onOnFooterRowCellRendered?: (e: CustomEvent<{ eventData: any; args: OnFooterRowCellRenderedEventArgs }>) => void;

@@ -1,5 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Editors, SlickgridReact, SlickSelectionUtils, type Column, type GridOption, type SlickgridReactInstance } from 'slickgrid-react';
+import {
+  Editors,
+  SlickgridReact,
+  SlickSelectionUtils,
+  type Column,
+  type GridOption,
+  type OnDragReplaceCellsEventArgs,
+  type SlickgridReactInstance,
+} from 'slickgrid-react';
 import './example49.scss'; // provide custom CSS/SASS styling
 
 const NB_ITEMS = 100;

@@ -1,4 +1,11 @@
-import { Editors, SlickSelectionUtils, type AureliaGridInstance, type Column, type GridOption } from 'aurelia-slickgrid';
+import {
+  Editors,
+  SlickSelectionUtils,
+  type AureliaGridInstance,
+  type Column,
+  type GridOption,
+  type OnDragReplaceCellsEventArgs,
+} from 'aurelia-slickgrid';
 import './example49.scss';
 
 const NB_ITEMS = 100;

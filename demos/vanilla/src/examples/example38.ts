@@ -32,7 +32,7 @@ export default class Example38 {
     document.body.classList.add('salesforce-theme');
 
     // bind any of the grid events
-    this._bindingEventService.bind(this.gridContainerElm, 'ondragreplacecells', this.copyDraggedCellRange.bind(this));
+    this._bindingEventService.bind(this.gridContainerElm, 'ondragreplacecells', this.copyDraggedCellRange.bind(this) as EventListener);
   }
 
   dispose() {
@@ -99,7 +99,7 @@ export default class Example38 {
     };
   }
 
-  copyDraggedCellRange(event: CustomEvent<OnDragReplaceCellsEventArgs>) {
+  copyDraggedCellRange(event: CustomEvent<{ args: OnDragReplaceCellsEventArgs }>) {
     const args = event.detail?.args;
     const verticalTargetRange = SlickSelectionUtils.verticalTargetRange(args.prevSelectedRange, args.selectedRange);
     const horizontalTargetRange = SlickSelectionUtils.horizontalTargetRange(args.prevSelectedRange, args.selectedRange);

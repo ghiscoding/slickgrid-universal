@@ -31,6 +31,7 @@ import type {
   OnColumnsResizedEventArgs,
   OnCompositeEditorChangeEventArgs,
   OnDblClickEventArgs,
+  OnDragReplaceCellsEventArgs,
   OnFooterClickEventArgs,
   OnFooterContextMenuEventArgs,
   OnFooterRowCellRenderedEventArgs,
@@ -111,6 +112,7 @@ export interface SlickgridReactProps {
   onDragEnd?: (e: CustomEvent<{ eventData: any; args: DragRowMove }>) => void;
   onDragInit?: (e: CustomEvent<{ eventData: any; args: DragRowMove }>) => void;
   onDragStart?: (e: CustomEvent<{ eventData: any; args: DragRowMove }>) => void;
+  onDragReplaceCells?: (e: CustomEvent<{ eventData: any; args: OnDragReplaceCellsEventArgs }>) => void;
   onDblClick?: (e: CustomEvent<{ eventData: any; args: OnDblClickEventArgs }>) => void;
   onFooterContextMenu?: (e: CustomEvent<{ eventData: any; args: OnFooterContextMenuEventArgs }>) => void;
   onFooterRowCellRendered?: (e: CustomEvent<{ eventData: any; args: OnFooterRowCellRenderedEventArgs }>) => void;

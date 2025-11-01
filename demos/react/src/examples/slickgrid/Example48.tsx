@@ -1,6 +1,14 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { useEffect, useState } from 'react';
-import { Formatters, SlickEventHandler, SlickgridReact, type Column, type GridOption, type SlickgridReactInstance } from 'slickgrid-react';
+import {
+  Formatters,
+  SlickEventHandler,
+  SlickgridReact,
+  type Column,
+  type GridOption,
+  type SlickgridReactInstance,
+  type SlickHybridSelectionModel,
+} from 'slickgrid-react';
 
 const NB_ITEMS = 995;
 
@@ -145,7 +153,7 @@ const Example48: React.FC = () => {
   function reactGrid1Ready(reactGrid: SlickgridReactInstance) {
     setReactGrid1(reactGrid);
 
-    const cellSelectionModel1 = reactGrid.slickGrid?.getSelectionModel();
+    const cellSelectionModel1 = reactGrid.slickGrid.getSelectionModel() as SlickHybridSelectionModel;
     _eventHandler.subscribe(cellSelectionModel1.onSelectedRangesChanged, (_e, args) => {
       const targetRange = document.querySelector('#selectionRange1') as HTMLSpanElement;
       targetRange.textContent = '';
@@ -158,7 +166,7 @@ const Example48: React.FC = () => {
   function reactGrid2Ready(reactGrid: SlickgridReactInstance) {
     setReactGrid2(reactGrid);
 
-    const cellSelectionModel2 = reactGrid.slickGrid?.getSelectionModel()!;
+    const cellSelectionModel2 = reactGrid.slickGrid.getSelectionModel() as SlickHybridSelectionModel;
     _eventHandler.subscribe(cellSelectionModel2.onSelectedRangesChanged, (_e, args) => {
       const targetRange = document.querySelector('#selectionRange2') as HTMLSpanElement;
       targetRange.textContent = '';
