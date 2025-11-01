@@ -928,10 +928,10 @@ export class SlickSelectionUtils {
   }
 
   public static copyCellsToTargetRange(baseRange: SlickRange, targetRange: SlickRange, grid: SlickGrid): void {
-    let fromRowOffset = 0,
-      fromCellOffset = 0;
     const columns = grid.getVisibleColumns();
     const options = grid.getOptions();
+    let fromRowOffset = 0;
+    let fromCellOffset = 0;
 
     for (let i = 0; i < targetRange.rowCount(); i++) {
       const toRow = grid.getDataItem(targetRange.fromRow + i);

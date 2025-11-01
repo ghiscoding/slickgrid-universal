@@ -39,7 +39,7 @@ onBeforeMount(() => {
 
 function defineGrid() {
   // define columns
-  ...
+  // ...
 
   // grid options
   gridOptions.value = {
@@ -91,6 +91,7 @@ function gridObjChanged(grid) {
     }
   });
 }
+</script>
 ```
 
 ## Multiple Row Selections
@@ -115,7 +116,7 @@ onBeforeMount(() => {
 
 function defineGrid() {
   // define columns
-  ...
+  // ...
 
   // grid options
   gridOptions.value = {
@@ -369,6 +370,83 @@ function changeRowSelections() {
     @onSelectedRowsChanged="changeRowSelections()"
   />
 </template>
+```
+
+### Hybrid Selection Model
+
+Starting with v9.10.0, you can now use the new Hybrid Selection Model, this new model will allow you to do Cell Selection & Row Selection in the same grid. This wasn't previously doable before that version because SlickGrid only ever allows 1 selection model to be loaded at once and so we had to load either `SlickCellSelectionModel` or `SlickRowSelectionModel` but never both of them at the same time. The new Hybrid Selection Model is merging both of these plugins in a single plugin allowing us to do both type of selections.
+
+> [!NOTE]
+> You can use `enableHybridSelection: true` grid option to enable the new Hybrid Model, this new model will eventually replace both cell/row selection model in the future since there's no need to keep all these models when only 1 is more than enough
+
+For example, we could use the Excel Copy Buffer (Cell Selection) and use `rowSelectColumnIds` (Row Selection)
+
+```ts
+gridOptions.value = {
+  // enable new hybrid selection model (rows & cells)
+  enableHybridSelection: true,
+  rowSelectionOptions: {
+    selectActiveRow: true,
+    rowSelectColumnIds: ['selector'],
+  },
+
+  // when using the ExcelCopyBuffer, you can see what the selection range is
+  enableExcelCopyBuffer: true,
+  excelCopyBufferOptions: {
+    copyActiveEditorCell: true,
+    removeDoubleQuotesOnPaste: true,
+    replaceNewlinesWith: ' ',
+  },
+};
+```
+
+#### Hybrid Selection Model and Drag-Fill
+
+You can also `onDragReplaceCells` event to drag and fill cell values to the extended cell selection.
+
+#### Component
+```vue
+<script setup lang="ts">
+import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { onBeforeMount, type Ref } from 'vue';
+
+const gridOptions = ref<GridOption>();
+const columnDefinitions: Ref<Column[]> = ref([]);
+const dataset = ref<any[]>([]);
+
+onBeforeMount(() => {
+  defineGrid();
+});
+
+function defineGrid() {
+  // define columns
+  // ...
+
+  // grid options
+  gridOptions.value = {
+    // enable new hybrid selection model (rows & cells)
+    enableHybridSelection: true,
+    // ...
+  };
+}
+
+/** Copy the dragged cell values to other cells that are part of the extended drag-fill selection */
+function copyDraggedCellRange(args: OnDragReplaceCellsEventArgs) {
+  const verticalTargetRange = SlickSelectionUtils.verticalTargetRange(args.prevSelectedRange, args.selectedRange);
+  const horizontalTargetRange = SlickSelectionUtils.horizontalTargetRange(args.prevSelectedRange, args.selectedRange);
+  const cornerTargetRange = SlickSelectionUtils.cornerTargetRange(args.prevSelectedRange, args.selectedRange);
+
+  if (verticalTargetRange) {
+    SlickSelectionUtils.copyCellsToTargetRange(args.prevSelectedRange, verticalTargetRange, args.grid);
+  }
+  if (horizontalTargetRange) {
+    SlickSelectionUtils.copyCellsToTargetRange(args.prevSelectedRange, horizontalTargetRange, args.grid);
+  }
+  if (cornerTargetRange) {
+    SlickSelectionUtils.copyCellsToTargetRange(args.prevSelectedRange, cornerTargetRange, args.grid);
+  }
+}
+</script>
 ```
 
 ## Troubleshooting

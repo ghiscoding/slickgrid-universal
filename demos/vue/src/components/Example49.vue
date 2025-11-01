@@ -81,6 +81,7 @@ function defineGrid() {
   };
 }
 
+/** Copy the dragged cell values to other cells that are part of the extended drag-fill selection */
 function copyDraggedCellRange(args: OnDragReplaceCellsEventArgs) {
   const verticalTargetRange = SlickSelectionUtils.verticalTargetRange(args.prevSelectedRange, args.selectedRange);
   const horizontalTargetRange = SlickSelectionUtils.horizontalTargetRange(args.prevSelectedRange, args.selectedRange);

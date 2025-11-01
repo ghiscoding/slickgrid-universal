@@ -99,6 +99,7 @@ export default class Example38 {
     };
   }
 
+  /** Copy the dragged cell values to other cells that are part of the extended drag-fill selection */
   copyDraggedCellRange(event: CustomEvent<{ args: OnDragReplaceCellsEventArgs }>) {
     const args = event.detail?.args;
     const verticalTargetRange = SlickSelectionUtils.verticalTargetRange(args.prevSelectedRange, args.selectedRange);
