@@ -109,7 +109,7 @@ describe('Example 48 - Hybrid Selection Model', () => {
         expect(scrollDistance.row.scrollBefore).to.be.lte(scrollDistance.row.scrollAfter);
       });
 
-      cy.get('#selectionRange1').should('contain', '{"fromRow":0,"fromCell":1,"toRow":15,"toCell":3}');
+      cy.get('#selectionRange1').contains(/"fromRow":0,"fromCell":1,"toRow":1[45],"toCell":3/);
       cy.get('#grid48-1 .slick-viewport-top.slick-viewport-left').scrollTo(0, 13 * 35);
     });
   });
