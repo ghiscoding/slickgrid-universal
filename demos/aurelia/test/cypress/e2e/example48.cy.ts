@@ -1,8 +1,8 @@
 import { getScrollDistanceWhenDragOutsideGrid } from '../support/drag';
 
 function testScroll(fromClass: string, toClass: string, fromRow: number, fromCol: number) {
-  return getScrollDistanceWhenDragOutsideGrid(fromClass, 'topLeft', 'right', fromRow, fromCol, 160).then((cellScrollDistance) => {
-    return getScrollDistanceWhenDragOutsideGrid(toClass, 'topLeft', 'bottom', fromRow, fromCol, 160).then((rowScrollDistance) => {
+  return getScrollDistanceWhenDragOutsideGrid(fromClass, 'topLeft', 'right', fromRow, fromCol, 165).then((cellScrollDistance) => {
+    return getScrollDistanceWhenDragOutsideGrid(toClass, 'topLeft', 'bottom', fromRow, fromCol, 165).then((rowScrollDistance) => {
       return cy.wrap({
         cell: {
           scrollBefore: cellScrollDistance.scrollLeftBefore,
