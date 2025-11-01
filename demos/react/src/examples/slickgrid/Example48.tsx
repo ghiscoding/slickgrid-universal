@@ -201,7 +201,22 @@ const Example48: React.FC = () => {
         </button>
       </h2>
 
-      {hideSubTitle ? null : <div className="subtitle">Simple Grids with Fixed Sizes (800 x 225)</div>}
+      {hideSubTitle ? null : (
+        <div className="subtitle">
+          <code>SlickHybridSelectionModel</code> This Selection Model is an hybrid approach that uses a combination of the row or cell
+          selections depending on certain conditions. Use <code>enableHybridSelection</code> grid option to enable the new Hybrid Selection
+          Model.
+          <ul>
+            <li>
+              1. clicking on the first column (<code>id</code>) will use <code>RowSelectionModel</code> because of our configuration of
+              <code>rowSelectColumnIds: ['id']</code> as the columns that will trigger row selection.
+            </li>
+            <li>
+              2. clicking on the any other columns will use <code>CellSelectionModel</code> by default
+            </li>
+          </ul>
+        </div>
+      )}
 
       <h3>
         Grid 1

@@ -203,7 +203,7 @@ function toggleSubTitle() {
 
   <div class="subtitle">
     <code>SlickHybridSelectionModel</code> This Selection Model is an hybrid approach that uses a combination of the row or cell selections
-    depending on certain conditions.
+    depending on certain conditions. Use <code>enableHybridSelection</code> grid option to enable the new Hybrid Selection Model.
     <ul>
       <li>
         1. clicking on the first column (<code>id</code>) will use <code>RowSelectionModel</code> because of our configuration of
