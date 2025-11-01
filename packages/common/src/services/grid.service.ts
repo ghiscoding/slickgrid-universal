@@ -962,11 +962,8 @@ export class GridService {
   /** Check wether the grid has the Row Selection enabled */
   protected hasRowSelectionEnabled(): boolean {
     const selectionModel = this._grid.getSelectionModel();
-    const isRowSelectionEnabled = !!(
-      this._gridOptions.enableRowSelection ||
-      this._gridOptions.enableHybridSelection ||
-      this._gridOptions.enableCheckboxSelector
-    );
+    const { enableRowSelection, enableHybridSelection, enableCheckboxSelector } = this._gridOptions;
+    const isRowSelectionEnabled = !!(enableRowSelection || enableHybridSelection || enableCheckboxSelector);
     return isRowSelectionEnabled && !!selectionModel;
   }
 }
