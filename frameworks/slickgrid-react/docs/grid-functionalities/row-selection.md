@@ -8,6 +8,7 @@
 - [Change Row Selections](#change-row-selections)
 - Troubleshooting
   - [Adding a Column dynamically is removing the Row Selection, why is that?](#adding-a-column-dynamically-is-removing-the-row-selection-why-is-that)
+- [Hybrid Selection Model (cell+row selection)](#hybrid-selection-model-and-drag-fill)
 
 ### Description
 For row selection, you can simply play with couple of grid options (see below) and subscribe to `onSelectedRowsChanged` (a SlickGrid Event that is, it's not an Observable). However please note that `onSelectedRowsChanged` is a function available on the `Grid` object and you will need bind to `(gridChanged)` to get the object when grid is ready. There are 2 types of row selection(s) which you can do.
