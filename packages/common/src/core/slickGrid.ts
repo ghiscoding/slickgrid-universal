@@ -11,6 +11,7 @@ import {
   isDefined,
   isDefinedNumber,
   isPrimitiveOrHTML,
+  queueMicrotaskOrSetTimeout,
 } from '@slickgrid-universal/utils';
 import type { SortableEvent, Options as SortableOptions } from 'sortablejs';
 import Sortable from 'sortablejs/modular/sortable.core.esm.js';
@@ -3404,17 +3405,20 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /**
    * Sets grid columns. Column headers will be recreated and all rendered rows will be removed. To rerender the grid (if necessary), call render().
-   * @param {Column[]} columns An array of column definitions.
+   * @param {Column[]} newColumns An array of column definitions.
+   * @param {boolean} [waitNextCycle=false] - should we wait for a microtask cycle before updating column headers
    */
-  setColumns(columns: C[]): void {
-    this.triggerEvent(this.onBeforeSetColumns, { previousColumns: this.columns, newColumns: columns, grid: this });
-    const isValidFreeze = this.validateSetColumnFreeze(columns);
-    if (!isValidFreeze) {
+  setColumns(newColumns: C[], waitNextCycle = false): void {
+    this.triggerEvent(this.onBeforeSetColumns, { previousColumns: this.columns, newColumns, grid: this });
+    if (!this.validateSetColumnFreeze(newColumns)) {
       return; // exit early if freeze is invalid
     }
-    this.columns = columns;
-    this.updateColumnsInternal();
-    this.triggerEvent(this.onAfterSetColumns, { newColumns: columns, grid: this });
+    this.columns = newColumns;
+    const updateCols = () => {
+      this.updateColumnsInternal();
+      this.triggerEvent(this.onAfterSetColumns, { newColumns, grid: this });
+    };
+    waitNextCycle ? queueMicrotaskOrSetTimeout(() => updateCols()) : updateCols();
   }
 
   /** Update columns for when a hidden property has changed but the column list itself has not changed. */
@@ -5454,9 +5458,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
     };
 
-    const dequeue = () => {
-      queued = false;
-    };
+    const dequeue = () => (queued = false);
 
     const blockAndExecute = () => {
       blocked = true;

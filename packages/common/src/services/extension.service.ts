@@ -432,7 +432,7 @@ export class ExtensionService {
     if (typeof this.sharedService?.slickGrid?.getColumns === 'function') {
       const columnIndex = this.sharedService.slickGrid.getColumnIndex(column.id);
       this.sharedService.visibleColumns = this.removeColumnByIndex(this.sharedService.slickGrid.getColumns(), columnIndex);
-      this.sharedService.slickGrid.setColumns(this.sharedService.visibleColumns);
+      this.sharedService.slickGrid.setColumns(this.sharedService.visibleColumns, true);
     }
   }
 

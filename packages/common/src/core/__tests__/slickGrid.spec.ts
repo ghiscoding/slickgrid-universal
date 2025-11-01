@@ -216,6 +216,32 @@ describe('SlickGrid core file', () => {
     expect(grid.getColumnByIndex(99)).toEqual(undefined);
   });
 
+  it('should call setColumns() and wait a cycle before updating the column headers', () => {
+    const columns = [
+      { id: 'firstName', field: 'firstName', name: 'First Name', headerCssClass: 'header-class', headerCellAttrs: { 'some-attr': 3 } },
+    ] as Column[];
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, defaultOptions);
+    grid.init();
+    grid.setOptions({ addNewRowCssClass: 'new-class' });
+    const colHeaderElms = container.querySelectorAll('.slick-header-columns .slick-header-column');
+    const onAfterSetColumnsSpy = vi.spyOn(grid.onAfterSetColumns, 'notify');
+
+    expect(grid).toBeTruthy();
+    expect(colHeaderElms.length).toBe(1);
+    expect(grid.getColumns()).toEqual(columns);
+
+    const columnsMock = [
+      { id: 'firstName', field: 'firstName', name: 'First Name' },
+      { id: 'lastName', field: 'lastName', name: 'Last Name' },
+      { id: 'age', field: 'age', name: 'Age' },
+    ] as Column[];
+    grid.setColumns(columnsMock, true);
+    vi.runAllTimers(); // fast-forward timer
+
+    expect(grid.getColumns()).toEqual(columnsMock);
+    expect(onAfterSetColumnsSpy).toHaveBeenCalled();
+  });
+
   it('should be able to instantiate SlickGrid and set headerCssClass and expect it in column header', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name', headerCssClass: 'header-class  other-class' }] as Column[];
     grid = new SlickGrid<any, Column>('#myGrid', [], columns, defaultOptions);
