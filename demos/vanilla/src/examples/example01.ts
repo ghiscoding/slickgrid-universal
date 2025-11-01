@@ -98,6 +98,7 @@ export default class Example01 {
       gridWidth: 800,
       rowHeight: 33,
       gridMenu: {
+        // autoResizeColumns: false, // disable auto-resize columns after closing the Grid Menu
         hideToggleDarkModeCommand: false, // disabled command by default
         onCommand: (_, args) => {
           if (args.command === 'toggle-dark-mode') {

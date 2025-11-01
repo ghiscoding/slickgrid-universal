@@ -364,7 +364,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     this._isMenuOpen = false;
 
     // we also want to resize the columns if the user decided to hide certain column(s)
-    if (typeof this.grid?.autosizeColumns === 'function') {
+    if (typeof this.grid?.autosizeColumns === 'function' && this._addonOptions?.autoResizeColumns !== false) {
       // make sure that the grid still exist (by looking if the Grid UID is found in the DOM tree)
       const gridUid = this.grid.getUID() || '';
       if (this._areVisibleColumnDifferent && gridUid && document.querySelector(`.${gridUid}`) !== null) {

@@ -839,6 +839,48 @@ describe('GridMenuControl', () => {
         expect(autosizeSpy).toHaveBeenCalled();
       });
 
+      it('should close the Grid Menu by calling "hideMenu" and not expect "autosizeColumns" to be called when "autoResizeColumns" Grid Menu option is disabled', () => {
+        gridOptionsMock.enableAutoSizeColumns = true;
+        const autosizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
+        vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
+        vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
+
+        control.columns = columnsMock;
+        control.init();
+        const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLDivElement;
+        buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+        const pickerField1Elm = document.querySelector('input[type="checkbox"][data-columnid="field1"]') as HTMLInputElement;
+        pickerField1Elm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+
+        expect(control.menuElement!.style.display).toBe('block');
+
+        control.addonOptions.autoResizeColumns = false;
+        control.hideMenu(new Event('click', { bubbles: true, cancelable: true, composed: false }) as DOMEvent<HTMLDivElement>);
+        expect(control.menuElement).toBeFalsy();
+        expect(autosizeSpy).not.toHaveBeenCalled();
+      });
+
+      it('should close the Grid Menu by calling "hideMenu" and expect "autosizeColumns" to be called when "autoResizeColumns" Grid Menu option is enabled', () => {
+        gridOptionsMock.enableAutoSizeColumns = true;
+        const autosizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
+        vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
+        vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
+
+        control.columns = columnsMock;
+        control.init();
+        const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLDivElement;
+        buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+        const pickerField1Elm = document.querySelector('input[type="checkbox"][data-columnid="field1"]') as HTMLInputElement;
+        pickerField1Elm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+
+        expect(control.menuElement!.style.display).toBe('block');
+
+        control.addonOptions.autoResizeColumns = true;
+        control.hideMenu(new Event('click', { bubbles: true, cancelable: true, composed: false }) as DOMEvent<HTMLDivElement>);
+        expect(control.menuElement).toBeFalsy();
+        expect(autosizeSpy).toHaveBeenCalled();
+      });
+
       it('should add a custom Grid Menu item and expect the "action" and "onCommand" callbacks to be called when command is clicked in the list', () => {
         const helpFnMock = vi.fn();
         const onCommandMock = vi.fn();
