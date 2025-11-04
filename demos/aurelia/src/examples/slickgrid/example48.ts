@@ -33,9 +33,11 @@ export class Example48 {
     const cellSelectionModel1 = aureliaGrid1.slickGrid!.getSelectionModel()!;
     this._eventHandler.subscribe(cellSelectionModel1.onSelectedRangesChanged, (_e, args) => {
       const targetRange = document.querySelector('#selectionRange1') as HTMLSpanElement;
-      targetRange.textContent = '';
-      for (const slickRange of args) {
-        targetRange.textContent += JSON.stringify(slickRange);
+      if (targetRange) {
+        targetRange.textContent = '';
+        for (const slickRange of args) {
+          targetRange.textContent += JSON.stringify(slickRange);
+        }
       }
     });
   }
@@ -46,9 +48,11 @@ export class Example48 {
     const cellSelectionModel2 = aureliaGrid2.slickGrid!.getSelectionModel()!;
     this._eventHandler.subscribe(cellSelectionModel2.onSelectedRangesChanged, (_e, args) => {
       const targetRange = document.querySelector('#selectionRange2') as HTMLSpanElement;
-      targetRange.textContent = '';
-      for (const slickRange of args) {
-        targetRange.textContent += JSON.stringify(slickRange);
+      if (targetRange) {
+        targetRange.textContent = '';
+        for (const slickRange of args) {
+          targetRange.textContent += JSON.stringify(slickRange);
+        }
       }
     });
   }

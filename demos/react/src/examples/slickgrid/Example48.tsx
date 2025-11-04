@@ -156,9 +156,11 @@ const Example48: React.FC = () => {
     const cellSelectionModel1 = reactGrid.slickGrid.getSelectionModel() as SlickHybridSelectionModel;
     _eventHandler.subscribe(cellSelectionModel1.onSelectedRangesChanged, (_e, args) => {
       const targetRange = document.querySelector('#selectionRange1') as HTMLSpanElement;
-      targetRange.textContent = '';
-      for (const slickRange of args) {
-        targetRange.textContent += JSON.stringify(slickRange);
+      if (targetRange) {
+        targetRange.textContent = '';
+        for (const slickRange of args) {
+          targetRange.textContent += JSON.stringify(slickRange);
+        }
       }
     });
   }
@@ -169,9 +171,11 @@ const Example48: React.FC = () => {
     const cellSelectionModel2 = reactGrid.slickGrid.getSelectionModel() as SlickHybridSelectionModel;
     _eventHandler.subscribe(cellSelectionModel2.onSelectedRangesChanged, (_e, args) => {
       const targetRange = document.querySelector('#selectionRange2') as HTMLSpanElement;
-      targetRange.textContent = '';
-      for (const slickRange of args) {
-        targetRange.textContent += JSON.stringify(slickRange);
+      if (targetRange) {
+        targetRange.textContent = '';
+        for (const slickRange of args) {
+          targetRange.textContent += JSON.stringify(slickRange);
+        }
       }
     });
   }

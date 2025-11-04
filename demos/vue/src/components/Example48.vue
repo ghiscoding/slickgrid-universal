@@ -1,29 +1,18 @@
 <script setup lang="ts">
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import {
-  Formatters,
-  SlickEventHandler,
-  SlickgridVue,
-  type Column,
-  type GridOption,
-  type PaginationChangedArgs,
-  type SlickgridVueInstance,
-} from 'slickgrid-vue';
-import { onBeforeMount, onUnmounted, ref, type Ref } from 'vue';
-import { zeroPadding } from './utilities';
+import { Formatters, SlickEventHandler, SlickgridVue, type Column, type GridOption, type SlickgridVueInstance } from 'slickgrid-vue';
+import { onBeforeMount, ref, type Ref } from 'vue';
 
 const NB_ITEMS = 995;
 
 const _eventHandler = new SlickEventHandler();
-let vueGrid1!: SlickgridVueInstance;
-let vueGrid2!: SlickgridVueInstance;
 const gridOptions1 = ref<GridOption>();
 const gridOptions2 = ref<GridOption>();
 const columnDefinitions1: Ref<Column[]> = ref([]);
 const columnDefinitions2: Ref<Column[]> = ref([]);
 const dataset1 = ref<any[]>([]);
 const dataset2 = ref<any[]>([]);
-const hideSubTitle = ref(false);
+const showSubTitle = ref(true);
 
 onBeforeMount(() => {
   defineGrids();
@@ -33,39 +22,34 @@ onBeforeMount(() => {
 });
 
 function vueGrid1Ready(vueGrid: SlickgridVueInstance) {
-  vueGrid1 = vueGrid;
-
   const cellSelectionModel1 = vueGrid.slickGrid!.getSelectionModel()!;
   _eventHandler.subscribe(cellSelectionModel1.onSelectedRangesChanged, (_e, args) => {
     const targetRange = document.querySelector('#selectionRange1') as HTMLSpanElement;
-    targetRange.textContent = '';
-    for (const slickRange of args) {
-      targetRange.textContent += JSON.stringify(slickRange);
+    if (targetRange) {
+      targetRange.textContent = '';
+      for (const slickRange of args) {
+        targetRange.textContent += JSON.stringify(slickRange);
+      }
     }
   });
 }
 
 function vueGrid2Ready(vueGrid: SlickgridVueInstance) {
-  vueGrid2 = vueGrid;
-
   const cellSelectionModel2 = vueGrid.slickGrid!.getSelectionModel()!;
   _eventHandler.subscribe(cellSelectionModel2.onSelectedRangesChanged, (_e, args) => {
-    const targetRange = document.querySelector('#selectionRange1') as HTMLSpanElement;
-    targetRange.textContent = '';
-    for (const slickRange of args) {
-      targetRange.textContent += JSON.stringify(slickRange);
+    const targetRange = document.querySelector('#selectionRange2') as HTMLSpanElement;
+    if (targetRange) {
+      targetRange.textContent = '';
+      for (const slickRange of args) {
+        targetRange.textContent += JSON.stringify(slickRange);
+      }
     }
   });
 }
 
-function updateDataset1() {
-  dataset1.value = mockData(125);
-  dataset1.value = mockData(125);
-}
-
 /* Define grid Options and Columns */
 function defineGrids() {
-  const colDefs1 = [
+  const colDefs1: Column[] = [
     { id: 'id', name: '#', field: 'id', width: 32, maxWidth: 40, excludeFromHeaderMenu: true },
     { id: 'title', name: 'Title', field: 'title', width: 90, cssClass: 'cell-title' },
     { id: 'complete', name: '% Complete', field: 'percentComplete', sortable: true, width: 90 },
@@ -183,7 +167,6 @@ function toggleSubTitle() {
   showSubTitle.value = !showSubTitle.value;
   const action = showSubTitle.value ? 'remove' : 'add';
   document.querySelector('.subtitle')?.classList[action]('hidden');
-  queueMicrotask(() => vueGrid.resizerService.resizeGrid());
 }
 </script>
 

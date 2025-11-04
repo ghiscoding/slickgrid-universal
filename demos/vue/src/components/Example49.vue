@@ -1,5 +1,13 @@
 <script setup lang="ts">
-import { Editors, SlickgridVue, SlickSelectionUtils, type Column, type GridOption, type SlickgridVueInstance } from 'slickgrid-vue';
+import {
+  Editors,
+  SlickgridVue,
+  SlickSelectionUtils,
+  type Column,
+  type GridOption,
+  type OnDragReplaceCellsEventArgs,
+  type SlickgridVueInstance,
+} from 'slickgrid-vue';
 import { onBeforeMount, onUnmounted, ref, type Ref } from 'vue';
 
 const NB_ITEMS = 100;
@@ -25,7 +33,7 @@ onUnmounted(() => {
 
 /* Define grid Options and Columns */
 function defineGrid() {
-  const colDefs = [
+  const colDefs: Column[] = [
     {
       id: 'selector',
       name: '',
