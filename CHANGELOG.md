@@ -4,6 +4,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.9.0...v9.10.0) (2025-11-04)
+
+### Features
+
+* add Grid Menu `autoResizeColumns` to disable resize w/closing menu ([#2216](https://github.com/ghiscoding/slickgrid-universal/issues/2216)) ([8eab765](https://github.com/ghiscoding/slickgrid-universal/commit/8eab7654b7f918f6ee9255b9dcb773e885ab4732)) - by @ghiscoding
+* Drag-Fill capability and Hybrid SelectionModel plugin ([#2162](https://github.com/ghiscoding/slickgrid-universal/issues/2162)) ([bb8fb3e](https://github.com/ghiscoding/slickgrid-universal/commit/bb8fb3ee83210755b36713764972c02ad658c12c)) - by @ghiscoding
+* remove multiple cellCssStyles using predicate ([#2192](https://github.com/ghiscoding/slickgrid-universal/issues/2192)) ([e826ebd](https://github.com/ghiscoding/slickgrid-universal/commit/e826ebdf6afbbe7d3f111f76fee8b39970e795c2)) - by @zewa666
+
+### Bug Fixes
+
+* add correct offset height/width margins ([#2208](https://github.com/ghiscoding/slickgrid-universal/issues/2208)) ([4e78410](https://github.com/ghiscoding/slickgrid-universal/commit/4e7841034572ac81cb90273d00c484f7ec98c84b)) - by @ghiscoding
+* calculate grid's width using window.innerWidth only when parent-container autoresize is not enabled ([#2210](https://github.com/ghiscoding/slickgrid-universal/issues/2210)) ([345230f](https://github.com/ghiscoding/slickgrid-universal/commit/345230fce08450b12f4b080cf5413cef14717f18)) - by @carlosdelros
+* column cannot be resized when column not orderable ([ef1ea2e](https://github.com/ghiscoding/slickgrid-universal/commit/ef1ea2e3387febd48dfd3a5ff9d3d556ffff26b2)) - by @ghiscoding
+* column cannot be resized when column not orderable ([#2213](https://github.com/ghiscoding/slickgrid-universal/issues/2213)) ([f27fc41](https://github.com/ghiscoding/slickgrid-universal/commit/f27fc419220212db2a7c082e14e914ca677ac4d6)) - by @ghiscoding
+* **deps:** update all non-major dependencies ([#2182](https://github.com/ghiscoding/slickgrid-universal/issues/2182)) ([52525e7](https://github.com/ghiscoding/slickgrid-universal/commit/52525e781538c3bed6857f6b791b26cb43240d19)) - by @ghiscoding
+* **deps:** update all non-major dependencies ([#2187](https://github.com/ghiscoding/slickgrid-universal/issues/2187)) ([cc7d86f](https://github.com/ghiscoding/slickgrid-universal/commit/cc7d86f96de613355f32fd987f6e4fccee96c549)) - by @renovate-bot
+* **deps:** update all non-major dependencies ([#2218](https://github.com/ghiscoding/slickgrid-universal/issues/2218)) ([da0dfe3](https://github.com/ghiscoding/slickgrid-universal/commit/da0dfe37ccfabc3ac7d13c25e8615c0674363358)) - by @renovate-bot
+* **deps:** update all non-major dependencies ([#2221](https://github.com/ghiscoding/slickgrid-universal/issues/2221)) ([e9ed934](https://github.com/ghiscoding/slickgrid-universal/commit/e9ed93490303f5eaa85cf05402e26ef7b9ae60d8)) - by @renovate-bot
+* **deps:** update dependency react-i18next to v16 ([#2175](https://github.com/ghiscoding/slickgrid-universal/issues/2175)) ([bf03c42](https://github.com/ghiscoding/slickgrid-universal/commit/bf03c4278cd7c35b8dcd7c6335d900493d24c464)) - by @ghiscoding
+* hide column shouldn't cause header/data misalignments ([#2215](https://github.com/ghiscoding/slickgrid-universal/issues/2215)) ([ccd59d0](https://github.com/ghiscoding/slickgrid-universal/commit/ccd59d013f366f1c324642e4a7f1e83e7e00823f)) - by @ghiscoding
+* Pre-edit Click mode (PreClick) should work with Checkbox Editor ([#2211](https://github.com/ghiscoding/slickgrid-universal/issues/2211)) ([54e62a4](https://github.com/ghiscoding/slickgrid-universal/commit/54e62a40de355edac0870a7fed1a36cadf110f04)) - by @ghiscoding
+* **react:** remove unnecessary dep `regenerator-runtime`, fixes [#2200](https://github.com/ghiscoding/slickgrid-universal/issues/2200) ([#2202](https://github.com/ghiscoding/slickgrid-universal/issues/2202)) ([e775108](https://github.com/ghiscoding/slickgrid-universal/commit/e7751084aa33cc5f6bb331676d580efeeac9dd51)) - by @ghiscoding
+* removing left column from picker w/only 1 col on right should be ok ([#2171](https://github.com/ghiscoding/slickgrid-universal/issues/2171)) ([6469ea3](https://github.com/ghiscoding/slickgrid-universal/commit/6469ea38aea13a0e36b7cb5730dea678fc2b2f7b)) - by @ghiscoding
+* toggling Row Detail under a Group should become out of viewport ([#2170](https://github.com/ghiscoding/slickgrid-universal/issues/2170)) ([d14f057](https://github.com/ghiscoding/slickgrid-universal/commit/d14f057c358b5fdf34252e83067c2747d57ce826)) - by @ghiscoding
+* **utils:** htmlDecode should decodes all multi-layered HTML entities ([#2204](https://github.com/ghiscoding/slickgrid-universal/issues/2204)) ([94e90b4](https://github.com/ghiscoding/slickgrid-universal/commit/94e90b42d9f05904acacdc7f7060c1cb7225e41c)) - by @ghiscoding
+
 ## [9.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.8.0...v9.9.0) (2025-09-20)
 
 ### Features

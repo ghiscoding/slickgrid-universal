@@ -4,6 +4,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.9.0...v9.10.0) (2025-11-04)
+
+### Features
+
+* Drag-Fill capability and Hybrid SelectionModel plugin ([#2162](https://github.com/ghiscoding/slickgrid-universal/issues/2162)) ([bb8fb3e](https://github.com/ghiscoding/slickgrid-universal/commit/bb8fb3ee83210755b36713764972c02ad658c12c)) - by @ghiscoding
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#2218](https://github.com/ghiscoding/slickgrid-universal/issues/2218)) ([da0dfe3](https://github.com/ghiscoding/slickgrid-universal/commit/da0dfe37ccfabc3ac7d13c25e8615c0674363358)) - by @renovate-bot
+* toggling Row Detail under a Group should become out of viewport ([#2170](https://github.com/ghiscoding/slickgrid-universal/issues/2170)) ([d14f057](https://github.com/ghiscoding/slickgrid-universal/commit/d14f057c358b5fdf34252e83067c2747d57ce826)) - by @ghiscoding
+
 ## [9.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.8.0...v9.9.0) (2025-09-20)
 
 ### Bug Fixes
