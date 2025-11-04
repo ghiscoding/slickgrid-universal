@@ -67,9 +67,9 @@
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "catalog:",
-    "@analogjs/platform": "^1.22.4",
-    "@analogjs/vite-plugin-angular": "^1.22.4",
-    "@analogjs/vitest-angular": "^1.22.4",
+    "@analogjs/platform": "^1.22.5",
+    "@analogjs/vite-plugin-angular": "^1.22.5",
+    "@analogjs/vitest-angular": "^1.22.5",
     "@angular-devkit/build-angular": "^19.2.19",
     "@angular/animations": "^19.2.15",
     "@angular/build": "19.2.19",
