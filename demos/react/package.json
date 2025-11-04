@@ -43,7 +43,7 @@
     "i18next": "catalog:",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "react-i18next": "^16.2.3",
+    "react-i18next": "^16.2.4",
     "react-router-dom": "^7.9.5",
     "slickgrid-react": "workspace:*"
   },
