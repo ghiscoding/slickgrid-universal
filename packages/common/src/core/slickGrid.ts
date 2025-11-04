@@ -101,7 +101,7 @@ import {
   type SlickEditorLock,
 } from './slickCore.js';
 import type { SlickDataView } from './slickDataview.js';
-import { Draggable, MouseWheel, Resizable } from './slickInteractions';
+import { Draggable, MouseWheel, Resizable } from './slickInteractions.js';
 import { applyHtmlToElement, runOptionalHtmlSanitizer } from './utils.js';
 
 /**
