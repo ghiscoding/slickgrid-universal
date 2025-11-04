@@ -64,7 +64,7 @@
     "not dead"
   ],
   "dependencies": {
-    "@excel-builder-vanilla/types": "^4.1.1",
+    "@excel-builder-vanilla/types": "^4.2.1",
     "@formkit/tempo": "catalog:",
     "@slickgrid-universal/binding": "workspace:*",
     "@slickgrid-universal/event-pub-sub": "workspace:*",
@@ -80,7 +80,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.21",
-    "cssnano": "^7.1.1",
+    "cssnano": "^7.1.2",
     "native-copyfiles": "catalog:",
     "npm-run-all2": "catalog:",
     "postcss": "^8.5.6",
