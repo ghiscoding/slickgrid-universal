@@ -330,6 +330,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         rightPadding: 0,
       },
       backendServiceApi: null,
+      devMode: { ownerNodeIndex: 0 },
     } as unknown as GridOption;
     sharedService = new SharedService();
     translateService = new TranslateServiceStub();
