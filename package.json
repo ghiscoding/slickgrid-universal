@@ -45,7 +45,7 @@
     "roll-new-release": "pnpm build && pnpm new-version && pnpm new-publish",
     "build:dev": "pnpm -r --filter=vanilla-demo build:dev",
     "serve:vite": "pnpm -r --filter=vanilla-demo dev",
-    "lint": "oxlint .",
+    "lint": "oxlint . --threads 1",
     "lint:fix": "oxlint . --fix",
     "prettier:check": "prettier --check **/*.{html,js,ts,tsx,vue}",
     "prettier:write": "prettier --write **/*.{html,js,ts,tsx,vue}",
