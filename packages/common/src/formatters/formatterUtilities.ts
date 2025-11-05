@@ -333,11 +333,11 @@ export function parseFormatterWhenExist<T = any>(
 /** private function to parse a date */
 function parseDateByIOFormats(columnDef: Column, value: any, inputDateFormat: string, outputDateFormat: string): string {
   const isParsingAsUtc = columnDef.params?.parseDateAsUtc ?? false;
-  const date = tryParseDate(value, inputDateFormat);
+  const d1 = tryParseDate(value, inputDateFormat);
   let outputDate = value;
-  if (date) {
-    const d = isParsingAsUtc ? toUtcDate(date) : date;
-    outputDate = format(d, outputDateFormat, 'en-US');
+  if (d1) {
+    const d2 = isParsingAsUtc ? toUtcDate(d1) : d1;
+    outputDate = format(d2, outputDateFormat, 'en-US');
   }
   return outputDate;
 }

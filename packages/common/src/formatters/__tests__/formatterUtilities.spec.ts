@@ -30,7 +30,11 @@ describe('formatterUtilities', () => {
 
     beforeEach(() => {
       columnDefinitions = [
-        { id: 'firstName', field: 'firstName', editor: { model: Editors.text } },
+        {
+          id: 'firstName',
+          field: 'firstName',
+          editor: { model: Editors.text },
+        },
         {
           id: 'lastName',
           field: 'lastName',
@@ -38,9 +42,24 @@ describe('formatterUtilities', () => {
           formatter: multipleFormatter,
           params: { formatters: [myItalicFormatter, myBoldFormatter] },
         },
-        { id: 'age', field: 'age', type: 'number', formatter: multipleFormatter },
-        { id: 'address', field: 'address.street', editor: { model: Editors.longText }, formatter: complexObjectFormatter },
-        { id: 'zip', field: 'address.zip', type: 'number', formatter: complexObjectFormatter },
+        {
+          id: 'age',
+          field: 'age',
+          type: 'number',
+          formatter: multipleFormatter,
+        },
+        {
+          id: 'address',
+          field: 'address.street',
+          editor: { model: Editors.longText },
+          formatter: complexObjectFormatter,
+        },
+        {
+          id: 'zip',
+          field: 'address.zip',
+          type: 'number',
+          formatter: complexObjectFormatter,
+        },
       ];
     });
 
@@ -48,23 +67,42 @@ describe('formatterUtilities', () => {
       autoAddEditorFormatterToColumnsWithEditor(columnDefinitions, customEditableInputFormatter);
 
       expect(columnDefinitions).toEqual([
-        { id: 'firstName', field: 'firstName', editor: { model: Editors.text }, formatter: customEditableInputFormatter },
+        {
+          id: 'firstName',
+          field: 'firstName',
+          editor: { model: Editors.text },
+          formatter: customEditableInputFormatter,
+        },
         {
           id: 'lastName',
           field: 'lastName',
           editor: { model: Editors.text },
           formatter: multipleFormatter,
-          params: { formatters: [myItalicFormatter, myBoldFormatter, customEditableInputFormatter] },
+          params: {
+            formatters: [myItalicFormatter, myBoldFormatter, customEditableInputFormatter],
+          },
         },
-        { id: 'age', field: 'age', type: 'number', formatter: multipleFormatter },
+        {
+          id: 'age',
+          field: 'age',
+          type: 'number',
+          formatter: multipleFormatter,
+        },
         {
           id: 'address',
           field: 'address.street',
           editor: { model: Editors.longText },
           formatter: multipleFormatter,
-          params: { formatters: [complexObjectFormatter, customEditableInputFormatter] },
+          params: {
+            formatters: [complexObjectFormatter, customEditableInputFormatter],
+          },
         },
-        { id: 'zip', field: 'address.zip', type: 'number', formatter: complexObjectFormatter },
+        {
+          id: 'zip',
+          field: 'address.zip',
+          type: 'number',
+          formatter: complexObjectFormatter,
+        },
       ]);
     });
 
@@ -73,23 +111,42 @@ describe('formatterUtilities', () => {
       autoAddEditorFormatterToColumnsWithEditor(columnDefinitions, customEditableInputFormatter);
 
       expect(columnDefinitions).toEqual([
-        { id: 'firstName', field: 'firstName', editor: { model: Editors.text }, formatter: customEditableInputFormatter },
+        {
+          id: 'firstName',
+          field: 'firstName',
+          editor: { model: Editors.text },
+          formatter: customEditableInputFormatter,
+        },
         {
           id: 'lastName',
           field: 'lastName',
           editor: { model: Editors.text },
           formatter: multipleFormatter,
-          params: { formatters: [myItalicFormatter, myBoldFormatter, customEditableInputFormatter] },
+          params: {
+            formatters: [myItalicFormatter, myBoldFormatter, customEditableInputFormatter],
+          },
         },
-        { id: 'age', field: 'age', type: 'number', formatter: multipleFormatter },
+        {
+          id: 'age',
+          field: 'age',
+          type: 'number',
+          formatter: multipleFormatter,
+        },
         {
           id: 'address',
           field: 'address.street',
           editor: { model: Editors.longText },
           formatter: multipleFormatter,
-          params: { formatters: [complexObjectFormatter, customEditableInputFormatter] },
+          params: {
+            formatters: [complexObjectFormatter, customEditableInputFormatter],
+          },
         },
-        { id: 'zip', field: 'address.zip', type: 'number', formatter: complexObjectFormatter },
+        {
+          id: 'zip',
+          field: 'address.zip',
+          type: 'number',
+          formatter: complexObjectFormatter,
+        },
       ]);
     });
   });
@@ -135,9 +192,21 @@ describe('formatterUtilities', () => {
       expect(output).toBe('2002-01-01');
     });
 
+    it('should return same unformatted blank Date when calling the Formatter function with a blank date', () => {
+      const formatterFn = getAssociatedDateFormatter(FieldType.dateIso, '-');
+      const gridSpy = vi.spyOn(gridStub, 'getOptions');
+
+      const output = formatterFn(1, 1, '0001-01-01T00:00:00', { type: FieldType.dateIso } as Column, {}, gridStub);
+
+      expect(gridSpy).toHaveBeenCalled();
+      expect(output).toBe('0001-01-01T00:00:00');
+    });
+
     it('should return a formatted Date with a different separator when changing setting the "dateSeparator" in "formatterOptions"', () => {
       const formatterFn = getAssociatedDateFormatter(FieldType.dateIso, '-');
-      const gridOptions = { formatterOptions: { dateSeparator: '.' } } as GridOption;
+      const gridOptions = {
+        formatterOptions: { dateSeparator: '.' },
+      } as GridOption;
       const gridSpy = (gridStub.getOptions as Mock).mockReturnValue(gridOptions);
 
       const output = formatterFn(1, 1, '2002-01-01T00:01:01', { type: FieldType.dateIso } as Column, {}, gridStub);
@@ -164,7 +233,10 @@ describe('formatterUtilities', () => {
 
     it('should return a formatted Date when calling the Formatter function with a defined "params.outputFormat"', () => {
       const formatterFn = getBaseDateFormatter();
-      const mockColumn = { type: FieldType.date, params: { dateFormat: 'MMM DD, YYYY' } } as Column;
+      const mockColumn = {
+        type: FieldType.date,
+        params: { dateFormat: 'MMM DD, YYYY' },
+      } as Column;
 
       const output = formatterFn(1, 1, '2002-01-01T00:01:01', mockColumn, {}, gridStub);
 
@@ -185,8 +257,19 @@ describe('formatterUtilities', () => {
     };
 
     beforeEach(() => {
-      mockItem = { firstName: 'John', lastName: 'Doe', age: 45, address: { zip: 12345 }, empty: {} };
-      mockColumn = { id: 'firstName', name: 'First Name', field: 'firstName', formatter: myUppercaseFormatter };
+      mockItem = {
+        firstName: 'John',
+        lastName: 'Doe',
+        age: 45,
+        address: { zip: 12345 },
+        empty: {},
+      };
+      mockColumn = {
+        id: 'firstName',
+        name: 'First Name',
+        field: 'firstName',
+        formatter: myUppercaseFormatter,
+      };
     });
 
     describe('exportWithFormatterWhenDefined method', () => {
