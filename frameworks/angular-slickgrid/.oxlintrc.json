@@ -1,7 +1,8 @@
 {
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["import", "oxc", "regex", "typescript"],
-  "extends": ["recommended"],
+  "$schema": "../../node_modules/oxlint/configuration_schema.json",
+  "extends": ["../../.oxlintrc.json"],
+  "plugins": ["oxc", "regex", "typescript"],
+  "jsPlugins": ["@angular-eslint/eslint-plugin"],
   "ignorePatterns": [
     "**/*.spec.ts",
     "**/*.cy.ts",
