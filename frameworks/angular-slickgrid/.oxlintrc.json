@@ -18,27 +18,10 @@
     {
       "files": ["**/*.ts"],
       "rules": {
-        // typescript-eslint rules are not all implemented yet, see https://github.com/oxc-project/oxc/issues/2180
-        "typescript/ban-ts-comment": "off",
-        "typescript/consistent-type-definitions": "error",
-        "typescript/consistent-type-exports": "error",
-        "typescript/consistent-type-imports": "off",
-        "typescript/member-ordering": "error",
-        "typescript/no-unused-vars": [
-          "error",
-          {
-            "argsIgnorePattern": "^_",
-            "destructuredArrayIgnorePattern": "^_",
-            "caughtErrors": "none"
-          }
-        ],
-        "typescript/no-empty-function": "off",
-        "typescript/no-unused-expressions": "off",
-        "typescript/no-explicit-any": "off",
-        "import/no-self-import": "error",
-        "import/no-useless-path-segments": ["error", { "noUselessIndex": true }],
-        "import/extensions": "off",
-        "no-case-declarations": "off"
+        // disable type imports since that conflicts with DI:
+        //   import type { TranslateService } from '@ngx-translate/core';
+        //   constructor(private translate: TranslateService) {}
+        "typescript/consistent-type-imports": "off"
       }
     },
     {
@@ -50,6 +33,9 @@
     }
   ],
   "rules": {
+    "@angular-eslint/directive-selector": ["error", { "type": "attribute", "prefix": "app", "style": "camelCase" }],
+    "@angular-eslint/component-selector": ["error", { "type": "element", "style": "kebab-case" }],
+    "@angular-eslint/prefer-standalone": "off",
     // Angular-specific selector rules (manual implementation)
     "naming-convention": [
       "error",
