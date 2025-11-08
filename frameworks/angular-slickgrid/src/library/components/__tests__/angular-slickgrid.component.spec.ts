@@ -56,14 +56,6 @@ import { type GridOption } from '../../models/index.js';
 import { ContainerService, type AngularUtilService, type TranslaterService } from '../../services/index.js';
 import { AngularSlickgridComponent } from '../angular-slickgrid.component.js';
 
-// mocked modules
-vi.mock('@slickgrid-universal/common', async (importOriginal) => ({
-  ...((await importOriginal()) as any),
-  applyHtmlToElement: (elm: HTMLElement, val: any) => {
-    elm.innerHTML = `${val || ''}`;
-  },
-}));
-
 const addVanillaEventPropagation = function (event: Event) {
   Object.defineProperty(event, 'isPropagationStopped', { writable: true, configurable: true, value: vi.fn() });
   Object.defineProperty(event, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: vi.fn() });
@@ -300,6 +292,9 @@ const slickEventHandler = new MockSlickEventHandler() as unknown as SlickEventHa
 
 vi.mock('@slickgrid-universal/common', async () => ({
   ...((await vi.importActual('@slickgrid-universal/common')) as any),
+  applyHtmlToElement: (elm: HTMLElement, val: any) => {
+    elm.innerHTML = `${val || ''}`;
+  },
   autoAddEditorFormatterToColumnsWithEditor: vi.fn(),
   SlickGrid: vi.fn().mockImplementation(function () {
     return mockGrid;
