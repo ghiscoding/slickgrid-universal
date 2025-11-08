@@ -56,14 +56,6 @@ vi.mock('sortablejs');
 
 vi.useFakeTimers();
 
-// mocked modules
-vi.mock('@slickgrid-universal/common', async (importOriginal) => ({
-  ...((await importOriginal()) as any),
-  applyHtmlToElement: (elm: HTMLElement, val: any) => {
-    elm.innerHTML = `${val || ''}`;
-  },
-}));
-
 const addVanillaEventPropagation = function (event: any) {
   Object.defineProperty(event, 'isPropagationStopped', { writable: true, configurable: true, value: vi.fn() });
   Object.defineProperty(event, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: vi.fn() });
@@ -287,6 +279,9 @@ vi.mock('@slickgrid-universal/common', async (importOriginal) => {
   const actual = (await importOriginal()) as any;
   return {
     ...actual,
+    applyHtmlToElement: (elm: HTMLElement, val: any) => {
+      elm.innerHTML = `${val || ''}`;
+    },
     autoAddEditorFormatterToColumnsWithEditor: vi.fn(),
     SlickGrid: vi.fn().mockImplementation(function () {
       return mockGrid;
