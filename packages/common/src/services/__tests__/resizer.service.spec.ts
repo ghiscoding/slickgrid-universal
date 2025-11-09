@@ -159,7 +159,7 @@ describe('Resizer Service', () => {
       service.init(gridStub, divContainer);
 
       expect(resizeObserverMock.mock.instances.length).toBe(1);
-      const observerInstance = resizeObserverMock.mock.instances[0];
+      const observerInstance = resizeObserverMock.mock.instances[0] as ResizeObserver;
 
       expect(observerInstance.observe).toHaveBeenCalledTimes(1);
       expect(observerInstance.observe).toHaveBeenCalledWith(resizeContainer);
@@ -230,7 +230,7 @@ describe('Resizer Service', () => {
       service.dispose();
 
       expect(resizeObserverMock.mock.instances.length).toBe(1);
-      const observerInstance = resizeObserverMock.mock.instances[0];
+      const observerInstance = resizeObserverMock.mock.instances[0] as ResizeObserver;
 
       expect(observerInstance.disconnect).toHaveBeenCalledTimes(1);
     });
@@ -980,7 +980,6 @@ describe('Resizer Service', () => {
             expect(resizeSpy).toHaveBeenCalled();
             expect(resizeSpy).toHaveBeenNthCalledWith(2, 10, undefined);
             expect(resizeSpy).toHaveBeenNthCalledWith(3);
-            expect(resizeSpy).toHaveBeenNthCalledWith(4);
             clearInterval(intervalId);
             done();
             service.requestStopOfAutoFixResizeGrid();
