@@ -219,7 +219,7 @@ const Example39: React.FC = () => {
       fetch(SAMPLE_COLLECTION_DATA_URL)
         .then((e) => e.json())
         .then((data: any) => {
-          let filteredData: Array<{ id: number; name: string; gender: string; company: string; category: { id: number; name: string; }; }> =
+          let filteredData: Array<{ id: number; name: string; gender: string; company: string; category: { id: number; name: string } }> =
             data;
           if (query.includes('first:')) {
             const topMatch = query.match(/first:([0-9]+),/) || [];

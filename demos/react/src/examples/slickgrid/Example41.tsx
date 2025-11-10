@@ -85,7 +85,7 @@ const Example41: React.FC = () => {
     ];
   }
 
-  function onBeforeMoveRows(e: MouseEvent | TouchEvent, data: { rows: number[]; insertBefore: number; }) {
+  function onBeforeMoveRows(e: MouseEvent | TouchEvent, data: { rows: number[]; insertBefore: number }) {
     for (const dataRow of data.rows) {
       // no point in moving before or after itself
       if (dataRow === data.insertBefore || dataRow === data.insertBefore - 1) {
@@ -96,7 +96,7 @@ const Example41: React.FC = () => {
     return true;
   }
 
-  function onMoveRows(_e: MouseEvent | TouchEvent, args: { rows: number[]; insertBefore: number; }) {
+  function onMoveRows(_e: MouseEvent | TouchEvent, args: { rows: number[]; insertBefore: number }) {
     const extractedRows: any[] = [];
     const rows = args.rows;
     const insertBefore = args.insertBefore;
