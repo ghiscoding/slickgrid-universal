@@ -37,14 +37,6 @@ import { VanillaForceGridBundle } from '../vanilla-force-bundle.js';
 
 vi.useFakeTimers();
 
-// mocked modules
-vi.mock('@slickgrid-universal/common', async (importOriginal) => ({
-  ...((await importOriginal()) as any),
-  applyHtmlToElement: (elm: HTMLElement, val: any) => {
-    elm.innerHTML = `${val || ''}`;
-  },
-}));
-
 const extensionServiceStub = {
   addRxJsResource: vi.fn(),
   bindDifferentExtensions: vi.fn(),
@@ -258,6 +250,9 @@ vi.mock('@slickgrid-universal/common', async (importOriginal) => {
   const actual = (await importOriginal()) as any;
   return {
     ...actual,
+    applyHtmlToElement: (elm: HTMLElement, val: any) => {
+      elm.innerHTML = `${val || ''}`;
+    },
     autoAddEditorFormatterToColumnsWithEditor: vi.fn(),
     SlickGrid: vi.fn().mockImplementation(function () {
       return mockGrid;
@@ -650,7 +645,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
 
     describe('Tree Data View', () => {
       afterEach(() => {
-        component.dispose();
+        component?.dispose();
         vi.clearAllMocks();
       });
 
