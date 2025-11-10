@@ -78,7 +78,7 @@
     "sortablejs": "catalog:"
   },
   "peerDependencies": {
-    "react": ">=19.0.0"
+    "react": ">=18.0.0"
   },
   "devDependencies": {
     "@formkit/tempo": "catalog:",
@@ -90,15 +90,15 @@
     "@slickgrid-universal/rxjs-observable": "workspace:*",
     "@slickgrid-universal/text-export": "workspace:*",
     "@types/node": "catalog:",
-    "@types/react": "^19.2.2",
-    "@types/react-dom": "^19.2.2",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
     "@types/sortablejs": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "dompurify": "catalog:",
     "globals": "catalog:",
     "native-copyfiles": "catalog:",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
     "react-router-dom": "^7.9.5",
     "remove-glob": "catalog:",
     "rxjs": "catalog:",

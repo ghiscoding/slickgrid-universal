@@ -35,7 +35,7 @@ const Example38: React.FC = () => {
   const [isPageErrorTest, setIsPageErrorTest] = useState(false);
   const [hideSubTitle, setHideSubTitle] = useState(false);
 
-  const gridOptionsRef = useRef<GridOption>(null);
+  const gridOptionsRef = useRef<GridOption | null>(null);
   const metricsRef = useRef({} as Metrics);
   const reactGridRef = useRef<SlickgridReactInstance | null>(null);
 
@@ -264,7 +264,7 @@ const Example38: React.FC = () => {
       }
 
       /// read the JSON and create a fresh copy of the data that we are free to modify
-      let data = Data as unknown as { name: string; gender: string; company: string; id: string; category: { id: string; name: string } }[];
+      let data = Data as unknown as { name: string; gender: string; company: string; id: string; category: { id: string; name: string; }; }[];
       data = JSON.parse(JSON.stringify(data));
 
       // Sort the data
