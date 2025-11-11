@@ -3,7 +3,6 @@ import type { MultipleSelectOption } from 'multiple-select-vanilla';
 import type { TrustedHTML } from 'trusted-types/lib';
 import type { DataViewOption, SlickEditorLock } from '../core/index.js';
 import type { ColumnReorderFunction, OperatorString, OperatorType } from '../enums/index.js';
-import type { HybridSelectionModelOption } from '../extensions/slickHybridSelectionModel.js';
 import type { TranslaterService } from '../services/translater.service.js';
 import type {
   AutocompleterOption,
@@ -33,6 +32,7 @@ import type {
   GroupItemMetadataProviderOption,
   HeaderButton,
   HeaderMenu,
+  HybridSelectionModelOption,
   ItemMetadata,
   Locale,
   LongTextEditorOption,

@@ -1,4 +1,4 @@
-import type { SlickEvent, SlickRange } from '../core/index.js';
+import type { SlickEvent, SlickRange } from '../core/slickCore.js';
 import type { SlickPlugin } from '../interfaces/index.js';
 
 export type SelectionModel = SlickPlugin & {

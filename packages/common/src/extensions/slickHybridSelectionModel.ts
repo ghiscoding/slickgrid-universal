@@ -2,26 +2,9 @@ import { isDefined } from '@slickgrid-universal/utils';
 import { SlickEvent, SlickEventData, SlickEventHandler, SlickRange } from '../core/index.js';
 import type { SlickDataView } from '../core/slickDataview.js';
 import type { SlickGrid } from '../core/slickGrid.js';
-import type { GridOption, SelectionModel } from '../index.js';
+import type { GridOption, HybridSelectionModelOption, SelectionModel } from '../index.js';
 import type { CustomDataView, OnActiveCellChangedEventArgs } from '../interfaces/index.js';
 import { SlickCellRangeSelector } from './slickCellRangeSelector.js';
-
-export declare type RowSelectOverride = (
-  data: OnActiveCellChangedEventArgs,
-  selectionModel: SlickHybridSelectionModel,
-  grid: SlickGrid
-) => boolean;
-
-export interface HybridSelectionModelOption {
-  selectActiveCell: boolean;
-  selectActiveRow: boolean;
-  cellRangeSelector?: SlickCellRangeSelector;
-  dragToSelect: boolean;
-  autoScrollWhenDrag: boolean;
-  handleRowMoveManagerColumn: boolean; // Row Selection on RowMoveManage column
-  rowSelectColumnIds: string[]; // Row Selection on these columns
-  rowSelectOverride: RowSelectOverride | undefined; // function to toggle Row Selection Models
-}
 
 export class SlickHybridSelectionModel implements SelectionModel {
   // hybrid selection model is CellSelectionModel except when selecting
@@ -54,6 +37,7 @@ export class SlickHybridSelectionModel implements SelectionModel {
     rowSelectColumnIds: [], // Row Selection on these columns
     rowSelectOverride: undefined, // function to toggle Row Selection Models
     cellRangeSelector: undefined,
+    selectionType: 'mixed',
   };
 
   constructor(options?: Partial<HybridSelectionModelOption>) {
@@ -85,6 +69,12 @@ export class SlickHybridSelectionModel implements SelectionModel {
     this._grid = grid;
     this._options = { ...this._defaults, ...this._options };
     this._selector = this.addonOptions.cellRangeSelector;
+
+    if (this._options.selectionType === 'cell') {
+      this._activeSelectionIsRow = false;
+    } else if (this._options.selectionType === 'row') {
+      this._activeSelectionIsRow = true;
+    }
 
     // add PubSub instance to all SlickEvent
     const pubSub = grid.getPubSubService();
@@ -119,8 +109,12 @@ export class SlickHybridSelectionModel implements SelectionModel {
     if (this._selector) {
       this._grid.registerPlugin(this._selector);
       this._eventHandler
-        // this._selector.onCellRangeSelecting.subscribe(this.handleCellRangeSelected.bind(this));
-        .subscribe(this._selector.onCellRangeSelected, this.handleCellRangeSelected.bind(this))
+        .subscribe(this._selector.onCellRangeSelecting, (e, args) =>
+          this.handleCellRangeSelected(e, { ...args, caller: 'onCellRangeSelecting' })
+        )
+        .subscribe(this._selector.onCellRangeSelected, (e, args) =>
+          this.handleCellRangeSelected(e, { ...args, caller: 'onCellRangeSelected' })
+        )
         .subscribe(this._selector.onBeforeCellRangeSelected, this.handleBeforeCellRangeSelected.bind(this));
     }
 
@@ -134,14 +128,7 @@ export class SlickHybridSelectionModel implements SelectionModel {
 
   dispose(): void {
     this._eventHandler.unsubscribeAll();
-    this.disposeSelector();
-  }
-
-  disposeSelector(): void {
     if (this._selector) {
-      // this._selector.onCellRangeSelecting.unsubscribe(this.handleCellRangeSelected.bind(this));
-      this._selector.onCellRangeSelected.unsubscribe(this.handleCellRangeSelected.bind(this));
-      this._selector.onBeforeCellRangeSelected.unsubscribe(this.handleBeforeCellRangeSelected.bind(this));
       this._grid?.unregisterPlugin(this._selector);
     }
     this._selector?.destroy();
@@ -243,9 +230,6 @@ export class SlickHybridSelectionModel implements SelectionModel {
       return;
     }
 
-    // if range has not changed, don't fire onSelectedRangesChanged
-    const rangeHasChanged = !this.rangesAreEqual(this._ranges, ranges);
-
     if (this._activeSelectionIsRow) {
       this._ranges = ranges;
 
@@ -254,6 +238,9 @@ export class SlickHybridSelectionModel implements SelectionModel {
       const eventData = new SlickEventData(new CustomEvent('click', { detail: { caller, selectionMode } }), this._ranges);
       this.onSelectedRangesChanged.notify(this._ranges, eventData);
     } else {
+      // if range has not changed, don't fire onSelectedRangesChanged
+      const rangeHasChanged = !this.rangesAreEqual(this._ranges, ranges);
+
       this._ranges = this.removeInvalidRanges(ranges);
       if (rangeHasChanged) {
         // provide extra "caller" argument through SlickEventData event to avoid breaking the previous pubsub event structure
@@ -280,6 +267,12 @@ export class SlickHybridSelectionModel implements SelectionModel {
   }
 
   rowSelectionModelIsActive(data: OnActiveCellChangedEventArgs): boolean {
+    if (this._options.selectionType === 'cell') {
+      return false;
+    } else if (this._options.selectionType === 'row') {
+      return true;
+    }
+
     // work out required selection mode
     if (this._options?.rowSelectOverride) {
       return this._options?.rowSelectOverride(data, this, this._grid);
@@ -574,10 +567,10 @@ export class SlickHybridSelectionModel implements SelectionModel {
 
   protected handleCellRangeSelected(
     _e: SlickEventData,
-    args: { range: SlickRange; selectionMode: string; allowAutoEdit?: boolean }
+    args: { range: SlickRange; selectionMode: string; allowAutoEdit?: boolean; caller: 'onCellRangeSelecting' | 'onCellRangeSelected' }
   ): boolean {
     if (this._activeSelectionIsRow) {
-      if (!this.gridOptions.multiSelect || !this.addonOptions?.selectActiveRow) {
+      if (!this.gridOptions.multiSelect || (!this.addonOptions?.selectActiveRow && this._options.selectionType !== 'row')) {
         return false;
       }
       this.setSelectedRanges(
@@ -586,6 +579,9 @@ export class SlickHybridSelectionModel implements SelectionModel {
         args.selectionMode
       );
     } else {
+      if (args.caller === 'onCellRangeSelecting') {
+        return false;
+      }
       this._grid.setActiveCell(args.range.fromRow, args.range.fromCell, args.allowAutoEdit ? undefined : false, false, true);
       this.setSelectedRanges([args.range], undefined, args.selectionMode);
     }

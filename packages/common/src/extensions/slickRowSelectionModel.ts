@@ -131,7 +131,7 @@ export class SlickRowSelectionModel implements SelectionModel {
 
   protected getRowsRange(from: number, to: number): number[] {
     let i;
-    const rows = [];
+    const rows: number[] = [];
     for (i = from; i <= to; i++) {
       rows.push(i);
     }
@@ -257,7 +257,7 @@ export class SlickRowSelectionModel implements SelectionModel {
   }
 
   protected rangesToRows(ranges: SlickRange[]): number[] {
-    const rows = [];
+    const rows: number[] = [];
     for (let i = 0; i < ranges.length; i++) {
       for (let j = ranges[i].fromRow; j <= ranges[i].toRow; j++) {
         rows.push(j);

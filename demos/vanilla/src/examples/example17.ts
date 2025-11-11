@@ -248,6 +248,7 @@ export default class Example17 {
     );
 
     this.sgb2.slickGrid?.setSelectionModel(
+      // or use SlickHybridSelectionModel with `selectionType: 'row'`
       new SlickRowSelectionModel({
         cellRangeSelector: new SlickCellRangeSelector({
           selectionCss: {
