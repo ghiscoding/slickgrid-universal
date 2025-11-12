@@ -1,13 +1,13 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["oxc", "regex", "typescript", "vitest"],
+  "plugins": ["import", "oxc", "regex", "typescript", "vitest"],
   "extends": ["recommended", "recommended-module"],
   "env": {
     "es2025": true,
     "browser": true,
     "shared-node-browser": true
   },
-  "ignorePatterns": ["**/*.{js,mjs,d.ts}", "**/dist/**", "**/demos/angular/**", "**/frameworks/angular-slickgrid/**", "**/*.d.ts"],
+  "ignorePatterns": ["**/*.{js,mjs,d.ts}", "**/dist/**", "**/frameworks/angular-slickgrid/**", "**/*.d.ts"],
   "overrides": [
     {
       "files": ["**/*.spec.ts"],

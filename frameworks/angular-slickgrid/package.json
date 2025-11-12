@@ -39,6 +39,7 @@
     "copy:i18n": "copyfiles src/assets/i18n/*.json dist/i18n --flat --stat",
     "delete:dist": "remove dist",
     "build:demo": "ng build --configuration=production --base-href=''",
+    "lint": "oxlint . -c oxlintrc-angular.json --threads 1",
     "pack-tarball": "npm pack",
     "pack-lib": "npm pack ./dist",
     "replace-workspace": "node ./scripts/replace-workspace.mjs",

@@ -1,7 +1,11 @@
 {
   "$schema": "../../node_modules/oxlint/configuration_schema.json",
-  "extends": ["../../.oxlintrc.json"],
-  "plugins": ["oxc", "regex", "typescript"],
+  "env": {
+    "es2025": true,
+    "browser": true,
+    "shared-node-browser": true
+  },
+  "plugins": ["oxc", "regex", "typescript", "vitest"],
   "jsPlugins": ["@angular-eslint/eslint-plugin"],
   "ignorePatterns": [
     "**/*.spec.ts",
@@ -18,17 +22,7 @@
     {
       "files": ["**/*.ts"],
       "rules": {
-        // disable type imports since that conflicts with DI:
-        //   import type { TranslateService } from '@ngx-translate/core';
-        //   constructor(private translate: TranslateService) {}
         "typescript/consistent-type-imports": "off"
-      }
-    },
-    {
-      "files": ["**/*.html"],
-      "rules": {
-        // HTML-specific rules (limited in Oxlint)
-        // You may need additional tooling for HTML-specific linting
       }
     }
   ],
@@ -36,7 +30,15 @@
     "@angular-eslint/directive-selector": ["error", { "type": "attribute", "prefix": "app", "style": "camelCase" }],
     "@angular-eslint/component-selector": ["error", { "type": "element", "style": "kebab-case" }],
     "@angular-eslint/prefer-standalone": "off",
-    // Angular-specific selector rules (manual implementation)
+    "typescript/no-unused-expressions": "off",
+    "typescript/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "destructuredArrayIgnorePattern": "^_",
+        "caughtErrors": "none"
+      }
+    ],
     "naming-convention": [
       "error",
       {
