@@ -17,7 +17,7 @@ import {
 } from 'slickgrid-vue';
 import { onBeforeMount, onUnmounted, ref, type Ref } from 'vue';
 
-const NB_ITEMS = 5000;
+const NB_ITEMS = 10_000;
 const darkMode = ref(false);
 const gridOptions = ref<GridOption>();
 const columnDefinitions: Ref<Column[]> = ref([]);

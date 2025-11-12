@@ -31,7 +31,7 @@ const Example18: React.FC = () => {
 
   useEffect(() => {
     defineGrid();
-    setDataset(loadData(5000));
+    setDataset(loadData(10_000));
 
     // reset to light mode before unmounting
     return () => {
