@@ -7048,8 +7048,11 @@ describe('SlickGrid core file', () => {
 
         // when enableTextSelectionOnCells isn't enabled and trigger IE related code
         const selectStartEvent = new CustomEvent('selectstart');
+        const eventStartSpy = vi.spyOn(selectStartEvent, 'preventDefault');
         Object.defineProperty(selectStartEvent, 'target', { writable: true, value: document.createElement('TextArea') });
         viewportTopLeft.dispatchEvent(selectStartEvent);
+
+        expect(eventStartSpy).not.toHaveBeenCalled();
       });
 
       it('should update viewport top/left scrollLeft when scrolling in topHeader DOM element', () => {
@@ -7074,8 +7077,11 @@ describe('SlickGrid core file', () => {
 
         // when enableTextSelectionOnCells isn't enabled and trigger IE related code
         const selectStartEvent = new CustomEvent('selectstart');
-        Object.defineProperty(selectStartEvent, 'target', { writable: true, value: document.createElement('TextArea') });
+        const eventStartSpy = vi.spyOn(selectStartEvent, 'preventDefault');
+        Object.defineProperty(selectStartEvent, 'target', { writable: true, value: null });
         viewportTopLeft.dispatchEvent(selectStartEvent);
+
+        expect(eventStartSpy).toHaveBeenCalled();
       });
 
       it('should NOT trigger onHeaderRowMouseEnter notify when hovering a header when "slick-headerrow-column" class is not found', () => {
