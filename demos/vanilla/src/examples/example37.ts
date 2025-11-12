@@ -159,7 +159,9 @@ export default class Example37 {
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
-        rowSelectColumnIds: ['id', '_checkbox_selector'],
+
+        // you could use "row" selection to override the hybrid mode
+        selectionType: 'row',
       },
     };
   }

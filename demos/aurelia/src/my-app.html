@@ -44,7 +44,7 @@
           <a class="nav-link" href="https://ghiscoding.gitbook.io/aurelia-slickgrid/" target="_blank"> 📘 Documentation </a>
         </li>
         <li repeat.for="r of routes" class="nav-item">
-          <a if.bind="r.path !== 'home'" load.bind="r.path" class="nav-link ${r.isActive ? 'active' : ''}">${r.title}</a>
+          <a if.bind="r.path !== 'home'" load.bind="r.path" class="nav-link">${r.title}</a>
         </li>
       </ul>
     </section>

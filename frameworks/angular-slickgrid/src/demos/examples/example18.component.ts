@@ -20,7 +20,7 @@ import {
   type GroupingGetterFunction,
 } from '../../library';
 
-const NB_ITEMS = 5000;
+const NB_ITEMS = 10_000;
 
 @Component({
   templateUrl: './example18.component.html',

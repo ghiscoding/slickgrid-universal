@@ -104,7 +104,7 @@ describe('Example 48 - Hybrid Selection Model', () => {
     it('should auto scroll take effect to display the selecting element when dragging', { scrollBehavior: false }, () => {
       cy.get('#grid48-1 .slick-viewport-top.slick-viewport-left').scrollTo('top');
 
-      testScroll('#grid48-2', '#grid48-1', 0, 1).then((scrollDistance) => {
+      testScroll('#grid48-1', '#grid48-1', 0, 1).then((scrollDistance) => {
         expect(scrollDistance.cell.scrollBefore).to.be.lte(scrollDistance.cell.scrollAfter);
         expect(scrollDistance.row.scrollBefore).to.be.lte(scrollDistance.row.scrollAfter);
       });
@@ -136,48 +136,27 @@ describe('Example 48 - Hybrid Selection Model', () => {
 
       cy.get('#grid48-2 .slick-row[data-row="1"] .slick-cell.l3.r3').trigger('mouseup', 'bottomRight', { which: 1, force: true });
 
-      cy.get('#grid48-2 .slick-row[data-row="1"] .slick-cell.l3.r3')
-        .find('.slick-drag-replace-handle')
-        .trigger('mousedown', { which: 1, force: true });
+      testScroll('#grid48-2', '#grid48-2', 0, 1).then((scrollDistance) => {
+        expect(scrollDistance.cell.scrollBefore).to.be.lte(scrollDistance.cell.scrollAfter);
+        expect(scrollDistance.row.scrollBefore).to.be.lte(scrollDistance.row.scrollAfter);
+      });
 
-      cy.get('#grid48-2 .slick-row[data-row="2"] .slick-cell.l3.r3')
-        .trigger('mousemove', 'bottomRight')
-        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
-
-      cy.get('#grid48-2 .slick-cell.selected').should('have.length', 4);
-    });
-
-    it('should be able to expand the cell selections further to the right', () => {
-      cy.get('#grid48-2 .slick-cell.selected').should('have.length', 4);
-      cy.get('#grid48-2 .slick-row[data-row="2"] .slick-cell.l3.r3')
-        .find('.slick-drag-replace-handle')
-        .trigger('mousedown', { which: 1, force: true });
-
-      cy.get('#grid48-2 .slick-row[data-row="2"] .slick-cell.l4.r4')
-        .trigger('mousemove', 'bottomRight')
-        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
-
-      cy.get('#grid48-2 .slick-cell.selected').should('have.length', 6);
-    });
-
-    it('should be able to expand the cell selections further to the bottom', () => {
-      cy.get('#grid48-2 .slick-cell.selected').should('have.length', 6);
-      cy.get('#grid48-2 .slick-row[data-row="2"] .slick-cell.l4.r4')
-        .find('.slick-drag-replace-handle')
-        .trigger('mousedown', { which: 1, force: true });
-
-      cy.get('#grid48-2 .slick-row[data-row="3"] .slick-cell.l4.r4')
-        .trigger('mousemove', 'bottomRight')
-        .trigger('mouseup', 'bottomRight', { which: 1, force: true });
-
-      cy.get('#grid48-2 .slick-cell.selected').should('have.length', 9);
+      cy.get('#selectionRange2').contains(/"fromRow":0,"fromCell":0,"toRow":1[0-9],"toCell":7/);
+      cy.get('#grid48-2 .slick-viewport-top.slick-viewport-left').scrollTo(0, 12 * 35);
     });
 
     it('should click on a cell outside of the selected range and expect previous selection to remain', () => {
-      cy.get('#grid48-2 .slick-row[data-row="4"] .slick-cell.l2.r2').as('task4');
-      cy.get('@task4').should('contain', 'Task 4').click();
+      cy.get('#grid48-2 .slick-row[data-row="16"] .slick-cell.l2.r2').as('task1x');
+      cy.get('@task1x')
+        .contains(/Task 1[0-9]/)
+        .click();
       cy.get('#grid48-2 .slick-viewport-top.slick-viewport-left').scrollTo('top');
-      cy.get('#grid48-2 .slick-cell.selected').should('have.length', 9);
+      cy.get('#grid48-2 .slick-cell.selected').should('have.length.gte', 60);
+      cy.get('#selectionRange2').contains(/"fromRow":0,"fromCell":0,"toRow":1[0-9],"toCell":7/);
+    });
+
+    it('should clear Select All checkboxes', () => {
+      cy.get('#grid48-2 .header-checkbox-selectall').click().click();
     });
 
     it('should click on row 4 and 5 row checkbox and expect 5 full rows to be selected', () => {
@@ -186,7 +165,7 @@ describe('Example 48 - Hybrid Selection Model', () => {
       cy.get('@task4').click();
       cy.get('#grid48-2 .slick-viewport-top.slick-viewport-left').scrollTo('top');
       cy.get('#grid48-2 .slick-row[data-row="4"] .slick-cell.l0.r0').should('have.class', 'selected');
-      cy.get('#grid48-2 .slick-cell.selected').should('have.length', 8 * 4);
+      cy.get('#grid48-2 .slick-cell.selected').should('have.length', 8 * 1);
 
       // select another row
       cy.get('#grid48-2 .slick-row[data-row="5"] .slick-cell.l0.r0').as('task5');
@@ -194,7 +173,7 @@ describe('Example 48 - Hybrid Selection Model', () => {
       cy.get('@task5').click();
       cy.get('#grid48-2 .slick-viewport-top.slick-viewport-left').scrollTo('top');
       cy.get('@task5').should('have.class', 'selected');
-      cy.get('#grid48-2 .slick-cell.selected').should('have.length', 8 * 5);
+      cy.get('#grid48-2 .slick-cell.selected').should('have.length', 8 * 2);
     });
   });
 });

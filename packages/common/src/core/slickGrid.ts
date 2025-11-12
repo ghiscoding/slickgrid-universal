@@ -983,21 +983,17 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       // calculate the diff so we can set consistent sizes
       this.measureCellPaddingAndBorder();
 
-      // for usability reasons, all text selection in SlickGrid are disabled
-      // with the exception of input and textarea elements (selection must
-      // be enabled there so that editors work as expected); note that
-      // selection in grid cells (grid body) is already unavailable in
-      // all browsers except IE
-      this.disableSelection(this._headers); // disable all text selection in header (including input and textarea)
+      // disable all text selection in header (including input and textarea)
+      this.disableSelection(this._headers);
 
       if (!this._options.enableTextSelectionOnCells) {
         // disable text selection in grid cells except in input and textarea elements
-        // (this is IE-specific, because selectstart event will only fire in IE)
         this._viewport.forEach((view) => {
           this._bindingEventService.bind(view, 'selectstart', (event: Event) => {
             if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
               return;
             }
+            event.preventDefault();
           });
         });
       }

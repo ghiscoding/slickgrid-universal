@@ -22,7 +22,7 @@ describe('Example 18 - Draggable Grouping & Aggregators', () => {
   });
 
   it('should initially be grouped by "Duration" when loading the grid', () => {
-    cy.get('[data-row=0] > .cell-title .slick-group-title').should('contain', 'Duration: 0');
+    cy.get('[data-row=0] > .cell-title .slick-group-title').contains(/Duration: [0-9]/);
     cy.get('[data-row=1] > .slick-cell:nth(2)').should('contain', '0');
   });
 

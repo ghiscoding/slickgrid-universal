@@ -137,14 +137,19 @@ export function tryParseDate(inputDate?: string | Date, inputFormat?: string, st
     if (!inputDate) {
       return false;
     }
-    return inputDate instanceof Date
-      ? inputDate
-      : parse({
-          date: inputDate,
-          format: inputFormat as string,
-          dateOverflow: strict ? 'throw' : 'backward',
-          locale: 'en-US',
-        });
+    const d =
+      inputDate instanceof Date
+        ? inputDate
+        : parse({
+            date: inputDate,
+            format: inputFormat as string,
+            dateOverflow: strict ? 'throw' : 'backward',
+            locale: 'en-US',
+          });
+
+    // make sure we have a valid year before returning, otherwise return false
+    // e.g blank date "0001-01-01" will throw with Tempo `format()`, so better return false
+    return d.getFullYear() > 1000 ? d : false;
   } catch (_e) {
     return false;
   }

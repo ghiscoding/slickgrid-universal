@@ -16,7 +16,7 @@ import {
   type SlickGrid,
 } from 'aurelia-slickgrid';
 
-const NB_ITEMS = 5000;
+const NB_ITEMS = 10_000;
 
 export class Example18 {
   private _darkMode = false;
