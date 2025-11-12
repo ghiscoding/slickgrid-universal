@@ -2,7 +2,7 @@ import { route, type Routeable } from '@aurelia/router';
 import { customElement } from 'aurelia';
 // @ts-ignore
 import AureliaLogo from './assets/aurelia-logo.png?url';
-import template from './my-app.html';
+import template from './my-app.html?raw';
 import './styles.scss';
 
 const myRoutes: Routeable[] = [
