@@ -53,5 +53,9 @@ jobs:
       - name: OXLint
         run: pnpm lint
 
+      # to be removed later once oxlint jsPlugins issue is resolved
+      - name: OXLint Angular-Slickgrid
+        run: pnpm angular:lint
+
       - name: Prettier
         run: pnpm prettier:check
