@@ -12,11 +12,6 @@
   ],
   "license": "MIT",
   "author": "Ghislain B.",
-  "browserslist": [
-    "last 2 versions",
-    "> 1%",
-    "not dead"
-  ],
   "scripts": {
     "aurelia:dev": "vite",
     "aurelia:preview": "vite preview",
@@ -57,7 +52,6 @@
     "@types/node": "catalog:",
     "@types/sortablejs": "catalog:",
     "aurelia-polyfills": "^1.3.4",
-    "autoprefixer": "^10.4.21",
     "cypress": "catalog:",
     "cypress-real-events": "catalog:",
     "dompurify": "catalog:",

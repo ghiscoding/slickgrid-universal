@@ -59,9 +59,7 @@
     "sass:watch-all": "run-p \"sass-build-task:scss-compile:* --watch\" --"
   },
   "browserslist": [
-    "last 2 versions",
-    "> 1%",
-    "not dead"
+    "baseline widely available"
   ],
   "dependencies": {
     "@excel-builder-vanilla/types": "^4.2.1",
@@ -79,7 +77,7 @@
     "vanilla-calendar-pro": "^3.0.5"
   },
   "devDependencies": {
-    "autoprefixer": "^10.4.21",
+    "autoprefixer": "^10.4.22",
     "cssnano": "^7.1.2",
     "native-copyfiles": "catalog:",
     "npm-run-all2": "catalog:",
