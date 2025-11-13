@@ -42,11 +42,6 @@
   "bugs": {
     "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
   },
-  "browserslist": [
-    "last 2 versions",
-    "> 1%",
-    "not dead"
-  ],
   "dependencies": {
     "@slickgrid-universal/binding": "workspace:*",
     "@slickgrid-universal/common": "workspace:*",

@@ -19,11 +19,6 @@
     "build": "pnpm type-check && vite build",
     "type-check": "tsc --noEmit"
   },
-  "browserslist": [
-    "last 2 versions",
-    "> 1%",
-    "not dead"
-  ],
   "dependencies": {
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/composite-editor-component": "workspace:*",

@@ -57,11 +57,6 @@
     "copy-i18n:dist": "copyfiles src/assets/locales/**/*.* dist/i18n --up 3 --stat",
     "pack": "npm pack"
   },
-  "browserslist": [
-    "last 2 versions",
-    "> 1%",
-    "not dead"
-  ],
   "files": [
     "/dist",
     "/src"
