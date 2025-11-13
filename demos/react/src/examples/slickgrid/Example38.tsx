@@ -35,7 +35,7 @@ const Example38: React.FC = () => {
   const [isPageErrorTest, setIsPageErrorTest] = useState(false);
   const [hideSubTitle, setHideSubTitle] = useState(false);
 
-  const gridOptionsRef = useRef<GridOption>(null);
+  const gridOptionsRef = useRef<GridOption | null>(null);
   const metricsRef = useRef({} as Metrics);
   const reactGridRef = useRef<SlickgridReactInstance | null>(null);
 

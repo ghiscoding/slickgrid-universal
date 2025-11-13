@@ -36,7 +36,7 @@ const Example31: React.FC = () => {
   ]);
   const [hideSubTitle, setHideSubTitle] = useState(false);
 
-  const gridOptionsRef = useRef<GridOption>(null);
+  const gridOptionsRef = useRef<GridOption | null>(null);
   const reactGridRef = useRef<SlickgridReactInstance | null>(null);
 
   useEffect(() => {

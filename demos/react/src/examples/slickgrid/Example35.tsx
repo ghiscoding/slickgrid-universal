@@ -28,7 +28,7 @@ const Example35: React.FC = () => {
   const [fetchResult, setFetchResult] = useState('');
   const [hideSubTitle, setHideSubTitle] = useState(false);
 
-  const gridOptionsRef = useRef<GridOption>(null);
+  const gridOptionsRef = useRef<GridOption | null>(null);
   const reactGridRef = useRef<SlickgridReactInstance | null>(null);
 
   useEffect(() => {
