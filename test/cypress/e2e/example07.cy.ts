@@ -717,7 +717,9 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       .contains(/^Task 8$/)
       .click();
 
-    cy.get('.ms-ok-button').click();
+    // click OK button or click on document body will both do the same
+    cy.get('body').click();
+    // cy.get('.ms-ok-button').click();
 
     cy.get('.slick-row').should('have.length', 2);
 

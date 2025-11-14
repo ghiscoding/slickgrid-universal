@@ -141,7 +141,7 @@ export class SelectEditor implements Editor {
         }
       },
       onClose: (reason) => {
-        if (reason === 'key.escape' || reason === 'body.click' || (!this.hasAutoCommitEdit && !this.isValueChanged())) {
+        if (reason === 'key.escape' || (!this.hasAutoCommitEdit && !this.isValueChanged())) {
           if (reason === 'key.escape') {
             this.cancel();
           }

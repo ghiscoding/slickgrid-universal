@@ -699,8 +699,9 @@ describe('SelectEditor', () => {
       });
 
       it('should call "save" and "getEditorLock" method when "hasAutoCommitEdit" is enabled and we are destroying the editor without it being saved yet', () => {
+        const isAutoCommitEnabled = true;
         mockItemData = { id: 1, gender: 'male', isActive: true };
-        gridOptionMock.autoCommitEdit = true;
+        gridOptionMock.autoCommitEdit = isAutoCommitEnabled;
         const lockSpy = vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
 
         editor = new SelectEditor(editorArguments, true);
@@ -710,13 +711,14 @@ describe('SelectEditor', () => {
         editor.destroy();
 
         expect(saveSpy).toHaveBeenCalledTimes(1);
-        expect(saveSpy).toHaveBeenCalledWith(true);
+        expect(saveSpy).toHaveBeenCalledWith(isAutoCommitEnabled);
         expect(lockSpy).toHaveBeenCalled();
       });
 
       it('should call "save(true)" only once when autoCommitEdit is True and even when both "onClose" and "destroy" are called', () => {
+        const isAutoCommitEnabled = true;
         mockItemData = { id: 1, gender: 'male', isActive: true };
-        gridOptionMock.autoCommitEdit = true;
+        gridOptionMock.autoCommitEdit = isAutoCommitEnabled;
 
         editor = new SelectEditor(editorArguments, true);
         const saveSpy = vi.spyOn(editor, 'save');
@@ -726,12 +728,13 @@ describe('SelectEditor', () => {
         editor.destroy();
 
         expect(saveSpy).toHaveBeenCalledTimes(1);
-        expect(saveSpy).toHaveBeenCalledWith(true);
+        expect(saveSpy).toHaveBeenCalledWith(isAutoCommitEnabled);
       });
 
       it('should call "save(false)" only once when autoCommitEdit is False and even when both "onClose" and "destroy" are called', () => {
+        const isAutoCommitEnabled = false;
         mockItemData = { id: 1, gender: 'male', isActive: true };
-        gridOptionMock.autoCommitEdit = false;
+        gridOptionMock.autoCommitEdit = isAutoCommitEnabled;
 
         editor = new SelectEditor(editorArguments, true);
         const saveSpy = vi.spyOn(editor, 'save');
@@ -741,7 +744,7 @@ describe('SelectEditor', () => {
         editor.destroy();
 
         expect(saveSpy).toHaveBeenCalledTimes(1);
-        expect(saveSpy).toHaveBeenCalledWith(false);
+        expect(saveSpy).toHaveBeenCalledWith(isAutoCommitEnabled);
       });
 
       it('should cancel changes when Escape key is pressed and should not call "save()"', () => {
@@ -760,9 +763,10 @@ describe('SelectEditor', () => {
         expect(saveSpy).not.toHaveBeenCalled();
       });
 
-      it('should not "save()" when clicking ouside the select on body', () => {
+      it('should also "save()" when clicking on document body (ouside the select)', () => {
+        const isAutoCommitEnabled = false;
         mockItemData = { id: 1, gender: 'male', isActive: true };
-        gridOptionMock.autoCommitEdit = false;
+        gridOptionMock.autoCommitEdit = isAutoCommitEnabled;
 
         editor = new SelectEditor(editorArguments, true);
         const cancelSpy = vi.spyOn(editor, 'cancel');
@@ -773,7 +777,7 @@ describe('SelectEditor', () => {
         editor.destroy();
 
         expect(cancelSpy).not.toHaveBeenCalled();
-        expect(saveSpy).not.toHaveBeenCalled();
+        expect(saveSpy).toHaveBeenCalledWith(isAutoCommitEnabled);
       });
 
       it('should not call "commitCurrentEdit" when "hasAutoCommitEdit" is disabled', () => {

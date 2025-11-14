@@ -168,7 +168,9 @@ describe('Example 25 - GraphQL Basic API without Pagination', () => {
 
     cy.get('.ms-drop:visible').contains('French').click();
 
-    cy.get('.ms-ok-button:visible').click();
+    // click OK button or click on document body will both do the same
+    cy.get('.ms-ok-button:visible');
+    cy.get('body').click();
 
     cy.get('.right-footer.metrics').contains('44 of 250 items');
 
