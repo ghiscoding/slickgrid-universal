@@ -42,9 +42,9 @@ catalog:
   vitest: ^4.0.6
   vue: ^3.5.22
 
-# add a few named catalog: for Lerna-Lite to test its own code with real projects
-catalogs:
-  # Can be referenced through "catalog:vite6" or "catalog:vite7"
+# named catalog: to reference multiple version of a dependency
+# Can be referenced through "catalog:vite6" or "catalog:vite7"
+catalogs:  
   vite6:
     vite: ^6.4.1
   vite7:
