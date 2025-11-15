@@ -181,12 +181,12 @@ describe('Example 14 - Columns Resize by Content', () => {
       cy.get('[data-test="toggle-readonly-btn"]').click();
 
       // 1st click on "Completed" to enable "Finish" date
-      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(7)`).click();
+      cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(7)`).dblclick();
       cy.get('.editor-completed').check();
 
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(8)`)
         .should('contain', '')
-        .click(); // this date should also always be initially empty
+        .dblclick(); // this date should also always be initially empty
 
       const yesterdayDate = format(addDay(new Date(), -1), 'YYYY-MM-DD');
       const todayDate = format(new Date(), 'YYYY-MM-DD');

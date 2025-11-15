@@ -548,7 +548,8 @@ export default class Example14 {
       editable: true,
       autoAddCustomEditorFormatter: customEditableInputFormatter,
       enableCellNavigation: true,
-      autoEdit: true,
+      autoEdit: false,
+      autoEditByKey: true,
       autoCommitEdit: true,
       autoResize: {
         container: '.grid-container',

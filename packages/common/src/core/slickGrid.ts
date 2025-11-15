@@ -5824,6 +5824,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
     }
 
+    const cell = this.getActiveCell();
+    const isChar = /^[\p{L}\p{N}\p{P}\p{S}\s]$/u.test(e.key); // make sure it's a character being typed
+    if (!handled && this._options.autoEditByKey && cell && isChar && this.isCellEditable(cell.row, cell.cell) && !this.currentEditor) {
+      this.makeActiveCellEditable(undefined, false, e);
+    }
+
     if (handled) {
       // the event has been handled so don't let parent element (bubbling/propagation) or browser (default) handle it
       e.stopPropagation();
@@ -6272,7 +6278,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         this.rowsCache[this.activeRow]?.rowNode?.forEach((node) => node.classList.add('active'));
       }
 
-      if (this._options.editable && opt_editMode && this.isCellPotentiallyEditable(this.activeRow, this.activeCell)) {
+      if (opt_editMode && this.isCellEditable(this.activeRow, this.activeCell)) {
         if (this._options.asyncEditorLoading) {
           clearTimeout(this.h_editorLoader);
           this.h_editorLoader = setTimeout(() => {
@@ -6297,6 +6303,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     // }
   }
 
+  /** Check if cell is editable and check if grid is also editable */
+  protected isCellEditable(row: number, cell: number): boolean {
+    return !!(this._options.editable && this.isCellPotentiallyEditable(row, cell));
+  }
+
+  /** Check if cell is potentially editable but without validating that the grid is editable */
   protected isCellPotentiallyEditable(row: number, cell: number): boolean {
     const dataLength = this.getDataLength();
     // is the data for this row actually loaded?
