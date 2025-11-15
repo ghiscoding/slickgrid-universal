@@ -16,7 +16,6 @@
     "typeRoots": ["node_modules/@types"],
     "lib": ["es2022", "dom"],
     "module": "es2022",
-    "baseUrl": "./",
     "paths": {
       "sortablejs/modular/sortable.core.esm.js": ["./types/sortablejs.d.ts"]
     },
