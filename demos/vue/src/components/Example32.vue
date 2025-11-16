@@ -622,6 +622,14 @@ function saveAll() {
   editedItems.value = {};
 }
 
+function toggleAutoEdit(state: boolean) {
+  vueGrid.slickGrid?.setOptions({ autoEdit: state });
+}
+
+function toggleAutoEditByKey(state: boolean) {
+  vueGrid.slickGrid?.setOptions({ autoEditByKey: state });
+}
+
 function undoLastEdit(showLastEditor = false) {
   const lastEdit = editQueue.value.pop();
   const lastEditCommand = lastEdit?.editCommand;
@@ -919,6 +927,7 @@ function renderItemCallbackWith4Corners(item: any): string {
           <i class="mdi mdi-arrow-expand"></i> Resize by Cell Content
         </label>
       </div>
+      <span class="ms-3 h5">Container Width (950px)</span>
     </div>
 
     <div class="mb-2">
@@ -940,6 +949,29 @@ function renderItemCallbackWith4Corners(item: any): string {
         </button>
         <button type="button" class="btn btn-outline-secondary btn-icon" data-test="save-all-btn" @click="saveAll()">
           <span>Save All</span>
+        </button>
+      </div>
+      <span class="ms-2"><code>autoEdit</code></span>
+      <div class="btn-group" role="group" aria-label="autoEdit">
+        <button type="button" class="btn btn-outline-secondary btn-sm" data-test="auto-edit-on-btn" @click="toggleAutoEdit(true)">
+          ON
+        </button>
+        <button type="button" class="btn btn-outline-secondary btn-sm" data-test="auto-edit-off-btn" @click="toggleAutoEdit(false)">
+          OFF
+        </button>
+      </div>
+      <span class="ms-2"><code>autoEditByKey</code></span>
+      <div class="btn-group" role="group" aria-label="autoEditByKey">
+        <button type="button" class="btn btn-outline-secondary btn-sm" data-test="auto-edit-key-on-btn" @click="toggleAutoEditByKey(true)">
+          ON
+        </button>
+        <button
+          type="button"
+          class="btn btn-outline-secondary btn-sm"
+          data-test="auto-edit-key-off-btn"
+          @click="toggleAutoEditByKey(false)"
+        >
+          OFF
         </button>
       </div>
     </div>

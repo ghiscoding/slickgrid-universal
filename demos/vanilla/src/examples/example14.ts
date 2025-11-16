@@ -868,6 +868,14 @@ export default class Example14 {
     // });
   }
 
+  toggleAutoEdit(state: boolean) {
+    this.sgb.slickGrid?.setOptions({ autoEdit: state });
+  }
+
+  toggleAutoEditByKey(state: boolean) {
+    this.sgb.slickGrid?.setOptions({ autoEditByKey: state });
+  }
+
   undoLastEdit(showLastEditor = false) {
     const lastEdit = this.editQueue.pop();
     const lastEditCommand = lastEdit?.editCommand;

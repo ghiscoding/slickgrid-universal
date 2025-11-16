@@ -128,6 +128,14 @@ export class DateEditor implements Editor {
         onClickDate: () => {
           this._lastClickIsDate = true;
         },
+        onInit: (self) => {
+          setTimeout(() => {
+            const mainElm = self.context.mainElement;
+            const targetElement = mainElm.querySelector<HTMLDivElement>('.vc-date:first-child')!;
+            targetElement.tabIndex = 0;
+            targetElement.focus();
+          }, 0);
+        },
         onChangeToInput: (self) => {
           if (self.context.inputElement) {
             let selectedDate = '';

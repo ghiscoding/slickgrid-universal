@@ -385,4 +385,49 @@ describe('Example 14 - Columns Resize by Content', () => {
       cy.get('.slick-submenu').should('have.length', 0);
     });
   });
+
+  describe('edit by typing character in active cell', () => {
+    it('should clear filters by using the Grid Menu "Clear all Filters" command & toggle back grid to be editable', () => {
+      cy.get('button.slick-grid-menu-button').click({ force: true });
+
+      cy.get(`.slick-grid-menu:visible`).find('.slick-menu-item').first().find('span').contains('Clear all Filters').click();
+
+      cy.get('button.slick-grid-menu-button').trigger('click').click({ force: true });
+      cy.get('[data-test="toggle-readonly-btn"]').click();
+    });
+
+    it('should click on "Auto-Edit by keyboard ON" button', () => {
+      cy.get('[data-test="auto-edit-off-btn"]').click();
+      cy.get('[data-test="auto-edit-key-on-btn"]').click();
+    });
+
+    it('should be able to edit "Duration" when "autoEditByKey" is enabled and by clicking once on second row and expect next row to become editable', () => {
+      cy.get('[data-row="2"] .slick-cell.l2.r2').contains(/[0-9]* days/);
+      cy.get('[data-row="2"] .slick-cell.l2.r2').click();
+      cy.get('[data-row="2"] .slick-cell.l2.r2.active.editable').should('have.length', 0);
+
+      cy.get('[data-row="2"] .slick-cell.l2.r2').type('123');
+      cy.get('[data-row="2"] .slick-cell.l2.r2.active.editable').should('have.length', 1);
+      cy.get('[data-row="2"] .slick-cell.l2.r2').type('{enter}');
+      cy.get('[data-row="2"] .slick-cell.l2.r2.active.editable').should('have.length', 0);
+
+      cy.get('[data-row="2"] .slick-cell.l2.r2').should('contain', '123 days');
+    });
+
+    it('should click on "Auto-Edit by keyboard OFF" button', () => {
+      cy.get('[data-test="auto-edit-off-btn"]').click();
+      cy.get('[data-test="auto-edit-key-off-btn"]').click();
+    });
+
+    it('should NOT be able to edit "Duration" when "autoEditByKey" is disabled', () => {
+      cy.get('[data-row="2"] .slick-cell.l2.r2').contains(/[0-9]* days/);
+      cy.get('[data-row="3"] .slick-cell.l2.r2').click();
+      cy.get('[data-row="3"] .slick-cell.l2.r2.active.editable').should('have.length', 0);
+
+      cy.get('[data-row="3"] .slick-cell.l2.r2').type('123');
+      cy.get('[data-row="3"] .slick-cell.l2.r2.active.editable').should('have.length', 0);
+
+      cy.get('[data-row="2"] .slick-cell.l2.r2').contains(/[0-9]* days/);
+    });
+  });
 });

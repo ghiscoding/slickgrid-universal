@@ -1,104 +1,128 @@
-<h3 class="title is-3">
-  Example 14 - Columns Resize by Content
-  <span class="subtitle is-size-5 has-text-grey-dark">(with Salesforce Theme)</span>
-  <div class="subtitle code-link">
-    <span class="is-size-6">see</span>
-    <a
-      class="is-size-5"
-      target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example14.ts"
-    >
-      <span class="mdi mdi-link-variant"></span> code
-    </a>
-  </div>
-</h3>
-
-<div class="columns">
-  <div class="column is-three-quarters">
-    <p class="italic example-details">
-      The grid below uses the optional resize by cell content (with a fixed 1000px for demo purposes), you can click on the 2 buttons to see
-      the difference. The "autosizeColumns" is really the default option used by SlickGrid-Universal, the resize by cell content is optional
-      because it requires to read the first thousand rows and do extra width calculation.
-    </p>
-  </div>
-</div>
-
-<div class="columns">
-  <div class="column field is-narrow">
-    <h4 class="title is-4">Container Width (1000px)</h4>
-  </div>
-  <div class="column field has-addons is-narrow">
-    <p class="control">
-      <button class.bind="classDefaultResizeButton" onclick.trigger="handleDefaultResizeColumns()" data-test="autosize-columns-btn">
-        <span class="mdi mdi-arrow-expand"></span>
-        <span>(default resize) "autosizeColumns"</span>
-      </button>
-    </p>
-    <p class="control">
-      <button class.bind="classNewResizeButton" onclick.trigger="handleNewResizeColumns()" data-test="resize-by-content-btn">
-        <span class="mdi mdi-arrow-expand"></span>
-        <span>Resize by Cell Content</span>
-      </button>
-    </p>
-  </div>
-
-  <div class="column field has-addons is-narrow">
-    <p class="control">
-      <button
-        class="button is-small"
-        onclick.trigger="handleNavigateBottom()"
-        data-test="navigate-bottom"
-        title="Navigate to Bottom of Grid"
+<div class="grid14-container">
+  <h3 class="title is-3">
+    Example 14 - Columns Resize by Content
+    <span class="subtitle is-size-5 has-text-grey-dark">(with Salesforce Theme)</span>
+    <div class="subtitle code-link">
+      <span class="is-size-6">see</span>
+      <a
+        class="is-size-5"
+        target="_blank"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example14.ts"
       >
-        <span class="mdi mdi-arrow-down"></span>
-      </button>
-    </p>
-    <p class="control">
-      <button class="button is-small" onclick.trigger="handleNavigateTop()" data-test="navigate-top" title="Navigate to Top of Grid">
-        <span class="mdi mdi-arrow-down mdi-rotate-180"></span>
-      </button>
-    </p>
+        <span class="mdi mdi-link-variant"></span> code
+      </a>
+    </div>
+  </h3>
+
+  <div class="columns">
+    <div class="column is-three-quarters">
+      <p class="italic example-details">
+        The grid below uses the optional resize by cell content (with a fixed 1000px for demo purposes), you can click on the 2 buttons to
+        see the difference. The "autosizeColumns" is really the default option used by SlickGrid-Universal, the resize by cell content is
+        optional because it requires to read the first thousand rows and do extra width calculation.
+      </p>
+    </div>
   </div>
 
-  <div class="column field has-addons is-narrow">
-    <p class="control">
-      <button class="button is-small" onclick.trigger="toggleGridEditReadonly()" data-test="toggle-readonly-btn">
-        <span class="mdi mdi-table-edit"></span>
-        <span>Toggle Readonly</span>
-      </button>
-    </p>
-    <p class="control">
-      <button class="button is-small" onclick.trigger="undoLastEdit()" data-test="undo-last-edit-btn">
-        <span class="mdi mdi-undo"></span>
-        <span>Undo Last Edit</span>
-      </button>
-    </p>
-    <p class="control">
-      <button
-        class="button is-small is-success is-outlined"
-        onclick.trigger="saveAll()"
-        data-test="save-all-btn"
-        title="Check your console log for the result"
-      >
-        <span class="mdi mdi-check-all color-se-primary"></span>
-        <span>Save All</span>
-      </button>
-    </p>
-    <p class="control">
-      <button
-        class="button is-small"
-        onclick.trigger="setSelectedRowIds()"
-        data-test="set-dynamic-rows-btn"
-        title="Change Row Selection across multiple pages"
-      >
-        <span>Change Row Selection</span>
-      </button>
-    </p>
-    <span class.bind="loadingClass"></span>
-  </div>
-</div>
+  <div class="columns">
+    <div class="column field has-addons is-narrow">
+      <p class="control">
+        <button class.bind="classDefaultResizeButton" onclick.trigger="handleDefaultResizeColumns()" data-test="autosize-columns-btn">
+          <span class="mdi mdi-arrow-expand"></span>
+          <span>(default resize) "autosizeColumns"</span>
+        </button>
+      </p>
+      <p class="control">
+        <button class.bind="classNewResizeButton" onclick.trigger="handleNewResizeColumns()" data-test="resize-by-content-btn">
+          <span class="mdi mdi-arrow-expand"></span>
+          <span>Resize by Cell Content</span>
+        </button>
+      </p>
+    </div>
 
-<!-- https://www.w3docs.com/snippets/html/how-to-make-a-div-fill-the-height-of-the-remaining-space.html -->
-<div class="grid-container grid14-container">
-  <div class="grid14"></div>
+    <div class="column field has-addons is-narrow">
+      <p class="control">
+        <button
+          class="button is-small"
+          onclick.trigger="handleNavigateBottom()"
+          data-test="navigate-bottom"
+          title="Navigate to Bottom of Grid"
+        >
+          <span class="mdi mdi-arrow-down"></span>
+        </button>
+      </p>
+      <p class="control">
+        <button class="button is-small" onclick.trigger="handleNavigateTop()" data-test="navigate-top" title="Navigate to Top of Grid">
+          <span class="mdi mdi-arrow-down mdi-rotate-180"></span>
+        </button>
+      </p>
+    </div>
+    <div class="column field is-narrow">
+      <h4 class="title is-5">Container Width (1000px)</h4>
+    </div>
+  </div>
+
+  <div class="columns mb-4">
+    <div class="column field has-addons is-narrow">
+      <p class="control">
+        <button class="button is-small" onclick.trigger="toggleGridEditReadonly()" data-test="toggle-readonly-btn">
+          <span class="mdi mdi-table-edit"></span>
+          <span>Toggle Readonly</span>
+        </button>
+      </p>
+      <p class="control">
+        <button class="button is-small" onclick.trigger="undoLastEdit()" data-test="undo-last-edit-btn">
+          <span class="mdi mdi-undo"></span>
+          <span>Undo Last Edit</span>
+        </button>
+      </p>
+      <p class="control">
+        <button
+          class="button is-small is-success is-outlined"
+          onclick.trigger="saveAll()"
+          data-test="save-all-btn"
+          title="Check your console log for the result"
+        >
+          <span class="mdi mdi-check-all color-se-primary"></span>
+          <span>Save All</span>
+        </button>
+      </p>
+      <p class="control">
+        <button
+          class="button is-small"
+          onclick.trigger="setSelectedRowIds()"
+          data-test="set-dynamic-rows-btn"
+          title="Change Row Selection across multiple pages"
+        >
+          <span>Change Row Selection</span>
+        </button>
+      </p>
+    </div>
+    <div class="mt-2 ml-3"><code>autoEdit</code></div>
+    <div class="column field has-addons is-narrow">
+      <p class="control">
+        <button class="button is-small" onclick.trigger="toggleAutoEdit(true)" data-test="auto-edit-on-btn">ON</button>
+      </p>
+      <p class="control">
+        <button class="button is-small" onclick.trigger="toggleAutoEdit(false)" data-test="auto-edit-off-btn">OFF</button>
+      </p>
+    </div>
+    <div class="mt-2 ml-3"><code>autoEditByKey</code></div>
+    <div class="column field has-addons is-narrow">
+      <p class="control">
+        <button class="button is-small" onclick.trigger="toggleAutoEditByKey(true)" data-test="auto-edit-key-on-btn">ON</button>
+      </p>
+      <p class="control">
+        <button class="button is-small" onclick.trigger="toggleAutoEditByKey(false)" data-test="auto-edit-key-off-btn">OFF</button>
+      </p>
+    </div>
+    <div>
+      <span class.bind="loadingClass"></span>
+    </div>
+  </div>
+
+  <!-- https://www.w3docs.com/snippets/html/how-to-make-a-div-fill-the-height-of-the-remaining-space.html -->
+  <div class="grid-container grid14-container">
+    <div class="grid14"></div>
+  </div>
 </div>

@@ -669,6 +669,14 @@ const Example32: React.FC = () => {
     setEditedItems({});
   }
 
+  function toggleAutoEdit(state: boolean) {
+    reactGridRef.current?.slickGrid?.setOptions({ autoEdit: state });
+  }
+
+  function toggleAutoEditByKey(state: boolean) {
+    reactGridRef.current?.slickGrid?.setOptions({ autoEditByKey: state });
+  }
+
   function undoLastEdit(showLastEditor = false) {
     const lastEdit = editQueue.pop();
     const lastEditCommand = lastEdit?.editCommand;
@@ -960,6 +968,7 @@ const Example32: React.FC = () => {
               <i className="mdi mdi-arrow-expand"></i> Resize by Cell Content
             </label>
           </div>
+          <span className="ms-3 h5">Container Width (950px)</span>
         </div>
 
         <div className="mb-2">
@@ -991,6 +1000,48 @@ const Example32: React.FC = () => {
             </button>
             <button type="button" className="btn btn-outline-secondary btn-icon" data-test="save-all-btn" onClick={() => saveAll()}>
               Save All
+            </button>
+          </div>
+          <span className="ms-2">
+            <code>autoEdit</code>
+          </span>
+          <div className="btn-group" role="group" aria-label="autoEdit">
+            <button
+              type="button"
+              className="btn btn-outline-secondary btn-sm"
+              data-test="auto-edit-on-btn"
+              onClick={() => toggleAutoEdit(true)}
+            >
+              ON
+            </button>
+            <button
+              type="button"
+              className="btn btn-outline-secondary btn-sm"
+              data-test="auto-edit-off-btn"
+              onClick={() => toggleAutoEdit(false)}
+            >
+              OFF
+            </button>
+          </div>
+          <span className="ms-2">
+            <code>autoEditByKey</code>
+          </span>
+          <div className="btn-group" role="group" aria-label="autoEditByKey">
+            <button
+              type="button"
+              className="btn btn-outline-secondary btn-sm"
+              data-test="auto-edit-key-on-btn"
+              onClick={() => toggleAutoEditByKey(true)}
+            >
+              ON
+            </button>
+            <button
+              type="button"
+              className="btn btn-outline-secondary btn-sm"
+              data-test="auto-edit-key-off-btn"
+              onClick={() => toggleAutoEditByKey(false)}
+            >
+              OFF
             </button>
           </div>
         </div>
