@@ -683,6 +683,14 @@ export class Example32 {
     this.editedItems = {};
   }
 
+  toggleAutoEdit(state: boolean) {
+    this.aureliaGrid.slickGrid?.setOptions({ autoEdit: state });
+  }
+
+  toggleAutoEditByKeypress(state: boolean) {
+    this.aureliaGrid.slickGrid?.setOptions({ autoEditByKeypress: state });
+  }
+
   undoLastEdit(showLastEditor = false) {
     const lastEdit = this.editQueue.pop();
     const lastEditCommand = lastEdit?.editCommand;

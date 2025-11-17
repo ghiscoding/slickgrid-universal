@@ -7618,6 +7618,32 @@ describe('SlickGrid core file', () => {
         expect(onKeyDownSpy).toHaveBeenCalled();
         expect(stopPropagationSpy).not.toHaveBeenCalled();
       });
+
+      it('should open editor when "autoEditByKeypress" is enabled and we start typing a character on an active cell', () => {
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, {
+          ...defaultOptions,
+          enableCellNavigation: true,
+          enableExcelCopyBuffer: false,
+          editable: true,
+          autoEdit: false,
+          autoEditByKeypress: true,
+        });
+        const activeCell = { row: 0, cell: 1 };
+        grid.setActiveCell(activeCell.row, activeCell.cell);
+        vi.spyOn(grid, 'getActiveCell').mockReturnValue(activeCell);
+        vi.spyOn(grid, 'getCellNode').mockReturnValue(document.createElement('div'));
+        const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'C' });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(onKeyDownSpy).toHaveBeenCalled();
+        expect(grid.getCellEditor()).toBeTruthy();
+      });
     });
   });
 });

@@ -746,6 +746,14 @@ export class Example32Component implements OnInit {
     this.editedItems = {};
   }
 
+  toggleAutoEdit(state: boolean) {
+    this.angularGrid.slickGrid?.setOptions({ autoEdit: state });
+  }
+
+  toggleAutoEditByKeypress(state: boolean) {
+    this.angularGrid.slickGrid?.setOptions({ autoEditByKeypress: state });
+  }
+
   undoLastEdit(showLastEditor = false) {
     const lastEdit = this.editQueue.pop();
     const lastEditCommand = lastEdit?.editCommand;

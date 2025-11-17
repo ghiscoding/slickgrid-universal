@@ -548,7 +548,8 @@ export default class Example14 {
       editable: true,
       autoAddCustomEditorFormatter: customEditableInputFormatter,
       enableCellNavigation: true,
-      autoEdit: true,
+      autoEdit: false,
+      autoEditByKeypress: true,
       autoCommitEdit: true,
       autoResize: {
         container: '.grid-container',
@@ -865,6 +866,14 @@ export default class Example14 {
     //   shouldTriggerEvent: true,
     //   applyGridRowSelection: true
     // });
+  }
+
+  toggleAutoEdit(state: boolean) {
+    this.sgb.slickGrid?.setOptions({ autoEdit: state });
+  }
+
+  toggleAutoEditByKeypress(state: boolean) {
+    this.sgb.slickGrid?.setOptions({ autoEditByKeypress: state });
   }
 
   undoLastEdit(showLastEditor = false) {

@@ -3,6 +3,7 @@
    - [Demo with Float Editor & Dollar Formatter](#demo-with-float-editor-and-dollar-currency-formatter)
    - [Editor `outputType` and `saveOutputType`](#editor-output-type--save-output-type)
    - [Custom Editor](#custom-inline-editor)
+- [Open Editor on cell click or keyboard](#open-editor-on-cell-click-or-keyboard)
 - [Perform an Action after Inline Edit](#perform-an-action-after-inline-edit)
 - [How to prevent Editor from going to the next bottom cell](#how-to-prevent-editor-from-going-to-the-next-bottom-cell)
 - [onClick Action Editor (icon click)](#onclick-action-editor-icon-click)
@@ -289,6 +290,19 @@ this.columnDefinitions = [
   }
 ];
 ```
+
+### Open Editor on cell click or keyboard
+
+For a grid to be editable, you need to enable the grid option `editable` flag and by default you will have to double-click on a cell for it to open the inline editor. You also need to enable `enableCellNavigation` grid option for editing to work.
+
+We also have other useful grid options:
+- `autoEdit`: when enabled, a single click will make the cell editable and open the inline editor
+  - when this flag is disabled, it will require a double-click
+- `autoEditByKeypress`: when enabled will automatically open the inlined editor as soon as the user starts typing in an active cell
+- `autoCommitEdit`: when enabled will try to commit the current edit without focusing on the next row
+- `autoEditNewRow`: when enabled it will automatically open the editor when clicking on cell that has a defined editor
+
+Most users typically want to use `autoEdit` for single click editors or the new `autoEditByKeypress` to open the editor when user starts typing. The `autoCommitEdit` is also quite useful.
 
 ## Perform an action after inline edit
 #### Recommended way

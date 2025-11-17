@@ -1,14 +1,23 @@
 // @use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-salesforce.scss' with (
 //   $slick-autocomplete-max-height: 250px,
 // );
-
-.salmon {
-  color: lightsalmon;
-}
-.green {
-  color: rgb(127, 196, 24);
-}
 .grid14-container {
-  width: 1000px;
-  height: calc(100vh - 320px);
+  .salmon {
+    color: lightsalmon;
+  }
+  .green {
+    color: rgb(127, 196, 24);
+  }
+  .grid14-container {
+    width: 1000px;
+    height: calc(100vh - 320px);
+  }
+
+  div.columns {
+    margin: 0;
+    .column {
+      margin-bottom: 0;
+      padding: 6px;
+    }
+  }
 }
