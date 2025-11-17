@@ -626,8 +626,8 @@ function toggleAutoEdit(state: boolean) {
   vueGrid.slickGrid?.setOptions({ autoEdit: state });
 }
 
-function toggleAutoEditByKey(state: boolean) {
-  vueGrid.slickGrid?.setOptions({ autoEditByKey: state });
+function toggleAutoEditByKeypress(state: boolean) {
+  vueGrid.slickGrid?.setOptions({ autoEditByKeypress: state });
 }
 
 function undoLastEdit(showLastEditor = false) {
@@ -960,16 +960,21 @@ function renderItemCallbackWith4Corners(item: any): string {
           OFF
         </button>
       </div>
-      <span class="ms-2"><code>autoEditByKey</code></span>
-      <div class="btn-group" role="group" aria-label="autoEditByKey">
-        <button type="button" class="btn btn-outline-secondary btn-sm" data-test="auto-edit-key-on-btn" @click="toggleAutoEditByKey(true)">
+      <span class="ms-2"><code>autoEditByKeypress</code></span>
+      <div class="btn-group" role="group" aria-label="autoEditByKeypress">
+        <button
+          type="button"
+          class="btn btn-outline-secondary btn-sm"
+          data-test="auto-edit-key-on-btn"
+          @click="toggleAutoEditByKeypress(true)"
+        >
           ON
         </button>
         <button
           type="button"
           class="btn btn-outline-secondary btn-sm"
           data-test="auto-edit-key-off-btn"
-          @click="toggleAutoEditByKey(false)"
+          @click="toggleAutoEditByKeypress(false)"
         >
           OFF
         </button>

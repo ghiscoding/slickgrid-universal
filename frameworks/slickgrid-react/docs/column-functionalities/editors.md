@@ -107,11 +107,11 @@ For a grid to be editable, you need to enable the grid option `editable` flag an
 We also have other useful grid options:
 - `autoEdit`: when enabled, a single click will make the cell editable and open the inline editor
   - when this flag is disabled, it will require a double-click
-- `autoEditByKey`: when enabled will automatically open the inlined editor as soon as the user starts typing in an active cell
+- `autoEditByKeypress`: when enabled will automatically open the inlined editor as soon as the user starts typing in an active cell
 - `autoCommitEdit`: when enabled will try to commit the current edit without focusing on the next row
 - `autoEditNewRow`: when enabled it will automatically open the editor when clicking on cell that has a defined editor
 
-Most users typically want to use `autoEdit` for single click editors or the new `autoEditByKey` to open the editor when user starts typing. The `autoCommitEdit` is also quite useful.
+Most users typically want to use `autoEdit` for single click editors or the new `autoEditByKeypress` to open the editor when user starts typing. The `autoCommitEdit` is also quite useful.
 
 ## Perform an action After Inline Edit
 #### Recommended way

@@ -687,8 +687,8 @@ export class Example32 {
     this.aureliaGrid.slickGrid?.setOptions({ autoEdit: state });
   }
 
-  toggleAutoEditByKey(state: boolean) {
-    this.aureliaGrid.slickGrid?.setOptions({ autoEditByKey: state });
+  toggleAutoEditByKeypress(state: boolean) {
+    this.aureliaGrid.slickGrid?.setOptions({ autoEditByKeypress: state });
   }
 
   undoLastEdit(showLastEditor = false) {

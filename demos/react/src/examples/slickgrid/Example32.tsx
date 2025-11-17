@@ -673,8 +673,8 @@ const Example32: React.FC = () => {
     reactGridRef.current?.slickGrid?.setOptions({ autoEdit: state });
   }
 
-  function toggleAutoEditByKey(state: boolean) {
-    reactGridRef.current?.slickGrid?.setOptions({ autoEditByKey: state });
+  function toggleAutoEditByKeypress(state: boolean) {
+    reactGridRef.current?.slickGrid?.setOptions({ autoEditByKeypress: state });
   }
 
   function undoLastEdit(showLastEditor = false) {
@@ -1024,14 +1024,14 @@ const Example32: React.FC = () => {
             </button>
           </div>
           <span className="ms-2">
-            <code>autoEditByKey</code>
+            <code>autoEditByKeypress</code>
           </span>
-          <div className="btn-group" role="group" aria-label="autoEditByKey">
+          <div className="btn-group" role="group" aria-label="autoEditByKeypress">
             <button
               type="button"
               className="btn btn-outline-secondary btn-sm"
               data-test="auto-edit-key-on-btn"
-              onClick={() => toggleAutoEditByKey(true)}
+              onClick={() => toggleAutoEditByKeypress(true)}
             >
               ON
             </button>
@@ -1039,7 +1039,7 @@ const Example32: React.FC = () => {
               type="button"
               className="btn btn-outline-secondary btn-sm"
               data-test="auto-edit-key-off-btn"
-              onClick={() => toggleAutoEditByKey(false)}
+              onClick={() => toggleAutoEditByKeypress(false)}
             >
               OFF
             </button>

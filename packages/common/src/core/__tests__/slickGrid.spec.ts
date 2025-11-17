@@ -7619,7 +7619,7 @@ describe('SlickGrid core file', () => {
         expect(stopPropagationSpy).not.toHaveBeenCalled();
       });
 
-      it('should open editor when "autoEditByKey" is enabled and we start typing a character on an active cell', () => {
+      it('should open editor when "autoEditByKeypress" is enabled and we start typing a character on an active cell', () => {
         const columns = [
           { id: 'name', field: 'name', name: 'Name' },
           { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
@@ -7630,7 +7630,7 @@ describe('SlickGrid core file', () => {
           enableExcelCopyBuffer: false,
           editable: true,
           autoEdit: false,
-          autoEditByKey: true,
+          autoEditByKeypress: true,
         });
         const activeCell = { row: 0, cell: 1 };
         grid.setActiveCell(activeCell.row, activeCell.cell);
