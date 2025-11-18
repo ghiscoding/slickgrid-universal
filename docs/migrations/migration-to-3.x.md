@@ -13,7 +13,7 @@ In our previous v2.0 release (see [Migration to v2.0](Migration-to-2.x.md)), we 
 
 ---
 
-**NOTE:** if you come from an earlier version other than 2.x, then please make sure to follow each migration in their respected order
+**NOTE:** if you come from an earlier version other than 2.x, then please make sure to follow each migration in their respective order
 
 ## Changes
 ### Replaced `multiple-select` with [`multiple-select-vanilla`](https://github.com/ghiscoding/multiple-select-vanilla)

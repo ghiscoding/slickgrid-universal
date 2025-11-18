@@ -28,7 +28,7 @@ Slickgrid-Universal is now fully standalone and entirely written in TypeScript w
 
 ---
 
-**NOTE:** if you come from an earlier version, please make sure to follow each migration in their respected order (see Wiki index)
+**NOTE:** if you come from an earlier version, please make sure to follow each migration in their respective order (see Wiki index)
 
 > **Note** after following the migration, if you have some build errors with missing `slickgrid` that is because you did not upgrade all Slickgrid-Universal dependencies that you may have. So in short **do not install SlickGrid** manually, this is wrong and we are no longer depending on 6pac/slickgrid since Slickgrid-Universal now has its own SlickGrid/SlickDataView core files.
 

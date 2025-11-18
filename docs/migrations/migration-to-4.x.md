@@ -29,7 +29,7 @@ Slickgrid-Universal is now fully standalone and entirely written in TypeScript w
 
 ---
 
-**NOTE:** if you come from an earlier version, please make sure to follow each migration in their respected order
+**NOTE:** if you come from an earlier version, please make sure to follow each migration in their respective order
 
 ## Changes
 ### Distribution folder

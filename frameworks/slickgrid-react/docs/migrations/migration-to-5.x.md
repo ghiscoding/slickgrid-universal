@@ -36,7 +36,7 @@ With this release, and after 7 years of development as a single developer (mysel
 
 For most of breaking changes, a quick Search & Replace in your code editor should suffice.
 
-> **Note:** if you come from an earlier version, please make sure to follow each migrations in their respected order (review previous migration guides)
+> **Note:** if you come from an earlier version, please make sure to follow each migrations in their respective order (review previous migration guides)
 
 ## Changes
 

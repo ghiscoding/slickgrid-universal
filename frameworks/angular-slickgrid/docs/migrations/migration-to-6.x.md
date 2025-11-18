@@ -14,7 +14,7 @@ In our previous v5.0 release (see [Migration to v5.0](https://github.com/ghiscod
 
 ---
 
-**NOTE:** if you come from an earlier version other than 5.x, please make sure to follow each migration in their respected order
+**NOTE:** if you come from an earlier version other than 5.x, please make sure to follow each migration in their respective order
 
 ## Changes
 

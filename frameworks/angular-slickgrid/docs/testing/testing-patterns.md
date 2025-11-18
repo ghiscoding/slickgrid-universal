@@ -11,7 +11,6 @@ Below is a super small Cypress test
 
 ```ts
 describe('Example 3 - Grid with Editors', () => {
-  const GRID_ROW_HEIGHT = 35; // `rowHeight` GridOption
   const fullTitles = ['Title', 'Duration (days)', '% Complete', 'Start', 'Finish', 'Effort Driven'];
 
   it('should display Example title', () => {
@@ -27,13 +26,13 @@ describe('Example 3 - Grid with Editors', () => {
   });
 
   it('should be able to change "Task 1" in first column of second row to a different Task', () => {
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(1)`).should('contain', 'Task 1').click();
+    cy.get('[data-row="1"] > .slick-cell:nth(1)').should('contain', 'Task 1').click();
     cy.get('input[type=text].editor-text')
       .type('Task 8888')
       .type('{enter}');
 
     // revalidate the cell
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(1)`).should('contain', 'Task 8888');
+    cy.get('[data-row="1"] > .slick-cell:nth(1)').should('contain', 'Task 8888');
   });
 });
 ```
@@ -47,7 +46,7 @@ These tests are typically based on either Jest or Vitest leveraging JSDOM, hence
 ```typescript
 describe('Example 3 - Grid with Editors', () => {
   it('should have exact Column Titles in the grid', async () => {
-    const fullTitles = ['Name','Owner','% Complete','Start','Finish','Effort Driven'];
+    const fullTitles = ['Name', 'Owner', '% Complete', 'Start', 'Finish', 'Effort Driven'];
     await render(GridDemoComponent, {
       imports: [
         AppModule,
@@ -56,8 +55,11 @@ describe('Example 3 - Grid with Editors', () => {
             container: '#container',
           },
           devMode: {
-            containerClientWidth: 1000,  // fake the default container clientWidth since that's not available in jsdom
-            ownerNodeIndex: 0 // if no other dynamic stylesheets are created index 0 is fine to workaround an issue with lack of ownerNode
+            // fake the default container clientWidth since that's not available in jsdom
+            containerClientWidth: 1000,
+
+            // if no other dynamic stylesheets are created index 0 is fine to workaround an issue with lack of ownerNode
+            ownerNodeIndex: 0
           },
         }),
       ]

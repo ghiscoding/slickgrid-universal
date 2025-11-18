@@ -10,7 +10,6 @@ Below is a super small Cypress test
 
 ```ts
 describe('Example 3 - Grid with Editors', () => {
-  const GRID_ROW_HEIGHT = 35; // `rowHeight` GridOption
   const fullTitles = ['Title', 'Duration (days)', '% Complete', 'Start', 'Finish', 'Effort Driven'];
 
   it('should display Example title', () => {
@@ -26,13 +25,13 @@ describe('Example 3 - Grid with Editors', () => {
   });
 
   it('should be able to change "Task 1" in first column of second row to a different Task', () => {
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(1)`).should('contain', 'Task 1').click();
+    cy.get('[data-row="1"] > .slick-cell:nth(1)').should('contain', 'Task 1').click();
     cy.get('input[type=text].editor-text')
       .type('Task 8888')
       .type('{enter}');
 
     // revalidate the cell
-    cy.get(`[style="top:${GRID_ROW_HEIGHT * 1}px"] > .slick-cell:nth(1)`).should('contain', 'Task 8888');
+    cy.get('[data-row="1"] > .slick-cell:nth(1)').should('contain', 'Task 8888');
   });
 });
 ```

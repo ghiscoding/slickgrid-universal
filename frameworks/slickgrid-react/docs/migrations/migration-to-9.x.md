@@ -23,7 +23,7 @@ If the project is useful to you, please give it a ⭐ (on [Slickgrid-Universal](
 - removing arrow pointer from Custom Tooltip addon (because it was often offset with the cell text)
 - Slickgrid-React project now moved under [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal/) GitHub project
 
-> **Note:** if you come from an earlier version, please make sure to follow each migration in their respected order (review previous migration guides).
+> **Note:** if you come from an earlier version, please make sure to follow each migration in their respective order (review previous migration guides).
 
 ## Changes
 
@@ -47,8 +47,8 @@ gridOptions = {
 ```diff
 function reactGridReady(reactGrid: SlickgridReactInstance) {
   reactGridRef.current = reactGrid;
--  reactGrid.groupingService.renderPreHeaderRowGroupingTitles();
-+  reactGrid.headerGroupingService.renderPreHeaderRowGroupingTitles();
+- reactGrid.groupingService.renderPreHeaderRowGroupingTitles();
++ reactGrid.headerGroupingService.renderPreHeaderRowGroupingTitles();
 }
 ```
 
@@ -188,7 +188,7 @@ The `GridService` has CRUD method events which were sometime returning a single 
 ---
 
 ## Future Changes (next major to be expected around Node 20 EOL)
-### Code being `@deprecated` (to be removed in the future, next year)
+### Code being `@deprecated` (to be removed in the future, 2026-Q1)
 #### You can already start using these new options and props (shown below) in v9.0 and above.
 
 When I created the project, I started using a few TypeScript Enums and I thought that was pretty nice, but little did I know that all of these Enums were ending up in the final transpiled JS bundle which ends up taking extra space (but `type` do not). So in the next major, I'm planning to remove most of these Enums and replace them with string literal types (`type` instead of `enum` because again `type` aren't transpiled and `enum` are). So you should consider using string types as much, and as soon, as possible in all of your new grids and eventually make the changes in your older grids. At the moment, these are all tagged as deprecations and they will only be dropped in the future (not now, but still, you should consider making this change sooner rather than later), for example:

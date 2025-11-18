@@ -12,7 +12,7 @@ This new release is rather small for the developer, but a lot changed internally
 
 ---
 
-**NOTE:** if you come from a version earlier than 4.x, it is very important that you follow each migration in the respected order
+**NOTE:** if you come from a version earlier than 4.x, it is very important that you follow each migration in the respective order
 
 ### Removed Code
 1. ~Since we dropped jQueryUI, and we were using jQueryUI Slider for the `Filters.SliderRange`, we had to remove the Slider Range and we don't currently have a replacement at the moment, though it might come in the future.~ The Slider Range Filter got rewritten in pure JS and is back in version **[v5.1.0](https://github.com/ghiscoding/angular-slickgrid/releases/tag/v5.1.0)** release (see [Example 25](https://ghiscoding.github.io/angular-slickgrid-demos/#/range)).
