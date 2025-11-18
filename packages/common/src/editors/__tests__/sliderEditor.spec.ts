@@ -272,6 +272,75 @@ describe('SliderEditor', () => {
       expect(cellMouseEnterSpy).toHaveBeenCalledWith({ column: mockColumn, grid: gridStub }, expect.anything());
     });
 
+    describe('keydown event', () => {
+      it('should decrease slider number value and tooltip when using ArrowLeft keydown with "useArrowToSlide" undefined', () => {
+        const inputValue = 17;
+        const cellMouseEnterSpy = vi.spyOn(gridStub.onMouseEnter, 'notify');
+        mockColumn.editor!.options = { hideSliderNumber: false, useArrowToSlide: undefined };
+        mockItemData = { id: 1, price: 32, isActive: true };
+        editor = new SliderEditor(editorArguments);
+        editor.loadValue(mockItemData);
+        editor.setValue(inputValue);
+
+        const inputElm = divContainer.querySelector('.slider-editor-input.editor-price') as HTMLDivElement;
+        const editorNumberElm = divContainer.querySelector('.input-group-text') as HTMLInputElement;
+        const mockEvent = new (window.window as any).KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true, cancelable: true });
+        const prevDefaultSpy = vi.spyOn(mockEvent, 'preventDefault');
+        const stopPropSpy = vi.spyOn(mockEvent, 'stopPropagation');
+        inputElm.dispatchEvent(mockEvent);
+
+        expect(editor.isValueChanged()).toBe(true);
+        expect(editorNumberElm.textContent).toBe(`${inputValue - 1}`);
+        expect(cellMouseEnterSpy).toHaveBeenCalledWith({ column: mockColumn, grid: gridStub }, expect.anything());
+        expect(prevDefaultSpy).toHaveBeenCalled();
+        expect(stopPropSpy).toHaveBeenCalled();
+      });
+
+      it('should increase slider number value and tooltip when using ArrowRight keydown with "useArrowToSlide" enabled', () => {
+        const inputValue = 17;
+        const cellMouseEnterSpy = vi.spyOn(gridStub.onMouseEnter, 'notify');
+        mockColumn.editor!.options = { hideSliderNumber: false, useArrowToSlide: true };
+        mockItemData = { id: 1, price: 32, isActive: true };
+        editor = new SliderEditor(editorArguments);
+        editor.loadValue(mockItemData);
+        editor.setValue(inputValue);
+
+        const inputElm = divContainer.querySelector('.slider-editor-input.editor-price') as HTMLDivElement;
+        const editorNumberElm = divContainer.querySelector('.input-group-text') as HTMLInputElement;
+        const mockEvent = new (window.window as any).KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true });
+        const prevDefaultSpy = vi.spyOn(mockEvent, 'preventDefault');
+        const stopPropSpy = vi.spyOn(mockEvent, 'stopPropagation');
+        inputElm.dispatchEvent(mockEvent);
+
+        expect(editor.isValueChanged()).toBe(true);
+        expect(editorNumberElm.textContent).toBe(`${inputValue + 1}`);
+        expect(cellMouseEnterSpy).toHaveBeenCalledWith({ column: mockColumn, grid: gridStub }, expect.anything());
+        expect(prevDefaultSpy).toHaveBeenCalled();
+        expect(stopPropSpy).toHaveBeenCalled();
+      });
+
+      it('should not decrease or increase slider number value when "useArrowToSlide" is disabled', () => {
+        const inputValue = 17;
+        mockColumn.editor!.options = { hideSliderNumber: false, useArrowToSlide: false };
+        mockItemData = { id: 1, price: 32, isActive: true };
+        editor = new SliderEditor(editorArguments);
+        editor.loadValue(mockItemData);
+        editor.setValue(inputValue);
+
+        const inputElm = divContainer.querySelector('.slider-editor-input.editor-price') as HTMLDivElement;
+        const editorNumberElm = divContainer.querySelector('.input-group-text') as HTMLInputElement;
+        const mockEvent = new (window.window as any).KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true });
+        const prevDefaultSpy = vi.spyOn(mockEvent, 'preventDefault');
+        const stopPropSpy = vi.spyOn(mockEvent, 'stopPropagation');
+        inputElm.dispatchEvent(mockEvent);
+
+        expect(editor.isValueChanged()).toBe(true);
+        expect(editorNumberElm.textContent).toBe(`${inputValue}`);
+        expect(prevDefaultSpy).not.toHaveBeenCalled();
+        expect(stopPropSpy).not.toHaveBeenCalled();
+      });
+    });
+
     describe('changeEditorOption() method', () => {
       it('should be able to change enableSliderTrackColoring option', () => {
         editor = new SliderEditor(editorArguments);
@@ -587,39 +656,41 @@ describe('SliderEditor', () => {
       });
     });
 
-    it('should enableSliderTrackColoring and trigger a change event and expect slider track to have background color', () => {
-      mockColumn.editor!.options = { sliderStartValue: 5, enableSliderTrackColoring: true };
-      mockItemData = { id: 1, price: 80, isActive: true };
-      editor = new SliderEditor(editorArguments);
-      editor.loadValue(mockItemData);
-      editor.setValue(45);
+    describe('slider track', () => {
+      it('should enableSliderTrackColoring and trigger a change event and expect slider track to have background color', () => {
+        mockColumn.editor!.options = { sliderStartValue: 5, enableSliderTrackColoring: true };
+        mockItemData = { id: 1, price: 80, isActive: true };
+        editor = new SliderEditor(editorArguments);
+        editor.loadValue(mockItemData);
+        editor.setValue(45);
 
-      const editorElm = divContainer.querySelector('.slider-editor input.editor-price') as HTMLInputElement;
-      editorElm.dispatchEvent(new Event('change'));
+        const editorElm = divContainer.querySelector('.slider-editor input.editor-price') as HTMLInputElement;
+        editorElm.dispatchEvent(new Event('change'));
 
-      expect(editor.sliderOptions?.sliderTrackBackground).toBe(
-        'linear-gradient(to right, #eee 0%, var(--slick-slider-filter-thumb-color, #86bff8) 0%, var(--slick-slider-filter-thumb-color, #86bff8) 45%, #eee 45%)'
-      );
-    });
+        expect(editor.sliderOptions?.sliderTrackBackground).toBe(
+          'linear-gradient(to right, #eee 0%, var(--slick-slider-filter-thumb-color, #86bff8) 0%, var(--slick-slider-filter-thumb-color, #86bff8) 45%, #eee 45%)'
+        );
+      });
 
-    it('should click on the slider track and expect handle to move to the new position', () => {
-      mockColumn.editor!.editorOptions = { sliderStartValue: 5, enableSliderTrackColoring: true };
-      editor = new SliderEditor(editorArguments);
+      it('should click on the slider track and expect handle to move to the new position', () => {
+        mockColumn.editor!.editorOptions = { sliderStartValue: 5, enableSliderTrackColoring: true };
+        editor = new SliderEditor(editorArguments);
 
-      const editorElm = divContainer.querySelector('.slider-editor input.editor-price') as HTMLInputElement;
-      editorElm.dispatchEvent(new Event('change'));
+        const editorElm = divContainer.querySelector('.slider-editor input.editor-price') as HTMLInputElement;
+        editorElm.dispatchEvent(new Event('change'));
 
-      const sliderInputs = divContainer.querySelectorAll<HTMLInputElement>('.slider-editor-input');
-      const sliderTrackElm = divContainer.querySelector('.slider-track') as HTMLDivElement;
+        const sliderInputs = divContainer.querySelectorAll<HTMLInputElement>('.slider-editor-input');
+        const sliderTrackElm = divContainer.querySelector('.slider-track') as HTMLDivElement;
 
-      const sliderRightChangeSpy = vi.spyOn(sliderInputs[0], 'dispatchEvent');
+        const sliderRightChangeSpy = vi.spyOn(sliderInputs[0], 'dispatchEvent');
 
-      const clickEvent = new Event('click');
-      Object.defineProperty(clickEvent, 'offsetX', { writable: true, configurable: true, value: 56 });
-      Object.defineProperty(sliderTrackElm, 'offsetWidth', { writable: true, configurable: true, value: 75 });
-      sliderTrackElm.dispatchEvent(clickEvent);
+        const clickEvent = new Event('click');
+        Object.defineProperty(clickEvent, 'offsetX', { writable: true, configurable: true, value: 56 });
+        Object.defineProperty(sliderTrackElm, 'offsetWidth', { writable: true, configurable: true, value: 75 });
+        sliderTrackElm.dispatchEvent(clickEvent);
 
-      expect(sliderRightChangeSpy).toHaveBeenCalled();
+        expect(sliderRightChangeSpy).toHaveBeenCalled();
+      });
     });
   });
 

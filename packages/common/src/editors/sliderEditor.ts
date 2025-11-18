@@ -103,18 +103,19 @@ export class SliderEditor implements Editor {
       // create HTML string template
       this._editorElm = this.buildDomElement();
 
-      if (!compositeEditorOptions) {
-        this.focus();
-      }
-
       // watch on change event
       this._cellContainerElm.appendChild(this._editorElm);
       this._bindEventService.bind(this._sliderTrackElm, ['click', 'mouseup'], this.sliderTrackClicked.bind(this) as EventListener);
       this._bindEventService.bind(this._inputElm, ['change', 'mouseup', 'touchend'], this.handleChangeEvent.bind(this) as EventListener);
+      this._bindEventService.bind(this._inputElm, ['keydown'], this.handleKeyDown.bind(this) as EventListener);
 
       // if user chose to display the slider number on the right side, then update it every time it changes
       // we need to use both "input" and "change" event to be all cross-browser
       this._bindEventService.bind(this._inputElm, ['input', 'change'], this.handleChangeSliderNumber.bind(this));
+
+      if (!compositeEditorOptions) {
+        this.focus();
+      }
     }
   }
 
@@ -295,10 +296,7 @@ export class SliderEditor implements Editor {
   }
 
   save(): void {
-    const validation = this.validate();
-    const isValid = (validation && validation.valid) || false;
-
-    if (this.hasAutoCommitEdit && isValid) {
+    if (this.hasAutoCommitEdit && this.validate()?.valid) {
       // do not use args.commitChanges() as this sets the focus to the next row.
       // also the select list will stay shown when clicking off the grid
       this.grid.getEditorLock().commitCurrentEdit();
@@ -344,10 +342,10 @@ export class SliderEditor implements Editor {
   protected buildDomElement(): HTMLDivElement {
     const columnId = this.columnDef?.id ?? '';
     const title = this.columnEditor.title ?? '';
-    const minValue = +(this.columnEditor.minValue ?? Constants.SLIDER_DEFAULT_MIN_VALUE);
-    const maxValue = +(this.columnEditor.maxValue ?? Constants.SLIDER_DEFAULT_MAX_VALUE);
-    const step = +(this.columnEditor.valueStep ?? Constants.SLIDER_DEFAULT_STEP);
-    const defaultValue = this.editorOptions.sliderStartValue ?? minValue;
+
+    // merge options with optional user's custom options
+    this._sliderOptions = this.getSliderConfigs();
+    const defaultValue = this.editorOptions.sliderStartValue ?? this._sliderOptions.minValue;
     this._defaultValue = +defaultValue;
 
     this._sliderTrackElm = createDomElement('div', { className: 'slider-track' });
@@ -356,10 +354,10 @@ export class SliderEditor implements Editor {
       title,
       defaultValue: `${defaultValue}`,
       value: `${defaultValue}`,
-      min: `${minValue}`,
-      max: `${maxValue}`,
+      min: `${this._sliderOptions.minValue}`,
+      max: `${this._sliderOptions.maxValue}`,
       step: `${this.columnEditor.valueStep ?? Constants.SLIDER_DEFAULT_STEP}`,
-      ariaLabel: this.columnEditor.ariaLabel ?? `${toSentenceCase(columnId + '')} Slider Editor`,
+      ariaLabel: this.columnEditor.ariaLabel ?? `${toSentenceCase(`${columnId}`)} Slider Editor`,
       className: `slider-editor-input editor-${columnId}`,
     });
 
@@ -371,10 +369,15 @@ export class SliderEditor implements Editor {
 
     this.renderSliderNumber(divContainerElm, defaultValue);
 
-    // merge options with optional user's custom options
-    this._sliderOptions = { minValue, maxValue, step };
-
     return divContainerElm;
+  }
+
+  protected getSliderConfigs(): Omit<CurrentSliderOption, 'sliderTrackBackground'> {
+    return {
+      minValue: +(this.columnEditor.minValue ?? Constants.SLIDER_DEFAULT_MIN_VALUE),
+      maxValue: +(this.columnEditor.maxValue ?? Constants.SLIDER_DEFAULT_MAX_VALUE),
+      step: +(this.columnEditor.valueStep ?? Constants.SLIDER_DEFAULT_STEP),
+    };
   }
 
   protected renderSliderNumber(divContainerElm: HTMLDivElement, defaultValue: number | string): void {
@@ -470,6 +473,24 @@ export class SliderEditor implements Editor {
       },
       new SlickEventData(event)
     );
+  }
+
+  /** use keydown event to increase/decrease slider value */
+  protected handleKeyDown(e: KeyboardEvent): void {
+    if (this.editorOptions.useArrowToSlide !== false && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+      const { minValue, maxValue, step } = this.getSliderConfigs();
+      const currentValue = Number(this._inputElm.value);
+      let newValue = e.key === 'ArrowLeft' ? currentValue - step : currentValue + step;
+      newValue = newValue < minValue ? minValue : newValue > maxValue ? maxValue : newValue; // make we are within limits
+
+      // Update input value & trigger an event to update tooltip as well
+      this._inputElm.value = `${newValue}`;
+      this.handleChangeSliderNumber(e);
+
+      // Prevent default arrow key behavior
+      e.stopPropagation();
+      e.preventDefault();
+    }
   }
 
   protected sliderTrackClicked(e: MouseEvent): void {
