@@ -116,6 +116,7 @@ describe('DateRangeFilter', () => {
       monthsToSwitch: 2,
       onChangeToInput: expect.any(Function),
       onClickDate: expect.any(Function),
+      onShow: expect.any(Function),
       positionToInput: 'auto',
       sanitizerHTML: expect.any(Function),
       selectionDatesMode: 'multiple-ranged',

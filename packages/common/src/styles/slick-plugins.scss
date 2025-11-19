@@ -886,9 +886,13 @@ li.hidden {
 // Date Picker Filter
 // ----------------------------------------------
 
-.vc {
+.vc[data-vc='calendar'] {
   padding: 0.9rem;
   z-index: 9999;
+
+  [tabindex='0']:focus {
+    outline: 1px solid orange;
+  }
 }
 
 // ----------------------------------------------

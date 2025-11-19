@@ -2,7 +2,7 @@ import { format, parse } from '@formkit/tempo';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, emptyElement, extend, isDefined } from '@slickgrid-universal/utils';
 import { Calendar, type Options } from 'vanilla-calendar-pro';
-import { resetDatePicker, setPickerDates } from '../commonEditorFilter/commonEditorFilterUtils.js';
+import { resetDatePicker, setPickerDates, setPickerFocus } from '../commonEditorFilter/commonEditorFilterUtils.js';
 import type { SlickGrid } from '../core/slickGrid.js';
 import { FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
 import type { Column, ColumnFilter, Filter, FilterArguments, FilterCallback, GridOption, OperatorDetail } from '../interfaces/index.js';
@@ -342,6 +342,9 @@ export class DateFilter implements Filter {
             this._lastClickIsDate = false;
           }
         }
+      },
+      onShow: (self) => {
+        setPickerFocus(self.context.mainElement);
       },
     };
 
