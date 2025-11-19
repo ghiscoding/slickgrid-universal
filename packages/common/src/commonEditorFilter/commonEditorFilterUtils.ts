@@ -88,6 +88,17 @@ export function createBlankSelectEntry(labelName: string, valueName: string, lab
   return blankEntry;
 }
 
+export function setPickerFocus(pickerElm: HTMLElement): void {
+  setTimeout(() => {
+    const buttonElm = pickerElm.querySelector<HTMLElement>('[data-vc-date-selected] button');
+    const outlineElm = buttonElm ?? pickerElm.querySelector<HTMLElement>('[data-vc="month"]');
+    if (outlineElm) {
+      outlineElm.focus();
+      outlineElm.tabIndex = 0;
+    }
+  });
+}
+
 export function setPickerDates(
   colEditorOrFilter: ColumnEditor | ColumnFilter,
   dateInputElm: HTMLInputElement,
