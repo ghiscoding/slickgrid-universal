@@ -1,4 +1,4 @@
-# <a href="https://vuejs.org/"><img src="https://camo.githubusercontent.com/0bb9b18fa205c1e102c2027414a8568107ae74489b52d5b6486667e29a823ac0/68747470733a2f2f7675656a732e6f72672f696d616765732f6c6f676f2e706e67" height="65" alt="VueJS"/></a> Slickgrid-Vue
+# <a href="https://vuejs.org/"><img src="https://play.vuejs.org/logo.svg" height="60" alt="VueJS"/></a> Slickgrid-Vue
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
