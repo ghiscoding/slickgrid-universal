@@ -44,7 +44,7 @@
 
 ## Grid Functionalities
 
-* [Auto-Resize / Resizer Service](grid-functionalities/Grid-Auto-Resize.md)
+* [Auto-Resize / Resizer Service](grid-functionalities/grid-auto-resize.md)
 * [Resize by Cell Content](grid-functionalities/Resize-by-Cell-Content.md)
 * [Column Picker](grid-functionalities/Column-Picker.md)
 * [Composite Editor Modal](grid-functionalities/Composite-Editor-Modal.md)
