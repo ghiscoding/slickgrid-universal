@@ -124,7 +124,7 @@ const gridOptions = {
 
 ### Auto-Height by Data Size
 
-This grid option `autoResize.autoHeight` when enabled (default), will automatically resize the grid height by available data length.
+This grid option `autoResize.autoHeight` when enabled (default), will automatically resize the grid height by available data length (unless `minHeight` is reached).
 
 ```ts
 const gridOptions = {
@@ -134,6 +134,8 @@ const gridOptions = {
   }
 }
 ```
+
+**NOTE:** You would typically want to disable this grid option when dealing with real time data, for example: Real Time Trading Platform.
 
 ### Add some Padding to the Calculation
 

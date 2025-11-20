@@ -119,7 +119,7 @@ this.gridOptions = {
 
 ### Auto-Height by Data Size
 
-This grid option `autoResize.autoHeight` when enabled (default), will automatically resize the grid height by available data length.
+This grid option `autoResize.autoHeight` when enabled (default), will automatically resize the grid height by available data length (unless `minHeight` is reached).
 
 ```ts
 this.gridOptions = {
