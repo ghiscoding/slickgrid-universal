@@ -1,4 +1,4 @@
-# [![Aurelia](https://avatars.githubusercontent.com/u/9808864?s=70&v=4)](https://aurelia.io/) Aurelia-Slickgrid
+# [![Aurelia](https://avatars.githubusercontent.com/u/9808864?s=65&v=4)](https://aurelia.io/) Aurelia-Slickgrid
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)

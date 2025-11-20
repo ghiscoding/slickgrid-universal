@@ -1,4 +1,4 @@
-# [![Aurelia](https://avatars.githubusercontent.com/u/9808864?s=70&v=4)](https://aurelia.io/) Aurelia-Slickgrid - Bootstrap 5 Demo with i18n
+# [![Aurelia](https://avatars.githubusercontent.com/u/9808864?s=65&v=4)](https://aurelia.io/) Aurelia-Slickgrid - Bootstrap 5 Demo with i18n
 
 ## Important Note
 Please note that some of the npm packages installed in these demos are **optional** and are installed **only** for demo purposes. If you don't need the feature then don't install it (remove it from your `package.json`) and you'll end up with a smaller production build.
