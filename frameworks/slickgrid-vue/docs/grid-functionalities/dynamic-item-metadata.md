@@ -35,7 +35,6 @@ function changeDurationBackgroundColor() {
 
   // also re-render the grid for the styling to be applied right away
   vueGrid.grid.invalidate();
-  vueGrid.grid.render();
 }
 
 /**
@@ -106,7 +105,6 @@ function vueGridReady(vGrid: SlickgridVueInstance) {
   // you would put the code here, also make sure to re-render the grid for the styling to be applied right away
   vueGrid.dataView.getItemMetadata = updateItemMetadataForDurationOver50(dataView.getItemMetadata);
   vueGrid.grid.invalidate();
-  vueGrid.grid.render();
 }
 
 /**

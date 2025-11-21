@@ -178,7 +178,6 @@ function changeDurationBackgroundColor() {
   vueGrid.dataView.getItemMetadata = updateItemMetadataForDurationOver40(vueGrid.dataView.getItemMetadata);
   // also re-render the grid for the styling to be applied right away
   vueGrid.slickGrid.invalidate();
-  vueGrid.slickGrid.render();
   // or use the SlickGrid-Vue GridService
   // gridService.renderGrid();
 }
