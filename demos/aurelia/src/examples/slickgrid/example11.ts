@@ -37,7 +37,6 @@ export class Example11 {
     /*
     this.dataView.getItemMetadata = this.updateItemMetadataForDurationOver50(this.dataView.getItemMetadata);
     this.grid.invalidate();
-    this.grid.render();
     */
   }
 
@@ -204,7 +203,6 @@ export class Example11 {
     this.dataView.getItemMetadata = this.updateItemMetadataForDurationOver40(this.dataView.getItemMetadata);
     // also re-render the grid for the styling to be applied right away
     this.grid.invalidate();
-    this.grid.render();
     // or use the Aurelia-SlickGrid GridService
     // this.gridService.renderGrid();
   }

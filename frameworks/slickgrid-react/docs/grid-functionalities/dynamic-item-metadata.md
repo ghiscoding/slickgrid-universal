@@ -25,7 +25,6 @@ const Example: React.FC = () => {
 
     // also re-render the grid for the styling to be applied right away
     reactGridRef.current?.slickGrid.invalidate();
-    reactGridRef.current?.slickGrid.render();
   }
 
   /**
@@ -86,7 +85,6 @@ const Example: React.FC = () => {
     // you would put the code here, also make sure to re-render the grid for the styling to be applied right away
     reactGrid.dataView.getItemMetadata = updateItemMetadataForDurationOver50(reactGrid.dataView.getItemMetadata);
     reactGrid.slickGrid.invalidate();
-    reactGrid.slickGrid.render();
   }
 
   /**

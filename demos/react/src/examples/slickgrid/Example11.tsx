@@ -30,7 +30,6 @@ const Example11: React.FC = () => {
     /*
     dataView.getItemMetadata = updateItemMetadataForDurationOver50(dataView.getItemMetadata);
     grid.invalidate();
-    grid.render();
     */
   }
 
@@ -198,7 +197,6 @@ const Example11: React.FC = () => {
     reactGridRef.current!.dataView.getItemMetadata = updateItemMetadataForDurationOver40(reactGridRef.current!.dataView.getItemMetadata);
     // also re-render the grid for the styling to be applied right away
     reactGridRef.current!.slickGrid.invalidate();
-    reactGridRef.current!.slickGrid.render();
     // or use the SlickGrid-React GridService
     // gridService.renderGrid();
   }
