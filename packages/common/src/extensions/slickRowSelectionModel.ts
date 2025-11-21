@@ -3,7 +3,7 @@ import { type SelectionModel } from '../enums/index.js';
 import { SlickCellRangeSelector } from '../extensions/slickCellRangeSelector.js';
 import type { GridOption, OnActiveCellChangedEventArgs, RowSelectionModelOption } from '../interfaces/index.js';
 
-export class SlickRowSelectionModel implements SelectionModel {
+export class SlickRowSelectionModel implements SelectionModel<RowSelectionModelOption> {
   pluginName: 'RowSelectionModel' = 'RowSelectionModel' as const;
 
   /** triggered when selected ranges changes */
@@ -28,10 +28,6 @@ export class SlickRowSelectionModel implements SelectionModel {
     this._options = { ...this._defaults, ...options };
   }
 
-  get addonOptions(): RowSelectionModelOption {
-    return this._options;
-  }
-
   get eventHandler(): SlickEventHandler {
     return this._eventHandler;
   }
@@ -43,7 +39,7 @@ export class SlickRowSelectionModel implements SelectionModel {
   init(grid: SlickGrid): void {
     this._grid = grid;
     this._options = { ...this._defaults, ...this._options };
-    this._selector = this.addonOptions.cellRangeSelector;
+    this._selector = this._options.cellRangeSelector;
 
     // add PubSub instance to all SlickEvent
     const pubSub = grid.getPubSubService();
@@ -56,7 +52,7 @@ export class SlickRowSelectionModel implements SelectionModel {
         selectionCss: { border: 'none' } as CSSStyleDeclaration,
         autoScroll: this._options.autoScrollWhenDrag,
       });
-      this.addonOptions.cellRangeSelector = this._selector;
+      this._options.cellRangeSelector = this._selector;
     }
 
     this._eventHandler
@@ -90,6 +86,10 @@ export class SlickRowSelectionModel implements SelectionModel {
       this._selector?.destroy();
       this._selector?.dispose();
     }
+  }
+
+  getOptions(): RowSelectionModelOption {
+    return this._options;
   }
 
   getCellRangeSelector(): SlickCellRangeSelector | undefined {
@@ -154,7 +154,7 @@ export class SlickRowSelectionModel implements SelectionModel {
   }
 
   protected handleCellRangeSelected(_e: SlickEventData, args: { range: SlickRange; selectionMode: string }): boolean | void {
-    if (!this.gridOptions.multiSelect || !this.addonOptions.selectActiveRow) {
+    if (!this.gridOptions.multiSelect || !this._options.selectActiveRow) {
       return false;
     }
     this.setSelectedRanges(

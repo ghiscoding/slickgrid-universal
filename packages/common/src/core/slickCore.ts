@@ -444,7 +444,7 @@ export class SlickDragExtendHandle {
   cssClass = 'slick-drag-replace-handle';
 
   constructor(gridUid: string) {
-    this.id = gridUid + '_drag_replace_handle';
+    this.id = `${gridUid}_drag_replace_handle`;
   }
 
   removeEl(): void {
@@ -455,7 +455,7 @@ export class SlickDragExtendHandle {
     if (activeCellNode) {
       const dragReplaceEl = document.createElement('div');
       dragReplaceEl.classList.add('slick-drag-replace-handle');
-      dragReplaceEl.setAttribute('id', this.id);
+      dragReplaceEl.id = this.id;
       activeCellNode.appendChild(dragReplaceEl);
     }
   }

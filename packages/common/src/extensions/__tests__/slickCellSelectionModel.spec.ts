@@ -141,7 +141,7 @@ describe('CellSelectionModel Plugin', () => {
     plugin.init(gridStub);
 
     expect(plugin.cellRangeSelector).toBeTruthy();
-    expect(plugin.addonOptions).toEqual({ selectActiveCell: true });
+    expect(plugin.getOptions()).toEqual({ selectActiveCell: true });
     expect(registerSpy).toHaveBeenCalledWith(plugin.cellRangeSelector);
   });
 
@@ -152,7 +152,7 @@ describe('CellSelectionModel Plugin', () => {
     plugin.init(gridStub);
 
     expect(plugin.cellRangeSelector).toBeTruthy();
-    expect(plugin.addonOptions).toEqual({ selectActiveCell: false });
+    expect(plugin.getOptions()).toEqual({ selectActiveCell: false });
     expect(registerSpy).toHaveBeenCalledWith(plugin.cellRangeSelector);
   });
 
@@ -164,7 +164,7 @@ describe('CellSelectionModel Plugin', () => {
     plugin.init(gridStub);
 
     expect(plugin.cellRangeSelector).toBeTruthy();
-    expect(plugin.addonOptions).toEqual({ selectActiveCell: true, cellRangeSelector: mockCellRangeSelector });
+    expect(plugin.getOptions()).toEqual({ selectActiveCell: true, cellRangeSelector: mockCellRangeSelector });
     expect(registerSpy).toHaveBeenCalledWith(plugin.cellRangeSelector);
   });
 

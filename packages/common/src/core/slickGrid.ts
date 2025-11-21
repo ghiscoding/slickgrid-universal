@@ -3271,7 +3271,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected handleSelectedRangesChanged(e: SlickEventData, ranges: SlickRange[]): void {
     const ne = e.getNativeEvent<CustomEvent>();
     const selectionMode: CellSelectionMode = ne?.detail?.selectionMode ?? '';
-    const addDragHandle = !!ne?.detail?.addDragHandle;
+    let addDragHandle = !!ne?.detail?.addDragHandle;
+
+    const selectionType = this.getSelectionModel()?.getOptions()?.selectionType;
+    addDragHandle = selectionType === 'cell' || selectionType === 'mixed';
 
     // drag and replace functionality
     const prevSelectedRanges = this.selectedRanges.slice(0);
@@ -4052,7 +4055,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       applyHtmlToElement(cellDiv, cellResult as string | HTMLElement, this._options);
 
       // add drag-to-replace handle
-      if (row === this.selectionBottomRow && cell === this.selectionRightCell && this._options.showCellSelection) {
+      const selectionType = this.getSelectionModel()?.getOptions()?.selectionType;
+      const addDragHandle = selectionType === 'cell' || selectionType === 'mixed';
+      if (row === this.selectionBottomRow && cell === this.selectionRightCell && this._options.showCellSelection && addDragHandle) {
         this.dragReplaceEl.createEl(cellDiv);
       }
     }
