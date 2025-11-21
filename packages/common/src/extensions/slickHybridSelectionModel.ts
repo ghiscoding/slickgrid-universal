@@ -6,7 +6,7 @@ import type { GridOption, HybridSelectionModelOption, SelectionModel } from '../
 import type { CustomDataView, OnActiveCellChangedEventArgs } from '../interfaces/index.js';
 import { SlickCellRangeSelector } from './slickCellRangeSelector.js';
 
-export class SlickHybridSelectionModel implements SelectionModel {
+export class SlickHybridSelectionModel implements SelectionModel<HybridSelectionModelOption> {
   // hybrid selection model is CellSelectionModel except when selecting
   // specific columns, which behave as RowSelectionModel
 
@@ -46,10 +46,6 @@ export class SlickHybridSelectionModel implements SelectionModel {
     this._options = { ...this._defaults, ...options };
   }
 
-  get addonOptions(): HybridSelectionModelOption {
-    return this._options;
-  }
-
   get eventHandler(): SlickEventHandler {
     return this._eventHandler;
   }
@@ -68,7 +64,7 @@ export class SlickHybridSelectionModel implements SelectionModel {
   init(grid: SlickGrid): void {
     this._grid = grid;
     this._options = { ...this._defaults, ...this._options };
-    this._selector = this.addonOptions.cellRangeSelector;
+    this._selector = this._options.cellRangeSelector;
 
     if (this._options.selectionType === 'cell') {
       this._activeSelectionIsRow = false;
@@ -94,7 +90,7 @@ export class SlickHybridSelectionModel implements SelectionModel {
               copyToSelectionCss: { border: '2px solid purple' } as CSSStyleDeclaration,
             }
       );
-      this.addonOptions.cellRangeSelector = this._selector;
+      this._options.cellRangeSelector = this._selector;
     }
 
     if (grid.hasDataView()) {
@@ -133,6 +129,10 @@ export class SlickHybridSelectionModel implements SelectionModel {
     }
     this._selector?.destroy();
     this._selector?.dispose();
+  }
+
+  getOptions(): HybridSelectionModelOption {
+    return this._options;
   }
 
   // Region: CellSelectionModel Members
@@ -570,7 +570,7 @@ export class SlickHybridSelectionModel implements SelectionModel {
     args: { range: SlickRange; selectionMode: string; allowAutoEdit?: boolean; caller: 'onCellRangeSelecting' | 'onCellRangeSelected' }
   ): boolean {
     if (this._activeSelectionIsRow) {
-      if (!this.gridOptions.multiSelect || (!this.addonOptions?.selectActiveRow && this._options.selectionType !== 'row')) {
+      if (!this.gridOptions.multiSelect || (!this._options?.selectActiveRow && this._options.selectionType !== 'row')) {
         return false;
       }
       this.setSelectedRanges(

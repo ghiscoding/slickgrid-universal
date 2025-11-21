@@ -148,7 +148,7 @@ describe('Row Selection Model Plugin', () => {
   it('should create the plugin and initialize it', () => {
     plugin.init(gridStub);
 
-    expect(plugin.addonOptions).toEqual({
+    expect(plugin.getOptions()).toEqual({
       autoScrollWhenDrag: true,
       cellRangeSelector: expect.any(SlickCellRangeSelector),
       dragToSelect: false,
@@ -179,7 +179,7 @@ describe('Row Selection Model Plugin', () => {
     plugin = new SlickHybridSelectionModel({ selectActiveRow: false });
     plugin.init(gridStub);
 
-    expect(plugin.addonOptions).toEqual({
+    expect(plugin.getOptions()).toEqual({
       autoScrollWhenDrag: true,
       cellRangeSelector: expect.any(SlickCellRangeSelector),
       dragToSelect: false,
@@ -196,7 +196,7 @@ describe('Row Selection Model Plugin', () => {
     plugin = new SlickHybridSelectionModel({ selectActiveRow: true });
     plugin.init(gridStub);
 
-    expect(plugin.addonOptions).toEqual({
+    expect(plugin.getOptions()).toEqual({
       autoScrollWhenDrag: true,
       cellRangeSelector: expect.any(SlickCellRangeSelector),
       dragToSelect: false,
@@ -636,7 +636,7 @@ describe('Row Selection Model Plugin', () => {
   describe('with Selector', () => {
     beforeEach(() => {
       plugin.activeSelectionIsRow = true;
-      plugin.addonOptions.dragToSelect = true;
+      plugin.getOptions().dragToSelect = true;
     });
 
     afterEach(() => {
@@ -669,7 +669,7 @@ describe('Row Selection Model Plugin', () => {
       vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(mockColumns);
       const setSelectedRangeSpy = vi.spyOn(plugin, 'setSelectedRanges');
 
-      plugin.addonOptions.cellRangeSelector = new SlickCellRangeSelector({
+      plugin.getOptions().cellRangeSelector = new SlickCellRangeSelector({
         selectionCss: {
           border: 'none',
         } as CSSStyleDeclaration,
@@ -808,7 +808,7 @@ describe('Cell Selection Model Plugin', () => {
     plugin.init(gridStub);
 
     expect(plugin.getCellRangeSelector()).toBeTruthy();
-    expect(plugin.addonOptions).toEqual({
+    expect(plugin.getOptions()).toEqual({
       autoScrollWhenDrag: true,
       cellRangeSelector: expect.any(SlickCellRangeSelector),
       dragToSelect: false,
@@ -829,7 +829,7 @@ describe('Cell Selection Model Plugin', () => {
     plugin.init(gridStub);
 
     expect(plugin.getCellRangeSelector()).toBeTruthy();
-    expect(plugin.addonOptions).toEqual({
+    expect(plugin.getOptions()).toEqual({
       autoScrollWhenDrag: true,
       cellRangeSelector: expect.any(SlickCellRangeSelector),
       dragToSelect: false,
@@ -854,7 +854,7 @@ describe('Cell Selection Model Plugin', () => {
     plugin.init(gridStub);
 
     expect(plugin.getCellRangeSelector()).toBeTruthy();
-    expect(plugin.addonOptions).toEqual({
+    expect(plugin.getOptions()).toEqual({
       autoScrollWhenDrag: true,
       cellRangeSelector: mockCellRangeSelector,
       dragToSelect: false,
