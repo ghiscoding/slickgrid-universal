@@ -26,7 +26,7 @@ const highlightDuration = ref(150);
 const minChangePerCycle = ref(0);
 const maxChangePerCycle = ref(10);
 const refreshRate = ref(75);
-let timer = 0;
+let timer: any = 0;
 const showSubTitle = ref(true);
 let vueGrid!: SlickgridVueInstance;
 

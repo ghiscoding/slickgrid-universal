@@ -732,7 +732,7 @@ export class AureliaSlickgridCustomElement {
     this.subscriptions.push(
       this.globalEa.subscribe('i18n:locale:changed', (args: { oldLocale: string; newLocale: string }) => {
         // publish event of the same name that Slickgrid-Universal uses on a language change event
-        this._eventPubSubService.publish('onLanguageChange');
+        this._eventPubSubService.publish('onLanguageChange', args.newLocale);
 
         if (gridOptions.enableTranslate) {
           this.extensionService.translateAllExtensions(args.newLocale);

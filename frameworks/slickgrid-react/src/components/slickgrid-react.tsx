@@ -829,7 +829,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     if (typeof this._i18next?.on === 'function') {
       this._i18next.on('languageChanged', (lang) => {
         // publish event of the same name that Slickgrid-Universal uses on a language change event
-        this._eventPubSubService.publish('onLanguageChange');
+        this._eventPubSubService.publish('onLanguageChange', lang);
 
         if (gridOptions.enableTranslate) {
           this.extensionService.translateAllExtensions(lang);

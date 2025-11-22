@@ -562,8 +562,8 @@ function handleValidationError(e: Event, args: any) {
   return false;
 }
 
-function handleItemsDeleted(itemId: string) {
-  console.log('item deleted with id:', itemId);
+function handleItemsDeleted(itemIds: string[]) {
+  console.log('item deleted with ids:', itemIds);
 }
 
 function handleOnBeforeEditCell(e: Event, args: any) {

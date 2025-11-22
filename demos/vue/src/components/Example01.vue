@@ -1,12 +1,5 @@
 <script setup lang="ts">
-import {
-  Formatters,
-  SlickgridVue,
-  type Column,
-  type GridOption,
-  type PaginationChangedArgs,
-  type SlickgridVueInstance,
-} from 'slickgrid-vue';
+import { Formatters, SlickgridVue, type Column, type GridOption, type PaginationMetadata, type SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, onUnmounted, ref, type Ref } from 'vue';
 import { zeroPadding } from './utilities';
 
@@ -106,7 +99,7 @@ function mockData(count: number) {
   return mockDataset;
 }
 
-function paginationChanged(changes: PaginationChangedArgs) {
+function paginationChanged(changes: PaginationMetadata) {
   console.log('Pagination changed', changes);
 }
 

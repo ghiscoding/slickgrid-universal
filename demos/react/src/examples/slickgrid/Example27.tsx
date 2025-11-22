@@ -486,8 +486,6 @@ const Example27: React.FC = () => {
           onFilterCleared={() => hideSpinner()}
           onBeforeSortChange={() => showSpinner()}
           onSortChanged={() => hideSpinner()}
-          onBeforeToggleTreeCollapse={() => showSpinner()}
-          onToggleTreeCollapsed={() => hideSpinner()}
           onTreeFullToggleStart={() => showSpinner()}
           onTreeFullToggleEnd={($event) => handleOnTreeFullToggleEnd($event.detail)}
           onTreeItemToggled={($event) => handleOnTreeItemToggled($event.detail)}

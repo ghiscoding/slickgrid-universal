@@ -37,8 +37,8 @@
 
 ## Events
 
-* [Available events](events/Available-Events.md)
-* [On Events](events/Grid-&-DataView-Events.md)
+* [Available events](events/available-events.md)
+* [On Events](events/grid-and-dataview-events.md)
 
 ## Grid Functionalities
 

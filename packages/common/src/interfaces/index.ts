@@ -24,6 +24,7 @@ export type * from './columnFilter.interface.js';
 export type * from './columnFilters.interface.js';
 export type * from './columnPicker.interface.js';
 export type * from './columnSort.interface.js';
+export type * from './componentEvents.interface.js';
 export type * from './compositeEditorError.interface.js';
 export type * from './compositeEditorLabel.interface.js';
 export type * from './compositeEditorOpenDetailOption.interface.js';

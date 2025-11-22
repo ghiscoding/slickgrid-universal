@@ -734,7 +734,7 @@ function bindDifferentHooks(grid: SlickGrid, gridOptions: GridOption, dataView: 
   if (typeof i18next?.on === 'function') {
     i18next.on('languageChanged', (lang: string) => {
       // publish event of the same name that Slickgrid-Universal uses on a language change event
-      eventPubSubService.publish('onLanguageChange');
+      eventPubSubService.publish('onLanguageChange', lang);
 
       if (gridOptions.enableTranslate) {
         extensionService.translateAllExtensions(lang);
