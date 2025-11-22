@@ -98,10 +98,10 @@
     "@4tw/cypress-drag-drop": "catalog:",
     "@formkit/tempo": "catalog:",
     "@ianvs/prettier-plugin-sort-imports": "^4.7.0",
-    "@lerna-lite/cli": "^4.9.2",
-    "@lerna-lite/publish": "^4.9.2",
-    "@lerna-lite/watch": "^4.9.2",
-    "@prettier/plugin-oxc": "^0.0.4",
+    "@lerna-lite/cli": "^4.9.3",
+    "@lerna-lite/publish": "^4.9.3",
+    "@lerna-lite/watch": "^4.9.3",
+    "@prettier/plugin-oxc": "^0.0.5",
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/event-pub-sub": "workspace:*",
     "@types/node": "catalog:",
@@ -133,7 +133,7 @@
       "@vitejs/plugin-basic-ssl>vite": "catalog:vite7",
       "@vitest/coverage-v8>vite": "npm:rolldown-vite@latest",
       "@vitest/ui>vite": "npm:rolldown-vite@latest",
-      "axios": "^1.13.1",
+      "axios": "^1.13.2",
       "tmp": "^0.2.5",
       "vitest>vite": "npm:rolldown-vite@latest"
     }
