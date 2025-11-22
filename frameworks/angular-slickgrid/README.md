@@ -67,10 +67,6 @@ export class GridComponent implements OnInit {
     [dataset]="dataset">
 </angular-slickgrid>
 ```
-### Troubleshooting
-
-> [!WARNING]
-> Because of its use of native Custom Event, this project **does not** work well with `strictTemplates`, so please make sure to either disable `strictTemplates` or cast your event as `any` (see this [discussion](https://github.com/ghiscoding/Angular-Slickgrid/discussions/815) for more info)
 
 ### Styling Themes
 
@@ -143,7 +139,3 @@ Angular-Slickgrid uses [`ngx-translate`](https://github.com/ngx-translate/core) 
 
 ### Tested with [Vitest](https://vitest.dev/) (Unit Tests) - [Cypress](https://www.cypress.io/) (E2E Tests)
 Slickgrid-Universal & Angular-Slickgrid both have **100%** Unit Test Coverage and also every Angular-Slickgrid Examples are fully tested with [Cypress](https://www.cypress.io/) as E2E tests.
-
-## Troubleshooting Section
-
-- [`strictTemplates` error](https://ghiscoding.gitbook.io/angular-slickgrid/getting-started/troubleshooting#stricttemplates-error)

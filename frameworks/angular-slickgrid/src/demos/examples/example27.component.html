@@ -133,10 +133,10 @@
     (onBeforeSortChange)="showSpinner()"
     (onSortChanged)="hideSpinner()"
     (onBeforeToggleTreeCollapse)="showSpinner()"
-    (onToggle-tree-collapsed)="hideSpinner()"
-    (onTree-full-toggle-start)="showSpinner()"
-    (onTree-full-toggle-end)="handleOnTreeFullToggleEnd($event.detail)"
-    (onTree-item-toggled)="handleOnTreeItemToggled($event.detail)"
+    (onToggleTreeCollapsed)="hideSpinner()"
+    (onTreeFullToggleStart)="showSpinner()"
+    (onTreeFullToggleEnd)="handleOnTreeFullToggleEnd($event.detail)"
+    (onTreeItemToggled)="handleOnTreeItemToggled($event.detail)"
   >
   </angular-slickgrid>
 </div>

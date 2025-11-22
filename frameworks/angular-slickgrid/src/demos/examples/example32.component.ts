@@ -607,44 +607,6 @@ export class Example32Component implements OnInit {
     return tmpArray;
   }
 
-  handleValidationError(_e: Event, args: any) {
-    if (args.validationResults) {
-      alert(args.validationResults.msg);
-    }
-    return false;
-  }
-
-  handleItemDeleted(_e: Event, args: any) {
-    console.log('item deleted with id:', args.itemId);
-  }
-
-  handleOnBeforeEditCell(e: Event, args: any) {
-    const { column, item, grid } = args;
-
-    if (column && item) {
-      if (!checkItemIsEditable(item, column, grid)) {
-        e.preventDefault(); // OR eventData.preventDefault();
-        return false;
-      }
-    }
-    return false;
-  }
-
-  handleOnCellChange(_e: Event, args: any) {
-    const dataContext = args?.item;
-
-    // when the field "completed" changes to false, we also need to blank out the "finish" date
-    if (dataContext && !dataContext.completed) {
-      dataContext.finish = null;
-      this.angularGrid.gridService.updateItem(dataContext);
-    }
-  }
-
-  handlePaginationChanged() {
-    this.removeAllUnsavedStylingFromCell();
-    this.renderUnsavedStylingOnAllVisibleCells();
-  }
-
   handleDefaultResizeColumns() {
     // just for demo purposes, set it back to its original width
     const columns = this.angularGrid.slickGrid.getColumns() as Column[];

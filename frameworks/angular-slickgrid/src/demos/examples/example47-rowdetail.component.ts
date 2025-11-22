@@ -7,7 +7,7 @@ import { showToast } from './utilities';
 
 interface ItemDetail {
   id: number;
-  duration: Date;
+  duration: number;
   percentComplete: number;
   reporter: string;
   start: Date;
@@ -34,7 +34,7 @@ export class Example47RowDetailComponent {
   // NOTE that you MUST provide it through the "parentRef" property in your "rowDetail" grid options
   parentRef!: Example47Component;
 
-  alertAssignee(name: string) {
+  alertAssignee(name?: string) {
     if (typeof name === 'string') {
       alert(`Assignee on this task is: ${name.toUpperCase()}`);
     } else {
