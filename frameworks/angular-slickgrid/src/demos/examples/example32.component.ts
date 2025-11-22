@@ -17,34 +17,10 @@ import {
   type GridOption,
   type LongTextEditorOption,
   type SearchTerm,
-  type SlickGrid,
   type VanillaCalendarOption,
 } from '../../library';
 
 const URL_COUNTRIES_COLLECTION = 'assets/data/countries.json';
-
-/**
- * Check if the current item (cell) is editable or not
- * @param {*} dataContext - item data context object
- * @param {*} columnDef - column definition
- * @param {*} grid - slickgrid grid object
- * @returns {boolean} isEditable
- */
-function checkItemIsEditable(dataContext: any, columnDef: Column, grid: SlickGrid) {
-  const gridOptions = grid && grid.getOptions && grid.getOptions();
-  const hasEditor = columnDef.editor;
-  const isGridEditable = gridOptions.editable;
-  let isEditable = !!(isGridEditable && hasEditor);
-
-  if (dataContext && columnDef && gridOptions && gridOptions.editable) {
-    switch (columnDef.id) {
-      case 'finish':
-        isEditable = !!dataContext?.completed;
-        break;
-    }
-  }
-  return isEditable;
-}
 
 const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef, _dataContext, grid) => {
   const gridOptions = grid && grid.getOptions && grid.getOptions();
