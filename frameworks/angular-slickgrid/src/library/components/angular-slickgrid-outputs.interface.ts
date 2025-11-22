@@ -1,70 +1,89 @@
-import {
-  type Column,
-  type DragRowMove,
-  type GridStateChange,
-  type OnActiveCellChangedEventArgs,
-  type OnAddNewRowEventArgs,
-  type OnAutosizeColumnsEventArgs,
-  type OnBeforeAppendCellEventArgs,
-  type OnBeforeCellEditorDestroyEventArgs,
-  type OnBeforeColumnsResizeEventArgs,
-  type OnBeforeEditCellEventArgs,
-  type OnBeforeFooterRowCellDestroyEventArgs,
-  type OnBeforeHeaderCellDestroyEventArgs,
-  type OnBeforeHeaderRowCellDestroyEventArgs,
-  type OnBeforeSetColumnsEventArgs,
-  type OnCellChangeEventArgs,
-  type OnCellCssStylesChangedEventArgs,
-  type OnClickEventArgs,
-  type OnColumnsDragEventArgs,
-  type OnColumnsReorderedEventArgs,
-  type OnColumnsResizeDblClickEventArgs,
-  type OnColumnsResizedEventArgs,
-  type OnCompositeEditorChangeEventArgs,
-  type OnDblClickEventArgs,
-  type OnDragReplaceCellsEventArgs,
-  type OnFooterClickEventArgs,
-  type OnFooterContextMenuEventArgs,
-  type OnFooterRowCellRenderedEventArgs,
-  type OnGroupCollapsedEventArgs,
-  type OnGroupExpandedEventArgs,
-  type OnHeaderCellRenderedEventArgs,
-  type OnHeaderClickEventArgs,
-  type OnHeaderContextMenuEventArgs,
-  type OnHeaderMouseEventArgs,
-  type OnHeaderRowCellRenderedEventArgs,
-  type OnKeyDownEventArgs,
-  type OnRenderedEventArgs,
-  type OnRowCountChangedEventArgs,
-  type OnRowsChangedEventArgs,
-  type OnRowsOrCountChangedEventArgs,
-  type OnScrollEventArgs,
-  type OnSelectedRowsChangedEventArgs,
-  type OnSetItemsCalledEventArgs,
-  type OnSetOptionsEventArgs,
-  type OnValidationErrorEventArgs,
-  type PagingInfo,
-  type SingleColumnSort,
-  type SlickDataView,
-  type SlickGrid,
+import type {
+  Column,
+  ColumnSort,
+  CurrentFilter,
+  CurrentSorter,
+  DragRowMove,
+  ExportTextDownloadOption,
+  GridMenuCommandItemCallbackArgs,
+  GridMenuEventWithElementCallbackArgs,
+  GridSize,
+  GridStateChange,
+  HeaderButtonOnCommandArgs,
+  HeaderMenuCommandItemCallbackArgs,
+  MenuCommandItemCallbackArgs,
+  MenuFromCellCallbackArgs,
+  MenuOptionItemCallbackArgs,
+  OnActiveCellChangedEventArgs,
+  OnAddNewRowEventArgs,
+  OnAutosizeColumnsEventArgs,
+  OnBeforeAppendCellEventArgs,
+  OnBeforeCellEditorDestroyEventArgs,
+  OnBeforeColumnsResizeEventArgs,
+  OnBeforeEditCellEventArgs,
+  OnBeforeFooterRowCellDestroyEventArgs,
+  OnBeforeHeaderCellDestroyEventArgs,
+  OnBeforeHeaderRowCellDestroyEventArgs,
+  OnBeforeSetColumnsEventArgs,
+  OnCellChangeEventArgs,
+  OnCellCssStylesChangedEventArgs,
+  OnClickEventArgs,
+  OnColumnsChangedArgs,
+  OnColumnsDragEventArgs,
+  OnColumnsReorderedEventArgs,
+  OnColumnsResizeDblClickEventArgs,
+  OnColumnsResizedEventArgs,
+  OnCompositeEditorChangeEventArgs,
+  OnDblClickEventArgs,
+  OnDragReplaceCellsEventArgs,
+  OnFooterClickEventArgs,
+  OnFooterContextMenuEventArgs,
+  OnFooterRowCellRenderedEventArgs,
+  OnGroupCollapsedEventArgs,
+  OnGroupExpandedEventArgs,
+  OnHeaderCellRenderedEventArgs,
+  OnHeaderClickEventArgs,
+  OnHeaderContextMenuEventArgs,
+  OnHeaderMouseEventArgs,
+  OnHeaderRowCellRenderedEventArgs,
+  OnKeyDownEventArgs,
+  OnRenderedEventArgs,
+  OnRowCountChangedEventArgs,
+  OnRowsChangedEventArgs,
+  OnRowsOrCountChangedEventArgs,
+  OnScrollEventArgs,
+  OnSelectedRowIdsChangedEventArgs,
+  OnSelectedRowsChangedEventArgs,
+  OnSetItemsCalledEventArgs,
+  OnSetOptionsEventArgs,
+  OnValidationErrorEventArgs,
+  PaginationMetadata,
+  PagingInfo,
+  SingleColumnSort,
+  SlickDataView,
+  SlickGrid,
+  SlickRange,
+  TreeToggleStateChange,
 } from '@slickgrid-universal/common';
 import type { AngularGridInstance } from '../models/index';
 
 /**
  * Generic type for wrapping event output with detail property
  * Used for typed Angular output() signals that need both eventData and args
- *
+ * Extends CustomEvent for compatibility with event handlers
  * @template T - The event function type from AngularSlickgridOutputs interface
  */
-export type SlickEventOutput<T extends (...args: any) => any> = {
-  detail: {
-    eventData: any;
-    args: Parameters<T>[0];
-  };
-};
-export type RegularEventOutput<T extends (...args: any) => any> = {
-  detail: Parameters<T>[0];
-};
+export type SlickEventOutput<T extends (...args: any) => any> = CustomEvent<{
+  eventData: any;
+  args: Parameters<T>[0];
+}>;
+
+/**
+ * Generic type for wrapping simple event output with detail property
+ * Extends CustomEvent for compatibility with event handlers
+ * @template T - The event function type from AngularSlickgridOutputs interface
+ */
+export type RegularEventOutput<T extends (...args: any) => any> = CustomEvent<Parameters<T>[0]>;
 
 /**
  * Angular-Slickgrid Output Events Interface
@@ -86,7 +105,7 @@ export interface AngularSlickgridOutputs {
   onAddNewRow: (e: OnAddNewRowEventArgs) => void;
   onAutosizeColumns: (e: OnAutosizeColumnsEventArgs) => void;
   onBeforeAppendCell: (e: OnBeforeAppendCellEventArgs) => void;
-  onBeforeSearchChange: (e: OnCellChangeEventArgs) => void;
+  onBeforeSearchChange: (e: OnCellChangeEventArgs) => boolean | void;
   onBeforeCellEditorDestroy: (e: OnBeforeCellEditorDestroyEventArgs) => void;
   onBeforeColumnsResize: (e: OnBeforeColumnsResizeEventArgs) => void;
   onBeforeDestroy: (e: { grid: SlickGrid }) => void;
@@ -95,7 +114,7 @@ export interface AngularSlickgridOutputs {
   onBeforeHeaderRowCellDestroy: (e: OnBeforeHeaderRowCellDestroyEventArgs) => void;
   onBeforeFooterRowCellDestroy: (e: OnBeforeFooterRowCellDestroyEventArgs) => void;
   onBeforeSetColumns: (e: OnBeforeSetColumnsEventArgs) => void;
-  onBeforeSort: (e: SingleColumnSort) => void;
+  onBeforeSort: (e: SingleColumnSort) => boolean | void;
   onCellChange: (e: OnCellChangeEventArgs) => void;
   onCellCssStylesChanged: (e: OnCellCssStylesChangedEventArgs) => void;
   onClick: (e: OnClickEventArgs) => void;
@@ -143,72 +162,71 @@ export interface AngularSlickgridOutputs {
   onRowsOrCountChanged: (e: OnRowsOrCountChangedEventArgs) => void;
   onSetItemsCalled: (e: OnSetItemsCalledEventArgs) => void;
 
-  // Slickgrid-Universal Events
-  onAfterExportToExcel: (e: any) => void;
-  onBeforeExportToExcel: (e: any) => void;
-  onBeforeFilterChange: (e: any) => void;
-  onBeforeFilterClear: (e: any) => void;
-  onBeforeSortChange: (e: any) => void;
-  onBeforeToggleTreeCollapse: (e: any) => void;
-  onContextMenuClearGrouping: (e: any) => void;
-  onContextMenuCollapseAllGroups: (e: any) => void;
-  onContextMenuExpandAllGroups: (e: any) => void;
-  onAfterMenuShow: (e: any) => void;
-  onBeforeMenuShow: (e: any) => void;
-  onBeforeMenuClose: (e: any) => void;
-  onCommand: (e: any) => void;
-  onOptionSelected: (e: any) => void;
-  onColumnPickerColumnsChanged: (e: any) => void;
-  onColumnsChanged: (e: {
-    columnId: string;
-    showing: boolean;
-    allColumns: Column[];
-    visibleColumns: Column[];
-    columns: Column[];
-    grid: SlickGrid;
-  }) => void;
-  onGridMenuMenuClose: (e: any) => void;
-  onGridMenuBeforeMenuShow: (e: any) => void;
-  onGridMenuAfterMenuShow: (e: any) => void;
-  onGridMenuClearAllPinning: (e: any) => void;
-  onGridMenuClearAllFilters: (e: any) => void;
-  onGridMenuClearAllSorting: (e: any) => void;
-  onGridMenuColumnsChanged: (e: any) => void;
-  onGridMenuCommand: (e: any) => void;
-  onHeaderButtonCommand: (e: any) => void;
-  onCopyCells: (e: any) => void;
-  onCopyCancelled: (e: any) => void;
-  onPasteCells: (e: any) => void;
+  // other Slick Events
+  onAfterMenuShow: (e: MenuFromCellCallbackArgs) => void;
+  onBeforeMenuClose: (e: MenuFromCellCallbackArgs) => void;
+  onBeforeMenuShow: (e: MenuFromCellCallbackArgs) => void;
+  onColumnsChanged: (e: OnColumnsChangedArgs) => void;
+  onCommand: (e: MenuCommandItemCallbackArgs | MenuOptionItemCallbackArgs) => void;
+  onGridMenuColumnsChanged: (e: OnColumnsChangedArgs) => void;
+  onMenuClose: (e: GridMenuEventWithElementCallbackArgs) => void;
+  onCopyCells: (e: { ranges: SlickRange[] }) => void;
+  onCopyCancelled: (e: { ranges: SlickRange[] }) => void;
+  onPasteCells: (e: { ranges: SlickRange[] }) => void;
   onBeforePasteCell: (e: { cell: number; row: number; item: any; columnDef: Column; value: any }) => void;
-  onHeaderMenuCommand: (e: any) => void;
+
+  // Slickgrid-Universal Events
+  onAfterExportToExcel: (e: { filename: string; mimeType: string }) => void;
+  onBeforeExportToExcel: (e: boolean) => void;
+  onBeforeExportToTextFile?: (e: boolean) => void;
+  onAfterExportToTextFile?: (e: ExportTextDownloadOption) => void;
+  onBeforeFilterChange: (e: CurrentFilter[]) => void;
+  onBeforeFilterClear: (e: { columnId: string } | boolean) => void;
+  onBeforeSortChange: (e: Array<ColumnSort & { clearSortTriggered?: boolean }>) => void;
+  onContextMenuClearGrouping: () => void;
+  onContextMenuCollapseAllGroups: () => void;
+  onContextMenuExpandAllGroups: () => void;
+  onOptionSelected: (e: MenuCommandItemCallbackArgs | MenuOptionItemCallbackArgs) => void;
+  onColumnPickerColumnsChanged: (e: OnColumnsChangedArgs) => void;
+  onGridMenuMenuClose: (e: GridMenuEventWithElementCallbackArgs) => void;
+  onGridMenuBeforeMenuShow: (e: GridMenuEventWithElementCallbackArgs) => void;
+  onGridMenuAfterMenuShow: (e: GridMenuEventWithElementCallbackArgs) => void;
+  onGridMenuClearAllPinning: () => void;
+  onGridMenuClearAllFilters: () => void;
+  onGridMenuClearAllSorting: () => void;
+  onGridMenuCommand: (e: GridMenuCommandItemCallbackArgs) => void;
+  onHeaderButtonCommand: (e: HeaderButtonOnCommandArgs) => void;
+  onHeaderMenuCommand: (e: MenuCommandItemCallbackArgs) => void;
   onHeaderMenuColumnResizeByContent: (e: { columnId: string }) => void;
-  onHeaderMenuBeforeMenuShow: (e: any) => void;
-  onHeaderMenuAfterMenuShow: (e: any) => void;
+  onHeaderMenuBeforeMenuShow: (e: HeaderMenuCommandItemCallbackArgs) => void;
+  onHeaderMenuAfterMenuShow: (e: HeaderMenuCommandItemCallbackArgs) => void;
   onHideColumns: (e: { columns: Column[]; hiddenColumn: Column[] }) => void;
-  onItemsAdded: (e: any) => void;
+  onItemsAdded: (e: any[]) => void;
   onItemsDeleted: (e: any[]) => void;
-  onItemsUpdated: (e: any) => void;
-  onItemsUpserted: (e: any) => void;
-  onFullResizeByContentRequested: (e: any) => void;
+  onItemsUpdated: (e: any[]) => void;
+  onItemsUpserted: (e: any[]) => void;
+  onFullResizeByContentRequested: (e: { caller: string }) => void;
   onGridStateChanged: (e: GridStateChange) => void;
-  onBeforePaginationChange: (e: any) => void;
-  onPaginationChanged: (e: any) => void;
-  onPaginationRefreshed: (e: any) => void;
-  onPaginationVisibilityChanged: (e: any) => void;
-  onPaginationSetCursorBased: (e: any) => void;
-  onGridBeforeResize: (e: any) => void;
-  onGridAfterResize: (e: any) => void;
-  onBeforeResizeByContent: (e: any) => void;
-  onAfterResizeByContent: (e: any) => void;
-  onSelectedRowIdsChanged: (e: any) => void;
-  onSortCleared: (e: any) => void;
-  onFilterChanged: (e: any) => void;
-  onFilterCleared: (e: any) => void;
-  onSortChanged: (e: any) => void;
-  onToggleTreeCollapsed: (e: any) => void;
-  onTreeItemToggled: (e: any) => void;
-  onTreeFullToggleEnd: (e: any) => void;
-  onTreeFullToggleStart: (e: any) => void;
+  onBeforePaginationChange: (e: PaginationMetadata) => boolean | void;
+  onPaginationChanged: (e: PaginationMetadata) => void;
+  onPaginationRefreshed: (e: PaginationMetadata) => void;
+  onPaginationVisibilityChanged: (e: { visible: boolean }) => void;
+  onPaginationSetCursorBased: (e: { isCursorBased: boolean }) => void;
+  onGridBeforeResize: () => void;
+  onGridAfterResize: (e: GridSize | undefined) => void;
+  onBeforeResizeByContent: () => void;
+  onAfterResizeByContent: (e: {
+    readItemCount: number;
+    calculateColumnWidths: { [x: string]: number | undefined; [x: number]: number | undefined };
+  }) => void;
+  onSelectedRowIdsChanged: (e: OnSelectedRowIdsChangedEventArgs) => void;
+  onSortCleared: (e: boolean) => void;
+  onFilterChanged: (e: CurrentFilter[]) => void;
+  onFilterCleared: (e: boolean) => void;
+  onSortChanged: (e: CurrentSorter[]) => void;
+  onTreeItemToggled: (e: TreeToggleStateChange) => void;
+  onTreeFullToggleEnd: (e: TreeToggleStateChange) => void;
+  onTreeFullToggleStart: (e: TreeToggleStateChange) => void;
 
   // Angular-Slickgrid specific events
   onBeforeGridCreate: (e: boolean) => void;
@@ -217,5 +235,5 @@ export interface AngularSlickgridOutputs {
   onAngularGridCreated: (e: AngularGridInstance) => void;
   onBeforeGridDestroy: (e: SlickGrid) => void;
   onAfterGridDestroyed: (e: boolean) => void;
-  onLanguageChange: (e: void) => void;
+  onLanguageChange: (lang: string) => void;
 }

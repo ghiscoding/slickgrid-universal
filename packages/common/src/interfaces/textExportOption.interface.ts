@@ -1,6 +1,14 @@
 import type { DelimiterType } from '../enums/delimiterType.enum.js';
 import type { FileType } from '../enums/fileType.enum.js';
 
+export interface ExportTextDownloadOption {
+  filename: string;
+  content: string;
+  format: FileType | string;
+  mimeType: string;
+  useUtf8WithBom?: boolean;
+}
+
 export interface TextExportOption {
   /** export delimiter, can be (comma, tab, ... or even custom string). */
   delimiter?: DelimiterType | string;

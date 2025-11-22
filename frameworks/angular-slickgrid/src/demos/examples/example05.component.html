@@ -146,9 +146,9 @@
     [dataset]="dataset"
     (onAngularGridCreated)="angularGridReady($event.detail)"
     (onGridStateChanged)="gridStateChanged($event.detail)"
-    (onBeforeSort)="handleOnBeforeSort($event.detail.eventData)"
-    (onBeforeSearchChange)="handleOnBeforeSearchChange($event.detail.eventData)"
-    (onBeforePaginationChange)="handleOnBeforePaginationChange($event.detail.eventData)"
+    (onBeforeSort)="handleOnBeforeSort($event)"
+    (onBeforeSearchChange)="handleOnBeforeSearchChange($event)"
+    (onBeforePaginationChange)="handleOnBeforePaginationChange($event)"
   >
   </angular-slickgrid>
 </div>

@@ -241,7 +241,21 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
   onRowCountChanged = output<SlickEventOutput<AngularSlickgridOutputs['onRowCountChanged']>>();
   onRowsChanged = output<SlickEventOutput<AngularSlickgridOutputs['onRowsChanged']>>();
   onRowsOrCountChanged = output<SlickEventOutput<AngularSlickgridOutputs['onRowsOrCountChanged']>>();
+  onSelectedRowIdsChanged = output<SlickEventOutput<AngularSlickgridOutputs['onSelectedRowIdsChanged']>>();
   onSetItemsCalled = output<SlickEventOutput<AngularSlickgridOutputs['onSetItemsCalled']>>();
+
+  // other Slick Events
+  onAfterMenuShow = output<SlickEventOutput<AngularSlickgridOutputs['onAfterMenuShow']>>();
+  onBeforeMenuClose = output<SlickEventOutput<AngularSlickgridOutputs['onBeforeMenuClose']>>();
+  onBeforeMenuShow = output<SlickEventOutput<AngularSlickgridOutputs['onBeforeMenuShow']>>();
+  onColumnsChanged = output<SlickEventOutput<AngularSlickgridOutputs['onColumnsChanged']>>();
+  onCommand = output<SlickEventOutput<AngularSlickgridOutputs['onCommand']>>();
+  onGridMenuColumnsChanged = output<SlickEventOutput<AngularSlickgridOutputs['onGridMenuColumnsChanged']>>();
+  onMenuClose = output<SlickEventOutput<AngularSlickgridOutputs['onMenuClose']>>();
+  onCopyCells = output<SlickEventOutput<AngularSlickgridOutputs['onCopyCells']>>();
+  onCopyCancelled = output<SlickEventOutput<AngularSlickgridOutputs['onCopyCancelled']>>();
+  onPasteCells = output<SlickEventOutput<AngularSlickgridOutputs['onPasteCells']>>();
+  onBeforePasteCell = output<SlickEventOutput<AngularSlickgridOutputs['onBeforePasteCell']>>();
 
   // Slickgrid-Universal events
   onAfterExportToExcel = output<RegularEventOutput<AngularSlickgridOutputs['onAfterExportToExcel']>>();
@@ -249,30 +263,19 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
   onBeforeFilterChange = output<RegularEventOutput<AngularSlickgridOutputs['onBeforeFilterChange']>>();
   onBeforeFilterClear = output<RegularEventOutput<AngularSlickgridOutputs['onBeforeFilterClear']>>();
   onBeforeSortChange = output<RegularEventOutput<AngularSlickgridOutputs['onBeforeSortChange']>>();
-  onBeforeToggleTreeCollapse = output<RegularEventOutput<AngularSlickgridOutputs['onBeforeToggleTreeCollapse']>>();
   onContextMenuClearGrouping = output<RegularEventOutput<AngularSlickgridOutputs['onContextMenuClearGrouping']>>();
   onContextMenuCollapseAllGroups = output<RegularEventOutput<AngularSlickgridOutputs['onContextMenuCollapseAllGroups']>>();
   onContextMenuExpandAllGroups = output<RegularEventOutput<AngularSlickgridOutputs['onContextMenuExpandAllGroups']>>();
-  onAfterMenuShow = output<RegularEventOutput<AngularSlickgridOutputs['onAfterMenuShow']>>();
-  onBeforeMenuShow = output<RegularEventOutput<AngularSlickgridOutputs['onBeforeMenuShow']>>();
-  onBeforeMenuClose = output<RegularEventOutput<AngularSlickgridOutputs['onBeforeMenuClose']>>();
-  onCommand = output<RegularEventOutput<AngularSlickgridOutputs['onCommand']>>();
   onOptionSelected = output<RegularEventOutput<AngularSlickgridOutputs['onOptionSelected']>>();
   onColumnPickerColumnsChanged = output<RegularEventOutput<AngularSlickgridOutputs['onColumnPickerColumnsChanged']>>();
-  onColumnsChanged = output<RegularEventOutput<AngularSlickgridOutputs['onColumnsChanged']>>();
   onGridMenuMenuClose = output<RegularEventOutput<AngularSlickgridOutputs['onGridMenuMenuClose']>>();
   onGridMenuBeforeMenuShow = output<RegularEventOutput<AngularSlickgridOutputs['onGridMenuBeforeMenuShow']>>();
   onGridMenuAfterMenuShow = output<RegularEventOutput<AngularSlickgridOutputs['onGridMenuAfterMenuShow']>>();
   onGridMenuClearAllPinning = output<RegularEventOutput<AngularSlickgridOutputs['onGridMenuClearAllPinning']>>();
   onGridMenuClearAllFilters = output<RegularEventOutput<AngularSlickgridOutputs['onGridMenuClearAllFilters']>>();
   onGridMenuClearAllSorting = output<RegularEventOutput<AngularSlickgridOutputs['onGridMenuClearAllSorting']>>();
-  onGridMenuColumnsChanged = output<RegularEventOutput<AngularSlickgridOutputs['onGridMenuColumnsChanged']>>();
   onGridMenuCommand = output<RegularEventOutput<AngularSlickgridOutputs['onGridMenuCommand']>>();
   onHeaderButtonCommand = output<RegularEventOutput<AngularSlickgridOutputs['onHeaderButtonCommand']>>();
-  onCopyCells = output<RegularEventOutput<AngularSlickgridOutputs['onCopyCells']>>();
-  onCopyCancelled = output<RegularEventOutput<AngularSlickgridOutputs['onCopyCancelled']>>();
-  onPasteCells = output<RegularEventOutput<AngularSlickgridOutputs['onPasteCells']>>();
-  onBeforePasteCell = output<RegularEventOutput<AngularSlickgridOutputs['onBeforePasteCell']>>();
   onHeaderMenuCommand = output<RegularEventOutput<AngularSlickgridOutputs['onHeaderMenuCommand']>>();
   onHeaderMenuColumnResizeByContent = output<RegularEventOutput<AngularSlickgridOutputs['onHeaderMenuColumnResizeByContent']>>();
   onHeaderMenuBeforeMenuShow = output<RegularEventOutput<AngularSlickgridOutputs['onHeaderMenuBeforeMenuShow']>>();
@@ -293,12 +296,10 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
   onGridAfterResize = output<RegularEventOutput<AngularSlickgridOutputs['onGridAfterResize']>>();
   onBeforeResizeByContent = output<RegularEventOutput<AngularSlickgridOutputs['onBeforeResizeByContent']>>();
   onAfterResizeByContent = output<RegularEventOutput<AngularSlickgridOutputs['onAfterResizeByContent']>>();
-  onSelectedRowIdsChanged = output<RegularEventOutput<AngularSlickgridOutputs['onSelectedRowIdsChanged']>>();
   onSortCleared = output<RegularEventOutput<AngularSlickgridOutputs['onSortCleared']>>();
   onFilterChanged = output<RegularEventOutput<AngularSlickgridOutputs['onFilterChanged']>>();
   onFilterCleared = output<RegularEventOutput<AngularSlickgridOutputs['onFilterCleared']>>();
   onSortChanged = output<RegularEventOutput<AngularSlickgridOutputs['onSortChanged']>>();
-  onToggleTreeCollapsed = output<RegularEventOutput<AngularSlickgridOutputs['onToggleTreeCollapsed']>>();
   onTreeItemToggled = output<RegularEventOutput<AngularSlickgridOutputs['onTreeItemToggled']>>();
   onTreeFullToggleEnd = output<RegularEventOutput<AngularSlickgridOutputs['onTreeFullToggleEnd']>>();
   onTreeFullToggleStart = output<RegularEventOutput<AngularSlickgridOutputs['onTreeFullToggleStart']>>();
@@ -1065,7 +1066,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
       this.subscriptions.push(
         this.translate.onLangChange.subscribe(({ lang }) => {
           // publish event of the same name that Slickgrid-Universal uses on a language change event
-          this._eventPubSubService.publish('onLanguageChange');
+          this._eventPubSubService.publish('onLanguageChange', lang);
 
           if (gridOptions.enableTranslate) {
             this.extensionService.translateAllExtensions(lang);
