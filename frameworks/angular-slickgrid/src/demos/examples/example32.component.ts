@@ -17,34 +17,10 @@ import {
   type GridOption,
   type LongTextEditorOption,
   type SearchTerm,
-  type SlickGrid,
   type VanillaCalendarOption,
 } from '../../library';
 
 const URL_COUNTRIES_COLLECTION = 'assets/data/countries.json';
-
-/**
- * Check if the current item (cell) is editable or not
- * @param {*} dataContext - item data context object
- * @param {*} columnDef - column definition
- * @param {*} grid - slickgrid grid object
- * @returns {boolean} isEditable
- */
-function checkItemIsEditable(dataContext: any, columnDef: Column, grid: SlickGrid) {
-  const gridOptions = grid && grid.getOptions && grid.getOptions();
-  const hasEditor = columnDef.editor;
-  const isGridEditable = gridOptions.editable;
-  let isEditable = !!(isGridEditable && hasEditor);
-
-  if (dataContext && columnDef && gridOptions && gridOptions.editable) {
-    switch (columnDef.id) {
-      case 'finish':
-        isEditable = !!dataContext?.completed;
-        break;
-    }
-  }
-  return isEditable;
-}
 
 const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef, _dataContext, grid) => {
   const gridOptions = grid && grid.getOptions && grid.getOptions();
@@ -605,44 +581,6 @@ export class Example32Component implements OnInit {
       }
     }
     return tmpArray;
-  }
-
-  handleValidationError(_e: Event, args: any) {
-    if (args.validationResults) {
-      alert(args.validationResults.msg);
-    }
-    return false;
-  }
-
-  handleItemDeleted(_e: Event, args: any) {
-    console.log('item deleted with id:', args.itemId);
-  }
-
-  handleOnBeforeEditCell(e: Event, args: any) {
-    const { column, item, grid } = args;
-
-    if (column && item) {
-      if (!checkItemIsEditable(item, column, grid)) {
-        e.preventDefault(); // OR eventData.preventDefault();
-        return false;
-      }
-    }
-    return false;
-  }
-
-  handleOnCellChange(_e: Event, args: any) {
-    const dataContext = args?.item;
-
-    // when the field "completed" changes to false, we also need to blank out the "finish" date
-    if (dataContext && !dataContext.completed) {
-      dataContext.finish = null;
-      this.angularGrid.gridService.updateItem(dataContext);
-    }
-  }
-
-  handlePaginationChanged() {
-    this.removeAllUnsavedStylingFromCell();
-    this.renderUnsavedStylingOnAllVisibleCells();
   }
 
   handleDefaultResizeColumns() {

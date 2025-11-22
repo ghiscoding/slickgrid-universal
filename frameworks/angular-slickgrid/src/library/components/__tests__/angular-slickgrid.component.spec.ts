@@ -379,32 +379,35 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
       nativeElement: divContainer,
     } as ElementRef;
 
-    component = new AngularSlickgridComponent(
-      angularUtilServiceStub,
-      mockAppRef,
-      mockChangeDetectorRef,
-      containerService,
-      mockElementRef,
-      translate as unknown as TranslateService,
-      translaterService as unknown as TranslaterService,
-      {} as GridOption,
-      {
-        backendUtilityService: backendUtilityServiceStub,
-        collectionService: collectionServiceStub,
-        extensionService: extensionServiceStub,
-        extensionUtility: mockExtensionUtility,
-        eventPubSubService,
-        filterService: filterServiceStub,
-        gridEventService: gridEventServiceStub,
-        gridService: gridServiceStub,
-        gridStateService: gridStateServiceStub,
-        headerGroupingService: headerGroupingServiceStub,
-        resizerService: resizerServiceStub,
-        paginationService: paginationServiceStub,
-        sharedService,
-        sortService: sortServiceStub,
-        treeDataService: treeDataServiceStub,
-      }
+    component = TestBed.runInInjectionContext(
+      () =>
+        new AngularSlickgridComponent(
+          angularUtilServiceStub,
+          mockAppRef,
+          mockChangeDetectorRef,
+          containerService,
+          mockElementRef,
+          translate as unknown as TranslateService,
+          translaterService as unknown as TranslaterService,
+          {} as GridOption,
+          {
+            backendUtilityService: backendUtilityServiceStub,
+            collectionService: collectionServiceStub,
+            extensionService: extensionServiceStub,
+            extensionUtility: mockExtensionUtility,
+            eventPubSubService,
+            filterService: filterServiceStub,
+            gridEventService: gridEventServiceStub,
+            gridService: gridServiceStub,
+            gridStateService: gridStateServiceStub,
+            headerGroupingService: headerGroupingServiceStub,
+            resizerService: resizerServiceStub,
+            paginationService: paginationServiceStub,
+            sharedService,
+            sortService: sortServiceStub,
+            treeDataService: treeDataServiceStub,
+          }
+        )
     );
 
     component.gridId = 'grid1';
@@ -423,32 +426,35 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
   });
 
   it('should provide the gridService lazily', () => {
-    const instance = new AngularSlickgridComponent(
-      angularUtilServiceStub,
-      mockAppRef,
-      mockChangeDetectorRef,
-      containerService,
-      mockElementRef,
-      translate as unknown as TranslateService,
-      translaterService as unknown as TranslaterService,
-      {} as GridOption,
-      {
-        backendUtilityService: backendUtilityServiceStub,
-        collectionService: collectionServiceStub,
-        extensionService: undefined,
-        extensionUtility: mockExtensionUtility,
-        eventPubSubService,
-        filterService: filterServiceStub,
-        gridEventService: gridEventServiceStub,
-        gridService: gridServiceStub,
-        gridStateService: gridStateServiceStub,
-        headerGroupingService: headerGroupingServiceStub,
-        resizerService: resizerServiceStub,
-        paginationService: paginationServiceStub,
-        sharedService,
-        sortService: sortServiceStub,
-        treeDataService: treeDataServiceStub,
-      }
+    const instance = TestBed.runInInjectionContext(
+      () =>
+        new AngularSlickgridComponent(
+          angularUtilServiceStub,
+          mockAppRef,
+          mockChangeDetectorRef,
+          containerService,
+          mockElementRef,
+          translate as unknown as TranslateService,
+          translaterService as unknown as TranslaterService,
+          {} as GridOption,
+          {
+            backendUtilityService: backendUtilityServiceStub,
+            collectionService: collectionServiceStub,
+            extensionService: undefined,
+            extensionUtility: mockExtensionUtility,
+            eventPubSubService,
+            filterService: filterServiceStub,
+            gridEventService: gridEventServiceStub,
+            gridService: gridServiceStub,
+            gridStateService: gridStateServiceStub,
+            headerGroupingService: headerGroupingServiceStub,
+            resizerService: resizerServiceStub,
+            paginationService: paginationServiceStub,
+            sharedService,
+            sortService: sortServiceStub,
+            treeDataService: treeDataServiceStub,
+          }
+        )
     );
 
     expect(instance).toBeTruthy();

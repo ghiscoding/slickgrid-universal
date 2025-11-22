@@ -179,33 +179,3 @@ export class MyApp {
   }
 }
 ```
-
-### Error thrown in the IDE when using `strictTemplates`
-You might get some error thrown in your editor by the Angular-Language-Service, the error might 1 of these
-```shell
-Event onAngularGridCreated is not emitted by any applicable directives nor by angular-slickgrid element
-```
-or
-```shell
-error TS2339: Property 'detail' does not exist on type 'Event'.
-```
-There are 3 possible solutions to fix this issue
-1. disabled `strictTemplates`
-2. define argument type as `Event` to avoid error then later cast it as a `CustomEvent`
-```ts
-angularGridReady(event: Event) {
-    this.angularGrid = (event as CustomEvent).detail as AngularGridInstance;
-}
-```
-3. use `$any()` in the View
-```html
-<angular-slickgrid gridId="grid1"
-    [columns]="columnDefinitions"
-    [options]="gridOptions"
-    [dataset]="dataset"
-    (onAngularGridCreated)="angularGridReady($any($event).detail)">
-</angular-slickgrid>
-```
-You can read more on the subject at:
-- Stack Overflow question [Cannot use onAngularGridCreated emitter](https://stackoverflow.com/questions/71156193/cannot-use-onangulargridcreated-emitter/71245004#71245004)
-- Discussion [#815](https://github.com/ghiscoding/angular-slickgrid/discussions/815)
