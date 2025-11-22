@@ -617,8 +617,8 @@ export class Example30Component implements OnDestroy, OnInit {
     return false;
   }
 
-  handleItemDeleted(itemId: string) {
-    console.log('item deleted with id:', itemId);
+  handleItemDeleted(itemIds: string[]) {
+    console.log('item deleted with ids:', itemIds);
   }
 
   handleOnBeforeEditCell(e: Event, args: any) {

@@ -2,6 +2,7 @@ import type {
   TextExportService as BaseTextExportService,
   Column,
   ContainerService,
+  ExportTextDownloadOption,
   ExternalResource,
   FileType,
   GridOption,
@@ -30,14 +31,6 @@ const DEFAULT_EXPORT_OPTIONS: TextExportOption = {
   format: 'csv',
   useUtf8WithBom: true,
 };
-
-interface ExportTextDownloadOption {
-  filename: string;
-  content: string;
-  format: FileType | string;
-  mimeType: string;
-  useUtf8WithBom?: boolean;
-}
 
 export class TextExportService implements ExternalResource, BaseTextExportService {
   protected _delimiter = ',';

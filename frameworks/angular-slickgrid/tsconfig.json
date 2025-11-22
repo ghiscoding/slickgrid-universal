@@ -24,6 +24,12 @@
   "angularCompilerOptions": {
     "compilationMode": "partial",
     "preserveWhitespaces": true,
-    "strictMetadataEmit": true
+    "strictMetadataEmit": true,
+    "strictTemplates": true,
+    "extendedDiagnostics": {
+      "checks": {
+        "optionalChainNotNullable": "suppress"
+      }
+    }
   }
 }

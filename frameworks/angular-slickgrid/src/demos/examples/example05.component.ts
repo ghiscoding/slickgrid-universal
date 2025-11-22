@@ -6,6 +6,7 @@ import {
   AngularSlickgridModule,
   Filters,
   OperatorType,
+  PaginationMetadata,
   type AngularGridInstance,
   type Column,
   type GridOption,
@@ -443,7 +444,7 @@ export class Example5Component implements OnInit {
     return true;
   }
 
-  handleOnBeforePaginationChange(_e: Event) {
+  handleOnBeforePaginationChange(_e: CustomEvent<PaginationMetadata>) {
     // e.preventDefault();
     // return false;
     return true;

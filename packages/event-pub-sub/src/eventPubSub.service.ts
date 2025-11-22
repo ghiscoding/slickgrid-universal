@@ -107,7 +107,7 @@ export class EventPubSubService implements BasePubSubService {
    * Return is a Boolean (from the event dispatch) unless a delay is provided if so we'll return the dispatched event in a Promise with a delayed cycle
    * The delay is rarely use and is only used when we want to make sure that certain events have the time to execute
    * and we do this because most framework require a cycle before the binding is processed and binding a spinner end up showing too late
-   * for example this is used for the following events: onBeforeFilterClear, onBeforeFilterChange, onBeforeToggleTreeCollapse, onBeforeSortChange
+   * for example this is used for the following events: onBeforeFilterClear, onBeforeFilterChange, onBeforeSortChange
    * @param {String} event - The event or channel to publish to.
    * @param {*} data - The data to publish on the channel.
    * @param {Number} delay - optional argument to delay the publish event

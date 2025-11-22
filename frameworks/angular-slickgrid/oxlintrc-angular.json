@@ -7,17 +7,7 @@
   },
   "plugins": ["oxc", "regex", "typescript", "vitest"],
   "jsPlugins": ["@angular-eslint/eslint-plugin"],
-  "ignorePatterns": [
-    "**/*.spec.ts",
-    "**/*.cy.ts",
-    ".angular/*",
-    "dist/",
-    "coverage/",
-    "test/",
-    "**/environment.*.ts",
-    "**/grid-remote.component.ts",
-    "**/public_api.ts"
-  ],
+  "ignorePatterns": ["**/*.spec.ts", "**/*.cy.ts", ".angular/*", "dist/", "coverage/", "test/", "**/environment.*.ts", "**/public_api.ts"],
   "overrides": [
     {
       "files": ["**/*.ts"],
