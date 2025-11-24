@@ -68,7 +68,7 @@
     "@analogjs/vite-plugin-angular": "^1.22.5",
     "@analogjs/vitest-angular": "^1.22.5",
     "@angular-devkit/build-angular": "^19.2.19",
-    "@angular-eslint/eslint-plugin": "^20.5.1",
+    "@angular-eslint/eslint-plugin": "^20.7.0",
     "@angular/animations": "^19.2.15",
     "@angular/build": "19.2.19",
     "@angular/cli": "^19.2.19",
@@ -87,9 +87,9 @@
     "@gc-utils/fs-extra": "^0.4.0",
     "@ng-select/ng-select": "^14.9.0",
     "@ngx-translate/http-loader": "^16.0.1",
-    "@nx/angular": "^21.6.8",
-    "@nx/devkit": "^21.6.8",
-    "@nx/vite": "^21.6.8",
+    "@nx/angular": "^21.6.9",
+    "@nx/devkit": "^21.6.9",
+    "@nx/vite": "^21.6.9",
     "@popperjs/core": "catalog:",
     "@slickgrid-universal/composite-editor-component": "workspace:*",
     "@slickgrid-universal/custom-tooltip-plugin": "workspace:*",
@@ -122,6 +122,6 @@
     "vite-tsconfig-paths": "catalog:",
     "vitest": "catalog:",
     "yaml": "^2.8.1",
-    "zone.js": "~0.15.1"
+    "zone.js": "~0.16.0"
   }
 }
