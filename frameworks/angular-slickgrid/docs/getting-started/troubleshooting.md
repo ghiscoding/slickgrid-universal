@@ -48,33 +48,3 @@ This is no longer the case. Verify if you need this module and configure a polyf
   ],
 },
 ```
-
-#### `strictTemplates` error
-In Angular 14 and higher, Angular has a `strictTemplates` flag in your `tsconfig.json` file (enabled by default when creating new projects from CLI) which causes issues with Angular-Slickgrid events with errors similar to this:
-
-> Property 'detail' does not exist on type 'Event'. (onAngularGridCreated)="angularGridReady($event.detail)"
-
-The reason is because Angular-Slickgrid uses Custom Event for all its events and Angular complains because these Custom Events aren't typed. In order to fix this issue, you have 3 viable approaches:
-
-1. disabled `strictTemplates` in your `tsconfig.json` config
-2. cast the event in the View template to `$any` type
-   - `$any($event)` for example `$any($event).detail.eventData`
-3. cast the event in the component ViewModel to `CustomEvent`
-```html
-<angular-slickgrid gridId="grid28"
-    [columns]="columnDefinitions"
-    [options]="gridOptions"
-    [dataset]="dataset"
-    (onAngularGridCreated)="angularGridReady($event.detail)">
-</angular-slickgrid>
-```
-
-```ts
-angularGridReady(event: CustomEvent<AngularGridInstance>) {
-  this.angularGrid = event.detail;
-  this.gridObj = this.angularGrid.slickGrid;
-}
-```
-
-The simplest is obviously the option 1 but you lose the strictness on the view templates, more details can found under the discussion [(`strictTemplates`) Template error ](https://github.com/ghiscoding/Angular-Slickgrid/discussions/815), I have also opened a similar Stack Overflow question myself:
-[How to use Custom Event (not Event Emitter) without `strictTemplates` to complain about `$event` not being a Custom Event type?](https://stackoverflow.com/questions/68490848/how-to-use-custom-event-not-event-emitter-without-stricttemplates-to-complai).
