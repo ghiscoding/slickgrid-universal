@@ -4,6 +4,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.11.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.10.0...v9.11.0) (2025-11-24)
+
+### Features
+
+* add `useArrowToSlide` to Slider Editor ([#2238](https://github.com/ghiscoding/slickgrid-universal/issues/2238)) ([a11678b](https://github.com/ghiscoding/slickgrid-universal/commit/a11678be4869edac9b6eaf923280a361f82e7415)) - by @ghiscoding
+* add new `autoEditByKeypress` to open editor by typing a char, fix [#2185](https://github.com/ghiscoding/slickgrid-universal/issues/2185) ([#2236](https://github.com/ghiscoding/slickgrid-universal/issues/2236)) ([7e3b6e3](https://github.com/ghiscoding/slickgrid-universal/commit/7e3b6e35eed15bd37dc7d14d71f4b42bc82084dd)) - by @ghiscoding
+* add new Cell/Row override to Hybrid Selection Model ([#2229](https://github.com/ghiscoding/slickgrid-universal/issues/2229)) ([1471ebb](https://github.com/ghiscoding/slickgrid-universal/commit/1471ebb361bd2d302db7c1cc5e4f14cd06ce6f0c)) - by @ghiscoding
+* **angular:** add all event Types to support Strict Templates ([#2243](https://github.com/ghiscoding/slickgrid-universal/issues/2243)) ([3330525](https://github.com/ghiscoding/slickgrid-universal/commit/3330525611989228d4a5fbef8b0f410ccbf45690)) - by @ghiscoding
+
+### Bug Fixes
+
+* add full event Types to Slickgrid-React/Vue ([4766128](https://github.com/ghiscoding/slickgrid-universal/commit/476612899f73f699531b6eef421e9fd055de2380)) - by @ghiscoding
+* add missing .js extension which could fail in WebPack ([6a13020](https://github.com/ghiscoding/slickgrid-universal/commit/6a13020fe5f6e89c718ceca6a7560c0f40c488d4)) - by @ghiscoding
+* Calendar picker focus should be on selected date/month when opening ([#2239](https://github.com/ghiscoding/slickgrid-universal/issues/2239)) ([fde21b1](https://github.com/ghiscoding/slickgrid-universal/commit/fde21b19def14d6814ed6e26ab185d9f9aa37d18)) - by @ghiscoding
+* **editors:** clicking outside multiple select (body) call onCellChanged ([#2234](https://github.com/ghiscoding/slickgrid-universal/issues/2234)) ([deb2a13](https://github.com/ghiscoding/slickgrid-universal/commit/deb2a137a19b47aaa851744d4ee418240b3a8a1e)) - by @ghiscoding
+* formatting blank date with Tempo shouldn't throw ([#2224](https://github.com/ghiscoding/slickgrid-universal/issues/2224)) ([284121c](https://github.com/ghiscoding/slickgrid-universal/commit/284121cbc7821fff047a98455113690692fb31ca)) - by @ghiscoding
+* only show Cell Selection drag handle w/using mixed/cell selection ([#2242](https://github.com/ghiscoding/slickgrid-universal/issues/2242)) ([8a709e7](https://github.com/ghiscoding/slickgrid-universal/commit/8a709e7624a9339951a30fb70ca7d2a4e7aef713)) - by @ghiscoding
+* text selection in grid cells ([#2231](https://github.com/ghiscoding/slickgrid-universal/issues/2231)) ([8794deb](https://github.com/ghiscoding/slickgrid-universal/commit/8794deb898cc876cd6a39a1aaefb91079eaefb0e)) - by @ghiscoding
+* unable to drag row when the cell formatter renders html elements ([#2240](https://github.com/ghiscoding/slickgrid-universal/issues/2240)) ([36e9579](https://github.com/ghiscoding/slickgrid-universal/commit/36e9579e0978ec403074e48c64d4d00cc3cbaeef)) - by @ghiscoding
+
 ## [9.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.9.0...v9.10.0) (2025-11-04)
 
 ### Features

@@ -4,6 +4,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.11.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.10.0...v9.11.0) (2025-11-24)
+
+### Features
+
+* add new `autoEditByKeypress` to open editor by typing a char, fix [#2185](https://github.com/ghiscoding/slickgrid-universal/issues/2185) ([#2236](https://github.com/ghiscoding/slickgrid-universal/issues/2236)) ([7e3b6e3](https://github.com/ghiscoding/slickgrid-universal/commit/7e3b6e35eed15bd37dc7d14d71f4b42bc82084dd)) - by @ghiscoding
+
+### Bug Fixes
+
+* add full event Types to Slickgrid-React/Vue ([4766128](https://github.com/ghiscoding/slickgrid-universal/commit/476612899f73f699531b6eef421e9fd055de2380)) - by @ghiscoding
+* **deps:** update all non-major dependencies ([#2225](https://github.com/ghiscoding/slickgrid-universal/issues/2225)) ([095de1b](https://github.com/ghiscoding/slickgrid-universal/commit/095de1beeb9f906b0dcddf4819dfeb64bdae68d3)) - by @renovate-bot
+
 ## [9.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.9.0...v9.10.0) (2025-11-04)
 
 ### Features

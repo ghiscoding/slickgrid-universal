@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/row-detail-view-plugin",
-  "version": "9.10.0",
+  "version": "9.11.0",
   "description": "SlickRowDetail plugin - A plugin to add Row Detail Panel",
   "type": "module",
   "main": "./dist/index.js",
