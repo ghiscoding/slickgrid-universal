@@ -53,7 +53,7 @@
     "@popperjs/core": "catalog:",
     "@types/fnando__sparkline": "catalog:",
     "@types/node": "catalog:",
-    "@types/react": "^19.2.6",
+    "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@types/sortablejs": "catalog:",
     "@vitejs/plugin-react": "catalog:",
