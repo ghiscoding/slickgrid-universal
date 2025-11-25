@@ -97,11 +97,11 @@
 
 ## Migrations
 
-* [Migration Guide to 9.x (2025-05-10)](migrations/migration-to-9.x.md)
-* [Migration Guide to 8.x (2024-05-23)](migrations/migration-to-8.x.md)
-* [Migration Guide to 7.x (2023-12-15)](migrations/migration-to-7.x.md)
-* [Migration Guide to 6.x (2023-05-29)](migrations/migration-to-6.x.md)
-* [Migration Guide to 5.x (2022-10-17)](migrations/migration-to-5.x.md)
-* [Migration Guide to 4.x (2021-12-11)](migrations/migration-to-4.x.md)
-* [Migration Guide to 3.x (2021-07-20)](migrations/migration-to-3.x.md)
 * [Migration Guide to 2.x (2018-06-23)](migrations/migration-to-2.x.md)
+* [Migration Guide to 3.x (2021-07-20)](migrations/migration-to-3.x.md)
+* [Migration Guide to 4.x (2021-12-11)](migrations/migration-to-4.x.md)
+* [Migration Guide to 5.x (2022-10-17)](migrations/migration-to-5.x.md)
+* [Migration Guide to 6.x (2023-05-29)](migrations/migration-to-6.x.md)
+* [Migration Guide to 7.x (2023-12-15)](migrations/migration-to-7.x.md)
+* [Migration Guide to 8.x (2024-05-23)](migrations/migration-to-8.x.md)
+* [Migration Guide to 9.x (2025-05-10)](migrations/migration-to-9.x.md)
