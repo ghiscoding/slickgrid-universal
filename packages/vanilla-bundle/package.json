@@ -21,8 +21,7 @@
   ],
   "scripts": {
     "are-types-wrong": "pnpx @arethetypeswrong/cli --pack .",
-    "prebuild": "pnpm run clean",
-    "build": "tsc",
+    "build": "pnpm run clean && tsc",
     "build:incremental": "tsc --incremental --declaration",
     "clean": "remove dist tsconfig.tsbuildinfo",
     "dev": "pnpm build:incremental",

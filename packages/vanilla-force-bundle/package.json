@@ -20,13 +20,11 @@
     "/src"
   ],
   "scripts": {
-    "prebuild": "pnpm run clean",
-    "build": "tsc --build",
+    "build": "pnpm run clean && tsc --build",
     "build:incremental": "tsc --incremental --declaration",
     "clean": "remove dist tsconfig.tsbuildinfo",
     "bundle:vite": "vite build",
-    "prebundle:zip": "pnpm run delete:zip",
-    "bundle:zip": "pnpm bundle:vite && pnpm run zip:dist",
+    "bundle:zip": "pnpm run delete:zip && pnpm bundle:vite && pnpm run zip:dist",
     "delete:zip": "remove --glob \"dist-grid-bundle-zip/*.zip\"",
     "zip:dist": "node compress.mjs --output-filename=slickgrid-vanilla-bundle --output-folder=\"dist-grid-bundle-zip/\"",
     "test": "echo testing slickgrid-universal vanilla-force-bundle code"
