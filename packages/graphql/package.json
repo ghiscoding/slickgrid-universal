@@ -20,8 +20,7 @@
     "/src"
   ],
   "scripts": {
-    "prebuild": "pnpm run clean",
-    "build": "tsc",
+    "build": "pnpm run clean && tsc",
     "build:incremental": "tsc --incremental --declaration",
     "clean": "remove dist tsconfig.tsbuildinfo",
     "dev": "pnpm build:incremental"

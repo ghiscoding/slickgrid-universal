@@ -40,9 +40,7 @@
   "scripts": {
     "are-types-wrong": "pnpx @arethetypeswrong/cli --pack .",
     "aurelia:dev": "tsc --watch",
-    "prebuild": "remove dist",
-    "build": "tsc",
-    "postbuild": "npm run copy-i18n:dist && npm run copy-asset-lib",
+    "build": "remove dist && tsc && npm run copy-i18n:dist && npm run copy-asset-lib",
     "copy-asset-lib": "copyfiles src/assets/lib/** dist --up 2 --stat",
     "copy-i18n:dist": "copyfiles src/assets/i18n/**/*.* dist/i18n --up 3 --stat",
     "pack": "npm pack"
