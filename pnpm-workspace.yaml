@@ -25,7 +25,7 @@ catalog:
   dompurify: ^3.3.0
   globals: ^16.5.0
   i18next: ^25.6.3
-  i18next-vue: ^5.3.0
+  i18next-vue: ^5.3.1
   jsdom: ^27.2.0
   jsdom-global: ^3.0.2
   multiple-select-vanilla: ^4.4.0
