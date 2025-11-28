@@ -136,6 +136,9 @@
       "@vitest/coverage-v8>vite": "npm:rolldown-vite@latest",
       "@vitest/ui>vite": "npm:rolldown-vite@latest",
       "axios": "^1.13.2",
+      "glob": "^13.0.0",
+      "js-yaml": "^4.1.1",
+      "node-forge": "^1.3.2",
       "tmp": "^0.2.5",
       "vitest>vite": "npm:rolldown-vite@latest"
     }
