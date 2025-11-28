@@ -110,15 +110,15 @@ Make sure to check out the [Releases](https://github.com/ghiscoding/slickgrid-un
 
 **NOTE:** Please be aware that only the latest major version of Angular-Slickgrid will be supported and receive bug fixes.
 
-| Angular-Slickgrid | Angular | Migration Guide | Date | Notes |
-| :----------------:|:-------:|-----------------| ---- | ------|
-| 9.x               | >=19.0 | [Migration 9.x](https://ghiscoding.gitbook.io/angular-slickgrid/migrations/migration-to-9.x) | 2025-05-10 | ESM-Only, requires Slickgrid-Universal [9.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v9.0.0) version |
-| 8.x               | >=18.0 | [Migration 8.x](https://ghiscoding.gitbook.io/angular-slickgrid/migrations/migration-to-8.x) | 2024-05-22 | Modern UI / Dark Mode, requires Slickgrid-Universal [5.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v5.0.0) version |
-| 7.x               | >=17.0 | [Migration 7.x](https://ghiscoding.gitbook.io/angular-slickgrid/migrations/migration-to-7.x) | 2023-12-15 | merge SlickGrid into Slickgrid-Universal, requires Slickgrid-Universal [4.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v4.0.2) version |
-| 6.x               | >=16.0 | [Migration 6.x](https://ghiscoding.gitbook.io/angular-slickgrid/migrations/Migration-to-6.x) | 2023-07-01 | removal of jQuery (now uses browser native code), requires Slickgrid-Universal [3.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v3.0.0) version |
-| 5.x               | >=14.0 | [Migration 5.x](https://ghiscoding.gitbook.io/angular-slickgrid/migrations/Migration-to-5.x) | 2022-10-17 | removal of jQueryUI, requires Slickgrid-Universal [2.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v2.0.0) version |
-| 4.x               | >=13.0 | [Migration 4.x](https://ghiscoding.gitbook.io/angular-slickgrid/migrations/Migration-to-4.x) | 2021-12-11 | for Ivy build only, requires Slickgrid-Universal [1.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v1.1.1) version |
-| 3.x               | >=12.0 | [Migration 3.x](https://ghiscoding.gitbook.io/angular-slickgrid/migrations/Migration-to-3.x) | 2021-07-02 | the lib now uses [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) monorepo [v0.19.2](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v0.19.2). Also, IE11 is EOL and no longer supported. |
+| Angular-Slickgrid | Angular | Migration Guide | Notes |
+| :----------------:|:-------:|-----------------| ------|
+| 9.x               | >=19.0 | [Migration 9.x](https://ghiscoding.gitbook.io/angular-slickgrid/migrations/migration-to-9.x) | (2025-05-10) ESM-Only, requires Slickgrid-Universal [9.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v9.0.0) version |
+| 8.x               | >=18.0 | [Migration 8.x](https://ghiscoding.gitbook.io/angular-slickgrid/migrations/migration-to-8.x) | (2024-05-22) Modern UI / Dark Mode, requires Slickgrid-Universal [5.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v5.0.0) version |
+| 7.x               | >=17.0 | [Migration 7.x](https://ghiscoding.gitbook.io/angular-slickgrid/migrations/migration-to-7.x) | (2023-12-15) merge SlickGrid into Slickgrid-Universal, requires Slickgrid-Universal [4.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v4.0.2) version |
+| 6.x               | >=16.0 | [Migration 6.x](https://ghiscoding.gitbook.io/angular-slickgrid/migrations/Migration-to-6.x) | (2023-07-01) removal of jQuery (now uses browser native code), requires Slickgrid-Universal [3.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v3.0.0) version |
+| 5.x               | >=14.0 | [Migration 5.x](https://ghiscoding.gitbook.io/angular-slickgrid/migrations/Migration-to-5.x) | (2022-10-17) removal of jQueryUI, requires Slickgrid-Universal [2.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v2.0.0) version |
+| 4.x               | >=13.0 | [Migration 4.x](https://ghiscoding.gitbook.io/angular-slickgrid/migrations/Migration-to-4.x) | (2021-12-11) for Ivy build only, requires Slickgrid-Universal [1.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v1.1.1) version |
+| 3.x               | >=12.0 | [Migration 3.x](https://ghiscoding.gitbook.io/angular-slickgrid/migrations/Migration-to-3.x) | (2021-07-02) the lib now uses [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) monorepo [v0.19.2](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v0.19.2). Also, IE11 is EOL and no longer supported. |
 | 2.x               | 7-11.x | [Migration 2.x](https://ghiscoding.gitbook.io/angular-slickgrid/migrations/Migration-to-2.x) | | support multiple grids on the same page     |
 | 1.x               | 4-6.x  |                 |      |
 
