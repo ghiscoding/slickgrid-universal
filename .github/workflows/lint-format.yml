@@ -57,5 +57,8 @@ jobs:
       - name: OXLint Angular-Slickgrid
         run: pnpm angular:lint
 
+      - name: OXLint Cypress
+        run: pnpm lint:cypress
+
       - name: Prettier
         run: pnpm prettier:check
