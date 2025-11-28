@@ -119,7 +119,7 @@ For example if you would want to disable this behavior, you can assign `emptySea
 ```ts
 // define you columns, in this demo Effort Driven will use a Select Filter
 this.columnDefinitions = [
-  { 
+  {
     id: 'lastName', name: 'Last Name', field: 'lastName',
     filterable: true,
     filter: {
