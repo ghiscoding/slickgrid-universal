@@ -137,6 +137,7 @@ export default class Example02 {
             hideSliderNumber: true,
             enableSliderTrackColoring: true,
             sliderTrackFilledColor: '#9ac49c',
+            filterWhileSliding: true, // uncomment this line to enable real-time filtering as the user slide the handle
           } as SliderOption,
         },
         sortable: true,

@@ -7,9 +7,9 @@ In our previous v2.0 release (see [Migration to v2.0](Migration-to-2.x.md)), we 
 
 #### Major Changes - Quick Summary
 - minimum requirements bump
-  - [`@slickgrid-universal/rxjs-observable`](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/rxjs-observable) package now requires RxJS `>=8.7.1`
+  - [`@slickgrid-universal/rxjs-observable`](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/rxjs-observable) package now requires RxJS `>=7.7.1`
 - we dropped jQuery requirement
-  - it also required us to rewrite the `multiple-select` (jQuery based lib) into a brand new [`multiple-select-vanilla`](https://github.com/ghiscoding/multiple-select-vanilla) lib which is now native and has zero dependency
+  - it also required me to rewrite the `multiple-select` (jQuery based lib) into a brand new [`multiple-select-vanilla`](https://github.com/ghiscoding/multiple-select-vanilla) lib which is now native and has zero dependency
 
 ---
 
@@ -32,7 +32,7 @@ filterOptions: {
 The new lib also offers a bunch of new options as well, you can see the full interface at [MultipleSelectOption](https://github.com/ghiscoding/multiple-select-vanilla/blob/main/lib/src/interfaces/multipleSelectOption.interface.ts)
 
 ### Slickgrid-Universal
-If you use any of the Slickgrid-Universal extra dependencies then make sure to upgrade them all to the new major `3.0.0` version
+If you use any of the Slickgrid-Universal optional dependencies then make sure to upgrade them all to the new major `3.0.0` version
 
 ```diff
   "dependencies": {
