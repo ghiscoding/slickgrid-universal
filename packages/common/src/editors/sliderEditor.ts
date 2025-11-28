@@ -372,6 +372,7 @@ export class SliderEditor implements Editor {
     return divContainerElm;
   }
 
+  /** get default slider defaults */
   protected getSliderConfigs(): Omit<CurrentSliderOption, 'sliderTrackBackground'> {
     return {
       minValue: +(this.columnEditor.minValue ?? Constants.SLIDER_DEFAULT_MIN_VALUE),

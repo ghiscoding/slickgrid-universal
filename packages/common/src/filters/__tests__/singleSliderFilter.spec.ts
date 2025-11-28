@@ -275,6 +275,41 @@ describe('SingleSliderFilter', () => {
     expect(filter.sliderOptions?.sliderTrackBackground).toBe('linear-gradient(to right, #eee 0%, #86bff8 0%, #86bff8 80%, #eee 80%)');
   });
 
+  it('should execute filter callback when filterWhileSliding is enabled and we only triggered an input event', () => {
+    const callbackSpy = vi.spyOn(filterArgs, 'callback');
+
+    mockColumn.filter = { options: { filterWhileSliding: true } };
+    filter.init(filterArgs);
+    filter.setValues(['2']);
+    const filterNumberElm = divContainer.querySelector('.input-group-text') as HTMLInputElement;
+    const filterElm = divContainer.querySelector('.input-group.search-filter.filter-duration input') as HTMLInputElement;
+    filterElm.dispatchEvent(new Event('input'));
+
+    expect(filterNumberElm.textContent).toBe('2');
+
+    expect(callbackSpy).toHaveBeenLastCalledWith(expect.any(Event), {
+      columnDef: mockColumn,
+      operator: 'GE',
+      searchTerms: [2],
+      shouldTriggerQuery: true,
+    });
+  });
+
+  it('should NOT execute filter callback when filterWhileSliding is disabled and we only triggered an input event', () => {
+    const callbackSpy = vi.spyOn(filterArgs, 'callback');
+
+    mockColumn.filter = { options: { filterWhileSliding: false } };
+    filter.init(filterArgs);
+    filter.setValues(['2']);
+    const filterNumberElm = divContainer.querySelector('.input-group-text') as HTMLInputElement;
+    const filterElm = divContainer.querySelector('.input-group.search-filter.filter-duration input') as HTMLInputElement;
+    filterElm.dispatchEvent(new Event('input'));
+
+    expect(filterNumberElm.textContent).toBe('2');
+
+    expect(callbackSpy).not.toHaveBeenCalled();
+  });
+
   it('should click on the slider track and expect handle to move to the new position', () => {
     filter.init(filterArgs);
     const sliderInputs = divContainer.querySelectorAll<HTMLInputElement>('.slider-filter-input');
@@ -288,5 +323,95 @@ describe('SingleSliderFilter', () => {
     sliderTrackElm.dispatchEvent(clickEvent);
 
     expect(sliderRightChangeSpy).toHaveBeenCalled();
+  });
+
+  describe('keydown event', () => {
+    it('should decrease slider number value and tooltip when using ArrowLeft keydown with "useArrowToSlide" undefined', () => {
+      const leftValue = 4;
+      const callbackSpy = vi.spyOn(filterArgs, 'callback');
+      mockColumn.filter = {
+        filterOptions: {
+          sliderStartValue: leftValue,
+          sliderEndValue: 69,
+          useArrowToSlide: undefined,
+        },
+      };
+
+      filter.init(filterArgs);
+
+      const sliderInputs = divContainer.querySelectorAll<HTMLInputElement>('.slider-filter-input');
+
+      const mockEvent = new (window.window as any).KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true, cancelable: true });
+      const prevDefaultSpy = vi.spyOn(mockEvent, 'preventDefault');
+      const stopPropSpy = vi.spyOn(mockEvent, 'stopPropagation');
+
+      sliderInputs[0].dispatchEvent(mockEvent);
+
+      expect(callbackSpy).toHaveBeenLastCalledWith(expect.any(KeyboardEvent), {
+        columnDef: mockColumn,
+        operator: 'GE',
+        searchTerms: [leftValue - 1],
+        shouldTriggerQuery: true,
+      });
+      expect(prevDefaultSpy).toHaveBeenCalled();
+      expect(stopPropSpy).toHaveBeenCalled();
+    });
+
+    it('should increase slider number value and tooltip when using ArrowRight keydown with "useArrowToSlide" enabled', () => {
+      const callbackSpy = vi.spyOn(filterArgs, 'callback');
+      const leftValue = 4;
+      mockColumn.filter = {
+        filterOptions: {
+          sliderStartValue: leftValue,
+          sliderEndValue: 69,
+          useArrowToSlide: true,
+        },
+      };
+
+      filter.init(filterArgs);
+
+      const sliderInputs = divContainer.querySelectorAll<HTMLInputElement>('.slider-filter-input');
+
+      const mockEvent = new (window.window as any).KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true });
+      const prevDefaultSpy = vi.spyOn(mockEvent, 'preventDefault');
+      const stopPropSpy = vi.spyOn(mockEvent, 'stopPropagation');
+
+      sliderInputs[0].dispatchEvent(mockEvent);
+
+      expect(callbackSpy).toHaveBeenLastCalledWith(expect.any(KeyboardEvent), {
+        columnDef: mockColumn,
+        operator: 'GE',
+        searchTerms: [leftValue + 1],
+        shouldTriggerQuery: true,
+      });
+      expect(prevDefaultSpy).toHaveBeenCalled();
+      expect(stopPropSpy).toHaveBeenCalled();
+    });
+
+    it('should not decrease or increase slider number value when "useArrowToSlide" is disabled', () => {
+      const callbackSpy = vi.spyOn(filterArgs, 'callback');
+      const leftValue = 4;
+      mockColumn.filter = {
+        filterOptions: {
+          sliderStartValue: leftValue,
+          sliderEndValue: 69,
+          useArrowToSlide: false,
+        },
+      };
+
+      filter.init(filterArgs);
+
+      const sliderInputs = divContainer.querySelectorAll<HTMLInputElement>('.slider-filter-input');
+
+      const mockEvent = new (window.window as any).KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true });
+      const prevDefaultSpy = vi.spyOn(mockEvent, 'preventDefault');
+      const stopPropSpy = vi.spyOn(mockEvent, 'stopPropagation');
+
+      sliderInputs[0].dispatchEvent(mockEvent);
+
+      expect(callbackSpy).not.toHaveBeenCalled();
+      expect(prevDefaultSpy).not.toHaveBeenCalled();
+      expect(stopPropSpy).not.toHaveBeenCalled();
+    });
   });
 });

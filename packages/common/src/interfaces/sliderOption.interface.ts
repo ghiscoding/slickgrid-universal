@@ -16,6 +16,9 @@ export interface SliderOption {
 
   /** Defaults to true, use arrow to slide and increase/decrease values in the Slider Editor instead of the default cell left/right navigation. */
   useArrowToSlide?: boolean;
+
+  /** Defaults to false, when true the filter will trigger while sliding instead of waiting for the slide to complete */
+  filterWhileSliding?: boolean;
 }
 
 export interface SliderRangeOption extends Omit<SliderOption, 'hideSliderNumber'> {

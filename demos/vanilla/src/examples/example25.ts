@@ -129,6 +129,7 @@ export default class Example25 {
             hideSliderNumbers: false, // you can hide/show the slider numbers on both side
             min: 0,
             step: 5,
+            // filterWhileSliding: true, // uncomment this line to enable real-time filtering as the user slide the handle
           } as SliderRangeOption,
         },
       },
