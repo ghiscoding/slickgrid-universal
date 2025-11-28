@@ -517,7 +517,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * regression from PR [#262](https://github.com/ghiscoding/slickgrid-react/issues/262), read external resource when required ([dcf01e4](https://github.com/ghiscoding/slickgrid-react/commit/dcf01e42c7edcc84db53085df2a48ace9caefeb3))
 
 ## [4.0.1](https://github.com/ghiscoding/slickgrid-react/compare/v3.6.5...v4.0.1) (2023-12-15)
-### Follow the [Migration 3.x Guide](https://ghiscoding.gitbook.io/slickgrid-react/migrations/migration-to-4.x)
+### Follow the [Migration 4.x Guide](https://ghiscoding.gitbook.io/slickgrid-react/migrations/migration-to-4.x)
 ### ⚠ BREAKING CHANGES
 * migrate to Slickgrid-Universal v4.0 new major version PR (#269) ([e3b71e7](https://github.com/ghiscoding/slickgrid-react/commit/e3b71e75ea3036f78d8f8ff2c1937992575f3616))
 
