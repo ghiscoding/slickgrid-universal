@@ -85,7 +85,7 @@ export default function Example() {
 
 ### Versions Compatibility
 
-> **Note** please be aware that only the latest major version of Slickgrid-React will be supported and receive bug fixes (it's already a lot of work to maintain for a single developer like me).
+> **Note** Please be aware that only the latest major version of Slickgrid-React will be supported and receive bug fixes.
 
 | Slickgrid-React | React     | Migration Guide | Notes | Date |
 |:---------------:| --------- | --------------- | ----- | ---- |
