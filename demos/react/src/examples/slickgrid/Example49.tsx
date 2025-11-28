@@ -23,6 +23,12 @@ const Example49: React.FC = () => {
 
   useEffect(() => {
     defineGrid();
+
+    // make sure it's back to light mode before unmounting
+    return () => {
+      document.querySelector('.panel-wm-content')!.classList.remove('dark-mode');
+      document.querySelector<HTMLDivElement>('#demo-container')!.dataset.bsTheme = 'light';
+    };
   }, []);
 
   function reactGridReady(reactGrid: SlickgridReactInstance) {
