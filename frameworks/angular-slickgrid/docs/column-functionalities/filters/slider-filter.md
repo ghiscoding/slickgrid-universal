@@ -28,7 +28,7 @@ SlickGrid Universal provides three slider filter variants via the Filters enum:
 ### Filter Types
 
 #### Single Slider Filter (`Filters.slider`)
-A single-value slider that filters data based on a single numeric threshold. Useful when you want to filter "greater than", "less than", or "equal to" a specific value.
+A single-value slider that filters data based on a single numeric threshold. Useful when you want to filter "greater than", "less than", or "equal to" a specific value. You can define such `operator` via your `column` definition.
 
 **Operators**: `>`, `>=`, `<`, `<=`, `=`, `<>`, `!=`
 
@@ -112,9 +112,9 @@ Example with range slider:
     model: Filters.sliderRange,
     minValue: 0,        // minimum value on the slider
     maxValue: 100,      // maximum value on the slider
-    operator: OperatorType.rangeInclusive,  // defaults to inclusive
+    operator: OperatorType.rangeInclusive,   // defaults to inclusive
     options: {
-      hideSliderNumbers: false,               // show/hide the numbers on both sides
+      hideSliderNumbers: false,              // show/hide the numbers on both sides
       sliderStartValue: 0,                   // left handle starting position
       sliderEndValue: 100,                   // right handle starting position
       step: 5,                               // step increment when moving the slider
@@ -179,12 +179,14 @@ The following options can be configured via the `options` object in your filter 
 ### Operators
 
 #### Single & Compound Slider Operators
-- `>` - Greater than
-- `>=` - Greater than or equal to
-- `<` - Less than
-- `<=` - Less than or equal to
-- `=` or `==` - Equal to
-- `<>` or `!=` - Not equal to
+| Operator | Description |
+| -------- | ----------- |
+`>` | Greater than |
+`>=` | Greater than or equal to |
+`<` | Less than |
+`<=` | Less than or equal to |
+`=` or `==` | Equal to |
+`<>` or `!=` | Not equal to |
 
 #### Range Slider Operators
 - `rangeInclusive` - Include the boundary values (default)
