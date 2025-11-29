@@ -3082,6 +3082,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     let reRender = false;
     for (i = 0; i < this.columns.length; i++) {
+      c = this.columns[i];
       if (c && !c.hidden) {
         if (this.columns[i].rerenderOnResize && this.columns[i].width !== widths[i]) {
           reRender = true;
