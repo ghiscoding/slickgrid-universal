@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "allowJs": true,
-    "baseUrl": "./",
     "lib": ["es2022", "DOM"],
     "target": "ESNext",
     "module": "ESNext",
@@ -14,9 +13,6 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noImplicitReturns": false,
-    "paths": {
-      "@/*": ["src/*"]
-    },
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "sourceMap": true,
