@@ -3165,7 +3165,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     let w = 0;
     let rule: any;
     for (let i = 0; i < this.columns.length; i++) {
-      if (!this.columns[i]?.hidden) {
+      if (this.columns[i] && !this.columns[i].hidden) {
         w = this.columns[i].width || 0;
 
         rule = this.getColumnCssRules(i);
