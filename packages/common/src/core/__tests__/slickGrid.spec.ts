@@ -2318,13 +2318,13 @@ describe('SlickGrid core file', () => {
       expect(grid.getHeader(columns[0])).toBeInstanceOf(HTMLDivElement);
       expect(grid.getVisibleColumns().length).toBe(3);
       expect(result).toBe(1012);
-      expect(columns[0].width).toBe(0);
+      expect(columns[0].width).toBe(300);
       expect(columns[1].width).toBeGreaterThanOrEqual(454);
       expect(columns[1].width).toBeLessThanOrEqual(456);
       expect(columns[2].width).toBe(192);
       expect(columns[3].width).toBeGreaterThanOrEqual(152);
       expect(columns[3].width).toBeLessThan(154);
-      expect(columns[4].width).toBe(0); // hidden
+      expect(columns[4].width).toBe(200); // hidden
     });
 
     it('should return visible columns', () => {
@@ -3774,7 +3774,7 @@ describe('SlickGrid core file', () => {
       document.body.dispatchEvent(bodyMouseUpEvent);
       expect(columnElms[1].classList.contains('slick-header-column-active')).toBeFalsy();
       expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'lastName', grid }, expect.anything(), grid);
-      expect(columns[0].width).toBe(0);
+      expect(columns[0].width).toBe(80);
       expect(columns[1].width).toBe(0);
       expect(columns[2].width).toBe(74);
       expect(columns[3].width).toBe(133);
@@ -3818,7 +3818,7 @@ describe('SlickGrid core file', () => {
       document.body.dispatchEvent(bodyMouseUpEvent);
       expect(columnElms[1].classList.contains('slick-header-column-active')).toBeFalsy();
       expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'lastName', grid }, expect.anything(), grid);
-      expect(columns[0].width).toBe(0);
+      expect(columns[0].width).toBe(80);
       expect(columns[1].width).toBe(0);
       expect(columns[2].width).toBe(76);
       expect(columns[3].width).toBe(131);
@@ -3862,7 +3862,7 @@ describe('SlickGrid core file', () => {
       document.body.dispatchEvent(bodyMouseUpEvent);
       expect(columnElms[1].classList.contains('slick-header-column-active')).toBeFalsy();
       expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'lastName', grid }, expect.anything(), grid);
-      expect(columns[0].width).toBe(0);
+      expect(columns[0].width).toBe(80);
       expect(columns[1].width).toBe(0);
       expect(columns[2].width).toBe(74);
       expect(columns[3].width).toBe(88);
@@ -3903,7 +3903,7 @@ describe('SlickGrid core file', () => {
       document.body.dispatchEvent(bodyMouseUpEvent);
       expect(columnElms[1].classList.contains('slick-header-column-active')).toBeFalsy();
       expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'lastName', grid }, expect.anything(), grid);
-      expect(columns[0].width).toBe(0);
+      expect(columns[0].width).toBe(80);
       expect(columns[1].width).toBe(0);
       expect(columns[2].width).toBe(73);
       expect(columns[3].width).toBe(88);
@@ -3943,7 +3943,7 @@ describe('SlickGrid core file', () => {
       document.body.dispatchEvent(bodyMouseUpEvent);
       expect(columnElms[2].classList.contains('slick-header-column-active')).toBeFalsy();
       expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'age', grid }, expect.anything(), grid);
-      expect(columns[0].width).toBe(0);
+      expect(columns[0].width).toBe(80);
       expect(columns[1].width).toBe(0);
       expect(columns[2].width).toBe(74);
       expect(columns[3].width).toBe(132);
@@ -3983,7 +3983,7 @@ describe('SlickGrid core file', () => {
       document.body.dispatchEvent(bodyMouseUpEvent);
       expect(columnElms[2].classList.contains('slick-header-column-active')).toBeFalsy();
       expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'age', grid }, expect.anything(), grid);
-      expect(columns[0].width).toBe(0);
+      expect(columns[0].width).toBe(80);
       expect(columns[1].width).toBe(0);
       expect(columns[2].width).toBe(74);
       expect(columns[3].width).toBe(132);
@@ -4023,7 +4023,7 @@ describe('SlickGrid core file', () => {
       document.body.dispatchEvent(bodyMouseUpEvent);
       expect(columnElms[2].classList.contains('slick-header-column-active')).toBeFalsy();
       expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: 'age', grid }, expect.anything(), grid);
-      expect(columns[0].width).toBe(0);
+      expect(columns[0].width).toBe(80);
       expect(columns[1].width).toBe(0);
       expect(columns[2].width).toBe(74);
       expect(columns[3].width).toBe(132);
@@ -4064,7 +4064,7 @@ describe('SlickGrid core file', () => {
       document.body.dispatchEvent(bodyMouseUpEvent);
       expect(column3.classList.contains('slick-header-column-active')).toBeFalsy();
       expect(onColumnsResizedSpy).toHaveBeenCalledWith({ triggeredByColumn: columns[3].id, grid }, expect.anything(), grid);
-      expect(columns[0].width).toBe(0);
+      expect(columns[0].width).toBe(80);
       expect(columns[1].width).toBe(0);
       expect(columns[2].width).toBe(74);
       expect(columns[3].width).toBe(132);
