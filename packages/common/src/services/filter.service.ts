@@ -24,7 +24,7 @@ import type { RxJsFacade, Subject } from './rxjsFacade.js';
 import type { SharedService } from './shared.service.js';
 import { findItemInTreeStructure, getDescendantProperty, mapOperatorByFieldType } from './utilities.js';
 
-interface OnSearchChangeEventArgs {
+export interface OnSearchChangeEventArgs {
   clearFilterTriggered?: boolean;
   shouldTriggerQuery?: boolean;
   columnId: string | number;
