@@ -165,17 +165,6 @@ export class SlickCustomTooltip {
     this.hideTooltip();
     this._cancellablePromise = undefined;
     this._eventHandler.unsubscribeAll();
-
-    if (this.addonOptions?.persistOnHover === true) {
-      if (this._hideTooltipTimeout) {
-        clearTimeout(this._hideTooltipTimeout);
-        this._hideTooltipTimeout = undefined;
-      }
-      if (this._autoHideTimeout) {
-        clearTimeout(this._autoHideTimeout);
-        this._autoHideTimeout = undefined;
-      }
-    }
   }
 
   protected handleOnMouseLeave(): void {
@@ -238,7 +227,7 @@ export class SlickCustomTooltip {
    */
   protected asyncProcessCallback(
     asyncResult: any,
-    cell: { row: number; cell: number },
+    cell: { row: number; cell: number; },
     value: any,
     columnDef: Column,
     dataContext: any
@@ -393,7 +382,7 @@ export class SlickCustomTooltip {
    */
   protected parseFormatterAndSanitize(
     formatterOrText: Formatter | string | undefined,
-    cell: { row: number; cell: number },
+    cell: { row: number; cell: number; },
     value: any,
     columnDef: Column,
     item: unknown
@@ -418,7 +407,7 @@ export class SlickCustomTooltip {
    */
   protected renderRegularTooltip(
     formatterOrText: Formatter | string | undefined,
-    cell: { row: number; cell: number },
+    cell: { row: number; cell: number; },
     value: any,
     columnDef: Column,
     item: any
@@ -478,7 +467,7 @@ export class SlickCustomTooltip {
 
   protected renderTooltipFormatter(
     formatter: Formatter | string | undefined,
-    cell: { row: number; cell: number },
+    cell: { row: number; cell: number; },
     value: any,
     columnDef: Column,
     item: unknown,
@@ -564,7 +553,7 @@ export class SlickCustomTooltip {
    * Most of the time positioning of the tooltip will be to the "top-right" of the cell is ok but if our column is completely on the right side then we'll want to change the position to "left" align.
    * Same goes for the top/bottom position, Most of the time positioning the tooltip to the "top" but if we are hovering a cell at the top of the grid and there's no room to display it then we might need to reposition to "bottom" instead.
    */
-  protected reposition(cell: { row: number; cell: number }): void {
+  protected reposition(cell: { row: number; cell: number; }): void {
     if (this._tooltipElm) {
       this._cellNodeElm = this._cellNodeElm || (this._grid.getCellNode(cell.row, cell.cell) as HTMLDivElement);
       const cellPosition = getOffset(this._cellNodeElm);
