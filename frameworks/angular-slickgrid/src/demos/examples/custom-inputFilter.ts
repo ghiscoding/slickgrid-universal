@@ -96,7 +96,8 @@ export class CustomInputFilter implements Filter {
       });
       this.filterElm?.classList.remove('filled');
     } else {
-      value === '' ? this.filterElm?.classList.remove('filled') : this.filterElm?.classList.add('filled');
+      const action = value === '' ? 'remove' : 'add';
+      this.filterElm?.classList[action]('filled');
       this.callback(e, { columnDef: this.columnDef, searchTerms: [value], shouldTriggerQuery: this._shouldTriggerQuery });
     }
     // reset both flags for next use

@@ -73,13 +73,15 @@
         <i class="mdi mdi-filter-remove-outline"></i>
         Clear all Filter & Sorts
       </button>
-      <button class="btn btn-outline-secondary btn-sm" data-test="set-dynamic-filter" (click)="setFiltersDynamically()">
+      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="set-dynamic-filter" (click)="setFiltersDynamically()">
         Set Filters Dynamically
       </button>
-      <button class="btn btn-outline-secondary btn-sm" data-test="set-dynamic-sorting" (click)="setSortingDynamically()">
+      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="set-dynamic-sorting" (click)="setSortingDynamically()">
         Set Sorting Dynamically
       </button>
-      <button class="btn btn-outline-secondary btn-sm" data-test="group-by-gender" (click)="groupByGender()">Group by Gender</button>
+      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="group-by-gender" (click)="groupByGender()">
+        Group by Gender
+      </button>
 
       <div *ngIf="metrics" class="mt-2" style="margin: 10px 0px">
         <b>Metrics:</b>

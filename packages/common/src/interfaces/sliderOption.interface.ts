@@ -13,6 +13,12 @@ export interface SliderOption {
 
   /** Defaults to "#3C97DD", what will be the color to use to represent slider range */
   sliderTrackFilledColor?: string;
+
+  /** Defaults to true, use arrow to slide and increase/decrease values in the Slider Editor instead of the default cell left/right navigation. */
+  useArrowToSlide?: boolean;
+
+  /** Defaults to false, when true the filter will trigger while sliding instead of waiting for the slide to complete */
+  filterWhileSliding?: boolean;
 }
 
 export interface SliderRangeOption extends Omit<SliderOption, 'hideSliderNumber'> {

@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/composite-editor-component",
-  "version": "9.9.0",
+  "version": "9.11.0",
   "description": "Slick Composite Editor Component - Vanilla Implementation of a Composite Editor Modal Window Component",
   "type": "module",
   "main": "./dist/index.js",
@@ -20,8 +20,7 @@
     "/src"
   ],
   "scripts": {
-    "prebuild": "pnpm run clean",
-    "build": "tsc",
+    "build": "pnpm run clean && tsc",
     "build:incremental": "tsc --incremental --declaration",
     "clean": "remove dist tsconfig.tsbuildinfo",
     "dev": "pnpm build:incremental"
@@ -37,11 +36,6 @@
   "bugs": {
     "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
   },
-  "browserslist": [
-    "last 2 versions",
-    "> 1%",
-    "not dead"
-  ],
   "dependencies": {
     "@slickgrid-universal/binding": "workspace:*",
     "@slickgrid-universal/common": "workspace:*",

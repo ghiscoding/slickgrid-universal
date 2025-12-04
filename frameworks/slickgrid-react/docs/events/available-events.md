@@ -103,6 +103,12 @@ render() {
   - `onHeaderMenuBeforeMenuShow`
   - `onHeaderMenuAfterMenuShow`
 
+#### Export Services
+  - `onAfterExportToExcel`
+  - `onBeforeExportToExcel`
+  - `onBeforeExportToTextFile`
+  - `onAfterExportToTextFile`
+
 #### Filter Service
    - `onBeforeFilterClear`
    - `onBeforeSearchChange`

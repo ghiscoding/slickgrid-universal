@@ -83,6 +83,16 @@ describe('CompoundDateFilter', () => {
     expect(filterCount).toBe(1);
   });
 
+  it('should initialize the editor and expect to focus on the element after a small delay', () => {
+    filter = new CompoundDateFilter(translateService);
+    filter.init(filterArguments);
+    const filterCount = divContainer.querySelectorAll('.form-group.search-filter.filter-finish').length;
+
+    vi.runAllTimers();
+
+    expect(filterCount).toBe(1);
+  });
+
   it('should have a placeholder when defined in its column definition', () => {
     const testValue = 'test placeholder';
     mockColumn.filter!.placeholder = testValue;
@@ -127,6 +137,7 @@ describe('CompoundDateFilter', () => {
       locale: 'en',
       onChangeToInput: expect.any(Function),
       onClickDate: expect.any(Function),
+      onShow: expect.any(Function),
       positionToInput: 'auto',
       sanitizerHTML: expect.any(Function),
       selectedTheme: 'light',

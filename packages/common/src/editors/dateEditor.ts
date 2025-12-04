@@ -2,7 +2,7 @@ import { parse } from '@formkit/tempo';
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, emptyElement, extend, queueMicrotaskOrSetTimeout, setDeepValue } from '@slickgrid-universal/utils';
 import { Calendar, type FormatDateString, type Options } from 'vanilla-calendar-pro';
-import { resetDatePicker, setPickerDates } from '../commonEditorFilter/commonEditorFilterUtils.js';
+import { resetDatePicker, setPickerDates, setPickerFocus } from '../commonEditorFilter/commonEditorFilterUtils.js';
 import { SlickEventData, type SlickGrid } from '../core/index.js';
 import { FieldType } from '../enums/index.js';
 import { formatDateByFieldType, mapTempoDateFormatWithFieldType } from '../services/dateUtils.js';
@@ -17,6 +17,7 @@ import type {
   EditorValidationResult,
   EditorValidator,
   GridOption,
+  ValidateOption,
   VanillaCalendarOption,
 } from './../interfaces/index.js';
 import { getDescendantProperty } from './../services/utilities.js';
@@ -126,6 +127,9 @@ export class DateEditor implements Editor {
         selectedWeekends: [],
         onClickDate: () => {
           this._lastClickIsDate = true;
+        },
+        onShow: (self) => {
+          setPickerFocus(self.context.mainElement);
         },
         onChangeToInput: (self) => {
           if (self.context.inputElement) {
@@ -411,10 +415,7 @@ export class DateEditor implements Editor {
   }
 
   save(): void {
-    const validation = this.validate();
-    const isValid = validation?.valid ?? false;
-
-    if (this.hasAutoCommitEdit && isValid) {
+    if (this.hasAutoCommitEdit && this.validate()?.valid) {
       // do not use args.commitChanges() as this sets the focus to the next row.
       // also the select list will stay shown when clicking off the grid
       this.grid.getEditorLock().commitCurrentEdit();
@@ -432,9 +433,9 @@ export class DateEditor implements Editor {
     return domValue;
   }
 
-  validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
+  validate(_targetElm?: any, options?: ValidateOption): EditorValidationResult {
     const isRequired = this.args?.compositeEditorOptions ? false : this.columnEditor.required;
-    const elmValue = inputValue ?? this._inputElm?.value;
+    const elmValue = options?.inputValue ?? this._inputElm?.value;
     const errorMsg = this.columnEditor.errorMessage;
 
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form

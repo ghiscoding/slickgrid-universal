@@ -26,6 +26,7 @@ import type {
   GridOption,
   Locale,
   SelectOption,
+  ValidateOption,
 } from './../interfaces/index.js';
 
 /**
@@ -140,7 +141,7 @@ export class SelectEditor implements Editor {
         }
       },
       onClose: (reason) => {
-        if (reason === 'key.escape' || reason === 'body.click' || (!this.hasAutoCommitEdit && !this.isValueChanged())) {
+        if (reason === 'key.escape' || (!this.hasAutoCommitEdit && !this.isValueChanged())) {
           if (reason === 'key.escape') {
             this.cancel();
           }
@@ -601,9 +602,9 @@ export class SelectEditor implements Editor {
     }
   }
 
-  validate(_targetElm?: any, inputValue?: any): EditorValidationResult {
+  validate(_targetElm?: any, options?: ValidateOption): EditorValidationResult {
     const isRequired = this.args.isCompositeEditor ? false : this.columnEditor?.required;
-    const elmValue = inputValue !== undefined ? inputValue : this._msInstance?.getSelects(); // && this.$editorElm.val && this.$editorElm.val();
+    const elmValue = options?.inputValue ?? this._msInstance?.getSelects(); // && this.$editorElm.val && this.$editorElm.val();
     const errorMsg = this.columnEditor?.errorMessage;
 
     // when using Composite Editor, we also want to recheck if the field if disabled/enabled since it might change depending on other inputs on the composite form
@@ -617,7 +618,7 @@ export class SelectEditor implements Editor {
     }
 
     if (this.validator) {
-      const value = inputValue !== undefined ? inputValue : this.isMultipleSelect ? this.currentValues : this.currentValue;
+      const value = options !== undefined ? options : this.isMultipleSelect ? this.currentValues : this.currentValue;
       return this.validator(value, this.args);
     }
 

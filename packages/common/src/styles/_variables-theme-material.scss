@@ -90,6 +90,7 @@ $slick-editor-input-group-clear-btn-icon-color:               inherit !default;
   $slick-editor-input-height:                                 100% !default,
   $slick-editor-input-group-clear-btn-icon-padding:           1px 6px !default,
   $slick-row-mouse-hover-color:                               #ebfaef !default,
+  $slick-cell-selected-color:                                 #d4f6d7 !default,
   $slick-row-selected-color:                                  #d4f6d7 !default,
   $slick-pagination-icon-color:                               $primary-color !default,
   $slick-pagination-button-border-radius:                     2px !default,
@@ -130,7 +131,8 @@ $slick-dark-text-color:                                   #d4d4d4;
   --slick-checkbox-icon-color:                    #4dae52;
   --slick-row-mouse-hover-box-shadow:             none;
   --slick-row-mouse-hover-color:                  #575757;
-  --slick-row-selected-color:                     #4b4b4b;
+  --slick-cell-selected-color:                    #474a45;
+  --slick-row-selected-color:                     #474a45;
   --slick-checkbox-icon-color:                    #59c55f;
   --slick-checkbox-icon-height:                   22px;
   --slick-checkbox-icon-bg-color:                 transparent;

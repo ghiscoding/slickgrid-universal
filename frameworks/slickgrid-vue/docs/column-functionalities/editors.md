@@ -1,13 +1,14 @@
 #### index
-* [Inline Editors](#how-to-use-inline-editors)
-   * [Demo with Float Editor & Dollar Formatter](#demo-with-float-editor-and-dollar-currency-formatter)
-   * [Editor `outputType` and `saveOutputType`](#editor-output-type--save-output-type)
-   * [Custom Editor](#custom-inline-editor)
-* [Perform an Action after Inline Edit](#perform-an-action-after-inline-edit)
-* [How to prevent Editor from going to the next bottom cell](#how-to-prevent-editor-from-going-to-the-next-bottom-cell)
-* [onClick Action Editor (icon click)](#onclick-action-editor-icon-click)
-* [AutoComplete Editor](#autocomplete-editor)
-* [Select (single/multi) Editors](#select-editors)
+- [Inline Editors](#how-to-use-inline-editors)
+   - [Demo with Float Editor & Dollar Formatter](#demo-with-float-editor-and-dollar-currency-formatter)
+   - [Editor `outputType` and `saveOutputType`](#editor-output-type--save-output-type)
+   - [Custom Editor](#custom-inline-editor)
+- [Open Editor on cell click or keyboard](#open-editor-on-cell-click-or-keyboard)
+- [Perform an Action after Inline Edit](#perform-an-action-after-inline-edit)
+- [How to prevent Editor from going to the next bottom cell](#how-to-prevent-editor-from-going-to-the-next-bottom-cell)
+- [onClick Action Editor (icon click)](#onclick-action-editor-icon-click)
+- [AutoComplete Editor](#autocomplete-editor)
+- [Select (single/multi) Editors](#select-editors)
   - [Editor Options (multipleSelectOption interface)](#editor-options-multipleselectoption-interface)
   - [Collection Async Load](#collection-async-load)
   - [Collection Label Prefix/Suffix](#collection-label-prefixsuffix)
@@ -110,6 +111,19 @@ function defineGrid() {
 ```
 
 So to make it more clear, the `saveOutputType` is the format that will be sent to the `onCellChange` event, then the `outputType` is how the date will show up in the date picker (Vanilla-Calendar) and finally the `type` is basically the input format (coming from your dataset). Note however that each property are cascading, if 1 property is missing it will go to the next one until 1 is found... for example, on the `onCellChange` if you aren't defining `saveOutputType`, it will try to use `outputType`, if again none is provided it will try to use `type` and finally if none is provided it will use `'dateIso'` as the default.
+
+### Open Editor on cell click or keyboard
+
+For a grid to be editable, you need to enable the grid option `editable` flag and by default you will have to double-click on a cell for it to open the inline editor. You also need to enable `enableCellNavigation` grid option for editing to work.
+
+We also have other useful grid options:
+- `autoEdit`: when enabled, a single click will make the cell editable and open the inline editor
+  - when this flag is disabled, it will require a double-click
+- `autoEditByKeypress`: when enabled will automatically open the inlined editor as soon as the user starts typing in an active cell
+- `autoCommitEdit`: when enabled will try to commit the current edit without focusing on the next row
+- `autoEditNewRow`: when enabled it will automatically open the editor when clicking on cell that has a defined editor
+
+Most users typically want to use `autoEdit` for single click editors or the new `autoEditByKeypress` to open the editor when user starts typing. The `autoCommitEdit` is also quite useful.
 
 ## Perform an action After Inline Edit
 #### Recommended way

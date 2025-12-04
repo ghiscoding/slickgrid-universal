@@ -37,7 +37,7 @@ With this release, and after 7 years of development as a single developer (mysel
 
 For most of breaking changes, a quick Search & Replace in your code editor should suffice.
 
-> **Note:** if you come from an earlier version, please make sure to follow each migrations in their respected order (review previous migration guides)
+> **Note:** if you come from an earlier version, please make sure to follow each migrations in their respective order (review previous migration guides)
 
 ## Changes
 
@@ -224,16 +224,16 @@ prepareGrid() {
 > **Note** to keep docs available for older as well as newer versions, I renamed the old one doc as [Date-Picker (flatpickr)](https://ghiscoding.gitbook.io/slickgrid-universal/column-functionalities/editors/date-editor-flatpickr) and created a new one named [Date-Picker (vanilla-calendar)](https://ghiscoding.gitbook.io/slickgrid-universal/column-functionalities/editors/date-editor-vanilla-calendar).
 
 ### `internalColumnEditor` is completely removed
-The work on this subject started over a month ago in version [v4.6.0](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v4.6.0) to progressively remove `internalColumnEditor` because it was confusing and with this new release, it is now completely removed. This mean that the column `editor` property will remain untouched (in previous releases, the `editor` was moved to an `internalColumnEditor` prop and `editor` was then overriden with the `editor.model` and that was for SlickGrid to work properly... but that was extremely confusing to the user). So in short, the `internalColumnEditor` is now completely removed and the associated confusion is also gone with it.
+The work on this subject started over a month ago in version [v4.6.0](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v4.6.0) to progressively remove `internalColumnEditor` because it was confusing and with this new release, it is now completely removed. This mean that the column `editor` property will remain untouched (in previous releases, the `editor` was moved internally to an `internalColumnEditor` prop and the `editor` prop was then overriden with the `editor.model` which was an internal joggling exercise to make SlickGrid work properly... but that was extremely confusing to the user). So in short, the `internalColumnEditor` is now completely removed and the associated confusion is also gone with it.
 
-A good example of the previous `internalColumnEditor` usage, was when you wanted to modify or push a new item to the editor collection array (see below). In the past, you could not simply push to the `collection.editor.collection` because the property was swapped internally. What you really had to do was to use the mapped `collection.internalColumnEditor.collection` 😵... and this is now thankfully gone, you can now use the same and original `collection.editor.collection` 👍
+A great example of the previous `internalColumnEditor` usage, was when you wanted to modify or push a new item to the editor collection array (see below). In the past, you were **not** able to simply push to the `collection.editor.collection` because the property was swapped internally and that previously didn't work. What you really had to do was to use the mapped `collection.internalColumnEditor.collection` 😵... and this is now thankfully gone, you can now use the same and original `collection.editor.collection` 👍
 
 For example, previously, to add an item to the editor/filter collection
 ```diff
 this.columnDefinitions = [{ id: 'complexity', editor: { model: Editors.singleSelect, collection: [{ value: 1, label: 'Simple' }, { value: 2, label: 'Hard' }] } }];
 
 // then adding an item was previously requiring to use the `internalColumnEditor`
-// that is, after the grid init our `editor` became `internalColumnEditor
+// that is, after the grid init, then our `editor` became `internalColumnEditor
 - const complexityEditor = this.columnDefinitions[0].internalColumnEditor;
 complexityEditor.collection.push({ value: 9, label: 'Hard' });
 
@@ -247,9 +247,9 @@ if you want to reference the Editor class (e.g. `Editors.longText`), you can now
 ## Grid Functionalities
 
 ### Sanitizer (DOMPurify)
-`DOMPurify` is now completely optional via the `sanitizer` grid option and you must now provide it yourself. The main reason to make it optional is because even though most users would prefer to use `dompurify`, some might prefer to use `isomorphic-dompurify` for SSR support. Considering that it is now optional, you could also technically speaking, skip the `sanitizer` configuration completely, but that is not at all recommended and is risky business nowadays.
+`DOMPurify` is now completely optional via the `sanitizer` grid option and if you still want to use it, then you must provide it yourself. The main reason to make it optional was because even though most users would prefer to use `dompurify`, there were other users who might prefer to use `isomorphic-dompurify` for SSR support. Considering that it is now optional, you could also technically speaking, skip the `sanitizer` configuration completely, but that is not at all recommended and is risky business nowadays.
 
-> **⚠ Note** even if the `sanitizer` is now optional, we **strongly suggest** that you configure it as a global grid option to avoid any XSS attacks from your data and also to remain CSP compliant. Also note that for Salesforce users, you do not have to configure it since Salesforce already use DOMPurify internally.
+> **⚠ Note** even if the `sanitizer` is now optional, we **strongly suggest** that you configure it as a global grid option to avoid any XSS attacks from your data and also to remain CSP compliant. Also note that for Salesforce users, you do not have to configure this since Salesforce already uses DOMPurify internally.
 
 ```diff
 // prefer the global grid options if possible

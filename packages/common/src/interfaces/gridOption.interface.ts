@@ -32,6 +32,7 @@ import type {
   GroupItemMetadataProviderOption,
   HeaderButton,
   HeaderMenu,
+  HybridSelectionModelOption,
   ItemMetadata,
   Locale,
   LongTextEditorOption,
@@ -109,6 +110,9 @@ export interface GridOption<C extends Column = Column> {
 
   /** Defaults to false, when enabled will automatically open the inlined editor as soon as there is a focus on the cell (can be combined with "enableCellNavigation: true"). */
   autoEdit?: boolean;
+
+  /** Defaults to false, when enabled will automatically open the inlined editor as soon as user starts typing in an active cell (can be combined with "enableCellNavigation: true"). */
+  autoEditByKeypress?: boolean;
 
   /**
    * Defaults to true, when enabled it will automatically open the editor when clicking on cell that has a defined editor.
@@ -343,6 +347,9 @@ export interface GridOption<C extends Column = Column> {
   /** Defaults to false, editor cell navigation left/right keys */
   editorCellNavOnLRKeys?: boolean;
 
+  /** Defaults to false, when enabled will allow editor navigation using arrow keys */
+  editorNavigateOnArrows?: boolean;
+
   /** option to intercept edit commands and implement undo support. */
   editCommandHandler?: (item: any, column: C, command: EditCommand) => void;
 
@@ -481,6 +488,9 @@ export interface GridOption<C extends Column = Column> {
    * Note: for strict CSP, you would want to disable this option and convert all your custom Formatters to return an HTMLElement instead of a string
    */
   enableHtmlRendering?: boolean;
+
+  /** Do we want to enable hybrid selection (cell/row selection)? */
+  enableHybridSelection?: boolean;
 
   /** Do we want to enable a styling effect when hovering any row from the grid? */
   enableMouseHoverHighlightRow?: boolean;
@@ -768,7 +778,7 @@ export interface GridOption<C extends Column = Column> {
   rowMoveManager?: RowMoveManager;
 
   /** Row selection options */
-  rowSelectionOptions?: RowSelectionModelOption;
+  rowSelectionOptions?: HybridSelectionModelOption | RowSelectionModelOption;
 
   /**
    * Defaults to "transform", what CSS style to we want to use to render each row top offset (choose between "top" and "transform").

@@ -21,6 +21,8 @@ import { TextExportService } from '@slickgrid-universal/text-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options.js';
 
+const NB_ITEMS = 10_000;
+
 interface ReportItem {
   title: string;
   duration: number;
@@ -52,7 +54,7 @@ export default class Example03 {
 
   attached() {
     this.initializeGrid();
-    this.dataset = this.loadData(5000);
+    this.dataset = this.loadData(NB_ITEMS);
     const gridContainerElm = document.querySelector(`.grid3`) as HTMLDivElement;
 
     this._bindingEventService.bind(gridContainerElm, 'onclick', this.handleOnClick.bind(this));

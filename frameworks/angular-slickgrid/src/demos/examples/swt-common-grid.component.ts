@@ -298,7 +298,6 @@ export class SwtCommonGridComponent implements OnInit, AfterViewInit, BackendSer
     // this.gridObj.setSortColumns([{'columnId':'excludeType','sortAsc':true}]);
 
     // this.gridObj.invalidate();
-    // this.gridObj.render();
   }
 
   get gridData(): any {

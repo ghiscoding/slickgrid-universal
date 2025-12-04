@@ -27,7 +27,7 @@ jobs:
         run: echo ${{ env.START_TIME }}
 
       - name: Clone repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -100,19 +100,6 @@ jobs:
         shell: bash
         id: lerna-publish
         run: pnpm exec lerna publish from-package --force-publish --yes
-
-      - name: Diagnostic Output Check
-        if: always() # This ensures the step runs even if previous steps fail
-        shell: bash
-        run: |
-          echo "Lerna Publish Outputs:"
-          echo "publish_failed: ${{ steps.lerna-publish.outputs.publish_failed }}"
-          echo "Full context of lerna-publish step:"
-          echo "Conclusion: ${{ steps.lerna-publish.conclusion }}"
-          echo "Outcome: ${{ steps.lerna-publish.outcome }}"
-
-          # Additional context
-          echo "Job Status: ${{ job.status }}"
 
       - name: Website Dev Build
         run: pnpm build:dev

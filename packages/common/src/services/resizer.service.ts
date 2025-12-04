@@ -268,7 +268,10 @@ export class ResizerService {
     }
 
     const availableHeight = gridHeight - gridOffsetTop - bottomPadding;
-    const availableWidth = getInnerSize(this._pageContainerElm, 'width') || window.innerWidth || 0;
+    const availableWidth =
+      getInnerSize(this._pageContainerElm, 'width') ||
+      (autoResizeOptions.calculateAvailableSizeBy !== 'container' && window.innerWidth) ||
+      0;
     const maxHeight = autoResizeOptions?.maxHeight;
     const minHeight = autoResizeOptions?.minHeight ?? DATAGRID_MIN_HEIGHT;
     const maxWidth = autoResizeOptions?.maxWidth;

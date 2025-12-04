@@ -8,13 +8,13 @@ In our previous v5.0 release (see [Migration to v5.0](https://github.com/ghiscod
 #### Major Changes - Quick Summary
 - minimum requirements bump
   - Angular `>=16.0.0`
-  - RxJS `>=8.7.1`
+  - RxJS `>=7.7.1`
 - we dropped jQuery requirement
   - it also required us to rewrite the `multiple-select` (jQuery based lib) into a brand new [`multiple-select-vanilla`](https://github.com/ghiscoding/multiple-select-vanilla) lib which is now native and has zero dependency
 
 ---
 
-**NOTE:** if you come from an earlier version other than 5.x, please make sure to follow each migration in their respected order
+**NOTE:** if you come from an earlier version other than 5.x, please make sure to follow each migration in their respective order
 
 ## Changes
 

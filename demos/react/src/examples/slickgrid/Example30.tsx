@@ -609,8 +609,8 @@ const Example30: React.FC = () => {
     return false;
   }
 
-  function handleItemsDeleted(itemId: string) {
-    console.log('item deleted with id:', itemId);
+  function handleItemsDeleted(itemIds: string[]) {
+    console.log('item deleted with ids:', itemIds);
   }
 
   function handleOnBeforeEditCell(e: Event, args: any) {
@@ -642,7 +642,7 @@ const Example30: React.FC = () => {
     // }
   }
 
-  function handleOnCompositeEditorChange(_e: Event, args: OnCompositeEditorChangeEventArgs) {
+  function handleOnCompositeEditorChange(args: OnCompositeEditorChangeEventArgs) {
     const columnDef = args.column;
     const formValues = args.formValues;
 
@@ -1210,7 +1210,7 @@ const Example30: React.FC = () => {
         onBeforeEditCell={($event) => handleOnBeforeEditCell($event.detail.eventData, $event.detail.args)}
         onCellChange={($event) => handleOnCellChange($event.detail.eventData, $event.detail.args)}
         onClick={($event) => handleOnCellClicked($event.detail.eventData, $event.detail.args)}
-        onCompositeEditorChange={($event) => handleOnCompositeEditorChange($event.detail.eventData, $event.detail.args)}
+        onCompositeEditorChange={($event) => handleOnCompositeEditorChange($event.detail.args)}
         onItemsDeleted={($event) => handleItemsDeleted($event.detail)}
         onGridStateChanged={($event) => handleOnGridStateChanged($event.detail)}
         onRowsOrCountChanged={() => handleReRenderUnsavedStyling()}

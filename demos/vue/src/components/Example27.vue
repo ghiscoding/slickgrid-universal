@@ -501,8 +501,6 @@ function vueGridReady(grid: SlickgridVueInstance) {
       @onFilterCleared="hideSpinner()"
       @onBeforeSortChange="showSpinner()"
       @onSortChanged="hideSpinner()"
-      @onBeforeToggleTreeCollapse="showSpinner()"
-      @onToggleTreeCollapsed="hideSpinner()"
       @onTreeFullToggleStart="showSpinner()"
       @onTreeFullToggleEnd="handleOnTreeFullToggleEnd($event.detail)"
       @onTreeItemToggled="handleOnTreeItemToggled($event.detail)"

@@ -82,6 +82,7 @@ describe('Draggable class', () => {
     dg = Draggable({
       containerElement,
       allowDragFrom: 'div.slick-cell',
+      dragFromClassDetectArr: [{ cssSelector: '.slick-cell', tag: '.slick-cell' }],
       onDrag: dragSpy,
       onDragInit: dragInitSpy,
       onDragStart: dragStartSpy,
@@ -110,6 +111,7 @@ describe('Draggable class', () => {
       deltaY: 0,
       dragHandle: containerElement,
       dragSource: containerElement,
+      matchClassTag: '.slick-cell',
       target: window,
     });
     expect(dragStartSpy).toHaveBeenCalled(); // TODO: revisit calledWith X/Y pos, after migrating to TS class

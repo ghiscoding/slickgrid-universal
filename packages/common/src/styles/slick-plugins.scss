@@ -886,9 +886,13 @@ li.hidden {
 // Date Picker Filter
 // ----------------------------------------------
 
-.vc {
+.vc[data-vc='calendar'] {
   padding: 0.9rem;
   z-index: 9999;
+
+  [tabindex='0']:focus {
+    outline: 1px solid orange;
+  }
 }
 
 // ----------------------------------------------
@@ -1259,4 +1263,13 @@ li.hidden {
     padding: var(--slick-detail-view-container-padding, v.$slick-detail-view-container-padding);
     z-index: var(--slick-detail-view-container-z-index, v.$slick-detail-view-container-z-index);
   }
+}
+
+.slick-drag-replace-handle {
+  height: 7px;
+  width: 7px;
+  background: gray;
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }

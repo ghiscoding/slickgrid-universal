@@ -9,15 +9,17 @@ export interface CellSelectionModelOption {
   cellRangeSelector: SlickCellRangeSelector;
 }
 
-export class SlickCellSelectionModel implements SelectionModel {
+export type CellSelectionMode = 'SEL' | 'REP';
+
+export class SlickCellSelectionModel implements SelectionModel<CellSelectionModelOption | undefined> {
   onSelectedRangesChanged: SlickEvent<SlickRange[]>;
   pluginName: 'CellSelectionModel' = 'CellSelectionModel' as const;
 
-  protected _addonOptions?: CellSelectionModelOption;
   protected _cachedPageRowCount = 0;
   protected _eventHandler: SlickEventHandler;
   protected _dataView?: CustomDataView | SlickDataView;
   protected _grid!: SlickGrid;
+  protected _options?: CellSelectionModelOption;
   protected _prevSelectedRow?: number;
   protected _prevKeyDown = '';
   protected _ranges: SlickRange[] = [];
@@ -35,11 +37,7 @@ export class SlickCellSelectionModel implements SelectionModel {
         ? new SlickCellRangeSelector({ selectionCss: { border: '2px solid black' } as CSSStyleDeclaration })
         : options.cellRangeSelector;
 
-    this._addonOptions = options;
-  }
-
-  get addonOptions(): CellSelectionModelOption | undefined {
-    return this._addonOptions;
+    this._options = options;
   }
 
   get cellRangeSelector(): SlickCellRangeSelector {
@@ -52,7 +50,7 @@ export class SlickCellSelectionModel implements SelectionModel {
 
   init(grid: SlickGrid): void {
     this._grid = grid;
-    if (this._addonOptions === undefined || this._addonOptions.cellRangeSelector === undefined) {
+    if (this._options === undefined || this._options.cellRangeSelector === undefined) {
       this._selector = new SlickCellRangeSelector({
         selectionCss: { border: `2px solid ${this._grid.getOptions().darkMode ? 'white' : 'black'}` } as CSSStyleDeclaration,
       });
@@ -61,7 +59,7 @@ export class SlickCellSelectionModel implements SelectionModel {
     if (grid.hasDataView()) {
       this._dataView = grid.getData<CustomDataView | SlickDataView>();
     }
-    this._addonOptions = { ...this._defaults, ...this._addonOptions } as CellSelectionModelOption;
+    this._options = { ...this._defaults, ...this._options } as CellSelectionModelOption;
 
     // add PubSub instance to all SlickEvent
     const pubSub = grid.getPubSubService();
@@ -87,10 +85,14 @@ export class SlickCellSelectionModel implements SelectionModel {
     if (this._selector) {
       this._selector.onBeforeCellRangeSelected.unsubscribe(this.handleBeforeCellRangeSelected.bind(this));
       this._selector.onCellRangeSelected.unsubscribe(this.handleCellRangeSelected.bind(this));
+      this._grid?.unregisterPlugin(this._selector);
     }
     this._eventHandler.unsubscribeAll();
-    this._grid?.unregisterPlugin(this._selector);
     this._selector?.dispose();
+  }
+
+  getOptions(): CellSelectionModelOption | undefined {
+    return this._options;
   }
 
   getSelectedRanges(): SlickRange[] {
@@ -162,9 +164,9 @@ export class SlickCellSelectionModel implements SelectionModel {
     const isCellDefined = isDefined(args.cell);
     const isRowDefined = isDefined(args.row);
 
-    if (this._addonOptions?.selectActiveCell && isRowDefined && isCellDefined) {
+    if (this._options?.selectActiveCell && isRowDefined && isCellDefined) {
       this.setSelectedRanges([new SlickRange(args.row, args.cell)]);
-    } else if (!this._addonOptions?.selectActiveCell || (!isRowDefined && !isCellDefined)) {
+    } else if (!this._options?.selectActiveCell || (!isRowDefined && !isCellDefined)) {
       // clear the previous selection once the cell changes
       this.setSelectedRanges([]);
     }

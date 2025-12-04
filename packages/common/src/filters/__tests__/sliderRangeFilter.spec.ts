@@ -462,4 +462,97 @@ describe('SliderRangeFilter', () => {
     expect(sliderOneChangeSpy).not.toHaveBeenCalled();
     expect(sliderTwoChangeSpy).toHaveBeenCalled();
   });
+
+  describe('keydown event', () => {
+    it('should decrease left slider number value and tooltip when using ArrowLeft keydown with "useArrowToSlide" undefined and calculated percent is above 50%', () => {
+      const leftValue = 56;
+      const rightValue = 69;
+      const callbackSpy = vi.spyOn(filterArguments, 'callback');
+      mockColumn.filter = {
+        filterOptions: {
+          sliderStartValue: leftValue,
+          sliderEndValue: 69,
+          useArrowToSlide: undefined,
+        },
+      };
+
+      filter.init(filterArguments);
+
+      const sliderInputs = divContainer.querySelectorAll<HTMLInputElement>('.slider-filter-input');
+
+      const mockEvent = new (window.window as any).KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true, cancelable: true });
+      const prevDefaultSpy = vi.spyOn(mockEvent, 'preventDefault');
+      const stopPropSpy = vi.spyOn(mockEvent, 'stopPropagation');
+
+      sliderInputs[0].dispatchEvent(mockEvent);
+
+      expect(callbackSpy).toHaveBeenLastCalledWith(expect.any(KeyboardEvent), {
+        columnDef: mockColumn,
+        operator: 'RangeInclusive',
+        searchTerms: [leftValue - 1, rightValue],
+        shouldTriggerQuery: true,
+      });
+      expect(prevDefaultSpy).toHaveBeenCalled();
+      expect(stopPropSpy).toHaveBeenCalled();
+    });
+
+    it('should increase slider number value and tooltip when using ArrowRight keydown with "useArrowToSlide" enabled and calculated percent is above 50%', () => {
+      const callbackSpy = vi.spyOn(filterArguments, 'callback');
+      const leftValue = 56;
+      const rightValue = 69;
+      mockColumn.filter = {
+        filterOptions: {
+          sliderStartValue: leftValue,
+          sliderEndValue: rightValue,
+          useArrowToSlide: true,
+        },
+      };
+
+      filter.init(filterArguments);
+
+      const sliderInputs = divContainer.querySelectorAll<HTMLInputElement>('.slider-filter-input');
+
+      const mockEvent = new (window.window as any).KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true });
+      const prevDefaultSpy = vi.spyOn(mockEvent, 'preventDefault');
+      const stopPropSpy = vi.spyOn(mockEvent, 'stopPropagation');
+
+      sliderInputs[0].dispatchEvent(mockEvent);
+
+      expect(callbackSpy).toHaveBeenLastCalledWith(expect.any(KeyboardEvent), {
+        columnDef: mockColumn,
+        operator: 'RangeInclusive',
+        searchTerms: [leftValue + 1, rightValue],
+        shouldTriggerQuery: true,
+      });
+      expect(prevDefaultSpy).toHaveBeenCalled();
+      expect(stopPropSpy).toHaveBeenCalled();
+    });
+
+    it('should not decrease or increase slider number value when "useArrowToSlide" is disabled and calculated percent is above 50%', () => {
+      const callbackSpy = vi.spyOn(filterArguments, 'callback');
+      const leftValue = 56;
+      const rightValue = 69;
+      mockColumn.filter = {
+        filterOptions: {
+          sliderStartValue: leftValue,
+          sliderEndValue: rightValue,
+          useArrowToSlide: false,
+        },
+      };
+
+      filter.init(filterArguments);
+
+      const sliderInputs = divContainer.querySelectorAll<HTMLInputElement>('.slider-filter-input');
+
+      const mockEvent = new (window.window as any).KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true });
+      const prevDefaultSpy = vi.spyOn(mockEvent, 'preventDefault');
+      const stopPropSpy = vi.spyOn(mockEvent, 'stopPropagation');
+
+      sliderInputs[0].dispatchEvent(mockEvent);
+
+      expect(callbackSpy).not.toHaveBeenCalled();
+      expect(prevDefaultSpy).not.toHaveBeenCalled();
+      expect(stopPropSpy).not.toHaveBeenCalled();
+    });
+  });
 });

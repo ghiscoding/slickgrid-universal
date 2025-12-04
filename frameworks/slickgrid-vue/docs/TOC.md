@@ -24,6 +24,7 @@
   * [Autocomplete](column-functionalities/filters/autocomplete-filter.md)
   * [Input Filter (default)](column-functionalities/filters/input-filter.md)
   * [Select Filter (dropdown)](column-functionalities/filters/select-filter.md)
+  * [Slider Filter](column-functionalities/filters/slider-filter.md)
   * [Compound Filters](column-functionalities/filters/compound-filters.md)
     * [Date Filter](column-functionalities/filters/compound-filters.md#how-to-use-compounddate-filter)
   * [Range Filters](column-functionalities/filters/range-filters.md)

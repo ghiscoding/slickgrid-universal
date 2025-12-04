@@ -141,7 +141,7 @@ describe('CellSelectionModel Plugin', () => {
     plugin.init(gridStub);
 
     expect(plugin.cellRangeSelector).toBeTruthy();
-    expect(plugin.addonOptions).toEqual({ selectActiveCell: true });
+    expect(plugin.getOptions()).toEqual({ selectActiveCell: true });
     expect(registerSpy).toHaveBeenCalledWith(plugin.cellRangeSelector);
   });
 
@@ -152,7 +152,7 @@ describe('CellSelectionModel Plugin', () => {
     plugin.init(gridStub);
 
     expect(plugin.cellRangeSelector).toBeTruthy();
-    expect(plugin.addonOptions).toEqual({ selectActiveCell: false });
+    expect(plugin.getOptions()).toEqual({ selectActiveCell: false });
     expect(registerSpy).toHaveBeenCalledWith(plugin.cellRangeSelector);
   });
 
@@ -164,7 +164,7 @@ describe('CellSelectionModel Plugin', () => {
     plugin.init(gridStub);
 
     expect(plugin.cellRangeSelector).toBeTruthy();
-    expect(plugin.addonOptions).toEqual({ selectActiveCell: true, cellRangeSelector: mockCellRangeSelector });
+    expect(plugin.getOptions()).toEqual({ selectActiveCell: true, cellRangeSelector: mockCellRangeSelector });
     expect(registerSpy).toHaveBeenCalledWith(plugin.cellRangeSelector);
   });
 
@@ -210,7 +210,11 @@ describe('CellSelectionModel Plugin', () => {
     const setSelectRangeSpy = vi.spyOn(plugin, 'setSelectedRanges');
 
     plugin.init(gridStub);
-    plugin.cellRangeSelector.onCellRangeSelected.notify({ range: { fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 } as SlickRange }, mouseEvent, gridStub);
+    plugin.cellRangeSelector.onCellRangeSelected.notify(
+      { range: { fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 } as SlickRange, allowAutoEdit: false, selectionMode: 'SEL' },
+      mouseEvent,
+      gridStub
+    );
 
     expect(setActiveCellSpy).toHaveBeenCalledWith(2, 1, false, false, true);
     expect(setSelectRangeSpy).toHaveBeenCalledWith([{ fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 }]);
@@ -358,10 +362,6 @@ describe('CellSelectionModel Plugin', () => {
     expect(setSelectRangeSpy).toHaveBeenCalledWith(expectedRangeCalled);
     expect(scrollCellSpy).toHaveBeenCalledWith(4, 2, false);
     expect(scrollRowSpy).toHaveBeenCalledWith(4);
-    expect(onSelectedRangeSpy).toHaveBeenCalledWith(
-      expectedRangeCalled,
-      expect.objectContaining({ event: expect.objectContaining({ detail: { caller: 'SlickCellSelectionModel.setSelectedRanges' } }) })
-    );
     expect(onSelectedRangeSpy).toHaveBeenCalledWith(
       expectedRangeCalled,
       expect.objectContaining({ event: expect.objectContaining({ detail: { caller: 'SlickCellSelectionModel.setSelectedRanges' } }) })

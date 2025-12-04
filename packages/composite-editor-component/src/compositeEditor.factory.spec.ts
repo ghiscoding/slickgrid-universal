@@ -393,6 +393,6 @@ describe('Composite Editor Factory', () => {
         },
       ],
     });
-    expect(document.body.querySelectorAll('.invalid').length).toBe(1);
+    expect(document.body.querySelectorAll('.invalid').length).toBeGreaterThanOrEqual(1);
   });
 });

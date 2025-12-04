@@ -111,7 +111,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
       // then proceed with hiding the column in SlickGrid & trigger an event when done
       const visibleColumns = arrayRemoveItemByIndex<Column>(currentVisibleColumns, columnIndex);
       this.sharedService.visibleColumns = visibleColumns;
-      this.grid.setColumns(visibleColumns);
+      this.grid.setColumns(visibleColumns, true);
       this.pubSubService.publish('onHideColumns', { columns: visibleColumns, hiddenColumn: column });
     }
   }

@@ -7,6 +7,7 @@ import { configDefaults, defineConfig } from 'vitest/config';
 export default defineConfig(({ mode }) => {
   return {
     plugins: [angular() as any],
+    oxc: false,
     test: {
       root: './',
       environment: 'jsdom',

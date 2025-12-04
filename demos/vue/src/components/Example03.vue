@@ -34,24 +34,7 @@ let isAutoEdit = true;
 const alertWarning = ref();
 const updatedObject = ref();
 const showSubTitle = ref(true);
-
-const gridOptions = ref<GridOption>({
-  autoEdit: isAutoEdit,
-  autoCommitEdit: false,
-  autoResize: {
-    container: '#demo-container',
-    rightPadding: 10,
-  },
-  editable: true,
-  enableCellNavigation: true,
-  enableExcelCopyBuffer: true,
-  enableFiltering: true,
-  editCommandHandler: (_item, _column, editCommand) => {
-    _commandQueue.push(editCommand);
-    editCommand.execute();
-  },
-  // i18n: i18n,
-});
+const gridOptions = ref<GridOption>();
 const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 let vueGrid!: SlickgridVueInstance;
@@ -440,6 +423,23 @@ function defineGrid() {
       },
     },
   ];
+
+  gridOptions.value = {
+    autoEdit: isAutoEdit,
+    autoCommitEdit: false,
+    autoResize: {
+      container: '#demo-container',
+      rightPadding: 10,
+    },
+    editable: true,
+    enableCellNavigation: true,
+    enableExcelCopyBuffer: true,
+    enableFiltering: true,
+    editCommandHandler: (_item, _column, editCommand) => {
+      _commandQueue.push(editCommand);
+      editCommand.execute();
+    },
+  };
 }
 
 /** Add a new row to the grid and refresh the Filter collection */
@@ -558,11 +558,14 @@ function onValidationError(_e: Event, args: any) {
     alert(args.validationResults.msg);
   }
 }
+
 function changeAutoCommit() {
-  gridOptions.value.autoCommitEdit = !gridOptions.value.autoCommitEdit;
-  vueGrid.slickGrid.setOptions({
-    autoCommitEdit: gridOptions.value.autoCommitEdit,
-  });
+  if (gridOptions.value) {
+    gridOptions.value.autoCommitEdit = !gridOptions.value.autoCommitEdit;
+    vueGrid.slickGrid.setOptions({
+      autoCommitEdit: gridOptions.value.autoCommitEdit,
+    });
+  }
   return true;
 }
 
@@ -696,7 +699,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
                 id="autoCommitEdit"
                 type="checkbox"
                 data-test="auto-commit"
-                :value="gridOptions.autoCommitEdit"
+                :value="gridOptions?.autoCommitEdit"
                 @click="changeAutoCommit()"
               />
               Auto Commit Edit
@@ -752,7 +755,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
   </div>
 
   <slickgrid-vue
-    v-model:options="gridOptions as GridOption"
+    v-model:options="gridOptions"
     v-model:columns="columnDefinitions"
     v-model:data="dataset"
     grid-id="grid3"

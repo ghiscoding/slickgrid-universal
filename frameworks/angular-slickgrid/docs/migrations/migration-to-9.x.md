@@ -2,7 +2,7 @@
 
 This new release is focused around 2 things, it is now shipping ESM-only builds (in other words, CommonJS builds are fully dropped and only ESM remains), this move will cut the npm download size by half. The other big change is an internal one which is an organizational one, I'm moving all framework wrappers directly into Slickgrid-Universal (Angular, Aurelia, React and Vue wrappers are now **all** located under the Slickgrid-Universal [frameworks/](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/) folder). This change will help tremendously with the project's maintenance (any new PR will now run against all frameworks all at once (catching bugs early), publishing a new version is now a single click execution for all frameworks all at once, and finally having a single codebase to test & troubleshoot all wrappers, etc... will be so much easier to handle). With this new structure change, the Slickgrid-Universal name now makes so much more sense. 🌐
 
-The other great thing about having everything under the same roof/project is that every package will now be released at the same time with the exact same version number across the board. Everything will be released under v9.0 and whenever any new feature/bugfix comes in, then every package will be bumped to v9.1 and so on (no more version discrepancies).
+The other great thing about having everything under the same project umbrella is that every package will now be released at the same time with the exact same version number across the board. Everything will be released under v9.0 and whenever any new feature/bugfix comes in, then every package will be bumped to v9.1 and so on (no more version discrepancies).
 
 I also decided to align all SlickGrid examples in all frameworks and Angular-Slickgrid turned out to have many example offsets, so just be aware that the example numbering might have changed a little (ie: Row Detail is now Example 19 instead of 21). If the project is useful to you, please give it a ⭐ (on [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal)) and perhaps buy me a coffee [☕ (Ko-Fi)](https://ko-fi.com/ghiscoding), thanks.
 
@@ -16,7 +16,7 @@ I also decided to align all SlickGrid examples in all frameworks and Angular-Sli
 - removing arrow pointer from Custom Tooltip addon (because it was often offset with the cell text)
 - Angular-Slickgrid project now moved under [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal/) GitHub project
 
-> **Note:** if you come from an earlier version, please make sure to follow each migration in their respected order (review previous migration guides).
+> **Note:** if you come from an earlier version, please make sure to follow each migration in their respective order (review previous migration guides).
 
 ## Changes
 
@@ -40,8 +40,8 @@ gridOptions = {
 ```diff
 function angularGridReady(angularGrid: AngularGridInstance) {
   this.angularGrid = angularGrid;
--  angularGrid.groupingService.renderPreHeaderRowGroupingTitles();
-+  angularGrid.headerGroupingService.renderPreHeaderRowGroupingTitles();
+- angularGrid.groupingService.renderPreHeaderRowGroupingTitles();
++ angularGrid.headerGroupingService.renderPreHeaderRowGroupingTitles();
 }
 ```
 
@@ -123,7 +123,7 @@ We are changing the `columnDefinitions` and `gridOptions` attribute names to muc
 
 ### Date Editor/Filter (flat config)
 
-Vanilla-Calendar-Pro was upgraded to v3.0, and it includes a breaking change in which they migrated their options to flat config (instead of complex object config), and this means that if you use any of their config options, you'll have to update them to use their new flat config structure and naming.
+Vanilla-Calendar-Pro was upgraded to v3.0, and their main breaking change is that they migrated all their options to flat config (instead of complex object config), and this means that if you use any of their config options, you'll have to update them to use their new flat config structure and naming.
 
 The biggest change that you will most probably have to update is the min/max date setting when using the `'today'` shortcut as shown below:
 
@@ -142,8 +142,9 @@ prepareGrid() {
 }
 ```
 
-> [!NOTE]
-> for a complete list of option changes, visit the Vanilla-Calendar-Pro [migration](https://github.com/uvarov-frontend/vanilla-calendar-pro/wiki/%5BMigration-from-v2.*.*%5D-New-API-for-all-options-and-actions-in-v3.0.0) page, which details every single option and new associated option name.
+{% hint style="note" %}
+**Info** for a complete list of option changes, visit the Vanilla-Calendar-Pro [migration](https://github.com/uvarov-frontend/vanilla-calendar-pro/wiki/%5BMigration-from-v2.*.*%5D-New-API-for-all-options-and-actions-in-v3.0.0) page, which details every single option and new associated option name.
+{% endhint %}
 
 ## Grid Functionalities
 
@@ -159,10 +160,10 @@ The `GridService` has CRUD method events that were sometime returning a single i
 ---
 
 ## Future Changes (next major to be expected around Node 20 EOL)
-### Code being `@deprecated` (to be removed in the future, next year)
+### Code being `@deprecated` (to be removed in the future, 2026-Q1)
 #### You can already start using these new options and props (shown below) in v9.0 and above.
 
-When I created the project, I started using a few TypeScript Enums and I thought that was pretty nice, but little did I know that all of these Enums were ending up in the final transpiled JS bundle which ends up taking extra space (but `type` do not). So in the next major, I'm planning to remove most of these Enums and replace them with string literal types (`type` instead of `enum` because again `type` aren't transpiled and `enum` are). So you should consider using string types as much, and as soon, as possible in all of your new grids and eventually make the changes in your older grids. At the moment, these are all tagged as deprecations and they will only be dropped in the future (not now, but still, you should consider making this change sooner rather than later), for example:
+When I created the project, I started using a few TypeScript Enums and I thought that was pretty nice, but little did I know that all of these Enums were ending up in the final transpiled JS bundle which ends up taking extra space (but `type` do not) that we could eventually gain back. So in the next major, I'm planning to remove most of these Enums and replace them with string literal types (`type` instead of `enum` because again `type` aren't transpiled and `enum` are). So you should consider using string types as much, and as soon, as possible in all of your new grids and eventually make the changes in your older grids. At the moment, these are all tagged as deprecations and they will only be dropped in the future (not now, but still, you should consider making these changes sooner rather than later), for example:
 
 ```diff
 columns = [{
@@ -174,7 +175,7 @@ columns = [{
 
 > Note that using the string types (e.g.: `'number'`) instead of `FieldType.number`, ... which was already doable for the past couple years, so this is far from being something new.
 
-Below is a list of Enums being deprecated and you should think about migrating them sooner than later, or at the minimum use them in your new grids, because they will be removed in the next major release (whenever that happens, probably next year). Please note that the list below is only a summary of all deprecations and replacements (a suggestion is to do a Search on any of these group name prefixes, e.g.: `FieldType.` and start replacing them).
+Below is a list of Enums being deprecated and you should think about migrating them sooner rather than later, or at the minimum use them in your new grids, because they will be removed in the next major release (whenever that happens, probably next year). Please note that the list below is only a summary of all deprecations and replacements (a suggestion is to do a Search on any of these group name prefixes, e.g.: `FieldType.` and start replacing them).
 
 | Enum Name   | from `enum`         | to string `type`    | Note |
 | ----------- | ------------------- | ------------------- | ---- |

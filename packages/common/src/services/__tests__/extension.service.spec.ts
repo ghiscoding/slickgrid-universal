@@ -14,6 +14,7 @@ import {
   SlickGridMenu,
   SlickHeaderButtons,
   SlickHeaderMenu,
+  SlickHybridSelectionModel,
   SlickRowBasedEdit,
   SlickRowSelectionModel,
   type SlickCellSelectionModel,
@@ -41,6 +42,14 @@ const mockCellSelectionModel = {
 } as unknown as SlickCellSelectionModel;
 vi.mock('../../extensions/slickCellSelectionModel');
 
+const mockHybridSelectionModel = {
+  constructor: vi.fn(),
+  init: vi.fn(),
+  destroy: vi.fn(),
+  dispose: vi.fn(),
+  onSelectedRangesChanged: new SlickEvent(),
+} as unknown as SlickHybridSelectionModel;
+
 const mockRowSelectionModel = {
   constructor: vi.fn(),
   init: vi.fn(),
@@ -48,6 +57,13 @@ const mockRowSelectionModel = {
   dispose: vi.fn(),
   onSelectedRangesChanged: new SlickEvent(),
 } as unknown as SlickRowSelectionModel;
+
+vi.mock('../../extensions/slickHybridSelectionModel', () => ({
+  SlickHybridSelectionModel: vi.fn().mockImplementation(function () {
+    return mockHybridSelectionModel;
+  }),
+}));
+
 vi.mock('../../extensions/slickRowSelectionModel', () => ({
   SlickRowSelectionModel: vi.fn().mockImplementation(function () {
     return mockRowSelectionModel;
@@ -438,6 +454,24 @@ describe('ExtensionService', () => {
         expect(output!.instance instanceof SlickGridMenu).toBe(true);
       });
 
+      it('should register the CheckboxSelector addon when "enableCheckboxSelector" is set in the grid options and enableHybridSelection', () => {
+        const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
+        const gridOptionsMock = { enableCheckboxSelector: true, enableHybridSelection: true } as GridOption;
+        const extCreateSpy = vi.spyOn(mockCheckboxSelectColumn, 'create').mockReturnValueOnce(mockCheckboxSelectColumn);
+        const gridSpy = vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+
+        service.createExtensionsBeforeGridCreation(columnsMock, gridOptionsMock);
+        service.bindDifferentExtensions();
+        const rowSelectionInstance = service.getExtensionByName(ExtensionName.hybridSelection);
+        const output = service.getExtensionByName(ExtensionName.checkboxSelector);
+
+        expect(gridSpy).toHaveBeenCalled();
+        expect(extCreateSpy).toHaveBeenCalledWith(columnsMock, gridOptionsMock);
+        expect(rowSelectionInstance).not.toBeNull();
+        expect(SlickHybridSelectionModel).toHaveBeenCalledWith({});
+        expect(output).toEqual({ name: ExtensionName.checkboxSelector, instance: mockCheckboxSelectColumn as unknown } as ExtensionModel<any>);
+      });
+
       it('should register the CheckboxSelector addon when "enableCheckboxSelector" is set in the grid options', () => {
         const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
         const gridOptionsMock = { enableCheckboxSelector: true } as GridOption;
@@ -454,6 +488,32 @@ describe('ExtensionService', () => {
         expect(rowSelectionInstance).not.toBeNull();
         expect(SlickRowSelectionModel).toHaveBeenCalledWith({});
         expect(output).toEqual({ name: ExtensionName.checkboxSelector, instance: mockCheckboxSelectColumn as unknown } as ExtensionModel<any>);
+      });
+
+      it('should call "onExtensionRegistered" when defined in grid option and enableHybridSelection and the CheckboxSelectColumn plugin gets created', () => {
+        const onRegisteredMock = vi.fn();
+        const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
+        const gridOptionsMock = {
+          enableCheckboxSelector: true,
+          enableHybridSelection: true,
+          checkboxSelector: {
+            onExtensionRegistered: onRegisteredMock,
+          },
+        } as GridOption;
+        const extCreateSpy = vi.spyOn(mockCheckboxSelectColumn, 'create').mockReturnValueOnce(mockCheckboxSelectColumn);
+        const gridSpy = vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+
+        service.createExtensionsBeforeGridCreation(columnsMock, gridOptionsMock);
+        service.bindDifferentExtensions();
+        const rowSelectionInstance = service.getExtensionByName(ExtensionName.hybridSelection);
+        const output = service.getExtensionByName(ExtensionName.checkboxSelector);
+
+        expect(gridSpy).toHaveBeenCalled();
+        expect(extCreateSpy).toHaveBeenCalledWith(columnsMock, gridOptionsMock);
+        expect(rowSelectionInstance).not.toBeNull();
+        expect(SlickHybridSelectionModel).toHaveBeenCalledWith({});
+        expect(output).toEqual({ name: ExtensionName.checkboxSelector, instance: mockCheckboxSelectColumn as unknown } as ExtensionModel<any>);
+        expect(onRegisteredMock).toHaveBeenCalledWith(expect.any(Object));
       });
 
       it('should call "onExtensionRegistered" when defined in grid option and the CheckboxSelectColumn plugin gets created', () => {
@@ -481,6 +541,24 @@ describe('ExtensionService', () => {
         expect(onRegisteredMock).toHaveBeenCalledWith(expect.any(Object));
       });
 
+      it('should register the RowMoveManager addon when "enableRowMoveManager" is set in the grid options and Hybrid Selection is enabled', () => {
+        const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
+        const gridOptionsMock = { enableRowMoveManager: true, enableHybridSelection: true } as GridOption;
+        const extCreateSpy = vi.spyOn(mockRowMoveManager, 'create').mockReturnValue(mockRowMoveManager);
+        const gridSpy = vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+
+        service.createExtensionsBeforeGridCreation(columnsMock, gridOptionsMock);
+        service.bindDifferentExtensions();
+        const hybridSelectionInstance = service.getExtensionByName(ExtensionName.hybridSelection);
+        const output = service.getExtensionByName(ExtensionName.rowMoveManager);
+
+        expect(gridSpy).toHaveBeenCalled();
+        expect(extCreateSpy).toHaveBeenCalledWith(columnsMock, gridOptionsMock);
+        expect(hybridSelectionInstance).not.toBeNull();
+        expect(SlickHybridSelectionModel).toHaveBeenCalledWith({ dragToSelect: true });
+        expect(output).toEqual({ name: ExtensionName.rowMoveManager, instance: mockRowMoveManager as unknown } as ExtensionModel<any>);
+      });
+
       it('should register the RowMoveManager addon when "enableRowMoveManager" is set in the grid options', () => {
         const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
         const gridOptionsMock = { enableRowMoveManager: true } as GridOption;
@@ -497,6 +575,17 @@ describe('ExtensionService', () => {
         expect(rowSelectionInstance).not.toBeNull();
         expect(SlickRowSelectionModel).toHaveBeenCalledWith({ dragToSelect: true });
         expect(output).toEqual({ name: ExtensionName.rowMoveManager, instance: mockRowMoveManager as unknown } as ExtensionModel<any>);
+      });
+
+      it('should register the RowSelection addon when "enableCheckboxSelector" (false) and "enableRowSelection" (true) are set in the grid options and Hybrid Selection is enabled', () => {
+        const gridOptionsMock = { enableCheckboxSelector: false, enableRowSelection: true, enableHybridSelection: true } as GridOption;
+        const gridSpy = vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
+
+        service.bindDifferentExtensions();
+        const output = service.getExtensionByName(ExtensionName.hybridSelection);
+
+        expect(gridSpy).toHaveBeenCalled();
+        expect(output).toEqual({ name: ExtensionName.hybridSelection, instance: mockHybridSelectionModel } as ExtensionModel<any>);
       });
 
       it('should register the RowSelection addon when "enableCheckboxSelector" (false) and "enableRowSelection" (true) are set in the grid options', () => {
@@ -712,7 +801,7 @@ describe('ExtensionService', () => {
       service.hideColumn(columnsMock[1]);
 
       expect(sharedService.visibleColumns).toEqual(updatedColumnsMock);
-      expect(setColumnsSpy).toHaveBeenCalledWith(updatedColumnsMock);
+      expect(setColumnsSpy).toHaveBeenCalledWith(updatedColumnsMock, true);
     });
 
     it('should call the refreshBackendDataset method on the GridMenu Extension when service with same method name is called', () => {

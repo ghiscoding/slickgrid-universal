@@ -24,6 +24,7 @@
   * [Autocomplete](column-functionalities/filters/autocomplete-filter.md)
   * [Input Filter (default)](column-functionalities/filters/input-filter.md)
   * [Select Filter (dropdown)](column-functionalities/filters/select-filter.md)
+  * [Slider Filter](column-functionalities/filters/slider-filter.md)
   * [Compound Filters](column-functionalities/filters/compound-filters.md)
     * [Date Filter](column-functionalities/filters/compound-filters.md#how-to-use-compounddate-filter)
   * [Range Filters](column-functionalities/filters/range-filters.md)
@@ -94,8 +95,8 @@
 
 ## Migrations
 
-* [Migration Guide to 9.x (2025-05-10)](migrations/migration-to-9.x.md)
-* Versions 6 to 8 are skipped...
-* [Migration Guide to 5.x (2024-05-10)](migrations/migration-to-5.x.md)
-* [Migration Guide to 4.x (2023-12-15)](migrations/migration-to-4.x.md)
 * [Migration Guide to 3.x (2023-05-29)](migrations/migration-to-3.x.md)
+* [Migration Guide to 4.x (2023-12-15)](migrations/migration-to-4.x.md)
+* [Migration Guide to 5.x (2024-05-10)](migrations/migration-to-5.x.md)
+* Versions 6 to 8 were skipped...
+* [Migration Guide to 9.x (2025-05-10)](migrations/migration-to-9.x.md)

@@ -4,6 +4,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.11.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.10.0...v9.11.0) (2025-11-24)
+
+**Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin
+
+## [9.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.9.0...v9.10.0) (2025-11-04)
+
+### Bug Fixes
+
+* toggling Row Detail under a Group should become out of viewport ([#2170](https://github.com/ghiscoding/slickgrid-universal/issues/2170)) ([d14f057](https://github.com/ghiscoding/slickgrid-universal/commit/d14f057c358b5fdf34252e83067c2747d57ce826)) - by @ghiscoding
+
 ## [9.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.8.0...v9.9.0) (2025-09-20)
 
 ### Bug Fixes

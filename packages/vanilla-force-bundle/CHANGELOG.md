@@ -4,6 +4,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.11.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.10.0...v9.11.0) (2025-11-24)
+
+**Note:** Version bump only for package @slickgrid-universal/vanilla-force-bundle
+
+## [9.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.9.0...v9.10.0) (2025-11-04)
+
+### Bug Fixes
+
+* removing left column from picker w/only 1 col on right should be ok ([#2171](https://github.com/ghiscoding/slickgrid-universal/issues/2171)) ([6469ea3](https://github.com/ghiscoding/slickgrid-universal/commit/6469ea38aea13a0e36b7cb5730dea678fc2b2f7b)) - by @ghiscoding
+
 ## [9.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.8.0...v9.9.0) (2025-09-20)
 
 ### Bug Fixes

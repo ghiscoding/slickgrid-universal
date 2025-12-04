@@ -1,4 +1,4 @@
-# [![Aurelia](https://avatars.githubusercontent.com/u/9808864?s=50&v=4)](https://aurelia.io/) Aurelia-Slickgrid
+# [![Aurelia](https://avatars.githubusercontent.com/u/9808864?s=55&v=4)](https://aurelia.io/) Aurelia-Slickgrid
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
@@ -88,14 +88,14 @@ You like **Slickgrid-Vue**? Be sure to upvote ⭐ the project, and perhaps suppo
 
 ### Versions Compatibility
 
-> **Note** please be aware that only the latest major version of Aurelia-Slickgrid will be supported and receive bug fixes (it's already a lot of work to maintain for a single developer like me).
+**NOTE:** Please be aware that only the latest major version of Angular-Slickgrid will be supported and receive bug fixes.
 
-| Aurelia-Slickgrid | Aurelia version | Migration Guide | Notes |
-|-------------------|-----------------|-----------------|------|
-| 9.x               | Aurelia 2       | [Migration 9.x](https://ghiscoding.gitbook.io/aurelia-slickgrid/migrations/migration-to-9.x)     | ESM-Only, requires Slickgrid-Universal [9.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v9.0.0) version |
-| 8.x               | Aurelia 2       | [Migration 8.x](https://ghiscoding.gitbook.io/aurelia-slickgrid/migrations/migration-to-8.x)     | modern UI / Dark Mode, requires Slickgrid-Universal [5.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v5.0.0) |
-| 7.x               | Aurelia 2       | [Migration 7.x](https://ghiscoding.gitbook.io/aurelia-slickgrid/migrations/migration-to-7.x)     | merge SlickGrid into Slickgrid-Universal, requires Slickgrid-Universal [4.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v4.0.2) |
-| 6.x               | 1.x             | [Migration 6.x](https://ghiscoding.gitbook.io/aurelia-slickgrid/migrations/migration-to-6.x)     | removal of jQuery (now uses browser native code), requires Slickgrid-Universal [3.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v3.0.0) |
-| 5.x               | 1.x             | [Migration 5.x](https://ghiscoding.gitbook.io/aurelia-slickgrid/migrations/migration-to-5.x)     | removal of jQueryUI, requires Slickgrid-Universal [2.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v2.0.0) version |
+| Aurelia-Slickgrid | Aurelia   | Migration Guide | Notes | Date |
+| :---------------: | --------- | --------------- | ----- | ---- |
+| 9.x               | Aurelia 2 | [Migration 9.x](https://ghiscoding.gitbook.io/aurelia-slickgrid/migrations/migration-to-9.x)     | ESM-Only, requires Slickgrid-Universal [9.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v9.0.0) | 2025-05-10 |
+| 8.x               | Aurelia 2 | [Migration 8.x](https://ghiscoding.gitbook.io/aurelia-slickgrid/migrations/migration-to-8.x)     | modern UI / Dark Mode, requires Slickgrid-Universal [5.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v5.0.0) | 2024-05-09 |
+| 7.x               | Aurelia 2  | [Migration 7.x](https://ghiscoding.gitbook.io/aurelia-slickgrid/migrations/migration-to-7.x)     | merge SlickGrid into Slickgrid-Universal,<br> requires Slickgrid-Universal [4.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v4.0.2) | 2023-12-19 |
+| 6.x               | 1.x        | [Migration 6.x](https://ghiscoding.gitbook.io/aurelia-slickgrid/migrations/migration-to-6.x)     | removal of jQuery (now uses browser native code),<br> requires Slickgrid-Universal [3.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v3.0.0) | 2023-05-29 |
+| 5.x               | 1.x        | [Migration 5.x](https://ghiscoding.gitbook.io/aurelia-slickgrid/migrations/migration-to-5.x)     | removal of jQueryUI, <br>requires Slickgrid-Universal [2.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v2.0.0) | 2022-10-18 |
 
 For a full compatibility table of all Aurelia-Slickgrid versions with Slickgrid-Universal, please refer to the [Versions Compatibility Table - Wiki](https://github.com/ghiscoding/aurelia-slickgrid/wiki/Versions-Compatibility-Table)

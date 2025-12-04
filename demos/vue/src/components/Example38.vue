@@ -507,7 +507,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
         <button class="btn btn-outline-secondary btn-sm mx-1" data-test="set-dynamic-filter" @click="setFiltersDynamically()">
           Set Filters Dynamically
         </button>
-        <button class="btn btn-outline-secondary btn-sm" data-test="set-dynamic-sorting" @click="setSortingDynamically()">
+        <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="set-dynamic-sorting" @click="setSortingDynamically()">
           Set Sorting Dynamically
         </button>
         <button class="btn btn-outline-secondary btn-sm mx-1" data-test="group-by-gender" @click="groupByGender()">Group by Gender</button>

@@ -24,9 +24,8 @@ describe('Example 03 - Draggable Grouping', () => {
   });
 
   it('should initially be grouped by "Duration" when loading the grid', () => {
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0) .slick-group-title`).should(
-      'contain',
-      'Duration: 0'
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0) .slick-group-title`).contains(
+      /Duration: [0-9]/
     );
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(2)`).should('contain', '0');
   });

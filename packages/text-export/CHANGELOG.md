@@ -4,6 +4,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.11.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.10.0...v9.11.0) (2025-11-24)
+
+### Features
+
+* **angular:** add all event Types to support Strict Templates ([#2243](https://github.com/ghiscoding/slickgrid-universal/issues/2243)) ([3330525](https://github.com/ghiscoding/slickgrid-universal/commit/3330525611989228d4a5fbef8b0f410ccbf45690)) - by @ghiscoding
+
+## [9.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.9.0...v9.10.0) (2025-11-04)
+
+**Note:** Version bump only for package @slickgrid-universal/text-export
+
 ## [9.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.8.0...v9.9.0) (2025-09-20)
 
 **Note:** Version bump only for package @slickgrid-universal/text-export

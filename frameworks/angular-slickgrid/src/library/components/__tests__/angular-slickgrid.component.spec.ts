@@ -56,14 +56,6 @@ import { type GridOption } from '../../models/index.js';
 import { ContainerService, type AngularUtilService, type TranslaterService } from '../../services/index.js';
 import { AngularSlickgridComponent } from '../angular-slickgrid.component.js';
 
-// mocked modules
-vi.mock('@slickgrid-universal/common', async (importOriginal) => ({
-  ...((await importOriginal()) as any),
-  applyHtmlToElement: (elm: HTMLElement, val: any) => {
-    elm.innerHTML = `${val || ''}`;
-  },
-}));
-
 const addVanillaEventPropagation = function (event: Event) {
   Object.defineProperty(event, 'isPropagationStopped', { writable: true, configurable: true, value: vi.fn() });
   Object.defineProperty(event, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: vi.fn() });
@@ -300,6 +292,9 @@ const slickEventHandler = new MockSlickEventHandler() as unknown as SlickEventHa
 
 vi.mock('@slickgrid-universal/common', async () => ({
   ...((await vi.importActual('@slickgrid-universal/common')) as any),
+  applyHtmlToElement: (elm: HTMLElement, val: any) => {
+    elm.innerHTML = `${val || ''}`;
+  },
   autoAddEditorFormatterToColumnsWithEditor: vi.fn(),
   SlickGrid: vi.fn().mockImplementation(function () {
     return mockGrid;
@@ -384,32 +379,35 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
       nativeElement: divContainer,
     } as ElementRef;
 
-    component = new AngularSlickgridComponent(
-      angularUtilServiceStub,
-      mockAppRef,
-      mockChangeDetectorRef,
-      containerService,
-      mockElementRef,
-      translate as unknown as TranslateService,
-      translaterService as unknown as TranslaterService,
-      {} as GridOption,
-      {
-        backendUtilityService: backendUtilityServiceStub,
-        collectionService: collectionServiceStub,
-        extensionService: extensionServiceStub,
-        extensionUtility: mockExtensionUtility,
-        eventPubSubService,
-        filterService: filterServiceStub,
-        gridEventService: gridEventServiceStub,
-        gridService: gridServiceStub,
-        gridStateService: gridStateServiceStub,
-        headerGroupingService: headerGroupingServiceStub,
-        resizerService: resizerServiceStub,
-        paginationService: paginationServiceStub,
-        sharedService,
-        sortService: sortServiceStub,
-        treeDataService: treeDataServiceStub,
-      }
+    component = TestBed.runInInjectionContext(
+      () =>
+        new AngularSlickgridComponent(
+          angularUtilServiceStub,
+          mockAppRef,
+          mockChangeDetectorRef,
+          containerService,
+          mockElementRef,
+          translate as unknown as TranslateService,
+          translaterService as unknown as TranslaterService,
+          {} as GridOption,
+          {
+            backendUtilityService: backendUtilityServiceStub,
+            collectionService: collectionServiceStub,
+            extensionService: extensionServiceStub,
+            extensionUtility: mockExtensionUtility,
+            eventPubSubService,
+            filterService: filterServiceStub,
+            gridEventService: gridEventServiceStub,
+            gridService: gridServiceStub,
+            gridStateService: gridStateServiceStub,
+            headerGroupingService: headerGroupingServiceStub,
+            resizerService: resizerServiceStub,
+            paginationService: paginationServiceStub,
+            sharedService,
+            sortService: sortServiceStub,
+            treeDataService: treeDataServiceStub,
+          }
+        )
     );
 
     component.gridId = 'grid1';
@@ -428,32 +426,35 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
   });
 
   it('should provide the gridService lazily', () => {
-    const instance = new AngularSlickgridComponent(
-      angularUtilServiceStub,
-      mockAppRef,
-      mockChangeDetectorRef,
-      containerService,
-      mockElementRef,
-      translate as unknown as TranslateService,
-      translaterService as unknown as TranslaterService,
-      {} as GridOption,
-      {
-        backendUtilityService: backendUtilityServiceStub,
-        collectionService: collectionServiceStub,
-        extensionService: undefined,
-        extensionUtility: mockExtensionUtility,
-        eventPubSubService,
-        filterService: filterServiceStub,
-        gridEventService: gridEventServiceStub,
-        gridService: gridServiceStub,
-        gridStateService: gridStateServiceStub,
-        headerGroupingService: headerGroupingServiceStub,
-        resizerService: resizerServiceStub,
-        paginationService: paginationServiceStub,
-        sharedService,
-        sortService: sortServiceStub,
-        treeDataService: treeDataServiceStub,
-      }
+    const instance = TestBed.runInInjectionContext(
+      () =>
+        new AngularSlickgridComponent(
+          angularUtilServiceStub,
+          mockAppRef,
+          mockChangeDetectorRef,
+          containerService,
+          mockElementRef,
+          translate as unknown as TranslateService,
+          translaterService as unknown as TranslaterService,
+          {} as GridOption,
+          {
+            backendUtilityService: backendUtilityServiceStub,
+            collectionService: collectionServiceStub,
+            extensionService: undefined,
+            extensionUtility: mockExtensionUtility,
+            eventPubSubService,
+            filterService: filterServiceStub,
+            gridEventService: gridEventServiceStub,
+            gridService: gridServiceStub,
+            gridStateService: gridStateServiceStub,
+            headerGroupingService: headerGroupingServiceStub,
+            resizerService: resizerServiceStub,
+            paginationService: paginationServiceStub,
+            sharedService,
+            sortService: sortServiceStub,
+            treeDataService: treeDataServiceStub,
+          }
+        )
     );
 
     expect(instance).toBeTruthy();
@@ -2398,6 +2399,30 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
           vi.spyOn(mockDataView, 'getLength').mockReturnValue(mockData.length);
 
           component.options.enableRowSelection = true;
+          component.options.presets = { rowSelection: { gridRowIndexes: selectedGridRows } };
+          component.dataset = mockData;
+          component.isDatasetInitialized = false; // it won't call the preset unless we reset this flag
+          component.initialization(slickEventHandler);
+
+          setTimeout(() => {
+            expect(component.isDatasetInitialized).toBe(true);
+            expect(selectRowSpy).toHaveBeenCalledWith(selectedGridRows);
+            done();
+          });
+        }));
+
+      it('should call the "setSelectedRows" from the Grid when there are row selection presets with "dataContextIds" array set and Hybrid Selection is enabled', () =>
+        new Promise((done: any) => {
+          const selectedGridRows = [22];
+          const mockData = [
+            { firstName: 'John', lastName: 'Doe' },
+            { firstName: 'Jane', lastName: 'Smith' },
+          ];
+          const selectRowSpy = vi.spyOn(mockGrid, 'setSelectedRows');
+          vi.spyOn(mockGrid, 'getSelectionModel').mockReturnValue(true as any);
+          vi.spyOn(mockDataView, 'getLength').mockReturnValue(mockData.length);
+
+          component.options.enableHybridSelection = true;
           component.options.presets = { rowSelection: { gridRowIndexes: selectedGridRows } };
           component.dataset = mockData;
           component.isDatasetInitialized = false; // it won't call the preset unless we reset this flag

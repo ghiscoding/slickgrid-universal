@@ -1,4 +1,4 @@
-## [![Angular](https://avatars.githubusercontent.com/u/139426?s=50&v=4)](https://angular.io/) Angular-Slickgrid
+## [![Angular](https://avatars.githubusercontent.com/u/139426?s=65&v=4)](https://angular.io/) Angular-Slickgrid
 
 This Angular demo is different compare to the other framework demos, because all the Angular-Slickgrid can only be found directly under the [`frameworks/angular-slickgrid/`](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/angular-slickgrid) folder.
 

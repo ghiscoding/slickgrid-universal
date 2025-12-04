@@ -1,0 +1,64 @@
+<style>
+  .blocked-cell {
+    background: darkred !important;
+    color: #999;
+  }
+</style>
+<h3 class="title is-3">
+  Example 37 - Hybrid Selection Model
+  <div class="subtitle code-link">
+    <span class="is-size-6">see</span>
+    <a
+      class="is-size-5"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example37.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </div>
+</h3>
+
+<h5 class="mb-3 italic example-details">
+  <ul>
+    <li>
+      <code>SlickHybridSelectionModel</code> This Selection Model is an hybrid approach that uses a combination of the row or cell
+      selections depending on certain conditions. Use <code>enableHybridSelection</code> grid option to enable the new Hybrid Selection
+      Model.
+    </li>
+    <li>
+      1. clicking on the first column (<code>id</code>) will use <code>RowSelectionModel</code> because of our configuration of
+      <code>rowSelectColumnIds: ['id']</code> as the columns that will trigger row selection.
+    </li>
+    <li>2. clicking on the any other columns will use <code>CellSelectionModel</code> by default</li>
+  </ul>
+</h5>
+
+<div class="columns">
+  <div class="column field is-narrow">
+    <h5 class="title is-5">
+      Grid 1
+      <span class="subtitle is-6 is-small ml-5 text-italic">
+        <label>Range Selection</label>
+        <span id="selectionRange1"></span>
+      </span>
+    </h5>
+  </div>
+</div>
+<div class="grid37-1"></div>
+
+<div class="column is-half">
+  <hr class="my-4" />
+</div>
+
+<div class="columns">
+  <div class="column field is-narrow">
+    <h5 class="title is-5">
+      Grid 2
+      <span class="subtitle is-6 ml-5 text-italic">
+        <label>Range Selection</label>
+        <span id="selectionRange2"></span>
+      </span>
+    </h5>
+  </div>
+</div>
+<div class="grid37-2"></div>

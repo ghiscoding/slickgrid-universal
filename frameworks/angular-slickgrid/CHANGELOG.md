@@ -4,6 +4,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.11.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.10.0...v9.11.0) (2025-11-24)
+
+### Features
+
+* add new `autoEditByKeypress` to open editor by typing a char, fix [#2185](https://github.com/ghiscoding/slickgrid-universal/issues/2185) ([#2236](https://github.com/ghiscoding/slickgrid-universal/issues/2236)) ([7e3b6e3](https://github.com/ghiscoding/slickgrid-universal/commit/7e3b6e35eed15bd37dc7d14d71f4b42bc82084dd)) - by @ghiscoding
+* add new Cell/Row override to Hybrid Selection Model ([#2229](https://github.com/ghiscoding/slickgrid-universal/issues/2229)) ([1471ebb](https://github.com/ghiscoding/slickgrid-universal/commit/1471ebb361bd2d302db7c1cc5e4f14cd06ce6f0c)) - by @ghiscoding
+* **angular:** add all event Types to support Strict Templates ([#2243](https://github.com/ghiscoding/slickgrid-universal/issues/2243)) ([3330525](https://github.com/ghiscoding/slickgrid-universal/commit/3330525611989228d4a5fbef8b0f410ccbf45690)) - by @ghiscoding
+
+## [9.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.9.0...v9.10.0) (2025-11-04)
+
+### Features
+
+* Drag-Fill capability and Hybrid SelectionModel plugin ([#2162](https://github.com/ghiscoding/slickgrid-universal/issues/2162)) ([bb8fb3e](https://github.com/ghiscoding/slickgrid-universal/commit/bb8fb3ee83210755b36713764972c02ad658c12c)) - by @ghiscoding
+
+### Bug Fixes
+
+* **deps:** update dependency react-i18next to v16 ([#2175](https://github.com/ghiscoding/slickgrid-universal/issues/2175)) ([bf03c42](https://github.com/ghiscoding/slickgrid-universal/commit/bf03c4278cd7c35b8dcd7c6335d900493d24c464)) - by @ghiscoding
+* toggling Row Detail under a Group should become out of viewport ([#2170](https://github.com/ghiscoding/slickgrid-universal/issues/2170)) ([d14f057](https://github.com/ghiscoding/slickgrid-universal/commit/d14f057c358b5fdf34252e83067c2747d57ce826)) - by @ghiscoding
+
 ## [9.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.8.0...v9.9.0) (2025-09-20)
 
 ### Bug Fixes

@@ -1,5 +1,5 @@
 import { I18nConfiguration } from '@aurelia/i18n';
-import { RouterConfiguration } from '@aurelia/router-direct';
+import { RouterConfiguration } from '@aurelia/router';
 import Aurelia from 'aurelia';
 import 'bootstrap';
 // import Fetch from 'i18next-fetch-backend';
@@ -29,7 +29,11 @@ Aurelia
   */
   // Register all exports of the plugin
   .register(
-    RouterConfiguration.customize({ useHref: false }),
+    RouterConfiguration.customize({
+      activeClass: 'active',
+      useUrlFragmentHash: true,
+      useHref: true,
+    }),
 
     // dynamic components to enhance
     CustomTitleFormatter,

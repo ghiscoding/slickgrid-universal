@@ -720,9 +720,9 @@ const Example5: React.FC = () => {
         paginationOptions={paginationOptions}
         onReactGridCreated={($event) => reactGridReady($event.detail)}
         onGridStateChanged={($event) => gridStateChanged($event.detail)}
-        onBeforeSort={($event) => handleOnBeforeSort($event.detail.eventData)}
-        onBeforeSearchChange={($event) => handleOnBeforeSearchChange($event.detail.eventData)}
-        onBeforePaginationChange={($event) => handleOnBeforePaginationChange($event.detail.eventData)}
+        onBeforeSort={($event) => handleOnBeforeSort($event)}
+        onBeforeSearchChange={($event) => handleOnBeforeSearchChange($event)}
+        onBeforePaginationChange={($event) => handleOnBeforePaginationChange($event)}
       />
     </div>
   );

@@ -538,7 +538,10 @@ function initialization() {
 
     const datasetLn = dataModel.value?.length || 0;
     if (datasetLn > 0) {
-      if (!isDatasetInitialized && (_gridOptions.value.enableCheckboxSelector || _gridOptions.value.enableRowSelection)) {
+      if (
+        !isDatasetInitialized &&
+        (_gridOptions.value.enableCheckboxSelector || _gridOptions.value.enableRowSelection || _gridOptions.value.enableHybridSelection)
+      ) {
         loadRowSelectionPresetWhenExists();
       }
       loadFilterPresetsWhenDatasetInitialized();
@@ -731,7 +734,7 @@ function bindDifferentHooks(grid: SlickGrid, gridOptions: GridOption, dataView: 
   if (typeof i18next?.on === 'function') {
     i18next.on('languageChanged', (lang: string) => {
       // publish event of the same name that Slickgrid-Universal uses on a language change event
-      eventPubSubService.publish('onLanguageChange');
+      eventPubSubService.publish('onLanguageChange', lang);
 
       if (gridOptions.enableTranslate) {
         extensionService.translateAllExtensions(lang);
@@ -1007,7 +1010,7 @@ function paginationChanged(pagination: PaginationMetadata) {
     grid &&
     !isSyncGridSelectionEnabled &&
     _gridOptions.value?.backendServiceApi &&
-    (_gridOptions.value.enableRowSelection || _gridOptions.value.enableCheckboxSelector)
+    (_gridOptions.value.enableRowSelection || _gridOptions.value.enableHybridSelection || _gridOptions.value.enableCheckboxSelector)
   ) {
     grid.setSelectedRows([]);
   }
@@ -1356,7 +1359,9 @@ function loadLocalGridPagination(dataset?: any[]) {
 function loadRowSelectionPresetWhenExists() {
   // if user entered some Row Selections "presets"
   const presets = _gridOptions.value?.presets;
-  const enableRowSelection = _gridOptions.value && (_gridOptions.value.enableCheckboxSelector || _gridOptions.value.enableRowSelection);
+  const enableRowSelection =
+    _gridOptions.value &&
+    (_gridOptions.value.enableCheckboxSelector || _gridOptions.value.enableRowSelection || _gridOptions.value.enableHybridSelection);
   if (
     enableRowSelection &&
     grid?.getSelectionModel() &&

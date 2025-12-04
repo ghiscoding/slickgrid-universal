@@ -601,7 +601,7 @@ describe('HeaderMenu Plugin', () => {
 
         expect(setOptionSpy).not.toHaveBeenCalled();
         expect(visibleSpy).toHaveBeenCalledWith(updatedColumnsMock);
-        expect(setColumnsSpy).toHaveBeenCalledWith(updatedColumnsMock);
+        expect(setColumnsSpy).toHaveBeenCalledWith(updatedColumnsMock, true);
       });
 
       it('should call hideColumn and expect "setOptions" to be called with new "frozenColumn" index when the grid is detected to be a frozen grid', () => {
@@ -626,7 +626,7 @@ describe('HeaderMenu Plugin', () => {
 
         expect(setOptionSpy).toHaveBeenCalledWith({ frozenColumn: 0 });
         expect(visibleSpy).toHaveBeenCalledWith(updatedColumnsMock);
-        expect(setColumnsSpy).toHaveBeenCalledWith(updatedColumnsMock);
+        expect(setColumnsSpy).toHaveBeenCalledWith(updatedColumnsMock, true);
       });
     });
 

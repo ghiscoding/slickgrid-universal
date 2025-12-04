@@ -280,11 +280,9 @@ export class SliderFilter implements Filter {
    */
   protected createDomFilterElement(searchTerms?: SearchTerm | SearchTerm[]): HTMLDivElement {
     const columnId = this.columnDef?.id ?? '';
-    const minValue = +(this.columnFilter.minValue ?? Constants.SLIDER_DEFAULT_MIN_VALUE);
-    const maxValue = +(this.columnFilter.maxValue ?? Constants.SLIDER_DEFAULT_MAX_VALUE);
-    const step = +(this.columnFilter.valueStep ?? Constants.SLIDER_DEFAULT_STEP);
     emptyElement(this._argFilterContainerElm);
 
+    const { minValue, maxValue, step } = this.getSliderConfigs();
     const defaultStartValue = +(
       (Array.isArray(searchTerms) && searchTerms?.[0]) ??
       (this.filterOptions as SliderRangeOption)?.sliderStartValue ??
@@ -403,24 +401,22 @@ export class SliderFilter implements Filter {
     // attach events
     this._bindEventService.bind(this._sliderTrackElm, 'click', this.sliderTrackClicked.bind(this) as EventListener);
     this._bindEventService.bind(this._sliderRightInputElm, ['input', 'change'], this.slideRightInputChanged.bind(this) as EventListener);
-    this._bindEventService.bind(
-      this._sliderRightInputElm,
-      ['change', 'mouseup', 'touchend'],
-      this.onValueChanged.bind(this) as EventListener
-    );
+    this._bindEventService.bind(this._sliderRightInputElm, ['change', 'mouseup', 'touchend'], (e) => this.onValueChanged(e));
+    this._bindEventService.bind(this._sliderRightInputElm, ['keydown'], (e) => this.handleKeyDown(e, 'right'));
 
     if (this.sliderType === 'compound' && this._selectOperatorElm) {
       this._bindEventService.bind(this._selectOperatorElm, ['change'], this.onValueChanged.bind(this) as EventListener);
     } else if (this.sliderType === 'double' && this._sliderLeftInputElm) {
       this._bindEventService.bind(this._sliderLeftInputElm, ['input', 'change'], this.slideLeftInputChanged.bind(this) as EventListener);
-      this._bindEventService.bind(
-        this._sliderLeftInputElm,
-        ['change', 'mouseup', 'touchend'],
-        this.onValueChanged.bind(this) as EventListener
-      );
+      this._bindEventService.bind(this._sliderLeftInputElm, ['change', 'mouseup', 'touchend'], (e) => this.onValueChanged(e));
+      this._bindEventService.bind(this._sliderLeftInputElm, ['keydown'], (e) => this.handleKeyDown(e, 'left'));
     }
 
     return this._divContainerFilterElm;
+  }
+
+  protected getInputValue(elm?: HTMLInputElement): number {
+    return parseInt(elm?.value ?? '', 10);
   }
 
   /** Get the available operator option values to populate the operator select dropdown list */
@@ -438,9 +434,47 @@ export class SliderFilter implements Filter {
     return operatorList;
   }
 
+  /** get default slider defaults */
+  protected getSliderConfigs(): Omit<CurrentSliderOption, 'sliderTrackBackground'> {
+    return {
+      minValue: +(this.columnFilter.minValue ?? Constants.SLIDER_DEFAULT_MIN_VALUE),
+      maxValue: +(this.columnFilter.maxValue ?? Constants.SLIDER_DEFAULT_MAX_VALUE),
+      step: +(this.columnFilter.valueStep ?? Constants.SLIDER_DEFAULT_STEP),
+    };
+  }
+
+  /** use keydown event to increase/decrease slider value */
+  protected handleKeyDown(event: Event, side: 'left' | 'right'): void {
+    const e = event as KeyboardEvent;
+    if (this.filterOptions.useArrowToSlide !== false && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+      const { minValue, maxValue, step } = this.getSliderConfigs();
+      const currentValue = Number(side === 'left' ? this._sliderLeftInputElm?.value : this._sliderRightInputElm?.value);
+      let newValue = e.key === 'ArrowLeft' ? currentValue - step : currentValue + step;
+      newValue = newValue < minValue ? minValue : newValue > maxValue ? maxValue : newValue; // make we are within limits
+
+      // Update input value & trigger an event to update tooltip as well
+      let sliderRightVal = this.getInputValue(this._sliderRightInputElm);
+      let sliderLeftVal = 0;
+      if (this.sliderType === 'compound' || this.sliderType === 'single') {
+        this._sliderRightInputElm!.value = `${newValue}`;
+        sliderRightVal = newValue;
+      } else if (this.sliderType === 'double' && this._sliderLeftInputElm) {
+        this._sliderLeftInputElm.value = `${newValue}`;
+        sliderLeftVal = newValue;
+      }
+
+      this.sliderLeftOrRightChanged(e as any, side, sliderLeftVal, sliderRightVal);
+      this.onValueChanged(e as any);
+
+      // Prevent default arrow key behavior
+      e.stopPropagation();
+      e.preventDefault();
+    }
+  }
+
   /** handle value change event triggered, trigger filter callback & update "filled" class name */
-  protected onValueChanged(e: DOMEvent<HTMLInputElement>): void {
-    const sliderRightVal = parseInt(this._sliderRightInputElm?.value ?? '', 10);
+  protected onValueChanged(e: Event): void {
+    const sliderRightVal = this.getInputValue(this._sliderRightInputElm);
     let value;
     let searchTerms: SearchTerm[];
 
@@ -452,7 +486,7 @@ export class SliderFilter implements Filter {
       value = this._currentValue;
       searchTerms = [value || '0'];
     } else if (this.sliderType === 'double') {
-      const sliderLeftVal = parseInt(this._sliderLeftInputElm?.value ?? '', 10);
+      const sliderLeftVal = this.getInputValue(this._sliderLeftInputElm);
       const values = [sliderLeftVal, sliderRightVal];
       value = values.join('..');
       searchTerms = values as SearchTerm[];
@@ -503,8 +537,8 @@ export class SliderFilter implements Filter {
   }
 
   protected slideLeftInputChanged(e: DOMEvent<HTMLInputElement>): void {
-    const sliderLeftVal = parseInt(this._sliderLeftInputElm?.value ?? '', 10);
-    const sliderRightVal = parseInt(this._sliderRightInputElm?.value ?? '', 10);
+    const sliderLeftVal = this.getInputValue(this._sliderLeftInputElm);
+    const sliderRightVal = this.getInputValue(this._sliderRightInputElm);
 
     if (
       this._sliderLeftInputElm &&
@@ -533,8 +567,8 @@ export class SliderFilter implements Filter {
   }
 
   protected slideRightInputChanged(e: DOMEvent<HTMLInputElement>): void {
-    const sliderLeftVal = parseInt(this._sliderLeftInputElm?.value ?? '', 10);
-    const sliderRightVal = parseInt(this._sliderRightInputElm?.value ?? '', 10);
+    const sliderLeftVal = this.getInputValue(this._sliderLeftInputElm);
+    const sliderRightVal = this.getInputValue(this._sliderRightInputElm);
 
     if (
       this.sliderType === 'double' &&
@@ -582,6 +616,11 @@ export class SliderFilter implements Filter {
       if (this._rightSliderNumberElm?.textContent) {
         this._rightSliderNumberElm.textContent = this._sliderRightInputElm?.value ?? '';
       }
+    }
+
+    // does the user also want to trigger the filter while sliding?
+    if (this.filterOptions.filterWhileSliding) {
+      this.onValueChanged(e);
     }
 
     // also trigger mouse enter event on the filter in case a SlickCustomTooltip is attached

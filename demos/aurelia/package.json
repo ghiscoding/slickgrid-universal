@@ -1,7 +1,7 @@
 {
   "name": "aurelia-slickgrid-demo",
   "private": true,
-  "version": "9.9.0",
+  "version": "9.11.0",
   "description": "Aurelia-Slickgrid demos",
   "keywords": [
     "aurelia",
@@ -12,11 +12,6 @@
   ],
   "license": "MIT",
   "author": "Ghislain B.",
-  "browserslist": [
-    "last 2 versions",
-    "> 1%",
-    "not dead"
-  ],
   "scripts": {
     "aurelia:dev": "vite",
     "aurelia:preview": "vite preview",
@@ -29,7 +24,7 @@
     "@aurelia/i18n": "^2.0.0-beta.25",
     "@aurelia/kernel": "^2.0.0-beta.25",
     "@aurelia/metadata": "^2.0.0-beta.25",
-    "@aurelia/router-direct": "^2.0.0-beta.25",
+    "@aurelia/router": "^2.0.0-beta.25",
     "@aurelia/runtime": "^2.0.0-beta.25",
     "@aurelia/runtime-html": "^2.0.0-beta.25",
     "@faker-js/faker": "catalog:",
@@ -57,7 +52,6 @@
     "@types/node": "catalog:",
     "@types/sortablejs": "catalog:",
     "aurelia-polyfills": "^1.3.4",
-    "autoprefixer": "^10.4.21",
     "cypress": "catalog:",
     "cypress-real-events": "catalog:",
     "dompurify": "catalog:",

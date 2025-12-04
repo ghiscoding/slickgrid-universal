@@ -660,7 +660,7 @@ describe('LongTextEditor', () => {
       it('should return False when field is required and field is empty', () => {
         mockColumn.editor!.required = true;
         editor = new LongTextEditor(editorArguments);
-        const validation = editor.validate(undefined, '');
+        const validation = editor.validate(undefined, { inputValue: '' });
 
         expect(validation).toEqual({ valid: false, msg: 'Field is required' });
       });
@@ -668,7 +668,7 @@ describe('LongTextEditor', () => {
       it('should return True when field is required and input is a valid input value', () => {
         mockColumn.editor!.required = true;
         editor = new LongTextEditor(editorArguments);
-        const validation = editor.validate(undefined, 'text');
+        const validation = editor.validate(undefined, { inputValue: 'text' });
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -676,7 +676,7 @@ describe('LongTextEditor', () => {
       it('should return False when field is lower than a minLength defined', () => {
         mockColumn.editor!.minLength = 5;
         editor = new LongTextEditor(editorArguments);
-        const validation = editor.validate(undefined, 'text');
+        const validation = editor.validate(undefined, { inputValue: 'text' });
 
         expect(validation).toEqual({ valid: false, msg: 'Please make sure your text is at least 5 character(s)' });
       });
@@ -685,7 +685,7 @@ describe('LongTextEditor', () => {
         mockColumn.editor!.minLength = 5;
         mockColumn.editor!.operatorConditionalType = 'exclusive';
         editor = new LongTextEditor(editorArguments);
-        const validation = editor.validate(undefined, 'text');
+        const validation = editor.validate(undefined, { inputValue: 'text' });
 
         expect(validation).toEqual({ valid: false, msg: 'Please make sure your text is more than 5 character(s)' });
       });
@@ -693,7 +693,7 @@ describe('LongTextEditor', () => {
       it('should return True when field is equal to the minLength defined', () => {
         mockColumn.editor!.minLength = 4;
         editor = new LongTextEditor(editorArguments);
-        const validation = editor.validate(undefined, 'text');
+        const validation = editor.validate(undefined, { inputValue: 'text' });
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -701,7 +701,7 @@ describe('LongTextEditor', () => {
       it('should return False when field is greater than a maxLength defined', () => {
         mockColumn.editor!.maxLength = 10;
         editor = new LongTextEditor(editorArguments);
-        const validation = editor.validate(undefined, 'text is 16 chars');
+        const validation = editor.validate(undefined, { inputValue: 'text is 16 chars' });
 
         expect(validation).toEqual({ valid: false, msg: 'Please make sure your text is less than or equal to 10 characters' });
       });
@@ -710,7 +710,7 @@ describe('LongTextEditor', () => {
         mockColumn.editor!.maxLength = 10;
         mockColumn.editor!.operatorConditionalType = 'exclusive';
         editor = new LongTextEditor(editorArguments);
-        const validation = editor.validate(undefined, 'text is 16 chars');
+        const validation = editor.validate(undefined, { inputValue: 'text is 16 chars' });
 
         expect(validation).toEqual({ valid: false, msg: 'Please make sure your text is less than 10 characters' });
       });
@@ -718,7 +718,7 @@ describe('LongTextEditor', () => {
       it('should return True when field is equal to the maxLength defined', () => {
         mockColumn.editor!.maxLength = 16;
         editor = new LongTextEditor(editorArguments);
-        const validation = editor.validate(undefined, 'text is 16 chars');
+        const validation = editor.validate(undefined, { inputValue: 'text is 16 chars' });
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -727,7 +727,7 @@ describe('LongTextEditor', () => {
         mockColumn.editor!.maxLength = 16;
         mockColumn.editor!.operatorConditionalType = 'inclusive';
         editor = new LongTextEditor(editorArguments);
-        const validation = editor.validate(undefined, 'text is 16 chars');
+        const validation = editor.validate(undefined, { inputValue: 'text is 16 chars' });
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -736,7 +736,7 @@ describe('LongTextEditor', () => {
         mockColumn.editor!.maxLength = 16;
         mockColumn.editor!.operatorConditionalType = 'exclusive';
         editor = new LongTextEditor(editorArguments);
-        const validation = editor.validate(undefined, 'text is 16 chars');
+        const validation = editor.validate(undefined, { inputValue: 'text is 16 chars' });
 
         expect(validation).toEqual({ valid: false, msg: 'Please make sure your text is less than 16 characters' });
       });
@@ -745,7 +745,7 @@ describe('LongTextEditor', () => {
         mockColumn.editor!.minLength = 0;
         mockColumn.editor!.maxLength = 10;
         editor = new LongTextEditor(editorArguments);
-        const validation = editor.validate(undefined, 'text is 16 chars');
+        const validation = editor.validate(undefined, { inputValue: 'text is 16 chars' });
 
         expect(validation).toEqual({ valid: false, msg: 'Please make sure your text length is between 0 and 10 characters' });
       });
@@ -754,7 +754,7 @@ describe('LongTextEditor', () => {
         mockColumn.editor!.minLength = 0;
         mockColumn.editor!.maxLength = 16;
         editor = new LongTextEditor(editorArguments);
-        const validation = editor.validate(undefined, 'text is 16 chars');
+        const validation = editor.validate(undefined, { inputValue: 'text is 16 chars' });
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -764,7 +764,7 @@ describe('LongTextEditor', () => {
         mockColumn.editor!.maxLength = 15;
         mockColumn.editor!.operatorConditionalType = 'inclusive';
         editor = new LongTextEditor(editorArguments);
-        const validation = editor.validate(undefined, 'text');
+        const validation = editor.validate(undefined, { inputValue: 'text' });
 
         expect(validation).toEqual({ valid: true, msg: '' });
       });
@@ -774,8 +774,8 @@ describe('LongTextEditor', () => {
         mockColumn.editor!.maxLength = 16;
         mockColumn.editor!.operatorConditionalType = 'exclusive';
         editor = new LongTextEditor(editorArguments);
-        const validation1 = editor.validate(undefined, 'text is 16 chars');
-        const validation2 = editor.validate(undefined, 'text');
+        const validation1 = editor.validate(undefined, { inputValue: 'text is 16 chars' });
+        const validation2 = editor.validate(undefined, { inputValue: 'text' });
 
         expect(validation1).toEqual({ valid: false, msg: 'Please make sure your text length is between 4 and 16 characters' });
         expect(validation2).toEqual({ valid: false, msg: 'Please make sure your text length is between 4 and 16 characters' });
@@ -784,7 +784,7 @@ describe('LongTextEditor', () => {
       it('should return False when field is greater than a maxValue defined', () => {
         mockColumn.editor!.maxLength = 10;
         editor = new LongTextEditor(editorArguments);
-        const validation = editor.validate(undefined, 'Task is longer than 10 chars');
+        const validation = editor.validate(undefined, { inputValue: 'Task is longer than 10 chars' });
 
         expect(validation).toEqual({ valid: false, msg: 'Please make sure your text is less than or equal to 10 characters' });
       });

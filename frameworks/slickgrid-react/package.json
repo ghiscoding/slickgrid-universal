@@ -1,6 +1,6 @@
 {
   "name": "slickgrid-react",
-  "version": "9.9.0",
+  "version": "9.11.0",
   "description": "Slickgrid components made available in React",
   "keywords": [
     "react",
@@ -50,18 +50,11 @@
   "scripts": {
     "are-types-wrong": "pnpx @arethetypeswrong/cli --pack .",
     "react:dev": "tsc --watch",
-    "prebuild": "remove dist",
-    "build": "tsc",
-    "postbuild": "npm run copy-i18n:dist && npm run copy-asset-lib",
+    "build": "remove dist && tsc && npm run copy-i18n:dist && npm run copy-asset-lib",
     "copy-asset-lib": "copyfiles src/assets/lib/** dist --up 2 --stat",
     "copy-i18n:dist": "copyfiles src/assets/locales/**/*.* dist/i18n --up 3 --stat",
     "pack": "npm pack"
   },
-  "browserslist": [
-    "last 2 versions",
-    "> 1%",
-    "not dead"
-  ],
   "files": [
     "/dist",
     "/src"
@@ -90,8 +83,8 @@
     "@slickgrid-universal/rxjs-observable": "workspace:*",
     "@slickgrid-universal/text-export": "workspace:*",
     "@types/node": "catalog:",
-    "@types/react": "^19.2.2",
-    "@types/react-dom": "^19.2.2",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
     "@types/sortablejs": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "dompurify": "catalog:",
@@ -99,7 +92,7 @@
     "native-copyfiles": "catalog:",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "react-router-dom": "^7.9.4",
+    "react-router-dom": "^7.9.6",
     "remove-glob": "catalog:",
     "rxjs": "catalog:",
     "sass": "catalog:",

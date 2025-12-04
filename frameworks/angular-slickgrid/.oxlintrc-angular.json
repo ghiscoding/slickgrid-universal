@@ -1,0 +1,45 @@
+{
+  "$schema": "../../node_modules/oxlint/configuration_schema.json",
+  "env": {
+    "es2025": true,
+    "browser": true,
+    "shared-node-browser": true
+  },
+  "plugins": ["oxc", "regex", "typescript", "vitest"],
+  "jsPlugins": ["@angular-eslint/eslint-plugin"],
+  "ignorePatterns": ["**/*.spec.ts", "**/*.cy.ts", ".angular/*", "dist/", "coverage/", "test/", "**/environment.*.ts", "**/public_api.ts"],
+  "overrides": [
+    {
+      "files": ["**/*.ts"],
+      "rules": {
+        "typescript/consistent-type-imports": "off"
+      }
+    }
+  ],
+  "rules": {
+    "@angular-eslint/directive-selector": ["error", { "type": "attribute", "prefix": "app", "style": "camelCase" }],
+    "@angular-eslint/component-selector": ["error", { "type": "element", "style": "kebab-case" }],
+    "@angular-eslint/prefer-standalone": "off",
+    "typescript/no-unused-expressions": "off",
+    "typescript/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "destructuredArrayIgnorePattern": "^_",
+        "caughtErrors": "none"
+      }
+    ],
+    "naming-convention": [
+      "error",
+      {
+        "selector": "directive",
+        "format": ["camelCase"],
+        "prefix": ["app"]
+      },
+      {
+        "selector": "component",
+        "format": ["kebab-case"]
+      }
+    ]
+  }
+}

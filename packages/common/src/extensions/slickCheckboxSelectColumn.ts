@@ -13,6 +13,7 @@ import type {
   SelectableOverrideCallback,
 } from '../interfaces/index.js';
 import { createDocumentFragmentOrElement } from '../services/utilities.js';
+import { SlickHybridSelectionModel } from './slickHybridSelectionModel.js';
 import { SlickRowSelectionModel } from './slickRowSelectionModel.js';
 
 export interface RowLookup {
@@ -116,7 +117,8 @@ export class SlickCheckboxSelectColumn<T = any> {
 
     // this also requires the Row Selection Model to be registered as well
     if (!this._rowSelectionModel || !this._grid.getSelectionModel()) {
-      this._rowSelectionModel = new SlickRowSelectionModel(this.gridOptions.rowSelectionOptions);
+      const SelectionModelClass = this.gridOptions.enableHybridSelection ? SlickHybridSelectionModel : SlickRowSelectionModel;
+      this._rowSelectionModel = new SelectionModelClass(this.gridOptions.rowSelectionOptions);
       this._grid.setSelectionModel(this._rowSelectionModel);
     }
 
@@ -155,7 +157,7 @@ export class SlickCheckboxSelectColumn<T = any> {
         } else {
           columns.unshift(selectionColumn);
         }
-        this.pubSubService.publish(`onPluginColumnsChanged`, {
+        this.pubSubService.publish('onPluginColumnsChanged', {
           columns,
           pluginName: this.pluginName,
         });

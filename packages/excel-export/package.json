@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/excel-export",
-  "version": "9.9.0",
+  "version": "9.11.0",
   "description": "Excel Export (xls/xlsx) Service.",
   "type": "module",
   "main": "./dist/index.js",
@@ -20,8 +20,7 @@
     "/src"
   ],
   "scripts": {
-    "prebuild": "pnpm run clean",
-    "build": "tsc",
+    "build": "pnpm run clean && tsc",
     "build:incremental": "tsc --incremental --declaration",
     "clean": "remove dist tsconfig.tsbuildinfo",
     "dev": "pnpm build:incremental"
@@ -37,15 +36,10 @@
   "bugs": {
     "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
   },
-  "browserslist": [
-    "last 2 versions",
-    "> 1%",
-    "not dead"
-  ],
   "dependencies": {
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/utils": "workspace:*",
-    "excel-builder-vanilla": "^4.1.1"
+    "excel-builder-vanilla": "^4.2.1"
   },
   "devDependencies": {
     "@slickgrid-universal/event-pub-sub": "workspace:*"

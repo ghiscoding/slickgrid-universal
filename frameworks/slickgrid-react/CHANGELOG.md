@@ -4,6 +4,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.11.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.10.0...v9.11.0) (2025-11-24)
+
+### Features
+
+* add new `autoEditByKeypress` to open editor by typing a char, fix [#2185](https://github.com/ghiscoding/slickgrid-universal/issues/2185) ([#2236](https://github.com/ghiscoding/slickgrid-universal/issues/2236)) ([7e3b6e3](https://github.com/ghiscoding/slickgrid-universal/commit/7e3b6e35eed15bd37dc7d14d71f4b42bc82084dd)) - by @ghiscoding
+
+### Bug Fixes
+
+* add full event Types to Slickgrid-React/Vue ([4766128](https://github.com/ghiscoding/slickgrid-universal/commit/476612899f73f699531b6eef421e9fd055de2380)) - by @ghiscoding
+* **deps:** update all non-major dependencies ([#2225](https://github.com/ghiscoding/slickgrid-universal/issues/2225)) ([095de1b](https://github.com/ghiscoding/slickgrid-universal/commit/095de1beeb9f906b0dcddf4819dfeb64bdae68d3)) - by @renovate-bot
+
+## [9.10.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.9.0...v9.10.0) (2025-11-04)
+
+### Features
+
+* Drag-Fill capability and Hybrid SelectionModel plugin ([#2162](https://github.com/ghiscoding/slickgrid-universal/issues/2162)) ([bb8fb3e](https://github.com/ghiscoding/slickgrid-universal/commit/bb8fb3ee83210755b36713764972c02ad658c12c)) - by @ghiscoding
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#2182](https://github.com/ghiscoding/slickgrid-universal/issues/2182)) ([52525e7](https://github.com/ghiscoding/slickgrid-universal/commit/52525e781538c3bed6857f6b791b26cb43240d19)) - by @ghiscoding
+* **deps:** update all non-major dependencies ([#2187](https://github.com/ghiscoding/slickgrid-universal/issues/2187)) ([cc7d86f](https://github.com/ghiscoding/slickgrid-universal/commit/cc7d86f96de613355f32fd987f6e4fccee96c549)) - by @renovate-bot
+* **deps:** update all non-major dependencies ([#2218](https://github.com/ghiscoding/slickgrid-universal/issues/2218)) ([da0dfe3](https://github.com/ghiscoding/slickgrid-universal/commit/da0dfe37ccfabc3ac7d13c25e8615c0674363358)) - by @renovate-bot
+* **react:** remove unnecessary dep `regenerator-runtime`, fixes [#2200](https://github.com/ghiscoding/slickgrid-universal/issues/2200) ([#2202](https://github.com/ghiscoding/slickgrid-universal/issues/2202)) ([e775108](https://github.com/ghiscoding/slickgrid-universal/commit/e7751084aa33cc5f6bb331676d580efeeac9dd51)) - by @ghiscoding
+
 ## [9.9.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.8.0...v9.9.0) (2025-09-20)
 
 ### Bug Fixes
@@ -493,7 +517,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * regression from PR [#262](https://github.com/ghiscoding/slickgrid-react/issues/262), read external resource when required ([dcf01e4](https://github.com/ghiscoding/slickgrid-react/commit/dcf01e42c7edcc84db53085df2a48ace9caefeb3))
 
 ## [4.0.1](https://github.com/ghiscoding/slickgrid-react/compare/v3.6.5...v4.0.1) (2023-12-15)
-### Follow the [Migration 3.x Guide](https://ghiscoding.gitbook.io/slickgrid-react/migrations/migration-to-4.x)
+### Follow the [Migration 4.x Guide](https://ghiscoding.gitbook.io/slickgrid-react/migrations/migration-to-4.x)
 ### ⚠ BREAKING CHANGES
 * migrate to Slickgrid-Universal v4.0 new major version PR (#269) ([e3b71e7](https://github.com/ghiscoding/slickgrid-react/commit/e3b71e75ea3036f78d8f8ff2c1937992575f3616))
 

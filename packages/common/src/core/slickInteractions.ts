@@ -1,5 +1,12 @@
 import { windowScrollPosition } from '@slickgrid-universal/utils';
-import type { DraggableOption, DragItem, DragPosition, MouseWheelOption, ResizableOption } from '../interfaces/index.js';
+import type {
+  ClassDetectElement,
+  DraggableOption,
+  DragItem,
+  DragPosition,
+  MouseWheelOption,
+  ResizableOption,
+} from '../interfaces/index.js';
 
 /***
  * Interactions, add basic behaviors to any element.
@@ -15,6 +22,8 @@ import type { DraggableOption, DragItem, DragPosition, MouseWheelOption, Resizab
  *   https://betterprogramming.pub/perfecting-drag-and-drop-in-pure-vanilla-javascript-a761184b797a
  * available optional options:
  *   - containerElement: container DOM element, defaults to "document"
+ *   - dragFromClassDetectArr: array of tags and query selectors/ids to match on dragstart, used to determine
+ *     drag source element. eg:  [ { tag: 'B', id: 'myElement' }, { tag: 'A', cssSelector: 'div.myClass' } ]
  *   - allowDragFrom: when defined, only allow dragging from an element that matches a specific query selector
  *   - allowDragFromClosest: when defined, only allow dragging from an element or its parent matching a specific .closest() query selector
  *   - onDragInit: drag initialized callback
@@ -36,6 +45,7 @@ export function Draggable(options: DraggableOption): {
   let deltaX: number;
   let deltaY: number;
   let dragStarted: boolean;
+  let matchClassTag: string;
 
   if (!containerElement) {
     containerElement = document.body;
@@ -95,12 +105,24 @@ export function Draggable(options: DraggableOption): {
         (options.allowDragFromClosest && element.closest(options.allowDragFromClosest))
       ) {
         originaldd.dragHandle = element as HTMLElement;
+        matchClassTag = '';
+        if (options.dragFromClassDetectArr) {
+          for (let o: ClassDetectElement, i = 0; i < options.dragFromClassDetectArr.length; i++) {
+            o = options.dragFromClassDetectArr[i];
+
+            if ((o.id && element.id === o.id) || (o.cssSelector && element.matches(o.cssSelector))) {
+              matchClassTag = o.tag;
+              break;
+            }
+          }
+        }
+
         const winScrollPos = windowScrollPosition();
         startX = winScrollPos.left + targetEvent.clientX;
         startY = winScrollPos.top + targetEvent.clientY;
         deltaX = targetEvent.clientX - targetEvent.clientX;
         deltaY = targetEvent.clientY - targetEvent.clientY;
-        originaldd = Object.assign(originaldd, { deltaX, deltaY, startX, startY, target });
+        originaldd = Object.assign(originaldd, { deltaX, deltaY, startX, startY, target, matchClassTag });
         const result = executeDragCallbackWhenDefined(
           onDragInit as (e: DragEvent, dd: DragPosition) => boolean | void,
           event,
@@ -127,12 +149,12 @@ export function Draggable(options: DraggableOption): {
       const { target } = targetEvent;
 
       if (!dragStarted) {
-        originaldd = Object.assign(originaldd, { deltaX, deltaY, startX, startY, target });
+        originaldd = Object.assign(originaldd, { deltaX, deltaY, startX, startY, target, matchClassTag });
         executeDragCallbackWhenDefined(onDragStart, event, originaldd as DragItem);
         dragStarted = true;
       }
 
-      originaldd = Object.assign(originaldd, { deltaX, deltaY, startX, startY, target });
+      originaldd = Object.assign(originaldd, { deltaX, deltaY, startX, startY, target, matchClassTag });
       executeDragCallbackWhenDefined(onDrag, event, originaldd as DragItem);
     }
   }

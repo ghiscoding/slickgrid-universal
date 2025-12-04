@@ -3,9 +3,9 @@
 
 There are a few changes, but it's for good reasons 😉
 
-This new major release is dropping SlickGrid dependency (`6pac/slickgrid`) dependency entirely and no longer relies on external SlickGrid code. All core files are now included into the Slickgrid-Universal project instead of being an external dependency which was sometime hard to troubleshoot (which was the case for the past couple years). The main reason to move the core lib into the project is for simplicity but it also allows us to drop code that we never really used in Slickgrid-Universal (e.g. SlickGrid had its own `autosize` which is different than our implementation in `ResizerService`, see Slickgrid-Universal [Example 14](https://ghiscoding.github.io/slickgrid-universal/#/example14)). Migrating SlickGrid to native JS (dropping jQuery) also required a few DOM utils that were duplicated in both projects, with this release we can now deduplicate these methods. It was hard or impossible to achieve earlier because SlickGrid was always written as a JavaScript library while our project was written in TypeScript, but now that SlickGrid core lib was also migrated to TypeScript (I'm actually the person who worked on that), this is now allowing me to simply copy the new TypeScript code and merge it in here without too much effort. It's also been tested in the wild for couple months already and all bugs were discovered and fixed already, so I know the new code is also stable already.
+This new major release is dropping SlickGrid dependency (`6pac/slickgrid`) dependency entirely and no longer relies on external SlickGrid code. All core files are now included into the Slickgrid-Universal project instead of being an external dependency which was sometime hard to troubleshoot (which was the case for the past couple years). The main reason to move the core lib into the project is for simplicity but it also allows us to drop code that we never really used in Slickgrid-Universal (e.g. SlickGrid had its own `autosize` which is different than our implementation in `ResizerService`, see Slickgrid-Universal [Example 14](https://ghiscoding.github.io/slickgrid-universal/#/example14)). Migrating SlickGrid to native JS (dropping jQuery) also required a few DOM utils that were duplicated in both projects, with this release we can now deduplicate these functions. It was hard or impossible to achieve earlier because SlickGrid was always written as a JavaScript library while our project was written in TypeScript, but now that SlickGrid core lib was also migrated to TypeScript (I'm actually the person who worked on that), this is now allowing me to simply copy the new TypeScript code and merge it in here without too much effort. It's also been tested in the wild for couple months already and all bugs were discovered and fixed already, so I know the new code is also relatively stable already.
 
-Another great feature of this new major release is that I made a lot of improvements on the library for CSP (Content Security Policy) compliance, or at least provide ways to be compliant. One of the biggest change in that regard is that you can now create custom Formatters to return native HTML element (I rewrote a few built-in Formatters with that approach) and this is mostly to avoid the use of `innerHTML` which is not CSP safe by default.
+Another great feature of this new major release is that I made a lot of improvements on the library for CSP (Content Security Policy) compliance, or at least provide ways to be compliant. One of the biggest change in that regard is that you can now create custom Formatters using native HTML element (I rewrote a few built-in Formatters with that approach) which is mostly to avoid the use of `innerHTML` which is not CSP safe by default.
 
 With this new major version release, we can now say that the journey to modernize the project is now, for the most part, completed, in summary the following was achieved in Slickgrid-Universal: 
 1. dropped jQueryUI in v2
@@ -29,7 +29,7 @@ Slickgrid-Universal is now fully standalone and entirely written in TypeScript w
 
 ---
 
-**NOTE:** if you come from an earlier version, please make sure to follow each migration in their respected order
+**NOTE:** if you come from an earlier version, please make sure to follow each migration in their respective order
 
 ## Changes
 ### Distribution folder
@@ -37,7 +37,7 @@ The `dist/commonjs` folder was renamed as `dist/cjs` to make it shorter and also
 - this should be transparent for most users
 
 #### `Slick` namespace on the `window` object is gone
-By migrating the SlickGrid core files into the project, we are now taking full advantage of TypeScript classes but that is also indirectly drops the `Slick` namespace on the `window` object. The main usage of the `Slick` namespace for most users, is when you have an editable grid with the "undo" functionality, you will need to update your code as shown below.
+By migrating the SlickGrid core files into the project, we are now taking full advantage of TypeScript classes but that is also indirectly dropping the `Slick` namespace on the `window` object. The main usage of the `Slick` namespace for most users, is when you have an editable grid with the "undo" functionality, you will need to update your code as shown below.
 
 ```diff
 + { SlickGlobalEditorLock }  from '@slickgrid-universal/common';
@@ -134,7 +134,7 @@ Some of the DomUtils Service function were renamed, if you use any of them then 
 ### Excel Export
 _requires version >=4.4.0_
 
-Migrate to a new [Excel-Builder-Vanilla](https://github.com/ghiscoding/excel-builder-vanilla) library which is a fork of the `excel-builder.js` lib. The new fork is all about modernizing Excel-Builder, it drops `Q`, `Lodash` and also replaces `JSZip` with `fflate` which decreases its size a lot.
+Migrate to a new [Excel-Builder-Vanilla](https://github.com/ghiscoding/excel-builder-vanilla) library which is a fork of the `excel-builder.js` lib. The new fork is all about modernizing Excel-Builder, it drops `Q`, `Lodash` and also replaces `JSZip` with `fflate` which decreases its install size a lot.
 
 By migrating from `JSZip` to `fflate`, the users should remove any `JSZip` references (like `tsconfig.json`)
 
@@ -156,7 +156,7 @@ Also note that `fflate` could use Web Worker for performance reasons and by doin
 ### Formatters Cleanup & Removals
 I decided to remove a bunch of Formatters (like `Formatters.bold`, `Formatters.uppercase`, ...) because they could and should be using the column `cssClass` option. Basically, I did not even use myself the best practice available when I created soo many Formatters in the past and I did not realized that we could simply use `cssClass` which is a much more efficient way and so I'm correcting this inadvertence in this new release. With that in mind, I decided to do a big cleanup in the list of Formatters to make the project a little more lightweight with less code to support and replace some of them with more generic alternatives (see below).
 
-The benefits of using `cssClass` are non negligible since it will slightly decrease the project size and code to support, but most importantly it is a lot more efficient, because applying CSS is a lot quicker in comparison to parse and apply a formatter on each cell. See below for the list of deleted (or replaced) Formatters and their equivalent Column `cssClass` property to use (when available).
+The benefits of using `cssClass` are non negligible since it will slightly decrease the project size and code to support, but more importantly it is a lot more efficient, because applying CSS is a lot quicker in comparison to parsing and applying a formatter on each cell. See below for the list of deleted (or replaced) Formatters and their equivalent Column `cssClass` property to use (when available).
 
 > **Note** the CSS class name to use might be different depending on which framework you use in your project, i.e. Bootstrap/Bulma/Material
 
@@ -196,7 +196,7 @@ this.columnDefinitions = [
 | `Formatters.yesNo` | n/a ... rarely used, so it was removed |  create a custom Formatter |
 
 ### All Formatters were rewritten as native HTML (CSP Safe)
-The previous Formatters implementation were all returning HTML strings (or `FormatterResultObject`), however that approach was not CSP safe by default and we have to do some extra transformations in order to be CSP safe. The transformation is to take the HTML string, sanitize it (DOMPurify is used by default unless a custom `sanitizer` is provided, for example in Salesforce DOMPurify doesn't work so a custom sanitizer is provided) and if you do use DOMPurify then its transformation will return `TrustedHTML` (when enabled with `RETURN_TRUSTED_TYPE: true` which is the default in here) which is CSP safe and we can finally assign it the cell content via `innerHTML` but as you can see, that required couple of extra steps. With that in mind, if we were to return native HTML directly from our Formatter, we could then bypass any transformations and simply use `.appendChild()` and that is exactly why I decided to rewrite some built-in Formatters as native code, the bonus is that this is much more efficient (no transformation) and is also 100% CSP safe since it's already native. For the most part this change shouldn't affect you too much **unless** you chained some of these Formatters (e.g. with `Formatters.multiple`) or if you were expecting an HTML string that you were then concatenating another string to a built-in Formatter result, then that might break your UI and you will have to update your code.
+The previous Formatters implementation were all returning HTML strings (or `FormatterResultObject`), however that approach was not CSP safe by default and we had to do some extra transformations in order to become CSP safe. The transformation is to take the HTML string, sanitize it (DOMPurify is used by default unless a custom `sanitizer` is provided, for example in Salesforce DOMPurify doesn't work so a custom sanitizer is provided) and if you do use DOMPurify then its transformation will return `TrustedHTML` (when enabled with `RETURN_TRUSTED_TYPE: true` which is the default in here) which is CSP safe and we can finally assign it the cell content via `innerHTML` but as you can see, that required couple of extra steps. With that in mind, if we were to return native HTML directly from our Formatter, we could then bypass all of these transformations and simply use `.appendChild()` internally, and that is exactly why I decided to rewrite some built-in Formatters to native code, the bonus is that this is much more efficient (no transformation) and is also 100% CSP safe since it's already native. For the most part this change shouldn't affect you too much **unless** you chained some of these Formatters (e.g. with `Formatters.multiple`) or if you were expecting an HTML string that you were then concatenating another string to a built-in Formatter result, then that might break your UI and you will have to update your code.
 
 > **Note** prior to this release, Slickgrid-Universal only supported returning HTML string (or via an object of type `FormatterResultObject`). With this release, we still support returning HTML string but now we also support returning native HTML in addition (or as `FormatterResultWithHtml`)
 

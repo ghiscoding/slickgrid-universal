@@ -36,7 +36,6 @@ export class Example {
 
     // also re-render the grid for the styling to be applied right away
     this.grid.invalidate();
-    this.grid.render();
   }
 
   /**
@@ -84,7 +83,6 @@ export class Example {
     // you would put the code here, also make sure to re-render the grid for the styling to be applied right away
     this.dataView.getItemMetadata = this.updateItemMetadataForDurationOver50(this.dataView.getItemMetadata);
     this.grid.invalidate();
-    this.grid.render();
   }
 
   /**

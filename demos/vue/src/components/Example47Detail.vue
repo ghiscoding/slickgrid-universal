@@ -79,7 +79,9 @@ function showNotification(model: Item) {
 
     <div class="col-sm-4">
       <button class="btn btn-primary btn-danger btn-sm" data-test="delete-btn" @click="deleteRow(model)">Delete Row</button>
-      <button class="btn btn-outline-secondary btn-sm" data-test="parent-btn" @click="showNotification(model)">Call Parent Method</button>
+      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="parent-btn" @click="showNotification(model)">
+        Call Parent Method
+      </button>
     </div>
   </div>
 </template>

@@ -11,11 +11,13 @@ import {
   isDefined,
   isDefinedNumber,
   isPrimitiveOrHTML,
+  queueMicrotaskOrSetTimeout,
 } from '@slickgrid-universal/utils';
 import type { SortableEvent, Options as SortableOptions } from 'sortablejs';
 import Sortable from 'sortablejs/modular/sortable.core.esm.js';
 import type { TrustedHTML } from 'trusted-types/lib';
 import type { SelectionModel } from '../enums/index.js';
+import type { CellSelectionMode } from '../extensions/slickCellSelectionModel.js';
 import { copyCellToClipboard } from '../formatters/formatterUtilities.js';
 import type {
   GridOption as BaseGridOption,
@@ -65,6 +67,7 @@ import type {
   OnColumnsResizedEventArgs,
   OnCompositeEditorChangeEventArgs,
   OnDblClickEventArgs,
+  OnDragReplaceCellsEventArgs,
   OnFooterClickEventArgs,
   OnFooterContextMenuEventArgs,
   OnFooterRowCellRenderedEventArgs,
@@ -87,16 +90,18 @@ import type {
 } from '../interfaces/index.js';
 import {
   preClickClassName,
+  SlickDragExtendHandle,
   SlickEvent,
   SlickEventData,
   SlickGlobalEditorLock,
   SlickRange,
+  SlickSelectionUtils,
   Utils,
   type BasePubSub,
   type SlickEditorLock,
 } from './slickCore.js';
 import type { SlickDataView } from './slickDataview.js';
-import { Draggable, MouseWheel, Resizable } from './slickInteractions';
+import { Draggable, MouseWheel, Resizable } from './slickInteractions.js';
 import { applyHtmlToElement, runOptionalHtmlSanitizer } from './utils.js';
 
 /**
@@ -190,6 +195,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   onSort: SlickEvent<SingleColumnSort | MultiColumnSort>;
   onValidationError: SlickEvent<OnValidationErrorEventArgs>;
   onViewportChanged: SlickEvent<{ grid: SlickGrid }>;
+  onDragReplaceCells: SlickEvent<OnDragReplaceCellsEventArgs>;
 
   // ---
   // protected variables
@@ -332,6 +338,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected initialized = false;
   protected _container!: HTMLElement;
   protected uid = `slickgrid_${Math.round(1000000 * Math.random())}`;
+  protected dragReplaceEl: SlickDragExtendHandle = new SlickDragExtendHandle(this.uid);
   protected _focusSink!: HTMLDivElement;
   protected _focusSink2!: HTMLDivElement;
   protected _groupHeaders: HTMLDivElement[] = [];
@@ -417,9 +424,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected lastRenderedScrollLeft = 0;
   protected prevScrollLeft = 0;
   protected scrollLeft = 0;
+  protected selectionBottomRow!: number;
+  protected selectionRightCell!: number;
 
   protected selectionModel?: SelectionModel;
   protected selectedRows: number[] = [];
+  protected selectedRanges: SlickRange[] = [];
 
   protected plugins: SlickPlugin[] = [];
   protected cellCssClasses: CssStyleHash = {};
@@ -590,6 +600,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.onSort = new SlickEvent<SingleColumnSort | MultiColumnSort>('onSort', externalPubSub);
     this.onValidationError = new SlickEvent<OnValidationErrorEventArgs>('onValidationError', externalPubSub);
     this.onViewportChanged = new SlickEvent<{ grid: SlickGrid }>('onViewportChanged', externalPubSub);
+    this.onDragReplaceCells = new SlickEvent<OnDragReplaceCellsEventArgs>('onDragReplaceCells', externalPubSub);
 
     this.initialize(options);
   }
@@ -972,21 +983,17 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       // calculate the diff so we can set consistent sizes
       this.measureCellPaddingAndBorder();
 
-      // for usability reasons, all text selection in SlickGrid are disabled
-      // with the exception of input and textarea elements (selection must
-      // be enabled there so that editors work as expected); note that
-      // selection in grid cells (grid body) is already unavailable in
-      // all browsers except IE
-      this.disableSelection(this._headers); // disable all text selection in header (including input and textarea)
+      // disable all text selection in header (including input and textarea)
+      this.disableSelection(this._headers);
 
       if (!this._options.enableTextSelectionOnCells) {
         // disable text selection in grid cells except in input and textarea elements
-        // (this is IE-specific, because selectstart event will only fire in IE)
         this._viewport.forEach((view) => {
           this._bindingEventService.bind(view, 'selectstart', (event: Event) => {
             if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
               return;
             }
+            event.preventDefault();
           });
         });
       }
@@ -1074,7 +1081,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (Draggable) {
         this.slickDraggableInstance = Draggable({
           containerElement: this._container,
-          allowDragFrom: 'div.slick-cell',
+          allowDragFrom: `div.slick-cell, div.slick-cell *, div.${this.dragReplaceEl.cssClass}`,
+          dragFromClassDetectArr: [{ tag: 'dragReplaceHandle', id: this.dragReplaceEl.id }],
           // the slick cell parent must always contain `.dnd` and/or `.cell-reorder` class to be identified as draggable
           allowDragFromClosest: 'div.slick-cell.dnd, div.slick-cell.cell-reorder',
           preventDragFromKeys: this._options.preventDragFromKeys,
@@ -2145,6 +2153,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       ghostClass: 'slick-sortable-placeholder',
       draggable: '.slick-header-column',
       dragoverBubble: false,
+      preventOnFilter: false, // allow column to be resized even when they are not orderable
       revertClone: true,
       scroll: !this.hasFrozenColumns(), // enable auto-scroll
       // lock unorderable columns by using a combo of filter + onMove
@@ -3073,6 +3082,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     let reRender = false;
     for (i = 0; i < this.columns.length; i++) {
+      c = this.columns[i];
       if (c && !c.hidden) {
         if (this.columns[i].rerenderOnResize && this.columns[i].width !== widths[i]) {
           reRender = true;
@@ -3155,7 +3165,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     let w = 0;
     let rule: any;
     for (let i = 0; i < this.columns.length; i++) {
-      if (!this.columns[i]?.hidden) {
+      if (this.columns[i] && !this.columns[i].hidden) {
         w = this.columns[i].width || 0;
 
         rule = this.getColumnCssRules(i);
@@ -3218,6 +3228,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const numberCols = this._options.numberedMultiColumnSort && this.sortColumns.length > 1;
     this._headers.forEach((header) => {
       let indicators = header.querySelectorAll('.slick-header-column-sorted');
+      // v8 ignore next
       indicators.forEach((indicator) => indicator.classList.remove('slick-header-column-sorted'));
 
       indicators = header.querySelectorAll('.slick-sort-indicator');
@@ -3260,7 +3271,31 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected handleSelectedRangesChanged(e: SlickEventData, ranges: SlickRange[]): void {
     const ne = e.getNativeEvent<CustomEvent>();
+    const selectionMode: CellSelectionMode = ne?.detail?.selectionMode ?? '';
+    let addDragHandle = !!ne?.detail?.addDragHandle;
+
+    const selectionType = this.getSelectionModel()?.getOptions()?.selectionType;
+    addDragHandle = selectionType === 'cell' || selectionType === 'mixed';
+
+    // drag and replace functionality
+    const prevSelectedRanges = this.selectedRanges.slice(0);
+    this.selectedRanges = ranges;
+
+    if (selectionMode === 'REP' && prevSelectedRanges?.length === 1 && this.selectedRanges?.length === 1) {
+      const prevSelectedRange = prevSelectedRanges[0];
+      const selectedRange = this.selectedRanges[0];
+
+      // check range has expanded
+      if (SlickSelectionUtils.copyRangeIsLarger(prevSelectedRange, selectedRange)) {
+        this.triggerEvent(this.onDragReplaceCells, { prevSelectedRange, selectedRange });
+        this.invalidate();
+      }
+    }
+
     const previousSelectedRows = this.selectedRows.slice(0); // shallow copy previously selected rows for later comparison
+    this.selectionBottomRow = -1;
+    this.selectionRightCell = -1;
+    this.dragReplaceEl.removeEl();
     this.selectedRows = [];
     const hash: CssStyleHash = {};
     for (let i = 0; i < ranges.length; i++) {
@@ -3276,9 +3311,20 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           }
         }
       }
+      if (this.selectionBottomRow < ranges[i].toRow) {
+        this.selectionBottomRow = ranges[i].toRow;
+      }
+      if (this.selectionRightCell < ranges[i].toCell) {
+        this.selectionRightCell = ranges[i].toCell;
+      }
     }
 
     this.setCellCssStyles(this._options.selectedCellCssClass || '', hash);
+
+    if (this.selectionBottomRow >= 0 && this.selectionRightCell >= 0 && addDragHandle) {
+      const lowerRightCell = this.getCellNode(this.selectionBottomRow, this.selectionRightCell);
+      this.dragReplaceEl.createEl(lowerRightCell);
+    }
 
     // check if the selected rows have changed (index order isn't important, so we'll sort them both before comparing them)
     if (!this.arrayEquals(previousSelectedRows.sort(), this.selectedRows.sort())) {
@@ -3359,17 +3405,20 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /**
    * Sets grid columns. Column headers will be recreated and all rendered rows will be removed. To rerender the grid (if necessary), call render().
-   * @param {Column[]} columns An array of column definitions.
+   * @param {Column[]} newColumns An array of column definitions.
+   * @param {boolean} [waitNextCycle=false] - should we wait for a microtask cycle before updating column headers
    */
-  setColumns(columns: C[]): void {
-    this.triggerEvent(this.onBeforeSetColumns, { previousColumns: this.columns, newColumns: columns, grid: this });
-    const isValidFreeze = this.validateSetColumnFreeze(columns);
-    if (!isValidFreeze) {
+  setColumns(newColumns: C[], waitNextCycle = false): void {
+    this.triggerEvent(this.onBeforeSetColumns, { previousColumns: this.columns, newColumns, grid: this });
+    if (!this.validateSetColumnFreeze(newColumns)) {
       return; // exit early if freeze is invalid
     }
-    this.columns = columns;
-    this.updateColumnsInternal();
-    this.triggerEvent(this.onAfterSetColumns, { newColumns: columns, grid: this });
+    this.columns = newColumns;
+    const updateCols = () => {
+      this.updateColumnsInternal();
+      this.triggerEvent(this.onAfterSetColumns, { newColumns, grid: this });
+    };
+    waitNextCycle ? queueMicrotaskOrSetTimeout(() => updateCols()) : updateCols();
   }
 
   /** Update columns for when a hidden property has changed but the column list itself has not changed. */
@@ -4005,6 +4054,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         ? formatterResult
         : (formatterResult as FormatterResultWithHtml).html || (formatterResult as FormatterResultWithText).text;
       applyHtmlToElement(cellDiv, cellResult as string | HTMLElement, this._options);
+
+      // add drag-to-replace handle
+      const selectionType = this.getSelectionModel()?.getOptions()?.selectionType;
+      const addDragHandle = selectionType === 'cell' || selectionType === 'mixed';
+      if (row === this.selectionBottomRow && cell === this.selectionRightCell && this._options.showCellSelection && addDragHandle) {
+        this.dragReplaceEl.createEl(cellDiv);
+      }
     }
     divRow.appendChild(cellDiv);
 
@@ -5404,9 +5460,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
     };
 
-    const dequeue = () => {
-      queued = false;
-    };
+    const dequeue = () => (queued = false);
 
     const blockAndExecute = () => {
       blocked = true;
@@ -5674,6 +5728,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       return false;
     }
 
+    if (this.currentEditor && !this.getEditorLock().commitCurrentEdit()) {
+      return false;
+    }
+
     const retval = this.triggerEvent(this.onDragStart, dd, e);
     if (retval.isImmediatePropagationStopped()) {
       return retval.getReturnValue();
@@ -5772,6 +5830,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
     }
 
+    const cell = this.getActiveCell();
+    const isChar = /^[\p{L}\p{N}\p{P}\p{S}\s]$/u.test(e.key); // make sure it's a character being typed
+    if (!handled && this._options.autoEditByKeypress && cell && isChar && this.isCellEditable(cell.row, cell.cell) && !this.currentEditor) {
+      this.makeActiveCellEditable(undefined, false, e);
+    }
+
     if (handled) {
       // the event has been handled so don't let parent element (bubbling/propagation) or browser (default) handle it
       e.stopPropagation();
@@ -5810,7 +5874,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (!this.getEditorLock()?.isActive() || this.getEditorLock()?.commitCurrentEdit()) {
         this.scrollRowIntoView(cell.row, false);
 
-        const preClickModeOn = (e as DOMEvent<HTMLDivElement>).target?.className === preClickClassName;
+        const preClickModeOn = !!(e as DOMEvent<HTMLDivElement>).target?.classList?.contains(preClickClassName);
         const column = this.columns[cell.cell];
         const suppressActiveCellChangedEvent = !!(
           this._options.editable &&
@@ -6214,12 +6278,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       if (this._options.showCellSelection) {
         // make sure to never activate more than 1 cell at a time
+        // v8 ignore next
         document.querySelectorAll('.slick-cell.active').forEach((node) => node.classList.remove('active'));
         this.activeCellNode.classList.add('active');
         this.rowsCache[this.activeRow]?.rowNode?.forEach((node) => node.classList.add('active'));
       }
 
-      if (this._options.editable && opt_editMode && this.isCellPotentiallyEditable(this.activeRow, this.activeCell)) {
+      if (opt_editMode && this.isCellEditable(this.activeRow, this.activeCell)) {
         if (this._options.asyncEditorLoading) {
           clearTimeout(this.h_editorLoader);
           this.h_editorLoader = setTimeout(() => {
@@ -6244,6 +6309,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     // }
   }
 
+  /** Check if cell is editable and check if grid is also editable */
+  protected isCellEditable(row: number, cell: number): boolean {
+    return !!(this._options.editable && this.isCellPotentiallyEditable(row, cell));
+  }
+
+  /** Check if cell is potentially editable but without validating that the grid is editable */
   protected isCellPotentiallyEditable(row: number, cell: number): boolean {
     const dataLength = this.getDataLength();
     // is the data for this row actually loaded?
@@ -7295,7 +7366,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     if (self.currentEditor) {
       if (self.currentEditor.isValueChanged()) {
-        const validationResults = self.currentEditor.validate();
+        const validationResults = self.currentEditor.validate(undefined, {
+          rowIndex: self.activeRow,
+          cellIndex: self.activeCell,
+        });
 
         if (validationResults.valid) {
           const row = self.activeRow;
