@@ -2,7 +2,7 @@ import type { SlickGrid } from '../core/index.js';
 import type { Observable, Subject } from '../services/rxjsFacade.js';
 import type { Column, Formatter } from './index.js';
 
-type PostProcessOutput<P> = P & { [asyncParamsPropName: string]: any };
+type PostProcessOutput<P> = P & { [asyncParamsPropName: string]: any; };
 export type AsyncProcess<T = any> = (
   row: number,
   cell: number,
@@ -97,6 +97,12 @@ export interface CustomTooltipOption<T = any> {
 
   /** defaults to `normal`, optionally change the style `white-space` when displaying tooltip with formatter (tooltip or regular formatter) */
   whiteSpace?: string;
+
+  /** defaults to false, when set to true the tooltip will persist on hover instead of hiding immediately on mouse leave */
+  persistOnHover?: boolean;
+
+  /** defaults to 3000 milliseconds, delay before hiding the tooltip. Only works in tandem with persistOnHover set to true */
+  autoHideDelay?: number;
 
   // --
   // callback functions

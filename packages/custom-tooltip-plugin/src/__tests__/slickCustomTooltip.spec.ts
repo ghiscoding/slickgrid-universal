@@ -91,6 +91,7 @@ describe('SlickCustomTooltip plugin', () => {
       offsetTopBottom: 8,
       regularTooltipWhiteSpace: 'pre-wrap',
       whiteSpace: 'normal',
+      autoHideDelay: 3000,
     };
     plugin.init(gridStub, container);
     plugin.setOptions(mockOptions);
@@ -796,5 +797,142 @@ describe('SlickCustomTooltip plugin', () => {
     const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipElm).toBeTruthy();
     expect(tooltipElm.textContent).toBe('header row tooltip text');
+  });
+
+  it('should keep tooltip open when mouse hovers over it with persistOnHover enabled', () => {
+    const cellNode = document.createElement('div');
+    cellNode.className = 'slick-cell l2 r2';
+    cellNode.setAttribute('title', 'tooltip text');
+    const mockColumns = [{ id: 'firstName', field: 'firstName' }] as Column[];
+    vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+    vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+    vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
+
+    plugin.init(gridStub, container);
+    plugin.setOptions({ useRegularTooltip: true, persistOnHover: true });
+    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
+
+    const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+    expect(tooltipElm).toBeTruthy();
+    expect(tooltipElm.textContent).toBe('tooltip text');
+
+    const mouseEnterEvent = new Event('mouseenter');
+    tooltipElm.dispatchEvent(mouseEnterEvent);
+    gridStub.onMouseLeave.notify({ grid: gridStub } as any);
+
+    // Fake time passed to check that tooltip is still open
+    vi.advanceTimersByTime(2000);
+    const tooltipStillVisible = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+    expect(tooltipStillVisible).toBeTruthy();
+  });
+
+  it('should hide tooltip after mouse leaves both cell and tooltip with persistOnHover enabled', () => {
+    const cellNode = document.createElement('div');
+    cellNode.className = 'slick-cell l2 r2';
+    cellNode.setAttribute('title', 'tooltip text');
+    const mockColumns = [{ id: 'firstName', field: 'firstName' }] as Column[];
+    vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+    vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+    vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
+
+    plugin.init(gridStub, container);
+    plugin.setOptions({ useRegularTooltip: true, persistOnHover: true });
+    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
+
+    const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+    expect(tooltipElm).toBeTruthy();
+
+    const mouseLeaveEvent = new Event('mouseleave');
+    tooltipElm.dispatchEvent(mouseLeaveEvent);
+
+    const tooltipAfterLeave = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+    expect(tooltipAfterLeave).toBeFalsy();
+  });
+
+  it('should auto-hide tooltip after autoHideDelay when persistOnHover is enabled', () => {
+    const cellNode = document.createElement('div');
+    cellNode.className = 'slick-cell l2 r2';
+    cellNode.setAttribute('title', 'tooltip text');
+    const mockColumns = [{ id: 'firstName', field: 'firstName' }] as Column[];
+    vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+    vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+    vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
+
+    plugin.init(gridStub, container);
+    plugin.setOptions({ useRegularTooltip: true, persistOnHover: true, autoHideDelay: 3000 });
+    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
+
+    const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+    expect(tooltipElm).toBeTruthy();
+
+    const mouseEnterEvent = new Event('mouseenter');
+    tooltipElm.dispatchEvent(mouseEnterEvent);
+
+    // Advance time to just before auto-hide
+    vi.advanceTimersByTime(2999);
+    let tooltipStillVisible = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+    expect(tooltipStillVisible).toBeTruthy();
+
+    // Advance time past auto-hide delay
+    vi.advanceTimersByTime(1);
+    const tooltipAfterAutoHide = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+    expect(tooltipAfterAutoHide).toBeFalsy();
+  });
+
+  it('should hide tooltip immediately when persistOnHover is disabled', () => {
+    const cellNode = document.createElement('div');
+    cellNode.className = 'slick-cell l2 r2';
+    cellNode.setAttribute('title', 'tooltip text');
+    const mockColumns = [{ id: 'firstName', field: 'firstName' }] as Column[];
+    vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+    vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+    vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
+
+    plugin.init(gridStub, container);
+    plugin.setOptions({ useRegularTooltip: true, persistOnHover: false });
+    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
+
+    const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+    expect(tooltipElm).toBeTruthy();
+
+    gridStub.onMouseLeave.notify({ grid: gridStub } as any);
+
+    const tooltipAfterLeave = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+    expect(tooltipAfterLeave).toBeFalsy();
+  });
+
+  it('should cancel hide timeout when mouse re-enters tooltip with persistOnHover enabled', () => {
+    const cellNode = document.createElement('div');
+    cellNode.className = 'slick-cell l2 r2';
+    cellNode.setAttribute('title', 'tooltip text');
+    const mockColumns = [{ id: 'firstName', field: 'firstName' }] as Column[];
+    vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+    vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+    vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
+
+    plugin.init(gridStub, container);
+    plugin.setOptions({ useRegularTooltip: true, persistOnHover: true });
+    gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
+
+    const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+    expect(tooltipElm).toBeTruthy();
+
+    gridStub.onMouseLeave.notify({ grid: gridStub } as any);
+
+    // simulate quick cell re-entry before hide timeout completes (flickering mouse movements)
+    vi.advanceTimersByTime(50);
+    const mouseEnterEvent = new Event('mouseenter');
+    tooltipElm.dispatchEvent(mouseEnterEvent);
+
+    // Advance past original timeout
+    vi.advanceTimersByTime(100);
+
+    const tooltipStillVisible = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+    expect(tooltipStillVisible).toBeTruthy();
   });
 });
