@@ -52,6 +52,7 @@ import type {
   OnRowsChangedEventArgs,
   OnRowsOrCountChangedEventArgs,
   OnScrollEventArgs,
+  OnSearchChangeEventArgs,
   OnSelectedRowIdsChangedEventArgs,
   OnSelectedRowsChangedEventArgs,
   OnSetItemsCalledEventArgs,
@@ -105,7 +106,6 @@ export interface AngularSlickgridOutputs {
   onAddNewRow: (e: OnAddNewRowEventArgs) => void;
   onAutosizeColumns: (e: OnAutosizeColumnsEventArgs) => void;
   onBeforeAppendCell: (e: OnBeforeAppendCellEventArgs) => void;
-  onBeforeSearchChange: (e: OnCellChangeEventArgs) => boolean | void;
   onBeforeCellEditorDestroy: (e: OnBeforeCellEditorDestroyEventArgs) => void;
   onBeforeColumnsResize: (e: OnBeforeColumnsResizeEventArgs) => void;
   onBeforeDestroy: (e: { grid: SlickGrid }) => void;
@@ -182,6 +182,7 @@ export interface AngularSlickgridOutputs {
   onAfterExportToTextFile?: (e: ExportTextDownloadOption) => void;
   onBeforeFilterChange: (e: CurrentFilter[]) => void;
   onBeforeFilterClear: (e: { columnId: string } | boolean) => void;
+  onBeforeSearchChange: (e: OnSearchChangeEventArgs) => boolean | void;
   onBeforeSortChange: (e: Array<ColumnSort & { clearSortTriggered?: boolean }>) => void;
   onContextMenuClearGrouping: () => void;
   onContextMenuCollapseAllGroups: () => void;
