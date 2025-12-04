@@ -2,7 +2,7 @@ import type { SlickGrid } from '../core/index.js';
 import type { Observable, Subject } from '../services/rxjsFacade.js';
 import type { Column, Formatter } from './index.js';
 
-type PostProcessOutput<P> = P & { [asyncParamsPropName: string]: any; };
+type PostProcessOutput<P> = P & { [asyncParamsPropName: string]: any };
 export type AsyncProcess<T = any> = (
   row: number,
   cell: number,
