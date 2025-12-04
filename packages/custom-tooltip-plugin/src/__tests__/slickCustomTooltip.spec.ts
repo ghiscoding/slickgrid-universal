@@ -1027,6 +1027,37 @@ describe('SlickCustomTooltip plugin', () => {
     expect(tooltipAfterSecondTimeout).toBeFalsy();
   });
 
+  it("should dispose any dangling timeouts when plugin is disposed", () => {
+    const cellNode = document.createElement('div');
+    cellNode.className = 'slick-cell l2 r2';
+    cellNode.setAttribute('title', 'tooltip text');
+    const mockColumns = [{ id: 'firstName', field: 'firstName' }] as Column[];
+    vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+    vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+    vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
+
+    plugin.init(gridStub, container);
+    plugin.setOptions({ useRegularTooltip: true, persistOnHover: true });
+
+    const clearTimeoutSpy = vi.spyOn(global, 'clearTimeout');
+
+    (plugin as any)._hideTooltipTimeout = 123 as any; // simulate existing timeout
+    (plugin as any)._autoHideTimeout = 456 as any; // simulate existing timeout
+
+    plugin.dispose();
+
+    expect(clearTimeoutSpy).toHaveBeenCalledWith(123);
+    expect(clearTimeoutSpy).toHaveBeenCalledWith(456);
+    clearTimeoutSpy.mockClear();
+
+    plugin.setOptions({ useRegularTooltip: true, persistOnHover: false });
+    plugin.dispose();
+
+    expect(clearTimeoutSpy).not.toHaveBeenCalledWith(123);
+    expect(clearTimeoutSpy).not.toHaveBeenCalledWith(456);
+  });
+
   it('should not hide tooltip when mouse is over tooltip after timeout expires', () => {
     const cellNode = document.createElement('div');
     cellNode.className = 'slick-cell l2 r2';
