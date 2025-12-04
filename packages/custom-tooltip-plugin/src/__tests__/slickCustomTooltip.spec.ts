@@ -1027,7 +1027,7 @@ describe('SlickCustomTooltip plugin', () => {
     expect(tooltipAfterSecondTimeout).toBeFalsy();
   });
 
-  it("should dispose any dangling timeouts when plugin is disposed", () => {
+  it('should dispose any dangling timeouts when plugin is disposed', () => {
     const cellNode = document.createElement('div');
     cellNode.className = 'slick-cell l2 r2';
     cellNode.setAttribute('title', 'tooltip text');
