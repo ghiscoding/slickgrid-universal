@@ -8,7 +8,8 @@ export interface CustomPagerComponentRef {
   renderPagination: () => void;
 }
 
-const CustomPagerComponent = React.forwardRef<CustomPagerComponentRef, any>((_props, ref) => {
+const CustomPagerComponent = (_props: any) => {
+  const { ref /*, ...props */ } = _props;
   const [currentPagination, setCurrentPagination] = useState<PaginationMetadata>({} as PaginationMetadata);
   const [isLeftPaginationDisabled, setIsLeftPaginationDisabled] = useState(false);
   const [isRightPaginationDisabled, setIsRightPaginationDisabled] = useState(false);
@@ -174,6 +175,6 @@ const CustomPagerComponent = React.forwardRef<CustomPagerComponentRef, any>((_pr
       </div>
     </div>
   );
-});
+};
 
 export default CustomPagerComponent;
