@@ -1,3 +1,4 @@
+import { BindingEventService } from '@slickgrid-universal/binding';
 import type {
   CancellablePromiseWrapper,
   Column,
@@ -84,12 +85,14 @@ export class SlickCustomTooltip {
     regularTooltipWhiteSpace: 'pre-line',
     whiteSpace: 'normal',
     autoHideDelay: 3000,
+    persistOnHover: true,
   } as CustomTooltipOption;
   protected _grid!: SlickGrid;
   protected _eventHandler: SlickEventHandler;
-  protected _hideTooltipTimeout?: NodeJS.Timeout;
-  protected _autoHideTimeout?: NodeJS.Timeout;
+  protected _hideTooltipTimeout?: any;
+  protected _autoHideTimeout?: any;
   protected _isMouseOverTooltip = false;
+  protected _bindEventService: BindingEventService = new BindingEventService();
 
   constructor() {
     this._eventHandler = new SlickEventHandler();
@@ -168,7 +171,7 @@ export class SlickCustomTooltip {
   }
 
   protected handleOnMouseLeave(): void {
-    if (this.addonOptions?.persistOnHover === true) {
+    if (this.addonOptions?.persistOnHover === false) {
       if (this._hideTooltipTimeout) {
         clearTimeout(this._hideTooltipTimeout);
       }
@@ -191,7 +194,7 @@ export class SlickCustomTooltip {
     this._cancellablePromise?.cancel();
     this._observable$?.unsubscribe();
 
-    if (this.addonOptions?.persistOnHover === true) {
+    if (this.addonOptions?.persistOnHover === false) {
       if (this._hideTooltipTimeout) {
         clearTimeout(this._hideTooltipTimeout);
         this._hideTooltipTimeout = undefined;
@@ -202,6 +205,7 @@ export class SlickCustomTooltip {
       }
 
       this._isMouseOverTooltip = false;
+      this._bindEventService.unbindAll();
     }
 
     const cssClasses = classNameToList(this.className).join('.');
@@ -518,8 +522,8 @@ export class SlickCustomTooltip {
     if (finalOutputText.toString()) {
       document.body.appendChild(this._tooltipElm);
 
-      if (this.addonOptions?.persistOnHover === true) {
-        this._tooltipElm.addEventListener('mouseenter', () => {
+      if (this.addonOptions?.persistOnHover === false) {
+        this._bindEventService.bind(this._tooltipElm, 'mouseenter', () => {
           this._isMouseOverTooltip = true;
           if (this._hideTooltipTimeout) {
             clearTimeout(this._hideTooltipTimeout);
@@ -527,7 +531,7 @@ export class SlickCustomTooltip {
           }
         });
 
-        this._tooltipElm.addEventListener('mouseleave', () => {
+        this._bindEventService.bind(this._tooltipElm, 'mouseleave', () => {
           this._isMouseOverTooltip = false;
           this.hideTooltip();
         });
