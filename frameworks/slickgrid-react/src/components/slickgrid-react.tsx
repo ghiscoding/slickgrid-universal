@@ -22,6 +22,7 @@ import {
   SlickGrid,
   SlickgridConfig,
   SlickGroupItemMetadataProvider,
+  sortPresetColumns,
   SortService,
   TreeDataService,
   type AutocompleterEditor,
@@ -1450,9 +1451,9 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
         // We will use this when doing a resize by cell content, if user provided a `width` it won't override it.
         gridPresetColumns.forEach((col) => (col.originalWidth = col.width));
 
-        // finally set the new presets columns (including checkbox selector if need be)
-        this.grid.setColumns(gridPresetColumns);
-        this.sharedService.visibleColumns = gridPresetColumns;
+        // finally sort and set the new presets columns (including checkbox selector if need be)
+        const orderedColumns = sortPresetColumns(this._columns, gridPresetColumns);
+        this.grid.setColumns(orderedColumns);
       }
     }
   }

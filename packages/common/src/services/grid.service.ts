@@ -99,7 +99,7 @@ export class GridService {
     // SlickGrid seems to be somehow resetting the columns to their original positions,
     // so let's re-fix them to the position we kept as reference
     if (resetColumns && Array.isArray(visibleColumns)) {
-      this.sharedService.slickGrid.setColumns(visibleColumns);
+      this.sharedService.slickGrid.updateColumns();
     }
   }
 
@@ -238,12 +238,7 @@ export class GridService {
 
       if (colIndexFound >= 0) {
         const visibleColumns = arrayRemoveItemByIndex<Column>(currentColumns, colIndexFound);
-
-        // do we want to apply the new columns in the grid
-        if (options?.applySetColumns) {
-          this.sharedService.visibleColumns = visibleColumns;
-          this._grid.setColumns(visibleColumns);
-        }
+        this._grid.updateColumnById(columnId, { hidden: true }, options.applySetColumns !== false);
 
         const columnIndexFromAllColumns = this.sharedService.allColumns.findIndex((col) => col.id === columnId);
         if (columnIndexFromAllColumns) {
@@ -270,19 +265,16 @@ export class GridService {
    */
   hideColumnByIds(columnIds: Array<string | number>, options?: HideColumnOption): void {
     if (Array.isArray(columnIds)) {
-      const finalVisibileColumns = this._grid.getColumns().filter((c) => !columnIds.includes(c.id));
+      const finalVisibleColumns = this._grid.getColumns().filter((c) => !columnIds.includes(c.id));
       options = { ...HideColumnOptionDefaults, ...options };
+
+      // hide each column by its id but wait after the for loop to auto resize columns in the grid
       for (const columnId of columnIds) {
-        // hide each column by its id but wait after the for loop to auto resize columns in the grid
         this.hideColumnById(columnId, { ...options, triggerEvent: false, applySetColumns: false, autoResizeColumns: false });
       }
 
-      // after looping through all columns, we can apply the leftover visible columns in the grid & keep shared ref
-      this.sharedService.visibleColumns = finalVisibileColumns;
-      this._grid.setColumns(finalVisibileColumns);
-
       // execute common grid commands when enabled
-      this.executeVisibilityCommands(options, ['onHideColumns'], finalVisibileColumns);
+      this.executeVisibilityCommands(options, ['onHideColumns'], finalVisibleColumns);
     }
   }
 
@@ -294,9 +286,11 @@ export class GridService {
   showColumnByIds(columnIds: Array<string | number>, options?: ShowColumnOption): void {
     if (this._grid) {
       options = { ...ShowColumnOptionDefaults, ...options };
-      const columns = this.sharedService.allColumns.filter((c) => columnIds.includes(c.id));
-      this._grid.setColumns(columns);
-      this.sharedService.visibleColumns = columns;
+      this._grid.getColumns().forEach((col) => {
+        this._grid.updateColumnById(col.id, { hidden: !columnIds.includes(col.id) });
+      });
+      this._grid.updateColumns();
+      this.sharedService.visibleColumns = this._grid.getVisibleColumns();
 
       // execute common grid commands when enabled
       this.executeVisibilityCommands(options, ['onShowColumns'], this.sharedService.visibleColumns);

@@ -17,11 +17,9 @@ import type {
 } from '@slickgrid-universal/common';
 import {
   autoAddEditorFormatterToColumnsWithEditor,
-  // services
   BackendUtilityService,
   collectionObserver,
   CollectionService,
-  // utilities
   emptyElement,
   ExtensionService,
   ExtensionUtility,
@@ -42,6 +40,7 @@ import {
   SlickGrid,
   SlickgridConfig,
   SlickGroupItemMetadataProvider,
+  sortPresetColumns,
   SortService,
   TreeDataService,
   unsubscribeAll,
@@ -1419,9 +1418,9 @@ export class SlickVanillaGridBundle<TData = any> {
         // We will use this when doing a resize by cell content, if user provided a `width` it won't override it.
         gridPresetColumns.forEach((col) => (col.originalWidth = col.width));
 
-        // finally set the new presets columns (including checkbox selector if need be)
-        this.slickGrid.setColumns(gridPresetColumns);
-        this.sharedService.visibleColumns = gridPresetColumns;
+        // finally sort and set the new presets columns (including checkbox selector if need be)
+        const orderedColumns = sortPresetColumns(this.columnDefinitions, gridPresetColumns);
+        this.slickGrid.setColumns(orderedColumns);
       }
     }
   }

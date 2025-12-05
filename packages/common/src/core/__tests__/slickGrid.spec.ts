@@ -3002,7 +3002,7 @@ describe('SlickGrid core file', () => {
     it('should be able to calculate a new frozen column index when "age" column is found at position from new columns', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
       const setOptionSpy = vi.spyOn(grid, 'setOptions');
-      const frozenColumnIndex = grid.calculateFrozenColumnIndexById(columns, 'age');
+      const frozenColumnIndex = grid.calculateFrozenColumnIndexById('age');
 
       expect(frozenColumnIndex).toBe(2);
       expect(setOptionSpy).not.toHaveBeenCalled();
@@ -3011,7 +3011,7 @@ describe('SlickGrid core file', () => {
     it('should be able to calculate a different frozen column index when "age" column is calculated at different position from new columns', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenColumn: 1 });
       const setOptionSpy = vi.spyOn(grid, 'setOptions');
-      const frozenColumnIndex = grid.calculateFrozenColumnIndexById(columns, 'age');
+      const frozenColumnIndex = grid.calculateFrozenColumnIndexById('age');
 
       expect(frozenColumnIndex).toBe(2);
       expect(setOptionSpy).not.toHaveBeenCalled();
@@ -3020,7 +3020,7 @@ describe('SlickGrid core file', () => {
     it('should be able to calculate a different frozen column index and apply the change when "age" column is found at different position and last argument is enabled', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenColumn: 1 });
       const setOptionSpy = vi.spyOn(grid, 'setOptions');
-      const frozenColumnIndex = grid.calculateFrozenColumnIndexById(columns, 'age', true);
+      const frozenColumnIndex = grid.calculateFrozenColumnIndexById('age', true);
 
       expect(frozenColumnIndex).toBe(2);
       expect(setOptionSpy).toHaveBeenCalledWith({ frozenColumn: 2 });

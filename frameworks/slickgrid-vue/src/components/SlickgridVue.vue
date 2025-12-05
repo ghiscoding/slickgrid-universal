@@ -24,6 +24,7 @@ import {
   SlickGrid,
   SlickgridConfig,
   SlickGroupItemMetadataProvider,
+  sortPresetColumns,
   SortService,
   TreeDataService,
   type AutocompleterEditor,
@@ -1313,9 +1314,9 @@ function loadColumnPresetsWhenDatasetInitialized() {
       // We will use this when doing a resize by cell content, if user provided a `width` it won't override it.
       gridPresetColumns.forEach((col) => (col.originalWidth = col.width));
 
-      // finally set the new presets columns (including checkbox selector if need be)
-      grid?.setColumns(gridPresetColumns);
-      sharedService.visibleColumns = gridPresetColumns;
+      // finally sort and set the new presets columns (including checkbox selector if need be)
+      const orderedColumns = sortPresetColumns(_columnDefinitions.value, gridPresetColumns);
+      grid?.setColumns(orderedColumns);
     }
   }
 }

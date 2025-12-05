@@ -431,6 +431,7 @@ export class ExtensionService {
   hideColumn(column: Column): void {
     if (typeof this.sharedService?.slickGrid?.getColumns === 'function') {
       const columnIndex = this.sharedService.slickGrid.getColumnIndex(column.id);
+      // TODO: need to remove setColumns(), verify against HeaderMenu plugin
       this.sharedService.visibleColumns = this.removeColumnByIndex(this.sharedService.slickGrid.getColumns(), columnIndex);
       this.sharedService.slickGrid.setColumns(this.sharedService.visibleColumns, true);
     }

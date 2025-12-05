@@ -645,7 +645,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       .find('.slick-header-columns')
       .children()
       .each(($child, index) => {
-        if (index <= 5) {
+        if (index <= 7) {
           expect($child.text()).to.eq(expectedFullPickerTitles[index]);
         }
       });
@@ -828,7 +828,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
   });
 
   it('should open column picker and expect all columns to be translated to French', () => {
-    const originalColumns = ['Titre', 'Action', '% Achevée', 'Durée', 'Terminé', 'Fin', 'Début', 'Prerequisites', 'Titre'];
+    const originalColumns = ['Titre', 'Action', '% Achevée', 'Fin', 'Durée', 'Terminé', 'Début', 'Prerequisites', 'Titre'];
 
     cy.get('.grid7').find('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
 
@@ -884,7 +884,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
   });
 
   it('should open Grid Menu and expect new columns to be added to the column picker section, also "Finish" to be unchecked while "Duration" to be at new position', () => {
-    const updatedTitles = ['', '', 'Titre', 'Action', '% Achevée', 'Durée', 'Terminé', 'Début', 'Prerequisites', 'Titre'];
+    const updatedTitles = ['', '', 'Titre', 'Action', '% Achevée', 'Fin', 'Durée', 'Terminé', 'Début', 'Prerequisites', 'Titre'];
 
     cy.get('.grid7').find('button.slick-grid-menu-button').click({ force: true });
 

@@ -1,5 +1,5 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { arrayRemoveItemByIndex, classNameToList, createDomElement, toKebabCase } from '@slickgrid-universal/utils';
+import { classNameToList, createDomElement, toKebabCase } from '@slickgrid-universal/utils';
 import type { SlickEventData } from '../core/slickCore.js';
 import type { EmitterType } from '../enums/index.js';
 import type { ExtensionUtility } from '../extensions/extensionUtility.js';
@@ -72,9 +72,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
     // when setColumns is called (could be via toggle filtering/sorting or anything else),
     // we need to recreate header menu items custom commands array before the `onHeaderCellRendered` gets called
-    this._eventHandler.subscribe(this.grid.onBeforeSetColumns, (e, args) => {
-      this.sharedService.gridOptions.headerMenu = this.addHeaderMenuCustomCommands(args.newColumns);
-    });
+    this._eventHandler.subscribe(this.grid.onBeforeSetColumns, (_e, args) => this.recreateHeaderMenu(args.newColumns));
     this._eventHandler.subscribe(this.grid.onHeaderCellRendered, this.handleHeaderCellRendered.bind(this));
     this._eventHandler.subscribe(this.grid.onBeforeHeaderCellDestroy, this.handleBeforeHeaderCellDestroy.bind(this));
     this._eventHandler.subscribe(this.grid.onClick, this.hideMenu.bind(this));
@@ -98,21 +96,19 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
   hideColumn(column: Column): void {
     if (this.grid?.getColumnIndex) {
       const columnIndex = this.grid.getColumnIndex(column.id);
-      const currentVisibleColumns = this.grid.getColumns();
 
       // if we're using frozen columns, we need to readjust pinning when the new hidden column is on the left pinning container
       // we need to do this because SlickGrid freezes by index and has no knowledge of the columns themselves
+      this.grid.updateColumnById(column.id, { hidden: true });
       const frozenColumnIndex = this.sharedService.gridOptions.frozenColumn ?? -1;
       if (frozenColumnIndex >= 0 && frozenColumnIndex >= columnIndex) {
         this.sharedService.gridOptions.frozenColumn = frozenColumnIndex - 1;
-        this.grid.setOptions({ frozenColumn: this.sharedService.gridOptions.frozenColumn });
+        this.grid.calculateFrozenColumnIndexById(this.sharedService.frozenVisibleColumnId, true);
       }
 
       // then proceed with hiding the column in SlickGrid & trigger an event when done
-      const visibleColumns = arrayRemoveItemByIndex<Column>(currentVisibleColumns, columnIndex);
-      this.sharedService.visibleColumns = visibleColumns;
-      this.grid.setColumns(visibleColumns, true);
-      this.pubSubService.publish('onHideColumns', { columns: visibleColumns, hiddenColumn: column });
+      this.grid.updateColumns();
+      this.pubSubService.publish('onHideColumns', { columns: this.grid.getVisibleColumns(), hiddenColumn: column });
     }
   }
 
@@ -499,21 +495,15 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
   /** freeze or unfreeze columns command */
   protected freezeOrUnfreezeColumns(column: Column, command: 'freeze-columns' | 'unfreeze-columns'): void {
-    const visibleColumns = [...this.sharedService.visibleColumns];
-    const columnPosition = visibleColumns.findIndex((col) => col.id === column.id);
+    const columnPosition = this.grid.getColumns().findIndex((col) => col.id === column.id);
     const newGridOptions = {
       frozenColumn: command === 'unfreeze-columns' ? -1 : columnPosition,
       enableMouseWheelScrollHandler: true,
     };
 
-    // to circumvent a bug in SlickGrid core lib, let's keep the columns positions ref and re-apply them after calling setOptions
-    // the bug is highlighted in this issue comment:: https://github.com/6pac/SlickGrid/issues/592#issuecomment-822885069
-    const previousColumns = this.grid.getColumns();
-
     // make sure column freeze is allowed before applying the change
     if (this.grid.validateColumnFreezeWidth(newGridOptions.frozenColumn, true)) {
       this.grid.setOptions(newGridOptions, false, true); // suppress the setColumns (3rd argument) since we'll do that ourselves
-      let finalVisibleColumns = visibleColumns || [];
 
       // remove the last freeze/unfreeze command called from Header Menu since it will be replaced by the other one when reopening the menu
       const columnHeaderMenuItems: Array<MenuCommandItem | 'divider'> = column?.header?.menu?.commandItems ?? [];
@@ -523,18 +513,8 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
       this.sharedService.gridOptions.enableMouseWheelScrollHandler = newGridOptions.enableMouseWheelScrollHandler;
       this.sharedService.frozenVisibleColumnId = this.grid.getFrozenColumnId();
 
-      if (command === 'freeze-columns') {
-        // to freeze columns, we need to take only the visible columns and we also need to use setColumns() when some of them are hidden
-        // to make sure that we only use the visible columns, not doing this will have the undesired effect of showing back some of the hidden columns
-        // prettier-ignore
-        if (this.sharedService.hasColumnsReordered || (Array.isArray(visibleColumns) && Array.isArray(this.sharedService.allColumns) && visibleColumns.length !== this.sharedService.allColumns.length)) {
-            finalVisibleColumns = visibleColumns;
-          } else {
-            // to circumvent a bug in SlickGrid core lib re-apply same column definitions that were backed up before calling setOptions()
-            finalVisibleColumns = previousColumns;
-          }
-      }
-      this.grid.setColumns(finalVisibleColumns);
+      this.grid.updateColumns();
+      this.recreateHeaderMenu(this.grid.getColumns());
 
       // we also need to autosize columns if the option is enabled
       const gridOptions = this.grid.getOptions();
@@ -769,5 +749,9 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
         this.sortService.emitSortChanged(emitterType, currentLocalSorters);
       }
     }
+  }
+
+  protected recreateHeaderMenu(newColumns: Column[]): void {
+    this.sharedService.gridOptions.headerMenu = this.addHeaderMenuCustomCommands(newColumns);
   }
 }

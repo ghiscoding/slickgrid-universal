@@ -1,5 +1,5 @@
 import { Constants } from '../constants.js';
-import type { Column, GridMenuItem, GridOption, Locale, MenuCommandItem, MenuOptionItem } from '../interfaces/index.js';
+import type { GridMenuItem, GridOption, Locale, MenuCommandItem, MenuOptionItem } from '../interfaces/index.js';
 import type { BackendUtilityService } from '../services/backendUtility.service.js';
 import type { SharedService } from '../services/shared.service.js';
 import type { TranslaterService } from '../services/translater.service.js';
@@ -63,16 +63,10 @@ export class ExtensionUtility {
    * @param {Array<Object>} allColumns - all columns (including hidden ones)
    * @param {Array<Object>} visibleColumns - only visible columns (excluding hidden ones)
    */
-  readjustFrozenColumnIndexWhenNeeded(frozenColumnIndex: number, allColumns: Column[], visibleColumns: Column[]): void {
+  readjustFrozenColumnIndexWhenNeeded(frozenColumnIndex: number): void {
     if (frozenColumnIndex >= 0) {
       // recalculate and apply changes when `frozenColumn` index changes
-      this.sharedService.slickGrid.calculateFrozenColumnIndexById(visibleColumns, this.sharedService.frozenVisibleColumnId, true);
-
-      // to freeze columns, we need to take only the visible columns and we also need to use setColumns() when some of them are hidden
-      // to make sure that we only use the visible columns, not doing this would show back some of the hidden columns
-      if (Array.isArray(visibleColumns) && Array.isArray(allColumns) && visibleColumns.length !== allColumns.length) {
-        this.sharedService.slickGrid.setColumns(visibleColumns);
-      }
+      this.sharedService.slickGrid.calculateFrozenColumnIndexById(this.sharedService.frozenVisibleColumnId, true);
     }
   }
 

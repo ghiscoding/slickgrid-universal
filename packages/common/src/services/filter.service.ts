@@ -881,7 +881,8 @@ export class FilterService {
       this.sharedService.gridOptions = this._gridOptions;
 
       // when displaying header row, we'll call "setColumns" which in terms will recreate the header row filters
-      this._grid.setColumns(this.sharedService.columnDefinitions);
+      this._grid.updateColumns();
+      // this._grid.setColumns(this.sharedService.columnDefinitions);
     }
   }
 
@@ -912,7 +913,8 @@ export class FilterService {
 
     // when displaying header row, we'll call "setColumns" which in terms will recreate the header row filters
     if (showHeaderRow === true) {
-      this._grid.setColumns(this.sharedService.columnDefinitions);
+      // this._grid.setColumns(this.sharedService.columnDefinitions);
+      this._grid.updateColumns();
     }
   }
 

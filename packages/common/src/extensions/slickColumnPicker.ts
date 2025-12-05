@@ -177,7 +177,7 @@ export class SlickColumnPicker {
    * @returns {Array<Object>} - all columns array
    */
   getVisibleColumns(): Column[] {
-    return this.grid.getColumns();
+    return this.grid.getVisibleColumns();
   }
 
   /** Translate the Column Picker headers and also the last 2 checkboxes */

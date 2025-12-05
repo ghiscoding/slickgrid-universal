@@ -737,8 +737,7 @@ export default class Example11 {
     }
 
     this.predefinedViews.forEach((viewSelect) => (viewSelect.isSelected = false)); // reset selection
-    const currentGridState = this.sgb.gridStateService.getCurrentGridState();
-    const { columns, filters, sorters, pinning } = currentGridState;
+    const { columns, filters, sorters, pinning } = this.sgb.gridStateService.getCurrentGridState();
 
     const viewName = await prompt('Please provide a name for the new View.');
     if (viewName) {
@@ -792,8 +791,7 @@ export default class Example11 {
       event.stopPropagation();
       return;
     }
-    const currentGridState = this.sgb.gridStateService.getCurrentGridState();
-    const { columns, filters, sorters, pinning } = currentGridState;
+    const { columns, filters, sorters, pinning } = this.sgb.gridStateService.getCurrentGridState();
 
     if (this.currentSelectedViewPreset && filters) {
       const filterName = await prompt(`Update View name or click on OK to continue.`, this.currentSelectedViewPreset.label);

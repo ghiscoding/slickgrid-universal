@@ -18,6 +18,7 @@ import type { FilterService } from './filter.service.js';
 import type { SharedService } from './shared.service.js';
 import type { SortService } from './sort.service.js';
 import type { TreeDataService } from './treeData.service.js';
+import { sortPresetColumns } from './utilities.js';
 
 export class GridStateService {
   protected _eventHandler: SlickEventHandler;
@@ -102,17 +103,21 @@ export class GridStateService {
         if (Array.isArray(this.sharedService.allColumns)) {
           const dynamicAddonColumnByIndexPositionList: { columnId: string; columnIndexPosition: number }[] = [];
 
+          // make sure that the dynamic columns are included in presets (1.Row Move, 2. Row Selection, 3. Row Detail)
+          if (this._gridOptions.enableRowMoveManager) {
+            const rmmColId = this._gridOptions?.rowMoveManager?.columnId ?? '_move';
+            const columnIndexPosition = this._gridOptions?.rowMoveManager?.columnIndexPosition ?? 0;
+            dynamicAddonColumnByIndexPositionList.push({ columnId: rmmColId, columnIndexPosition });
+          }
           if (this._gridOptions.enableCheckboxSelector) {
+            const chkColId = this._gridOptions?.checkboxSelector?.columnId ?? '_checkbox_selector';
             const columnIndexPosition = this._gridOptions?.checkboxSelector?.columnIndexPosition ?? 0;
-            dynamicAddonColumnByIndexPositionList.push({ columnId: '_checkbox_selector', columnIndexPosition });
+            dynamicAddonColumnByIndexPositionList.push({ columnId: chkColId, columnIndexPosition });
           }
           if (this._gridOptions.enableRowDetailView) {
+            const rdvColId = this._gridOptions?.rowDetailView?.columnId ?? '_detail_selector';
             const columnIndexPosition = this._gridOptions?.rowDetailView?.columnIndexPosition ?? 0;
-            dynamicAddonColumnByIndexPositionList.push({ columnId: '_detail_selector', columnIndexPosition });
-          }
-          if (this._gridOptions.enableRowMoveManager) {
-            const columnIndexPosition = this._gridOptions?.rowMoveManager?.columnIndexPosition ?? 0;
-            dynamicAddonColumnByIndexPositionList.push({ columnId: '_move', columnIndexPosition });
+            dynamicAddonColumnByIndexPositionList.push({ columnId: rdvColId, columnIndexPosition });
           }
 
           // since some features could have a `columnIndexPosition`, we need to make sure these indexes are respected in the column definitions
@@ -123,9 +128,9 @@ export class GridStateService {
         // We will use this when doing a resize by cell content, if user provided a `width` it won't override it.
         newArrangedColumns.forEach((col) => (col.originalWidth = col.width || col.originalWidth));
 
-        // finally set the new presets columns (including checkbox selector if need be)
-        this._grid.setColumns(newArrangedColumns);
-        this.sharedService.visibleColumns = newArrangedColumns;
+        // finally sort and set the new presets columns (including checkbox selector if need be)
+        const orderedColumns = sortPresetColumns(this._columns, newArrangedColumns);
+        this._grid.setColumns(orderedColumns);
 
         // resize the columns to fit the grid canvas
         if (triggerAutoSizeColumns) {
@@ -249,7 +254,7 @@ export class GridStateService {
    * @return current columns
    */
   getCurrentColumns(): CurrentColumn[] {
-    return this.getAssociatedCurrentColumns(this._grid.getColumns() || []);
+    return this.getAssociatedCurrentColumns(this._grid.getVisibleColumns() || []);
   }
 
   /**
