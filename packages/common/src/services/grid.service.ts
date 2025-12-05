@@ -88,7 +88,6 @@ export class GridService {
 
   /** Clear all the pinning (frozen) options */
   clearPinning(resetColumns = true): void {
-    const visibleColumns = [...this.sharedService.visibleColumns];
     this.sharedService.slickGrid.setOptions({
       frozenColumn: -1,
       frozenRow: -1,
@@ -98,7 +97,7 @@ export class GridService {
 
     // SlickGrid seems to be somehow resetting the columns to their original positions,
     // so let's re-fix them to the position we kept as reference
-    if (resetColumns && Array.isArray(visibleColumns)) {
+    if (resetColumns) {
       this.sharedService.slickGrid.updateColumns();
     }
   }
@@ -144,7 +143,7 @@ export class GridService {
 
   /** Get only visible column definitions and also include any extra columns by some plugins (like Row Selection, Row Detail, ...) */
   getVisibleColumnDefinitions(): Column[] {
-    return this.sharedService.visibleColumns;
+    return this._grid.getVisibleColumns();
   }
 
   /**
@@ -290,10 +289,9 @@ export class GridService {
         this._grid.updateColumnById(col.id, { hidden: !columnIds.includes(col.id) });
       });
       this._grid.updateColumns();
-      this.sharedService.visibleColumns = this._grid.getVisibleColumns();
 
       // execute common grid commands when enabled
-      this.executeVisibilityCommands(options, ['onShowColumns'], this.sharedService.visibleColumns);
+      this.executeVisibilityCommands(options, ['onShowColumns'], this._grid.getColumns());
     }
   }
 

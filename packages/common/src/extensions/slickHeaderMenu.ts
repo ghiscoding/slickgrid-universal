@@ -129,7 +129,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
   /** Translate the Header Menu titles, we need to loop through all column definition to re-translate them */
   translateHeaderMenu(): void {
     if (this.sharedService.gridOptions?.headerMenu) {
-      this.resetHeaderMenuTranslations(this.sharedService.visibleColumns);
+      this.resetHeaderMenuTranslations(this.sharedService.allColumns);
     }
   }
 

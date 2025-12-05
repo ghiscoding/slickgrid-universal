@@ -713,7 +713,6 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
 
     // save reference for all columns before they optionally become hidden/visible
     this.sharedService.allColumns = this._columnDefinitions;
-    this.sharedService.visibleColumns = this._columnDefinitions;
 
     // before certain extentions/plugins potentially adds extra columns not created by the user itself (RowMove, RowDetail, RowSelections)
     // we'll subscribe to the event and push back the change to the user so they always use full column defs array including extra cols
@@ -1013,10 +1012,9 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
     newColumns = this.loadSlickGridEditors(newColumns);
 
     if (this.options.enableTranslate) {
-      this.extensionService.translateColumnHeaders(undefined, newColumns);
-    } else {
-      this.extensionService.renderColumnHeaders(newColumns, true);
+      this.extensionService.translateColumnHeaders(undefined, newColumns, false);
     }
+    this.extensionService.renderColumnHeaders(newColumns, true);
 
     if (this.options?.enableAutoSizeColumns) {
       this.slickGrid.autosizeColumns();
@@ -1119,9 +1117,8 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
       }
 
       // when column are reordered, we need to update the visibleColumn array
-      this._eventHandler.subscribe(grid.onColumnsReordered, (_e, args) => {
+      this._eventHandler.subscribe(grid.onColumnsReordered, () => {
         this.sharedService.hasColumnsReordered = true;
-        this.sharedService.visibleColumns = args.impactedColumns;
       });
 
       this._eventHandler.subscribe(grid.onSetOptions, (_e, args) => {

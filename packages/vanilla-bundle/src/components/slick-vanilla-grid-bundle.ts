@@ -558,7 +558,6 @@ export class SlickVanillaGridBundle<TData = any> {
 
     // save reference for all columns before they optionally become hidden/visible
     this.sharedService.allColumns = this._columns;
-    this.sharedService.visibleColumns = this._columns;
 
     // TODO: revisit later, this is conflicting with Grid State & Presets
     // before certain extentions/plugins potentially adds extra columns not created by the user itself (RowMove, RowDetail, RowSelections)
@@ -904,9 +903,8 @@ export class SlickVanillaGridBundle<TData = any> {
       }
 
       // when column are reordered, we need to update the visibleColumn array
-      this._eventHandler.subscribe(grid.onColumnsReordered, (_e, args) => {
+      this._eventHandler.subscribe(grid.onColumnsReordered, () => {
         this.sharedService.hasColumnsReordered = true;
-        this.sharedService.visibleColumns = args.impactedColumns;
       });
 
       this._eventHandler.subscribe(grid.onSetOptions, (_e, args) => {
@@ -1199,10 +1197,9 @@ export class SlickVanillaGridBundle<TData = any> {
       }
 
       if (this._gridOptions.enableTranslate) {
-        this.extensionService.translateColumnHeaders(undefined, newColumns);
-      } else {
-        this.extensionService.renderColumnHeaders(newColumns, true);
+        this.extensionService.translateColumnHeaders(undefined, newColumns, false);
       }
+      this.extensionService.renderColumnHeaders(newColumns, true);
 
       if (this.slickGrid && this._gridOptions?.enableAutoSizeColumns) {
         this.slickGrid.autosizeColumns();
