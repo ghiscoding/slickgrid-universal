@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
 import {
   SlickgridReact,
   type Column,
@@ -29,7 +29,8 @@ export interface OrderData {
   shipName: string;
 }
 
-const Example45DetailView: React.FC<RowDetailViewProps<Distributor, typeof Example45>> = forwardRef((props, ref) => {
+const Example45DetailView: React.FC<RowDetailViewProps<Distributor, typeof Example45>> = (props) => {
+  const { ref /*, ...rest */ } = props;
   const [showGrid, setShowGrid] = useState(false);
   const [innerGridOptions, setInnerGridOptions] = useState<GridOption | undefined>(undefined);
   const [innerColDefs, setInnerColDefs] = useState<Column[]>([]);
@@ -122,6 +123,6 @@ const Example45DetailView: React.FC<RowDetailViewProps<Distributor, typeof Examp
       </div>
     </div>
   );
-});
+};
 
 export default Example45DetailView;
