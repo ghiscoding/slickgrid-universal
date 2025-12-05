@@ -61,4 +61,7 @@ export interface ExcelExportOption {
 
   /** Add a Custom Excel Header on first row of the Excel Sheet */
   customExcelHeader?: (workbook: Workbook, sheet: Worksheet) => void;
+
+  /** Add custom Excel Charts after data is written */
+  customExcelCharts?: (workbook: Workbook, sheet: Worksheet) => void;
 }

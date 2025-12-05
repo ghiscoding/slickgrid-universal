@@ -16,11 +16,13 @@ import {
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
+import { Chart, Drawings } from 'excel-builder-vanilla';
 import { ExampleGridOptions } from './example-grid-options.js';
 import './example23.scss';
 
 interface GroceryItem {
   id: number;
+  category: string;
   name: string;
   qty: number;
   price: number;
@@ -156,6 +158,15 @@ export default class Example23 {
         width: 140,
         filterable: true,
         excelExportOptions: { width: 18 },
+      },
+      {
+        id: 'category',
+        name: 'Category',
+        field: 'category',
+        sortable: true,
+        width: 110,
+        filterable: true,
+        excelExportOptions: { width: 14 },
       },
       {
         id: 'price',
@@ -367,9 +378,40 @@ export default class Example23 {
 
           // excel cells start with A1 which is upper left corner
           const customTitle = 'Grocery Shopping List';
-          const lastCellMerge = this.isDataGrouped ? 'H1' : 'G1';
+          const lastCellMerge = this.isDataGrouped ? 'I1' : 'H1';
           sheet.mergeCells('A1', lastCellMerge);
           sheet.data.push([{ value: customTitle, metadata: { style: excelFormat.id } }]);
+        },
+
+        // Add a chart after data export
+        customExcelCharts: (workbook, sheet) => {
+          // Columns: A = Name, B = Price, C = Qty, D = SubTotal, E = Taxable, F = Taxes, G = Total
+          // Data starts at row 2 (after header row)
+          // Auto-detect first and last data row (skip header/title/whitespace rows)
+          // Use fixed data range for chart: rows 3–13
+          const firstDataRow = 3;
+          const lastDataRow = 13;
+
+          // Escape sheet name if it contains spaces or special characters
+          const escapedSheetName = /[^A-Za-z0-9_]/.test(sheet.name) ? `'${sheet.name}'` : sheet.name;
+          const drawings = new Drawings();
+          // Pie chart: Category as categories, Price as values
+          const chart = new Chart({
+            type: 'pie',
+            title: 'Price Share by Category',
+            width: 6_000_000,
+            height: 2_500_000,
+            series: [{ name: 'Price', valuesRange: `${escapedSheetName}!$C$${firstDataRow}:$C$${lastDataRow}` }],
+            categoriesRange: `${escapedSheetName}!$B$${firstDataRow}:$B$${lastDataRow}`,
+            legend: { position: 'topRight' },
+            dataLabels: { showPercent: true },
+          });
+          const anchor = chart.createAnchor('twoCellAnchor', { from: { x: 10, y: 5 }, to: { x: 16, y: 20 } });
+          chart.anchor = anchor;
+          drawings.addDrawing(chart);
+          sheet.addDrawings(drawings);
+          workbook.addDrawings(drawings);
+          workbook.addChart(chart);
         },
       },
     };
@@ -471,17 +513,17 @@ export default class Example23 {
   getData() {
     let i = 1;
     const datasetTmp = [
-      { id: i++, name: 'Oranges', qty: 4, taxable: false, price: 2.22 },
-      { id: i++, name: 'Apples', qty: 3, taxable: false, price: 1.55 },
-      { id: i++, name: 'Honeycomb Cereals', qty: 2, taxable: true, price: 4.55 },
-      { id: i++, name: 'Raisins', qty: 77, taxable: false, price: 0.23 },
-      { id: i++, name: 'Corn Flake Cereals', qty: 1, taxable: true, price: 6.62 },
-      { id: i++, name: 'Tomatoes', qty: 3, taxable: false, price: 1.88 },
-      { id: i++, name: 'Butter', qty: 1, taxable: false, price: 3.33 },
-      { id: i++, name: 'BBQ Chicken', qty: 1, taxable: false, price: 12.33 },
-      { id: i++, name: 'Chicken Wings', qty: 12, taxable: true, price: 0.53 },
-      { id: i++, name: 'Drinkable Yogurt', qty: 6, taxable: true, price: 1.22 },
-      { id: i++, name: 'Milk', qty: 3, taxable: true, price: 3.11 },
+      { id: i++, name: 'Oranges', category: 'Fruits & Vegetables', qty: 4, taxable: false, price: 2.22 },
+      { id: i++, name: 'Apples', category: 'Fruits & Vegetables', qty: 3, taxable: false, price: 1.55 },
+      { id: i++, name: 'Honeycomb Cereals', category: 'Grains & Cereals', qty: 2, taxable: true, price: 4.55 },
+      { id: i++, name: 'Raisins', category: 'Fruits & Vegetables', qty: 77, taxable: false, price: 0.23 },
+      { id: i++, name: 'Corn Flake Cereals', category: 'Grains & Cereals', qty: 1, taxable: true, price: 6.62 },
+      { id: i++, name: 'Tomatoes', category: 'Fruits & Vegetables', qty: 3, taxable: false, price: 1.88 },
+      { id: i++, name: 'Butter', category: 'Dairy', qty: 1, taxable: false, price: 3.33 },
+      { id: i++, name: 'BBQ Chicken', category: 'Meat', qty: 1, taxable: false, price: 12.33 },
+      { id: i++, name: 'Chicken Wings', category: 'Meat', qty: 12, taxable: true, price: 0.53 },
+      { id: i++, name: 'Drinkable Yogurt', category: 'Dairy', qty: 6, taxable: true, price: 1.22 },
+      { id: i++, name: 'Milk', category: 'Dairy', qty: 3, taxable: true, price: 3.11 },
     ] as GroceryItem[];
 
     return datasetTmp;
@@ -496,7 +538,6 @@ export default class Example23 {
     const checkIcon = 'mdi-check-box-outline';
     const uncheckIcon = 'mdi-checkbox-blank-outline';
     this.isDataGrouped = true;
-
     this.sgb?.dataView?.setGrouping({
       getter: 'taxable',
       formatter: (g) =>
@@ -512,7 +553,24 @@ export default class Example23 {
       aggregateCollapsed: false,
       lazyTotalsCalculation: false,
     } as Grouping);
+    this.sgb?.dataView?.refresh();
+  }
 
+  groupByCategory() {
+    this.isDataGrouped = true;
+    this.sgb?.dataView?.setGrouping({
+      getter: 'category',
+      formatter: (g) => `${g.value} <span class="color-primary">(${g.count} items)</span>`,
+      aggregators: [
+        new Aggregators.Sum('price'),
+        new Aggregators.Sum('qty'),
+        new CustomSumAggregator('subTotal', this.taxRate),
+        new CustomSumAggregator('taxes', this.taxRate),
+        new CustomSumAggregator('total', this.taxRate),
+      ],
+      aggregateCollapsed: true,
+      lazyTotalsCalculation: false,
+    } as Grouping);
     this.sgb?.dataView?.refresh();
   }
 }

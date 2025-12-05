@@ -182,6 +182,11 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
           this._gridOptions.excelExportOptions.customExcelHeader(this._workbook, this._sheet);
         }
 
+        // Add custom Excel Charts after data is written
+        if (this._gridOptions?.excelExportOptions?.customExcelCharts) {
+          this._gridOptions.excelExportOptions.customExcelCharts(this._workbook, this._sheet);
+        }
+
         const columns = this._grid?.getColumns() || [];
         this._sheet.setColumns(this.getColumnStyles(columns));
 
