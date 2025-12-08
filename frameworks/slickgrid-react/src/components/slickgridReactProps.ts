@@ -172,7 +172,7 @@ export interface SlickgridReactProps {
   onBeforePasteCell?: ReactSlickEventHandler<{ cell: number; row: number; item: any; columnDef: Column; value: any }>;
 
   // Slickgrid-React or Slickgrid-Universal events
-  onAfterExportToExcel?: ReactRegularEventHandler<{ filename: string; mimeType: string }>;
+  onAfterExportToExcel?: ReactRegularEventHandler<{ filename: string; mimeType: string } | { error: any }>;
   onBeforeExportToExcel?: ReactRegularEventHandler<boolean>;
   onBeforeExportToTextFile?: ReactRegularEventHandler<boolean>;
   onAfterExportToTextFile?: ReactRegularEventHandler<ExportTextDownloadOption>;

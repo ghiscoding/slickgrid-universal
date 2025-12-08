@@ -176,7 +176,7 @@ export interface AngularSlickgridOutputs {
   onBeforePasteCell: (e: { cell: number; row: number; item: any; columnDef: Column; value: any }) => void;
 
   // Slickgrid-Universal Events
-  onAfterExportToExcel: (e: { filename: string; mimeType: string }) => void;
+  onAfterExportToExcel: (e: { filename: string; mimeType: string } | { error: any }) => void;
   onBeforeExportToExcel: (e: boolean) => void;
   onBeforeExportToTextFile?: (e: boolean) => void;
   onAfterExportToTextFile?: (e: ExportTextDownloadOption) => void;
