@@ -162,7 +162,7 @@ export interface SlickgridVueProps {
   onOnBeforePasteCell?: VueSlickEventHandler<{ cell: number; row: number; item: any; columnDef: Column; value: any }>;
 
   // Slickgrid-Vue events
-  onOnAfterExportToExcel?: VueRegularEventHandler<{ filename: string; mimeType: string }>;
+  onOnAfterExportToExcel?: VueRegularEventHandler<{ filename: string; mimeType: string } | { error: any }>;
   onOnBeforeExportToExcel?: VueRegularEventHandler<boolean>;
   onOnBeforeExportToTextFile?: VueRegularEventHandler<boolean>;
   onOnAfterExportToTextFile?: VueRegularEventHandler<ExportTextDownloadOption>;

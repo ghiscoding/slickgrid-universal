@@ -133,107 +133,110 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   }
 
   /**
-   * Function to export the Grid result to an Excel CSV format using JavaScript for it to produce the CSV file.
-   * This is a WYSIWYG export to file output (What You See is What You Get)
+   * Export the current grid data to Excel (WYSIWYG).
    *
-   * NOTES: The column position needs to match perfectly the JSON Object position because of the way we are pulling the data,
-   * which means that if any column(s) got moved in the UI, it has to be reflected in the JSON array output as well
+   * Notes:
+   * - Column order must match the grid.
+   * - For large datasets, processing yields periodically to keep the UI responsive.
    *
-   * Example: exportToExcel({ format: FileType.csv, delimiter: DelimiterType.comma })
+   * Events:
+   * - 'onBeforeExportToExcel' before export starts
+   * - 'onAfterExportToExcel' after export completes or fails
    */
-  exportToExcel(options?: ExcelExportOption): Promise<boolean> {
+  async exportToExcel(options?: ExcelExportOption): Promise<boolean> {
     if (!this._grid || !this._dataView || !this._pubSubService) {
       throw new Error(
         '[Slickgrid-Universal] it seems that the SlickGrid & DataView objects and/or PubSubService are not initialized did you forget to enable the grid option flag "enableExcelExport"?'
       );
     }
-    // wrap in a Promise so that we can add loading spinner
-    return new Promise((resolve) => {
-      this._pubSubService?.publish('onBeforeExportToExcel', true);
-      this._excelExportOptions = extend(true, {}, { ...DEFAULT_EXPORT_OPTIONS, ...this._gridOptions.excelExportOptions, ...options });
-      this._fileFormat = this._excelExportOptions.format || FileType.xlsx;
-      const useStreamingExport = !!this._excelExportOptions.useStreamingExport;
 
-      // reset references of detected Excel formats
-      this._regularCellExcelFormats = {};
-      this._groupTotalExcelFormats = {};
+    this._pubSubService?.publish('onBeforeExportToExcel', true);
+    this._excelExportOptions = extend(true, {}, { ...DEFAULT_EXPORT_OPTIONS, ...this._gridOptions.excelExportOptions, ...options });
+    this._fileFormat = this._excelExportOptions.format || FileType.xlsx;
+    const useStreamingExport = !!this._excelExportOptions.useStreamingExport;
 
-      // prepare the Excel Workbook & Sheet
-      const worksheetOptions = { name: this._excelExportOptions.sheetName || 'Sheet1' };
-      this._workbook = new Workbook();
-      this._sheet = this._workbook.createWorksheet(worksheetOptions);
+    // reset references of detected Excel formats
+    this._regularCellExcelFormats = {};
+    this._groupTotalExcelFormats = {};
 
-      // add any Excel Format/Stylesheet to current Workbook
-      this._stylesheet = this._workbook.getStyleSheet();
+    // prepare the Excel Workbook & Sheet
+    const worksheetOptions = { name: this._excelExportOptions.sheetName || 'Sheet1' };
+    this._workbook = new Workbook();
+    this._sheet = this._workbook.createWorksheet(worksheetOptions);
 
-      // create some common default Excel formatters that will be used
-      const boldFormat = this._stylesheet.createFormat({ font: { bold: true } });
-      const stringFormat = this._stylesheet.createFormat({ format: '@' });
-      const numberFormat = this._stylesheet.createFormat({ format: '0' });
-      this._stylesheetFormats = { boldFormat, numberFormat, stringFormat };
-      this._sheet.setColumnFormats([boldFormat]);
+    // add any Excel Format/Stylesheet to current Workbook
+    this._stylesheet = this._workbook.getStyleSheet();
 
-      // Add a short delay to ensure spinner/UI updates before heavy export work begins
-      setTimeout(async () => {
-        // get all data by reading all DataView rows
-        const dataOutput = this.getDataOutput();
+    // create some common default Excel formatters that will be used
+    const boldFormat = this._stylesheet.createFormat({ font: { bold: true } });
+    const stringFormat = this._stylesheet.createFormat({ format: '@' });
+    const numberFormat = this._stylesheet.createFormat({ format: '0' });
+    this._stylesheetFormats = { boldFormat, numberFormat, stringFormat };
+    this._sheet.setColumnFormats([boldFormat]);
 
-        if (this._gridOptions?.excelExportOptions?.customExcelHeader) {
-          this._gridOptions.excelExportOptions.customExcelHeader(this._workbook, this._sheet);
-        }
+    try {
+      // get all data by reading all DataView rows with yielding for responsiveness
+      const dataOutput = await this.getDataOutputAsync();
 
-        const columns = this._grid?.getColumns() || [];
-        this._sheet.setColumns(this.getColumnStyles(columns));
+      if (this._gridOptions?.excelExportOptions?.customExcelHeader) {
+        this._gridOptions.excelExportOptions.customExcelHeader(this._workbook, this._sheet);
+      }
 
-        const currentSheetData = this._sheet.data;
-        let finalOutput = currentSheetData;
-        if (Array.isArray(currentSheetData) && Array.isArray(dataOutput)) {
-          finalOutput = this._sheet.data.concat(dataOutput);
-        }
+      const columns = this._grid?.getColumns() || [];
+      this._sheet.setColumns(this.getColumnStyles(columns));
 
-        this._sheet.setData(finalOutput);
-        this._workbook.addWorksheet(this._sheet);
+      const currentSheetData = this._sheet.data;
+      let finalOutput = currentSheetData;
+      if (Array.isArray(currentSheetData) && Array.isArray(dataOutput)) {
+        finalOutput = this._sheet.data.concat(dataOutput);
+      }
 
-        // MIME type could be undefined, if that's the case we'll detect the type by its file extension
-        // user could also provide its own mime type, if however an empty string is provided we will consider to be without any MIME type)
-        let mimeType = this._excelExportOptions?.mimeType;
-        if (mimeType === undefined) {
-          mimeType =
-            this._fileFormat === FileType.xls
-              ? 'application/vnd.ms-excel'
-              : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-        }
+      this._sheet.setData(finalOutput);
+      this._workbook.addWorksheet(this._sheet);
 
-        const filename = `${this._excelExportOptions.filename}.${this._fileFormat}`;
+      // MIME type could be undefined, if that's the case we'll detect the type by its file extension
+      // user could also provide its own mime type, if however an empty string is provided we will consider to be without any MIME type)
+      let mimeType = this._excelExportOptions?.mimeType;
+      if (mimeType === undefined) {
+        mimeType =
+          this._fileFormat === FileType.xls
+            ? 'application/vnd.ms-excel'
+            : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+      }
 
-        if (this._fileFormat === FileType.xlsx && useStreamingExport) {
-          try {
-            const stream = createExcelFileStream(this._workbook, { chunkSize: 1000 });
-            const chunks: Uint8Array[] = [];
-            for await (const chunk of stream as AsyncIterable<Uint8Array>) {
-              chunks.push(chunk);
-            }
+      const filename = `${this._excelExportOptions.filename}.${this._fileFormat}`;
 
-            const blob = new Blob(chunks as BlobPart[], { type: mimeType });
-            const url = URL.createObjectURL(blob);
-
-            // download with anchor tag
-            const a = createDomElement('a', { href: url, download: filename }, document.body);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            this._pubSubService?.publish('onAfterExportToExcel', { filename, mimeType });
-            resolve(true);
-          } catch (err) {
-            // fallback to legacy export if streaming is not supported
-            this.legacyExcelExport(filename, mimeType, resolve);
+      if (this._fileFormat === FileType.xlsx && useStreamingExport) {
+        try {
+          const stream = createExcelFileStream(this._workbook, { chunkSize: 1000 });
+          const chunks: Uint8Array[] = [];
+          for await (const chunk of stream as AsyncIterable<Uint8Array>) {
+            chunks.push(chunk);
           }
-        } else {
-          // fallback to legacy export for non-xlsx or if useStreamingExport is false
-          this.legacyExcelExport(filename, mimeType, resolve);
+
+          const blob = new Blob(chunks as BlobPart[], { type: mimeType });
+          const url = URL.createObjectURL(blob);
+
+          // download with anchor tag
+          const a = createDomElement('a', { href: url, download: filename }, document.body);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          this._pubSubService?.publish('onAfterExportToExcel', { filename, mimeType });
+          return true;
+        } catch (err) {
+          // fallback to legacy export if streaming is not supported
+          return await this.legacyExcelExportAsync(filename, mimeType);
         }
-      }, 50); // delay to allow spinner to show
-    });
+      } else {
+        // fallback to legacy export for non-xlsx or if useStreamingExport is false
+        return await this.legacyExcelExportAsync(filename, mimeType);
+      }
+    } /** v8 ignore next */ catch (error) {
+      console.error('Excel export failed:', error);
+      this._pubSubService?.publish('onAfterExportToExcel', { error });
+      return false;
+    }
   }
 
   /**
@@ -264,7 +267,10 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   // protected functions
   // -----------------------
 
-  protected getDataOutput(): Array<string[] | ExcelColumnMetadata[]> {
+  /**
+   * Async version of getDataOutput with yielding for UI responsiveness during large dataset processing
+   */
+  protected async getDataOutputAsync(): Promise<Array<string[] | ExcelColumnMetadata[]>> {
     const columns = this._grid?.getColumns() || [];
 
     // data variable which will hold all the fields data of a row
@@ -288,8 +294,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     // also style the headers, defaults to Bold but user could pass his own style
     outputData.push(this.getColumnHeaderData(columns, { style: columnHeaderStyleId }));
 
-    // Populate the rest of the Grid Data
-    this.pushAllGridRowDataToArray(outputData, columns);
+    // Populate the rest of the Grid Data by reading directly from DataView with yielding for responsiveness
+    await this.pushAllGridRowDataToArrayAsync(outputData, columns);
 
     return outputData;
   }
@@ -389,9 +395,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     if (Array.isArray(grouping) && grouping.length > 0) {
       this._hasGroupedItems = true;
       return groupByColumnHeader;
-    } else {
-      this._hasGroupedItems = false;
     }
+    this._hasGroupedItems = false;
     return null;
   }
 
@@ -405,12 +410,11 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     if (Array.isArray(columns)) {
       // Populate the Grouped Column Header, pull the columnGroup(Key) defined
       columns.forEach((columnDef) => {
-        let groupedHeaderTitle = '';
-        if (columnDef.columnGroupKey && this._gridOptions.enableTranslate && this._translaterService?.translate) {
-          groupedHeaderTitle = this._translaterService.translate(columnDef.columnGroupKey);
-        } else {
-          groupedHeaderTitle = columnDef.columnGroup || '';
-        }
+        const groupedHeaderTitle =
+          columnDef.columnGroupKey && this._gridOptions.enableTranslate && this._translaterService?.translate
+            ? this._translaterService.translate(columnDef.columnGroupKey)
+            : columnDef.columnGroup || '';
+
         const skippedField = columnDef.excludeFromExport || false;
 
         // if column width is 0px, then we consider that field as a hidden field and should not be part of the export
@@ -457,34 +461,94 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
   /**
    * Get all the grid row data and return that as an output string
+   * Async version of pushAllGridRowDataToArray with yielding for UI responsiveness during large dataset processing.
+   * Processes rows directly from DataView with periodic yielding for responsiveness.
    */
-  protected pushAllGridRowDataToArray(
+  protected async pushAllGridRowDataToArrayAsync(
     originalDaraArray: Array<Array<string | ExcelColumnMetadata | number>>,
     columns: Column[]
-  ): Array<Array<string | ExcelColumnMetadata | number>> {
-    const lineCount = this._dataView.getLength();
+  ): Promise<Array<Array<string | ExcelColumnMetadata | number>>> {
+    const dataView = this._dataView;
+    const lineCount = dataView.getLength();
 
-    // loop through all the grid rows of data
+    // Yield periodically based on dataset size
+    const YIELD_FREQUENCY = lineCount < 1000 ? 0 : lineCount < 10000 ? 1000 : 500;
+
+    // Update the hasGroupedItems flag from current grouping
+    const grouping = dataView.getGrouping();
+    this._hasGroupedItems = Array.isArray(grouping) && grouping.length > 0;
+
+    // Read rows directly from DataView
     for (let rowNumber = 0; rowNumber < lineCount; rowNumber++) {
-      const itemObj = this._dataView.getItem(rowNumber);
+      const itemObj = dataView.getItem(rowNumber);
 
       // make sure we have a filled object AND that the item doesn't include the "getItem" method
       // this happen could happen with an opened Row Detail as it seems to include an empty Slick DataView (we'll just skip those lines)
       if (itemObj && !itemObj.hasOwnProperty('getItem')) {
         // Normal row (not grouped by anything) would have an ID which was predefined in the Grid Columns definition
         if (itemObj[this._datasetIdPropName] !== null && itemObj[this._datasetIdPropName] !== undefined) {
-          // get regular row item data
+          // Read a regular row
           originalDaraArray.push(this.readRegularRowData(columns, rowNumber, itemObj, rowNumber));
         } else if (this._hasGroupedItems && itemObj.__groupTotals === undefined) {
           // get the group row
           originalDaraArray.push([this.readGroupedRowTitle(itemObj)]);
         } else if (itemObj.__groupTotals) {
-          // else if the row is a Group By and we have agreggators, then a property of '__groupTotals' would exist under that object
+          // else if the row is a Group By and we have aggregators, then a property of '__groupTotals' would exist under that object
           originalDaraArray.push(this.readGroupedTotalRows(columns, itemObj, rowNumber));
         }
       }
+
+      // Yield to event loop
+      if (YIELD_FREQUENCY > 0 && rowNumber > 0 && rowNumber % YIELD_FREQUENCY === 0) {
+        await new Promise((resolve) => setTimeout(resolve, 0));
+      }
     }
+
     return originalDaraArray;
+  }
+
+  /** OPTIMIZATION: Pre-calculate column metadata to avoid repeated calculations */
+  protected preCalculateColumnMetadata(columns: Column[]): Map<string, any> {
+    const cache = new Map();
+
+    // OPTIMIZATION: Pre-calculate if we have complex spanning to avoid checking on every row
+    const hasComplexSpanning = this._gridOptions.enableCellRowSpan || columns.some((col) => col.colspan || col.rowspan);
+
+    for (const columnDef of columns) {
+      if (!columnDef.excludeFromExport) {
+        const fieldType = getColumnFieldType(columnDef);
+        const exportOptions = { ...this._excelExportOptions };
+
+        // Pre-calculate date formatting logic
+        if (columnDef.exportWithFormatter !== false && isColumnDateType(fieldType)) {
+          exportOptions.exportWithFormatter = true;
+        }
+
+        cache.set(String(columnDef.id), {
+          fieldType,
+          exportOptions,
+          hasFormatter: !!columnDef.formatter,
+          sanitizeData: columnDef.sanitizeDataExport || this._excelExportOptions.sanitizeDataExport,
+          field: columnDef.field,
+          hasComplexSpanning, // Cache this to avoid repeated checks
+        });
+      }
+    }
+
+    return cache;
+  }
+
+  /** OPTIMIZATION: Efficient yielding - use the fastest available method */
+  protected async efficientYield(): Promise<void> {
+    // Use scheduler.postTask if available (Chrome 94+) - fastest
+    if (typeof (globalThis as any).scheduler?.postTask === 'function') {
+      return new Promise((resolve) => {
+        (globalThis as any).scheduler.postTask(resolve, { priority: 'user-blocking' });
+      });
+    }
+
+    // Use setTimeout(0) - most reliable and often fastest
+    return new Promise((resolve) => setTimeout(resolve, 0));
   }
 
   /**
@@ -733,11 +797,16 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     return outputStrings;
   }
 
-  /** Legacy (non-streaming) Excel export fallback method */
-  protected legacyExcelExport(filename: string, mimeType: string, resolve: (value: boolean) => void): void {
-    downloadExcelFile(this._workbook, filename, { mimeType }).then(() => {
+  /** Async version of legacy Excel export fallback method */
+  protected async legacyExcelExportAsync(filename: string, mimeType: string): Promise<boolean> {
+    try {
+      await downloadExcelFile(this._workbook, filename, { mimeType });
       this._pubSubService?.publish(`onAfterExportToExcel`, { filename, mimeType });
-      resolve(true);
-    });
+      return true;
+    } catch (error) {
+      console.error('Legacy Excel export failed:', error);
+      this._pubSubService?.publish('onAfterExportToExcel', { error });
+      return false;
+    }
   }
 }
