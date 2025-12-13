@@ -138,7 +138,7 @@ export class GridService {
    * and also include any extra columns used by some plugins (like Row Selection, Row Detail, ...)
    */
   getAllColumnDefinitions(): Column[] {
-    return this.sharedService.allColumns;
+    return this._grid.getColumns();
   }
 
   /** Get only visible column definitions and also include any extra columns by some plugins (like Row Selection, Row Detail, ...) */
@@ -239,13 +239,13 @@ export class GridService {
         const visibleColumns = arrayRemoveItemByIndex<Column>(currentColumns, colIndexFound);
         this._grid.updateColumnById(columnId, { hidden: true }, options.applySetColumns !== false);
 
-        const columnIndexFromAllColumns = this.sharedService.allColumns.findIndex((col) => col.id === columnId);
+        const columnIndexFromAllColumns = this.getAllColumnDefinitions().findIndex((col) => col.id === columnId);
         if (columnIndexFromAllColumns) {
           if (options?.hideFromColumnPicker) {
-            this.sharedService.allColumns[columnIndexFromAllColumns].excludeFromColumnPicker = true;
+            this.getAllColumnDefinitions()[columnIndexFromAllColumns].excludeFromColumnPicker = true;
           }
           if (options?.hideFromGridMenu) {
-            this.sharedService.allColumns[columnIndexFromAllColumns].excludeFromGridMenu = true;
+            this.getAllColumnDefinitions()[columnIndexFromAllColumns].excludeFromGridMenu = true;
           }
         }
 
@@ -271,6 +271,7 @@ export class GridService {
       for (const columnId of columnIds) {
         this.hideColumnById(columnId, { ...options, triggerEvent: false, applySetColumns: false, autoResizeColumns: false });
       }
+      this._grid.updateColumns();
 
       // execute common grid commands when enabled
       this.executeVisibilityCommands(options, ['onHideColumns'], finalVisibleColumns);
@@ -936,7 +937,7 @@ export class GridService {
       const sortCols = this.sortService.getCurrentColumnSorts();
       const sortedDatasetResult = this.treeDataService.convertFlatParentChildToTreeDatasetAndSort(
         inputItems || [],
-        this.sharedService.allColumns,
+        this.getAllColumnDefinitions(),
         this._gridOptions,
         sortCols
       );

@@ -19,11 +19,14 @@ const gridStub = {
   getGridPosition: vi.fn(),
   getOptions: vi.fn(),
   getSelectedRows: vi.fn(),
+  getVisibleColumns: vi.fn(),
   getUID: () => gridUid,
   registerPlugin: vi.fn(),
   setColumns: vi.fn(),
   setOptions: vi.fn(),
   setSelectedRows: vi.fn(),
+  updateColumnById: vi.fn(),
+  updateColumns: vi.fn(),
   validateSetColumnFreeze: vi.fn(),
   onClick: new SlickEvent(),
   onColumnsReordered: new SlickEvent(),
@@ -71,12 +74,17 @@ describe('ColumnPickerControl', () => {
     extensionUtility = new ExtensionUtility(sharedService, backendUtilityService, translateService);
     sharedService.slickGrid = gridStub;
 
+    gridStub.updateColumnById = (columnId, props) => {
+      const column = columnsMock.find((col) => col.id === columnId);
+      if (column) {
+        Object.assign(column, props);
+      }
+    };
     vi.spyOn(utils, 'applyHtmlToElement').mockImplementation((elm, val) => {
       elm.innerHTML = `${val || ''}`;
     });
     vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-    vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
-    vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock.slice(0, 1));
+    vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columnsMock);
     vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsMock);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
     vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
@@ -109,7 +117,7 @@ describe('ColumnPickerControl', () => {
         .mockReturnValue(undefined as any)
         .mockReturnValue(1);
       vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue(mockRowSelection);
-      const setColumnSpy = vi.spyOn(gridStub, 'setColumns');
+      const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
       const setSelectionSpy = vi.spyOn(gridStub, 'setSelectedRows');
 
       gridOptionsMock.enableRowSelection = true;
@@ -121,7 +129,7 @@ describe('ColumnPickerControl', () => {
       inputElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
       expect(control.menuElement!.style.display).toBe('block');
-      expect(setColumnSpy).not.toHaveBeenCalled();
+      expect(updateColumnSpy).not.toHaveBeenCalled();
       expect(setSelectionSpy).not.toHaveBeenCalled();
     });
 
@@ -133,7 +141,7 @@ describe('ColumnPickerControl', () => {
         .mockReturnValue(undefined as any)
         .mockReturnValue(1);
       vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue(mockRowSelection);
-      const setColumnSpy = vi.spyOn(gridStub, 'setColumns');
+      const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
       const setSelectionSpy = vi.spyOn(gridStub, 'setSelectedRows');
 
       gridOptionsMock.enableHybridSelection = true;
@@ -145,7 +153,7 @@ describe('ColumnPickerControl', () => {
       inputElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
       expect(control.menuElement!.style.display).toBe('block');
-      expect(setColumnSpy).not.toHaveBeenCalled();
+      expect(updateColumnSpy).not.toHaveBeenCalled();
       expect(setSelectionSpy).not.toHaveBeenCalled();
     });
 
@@ -410,7 +418,7 @@ describe('ColumnPickerControl', () => {
         .mockReturnValue(1);
       vi.spyOn(control, 'getVisibleColumns').mockReturnValue(columnsMock.slice(1));
       const setOptionSpy = vi.spyOn(gridStub, 'setOptions');
-      const setColumnSpy = vi.spyOn(gridStub, 'setColumns');
+      const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
 
       gridOptionsMock.columnPicker!.hideForceFitButton = false;
       gridOptionsMock.columnPicker!.forceFitTitle = 'Custom Force Fit';
@@ -428,7 +436,7 @@ describe('ColumnPickerControl', () => {
       expect(inputForcefitElm.dataset.option).toBe('autoresize');
       expect(labelSyncElm.textContent).toBe('Custom Force Fit');
       expect(setOptionSpy).toHaveBeenCalledWith({ forceFitColumns: true });
-      expect(setColumnSpy).toHaveBeenCalledWith(columnsMock.slice(1));
+      expect(updateColumnSpy).toHaveBeenCalled();
     });
 
     it('should open the column picker via "onHeaderContextMenu", click on "syncresize" checkbox and expect "setOptions" to be called with "syncColumnCellResize" property', () => {
@@ -531,10 +539,17 @@ describe('ColumnPickerControl', () => {
         control.menuElement!.querySelector<HTMLInputElement>('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
         const col4 = control.menuElement!.querySelector<HTMLInputElement>('li.hidden input[data-columnid=field4]');
 
+        const expectedColumnMocks = [
+          { id: 'field1', field: 'field1', name: 'Field 1', width: 100, nameKey: 'TITLE', hidden: false },
+          { id: 'field2', field: 'field2', name: 'Field 2', width: 75, columnPickerLabel: 'Custom Label' },
+          { id: 'field3', field: 'field3', name: 'Field 3', columnGroup: 'Billing', width: 75 },
+          { id: 'field4', field: 'field4', name: 'Field 4', width: 75, excludeFromColumnPicker: true },
+        ];
+
         expect(handlerSpy).toHaveBeenCalledTimes(4);
-        expect(control.getAllColumns()).toEqual(columnsMock);
-        expect(control.getVisibleColumns()).toEqual(columnsMock);
-        expect(control.columns).toEqual(columnsMock);
+        expect(control.getAllColumns()).toEqual(expectedColumnMocks);
+        expect(control.getVisibleColumns()).toEqual(expectedColumnMocks);
+        expect(control.columns).toEqual(expectedColumnMocks);
         expect(col4).toBeTruthy();
       });
     });
@@ -573,7 +588,7 @@ describe('ColumnPickerControl', () => {
       expect((SharedService.prototype.gridOptions.columnPicker as ColumnPicker).forceFitTitle).toBe('Ajustement forcé des colonnes');
       expect((SharedService.prototype.gridOptions.columnPicker as ColumnPicker).syncResizeTitle).toBe('Redimension synchrone');
       expect(columnsMock).toEqual([
-        { id: 'field1', field: 'field1', name: 'Titre', width: 100, nameKey: 'TITLE' },
+        { id: 'field1', field: 'field1', name: 'Titre', width: 100, nameKey: 'TITLE', hidden: false },
         { id: 'field2', field: 'field2', name: 'Field 2', width: 75, columnPickerLabel: 'Custom Label' },
         { id: 'field3', field: 'field3', name: 'Field 3', columnGroup: 'Billing', width: 75 },
         { id: 'field4', field: 'field4', name: 'Field 4', width: 75, excludeFromColumnPicker: true },
@@ -617,7 +632,7 @@ describe('ColumnPickerControl', () => {
       expect((SharedService.prototype.gridOptions.columnPicker as ColumnPicker).forceFitTitle).toBe('Custom Force Fit Title');
       expect((SharedService.prototype.gridOptions.columnPicker as ColumnPicker).syncResizeTitle).toBe('Custom Sync Resize Title');
       expect(columnsMock).toEqual([
-        { id: 'field1', field: 'field1', name: 'Titre', width: 100, nameKey: 'TITLE' },
+        { id: 'field1', field: 'field1', name: 'Titre', width: 100, nameKey: 'TITLE', hidden: false },
         { id: 'field2', field: 'field2', name: 'Field 2', width: 75, columnPickerLabel: 'Custom Label' },
         { id: 'field3', field: 'field3', name: 'Field 3', columnGroup: 'Billing', width: 75 },
         { id: 'field4', field: 'field4', name: 'Field 4', width: 75, excludeFromColumnPicker: true },
@@ -642,8 +657,8 @@ describe('ColumnPickerControl', () => {
       ];
 
       // Mock the shared service to return our custom columns
-      vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(unsortedColumnsMock);
-      vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(unsortedColumnsMock);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(unsortedColumnsMock);
+      vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(unsortedColumnsMock);
       vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(unsortedColumnsMock);
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(unsortedColumnsMock);
 
@@ -693,8 +708,8 @@ describe('ColumnPickerControl', () => {
       ];
 
       // Mock the shared service to return our custom columns
-      vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(originalColumnsMock);
-      vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(originalColumnsMock);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(originalColumnsMock);
+      vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(originalColumnsMock);
       vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(originalColumnsMock);
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(originalColumnsMock);
 

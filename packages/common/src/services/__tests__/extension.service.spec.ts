@@ -114,6 +114,7 @@ const gridStub = {
   getPluginByName: vi.fn(),
   getPreHeaderPanel: vi.fn(),
   getSelectionModel: vi.fn(),
+  getVisibleColumns: vi.fn(),
   getUID: () => GRID_UID,
   getColumns: vi.fn(),
   setColumns: vi.fn(),
@@ -122,6 +123,8 @@ const gridStub = {
   registerPlugin: vi.fn(),
   setSelectionModel: vi.fn(),
   updateColumnHeader: vi.fn(),
+  updateColumnById: vi.fn(),
+  updateColumns: vi.fn(),
   onActiveCellChanged: new SlickEvent(),
   onBeforeDestroy: new SlickEvent(),
   onBeforeHeaderCellDestroy: new SlickEvent(),
@@ -232,7 +235,7 @@ describe('ExtensionService', () => {
     });
 
     it('should return "visibleColumns" from the SharedService when "getVisibleColumns" method is called', () => {
-      const spy = vi.spyOn(SharedService.prototype, 'visibleColumns', 'get');
+      const spy = vi.spyOn(gridStub, 'getVisibleColumns');
       service.getVisibleColumns();
       expect(spy).toHaveBeenCalled();
     });
@@ -789,19 +792,14 @@ describe('ExtensionService', () => {
         { id: 'field2', width: 150 },
         { id: 'field3', field: 'field3' },
       ] as Column[];
-      const updatedColumnsMock = [
-        { id: 'field1', width: 100 },
-        { id: 'field3', field: 'field3' },
-      ] as Column[];
       sharedService.slickGrid = gridStub;
       vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(1);
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
-      const setColumnsSpy = vi.spyOn(gridStub, 'setColumns');
+      const updateColIdSpy = vi.spyOn(gridStub, 'updateColumnById');
 
       service.hideColumn(columnsMock[1]);
 
-      expect(sharedService.visibleColumns).toEqual(updatedColumnsMock);
-      expect(setColumnsSpy).toHaveBeenCalledWith(updatedColumnsMock, true);
+      expect(updateColIdSpy).toHaveBeenCalledWith('field2', { hidden: true }, true);
     });
 
     it('should call the refreshBackendDataset method on the GridMenu Extension when service with same method name is called', () => {
@@ -866,7 +864,7 @@ describe('ExtensionService', () => {
     it('should call the translateCellMenu method on the CellMenu Extension when service with same method name is called', () => {
       const gridOptionsMock = { enableCellMenu: true, cellMenu: {} } as GridOption;
       vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-      vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue([]);
+      vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue([]);
 
       service.bindDifferentExtensions();
       const pluginInstance = service.getExtensionInstanceByName(ExtensionName.cellMenu);
@@ -910,7 +908,7 @@ describe('ExtensionService', () => {
     it('should call the translateHeaderMenu method on the HeaderMenu Extension when service with same method name is called', () => {
       const gridOptionsMock = { enableHeaderMenu: true, headerMenu: {} } as GridOption;
       vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-      vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue([]);
+      vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue([]);
 
       service.bindDifferentExtensions();
       const pluginInstance = service.getExtensionInstanceByName(ExtensionName.headerMenu);
@@ -926,11 +924,11 @@ describe('ExtensionService', () => {
         const columnsAfterTranslateMock = [{ id: 'field1', field: 'field1', name: 'Bonjour', nameKey: 'HELLO' }] as Column[];
         vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsBeforeTranslateMock);
         sharedService.allColumns = columnsBeforeTranslateMock;
-        const renderSpy = vi.spyOn(service, 'renderColumnHeaders');
+        const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
 
         service.translateColumnHeaders();
 
-        expect(renderSpy).toHaveBeenCalledWith(columnsAfterTranslateMock, false);
+        expect(updateColumnSpy).toHaveBeenCalledWith();
         expect(columnsBeforeTranslateMock).toEqual(columnsAfterTranslateMock);
       });
 
@@ -939,12 +937,18 @@ describe('ExtensionService', () => {
         const columnsAfterTranslateMock = [{ id: 'field1', field: 'field1', name: 'Hello', nameKey: 'HELLO' }] as Column[];
         vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsBeforeTranslateMock);
         sharedService.allColumns = columnsBeforeTranslateMock;
-        const renderSpy = vi.spyOn(service, 'renderColumnHeaders');
+        const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
+        const gridOptionsMock = { enableColumnPicker: true } as GridOption;
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
+        service.bindDifferentExtensions();
+        const columnPicker = service.getExtensionByName(ExtensionName.columnPicker);
+        const translatePickerSpy = vi.spyOn(columnPicker?.instance, 'translateColumnPicker');
         service.translateColumnHeaders('en');
 
-        expect(renderSpy).toHaveBeenCalledWith(columnsAfterTranslateMock, false);
+        expect(updateColumnSpy).toHaveBeenCalled();
         expect(columnsBeforeTranslateMock).toEqual(columnsAfterTranslateMock);
+        expect(translatePickerSpy).toHaveBeenCalled();
       });
 
       it('should translate items with locale & column definitions provided as arguments to the method', () => {
@@ -952,13 +956,19 @@ describe('ExtensionService', () => {
         const columnsAfterTranslateMock = [{ id: 'field1', field: 'field1', name: 'Hello', nameKey: 'HELLO' }] as Column[];
         const colDefSpy = vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get');
         sharedService.allColumns = columnsBeforeTranslateMock;
-        const renderSpy = vi.spyOn(service, 'renderColumnHeaders');
+        const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
+        const gridOptionsMock = { enableGridMenu: true } as GridOption;
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
+        service.bindDifferentExtensions();
+        const gridMenu = service.getExtensionByName(ExtensionName.gridMenu);
+        const translateGMSpy = vi.spyOn(gridMenu?.instance, 'translateGridMenu');
         service.translateColumnHeaders('en', columnsBeforeTranslateMock);
 
         expect(colDefSpy).not.toHaveBeenCalled();
-        expect(renderSpy).toHaveBeenCalledWith(columnsAfterTranslateMock, true);
+        expect(updateColumnSpy).toHaveBeenCalled();
         expect(columnsBeforeTranslateMock).toEqual(columnsAfterTranslateMock);
+        expect(translateGMSpy).toHaveBeenCalled();
       });
     });
 

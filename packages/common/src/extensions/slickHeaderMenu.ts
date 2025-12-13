@@ -96,19 +96,22 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
   hideColumn(column: Column): void {
     if (this.grid?.getColumnIndex) {
       const columnIndex = this.grid.getColumnIndex(column.id);
+      const frozenColumnIndex = this.grid.getOptions().frozenColumn ?? -1;
+      const isFrozenValid = this.grid.validateSetColumnFreeze(undefined, frozenColumnIndex);
 
-      // if we're using frozen columns, we need to readjust pinning when the new hidden column is on the left pinning container
-      // we need to do this because SlickGrid freezes by index and has no knowledge of the columns themselves
-      this.grid.updateColumnById(column.id, { hidden: true });
-      const frozenColumnIndex = this.sharedService.gridOptions.frozenColumn ?? -1;
-      if (frozenColumnIndex >= 0 && frozenColumnIndex >= columnIndex) {
-        this.sharedService.gridOptions.frozenColumn = frozenColumnIndex - 1;
-        this.grid.calculateFrozenColumnIndexById(this.sharedService.frozenVisibleColumnId, true);
+      // update column hidden prop but only when valid
+      if (isFrozenValid) {
+        this.grid.updateColumnById(column.id, { hidden: true });
+
+        if (frozenColumnIndex >= 0 && frozenColumnIndex >= columnIndex) {
+          this.sharedService.gridOptions.frozenColumn = frozenColumnIndex - 1;
+          this.grid.calculateFrozenColumnIndexById(this.sharedService.frozenVisibleColumnId, true);
+        }
+
+        // then proceed with hiding the column in SlickGrid & trigger an event when done
+        this.grid.updateColumns();
+        this.pubSubService.publish('onHideColumns', { columns: this.grid.getVisibleColumns(), hiddenColumn: column });
       }
-
-      // then proceed with hiding the column in SlickGrid & trigger an event when done
-      this.grid.updateColumns();
-      this.pubSubService.publish('onHideColumns', { columns: this.grid.getVisibleColumns(), hiddenColumn: column });
     }
   }
 
@@ -129,7 +132,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
   /** Translate the Header Menu titles, we need to loop through all column definition to re-translate them */
   translateHeaderMenu(): void {
     if (this.sharedService.gridOptions?.headerMenu) {
-      this.resetHeaderMenuTranslations(this.sharedService.allColumns);
+      this.resetHeaderMenuTranslations(this.grid.getColumns());
     }
   }
 
@@ -495,7 +498,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
   /** freeze or unfreeze columns command */
   protected freezeOrUnfreezeColumns(column: Column, command: 'freeze-columns' | 'unfreeze-columns'): void {
-    const columnPosition = this.grid.getColumns().findIndex((col) => col.id === column.id);
+    const columnPosition = this.grid.getVisibleColumns().findIndex((col) => col.id === column.id);
     const newGridOptions = {
       frozenColumn: command === 'unfreeze-columns' ? -1 : columnPosition,
       enableMouseWheelScrollHandler: true,

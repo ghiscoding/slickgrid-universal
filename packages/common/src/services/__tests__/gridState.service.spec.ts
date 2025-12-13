@@ -82,6 +82,7 @@ const gridStub = {
   getSelectionModel: vi.fn(),
   getSelectedRows: vi.fn(),
   setColumns: vi.fn(),
+  getVisibleColumns: vi.fn(),
   setSelectedRows: vi.fn(),
   onColumnsReordered: new SlickEvent(),
   onColumnsResized: new SlickEvent(),
@@ -194,7 +195,7 @@ describe('GridStateService', () => {
           { id: 'field2', field: 'field2', width: 150, headerCssClass: 'blue' },
           { id: 'field3', field: 'field3' },
         ] as Column[];
-        const gridSpy = vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+        const gridSpy = vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columnsMock);
 
         const output = service.getCurrentColumns();
 
@@ -225,16 +226,40 @@ describe('GridStateService', () => {
           { id: 'field3', field: 'field3' },
         ] as Column[];
         columnsWithoutCheckboxMock = [
-          { id: 'field2', field: 'field2', width: 150, headerCssClass: 'blue' },
-          { id: 'field1', field: 'field1', width: 100, cssClass: 'red' },
-          { id: 'field3', field: 'field3' },
+          {
+            cssClass: undefined,
+            field: 'field2',
+            headerCssClass: 'blue',
+            id: 'field2',
+            hidden: false,
+            originalWidth: 150,
+            width: 150,
+          },
+          {
+            cssClass: 'red',
+            field: 'field1',
+            hidden: false,
+            headerCssClass: undefined,
+            id: 'field1',
+            originalWidth: 100,
+            width: 100,
+          },
+          {
+            cssClass: undefined,
+            field: 'field3',
+            hidden: false,
+            headerCssClass: undefined,
+            id: 'field3',
+            originalWidth: undefined,
+            width: undefined,
+          },
         ] as Column[];
         presetColumnsMock = [
           { columnId: 'field2', width: 150, headerCssClass: 'blue' },
           { columnId: 'field1', width: 100, cssClass: 'red' },
           { columnId: 'field3' },
         ] as CurrentColumn[];
-        vi.spyOn(service, 'getAssociatedGridColumns').mockReturnValue([...columnsWithoutCheckboxMock]);
+        // vi.spyOn(service, 'getAssociatedGridColumns').mockReturnValue([...columnsWithoutCheckboxMock]);
       });
 
       afterEach(() => {
@@ -259,7 +284,12 @@ describe('GridStateService', () => {
 
         service.changeColumnsArrangement(presetColumnsMock);
 
-        expect(setColsSpy).toHaveBeenCalledWith([rowDetailColumnMock, rowMoveColumnMock, rowCheckboxColumnMock, ...columnsWithoutCheckboxMock]);
+        expect(setColsSpy).toHaveBeenCalledWith([
+          { ...rowDetailColumnMock, hidden: false },
+          { ...rowMoveColumnMock, hidden: false },
+          { ...rowCheckboxColumnMock, hidden: false },
+          ...columnsWithoutCheckboxMock,
+        ]);
         expect(autoSizeSpy).toHaveBeenCalled();
         expect(pubSubSpy).not.toHaveBeenCalledWith('onFullResizeByContentRequested');
       });
@@ -1011,7 +1041,7 @@ describe('GridStateService', () => {
 
       vi.spyOn(filterServiceStub, 'getCurrentLocalFilters').mockReturnValue(filterMock);
       vi.spyOn(sortServiceStub, 'getCurrentLocalSorters').mockReturnValue(sorterMock);
-      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+      vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columnsMock);
     });
 
     it('should trigger a "onGridStateChanged" event when "onFilterChanged" is triggered', () => {

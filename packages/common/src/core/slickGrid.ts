@@ -1410,7 +1410,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (columnId !== undefined) {
       const newFrozenColumnIdx = this.columns.findIndex((col) => col.id === columnId);
       if (newFrozenColumnIdx >= 0 && newFrozenColumnIdx !== frozenColumnIdx) {
-        if (applyIndexChange) {
+        if (applyIndexChange && this.validateSetColumnFreeze(undefined, newFrozenColumnIdx)) {
           this._options.frozenColumn = newFrozenColumnIdx;
           this.updateColumnsInternal();
         }
@@ -1424,15 +1424,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * Validate that there is at least 1, or more, column to the right of the frozen column otherwise show an error (we do this check before calling `setColumns()`).
    * Note that it will only validate when `invalidColumnFreezePickerCallback` grid option is enabled.
    * @param {Boolean} [forceAlert] tri-state flag to alert when frozen column is invalid
+   * @param {Number} [frozenColIdx] optional frozen column index to validate freezing
    *  - if `undefined` it will do the condition check and never alert more than once
    *  - if `true` it will do the condition check and always alert even if it was called before
    *  - if `false` it will do the condition check but always skip the alert
    */
-  validateSetColumnFreeze(forceAlert?: boolean): boolean {
+  validateSetColumnFreeze(forceAlert?: boolean, frozenColIdx?: number): boolean {
     const visibleColumns = this.getVisibleColumns();
-    const frozenColumn = this.columns[this._prevFrozenColumnIdx] ?? this.columns[this._options.frozenColumn!];
+    const frozenColumn = this.columns[frozenColIdx ?? this._prevFrozenColumnIdx] ?? this.columns[this._options.frozenColumn!];
     const frozenColumnIdx = visibleColumns.findIndex((col) => col.id === frozenColumn?.id);
-    if (frozenColumnIdx >= 0 && frozenColumnIdx > visibleColumns.length - 2 && !this._options.skipFreezeColumnValidation) {
+    if (frozenColumnIdx >= 0 && frozenColumnIdx >= visibleColumns.length - 2 && !this._options.skipFreezeColumnValidation) {
       if ((forceAlert !== false && !this._invalidfrozenAlerted) || forceAlert === true) {
         this._options.invalidColumnFreezePickerCallback?.(this._options.invalidColumnFreezePickerMessage!);
         this._invalidfrozenAlerted = true;
@@ -2120,7 +2121,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
               previousSortColumns,
               sortCols: this.sortColumns
                 .map((col) => {
-                  const tempCol = this.columns[this.getColumnIndex(col.columnId)];
+                  const tempCol = this.getColumnById(col.columnId);
                   return tempCol && !tempCol.hidden ? { columnId: tempCol.id, sortCol: tempCol, sortAsc: col.sortAsc } : null;
                 })
                 .filter((el) => el),
@@ -3143,12 +3144,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /** Returns the column object by its ID */
-  getColumnById(id: number | string): C | undefined {
+  getColumnById(id: number | string): C | null {
     const index = this.getColumnIndex(id);
     if (isDefined(index)) {
       return this.columns[index];
     }
-    return undefined;
+    return null;
   }
 
   /** Update any column properties by their finding column by ID */

@@ -494,8 +494,9 @@ export class FilterService {
 
     // it might be a hidden column, if so it won't be part of the getColumns (because it could be hidden via setColumns())
     // when that happens we can try to get the column definition from all defined columns
-    if (!columnDef && this.sharedService && Array.isArray(this.sharedService.allColumns)) {
-      columnIndex = this.sharedService.allColumns.findIndex((col) => col.field === columnId);
+    const columns = this._grid.getColumns();
+    if (!columnDef && Array.isArray(columns)) {
+      columnIndex = columns.findIndex((col) => col.field === columnId);
     }
 
     // if we still don't have a column definition then we should return then row anyway (true)
@@ -882,7 +883,6 @@ export class FilterService {
 
       // when displaying header row, we'll call "setColumns" which in terms will recreate the header row filters
       this._grid.updateColumns();
-      // this._grid.setColumns(this.sharedService.columnDefinitions);
     }
   }
 
@@ -1020,7 +1020,7 @@ export class FilterService {
    * @param triggerBackendQuery defaults to True, which will query the backend.
    */
   async updateSingleFilter(filter: CurrentFilter, emitChangedEvent = true, triggerBackendQuery = true): Promise<boolean> {
-    const columnDef = this.sharedService.allColumns.find((col) => col.id === filter.columnId);
+    const columnDef = this._grid.getColumns().find((col) => col.id === filter.columnId);
     if (columnDef && filter.columnId) {
       this._columnFilters = {};
       const emptySearchTermReturnAllValues = columnDef.filter?.emptySearchTermReturnAllValues ?? true;
@@ -1092,7 +1092,7 @@ export class FilterService {
     } else {
       filterContainerElm = filterContainer;
     }
-    const columnDef = typeof column === 'string' ? this.sharedService.allColumns.find((col) => col.id === column) : column;
+    const columnDef = typeof column === 'string' ? this._grid.getColumns().find((col) => col.id === column) : column;
     const columnId = columnDef?.id ?? '';
 
     if (columnId !== 'selector' && columnDef?.filterable) {

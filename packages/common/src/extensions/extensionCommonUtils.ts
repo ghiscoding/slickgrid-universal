@@ -65,18 +65,17 @@ export function handleColumnPickerItemClick(this: SlickColumnPicker | SlickGridM
   if (event.target.type === 'checkbox') {
     context._areVisibleColumnDifferent = true;
     const columnId = event.target.dataset.columnid || '';
-    grid.updateColumnById(columnId, { hidden: !isChecked });
 
     // validate that the checkbox changes is allowed before going any further
     const visibleColumns = context.getVisibleColumns();
     const isFrozenAllowed = grid.validateSetColumnFreeze(true);
     if (!isFrozenAllowed || !visibleColumns.length) {
       event.target.checked = true;
-      grid.updateColumnById(columnId, { hidden: false });
       togglePickerCheckbox(iconElm, true);
       return;
     }
 
+    grid.updateColumnById(columnId, { hidden: !isChecked });
     grid.updateColumns();
 
     // keep reference to the updated visible columns list

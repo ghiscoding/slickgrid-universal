@@ -34,6 +34,7 @@ const gridStub = {
   getData: () => dataViewStub,
   getOptions: () => gridOptionMock,
   getColumns: vi.fn(),
+  getVisibleColumns: vi.fn(),
   getHeadersWidth: vi.fn(),
   getHeaderColumnWidthDiff: vi.fn(),
   getPluginByName: vi.fn(),
@@ -52,6 +53,7 @@ const gridStub = {
   setColumns: vi.fn(),
   setOptions: vi.fn(),
   setSortColumns: vi.fn(),
+  updateColumns: vi.fn(),
 } as unknown as SlickGrid;
 
 const mockExtensionUtility = {
@@ -127,8 +129,9 @@ describe('HeaderGroupingService', () => {
         { id: 'start', name: 'Start', field: 'start' },
       ];
       gridStub.getColumns = vi.fn();
+      gridStub.getVisibleColumns = vi.fn();
       vi.spyOn(gridStub, 'getPluginByName').mockReturnValue(resizerPluginStub);
-      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(mockColumns);
       vi.spyOn(gridStub, 'getPreHeaderPanel').mockReturnValue(mockPreHeaderPanelElm);
       vi.spyOn(gridStub, 'getPreHeaderPanelLeft').mockReturnValue(document.createElement('div'));
       vi.spyOn(gridStub, 'getPreHeaderPanelRight').mockReturnValue(document.createElement('div'));
@@ -192,13 +195,13 @@ describe('HeaderGroupingService', () => {
       const renderSpy = vi.spyOn(service, 'renderPreHeaderRowGroupingTitles');
       const translateSpy = vi.spyOn(mockExtensionUtility, 'translateItems');
       const getColSpy = vi.spyOn(gridStub, 'getColumns');
-      const setColSpy = vi.spyOn(gridStub, 'setColumns');
+      const updateColumSpy = vi.spyOn(gridStub, 'updateColumns');
 
       service.init(gridStub);
       service.translateHeaderGrouping();
 
       expect(getColSpy).toHaveBeenCalled();
-      expect(setColSpy).toHaveBeenCalled();
+      expect(updateColumSpy).toHaveBeenCalled();
       expect(translateSpy).toHaveBeenCalled();
       expect(renderSpy).toHaveBeenCalledTimes(2); // 1x by the init, 1x by translateHeaderGrouping
     });

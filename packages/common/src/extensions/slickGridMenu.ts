@@ -101,7 +101,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     this._menuCssPrefix = 'slick-menu';
     this._menuPluginCssPrefix = 'slick-grid-menu';
     this._camelPluginName = 'gridMenu';
-    this._columns = this.sharedService.allColumns ?? [];
+    this._columns = this.grid?.getColumns() ?? [];
     this._gridUid = this.grid?.getUID() ?? '';
     this.onAfterMenuShow = new SlickEvent<GridMenuEventWithElementCallbackArgs>('onAfterMenuShow');
     this.onBeforeMenuShow = new SlickEvent<GridMenuEventWithElementCallbackArgs>('onBeforeMenuShow');
