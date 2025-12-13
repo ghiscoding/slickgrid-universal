@@ -27,7 +27,7 @@ const gridStub = {
   setSelectedRows: vi.fn(),
   updateColumnById: vi.fn(),
   updateColumns: vi.fn(),
-  validateSetColumnFreeze: vi.fn(),
+  validateColumnFreeze: vi.fn(),
   onClick: new SlickEvent(),
   onColumnsReordered: new SlickEvent(),
   onHeaderContextMenu: new SlickEvent(),
@@ -109,9 +109,9 @@ describe('ColumnPickerControl', () => {
       expect(control).toBeTruthy();
     });
 
-    it('should query an input checkbox change event and expect it to cancel the uncheck column when "validateSetColumnFreeze()" returns false', () => {
+    it('should query an input checkbox change event and expect it to cancel the uncheck column when "validateColumnFreeze()" returns false', () => {
       const mockRowSelection = [0, 3, 5];
-      vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(false);
+      vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(false);
       vi.spyOn(control.eventHandler, 'subscribe');
       vi.spyOn(gridStub, 'getColumnIndex')
         .mockReturnValue(undefined as any)
@@ -133,9 +133,9 @@ describe('ColumnPickerControl', () => {
       expect(setSelectionSpy).not.toHaveBeenCalled();
     });
 
-    it('should query an input checkbox change event and expect it to cancel the uncheck column when "validateSetColumnFreeze()" returns false with Hybrid Selection enabled', () => {
+    it('should query an input checkbox change event and expect it to cancel the uncheck column when "validateColumnFreeze()" returns false with Hybrid Selection enabled', () => {
       const mockRowSelection = [0, 3, 5];
-      vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(false);
+      vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(false);
       vi.spyOn(control.eventHandler, 'subscribe');
       vi.spyOn(gridStub, 'getColumnIndex')
         .mockReturnValue(undefined as any)
@@ -159,7 +159,7 @@ describe('ColumnPickerControl', () => {
 
     it('should query an input checkbox change event and expect "setSelectedRows" method to be called using Row Selection when enabled', () => {
       const mockRowSelection = [0, 3, 5];
-      vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
+      vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
       vi.spyOn(control.eventHandler, 'subscribe');
       vi.spyOn(gridStub, 'getColumnIndex')
         .mockReturnValue(undefined as any)
@@ -233,7 +233,7 @@ describe('ColumnPickerControl', () => {
 
     it('should query an input checkbox change event and expect "readjustFrozenColumnIndexWhenNeeded" method to be called when the grid is detected to be a frozen grid', () => {
       const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
-      vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
+      vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
       vi.spyOn(gridStub, 'getColumnIndex')
         .mockReturnValue(undefined as any)
         .mockReturnValue(1);
@@ -259,7 +259,7 @@ describe('ColumnPickerControl', () => {
 
     it('should query an input checkbox change event and expect "headerColumnValueExtractor" method to be called when defined', () => {
       const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
-      vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
+      vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
       vi.spyOn(gridStub, 'getColumnIndex')
         .mockReturnValue(undefined as any)
         .mockReturnValue(1);
@@ -281,7 +281,7 @@ describe('ColumnPickerControl', () => {
     });
 
     it('should return custom label when columnPickerLabel is defined', () => {
-      vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
+      vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
       const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
       vi.spyOn(gridStub, 'getColumnIndex')
         .mockReturnValue(undefined as any)
@@ -383,7 +383,7 @@ describe('ColumnPickerControl', () => {
     it('should open the column picker via "onHeaderContextMenu" and expect "onColumnsChanged" to be called when defined', () => {
       const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
       const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
-      vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
+      vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
       const onColChangedMock = vi.fn();
       vi.spyOn(gridStub, 'getColumnIndex')
         .mockReturnValue(undefined as any)

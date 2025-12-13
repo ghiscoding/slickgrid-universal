@@ -576,5 +576,26 @@ describe('Example 01 - Basic Grids', () => {
       cy.get('.grid2 [data-row="3"] > .slick-cell:nth(0)').should('contain', 'Task 344');
       cy.get('.grid2 [data-row="4"] > .slick-cell:nth(0)').should('contain', 'Task 44');
     });
+
+    it('should not be able to uncheck all columns', () => {
+      cy.get('.grid2').find('.slick-header-columns .slick-header-column').should('have.length', fullTitles.length);
+
+      cy.get('.grid2')
+        .find('.slick-header-columns')
+        .children()
+        .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
+
+      cy.get('.grid2').find('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
+      cy.get('.slick-column-picker')
+        .find('.slick-column-picker-list')
+        .children()
+        .each(($child, index) => {
+          if (index < fullTitles.length) {
+            cy.wrap($child).children('label').click();
+          }
+        });
+
+      cy.get('.grid2').find('.slick-header-columns .slick-header-column').should('have.length', 1);
+    });
   });
 });

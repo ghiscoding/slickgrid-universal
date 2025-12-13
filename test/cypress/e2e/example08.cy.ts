@@ -279,7 +279,71 @@ describe('Example 08 - Column Span & Header Grouping', () => {
       });
   });
 
+  it('should reapply 3 frozen columns on 2nd grid', () => {
+    cy.contains('Set 3 Frozen Columns').click({ force: true });
+
+    cy.get('.grid2')
+      .find('.slick-pane-left .slick-header.slick-header-left .slick-header-columns .slick-header-column')
+      .should('have.length', 3);
+
+    cy.get('.grid2')
+      .find('.slick-pane-right .slick-header.slick-header-right .slick-header-columns .slick-header-column')
+      .should('have.length', 4);
+  });
+
+  it('should be able to "Unfreeze Columns" from header menu', () => {
+    cy.get('.grid2')
+      .find('.slick-pane-left .slick-header-columns .slick-header-column[role="columnheader"]:nth(2)')
+      .trigger('mouseover')
+      .children('.slick-header-menu-button')
+      .invoke('show')
+      .click();
+
+    cy.get('.slick-header-menu .slick-menu-command-list')
+      .should('be.visible')
+      .children('.slick-menu-item:nth-of-type(1)')
+      .children('.slick-menu-content')
+      .should('contain', 'Unfreeze Columns')
+      .click();
+
+    cy.get('.grid2')
+      .find('.slick-pane-left .slick-header.slick-header-left .slick-header-columns .slick-header-column')
+      .should('have.length', 7);
+  });
+
+  it('should be able to "Freeze Columns" back from header menu', () => {
+    cy.get('.grid2')
+      .find('.slick-pane-left .slick-header-columns .slick-header-column[role="columnheader"]:nth(2)')
+      .trigger('mouseover')
+      .children('.slick-header-menu-button')
+      .invoke('show')
+      .click();
+
+    cy.get('.slick-header-menu .slick-menu-command-list')
+      .should('be.visible')
+      .children('.slick-menu-item:nth-of-type(1)')
+      .children('.slick-menu-content')
+      .should('contain', 'Freeze Columns')
+      .click();
+
+    cy.get('.grid2')
+      .find('.slick-pane-left .slick-header.slick-header-left .slick-header-columns .slick-header-column')
+      .should('have.length', 3);
+
+    cy.get('.grid2')
+      .find('.slick-pane-right .slick-header.slick-header-right .slick-header-columns .slick-header-column')
+      .should('have.length', 4);
+  });
+
   describe('Basic Key Navigations', () => {
+    it('should remove any freezing', () => {
+      cy.get('[data-test="remove-frozen-column-button"]').click();
+
+      cy.get('.grid2')
+        .find('.slick-pane-left .slick-header.slick-header-left .slick-header-columns .slick-header-column')
+        .should('have.length', 7);
+    });
+
     it('should start at Task 1 on Duration colspan 5 days and type "PageDown" key once and be on Task 8 with full colspan', () => {
       cy.get('[data-row=1] > .slick-cell.l1.r3').as('active_cell').click();
       cy.get('@active_cell').type('{pagedown}');

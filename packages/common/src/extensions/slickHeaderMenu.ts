@@ -94,19 +94,13 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
   /** Hide a column from the grid */
   hideColumn(column: Column): void {
-    if (this.grid?.getColumnIndex) {
-      const columnIndex = this.grid.getColumnIndex(column.id);
-      const frozenColumnIndex = this.grid.getOptions().frozenColumn ?? -1;
-      const isFrozenValid = this.grid.validateSetColumnFreeze(undefined, frozenColumnIndex);
+    if (this.grid) {
+      // check if column freezing is allowed
+      const isFrozenAllowed = this.grid.validateColumnFreeze(column.id, true);
 
-      // update column hidden prop but only when valid
-      if (isFrozenValid) {
+      // when valid, update column hidden prop
+      if (isFrozenAllowed) {
         this.grid.updateColumnById(column.id, { hidden: true });
-
-        if (frozenColumnIndex >= 0 && frozenColumnIndex >= columnIndex) {
-          this.sharedService.gridOptions.frozenColumn = frozenColumnIndex - 1;
-          this.grid.calculateFrozenColumnIndexById(this.sharedService.frozenVisibleColumnId, true);
-        }
 
         // then proceed with hiding the column in SlickGrid & trigger an event when done
         this.grid.updateColumns();

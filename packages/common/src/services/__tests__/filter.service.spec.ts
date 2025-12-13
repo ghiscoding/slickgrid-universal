@@ -860,7 +860,7 @@ describe('FilterService', () => {
       const searchTerms = ['John'];
       const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
       sharedService.allColumns = [mockColumn1];
-      vi.spyOn(gridStub, 'getColumns').mockReturnValue([]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, 'text');

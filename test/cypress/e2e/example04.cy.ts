@@ -592,9 +592,37 @@ describe('Example 04 - Frozen Grid', () => {
           }
         }
       });
+
+    cy.get('button[data-dismiss="slick-column-picker"]').click();
+  });
+
+  it('should also not be able to "Hide Column" via the Header Menu', () => {
+    const alertStub = cy.stub();
+    cy.on('window:alert', alertStub);
+    const newColumnList = ['', 'Title', '% Complete', 'Action'];
+
+    cy.get('.grid4').find('.slick-header-column:nth(3)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
+
+    cy.get('.slick-header-menu .slick-menu-command-list')
+      .should('be.visible')
+      .children('.slick-menu-item')
+      .contains('Hide Column')
+      .click()
+      .then(() => {
+        expect(alertStub.getCall(0)).to.be.calledWith(
+          '[SlickGrid] Action not allowed and aborted, you need to have at least one or more column on the right section of the column freeze/pining. ' +
+            'You could alternatively "Unfreeze all the columns" before trying again.'
+        );
+      });
+
+    cy.get('.grid4')
+      .find('.slick-header-columns')
+      .children()
+      .each(($child, index) => expect($child.text()).to.eq(newColumnList[index]));
   });
 
   it('should be able to uncheck "Title" column without any alert', () => {
+    cy.get('.grid4').find('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
     const updatedColumns = ['', '% Complete', 'Action'];
     cy.get('.slick-column-picker-list li:not(.hidden) .checkbox-picker-label').first().click();
     cy.get('.slick-column-picker:visible').find('.close').trigger('click').click();

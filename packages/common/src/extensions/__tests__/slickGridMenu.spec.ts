@@ -70,7 +70,7 @@ const gridStub = {
   setPreHeaderPanelVisibility: vi.fn(),
   setOptions: vi.fn(),
   scrollColumnIntoView: vi.fn(),
-  validateSetColumnFreeze: vi.fn(),
+  validateColumnFreeze: vi.fn(),
   onBeforeDestroy: new SlickEvent(),
   onClick: new SlickEvent(),
   onColumnsReordered: new SlickEvent(),
@@ -213,9 +213,9 @@ describe('GridMenuControl', () => {
         expect(control).toBeTruthy();
       });
 
-      it('should query an input checkbox change event and expect it to cancel the uncheck column when "validateSetColumnFreeze()" returns false', () => {
+      it('should query an input checkbox change event and expect it to cancel the uncheck column when "validateColumnFreeze()" returns false', () => {
         const mockRowSelection = [0, 3, 5];
-        vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(false);
+        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(false);
         vi.spyOn(control.eventHandler, 'subscribe');
         vi.spyOn(gridStub, 'getColumnIndex')
           .mockReturnValue(undefined as any)
@@ -238,9 +238,9 @@ describe('GridMenuControl', () => {
         expect(setSelectionSpy).not.toHaveBeenCalled();
       });
 
-      it('should query an input checkbox change event and expect it to cancel the uncheck column when "validateSetColumnFreeze()" returns false and Hybrid Selection is enabled', () => {
+      it('should query an input checkbox change event and expect it to cancel the uncheck column when "validateColumnFreeze()" returns false and Hybrid Selection is enabled', () => {
         const mockRowSelection = [0, 3, 5];
-        vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(false);
+        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(false);
         vi.spyOn(control.eventHandler, 'subscribe');
         vi.spyOn(gridStub, 'getColumnIndex')
           .mockReturnValue(undefined as any)
@@ -271,7 +271,7 @@ describe('GridMenuControl', () => {
           .mockReturnValue(1);
         vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue(mockRowSelection);
         const setSelectionSpy = vi.spyOn(gridStub, 'setSelectedRows');
-        vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
+        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
 
         gridOptionsMock.enableRowSelection = true;
         control.columns = columnsMock;
@@ -358,7 +358,7 @@ describe('GridMenuControl', () => {
           .mockReturnValue(undefined as any)
           .mockReturnValue(1);
         const readjustSpy = vi.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
-        vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
+        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
 
         gridOptionsMock.frozenColumn = 0;
         control.columns = columnsMock;
@@ -385,7 +385,7 @@ describe('GridMenuControl', () => {
           .mockReturnValue(undefined as any)
           .mockReturnValue(1);
         const readjustSpy = vi.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
-        vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
+        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
 
         gridOptionsMock.frozenColumn = 0;
         control.columns = columnsMock;
@@ -427,7 +427,7 @@ describe('GridMenuControl', () => {
           .mockReturnValue(undefined as any)
           .mockReturnValue(1);
         const readjustSpy = vi.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
-        vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
+        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
 
         gridOptionsMock.gridMenu!.headerColumnValueExtractor = (column: Column) => `${column?.columnGroup || ''} - ${column.name}`;
         control.columns = columnsMock;
@@ -452,7 +452,7 @@ describe('GridMenuControl', () => {
           .mockReturnValue(undefined as any)
           .mockReturnValue(1);
         const readjustSpy = vi.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
-        vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
+        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
 
         gridOptionsMock.gridMenu!.headerColumnValueExtractor = null as any;
         control.columns = columnsMock;
@@ -599,7 +599,7 @@ describe('GridMenuControl', () => {
 
       it('should open the Grid Menu and expect "onColumnsChanged" to be called when defined', () => {
         const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
-        vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
+        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
         const onColChangedMock = vi.fn();
         vi.spyOn(gridStub, 'getColumnIndex')
@@ -813,7 +813,7 @@ describe('GridMenuControl', () => {
         gridOptionsMock.enableAutoSizeColumns = true;
         const autosizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
-        vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
+        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
 
         control.columns = columnsMock;
         control.init();
@@ -844,7 +844,7 @@ describe('GridMenuControl', () => {
         gridOptionsMock.enableAutoSizeColumns = true;
         const autosizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
-        vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
+        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
 
         control.columns = columnsMock;
         control.init();
@@ -865,7 +865,7 @@ describe('GridMenuControl', () => {
         gridOptionsMock.enableAutoSizeColumns = true;
         const autosizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
-        vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
+        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
 
         control.columns = columnsMock;
         control.init();

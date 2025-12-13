@@ -63,6 +63,7 @@ const gridStub = {
   updateColumnById: vi.fn(),
   updateColumns: vi.fn(),
   validateColumnFreezeWidth: vi.fn(),
+  validateColumnFreeze: vi.fn(),
   onBeforeSetColumns: new SlickEvent(),
   onBeforeHeaderCellDestroy: new SlickEvent(),
   onClick: new SlickEvent(),
@@ -597,6 +598,7 @@ describe('HeaderMenu Plugin', () => {
           ...gridOptionsMock,
           headerMenu: { hideFreezeColumnsCommand: false, hideColumnResizeByContentCommand: true },
         });
+        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
         vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(1);
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
         const updateColumnsSpy = vi.spyOn(gridStub, 'updateColumns');
@@ -620,14 +622,13 @@ describe('HeaderMenu Plugin', () => {
           headerMenu: { hideFreezeColumnsCommand: false, hideColumnResizeByContentCommand: true },
         });
 
+        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
         vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(1);
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
         const updateColumnsSpy = vi.spyOn(gridStub, 'updateColumns');
-        const calcSpy = vi.spyOn(gridStub, 'calculateFrozenColumnIndexById');
 
         plugin.hideColumn(columnsMock[1]);
 
-        expect(calcSpy).toHaveBeenCalledWith('field1', true);
         expect(updateColumnsSpy).toHaveBeenCalled();
         expect(columnsMock[1].hidden).toBeTruthy();
         expect(pubSubSpy).toHaveBeenCalledWith('onHideColumns', { columns: columnsMock, hiddenColumn: columnsMock[1] });

@@ -956,6 +956,65 @@ describe('SlickGrid core file', () => {
       expect(onAfterSetColumnsSpy).not.toHaveBeenCalled();
     });
 
+    it('should return false when calling validateColumnFreeze() when less than 1 column on the right section of the column freeze and when invalidColumnFreezePickerCallback is defined', () => {
+      const onAfterSetColumnsSpy = vi.spyOn(grid.onAfterSetColumns, 'notify');
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name' },
+        { id: 'lastName', field: 'lastName', name: 'Last Name' },
+        { id: 'age', field: 'age', name: 'Age' },
+      ] as Column[];
+      const gridOptions = {
+        ...defaultOptions,
+        enableColumnReorder: false,
+        enableCellNavigation: true,
+        preHeaderPanelHeight: 30,
+        showPreHeaderPanel: true,
+        createPreHeaderPanel: true,
+        frozenColumn: 1,
+      } as GridOption;
+      const data = [
+        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+      ];
+
+      skipGridDestroy = true;
+      grid = new SlickGrid<any, Column>(container, data, columns, gridOptions);
+
+      // only return middle column (meaning first/last are now hidden columns)
+      vi.spyOn(grid, 'getVisibleColumns').mockReturnValueOnce([columns[1]]);
+      grid.setColumns([columns[1]]);
+      const result = grid.validateColumnFreeze(columns[1].id, true);
+
+      expect(result).toBe(false);
+      expect(onAfterSetColumnsSpy).not.toHaveBeenCalled();
+    });
+
+    it('should return true when calling validateColumnFreeze() when frozenColumn is within and below visible column', () => {
+      const onAfterSetColumnsSpy = vi.spyOn(grid.onAfterSetColumns, 'notify');
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name' },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', hidden: true },
+        { id: 'age', field: 'age', name: 'Age' },
+      ] as Column[];
+      const gridOptions = {
+        ...defaultOptions,
+        enableColumnReorder: false,
+        enableCellNavigation: true,
+        preHeaderPanelHeight: 30,
+        showPreHeaderPanel: true,
+        createPreHeaderPanel: true,
+        frozenColumn: 0,
+      } as GridOption;
+
+      grid = new SlickGrid<any, Column>(container, [], columns, gridOptions);
+
+      // only return middle column (meaning first/last are now hidden columns)
+      const result = grid.validateColumnFreeze(columns[1].id, true);
+
+      expect(result).toBe(true);
+      expect(onAfterSetColumnsSpy).not.toHaveBeenCalled();
+    });
+
     it('should hide column headers div when "showPreHeaderPanel" is disabled', () => {
       const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
       const gridOptions = {
@@ -2329,13 +2388,13 @@ describe('SlickGrid core file', () => {
     });
 
     it('should return left viewport total column widths but also use shrink leeway since we are larger than canvas width', () => {
-      const columns = [
+      const columns: Column[] = [
         { id: 'firstName', field: 'firstName', name: 'First Name', minWidth: 110, width: 300, hidden: true },
         { id: 'lastName', field: 'lastName', name: 'Last Name', width: 620 },
         { id: 'age', field: 'age', name: 'age', width: 192, resizable: false },
         { id: 'gender', field: 'gender', name: 'gender', width: 200 },
         { id: 'active', field: 'active', name: 'active', width: 200, hidden: true },
-      ] as Column[];
+      ];
       grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, frozenColumn: 1 });
       const result = grid.getCanvasWidth();
       grid.resizeCanvas();
@@ -2362,22 +2421,24 @@ describe('SlickGrid core file', () => {
         { id: 'firstName', field: 'firstName', name: 'First Name', hidden: true },
         { id: 'lastName', field: 'lastName', name: 'Last Name' },
         { id: 'age', field: 'age', name: 'age' },
+        { id: 'gender', field: 'gender', name: 'gender' },
       ] as Column[];
       grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, frozenColumn: 0 });
       const updateSpy = vi.spyOn(grid.onBeforeUpdateColumns, 'notify');
       grid.updateColumns();
-      expect(grid.getVisibleColumns().length).toBe(2);
+      expect(grid.getVisibleColumns().length).toBe(3);
 
       const newColumns = [
         { id: 'firstName', field: 'firstName', name: 'First Name', hidden: false },
-        { id: 'lastName', field: 'lastName', name: 'Last Name', hidden: true },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', hidden: false },
         { id: 'age', field: 'age', name: 'age', hidden: true },
+        { id: 'gender', field: 'gender', name: 'gender', hidden: true },
       ] as Column[];
       grid.setColumns(newColumns);
 
       expect(updateSpy).toHaveBeenCalled();
       expect((grid.getHeader() as HTMLDivElement[])[0]).toBeInstanceOf(HTMLDivElement);
-      expect(grid.getVisibleColumns().length).toBe(1);
+      expect(grid.getVisibleColumns().length).toBe(2);
     });
 
     it('should return full grid width when fullWidthRows is enabled even with frozenColumn defined', () => {
@@ -3055,6 +3116,16 @@ describe('SlickGrid core file', () => {
       expect(frozenColumnIndex).toBe(2);
       expect(updateColumnSpy).not.toHaveBeenCalled();
       expect(grid.getOptions().frozenColumn).toBe(1);
+    });
+
+    it('should be able to calculate a different frozen column index when "age" column and apply frozenColumn change when freezing is allowed and last argument is enabled', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenColumn: 0 });
+      const updateColumnSpy = vi.spyOn(grid as any, 'updateColumnsInternal');
+      const frozenColumnIndex = grid.calculateFrozenColumnIndexById('age', true);
+
+      expect(frozenColumnIndex).toBe(2);
+      expect(updateColumnSpy).toHaveBeenCalled();
+      expect(grid.getOptions().frozenColumn).toBe(2);
     });
   });
 
