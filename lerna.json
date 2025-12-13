@@ -4,25 +4,20 @@
   "npmClient": "pnpm",
   "loglevel": "verbose",
   "command": {
-    "publish": {
-      "cleanupTempFiles": true,
-      "stripPackageKeys": [
-        "devDependencies",
-        "scripts"
-      ]
-    },
     "version": {
       "conventionalCommits": true,
       "createRelease": "github",
       "changelogIncludeCommitsClientLogin": " - by @%l",
       "changelogHeaderMessage": "## All-in-One SlickGrid agnostic library, visit [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) 📦🚀",
+      "commentIssues": "✅ This issue has been resolved and included in version %v.<br>🎉 See [%s](%u) for release notes. 🎉",
+      "commentPullRequests": "📦 This pull request is included in version %v.<br>🎉 See [%s](%u) for release notes. 🎉",
       "message": "chore(release): publish new version %s"
+    },
+    "publish": {
+      "cleanupTempFiles": true,
+      "stripPackageKeys": ["devDependencies", "scripts"]
     }
   },
   "changelogPreset": "conventionalcommits",
-  "packages": [
-    "demos/*",
-    "frameworks/*",
-    "packages/*"
-  ]
+  "packages": ["demos/*", "frameworks/*", "packages/*"]
 }
