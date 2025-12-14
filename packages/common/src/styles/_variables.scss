@@ -970,9 +970,10 @@ $slick-empty-data-warning-z-index:                          10 !default;
 // -----------
 
 // add a few Dark Mode SASS variables, just the basic vars
+// Bootstrap default dark body bg-color is "--bs-body-bg: #212529"
 $slick-dark-primary-color:                                color.adjust($slick-primary-color, $lightness: 15%) !default;
 $slick-dark-base-dark-text-color:                         #d4d4d4 !default;
-$slick-dark-base-dark-menu-bg-color:                      #252525 !default;
+$slick-dark-base-dark-menu-bg-color:                      #212529 !default;
 $slick-dark-base-dark-menu-border-color:                  #505050 !default;
 $slick-dark-base-dark-menu-item-border-color:             #5a5a5a !default;
 $slick-dark-base-dark-menu-item-hover-color:              #363b40 !default;

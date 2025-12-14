@@ -191,7 +191,7 @@ export class GridStateService {
 
   /**
    * Get the Columns (and their state: visibility/position) that are currently applied in the grid
-   * @return current columns
+   * @return {Array<Column>} current columns
    */
   getColumns(): Column[] {
     return this._columns;
@@ -199,7 +199,8 @@ export class GridStateService {
 
   /**
    * From an array of Grid Column Definitions, get the associated Current Columns
-   * @param gridColumns
+   * @param {Array<Column>} gridColumns
+   * @returns {{Array<CurrentColumn>} current columns
    */
   getAssociatedCurrentColumns(gridColumns: Column[]): CurrentColumn[] {
     const currentColumns: CurrentColumn[] = [];
@@ -221,8 +222,9 @@ export class GridStateService {
 
   /**
    * From an array of Current Columns, get the associated Grid Column Definitions
-   * @param grid
-   * @param currentColumns
+   * @param {Object} grid
+   * @param {Array<CurrentColumn>} currentColumns (e.g. Grid Preset)
+   * @returns {Array<Column>} column definitions
    */
   getAssociatedGridColumns(grid: SlickGrid, currentColumns: CurrentColumn[]): Column[] {
     const columns: Column[] = [];
@@ -303,8 +305,7 @@ export class GridStateService {
 
   /**
    * Get the current Row Selections (and its state, gridRowIndexes, dataContextIds, filteredDataContextIds) that are currently applied in the grid
-   * @param boolean are we requesting a refresh of the Section FilteredRow
-   * @return current row selection
+   * @return current row selections
    */
   getCurrentRowSelections(): CurrentRowSelection | null {
     if (this._grid && this._dataView && this.hasRowSelectionEnabled()) {

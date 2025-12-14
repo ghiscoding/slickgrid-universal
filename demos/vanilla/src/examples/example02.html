@@ -36,6 +36,7 @@
     <button class="button is-small" data-test="export-excel-btn" onclick.trigger="logItems()">
       <span>Log Items</span>
     </button>
+    <span class.bind="loadingClass"></span>
   </div>
 
   <div class="row">
@@ -54,7 +55,6 @@
     <button class="button is-small" data-test="group-duration-effort-percent-btn" onclick.trigger="groupByDurationEffortDrivenPercent()">
       Group by Duration then Effort-Driven then Percent.
     </button>
-    <span class.bind="loadingClass"></span>
   </div>
 </section>
 

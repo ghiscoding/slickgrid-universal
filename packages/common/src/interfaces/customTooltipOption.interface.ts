@@ -98,6 +98,12 @@ export interface CustomTooltipOption<T = any> {
   /** defaults to `normal`, optionally change the style `white-space` when displaying tooltip with formatter (tooltip or regular formatter) */
   whiteSpace?: string;
 
+  /** defaults to true, when set to true the tooltip will persist on hover instead of hiding after a timeout */
+  persistOnHover?: boolean;
+
+  /** defaults to 3000 milliseconds, delay before hiding the tooltip. Only works in tandem with persistOnHover set to true */
+  autoHideDelay?: number;
+
   // --
   // callback functions
   // -------------------

@@ -53,6 +53,7 @@ import type {
   OnRowsChangedEventArgs,
   OnRowsOrCountChangedEventArgs,
   OnScrollEventArgs,
+  OnSearchChangeEventArgs,
   OnSelectedRowIdsChangedEventArgs,
   OnSelectedRowsChangedEventArgs,
   OnSetItemsCalledEventArgs,
@@ -90,7 +91,6 @@ export interface SlickgridVueProps {
   onOnAddNewRow?: VueSlickEventHandler<OnAddNewRowEventArgs>;
   onOnAutosizeColumns?: VueSlickEventHandler<OnAutosizeColumnsEventArgs>;
   onOnBeforeAppendCell?: VueSlickEventHandler<OnBeforeAppendCellEventArgs>;
-  onOnBeforeSearchChange?: VueSlickEventHandler<OnCellChangeEventArgs, boolean | void>;
   onOnBeforeCellEditorDestroy?: VueSlickEventHandler<OnBeforeCellEditorDestroyEventArgs>;
   onOnBeforeColumnsResize?: VueSlickEventHandler<OnBeforeColumnsResizeEventArgs>;
   onOnBeforeDestroy?: VueSlickEventHandler<{ grid: SlickGrid }>;
@@ -162,12 +162,13 @@ export interface SlickgridVueProps {
   onOnBeforePasteCell?: VueSlickEventHandler<{ cell: number; row: number; item: any; columnDef: Column; value: any }>;
 
   // Slickgrid-Vue events
-  onOnAfterExportToExcel?: VueRegularEventHandler<{ filename: string; mimeType: string }>;
+  onOnAfterExportToExcel?: VueRegularEventHandler<{ filename: string; mimeType: string } | { error: any }>;
   onOnBeforeExportToExcel?: VueRegularEventHandler<boolean>;
   onOnBeforeExportToTextFile?: VueRegularEventHandler<boolean>;
   onOnAfterExportToTextFile?: VueRegularEventHandler<ExportTextDownloadOption>;
   onOnBeforeFilterChange?: VueRegularEventHandler<CurrentFilter[]>;
   onOnBeforeFilterClear?: VueRegularEventHandler<{ columnId: string } | boolean>;
+  onOnBeforeSearchChange?: VueRegularEventHandler<OnSearchChangeEventArgs, boolean | void>;
   onOnBeforeSortChange?: VueRegularEventHandler<Array<ColumnSort & { clearSortTriggered?: boolean }>>;
   onOnContextMenuClearGrouping?: VueRegularEventHandler<void>;
   onOnContextMenuCollapseAllGroups?: VueRegularEventHandler<void>;

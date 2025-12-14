@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "@slickgrid-universal/common": "workspace:*",
-    "@slickgrid-universal/utils": "workspace:*"
+    "@slickgrid-universal/utils": "workspace:*",
+    "@slickgrid-universal/binding": "workspace:*"
   }
 }

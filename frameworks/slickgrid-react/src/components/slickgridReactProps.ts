@@ -55,6 +55,7 @@ import type {
   OnRowsChangedEventArgs,
   OnRowsOrCountChangedEventArgs,
   OnScrollEventArgs,
+  OnSearchChangeEventArgs,
   OnSelectedRowIdsChangedEventArgs,
   OnSelectedRowsChangedEventArgs,
   OnSetItemsCalledEventArgs,
@@ -100,7 +101,6 @@ export interface SlickgridReactProps {
   onAddNewRow?: ReactSlickEventHandler<OnAddNewRowEventArgs>;
   onAutosizeColumns?: ReactSlickEventHandler<OnAutosizeColumnsEventArgs>;
   onBeforeAppendCell?: ReactSlickEventHandler<OnBeforeAppendCellEventArgs>;
-  onBeforeSearchChange?: ReactSlickEventHandler<OnCellChangeEventArgs, boolean | void>;
   onBeforeCellEditorDestroy?: ReactSlickEventHandler<OnBeforeCellEditorDestroyEventArgs>;
   onBeforeColumnsResize?: ReactSlickEventHandler<OnBeforeColumnsResizeEventArgs>;
   onBeforeDestroy?: ReactSlickEventHandler<{ grid: SlickGrid }>;
@@ -172,12 +172,13 @@ export interface SlickgridReactProps {
   onBeforePasteCell?: ReactSlickEventHandler<{ cell: number; row: number; item: any; columnDef: Column; value: any }>;
 
   // Slickgrid-React or Slickgrid-Universal events
-  onAfterExportToExcel?: ReactRegularEventHandler<{ filename: string; mimeType: string }>;
+  onAfterExportToExcel?: ReactRegularEventHandler<{ filename: string; mimeType: string } | { error: any }>;
   onBeforeExportToExcel?: ReactRegularEventHandler<boolean>;
   onBeforeExportToTextFile?: ReactRegularEventHandler<boolean>;
   onAfterExportToTextFile?: ReactRegularEventHandler<ExportTextDownloadOption>;
   onBeforeFilterChange?: ReactRegularEventHandler<CurrentFilter[]>;
   onBeforeFilterClear?: ReactRegularEventHandler<{ columnId: string } | boolean>;
+  onBeforeSearchChange?: ReactRegularEventHandler<OnSearchChangeEventArgs, boolean | void>;
   onBeforeSortChange?: ReactRegularEventHandler<Array<ColumnSort & { clearSortTriggered?: boolean }>>;
   onContextMenuClearGrouping?: ReactRegularEventHandler<void>;
   onContextMenuCollapseAllGroups?: ReactRegularEventHandler<void>;

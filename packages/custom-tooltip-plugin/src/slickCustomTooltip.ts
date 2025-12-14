@@ -1,3 +1,4 @@
+import { BindingEventService } from '@slickgrid-universal/binding';
 import type {
   CancellablePromiseWrapper,
   Column,
@@ -83,9 +84,15 @@ export class SlickCustomTooltip {
     offsetTopBottom: 2,
     regularTooltipWhiteSpace: 'pre-line',
     whiteSpace: 'normal',
+    autoHideDelay: 3000,
+    persistOnHover: true,
   } as CustomTooltipOption;
   protected _grid!: SlickGrid;
   protected _eventHandler: SlickEventHandler;
+  protected _hideTooltipTimeout?: any;
+  protected _autoHideTimeout?: any;
+  protected _isMouseOverTooltip = false;
+  protected _bindEventService: BindingEventService = new BindingEventService();
 
   constructor() {
     this._eventHandler = new SlickEventHandler();
@@ -150,10 +157,10 @@ export class SlickCustomTooltip {
       .subscribe(grid.onHeaderMouseOver, (e, args) => this.handleOnHeaderMouseOverByType(e, args, 'slick-header-column'))
       .subscribe(grid.onHeaderRowMouseEnter, (e, args) => this.handleOnHeaderMouseOverByType(e, args, 'slick-headerrow-column'))
       .subscribe(grid.onHeaderRowMouseOver, (e, args) => this.handleOnHeaderMouseOverByType(e, args, 'slick-headerrow-column'))
-      .subscribe(grid.onMouseLeave, this.hideTooltip.bind(this))
-      .subscribe(grid.onHeaderMouseOut, this.hideTooltip.bind(this))
-      .subscribe(grid.onHeaderRowMouseLeave, this.hideTooltip.bind(this))
-      .subscribe(grid.onHeaderRowMouseOut, this.hideTooltip.bind(this));
+      .subscribe(grid.onMouseLeave, this.handleOnMouseLeave.bind(this))
+      .subscribe(grid.onHeaderMouseOut, this.handleOnMouseLeave.bind(this))
+      .subscribe(grid.onHeaderRowMouseLeave, this.handleOnMouseLeave.bind(this))
+      .subscribe(grid.onHeaderRowMouseOut, this.handleOnMouseLeave.bind(this));
   }
 
   dispose(): void {
@@ -163,6 +170,22 @@ export class SlickCustomTooltip {
     this._eventHandler.unsubscribeAll();
   }
 
+  protected handleOnMouseLeave(): void {
+    if (this.addonOptions?.persistOnHover === false) {
+      if (this._hideTooltipTimeout) {
+        clearTimeout(this._hideTooltipTimeout);
+      }
+
+      this._hideTooltipTimeout = setTimeout(() => {
+        if (!this._isMouseOverTooltip) {
+          this.hideTooltip();
+        }
+      }, 100);
+    } else {
+      this.hideTooltip();
+    }
+  }
+
   /**
    * hide (remove) tooltip from the DOM, it will also remove it from the DOM and also cancel any pending requests (as mentioned below).
    * When using async process, it will also cancel any opened Promise/Observable that might still be pending.
@@ -170,6 +193,21 @@ export class SlickCustomTooltip {
   hideTooltip(): void {
     this._cancellablePromise?.cancel();
     this._observable$?.unsubscribe();
+
+    if (this.addonOptions?.persistOnHover === false) {
+      if (this._hideTooltipTimeout) {
+        clearTimeout(this._hideTooltipTimeout);
+        this._hideTooltipTimeout = undefined;
+      }
+      if (this._autoHideTimeout) {
+        clearTimeout(this._autoHideTimeout);
+        this._autoHideTimeout = undefined;
+      }
+
+      this._isMouseOverTooltip = false;
+      this._bindEventService.unbindAll();
+    }
+
     const cssClasses = classNameToList(this.className).join('.');
     const prevTooltip = document.body.querySelector(`.${cssClasses}${this.gridUidSelector}`);
     prevTooltip?.remove();
@@ -483,6 +521,26 @@ export class SlickCustomTooltip {
     // when do have text to show, then append the new tooltip to the html body & reposition the tooltip
     if (finalOutputText.toString()) {
       document.body.appendChild(this._tooltipElm);
+
+      if (this.addonOptions?.persistOnHover === false) {
+        this._bindEventService.bind(this._tooltipElm, 'mouseenter', () => {
+          this._isMouseOverTooltip = true;
+          if (this._hideTooltipTimeout) {
+            clearTimeout(this._hideTooltipTimeout);
+            this._hideTooltipTimeout = undefined;
+          }
+        });
+
+        this._bindEventService.bind(this._tooltipElm, 'mouseleave', () => {
+          this._isMouseOverTooltip = false;
+          this.hideTooltip();
+        });
+
+        // Auto-hide tooltip after 3 seconds regardless of mouse position
+        this._autoHideTimeout = setTimeout(() => {
+          this.hideTooltip();
+        }, this.addonOptions?.autoHideDelay);
+      }
 
       // reposition the tooltip on top of the cell that triggered the mouse over event
       this.reposition(cell);
