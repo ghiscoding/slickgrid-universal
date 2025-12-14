@@ -608,15 +608,89 @@ describe('Example 03 - Draggable Grouping', () => {
 
       // Column Pre-Headers without Common Factor group
       cy.get('.grid3')
-        .find('.slick-header:not(.slick-preheader-panel) .slick-header-columns')
-        .children()
-        .each(($child, index) => expect($child.text()).to.eq(titlesWithTitleDuration[index]));
-
-      // Column Headers without Title & Duration
-      cy.get('.grid3')
         .find('.slick-preheader-panel .slick-header-columns')
         .children()
         .each(($child, index) => expect($child.text()).to.eq(preHeadersWithFactor[index]));
+
+      // Column Headers without Title & Duration
+      cy.get('.grid3')
+        .find('.slick-header:not(.slick-preheader-panel) .slick-header-columns')
+        .children()
+        .each(($child, index) => expect($child.text()).to.eq(titlesWithTitleDuration[index]));
+    });
+
+    it('should open Header Menu on Duration column and freeze column', () => {
+      cy.get('.slick-header:not(.slick-preheader-panel) .slick-header-columns')
+        .find('.slick-header-column:nth(2)')
+        .trigger('mouseover')
+        .children('.slick-header-menu-button')
+        .invoke('show')
+        .click();
+
+      cy.get('.slick-header-menu .slick-menu-command-list')
+        .should('be.visible')
+        .children('.slick-menu-item:nth-of-type(1)')
+        .children('.slick-menu-content')
+        .contains('Freeze Columns')
+        .click();
+    });
+
+    it('should open Cost column Header Menu then click on "Hide Column" and still expect all headers shown', () => {
+      const headerTitles = ['', 'Title', 'Duration', 'Start', 'Finish', '% Complete', 'Effort-Driven', 'Action'];
+
+      cy.get('.slick-header:not(.slick-preheader-panel).slick-header-right .slick-header-columns')
+        .find('.slick-header-column:nth(2)')
+        .should('contain', 'Cost')
+        .trigger('mouseover')
+        .children('.slick-header-menu-button')
+        .invoke('show')
+        .click();
+
+      cy.get('.slick-header-menu .slick-menu-command-list')
+        .should('be.visible')
+        .children('.slick-menu-item:nth-of-type(9)')
+        .children('.slick-menu-content')
+        .contains('Hide Column')
+        .click();
+
+      cy.get('.grid3')
+        .find('.slick-preheader-panel .slick-header-columns')
+        .children()
+        .each(($child, index) => expect($child.text()).to.eq(preHeaders[index]));
+
+      cy.get('.grid3')
+        .find('.slick-header:not(.slick-preheader-panel) .slick-header-columns')
+        .children()
+        .each(($child, index) => expect($child.text()).to.eq(headerTitles[index]));
+    });
+
+    it('should open Column Picker then hide "Finish" column and still expect all headers shown', () => {
+      const headerTitles = ['', 'Title', 'Duration', 'Start', '% Complete', 'Effort-Driven', 'Action'];
+
+      cy.get('.slick-header:not(.slick-preheader-panel).slick-header-right .slick-header-columns')
+        .find('.slick-header-column:nth(2)')
+        .trigger('mouseover')
+        .trigger('contextmenu')
+        .invoke('show');
+
+      cy.get('.slick-column-picker')
+        .find('.slick-column-picker-list')
+        .children('li:visible:nth-child(5)')
+        .children('label')
+        .should('contain', 'Period - Finish')
+        .click();
+
+      cy.get('.slick-column-picker .close').click();
+
+      cy.get('.grid3')
+        .find('.slick-preheader-panel .slick-header-columns')
+        .children()
+        .each(($child, index) => expect($child.text()).to.eq(preHeaders[index]));
+
+      cy.get('.grid3')
+        .find('.slick-header:not(.slick-preheader-panel) .slick-header-columns')
+        .children()
+        .each(($child, index) => expect($child.text()).to.eq(headerTitles[index]));
     });
   });
 });

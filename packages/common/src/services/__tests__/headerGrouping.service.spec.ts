@@ -43,6 +43,7 @@ const gridStub = {
   getSortColumns: vi.fn(),
   invalidate: vi.fn(),
   onAutosizeColumns: new SlickEvent(),
+  onAfterUpdateColumns: new SlickEvent(),
   onColumnsReordered: new SlickEvent(),
   onColumnsResized: new SlickEvent(),
   onRendered: new SlickEvent(),
@@ -156,6 +157,18 @@ describe('HeaderGroupingService', () => {
 
       service.init(gridStub);
       gridStub.onAutosizeColumns.notify({ columns: [], grid: gridStub }, new SlickEventData(), gridStub);
+      vi.runAllTimers(); // fast-forward timer
+
+      expect(renderSpy).toHaveBeenCalledTimes(2);
+      expect(setTimeoutSpy).toHaveBeenCalledTimes(1);
+      expect(setTimeoutSpy).toHaveBeenLastCalledWith(expect.any(Function), 75);
+    });
+
+    it('should call the "renderPreHeaderRowGroupingTitles" after triggering a grid "onAfterUpdateColumns"', () => {
+      const renderSpy = vi.spyOn(service, 'renderPreHeaderRowGroupingTitles');
+
+      service.init(gridStub);
+      gridStub.onAfterUpdateColumns.notify({ columns: [], grid: gridStub }, new SlickEventData(), gridStub);
       vi.runAllTimers(); // fast-forward timer
 
       expect(renderSpy).toHaveBeenCalledTimes(2);
