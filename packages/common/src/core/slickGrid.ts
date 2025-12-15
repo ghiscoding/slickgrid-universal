@@ -57,11 +57,11 @@ import type {
   OnBeforeHeaderCellDestroyEventArgs,
   OnBeforeHeaderRowCellDestroyEventArgs,
   OnBeforeSetColumnsEventArgs,
-  OnBeforeUpdateColumnsEventArgs,
   OnCellChangeEventArgs,
   OnCellCssStylesChangedEventArgs,
   OnClickEventArgs,
   OnColumnsDragEventArgs,
+  OnColumnsEventArgs,
   OnColumnsReorderedEventArgs,
   OnColumnsResizeDblClickEventArgs,
   OnColumnsResizedEventArgs,
@@ -153,7 +153,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   onBeforeRemoveCachedRow: SlickEvent<{ row: number; grid: SlickGrid }>;
   onBeforeSetColumns: SlickEvent<OnBeforeSetColumnsEventArgs>;
   onBeforeSort: SlickEvent<SingleColumnSort | MultiColumnSort>;
-  onBeforeUpdateColumns: SlickEvent<OnBeforeUpdateColumnsEventArgs>;
+  onBeforeUpdateColumns: SlickEvent<OnColumnsEventArgs>;
+  onAfterUpdateColumns: SlickEvent<OnColumnsEventArgs>;
   onCellChange: SlickEvent<OnCellChangeEventArgs>;
   onCellCssStylesChanged: SlickEvent<OnCellCssStylesChangedEventArgs>;
   onClick: SlickEvent<OnClickEventArgs>;
@@ -557,7 +558,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.onBeforeRemoveCachedRow = new SlickEvent<{ row: number; grid: SlickGrid }>('onRowRemovedFromCache', externalPubSub);
     this.onBeforeSetColumns = new SlickEvent<OnBeforeSetColumnsEventArgs>('onBeforeSetColumns', externalPubSub);
     this.onBeforeSort = new SlickEvent<SingleColumnSort | MultiColumnSort>('onBeforeSort', externalPubSub);
-    this.onBeforeUpdateColumns = new SlickEvent<OnBeforeUpdateColumnsEventArgs>('onBeforeUpdateColumns', externalPubSub);
+    this.onBeforeUpdateColumns = new SlickEvent<OnColumnsEventArgs>('onBeforeUpdateColumns', externalPubSub);
+    this.onAfterUpdateColumns = new SlickEvent<OnColumnsEventArgs>('onBeforeUpdateColumns', externalPubSub);
     this.onCellChange = new SlickEvent<OnCellChangeEventArgs>('onCellChange', externalPubSub);
     this.onCellCssStylesChanged = new SlickEvent<OnCellCssStylesChangedEventArgs>('onCellCssStylesChanged', externalPubSub);
     this.onClick = new SlickEvent<OnClickEventArgs>('onClick', externalPubSub);
@@ -3458,7 +3460,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
     this.columns = newColumns;
     const updateCols = () => {
-      this.updateColumnsInternal();
+      this.updateColumns();
       this.triggerEvent(this.onAfterSetColumns, { newColumns, grid: this });
     };
     waitNextCycle ? queueMicrotaskOrSetTimeout(() => updateCols()) : updateCols();
@@ -3468,6 +3470,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   updateColumns(): void {
     this.triggerEvent(this.onBeforeUpdateColumns, { columns: this.columns, grid: this });
     this.updateColumnsInternal();
+    this.triggerEvent(this.onAfterUpdateColumns, { columns: this.columns, grid: this });
   }
 
   protected updateColumnsInternal(): void {

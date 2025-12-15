@@ -44,18 +44,19 @@ export class HeaderGroupingService {
           this.translateHeaderGrouping();
         }
 
-        this._eventHandler.subscribe(grid.onColumnsReordered, () => this.renderPreHeaderRowGroupingTitles());
-        this._eventHandler.subscribe(grid.onRendered, () => this.renderPreHeaderRowGroupingTitles());
-        this._eventHandler.subscribe(grid.onAutosizeColumns, () => this.renderPreHeaderRowGroupingTitles());
-        this._eventHandler.subscribe(this._dataView.onRowCountChanged, () => this.delayRenderPreHeaderRowGroupingTitles(0));
-
-        // and finally we need to re-create after user calls the Grid "setOptions" when changing from regular to frozen grid (and vice versa)
-        this._eventHandler.subscribe(grid.onSetOptions, (_e, args) => {
-          // when user changes frozen columns dynamically (e.g. from header menu), we need to re-render the pre-header of the grouping titles
-          if (args?.optionsBefore?.frozenColumn !== args?.optionsAfter?.frozenColumn) {
-            this.delayRenderPreHeaderRowGroupingTitles(0);
-          }
-        });
+        this._eventHandler
+          .subscribe(grid.onAfterUpdateColumns, () => this.renderPreHeaderRowGroupingTitles())
+          .subscribe(grid.onColumnsReordered, () => this.renderPreHeaderRowGroupingTitles())
+          .subscribe(grid.onRendered, () => this.renderPreHeaderRowGroupingTitles())
+          .subscribe(grid.onAutosizeColumns, () => this.renderPreHeaderRowGroupingTitles())
+          .subscribe(this._dataView.onRowCountChanged, () => this.delayRenderPreHeaderRowGroupingTitles(0))
+          .subscribe(grid.onSetOptions, (_e, args) => {
+            // and finally we need to re-create after user calls the Grid "setOptions" when changing from regular to frozen grid (and vice versa)
+            // when user changes frozen columns dynamically (e.g. from header menu), we need to re-render the pre-header of the grouping titles
+            if (args?.optionsBefore?.frozenColumn !== args?.optionsAfter?.frozenColumn) {
+              this.delayRenderPreHeaderRowGroupingTitles(0);
+            }
+          });
 
         // also not sure why at this point, but it seems that I need to call the 1st create in a delayed execution
         // probably some kind of timing issues and delaying it until the grid is fully ready fixes this problem
