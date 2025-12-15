@@ -499,7 +499,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     };
 
     // make sure column freeze is allowed before applying the change
-    if (this.grid.validateColumnFreezeWidth(newGridOptions.frozenColumn, true)) {
+    if (this.grid.validateColumnFreezeWidth(newGridOptions.frozenColumn)) {
       this.grid.setOptions(newGridOptions, false, true); // suppress the setColumns (3rd argument) since we'll do that ourselves
 
       // remove the last freeze/unfreeze command called from Header Menu since it will be replaced by the other one when reopening the menu

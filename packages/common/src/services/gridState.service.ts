@@ -221,7 +221,7 @@ export class GridStateService {
   }
 
   /**
-   * From an array of Current Columns, get the associated Grid Column Definitions
+   * From an array of Grid State Columns (`CurrentColumn[]`), get the associated Grid Column Definitions
    * @param {Object} grid
    * @param {Array<CurrentColumn>} currentColumns (e.g. Grid Preset)
    * @returns {Array<Column>} column definitions
