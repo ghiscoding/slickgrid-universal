@@ -13,7 +13,6 @@ import { SlickColumnPicker } from '../slickColumnPicker.js';
 const gridUid = 'slickgrid_124343';
 
 const gridStub = {
-  calculateFrozenColumnIndexById: vi.fn(),
   getColumnIndex: vi.fn(),
   getColumns: vi.fn(),
   getGridPosition: vi.fn(),
@@ -231,39 +230,12 @@ describe('ColumnPickerControl', () => {
       expect(control.menuElement).toBeFalsy();
     });
 
-    it('should query an input checkbox change event and expect "readjustFrozenColumnIndexWhenNeeded" method to be called when the grid is detected to be a frozen grid', () => {
-      const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
-      vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
-      vi.spyOn(gridStub, 'getColumnIndex')
-        .mockReturnValue(undefined as any)
-        .mockReturnValue(1);
-      const readjustSpy = vi.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
-
-      gridOptionsMock.frozenColumn = 0;
-      control.columns = columnsMock;
-      control.init();
-
-      gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData as any, gridStub);
-      control.menuElement!.querySelector('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
-
-      expect(handlerSpy).toHaveBeenCalledTimes(4);
-      expect(readjustSpy).toHaveBeenCalledWith(0, columnsMock, columnsMock);
-      expect(control.getAllColumns()).toEqual(columnsMock);
-      expect(control.getVisibleColumns()).toEqual(columnsMock);
-
-      // cell click should close it
-      gridStub.onClick.notify({ row: 1, cell: 2, grid: gridStub }, eventData as any, gridStub);
-
-      expect(control.menuElement).toBeFalsy();
-    });
-
     it('should query an input checkbox change event and expect "headerColumnValueExtractor" method to be called when defined', () => {
       const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
       vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
       vi.spyOn(gridStub, 'getColumnIndex')
         .mockReturnValue(undefined as any)
         .mockReturnValue(1);
-      const readjustSpy = vi.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
 
       gridOptionsMock.columnPicker!.headerColumnValueExtractor = (column: Column) => `${column?.columnGroup || ''} - ${column.name}`;
       control.columns = columnsMock;
@@ -274,7 +246,6 @@ describe('ColumnPickerControl', () => {
       const liElmList = control.menuElement!.querySelectorAll<HTMLLIElement>('li');
 
       expect(handlerSpy).toHaveBeenCalledTimes(4);
-      expect(readjustSpy).toHaveBeenCalledWith(0, columnsMock, columnsMock);
       expect(control.getAllColumns()).toEqual(columnsMock);
       expect(control.getVisibleColumns()).toEqual(columnsMock);
       expect(liElmList[2].textContent).toBe('Billing - Field 3');
@@ -286,7 +257,6 @@ describe('ColumnPickerControl', () => {
       vi.spyOn(gridStub, 'getColumnIndex')
         .mockReturnValue(undefined as any)
         .mockReturnValue(0);
-      const readjustSpy = vi.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
 
       control.columns = columnsMock;
       control.init();
@@ -296,7 +266,6 @@ describe('ColumnPickerControl', () => {
       const liElmList = control.menuElement!.querySelectorAll<HTMLLIElement>('li');
 
       expect(handlerSpy).toHaveBeenCalledTimes(4);
-      expect(readjustSpy).toHaveBeenCalledWith(0, columnsMock, columnsMock);
       expect(control.getAllColumns()).toEqual(columnsMock);
       expect(control.getVisibleColumns()).toEqual(columnsMock);
       expect(liElmList[1].textContent).toBe('Custom Label');

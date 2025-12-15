@@ -52,7 +52,6 @@ const dataViewStub = {
 
 const gridStub = {
   autosizeColumns: vi.fn(),
-  calculateFrozenColumnIndexById: vi.fn(),
   getColumnIndex: vi.fn(),
   getColumns: vi.fn(),
   getContainerNode: vi.fn(),
@@ -352,12 +351,11 @@ describe('GridMenuControl', () => {
         expect(control.menuElement).toBeFalsy();
       });
 
-      it('should query an input checkbox change event and expect "readjustFrozenColumnIndexWhenNeeded" method to be called when the grid is detected to be a frozen grid', () => {
+      it('should execute "hideMenu()" when onClick event is triggered', () => {
         const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
         vi.spyOn(gridStub, 'getColumnIndex')
           .mockReturnValue(undefined as any)
           .mockReturnValue(1);
-        const readjustSpy = vi.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
         vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
 
         gridOptionsMock.frozenColumn = 0;
@@ -369,7 +367,6 @@ describe('GridMenuControl', () => {
         control.menuElement!.querySelector('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
 
         expect(handlerSpy).toHaveBeenCalledTimes(4);
-        expect(readjustSpy).toHaveBeenCalledWith(0, columnsMock, columnsMock);
         expect(control.getAllColumns()).toEqual(columnsMock);
         expect(control.getVisibleColumns()).toEqual(columnsMock);
 
@@ -377,28 +374,6 @@ describe('GridMenuControl', () => {
         gridStub.onClick.notify({ row: 1, cell: 2, grid: gridStub }, eventData as any, gridStub);
 
         expect(control.menuElement).toBeFalsy();
-      });
-
-      it('should query an input checkbox change event and expect "readjustFrozenColumnIndexWhenNeeded" method to be called when the grid is detected to be a frozen grid', () => {
-        const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
-        vi.spyOn(gridStub, 'getColumnIndex')
-          .mockReturnValue(undefined as any)
-          .mockReturnValue(1);
-        const readjustSpy = vi.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
-        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
-
-        gridOptionsMock.frozenColumn = 0;
-        control.columns = columnsMock;
-        control.initEventHandlers();
-        control.init();
-        const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLDivElement;
-        buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
-        control.menuElement!.querySelector('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
-
-        expect(handlerSpy).toHaveBeenCalledTimes(4);
-        expect(readjustSpy).toHaveBeenCalledWith(0, columnsMock, columnsMock);
-        expect(control.getAllColumns()).toEqual(columnsMock);
-        expect(control.getVisibleColumns()).toEqual(columnsMock);
       });
 
       it('should expect the Grid Menu to change from the Left side container to the Right side when changing from a regular to a frozen grid via "setOptions"', () => {
@@ -426,7 +401,6 @@ describe('GridMenuControl', () => {
         vi.spyOn(gridStub, 'getColumnIndex')
           .mockReturnValue(undefined as any)
           .mockReturnValue(1);
-        const readjustSpy = vi.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
         vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
 
         gridOptionsMock.gridMenu!.headerColumnValueExtractor = (column: Column) => `${column?.columnGroup || ''} - ${column.name}`;
@@ -440,7 +414,6 @@ describe('GridMenuControl', () => {
         const liElmList = control.menuElement!.querySelectorAll<HTMLLIElement>('li');
 
         expect(handlerSpy).toHaveBeenCalledTimes(4);
-        expect(readjustSpy).toHaveBeenCalledWith(0, columnsMock, columnsMock);
         expect(control.getAllColumns()).toEqual(columnsMock);
         expect(control.getVisibleColumns()).toEqual(columnsMock);
         expect(liElmList[2].textContent).toBe('Billing - Field 3');
@@ -451,7 +424,6 @@ describe('GridMenuControl', () => {
         vi.spyOn(gridStub, 'getColumnIndex')
           .mockReturnValue(undefined as any)
           .mockReturnValue(1);
-        const readjustSpy = vi.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
         vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
 
         gridOptionsMock.gridMenu!.headerColumnValueExtractor = null as any;
@@ -465,7 +437,6 @@ describe('GridMenuControl', () => {
         const liElmList = control.menuElement!.querySelectorAll<HTMLLIElement>('li');
 
         expect(handlerSpy).toHaveBeenCalledTimes(4);
-        expect(readjustSpy).toHaveBeenCalledWith(0, columnsMock, columnsMock);
         expect(control.getAllColumns()).toEqual(columnsMock);
         expect(control.getVisibleColumns()).toEqual(columnsMock);
         expect(liElmList[2].textContent).toBe('Field 3');
@@ -1942,7 +1913,7 @@ describe('GridMenuControl', () => {
       });
     });
 
-    describe.skip('onColumnsReordered event', () => {
+    describe('onColumnsReordered event', () => {
       it('should reorder some columns', () => {
         const columnsUnorderedMock: Column[] = [
           { id: 'field2', field: 'field2', name: 'Field 2', width: 75 },
@@ -1976,7 +1947,7 @@ describe('GridMenuControl', () => {
     });
   });
 
-  describe.skip('translateGridMenu method', () => {
+  describe('translateGridMenu method', () => {
     beforeEach(() => {
       control.dispose();
       document.body.innerHTML = '';

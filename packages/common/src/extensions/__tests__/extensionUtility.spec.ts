@@ -1,18 +1,9 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
-import type { SlickGrid } from '../../core/slickGrid.js';
 import type { GridOption, MenuCommandItem } from '../../interfaces/index.js';
 import type { BackendUtilityService } from '../../services/backendUtility.service.js';
 import { SharedService } from '../../services/shared.service.js';
 import { ExtensionUtility } from '../extensionUtility.js';
-
-const gridStub = {
-  calculateFrozenColumnIndexById: vi.fn(),
-  getOptions: vi.fn(),
-  setColumns: vi.fn(),
-  setOptions: vi.fn(),
-  registerPlugin: vi.fn(),
-} as unknown as SlickGrid;
 
 const backendUtilityServiceStub = {
   executeBackendProcessesCallback: vi.fn(),
@@ -147,31 +138,6 @@ describe('extensionUtility', () => {
 
         expect(output1).toBe('Commandes');
         expect(output2).toBe('Options');
-      });
-    });
-
-    describe('readjustFrozenColumnIndexWhenNeeded method', () => {
-      let gridOptionsMock: GridOption;
-
-      beforeEach(() => {
-        gridOptionsMock = { frozenColumn: 1 } as GridOption;
-        sharedService.slickGrid = gridStub;
-        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-        sharedService.frozenVisibleColumnId = 'field2';
-      });
-
-      afterEach(() => {
-        vi.clearAllMocks();
-      });
-
-      it('should keep "frozenColumn" at 1 when showing a column that was previously hidden and its index is greater than provided argument of frozenColumnIndex', () => {
-        const calcSpy = vi.spyOn(gridStub, 'calculateFrozenColumnIndexById');
-        const setOptionSpy = vi.spyOn(sharedService.slickGrid, 'setOptions');
-
-        utility.readjustFrozenColumnIndexWhenNeeded(1);
-
-        expect(setOptionSpy).not.toHaveBeenCalled();
-        expect(calcSpy).toHaveBeenCalled();
       });
     });
   });

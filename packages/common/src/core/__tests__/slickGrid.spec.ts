@@ -190,14 +190,12 @@ describe('SlickGrid core file', () => {
     grid = new SlickGrid<any, Column>('#myGrid', [], columns, defaultOptions);
     grid.init();
     grid.setOptions({ addNewRowCssClass: 'new-class' });
-    const frozenIdx = grid.calculateFrozenColumnIndexById();
     const colHeaderElms = container.querySelectorAll('.slick-header-columns .slick-header-column');
 
     expect(grid).toBeTruthy();
     expect(colHeaderElms.length).toBe(1);
     expect(colHeaderElms[0].classList.contains('header-class')).toBeTruthy();
     expect(colHeaderElms[0].getAttribute('some-attr')).toBe('3');
-    expect(frozenIdx).toBe(-1);
     expect(grid.getOptions().addNewRowCssClass).toBe('new-class');
     expect(grid.getData()).toEqual([]);
     expect(grid.getColumns()).toEqual(columns);
@@ -3076,56 +3074,6 @@ describe('SlickGrid core file', () => {
       );
       expect(grid.getEditController()).toBeTruthy();
       expect(result).toBeFalsy();
-    });
-  });
-
-  describe('calculateFrozenColumnIndexById() method', () => {
-    const columns = [
-      { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
-      { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
-      { id: 'age', field: 'age', name: 'Age', sortable: true },
-    ] as Column[];
-    const data = [
-      { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
-      { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
-    ];
-
-    it('should be able to calculate a new frozen column index when "age" column is found at position from new columns', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
-      const setOptionSpy = vi.spyOn(grid, 'setOptions');
-      const frozenColumnIndex = grid.calculateFrozenColumnIndexById('age');
-
-      expect(frozenColumnIndex).toBe(2);
-      expect(setOptionSpy).not.toHaveBeenCalled();
-    });
-
-    it('should be able to calculate a different frozen column index when "age" column is calculated at different position from new columns', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenColumn: 1 });
-      const updateColumnSpy = vi.spyOn(grid as any, 'updateColumnsInternal');
-      const frozenColumnIndex = grid.calculateFrozenColumnIndexById('age');
-
-      expect(frozenColumnIndex).toBe(2);
-      expect(updateColumnSpy).not.toHaveBeenCalled();
-    });
-
-    it('should be able to calculate a different frozen column index and apply the change when "age" column is found at different position and last argument is enabled', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenColumn: 1 });
-      const updateColumnSpy = vi.spyOn(grid as any, 'updateColumnsInternal');
-      const frozenColumnIndex = grid.calculateFrozenColumnIndexById('age', true);
-
-      expect(frozenColumnIndex).toBe(2);
-      expect(updateColumnSpy).not.toHaveBeenCalled();
-      expect(grid.getOptions().frozenColumn).toBe(1);
-    });
-
-    it('should be able to calculate a different frozen column index when "age" column and apply frozenColumn change when freezing is allowed and last argument is enabled', () => {
-      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, frozenColumn: 0 });
-      const updateColumnSpy = vi.spyOn(grid as any, 'updateColumnsInternal');
-      const frozenColumnIndex = grid.calculateFrozenColumnIndexById('age', true);
-
-      expect(frozenColumnIndex).toBe(2);
-      expect(updateColumnSpy).toHaveBeenCalled();
-      expect(grid.getOptions().frozenColumn).toBe(2);
     });
   });
 

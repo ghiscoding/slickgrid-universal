@@ -98,18 +98,10 @@ export function handleColumnPickerItemClick(this: SlickColumnPicker | SlickGridM
       grid.setSelectedRows(rowSelection);
     }
 
-    // if we're using frozen columns, we need to readjust pinning when the new hidden column becomes visible again on the left pinning container
-    // we need to readjust frozenColumn index because SlickGrid freezes by index and has no knowledge of the columns themselves
-    const allColumns = grid.getColumns();
-    const frozenColumnIndex = context.gridOptions.frozenColumn ?? -1;
-    if (frozenColumnIndex >= 0) {
-      context.extensionUtility.readjustFrozenColumnIndexWhenNeeded(frozenColumnIndex, allColumns, visibleColumns);
-    }
-
     const callbackArgs = {
       columnId,
       showing: isChecked,
-      allColumns,
+      allColumns:  grid.getColumns(),
       visibleColumns,
       columns: visibleColumns,
       grid,

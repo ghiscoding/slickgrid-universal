@@ -1397,31 +1397,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /**
-   * From a new set of columns, different than current grid columns, we'll recalculate the `frozenColumn` index position by comparing its column `id`
-   * and recalculating the `frozenColumn` index to find out if it is different from a new set of columns.
-   * @param {String|Number} [columnId] - optional column id to calculate from (otherwise it will find the current frozen column id)
-   * @param {Boolean} [applyIndexChange] - whether to apply index changes to the frozen column
-   * @returns {number} - the recalculated frozen column index
-   */
-  calculateFrozenColumnIndexById(columnId?: string | number | null, applyIndexChange = false): number {
-    const frozenColumnIdx = this.getFrozenColumnIdx();
-    columnId ??= frozenColumnIdx >= 0 ? this.columns[frozenColumnIdx as any]?.id : undefined;
-    if (columnId !== undefined) {
-      const newFrozenColumnIdx = this.columns.findIndex((col) => col.id === columnId);
-      if (newFrozenColumnIdx >= 0 && newFrozenColumnIdx !== frozenColumnIdx) {
-        const isValid = this.validateColumnFreeze(columnId);
-        if (applyIndexChange && isValid) {
-          this._options.frozenColumn = newFrozenColumnIdx;
-          this._prevFrozenColumnIdx = newFrozenColumnIdx;
-          this.updateColumnsInternal();
-        }
-        return newFrozenColumnIdx;
-      }
-    }
-    return frozenColumnIdx;
-  }
-
-  /**
    * Validate that the frozen column is allowed by verifying there is at least 1, or more, column to the right of the frozen column otherwise show an error
    * Note that it will only validate when `invalidColumnFreezePickerCallback` grid option is enabled.
    * @param {Number|String} [columnId] column id

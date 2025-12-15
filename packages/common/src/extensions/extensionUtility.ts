@@ -55,21 +55,6 @@ export class ExtensionUtility {
     return output;
   }
 
-  /**
-   * When using ColumnPicker/GridMenu to show/hide a column, we potentially need to readjust the grid option "frozenColumn" index.
-   * That is because SlickGrid freezes by column index and it has no knowledge of the columns themselves and won't change the index, we need to do that ourselves whenever necessary.
-   * Note: we call this method right after the visibleColumns array got updated, it won't work properly if we call it before the setting the visibleColumns.
-   * @param {Number} frozenColumnIndex - current frozenColumn index
-   * @param {Array<Object>} allColumns - all columns (including hidden ones)
-   * @param {Array<Object>} visibleColumns - only visible columns (excluding hidden ones)
-   */
-  readjustFrozenColumnIndexWhenNeeded(frozenColumnIndex: number): void {
-    if (frozenColumnIndex >= 0) {
-      // recalculate and apply changes when `frozenColumn` index changes
-      this.sharedService.slickGrid.calculateFrozenColumnIndexById(this.sharedService.frozenVisibleColumnId, true);
-    }
-  }
-
   /** Refresh the dataset through the Backend Service */
   refreshBackendDataset(inputGridOptions?: GridOption): void {
     // user can pass new set of grid options which will override current ones

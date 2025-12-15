@@ -44,7 +44,6 @@ const gridOptionsMock = {
 
 const gridStub = {
   autosizeColumns: vi.fn(),
-  calculateFrozenColumnIndexById: vi.fn(),
   getCellNode: vi.fn(),
   getCellFromEvent: vi.fn(),
   getColumns: vi.fn(),
