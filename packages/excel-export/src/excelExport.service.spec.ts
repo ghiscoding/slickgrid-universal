@@ -2282,7 +2282,7 @@ describe('ExcelExportService', () => {
 
       mockColumns = [
         { id: 'id', name: 'ID', field: 'id', width: 100 },
-        { id: 'dt', name: 'Date', field: 'dt', width: 100, type: 'date' } as any,
+        { id: 'dt', name: 'Date', field: 'dt', width: 100, type: 'date', colspan: 2 },
         { id: 'title', name: 'Title', field: 'title', width: 100 },
       ] as Column[];
 
@@ -2294,10 +2294,21 @@ describe('ExcelExportService', () => {
       vi.clearAllMocks();
     });
 
-    it('preCalculateColumnMetadata should cache per-column options and detect complex spanning', () => {
+    it('preCalculateColumnMetadata should cache per-column options and detect complex spanning when enableCellRowSpan grid option is enabled', () => {
       service.init(gridStub, container);
       (service as any)._excelExportOptions = { autoDetectCellFormat: true };
       mockGridOptions.enableCellRowSpan = true;
+
+      const cache = (service as any).preCalculateColumnMetadata(mockColumns);
+      expect(cache.get('id')).toBeDefined();
+      expect(cache.get('dt').exportOptions.exportWithFormatter).toBe(true);
+      expect(cache.get('id').hasComplexSpanning).toBe(true);
+    });
+
+    it('preCalculateColumnMetadata should cache per-column options and detect complex spanning when enableCellRowSpan grid option is disabled but column has a colspan defined', () => {
+      service.init(gridStub, container);
+      (service as any)._excelExportOptions = { autoDetectCellFormat: true };
+      mockGridOptions.enableCellRowSpan = false;
 
       const cache = (service as any).preCalculateColumnMetadata(mockColumns);
       expect(cache.get('id')).toBeDefined();
