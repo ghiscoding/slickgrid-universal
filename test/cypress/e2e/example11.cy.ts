@@ -506,6 +506,53 @@ describe('Example 11 - Batch Editing', () => {
       cy.get('.slick-column-picker button.close').click();
     });
 
+    it('should change back pre-defined view to "Tasks Finishing in Previous Years", then be able to show the 2 hidden columns "Product" and "Country of Origin"', () => {
+      const hiddenTitles = ['', 'Title', 'Duration', 'Cost', '% Complete', 'Start', 'Finish', 'Completed', 'Action'];
+      const allTitles = [
+        '',
+        'Title',
+        'Duration',
+        'Cost',
+        '% Complete',
+        'Start',
+        'Finish',
+        'Completed',
+        'Product',
+        'Country of Origin',
+        'Action',
+      ];
+
+      cy.get('.selected-view').select('previousYears');
+      cy.get('.selected-view').should('have.value', 'previousYears');
+
+      cy.get('.grid11')
+        .find('.slick-header-columns')
+        .children()
+        .each(($child, index) => expect($child.text()).to.eq(hiddenTitles[index]));
+
+      // open Column Picker
+      cy.get('.grid11').find('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
+
+      cy.get('.slick-column-picker-list')
+        .find('input[type="checkbox"]:checked')
+        .should('have.length', 11 - 2);
+
+      cy.get('.slick-column-picker-list li .mdi-icon-picker-uncheck').each(($child, index) => {
+        if (index < 2) {
+          $child.trigger('click');
+        }
+      });
+
+      cy.get('.slick-column-picker-list').find('input[type="checkbox"]:checked').should('have.length', 11);
+
+      cy.get('.grid11')
+        .find('.slick-header-columns')
+        .children()
+        .each(($child, index) => expect($child.text()).to.eq(allTitles[index]));
+
+      cy.get('.slick-column-picker button.close').click();
+    });
+
     it('should create a new View based on "Tasks Finished in Previous Years" that was already selected', () => {
       const filterName = 'Custom View Test';
       const winPromptStub = () => filterName;
@@ -1165,6 +1212,64 @@ describe('Example 11 - Batch Editing', () => {
       cy.get('.slick-header-left .slick-header-column').should('have.length', 4);
       cy.get('.slick-header-right .slick-header-column').should('have.length', 7);
       cy.get('.slick-header-left .slick-header-column').last().get('.slick-column-name').should('contain', 'Cost');
+    });
+
+    it('should change back pre-defined view to "Tasks Finishing in Future Years", then be able to show the hidden column "Cost"', () => {
+      const hiddenTitles = [
+        '',
+        'Title',
+        'Duration',
+        '% Complete',
+        'Start',
+        'Finish',
+        'Completed',
+        'Product',
+        'Country of Origin',
+        'Action',
+      ];
+      const allTitles = [
+        '',
+        'Title',
+        'Duration',
+        'Cost',
+        '% Complete',
+        'Start',
+        'Finish',
+        'Completed',
+        'Product',
+        'Country of Origin',
+        'Action',
+      ];
+
+      cy.get('.selected-view').select('greaterCurrentYear');
+      cy.get('.selected-view').should('have.value', 'greaterCurrentYear');
+
+      cy.get('.grid11')
+        .find('.slick-header-columns')
+        .children()
+        .each(($child, index) => expect($child.text()).to.eq(hiddenTitles[index]));
+
+      // open Column Picker
+      cy.get('.grid11').find('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
+
+      cy.get('.slick-column-picker-list')
+        .find('input[type="checkbox"]:checked')
+        .should('have.length', 11 - 1);
+
+      cy.get('.slick-column-picker-list li .mdi-icon-picker-uncheck').each(($child, index) => {
+        if (index < 1) {
+          $child.trigger('click');
+        }
+      });
+
+      cy.get('.slick-column-picker-list').find('input[type="checkbox"]:checked').should('have.length', 11);
+
+      cy.get('.grid11')
+        .find('.slick-header-columns')
+        .children()
+        .each(($child, index) => expect($child.text()).to.eq(allTitles[index]));
+
+      cy.get('.slick-column-picker button.close').click();
     });
   });
 });
