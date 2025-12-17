@@ -73,6 +73,8 @@ const Example: React.FC = () => {
 }
 ```
 
+> **Note** since v10 you can now pass `true` as the argument to `gridStateService.getCurrentGridState(true)` which will return all columns, not just the visible columns but also include the hidden columns and their "hidden" properties.
+
 ### Using Grid Presets & Filter SearchTerm(s)
 What happens when we use the grid `presets` and a [Filter Default SearchTerms](../column-functionalities/filters/select-filter.md#default-search-terms)? In this case, the `presets` will win over filter `searchTerms`. The cascading order of priorities is the following
 1. Do we have any `presets`? Yes use them, else go to step 2

@@ -725,13 +725,14 @@ describe('Resizer Service', () => {
       });
 
       it('should call the resize and expect first column have a fixed width while other will have a calculated width when resizing by their content', () => {
-        const setColumnsSpy = vi.spyOn(gridStub, 'setColumns');
+        const updateColumnsSpy = vi.spyOn(gridStub, 'updateColumns');
         const reRenderColumnsSpy = vi.spyOn(gridStub, 'reRenderColumns');
 
         service.init(gridStub, divContainer);
         service.resizeColumnsByCellContent(true);
 
-        expect(setColumnsSpy).toHaveBeenCalledWith([
+        expect(updateColumnsSpy).toHaveBeenCalled();
+        expect(gridStub.getColumns()).toEqual([
           expect.objectContaining({ id: 'userId', width: 30 }),
           expect.objectContaining({ id: 'firstName', width: 56 }), // longest word "Destinee" (length 8 * charWidth(7) * ratio(0.88)) + cellPadding(6) = 55.28 ceil to => 56
           expect.objectContaining({ id: 'lastName', width: 68 }), // longest word "Altenwerth" (length 10 * charWidth(7) * ratio(0.88)) + cellPadding(6) = 67.6 ceil to => 68
@@ -745,14 +746,14 @@ describe('Resizer Service', () => {
       });
 
       it('should not return without resizing if "resizeByContentOnlyOnFirstLoad" is set to True and we already resized once', () => {
-        const setColumnsSpy = vi.spyOn(gridStub, 'setColumns');
+        const updateColumnsSpy = vi.spyOn(gridStub, 'updateColumns');
         const reRenderColumnsSpy = vi.spyOn(gridStub, 'reRenderColumns');
         const pubSubSpy = vi.spyOn(eventPubSubService, 'publish');
 
         service.init(gridStub, divContainer);
         service.resizeColumnsByCellContent(true);
 
-        expect(setColumnsSpy).toHaveBeenCalled();
+        expect(updateColumnsSpy).toHaveBeenCalled();
         expect(reRenderColumnsSpy).toHaveBeenCalledWith(true);
         expect(pubSubSpy).toHaveBeenCalledWith('onBeforeResizeByContent', undefined, 0);
 
@@ -760,11 +761,11 @@ describe('Resizer Service', () => {
         // so we shouldn't expect the grid.setColumns to be called again
         mockGridOptions.resizeByContentOnlyOnFirstLoad = true;
         service.resizeColumnsByCellContent(false);
-        expect(setColumnsSpy).toHaveBeenCalledTimes(1);
+        expect(updateColumnsSpy).toHaveBeenCalledTimes(1);
       });
 
       it('should call the resize and expect first column have a fixed width while other will have a calculated width when resizing by their content and grid is editable', () => {
-        const setColumnsSpy = vi.spyOn(gridStub, 'setColumns');
+        const updateColumnsSpy = vi.spyOn(gridStub, 'updateColumns');
         const reRenderColumnsSpy = vi.spyOn(gridStub, 'reRenderColumns');
 
         mockGridOptions.editable = true;
@@ -772,7 +773,8 @@ describe('Resizer Service', () => {
         service.resizeColumnsByCellContent(true);
 
         // same as previous except firstName/lastName have editors with padding of 5px
-        expect(setColumnsSpy).toHaveBeenCalledWith([
+        expect(updateColumnsSpy).toHaveBeenCalledWith();
+        expect(gridStub.getColumns()).toEqual([
           expect.objectContaining({ id: 'userId', width: 30 }),
           expect.objectContaining({ id: 'firstName', width: 61 }), // longest word "Destinee" (length 8 * charWidth(7) * ratio(0.88)) + cellPadding(6) + editorPadding(5) = 60.28 ceil to => 61
           expect.objectContaining({ id: 'lastName', width: 73 }), // longest word "Altenwerth" (length 10 * charWidth(7) * ratio(0.88)) + cellPadding(6) + editorPadding(5) = 72.6 ceil to => 73

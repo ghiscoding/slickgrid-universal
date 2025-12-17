@@ -736,7 +736,7 @@ export function sortPresetColumns<T = any>(allColumns: Column<T>[], presetColumn
   return allColumns
     .map((column, originalIndex) => ({
       ...column,
-      hidden: !presetColumnMap.has(column.id),
+      hidden: !presetColumnMap.has(column.id) || (presetColumns.find((c) => c.id === column.id)?.hidden ?? false),
       _originalIndex: originalIndex,
       _presetIndex: presetColumnMap.get(column.id),
     }))

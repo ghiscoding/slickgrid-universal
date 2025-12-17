@@ -69,7 +69,7 @@ export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
     this._eventHandler.subscribe(this.grid.onBeforeHeaderCellDestroy, this.handleBeforeHeaderCellDestroy.bind(this));
 
     // force the grid to re-render the header after the events are hooked up.
-    this.grid.setColumns(this.grid.getColumns());
+    this.grid.updateColumns();
   }
 
   /** Dispose (destroy) the SlickGrid 3rd party plugin */

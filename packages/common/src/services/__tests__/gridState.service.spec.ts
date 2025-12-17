@@ -184,26 +184,52 @@ describe('GridStateService', () => {
     });
 
     describe('getCurrentColumns method', () => {
+      afterEach(() => {
+        vi.clearAllMocks();
+      });
+
       it('should call "getCurrentColumns" and return empty array when no columns is defined', () => {
         const output = service.getCurrentColumns();
         expect(output).toEqual([]);
       });
 
-      it('should call "getCurrentColumns" and return Columns when the method is called', () => {
+      it('should call "getCurrentColumns" and return Columns without "hidden" prop by default when the method is called', () => {
         const columnsMock = [
-          { id: 'field1', field: 'field1', width: 100, cssClass: 'red' },
-          { id: 'field2', field: 'field2', width: 150, headerCssClass: 'blue' },
-          { id: 'field3', field: 'field3' },
+          { id: 'field1', field: 'field1', width: 100, cssClass: 'red', hidden: true },
+          { id: 'field2', field: 'field2', width: 150, headerCssClass: 'blue', hidden: true },
+          { id: 'field3', field: 'field3', hidden: true },
         ] as Column[];
-        const gridSpy = vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columnsMock);
+        const getColSpy = vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+        const getVisibleColSpy = vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columnsMock);
 
         const output = service.getCurrentColumns();
 
-        expect(gridSpy).toHaveBeenCalled();
+        expect(getColSpy).not.toHaveBeenCalled();
+        expect(getVisibleColSpy).toHaveBeenCalled();
         expect(output).toEqual([
           { columnId: 'field1', cssClass: 'red', headerCssClass: '', width: 100 },
           { columnId: 'field2', cssClass: '', headerCssClass: 'blue', width: 150 },
           { columnId: 'field3', cssClass: '', headerCssClass: '', width: 0 },
+        ] as CurrentColumn[]);
+      });
+
+      it('should call "getCurrentColumns" and return Columns with "hidden" prop when the method is called with true as argument', () => {
+        const columnsMock = [
+          { id: 'field1', field: 'field1', width: 100, cssClass: 'red', hidden: true },
+          { id: 'field2', field: 'field2', width: 150, headerCssClass: 'blue', hidden: false },
+          { id: 'field3', field: 'field3', hidden: true },
+        ] as Column[];
+        const getColSpy = vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+        const getVisibleColSpy = vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columnsMock);
+
+        const output = service.getCurrentColumns(true);
+
+        expect(getColSpy).toHaveBeenCalled();
+        expect(getVisibleColSpy).not.toHaveBeenCalled();
+        expect(output).toEqual([
+          { columnId: 'field1', cssClass: 'red', headerCssClass: '', width: 100, hidden: true },
+          { columnId: 'field2', cssClass: '', headerCssClass: 'blue', width: 150, hidden: false },
+          { columnId: 'field3', cssClass: '', headerCssClass: '', width: 0, hidden: true },
         ] as CurrentColumn[]);
       });
     });
@@ -227,31 +253,23 @@ describe('GridStateService', () => {
         ] as Column[];
         columnsWithoutCheckboxMock = [
           {
-            cssClass: undefined,
             field: 'field2',
             headerCssClass: 'blue',
             id: 'field2',
             hidden: false,
-            originalWidth: 150,
             width: 150,
           },
           {
             cssClass: 'red',
             field: 'field1',
             hidden: false,
-            headerCssClass: undefined,
             id: 'field1',
-            originalWidth: 100,
             width: 100,
           },
           {
-            cssClass: undefined,
             field: 'field3',
             hidden: false,
-            headerCssClass: undefined,
             id: 'field3',
-            originalWidth: undefined,
-            width: undefined,
           },
         ] as Column[];
         presetColumnsMock = [
@@ -259,7 +277,6 @@ describe('GridStateService', () => {
           { columnId: 'field1', width: 100, cssClass: 'red' },
           { columnId: 'field3' },
         ] as CurrentColumn[];
-        // vi.spyOn(service, 'getAssociatedGridColumns').mockReturnValue([...columnsWithoutCheckboxMock]);
       });
 
       afterEach(() => {
@@ -284,12 +301,7 @@ describe('GridStateService', () => {
 
         service.changeColumnsArrangement(presetColumnsMock);
 
-        expect(setColsSpy).toHaveBeenCalledWith([
-          { ...rowDetailColumnMock, hidden: false },
-          { ...rowMoveColumnMock, hidden: false },
-          { ...rowCheckboxColumnMock, hidden: false },
-          ...columnsWithoutCheckboxMock,
-        ]);
+        expect(setColsSpy).toHaveBeenCalledWith([...columnsWithoutCheckboxMock]);
         expect(autoSizeSpy).toHaveBeenCalled();
         expect(pubSubSpy).not.toHaveBeenCalledWith('onFullResizeByContentRequested');
       });
@@ -348,6 +360,55 @@ describe('GridStateService', () => {
         service.changeColumnsArrangement(presetColumnsMock, false);
 
         expect(setColsSpy).toHaveBeenCalledWith(columnsWithoutCheckboxMock);
+        expect(autoSizeSpy).not.toHaveBeenCalled();
+      });
+
+      it('should use columns already set in service when method is being called and grid.getColumns() returns an empty array', () => {
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue([]);
+        vi.spyOn(service, 'getColumns').mockReturnValueOnce([
+          { id: 'field1', field: 'field1', width: 100, cssClass: 'red', hidden: true },
+          { id: 'field2', field: 'field2', width: 150, headerCssClass: 'blue', hidden: true },
+          { id: 'field3', field: 'field3', hidden: true },
+        ] as unknown as Column[]);
+        const setColsSpy = vi.spyOn(gridStub, 'setColumns');
+        const autoSizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
+        const presetColumnsMock = [
+          { columnId: 'field2', width: 150, headerCssClass: 'blue' },
+          { columnId: 'field1', width: 100, cssClass: 'red' },
+          { columnId: 'field3' },
+        ] as CurrentColumn[];
+
+        service.changeColumnsArrangement(presetColumnsMock, false);
+
+        expect(setColsSpy).toHaveBeenCalledWith([
+          {
+            cssClass: undefined,
+            field: 'field2',
+            headerCssClass: 'blue',
+            id: 'field2',
+            hidden: false,
+            originalWidth: 150,
+            width: 150,
+          },
+          {
+            cssClass: 'red',
+            field: 'field1',
+            hidden: false,
+            headerCssClass: undefined,
+            id: 'field1',
+            originalWidth: 100,
+            width: 100,
+          },
+          {
+            cssClass: undefined,
+            field: 'field3',
+            hidden: false,
+            headerCssClass: undefined,
+            id: 'field3',
+            originalWidth: undefined,
+            width: undefined,
+          },
+        ]);
         expect(autoSizeSpy).not.toHaveBeenCalled();
       });
     });
@@ -469,14 +530,14 @@ describe('GridStateService', () => {
 
       // cssClass: red will change to purple and headerCssClass will remain blue when defined in either
       expect(associatedGridColumns).toEqual([
-        { id: 'field1', field: 'field1', width: 100, cssClass: 'purple', headerCssClass: 'custom-hdr' },
-        { id: 'field2', field: 'field2', width: 150, cssClass: undefined, headerCssClass: 'blue' },
-        { id: 'field3', field: 'field3', width: 0, cssClass: undefined, headerCssClass: undefined },
+        { id: 'field1', field: 'field1', width: 100, cssClass: 'purple', hidden: false, headerCssClass: 'custom-hdr' },
+        { id: 'field2', field: 'field2', width: 150, cssClass: undefined, hidden: false, headerCssClass: 'blue' },
+        { id: 'field3', field: 'field3', width: 0, cssClass: undefined, hidden: false, headerCssClass: undefined },
       ]);
       expect(columns).toEqual([
-        { id: 'field1', field: 'field1', width: 100, cssClass: 'purple', headerCssClass: 'custom-hdr' },
-        { id: 'field2', field: 'field2', width: 150, cssClass: undefined, headerCssClass: 'blue' },
-        { id: 'field3', field: 'field3', width: 0, cssClass: undefined, headerCssClass: undefined },
+        { id: 'field1', field: 'field1', width: 100, cssClass: 'purple', hidden: false, headerCssClass: 'custom-hdr' },
+        { id: 'field2', field: 'field2', width: 150, cssClass: undefined, hidden: false, headerCssClass: 'blue' },
+        { id: 'field3', field: 'field3', width: 0, cssClass: undefined, hidden: false, headerCssClass: undefined },
       ]);
     });
   });

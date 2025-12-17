@@ -436,6 +436,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected cellCssClasses: CssStyleHash = {};
 
   protected columnsById: Record<string, number> = {};
+  protected visibleColumnsById: Record<string, number> = {};
   protected sortColumns: ColumnSort[] = [];
   protected columnPosLeft: number[] = [];
   protected columnPosRight: number[] = [];
@@ -3137,6 +3138,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return this.columnsById[id];
   }
 
+  /**
+   * Returns the index of a visible column with a given id. Since columns can be reordered by the user, this can be used to get the column definition independent of the order:
+   * @param {String | Number} id A column id.
+   */
+  getVisibleColumnIndex(id: number | string): number {
+    return this.visibleColumnsById[id];
+  }
+
   /** Returns the column object by its ID */
   getColumnById(id: number | string): C | null {
     const index = this.getColumnIndex(id);
@@ -3217,18 +3226,18 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /**
    * Get column by index
-   * @param {Number} id - column index
+   * @param {Number} idx - column index
    * @returns
    */
-  getColumnByIndex(id: number): HTMLElement | undefined {
+  getColumnByIndex(idx: number): HTMLElement | undefined {
     let result: HTMLElement | undefined;
     this._headers.every((header) => {
       const length = header.children.length;
-      if (id < length) {
-        result = header.children[id] as HTMLElement;
+      if (idx < length) {
+        result = header.children[idx] as HTMLElement;
         return false;
       }
-      id -= length;
+      idx -= length;
       return true;
     });
 
@@ -3261,7 +3270,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         col.sortAsc = true;
       }
 
-      const columnIndex = this.getColumnIndex(col.columnId);
+      const columnIndex = this.getVisibleColumnIndex(col.columnId);
       if (isDefined(columnIndex)) {
         const column = this.getColumnByIndex(columnIndex);
         if (column) {
@@ -3398,6 +3407,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected updateColumnProps(): void {
     this.columnsById = {};
+    this.visibleColumnsById = {};
+
     for (let i = 0; i < this.columns.length; i++) {
       let m: C = this.columns[i] || {};
       if (m.width) {
@@ -3418,6 +3429,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         m.width = m.maxWidth;
       }
     }
+    // also update visible columns
+    this.getVisibleColumns().forEach((col, idx) => {
+      this.visibleColumnsById[col.id] = idx;
+    });
   }
 
   /**

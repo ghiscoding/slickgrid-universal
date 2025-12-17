@@ -2382,6 +2382,8 @@ describe('SlickGrid core file', () => {
       expect((grid.getHeader() as HTMLDivElement[])[0]).toBeInstanceOf(HTMLDivElement);
       expect(grid.getHeader(columns[0])).toBeInstanceOf(HTMLDivElement);
       expect(grid.getVisibleColumns().length).toBe(2);
+      expect(grid.getColumnIndex('lastName')).toBe(1);
+      expect(grid.getVisibleColumnIndex('lastName')).toBe(0);
       expect(result).toBe(80 * 2);
     });
 

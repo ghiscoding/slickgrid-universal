@@ -101,7 +101,7 @@ export function handleColumnPickerItemClick(this: SlickColumnPicker | SlickGridM
     const callbackArgs = {
       columnId,
       showing: isChecked,
-      allColumns:  grid.getColumns(),
+      allColumns: grid.getColumns(),
       visibleColumns,
       columns: visibleColumns,
       grid,

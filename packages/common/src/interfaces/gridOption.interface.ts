@@ -627,6 +627,13 @@ export interface GridOption<C extends Column = Column> {
   gridMenu?: GridMenu;
 
   /**
+   * Defaults to false, should we include the "hidden" props when getting current Grid State?
+   * Note: when enabled, it will call `grid.getColumns()` instead of `grid.getVisibleColumns()`
+   * and might return more columns since hidden columns will also be included
+   */
+  gridStateIncludeHiddenProps?: boolean;
+
+  /**
    * When using a fixed grid width, can be a number or a string.
    * if a number is provided it will add the `px` suffix for pixels, or if a string is passed it will use it as it is.
    */

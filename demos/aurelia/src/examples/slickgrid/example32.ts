@@ -586,7 +586,7 @@ export class Example32 {
     // just for demo purposes, set it back to its original width
     const columns = this.aureliaGrid.slickGrid.getColumns() as Column[];
     columns.forEach((col) => (col.width = col.originalWidth));
-    this.aureliaGrid.slickGrid.setColumns(columns);
+    this.aureliaGrid.slickGrid.updateColumns();
     this.aureliaGrid.slickGrid.autosizeColumns();
     this.isUsingDefaultResize = true;
   }
