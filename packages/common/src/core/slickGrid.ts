@@ -1408,6 +1408,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    *  - if `false` it will do the condition check but always skip the alert
    */
   validateColumnFreeze(columnId?: number | string, forceAlert = false, columns?: Column[]): boolean {
+    const hasColummnIdArg = columnId !== undefined;
     columns ??= this.columns;
     if (columnId === undefined && (this._prevFrozenColumnIdx >= 0 || this._options.frozenColumn! >= 0)) {
       const column = columns[this._prevFrozenColumnIdx] ?? columns[this._options.frozenColumn!];
@@ -1427,7 +1428,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       return true;
     }
 
-    if (currentFrozenColumn >= 0 && currentFrozenColumn >= visibleColumns.length - 2 && !this._options.skipFreezeColumnValidation) {
+    if (
+      (currentFrozenColumn >= 0 && currentFrozenColumn >= visibleColumns.length - 2 && !this._options.skipFreezeColumnValidation) ||
+      (hasColummnIdArg && currentFrozenColumn === 0 && columnId !== undefined && this.columns[0].id === columnId)
+    ) {
       if ((forceAlert !== false && !this._invalidfrozenAlerted) || forceAlert === true) {
         this._options.invalidColumnFreezePickerCallback?.(this._options.invalidColumnFreezePickerMessage!);
         this._invalidfrozenAlerted = true;

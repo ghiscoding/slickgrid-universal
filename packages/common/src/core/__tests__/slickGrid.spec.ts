@@ -1013,6 +1013,32 @@ describe('SlickGrid core file', () => {
       expect(onAfterSetColumnsSpy).not.toHaveBeenCalled();
     });
 
+    it('should return false when calling validateColumnFreeze() and trying to unfreeze only column available', () => {
+      const onAfterSetColumnsSpy = vi.spyOn(grid.onAfterSetColumns, 'notify');
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name' },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', hidden: true },
+        { id: 'age', field: 'age', name: 'Age' },
+      ] as Column[];
+      const gridOptions = {
+        ...defaultOptions,
+        enableColumnReorder: false,
+        enableCellNavigation: true,
+        preHeaderPanelHeight: 30,
+        showPreHeaderPanel: true,
+        createPreHeaderPanel: true,
+        frozenColumn: 0,
+      } as GridOption;
+
+      grid = new SlickGrid<any, Column>(container, [], columns, gridOptions);
+
+      // only return middle column (meaning first/last are now hidden columns)
+      const result = grid.validateColumnFreeze(columns[0].id, true);
+
+      expect(result).toBe(false);
+      expect(onAfterSetColumnsSpy).not.toHaveBeenCalled();
+    });
+
     it('should hide column headers div when "showPreHeaderPanel" is disabled', () => {
       const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
       const gridOptions = {
