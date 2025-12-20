@@ -95,7 +95,6 @@
   "packageManager": "pnpm@10.17.1",
   "devDependencies": {
     "@4tw/cypress-drag-drop": "catalog:",
-    "@angular-eslint/eslint-plugin": "^20.7.0",
     "@formkit/tempo": "catalog:",
     "@ianvs/prettier-plugin-sort-imports": "^4.7.0",
     "@lerna-lite/cli": "^4.10.2",

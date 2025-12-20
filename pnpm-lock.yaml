@@ -140,9 +140,6 @@ importers:
       '@4tw/cypress-drag-drop':
         specifier: 'catalog:'
         version: 2.3.1(cypress@15.7.1)
-      '@angular-eslint/eslint-plugin':
-        specifier: ^20.7.0
-        version: 20.7.0(@typescript-eslint/utils@8.45.0(eslint@9.36.0(jiti@2.6.1))(typescript@5.8.3))(eslint@9.36.0(jiti@2.6.1))(typescript@5.8.3)
       '@formkit/tempo':
         specifier: 'catalog:'
         version: 0.1.2
