@@ -9,15 +9,22 @@
       "createRelease": "github",
       "changelogIncludeCommitsClientLogin": " - by @%l",
       "changelogHeaderMessage": "## All-in-One SlickGrid agnostic library, visit [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) 📦🚀",
-      "commentIssues": "✅ This issue has been resolved and included in version %v 📦<br>The release is available on: [GitHub release](%u) 🚀",
-      "commentPullRequests": "🎉 This pull request is included in version %v 📦<br>The release is available on: [GitHub release](%u) 🚀",
+      "commentIssues": "✅ This issue has been resolved and included in version %v 📦<br>🔗 The release is available on: [GitHub release](%u) 🚀",
+      "commentPullRequests": "🎉 This pull request is included in version %v 📦<br>🔗 The release is available on: [GitHub release](%u) 🚀",
       "message": "chore(release): publish new version %s"
     },
     "publish": {
       "cleanupTempFiles": true,
-      "stripPackageKeys": ["devDependencies", "scripts"]
+      "stripPackageKeys": [
+        "devDependencies",
+        "scripts"
+      ]
     }
   },
   "changelogPreset": "conventionalcommits",
-  "packages": ["demos/*", "frameworks/*", "packages/*"]
+  "packages": [
+    "demos/*",
+    "frameworks/*",
+    "packages/*"
+  ]
 }
