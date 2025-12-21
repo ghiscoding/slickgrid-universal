@@ -1012,7 +1012,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
     newColumns = this.loadSlickGridEditors(newColumns);
 
     if (this.options.enableTranslate) {
-      this.extensionService.translateColumnHeaders(undefined, newColumns, false);
+      this.extensionService.translateColumnHeaders(undefined, newColumns);
     }
     this.extensionService.renderColumnHeaders(newColumns, true);
 
@@ -1116,7 +1116,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
         }
       }
 
-      // when column are reordered, we need to update the visibleColumn array
+      // when column are reordered, we need to update SharedService flag
       this._eventHandler.subscribe(grid.onColumnsReordered, () => {
         this.sharedService.hasColumnsReordered = true;
       });

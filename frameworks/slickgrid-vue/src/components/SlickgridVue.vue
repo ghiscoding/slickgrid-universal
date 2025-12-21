@@ -786,7 +786,7 @@ function bindDifferentHooks(grid: SlickGrid, gridOptions: GridOption, dataView: 
         }
       }
 
-      // when column are reordered, we need to update the visibleColumn array
+      // when column are reordered, we need to update SharedService flag
       eventHandler.subscribe(grid.onColumnsReordered, () => {
         sharedService.hasColumnsReordered = true;
       });
@@ -1159,7 +1159,7 @@ function updateColumnDefinitionsList(newColumns: Column<any>[]) {
     }
 
     if (_gridOptions.value.enableTranslate) {
-      extensionService.translateColumnHeaders(undefined, newColumns, false);
+      extensionService.translateColumnHeaders(undefined, newColumns);
     }
     extensionService.renderColumnHeaders(newColumns, true);
 

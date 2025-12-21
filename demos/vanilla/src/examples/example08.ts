@@ -267,7 +267,7 @@ export default class Example08 {
 
   spreadColspan() {
     this.isColspanSpreading = !this.isColspanSpreading;
-    this.sgb1.gridOptions = { spreadHiddenColspan: this.isColspanSpreading };
+    this.sgb1.slickGrid?.setOptions({ spreadHiddenColspan: this.isColspanSpreading });
     this.sgb1.slickGrid?.resetActiveCell();
     this.sgb1.slickGrid?.invalidate();
   }

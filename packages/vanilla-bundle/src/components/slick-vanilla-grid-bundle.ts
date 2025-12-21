@@ -902,7 +902,7 @@ export class SlickVanillaGridBundle<TData = any> {
         });
       }
 
-      // when column are reordered, we need to update the visibleColumn array
+      // when column are reordered, we need to update SharedService flag
       this._eventHandler.subscribe(grid.onColumnsReordered, () => {
         this.sharedService.hasColumnsReordered = true;
       });

@@ -6,11 +6,12 @@ import './example14.scss'; // provide custom CSS/SASS styling
 const Example14: React.FC = () => {
   const [gridOptions1, setGridOptions1] = useState<GridOption | undefined>(undefined);
   const [gridOptions2, setGridOptions2] = useState<GridOption | undefined>(undefined);
+  const [isColspanSpreading, setIsColspanSpreading] = useState<boolean>(false);
   const [columnDefinitions1, setColumnDefinitions1] = useState<Column[]>([]);
   const [columnDefinitions2, setColumnDefinitions2] = useState<Column[]>([]);
   const [dataset1, setDataset1] = useState<any[]>([]);
   const [dataset2, setDataset2] = useState<any[]>([]);
-  // const reactGridRef1 = useRef<SlickgridReactInstance | null>(null);
+  const reactGridRef1 = useRef<SlickgridReactInstance | null>(null);
   const reactGridRef2 = useRef<SlickgridReactInstance | null>(null);
   const [hideSubTitle, setHideSubTitle] = useState(false);
 
@@ -21,9 +22,9 @@ const Example14: React.FC = () => {
     setDataset2(getData(500));
   }, []);
 
-  // function reactGrid1Ready(reactGrid: SlickgridReactInstance) {
-  //   reactGridRef1.current = reactGrid;
-  // }
+  function reactGrid1Ready(reactGrid: SlickgridReactInstance) {
+    reactGridRef1.current = reactGrid;
+  }
 
   function reactGrid2Ready(reactGrid: SlickgridReactInstance) {
     reactGridRef2.current = reactGrid;
@@ -160,6 +161,14 @@ const Example14: React.FC = () => {
     };
   }
 
+  function spreadColspan() {
+    const isSpreading = !isColspanSpreading;
+    setIsColspanSpreading(isSpreading);
+    reactGridRef1.current?.slickGrid?.setOptions({ spreadHiddenColspan: isSpreading });
+    reactGridRef1.current?.slickGrid?.resetActiveCell();
+    reactGridRef1.current?.slickGrid?.invalidate();
+  }
+
   return !gridOptions1 ? (
     ''
   ) : (
@@ -198,8 +207,23 @@ const Example14: React.FC = () => {
 
       <h3>
         Grid 1 <small>(with Header Grouping &amp; Colspan)</small>
+        <button
+          className="btn btn-outline-secondary btn-sm btn-icon ms-2"
+          onClick={() => spreadColspan()}
+          data-test="spread-colspan-button"
+          title="Should we always spread the same visible column count with or without hidden columns?"
+        >
+          <span>Toggle Spreading of ColSpan with/without Hidden Columns</span>
+        </button>
       </h3>
-      <SlickgridReact gridId="grid1" columns={columnDefinitions1} options={gridOptions1} dataset={dataset1} />
+
+      <SlickgridReact
+        gridId="grid1"
+        columns={columnDefinitions1}
+        options={gridOptions1}
+        dataset={dataset1}
+        onReactGridCreated={($event) => reactGrid1Ready($event.detail)}
+      />
 
       <hr />
 
