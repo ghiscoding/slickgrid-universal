@@ -288,4 +288,41 @@ describe('Example 14 - Column Span & Header Grouping', () => {
         .each(($child, index) => expect($child.text()).to.eq(newHeaderTitles[index]));
     });
   });
+
+  describe('First Grid - Key Navigation', () => {
+    it('should start at Task 1 and expect "Duration" to have colspan of 3 and show "% Complete" and "Effort Driven"', () => {
+      cy.get('#grid1 [data-row=1] > .slick-cell.l0.r0').should('contain', 'Task 1').click().type('{rightArrow}');
+      cy.get('#grid1 [data-row=1] > .slick-cell.l1.r3').should('have.class', 'active').should('contain', '5 days').type('{rightArrow}');
+      cy.get('#grid1 [data-row=1] > .slick-cell.l4.r4').should('have.class', 'active').contains(/\d+$/).type('{rightArrow}');
+      cy.get('#grid1 [data-row=1] > .slick-cell.l5.r5')
+        .should('have.class', 'active')
+        .contains(/(true|false)+$/);
+
+      cy.get('#grid1 [data-row=1] > .slick-cell.l5.r5.active').type('{leftArrow}');
+      cy.get('#grid1 [data-row=1] > .slick-cell.l4.r4').should('have.class', 'active').contains(/\d+$/).type('{leftArrow}');
+      cy.get('#grid1 [data-row=1] > .slick-cell.l1.r3').should('have.class', 'active').should('contain', '5 days');
+      cy.get('#grid1 [data-row=1] > .slick-cell.l0.r0').should('contain', 'Task 1');
+    });
+
+    it('should hide "Finish" column and start at Task 1 and expect "Duration" to have colspan of 3 and show "% Complete" and "Effort Driven"', () => {
+      cy.get('#grid1').find('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
+      cy.get('.slick-column-picker')
+        .find('.slick-column-picker-list')
+        .children('li:nth-of-type(4)')
+        .children('label')
+        .should('contain', 'Period - Finish')
+        .click();
+
+      cy.get('#grid1 [data-row=1] > .slick-cell.l0.r0').should('contain', 'Task 1').click().type('{rightArrow}');
+      cy.get('#grid1 [data-row=1] > .slick-cell.l1.r3').should('have.class', 'active').should('contain', '5 days').type('{rightArrow}');
+      cy.get('#grid1 [data-row=1] > .slick-cell.l4.r4')
+        .should('have.class', 'active')
+        .contains(/(true|false)+$/);
+
+      cy.get('#grid1 [data-row=1] > .slick-cell.l4.r4.active').type('{leftArrow}');
+      cy.get('#grid1 [data-row=1] > .slick-cell.l1.r3').should('have.class', 'active').should('contain', '5 days').type('{leftArrow}');
+      cy.get('#grid1 [data-row=1] > .slick-cell.l0.r0').should('have.class', 'active');
+      cy.get('#grid1 [data-row=1] > .slick-cell.l0.r0').should('contain', 'Task 1');
+    });
+  });
 });
