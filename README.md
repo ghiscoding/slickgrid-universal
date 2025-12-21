@@ -21,23 +21,23 @@
 Also available in Stackblitz for all available frameworks (see [table](https://github.com/ghiscoding/slickgrid-universal?tab=readme-ov-file#available-framework-wrappers) below)
 
 ### Description
-One of the best JavaScript data grid named as "SlickGrid", which was originally developed by @mleibman, beats most other data grids in terms of features, customizability & performance (running smoothly with even a million rows).
+One of the best JavaScript data grid named "SlickGrid", which was originally developed by @mleibman, beats most other data grids in terms of features, customizability & performance (running smoothly with even a million rows).
 
-This is a monorepo project (using [pnpm workspaces](https://pnpm.io/workspaces) and [Lerna-Lite](https://github.com/lerna-lite/lerna-lite)) which is regrouping a few packages under a single repository. It was originally requiring `@6pac/SlickGrid` as an external dependency, but that was dropped in v4.0, and it has been a standalone library since then. The main goal of this project is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any frameworks (the project is framework agnostic).
+This is a monorepo project (using [pnpm workspaces](https://pnpm.io/workspaces) and [Lerna-Lite](https://github.com/lerna-lite/lerna-lite)) which is regrouping a few packages under a single repository. It was originally requiring `@6pac/SlickGrid` as an external dependency, but that was dropped in v4.0, and it has been a standalone library ever since. The main goal of this project is to create a common repo that includes all Editors, Filters, Extensions and Services that could be used by any frameworks (the project is framework agnostic).
 
 ### What's the difference with the original SlickGrid (now [`@6pac/SlickGrid`](https://github.com/6pac/SlickGrid)) project?
 If you've used the original SlickGrid in the past, you might be wondering, should I use the [`@6pac/SlickGrid`](https://github.com/6pac/SlickGrid) or Slickgrid-Universal? The main difference is that the original SlickGrid is like an unassembled IKEA product where it's very bare bone and unassembled, but on the other hand Slickgrid-Universal is an all assembled product with batteries included. What that means is that Slickgrid-Universal comes with many built-in features like Formatters, Editors, Filters, Tree Data, ... which are not directly available in the original SlickGrid. So in the end SlickGrid (`@6pac/SlickGrid`) project is much smaller in size because it's very bare bone but you will have to implement many things yourself (Sorting/Filtering/Editing/...), and if you're looking at creating very basic grids with the smallest footprint possible, then SlickGrid might just work for you, otherwise Slickgrid-Universal has a more complete set of features out of the box with a bit larger download and installation size.
 
-Side note, I am (`@ghiscoding`) a maintainer in both projects, which are Slickgrid-Universal as well as the [`@6pac/SlickGrid`](https://github.com/6pac/SlickGrid) (in fact Slickgrid-Universal was originally requiring the `@6pac/SlickGrid` dependency but that requirement was eventually dropped in v4 and it is now a standalone). The main reason to support both projects is to keep core files in sync as much as possible (SlickGrid, SlickDataView and all plugins). Combined together, both projects have a much larger user base and this mean much more stability, and I also often sync new core & plugin files in both projects as well... and that's it, I hope this makes it clear what the differences are.
+Side note, I am (`@ghiscoding`) a maintainer in both projects, which are Slickgrid-Universal as well as the [`@6pac/SlickGrid`](https://github.com/6pac/SlickGrid) (in fact Slickgrid-Universal was originally requiring the `@6pac/SlickGrid` dependency but that requirement was eventually dropped in v4 and it is now a standalone). The main reason to support both projects is to keep core files in sync as much as possible (SlickGrid, SlickDataView and all plugins). When combined together, both projects have a much larger user base and this mean much more stability, and I also often sync new core & plugin files in both projects as well... and that's it, I hope this makes it clear what the differences are.
 
 ### Why create this monorepo?
-Below is a list of reasons as to why this project was created and why it was built as a monorepo project:
-1. originally created to remove duplicated code from the first 2 supported frameworks (Angular & Aurelia)
-2. many of the Services were also decoupled because no project will ever require all services all at once
+Below is a list of reasons as to why this project was created and why it is built as a monorepo project:
+1. avoids duplicate code by creating common packages available in Slickgrid-Universal and used by all framework wrappers
+2. many of the Services are decoupled because no project will ever require all of these services all at once
    - OData, GraphQL, Export to CSV, Export to Excel, Composite Editor, RxJS, ...
 4. and finally it is framework agnostic
-   - you can reuse the same grids and logic in many different frameworks, since it's easily transportable
-   - you can use it in plain JavaScript (ES6) or TypeScript, e.g. we use plain JS (ES6) in our Salesforce environment with LWC (Lightning Web Component)
+   - you can reuse the same grids and logic in many different frameworks, because it's easily transportable
+   - you can use it in plain JavaScript (ES6) or TypeScript, e.g. we use it ourselves as plain JS (ES6) in our Salesforce environment with LWC (Lightning Web Component)
 
 ## Latest News & Releases
 Check out the [Releases](https://github.com/ghiscoding/slickgrid-universal/releases) section for all the latest News & Releases.
@@ -48,7 +48,7 @@ You could star ⭐ the project and/or support me with caffeine via GitHub [spons
 <a href='https://ko-fi.com/ghiscoding' target='_blank'><img height='36' width='140' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi3.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
 ## Live Demos & Available Framework Wrappers
-The Slickgrid-Universal [live demo](https://ghiscoding.github.io/slickgrid-universal) shows 2 different UI themes (Material Design / Salesforce) and you can see the Bootstrap theme demoed in all other frameworks with links available in the table shown below. Also please note that even if all the demos are built with either [Bootstrap](https://getbootstrap.com/) or [Bulma](https://bulma.io/), you could in theory use any other UI libraries. The project tries to be as much agnostic as possible and it does so by providing a large set of CSS/SASS variables which are available to customize the UI however you want.
+The Slickgrid-Universal [live demo](https://ghiscoding.github.io/slickgrid-universal) shows 2 different UI themes (Material Design / Salesforce) and you can also see the Bootstrap theme demoed in all other frameworks with links available in the table shown below. Also please note that even if all the demos are built with either [Bootstrap](https://getbootstrap.com/) or [Bulma](https://bulma.io/), you could in theory use any other UI libraries (e.g. Google Material, ...). The project tries to be as much agnostic as possible and it does so by providing a large set of CSS/SASS variables which are available to customize the UI however you want.
 
 ### Available Framework Wrappers
 
@@ -68,7 +68,7 @@ The Slickgrid-Universal [live demo](https://ghiscoding.github.io/slickgrid-unive
 Dark Mode is also shown in some of the examples (not all), see [Dark Mode](https://ghiscoding.gitbook.io/slickgrid-universal/styling/dark-mode) documentation for more infos.
 
 ### Fully Tested with [Vitest](https://vitest.dev/) (Unit Tests) - [Cypress](https://www.cypress.io/) (E2E Tests)
-Slickgrid-Universal has **100%** Unit Test Coverage, 5000+ Vitest unit tests and close to 1000 Cypress E2E tests to cover **all** [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities (each framework implementation also includes roughly the same amount of E2E tests), the goal is to offer peace of mind that pretty much all the code and PR changes are fully tested before releasing anything new. Every time a new Pull Request (PR) is created, it runs all unit tests and all Cypress E2E tests for all frameworks and they all run in parallel for a complete test suite.
+Slickgrid-Universal has **100%** Unit Test Coverage, 5000+ Vitest unit tests and close to 1000 Cypress E2E tests to cover **all** [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities (each framework implementation also includes roughly the same amount of E2E tests), the goal is to offer peace of mind that pretty much all the code, features and PR changes are fully tested before releasing anything new. Every time a new Pull Request (PR) is created, it runs all unit tests and all Cypress E2E tests for all frameworks and they all run in parallel for a complete test suite.
 
 ### Available Public Packages
 

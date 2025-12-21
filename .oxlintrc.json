@@ -1,13 +1,23 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["import", "oxc", "regex", "typescript", "vitest"],
+  "plugins": ["import", "oxc", "typescript", "vitest"],
+  "jsPlugins": ["eslint-plugin-cypress"],
   "extends": ["recommended", "recommended-module"],
   "env": {
     "es2025": true,
     "browser": true,
     "shared-node-browser": true
   },
-  "ignorePatterns": ["**/*.{js,mjs,d.ts}", "**/dist/**", "**/frameworks/angular-slickgrid/**", "**/*.d.ts"],
+  "ignorePatterns": [
+    "**/*.{js,mjs,d.ts}",
+    "**/dist/**",
+    "coverage/",
+    "test/",
+    "**/environment.*.ts",
+    "**/public_api.ts",
+    "**/*.spec.ts",
+    "!**/cypress/e2e/*.cy.ts"
+  ],
   "overrides": [
     {
       "files": ["**/*.spec.ts"],
@@ -20,11 +30,21 @@
     },
     {
       "files": ["**/*.cy.ts"],
-      "excludedRules": ["vitest/*"]
+      "rules": {
+        "eslint/no-unused-expressions": "off",
+        "oxc/erasing-op": "off",
+        "cypress/no-debug": "error",
+        "vitest/*": "off"
+      }
+    },
+    {
+      "files": ["**/*.ts"],
+      "rules": {
+        "typescript/consistent-type-imports": "off"
+      }
     }
   ],
   "rules": {
-    // typescript-eslint rules are not all implemented yet, see https://github.com/oxc-project/oxc/issues/2180
     "typescript/ban-ts-comment": "off",
     "typescript/consistent-type-definitions": "error",
     "typescript/consistent-type-exports": "error",
@@ -59,8 +79,6 @@
     ],
     "import/no-self-import": "error",
     "import/no-useless-path-segments": ["error", { "noUselessIndex": true }],
-
-    // Additional rules
     "no-async-promise-executor": "off",
     "oxc/erasing-op": "off",
     "object-shorthand": "error"
