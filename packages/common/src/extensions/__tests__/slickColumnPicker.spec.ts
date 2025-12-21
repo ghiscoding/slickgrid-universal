@@ -21,6 +21,7 @@ const gridStub = {
   getVisibleColumns: vi.fn(),
   getUID: () => gridUid,
   registerPlugin: vi.fn(),
+  remapAllColumnsRowSpan: vi.fn(),
   setColumns: vi.fn(),
   setOptions: vi.fn(),
   setSelectedRows: vi.fn(),
@@ -178,6 +179,29 @@ describe('ColumnPickerControl', () => {
       expect(setSelectionSpy).toHaveBeenCalledWith(mockRowSelection);
       expect(control.getAllColumns()).toEqual(columnsMock);
       expect(control.getVisibleColumns()).toEqual(columnsMock);
+    });
+
+    it('should remap all RowSpan when input called as unchecked and RowSpan is enabled', () => {
+      vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
+      vi.spyOn(control.eventHandler, 'subscribe');
+      vi.spyOn(gridStub, 'getColumnIndex')
+        .mockReturnValue(undefined as any)
+        .mockReturnValue(1);
+      const remapSpy = vi.spyOn(gridStub, 'remapAllColumnsRowSpan');
+
+      gridOptionsMock.enableCellRowSpan = true;
+      control.columns = columnsMock;
+
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() } as any;
+      gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData as any, gridStub);
+      const inputElm = control.menuElement!.querySelector('input[type="checkbox"]') as HTMLInputElement;
+      inputElm.checked = false;
+      inputElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+
+      expect(control.menuElement!.style.display).toBe('block');
+      expect(control.getAllColumns()).toEqual(columnsMock);
+      expect(control.getVisibleColumns()).toEqual(columnsMock);
+      expect(remapSpy).toHaveBeenCalled();
     });
 
     it('should open the Column Picker and then expect it to hide when clicking anywhere in the DOM body', () => {
@@ -363,7 +387,9 @@ describe('ColumnPickerControl', () => {
       control.init();
 
       gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData as any, gridStub);
-      control.menuElement!.querySelector<HTMLInputElement>('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
+      const inputElm = control.menuElement!.querySelector('input[type="checkbox"]') as HTMLInputElement;
+      inputElm.checked = true;
+      inputElm.dispatchEvent(new Event('click', { bubbles: true }));
 
       const expectedCallbackArgs = {
         columnId: 'field1',

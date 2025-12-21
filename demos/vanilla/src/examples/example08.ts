@@ -18,6 +18,7 @@ export default class Example08 {
   grid2SelectedOperator: OperatorString;
   grid2SearchValue: any;
   operatorList: OperatorString[] = ['=', '<', '<=', '>', '>=', '<>', 'StartsWith', 'EndsWith'];
+  isColspanSpreading = false;
 
   constructor() {
     this.definedGrid1();
@@ -95,6 +96,7 @@ export default class Example08 {
           getRowMetadata: (item: any, row: number) => this.renderDifferentColspan(item, row),
         },
       },
+      spreadHiddenColspan: this.isColspanSpreading,
     };
   }
 
@@ -261,6 +263,13 @@ export default class Example08 {
   searchValueChanged(newValue: string) {
     this.grid2SearchValue = newValue;
     this.updateFilter();
+  }
+
+  spreadColspan() {
+    this.isColspanSpreading = !this.isColspanSpreading;
+    this.sgb1.gridOptions = { spreadHiddenColspan: this.isColspanSpreading };
+    this.sgb1.slickGrid?.resetActiveCell();
+    this.sgb1.slickGrid?.invalidate();
   }
 
   updateFilter() {

@@ -77,6 +77,9 @@ export function handleColumnPickerItemClick(this: SlickColumnPicker | SlickGridM
     }
 
     grid.updateColumnById(columnId, { hidden: !isChecked });
+    if (!isChecked && context.gridOptions.enableCellRowSpan) {
+      grid.remapAllColumnsRowSpan(); // remap row spans when column gets hidden and cell rowspan is enabled
+    }
     grid.updateColumns();
     visibleColumns = context.getVisibleColumns();
 

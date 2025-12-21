@@ -427,13 +427,30 @@ export class Example43 {
       }
     }
 
-    // update column definitions
+    // 1. update column definitions via grid.setColumns()
+    // this will shift colspan/rowspan to the left or right accordingly
     if (this.showEmployeeId) {
       this.columnDefinitions.unshift({ id: 'employeeID', name: 'Employee ID', field: 'employeeID', width: 100 });
     } else {
       this.columnDefinitions.splice(0, 1);
     }
     this.aureliaGrid.slickGrid.setColumns(this.columnDefinitions);
+
+    // --- OR ---
+    // 2. OR update via "hidden" column flag & increase/decrease column index accordingly in the metadata
+    // this approach will keep colspan/rowspan "as-is" but will hide the EmployeeID column
+    /*
+    const colDirIdx = newShowEmployeeId ? -1 : 1;
+    for (const row of Object.keys(this.metadata)) {
+      newMetadata[row] = { columns: {} };
+      for (const col of Object.keys((this.metadata as any)[row].columns)) {
+        newMetadata[row].columns[Number(col) + colDirIdx] = (this.metadata as any)[row].columns[col];
+      }
+    }
+    this.aureliaGrid.slickGrid?.setOptions({ frozenColumn: newShowEmployeeId ? 0 : 1 });
+    this.aureliaGrid.slickGrid?.updateColumnById('employeeID', { hidden: !newShowEmployeeId });
+    this.aureliaGrid.slickGrid?.updateColumns();
+    */
 
     // update & remap rowspans
     this.metadata = newMetadata;

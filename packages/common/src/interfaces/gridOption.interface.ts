@@ -846,6 +846,14 @@ export interface GridOption<C extends Column = Column> {
   sortColNumberInSeparateSpan?: boolean;
 
   /**
+   * Defaults to false, when doing a colspan and one or more column is hidden in that spanning,
+   * do we want to still spread to the same amount of visible columns or should we simply skip over the hidden columns and have less spanning?
+   * For example, if we have 4 columns (first, last, age, gender) and we have a `colspan: 2` on first cell but "last" column is hidden
+   * then it would spread by 3 columns on ("first" and "age")
+   */
+  spreadHiddenColspan?: boolean;
+
+  /**
    * Defaults to false, which leads to suppress the cell from becoming active when cell as an editor and is clicked.
    * This flag was originally enabled to work properly with (Row Selections & Inline Editors) features but it caused problem when also used with CellExternalCopyManager,
    * however this flag shouldn't be need anymore when editing & using all 3 features and the flag's default is now disabled (false) but user can still change it if needed.

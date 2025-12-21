@@ -442,7 +442,7 @@ describe('SlickGrid core file', () => {
       0: { columns: { 0: { colspan: 2, rowspan: 2 } } },
     };
     const customDV = { getItemMetadata: (row) => metadata[row], getLength: () => 2 } as CustomDataView;
-    grid = new SlickGrid<any, Column>('#myGrid', customDV, columns, { ...defaultOptions, editable: true, enableCellRowSpan: true });
+    grid = new SlickGrid<any, Column>('#myGrid', customDV, columns, { ...defaultOptions, editable: true, enableCellRowSpan: true, spreadHiddenColspan: true });
     grid.setActiveCell(0, 0);
     grid.editActiveCell(InputEditor as any, true);
 
@@ -1305,6 +1305,66 @@ describe('SlickGrid core file', () => {
       expect(grid.getFooterRowColumn('firstName')).toEqual(footerElms[0].querySelector('.slick-footerrow-column'));
     });
 
+    it('should define colspan as number only and rowspan then expect to cleanup rendered cells when SlickDataView and cell metadata are defined', () => {
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name', colspan: 2, rowspan: 2 },
+        { id: 'lastName', field: 'lastName', name: 'Last Name' },
+        { id: 'age', field: 'age', name: 'Age' },
+        { id: 'gender', field: 'gender', name: 'gender', colspan: 3 },
+        { id: 'scholarity', field: 'scholarity', name: 'scholarity' },
+        { id: 'bornCity', field: 'bornCity', name: 'bornCity' },
+      ] as Column[];
+      const gridOptions = {
+        ...defaultOptions,
+        enableCellRowSpan: true,
+        createFooterRow: true,
+        showFooterRow: false,
+        minRowBuffer: 10,
+        spreadHiddenColspan: true,
+      } as GridOption;
+      const data: any[] = [];
+      for (let i = 0; i < 1000; i++) {
+        data.push({ id: i, firstName: 'John', lastName: 'Doe', age: 30 });
+      }
+      const dv = new SlickDataView({});
+      dv.setItems(data);
+      grid = new SlickGrid<any, Column>(container, dv, columns, gridOptions);
+      vi.spyOn(grid, 'getRowSpanIntersect').mockReturnValueOnce(1); // add a rowspan mandatory row to always render
+      grid.init();
+      let footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
+      const onBeforeFooterRowCellDestroySpy = vi.spyOn(grid.onBeforeFooterRowCellDestroy, 'notify');
+      vi.spyOn(grid, 'getRenderedRange').mockReturnValue({ leftPx: 200, rightPx: 12, bottom: 230, top: 12 });
+      vi.spyOn(dv, 'getItemMetadata').mockReturnValue({
+        cssClasses: 'text-bold',
+        focusable: true,
+        formatter: (_r: number, _c: number, val: any) => val,
+        columns: { 0: { colspan: 3 } },
+      });
+
+      expect(grid.getFooterRow()).toBeTruthy();
+      expect(footerElms).toBeTruthy();
+      expect(footerElms[0].style.display).toBe('none');
+      expect(footerElms[1].style.display).toBe('none');
+
+      grid.setActiveCell(200, 1);
+      grid.updateCell(344, 5);
+      vi.spyOn(grid, 'getRowSpanIntersect').mockReturnValueOnce(1); // add a rowspan mandatory row to always render
+      vi.spyOn(grid, 'getParentRowSpanByCell').mockReturnValue(null).mockReturnValueOnce({ start: 0, end: 1, range: '0:1' }); // add a rowspan mandatory row to always render
+      grid.setFooterRowVisibility(true);
+      grid.updateColumns(); // this will trigger onBeforeFooterRowCellDestroySpy
+
+      vi.spyOn(grid, 'getDataLength').mockReturnValueOnce(data.length + 1); // add 1 more to force a full rowspan cache remap
+      const remapRowspanSpy = vi.spyOn(grid, 'remapAllColumnsRowSpan');
+      grid.updateRowCount();
+
+      expect(remapRowspanSpy).toHaveBeenCalled();
+      expect(onBeforeFooterRowCellDestroySpy).toHaveBeenCalled();
+      footerElms = container.querySelectorAll<HTMLDivElement>('.slick-footerrow');
+      expect(footerElms[0].style.display).not.toBe('none');
+      expect(footerElms[1].style.display).not.toBe('none');
+      expect(grid.getFooterRowColumn('firstName')).toEqual(footerElms[0].querySelector('.slick-footerrow-column'));
+    });
+
     it('should define colspan and rowspan but get a warning when enableCellRowSpan is disabled', () => {
       const consoleWarnSpy = vi.spyOn(global.console, 'warn').mockReturnValue();
       const columns = [
@@ -1324,6 +1384,31 @@ describe('SlickGrid core file', () => {
       grid.init();
 
       expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('[SlickGrid] Cell "rowspan" is an opt-in grid option because of its small perf hit'));
+    });
+
+    it('should define colspan with hidden column in between and expect it be included when "spreadHiddenColspan" is enabled', () => {
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name' },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', hidden: true },
+        { id: 'age', field: 'age', name: 'Age' },
+        { id: 'gender', field: 'gender', name: 'Gender' },
+      ] as Column[];
+      const metadata = { 0: { columns: { 0: { colspan: 2 } } } };
+      const gridOptions = { ...defaultOptions, minRowBuffer: 10, spreadHiddenColspan: true } as GridOption;
+      const data: any[] = [];
+      for (let i = 0; i < 2; i++) {
+        data.push({ id: i, firstName: 'John', lastName: 'Doe', age: 30 });
+      }
+      const dv = new SlickDataView({});
+      vi.spyOn(dv, 'getItemMetadata').mockReturnValue(metadata[0]);
+      dv.setItems(data);
+      grid = new SlickGrid<any, Column>(container, dv, columns, gridOptions);
+      grid.init();
+
+      const cells = container.querySelectorAll<HTMLDivElement>('.slick-row:nth-child(1) .slick-cell');
+
+      expect(cells[0].className.includes('l0 r2')).toBeTruthy();
+      expect(cells[1].className.includes('l3 r3')).toBeTruthy();
     });
 
     it('should hide/show column headers div when "showFooterRow" is disabled and expect some row cache to be cleaned up', () => {
@@ -5098,6 +5183,35 @@ describe('SlickGrid core file', () => {
       expect(scrollCellSpy).toHaveBeenCalledWith(data.length - 1, 0, true);
       expect(scrollToSpy).toHaveBeenCalledWith(DEFAULT_COLUMN_HEIGHT);
       expect(canCellActiveSpy).toHaveBeenCalledTimes(3);
+      expect(resetCellSpy).not.toHaveBeenCalled();
+      expect(onActiveCellSpy).toHaveBeenCalled();
+    });
+
+    it('should navigate to the right but jump over hidden column, from active cell 0 to 2', () => {
+      const data = [
+        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+        { id: 2, firstName: 'Bob', lastName: 'Smith', age: 22 },
+        { id: 3, firstName: 'David', lastName: 'Smith', age: 24 },
+      ];
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true, hidden: true },
+        { id: 'age', field: 'age', name: 'Age', sortable: true },
+        { id: 'gender', field: 'gender', name: 'Aender', sortable: true },
+      ] as Column[];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
+      const scrollCellSpy = vi.spyOn(grid, 'scrollCellIntoView');
+      const resetCellSpy = vi.spyOn(grid, 'resetActiveCell');
+      const canCellActiveSpy = vi.spyOn(grid, 'canCellBeActive');
+      const onActiveCellSpy = vi.spyOn(grid.onActiveCellChanged, 'notify');
+      const scrollToSpy = vi.spyOn(grid, 'scrollTo');
+      grid.setActiveCell(0, 0);
+      grid.navigateRight();
+
+      expect(scrollCellSpy).toHaveBeenCalledWith(0, 2, true);
+      expect(scrollToSpy).toHaveBeenCalledWith(DEFAULT_COLUMN_HEIGHT);
+      expect(canCellActiveSpy).toHaveBeenCalled();
       expect(resetCellSpy).not.toHaveBeenCalled();
       expect(onActiveCellSpy).toHaveBeenCalled();
     });

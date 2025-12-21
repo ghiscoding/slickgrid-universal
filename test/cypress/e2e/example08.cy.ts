@@ -392,4 +392,174 @@ describe('Example 08 - Column Span & Header Grouping', () => {
       cy.get('[data-row=1] > .slick-cell.l1.r3.active').should('have.length', 1);
     });
   });
+
+  describe('Colspan checks on 1st grid', () => {
+    it('should hide Finish column and expect "5 days" spread to drop from 3 to 2 columns (1x hidden column)', () => {
+      cy.get('.grid1').find('[data-row=1] .slick-cell.l0.r0').should('contain', 'Task 1');
+      cy.get('.grid1').find('[data-row=2] .slick-cell.l0.r5').should('contain', 'Task 2');
+      cy.get('.grid1').find('[data-row=1] .slick-cell.l1.r3').should('contain', '5 days');
+      cy.get('.grid1').find('[data-row=1] .slick-cell.l4.r4').contains(/\d+$/);
+      cy.get('.grid1')
+        .find('[data-row=1] .slick-cell.l5.r5')
+        .contains(/(true|false)+$/);
+
+      cy.get('.grid1')
+        .find('.slick-pane-left .slick-header-columns .slick-header-column[role="columnheader"]:nth(3)')
+        .trigger('mouseover')
+        .children('.slick-header-menu-button')
+        .invoke('show')
+        .click();
+
+      cy.get('.slick-header-menu .slick-menu-command-list')
+        .should('be.visible')
+        .children('.slick-menu-item:nth-of-type(3)')
+        .children('.slick-menu-content')
+        .should('contain', 'Hide Column')
+        .click();
+
+      // goto right
+      cy.get('.grid1').find('[data-row=1] .slick-cell.l0.r0').click();
+      cy.get('.grid1').find('[data-row=1] .slick-cell.l0.r0.active').should('contain', 'Task 1').type('{rightArrow}');
+      cy.get('.grid1').find('[data-row=1] .slick-cell.l1.r3.active').should('contain', '5 days').type('{rightArrow}');
+      cy.get('.grid1').find('[data-row=1] .slick-cell.l4.r4.active').contains(/\d+$/).type('{rightArrow}');
+      cy.get('.grid1')
+        .find('[data-row=1] .slick-cell.l5.r5')
+        .contains(/(true|false)+$/);
+
+      // goto left
+      cy.get('.grid1 [data-row=1] > .slick-cell.l5.r5.active')
+        .contains(/(true|false)+$/)
+        .type('{leftArrow}');
+      cy.get('.grid1 [data-row=1] > .slick-cell.l4.r4.active').contains(/\d+$/).type('{leftArrow}');
+      cy.get('.grid1 [data-row=1] > .slick-cell.l1.r3.active').should('contain', '5 days').type('{leftArrow}');
+      cy.get('.grid1 [data-row=1] > .slick-cell.l0.r0.active').should('contain', 'Task 1');
+    });
+
+    it('should reset Column Picker, click on Spread Hidden Coolumn button then hide Finish column and still expect "5 days" to spread accross 3 column', () => {
+      cy.get('.grid1').find('.slick-header-column:nth(1)').trigger('mouseover').trigger('contextmenu').invoke('show');
+
+      cy.get('.slick-column-picker')
+        .find('.slick-column-picker-list')
+        .children('li:nth-child(4)')
+        .children('label')
+        .should('contain', 'Period - Finish')
+        .click();
+
+      cy.get('.slick-column-picker .close').click();
+
+      cy.get('[data-test="spread-colspan-button"]').click();
+      cy.get('.grid1').find('[data-row=1] .slick-cell.l0.r0').should('contain', 'Task 1');
+      cy.get('.grid1').find('[data-row=2] .slick-cell.l0.r5').should('contain', 'Task 2');
+      cy.get('.grid1').find('[data-row=1] .slick-cell.l1.r3').should('contain', '5 days');
+      cy.get('.grid1').find('[data-row=1] .slick-cell.l4.r4').contains(/\d+$/);
+      cy.get('.grid1')
+        .find('[data-row=1] .slick-cell.l5.r5')
+        .contains(/(true|false)+$/);
+
+      cy.get('.grid1')
+        .find('.slick-pane-left .slick-header-columns .slick-header-column[role="columnheader"]:nth(3)')
+        .trigger('mouseover')
+        .children('.slick-header-menu-button')
+        .invoke('show')
+        .click();
+
+      cy.get('.slick-header-menu .slick-menu-command-list')
+        .should('be.visible')
+        .children('.slick-menu-item:nth-of-type(3)')
+        .children('.slick-menu-content')
+        .should('contain', 'Hide Column')
+        .click();
+
+      cy.get('.grid1').find('[data-row=1] .slick-cell.l0.r0').should('contain', 'Task 1');
+      cy.get('.grid1').find('[data-row=2] .slick-cell.l0.r5').should('contain', 'Task 2');
+      cy.get('.grid1').find('[data-row=1] .slick-cell.l1.r4').should('contain', '5 days');
+      cy.get('.grid1')
+        .find('[data-row=1] .slick-cell.l5.r5')
+        .contains(/(true|false)+$/);
+    });
+
+    it('should have Column Pre-Header & Column Header Titles without the Finish column in the 1st grid', () => {
+      const newPreTitles = ['Common Factor', 'Period', 'Analysis'];
+      const newHeaderTitles = ['Title', 'Duration', 'Start', '% Complete', 'Effort Driven'];
+      cy.get('.grid1')
+        .find('.slick-header-columns:nth(0)')
+        .children()
+        .each(($child, index) => expect($child.text()).to.eq(newPreTitles[index]));
+
+      cy.get('.grid1')
+        .find('.slick-header-columns:nth(1)')
+        .children()
+        .each(($child, index) => expect($child.text()).to.eq(newHeaderTitles[index]));
+    });
+
+    it('should open Grid Menu and show again Finish column', () => {
+      cy.get('.grid1').find('button.slick-grid-menu-button').click({ force: true });
+      cy.get('.grid1')
+        .get('.slick-grid-menu:visible')
+        .find('.slick-column-picker-list')
+        .children('li:visible:nth(3)')
+        .children('label')
+        .should('contain', 'Period - Finish')
+        .click({ force: true });
+
+      cy.get('.grid1').find('[data-row=1] .slick-cell.l0.r0').should('contain', 'Task 1');
+      cy.get('.grid1').find('[data-row=2] .slick-cell.l0.r5').should('contain', 'Task 2');
+      cy.get('.grid1').find('[data-row=1] .slick-cell.l1.r3').should('contain', '5 days');
+      cy.get('.grid1').find('[data-row=1] .slick-cell.l4.r4').contains(/\d+$/);
+      cy.get('.grid1')
+        .find('[data-row=1] .slick-cell.l5.r5')
+        .contains(/(true|false)+$/);
+      cy.get('.grid1').get('.slick-grid-menu:visible').find('.close').click({ force: true });
+    });
+
+    it('should have back original Column Pre-Header & Column Header Titles without the Finish column in the 1st grid', () => {
+      const newPreTitles = ['Common Factor', 'Period', 'Analysis'];
+      const newHeaderTitles = ['Title', 'Duration', 'Start', 'Finish', '% Complete', 'Effort Driven'];
+      cy.get('.grid1')
+        .find('.slick-header-columns:nth(0)')
+        .children()
+        .each(($child, index) => expect($child.text()).to.eq(newPreTitles[index]));
+
+      cy.get('.grid1')
+        .find('.slick-header-columns:nth(1)')
+        .children()
+        .each(($child, index) => expect($child.text()).to.eq(newHeaderTitles[index]));
+    });
+  });
+
+  describe('First Grid - Key Navigation', () => {
+    it('should start at Task 1 and expect "Duration" to have colspan of 3 and show "% Complete" and "Effort Driven"', () => {
+      cy.get('.grid1 [data-row=1] > .slick-cell.l0.r0').should('contain', 'Task 1').click().type('{rightArrow}');
+      cy.get('.grid1 [data-row=1] > .slick-cell.l1.r3.active').should('contain', '5 days').type('{rightArrow}');
+      cy.get('.grid1 [data-row=1] > .slick-cell.l4.r4.active').contains(/\d+$/).type('{rightArrow}');
+      cy.get('.grid1 [data-row=1] > .slick-cell.l5.r5.active').contains(/(true|false)+$/);
+
+      cy.get('.grid1 [data-row=1] > .slick-cell.l5.r5.active').type('{leftArrow}');
+      cy.get('.grid1 [data-row=1] > .slick-cell.l4.r4.active').contains(/\d+$/).type('{leftArrow}');
+      cy.get('.grid1 [data-row=1] > .slick-cell.l1.r3.active').should('contain', '5 days');
+      cy.get('.grid1 [data-row=1] > .slick-cell.l0.r0').should('contain', 'Task 1');
+    });
+
+    it('should hide "Finish" column and start at Task 1 and expect "Duration" to have colspan of 3 and show "% Complete" and "Effort Driven"', () => {
+      cy.get('.grid1').find('.slick-header-column').first().trigger('mouseover').trigger('contextmenu').invoke('show');
+      cy.get('.slick-column-picker')
+        .find('.slick-column-picker-list')
+        .children('li:nth-of-type(4)')
+        .children('label')
+        .should('contain', 'Period - Finish')
+        .click();
+      cy.get('.slick-column-picker .close').click();
+
+      cy.get('.grid1 [data-row=1] > .slick-cell.l0.r0').should('contain', 'Task 1').click().type('{rightArrow}');
+      cy.get('.grid1 [data-row=1] > .slick-cell.l1.r4.active').should('contain', '5 days').type('{rightArrow}');
+      cy.get('.grid1 [data-row=1] > .slick-cell.l5.r5')
+        .should('have.class', 'active')
+        .contains(/(true|false)+$/);
+
+      cy.get('.grid1 [data-row=1] > .slick-cell.l5.r5.active').type('{leftArrow}');
+      cy.get('.grid1 [data-row=1] > .slick-cell.l1.r4.active').should('contain', '5 days').type('{leftArrow}');
+      cy.get('.grid1 [data-row=1] > .slick-cell.l0.r0.active');
+      cy.get('.grid1 [data-row=1] > .slick-cell.l0.r0').should('contain', 'Task 1');
+    });
+  });
 });
