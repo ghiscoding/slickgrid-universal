@@ -86,7 +86,9 @@ export default class Example11 {
       isSelected: false,
       isUserDefined: false,
       columns: [...this.allColumnIds]
-        .map((colId) => ({ columnId: `${colId}`, hidden: false }))
+        .map((colId) => ({ columnId: `${colId}` }))
+        // OR the `hidden` props alternative
+        // .map((colId) => ({ columnId: `${colId}`, hidden: false }))
         .filter((col) => col.columnId !== 'product' && col.columnId !== 'countryOfOrigin'), // remove "Product", "Country of Origin"
       filters: [
         { columnId: 'finish', operator: OperatorType.lessThanOrEqual, searchTerms: [`${this.currentYear}-01-01`] },
@@ -100,7 +102,11 @@ export default class Example11 {
       value: 'greaterCurrentYear',
       isSelected: false,
       isUserDefined: false,
-      columns: [...this.allColumnIds].map((colId) => ({ columnId: `${colId}`, hidden: false })).filter((col) => col.columnId !== 'cost'), // remove "Cost"
+      columns: [...this.allColumnIds]
+        .map((colId) => ({ columnId: `${colId}` }))
+        // OR the `hidden` props alternative
+        // .map((colId) => ({ columnId: `${colId}`, hidden: false }))
+        .filter((col) => col.columnId !== 'cost'), // remove "Cost"
       filters: [{ columnId: 'finish', operator: '>=', searchTerms: [`${this.currentYear + 1}-01-01`] }],
       sorters: [{ columnId: 'finish', direction: 'asc' }] as CurrentSorter[],
     },
@@ -451,7 +457,10 @@ export default class Example11 {
         ],
         onCommand: (e, args) => this.executeCommand(e, args),
       },
-      gridStateIncludeHiddenProps: true,
+
+      // the `hidden` props alternative, we could use column "hidden" props, then we could also include it in the saved state
+      // using this flag (below) will result in all columns included in the Grid State including hidden columns
+      // gridStateIncludeHiddenProps: true,
     };
 
     const storedData = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -830,7 +839,9 @@ export default class Example11 {
       this.sgb.filterService.clearFilters();
       this.sgb.sortService.clearSorting();
       this.sgb.gridStateService.changeColumnsArrangement(
-        [...this.columnDefinitions].map((col) => ({ columnId: `${col.id}`, hidden: false }))
+        [...this.columnDefinitions].map((col) => ({ columnId: `${col.id}` }))
+        // OR the `hidden` props alternative
+        // [...this.columnDefinitions].map((col) => ({ columnId: `${col.id}`, hidden: false }))
       );
     }
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.predefinedViews));
