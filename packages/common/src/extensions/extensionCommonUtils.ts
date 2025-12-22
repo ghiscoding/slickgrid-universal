@@ -84,10 +84,8 @@ export function handleColumnPickerItemClick(this: SlickColumnPicker | SlickGridM
     visibleColumns = context.getVisibleColumns();
 
     // keep reference to the updated visible columns list
-    if (
-      !context.sharedService.visibleColumns ||
-      (Array.isArray(visibleColumns) && visibleColumns.length !== context.sharedService.visibleColumns.length)
-    ) {
+    // prettier-ignore
+    if (!context.sharedService.visibleColumns || (Array.isArray(visibleColumns) && visibleColumns.length !== context.sharedService.visibleColumns.length)) {
       context.sharedService.visibleColumns = visibleColumns;
     }
 
