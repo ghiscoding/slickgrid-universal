@@ -492,10 +492,8 @@ export class GridStateService {
         this.selectedRowDataContextIds = args.filteredIds;
         this._selectedRowIndexes = args.rows;
 
-        if (
-          !dequal(this.selectedRowDataContextIds, previousSelectedFilteredRowDataContextIds) ||
-          !dequal(this._selectedRowIndexes, previousSelectedRowIndexes)
-        ) {
+        // prettier-ignore
+        if (!dequal(this.selectedRowDataContextIds, previousSelectedFilteredRowDataContextIds) || !dequal(this._selectedRowIndexes, previousSelectedRowIndexes)) {
           const newValues = {
             gridRowIndexes: this._selectedRowIndexes || [],
             dataContextIds: args.selectedRowIds,
