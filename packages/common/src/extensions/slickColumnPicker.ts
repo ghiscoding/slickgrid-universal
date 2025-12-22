@@ -67,8 +67,8 @@ export class SlickColumnPicker {
     this._bindEventService = new BindingEventService();
     this.onColumnsChanged = new SlickEvent<OnColumnsChangedArgs>('onColumnsChanged');
     this._eventHandler = new SlickEventHandler();
-    this._columns = this.sharedService.allColumns ?? [];
-    this._gridUid = this.grid?.getUID?.() ?? '';
+    this._columns = this.grid?.getColumns() ?? [];
+    this._gridUid = this.grid?.getUID() ?? '';
 
     this.init();
   }
@@ -177,7 +177,7 @@ export class SlickColumnPicker {
    * @returns {Array<Object>} - all columns array
    */
   getVisibleColumns(): Column[] {
-    return this.grid.getColumns();
+    return this.grid.getVisibleColumns();
   }
 
   /** Translate the Column Picker headers and also the last 2 checkboxes */

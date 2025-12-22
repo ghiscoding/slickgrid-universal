@@ -408,7 +408,7 @@ describe('Example 16 - Row Move & Checkbox Selector Selector Plugins', () => {
   });
 
   it('should add Edit/Delete columns and expect 2 new columns added at the beginning of the grid', () => {
-    const newExpectedColumns = ['', '', ...fullTitles];
+    const newExpectedColumns = ['', '', '', '', 'Title', '% Complete', 'Start', 'Finish', 'Duration', 'Completed'];
     cy.get('[data-test="add-crud-columns-btn"]').click();
 
     cy.get('#grid16')

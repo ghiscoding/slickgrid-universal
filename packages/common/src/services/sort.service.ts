@@ -241,15 +241,14 @@ export class SortService {
     const newSorting = !prevSorting;
 
     this._gridOptions.enableSorting = newSorting;
-    let updatedColumnDefinitions;
     if (isSortingDisabled) {
       if (clearSortingWhenDisabled) {
         this.clearSorting();
       }
       this._eventHandler.unsubscribeAll();
-      updatedColumnDefinitions = this.disableAllSortingCommands(true);
+      this.disableAllSortingCommands(true);
     } else {
-      updatedColumnDefinitions = this.disableAllSortingCommands(false);
+      this.disableAllSortingCommands(false);
       this._eventHandler.subscribe(this._grid.onSort, (e, args) => this.handleLocalOnSort(e, args as SingleColumnSort | MultiColumnSort));
     }
     this._grid.setOptions({ enableSorting: this._gridOptions.enableSorting }, false, true);
@@ -257,7 +256,7 @@ export class SortService {
 
     // reset columns so that it recreate the column headers and remove/add the sort icon hints
     // basically without this, the sort icon hints were still showing up even after disabling the Sorting
-    this._grid.setColumns(updatedColumnDefinitions);
+    this._grid.updateColumns();
   }
 
   /**

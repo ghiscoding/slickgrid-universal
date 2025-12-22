@@ -16,7 +16,6 @@ import type {
   Pagination,
   PaginationChangedArgs,
   SearchTerm,
-  SharedService,
   SingleColumnSort,
   SlickGrid,
   SortDirectionString,
@@ -63,7 +62,7 @@ export class GridOdataService implements BackendService {
     this._odataService = new OdataQueryBuilderService();
   }
 
-  init(serviceOptions?: Partial<OdataOption>, pagination?: Pagination, grid?: SlickGrid, sharedService?: SharedService): void {
+  init(serviceOptions?: Partial<OdataOption>, pagination?: Pagination, grid?: SlickGrid): void {
     this._grid = grid;
     const mergedOptions = { ...this.defaultOptions, ...serviceOptions };
 
@@ -86,7 +85,7 @@ export class GridOdataService implements BackendService {
     this.pagination = pagination;
 
     if (grid?.getColumns) {
-      const tmpColumnDefinitions = sharedService?.allColumns ?? grid.getColumns() ?? [];
+      const tmpColumnDefinitions = grid.getColumns() ?? [];
       this._columns = tmpColumnDefinitions.filter((column: Column) => !column.excludeFromQuery);
     }
 

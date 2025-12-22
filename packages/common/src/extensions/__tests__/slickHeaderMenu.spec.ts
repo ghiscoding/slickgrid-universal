@@ -51,6 +51,7 @@ const gridStub = {
   getContainerNode: vi.fn(),
   getFrozenColumnId: vi.fn(),
   getGridPosition: () => ({ width: 10, left: 0 }),
+  getVisibleColumns: vi.fn(),
   getUID: () => 'slickgrid12345',
   getOptions: () => gridOptionsMock,
   registerPlugin: vi.fn(),
@@ -58,8 +59,10 @@ const gridStub = {
   setOptions: vi.fn(),
   setSortColumns: vi.fn(),
   updateColumnHeader: vi.fn(),
+  updateColumnById: vi.fn(),
   updateColumns: vi.fn(),
   validateColumnFreezeWidth: vi.fn(),
+  validateColumnFreeze: vi.fn(),
   onBeforeSetColumns: new SlickEvent(),
   onBeforeHeaderCellDestroy: new SlickEvent(),
   onClick: new SlickEvent(),
@@ -133,7 +136,7 @@ describe('HeaderMenu Plugin', () => {
     extensionUtility = new ExtensionUtility(sharedService, backendUtilityService, translateService);
     vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
     vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsMock);
-    vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock.slice(0, 2));
+    vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columnsMock.slice(0, 2));
     plugin = new SlickHeaderMenu(extensionUtility, filterServiceStub, pubSubServiceStub, sharedService, sortServiceStub);
   });
 
@@ -189,6 +192,12 @@ describe('HeaderMenu Plugin', () => {
           tooltip: 'Highlight negative numbers.',
         } as MenuCommandItem;
       }
+      gridStub.updateColumnById = (columnId, props) => {
+        const column = columnsMock.find((col) => col.id === columnId);
+        if (column) {
+          Object.assign(column, props);
+        }
+      };
       headerDiv = document.createElement('div');
       headerDiv.className = 'slick-header-column';
       gridContainerDiv = document.createElement('div');
@@ -578,55 +587,50 @@ describe('HeaderMenu Plugin', () => {
         columnsMock[2].header!.menu = undefined;
         const mockColumn = { id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE', sortable: true, filterable: true } as any;
         vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue([mockColumn]);
-        vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock);
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columnsMock);
       });
 
       it('should call hideColumn and expect "visibleColumns" to be updated accordingly', () => {
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
         sharedService.slickGrid = gridStub;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
           headerMenu: { hideFreezeColumnsCommand: false, hideColumnResizeByContentCommand: true },
         });
+        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
         vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(1);
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
-        const setColumnsSpy = vi.spyOn(gridStub, 'setColumns');
+        const updateColumnsSpy = vi.spyOn(gridStub, 'updateColumns');
         const setOptionSpy = vi.spyOn(gridStub, 'setOptions');
-        const visibleSpy = vi.spyOn(SharedService.prototype, 'visibleColumns', 'set');
-        const updatedColumnsMock = [
-          { id: 'field1', field: 'field1', name: 'Field 1', width: 100, header: { menu: undefined } },
-          { id: 'field3', field: 'field3', name: 'Field 3', columnGroup: 'Billing', header: { menu: undefined }, width: 75 },
-        ] as Column[];
 
         plugin.hideColumn(columnsMock[1]);
 
         expect(setOptionSpy).not.toHaveBeenCalled();
-        expect(visibleSpy).toHaveBeenCalledWith(updatedColumnsMock);
-        expect(setColumnsSpy).toHaveBeenCalledWith(updatedColumnsMock, true);
+        expect(updateColumnsSpy).toHaveBeenCalledWith();
+        expect(columnsMock[1].hidden).toBeTruthy();
+        expect(pubSubSpy).toHaveBeenCalledWith('onHideColumns', { columns: columnsMock, hiddenColumn: columnsMock[1] });
       });
 
       it('should call hideColumn and expect "setOptions" to be called with new "frozenColumn" index when the grid is detected to be a frozen grid', () => {
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
         sharedService.slickGrid = gridStub;
+        sharedService.frozenVisibleColumnId = 'field1';
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
           frozenColumn: 1,
           headerMenu: { hideFreezeColumnsCommand: false, hideColumnResizeByContentCommand: true },
         });
 
+        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
         vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(1);
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
-        const setColumnsSpy = vi.spyOn(gridStub, 'setColumns');
-        const setOptionSpy = vi.spyOn(gridStub, 'setOptions');
-        const visibleSpy = vi.spyOn(SharedService.prototype, 'visibleColumns', 'set');
-        const updatedColumnsMock = [
-          { id: 'field1', field: 'field1', name: 'Field 1', width: 100, header: { menu: undefined } },
-          { id: 'field3', field: 'field3', name: 'Field 3', columnGroup: 'Billing', header: { menu: undefined }, width: 75 },
-        ] as Column[];
+        const updateColumnsSpy = vi.spyOn(gridStub, 'updateColumns');
 
         plugin.hideColumn(columnsMock[1]);
 
-        expect(setOptionSpy).toHaveBeenCalledWith({ frozenColumn: 0 });
-        expect(visibleSpy).toHaveBeenCalledWith(updatedColumnsMock);
-        expect(setColumnsSpy).toHaveBeenCalledWith(updatedColumnsMock, true);
+        expect(updateColumnsSpy).toHaveBeenCalled();
+        expect(columnsMock[1].hidden).toBeTruthy();
+        expect(pubSubSpy).toHaveBeenCalledWith('onHideColumns', { columns: columnsMock, hiddenColumn: columnsMock[1] });
       });
     });
 
@@ -971,12 +975,9 @@ describe('HeaderMenu Plugin', () => {
       });
 
       it('should expect menu related to Freeze Columns when "hideFreezeColumnsCommand" is disabled and also expect grid "setOptions" method to be called with frozen column of -1 because the column found is not visible', () => {
-        // const originalColumnDefinitions = [{ id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' }, { id: 'field2', field: 'field2', width: 75 }];
-        // vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(originalColumnDefinitions);
-        // vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValueOnce(originalColumnDefinitions);
         sharedService.hasColumnsReordered = true;
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
-        const setColSpy = vi.spyOn(gridStub, 'setColumns');
+        const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
         vi.spyOn(gridStub, 'validateColumnFreezeWidth').mockReturnValue(true);
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
@@ -1004,7 +1005,7 @@ describe('HeaderMenu Plugin', () => {
 
         commandDivElm.dispatchEvent(new Event('click')); // execute command
         expect(setOptionsSpy).toHaveBeenCalledWith({ frozenColumn: -1, enableMouseWheelScrollHandler: true }, false, true);
-        expect(setColSpy).toHaveBeenCalledWith(columnsMock.slice(0, 2));
+        expect(updateColumnSpy).toHaveBeenCalled();
       });
 
       it('should expect menu to show and "onBeforeMenuShow" callback to run when defined', () => {
@@ -1013,7 +1014,7 @@ describe('HeaderMenu Plugin', () => {
           { id: 'field2', field: 'field2', width: 75 },
         ];
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(originalColumnDefinitions);
-        vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(originalColumnDefinitions);
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(originalColumnDefinitions);
         sharedService.hasColumnsReordered = true;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
@@ -1369,17 +1370,17 @@ describe('HeaderMenu Plugin', () => {
         expect(clearSortSpy).toHaveBeenCalledWith(clickEvent, 'field2');
       });
 
-      it('should expect menu related to Freeze Columns when "hideFreezeColumnsCommand" is disabled and also expect "setColumns" to be called with same as original even when the column definitions list did not change', () => {
+      it('should expect menu related to Freeze Columns when "hideFreezeColumnsCommand" is disabled and also expect "updateColumns" to be called', () => {
         const originalColumnDefinitions = [
           { id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' },
           { id: 'field2', field: 'field2', width: 75 },
         ];
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
-        const setColSpy = vi.spyOn(gridStub, 'setColumns');
+        const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
         vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ frozenColumn: 0 } as GridOption);
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(originalColumnDefinitions);
         vi.spyOn(gridStub, 'validateColumnFreezeWidth').mockReturnValue(true);
-        vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(originalColumnDefinitions);
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(originalColumnDefinitions);
         sharedService.hasColumnsReordered = false;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
@@ -1406,10 +1407,10 @@ describe('HeaderMenu Plugin', () => {
 
         commandDivElm.dispatchEvent(new Event('click')); // execute command
         expect(setOptionsSpy).toHaveBeenCalledWith({ frozenColumn: 0, enableMouseWheelScrollHandler: true }, false, true);
-        expect(setColSpy).toHaveBeenCalledWith(originalColumnDefinitions);
+        expect(updateColumnSpy).toHaveBeenCalled();
       });
 
-      it('should expect menu related to Freeze Columns when "hideFreezeColumnsCommand" is disabled and also expect "setColumns" to be called with previous visible columns when hasColumnsReordered returns true', () => {
+      it('should expect menu related to Freeze Columns when "hideFreezeColumnsCommand" is disabled and also expect "updateColumns" to be called when hasColumnsReordered returns true', () => {
         const originalColumnDefinitions = [
           { id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' },
           { id: 'field2', field: 'field2', width: 75 },
@@ -1419,11 +1420,11 @@ describe('HeaderMenu Plugin', () => {
           { id: 'field1', field: 'field1', width: 100, nameKey: 'TITLE' },
         ];
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
-        const setColSpy = vi.spyOn(gridStub, 'setColumns');
+        const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
         vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ frozenColumn: 0 } as GridOption);
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(originalColumnDefinitions);
         vi.spyOn(gridStub, 'validateColumnFreezeWidth').mockReturnValue(true);
-        vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(visibleColumnDefinitions);
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(visibleColumnDefinitions);
         sharedService.hasColumnsReordered = true;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
@@ -1450,7 +1451,7 @@ describe('HeaderMenu Plugin', () => {
 
         commandDivElm.dispatchEvent(new Event('click')); // execute command
         expect(setOptionsSpy).toHaveBeenCalledWith({ frozenColumn: 0, enableMouseWheelScrollHandler: true }, false, true);
-        expect(setColSpy).toHaveBeenCalledWith(visibleColumnDefinitions);
+        expect(updateColumnSpy).toHaveBeenCalled();
       });
 
       it('should trigger the command "sort-asc" and expect Sort Service to call "onBackendSortChanged" being called without the sorted column', () => {

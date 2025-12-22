@@ -722,6 +722,37 @@ export function fetchAsPromise<T = any>(input?: T[] | Promise<T> | Observable<T>
 }
 
 /**
+ * Take all the columns defined in the datagrid and also the preset columns,
+ * then sort by the original column definitions unless a different order is specified in the presets which is given precedence
+ * @param allColumns
+ * @param presetColumns
+ * @returns
+ */
+export function sortPresetColumns<T = any>(allColumns: Column<T>[], presetColumns: Column<T>[]): Column<T>[] {
+  // Create a map of preset column IDs with their order
+  const presetColumnMap = new Map(presetColumns.map((col, index) => [col.id, index]));
+
+  // Create a copy of allColumns with sorting metadata
+  return allColumns
+    .map((column, originalIndex) => ({
+      ...column,
+      hidden: !presetColumnMap.has(column.id) || (presetColumns.find((c) => c.id === column.id)?.hidden ?? false),
+      _originalIndex: originalIndex,
+      _presetIndex: presetColumnMap.get(column.id),
+    }))
+    .sort((a, b) => {
+      // If both columns have a preset index, sort by preset order
+      if (a._presetIndex !== undefined && b._presetIndex !== undefined) {
+        return a._presetIndex - b._presetIndex;
+      }
+
+      // If one column is in presets and the other is not, preserve original order
+      return a._originalIndex - b._originalIndex;
+    })
+    .map(({ _originalIndex, _presetIndex, ...column }) => column);
+}
+
+/**
  * Unsubscribe all Subscriptions
  * It will return an empty array if it all went well
  * @param subscriptions

@@ -1,18 +1,9 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
-import type { SlickGrid } from '../../core/slickGrid.js';
-import type { Column, GridOption, MenuCommandItem } from '../../interfaces/index.js';
+import type { GridOption, MenuCommandItem } from '../../interfaces/index.js';
 import type { BackendUtilityService } from '../../services/backendUtility.service.js';
 import { SharedService } from '../../services/shared.service.js';
 import { ExtensionUtility } from '../extensionUtility.js';
-
-const gridStub = {
-  calculateFrozenColumnIndexById: vi.fn(),
-  getOptions: vi.fn(),
-  setColumns: vi.fn(),
-  setOptions: vi.fn(),
-  registerPlugin: vi.fn(),
-} as unknown as SlickGrid;
 
 const backendUtilityServiceStub = {
   executeBackendProcessesCallback: vi.fn(),
@@ -147,51 +138,6 @@ describe('extensionUtility', () => {
 
         expect(output1).toBe('Commandes');
         expect(output2).toBe('Options');
-      });
-    });
-
-    describe('readjustFrozenColumnIndexWhenNeeded method', () => {
-      let gridOptionsMock: GridOption;
-
-      beforeEach(() => {
-        gridOptionsMock = { frozenColumn: 1 } as GridOption;
-        sharedService.slickGrid = gridStub;
-        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-        sharedService.frozenVisibleColumnId = 'field2';
-      });
-
-      afterEach(() => {
-        vi.clearAllMocks();
-      });
-
-      it('should keep "frozenColumn" at 1 when showing a column that was previously hidden and its index is greater than provided argument of frozenColumnIndex', () => {
-        const allColumns = [{ id: 'field1' }, { id: 'field2' }] as Column[];
-        const visibleColumns = [{ id: 'field1' }, { id: 'field2' }, { id: 'field3' }] as Column[];
-        const setOptionSpy = vi.spyOn(sharedService.slickGrid, 'setOptions');
-
-        utility.readjustFrozenColumnIndexWhenNeeded(1, allColumns, visibleColumns);
-
-        expect(setOptionSpy).not.toHaveBeenCalled();
-      });
-
-      it('should keep "frozenColumn" at 1 when hiding a column that was previously hidden and its index is greater than provided argument of frozenColumnIndex', () => {
-        const allColumns = [{ id: 'field1' }, { id: 'field2' }, { id: 'field3' }] as Column[];
-        const visibleColumns = [{ id: 'field1' }, { id: 'field2' }] as Column[];
-        const setOptionSpy = vi.spyOn(sharedService.slickGrid, 'setOptions');
-
-        utility.readjustFrozenColumnIndexWhenNeeded(1, allColumns, visibleColumns);
-
-        expect(setOptionSpy).not.toHaveBeenCalled();
-      });
-
-      it('should not change "frozenColumn" when showing a column that was not found in the visibleColumns columns array', () => {
-        const allColumns = [{ id: 'field1' }, { id: 'field2' }, { id: 'field3' }] as Column[];
-        const visibleColumns = [{ id: 'field1' }, { field: 'field2' }] as unknown as Column[];
-        const setOptionSpy = vi.spyOn(sharedService.slickGrid, 'setOptions');
-
-        utility.readjustFrozenColumnIndexWhenNeeded(0, allColumns, visibleColumns);
-
-        expect(setOptionSpy).not.toHaveBeenCalled();
       });
     });
   });

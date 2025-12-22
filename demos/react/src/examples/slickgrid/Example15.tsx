@@ -51,8 +51,6 @@ const Example15: React.FC = () => {
 
   /** Clear the Grid State from Local Storage and reset the grid to it's original state */
   function clearGridStateFromLocalStorage() {
-    // reactGridRef.current?.slickGrid.setColumns(reactGridRef.current?.gridService.getAllColumnDefinitions());
-    // reactGridRef.current?.slickGrid.autosizeColumns();
     reactGridRef.current?.gridService.resetGrid(getColumnDefinitions());
     reactGridRef.current?.paginationService!.changeItemPerPage(DEFAULT_PAGE_SIZE);
     setTimeout(() => (localStorage[LOCAL_STORAGE_KEY] = null));

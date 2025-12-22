@@ -1044,7 +1044,7 @@ describe('TreeData Service', () => {
         },
       ];
       const mockColumnSort = { columnId: 'size', sortAsc: true, sortCol: mockColumns[1] };
-      vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
       const getInitialSpy = vi.spyOn(service, 'getInitialSort').mockReturnValue(mockColumnSort);
       const sortHierarchySpy = vi.spyOn(sortServiceStub, 'sortHierarchicalDataset');
 

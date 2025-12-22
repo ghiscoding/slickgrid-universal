@@ -1,4 +1,4 @@
-describe('Example 44 - Column & Row Span', { retries: 1 }, () => {
+describe('Example 44 - Column & Row Span', { retries: 0 }, () => {
   const GRID_ROW_HEIGHT = 30;
   const fullTitles = [
     'Title',
@@ -461,6 +461,104 @@ describe('Example 44 - Column & Row Span', { retries: 1 }, () => {
       }
       cy.get('@active_cell').type(command);
       cy.get('[data-row=499] > .slick-cell.l5.r5.active').should('have.length', 1);
+    });
+  });
+
+  describe('Hide Columns with colspan/rowspan', () => {
+    it('should hide Title column and expect other colspan/rowspan to simply move over and stay attached to same columns', () => {
+      cy.get('[data-row=499] > .slick-cell.l5.r5.active').type('{ctrl}{home}', { release: false });
+      cy.get('[data-row=2] > .slick-cell.l0.r0.rowspan').should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 3)
+      );
+
+      cy.get('.slick-header-column:nth(1)').trigger('mouseover').trigger('contextmenu').invoke('show');
+
+      cy.get('.slick-column-picker')
+        .find('.slick-column-picker-list')
+        .children('li:nth-child(1)')
+        .children('label')
+        .should('contain', 'Title')
+        .click();
+      cy.get('.slick-column-picker .close').click();
+
+      // Task 2 rowspan should be hidden now
+      cy.get('[data-row=2] > .slick-cell.l0.r0.rowspan').should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.not.eq(GRID_ROW_HEIGHT * 3)
+      );
+    });
+
+    it('should start at "Revenue Growth" second cell down, then type "Arrow Right" key 2x times and expect 4th row "Policy Index" green section to still have a rowspan 3x and colspan of 4x', () => {
+      cy.get('[data-row=3] > .slick-cell.l1.r1.rowspan').as('active_cell').click();
+      cy.get('[data-row=3] > .slick-cell.l1.r1.active').should('have.length', 1);
+      cy.get('@active_cell').type('{rightarrow}{rightarrow}');
+
+      cy.get('[data-row=2] > .slick-cell.l3.r5').should('not.have.class', 'rowspan');
+      cy.get('[data-row=3] > .slick-cell.l3.r7.rowspan').should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 3)
+      );
+    });
+
+    it('should go up by 1x "Arrow Up" and expect blue section colspan of 3x', () => {
+      cy.get('[data-row=3] > .slick-cell.l3.r7.rowspan').type('{uparrow}');
+      cy.get('[data-row=2] > .slick-cell.l3.r5.active').should('not.have.class', 'rowspan');
+    });
+
+    it('should "Revenue Growth" rowspan should now be at first column and "Policy Index" should now be at third column', () => {
+      cy.get(`[data-row=0] > .slick-cell.l0.r0`).should('not.exist');
+      cy.get(`[data-row=1] > .slick-cell.l0.r0`).should('not.exist');
+      cy.get(`[data-row=2] > .slick-cell.l0.r0`).should('not.exist');
+
+      cy.get('[data-row=0] > .slick-cell.l1.r1.rowspan').should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 3)
+      );
+      cy.get('[data-row=3] > .slick-cell.l1.r1.rowspan').should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 5)
+      );
+      cy.get('[data-row=8] > .slick-cell.l1.r1.rowspan').should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 80)
+      );
+
+      cy.get('[data-row=2] > .slick-cell.l3.r5').should('not.have.class', 'rowspan');
+      cy.get('[data-row=3] > .slick-cell.l3.r7.rowspan').should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 3)
+      );
+      cy.get('[data-row=8] > .slick-cell.l3.r4.rowspan').should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 492)
+      );
+    });
+
+    it('should show again "Title" column and expect "Revenue Growth" and "Policy Index" columns to be moved to the right by 1 column', () => {
+      cy.get('.slick-header-column:nth(1)').trigger('mouseover').trigger('contextmenu').invoke('show');
+
+      cy.get('.slick-column-picker')
+        .find('.slick-column-picker-list')
+        .children('li:nth-child(1)')
+        .children('label')
+        .should('contain', 'Title')
+        .click();
+      cy.get('.slick-column-picker .close').click();
+
+      cy.get(`[data-row=0] > .slick-cell.l0.r0`).should('contain', 'Task 0');
+      cy.get(`[data-row=1] > .slick-cell.l0.r0`).should('contain', 'Task 1');
+      cy.get(`[data-row=2] > .slick-cell.l0.r0`).should('contain', 'Task 2');
+
+      cy.get('[data-row=0] > .slick-cell.l1.r1.rowspan').should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 3)
+      );
+      cy.get('[data-row=3] > .slick-cell.l1.r1.rowspan').should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 5)
+      );
+      cy.get('[data-row=8] > .slick-cell.l1.r1.rowspan').should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 80)
+      );
+
+      cy.get('[data-row=2] > .slick-cell.l3.r5').should('not.have.class', 'rowspan');
+      cy.get('[data-row=3] > .slick-cell.l3.r7.rowspan').should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 3)
+      );
+      cy.get('[data-row=8] > .slick-cell.l3.r4.rowspan').should(($el) =>
+        expect(parseInt(`${$el.outerHeight()}`, 10)).to.eq(GRID_ROW_HEIGHT * 492)
+      );
     });
   });
 });

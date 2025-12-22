@@ -586,7 +586,7 @@ const Example32: React.FC = () => {
     // just for demo purposes, set it back to its original width
     const columns = reactGridRef.current?.slickGrid.getColumns() as Column[];
     columns.forEach((col) => (col.width = col.originalWidth));
-    reactGridRef.current?.slickGrid.setColumns(columns);
+    reactGridRef.current?.slickGrid.updateColumns();
     reactGridRef.current?.slickGrid.autosizeColumns();
     setIsUsingDefaultResize(true);
   }

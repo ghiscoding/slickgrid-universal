@@ -763,7 +763,7 @@ export default class Example14 {
     // just for demo purposes, set it back to its original width
     const columns = this.sgb.slickGrid?.getColumns() as Column[];
     columns.forEach((col) => (col.width = col.originalWidth));
-    this.sgb.slickGrid?.setColumns(columns);
+    this.sgb.slickGrid?.updateColumns();
     this.sgb.slickGrid?.autosizeColumns();
 
     // simple css class to change selected button in the UI

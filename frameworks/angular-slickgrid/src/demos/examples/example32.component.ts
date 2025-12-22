@@ -587,7 +587,7 @@ export class Example32Component implements OnInit {
     // just for demo purposes, set it back to its original width
     const columns = this.angularGrid.slickGrid.getColumns() as Column[];
     columns.forEach((col) => (col.width = col.originalWidth));
-    this.angularGrid.slickGrid.setColumns(columns);
+    this.angularGrid.slickGrid.updateColumns();
     this.angularGrid.slickGrid.autosizeColumns();
     this.isUsingDefaultResize = true;
   }

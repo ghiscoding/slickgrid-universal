@@ -1,5 +1,5 @@
 import { Constants } from '../constants.js';
-import type { Column, GridMenuItem, GridOption, Locale, MenuCommandItem, MenuOptionItem } from '../interfaces/index.js';
+import type { GridMenuItem, GridOption, Locale, MenuCommandItem, MenuOptionItem } from '../interfaces/index.js';
 import type { BackendUtilityService } from '../services/backendUtility.service.js';
 import type { SharedService } from '../services/shared.service.js';
 import type { TranslaterService } from '../services/translater.service.js';
@@ -53,27 +53,6 @@ export class ExtensionUtility {
       output = transKey ? this.translateWhenEnabledAndServiceExist(`${translationPrefix}${transKey}`, `TEXT_${transKey}`, title) : title;
     }
     return output;
-  }
-
-  /**
-   * When using ColumnPicker/GridMenu to show/hide a column, we potentially need to readjust the grid option "frozenColumn" index.
-   * That is because SlickGrid freezes by column index and it has no knowledge of the columns themselves and won't change the index, we need to do that ourselves whenever necessary.
-   * Note: we call this method right after the visibleColumns array got updated, it won't work properly if we call it before the setting the visibleColumns.
-   * @param {Number} frozenColumnIndex - current frozenColumn index
-   * @param {Array<Object>} allColumns - all columns (including hidden ones)
-   * @param {Array<Object>} visibleColumns - only visible columns (excluding hidden ones)
-   */
-  readjustFrozenColumnIndexWhenNeeded(frozenColumnIndex: number, allColumns: Column[], visibleColumns: Column[]): void {
-    if (frozenColumnIndex >= 0) {
-      // recalculate and apply changes when `frozenColumn` index changes
-      this.sharedService.slickGrid.calculateFrozenColumnIndexById(visibleColumns, this.sharedService.frozenVisibleColumnId, true);
-
-      // to freeze columns, we need to take only the visible columns and we also need to use setColumns() when some of them are hidden
-      // to make sure that we only use the visible columns, not doing this would show back some of the hidden columns
-      if (Array.isArray(visibleColumns) && Array.isArray(allColumns) && visibleColumns.length !== allColumns.length) {
-        this.sharedService.slickGrid.setColumns(visibleColumns);
-      }
-    }
   }
 
   /** Refresh the dataset through the Backend Service */

@@ -29,8 +29,26 @@
     </ul>
   </div>
 
-  <h3>Grid 1 <small>(with Header Grouping &amp; Colspan)</small></h3>
-  <angular-slickgrid gridId="grid1" [columns]="columnDefinitions1" [options]="gridOptions1" [dataset]="dataset1"> </angular-slickgrid>
+  <h3>
+    Grid 1 <small>(with Header Grouping &amp; Colspan)</small>
+    <button
+      class="btn btn-outline-secondary btn-sm btn-icon ms-2"
+      (click)="spreadColspan()"
+      data-test="spread-colspan-button"
+      title="Should we always spread the same visible column count with or without hidden columns?"
+    >
+      <span>Toggle Spreading of ColSpan with/without Hidden Columns</span>
+    </button>
+  </h3>
+
+  <angular-slickgrid
+    gridId="grid1"
+    [columns]="columnDefinitions1"
+    [options]="gridOptions1"
+    [dataset]="dataset1"
+    (onAngularGridCreated)="angularGridReady1($event.detail)"
+  >
+  </angular-slickgrid>
 
   <hr />
 

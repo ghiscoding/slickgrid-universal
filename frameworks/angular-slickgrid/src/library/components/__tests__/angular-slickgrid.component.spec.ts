@@ -260,6 +260,8 @@ const mockGrid = {
   getRenderedRange: vi.fn(),
   getSelectionModel: vi.fn(),
   getScrollbarDimensions: vi.fn(),
+  updateColumnById: vi.fn(),
+  updateColumns: vi.fn(),
   updateRow: vi.fn(),
   render: vi.fn(),
   registerPlugin: vi.fn(),
@@ -498,8 +500,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
     expect(sharedService.frozenVisibleColumnId).toBe('name');
   });
 
-  it('should update "visibleColumns" in the Shared Service when "onColumnsReordered" event is triggered', () => {
-    const sharedVisibleColumnsSpy = vi.spyOn(SharedService.prototype, 'visibleColumns', 'set');
+  it('should assign "hasColumnReordered: true" when "onColumnsReordered" event is triggered', () => {
     const newVisibleColumns = [
       { id: 'lastName', field: 'lastName' },
       { id: 'firstName', field: 'firstName' },
@@ -511,7 +512,6 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
 
     expect(component.eventHandler).toEqual(slickEventHandler);
     expect(sharedService.hasColumnsReordered).toBe(true);
-    expect(sharedVisibleColumnsSpy).toHaveBeenCalledWith(newVisibleColumns);
   });
 
   it('should change Dark Mode by using "setOptions" when triggered with "onSetOptions" event', () => {
@@ -1762,7 +1762,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
 
       it('should reflect columns in the grid', () => {
         const mockColsPresets = [{ columnId: 'firstName', width: 100 }];
-        const mockCols = [{ id: 'firstName', field: 'firstName' }];
+        const mockCols = [{ id: 'firstName', field: 'firstName', editorClass: undefined, hidden: false }];
         const getAssocColSpy = vi.spyOn(gridStateServiceStub, 'getAssociatedGridColumns').mockReturnValue(mockCols);
         const setColSpy = vi.spyOn(mockGrid, 'setColumns');
 
@@ -1776,7 +1776,10 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
       it('should reflect columns with an extra checkbox selection column in the grid when "enableCheckboxSelector" is set', () => {
         const mockColsPresets = [{ columnId: 'firstName', width: 100 }];
         const mockCol = { id: 'firstName', field: 'firstName' };
-        const mockCols = [{ id: '_checkbox_selector', field: '_checkbox_selector', editor: undefined }, mockCol];
+        const mockCols = [
+          { id: '_checkbox_selector', field: '_checkbox_selector', editor: undefined, editorClass: undefined, hidden: false },
+          { ...mockCol, editorClass: undefined, hidden: false },
+        ];
         const getAssocColSpy = vi.spyOn(gridStateServiceStub, 'getAssociatedGridColumns').mockReturnValue([mockCol]);
         const setColSpy = vi.spyOn(mockGrid, 'setColumns');
 
@@ -1791,7 +1794,10 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
       it('should reflect columns with an extra row detail column in the grid when "enableRowDetailView" is set', () => {
         const mockColsPresets = [{ columnId: 'firstName', width: 100 }];
         const mockCol = { id: 'firstName', field: 'firstName' };
-        const mockCols = [{ id: '_detail_selector', field: '_detail_selector', editor: undefined }, mockCol];
+        const mockCols = [
+          { id: '_detail_selector', field: '_detail_selector', editor: undefined, editorClass: undefined, hidden: false },
+          { ...mockCol, editorClass: undefined, hidden: false },
+        ];
         const getAssocColSpy = vi.spyOn(gridStateServiceStub, 'getAssociatedGridColumns').mockReturnValue([mockCol]);
         const setColSpy = vi.spyOn(mockGrid, 'setColumns');
 
@@ -1806,7 +1812,10 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
       it('should reflect columns with an extra row move column in the grid when "enableRowMoveManager" is set', () => {
         const mockColsPresets = [{ columnId: 'firstName', width: 100 }];
         const mockCol = { id: 'firstName', field: 'firstName' };
-        const mockCols = [{ id: '_move', field: '_move', editor: undefined }, mockCol];
+        const mockCols = [
+          { id: '_move', field: '_move', editor: undefined, editorClass: undefined, hidden: false },
+          { ...mockCol, editorClass: undefined, hidden: false },
+        ];
         const getAssocColSpy = vi.spyOn(gridStateServiceStub, 'getAssociatedGridColumns').mockReturnValue([mockCol]);
         const setColSpy = vi.spyOn(mockGrid, 'setColumns');
 
@@ -1822,10 +1831,10 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         const mockColsPresets = [{ columnId: 'firstName', width: 100 }];
         const mockCol = { id: 'firstName', field: 'firstName' };
         const mockCols = [
-          { id: '_move', field: '_move', editor: undefined },
-          { id: '_checkbox_selector', field: '_checkbox_selector', editor: undefined },
-          { id: '_detail_selector', field: '_detail_selector', editor: undefined },
-          mockCol,
+          { id: '_move', field: '_move', editor: undefined, editorClass: undefined, hidden: false },
+          { id: '_checkbox_selector', field: '_checkbox_selector', editor: undefined, editorClass: undefined, hidden: false },
+          { id: '_detail_selector', field: '_detail_selector', editor: undefined, editorClass: undefined, hidden: false },
+          { ...mockCol, editorClass: undefined, hidden: false },
         ];
         const getAssocColSpy = vi.spyOn(gridStateServiceStub, 'getAssociatedGridColumns').mockReturnValue([mockCol]);
         const setColSpy = vi.spyOn(mockGrid, 'setColumns');

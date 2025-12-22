@@ -1,7 +1,6 @@
 import {
   FieldType,
   OperatorType,
-  SharedService,
   type BackendService,
   type Column,
   type ColumnFilter,
@@ -41,10 +40,8 @@ describe('GridOdataService', () => {
   let service: GridOdataService;
   let paginationOptions: Pagination;
   let serviceOptions: OdataOption;
-  let sharedService: SharedService;
 
   beforeEach(() => {
-    sharedService = new SharedService();
     service = new GridOdataService();
     serviceOptions = {
       orderBy: '',
@@ -1835,10 +1832,7 @@ describe('GridOdataService', () => {
       mockColumnsCopy.splice(1, 1);
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumnsCopy);
 
-      // but still pass all columns to the service init
-      vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
-
-      service.init(serviceOptions, paginationOptions, gridStub, sharedService);
+      service.init(serviceOptions, paginationOptions, gridStub);
       service.updateFilters(presetFilters, true);
       const query = service.buildQuery();
       const currentFilters = service.getCurrentFilters();

@@ -65,6 +65,7 @@ const gridStub = {
   getGridPosition: vi.fn(),
   getOptions: () => gridOptionsMock,
   getUID: () => 'slickgrid12345',
+  getVisibleColumns: vi.fn(),
   registerPlugin: vi.fn(),
   setColumns: vi.fn(),
   setOptions: vi.fn(),
@@ -171,7 +172,7 @@ describe('CellMenu Plugin', () => {
     vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
     vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsMock);
     vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
-    vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock.slice(0, 2));
+    vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columnsMock.slice(0, 2));
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
     plugin = new SlickCellMenu(extensionUtility, pubSubServiceStub, sharedService);
   });

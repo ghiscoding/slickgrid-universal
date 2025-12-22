@@ -15,7 +15,6 @@ import type {
   Pagination,
   PaginationChangedArgs,
   PaginationCursorChangedArgs,
-  SharedService,
   SingleColumnSort,
   SlickGrid,
   SortDirectionString,
@@ -62,14 +61,14 @@ export class GraphqlService implements BackendService {
   }
 
   /** Initialization of the service, which acts as a constructor */
-  init(serviceOptions?: GraphqlServiceOption, pagination?: Pagination, grid?: SlickGrid, sharedService?: SharedService): void {
+  init(serviceOptions?: GraphqlServiceOption, pagination?: Pagination, grid?: SlickGrid): void {
     this._grid = grid;
     this.options = serviceOptions || { datasetName: '' };
     this.pagination = pagination;
     this._datasetIdPropName = this._gridOptions.datasetIdPropertyName || 'id';
 
     if (typeof grid?.getColumns === 'function') {
-      this._columns = sharedService?.allColumns ?? grid.getColumns() ?? [];
+      this._columns = grid.getColumns() ?? [];
     }
   }
 

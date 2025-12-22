@@ -538,7 +538,7 @@ function handleDefaultResizeColumns() {
   // just for demo purposes, set it back to its original width
   const columns = vueGrid.slickGrid.getColumns() as Column[];
   columns.forEach((col) => (col.width = col.originalWidth));
-  vueGrid.slickGrid.setColumns(columns);
+  vueGrid.slickGrid.updateColumns();
   vueGrid.slickGrid.autosizeColumns();
   isUsingDefaultResize.value = true;
 }

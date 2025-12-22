@@ -603,13 +603,17 @@ describe('Example 04 - Frozen Grid', () => {
 
     cy.get('.grid4').find('.slick-header-column:nth(3)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
 
-    cy.get('.slick-header-menu .slick-menu-command-list').should('be.visible').children('.slick-menu-item').contains('Hide Column').click();
-    // .then(() => {
-    //   expect(alertStub.getCall(0)).to.be.calledWith(
-    //     '[SlickGrid] Action not allowed and aborted, you need to have at least one or more column on the right section of the column freeze/pining. ' +
-    //       'You could alternatively "Unfreeze all the columns" before trying again.'
-    //   );
-    // });
+    cy.get('.slick-header-menu .slick-menu-command-list')
+      .should('be.visible')
+      .children('.slick-menu-item')
+      .contains('Hide Column')
+      .click()
+      .then(() => {
+        expect(alertStub.getCall(0)).to.be.calledWith(
+          '[SlickGrid] Action not allowed and aborted, you need to have at least one or more column on the right section of the column freeze/pining. ' +
+            'You could alternatively "Unfreeze all the columns" before trying again.'
+        );
+      });
 
     cy.get('.grid4')
       .find('.slick-header-columns')

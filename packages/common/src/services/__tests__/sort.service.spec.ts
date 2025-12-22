@@ -92,6 +92,7 @@ const gridStub = {
   setItems: vi.fn(),
   setOptions: vi.fn(),
   setSortColumns: vi.fn(),
+  updateColumns: vi.fn(),
 } as unknown as SlickGrid;
 
 describe('SortService', () => {
@@ -883,27 +884,27 @@ describe('SortService', () => {
     it('should toggle the Sorting', () => {
       const setOptionSpy = vi.spyOn(gridStub, 'setOptions');
       const disableSpy = vi.spyOn(service, 'disableSortFunctionality');
-      const setColsSpy = vi.spyOn(gridStub, 'setColumns');
+      const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
 
       service.bindLocalOnSort(gridStub);
       service.toggleSortFunctionality();
 
       expect(setOptionSpy).toHaveBeenCalledWith({ enableSorting: false }, false, true);
       expect(disableSpy).toHaveBeenCalledWith(true, true);
-      expect(setColsSpy).toHaveBeenCalled();
+      expect(updateColumnSpy).toHaveBeenCalled();
     });
 
     it('should toggle the Sorting BUT NOT trigger an event when defined as such', () => {
       const setOptionSpy = vi.spyOn(gridStub, 'setOptions');
       const disableSpy = vi.spyOn(service, 'disableSortFunctionality');
-      const setColsSpy = vi.spyOn(gridStub, 'setColumns');
+      const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
 
       service.bindLocalOnSort(gridStub);
       service.toggleSortFunctionality(false);
 
       expect(setOptionSpy).toHaveBeenCalledWith({ enableSorting: false }, false, true);
       expect(disableSpy).toHaveBeenCalledWith(true, false);
-      expect(setColsSpy).toHaveBeenCalled();
+      expect(updateColumnSpy).toHaveBeenCalled();
     });
   });
 

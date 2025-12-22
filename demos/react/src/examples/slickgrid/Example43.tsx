@@ -418,7 +418,8 @@ export default function Example43() {
       }
     }
 
-    // update column definitions
+    // 1. update column definitions via grid.setColumns()
+    // this will shift colspan/rowspan to the left or right accordingly
     const cols: Column[] = reactGrid?.slickGrid.getColumns() || [];
     if (newShowEmployeeId) {
       cols.unshift({ id: 'employeeID', name: 'Employee ID', field: 'employeeID', width: 100 });
@@ -426,6 +427,22 @@ export default function Example43() {
       cols.splice(0, 1);
     }
     reactGrid?.slickGrid.setColumns(cols || []);
+
+    // --- OR ---
+    // 2. OR update via "hidden" column flag & increase/decrease column index accordingly in the metadata
+    // this approach will keep colspan/rowspan "as-is" but will hide the EmployeeID column
+    /*
+    const colDirIdx = newShowEmployeeId ? -1 : 1;
+    for (const row of Object.keys(this.metadata)) {
+      newMetadata[row] = { columns: {} };
+      for (const col of Object.keys((this.metadata as any)[row].columns)) {
+        newMetadata[row].columns[Number(col) + colDirIdx] = (this.metadata as any)[row].columns[col];
+      }
+    }
+    reactGrid?.slickGrid?.setOptions({ frozenColumn: newShowEmployeeId ? 0 : 1 });
+    reactGrid?.slickGrid?.updateColumnById('employeeID', { hidden: !newShowEmployeeId });
+    reactGrid?.slickGrid?.updateColumns();
+    */
 
     // update & remap rowspans
     metadataRef.current = newMetadata;
