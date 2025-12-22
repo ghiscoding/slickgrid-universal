@@ -9,6 +9,15 @@ on:
       graduate:
         type: boolean
         description: Force Conventional Graduate
+      tag:
+        type: choice
+        default: latest
+        description: NPM tag (defaults to 'latest')
+        options:
+          - latest
+          - alpha
+          - beta
+          - next
 
 permissions:
   contents: write # to be able to publish a GitHub release
@@ -101,7 +110,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         id: lerna-publish
-        run: pnpm exec lerna publish from-package --force-publish --yes
+        run: pnpm exec lerna publish from-package --force-publish --yes --dist-tag ${{ inputs.tag || 'latest' }}
 
       - name: Website Dev Build
         run: pnpm build:dev
