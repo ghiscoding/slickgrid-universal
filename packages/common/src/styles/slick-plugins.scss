@@ -212,7 +212,7 @@ li.hidden {
     overflow: hidden;
     text-overflow: ellipsis;
     @-moz-document url-prefix() {
-      margin-right: var(--slick-gri-menu-item-margin-right, v.$slick-gri-menu-item-margin-right);
+      margin-right: var(--slick-grid-menu-item-margin-right, v.$slick-grid-menu-item-margin-right);
       width: 100%;
     }
 

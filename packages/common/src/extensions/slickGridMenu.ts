@@ -194,6 +194,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     if (this._headerElm) {
       // put back grid header original width (fixes width and frozen+gridMenu on left header)
       this._headerElm.style.width = '100%';
+      this._headerElm.parentElement?.querySelector('.slick-grid-menu-container')?.remove();
     }
   }
 
@@ -217,34 +218,32 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
   /** Create parent grid menu container */
   createGridMenu(): void {
-    const gridUidSelector = this._gridUid ? `.${this._gridUid}` : '';
-    const gridMenuWidth = this._addonOptions?.menuWidth || this._defaults.menuWidth;
-    const headerSide = this.gridOptions.hasOwnProperty('frozenColumn') && this.gridOptions.frozenColumn! >= 0 ? 'right' : 'left';
+    const gridMenuWidth = (this._addonOptions?.menuWidth || this._defaults.menuWidth) as number;
     const gridContainer = this.grid.getContainerNode();
-    this._headerElm = gridContainer.querySelector<HTMLDivElement>(`.slick-header-${headerSide}`);
+    const headerSide = this.gridOptions.hasOwnProperty('frozenColumn') && this.gridOptions.frozenColumn! >= 0 ? 'right' : 'left';
 
-    if (this._headerElm && this._addonOptions) {
-      // resize the header row to include the hamburger menu icon
-      this._headerElm.style.width = `calc(100% - ${gridMenuWidth}px)`;
+    // find the header or pre-header element where to insert the grid menu button
+    this._headerElm =
+      this._addonOptions?.iconButtonContainer === 'preheader'
+        ? gridContainer.querySelector<HTMLDivElement>('.slick-preheader-panel')
+        : gridContainer.querySelector<HTMLDivElement>(`.slick-header-${headerSide}`);
 
-      // if header row is enabled, we also need to resize its width
-      const enableResizeHeaderRow = this._addonOptions.resizeOnShowHeaderRow ?? this._defaults.resizeOnShowHeaderRow;
-      if (enableResizeHeaderRow && this.gridOptions.showHeaderRow) {
-        const headerRowElm = gridContainer.querySelector<HTMLDivElement>(`${gridUidSelector} .slick-headerrow`);
-        if (headerRowElm) {
-          headerRowElm.style.width = `calc(100% - ${gridMenuWidth}px)`;
-        }
-      }
+    if (this._headerElm?.parentElement && this._addonOptions) {
+      if (this._addonOptions.showButton ?? this._defaults.showButton) {
+        const buttonPadding = 2; // add small padding around the button to make it more usable
+        const gridMenuContainerElm = createDomElement('div', {
+          className: 'slick-grid-menu-container',
+          style: { width: `${gridMenuWidth + buttonPadding}px` },
+        });
 
-      const showButton = this._addonOptions.showButton ?? this._defaults.showButton;
-      if (showButton) {
         this._gridMenuButtonElm = createDomElement('button', { className: 'slick-grid-menu-button', ariaLabel: 'Grid Menu' });
         if (this._addonOptions?.iconCssClass) {
           this._gridMenuButtonElm.classList.add(...classNameToList(this._addonOptions.iconCssClass));
         }
-        // add the grid menu button in the preheader (when exists) or always in the column header (default)
-        const buttonContainerTarget = this._addonOptions.iconButtonContainer === 'preheader' ? 'firstChild' : 'lastChild';
-        this._headerElm.parentElement!.insertBefore(this._gridMenuButtonElm, this._headerElm.parentElement![buttonContainerTarget]);
+
+        // add the grid menu button to the header container
+        gridMenuContainerElm.appendChild(this._gridMenuButtonElm);
+        this._headerElm.parentElement.appendChild(gridMenuContainerElm);
 
         // show the Grid Menu when hamburger menu is clicked
         this._bindEventService.bind(this._gridMenuButtonElm, 'click', this.showGridMenu.bind(this) as EventListener);
