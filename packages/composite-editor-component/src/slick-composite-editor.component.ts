@@ -53,7 +53,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
   protected _compositeOptions!: CompositeEditorOption;
   protected _eventHandler: SlickEventHandler;
   protected _itemDataContext: any;
-  protected _modalElm!: HTMLDivElement;
+  protected _modalElm!: HTMLDialogElement;
   protected _originalDataContext: any;
   protected _options!: CompositeEditorOpenDetailOption;
   protected _lastActiveRowNumber = -1;
@@ -407,7 +407,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
         const parsedHeaderTitle = headerTitle.replace(/\{\{(.*?)\}\}/g, (_match, group) => getDescendantProperty(dataContext, group));
         const layoutColCount = viewColumnLayout === 'auto' ? this.autoCalculateLayoutColumnCount(modalColumns.length) : viewColumnLayout;
 
-        this._modalElm = createDomElement('div', { className: `slick-editor-modal ${gridUid}` });
+        this._modalElm = createDomElement('dialog', { className: `slick-editor-modal ${gridUid}` });
         const modalContentElm = createDomElement('div', { className: 'slick-editor-modal-content' });
 
         // add dark mode CSS class when enabled
@@ -541,6 +541,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
           modalBodyElm.appendChild(resetButtonContainerElm);
         }
 
+        this._modalElm.open = true;
         document.body.appendChild(this._modalElm);
         document.body.classList.add('slick-modal-open'); // add backdrop to body
         this._bindEventService.bind(document.body, 'click', this.handleBodyClicked.bind(this));

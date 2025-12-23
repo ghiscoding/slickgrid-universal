@@ -114,7 +114,7 @@ export interface CompositeEditorOpenDetailOption {
   onError?: (error: OnErrorOption) => void;
 
   /** onRendered callback allows the user to optionally execute something after the modal is created and rendered in the DOM (for example add Bootstrap `bs-data-theme="dark"` attribute to the modal element) */
-  onRendered?: (modalElm: HTMLDivElement) => void;
+  onRendered?: (modalElm: HTMLDialogElement) => void;
 
   /**
    * onSave callback will be triggered (when defined) after user clicked the save/apply button,

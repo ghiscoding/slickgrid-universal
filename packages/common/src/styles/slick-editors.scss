@@ -161,6 +161,9 @@
 .slick-editor-modal {
   position: fixed;
   overflow-y: auto;
+  height: auto;
+  width: auto;
+  border: 0;
   top: 0;
   right: 0;
   bottom: 0;
