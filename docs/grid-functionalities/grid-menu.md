@@ -72,6 +72,7 @@ this.gridOptions = {
    }
 };
 ```
+
 #### Events
 There are multiple events/callback hooks which are accessible from the Grid Options
 - `onBeforeMenuShow`
@@ -118,6 +119,21 @@ this.gridOptions = {
      iconToggleFilterCommand: 'mdi-flip-vertical',
    },
 };
+```
+
+### When using Pre-Header
+
+By default the Grid Menu icon will be showing on the right after the column headers, if however you wish to move the button icon to show in the pre-header instead, you could simply use the `iconButtonContainer` grid option
+
+```ts
+gridOptions = {
+  createPreHeaderPanel: true,
+  showPreHeaderPanel: true,
+  preHeaderPanelHeight: 26,
+  gridMenu: {
+    iconButtonContainer: 'preheader', // we can display the grid menu icon in either the preheader or in the column header (default)
+  },
+}
 ```
 
 ### How to Disable the Grid Menu?

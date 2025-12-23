@@ -58,7 +58,7 @@
 * [Excel Copy Buffer Plugin](grid-functionalities/excel-copy-buffer.md)
 * [Export to Excel](grid-functionalities/Export-to-Excel.md)
 * [Export to File (csv/txt)](grid-functionalities/Export-to-Text-File.md)
-* [Grid Menu](grid-functionalities/Grid-Menu.md)
+* [Grid Menu](grid-functionalities/grid-menu.md)
 * [Grid State & Presets](grid-functionalities/grid-state-preset.md)
 * [Grouping & Aggregators](grid-functionalities/grouping-and-aggregators.md)
 * [Header & Footer Slots](grid-functionalities/header-footer-slots.md)
