@@ -52,6 +52,8 @@ The Slickgrid-Universal [live demo](https://ghiscoding.github.io/slickgrid-unive
 
 ### Available Framework Wrappers
 
+> There's no SolidJS or Svelte wrappers, but if you willing to help then let's talk and open a new [Discussion](https://github.com/ghiscoding/slickgrid-universal/discussions)
+
 | Platform | Project Repos | Live Demo | Stackblitz | Downloads | Details | 
 | :------: | ------------- | --------- | ---------- | -------: | ------- | 
 | [![Angular](https://avatars.githubusercontent.com/u/139426?s=40&v=4)](https://angular.io/) | [Angular-Slickgrid](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/angular-slickgrid) / <br> [Angular-Slickgrid-Demos](https://github.com/ghiscoding/angular-slickgrid-demos)  | [demo](https://ghiscoding.github.io/angular-slickgrid-demos) | [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/angular-slickgrid-demos) | [![NPM downloads](https://img.shields.io/npm/dy/angular-slickgrid)](https://npmjs.org/package/angular-slickgrid) <br> [![npm bundle size](https://img.shields.io/bundlephobia/minzip/angular-slickgrid?color=success&label=gzip)](https://bundlephobia.com/result?p=angular-slickgrid) | [docs](https://ghiscoding.gitbook.io/angular-slickgrid/getting-started/quick-start) / <br> [changelog](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/CHANGELOG.md) |
