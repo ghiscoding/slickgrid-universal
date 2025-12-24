@@ -52,7 +52,7 @@ The Slickgrid-Universal [live demo](https://ghiscoding.github.io/slickgrid-unive
 
 ### Available Framework Wrappers
 
-> There's no SolidJS or Svelte wrappers, but if you willing to help then let's talk and open a new [Discussion](https://github.com/ghiscoding/slickgrid-universal/discussions)
+> There's no SolidJS or Svelte wrappers, but if you're willing to help then let's talk and open a new [Discussion](https://github.com/ghiscoding/slickgrid-universal/discussions)
 
 | Platform | Project Repos | Live Demo | Stackblitz | Downloads | Details | 
 | :------: | ------------- | --------- | ---------- | -------: | ------- | 
