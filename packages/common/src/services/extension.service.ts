@@ -508,12 +508,7 @@ export class ExtensionService {
    * @param new column definitions (optional)
    */
   translateColumnHeaders(locale?: string, newColumns?: Column[]): void {
-    if (
-      this.sharedService &&
-      this.gridOptions &&
-      this.gridOptions.enableTranslate &&
-      (!this.translaterService || !this.translaterService.translate)
-    ) {
+    if (this.sharedService && this.gridOptions?.enableTranslate && !this.translaterService?.translate) {
       throw new Error(
         '[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.'
       );
