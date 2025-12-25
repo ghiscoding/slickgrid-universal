@@ -16,7 +16,7 @@
 📘 [Documentation](https://ghiscoding.gitbook.io/slickgrid-universal/) website powered by GitBook for version 4.0+ (_or use the [Wikis](https://github.com/ghiscoding/slickgrid-universal/wiki) for older versions_)
 
 ### Live Demo
-[Live Demo](https://ghiscoding.github.io/slickgrid-universal/) website
+[Live Demo](https://ghiscoding.github.io/slickgrid-universal/) website OR see [Available Framework Wrappers](#available-framework-wrappers) table below for more demos.
 
 Also available in Stackblitz for all available frameworks (see [table](https://github.com/ghiscoding/slickgrid-universal?tab=readme-ov-file#available-framework-wrappers) below)
 
