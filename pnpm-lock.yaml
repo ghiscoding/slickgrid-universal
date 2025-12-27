@@ -16,8 +16,8 @@ catalogs:
       specifier: ^0.3.10
       version: 0.3.10
     '@formkit/tempo':
-      specifier: ^0.1.2
-      version: 0.1.2
+      specifier: ^1.0.0
+      version: 1.0.0
     '@popperjs/core':
       specifier: ^2.11.8
       version: 2.11.8
@@ -142,7 +142,7 @@ importers:
         version: 2.3.1(cypress@15.7.1)
       '@formkit/tempo':
         specifier: 'catalog:'
-        version: 0.1.2
+        version: 1.0.0
       '@ianvs/prettier-plugin-sort-imports':
         specifier: ^4.7.0
         version: 4.7.0(@prettier/plugin-oxc@0.1.3)(@vue/compiler-sfc@3.5.25)(prettier@3.7.4)
@@ -253,7 +253,7 @@ importers:
         version: 0.3.10
       '@formkit/tempo':
         specifier: 'catalog:'
-        version: 0.1.2
+        version: 1.0.0
       '@popperjs/core':
         specifier: 'catalog:'
         version: 2.11.8
@@ -420,7 +420,7 @@ importers:
         version: 0.3.10
       '@formkit/tempo':
         specifier: 'catalog:'
-        version: 0.1.2
+        version: 1.0.0
       '@popperjs/core':
         specifier: 'catalog:'
         version: 2.11.8
@@ -480,7 +480,7 @@ importers:
         version: 0.3.10
       '@formkit/tempo':
         specifier: 'catalog:'
-        version: 0.1.2
+        version: 1.0.0
       '@slickgrid-universal/binding':
         specifier: workspace:*
         version: link:../../packages/binding
@@ -559,7 +559,7 @@ importers:
         version: 0.3.10
       '@formkit/tempo':
         specifier: 'catalog:'
-        version: 0.1.2
+        version: 1.0.0
       '@popperjs/core':
         specifier: 'catalog:'
         version: 2.11.8
@@ -741,7 +741,7 @@ importers:
         version: 0.3.10
       '@formkit/tempo':
         specifier: 'catalog:'
-        version: 0.1.2
+        version: 1.0.0
       '@gc-utils/fs-extra':
         specifier: ^0.4.0
         version: 0.4.0
@@ -871,7 +871,7 @@ importers:
         version: 2.0.0-beta.25
       '@formkit/tempo':
         specifier: 'catalog:'
-        version: 0.1.2
+        version: 1.0.0
       '@slickgrid-universal/common':
         specifier: workspace:*
         version: link:../../packages/common
@@ -954,7 +954,7 @@ importers:
     devDependencies:
       '@formkit/tempo':
         specifier: 'catalog:'
-        version: 0.1.2
+        version: 1.0.0
       '@slickgrid-universal/composite-editor-component':
         specifier: workspace:*
         version: link:../../packages/composite-editor-component
@@ -1032,7 +1032,7 @@ importers:
     dependencies:
       '@formkit/tempo':
         specifier: 'catalog:'
-        version: 0.1.2
+        version: 1.0.0
       '@slickgrid-universal/common':
         specifier: workspace:*
         version: link:../../packages/common
@@ -1101,7 +1101,7 @@ importers:
         version: 4.2.1
       '@formkit/tempo':
         specifier: 'catalog:'
-        version: 0.1.2
+        version: 1.0.0
       '@slickgrid-universal/binding':
         specifier: workspace:*
         version: link:../binding
@@ -1174,7 +1174,7 @@ importers:
     dependencies:
       '@formkit/tempo':
         specifier: 'catalog:'
-        version: 0.1.2
+        version: 1.0.0
       '@slickgrid-universal/binding':
         specifier: workspace:*
         version: link:../binding
@@ -3083,8 +3083,8 @@ packages:
   '@fnando/sparkline@0.3.10':
     resolution: {integrity: sha512-Rwz2swatdSU5F4sCOvYG8EOWdjtLgq5d8nmnqlZ3PXdWJI9Zq9BRUvJ/9ygjajJG8qOyNpMFX3GEVFjZIuB1Jg==}
 
-  '@formkit/tempo@0.1.2':
-    resolution: {integrity: sha512-jNPPbjL8oj7hK3eHX++CwbR6X4GKQt+x00/q4yeXkwynXHGKL27dylYhpEgwrmediPP4y7s0XtN1if/M/JYujg==}
+  '@formkit/tempo@1.0.0':
+    resolution: {integrity: sha512-2jhR8jnWFt4ajtbpHL2ZvJJ+ofj/XpAumb1OLmsY7U5iwCjGKuk0wqLR7dGsZfyvJeivfWLD9vzj9cdkUUWzyg==}
 
   '@gc-utils/fs-extra@0.4.0':
     resolution: {integrity: sha512-2kaNdnCGFQRPuXefZ4E4HH3iKXQEWUpbm3hlQorIQZxzJ9HWr2tnH1HcR8/UvdE6V/7/VGSDqXGgDMT43NI7Mg==}
@@ -13948,7 +13948,7 @@ snapshots:
 
   '@fnando/sparkline@0.3.10': {}
 
-  '@formkit/tempo@0.1.2': {}
+  '@formkit/tempo@1.0.0': {}
 
   '@gc-utils/fs-extra@0.4.0': {}
 

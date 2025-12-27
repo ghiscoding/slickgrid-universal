@@ -8,7 +8,7 @@ catalog:
   '@4tw/cypress-drag-drop': ^2.3.1
   '@faker-js/faker': ^10.1.0
   '@fnando/sparkline': ^0.3.10
-  '@formkit/tempo': ^0.1.2
+  '@formkit/tempo': ^1.0.0
   '@popperjs/core': ^2.11.8
   '@types/fnando__sparkline': ^0.3.7
   '@types/node': ^24.10.1
