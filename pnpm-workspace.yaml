@@ -38,7 +38,7 @@ catalog:
   sortablejs: ^1.15.6
   tslib: ^2.8.1
   typescript: ^5.8.3
-  vite-tsconfig-paths: ^5.1.4
+  vite-tsconfig-paths: ^6.0.3
   vitest: ^4.0.15
   vue: ^3.5.25
 
