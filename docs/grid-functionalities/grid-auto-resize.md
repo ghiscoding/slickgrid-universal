@@ -149,7 +149,7 @@ this.gridOptions = {
 ### Calculate Size by Container or Window Element
 
 The default way of calculating the available size is by the window element but in some rare case you might need to calculate by the container element.
-So if you do want to calculate the size by the container, then you can write it as shown below (for more info, see Angular-Slickgrid issue [#175](https://github.com/ghiscoding/Angular-Slickgrid/issues/175))
+So if you do want to calculate the size by the container, then you can write it as shown below:
 
 ```ts
 this.gridOptions = {

@@ -459,7 +459,7 @@ export class InnerGridComponent {
   @bindable() model!: Distributor;
   innerColDefs: Column[] = [];
   innerGridOptions!: GridOption;
-  angularGrid!: AngularGridInstance;
+  aureliaGrid!: AureliaGridInstance;
   innerDataset: any[] = [];
   innerGridId = '';
   innerGridClass = '';
@@ -503,7 +503,7 @@ export class InnerGridComponent {
 
   // OPTIONALLY save Grid State before unmounting the compoment
   handleBeforeGridDestroy() {
-    const gridState = this.angularGrid.gridStateService.getCurrentGridState();
+    const gridState = this.aureliaGrid.gridStateService.getCurrentGridState();
     sessionStorage.setItem(`gridstate_${this.innerGridClass}`, JSON.stringify(gridState));
   }
 }

@@ -34,7 +34,7 @@ export class Example1 {
   }
 
   detaching() {
-    // also unsubscribe all Angular Subscriptions
+    // also unsubscribe all Aurelia Subscriptions
     document.querySelector('.panel-wm-content')!.classList.remove('dark-mode');
     document.querySelector<HTMLDivElement>('#demo-container')!.dataset.bsTheme = 'light';
   }
