@@ -32,6 +32,10 @@
         enabled: false,
       },
     },
+    {
+      packageNames: ['jsdom'],
+      allowedVersions: '27.2.0',
+    },
   ],
   ignoreDeps: ['lee-dohm/no-response', 'node', 'pnpm', 'typescript'],
   schedule: ['every 4 weeks on friday'],
