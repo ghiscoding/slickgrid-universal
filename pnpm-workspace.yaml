@@ -26,7 +26,7 @@ catalog:
   globals: ^16.5.0
   i18next: ^25.7.3
   i18next-vue: ^5.4.0
-  jsdom: ^27.2.0
+  jsdom: ^27.4.0
   jsdom-global: ^3.0.2
   multiple-select-vanilla: ^4.4.1
   native-copyfiles: ^1.3.7
