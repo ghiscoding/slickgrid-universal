@@ -36,10 +36,10 @@
     "bootstrap": "catalog:",
     "dompurify": "catalog:",
     "i18next": "catalog:",
-    "react": "^19.2.1",
-    "react-dom": "^19.2.1",
-    "react-i18next": "^16.4.0",
-    "react-router-dom": "^7.10.1",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "react-i18next": "^16.5.0",
+    "react-router-dom": "^7.11.0",
     "slickgrid-react": "workspace:*"
   },
   "peerDependencies": {
