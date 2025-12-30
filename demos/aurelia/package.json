@@ -31,6 +31,7 @@
     "@fnando/sparkline": "catalog:",
     "@formkit/tempo": "catalog:",
     "@popperjs/core": "catalog:",
+    "@slickgrid-universal/aurelia-row-detail": "workspace:*",
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/composite-editor-component": "workspace:*",
     "@slickgrid-universal/custom-tooltip-plugin": "workspace:*",

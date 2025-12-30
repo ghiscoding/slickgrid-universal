@@ -16,9 +16,7 @@ import {
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  // utilities
   autoAddEditorFormatterToColumnsWithEditor,
-  // services
   BackendUtilityService,
   CollectionService,
   emptyElement,
@@ -26,6 +24,7 @@ import {
   ExtensionName,
   ExtensionService,
   ExtensionUtility,
+  ExternalResourceConstructor,
   FilterFactory,
   FilterService,
   GridEventService,
@@ -69,7 +68,6 @@ import { extend } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 import { Observable } from 'rxjs';
 import { Constants } from '../constants';
-import { SlickRowDetailView } from '../extensions/slickRowDetailView';
 import { GlobalGridOptions } from '../global-grid-options';
 import type { AngularGridInstance, ExternalTestingDependencies, GridOption } from '../models/index';
 import { AngularUtilService } from '../services/angularUtil.service';
@@ -78,6 +76,11 @@ import { TranslaterService } from '../services/translater.service';
 import type { AngularSlickgridOutputs, RegularEventOutput, SlickEventOutput } from './angular-slickgrid-outputs.interface';
 
 const WARN_NO_PREPARSE_DATE_SIZE = 10000; // data size to warn user when pre-parse isn't enabled
+
+export interface AngularSlickRowDetailView {
+  create(columns: Column[], gridOptions: GridOption): any;
+  init(grid: SlickGrid): void;
+}
 
 @Component({
   selector: 'angular-slickgrid',
@@ -101,7 +104,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
   protected _isPaginationInitialized = false;
   protected _isLocalGrid = true;
   protected _paginationOptions: Pagination | undefined;
-  protected _registeredResources: ExternalResource[] = [];
+  protected _registeredResources: Array<ExternalResource | ExternalResourceConstructor> = [];
   protected _scrollEndCalled = false;
   dataView!: SlickDataView;
   slickGrid!: SlickGrid;
@@ -124,7 +127,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
   slickFooter?: SlickFooterComponent;
   slickPagination?: BasePaginationComponent;
   paginationComponent: BasePaginationComponent | undefined;
-  slickRowDetailView?: SlickRowDetailView;
+  slickRowDetailView?: AngularSlickRowDetailView;
 
   // services
   backendUtilityService!: BackendUtilityService;
@@ -403,7 +406,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
     this._isDatasetHierarchicalInitialized = isInitialized;
   }
 
-  get registeredResources(): ExternalResource[] {
+  get registeredResources(): Array<ExternalResource | ExternalResourceConstructor> {
     return this._registeredResources;
   }
 
@@ -609,8 +612,8 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
     if (Array.isArray(this._registeredResources)) {
       while (this._registeredResources.length > 0) {
         const res = this._registeredResources.pop();
-        if (res?.dispose) {
-          res.dispose();
+        if (typeof (res as ExternalResource)?.dispose === 'function') {
+          (res as ExternalResource).dispose!();
         }
       }
     }
@@ -1573,7 +1576,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
   }
 
   /** Add a register of a new external resource, user could also optional dispose all previous resources before pushing any new resources to the resources array list. */
-  registerExternalResources(resources: ExternalResource[], disposePreviousResources = false) {
+  registerExternalResources(resources: Array<ExternalResource | ExternalResourceConstructor>, disposePreviousResources = false) {
     if (disposePreviousResources) {
       this.disposeExternalResources();
     }
@@ -1593,26 +1596,38 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
     this.registerRxJsResource(new RxJsResource() as RxJsFacade);
 
     if (this.options.enableRowDetailView) {
-      this.slickRowDetailView = new SlickRowDetailView(
-        this.angularUtilService,
-        this.appRef,
-        this._eventPubSubService,
-        this.elm.nativeElement,
-        this.rxjs
-      );
-      this.slickRowDetailView.create(this.columns, this.options);
-      this.extensionService.addExtensionToList(ExtensionName.rowDetailView, {
-        name: ExtensionName.rowDetailView,
-        instance: this.slickRowDetailView,
-      });
+      const RowDetailClass = this._registeredResources.find((res: any) => res.pluginName === 'AngularSlickRowDetailView') as
+        | ExternalResourceConstructor
+        | undefined;
+      if (!RowDetailClass) {
+        throw new Error(
+          '[Angular-Slickgrid] You enabled the Row Detail View feature but you did not provide the "AngularSlickRowDetailView" class as an external resource.'
+        );
+      }
+
+      if (RowDetailClass) {
+        const rowDetailInstance = new RowDetailClass(
+          this.angularUtilService,
+          this.appRef,
+          this._eventPubSubService,
+          this.elm.nativeElement,
+          this.rxjs
+        ) as AngularSlickRowDetailView;
+        this.slickRowDetailView = rowDetailInstance;
+        rowDetailInstance.create(this.columns, this.options);
+        this.extensionService.addExtensionToList(ExtensionName.rowDetailView, {
+          name: ExtensionName.rowDetailView,
+          instance: this.slickRowDetailView,
+        });
+      }
     }
   }
 
-  protected initializeExternalResources(resources: ExternalResource[]) {
+  protected initializeExternalResources(resources: Array<ExternalResource | ExternalResourceConstructor>) {
     if (Array.isArray(resources)) {
       for (const resource of resources) {
-        if (this.slickGrid && typeof resource.init === 'function') {
-          resource.init(this.slickGrid, this.containerService);
+        if (this.slickGrid && typeof (resource as ExternalResource).init === 'function') {
+          (resource as ExternalResource).init!(this.slickGrid, this.containerService);
         }
       }
     }

@@ -1,6 +1,7 @@
 import { NgIf } from '@angular/common';
 import { Component, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { AngularSlickRowDetailView } from '@slickgrid-universal/angular-row-detail';
 import {
   AngularSlickgridModule,
   Editors,
@@ -9,7 +10,6 @@ import {
   type AngularGridInstance,
   type Column,
   type GridOption,
-  type SlickRowDetailView,
 } from '../../library';
 import { Example19RowDetailComponent } from './example19-rowdetail.component';
 import { RowDetailPreloadComponent } from './rowdetail-preload.component';
@@ -37,7 +37,7 @@ export class Example19Component implements OnDestroy, OnInit {
     this.angularGrid = angularGrid;
   }
 
-  get rowDetailInstance(): SlickRowDetailView {
+  get rowDetailInstance(): AngularSlickRowDetailView {
     // you can get the SlickGrid RowDetail plugin (addon) instance via 2 ways
 
     // option 1
@@ -145,6 +145,7 @@ export class Example19Component implements OnDestroy, OnInit {
       rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
       darkMode: this._darkMode,
       datasetIdPropertyName: 'rowId', // optionally use a different "id"
+      externalResources: [AngularSlickRowDetailView],
       rowDetailView: {
         // optionally change the column index position of the icon (defaults to 0)
         // columnIndexPosition: 1,

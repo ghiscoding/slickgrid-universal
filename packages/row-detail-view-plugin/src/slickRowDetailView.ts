@@ -29,7 +29,7 @@ import { classNameToList, extend } from '@slickgrid-universal/utils';
 export class SlickRowDetailView implements ExternalResource, UniversalRowDetailView {
   // --
   // public API
-  pluginName = 'RowDetailView' as const;
+  pluginName = 'RowDetailView';
 
   /** Fired when the async response finished */
   onAsyncEndUpdate: SlickEvent<OnRowDetailAsyncEndUpdateArgs>;

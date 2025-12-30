@@ -30,7 +30,7 @@
     "@slickgrid-universal/graphql": "workspace:*",
     "@slickgrid-universal/odata": "workspace:*",
     "@slickgrid-universal/pagination-component": "workspace:*",
-    "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
+    "@slickgrid-universal/react-row-detail": "workspace:*",
     "@slickgrid-universal/rxjs-observable": "workspace:*",
     "@slickgrid-universal/text-export": "workspace:*",
     "bootstrap": "catalog:",

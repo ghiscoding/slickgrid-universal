@@ -1,0 +1,54 @@
+{
+  "name": "@slickgrid-universal/react-row-detail",
+  "version": "9.11.0",
+  "description": "React Row Detail Plugin for SlickGrid-React",
+  "type": "module",
+  "main": "./dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "/dist",
+    "/src"
+  ],
+  "scripts": {
+    "build": "pnpm run clean && tsc",
+    "build:incremental": "tsc --incremental --declaration",
+    "clean": "remove dist tsconfig.tsbuildinfo",
+    "dev": "pnpm build:incremental",
+    "test": "ng test --watch",
+    "test:coverage": "vitest --no-watch --coverage"
+  },
+  "license": "MIT",
+  "author": "Ghislain B.",
+  "homepage": "https://github.com/ghiscoding/slickgrid-universal",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ghiscoding/slickgrid-universal.git",
+    "directory": "packages/react-row-detail"
+  },
+  "bugs": {
+    "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
+  },
+  "dependencies": {
+    "@slickgrid-universal/common": "workspace:*",
+    "@slickgrid-universal/event-pub-sub": "workspace:*",
+    "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
+    "slickgrid-react": "workspace:*",
+    "tslib": "catalog:"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3"
+  }
+}

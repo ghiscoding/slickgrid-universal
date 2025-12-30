@@ -25,6 +25,8 @@ A Row Detail allows you to open a detail panel which can contain extra and/or mo
 
 ## Usage
 
+> Starting from version 10, Row Detail is now an optional package and must be installed separately (`@slickgrid-universal/aurelia-row-detail`)
+
 ##### View
 ```html
 <aurelia-slickgrid
@@ -38,6 +40,7 @@ A Row Detail allows you to open a detail panel which can contain extra and/or mo
 
 ##### Component
 ```ts
+import { AureliaSlickRowDetailView } from '@slickgrid-universal/aurelia-row-detail'; // for v10 and above
 import { AureliaGridInstance, GridState } from 'aurelia-slickgrid';
 
 export class GridExample {
@@ -60,6 +63,7 @@ export class GridExample {
       rowSelectionOptions: {
         selectActiveRow: true
       },
+      externalResources: [AureliaSlickRowDetailView], // for v10 and above
       rowDetailView: {
         // We can load the "process" asynchronously in 3 different ways (aurelia-http-client, aurelia-fetch-client OR even Promise)
         process: (item) => this.http.get(`api/item/${item.id}`),
@@ -153,6 +157,7 @@ Most of the time we would get data asynchronously, during that time we can show 
 ```ts
     this.gridOptions = {
       enableRowDetailView: true,
+      externalResources: [AureliaSlickRowDetailView], // for v10 and above
       rowDetailView: {
         //  ... row detail options
 
@@ -169,6 +174,7 @@ Same concept as the preload, we pass an Aurelia ViewModel to the `viewModel` tha
 ```ts
     this.gridOptions = {
       enableRowDetailView: true,
+      externalResources: [AureliaSlickRowDetailView], // for v10 and above
       rowDetailView: {
         //  ... row detail options
 
@@ -250,6 +256,7 @@ The Row Detail provides you access to the following references (SlickGrid, DataV
 // Parent Component (grid)
 this.gridOptions = {
   enableRowDetailView: true,
+  externalResources: [AureliaSlickRowDetailView], // for v10 and above
   rowDetailView: {
     // ...
     // ViewModel Template to load when row detail data is ready
@@ -274,7 +281,7 @@ Then in our Child Component, we can do some action on the Grid, the DataView or 
 <div class="container-fluid">
   <h3>${model.title}</h3>
 
-    <-- delete a row using the DataView & SlickGrid objects -->
+    <!-- delete a row using the DataView & SlickGrid objects -->
     <button class="btn btn-primary btn-danger btn-sm" click.trigger="deleteRow(model)" data-test="delete-btn">
       Delete Row
     </button>
@@ -378,6 +385,7 @@ You can also add an inner grid inside a Row Detail, however there are a few thin
 Main Grid Component
 
 ```ts
+import { AureliaSlickRowDetailView } from '@slickgrid-universal/aurelia-row-detail'; // for v10 and above
 import { bindable } from 'aurelia';
 import { type AureliaGridInstance, type Column, ExtensionName, type GridOption, type SlickRowDetailView, } from 'aurelia-slickgrid';
 
@@ -407,6 +415,7 @@ export class MainGrid implements OnInit {
     this.columnDefinitions = [ /*...*/ ];
     this.gridOptions = {
       enableRowDetailView: true,
+      externalResources: [AureliaSlickRowDetailView], // for v10 and above
       rowSelectionOptions: {
         selectActiveRow: true
       },
