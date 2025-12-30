@@ -284,11 +284,11 @@ For example, if you wish to display a date like `"March 12, 2025"`, you could ad
 
 ```ts
 const columnDefinitions = [
-  { 
-    id: 'finish', name: 'Finish', field: 'finish', 
-    type: 'date', 
-    formatter: Formatters.date, 
-    params: { dateFormat: 'MMM DD, YYYY' } 
+  {
+    id: 'finish', name: 'Finish', field: 'finish',
+    type: 'date',
+    formatter: Formatters.date,
+    params: { dateFormat: 'MMM DD, YYYY' }
   }
 ];
 ```
@@ -329,7 +329,7 @@ A **Better Solution** is to use Custom Formatters **as much as possible** becaus
 ### Vue Component Formatter
 Can we show a Vue Component in a SlickGrid Formatter? Typically you wouldn't do this because a Formatter requires synchronous output so that it can render the grid right away... luckily Vue can do that by using its `createApp()` which helps create and mount a Vue Component like it was native.
 
-> Side note, Vue is the exception here to mount a Component synchronously, because most frameworks require at least 1 cycle (async) to render a Component (i.e. Angular) which wouldn't work with a Formatter (for that use case we must use `asyncPostRender`).
+> Side note, Vue is the exception here to mount a Component synchronously, because most frameworks require at least 1 cycle (async) to render a Component (i.e. Angular) which wouldn't work with a Formatter (for that use case, async, we must use `asyncPostRender`).
 
 > **Note** if your Vue Component is async in nature (if it takes time to load) then you might need to use `asyncPostRender` as documented above.
 

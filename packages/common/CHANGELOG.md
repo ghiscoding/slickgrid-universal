@@ -4,6 +4,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.12.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.11.0...v9.12.0) (2025-12-29)
+
+### Features
+
+* add `useArrowToSlide` and `filterWhileSliding` to Slider Filter ([#2257](https://github.com/ghiscoding/slickgrid-universal/issues/2257)) ([dc14f5c](https://github.com/ghiscoding/slickgrid-universal/commit/dc14f5ccbfaf5135981c7ebce43209a91c7edbfb)) - by @ghiscoding
+* expose the OnSearchChangeEventArgs ([#2263](https://github.com/ghiscoding/slickgrid-universal/issues/2263)) ([e6edfb5](https://github.com/ghiscoding/slickgrid-universal/commit/e6edfb50d86b73e190862f20419d25d25eda27d1)) - by @zewa666
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#2288](https://github.com/ghiscoding/slickgrid-universal/issues/2288)) ([67c0630](https://github.com/ghiscoding/slickgrid-universal/commit/67c0630e4a95a65954d841d9b2176352a65cf9ef)) - by @renovate-bot
+* HeaderMenu/ColumnPicker hiding column need re-render Header Groups ([#2275](https://github.com/ghiscoding/slickgrid-universal/issues/2275)) ([4295827](https://github.com/ghiscoding/slickgrid-universal/commit/4295827551acff9a97fa8a15b785f0da2697c59c)) - by @ghiscoding
+* SlickGrid rendering logic for column resizing ([#2258](https://github.com/ghiscoding/slickgrid-universal/issues/2258)) ([e33bf8d](https://github.com/ghiscoding/slickgrid-universal/commit/e33bf8d938e2a46c8e87ea2afceb888b79385417)) - by @ghiscoding
+* stops custom tooltip from flickering when hovered, fixes [#2206](https://github.com/ghiscoding/slickgrid-universal/issues/2206) ([#2207](https://github.com/ghiscoding/slickgrid-universal/issues/2207)) ([0fd47cf](https://github.com/ghiscoding/slickgrid-universal/commit/0fd47cfa6642124106b344314359ef44bbb55f54)) - by @zewa666
+* **styling:** use same Bootstrap inputs default bg-color on all filters ([bf0615f](https://github.com/ghiscoding/slickgrid-universal/commit/bf0615fde0553047f2d1ab8498a884e2b99df3f5)) - by @ghiscoding
+
 ## [9.11.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.10.0...v9.11.0) (2025-11-24)
 
 ### Features

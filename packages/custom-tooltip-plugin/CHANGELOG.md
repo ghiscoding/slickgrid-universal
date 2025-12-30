@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.12.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.11.0...v9.12.0) (2025-12-29)
+
+### Bug Fixes
+
+* stops custom tooltip from flickering when hovered, fixes [#2206](https://github.com/ghiscoding/slickgrid-universal/issues/2206) ([#2207](https://github.com/ghiscoding/slickgrid-universal/issues/2207)) ([0fd47cf](https://github.com/ghiscoding/slickgrid-universal/commit/0fd47cfa6642124106b344314359ef44bbb55f54)) - by @zewa666
+
 ## [9.11.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.10.0...v9.11.0) (2025-11-24)
 
 **Note:** Version bump only for package @slickgrid-universal/custom-tooltip-plugin

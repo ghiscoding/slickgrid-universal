@@ -1,4 +1,4 @@
-# [![Aurelia](https://avatars.githubusercontent.com/u/9808864?s=55&v=4)](https://aurelia.io/) Aurelia-Slickgrid
+# <a href="https://aurelia.io/" rel="nofollow"><img alt="Aurelia" src="https://ghiscoding.github.io/aurelia-slickgrid-demos/assets/aurelia-logo.png" width="55"></a> Aurelia-Slickgrid
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
@@ -88,7 +88,7 @@ You like **Slickgrid-Vue**? Be sure to upvote ⭐ the project, and perhaps suppo
 
 ### Versions Compatibility
 
-**NOTE:** Please be aware that only the latest major version of Angular-Slickgrid will be supported and receive bug fixes.
+**NOTE:** Please be aware that only the latest major version of Aurelia-Slickgrid will be supported and receive bug fixes.
 
 | Aurelia-Slickgrid | Aurelia   | Migration Guide | Notes | Date |
 | :---------------: | --------- | --------------- | ----- | ---- |

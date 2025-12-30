@@ -1,6 +1,6 @@
 {
   "name": "slickgrid-react",
-  "version": "9.11.0",
+  "version": "9.12.0",
   "description": "Slickgrid components made available in React",
   "keywords": [
     "react",
@@ -90,9 +90,9 @@
     "dompurify": "catalog:",
     "globals": "catalog:",
     "native-copyfiles": "catalog:",
-    "react": "^19.2.1",
-    "react-dom": "^19.2.1",
-    "react-router-dom": "^7.10.1",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "react-router-dom": "^7.11.0",
     "remove-glob": "catalog:",
     "rxjs": "catalog:",
     "sass": "catalog:",

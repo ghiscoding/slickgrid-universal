@@ -571,7 +571,7 @@ export interface GridOption<C extends Column = Column> {
   /** Firefox max supported CSS height */
   ffMaxSupportedCssHeight?: number;
 
-  /** Defaults to 25, which is the grid footer row panel height */
+  /** Defaults to 25, which is the grid footer row panel height (only accepts an integer) */
   footerRowHeight?: number;
 
   /** Do we want to force fit columns in the grid at all time? */
@@ -615,7 +615,7 @@ export interface GridOption<C extends Column = Column> {
   gridContainerId?: string;
 
   /**
-   * When using a fixed grid height, can be a number or a string.
+   * When using a fixed grid height, can be a number (an integer) or a string.
    * if a number is provided it will add the `px` suffix for pixels, or if a string is passed it will use it as is.
    */
   gridHeight?: number | string;
@@ -642,7 +642,7 @@ export interface GridOption<C extends Column = Column> {
   /** Optional option to provide to the GroupItemMetadataProvider */
   groupItemMetadataOption?: GroupItemMetadataProviderOption;
 
-  /** Header row height in pixels (only type the number). Header row is where the filters are. */
+  /** Header row height in pixels (only accepts an integer). Header row is where the filters are. */
   headerRowHeight?: number;
 
   /** Header button options */
@@ -677,7 +677,7 @@ export interface GridOption<C extends Column = Column> {
    */
   maxPartialRowSpanRemap?: number;
 
-  /** Max supported CSS height */
+  /** Max supported CSS height (only accepts an integer) */
   maxSupportedCssHeight?: number;
 
   /** Defaults to 3, what is the minimum row buffer to use? */
@@ -709,13 +709,13 @@ export interface GridOption<C extends Column = Column> {
   /** extra custom generic parameters that could be used by your Formatter/Editor or anything else */
   params?: any | any[];
 
-  /** Extra pre-header panel height (on top of column header) */
+  /** Extra pre-header panel height (on top of column header, only accepts an integer) */
   preHeaderPanelHeight?: number;
 
   /** Defaults to "auto", extra pre-header panel (on top of column header) width, it could be a number (pixels) or a string ("100%" or "auto") */
   preHeaderPanelWidth?: number | string;
 
-  /** Extra top-header panel height (on top of column header & pre-header) */
+  /** Extra top-header panel height (on top of column header & pre-header, only accepts an integer) */
   topHeaderPanelHeight?: number;
 
   /** Defaults to "auto", extra top-header panel (on top of column header & pre-header) width, it could be a number (pixels) or a string ("100%" or "auto") */
@@ -768,7 +768,7 @@ export interface GridOption<C extends Column = Column> {
   /** Row Detail View Plugin options & events (columnId, cssClass, toolTip, width) */
   rowDetailView?: RowDetailView;
 
-  /** Grid row height in pixels (only type the number). Row of cell values. */
+  /** Grid row height in pixels (only accepts an integer). Cell value row height. */
   rowHeight?: number;
 
   /**
@@ -895,7 +895,7 @@ export interface GridOption<C extends Column = Column> {
    */
   invalidColumnFreezeWidthCallback?: (error: string) => void;
 
-  /** What is the top panel height in pixels (only type the number) */
+  /** What is the top panel height in pixels (only accepts an integer) */
   topPanelHeight?: number;
 
   /** Translater Service used by Slickgrid-Universal for translating locale. */

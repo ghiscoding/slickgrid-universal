@@ -12,6 +12,17 @@ const mock = () => {
 
 window.HTMLElement.prototype.scrollIntoView = () => {};
 
+Object.defineProperty(document, 'styleSheets', {
+  value: [
+    {
+      ownerNode: null,
+      cssRules: [
+        { cssText: '.slickgrid_124343 .l0 { left: 0px; }', selectorText: '.slickgrid_124343 .l0', style: {} },
+        { cssText: '.slickgrid_124343 .r0 { left: 0px; }', selectorText: '.slickgrid_124343 .r0', style: {} },
+      ],
+    },
+  ],
+});
 Object.defineProperty(window, 'localStorage', { value: mock() });
 Object.defineProperty(window, 'sessionStorage', { value: mock() });
 Object.defineProperty(window, 'getComputedStyle', {

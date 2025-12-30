@@ -1,6 +1,6 @@
 {
   "name": "angular-slickgrid",
-  "version": "9.11.0",
+  "version": "9.12.0",
   "description": "Slickgrid components made available in Angular",
   "keywords": [
     "angular",
@@ -63,9 +63,9 @@
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "catalog:",
-    "@analogjs/platform": "^2.1.2",
-    "@analogjs/vite-plugin-angular": "^2.1.2",
-    "@analogjs/vitest-angular": "^2.1.2",
+    "@analogjs/platform": "^2.2.0",
+    "@analogjs/vite-plugin-angular": "^2.2.0",
+    "@analogjs/vitest-angular": "^2.2.0",
     "@angular-devkit/build-angular": "^19.2.19",
     "@angular-eslint/eslint-plugin": "^20.7.0",
     "@angular/animations": "^19.2.17",
@@ -118,7 +118,6 @@
     "tslib": "catalog:",
     "typescript": "~5.8.3",
     "vite": "catalog:vite6",
-    "vite-tsconfig-paths": "catalog:",
     "vitest": "catalog:",
     "yaml": "^2.8.2",
     "zone.js": "~0.16.0"
