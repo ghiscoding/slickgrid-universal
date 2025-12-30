@@ -1,7 +1,7 @@
 {
   "name": "slickgrid-vue-demo",
   "private": true,
-  "version": "9.11.0",
+  "version": "9.12.0",
   "type": "module",
   "author": {
     "name": "Ghislain B."
@@ -35,7 +35,7 @@
     "rxjs": "catalog:",
     "slickgrid-vue": "workspace:*",
     "vue": "catalog:",
-    "vue-router": "^4.6.3"
+    "vue-router": "^4.6.4"
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "catalog:",

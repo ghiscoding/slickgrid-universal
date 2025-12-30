@@ -1,7 +1,7 @@
 {
   "name": "aurelia-slickgrid-demo",
   "private": true,
-  "version": "9.11.0",
+  "version": "9.12.0",
   "description": "Aurelia-Slickgrid demos",
   "keywords": [
     "aurelia",
@@ -20,13 +20,13 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@aurelia/fetch-client": "^2.0.0-beta.25",
-    "@aurelia/i18n": "^2.0.0-beta.25",
-    "@aurelia/kernel": "^2.0.0-beta.25",
-    "@aurelia/metadata": "^2.0.0-beta.25",
-    "@aurelia/router": "^2.0.0-beta.25",
-    "@aurelia/runtime": "^2.0.0-beta.25",
-    "@aurelia/runtime-html": "^2.0.0-beta.25",
+    "@aurelia/fetch-client": "^2.0.0-beta.27",
+    "@aurelia/i18n": "^2.0.0-beta.27",
+    "@aurelia/kernel": "^2.0.0-beta.27",
+    "@aurelia/metadata": "^2.0.0-beta.27",
+    "@aurelia/router": "^2.0.0-beta.27",
+    "@aurelia/runtime": "^2.0.0-beta.27",
+    "@aurelia/runtime-html": "^2.0.0-beta.27",
     "@faker-js/faker": "catalog:",
     "@fnando/sparkline": "catalog:",
     "@formkit/tempo": "catalog:",
@@ -41,14 +41,14 @@
     "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
     "@slickgrid-universal/rxjs-observable": "workspace:*",
     "@slickgrid-universal/text-export": "workspace:*",
-    "aurelia": "^2.0.0-beta.25",
+    "aurelia": "^2.0.0-beta.27",
     "aurelia-slickgrid": "workspace:*",
     "bootstrap": "catalog:",
     "i18next": "catalog:",
     "rxjs": "catalog:"
   },
   "devDependencies": {
-    "@aurelia/vite-plugin": "^2.0.0-beta.25",
+    "@aurelia/vite-plugin": "^2.0.0-beta.27",
     "@types/fnando__sparkline": "catalog:",
     "@types/node": "catalog:",
     "@types/sortablejs": "catalog:",

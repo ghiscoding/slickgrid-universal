@@ -4,6 +4,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.12.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.11.0...v9.12.0) (2025-12-29)
+
+### Features
+
+* add `useArrowToSlide` and `filterWhileSliding` to Slider Filter ([#2257](https://github.com/ghiscoding/slickgrid-universal/issues/2257)) ([dc14f5c](https://github.com/ghiscoding/slickgrid-universal/commit/dc14f5ccbfaf5135981c7ebce43209a91c7edbfb)) - by @ghiscoding
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#2288](https://github.com/ghiscoding/slickgrid-universal/issues/2288)) ([67c0630](https://github.com/ghiscoding/slickgrid-universal/commit/67c0630e4a95a65954d841d9b2176352a65cf9ef)) - by @renovate-bot
+* use the correct onBeforeSearchChange event interface ([#2264](https://github.com/ghiscoding/slickgrid-universal/issues/2264)) ([24460cc](https://github.com/ghiscoding/slickgrid-universal/commit/24460cc899322d8724b06448e48220a12f805ed2)) - by @ghiscoding
+
+### Performance Improvements
+
+* **export:** improve Excel export responsiveness with periodic yielding ([#2271](https://github.com/ghiscoding/slickgrid-universal/issues/2271)) ([76ae4a3](https://github.com/ghiscoding/slickgrid-universal/commit/76ae4a381c67a1d37fabbe3eec680079f283f8c0)) - by @ghiscoding
+
 ## [9.11.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.10.0...v9.11.0) (2025-11-24)
 
 ### Features

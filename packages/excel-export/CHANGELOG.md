@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.12.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.11.0...v9.12.0) (2025-12-29)
+
+### Performance Improvements
+
+* **export:** improve Excel export responsiveness with periodic yielding ([#2271](https://github.com/ghiscoding/slickgrid-universal/issues/2271)) ([76ae4a3](https://github.com/ghiscoding/slickgrid-universal/commit/76ae4a381c67a1d37fabbe3eec680079f283f8c0)) - by @ghiscoding
+
 ## [9.11.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.10.0...v9.11.0) (2025-11-24)
 
 **Note:** Version bump only for package @slickgrid-universal/excel-export
