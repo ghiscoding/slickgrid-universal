@@ -729,10 +729,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     );
 
     if (this._options.createPreHeaderPanel) {
+      const headerContainer = createDomElement('div', { className: 'slick-preheader-container' }, this._paneHeaderL);
       this._preHeaderPanelScroller = createDomElement(
         'div',
         { className: 'slick-preheader-panel slick-state-default', style: { overflow: 'hidden', position: 'relative' } },
-        this._paneHeaderL
+        headerContainer
       );
       this._preHeaderPanelScroller.appendChild(document.createElement('div'));
       this._preHeaderPanel = createDomElement('div', null, this._preHeaderPanelScroller);
@@ -761,12 +762,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
 
     // Append the header scroller containers
-    this._headerScrollerL = createDomElement('div', { className: 'slick-header slick-state-default slick-header-left' }, this._paneHeaderL);
-    this._headerScrollerR = createDomElement(
-      'div',
-      { className: 'slick-header slick-state-default slick-header-right' },
-      this._paneHeaderR
-    );
+    const headerContainerL = createDomElement('div', { className: 'slick-header-container' }, this._paneHeaderL);
+    const headerContainerR = createDomElement('div', { className: 'slick-header-container' }, this._paneHeaderR);
+    this._headerScrollerL = createDomElement('div', { className: 'slick-header slick-state-default slick-header-left' }, headerContainerL);
+    this._headerScrollerR = createDomElement('div', { className: 'slick-header slick-state-default slick-header-right' }, headerContainerR);
 
     // Cache the header scroller containers
     this._headerScroller.push(this._headerScrollerL);

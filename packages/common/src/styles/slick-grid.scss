@@ -304,6 +304,11 @@
     border-bottom: var(--slick-header-border-bottom, v.$slick-header-border-bottom);
   }
 
+  .slick-preheader-container,
+  .slick-header-container {
+    display: flex;
+  }
+
   .slick-pane-top {
     box-sizing: border-box;
     border-top: var(--slick-pane-top-border-top, v.$slick-pane-top-border-top);
@@ -657,7 +662,6 @@
   .slick-header-columns {
     background: var(--slick-grid-header-background, v.$slick-grid-header-background);
     background-color: var(--slick-header-background-color, v.$slick-header-background-color);
-    width: calc(100% - #{var(--slick-header-scroll-width-to-remove, v.$slick-header-scroll-width-to-remove)});
 
     [id$='checkbox_selector'] {
       justify-content: center;

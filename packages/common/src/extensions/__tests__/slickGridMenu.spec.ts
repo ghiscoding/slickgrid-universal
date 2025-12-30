@@ -81,6 +81,9 @@ const template = `<div id="${containerId}" style="height: 800px; width: 600px;">
     <div id="slickGridContainer-${gridId}" class="grid-pane" style="width: 100%;">
       <div id="${gridId}" class="${gridUid} slickgrid-container" style="width: 100%">
         <div class="slick-pane slick-pane-header slick-pane-left">
+          <div class="slick-preheader-container">
+            <div class="slick-preheader-panel slick-state-default slick-header"></div>
+          </div>
           <div class="slick-headerrow"></div>
           <div class="slick-header-left"></div>
         </div>
@@ -303,10 +306,10 @@ describe('GridMenuControl', () => {
         control.init();
         const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLDivElement;
         buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
-        const headerRowElm = document.querySelector('.slick-headerrow') as HTMLDivElement;
+        const gridMenuContainerElm = document.querySelector('.slick-grid-menu-container') as HTMLDivElement;
 
         expect(control.menuElement!.style.display).toBe('block');
-        expect(headerRowElm.style.width).toBe(`calc(100% - 16px)`);
+        expect(gridMenuContainerElm.style.width).toBe('18px');
 
         // click inside menu shouldn't close it
         control.menuElement!.dispatchEvent(new Event('mousedown', { bubbles: true }));
@@ -331,14 +334,15 @@ describe('GridMenuControl', () => {
         gridOptionsMock.showHeaderRow = true;
         gridOptionsMock.gridMenu!.menuWidth = 16;
         gridOptionsMock.gridMenu!.resizeOnShowHeaderRow = true;
+        gridOptionsMock.gridMenu!.iconButtonContainer = 'preheader';
         control.columns = columnsMock;
         control.init();
         const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLDivElement;
         buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
-        const headerRowElm = document.querySelector('.slick-headerrow') as HTMLDivElement;
+        const gridMenuContainerElm = document.querySelector('.slick-grid-menu-container') as HTMLDivElement;
 
         expect(control.menuElement!.style.display).toBe('block');
-        expect(headerRowElm.style.width).toBe(`calc(100% - 16px)`);
+        expect(gridMenuContainerElm.style.width).toBe('18px');
 
         // click inside menu shouldn't close it
         control.menuElement!.dispatchEvent(new Event('mousedown', { bubbles: true }));
