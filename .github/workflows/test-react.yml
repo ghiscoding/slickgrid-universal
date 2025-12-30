@@ -55,6 +55,9 @@ jobs:
       - name: Slickgrid-React Framework Build
         run: pnpm react:build:framework
 
+      - name: Slickgrid-React Framework-Plugins Build
+        run: pnpm react:build:framework-plugins
+
       - name: Website Dev Build (served for Cypress)
         run: pnpm react:build:demo
 
