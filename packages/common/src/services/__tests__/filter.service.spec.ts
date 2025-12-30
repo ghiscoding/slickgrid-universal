@@ -100,6 +100,7 @@ const gridStub = {
   onHeaderRowCellRendered: new SlickEvent(),
   render: vi.fn(),
   setColumns: vi.fn(),
+  updateColumns: vi.fn(),
   setHeaderRowVisibility: vi.fn(),
   setSortColumns: vi.fn(),
   setOptions: vi.fn(),
@@ -346,7 +347,7 @@ describe('FilterService', () => {
         target: tmpDivElm,
         grid: gridStub,
       };
-      sharedService.allColumns = [mockColumn];
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn]);
 
       service.init(gridStub);
       service.bindLocalOnFilter(gridStub);
@@ -859,7 +860,7 @@ describe('FilterService', () => {
       const searchTerms = ['John'];
       const mockColumn1 = { id: 'firstName', field: 'firstName', filterable: true } as Column;
       sharedService.allColumns = [mockColumn1];
-      vi.spyOn(gridStub, 'getColumns').mockReturnValue([]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, 'text');
@@ -1787,7 +1788,7 @@ describe('FilterService', () => {
       mockColumn2 = { id: 'isActive', name: 'isActive', field: 'isActive', type: FieldType.boolean };
       mockArgs1 = { grid: gridStub, column: mockColumn1, node: document.getElementById(DOM_ELEMENT_ID) };
       mockArgs2 = { grid: gridStub, column: mockColumn2, node: document.getElementById(DOM_ELEMENT_ID) };
-      sharedService.allColumns = [mockColumn1, mockColumn2];
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1, mockColumn2]);
     });
 
     it('should call "updateSingleFilter" method and expect event "emitFilterChanged" to be trigged local when using "bindLocalOnFilter" and also expect filters to be set in dataview', async () => {
@@ -1903,7 +1904,7 @@ describe('FilterService', () => {
       ];
       const setOptionSpy = vi.spyOn(gridStub, 'setOptions');
       const setHeaderSpy = vi.spyOn(gridStub, 'setHeaderRowVisibility');
-      const setColsSpy = vi.spyOn(gridStub, 'setColumns');
+      const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
       vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns);
 
@@ -1920,7 +1921,7 @@ describe('FilterService', () => {
       });
       expect(setOptionSpy).toHaveBeenCalledWith({ enableFiltering: false }, false, true);
       expect(setHeaderSpy).toHaveBeenCalledWith(false);
-      expect(setColsSpy).toHaveBeenCalledWith(mockColumns);
+      expect(updateColumnSpy).toHaveBeenCalled();
     });
 
     it('should enable the Filter Functionality when passing 1st argument as False', () => {
@@ -1933,7 +1934,7 @@ describe('FilterService', () => {
       ];
       const setOptionSpy = vi.spyOn(gridStub, 'setOptions');
       const setHeaderSpy = vi.spyOn(gridStub, 'setHeaderRowVisibility');
-      const setColsSpy = vi.spyOn(gridStub, 'setColumns');
+      const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
       vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns);
 
@@ -1950,7 +1951,7 @@ describe('FilterService', () => {
       });
       expect(setOptionSpy).toHaveBeenCalledWith({ enableFiltering: true }, false, true);
       expect(setHeaderSpy).toHaveBeenCalledWith(true);
-      expect(setColsSpy).toHaveBeenCalledWith(mockColumns);
+      expect(updateColumnSpy).toHaveBeenCalled();
     });
 
     it('should NOT change neither call anything if the end result of disabling is the same', () => {
@@ -1988,7 +1989,7 @@ describe('FilterService', () => {
       ];
       const setOptionSpy = vi.spyOn(gridStub, 'setOptions');
       const setHeaderSpy = vi.spyOn(gridStub, 'setHeaderRowVisibility');
-      const setColsSpy = vi.spyOn(gridStub, 'setColumns');
+      const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
       vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(mockColumns);
 
       service.init(gridStub);
@@ -1996,7 +1997,7 @@ describe('FilterService', () => {
 
       expect(setOptionSpy).toHaveBeenCalledWith({ enableFiltering: false }, false, true);
       expect(setHeaderSpy).toHaveBeenCalledWith(false);
-      expect(setColsSpy).toHaveBeenCalledWith(mockColumns);
+      expect(updateColumnSpy).toHaveBeenCalled();
     });
   });
 
@@ -2018,13 +2019,13 @@ describe('FilterService', () => {
     it('should toggle the Header Filter Row and expect to call "setColumns" when changing to enabled when previously disabled', () => {
       gridOptionMock.showHeaderRow = false;
       const setHeaderSpy = vi.spyOn(gridStub, 'setHeaderRowVisibility');
-      const setColsSpy = vi.spyOn(gridStub, 'setColumns');
+      const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
 
       service.init(gridStub);
       service.toggleHeaderFilterRow();
 
       expect(setHeaderSpy).toHaveBeenCalledWith(true);
-      expect(setColsSpy).toHaveBeenCalled();
+      expect(updateColumnSpy).toHaveBeenCalled();
     });
   });
 
@@ -2074,7 +2075,7 @@ describe('FilterService', () => {
         { columnId: 'firstName', searchTerms: ['Jane'], operator: 'StartsWith' },
         { columnId: 'isActive', searchTerms: [false] },
       ];
-      sharedService.allColumns = [mockColumn1, mockColumn2, mockColumn3];
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1, mockColumn2, mockColumn3]);
     });
 
     it('should Draw DOM Element Filter on custom HTML element by string id', async () => {

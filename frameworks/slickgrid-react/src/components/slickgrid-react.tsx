@@ -22,6 +22,7 @@ import {
   SlickGrid,
   SlickgridConfig,
   SlickGroupItemMetadataProvider,
+  sortPresetColumns,
   SortService,
   TreeDataService,
   type AutocompleterEditor,
@@ -510,7 +511,6 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
 
     // save reference for all columns before they optionally become hidden/visible
     this.sharedService.allColumns = this._columns;
-    this.sharedService.visibleColumns = this._columns;
 
     // after subscribing to potential columns changed, we are ready to create these optional extensions
     // when we did find some to create (RowMove, RowDetail, RowSelections), it will automatically modify column definitions (by previous subscribe)
@@ -882,10 +882,9 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
           }
         }
 
-        // when column are reordered, we need to update the visibleColumn array
-        this._eventHandler.subscribe(grid.onColumnsReordered, (_e, args) => {
+        // when column are reordered, we need to update SharedService flag
+        this._eventHandler.subscribe(grid.onColumnsReordered, () => {
           this.sharedService.hasColumnsReordered = true;
-          this.sharedService.visibleColumns = args.impactedColumns;
         });
 
         this._eventHandler.subscribe(grid.onSetOptions, (_e, args) => {
@@ -1259,9 +1258,8 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
 
       if (this._options.enableTranslate) {
         this.extensionService.translateColumnHeaders(undefined, newColumns);
-      } else {
-        this.extensionService.renderColumnHeaders(newColumns, true);
       }
+      this.extensionService.renderColumnHeaders(newColumns, true);
 
       if (this._options?.enableAutoSizeColumns) {
         this.grid.autosizeColumns();
@@ -1451,9 +1449,9 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
         // We will use this when doing a resize by cell content, if user provided a `width` it won't override it.
         gridPresetColumns.forEach((col) => (col.originalWidth = col.width));
 
-        // finally set the new presets columns (including checkbox selector if need be)
-        this.grid.setColumns(gridPresetColumns);
-        this.sharedService.visibleColumns = gridPresetColumns;
+        // finally sort and set the new presets columns (including checkbox selector if need be)
+        const orderedColumns = sortPresetColumns(this._columns, gridPresetColumns);
+        this.grid.setColumns(orderedColumns);
       }
     }
   }

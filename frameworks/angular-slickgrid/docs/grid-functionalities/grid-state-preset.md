@@ -58,6 +58,8 @@ export class GridDemoComponent {
 }
 ```
 
+> **Note** since v10 you can now pass `true` as the argument to `gridStateService.getCurrentGridState(true)` which will return all columns, not just the visible columns but also include the hidden columns and their "hidden" properties.
+
 ### Using Grid Presets & Filter SearchTerm(s)
 What happens when we use the grid `presets` and a [Filter Default SearchTerms](../column-functionalities/filters/select-filter.md#default-search-terms)? In this case, the `presets` will win over filter `searchTerms`. The cascading order of priorities is the following
 1. Do we have any `presets`? Yes use them, else go to step 2
@@ -209,6 +211,10 @@ You can show/hide or even change a column position via the `presets`, yes `prese
 
 So let say that we want to hide the last Column on page load, we can just find the column by it's `id` that you want to hide and pass the new column definition to the `presets` (again make sure to follow the correct preset structure).
 
+#### Option 1
+
+Pass the Grid Presets with an array that has less `presets.columns`, whichever column(s) are missing will be considered hidden columns
+
 ```ts
 this.columnDefinitions = [
   // initial column definitions
@@ -219,7 +225,7 @@ this.columnDefinitions = [
 const mappedColumnDefinitions = this.columnDefinitions.map(col => ({ columnId: col.id, width: col.width }));
 mappedColumnDefinitions.pop();
 
-// then pass it to the presets
+// then pass it to the grid presets (an array of columns minus the last column)
 this.gridOptions = {
   presets: {
     columns: mappedColumnDefinitions
@@ -228,6 +234,11 @@ this.gridOptions = {
 ```
 This would be the easiest way to do it.
 
+#### Option 2
+
+Since v10, the second alternative is to pass all the columns to `presets.columns` with some of them having the `hidden` properties. Both approaches are valid in v10, just choose whichever option you prefer.
+
+###### Summary
 As pointed out earlier, the `presets` requires a specific structure where the `columns` is the list of columns to show/hide with their possible widths. Also worth mentioning again that the position in the array is very important as it defines the position shown in the UI.
 
 ```ts
@@ -245,4 +256,4 @@ this.gridOptions = {
    }
 };
 ```
-You could technically redefine by hand the complete list of `columns` that the `presets` requires. I would personally do it via the Column Definitions looping with `map()`, but go manual is also perfectly fine. You would just re-declare the `columns` again with the `id` and `width` and that would work as well.
+You could technically redefine by hand the complete list of `columns` that the `presets` requires. I would personally do it via the Column Definitions looping with `map()`, but loading them manually is also perfectly fine. You would just re-declare the `columns` again with the `id` and `width` (maybe include the `hidden` prop as well) and that would work as well.

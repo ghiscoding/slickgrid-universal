@@ -246,7 +246,7 @@ export class Example16Component implements OnInit {
           params: { iconCssClass: 'mdi mdi-pencil pointer' },
           minWidth: 30,
           maxWidth: 30,
-          onCellClick: (clickEvent: Event, args: OnEventArgs) => {
+          onCellClick: (_clickEvent: Event, args: OnEventArgs) => {
             alert(`Technically we should Edit "Task ${args.dataContext.id}"`);
           },
         },
@@ -260,7 +260,7 @@ export class Example16Component implements OnInit {
           params: { iconCssClass: 'mdi mdi-trash-can pointer' },
           minWidth: 30,
           maxWidth: 30,
-          onCellClick: (e: Event, args: OnEventArgs) => {
+          onCellClick: (_e: Event, args: OnEventArgs) => {
             if (confirm('Are you sure?')) {
               this.angularGrid.gridService.deleteItemById(args.dataContext.id);
             }
@@ -268,8 +268,12 @@ export class Example16Component implements OnInit {
         },
       ];
 
-      this.columnDefinitions.splice(0, 0, newCols[0], newCols[1]);
-      this.columnDefinitions = this.columnDefinitions.slice(); // or use spread operator [...cols] to trigger change
+      // NOTE if you use an Extensions (Checkbox Selector, Row Detail, ...) that modifies the column definitions in any way
+      // you MUST use "getAllColumnDefinitions()" from the GridService, using this will be ALL columns including the 1st column that is created internally
+      // for example if you use the Checkbox Selector (row selection), you MUST use the code below
+      const allColumns = this.angularGrid.gridService.getAllColumnDefinitions();
+      allColumns.unshift(newCols[0], newCols[1]);
+      this.columnDefinitions = [...allColumns]; // (or use slice) reassign to column definitions for Aurelia to do dirty checking
     }
   }
 

@@ -212,7 +212,7 @@ li.hidden {
     overflow: hidden;
     text-overflow: ellipsis;
     @-moz-document url-prefix() {
-      margin-right: var(--slick-gri-menu-item-margin-right, v.$slick-gri-menu-item-margin-right);
+      margin-right: var(--slick-grid-menu-item-margin-right, v.$slick-grid-menu-item-margin-right);
       width: 100%;
     }
 
@@ -237,16 +237,12 @@ li.hidden {
 }
 
 .slick-grid-menu-button {
-  background-color: transparent;
   border: 0;
   cursor: pointer;
-  right: 0;
   position: absolute;
-  width: 22px;
+  right: 0;
   z-index: 2;
   color: var(--slick-grid-menu-icon-btn-color, v.$slick-grid-menu-icon-btn-color);
-  display: var(--slick-grid-menu-button-display, v.$slick-grid-menu-button-display);
-  font-size: var(--slick-grid-menu-icon-font-size, v.$slick-grid-menu-icon-font-size);
   padding: var(--slick-grid-menu-button-padding, v.$slick-grid-menu-button-padding);
   margin-top: var(--slick-grid-menu-icon-top-margin, v.$slick-grid-menu-icon-top-margin);
 }

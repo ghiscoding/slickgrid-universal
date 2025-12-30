@@ -40,6 +40,7 @@ import {
   SlickGrid,
   SlickgridConfig,
   SlickGroupItemMetadataProvider,
+  sortPresetColumns,
   SortService,
   TreeDataService,
   unsubscribeAll,
@@ -715,7 +716,6 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
 
     // save reference for all columns before they optionally become hidden/visible
     this.sharedService.allColumns = this._columnDefinitions;
-    this.sharedService.visibleColumns = this._columnDefinitions;
 
     // before certain extentions/plugins potentially adds extra columns not created by the user itself (RowMove, RowDetail, RowSelections)
     // we'll subscribe to the event and push back the change to the user so they always use full column defs array including extra cols
@@ -1016,9 +1016,8 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
 
     if (this.options.enableTranslate) {
       this.extensionService.translateColumnHeaders(undefined, newColumns);
-    } else {
-      this.extensionService.renderColumnHeaders(newColumns, true);
     }
+    this.extensionService.renderColumnHeaders(newColumns, true);
 
     if (this.options?.enableAutoSizeColumns) {
       this.slickGrid.autosizeColumns();
@@ -1120,10 +1119,9 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
         }
       }
 
-      // when column are reordered, we need to update the visibleColumn array
-      this._eventHandler.subscribe(grid.onColumnsReordered, (_e, args) => {
+      // when column are reordered, we need to update SharedService flag
+      this._eventHandler.subscribe(grid.onColumnsReordered, () => {
         this.sharedService.hasColumnsReordered = true;
-        this.sharedService.visibleColumns = args.impactedColumns;
       });
 
       this._eventHandler.subscribe(grid.onSetOptions, (_e, args) => {
@@ -1450,9 +1448,9 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
         // We will use this when doing a resize by cell content, if user provided a `width` it won't override it.
         gridPresetColumns.forEach((col) => (col.originalWidth = col.width));
 
-        // finally set the new presets columns (including checkbox selector if need be)
-        this.slickGrid.setColumns(gridPresetColumns);
-        this.sharedService.visibleColumns = gridPresetColumns;
+        // finally sort and set the new presets columns (including checkbox selector if need be)
+        const orderedColumns = sortPresetColumns(this._columnDefinitions, gridPresetColumns);
+        this.slickGrid.setColumns(orderedColumns);
       }
     }
   }
