@@ -2,7 +2,7 @@
 import { createDomElement, titleCase } from '@slickgrid-universal/utils';
 import type { SlickGrid } from '../core/slickGrid.js';
 import { applyHtmlToElement } from '../core/utils.js';
-import type { Column, ColumnPickerOption, DOMEvent, GridMenuOption } from '../interfaces/index.js';
+import type { ColumnPickerOption, DOMEvent, GridMenuOption } from '../interfaces/index.js';
 import { SlickColumnPicker } from './slickColumnPicker.js';
 import { SlickGridMenu } from './slickGridMenu.js';
 
@@ -47,49 +47,45 @@ export function handleColumnPickerItemClick(this: SlickColumnPicker | SlickGridM
   const isChecked = !!event.target.checked;
   event.target.ariaChecked = String(isChecked);
   togglePickerCheckbox(iconElm, isChecked);
+  const grid = context.grid as SlickGrid;
 
   if (event.target.dataset.option === 'autoresize') {
     // when calling setOptions, it will resize with ALL Columns (even the hidden ones)
     // we can avoid this problem by keeping a reference to the visibleColumns before setOptions and then setColumns after
-    const previousVisibleColumns = context.getVisibleColumns();
-    context.grid.setOptions({ forceFitColumns: isChecked });
-    context.grid.setColumns(previousVisibleColumns);
+    grid.setOptions({ forceFitColumns: isChecked });
+    grid.updateColumns();
     return;
   }
 
   if (event.target.dataset.option === 'syncresize') {
-    context.grid.setOptions({ syncColumnCellResize: isChecked });
+    grid.setOptions({ syncColumnCellResize: isChecked });
     return;
   }
 
   if (event.target.type === 'checkbox') {
     context._areVisibleColumnDifferent = true;
     const columnId = event.target.dataset.columnid || '';
-    const visibleColumns: Column[] = [];
-
-    // Iterate through columns and add those that have checked checkboxes to visibleColumns
-    context.columns.forEach((column: Column) => {
-      const checkbox = context._columnCheckboxes.find((cb: HTMLInputElement) => cb.dataset.columnid === column.id.toString());
-      if (checkbox?.checked) {
-        visibleColumns.push(column);
-      }
-    });
 
     // validate that the checkbox changes is allowed before going any further
-    const isFrozenAllowed = (context.grid as SlickGrid).validateSetColumnFreeze(visibleColumns, true);
-    if (!isFrozenAllowed || !visibleColumns.length) {
+    const isFrozenAllowed = grid.validateColumnFreeze(columnId, true);
+    let visibleColumns = context.getVisibleColumns();
+
+    if (!isFrozenAllowed || (visibleColumns.length - 1 < 1 && !isChecked)) {
       event.target.checked = true;
       togglePickerCheckbox(iconElm, true);
       return;
     }
 
-    context.grid.setColumns(visibleColumns);
+    grid.updateColumnById(columnId, { hidden: !isChecked });
+    if (!isChecked && context.gridOptions.enableCellRowSpan) {
+      grid.remapAllColumnsRowSpan(); // remap row spans when column gets hidden and cell rowspan is enabled
+    }
+    grid.updateColumns();
+    visibleColumns = context.getVisibleColumns();
 
     // keep reference to the updated visible columns list
-    if (
-      !context.sharedService.visibleColumns ||
-      (Array.isArray(visibleColumns) && visibleColumns.length !== context.sharedService.visibleColumns.length)
-    ) {
+    // prettier-ignore
+    if (!context.sharedService.visibleColumns || (Array.isArray(visibleColumns) && visibleColumns.length !== context.sharedService.visibleColumns.length)) {
       context.sharedService.visibleColumns = visibleColumns;
     }
 
@@ -99,24 +95,17 @@ export function handleColumnPickerItemClick(this: SlickColumnPicker | SlickGridM
     // To bypass this problem we can simply recall the row selection with the same selection and that will trigger a re-apply of the CSS class
     // on all columns including the column we just made visible
     if ((context.gridOptions.enableRowSelection || context.gridOptions.enableHybridSelection) && isChecked) {
-      const rowSelection = context.grid.getSelectedRows();
-      context.grid.setSelectedRows(rowSelection);
-    }
-
-    // if we're using frozen columns, we need to readjust pinning when the new hidden column becomes visible again on the left pinning container
-    // we need to readjust frozenColumn index because SlickGrid freezes by index and has no knowledge of the columns themselves
-    const frozenColumnIndex = context.gridOptions.frozenColumn ?? -1;
-    if (frozenColumnIndex >= 0) {
-      context.extensionUtility.readjustFrozenColumnIndexWhenNeeded(frozenColumnIndex, context.columns, visibleColumns);
+      const rowSelection = grid.getSelectedRows();
+      grid.setSelectedRows(rowSelection);
     }
 
     const callbackArgs = {
       columnId,
       showing: isChecked,
-      allColumns: context.columns,
+      allColumns: grid.getColumns(),
       visibleColumns,
       columns: visibleColumns,
-      grid: context.grid,
+      grid,
     };
 
     // execute user callback when defined
@@ -167,6 +156,7 @@ export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, ad
   const context: any = this;
   const isGridMenu = context instanceof SlickGridMenu;
   const menuPrefix = isGridMenu ? 'gridmenu-' : '';
+  const grid = context.grid as SlickGrid;
 
   let sortedColumns = context.columns;
   if (typeof addonOptions?.columnSort === 'function') {
@@ -182,7 +172,7 @@ export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, ad
     }
 
     const inputId = `${context._gridUid}-${menuPrefix}colpicker-${columnId}`;
-    const isChecked = context.grid.getColumnIndex(columnId) >= 0;
+    const isChecked = grid.getVisibleColumns().some((col) => col.id === columnId && !col.hidden);
     const { inputElm, labelElm, labelSpanElm } = generatePickerCheckbox(columnLiElm, inputId, { columnid: `${columnId}` }, isChecked);
     context._columnCheckboxes.push(inputElm);
 

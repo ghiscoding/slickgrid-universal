@@ -5,7 +5,6 @@ import type { Column, CurrentPagination, GridOption } from '../interfaces/index.
 export class SharedService {
   protected _allColumns!: Column[];
   protected _gridOptions!: GridOption;
-  protected _visibleColumns!: Column[];
   protected _hierarchicalDataset: any[] | undefined;
   protected _externalRegisteredResources!: any[];
 
@@ -73,15 +72,6 @@ export class SharedService {
   /** Setter for knowing if user want to hide header row after 1st page load */
   set externalRegisteredResources(externalRegisteredResources: any[]) {
     this._externalRegisteredResources = externalRegisteredResources;
-  }
-
-  /** Getter for the Visible Columns in the grid */
-  get visibleColumns(): Column[] {
-    return this._visibleColumns;
-  }
-  /** Setter for the Visible Columns in the grid */
-  set visibleColumns(visibleColumns: Column[]) {
-    this._visibleColumns = visibleColumns;
   }
 
   /** Getter for the Hierarchical Tree Data dataset when the feature is enabled */

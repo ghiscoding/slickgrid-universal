@@ -501,7 +501,7 @@ export class ResizerService {
     }
 
     // send updated column definitions widths to SlickGrid
-    this._grid.setColumns(columnDefinitions);
+    this._grid.updateColumns();
     this._hasResizedByContentAtLeastOnce = true;
 
     const calculateColumnWidths: { [columnId in string | number]: number | undefined } = {};

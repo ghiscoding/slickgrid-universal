@@ -8,6 +8,7 @@ import { AngularSlickgridModule, type AngularGridInstance, type Column, type Gri
   imports: [AngularSlickgridModule],
 })
 export class Example14Component implements OnInit {
+  angularGrid1!: AngularGridInstance;
   angularGrid2!: AngularGridInstance;
   gridObj2: any;
   columnDefinitions1!: Column[];
@@ -17,10 +18,15 @@ export class Example14Component implements OnInit {
   dataset1: any[] = [];
   dataset2: any[] = [];
   hideSubTitle = false;
+  isColspanSpreading = false;
 
   ngOnInit(): void {
     this.prepareGrid1();
     this.prepareGrid2();
+  }
+
+  angularGridReady1(angularGrid: AngularGridInstance) {
+    this.angularGrid1 = angularGrid;
   }
 
   angularGridReady2(angularGrid: AngularGridInstance) {
@@ -61,6 +67,7 @@ export class Example14Component implements OnInit {
         exportWithFormatter: false,
       },
       externalResources: [new ExcelExportService()],
+      spreadHiddenColspan: this.isColspanSpreading,
     };
 
     this.dataset1 = this.getData(500);
@@ -152,6 +159,13 @@ export class Example14Component implements OnInit {
         },
       },
     };
+  }
+
+  spreadColspan() {
+    this.isColspanSpreading = !this.isColspanSpreading;
+    this.angularGrid1.slickGrid?.setOptions({ spreadHiddenColspan: this.isColspanSpreading });
+    this.angularGrid1.slickGrid?.resetActiveCell();
+    this.angularGrid1.slickGrid?.invalidate();
   }
 
   toggleSubTitle() {

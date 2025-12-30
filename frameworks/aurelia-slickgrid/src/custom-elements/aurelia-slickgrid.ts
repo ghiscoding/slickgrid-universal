@@ -40,6 +40,7 @@ import {
   SlickGrid,
   SlickgridConfig,
   SlickGroupItemMetadataProvider,
+  sortPresetColumns,
   SortService,
   TreeDataService,
   type Observable,
@@ -365,7 +366,6 @@ export class AureliaSlickgridCustomElement {
 
     // save reference for all columns before they optionally become hidden/visible
     this.sharedService.allColumns = this._columns;
-    this.sharedService.visibleColumns = this._columns;
 
     // TODO: revisit later, this conflicts with Grid State (Example 15)
     // before certain extentions/plugins potentially adds extra columns not created by the user itself (RowMove, RowDetail, RowSelections)
@@ -784,10 +784,9 @@ export class AureliaSlickgridCustomElement {
           }
         }
 
-        // when column are reordered, we need to update the visibleColumn array
-        this._eventHandler.subscribe(grid.onColumnsReordered, (_e, args) => {
+        // when column are reordered, we need to update SharedService flag
+        this._eventHandler.subscribe(grid.onColumnsReordered, () => {
           this.sharedService.hasColumnsReordered = true;
-          this.sharedService.visibleColumns = args.impactedColumns;
         });
 
         this._eventHandler.subscribe(grid.onSetOptions, (_e, args) => {
@@ -1166,9 +1165,8 @@ export class AureliaSlickgridCustomElement {
 
       if (this.options.enableTranslate) {
         this.extensionService.translateColumnHeaders(undefined, newColumns);
-      } else {
-        this.extensionService.renderColumnHeaders(newColumns, true);
       }
+      this.extensionService.renderColumnHeaders(newColumns, true);
 
       if (this.options?.enableAutoSizeColumns) {
         this.grid.autosizeColumns();
@@ -1342,9 +1340,9 @@ export class AureliaSlickgridCustomElement {
         // We will use this when doing a resize by cell content, if user provided a `width` it won't override it.
         gridPresetColumns.forEach((col) => (col.originalWidth = col.width));
 
-        // finally set the new presets columns (including checkbox selector if need be)
-        this.grid.setColumns(gridPresetColumns);
-        this.sharedService.visibleColumns = gridPresetColumns;
+        // finally sort and set the new presets columns (including checkbox selector if need be)
+        const orderedColumns = sortPresetColumns(this._columns, gridPresetColumns);
+        this.grid.setColumns(orderedColumns);
       }
     }
   }

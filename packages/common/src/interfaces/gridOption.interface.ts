@@ -627,6 +627,13 @@ export interface GridOption<C extends Column = Column> {
   gridMenu?: GridMenu;
 
   /**
+   * Defaults to false, should we include the "hidden" props when getting current Grid State?
+   * Note: when enabled, it will call `grid.getColumns()` instead of `grid.getVisibleColumns()`
+   * and might return more columns since hidden columns will also be included
+   */
+  gridStateIncludeHiddenProps?: boolean;
+
+  /**
    * When using a fixed grid width, can be a number or a string.
    * if a number is provided it will add the `px` suffix for pixels, or if a string is passed it will use it as it is.
    */
@@ -837,6 +844,14 @@ export interface GridOption<C extends Column = Column> {
 
   /** Defaults to true, which leads to render a separate span for the number and styles it with css class <i>slick-sort-indicator-numbered</i> */
   sortColNumberInSeparateSpan?: boolean;
+
+  /**
+   * Defaults to false, when doing a colspan and one or more column is hidden in that spanning,
+   * do we want to still spread to the same amount of visible columns or should we simply skip over the hidden columns and have less spanning?
+   * For example, if we have 4 columns (first, last, age, gender) and we have a `colspan: 2` on first cell but "last" column is hidden
+   * then it would spread by 3 columns on ("first" and "age")
+   */
+  spreadHiddenColspan?: boolean;
 
   /**
    * Defaults to false, which leads to suppress the cell from becoming active when cell as an editor and is clicked.

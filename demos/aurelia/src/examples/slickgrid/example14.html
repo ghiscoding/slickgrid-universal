@@ -24,8 +24,25 @@
   </ul>
 </div>
 
-<h3>Grid 1 <small>(with Header Grouping &amp; Colspan)</small></h3>
-<aurelia-slickgrid grid-id="grid1" columns.bind="columnDefinitions1" options.bind="gridOptions1" dataset.bind="dataset1">
+<h3>
+  Grid 1 <small>(with Header Grouping &amp; Colspan)</small>
+  <button
+    class="btn btn-outline-secondary btn-sm btn-icon ms-2"
+    click.trigger="spreadColspan()"
+    data-test="spread-colspan-button"
+    title="Should we always spread the same visible column count with or without hidden columns?"
+  >
+    <span>Toggle Spreading of ColSpan with/without Hidden Columns</span>
+  </button>
+</h3>
+
+<aurelia-slickgrid
+  grid-id="grid1"
+  columns.bind="columnDefinitions1"
+  options.bind="gridOptions1"
+  dataset.bind="dataset1"
+  on-aurelia-grid-created.trigger="aureliaGridReady1($event.detail)"
+>
 </aurelia-slickgrid>
 
 <hr />

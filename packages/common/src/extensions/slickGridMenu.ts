@@ -101,7 +101,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     this._menuCssPrefix = 'slick-menu';
     this._menuPluginCssPrefix = 'slick-grid-menu';
     this._camelPluginName = 'gridMenu';
-    this._columns = this.sharedService.allColumns ?? [];
+    this._columns = this.grid?.getColumns() ?? [];
     this._gridUid = this.grid?.getUID() ?? '';
     this.onAfterMenuShow = new SlickEvent<GridMenuEventWithElementCallbackArgs>('onAfterMenuShow');
     this.onBeforeMenuShow = new SlickEvent<GridMenuEventWithElementCallbackArgs>('onBeforeMenuShow');
@@ -336,7 +336,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
    * @returns {Array<Object>} - only the visible columns array
    */
   getVisibleColumns(): Column[] {
-    return this.grid.getColumns();
+    return this.grid.getVisibleColumns();
   }
 
   /**
@@ -727,7 +727,6 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     if (args?.command) {
       switch (args.command) {
         case 'clear-pinning':
-          const visibleColumns = [...this.sharedService.visibleColumns];
           const newGridOptions = { frozenColumn: -1, frozenRow: -1, frozenBottom: false, enableMouseWheelScrollHandler: false };
           this.grid.setOptions(newGridOptions);
           this.sharedService.gridOptions.frozenColumn = newGridOptions.frozenColumn;
@@ -735,11 +734,8 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
           this.sharedService.gridOptions.frozenBottom = newGridOptions.frozenBottom;
           this.sharedService.gridOptions.enableMouseWheelScrollHandler = newGridOptions.enableMouseWheelScrollHandler;
 
-          // SlickGrid seems to be somehow resetting the columns to their original positions,
-          // so let's re-fix them to the position we kept as reference
-          if (Array.isArray(visibleColumns)) {
-            this.grid.setColumns(visibleColumns);
-          }
+          // re-update columns to reflect any possible changes
+          this.grid.updateColumns();
 
           // we also need to autosize columns if the option is enabled
           const gridOptions = this.gridOptions;
@@ -806,7 +802,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
           // when displaying header row, we'll call "setColumns" which in terms will recreate the header row filters
           if (showHeaderRow === true) {
-            this.grid.setColumns(this.sharedService.columnDefinitions);
+            this.grid.updateColumns();
             this.grid.scrollColumnIntoView(0); // quick fix to avoid filter being out of sync with horizontal scroll
           }
           break;

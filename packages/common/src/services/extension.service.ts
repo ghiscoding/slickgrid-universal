@@ -72,8 +72,6 @@ export class ExtensionService {
 
   /** Dispose of all the controls & plugins */
   dispose(): void {
-    this.sharedService.visibleColumns = [];
-
     // dispose of each control/plugin & reset the list
     if (typeof this._extensionList === 'object') {
       const extensionNames = Object.keys(this._extensionList);
@@ -123,7 +121,7 @@ export class ExtensionService {
 
   /** Get only visible columns */
   getVisibleColumns(): Column[] {
-    return this.sharedService.visibleColumns || [];
+    return this.sharedService.slickGrid.getVisibleColumns();
   }
 
   /**
@@ -429,11 +427,7 @@ export class ExtensionService {
 
   /** Hide a column from the grid */
   hideColumn(column: Column): void {
-    if (typeof this.sharedService?.slickGrid?.getColumns === 'function') {
-      const columnIndex = this.sharedService.slickGrid.getColumnIndex(column.id);
-      this.sharedService.visibleColumns = this.removeColumnByIndex(this.sharedService.slickGrid.getColumns(), columnIndex);
-      this.sharedService.slickGrid.setColumns(this.sharedService.visibleColumns, true);
-    }
+    this.sharedService.slickGrid?.updateColumnById(column.id, { hidden: true }, true);
   }
 
   /** Refresh the dataset through the Backend Service */
@@ -507,8 +501,13 @@ export class ExtensionService {
    * @param locale to use
    * @param new column definitions (optional)
    */
-  translateColumnHeaders(locale?: string, newColumns?: Column[]): void {
-    if (this.sharedService && this.gridOptions?.enableTranslate && !this.translaterService?.translate) {
+  translateColumnHeaders(locale?: string, newColumns?: Column[], updateColumns = true): void {
+    if (
+      this.sharedService &&
+      this.gridOptions &&
+      this.gridOptions.enableTranslate &&
+      (!this.translaterService || !this.translaterService.translate)
+    ) {
       throw new Error(
         '[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.'
       );
@@ -528,8 +527,19 @@ export class ExtensionService {
     this.translateItems(this.sharedService.allColumns, 'nameKey', 'name');
     this.translateItems(this.sharedService.allColumns, 'columnGroupKey', 'columnGroup');
 
-    // re-render the column headers which will indirectly re-translate ColumnPicker/GridMenu
-    this.renderColumnHeaders(columnDefinitions, Array.isArray(newColumns));
+    if (updateColumns) {
+      this.sharedService.slickGrid.updateColumns();
+    }
+
+    // replace Column Picker columns with newer data which includes new translations
+    if (this.gridOptions.enableColumnPicker && this._columnPickerControl) {
+      this._columnPickerControl.translateColumnPicker();
+    }
+
+    // replace the Grid Menu columns array list
+    if (this.gridOptions.enableGridMenu && this._gridMenuControl) {
+      this._gridMenuControl.translateGridMenu();
+    }
   }
 
   /**

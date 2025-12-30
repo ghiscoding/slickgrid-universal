@@ -385,6 +385,8 @@ export interface Column<T = any> {
   /** Width of the column in pixels (number only). */
   width?: number;
 
+  widthOriginal?: number;
+
   /** column width request when resizing */
   widthRequest?: number;
 }

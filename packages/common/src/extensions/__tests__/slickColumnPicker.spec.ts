@@ -13,18 +13,21 @@ import { SlickColumnPicker } from '../slickColumnPicker.js';
 const gridUid = 'slickgrid_124343';
 
 const gridStub = {
-  calculateFrozenColumnIndexById: vi.fn(),
   getColumnIndex: vi.fn(),
   getColumns: vi.fn(),
   getGridPosition: vi.fn(),
   getOptions: vi.fn(),
   getSelectedRows: vi.fn(),
+  getVisibleColumns: vi.fn(),
   getUID: () => gridUid,
   registerPlugin: vi.fn(),
+  remapAllColumnsRowSpan: vi.fn(),
   setColumns: vi.fn(),
   setOptions: vi.fn(),
   setSelectedRows: vi.fn(),
-  validateSetColumnFreeze: vi.fn(),
+  updateColumnById: vi.fn(),
+  updateColumns: vi.fn(),
+  validateColumnFreeze: vi.fn(),
   onClick: new SlickEvent(),
   onColumnsReordered: new SlickEvent(),
   onHeaderContextMenu: new SlickEvent(),
@@ -71,12 +74,17 @@ describe('ColumnPickerControl', () => {
     extensionUtility = new ExtensionUtility(sharedService, backendUtilityService, translateService);
     sharedService.slickGrid = gridStub;
 
+    gridStub.updateColumnById = (columnId, props) => {
+      const column = columnsMock.find((col) => col.id === columnId);
+      if (column) {
+        Object.assign(column, props);
+      }
+    };
     vi.spyOn(utils, 'applyHtmlToElement').mockImplementation((elm, val) => {
       elm.innerHTML = `${val || ''}`;
     });
     vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-    vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
-    vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock.slice(0, 1));
+    vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columnsMock);
     vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsMock);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
     vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
@@ -101,15 +109,15 @@ describe('ColumnPickerControl', () => {
       expect(control).toBeTruthy();
     });
 
-    it('should query an input checkbox change event and expect it to cancel the uncheck column when "validateSetColumnFreeze()" returns false', () => {
+    it('should query an input checkbox change event and expect it to cancel the uncheck column when "validateColumnFreeze()" returns false', () => {
       const mockRowSelection = [0, 3, 5];
-      vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(false);
+      vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(false);
       vi.spyOn(control.eventHandler, 'subscribe');
       vi.spyOn(gridStub, 'getColumnIndex')
         .mockReturnValue(undefined as any)
         .mockReturnValue(1);
       vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue(mockRowSelection);
-      const setColumnSpy = vi.spyOn(gridStub, 'setColumns');
+      const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
       const setSelectionSpy = vi.spyOn(gridStub, 'setSelectedRows');
 
       gridOptionsMock.enableRowSelection = true;
@@ -121,19 +129,19 @@ describe('ColumnPickerControl', () => {
       inputElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
       expect(control.menuElement!.style.display).toBe('block');
-      expect(setColumnSpy).not.toHaveBeenCalled();
+      expect(updateColumnSpy).not.toHaveBeenCalled();
       expect(setSelectionSpy).not.toHaveBeenCalled();
     });
 
-    it('should query an input checkbox change event and expect it to cancel the uncheck column when "validateSetColumnFreeze()" returns false with Hybrid Selection enabled', () => {
+    it('should query an input checkbox change event and expect it to cancel the uncheck column when "validateColumnFreeze()" returns false with Hybrid Selection enabled', () => {
       const mockRowSelection = [0, 3, 5];
-      vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(false);
+      vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(false);
       vi.spyOn(control.eventHandler, 'subscribe');
       vi.spyOn(gridStub, 'getColumnIndex')
         .mockReturnValue(undefined as any)
         .mockReturnValue(1);
       vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue(mockRowSelection);
-      const setColumnSpy = vi.spyOn(gridStub, 'setColumns');
+      const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
       const setSelectionSpy = vi.spyOn(gridStub, 'setSelectedRows');
 
       gridOptionsMock.enableHybridSelection = true;
@@ -145,13 +153,13 @@ describe('ColumnPickerControl', () => {
       inputElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
       expect(control.menuElement!.style.display).toBe('block');
-      expect(setColumnSpy).not.toHaveBeenCalled();
+      expect(updateColumnSpy).not.toHaveBeenCalled();
       expect(setSelectionSpy).not.toHaveBeenCalled();
     });
 
     it('should query an input checkbox change event and expect "setSelectedRows" method to be called using Row Selection when enabled', () => {
       const mockRowSelection = [0, 3, 5];
-      vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
+      vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
       vi.spyOn(control.eventHandler, 'subscribe');
       vi.spyOn(gridStub, 'getColumnIndex')
         .mockReturnValue(undefined as any)
@@ -171,6 +179,29 @@ describe('ColumnPickerControl', () => {
       expect(setSelectionSpy).toHaveBeenCalledWith(mockRowSelection);
       expect(control.getAllColumns()).toEqual(columnsMock);
       expect(control.getVisibleColumns()).toEqual(columnsMock);
+    });
+
+    it('should remap all RowSpan when input called as unchecked and RowSpan is enabled', () => {
+      vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
+      vi.spyOn(control.eventHandler, 'subscribe');
+      vi.spyOn(gridStub, 'getColumnIndex')
+        .mockReturnValue(undefined as any)
+        .mockReturnValue(1);
+      const remapSpy = vi.spyOn(gridStub, 'remapAllColumnsRowSpan');
+
+      gridOptionsMock.enableCellRowSpan = true;
+      control.columns = columnsMock;
+
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() } as any;
+      gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData as any, gridStub);
+      const inputElm = control.menuElement!.querySelector('input[type="checkbox"]') as HTMLInputElement;
+      inputElm.checked = false;
+      inputElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+
+      expect(control.menuElement!.style.display).toBe('block');
+      expect(control.getAllColumns()).toEqual(columnsMock);
+      expect(control.getVisibleColumns()).toEqual(columnsMock);
+      expect(remapSpy).toHaveBeenCalled();
     });
 
     it('should open the Column Picker and then expect it to hide when clicking anywhere in the DOM body', () => {
@@ -223,39 +254,12 @@ describe('ColumnPickerControl', () => {
       expect(control.menuElement).toBeFalsy();
     });
 
-    it('should query an input checkbox change event and expect "readjustFrozenColumnIndexWhenNeeded" method to be called when the grid is detected to be a frozen grid', () => {
-      const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
-      vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
-      vi.spyOn(gridStub, 'getColumnIndex')
-        .mockReturnValue(undefined as any)
-        .mockReturnValue(1);
-      const readjustSpy = vi.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
-
-      gridOptionsMock.frozenColumn = 0;
-      control.columns = columnsMock;
-      control.init();
-
-      gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData as any, gridStub);
-      control.menuElement!.querySelector('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
-
-      expect(handlerSpy).toHaveBeenCalledTimes(4);
-      expect(readjustSpy).toHaveBeenCalledWith(0, columnsMock, columnsMock);
-      expect(control.getAllColumns()).toEqual(columnsMock);
-      expect(control.getVisibleColumns()).toEqual(columnsMock);
-
-      // cell click should close it
-      gridStub.onClick.notify({ row: 1, cell: 2, grid: gridStub }, eventData as any, gridStub);
-
-      expect(control.menuElement).toBeFalsy();
-    });
-
     it('should query an input checkbox change event and expect "headerColumnValueExtractor" method to be called when defined', () => {
       const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
-      vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
+      vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
       vi.spyOn(gridStub, 'getColumnIndex')
         .mockReturnValue(undefined as any)
         .mockReturnValue(1);
-      const readjustSpy = vi.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
 
       gridOptionsMock.columnPicker!.headerColumnValueExtractor = (column: Column) => `${column?.columnGroup || ''} - ${column.name}`;
       control.columns = columnsMock;
@@ -266,19 +270,17 @@ describe('ColumnPickerControl', () => {
       const liElmList = control.menuElement!.querySelectorAll<HTMLLIElement>('li');
 
       expect(handlerSpy).toHaveBeenCalledTimes(4);
-      expect(readjustSpy).toHaveBeenCalledWith(0, columnsMock, columnsMock);
       expect(control.getAllColumns()).toEqual(columnsMock);
       expect(control.getVisibleColumns()).toEqual(columnsMock);
       expect(liElmList[2].textContent).toBe('Billing - Field 3');
     });
 
     it('should return custom label when columnPickerLabel is defined', () => {
-      vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
+      vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
       const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
       vi.spyOn(gridStub, 'getColumnIndex')
         .mockReturnValue(undefined as any)
         .mockReturnValue(0);
-      const readjustSpy = vi.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
 
       control.columns = columnsMock;
       control.init();
@@ -288,7 +290,6 @@ describe('ColumnPickerControl', () => {
       const liElmList = control.menuElement!.querySelectorAll<HTMLLIElement>('li');
 
       expect(handlerSpy).toHaveBeenCalledTimes(4);
-      expect(readjustSpy).toHaveBeenCalledWith(0, columnsMock, columnsMock);
       expect(control.getAllColumns()).toEqual(columnsMock);
       expect(control.getVisibleColumns()).toEqual(columnsMock);
       expect(liElmList[1].textContent).toBe('Custom Label');
@@ -375,7 +376,7 @@ describe('ColumnPickerControl', () => {
     it('should open the column picker via "onHeaderContextMenu" and expect "onColumnsChanged" to be called when defined', () => {
       const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
       const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
-      vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
+      vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
       const onColChangedMock = vi.fn();
       vi.spyOn(gridStub, 'getColumnIndex')
         .mockReturnValue(undefined as any)
@@ -386,7 +387,9 @@ describe('ColumnPickerControl', () => {
       control.init();
 
       gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData as any, gridStub);
-      control.menuElement!.querySelector<HTMLInputElement>('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
+      const inputElm = control.menuElement!.querySelector('input[type="checkbox"]') as HTMLInputElement;
+      inputElm.checked = true;
+      inputElm.dispatchEvent(new Event('click', { bubbles: true }));
 
       const expectedCallbackArgs = {
         columnId: 'field1',
@@ -410,7 +413,7 @@ describe('ColumnPickerControl', () => {
         .mockReturnValue(1);
       vi.spyOn(control, 'getVisibleColumns').mockReturnValue(columnsMock.slice(1));
       const setOptionSpy = vi.spyOn(gridStub, 'setOptions');
-      const setColumnSpy = vi.spyOn(gridStub, 'setColumns');
+      const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
 
       gridOptionsMock.columnPicker!.hideForceFitButton = false;
       gridOptionsMock.columnPicker!.forceFitTitle = 'Custom Force Fit';
@@ -428,7 +431,7 @@ describe('ColumnPickerControl', () => {
       expect(inputForcefitElm.dataset.option).toBe('autoresize');
       expect(labelSyncElm.textContent).toBe('Custom Force Fit');
       expect(setOptionSpy).toHaveBeenCalledWith({ forceFitColumns: true });
-      expect(setColumnSpy).toHaveBeenCalledWith(columnsMock.slice(1));
+      expect(updateColumnSpy).toHaveBeenCalled();
     });
 
     it('should open the column picker via "onHeaderContextMenu", click on "syncresize" checkbox and expect "setOptions" to be called with "syncColumnCellResize" property', () => {
@@ -531,10 +534,17 @@ describe('ColumnPickerControl', () => {
         control.menuElement!.querySelector<HTMLInputElement>('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
         const col4 = control.menuElement!.querySelector<HTMLInputElement>('li.hidden input[data-columnid=field4]');
 
+        const expectedColumnMocks = [
+          { id: 'field1', field: 'field1', name: 'Field 1', width: 100, nameKey: 'TITLE', hidden: false },
+          { id: 'field2', field: 'field2', name: 'Field 2', width: 75, columnPickerLabel: 'Custom Label' },
+          { id: 'field3', field: 'field3', name: 'Field 3', columnGroup: 'Billing', width: 75 },
+          { id: 'field4', field: 'field4', name: 'Field 4', width: 75, excludeFromColumnPicker: true },
+        ];
+
         expect(handlerSpy).toHaveBeenCalledTimes(4);
-        expect(control.getAllColumns()).toEqual(columnsMock);
-        expect(control.getVisibleColumns()).toEqual(columnsMock);
-        expect(control.columns).toEqual(columnsMock);
+        expect(control.getAllColumns()).toEqual(expectedColumnMocks);
+        expect(control.getVisibleColumns()).toEqual(expectedColumnMocks);
+        expect(control.columns).toEqual(expectedColumnMocks);
         expect(col4).toBeTruthy();
       });
     });
@@ -573,7 +583,7 @@ describe('ColumnPickerControl', () => {
       expect((SharedService.prototype.gridOptions.columnPicker as ColumnPicker).forceFitTitle).toBe('Ajustement forcé des colonnes');
       expect((SharedService.prototype.gridOptions.columnPicker as ColumnPicker).syncResizeTitle).toBe('Redimension synchrone');
       expect(columnsMock).toEqual([
-        { id: 'field1', field: 'field1', name: 'Titre', width: 100, nameKey: 'TITLE' },
+        { id: 'field1', field: 'field1', name: 'Titre', width: 100, nameKey: 'TITLE', hidden: false },
         { id: 'field2', field: 'field2', name: 'Field 2', width: 75, columnPickerLabel: 'Custom Label' },
         { id: 'field3', field: 'field3', name: 'Field 3', columnGroup: 'Billing', width: 75 },
         { id: 'field4', field: 'field4', name: 'Field 4', width: 75, excludeFromColumnPicker: true },
@@ -617,7 +627,7 @@ describe('ColumnPickerControl', () => {
       expect((SharedService.prototype.gridOptions.columnPicker as ColumnPicker).forceFitTitle).toBe('Custom Force Fit Title');
       expect((SharedService.prototype.gridOptions.columnPicker as ColumnPicker).syncResizeTitle).toBe('Custom Sync Resize Title');
       expect(columnsMock).toEqual([
-        { id: 'field1', field: 'field1', name: 'Titre', width: 100, nameKey: 'TITLE' },
+        { id: 'field1', field: 'field1', name: 'Titre', width: 100, nameKey: 'TITLE', hidden: false },
         { id: 'field2', field: 'field2', name: 'Field 2', width: 75, columnPickerLabel: 'Custom Label' },
         { id: 'field3', field: 'field3', name: 'Field 3', columnGroup: 'Billing', width: 75 },
         { id: 'field4', field: 'field4', name: 'Field 4', width: 75, excludeFromColumnPicker: true },
@@ -642,8 +652,8 @@ describe('ColumnPickerControl', () => {
       ];
 
       // Mock the shared service to return our custom columns
-      vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(unsortedColumnsMock);
-      vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(unsortedColumnsMock);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(unsortedColumnsMock);
+      vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(unsortedColumnsMock);
       vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(unsortedColumnsMock);
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(unsortedColumnsMock);
 
@@ -693,8 +703,8 @@ describe('ColumnPickerControl', () => {
       ];
 
       // Mock the shared service to return our custom columns
-      vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(originalColumnsMock);
-      vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(originalColumnsMock);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(originalColumnsMock);
+      vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(originalColumnsMock);
       vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(originalColumnsMock);
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(originalColumnsMock);
 

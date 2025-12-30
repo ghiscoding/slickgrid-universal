@@ -28,6 +28,7 @@ import {
   mapOperatorByFieldType,
   mapOperatorToShorthandDesignation,
   mapOperatorType,
+  sortPresetColumns,
   thousandSeparatorFormatted,
   unflattenParentChildArrayToTree,
   unsubscribeAll,
@@ -1458,7 +1459,28 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('thousandSeparatorFormatted method', () => {
+  describe('sortPresetColumns() method', () => {
+    it('should sort preset columns', () => {
+      const allColumns: Column[] = [
+        { id: 'firstName', field: 'firstName', name: 'First Name', minWidth: 110, width: 300, hidden: true },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', width: 620 },
+        { id: 'age', field: 'age', name: 'age', width: 192, resizable: false },
+      ];
+
+      const results = sortPresetColumns(allColumns, [
+        { id: 'firstName', field: 'firstName' },
+        { id: 'lastName', field: 'lastName' },
+      ]);
+
+      expect(results).toEqual([
+        { field: 'firstName', hidden: false, id: 'firstName', minWidth: 110, name: 'First Name', width: 300 },
+        { field: 'lastName', hidden: false, id: 'lastName', name: 'Last Name', width: 620 },
+        { field: 'age', hidden: true, id: 'age', name: 'age', resizable: false, width: 192 },
+      ]);
+    });
+  });
+
+  describe('thousandSeparatorFormatted() method', () => {
     it('should return original value when input provided is null', () => {
       const input = null as any;
       const output = thousandSeparatorFormatted(input, ',');

@@ -1,7 +1,6 @@
 import {
   FieldType,
   OperatorType,
-  SharedService,
   type BackendService,
   type Column,
   type ColumnFilter,
@@ -47,14 +46,12 @@ describe('GraphqlService', () => {
   let service: GraphqlService;
   let paginationOptions: Pagination;
   let serviceOptions: GraphqlServiceOption;
-  let sharedService: SharedService;
 
   beforeEach(() => {
     mockColumns = [
       { id: 'field1', field: 'field1', width: 100 },
       { id: 'field2', field: 'field2', width: 100 },
     ];
-    sharedService = new SharedService();
     service = new GraphqlService();
     serviceOptions = {
       datasetName: 'users',
@@ -1555,28 +1552,6 @@ describe('GraphqlService', () => {
       const presetFilters = [{ columnId: 'duration', searchTerms: ['2..33'] }] as CurrentFilter[];
 
       service.init(serviceOptions, paginationOptions, gridStub);
-      service.updateFilters(presetFilters, true);
-      const query = service.buildQuery();
-      const currentFilters = service.getCurrentFilters();
-
-      expect(removeSpaces(query)).toBe(removeSpaces(expectation));
-      expect(currentFilters).toEqual(presetFilters);
-    });
-
-    it('should return a query with all columns and search even when having hidden columns (basically when it is not part of the `getColumns()` return) when all passed are passed with the shared service', () => {
-      const expectation = `query{users(first:10, offset:0, filterBy:[{field:duration, operator:GE, value:"2"}, {field:duration, operator:LE, value:"33"}]) {
-        totalCount,nodes{ id,company,gender,duration,startDate } }}`;
-      const presetFilters = [{ columnId: 'duration', searchTerms: ['2..33'] }] as CurrentFilter[];
-      const mockColumnsCopy = [...mockColumns];
-
-      // remove "Gender" column from `getColumns` (to simulate hidden field)
-      mockColumnsCopy.splice(1, 1);
-      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumnsCopy);
-
-      // but still pass all columns to the service init
-      vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
-
-      service.init(serviceOptions, paginationOptions, gridStub, sharedService);
       service.updateFilters(presetFilters, true);
       const query = service.buildQuery();
       const currentFilters = service.getCurrentFilters();
