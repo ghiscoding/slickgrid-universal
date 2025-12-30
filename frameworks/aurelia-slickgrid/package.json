@@ -58,7 +58,6 @@
     "@slickgrid-universal/empty-warning-component": "workspace:*",
     "@slickgrid-universal/event-pub-sub": "workspace:*",
     "@slickgrid-universal/pagination-component": "workspace:*",
-    "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
     "@slickgrid-universal/utils": "workspace:*",
     "dequal": "catalog:",
     "sortablejs": "catalog:"

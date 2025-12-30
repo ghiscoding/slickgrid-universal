@@ -1006,9 +1006,6 @@ importers:
       '@slickgrid-universal/pagination-component':
         specifier: workspace:*
         version: link:../../packages/pagination-component
-      '@slickgrid-universal/row-detail-view-plugin':
-        specifier: workspace:*
-        version: link:../../packages/row-detail-view-plugin
       '@slickgrid-universal/utils':
         specifier: workspace:*
         version: link:../../packages/utils
@@ -1058,9 +1055,6 @@ importers:
       '@slickgrid-universal/pagination-component':
         specifier: workspace:*
         version: link:../../packages/pagination-component
-      '@slickgrid-universal/row-detail-view-plugin':
-        specifier: workspace:*
-        version: link:../../packages/row-detail-view-plugin
       '@slickgrid-universal/utils':
         specifier: workspace:*
         version: link:../../packages/utils
@@ -1167,9 +1161,6 @@ importers:
       '@slickgrid-universal/pagination-component':
         specifier: workspace:*
         version: link:../../packages/pagination-component
-      '@slickgrid-universal/row-detail-view-plugin':
-        specifier: workspace:*
-        version: link:../../packages/row-detail-view-plugin
       '@slickgrid-universal/utils':
         specifier: workspace:*
         version: link:../../packages/utils
