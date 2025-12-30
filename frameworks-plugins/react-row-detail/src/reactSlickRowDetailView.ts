@@ -14,8 +14,8 @@ import {
 import { type EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickRowDetailView as UniversalSlickRowDetailView } from '@slickgrid-universal/row-detail-view-plugin';
 import type { Root } from 'react-dom/client';
-import type { GridOption, RowDetailView, ViewModelBindableInputData } from '../models/index.js';
-import { createReactComponentDynamically } from '../services/reactUtils.js';
+import { createReactComponentDynamically, type GridOption, type ViewModelBindableInputData } from 'slickgrid-react';
+import type { RowDetailView } from './interfaces';
 
 const ROW_DETAIL_CONTAINER_PREFIX = 'container_';
 const PRELOAD_CONTAINER_PREFIX = 'container_loading';
@@ -26,9 +26,9 @@ export interface CreatedView {
   root: Root | null;
   rendered?: boolean;
 }
-// interface SRDV extends React.Component<Props, State>, UniversalSlickRowDetailView {}s
 
-export class SlickRowDetailView extends UniversalSlickRowDetailView {
+export class ReactSlickRowDetailView extends UniversalSlickRowDetailView {
+  static pluginName = 'ReactSlickRowDetailView';
   protected _component?: any;
   protected _preloadComponent?: any;
   protected _preloadRoot?: Root;
@@ -76,7 +76,7 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
   }
 
   /** Get the instance of the SlickGrid addon (control or plugin). */
-  getAddonInstance(): SlickRowDetailView | null {
+  getAddonInstance(): ReactSlickRowDetailView | null {
     return this;
   }
 

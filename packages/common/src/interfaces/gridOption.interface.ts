@@ -25,6 +25,7 @@ import type {
   ExcelExportOption,
   ExtensionModel,
   ExternalResource,
+  ExternalResourceConstructor,
   Formatter,
   FormatterOption,
   GridMenu,
@@ -552,7 +553,7 @@ export interface GridOption<C extends Column = Column> {
   excelExportOptions?: ExcelExportOption;
 
   /** Register any external Resources (Components, Services) like the ExcelExportService, TextExportService, SlickCompositeEditorComponent, ... */
-  externalResources?: ExternalResource[];
+  externalResources?: ExternalResource[] | ExternalResourceConstructor[];
 
   /**
    * Some external (optional) extensions might need to be pre-registered, for example SlickRowDetail.

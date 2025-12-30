@@ -15,16 +15,9 @@
     },
     "publish": {
       "cleanupTempFiles": true,
-      "stripPackageKeys": [
-        "devDependencies",
-        "scripts"
-      ]
+      "stripPackageKeys": ["devDependencies", "scripts"]
     }
   },
   "changelogPreset": "conventionalcommits",
-  "packages": [
-    "demos/*",
-    "frameworks/*",
-    "packages/*"
-  ]
+  "packages": ["demos/*", "frameworks/*", "frameworks-plugins/*", "packages/*"]
 }

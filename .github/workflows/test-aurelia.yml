@@ -55,6 +55,9 @@ jobs:
       - name: Aurelia-Slickgrid Framework Build
         run: pnpm aurelia:build:framework
 
+      - name: Aurelia-Slickgrid Framework-Plugins Build
+        run: pnpm aurelia:build:framework-plugins
+
       - name: Website Dev Build (served for Cypress)
         run: pnpm aurelia:build:demo
 

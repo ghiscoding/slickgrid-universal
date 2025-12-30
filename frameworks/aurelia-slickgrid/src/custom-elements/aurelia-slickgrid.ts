@@ -10,6 +10,7 @@ import type {
   EventSubscription,
   ExtensionList,
   ExternalResource,
+  ExternalResourceConstructor,
   Locale,
   Metrics,
   Pagination,
@@ -54,12 +55,16 @@ import { extend } from '@slickgrid-universal/utils';
 import { bindable, BindingMode, customElement, IContainer, IEventAggregator, IObserverLocator, resolve, type IDisposable } from 'aurelia';
 import { dequal } from 'dequal/lite';
 import { Constants } from '../constants.js';
-import { SlickRowDetailView } from '../extensions/slickRowDetailView.js';
 import { GlobalGridOptions } from '../global-grid-options.js';
 import type { AureliaGridInstance, GridOption } from '../models/index.js';
 import { AureliaUtilService, ContainerService, disposeAllSubscriptions, TranslaterService } from '../services/index.js';
 
 const WARN_NO_PREPARSE_DATE_SIZE = 10000; // data size to warn user when pre-parse isn't enabled
+
+export interface AureliaSlickRowDetailView {
+  create(columns: Column[], gridOptions: GridOption): any;
+  init(grid: SlickGrid): void;
+}
 
 @customElement({
   name: 'aurelia-slickgrid',
@@ -96,7 +101,7 @@ export class AureliaSlickgridCustomElement {
   protected _isPaginationInitialized = false;
   protected _isLocalGrid = true;
   protected _paginationOptions: Pagination | undefined;
-  protected _registeredResources: ExternalResource[] = [];
+  protected _registeredResources: Array<ExternalResource | ExternalResourceConstructor> = [];
   protected _scrollEndCalled = false;
 
   backendServiceApi: BackendServiceApi | undefined;
@@ -116,7 +121,7 @@ export class AureliaSlickgridCustomElement {
   slickFooter: SlickFooterComponent | undefined;
   paginationComponent: BasePaginationComponent | undefined;
   slickPagination: BasePaginationComponent | undefined;
-  slickRowDetailView?: SlickRowDetailView;
+  slickRowDetailView?: AureliaSlickRowDetailView;
 
   // services
   backendUtilityService!: BackendUtilityService;
@@ -263,7 +268,7 @@ export class AureliaSlickgridCustomElement {
     this._isDatasetHierarchicalInitialized = isInitialized;
   }
 
-  get registeredResources(): ExternalResource[] {
+  get registeredResources(): Array<ExternalResource | ExternalResourceConstructor> {
     return this._registeredResources;
   }
 
@@ -502,6 +507,7 @@ export class AureliaSlickgridCustomElement {
       // Slick Grid & DataView objects
       dataView: this.dataview,
       slickGrid: this.grid,
+      extensions: this.extensionService?.extensionList,
 
       // public methods
       dispose: this.disposeInstance.bind(this),
@@ -609,8 +615,8 @@ export class AureliaSlickgridCustomElement {
     if (Array.isArray(this._registeredResources)) {
       while (this._registeredResources.length > 0) {
         const res = this._registeredResources.pop();
-        if (res?.dispose) {
-          res.dispose();
+        if (typeof (res as ExternalResource)?.dispose === 'function') {
+          (res as ExternalResource).dispose!();
         }
       }
     }
@@ -1467,7 +1473,7 @@ export class AureliaSlickgridCustomElement {
   }
 
   /** Add a register of a new external resource, user could also optional dispose all previous resources before pushing any new resources to the resources array list. */
-  registerExternalResources(resources: ExternalResource[], disposePreviousResources = false) {
+  registerExternalResources(resources: Array<ExternalResource | ExternalResourceConstructor>, disposePreviousResources = false) {
     if (disposePreviousResources) {
       this.disposeExternalResources();
     }
@@ -1479,11 +1485,11 @@ export class AureliaSlickgridCustomElement {
     this._registeredResources = [];
   }
 
-  protected initializeExternalResources(resources: ExternalResource[]) {
+  protected initializeExternalResources(resources: Array<ExternalResource | ExternalResourceConstructor>) {
     if (Array.isArray(resources)) {
       for (const resource of resources) {
-        if (this.grid && typeof resource.init === 'function') {
-          resource.init(this.grid, this.containerService);
+        if (this.grid && typeof (resource as ExternalResource).init === 'function') {
+          (resource as ExternalResource).init!(this.grid, this.containerService);
         }
       }
     }
@@ -1497,19 +1503,35 @@ export class AureliaSlickgridCustomElement {
     // register all services by executing their init method and providing them with the Grid object
     if (Array.isArray(this._registeredResources)) {
       for (const resource of this._registeredResources) {
-        if (resource?.className === 'RxJsResource') {
+        if ((resource as ExternalResource)?.className === 'RxJsResource') {
           this.registerRxJsResource(resource as RxJsFacade);
         }
       }
     }
 
-    if (this.options.enableRowDetailView && !this._registeredResources.some((r) => r instanceof SlickRowDetailView)) {
-      this.slickRowDetailView = new SlickRowDetailView(this.aureliaUtilService, this._eventPubSubService, this.elm as HTMLElement);
-      this.slickRowDetailView.create(this.columns, this.options);
-      this.extensionService.addExtensionToList(ExtensionName.rowDetailView, {
-        name: ExtensionName.rowDetailView,
-        instance: this.slickRowDetailView,
-      });
+    if (this.options.enableRowDetailView) {
+      const RowDetailClass = this._registeredResources.find((res: any) => res.pluginName === 'AureliaSlickRowDetailView') as
+        | ExternalResourceConstructor
+        | undefined;
+      if (!RowDetailClass) {
+        throw new Error(
+          '[Aurelia-Slickgrid] You enabled the Row Detail View feature but you did not provide the "AureliaSlickRowDetailView" class as an external resource.'
+        );
+      }
+
+      if (RowDetailClass) {
+        const rowDetailInstance = new RowDetailClass(
+          this.aureliaUtilService,
+          this._eventPubSubService,
+          this.elm as HTMLElement
+        ) as AureliaSlickRowDetailView;
+        this.slickRowDetailView = rowDetailInstance;
+        rowDetailInstance.create(this.columns, this.options);
+        this.extensionService.addExtensionToList(ExtensionName.rowDetailView, {
+          name: ExtensionName.rowDetailView,
+          instance: this.slickRowDetailView,
+        });
+      }
     }
   }
 

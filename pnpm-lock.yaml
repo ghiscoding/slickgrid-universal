@@ -9,6 +9,9 @@ catalogs:
     '@4tw/cypress-drag-drop':
       specifier: ^2.3.1
       version: 2.3.1
+    '@angular-eslint/eslint-plugin':
+      specifier: ^20.7.0
+      version: 20.7.0
     '@faker-js/faker':
       specifier: ^10.1.0
       version: 10.1.0
@@ -225,26 +228,26 @@ importers:
   demos/aurelia:
     dependencies:
       '@aurelia/fetch-client':
-        specifier: ^2.0.0-beta.25
-        version: 2.0.0-beta.25
+        specifier: ^2.0.0-beta.27
+        version: 2.0.0-beta.27
       '@aurelia/i18n':
-        specifier: ^2.0.0-beta.25
-        version: 2.0.0-beta.25(typescript@5.8.3)
+        specifier: ^2.0.0-beta.27
+        version: 2.0.0-beta.27(typescript@5.8.3)
       '@aurelia/kernel':
-        specifier: ^2.0.0-beta.25
-        version: 2.0.0-beta.25
+        specifier: ^2.0.0-beta.27
+        version: 2.0.0-beta.27
       '@aurelia/metadata':
-        specifier: ^2.0.0-beta.25
-        version: 2.0.0-beta.25
+        specifier: ^2.0.0-beta.27
+        version: 2.0.0-beta.27
       '@aurelia/router':
-        specifier: ^2.0.0-beta.25
-        version: 2.0.0-beta.25
+        specifier: ^2.0.0-beta.27
+        version: 2.0.0-beta.27
       '@aurelia/runtime':
-        specifier: ^2.0.0-beta.25
-        version: 2.0.0-beta.25
+        specifier: ^2.0.0-beta.27
+        version: 2.0.0-beta.27
       '@aurelia/runtime-html':
-        specifier: ^2.0.0-beta.25
-        version: 2.0.0-beta.25
+        specifier: ^2.0.0-beta.27
+        version: 2.0.0-beta.27
       '@faker-js/faker':
         specifier: 'catalog:'
         version: 10.1.0
@@ -257,6 +260,9 @@ importers:
       '@popperjs/core':
         specifier: 'catalog:'
         version: 2.11.8
+      '@slickgrid-universal/aurelia-row-detail':
+        specifier: workspace:*
+        version: link:../../frameworks-plugins/aurelia-row-detail
       '@slickgrid-universal/common':
         specifier: workspace:*
         version: link:../../packages/common
@@ -285,8 +291,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/text-export
       aurelia:
-        specifier: ^2.0.0-beta.25
-        version: 2.0.0-beta.25
+        specifier: ^2.0.0-beta.27
+        version: 2.0.0-beta.27
       aurelia-slickgrid:
         specifier: workspace:*
         version: link:../../frameworks/aurelia-slickgrid
@@ -301,8 +307,8 @@ importers:
         version: 7.8.2
     devDependencies:
       '@aurelia/vite-plugin':
-        specifier: ^2.0.0-beta.25
-        version: 2.0.0-beta.25(@types/node@24.10.4)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.2)(sass-embedded@1.93.2)(sass@1.97.1)(terser@5.44.0)(yaml@2.8.2)
+        specifier: ^2.0.0-beta.27
+        version: 2.0.0-beta.27(@types/node@24.10.4)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.2)(sass-embedded@1.93.2)(sass@1.97.1)(terser@5.44.0)(yaml@2.8.2)
       '@types/fnando__sparkline':
         specifier: 'catalog:'
         version: 0.3.7
@@ -375,9 +381,9 @@ importers:
       '@slickgrid-universal/pagination-component':
         specifier: workspace:*
         version: link:../../packages/pagination-component
-      '@slickgrid-universal/row-detail-view-plugin':
+      '@slickgrid-universal/react-row-detail':
         specifier: workspace:*
-        version: link:../../packages/row-detail-view-plugin
+        version: link:../../frameworks-plugins/react-row-detail
       '@slickgrid-universal/rxjs-observable':
         specifier: workspace:*
         version: link:../../packages/rxjs-observable
@@ -584,15 +590,15 @@ importers:
       '@slickgrid-universal/odata':
         specifier: workspace:*
         version: link:../../packages/odata
-      '@slickgrid-universal/row-detail-view-plugin':
-        specifier: workspace:*
-        version: link:../../packages/row-detail-view-plugin
       '@slickgrid-universal/rxjs-observable':
         specifier: workspace:*
         version: link:../../packages/rxjs-observable
       '@slickgrid-universal/text-export':
         specifier: workspace:*
         version: link:../../packages/text-export
+      '@slickgrid-universal/vue-row-detail':
+        specifier: workspace:*
+        version: link:../../frameworks-plugins/vue-row-detail
       bootstrap:
         specifier: 'catalog:'
         version: 5.3.8(@popperjs/core@2.11.8)
@@ -643,6 +649,122 @@ importers:
         specifier: catalog:vite7
         version: 7.3.0(@types/node@24.10.4)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.2)(sass-embedded@1.93.2)(sass@1.97.1)(terser@5.44.0)(yaml@2.8.2)
 
+  frameworks-plugins/angular-row-detail:
+    dependencies:
+      '@ngx-translate/core':
+        specifier: ^16.0.4
+        version: 16.0.4(@angular/common@19.2.17(@angular/core@19.2.17(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(@angular/core@19.2.17(rxjs@7.8.2)(zone.js@0.16.0))
+      '@slickgrid-universal/common':
+        specifier: workspace:*
+        version: link:../../packages/common
+      '@slickgrid-universal/event-pub-sub':
+        specifier: workspace:*
+        version: link:../../packages/event-pub-sub
+      '@slickgrid-universal/row-detail-view-plugin':
+        specifier: workspace:*
+        version: link:../../packages/row-detail-view-plugin
+      angular-slickgrid:
+        specifier: workspace:*
+        version: link:../../frameworks/angular-slickgrid/dist
+      rxjs:
+        specifier: 'catalog:'
+        version: 7.8.2
+    devDependencies:
+      '@angular-eslint/eslint-plugin':
+        specifier: 'catalog:'
+        version: 20.7.0(@typescript-eslint/utils@8.45.0(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3)
+      '@angular/core':
+        specifier: ^19.2.17
+        version: 19.2.17(rxjs@7.8.2)(zone.js@0.16.0)
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.36.0
+      tslib:
+        specifier: 'catalog:'
+        version: 2.8.1
+      vitest:
+        specifier: 'catalog:'
+        version: 4.0.16(@types/node@24.10.4)(@vitest/ui@4.0.16)(esbuild@0.27.2)(jiti@2.6.1)(jsdom@27.4.0)(less@4.4.1)(sass-embedded@1.93.2)(sass@1.97.1)(terser@5.44.0)(yaml@2.8.2)
+
+  frameworks-plugins/aurelia-row-detail:
+    dependencies:
+      '@aurelia/kernel':
+        specifier: ^2.0.0-beta.25
+        version: 2.0.0-beta.27
+      '@aurelia/runtime-html':
+        specifier: ^2.0.0-beta.25
+        version: 2.0.0-beta.27
+      '@slickgrid-universal/common':
+        specifier: workspace:*
+        version: link:../../packages/common
+      '@slickgrid-universal/event-pub-sub':
+        specifier: workspace:*
+        version: link:../../packages/event-pub-sub
+      '@slickgrid-universal/row-detail-view-plugin':
+        specifier: workspace:*
+        version: link:../../packages/row-detail-view-plugin
+      aurelia-slickgrid:
+        specifier: workspace:*
+        version: link:../../frameworks/aurelia-slickgrid
+      rxjs:
+        specifier: 'catalog:'
+        version: 7.8.2
+      tslib:
+        specifier: 'catalog:'
+        version: 2.8.1
+
+  frameworks-plugins/react-row-detail:
+    dependencies:
+      '@slickgrid-universal/common':
+        specifier: workspace:*
+        version: link:../../packages/common
+      '@slickgrid-universal/event-pub-sub':
+        specifier: workspace:*
+        version: link:../../packages/event-pub-sub
+      '@slickgrid-universal/row-detail-view-plugin':
+        specifier: workspace:*
+        version: link:../../packages/row-detail-view-plugin
+      react:
+        specifier: ^19.2.1
+        version: 19.2.3
+      react-dom:
+        specifier: ^19.2.1
+        version: 19.2.3(react@19.2.3)
+      slickgrid-react:
+        specifier: workspace:*
+        version: link:../../frameworks/slickgrid-react
+      tslib:
+        specifier: 'catalog:'
+        version: 2.8.1
+    devDependencies:
+      '@types/react':
+        specifier: ^19.2.7
+        version: 19.2.7
+      '@types/react-dom':
+        specifier: ^19.2.3
+        version: 19.2.3(@types/react@19.2.7)
+
+  frameworks-plugins/vue-row-detail:
+    dependencies:
+      '@slickgrid-universal/common':
+        specifier: workspace:*
+        version: link:../../packages/common
+      '@slickgrid-universal/event-pub-sub':
+        specifier: workspace:*
+        version: link:../../packages/event-pub-sub
+      '@slickgrid-universal/row-detail-view-plugin':
+        specifier: workspace:*
+        version: link:../../packages/row-detail-view-plugin
+      slickgrid-vue:
+        specifier: workspace:*
+        version: link:../../frameworks/slickgrid-vue
+      tslib:
+        specifier: 'catalog:'
+        version: 2.8.1
+      vue:
+        specifier: 'catalog:'
+        version: 3.5.26(typescript@5.9.3)
+
   frameworks/angular-slickgrid:
     dependencies:
       '@ngx-translate/core':
@@ -663,9 +785,6 @@ importers:
       '@slickgrid-universal/pagination-component':
         specifier: workspace:*
         version: link:../../packages/pagination-component
-      '@slickgrid-universal/row-detail-view-plugin':
-        specifier: workspace:*
-        version: link:../../packages/row-detail-view-plugin
       '@slickgrid-universal/rxjs-observable':
         specifier: workspace:*
         version: link:../../packages/rxjs-observable
@@ -695,7 +814,7 @@ importers:
         specifier: ^19.2.19
         version: 19.2.19(@angular/compiler-cli@19.2.17(@angular/compiler@19.2.17)(typescript@5.8.3))(@angular/compiler@19.2.17)(@rspack/core@1.5.8(@swc/helpers@0.5.17))(@types/node@24.10.4)(chokidar@4.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(ng-packagr@19.2.2(@angular/compiler-cli@19.2.17(@angular/compiler@19.2.17)(typescript@5.8.3))(tslib@2.8.1)(typescript@5.8.3))(sass-embedded@1.93.2)(typescript@5.8.3)(vite@6.4.1(@types/node@24.10.4)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.2)(sass-embedded@1.93.2)(sass@1.97.1)(terser@5.44.0)(yaml@2.8.2))(yaml@2.8.2)
       '@angular-eslint/eslint-plugin':
-        specifier: ^20.7.0
+        specifier: 'catalog:'
         version: 20.7.0(@typescript-eslint/utils@8.45.0(eslint@9.36.0(jiti@2.6.1))(typescript@5.8.3))(eslint@9.36.0(jiti@2.6.1))(typescript@5.8.3)
       '@angular/animations':
         specifier: ^19.2.17
@@ -763,6 +882,9 @@ importers:
       '@popperjs/core':
         specifier: 'catalog:'
         version: 2.11.8
+      '@slickgrid-universal/angular-row-detail':
+        specifier: link:../../frameworks-plugins/angular-row-detail
+        version: link:../../frameworks-plugins/angular-row-detail
       '@slickgrid-universal/composite-editor-component':
         specifier: workspace:*
         version: link:../../packages/composite-editor-component
@@ -858,14 +980,14 @@ importers:
   frameworks/aurelia-slickgrid:
     dependencies:
       '@aurelia/i18n':
-        specifier: ^2.0.0-beta.25
-        version: 2.0.0-beta.25(typescript@5.8.3)
+        specifier: ^2.0.0-beta.27
+        version: 2.0.0-beta.27(typescript@5.8.3)
       '@aurelia/runtime':
-        specifier: ^2.0.0-beta.25
-        version: 2.0.0-beta.25
+        specifier: ^2.0.0-beta.27
+        version: 2.0.0-beta.27
       '@aurelia/runtime-html':
-        specifier: ^2.0.0-beta.25
-        version: 2.0.0-beta.25
+        specifier: ^2.0.0-beta.27
+        version: 2.0.0-beta.27
       '@formkit/tempo':
         specifier: 'catalog:'
         version: 1.0.0
@@ -884,15 +1006,12 @@ importers:
       '@slickgrid-universal/pagination-component':
         specifier: workspace:*
         version: link:../../packages/pagination-component
-      '@slickgrid-universal/row-detail-view-plugin':
-        specifier: workspace:*
-        version: link:../../packages/row-detail-view-plugin
       '@slickgrid-universal/utils':
         specifier: workspace:*
         version: link:../../packages/utils
       aurelia:
-        specifier: ^2.0.0-beta.25
-        version: 2.0.0-beta.25
+        specifier: ^2.0.0-beta.27
+        version: 2.0.0-beta.27
       dequal:
         specifier: 'catalog:'
         version: 2.0.3
@@ -901,8 +1020,8 @@ importers:
         version: 1.15.6
     devDependencies:
       '@aurelia/kernel':
-        specifier: ^2.0.0-beta.25
-        version: 2.0.0-beta.25
+        specifier: ^2.0.0-beta.27
+        version: 2.0.0-beta.27
       dompurify:
         specifier: 'catalog:'
         version: 3.3.1
@@ -936,9 +1055,6 @@ importers:
       '@slickgrid-universal/pagination-component':
         specifier: workspace:*
         version: link:../../packages/pagination-component
-      '@slickgrid-universal/row-detail-view-plugin':
-        specifier: workspace:*
-        version: link:../../packages/row-detail-view-plugin
       '@slickgrid-universal/utils':
         specifier: workspace:*
         version: link:../../packages/utils
@@ -1045,9 +1161,6 @@ importers:
       '@slickgrid-universal/pagination-component':
         specifier: workspace:*
         version: link:../../packages/pagination-component
-      '@slickgrid-universal/row-detail-view-plugin':
-        specifier: workspace:*
-        version: link:../../packages/row-detail-view-plugin
       '@slickgrid-universal/utils':
         specifier: workspace:*
         version: link:../../packages/utils
@@ -1661,60 +1774,60 @@ packages:
   '@asamuzakjp/nwsapi@2.3.9':
     resolution: {integrity: sha512-n8GuYSrI9bF7FFZ/SjhwevlHc8xaVlb/7HmHelnc/PZXBD2ZR49NnN9sMMuDdEGPeeRQ5d0hqlSlEpgCX3Wl0Q==}
 
-  '@aurelia/expression-parser@2.0.0-beta.25':
-    resolution: {integrity: sha512-aIbXxC+jBjeoNX/Pshrj/RYBFDx03YK5MEBG/DAYZUy9GKFguAMNpWGGj4hbtDncZetKtuDAK8sOPMffaF4Tyg==}
+  '@aurelia/expression-parser@2.0.0-beta.27':
+    resolution: {integrity: sha512-cQx+f4HeX9Fq4aAz+eOd6RMQJlpddq7yAEwxQHCuWTaQ7Zn117KQLP5G9f3C38jPYcgdwE3KzO6fIl/DSOKKoA==}
     engines: {node: '>=20.16.0'}
 
-  '@aurelia/fetch-client@2.0.0-beta.25':
-    resolution: {integrity: sha512-3bynSrG0gSmUbxaFJokJfEtwJ85bRBsg8RHnczmv3R5xLIMOUcMYpJVOangMM1ek4qEwlzi0Q1srpT2hrxPKlA==}
+  '@aurelia/fetch-client@2.0.0-beta.27':
+    resolution: {integrity: sha512-5Bo3pIiAcZIXqqmwyXe1qL3YMBXnZygPZPCOZ5KBaR+tDAUH5KtZgstxOqEa79WPWKWH04YMUcdVRt5kooDsUw==}
     engines: {node: '>=20.16.0'}
 
-  '@aurelia/i18n@2.0.0-beta.25':
-    resolution: {integrity: sha512-5M4FN8vMl8vU6HcOhx+/gF7Aa/4K/P+0qqz7FNi2T9ZHShEJMAkkz8CcrzZaVtfANCUPPaeMp3SZRJM5klFnWw==}
+  '@aurelia/i18n@2.0.0-beta.27':
+    resolution: {integrity: sha512-N7XHV3z26xayddCoIv6LMZDhVen8x5UlcPN/oPedKl6r/a9Zz2McOBfNQJDDN4OVkQ8Jokp4jfAwkrejjBGgWA==}
     engines: {node: '>=20.16.0'}
 
-  '@aurelia/kernel@2.0.0-beta.25':
-    resolution: {integrity: sha512-U8I/FH4RJOkXe2igTy4G6U34aSdDLa43f4C+z4IU4jvgVpJTyu9+B92n/tUI7TtE+lOly8sbi7GQbgaPP9lntw==}
+  '@aurelia/kernel@2.0.0-beta.27':
+    resolution: {integrity: sha512-gJNmMwtgvpdsg2GyQ9szjAMpeva4m067m5OVhxi7OGp0/VduM8dbK+NNT15QDw289DFr4ucHwBOPwKe2mLy8Cw==}
     engines: {node: '>=20.16.0'}
 
-  '@aurelia/metadata@2.0.0-beta.25':
-    resolution: {integrity: sha512-N/TihhPtbM/2FbcOGkCuCOpTjRyQTz7Z3GyNkJGxiIgTdMnzrpslwoC3GT/Qeh3lP28zR96jfAbAOlSyy8wY6g==}
+  '@aurelia/metadata@2.0.0-beta.27':
+    resolution: {integrity: sha512-FGo24WjiawAhVCO4FzVMYUzEbDCKw7DOEBt1ZmM4/0OW7E2pW0Wd/lF29JIPHTJeuJGp32ri+nJj/6ABelei2g==}
     engines: {node: '>=20.16.0'}
 
-  '@aurelia/platform-browser@2.0.0-beta.25':
-    resolution: {integrity: sha512-V9s7/kHB5yLI3P8a5la/0Y/p2h938HAHQ28eJTYwaSLC88y0ZktmG5MUS/uzORCjpANFxK1JrKfpI+v3kGfdZQ==}
+  '@aurelia/platform-browser@2.0.0-beta.27':
+    resolution: {integrity: sha512-DZFmREPyePjopPsz40tgwcqZ6bw8hi+eTgp817nzy9FAWjmZBmeKLSCjDZtIBW3S4n0VoOgNkUCa+401alz/wg==}
     engines: {node: '>=20.16.0'}
 
-  '@aurelia/platform@2.0.0-beta.25':
-    resolution: {integrity: sha512-dE8Uk9oX5rjhhFgwEqV/NTUOrVrWaYHIv4MQFxiiDqEpTLyMLQDykVk+Q0sxqeIIw8xWw0XNQUs9NNExEcntjw==}
+  '@aurelia/platform@2.0.0-beta.27':
+    resolution: {integrity: sha512-3S0i3EpSW03Iyi3qWt+TYpDDOLbI1b79/to7k2C/cPXcDoNij0rMTmwRi6IzehK86FXnCaQqb+hXt7962CYy5g==}
     engines: {node: '>=20.16.0'}
 
-  '@aurelia/plugin-conventions@2.0.0-beta.25':
-    resolution: {integrity: sha512-egYB1CykdqCJQj/BHj8agF1r5sB2k8vkjq53I7wEaapSEg7z8lTR0+pU6d9GHy3lYkl+6p++3UIb+zVlPwIK3g==}
+  '@aurelia/plugin-conventions@2.0.0-beta.27':
+    resolution: {integrity: sha512-JYxcZFgIRjBM8/UNorvTrTfCCVEQPN/Kcsl70G0j+NQM7kgKBLm5lXxCs4hOv6+2Rlx5o/L0idWq5u+GfyEqSg==}
     engines: {node: '>=20.16.0'}
 
-  '@aurelia/route-recognizer@2.0.0-beta.25':
-    resolution: {integrity: sha512-iHJlmUzHwl27BA1MgMn0SyUB18iUOkFdyvWz4DAEMgpVujrL71OghpY1oQrFoSUxpSC43DOxFC+FAIiMDqKagw==}
+  '@aurelia/route-recognizer@2.0.0-beta.27':
+    resolution: {integrity: sha512-1rEZEvKODwqmxIqoEJdZPNSzvXnQ6FLbdqFgPW3dEI2F10n4LEaMcYveQHUDmzVmF6TiNt2QIpIvdznfIt5Mkw==}
     engines: {node: '>=20.16.0'}
 
-  '@aurelia/router@2.0.0-beta.25':
-    resolution: {integrity: sha512-XSwpgpqQiyR8Z6y5VL7iELouia6cYffnkgz30nomF28lQuQhv0/J5mifux8m/A2BDtN55c9pUov0idJx3nqg+Q==}
+  '@aurelia/router@2.0.0-beta.27':
+    resolution: {integrity: sha512-FKXdTXIrf6RMxyzUVRLli6oRxvsrOAAYKDXvDgzSmfFj9pWY2wxlBtC0Rm/u4vdfNR1OYS5JdBHaKvdwufp2gg==}
     engines: {node: '>=20.16.0'}
 
-  '@aurelia/runtime-html@2.0.0-beta.25':
-    resolution: {integrity: sha512-hKIGPCLd+o8osMq2lfD1xOu6qxdfjVM3D6nAu7oWLvMCPVUY0cNTv4fPSDXO9ZsSUWcsSyqeHgchpqNP9/g3Tg==}
+  '@aurelia/runtime-html@2.0.0-beta.27':
+    resolution: {integrity: sha512-1LEehU2RSjssAtN89fm0sYAtTuEniqcPBuYq1YdW1lGdNFrI0g+kr2eJqJ1s/rIcp64e/LTs1SZ1wMPscc0bvw==}
     engines: {node: '>=20.16.0'}
 
-  '@aurelia/runtime@2.0.0-beta.25':
-    resolution: {integrity: sha512-geRbXQYBt/IBgVJgvfmbvw9+vOHbtiP8hlnN58jz9/U5nFX3G+UHukOOEraLUk4Jt7OA90bOTfLDIw6JtPLkzQ==}
+  '@aurelia/runtime@2.0.0-beta.27':
+    resolution: {integrity: sha512-7G5ZWUpdvcxV6eCK5fCeL64+0OXOeLKGnzmTXFge2NPMurIPAuf2ksDXIuZHsJDLAvsKx66Skyo2+z3VYZE4Pg==}
     engines: {node: '>=20.16.0'}
 
-  '@aurelia/template-compiler@2.0.0-beta.25':
-    resolution: {integrity: sha512-IfgKKtduYt3VbGRDdzvKdA3RqHWQ7l3y0kp0IpS0OQGL0PYFD3xN/mCiHtjaonFs+siJf9C+LvoGhFkfGA6vPg==}
+  '@aurelia/template-compiler@2.0.0-beta.27':
+    resolution: {integrity: sha512-2J5nz0qGyAb3GwOs1aMMu86w85T6xSsUB4Yx4HUWmVloAHiXNT0XDgBtgEfjep2+LF3pTA2et325+sDwbpKEVQ==}
     engines: {node: '>=20.16.0'}
 
-  '@aurelia/vite-plugin@2.0.0-beta.25':
-    resolution: {integrity: sha512-K3hIg02Q/mLw7zEl8dX1pZCDQtsnOGh4i+imuLnUcASDt4GRCdwFRiako4dyQRm57hD2/Fj1WrdiJCFuP/pVkA==}
+  '@aurelia/vite-plugin@2.0.0-beta.27':
+    resolution: {integrity: sha512-0VKgjowwgScbFLwwdx+iUoW8RNqS/Cg2r82tRdiWvc3hNLrRkVDkZJ91zfztPhAsi/emZ884BkC5BvUwKmrJdg==}
     engines: {node: '>=20.16.0'}
 
   '@babel/code-frame@7.27.1':
@@ -5563,14 +5676,8 @@ packages:
   '@volar/typescript@2.4.27':
     resolution: {integrity: sha512-eWaYCcl/uAPInSK2Lze6IqVWaBu/itVqR5InXcHXFyles4zO++Mglt3oxdgj75BDcv1Knr9Y93nowS8U3wqhxg==}
 
-  '@vue/compiler-core@3.5.25':
-    resolution: {integrity: sha512-vay5/oQJdsNHmliWoZfHPoVZZRmnSWhug0BYT34njkYTPqClh3DNWLkZNJBVSjsNMrg0CCrBfoKkjZQPM/QVUw==}
-
   '@vue/compiler-core@3.5.26':
     resolution: {integrity: sha512-vXyI5GMfuoBCnv5ucIT7jhHKl55Y477yxP6fc4eUswjP8FG3FFVFd41eNDArR+Uk3QKn2Z85NavjaxLxOC19/w==}
-
-  '@vue/compiler-dom@3.5.25':
-    resolution: {integrity: sha512-4We0OAcMZsKgYoGlMjzYvaoErltdFI2/25wqanuTu+S4gismOTRTBPi4IASOjxWdzIwrYSjnqONfKvuqkXzE2Q==}
 
   '@vue/compiler-dom@3.5.26':
     resolution: {integrity: sha512-y1Tcd3eXs834QjswshSilCBnKGeQjQXB6PqFn/1nxcQw4pmG42G8lwz+FZPAZAby6gZeHSt/8LMPfZ4Rb+Bd/A==}
@@ -5611,9 +5718,6 @@ packages:
     resolution: {integrity: sha512-TYKLXmrwWKSodyVuO1WAubucd+1XlLg4set0YoV+Hu8Lo79mp/YMwWV5mC5FgtsDxX3qo1ONrxFaTP1OQgy1uA==}
     peerDependencies:
       vue: 3.5.26
-
-  '@vue/shared@3.5.25':
-    resolution: {integrity: sha512-AbOPdQQnAnzs58H2FrrDxYj/TJfmeS2jdfEEhgiKINy+bnOANmVizIEgq1r+C5zsbs6l1CCQxtcj71rwNQ4jWg==}
 
   '@vue/shared@3.5.26':
     resolution: {integrity: sha512-7Z6/y3uFI5PRoKeorTOSXKcDj0MSasfNNltcslbFrPpcw6aXRUALq4IfJlaTRspiWIUOEZbrpM+iQGmCOiWe4A==}
@@ -5913,8 +6017,8 @@ packages:
   aurelia-polyfills@1.3.4:
     resolution: {integrity: sha512-NvOBYi4aWnxWCxfCfyW5DObggevOwfkC0riGMicgXNQg/ngpaQpFIXQgc4jMlI6jyE+/e38J36Hd9CeUcj04BA==}
 
-  aurelia@2.0.0-beta.25:
-    resolution: {integrity: sha512-97kZ8QaZB65mo5RrQk6Ln9DUoXEfpoBeO8lDaLEk4Bl4NlEBJAY/sHjDRQm83+S7aCAuEzc9NGb2+b0ZNhGlJQ==}
+  aurelia@2.0.0-beta.27:
+    resolution: {integrity: sha512-A37BtSPK2oaBzuiXIAhkg+4nTLHYAJ/OJLyZe5rjRbHr9inxFlgYH+uI+BJ+k0nsShX/FFT+dfktBJs237t1Tg==}
     engines: {node: '>=20.16.0'}
 
   autocompleter@9.3.2:
@@ -11994,12 +12098,28 @@ snapshots:
       ts-api-utils: 2.1.0(typescript@5.8.3)
       typescript: 5.8.3
 
+  '@angular-eslint/eslint-plugin@20.7.0(@typescript-eslint/utils@8.45.0(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3)':
+    dependencies:
+      '@angular-eslint/bundled-angular-compiler': 20.7.0
+      '@angular-eslint/utils': 20.7.0(@typescript-eslint/utils@8.45.0(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3)
+      '@typescript-eslint/utils': 8.45.0(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3)
+      eslint: 9.36.0(jiti@2.6.1)
+      ts-api-utils: 2.1.0(typescript@5.9.3)
+      typescript: 5.9.3
+
   '@angular-eslint/utils@20.7.0(@typescript-eslint/utils@8.45.0(eslint@9.36.0(jiti@2.6.1))(typescript@5.8.3))(eslint@9.36.0(jiti@2.6.1))(typescript@5.8.3)':
     dependencies:
       '@angular-eslint/bundled-angular-compiler': 20.7.0
       '@typescript-eslint/utils': 8.45.0(eslint@9.36.0(jiti@2.6.1))(typescript@5.8.3)
       eslint: 9.36.0(jiti@2.6.1)
       typescript: 5.8.3
+
+  '@angular-eslint/utils@20.7.0(@typescript-eslint/utils@8.45.0(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3)':
+    dependencies:
+      '@angular-eslint/bundled-angular-compiler': 20.7.0
+      '@typescript-eslint/utils': 8.45.0(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3)
+      eslint: 9.36.0(jiti@2.6.1)
+      typescript: 5.9.3
 
   '@angular/animations@19.2.17(@angular/common@19.2.17(@angular/core@19.2.17(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(@angular/core@19.2.17(rxjs@7.8.2)(zone.js@0.16.0))':
     dependencies:
@@ -12212,96 +12332,96 @@ snapshots:
 
   '@asamuzakjp/nwsapi@2.3.9': {}
 
-  '@aurelia/expression-parser@2.0.0-beta.25':
+  '@aurelia/expression-parser@2.0.0-beta.27':
     dependencies:
-      '@aurelia/kernel': 2.0.0-beta.25
+      '@aurelia/kernel': 2.0.0-beta.27
 
-  '@aurelia/fetch-client@2.0.0-beta.25':
+  '@aurelia/fetch-client@2.0.0-beta.27':
     dependencies:
-      '@aurelia/kernel': 2.0.0-beta.25
-      '@aurelia/metadata': 2.0.0-beta.25
+      '@aurelia/kernel': 2.0.0-beta.27
+      '@aurelia/metadata': 2.0.0-beta.27
 
-  '@aurelia/i18n@2.0.0-beta.25(typescript@5.8.3)':
+  '@aurelia/i18n@2.0.0-beta.27(typescript@5.8.3)':
     dependencies:
-      '@aurelia/expression-parser': 2.0.0-beta.25
-      '@aurelia/kernel': 2.0.0-beta.25
-      '@aurelia/metadata': 2.0.0-beta.25
-      '@aurelia/platform': 2.0.0-beta.25
-      '@aurelia/runtime': 2.0.0-beta.25
-      '@aurelia/runtime-html': 2.0.0-beta.25
-      '@aurelia/template-compiler': 2.0.0-beta.25
+      '@aurelia/expression-parser': 2.0.0-beta.27
+      '@aurelia/kernel': 2.0.0-beta.27
+      '@aurelia/metadata': 2.0.0-beta.27
+      '@aurelia/platform': 2.0.0-beta.27
+      '@aurelia/runtime': 2.0.0-beta.27
+      '@aurelia/runtime-html': 2.0.0-beta.27
+      '@aurelia/template-compiler': 2.0.0-beta.27
       i18next: 25.7.3(typescript@5.8.3)
     transitivePeerDependencies:
       - typescript
 
-  '@aurelia/kernel@2.0.0-beta.25':
+  '@aurelia/kernel@2.0.0-beta.27':
     dependencies:
-      '@aurelia/metadata': 2.0.0-beta.25
-      '@aurelia/platform': 2.0.0-beta.25
+      '@aurelia/metadata': 2.0.0-beta.27
+      '@aurelia/platform': 2.0.0-beta.27
 
-  '@aurelia/metadata@2.0.0-beta.25': {}
+  '@aurelia/metadata@2.0.0-beta.27': {}
 
-  '@aurelia/platform-browser@2.0.0-beta.25':
+  '@aurelia/platform-browser@2.0.0-beta.27':
     dependencies:
-      '@aurelia/platform': 2.0.0-beta.25
+      '@aurelia/platform': 2.0.0-beta.27
 
-  '@aurelia/platform@2.0.0-beta.25': {}
+  '@aurelia/platform@2.0.0-beta.27': {}
 
-  '@aurelia/plugin-conventions@2.0.0-beta.25':
+  '@aurelia/plugin-conventions@2.0.0-beta.27':
     dependencies:
-      '@aurelia/expression-parser': 2.0.0-beta.25
-      '@aurelia/kernel': 2.0.0-beta.25
-      '@aurelia/metadata': 2.0.0-beta.25
-      '@aurelia/platform': 2.0.0-beta.25
-      '@aurelia/runtime': 2.0.0-beta.25
-      '@aurelia/runtime-html': 2.0.0-beta.25
-      '@aurelia/template-compiler': 2.0.0-beta.25
+      '@aurelia/expression-parser': 2.0.0-beta.27
+      '@aurelia/kernel': 2.0.0-beta.27
+      '@aurelia/metadata': 2.0.0-beta.27
+      '@aurelia/platform': 2.0.0-beta.27
+      '@aurelia/runtime': 2.0.0-beta.27
+      '@aurelia/runtime-html': 2.0.0-beta.27
+      '@aurelia/template-compiler': 2.0.0-beta.27
       modify-code: 2.1.4
       parse5: 7.3.0
-      typescript: 5.8.3
+      typescript: 5.9.3
 
-  '@aurelia/route-recognizer@2.0.0-beta.25': {}
+  '@aurelia/route-recognizer@2.0.0-beta.27': {}
 
-  '@aurelia/router@2.0.0-beta.25':
+  '@aurelia/router@2.0.0-beta.27':
     dependencies:
-      '@aurelia/kernel': 2.0.0-beta.25
-      '@aurelia/metadata': 2.0.0-beta.25
-      '@aurelia/platform': 2.0.0-beta.25
-      '@aurelia/platform-browser': 2.0.0-beta.25
-      '@aurelia/route-recognizer': 2.0.0-beta.25
-      '@aurelia/runtime': 2.0.0-beta.25
-      '@aurelia/runtime-html': 2.0.0-beta.25
+      '@aurelia/kernel': 2.0.0-beta.27
+      '@aurelia/metadata': 2.0.0-beta.27
+      '@aurelia/platform': 2.0.0-beta.27
+      '@aurelia/platform-browser': 2.0.0-beta.27
+      '@aurelia/route-recognizer': 2.0.0-beta.27
+      '@aurelia/runtime': 2.0.0-beta.27
+      '@aurelia/runtime-html': 2.0.0-beta.27
 
-  '@aurelia/runtime-html@2.0.0-beta.25':
+  '@aurelia/runtime-html@2.0.0-beta.27':
     dependencies:
-      '@aurelia/expression-parser': 2.0.0-beta.25
-      '@aurelia/kernel': 2.0.0-beta.25
-      '@aurelia/metadata': 2.0.0-beta.25
-      '@aurelia/platform': 2.0.0-beta.25
-      '@aurelia/platform-browser': 2.0.0-beta.25
-      '@aurelia/runtime': 2.0.0-beta.25
-      '@aurelia/template-compiler': 2.0.0-beta.25
+      '@aurelia/expression-parser': 2.0.0-beta.27
+      '@aurelia/kernel': 2.0.0-beta.27
+      '@aurelia/metadata': 2.0.0-beta.27
+      '@aurelia/platform': 2.0.0-beta.27
+      '@aurelia/platform-browser': 2.0.0-beta.27
+      '@aurelia/runtime': 2.0.0-beta.27
+      '@aurelia/template-compiler': 2.0.0-beta.27
 
-  '@aurelia/runtime@2.0.0-beta.25':
+  '@aurelia/runtime@2.0.0-beta.27':
     dependencies:
-      '@aurelia/expression-parser': 2.0.0-beta.25
-      '@aurelia/kernel': 2.0.0-beta.25
-      '@aurelia/metadata': 2.0.0-beta.25
-      '@aurelia/platform': 2.0.0-beta.25
+      '@aurelia/expression-parser': 2.0.0-beta.27
+      '@aurelia/kernel': 2.0.0-beta.27
+      '@aurelia/metadata': 2.0.0-beta.27
+      '@aurelia/platform': 2.0.0-beta.27
 
-  '@aurelia/template-compiler@2.0.0-beta.25':
+  '@aurelia/template-compiler@2.0.0-beta.27':
     dependencies:
-      '@aurelia/expression-parser': 2.0.0-beta.25
-      '@aurelia/kernel': 2.0.0-beta.25
-      '@aurelia/metadata': 2.0.0-beta.25
+      '@aurelia/expression-parser': 2.0.0-beta.27
+      '@aurelia/kernel': 2.0.0-beta.27
+      '@aurelia/metadata': 2.0.0-beta.27
 
-  '@aurelia/vite-plugin@2.0.0-beta.25(@types/node@24.10.4)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.2)(sass-embedded@1.93.2)(sass@1.97.1)(terser@5.44.0)(yaml@2.8.2)':
+  '@aurelia/vite-plugin@2.0.0-beta.27(@types/node@24.10.4)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.2)(sass-embedded@1.93.2)(sass@1.97.1)(terser@5.44.0)(yaml@2.8.2)':
     dependencies:
-      '@aurelia/kernel': 2.0.0-beta.25
-      '@aurelia/metadata': 2.0.0-beta.25
-      '@aurelia/platform': 2.0.0-beta.25
-      '@aurelia/plugin-conventions': 2.0.0-beta.25
-      '@aurelia/runtime': 2.0.0-beta.25
+      '@aurelia/kernel': 2.0.0-beta.27
+      '@aurelia/metadata': 2.0.0-beta.27
+      '@aurelia/platform': 2.0.0-beta.27
+      '@aurelia/plugin-conventions': 2.0.0-beta.27
+      '@aurelia/runtime': 2.0.0-beta.27
       '@rollup/pluginutils': 5.0.2
       loader-utils: 2.0.4
       vite: 7.3.0(@types/node@24.10.4)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.2)(sass-embedded@1.93.2)(sass@1.97.1)(terser@5.44.0)(yaml@2.8.2)
@@ -16833,6 +16953,15 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@typescript-eslint/project-service@8.45.0(typescript@5.9.3)':
+    dependencies:
+      '@typescript-eslint/tsconfig-utils': 8.45.0(typescript@5.9.3)
+      '@typescript-eslint/types': 8.45.0
+      debug: 4.4.3(supports-color@8.1.1)
+      typescript: 5.9.3
+    transitivePeerDependencies:
+      - supports-color
+
   '@typescript-eslint/scope-manager@8.45.0':
     dependencies:
       '@typescript-eslint/types': 8.45.0
@@ -16841,6 +16970,10 @@ snapshots:
   '@typescript-eslint/tsconfig-utils@8.45.0(typescript@5.8.3)':
     dependencies:
       typescript: 5.8.3
+
+  '@typescript-eslint/tsconfig-utils@8.45.0(typescript@5.9.3)':
+    dependencies:
+      typescript: 5.9.3
 
   '@typescript-eslint/type-utils@8.45.0(eslint@9.36.0(jiti@2.6.1))(typescript@5.8.3)':
     dependencies:
@@ -16872,6 +17005,22 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@typescript-eslint/typescript-estree@8.45.0(typescript@5.9.3)':
+    dependencies:
+      '@typescript-eslint/project-service': 8.45.0(typescript@5.9.3)
+      '@typescript-eslint/tsconfig-utils': 8.45.0(typescript@5.9.3)
+      '@typescript-eslint/types': 8.45.0
+      '@typescript-eslint/visitor-keys': 8.45.0
+      debug: 4.4.3(supports-color@8.1.1)
+      fast-glob: 3.3.3
+      is-glob: 4.0.3
+      minimatch: 9.0.5
+      semver: 7.7.3
+      ts-api-utils: 2.1.0(typescript@5.9.3)
+      typescript: 5.9.3
+    transitivePeerDependencies:
+      - supports-color
+
   '@typescript-eslint/utils@8.45.0(eslint@9.36.0(jiti@2.6.1))(typescript@5.8.3)':
     dependencies:
       '@eslint-community/eslint-utils': 4.9.0(eslint@9.36.0(jiti@2.6.1))
@@ -16880,6 +17029,17 @@ snapshots:
       '@typescript-eslint/typescript-estree': 8.45.0(typescript@5.8.3)
       eslint: 9.36.0(jiti@2.6.1)
       typescript: 5.8.3
+    transitivePeerDependencies:
+      - supports-color
+
+  '@typescript-eslint/utils@8.45.0(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3)':
+    dependencies:
+      '@eslint-community/eslint-utils': 4.9.0(eslint@9.36.0(jiti@2.6.1))
+      '@typescript-eslint/scope-manager': 8.45.0
+      '@typescript-eslint/types': 8.45.0
+      '@typescript-eslint/typescript-estree': 8.45.0(typescript@5.9.3)
+      eslint: 9.36.0(jiti@2.6.1)
+      typescript: 5.9.3
     transitivePeerDependencies:
       - supports-color
 
@@ -17020,14 +17180,6 @@ snapshots:
       path-browserify: 1.0.1
       vscode-uri: 3.1.0
 
-  '@vue/compiler-core@3.5.25':
-    dependencies:
-      '@babel/parser': 7.28.5
-      '@vue/shared': 3.5.25
-      entities: 4.5.0
-      estree-walker: 2.0.2
-      source-map-js: 1.2.1
-
   '@vue/compiler-core@3.5.26':
     dependencies:
       '@babel/parser': 7.28.5
@@ -17035,11 +17187,6 @@ snapshots:
       entities: 7.0.0
       estree-walker: 2.0.2
       source-map-js: 1.2.1
-
-  '@vue/compiler-dom@3.5.25':
-    dependencies:
-      '@vue/compiler-core': 3.5.25
-      '@vue/shared': 3.5.25
 
   '@vue/compiler-dom@3.5.26':
     dependencies:
@@ -17073,9 +17220,9 @@ snapshots:
   '@vue/language-core@2.2.0(typescript@5.8.3)':
     dependencies:
       '@volar/language-core': 2.4.23
-      '@vue/compiler-dom': 3.5.25
+      '@vue/compiler-dom': 3.5.26
       '@vue/compiler-vue2': 2.7.16
-      '@vue/shared': 3.5.25
+      '@vue/shared': 3.5.26
       alien-signals: 0.4.14
       minimatch: 9.0.5
       muggle-string: 0.4.1
@@ -17086,8 +17233,8 @@ snapshots:
   '@vue/language-core@3.2.1':
     dependencies:
       '@volar/language-core': 2.4.27
-      '@vue/compiler-dom': 3.5.25
-      '@vue/shared': 3.5.25
+      '@vue/compiler-dom': 3.5.26
+      '@vue/shared': 3.5.26
       alien-signals: 3.1.2
       muggle-string: 0.4.1
       path-browserify: 1.0.1
@@ -17115,7 +17262,11 @@ snapshots:
       '@vue/shared': 3.5.26
       vue: 3.5.26(typescript@5.8.3)
 
-  '@vue/shared@3.5.25': {}
+  '@vue/server-renderer@3.5.26(vue@3.5.26(typescript@5.9.3))':
+    dependencies:
+      '@vue/compiler-ssr': 3.5.26
+      '@vue/shared': 3.5.26
+      vue: 3.5.26(typescript@5.9.3)
 
   '@vue/shared@3.5.26': {}
 
@@ -17438,17 +17589,17 @@ snapshots:
     dependencies:
       aurelia-pal: 1.8.2
 
-  aurelia@2.0.0-beta.25:
+  aurelia@2.0.0-beta.27:
     dependencies:
-      '@aurelia/expression-parser': 2.0.0-beta.25
-      '@aurelia/fetch-client': 2.0.0-beta.25
-      '@aurelia/kernel': 2.0.0-beta.25
-      '@aurelia/metadata': 2.0.0-beta.25
-      '@aurelia/platform': 2.0.0-beta.25
-      '@aurelia/platform-browser': 2.0.0-beta.25
-      '@aurelia/runtime': 2.0.0-beta.25
-      '@aurelia/runtime-html': 2.0.0-beta.25
-      '@aurelia/template-compiler': 2.0.0-beta.25
+      '@aurelia/expression-parser': 2.0.0-beta.27
+      '@aurelia/fetch-client': 2.0.0-beta.27
+      '@aurelia/kernel': 2.0.0-beta.27
+      '@aurelia/metadata': 2.0.0-beta.27
+      '@aurelia/platform': 2.0.0-beta.27
+      '@aurelia/platform-browser': 2.0.0-beta.27
+      '@aurelia/runtime': 2.0.0-beta.27
+      '@aurelia/runtime-html': 2.0.0-beta.27
+      '@aurelia/template-compiler': 2.0.0-beta.27
 
   autocompleter@9.3.2: {}
 
@@ -23038,6 +23189,10 @@ snapshots:
     dependencies:
       typescript: 5.8.3
 
+  ts-api-utils@2.1.0(typescript@5.9.3):
+    dependencies:
+      typescript: 5.9.3
+
   ts-checker-rspack-plugin@1.1.5(@rspack/core@1.5.8(@swc/helpers@0.5.17))(typescript@5.8.3):
     dependencies:
       '@babel/code-frame': 7.27.1
@@ -23526,6 +23681,16 @@ snapshots:
       '@vue/shared': 3.5.26
     optionalDependencies:
       typescript: 5.8.3
+
+  vue@3.5.26(typescript@5.9.3):
+    dependencies:
+      '@vue/compiler-dom': 3.5.26
+      '@vue/compiler-sfc': 3.5.26
+      '@vue/runtime-dom': 3.5.26
+      '@vue/server-renderer': 3.5.26(vue@3.5.26(typescript@5.9.3))
+      '@vue/shared': 3.5.26
+    optionalDependencies:
+      typescript: 5.9.3
 
   w3c-xmlserializer@5.0.0:
     dependencies:

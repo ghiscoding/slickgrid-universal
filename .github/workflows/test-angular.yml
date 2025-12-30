@@ -70,6 +70,9 @@ jobs:
       - name: Angular-Slickgrid Framework Build
         run: pnpm angular:build:framework
 
+      - name: Angular-Slickgrid Framework-Plugins Build
+        run: pnpm angular:build:framework-plugins
+
       - name: Website Dev Build (served for Cypress)
         run: pnpm angular:build:demo
 

@@ -7,6 +7,7 @@ import type {
   DataViewOption,
   ExtensionList,
   ExternalResource,
+  ExternalResourceConstructor,
   GridOption,
   Metrics,
   Pagination,
@@ -78,7 +79,7 @@ export class SlickVanillaGridBundle<TData = any> {
   protected _eventHandler!: SlickEventHandler;
   protected _extensions: ExtensionList<any> | undefined;
   protected _paginationOptions: Pagination | undefined;
-  protected _registeredResources: ExternalResource[] = [];
+  protected _registeredResources: Array<ExternalResource | ExternalResourceConstructor> = [];
   protected _scrollEndCalled = false;
   protected _slickgridInitialized = false;
   protected _slickerGridInstances: SlickerGridInstance | undefined;
@@ -270,7 +271,7 @@ export class SlickVanillaGridBundle<TData = any> {
     return this._extensions;
   }
 
-  get registeredResources(): any[] {
+  get registeredResources(): Array<ExternalResource | ExternalResourceConstructor> {
     return this._registeredResources;
   }
 
@@ -495,8 +496,8 @@ export class SlickVanillaGridBundle<TData = any> {
     if (Array.isArray(this._registeredResources)) {
       while (this._registeredResources.length > 0) {
         const res = this._registeredResources.pop();
-        if (res?.dispose) {
-          res.dispose();
+        if (typeof (res as ExternalResource)?.dispose === 'function') {
+          (res as ExternalResource).dispose!();
         }
       }
     }
@@ -1514,18 +1515,18 @@ export class SlickVanillaGridBundle<TData = any> {
     // register all services by executing their init method and providing them with the Grid object
     if (Array.isArray(this._registeredResources)) {
       for (const resource of this._registeredResources) {
-        if (resource?.className === 'RxJsResource') {
+        if ((resource as ExternalResource)?.className === 'RxJsResource') {
           this.registerRxJsResource(resource as RxJsFacade);
         }
       }
     }
   }
 
-  protected initializeExternalResources(resources: ExternalResource[]): void {
+  protected initializeExternalResources(resources: Array<ExternalResource | ExternalResourceConstructor>): void {
     if (Array.isArray(resources)) {
       for (const resource of resources) {
-        if (this.slickGrid && typeof resource.init === 'function') {
-          resource.init(this.slickGrid, this.universalContainerService);
+        if (this.slickGrid && typeof (resource as ExternalResource).init === 'function') {
+          (resource as ExternalResource).init!(this.slickGrid, this.universalContainerService);
         }
       }
     }

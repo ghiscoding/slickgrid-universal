@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { VueSlickRowDetailView } from '@slickgrid-universal/vue-row-detail';
 import {
   Editors,
   ExtensionName,
@@ -129,6 +130,7 @@ function defineGrid() {
     rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
     darkMode: isDarkMode.value,
     datasetIdPropertyName: 'rowId', // optionally use a different "id"
+    externalResources: [VueSlickRowDetailView],
     rowDetailView: {
       // optionally change the column index position of the icon (defaults to 0)
       // columnIndexPosition: 1,

@@ -51,7 +51,6 @@ import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vite
 import { MockSlickEvent, MockSlickEventHandler } from '../../../../test/mockSlickEvent.js';
 import { RxJsResourceStub } from '../../../../test/rxjsResourceStub.js';
 import { TranslaterServiceStub } from '../../../../test/translaterServiceStub.js';
-import { type SlickRowDetailView } from '../../extensions/slickRowDetailView.js';
 import { type GridOption } from '../../models/index.js';
 import { ContainerService, type AngularUtilService, type TranslaterService } from '../../services/index.js';
 import { AngularSlickgridComponent } from '../angular-slickgrid.component.js';
@@ -66,21 +65,16 @@ const viewportElm = document.createElement('div');
 viewportElm.className = 'slick-viewport';
 Object.defineProperty(viewportElm, 'offsetHeight', { writable: true, configurable: true, value: 12 });
 
-const mockSlickRowDetailView = {
-  create: vi.fn(),
-  init: vi.fn(),
-} as unknown as SlickRowDetailView;
-
-vi.mock('../../extensions/slickRowDetailView', () => ({
-  SlickRowDetailView: vi.fn().mockImplementation(function () {
-    return mockSlickRowDetailView;
-  }),
-}));
-
 const angularUtilServiceStub = {
   createAngularComponent: vi.fn(),
   createAngularComponentAppendToDom: vi.fn(),
 } as unknown as AngularUtilService;
+
+class AngularSlickRowDetailView {
+  static pluginName = 'AngularSlickRowDetailView';
+  create = vi.fn();
+  init = vi.fn();
+}
 
 const backendUtilityServiceStub = {
   addRxJsResource: vi.fn(),
@@ -1108,19 +1102,12 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         expect(spy).not.toHaveBeenCalled();
       });
 
-      it('should create the Row Detail View plugin when "enableRowDetailView" is enabled', () => {
-        const initSpy = vi.spyOn(mockSlickRowDetailView, 'init');
-        const createSpy = vi.spyOn(mockSlickRowDetailView, 'create');
-        vi.spyOn(extensionServiceStub, 'extensionList', 'get').mockReturnValue({ rowDetailView: { pluginName: 'RowDetail' } } as unknown as ExtensionList<any>);
-
+      it('should throw when enabling RowDetailView without providing Row Detail class as external resources', () => {
         component.options = { enableRowDetailView: true } as unknown as GridOption;
-        component.initialization(slickEventHandler);
 
-        expect(extensionServiceStub.addExtensionToList).toHaveBeenCalledWith('rowDetailView', { name: 'rowDetailView', instance: mockSlickRowDetailView });
-        expect(component.registeredResources.length).toBe(3);
-        expect(component.extensionService.extensionList.rowDetailView).toBeTruthy();
-        expect(createSpy).toHaveBeenCalled();
-        expect(initSpy).toHaveBeenCalled();
+        expect(() => component.initialization(slickEventHandler)).toThrowError(
+          '[Angular-Slickgrid] You enabled the Row Detail View feature but you did not provide the "AngularSlickRowDetailView" class as an external resource.'
+        );
       });
 
       it('should call "translateColumnHeaders" from ExtensionService when "enableTranslate" is set', () => {
@@ -1802,7 +1789,12 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         const setColSpy = vi.spyOn(mockGrid, 'setColumns');
 
         component.columns = mockCols;
-        component.options = { ...gridOptions, enableRowDetailView: true, presets: { columns: mockColsPresets } } as unknown as GridOption;
+        component.options = {
+          ...gridOptions,
+          enableRowDetailView: true,
+          externalResources: [AngularSlickRowDetailView],
+          presets: { columns: mockColsPresets },
+        } as GridOption;
         component.initialization(slickEventHandler);
 
         expect(getAssocColSpy).toHaveBeenCalledWith(mockGrid, mockColsPresets);
@@ -1845,6 +1837,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
           enableCheckboxSelector: true,
           enableRowDetailView: true,
           enableRowMoveManager: true,
+          externalResources: [AngularSlickRowDetailView],
           presets: { columns: mockColsPresets },
         } as unknown as GridOption;
         component.initialization(slickEventHandler);
@@ -1990,6 +1983,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         vi.spyOn(mockGrid, 'getRenderedRange').mockReturnValue({ bottom: 10, top: 0, leftPx: 0, rightPx: 890 });
 
         component.options.enableRowDetailView = true;
+        component.options.externalResources = [AngularSlickRowDetailView];
         component.initialization(slickEventHandler);
         mockDataView.onRowCountChanged.notify({
           current: 2,

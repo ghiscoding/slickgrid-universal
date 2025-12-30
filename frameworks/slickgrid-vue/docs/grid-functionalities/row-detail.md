@@ -25,9 +25,12 @@ A Row Detail allows you to open a detail panel which can contain extra and/or mo
 
 ## Usage
 
+> Starting from version 10, Row Detail is now an optional package and must be installed separately (`@slickgrid-universal/vue-row-detail`)
+
 ##### Component
 ```vue
 <script setup lang="ts">
+import { VueSlickRowDetailView } from '@slickgrid-universal/vue-row-detail'; // for v10 and above
 import { type Column, Filters, Formatters, GridState, OperatorType, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
@@ -47,12 +50,7 @@ function defineGrid() {
     rowSelectionOptions: {
       selectActiveRow: true
     },
-    preRegisterExternalExtensions: (pubSubService) => {
-      // Row Detail View is a special case because of its requirement to create extra column definition dynamically
-      // so it must be pre-registered before SlickGrid is instantiated, we can do so via this option
-      const rowDetail = new SlickRowDetailView(pubSubService as EventPubSubService);
-      return [{ name: ExtensionName.rowDetailView, instance: rowDetail }];
-    },
+    externalResources: [VueSlickRowDetailView], // for v10 and above
     rowDetailView: {
       // We can load the "process" asynchronously via Fetch, Promise, ...
       process: (item) => http.get(`api/item/${item.id}`),
@@ -254,16 +252,12 @@ function callParentMethod(model: Item) {
 ###### Grid Definition
 ```vue
 <script setup lang="ts">
+import { VueSlickRowDetailView } from '@slickgrid-universal/vue-row-detail'; // for v10 and above
 
 function defineGrid() {
   gridOptions.value = {
     enableRowDetailView: true,
-    preRegisterExternalExtensions: (pubSubService) => {
-      // Row Detail View is a special case because of its requirement to create extra column definition dynamically
-      // so it must be pre-registered before SlickGrid is instantiated, we can do so via this option
-      const rowDetail = new SlickRowDetailView(pubSubService as EventPubSubService);
-      return [{ name: ExtensionName.rowDetailView, instance: rowDetail }];
-    },
+    externalResources: [VueSlickRowDetailView], // for v10 and above
     rowDetailView: {
       // We can load the "process" asynchronously via Fetch, Promise, ...
       process: (item) => http.get(`api/item/${item.id}`),
@@ -297,17 +291,13 @@ The Row Detail provides you access to the following references (SlickGrid, DataV
 
 ```ts
 <script setup lang="ts">
+import { VueSlickRowDetailView } from '@slickgrid-universal/vue-row-detail'; // for v10 and above
 
 function defineGrid() {
   // Parent Component (grid)
   gridOptions.value = {
     enableRowDetailView: true,
-    preRegisterExternalExtensions: (pubSubService) => {
-      // Row Detail View is a special case because of its requirement to create extra column definition dynamically
-      // so it must be pre-registered before SlickGrid is instantiated, we can do so via this option
-      const rowDetail = new SlickRowDetailView(pubSubService as EventPubSubService);
-      return [{ name: ExtensionName.rowDetailView, instance: rowDetail }];
-    },
+    externalResources: [VueSlickRowDetailView], // for v10 and above
     rowDetailView: {
       // ...
       // ViewComponent Template to load when row detail data is ready
@@ -434,6 +424,7 @@ Main Grid Component
 
 ```vue
 <script setup lang="ts">
+import { VueSlickRowDetailView } from '@slickgrid-universal/vue-row-detail'; // for v10 and above
 import { type Column, Filters, Formatters, GridState, OperatorType, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
@@ -452,12 +443,7 @@ function defineGrid() {
     rowSelectionOptions: {
       selectActiveRow: true
     },
-    preRegisterExternalExtensions: (pubSubService) => {
-      // Row Detail View is a special case because of its requirement to create extra column definition dynamically
-      // so it must be pre-registered before SlickGrid is instantiated, we can do so via this option
-      const rowDetail = new SlickRowDetailView(pubSubService as EventPubSubService);
-      return [{ name: ExtensionName.rowDetailView, instance: rowDetail }];
-    },
+    externalResources: [VueSlickRowDetailView], // for v10 and above
     rowDetailView: {
       process: (item: any) => simulateServerAsyncCall(item),
       loadOnce: false, // IMPORTANT, you can't use loadOnce with inner grid because only HTML template are re-rendered, not JS events

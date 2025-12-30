@@ -11,3 +11,7 @@ export interface ExternalResource {
   /** Dispose method */
   dispose?: () => void;
 }
+
+export interface ExternalResourceConstructor {
+  new (...args: any[]): ExternalResource;
+}

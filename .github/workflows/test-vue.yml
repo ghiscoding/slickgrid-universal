@@ -55,6 +55,9 @@ jobs:
       - name: Slickgrid-Vue Framework Build
         run: pnpm vue:build:framework
 
+      - name: Slickgrid-Vue Framework-Plugins Build
+        run: pnpm vue:build:framework-plugins
+
       - name: Website Dev Build (served for Cypress)
         run: pnpm vue:build:demo
 

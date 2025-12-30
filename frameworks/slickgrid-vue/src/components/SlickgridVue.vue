@@ -37,6 +37,7 @@ import {
   type EventSubscription,
   type ExtensionList,
   type ExternalResource,
+  type ExternalResourceConstructor,
   type Metrics,
   type Observable,
   type Pagination,
@@ -63,7 +64,6 @@ import {
   type ComponentPublicInstance,
   type Ref,
 } from 'vue';
-import { SlickRowDetailView } from '../extensions/slickRowDetailView.js';
 import { GlobalGridOptions } from '../global-grid-options.js';
 import type { GridOption, I18Next, SlickgridVueInstance } from '../models/index.js';
 import { ContainerService, disposeAllSubscriptions } from '../services/index.js';
@@ -71,6 +71,11 @@ import { TranslaterI18NextService } from '../services/translaterI18Next.service.
 import type { SlickgridVueProps } from './slickgridVueProps.interface.js';
 
 const WARN_NO_PREPARSE_DATE_SIZE = 10000; // data size to warn user when pre-parsing isn't enabled
+
+export interface VueSlickRowDetailView {
+  create(columns: Column[], gridOptions: GridOption): any;
+  init(grid: SlickGrid): void;
+}
 
 const attrs = useAttrs();
 
@@ -104,7 +109,7 @@ let isDatasetHierarchicalInitialized = false;
 let isPaginationInitialized = false;
 let isLocalGrid = true;
 let metrics: Metrics | undefined;
-let registeredResources: ExternalResource[] = [];
+let registeredResources: Array<ExternalResource | ExternalResourceConstructor> = [];
 let scrollEndCalled = false;
 let showPagination = false;
 let subscriptions: Array<EventSubscription> = [];
@@ -113,7 +118,7 @@ let subscriptions: Array<EventSubscription> = [];
 let slickEmptyWarning: SlickEmptyWarningComponent | undefined;
 let slickFooter: SlickFooterComponent | undefined;
 let slickPagination: BasePaginationComponent | undefined;
-let slickRowDetailView: SlickRowDetailView | undefined;
+let slickRowDetailView: VueSlickRowDetailView | undefined;
 
 // initialize and assign all Service Dependencies
 let backendServiceApi: BackendServiceApi | undefined;
@@ -677,8 +682,8 @@ function disposeExternalResources() {
   if (Array.isArray(registeredResources)) {
     while (registeredResources.length > 0) {
       const res = registeredResources.pop();
-      if (res?.dispose) {
-        res.dispose();
+      if (typeof (res as ExternalResource)?.dispose === 'function') {
+        (res as ExternalResource).dispose!();
       }
     }
   }
@@ -1438,11 +1443,11 @@ function mergeGridOptions(gridOptions: GridOption): GridOption {
   return options;
 }
 
-function initializeExternalResources(resources: ExternalResource[]) {
+function initializeExternalResources(resources: Array<ExternalResource | ExternalResourceConstructor>) {
   if (Array.isArray(resources)) {
     for (const resource of resources) {
-      if (grid && typeof resource.init === 'function') {
-        resource.init(grid, containerService);
+      if (grid && typeof (resource as ExternalResource).init === 'function') {
+        (resource as ExternalResource).init!(grid, containerService);
       }
     }
   }
@@ -1456,19 +1461,31 @@ function preRegisterResources() {
   // register all services by executing their init method and providing them with the Grid object
   if (Array.isArray(registeredResources)) {
     for (const resource of registeredResources) {
-      if (resource?.className === 'RxJsResource') {
+      if ((resource as ExternalResource)?.className === 'RxJsResource') {
         registerRxJsResource(resource as RxJsFacade);
       }
     }
   }
 
-  if (_gridOptions.value.enableRowDetailView && !registeredResources.some((r) => r instanceof SlickRowDetailView)) {
-    slickRowDetailView = new SlickRowDetailView(eventPubSubService);
-    slickRowDetailView.create(_columnDefinitions.value, _gridOptions.value as GridOption);
-    extensionService.addExtensionToList(ExtensionName.rowDetailView, {
-      name: ExtensionName.rowDetailView,
-      instance: slickRowDetailView,
-    });
+  if (_gridOptions.value.enableRowDetailView) {
+    const RowDetailClass = registeredResources.find((res: any) => res.pluginName === 'VueSlickRowDetailView') as
+      | ExternalResourceConstructor
+      | undefined;
+    if (!RowDetailClass) {
+      throw new Error(
+        '[Slickgrid-Vue] You enabled the Row Detail View feature but you did not provide the "VueSlickRowDetailView" class as an external resource.'
+      );
+    }
+
+    if (RowDetailClass) {
+      const rowDetailInstance = new RowDetailClass(eventPubSubService) as VueSlickRowDetailView;
+      slickRowDetailView = rowDetailInstance;
+      rowDetailInstance.create(_columnDefinitions.value, _gridOptions.value as GridOption);
+      extensionService.addExtensionToList(ExtensionName.rowDetailView, {
+        name: ExtensionName.rowDetailView,
+        instance: slickRowDetailView,
+      });
+    }
   }
 }
 

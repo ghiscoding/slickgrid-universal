@@ -1,11 +1,13 @@
 packages:
   - demos/**
   - frameworks/**
+  - frameworks-plugins/**
   - packages/**
   - '!**/dist/**'
 
 catalog:
   '@4tw/cypress-drag-drop': ^2.3.1
+  '@angular-eslint/eslint-plugin': ^20.7.0
   '@faker-js/faker': ^10.1.0
   '@fnando/sparkline': ^0.3.10
   '@formkit/tempo': ^1.0.0

@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "pretty": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "target": "es2022",
+    "lib": ["esnext", "dom"],
+    "typeRoots": ["../types", "../../node_modules/@types"],
+    "declaration": true,
+    "declarationDir": "dist",
+    "esModuleInterop": true,
+    "inlineSources": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "strictNullChecks": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmitHelpers": true,
+    "importHelpers": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "newLine": "lf",
+    "downlevelIteration": true,
+    "outDir": "dist"
+  },
+  "include": ["src"],
+  "exclude": [".vscode", "dist", "doc", "node_modules", "test", "**/*.spec.ts"]
+}

@@ -1,3 +1,4 @@
+import { AureliaSlickRowDetailView } from '@slickgrid-universal/aurelia-row-detail';
 import { bindable } from 'aurelia';
 import {
   Aggregators,
@@ -57,6 +58,7 @@ export class Example47 {
 
     // option 1
     // return this.extensions.rowDetailView.instance || {};
+    // return this.aureliaGrid?.extensions.rowDetailView.instance || {};
 
     // OR option 2
     return this.aureliaGrid?.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView);
@@ -181,6 +183,7 @@ export class Example47 {
       enableRowDetailView: true,
       rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
       darkMode: this._darkMode,
+      externalResources: [AureliaSlickRowDetailView],
       rowDetailView: {
         // optionally change the column index position of the icon (defaults to 0)
         // columnIndexPosition: 1,
