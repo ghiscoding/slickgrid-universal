@@ -29,7 +29,7 @@ function unescapeAndLowerCase(val: string) {
   styleUrls: ['./example39.component.scss'],
   encapsulation: ViewEncapsulation.None,
   templateUrl: './example39.component.html',
-  imports: [FormsModule, NgIf, AngularSlickgridModule, DatePipe],
+  imports: [AngularSlickgridModule, DatePipe, FormsModule, NgIf],
 })
 export class Example39Component implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];

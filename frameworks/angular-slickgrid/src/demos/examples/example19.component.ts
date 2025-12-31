@@ -19,7 +19,7 @@ const NB_ITEMS = 1000;
 
 @Component({
   templateUrl: './example19.component.html',
-  imports: [FormsModule, NgIf, AngularSlickgridModule],
+  imports: [AngularSlickgridModule, FormsModule, NgIf],
 })
 export class Example19Component implements OnDestroy, OnInit {
   private _darkMode = false;

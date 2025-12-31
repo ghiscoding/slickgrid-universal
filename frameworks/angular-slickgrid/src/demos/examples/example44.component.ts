@@ -18,7 +18,7 @@ const rowCellValueExportFormatter: Formatter = (_row, _cell, value) => value.toF
   styleUrls: ['example44.component.scss'],
   templateUrl: './example44.component.html',
   encapsulation: ViewEncapsulation.None,
-  imports: [FormsModule, AngularSlickgridModule],
+  imports: [AngularSlickgridModule, FormsModule],
 })
 export class Example44Component implements OnInit {
   columnDefinitions: Column[] = [];

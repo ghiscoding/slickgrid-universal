@@ -99,7 +99,7 @@ export class CustomSumAggregator implements Aggregator {
   templateUrl: './example36.component.html',
   styleUrls: ['./example36.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  imports: [FormsModule, AngularSlickgridModule],
+  imports: [AngularSlickgridModule, FormsModule],
 })
 export class Example36Component implements OnInit {
   columnDefinitions: Column<GroceryItem>[] = [];

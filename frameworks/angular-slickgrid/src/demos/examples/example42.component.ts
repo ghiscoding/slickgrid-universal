@@ -22,7 +22,7 @@ function randomBetween(min: number, max: number): number {
 @Component({
   templateUrl: './example42.component.html',
   providers: [AngularUtilService],
-  imports: [FormsModule, AngularSlickgridModule],
+  imports: [AngularSlickgridModule, FormsModule],
 })
 export class Example42Component implements OnInit {
   angularGrid!: AngularGridInstance;

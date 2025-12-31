@@ -10,7 +10,7 @@ const sampleDataRoot = 'assets/data';
   styles: ['.file-upload { max-width: 300px; }'],
   encapsulation: ViewEncapsulation.None,
   templateUrl: './example17.component.html',
-  imports: [FormsModule, NgIf, AngularSlickgridModule],
+  imports: [AngularSlickgridModule, FormsModule, NgIf],
 })
 export class Example17Component {
   angularGrid!: AngularGridInstance;

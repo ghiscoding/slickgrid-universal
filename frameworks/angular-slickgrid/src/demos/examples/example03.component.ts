@@ -64,7 +64,7 @@ const taskFormatter: Formatter = (_row, _cell, value) => {
 };
 @Component({
   templateUrl: './example03.component.html',
-  imports: [NgIf, AngularSlickgridModule, JsonPipe],
+  imports: [AngularSlickgridModule, JsonPipe, NgIf],
 })
 export class Example3Component implements OnInit {
   private _commandQueue: any = [];

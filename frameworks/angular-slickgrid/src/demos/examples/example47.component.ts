@@ -34,7 +34,7 @@ export interface Item {
 
 @Component({
   templateUrl: './example47.component.html',
-  imports: [FormsModule, AngularSlickgridModule],
+  imports: [AngularSlickgridModule, FormsModule],
 })
 export class Example47Component implements OnDestroy, OnInit {
   private _darkMode = false;
