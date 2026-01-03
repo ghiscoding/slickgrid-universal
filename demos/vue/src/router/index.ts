@@ -49,6 +49,7 @@ import Example46 from '../components/Example46.vue';
 import Example47 from '../components/Example47.vue';
 import Example48 from '../components/Example48.vue';
 import Example49 from '../components/Example49.vue';
+import Example50 from '../components/Example50.vue';
 import Home from '../Home.vue';
 
 export const routes: RouteRecordRaw[] = [
@@ -103,6 +104,7 @@ export const routes: RouteRecordRaw[] = [
   { path: '/example47', name: '47- Row Detail + Grouping', component: Example47 },
   { path: '/example48', name: '48- Hybrid Selection Model', component: Example48 },
   { path: '/example49', name: '49- Spreadsheet Drag-Fill', component: Example49 },
+  { path: '/example50', name: '50- Master/Detail Grids', component: Example50 },
 ];
 
 export const router = createRouter({
