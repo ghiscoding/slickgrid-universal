@@ -260,9 +260,9 @@ importers:
       '@popperjs/core':
         specifier: 'catalog:'
         version: 2.11.8
-      '@slickgrid-universal/aurelia-row-detail':
+      '@slickgrid-universal/aurelia-row-detail-plugin':
         specifier: workspace:*
-        version: link:../../frameworks-plugins/aurelia-row-detail
+        version: link:../../frameworks-plugins/aurelia-row-detail-plugin
       '@slickgrid-universal/common':
         specifier: workspace:*
         version: link:../../packages/common
@@ -381,9 +381,9 @@ importers:
       '@slickgrid-universal/pagination-component':
         specifier: workspace:*
         version: link:../../packages/pagination-component
-      '@slickgrid-universal/react-row-detail':
+      '@slickgrid-universal/react-row-detail-plugin':
         specifier: workspace:*
-        version: link:../../frameworks-plugins/react-row-detail
+        version: link:../../frameworks-plugins/react-row-detail-plugin
       '@slickgrid-universal/rxjs-observable':
         specifier: workspace:*
         version: link:../../packages/rxjs-observable
@@ -596,9 +596,9 @@ importers:
       '@slickgrid-universal/text-export':
         specifier: workspace:*
         version: link:../../packages/text-export
-      '@slickgrid-universal/vue-row-detail':
+      '@slickgrid-universal/vue-row-detail-plugin':
         specifier: workspace:*
-        version: link:../../frameworks-plugins/vue-row-detail
+        version: link:../../frameworks-plugins/vue-row-detail-plugin
       bootstrap:
         specifier: 'catalog:'
         version: 5.3.8(@popperjs/core@2.11.8)
@@ -649,7 +649,7 @@ importers:
         specifier: catalog:vite7
         version: 7.3.0(@types/node@24.10.4)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.2)(sass-embedded@1.93.2)(sass@1.97.1)(terser@5.44.0)(yaml@2.8.2)
 
-  frameworks-plugins/angular-row-detail:
+  frameworks-plugins/angular-row-detail-plugin:
     dependencies:
       '@ngx-translate/core':
         specifier: ^16.0.4
@@ -686,7 +686,7 @@ importers:
         specifier: 'catalog:'
         version: 4.0.16(@types/node@24.10.4)(@vitest/ui@4.0.16)(esbuild@0.27.2)(jiti@2.6.1)(jsdom@27.4.0)(less@4.4.1)(sass-embedded@1.93.2)(sass@1.97.1)(terser@5.44.0)(yaml@2.8.2)
 
-  frameworks-plugins/aurelia-row-detail:
+  frameworks-plugins/aurelia-row-detail-plugin:
     dependencies:
       '@aurelia/kernel':
         specifier: ^2.0.0-beta.25
@@ -713,7 +713,7 @@ importers:
         specifier: 'catalog:'
         version: 2.8.1
 
-  frameworks-plugins/react-row-detail:
+  frameworks-plugins/react-row-detail-plugin:
     dependencies:
       '@slickgrid-universal/common':
         specifier: workspace:*
@@ -744,7 +744,7 @@ importers:
         specifier: ^19.2.3
         version: 19.2.3(@types/react@19.2.7)
 
-  frameworks-plugins/vue-row-detail:
+  frameworks-plugins/vue-row-detail-plugin:
     dependencies:
       '@slickgrid-universal/common':
         specifier: workspace:*
@@ -882,9 +882,9 @@ importers:
       '@popperjs/core':
         specifier: 'catalog:'
         version: 2.11.8
-      '@slickgrid-universal/angular-row-detail':
-        specifier: link:../../frameworks-plugins/angular-row-detail
-        version: link:../../frameworks-plugins/angular-row-detail
+      '@slickgrid-universal/angular-row-detail-plugin':
+        specifier: link:../../frameworks-plugins/angular-row-detail-plugin
+        version: link:../../frameworks-plugins/angular-row-detail-plugin
       '@slickgrid-universal/composite-editor-component':
         specifier: workspace:*
         version: link:../../packages/composite-editor-component

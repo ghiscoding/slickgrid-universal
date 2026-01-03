@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { VueSlickRowDetailView } from '@slickgrid-universal/vue-row-detail';
+import { VueSlickRowDetailView } from '@slickgrid-universal/vue-row-detail-plugin';
 import {
   Aggregators,
   Editors,

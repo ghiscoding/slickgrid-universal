@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { faker } from '@faker-js/faker';
-import { VueSlickRowDetailView } from '@slickgrid-universal/vue-row-detail';
+import { VueSlickRowDetailView } from '@slickgrid-universal/vue-row-detail-plugin';
 import { ExtensionName, SlickgridVue, type Column, type GridOption, type SlickgridVueInstance } from 'slickgrid-vue';
 import { computed, onBeforeMount, onUnmounted, ref, type Ref } from 'vue';
 import Example45Detail, { type Distributor, type OrderData } from './Example45Detail.vue';

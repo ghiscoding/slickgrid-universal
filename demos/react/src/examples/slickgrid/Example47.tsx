@@ -1,5 +1,5 @@
 import { type EventPubSubService } from '@slickgrid-universal/event-pub-sub';
-import { ReactSlickRowDetailView } from '@slickgrid-universal/react-row-detail';
+import { ReactSlickRowDetailView } from '@slickgrid-universal/react-row-detail-plugin';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Aggregators,

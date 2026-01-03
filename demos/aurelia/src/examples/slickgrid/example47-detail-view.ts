@@ -1,4 +1,4 @@
-import type { AureliaSlickRowDetailView } from '@slickgrid-universal/aurelia-row-detail';
+import type { AureliaSlickRowDetailView } from '@slickgrid-universal/aurelia-row-detail-plugin';
 import { bindable } from 'aurelia';
 import type { SlickDataView, SlickGrid } from 'aurelia-slickgrid';
 import { showToast } from './utilities.js';

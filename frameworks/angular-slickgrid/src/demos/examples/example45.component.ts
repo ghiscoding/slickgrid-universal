@@ -1,7 +1,7 @@
 import { Component, ViewEncapsulation, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { faker } from '@faker-js/faker';
-import { AngularSlickRowDetailView } from '@slickgrid-universal/angular-row-detail';
+import { AngularSlickRowDetailView } from '@slickgrid-universal/angular-row-detail-plugin';
 import { AngularSlickgridModule, type AngularGridInstance, type Column, type GridOption } from '../../library';
 import { Example45DetailComponent, type Distributor, type OrderData } from './example45-detail.component';
 import { RowDetailPreloadComponent } from './rowdetail-preload.component';

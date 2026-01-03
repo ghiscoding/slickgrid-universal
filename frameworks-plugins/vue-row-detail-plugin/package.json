@@ -1,7 +1,7 @@
 {
-  "name": "@slickgrid-universal/angular-row-detail",
+  "name": "@slickgrid-universal/vue-row-detail-plugin",
   "version": "9.11.0",
-  "description": "Angular Row Detail Plugin for Angular-SlickGrid",
+  "description": "Vue Row Detail Plugin for SlickGrid-Vue",
   "type": "module",
   "main": "./dist/index.js",
   "exports": {
@@ -33,24 +33,17 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ghiscoding/slickgrid-universal.git",
-    "directory": "packages/angular-row-detail"
+    "directory": "packages/vue-row-detail-plugin"
   },
   "bugs": {
     "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
   },
   "dependencies": {
-    "@ngx-translate/core": "^16.0.4",
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/event-pub-sub": "workspace:*",
     "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
-    "angular-slickgrid": "workspace:*",
-    "rxjs": "catalog:"
-  },
-  "devDependencies": {
-    "@angular-eslint/eslint-plugin": "catalog:",
-    "@angular/core": "^19.2.17",
-    "oxlint": "catalog:",
+    "slickgrid-vue": "workspace:*",
     "tslib": "catalog:",
-    "vitest": "catalog:"
+    "vue": "catalog:"
   }
 }

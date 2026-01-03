@@ -1,7 +1,7 @@
 {
-  "name": "@slickgrid-universal/aurelia-row-detail",
+  "name": "@slickgrid-universal/angular-row-detail-plugin",
   "version": "9.11.0",
-  "description": "Aurelia Row Detail Plugin for Aurelia-SlickGrid",
+  "description": "Angular Row Detail Plugin for Angular-SlickGrid",
   "type": "module",
   "main": "./dist/index.js",
   "exports": {
@@ -33,19 +33,24 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ghiscoding/slickgrid-universal.git",
-    "directory": "packages/aurelia-row-detail"
+    "directory": "packages/angular-row-detail-plugin"
   },
   "bugs": {
     "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
   },
   "dependencies": {
-    "@aurelia/kernel": "^2.0.0-beta.25",
-    "@aurelia/runtime-html": "^2.0.0-beta.25",
+    "@ngx-translate/core": "^16.0.4",
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/event-pub-sub": "workspace:*",
     "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
-    "aurelia-slickgrid": "workspace:*",
-    "rxjs": "catalog:",
-    "tslib": "catalog:"
+    "angular-slickgrid": "workspace:*",
+    "rxjs": "catalog:"
+  },
+  "devDependencies": {
+    "@angular-eslint/eslint-plugin": "catalog:",
+    "@angular/core": "^19.2.17",
+    "oxlint": "catalog:",
+    "tslib": "catalog:",
+    "vitest": "catalog:"
   }
 }

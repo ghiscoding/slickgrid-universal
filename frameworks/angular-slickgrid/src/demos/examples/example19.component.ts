@@ -1,7 +1,7 @@
 import { NgIf } from '@angular/common';
 import { Component, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AngularSlickRowDetailView } from '@slickgrid-universal/angular-row-detail';
+import { AngularSlickRowDetailView } from '@slickgrid-universal/angular-row-detail-plugin';
 import {
   AngularSlickgridModule,
   Editors,
