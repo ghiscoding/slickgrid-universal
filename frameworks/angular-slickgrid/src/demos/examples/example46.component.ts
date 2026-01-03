@@ -41,7 +41,7 @@ const coloredTextFormatter: Formatter = (_row: number, _cell: number, val: any, 
   templateUrl: './example46.component.html',
   styleUrls: ['example46.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  imports: [FormsModule, AngularSlickgridModule],
+  imports: [AngularSlickgridModule, FormsModule],
 })
 export class Example46Component implements OnInit {
   angularGrid!: AngularGridInstance;

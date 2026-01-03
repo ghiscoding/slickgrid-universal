@@ -13,7 +13,7 @@ const NB_ITEMS = 995;
   styleUrls: ['example45.component.scss'],
   templateUrl: './example45.component.html',
   encapsulation: ViewEncapsulation.None,
-  imports: [FormsModule, AngularSlickgridModule],
+  imports: [AngularSlickgridModule, FormsModule],
 })
 export class Example45Component implements OnDestroy, OnInit {
   private _darkMode = false;

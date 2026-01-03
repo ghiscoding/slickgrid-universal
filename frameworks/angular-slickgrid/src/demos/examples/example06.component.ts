@@ -32,7 +32,7 @@ const FAKE_SERVER_DELAY = 250;
 
 @Component({
   templateUrl: './example06.component.html',
-  imports: [FormsModule, NgIf, AngularSlickgridModule, DatePipe],
+  imports: [AngularSlickgridModule, DatePipe, FormsModule, NgIf],
 })
 export class Example6Component implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];

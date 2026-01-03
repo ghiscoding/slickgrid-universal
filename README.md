@@ -68,7 +68,7 @@ The Slickgrid-Universal [live demo](https://ghiscoding.github.io/slickgrid-unive
 Dark Mode is also shown in some of the examples (not all), see [Dark Mode](https://ghiscoding.gitbook.io/slickgrid-universal/styling/dark-mode) documentation for more infos.
 
 ### Fully Tested with [Vitest](https://vitest.dev/) (Unit Tests) - [Cypress](https://www.cypress.io/) (E2E Tests)
-Slickgrid-Universal has **100%** Unit Test Coverage, 5000+ Vitest unit tests and close to 1000 Cypress E2E tests to cover **all** [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities (each framework implementation also includes roughly the same amount of E2E tests), the goal is to offer peace of mind that pretty much all the code, features and PR changes are fully tested before releasing anything new. Every time a new Pull Request (PR) is created, it runs all unit tests and all Cypress E2E tests for all frameworks and they all run in parallel for a complete test suite.
+Slickgrid-Universal has **100%** Unit Test Coverage, 5000+ Vitest unit tests and 1000+ Cypress E2E tests to cover **all** [Examples](https://ghiscoding.github.io/slickgrid-universal/) and most UI functionalities (each framework implementation also includes roughly the same amount of E2E tests), the goal is to offer peace of mind that pretty much all the code, features and PR changes are fully tested before releasing anything new. Every time a new Pull Request (PR) is created, it runs all unit tests and all Cypress E2E tests for all frameworks and they all run in parallel for a complete test suite.
 
 ### Available Public Packages
 

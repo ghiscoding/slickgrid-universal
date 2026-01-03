@@ -5,31 +5,31 @@ export declare type RowSelectOverride = (data: OnActiveCellChangedEventArgs, sel
 
 export interface HybridSelectionModelOption {
   /** defaults to True, do we want to select the active cell? */
-  selectActiveCell: boolean;
+  selectActiveCell?: boolean;
 
   /** defaults to True, do we want to select the active row? */
-  selectActiveRow: boolean;
+  selectActiveRow?: boolean;
 
   /** cell range selector */
   cellRangeSelector?: SlickCellRangeSelector;
 
   /** Defaults to False, should we select when dragging? */
-  dragToSelect: boolean;
+  dragToSelect?: boolean;
 
   /** Defaults to True, should we auto-scroll when dragging a row */
-  autoScrollWhenDrag: boolean;
+  autoScrollWhenDrag?: boolean;
 
   /** Row Selection on RowMoveManage column */
-  handleRowMoveManagerColumn: boolean;
+  handleRowMoveManagerColumn?: boolean;
 
   /** Row Selection on these columns */
-  rowSelectColumnIds: string[];
+  rowSelectColumnIds?: string[];
 
   /** function to toggle Row Selection Models */
-  rowSelectOverride: RowSelectOverride | undefined;
+  rowSelectOverride?: RowSelectOverride | undefined;
 
   /** Defaults to 'mixed', use a specifc selection type */
-  selectionType: 'cell' | 'row' | 'mixed';
+  selectionType?: 'cell' | 'row' | 'mixed';
 }
 
 export interface RowSelectionModelOption {
