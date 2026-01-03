@@ -23,7 +23,7 @@ catalog:
   cypress-real-events: ^1.15.0
   dequal: ^2.0.3
   dompurify: ^3.3.1
-  globals: ^16.5.0
+  globals: ^17.0.0
   i18next: ^25.7.3
   i18next-vue: ^5.4.0
   jsdom: ^27.4.0
