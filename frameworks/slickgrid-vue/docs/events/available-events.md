@@ -25,9 +25,9 @@ function handleOnCellChange(e, args) {
     grid-id="grid3"
     v-model:columns="columnDefinitions"
     v-model:options="gridOptions"
-    v-model:data="dataset"
-    @onvueGridCreated="vueGridReady(e.detail)"
+    v-model:dataset="dataset"
     @onCellChange="handleOnCellChange(e.detail.eventData, e.detail.args)"
+    @onVueGridCreated="vueGridReady(e.detail)"
   />
 </template>
 ```
@@ -52,9 +52,9 @@ function handleOnHeaderMenuCommand(e) {
     grid-id="grid3"
     v-model:columns="columnDefinitions"
     v-model:options="gridOptions"
-    v-model:data="dataset"
-    @onvueGridCreated="vueGridReady($event.detail)"
+    v-model:dataset="dataset"
     @onHeaderMenuCommand="handleOnHeaderMenuCommand($event.detail)"
+    @onVueGridCreated="vueGridReady($event.detail)"
   />
 </template>
 ```

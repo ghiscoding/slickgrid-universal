@@ -118,8 +118,8 @@ function updateFilter() {
       grid-id="grid21"
       v-model:columns="columnDefinitions"
       v-model:options="gridOptions"
-      v-model:data="dataset"
-      @onvueGridCreated="vueGridReady($event.detail)"
+      v-model:dataset="dataset"
+      @onVueGridCreated="vueGridReady($event.detail)"
     ></slickgrid-vue>
   </div>
 </template>

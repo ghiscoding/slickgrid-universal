@@ -97,7 +97,7 @@ function vueGridReady(vueGrid: SlickgridVueInstance) {
     grid-id="grid40"
     v-model:columns="columnDefinitions"
     v-model:options="gridOptions"
-    v-model:data="dataset"
+    v-model:dataset="dataset"
     @onVueGridCreated="vueGridReady($event.detail)" />
 </template>
 ```
@@ -281,7 +281,7 @@ function defineGrid() {
   <SlickgridVue gridId="grid40"
     v-model:columns="columnDefinitions"
     v-model:options="gridOptions"
-    v-model:data="dataset"
+    v-model:dataset="dataset"
     @onVueGridCreated="vueGridReady($event.detail)" />
 </template>
 ```
@@ -460,7 +460,7 @@ function defineGrid() {
     grid-id="grid40"
     v-model:columns="columnDefinitions"
     v-model:options="gridOptions"
-    v-model:data="dataset" />
+    v-model:dataset="dataset" />
 </template>
 ```
 
@@ -537,7 +537,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
         v-if="showGrid"
         v-model:options="innerGridOptions"
         v-model:columns="innerColDefs"
-        v-model:data="innerDataset"
+        v-model:dataset="innerDataset"
         :grid-id="`innergrid-${model.id}`"
         @onBeforeGridDestroy="handleBeforeGridDestroy"
         @onVueGridCreated="vueGridReady($event.detail)"

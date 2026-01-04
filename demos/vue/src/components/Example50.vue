@@ -207,7 +207,7 @@ function mockDetailData(c: Customer) {
     <SlickgridVue
       v-model:options="gridOptions1!"
       v-model:columns="columnDefinitions1"
-      v-model:data="dataset1"
+      v-model:dataset="dataset1"
       grid-id="grid50-1"
       @onVueGridCreated="vueGrid1Ready($event.detail)"
       @onClick="handleOnCellClicked($event.detail.args)"
@@ -221,6 +221,6 @@ function mockDetailData(c: Customer) {
     <span>Detail Grid - Orders for:</span>
     <span class="fst-italic text-secondary customer-detail">{{ selectedName }}</span>
   </h5>
-  <slickgrid-vue v-model:options="gridOptions2!" v-model:columns="columnDefinitions2" v-model:data="dataset2" grid-id="grid50-2">
+  <slickgrid-vue v-model:options="gridOptions2!" v-model:columns="columnDefinitions2" v-model:dataset="dataset2" grid-id="grid50-2">
   </slickgrid-vue>
 </template>

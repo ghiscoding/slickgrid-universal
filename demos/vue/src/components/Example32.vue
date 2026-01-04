@@ -986,7 +986,7 @@ function renderItemCallbackWith4Corners(item: any): string {
     <slickgrid-vue
       v-model:options="gridOptions"
       v-model:columns="columnDefinitions"
-      v-model:data="dataset"
+      v-model:dataset="dataset"
       grid-id="grid32"
       @onSelectedRowIdsChanged="handleOnSelectedRowIdsChanged($event.detail.args)"
       @onVueGridCreated="vueGridReady($event.detail)"

@@ -79,11 +79,11 @@ function expandAllGroups() {
         grid-id="grid3"
         v-model:columns="columnDefinitions"
         v-model:options="gridOptions"
-        v-model:data="dataset"
-        onvueGridCreated="vueGridReady(e.detail)"
-        onCellChange="onCellChanged(e.detail.eventData, e.detail.args)"
-        onClick="onCellClicked(e.detail.eventData, e.detail.args)"
-        onValidationError="onCellValidationError(e.detail.eventData, e.detail.args)"
+        v-model:dataset="dataset"
+        @onCellChange="onCellChanged($event.detail.eventData, $event.detail.args)"
+        @onClick="onCellClicked($event.detail.eventData, $event.detail.args)"
+        @onValidationError="onCellValidationError($event.detail.eventData, $event.detail.args)"
+        @onVueGridCreated="vueGridReady($event.detail)"
       />
     </div>
   </div>
@@ -117,7 +117,7 @@ function setAutoEdit(isAutoEdit) {
     grid-id="grid1"
     v-model:columns="columnDefinitions"
     v-model:options="gridOptions"
-    v-model:data="dataset"
+    v-model:dataset="dataset"
     @onVueGridCreated="vueGridReady($event.detail)"
   />
 </template>

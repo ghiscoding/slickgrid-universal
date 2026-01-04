@@ -60,11 +60,11 @@ function handleRowSelection(event, args) {
 <template>
   <SlickgridVue
     grid-id="grid1"
-    columnDefinitions="columnDefinitions1"
-    gridOptions="gridOptions1"}
-    dataset="dataset1"
-    onvueGridCreated="vueGrid1Ready($event.detail)"
-    onSelectedRowsChanged="onGrid1SelectedRowsChanged($event.detail.eventData, $event.detail.args)"
+    v-model:columns="columnDefinitions"
+    v-model:options="gridOptions"
+    v-model:dataset="dataset"
+    @onSelectedRowsChanged="onGrid1SelectedRowsChanged($event.detail.eventData, $event.detail.args)"
+    @onVueGridCreated="vueGridReady($event.detail)"
   />
 </template>
 ```
@@ -142,9 +142,9 @@ function handleRowSelection(event, args) {
     grid-id="grid1"
     v-model:columns="columnDefinitions1"
     v-model:options="gridOptions1"
-    v-model:data="dataset1"
-    @onVueGridCreated="vueGrid1Ready($event.detail)"
+    v-model:dataset="dataset1"
     @onSelectedRowsChanged="onGrid1SelectedRowsChanged($event.detail.eventData, $event.detail.args)"
+    @onVueGridCreated="vueGrid1Ready($event.detail)"
   />
 </template>
 ```
@@ -233,10 +233,10 @@ function handleSingleRowClick(event, args) {
     grid-id="grid1"
     v-model:columns="columnDefinitions1"
     v-model:options="gridOptions1"
-    v-model:data="dataset1"
-    @onVueGridCreated="vueGrid1Ready($event.detail)"
+    v-model:dataset="dataset1"
     @onClick="onCellClicked($event.detail.eventData, $event.detail.args)"
     @onSelectedRowsChanged="onGrid1SelectedRowsChanged($event.detail.eventData, $event.detail.args)"
+    @onVueGridCreated="vueGrid1Ready($event.detail)"
   />
 </template>
 ```
@@ -294,10 +294,10 @@ function handleOnSelectedRowsChanged(args) {
     grid-id="grid1"
     v-model:columns="columnDefinitions1"
     v-model:options="gridOptions1"
-    v-model:data="dataset1"
-    @onVueGridCreated="vueGrid1Ready($event.detail)"
+    v-model:dataset="dataset1"
     @onClick="onCellClicked($event.detail.eventData, $event.detail.args)"
     @onSelectedRowsChanged="handleOnSelectedRowsChanged($event.detail.eventData, $event.detail.args)"
+    @onVueGridCreated="vueGrid1Ready($event.detail)"
   />
 </template>
 ```
@@ -320,11 +320,11 @@ function handleOngridStateChanged(gridState) {
     grid-id="grid1"
     v-model:columns="columnDefinitions1"
     v-model:options="gridOptions1"
-    v-model:data="dataset1"
-    @onVueGridCreated="vueGrid1Ready($event.detail)"
+    v-model:dataset="dataset1"
     @onClick="onCellClicked($event.detail.eventData, $event.detail.args)"
     @onGridStateChanged="gridStateChanged($event.detail)"
     @onSelectedRowsChanged="handleOngridStateChanged($event.detail.eventData, $event.detail.args)"
+    @onVueGridCreated="vueGrid1Ready($event.detail)"
   />
 </template>
 ```
@@ -365,10 +365,10 @@ function changeRowSelections() {
     grid-id="grid1"
     v-model:columns="columnDefinitions1"
     v-model:options="gridOptions1"
-    v-model:data="dataset1"
-    @onvueGridCreated="vueGrid1Ready($event.detail)"
+    v-model:dataset="dataset1"
     @onClick="onCellClicked($event.detail.eventData, $event.detail.args)"
     @onSelectedRowsChanged="changeRowSelections()"
+    @onVueGridCreated="vueGrid1Ready($event.detail)"
   />
 </template>
 ```

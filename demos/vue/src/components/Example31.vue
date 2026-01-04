@@ -544,7 +544,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
     v-model:options="gridOptions"
     v-model:columns="columnDefinitions"
     v-model:pagination="paginationOptions"
-    v-model:data="dataset"
+    v-model:dataset="dataset"
     grid-id="grid31"
     @onGridStateChanged="gridStateChanged($event.detail)"
     @onVueGridCreated="vueGridReady($event.detail)"

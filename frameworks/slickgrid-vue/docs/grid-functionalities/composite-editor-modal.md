@@ -503,16 +503,16 @@ function handleOnCompositeEditorChange(event) {
   <SlickgridVue gridId="grid30"
     v-model:columns="columnDefinitions"
     v-model:options="gridOptions"
-    v-model:data="dataset"
-    @onvueGridCreated="vueGridReady($event.detail)"
+    v-model:dataset="dataset"
     @onBeforeEditCell="handleOnBeforeEditCell($event.detail.eventData, $event.detail.args)"
     @onCellChange="handleOnCellChange($event.detail.eventData, $event.detail.args)"
     @onCompositeEditorChange="handleOnCompositeEditorChange($event.detail.eventData, $event.detail.args)"
     @onItemsDeleted="handleItemsDeleted($event.detail)"
-    @onGridStateChanged="handleOnGridStateChanged($event.detail)"
     @onFilterChanged="handleReRenderUnsavedStyling()"
+    @onGridStateChanged="handleOnGridStateChanged($event.detail)"
     @onPaginationChanged="handleReRenderUnsavedStyling()"
     @onValidationError="handleValidationError($event.detail.eventData, $event.detail.args)"
+    @onVueGridCreated="vueGridReady($event.detail)"
   />
 </template>
 ```

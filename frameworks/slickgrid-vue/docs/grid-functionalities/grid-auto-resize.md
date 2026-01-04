@@ -104,8 +104,7 @@ function togglePauseResizer() {
 </script>
 
 <template>
-  <button className="btn btn-outline-secondary btn-sm btn-icon"
-    onClick={() => togglePauseResizer()}>
+  <button class="btn btn-outline-secondary btn-sm btn-icon" @click="togglePauseResizer()">
     Pause auto-resize: <b>{resizerPaused}</b>
   </button>
 
@@ -113,9 +112,9 @@ function togglePauseResizer() {
     grid-id="grid1"
     v-model:columns="columnDefinitions"
     v-model:options="gridOptions"
-    v-model:data="dataset"
-    @onVueGridCreated="vueGridReady($event.detail)"
+    v-model:dataset="dataset"
     @onGridStateChanged="gridStateChanged($event.detail)"
+    @onVueGridCreated="vueGridReady($event.detail)"
   />
 </template>
 ```
@@ -216,9 +215,9 @@ function defineGrid() {
       grid-id="grid1"
       v-model:columns="columnDefinitions"
       v-model:options="gridOptions"
-      v-model:data="dataset"
-      @onVueGridCreated="vueGridReady($event.detail)"
+      v-model:dataset="dataset"
       @onGridStateChanged="gridStateChanged($event.detail)"
+      @onVueGridCreated="vueGridReady($event.detail)"
     />
   </div>
 </template>
