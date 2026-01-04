@@ -1492,9 +1492,6 @@ importers:
       normalize-path:
         specifier: ^3.0.0
         version: 3.0.0
-      tinyglobby:
-        specifier: ^0.2.15
-        version: 0.2.15
       vite:
         specifier: catalog:vite7
         version: 7.3.0(@types/node@24.10.4)(jiti@2.6.1)(less@4.4.1)(lightningcss@1.30.2)(sass-embedded@1.93.2)(sass@1.97.1)(terser@5.44.0)(yaml@2.8.2)
