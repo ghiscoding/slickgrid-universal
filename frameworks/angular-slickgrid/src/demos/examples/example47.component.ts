@@ -1,6 +1,6 @@
 import { Component, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AngularSlickRowDetailView } from '@slickgrid-universal/angular-row-detail';
+import { AngularSlickRowDetailView } from '@slickgrid-universal/angular-row-detail-plugin';
 import {
   Aggregators,
   AngularSlickgridModule,
@@ -34,7 +34,7 @@ export interface Item {
 
 @Component({
   templateUrl: './example47.component.html',
-  imports: [FormsModule, AngularSlickgridModule],
+  imports: [AngularSlickgridModule, FormsModule],
 })
 export class Example47Component implements OnDestroy, OnInit {
   private _darkMode = false;

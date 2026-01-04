@@ -24,7 +24,7 @@ const NB_ITEMS = 10_000;
 
 @Component({
   templateUrl: './example18.component.html',
-  imports: [FormsModule, NgFor, AngularSlickgridModule],
+  imports: [AngularSlickgridModule, FormsModule, NgFor],
 })
 export class Example18Component implements AfterViewInit, OnInit, OnDestroy {
   private _darkMode = false;

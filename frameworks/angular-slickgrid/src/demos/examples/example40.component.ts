@@ -21,7 +21,7 @@ const FETCH_SIZE = 50;
 
 @Component({
   templateUrl: './example40.component.html',
-  imports: [NgIf, AngularSlickgridModule, DatePipe],
+  imports: [AngularSlickgridModule, DatePipe, NgIf],
 })
 export class Example40Component implements OnInit {
   angularGrid!: AngularGridInstance;

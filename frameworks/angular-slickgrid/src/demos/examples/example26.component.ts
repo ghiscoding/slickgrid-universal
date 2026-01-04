@@ -30,7 +30,7 @@ const NB_ITEMS = 100;
   styleUrls: ['./example26.component.scss'],
   encapsulation: ViewEncapsulation.None,
   providers: [AngularUtilService],
-  imports: [NgIf, AngularSlickgridModule, JsonPipe],
+  imports: [AngularSlickgridModule, JsonPipe, NgIf],
 })
 export class Example26Component implements OnInit {
   private _commandQueue: any[] = [];

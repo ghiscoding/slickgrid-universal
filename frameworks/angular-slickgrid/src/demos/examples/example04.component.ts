@@ -26,7 +26,7 @@ const URL_SAMPLE_COLLECTION_DATA = 'assets/data/collection_500_numbers.json';
 
 @Component({
   templateUrl: './example04.component.html',
-  imports: [NgIf, AngularSlickgridModule, DatePipe],
+  imports: [AngularSlickgridModule, DatePipe, NgIf],
 })
 export class Example4Component implements OnInit {
   angularGrid!: AngularGridInstance;

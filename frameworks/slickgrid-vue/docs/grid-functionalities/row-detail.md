@@ -25,12 +25,12 @@ A Row Detail allows you to open a detail panel which can contain extra and/or mo
 
 ## Usage
 
-> Starting from version 10, Row Detail is now an optional package and must be installed separately (`@slickgrid-universal/vue-row-detail`)
+> Starting from version 10, Row Detail is now an optional package and must be installed separately (`@slickgrid-universal/vue-row-detail-plugin`)
 
 ##### Component
 ```vue
 <script setup lang="ts">
-import { VueSlickRowDetailView } from '@slickgrid-universal/vue-row-detail'; // for v10 and above
+import { VueSlickRowDetailView } from '@slickgrid-universal/vue-row-detail-plugin'; // for v10 and above
 import { type Column, Filters, Formatters, GridState, OperatorType, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
@@ -252,7 +252,7 @@ function callParentMethod(model: Item) {
 ###### Grid Definition
 ```vue
 <script setup lang="ts">
-import { VueSlickRowDetailView } from '@slickgrid-universal/vue-row-detail'; // for v10 and above
+import { VueSlickRowDetailView } from '@slickgrid-universal/vue-row-detail-plugin'; // for v10 and above
 
 function defineGrid() {
   gridOptions.value = {
@@ -291,7 +291,7 @@ The Row Detail provides you access to the following references (SlickGrid, DataV
 
 ```ts
 <script setup lang="ts">
-import { VueSlickRowDetailView } from '@slickgrid-universal/vue-row-detail'; // for v10 and above
+import { VueSlickRowDetailView } from '@slickgrid-universal/vue-row-detail-plugin'; // for v10 and above
 
 function defineGrid() {
   // Parent Component (grid)
@@ -424,7 +424,7 @@ Main Grid Component
 
 ```vue
 <script setup lang="ts">
-import { VueSlickRowDetailView } from '@slickgrid-universal/vue-row-detail'; // for v10 and above
+import { VueSlickRowDetailView } from '@slickgrid-universal/vue-row-detail-plugin'; // for v10 and above
 import { type Column, Filters, Formatters, GridState, OperatorType, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 

@@ -25,7 +25,7 @@ A Row Detail allows you to open a detail panel which can contain extra and/or mo
 
 ## Usage
 
-> Starting from version 10, Row Detail is now an optional package and must be installed separately (`@slickgrid-universal/aurelia-row-detail`)
+> Starting from version 10, Row Detail is now an optional package and must be installed separately (`@slickgrid-universal/aurelia-row-detail-plugin`)
 
 ##### View
 ```html
@@ -40,7 +40,7 @@ A Row Detail allows you to open a detail panel which can contain extra and/or mo
 
 ##### Component
 ```ts
-import { AureliaSlickRowDetailView } from '@slickgrid-universal/aurelia-row-detail'; // for v10 and above
+import { AureliaSlickRowDetailView } from '@slickgrid-universal/aurelia-row-detail-plugin'; // for v10 and above
 import { AureliaGridInstance, GridState } from 'aurelia-slickgrid';
 
 export class GridExample {
@@ -385,7 +385,7 @@ You can also add an inner grid inside a Row Detail, however there are a few thin
 Main Grid Component
 
 ```ts
-import { AureliaSlickRowDetailView } from '@slickgrid-universal/aurelia-row-detail'; // for v10 and above
+import { AureliaSlickRowDetailView } from '@slickgrid-universal/aurelia-row-detail-plugin'; // for v10 and above
 import { bindable } from 'aurelia';
 import { type AureliaGridInstance, type Column, ExtensionName, type GridOption, type SlickRowDetailView, } from 'aurelia-slickgrid';
 

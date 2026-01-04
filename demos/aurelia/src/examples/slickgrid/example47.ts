@@ -1,4 +1,4 @@
-import { AureliaSlickRowDetailView } from '@slickgrid-universal/aurelia-row-detail';
+import { AureliaSlickRowDetailView } from '@slickgrid-universal/aurelia-row-detail-plugin';
 import { bindable } from 'aurelia';
 import {
   Aggregators,

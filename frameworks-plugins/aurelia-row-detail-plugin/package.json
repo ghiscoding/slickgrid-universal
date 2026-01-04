@@ -1,7 +1,7 @@
 {
-  "name": "@slickgrid-universal/vue-row-detail",
+  "name": "@slickgrid-universal/aurelia-row-detail-plugin",
   "version": "9.11.0",
-  "description": "Vue Row Detail Plugin for SlickGrid-Vue",
+  "description": "Aurelia Row Detail Plugin for Aurelia-SlickGrid",
   "type": "module",
   "main": "./dist/index.js",
   "exports": {
@@ -33,17 +33,19 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ghiscoding/slickgrid-universal.git",
-    "directory": "packages/vue-row-detail"
+    "directory": "packages/aurelia-row-detail-plugin"
   },
   "bugs": {
     "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
   },
   "dependencies": {
+    "@aurelia/kernel": "^2.0.0-beta.25",
+    "@aurelia/runtime-html": "^2.0.0-beta.25",
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/event-pub-sub": "workspace:*",
     "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
-    "slickgrid-vue": "workspace:*",
-    "tslib": "catalog:",
-    "vue": "catalog:"
+    "aurelia-slickgrid": "workspace:*",
+    "rxjs": "catalog:",
+    "tslib": "catalog:"
   }
 }

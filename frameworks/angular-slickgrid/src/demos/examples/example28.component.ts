@@ -21,7 +21,7 @@ import {
   templateUrl: './example28.component.html',
   styleUrls: ['example28.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  imports: [FormsModule, AngularSlickgridModule],
+  imports: [AngularSlickgridModule, FormsModule],
 })
 export class Example28Component implements OnInit {
   angularGrid!: AngularGridInstance;

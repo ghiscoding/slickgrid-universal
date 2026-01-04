@@ -30,7 +30,7 @@
     "@slickgrid-universal/graphql": "workspace:*",
     "@slickgrid-universal/odata": "workspace:*",
     "@slickgrid-universal/pagination-component": "workspace:*",
-    "@slickgrid-universal/react-row-detail": "workspace:*",
+    "@slickgrid-universal/react-row-detail-plugin": "workspace:*",
     "@slickgrid-universal/rxjs-observable": "workspace:*",
     "@slickgrid-universal/text-export": "workspace:*",
     "bootstrap": "catalog:",
@@ -38,7 +38,7 @@
     "i18next": "catalog:",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
-    "react-i18next": "^16.5.0",
+    "react-i18next": "^16.5.1",
     "react-router-dom": "^7.11.0",
     "slickgrid-react": "workspace:*"
   },

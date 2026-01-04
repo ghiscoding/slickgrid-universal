@@ -1,0 +1,37 @@
+<div id="demo-container" class="container-fluid">
+  <h2>
+    Example 50: Master/Detail Grids
+    <span class="float-end">
+      <a
+        style="font-size: 18px"
+        target="_blank"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example50.component.ts"
+      >
+        <span class="mdi mdi-link-variant"></span> code
+      </a>
+    </span>
+  </h2>
+
+  <h5>Master Grid</h5>
+  <div class="grid-container1">
+    <angular-slickgrid
+      gridId="grid50-1"
+      [columns]="columnDefinitions1"
+      [options]="gridOptions1"
+      [dataset]="dataset1"
+      (onAngularGridCreated)="angularGridReady1($event.detail)"
+      (onClick)="handleOnCellClicked($event.detail.args)"
+    >
+    </angular-slickgrid>
+  </div>
+
+  <hr />
+
+  <h5>
+    <span>Detail Grid - Orders for:</span>
+    <span class="fst-italic text-secondary customer-detail">{{ selectedName }}</span>
+  </h5>
+  <div class="grid-container">
+    <angular-slickgrid gridId="grid50-2" [columns]="columnDefinitions2" [options]="gridOptions2" [dataset]="dataset2"> </angular-slickgrid>
+  </div>
+</div>

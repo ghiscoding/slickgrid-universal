@@ -27,7 +27,7 @@
     "@slickgrid-universal/odata": "workspace:*",
     "@slickgrid-universal/rxjs-observable": "workspace:*",
     "@slickgrid-universal/text-export": "workspace:*",
-    "@slickgrid-universal/vue-row-detail": "workspace:*",
+    "@slickgrid-universal/vue-row-detail-plugin": "workspace:*",
     "bootstrap": "catalog:",
     "dompurify": "catalog:",
     "i18next": "catalog:",

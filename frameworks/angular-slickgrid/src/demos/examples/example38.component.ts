@@ -23,7 +23,7 @@ const PERCENT_HTML_ESCAPED = '%25';
   styleUrls: ['./example38.component.scss'],
   encapsulation: ViewEncapsulation.None,
   templateUrl: './example38.component.html',
-  imports: [NgIf, AngularSlickgridModule, DatePipe],
+  imports: [AngularSlickgridModule, DatePipe, NgIf],
 })
 export class Example38Component implements OnInit {
   angularGrid!: AngularGridInstance;

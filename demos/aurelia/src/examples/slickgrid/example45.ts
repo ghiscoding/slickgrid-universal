@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { AureliaSlickRowDetailView } from '@slickgrid-universal/aurelia-row-detail';
+import { AureliaSlickRowDetailView } from '@slickgrid-universal/aurelia-row-detail-plugin';
 import { bindable } from 'aurelia';
 import { ExtensionName, type AureliaGridInstance, type Column, type GridOption } from 'aurelia-slickgrid';
 import { Example45DetailView, type Distributor, type OrderData } from './example45-detail-view.js';

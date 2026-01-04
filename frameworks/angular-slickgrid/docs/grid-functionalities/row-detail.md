@@ -25,7 +25,7 @@ A Row Detail allows you to open a detail panel which can contain extra and/or mo
 
 ## Usage
 
-> Starting from version 10, Row Detail is now an optional package and must be installed separately (`@slickgrid-universal/angular-row-detail`)
+> Starting from version 10, Row Detail is now an optional package and must be installed separately (`@slickgrid-universal/angular-row-detail-plugin`)
 
 ##### View
 ```html
@@ -40,7 +40,7 @@ A Row Detail allows you to open a detail panel which can contain extra and/or mo
 
 ##### Component
 ```ts
-import { AngularSlickRowDetailView } from '@slickgrid-universal/angular-row-detail'; // for v10 and above
+import { AngularSlickRowDetailView } from '@slickgrid-universal/angular-row-detail-plugin'; // for v10 and above
 
 @Component({
   templateUrl: './grid-rowdetail.component.html'
@@ -400,7 +400,7 @@ Main Grid Component
 
 ```ts
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { AngularSlickRowDetailView } from '@slickgrid-universal/angular-row-detail'; // for v10 and above
+import { AngularSlickRowDetailView } from '@slickgrid-universal/angular-row-detail-plugin'; // for v10 and above
 import { AngularGridInstance, Column, GridOption, GridState } from 'angular-slickgrid';
 
 @Component({
