@@ -5,11 +5,6 @@
 [![npm](https://img.shields.io/npm/dy/@slickgrid-universal/vanilla-bundle)](https://www.npmjs.com/package/@slickgrid-universal/vanilla-bundle)
 [![npm bundle size](https://img.shields.io/bundlephobia/minzip/@slickgrid-universal/vanilla-bundle?color=success&label=gzip)](https://bundlephobia.com/result?p=@slickgrid-universal/vanilla-bundle)
 
-[![Actions Status](https://github.com/ghiscoding/slickgrid-universal/workflows/CI%20Build/badge.svg)](https://github.com/ghiscoding/slickgrid-universal/actions)
-[![Cypress.io](https://img.shields.io/badge/tested%20with-Cypress-04C38E.svg)](https://www.cypress.io/)
-[![Vitest](https://img.shields.io/badge/tested%20with-vitest-fcc72b.svg?logo=vitest)](https://vitest.dev/)
-[![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
-
 ## Vanilla Bundle
 #### @slickgrid-universal/vanilla-bundle
 
