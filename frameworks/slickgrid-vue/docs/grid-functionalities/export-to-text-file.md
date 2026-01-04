@@ -169,12 +169,12 @@ If you have lots of data, you might want to show a spinner telling the user that
   <SlickgridVue gridId="grid5"
       v-model:columns="columnDefinitions"
       v-model:options="gridOptions"
-      v-model:data="dataset"
+      v-model:dataset="dataset"
       paginationOptions={state.paginationOptions}
-      @onVueGridCreated="vueGridReady($event.detail)"
       @onBeforeExportToFile="processing = true"
       @onAfterExportToFile="processing = false"
       @onGridStateChanged="gridStateChanged($event.detail)"
+      @onVueGridCreated="vueGridReady($event.detail)"
   />
 </template>
 ```

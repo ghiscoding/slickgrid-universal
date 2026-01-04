@@ -431,7 +431,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
   <slickgrid-vue
     v-model:options="gridOptions"
     v-model:columns="columnDefinitions"
-    v-model:data="dataset"
+    v-model:dataset="dataset"
     grid-id="grid4"
     @onGridStateChanged="gridStateChanged($event.detail)"
     @onRowCountChanged="refreshMetrics($event.detail.eventData, $event.detail.args)"

@@ -210,7 +210,7 @@ function toggleSubTitle() {
     <SlickgridVue
       v-model:options="gridOptions1!"
       v-model:columns="columnDefinitions1"
-      v-model:data="dataset1"
+      v-model:dataset="dataset1"
       grid-id="grid48-1"
       @onVueGridCreated="vueGrid1Ready($event.detail)"
     >
@@ -230,7 +230,7 @@ function toggleSubTitle() {
   <slickgrid-vue
     v-model:options="gridOptions2!"
     v-model:columns="columnDefinitions2"
-    v-model:data="dataset2"
+    v-model:dataset="dataset2"
     grid-id="grid48-2"
     @onVueGridCreated="vueGrid2Ready($event.detail)"
   >

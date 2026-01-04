@@ -118,8 +118,8 @@ Note: the default is different depending on the filter type
 For example if you would want to disable this behavior, you can assign `emptySearchTermReturnAllValues: false`
 ```ts
 // define you columns, in this demo Effort Driven will use a Select Filter
-this.columnDefinitions = [
-  { 
+columnDefinitions.value = [
+  {
     id: 'lastName', name: 'Last Name', field: 'lastName',
     filterable: true,
     filter: {
@@ -167,9 +167,9 @@ function setFiltersDynamically() {
   <slickgrid-vue grid-id="grid1"
     v-model:columns="columnDefinitions"
     v-model:options="gridOptions"
-    v-model:data="dataset"
-    @onvueGridCreated="vueGridReady($event.detail)"
+    v-model:dataset="dataset"
     @onGridStateChanged="gridStateChanged($event.detail)"
+    @onVueGridCreated="vueGridReady($event.detail)"
   ></slickgrid-vue>
 </template>
 ```

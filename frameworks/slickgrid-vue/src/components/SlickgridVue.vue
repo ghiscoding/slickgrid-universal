@@ -212,7 +212,7 @@ const _columnDefinitions: Ref<Column[]> = ref([]);
 const columnDefinitionsModel = defineModel<Column[]>('columns', { required: true, default: [] });
 watch(columnDefinitionsModel, (columnDefinitions) => columnDefinitionsChanged(columnDefinitions), { immediate: true });
 
-const dataModel = defineModel<any[]>('data', { required: false }); // technically true but user could use datasetHierarchical instead
+const dataModel = defineModel<any[]>('dataset', { required: false }); // technically true but user could use datasetHierarchical instead
 watch(
   dataModel,
   (newDataset: any[]) => {

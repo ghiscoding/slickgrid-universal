@@ -5,6 +5,7 @@ One of the biggest change in this release is to hide columns by using the `hidde
 #### Major Changes - Quick Summary
 - [`hidden` columns](#hidden-columns)
 - [Row Detail (now optional)](#row-detail-now-optional)
+- rename `v-model:data` to `v-model:dataset`
 
 > **Note:** if you come from an earlier version, please make sure to follow each migrations in their respected order (review previous migration guides)
 
@@ -47,6 +48,21 @@ function defineGrid() {
     }
   };
 }
+```
+
+#### rename `v-model:data` to `v-model:dataset`
+
+I am renaming `v-model:data` to `v-model:dataset` to align with all other framework wrappers.
+
+```diff
+<SlickgridVue
+    grid-id="grid1"
+    v-model:columns="columnDefinitions"
+-   v-model:dataset="data"
++   v-model:dataset="dataset"
+    v-model:options="gridOptions"
+>
+</SlickgridVue>
 ```
 
 ## Changes

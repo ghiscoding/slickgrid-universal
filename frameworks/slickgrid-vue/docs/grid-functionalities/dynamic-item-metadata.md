@@ -72,7 +72,7 @@ function updateItemMetadataForDurationOver50(previousItemMetadata: any) {
     grid-id="grid1"
     v-model:columns="columnDefinitions"
     v-model:options="gridOptions"
-    v-model:data="dataset"
+    v-model:dataset="dataset"
     @onVueGridCreated="vueGridReady($event.detail)"
   />
 </script>

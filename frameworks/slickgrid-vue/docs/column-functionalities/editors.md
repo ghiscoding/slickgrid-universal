@@ -572,8 +572,8 @@ function setAutoEdit(autoEdit) {
     grid-id="grid1"
     v-model:columns="columnDefinitions"
     v-model:options="gridOptions"
-    v-model:data="dataset"
-    @onvueGridCreated="vueGridReady($event.detail)"
+    v-model:dataset="dataset"
+    @onVueGridCreated="vueGridReady($event.detail)"
   ></slickgrid-vue>
 </template>
 ```
@@ -605,13 +605,13 @@ function onBeforeEditCell($event) {
     grid-id="grid3"
     v-model:columns="columnDefinitions"
     v-model:options="gridOptions"
-    v-model:data="dataset"
-    @onvueGridCreated="vueGridReady(e.detail)"
+    v-model:dataset="dataset"
     @onBeforeEditCell="onBeforeEditCell($event.detail.eventData, $event.detail.args)"
     @onBeforeCellEditorDestroy="onAfterEditCell($event.detail.eventData, $event.detail.args)"
     @onCellChange="onCellChanged(e.detail.eventData, e.detail.args)"
     @onClick="onCellClicked(e.detail.eventData, e.detail.args)"
     @onValidationError="onCellValidationError(e.detail.eventData, e.detail.args)"
+    @onVueGridCreated="vueGridReady(e.detail)"
     ></slickgrid-vue>
 </template>
 ```

@@ -79,10 +79,10 @@ function handleOnSort() {
   <SlickgridVue gridId="grid1"
     v-model:columns="columnDefinitions"
     v-model:options="gridOptions"
-    v-model:data="dataset"
+    v-model:dataset="dataset"
+    @onScroll="handleOnScroll($event.$detail.args)"
+    @onSort="handleOnSort()"
     @onVueGridCreated="vueGridReady($event.detail)"
-    onScroll={$event => handleOnScroll($event.$detail.args)}
-    onSort={$event => handleOnSort())}
   />
 </template>
 ```
@@ -178,7 +178,7 @@ function getCustomerCallback(data: { '@odata.count': number; infiniteScrollBotto
   <SlickgridVue gridId="grid1"
     v-model:columns="columnDefinitions"
     v-model:options="gridOptions"
-    v-model:data="dataset"
+    v-model:dataset="dataset"
     @onVueGridCreated="vueGridReady($event.detail)"
   />
 </template>

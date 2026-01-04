@@ -55,12 +55,12 @@ function onMouseEntered(e, args) {
       grid-id='grid3'
       v-model:columns="columnDefinitions"
       v-model:options="gridOptions"
-      v-model:data="dataset"
-      @onvueGridCreated="vueGridReady($event.detail)"
+      v-model:dataset="dataset"
       @onCellChange="onCellChanged($event.detail.eventData, $event.detail.args)"
       @onClick="onCellClicked($event.detail.eventData, $event.detail.args)"
       @onMouseEnter="MouseEntered($event.detail.eventData, $event.detail.args)"
       @onValidationError="onCellValidationError($event.detail.eventData, $event.detail.args)"
+      @onVueGridCreated="vueGridReady($event.detail)"
     />
 </template>
 ```
@@ -135,9 +135,9 @@ function vueGridReady(vueGrid: SlickgridVueInstance) {
   <SlickgridVue gridId="grid12"
     v-model:columns="columnDefinitions"
     v-model:options="gridOptions"
-    v-model:data="dataset"
-    @onvueGridCreated="vueGridReady($event.detail)"
+    v-model:dataset="dataset"
     @onGridStateChanged="gridStateChanged($event.detail)"
+    @onVueGridCreated="vueGridReady($event.detail)"
   />
 </template>
 ```
