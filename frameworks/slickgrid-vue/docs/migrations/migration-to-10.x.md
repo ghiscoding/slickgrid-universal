@@ -52,7 +52,7 @@ function defineGrid() {
 
 #### rename `v-model:data` to `v-model:dataset`
 
-I am renaming `v-model:data` to `v-model:dataset` to align with all other framework wrappers.
+Renaming `v-model:data` to `v-model:dataset` so that it aligns with all other framework wrappers.
 
 ```diff
 <SlickgridVue
