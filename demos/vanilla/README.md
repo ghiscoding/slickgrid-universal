@@ -1,4 +1,4 @@
-# [![ViteJS](https://avatars.githubusercontent.com/u/65625612?s=45&v=4)](https://vite.dev/) Slickgrid-Universal Vite Demo
+# <a href="https://vite.dev/" rel="nofollow"><img alt="ViteJS" src="https://ghiscoding.github.io/slickgrid-universal-vite-demo/assets/favicon-C49brna2.svg" width="65"></a> Slickgrid-Universal Vite Demo
 ## Demo of the [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) library
 
 This project is demoing multiple examples of [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal), the binding & routing are very basic and **not at all recommended for production release**, it was created for demo purpose only, so please keep that in mind.
