@@ -31,8 +31,8 @@ Side note, I am (`@ghiscoding`) a maintainer in both projects, which are Slickgr
 
 ### Why create this monorepo?
 Below is a list of reasons as to why this project was created and why it is built as a monorepo project:
-1. avoids duplicate code by creating common packages available in Slickgrid-Universal and used by all framework wrappers
-2. many of the Services are decoupled because no project will ever require all of these services all at once
+1. avoids duplicate code by creating common packages available in Slickgrid-Universal and used by all frameworks
+2. many of the Services are decoupled because most project will never require all of these services all at once
    - OData, GraphQL, Export to CSV, Export to Excel, Composite Editor, RxJS, ...
 4. and finally it is framework agnostic
    - you can reuse the same grids and logic in many different frameworks, because it's easily transportable
@@ -47,7 +47,7 @@ You could star ⭐ the project and/or support me with caffeine via GitHub [spons
 <a href='https://ko-fi.com/ghiscoding' target='_blank'><img height='36' width='140' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi3.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
 ## Live Demos & Available Framework Wrappers
-The Slickgrid-Universal [live demo](https://ghiscoding.github.io/slickgrid-universal) shows 2 different UI themes (Material Design / Salesforce) and you can also see the Bootstrap theme demoed in all other frameworks with links available in the table shown below. Also please note that even if all the demos are built with either [Bootstrap](https://getbootstrap.com/) or [Bulma](https://bulma.io/), you could in theory use any other UI libraries (e.g. Google Material, ...). The project tries to be as much agnostic as possible and it does so by providing a large set of CSS/SASS variables which are available to customize the UI however you want.
+The Slickgrid-Universal [live demo](https://ghiscoding.github.io/slickgrid-universal) shows 2 different UI themes (Material Design / Salesforce) and you can also see the Bootstrap theme demoed in all other frameworks with links available in the table shown below. Also please note that even if all the demos are built with [Bootstrap](https://getbootstrap.com/) or [Bulma](https://bulma.io/), you could in theory use any other UI libraries (e.g. Google Material, ...). The project tries to be as much agnostic as possible and it does so by providing a large set of CSS/SASS variables which are available to customize the UI however you want.
 
 ### Available Framework Wrappers
 
