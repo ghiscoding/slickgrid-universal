@@ -5,12 +5,7 @@
 [![npm](https://img.shields.io/npm/dy/@slickgrid-universal/vanilla-force-bundle)](https://www.npmjs.com/package/@slickgrid-universal/vanilla-force-bundle)
 [![npm bundle size](https://img.shields.io/bundlephobia/minzip/@slickgrid-universal/vanilla-force-bundle?color=success&label=gzip)](https://bundlephobia.com/result?p=@slickgrid-universal/vanilla-force-bundle)
 
-[![Actions Status](https://github.com/ghiscoding/slickgrid-universal/workflows/CI%20Build/badge.svg)](https://github.com/ghiscoding/slickgrid-universal/actions)
-[![Cypress.io](https://img.shields.io/badge/tested%20with-Cypress-04C38E.svg)](https://www.cypress.io/)
-[![Vitest](https://img.shields.io/badge/tested%20with-vitest-fcc72b.svg?logo=vitest)](https://vitest.dev/)
-[![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
-
-## Vanilla Force Bundle
+## <a href="https://lwc.dev/" rel="nofollow"><img alt="Salesforce (LWC)" src="https://login.salesforce.com/img/logo214.svg" width="65"></a> Vanilla Force Bundle
 #### @slickgrid-universal/vanilla-force-bundle
 
 Vanilla Force Bundle is similar to the Vanilla Bundle but oriented towards a Salesforce (LWC) implementation which requires an all-in-1 bundle (zip) with all necessary package loaded at once. So this package is very similar to the [@slickgrid-universal/vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle), it actually extends from it, with the only difference that it imports and includes 3 extra packages (which are optional in the `vanilla-bundle` but required for our Salesforce implementation) and those are:

@@ -5,11 +5,6 @@
 [![npm](https://img.shields.io/npm/dy/@slickgrid-universal/common)](https://www.npmjs.com/package/@slickgrid-universal/common)
 [![npm bundle size](https://img.shields.io/bundlephobia/minzip/@slickgrid-universal/common?color=success&label=gzip)](https://bundlephobia.com/result?p=@slickgrid-universal/common)
 
-[![Actions Status](https://github.com/ghiscoding/slickgrid-universal/actions/workflows/main.yml/badge.svg)](https://github.com/ghiscoding/slickgrid-universal/actions)
-[![Cypress.io](https://img.shields.io/badge/tested%20with-Cypress-04C38E.svg)](https://www.cypress.io/)
-[![Vitest](https://img.shields.io/badge/tested%20with-vitest-fcc72b.svg?logo=vitest)](https://vitest.dev/)
-[![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
-
 ## Common Filters/Editors/Extensions/Services
 #### @slickgrid-universal/common
 
