@@ -103,7 +103,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
         v-if="showGrid"
         v-model:options="innerGridOptions"
         v-model:columns="innerColDefs"
-        v-model:data="innerDataset"
+        v-model:dataset="innerDataset"
         :grid-id="`innergrid-${model.id}`"
         class="innergrid"
         @onBeforeGridDestroy="handleBeforeGridDestroy"

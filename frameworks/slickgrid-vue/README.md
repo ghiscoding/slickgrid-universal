@@ -65,7 +65,7 @@ const gridOptions = ref<GridOption>({ /*...*/ }); // optional grid options
   <slickgrid-vue
     grid-id="grid1"
     v-model:columns="columnDefinitions"
-    v-model:data="dataset"
+    v-model:dataset="dataset"
     v-model:options="gridOptions"
   ></slickgrid-vue>
 </template>

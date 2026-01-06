@@ -5,6 +5,7 @@ One of the biggest change in this release is to hide columns by using the `hidde
 #### Major Changes - Quick Summary
 - [`hidden` columns](#hidden-columns)
 - [Row Detail (now optional)](#row-detail-now-optional)
+- rename `v-model:data` to `v-model:dataset`
 
 > **Note:** if you come from an earlier version, please make sure to follow each migrations in their respected order (review previous migration guides)
 
@@ -33,8 +34,7 @@ _Changes that should be transparent to most users, I'm just listing it in case o
 
 #### Row Detail (now optional)
 
-Since I don't think that Row Detail is being used by everyone, I'm making it an optional plugin (package). This will help decrease build size for users who don't require it.
-
+Since I don't think that Row Detail is being used by everyone, I'm making it an optional plugin (package). This should help decrease build size quite a bit for users who don't require it.
 
 ```diff
 + import { VueSlickRowDetailView } from '@slickgrid-universal/vue-row-detail-plugin';
@@ -48,6 +48,21 @@ function defineGrid() {
     }
   };
 }
+```
+
+#### rename `v-model:data` to `v-model:dataset`
+
+Renaming `v-model:data` to `v-model:dataset` so that it aligns with all other framework wrappers.
+
+```diff
+<SlickgridVue
+    grid-id="grid1"
+    v-model:columns="columnDefinitions"
+-   v-model:dataset="data"
++   v-model:dataset="dataset"
+    v-model:options="gridOptions"
+>
+</SlickgridVue>
 ```
 
 ## Changes

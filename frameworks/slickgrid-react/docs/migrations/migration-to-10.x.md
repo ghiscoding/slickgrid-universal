@@ -33,8 +33,7 @@ _Changes that should be transparent to most users, I'm just listing it in case o
 
 #### Row Detail (now optional)
 
-Since I don't think that Row Detail is being used by everyone, I'm making it an optional plugin (package). This will help decrease build size for users who don't require it.
-
+Since I don't think that Row Detail is being used by everyone, I'm making it an optional plugin (package). This should help decrease build size quite a bit for users who don't require it.
 
 ```diff
 + import { ReactSlickRowDetailView } from '@slickgrid-universal/react-row-detail-plugin';

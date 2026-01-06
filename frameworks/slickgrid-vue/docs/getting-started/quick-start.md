@@ -159,7 +159,7 @@ function getData(count: number) {
     grid-id="grid1"
     v-model:columns="columnDefinitions"
     v-model:options="gridOptions"
-    v-model:data="dataset" />
+    v-model:dataset="dataset" />
 </template>
 ```
 

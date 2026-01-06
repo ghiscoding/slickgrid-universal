@@ -144,7 +144,7 @@ function toggleSubTitle() {
     v-if="gridCreated"
     v-model:options="gridOptions"
     v-model:columns="columnDefinitions"
-    v-model:data="dataset"
+    v-model:dataset="dataset"
     grid-id="grid17"
   >
   </slickgrid-vue>
