@@ -2,13 +2,17 @@ name: Lint PR
 
 on:
   pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
 
 permissions:
   pull-requests: read
 
 jobs:
   main:
-    name: Validate PR title
+    name: Validate PR title (conventional commit)
     runs-on: ubuntu-latest
     steps:
       - name: Validate PR title
