@@ -2,7 +2,6 @@ import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement, getInnerSize, getOffset, isPrimitiveOrHTML, stripTags } from '@slickgrid-universal/utils';
 import { SlickEventHandler, type SlickDataView, type SlickGrid } from '../core/index.js';
-import { FieldType } from '../enums/index.js';
 import { parseFormatterWhenExist } from '../formatters/formatterUtilities.js';
 import type { AutoResizeOption, Column, GridOption, GridSize, ResizeByContentOption } from '../interfaces/index.js';
 
@@ -627,7 +626,7 @@ export class ResizerService {
     // read a few optional resize by content grid options
     const resizeCellPaddingWidthInPx = this.resizeByContentOptions.cellPaddingWidthInPx ?? 6;
     const resizeFormatterPaddingWidthInPx = this.resizeByContentOptions.formatterPaddingWidthInPx ?? 6;
-    const fieldType = column?.filter?.type ?? column?.type ?? FieldType.string;
+    const fieldType = column?.filter?.type ?? column?.type ?? 'string';
 
     // let's start with column width found in previous column & data analysis
     let newColWidth = calculatedColumnWidth;

@@ -5,7 +5,7 @@ export * from './delimiterType.enum.js';
 export type * from './emitterType.type.js';
 export type * from './extensionList.type.js';
 export * from './extensionName.enum.js';
-export * from './fieldType.enum.js';
+export * from './field.type.js';
 export * from './fileType.enum.js';
 export type * from './filterMultiplePassType.type.js';
 export * from './gridStateType.enum.js';

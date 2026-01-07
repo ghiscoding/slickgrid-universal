@@ -2,7 +2,7 @@ import { format } from '@formkit/tempo';
 import { getHtmlStringOutput, isPrimitiveOrHTML, stripTags } from '@slickgrid-universal/utils';
 import { Constants } from '../constants.js';
 import { type SlickGrid } from '../core/index.js';
-import { FieldType } from '../enums/fieldType.enum.js';
+import { type FieldType } from '../enums/field.type.js';
 import type {
   Column,
   ExcelExportOption,
@@ -192,13 +192,13 @@ export function getValueFromParamsOrFormatterOptions(
 }
 
 /** From a FieldType, return the associated date Formatter */
-export function getAssociatedDateFormatter(fieldType: (typeof FieldType)[keyof typeof FieldType], defaultSeparator: string): Formatter {
+export function getAssociatedDateFormatter(fieldType: FieldType, defaultSeparator: string): Formatter {
   const defaultDateFormat = mapTempoDateFormatWithFieldType(fieldType, { withZeroPadding: true });
 
   return (_row, _cell, value, columnDef, _dataContext, grid) => {
     const gridOptions = (grid.getOptions?.() ?? {}) as GridOption;
     const customSeparator = gridOptions?.formatterOptions?.dateSeparator ?? defaultSeparator;
-    const inputType = columnDef?.type ?? FieldType.date;
+    const inputType = columnDef?.type ?? 'date';
     const inputDateFormat = mapTempoDateFormatWithFieldType(inputType, { withDefaultIso8601: true });
     let outputDate = parseDateByIOFormats(columnDef, value, inputDateFormat, defaultDateFormat);
 
@@ -220,7 +220,7 @@ export function getAssociatedDateFormatter(fieldType: (typeof FieldType)[keyof t
  */
 export function getBaseDateFormatter(): Formatter {
   return (_row, _cell, value, columnDef) => {
-    const inputType = columnDef?.type ?? FieldType.date;
+    const inputType = columnDef?.type ?? 'date';
     const inputDateFormat = mapTempoDateFormatWithFieldType(inputType, { withDefaultIso8601: true });
     const outpuDateFormat: string = columnDef.params?.dateFormat;
     if (!outpuDateFormat) {

@@ -580,7 +580,7 @@ describe('AutocompleterFilter', () => {
       } as any,
       collectionOptions: { collectionInsideObjectProperty: 'deep.myCollection' },
     };
-    mockColumn.type = FieldType.object;
+    mockColumn.type = 'object';
     mockColumn.dataKey = 'value';
     mockColumn.labelKey = 'description';
 
@@ -627,7 +627,7 @@ describe('AutocompleterFilter', () => {
       collection: ['other', 'male', 'female'],
       collectionSortBy: {
         sortDesc: true,
-        fieldType: FieldType.string,
+        fieldType: 'string',
       },
     };
 
@@ -650,7 +650,7 @@ describe('AutocompleterFilter', () => {
       collectionSortBy: {
         property: 'value',
         sortDesc: false,
-        fieldType: FieldType.string,
+        fieldType: 'string',
       },
       customStructure: {
         value: 'value',

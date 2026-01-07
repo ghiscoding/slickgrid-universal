@@ -19,7 +19,7 @@ import {
 import { Constants } from '../constants.js';
 import { type SlickGrid } from '../core/index.js';
 import { applyHtmlToElement } from '../core/utils.js';
-import { FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
+import { OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
 import type {
   AutocompleterOption,
   AutocompleteSearchItem,
@@ -120,7 +120,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
   get customStructure(): CollectionCustomStructure | undefined {
     let customStructure = this.columnFilter?.customStructure;
     const columnType = this.columnFilter?.type ?? this.columnDef?.type;
-    if (!customStructure && columnType === FieldType.object && this.columnDef?.dataKey && this.columnDef?.labelKey) {
+    if (!customStructure && columnType === 'object' && this.columnDef?.dataKey && this.columnDef?.labelKey) {
       customStructure = {
         label: this.columnDef.labelKey,
         value: this.columnDef.dataKey,

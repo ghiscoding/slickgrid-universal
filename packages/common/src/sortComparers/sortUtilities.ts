@@ -1,11 +1,11 @@
-import { FieldType, type SortDirectionNumber } from '../enums/index.js';
+import { type FieldType, type SortDirectionNumber } from '../enums/index.js';
 import type { Column, GridOption } from '../interfaces/index.js';
 import { isColumnDateType } from '../services/utilities.js';
 import { getAssociatedDateSortComparer } from './dateUtilities.js';
 import { SortComparers } from './index.js';
 
 export function sortByFieldType(
-  fieldType: (typeof FieldType)[keyof typeof FieldType],
+  fieldType: FieldType,
   value1: any,
   value2: any,
   sortDirection: number | SortDirectionNumber,
@@ -19,21 +19,21 @@ export function sortByFieldType(
     sortResult = dateSortComparer(value1, value2, sortDirection, sortColumn, gridOptions);
   } else {
     switch (fieldType) {
-      case FieldType.boolean:
+      case 'boolean':
         sortResult = SortComparers.boolean(value1, value2, sortDirection, sortColumn, gridOptions);
         break;
-      case FieldType.float:
-      case FieldType.integer:
-      case FieldType.number:
+      case 'float':
+      case 'integer':
+      case 'number':
         sortResult = SortComparers.numeric(value1, value2, sortDirection, sortColumn, gridOptions);
         break;
-      case FieldType.object:
+      case 'object':
         sortResult = SortComparers.objectString(value1, value2, sortDirection, sortColumn, gridOptions);
         break;
-      case FieldType.string:
-      case FieldType.text:
-      case FieldType.password:
-      case FieldType.readonly:
+      case 'string':
+      case 'text':
+      case 'password':
+      case 'readonly':
       default:
         sortResult = SortComparers.string(value1, value2, sortDirection, sortColumn, gridOptions);
         break;

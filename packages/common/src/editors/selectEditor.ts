@@ -11,7 +11,6 @@ import { Constants } from '../constants.js';
 import { SlickEventData, type SlickGrid } from '../core/index.js';
 import { buildMsSelectCollectionList, CollectionService, findOrDefault, type TranslaterService } from '../services/index.js';
 import { getDescendantProperty, getTranslationPrefix } from '../services/utilities.js';
-import { FieldType } from './../enums/index.js';
 import type {
   CollectionCustomStructure,
   CollectionOption,
@@ -408,10 +407,7 @@ export class SelectEditor implements Editor {
 
     if (fieldName !== undefined) {
       // when the provided user defined the column field type as a possible number then try parsing the state value as that
-      if (
-        (fieldType === FieldType.number || fieldType === FieldType.integer || fieldType === FieldType.boolean) &&
-        !isNaN(parseFloat(state))
-      ) {
+      if ((fieldType === 'number' || fieldType === 'integer' || fieldType === 'boolean') && !isNaN(parseFloat(state))) {
         newValue = parseFloat(state);
       }
 

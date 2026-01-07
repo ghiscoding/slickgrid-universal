@@ -41,7 +41,7 @@ describe('DateRangeFilter', () => {
     document.body.appendChild(divContainer);
     spyGetHeaderRow = vi.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
 
-    mockColumn = { id: 'finish', field: 'finish', type: FieldType.dateIso, filterable: true, filter: { model: Filters.dateRange, operator: 'RangeInclusive' } };
+    mockColumn = { id: 'finish', field: 'finish', type: 'dateIso', filterable: true, filter: { model: Filters.dateRange, operator: 'RangeInclusive' } };
     filterArguments = {
       grid: gridStub,
       columnDef: mockColumn,
@@ -382,7 +382,7 @@ describe('DateRangeFilter', () => {
   });
 
   it('should have a value with date & time in the picker when "enableTime" option is set and we trigger a change', () => {
-    mockColumn.outputType = FieldType.dateTimeIsoAmPm;
+    mockColumn.outputType = 'dateTimeIsoAmPm';
     mockColumn.filter!.operator = '>';
     const spyCallback = vi.spyOn(filterArguments, 'callback');
     const selectedDates = ['2001-01-02', '2001-01-13'];
@@ -414,7 +414,7 @@ describe('DateRangeFilter', () => {
 
   it('should have a value with date & time in the picker when "enableTime" option is set as a global default filter option and we trigger a change', () => {
     gridOptionMock.defaultFilterOptions = {};
-    mockColumn.outputType = FieldType.dateTimeIsoAmPm;
+    mockColumn.outputType = 'dateTimeIsoAmPm';
     mockColumn.filter!.operator = '>';
     const spyCallback = vi.spyOn(filterArguments, 'callback');
     const selectedDates = ['2001-01-02', '2001-01-13'];

@@ -1,6 +1,6 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickEventHandler, type SlickDataView, type SlickEventData, type SlickGrid } from '../core/index.js';
-import { FieldType, SortDirection, SortDirectionNumber, type EmitterType, type SortDirectionString } from '../enums/index.js';
+import { SortDirection, SortDirectionNumber, type EmitterType, type SortDirectionString } from '../enums/index.js';
 import type {
   Column,
   ColumnSort,
@@ -557,7 +557,7 @@ export class SortService {
   sortComparer(sortColumn: ColumnSort, dataRow1: any, dataRow2: any, querySortField?: string): number | undefined {
     if (sortColumn?.sortCol) {
       const columnDef = sortColumn.sortCol;
-      const fieldType = columnDef.type || FieldType.string;
+      const fieldType = columnDef.type || 'string';
       const sortDirection = sortColumn.sortAsc ? SortDirectionNumber.asc : SortDirectionNumber.desc;
       let queryFieldName1 = querySortField || columnDef.queryFieldSorter || columnDef.queryField || columnDef.field;
 

@@ -140,7 +140,7 @@ describe('CollectionService', () => {
         it('should return a collection sorted by a "dataKey"', () => {
           const columnDef = { id: 'users', field: 'users', dataKey: 'lastName' } as Column;
 
-          const result = service.sortCollection(columnDef, collection, { property: 'lastName', sortDesc: true, fieldType: FieldType.string });
+          const result = service.sortCollection(columnDef, collection, { property: 'lastName', sortDesc: true, fieldType: 'string' });
 
           expect(result).toEqual([
             { firstName: 'John', lastName: 'Zachary', position: 'SALES_REP', order: 2 },
@@ -158,8 +158,8 @@ describe('CollectionService', () => {
         it('should return a collection sorted by multiple sortBy entities', () => {
           const columnDef = { id: 'users', field: 'users', dataKey: 'lastName' } as Column;
           const sortBy = [
-            { property: 'firstName', sortDesc: false, fieldType: FieldType.string },
-            { property: 'lastName', sortDesc: true, fieldType: FieldType.string },
+            { property: 'firstName', sortDesc: false, fieldType: 'string' },
+            { property: 'lastName', sortDesc: true, fieldType: 'string' },
           ] as CollectionSortBy[];
 
           const result = service.sortCollection(columnDef, collection, sortBy);
@@ -179,7 +179,7 @@ describe('CollectionService', () => {
 
         it('should return a collection sorted by a sortyBy entity being a number', () => {
           const columnDef = { id: 'users', field: 'users', dataKey: 'lastName' } as Column;
-          const sortBy = [{ property: 'order', sortDesc: true, fieldType: FieldType.number }] as CollectionSortBy[];
+          const sortBy = [{ property: 'order', sortDesc: true, fieldType: 'number' }] as CollectionSortBy[];
 
           const result = service.sortCollection(columnDef, collection, sortBy);
 
@@ -200,7 +200,7 @@ describe('CollectionService', () => {
           translateService.use('fr');
           const columnDef = { id: 'users', field: 'users', dataKey: 'lastName' } as Column;
           const sortBy = [
-            { property: 'firstName', sortDesc: false, fieldType: FieldType.string },
+            { property: 'firstName', sortDesc: false, fieldType: 'string' },
             { property: 'position', sortDesc: true }, // fieldType is string by default
           ] as CollectionSortBy[];
 
@@ -299,7 +299,7 @@ describe('CollectionService', () => {
       describe('sortCollection method', () => {
         it('should return a collection of numbers sorted', () => {
           translateService.use('en');
-          const columnDef = { id: 'count', field: 'count', type: FieldType.number } as Column;
+          const columnDef = { id: 'count', field: 'count', type: 'number' } as Column;
 
           const result1 = service.sortCollection(columnDef, [0, -11, 3, 99999, -200], { sortDesc: false } as CollectionSortBy);
           const result2 = service.sortCollection(columnDef, [0, -11, 3, 99999, -200], { sortDesc: true } as CollectionSortBy);
@@ -311,7 +311,7 @@ describe('CollectionService', () => {
         it('should return a collection of translation values sorted', () => {
           translateService.use('en');
           const roleCollection = ['SALES_REP', 'DEVELOPER', 'SALES_REP', null, 'HUMAN_RESOURCES', 'FINANCE_MANAGER', 'UNKNOWN'];
-          const columnDef = { id: 'count', field: 'count', type: FieldType.string } as Column;
+          const columnDef = { id: 'count', field: 'count', type: 'string' } as Column;
 
           const result1 = service.sortCollection(columnDef, [...roleCollection], { sortDesc: false } as CollectionSortBy, true);
           const result2 = service.sortCollection(columnDef, [...roleCollection], { sortDesc: true } as CollectionSortBy, true);
@@ -332,7 +332,7 @@ describe('CollectionService', () => {
     it('should throw an error if "enableTranslate" is set but the I18N Service is null', () => {
       const columnDef = { id: 'users', field: 'users', dataKey: 'lastName' } as Column;
 
-      expect(() => service.sortCollection(columnDef, collection, { property: 'lastName', sortDesc: true, fieldType: FieldType.string }, true)).toThrow(
+      expect(() => service.sortCollection(columnDef, collection, { property: 'lastName', sortDesc: true, fieldType: 'string' }, true)).toThrow(
         '[Slickgrid-Universal] requires a Translate Service to be installed and configured'
       );
     });
@@ -342,8 +342,8 @@ describe('CollectionService', () => {
     const columns: Column[] = [
       { id: 'firstName', field: 'firstName', name: 'First Name' },
       { id: 'lastName', field: 'lastName', name: 'Last Name' },
-      { id: 'start', field: 'start', name: 'Start', type: FieldType.dateIso },
-      { id: 'finish', field: 'finish', name: 'Finish', type: FieldType.dateIso },
+      { id: 'start', field: 'start', name: 'Start', type: 'dateIso' },
+      { id: 'finish', field: 'finish', name: 'Finish', type: 'dateIso' },
     ];
     let collection: any[] = [];
 

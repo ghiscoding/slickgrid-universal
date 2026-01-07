@@ -626,8 +626,8 @@ describe('ExcelExportService', () => {
             width: 100,
             excelExportOptions: { style: { font: { outline: true, italic: true }, format: '€0.00##;[Red](€0.00##)' }, width: 18 },
           },
-          { id: 'startDate', field: 'startDate', type: FieldType.dateIso, width: 100, exportWithFormatter: false },
-          { id: 'endDate', field: 'endDate', width: 100, formatter: Formatters.dateIso, type: FieldType.dateUtc, outputType: FieldType.dateIso },
+          { id: 'startDate', field: 'startDate', type: 'dateIso', width: 100, exportWithFormatter: false },
+          { id: 'endDate', field: 'endDate', width: 100, formatter: Formatters.dateIso, type: 'dateUtc', outputType: 'dateIso' },
         ] as Column[];
 
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
@@ -694,7 +694,7 @@ describe('ExcelExportService', () => {
           { id: 'id', field: 'id', excludeFromExport: true },
           { id: 'firstName', field: 'user.firstName', name: 'First Name', width: 100, formatter: Formatters.complexObject, exportWithFormatter: true },
           { id: 'lastName', field: 'user.lastName', name: 'Last Name', width: 100, formatter: Formatters.complexObject, exportWithFormatter: true },
-          { id: 'position', field: 'position', width: 100, type: FieldType.number },
+          { id: 'position', field: 'position', width: 100, type: 'number' },
         ] as Column[];
 
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
@@ -791,7 +791,7 @@ describe('ExcelExportService', () => {
             id: 'position',
             field: 'position',
             name: 'Position',
-            type: FieldType.number,
+            type: 'number',
             width: 100,
             formatter: Formatters.translate,
             exportWithFormatter: true,
@@ -875,7 +875,7 @@ describe('ExcelExportService', () => {
           {
             id: 'order',
             field: 'order',
-            type: FieldType.number,
+            type: 'number',
             exportWithFormatter: true,
             formatter: Formatters.multiple,
             params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
@@ -1016,7 +1016,7 @@ describe('ExcelExportService', () => {
           {
             id: 'order',
             field: 'order',
-            type: FieldType.number,
+            type: 'number',
             exportWithFormatter: true,
             formatter: Formatters.multiple,
             params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
@@ -1149,7 +1149,7 @@ describe('ExcelExportService', () => {
             id: 'position',
             field: 'position',
             name: 'Position',
-            type: FieldType.number,
+            type: 'number',
             width: 100,
             formatter: Formatters.translate,
             exportWithFormatter: true,
@@ -1157,7 +1157,7 @@ describe('ExcelExportService', () => {
           {
             id: 'order',
             field: 'order',
-            type: FieldType.number,
+            type: 'number',
             exportWithFormatter: true,
             formatter: Formatters.multiple,
             params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
@@ -1275,7 +1275,7 @@ describe('ExcelExportService', () => {
           {
             id: 'order',
             field: 'order',
-            type: FieldType.number,
+            type: 'number',
             exportWithFormatter: true,
             formatter: Formatters.multiple,
             params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
@@ -1464,8 +1464,8 @@ describe('ExcelExportService', () => {
     });
 
     describe('useCellFormatByFieldType method', () => {
-      it('should return a date time format when using FieldType.dateTime and a Date object as input', async () => {
-        const column = { type: FieldType.dateTime } as Column;
+      it('should return a date time format when using "dateTime" and a Date object as input', async () => {
+        const column = { type: 'dateTime' } as Column;
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
@@ -1474,8 +1474,8 @@ describe('ExcelExportService', () => {
         expect(output).toEqual({ getDataValueParser: expect.any(Function), excelFormatId: undefined });
       });
 
-      it('should return a number format when using FieldType.number and a number is provided as input', async () => {
-        const column = { type: FieldType.number } as Column;
+      it('should return a number format when using "number" and a number is provided as input', async () => {
+        const column = { type: 'number' } as Column;
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);
@@ -1484,8 +1484,8 @@ describe('ExcelExportService', () => {
         expect(output).toEqual({ getDataValueParser: expect.any(Function), excelFormatId: 3 });
       });
 
-      it('should NOT return a number format when using FieldType.number but autoDetectCellFormat is disabled', async () => {
-        const column = { type: FieldType.number, excelExportOptions: { autoDetectCellFormat: false } } as Column;
+      it('should NOT return a number format when using "number" but autoDetectCellFormat is disabled', async () => {
+        const column = { type: 'number', excelExportOptions: { autoDetectCellFormat: false } } as Column;
 
         service.init(gridStub, container);
         await service.exportToExcel(mockExportExcelOptions);

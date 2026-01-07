@@ -1,7 +1,7 @@
 import type { EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { flatten } from 'un-flatten-tree';
 import { Constants } from '../constants.js';
-import { FieldType, OperatorType, type OperatorString } from '../enums/index.js';
+import { OperatorType, type FieldType, type OperatorString } from '../enums/index.js';
 import type { Aggregator, CancellablePromiseWrapper, Column, GridOption, TreeDataPropNames } from '../interfaces/index.js';
 import type { Observable, RxJsFacade, Subject, Subscription } from './rxjsFacade.js';
 
@@ -441,45 +441,45 @@ export function getTranslationPrefix(gridOptions?: GridOption): string {
 }
 
 /** From a column definition, find column type */
-export function getColumnFieldType(columnDef: Column): (typeof FieldType)[keyof typeof FieldType] {
-  return columnDef.outputType || columnDef.type || FieldType.string;
+export function getColumnFieldType(columnDef: Column): FieldType {
+  return columnDef.outputType || columnDef.type || 'string';
 }
 
 /** Return all Date field types that exists in the library */
-export function getAllDateFieldTypes(): (typeof FieldType)[keyof typeof FieldType][] {
+export function getAllDateFieldTypes(): FieldType[] {
   return [
-    FieldType.date,
-    FieldType.dateTime,
-    FieldType.dateIso,
-    FieldType.dateTimeIso,
-    FieldType.dateTimeShortIso,
-    FieldType.dateTimeIsoAmPm,
-    FieldType.dateTimeIsoAM_PM,
-    FieldType.dateEuro,
-    FieldType.dateEuroShort,
-    FieldType.dateTimeEuro,
-    FieldType.dateTimeShortEuro,
-    FieldType.dateTimeEuroAmPm,
-    FieldType.dateTimeEuroAM_PM,
-    FieldType.dateTimeEuroShort,
-    FieldType.dateTimeEuroShortAmPm,
-    FieldType.dateTimeEuroShortAM_PM,
-    FieldType.dateUs,
-    FieldType.dateUsShort,
-    FieldType.dateTimeUs,
-    FieldType.dateTimeShortUs,
-    FieldType.dateTimeUsAmPm,
-    FieldType.dateTimeUsAM_PM,
-    FieldType.dateTimeUsShort,
-    FieldType.dateTimeUsShortAmPm,
-    FieldType.dateTimeUsShortAM_PM,
-    FieldType.dateUtc,
+    'date',
+    'dateTime',
+    'dateIso',
+    'dateTimeIso',
+    'dateTimeShortIso',
+    'dateTimeIsoAmPm',
+    'dateTimeIsoAM_PM',
+    'dateEuro',
+    'dateEuroShort',
+    'dateTimeEuro',
+    'dateTimeShortEuro',
+    'dateTimeEuroAmPm',
+    'dateTimeEuroAM_PM',
+    'dateTimeEuroShort',
+    'dateTimeEuroShortAmPm',
+    'dateTimeEuroShortAM_PM',
+    'dateUs',
+    'dateUsShort',
+    'dateTimeUs',
+    'dateTimeShortUs',
+    'dateTimeUsAmPm',
+    'dateTimeUsAM_PM',
+    'dateTimeUsShort',
+    'dateTimeUsShortAmPm',
+    'dateTimeUsShortAM_PM',
+    'dateUtc',
   ];
 }
 
 /** Verify if the identified column is of type Date */
-export function isColumnDateType(fieldType?: (typeof FieldType)[keyof typeof FieldType]): boolean {
-  if (getAllDateFieldTypes().includes(fieldType as (typeof FieldType)[keyof typeof FieldType])) {
+export function isColumnDateType(fieldType?: FieldType): boolean {
+  if (getAllDateFieldTypes().includes(fieldType as FieldType)) {
     return true;
   }
   return false;
@@ -609,22 +609,22 @@ export function mapOperatorToShorthandDesignation(operator: OperatorType | Opera
  * @param operator
  * @returns string map
  */
-export function mapOperatorByFieldType(fieldType: (typeof FieldType)[keyof typeof FieldType]): OperatorType {
+export function mapOperatorByFieldType(fieldType: FieldType): OperatorType {
   let map: OperatorType;
 
   if (isColumnDateType(fieldType)) {
     map = OperatorType.equal;
   } else {
     switch (fieldType) {
-      case FieldType.unknown:
-      case FieldType.string:
-      case FieldType.text:
-      case FieldType.password:
-      case FieldType.readonly:
+      case 'unknown':
+      case 'string':
+      case 'text':
+      case 'password':
+      case 'readonly':
         map = OperatorType.contains;
         break;
-      case FieldType.float:
-      case FieldType.number:
+      case 'float':
+      case 'number':
       default:
         map = OperatorType.equal;
         break;

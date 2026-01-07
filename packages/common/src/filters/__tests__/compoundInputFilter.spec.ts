@@ -124,7 +124,7 @@ describe('CompoundInputFilter', () => {
   });
 
   it('should call "setValues" with "operator" set in the filter arguments and expect that value to be in the callback when triggered', () => {
-    mockColumn.type = FieldType.number;
+    mockColumn.type = 'number';
     const spyCallback = vi.spyOn(filterArguments, 'callback');
     const filterArgs = { ...filterArguments, operator: '>' } as FilterArguments;
 
@@ -139,7 +139,7 @@ describe('CompoundInputFilter', () => {
   });
 
   it('should be able to call "setValues" with a value and an extra operator and expect it to be set as new operator', () => {
-    mockColumn.type = FieldType.number;
+    mockColumn.type = 'number';
     const spyCallback = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
@@ -165,7 +165,7 @@ describe('CompoundInputFilter', () => {
   });
 
   it('should trigger an operator change event and expect the callback to be called with the searchTerms and operator defined', () => {
-    mockColumn.type = FieldType.number;
+    mockColumn.type = 'number';
     const spyCallback = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
@@ -180,7 +180,7 @@ describe('CompoundInputFilter', () => {
 
   it('should change operator dropdown without a value entered and not expect the callback to be called when "skipCompoundOperatorFilterWithNullInput" is defined as True and value is undefined', () => {
     mockColumn.filter!.skipCompoundOperatorFilterWithNullInput = true;
-    mockColumn.type = FieldType.number;
+    mockColumn.type = 'number';
     const callbackSpy = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
@@ -194,7 +194,7 @@ describe('CompoundInputFilter', () => {
 
   it('should change operator dropdown without a value entered and not expect the callback to be called when "skipCompoundOperatorFilterWithNullInput" is defined as undefined and value is also undefined', () => {
     mockColumn.filter!.skipCompoundOperatorFilterWithNullInput = undefined;
-    mockColumn.type = FieldType.number;
+    mockColumn.type = 'number';
     const callbackSpy = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
@@ -208,7 +208,7 @@ describe('CompoundInputFilter', () => {
 
   it('should change operator dropdown without a value entered and not expect the callback to be called when "skipCompoundOperatorFilterWithNullInput" is defined as True and value is empty string', () => {
     mockColumn.filter!.skipCompoundOperatorFilterWithNullInput = true;
-    mockColumn.type = FieldType.number;
+    mockColumn.type = 'number';
     const callbackSpy = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
@@ -223,7 +223,7 @@ describe('CompoundInputFilter', () => {
 
   it('should change operator dropdown without a value entered and expect the callback to be called when "skipCompoundOperatorFilterWithNullInput" but value was changed from set to unset', () => {
     mockColumn.filter!.skipCompoundOperatorFilterWithNullInput = true;
-    mockColumn.type = FieldType.number;
+    mockColumn.type = 'number';
     const callbackSpy = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
@@ -240,7 +240,7 @@ describe('CompoundInputFilter', () => {
 
   it('should change operator dropdown without a value entered and not expect the callback to be called when "skipCompoundOperatorFilterWithNullInput" is defined as False', () => {
     mockColumn.filter!.skipCompoundOperatorFilterWithNullInput = false;
-    mockColumn.type = FieldType.number;
+    mockColumn.type = 'number';
     const callbackSpy = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
@@ -254,7 +254,7 @@ describe('CompoundInputFilter', () => {
 
   it('should call "setValues" with extra spaces at the beginning of the searchTerms and trim value when "enableFilterTrimWhiteSpace" is enabled in grid options', () => {
     gridOptionMock.enableFilterTrimWhiteSpace = true;
-    mockColumn.type = FieldType.number;
+    mockColumn.type = 'number';
     const spyCallback = vi.spyOn(filterArguments, 'callback');
     const filterArgs = { ...filterArguments, operator: '>' } as FilterArguments;
 
@@ -271,7 +271,7 @@ describe('CompoundInputFilter', () => {
   it('should call "setValues" with extra spaces at the beginning of the searchTerms and trim value when "enableTrimWhiteSpace" is enabled in the column filter', () => {
     gridOptionMock.enableFilterTrimWhiteSpace = false;
     mockColumn.filter!.enableTrimWhiteSpace = true;
-    mockColumn.type = FieldType.number;
+    mockColumn.type = 'number';
     const spyCallback = vi.spyOn(filterArguments, 'callback');
     const filterArgs = { ...filterArguments, operator: '>' } as FilterArguments;
 
@@ -354,8 +354,8 @@ describe('CompoundInputFilter', () => {
     expect(filterFilledElms.length).toBe(0);
   });
 
-  it('should create the input filter with operator dropdown options related to numbers when column definition type is FieldType.number', () => {
-    mockColumn.type = FieldType.number;
+  it('should create the input filter with operator dropdown options related to numbers when column definition type is "number"', () => {
+    mockColumn.type = 'number';
     filterArguments.searchTerms = ['9'];
 
     filter.init(filterArguments);
@@ -371,8 +371,8 @@ describe('CompoundInputFilter', () => {
     expect(removeExtraSpaces(filterOperatorElm[0][6].textContent!)).toBe('<> Not equal to');
   });
 
-  it('should create the input filter with operator dropdown options related to strings when column definition type is FieldType.string', () => {
-    mockColumn.type = FieldType.string;
+  it('should create the input filter with operator dropdown options related to strings when column definition type is "string"', () => {
+    mockColumn.type = 'string';
     filterArguments.searchTerms = ['xyz'];
 
     filter.init(filterArguments);
@@ -494,8 +494,8 @@ describe('CompoundInputFilter', () => {
       translateService.use('fr');
     });
 
-    it('should have French text translated with operator dropdown options related to numbers when column definition type is FieldType.number', () => {
-      mockColumn.type = FieldType.number;
+    it('should have French text translated with operator dropdown options related to numbers when column definition type is "number"', () => {
+      mockColumn.type = 'number';
       filterArguments.searchTerms = ['9'];
 
       filter.init(filterArguments);
@@ -511,8 +511,8 @@ describe('CompoundInputFilter', () => {
       expect(removeExtraSpaces(filterOperatorElm[0][6].textContent!)).toBe('<> Non égal à');
     });
 
-    it('should have French text translated with operator dropdown options related to strings when column definition type is FieldType.string', () => {
-      mockColumn.type = FieldType.string;
+    it('should have French text translated with operator dropdown options related to strings when column definition type is "string"', () => {
+      mockColumn.type = 'string';
       filterArguments.searchTerms = ['xyz'];
 
       filter.init(filterArguments);

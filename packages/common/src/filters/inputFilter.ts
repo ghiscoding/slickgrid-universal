@@ -1,7 +1,7 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, emptyElement, isDefined, toSentenceCase } from '@slickgrid-universal/utils';
 import { type SlickGrid } from '../core/index.js';
-import { FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
+import { OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
 import type { Column, ColumnFilter, Filter, FilterArguments, FilterCallback, GridOption, OperatorDetail } from '../interfaces/index.js';
 import { mapOperatorToShorthandDesignation, type TranslaterService } from '../services/index.js';
 import { applyOperatorAltTextWhenExists, buildSelectOperator, compoundOperatorNumeric, compoundOperatorString } from './filterUtilities.js';
@@ -238,7 +238,7 @@ export class InputFilter implements Filter {
 
   /** Get the available operator option values to populate the operator select dropdown list */
   protected getCompoundOperatorOptionValues(): OperatorDetail[] {
-    const type = this.columnDef.type ? this.columnDef.type : FieldType.string;
+    const type = this.columnDef.type ? this.columnDef.type : 'string';
     let operatorList: OperatorDetail[];
     let listType: 'text' | 'numeric' = 'text';
 
@@ -246,10 +246,10 @@ export class InputFilter implements Filter {
       operatorList = this.columnFilter.compoundOperatorList;
     } else {
       switch (type) {
-        case FieldType.string:
-        case FieldType.text:
-        case FieldType.readonly:
-        case FieldType.password:
+        case 'string':
+        case 'text':
+        case 'readonly':
+        case 'password':
           listType = 'text';
           operatorList = compoundOperatorString(this.gridOptions, this.translaterService);
           break;

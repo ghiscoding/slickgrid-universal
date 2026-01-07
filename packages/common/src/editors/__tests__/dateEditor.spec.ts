@@ -222,7 +222,7 @@ describe('DateEditor', () => {
     });
 
     it('should call "setValue" with value & apply value flag and expect the DOM element to have same value and also expect the value to be applied to the item object', () => {
-      mockColumn.type = FieldType.dateIso;
+      mockColumn.type = 'dateIso';
       editor = new DateEditor(editorArguments);
 
       vi.runAllTimers();
@@ -423,7 +423,7 @@ describe('DateEditor', () => {
 
       it('should return the first loaded date when date is loaded multiple times then reset', () => {
         mockItemData = { id: 1, startDate: '02/25/2020', isActive: true };
-        mockColumn.type = FieldType.dateUs;
+        mockColumn.type = 'dateUs';
         const dateMock = '02/25/2020';
 
         editor = new DateEditor(editorArguments);
@@ -450,7 +450,7 @@ describe('DateEditor', () => {
 
       it('should return False when date in the picker is the same as the current date', () => {
         mockItemData = { id: 1, startDate: '2001-01-02', isActive: true };
-        mockColumn.type = FieldType.dateIso;
+        mockColumn.type = 'dateIso';
 
         editor = new DateEditor(editorArguments);
         vi.runAllTimers();
@@ -474,7 +474,7 @@ describe('DateEditor', () => {
 
       it('should return False when input date is invalid', () => {
         mockItemData = { id: 1, startDate: '1900-02-32', isActive: true };
-        mockColumn.type = FieldType.dateUs;
+        mockColumn.type = 'dateUs';
         const dateMock = '1900-02-32';
 
         editor = new DateEditor(editorArguments);
@@ -500,7 +500,7 @@ describe('DateEditor', () => {
     describe('applyValue method', () => {
       it('should apply the value to the startDate property with ISO format when no "outputType" is defined and when it passes validation', () => {
         mockColumn.editor!.validator = null as any;
-        mockColumn.type = FieldType.date;
+        mockColumn.type = 'date';
         mockItemData = { id: 1, startDate: '2001-04-05T11:33:42.000Z', isActive: true };
 
         const newDate = new Date(Date.UTC(2001, 0, 2, 16, 2, 2, 0));
@@ -514,8 +514,8 @@ describe('DateEditor', () => {
 
       it('should apply the value to the startDate property with "outputType" format with a field having dot notation (complex object) that passes validation', () => {
         mockColumn.editor!.validator = null as any;
-        mockColumn.type = FieldType.date;
-        mockColumn.outputType = FieldType.dateTimeShortEuro;
+        mockColumn.type = 'date';
+        mockColumn.outputType = 'dateTimeShortEuro';
         mockColumn.field = 'employee.startDate';
         mockItemData = { id: 1, employee: { startDate: '2001-04-05T11:33:42.000Z' }, isActive: true };
 
@@ -530,8 +530,8 @@ describe('DateEditor', () => {
 
       it('should apply the value to the startDate property with output format defined by "saveOutputType" when it passes validation', () => {
         mockColumn.editor!.validator = null as any;
-        mockColumn.type = FieldType.date;
-        mockColumn.saveOutputType = FieldType.dateTimeIsoAmPm;
+        mockColumn.type = 'date';
+        mockColumn.saveOutputType = 'dateTimeIsoAmPm';
         mockItemData = { id: 1, startDate: '2001-04-05T11:33:42.000Z', isActive: true };
 
         const newDate = new Date(Date.UTC(2001, 0, 2, 16, 2, 2, 0));
@@ -562,7 +562,7 @@ describe('DateEditor', () => {
 
     describe('serializeValue method', () => {
       it('should return serialized value as a date string', () => {
-        mockColumn.type = FieldType.dateIso;
+        mockColumn.type = 'dateIso';
         mockItemData = { id: 1, startDate: '2001-01-02T16:02:02.000+05:00', isActive: true };
 
         editor = new DateEditor(editorArguments);
@@ -596,7 +596,7 @@ describe('DateEditor', () => {
       });
 
       it('should return serialized value as a date string when using a dot (.) notation for complex object', () => {
-        mockColumn.type = FieldType.dateIso;
+        mockColumn.type = 'dateIso';
         mockColumn.field = 'employee.startDate';
         mockItemData = { id: 1, employee: { startDate: '2001-01-02T16:02:02.000+05:00' }, isActive: true };
 
@@ -787,7 +787,7 @@ describe('DateEditor', () => {
       const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false,
       } as any);
-      mockColumn.type = FieldType.dateIso;
+      mockColumn.type = 'dateIso';
       editor = new DateEditor(editorArguments);
       vi.runAllTimers();
       editor.setValue('2001-01-02', true);
@@ -943,7 +943,7 @@ describe('DateEditor', () => {
     it('should expect "onCompositeEditorChange" to have been triggered with the new value showing up in its "formValues" object', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const dateMock = '2001-01-02';
-      mockColumn.type = FieldType.dateIso;
+      mockColumn.type = 'dateIso';
       const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => undefined,

@@ -20,7 +20,7 @@ import type {
   SlickGrid,
   SortDirectionString,
 } from '@slickgrid-universal/common';
-import { FieldType, mapOperatorByFieldType, OperatorType, parseUtcDate, SortDirection } from '@slickgrid-universal/common';
+import { mapOperatorByFieldType, OperatorType, parseUtcDate, SortDirection, type FieldType } from '@slickgrid-universal/common';
 import { getHtmlStringOutput, stripTags, titleCase } from '@slickgrid-universal/utils';
 import type { OdataOption, OdataSortingOption } from '../interfaces/index.js';
 import { OdataQueryBuilderService } from './odataQueryBuilder.service.js';
@@ -338,7 +338,7 @@ export class GridOdataService implements BackendService {
         if (fieldName instanceof HTMLElement) {
           fieldName = stripTags(fieldName.innerHTML);
         }
-        const fieldType = columnDef.type || FieldType.string;
+        const fieldType = columnDef.type || 'string';
         let searchTerms = (columnFilter?.searchTerms ? [...columnFilter.searchTerms] : null) || [];
         let fieldSearchValue = Array.isArray(searchTerms) && searchTerms.length === 1 ? searchTerms[0] : '';
         if (typeof fieldSearchValue === 'undefined') {
@@ -423,7 +423,7 @@ export class GridOdataService implements BackendService {
           (operator === 'RangeInclusive' || operator === 'RangeExclusive') &&
           Array.isArray(searchTerms) &&
           searchTerms.length === 1 &&
-          fieldType === FieldType.date
+          fieldType === 'date'
         ) {
           operator = OperatorType.equal;
         }
@@ -517,7 +517,7 @@ export class GridOdataService implements BackendService {
             searchBy = this.filterBySearchTermRange(getHtmlStringOutput(fieldName), operator, searchTerms);
           } else if (
             (operator === '' || operator === OperatorType.contains || operator === OperatorType.notContains) &&
-            (fieldType === FieldType.string || fieldType === FieldType.text || fieldType === FieldType.readonly)
+            (fieldType === 'string' || fieldType === 'text' || fieldType === 'readonly')
           ) {
             searchBy = odataVersion >= 4 ? `contains(${fieldName}, ${searchValue})` : `substringof(${searchValue}, ${fieldName})`;
             if (operator === OperatorType.notContains) {
@@ -721,15 +721,15 @@ export class GridOdataService implements BackendService {
   /**
    * Normalizes the search value according to field type and oData version.
    */
-  protected normalizeSearchValue(fieldType: (typeof FieldType)[keyof typeof FieldType], searchValue: any, version: number): any {
+  protected normalizeSearchValue(fieldType: FieldType, searchValue: any, version: number): any {
     switch (fieldType) {
-      case FieldType.date:
+      case 'date':
         searchValue = parseUtcDate(searchValue as string);
         searchValue = version >= 4 ? searchValue : `DateTime'${searchValue}'`;
         break;
-      case FieldType.string:
-      case FieldType.text:
-      case FieldType.readonly:
+      case 'string':
+      case 'text':
+      case 'readonly':
         if (typeof searchValue === 'string') {
           // escape single quotes by doubling them
           searchValue = searchValue.replace(/'/g, `''`);
@@ -739,9 +739,9 @@ export class GridOdataService implements BackendService {
           searchValue = `'${searchValue}'`;
         }
         break;
-      case FieldType.integer:
-      case FieldType.number:
-      case FieldType.float:
+      case 'integer':
+      case 'number':
+      case 'float':
         if (typeof searchValue === 'string') {
           // Parse a valid decimal from the string.
 
