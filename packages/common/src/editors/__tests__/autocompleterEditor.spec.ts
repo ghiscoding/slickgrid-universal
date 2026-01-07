@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index.js';
 import * as utils from '../../core/utils.js';
-import { FieldType } from '../../enums/index.js';
 import type { AutocompleterOption, Column, Editor, EditorArguments, GridOption } from '../../interfaces/index.js';
 import { AutocompleterEditor } from '../autocompleterEditor.js';
 import { Editors } from '../index.js';
@@ -174,7 +173,7 @@ describe('AutocompleterEditor', () => {
     });
 
     it('should call "setValue" with value & apply value flag and expect the DOM element to have same value and also expect the value to be applied to the item object', () => {
-      mockColumn.type = FieldType.object;
+      mockColumn.type = 'object';
       editor = new AutocompleterEditor(editorArguments);
       editor.setValue({ value: 'male', label: 'male' }, true);
 
@@ -423,8 +422,8 @@ describe('AutocompleterEditor', () => {
         expect(output).toBe('female');
       });
 
-      it('should return an object output when calling "serializeValue" with its column definition set to "FieldType.object" with default label/value', () => {
-        mockColumn.type = FieldType.object;
+      it('should return an object output when calling "serializeValue" with its column definition set to "object" with default label/value', () => {
+        mockColumn.type = 'object';
         mockColumn.editor!.collection = [
           { value: 'm', label: 'Male' },
           { value: 'f', label: 'Female' },
@@ -438,8 +437,8 @@ describe('AutocompleterEditor', () => {
         expect(output).toEqual({ value: 'f', label: 'Female' });
       });
 
-      it('should return an object output when calling "serializeValue" with its column definition set to "FieldType.object" with custom dataKey/labelKey pair', () => {
-        mockColumn.type = FieldType.object;
+      it('should return an object output when calling "serializeValue" with its column definition set to "object" with custom dataKey/labelKey pair', () => {
+        mockColumn.type = 'object';
         mockColumn.editor!.collection = [
           { value: 'm', label: 'Male' },
           { value: 'f', label: 'Female' },

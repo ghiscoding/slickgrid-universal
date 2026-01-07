@@ -542,7 +542,7 @@ describe('SelectEditor', () => {
         mockColumn = {
           id: 'age',
           field: 'age',
-          type: FieldType.boolean,
+          type: 'boolean',
           editable: true,
           editor: { model: Editors.multipleSelect },
           editorClass: {} as Editor,
@@ -834,7 +834,7 @@ describe('SelectEditor', () => {
           collection: ['other', 'male', 'female'],
           collectionSortBy: {
             sortDesc: true,
-            fieldType: FieldType.string,
+            fieldType: 'string',
           },
         };
 
@@ -859,7 +859,7 @@ describe('SelectEditor', () => {
           collectionSortBy: {
             property: 'value',
             sortDesc: false,
-            fieldType: FieldType.string,
+            fieldType: 'string',
           },
           customStructure: {
             value: 'value',

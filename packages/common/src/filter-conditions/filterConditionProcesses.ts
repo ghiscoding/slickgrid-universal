@@ -1,4 +1,4 @@
-import { FieldType, type SearchTerm } from '../enums/index.js';
+import { type FieldType, type SearchTerm } from '../enums/index.js';
 import { isColumnDateType } from '../services/utilities.js';
 import { getFilterParsedBoolean } from './booleanFilterCondition.js';
 import { getFilterParsedDates } from './dateFilterCondition.js';
@@ -19,7 +19,7 @@ export type GeneralVariableDataType = 'boolean' | 'date' | 'number' | 'object' |
  */
 export function getParsedSearchTermsByFieldType(
   inputSearchTerms: SearchTerm[] | undefined,
-  inputFilterSearchType: (typeof FieldType)[keyof typeof FieldType]
+  inputFilterSearchType: FieldType
 ): SearchTerm | SearchTerm[] | undefined {
   const generalizedType = getVarTypeOfByColumnFieldType(inputFilterSearchType);
   let parsedSearchValues: SearchTerm | SearchTerm[] | undefined;
@@ -51,25 +51,25 @@ export function getParsedSearchTermsByFieldType(
  * @param fieldType - specific field type
  * @returns generalType - general field type
  */
-export function getVarTypeOfByColumnFieldType(fieldType: (typeof FieldType)[keyof typeof FieldType]): GeneralVariableDataType {
+export function getVarTypeOfByColumnFieldType(fieldType: FieldType): GeneralVariableDataType {
   if (isColumnDateType(fieldType)) {
     return 'date';
   }
 
   // return general field type
   switch (fieldType) {
-    case FieldType.boolean:
+    case 'boolean':
       return 'boolean';
-    case FieldType.integer:
-    case FieldType.float:
-    case FieldType.number:
+    case 'integer':
+    case 'float':
+    case 'number':
       return 'number';
-    case FieldType.object:
+    case 'object':
       return 'object';
-    case FieldType.string:
-    case FieldType.text:
-    case FieldType.password:
-    case FieldType.readonly:
+    case 'string':
+    case 'text':
+    case 'password':
+    case 'readonly':
     default:
       return 'string';
   }

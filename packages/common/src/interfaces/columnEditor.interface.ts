@@ -153,7 +153,7 @@ export interface ColumnEditor {
   title?: string;
 
   /** What is the Field Type that can be used by the Editor (as precedence over the "type" set the column definition) */
-  type?: (typeof FieldType)[keyof typeof FieldType];
+  type?: FieldType;
 
   /** Editor Validator */
   validator?: EditorValidator;

@@ -4,7 +4,7 @@ import { createDomElement, emptyElement, extend, isDefined } from '@slickgrid-un
 import { Calendar, type Options } from 'vanilla-calendar-pro';
 import { resetDatePicker, setPickerDates, setPickerFocus } from '../commonEditorFilter/commonEditorFilterUtils.js';
 import type { SlickGrid } from '../core/slickGrid.js';
-import { FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
+import { OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
 import type { Column, ColumnFilter, Filter, FilterArguments, FilterCallback, GridOption, OperatorDetail } from '../interfaces/index.js';
 import { formatDateByFieldType, mapTempoDateFormatWithFieldType } from '../services/dateUtils.js';
 import type { TranslaterService } from '../services/translater.service.js';
@@ -230,16 +230,16 @@ export class DateFilter implements Filter {
   // ------------------
   protected buildDatePickerInput(searchTerms?: SearchTerm | SearchTerm[]): void {
     const columnId = this.columnDef?.id ?? '';
-    const columnFieldType = this.columnFilter.type || this.columnDef.type || FieldType.dateIso;
-    const outputFieldType = this.columnDef.outputType || this.columnFilter.type || this.columnDef.type || FieldType.dateUtc;
+    const columnFieldType = this.columnFilter.type || this.columnDef.type || 'dateIso';
+    const outputFieldType = this.columnDef.outputType || this.columnFilter.type || this.columnDef.type || 'dateUtc';
     const outputFormat = mapTempoDateFormatWithFieldType(outputFieldType);
-    const inputFieldType = this.columnFilter.type || this.columnDef.type || FieldType.dateIso;
+    const inputFieldType = this.columnFilter.type || this.columnDef.type || 'dateIso';
 
     // add the time picker when format is UTC (TZ - ISO8601) or has the 'h' (meaning hours)
     if (outputFormat && this.inputFilterType !== 'range' && (outputFormat === 'ISO8601' || outputFormat.toLowerCase().includes('h'))) {
       this.hasTimePicker = true;
     }
-    const pickerFormat = mapTempoDateFormatWithFieldType(this.hasTimePicker ? FieldType.dateTimeIsoAM_PM : FieldType.dateIso);
+    const pickerFormat = mapTempoDateFormatWithFieldType(this.hasTimePicker ? 'dateTimeIsoAM_PM' : 'dateIso');
 
     // get current locale, if user defined a custom locale just use or get it the Translate Service if it exist else just use English
     // prettier-ignore
@@ -300,7 +300,7 @@ export class DateFilter implements Filter {
             outDates = [firstDate, lastDate];
           } else if (self.context.selectedDates[0]) {
             firstDate = self.context.selectedDates[0];
-            self.context.inputElement.value = formatDateByFieldType(firstDate, FieldType.dateIso, outputFieldType);
+            self.context.inputElement.value = formatDateByFieldType(firstDate, 'dateIso', outputFieldType);
             outDates = self.context.selectedDates;
           } else {
             self.context.inputElement.value = '';

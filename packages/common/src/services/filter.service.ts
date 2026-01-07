@@ -3,7 +3,7 @@ import { deepCopy, extend, queueMicrotaskOrSetTimeout, stripTags } from '@slickg
 import { dequal } from 'dequal/lite';
 import { Constants } from '../constants.js';
 import { SlickEvent, SlickEventData, SlickEventHandler, type SlickDataView, type SlickGrid } from '../core/index.js';
-import { FieldType, OperatorType, type EmitterType, type OperatorString, type SearchTerm } from '../enums/index.js';
+import { OperatorType, type EmitterType, type OperatorString, type SearchTerm } from '../enums/index.js';
 import { FilterConditions, getParsedSearchTermsByFieldType } from './../filter-conditions/index.js';
 import { type FilterFactory } from './../filters/filterFactory.js';
 import type {
@@ -392,7 +392,7 @@ export class FilterService {
           // then we'll use the parsed terms and whenever they are filled in, we typically won't need to ask for these values anymore.
           if (parsedSearchTerms === undefined) {
             // parsed term could be a single value or an array of values
-            parsedSearchTerms = getParsedSearchTermsByFieldType(searchColFilter.searchTerms, columnDef.type || FieldType.string);
+            parsedSearchTerms = getParsedSearchTermsByFieldType(searchColFilter.searchTerms, columnDef.type || 'string');
             if (parsedSearchTerms !== undefined) {
               searchColFilter.parsedSearchTerms = parsedSearchTerms;
             }
@@ -425,10 +425,10 @@ export class FilterService {
     const searchValues: SearchTerm[] = deepCopy(inputSearchTerms) || [];
     let fieldSearchValue = Array.isArray(searchValues) && searchValues.length === 1 ? searchValues[0] : '';
     const columnDef = columnFilter.columnDef;
-    const fieldType = columnDef.filter?.type ?? columnDef.type ?? FieldType.string;
+    const fieldType = columnDef.filter?.type ?? columnDef.type ?? 'string';
 
     let matches = null;
-    if (fieldType !== FieldType.object) {
+    if (fieldType !== 'object') {
       fieldSearchValue = fieldSearchValue === undefined || fieldSearchValue === null ? '' : `${fieldSearchValue}`; // make sure it's a string
 
       // run regex to find possible filter operators unless the user disabled the feature
@@ -516,7 +516,7 @@ export class FilterService {
     if (typeof columnDef.queryFieldNameGetterFn === 'function') {
       queryFieldName = columnDef.queryFieldNameGetterFn(item);
     }
-    const fieldType = columnDef.filter?.type ?? columnDef.type ?? FieldType.string;
+    const fieldType = columnDef.filter?.type ?? columnDef.type ?? 'string';
     let cellValue = item[queryFieldName];
 
     // when item is a complex object (dot "." notation), we need to filter the value contained in the object tree
@@ -537,7 +537,7 @@ export class FilterService {
 
     // filter search terms should always be string type (even though we permit the end user to input numbers)
     // so make sure each term are strings, if user has some default search terms, we will cast them to string
-    if (searchValues && Array.isArray(searchValues) && fieldType !== FieldType.object) {
+    if (searchValues && Array.isArray(searchValues) && fieldType !== 'object') {
       for (let k = 0, ln = searchValues.length; k < ln; k++) {
         // make sure all search terms are strings
         searchValues[k] = (searchValues[k] === undefined || searchValues[k] === null ? '' : searchValues[k]) + '';
@@ -615,7 +615,7 @@ export class FilterService {
           const inputSearchConditions = this.parseFormInputFilterConditions(searchValues, columnFilter);
 
           const columnDef = columnFilter.columnDef;
-          const fieldType = columnDef?.filter?.type ?? columnDef?.type ?? FieldType.string;
+          const fieldType = columnDef?.filter?.type ?? columnDef?.type ?? 'string';
           const parsedSearchTerms = getParsedSearchTermsByFieldType(inputSearchConditions.searchTerms, fieldType); // parsed term could be a single value or an array of values
           if (parsedSearchTerms !== undefined) {
             columnFilter.parsedSearchTerms = parsedSearchTerms;
@@ -1035,7 +1035,7 @@ export class FilterService {
           operator: filter.operator,
           searchTerms: filter.searchTerms,
           columnDef,
-          type: columnDef.type ?? FieldType.string,
+          type: columnDef.type ?? 'string',
         };
       }
 
@@ -1197,7 +1197,7 @@ export class FilterService {
       const searchTerms = args.searchTerms && Array.isArray(args.searchTerms) ? args.searchTerms : searchTerm ? [searchTerm] : undefined;
       const columnDef = args.columnDef || null;
       const columnId = columnDef?.id ?? '';
-      const fieldType = columnDef?.filter?.type ?? columnDef?.type ?? FieldType.string;
+      const fieldType = columnDef?.filter?.type ?? columnDef?.type ?? 'string';
       const operator = args.operator || undefined;
       const hasSearchTerms = searchTerms && Array.isArray(searchTerms);
       const termsCount = hasSearchTerms && searchTerms && searchTerms.length;
@@ -1364,7 +1364,7 @@ export class FilterService {
   }
 
   protected updateColumnFilters(searchTerms: SearchTerm[] | undefined, columnDef: Column, operator?: OperatorType | OperatorString): void {
-    const fieldType = columnDef.filter?.type ?? columnDef.type ?? FieldType.string;
+    const fieldType = columnDef.filter?.type ?? columnDef.type ?? 'string';
     const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, fieldType); // parsed term could be a single value or an array of values
 
     if (searchTerms && columnDef) {

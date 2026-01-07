@@ -194,7 +194,7 @@ describe('FilterService', () => {
         id: 'isActive',
         field: 'isActive',
         filterable: true,
-        type: FieldType.boolean,
+        type: 'boolean',
         filter: {
           model: Filters.singleSelect,
           searchTerms: [true],
@@ -216,7 +216,7 @@ describe('FilterService', () => {
 
       expect(service.isFilterFirstRender).toBe(false);
       expect(columnFilters).toEqual({
-        isActive: { columnDef: mockColumn, columnId: 'isActive', operator: 'EQ', searchTerms: [true], parsedSearchTerms: true, type: FieldType.boolean },
+        isActive: { columnDef: mockColumn, columnId: 'isActive', operator: 'EQ', searchTerms: [true], parsedSearchTerms: true, type: 'boolean' },
       });
       expect(filterMetadataArray.length).toBe(1);
       expect(filterMetadataArray[0] instanceof SingleSelectFilter).toBeTruthy();
@@ -381,7 +381,7 @@ describe('FilterService', () => {
         searchTerms: ['John'],
         parsedSearchTerms: ['John'],
         targetSelector: '',
-        type: FieldType.string,
+        type: 'string',
       };
       const spySearchChange = vi.spyOn(service.onSearchChange as any, 'notify');
       const spyEmit = vi.spyOn(service, 'emitFilterChanged');
@@ -420,7 +420,7 @@ describe('FilterService', () => {
         searchTerms: ['John'],
         parsedSearchTerms: ['John'],
         targetSelector: '',
-        type: FieldType.string,
+        type: 'string',
       };
       const spySearchChange = vi.spyOn(service.onSearchChange as any, 'notify');
       sharedService.allColumns = [mockColumn];
@@ -473,7 +473,7 @@ describe('FilterService', () => {
         searchTerms: [''],
         parsedSearchTerms: [''],
         targetSelector: 'div.some-classes',
-        type: FieldType.string,
+        type: 'string',
       };
       const spySearchChange = vi.spyOn(service.onSearchChange as any, 'notify');
       sharedService.allColumns = [mockColumn];
@@ -567,7 +567,7 @@ describe('FilterService', () => {
           searchTerms: ['Doe'],
           parsedSearchTerms: ['Doe'],
           targetSelector: '',
-          type: FieldType.string,
+          type: 'string',
         };
         const newEvent = new SlickEventData(new CustomEvent(`mouseup`));
         const spyClear = vi.spyOn(service.getFiltersMetadata()[0], 'clear');
@@ -596,7 +596,7 @@ describe('FilterService', () => {
           searchTerms: ['John'],
           parsedSearchTerms: ['John'],
           targetSelector: '',
-          type: FieldType.string,
+          type: 'string',
         };
         const filterLastExpectation = {
           columnDef: mockColumn2,
@@ -605,7 +605,7 @@ describe('FilterService', () => {
           searchTerms: ['Doe'],
           parsedSearchTerms: ['Doe'],
           targetSelector: '',
-          type: FieldType.string,
+          type: 'string',
         };
         const newEvent = new SlickEventData(new CustomEvent(`mouseup`));
         const spyClear = vi.spyOn(service.getFiltersMetadata()[2], 'clear');
@@ -743,7 +743,7 @@ describe('FilterService', () => {
             searchTerms: ['Doe'],
             parsedSearchTerms: ['Doe'],
             targetSelector: '',
-            type: FieldType.string,
+            type: 'string',
           },
         });
         expect(spyEmitter).toHaveBeenCalledWith('local');
@@ -778,7 +778,7 @@ describe('FilterService', () => {
       service.init(gridStub);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, 'text');
       const columnFilters = {
-        firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms, parsedSearchTerms, type: FieldType.string },
+        firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms, parsedSearchTerms, type: 'string' },
       } as ColumnFilters;
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
@@ -804,7 +804,7 @@ describe('FilterService', () => {
       service.init(gridStub);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, 'text');
       const columnFilters = {
-        firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms, parsedSearchTerms, type: FieldType.string },
+        firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms, parsedSearchTerms, type: 'string' },
       } as ColumnFilters;
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
@@ -818,7 +818,7 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       const columnFilters = {
-        firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms, type: FieldType.string },
+        firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms, type: 'string' },
       } as ColumnFilters;
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
@@ -834,7 +834,7 @@ describe('FilterService', () => {
       service.init(gridStub);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, 'text');
       const columnFilters = {
-        firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms, parsedSearchTerms, type: FieldType.string },
+        firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms, parsedSearchTerms, type: 'string' },
       } as ColumnFilters;
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
@@ -849,7 +849,7 @@ describe('FilterService', () => {
       service.init(gridStub);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, 'text');
       const columnFilters = {
-        firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms, parsedSearchTerms, type: FieldType.string },
+        firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms, parsedSearchTerms, type: 'string' },
       } as ColumnFilters;
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
@@ -872,7 +872,7 @@ describe('FilterService', () => {
           searchTerms,
           parsedSearchTerms,
           targetSelector: '',
-          type: FieldType.string,
+          type: 'string',
         },
       } as ColumnFilters;
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
@@ -886,7 +886,7 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       const columnFilters = {
-        firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms: [], type: FieldType.string },
+        firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'EQ', searchTerms: [], type: 'string' },
       } as ColumnFilters;
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
@@ -898,7 +898,7 @@ describe('FilterService', () => {
       vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
-      const columnFilters = { age: { columnDef: mockColumn1, columnId: 'age', operator: '<=', searchTerms: ['<='], type: FieldType.string } } as ColumnFilters;
+      const columnFilters = { age: { columnDef: mockColumn1, columnId: 'age', operator: '<=', searchTerms: ['<='], type: 'string' } } as ColumnFilters;
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
       expect(output).toBe(true);
@@ -910,7 +910,7 @@ describe('FilterService', () => {
       vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
-      const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
+      const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: 'string' as FieldType };
       const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
       const columnFilters = {
@@ -928,7 +928,7 @@ describe('FilterService', () => {
       vi.spyOn(gridStub, 'getColumns').mockReturnValue([]);
 
       service.init(gridStub);
-      const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
+      const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: 'string' as FieldType };
       const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
       const columnFilters = {
@@ -941,15 +941,15 @@ describe('FilterService', () => {
 
     it('should return True when input value from datacontext is a number and searchTerms is also a number', () => {
       const searchTerms = [26];
-      const mockColumn1 = { id: 'age', field: 'age', filterable: true, type: FieldType.number } as Column;
+      const mockColumn1 = { id: 'age', field: 'age', filterable: true, type: 'number' } as Column;
       vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
-      const columnFilter = { columnDef: mockColumn1, columnId: 'age', type: FieldType.number };
+      const columnFilter = { columnDef: mockColumn1, columnId: 'age', type: 'number' as FieldType };
       const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'number');
       const columnFilters = {
-        age: { ...columnFilter, operator: 'EQ', searchTerms: filterCondition.searchTerms, parsedSearchTerms, type: FieldType.string },
+        age: { ...columnFilter, operator: 'EQ', searchTerms: filterCondition.searchTerms, parsedSearchTerms, type: 'string' },
       } as ColumnFilters;
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
@@ -958,15 +958,15 @@ describe('FilterService', () => {
 
     it('should return True when input value from datacontext is a number, "filterSearchType" is a FieldType number and finally searchTerms is also a number', () => {
       const searchTerms = [26];
-      const mockColumn1 = { id: 'age', field: 'age', filterable: true, filterSearchType: FieldType.number } as Column;
+      const mockColumn1 = { id: 'age', field: 'age', filterable: true, filterSearchType: 'number' } as Column;
       vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
-      const columnFilter = { columnDef: mockColumn1, columnId: 'age', type: FieldType.string };
+      const columnFilter = { columnDef: mockColumn1, columnId: 'age', type: 'string' as FieldType };
       const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'number');
       const columnFilters = {
-        age: { ...columnFilter, operator: 'EQ', searchTerms: filterCondition.searchTerms, parsedSearchTerms, type: FieldType.string },
+        age: { ...columnFilter, operator: 'EQ', searchTerms: filterCondition.searchTerms, parsedSearchTerms, type: 'string' },
       } as ColumnFilters;
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
@@ -979,7 +979,7 @@ describe('FilterService', () => {
       vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
-      const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
+      const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: 'string' as FieldType };
       const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
       const columnFilters = {
@@ -996,7 +996,7 @@ describe('FilterService', () => {
       vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
-      const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
+      const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: 'string' as FieldType };
       const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
       const columnFilters = {
@@ -1013,7 +1013,7 @@ describe('FilterService', () => {
       vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
-      const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
+      const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: 'string' as FieldType };
       const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
       const columnFilters = {
@@ -1030,7 +1030,7 @@ describe('FilterService', () => {
       vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
-      const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
+      const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: 'string' as FieldType };
       const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
       const columnFilters = {
@@ -1050,7 +1050,7 @@ describe('FilterService', () => {
       service.init(gridStub);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, 'text');
       const columnFilters = {
-        firstName: { columnDef: mockColumn1, columnId: 'firstName', operator, searchTerms, parsedSearchTerms, type: FieldType.string },
+        firstName: { columnDef: mockColumn1, columnId: 'firstName', operator, searchTerms, parsedSearchTerms, type: 'string' },
       } as ColumnFilters;
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
@@ -1063,7 +1063,7 @@ describe('FilterService', () => {
       vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
-      const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
+      const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: 'string' as FieldType };
       const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
       const columnFilters = {
@@ -1080,7 +1080,7 @@ describe('FilterService', () => {
       vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
-      const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
+      const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: 'string' as FieldType };
       const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
       const columnFilters = {
@@ -1097,7 +1097,7 @@ describe('FilterService', () => {
       vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
-      const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
+      const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: 'string' as FieldType };
       const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
       const columnFilters = {
@@ -1114,7 +1114,7 @@ describe('FilterService', () => {
       vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
-      const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
+      const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: 'string' as FieldType };
       const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
       const columnFilters = {
@@ -1139,7 +1139,7 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       const columnFilters = {
-        firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'IN', searchTerms: ['Jane', 'John'], type: FieldType.string },
+        firstName: { columnDef: mockColumn1, columnId: 'firstName', operator: 'IN', searchTerms: ['Jane', 'John'], type: 'string' },
       } as ColumnFilters;
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
@@ -1152,7 +1152,7 @@ describe('FilterService', () => {
       vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
-      const columnFilter = { columnDef: mockColumn1, columnId: 'age', type: FieldType.number };
+      const columnFilter = { columnDef: mockColumn1, columnId: 'age', type: 'number' as FieldType };
       const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'number');
       const columnFilters = {
@@ -1169,7 +1169,7 @@ describe('FilterService', () => {
       vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
-      const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: FieldType.string };
+      const columnFilter = { columnDef: mockColumn1, columnId: 'firstName', type: 'string' as FieldType };
       const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'text');
       const columnFilters = {
@@ -1186,7 +1186,7 @@ describe('FilterService', () => {
       vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
 
       service.init(gridStub);
-      const columnFilter = { columnDef: mockColumn1, columnId: 'age', type: FieldType.string };
+      const columnFilter = { columnDef: mockColumn1, columnId: 'age', type: 'string' as FieldType };
       const filterCondition = service.parseFormInputFilterConditions(searchTerms, columnFilter);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(filterCondition.searchTerms, 'string');
       const columnFilters = {
@@ -1199,14 +1199,14 @@ describe('FilterService', () => {
 
     it('should return True when input value is a complex object searchTerms value is found following the dot notation', () => {
       const searchTerms = [123456];
-      const mockColumn1 = { id: 'zip', field: 'zip', filterable: true, queryFieldFilter: 'address.zip', type: FieldType.number } as Column;
+      const mockColumn1 = { id: 'zip', field: 'zip', filterable: true, queryFieldFilter: 'address.zip', type: 'number' } as Column;
       vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
       vi.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
 
       service.init(gridStub);
       const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, 'number');
       const columnFilters = {
-        zip: { columnDef: mockColumn1, columnId: 'zip', operator: 'EQ', searchTerms, parsedSearchTerms, type: FieldType.number },
+        zip: { columnDef: mockColumn1, columnId: 'zip', operator: 'EQ', searchTerms, parsedSearchTerms, type: 'number' },
       } as ColumnFilters;
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
@@ -1215,14 +1215,14 @@ describe('FilterService', () => {
 
     it('should return True when using row detail and the item is found in its parent', () => {
       gridOptionMock.enableRowDetailView = true;
-      const mockColumn1 = { id: 'zip', field: 'zip', filterable: true, queryFieldFilter: 'address.zip', type: FieldType.number } as Column;
+      const mockColumn1 = { id: 'zip', field: 'zip', filterable: true, queryFieldFilter: 'address.zip', type: 'number' } as Column;
       const mockItem2 = { __isPadding: true, __parent: mockItem1 };
       vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
       vi.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
 
       service.init(gridStub);
       const columnFilters = {
-        zip: { columnDef: mockColumn1, columnId: 'zip', operator: 'EQ', searchTerms: [123456], parsedSearchTerms: [123456], type: FieldType.number },
+        zip: { columnDef: mockColumn1, columnId: 'zip', operator: 'EQ', searchTerms: [123456], parsedSearchTerms: [123456], type: 'number' },
       } as ColumnFilters;
       const output = service.customLocalFilter(mockItem2, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
@@ -1232,14 +1232,14 @@ describe('FilterService', () => {
     it('should return True when using row detail custom "keyPrefix" and the item is found in its parent', () => {
       gridOptionMock.rowDetailView = { keyPrefix: 'prefix_' } as RowDetailView;
       gridOptionMock.enableRowDetailView = true;
-      const mockColumn1 = { id: 'zip', field: 'zip', filterable: true, queryFieldFilter: 'address.zip', type: FieldType.number } as Column;
+      const mockColumn1 = { id: 'zip', field: 'zip', filterable: true, queryFieldFilter: 'address.zip', type: 'number' } as Column;
       const mockItem2 = { prefix_isPadding: true, prefix_parent: mockItem1 };
       vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1]);
       vi.spyOn(dataViewStub, 'getIdxById').mockReturnValue(0);
 
       service.init(gridStub);
       const columnFilters = {
-        zip: { columnDef: mockColumn1, columnId: 'zip', operator: 'EQ', searchTerms: [123456], parsedSearchTerms: [123456], type: FieldType.number },
+        zip: { columnDef: mockColumn1, columnId: 'zip', operator: 'EQ', searchTerms: [123456], parsedSearchTerms: [123456], type: 'number' },
       } as ColumnFilters;
       const output = service.customLocalFilter(mockItem2, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
@@ -1253,7 +1253,7 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       const columnFilters = {
-        name: { columnDef: mockColumn1, columnId: 'name', operator: 'EQ', searchTerms: ['John Doe'], parsedSearchTerms: ['John Doe'], type: FieldType.string },
+        name: { columnDef: mockColumn1, columnId: 'name', operator: 'EQ', searchTerms: ['John Doe'], parsedSearchTerms: ['John Doe'], type: 'string' },
       } as ColumnFilters;
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
@@ -1267,7 +1267,7 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       const columnFilters = {
-        name: { columnDef: mockColumn1, columnId: 'name', operator: 'EQ', searchTerms: ['John'], parsedSearchTerms: ['John'], type: FieldType.string },
+        name: { columnDef: mockColumn1, columnId: 'name', operator: 'EQ', searchTerms: ['John'], parsedSearchTerms: ['John'], type: 'string' },
       } as ColumnFilters;
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
@@ -1281,7 +1281,7 @@ describe('FilterService', () => {
 
       service.init(gridStub);
       const columnFilters = {
-        name: { columnDef: mockColumn1, columnId: 'name', operator: 'EQ', searchTerms: ['Doe'], parsedSearchTerms: ['Doe'], type: FieldType.string },
+        name: { columnDef: mockColumn1, columnId: 'name', operator: 'EQ', searchTerms: ['Doe'], parsedSearchTerms: ['Doe'], type: 'string' },
       } as ColumnFilters;
       const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
@@ -1500,7 +1500,7 @@ describe('FilterService', () => {
         id: 'isActive',
         name: 'isActive',
         field: 'isActive',
-        type: FieldType.boolean,
+        type: 'boolean',
         filterable: true,
         filter: {
           model: Filters.singleSelect,
@@ -1551,9 +1551,9 @@ describe('FilterService', () => {
           searchTerms: ['Jane'],
           operator: 'StartsWith',
           parsedSearchTerms: ['Jane'],
-          type: FieldType.string,
+          type: 'string',
         },
-        isActive: { columnId: 'isActive', columnDef: mockColumn2, searchTerms: [false], operator: 'EQ', parsedSearchTerms: false, type: FieldType.boolean },
+        isActive: { columnId: 'isActive', columnDef: mockColumn2, searchTerms: [false], operator: 'EQ', parsedSearchTerms: false, type: 'boolean' },
       });
     });
 
@@ -1592,9 +1592,9 @@ describe('FilterService', () => {
           searchTerms: ['Jane'],
           operator: 'StartsWith',
           parsedSearchTerms: ['Jane'],
-          type: FieldType.string,
+          type: 'string',
         },
-        isActive: { columnId: 'isActive', columnDef: mockColumn2, searchTerms: [false], operator: 'EQ', parsedSearchTerms: false, type: FieldType.boolean },
+        isActive: { columnId: 'isActive', columnDef: mockColumn2, searchTerms: [false], operator: 'EQ', parsedSearchTerms: false, type: 'boolean' },
       });
     });
 
@@ -1627,9 +1627,9 @@ describe('FilterService', () => {
           searchTerms: ['Jane'],
           operator: 'StartsWith',
           parsedSearchTerms: ['Jane'],
-          type: FieldType.string,
+          type: 'string',
         },
-        isActive: { columnId: 'isActive', columnDef: mockColumn2, searchTerms: [false], operator: 'EQ', parsedSearchTerms: false, type: FieldType.boolean },
+        isActive: { columnId: 'isActive', columnDef: mockColumn2, searchTerms: [false], operator: 'EQ', parsedSearchTerms: false, type: 'boolean' },
       });
       expect(clearSpy).toHaveBeenCalledWith(false);
       expect(refreshBackendSpy).toHaveBeenCalledWith(gridOptionMock);
@@ -1664,9 +1664,9 @@ describe('FilterService', () => {
           searchTerms: ['Jane'],
           operator: 'StartsWith',
           parsedSearchTerms: ['Jane'],
-          type: FieldType.string,
+          type: 'string',
         },
-        isActive: { columnId: 'isActive', columnDef: mockColumn2, searchTerms: [false], operator: 'EQ', parsedSearchTerms: false, type: FieldType.boolean },
+        isActive: { columnId: 'isActive', columnDef: mockColumn2, searchTerms: [false], operator: 'EQ', parsedSearchTerms: false, type: 'boolean' },
       });
       expect(clearSpy).toHaveBeenCalledWith(false);
     });
@@ -1693,7 +1693,7 @@ describe('FilterService', () => {
           operator: 'StartsWith',
           parsedSearchTerms: ['Jane'],
           targetSelector: '',
-          type: FieldType.string,
+          type: 'string',
         },
       });
       expect(spySearchChange).toHaveBeenCalledWith(
@@ -1710,7 +1710,7 @@ describe('FilterService', () => {
               searchTerms: ['Jane'],
               parsedSearchTerms: ['Jane'],
               targetSelector: '',
-              type: FieldType.string,
+              type: 'string',
             },
           },
           operator: 'StartsWith',
@@ -1744,7 +1744,7 @@ describe('FilterService', () => {
           operator: 'StartsWith',
           parsedSearchTerms: ['Jane'],
           targetSelector: '',
-          type: FieldType.string,
+          type: 'string',
         },
       });
       expect(spySearchChange).toHaveBeenCalledWith(
@@ -1761,7 +1761,7 @@ describe('FilterService', () => {
               searchTerms: ['Jane'],
               parsedSearchTerms: ['Jane'],
               targetSelector: '',
-              type: FieldType.string,
+              type: 'string',
             },
           },
           operator: 'StartsWith',
@@ -1785,7 +1785,7 @@ describe('FilterService', () => {
       gridOptionMock.enableTreeData = false;
       gridOptionMock.backendServiceApi = undefined;
       mockColumn1 = { id: 'firstName', name: 'firstName', field: 'firstName' };
-      mockColumn2 = { id: 'isActive', name: 'isActive', field: 'isActive', type: FieldType.boolean };
+      mockColumn2 = { id: 'isActive', name: 'isActive', field: 'isActive', type: 'boolean' };
       mockArgs1 = { grid: gridStub, column: mockColumn1, node: document.getElementById(DOM_ELEMENT_ID) };
       mockArgs2 = { grid: gridStub, column: mockColumn2, node: document.getElementById(DOM_ELEMENT_ID) };
       vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn1, mockColumn2]);
@@ -1793,7 +1793,7 @@ describe('FilterService', () => {
 
     it('should call "updateSingleFilter" method and expect event "emitFilterChanged" to be trigged local when using "bindLocalOnFilter" and also expect filters to be set in dataview', async () => {
       const expectation = {
-        firstName: { columnId: 'firstName', columnDef: mockColumn1, searchTerms: ['Jane'], operator: 'StartsWith', type: FieldType.string },
+        firstName: { columnId: 'firstName', columnDef: mockColumn1, searchTerms: ['Jane'], operator: 'StartsWith', type: 'string' },
       };
       const emitSpy = vi.spyOn(service, 'emitFilterChanged');
       const setFilterArgsSpy = vi.spyOn(dataViewStub, 'setFilterArgs');
@@ -1808,13 +1808,13 @@ describe('FilterService', () => {
       expect(refreshSpy).toHaveBeenCalled();
       expect(emitSpy).toHaveBeenCalledWith('local');
       expect(service.getColumnFilters()).toEqual({
-        firstName: { columnId: 'firstName', columnDef: mockColumn1, searchTerms: ['Jane'], operator: 'StartsWith', type: FieldType.string },
+        firstName: { columnId: 'firstName', columnDef: mockColumn1, searchTerms: ['Jane'], operator: 'StartsWith', type: 'string' },
       });
     });
 
     it('should call "updateSingleFilter" method with an empty search term and still expect event "emitFilterChanged" to be trigged local when setting `emptySearchTermReturnAllValues` to False', async () => {
       const expectation = {
-        firstName: { columnId: 'firstName', columnDef: mockColumn1, searchTerms: [''], operator: 'StartsWith', type: FieldType.string },
+        firstName: { columnId: 'firstName', columnDef: mockColumn1, searchTerms: [''], operator: 'StartsWith', type: 'string' },
       };
       const emitSpy = vi.spyOn(service, 'emitFilterChanged');
       const setFilterArgsSpy = vi.spyOn(dataViewStub, 'setFilterArgs');
@@ -1831,14 +1831,14 @@ describe('FilterService', () => {
       expect(refreshSpy).toHaveBeenCalled();
       expect(emitSpy).toHaveBeenCalledWith('local');
       expect(service.getColumnFilters()).toEqual({
-        firstName: { columnId: 'firstName', columnDef: mockColumn1, searchTerms: [''], operator: 'StartsWith', type: FieldType.string },
+        firstName: { columnId: 'firstName', columnDef: mockColumn1, searchTerms: [''], operator: 'StartsWith', type: 'string' },
       });
       expect(service.getCurrentLocalFilters()).toEqual([{ columnId: 'firstName', operator: 'StartsWith', searchTerms: [''] }]);
     });
 
     it('should call "updateSingleFilter" method and expect event "emitFilterChanged" to be trigged local when using "bindBackendOnFilter" and also expect filters to be set in dataview', async () => {
       const expectation = {
-        firstName: { columnId: 'firstName', columnDef: mockColumn1, searchTerms: ['Jane'], operator: 'StartsWith', type: FieldType.string },
+        firstName: { columnId: 'firstName', columnDef: mockColumn1, searchTerms: ['Jane'], operator: 'StartsWith', type: 'string' },
       };
       gridOptionMock.backendServiceApi = {
         filterTypingDebounce: 0,
@@ -1865,7 +1865,7 @@ describe('FilterService', () => {
 
     it('should expect filter to be sent to the backend when using "bindBackendOnFilter" without triggering a filter changed event neither a backend query when both flag arguments are set to false', async () => {
       const expectation = {
-        firstName: { columnId: 'firstName', columnDef: mockColumn1, searchTerms: ['Jane'], operator: 'StartsWith', type: FieldType.string },
+        firstName: { columnId: 'firstName', columnDef: mockColumn1, searchTerms: ['Jane'], operator: 'StartsWith', type: 'string' },
       };
       gridOptionMock.backendServiceApi = {
         filterTypingDebounce: 0,
@@ -2058,7 +2058,7 @@ describe('FilterService', () => {
         id: 'isActive',
         name: 'isActive',
         field: 'isActive',
-        type: FieldType.boolean,
+        type: 'boolean',
         filterable: true,
         filter: {
           model: Filters.singleSelect,
@@ -2282,7 +2282,7 @@ describe('FilterService', () => {
             searchTerms: ['map'],
             parsedSearchTerms: ['map'],
             targetSelector: '',
-            type: FieldType.string,
+            type: 'string',
           },
         } as ColumnFilters;
         await service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['map'] }], true, true, true);
@@ -2319,7 +2319,7 @@ describe('FilterService', () => {
             searchTerms: ['map'],
             parsedSearchTerms: ['map'],
             targetSelector: '',
-            type: FieldType.string,
+            type: 'string',
           },
         } as ColumnFilters;
         await service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['map'] }], true, true, true);
@@ -2359,7 +2359,7 @@ describe('FilterService', () => {
             searchTerms: ['map'],
             parsedSearchTerms: ['map'],
             targetSelector: '',
-            type: FieldType.string,
+            type: 'string',
           },
         } as ColumnFilters;
         await service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['map'] }], true, true, true);
@@ -2396,7 +2396,7 @@ describe('FilterService', () => {
             searchTerms: ['map'],
             parsedSearchTerms: ['map'],
             targetSelector: '',
-            type: FieldType.string,
+            type: 'string',
           },
         } as ColumnFilters;
         await service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['map'] }], true, true, true);
@@ -2425,7 +2425,7 @@ describe('FilterService', () => {
         gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new SlickEventData(), gridStub);
 
         const columnFilters = {
-          file: { columnDef: mockColumn1, columnId: 'file', searchTerms: ['unknown'], targetSelector: '', type: FieldType.string },
+          file: { columnDef: mockColumn1, columnId: 'file', searchTerms: ['unknown'], targetSelector: '', type: 'string' },
         } as ColumnFilters;
         await service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['unknown'] }], true, true, true);
         const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
@@ -2455,7 +2455,7 @@ describe('FilterService', () => {
         gridStub.onHeaderRowCellRendered.notify(mockArgs1 as any, new SlickEventData(), gridStub);
         gridStub.onHeaderRowCellRendered.notify(mockArgs2 as any, new SlickEventData(), gridStub);
 
-        const columnFilters = { file: { columnDef: mockColumn1, columnId: 'file', searchTerms: ['unknown'], type: FieldType.string } } as ColumnFilters;
+        const columnFilters = { file: { columnDef: mockColumn1, columnId: 'file', searchTerms: ['unknown'], type: 'string' } } as ColumnFilters;
         await service.updateSingleFilter({ columnId: 'file', operator: 'Contains', searchTerms: ['unknown'] }, true, true);
         const output = service.customLocalFilter(mockItem1, { dataView: dataViewStub, grid: gridStub, columnFilters });
 
@@ -2495,7 +2495,7 @@ describe('FilterService', () => {
             searchTerms: ['misc'],
             parsedSearchTerms: ['misc'],
             targetSelector: '',
-            type: FieldType.string,
+            type: 'string',
           },
         } as ColumnFilters;
         await service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['misc'] }], true, true, true);
@@ -2532,7 +2532,7 @@ describe('FilterService', () => {
             searchTerms: ['misc'],
             parsedSearchTerms: ['misc'],
             targetSelector: '',
-            type: FieldType.string,
+            type: 'string',
           },
         } as ColumnFilters;
         await service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['misc'] }], true, true, true);
@@ -2570,7 +2570,7 @@ describe('FilterService', () => {
             searchTerms: ['misc'],
             parsedSearchTerms: ['misc'],
             targetSelector: '',
-            type: FieldType.string,
+            type: 'string',
           },
         } as ColumnFilters;
         await service.updateFilters([{ columnId: 'file', operator: '', searchTerms: ['misc'] }], true, true, true);
@@ -2609,7 +2609,7 @@ describe('FilterService', () => {
             searchTerms: ['0.1'],
             parsedSearchTerms: ['0.1'],
             targetSelector: '',
-            type: FieldType.string,
+            type: 'string',
           },
         } as ColumnFilters;
         await service.updateFilters([{ columnId: 'size', operator: '<', searchTerms: ['0.1'] }], true, true, true);

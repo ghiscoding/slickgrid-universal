@@ -4,7 +4,6 @@ import { createDomElement, emptyElement, extend, queueMicrotaskOrSetTimeout, set
 import { Calendar, type FormatDateString, type Options } from 'vanilla-calendar-pro';
 import { resetDatePicker, setPickerDates, setPickerFocus } from '../commonEditorFilter/commonEditorFilterUtils.js';
 import { SlickEventData, type SlickGrid } from '../core/index.js';
-import { FieldType } from '../enums/index.js';
 import { formatDateByFieldType, mapTempoDateFormatWithFieldType } from '../services/dateUtils.js';
 import type { TranslaterService } from '../services/translater.service.js';
 import { Constants } from './../constants.js';
@@ -105,7 +104,7 @@ export class DateEditor implements Editor {
       const columnId = this.columnDef?.id ?? '';
       const gridOptions: GridOption = this.args.grid.getOptions() || {};
       this.defaultDate = this.args.item?.[this.columnDef.field];
-      const outputFieldType = this.columnDef.outputType || this.columnEditor.type || this.columnDef.type || FieldType.dateUtc;
+      const outputFieldType = this.columnDef.outputType || this.columnEditor.type || this.columnDef.type || 'dateUtc';
       const outputFormat = mapTempoDateFormatWithFieldType(outputFieldType);
       const currentLocale = this._translaterService?.getCurrentLanguage?.() || gridOptions.locale || 'en';
 
@@ -113,7 +112,7 @@ export class DateEditor implements Editor {
       if (outputFormat && (outputFormat === 'ISO8601' || outputFormat.toLowerCase().includes('h'))) {
         this.hasTimePicker = true;
       }
-      const pickerFormat = mapTempoDateFormatWithFieldType(this.hasTimePicker ? FieldType.dateTimeIsoAM_PM : FieldType.dateIso);
+      const pickerFormat = mapTempoDateFormatWithFieldType(this.hasTimePicker ? 'dateTimeIsoAM_PM' : 'dateIso');
 
       const pickerOptions: Options = {
         inputMode: true,
@@ -330,8 +329,8 @@ export class DateEditor implements Editor {
     const fieldName = this.columnDef?.field;
     if (this.columnDef && fieldName !== undefined) {
       const saveFieldType =
-        this.columnDef.saveOutputType || this.columnDef.outputType || this.columnEditor.type || this.columnDef.type || FieldType.dateUtc;
-      const outputFieldType = this.columnDef.outputType || this.columnEditor.type || this.columnDef.type || FieldType.dateUtc;
+        this.columnDef.saveOutputType || this.columnDef.outputType || this.columnEditor.type || this.columnDef.type || 'dateUtc';
+      const outputFieldType = this.columnDef.outputType || this.columnEditor.type || this.columnDef.type || 'dateUtc';
       const isComplexObject = fieldName.indexOf('.') > 0; // is the field a complex object, "address.streetNumber"
 
       // validate the value before applying it (if not valid we'll set an empty string)
@@ -378,8 +377,8 @@ export class DateEditor implements Editor {
       // is the field a complex object, "address.streetNumber"
       const isComplexObject = fieldName?.indexOf('.') > 0;
       const value = isComplexObject ? getDescendantProperty(item, fieldName) : item[fieldName];
-      const inputFieldType = this.columnEditor.type || this.columnDef?.type || FieldType.dateIso;
-      const outputFieldType = this.columnDef.outputType || this.columnEditor.type || this.columnDef.type || FieldType.dateIso;
+      const inputFieldType = this.columnEditor.type || this.columnDef?.type || 'dateIso';
+      const outputFieldType = this.columnDef.outputType || this.columnEditor.type || this.columnDef.type || 'dateIso';
 
       const formattedDate = formatDateByFieldType(value, inputFieldType, outputFieldType);
       this._originalDate = formattedDate !== '' ? value : '';

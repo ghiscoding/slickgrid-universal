@@ -2,7 +2,6 @@ import { format } from '@formkit/tempo';
 import { isObject } from '@slickgrid-universal/utils';
 import type { AutocompleteItem } from 'autocompleter';
 import { Calendar, type FormatDateString, type Options, type Range } from 'vanilla-calendar-pro';
-import { FieldType } from '../enums/fieldType.enum.js';
 import type {
   AutocompleterOption,
   CollectionFilterBy,
@@ -115,11 +114,11 @@ export function setPickerDates(
 
   if (oldVal !== newVal) {
     const inputFieldType = colEditorOrFilter.type || columnDef.type;
-    const outputFieldType = columnDef.outputType || colEditorOrFilter.type || columnDef.type || FieldType.dateUtc;
+    const outputFieldType = columnDef.outputType || colEditorOrFilter.type || columnDef.type || 'dateUtc';
     const newDates = Array.isArray(newVal) ? newVal : [(newVal || '') as string];
     const pickerDates: Date[] = [];
 
-    const isoFormat = mapTempoDateFormatWithFieldType(FieldType.dateIso) as string;
+    const isoFormat = mapTempoDateFormatWithFieldType('dateIso') as string;
     const inputFormat = inputFieldType ? mapTempoDateFormatWithFieldType(inputFieldType) : undefined;
     for (const initialDate of newDates) {
       const date = initialDate instanceof Date ? initialDate : tryParseDate(initialDate, inputFormat);

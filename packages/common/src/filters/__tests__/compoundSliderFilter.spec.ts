@@ -480,8 +480,8 @@ describe('CompoundSliderFilter', () => {
       translateService.use('fr');
     });
 
-    it('should have French text translated with operator dropdown options related to numbers when column definition type is FieldType.number', () => {
-      mockColumn.type = FieldType.number;
+    it('should have French text translated with operator dropdown options related to numbers when column definition field type is set to "number"', () => {
+      mockColumn.type = 'number';
       filterArguments.searchTerms = [9];
 
       filter.init(filterArguments);

@@ -19,7 +19,7 @@ import type {
   SlickGrid,
   SortDirectionString,
 } from '@slickgrid-universal/common';
-import { FieldType, mapOperatorByFieldType, mapOperatorType, OperatorType, SortDirection } from '@slickgrid-universal/common';
+import { mapOperatorByFieldType, mapOperatorType, OperatorType, SortDirection, type FieldType } from '@slickgrid-universal/common';
 import { getHtmlStringOutput, stripTags } from '@slickgrid-universal/utils';
 import type {
   GraphqlCursorPaginationOption,
@@ -427,7 +427,7 @@ export class GraphqlService implements BackendService {
         if (fieldName instanceof HTMLElement) {
           fieldName = stripTags(fieldName.innerHTML);
         }
-        const fieldType = columnDef.type || FieldType.string;
+        const fieldType = columnDef.type || 'string';
         let searchTerms = columnFilter?.searchTerms ?? [];
         let fieldSearchValue = Array.isArray(searchTerms) && searchTerms.length === 1 ? searchTerms[0] : '';
         if (typeof fieldSearchValue === 'undefined') {
@@ -535,7 +535,7 @@ export class GraphqlService implements BackendService {
             (operator === 'RangeInclusive' || operator === 'RangeExclusive') &&
             Array.isArray(searchTerms) &&
             searchTerms.length === 1 &&
-            fieldType === FieldType.date
+            fieldType === 'date'
           ) {
             operator = OperatorType.equal;
           }
@@ -762,20 +762,20 @@ export class GraphqlService implements BackendService {
   }
 
   /** Normalizes the search value according to field type. */
-  protected normalizeSearchValue(fieldType: (typeof FieldType)[keyof typeof FieldType], searchValue: any): any {
+  protected normalizeSearchValue(fieldType: FieldType, searchValue: any): any {
     switch (fieldType) {
-      case FieldType.date:
-      case FieldType.string:
-      case FieldType.text:
-      case FieldType.readonly:
+      case 'date':
+      case 'string':
+      case 'text':
+      case 'readonly':
         if (typeof searchValue === 'string') {
           // escape single quotes by doubling them
           searchValue = searchValue.replace(/'/g, `''`);
         }
         break;
-      case FieldType.integer:
-      case FieldType.number:
-      case FieldType.float:
+      case 'integer':
+      case 'number':
+      case 'float':
         if (typeof searchValue === 'string') {
           // Parse a valid decimal from the string.
 

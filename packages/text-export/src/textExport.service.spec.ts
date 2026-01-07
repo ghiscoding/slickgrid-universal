@@ -603,7 +603,7 @@ describe('ExportService', () => {
           {
             id: 'order',
             field: 'order',
-            type: FieldType.number,
+            type: 'number',
             exportWithFormatter: true,
             formatter: Formatters.multiple,
             params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
@@ -724,7 +724,7 @@ describe('ExportService', () => {
           {
             id: 'order',
             field: 'order',
-            type: FieldType.number,
+            type: 'number',
             exportWithFormatter: true,
             formatter: Formatters.multiple,
             params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
@@ -847,7 +847,7 @@ describe('ExportService', () => {
           {
             id: 'order',
             field: 'order',
-            type: FieldType.number,
+            type: 'number',
             exportWithFormatter: true,
             formatter: Formatters.multiple,
             params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },

@@ -170,7 +170,7 @@ export interface ColumnFilter {
   targetSelector?: string;
 
   /** What is the Field Type that can be used by the Filter (as precedence over the "type" set the column definition) */
-  type?: (typeof FieldType)[keyof typeof FieldType];
+  type?: FieldType;
 
   /** Step value of the filter, works only with Filters supporting it (input text, number, float, range, slider) */
   valueStep?: number | string;

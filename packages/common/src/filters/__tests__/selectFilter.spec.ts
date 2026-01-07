@@ -461,7 +461,7 @@ describe('SelectFilter', () => {
       collection: ['other', 'male', 'female'],
       collectionSortBy: {
         sortDesc: true,
-        fieldType: FieldType.string,
+        fieldType: 'string',
       },
     };
 
@@ -487,7 +487,7 @@ describe('SelectFilter', () => {
       collectionSortBy: {
         property: 'value',
         sortDesc: false,
-        fieldType: FieldType.string,
+        fieldType: 'string',
       },
       customStructure: {
         value: 'value',

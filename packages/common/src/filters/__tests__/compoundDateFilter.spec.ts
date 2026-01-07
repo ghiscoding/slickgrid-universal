@@ -50,7 +50,7 @@ describe('CompoundDateFilter', () => {
     document.body.appendChild(divContainer);
     spyGetHeaderRow = vi.spyOn(gridStub, 'getHeaderRowColumn').mockReturnValue(divContainer);
 
-    mockColumn = { id: 'finish', field: 'finish', filterable: true, outputType: FieldType.dateIso, filter: { model: Filters.compoundDate, operator: '>' } };
+    mockColumn = { id: 'finish', field: 'finish', filterable: true, outputType: 'dateIso', filter: { model: Filters.compoundDate, operator: '>' } };
 
     filterArguments = {
       grid: gridStub,
@@ -379,8 +379,8 @@ describe('CompoundDateFilter', () => {
   it('should create the input filter with a default search terms when passed as a filter argument', () => {
     filterArguments.searchTerms = ['2000-01-01T05:00:00.000Z'];
     mockColumn.filter!.operator = '<=';
-    mockColumn.type = FieldType.dateUtc;
-    mockColumn.outputType = FieldType.dateUtc;
+    mockColumn.type = 'dateUtc';
+    mockColumn.outputType = 'dateUtc';
     const spyCallback = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
@@ -426,7 +426,7 @@ describe('CompoundDateFilter', () => {
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
-    expect(format((filter.currentDateOrDates as any)[0], mapTempoDateFormatWithFieldType(FieldType.dateTimeIso))).toBe('2000-01-02 00:00:00');
+    expect(format((filter.currentDateOrDates as any)[0], mapTempoDateFormatWithFieldType('dateTimeIso'))).toBe('2000-01-02 00:00:00');
     expect(filterInputElm.value).toBe('2000-01-02');
     expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-02'], shouldTriggerQuery: true });
   });
@@ -449,7 +449,7 @@ describe('CompoundDateFilter', () => {
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
-    expect(format((filter.currentDateOrDates as any)[0], mapTempoDateFormatWithFieldType(FieldType.dateTimeIso))).toBe('2000-01-02 00:00:00');
+    expect(format((filter.currentDateOrDates as any)[0], mapTempoDateFormatWithFieldType('dateTimeIso'))).toBe('2000-01-02 00:00:00');
     expect(filterInputElm.value).toBe('2000-01-02');
     expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-02'], shouldTriggerQuery: true });
   });
@@ -472,7 +472,7 @@ describe('CompoundDateFilter', () => {
     const filterFilledElms = divContainer.querySelectorAll<HTMLInputElement>('.form-group.search-filter.filter-finish.filled');
 
     expect(filterFilledElms.length).toBe(1);
-    expect(format((filter.currentDateOrDates as any)[0], mapTempoDateFormatWithFieldType(FieldType.dateTimeIso))).toBe('2000-01-02 00:00:00');
+    expect(format((filter.currentDateOrDates as any)[0], mapTempoDateFormatWithFieldType('dateTimeIso'))).toBe('2000-01-02 00:00:00');
     expect(filterInputElm.value).toBe('2000-01-02');
     expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: '<=', searchTerms: ['2000-01-02'], shouldTriggerQuery: true });
   });
@@ -516,8 +516,8 @@ describe('CompoundDateFilter', () => {
     translateService.use('fr');
     filterArguments.searchTerms = ['2000-01-01T05:00:00.000Z'];
     mockColumn.filter!.operator = '<=';
-    mockColumn.type = FieldType.dateUtc;
-    mockColumn.outputType = FieldType.dateUtc;
+    mockColumn.type = 'dateUtc';
+    mockColumn.outputType = 'dateUtc';
     const spyCallback = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
@@ -584,7 +584,7 @@ describe('CompoundDateFilter', () => {
   });
 
   it('should have a value with date & time in the picker when "enableTime" option is set and we trigger a change', () => {
-    mockColumn.outputType = FieldType.dateTimeShortEuro;
+    mockColumn.outputType = 'dateTimeShortEuro';
     mockColumn.filter!.operator = '>';
     const spyCallback = vi.spyOn(filterArguments, 'callback');
 
@@ -612,7 +612,7 @@ describe('CompoundDateFilter', () => {
   });
 
   it('should have a value with date & time in the picker when using no "outputType" which will default to UTC date', () => {
-    mockColumn.type = FieldType.dateUtc;
+    mockColumn.type = 'dateUtc';
     mockColumn.outputType = null as any;
     filterArguments.searchTerms = ['2000-01-01T05:00'];
     mockColumn.filter!.operator = '<=';
