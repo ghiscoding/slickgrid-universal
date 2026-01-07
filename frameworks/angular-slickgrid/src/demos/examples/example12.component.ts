@@ -5,7 +5,6 @@ import { TextExportService } from '@slickgrid-universal/text-export';
 import type { Subscription } from 'rxjs';
 import {
   AngularSlickgridModule,
-  DelimiterType,
   Filters,
   Formatters,
   unsubscribeAllObservables,
@@ -295,7 +294,7 @@ export class Example12Component implements OnInit, OnDestroy {
 
   exportToFile(type = 'csv') {
     this.textExportService.exportToFile({
-      delimiter: type === 'csv' ? DelimiterType.comma : DelimiterType.tab,
+      delimiter: type === 'csv' ? ',' : '\t',
       filename: 'myExport',
       format: type === 'csv' ? 'csv' : 'txt',
     });

@@ -72,29 +72,33 @@ Below is a list of Enums being deprecated and you should think about migrating t
 
 | Enum Name   | from `enum`         | to string `type`    | Note |
 | ----------- | ------------------- | ------------------- | ---- |
+| `DelimiterType` | `DelimiterType.comma` | `','` |
+|             | `DelimiterType.colon` | `':'` |
+|             | `DelimiterType.space` | `' '` |
+|  | ... | ... |
 | `EventNamingStyle` | `EventNamingStyle.camelCase` | `'camelCase'` |
 |             | `EventNamingStyle.kebabCase` | `'kebabCase'` |
 |             | `EventNamingStyle.lowerCase` | `'lowerCase'` |
 | `FieldType`  | `FieldType.boolean` | `'boolean'`         |
 |             | `FieldType.number`   | `'number'`          |
 |             | `FieldType.dateIso`   | `'dateIso'`          |
-| - | - | - |
+|  | ... | ... |
 | `FileType` | `FileType.csv`      | `'csv'`             |
 |             | `FileType.xlsx`     | `'xlsx'`            |
-| - | - | - |
+|  | ... | ... |
 | `GridStateType`  | `GridStateType.columns` | `'columns'`  |
 |             | `GridStateType.filters`   | `'filters'`   |
 |             | `GridStateType.sorters`   | `'sorters'`   |
-| - | - | - |
+|  | ... | ... |
 | `Operator`  | `Operator.greaterThan` | `'>'`  |    See [Operator](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/enums/operatorString.type.ts) list for all available operators |
 |             | `Operator.lessThanOrEqual`   | `'<='`   |
 |             | `Operator.contains`   | `'Contains'` or `'CONTAINS'`  | Operators are written as PascalCase |
 |             | `Operator.equal`   | `'EQ'`  |
 |             | `Operator.rangeExclusive`   | `'RangeExclusive'`  |
-| - | - | - |
+|  | ... | ... |
 | `SortDirection`  | `SortDirection.ASC` | `'ASC'` or `'asc'`  |
 |             | `SortDirection.DESC`   | `'DESC'` or `'desc'`  |
-| - | - | - |
+|  | ... | ... |
 
 #### renaming `editorOptions` and `filterOptions` to a more generic `options` property
 

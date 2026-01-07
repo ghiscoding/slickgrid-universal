@@ -4,7 +4,6 @@ import i18next from 'i18next';
 import React, { useEffect, useRef, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import {
-  DelimiterType,
   Filters,
   Formatters,
   SlickgridReact,
@@ -253,7 +252,7 @@ const Example12: React.FC = () => {
 
   function exportToFile(type = 'csv') {
     textExportService.exportToFile({
-      delimiter: type === 'csv' ? DelimiterType.comma : DelimiterType.tab,
+      delimiter: type === 'csv' ? ',' : '\t',
       filename: 'myExport',
       format: type === 'csv' ? 'csv' : 'txt',
     });

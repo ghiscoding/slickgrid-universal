@@ -3,7 +3,6 @@ import { deepCopy } from '@slickgrid-universal/utils';
 import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import { SlickEvent, SlickEventData, type SlickDataView, type SlickGrid } from '../../core/index.js';
-import { DelimiterType } from '../../enums/index.js';
 import { ExtensionUtility } from '../../extensions/extensionUtility.js';
 import type { Column, ContextMenu, ElementPosition, Formatter, GridOption, MenuCommandItem, MenuOptionItem } from '../../interfaces/index.js';
 import { BackendUtilityService, SharedService, type ExcelExportService, type TextExportService, type TreeDataService } from '../../services/index.js';
@@ -1354,7 +1353,7 @@ describe('ContextMenu Plugin', () => {
         menuItemCommand.action!(new CustomEvent('change'), { command: 'export-excel', cell: 0, row: 0 } as any);
 
         expect(exportSpy).toHaveBeenCalledWith({
-          delimiter: DelimiterType.comma,
+          delimiter: ',',
           format: 'csv',
         });
       });
@@ -1379,7 +1378,7 @@ describe('ContextMenu Plugin', () => {
         menuItemCommand.action!(new CustomEvent('change'), { command: 'export-excel', cell: 0, row: 0 } as any);
 
         expect(exportSpy).toHaveBeenCalledWith({
-          delimiter: DelimiterType.tab,
+          delimiter: '\t',
           format: 'txt',
         });
       });

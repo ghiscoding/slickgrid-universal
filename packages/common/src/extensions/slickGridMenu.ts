@@ -8,7 +8,6 @@ import {
   getHtmlStringOutput,
 } from '@slickgrid-universal/utils';
 import { SlickEvent, Utils as SlickUtils } from '../core/index.js';
-import { DelimiterType } from '../enums/index.js';
 import {
   addCloseButtomElement,
   addColumnTitleElementWhenDefined,
@@ -757,7 +756,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
           const exportCsvService: TextExportService = registeredResources.find((service: any) => service.className === 'TextExportService');
           if (exportCsvService?.exportToFile) {
             exportCsvService.exportToFile({
-              delimiter: DelimiterType.comma,
+              delimiter: ',',
               format: 'csv',
             });
           } else {
@@ -780,7 +779,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
           const exportTxtService: TextExportService = registeredResources.find((service: any) => service.className === 'TextExportService');
           if (exportTxtService?.exportToFile) {
             exportTxtService.exportToFile({
-              delimiter: DelimiterType.tab,
+              delimiter: '\t',
               format: 'txt',
             });
           } else {

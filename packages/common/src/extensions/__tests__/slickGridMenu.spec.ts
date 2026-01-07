@@ -3,7 +3,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import { SlickEvent, SlickEventData, type SlickDataView, type SlickGrid } from '../../core/index.js';
 import * as utils from '../../core/utils.js';
-import { DelimiterType } from '../../enums/index.js';
 import { ExtensionUtility } from '../../extensions/extensionUtility.js';
 import type { Column, DOMEvent, GridMenu, GridOption } from '../../interfaces/index.js';
 import {
@@ -1806,7 +1805,7 @@ describe('GridMenuControl', () => {
           document.querySelector('.slick-grid-menu-button')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
           control.menuElement!.querySelector('.slick-menu-item[data-command=export-csv]')!.dispatchEvent(clickEvent);
 
-          expect(exportSpy).toHaveBeenCalledWith({ delimiter: DelimiterType.comma, format: 'csv' });
+          expect(exportSpy).toHaveBeenCalledWith({ delimiter: ',', format: 'csv' });
         });
 
         it('should call "exportToFile" with Text Delimited set when the command triggered is "export-text-delimited"', () => {
@@ -1823,7 +1822,7 @@ describe('GridMenuControl', () => {
           document.querySelector('.slick-grid-menu-button')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
           control.menuElement!.querySelector('.slick-menu-item[data-command=export-text-delimited]')!.dispatchEvent(clickEvent);
 
-          expect(exportSpy).toHaveBeenCalledWith({ delimiter: DelimiterType.tab, format: 'txt' });
+          expect(exportSpy).toHaveBeenCalledWith({ delimiter: '\t', format: 'txt' });
         });
 
         it('should toggle the darkMode grid option when the command triggered is "toggle-dark-mode"', () => {

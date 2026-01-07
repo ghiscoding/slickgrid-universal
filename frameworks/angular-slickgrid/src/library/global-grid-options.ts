@@ -1,10 +1,4 @@
-import {
-  DelimiterType,
-  Filters,
-  type Column,
-  type GridOption as GridOptionUniversal,
-  type TreeDataOption,
-} from '@slickgrid-universal/common';
+import { Filters, type Column, type GridOption as GridOptionUniversal, type TreeDataOption } from '@slickgrid-universal/common';
 import type { GridOption, RowDetailView } from './models/index';
 
 /** Global Grid Options Defaults */
@@ -137,7 +131,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
     sanitizeDataExport: false,
   },
   textExportOptions: {
-    delimiter: DelimiterType.comma,
+    delimiter: ',',
     exportWithFormatter: false,
     filename: 'export',
     format: 'csv',

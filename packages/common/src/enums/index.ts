@@ -1,7 +1,7 @@
 export type * from './caseType.type.js';
 export type * from './columnReorderFunction.type.js';
 export type * from './compositeEditorModalType.type.js';
-export * from './delimiterType.enum.js';
+export * from './delimiterType.type.js';
 export type * from './emitterType.type.js';
 export type * from './extensionList.type.js';
 export * from './extensionName.enum.js';

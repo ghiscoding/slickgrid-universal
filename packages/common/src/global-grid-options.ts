@@ -1,4 +1,3 @@
-import { DelimiterType } from './enums/index.js';
 import { Filters } from './filters/index.js';
 import type { Column, EmptyWarning, GridOption, RowDetailView, TreeDataOption } from './interfaces/index.js';
 
@@ -161,7 +160,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
     sanitizeDataExport: true,
   },
   textExportOptions: {
-    delimiter: DelimiterType.comma,
+    delimiter: ',',
     exportWithFormatter: false,
     filename: 'export',
     format: 'csv',

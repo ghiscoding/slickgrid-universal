@@ -1,4 +1,4 @@
-import type { DelimiterType } from '../enums/delimiterType.enum.js';
+import type { DelimiterType } from '../enums/delimiterType.type.js';
 import type { FileType } from '../enums/file.type.js';
 
 export interface ExportTextDownloadOption {
@@ -11,10 +11,10 @@ export interface ExportTextDownloadOption {
 
 export interface TextExportOption {
   /** export delimiter, can be (comma, tab, ... or even custom string). */
-  delimiter?: DelimiterType | string;
+  delimiter?: DelimiterType;
 
   /** Allows you to override for the export delimiter */
-  delimiterOverride?: DelimiterType | string;
+  delimiterOverride?: DelimiterType;
 
   /** Defaults to false, which leads to all Formatters of the grid being evaluated on export. You can also override a column by changing the propery on the column itself */
   exportWithFormatter?: boolean;
