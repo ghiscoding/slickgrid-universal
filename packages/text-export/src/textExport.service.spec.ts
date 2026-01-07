@@ -95,14 +95,14 @@ describe('ExportService', () => {
       mockExportCsvOptions = {
         delimiter: DelimiterType.comma,
         filename: 'export',
-        format: FileType.csv,
+        format: 'csv',
         useUtf8WithBom: false,
       };
 
       mockExportTxtOptions = {
         delimiter: DelimiterType.semicolon,
         filename: 'export',
-        format: FileType.txt,
+        format: 'txt',
       };
 
       service = new TextExportService();

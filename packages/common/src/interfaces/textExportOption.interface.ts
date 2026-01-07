@@ -1,5 +1,5 @@
 import type { DelimiterType } from '../enums/delimiterType.enum.js';
-import type { FileType } from '../enums/fileType.enum.js';
+import type { FileType } from '../enums/file.type.js';
 
 export interface ExportTextDownloadOption {
   filename: string;
@@ -23,7 +23,7 @@ export interface TextExportOption {
   filename?: string;
 
   /** file type format, .csv/.txt (this will provide the extension) */
-  format?: FileType.csv | FileType.txt | 'csv' | 'txt';
+  format?: Extract<FileType, 'csv' | 'txt'>;
 
   /** The column header title (at position A0 in Excel) of the Group by column. If nothing is provided it will use "Group By" (which is a translated value of GROUP_BY i18n) */
   groupingColumnHeaderTitle?: string;
