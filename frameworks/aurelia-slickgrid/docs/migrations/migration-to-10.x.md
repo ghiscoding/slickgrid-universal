@@ -72,6 +72,9 @@ Below is a list of Enums being deprecated and you should think about migrating t
 
 | Enum Name   | from `enum`         | to string `type`    | Note |
 | ----------- | ------------------- | ------------------- | ---- |
+| `EventNamingStyle` | `EventNamingStyle.camelCase` | `'camelCase'` |
+|             | `EventNamingStyle.kebabCase` | `'kebabCase'` |
+|             | `EventNamingStyle.lowerCase` | `'lowerCase'` |
 | `FieldType`  | `FieldType.boolean` | `'boolean'`         |
 |             | `FieldType.number`   | `'number'`          |
 |             | `FieldType.dateIso`   | `'dateIso'`          |

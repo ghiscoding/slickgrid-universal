@@ -1,7 +1,6 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import {
   Editors,
-  EventNamingStyle,
   Filters,
   formatNumber,
   Formatters,
@@ -500,7 +499,7 @@ export default class Example12 {
       autoFixResizeRequiredGoodCount: 1,
       datasetIdPropertyName: 'id',
       darkMode: this._darkMode,
-      eventNamingStyle: EventNamingStyle.lowerCase,
+      eventNamingStyle: 'lowerCase',
       autoAddCustomEditorFormatter: customEditableInputFormatter,
       enableAddRow: true, // <-- this flag is required to work with the (create & clone) modal types
       enableCellNavigation: true,

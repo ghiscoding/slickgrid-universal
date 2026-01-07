@@ -1,4 +1,4 @@
-import { DelimiterType, EventNamingStyle, Filters, type Column, type TreeDataOption } from '@slickgrid-universal/common';
+import { DelimiterType, Filters, type Column, type TreeDataOption } from '@slickgrid-universal/common';
 import type { GridOption, RowDetailView } from './models/index.js';
 
 /**
@@ -136,7 +136,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
   enableMouseHoverHighlightRow: true,
   enableSorting: true,
   enableTextSelectionOnCells: true,
-  eventNamingStyle: EventNamingStyle.camelCase,
+  eventNamingStyle: 'camelCase',
   explicitInitialization: true,
   excelExportOptions: {
     addGroupIndentation: true,

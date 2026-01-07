@@ -1,6 +1,6 @@
 import { titleCase, toKebabCase } from '@slickgrid-universal/utils';
 import { type BasePubSubService } from './types/basePubSubService.interface.js';
-import { EventNamingStyle } from './types/eventNamingStyle.enum.js';
+import { type EventNamingStyle } from './types/eventNamingStyle.type.js';
 import { type EventSubscription, type Subscription } from './types/eventSubscription.interface.js';
 
 export interface PubSubEvent<T = any> {
@@ -13,7 +13,7 @@ export class EventPubSubService implements BasePubSubService {
   protected _subscribedEvents: PubSubEvent[] = [];
   protected _timer?: any;
 
-  eventNamingStyle: EventNamingStyle = EventNamingStyle.camelCase;
+  eventNamingStyle: EventNamingStyle = 'camelCase';
 
   get elementSource(): Element {
     return this._elementSource;
@@ -81,19 +81,19 @@ export class EventPubSubService implements BasePubSubService {
     let outputEventName = inputEventName;
 
     switch (this.eventNamingStyle) {
-      case EventNamingStyle.camelCase:
-      case EventNamingStyle.camelCaseWithExtraOnPrefix:
-        if (this.eventNamingStyle === EventNamingStyle.camelCaseWithExtraOnPrefix) {
+      case 'camelCase':
+      case 'camelCaseWithExtraOnPrefix':
+        if (this.eventNamingStyle === 'camelCaseWithExtraOnPrefix') {
           outputEventName = `${eventNamePrefix}${inputEventName.replace(/^on/, 'onOn')}`;
         }
         outputEventName = eventNamePrefix !== '' ? `${eventNamePrefix}${titleCase(outputEventName)}` : outputEventName;
         break;
-      case EventNamingStyle.kebabCase:
+      case 'kebabCase':
         outputEventName = eventNamePrefix !== '' ? `${eventNamePrefix}-${toKebabCase(outputEventName)}` : toKebabCase(outputEventName);
         break;
-      case EventNamingStyle.lowerCase:
-      case EventNamingStyle.lowerCaseWithoutOnPrefix:
-        if (this.eventNamingStyle === EventNamingStyle.lowerCaseWithoutOnPrefix) {
+      case 'lowerCase':
+      case 'lowerCaseWithoutOnPrefix':
+        if (this.eventNamingStyle === 'lowerCaseWithoutOnPrefix') {
           outputEventName = `${eventNamePrefix}${inputEventName.replace(/^on/, '')}`;
         }
         outputEventName = `${eventNamePrefix}${outputEventName}`.toLowerCase();

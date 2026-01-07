@@ -1,7 +1,6 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import {
   Editors,
-  EventNamingStyle,
   Filters,
   // utilities
   formatNumber,
@@ -544,7 +543,7 @@ export default class Example14 {
     });
 
     this.gridOptions = {
-      eventNamingStyle: EventNamingStyle.lowerCase,
+      eventNamingStyle: 'lowerCase',
       editable: true,
       autoAddCustomEditorFormatter: customEditableInputFormatter,
       enableCellNavigation: true,

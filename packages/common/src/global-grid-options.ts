@@ -1,4 +1,3 @@
-import { EventNamingStyle } from '@slickgrid-universal/event-pub-sub';
 import { DelimiterType } from './enums/index.js';
 import { Filters } from './filters/index.js';
 import type { Column, EmptyWarning, GridOption, RowDetailView, TreeDataOption } from './interfaces/index.js';
@@ -171,7 +170,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
     sanitizeDataExport: true,
     useUtf8WithBom: true,
   },
-  eventNamingStyle: EventNamingStyle.lowerCase,
+  eventNamingStyle: 'lowerCase',
   forceFitColumns: false,
   frozenHeaderWidthCalcDifferential: 1,
   gridMenu: {

@@ -1,6 +1,5 @@
 import {
   DelimiterType,
-  EventNamingStyle,
   Filters,
   type Column,
   type GridOption as GridOptionUniversal,
@@ -124,7 +123,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
   enableMouseHoverHighlightRow: true,
   enableSorting: true,
   enableTextSelectionOnCells: true,
-  eventNamingStyle: EventNamingStyle.camelCase,
+  eventNamingStyle: 'camelCase',
   explicitInitialization: true,
   excelExportOptions: {
     addGroupIndentation: true,

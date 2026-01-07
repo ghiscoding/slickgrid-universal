@@ -1,5 +1,4 @@
 import { createDomElement, type GridOption } from '@slickgrid-universal/common';
-import { EventNamingStyle } from '@slickgrid-universal/event-pub-sub';
 
 // create empty warning message as Document Fragment to be CSP safe
 const emptyWarningElm = document.createElement('div');
@@ -35,7 +34,7 @@ export const SalesforceGlobalGridOptions = {
   contextMenu: {
     hideCloseButton: false,
   },
-  eventNamingStyle: EventNamingStyle.lowerCaseWithoutOnPrefix,
+  eventNamingStyle: 'lowerCaseWithoutOnPrefix',
   compositeEditorOptions: {
     resetEditorButtonCssClass: 'mdi mdi-refresh font-15px',
     resetFormButtonIconCssClass: 'mdi mdi-refresh font-16px mdi-flip-h',

@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { EventPubSubService } from './eventPubSub.service.js';
-import { EventNamingStyle } from './types/eventNamingStyle.enum.js';
 
 describe('EventPubSub Service', () => {
   let service: EventPubSubService;
@@ -9,7 +8,7 @@ describe('EventPubSub Service', () => {
   beforeEach(() => {
     divContainer = document.createElement('div');
     service = new EventPubSubService(divContainer);
-    service.eventNamingStyle = EventNamingStyle.camelCase;
+    service.eventNamingStyle = 'camelCase';
   });
 
   afterEach(() => {
@@ -72,7 +71,7 @@ describe('EventPubSub Service', () => {
       const dispatchSpy = vi.spyOn(service, 'dispatchCustomEvent');
       const getEventNameSpy = vi.spyOn(service, 'getEventNameByNamingConvention');
 
-      service.eventNamingStyle = EventNamingStyle.lowerCase;
+      service.eventNamingStyle = 'lowerCase';
       const publishResult = service.publish('onClick', { name: 'John' });
 
       expect(publishResult).toBeTruthy();
@@ -120,7 +119,7 @@ describe('EventPubSub Service', () => {
       const getEventNameSpy = vi.spyOn(service, 'getEventNameByNamingConvention');
       const mockCallback = vi.fn();
 
-      service.eventNamingStyle = EventNamingStyle.kebabCase;
+      service.eventNamingStyle = 'kebabCase';
       service.subscribe('onClick', mockCallback);
       divContainer.dispatchEvent(new CustomEvent('on-click', { detail: { name: 'John' } }));
 
@@ -143,7 +142,7 @@ describe('EventPubSub Service', () => {
       const getEventNameSpy = vi.spyOn(service, 'getEventNameByNamingConvention');
       const mockCallback = vi.fn();
 
-      service.eventNamingStyle = EventNamingStyle.camelCase;
+      service.eventNamingStyle = 'camelCase';
       const subscription = service.subscribeEvent('onDblClick', mockCallback);
       divContainer.dispatchEvent(new CustomEvent('onDblClick', { composed: true, detail: { name: 'John' } }));
 
@@ -162,7 +161,7 @@ describe('EventPubSub Service', () => {
       const getEventNameSpy = vi.spyOn(service, 'getEventNameByNamingConvention');
       const mockCallback = vi.fn();
 
-      service.eventNamingStyle = EventNamingStyle.lowerCase;
+      service.eventNamingStyle = 'lowerCase';
       const subscription = service.subscribeEvent('onDblClick', mockCallback);
       divContainer.dispatchEvent(new CustomEvent('ondblclick', { composed: true, detail: { name: 'John' } }));
 
@@ -181,7 +180,7 @@ describe('EventPubSub Service', () => {
       const getEventNameSpy = vi.spyOn(service, 'getEventNameByNamingConvention');
       const mockCallback = vi.fn();
 
-      service.eventNamingStyle = EventNamingStyle.lowerCaseWithoutOnPrefix;
+      service.eventNamingStyle = 'lowerCaseWithoutOnPrefix';
       const subscription = service.subscribeEvent('onDblClick', mockCallback);
       divContainer.dispatchEvent(new CustomEvent('dblclick', { composed: true, detail: { name: 'John' } }));
 
@@ -200,7 +199,7 @@ describe('EventPubSub Service', () => {
       const getEventNameSpy = vi.spyOn(service, 'getEventNameByNamingConvention');
       const mockCallback = vi.fn();
 
-      service.eventNamingStyle = EventNamingStyle.kebabCase;
+      service.eventNamingStyle = 'kebabCase';
       const subscription = service.subscribeEvent('onDblClick', mockCallback);
       divContainer.dispatchEvent(new CustomEvent('on-dbl-click', { composed: true, detail: { name: 'John' } }));
 
@@ -219,7 +218,7 @@ describe('EventPubSub Service', () => {
       const getEventNameSpy = vi.spyOn(service, 'getEventNameByNamingConvention');
       const mockCallback = vi.fn();
 
-      service.eventNamingStyle = EventNamingStyle.camelCaseWithExtraOnPrefix;
+      service.eventNamingStyle = 'camelCaseWithExtraOnPrefix';
       const subscription = service.subscribeEvent('onDblClick', mockCallback);
       divContainer.dispatchEvent(new CustomEvent('onOnDblClick', { composed: true, detail: { name: 'John' } }));
 

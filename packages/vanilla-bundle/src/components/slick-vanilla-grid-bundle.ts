@@ -51,7 +51,7 @@ import {
 } from '@slickgrid-universal/common';
 import { SlickFooterComponent } from '@slickgrid-universal/custom-footer-component';
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
-import { EventNamingStyle, EventPubSubService } from '@slickgrid-universal/event-pub-sub';
+import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickPaginationComponent } from '@slickgrid-universal/pagination-component';
 import { deepCopy, extend, queueMicrotaskOrSetTimeout } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
@@ -352,7 +352,7 @@ export class SlickVanillaGridBundle<TData = any> {
 
     // initialize and assign all Service Dependencies
     this._eventPubSubService = services?.eventPubSubService ?? new EventPubSubService(gridParentContainerElm);
-    this._eventPubSubService.eventNamingStyle = this._gridOptions?.eventNamingStyle ?? EventNamingStyle.camelCase;
+    this._eventPubSubService.eventNamingStyle = this._gridOptions?.eventNamingStyle ?? 'camelCase';
 
     const slickgridConfig = new SlickgridConfig();
     this.backendUtilityService = services?.backendUtilityService ?? new BackendUtilityService();
@@ -524,7 +524,7 @@ export class SlickVanillaGridBundle<TData = any> {
     this._gridOptions = this.mergeGridOptions(this._gridOptions || ({} as GridOption));
     this.backendServiceApi = this._gridOptions?.backendServiceApi;
     this._isLocalGrid = !this.backendServiceApi; // considered a local grid if it doesn't have a backend service set
-    this._eventPubSubService.eventNamingStyle = this._gridOptions?.eventNamingStyle ?? EventNamingStyle.camelCase;
+    this._eventPubSubService.eventNamingStyle = this._gridOptions?.eventNamingStyle ?? 'camelCase';
     this._paginationOptions = this.gridOptions?.pagination;
 
     // unless specified, we'll create an internal postProcess callback (currently only available for GraphQL)
