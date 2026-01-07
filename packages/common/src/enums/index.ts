@@ -8,7 +8,7 @@ export * from './extensionName.enum.js';
 export * from './field.type.js';
 export * from './file.type.js';
 export type * from './filterMultiplePassType.type.js';
-export * from './gridStateType.enum.js';
+export * from './gridState.type.js';
 export type * from './infer.type.js';
 export type * from './operatorString.type.js';
 export * from './operatorType.enum.js';

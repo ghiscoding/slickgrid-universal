@@ -1,16 +1,5 @@
-/** @deprecated @use grid state type as string instead (ie: `GridStateType.columns` => 'columns', `GridStateType.rowSelection` => 'rowSelection') */
-export enum GridStateType {
-  columns = 'columns',
-  filter = 'filter',
-  pagination = 'pagination',
-  pinning = 'pinning',
-  rowSelection = 'rowSelection',
-  sorter = 'sorter',
-  treeData = 'treeData',
-}
-
 /** GridState properties */
-export type GridStateTypeString =
+export type GridStateType =
   /** List of Current Visible Columns in the grid, including these props (`columnId`, `cssClass`, `headerCssClass`, `width`) */
   | 'columns'
   /** List of Current Filters including these props (`columnId`, `operator`, `searchTerms`, `targetSelector`, `verbatimSearchTerms`) */
