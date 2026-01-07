@@ -11,7 +11,6 @@ import {
   Filters,
   Formatters,
   OperatorType,
-  SortDirection,
   type AureliaGridInstance,
   type Column,
   type CursorPageInfo,
@@ -216,7 +215,7 @@ export class Example6 {
         sorters: [
           // direction can written as 'asc' (uppercase or lowercase) and/or use the SortDirection type
           { columnId: 'name', direction: 'asc' },
-          { columnId: 'company', direction: SortDirection.DESC },
+          { columnId: 'company', direction: 'DESC' },
         ],
         pagination: { pageNumber: this.isWithCursor ? 1 : 2, pageSize: 20 }, // if cursor based, start at page 1
       },
@@ -394,7 +393,7 @@ export class Example6 {
     this.aureliaGrid.sortService.updateSorting([
       // direction can written as 'asc' (uppercase or lowercase) and/or use the SortDirection type
       { columnId: 'name', direction: 'asc' },
-      { columnId: 'company', direction: SortDirection.DESC },
+      { columnId: 'company', direction: 'DESC' },
     ]);
     setTimeout(() => {
       this.aureliaGrid.paginationService?.changeItemPerPage(20);

@@ -13,7 +13,6 @@ import {
   Formatters,
   OperatorType,
   SlickgridReact,
-  SortDirection,
   type Column,
   type CursorPageInfo,
   type GridOption,
@@ -229,7 +228,7 @@ const Example6: React.FC = () => {
         ],
         sorters: [
           { columnId: 'name', direction: 'asc' },
-          { columnId: 'company', direction: SortDirection.DESC },
+          { columnId: 'company', direction: 'DESC' },
         ],
         pagination: { pageNumber: isWithCursorRef.current ? 1 : 2, pageSize: 20 },
       },
@@ -367,7 +366,7 @@ const Example6: React.FC = () => {
     ]);
     reactGridRef.current?.sortService.updateSorting([
       { columnId: 'name', direction: 'asc' },
-      { columnId: 'company', direction: SortDirection.DESC },
+      { columnId: 'company', direction: 'DESC' },
     ]);
     setTimeout(() => {
       reactGridRef.current?.paginationService?.changeItemPerPage(20);

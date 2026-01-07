@@ -17,9 +17,9 @@ import type {
   PaginationCursorChangedArgs,
   SingleColumnSort,
   SlickGrid,
-  SortDirectionString,
+  SortDirection,
 } from '@slickgrid-universal/common';
-import { mapOperatorByFieldType, mapOperatorType, OperatorType, SortDirection, type FieldType } from '@slickgrid-universal/common';
+import { mapOperatorByFieldType, mapOperatorType, OperatorType, type FieldType } from '@slickgrid-universal/common';
 import { getHtmlStringOutput, stripTags } from '@slickgrid-universal/utils';
 import type {
   GraphqlCursorPaginationOption,
@@ -638,7 +638,7 @@ export class GraphqlService implements BackendService {
     if (!sortColumns && presetSorters) {
       // make the presets the current sorters, also make sure that all direction are in uppercase for GraphQL
       currentSorters = presetSorters;
-      currentSorters.forEach((sorter) => (sorter.direction = sorter.direction.toUpperCase() as SortDirectionString));
+      currentSorters.forEach((sorter) => (sorter.direction = sorter.direction.toUpperCase() as SortDirection));
 
       // display the correct sorting icons on the UI, for that it requires (columnId, sortAsc) properties
       const tmpSorterArray = currentSorters.map((sorter) => {
@@ -653,7 +653,7 @@ export class GraphqlService implements BackendService {
         if (columnDef) {
           return {
             columnId: sorter.columnId,
-            sortAsc: sorter.direction.toUpperCase() === SortDirection.ASC,
+            sortAsc: sorter.direction.toUpperCase() === 'ASC',
           };
         }
         return null;
@@ -671,14 +671,14 @@ export class GraphqlService implements BackendService {
           if (column && column.sortCol) {
             currentSorters.push({
               columnId: column.sortCol.id + '',
-              direction: column.sortAsc ? SortDirection.ASC : SortDirection.DESC,
+              direction: column.sortAsc ? 'ASC' : 'DESC',
             });
 
             const fieldName = (column.sortCol.queryFieldSorter || column.sortCol.queryField || column.sortCol.field || '') + '';
             if (fieldName) {
               graphqlSorters.push({
                 field: fieldName,
-                direction: column.sortAsc ? SortDirection.ASC : SortDirection.DESC,
+                direction: column.sortAsc ? 'ASC' : 'DESC',
               });
             }
           }

@@ -224,7 +224,7 @@ function defineGrid() {
       sorters: [
         // direction can written as 'asc' (uppercase or lowercase) and/or use the SortDirection type
         { columnId: 'name', direction: 'asc' },
-        { columnId: 'company', direction: SortDirection.DESC },
+        { columnId: 'company', direction: 'DESC' },
       ],
       pagination: { pageNumber: isWithCursor.value ? 1 : 2, pageSize: 20 }, // if cursor based, start at page 1
     },
@@ -407,7 +407,7 @@ function resetToOriginalPresets() {
   vueGrid.sortService.updateSorting([
     // direction can written as 'asc' (uppercase or lowercase) and/or use the SortDirection type
     { columnId: 'name', direction: 'asc' },
-    { columnId: 'company', direction: SortDirection.DESC },
+    { columnId: 'company', direction: 'DESC' },
   ]);
   setTimeout(() => {
     vueGrid.paginationService?.changeItemPerPage(20);

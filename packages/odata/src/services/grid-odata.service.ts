@@ -1,5 +1,4 @@
 import type {
-  // enums/interfaces
   BackendService,
   Column,
   ColumnFilter,
@@ -18,9 +17,9 @@ import type {
   SearchTerm,
   SingleColumnSort,
   SlickGrid,
-  SortDirectionString,
+  SortDirection,
 } from '@slickgrid-universal/common';
-import { mapOperatorByFieldType, OperatorType, parseUtcDate, SortDirection, type FieldType } from '@slickgrid-universal/common';
+import { mapOperatorByFieldType, OperatorType, parseUtcDate, type FieldType } from '@slickgrid-universal/common';
 import { getHtmlStringOutput, stripTags, titleCase } from '@slickgrid-universal/utils';
 import type { OdataOption, OdataSortingOption } from '../interfaces/index.js';
 import { OdataQueryBuilderService } from './odataQueryBuilder.service.js';
@@ -578,7 +577,7 @@ export class GridOdataService implements BackendService {
     if (!sortColumns && presetSorters) {
       // make the presets the current sorters, also make sure that all direction are in lowercase for OData
       currentSorters = presetSorters;
-      currentSorters.forEach((sorter) => (sorter.direction = sorter.direction.toLowerCase() as SortDirectionString));
+      currentSorters.forEach((sorter) => (sorter.direction = sorter.direction.toLowerCase() as SortDirection));
 
       // display the correct sorting icons on the UI, for that it requires (columnId, sortAsc) properties
       const tmpSorterArray = currentSorters.map((sorter) => {
@@ -593,7 +592,7 @@ export class GridOdataService implements BackendService {
         if (columnDef) {
           return {
             columnId: sorter.columnId,
-            sortAsc: sorter.direction.toUpperCase() === SortDirection.ASC,
+            sortAsc: sorter.direction.toUpperCase() === 'ASC',
           };
         }
         return null;
@@ -623,13 +622,13 @@ export class GridOdataService implements BackendService {
 
               currentSorters.push({
                 columnId: columnDef.sortCol.id,
-                direction: columnDef.sortAsc ? SortDirection.asc : SortDirection.desc,
+                direction: columnDef.sortAsc ? 'asc' : 'desc',
               });
 
               if (queryField !== '') {
                 odataSorters.push({
                   field: queryField,
-                  direction: columnDef.sortAsc ? SortDirection.ASC : SortDirection.DESC,
+                  direction: columnDef.sortAsc ? 'ASC' : 'DESC',
                 });
               }
             }
