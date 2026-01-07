@@ -1,4 +1,4 @@
-import type { SortDirection, SortDirectionString } from '../enums/index.js';
+import type { SortDirection } from '../enums/index.js';
 
 export interface CurrentSorter {
   /**
@@ -9,5 +9,5 @@ export interface CurrentSorter {
   columnId: string | number;
 
   /** Direction of the sort ASC/DESC */
-  direction: SortDirection | SortDirectionString;
+  direction: SortDirection;
 }

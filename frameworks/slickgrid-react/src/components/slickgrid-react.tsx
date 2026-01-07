@@ -4,7 +4,6 @@ import {
   collectionObserver,
   CollectionService,
   emptyElement,
-  EventNamingStyle,
   ExtensionService,
   ExtensionUtility,
   FilterFactory,
@@ -264,7 +263,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
 
     // initialize and assign all Service Dependencies
     this._eventPubSubService = new EventPubSubService();
-    this._eventPubSubService.eventNamingStyle = EventNamingStyle.camelCase;
+    this._eventPubSubService.eventNamingStyle = 'camelCase';
 
     this.backendUtilityService = new BackendUtilityService();
     this.gridEventService = new GridEventService();
@@ -452,7 +451,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
       this._options.enableMouseWheelScrollHandler = true;
     }
 
-    this._eventPubSubService.eventNamingStyle = this._options?.eventNamingStyle ?? EventNamingStyle.camelCase;
+    this._eventPubSubService.eventNamingStyle = this._options?.eventNamingStyle ?? 'camelCase';
     this._eventPubSubService.publish(`onBeforeGridCreate`, true);
 
     // make sure the dataset is initialized (if not it will throw an error that it cannot getLength of null)

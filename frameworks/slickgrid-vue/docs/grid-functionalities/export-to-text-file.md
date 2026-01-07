@@ -148,7 +148,7 @@ function defineGrid() {
 
 function exportToFile(type = 'csv') {
   textExportService.exportToFile({
-    delimiter: (type === 'csv') ? DelimiterType.comma : DelimiterType.tab,
+    delimiter: (type === 'csv') ? ',' : '\t',
     filename: 'myExport',
     format: (type === 'csv') ? 'csv' : 'txt'
   });

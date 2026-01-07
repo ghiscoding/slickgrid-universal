@@ -5,7 +5,6 @@ import {
   collectionObserver,
   CollectionService,
   emptyElement,
-  EventNamingStyle,
   ExtensionName,
   ExtensionService,
   ExtensionUtility,
@@ -126,7 +125,7 @@ let rxjs: RxJsFacade | undefined;
 const slickgridConfig = new SlickgridConfig();
 const eventHandler = new SlickEventHandler();
 const eventPubSubService = new EventPubSubService();
-eventPubSubService.eventNamingStyle = EventNamingStyle.camelCaseWithExtraOnPrefix;
+eventPubSubService.eventNamingStyle = 'camelCaseWithExtraOnPrefix';
 
 const containerService = new ContainerService();
 const translaterService = new TranslaterI18NextService();
@@ -387,7 +386,7 @@ function initialization() {
     _gridOptions.value.enableMouseWheelScrollHandler = true;
   }
 
-  eventPubSubService.eventNamingStyle = _gridOptions.value?.eventNamingStyle ?? EventNamingStyle.camelCaseWithExtraOnPrefix;
+  eventPubSubService.eventNamingStyle = _gridOptions.value?.eventNamingStyle ?? 'camelCaseWithExtraOnPrefix';
   eventPubSubService.publish('onBeforeGridCreate', true);
 
   // make sure the dataset is initialized (if not it will throw an error that it cannot getLength of null)

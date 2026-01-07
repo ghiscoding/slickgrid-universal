@@ -4,7 +4,6 @@ import { TextExportService } from '@slickgrid-universal/text-export';
 import { resolve } from 'aurelia';
 // import { TOptions as I18NOptions } from 'i18next';
 import {
-  DelimiterType,
   Filters,
   Formatters,
   type AureliaGridInstance,
@@ -292,7 +291,7 @@ export class Example12 {
 
   exportToFile(type = 'csv') {
     this.textExportService.exportToFile({
-      delimiter: type === 'csv' ? DelimiterType.comma : DelimiterType.tab,
+      delimiter: type === 'csv' ? ',' : '\t',
       filename: 'myExport',
       format: type === 'csv' ? 'csv' : 'txt',
     });

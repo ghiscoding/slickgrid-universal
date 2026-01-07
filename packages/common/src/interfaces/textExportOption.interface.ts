@@ -1,5 +1,5 @@
-import type { DelimiterType } from '../enums/delimiterType.enum.js';
-import type { FileType } from '../enums/fileType.enum.js';
+import type { DelimiterType } from '../enums/delimiterType.type.js';
+import type { FileType } from '../enums/file.type.js';
 
 export interface ExportTextDownloadOption {
   filename: string;
@@ -11,10 +11,10 @@ export interface ExportTextDownloadOption {
 
 export interface TextExportOption {
   /** export delimiter, can be (comma, tab, ... or even custom string). */
-  delimiter?: DelimiterType | string;
+  delimiter?: DelimiterType;
 
   /** Allows you to override for the export delimiter */
-  delimiterOverride?: DelimiterType | string;
+  delimiterOverride?: DelimiterType;
 
   /** Defaults to false, which leads to all Formatters of the grid being evaluated on export. You can also override a column by changing the propery on the column itself */
   exportWithFormatter?: boolean;
@@ -23,7 +23,7 @@ export interface TextExportOption {
   filename?: string;
 
   /** file type format, .csv/.txt (this will provide the extension) */
-  format?: FileType.csv | FileType.txt | 'csv' | 'txt';
+  format?: Extract<FileType, 'csv' | 'txt'>;
 
   /** The column header title (at position A0 in Excel) of the Group by column. If nothing is provided it will use "Group By" (which is a translated value of GROUP_BY i18n) */
   groupingColumnHeaderTitle?: string;

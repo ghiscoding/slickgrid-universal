@@ -3,7 +3,6 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { useTranslation } from 'i18next-vue';
 import {
-  DelimiterType,
   Filters,
   Formatters,
   SlickgridVue,
@@ -280,7 +279,7 @@ function exportToExcel() {
 
 function exportToFile(type = 'csv') {
   textExportService.exportToFile({
-    delimiter: type === 'csv' ? DelimiterType.comma : DelimiterType.tab,
+    delimiter: type === 'csv' ? ',' : '\t',
     filename: 'myExport',
     format: type === 'csv' ? 'csv' : 'txt',
   });

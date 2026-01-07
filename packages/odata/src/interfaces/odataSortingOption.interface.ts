@@ -1,6 +1,6 @@
-import type { SortDirection, SortDirectionString } from '@slickgrid-universal/common';
+import type { SortDirection } from '@slickgrid-universal/common';
 
 export interface OdataSortingOption {
   field: string;
-  direction: SortDirection | SortDirectionString;
+  direction: SortDirection;
 }

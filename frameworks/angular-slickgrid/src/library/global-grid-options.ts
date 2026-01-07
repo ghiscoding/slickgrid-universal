@@ -1,11 +1,4 @@
-import {
-  DelimiterType,
-  EventNamingStyle,
-  Filters,
-  type Column,
-  type GridOption as GridOptionUniversal,
-  type TreeDataOption,
-} from '@slickgrid-universal/common';
+import { Filters, type Column, type GridOption as GridOptionUniversal, type TreeDataOption } from '@slickgrid-universal/common';
 import type { GridOption, RowDetailView } from './models/index';
 
 /** Global Grid Options Defaults */
@@ -124,7 +117,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
   enableMouseHoverHighlightRow: true,
   enableSorting: true,
   enableTextSelectionOnCells: true,
-  eventNamingStyle: EventNamingStyle.camelCase,
+  eventNamingStyle: 'camelCase',
   explicitInitialization: true,
   excelExportOptions: {
     addGroupIndentation: true,
@@ -138,7 +131,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
     sanitizeDataExport: false,
   },
   textExportOptions: {
-    delimiter: DelimiterType.comma,
+    delimiter: ',',
     exportWithFormatter: false,
     filename: 'export',
     format: 'csv',

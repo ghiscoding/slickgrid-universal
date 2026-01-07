@@ -9,7 +9,7 @@ export {
   // export nearly everything except the EventPubSubService because we want to force users to import from '@slickgrid-universal/event-pub-sub
   // also export BasePubSubService as alias to avoid breaking users who might already use PubSubService from common
   type BasePubSubService as PubSubService,
-  EventNamingStyle,
+  type EventNamingStyle,
   type EventSubscription,
   type PubSubEvent,
 } from '@slickgrid-universal/event-pub-sub';

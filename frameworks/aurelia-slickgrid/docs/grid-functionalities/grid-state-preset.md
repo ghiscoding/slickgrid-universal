@@ -87,7 +87,7 @@ export interface CurrentFilter {
 }
 export interface CurrentSorter {
   columnId: string;
-  direction: SortDirection | SortDirectionString;
+  direction: SortDirection;
 }
 export interface GridState {
   columns?: CurrentColumn[] | null;

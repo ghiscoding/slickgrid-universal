@@ -1,7 +1,6 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { extend } from '@slickgrid-universal/utils';
 import type { SlickEventData, SlickGrid } from '../core/index.js';
-import { DelimiterType } from '../enums/index.js';
 import type { ExtensionUtility } from '../extensions/extensionUtility.js';
 import { copyCellToClipboard } from '../formatters/formatterUtilities.js';
 import type {
@@ -232,7 +231,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
             const excelService: TextExportService = registedServices.find((service: any) => service.className === 'TextExportService');
             if (excelService?.exportToFile) {
               excelService.exportToFile({
-                delimiter: DelimiterType.comma,
+                delimiter: ',',
                 format: 'csv',
               });
             } else {
@@ -287,7 +286,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
             const excelService: TextExportService = registedServices.find((service: any) => service.className === 'TextExportService');
             if (excelService?.exportToFile) {
               excelService.exportToFile({
-                delimiter: DelimiterType.tab,
+                delimiter: '\t',
                 format: 'txt',
               });
             } else {

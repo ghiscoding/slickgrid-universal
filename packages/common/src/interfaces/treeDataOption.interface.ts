@@ -1,5 +1,4 @@
-// import { Aggregator } from './aggregator.interface';
-import type { SortDirection, SortDirectionString } from '../enums/index.js';
+import type { SortDirection } from '../enums/index.js';
 import type { Aggregator } from './aggregator.interface.js';
 import type { Formatter } from './formatter.interface.js';
 
@@ -43,7 +42,7 @@ export interface TreeDataOption extends TreeDataPropNames {
     columnId: string;
 
     /** Direction of the initial Sort (ASC/DESC) */
-    direction: SortDirection | SortDirectionString;
+    direction: SortDirection;
   };
 
   /** Defaults to False, will the Tree be collapsed on first load? */
