@@ -7,7 +7,7 @@ import {
   type AngularGridInstance,
   type Column,
   type GridOption,
-  type OperatorString,
+  type OperatorType,
   type SlickDataView,
   type SlickGrid,
 } from '../../library';
@@ -26,7 +26,7 @@ export class Example21Component implements OnInit {
   gridOptions!: GridOption;
   dataset!: any[];
   hideSubTitle = false;
-  operatorList: OperatorString[] = ['=', '<', '<=', '>', '>=', '<>', 'StartsWith', 'EndsWith'];
+  operatorList: OperatorType[] = ['=', '<', '<=', '>', '>=', '<>', 'StartsWith', 'EndsWith'];
   selectedOperator = '=';
   searchValue = '';
   selectedColumn?: Column;
@@ -145,7 +145,7 @@ export class Example21Component implements OnInit {
   updateFilter() {
     this.angularGrid.filterService.updateSingleFilter({
       columnId: `${this.selectedColumn!.id || ''}`,
-      operator: this.selectedOperator as OperatorString,
+      operator: this.selectedOperator as OperatorType,
       searchTerms: [this.searchValue || ''],
     });
   }

@@ -2,7 +2,6 @@ import type { ComponentRef } from '@angular/core';
 import type { Subscription } from 'rxjs';
 import {
   AngularUtilService,
-  OperatorType,
   unsubscribeAllObservables,
   type Column,
   type ColumnFilter,
@@ -10,7 +9,7 @@ import {
   type FilterArguments,
   type FilterCallback,
   type GridOption,
-  type OperatorString,
+  type OperatorType,
   type SearchTerm,
   type SlickGrid,
 } from '../../library';
@@ -27,7 +26,7 @@ export class CustomAngularComponentFilter implements Filter {
   searchTerms: SearchTerm[] = [];
   columnDef!: Column;
   callback!: FilterCallback;
-  operator: OperatorType | OperatorString = OperatorType.equal;
+  operator: OperatorType = 'EQ';
 
   /** Angular Util Service (could be inside the Grid Options Params or the Filter Params ) */
   get angularUtilService(): AngularUtilService {

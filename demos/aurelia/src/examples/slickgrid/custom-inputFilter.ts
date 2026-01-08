@@ -1,13 +1,12 @@
 import {
   emptyElement,
-  OperatorType,
   type Column,
   type ColumnFilter,
   type Filter,
   type FilterArguments,
   type FilterCallback,
   type GridOption,
-  type OperatorString,
+  type OperatorType,
   type SearchTerm,
   type SlickGrid,
 } from 'aurelia-slickgrid';
@@ -20,7 +19,7 @@ export class CustomInputFilter implements Filter {
   searchTerms: SearchTerm[] = [];
   columnDef!: Column;
   callback!: FilterCallback;
-  operator: OperatorType | OperatorString = OperatorType.equal;
+  operator: OperatorType = 'EQ';
 
   /** Getter for the Filter Operator */
   get columnFilter(): ColumnFilter {

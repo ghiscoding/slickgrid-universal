@@ -5,7 +5,6 @@ import { basicFetchStub } from '../../../../../test/httpClientStub.js';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import type { SlickGrid } from '../../core/index.js';
-import { FieldType, OperatorType } from '../../enums/index.js';
 import type { Column, FilterArguments, GridOption } from '../../interfaces/index.js';
 import { CollectionService } from '../../services/collection.service.js';
 import { Filters } from '../filters.index.js';
@@ -509,7 +508,7 @@ describe('SelectFilter', () => {
   it('should create the multi-select filter and filter the string collection when "collectionFilterBy" is set', () => {
     mockColumn.filter = {
       collection: ['other', 'male', 'female'],
-      collectionFilterBy: { operator: OperatorType.equal, value: 'other' },
+      collectionFilterBy: { operator: 'EQ', value: 'other' },
     };
 
     filter.init(filterArguments);
@@ -529,8 +528,8 @@ describe('SelectFilter', () => {
         { value: 'female', description: 'female' },
       ],
       collectionFilterBy: [
-        { property: 'value', operator: OperatorType.notEqual, value: 'other' },
-        { property: 'value', operator: OperatorType.notEqual, value: 'male' },
+        { property: 'value', operator: '!=', value: 'other' },
+        { property: 'value', operator: 'NE', value: 'male' },
       ],
       customStructure: { value: 'value', label: 'description' },
     };
@@ -552,8 +551,8 @@ describe('SelectFilter', () => {
         { value: 'female', description: 'female' },
       ],
       collectionFilterBy: [
-        { property: 'value', operator: OperatorType.equal, value: 'other' },
-        { property: 'value', operator: OperatorType.equal, value: 'male' },
+        { property: 'value', operator: '=', value: 'other' },
+        { property: 'value', operator: 'EQ', value: 'male' },
       ],
       collectionOptions: { filterResultAfterEachPass: 'merge' },
       customStructure: { value: 'value', label: 'description' },

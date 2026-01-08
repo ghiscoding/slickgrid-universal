@@ -39,7 +39,7 @@ export class MyComponent {
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset: any[];
-  operatorList: OperatorString[] = ['=', '<', '<=', '>', '>=', '<>'];
+  operatorList: OperatorType[] = ['=', '<', '<=', '>', '>=', '<>'];
   selectedOperator = '=';
   searchValue = '';
   selectedColumn: Column;
@@ -54,7 +54,7 @@ export class MyComponent {
       const filter = {};
       const filterArg: FilterCallbackArg = {
         columnDef: this.selectedColumn,
-        operator: this.selectedOperator as OperatorString, // or fix one yourself like '='
+        operator: this.selectedOperator as OperatorType, // or fix one yourself like '='
         searchTerms: [this.searchValue || '']
       };
 

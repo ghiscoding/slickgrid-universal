@@ -191,11 +191,11 @@ Below is a list of Enums being deprecated and you should think about migrating t
 |             | `GridStateType.filters`   | `'filters'`   |
 |             | `GridStateType.sorters`   | `'sorters'`   |
 | - | - | - |
-| `Operator`  | `Operator.greaterThan` | `'>'`  |    See [Operator](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/enums/operatorString.type.ts) list for all available operators |
-|             | `Operator.lessThanOrEqual`   | `'<='`   |
-|             | `Operator.contains`   | `'Contains'` or `'CONTAINS'`  | Operators are written as PascalCase |
-|             | `Operator.equal`   | `'EQ'`  |
-|             | `Operator.rangeExclusive`   | `'RangeExclusive'`  |
+| `Operator`  | `OperatorType.greaterThan` | `'>'`  |    See [Operator](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/enums/operator.type.ts) list for all available operators |
+|             | `OperatorType.lessThanOrEqual`   | `'<='`   |
+|             | `OperatorType.contains`   | `'Contains'` or `'CONTAINS'`  | Operators are written as PascalCase |
+|             | `OperatorType.equal`   | `'EQ'`  |
+|             | `OperatorType.rangeExclusive`   | `'RangeExclusive'`  |
 | - | - | - |
 | `SortDirection`  | `SortDirection.ASC` | `'ASC'` or `'asc'`  |
 |             | `SortDirection.DESC`   | `'DESC'` or `'desc'`  |
@@ -240,7 +240,7 @@ columnDefinitions = [{
 
 ##### deprecating `text-color-xyz` and renaming them all to `color-xyz`
 
-I decided to deprecate all `text-color-...` and renaming them all to `color-...` which is much simpler to type and use. 
+I decided to deprecate all `text-color-...` and renaming them all to `color-...` which is much simpler to type and use.
 
 You can do a "Search and Replace" in VSCode via Regular Expressions to replace them all easily:
 

@@ -55,7 +55,7 @@ export class MyExample {
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset: any[];
-  operatorList: OperatorString[] = ['=', '<', '<=', '>', '>=', '<>'];
+  operatorList: OperatorType[] = ['=', '<', '<=', '>', '>=', '<>'];
 
   //
   // -- if any of the Search form input changes, we'll call the updateFilter() method
@@ -78,7 +78,7 @@ export class MyExample {
     const filter = {};
     const filterArg: FilterCallbackArg = {
       columnDef: this.selectedColumn,
-      operator: this.selectedOperator as OperatorString, // or fix one yourself like '='
+      operator: this.selectedOperator as OperatorType, // or fix one yourself like '='
       searchTerms: [this.searchValue || '']
     };
 

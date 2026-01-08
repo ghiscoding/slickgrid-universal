@@ -10,7 +10,6 @@ import {
   AngularSlickgridModule,
   Filters,
   Formatters,
-  OperatorType,
   unsubscribeAllObservables,
   type AngularGridInstance,
   type Column,
@@ -108,7 +107,7 @@ export class Example23Component implements OnInit, OnDestroy {
         filter: {
           model: Filters.sliderRange,
           maxValue: 100, // or you can use the options as well
-          operator: OperatorType.rangeInclusive, // defaults to inclusive
+          operator: 'RangeInclusive', // defaults to inclusive
           options: {
             hideSliderNumbers: false, // you can hide/show the slider numbers on both side
             min: 0,
@@ -156,7 +155,7 @@ export class Example23Component implements OnInit, OnDestroy {
         filterable: true,
         filter: {
           model: Filters.input,
-          operator: OperatorType.rangeExclusive, // defaults to inclusive
+          operator: 'RangeExclusive', // defaults to inclusive
         },
       },
       {
@@ -305,8 +304,8 @@ export class Example23Component implements OnInit, OnDestroy {
     switch (filterValue) {
       case 'currentYearTasks':
         filters = [
-          { columnId: 'finish', operator: OperatorType.rangeInclusive, searchTerms: [`${currentYear}-01-01`, `${currentYear}-12-31`] },
-          { columnId: 'completed', operator: OperatorType.equal, searchTerms: [true] },
+          { columnId: 'finish', operator: 'RangeInclusive', searchTerms: [`${currentYear}-01-01`, `${currentYear}-12-31`] },
+          { columnId: 'completed', operator: '=', searchTerms: [true] },
         ];
         break;
       case 'nextYearTasks':

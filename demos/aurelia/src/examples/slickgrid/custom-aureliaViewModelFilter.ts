@@ -3,14 +3,13 @@ import type { ICustomElementController } from '@aurelia/runtime-html';
 import {
   AureliaUtilService,
   emptyElement,
-  OperatorType,
   type Column,
   type ColumnFilter,
   type Filter,
   type FilterArguments,
   type FilterCallback,
   type GridOption,
-  type OperatorString,
+  type OperatorType,
   type SearchTerm,
   type SlickGrid,
   type ViewModelBindableInputData,
@@ -23,7 +22,7 @@ export class CustomAureliaViewModelFilter implements Filter {
   searchTerms: SearchTerm[] = [];
   columnDef!: Column;
   callback!: FilterCallback;
-  operator: OperatorType | OperatorString = OperatorType.equal;
+  operator: OperatorType = 'EQ';
 
   /** Aurelia ViewModel Reference */
   vm?: { controller?: ICustomElementController } | null;

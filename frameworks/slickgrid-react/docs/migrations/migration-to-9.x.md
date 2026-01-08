@@ -6,7 +6,7 @@ The other great thing about having everything under the same project umbrella is
 
 Wait, what happened to version 6 to 8?
 
-I'm skipping versions 6-8 and going straight to v9.0 because some of the framework wrappers (Angular-Slickgrid & Aurelia-Slickgrid) were already at v8.x and so the next available major version bump for everything was v9.0. 
+I'm skipping versions 6-8 and going straight to v9.0 because some of the framework wrappers (Angular-Slickgrid & Aurelia-Slickgrid) were already at v8.x and so the next available major version bump for everything was v9.0.
 
 If the project is useful to you, please give it a ⭐ (on [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal)) and perhaps buy me a coffee [☕ (Ko-Fi)](https://ko-fi.com/ghiscoding), thanks.
 
@@ -219,11 +219,11 @@ Below is a list of Enums being deprecated and you should think about migrating t
 |             | `GridStateType.filters`   | `'filters'`   |
 |             | `GridStateType.sorters`   | `'sorters'`   |
 | - | - | - |
-| `Operator`  | `Operator.greaterThan` | `'>'`  |    See [Operator](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/enums/operatorString.type.ts) list for all available operators |
-|             | `Operator.lessThanOrEqual`   | `'<='`   |
-|             | `Operator.contains`   | `'Contains'` or `'CONTAINS'`  | Operators are written as PascalCase |
-|             | `Operator.equal`   | `'EQ'`  |
-|             | `Operator.rangeExclusive`   | `'RangeExclusive'`  |
+| `Operator`  | `OperatorType.greaterThan` | `'>'`  |    See [Operator](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/enums/operator.type.ts) list for all available operators |
+|             | `OperatorType.lessThanOrEqual`   | `'<='`   |
+|             | `OperatorType.contains`   | `'Contains'` or `'CONTAINS'`  | Operators are written as PascalCase |
+|             | `OperatorType.equal`   | `'EQ'`  |
+|             | `OperatorType.rangeExclusive`   | `'RangeExclusive'`  |
 | - | - | - |
 | `SortDirection`  | `SortDirection.ASC` | `'ASC'` or `'asc'`  |
 |             | `SortDirection.DESC`   | `'DESC'` or `'desc'`  |
@@ -268,7 +268,7 @@ columnDefinitions = [{
 
 ##### deprecating `text-color-xyz` and renaming them all to `color-xyz`
 
-I decided to deprecate all `text-color-...` and renaming them all to `color-...` which is much simpler to type and use. 
+I decided to deprecate all `text-color-...` and renaming them all to `color-...` which is much simpler to type and use.
 
 You can do a "Search and Replace" in VSCode via Regular Expressions to replace them all easily:
 

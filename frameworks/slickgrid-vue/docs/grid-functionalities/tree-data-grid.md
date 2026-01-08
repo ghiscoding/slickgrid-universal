@@ -98,7 +98,7 @@ _For the full list of options, refer to the [treeDataOptions](https://github.com
 ###### Component
 ```vue
 <script setup lang="ts">
-import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -300,7 +300,7 @@ There are a few methods available from the `TreeDataService` (only listing the i
 For example
 ```vue
 <script setup lang="ts">
-import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();

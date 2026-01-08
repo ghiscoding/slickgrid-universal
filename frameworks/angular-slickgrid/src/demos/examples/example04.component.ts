@@ -7,7 +7,6 @@ import {
   AngularSlickgridModule,
   Filters,
   Formatters,
-  OperatorType,
   type AngularGridInstance,
   type Column,
   type GridOption,
@@ -80,12 +79,12 @@ export class Example4Component implements OnInit {
           collectionFilterBy: [
             {
               property: 'value',
-              operator: OperatorType.notEqual,
+              operator: '!=',
               value: 360,
             },
             {
               property: 'value',
-              operator: OperatorType.notEqual,
+              operator: '!=',
               value: 365,
             },
           ],

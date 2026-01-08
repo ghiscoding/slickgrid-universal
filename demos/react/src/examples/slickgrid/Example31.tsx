@@ -5,7 +5,6 @@ import { Observable, of, type Subject } from 'rxjs';
 import {
   Editors,
   Filters,
-  OperatorType,
   SlickgridReact,
   type Column,
   type GridOption,
@@ -109,7 +108,7 @@ const Example31: React.FC = () => {
       },
       presets: {
         // you can also type operator as string, e.g.: operator: 'EQ'
-        filters: [{ columnId: 'gender', searchTerms: ['male'], operator: OperatorType.equal }],
+        filters: [{ columnId: 'gender', searchTerms: ['male'], operator: '=' }],
         sorters: [
           // direction can be written as 'asc' (uppercase or lowercase) and/or use the SortDirection type
           { columnId: 'name', direction: 'asc' },
@@ -386,7 +385,7 @@ const Example31: React.FC = () => {
   function setFiltersDynamically() {
     // we can Set Filters Dynamically (or different filters) afterward through the FilterService
     reactGridRef.current?.filterService.updateFilters([
-      // { columnId: 'gender', searchTerms: ['male'], operator: OperatorType.equal },
+      // { columnId: 'gender', searchTerms: ['male'], operator: '=' },
       { columnId: 'name', searchTerms: ['A'], operator: 'a*' },
     ]);
   }

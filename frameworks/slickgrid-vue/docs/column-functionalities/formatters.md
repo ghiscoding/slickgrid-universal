@@ -94,7 +94,7 @@ To use any of them, you simply need to import `Formatters` from `Slickgrid-Unive
 
 ```vue
 <script setup lang="ts">
-import { Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { Column, Filters, Formatters, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();

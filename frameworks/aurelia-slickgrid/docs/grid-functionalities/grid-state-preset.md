@@ -82,7 +82,7 @@ export interface CurrentColumn {
 }
 export interface CurrentFilter {
   columnId: string;
-  operator?: OperatorType | OperatorString;
+  operator?: OperatorType;
   searchTerms?: SearchTerm[];
 }
 export interface CurrentSorter {

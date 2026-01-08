@@ -1,4 +1,4 @@
-import { type Column, type GridOption, type ItemMetadata, type OperatorString } from '@slickgrid-universal/common';
+import { type Column, type GridOption, type ItemMetadata, type OperatorType } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
@@ -15,9 +15,9 @@ export default class Example08 {
   sgb1: SlickVanillaGridBundle;
   sgb2: SlickVanillaGridBundle;
   grid2SearchSelectedColumn: Column;
-  grid2SelectedOperator: OperatorString;
+  grid2SelectedOperator: OperatorType;
   grid2SearchValue: any;
-  operatorList: OperatorString[] = ['=', '<', '<=', '>', '>=', '<>', 'StartsWith', 'EndsWith'];
+  operatorList: OperatorType[] = ['=', '<', '<=', '>', '>=', '<>', 'StartsWith', 'EndsWith'];
   isColspanSpreading = false;
 
   constructor() {
@@ -251,7 +251,7 @@ export default class Example08 {
   }
 
   selectedOperatorChanged(newOperator: string) {
-    this.grid2SelectedOperator = newOperator as OperatorString;
+    this.grid2SelectedOperator = newOperator as OperatorType;
     this.updateFilter();
   }
 
@@ -275,7 +275,7 @@ export default class Example08 {
   updateFilter() {
     this.sgb2.filterService.updateSingleFilter({
       columnId: `${this.grid2SearchSelectedColumn?.id ?? ''}`,
-      operator: this.grid2SelectedOperator as OperatorString,
+      operator: this.grid2SelectedOperator as OperatorType,
       searchTerms: [this.grid2SearchValue || ''],
     });
   }

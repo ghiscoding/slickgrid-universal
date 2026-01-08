@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it, vi, type MockInstance } fr
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import type { SlickGrid } from '../../core/index.js';
 import * as utils from '../../core/utils.js';
-import { FieldType, OperatorType } from '../../enums/index.js';
 import type { BackendServiceApi, Column, FilterArguments, GridOption } from '../../interfaces/index.js';
 import { CompoundInputFilter } from '../compoundInputFilter.js';
 import { Filters } from '../index.js';
@@ -143,7 +142,7 @@ describe('CompoundInputFilter', () => {
     const spyCallback = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
-    filter.setValues(['9'], OperatorType.greaterThanOrEqual);
+    filter.setValues(['9'], '>=');
 
     const filterSelectElm = divContainer.querySelector('.search-filter.filter-duration select') as HTMLInputElement;
     filterSelectElm.dispatchEvent(new Event('change'));

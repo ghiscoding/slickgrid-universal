@@ -136,7 +136,7 @@ You can update/change the Filters dynamically (on the fly) via the `updateFilter
 ##### Component
 ```vue
 <script setup lang="ts">
-import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();

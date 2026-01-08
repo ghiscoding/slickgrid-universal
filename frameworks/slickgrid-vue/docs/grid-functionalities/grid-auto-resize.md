@@ -76,7 +76,7 @@ User can pause the resizer at any time and later resume the auto-resize. This mi
 ##### Component
 ```vue
 <script setup lang="ts">
-import { Column, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { Column, Filters, Formatters, GridOption, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -186,7 +186,7 @@ It's also possible to let the grid detect a resize by the grid container element
 
 ```vue
 <script setup lang="ts">
-import { Column, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { Column, Filters, Formatters, GridOption, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -230,7 +230,7 @@ You can call `resizeGrid()` method at any point in time by passing dimensions as
 ##### Component
 ```vue
 <script setup lang="ts">
-import { Column, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { Column, Filters, Formatters, GridOption, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();

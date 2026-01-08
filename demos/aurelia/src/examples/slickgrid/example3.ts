@@ -5,7 +5,6 @@ import {
   Editors,
   Filters,
   Formatters,
-  OperatorType,
   SlickGlobalEditorLock,
   SortComparers,
   type AureliaGridInstance,
@@ -210,7 +209,7 @@ export class Example3 {
           collectionFilterBy: {
             property: 'value',
             value: 0,
-            operator: OperatorType.notEqual,
+            operator: 'NE',
           },
           model: Editors.singleSelect,
           // validator: (value, args) => {
@@ -433,7 +432,7 @@ export class Example3 {
             separatorBetweenTextLabels: ' ',
           },
           model: Filters.multipleSelect,
-          operator: OperatorType.inContains,
+          operator: 'IN_CONTAINS',
         },
       },
     ];

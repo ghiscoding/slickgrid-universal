@@ -3,7 +3,7 @@ import { deepCopy, extend, queueMicrotaskOrSetTimeout, stripTags } from '@slickg
 import { dequal } from 'dequal/lite';
 import { Constants } from '../constants.js';
 import { SlickEvent, SlickEventData, SlickEventHandler, type SlickDataView, type SlickGrid } from '../core/index.js';
-import { OperatorType, type EmitterType, type OperatorString, type SearchTerm } from '../enums/index.js';
+import { type EmitterType, type OperatorType, type SearchTerm } from '../enums/index.js';
 import { FilterConditions, getParsedSearchTermsByFieldType } from './../filter-conditions/index.js';
 import { type FilterFactory } from './../filters/filterFactory.js';
 import type {
@@ -30,7 +30,7 @@ export interface OnSearchChangeEventArgs {
   columnId: string | number;
   columnDef: Column;
   columnFilters: ColumnFilters;
-  operator: OperatorType | OperatorString | undefined;
+  operator: OperatorType | undefined;
   parsedSearchTerms?: SearchTerm | SearchTerm[] | undefined;
   searchTerms: SearchTerm[] | undefined;
   grid: SlickGrid;
@@ -451,11 +451,11 @@ export class FilterService {
       fieldSearchValue = fieldSearchValue.replace(`'`, `''`); // escape any single quotes by doubling them
       if (comboStartsWith && comboEndsWith) {
         searchTerm = fieldSearchValue;
-        operator = OperatorType.startsWithEndsWith;
+        operator = 'StartsWithEndsWith';
       } else if (operator === '*' || operator === '*z') {
-        operator = OperatorType.endsWith;
+        operator = 'EndsWith';
       } else if (operator === 'a*' || inputLastChar === '*') {
-        operator = OperatorType.startsWith;
+        operator = 'StartsWith';
       }
     }
 
@@ -471,7 +471,7 @@ export class FilterService {
       dataKey: columnDef.dataKey,
       fieldType,
       searchTerms: searchValues || [],
-      operator: operator as OperatorString,
+      operator: operator as OperatorType,
       searchInputLastChar: inputLastChar,
       filterSearchType: columnDef.filterSearchType,
       defaultFilterRangeOperator: this._gridOptions.defaultFilterRangeOperator,
@@ -563,7 +563,7 @@ export class FilterService {
       fieldType,
       searchTerms: searchValues,
       cellValue,
-      operator: operator as OperatorString,
+      operator: operator as OperatorType,
       searchInputLastChar: columnFilter.searchInputLastChar,
       filterSearchType: columnDef.filterSearchType,
       ignoreAccentOnStringFilterAndSort: this._gridOptions.ignoreAccentOnStringFilterAndSort ?? false,
@@ -1096,7 +1096,7 @@ export class FilterService {
 
     if (columnId !== 'selector' && columnDef?.filterable) {
       let searchTerms: SearchTerm[] | undefined;
-      let operator: OperatorString | OperatorType | undefined;
+      let operator: OperatorType | undefined;
       const newFilter: Filter | undefined = this.filterFactory.createFilter(columnDef.filter);
       operator = (columnDef && columnDef.filter && columnDef.filter.operator) || (newFilter && newFilter.operator);
 
@@ -1144,7 +1144,7 @@ export class FilterService {
 
     if (columnId !== 'selector' && columnDef?.filterable && !columnDef?.hidden) {
       let searchTerms: SearchTerm[] | undefined;
-      let operator: OperatorString | OperatorType | undefined;
+      let operator: OperatorType | undefined;
       const newFilter: Filter | undefined = this.filterFactory.createFilter(columnDef.filter);
       operator = (columnDef && columnDef.filter && columnDef.filter.operator) || (newFilter && newFilter.operator);
 
@@ -1363,7 +1363,7 @@ export class FilterService {
     });
   }
 
-  protected updateColumnFilters(searchTerms: SearchTerm[] | undefined, columnDef: Column, operator?: OperatorType | OperatorString): void {
+  protected updateColumnFilters(searchTerms: SearchTerm[] | undefined, columnDef: Column, operator?: OperatorType): void {
     const fieldType = columnDef.filter?.type ?? columnDef.type ?? 'string';
     const parsedSearchTerms = getParsedSearchTermsByFieldType(searchTerms, fieldType); // parsed term could be a single value or an array of values
 

@@ -5,7 +5,6 @@ import {
   Editors,
   Filters,
   Formatters,
-  OperatorType,
   SlickgridReact,
   type Column,
   type EditCommand,
@@ -318,7 +317,7 @@ const Example33: React.FC = () => {
           collectionOptions: { separatorBetweenTextLabels: ' ' },
           options: { minHeight: 70 } as MultipleSelectOption,
           model: Filters.multipleSelect,
-          operator: OperatorType.inContains,
+          operator: 'IN_CONTAINS',
         },
       },
       {

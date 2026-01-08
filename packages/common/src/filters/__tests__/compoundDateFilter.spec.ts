@@ -4,7 +4,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import type { SlickGrid } from '../../core/index.js';
 import * as utils from '../../core/utils.js';
-import { FieldType, OperatorType } from '../../enums/index.js';
 import type { Column, FilterArguments, GridOption } from '../../interfaces/index.js';
 import { mapTempoDateFormatWithFieldType } from '../../services/dateUtils.js';
 import { CompoundDateFilter } from '../compoundDateFilter.js';
@@ -163,7 +162,7 @@ describe('CompoundDateFilter', () => {
   it('should be able to call "setValues" with a value and an extra operator and expect it to be set as new operator', () => {
     const mockDate = '2001-01-02T16:02:02.239Z';
     filter.init(filterArguments);
-    filter.setValues([mockDate], OperatorType.greaterThanOrEqual);
+    filter.setValues([mockDate], '>=');
 
     const filterOperatorElm = divContainer.querySelector('.input-group-prepend.operator select') as HTMLInputElement;
 

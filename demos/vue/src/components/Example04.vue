@@ -4,7 +4,6 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
   Filters,
   Formatters,
-  OperatorType,
   SlickgridVue,
   type Column,
   type GridOption,
@@ -90,12 +89,12 @@ function defineGrid() {
         collectionFilterBy: [
           {
             property: 'value',
-            operator: OperatorType.notEqual,
+            operator: '!=',
             value: 360,
           },
           {
             property: 'value',
-            operator: OperatorType.notEqual,
+            operator: '!=',
             value: 365,
           },
         ],

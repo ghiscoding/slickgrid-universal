@@ -92,7 +92,7 @@ export interface CurrentColumn {
 }
 export interface CurrentFilter {
   columnId: string;
-  operator?: OperatorType | OperatorString;
+  operator?: OperatorType;
   searchTerms?: SearchTerm[];
 }
 export interface CurrentSorter {
@@ -122,7 +122,7 @@ For example, we can set `presets` on a grid like so:
 **Component**
 ```vue
 <script setup lang="ts">
-import { type Column, Filters, Formatters, GridState, OperatorType, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, GridState, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();

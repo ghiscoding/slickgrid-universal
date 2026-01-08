@@ -6,9 +6,7 @@ import { useTranslation } from 'i18next-vue';
 import {
   Filters,
   Formatters,
-  OperatorType,
   SlickgridVue,
-  SortDirection,
   type Column,
   type CursorPageInfo,
   type GridOption,
@@ -168,7 +166,7 @@ function defineGrid() {
     gridHeight: 200,
     gridWidth: 900,
     compoundOperatorAltTexts: {
-      // where '=' is any of the `OperatorString` type shown above
+      // where '=' is any of the `OperatorType` type shown above
       text: { Custom: { operatorAlt: '%%', descAlt: 'SQL Like' } },
     },
     enableFiltering: true,
@@ -213,13 +211,13 @@ function defineGrid() {
       ],
       filters: [
         // you can use OperatorType or type them as string, e.g.: operator: 'EQ'
-        { columnId: 'gender', searchTerms: ['male'], operator: OperatorType.equal },
-        // { columnId: 'name', searchTerms: ['John Doe'], operator: OperatorType.contains },
-        { columnId: 'name', searchTerms: ['Joh*oe'], operator: OperatorType.startsWithEndsWith },
+        { columnId: 'gender', searchTerms: ['male'], operator: '=' },
+        // { columnId: 'name', searchTerms: ['John Doe'], operator:  'Contains' },
+        { columnId: 'name', searchTerms: ['Joh*oe'], operator: 'StartsWithEndsWith' },
         { columnId: 'company', searchTerms: ['xyz'], operator: 'IN' },
 
         // use a date range with 2 searchTerms values
-        { columnId: 'finish', searchTerms: [presetLowestDay, presetHighestDay], operator: OperatorType.rangeInclusive },
+        { columnId: 'finish', searchTerms: [presetLowestDay, presetHighestDay], operator: 'RangeInclusive' },
       ],
       sorters: [
         // direction can written as 'asc' (uppercase or lowercase) and/or use the SortDirection type
@@ -241,7 +239,7 @@ function defineGrid() {
           },
         ],
         filterQueryOverride: ({ fieldName, columnDef, columnFilterOperator, searchValues }) => {
-          if (columnFilterOperator === OperatorType.custom && columnDef?.id === 'name') {
+          if (columnFilterOperator === 'Custom' && columnDef?.id === 'name') {
             // technically speaking GraphQL isn't a database query language like SQL, it's an application query language.
             // What that means is that GraphQL won't let you write arbitrary queries out of the box.
             // It will only support the types of queries defined in your GraphQL schema.
@@ -373,11 +371,11 @@ function setFiltersDynamically() {
 
   // we can Set Filters Dynamically (or different filters) afterward through the FilterService
   vueGrid.filterService.updateFilters([
-    { columnId: 'gender', searchTerms: ['female'], operator: OperatorType.equal },
-    { columnId: 'name', searchTerms: ['Jane'], operator: OperatorType.startsWith },
+    { columnId: 'gender', searchTerms: ['female'], operator: '=' },
+    { columnId: 'name', searchTerms: ['Jane'], operator: 'StartsWith' },
     { columnId: 'company', searchTerms: ['acme'], operator: 'IN' },
-    { columnId: 'billingAddressZip', searchTerms: ['11'], operator: OperatorType.greaterThanOrEqual },
-    { columnId: 'finish', searchTerms: [presetLowestDay, presetHighestDay], operator: OperatorType.rangeInclusive },
+    { columnId: 'billingAddressZip', searchTerms: ['11'], operator: '>=' },
+    { columnId: 'finish', searchTerms: [presetLowestDay, presetHighestDay], operator: 'RangeInclusive' },
   ]);
 }
 
@@ -396,13 +394,13 @@ function resetToOriginalPresets() {
 
   vueGrid.filterService.updateFilters([
     // you can use OperatorType or type them as string, e.g.: operator: 'EQ'
-    { columnId: 'gender', searchTerms: ['male'], operator: OperatorType.equal },
-    // { columnId: 'name', searchTerms: ['John Doe'], operator: OperatorType.contains },
-    { columnId: 'name', searchTerms: ['Joh*oe'], operator: OperatorType.startsWithEndsWith },
+    { columnId: 'gender', searchTerms: ['male'], operator: '=' },
+    // { columnId: 'name', searchTerms: ['John Doe'], operator:  'Contains' },
+    { columnId: 'name', searchTerms: ['Joh*oe'], operator: 'StartsWithEndsWith' },
     { columnId: 'company', searchTerms: ['xyz'], operator: 'IN' },
 
     // use a date range with 2 searchTerms values
-    { columnId: 'finish', searchTerms: [presetLowestDay, presetHighestDay], operator: OperatorType.rangeInclusive },
+    { columnId: 'finish', searchTerms: [presetLowestDay, presetHighestDay], operator: 'RangeInclusive' },
   ]);
   vueGrid.sortService.updateSorting([
     // direction can written as 'asc' (uppercase or lowercase) and/or use the SortDirection type

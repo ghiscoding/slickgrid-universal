@@ -1,4 +1,4 @@
-import type { FieldType, OperatorString, OperatorType } from '../enums/index.js';
+import type { FieldType, OperatorType } from '../enums/index.js';
 import type { SearchTerm } from '../enums/searchTerm.type.js';
 import type { Column } from './index.js';
 
@@ -19,7 +19,7 @@ export interface SearchColumnFilter {
   searchTerms: SearchTerm[];
 
   /** Operator to use when filtering (>, >=, EQ, IN, ...) */
-  operator?: OperatorType | OperatorString;
+  operator?: OperatorType;
 
   /**
    * Useful when you want to display a certain field to the UI, but you want to use another field to query when Filtering/Sorting.

@@ -3,7 +3,6 @@ import {
   Editors,
   Filters,
   Formatters,
-  OperatorType,
   SlickGlobalEditorLock,
   SlickgridVue,
   SortComparers,
@@ -204,7 +203,7 @@ function defineGrid() {
         collectionFilterBy: {
           property: 'value',
           value: 0,
-          operator: OperatorType.notEqual,
+          operator: '!=',
         },
         model: Editors.singleSelect,
         // validator: (value, args) => {
@@ -419,7 +418,7 @@ function defineGrid() {
           separatorBetweenTextLabels: ' ',
         },
         model: Filters.multipleSelect,
-        operator: OperatorType.inContains,
+        operator: 'IN_CONTAINS',
       },
     },
   ];

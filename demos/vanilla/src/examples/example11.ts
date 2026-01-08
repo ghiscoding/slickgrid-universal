@@ -6,7 +6,6 @@ import {
   Filters,
   formatNumber,
   Formatters,
-  OperatorType,
   SlickGlobalEditorLock,
   SortComparers,
   type AutocompleterOption,
@@ -91,9 +90,9 @@ export default class Example11 {
         // .map((colId) => ({ columnId: `${colId}`, hidden: false }))
         .filter((col) => col.columnId !== 'product' && col.columnId !== 'countryOfOrigin'), // remove "Product", "Country of Origin"
       filters: [
-        { columnId: 'finish', operator: OperatorType.lessThanOrEqual, searchTerms: [`${this.currentYear}-01-01`] },
-        { columnId: 'completed', operator: OperatorType.equal, searchTerms: [true] },
-        { columnId: 'percentComplete', operator: OperatorType.greaterThan, searchTerms: [50] },
+        { columnId: 'finish', operator: '<=', searchTerms: [`${this.currentYear}-01-01`] },
+        { columnId: 'completed', operator: '=', searchTerms: [true] },
+        { columnId: 'percentComplete', operator: '>', searchTerms: [50] },
       ] as CurrentFilter[],
       sorters: [{ columnId: 'finish', direction: 'desc' }] as CurrentSorter[],
     },

@@ -226,14 +226,14 @@ For example if the backend responds with `{ value: [{ id: 1, nav1: { field1: 'x'
 
 Column filters may have a `Custom` operator, that acts as a placeholder for you to define your own logic. To do so, the easiest way is to provide the `filterQueryOverride` callback in the OdataOptions. This method will be called with `BackendServiceFilterQueryOverrideArgs` to let you decide dynamically on how the filter should be assembled.
 
-E.g. you could listen for a specific column and the active OperatorType.custom in order to switch the filter to a matchesPattern SQL LIKE search:
+E.g. you could listen for a specific column and the active 'Custom' in order to switch the filter to a matchesPattern SQL LIKE search:
 
 ```tsx
 setOptions({
   backendServiceApi: {
     options: {
       filterQueryOverride: ({ fieldName, columnDef, columnFilterOperator, searchValues }) => {
-        if (columnFilterOperator === OperatorType.custom && columnDef?.id === 'name') {
+        if (columnFilterOperator === 'Custom' && columnDef?.id === 'name') {
           let matchesSearch = searchValues[0].replace(/\*/g, '.*');
           matchesSearch = matchesSearch.slice(0, 1) + '%5E' + matchesSearch.slice(1);
           matchesSearch = matchesSearch.slice(0, -1) + '$\'';

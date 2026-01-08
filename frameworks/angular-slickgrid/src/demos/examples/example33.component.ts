@@ -8,7 +8,6 @@ import {
   Editors,
   Filters,
   Formatters,
-  OperatorType,
   type AngularGridInstance,
   type Column,
   type EditCommand,
@@ -327,7 +326,7 @@ export class Example33Component implements OnInit {
           },
           model: Filters.multipleSelect,
           options: { minHeight: 70 } as MultipleSelectOption,
-          operator: OperatorType.inContains,
+          operator: 'IN_CONTAINS',
         },
       },
       {

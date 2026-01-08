@@ -262,7 +262,7 @@ const columnDefinitions = [
        ],
        collectionFilterBy: {
           property: 'effortDriven',
-          operator: OperatorType.notEqual,
+          operator: '!=',
           value: undefined
        },
        collectionSortBy: {
@@ -296,11 +296,11 @@ const columnDefinitions = [
        collection: multiSelectFilterArray,
        collectionFilterBy: [{
           property: 'value',
-          operator: OperatorType.notEqual, // remove day 1
+          operator: '!=', // remove day 1
           value: 1
        }, {
           property: 'value',
-          operator: OperatorType.notEqual, // remove day 365
+          operator: '!=', // remove day 365
           value: 365
        }],
        model: Filters.multipleSelect
@@ -380,7 +380,7 @@ const columnDefinitions = [
       ],
       collectionFilterBy: {
         property: 'effortDriven',
-        operator: OperatorType.equal, // defaults to equal when not provided
+        operator: '=', // defaults to equal when not provided
         value: undefined
       },
       collectionSortBy: {

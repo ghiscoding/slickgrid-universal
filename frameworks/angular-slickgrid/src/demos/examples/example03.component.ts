@@ -8,7 +8,6 @@ import {
   Editors,
   Filters,
   Formatters,
-  OperatorType,
   SlickGlobalEditorLock,
   SortComparers,
   type AngularGridInstance,
@@ -249,7 +248,7 @@ export class Example3Component implements OnInit {
           collectionFilterBy: {
             property: 'value',
             value: 0,
-            operator: OperatorType.notEqual,
+            operator: '!=',
           },
           // you could also provide a collection override to filter/sort based on the item dataContext or whatever else
           // collectionOverride: (updatedCollection, args) => {
@@ -470,7 +469,7 @@ export class Example3Component implements OnInit {
             separatorBetweenTextLabels: ' ',
           },
           model: Filters.multipleSelect,
-          operator: OperatorType.inContains,
+          operator: 'IN_CONTAINS',
         },
       },
     ];

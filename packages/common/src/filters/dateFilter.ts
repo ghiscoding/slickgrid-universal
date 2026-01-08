@@ -4,7 +4,7 @@ import { createDomElement, emptyElement, extend, isDefined } from '@slickgrid-un
 import { Calendar, type Options } from 'vanilla-calendar-pro';
 import { resetDatePicker, setPickerDates, setPickerFocus } from '../commonEditorFilter/commonEditorFilterUtils.js';
 import type { SlickGrid } from '../core/slickGrid.js';
-import { OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
+import { type OperatorType, type SearchTerm } from '../enums/index.js';
 import type { Column, ColumnFilter, Filter, FilterArguments, FilterCallback, GridOption, OperatorDetail } from '../interfaces/index.js';
 import { formatDateByFieldType, mapTempoDateFormatWithFieldType } from '../services/dateUtils.js';
 import type { TranslaterService } from '../services/translater.service.js';
@@ -22,7 +22,7 @@ export class DateFilter implements Filter {
   protected _pickerOptions!: Options;
   protected _filterElm!: HTMLDivElement;
   protected _dateInputElm!: HTMLInputElement;
-  protected _operator!: OperatorType | OperatorString;
+  protected _operator!: OperatorType;
   protected _selectOperatorElm?: HTMLSelectElement;
   protected _shouldTriggerQuery = true;
   hasTimePicker = false;
@@ -54,10 +54,8 @@ export class DateFilter implements Filter {
   }
 
   /** Getter to know what would be the default operator when none is specified */
-  get defaultOperator(): OperatorType | OperatorString {
-    return this.inputFilterType === 'compound'
-      ? OperatorType.empty
-      : this.gridOptions.defaultFilterRangeOperator || OperatorType.rangeInclusive;
+  get defaultOperator(): OperatorType {
+    return this.inputFilterType === 'compound' ? '' : this.gridOptions.defaultFilterRangeOperator || 'RangeInclusive';
   }
 
   /** Getter for the date picker options */
@@ -70,7 +68,7 @@ export class DateFilter implements Filter {
   }
 
   /** Getter for the Filter Operator */
-  get operator(): OperatorType | OperatorString {
+  get operator(): OperatorType {
     if (this.inputFilterType === 'compound') {
       return this._operator || this.columnFilter.operator || this.defaultOperator;
     }
@@ -78,7 +76,7 @@ export class DateFilter implements Filter {
   }
 
   /** Setter for the filter operator */
-  set operator(operator: OperatorType | OperatorString) {
+  set operator(operator: OperatorType) {
     if (this.inputFilterType === 'compound') {
       this._operator = operator;
     } else if (this.columnFilter) {
@@ -182,7 +180,7 @@ export class DateFilter implements Filter {
    * Set value(s) on the DOM element
    * @params searchTerms
    */
-  setValues(values?: SearchTerm[] | SearchTerm, operator?: OperatorType | OperatorString, triggerChange = false): void {
+  setValues(values?: SearchTerm[] | SearchTerm, operator?: OperatorType, triggerChange = false): void {
     let pickerValues: any | any[];
 
     if (this.inputFilterType === 'compound') {
@@ -491,7 +489,7 @@ export class DateFilter implements Filter {
           shouldTriggerQuery: this._shouldTriggerQuery,
         });
       } else if (this.inputFilterType === 'compound' && this._selectOperatorElm) {
-        const selectedOperator = this._selectOperatorElm.value as OperatorString;
+        const selectedOperator = this._selectOperatorElm.value as OperatorType;
         this.updateFilterStyle(!!this._currentValue);
 
         // when changing compound operator, we don't want to trigger the filter callback unless the date input is also provided

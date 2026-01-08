@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import { SlickEvent, type SlickGrid } from '../../core/index.js';
 import * as utils from '../../core/utils.js';
-import { FieldType, OperatorType } from '../../enums/index.js';
 import type { Column, FilterArguments, GridOption, SliderOption } from '../../interfaces/index.js';
 import { CompoundSliderFilter } from '../compoundSliderFilter.js';
 import { Filters } from '../index.js';
@@ -215,7 +214,7 @@ describe('CompoundSliderFilter', () => {
     const callbackSpy = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
-    filter.setValues(['9'], OperatorType.greaterThanOrEqual);
+    filter.setValues(['9'], '>=');
 
     const filterSelectElm = divContainer.querySelector('.search-filter.filter-duration select') as HTMLInputElement;
     filterSelectElm.dispatchEvent(new Event('change'));

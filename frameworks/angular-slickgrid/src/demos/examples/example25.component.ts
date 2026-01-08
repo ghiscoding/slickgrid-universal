@@ -6,7 +6,6 @@ import {
   AngularSlickgridModule,
   Filters,
   Formatters,
-  OperatorType,
   type AngularGridInstance,
   type Column,
   type GridOption,
@@ -90,7 +89,7 @@ export class Example25Component implements OnInit {
         filter: {
           model: Filters.multipleSelect,
           collectionAsync: this.getLanguages(),
-          operator: OperatorType.inContains,
+          operator: 'IN_CONTAINS',
           collectionOptions: {
             addBlankEntry: true,
             // the data is not at the root of the array, so we must tell the Select Filter where to pull the data
@@ -118,7 +117,7 @@ export class Example25Component implements OnInit {
         filter: {
           model: Filters.multipleSelect,
           collectionAsync: this.getLanguages(),
-          operator: OperatorType.inContains,
+          operator: 'IN_CONTAINS',
           collectionOptions: {
             addBlankEntry: true,
             // the data is not at the root of the array, so we must tell the Select Filter where to pull the data
