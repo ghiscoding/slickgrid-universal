@@ -18,7 +18,7 @@ import {
   type SliderRangeOption,
 } from 'slickgrid-vue';
 import { onBeforeMount, onBeforeUnmount, ref, type Ref } from 'vue';
-import { CustomInputFilter } from './custom-inputFilter';
+import { CustomInputFilter } from './custom-inputFilter.js';
 
 const { i18next } = useTranslation();
 

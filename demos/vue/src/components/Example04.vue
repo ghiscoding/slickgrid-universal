@@ -14,7 +14,7 @@ import {
   type VanillaCalendarOption,
 } from 'slickgrid-vue';
 import { onBeforeMount, onBeforeUnmount, onMounted, ref, type Ref } from 'vue';
-import { CustomInputFilter } from './custom-inputFilter';
+import { CustomInputFilter } from './custom-inputFilter.js';
 import SAMPLE_COLLECTION_DATA from './data/collection_500_numbers.json';
 
 const NB_ITEMS = 10500;

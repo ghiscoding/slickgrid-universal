@@ -14,8 +14,8 @@ import {
   type SliderOption,
 } from 'slickgrid-vue';
 import { createApp, onBeforeMount, ref, type ComponentPublicInstance, type Ref } from 'vue';
-import { CustomVueComponentEditor } from './custom-viewModelEditor';
-import { CustomVueComponentFilter } from './custom-viewModelFilter';
+import { CustomVueComponentEditor } from './custom-viewModelEditor.js';
+import { CustomVueComponentFilter } from './custom-viewModelFilter.js';
 import CustomTitleFormatter from './CustomTitleFormatterComponent.vue';
 import EditorSelect from './SelectEditorComponent.vue';
 import FilterSelect from './SelectFilterComponent.vue';

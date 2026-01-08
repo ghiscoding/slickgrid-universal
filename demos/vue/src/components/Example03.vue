@@ -17,8 +17,8 @@ import {
   type VanillaCalendarOption,
 } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
-import { CustomInputEditor } from './custom-inputEditor';
-import { CustomInputFilter } from './custom-inputFilter';
+import { CustomInputEditor } from './custom-inputEditor.js';
+import { CustomInputFilter } from './custom-inputFilter.js';
 import SAMPLE_COLLECTION_DATA from './data/collection_100_numbers.json';
 import SAMPLE_COLLECTION_DATA_URL from './data/collection_100_numbers.json?url';
 import COUNTRIES_COLLECTION from './data/countries.json';
