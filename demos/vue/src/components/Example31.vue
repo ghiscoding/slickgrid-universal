@@ -6,7 +6,6 @@ import { Observable, of, type Subject } from 'rxjs';
 import {
   Editors,
   Filters,
-  OperatorType,
   SlickgridVue,
   type Column,
   type GridOption,
@@ -106,8 +105,8 @@ function defineGrid() {
     presets: {
       // you can also type operator as string, e.g.: operator: 'EQ'
       filters: [
-        // { columnId: 'name', searchTerms: ['w'], operator: OperatorType.startsWith },
-        { columnId: 'gender', searchTerms: ['male'], operator: OperatorType.equal },
+        // { columnId: 'name', searchTerms: ['w'], operator: 'StartsWith' },
+        { columnId: 'gender', searchTerms: ['male'], operator: '=' },
       ],
       sorters: [
         // direction can be written as 'asc' (uppercase or lowercase) and/or use the SortDirection type
@@ -381,7 +380,7 @@ function gridStateChanged(gridStateChanges: GridStateChange) {
 function setFiltersDynamically() {
   // we can Set Filters Dynamically (or different filters) afterward through the FilterService
   vueGrid?.filterService.updateFilters([
-    // { columnId: 'gender', searchTerms: ['male'], operator: OperatorType.equal },
+    // { columnId: 'gender', searchTerms: ['male'], operator: '=' },
     { columnId: 'name', searchTerms: ['A'], operator: 'a*' },
   ]);
 }

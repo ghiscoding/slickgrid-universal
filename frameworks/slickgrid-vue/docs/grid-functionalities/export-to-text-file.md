@@ -26,7 +26,7 @@ You can set certain options for the entire grid, for example if you set `exportW
 ```ts
 <script setup lang="ts">
 import { TextExportService } from '@slickgrid-universal/text-export';
-import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -127,7 +127,7 @@ The code below is just an example and it can be configured in many ways, the del
 ```ts
 <script setup lang="ts">
 import { TextExportService } from '@slickgrid-universal/text-export';
-import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();

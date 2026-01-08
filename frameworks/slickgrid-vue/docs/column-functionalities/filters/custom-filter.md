@@ -56,7 +56,7 @@ const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const $filterElm = ref();
 const callback: FilterCallback;
-const operator: OperatorType | OperatorString = OperatorType.equal;
+const operator: OperatorType = 'EQ';
 
 onBeforeMount(() => {
   defineGrid();

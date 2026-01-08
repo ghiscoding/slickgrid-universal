@@ -38,7 +38,7 @@ You can set certain options for the entire grid, for example if you set `exportW
 ```vue
 <script setup lang="ts">
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -97,7 +97,7 @@ Inside the column definition there are couple of flags you can set in `excelExpo
 ```vue
 <script setup lang="ts">
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -193,7 +193,7 @@ The example below shows a title which uses a merged cell from "B1" to "D1" with 
 #### Component
 ```vue
 <script setup lang="ts">
-import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -251,7 +251,7 @@ You can use the export from the Grid Menu and/or you can simply create your own 
 The code below is just an example and it can be configured in many ways, see the `excelExportOptions`.
 ```vue
 <script setup lang="ts">
-import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();

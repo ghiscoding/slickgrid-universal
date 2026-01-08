@@ -1,14 +1,6 @@
 import { GraphqlService, type GraphqlResult, type GraphqlServiceApi } from '@slickgrid-universal/graphql';
 import React, { useEffect, useState } from 'react';
-import {
-  Filters,
-  Formatters,
-  OperatorType,
-  SlickgridReact,
-  type Column,
-  type GridOption,
-  type MultipleSelectOption,
-} from 'slickgrid-react';
+import { Filters, Formatters, SlickgridReact, type Column, type GridOption, type MultipleSelectOption } from 'slickgrid-react';
 import './example25.scss'; // provide custom CSS/SASS styling
 
 const COUNTRIES_API = 'https://countries.trevorblades.com/';
@@ -78,7 +70,7 @@ const Example25: React.FC = () => {
         filter: {
           model: Filters.multipleSelect,
           collectionAsync: getLanguages(),
-          operator: OperatorType.inContains,
+          operator: 'IN_CONTAINS',
           collectionOptions: {
             addBlankEntry: true,
             // the data is not at the root of the array, so we must tell the Select Filter where to pull the data
@@ -106,7 +98,7 @@ const Example25: React.FC = () => {
         filter: {
           model: Filters.multipleSelect,
           collectionAsync: getLanguages(),
-          operator: OperatorType.inContains,
+          operator: 'IN_CONTAINS',
           collectionOptions: {
             addBlankEntry: true,
             // the data is not at the root of the array, so we must tell the Select Filter where to pull the data
@@ -268,7 +260,7 @@ const Example25: React.FC = () => {
   // function setFiltersDynamically() {
   //   // we can Set Filters Dynamically (or different filters) afterward through the FilterService
   //   reactGridRef.current?.filterService.updateFilters([
-  //     { columnId: 'countryName', searchTerms: ['G'], operator: OperatorType.startsWith },
+  //     { columnId: 'countryName', searchTerms: ['G'], operator: 'StartsWith' },
   //   ]);
   // }
 

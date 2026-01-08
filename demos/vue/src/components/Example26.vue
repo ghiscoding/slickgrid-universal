@@ -3,7 +3,6 @@ import {
   Editors,
   Filters,
   Formatters,
-  OperatorType,
   SlickGlobalEditorLock,
   SlickgridVue,
   type Column,
@@ -179,7 +178,7 @@ function defineGrid() {
         collectionFilterBy: {
           property: 'value',
           value: 0,
-          operator: OperatorType.notEqual,
+          operator: '!=',
         },
         model: Editors.singleSelect,
       },

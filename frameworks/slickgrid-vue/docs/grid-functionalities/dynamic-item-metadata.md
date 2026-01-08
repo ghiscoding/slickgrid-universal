@@ -7,7 +7,7 @@ SlickGrid is very flexible and it allows you to change or add CSS Class(es) dyna
 ##### Component
 ```vue
 <script setup lang="ts">
-import { Column, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { Column, Filters, Formatters, GridOption, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -84,7 +84,7 @@ Or if you want to apply the styling right after the page load
 ##### Component
 ```vue
 <script setup lang="ts">
-import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();

@@ -1,4 +1,4 @@
-import type { OperatorString, OperatorType } from '../enums/index.js';
+import type { OperatorType } from '../enums/index.js';
 import type { SearchTerm } from '../enums/searchTerm.type.js';
 
 export interface CurrentFilter {
@@ -9,7 +9,7 @@ export interface CurrentFilter {
   columnId: string;
 
   /** Filter operator or use default operator when not provided */
-  operator?: OperatorType | OperatorString;
+  operator?: OperatorType;
 
   /** Filter search terms */
   searchTerms?: SearchTerm[];

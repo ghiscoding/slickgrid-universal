@@ -2,7 +2,7 @@ import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, emptyElement, isDefined, toSentenceCase } from '@slickgrid-universal/utils';
 import { Constants } from '../constants.js';
 import { SlickEventData, type SlickGrid } from '../core/index.js';
-import { OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
+import { type OperatorType, type SearchTerm } from '../enums/index.js';
 import type {
   Column,
   ColumnFilter,
@@ -34,7 +34,7 @@ export class SliderFilter implements Filter {
   protected _lastSearchValue?: number | string;
   protected _shouldTriggerQuery = true;
   protected _sliderOptions!: CurrentSliderOption;
-  protected _operator?: OperatorType | OperatorString;
+  protected _operator?: OperatorType;
   protected _filterElm!: HTMLDivElement;
   protected _argFilterContainerElm!: HTMLElement;
   protected _divContainerFilterElm!: HTMLDivElement;
@@ -73,13 +73,13 @@ export class SliderFilter implements Filter {
   }
 
   /** Getter to know what would be the default operator when none is specified */
-  get defaultOperator(): OperatorType | OperatorString {
+  get defaultOperator(): OperatorType {
     if (this.sliderType === 'compound') {
-      return OperatorType.empty;
+      return '';
     } else if (this.sliderType === 'single') {
-      return OperatorType.greaterThanOrEqual;
+      return 'GE';
     }
-    return this.gridOptions.defaultFilterRangeOperator || OperatorType.rangeInclusive;
+    return this.gridOptions.defaultFilterRangeOperator || 'RangeInclusive';
   }
 
   get filterOptions(): SliderOption | SliderRangeOption {
@@ -97,12 +97,12 @@ export class SliderFilter implements Filter {
   }
 
   /** Getter for the Filter Operator */
-  get operator(): OperatorType | OperatorString {
+  get operator(): OperatorType {
     return this._operator || (this.columnFilter.operator ?? this.defaultOperator);
   }
 
   /** Setter for the Filter Operator */
-  set operator(operator: OperatorType | OperatorString) {
+  set operator(operator: OperatorType) {
     this._operator = operator;
   }
 
@@ -210,7 +210,7 @@ export class SliderFilter implements Filter {
    * Set value(s) on the DOM element
    * @params searchTerms
    */
-  setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString, triggerChange = false): void {
+  setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType, triggerChange = false): void {
     if (values) {
       let sliderVals: Array<number | string | undefined> = [];
       const term1: SearchTerm | undefined = Array.isArray(values) ? values?.[0] : values;
@@ -501,7 +501,7 @@ export class SliderFilter implements Filter {
         shouldTriggerQuery: this._shouldTriggerQuery,
       });
     } else {
-      const selectedOperator = (this._selectOperatorElm?.value ?? this.operator) as OperatorString;
+      const selectedOperator = (this._selectOperatorElm?.value ?? this.operator) as OperatorType;
       this.updateFilterStyle(value !== '');
 
       // when changing compound operator, we don't want to trigger the filter callback unless the filter input is also provided

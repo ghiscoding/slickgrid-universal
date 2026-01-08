@@ -3,7 +3,6 @@ import {
   Editors,
   Filters,
   Formatters,
-  OperatorType,
   type AutocompleterOption,
   type Column,
   type ColumnEditorDualInput,
@@ -123,7 +122,7 @@ export default class Example04 {
           collectionFilterBy: {
             property: 'value',
             value: 0,
-            operator: OperatorType.notEqual,
+            operator: '!=',
           },
           // collectionOverride: (updatedCollection, args) => {
           //   console.log(args);

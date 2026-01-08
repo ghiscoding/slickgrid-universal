@@ -2,7 +2,6 @@ import { bindable } from 'aurelia';
 import {
   Filters,
   Formatters,
-  OperatorType,
   type AureliaGridInstance,
   type Column,
   type GridOption,
@@ -74,7 +73,7 @@ export class Example42 {
         filter: {
           model: Filters.sliderRange,
           maxValue: 100, // or you can use the options as well
-          operator: OperatorType.rangeInclusive, // defaults to inclusive
+          operator: 'RangeInclusive', // defaults to inclusive
           options: {
             hideSliderNumbers: false, // you can hide/show the slider numbers on both side
             min: 0,
@@ -120,7 +119,7 @@ export class Example42 {
         filterable: true,
         filter: {
           model: Filters.input,
-          operator: OperatorType.rangeExclusive, // defaults to exclusive
+          operator: 'RangeExclusive', // defaults to exclusive
         },
       },
       {

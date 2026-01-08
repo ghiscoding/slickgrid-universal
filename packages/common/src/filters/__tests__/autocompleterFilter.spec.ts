@@ -5,7 +5,6 @@ import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import type { SlickGrid } from '../../core/index.js';
 import * as utils from '../../core/utils.js';
-import { FieldType, OperatorType } from '../../enums/index.js';
 import type { AutocompleterOption, Column, ColumnFilter, FilterArguments, GridOption } from '../../interfaces/index.js';
 import { CollectionService } from '../../services/collection.service.js';
 import { AutocompleterFilter } from '../autocompleterFilter.js';
@@ -489,7 +488,7 @@ describe('AutocompleterFilter', () => {
   it('should create the filter and filter the string collection when "collectionFilterBy" is set', () => {
     mockColumn.filter = {
       collection: ['other', 'male', 'female'],
-      collectionFilterBy: { operator: OperatorType.equal, value: 'other' },
+      collectionFilterBy: { operator: '=', value: 'other' },
     };
 
     filter.init(filterArguments);
@@ -507,8 +506,8 @@ describe('AutocompleterFilter', () => {
         { value: 'female', description: 'female' },
       ],
       collectionFilterBy: [
-        { property: 'value', operator: OperatorType.notEqual, value: 'other' },
-        { property: 'value', operator: OperatorType.notEqual, value: 'male' },
+        { property: 'value', operator: '!=', value: 'other' },
+        { property: 'value', operator: 'NE', value: 'male' },
       ],
       customStructure: { value: 'value', label: 'description' },
     };
@@ -528,8 +527,8 @@ describe('AutocompleterFilter', () => {
         { value: 'female', description: 'female' },
       ],
       collectionFilterBy: [
-        { property: 'value', operator: OperatorType.equal, value: 'other' },
-        { property: 'value', operator: OperatorType.equal, value: 'male' },
+        { property: 'value', operator: '=', value: 'other' },
+        { property: 'value', operator: 'EQ', value: 'male' },
       ],
       collectionOptions: { filterResultAfterEachPass: 'merge' },
       customStructure: { value: 'value', label: 'description' },

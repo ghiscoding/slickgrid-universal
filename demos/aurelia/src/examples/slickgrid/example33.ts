@@ -4,7 +4,6 @@ import {
   Editors,
   Filters,
   Formatters,
-  OperatorType,
   type AureliaGridInstance,
   type Column,
   type EditCommand,
@@ -320,7 +319,7 @@ export class Example33 {
           collectionOptions: { separatorBetweenTextLabels: ' ' },
           options: { minHeight: 70 } as MultipleSelectOption,
           model: Filters.multipleSelect,
-          operator: OperatorType.inContains,
+          operator: 'IN_CONTAINS',
         },
       },
       {

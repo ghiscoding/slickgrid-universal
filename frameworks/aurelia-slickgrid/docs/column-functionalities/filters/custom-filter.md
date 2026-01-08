@@ -47,7 +47,7 @@ You can also create your own Custom Filter with any html/css you want and/or jQu
      searchTerms: SearchTerm[];
      columnDef: Column;
      callback: FilterCallback;
-     operator: OperatorType | OperatorString = OperatorType.equal;
+     operator: OperatorType = 'EQ';
 
      init(args: FilterArguments) {
        // ...logic

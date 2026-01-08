@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { FieldType, OperatorType } from '../../enums/index.js';
 import type { FilterConditionOption } from '../../interfaces/index.js';
 import { executeFilterConditionTest } from '../filterConditions.index.js';
 import { executeStringFilterCondition, getFilterParsedText } from '../stringFilterCondition.js';
@@ -92,7 +91,7 @@ describe('executeStringFilterCondition method', () => {
     const searchTerms = ['abb'];
     const options = {
       dataKey: '',
-      operator: OperatorType.startsWith,
+      operator: 'StartsWith',
       cellValue: 'abbostford',
       fieldType: 'string',
       searchTerms,
@@ -162,7 +161,7 @@ describe('executeStringFilterCondition method', () => {
     const searchTerms = ['Smith'];
     const options = {
       dataKey: '',
-      operator: OperatorType.endsWith,
+      operator: 'EndsWith',
       cellValue: 'John Smith',
       fieldType: 'string',
       searchTerms,
@@ -182,7 +181,7 @@ describe('executeStringFilterCondition method', () => {
     const searchTerms = ['b..e'];
     const options = {
       dataKey: '',
-      defaultFilterRangeOperator: OperatorType.rangeInclusive,
+      defaultFilterRangeOperator: 'RangeInclusive',
       cellValue: 'b',
       fieldType: 'string',
       searchTerms,
@@ -195,7 +194,7 @@ describe('executeStringFilterCondition method', () => {
     const searchTerms = ['b..e'];
     const options = {
       dataKey: '',
-      defaultFilterRangeOperator: OperatorType.rangeExclusive,
+      defaultFilterRangeOperator: 'RangeExclusive',
       cellValue: 'b',
       fieldType: 'string',
       searchTerms,

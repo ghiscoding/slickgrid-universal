@@ -5,7 +5,6 @@ import {
   Editors,
   Filters,
   Formatters,
-  OperatorType,
   SlickgridVue,
   type Column,
   type EditCommand,
@@ -357,7 +356,7 @@ function defineGrid() {
         collectionOptions: { separatorBetweenTextLabels: ' ' },
         options: { minHeight: 70 } as MultipleSelectOption,
         model: Filters.multipleSelect,
-        operator: OperatorType.inContains,
+        operator: 'IN_CONTAINS',
       },
     },
     {

@@ -1,5 +1,5 @@
 import { isNumber } from '@slickgrid-universal/utils';
-import { OperatorType, type SearchTerm } from '../enums/index.js';
+import { type SearchTerm } from '../enums/index.js';
 import type { FilterCondition, FilterConditionOption } from '../interfaces/index.js';
 import { testFilterCondition } from './filterUtilities.js';
 
@@ -14,10 +14,10 @@ export const executeNumberFilterCondition: FilterCondition = ((options: FilterCo
 
   if (searchValue1 !== undefined && searchValue2 !== undefined) {
     let operator = options?.operator ?? options.defaultFilterRangeOperator;
-    if (operator !== OperatorType.rangeInclusive && operator !== OperatorType.rangeExclusive) {
+    if (operator !== 'RangeInclusive' && operator !== 'RangeExclusive') {
       operator = options.defaultFilterRangeOperator;
     }
-    const isInclusive = operator === OperatorType.rangeInclusive;
+    const isInclusive = operator === 'RangeInclusive';
     const resultCondition1 = testFilterCondition(isInclusive ? '>=' : '>', cellValue, +searchValue1);
     const resultCondition2 = testFilterCondition(isInclusive ? '<=' : '<', cellValue, +searchValue2);
     return resultCondition1 && resultCondition2;

@@ -18,7 +18,7 @@ To use any of them, you can use the `FieldType` interface or enter a type via a 
 
 ```vue
 <script setup lang="ts">
-import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -93,7 +93,7 @@ You can update/change the Sorting dynamically (on the fly) via the `updateSortin
 ##### Component
 ```vue
 <script setup lang="ts">
-import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();

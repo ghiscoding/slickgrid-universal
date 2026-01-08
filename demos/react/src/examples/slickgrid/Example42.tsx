@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   Filters,
   Formatters,
-  OperatorType,
   SlickgridReact,
   type Column,
   type GridOption,
@@ -68,7 +67,7 @@ const Example42: React.FC = () => {
         filter: {
           model: Filters.sliderRange,
           maxValue: 100, // or you can use the options as well
-          operator: OperatorType.rangeInclusive, // defaults to inclusive
+          operator: 'RangeInclusive', // defaults to inclusive
           options: {
             hideSliderNumbers: false, // you can hide/show the slider numbers on both side
             min: 0,
@@ -114,7 +113,7 @@ const Example42: React.FC = () => {
         filterable: true,
         filter: {
           model: Filters.input,
-          operator: OperatorType.rangeExclusive, // defaults to exclusive
+          operator: 'RangeExclusive', // defaults to exclusive
         },
       },
       {

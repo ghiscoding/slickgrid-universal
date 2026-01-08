@@ -2,7 +2,6 @@ import { parse } from '@formkit/tempo';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import { type SlickGrid } from '../../core/slickGrid.js';
-import { FieldType, OperatorType } from '../../enums/index.js';
 import type { CollectionFilterBy, CollectionSortBy, Column, GridOption } from '../../interfaces/index.js';
 import { CollectionService } from '../collection.service.js';
 
@@ -96,7 +95,7 @@ describe('CollectionService', () => {
 
         it('should return an array with merged output of filtered values', () => {
           const filterBy = [
-            { property: 'firstName', operator: OperatorType.equal, value: 'John' },
+            { property: 'firstName', operator: '=', value: 'John' },
             { property: 'lastName', value: 'Doe' }, // ommitted Operator are Equal by default
           ] as CollectionFilterBy[];
 
@@ -115,7 +114,7 @@ describe('CollectionService', () => {
 
       describe('singleFilterCollection method', () => {
         it('should return an array by using the "contains" filter type', () => {
-          const filterBy = { property: 'firstName', operator: OperatorType.contains, value: 'Foo' } as CollectionFilterBy;
+          const filterBy = { property: 'firstName', operator: 'Contains', value: 'Foo' } as CollectionFilterBy;
 
           const result = service.singleFilterCollection(collection, filterBy);
 
@@ -123,7 +122,7 @@ describe('CollectionService', () => {
         });
 
         it('should return an array by using the "notContains" filter type', () => {
-          const filterBy = { property: 'firstName', operator: OperatorType.notContains, value: 'John' } as CollectionFilterBy;
+          const filterBy = { property: 'firstName', operator: 'Not_Contains', value: 'John' } as CollectionFilterBy;
 
           const result = service.singleFilterCollection(collection, filterBy);
 
@@ -266,7 +265,7 @@ describe('CollectionService', () => {
 
         it('should return an array with merged (unique values no duplicate) output of filtered values', () => {
           const filterBy = [
-            { operator: OperatorType.equal, value: 'John' },
+            { operator: '=', value: 'John' },
             { value: 'Bob' }, // ommitted Operator are Equal by default
           ] as CollectionFilterBy[];
 
@@ -280,7 +279,7 @@ describe('CollectionService', () => {
         // stringCollection = ['John', 'Jane', 'Ava Luna', '', 'Bob', 'John', null, 'John Foo'];
 
         it('should return an array by using the "contains" filter type', () => {
-          const filterBy = { operator: OperatorType.contains, value: 'Foo' } as CollectionFilterBy;
+          const filterBy = { operator: 'Contains', value: 'Foo' } as CollectionFilterBy;
 
           const result = service.singleFilterCollection(stringCollection, filterBy);
 
@@ -288,7 +287,7 @@ describe('CollectionService', () => {
         });
 
         it('should return an array by using the "notContains" filter type', () => {
-          const filterBy = { operator: OperatorType.notContains, value: 'John' } as CollectionFilterBy;
+          const filterBy = { operator: 'Not_Contains', value: 'John' } as CollectionFilterBy;
 
           const result = service.singleFilterCollection(stringCollection, filterBy);
 

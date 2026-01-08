@@ -1,5 +1,5 @@
 import { removeAccentFromText } from '@slickgrid-universal/utils';
-import { OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
+import { type OperatorType, type SearchTerm } from '../enums/index.js';
 import type { FilterCondition, FilterConditionOption } from '../interfaces/index.js';
 import { testFilterCondition } from './filterUtilities.js';
 
@@ -26,14 +26,14 @@ export const executeStringFilterCondition: FilterCondition = ((options: FilterCo
     searchValue2 = options?.ignoreAccentOnStringFilterAndSort ? removeAccentFromText(searchValue2, true) : searchValue2.toLowerCase();
   }
 
-  if (options.operator === OperatorType.startsWithEndsWith && searchValue1 !== undefined && searchValue2 !== undefined) {
+  if (options.operator === 'StartsWithEndsWith' && searchValue1 !== undefined && searchValue2 !== undefined) {
     return testStartsWithEndsWith(cellValue, [searchValue1, searchValue2]);
   } else if (searchValue1 !== undefined && searchValue2 !== undefined) {
     let operator = options?.operator ?? options.defaultFilterRangeOperator;
-    if (operator !== OperatorType.rangeInclusive && operator !== OperatorType.rangeExclusive) {
+    if (operator !== 'RangeInclusive' && operator !== 'RangeExclusive') {
       operator = options.defaultFilterRangeOperator;
     }
-    const isInclusive = operator === OperatorType.rangeInclusive;
+    const isInclusive = operator === 'RangeInclusive';
     const searchResult1 = testStringCondition(isInclusive ? '>=' : '>', cellValue, searchValue1, options.searchInputLastChar);
     const searchResult2 = testStringCondition(isInclusive ? '<=' : '<', cellValue, searchValue2, options.searchInputLastChar);
     return searchResult1 && searchResult2;
@@ -79,19 +79,14 @@ export function getFilterParsedText(inputSearchTerms: SearchTerm[] | undefined):
 }
 
 /** Execute the filter string test condition, returns a boolean */
-function testStringCondition(
-  operator: OperatorType | OperatorString,
-  cellValue: string,
-  searchValue: string,
-  searchInputLastChar?: string
-): boolean {
-  if (operator === '*' || operator === OperatorType.endsWith || operator === '*z') {
+function testStringCondition(operator: OperatorType, cellValue: string, searchValue: string, searchInputLastChar?: string): boolean {
+  if (operator === '*' || operator === 'EndsWith' || operator === '*z') {
     return cellValue.endsWith(searchValue);
-  } else if ((operator === '' && searchInputLastChar === '*') || operator === OperatorType.startsWith || operator === 'a*') {
+  } else if ((operator === '' && searchInputLastChar === '*') || operator === 'StartsWith' || operator === 'a*') {
     return cellValue.startsWith(searchValue);
-  } else if (operator === '' || operator === OperatorType.contains) {
+  } else if (operator === '' || operator === 'Contains') {
     return cellValue.indexOf(searchValue) > -1;
-  } else if (operator === '<>' || operator === OperatorType.notContains) {
+  } else if (operator === '<>' || operator === 'Not_Contains') {
     return cellValue.indexOf(searchValue) === -1;
   }
   return testFilterCondition(operator || '==', cellValue, searchValue);

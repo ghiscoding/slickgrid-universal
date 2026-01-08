@@ -5,7 +5,6 @@ import { GridOdataService, type OdataOption, type OdataServiceApi } from '@slick
 import {
   AngularSlickgridModule,
   Filters,
-  OperatorType,
   PaginationMetadata,
   type AngularGridInstance,
   type Column,
@@ -103,7 +102,7 @@ export class Example5Component implements OnInit {
         hideInColumnTitleRow: true,
       },
       compoundOperatorAltTexts: {
-        // where '=' is any of the `OperatorString` type shown above
+        // where '=' is any of the `OperatorType` type shown above
         text: { Custom: { operatorAlt: '%%', descAlt: 'SQL Like' } },
       },
       enableCellNavigation: true,
@@ -118,7 +117,7 @@ export class Example5Component implements OnInit {
       },
       presets: {
         // you can also type operator as string, e.g.: operator: 'EQ'
-        filters: [{ columnId: 'gender', searchTerms: ['male'], operator: OperatorType.equal }],
+        filters: [{ columnId: 'gender', searchTerms: ['male'], operator: '=' }],
         sorters: [
           // direction can be written as 'asc' (uppercase or lowercase) and/or use the SortDirection type
           { columnId: 'name', direction: 'asc' },
@@ -132,7 +131,7 @@ export class Example5Component implements OnInit {
           enableSelect: this.isSelectEnabled,
           enableExpand: this.isExpandEnabled,
           filterQueryOverride: ({ fieldName, columnDef, columnFilterOperator, searchValues }) => {
-            if (columnFilterOperator === OperatorType.custom && columnDef?.id === 'name') {
+            if (columnFilterOperator === 'Custom' && columnDef?.id === 'name') {
               let matchesSearch = searchValues[0].replace(/\*/g, '.*');
               matchesSearch = matchesSearch.slice(0, 1) + CARET_HTML_ESCAPED + matchesSearch.slice(1);
               matchesSearch = matchesSearch.slice(0, -1) + "$'";
@@ -206,7 +205,7 @@ export class Example5Component implements OnInit {
   setFiltersDynamically() {
     // we can Set Filters Dynamically (or different filters) afterward through the FilterService
     this.angularGrid.filterService.updateFilters([
-      // { columnId: 'gender', searchTerms: ['male'], operator: OperatorType.equal },
+      // { columnId: 'gender', searchTerms: ['male'], operator: '=' },
       { columnId: 'name', searchTerms: ['A'], operator: 'a*' },
     ]);
   }

@@ -4,7 +4,6 @@ import { GraphqlService, type GraphqlResult, type GraphqlServiceApi } from '@sli
 import {
   Filters,
   Formatters,
-  OperatorType,
   type AureliaGridInstance,
   type Column,
   type GridOption,
@@ -85,7 +84,7 @@ export class Example25 {
         filter: {
           model: Filters.multipleSelect,
           collectionAsync: this.getLanguages(),
-          operator: OperatorType.inContains,
+          operator: 'IN_CONTAINS',
           collectionOptions: {
             addBlankEntry: true,
             // the data is not at the root of the array, so we must tell the Select Filter where to pull the data
@@ -118,7 +117,7 @@ export class Example25 {
         filter: {
           model: Filters.multipleSelect,
           collectionAsync: this.getLanguages(),
-          operator: OperatorType.inContains,
+          operator: 'IN_CONTAINS',
           collectionOptions: {
             addBlankEntry: true,
             // the data is not at the root of the array, so we must tell the Select Filter where to pull the data
@@ -277,7 +276,7 @@ export class Example25 {
 
   setFiltersDynamically() {
     // we can Set Filters Dynamically (or different filters) afterward through the FilterService
-    this.aureliaGrid.filterService.updateFilters([{ columnId: 'countryName', searchTerms: ['G'], operator: OperatorType.startsWith }]);
+    this.aureliaGrid.filterService.updateFilters([{ columnId: 'countryName', searchTerms: ['G'], operator: 'StartsWith' }]);
   }
 
   setSortingDynamically() {

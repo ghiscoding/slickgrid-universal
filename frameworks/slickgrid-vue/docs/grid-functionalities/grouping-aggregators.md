@@ -36,7 +36,7 @@ One of the very first thing that you need to do is to provide the `SlickGrid Dat
 
 ```vue
 <script setup lang="ts">
-import { type Column, Filters, Formatters, GridState, OperatorType, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, GridState, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -148,7 +148,7 @@ Note: the Group Total Formatters named as currency will have these extra `params
 ##### Component
 ```vue
 <script setup lang="ts">
-import { type Column, Filters, Formatters, GridState, OperatorType, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, GridState, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();

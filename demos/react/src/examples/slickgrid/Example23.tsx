@@ -7,7 +7,6 @@ import { withTranslation } from 'react-i18next';
 import {
   Filters,
   Formatters,
-  OperatorType,
   SlickgridReact,
   type Column,
   type CurrentFilter,
@@ -104,7 +103,7 @@ const Example23: React.FC = () => {
         filter: {
           model: Filters.sliderRange,
           maxValue: 100, // or you can use the options as well
-          operator: OperatorType.rangeInclusive, // defaults to inclusive
+          operator: 'RangeInclusive', // defaults to inclusive
           options: {
             hideSliderNumbers: false, // you can hide/show the slider numbers on both side
             min: 0,
@@ -152,7 +151,7 @@ const Example23: React.FC = () => {
         filterable: true,
         filter: {
           model: Filters.input,
-          operator: OperatorType.rangeExclusive, // defaults to exclusive
+          operator: 'RangeExclusive', // defaults to exclusive
         },
       },
       {
@@ -310,8 +309,8 @@ const Example23: React.FC = () => {
     switch (newPredefinedFilter) {
       case 'currentYearTasks':
         filters = [
-          { columnId: 'finish', operator: OperatorType.rangeInclusive, searchTerms: [`${currentYear}-01-01`, `${currentYear}-12-31`] },
-          { columnId: 'completed', operator: OperatorType.equal, searchTerms: [true] },
+          { columnId: 'finish', operator: 'RangeInclusive', searchTerms: [`${currentYear}-01-01`, `${currentYear}-12-31`] },
+          { columnId: 'completed', operator: '=', searchTerms: [true] },
         ];
         break;
       case 'nextYearTasks':

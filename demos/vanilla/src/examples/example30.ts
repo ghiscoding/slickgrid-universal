@@ -1,7 +1,6 @@
 import {
   Filters,
   Formatters,
-  OperatorType,
   type Column,
   type GridOption,
   type MultipleSelectOption,
@@ -80,7 +79,7 @@ export default class Example30 {
         filter: {
           model: Filters.sliderRange,
           maxValue: 100, // or you can use the options as well
-          operator: OperatorType.rangeInclusive, // defaults to inclusive
+          operator: 'RangeInclusive', // defaults to inclusive
           options: {
             hideSliderNumbers: false, // you can hide/show the slider numbers on both side
             min: 0,
@@ -126,7 +125,7 @@ export default class Example30 {
         filterable: true,
         filter: {
           model: Filters.input,
-          operator: OperatorType.rangeExclusive, // defaults to exclusive
+          operator: 'RangeExclusive', // defaults to exclusive
         },
       },
       {

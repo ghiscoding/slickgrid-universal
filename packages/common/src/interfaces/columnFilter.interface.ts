@@ -1,4 +1,4 @@
-import type { FieldType, OperatorString, OperatorType, SearchTerm } from '../enums/index.js';
+import type { FieldType, OperatorType, SearchTerm } from '../enums/index.js';
 import type { Observable, Subject } from '../services/rxjsFacade.js';
 import type {
   CollectionCustomStructure,
@@ -36,7 +36,7 @@ export interface ColumnFilter {
   searchTerms?: SearchTerm[] | undefined;
 
   /** Operator to use when filtering (>, >=, EQ, IN, ...) */
-  operator?: OperatorType | OperatorString;
+  operator?: OperatorType;
 
   /** Maximum value of the filter, works only with Filters supporting it (text, number, float, slider) */
   maxValue?: number | string;
@@ -122,7 +122,7 @@ export interface ColumnFilter {
   filterShortcuts?: Array<
     Omit<MenuCommandItem, 'command' | 'divider' | 'action'> & {
       searchTerms: SearchTerm[];
-      operator?: OperatorType | OperatorString;
+      operator?: OperatorType;
     }
   >;
 

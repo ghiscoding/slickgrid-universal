@@ -11,7 +11,7 @@ import type {
   GridOption,
   InfiniteScrollOption,
   MultiColumnSort,
-  OperatorString,
+  OperatorType,
   Pagination,
   PaginationChangedArgs,
   SearchTerm,
@@ -19,7 +19,7 @@ import type {
   SlickGrid,
   SortDirection,
 } from '@slickgrid-universal/common';
-import { mapOperatorByFieldType, OperatorType, parseUtcDate, type FieldType } from '@slickgrid-universal/common';
+import { mapOperatorByFieldType, parseUtcDate, type FieldType } from '@slickgrid-universal/common';
 import { getHtmlStringOutput, stripTags, titleCase } from '@slickgrid-universal/utils';
 import type { OdataOption, OdataSortingOption } from '../interfaces/index.js';
 import { OdataQueryBuilderService } from './odataQueryBuilder.service.js';
@@ -370,7 +370,7 @@ export class GridOdataService implements BackendService {
         const comboEndsWith = matches?.[3] || '';
         let operator = columnFilter.operator || matches?.[4];
         let searchValue = matches?.[1] || matches?.[5] || '';
-        const lastValueChar = matches?.[6] || operator === '*z' || operator === OperatorType.endsWith ? '*' : '';
+        const lastValueChar = matches?.[6] || operator === '*z' || operator === 'EndsWith' ? '*' : '';
         const bypassOdataQuery = columnFilter.bypassBackendQuery || false;
 
         // no need to query if search value is empty
@@ -382,7 +382,7 @@ export class GridOdataService implements BackendService {
         // StartsWith + EndsWith combo
         if (comboStartsWith && comboEndsWith) {
           searchTerms = [comboStartsWith, comboEndsWith];
-          operator = OperatorType.startsWithEndsWith;
+          operator = 'StartsWithEndsWith';
         } else if (
           Array.isArray(searchTerms) &&
           searchTerms.length === 1 &&
@@ -390,17 +390,17 @@ export class GridOdataService implements BackendService {
           searchTerms[0].indexOf('..') >= 0
         ) {
           // range filter
-          if (operator !== OperatorType.rangeInclusive && operator !== OperatorType.rangeExclusive) {
-            operator = this._gridOptions.defaultFilterRangeOperator ?? OperatorType.rangeInclusive;
+          if (operator !== 'RangeInclusive' && operator !== 'RangeExclusive') {
+            operator = this._gridOptions.defaultFilterRangeOperator ?? 'RangeInclusive';
           }
 
           searchTerms = searchTerms[0].split('..', 2);
           if (searchTerms[0] === '') {
-            operator = operator === OperatorType.rangeInclusive ? '<=' : operator === OperatorType.rangeExclusive ? '<' : operator;
+            operator = operator === 'RangeInclusive' ? '<=' : operator === 'RangeExclusive' ? '<' : operator;
             searchTerms = searchTerms.slice(1);
             searchValue = searchTerms[0];
           } else if (searchTerms[1] === '') {
-            operator = operator === OperatorType.rangeInclusive ? '>=' : operator === OperatorType.rangeExclusive ? '>' : operator;
+            operator = operator === 'RangeInclusive' ? '>=' : operator === 'RangeExclusive' ? '>' : operator;
             searchTerms = searchTerms.slice(0, 1);
             searchValue = searchTerms[0];
           }
@@ -424,7 +424,7 @@ export class GridOdataService implements BackendService {
           searchTerms.length === 1 &&
           fieldType === 'date'
         ) {
-          operator = OperatorType.equal;
+          operator = 'EQ';
         }
 
         // if we still don't have an operator find the proper Operator to use according to field type
@@ -468,7 +468,7 @@ export class GridOdataService implements BackendService {
 
           if (filterQueryOverride !== undefined) {
             searchBy = filterQueryOverride;
-          } else if (operator === OperatorType.startsWithEndsWith && Array.isArray(searchTerms) && searchTerms.length === 2) {
+          } else if (operator === 'StartsWithEndsWith' && Array.isArray(searchTerms) && searchTerms.length === 2) {
             const tmpSearchTerms: string[] = [];
             const [sw, ew] = searchTerms;
 
@@ -503,23 +503,23 @@ export class GridOdataService implements BackendService {
             operator === 'a*' ||
             operator === '*z' ||
             lastValueChar === '*' ||
-            operator === OperatorType.startsWith ||
-            operator === OperatorType.endsWith
+            operator === 'StartsWith' ||
+            operator === 'EndsWith'
           ) {
             // first/last character is a '*' will be a startsWith or endsWith
             searchBy =
-              operator === '*' || operator === '*z' || operator === OperatorType.endsWith
+              operator === '*' || operator === '*z' || operator === 'EndsWith'
                 ? `endswith(${fieldName}, ${searchValue})`
                 : `startswith(${fieldName}, ${searchValue})`;
-          } else if (operator === OperatorType.rangeExclusive || operator === OperatorType.rangeInclusive) {
+          } else if (operator === 'RangeExclusive' || operator === 'RangeInclusive') {
             // example:: (Name >= 'Bob' and Name <= 'Jane')
             searchBy = this.filterBySearchTermRange(getHtmlStringOutput(fieldName), operator, searchTerms);
           } else if (
-            (operator === '' || operator === OperatorType.contains || operator === OperatorType.notContains) &&
+            (operator === '' || operator === 'Contains' || operator === 'Not_Contains') &&
             (fieldType === 'string' || fieldType === 'text' || fieldType === 'readonly')
           ) {
             searchBy = odataVersion >= 4 ? `contains(${fieldName}, ${searchValue})` : `substringof(${searchValue}, ${fieldName})`;
-            if (operator === OperatorType.notContains) {
+            if (operator === 'Not_Contains') {
               searchBy = `not ${searchBy}`;
             }
           } else {
@@ -695,17 +695,17 @@ export class GridOdataService implements BackendService {
   /**
    * Filter by a range of searchTerms (2 searchTerms OR 1 string separated by 2 dots "value1..value2")
    */
-  protected filterBySearchTermRange(fieldName: string, operator: OperatorType | OperatorString, searchTerms: SearchTerm[]): string {
+  protected filterBySearchTermRange(fieldName: string, operator: OperatorType, searchTerms: SearchTerm[]): string {
     let query = '';
     if (Array.isArray(searchTerms) && searchTerms.length === 2) {
-      if (operator === OperatorType.rangeInclusive) {
+      if (operator === 'RangeInclusive') {
         // example:: (Duration >= 5 and Duration <= 10)
         query = `(${fieldName} ge ${searchTerms[0]}`;
         if (searchTerms[1] !== '') {
           query += ` and ${fieldName} le ${searchTerms[1]}`;
         }
         query += ')';
-      } else if (operator === OperatorType.rangeExclusive) {
+      } else if (operator === 'RangeExclusive') {
         // example:: (Duration > 5 and Duration < 10)
         query = `(${fieldName} gt ${searchTerms[0]}`;
         if (searchTerms[1] !== '') {

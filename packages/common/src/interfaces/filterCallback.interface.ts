@@ -1,4 +1,4 @@
-import type { OperatorString, OperatorType, SearchTerm } from '../enums/index.js';
+import type { OperatorType, SearchTerm } from '../enums/index.js';
 import type { Column } from './index.js';
 
 export interface FilterCallbackArg {
@@ -9,7 +9,7 @@ export interface FilterCallbackArg {
   columnDef: Column;
 
   /** Operator to use with the Filter (Equals, NotEquals, Greater, ...) */
-  operator?: OperatorType | OperatorString;
+  operator?: OperatorType;
 
   /** Search Terms to preset or use as query */
   searchTerms?: SearchTerm[] | undefined | null;

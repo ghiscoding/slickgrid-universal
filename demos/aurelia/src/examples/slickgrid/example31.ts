@@ -5,7 +5,6 @@ import { RxJsResource } from '@slickgrid-universal/rxjs-observable';
 import {
   Editors,
   Filters,
-  OperatorType,
   type AureliaGridInstance,
   type Column,
   type GridOption,
@@ -112,8 +111,8 @@ export class Example31 {
       presets: {
         // you can also type operator as string, e.g.: operator: 'EQ'
         filters: [
-          // { columnId: 'name', searchTerms: ['w'], operator: OperatorType.startsWith },
-          { columnId: 'gender', searchTerms: ['male'], operator: OperatorType.equal },
+          // { columnId: 'name', searchTerms: ['w'], operator: 'StartsWith' },
+          { columnId: 'gender', searchTerms: ['male'], operator: '=' },
         ],
         sorters: [
           // direction can be written as 'asc' (uppercase or lowercase) and/or use the SortDirection type
@@ -384,7 +383,7 @@ export class Example31 {
   setFiltersDynamically() {
     // we can Set Filters Dynamically (or different filters) afterward through the FilterService
     this.aureliaGrid?.filterService.updateFilters([
-      // { columnId: 'gender', searchTerms: ['male'], operator: OperatorType.equal },
+      // { columnId: 'gender', searchTerms: ['male'], operator: '=' },
       { columnId: 'name', searchTerms: ['A'], operator: 'a*' },
     ]);
   }

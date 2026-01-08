@@ -1,13 +1,5 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import {
-  Editors,
-  Filters,
-  OperatorType,
-  type Column,
-  type GridOption,
-  type GridStateChange,
-  type Metrics,
-} from '@slickgrid-universal/common';
+import { Editors, Filters, type Column, type GridOption, type GridStateChange, type Metrics } from '@slickgrid-universal/common';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { GridOdataService, type OdataOption, type OdataServiceApi } from '@slickgrid-universal/odata';
 import { RxJsResource } from '@slickgrid-universal/rxjs-observable';
@@ -164,8 +156,8 @@ export default class Example15 {
       presets: {
         // you can also type operator as string, e.g.: operator: 'EQ'
         filters: [
-          // { columnId: 'name', searchTerms: ['w'], operator: OperatorType.startsWith },
-          { columnId: 'gender', searchTerms: ['male'], operator: OperatorType.equal },
+          // { columnId: 'name', searchTerms: ['w'], operator: 'StartsWith' },
+          { columnId: 'gender', searchTerms: ['male'], operator: '=' },
         ],
         sorters: [
           // direction can be written as 'asc' (uppercase or lowercase) and/or use the SortDirection type
@@ -454,7 +446,7 @@ export default class Example15 {
   setFiltersDynamically() {
     // we can Set Filters Dynamically (or different filters) afterward through the FilterService
     this.sgb?.filterService.updateFilters([
-      // { columnId: 'gender', searchTerms: ['male'], operator: OperatorType.equal },
+      // { columnId: 'gender', searchTerms: ['male'], operator: '=' },
       { columnId: 'name', searchTerms: ['A'], operator: 'a*' },
     ]);
   }

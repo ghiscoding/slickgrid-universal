@@ -4,7 +4,6 @@ import {
   Editors,
   Filters,
   Formatters,
-  OperatorType,
   SlickGlobalEditorLock,
   SlickgridReact,
   SortComparers,
@@ -197,7 +196,7 @@ const Example3: React.FC = () => {
         collectionFilterBy: {
           property: 'value',
           value: 0,
-          operator: OperatorType.notEqual,
+          operator: '!=',
         },
         model: Editors.singleSelect,
         // validator: (value, args) => {
@@ -418,7 +417,7 @@ const Example3: React.FC = () => {
           separatorBetweenTextLabels: ' ',
         },
         model: Filters.multipleSelect,
-        operator: OperatorType.inContains,
+        operator: 'IN_CONTAINS',
       },
     },
   ]);

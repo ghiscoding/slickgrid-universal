@@ -23,7 +23,7 @@ When used with a local JSON dataset, the Infinite Scroll is a feature that must 
 
 ```vue
 <script setup lang="ts">
-import { type Column, Filters, Formatters, GridState, OperatorType, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, GridState, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -98,7 +98,7 @@ We'll use the OData Backend Service to demo Infinite Scroll with a Backend Servi
 
 ```vue
 <script setup lang="ts">
-import { type Column, Filters, Formatters, GridState, OperatorType, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, GridState, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();

@@ -1,6 +1,4 @@
 import {
-  FieldType,
-  OperatorType,
   type BackendService,
   type Column,
   type ColumnFilter,
@@ -64,7 +62,7 @@ describe('GraphqlService', () => {
     };
     gridOptionMock = {
       enablePagination: true,
-      defaultFilterRangeOperator: OperatorType.rangeInclusive,
+      defaultFilterRangeOperator: 'RangeInclusive',
       backendServiceApi: {
         service: service as unknown as BackendService,
         options: { datasetName: '' },
@@ -875,7 +873,7 @@ describe('GraphqlService', () => {
       const mockColumnCompany = { id: 'company', field: 'company' } as Column;
       const mockColumnFilters = {
         gender: { columnId: 'gender', columnDef: mockColumnGender, searchTerms: ['female'], operator: 'EQ', type: 'string' },
-        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: OperatorType.notContains, type: 'string' },
+        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Not_Contains', type: 'string' },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1062,7 +1060,7 @@ describe('GraphqlService', () => {
         name: { columnId: 'name', columnDef: mockColumn, searchTerms: ['Ca*le'], operator: 'a*z', type: 'string' },
       } as ColumnFilters;
 
-      const sOptions = { ...serviceOptions, filterQueryOverride: () => ({ field: 'foo', operator: OperatorType.equal, value: 'bar' }) };
+      const sOptions = { ...serviceOptions, filterQueryOverride: () => ({ field: 'foo', operator: 'EQ', value: 'bar' }) };
       service.init(sOptions, paginationOptions, gridStub);
       service.updateFilters(mockColumnFilters, false);
       const query = service.buildQuery();
@@ -1215,7 +1213,7 @@ describe('GraphqlService', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:duration, operator:LE, value:"5"}]) { totalCount,nodes{ id,company,gender,name } }}`;
       const mockColumnDuration = { id: 'duration', field: 'duration', type: 'number' } as Column;
       const mockColumnFilters = {
-        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['..5'], operator: OperatorType.contains, type: 'number' },
+        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['..5'], operator: 'Contains', type: 'number' },
       } as ColumnFilters;
       gridOptionMock.defaultFilterRangeOperator = undefined;
 
@@ -1230,9 +1228,9 @@ describe('GraphqlService', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:duration, operator:LT, value:"5"}]) { totalCount,nodes{ id,company,gender,name } }}`;
       const mockColumnDuration = { id: 'duration', field: 'duration', type: 'number' } as Column;
       const mockColumnFilters = {
-        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['..5'], operator: OperatorType.contains, type: 'number' },
+        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['..5'], operator: 'Contains', type: 'number' },
       } as ColumnFilters;
-      gridOptionMock.defaultFilterRangeOperator = OperatorType.rangeExclusive;
+      gridOptionMock.defaultFilterRangeOperator = 'RangeExclusive';
 
       service.init(serviceOptions, paginationOptions, gridStub);
       service.updateFilters(mockColumnFilters, false);
@@ -1347,7 +1345,7 @@ describe('GraphqlService', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:gender, operator:NOT_IN, value:"female,male"}]) { totalCount,nodes{ id,company,gender,name } }}`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female', 'male'], operator: OperatorType.notIn, type: 'string' },
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female', 'male'], operator: 'NOT_IN', type: 'string' },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1359,7 +1357,7 @@ describe('GraphqlService', () => {
 
     it('should return a query with a CSV string and use the operator from the Column Definition Operator when provided', () => {
       const expectation = `query{users(first:10, offset:0, filterBy:[{field:gender, operator:NOT_IN, value:"female,male"}]) { totalCount,nodes{ id,company,gender,name } }}`;
-      const mockColumn = { id: 'gender', field: 'gender', filter: { operator: OperatorType.notIn } } as Column;
+      const mockColumn = { id: 'gender', field: 'gender', filter: { operator: 'NOT_IN' } } as Column;
       const mockColumnFilters = {
         gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female', 'male'], type: 'string' },
       } as ColumnFilters;

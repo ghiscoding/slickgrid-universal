@@ -2,7 +2,7 @@ import type { BasePubSubService, EventNamingStyle } from '@slickgrid-universal/e
 import type { MultipleSelectOption } from 'multiple-select-vanilla';
 import type { TrustedHTML } from 'trusted-types/lib';
 import type { DataViewOption, SlickEditorLock } from '../core/index.js';
-import type { ColumnReorderFunction, OperatorString, OperatorType } from '../enums/index.js';
+import type { ColumnReorderFunction, OperatorType } from '../enums/index.js';
 import type { TranslaterService } from '../services/translater.service.js';
 import type {
   AutocompleterOption,
@@ -209,8 +209,8 @@ export interface GridOption<C extends Column = Column> {
    * `compoundOperatorAltTexts: { text: { 'a*': { operatorAlt: 'a..', descAlt: 'my alternate description' } }}`
    */
   compoundOperatorAltTexts?: {
-    text?: { [operator in OperatorString]?: OperatorDetailAlt };
-    numeric?: { [operator in OperatorString]?: OperatorDetailAlt };
+    text?: { [operator in OperatorType]?: OperatorDetailAlt };
+    numeric?: { [operator in OperatorType]?: OperatorDetailAlt };
   };
 
   /** Optionally provide global options to the Composite Editor instead of having to redeclare them every time you want to use it */
@@ -328,7 +328,7 @@ export interface GridOption<C extends Column = Column> {
   defaultFilterPlaceholder?: string;
 
   /** Defaults to 'RangeInclusive', allows to change the default filter range operator */
-  defaultFilterRangeOperator?: OperatorString | OperatorType;
+  defaultFilterRangeOperator?: OperatorType;
 
   /** Default cell Formatter that will be used by the grid */
   defaultFormatter?: Formatter;

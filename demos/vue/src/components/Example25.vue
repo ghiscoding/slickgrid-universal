@@ -4,7 +4,6 @@ import { GraphqlService } from '@slickgrid-universal/graphql';
 import {
   Filters,
   Formatters,
-  OperatorType,
   SlickgridVue,
   type Column,
   type GridOption,
@@ -83,7 +82,7 @@ function defineGrid() {
       filter: {
         model: Filters.multipleSelect,
         collectionAsync: getLanguages(),
-        operator: OperatorType.inContains,
+        operator: 'IN_CONTAINS',
         collectionOptions: {
           addBlankEntry: true,
           // the data is not at the root of the array, so we must tell the Select Filter where to pull the data
@@ -111,7 +110,7 @@ function defineGrid() {
       filter: {
         model: Filters.multipleSelect,
         collectionAsync: getLanguages(),
-        operator: OperatorType.inContains,
+        operator: 'IN_CONTAINS',
         collectionOptions: {
           addBlankEntry: true,
           // the data is not at the root of the array, so we must tell the Select Filter where to pull the data

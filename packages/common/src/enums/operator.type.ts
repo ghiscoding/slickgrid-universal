@@ -1,4 +1,4 @@
-export type OperatorString =
+export type OperatorType =
   /** value is empty */
   | ''
   /** value is NOT equal to X */

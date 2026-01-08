@@ -1,4 +1,4 @@
-import type { OperatorType } from '../enums/operatorType.enum.js';
+import type { OperatorType } from '../enums/operator.type.js';
 
 export interface CollectionFilterBy {
   /** Object Property name when the collection is an array of objects */
@@ -7,15 +7,6 @@ export interface CollectionFilterBy {
   /** Value to filter from the collection */
   value: any;
 
-  /** Operator to use when filtering the value from the collection, we can only use  */
-  operator?:
-    | OperatorType.equal
-    | OperatorType.notEqual
-    | OperatorType.contains
-    | OperatorType.notContains
-    | 'EQ'
-    | 'NE'
-    | 'Contains'
-    | 'NOT_CONTAINS'
-    | 'Not_Contains';
+  /** Operator to use when filtering the value from the collection, limited subset of the available operators. */
+  operator?: Extract<OperatorType, '=' | '!=' | 'EQ' | 'NE' | 'Contains' | 'CONTAINS' | 'NOT_CONTAINS' | 'Not_Contains'>;
 }

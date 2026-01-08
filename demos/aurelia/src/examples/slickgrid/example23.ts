@@ -7,7 +7,6 @@ import { resolve } from 'aurelia';
 import {
   Filters,
   Formatters,
-  OperatorType,
   type AureliaGridInstance,
   type Column,
   type CurrentFilter,
@@ -109,7 +108,7 @@ export class Example23 {
         filter: {
           model: Filters.sliderRange,
           maxValue: 100, // or you can use the options as well
-          operator: OperatorType.rangeInclusive, // defaults to inclusive
+          operator: 'RangeInclusive', // defaults to inclusive
           options: {
             hideSliderNumbers: false, // you can hide/show the slider numbers on both side
             min: 0,
@@ -157,7 +156,7 @@ export class Example23 {
         filterable: true,
         filter: {
           model: Filters.input,
-          operator: OperatorType.rangeExclusive, // defaults to exclusive
+          operator: 'RangeExclusive', // defaults to exclusive
         },
       },
       {
@@ -304,8 +303,8 @@ export class Example23 {
     switch (newPredefinedFilter) {
       case 'currentYearTasks':
         filters = [
-          { columnId: 'finish', operator: OperatorType.rangeInclusive, searchTerms: [`${currentYear}-01-01`, `${currentYear}-12-31`] },
-          { columnId: 'completed', operator: OperatorType.equal, searchTerms: [true] },
+          { columnId: 'finish', operator: 'RangeInclusive', searchTerms: [`${currentYear}-01-01`, `${currentYear}-12-31`] },
+          { columnId: 'completed', operator: '=', searchTerms: [true] },
         ];
         break;
       case 'nextYearTasks':

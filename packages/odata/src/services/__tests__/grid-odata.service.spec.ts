@@ -1,6 +1,4 @@
 import {
-  FieldType,
-  OperatorType,
   type BackendService,
   type Column,
   type ColumnFilter,
@@ -57,7 +55,7 @@ describe('GridOdataService', () => {
 
     gridOptionMock = {
       enablePagination: true,
-      defaultFilterRangeOperator: OperatorType.rangeInclusive,
+      defaultFilterRangeOperator: 'RangeInclusive',
       backendServiceApi: {
         service: service as BackendService,
         preProcess: vi.fn(),
@@ -625,7 +623,7 @@ describe('GridOdataService', () => {
       const mockColumnCompany = { id: 'company', field: 'company' } as Column;
       const mockColumnFilters = {
         gender: { columnId: 'gender', columnDef: mockColumnGender, searchTerms: ['female'], operator: 'EQ', type: 'string' },
-        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: OperatorType.notContains, type: 'string' },
+        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: ['abc'], operator: 'Not_Contains', type: 'string' },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -641,7 +639,7 @@ describe('GridOdataService', () => {
       const mockColumnCompany = { id: 'company', field: 'company' } as Column;
       const mockColumnFilters = {
         gender: { columnId: 'gender', columnDef: mockColumnGender, searchTerms: ['female'], operator: 'EQ', type: 'string' },
-        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: [`abc's`], operator: OperatorType.notContains, type: 'string' },
+        company: { columnId: 'company', columnDef: mockColumnCompany, searchTerms: [`abc's`], operator: 'Not_Contains', type: 'string' },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -925,7 +923,7 @@ describe('GridOdataService', () => {
       const expectation = `$top=10&$filter=(Gender ne 'female' and Gender ne 'male')`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female', 'male'], operator: OperatorType.notIn, type: 'string' },
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female', 'male'], operator: 'NOT_IN', type: 'string' },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -939,7 +937,7 @@ describe('GridOdataService', () => {
       const expectation = `$top=10&$filter=(Gender ne 'female' and Gender ne 'ma%2Fle')`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
-        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female', 'ma/le'], operator: OperatorType.notIn, type: 'string' },
+        gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female', 'ma/le'], operator: 'NOT_IN', type: 'string' },
       } as ColumnFilters;
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -951,7 +949,7 @@ describe('GridOdataService', () => {
 
     it('should return a query with a CSV string and use the operator from the Column Definition Operator when provided', () => {
       const expectation = `$top=10&$filter=(Gender ne 'female' and Gender ne 'male')`;
-      const mockColumn = { id: 'gender', field: 'gender', filter: { operator: OperatorType.notIn } } as Column;
+      const mockColumn = { id: 'gender', field: 'gender', filter: { operator: 'NOT_IN' } } as Column;
       const mockColumnFilters = {
         gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female', 'male'], type: 'string' },
       } as ColumnFilters;
@@ -1266,7 +1264,7 @@ describe('GridOdataService', () => {
       const expectation = `$top=10&$filter=(Duration le 5)`;
       const mockColumnDuration = { id: 'duration', field: 'duration', type: 'number' } as Column;
       const mockColumnFilters = {
-        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['..5'], operator: OperatorType.contains, type: 'number' },
+        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['..5'], operator: 'Contains', type: 'number' },
       } as ColumnFilters;
       gridOptionMock.defaultFilterRangeOperator = undefined;
 
@@ -1281,9 +1279,9 @@ describe('GridOdataService', () => {
       const expectation = `$top=10&$filter=(Duration lt 5)`;
       const mockColumnDuration = { id: 'duration', field: 'duration', type: 'number' } as Column;
       const mockColumnFilters = {
-        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['..5'], operator: OperatorType.contains, type: 'number' },
+        duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['..5'], operator: 'Contains', type: 'number' },
       } as ColumnFilters;
-      gridOptionMock.defaultFilterRangeOperator = OperatorType.rangeExclusive;
+      gridOptionMock.defaultFilterRangeOperator = 'RangeExclusive';
 
       service.init(serviceOptions, paginationOptions, gridStub);
       service.updateFilters(mockColumnFilters, false);
