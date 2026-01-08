@@ -182,23 +182,24 @@ Below is a list of Enums being deprecated and you should think about migrating t
 | `FieldType`  | `FieldType.boolean` | `'boolean'`         |
 |             | `FieldType.number`   | `'number'`          |
 |             | `FieldType.dateIso`   | `'dateIso'`          |
-| - | - | - |
+|  | ... | ... |
 | `FileType` | `FileType.csv`      | `'csv'`             |
 |             | `FileType.xlsx`     | `'xlsx'`            |
-| - | - | - |
+|  | ... | ... |
 | `GridStateType`  | `GridStateType.columns` | `'columns'`  |
 |             | `GridStateType.filters`   | `'filters'`   |
 |             | `GridStateType.sorters`   | `'sorters'`   |
-| - | - | - |
-| `Operator`  | `Operator.greaterThan` | `'>'`  |    See [Operator](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/enums/operatorString.type.ts) list for all available operators |
-|             | `Operator.lessThanOrEqual`   | `'<='`   |
-|             | `Operator.contains`   | `'Contains'` or `'CONTAINS'`  | Operators are written as PascalCase |
-|             | `Operator.equal`   | `'EQ'`  |
-|             | `Operator.rangeExclusive`   | `'RangeExclusive'`  |
-| - | - | - |
+|  | ... | ... |
+| `OperatorType`  | `OperatorType.greaterThan` | `'>'`  or `'GT'` |    See [Operator](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/enums/operator.type.ts) list for all available operators |
+|             | `OperatorType.lessThanOrEqual`   | `'<='` or `'LE'`  |
+|             | `OperatorType.contains`   | `'Contains'` or `'CONTAINS'`  | Operators are written as PascalCase |
+|             | `OperatorType.equal`   | `'='` or `'EQ'` |
+|             | `OperatorType.rangeExclusive`   | `'RangeExclusive'`  |
+|  | ... | ... |
 | `SortDirection`  | `SortDirection.ASC` | `'ASC'` or `'asc'`  |
 |             | `SortDirection.DESC`   | `'DESC'` or `'desc'`  |
-| - | - | - |
+|  | ... | ... |
+
 
 ##### deprecating `editorOptions` and `filterOptions`, they are being renamed as a more generic `options` name
 
