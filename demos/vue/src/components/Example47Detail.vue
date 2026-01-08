@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { RowDetailViewProps } from 'slickgrid-vue';
-import { showToast } from './utilities';
+import { showToast } from './utilities.js';
 
 interface Item {
   id: number;

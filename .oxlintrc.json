@@ -34,6 +34,7 @@
         "eslint/no-unused-expressions": "off",
         "oxc/erasing-op": "off",
         "cypress/no-debug": "error",
+        "import/extensions": "off",
         "vitest/*": "off"
       }
     },
@@ -65,18 +66,7 @@
         "caughtErrors": "none"
       }
     ],
-    "import/extensions": [
-      "error",
-      "ignorePackages",
-      {
-        "js": "always",
-        "mjs": "always",
-        "jsx": "never",
-        "ts": "never",
-        "tsx": "never",
-        "json": "always"
-      }
-    ],
+    "import/extensions": ["error", "always", { "ignorePackages": true }],
     "import/no-self-import": "error",
     "import/no-useless-path-segments": ["error", { "noUselessIndex": true }],
     "no-async-promise-executor": "off",
