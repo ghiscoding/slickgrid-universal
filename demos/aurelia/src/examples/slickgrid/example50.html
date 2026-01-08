@@ -1,0 +1,37 @@
+<h2>
+  Example 50: Master/Detail Grids
+  <span class="float-end">
+    <a
+      style="font-size: 18px"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example50.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </span>
+  <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" click.trigger="toggleSubTitle()">
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
+</h2>
+
+<h5>Master Grid</h5>
+<div class="grid-container1">
+  <aurelia-slickgrid
+    grid-id="grid50-1"
+    columns.bind="columnDefinitions1"
+    options.bind="gridOptions1"
+    dataset.bind="dataset1"
+    on-aurelia-grid-created.trigger="aureliaGridReady1($event.detail)"
+    on-click.trigger="handleOnCellClicked($event.detail.args)"
+  >
+  </aurelia-slickgrid>
+</div>
+
+<hr />
+
+<h5>
+  <span>Detail Grid - Orders for:</span>
+  <span class="fst-italic text-secondary customer-detail">${ selectedName }</span>
+</h5>
+<aurelia-slickgrid grid-id="grid50-2" columns.bind="columnDefinitions2" options.bind="gridOptions2" dataset.bind="dataset2">
+</aurelia-slickgrid>

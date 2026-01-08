@@ -49,6 +49,7 @@ import Example46 from './Example46.js';
 import Example47 from './Example47.js';
 import Example48 from './Example48.js';
 import Example49 from './Example49.js';
+import Example50 from './Example50.js';
 
 const routes: Array<{ path: string; route: string; component: any; title: string }> = [
   { path: 'example1', route: '/example1', component: <Example1 />, title: '1- Basic Grid / 2 Grids' },
@@ -99,6 +100,7 @@ const routes: Array<{ path: string; route: string; component: any; title: string
   { path: 'example47', route: '/example47', component: <Example47 />, title: '47- Row Detail + Grouping' },
   { path: 'example48', route: '/example48', component: <Example48 />, title: '48- Hybrid Selection Model' },
   { path: 'example49', route: '/example49', component: <Example49 />, title: '49- Spreadsheet Drag-Fill' },
+  { path: 'example50', route: '/example50', component: <Example50 />, title: '50- Master/Detail Grids' },
 ];
 
 export default function Routes() {
