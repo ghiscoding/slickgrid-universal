@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Formatters, SlickgridVue, type Column, type GridOption, type PaginationMetadata, type SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, onUnmounted, ref, type Ref } from 'vue';
-import { zeroPadding } from './utilities';
+import { zeroPadding } from './utilities.js';
 
 const NB_ITEMS = 995;
 
