@@ -205,7 +205,7 @@ export class SelectEditor implements Editor {
   }
 
   get editorOptions(): MultipleSelectOption {
-    return { ...this.gridOptions.defaultEditorOptions?.select, ...this.columnEditor?.editorOptions, ...this.columnEditor?.options };
+    return { ...this.gridOptions.defaultEditorOptions?.select, ...this.columnEditor?.options };
   }
 
   /** Getter for the Custom Structure if exist */
@@ -518,8 +518,7 @@ export class SelectEditor implements Editor {
   ): void {
     if (this.columnEditor) {
       this.columnEditor.options ??= {};
-      this.columnEditor.editorOptions ??= {};
-      this.columnEditor.options[optionName] = this.columnEditor.editorOptions[optionName] = newValue;
+      this.columnEditor.options[optionName] = newValue;
       this.editorElmOptions = { ...this.editorElmOptions, [optionName]: newValue };
       this._msInstance?.refreshOptions(this.editorElmOptions);
     }

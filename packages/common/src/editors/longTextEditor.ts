@@ -83,7 +83,7 @@ export class LongTextEditor implements Editor {
   }
 
   get editorOptions(): LongTextEditorOption {
-    return { ...this.gridOptions.defaultEditorOptions?.longText, ...this.columnEditor?.editorOptions, ...this.columnEditor?.options };
+    return { ...this.gridOptions.defaultEditorOptions?.longText, ...this.columnEditor?.options };
   }
 
   get hasAutoCommitEdit(): boolean {

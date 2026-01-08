@@ -64,7 +64,7 @@ export class DateFilter implements Filter {
   }
 
   get filterOptions(): Options {
-    return { ...this.gridOptions.defaultFilterOptions?.date, ...this.columnFilter?.filterOptions, ...this.columnFilter?.options };
+    return { ...this.gridOptions.defaultFilterOptions?.date, ...this.columnFilter?.options };
   }
 
   /** Getter for the Filter Operator */

@@ -87,15 +87,6 @@ describe('CompoundSliderFilter', () => {
     expect(filterElm.value).toBe('1');
   });
 
-  it('should initialize the filter with slider value define in user filterOptions', () => {
-    mockColumn.filter!.filterOptions = { sliderStartValue: 1 } as SliderOption;
-    filter.init(filterArguments);
-
-    const filterElm = divContainer.querySelector('.search-filter.slider-container.filter-duration input.compound-input') as HTMLInputElement;
-    expect(filterElm.defaultValue).toBe('1');
-    expect(filterElm.value).toBe('1');
-  });
-
   it('should initialize the filter with slider value define in global default user filter options', () => {
     gridOptionMock.defaultFilterOptions = {
       slider: { sliderStartValue: 2 },
@@ -301,7 +292,7 @@ describe('CompoundSliderFilter', () => {
 
   it('should create the input filter with min/max slider values being set by filter "sliderStartValue" and "sliderEndValue" through the filter params', () => {
     mockColumn.filter = {
-      filterOptions: {
+      options: {
         sliderStartValue: 4,
         sliderEndValue: 69,
       },
@@ -353,7 +344,7 @@ describe('CompoundSliderFilter', () => {
     const callbackSpy = vi.spyOn(filterArguments, 'callback');
     const filterArgs = { ...filterArguments, operator: '<=', searchTerms: [3], grid: gridStub } as FilterArguments;
     mockColumn.filter = {
-      filterOptions: {
+      options: {
         sliderStartValue: 4,
         sliderEndValue: 69,
       },
@@ -367,7 +358,7 @@ describe('CompoundSliderFilter', () => {
   });
 
   it('should enableSliderTrackColoring and trigger a change event and expect slider track to have background color', () => {
-    mockColumn.filter = { filterOptions: { enableSliderTrackColoring: true } };
+    mockColumn.filter = { options: { enableSliderTrackColoring: true } };
     filter.init(filterArguments);
     filter.setValues(['80']);
     const filterElms = divContainer.querySelectorAll<HTMLInputElement>('.search-filter.slider-container.filter-duration input.compound-input');

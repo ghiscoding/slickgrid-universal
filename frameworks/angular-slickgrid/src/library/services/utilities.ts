@@ -3,7 +3,7 @@
  * It will return an empty array if it all went well
  * @param subscriptions
  */
-export function unsubscribeAllObservables(subscriptions: Array<{ unsubscribe: () => void }>): any[] {
+export function unsubscribeAllObservables(subscriptions: Array<{ unsubscribe: () => void }>): void {
   if (Array.isArray(subscriptions)) {
     let subscription = subscriptions.pop();
     while (subscription) {
@@ -13,7 +13,4 @@ export function unsubscribeAllObservables(subscriptions: Array<{ unsubscribe: ()
       subscription = subscriptions.pop();
     }
   }
-
-  // TODO: deprecated, remove the return type in next major version
-  return subscriptions;
 }

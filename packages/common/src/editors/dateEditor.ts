@@ -83,7 +83,7 @@ export class DateEditor implements Editor {
 
   /** Get options passed to the editor by the user */
   get editorOptions(): VanillaCalendarOption {
-    return { ...this.gridOptions.defaultEditorOptions?.date, ...this.columnEditor?.editorOptions, ...this.columnEditor?.options };
+    return { ...this.gridOptions.defaultEditorOptions?.date, ...this.columnEditor?.options };
   }
 
   get hasAutoCommitEdit(): boolean {
@@ -275,8 +275,7 @@ export class DateEditor implements Editor {
    */
   changeEditorOption<T extends keyof Options, K extends Options[T]>(optionName: T, newValue: K): void {
     this.columnEditor.options ??= {};
-    this.columnEditor.editorOptions ??= {};
-    this.columnEditor.options[optionName] = this.columnEditor.editorOptions[optionName] = newValue;
+    this.columnEditor.options[optionName] = newValue;
     this._pickerMergedOptions = extend(true, {}, this._pickerMergedOptions, { [optionName]: newValue });
     this.calendarInstance?.set(this._pickerMergedOptions, { dates: true, locale: true, month: true, time: true, year: true });
   }

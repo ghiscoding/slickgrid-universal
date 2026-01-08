@@ -120,9 +120,7 @@ What we can see from the example, is that it will use all Formatters (when exist
 
 ### Custom Column Width
 
-**NOTE** now deprecated, please use [Custom Cell Styling](#custom-cell-styling) instead
-
-You can define a custom Excel column width (the width Excel's own width which is not in pixel). You can define a custom width per column (in your column definitions) and/or for the entire grid (in your grid options).
+See [Custom Cell Styling](#custom-cell-styling) to define cell width.
 
 #### Per Column
 You could set a custom width per column

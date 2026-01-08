@@ -34,6 +34,8 @@ _Changes that should be transparent to most users, I'm just listing it in case o
 
 ### Removed `@deprecated` code
 
+1. `applyHtmlCode()` was removed and replaced with `applyHtmlToElement()`
+2. Grid Option `throwWhenFrozenNotAllViewable` was removed and replaced with `invalidColumnFreezeWidthCallback`
 
 ### Interfaces / Enums changes
 

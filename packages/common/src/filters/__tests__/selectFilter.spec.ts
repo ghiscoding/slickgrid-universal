@@ -134,17 +134,6 @@ describe('SelectFilter', () => {
     expect(filter.msInstance?.getOptions().minHeight).toBe(255);
   });
 
-  it('should initialize the filter with minHeight define in user filterOptions', () => {
-    mockColumn.filter!.filterOptions = { minHeight: 255 } as MultipleSelectOption;
-    mockColumn.filter!.collection = [
-      { value: 'male', label: 'male' },
-      { value: 'female', label: 'female' },
-    ];
-    filter.init(filterArguments);
-
-    expect(filter.msInstance?.getOptions().minHeight).toBe(255);
-  });
-
   it('should initialize the filter with minHeight define in global default user filter options', () => {
     gridOptionMock.defaultFilterOptions = {
       select: { minHeight: 243 },
@@ -255,7 +244,7 @@ describe('SelectFilter', () => {
     const spyClear = vi.spyOn(filter, 'clear');
 
     mockColumn.filter!.collection = ['male', 'female'];
-    mockColumn.filter!.filterOptions = { showClear: true };
+    mockColumn.filter!.options = { showClear: true };
     filter.init(filterArguments);
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
     filterBtnElm.click();
@@ -778,7 +767,7 @@ describe('SelectFilter', () => {
           { value: 'male', labelKey: 'MALE' },
           { value: 'female', labelKey: 'FEMALE' },
         ],
-        filterOptions: { minimumCountSelected: 1 },
+        options: { minimumCountSelected: 1 },
       };
 
       filterArguments.searchTerms = ['male', 'female'];
@@ -837,7 +826,7 @@ describe('SelectFilter', () => {
           { value: 'male', label: 'Male' },
           { value: 'female', label: 'Female' },
         ],
-        filterOptions: { minimumCountSelected: 1 },
+        options: { minimumCountSelected: 1 },
       };
 
       filterArguments.searchTerms = ['male', 'female'];

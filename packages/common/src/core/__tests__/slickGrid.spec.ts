@@ -835,31 +835,6 @@ describe('SlickGrid core file', () => {
       expect(grid.getPreHeaderPanelRight().outerHTML).toBe('<div></div>');
     });
 
-    it('should throw when frozen column is wider than actual grid width and throwWhenFrozenNotAllViewable is enabled', () => {
-      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
-      const gridOptions = {
-        ...defaultOptions,
-        enableColumnReorder: false,
-        enableCellNavigation: true,
-        preHeaderPanelHeight: 30,
-        showPreHeaderPanel: true,
-        frozenColumn: 0,
-        createPreHeaderPanel: true,
-        throwWhenFrozenNotAllViewable: true,
-      } as GridOption;
-      const data = [
-        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
-        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
-      ];
-      Object.defineProperty(container, 'clientWidth', { writable: true, value: 40 });
-      vi.spyOn(container, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0, width: 40 } as DOMRect);
-
-      skipGridDestroy = true;
-      expect(() => new SlickGrid<any, Column>(container, data, columns, gridOptions)).toThrow(
-        '[SlickGrid] You are trying to freeze/pin more columns than the grid can support.'
-      );
-    });
-
     it('should show an alert when frozen column is wider than actual grid width and invalidColumnFreezeWidthCallback is defined', () => {
       const alertSpy = vi.spyOn(global, 'alert').mockReturnValue();
       const columns = [
@@ -1689,107 +1664,6 @@ describe('SlickGrid core file', () => {
       expect(headerElm[0].style.display).not.toBe('none');
       expect(headerElm[1].style.display).not.toBe('none');
       expect(grid.getHeaderRowColumn(2)).toBeUndefined();
-    });
-  });
-
-  // @deprecated
-  describe('applyHtmlCode() method', () => {
-    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
-    const dv = new SlickDataView({});
-
-    it('should be able to apply HTMLElement to a HTMLElement target and empty its content by default', () => {
-      const divElm = document.createElement('div');
-      divElm.textContent = 'text to be erased';
-      const spanElm = document.createElement('span');
-      spanElm.textContent = 'some text';
-
-      grid = new SlickGrid<any, Column>('#myGrid', dv, columns, defaultOptions);
-      grid.applyHtmlCode(divElm, spanElm);
-
-      expect(divElm.outerHTML).toBe('<div><span>some text</span></div>');
-    });
-
-    it('should be able to apply HTMLElement to a HTMLElement target but not empty its content when defined', () => {
-      const divElm = document.createElement('div');
-      divElm.textContent = 'text not erased';
-      const spanElm = document.createElement('span');
-      spanElm.textContent = 'some text';
-
-      grid = new SlickGrid<any, Column>('#myGrid', dv, columns, defaultOptions);
-      grid.applyHtmlCode(divElm, spanElm, { emptyTarget: false });
-
-      expect(divElm.outerHTML).toBe('<div>text not erased<span>some text</span></div>');
-    });
-
-    it('should be able to skip empty text content assignment to HTMLElement', () => {
-      const divElm = document.createElement('div');
-      divElm.textContent = 'text not erased';
-      const spanElm = document.createElement('span');
-      spanElm.textContent = '';
-
-      grid = new SlickGrid<any, Column>('#myGrid', dv, columns, defaultOptions);
-      grid.applyHtmlCode(divElm, spanElm, { emptyTarget: false, skipEmptyReassignment: true });
-
-      expect(divElm.outerHTML).toBe('<div>text not erased<span></span></div>');
-    });
-
-    it('should be able to apply DocumentFragment to a HTMLElement target', () => {
-      const fragment = document.createDocumentFragment();
-      const divElm = document.createElement('div');
-      const spanElm = document.createElement('span');
-      spanElm.textContent = 'some text';
-      divElm.appendChild(spanElm);
-      fragment.appendChild(spanElm);
-
-      grid = new SlickGrid<any, Column>('#myGrid', dv, columns, defaultOptions);
-      grid.applyHtmlCode(divElm, fragment);
-
-      expect(divElm.outerHTML).toBe('<div><span>some text</span></div>');
-    });
-
-    it('should be able to apply a number and not expect it to be sanitized but parsed as string', () => {
-      const divElm = document.createElement('div');
-
-      grid = new SlickGrid<any, Column>('#myGrid', dv, columns, defaultOptions);
-      grid.applyHtmlCode(divElm, 123);
-
-      expect(divElm.outerHTML).toBe('<div>123</div>');
-    });
-
-    it('should be able to apply a boolean and not expect it to be sanitized but parsed as string', () => {
-      const divElm = document.createElement('div');
-
-      grid = new SlickGrid<any, Column>('#myGrid', dv, columns, defaultOptions);
-      grid.applyHtmlCode(divElm, false);
-
-      expect(divElm.outerHTML).toBe('<div>false</div>');
-    });
-
-    it('should be able to supply a custom sanitizer to use before applying html code', () => {
-      const sanitizer = (dirtyHtml: string) =>
-        typeof dirtyHtml === 'string'
-          ? dirtyHtml.replace(
-              /(\b)(on[a-z]+)(\s*)=|javascript:([^>]*)[^>]*|(<\s*)(\/*)script([<>]*).*(<\s*)(\/*)script(>*)|(&lt;)(\/*)(script|script defer)(.*)(&gt;|&gt;">)/gi,
-              ''
-            )
-          : dirtyHtml;
-      const divElm = document.createElement('div');
-      const htmlStr = '<span><script>alert("hello")</script>only text kept</span>';
-
-      grid = new SlickGrid<any, Column>('#myGrid', dv, columns, { ...defaultOptions, sanitizer });
-      grid.applyHtmlCode(divElm, htmlStr);
-
-      expect(divElm.outerHTML).toBe('<div><span>only text kept</span></div>');
-    });
-
-    it('should expect HTML string to be kept as a string and not be converted (but html escaped) when "enableHtmlRendering" grid option is disabled', () => {
-      const divElm = document.createElement('div');
-      const htmlStr = '<span aria-label="some aria label">only text kept</span>';
-
-      grid = new SlickGrid<any, Column>('#myGrid', dv, columns, { ...defaultOptions, enableHtmlRendering: false });
-      grid.applyHtmlCode(divElm, htmlStr);
-
-      expect(divElm.outerHTML).toBe('<div>&lt;span aria-label="some aria label"&gt;only text kept&lt;/span&gt;</div>');
     });
   });
 
@@ -6167,7 +6041,6 @@ describe('SlickGrid core file', () => {
     });
   });
 
-  // @deprecated
   describe('Sanitizer', () => {
     const columns = [
       { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },

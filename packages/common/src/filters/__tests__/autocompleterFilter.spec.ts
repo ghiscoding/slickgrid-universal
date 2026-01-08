@@ -126,19 +126,6 @@ describe('AutocompleterFilter', () => {
     expect(filterCount).toBe(1);
   });
 
-  it('should initialize the filter even when user define his own filterOptions', () => {
-    mockColumn.filter.collection = [
-      { value: 'male', label: 'male' },
-      { value: 'female', label: 'female' },
-    ];
-    mockColumn.filter.filterOptions = { minLength: 3 } as AutocompleterOption;
-    filter.init(filterArguments);
-    const filterCount = divContainer.querySelectorAll('input.search-filter.filter-gender').length;
-
-    expect(spyGetHeaderRow).toHaveBeenCalled();
-    expect(filterCount).toBe(1);
-  });
-
   it('should have a placeholder when defined in its column definition', () => {
     const testValue = 'test placeholder';
     mockColumn.filter.placeholder = testValue;
@@ -180,7 +167,7 @@ describe('AutocompleterFilter', () => {
       { value: 'male', label: 'male' },
       { value: 'female', label: 'female' },
     ];
-    mockColumn.filter.filterOptions = { triggerOnEveryKeyStroke: true };
+    mockColumn.filter.options = { triggerOnEveryKeyStroke: true };
     gridOptionMock.enableFilterTrimWhiteSpace = true;
     const spyCallback = vi.spyOn(filterArguments, 'callback');
 
@@ -241,7 +228,7 @@ describe('AutocompleterFilter', () => {
       { value: 'male', label: 'male' },
       { value: 'female', label: 'female' },
     ];
-    mockColumn.filter.filterOptions = { triggerOnEveryKeyStroke: true };
+    mockColumn.filter.options = { triggerOnEveryKeyStroke: true };
     const spyCallback = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
@@ -343,7 +330,7 @@ describe('AutocompleterFilter', () => {
     const spyCallback = vi.spyOn(filterArguments, 'callback');
     const mockCollection = ['male', 'female'];
     mockColumn.filter.collectionAsync = Promise.resolve(mockCollection);
-    mockColumn.filter.filterOptions = { showOnFocus: true, triggerOnEveryKeyStroke: true } as AutocompleterOption;
+    mockColumn.filter.options = { showOnFocus: true, triggerOnEveryKeyStroke: true } as AutocompleterOption;
 
     filterArguments.searchTerms = ['female'];
     await filter.init(filterArguments);
@@ -397,7 +384,7 @@ describe('AutocompleterFilter', () => {
     ];
 
     mockColumn.filter = {
-      filterOptions: {
+      options: {
         showOnFocus: true,
         fetch: (_: string, updateCallback: (data: any) => void) => updateCallback(mockDataResponse),
       },
@@ -468,7 +455,7 @@ describe('AutocompleterFilter', () => {
     const spyCallback = vi.spyOn(filterArguments, 'callback');
     const mockCollection = ['male', 'female'];
     mockColumn.filter.collectionAsync = basicFetchStub('http://locahost/api', { method: 'GET' }, mockCollection);
-    mockColumn.filter.filterOptions = { showOnFocus: true, triggerOnEveryKeyStroke: true } as AutocompleterOption;
+    mockColumn.filter.options = { showOnFocus: true, triggerOnEveryKeyStroke: true } as AutocompleterOption;
 
     filterArguments.searchTerms = ['female'];
     await filter.init(filterArguments);
@@ -671,7 +658,7 @@ describe('AutocompleterFilter', () => {
       const spy = vi.spyOn(filter, 'handleSelect');
 
       mockColumn.filter.collection = [];
-      mockColumn.filter.filterOptions = { minLength: 3 } as AutocompleterOption;
+      mockColumn.filter.options = { minLength: 3 } as AutocompleterOption;
       filter.init(filterArguments);
       filter.autocompleterOptions.onSelect({ item: 'fem' });
 
@@ -756,11 +743,11 @@ describe('AutocompleterFilter', () => {
   });
 
   describe('renderItem callback method', () => {
-    it('should provide "renderItem" in the "filterOptions" and expect the autocomplete "render" to be overriden', () => {
+    it('should provide "renderItem" in the "options" and expect the autocomplete "render" to be overriden', () => {
       const mockTemplateString = `<div>Hello World</div>`;
       const mockTemplateCallback = () => mockTemplateString;
       mockColumn.filter.collection = ['male', 'female'];
-      mockColumn.filter.filterOptions = {
+      mockColumn.filter.options = {
         showOnFocus: true,
         renderItem: {
           layout: 'fourCorners',
@@ -800,7 +787,7 @@ describe('AutocompleterFilter', () => {
       new Promise((done: any) => {
         const promise = Promise.resolve({ hello: 'world' });
         mockColumn.filter.collectionAsync = promise;
-        mockColumn.filter.filterOptions = { showOnFocus: true } as AutocompleterOption;
+        mockColumn.filter.options = { showOnFocus: true } as AutocompleterOption;
         filter.init(filterArguments).catch((e) => {
           expect(e.toString()).toContain(
             `Something went wrong while trying to pull the collection from the "collectionAsync" call in the Filter, the collection is not a valid array.`
@@ -855,7 +842,7 @@ describe('AutocompleterFilter', () => {
     it('should create the filter with a default search term when using "collectionAsync" as an Observable and triggerOnEveryKeyStroke is enabled', async () => {
       const spyCallback = vi.spyOn(filterArguments, 'callback');
       mockColumn.filter.collectionAsync = of(['male', 'female']);
-      mockColumn.filter.filterOptions = { showOnFocus: true, triggerOnEveryKeyStroke: true } as AutocompleterOption;
+      mockColumn.filter.options = { showOnFocus: true, triggerOnEveryKeyStroke: true } as AutocompleterOption;
 
       filterArguments.searchTerms = ['female'];
       await filter.init(filterArguments);
@@ -878,7 +865,7 @@ describe('AutocompleterFilter', () => {
     it('should create the autocomplete filter with a "collectionAsync" as an Observable and be able to call next on it and triggerOnEveryKeyStroke is enabled', async () => {
       const mockCollection = ['male', 'female'];
       mockColumn.filter.collectionAsync = of(mockCollection);
-      mockColumn.filter.filterOptions = { showOnFocus: true } as AutocompleterOption;
+      mockColumn.filter.options = { showOnFocus: true } as AutocompleterOption;
 
       filterArguments.searchTerms = ['female'];
       await filter.init(filterArguments);

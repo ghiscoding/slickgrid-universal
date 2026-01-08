@@ -55,6 +55,7 @@ const Example: React.FC = () => {
 
 ### Removed `@deprecated` code
 
+1. `applyHtmlCode()` was removed and replaced with `applyHtmlToElement()`
 
 ### Interfaces / Enums changes
 
