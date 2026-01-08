@@ -1,7 +1,7 @@
 {
   $schema: 'https://docs.renovatebot.com/renovate-schema.json',
   extends: ['config:base', 'group:allNonMajor'],
-  labels: ['📦 dependencies', '🤖bot'],
+  labels: ['📦 dependencies', '🤖 bot'],
   dependencyDashboard: true,
   lockFileMaintenance: {
     enabled: false,
