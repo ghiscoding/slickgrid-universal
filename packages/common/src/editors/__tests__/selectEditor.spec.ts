@@ -251,13 +251,6 @@ describe('SelectEditor', () => {
       expect(editorCount).toBe(1);
     });
 
-    it('should initialize the editor with minHeight define in user editor options', () => {
-      mockColumn.editor!.editorOptions = { minHeight: 255 } as MultipleSelectOption;
-      editor = new SelectEditor(editorArguments, true);
-
-      expect(editor.msInstance?.getOptions().minHeight).toBe(255);
-    });
-
     it('should initialize the editor with minHeight define in global default user editor options', () => {
       gridOptionMock.defaultEditorOptions = {
         select: { minHeight: 243 },

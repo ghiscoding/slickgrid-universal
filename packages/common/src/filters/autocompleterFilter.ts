@@ -113,7 +113,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
   }
 
   get filterOptions(): AutocompleterOption {
-    return { ...this.gridOptions.defaultFilterOptions?.autocompleter, ...this.columnFilter?.filterOptions, ...this.columnFilter?.options };
+    return { ...this.gridOptions.defaultFilterOptions?.autocompleter, ...this.columnFilter?.options };
   }
 
   /** Getter for the Custom Structure if exist */

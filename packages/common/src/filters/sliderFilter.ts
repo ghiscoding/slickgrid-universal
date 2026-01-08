@@ -83,7 +83,7 @@ export class SliderFilter implements Filter {
   }
 
   get filterOptions(): SliderOption | SliderRangeOption {
-    return { ...this.gridOptions.defaultFilterOptions?.slider, ...this.columnFilter?.filterOptions, ...this.columnFilter?.options };
+    return { ...this.gridOptions.defaultFilterOptions?.slider, ...this.columnFilter?.options };
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */

@@ -87,15 +87,6 @@ describe('SliderRangeFilter', () => {
     expect(filterElm.value).toBe('1');
   });
 
-  it('should initialize the filter with slider value define in user filterOptions', () => {
-    mockColumn.filter!.filterOptions = { sliderStartValue: 1 } as SliderRangeOption;
-    filter.init(filterArguments);
-
-    const filterElm = divContainer.querySelector('.search-filter.slider-container.filter-duration input') as HTMLInputElement;
-    expect(filterElm.defaultValue).toBe('1');
-    expect(filterElm.value).toBe('1');
-  });
-
   it('should initialize the filter with slider value define in global default user filter options', () => {
     gridOptionMock.defaultFilterOptions = {
       slider: { sliderStartValue: 2 },
@@ -272,7 +263,7 @@ describe('SliderRangeFilter', () => {
     const maxVal = 58;
 
     mockColumn.filter = {
-      filterOptions: { stopGapBetweenSliderHandles: 5 },
+      options: { stopGapBetweenSliderHandles: 5 },
     };
     filter.init(filterArguments);
     filter.setValues([minVal, maxVal]);
@@ -349,27 +340,9 @@ describe('SliderRangeFilter', () => {
     expect(filter.currentValues).toEqual([4, 69]);
   });
 
-  it('should create the input filter with min/max slider values being set by filter "sliderStartValue" and "sliderEndValue" through the filterOptions', () => {
-    mockColumn.filter = {
-      filterOptions: {
-        sliderStartValue: 4,
-        sliderEndValue: 69,
-      },
-    };
-
-    filter.init(filterArguments);
-
-    const filterLowestElm = divContainer.querySelector('.lowest-range-duration') as HTMLInputElement;
-    const filterHighestElm = divContainer.querySelector('.highest-range-duration') as HTMLInputElement;
-
-    expect(filterLowestElm.textContent).toBe('4');
-    expect(filterHighestElm.textContent).toBe('69');
-    expect(filter.currentValues).toEqual([4, 69]);
-  });
-
-  it('should create the input filter with default search terms range but without showing side numbers when "hideSliderNumbers" is set in filterOptions', () => {
+  it('should create the input filter with default search terms range but without showing side numbers when "hideSliderNumbers" is set in options', () => {
     filterArguments.searchTerms = [3, 80];
-    mockColumn.filter!.filterOptions = { hideSliderNumbers: true };
+    mockColumn.filter!.options = { hideSliderNumbers: true };
 
     filter.init(filterArguments);
 
@@ -403,10 +376,10 @@ describe('SliderRangeFilter', () => {
     expect(callbackSpy).toHaveBeenLastCalledWith(undefined, { columnDef: mockColumn, clearFilterTriggered: true, searchTerms: [], shouldTriggerQuery: false });
   });
 
-  it('should trigger a callback with the clear filter set when calling the "clear" method and expect min/max slider values being with values of "sliderStartValue" and "sliderEndValue" when defined through the filterOptions', () => {
+  it('should trigger a callback with the clear filter set when calling the "clear" method and expect min/max slider values being with values of "sliderStartValue" and "sliderEndValue" when defined through the options', () => {
     const callbackSpy = vi.spyOn(filterArguments, 'callback');
     mockColumn.filter = {
-      filterOptions: {
+      options: {
         sliderStartValue: 4,
         sliderEndValue: 69,
       },
@@ -420,7 +393,7 @@ describe('SliderRangeFilter', () => {
   });
 
   it('should enableSliderTrackColoring and trigger a change event and expect slider track to have background color', () => {
-    mockColumn.filter = { filterOptions: { enableSliderTrackColoring: true } };
+    mockColumn.filter = { options: { enableSliderTrackColoring: true } };
     filter.init(filterArguments);
     filter.setValues(['2..80']);
     const filterElms = divContainer.querySelectorAll<HTMLInputElement>('.search-filter.slider-container.filter-duration input');
@@ -469,7 +442,7 @@ describe('SliderRangeFilter', () => {
       const rightValue = 69;
       const callbackSpy = vi.spyOn(filterArguments, 'callback');
       mockColumn.filter = {
-        filterOptions: {
+        options: {
           sliderStartValue: leftValue,
           sliderEndValue: 69,
           useArrowToSlide: undefined,
@@ -501,7 +474,7 @@ describe('SliderRangeFilter', () => {
       const leftValue = 56;
       const rightValue = 69;
       mockColumn.filter = {
-        filterOptions: {
+        options: {
           sliderStartValue: leftValue,
           sliderEndValue: rightValue,
           useArrowToSlide: true,
@@ -533,7 +506,7 @@ describe('SliderRangeFilter', () => {
       const leftValue = 56;
       const rightValue = 69;
       mockColumn.filter = {
-        filterOptions: {
+        options: {
           sliderStartValue: leftValue,
           sliderEndValue: rightValue,
           useArrowToSlide: false,

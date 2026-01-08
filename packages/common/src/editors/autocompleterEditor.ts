@@ -139,7 +139,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
   }
 
   get editorOptions(): AutocompleterOption {
-    return { ...this.gridOptions.defaultEditorOptions?.autocompleter, ...this.columnEditor?.editorOptions, ...this.columnEditor?.options };
+    return { ...this.gridOptions.defaultEditorOptions?.autocompleter, ...this.columnEditor?.options };
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */

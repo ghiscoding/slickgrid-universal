@@ -50,13 +50,6 @@ export function showToast(msg: string, type: 'danger' | 'info' | 'warning', time
     }, time);
     return;
   }
-
-  // @deprecated, remove fallback in next major release
-  // otherwise, fallback (when popover is not supported): keep the div visible as regular HTML and remove after timeout.
-  div.style.left = '50%';
-  div.style.top = '20px';
-  div.style.transform = 'translateX(-50%)';
-  setTimeout(() => div.remove(), time);
 }
 
 export function zeroPadding(input: string | number) {

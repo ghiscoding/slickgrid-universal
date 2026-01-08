@@ -66,12 +66,6 @@ export interface ColumnEditor {
   disabled?: boolean;
 
   /**
-   * @deprecated @use `options` instead.
-   * Options that could be provided to the Editor, example: `{ container: 'body', maxHeight: 250}`
-   */
-  editorOptions?: any;
-
-  /**
    * Options, typically 3rd party lib options, that could be provided to the Editor, example: `{ container: 'body', maxHeight: 250}`
    *
    * Please note that if you use options that have model interfaces that exists,

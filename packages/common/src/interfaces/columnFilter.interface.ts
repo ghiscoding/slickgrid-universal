@@ -94,12 +94,6 @@ export interface ColumnFilter {
   enableTranslateLabel?: boolean;
 
   /**
-   * @deprecated @use `options` instead.
-   * Options that could be provided to the Filter, example: `{ container: 'body', maxHeight: 250 }`
-   */
-  filterOptions?: any;
-
-  /**
    * Options, typically 3rd party lib options, that could be provided to the Filter, example: `{ container: 'body', maxHeight: 250}`
    *
    * Please note that if you use options that have model interfaces that exists,

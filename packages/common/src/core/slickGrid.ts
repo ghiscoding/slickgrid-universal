@@ -276,7 +276,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     frozenColumn: -1,
     frozenRow: -1,
     frozenRightViewportMinWidth: 100,
-    throwWhenFrozenNotAllViewable: false,
     fullWidthRows: false,
     multiColumnSort: false,
     numberedMultiColumnSort: false,
@@ -624,20 +623,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       );
     }
     this.finishInitialization();
-  }
-
-  /** @deprecated @use `applyHtmlToElement` from `@slickgrid-universal/common` */
-  applyHtmlCode(
-    target: HTMLElement,
-    val: string | boolean | number | HTMLElement | DocumentFragment = '',
-    options?: {
-      emptyTarget?: boolean;
-      enableHtmlRendering?: boolean;
-      skipEmptyReassignment?: boolean;
-      sanitizer?: (dirtyHtml: string) => TrustedHTML | string;
-    }
-  ): void {
-    applyHtmlToElement(target, val, { ...this._options, ...options });
   }
 
   protected initialize(options: Partial<O>): void {
@@ -1361,7 +1346,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /**
    * Validate that the column freeze is allowed in the browser by making sure that the frozen column is not exceeding the available and visible left canvas width.
-   * Note that it will only validate when `invalidColumnFreezeWidthCallback` or `throwWhenFrozenNotAllViewable` grid option is enabled.
+   * Note that it will only validate when `invalidColumnFreezeWidthCallback` grid option is enabled.
    * @param {Number} frozenColumn the column index to freeze at
    *  - if `undefined` it will do the condition check and never alert more than once
    *  - if `true` it will do the condition check and always alert even if it was called before
@@ -1383,10 +1368,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       const cWidth = Utils.width(this._container) || 0;
       if (cWidth > 0 && canvasWidthL > cWidth && !this._options.skipFreezeColumnValidation) {
-        if (this._options.invalidColumnFreezeWidthCallback || this._options.throwWhenFrozenNotAllViewable) {
-          if (this._options.throwWhenFrozenNotAllViewable) {
-            throw new Error(this._options.invalidColumnFreezeWidthMessage);
-          }
+        if (this._options.invalidColumnFreezeWidthCallback) {
           this._options.invalidColumnFreezeWidthCallback?.(this._options.invalidColumnFreezeWidthMessage!);
           this._invalidfrozenAlerted = true;
         }

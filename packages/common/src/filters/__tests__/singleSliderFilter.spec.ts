@@ -185,7 +185,7 @@ describe('SingleSliderFilter', () => {
 
   it('should create the input filter with min/max slider values being set by filter "sliderStartValue" and "sliderEndValue" through the filter params', () => {
     mockColumn.filter = {
-      filterOptions: {
+      options: {
         sliderStartValue: 4,
         sliderEndValue: 69,
       },
@@ -252,7 +252,7 @@ describe('SingleSliderFilter', () => {
   it('should trigger a callback with the clear filter set when calling the "clear" method and expect min slider values being with values of "sliderStartValue" when defined through the filter params', () => {
     const callbackSpy = vi.spyOn(filterArgs, 'callback');
     mockColumn.filter = {
-      filterOptions: {
+      options: {
         sliderStartValue: 4,
         sliderEndValue: 69,
       },
@@ -330,7 +330,7 @@ describe('SingleSliderFilter', () => {
       const leftValue = 4;
       const callbackSpy = vi.spyOn(filterArgs, 'callback');
       mockColumn.filter = {
-        filterOptions: {
+        options: {
           sliderStartValue: leftValue,
           sliderEndValue: 69,
           useArrowToSlide: undefined,
@@ -361,7 +361,7 @@ describe('SingleSliderFilter', () => {
       const callbackSpy = vi.spyOn(filterArgs, 'callback');
       const leftValue = 4;
       mockColumn.filter = {
-        filterOptions: {
+        options: {
           sliderStartValue: leftValue,
           sliderEndValue: 69,
           useArrowToSlide: true,
@@ -392,7 +392,7 @@ describe('SingleSliderFilter', () => {
       const callbackSpy = vi.spyOn(filterArgs, 'callback');
       const leftValue = 4;
       mockColumn.filter = {
-        filterOptions: {
+        options: {
           sliderStartValue: leftValue,
           sliderEndValue: 69,
           useArrowToSlide: false,

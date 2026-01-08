@@ -69,6 +69,7 @@ Renaming `v-model:data` to `v-model:dataset` so that it aligns with all other fr
 
 ### Removed `@deprecated` code
 
+1. `applyHtmlCode()` was removed and replaced with `applyHtmlToElement()`
 
 ### Interfaces / Enums changes
 

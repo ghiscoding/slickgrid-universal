@@ -163,7 +163,7 @@ describe('SelectFilter', () => {
         { value: 'male', labelKey: 'MALE' },
         { value: 'female', labelKey: 'FEMALE' },
       ],
-      filterOptions: { minimumCountSelected: 1 },
+      options: { minimumCountSelected: 1 },
     };
 
     filterArguments.searchTerms = ['male', 'female'];
