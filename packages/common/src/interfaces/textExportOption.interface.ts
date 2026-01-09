@@ -1,4 +1,4 @@
-import type { DelimiterType } from '../enums/delimiterType.type.js';
+import type { DelimiterType } from '../enums/delimiter.type.js';
 import type { FileType } from '../enums/file.type.js';
 
 export interface ExportTextDownloadOption {

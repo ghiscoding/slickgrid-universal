@@ -1,4 +1,4 @@
-import type { CompositeEditorModalType } from '../enums/compositeEditorModalType.type.js';
+import type { CompositeEditorModalType } from '../enums/compositeEditorModal.type.js';
 import type { Editor, EditorConstructor } from './editor.interface.js';
 
 export interface CompositeEditorOption {
