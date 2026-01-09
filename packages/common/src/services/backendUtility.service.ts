@@ -1,4 +1,4 @@
-import type { EmitterType } from '../enums/emitterType.type.js';
+import type { EmitterType } from '../enums/emitter.type.js';
 import type { BackendServiceApi, GridOption } from '../interfaces/index.js';
 import type { Observable, RxJsFacade, Subject } from './rxjsFacade.js';
 

@@ -1,4 +1,4 @@
-import type { CompositeEditorModalType } from '../enums/compositeEditorModalType.type.js';
+import type { CompositeEditorModalType } from '../enums/compositeEditorModal.type.js';
 import type { CompositeEditorLabel } from './compositeEditorLabel.interface.js';
 import type { GridServiceInsertOption } from './gridServiceInsertOption.interface.js';
 
