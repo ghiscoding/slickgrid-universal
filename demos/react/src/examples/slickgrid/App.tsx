@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Routes as BaseRoutes, Link, Navigate, Route, useLocation } from 'react-router-dom';
+import { Routes as BaseRoutes, Link, Navigate, Route, useLocation } from 'react-router';
 import { NavBar } from '../../NavBar.js';
 import Example1 from './Example1.js';
 import Example2 from './Example2.js';
