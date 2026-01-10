@@ -126,8 +126,6 @@ export class Example48Component implements OnInit {
       // enable new hybrid selection model (rows & cells)
       enableHybridSelection: true,
       rowSelectionOptions: {
-        // True (Single Selection), False (Multiple Selections)
-        selectActiveRow: true,
         rowSelectColumnIds: ['id'],
       },
 
