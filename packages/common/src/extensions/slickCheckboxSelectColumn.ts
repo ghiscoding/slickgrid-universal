@@ -22,13 +22,14 @@ export interface RowLookup {
 
 const CHECK_ICON = 'mdi-icon-check';
 const UNCHECK_ICON = 'mdi-icon-uncheck';
+const DEFAULT_COLUMN_ID = '_checkbox_selector';
 
 export class SlickCheckboxSelectColumn<T = any> {
   pluginName = 'CheckboxSelectColumn' as const;
   protected _defaults = {
-    columnId: '_checkbox_selector',
+    columnId: DEFAULT_COLUMN_ID,
     cssClass: null,
-    field: '_checkbox_selector',
+    field: DEFAULT_COLUMN_ID,
     hideSelectAllCheckbox: false,
     name: '',
     toolTip: 'Select/Deselect All',
@@ -338,7 +339,7 @@ export class SlickCheckboxSelectColumn<T = any> {
 
   protected addCheckboxToFilterHeaderRow(grid: SlickGrid): void {
     this._eventHandler.subscribe(grid.onHeaderRowCellRendered, (_e, args) => {
-      if (args.column.field === (this._addonOptions.field || '_checkbox_selector')) {
+      if (args.column.field === (this._addonOptions.field || DEFAULT_COLUMN_ID)) {
         emptyElement(args.node);
 
         const inputId = `header-filter-selector${this._selectAll_UID}`;
