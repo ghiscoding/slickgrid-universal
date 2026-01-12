@@ -953,11 +953,10 @@
 );
 
 .mdi {
-  display: inline-block;
+  display: inline-flex;
   align-items: center;
   background-color: currentColor;
   font-size: v.$slick-icon-font-size;
-  user-select: none;
   width: 1em;
   height: 1em;
 
