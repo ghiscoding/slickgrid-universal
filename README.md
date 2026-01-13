@@ -42,7 +42,7 @@ Below is a list of reasons as to why this project was created and why it is buil
 Check out the [Releases](https://github.com/ghiscoding/slickgrid-universal/releases) section for all the latest News & Releases.
 
 ### Like my work?
-If you used and like the project, please give it a star ⭐ and/or support me with caffeine via GitHub [sponsorship](https://github.com/sponsors/ghiscoding) or the Ko-Fi button below would be much appreciated. Thanks in advance.
+If you use and like the project, please give it a star ⭐ and/or support me with caffeine via GitHub [sponsorship](https://github.com/sponsors/ghiscoding) or the Ko-Fi button below would be much appreciated. Thanks in advance.
 
 <a href='https://ko-fi.com/ghiscoding' target='_blank'><img height='36' width='140' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi3.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
