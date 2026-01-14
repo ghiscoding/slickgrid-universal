@@ -1177,15 +1177,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   setSelectionModel(model: SelectionModel): void {
     if (this.selectionModel) {
       this.selectionModel.onSelectedRangesChanged.unsubscribe(this.handleSelectedRangesChanged.bind(this));
-      if (this.selectionModel.destroy) {
-        this.selectionModel.destroy();
-      }
+      this.selectionModel?.destroy();
     }
 
     this.selectionModel = model;
     if (this.selectionModel) {
       this.selectionModel.init(this as unknown as SlickGrid);
       this.selectionModel.onSelectedRangesChanged.subscribe(this.handleSelectedRangesChanged.bind(this));
+      if (this.selectionModel.getOptions()?.selectionType === 'row-click' && this.slickDraggableInstance?.stop) {
+        this.slickDraggableInstance.stop(); // don't allow dragging (cell selection) when using row-click
+      }
     }
   }
 
