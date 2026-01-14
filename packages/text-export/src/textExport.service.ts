@@ -215,7 +215,11 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
     }
 
     // get all Grouped Column Header Titles when defined (from pre-header row)
-    if (this._gridOptions.createPreHeaderPanel && this._gridOptions.showPreHeaderPanel && !this._gridOptions.enableDraggableGrouping) {
+    if (
+      this._gridOptions.createPreHeaderPanel &&
+      this._gridOptions.showPreHeaderPanel &&
+      (!this._gridOptions.enableDraggableGrouping || (this._gridOptions.enableDraggableGrouping && this._gridOptions.createTopHeaderPanel))
+    ) {
       this._groupedColumnHeaders = this.getColumnGroupedHeaderTitles(columns) || [];
       if (Array.isArray(this._groupedColumnHeaders) && this._groupedColumnHeaders.length > 0) {
         // add the header row + add a new line at the end of the row
