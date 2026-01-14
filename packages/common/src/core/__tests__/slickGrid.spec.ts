@@ -3233,6 +3233,17 @@ describe('SlickGrid core file', () => {
       expect(onDragInitSpy).not.toHaveBeenCalled();
     });
 
+    it('should stop() the Draggable service when "selectionType" is set "row-click"', () => {
+      const hybridSelectionModel = new SlickHybridSelectionModel({ selectionType: 'row-click' });
+      const setRangeSpy = vi.spyOn(hybridSelectionModel, 'setSelectedRanges');
+
+      grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
+      const draggableSpy = vi.spyOn(grid.slickDraggableInstance, 'stop');
+      grid.setSelectionModel(hybridSelectionModel);
+
+      expect(draggableSpy).toHaveBeenCalled();
+    });
+
     it('should not drag when event has cancelled bubbling (immediatePropagationStopped)', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
 
