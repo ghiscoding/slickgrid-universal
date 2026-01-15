@@ -3233,12 +3233,11 @@ describe('SlickGrid core file', () => {
       expect(onDragInitSpy).not.toHaveBeenCalled();
     });
 
-    it('should stop() the Draggable service when "selectionType" is set "row-click"', () => {
+    it('should pause() the Draggable service when "selectionType" is set "row-click"', () => {
       const hybridSelectionModel = new SlickHybridSelectionModel({ selectionType: 'row-click' });
-      const setRangeSpy = vi.spyOn(hybridSelectionModel, 'setSelectedRanges');
 
       grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
-      const draggableSpy = vi.spyOn(grid.slickDraggableInstance, 'stop');
+      const draggableSpy = vi.spyOn((grid as any).slickDraggableInstance, 'pause');
       grid.setSelectionModel(hybridSelectionModel);
 
       expect(draggableSpy).toHaveBeenCalled();

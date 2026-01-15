@@ -36,9 +36,9 @@ import type {
  */
 export function Draggable(options: DraggableOption): {
   destroy: () => void;
-  stop: () => void;
+  pause: () => void;
 } {
-  let isStopped = false;
+  let isPaused = false;
   let { containerElement } = options;
   const { onDragInit, onDragStart, onDrag, onDragEnd, preventDragFromKeys } = options;
   let element: HTMLElement | null;
@@ -84,7 +84,7 @@ export function Draggable(options: DraggableOption): {
 
   /** Do we want to prevent Drag events from happening (for example prevent onDrag when Ctrl key is pressed while dragging) */
   function preventDrag(event: MouseEvent | TouchEvent | KeyboardEvent): boolean {
-    let eventPrevented = isStopped;
+    let eventPrevented = isPaused;
     if (preventDragFromKeys) {
       preventDragFromKeys.forEach((key) => {
         if ((event as KeyboardEvent)[key]) {
@@ -177,15 +177,16 @@ export function Draggable(options: DraggableOption): {
     }
   }
 
-  function stop() {
-    isStopped = true;
+  /** pause or stop the service */
+  function pause() {
+    isPaused = true;
   }
 
   // initialize Slick.MouseWheel by attaching mousewheel event
   init();
 
   // public API
-  return { destroy, stop };
+  return { destroy, pause: pause };
 }
 
 /**
