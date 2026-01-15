@@ -54,13 +54,13 @@ describe('Draggable class', () => {
     dg.destroy();
   });
 
-  it('should NOT trigger dragInit event when user has stopped the service', () => {
+  it('should NOT trigger dragInit event when user has paused the service', () => {
     const dragInitSpy = vi.fn();
     const dragSpy = vi.fn();
     containerElement.className = 'slick-cell';
 
     dg = Draggable({ containerElement, allowDragFrom: 'div.slick-cell', onDrag: dragSpy, onDragInit: dragInitSpy });
-    dg.stop();
+    dg.pause();
 
     containerElement.dispatchEvent(new MouseEvent('mousedown', { ctrlKey: true }));
 
