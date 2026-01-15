@@ -14,7 +14,7 @@ import {
   type SlickGrid,
 } from '@slickgrid-universal/common';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ContainerServiceStub } from '../../../test/containerServiceStub.js';
 import { TranslateServiceStub } from '../../../test/translateServiceStub.js';
 import { PdfExportService } from './pdfExport.service.js';
@@ -118,6 +118,14 @@ describe('PdfExportService', () => {
   let translateService: TranslateServiceStub;
   let mockColumns: Column[];
   let mockExportPdfOptions: PdfExportOption;
+
+  // Suppress console.error globally for all tests in this file
+  beforeAll(() => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+  });
+  afterAll(() => {
+    (console.error as any).mockRestore?.();
+  });
 
   describe('with Translater Service', () => {
     beforeEach(() => {
