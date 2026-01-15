@@ -57,6 +57,7 @@
 * [Custom Footer](grid-functionalities/Custom-Footer.md)
 * [Excel Copy Buffer Plugin](grid-functionalities/excel-copy-buffer.md)
 * [Export to Excel](grid-functionalities/Export-to-Excel.md)
+* [Export to PDF](grid-functionalities/Export-to-PDF.md)
 * [Export to File (csv/txt)](grid-functionalities/Export-to-Text-File.md)
 * [Grid Menu](grid-functionalities/Grid-Menu.md)
 * [Grid State & Presets](grid-functionalities/grid-state-preset.md)
