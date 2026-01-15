@@ -38,6 +38,7 @@ import type {
   LongTextEditorOption,
   OperatorDetailAlt,
   Pagination,
+  PdfExportOption,
   ResizeByContentOption,
   RowBasedEditOptions,
   RowDetailView,
@@ -521,6 +522,9 @@ export interface GridOption<C extends Column = Column> {
   /** Do we want to enable the Export to Text File? (if Yes, it will show up in the Grid Menu) */
   enableTextExport?: boolean;
 
+  /** Do we want to enable the Export to PDF File? (if Yes, it will show up in the Grid Menu) */
+  enablePdfExport?: boolean;
+
   /** Do we want to enable text selection on cells? Useful when user wants to do copy to clipboard. */
   enableTextSelectionOnCells?: boolean;
 
@@ -551,7 +555,7 @@ export interface GridOption<C extends Column = Column> {
   /** Some default options to set for the Excel export service */
   excelExportOptions?: ExcelExportOption;
 
-  /** Register any external Resources (Components, Services) like the ExcelExportService, TextExportService, SlickCompositeEditorComponent, ... */
+  /** Register any external Resources (Components, Services) like the ExcelExportService, TextExportService, PdfExportService, SlickCompositeEditorComponent, ... */
   externalResources?: ExternalResource[];
 
   /**
@@ -853,6 +857,9 @@ export interface GridOption<C extends Column = Column> {
 
   /** Some default options to set for the text file export service */
   textExportOptions?: TextExportOption;
+
+  /** Some default options to set for the PDF export service */
+  pdfExportOptions?: PdfExportOption;
 
   /** When set to true, it will skip the validation check to make sure frozen columns are not wider than the grid visible canvas width */
   skipFreezeColumnValidation?: boolean;

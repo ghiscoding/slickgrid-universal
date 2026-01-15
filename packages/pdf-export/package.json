@@ -1,0 +1,51 @@
+{
+  "name": "@slickgrid-universal/pdf-export",
+  "version": "9.12.0",
+  "description": "PDF Export Service for SlickGrid Universal.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "/dist",
+    "/src"
+  ],
+  "scripts": {
+    "build": "pnpm run clean && tsc",
+    "build:incremental": "tsc --incremental --declaration",
+    "clean": "remove dist tsconfig.tsbuildinfo",
+    "dev": "pnpm build:incremental"
+  },
+  "license": "MIT",
+  "author": "Ghislain B.",
+  "homepage": "https://github.com/ghiscoding/slickgrid-universal",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ghiscoding/slickgrid-universal.git",
+    "directory": "packages/pdf-export"
+  },
+  "bugs": {
+    "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
+  },
+  "dependencies": {
+    "@slickgrid-universal/common": "workspace:*",
+    "@slickgrid-universal/utils": "workspace:*",
+    "tinypdf": "^0.3.0"
+  },
+  "devDependencies": {
+    "@slickgrid-universal/event-pub-sub": "workspace:*"
+  },
+  "funding": {
+    "type": "ko_fi",
+    "url": "https://ko-fi.com/ghiscoding"
+  }
+}

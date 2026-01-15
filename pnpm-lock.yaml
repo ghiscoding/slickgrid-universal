@@ -503,6 +503,9 @@ importers:
       '@slickgrid-universal/odata':
         specifier: workspace:*
         version: link:../../packages/odata
+      '@slickgrid-universal/pdf-export':
+        specifier: workspace:*
+        version: link:../../packages/pdf-export
       '@slickgrid-universal/row-detail-view-plugin':
         specifier: workspace:*
         version: link:../../packages/row-detail-view-plugin
@@ -1250,6 +1253,22 @@ importers:
       '@slickgrid-universal/common':
         specifier: workspace:*
         version: link:../common
+    devDependencies:
+      '@slickgrid-universal/event-pub-sub':
+        specifier: workspace:*
+        version: link:../event-pub-sub
+
+  packages/pdf-export:
+    dependencies:
+      '@slickgrid-universal/common':
+        specifier: workspace:*
+        version: link:../common
+      '@slickgrid-universal/utils':
+        specifier: workspace:*
+        version: link:../utils
+      tinypdf:
+        specifier: ^0.3.0
+        version: 0.3.0
     devDependencies:
       '@slickgrid-universal/event-pub-sub':
         specifier: workspace:*
@@ -10831,6 +10850,9 @@ packages:
   tinyglobby@0.2.15:
     resolution: {integrity: sha512-j2Zq4NyQYG5XMST4cbs02Ak8iJUdxRM0XI5QyxXuZOzKOINmWurp3smXu3y5wDcJrptwpSjgXHzIQxR0omXljQ==}
     engines: {node: '>=12.0.0'}
+
+  tinypdf@0.3.0:
+    resolution: {integrity: sha512-QKFs3ZaMUXTf6EyIHKJ+VFEemkfoRByb3dl/7l4yAsqUwM6NRHSveVq8WLlPI/pk0BIaXgMswQpnjgJDNGAdHw==}
 
   tinyrainbow@3.0.3:
     resolution: {integrity: sha512-PSkbLUoxOFRzJYjjxHJt9xro7D+iilgMX/C9lawzVuYiIdcihh9DXmVibBe8lmcFrRi/VzlPjBxbN7rH24q8/Q==}
@@ -22992,6 +23014,8 @@ snapshots:
     dependencies:
       fdir: 6.5.0(picomatch@4.0.3)
       picomatch: 4.0.3
+
+  tinypdf@0.3.0: {}
 
   tinyrainbow@3.0.3: {}
 

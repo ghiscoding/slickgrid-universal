@@ -17,6 +17,7 @@ import {
   type VanillaCalendarOption,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import { PdfExportService } from '@slickgrid-universal/pdf-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options.js';
@@ -41,6 +42,7 @@ export default class Example03 {
   dataset: any[];
   editCommandQueue: EditCommand[] = [];
   excelExportService: ExcelExportService;
+  pdfExportService: PdfExportService;
   sgb: SlickVanillaGridBundle<ReportItem & { action: string }>;
   durationOrderByCount = false;
   draggableGroupingPlugin: SlickDraggableGrouping;
@@ -50,6 +52,7 @@ export default class Example03 {
   constructor() {
     this._bindingEventService = new BindingEventService();
     this.excelExportService = new ExcelExportService();
+    this.pdfExportService = new PdfExportService();
   }
 
   attached() {
@@ -347,10 +350,15 @@ export default class Example03 {
       enableCellNavigation: true,
       enableTextExport: true,
       enableExcelExport: true,
+      enablePdfExport: true,
       excelExportOptions: {
         exportWithFormatter: true,
       },
-      externalResources: [new TextExportService(), this.excelExportService],
+      pdfExportOptions: {
+        exportWithFormatter: true,
+        repeatHeadersOnEachPage: false, // defaults to true
+      },
+      externalResources: [new TextExportService(), this.excelExportService, this.pdfExportService],
       enableFiltering: true,
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)
@@ -482,6 +490,13 @@ export default class Example03 {
     this.excelExportService.exportToExcel({
       filename: 'Export',
       format: 'xlsx',
+    });
+  }
+
+  exportToPdf() {
+    this.pdfExportService.exportToPdf({
+      filename: 'Export',
+      exportWithFormatter: true,
     });
   }
 
