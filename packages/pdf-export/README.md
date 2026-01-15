@@ -2,7 +2,7 @@
 
 ## PDF Export Service
 
-Export your SlickGrid data to PDF format using tinypdf - a minimal, zero-dependency PDF library (~70x smaller than jsPDF).
+Export your SlickGrid data to PDF format using [`jsPDF`](https://www.npmjs.com/package/jspdf) - a popular, well-supported PDF library for JavaScript.
 
 ## Installation
 
@@ -51,16 +51,18 @@ See [PdfExportOption](../common/src/interfaces/pdfExportOption.interface.ts) for
 - Support for formatters
 - HTML entity decoding
 - Data sanitization
-- Minimal bundle size (~70x smaller than jsPDF)
-- Zero dependencies
+- Powered by jsPDF (widely used, extensible, and feature-rich)
 
-## Why tinypdf?
+`jsPDF` is a minimal PDF library that's perfect for grid exports:
 
-tinypdf is a minimal PDF library that's perfect for grid exports:
-- **3.3 KB** vs 229 KB (jsPDF) - ~70x smaller
-- **Zero dependencies**
-- Simple API focused on tables and text
-- Fast and efficient
+## Why `jsPDF`?
+
+`jsPDF` is a widely used JavaScript PDF generation library:
+- Well-maintained and actively developed
+- Supports a wide range of PDF features
+- Extensible with plugins (such as autotable)
+- Large community and documentation
+- Supports unicode and emojis
 
 ## License
 

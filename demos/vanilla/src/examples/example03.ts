@@ -100,6 +100,9 @@ export default class Example03 {
           minLength: 5,
           maxLength: 255,
         },
+        pdfExportOptions: {
+          textAlign: 'center',
+        },
         filterable: true,
         grouping: {
           getter: 'title',
@@ -355,8 +358,9 @@ export default class Example03 {
         exportWithFormatter: true,
       },
       pdfExportOptions: {
+        pageOrientation: 'landscape',
         exportWithFormatter: true,
-        repeatHeadersOnEachPage: false, // defaults to true
+        repeatHeadersOnEachPage: true, // defaults to true
       },
       externalResources: [new TextExportService(), this.excelExportService, this.pdfExportService],
       enableFiltering: true,

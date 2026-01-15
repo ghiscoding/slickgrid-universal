@@ -165,10 +165,6 @@ export const GlobalGridOptions: Partial<GridOption> = {
     groupExpandedSymbol: '⮟',
     groupingAggregatorRowText: '',
     repeatHeadersOnEachPage: true,
-    dataRowTextOffset: -9,
-    dataRowBackgroundOffset: 4,
-    headerTextOffset: -16,
-    headerBackgroundOffset: 0,
   },
   textExportOptions: {
     delimiter: DelimiterType.comma,

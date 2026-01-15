@@ -155,6 +155,7 @@ export default class Example02 {
         minWidth: 70,
         width: 90,
         formatter: Formatters.percentCompleteBar,
+        exportWithFormatter: false,
         filterable: true,
         filter: { model: Filters.compoundSlider },
         sortable: true,

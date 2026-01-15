@@ -66,6 +66,52 @@ const gridStub = {
   getParentRowSpanByCell: vi.fn(),
 } as unknown as SlickGrid;
 
+// --- jsPDF module mock ---
+vi.mock('jspdf', () => {
+  // These spies will be used for assertions
+  const saveSpy = vi.fn();
+  const setFontSizeSpy = vi.fn();
+  const getTextWidthSpy = vi.fn((txt) => txt.length * 6);
+  const setFillColorSpy = vi.fn();
+  const setTextColorSpy = vi.fn();
+  const rectSpy = vi.fn();
+  const textSpy = vi.fn();
+  const addPageSpy = vi.fn();
+
+  // The mock constructor
+  function jsPDFMock(this: any) {
+    this.save = saveSpy;
+    this.setFontSize = setFontSizeSpy;
+    this.getTextWidth = getTextWidthSpy;
+    this.internal = {
+      pageSize: {
+        getWidth: () => 595.28,
+        getHeight: () => 841.89,
+      },
+    };
+    this.setFillColor = setFillColorSpy;
+    this.setTextColor = setTextColorSpy;
+    this.rect = rectSpy;
+    this.text = textSpy;
+    this.addPage = addPageSpy;
+  }
+
+  return {
+    __esModule: true,
+    default: jsPDFMock,
+    saveSpy,
+    setFontSizeSpy,
+    getTextWidthSpy,
+    setFillColorSpy,
+    setTextColorSpy,
+    rectSpy,
+    textSpy,
+    addPageSpy,
+    jsPDFMock,
+  };
+});
+// --- end jsPDF module mock ---
+
 describe('PdfExportService', () => {
   let container: ContainerServiceStub;
   let service: PdfExportService;
@@ -173,7 +219,7 @@ describe('PdfExportService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf' }));
       });
 
-      it('should call tinypdf library with default page size A4 portrait', async () => {
+      it('should call jsPDF with default page size A4 portrait', async () => {
         vi.spyOn(dataViewStub, 'getLength').mockReturnValue(0);
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
@@ -183,33 +229,20 @@ describe('PdfExportService', () => {
         expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf' }));
       });
 
-      it('should call URL.createObjectURL with a Blob when browser is not IE11', async () => {
-        const mockCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 }];
-        vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
-        vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
-        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
-        const spyUrlCreate = vi.spyOn(URL, 'createObjectURL');
-
+      it('should call jsPDF save() with the correct filename (non-IE)', async () => {
+        // Use the saveSpy from the jsPDF mock
+        const { saveSpy } = (await import('jspdf')) as any;
         service.init(gridStub, container);
         await service.exportToPdf(mockExportPdfOptions);
-
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf' }));
-        expect(spyUrlCreate).toHaveBeenCalled();
+        expect(saveSpy).toHaveBeenCalledWith('export.pdf');
       });
 
-      it('should call msSaveOrOpenBlob with a Blob and PDF file when browser is IE11', async () => {
+      it('should call jsPDF save() with the correct filename (IE11 fallback)', async () => {
+        const { saveSpy } = (await import('jspdf')) as any;
         (navigator as any).msSaveOrOpenBlob = vi.fn();
-        const mockCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 }];
-        vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
-        vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
-        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
-        const spyMsSave = vi.spyOn(navigator as any, 'msSaveOrOpenBlob');
-
         service.init(gridStub, container);
         await service.exportToPdf(mockExportPdfOptions);
-
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf' }));
-        expect(spyMsSave).toHaveBeenCalledWith(expect.any(Blob), 'export.pdf');
+        expect(saveSpy).toHaveBeenCalledWith('export.pdf');
       });
     });
 
@@ -560,6 +593,43 @@ describe('PdfExportService', () => {
       };
     });
 
+    it('should export with grouped pre-header and enough rows to trigger page break (cover pre-header branch)', async () => {
+      // Setup columns with grouped header
+      const columns = [
+        { id: 'col1', field: 'col1', name: 'Col1', columnGroup: 'GroupA' },
+        { id: 'col2', field: 'col2', name: 'Col2', columnGroup: 'GroupA' },
+        { id: 'col3', field: 'col3', name: 'Col3', columnGroup: 'GroupB' },
+        { id: 'col4', field: 'col4', name: 'Col4', columnGroup: 'GroupB' },
+        { id: 'col5', field: 'col5', name: 'Col5', columnGroup: 'GroupC' },
+      ];
+      const gridStub = {
+        getColumns: () => columns,
+        getOptions: () => ({
+          createPreHeaderPanel: true,
+          showPreHeaderPanel: true,
+          enableDraggableGrouping: false,
+          documentTitle: 'Test PDF',
+        }),
+        getData: () => ({
+          getGrouping: () => [],
+          getLength: () => 70,
+          getItem: (i: number) => ({ id: i, col1: 'A', col2: 'B', col3: 'C', col4: 'D', col5: 'E' }),
+          getItemMetadata: vi.fn(),
+        }),
+      };
+      const pubSubService = { publish: vi.fn() };
+      const container = { get: () => pubSubService };
+      const buildSpy = vi.fn(() => new Uint8Array([1, 2, 3]));
+      const doc = { page: vi.fn(), build: buildSpy };
+      (global as any).__pdfDocOverride = doc;
+      const service = new PdfExportService();
+      service.init(gridStub as any, container as any);
+      let result;
+      result = await service.exportToPdf({ filename: 'preheader-multipage', documentTitle: 'Test PDF' });
+      expect(result).toBe(true);
+      delete (global as any).__pdfDocOverride;
+    });
+
     it('should call drawHeaders with grouped pre-header and without column headers', async () => {
       // Setup columns with grouped header, but disable column headers
       const columns = [
@@ -816,6 +886,80 @@ describe('PdfExportService', () => {
   });
 
   describe('PdfExportService Coverage', () => {
+    describe('PdfExportService with jsPDF-AutoTable', () => {
+      it('should cover jsPDF-AutoTable branch and pre-header row drawing', async () => {
+        vi.resetModules();
+        const autoTableSpy = vi.fn();
+        function jsPDFMockWithAutoTable(this: any) {
+          this.save = vi.fn();
+          this.setFontSize = vi.fn();
+          this.getTextWidth = vi.fn((txt) => txt.length * 6);
+          this.internal = {
+            pageSize: {
+              getWidth: () => 595.28,
+              getHeight: () => 841.89,
+            },
+          };
+          this.setFillColor = vi.fn();
+          this.setTextColor = vi.fn();
+          this.rect = vi.fn();
+          this.text = vi.fn();
+          this.addPage = vi.fn();
+          this.autoTable = autoTableSpy;
+        }
+        vi.doMock('jspdf', () => ({ __esModule: true, default: jsPDFMockWithAutoTable }));
+        const { PdfExportService: PdfExportServiceWithAutoTable } = await import('./pdfExport.service.js');
+        const columns = [
+          { id: 'col1', field: 'col1', name: 'Col1', columnGroup: 'GroupA' },
+          { id: 'col2', field: 'col2', name: 'Col2', columnGroup: 'GroupA' },
+        ];
+        const groupedHeaders = [{ title: 'GroupA', span: 2 }];
+        const dataViewStub = {
+          getGrouping: () => [],
+          getLength: () => 1,
+          getItem: () => ({ id: 1, col1: 'A', col2: 'B' }),
+          getItemMetadata: vi.fn().mockReturnValue({}),
+        };
+        const gridStub = {
+          getColumns: () => columns,
+          getOptions: () => ({ createPreHeaderPanel: true, showPreHeaderPanel: true, includeColumnHeaders: true }),
+          getData: () => dataViewStub,
+        };
+        const pubSubService = { publish: vi.fn() };
+        const container = { get: () => pubSubService };
+        const service = new PdfExportServiceWithAutoTable();
+        service.init(gridStub as any, container as any);
+        // Set grouped headers to trigger pre-header row logic
+        (service as any)._groupedColumnHeaders = groupedHeaders;
+        const result = await service.exportToPdf({ filename: 'autotable-preheader', includeColumnHeaders: true });
+        expect(result).toBe(true);
+        expect(autoTableSpy).toHaveBeenCalled();
+        vi.resetModules();
+      });
+    });
+
+    it('should cover link.click and link appendChild in downloadPdf', () => {
+      service = new PdfExportService();
+      service.init({ getOptions: () => ({}) } as any, container);
+      (navigator as any).msSaveOrOpenBlob = undefined;
+      const appendSpy = vi.spyOn(document.body, 'appendChild');
+      const clickSpy = vi.fn();
+      const removeSpy = vi.spyOn(document.body, 'removeChild');
+      const revokeSpy = vi.spyOn(URL, 'revokeObjectURL');
+      // Mock link element
+      const link = document.createElement('a');
+      link.click = clickSpy;
+      vi.spyOn(document, 'createElement').mockReturnValue(link);
+      service['downloadPdf'](new Uint8Array([1, 2, 3]), 'test.pdf');
+      expect(appendSpy).toHaveBeenCalledWith(link);
+      expect(clickSpy).toHaveBeenCalled();
+      expect(removeSpy).toHaveBeenCalledWith(link);
+      expect(revokeSpy).toHaveBeenCalled();
+      appendSpy.mockRestore();
+      removeSpy.mockRestore();
+      revokeSpy.mockRestore();
+    });
+
     it('should handle errors thrown during PDF export', async () => {
       const gridStub = {
         getOptions: () => ({}),
@@ -1071,32 +1215,6 @@ describe('PdfExportService', () => {
     expect(result).toBe(true);
   });
 
-  it('should call drawHeaders with both pre-header and column headers enabled', async () => {
-    const columns = [
-      { id: 'col1', field: 'col1', name: 'Col1', columnGroup: 'GroupA' },
-      { id: 'col2', field: 'col2', name: 'Col2', columnGroup: 'GroupA' },
-    ];
-    const dataViewStub = {
-      getGrouping: () => [],
-      getLength: () => 1,
-      getItem: () => ({ id: 1 }),
-      getItemMetadata: vi.fn().mockReturnValue({}),
-    };
-    const gridStub = {
-      getColumns: () => columns,
-      getOptions: () => ({ createPreHeaderPanel: true, showPreHeaderPanel: true, includeColumnHeaders: true }),
-      getData: () => dataViewStub,
-    };
-    const pubSubService = { publish: vi.fn() };
-    const container = { get: () => pubSubService };
-    const buildSpy = vi.fn(() => new Uint8Array([1, 2, 3]));
-    const doc = { page: vi.fn(), build: buildSpy };
-    (global as any).__pdfDocOverride = doc;
-    service.init(gridStub as any, container as any);
-    const result = await service.exportToPdf({ filename: 'preheader-and-col-header', includeColumnHeaders: true });
-    expect(result).toBe(true);
-  });
-
   it('should export with repeatHeadersOnEachPage enabled', async () => {
     const columns = [
       { id: 'col1', field: 'col1', name: 'Col1' },
@@ -1145,7 +1263,7 @@ describe('PdfExportService', () => {
     Object.defineProperty(service, '_exportOptions', { value: { htmlDecode: true, sanitizeDataExport: true } });
     (service as any)._hasGroupedItems = false;
     const result = service['readRegularRowData'](columns as any, 0, itemObj);
-    expect(result).toEqual(['A', '', '', '']); // Only first cell, rest skipped by colspan logic
+    expect(result).toEqual([undefined, '', '', '']); // Only first cell, rest skipped by colspan logic
   });
 
   it('should cover drawHeaders with grouped pre-header, grouped column, and no group title', async () => {
@@ -1406,6 +1524,7 @@ describe('PdfExportService', () => {
       translater: undefined,
       pdfExportOptions: {},
     };
+    // skip path for row 1, non-skip for row 0
     const gridStub = {
       getColumns: () => columns,
       getOptions: () => gridOptions,

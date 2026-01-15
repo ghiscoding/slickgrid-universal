@@ -54,4 +54,7 @@ export interface PdfExportOption {
 
   /** If true (default), repeat pre-header/header on every page; if false, only on first page */
   repeatHeadersOnEachPage?: boolean;
+
+  /** Horizontal alignment for all PDF table text ('left', 'center', 'right'). Defaults to 'left'. */
+  textAlign?: 'left' | 'center' | 'right';
 }

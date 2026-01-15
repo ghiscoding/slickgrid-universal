@@ -20,7 +20,12 @@ import {
   htmlDecode,
 } from '@slickgrid-universal/common';
 import { addWhiteSpaces, extend, getHtmlStringOutput, stripTags, titleCase } from '@slickgrid-universal/utils';
-import { pdf } from 'tinypdf';
+import jsPDF from 'jspdf';
+
+// Utility to resolve and merge column/grid export options
+function resolveColumnExportOptions(columnDef: any, globalOptions: PdfExportOption): PdfExportOption {
+  return { ...globalOptions, ...(columnDef.pdfExportOptions || {}) };
+}
 
 const DEFAULT_EXPORT_OPTIONS: PdfExportOption = {
   filename: 'export',
@@ -34,10 +39,11 @@ const DEFAULT_EXPORT_OPTIONS: PdfExportOption = {
   exportWithFormatter: false,
   addGroupIndentation: true,
   repeatHeadersOnEachPage: true,
-  dataRowTextOffset: -9,
-  dataRowBackgroundOffset: 4,
-  headerTextOffset: -16,
-  headerBackgroundOffset: 0,
+  // Updated offsets for correct visual alignment
+  dataRowTextOffset: -3,
+  dataRowBackgroundOffset: -1,
+  headerTextOffset: -10,
+  headerBackgroundOffset: -5,
 };
 
 export interface GroupedHeaderSpan {
@@ -156,175 +162,187 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
           // get all Column Header Titles
           this._columnHeaders = this.getColumnHeaders(columns) || [];
 
+          // cache resolved export options for each column
+          const columnExportOptionsCache: PdfExportOption[] = columns.map((col) => resolveColumnExportOptions(col, this._exportOptions));
+
           // prepare the data
-          const tableData = this.getAllGridRowData(columns);
+          const tableData = this.getAllGridRowData(columns, columnExportOptionsCache);
 
-          // create PDF document
-          const doc = pdf();
-
-          // determine page dimensions based on orientation and size
-          const pageSizes: Record<string, { width: number; height: number }> = {
-            a4: { width: 595, height: 842 },
-            letter: { width: 612, height: 792 },
-            legal: { width: 612, height: 1008 },
-          };
-          const pageSize = pageSizes[this._exportOptions.pageSize || 'a4'];
+          // create PDF document with jsPDF
           const isLandscape = this._exportOptions.pageOrientation === 'landscape';
-          const pageWidth = isLandscape ? pageSize.height : pageSize.width;
-          const pageHeight = isLandscape ? pageSize.width : pageSize.height;
+          const doc = new jsPDF({
+            orientation: isLandscape ? 'landscape' : 'portrait',
+            unit: 'pt',
+            format: this._exportOptions.pageSize || 'a4',
+          });
 
-          const margin = 40;
-          const contentWidth = pageWidth - margin * 2;
-          const fontSize = this._exportOptions.fontSize || 10;
-          const headerFontSize = this._exportOptions.headerFontSize || 12;
-          const rowHeight = 20;
-          const headerHeight = 25;
-          const numColumns = this._columnHeaders.length + (this._hasGroupedItems ? 1 : 0);
-          const colWidth = contentWidth / numColumns;
-
-          // Helper function to draw headers, including pre-header if enabled
-          const drawHeaders = (ctx: any, startY: number): number => {
-            let currentY = startY;
-
-            // Use header offsets from options or fallback to defaults
-            const headerTextOffset =
-              typeof this._exportOptions.headerTextOffset === 'number'
-                ? this._exportOptions.headerTextOffset
-                : (DEFAULT_EXPORT_OPTIONS.headerTextOffset as number);
-            const headerBackgroundOffset =
-              typeof this._exportOptions.headerBackgroundOffset === 'number'
-                ? this._exportOptions.headerBackgroundOffset
-                : (DEFAULT_EXPORT_OPTIONS.headerBackgroundOffset as number);
-
-            // Draw pre-header row if enabled
-            if (hasColumnTitlePreHeader && this._groupedColumnHeaders && this._groupedColumnHeaders.length > 0) {
-              ctx.rect(margin, currentY - headerHeight + headerBackgroundOffset, contentWidth, headerHeight, '#6c757d');
-              let headerX = margin + 5;
-              // Offset by one cell if grouped items and groupByColumnHeader are present
-              if (this._hasGroupedItems && groupByColumnHeader) {
-                headerX += colWidth;
-              }
-              this._groupedColumnHeaders.forEach((group) => {
-                if (group.title) {
-                  // Center the group title over its span
-                  ctx.text(
-                    group.title.length > 20 ? group.title.substring(0, 20) + '...' : group.title,
-                    headerX + (colWidth * group.span) / 2 - colWidth / 2,
-                    currentY + headerTextOffset,
-                    headerFontSize,
-                    { color: '#ffffff' }
-                  );
-                }
-                headerX += colWidth * group.span;
-              });
-              currentY -= headerHeight;
-            }
-
-            if (this._exportOptions.includeColumnHeaders !== false) {
-              ctx.rect(margin, currentY - headerHeight + headerBackgroundOffset, contentWidth, headerHeight, '#428bca');
-
-              let headerX = margin + 5;
-              if (this._hasGroupedItems && groupByColumnHeader) {
-                ctx.text(groupByColumnHeader, headerX, currentY + headerTextOffset, headerFontSize, { color: '#ffffff' });
-                headerX += colWidth;
-              }
-
-              this._columnHeaders.forEach((header) => {
-                const headerText = header.title.length > 20 ? header.title.substring(0, 20) + '...' : header.title;
-                ctx.text(headerText, headerX, currentY + headerTextOffset, headerFontSize, { color: '#ffffff' });
-                headerX += colWidth;
-              });
-
-              currentY -= headerHeight;
-              currentY -= 12; // increase bottom margin after header titles, before data rows
-            }
-            return currentY;
-          };
-
-          let currentPageRows: any[][] = [];
-          let allPages: any[][][] = [];
-
-          // Calculate how many rows fit on first page (with title)
-          let firstPageStartY = pageHeight - margin;
+          let startY = 40;
           if (this._exportOptions.documentTitle) {
-            firstPageStartY -= 50; // space for title
-          }
-          const firstPageAvailableHeight = firstPageStartY - margin - headerHeight - 5;
-          const firstPageMaxRows = Math.floor(firstPageAvailableHeight / rowHeight);
-
-          // Calculate how many rows fit on subsequent pages
-          const subsequentPageStartY = pageHeight - margin;
-          const subsequentPageAvailableHeight = subsequentPageStartY - margin - headerHeight - 5;
-          const subsequentPageMaxRows = Math.floor(subsequentPageAvailableHeight / rowHeight);
-
-          // Split rows into pages
-          tableData.forEach((row: any[]) => {
-            const maxRows = allPages.length === 0 ? firstPageMaxRows : subsequentPageMaxRows;
-
-            if (currentPageRows.length >= maxRows) {
-              allPages.push(currentPageRows);
-              currentPageRows = [];
-            }
-            currentPageRows.push(row);
-          });
-
-          // Add last page if it has rows
-          if (currentPageRows.length > 0) {
-            allPages.push(currentPageRows);
+            doc.setFontSize(16);
+            doc.text(this._exportOptions.documentTitle, 40, startY);
+            startY += 30;
           }
 
-          // Render all pages
-          allPages.forEach((pageRows, pageIndex) => {
-            doc.page(pageWidth, pageHeight, (ctx: any) => {
-              let currentY = pageHeight - margin;
+          // Prepare headers
+          let headers = [] as string[];
+          if (this._hasGroupedItems && groupByColumnHeader) {
+            headers.push(groupByColumnHeader);
+          }
+          headers = headers.concat(this._columnHeaders.map((h) => h.title));
 
-              // add document title only on first page
-              if (pageIndex === 0 && this._exportOptions.documentTitle) {
-                const titleSize = 16;
-                currentY -= 20;
-                ctx.text(this._exportOptions.documentTitle, margin, currentY, titleSize, { color: '#000000' });
-                currentY -= 30;
-              }
+          // Prepare data
+          const data = tableData;
 
-              // draw headers only on first page, or on every page if repeatHeadersOnEachPage is true
-              if (pageIndex === 0 || this._exportOptions.repeatHeadersOnEachPage) {
-                currentY = drawHeaders(ctx, currentY);
-              }
-
-              // draw data rows for this page
-              pageRows.forEach((row: any[], localRowIndex: number) => {
-                const globalRowIndex =
-                  pageIndex === 0 ? localRowIndex : allPages[0].length + (pageIndex - 1) * subsequentPageMaxRows + localRowIndex;
-
-                // alternate row background
-                const backgroundOffset =
-                  typeof this._exportOptions.dataRowBackgroundOffset === 'number'
-                    ? this._exportOptions.dataRowBackgroundOffset
-                    : (DEFAULT_EXPORT_OPTIONS.dataRowBackgroundOffset as number);
-                if (globalRowIndex % 2 === 1) {
-                  ctx.rect(margin, currentY - rowHeight + backgroundOffset, contentWidth, rowHeight, '#f5f5f5');
-                }
-
-                // draw row data
-                let cellX = margin + 5;
-                row.forEach((cell) => {
-                  const cellText = String(cell || '').length > 25 ? String(cell).substring(0, 25) + '...' : String(cell || '');
-                  const textOffset =
-                    typeof this._exportOptions.dataRowTextOffset === 'number'
-                      ? this._exportOptions.dataRowTextOffset
-                      : (DEFAULT_EXPORT_OPTIONS.dataRowTextOffset as number);
-                  ctx.text(cellText, cellX, currentY + textOffset, fontSize, { color: '#000000' });
-                  cellX += colWidth;
-                });
-
-                currentY -= rowHeight;
-              });
+          // Add table (using jsPDF-AutoTable if available, else fallback to manual)
+          if ((doc as any).autoTable) {
+            // For jsPDF-AutoTable, only global options are supported (no per-column)
+            (doc as any).autoTable({
+              head: [headers],
+              body: data,
+              startY,
+              styles: {
+                fontSize: this._exportOptions.fontSize || 10,
+                cellPadding: 4,
+                overflow: 'linebreak',
+                halign: this._exportOptions.textAlign || 'left',
+              },
+              headStyles: {
+                fontSize: this._exportOptions.headerFontSize || 12,
+                fillColor: [66, 139, 202], // blue header
+                textColor: 255,
+                halign: this._exportOptions.textAlign || 'left',
+                valign: 'middle',
+              },
+              alternateRowStyles: {
+                fillColor: [245, 245, 245], // light gray for odd rows
+              },
+              margin: { left: 40, right: 40 },
+              theme: 'grid',
+              didDrawPage: (_data: any) => {
+                // Optionally repeat headers or add custom logic here
+              },
             });
-          });
+          } else {
+            // Fallback: manual table rendering (no cell borders)
+            // Use cached columnExportOptionsCache for per-column options
+            const headerTextOffset = typeof this._exportOptions.headerTextOffset === 'number' ? this._exportOptions.headerTextOffset : -16;
+            const headerBackgroundOffset =
+              typeof this._exportOptions.headerBackgroundOffset === 'number' ? this._exportOptions.headerBackgroundOffset : 0;
+            doc.setFontSize(this._exportOptions.headerFontSize || 12);
+            let y = startY;
+            const pageHeight = doc.internal.pageSize.getHeight();
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const bottomMargin = 40;
+            const rowHeight = 18;
+            const margin = 40;
+            // Dynamically calculate table width based on page width and margins
+            const tableWidth = pageWidth - margin * 2;
+            const colCount = headers.length;
 
-          // build and save the PDF
-          const pdfBytes = doc.build();
-          this.downloadPdf(pdfBytes, `${this._exportOptions.filename}.pdf`);
+            // Try to fit all header titles by reducing font size if needed
+            let headerFontSize = this._exportOptions.headerFontSize || 12;
+            let minFontSize = 7;
+            doc.setFontSize(headerFontSize);
+            let fits = false;
+            let headerTextWidths = headers.map((h) => doc.getTextWidth(h));
+            while (!fits && headerFontSize >= minFontSize) {
+              fits = true;
+              headerTextWidths = headers.map((h) => doc.getTextWidth(h));
+              const totalTextWidth = headerTextWidths.reduce((a, b) => a + b, 0);
+              // Add padding for each column
+              const totalWidthWithPadding = totalTextWidth + colCount * 8; // 8pt padding per column
+              if (totalWidthWithPadding > tableWidth) {
+                fits = false;
+                headerFontSize--;
+                doc.setFontSize(headerFontSize);
+              }
+            }
+            // Use the final font size for header
+            this._exportOptions.headerFontSize = headerFontSize;
+
+            // Calculate proportional column widths
+            headerTextWidths = headers.map((h) => doc.getTextWidth(h));
+            const totalTextWidth = headerTextWidths.reduce((a, b) => a + b, 0);
+            // Dynamically clamp minColWidth so columns never overlap
+            let minColWidth = 30;
+            if (!isLandscape) {
+              // For portrait, use a smaller minimum
+              minColWidth = Math.max(10, Math.floor(tableWidth / colCount / 1.5));
+            }
+            let colWidths = headerTextWidths.map((w) => Math.max((w / totalTextWidth) * tableWidth, minColWidth));
+            let sumColWidths = colWidths.reduce((a, b) => a + b, 0);
+            if (sumColWidths > tableWidth) {
+              // If even the minimums exceed tableWidth, fallback to equal widths
+              colWidths = Array(colCount).fill(tableWidth / colCount);
+            }
+
+            // Draw pre-header row (grouped column headers) if enabled
+            if (hasColumnTitlePreHeader && this._groupedColumnHeaders && this._groupedColumnHeaders.length > 0) {
+              y = this._drawPreHeaderRow(doc, y, colWidths, margin, headerTextOffset, headerBackgroundOffset, groupByColumnHeader);
+            }
+
+            // Draw header row
+            y = this._drawHeaderRow(doc, y, headers, colWidths, margin, headerTextOffset, headerBackgroundOffset);
+            doc.setFontSize(this._exportOptions.fontSize || 10);
+            data.forEach((row, rowIdx) => {
+              // Check for page break before drawing row
+              if (y + rowHeight + bottomMargin > pageHeight) {
+                doc.addPage();
+                y = margin;
+                // Redraw pre-header and header on new page only if repeatHeadersOnEachPage is true
+                if (this._exportOptions.repeatHeadersOnEachPage !== false) {
+                  // Pre-header row
+                  if (hasColumnTitlePreHeader && this._groupedColumnHeaders && this._groupedColumnHeaders.length > 0) {
+                    y = this._drawPreHeaderRow(doc, y, colWidths, margin, headerTextOffset, headerBackgroundOffset, groupByColumnHeader);
+                  }
+                  // Header row
+                  y = this._drawHeaderRow(doc, y, headers, colWidths, margin, headerTextOffset, headerBackgroundOffset);
+                  doc.setFontSize(this._exportOptions.fontSize || 10);
+                }
+              }
+              // Alternate row background
+              if (rowIdx % 2 === 1) {
+                doc.setFillColor(245, 245, 245);
+                // Use first column's dataRowBackgroundOffset for the row
+                const colOpt = columnExportOptionsCache[0] || this._exportOptions;
+                doc.rect(
+                  margin,
+                  y - 12 + (typeof colOpt.dataRowBackgroundOffset === 'number' ? colOpt.dataRowBackgroundOffset : 0),
+                  tableWidth,
+                  rowHeight,
+                  'F'
+                );
+              }
+              let cellX = margin;
+              // Detect if this is a group title row (first cell has value, rest are empty)
+              const isGroupTitleRow = row.length === colCount && row.slice(1).every((cell) => cell === '');
+              if (isGroupTitleRow) {
+                // Always use left alignment for group title row
+                const colOpt = columnExportOptionsCache[0] || this._exportOptions;
+                doc.setTextColor(0, 0, 0);
+                doc.text(String(row[0] ?? ''), margin, y + (typeof colOpt.dataRowTextOffset === 'number' ? colOpt.dataRowTextOffset : 0), {
+                  align: 'left',
+                  baseline: 'middle',
+                });
+              } else {
+                row.forEach((cell: any, colIdx: number) => {
+                  const colOpt = columnExportOptionsCache[colIdx] || this._exportOptions;
+                  doc.setTextColor(0, 0, 0);
+                  doc.text(
+                    String(cell ?? ''),
+                    cellX + colWidths[colIdx] / 2,
+                    y + (typeof colOpt.dataRowTextOffset === 'number' ? colOpt.dataRowTextOffset : 0),
+                    { align: colOpt.textAlign || 'left', baseline: 'middle' }
+                  );
+                  cellX += colWidths[colIdx];
+                });
+              }
+              y += rowHeight;
+            });
+          }
+
+          // Save the PDF
+          doc.save(`${this._exportOptions.filename}.pdf`);
 
           this._pubSubService?.publish(`onAfterExportToPdf`, { filename: `${this._exportOptions.filename}.pdf` });
           resolve(true);
@@ -344,7 +362,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
   /**
    * Get all the grid row data and return that as a 2D array
    */
-  protected getAllGridRowData(columns: Column[]): any[][] {
+  protected getAllGridRowData(columns: Column[], columnExportOptionsCache?: PdfExportOption[]): any[][] {
     const outputData: any[][] = [];
     const lineCount = this._dataView.getLength();
 
@@ -358,7 +376,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
         // Normal row (not grouped by anything) would have an ID which was predefined in the Grid Columns definition
         if (itemObj[this._datasetIdPropName] !== null && itemObj[this._datasetIdPropName] !== undefined) {
           // get regular row item data
-          outputData.push(this.readRegularRowData(columns, rowNumber, itemObj));
+          outputData.push(this.readRegularRowData(columns, rowNumber, itemObj, columnExportOptionsCache));
         } else if (this._hasGroupedItems && itemObj.__groupTotals === undefined) {
           // get the group row
           outputData.push(this.readGroupedTitleRow(itemObj));
@@ -442,7 +460,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
    * @param {Number} row - row index
    * @param {Object} itemObj - item datacontext object
    */
-  protected readRegularRowData(columns: Column[], row: number, itemObj: any): any[] {
+  protected readRegularRowData(columns: Column[], row: number, itemObj: any, columnExportOptionsCache?: PdfExportOption[]): any[] {
     const rowData: any[] = [];
     const itemMetadata = this._dataView.getItemMetadata(row);
     let prevColspan: number | string = 1;
@@ -454,6 +472,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
 
     for (let col = 0, ln = columns.length; col < ln; col++) {
       const columnDef = columns[col];
+      const colOpt = columnExportOptionsCache ? columnExportOptionsCache[col] : this._exportOptions;
 
       // skip excluded column
       if (columnDef.excludeFromExport) {
@@ -492,15 +511,15 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
         }
       } else {
         // get the output by analyzing if we'll pull the value from the cell or from a formatter
-        let itemData = exportWithFormatterWhenDefined(row, col, columnDef, itemObj, this._grid, this._exportOptions);
+        let itemData = exportWithFormatterWhenDefined(row, col, columnDef, itemObj, this._grid, colOpt);
 
         // does the user want to sanitize the output data (remove HTML tags)?
-        if (columnDef.sanitizeDataExport || this._exportOptions.sanitizeDataExport) {
+        if (columnDef.sanitizeDataExport || colOpt.sanitizeDataExport) {
           itemData = stripTags(itemData);
         }
 
         // decode HTML entities if enabled
-        if (this._exportOptions.htmlDecode) {
+        if (colOpt.htmlDecode) {
           itemData = htmlDecode(itemData);
         }
 
@@ -519,6 +538,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
   protected readGroupedTitleRow(itemObj: any): any[] {
     let groupName = stripTags(itemObj.title);
 
+    // Indent group title by level (original logic, 0 offset for first group)
     if (this._exportOptions.addGroupIndentation) {
       groupName = addWhiteSpaces(5 * itemObj.level) + groupName;
     }
@@ -528,7 +548,13 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
       groupName = htmlDecode(groupName);
     }
 
-    return [groupName];
+    // Ensure group title row has the same number of columns as header/data rows
+    const colCount = (this._columnHeaders?.length || 0) + (this._hasGroupedItems ? 1 : 0);
+    const row: any[] = [groupName];
+    while (row.length < colCount) {
+      row.push('');
+    }
+    return row;
   }
 
   /**
@@ -607,5 +633,71 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
       });
     }
     return groupSpans;
+  }
+
+  /**
+   * Draw the pre-header row (grouped column headers) on the PDF document
+   */
+  private _drawPreHeaderRow(
+    doc: jsPDF,
+    y: number,
+    colWidths: number[],
+    margin: number,
+    headerTextOffset: number,
+    headerBackgroundOffset: number,
+    groupByColumnHeader?: string
+  ): number {
+    doc.setFontSize(this._exportOptions.headerFontSize || 12);
+    doc.setFillColor(108, 117, 125); // #6c757d
+    doc.setTextColor(255, 255, 255);
+    // colCount is not needed
+    const tableWidth = colWidths.reduce((a, b) => a + b, 0);
+    doc.rect(margin, y - 14 + headerBackgroundOffset, tableWidth, 20, 'F');
+    let preHeaderX = margin;
+    let colIdx = 0;
+    if (this._hasGroupedItems && groupByColumnHeader) {
+      preHeaderX += colWidths[0];
+      colIdx++;
+    }
+    this._groupedColumnHeaders?.forEach((group) => {
+      if (group.title) {
+        // Calculate span width
+        const spanWidth = colWidths.slice(colIdx, colIdx + group.span).reduce((a, b) => a + b, 0);
+        doc.text(
+          group.title.length > 20 ? group.title.substring(0, 20) + '...' : group.title,
+          preHeaderX + spanWidth / 2,
+          y + headerTextOffset,
+          { align: 'center', baseline: 'middle' }
+        );
+      }
+      preHeaderX += colWidths.slice(colIdx, colIdx + group.span).reduce((a, b) => a + b, 0);
+      colIdx += group.span;
+    });
+    return y + 20;
+  }
+
+  /**
+   * Draw the header row on the PDF document
+   */
+  private _drawHeaderRow(
+    doc: jsPDF,
+    y: number,
+    headers: string[],
+    colWidths: number[],
+    margin: number,
+    headerTextOffset: number,
+    headerBackgroundOffset: number
+  ): number {
+    doc.setFontSize(this._exportOptions.headerFontSize || 12);
+    doc.setFillColor(66, 139, 202);
+    doc.setTextColor(255, 255, 255);
+    const tableWidth = colWidths.reduce((a, b) => a + b, 0);
+    doc.rect(margin, y - 14 + headerBackgroundOffset, tableWidth, 20, 'F');
+    let headerX = margin;
+    headers.forEach((header, idx) => {
+      doc.text(String(header), headerX + colWidths[idx] / 2, y + headerTextOffset, { align: 'left', baseline: 'middle' });
+      headerX += colWidths[idx];
+    });
+    return y + 20;
   }
 }
