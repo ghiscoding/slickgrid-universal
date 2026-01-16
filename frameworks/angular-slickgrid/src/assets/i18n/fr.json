@@ -18,6 +18,7 @@
   "EXPAND_ALL_GROUPS": "Étendre tous les groupes",
   "EXPORT_TO_CSV": "Exporter en format CSV",
   "EXPORT_TO_EXCEL": "Exporter vers Excel",
+  "EXPORT_TO_PDF": "Exporter vers PDF",
   "EXPORT_TO_TAB_DELIMITED": "Exporter en format texte (délimité par tabulation)",
   "EXPORT_TO_TEXT_FORMAT": "Exporter en format texte",
   "FILTER_SHORTCUTS": "Raccourcis de filtre",

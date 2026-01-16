@@ -14,6 +14,9 @@ export class TranslateServiceStub implements TranslaterService {
   translate(translationKey: string): string {
     let output = translationKey;
     switch (translationKey) {
+      case 'EXPORT_TO_PDF':
+        output = this._locale === 'en' ? 'Export to PDF' : 'Exporter vers PDF';
+        break;
       case 'ALL_SELECTED':
         output = this._locale === 'en' ? 'All Selected' : 'Tout sélectionnés';
         break;

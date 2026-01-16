@@ -17,6 +17,12 @@ export interface ContextMenuLabel {
   /** Defaults to "EXPORT_TO_EXCEL" translation key */
   exportExcelCommandKey?: string;
 
+  /** Defaults to "Export to PDF" */
+  exportPdfCommand?: string;
+
+  /** Defaults to "EXPORT_TO_PDF" translation key */
+  exportPdfCommandKey?: string;
+
   /** Defaults to "Export to Text Delimited" */
   exportTextDelimitedCommand?: string;
 

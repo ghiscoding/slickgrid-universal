@@ -199,6 +199,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
       clearFrozenColumnsCommandKey: 'CLEAR_PINNING',
       exportCsvCommandKey: 'EXPORT_TO_CSV',
       exportExcelCommandKey: 'EXPORT_TO_EXCEL',
+      exportPdfCommandKey: 'EXPORT_TO_PDF',
       exportTextDelimitedCommandKey: 'EXPORT_TO_TAB_DELIMITED',
       refreshDatasetCommandKey: 'REFRESH_DATASET',
       toggleDarkModeCommandKey: 'TOGGLE_DARK_MODE',
@@ -210,6 +211,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
     hideClearFrozenColumnsCommand: true, // opt-in command
     hideExportCsvCommand: false,
     hideExportExcelCommand: false,
+    hideExportPdfCommand: true,
     hideExportTextDelimitedCommand: true,
     hideForceFitButton: false,
     hideRefreshDatasetCommand: false,
