@@ -711,7 +711,7 @@ describe('PdfExportService', () => {
       dataViewStub.getLength.mockReturnValue(rows.length);
       dataViewStub.getItem.mockImplementation((i: number) => rows[i]);
       service.init(gridStub, { get: () => pubSubService } as unknown as ContainerService);
-      const result = await service.exportToPdf({ filename: 'multi-page-exact', fontSize: 10, headerFontSize: 12 });
+      const result = await service.exportToPdf({ filename: 'multi-page-exact', fontSize: 10, headerFontSize: 11 });
       expect(result).toBe(true);
     });
 
@@ -749,7 +749,7 @@ describe('PdfExportService', () => {
       service.init(gridStub, { get: () => pubSubService } as unknown as ContainerService);
       let result;
       try {
-        result = await service.exportToPdf({ filename: 'multi-page', fontSize: 10, headerFontSize: 12 });
+        result = await service.exportToPdf({ filename: 'multi-page', fontSize: 10, headerFontSize: 11 });
       } catch (err) {
         console.error('Test error:', err);
         result = err;
@@ -886,7 +886,7 @@ describe('PdfExportService', () => {
       dataViewStub.getLength.mockReturnValue(rows.length);
       dataViewStub.getItem.mockImplementation((i: number) => rows[i]);
       service.init(gridStub, { get: () => pubSubService } as unknown as ContainerService);
-      const result = await service.exportToPdf({ filename: 'multi-page-title', fontSize: 10, headerFontSize: 12, documentTitle: 'Doc Title' });
+      const result = await service.exportToPdf({ filename: 'multi-page-title', fontSize: 10, headerFontSize: 11, documentTitle: 'Doc Title' });
       expect(result).toBe(true);
     });
 
@@ -1383,7 +1383,7 @@ describe('PdfExportService', () => {
     (global as any).__pdfDocOverride = doc;
     const service = new PdfExportService();
     service.init(gridStub as any, container as any);
-    const result = await service.exportToPdf({ filename: 'multi-page-exact-one', fontSize: 10, headerFontSize: 12 });
+    const result = await service.exportToPdf({ filename: 'multi-page-exact-one', fontSize: 10, headerFontSize: 11 });
     expect(result).toBe(true);
   });
 
@@ -1412,7 +1412,7 @@ describe('PdfExportService', () => {
     (global as any).__pdfDocOverride = doc;
     const service = new PdfExportService();
     service.init(gridStub as any, container as any);
-    const result = await service.exportToPdf({ filename: 'multi-page-just-over', fontSize: 10, headerFontSize: 12 });
+    const result = await service.exportToPdf({ filename: 'multi-page-just-over', fontSize: 10, headerFontSize: 11 });
     expect(result).toBe(true);
   });
 

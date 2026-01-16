@@ -498,10 +498,7 @@ export default class Example03 {
   }
 
   exportToPdf() {
-    this.pdfExportService.exportToPdf({
-      filename: 'Export',
-      exportWithFormatter: true,
-    });
+    this.pdfExportService.exportToPdf({ filename: 'Export' });
   }
 
   groupByDurationOrderByCount(sortedByCount = false) {

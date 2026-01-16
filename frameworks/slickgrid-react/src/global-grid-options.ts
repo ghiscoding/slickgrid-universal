@@ -156,7 +156,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
     pageOrientation: 'portrait',
     pageSize: 'a4',
     fontSize: 10,
-    headerFontSize: 12,
+    headerFontSize: 11,
     includeColumnHeaders: true,
     htmlDecode: true,
     sanitizeDataExport: false,

@@ -22,17 +22,12 @@ import {
 import { addWhiteSpaces, extend, getHtmlStringOutput, stripTags, titleCase } from '@slickgrid-universal/utils';
 import jsPDF from 'jspdf';
 
-// Utility to resolve and merge column/grid export options
-function resolveColumnExportOptions(columnDef: any, globalOptions: PdfExportOption): PdfExportOption {
-  return { ...globalOptions, ...(columnDef.pdfExportOptions || {}) };
-}
-
 const DEFAULT_EXPORT_OPTIONS: PdfExportOption = {
   filename: 'export',
   pageOrientation: 'portrait',
   pageSize: 'a4',
   fontSize: 10,
-  headerFontSize: 12,
+  headerFontSize: 11,
   includeColumnHeaders: true,
   htmlDecode: true,
   sanitizeDataExport: false,
@@ -49,6 +44,18 @@ const DEFAULT_EXPORT_OPTIONS: PdfExportOption = {
 export interface GroupedHeaderSpan {
   title: string;
   span: number;
+}
+
+// Utility to resolve and merge column/grid export options
+function resolveColumnExportOptions(columnDef: Column, globalOptions: PdfExportOption): PdfExportOption {
+  const config = { ...globalOptions, ...(columnDef.pdfExportOptions || {}) };
+
+  // Add root-level properties that should be included
+  if (columnDef.exportWithFormatter !== undefined) {
+    config.exportWithFormatter = columnDef.exportWithFormatter;
+  }
+
+  return config;
 }
 
 export class PdfExportService implements ExternalResource, BasePdfExportService {
@@ -128,24 +135,15 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
 
           // Group By text, it could be set in the export options or from translation or if nothing is found then use the English constant text
           let groupByColumnHeader = this._exportOptions.groupingColumnHeaderTitle;
-          if (
-            !groupByColumnHeader &&
-            this._gridOptions.enableTranslate &&
-            this._translaterService?.translate &&
-            this._translaterService?.getCurrentLanguage?.()
-          ) {
+          if (!groupByColumnHeader && this._gridOptions.enableTranslate && this._translaterService?.translate) {
             groupByColumnHeader = this._translaterService.translate(`${getTranslationPrefix(this._gridOptions)}GROUP_BY`);
           } else if (!groupByColumnHeader) {
-            groupByColumnHeader = this._locales && this._locales.TEXT_GROUP_BY;
+            groupByColumnHeader = this._locales?.TEXT_GROUP_BY;
           }
 
           // check if we have grouping
           const grouping = this._dataView.getGrouping();
-          if (Array.isArray(grouping) && grouping.length > 0) {
-            this._hasGroupedItems = true;
-          } else {
-            this._hasGroupedItems = false;
-          }
+          this._hasGroupedItems = Array.isArray(grouping) && grouping.length > 0;
 
           // get all Grouped Column Header Titles when defined (from pre-header row)
           let hasColumnTitlePreHeader = false;
@@ -207,7 +205,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
                 halign: this._exportOptions.textAlign || 'left',
               },
               headStyles: {
-                fontSize: this._exportOptions.headerFontSize || 12,
+                fontSize: this._exportOptions.headerFontSize || 11,
                 fillColor: [66, 139, 202], // blue header
                 textColor: 255,
                 halign: this._exportOptions.textAlign || 'left',
@@ -228,7 +226,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
             const headerTextOffset = typeof this._exportOptions.headerTextOffset === 'number' ? this._exportOptions.headerTextOffset : -16;
             const headerBackgroundOffset =
               typeof this._exportOptions.headerBackgroundOffset === 'number' ? this._exportOptions.headerBackgroundOffset : 0;
-            doc.setFontSize(this._exportOptions.headerFontSize || 12);
+            doc.setFontSize(this._exportOptions.headerFontSize || 11);
             let y = startY;
             const pageHeight = doc.internal.pageSize.getHeight();
             const pageWidth = doc.internal.pageSize.getWidth();
@@ -240,7 +238,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
             const colCount = headers.length;
 
             // Try to fit all header titles by reducing font size if needed
-            let headerFontSize = this._exportOptions.headerFontSize || 12;
+            let headerFontSize = this._exportOptions.headerFontSize || 11;
             let minFontSize = 7;
             doc.setFontSize(headerFontSize);
             let fits = false;
@@ -644,7 +642,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
     headerBackgroundOffset: number,
     groupByColumnHeader?: string
   ): number {
-    doc.setFontSize(this._exportOptions.headerFontSize || 12);
+    doc.setFontSize(this._exportOptions.headerFontSize || 11);
     doc.setFillColor(108, 117, 125); // #6c757d
     doc.setTextColor(255, 255, 255);
     // colCount is not needed
@@ -685,7 +683,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
     headerTextOffset: number,
     headerBackgroundOffset: number
   ): number {
-    doc.setFontSize(this._exportOptions.headerFontSize || 12);
+    doc.setFontSize(this._exportOptions.headerFontSize || 11);
     doc.setFillColor(66, 139, 202);
     doc.setTextColor(255, 255, 255);
     const tableWidth = colWidths.reduce((a, b) => a + b, 0);

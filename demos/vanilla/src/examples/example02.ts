@@ -305,8 +305,8 @@ export default class Example02 {
         },
       },
       pdfExportOptions: {
-        exportWithFormatter: true,
         repeatHeadersOnEachPage: false,
+        documentTitle: 'Grouping Grid',
       },
       textExportOptions: { filename: 'my-export', sanitizeDataExport: true },
       externalResources: [this.excelExportService, this.pdfExportService, new TextExportService()],
@@ -377,10 +377,7 @@ export default class Example02 {
   }
 
   exportToPdf() {
-    this.pdfExportService.exportToPdf({
-      filename: 'Export',
-      exportWithFormatter: true,
-    });
+    this.pdfExportService.exportToPdf({ filename: 'Export' });
   }
 
   groupByDuration() {
