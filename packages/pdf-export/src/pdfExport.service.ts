@@ -149,11 +149,11 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
 
           // get all Grouped Column Header Titles when defined (from pre-header row)
           let hasColumnTitlePreHeader = false;
+          // prettier-ignore
           if (
             this._gridOptions.createPreHeaderPanel &&
             this._gridOptions.showPreHeaderPanel &&
-            (!this._gridOptions.enableDraggableGrouping ||
-              (this._gridOptions.enableDraggableGrouping && this._gridOptions.createTopHeaderPanel))
+            (!this._gridOptions.enableDraggableGrouping || (this._gridOptions.enableDraggableGrouping && this._gridOptions.createTopHeaderPanel))
           ) {
             this._groupedColumnHeaders = this.getColumnGroupedHeaderTitles(columns) || [];
             hasColumnTitlePreHeader = Array.isArray(this._groupedColumnHeaders) && this._groupedColumnHeaders.length > 0;
@@ -609,10 +609,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
         const skippedField = columnDef.excludeFromExport || false;
         if ((columnDef.width === undefined || columnDef.width > 0) && !skippedField) {
           let groupedHeaderTitle =
-            columnDef.columnGroupKey &&
-            this._gridOptions.enableTranslate &&
-            this._translaterService?.translate &&
-            this._translaterService?.getCurrentLanguage?.()
+            columnDef.columnGroupKey && this._gridOptions.enableTranslate && this._translaterService?.translate
               ? this._translaterService.translate(columnDef.columnGroupKey)
               : columnDef.columnGroup || '';
           if (groupedHeaderTitle !== lastTitle) {
