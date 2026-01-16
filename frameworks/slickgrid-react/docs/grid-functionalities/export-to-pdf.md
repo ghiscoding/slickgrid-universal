@@ -64,7 +64,7 @@ You can customize font size, orientation, margins, and more via `pdfExportOption
 ```ts
 pdfExportOptions: {
   fontSize: 10,
-  headerFontSize: 12,
+  headerFontSize: 11,
   margin: 40,
   documentTitle: 'My PDF Title',
   repeatHeadersOnEachPage: true,
