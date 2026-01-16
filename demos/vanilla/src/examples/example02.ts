@@ -50,10 +50,10 @@ export default class Example02 {
 
     this._bindingEventService.bind(
       gridContainerElm,
-      'onbeforeexporttoexcel',
+      ['onbeforeexporttoexcel', 'onbeforeexporttopdf'],
       () => (this.loadingClass = 'mdi mdi-load mdi-spin-1s font-22px')
     );
-    this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => (this.loadingClass = ''));
+    this._bindingEventService.bind(gridContainerElm, ['onafterexporttoexcel', 'onafterexporttopdf'], () => (this.loadingClass = ''));
     this._bindingEventService.bind(gridContainerElm, 'onbeforesort', () => {
       // console.time('sort');
       this.sortStart = window.performance.now();
@@ -271,6 +271,7 @@ export default class Example02 {
       editable: true,
       enableCellNavigation: true,
       enableTextExport: true,
+      enablePdfExport: true,
       enableFiltering: true,
       enableGrouping: true,
       columnPicker: {

@@ -211,7 +211,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
     hideClearFrozenColumnsCommand: true, // opt-in command
     hideExportCsvCommand: false,
     hideExportExcelCommand: false,
-    hideExportPdfCommand: true,
+    hideExportPdfCommand: false,
     hideExportTextDelimitedCommand: true,
     hideForceFitButton: false,
     hideRefreshDatasetCommand: false,

@@ -66,10 +66,10 @@ export default class Example03 {
     this._bindingEventService.bind(gridContainerElm, 'onitemsdeleted', this.handleItemsDeleted.bind(this));
     this._bindingEventService.bind(
       gridContainerElm,
-      'onbeforeexporttoexcel',
+      ['onbeforeexporttoexcel', 'onbeforeexporttopdf'],
       () => (this.loadingClass = 'mdi mdi-load mdi-spin-1s font-22px')
     );
-    this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => (this.loadingClass = ''));
+    this._bindingEventService.bind(gridContainerElm, ['onafterexporttoexcel', 'onafterexporttopdf'], () => (this.loadingClass = ''));
     this.sgb = new Slicker.GridBundle(
       gridContainerElm,
       this.columnDefinitions,
@@ -351,9 +351,9 @@ export default class Example03 {
       enableAutoSizeColumns: true,
       enableAutoResize: true,
       enableCellNavigation: true,
+      enablePdfExport: true,
       enableTextExport: true,
       enableExcelExport: true,
-      enablePdfExport: true,
       excelExportOptions: {
         exportWithFormatter: true,
       },
