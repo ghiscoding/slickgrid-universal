@@ -564,6 +564,48 @@ describe('PdfExportService', () => {
         expect(headers).toHaveLength(2);
         expect(headers.find((h) => h.key === 'hidden')).toBeUndefined();
       });
+
+      it('should finalize last group span on last column (cover line 613)', () => {
+        const columns = [
+          { id: 'col1', field: 'col1', columnGroup: 'GroupA', width: 100 },
+          { id: 'col2', field: 'col2', columnGroup: 'GroupA', width: 100 },
+          { id: 'col3', field: 'col3', columnGroup: 'GroupB', width: 100 },
+        ];
+        service.init(gridStub, container);
+        const result = service['getColumnGroupedHeaderTitles'](columns as any);
+        expect(result).toEqual([
+          { title: 'GroupA', span: 2 },
+          { title: 'GroupB', span: 1 },
+        ]);
+      });
+
+      it('should translate grouped header titles when columnGroupKey and translation are enabled', () => {
+        // Setup grid options and translaterService
+        const mockTranslaterService = { translate: vi.fn((key) => `TR_${key}`) };
+        const gridOptions = { enableTranslate: true, translater: mockTranslaterService };
+        const columns = [
+          { id: 'col1', field: 'col1', columnGroupKey: 'GroupAKey', width: 100 },
+          { id: 'col2', field: 'col2', columnGroupKey: 'GroupAKey', width: 100 },
+          { id: 'col3', field: 'col3', columnGroupKey: 'GroupBKey', width: 100 },
+        ];
+        service.init(
+          {
+            ...gridStub,
+            getOptions: () => gridOptions,
+          } as any,
+          container
+        );
+        // Patch _translaterService directly for coverage
+        Object.defineProperty(service, '_translaterService', { value: mockTranslaterService });
+        Object.defineProperty(service, '_gridOptions', { get: () => gridOptions });
+        const result = service['getColumnGroupedHeaderTitles'](columns as any);
+        expect(result).toEqual([
+          { title: 'TR_GroupAKey', span: 2 },
+          { title: 'TR_GroupBKey', span: 1 },
+        ]);
+        expect(mockTranslaterService.translate).toHaveBeenCalledWith('GroupAKey');
+        expect(mockTranslaterService.translate).toHaveBeenCalledWith('GroupBKey');
+      });
     });
 
     describe('dispose method', () => {
