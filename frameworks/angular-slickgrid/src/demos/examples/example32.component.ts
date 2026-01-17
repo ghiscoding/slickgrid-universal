@@ -310,7 +310,6 @@ export class Example32Component implements OnInit {
           options: {
             minLength: 1,
             fetch: (searchTerm: string, callback: (items: false | any[]) => void) => {
-              // const items = require('c://TEMP/items.json');
               const products = this.mockProducts();
               callback(products.filter((product) => product.itemName.toLowerCase().includes(searchTerm.toLowerCase())));
             },
