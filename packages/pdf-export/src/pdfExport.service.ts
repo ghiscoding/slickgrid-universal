@@ -566,6 +566,12 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
   protected readGroupedTitleRow(itemObj: any): any[] {
     let groupName = stripTags(itemObj.title);
 
+    // Prepend expand/collapse symbol if configured (default to ASCII for PDF compatibility)
+    const collapsedSymbol = this._exportOptions.groupCollapsedSymbol || '+';
+    const expandedSymbol = this._exportOptions.groupExpandedSymbol || '-';
+    const chevron = itemObj.collapsed ? collapsedSymbol : expandedSymbol;
+    groupName = chevron + ' ' + groupName;
+
     // Indent group title by level (original logic, 0 offset for first group)
     if (this._exportOptions.addGroupIndentation) {
       groupName = addWhiteSpaces(5 * itemObj.level) + groupName;

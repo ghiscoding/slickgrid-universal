@@ -531,6 +531,48 @@ describe('PdfExportService', () => {
 
         expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf' }));
       });
+
+      it('should prepend + to collapsed group title and - to expanded group title by default', () => {
+        // Arrange
+        const service = new PdfExportService();
+        service['_columnHeaders'] = [
+          { key: 'userId', title: 'User Id' },
+          { key: 'firstName', title: 'First Name' },
+        ];
+        service['_hasGroupedItems'] = true;
+        service['_exportOptions'] = {};
+
+        // Collapsed group
+        const collapsedGroup = { title: 'Group 1', collapsed: true, level: 0 };
+        const collapsedRow = service['readGroupedTitleRow'](collapsedGroup);
+        expect(collapsedRow[0]).toMatch(/^\+ /);
+
+        // Expanded group
+        const expandedGroup = { title: 'Group 2', collapsed: false, level: 0 };
+        const expandedRow = service['readGroupedTitleRow'](expandedGroup);
+        expect(expandedRow[0]).toMatch(/^\- /);
+      });
+
+      it('should use custom groupCollapsedSymbol and groupExpandedSymbol if provided', () => {
+        // Arrange
+        const service = new PdfExportService();
+        service['_columnHeaders'] = [
+          { key: 'userId', title: 'User Id' },
+          { key: 'firstName', title: 'First Name' },
+        ];
+        service['_hasGroupedItems'] = true;
+        service['_exportOptions'] = { groupCollapsedSymbol: '>', groupExpandedSymbol: 'v' } as any;
+
+        // Collapsed group
+        const collapsedGroup = { title: 'Group 1', collapsed: true, level: 0 };
+        const collapsedRow = service['readGroupedTitleRow'](collapsedGroup);
+        expect(collapsedRow[0]).toMatch(/^> /);
+
+        // Expanded group
+        const expandedGroup = { title: 'Group 2', collapsed: false, level: 0 };
+        const expandedRow = service['readGroupedTitleRow'](expandedGroup);
+        expect(expandedRow[0]).toMatch(/^v /);
+      });
     });
 
     describe('getColumnHeaders method', () => {
