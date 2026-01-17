@@ -1,11 +1,11 @@
 export interface PdfExportOption {
-  /** Vertical offset for header text (default: -16) */
+  /** Vertical offset for header text (default: -10) */
   headerTextOffset?: number;
-  /** Vertical offset for header background (default: 0) */
+  /** Vertical offset for header background (default: -5) */
   headerBackgroundOffset?: number;
-  /** Vertical offset for data row text (default: -9) */
+  /** Vertical offset for data row text (default: -4) */
   dataRowTextOffset?: number;
-  /** Vertical offset for odd row background (default: +4) */
+  /** Vertical offset for odd row background (default: -1) */
   dataRowBackgroundOffset?: number;
   /** Defaults to true, when grid is using Grouping, it will show indentation of the text with collapsed/expanded symbol as well */
   addGroupIndentation?: boolean;

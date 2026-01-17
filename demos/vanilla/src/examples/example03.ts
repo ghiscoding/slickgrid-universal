@@ -139,6 +139,10 @@ export default class Example03 {
           aggregateCollapsed: false,
           collapsed: false,
         },
+        pdfExportOptions: {
+          width: 70,
+          textAlign: 'center',
+        },
       },
       {
         id: 'start',

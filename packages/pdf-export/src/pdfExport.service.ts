@@ -29,7 +29,7 @@ const DEFAULT_EXPORT_OPTIONS: PdfExportOption = {
   addGroupIndentation: true,
   repeatHeadersOnEachPage: true,
   // Updated offsets for correct visual alignment
-  dataRowTextOffset: -3,
+  dataRowTextOffset: -4,
   dataRowBackgroundOffset: -1,
   headerTextOffset: -10,
   headerBackgroundOffset: -5,
@@ -316,8 +316,9 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
               const isGroupTitleRow = row.length > 1 && row[0] && row.slice(1).every((cell) => cell === '');
               if (isGroupTitleRow) {
                 // Draw a single cell spanning all columns (no border)
+                const textY = y + (typeof this._exportOptions.dataRowTextOffset === 'number' ? this._exportOptions.dataRowTextOffset : 0);
                 doc.setTextColor(0, 0, 0);
-                doc.text(String(row[0]), margin + 4, y + 0, {
+                doc.text(String(row[0]), margin, textY, {
                   align: 'left',
                   baseline: 'middle',
                 });
@@ -340,9 +341,10 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
                   const cell = row[colIdx];
                   doc.setTextColor(0, 0, 0);
                   let textX = cellX;
+                  const textY = y + (typeof colOpt.dataRowTextOffset === 'number' ? colOpt.dataRowTextOffset : 0);
                   if (colIdx === 0 && this._hasGroupedItems) {
                     // Group column (blank for data rows)
-                    doc.text(String(cell ?? ''), textX, y + (typeof colOpt.dataRowTextOffset === 'number' ? colOpt.dataRowTextOffset : 0), {
+                    doc.text(String(cell ?? ''), textX, textY, {
                       align: 'left',
                       baseline: 'middle',
                     });
@@ -352,7 +354,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
                     } else if (colOpt.textAlign === 'right') {
                       textX = cellX + colWidth;
                     }
-                    doc.text(String(cell ?? ''), textX, y + (typeof colOpt.dataRowTextOffset === 'number' ? colOpt.dataRowTextOffset : 0), {
+                    doc.text(String(cell ?? ''), textX, textY, {
                       align: colOpt.textAlign || 'left',
                       baseline: 'middle',
                     });

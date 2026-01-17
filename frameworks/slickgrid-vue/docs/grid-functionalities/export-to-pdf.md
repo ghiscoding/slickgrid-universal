@@ -58,6 +58,21 @@ You can add a custom header or footer to your PDF using the `documentTitle` opti
 
 ### Styling the PDF
 You can customize font size, orientation, margins, and more via `pdfExportOptions`:
+
+#### Simulating PDF Zoom / Fit More Columns
+jsPDF does not have a true "zoom" feature, but you can fit more columns or make the export appear smaller by reducing the font size and/or column widths in your `pdfExportOptions`. For example, setting `fontSize` and `headerFontSize` to 80% of their defaults will make the content appear "zoomed out" and fit more columns on the page:
+
+```ts
+pdfExportOptions: {
+  fontSize: 8, // 80% of default (10)
+  headerFontSize: 9, // 80% of default (11)
+  // Optionally, set column widths to a smaller value
+  // width: <your calculated value>
+}
+```
+
+You can also use `pageOrientation: 'landscape'` or a larger `pageSize` to fit more content horizontally.
+
 ```ts
 pdfExportOptions: {
   fontSize: 10,

@@ -1,5 +1,6 @@
 import { type Column, type GridOption, type ItemMetadata, type OperatorString } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import { PdfExportService } from '@slickgrid-universal/pdf-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options.js';
@@ -73,6 +74,7 @@ export default class Example08 {
       gridHeight: 275,
       gridWidth: 800,
       enableTextExport: true,
+      enablePdfExport: true,
       enableExcelExport: true,
       excelExportOptions: {
         exportWithFormatter: true,
@@ -81,7 +83,7 @@ export default class Example08 {
       gridMenu: {
         iconButtonContainer: 'preheader', // we can display the grid menu icon in either the preheader or in the column header (default)
       },
-      externalResources: [new TextExportService(), new ExcelExportService()],
+      externalResources: [new TextExportService(), new ExcelExportService(), new PdfExportService()],
       enableCellNavigation: true,
       enableColumnReorder: false,
       enableSorting: true,
