@@ -12,13 +12,7 @@ import type {
   SlickGrid,
   TranslaterService,
 } from '@slickgrid-universal/common';
-import {
-  Constants,
-  // utility functions
-  exportWithFormatterWhenDefined,
-  getTranslationPrefix,
-  htmlDecode,
-} from '@slickgrid-universal/common';
+import { Constants, exportWithFormatterWhenDefined, getTranslationPrefix, htmlDecode } from '@slickgrid-universal/common';
 import { addWhiteSpaces, extend, getHtmlStringOutput, stripTags, titleCase } from '@slickgrid-universal/utils';
 import jsPDF from 'jspdf';
 
@@ -47,6 +41,7 @@ export interface GroupedHeaderSpan {
 }
 
 // Utility to resolve and merge column/grid export options
+
 function resolveColumnExportOptions(columnDef: Column, globalOptions: PdfExportOption): PdfExportOption {
   const config = { ...globalOptions, ...(columnDef.pdfExportOptions || {}) };
 
@@ -160,9 +155,13 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
           // get all Column Header Titles
           this._columnHeaders = this.getColumnHeaders(columns) || [];
 
-          // cache resolved export options for each column
-          const columnExportOptionsCache: PdfExportOption[] = columns.map((col) => resolveColumnExportOptions(col, this._exportOptions));
-
+          // cache resolved export options for each column as a Record by column.id
+          const columnExportOptionsCache: Record<string, PdfExportOption> = {};
+          columns.forEach((col) => {
+            if (col.id) {
+              columnExportOptionsCache[col.id] = resolveColumnExportOptions(col, this._exportOptions);
+            }
+          });
           // prepare the data
           const tableData = this.getAllGridRowData(columns, columnExportOptionsCache);
 
@@ -216,9 +215,6 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
               },
               margin: { left: 40, right: 40 },
               theme: 'grid',
-              didDrawPage: (_data: any) => {
-                // Optionally repeat headers or add custom logic here
-              },
             });
           } else {
             // Fallback: manual table rendering (no cell borders)
@@ -259,19 +255,20 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
             this._exportOptions.headerFontSize = headerFontSize;
 
             // Calculate proportional column widths
-            headerTextWidths = headers.map((h) => doc.getTextWidth(h));
-            const totalTextWidth = headerTextWidths.reduce((a, b) => a + b, 0);
-            // Dynamically clamp minColWidth so columns never overlap
-            let minColWidth = 30;
-            if (!isLandscape) {
-              // For portrait, use a smaller minimum
-              minColWidth = Math.max(10, Math.floor(tableWidth / colCount / 1.5));
+            // Use custom width if provided, else equal width
+            let colWidths = Array(colCount).fill(tableWidth / colCount);
+            for (let i = 0; i < colCount; i++) {
+              const colId = columns[i]?.id;
+              const colOpt = colId ? columnExportOptionsCache[colId] : undefined;
+              if (colOpt && colOpt.width && typeof colOpt.width === 'number') {
+                colWidths[i] = colOpt.width;
+              }
             }
-            let colWidths = headerTextWidths.map((w) => Math.max((w / totalTextWidth) * tableWidth, minColWidth));
-            let sumColWidths = colWidths.reduce((a, b) => a + b, 0);
-            if (sumColWidths > tableWidth) {
-              // If even the minimums exceed tableWidth, fallback to equal widths
-              colWidths = Array(colCount).fill(tableWidth / colCount);
+            // If any custom widths, adjust last column to fill remaining space so sum matches tableWidth
+            const sumWidths = colWidths.reduce((a, b) => a + b, 0);
+            if (Math.abs(sumWidths - tableWidth) > 0.1) {
+              // Adjust last column width to fill gap
+              colWidths[colCount - 1] += tableWidth - sumWidths;
             }
 
             // Draw pre-header row (grouped column headers) if enabled
@@ -302,7 +299,11 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
               if (rowIdx % 2 === 1) {
                 doc.setFillColor(245, 245, 245);
                 // Use first column's dataRowBackgroundOffset for the row
-                const colOpt = columnExportOptionsCache[0] || this._exportOptions;
+                // Always use the correct column for background offset (first visible data column)
+                let firstDataColIdx = 0;
+                if (this._hasGroupedItems) firstDataColIdx = 1;
+                const firstColId = columns.filter((col) => !col.excludeFromExport)[firstDataColIdx]?.id;
+                const colOpt = firstColId ? columnExportOptionsCache[firstColId] : this._exportOptions;
                 doc.rect(
                   margin,
                   y - 12 + (typeof colOpt.dataRowBackgroundOffset === 'number' ? colOpt.dataRowBackgroundOffset : 0),
@@ -311,29 +312,53 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
                   'F'
                 );
               }
-              let cellX = margin;
-              // Detect if this is a group title row (first cell has value, rest are empty)
-              const isGroupTitleRow = row.length === colCount && row.slice(1).every((cell) => cell === '');
+              // Detect group title row: only first cell has value, rest are empty
+              const isGroupTitleRow = row.length > 1 && row[0] && row.slice(1).every((cell) => cell === '');
               if (isGroupTitleRow) {
-                // Always use left alignment for group title row
-                const colOpt = columnExportOptionsCache[0] || this._exportOptions;
+                // Draw a single cell spanning all columns (no border)
                 doc.setTextColor(0, 0, 0);
-                doc.text(String(row[0] ?? ''), margin, y + (typeof colOpt.dataRowTextOffset === 'number' ? colOpt.dataRowTextOffset : 0), {
+                doc.text(String(row[0]), margin + 4, y + 0, {
                   align: 'left',
                   baseline: 'middle',
                 });
               } else {
-                row.forEach((cell: any, colIdx: number) => {
-                  const colOpt = columnExportOptionsCache[colIdx] || this._exportOptions;
+                // Render regular row by iterating header columns and row cells in parallel
+                let cellX = margin;
+                for (let colIdx = 0; colIdx < headers.length; colIdx++) {
+                  let colDef: Column | undefined;
+                  let colOpt: PdfExportOption = this._exportOptions;
+                  let colWidth = colWidths[colIdx];
+                  if (this._hasGroupedItems && colIdx === 0) {
+                    // Group column: no colDef, use default options
+                  } else {
+                    const dataColIdx = this._hasGroupedItems ? colIdx - 1 : colIdx;
+                    colDef = columns.filter((col) => !col.excludeFromExport)[dataColIdx];
+                    if (colDef && colDef.id) {
+                      colOpt = columnExportOptionsCache[colDef.id] || this._exportOptions;
+                    }
+                  }
+                  const cell = row[colIdx];
                   doc.setTextColor(0, 0, 0);
-                  doc.text(
-                    String(cell ?? ''),
-                    cellX + colWidths[colIdx] / 2,
-                    y + (typeof colOpt.dataRowTextOffset === 'number' ? colOpt.dataRowTextOffset : 0),
-                    { align: colOpt.textAlign || 'left', baseline: 'middle' }
-                  );
-                  cellX += colWidths[colIdx];
-                });
+                  let textX = cellX;
+                  if (colIdx === 0 && this._hasGroupedItems) {
+                    // Group column (blank for data rows)
+                    doc.text(String(cell ?? ''), textX, y + (typeof colOpt.dataRowTextOffset === 'number' ? colOpt.dataRowTextOffset : 0), {
+                      align: 'left',
+                      baseline: 'middle',
+                    });
+                  } else {
+                    if (colOpt.textAlign === 'center') {
+                      textX = cellX + colWidth / 2;
+                    } else if (colOpt.textAlign === 'right') {
+                      textX = cellX + colWidth;
+                    }
+                    doc.text(String(cell ?? ''), textX, y + (typeof colOpt.dataRowTextOffset === 'number' ? colOpt.dataRowTextOffset : 0), {
+                      align: colOpt.textAlign || 'left',
+                      baseline: 'middle',
+                    });
+                  }
+                  cellX += colWidth;
+                }
               }
               y += rowHeight;
             });
@@ -360,7 +385,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
   /**
    * Get all the grid row data and return that as a 2D array
    */
-  protected getAllGridRowData(columns: Column[], columnExportOptionsCache?: PdfExportOption[]): any[][] {
+  protected getAllGridRowData(columns: Column[], columnExportOptionsCache?: Record<string, PdfExportOption>): any[][] {
     const outputData: any[][] = [];
     const lineCount = this._dataView.getLength();
 
@@ -458,7 +483,12 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
    * @param {Number} row - row index
    * @param {Object} itemObj - item datacontext object
    */
-  protected readRegularRowData(columns: Column[], row: number, itemObj: any, columnExportOptionsCache?: PdfExportOption[]): any[] {
+  protected readRegularRowData(
+    columns: Column[],
+    row: number,
+    itemObj: any,
+    columnExportOptionsCache?: Record<string, PdfExportOption>
+  ): any[] {
     const rowData: any[] = [];
     const itemMetadata = this._dataView.getItemMetadata(row);
     let prevColspan: number | string = 1;
@@ -470,7 +500,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
 
     for (let col = 0, ln = columns.length; col < ln; col++) {
       const columnDef = columns[col];
-      const colOpt = columnExportOptionsCache ? columnExportOptionsCache[col] : this._exportOptions;
+      const colOpt = columnExportOptionsCache && columnDef.id ? columnExportOptionsCache[columnDef.id] : this._exportOptions;
 
       // skip excluded column
       if (columnDef.excludeFromExport) {
@@ -593,6 +623,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
 
     return outputRow;
   }
+
   /**
    * Get all Grouped Header Titles and their keys, translate the title when required.
    * Returns array of { title, span } for each group, in order
@@ -646,8 +677,8 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
     doc.setFillColor(108, 117, 125); // #6c757d
     doc.setTextColor(255, 255, 255);
     // colCount is not needed
-    const tableWidth = colWidths.reduce((a, b) => a + b, 0);
-    doc.rect(margin, y - 14 + headerBackgroundOffset, tableWidth, 20, 'F');
+    const preHeaderWidth = colWidths.reduce((a, b) => a + b, 0);
+    doc.rect(margin, y - 14 + headerBackgroundOffset, preHeaderWidth, 20, 'F');
     let preHeaderX = margin;
     let colIdx = 0;
     if (this._hasGroupedItems && groupByColumnHeader) {
@@ -686,11 +717,11 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
     doc.setFontSize(this._exportOptions.headerFontSize || 11);
     doc.setFillColor(66, 139, 202);
     doc.setTextColor(255, 255, 255);
-    const tableWidth = colWidths.reduce((a, b) => a + b, 0);
-    doc.rect(margin, y - 14 + headerBackgroundOffset, tableWidth, 20, 'F');
+    const headerWidth = colWidths.reduce((a, b) => a + b, 0);
+    doc.rect(margin, y - 14 + headerBackgroundOffset, headerWidth, 20, 'F');
     let headerX = margin;
     headers.forEach((header, idx) => {
-      doc.text(String(header), headerX + colWidths[idx] / 2, y + headerTextOffset, { align: 'left', baseline: 'middle' });
+      doc.text(String(header), headerX, y + headerTextOffset, { align: 'left', baseline: 'middle' });
       headerX += colWidths[idx];
     });
     return y + 20;

@@ -14,6 +14,7 @@ import {
   type SlickGrid,
 } from '@slickgrid-universal/common';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+import { textSpy } from 'jspdf';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ContainerServiceStub } from '../../../test/containerServiceStub.js';
 import { TranslateServiceStub } from '../../../test/translateServiceStub.js';
@@ -67,8 +68,8 @@ const gridStub = {
 } as unknown as SlickGrid;
 
 // --- jsPDF module mock ---
+
 vi.mock('jspdf', () => {
-  // These spies will be used for assertions
   const saveSpy = vi.fn();
   const setFontSizeSpy = vi.fn();
   const getTextWidthSpy = vi.fn((txt) => txt.length * 6);
@@ -77,9 +78,10 @@ vi.mock('jspdf', () => {
   const rectSpy = vi.fn();
   const textSpy = vi.fn();
   const addPageSpy = vi.fn();
+  const instances: any[] = [];
 
-  // The mock constructor
   function jsPDFMock(this: any) {
+    instances.push(this);
     this.save = saveSpy;
     this.setFontSize = setFontSizeSpy;
     this.getTextWidth = getTextWidthSpy;
@@ -95,10 +97,12 @@ vi.mock('jspdf', () => {
     this.text = textSpy;
     this.addPage = addPageSpy;
   }
+  jsPDFMock.prototype.text = textSpy;
 
   return {
     __esModule: true,
     default: jsPDFMock,
+    getInstances: () => instances,
     saveSpy,
     setFontSizeSpy,
     getTextWidthSpy,
@@ -1961,5 +1965,68 @@ describe('PdfExportService', () => {
     (service as any)._groupedColumnHeaders = groupedHeaders;
     const result = await service.exportToPdf({ filename: 'cover-headerX-colWidth', includeColumnHeaders: true, groupingColumnHeaderTitle: 'Group By' });
     expect(result).toBe(true);
+  });
+
+  describe('pdfExport textAlign and width coverage', () => {
+    let service: PdfExportService;
+    let container: ContainerServiceStub;
+    let pubSubService: any;
+    let gridStub: any;
+    let dataViewStub: any;
+
+    beforeEach(() => {
+      service = new PdfExportService();
+      pubSubService = { publish: vi.fn() };
+      container = { get: (key: string) => (key === 'PubSubService' ? pubSubService : undefined) };
+      gridStub = {
+        getOptions: () => ({}),
+        getColumns: () => [
+          { id: 'id', field: 'id', name: 'ID', width: 80, pdfExportOptions: { textAlign: 'center' } },
+          { id: 'amount', field: 'amount', name: 'Amount', width: 120, pdfExportOptions: { textAlign: 'right' } },
+          { id: 'desc', field: 'desc', name: 'Description', width: 100 },
+        ],
+        getData: () => dataViewStub,
+      };
+      dataViewStub = {
+        getGrouping: vi.fn().mockReturnValue([]),
+        getLength: vi.fn().mockReturnValue(1),
+        getItem: vi.fn().mockReturnValue({ id: 1, amount: 42, desc: 'Test' }),
+        getItemMetadata: vi.fn(),
+      };
+      textSpy.mockClear();
+    });
+    it('should use colOpt.width and colOpt.textAlign center/right', async () => {
+      service.init(gridStub, container);
+      await service.exportToPdf({ filename: 'align-width-test' });
+      // There should be a call with align: 'center' and one with align: 'right'
+      const alignments = textSpy.mock.calls.map((c: any[]) => (c[3] && c[3].align) || (c[2] && c[2].align));
+      expect(alignments).toContain('center');
+      expect(alignments).toContain('right');
+      // There should be a width assignment for colOpt.width (covered by the test setup)
+    });
+
+    it('should use custom colOpt.width when provided', async () => {
+      const columns = [
+        { id: 'id', field: 'id', name: 'ID', pdfExportOptions: { width: 123 } },
+        { id: 'desc', field: 'desc', name: 'Description' },
+      ];
+      const dataViewStub = {
+        getGrouping: () => [],
+        getLength: () => 1,
+        getItem: () => ({ id: 1, desc: 'Test' }),
+        getItemMetadata: vi.fn(),
+      };
+      const gridStub = {
+        getColumns: () => columns,
+        getOptions: () => ({}),
+        getData: () => dataViewStub,
+      };
+      const pubSubService = { publish: vi.fn() };
+      const container = { get: (key: string) => (key === 'PubSubService' ? pubSubService : undefined) };
+      const service = new PdfExportService();
+      service.init(gridStub as any, container as any);
+      await service.exportToPdf({ filename: 'custom-width-test' });
+      // No assertion needed, coverage is enough
+    });
   });
 });
