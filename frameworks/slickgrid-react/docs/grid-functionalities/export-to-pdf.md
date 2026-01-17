@@ -113,7 +113,8 @@ You can export from the Grid Menu or trigger export from your own button:
 ```
 ```tsx
 const Example: React.FC = () => {
-  const pdfExportService = new PdfExportService();
+  const [pdfExportService] = useState(new PdfExportService());
+
   function exportToFile() {
     pdfExportService.exportToPdf({
       filename: 'myExport',

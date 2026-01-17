@@ -29,10 +29,10 @@ const Example12: React.FC = () => {
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
   const [selectedLanguage, setSelectedLanguage] = useState<string>(defaultLang);
   const [hideSubTitle, setHideSubTitle] = useState(false);
+  const [excelExportService] = useState(new ExcelExportService());
+  const [textExportService] = useState(new TextExportService());
 
   const reactGridRef = useRef<SlickgridReactInstance | null>(null);
-  const excelExportService = new ExcelExportService();
-  const textExportService = new TextExportService();
   let duplicateTitleHeaderCount = 1;
 
   useEffect(() => {

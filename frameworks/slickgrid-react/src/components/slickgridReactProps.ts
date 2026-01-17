@@ -174,6 +174,8 @@ export interface SlickgridReactProps {
   // Slickgrid-React or Slickgrid-Universal events
   onAfterExportToExcel?: ReactRegularEventHandler<{ filename: string; mimeType: string } | { error: any }>;
   onBeforeExportToExcel?: ReactRegularEventHandler<boolean>;
+  onAfterExportToPdf?: ReactRegularEventHandler<{ filename: string } | { error: any }>;
+  onBeforeExportToPdf?: ReactRegularEventHandler<boolean>;
   onBeforeExportToTextFile?: ReactRegularEventHandler<boolean>;
   onAfterExportToTextFile?: ReactRegularEventHandler<ExportTextDownloadOption>;
   onBeforeFilterChange?: ReactRegularEventHandler<CurrentFilter[]>;

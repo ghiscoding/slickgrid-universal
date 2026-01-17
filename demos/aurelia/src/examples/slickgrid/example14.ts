@@ -1,4 +1,5 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import { PdfExportService } from '@slickgrid-universal/pdf-export';
 import { type AureliaGridInstance, type Column, type GridOption, type ItemMetadata } from 'aurelia-slickgrid';
 import './example14.scss'; // provide custom CSS/SASS styling
 
@@ -49,11 +50,12 @@ export class Example14 {
       preHeaderPanelHeight: 28,
       gridHeight: 275,
       gridWidth: 800,
+      enablePdfExport: true,
       enableExcelExport: true,
       excelExportOptions: {
         exportWithFormatter: false,
       },
-      externalResources: [new ExcelExportService()],
+      externalResources: [new ExcelExportService(), new PdfExportService()],
       explicitInitialization: true,
       dataView: {
         globalItemMetadataProvider: {
@@ -96,11 +98,12 @@ export class Example14 {
       gridHeight: 275,
       gridWidth: 800,
       frozenColumn: 2,
+      enablePdfExport: true,
       enableExcelExport: true,
       excelExportOptions: {
         exportWithFormatter: false,
       },
-      externalResources: [new ExcelExportService()],
+      externalResources: [new ExcelExportService(), new PdfExportService()],
       gridMenu: { hideClearFrozenColumnsCommand: false },
       headerMenu: { hideFreezeColumnsCommand: false },
     };

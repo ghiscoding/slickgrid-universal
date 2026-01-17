@@ -276,6 +276,9 @@ importers:
       '@slickgrid-universal/odata':
         specifier: workspace:*
         version: link:../../packages/odata
+      '@slickgrid-universal/pdf-export':
+        specifier: workspace:*
+        version: link:../../packages/pdf-export
       '@slickgrid-universal/row-detail-view-plugin':
         specifier: workspace:*
         version: link:../../packages/row-detail-view-plugin
@@ -376,6 +379,9 @@ importers:
       '@slickgrid-universal/pagination-component':
         specifier: workspace:*
         version: link:../../packages/pagination-component
+      '@slickgrid-universal/pdf-export':
+        specifier: workspace:*
+        version: link:../../packages/pdf-export
       '@slickgrid-universal/row-detail-view-plugin':
         specifier: workspace:*
         version: link:../../packages/row-detail-view-plugin
@@ -588,6 +594,9 @@ importers:
       '@slickgrid-universal/odata':
         specifier: workspace:*
         version: link:../../packages/odata
+      '@slickgrid-universal/pdf-export':
+        specifier: workspace:*
+        version: link:../../packages/pdf-export
       '@slickgrid-universal/row-detail-view-plugin':
         specifier: workspace:*
         version: link:../../packages/row-detail-view-plugin
@@ -782,6 +791,9 @@ importers:
       '@slickgrid-universal/odata':
         specifier: workspace:*
         version: link:../../packages/odata
+      '@slickgrid-universal/pdf-export':
+        specifier: workspace:*
+        version: link:../../packages/pdf-export
       '@slickgrid-universal/text-export':
         specifier: workspace:*
         version: link:../../packages/text-export

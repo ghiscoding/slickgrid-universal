@@ -41,6 +41,9 @@
     <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="export-excel-btn" click.trigger="exportToExcel()">
       <i class="mdi mdi-file-excel-outline text-success"></i> Export to Excel
     </button>
+    <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="export-pdf-btn" click.trigger="exportToPdf()">
+      <i class="mdi mdi-file-pdf-outline text-danger"></i> Export to PDF
+    </button>
   </div>
 </div>
 
@@ -96,6 +99,8 @@
   dataset.bind="dataset"
   on-before-export-to-excel.trigger="processing = true"
   on-after-export-to-excel.trigger="processing = false"
+  on-before-export-to-pdf.trigger="processing = true"
+  on-after-export-to-pdf.trigger="processing = false"
   on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"
 >
 </aurelia-slickgrid>
