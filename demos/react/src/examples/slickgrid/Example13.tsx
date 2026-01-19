@@ -1,4 +1,5 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import { PdfExportService } from '@slickgrid-universal/pdf-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import React, { useEffect, useRef, useState } from 'react';
 import {
@@ -24,9 +25,9 @@ const Example13: React.FC = () => {
   const reactGridRef = useRef<SlickgridReactInstance | null>(null);
   const [processing, setProcessing] = useState(false);
   const [hideSubTitle, setHideSubTitle] = useState(false);
-
-  const excelExportService = new ExcelExportService();
-  const textExportService = new TextExportService();
+  const [excelExportService] = useState(new ExcelExportService());
+  const [pdfExportService] = useState(new PdfExportService());
+  const [textExportService] = useState(new TextExportService());
 
   useEffect(() => {
     defineGrid();
@@ -209,13 +210,19 @@ const Example13: React.FC = () => {
       enableTextExport: true,
       excelExportOptions: { sanitizeDataExport: true },
       textExportOptions: { sanitizeDataExport: true },
-      externalResources: [excelExportService, textExportService],
+      externalResources: [excelExportService, pdfExportService, textExportService],
       showCustomFooter: true,
       customFooterOptions: {
         // optionally display some text on the left footer container
         hideMetrics: false,
         hideTotalItemCount: false,
         hideLastUpdateTimestamp: false,
+      },
+      enablePdfExport: true,
+      pdfExportOptions: {
+        repeatHeadersOnEachPage: false,
+        sanitizeDataExport: true,
+        documentTitle: 'Grouping Grid',
       },
     };
 
@@ -271,6 +278,10 @@ const Example13: React.FC = () => {
       filename: 'Export',
       format: 'xlsx',
     });
+  }
+
+  function exportToPdf() {
+    pdfExportService.exportToPdf({ filename: 'Export' });
   }
 
   function groupByDuration() {
@@ -435,8 +446,11 @@ const Example13: React.FC = () => {
           <button className="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="expand-all-btn" onClick={() => expandAllGroups()}>
             <i className="mdi mdi-arrow-expand"></i> Expand all groups
           </button>
-          <button className="btn btn-outline-secondary btn-xs btn-icon" data-test="export-excel-btn" onClick={() => exportToExcel()}>
+          <button className="btn btn-outline-secondary btn-xs btn-icon me-1" data-test="export-excel-btn" onClick={() => exportToExcel()}>
             <i className="mdi mdi-file-excel-outline text-success"></i> Export to Excel
+          </button>
+          <button className="btn btn-outline-secondary btn-xs btn-icon" data-test="export-pdf-btn" onClick={() => exportToPdf()}>
+            <i className="mdi mdi-file-pdf-outline text-danger"></i> Export to PDF
           </button>
         </div>
       </div>
@@ -499,6 +513,8 @@ const Example13: React.FC = () => {
         dataset={dataset}
         onBeforeExportToExcel={() => changeProcessing(true)}
         onAfterExportToExcel={() => changeProcessing(false)}
+        onBeforeExportToPdf={() => changeProcessing(true)}
+        onAfterExportToPdf={() => changeProcessing(false)}
         onReactGridCreated={($event) => reactGridReady($event.detail)}
       />
     </div>

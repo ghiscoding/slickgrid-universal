@@ -133,7 +133,7 @@ const Example: React.FC = () => {
   const [dataset, setDataset] = useState<any[]>([]);
   const [columns, setColumns] = useState<Column[]>([]);
   const [options, setOptions] = useState<GridOption | undefined>(undefined);
-  const textExportService = new TextExportService();
+  const [textExportService] = useState(new TextExportService());
 
   useEffect(() => defineGrid(), []);
 

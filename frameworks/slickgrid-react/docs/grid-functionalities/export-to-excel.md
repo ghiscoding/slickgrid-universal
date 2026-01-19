@@ -246,7 +246,7 @@ const Example: React.FC = () => {
   const [columns, setColumns] = useState<Column[]>([]);
   const [options, setOptions] = useState<GridOption | undefined>(undefined);
   const reactGridRef = useRef<SlickgridReactInstance | null>(null);
-  const excelExportService = new ExcelExportService();
+    const [excelExportService] = useState(new ExcelExportService());
 
   function reactGridReady(reactGrid: SlickgridReactInstance) {
     reactGridRef.current = reactGrid;

@@ -1,4 +1,5 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import { PdfExportService } from '@slickgrid-universal/pdf-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import React, { useEffect, useRef, useState } from 'react';
 import {
@@ -25,9 +26,9 @@ const Example18: React.FC = () => {
   const [draggableGroupingPlugin, setDraggableGroupingPlugin] = useState<any>(null);
   const [selectedGroupingFields, setSelectedGroupingFields] = useState(['', '', '']);
   const [hideSubTitle, setHideSubTitle] = useState(false);
-
-  const excelExportService = new ExcelExportService();
-  const textExportService = new TextExportService();
+  const [excelExportService] = useState(new ExcelExportService());
+  const [pdfExportService] = useState(new PdfExportService());
+  const [textExportService] = useState(new TextExportService());
 
   useEffect(() => {
     defineGrid();
@@ -248,7 +249,12 @@ const Example18: React.FC = () => {
       enableExcelExport: true,
       excelExportOptions: { sanitizeDataExport: true },
       textExportOptions: { sanitizeDataExport: true },
-      externalResources: [excelExportService, textExportService],
+      enablePdfExport: true,
+      pdfExportOptions: {
+        repeatHeadersOnEachPage: true, // defaults to true
+        documentTitle: 'Grouping Grid',
+      },
+      externalResources: [excelExportService, pdfExportService, textExportService],
     };
 
     setColumnDefinitions(columnDefinitions);
@@ -338,6 +344,12 @@ const Example18: React.FC = () => {
     excelExportService.exportToExcel({
       filename: 'Export',
       format: 'xlsx',
+    });
+  }
+
+  function exportToPdf() {
+    pdfExportService.exportToPdf({
+      filename: 'Export',
     });
   }
 
@@ -534,6 +546,9 @@ const Example18: React.FC = () => {
             </button>
             <button className="btn btn-outline-secondary btn-xs btn-icon mx-1" onClick={() => exportToExcel()}>
               <i className="mdi mdi-file-excel-outline text-success"></i> Export to Excel
+            </button>
+            <button className="btn btn-outline-secondary btn-xs btn-icon mx-1" onClick={() => exportToPdf()}>
+              <i className="mdi mdi-file-pdf-outline text-danger"></i> Export to PDF
             </button>
           </div>
         </div>

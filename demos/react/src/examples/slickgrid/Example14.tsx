@@ -1,4 +1,5 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import { PdfExportService } from '@slickgrid-universal/pdf-export';
 import React, { useEffect, useRef, useState } from 'react';
 import { SlickgridReact, type Column, type GridOption, type ItemMetadata, type SlickgridReactInstance } from 'slickgrid-react';
 import './example14.scss'; // provide custom CSS/SASS styling
@@ -53,7 +54,8 @@ const Example14: React.FC = () => {
       excelExportOptions: {
         exportWithFormatter: false,
       },
-      externalResources: [new ExcelExportService()],
+      enablePdfExport: true,
+      externalResources: [new ExcelExportService(), new PdfExportService()],
       explicitInitialization: true,
       dataView: {
         globalItemMetadataProvider: {
@@ -103,7 +105,7 @@ const Example14: React.FC = () => {
       excelExportOptions: {
         exportWithFormatter: false,
       },
-      externalResources: [new ExcelExportService()],
+      externalResources: [new ExcelExportService(), new PdfExportService()],
       gridMenu: { hideClearFrozenColumnsCommand: false },
       headerMenu: { hideFreezeColumnsCommand: false },
     };

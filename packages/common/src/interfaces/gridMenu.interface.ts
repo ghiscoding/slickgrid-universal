@@ -54,3 +54,11 @@ export interface onGridMenuColumnsChangedCallbackArgs extends GridMenuEventBaseC
   /** last command, are we showing or not the column? */
   showing: boolean;
 }
+
+export interface GridMenuExportOptions {
+  /** Defaults to false, which will hide the "Export to PDF" command in the Grid Menu (Grid Option "enablePdfExport: true" has to be enabled) */
+  hideExportPdfCommand?: boolean;
+
+  /** icon for the "Export to PDF" command */
+  iconExportPdfCommand?: string;
+}

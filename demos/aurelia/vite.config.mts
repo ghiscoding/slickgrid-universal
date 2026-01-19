@@ -1,5 +1,6 @@
-import { defineConfig, type PluginOption } from 'vite';
 import aurelia from '@aurelia/vite-plugin';
+import { defineConfig, type PluginOption } from 'vite';
+
 // import { resolve } from 'path';
 
 export default defineConfig({
@@ -42,6 +43,14 @@ export default defineConfig({
           return 'index';
         },
       },
+    },
+  },
+  optimizeDeps: {
+    include: ['jspdf'],
+  },
+  resolve: {
+    alias: {
+      jspdf: 'jspdf/dist/jspdf.es.min.js',
     },
   },
 });

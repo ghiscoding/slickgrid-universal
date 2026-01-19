@@ -178,6 +178,8 @@ export interface AngularSlickgridOutputs {
   // Slickgrid-Universal Events
   onAfterExportToExcel: (e: { filename: string; mimeType: string } | { error: any }) => void;
   onBeforeExportToExcel: (e: boolean) => void;
+  onAfterExportToPdf: (e: { filename: string } | { error: any }) => void;
+  onBeforeExportToPdf: (e: boolean) => void;
   onBeforeExportToTextFile?: (e: boolean) => void;
   onAfterExportToTextFile?: (e: ExportTextDownloadOption) => void;
   onBeforeFilterChange: (e: CurrentFilter[]) => void;

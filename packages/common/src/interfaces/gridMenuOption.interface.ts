@@ -75,6 +75,9 @@ export interface GridMenuOption {
   /** Defaults to false, which will hide the "Export to Excel" command in the Grid Menu (Grid Option "enableExcelExport: true" has to be enabled) */
   hideExportExcelCommand?: boolean;
 
+  /** Defaults to false, which will hide the "Export to Excel" command in the Grid Menu (Grid Option "enableExcelExport: true" has to be enabled) */
+  hideExportPdfCommand?: boolean;
+
   /** Defaults to false, which will hide the "Export to Text Delimited" command in the Grid Menu (Grid Option "enableTextExport: true" has to be enabled) */
   hideExportTextDelimitedCommand?: boolean;
 
@@ -116,6 +119,9 @@ export interface GridMenuOption {
 
   /** icon for the "Export to Excel" command */
   iconExportExcelCommand?: string;
+
+  /** icon for the "Export to PDF" command */
+  iconExportPdfCommand?: string;
 
   /** icon for the "Export to Text Delimited" command */
   iconExportTextDelimitedCommand?: string;

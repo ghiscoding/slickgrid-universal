@@ -17,7 +17,7 @@ import {
 } from '@slickgrid-universal/common';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createExcelFileStream, downloadExcelFile, Workbook } from 'excel-builder-vanilla';
-import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { ContainerServiceStub } from '../../../test/containerServiceStub.js';
 import { TranslateServiceStub } from '../../../test/translateServiceStub.js';
 import { ExcelExportService } from './excelExport.service.js';
@@ -94,6 +94,13 @@ const gridStub = {
 } as unknown as SlickGrid;
 
 describe('ExcelExportService', () => {
+  // Suppress console.error globally for all tests in this file
+  beforeAll(() => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+  });
+  afterAll(() => {
+    (console.error as any).mockRestore?.();
+  });
   let container: ContainerServiceStub;
   let service: ExcelExportService;
   let translateService: TranslateServiceStub;

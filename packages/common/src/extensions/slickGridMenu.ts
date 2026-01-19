@@ -32,7 +32,7 @@ import type {
 } from '../interfaces/index.js';
 import type { ExcelExportService } from '../services/excelExport.service.js';
 import type { FilterService } from '../services/filter.service.js';
-import { getTranslationPrefix } from '../services/index.js';
+import { getTranslationPrefix, type PdfExportService } from '../services/index.js';
 import type { SharedService } from '../services/shared.service.js';
 import type { SortService } from '../services/sort.service.js';
 import type { TextExportService } from '../services/textExport.service.js';
@@ -687,6 +687,21 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         }
       }
 
+      // show grid menu: Export to PDF
+      if (this.gridOptions.enablePdfExport && !this._addonOptions.hideExportPdfCommand) {
+        const commandName = 'export-pdf';
+        if (!cmdExists(commandName)) {
+          gridMenuCommandItems.push({
+            iconCssClass: this._addonOptions.iconExportPdfCommand || 'mdi mdi-file-pdf-outline text-danger',
+            _orgTitle: commandLabels?.exportPdfCommand || '',
+            titleKey: `${translationPrefix}${commandLabels?.exportPdfCommandKey ?? 'EXPORT_TO_PDF'}`,
+            disabled: false,
+            command: commandName,
+            positionOrder: 57,
+          });
+        }
+      }
+
       // show grid menu: export to text file as tab delimited
       if (this.gridOptions.enableTextExport && !this._addonOptions.hideExportTextDelimitedCommand) {
         const commandName = 'export-text-delimited';
@@ -697,7 +712,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
             titleKey: `${translationPrefix}${commandLabels?.exportTextDelimitedCommandKey ?? 'EXPORT_TO_TAB_DELIMITED'}`,
             disabled: false,
             command: commandName,
-            positionOrder: 57,
+            positionOrder: 58,
           });
         }
       }
@@ -778,6 +793,16 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
           } else {
             console.error(
               `[Slickgrid-Universal] You must register the ExcelExportService to properly use Export to Excel in the Grid Menu. Example:: this.gridOptions = { enableExcelExport: true, externalResources: [new ExcelExportService()] };`
+            );
+          }
+          break;
+        case 'export-pdf':
+          const pdfService: PdfExportService = registeredResources.find((service: any) => service.className === 'PdfExportService');
+          if (pdfService?.exportToPdf) {
+            pdfService.exportToPdf();
+          } else {
+            console.error(
+              `[Slickgrid-Universal] You must register the PdfExportService to properly use Export to PDF in the Grid Menu. Example:: this.gridOptions = { enablePdfExport: true, externalResources: [new PdfExportService()] };`
             );
           }
           break;

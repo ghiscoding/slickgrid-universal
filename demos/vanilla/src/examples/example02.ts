@@ -13,6 +13,7 @@ import {
   type SliderOption,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import { PdfExportService } from '@slickgrid-universal/pdf-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options.js';
@@ -32,12 +33,14 @@ export default class Example02 {
   commandQueue = [];
   sgb: SlickVanillaGridBundle;
   excelExportService: ExcelExportService;
+  pdfExportService: PdfExportService;
   loadingClass = '';
   sortStart = 0;
 
   constructor() {
     this.excelExportService = new ExcelExportService();
     this._bindingEventService = new BindingEventService();
+    this.pdfExportService = new PdfExportService();
   }
 
   attached() {
@@ -47,10 +50,10 @@ export default class Example02 {
 
     this._bindingEventService.bind(
       gridContainerElm,
-      'onbeforeexporttoexcel',
+      ['onbeforeexporttoexcel', 'onbeforeexporttopdf'],
       () => (this.loadingClass = 'mdi mdi-load mdi-spin-1s font-22px')
     );
-    this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => (this.loadingClass = ''));
+    this._bindingEventService.bind(gridContainerElm, ['onafterexporttoexcel', 'onafterexporttopdf'], () => (this.loadingClass = ''));
     this._bindingEventService.bind(gridContainerElm, 'onbeforesort', () => {
       // console.time('sort');
       this.sortStart = window.performance.now();
@@ -152,6 +155,7 @@ export default class Example02 {
         minWidth: 70,
         width: 90,
         formatter: Formatters.percentCompleteBar,
+        exportWithFormatter: false,
         filterable: true,
         filter: { model: Filters.compoundSlider },
         sortable: true,
@@ -267,6 +271,7 @@ export default class Example02 {
       editable: true,
       enableCellNavigation: true,
       enableTextExport: true,
+      enablePdfExport: true,
       enableFiltering: true,
       enableGrouping: true,
       columnPicker: {
@@ -299,8 +304,12 @@ export default class Example02 {
           sheet.data.push([{ value: customTitle, metadata: { style: excelFormat.id } }]);
         },
       },
+      pdfExportOptions: {
+        repeatHeadersOnEachPage: false,
+        documentTitle: 'Grouping Grid',
+      },
       textExportOptions: { filename: 'my-export', sanitizeDataExport: true },
-      externalResources: [this.excelExportService, new TextExportService()],
+      externalResources: [this.excelExportService, this.pdfExportService, new TextExportService()],
       showCustomFooter: true, // display some metrics in the bottom custom footer
       customFooterOptions: {
         // optionally display some text on the left footer container
@@ -365,6 +374,10 @@ export default class Example02 {
 
   exportToExcel() {
     this.excelExportService.exportToExcel({ filename: 'export', format: 'xlsx' });
+  }
+
+  exportToPdf() {
+    this.pdfExportService.exportToPdf({ filename: 'Export' });
   }
 
   groupByDuration() {

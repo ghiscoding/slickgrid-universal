@@ -1,6 +1,7 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { Editors, type Column, type GridOption, type ItemMetadata } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import { PdfExportService } from '@slickgrid-universal/pdf-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options.js';
 import './example32.scss';
@@ -12,6 +13,7 @@ export default class Example32 {
   gridOptions: GridOption;
   dataset: any[] = [];
   excelExportService: ExcelExportService;
+  pdfExportService: PdfExportService;
   sgb: SlickVanillaGridBundle;
   gridContainerElm: HTMLDivElement;
   showEmployeeId = true;
@@ -112,6 +114,7 @@ export default class Example32 {
   constructor() {
     this._bindingEventService = new BindingEventService();
     this.excelExportService = new ExcelExportService();
+    this.pdfExportService = new PdfExportService();
   }
 
   attached() {
@@ -168,7 +171,12 @@ export default class Example32 {
       enableCellRowSpan: true,
       enableHeaderMenu: false,
       enableExcelExport: true,
-      externalResources: [this.excelExportService],
+      enablePdfExport: true,
+      pdfExportOptions: {
+        fontSize: 7,
+        headerFontSize: 8,
+      },
+      externalResources: [this.excelExportService, this.pdfExportService],
       enableExcelCopyBuffer: true,
       autoEdit: true,
       editable: false,
@@ -189,6 +197,10 @@ export default class Example32 {
 
   exportToExcel() {
     this.excelExportService.exportToExcel({ filename: 'export', format: 'xlsx' });
+  }
+
+  exportToPdf() {
+    this.pdfExportService.exportToPdf({ filename: 'export', pageOrientation: 'landscape' });
   }
 
   navigateDown() {
