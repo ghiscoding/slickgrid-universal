@@ -39,7 +39,7 @@
   "dependencies": {
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/utils": "workspace:*",
-    "jspdf": "^2.5.1"
+    "jspdf": "^4.0.0"
   },
   "devDependencies": {
     "@slickgrid-universal/event-pub-sub": "workspace:*"
