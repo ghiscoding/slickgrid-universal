@@ -83,7 +83,7 @@
     "@slickgrid-universal/rxjs-observable": "workspace:*",
     "@slickgrid-universal/text-export": "workspace:*",
     "@types/node": "catalog:",
-    "@types/react": "^19.2.7",
+    "@types/react": "^19.2.8",
     "@types/react-dom": "^19.2.3",
     "@types/sortablejs": "catalog:",
     "@vitejs/plugin-react": "catalog:",
