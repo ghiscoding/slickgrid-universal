@@ -31,7 +31,7 @@ catalog:
   multiple-select-vanilla: ^4.4.1
   native-copyfiles: ^1.3.7
   npm-run-all2: ^8.0.4
-  oxlint: ^1.39.0
+  oxlint: ^1.41.0
   remove-glob: ^0.4.10
   rxjs: ^7.8.2
   sass: ^1.97.2
@@ -51,4 +51,4 @@ catalogs:
     vite: ^7.3.1
 
 onlyBuiltDependencies:
-  - 'cypress'
+  - cypress
