@@ -22,6 +22,7 @@ export interface RowLookup {
 
 const CHECK_ICON = 'mdi-icon-check';
 const UNCHECK_ICON = 'mdi-icon-uncheck';
+const PARTIAL_CHECK_ICON = 'mdi-icon-partial-check';
 const DEFAULT_COLUMN_ID = '_checkbox_selector';
 
 export class SlickCheckboxSelectColumn<T = any> {
@@ -47,6 +48,7 @@ export class SlickCheckboxSelectColumn<T = any> {
   protected _headerRowNode?: HTMLElement;
   protected _grid!: SlickGrid;
   protected _isSelectAllChecked = false;
+  protected _isPartialSelectAllChecked = false;
   protected _isUsingDataView = false;
   protected _rowSelectionModel?: SelectionModel;
   protected _selectableOverride?: SelectableOverrideCallback<T> | number;
@@ -179,7 +181,7 @@ export class SlickCheckboxSelectColumn<T = any> {
       this.hideSelectAllFromColumnHeaderFilterRow();
     } else {
       if (!this._addonOptions.hideInColumnTitleRow) {
-        this.renderSelectAllCheckbox(this._isSelectAllChecked);
+        this.renderSelectAllCheckbox(this._isSelectAllChecked, false);
         this._eventHandler.subscribe(this._grid.onHeaderClick, this.handleHeaderClick.bind(this));
       } else {
         this.hideSelectAllFromColumnHeaderTitleRow();
@@ -233,15 +235,17 @@ export class SlickCheckboxSelectColumn<T = any> {
    * use a DocumentFragment to return a fragment including an <input> then a <label> as siblings,
    * the label is using `for` to link it to the input `id`
    * @param {String} inputId - id to link the label
-   * @param {Boolean} checked - is the input checkbox checked?
+   * @param {Boolean} isChecked - is the input checkbox checked?
+   * @param {Boolean} isPartialChecked - is the input checkbox checked?
    * @returns
    */
-  createCheckboxElement(inputId: string, checked = false): DocumentFragment | HTMLSpanElement {
+  createCheckboxElement(inputId: string, isChecked = false, isPartialChecked = false): DocumentFragment | HTMLSpanElement {
     const checkboxElm = createDocumentFragmentOrElement(this.gridOptions);
     const labelElm = createDomElement('label', { className: 'checkbox-selector-label', htmlFor: inputId });
     const divElm = createDomElement('div', { className: 'icon-checkbox-container' });
-    divElm.appendChild(createDomElement('input', { id: inputId, type: 'checkbox', checked, ariaChecked: String(checked) }));
-    divElm.appendChild(createDomElement('div', { className: `mdi ${checked ? CHECK_ICON : UNCHECK_ICON}` }));
+    divElm.appendChild(createDomElement('input', { id: inputId, type: 'checkbox', checked: isChecked, ariaChecked: String(isChecked) }));
+    const iconClass = isChecked ? CHECK_ICON : isPartialChecked ? PARTIAL_CHECK_ICON : UNCHECK_ICON;
+    divElm.appendChild(createDomElement('div', { className: `mdi ${iconClass}` }));
     labelElm.appendChild(divElm);
     checkboxElm.appendChild(labelElm);
 
@@ -346,7 +350,7 @@ export class SlickCheckboxSelectColumn<T = any> {
         const labelElm = createDomElement('label', { id: 'filter-checkbox-selectall-container', htmlFor: inputId });
         const divElm = createDomElement('div', { className: 'icon-checkbox-container' });
         divElm.appendChild(createDomElement('input', { id: inputId, type: 'checkbox', ariaChecked: 'false' }));
-        divElm.appendChild(createDomElement('div', { className: 'mdi mdi-icon-uncheck' }));
+        divElm.appendChild(createDomElement('div', { className: `mdi ${UNCHECK_ICON}` }));
 
         labelElm.appendChild(divElm);
         args.node.appendChild(labelElm);
@@ -416,9 +420,10 @@ export class SlickCheckboxSelectColumn<T = any> {
       }
     }
     this._isSelectAllChecked = selectedIds.length + disabledCount >= filteredItems.length;
+    this._isPartialSelectAllChecked = selectedIds.length > 0;
 
     if (!this._addonOptions.hideInColumnTitleRow && !this._addonOptions.hideSelectAllCheckbox) {
-      this.renderSelectAllCheckbox(this._isSelectAllChecked);
+      this.renderSelectAllCheckbox(this._isSelectAllChecked, this._isPartialSelectAllChecked);
     }
     if (!this._addonOptions.hideInFilterHeaderRow) {
       const selectAllElm = this.headerRowNode?.querySelector<HTMLInputElement>(`#header-filter-selector${this._selectAll_UID}`);
@@ -428,7 +433,8 @@ export class SlickCheckboxSelectColumn<T = any> {
         selectAllElm.checked = this._isSelectAllChecked;
       }
       if (selectAllIconElm) {
-        selectAllIconElm.className = `mdi ${this._isSelectAllChecked ? CHECK_ICON : UNCHECK_ICON}`;
+        const iconClass = this._isSelectAllChecked ? CHECK_ICON : this._isPartialSelectAllChecked ? PARTIAL_CHECK_ICON : UNCHECK_ICON;
+        selectAllIconElm.className = `mdi ${iconClass}`;
       }
     }
   }
@@ -503,6 +509,7 @@ export class SlickCheckboxSelectColumn<T = any> {
 
       // we finally need to call the actual row selection from SlickGrid method
       this._grid.setSelectedRows(newSelectedRows, caller);
+      this._isPartialSelectAllChecked = newSelectedRows.length > 0;
 
       // user can optionally execute a callback defined in its grid options after the Select All toggling is completed
       if (this._addonOptions.onSelectAllToggleEnd) {
@@ -571,10 +578,11 @@ export class SlickCheckboxSelectColumn<T = any> {
     this._selectedRowsLookup = lookup;
     this._grid.render();
     this._isSelectAllChecked = (selectedRows?.length ?? 0) + disabledCount >= this._grid.getDataLength();
+    this._isPartialSelectAllChecked = (selectedRows?.length ?? 0) > 0;
 
     if (!this._isUsingDataView || !this._addonOptions.applySelectOnAllPages) {
       if (!this._addonOptions.hideInColumnTitleRow && !this._addonOptions.hideSelectAllCheckbox) {
-        this.renderSelectAllCheckbox(this._isSelectAllChecked);
+        this.renderSelectAllCheckbox(this._isSelectAllChecked, this._isPartialSelectAllChecked);
       }
       if (!this._addonOptions.hideInFilterHeaderRow) {
         const selectAllElm = this.headerRowNode?.querySelector<HTMLInputElement>(`#header-filter-selector${this._selectAll_UID}`);
@@ -595,10 +603,10 @@ export class SlickCheckboxSelectColumn<T = any> {
     }
   }
 
-  protected renderSelectAllCheckbox(isSelectAllChecked: boolean): void {
+  protected renderSelectAllCheckbox(isSelectAllChecked: boolean, isPartialSelectAllChecked: boolean): void {
     const colHeaderElm = this._grid.updateColumnHeader(
       this._addonOptions.columnId || '',
-      this.createCheckboxElement(`header-selector${this._selectAll_UID}`, !!isSelectAllChecked),
+      this.createCheckboxElement(`header-selector${this._selectAll_UID}`, !!isSelectAllChecked, !!isPartialSelectAllChecked),
       this._addonOptions.toolTip
     );
     colHeaderElm?.classList.add('header-checkbox-selectall');

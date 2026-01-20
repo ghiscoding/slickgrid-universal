@@ -468,6 +468,7 @@ $slick-checkbox-icon-font-size:                             16px !default;
 $slick-checkbox-icon-container-line-height:                 12px !default;
 $slick-checkbox-icon-container-size:                        1rem !default;
 $slick-checkbox-icon-checked-svg-path:                      "M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z" !default;
+$slick-checkbox-icon-partial-checked-svg-path:              "M20 14H4V10H20" !default;
 $slick-checkbox-icon-unchecked-svg-path:                    $slick-checkbox-icon-checked-svg-path !default;
 $slick-checkbox-icon-unchecked-color-visibility:            visible !default; // make this "hidden" when uncheck icon is not provided (e.g. Salesforce Theme)
 $slick-checkbox-label-text-padding-left:                    8px !default;
