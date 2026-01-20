@@ -25,6 +25,13 @@ export interface CheckboxSelectorOption {
   /** Provide a CSS class used by each row selection check boxes */
   cssClass?: string;
 
+  /**
+   * defaults to false, do we want to hide partial "Select All" checkbox?
+   * The partial checkbox is typically shown as a minux icon "-" and
+   * is shown when there's at least 1 checkbox selected without having all rows selected.
+   */
+  hidePartialSelectAllCheckbox?: boolean;
+
   /** default to false, do we want to hide the "Select All" checkbox? */
   hideSelectAllCheckbox?: boolean;
 
