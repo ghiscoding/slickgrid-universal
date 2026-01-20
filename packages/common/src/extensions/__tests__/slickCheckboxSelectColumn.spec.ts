@@ -925,4 +925,44 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
       'Select/Deselect All'
     );
   });
+
+  it('should trigger "onSelectedRowIdsChanged" event and invalidate row and render without partial checked icon when disabled and not all rows are selected', () => {
+    const nodeElm = document.createElement('div');
+    nodeElm.className = 'slick-headerrow-column';
+    const updateColumnHeaderSpy = vi.spyOn(gridStub, 'updateColumnHeader');
+    vi.spyOn(dataViewStub, 'getAllSelectedFilteredIds').mockReturnValueOnce([1, 2]);
+    vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
+    vi.spyOn(dataViewStub, 'getFilteredItems').mockReturnValueOnce([
+      { id: 22, firstName: 'John', lastName: 'Doe', age: 30 },
+      { id: 23, firstName: 'Jane', lastName: 'Doe', age: 28 },
+      { id: 24, firstName: 'Bob', lastName: 'Smith', age: 26 },
+    ]);
+    vi.spyOn(dataViewStub, 'getItemCount').mockReturnValueOnce(2);
+    vi.spyOn(dataViewStub, 'getItemByIdx').mockReturnValueOnce({ id: 22, firstName: 'John', lastName: 'Doe', age: 30 });
+
+    plugin = new SlickCheckboxSelectColumn(pubSubServiceStub, {
+      hideInFilterHeaderRow: false,
+      hideSelectAllCheckbox: false,
+      hidePartialSelectAllCheckbox: true,
+    });
+    plugin.init(gridStub);
+    plugin.selectedRowsLookup = { 1: false, 2: true };
+
+    gridStub.onHeaderRowCellRendered.notify({ column: { id: '_checkbox_selector', field: '_checkbox_selector' }, node: nodeElm, grid: gridStub });
+
+    const checkboxElm = document.createElement('input');
+    checkboxElm.type = 'checkbox';
+    const clickEvent = addVanillaEventPropagation(new Event('keyDown'), '', ' ', checkboxElm);
+    dataViewStub.onSelectedRowIdsChanged.notify(
+      { rows: [0, 1], filteredIds: [1, 2], ids: [1, 2], selectedRowIds: [1, 2], dataView: dataViewStub, grid: gridStub },
+      clickEvent
+    );
+
+    expect(plugin).toBeTruthy();
+    expect(updateColumnHeaderSpy).toHaveBeenCalledWith(
+      '_checkbox_selector',
+      plugin.createCheckboxElement(`header-selector${plugin.selectAllUid}`, false, true), // partial select all
+      'Select/Deselect All'
+    );
+  });
 });
