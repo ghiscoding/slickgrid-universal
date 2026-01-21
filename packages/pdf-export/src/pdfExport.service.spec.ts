@@ -1,5 +1,4 @@
 import {
-  FieldType,
   Formatters,
   GroupTotalFormatters,
   SortComparers,
@@ -14,6 +13,7 @@ import {
   type SlickGrid,
 } from '@slickgrid-universal/common';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
+// @ts-ignore
 import { textSpy } from 'jspdf';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ContainerServiceStub } from '../../../test/containerServiceStub.js';
@@ -473,7 +473,7 @@ describe('PdfExportService', () => {
           {
             id: 'order',
             field: 'order',
-            type: FieldType.number,
+            type: 'number',
             exportWithFormatter: true,
             formatter: Formatters.multiple,
             params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
@@ -2019,7 +2019,7 @@ describe('PdfExportService', () => {
     beforeEach(() => {
       service = new PdfExportService();
       pubSubService = { publish: vi.fn() };
-      container = { get: (key: string) => (key === 'PubSubService' ? pubSubService : undefined) };
+      container = { get: (key: string) => (key === 'PubSubService' ? pubSubService : undefined) } as ContainerServiceStub;
       gridStub = {
         getOptions: () => ({}),
         getColumns: () => [
