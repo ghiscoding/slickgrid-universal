@@ -244,12 +244,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     const labelElm = createDomElement('label', { className: 'checkbox-selector-label', htmlFor: inputId });
     const divElm = createDomElement('div', { className: 'icon-checkbox-container' });
     divElm.appendChild(createDomElement('input', { id: inputId, type: 'checkbox', checked: isChecked, ariaChecked: String(isChecked) }));
-    const iconClass = isChecked
-      ? CHECK_ICON
-      : isPartialChecked && !this._addonOptions.hidePartialCheckbox
-        ? PARTIAL_CHECK_ICON
-        : UNCHECK_ICON;
-    divElm.appendChild(createDomElement('div', { className: `mdi ${iconClass}` }));
+    divElm.appendChild(createDomElement('div', { className: this.getCheckboxIcon(isChecked, isPartialChecked) }));
     labelElm.appendChild(divElm);
     checkboxElm.appendChild(labelElm);
 
@@ -437,14 +432,18 @@ export class SlickCheckboxSelectColumn<T = any> {
         selectAllElm.checked = this._isSelectAllChecked;
       }
       if (selectAllIconElm) {
-        const iconClass = this._isSelectAllChecked
-          ? CHECK_ICON
-          : this._isPartialSelectAllChecked && !this._addonOptions.hidePartialCheckbox
-            ? PARTIAL_CHECK_ICON
-            : UNCHECK_ICON;
-        selectAllIconElm.className = `mdi ${iconClass}`;
+        selectAllIconElm.className = this.getCheckboxIcon(this._isSelectAllChecked, this._isPartialSelectAllChecked);
       }
     }
+  }
+
+  protected getCheckboxIcon(isChecked: boolean, isPartialChecked: boolean): string {
+    const iconClass = isChecked
+      ? CHECK_ICON
+      : isPartialChecked && !this._addonOptions.hidePartialCheckbox
+        ? PARTIAL_CHECK_ICON
+        : UNCHECK_ICON;
+    return `mdi ${iconClass}`;
   }
 
   protected handleClick(e: SlickEventData, args: { row: number; cell: number; grid: SlickGrid }): void {
