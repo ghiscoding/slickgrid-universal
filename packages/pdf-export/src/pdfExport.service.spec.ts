@@ -1,5 +1,4 @@
 import {
-  FieldType,
   Formatters,
   GroupTotalFormatters,
   SortComparers,
@@ -14,11 +13,12 @@ import {
   type SlickGrid,
 } from '@slickgrid-universal/common';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { textSpy } from 'jspdf';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ContainerServiceStub } from '../../../test/containerServiceStub.js';
 import { TranslateServiceStub } from '../../../test/translateServiceStub.js';
 import { PdfExportService } from './pdfExport.service.js';
+
+let textSpy: any; // Will be set from the jspdf mock
 
 const pubSubServiceStub = {
   publish: vi.fn(),
@@ -117,6 +117,9 @@ vi.mock('jspdf', () => {
 // --- end jsPDF module mock ---
 
 describe('PdfExportService', () => {
+  // Get textSpy from the jspdf mock
+  let getTextSpy: () => any;
+
   let container: ContainerServiceStub;
   let service: PdfExportService;
   let translateService: TranslateServiceStub;
@@ -124,7 +127,10 @@ describe('PdfExportService', () => {
   let mockExportPdfOptions: PdfExportOption;
 
   // Suppress console.error globally for all tests in this file
-  beforeAll(() => {
+  beforeAll(async () => {
+    const jspdfModule = await import('jspdf');
+    getTextSpy = () => (jspdfModule as any).textSpy;
+    textSpy = getTextSpy();
     vi.spyOn(console, 'error').mockImplementation(() => {});
   });
   afterAll(() => {
@@ -473,7 +479,7 @@ describe('PdfExportService', () => {
           {
             id: 'order',
             field: 'order',
-            type: FieldType.number,
+            type: 'number',
             exportWithFormatter: true,
             formatter: Formatters.multiple,
             params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
@@ -2019,7 +2025,7 @@ describe('PdfExportService', () => {
     beforeEach(() => {
       service = new PdfExportService();
       pubSubService = { publish: vi.fn() };
-      container = { get: (key: string) => (key === 'PubSubService' ? pubSubService : undefined) };
+      container = { get: (key: string) => (key === 'PubSubService' ? pubSubService : undefined) } as ContainerServiceStub;
       gridStub = {
         getOptions: () => ({}),
         getColumns: () => [
