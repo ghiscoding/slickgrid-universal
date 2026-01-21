@@ -34,6 +34,7 @@ export class Constants {
     TEXT_EXPORT_TO_CSV: 'Export in CSV format',
     TEXT_EXPORT_TO_TEXT_FORMAT: 'Export in Text format (Tab delimited)',
     TEXT_EXPORT_TO_EXCEL: 'Export to Excel',
+    TEXT_EXPORT_TO_PDF: 'Export to PDF',
     TEXT_EXPORT_TO_TAB_DELIMITED: 'Export in Text format (Tab delimited)',
     TEXT_FORCE_FIT_COLUMNS: 'Force fit columns',
     TEXT_FILTER_SHORTCUTS: 'Filter Shortcuts',

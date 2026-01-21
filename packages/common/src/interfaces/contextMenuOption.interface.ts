@@ -62,6 +62,9 @@ export interface ContextMenuOption {
   /** Defaults to false, which will hide the "Export to Excel" command in the menu (Grid Option "enableExcelExport: true" has to be enabled) */
   hideExportExcelCommand?: boolean;
 
+  /** Defaults to false, which will hide the "Export to PDF" command in the menu (Grid Option "enablePdfExport: true" has to be enabled) */
+  hideExportPdfCommand?: boolean;
+
   /** Defaults to false, which will hide the "Export to Text Delimited" command in the menu (Grid Option "enableTextExport: true" has to be enabled) */
   hideExportTextDelimitedCommand?: boolean;
 
@@ -88,6 +91,9 @@ export interface ContextMenuOption {
 
   /** icon for the "Export to Excel" command */
   iconExportExcelCommand?: string;
+
+  /** icon for the "Export to PDF" command */
+  iconExportPdfCommand?: string;
 
   /** icon for the "Export to Text Delimited" command */
   iconExportTextDelimitedCommand?: string;

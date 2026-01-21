@@ -602,6 +602,9 @@ li.hidden {
       &.mdi-icon-check {
         @include svg.generateSvgStyle('slick-checkbox-icon-checked-svg', v.$slick-checkbox-icon-checked-svg-path);
       }
+      &.mdi-icon-partial-check {
+        @include svg.generateSvgStyle('slick-checkbox-icon-partial-checked-svg', v.$slick-checkbox-icon-partial-checked-svg-path);
+      }
       &.mdi-icon-uncheck {
         @include svg.generateSvgStyle('slick-checkbox-icon-unchecked-svg', v.$slick-checkbox-icon-unchecked-svg-path);
         opacity: var(--slick-checkbox-unchecked-opacity, v.$slick-checkbox-unchecked-opacity); /* unchecked icon */

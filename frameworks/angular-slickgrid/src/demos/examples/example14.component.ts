@@ -1,5 +1,6 @@
 import { Component, type OnInit } from '@angular/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import { PdfExportService } from '@slickgrid-universal/pdf-export';
 import { AngularSlickgridModule, type AngularGridInstance, type Column, type GridOption, type ItemMetadata } from '../../library';
 
 @Component({
@@ -62,11 +63,12 @@ export class Example14Component implements OnInit {
       gridMenu: {
         iconButtonContainer: 'preheader', // we can display the grid menu icon in either the preheader or in the column header (default)
       },
+      enablePdfExport: true,
       enableExcelExport: true,
       excelExportOptions: {
         exportWithFormatter: false,
       },
-      externalResources: [new ExcelExportService()],
+      externalResources: [new ExcelExportService(), new PdfExportService()],
       spreadHiddenColspan: this.isColspanSpreading,
     };
 
@@ -104,11 +106,12 @@ export class Example14Component implements OnInit {
       frozenColumn: 2,
       gridMenu: { hideClearFrozenColumnsCommand: false },
       headerMenu: { hideFreezeColumnsCommand: false },
+      enablePdfExport: true,
       enableExcelExport: true,
       excelExportOptions: {
         exportWithFormatter: false,
       },
-      externalResources: [new ExcelExportService()],
+      externalResources: [new ExcelExportService(), new PdfExportService()],
     };
 
     this.dataset2 = this.getData(500);

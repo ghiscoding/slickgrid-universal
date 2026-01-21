@@ -2,6 +2,7 @@ import { NgFor } from '@angular/common';
 import { ChangeDetectorRef, Component, type AfterViewInit, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import { PdfExportService } from '@slickgrid-universal/pdf-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import {
   Aggregators,
@@ -39,6 +40,7 @@ export class Example18Component implements AfterViewInit, OnInit, OnDestroy {
   processing = false;
   selectedGroupingFields: Array<string | GroupingGetterFunction> = ['', '', ''];
   excelExportService = new ExcelExportService();
+  pdfExportService = new PdfExportService();
   textExportService = new TextExportService();
 
   constructor(private changeDetectorRef: ChangeDetectorRef) {
@@ -283,7 +285,12 @@ export class Example18Component implements AfterViewInit, OnInit, OnDestroy {
       enableTextExport: true,
       enableExcelExport: true,
       excelExportOptions: { sanitizeDataExport: true },
-      externalResources: [this.excelExportService, this.textExportService],
+      externalResources: [this.excelExportService, this.pdfExportService, this.textExportService],
+      enablePdfExport: true,
+      pdfExportOptions: {
+        repeatHeadersOnEachPage: true, // defaults to true
+        documentTitle: 'Grouping Grid',
+      },
     };
 
     this.loadData(500);
@@ -343,6 +350,12 @@ export class Example18Component implements AfterViewInit, OnInit, OnDestroy {
     this.excelExportService.exportToExcel({
       filename: 'Export',
       format: 'xlsx',
+    });
+  }
+
+  exportToPdf() {
+    this.pdfExportService.exportToPdf({
+      filename: 'Export',
     });
   }
 

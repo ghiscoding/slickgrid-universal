@@ -14,6 +14,7 @@ import type {
   GroupTotalsFormatter,
   HeaderButtonsOrMenu,
   OnEventArgs,
+  PdfExportOption,
   SortComparer,
 } from './index.js';
 
@@ -265,6 +266,9 @@ export interface Column<T = any> {
    * NOTE: this is currently only used by the Editors/Filters with a Date Picker
    */
   outputType?: FieldType;
+
+  /** PDF export custom options for cell formatting & alignment */
+  pdfExportOptions?: PdfExportOption;
 
   /**
    * Column Editor save format type (e.g. which date format to use when saving after choosing a date from the Date Editor picker)

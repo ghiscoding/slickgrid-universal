@@ -17,6 +17,7 @@ import {
   type VanillaCalendarOption,
 } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import { PdfExportService } from '@slickgrid-universal/pdf-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options.js';
@@ -41,6 +42,7 @@ export default class Example03 {
   dataset: any[];
   editCommandQueue: EditCommand[] = [];
   excelExportService: ExcelExportService;
+  pdfExportService: PdfExportService;
   sgb: SlickVanillaGridBundle<ReportItem & { action: string }>;
   durationOrderByCount = false;
   draggableGroupingPlugin: SlickDraggableGrouping;
@@ -50,6 +52,7 @@ export default class Example03 {
   constructor() {
     this._bindingEventService = new BindingEventService();
     this.excelExportService = new ExcelExportService();
+    this.pdfExportService = new PdfExportService();
   }
 
   attached() {
@@ -63,10 +66,10 @@ export default class Example03 {
     this._bindingEventService.bind(gridContainerElm, 'onitemsdeleted', this.handleItemsDeleted.bind(this));
     this._bindingEventService.bind(
       gridContainerElm,
-      'onbeforeexporttoexcel',
+      ['onbeforeexporttoexcel', 'onbeforeexporttopdf'],
       () => (this.loadingClass = 'mdi mdi-load mdi-spin-1s font-22px')
     );
-    this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => (this.loadingClass = ''));
+    this._bindingEventService.bind(gridContainerElm, ['onafterexporttoexcel', 'onafterexporttopdf'], () => (this.loadingClass = ''));
     this.sgb = new Slicker.GridBundle(
       gridContainerElm,
       this.columnDefinitions,
@@ -96,6 +99,9 @@ export default class Example03 {
           alwaysSaveOnEnterKey: true,
           minLength: 5,
           maxLength: 255,
+        },
+        pdfExportOptions: {
+          textAlign: 'center',
         },
         filterable: true,
         grouping: {
@@ -132,6 +138,10 @@ export default class Example03 {
           aggregators: [new Aggregators.Sum('duration'), new Aggregators.Sum('cost')],
           aggregateCollapsed: false,
           collapsed: false,
+        },
+        pdfExportOptions: {
+          width: 70,
+          textAlign: 'center',
         },
       },
       {
@@ -345,12 +355,18 @@ export default class Example03 {
       enableAutoSizeColumns: true,
       enableAutoResize: true,
       enableCellNavigation: true,
+      enablePdfExport: true,
       enableTextExport: true,
       enableExcelExport: true,
       excelExportOptions: {
         exportWithFormatter: true,
       },
-      externalResources: [new TextExportService(), this.excelExportService],
+      pdfExportOptions: {
+        pageOrientation: 'landscape',
+        exportWithFormatter: true,
+        repeatHeadersOnEachPage: true, // defaults to true
+      },
+      externalResources: [new TextExportService(), this.excelExportService, this.pdfExportService],
       enableFiltering: true,
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)
@@ -483,6 +499,10 @@ export default class Example03 {
       filename: 'Export',
       format: 'xlsx',
     });
+  }
+
+  exportToPdf() {
+    this.pdfExportService.exportToPdf({ filename: 'Export' });
   }
 
   groupByDurationOrderByCount(sortedByCount = false) {

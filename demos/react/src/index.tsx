@@ -2,7 +2,7 @@ import 'bootstrap';
 import i18n from 'i18next';
 import { createRoot } from 'react-dom/client';
 import { initReactI18next } from 'react-i18next';
-import { HashRouter } from 'react-router-dom';
+import { HashRouter } from 'react-router';
 import { I18nextProvider } from 'slickgrid-react';
 import localeEn from './assets/locales/en/translation.json';
 import localeFr from './assets/locales/fr/translation.json';

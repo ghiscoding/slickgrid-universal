@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "typeRoots": ["./node_modules/@types", "../../node_modules/@types"]
+  },
+  "exclude": ["dist", "node_modules", "**/*.spec.ts"],
+  "filesGlob": ["./src/**/*.ts"],
+  "include": ["src/**/*.ts"],
+  "references": [
+    {
+      "path": "../common"
+    },
+    {
+      "path": "../utils"
+    }
+  ]
+}

@@ -164,6 +164,8 @@ export interface SlickgridVueProps {
   // Slickgrid-Vue events
   onOnAfterExportToExcel?: VueRegularEventHandler<{ filename: string; mimeType: string } | { error: any }>;
   onOnBeforeExportToExcel?: VueRegularEventHandler<boolean>;
+  onOnAfterExportToPdf?: VueRegularEventHandler<{ filename: string } | { error: any }>;
+  onOnBeforeExportToPdf?: VueRegularEventHandler<boolean>;
   onOnBeforeExportToTextFile?: VueRegularEventHandler<boolean>;
   onOnAfterExportToTextFile?: VueRegularEventHandler<ExportTextDownloadOption>;
   onOnBeforeFilterChange?: VueRegularEventHandler<CurrentFilter[]>;

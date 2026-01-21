@@ -18,6 +18,7 @@
   "EXPAND_ALL_GROUPS": "Expand all Groups",
   "EXPORT_TO_CSV": "Export in CSV format",
   "EXPORT_TO_EXCEL": "Export to Excel",
+  "EXPORT_TO_PDF": "Export to PDF",
   "EXPORT_TO_TAB_DELIMITED": "Export in Text format (Tab delimited)",
   "EXPORT_TO_TEXT_FORMAT": "Export in Text format",
   "FILTER_SHORTCUTS": "Filter Shortcuts",

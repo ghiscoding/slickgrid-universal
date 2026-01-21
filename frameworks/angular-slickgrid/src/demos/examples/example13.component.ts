@@ -1,5 +1,6 @@
 import { Component, type OnInit } from '@angular/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import { PdfExportService } from '@slickgrid-universal/pdf-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import {
   Aggregators,
@@ -31,6 +32,7 @@ export class Example13Component implements OnInit {
   hideSubTitle = false;
   processing = false;
   excelExportService = new ExcelExportService();
+  pdfExportService = new PdfExportService();
   textExportService = new TextExportService();
 
   ngOnInit(): void {
@@ -209,13 +211,19 @@ export class Example13Component implements OnInit {
       },
       excelExportOptions: { sanitizeDataExport: true },
       textExportOptions: { sanitizeDataExport: true },
-      externalResources: [this.excelExportService, this.textExportService],
+      externalResources: [this.excelExportService, this.pdfExportService, this.textExportService],
       showCustomFooter: true, // display some metrics in the bottom custom footer
       customFooterOptions: {
         // optionally display some text on the left footer container
         hideMetrics: false,
         hideTotalItemCount: false,
         hideLastUpdateTimestamp: false,
+      },
+      enablePdfExport: true,
+      pdfExportOptions: {
+        repeatHeadersOnEachPage: false,
+        sanitizeDataExport: true,
+        documentTitle: 'Grouping Grid',
       },
     };
 
@@ -272,6 +280,10 @@ export class Example13Component implements OnInit {
       filename: 'Export',
       format: 'xlsx',
     });
+  }
+
+  exportToPdf() {
+    this.pdfExportService.exportToPdf({ filename: 'Export' });
   }
 
   exportToFile(type = 'csv') {

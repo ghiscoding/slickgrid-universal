@@ -39,6 +39,9 @@
       <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="export-excel-btn" (click)="exportToExcel()">
         <i class="mdi mdi-file-excel-outline text-success"></i> Export to Excel
       </button>
+      <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="export-pdf-btn" (click)="exportToPdf()">
+        <i class="mdi mdi-file-pdf-outline text-danger"></i> Export to PDF
+      </button>
     </div>
   </div>
   <hr />
@@ -94,6 +97,8 @@
     (onAfterExportToTextFile)="processing = false"
     (onBeforeExportToExcel)="processing = true"
     (onAfterExportToExcel)="processing = false"
+    (onBeforeExportToPdf)="processing = true"
+    (onAfterExportToPdf)="processing = false"
     (onAngularGridCreated)="angularGridReady($event.detail)"
   >
   </angular-slickgrid>

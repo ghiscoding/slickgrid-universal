@@ -5,7 +5,14 @@ import { TranslateServiceStub } from '../../../../../test/translateServiceStub.j
 import { SlickEvent, SlickEventData, type SlickDataView, type SlickGrid } from '../../core/index.js';
 import { ExtensionUtility } from '../../extensions/extensionUtility.js';
 import type { Column, ContextMenu, ElementPosition, Formatter, GridOption, MenuCommandItem, MenuOptionItem } from '../../interfaces/index.js';
-import { BackendUtilityService, SharedService, type ExcelExportService, type TextExportService, type TreeDataService } from '../../services/index.js';
+import {
+  BackendUtilityService,
+  SharedService,
+  type ExcelExportService,
+  type PdfExportService,
+  type TextExportService,
+  type TreeDataService,
+} from '../../services/index.js';
 import { SlickContextMenu } from '../slickContextMenu.js';
 
 const removeExtraSpaces = (text: string) => `${text}`.replace(/[\n\r]\s+/g, '');
@@ -146,6 +153,11 @@ const excelExportServiceStub = {
   className: 'ExcelExportService',
   exportToExcel: vi.fn(),
 } as unknown as ExcelExportService;
+
+const pdfExportServiceStub = {
+  className: 'PdfExportService',
+  exportToPdf: vi.fn(),
+} as unknown as PdfExportService;
 
 const exportServiceStub = {
   className: 'TextExportService',
@@ -1268,6 +1280,29 @@ describe('ContextMenu Plugin', () => {
         );
       });
 
+      // -- Export to PDF -- //
+      it('should call "exportToPdf" and expect an error thrown when PdfExportService is not registered prior to calling the method', () => {
+        const copyGridOptionsMock = {
+          ...gridOptionsMock,
+          enableExcelExport: false,
+          enablePdfExport: true,
+          enableTextExport: false,
+          contextMenu: { hideCopyCellValueCommand: true, hideExportCsvCommand: true, hideExportPdfCommand: false },
+        } as GridOption;
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+        vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+        vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([]);
+        plugin.dispose();
+        plugin.init({ commandItems: [] });
+
+        const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find(
+          (item: MenuCommandItem) => item.command === 'export-pdf'
+        ) as MenuCommandItem;
+        expect(() => menuItemCommand.action!(new CustomEvent('change'), { command: 'export-pdf', cell: 0, row: 0 } as any)).toThrow(
+          '[Slickgrid-Universal] You must register the PdfExportService to properly use Export to PDF in the Context Menu.'
+        );
+      });
+
       it('should call "exportToFile" with CSV and expect an error thrown when TextExportService is not registered prior to calling the method', () => {
         const copyGridOptionsMock = {
           ...gridOptionsMock,
@@ -1284,7 +1319,7 @@ describe('ContextMenu Plugin', () => {
         const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find(
           (item: MenuCommandItem) => item.command === 'export-csv'
         ) as MenuCommandItem;
-        expect(() => menuItemCommand.action!(new CustomEvent('change'), { command: 'export-excel', cell: 0, row: 0 } as any)).toThrow(
+        expect(() => menuItemCommand.action!(new CustomEvent('change'), { command: 'export-csv', cell: 0, row: 0 } as any)).toThrow(
           '[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Context Menu.'
         );
       });
@@ -1330,6 +1365,30 @@ describe('ContextMenu Plugin', () => {
         menuItemCommand.action!(new CustomEvent('change'), { command: 'export-excel', cell: 0, row: 0 } as any);
 
         expect(excelExportSpy).toHaveBeenCalled();
+      });
+
+      it('should call "exportToPdf" when the command triggered is "export-pdf"', () => {
+        const pdfExportSpy = vi.spyOn(pdfExportServiceStub, 'exportToPdf');
+        const copyGridOptionsMock = {
+          ...gridOptionsMock,
+          enableExcelExport: false,
+          enablePdfExport: true,
+          enableTextExport: false,
+          contextMenu: { hideCopyCellValueCommand: true, hideExportCsvCommand: true, hideExportExcelCommand: true, hideExportPdfCommand: false },
+        } as GridOption;
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+        vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+        vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([pdfExportServiceStub]);
+        plugin.dispose();
+        plugin.init({ commandItems: [{ command: 'export-pdf' }] }); // add fake command to test with .some()
+        plugin.init(); // calling init the 2nd time will replace the previous line init+command
+
+        const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find(
+          (item: MenuCommandItem) => item.command === 'export-pdf'
+        ) as MenuCommandItem;
+        menuItemCommand.action!(new CustomEvent('change'), { command: 'export-pdf', cell: 0, row: 0 } as any);
+
+        expect(pdfExportSpy).toHaveBeenCalled();
       });
 
       it('should call "exportToFile" with CSV set when the command triggered is "export-csv"', () => {

@@ -21,6 +21,7 @@
     "@slickgrid-universal/excel-export": "workspace:*",
     "@slickgrid-universal/graphql": "workspace:*",
     "@slickgrid-universal/odata": "workspace:*",
+    "@slickgrid-universal/pdf-export": "workspace:*",
     "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
     "@slickgrid-universal/rxjs-observable": "workspace:*",
     "@slickgrid-universal/text-export": "workspace:*",

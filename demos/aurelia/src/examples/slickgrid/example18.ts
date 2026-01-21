@@ -1,4 +1,5 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import { PdfExportService } from '@slickgrid-universal/pdf-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import {
   Aggregators,
@@ -32,6 +33,7 @@ export class Example18 {
   processing = false;
   selectedGroupingFields: Array<string | GroupingGetterFunction> = ['', '', ''];
   excelExportService = new ExcelExportService();
+  pdfExportService = new PdfExportService();
   textExportService = new TextExportService();
 
   constructor() {
@@ -255,7 +257,12 @@ export class Example18 {
       enableExcelExport: true,
       excelExportOptions: { sanitizeDataExport: true },
       textExportOptions: { sanitizeDataExport: true },
-      externalResources: [this.excelExportService, this.textExportService],
+      externalResources: [this.excelExportService, this.pdfExportService, this.textExportService],
+      enablePdfExport: true,
+      pdfExportOptions: {
+        repeatHeadersOnEachPage: true, // defaults to true
+        documentTitle: 'Grouping Grid',
+      },
     };
   }
 
@@ -314,6 +321,12 @@ export class Example18 {
     this.excelExportService.exportToExcel({
       filename: 'Export',
       format: 'xlsx',
+    });
+  }
+
+  exportToPdf() {
+    this.pdfExportService.exportToPdf({
+      filename: 'Export',
     });
   }
 

@@ -54,6 +54,23 @@ describe('Draggable class', () => {
     dg.destroy();
   });
 
+  it('should NOT trigger dragInit event when user has paused the service', () => {
+    const dragInitSpy = vi.fn();
+    const dragSpy = vi.fn();
+    containerElement.className = 'slick-cell';
+
+    dg = Draggable({ containerElement, allowDragFrom: 'div.slick-cell', onDrag: dragSpy, onDragInit: dragInitSpy });
+    dg.pause();
+
+    containerElement.dispatchEvent(new MouseEvent('mousedown', { ctrlKey: true }));
+
+    expect(dg).toBeTruthy();
+    expect(dragInitSpy).not.toHaveBeenCalled();
+    expect(dragSpy).not.toHaveBeenCalled();
+
+    dg.destroy();
+  });
+
   it('should NOT trigger dragInit event when user is pressing mousedown and mousemove + Ctrl key combo that we considered as forbidden via "preventDragFromKeys"', () => {
     const dragInitSpy = vi.fn();
     const dragSpy = vi.fn();
