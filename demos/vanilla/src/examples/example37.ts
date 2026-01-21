@@ -138,8 +138,6 @@ export default class Example37 {
       // enable new hybrid selection model (rows & cells)
       enableHybridSelection: true,
       rowSelectionOptions: {
-        // True (Single Selection), False (Multiple Selections)
-        selectActiveRow: true,
         rowSelectColumnIds: ['id'],
       },
 
@@ -151,6 +149,7 @@ export default class Example37 {
         replaceNewlinesWith: ' ',
       },
     };
+
     this.gridOptions2 = {
       ...this.gridOptions1,
       // you can also enable checkbox selection & row selection, make sure to use `rowSelectColumnIds: ['id', '_checkbox_selector']`

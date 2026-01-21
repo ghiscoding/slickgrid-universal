@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
+import { PdfExportService } from '@slickgrid-universal/pdf-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import {
   Aggregators,
@@ -23,6 +24,7 @@ const dataset = ref<any[]>([]);
 const showSubTitle = ref(true);
 const processing = ref(false);
 const excelExportService = new ExcelExportService();
+const pdfExportService = new PdfExportService();
 const textExportService = new TextExportService();
 let vueGrid!: SlickgridVueInstance;
 
@@ -204,13 +206,19 @@ function defineGrid() {
     enableTextExport: true,
     excelExportOptions: { sanitizeDataExport: true },
     textExportOptions: { sanitizeDataExport: true },
-    externalResources: [excelExportService, textExportService],
+    externalResources: [excelExportService, pdfExportService, textExportService],
     showCustomFooter: true,
     customFooterOptions: {
       // optionally display some text on the left footer container
       hideMetrics: false,
       hideTotalItemCount: false,
       hideLastUpdateTimestamp: false,
+    },
+    enablePdfExport: true,
+    pdfExportOptions: {
+      repeatHeadersOnEachPage: false,
+      sanitizeDataExport: true,
+      documentTitle: 'Grouping Grid',
     },
   };
 }
@@ -258,6 +266,10 @@ function exportToExcel() {
     filename: 'Export',
     format: 'xlsx',
   });
+}
+
+function exportToPdf() {
+  pdfExportService.exportToPdf({ filename: 'Export' });
 }
 
 function groupByDuration() {
@@ -408,6 +420,9 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <button class="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="export-excel-btn" @click="exportToExcel()">
         <i class="mdi mdi-file-excel-outline text-success"></i> Export to Excel
       </button>
+      <button class="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="export-pdf-btn" @click="exportToPdf()">
+        <i class="mdi mdi-file-pdf-outline text-danger"></i> Export to PDF
+      </button>
     </div>
   </div>
 
@@ -463,6 +478,8 @@ function vueGridReady(grid: SlickgridVueInstance) {
     grid-id="grid13"
     @onBeforeExportToExcel="processing = true"
     @onAfterExportToExcel="processing = false"
+    @onBeforeExportToPdf="processing = true"
+    @onAfterExportToPdf="processing = false"
     @onVueGridCreated="vueGridReady($event.detail)"
   >
   </slickgrid-vue>

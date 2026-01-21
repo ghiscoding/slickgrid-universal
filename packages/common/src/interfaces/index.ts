@@ -122,6 +122,7 @@ export type * from './pagination.interface.js';
 export type * from './paginationChangedArgs.interface.js';
 export type * from './paginationCursorChangedArgs.interface.js';
 export type * from './pagingInfo.interface.js';
+export type * from './pdfExportOption.interface.js';
 export type * from './position.interface.js';
 export type * from './resizeByContentOption.interface.js';
 export type * from './resizer.interface.js';

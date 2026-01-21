@@ -299,7 +299,6 @@ function defineGrid() {
         options: {
           minLength: 1,
           fetch: (searchTerm: string, callback: (items: false | any[]) => void) => {
-            // const items = require('c://TEMP/items.json');
             const products = mockProducts();
             callback(products.filter((product) => product.itemName.toLowerCase().includes(searchTerm.toLowerCase())));
           },

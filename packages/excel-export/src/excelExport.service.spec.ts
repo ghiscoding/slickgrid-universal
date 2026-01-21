@@ -17,7 +17,7 @@ import {
 } from '@slickgrid-universal/common';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createExcelFileStream, downloadExcelFile, Workbook } from 'excel-builder-vanilla';
-import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { ContainerServiceStub } from '../../../test/containerServiceStub.js';
 import { TranslateServiceStub } from '../../../test/translateServiceStub.js';
 import { ExcelExportService } from './excelExport.service.js';
@@ -94,6 +94,13 @@ const gridStub = {
 } as unknown as SlickGrid;
 
 describe('ExcelExportService', () => {
+  // Suppress console.error globally for all tests in this file
+  beforeAll(() => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+  });
+  afterAll(() => {
+    (console.error as any).mockRestore?.();
+  });
   let container: ContainerServiceStub;
   let service: ExcelExportService;
   let translateService: TranslateServiceStub;
@@ -1562,6 +1569,48 @@ describe('ExcelExportService', () => {
                     { metadata: { style: 1 }, value: 'Order' },
                   ],
                   ['John', 'X', '1E06', 'SALES_REP', '10'],
+                ],
+              }),
+            ],
+          }),
+          'export.xlsx',
+          { mimeType: mimeTypeXLSX }
+        );
+      });
+
+      it('should export with grouped header titles and "Group by" text prepended and showing up on first row', async () => {
+        mockCollection2 = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'X', position: 'SALES_REP', order: 10 }];
+        vi.spyOn(dataViewStub, 'getGrouping').mockReturnValue([{ getter: 'id' }] as any);
+        vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection2.length);
+        vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection2[0]);
+        const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
+
+        service.init(gridStub, container);
+        await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
+
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
+        expect(downloadExcelFile).toHaveBeenCalledWith(
+          expect.objectContaining({
+            worksheets: [
+              expect.objectContaining({
+                data: [
+                  [
+                    { value: '' },
+                    { metadata: { style: 4 }, value: 'User Profile' },
+                    { metadata: { style: 4 }, value: 'User Profile' },
+                    { metadata: { style: 4 }, value: 'Company Profile' },
+                    { metadata: { style: 4 }, value: 'Company Profile' },
+                    { metadata: { style: 4 }, value: 'Sales' },
+                  ],
+                  [
+                    { metadata: { style: 1 }, value: 'Grouped By' },
+                    { metadata: { style: 1 }, value: 'FirstName' },
+                    { metadata: { style: 1 }, value: 'LastName' },
+                    { metadata: { style: 1 }, value: 'User Id' },
+                    { metadata: { style: 1 }, value: 'Position' },
+                    { metadata: { style: 1 }, value: 'Order' },
+                  ],
+                  ['', 'John', 'X', '1E06', 'SALES_REP', '10'],
                 ],
               }),
             ],

@@ -16,6 +16,7 @@ import {
   getCellValueFromQueryFieldGetter,
   getTranslationPrefix,
   type ExcelExportService,
+  type PdfExportService,
   type TextExportService,
 } from '../services/index.js';
 import type { SharedService } from '../services/shared.service.js';
@@ -270,6 +271,32 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
       }
     }
 
+    // show context menu: Export to PDF
+    if (gridOptions && gridOptions.enablePdfExport && contextMenu && !contextMenu.hideExportPdfCommand) {
+      const commandName = 'export-pdf';
+      if (!cmdExists(commandName)) {
+        menuCommandItems.push({
+          _orgTitle: commandLabels?.exportPdfCommand || '',
+          iconCssClass: contextMenu.iconExportPdfCommand || 'mdi mdi-file-pdf-outline text-danger',
+          titleKey: `${translationPrefix}EXPORT_TO_PDF`,
+          disabled: false,
+          command: commandName,
+          positionOrder: 53,
+          action: () => {
+            const registedServices = this.sharedService?.externalRegisteredResources || [];
+            const pdfService: PdfExportService = registedServices.find((service: any) => service.className === 'PdfExportService');
+            if (pdfService?.exportToPdf) {
+              pdfService.exportToPdf();
+            } else {
+              throw new Error(
+                `[Slickgrid-Universal] You must register the PdfExportService to properly use Export to PDF in the Context Menu. Example:: this.gridOptions = { enablePdfExport: true, externalResources: [new PdfExportService()] };`
+              );
+            }
+          },
+        });
+      }
+    }
+
     // show context menu: export to text file as tab delimited
     if (gridOptions?.enableTextExport && contextMenu && !contextMenu.hideExportTextDelimitedCommand) {
       const commandName = 'export-text-delimited';
@@ -280,7 +307,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
           titleKey: `${translationPrefix}EXPORT_TO_TAB_DELIMITED`,
           disabled: false,
           command: commandName,
-          positionOrder: 53,
+          positionOrder: 54,
           action: () => {
             const registedServices = this.sharedService?.externalRegisteredResources || [];
             const excelService: TextExportService = registedServices.find((service: any) => service.className === 'TextExportService');
@@ -316,7 +343,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
             titleKey: `${translationPrefix}CLEAR_ALL_GROUPING`,
             disabled: false,
             command: commandName,
-            positionOrder: 55,
+            positionOrder: 56,
             action: () => {
               dataView.setGrouping([]);
               this.pubSubService.publish('onContextMenuClearGrouping');
@@ -340,7 +367,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
             titleKey: `${translationPrefix}COLLAPSE_ALL_GROUPS`,
             disabled: false,
             command: commandName,
-            positionOrder: 56,
+            positionOrder: 57,
             action: () => {
               if (gridOptions.enableTreeData) {
                 this.treeDataService.toggleTreeDataCollapse(true);
@@ -371,7 +398,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
             titleKey: `${translationPrefix}EXPAND_ALL_GROUPS`,
             disabled: false,
             command: commandName,
-            positionOrder: 57,
+            positionOrder: 58,
             action: () => {
               if (gridOptions.enableTreeData) {
                 this.treeDataService.toggleTreeDataCollapse(false);

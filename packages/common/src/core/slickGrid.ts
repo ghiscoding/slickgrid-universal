@@ -1065,7 +1065,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         this._bindingEventService.bind(element, 'mouseout', this.handleCellMouseOut.bind(this) as EventListener);
       });
 
-      if (Draggable) {
+      const isDraggable = this.selectionModel?.getOptions()?.selectionType !== 'row-click';
+      if (Draggable && isDraggable) {
         this.slickDraggableInstance = Draggable({
           containerElement: this._container,
           allowDragFrom: `div.slick-cell, div.slick-cell *, div.${this.dragReplaceEl.cssClass}`,
@@ -1161,15 +1162,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   setSelectionModel(model: SelectionModel): void {
     if (this.selectionModel) {
       this.selectionModel.onSelectedRangesChanged.unsubscribe(this.handleSelectedRangesChanged.bind(this));
-      if (this.selectionModel.destroy) {
-        this.selectionModel.destroy();
-      }
+      this.selectionModel?.destroy();
     }
 
     this.selectionModel = model;
     if (this.selectionModel) {
       this.selectionModel.init(this as unknown as SlickGrid);
       this.selectionModel.onSelectedRangesChanged.subscribe(this.handleSelectedRangesChanged.bind(this));
+      if (this.selectionModel.getOptions()?.selectionType === 'row-click' && this.slickDraggableInstance?.pause) {
+        this.slickDraggableInstance.pause(); // don't allow dragging (cell selection) when using row-click
+      }
     }
   }
 

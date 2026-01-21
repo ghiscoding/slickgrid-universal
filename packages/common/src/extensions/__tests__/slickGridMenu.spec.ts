@@ -10,6 +10,7 @@ import {
   SharedService,
   type ExcelExportService,
   type FilterService,
+  type PdfExportService,
   type SortService,
   type TextExportService,
 } from '../../services/index.js';
@@ -23,6 +24,11 @@ const excelExportServiceStub = {
   className: 'ExcelExportService',
   exportToExcel: vi.fn(),
 } as unknown as ExcelExportService;
+
+const pdfExportServiceStub = {
+  className: 'PdfExportService',
+  exportToPdf: vi.fn(),
+} as unknown as PdfExportService;
 
 const textExportServiceStub = {
   className: 'TextExportService',
@@ -1570,7 +1576,7 @@ describe('GridMenuControl', () => {
           expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([]);
         });
 
-        it('should have the "export-excel" menu command when "enableTextExport" is set', () => {
+        it('should have the "export-excel" menu command when "enableExcelExport" is set', () => {
           const copyGridOptionsMock = {
             ...gridOptionsMock,
             enableExcelExport: true,
@@ -1601,6 +1607,39 @@ describe('GridMenuControl', () => {
           ]);
         });
 
+        it('should have the "export-pdf" menu command when "enablePdfExport" is set', () => {
+          const copyGridOptionsMock = {
+            ...gridOptionsMock,
+            enablePdfExport: true,
+            enableExcelExport: false,
+            enableTextExport: false,
+            gridMenu: {
+              commandLabels: gridOptionsMock.gridMenu!.commandLabels,
+              hideClearFrozenColumnsCommand: true,
+              hideExportCsvCommand: true,
+              hideExportExcelCommand: true,
+              hideExportPdfCommand: false,
+              hideToggleDarkModeCommand: true,
+            },
+          } as unknown as GridOption;
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          control.columns = columnsMock;
+          control.init();
+          control.init(); // calling 2x register to make sure it doesn't duplicate commands
+          expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
+            {
+              _orgTitle: '',
+              iconCssClass: 'mdi mdi-file-pdf-outline text-danger',
+              titleKey: 'EXPORT_TO_PDF',
+              title: 'Exporter vers PDF',
+              disabled: false,
+              command: 'export-pdf',
+              positionOrder: 57,
+            },
+          ]);
+        });
+
         it('should have the "export-text-delimited" menu command when "enableTextExport" is set', () => {
           const copyGridOptionsMock = {
             ...gridOptionsMock,
@@ -1626,7 +1665,7 @@ describe('GridMenuControl', () => {
               title: 'Exporter en format texte (délimité par tabulation)',
               disabled: false,
               command: 'export-text-delimited',
-              positionOrder: 57,
+              positionOrder: 58,
             },
           ]);
         });
@@ -1740,6 +1779,23 @@ describe('GridMenuControl', () => {
           );
         });
 
+        it('should call "exportToPdf" and expect an error thrown when PdfExportService is not registered prior to calling the method', () => {
+          const copyGridOptionsMock = { ...gridOptionsMock, enablePdfExport: true } as unknown as GridOption;
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([]);
+
+          control.init();
+          control.columns = columnsMock;
+          const clickEvent = new Event('click', { bubbles: true, cancelable: true, composed: false });
+          document.querySelector('.slick-grid-menu-button')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+          control.menuElement!.querySelector('.slick-menu-item[data-command=export-pdf]')!.dispatchEvent(clickEvent);
+
+          expect(consoleErrorSpy).toHaveBeenCalledWith(
+            expect.stringContaining('[Slickgrid-Universal] You must register the PdfExportService to properly use Export to PDF in the Grid Menu.')
+          );
+        });
+
         it('should call "exportToFile" with CSV and expect an error thrown when TextExportService is not registered prior to calling the method', () => {
           const copyGridOptionsMock = { ...gridOptionsMock, enableTextExport: true, hideExportCsvCommand: false } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
@@ -1789,6 +1845,23 @@ describe('GridMenuControl', () => {
           control.menuElement!.querySelector('.slick-menu-item[data-command=export-excel]')!.dispatchEvent(clickEvent);
 
           expect(excelExportSpy).toHaveBeenCalled();
+        });
+
+        it('should call "exportToPdf" when the command triggered is "export-pdf"', () => {
+          const pdfExportSpy = vi.spyOn(pdfExportServiceStub, 'exportToPdf');
+          const copyGridOptionsMock = { ...gridOptionsMock, enablePdfExport: true } as unknown as GridOption;
+          vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([pdfExportServiceStub]);
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+
+          control.init();
+          control.init();
+          control.columns = columnsMock;
+          const clickEvent = new Event('click', { bubbles: true, cancelable: true, composed: false });
+          document.querySelector('.slick-grid-menu-button')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+          control.menuElement!.querySelector('.slick-menu-item[data-command=export-pdf]')!.dispatchEvent(clickEvent);
+
+          expect(pdfExportSpy).toHaveBeenCalled();
         });
 
         it('should call "exportToFile" with CSV set when the command triggered is "export-csv"', () => {

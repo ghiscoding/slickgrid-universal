@@ -35,6 +35,12 @@ export interface GridMenuLabel {
   /** Defaults to "EXPORT_TO_TAB_DELIMITED" translation key */
   exportTextDelimitedCommandKey?: string;
 
+  /** Defaults to "Export to PDF" */
+  exportPdfCommand?: string;
+
+  /** Defaults to "EXPORT_TO_PDF" translation key */
+  exportPdfCommandKey?: string;
+
   /** Defaults to "Refresh Dataset" */
   refreshDatasetCommand?: string;
 

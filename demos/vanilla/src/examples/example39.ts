@@ -69,6 +69,7 @@ export default class Example01 {
   dispose() {
     this.sgb1?.dispose();
     this.sgb2?.dispose();
+    document.body.classList.remove('material-theme');
   }
 
   /* Define grid Options and Columns */
@@ -87,8 +88,7 @@ export default class Example01 {
       rowHeight: 33,
       enableHybridSelection: true,
       rowSelectionOptions: {
-        selectionType: 'row',
-        selectActiveRow: true,
+        selectionType: 'row-click',
       },
     };
 

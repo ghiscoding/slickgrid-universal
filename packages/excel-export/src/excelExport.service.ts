@@ -280,7 +280,11 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     }
 
     // get all Grouped Column Header Titles when defined (from pre-header row)
-    if (this._gridOptions.createPreHeaderPanel && this._gridOptions.showPreHeaderPanel && !this._gridOptions.enableDraggableGrouping) {
+    if (
+      this._gridOptions.createPreHeaderPanel &&
+      this._gridOptions.showPreHeaderPanel &&
+      (!this._gridOptions.enableDraggableGrouping || (this._gridOptions.enableDraggableGrouping && this._gridOptions.createTopHeaderPanel))
+    ) {
       // when having Grouped Header Titles (in the pre-header), then make the cell Bold & Aligned Center
       const boldCenterAlign = this._stylesheet.createFormat({ alignment: { horizontal: 'center' }, font: { bold: true } });
       outputData.push(this.getColumnGroupedHeaderTitlesData(columns, { style: boldCenterAlign?.id }));
@@ -328,25 +332,31 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
    * @returns {Object} array of Excel cell format
    */
   protected getColumnGroupedHeaderTitlesData(columns: Column[], metadata: ExcelMetadata): Array<ExcelColumnMetadata> {
+    let colspanStartIndex = 0;
+    let headerOffset = 0; // increases when "Group by" is provided in the next header row
     let outputGroupedHeaderTitles: Array<ExcelColumnMetadata> = [];
+
+    if (this.getGroupColumnTitle()) {
+      outputGroupedHeaderTitles.push({ value: '' });
+      headerOffset = 1;
+    }
 
     // get all Column Header Titles
     this._groupedColumnHeaders = this.getColumnGroupedHeaderTitles(columns) || [];
-    if (this._groupedColumnHeaders && Array.isArray(this._groupedColumnHeaders) && this._groupedColumnHeaders.length > 0) {
+    if (Array.isArray(this._groupedColumnHeaders) && this._groupedColumnHeaders.length > 0) {
       // add the header row + add a new line at the end of the row
-      outputGroupedHeaderTitles = this._groupedColumnHeaders.map((header) => ({ value: header.title, metadata }));
+      outputGroupedHeaderTitles.push(...this._groupedColumnHeaders.map((header) => ({ value: header.title, metadata })));
     }
 
     // merge necessary cells (any grouped header titles)
-    let colspanStartIndex = 0;
     const headersLn = this._groupedColumnHeaders.length;
     for (let cellIndex = 0; cellIndex < headersLn; cellIndex++) {
       if (
         cellIndex + 1 === headersLn ||
         (cellIndex + 1 < headersLn && this._groupedColumnHeaders[cellIndex].title !== this._groupedColumnHeaders[cellIndex + 1].title)
       ) {
-        const leftExcelColumnChar = this.getExcelColumnNameByIndex(colspanStartIndex + 1);
-        const rightExcelColumnChar = this.getExcelColumnNameByIndex(cellIndex + 1);
+        const leftExcelColumnChar = this.getExcelColumnNameByIndex(colspanStartIndex + 1 + headerOffset);
+        const rightExcelColumnChar = this.getExcelColumnNameByIndex(cellIndex + 1 + headerOffset);
         this._sheet.mergeCells(`${leftExcelColumnChar}1`, `${rightExcelColumnChar}1`);
 
         // next group starts 1 column index away
@@ -379,7 +389,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
   protected getGroupColumnTitle(): string | null {
     // Group By text, it could be set in the export options or from translation or if nothing is found then use the English constant text
-    let groupByColumnHeader = this._excelExportOptions.groupingColumnHeaderTitle;
+    let groupByColumnHeader = this._excelExportOptions?.groupingColumnHeaderTitle ?? '';
     if (!groupByColumnHeader && this._gridOptions.enableTranslate && this._translaterService?.translate) {
       groupByColumnHeader = this._translaterService.translate(`${getTranslationPrefix(this._gridOptions)}GROUP_BY`);
     } else if (!groupByColumnHeader) {

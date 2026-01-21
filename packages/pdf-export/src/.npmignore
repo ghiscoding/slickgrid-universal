@@ -1,0 +1,12 @@
+# Ignore npm/pnpm/yarn lock files
+package-lock.json
+yarn.lock
+
+# Ignore compiled files
+*.js
+*.d.ts
+*.tsbuildinfo
+
+# Allow config files
+!*.config.js
+!vite.config.mts
