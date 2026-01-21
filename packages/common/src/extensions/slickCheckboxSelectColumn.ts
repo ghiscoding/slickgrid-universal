@@ -401,6 +401,15 @@ export class SlickCheckboxSelectColumn<T = any> {
     return this._checkboxColumnCellIndex;
   }
 
+  protected getCheckboxIcon(isChecked: boolean, isPartialChecked: boolean): string {
+    const iconClass = isChecked
+      ? CHECK_ICON
+      : isPartialChecked && !this._addonOptions.hidePartialCheckbox
+        ? PARTIAL_CHECK_ICON
+        : UNCHECK_ICON;
+    return `mdi ${iconClass}`;
+  }
+
   protected handleDataViewSelectedIdsChanged(): void {
     const selectedIds = this._dataView.getAllSelectedFilteredIds();
     const filteredItems = this._dataView.getFilteredItems();
@@ -435,15 +444,6 @@ export class SlickCheckboxSelectColumn<T = any> {
         selectAllIconElm.className = this.getCheckboxIcon(this._isSelectAllChecked, this._isPartialSelectAllChecked);
       }
     }
-  }
-
-  protected getCheckboxIcon(isChecked: boolean, isPartialChecked: boolean): string {
-    const iconClass = isChecked
-      ? CHECK_ICON
-      : isPartialChecked && !this._addonOptions.hidePartialCheckbox
-        ? PARTIAL_CHECK_ICON
-        : UNCHECK_ICON;
-    return `mdi ${iconClass}`;
   }
 
   protected handleClick(e: SlickEventData, args: { row: number; cell: number; grid: SlickGrid }): void {
