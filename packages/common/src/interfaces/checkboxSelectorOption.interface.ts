@@ -30,7 +30,7 @@ export interface CheckboxSelectorOption {
    * The partial checkbox is typically shown as a minux icon "-" and
    * is shown when there's at least 1 checkbox selected without having all rows selected.
    */
-  hidePartialSelectAllCheckbox?: boolean;
+  hidePartialCheckbox?: boolean;
 
   /** default to false, do we want to hide the "Select All" checkbox? */
   hideSelectAllCheckbox?: boolean;

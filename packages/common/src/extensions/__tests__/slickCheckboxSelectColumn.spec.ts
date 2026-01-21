@@ -943,7 +943,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     plugin = new SlickCheckboxSelectColumn(pubSubServiceStub, {
       hideInFilterHeaderRow: false,
       hideSelectAllCheckbox: false,
-      hidePartialSelectAllCheckbox: true,
+      hidePartialCheckbox: true,
     });
     plugin.init(gridStub);
     plugin.selectedRowsLookup = { 1: false, 2: true };

@@ -246,7 +246,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     divElm.appendChild(createDomElement('input', { id: inputId, type: 'checkbox', checked: isChecked, ariaChecked: String(isChecked) }));
     const iconClass = isChecked
       ? CHECK_ICON
-      : isPartialChecked && !this._addonOptions.hidePartialSelectAllCheckbox
+      : isPartialChecked && !this._addonOptions.hidePartialCheckbox
         ? PARTIAL_CHECK_ICON
         : UNCHECK_ICON;
     divElm.appendChild(createDomElement('div', { className: `mdi ${iconClass}` }));
@@ -439,7 +439,7 @@ export class SlickCheckboxSelectColumn<T = any> {
       if (selectAllIconElm) {
         const iconClass = this._isSelectAllChecked
           ? CHECK_ICON
-          : this._isPartialSelectAllChecked && !this._addonOptions.hidePartialSelectAllCheckbox
+          : this._isPartialSelectAllChecked && !this._addonOptions.hidePartialCheckbox
             ? PARTIAL_CHECK_ICON
             : UNCHECK_ICON;
         selectAllIconElm.className = `mdi ${iconClass}`;
