@@ -60,6 +60,7 @@ export default class Example21 {
 
     this.gridOptions = {
       enableRowDetailView: true,
+      // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
       rowSelectionOptions: {
         selectActiveRow: true
       },

@@ -75,6 +75,7 @@ export class Example1 implements OnInit {
       enableCellNavigation: true,
       enableCheckboxSelector: true,
       enableRowSelection: true,
+      // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false
@@ -140,6 +141,7 @@ export class Example1 implements OnInit {
         selectableOverride: (row: number, dataContext: any, grid: any) => (dataContext.id % 2 === 1)
       },
       multiSelect: false,
+      // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
       rowSelectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: true,
@@ -231,6 +233,7 @@ For example, we could use the Excel Copy Buffer (Cell Selection) and use `rowSel
 this.gridOptions = {
   // enable new hybrid selection model (rows & cells)
   enableHybridSelection: true,
+  // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
   rowSelectionOptions: {
     selectActiveRow: true,
     rowSelectColumnIds: ['selector'],

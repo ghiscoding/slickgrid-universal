@@ -57,6 +57,7 @@ export class GridExample {
 
     this.gridOptions = {
       enableRowDetailView: true,
+      // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
       rowSelectionOptions: {
         selectActiveRow: true
       },
@@ -407,6 +408,7 @@ export class MainGrid implements OnInit {
     this.columnDefinitions = [ /*...*/ ];
     this.gridOptions = {
       enableRowDetailView: true,
+      // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
       rowSelectionOptions: {
         selectActiveRow: true
       },
