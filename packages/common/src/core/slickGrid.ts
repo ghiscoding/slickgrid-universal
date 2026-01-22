@@ -1176,7 +1176,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   setSelectionModel(model: SelectionModel): void {
     if (this.selectionModel) {
       this.selectionModel.onSelectedRangesChanged.unsubscribe(this.handleSelectedRangesChanged.bind(this));
-      this.selectionModel?.destroy();
+      this.selectionModel.destroy?.();
     }
 
     this.selectionModel = model;
