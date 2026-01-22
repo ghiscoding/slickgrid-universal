@@ -113,7 +113,9 @@ export class SlickRowDetailView extends UniversalSlickRowDetailView {
         // this also requires the Row Selection Model to be registered as well
         if (!rowSelectionPlugin || !this._grid.getSelectionModel()) {
           const SelectionModelClass = this.gridOptions.enableHybridSelection ? SlickHybridSelectionModel : SlickRowSelectionModel;
-          rowSelectionPlugin = new SelectionModelClass(this.gridOptions.rowSelectionOptions || { selectActiveRow: true });
+          rowSelectionPlugin = new SelectionModelClass(
+            this.gridOptions.selectionOptions ?? this.gridOptions.rowSelectionOptions ?? { selectActiveRow: true }
+          );
           this._grid.setSelectionModel(rowSelectionPlugin);
         }
 

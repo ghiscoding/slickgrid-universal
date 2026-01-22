@@ -121,7 +121,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     // this also requires the Row Selection Model to be registered as well
     if (!this._rowSelectionModel || !this._grid.getSelectionModel()) {
       const SelectionModelClass = this.gridOptions.enableHybridSelection ? SlickHybridSelectionModel : SlickRowSelectionModel;
-      this._rowSelectionModel = new SelectionModelClass(this.gridOptions.rowSelectionOptions);
+      this._rowSelectionModel = new SelectionModelClass(this.gridOptions.selectionOptions ?? this.gridOptions.rowSelectionOptions);
       this._grid.setSelectionModel(this._rowSelectionModel);
     }
 
