@@ -136,6 +136,9 @@ function defineGrids() {
 
       // you could use "row" selection to override the hybrid mode
       selectionType: 'row',
+
+      // allow using the mouse drag selection to select multiple rows
+      dragToSelect: true,
     },
   };
 }

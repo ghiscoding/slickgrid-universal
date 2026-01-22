@@ -88,7 +88,7 @@ export default class Example01 {
       rowHeight: 33,
       enableHybridSelection: true,
       rowSelectionOptions: {
-        selectionType: 'row-click',
+        selectionType: 'row',
       },
     };
 

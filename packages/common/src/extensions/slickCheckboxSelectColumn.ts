@@ -458,6 +458,7 @@ export class SlickCheckboxSelectColumn<T = any> {
         return;
       }
 
+      console.log('CheckboxSelector handleClick on row');
       this.toggleRowSelectionWithEvent(e, args.row);
       e.stopPropagation();
       e.stopImmediatePropagation();
