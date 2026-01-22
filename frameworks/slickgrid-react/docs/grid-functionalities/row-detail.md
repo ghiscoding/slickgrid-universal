@@ -54,6 +54,7 @@ const Example: React.FC = () => {
     setColumns([ /*...*/ ]);
     setOptions({
       enableRowDetailView: true,
+      // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
       rowSelectionOptions: {
         selectActiveRow: true
       },
@@ -514,6 +515,7 @@ const Example: React.FC = () => {
     setColumns([ /*...*/]);
     setOptions({
       enableRowDetailView: true,
+      // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
       rowSelectionOptions: {
         selectActiveRow: true
       },

@@ -130,18 +130,5 @@
   "funding": {
     "type": "ko_fi",
     "url": "https://ko-fi.com/ghiscoding"
-  },
-  "pnpm": {
-    "overrides": {
-      "@angular/build>vite": "catalog:vite6",
-      "@vitejs/plugin-basic-ssl>vite": "catalog:vite7",
-      "@vitest/coverage-v8>vite": "npm:rolldown-vite@latest",
-      "@vitest/ui>vite": "npm:rolldown-vite@latest",
-      "glob": "^13.0.0",
-      "js-yaml": "^4.1.1",
-      "koa": "^3.1.1",
-      "qs": "^6.14.1",
-      "vitest>vite": "npm:rolldown-vite@latest"
-    }
   }
 }

@@ -222,7 +222,7 @@ export class ExtensionService {
           this.gridOptions.enableRowMoveManager)
       ) {
         if (!this._rowSelectionModel || !this.sharedService.slickGrid.getSelectionModel()) {
-          const rowSelectionOptions = this.gridOptions.rowSelectionOptions ?? {};
+          const rowSelectionOptions = this.gridOptions.selectionOptions ?? this.gridOptions.rowSelectionOptions ?? {};
           if (this.gridOptions.enableRowMoveManager && this.gridOptions.rowMoveManager?.dragToSelect !== false) {
             rowSelectionOptions.dragToSelect = true;
           }

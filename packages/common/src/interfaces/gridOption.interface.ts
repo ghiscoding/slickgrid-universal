@@ -789,7 +789,10 @@ export interface GridOption<C extends Column = Column> {
   /** Row Move Manager Plugin options & events */
   rowMoveManager?: RowMoveManager;
 
-  /** Row selection options */
+  /** Cell/Row/Hybrid Selection options */
+  selectionOptions?: HybridSelectionModelOption | RowSelectionModelOption;
+
+  /** @deprecated @use `selectionOptions` */
   rowSelectionOptions?: HybridSelectionModelOption | RowSelectionModelOption;
 
   /**
