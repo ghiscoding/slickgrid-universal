@@ -15,7 +15,7 @@
 📘 [Documentation](https://ghiscoding.gitbook.io/slickgrid-universal/) website powered by GitBook for version 4.0+ (_or use the [Wikis](https://github.com/ghiscoding/slickgrid-universal/wiki) for older versions_)
 
 ### Live Demo
-[Live Demo](https://ghiscoding.github.io/slickgrid-universal/) website
+[Live Demo](https://ghiscoding.github.io/slickgrid-universal/) website OR see [Available Framework Wrappers](#available-framework-wrappers) table below for more demos.
 
 Stackblitz links are also available for all frameworks supported (see [table](https://github.com/ghiscoding/slickgrid-universal?tab=readme-ov-file#available-framework-wrappers) below)
 
@@ -50,6 +50,8 @@ If you use and like the project, please give it a star ⭐ and/or support me wit
 The Slickgrid-Universal [live demo](https://ghiscoding.github.io/slickgrid-universal) shows 2 different UI themes (Material Design / Salesforce) and you can also see the Bootstrap theme demoed in all other frameworks with links available in the table shown below. Also please note that even if all the demos are built with [Bootstrap](https://getbootstrap.com/) or [Bulma](https://bulma.io/), you could use any other UI libraries (Google Material, ...). The project tries to be as much agnostic as possible and it does so by providing a large set of CSS/SASS variables which are available to customize the UI however you want.
 
 ### Available Framework Wrappers
+
+> There's no SolidJS or Svelte wrappers, but if you are willing to help then let's talk and open a new [Discussion](https://github.com/ghiscoding/slickgrid-universal/discussions)
 
 | Platform | Project Repos | Live Demo | Stackblitz | Downloads | Details |
 | :------: | ------------- | --------- | ---------- | -------: | ------- |

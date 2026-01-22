@@ -62,6 +62,7 @@ export class GridRowDetailComponent implements OnInit, OnDestroy {
 
     this.gridOptions = {
       enableRowDetailView: true,
+      // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
       rowSelectionOptions: {
         selectActiveRow: true
       },
@@ -431,6 +432,7 @@ export class MainGridComponent implements OnInit {
     this.columnDefinitions = [ /*...*/ ];
     this.gridOptions = {
       enableRowDetailView: true,
+      // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
       rowSelectionOptions: {
         selectActiveRow: true
       },

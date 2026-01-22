@@ -47,6 +47,7 @@ function defineGrid() {
   const columnDefinitions = [/*...*/];
   gridOptions.value = {
     enableRowDetailView: true,
+    // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
     rowSelectionOptions: {
       selectActiveRow: true
     },
@@ -440,6 +441,7 @@ function defineGrid() {
   const columnDefinitions = [/*...*/];
   gridOptions.value = {
     enableRowDetailView: true,
+    // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
     rowSelectionOptions: {
       selectActiveRow: true
     },

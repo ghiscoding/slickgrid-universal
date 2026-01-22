@@ -321,7 +321,7 @@ export class GridService {
     // create a SelectionModel if there's not one yet
     if (!this._grid.getSelectionModel()) {
       const SelectionModelClass = this._gridOptions.enableHybridSelection ? SlickHybridSelectionModel : SlickRowSelectionModel;
-      this._rowSelectionPlugin = new SelectionModelClass(this._gridOptions.rowSelectionOptions);
+      this._rowSelectionPlugin = new SelectionModelClass(this._gridOptions.selectionOptions ?? this._gridOptions.rowSelectionOptions);
       this._grid.setSelectionModel(this._rowSelectionPlugin);
     }
 
