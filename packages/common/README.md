@@ -10,11 +10,6 @@
 
 This package is regrouping the most common features, extensions, interfaces that can be used by other Frameworks (it is framework agnostic). It includes all Editors, Filters, Formatters, Grouping, Extensions and Services as can be seen below.
 
-### Internal Dependencies
-- [@slickgrid-universal/binding](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/binding)
-- [@slickgrid-universal/event-pub-sub](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/event-pub-sub)
-- [@slickgrid-universal/utils](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/utils)
-
 ### Installation
 Go to the root of the repo and follow the instructions provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation)
 

@@ -15,10 +15,5 @@ Vanilla Bundle implementation of a Composite Editor Modal Window which can do th
 - Mass Update Changes
 - Mass Selection Changes (similar to Mass Update but only for the selected items/rows)
 
-### Internal Dependencies
-- [@slickgrid-universal/binding](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/binding)
-- [@slickgrid-universal/common](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/common)
-- [@slickgrid-universal/utils](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/utils)
-
 ### Installation
 Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation).

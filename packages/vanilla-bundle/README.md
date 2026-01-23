@@ -10,13 +10,6 @@
 
 Vanilla Bundle implementation (no framework, plain TypeSript implementation). This package does what other framework would do which is to make all these features usable into 1 bundle so that it could then be used by other Apps/Projects.
 
-### Internal Dependencies
-- [@slickgrid-universal/common](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/common)
-- [@slickgrid-universal/event-pub-sub](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/event-pub-sub)
-- [@slickgrid-universal/custom-footer-component](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/custom-footer-component)
-- [@slickgrid-universal/empty-warning-component](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/empty-warning-component)
-- [@slickgrid-universal/pagination-component](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/pagination-component)
-
 ### Installation
 This Vanilla Bundle is used used by the standalone [demos/vanilla](https://github.com/ghiscoding/slickgrid-universal/tree/master/demos/vanilla) which serves for demo purposes.
 

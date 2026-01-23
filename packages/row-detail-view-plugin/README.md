@@ -12,9 +12,5 @@ A plugin to add Row Detail View Panel that can be expanded/collapsed, the plugin
  * [Can SlickGrid's row height be dynamically altered? - on Stack Overflow](https://stackoverflow.com/questions/10535164/can-slickgrids-row-height-be-dynamically-altered#29399927)
  * [a responsive slickgrid with dynamic row-heights by violet313](https://violet313.github.io)
 
-### Internal Dependencies
-- [@slickgrid-universal/common](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/common)
-
-
 ### Installation
 Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation)

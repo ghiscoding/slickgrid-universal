@@ -10,9 +10,5 @@
 
 A very simple Vanilla Implementation of an Event PubSub Service to do simple publish/subscribe inter-communication while optionally providing data as well.
 
-### Internal Dependencies
-- [@slickgrid-universal/utils](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/utils)
-
-
 ### Installation
 Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation)
