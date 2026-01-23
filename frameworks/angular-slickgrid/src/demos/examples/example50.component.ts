@@ -66,7 +66,7 @@ export class Example50Component implements OnInit {
       rowHeight: 33,
       enableHybridSelection: true,
       rowSelectionOptions: {
-        selectionType: 'row-click',
+        selectionType: 'row',
       },
     };
 

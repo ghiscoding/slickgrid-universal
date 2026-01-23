@@ -36,9 +36,7 @@ import type {
  */
 export function Draggable(options: DraggableOption): {
   destroy: () => void;
-  pause: () => void;
 } {
-  let isPaused = false;
   let { containerElement } = options;
   const { onDragInit, onDragStart, onDrag, onDragEnd, preventDragFromKeys } = options;
   let element: HTMLElement | null;
@@ -84,7 +82,7 @@ export function Draggable(options: DraggableOption): {
 
   /** Do we want to prevent Drag events from happening (for example prevent onDrag when Ctrl key is pressed while dragging) */
   function preventDrag(event: MouseEvent | TouchEvent | KeyboardEvent): boolean {
-    let eventPrevented = isPaused;
+    let eventPrevented = false;
     if (preventDragFromKeys) {
       preventDragFromKeys.forEach((key) => {
         if ((event as KeyboardEvent)[key]) {
@@ -177,16 +175,11 @@ export function Draggable(options: DraggableOption): {
     }
   }
 
-  /** pause or stop the service */
-  function pause() {
-    isPaused = true;
-  }
-
-  // initialize Slick.MouseWheel by attaching mousewheel event
+  // initialize Draggable service by attaching mouse/touch events
   init();
 
   // public API
-  return { destroy, pause: pause };
+  return { destroy };
 }
 
 /**
@@ -252,7 +245,7 @@ export function MouseWheel(options: MouseWheelOption): {
     }
   }
 
-  // initialize Slick.MouseWheel by attaching mousewheel event
+  // initialize MouseWheel service by attaching mousewheel events
   init();
 
   // public API
@@ -339,6 +332,7 @@ export function Resizable(options: ResizableOption): {
     document.body.removeEventListener('touchend', resizeEndHandler);
   }
 
+  // initialize Resizable service by attaching mouse/touch events
   init();
 
   // public API
