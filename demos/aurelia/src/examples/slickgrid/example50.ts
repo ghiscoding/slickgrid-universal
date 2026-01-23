@@ -60,7 +60,7 @@ export class Example50 {
       rowHeight: 33,
       enableHybridSelection: true,
       rowSelectionOptions: {
-        selectionType: 'row-click',
+        selectionType: 'row',
       },
     };
 
