@@ -221,13 +221,13 @@ export class ExtensionService {
           this.gridOptions.enableRowMoveManager)
       ) {
         if (!this._rowSelectionModel || !this.sharedService.slickGrid.getSelectionModel()) {
-          const rowSelectionOptions = this.gridOptions.selectionOptions ?? {};
+          const selectionOptions = this.gridOptions.selectionOptions ?? {};
           if (this.gridOptions.enableRowMoveManager && this.gridOptions.rowMoveManager?.dragToSelect !== false) {
-            rowSelectionOptions.dragToSelect = true;
+            selectionOptions.dragToSelect = true;
           }
           const selectionType =
             this.gridOptions.selectionOptions?.selectionType || (this.gridOptions.enableHybridSelection ? 'mixed' : 'row');
-          this._rowSelectionModel = new SlickHybridSelectionModel({ ...rowSelectionOptions, selectionType });
+          this._rowSelectionModel = new SlickHybridSelectionModel({ ...selectionOptions, selectionType });
           this.sharedService.slickGrid.setSelectionModel(this._rowSelectionModel);
         }
         const extensionName = this.gridOptions.enableHybridSelection ? ExtensionName.hybridSelection : ExtensionName.rowSelection;

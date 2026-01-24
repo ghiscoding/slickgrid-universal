@@ -10,8 +10,6 @@ export type SelectionType =
   | 'cell'
   /** multiple row selection */
   | 'row'
-  /** single row selection through row click */
-  | 'row-click'
   /** mixed cell/row selection */
   | 'mixed';
 
