@@ -420,7 +420,7 @@ export class Example33Component implements OnInit {
       },
       showCustomFooter: true,
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+      enableSelection: true,
       checkboxSelector: {
         hideInFilterHeaderRow: false,
         hideInColumnTitleRow: true,

@@ -97,7 +97,7 @@ const Example38: React.FC = () => {
       enableCellNavigation: true,
       enableFiltering: true,
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+      enableSelection: true,
       enableGrouping: true,
       presets: {
         // NOTE: pagination preset is NOT supported with infinite scroll

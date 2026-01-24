@@ -200,7 +200,7 @@ export class Example19Component implements OnDestroy, OnInit {
 
       // You could also enable Row Selection as well, but just make sure to disable `useRowClick: false`
       // enableCheckboxSelector: true,
-      // enableRowSelection: true,
+      // enableSelection: true,
       // checkboxSelector: {
       //   hideInFilterHeaderRow: false,
       //   hideSelectAllCheckbox: true,

@@ -16,7 +16,9 @@
 
 <div class="subtitle">
   <code>SlickHybridSelectionModel</code> This Selection Model is an hybrid approach that uses a combination of the row or cell selections
-  depending on certain conditions. Use <code>enableHybridSelection</code> grid option to enable the new Hybrid Selection Model.
+  depending on certain conditions. <br />
+  Use <code>&lcub; enableSelection: true, selectionOptions: &lcub; selectionType: 'mixed' &rcub;&rcub;</code> grid option to enable the new
+  Hybrid Selection Model.
   <ul>
     <li>
       1. clicking on the first column (<code>id</code>) will use <code>RowSelectionModel</code> because of our configuration of
@@ -29,8 +31,8 @@
 <h3>
   Grid 1
   <small class="subtitle ms-3 text-italic">
-    <label>Range Selection</label>
-    <span id="selectionRange1"></span>
+    <label>Range Selection:</label>
+    <span id="selectionRange1" className="ms-1"></span>
   </small>
 </h3>
 
@@ -50,8 +52,8 @@
 <h3>
   Grid 2
   <small class="subtitle ms-3 text-italic">
-    <label>Range Selection</label>
-    <span id="selectionRange2"></span>
+    <label>Range Selection:</label>
+    <span id="selectionRange2" className="ms-1"></span>
   </small>
 </h3>
 <aurelia-slickgrid

@@ -148,7 +148,7 @@ export class Example10 {
     this.gridOptions1 = {
       enableAutoResize: false,
       enableCellNavigation: true,
-      enableRowSelection: true,
+      enableSelection: true,
       enableCheckboxSelector: true,
       enableFiltering: true,
       checkboxSelector: {
@@ -196,12 +196,12 @@ export class Example10 {
         hideInColumnTitleRow: true,
         applySelectOnAllPages: true, // when clicking "Select All", should we apply it to all pages (defaults to true)
       },
+      enableSelection: true,
       selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },
       enableCheckboxSelector: true,
-      enableRowSelection: true,
       gridHeight: 255,
       gridWidth: 800,
       enablePagination: true,

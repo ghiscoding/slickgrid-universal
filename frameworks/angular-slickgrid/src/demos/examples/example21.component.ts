@@ -108,7 +108,7 @@ export class Example21Component implements OnInit {
       alwaysShowVerticalScroll: false,
       enableColumnPicker: true,
       enableCellNavigation: true,
-      enableRowSelection: true,
+      enableSelection: true,
     };
 
     // mock a dataset

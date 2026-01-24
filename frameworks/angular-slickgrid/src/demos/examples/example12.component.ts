@@ -173,7 +173,7 @@ export class Example12Component implements OnInit, OnDestroy {
         hideInColumnTitleRow: true,
       },
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+      enableSelection: true,
       showCustomFooter: true, // display some metrics in the bottom custom footer
       customFooterOptions: {
         metricTexts: {

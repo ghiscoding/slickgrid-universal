@@ -16,5 +16,4 @@ export enum ExtensionName {
   rowBasedEdit = 'rowBasedEdit',
   rowDetailView = 'rowDetailView',
   rowMoveManager = 'rowMoveManager',
-  rowSelection = 'rowSelection',
 }

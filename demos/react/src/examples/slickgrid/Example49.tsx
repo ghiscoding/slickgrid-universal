@@ -75,7 +75,7 @@ const Example49: React.FC = () => {
       editorNavigateOnArrows: true, // enable editor navigation using arrow keys
 
       // enable new hybrid selection model (rows & cells)
-      enableHybridSelection: true,
+      enableSelection: true,
       selectionOptions: {
         selectActiveRow: true,
         rowSelectColumnIds: ['selector'],
@@ -180,7 +180,9 @@ const Example49: React.FC = () => {
       <div className="subtitle">
         Spreadsheet with drag-fill, hybrid selection model. Type a few values in the grid and then select those cells and use the bottom
         right drag handle spread the selection and auto-fill the values to other cells. Use <code>onDragReplaceCells</code> event to
-        customize the drag-fill behavior. Use <code>enableHybridSelection</code> grid option to enable the new Hybrid Selection Model.
+        customize the drag-fill behavior. Use
+        <code>&lcub; enableSelection: true, selectionOptions: &lcub; selectionType: 'mixed' &rcub;&rcub;</code>
+        grid option to enable the new Hybrid Selection Model.
       </div>
 
       <br />

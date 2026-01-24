@@ -120,7 +120,7 @@ export class Example46 {
         sanitizeDataExport: true,
       },
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+      enableSelection: true,
       multiSelect: false,
       checkboxSelector: {
         // columnIndexPosition: 1,

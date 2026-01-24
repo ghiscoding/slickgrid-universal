@@ -491,7 +491,7 @@ const Example32: React.FC = () => {
       },
       externalResources: [new ExcelExportService()],
       enableFiltering: true,
-      enableRowSelection: true,
+      enableSelection: true,
       enableCheckboxSelector: true,
       checkboxSelector: {
         hideInFilterHeaderRow: false,

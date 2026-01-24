@@ -495,7 +495,7 @@ export class Example32Component implements OnInit {
       },
       externalResources: [new ExcelExportService()],
       enableFiltering: true,
-      enableRowSelection: true,
+      enableSelection: true,
       enableCheckboxSelector: true,
       checkboxSelector: {
         hideInFilterHeaderRow: false,

@@ -160,7 +160,7 @@ export class Example10Component implements OnInit {
       gridWidth: 800,
       enableAutoResize: false,
       enableCellNavigation: true,
-      enableRowSelection: true,
+      enableSelection: true,
       enableCheckboxSelector: true,
       enableFiltering: true,
       checkboxSelector: {
@@ -213,7 +213,7 @@ export class Example10Component implements OnInit {
         selectActiveRow: false,
       },
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+      enableSelection: true,
       enablePagination: true,
       pagination: {
         pageSizes: [5, 10, 15, 20, 25, 50, 75, 100],

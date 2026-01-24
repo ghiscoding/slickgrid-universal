@@ -534,7 +534,7 @@ export default class Example12 {
       rowHeight: 33,
       headerRowHeight: 35,
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+      enableSelection: true,
       checkboxSelector: {
         applySelectOnAllPages: true,
         hideInFilterHeaderRow: false,

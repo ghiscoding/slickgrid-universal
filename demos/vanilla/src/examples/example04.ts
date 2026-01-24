@@ -414,7 +414,7 @@ export default class Example04 {
         name: 'Sel', // column name will only show when `hideInColumnTitleRow` is true
         onExtensionRegistered: (instance) => (this.checkboxSelectorInstance = instance),
       },
-      enableRowSelection: true,
+      enableSelection: true,
       frozenColumn: this.frozenColumnCount,
       frozenRow: this.frozenRowCount,
       // frozenBottom: true, // if you want to freeze the bottom instead of the top, you can enable this property

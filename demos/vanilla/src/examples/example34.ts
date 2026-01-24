@@ -134,7 +134,7 @@ export default class Example34 {
       enableExcelExport: true,
       externalResources: [new ExcelExportService()],
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+      enableSelection: true,
       selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,

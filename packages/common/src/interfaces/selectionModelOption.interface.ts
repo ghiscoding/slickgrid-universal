@@ -38,6 +38,6 @@ export interface HybridSelectionModelOption {
   /** function to toggle Row Selection Models */
   rowSelectOverride?: RowSelectOverride | undefined;
 
-  /** Defaults to 'mixed', use a specifc selection type */
+  /** use a specifc selection type, defaults to 'row' when `enableCheckboxSelector` is enabled or 'mixed' when not */
   selectionType?: SelectionType;
 }

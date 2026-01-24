@@ -412,13 +412,9 @@ export class GridStateService {
 
   /** if we use Row Selection or the Checkbox Selector, we need to reset any selection */
   resetRowSelectionWhenRequired(): void {
-    if (
-      !this.needToPreserveRowSelection() &&
-      (this._gridOptions.enableRowSelection || this._gridOptions.enableHybridSelection || this._gridOptions.enableCheckboxSelector)
-    ) {
+    if (!this.needToPreserveRowSelection() && (this._gridOptions.enableSelection || this._gridOptions.enableCheckboxSelector)) {
       // this also requires the Hybrid Selection OR Row Selection Model to be registered as well
-      const extensionName = this._gridOptions.enableHybridSelection ? ExtensionName.hybridSelection : ExtensionName.rowSelection;
-      if (this.extensionService?.getExtensionByName?.(extensionName)?.instance) {
+      if (this.extensionService?.getExtensionByName?.(ExtensionName.hybridSelection)?.instance) {
         this._grid.setSelectedRows([]);
       }
     }
@@ -485,7 +481,7 @@ export class GridStateService {
     this.bindSlickGridOnSetOptionsEventToGridStateChange(grid);
 
     // subscribe to Row Selection changes (when enabled)
-    if (this._gridOptions.enableRowSelection || this._gridOptions.enableHybridSelection || this._gridOptions.enableCheckboxSelector) {
+    if (this._gridOptions.enableSelection || this._gridOptions.enableCheckboxSelector) {
       this._eventHandler.subscribe(this._dataView.onSelectedRowIdsChanged, (e, args) => {
         const previousSelectedRowIndexes = (this._selectedRowIndexes || []).slice();
         const previousSelectedFilteredRowDataContextIds = (this.selectedRowDataContextIds || []).slice();
@@ -640,11 +636,7 @@ export class GridStateService {
   /** Check wether the grid has the Row Selection enabled */
   protected hasRowSelectionEnabled(): boolean {
     const selectionModel = this._grid.getSelectionModel();
-    const isRowSelectionEnabled = !!(
-      this._gridOptions.enableRowSelection ||
-      this._gridOptions.enableHybridSelection ||
-      this._gridOptions.enableCheckboxSelector
-    );
+    const isRowSelectionEnabled = !!(this._gridOptions.enableSelection || this._gridOptions.enableCheckboxSelector);
     return isRowSelectionEnabled && !!selectionModel;
   }
 }
