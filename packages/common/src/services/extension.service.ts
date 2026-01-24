@@ -215,7 +215,7 @@ export class ExtensionService {
       if (
         !this._rowSelectionModel &&
         (this.gridOptions.enableHybridSelection ||
-          this.gridOptions.enableRowSelection ||
+          this.gridOptions.enableSelection ||
           this.gridOptions.enableCheckboxSelector ||
           this.gridOptions.enableRowDetailView ||
           this.gridOptions.enableRowMoveManager)

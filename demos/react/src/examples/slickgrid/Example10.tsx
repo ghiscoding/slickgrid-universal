@@ -150,7 +150,7 @@ const Example10: React.FC = () => {
     const gridOptions1: GridOption = {
       enableAutoResize: false,
       enableCellNavigation: true,
-      enableRowSelection: true,
+      enableSelection: true,
       enableCheckboxSelector: true,
       enableFiltering: true,
       checkboxSelector: {
@@ -203,7 +203,7 @@ const Example10: React.FC = () => {
         selectActiveRow: false,
       },
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+      enableSelection: true,
       gridHeight: 255,
       gridWidth: 800,
       enablePagination: true,

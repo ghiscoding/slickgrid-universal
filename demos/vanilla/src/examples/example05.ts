@@ -261,7 +261,7 @@ export default class Example05 {
           '<div class="flex gap-5px">Grid created with <a href="https://github.com/ghiscoding/slickgrid-universal" target="_blank">Slickgrid-Universal</a> <i class="mdi mdi-github"></i></div>',
       },
       // enableCheckboxSelector: true,
-      // enableRowSelection: true,
+      // enableSelection: true,
       // multiSelect: false,
       // checkboxSelector: {
       //   hideInFilterHeaderRow: false,

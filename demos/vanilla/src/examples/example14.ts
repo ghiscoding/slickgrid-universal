@@ -583,7 +583,7 @@ export default class Example14 {
       },
       externalResources: [new SlickCustomTooltip(), new ExcelExportService()],
       enableFiltering: true,
-      enableRowSelection: true,
+      enableSelection: true,
       enableCheckboxSelector: true,
       checkboxSelector: {
         applySelectOnAllPages: true, // already defaults to true

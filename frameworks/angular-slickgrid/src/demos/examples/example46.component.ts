@@ -138,7 +138,7 @@ export class Example46Component implements OnInit {
         sanitizeDataExport: true,
       },
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+      enableSelection: true,
       multiSelect: false,
       checkboxSelector: {
         // columnIndexPosition: 1,

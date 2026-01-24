@@ -146,7 +146,7 @@ export default class Example09 {
       enableCellNavigation: true,
       enableFiltering: true,
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+      enableSelection: true,
       enablePagination: true, // you could optionally disable the Pagination
       pagination: {
         pageSizes: [10, 20, 50, 100, 500, 50000],

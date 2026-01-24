@@ -544,7 +544,7 @@ function initialization() {
     if (datasetLn > 0) {
       if (
         !isDatasetInitialized &&
-        (_gridOptions.value.enableCheckboxSelector || _gridOptions.value.enableRowSelection || _gridOptions.value.enableHybridSelection)
+        (_gridOptions.value.enableCheckboxSelector || _gridOptions.value.enableSelection || _gridOptions.value.enableHybridSelection)
       ) {
         loadRowSelectionPresetWhenExists();
       }
@@ -1013,7 +1013,7 @@ function paginationChanged(pagination: PaginationMetadata) {
     grid &&
     !isSyncGridSelectionEnabled &&
     _gridOptions.value?.backendServiceApi &&
-    (_gridOptions.value.enableRowSelection || _gridOptions.value.enableHybridSelection || _gridOptions.value.enableCheckboxSelector)
+    (_gridOptions.value.enableSelection || _gridOptions.value.enableHybridSelection || _gridOptions.value.enableCheckboxSelector)
   ) {
     grid.setSelectedRows([]);
   }
@@ -1363,7 +1363,7 @@ function loadRowSelectionPresetWhenExists() {
   const presets = _gridOptions.value?.presets;
   const enableRowSelection =
     _gridOptions.value &&
-    (_gridOptions.value.enableCheckboxSelector || _gridOptions.value.enableRowSelection || _gridOptions.value.enableHybridSelection);
+    (_gridOptions.value.enableCheckboxSelector || _gridOptions.value.enableSelection || _gridOptions.value.enableHybridSelection);
   if (
     enableRowSelection &&
     grid?.getSelectionModel() &&

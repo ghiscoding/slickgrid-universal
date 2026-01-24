@@ -148,7 +148,7 @@ export class Example10 {
     this.gridOptions1 = {
       enableAutoResize: false,
       enableCellNavigation: true,
-      enableRowSelection: true,
+      enableSelection: true,
       enableCheckboxSelector: true,
       enableFiltering: true,
       checkboxSelector: {
@@ -201,7 +201,7 @@ export class Example10 {
         selectActiveRow: false,
       },
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+      enableSelection: true,
       gridHeight: 255,
       gridWidth: 800,
       enablePagination: true,

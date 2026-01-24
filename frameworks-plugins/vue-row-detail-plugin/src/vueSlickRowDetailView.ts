@@ -209,7 +209,7 @@ export class VueSlickRowDetailView extends UniversalSlickRowDetailView {
           this.eventHandler.subscribe(this._grid.onColumnsReordered, () => this.redrawAllViewComponents(false));
 
           // on row selection changed, we also need to redraw
-          if (this.gridOptions.enableRowSelection || this.gridOptions.enableHybridSelection || this.gridOptions.enableCheckboxSelector) {
+          if (this.gridOptions.enableSelection || this.gridOptions.enableHybridSelection || this.gridOptions.enableCheckboxSelector) {
             this._eventHandler.subscribe(this._grid.onSelectedRowsChanged, () => this.redrawAllViewComponents(false));
           }
 

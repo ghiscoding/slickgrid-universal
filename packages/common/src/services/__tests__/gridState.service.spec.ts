@@ -650,7 +650,7 @@ describe('GridStateService', () => {
     });
 
     it('should return null when "enableCheckboxSelector" flag is disabled', () => {
-      const gridOptionsMock = { enableCheckboxSelector: false, enableRowSelection: false, ...pinningMock } as GridOption;
+      const gridOptionsMock = { enableCheckboxSelector: false, enableSelection: false, ...pinningMock } as GridOption;
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
 
       const output = service.getCurrentRowSelections();
@@ -658,7 +658,7 @@ describe('GridStateService', () => {
       expect(output).toBeNull();
     });
 
-    it('should call "getCurrentGridState" method and return the Row Selection when either "enableCheckboxSelector" or "enableRowSelection" flag is enabled', () => {
+    it('should call "getCurrentGridState" method and return the Row Selection when either "enableCheckboxSelector" or "enableSelection" flag is enabled', () => {
       const selectedGridRows = [2];
       const selectedRowIds = [99];
       const gridOptionsMock = { enableCheckboxSelector: true, ...pinningMock } as GridOption;
@@ -711,7 +711,7 @@ describe('GridStateService', () => {
         vi.clearAllMocks();
         service.dispose();
         pinningMock = { frozenBottom: false, frozenColumn: -1, frozenRow: -1 } as CurrentPinning;
-        const gridOptionsMock = { enablePagination: true, enableRowSelection: true, ...pinningMock } as GridOption;
+        const gridOptionsMock = { enablePagination: true, enableSelection: true, ...pinningMock } as GridOption;
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
       });
@@ -920,7 +920,7 @@ describe('GridStateService', () => {
     });
 
     it('should return true when the "dataView" grid option is a boolean and is set to True', () => {
-      const gridOptionsMock = { dataView: { syncGridSelection: true }, enableRowSelection: true } as GridOption;
+      const gridOptionsMock = { dataView: { syncGridSelection: true }, enableSelection: true } as GridOption;
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
 
       const output = service.needToPreserveRowSelection();
@@ -935,7 +935,7 @@ describe('GridStateService', () => {
           service: backendServiceStub,
           process: vi.fn(),
         },
-        enableRowSelection: true,
+        enableSelection: true,
       } as GridOption;
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
 
@@ -951,7 +951,7 @@ describe('GridStateService', () => {
           service: backendServiceStub,
           process: vi.fn(),
         },
-        enableRowSelection: true,
+        enableSelection: true,
       } as GridOption;
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
 
@@ -963,7 +963,7 @@ describe('GridStateService', () => {
     it('should return true when the "dataView" grid option is provided as an object', () => {
       const gridOptionsMock = {
         dataView: { syncGridSelection: { preserveHidden: true, preserveHiddenOnSelectionChange: false } },
-        enableRowSelection: true,
+        enableSelection: true,
       } as GridOption;
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
 
@@ -1038,7 +1038,7 @@ describe('GridStateService', () => {
 
     it('should call the method and call the grid selection reset when the selection extension is used', () => {
       const extensionMock = { name: ExtensionName.rowSelection, addon: {}, instance: {} as unknown as SlickHybridSelectionModel, class: null };
-      const gridOptionsMock = { enableRowSelection: true } as GridOption;
+      const gridOptionsMock = { enableSelection: true } as GridOption;
       const gridOptionSpy = vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
       const setSelectionSpy = vi.spyOn(gridStub, 'setSelectedRows');
       const extensionSpy = vi.spyOn(extensionServiceStub, 'getExtensionByName').mockReturnValue(extensionMock as any);

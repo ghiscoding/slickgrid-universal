@@ -406,7 +406,7 @@ export default class Example03 {
         grouping: ['duration'],
       },
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+      enableSelection: true,
       checkboxSelector: {
         hideInFilterHeaderRow: false,
         hideInColumnTitleRow: true,

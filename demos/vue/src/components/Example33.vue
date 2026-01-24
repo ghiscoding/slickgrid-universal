@@ -451,7 +451,7 @@ function defineGrid() {
     },
     showCustomFooter: true,
     enableCheckboxSelector: true,
-    enableRowSelection: true,
+    enableSelection: true,
     checkboxSelector: {
       hideInFilterHeaderRow: false,
       hideInColumnTitleRow: true,

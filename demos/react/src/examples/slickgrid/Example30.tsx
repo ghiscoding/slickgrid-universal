@@ -490,7 +490,7 @@ const Example30: React.FC = () => {
       showPreHeaderPanel: true,
       preHeaderPanelHeight: 28,
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+      enableSelection: true,
       multiSelect: false,
       checkboxSelector: {
         hideInFilterHeaderRow: false,

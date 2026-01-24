@@ -49,7 +49,7 @@ export class Example41 {
       gridWidth: 800,
       rowHeight: 33,
       enableCellNavigation: true,
-      enableRowSelection: true,
+      enableSelection: true,
       enableRowMoveManager: true,
       selectionOptions: {
         // True (Single Selection), False (Multiple Selections)

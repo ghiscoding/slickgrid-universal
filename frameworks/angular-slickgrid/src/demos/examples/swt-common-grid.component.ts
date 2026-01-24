@@ -109,7 +109,7 @@ export class SwtCommonGridComponent implements OnInit, AfterViewInit, BackendSer
     gridHeight: 200,
     enableColumnPicker: true,
     enableCellNavigation: true,
-    enableRowSelection: true,
+    enableSelection: true,
     enableCheckboxSelector: false,
     enableFiltering: true,
     rowHeight: 23,

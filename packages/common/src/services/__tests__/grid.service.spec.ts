@@ -303,7 +303,7 @@ describe('Grid Service', () => {
         { id: 0, user: { firstName: 'John', lastName: 'Doe' } },
         { id: 5, user: { firstName: 'Jane', lastName: 'Doe' } },
       ];
-      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true } as GridOption);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableSelection: true } as GridOption);
       const dataviewSpy = vi
         .spyOn(dataviewStub, 'getRowById')
         .mockReturnValue(undefined as any)
@@ -387,7 +387,7 @@ describe('Grid Service', () => {
       expect(selectSpy).not.toHaveBeenCalled();
     });
 
-    it('should expect the row to be selected when calling "upsertItems" with an item when setting the "selecRow" flag and the grid option "enableRowSelection" is set', () => {
+    it('should expect the row to be selected when calling "upsertItems" with an item when setting the "selecRow" flag and the grid option "enableSelection" is set', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
       vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableHybridSelection: true } as GridOption);
       const dataviewSpy = vi.spyOn(dataviewStub, 'getRowById');
@@ -552,7 +552,7 @@ describe('Grid Service', () => {
       expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsUpdated', [mockItem]);
     });
 
-    it('should expect the service to call the "updateItemById" when calling "updateItem" and setting the "selecRow" flag and the grid option "enableRowSelection" is set', () => {
+    it('should expect the service to call the "updateItemById" when calling "updateItem" and setting the "selecRow" flag and the grid option "enableSelection" is set', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
       const getRowIdSpy = vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(mockItem.id);
       const getRowIndexSpy = vi.spyOn(dataviewStub, 'getIdxById').mockReturnValue(mockItem.id);
@@ -595,9 +595,9 @@ describe('Grid Service', () => {
       expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsUpdated', [mockItem]);
     });
 
-    it('should expect the row to be selected when calling "updateItems" with an item when setting the "selecRow" flag and the grid option "enableRowSelection" is set', () => {
+    it('should expect the row to be selected when calling "updateItems" with an item when setting the "selecRow" flag and the grid option "enableSelection" is set', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true } as GridOption);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableSelection: true } as GridOption);
       const updateSpy = vi.spyOn(dataviewStub, 'updateItems');
       const selectSpy = vi.spyOn(service, 'setSelectedRows');
       const serviceHighlightSpy = vi.spyOn(service, 'highlightRow');
@@ -734,7 +734,7 @@ describe('Grid Service', () => {
         flat: mockFlatDataset as any[],
         hierarchical: mockHierarchical as any[],
       });
-      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableSelection: true, enableTreeData: true } as GridOption);
       vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
       const setItemSpy = vi.spyOn(dataviewStub, 'setItems');
       const updateSpy = vi.spyOn(dataviewStub, 'updateItem');
@@ -765,7 +765,7 @@ describe('Grid Service', () => {
         flat: mockFlatDataset as any[],
         hierarchical: mockHierarchical as any[],
       });
-      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableSelection: true, enableTreeData: true } as GridOption);
       vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
       const setItemSpy = vi.spyOn(dataviewStub, 'setItems');
       const updateSpy = vi.spyOn(dataviewStub, 'updateItems');
@@ -881,10 +881,10 @@ describe('Grid Service', () => {
       expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsAdded', [mockItem]);
     });
 
-    it('should expect the row to be selected when calling "addItem" with an item when setting the "selecRow" flag and the grid option "enableRowSelection" is set', () => {
+    it('should expect the row to be selected when calling "addItem" with an item when setting the "selecRow" flag and the grid option "enableSelection" is set', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
       vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
-      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true } as GridOption);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableSelection: true } as GridOption);
       const addSpy = vi.spyOn(dataviewStub, 'insertItem');
       const selectSpy = vi.spyOn(gridStub, 'setSelectedRows');
       const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
@@ -1086,10 +1086,10 @@ describe('Grid Service', () => {
       expect(pubSubSpy).not.toHaveBeenLastCalledWith('onItemsAdded');
     });
 
-    it('should expect the row to be selected when calling "addItems" with an item when setting the "selecRow" flag and the grid option "enableRowSelection" is set', () => {
+    it('should expect the row to be selected when calling "addItems" with an item when setting the "selecRow" flag and the grid option "enableSelection" is set', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
       vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
-      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true } as GridOption);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableSelection: true } as GridOption);
       const insertSpy = vi.spyOn(dataviewStub, 'insertItems');
       const beginUpdateSpy = vi.spyOn(dataviewStub, 'beginUpdate');
       const endUpdateSpy = vi.spyOn(dataviewStub, 'endUpdate');
@@ -1106,11 +1106,11 @@ describe('Grid Service', () => {
       expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsAdded', [mockItem]);
     });
 
-    it('should expect the row to be selected when calling "addItems" with an item wich is not an array when setting the "selecRow" flag and the grid option "enableRowSelection" is set', () => {
+    it('should expect the row to be selected when calling "addItems" with an item wich is not an array when setting the "selecRow" flag and the grid option "enableSelection" is set', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
       vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
       vi.spyOn(gridStub, 'getOptions').mockReturnValue({
-        enableRowSelection: true,
+        enableSelection: true,
         selectRow: true,
       } as GridOption);
       const addSpy = vi.spyOn(dataviewStub, 'insertItem');
@@ -1170,7 +1170,7 @@ describe('Grid Service', () => {
         flat: mockFlatDataset as any[],
         hierarchical: mockHierarchical as any[],
       });
-      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableSelection: true, enableTreeData: true } as GridOption);
       vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
       const setItemSpy = vi.spyOn(dataviewStub, 'setItems');
       const addSpy = vi.spyOn(dataviewStub, 'addItem');
@@ -1204,7 +1204,7 @@ describe('Grid Service', () => {
         flat: mockFlatDataset as any[],
         hierarchical: mockHierarchical as any[],
       });
-      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableSelection: true, enableTreeData: true } as GridOption);
       vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
       const setItemSpy = vi.spyOn(dataviewStub, 'setItems');
       const addSpy = vi.spyOn(dataviewStub, 'addItem');
@@ -1238,7 +1238,7 @@ describe('Grid Service', () => {
         flat: mockFlatDataset as any[],
         hierarchical: mockHierarchical as any[],
       });
-      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableSelection: true, enableTreeData: true } as GridOption);
       vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
       const setItemSpy = vi.spyOn(dataviewStub, 'setItems');
       const addSpy = vi.spyOn(dataviewStub, 'addItems');
@@ -1373,8 +1373,8 @@ describe('Grid Service', () => {
       expect(selectionSpy).toHaveBeenCalledWith([]);
     });
 
-    it('should remove any row selection when the grid option "enableRowSelection" is enabled', () => {
-      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableRowSelection: true } as GridOption);
+    it('should remove any row selection when the grid option "enableSelection" is enabled', () => {
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableSelection: true } as GridOption);
       const mockItem = { id: 4, user: { firstName: 'John', lastName: 'Doe' } };
       const selectionSpy = vi.spyOn(service, 'setSelectedRows');
 

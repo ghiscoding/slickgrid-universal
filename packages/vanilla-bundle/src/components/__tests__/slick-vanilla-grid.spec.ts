@@ -1006,7 +1006,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         vi.spyOn(mockGrid, 'getSelectionModel').mockReturnValue(true as any);
         const syncSpy = vi.spyOn(mockDataView, 'syncGridSelection');
 
-        component.gridOptions = { dataView: { syncGridSelection: true }, enableRowSelection: true } as unknown as GridOption;
+        component.gridOptions = { dataView: { syncGridSelection: true }, enableSelection: true } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
 
         expect(syncSpy).toHaveBeenCalledWith(component.slickGrid, true);
@@ -1016,7 +1016,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         vi.spyOn(mockGrid, 'getSelectionModel').mockReturnValue(true as any);
         const syncSpy = vi.spyOn(mockDataView, 'syncGridSelection');
 
-        component.gridOptions = { dataView: { syncGridSelection: false }, enableRowSelection: true } as unknown as GridOption;
+        component.gridOptions = { dataView: { syncGridSelection: false }, enableSelection: true } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
 
         expect(syncSpy).toHaveBeenCalledWith(component.slickGrid, false);
@@ -1028,7 +1028,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
         component.gridOptions = {
           dataView: { syncGridSelection: { preserveHidden: true, preserveHiddenOnSelectionChange: false } },
-          enableRowSelection: true,
+          enableSelection: true,
         } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
 
@@ -1045,7 +1045,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
             process: vi.fn(),
           },
           dataView: { syncGridSelection: true, syncGridSelectionWithBackendService: true },
-          enableRowSelection: true,
+          enableSelection: true,
         } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
 
@@ -1062,7 +1062,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
             process: vi.fn(),
           },
           dataView: { syncGridSelection: false, syncGridSelectionWithBackendService: true },
-          enableRowSelection: true,
+          enableSelection: true,
         } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
 
@@ -1079,7 +1079,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
             process: vi.fn(),
           },
           dataView: { syncGridSelection: true, syncGridSelectionWithBackendService: false },
-          enableRowSelection: true,
+          enableSelection: true,
         } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
 
@@ -2016,14 +2016,14 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         });
       });
 
-      it('should trigger a gridStage change and reset selected rows when pagination change is triggered and "enableRowSelection" is set', () => {
+      it('should trigger a gridStage change and reset selected rows when pagination change is triggered and "enableSelection" is set', () => {
         const mockPagination = { pageNumber: 2, pageSize: 20 } as Pagination;
         const pluginEaSpy = vi.spyOn(eventPubSubService, 'publish');
         const setRowSpy = vi.spyOn(mockGrid, 'setSelectedRows');
         vi.spyOn(gridStateServiceStub, 'getCurrentGridState').mockReturnValue({ columns: [], pagination: mockPagination } as GridState);
 
         component.gridOptions = {
-          enableRowSelection: true,
+          enableSelection: true,
           backendServiceApi: { service: mockGraphqlService as any },
         } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
@@ -2273,7 +2273,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         vi.spyOn(mockGrid, 'getSelectionModel').mockReturnValue(true as any);
         vi.spyOn(mockDataView, 'getLength').mockReturnValue(mockData.length);
 
-        component.gridOptions.enableRowSelection = true;
+        component.gridOptions.enableSelection = true;
         component.gridOptions.presets = { rowSelection: { gridRowIndexes: selectedGridRows } };
         component.dataset = mockData;
         component.isDatasetInitialized = false; // it won't call the preset unless we reset this flag
@@ -2317,7 +2317,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         vi.spyOn(mockDataView, 'getLength').mockReturnValue(mockData.length);
 
         component.gridOptions = {
-          enableRowSelection: true,
+          enableSelection: true,
           enablePagination: true,
           backendServiceApi: null as any,
           presets: { rowSelection: { dataContextIds: selectedGridRows } },

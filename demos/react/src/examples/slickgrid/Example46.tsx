@@ -135,7 +135,7 @@ const Example46: React.FC = () => {
         sanitizeDataExport: true,
       },
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+      enableSelection: true,
       multiSelect: false,
       checkboxSelector: {
         // columnIndexPosition: 1,

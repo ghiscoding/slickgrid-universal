@@ -556,8 +556,8 @@ describe('ExtensionService', () => {
         expect(output).toEqual({ name: ExtensionName.rowMoveManager, instance: mockRowMoveManager as unknown } as ExtensionModel<any>);
       });
 
-      it('should register the RowSelection addon when "enableCheckboxSelector" (false) and "enableRowSelection" (true) are set in the grid options and Hybrid Selection is enabled', () => {
-        const gridOptionsMock = { enableCheckboxSelector: false, enableRowSelection: true, enableHybridSelection: true } as GridOption;
+      it('should register the RowSelection addon when "enableCheckboxSelector" (false) and "enableSelection" (true) are set in the grid options and Hybrid Selection is enabled', () => {
+        const gridOptionsMock = { enableCheckboxSelector: false, enableSelection: true, enableHybridSelection: true } as GridOption;
         const gridSpy = vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
         service.bindDifferentExtensions();
@@ -567,8 +567,8 @@ describe('ExtensionService', () => {
         expect(output).toEqual({ name: ExtensionName.hybridSelection, instance: mockHybridSelectionModel } as ExtensionModel<any>);
       });
 
-      it('should register the RowSelection addon when "enableCheckboxSelector" (false) and "enableRowSelection" (true) are set in the grid options', () => {
-        const gridOptionsMock = { enableCheckboxSelector: false, enableRowSelection: true } as GridOption;
+      it('should register the RowSelection addon when "enableCheckboxSelector" (false) and "enableSelection" (true) are set in the grid options', () => {
+        const gridOptionsMock = { enableCheckboxSelector: false, enableSelection: true } as GridOption;
         const gridSpy = vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
         service.bindDifferentExtensions();
@@ -710,7 +710,7 @@ describe('ExtensionService', () => {
         ] as Column[];
         const gridOptionsMock = {
           enableCheckboxSelector: true,
-          enableRowSelection: true,
+          enableSelection: true,
           checkboxSelector: { columnIndexPosition: 1 },
           enableRowMoveManager: true,
           rowMoveManager: { columnIndexPosition: 0 },
@@ -742,7 +742,7 @@ describe('ExtensionService', () => {
         ] as Column[];
         const gridOptionsMock = {
           enableCheckboxSelector: true,
-          enableRowSelection: true,
+          enableSelection: true,
           checkboxSelector: { columnIndexPosition: 1 },
           preRegisterExternalExtensions: () => {
             const ext = new ExternalExtension();

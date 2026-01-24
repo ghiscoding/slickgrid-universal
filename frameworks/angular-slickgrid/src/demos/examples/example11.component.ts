@@ -141,7 +141,7 @@ export class Example11Component implements OnInit {
       editable: true,
       enableColumnPicker: true,
       enableCellNavigation: true,
-      enableRowSelection: true,
+      enableSelection: true,
     };
   }
 

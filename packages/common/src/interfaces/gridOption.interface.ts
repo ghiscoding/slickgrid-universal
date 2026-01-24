@@ -514,7 +514,7 @@ export interface GridOption<C extends Column = Column> {
   enableRowMoveManager?: boolean;
 
   /** Do we want to enable row selection? */
-  enableRowSelection?: boolean;
+  enableSelection?: boolean;
 
   /** Do we want to enable sorting? */
   enableSorting?: boolean;

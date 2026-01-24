@@ -95,7 +95,7 @@ function defineGrid() {
     alwaysShowVerticalScroll: false,
     enableColumnPicker: true,
     enableCellNavigation: true,
-    enableRowSelection: true,
+    enableSelection: true,
   };
 }
 

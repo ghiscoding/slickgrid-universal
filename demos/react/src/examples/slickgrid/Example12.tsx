@@ -159,7 +159,7 @@ const Example12: React.FC = () => {
         hideInColumnTitleRow: true,
       },
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+      enableSelection: true,
       showCustomFooter: true, // display some metrics in the bottom custom footer
       customFooterOptions: {
         metricTexts: {

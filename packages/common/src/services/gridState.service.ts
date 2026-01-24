@@ -414,7 +414,7 @@ export class GridStateService {
   resetRowSelectionWhenRequired(): void {
     if (
       !this.needToPreserveRowSelection() &&
-      (this._gridOptions.enableRowSelection || this._gridOptions.enableHybridSelection || this._gridOptions.enableCheckboxSelector)
+      (this._gridOptions.enableSelection || this._gridOptions.enableHybridSelection || this._gridOptions.enableCheckboxSelector)
     ) {
       // this also requires the Hybrid Selection OR Row Selection Model to be registered as well
       const extensionName = this._gridOptions.enableHybridSelection ? ExtensionName.hybridSelection : ExtensionName.rowSelection;
@@ -485,7 +485,7 @@ export class GridStateService {
     this.bindSlickGridOnSetOptionsEventToGridStateChange(grid);
 
     // subscribe to Row Selection changes (when enabled)
-    if (this._gridOptions.enableRowSelection || this._gridOptions.enableHybridSelection || this._gridOptions.enableCheckboxSelector) {
+    if (this._gridOptions.enableSelection || this._gridOptions.enableHybridSelection || this._gridOptions.enableCheckboxSelector) {
       this._eventHandler.subscribe(this._dataView.onSelectedRowIdsChanged, (e, args) => {
         const previousSelectedRowIndexes = (this._selectedRowIndexes || []).slice();
         const previousSelectedFilteredRowDataContextIds = (this.selectedRowDataContextIds || []).slice();
@@ -641,7 +641,7 @@ export class GridStateService {
   protected hasRowSelectionEnabled(): boolean {
     const selectionModel = this._grid.getSelectionModel();
     const isRowSelectionEnabled = !!(
-      this._gridOptions.enableRowSelection ||
+      this._gridOptions.enableSelection ||
       this._gridOptions.enableHybridSelection ||
       this._gridOptions.enableCheckboxSelector
     );
