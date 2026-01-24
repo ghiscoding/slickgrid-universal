@@ -524,7 +524,7 @@ export default class Example12 {
       },
       externalResources: [new ExcelExportService(), this.compositeEditorInstance],
       enableFiltering: true,
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },

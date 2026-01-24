@@ -53,8 +53,8 @@ function defineGrids() {
     gridWidth: 800,
     rowHeight: 33,
     enableHybridSelection: true,
-    rowSelectionOptions: {
-      selectionType: 'row-click',
+    selectionOptions: {
+      selectionType: 'row',
     },
   };
 

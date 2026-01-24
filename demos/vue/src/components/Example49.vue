@@ -74,7 +74,7 @@ function defineGrid() {
 
     // enable new hybrid selection model (rows & cells)
     enableHybridSelection: true,
-    rowSelectionOptions: {
+    selectionOptions: {
       selectActiveRow: true,
       rowSelectColumnIds: ['selector'],
     },

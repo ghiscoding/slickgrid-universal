@@ -497,7 +497,7 @@ const Example32: React.FC = () => {
         hideInFilterHeaderRow: false,
         hideInColumnTitleRow: true,
       },
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },

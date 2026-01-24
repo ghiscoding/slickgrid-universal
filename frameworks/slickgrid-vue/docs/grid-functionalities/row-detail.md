@@ -48,7 +48,7 @@ function defineGrid() {
   gridOptions.value = {
     enableRowDetailView: true,
     // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
-    rowSelectionOptions: {
+    selectionOptions: {
       selectActiveRow: true
     },
     externalResources: [VueSlickRowDetailView], // for v10 and above
@@ -442,7 +442,7 @@ function defineGrid() {
   gridOptions.value = {
     enableRowDetailView: true,
     // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
-    rowSelectionOptions: {
+    selectionOptions: {
       selectActiveRow: true
     },
     externalResources: [VueSlickRowDetailView], // for v10 and above

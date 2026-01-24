@@ -78,7 +78,7 @@ export class SlickHybridSelectionModel implements SelectionModel<HybridSelection
       this.onSelectedRangesChanged.setPubSubService(pubSub);
     }
 
-    if (!this._selector) {
+    if (!this._selector && (!this._activeSelectionIsRow || (this._activeSelectionIsRow && this._options.dragToSelect))) {
       this._selector = new SlickCellRangeSelector(
         this._options?.dragToSelect
           ? {

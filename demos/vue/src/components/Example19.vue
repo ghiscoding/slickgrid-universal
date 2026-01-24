@@ -178,7 +178,7 @@ function defineGrid() {
         return true;
       },
     },
-    rowSelectionOptions: {
+    selectionOptions: {
       // True (Single Selection), False (Multiple Selections)
       selectActiveRow: true,
     },

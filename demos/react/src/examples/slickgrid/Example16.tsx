@@ -82,7 +82,7 @@ const Example16: React.FC = () => {
         hideInColumnTitleRow: true,
       },
       enableRowSelection: true,
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },

@@ -446,7 +446,7 @@ function defineGrid() {
     },
     externalResources: [new ExcelExportService(), new SlickCustomTooltip(), compositeEditorInstance.value],
     enableFiltering: true,
-    rowSelectionOptions: {
+    selectionOptions: {
       // True (Single Selection), False (Multiple Selections)
       selectActiveRow: false,
     },

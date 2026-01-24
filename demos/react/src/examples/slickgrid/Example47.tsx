@@ -211,7 +211,7 @@ const Example47: React.FC = () => {
         preloadComponent: ExampleDetailPreload,
         viewComponent: Example47DetailView,
       },
-      rowSelectionOptions: {
+      selectionOptions: {
         selectActiveRow: true,
       },
     };

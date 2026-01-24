@@ -63,7 +63,7 @@ export class GridRowDetailComponent implements OnInit, OnDestroy {
     this.gridOptions = {
       enableRowDetailView: true,
       // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
-      rowSelectionOptions: {
+      selectionOptions: {
         selectActiveRow: true
       },
       externalResources: [AngularSlickRowDetailView], // for v10 and above
@@ -433,7 +433,7 @@ export class MainGridComponent implements OnInit {
     this.gridOptions = {
       enableRowDetailView: true,
       // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
-      rowSelectionOptions: {
+      selectionOptions: {
         selectActiveRow: true
       },
       externalResources: [AngularSlickRowDetailView], // for v10 and above

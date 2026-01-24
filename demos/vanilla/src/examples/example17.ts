@@ -3,8 +3,7 @@ import {
   Formatters,
   GroupTotalFormatters,
   SlickCellRangeSelector,
-  SlickCellSelectionModel,
-  SlickRowSelectionModel,
+  SlickHybridSelectionModel,
   type Column,
   type GridOption,
   type Grouping,
@@ -233,7 +232,8 @@ export default class Example17 {
 
   setOptions() {
     this.sgb1.slickGrid?.setSelectionModel(
-      new SlickCellSelectionModel({
+      new SlickHybridSelectionModel({
+        selectionType: 'cell',
         selectActiveCell: true,
         cellRangeSelector: new SlickCellRangeSelector({
           selectionCss: {
@@ -248,8 +248,8 @@ export default class Example17 {
     );
 
     this.sgb2.slickGrid?.setSelectionModel(
-      // or use SlickHybridSelectionModel with `selectionType: 'row'`
-      new SlickRowSelectionModel({
+      new SlickHybridSelectionModel({
+        selectionType: 'row',
         cellRangeSelector: new SlickCellRangeSelector({
           selectionCss: {
             border: 'none',

@@ -193,7 +193,7 @@ export class Example19Component implements OnDestroy, OnInit {
           return true;
         },
       },
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: true,
       },

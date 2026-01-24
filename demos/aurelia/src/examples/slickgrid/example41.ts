@@ -51,7 +51,7 @@ export class Example41 {
       enableCellNavigation: true,
       enableRowSelection: true,
       enableRowMoveManager: true,
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },

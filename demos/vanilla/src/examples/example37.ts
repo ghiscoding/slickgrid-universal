@@ -137,7 +137,7 @@ export default class Example37 {
 
       // enable new hybrid selection model (rows & cells)
       enableHybridSelection: true,
-      rowSelectionOptions: {
+      selectionOptions: {
         rowSelectColumnIds: ['id'],
       },
 
@@ -155,12 +155,15 @@ export default class Example37 {
       // you can also enable checkbox selection & row selection, make sure to use `rowSelectColumnIds: ['id', '_checkbox_selector']`
       enableCheckboxSelector: true,
       enableRowSelection: true,
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
 
         // you could use "row" selection to override the hybrid mode
         selectionType: 'row',
+
+        // allow using the mouse drag selection to select multiple rows
+        dragToSelect: true,
       },
     };
   }

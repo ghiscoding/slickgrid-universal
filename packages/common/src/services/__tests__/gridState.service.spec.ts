@@ -4,7 +4,6 @@ import { SlickEvent, SlickEventData, type SlickDataView, type SlickGrid } from '
 import { ExtensionName } from '../../enums/index.js';
 import type { SlickColumnPicker } from '../../extensions/slickColumnPicker.js';
 import type { SlickHybridSelectionModel } from '../../extensions/slickHybridSelectionModel.js';
-import type { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel.js';
 import type {
   BackendService,
   CheckboxSelectorOption,
@@ -114,18 +113,6 @@ const hybridSelectionModelStub = {
   onSelectedRangesChanged: new SlickEvent(),
 } as unknown as SlickHybridSelectionModel;
 
-const rowSelectionModelStub = {
-  pluginName: 'RowSelectionModel',
-  constructor: vi.fn(),
-  init: vi.fn(),
-  destroy: vi.fn(),
-  getSelectedRanges: vi.fn(),
-  setSelectedRanges: vi.fn(),
-  getSelectedRows: vi.fn(),
-  setSelectedRows: vi.fn(),
-  onSelectedRangesChanged: new SlickEvent(),
-} as unknown as SlickRowSelectionModel;
-
 describe('GridStateService', () => {
   let service: GridStateService;
   let sharedService: SharedService;
@@ -134,7 +121,7 @@ describe('GridStateService', () => {
     sharedService = new SharedService();
     service = new GridStateService(extensionServiceStub, filterServiceStub, mockPubSub, sharedService, sortServiceStub, treeDataServiceStub);
     service.init(gridStub);
-    vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(rowSelectionModelStub);
+    vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(hybridSelectionModelStub);
   });
 
   afterEach(() => {
@@ -162,7 +149,7 @@ describe('GridStateService', () => {
       const pubSubSpy = vi.spyOn(mockPubSub, 'subscribe');
 
       service.init(gridStub);
-      vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(rowSelectionModelStub);
+      vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(hybridSelectionModelStub);
 
       expect(gridStateSpy).toHaveBeenCalled();
       expect(pubSubSpy).toHaveBeenCalledTimes(7);
@@ -427,7 +414,7 @@ describe('GridStateService', () => {
         const extensionSpy = vi.spyOn(extensionServiceStub, 'getExtensionByName').mockReturnValue(extensionMock as any);
 
         service.init(gridStub);
-        vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(rowSelectionModelStub);
+        vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(hybridSelectionModelStub);
         slickgridEvent.notify({ columns: columnsMock }, new SlickEventData(), gridStub);
 
         expect(gridStateSpy).toHaveBeenCalled();
@@ -451,7 +438,7 @@ describe('GridStateService', () => {
         const gridStateSpy = vi.spyOn(service, 'getCurrentGridState').mockReturnValue(gridStateMock);
 
         service.init(gridStub);
-        vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(rowSelectionModelStub);
+        vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(hybridSelectionModelStub);
         gridStub.onColumnsReordered.notify({ impactedColumns: columnsMock, previousColumnOrder: [], grid: gridStub }, new SlickEventData(), gridStub);
         service.resetColumns();
 
@@ -1050,7 +1037,7 @@ describe('GridStateService', () => {
     });
 
     it('should call the method and call the grid selection reset when the selection extension is used', () => {
-      const extensionMock = { name: ExtensionName.rowSelection, addon: {}, instance: {} as unknown as SlickRowSelectionModel, class: null };
+      const extensionMock = { name: ExtensionName.rowSelection, addon: {}, instance: {} as unknown as SlickHybridSelectionModel, class: null };
       const gridOptionsMock = { enableRowSelection: true } as GridOption;
       const gridOptionSpy = vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
       const setSelectionSpy = vi.spyOn(gridStub, 'setSelectedRows');

@@ -493,7 +493,7 @@ export class Example30Component implements OnDestroy, OnInit {
       },
       externalResources: [new ExcelExportService(), new SlickCustomTooltip(), this.compositeEditorInstance],
       enableFiltering: true,
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },

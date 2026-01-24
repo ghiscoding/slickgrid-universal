@@ -406,7 +406,7 @@ const Example33: React.FC = () => {
       },
       rowHeight: 33,
       enableFiltering: true,
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },

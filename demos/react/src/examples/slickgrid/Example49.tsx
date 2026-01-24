@@ -76,7 +76,7 @@ const Example49: React.FC = () => {
 
       // enable new hybrid selection model (rows & cells)
       enableHybridSelection: true,
-      rowSelectionOptions: {
+      selectionOptions: {
         selectActiveRow: true,
         rowSelectColumnIds: ['selector'],
       },

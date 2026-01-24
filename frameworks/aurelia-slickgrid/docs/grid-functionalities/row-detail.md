@@ -61,7 +61,7 @@ export class GridExample {
     this.gridOptions = {
       enableRowDetailView: true,
       // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
-      rowSelectionOptions: {
+      selectionOptions: {
         selectActiveRow: true
       },
       externalResources: [AureliaSlickRowDetailView], // for v10 and above
@@ -417,7 +417,7 @@ export class MainGrid implements OnInit {
     this.gridOptions = {
       enableRowDetailView: true,
       externalResources: [AureliaSlickRowDetailView], // for v10 and above
-      rowSelectionOptions: {
+      selectionOptions: {
         selectActiveRow: true
       },
       preRegisterExternalExtensions: (pubSubService) => {

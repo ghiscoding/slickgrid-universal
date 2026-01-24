@@ -3,7 +3,6 @@ import { getHtmlStringOutput } from '@slickgrid-universal/utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SlickEvent, type SlickGrid } from '../../core/index.js';
 import type { SlickHybridSelectionModel } from '../../extensions/slickHybridSelectionModel.js';
-import type { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel.js';
 import type { Column, OnSelectedRowsChangedEventArgs } from '../../interfaces/index.js';
 import { SlickCheckboxSelectColumn } from '../slickCheckboxSelectColumn.js';
 
@@ -79,17 +78,6 @@ const mockHybridSelectionModel = {
   onSelectedRangesChanged: new SlickEvent(),
 } as unknown as SlickHybridSelectionModel;
 
-const mockRowSelectionModel = {
-  constructor: vi.fn(),
-  init: vi.fn(),
-  dispose: vi.fn(),
-  getSelectedRows: vi.fn(),
-  setSelectedRows: vi.fn(),
-  getSelectedRanges: vi.fn(),
-  setSelectedRanges: vi.fn(),
-  onSelectedRangesChanged: new SlickEvent(),
-} as unknown as SlickRowSelectionModel;
-
 const pubSubServiceStub = {
   publish: vi.fn(),
   subscribe: vi.fn(),
@@ -100,12 +88,6 @@ const pubSubServiceStub = {
 vi.mock('../../extensions/slickHybridSelectionModel', () => ({
   SlickHybridSelectionModel: vi.fn().mockImplementation(function () {
     return mockHybridSelectionModel;
-  }),
-}));
-
-vi.mock('../../extensions/slickRowSelectionModel', () => ({
-  SlickRowSelectionModel: vi.fn().mockImplementation(function () {
-    return mockRowSelectionModel;
   }),
 }));
 
@@ -378,7 +360,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
   });
 
   it('should pre-select some rows in a delay when "preselectedRows" is defined with a row selection model', () => {
-    vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(mockRowSelectionModel);
+    vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(mockHybridSelectionModel);
     vi.spyOn(gridStub, 'getOptions').mockReturnValue({ preselectedRows: [1, 2] });
     vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue([]);
 

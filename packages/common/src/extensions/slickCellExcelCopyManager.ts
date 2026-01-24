@@ -10,7 +10,7 @@ import type {
   FormatterResultWithText,
   GridOption,
 } from '../interfaces/index.js';
-import { SlickCellExternalCopyManager, SlickCellSelectionModel } from './index.js';
+import { SlickCellExternalCopyManager, SlickHybridSelectionModel } from './index.js';
 
 /*
   This manager enables users to copy/paste data from/to an external Spreadsheet application
@@ -26,7 +26,7 @@ export class SlickCellExcelCopyManager {
   protected _addonOptions!: ExcelCopyBufferOption;
   protected _bindingEventService: BindingEventService;
   protected _cellExternalCopyManagerPlugin!: SlickCellExternalCopyManager;
-  protected _cellSelectionModel!: SlickCellSelectionModel;
+  protected _cellSelectionModel!: SlickHybridSelectionModel;
   protected _commandQueue!: EditCommand[];
   protected _eventHandler: SlickEventHandler;
   protected _grid!: SlickGrid;
@@ -60,7 +60,8 @@ export class SlickCellExcelCopyManager {
   init(grid: SlickGrid, options?: ExcelCopyBufferOption): void {
     this._grid = grid;
     this.createUndoRedoBuffer();
-    this._cellSelectionModel = new SlickCellSelectionModel();
+    const selectionType = this.gridOptions.selectionOptions?.selectionType || 'cell';
+    this._cellSelectionModel = new SlickHybridSelectionModel({ ...this.gridOptions.selectionOptions, selectionType });
     this._grid.setSelectionModel(this._cellSelectionModel);
     this._bindingEventService.bind(document.body, 'keydown', this.handleBodyKeyDown.bind(this) as EventListener);
     this._addonOptions = { ...this.getDefaultOptions(), ...options } as ExcelCopyBufferOption;

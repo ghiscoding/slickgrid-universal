@@ -180,7 +180,7 @@ function defineGrid() {
       // ViewModel Template to load when row detail data is ready
       viewComponent: Example47Detail as any,
     },
-    rowSelectionOptions: {
+    selectionOptions: {
       // True (Single Selection), False (Multiple Selections)
       selectActiveRow: true,
     },

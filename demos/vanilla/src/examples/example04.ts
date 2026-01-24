@@ -403,7 +403,7 @@ export default class Example04 {
         sanitizeDataExport: true,
       },
       externalResources: [new ExcelExportService()],
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },

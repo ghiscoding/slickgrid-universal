@@ -59,8 +59,8 @@ export class Example50 {
       gridWidth: 800,
       rowHeight: 33,
       enableHybridSelection: true,
-      rowSelectionOptions: {
-        selectionType: 'row-click',
+      selectionOptions: {
+        selectionType: 'row',
       },
     };
 

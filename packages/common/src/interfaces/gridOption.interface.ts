@@ -44,7 +44,6 @@ import type {
   RowBasedEditOptions,
   RowDetailView,
   RowMoveManager,
-  RowSelectionModelOption,
   SliderOption,
   SliderRangeOption,
   TextExportOption,
@@ -790,10 +789,7 @@ export interface GridOption<C extends Column = Column> {
   rowMoveManager?: RowMoveManager;
 
   /** Cell/Row/Hybrid Selection options */
-  selectionOptions?: HybridSelectionModelOption | RowSelectionModelOption;
-
-  /** @deprecated @use `selectionOptions` */
-  rowSelectionOptions?: HybridSelectionModelOption | RowSelectionModelOption;
+  selectionOptions?: HybridSelectionModelOption;
 
   /**
    * Defaults to "transform", what CSS style to we want to use to render each row top offset (choose between "top" and "transform").

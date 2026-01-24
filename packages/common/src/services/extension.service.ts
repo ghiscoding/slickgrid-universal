@@ -21,7 +21,6 @@ import {
   SlickHybridSelectionModel,
   SlickRowBasedEdit,
   SlickRowMoveManager,
-  SlickRowSelectionModel,
   type ExtensionUtility,
   type SlickGroupItemMetadataProvider,
 } from '../extensions/index.js';
@@ -47,7 +46,7 @@ export class ExtensionService {
   protected _groupItemMetadataProviderService?: SlickGroupItemMetadataProvider;
   protected _headerMenuPlugin?: SlickHeaderMenu;
   protected _rowMoveManagerPlugin?: SlickRowMoveManager;
-  protected _rowSelectionModel?: SlickHybridSelectionModel | SlickRowSelectionModel;
+  protected _rowSelectionModel?: SlickHybridSelectionModel;
   protected _rowBasedEdit?: SlickRowBasedEdit;
   protected _requireInitExternalExtensions: Array<ExtensionModel<any>> = [];
 
@@ -222,12 +221,13 @@ export class ExtensionService {
           this.gridOptions.enableRowMoveManager)
       ) {
         if (!this._rowSelectionModel || !this.sharedService.slickGrid.getSelectionModel()) {
-          const rowSelectionOptions = this.gridOptions.selectionOptions ?? this.gridOptions.rowSelectionOptions ?? {};
+          const rowSelectionOptions = this.gridOptions.selectionOptions ?? {};
           if (this.gridOptions.enableRowMoveManager && this.gridOptions.rowMoveManager?.dragToSelect !== false) {
             rowSelectionOptions.dragToSelect = true;
           }
-          const SelectionModelClass = this.gridOptions.enableHybridSelection ? SlickHybridSelectionModel : SlickRowSelectionModel;
-          this._rowSelectionModel = new SelectionModelClass(rowSelectionOptions);
+          const selectionType =
+            this.gridOptions.selectionOptions?.selectionType || (this.gridOptions.enableHybridSelection ? 'mixed' : 'row');
+          this._rowSelectionModel = new SlickHybridSelectionModel({ ...rowSelectionOptions, selectionType });
           this.sharedService.slickGrid.setSelectionModel(this._rowSelectionModel);
         }
         const extensionName = this.gridOptions.enableHybridSelection ? ExtensionName.hybridSelection : ExtensionName.rowSelection;
