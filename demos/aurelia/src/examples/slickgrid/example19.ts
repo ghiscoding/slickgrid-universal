@@ -173,7 +173,7 @@ export class Example19 {
         // Optionally pass your Parent Component reference to your Child Component (row detail component)
         parentRef: this,
       },
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: true,
       },

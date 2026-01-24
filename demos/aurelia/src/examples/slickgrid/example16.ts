@@ -88,7 +88,7 @@ export class Example16 {
         hideInColumnTitleRow: true,
       },
       enableRowSelection: true,
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },

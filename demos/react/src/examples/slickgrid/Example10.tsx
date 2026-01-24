@@ -162,7 +162,7 @@ const Example10: React.FC = () => {
         // selectableOverride: (row: number, dataContext: any, grid: SlickGrid) => (dataContext.id % 2 === 1)
       },
       multiSelect: false,
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: true,
       },
@@ -198,7 +198,7 @@ const Example10: React.FC = () => {
         hideInColumnTitleRow: true,
         applySelectOnAllPages: true, // when clicking "Select All", should we apply it to all pages (defaults to true)
       },
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },

@@ -198,7 +198,7 @@ export default class Example20 {
         // you can override it here in the options or externally by calling the method on the plugin instance
         expandableOverride: (_row, dataContext) => dataContext.id % 2 === 1,
       },
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },

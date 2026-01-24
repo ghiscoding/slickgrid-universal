@@ -108,7 +108,7 @@ export class Example1 {
       enableCheckboxSelector: true,
       enableRowSelection: true,
       // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false
       },
@@ -134,7 +134,7 @@ export class Example1 {
       enableCheckboxSelector: true,
       enableRowSelection: true,
       // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false
       },
@@ -198,7 +198,7 @@ export class Example1 implements OnInit {
       },
       multiSelect: false,
       // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: true,
       },
@@ -280,7 +280,7 @@ this.gridOptions = {
   // enable new hybrid selection model (rows & cells)
   enableHybridSelection: true,
   // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
-  rowSelectionOptions: {
+  selectionOptions: {
     selectActiveRow: true,
     rowSelectColumnIds: ['selector'],
   },

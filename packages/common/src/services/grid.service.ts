@@ -2,7 +2,6 @@ import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { arrayRemoveItemByIndex, isObjectEmpty } from '@slickgrid-universal/utils';
 import type { SlickDataView, SlickGrid } from '../core/index.js';
 import { SlickHybridSelectionModel } from '../extensions/slickHybridSelectionModel.js';
-import { SlickRowSelectionModel } from '../extensions/slickRowSelectionModel.js';
 import type {
   CellArgs,
   Column,
@@ -49,7 +48,7 @@ const ShowColumnOptionDefaults: ShowColumnOption = { autoResizeColumns: true, tr
 
 export class GridService {
   protected _grid!: SlickGrid;
-  protected _rowSelectionPlugin?: SlickHybridSelectionModel | SlickRowSelectionModel;
+  protected _rowSelectionPlugin?: SlickHybridSelectionModel;
 
   constructor(
     protected readonly gridStateService: GridStateService,
@@ -320,8 +319,8 @@ export class GridService {
   highlightRow(rowNumber: number | number[], duration?: number): void {
     // create a SelectionModel if there's not one yet
     if (!this._grid.getSelectionModel()) {
-      const SelectionModelClass = this._gridOptions.enableHybridSelection ? SlickHybridSelectionModel : SlickRowSelectionModel;
-      this._rowSelectionPlugin = new SelectionModelClass(this._gridOptions.selectionOptions ?? this._gridOptions.rowSelectionOptions);
+      const selectionType = this._gridOptions.selectionOptions?.selectionType || 'row';
+      this._rowSelectionPlugin = new SlickHybridSelectionModel({ ...this._gridOptions.selectionOptions, selectionType });
       this._grid.setSelectionModel(this._rowSelectionPlugin);
     }
 

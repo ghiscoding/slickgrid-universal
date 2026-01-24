@@ -8,7 +8,7 @@ import {
   type GridService,
   type SlickDataView,
   type SlickGrid,
-  type SlickRowSelectionModel,
+  type SlickHybridSelectionModel,
 } from '@slickgrid-universal/common';
 import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { ContainerServiceStub } from '../../../test/containerServiceStub.js';
@@ -114,8 +114,8 @@ const gridStub = {
   setSortColumns: vi.fn(),
 } as unknown as SlickGrid;
 
-const rowSelectionModelStub = {
-  pluginName: 'RowSelectionModel',
+const hybridSelectionModelStub = {
+  pluginName: 'HybridSelectionModel',
   constructor: vi.fn(),
   init: vi.fn(),
   destroy: vi.fn(),
@@ -124,7 +124,7 @@ const rowSelectionModelStub = {
   getSelectedRows: vi.fn(),
   setSelectedRows: vi.fn(),
   onSelectedRangesChanged: new SlickEvent(),
-} as unknown as SlickRowSelectionModel;
+} as unknown as SlickHybridSelectionModel;
 
 function createNewColumDefinitions(count: number) {
   const columnsMock: Column[] = [];
@@ -1791,7 +1791,7 @@ describe('CompositeEditorService', () => {
         const newGridOptions = { ...gridOptionsMock, enableRowSelection: true };
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
-        vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(rowSelectionModelStub);
+        vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(hybridSelectionModelStub);
       });
 
       afterEach(() => {

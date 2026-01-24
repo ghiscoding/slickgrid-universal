@@ -37,6 +37,30 @@ _Changes that should be transparent to most users, I'm just listing it in case o
 1. `applyHtmlCode()` was removed and replaced with `applyHtmlToElement()`
 2. Grid Option `throwWhenFrozenNotAllViewable` was removed and replaced with `invalidColumnFreezeWidthCallback`
 
+### Selection Models, keep only `SlickHybridSelectionModel`
+
+1. rename `rowSelectionOptions` to `selectionOptions`
+2. drop both `SlickCellSelectionModel`/`SlickRowSelectionModel` and keep only `SlickHybridSelectionModel`
+3. drop both `enableHybridSelection`/`enableRowSelection` merge them into a new `enableSelection` grid option
+
+`SlickHybridSelectionModel` was introduced to merge and allow using both Cell/Row Selections separately and/or together in the same grid. It was introduced in v9.x to test it out and it's now safe to drop the older `SlickCellSelectionModel` / `SlickRowSelectionModel` models. Also since we now have the Hybrid model and it's now accepting options for different selection models, I think it's better to rename `rowSelectionOptions` to `selectionOptions` for that reason.
+
+```diff
+gridOptions = {
+- enableHybridSelection: true,
+- enableRowSelection: true,
++  enableSelection: true,
+
+- rowSelectionOptions: {
++ selectionOptions: {
+    selectActiveRow: false,
+
+    // type can be: ['cell','row','mixed'] defaults to 'mixed'
++   selectionType: 'mixed',
+  }
+};
+```
+
 ### Interfaces / Enums changes
 
 Removing most Enums and replacing them with string literal types (`type` instead of `enum` because again `type` aren't transpiled and `enum` are). Making this change will help decrease the build size by transpiling a lot less code.

@@ -105,7 +105,7 @@ const Example: React.FC = () => {
       enableCheckboxSelector: true,
       enableRowSelection: true,
       // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false
       },
@@ -140,7 +140,7 @@ const Example: React.FC = () => {
       enableCheckboxSelector: true,
       enableRowSelection: true,
       // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false
       },
@@ -215,7 +215,7 @@ const Example: React.FC = () => {
       },
       multiSelect: false,
       // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: true,
       },
@@ -320,7 +320,7 @@ setGridOptions({
   // enable new hybrid selection model (rows & cells)
   enableHybridSelection: true,
   // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
-  rowSelectionOptions: {
+  selectionOptions: {
     selectActiveRow: true,
     rowSelectColumnIds: ['selector'],
   },

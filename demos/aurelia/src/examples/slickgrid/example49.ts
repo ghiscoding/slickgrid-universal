@@ -77,7 +77,7 @@ export class Example49 {
 
       // enable new hybrid selection model (rows & cells)
       enableHybridSelection: true,
-      rowSelectionOptions: {
+      selectionOptions: {
         selectActiveRow: true,
         rowSelectColumnIds: ['selector'],
       },

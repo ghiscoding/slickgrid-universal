@@ -78,7 +78,7 @@ export default class Example29 {
       enableCellNavigation: true,
       enableRowSelection: true,
       enableRowMoveManager: true,
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },

@@ -5,7 +5,7 @@ import type { EditCommand, Formatter, GridOption } from '../../interfaces/index.
 import { SharedService } from '../../services/shared.service.js';
 import { SlickCellExcelCopyManager } from '../slickCellExcelCopyManager.js';
 import type { SlickCellExternalCopyManager } from '../slickCellExternalCopyManager.js';
-import type { SlickCellSelectionModel } from '../slickCellSelectionModel.js';
+import type { SlickHybridSelectionModel } from '../slickHybridSelectionModel.js';
 
 const getEditorLockMock = {
   isActive: vi.fn(),
@@ -46,10 +46,10 @@ const mockCellSelectionModel = {
   getSelectedRows: vi.fn(),
   setSelectedRows: vi.fn(),
   onSelectedRangesChanged: new SlickEvent(),
-} as unknown as SlickCellSelectionModel;
+} as unknown as SlickHybridSelectionModel;
 
-vi.mock('../slickCellSelectionModel', () => ({
-  SlickCellSelectionModel: vi.fn().mockImplementation(function () {
+vi.mock('../slickHybridSelectionModel', () => ({
+  SlickHybridSelectionModel: vi.fn().mockImplementation(function () {
     return mockCellSelectionModel;
   }),
 }));

@@ -47,7 +47,7 @@ function defineGrid() {
     enableCellNavigation: true,
     enableRowSelection: true,
     enableRowMoveManager: true,
-    rowSelectionOptions: {
+    selectionOptions: {
       // True (Single Selection), False (Multiple Selections)
       selectActiveRow: false,
     },

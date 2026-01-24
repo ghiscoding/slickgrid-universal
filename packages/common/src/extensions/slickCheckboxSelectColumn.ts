@@ -14,7 +14,6 @@ import type {
 } from '../interfaces/index.js';
 import { createDocumentFragmentOrElement } from '../services/utilities.js';
 import { SlickHybridSelectionModel } from './slickHybridSelectionModel.js';
-import { SlickRowSelectionModel } from './slickRowSelectionModel.js';
 
 export interface RowLookup {
   [row: number]: boolean;
@@ -120,8 +119,8 @@ export class SlickCheckboxSelectColumn<T = any> {
 
     // this also requires the Row Selection Model to be registered as well
     if (!this._rowSelectionModel || !this._grid.getSelectionModel()) {
-      const SelectionModelClass = this.gridOptions.enableHybridSelection ? SlickHybridSelectionModel : SlickRowSelectionModel;
-      this._rowSelectionModel = new SelectionModelClass(this.gridOptions.selectionOptions ?? this.gridOptions.rowSelectionOptions);
+      const selectionType = this.gridOptions.selectionOptions?.selectionType || 'row';
+      this._rowSelectionModel = new SlickHybridSelectionModel({ ...this.gridOptions.selectionOptions, selectionType });
       this._grid.setSelectionModel(this._rowSelectionModel);
     }
 

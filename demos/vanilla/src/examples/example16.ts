@@ -456,7 +456,7 @@ export default class Example16 {
       rowHeight: 33,
       headerRowHeight: 35,
       enableFiltering: true,
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },

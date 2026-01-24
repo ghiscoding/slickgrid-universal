@@ -16,8 +16,6 @@ import {
   SlickHeaderMenu,
   SlickHybridSelectionModel,
   SlickRowBasedEdit,
-  SlickRowSelectionModel,
-  type SlickCellSelectionModel,
   type SlickCheckboxSelectColumn,
   type SlickRowMoveManager,
 } from '../../extensions/index.js';
@@ -29,44 +27,22 @@ const GRID_UID = 'slickgrid_12345';
 vi.mock('../../extensions/slickDraggableGrouping');
 vi.mock('../../extensions/slickRowBasedEdit');
 
-const mockCellSelectionModel = {
-  pluginName: 'CellSelectionModel',
+const mockHybridSelectionModel = {
+  pluginName: 'HybridSelectionModel',
   constructor: vi.fn(),
   init: vi.fn(),
   destroy: vi.fn(),
+  dispose: vi.fn(),
   getSelectedRanges: vi.fn(),
   setSelectedRanges: vi.fn(),
   getSelectedRows: vi.fn(),
   setSelectedRows: vi.fn(),
   onSelectedRangesChanged: new SlickEvent(),
-} as unknown as SlickCellSelectionModel;
-vi.mock('../../extensions/slickCellSelectionModel');
-
-const mockHybridSelectionModel = {
-  constructor: vi.fn(),
-  init: vi.fn(),
-  destroy: vi.fn(),
-  dispose: vi.fn(),
-  onSelectedRangesChanged: new SlickEvent(),
 } as unknown as SlickHybridSelectionModel;
-
-const mockRowSelectionModel = {
-  constructor: vi.fn(),
-  init: vi.fn(),
-  destroy: vi.fn(),
-  dispose: vi.fn(),
-  onSelectedRangesChanged: new SlickEvent(),
-} as unknown as SlickRowSelectionModel;
 
 vi.mock('../../extensions/slickHybridSelectionModel', () => ({
   SlickHybridSelectionModel: vi.fn().mockImplementation(function () {
     return mockHybridSelectionModel;
-  }),
-}));
-
-vi.mock('../../extensions/slickRowSelectionModel', () => ({
-  SlickRowSelectionModel: vi.fn().mockImplementation(function () {
-    return mockRowSelectionModel;
   }),
 }));
 
@@ -471,7 +447,7 @@ describe('ExtensionService', () => {
         expect(gridSpy).toHaveBeenCalled();
         expect(extCreateSpy).toHaveBeenCalledWith(columnsMock, gridOptionsMock);
         expect(rowSelectionInstance).not.toBeNull();
-        expect(SlickHybridSelectionModel).toHaveBeenCalledWith({});
+        expect(SlickHybridSelectionModel).toHaveBeenCalledWith({ selectionType: 'mixed' });
         expect(output).toEqual({ name: ExtensionName.checkboxSelector, instance: mockCheckboxSelectColumn as unknown } as ExtensionModel<any>);
       });
 
@@ -489,7 +465,7 @@ describe('ExtensionService', () => {
         expect(gridSpy).toHaveBeenCalled();
         expect(extCreateSpy).toHaveBeenCalledWith(columnsMock, gridOptionsMock);
         expect(rowSelectionInstance).not.toBeNull();
-        expect(SlickRowSelectionModel).toHaveBeenCalledWith({});
+        expect(SlickHybridSelectionModel).toHaveBeenCalledWith({ selectionType: 'row' });
         expect(output).toEqual({ name: ExtensionName.checkboxSelector, instance: mockCheckboxSelectColumn as unknown } as ExtensionModel<any>);
       });
 
@@ -514,7 +490,7 @@ describe('ExtensionService', () => {
         expect(gridSpy).toHaveBeenCalled();
         expect(extCreateSpy).toHaveBeenCalledWith(columnsMock, gridOptionsMock);
         expect(rowSelectionInstance).not.toBeNull();
-        expect(SlickHybridSelectionModel).toHaveBeenCalledWith({});
+        expect(SlickHybridSelectionModel).toHaveBeenCalledWith({ selectionType: 'mixed' });
         expect(output).toEqual({ name: ExtensionName.checkboxSelector, instance: mockCheckboxSelectColumn as unknown } as ExtensionModel<any>);
         expect(onRegisteredMock).toHaveBeenCalledWith(expect.any(Object));
       });
@@ -539,7 +515,7 @@ describe('ExtensionService', () => {
         expect(gridSpy).toHaveBeenCalled();
         expect(extCreateSpy).toHaveBeenCalledWith(columnsMock, gridOptionsMock);
         expect(rowSelectionInstance).not.toBeNull();
-        expect(SlickRowSelectionModel).toHaveBeenCalledWith({});
+        expect(SlickHybridSelectionModel).toHaveBeenCalledWith({ selectionType: 'row' });
         expect(output).toEqual({ name: ExtensionName.checkboxSelector, instance: mockCheckboxSelectColumn as unknown } as ExtensionModel<any>);
         expect(onRegisteredMock).toHaveBeenCalledWith(expect.any(Object));
       });
@@ -558,7 +534,7 @@ describe('ExtensionService', () => {
         expect(gridSpy).toHaveBeenCalled();
         expect(extCreateSpy).toHaveBeenCalledWith(columnsMock, gridOptionsMock);
         expect(hybridSelectionInstance).not.toBeNull();
-        expect(SlickHybridSelectionModel).toHaveBeenCalledWith({ dragToSelect: true });
+        expect(SlickHybridSelectionModel).toHaveBeenCalledWith({ dragToSelect: true, selectionType: 'mixed' });
         expect(output).toEqual({ name: ExtensionName.rowMoveManager, instance: mockRowMoveManager as unknown } as ExtensionModel<any>);
       });
 
@@ -576,7 +552,7 @@ describe('ExtensionService', () => {
         expect(gridSpy).toHaveBeenCalled();
         expect(extCreateSpy).toHaveBeenCalledWith(columnsMock, gridOptionsMock);
         expect(rowSelectionInstance).not.toBeNull();
-        expect(SlickRowSelectionModel).toHaveBeenCalledWith({ dragToSelect: true });
+        expect(SlickHybridSelectionModel).toHaveBeenCalledWith({ dragToSelect: true, selectionType: 'row' });
         expect(output).toEqual({ name: ExtensionName.rowMoveManager, instance: mockRowMoveManager as unknown } as ExtensionModel<any>);
       });
 
@@ -599,7 +575,7 @@ describe('ExtensionService', () => {
         const output = service.getExtensionByName(ExtensionName.rowSelection);
 
         expect(gridSpy).toHaveBeenCalled();
-        expect(output).toEqual({ name: ExtensionName.rowSelection, instance: mockRowSelectionModel } as ExtensionModel<any>);
+        expect(output).toEqual({ name: ExtensionName.rowSelection, instance: mockHybridSelectionModel } as ExtensionModel<any>);
       });
 
       it('should register the CellMenu addon when "enableCellMenu" is set in the grid options', () => {
@@ -674,7 +650,7 @@ describe('ExtensionService', () => {
         const onRegisteredMock = vi.fn();
         const gridOptionsMock = { enableExcelCopyBuffer: true, excelCopyBufferOptions: { onExtensionRegistered: onRegisteredMock } } as GridOption;
         const gridSpy = vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-        vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(mockCellSelectionModel);
+        vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(mockHybridSelectionModel);
 
         service.bindDifferentExtensions();
         const output = service.getExtensionByName(ExtensionName.cellExternalCopyManager);

@@ -2,10 +2,11 @@ import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement } from '@slickgrid-universal/utils';
 import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest';
 import { AutocompleterEditor, CheckboxEditor, InputEditor, LongTextEditor } from '../../editors/index.js';
-import { SlickCellSelectionModel, SlickHybridSelectionModel, SlickRowSelectionModel } from '../../extensions/index.js';
+import { SlickHybridSelectionModel } from '../../extensions/index.js';
 import { copyCellToClipboard } from '../../formatters/formatterUtilities.js';
+import { SelectionModel } from '../../index.js';
 import type { Column, CustomDataView, EditCommand, Editor, FormatterResultWithHtml, FormatterResultWithText, GridOption } from '../../interfaces/index.js';
-import { SlickEventData, SlickGlobalEditorLock, SlickRange } from '../slickCore.js';
+import { SlickEvent, SlickEventData, SlickGlobalEditorLock, SlickRange } from '../slickCore.js';
 import { SlickDataView } from '../slickDataview.js';
 import { SlickGrid } from '../slickGrid.js';
 
@@ -18,6 +19,14 @@ const pubSubServiceStub = {
   unsubscribe: vi.fn(),
   unsubscribeAll: vi.fn(),
 } as BasePubSubService;
+
+class SlickCellSelectionModelMock {
+  pluginName = 'CellSelectionModel';
+  onSelectedRangesChanged = new SlickEvent<SlickRange[]>('onSelectedRangesChanged');
+  constructor() {}
+  init() {}
+  destroy() {}
+}
 
 const DEFAULT_COLUMN_HEIGHT = 25;
 const DEFAULT_COLUMN_WIDTH = 80;
@@ -624,8 +633,8 @@ describe('SlickGrid core file', () => {
         expect(secondRowItemCell.classList.contains('selected')).toBeTruthy();
       });
 
-      it('should call SlickRowSelectionModel.setSelectedRanges() when editor lock isActive() is define and is returning false', () => {
-        const rowSelectionModel = new SlickRowSelectionModel();
+      it('should call SlickHybridSelectionModel.setSelectedRanges() when editor lock isActive() is define and is returning false', () => {
+        const rowSelectionModel = new SlickHybridSelectionModel({ selectionType: 'row' });
         const setRangeSpy = vi.spyOn(rowSelectionModel, 'setSelectedRanges');
 
         grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
@@ -678,8 +687,8 @@ describe('SlickGrid core file', () => {
         expect(invalidateSpy).toHaveBeenCalled();
       });
 
-      it('should call SlickRowSelectionModel.onDragReplaceCells() when selection mode is REP and range is expanding', () => {
-        const rowSelectionModel = new SlickRowSelectionModel();
+      it('should call SlickHybridSelectionModel.onDragReplaceCells() when selection mode is REP and range is expanding', () => {
+        const rowSelectionModel = new SlickHybridSelectionModel({ selectionType: 'row' });
         const setRangeSpy = vi.spyOn(rowSelectionModel, 'setSelectedRanges');
 
         grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
@@ -699,7 +708,7 @@ describe('SlickGrid core file', () => {
         const slickRange = new SlickRange(1, 2, 3, 4);
         const prevSelectedRange = new SlickRange(0, 0, 0, 0);
         const selectedRange = new SlickRange(1, 2, 3, 4);
-        rowSelectionModel.setSelectedRanges([slickRange], 'SlickRowSelectionModel.setSelectedRanges', 'REP');
+        rowSelectionModel.setSelectedRanges([slickRange], 'SlickHybridSelectionModel.setSelectedRanges', 'REP');
         expect(onDragReplaceSpy).toHaveBeenCalledWith({ grid, prevSelectedRange, selectedRange }, expect.anything(), grid);
         expect(invalidateSpy).toHaveBeenCalled();
       });
@@ -722,7 +731,7 @@ describe('SlickGrid core file', () => {
         expect(firstRowItemCell.classList.contains('selected')).toBeTruthy();
 
         const slickRange = new SlickRange(1, 2, 3, 4);
-        rowSelectionModel.setSelectedRanges([slickRange], 'SlickRowSelectionModel.setSelectedRanges', 'REP');
+        rowSelectionModel.setSelectedRanges([slickRange], 'SlickHybridSelectionModel.setSelectedRanges', 'REP');
         expect(onSelectedRowChangeSpy).toHaveBeenCalledWith(
           {
             grid,
@@ -752,8 +761,8 @@ describe('SlickGrid core file', () => {
         expect(setRangeSpy).not.toHaveBeenCalled();
       });
 
-      it('should not call SlickRowSelectionModel.setSelectedRanges() when editor lock isActive() is define and is returning true', () => {
-        const rowSelectionModel = new SlickRowSelectionModel();
+      it('should not call SlickHybridSelectionModel.setSelectedRanges() when editor lock isActive() is define and is returning true', () => {
+        const rowSelectionModel = new SlickHybridSelectionModel({ selectionType: 'row' });
         const setRangeSpy = vi.spyOn(rowSelectionModel, 'setSelectedRanges');
 
         grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
@@ -787,8 +796,8 @@ describe('SlickGrid core file', () => {
         );
       });
 
-      it('should not call SlickRowSelectionModel.setSelectedRanges() when editor lock is undefined', () => {
-        const rowSelectionModel = new SlickRowSelectionModel();
+      it('should not call SlickHybridSelectionModel.setSelectedRanges() when editor lock is undefined', () => {
+        const rowSelectionModel = new SlickHybridSelectionModel({ selectionType: 'row' });
         const setRangeSpy = vi.spyOn(rowSelectionModel, 'setSelectedRanges');
         grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, editorLock: undefined });
         grid.setSelectionModel(rowSelectionModel);
@@ -1930,23 +1939,23 @@ describe('SlickGrid core file', () => {
       expect(p).toBeFalsy();
     });
 
-    it('should be able to register SlickRowSelectionModel plugin', () => {
-      const rowSelectionModel = new SlickRowSelectionModel();
+    it('should be able to register SlickHybridSelectionModel plugin', () => {
+      const hybridSelectionModel = new SlickHybridSelectionModel({ selectionType: 'row' });
       grid = new SlickGrid<any, Column>(container, [], columns, defaultOptions);
-      grid.setSelectionModel(rowSelectionModel);
-      rowSelectionModel.init(grid);
+      grid.setSelectionModel(hybridSelectionModel);
+      hybridSelectionModel.init(grid);
 
-      grid.registerPlugin(rowSelectionModel);
-      let loadedPlugin = grid.getPluginByName<SlickRowSelectionModel>('RowSelectionModel');
+      grid.registerPlugin(hybridSelectionModel);
+      let loadedPlugin = grid.getPluginByName<SlickHybridSelectionModel>('HybridSelectionModel');
       const selectionModel = grid.getSelectionModel();
       expect(loadedPlugin).toBeTruthy();
       expect(selectionModel).toBeTruthy();
 
-      grid.unregisterPlugin(loadedPlugin as SlickRowSelectionModel);
-      loadedPlugin = grid.getPluginByName<SlickRowSelectionModel>('RowSelectionModel');
+      grid.unregisterPlugin(loadedPlugin as SlickHybridSelectionModel);
+      loadedPlugin = grid.getPluginByName<SlickHybridSelectionModel>('HybridSelectionModel');
       expect(loadedPlugin).toBeFalsy();
 
-      const p = grid.getPluginByName('RowSelectionModel');
+      const p = grid.getPluginByName('HybridSelectionModel');
       expect(p).toBeFalsy();
     });
 
@@ -1954,34 +1963,34 @@ describe('SlickGrid core file', () => {
       const hybridSelectionModel = new SlickHybridSelectionModel();
       hybridSelectionModel.activeSelectionIsRow = true;
       const rowSelectSpy = vi.spyOn(hybridSelectionModel, 'destroy');
-      const cellSelectionModel = new SlickCellSelectionModel();
+      const cellSelectionModel = new SlickCellSelectionModelMock();
 
       grid = new SlickGrid<any, Column>(container, [], columns, defaultOptions);
       grid.setSelectionModel(hybridSelectionModel);
-      grid.setSelectionModel(cellSelectionModel);
+      grid.setSelectionModel(cellSelectionModel as unknown as SelectionModel);
 
       expect(rowSelectSpy).toHaveBeenCalled();
     });
 
-    it('should clear previous selection model when calling setSelectionModel(SlickRowSelectionModel) with a different model', () => {
-      const rowSelectionModel = new SlickRowSelectionModel();
-      const rowSelectSpy = vi.spyOn(rowSelectionModel, 'destroy');
-      const cellSelectionModel = new SlickCellSelectionModel();
+    it('should clear previous selection model when calling setSelectionModel(SlickHybridSelectionModel) with a different model', () => {
+      const hybridSelectionModel = new SlickHybridSelectionModel({ selectionType: 'row' });
+      const rowSelectSpy = vi.spyOn(hybridSelectionModel, 'destroy');
+      const cellSelectionModel = new SlickCellSelectionModelMock();
 
       grid = new SlickGrid<any, Column>(container, [], columns, defaultOptions);
-      grid.setSelectionModel(rowSelectionModel);
-      grid.setSelectionModel(cellSelectionModel);
+      grid.setSelectionModel(hybridSelectionModel);
+      grid.setSelectionModel(cellSelectionModel as unknown as SelectionModel);
 
       expect(rowSelectSpy).toHaveBeenCalled();
     });
 
     it('should change border color for darkMode', () => {
-      const cellSelectionModel = new SlickCellSelectionModel();
+      const cellSelectionModel = new SlickHybridSelectionModel({ selectionType: 'cell' });
 
       grid = new SlickGrid<any, Column>(container, [], columns, { ...defaultOptions, darkMode: true });
       cellSelectionModel.init(grid);
 
-      expect(cellSelectionModel.cellRangeSelector.addonOptions.selectionCss.border).toBe('2px solid white');
+      expect(cellSelectionModel.getCellRangeSelector()?.addonOptions.selectionCss.border).toBe('2px solid gray');
     });
   });
 
@@ -3268,16 +3277,6 @@ describe('SlickGrid core file', () => {
       container.dispatchEvent(cMouseDownEvent);
 
       expect(onDragInitSpy).not.toHaveBeenCalled();
-    });
-
-    it('should pause() the Draggable service when "selectionType" is set "row-click"', () => {
-      const hybridSelectionModel = new SlickHybridSelectionModel({ selectionType: 'row-click' });
-
-      grid = new SlickGrid<any, Column>(container, data, columns, defaultOptions);
-      const draggableSpy = vi.spyOn((grid as any).slickDraggableInstance, 'pause');
-      grid.setSelectionModel(hybridSelectionModel);
-
-      expect(draggableSpy).toHaveBeenCalled();
     });
 
     it('should not drag when event has cancelled bubbling (immediatePropagationStopped)', () => {

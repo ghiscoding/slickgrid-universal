@@ -368,7 +368,7 @@ export default class Example03 {
       },
       externalResources: [new TextExportService(), this.excelExportService, this.pdfExportService],
       enableFiltering: true,
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },

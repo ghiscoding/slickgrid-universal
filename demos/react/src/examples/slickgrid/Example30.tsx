@@ -482,7 +482,7 @@ const Example30: React.FC = () => {
       },
       externalResources: [new ExcelExportService(), new SlickCustomTooltip(), compositeEditorInstanceRef.current!],
       enableFiltering: true,
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },

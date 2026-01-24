@@ -154,7 +154,7 @@ function defineGrids() {
       // selectableOverride: (row: number, dataContext: any, grid: SlickGrid) => (dataContext.id % 2 === 1)
     },
     multiSelect: false,
-    rowSelectionOptions: {
+    selectionOptions: {
       // True (Single Selection), False (Multiple Selections)
       selectActiveRow: true,
     },
@@ -190,7 +190,7 @@ function defineGrids() {
       hideInColumnTitleRow: true,
       applySelectOnAllPages: true, // when clicking "Select All", should we apply it to all pages (defaults to true)
     },
-    rowSelectionOptions: {
+    selectionOptions: {
       // True (Single Selection), False (Multiple Selections)
       selectActiveRow: false,
     },

@@ -216,7 +216,7 @@ export default class Example36 {
         // example, if you choosed 6 panelRows, the display will in fact use 5 rows
         panelRows: this.detailViewRowCount,
       },
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },

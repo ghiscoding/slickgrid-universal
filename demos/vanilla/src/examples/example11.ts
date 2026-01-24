@@ -405,7 +405,7 @@ export default class Example11 {
       },
       externalResources: [new ExcelExportService(), new SlickCustomTooltip()],
       enableFiltering: true,
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },

@@ -85,7 +85,7 @@ export class Example16Component implements OnInit {
         hideInColumnTitleRow: true,
       },
       enableRowSelection: true,
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },

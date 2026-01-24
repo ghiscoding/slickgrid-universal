@@ -192,7 +192,7 @@ const Example19: React.FC = () => {
           return true;
         },
       },
-      rowSelectionOptions: {
+      selectionOptions: {
         selectActiveRow: true,
       },
     };

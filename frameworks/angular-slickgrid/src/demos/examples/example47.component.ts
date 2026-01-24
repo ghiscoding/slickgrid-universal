@@ -192,7 +192,7 @@ export class Example47Component implements OnDestroy, OnInit {
         // View Component to load when row detail data is ready
         viewComponent: Example47RowDetailComponent,
       },
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: true,
       },

@@ -10,6 +10,7 @@ import {
 } from '../core/index.js';
 import type {
   CellRangeSelectorOption,
+  CellSelectionMode,
   DragPosition,
   DragRange,
   DragRowMove,
@@ -17,7 +18,7 @@ import type {
   MouseOffsetViewport,
   OnScrollEventArgs,
 } from '../interfaces/index.js';
-import { SlickCellRangeDecorator, type CellSelectionMode } from './index.js';
+import { SlickCellRangeDecorator } from './index.js';
 
 export class SlickCellRangeSelector {
   pluginName: 'CellRangeSelector' = 'CellRangeSelector' as const;

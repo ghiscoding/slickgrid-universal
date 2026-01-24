@@ -487,7 +487,7 @@ export class Example30 {
       },
       externalResources: [new ExcelExportService(), new SlickCustomTooltip(), this.compositeEditorInstance],
       enableFiltering: true,
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },

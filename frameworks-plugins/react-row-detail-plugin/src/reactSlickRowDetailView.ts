@@ -3,7 +3,6 @@ import {
   createDomElement,
   SlickEventData,
   SlickHybridSelectionModel,
-  SlickRowSelectionModel,
   unsubscribeAll,
   type EventSubscription,
   type OnBeforeRowDetailToggleArgs,
@@ -117,10 +116,9 @@ export class ReactSlickRowDetailView extends UniversalSlickRowDetailView {
       if (this._grid && this.gridOptions) {
         // this also requires the Row Selection Model to be registered as well
         if (!rowSelectionPlugin || !this._grid.getSelectionModel()) {
-          const SelectionModelClass = this.gridOptions.enableHybridSelection ? SlickHybridSelectionModel : SlickRowSelectionModel;
-          rowSelectionPlugin = new SelectionModelClass(
-            this.gridOptions.selectionOptions ?? this.gridOptions.rowSelectionOptions ?? { selectActiveRow: true }
-          );
+          const selectionType = this.gridOptions.selectionOptions?.selectionType || 'row';
+          const selectActiveRow = this.gridOptions.selectionOptions?.selectActiveRow ?? true;
+          rowSelectionPlugin = new SlickHybridSelectionModel({ ...this.gridOptions.selectionOptions, selectionType, selectActiveRow });
           this._grid.setSelectionModel(rowSelectionPlugin);
         }
 

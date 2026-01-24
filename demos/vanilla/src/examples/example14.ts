@@ -590,7 +590,7 @@ export default class Example14 {
         hideInFilterHeaderRow: false,
         hideInColumnTitleRow: true,
       },
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },

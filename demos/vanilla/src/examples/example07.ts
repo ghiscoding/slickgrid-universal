@@ -386,7 +386,7 @@ export default class Example07 {
       enableCellNavigation: true,
       enableCheckboxSelector: true,
       enableRowSelection: true,
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },

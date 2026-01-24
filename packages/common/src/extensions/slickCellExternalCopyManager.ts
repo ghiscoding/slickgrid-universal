@@ -90,7 +90,7 @@ export class SlickCellExternalCopyManager {
     const cellSelectionModel = grid.getSelectionModel();
     if (!cellSelectionModel) {
       throw new Error(
-        `Selection model is mandatory for this plugin. Please set a selection model on the grid before adding this plugin: grid.setSelectionModel(new SlickCellSelectionModel())`
+        `Selection model is mandatory for this plugin. Please set a selection model on the grid before adding this plugin: grid.setSelectionModel(new SlickHybridSelectionModel())`
       );
     }
 
