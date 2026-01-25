@@ -167,11 +167,10 @@ describe('Example 48 - Hybrid Selection Model', () => {
       cy.get('#grid48-2 .slick-cell.selected').should('have.length', 8 * 1);
 
       // select another row
-      cy.get('#grid48-2 .slick-row[data-row="5"] .slick-cell.l0.r0').as('task5');
       cy.get('#grid48-2 .slick-row[data-row="5"] .slick-cell.l1.r1').should('contain', '5');
       cy.get('#grid48-2 .slick-row[data-row="5"] input[type=checkbox]').click({ force: true });
       cy.get('#grid48-2 .slick-viewport-top.slick-viewport-left').scrollTo('top');
-      cy.get('@task5').should('have.class', 'selected');
+      cy.get('#grid48-2 .slick-row[data-row="5"] .slick-cell.l0.r0').should('have.class', 'selected');
       cy.get('#grid48-2 .slick-cell.selected').should('have.length', 8 * 2);
     });
   });
