@@ -194,7 +194,7 @@ export class AureliaSlickRowDetailView extends UniversalSlickRowDetailView {
           this._eventHandler.subscribe(this._grid.onColumnsReordered, this.redrawAllViewSlots.bind(this, false));
 
           // on row selection changed, we also need to redraw
-          if (this.gridOptions.enableSelection || this.gridOptions.enableHybridSelection || this.gridOptions.enableCheckboxSelector) {
+          if (this.gridOptions.enableSelection || this.gridOptions.enableCheckboxSelector) {
             this._eventHandler.subscribe(this._grid.onSelectedRowsChanged, this.redrawAllViewSlots.bind(this, false));
           }
 
