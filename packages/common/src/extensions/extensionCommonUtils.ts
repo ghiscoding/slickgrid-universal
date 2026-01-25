@@ -94,7 +94,7 @@ export function handleColumnPickerItemClick(this: SlickColumnPicker | SlickGridM
     // will not have the "selected" CSS class because it wasn't visible at the time.
     // To bypass this problem we can simply recall the row selection with the same selection and that will trigger a re-apply of the CSS class
     // on all columns including the column we just made visible
-    if ((context.gridOptions.enableSelection || context.gridOptions.enableHybridSelection) && isChecked) {
+    if (context.gridOptions.enableSelection && isChecked) {
       const rowSelection = grid.getSelectedRows();
       grid.setSelectedRows(rowSelection);
     }
