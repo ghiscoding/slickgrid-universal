@@ -55,14 +55,6 @@ jobs:
       - name: Website Dev Build (served for Cypress)
         run: pnpm build:dev
 
-      - name: Cache Cypress binary
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/Cypress
-          key: ${{ runner.os }}-cypress-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-cypress-
-
       - name: Ensure Cypress binary is installed
         run: pnpm exec cypress install
 
@@ -73,6 +65,7 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           install: false
+          package-manager-cache: false
           # working-directory: packages/dnd
           # start: pnpm vanilla:serve:demo
           # start: pnpm serve:vite
