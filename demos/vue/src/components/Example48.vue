@@ -110,9 +110,10 @@ function defineGrids() {
     externalResources: [new ExcelExportService()],
 
     // enable new hybrid selection model (rows & cells)
-    enableHybridSelection: true,
+    enableSelection: true,
     selectionOptions: {
       rowSelectColumnIds: ['id'],
+      selectionType: 'mixed',
     },
 
     // when using the ExcelCopyBuffer, you can see what the selection range is
@@ -129,7 +130,7 @@ function defineGrids() {
     ...gridOptions1.value,
     // you can also enable checkbox selection & row selection, make sure to use `rowSelectColumnIds: ['id', '_checkbox_selector']`
     enableCheckboxSelector: true,
-    enableRowSelection: true,
+    enableSelection: true,
     selectionOptions: {
       // True (Single Selection), False (Multiple Selections)
       selectActiveRow: false,
@@ -189,7 +190,7 @@ function toggleSubTitle() {
 
   <div class="subtitle">
     <code>SlickHybridSelectionModel</code> This Selection Model is an hybrid approach that uses a combination of the row or cell selections
-    depending on certain conditions. Use <code>enableHybridSelection</code> grid option to enable the new Hybrid Selection Model.
+    depending on certain conditions.
     <ul>
       <li>
         1. clicking on the first column (<code>id</code>) will use <code>RowSelectionModel</code> because of our configuration of

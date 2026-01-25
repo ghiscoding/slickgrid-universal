@@ -135,6 +135,10 @@ export class SlickHybridSelectionModel implements SelectionModel<HybridSelection
     return this._options;
   }
 
+  setOptions(options: Partial<HybridSelectionModelOption>): void {
+    this._options = { ...this._options, ...options };
+  }
+
   // Region: CellSelectionModel Members
   // -----------------------------------------------------------------------------
 

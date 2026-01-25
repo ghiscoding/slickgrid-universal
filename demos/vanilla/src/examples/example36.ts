@@ -223,7 +223,7 @@ export default class Example36 {
 
       // You could also enable Row Selection as well, but just make sure to disable `useRowClick: false`
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+      enableSelection: true,
       checkboxSelector: {
         hideInFilterHeaderRow: false,
         hideSelectAllCheckbox: true,

@@ -15,7 +15,7 @@ import { AngularSlickgridModule } from 'angular-slickgrid';
       enableFiltering: true,
       enableCellNavigation: true,
       enablePagination: true,
-      enableRowSelection: true,
+      enableSelection: true,
       enableTranslate: true,
       //...
     }),

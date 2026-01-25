@@ -142,7 +142,7 @@ function defineGrids() {
   gridOptions1.value = {
     enableAutoResize: false,
     enableCellNavigation: true,
-    enableRowSelection: true,
+    enableSelection: true,
     enableCheckboxSelector: true,
     enableFiltering: true,
     checkboxSelector: {
@@ -195,7 +195,7 @@ function defineGrids() {
       selectActiveRow: false,
     },
     enableCheckboxSelector: true,
-    enableRowSelection: true,
+    enableSelection: true,
     gridHeight: 255,
     gridWidth: 800,
     enablePagination: true,

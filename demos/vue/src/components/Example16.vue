@@ -70,7 +70,7 @@ function defineGrid() {
       hideInFilterHeaderRow: false,
       hideInColumnTitleRow: true,
     },
-    enableRowSelection: true,
+    enableSelection: true,
     selectionOptions: {
       // True (Single Selection), False (Multiple Selections)
       selectActiveRow: false,

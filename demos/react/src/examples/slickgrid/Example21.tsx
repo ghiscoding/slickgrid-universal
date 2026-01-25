@@ -100,7 +100,7 @@ const Example21: React.FC = () => {
       alwaysShowVerticalScroll: false,
       enableColumnPicker: true,
       enableCellNavigation: true,
-      enableRowSelection: true,
+      enableSelection: true,
     };
 
     setColumnDefinitions(columnDefinitions);

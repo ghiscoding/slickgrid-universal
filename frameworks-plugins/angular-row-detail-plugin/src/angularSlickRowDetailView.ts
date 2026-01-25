@@ -213,7 +213,7 @@ export class AngularSlickRowDetailView extends UniversalSlickRowDetailView {
         this.eventHandler.subscribe(this._grid.onColumnsReordered, this.redrawAllViewComponents.bind(this, false));
 
         // on row selection changed, we also need to redraw
-        if (this.gridOptions.enableRowSelection || this.gridOptions.enableHybridSelection || this.gridOptions.enableCheckboxSelector) {
+        if (this.gridOptions.enableSelection || this.gridOptions.enableCheckboxSelector) {
           this.eventHandler.subscribe(this._grid.onSelectedRowsChanged, this.redrawAllViewComponents.bind(this, false));
         }
 

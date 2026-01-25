@@ -542,10 +542,7 @@ function initialization() {
 
     const datasetLn = dataModel.value?.length || 0;
     if (datasetLn > 0) {
-      if (
-        !isDatasetInitialized &&
-        (_gridOptions.value.enableCheckboxSelector || _gridOptions.value.enableRowSelection || _gridOptions.value.enableHybridSelection)
-      ) {
+      if (!isDatasetInitialized && (_gridOptions.value.enableCheckboxSelector || _gridOptions.value.enableSelection)) {
         loadRowSelectionPresetWhenExists();
       }
       loadFilterPresetsWhenDatasetInitialized();
@@ -1013,7 +1010,7 @@ function paginationChanged(pagination: PaginationMetadata) {
     grid &&
     !isSyncGridSelectionEnabled &&
     _gridOptions.value?.backendServiceApi &&
-    (_gridOptions.value.enableRowSelection || _gridOptions.value.enableHybridSelection || _gridOptions.value.enableCheckboxSelector)
+    (_gridOptions.value.enableSelection || _gridOptions.value.enableCheckboxSelector)
   ) {
     grid.setSelectedRows([]);
   }
@@ -1361,9 +1358,7 @@ function loadLocalGridPagination(dataset?: any[]) {
 function loadRowSelectionPresetWhenExists() {
   // if user entered some Row Selections "presets"
   const presets = _gridOptions.value?.presets;
-  const enableRowSelection =
-    _gridOptions.value &&
-    (_gridOptions.value.enableCheckboxSelector || _gridOptions.value.enableRowSelection || _gridOptions.value.enableHybridSelection);
+  const enableRowSelection = _gridOptions.value && (_gridOptions.value.enableCheckboxSelector || _gridOptions.value.enableSelection);
   if (
     enableRowSelection &&
     grid?.getSelectionModel() &&

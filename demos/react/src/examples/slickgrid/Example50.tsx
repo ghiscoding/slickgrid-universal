@@ -54,7 +54,7 @@ const Example50: React.FC = () => {
     gridHeight: 225,
     gridWidth: 800,
     rowHeight: 33,
-    enableHybridSelection: true,
+    enableSelection: true,
     selectionOptions: {
       selectionType: 'row',
     },

@@ -82,6 +82,12 @@ gridOptions = {
 };
 ```
 
+---
+
+{% hint style="note" %}
+**Info** the changes in the next few lines were all mentioned in the previous "Migration Guide v9.0". So, if you have already made these changes then you could skip the section below.
+{% endhint %}
+
 ### Interfaces / Enums changes
 
 Removing most Enums and replacing them with string literal types (`type` instead of `enum` because again `type` aren't transpiled and `enum` are). Making this change will help decrease the build size by transpiling a lot less code.

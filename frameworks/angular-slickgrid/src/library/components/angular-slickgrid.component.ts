@@ -814,10 +814,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
 
       const datasetLn = this.dataView.getLength() || this._dataset?.length || 0;
       if (datasetLn > 0) {
-        if (
-          !this._isDatasetInitialized &&
-          (this.options.enableCheckboxSelector || this.options.enableRowSelection || this.options.enableHybridSelection)
-        ) {
+        if (!this._isDatasetInitialized && (this.options.enableCheckboxSelector || this.options.enableSelection)) {
           this.loadRowSelectionPresetWhenExists();
         }
         this.loadFilterPresetsWhenDatasetInitialized();
@@ -896,7 +893,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
       this.slickGrid &&
       !isSyncGridSelectionEnabled &&
       this.options?.backendServiceApi &&
-      (this.options.enableRowSelection || this.options.enableHybridSelection || this.options.enableCheckboxSelector)
+      (this.options.enableSelection || this.options.enableCheckboxSelector)
     ) {
       this.slickGrid.setSelectedRows([]);
     }
@@ -1490,8 +1487,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
   protected loadRowSelectionPresetWhenExists() {
     // if user entered some Row Selections "presets"
     const presets = this.options?.presets;
-    const enableRowSelection =
-      this.options && (this.options.enableCheckboxSelector || this.options.enableRowSelection || this.options.enableHybridSelection);
+    const enableRowSelection = this.options && (this.options.enableCheckboxSelector || this.options.enableSelection);
     if (
       enableRowSelection &&
       this.slickGrid?.getSelectionModel() &&

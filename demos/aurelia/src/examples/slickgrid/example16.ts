@@ -87,7 +87,7 @@ export class Example16 {
         hideInFilterHeaderRow: false,
         hideInColumnTitleRow: true,
       },
-      enableRowSelection: true,
+      enableSelection: true,
       selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,

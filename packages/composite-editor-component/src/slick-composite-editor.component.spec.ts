@@ -1788,7 +1788,7 @@ describe('CompositeEditorService', () => {
 
     describe('with Row Selections and Mass Selection Change', () => {
       beforeEach(() => {
-        const newGridOptions = { ...gridOptionsMock, enableRowSelection: true };
+        const newGridOptions = { ...gridOptionsMock, enableSelection: true };
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
         vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(hybridSelectionModelStub);
@@ -2011,7 +2011,7 @@ describe('CompositeEditorService', () => {
 
   describe('with Mass Update', () => {
     beforeEach(() => {
-      const newGridOptions = { ...gridOptionsMock, enableRowSelection: true };
+      const newGridOptions = { ...gridOptionsMock, enableSelection: true };
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
     });
@@ -2291,7 +2291,7 @@ describe('CompositeEditorService', () => {
       container.registerInstance('GridService', gridServiceStub);
       container.registerInstance('TranslaterService', translateService);
 
-      const newGridOptions = { ...gridOptionsMock, enableRowSelection: true, enableTranslate: true };
+      const newGridOptions = { ...gridOptionsMock, enableSelection: true, enableTranslate: true };
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
     });

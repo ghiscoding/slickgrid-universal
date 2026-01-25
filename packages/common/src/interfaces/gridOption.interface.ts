@@ -490,9 +490,6 @@ export interface GridOption<C extends Column = Column> {
    */
   enableHtmlRendering?: boolean;
 
-  /** Do we want to enable hybrid selection (cell/row selection)? */
-  enableHybridSelection?: boolean;
-
   /** Do we want to enable a styling effect when hovering any row from the grid? */
   enableMouseHoverHighlightRow?: boolean;
 
@@ -513,8 +510,8 @@ export interface GridOption<C extends Column = Column> {
   /** Defaults to false, when enabled it will make possible to move rows in the grid. */
   enableRowMoveManager?: boolean;
 
-  /** Do we want to enable row selection? */
-  enableRowSelection?: boolean;
+  /** Do we want to enable selection (cell/row selection)? */
+  enableSelection?: boolean;
 
   /** Do we want to enable sorting? */
   enableSorting?: boolean;

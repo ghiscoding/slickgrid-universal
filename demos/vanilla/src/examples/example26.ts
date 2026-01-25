@@ -119,7 +119,7 @@ export default class Example26 {
       enableCellNavigation: true,
       enableFiltering: true,
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+      enableSelection: true,
       enableGrouping: true,
       headerMenu: {
         hideFreezeColumnsCommand: false,

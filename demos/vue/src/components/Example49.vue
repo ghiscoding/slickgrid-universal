@@ -73,10 +73,11 @@ function defineGrid() {
     editorNavigateOnArrows: true, // enable editor navigation using arrow keys
 
     // enable new hybrid selection model (rows & cells)
-    enableHybridSelection: true,
+    enableSelection: true,
     selectionOptions: {
-      selectActiveRow: true,
       rowSelectColumnIds: ['selector'],
+      selectActiveRow: true,
+      selectionType: 'mixed',
     },
 
     // when using the ExcelCopyBuffer, you can see what the selection range is
@@ -168,7 +169,8 @@ function vueGridReady(grid: SlickgridVueInstance) {
     <div class="subtitle">
       Spreadsheet with drag-fill, hybrid selection model. Type a few values in the grid and then select those cells and use the bottom right
       drag handle spread the selection and auto-fill the values to other cells. Use <code>onDragReplaceCells</code> event to customize the
-      drag-fill behavior. Use <code>enableHybridSelection</code> grid option to enable the new Hybrid Selection Model.
+      drag-fill behavior. Use <code>&#123; enableSelection: true, selectionOptions: &#123; selectionType: 'mixed' &#125;&#125;</code>
+      grid option to enable the new Hybrid Selection Model.
     </div>
 
     <br />
