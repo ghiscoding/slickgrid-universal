@@ -1172,8 +1172,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /** Returns the current SelectionModel. See here for more information about SelectionModels. */
-  getSelectionModel(): SelectionModel | undefined {
-    return this.selectionModel;
+  getSelectionModel<T extends SelectionModel>(): T | undefined {
+    return this.selectionModel as T;
   }
 
   /** Get Grid Canvas Node DOM Element */

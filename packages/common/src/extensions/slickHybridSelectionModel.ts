@@ -44,6 +44,7 @@ export class SlickHybridSelectionModel implements SelectionModel<HybridSelection
     this.onSelectedRangesChanged = new SlickEvent<SlickRange[]>('onSelectedRangesChanged');
     this._eventHandler = new SlickEventHandler();
     this._options = { ...this._defaults, ...options };
+    console.log('hybrid options', this._options);
   }
 
   get eventHandler(): SlickEventHandler {
@@ -133,6 +134,10 @@ export class SlickHybridSelectionModel implements SelectionModel<HybridSelection
 
   getOptions(): HybridSelectionModelOption {
     return this._options;
+  }
+
+  setOptions(options: Partial<HybridSelectionModelOption>): void {
+    this._options = { ...this._options, ...options };
   }
 
   // Region: CellSelectionModel Members

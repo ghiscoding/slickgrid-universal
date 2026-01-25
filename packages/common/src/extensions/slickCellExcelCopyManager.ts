@@ -61,7 +61,10 @@ export class SlickCellExcelCopyManager {
     this._grid = grid;
     this.createUndoRedoBuffer();
     const selectionType = this.gridOptions.selectionOptions?.selectionType || 'cell';
-    this._cellSelectionModel = new SlickHybridSelectionModel({ ...this.gridOptions.selectionOptions, selectionType });
+    this._cellSelectionModel =
+      grid.getSelectionModel<SlickHybridSelectionModel>() ??
+      new SlickHybridSelectionModel({ ...this.gridOptions.selectionOptions, selectionType });
+    this._cellSelectionModel.setOptions({ ...this.gridOptions.selectionOptions, selectionType });
     this._grid.setSelectionModel(this._cellSelectionModel);
     this._bindingEventService.bind(document.body, 'keydown', this.handleBodyKeyDown.bind(this) as EventListener);
     this._addonOptions = { ...this.getDefaultOptions(), ...options } as ExcelCopyBufferOption;
