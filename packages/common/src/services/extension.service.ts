@@ -230,8 +230,7 @@ export class ExtensionService {
           this._selectionModel = new SlickHybridSelectionModel({ ...selectionOptions, selectionType });
           this.sharedService.slickGrid.setSelectionModel(this._selectionModel);
         }
-        const extensionName = this.gridOptions.enableHybridSelection ? ExtensionName.hybridSelection : ExtensionName.rowSelection;
-        this._extensionList[extensionName] = { name: extensionName, instance: this._selectionModel };
+        this._extensionList[ExtensionName.hybridSelection] = { name: ExtensionName.hybridSelection, instance: this._selectionModel };
       }
 
       // Checkbox Selector Plugin

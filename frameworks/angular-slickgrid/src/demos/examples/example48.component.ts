@@ -124,7 +124,7 @@ export class Example48Component implements OnInit {
       externalResources: [new ExcelExportService()],
 
       // enable new hybrid selection model (rows & cells)
-      enableHybridSelection: true,
+      enableSelection: true,
       selectionOptions: {
         rowSelectColumnIds: ['id'],
         selectionType: 'mixed',
