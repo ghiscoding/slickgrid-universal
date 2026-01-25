@@ -10,10 +10,6 @@
 
 OData Service to sync a grid with an OData backend server, the service will consider any Filter/Sort and automatically build the necessary OData query string that is sent to your OData backend server.
 
-### Internal Dependencies
-- [@slickgrid-universal/common](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/common)
-- [@slickgrid-universal/utils](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/utils)
-
 ### External Dependencies
 No external dependency
 

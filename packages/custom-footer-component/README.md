@@ -10,9 +10,5 @@
 
 Vanilla Implementation of a Custom Footer Component that can optionally be shown at the bottom of the grid. The default behavior is to show metrics on the right side of the footer while the left side could optionally show row selection count (when that feature is enabled). The default texts for metrics & row selection (when enabled) also have a set of locales that allows you to change the text according to the locale used. Lastly, you could also choose to provide your own custom text/html in both left and/or right side.
 
-### Internal Dependencies
-- [@slickgrid-universal/binding](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/binding)
-- [@slickgrid-universal/common](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/common)
-
 ### Installation
 Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation)

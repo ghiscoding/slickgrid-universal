@@ -12,9 +12,6 @@ An RxJS Observable Service Wrapper to make it possible to use RxJS with Slickgri
 
 This package is simply a bridge, a facade, to make it possible to use RxJS without adding RxJS to the `@slickgrid-universal/common` list of dependencies, so RxJS is a dependency of this package without being a dependency of the common (core) package, This will avoid adding dependencies not everyone need and won't clutter the common package (the common package will simply use an empty interface, which won't do anything, without requiring to install RxJS at all. We also have full unit tests coverage for all of that).
 
-### Internal Dependencies
-- [@slickgrid-universal/common](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/common)
-
 ### External Dependencies
 - [RxJS 7+](https://github.com/ReactiveX/RxJS)
 
