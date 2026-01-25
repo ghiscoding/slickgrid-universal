@@ -94,6 +94,7 @@ const Example48: React.FC = () => {
       enableHybridSelection: true,
       selectionOptions: {
         rowSelectColumnIds: ['id'],
+        selectionType: 'mixed',
       },
 
       // when using the ExcelCopyBuffer, you can see what the selection range is

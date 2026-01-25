@@ -46,7 +46,7 @@ export class ExtensionService {
   protected _groupItemMetadataProviderService?: SlickGroupItemMetadataProvider;
   protected _headerMenuPlugin?: SlickHeaderMenu;
   protected _rowMoveManagerPlugin?: SlickRowMoveManager;
-  protected _rowSelectionModel?: SlickHybridSelectionModel;
+  protected _selectionModel?: SlickHybridSelectionModel;
   protected _rowBasedEdit?: SlickRowBasedEdit;
   protected _requireInitExternalExtensions: Array<ExtensionModel<any>> = [];
 
@@ -99,7 +99,7 @@ export class ExtensionService {
     this._groupItemMetadataProviderService = null as any;
     this._headerMenuPlugin = null as any;
     this._rowMoveManagerPlugin = null as any;
-    this._rowSelectionModel = null as any;
+    this._selectionModel = null as any;
     this._extensionCreatedList = null as any;
     this._extensionList = {} as ExtensionList<any>;
   }
@@ -213,25 +213,25 @@ export class ExtensionService {
       // Hybrid Selection OR Row Selection Plugin
       // this extension should be registered BEFORE the CheckboxSelector, RowDetail or RowMoveManager since it can be use by these 2 plugins
       if (
-        !this._rowSelectionModel &&
+        !this._selectionModel &&
         (this.gridOptions.enableHybridSelection ||
           this.gridOptions.enableSelection ||
           this.gridOptions.enableCheckboxSelector ||
           this.gridOptions.enableRowDetailView ||
           this.gridOptions.enableRowMoveManager)
       ) {
-        if (!this._rowSelectionModel || !this.sharedService.slickGrid.getSelectionModel()) {
+        if (!this._selectionModel || !this.sharedService.slickGrid.getSelectionModel()) {
           const selectionOptions = this.gridOptions.selectionOptions ?? {};
           if (this.gridOptions.enableRowMoveManager && this.gridOptions.rowMoveManager?.dragToSelect !== false) {
             selectionOptions.dragToSelect = true;
           }
           const selectionType =
             this.gridOptions.selectionOptions?.selectionType || (this.gridOptions.enableHybridSelection ? 'mixed' : 'row');
-          this._rowSelectionModel = new SlickHybridSelectionModel({ ...selectionOptions, selectionType });
-          this.sharedService.slickGrid.setSelectionModel(this._rowSelectionModel);
+          this._selectionModel = new SlickHybridSelectionModel({ ...selectionOptions, selectionType });
+          this.sharedService.slickGrid.setSelectionModel(this._selectionModel);
         }
         const extensionName = this.gridOptions.enableHybridSelection ? ExtensionName.hybridSelection : ExtensionName.rowSelection;
-        this._extensionList[extensionName] = { name: extensionName, instance: this._rowSelectionModel };
+        this._extensionList[extensionName] = { name: extensionName, instance: this._selectionModel };
       }
 
       // Checkbox Selector Plugin
