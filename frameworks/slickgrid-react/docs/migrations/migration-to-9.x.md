@@ -1,14 +1,14 @@
 ## Embracing ESM-only builds ⚡
 
-This new release is focused around 2 things, it is now shipping ESM-only builds (in other words, CommonJS builds are fully dropped and only ESM remains), this move will cut the npm download size by half. The other big change is an internal one which is an organizational one, I'm moving all framework wrappers directly into Slickgrid-Universal (Angular, Aurelia, React and Vue wrappers are now **all** located under the Slickgrid-Universal [frameworks/](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/) folder). This change will help tremendously with the project's maintenance (any new PR will now run against all frameworks all at once (catching bugs early), publishing a new version is now a single click execution for all frameworks all at once, and finally having a single codebase to test & troubleshoot all wrappers, etc... will be so much easier to handle). With this new structure change, the Slickgrid-Universal name now makes so much more sense. 🌐
+This new release is focused around 2 things, it is now shipping ESM-only builds (in other words, CommonJS builds are fully dropped and only ESM remains), this move will cut the npm download size by half. The other big change is an internal one which is an organizational one, I'm moving all framework wrappers directly into Slickgrid-Universal (Angular, Aurelia, React and Vue wrappers are now **all** located under the Slickgrid-Universal [frameworks/](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/) folder). This change will help tremendously with the project maintenance (any new PR will now run against all frameworks all at once (catching bugs early), publishing a new version is now a single click execution for all frameworks all at once, and finally having a single codebase to test & troubleshoot all wrappers, etc... will be so much easier to handle). With this new structure change, the Slickgrid-Universal name now makes so much more sense. 🌐
 
-The other great thing about having everything under the same project umbrella is that every package will now be released at the same time with the exact same version number across the board. Everything will be released under v9.0 and whenever any new feature/bugfix comes in, then every package will be bumped to v9.1 and so on (no more version discrepancies).
+The other great thing about having everything under the same project umbrella is that every package will now be released at the same time with the exact same version number across the board. For example, the next version will be released as v9.0 and whenever any new feature/bugfix comes in, then every package will be bumped to v9.1 and so on (no more version discrepancies).
 
 Wait, what happened to version 6 to 8?
 
-I'm skipping versions 6-8 and going straight to v9.0 because some of the framework wrappers (Angular-Slickgrid & Aurelia-Slickgrid) were already at v8.x and so the next available major version bump for everything was v9.0.
+I'm skipping versions 6-8 and going straight to v9.0 because some of the framework wrappers (Angular-Slickgrid & Aurelia-Slickgrid) were already at v8.x and so the next available major version bump available for every packages was v9.0.
 
-If the project is useful to you, please give it a ⭐ (on [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal)) and perhaps buy me a coffee [☕ (Ko-Fi)](https://ko-fi.com/ghiscoding), thanks.
+If the project is useful to you, please give it a star ⭐ (on [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal)) umbrella project and perhaps buy me a coffee [☕ (Ko-Fi)](https://ko-fi.com/ghiscoding), thanks in advance.
 
 #### Major Changes - Quick Summary
 - minimum requirements bump
@@ -150,7 +150,7 @@ prepareGrid() {
 ```
 
 {% hint style="note" %}
-**Info** for a complete list of option changes, visit the Vanilla-Calendar-Pro [migration](https://github.com/uvarov-frontend/vanilla-calendar-pro/wiki/%5BMigration-from-v2.*.*%5D-New-API-for-all-options-and-actions-in-v3.0.0) page, which details every single option and new associated option name.
+**Info** for a complete list of option changes, visit the Vanilla-Calendar-Pro [migration](https://github.com/uvarov-frontend/vanilla-calendar-pro/wiki/%5BMigration-from-v2.*.*%5D-New-API-for-all-options-and-actions-in-v3.0.0) page, which details every single option and their new associated option names.
 {% endhint %}
 
 ## Grid Functionalities

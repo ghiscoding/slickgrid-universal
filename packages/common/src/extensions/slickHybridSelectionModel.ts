@@ -490,7 +490,7 @@ export class SlickHybridSelectionModel implements SelectionModel<HybridSelection
         if (active >= 0 && active < this._grid.getDataLength()) {
           this._grid.scrollRowIntoView(active);
           const tempRanges = this.rowsToRanges(this.getRowsRange(top, bottom));
-          this.setSelectedRanges(tempRanges, undefined, '');
+          this.setSelectedRanges(tempRanges);
         }
 
         e.preventDefault();
@@ -534,7 +534,7 @@ export class SlickHybridSelectionModel implements SelectionModel<HybridSelection
       }
 
       const tempRanges = this.rowsToRanges(selection);
-      this.setSelectedRanges(tempRanges, undefined, '');
+      this.setSelectedRanges(tempRanges);
       e.stopImmediatePropagation();
 
       return true;

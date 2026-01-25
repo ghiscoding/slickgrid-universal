@@ -76,14 +76,6 @@ jobs:
       - name: Website Dev Build (served for Cypress)
         run: pnpm angular:build:demo
 
-      - name: Cache Cypress binary
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/Cypress
-          key: ${{ runner.os }}-cypress-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-cypress-
-
       - name: Ensure Cypress binary is installed
         run: pnpm exec cypress install
 
@@ -91,9 +83,10 @@ jobs:
         run: pnpm angular:serve &
 
       - name: Run Cypress E2E tests
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           install: false
+          package-manager-cache: false
           working-directory: frameworks/angular-slickgrid
           # start: pnpm angular:serve
           wait-on: 'http://localhost:4300'

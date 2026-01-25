@@ -10,9 +10,5 @@
 
 Vanilla Implementation of a Pagination Component that can optionally be shown at the bottom of the grid. This Pagination will automatically be enabled when using a Backend Service (like OData/GraphQL) but can also optionally be used with a local (in-memory) dataset as well, the data will still remain in memory but it will be shown with pagination.
 
-### Internal Dependencies
-- [@slickgrid-universal/binding](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/binding)
-- [@slickgrid-universal/common](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/common)
-
 ### Installation
 Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation)

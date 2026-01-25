@@ -11,6 +11,10 @@
 
 Export your SlickGrid data to PDF format using [`jsPDF`](https://www.npmjs.com/package/jspdf) - a popular, well-supported PDF library for JavaScript.
 
+### External Dependencies
+
+- [`jsPDF`](https://www.npmjs.com/package/jspdf) to build and export to PDF.
+
 ## Installation
 
 ```bash

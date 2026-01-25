@@ -10,8 +10,5 @@
 
 Vanilla Implementation of an Empty Dataset Warning Component when there is no data available in the grid. This is in summary a very simplified `div` showing a warning message (that can be translated as well) when there are no data to show in the grid.
 
-### Internal Dependencies
-- [@slickgrid-universal/common](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/common)
-
 ### Installation
 Follow the instruction provided in the main [README](https://github.com/ghiscoding/slickgrid-universal#installation)

@@ -10,9 +10,6 @@
 
 GraphQL Service to sync a grid with an GraphQL backend server, the service will consider any Filter/Sort and automatically build the necessary GraphQL query string that is sent to your GraphQL backend server.
 
-### Internal Dependencies
-- [@slickgrid-universal/common](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/common)
-
 ### External Dependencies
 No external dependency
 

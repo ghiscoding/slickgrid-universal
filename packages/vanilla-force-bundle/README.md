@@ -15,17 +15,6 @@ Vanilla Force Bundle is similar to the Vanilla Bundle but oriented towards a Sal
 
 This package does what other framework would do, that is to make all the features usable into 1 bundle so that it could then be used by other Apps/Projects, for example we use this bundle in our SalesForce (with Lighning Web Component) App and it requires plain ES6 JavaScript which this bundle also produce (for that there's a [dist-grid-bundle-zip](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle/dist-grid-bundle-zip) folder which will zip the ES6 `dist` folder which we then import in our SalesForce implementation as a static resource).
 
-### Internal Dependencies
-- [@slickgrid-universal/common](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/common)
-- [@slickgrid-universal/composite-editor-component](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/composite-editor-component)
-- [@slickgrid-universal/custom-tooltip-plugin](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/custom-tooltip-plugin)
-- [@slickgrid-universal/event-pub-sub](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/event-pub-sub)
-- [@slickgrid-universal/custom-footer-component](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/custom-footer-component)
-- [@slickgrid-universal/empty-warning-component](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/empty-warning-component)
-- [@slickgrid-universal/pagination-component](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/pagination-component)
-- [@slickgrid-universal/text-export](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/text-export)
-- [@slickgrid-universal/vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle)
-
 ### Installation
 This Vanilla Bundle is used in our SalesForce implementation (since it requires plain ES6) and is also used by the standalone [demos/vanilla](https://github.com/ghiscoding/slickgrid-universal/tree/master/demos/vanilla) which serves for demo purposes.
 
