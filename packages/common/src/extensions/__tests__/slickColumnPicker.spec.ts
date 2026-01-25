@@ -144,7 +144,7 @@ describe('ColumnPickerControl', () => {
       const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
       const setSelectionSpy = vi.spyOn(gridStub, 'setSelectedRows');
 
-      gridOptionsMock.enableHybridSelection = true;
+      gridOptionsMock.enableSelection = true;
       control.columns = columnsMock;
 
       const eventData = { ...new SlickEventData(), preventDefault: vi.fn() } as any;
@@ -237,7 +237,7 @@ describe('ColumnPickerControl', () => {
         .mockReturnValue(1);
       vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue(mockRowSelection);
 
-      gridOptionsMock.enableHybridSelection = true;
+      gridOptionsMock.enableSelection = true;
       control.columns = columnsMock;
 
       const eventData = { ...new SlickEventData(), preventDefault: vi.fn() } as any;

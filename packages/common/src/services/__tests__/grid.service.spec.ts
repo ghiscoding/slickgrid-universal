@@ -123,7 +123,7 @@ describe('Grid Service', () => {
   vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
 
   beforeEach(() => {
-    mockGridOptions.enableHybridSelection = false;
+    mockGridOptions.enableSelection = false;
     service = new GridService(
       gridStateServiceStub,
       filterServiceStub,
@@ -145,7 +145,7 @@ describe('Grid Service', () => {
   });
 
   it('should dispose of the service and SlickHybridSelectionModel', () => {
-    vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ enableHybridSelection: true } as GridOption);
+    vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ enableSelection: true } as GridOption);
     const disposeSpy = vi.spyOn(mockHybridSelectionModel, 'dispose');
 
     service.highlightRow(0, 10);
@@ -389,7 +389,7 @@ describe('Grid Service', () => {
 
     it('should expect the row to be selected when calling "upsertItems" with an item when setting the "selecRow" flag and the grid option "enableSelection" is set', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableHybridSelection: true } as GridOption);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableSelection: true } as GridOption);
       const dataviewSpy = vi.spyOn(dataviewStub, 'getRowById');
       const serviceUpsertSpy = vi.spyOn(service, 'upsertItem');
       const serviceHighlightSpy = vi.spyOn(service, 'highlightRow');

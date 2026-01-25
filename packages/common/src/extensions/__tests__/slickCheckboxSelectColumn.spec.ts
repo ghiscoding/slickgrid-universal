@@ -348,7 +348,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
 
   it('should pre-select some rows in a delay when "preselectedRows" is defined with a row selection model', () => {
     vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(mockHybridSelectionModel);
-    vi.spyOn(gridStub, 'getOptions').mockReturnValue({ preselectedRows: [1, 2], enableHybridSelection: true });
+    vi.spyOn(gridStub, 'getOptions').mockReturnValue({ preselectedRows: [1, 2], enableSelection: true });
     vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue([]);
 
     const selectRowSpy = vi.spyOn(plugin, 'selectRows');

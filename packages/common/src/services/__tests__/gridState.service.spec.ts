@@ -137,7 +137,7 @@ describe('GridStateService', () => {
 
     beforeEach(() => {
       slickgridEvent = new SlickEvent();
-      gridOptionMock.enableHybridSelection = false;
+      gridOptionMock.enableSelection = false;
     });
 
     afterEach(() => {
@@ -161,7 +161,7 @@ describe('GridStateService', () => {
       const gridStateSpy = vi.spyOn(service, 'subscribeToAllGridChanges');
       const pubSubSpy = vi.spyOn(mockPubSub, 'subscribe');
 
-      gridOptionMock.enableHybridSelection = true;
+      gridOptionMock.enableSelection = true;
       service.init(gridStub);
       vi.spyOn(gridStub, 'getSelectionModel').mockReturnValueOnce(hybridSelectionModelStub);
 
@@ -1037,7 +1037,7 @@ describe('GridStateService', () => {
     });
 
     it('should call the method and call the grid selection reset when the selection extension is used', () => {
-      const extensionMock = { name: ExtensionName.rowSelection, addon: {}, instance: {} as unknown as SlickHybridSelectionModel, class: null };
+      const extensionMock = { name: ExtensionName.hybridSelection, addon: {}, instance: {} as unknown as SlickHybridSelectionModel, class: null };
       const gridOptionsMock = { enableSelection: true } as GridOption;
       const gridOptionSpy = vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
       const setSelectionSpy = vi.spyOn(gridStub, 'setSelectedRows');
@@ -1046,14 +1046,14 @@ describe('GridStateService', () => {
       service.resetRowSelectionWhenRequired();
 
       expect(gridOptionSpy).toHaveBeenCalled();
-      expect(extensionSpy).toHaveBeenCalledWith(ExtensionName.rowSelection);
+      expect(extensionSpy).toHaveBeenCalledWith(ExtensionName.hybridSelection);
       expect(setSelectionSpy).toHaveBeenCalled();
     });
 
     it('should call the method and call the grid selection reset when the selection extension is used', () => {
       vi.spyOn(gridStub, 'getSelectionModel').mockReturnValueOnce(hybridSelectionModelStub);
       const extensionMock = { name: ExtensionName.hybridSelection, addon: {}, instance: {} as unknown as SlickHybridSelectionModel, class: null };
-      const gridOptionsMock = { enableHybridSelection: true } as GridOption;
+      const gridOptionsMock = { enableSelection: true } as GridOption;
       const gridOptionSpy = vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
       const setSelectionSpy = vi.spyOn(gridStub, 'setSelectedRows');
       const extensionSpy = vi.spyOn(extensionServiceStub, 'getExtensionByName').mockReturnValue(extensionMock as any);

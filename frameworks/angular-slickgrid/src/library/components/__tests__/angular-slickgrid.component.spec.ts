@@ -2425,7 +2425,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
           vi.spyOn(mockGrid, 'getSelectionModel').mockReturnValue(true as any);
           vi.spyOn(mockDataView, 'getLength').mockReturnValue(mockData.length);
 
-          component.options.enableHybridSelection = true;
+          component.options.enableSelection = true;
           component.options.presets = { rowSelection: { gridRowIndexes: selectedGridRows } };
           component.dataset = mockData;
           component.isDatasetInitialized = false; // it won't call the preset unless we reset this flag

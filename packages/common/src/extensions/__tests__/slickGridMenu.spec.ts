@@ -256,7 +256,7 @@ describe('GridMenuControl', () => {
         const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
         const setSelectionSpy = vi.spyOn(gridStub, 'setSelectedRows');
 
-        gridOptionsMock.enableHybridSelection = true;
+        gridOptionsMock.enableSelection = true;
         control.columns = columnsMock;
         control.init();
         control.openGridMenu();
@@ -335,7 +335,7 @@ describe('GridMenuControl', () => {
           .mockReturnValue(1);
         vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue(mockRowSelection);
 
-        gridOptionsMock.enableHybridSelection = true;
+        gridOptionsMock.enableSelection = true;
         gridOptionsMock.showHeaderRow = true;
         gridOptionsMock.gridMenu!.menuWidth = 16;
         gridOptionsMock.gridMenu!.resizeOnShowHeaderRow = true;
