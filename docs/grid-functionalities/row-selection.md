@@ -19,7 +19,7 @@ For row selection, you can simply play with couple of grid options (see below) a
 [Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example07) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example07.ts)
 
 ## Single Row Selection
-For a single row selection, you need to have `enableCellNavigation: true`, `enableRowSelection: true` and `multiSelect: false` and as described earlier, subscribe to `onSelectedRowsChanged` (for that you need to bind to `(gridChanged)`). There are 2 ways to choose for the implementation of a row selection, option **1.** is the most common option and is the recommend way of doing it.
+For a single row selection, you need to have `enableCellNavigation: true`, `enableSelection: true` and `multiSelect: false` and as described earlier, subscribe to `onSelectedRowsChanged` (for that you need to bind to `(gridChanged)`). There are 2 ways to choose for the implementation of a row selection, option **1.** is the most common option and is the recommend way of doing it.
 
 ### 1. with Event Listener (preferred way)
 You can also do it through a Custom Event listener since all SlickGrid events are exposed as Custom Event. For more info see [Wiki - OnEvents](Grid-&-DataView-Events.md)
@@ -45,7 +45,7 @@ export class Example1 {
       enableAutoResize: true,
       enableCellNavigation: true,
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+      enableSelection: true,
       multiSelect: false,
     }
   }
@@ -64,7 +64,7 @@ It's preferable to use the Custom Events, but if you really wish, you can also u
 this.gridOptions = {
   enableAutoResize: true,
   enableCellNavigation: true,
-  enableRowSelection: true
+  enableSelection: true
 }
 
 gridObjChanged(grid) {
@@ -80,7 +80,7 @@ gridObjChanged(grid) {
 ```
 
 ## Multiple Row Selections
-As for multiple row selections, you need to disable `enableCellNavigation` and enable `enableCheckboxSelector` and `enableRowSelection`. Then as describe earlier, you will subscribe to `onSelectedRowsChanged` (for that you need to bind to `(gridChanged)`). There are 2 ways to choose for the implementation of a row selection, option **1.** is the most common option and is the recommend way of doing it.
+As for multiple row selections, you need to disable `enableCellNavigation` and enable `enableCheckboxSelector` and `enableSelection`. Then as describe earlier, you will subscribe to `onSelectedRowsChanged` (for that you need to bind to `(gridChanged)`). There are 2 ways to choose for the implementation of a row selection, option **1.** is the most common option and is the recommend way of doing it.
 
 ### 1. with Custom Events (preferred way)
 You can also do it through a Custom Event listener since all SlickGrid events are exposed as Custom Events. For more info see [Wiki - OnEvents](Grid-&-DataView-Events.md)
@@ -106,7 +106,10 @@ export class Example1 {
       enableAutoResize: true,
       enableCellNavigation: true,
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+
+      // `enableRowSelection` in <=9.x OR `enableSelection` in >=10.0
+      enableSelection: true,
+
       // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
       selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
@@ -132,7 +135,7 @@ export class Example1 {
       enableAutoResize: true,
       enableCellNavigation: true,
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+      enableSelection: true,
       // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
       selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
@@ -189,7 +192,7 @@ You can use `selectableOverride` to provide custom logic to disable certain rows
 export class Example1 implements OnInit {
   prepareGrid() {
     this.gridOptions = {
-      enableRowSelection: true,
+      enableSelection: true,
       enableCheckboxSelector: true,
       checkboxSelector: {
         // you can override the logic for showing (or not) the expand icon
@@ -271,14 +274,14 @@ export class Example1 {
 Starting with v9.10.0, you can now use the new Hybrid Selection Model, this new model will allow you to do Cell Selection & Row Selection in the same grid. This wasn't previously doable before that version because SlickGrid only ever allows 1 selection model to be loaded at once and so we had to load either `SlickCellSelectionModel` or `SlickRowSelectionModel` but never both of them at the same time. The new Hybrid Selection Model is merging both of these plugins in a single plugin allowing us to do both type of selections.
 
 > [!NOTE]
-> You can use `enableHybridSelection: true` grid option to enable the new Hybrid Model, this new model will eventually replace both cell/row selection model in the future since there's no need to keep all these models when only 1 is more than enough
+> You can use `{ enableSelection: true, selectionOptions: { selectionType: 'mixed' }}` grid option to enable the new Hybrid Model, this new model will eventually replace both cell/row selection model in the future since there's no need to keep all these models when only 1 is more than enough
 
 For example, we could use the Excel Copy Buffer (Cell Selection) and use `rowSelectColumnIds` (Row Selection)
 
 ```ts
 this.gridOptions = {
   // enable new hybrid selection model (rows & cells)
-  enableHybridSelection: true,
+  enableSelection: true,
   // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
   selectionOptions: {
     selectActiveRow: true,
@@ -315,7 +318,7 @@ export class Example1 {
   initializeGrid() {
     this.gridOptions = {
       // enable new hybrid selection model (rows & cells)
-      enableHybridSelection: true,
+      enableSelection: true,
       // ...
     };
   }
