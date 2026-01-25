@@ -190,9 +190,7 @@ function toggleSubTitle() {
 
   <div class="subtitle">
     <code>SlickHybridSelectionModel</code> This Selection Model is an hybrid approach that uses a combination of the row or cell selections
-    depending on certain conditions. <br />
-    Use <code>&#123; enableSelection: true, selectionOptions: &#123; selectionType: 'mixed' &#125;&#125;</code> grid option to enable the
-    new Hybrid Selection Model.
+    depending on certain conditions.
     <ul>
       <li>
         1. clicking on the first column (<code>id</code>) will use <code>RowSelectionModel</code> because of our configuration of
@@ -205,8 +203,8 @@ function toggleSubTitle() {
   <h3>
     Grid 1
     <small class="subtitle ms-3 text-italic">
-      <label>Range Selection:</label>
-      <span id="selectionRange1" className="ms-1"></span>
+      <label>Range Selection</label>
+      <span id="selectionRange1"></span>
     </small>
   </h3>
 
@@ -226,8 +224,8 @@ function toggleSubTitle() {
   <h3>
     Grid 2
     <small class="subtitle ms-3 text-italic">
-      <label>Range Selection:</label>
-      <span id="selectionRange2" className="ms-1"></span>
+      <label>Range Selection</label>
+      <span id="selectionRange2"></span>
     </small>
   </h3>
 

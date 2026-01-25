@@ -212,9 +212,7 @@ const Example48: React.FC = () => {
       {hideSubTitle ? null : (
         <div className="subtitle">
           <code>SlickHybridSelectionModel</code> This Selection Model is an hybrid approach that uses a combination of the row or cell
-          selections depending on certain conditions. <br />
-          Use <code>&#123; enableSelection: true, selectionOptions: &#123; selectionType: 'mixed' &#125;&#125;</code> grid option to enable
-          the new Hybrid Selection Model.
+          selections depending on certain conditions.
           <ul>
             <li>
               1. clicking on the first column (<code>id</code>) will use <code>RowSelectionModel</code> because of our configuration of
@@ -230,8 +228,8 @@ const Example48: React.FC = () => {
       <h3>
         Grid 1
         <small className="subtitle ms-3 text-italic">
-          <label>Range Selection: </label>
-          <span id="selectionRange1" className="ms-1"></span>
+          <label>Range Selection</label>
+          <span id="selectionRange1"></span>
         </small>
       </h3>
 
@@ -250,8 +248,8 @@ const Example48: React.FC = () => {
       <h3>
         Grid 2
         <small className="subtitle ms-3 text-italic">
-          <label>Range Selection: </label>
-          <span id="selectionRange2" className="ms-1"></span>
+          <label>Range Selection</label>
+          <span id="selectionRange2"></span>
         </small>
       </h3>
       <SlickgridReact

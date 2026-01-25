@@ -45,6 +45,7 @@ const mockCellSelectionModel = {
   setSelectedRanges: vi.fn(),
   getSelectedRows: vi.fn(),
   setSelectedRows: vi.fn(),
+  setOptions: vi.fn(),
   onSelectedRangesChanged: new SlickEvent(),
 } as unknown as SlickHybridSelectionModel;
 

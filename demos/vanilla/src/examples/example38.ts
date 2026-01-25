@@ -85,8 +85,9 @@ export default class Example38 {
       // enable new hybrid selection model (rows & cells)
       enableSelection: true,
       selectionOptions: {
-        selectActiveRow: true,
         rowSelectColumnIds: ['selector'],
+        selectActiveRow: true,
+        selectionType: 'mixed',
       },
 
       // when using the ExcelCopyBuffer, you can see what the selection range is
