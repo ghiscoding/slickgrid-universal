@@ -93,7 +93,7 @@
     "devDependencies": "The dev deps 'slickgrid' and 'sortablejs' are simply installed for Vitest unit tests."
   },
   "engines": {
-    "node": "^20.17.0 || >=22.9.0",
+    "node": "^22.17.0 || >=24.0.0",
     "pnpm": "10.x"
   },
   "packageManager": "pnpm@10.17.1",
