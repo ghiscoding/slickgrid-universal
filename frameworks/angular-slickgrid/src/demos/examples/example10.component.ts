@@ -1,4 +1,3 @@
-
 import { ChangeDetectorRef, Component, type OnInit } from '@angular/core';
 import {
   AngularSlickgridModule,

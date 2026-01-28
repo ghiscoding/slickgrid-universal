@@ -6,7 +6,7 @@
         style="font-size: 18px"
         target="_blank"
         href="https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example21.component.ts"
-        >
+      >
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
@@ -38,7 +38,7 @@
         name="selectedColumn"
         [(ngModel)]="selectedColumn"
         (ngModelChange)="updateFilter()"
-        >
+      >
         @for (field of columnDefinitions; track field) {
           <option [ngValue]="field">{{ field.name }}</option>
         }
@@ -51,7 +51,7 @@
         name="selectedOperator"
         [(ngModel)]="selectedOperator"
         (ngModelChange)="updateFilter()"
-        >
+      >
         @for (operator of operatorList; track operator) {
           <option [ngValue]="operator">{{ operator }}</option>
         }
@@ -69,12 +69,12 @@
           autocomplete="off"
           (input)="updateFilter()"
           [(ngModel)]="searchValue"
-          />
+        />
         <button
           class="btn btn-outline-secondary d-flex align-items-center pl-2 pr-2"
           data-test="clear-search-value"
           (click)="clearGridSearchInput()"
-          >
+        >
           <span class="mdi mdi-close"></span>
         </button>
       </div>
@@ -89,6 +89,6 @@
     [options]="gridOptions"
     [dataset]="dataset"
     (onAngularGridCreated)="angularGridReady($event.detail)"
-    >
+  >
   </angular-slickgrid>
 </div>
