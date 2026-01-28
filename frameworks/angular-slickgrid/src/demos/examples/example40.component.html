@@ -6,7 +6,7 @@
         style="font-size: 18px"
         target="_blank"
         href="https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example40.component.ts"
-      >
+        >
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
@@ -35,7 +35,7 @@
         data-test="clear-filters-sorting"
         (click)="clearAllFiltersAndSorts()"
         title="Clear all Filters & Sorts"
-      >
+        >
         <span class="mdi mdi-close"></span>
         <span>Clear all Filter & Sorts</span>
       </button>
@@ -55,14 +55,16 @@
     </div>
   </div>
 
-  <div *ngIf="metrics" class="mt-2" style="margin: 10px 0px">
-    <b>Metrics:</b>
-    <span>
-      <span>{{ metrics.endTime | date: 'dd MMM, h:mm:ssa' }}</span> —
-      <span data-test="totalItemCount">{{ metrics.totalItemCount }}</span>
-      items
-    </span>
-  </div>
+  @if (metrics) {
+    <div class="mt-2" style="margin: 10px 0px">
+      <b>Metrics:</b>
+      <span>
+        <span>{{ metrics.endTime | date: 'dd MMM, h:mm:ssa' }}</span> —
+        <span data-test="totalItemCount">{{ metrics.totalItemCount }}</span>
+        items
+      </span>
+    </div>
+  }
 
   <angular-slickgrid
     gridId="grid40"
@@ -73,6 +75,6 @@
     (onSort)="handleOnSort()"
     (onScroll)="handleOnScroll($event.detail.args)"
     (onRowCountChanged)="handleOnRowCountChanged($event.detail.args)"
-  >
+    >
   </angular-slickgrid>
 </div>

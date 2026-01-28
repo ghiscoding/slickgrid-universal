@@ -6,7 +6,7 @@
         style="font-size: 18px"
         target="_blank"
         href="https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example23.component.ts"
-      >
+        >
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
@@ -17,9 +17,9 @@
 
   <div class="subtitle">
     This demo shows how to use Filters with Range of Search Values (<a
-      href="https://ghiscoding.gitbook.io/angular-slickgrid/column-functionalities/filters/range-filters"
-      target="_blank"
-      >Wiki docs</a
+    href="https://ghiscoding.gitbook.io/angular-slickgrid/column-functionalities/filters/range-filters"
+    target="_blank"
+    >Wiki docs</a
     >)
     <br />
     <ul class="small">
@@ -51,10 +51,12 @@
 
   <br />
 
-  <span *ngIf="metrics" style="margin-right: 10px">
-    <b>Metrics:</b> {{ metrics.startTime | date: "yyyy-MM-dd hh:mm aaaaa'm'" }} | {{ metrics.itemCount }} of
-    {{ metrics.totalItemCount }} items
-  </span>
+  @if (metrics) {
+    <span style="margin-right: 10px">
+      <b>Metrics:</b> {{ metrics.startTime | date: "yyyy-MM-dd hh:mm aaaaa'm'" }} | {{ metrics.itemCount }} of
+      {{ metrics.totalItemCount }} items
+    </span>
+  }
 
   <form class="row row-cols-lg-auto g-1 align-items-center">
     <div class="col">
@@ -85,8 +87,10 @@
         [(ngModel)]="selectedPredefinedFilter"
         data-test="select-dynamic-filter"
         (ngModelChange)="usePredefinedFilter($event)"
-      >
-        <option [ngValue]="filter.value" *ngFor="let filter of filterList">{{ filter.label }}</option>
+        >
+        @for (filter of filterList; track filter) {
+          <option [ngValue]="filter.value">{{ filter.label }}</option>
+        }
       </select>
     </div>
   </form>
@@ -110,6 +114,6 @@
     (onGridStateChanged)="gridStateChanged($event.detail)"
     (onBeforeGridDestroy)="saveCurrentGridState()"
     (onRowCountChanged)="refreshMetrics($event.detail.eventData, $event.detail.args)"
-  >
+    >
   </angular-slickgrid>
 </div>

@@ -6,7 +6,7 @@
         style="font-size: 18px"
         target="_blank"
         href="https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example04.component.ts"
-      >
+        >
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
@@ -16,9 +16,9 @@
   </h2>
   <div class="subtitle">
     Sort/Filter on client side only using SlickGrid DataView (<a
-      href="https://ghiscoding.gitbook.io/angular-slickgrid/column-functionalities/sorting"
-      target="_blank"
-      >Wiki docs</a
+    href="https://ghiscoding.gitbook.io/angular-slickgrid/column-functionalities/sorting"
+    target="_blank"
+    >Wiki docs</a
     >)
     <br />
     <ul class="small">
@@ -44,47 +44,49 @@
         Custom Filter are now possible, "Description" column below, is a customized InputFilter with different placeholder. See
         <a href="https://ghiscoding.gitbook.io/angular-slickgrid/column-functionalities/custom-filter" target="_blank"
           >Wiki - Custom Filter</a
-        >
-      </li>
-      <li>MultipleSelect & SingeSelect Filters can use a regular "collection" or "collectionAsync" to load it asynchronously</li>
-    </ul>
-  </div>
+          >
+        </li>
+        <li>MultipleSelect & SingeSelect Filters can use a regular "collection" or "collectionAsync" to load it asynchronously</li>
+      </ul>
+    </div>
 
-  <br />
-  <span *ngIf="metrics" style="margin-right: 10px">
-    <b>Metrics:</b> {{ metrics.startTime | date: "yyyy-MM-dd hh:mm aaaaa'm'" }} | {{ metrics.itemCount }} of
-    {{ metrics.totalItemCount }} items
-  </span>
-  <div class="btn-group" role="group">
-    <button class="btn btn-sm btn-outline-secondary btn-icon" data-test="scroll-top-btn" (click)="scrollGridTop()">
-      <i class="mdi mdi-arrow-down mdi-rotate-180"></i>
+    <br />
+    @if (metrics) {
+      <span style="margin-right: 10px">
+        <b>Metrics:</b> {{ metrics.startTime | date: "yyyy-MM-dd hh:mm aaaaa'm'" }} | {{ metrics.itemCount }} of
+        {{ metrics.totalItemCount }} items
+      </span>
+    }
+    <div class="btn-group" role="group">
+      <button class="btn btn-sm btn-outline-secondary btn-icon" data-test="scroll-top-btn" (click)="scrollGridTop()">
+        <i class="mdi mdi-arrow-down mdi-rotate-180"></i>
+      </button>
+      <button class="btn btn-sm btn-outline-secondary btn-icon" data-test="scroll-bottom-btn" (click)="scrollGridBottom()">
+        <i class="mdi mdi-arrow-down"></i>
+      </button>
+    </div>
+    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="clear-filters" (click)="angularGrid.filterService.clearFilters()">
+      Clear Filters
     </button>
-    <button class="btn btn-sm btn-outline-secondary btn-icon" data-test="scroll-bottom-btn" (click)="scrollGridBottom()">
-      <i class="mdi mdi-arrow-down"></i>
+    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="clear-sorting" (click)="angularGrid.sortService.clearSorting()">
+      Clear Sorting
     </button>
-  </div>
-  <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="clear-filters" (click)="angularGrid.filterService.clearFilters()">
-    Clear Filters
-  </button>
-  <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="clear-sorting" (click)="angularGrid.sortService.clearSorting()">
-    Clear Sorting
-  </button>
-  <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="set-dynamic-filter" (click)="setFiltersDynamically()">
-    Set Filters Dynamically
-  </button>
-  <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="set-dynamic-sorting" (click)="setSortingDynamically()">
-    Set Sorting Dynamically
-  </button>
+    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="set-dynamic-filter" (click)="setFiltersDynamically()">
+      Set Filters Dynamically
+    </button>
+    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="set-dynamic-sorting" (click)="setSortingDynamically()">
+      Set Sorting Dynamically
+    </button>
 
-  <angular-slickgrid
-    gridId="grid4"
-    [columns]="columnDefinitions"
-    [options]="gridOptions"
-    [dataset]="dataset"
-    (onAngularGridCreated)="angularGridReady($event.detail)"
-    (onGridStateChanged)="gridStateChanged($event.detail)"
-    (onBeforeGridDestroy)="saveCurrentGridState()"
-    (onRowCountChanged)="refreshMetrics($event.detail.eventData, $event.detail.args)"
-  >
-  </angular-slickgrid>
-</div>
+    <angular-slickgrid
+      gridId="grid4"
+      [columns]="columnDefinitions"
+      [options]="gridOptions"
+      [dataset]="dataset"
+      (onAngularGridCreated)="angularGridReady($event.detail)"
+      (onGridStateChanged)="gridStateChanged($event.detail)"
+      (onBeforeGridDestroy)="saveCurrentGridState()"
+      (onRowCountChanged)="refreshMetrics($event.detail.eventData, $event.detail.args)"
+      >
+    </angular-slickgrid>
+  </div>

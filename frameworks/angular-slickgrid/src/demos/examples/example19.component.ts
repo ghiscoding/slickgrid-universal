@@ -1,4 +1,4 @@
-import { NgIf } from '@angular/common';
+
 import { Component, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AngularSlickRowDetailView } from '@slickgrid-universal/angular-row-detail-plugin';
@@ -19,7 +19,7 @@ const NB_ITEMS = 1000;
 
 @Component({
   templateUrl: './example19.component.html',
-  imports: [AngularSlickgridModule, FormsModule, NgIf],
+  imports: [AngularSlickgridModule, FormsModule],
 })
 export class Example19Component implements OnDestroy, OnInit {
   private _darkMode = false;

@@ -6,7 +6,7 @@
         style="font-size: 18px"
         target="_blank"
         href="https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example39.component.ts"
-      >
+        >
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
@@ -54,7 +54,7 @@
             data-test="clear-filters-sorting"
             (click)="clearAllFiltersAndSorts()"
             title="Clear all Filters & Sorts"
-          >
+            >
             <i class="mdi mdi-filter-remove-outline"></i>
             Clear all Filter & Sorts
           </button>
@@ -66,7 +66,7 @@
             style="width: 55px"
             [(ngModel)]="serverWaitDelay"
             title="input a fake timer delay to simulate slow server response"
-          />
+            />
         </div>
       </div>
       <div class="row mt-1">
@@ -82,17 +82,19 @@
         </div>
       </div>
       <br />
-      <div *ngIf="metrics" style="margin: 10px 0px">
-        <b>Metrics:</b>
-        <span>
-          <span>{{ metrics.endTime | date: 'dd MMM, h:mm:ssa' }}</span> —
-          <span data-test="itemCount">{{ metrics.itemCount }}</span>
-          of
-          <span data-test="totalItemCount">{{ metrics.totalItemCount }}</span>
-          items
-        </span>
-        <span class="badge rounded-pill text-bg-primary" [class]="tagDataClass" data-test="data-loaded-tag">All Data Loaded!!!</span>
-      </div>
+      @if (metrics) {
+        <div style="margin: 10px 0px">
+          <b>Metrics:</b>
+          <span>
+            <span>{{ metrics.endTime | date: 'dd MMM, h:mm:ssa' }}</span> —
+            <span data-test="itemCount">{{ metrics.itemCount }}</span>
+            of
+            <span data-test="totalItemCount">{{ metrics.totalItemCount }}</span>
+            items
+          </span>
+          <span class="badge rounded-pill text-bg-primary" [class]="tagDataClass" data-test="data-loaded-tag">All Data Loaded!!!</span>
+        </div>
+      }
     </div>
 
     <div class="col-sm-7">
@@ -110,6 +112,6 @@
     [dataset]="dataset"
     (onAngularGridCreated)="angularGridReady($event.detail)"
     (onRowCountChanged)="refreshMetrics($event.detail.args)"
-  >
+    >
   </angular-slickgrid>
 </div>

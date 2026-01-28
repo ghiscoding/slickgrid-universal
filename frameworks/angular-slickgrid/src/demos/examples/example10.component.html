@@ -6,7 +6,7 @@
         style="font-size: 18px"
         target="_blank"
         href="https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example10.component.ts"
-      >
+        >
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
@@ -17,9 +17,9 @@
 
   <div class="subtitle">
     Row selection, single or multi-select (<a
-      href="https://ghiscoding.gitbook.io/angular-slickgrid/grid-functionalities/row-selection"
-      target="_blank"
-      >Wiki docs</a
+    href="https://ghiscoding.gitbook.io/angular-slickgrid/grid-functionalities/row-selection"
+    target="_blank"
+    >Wiki docs</a
     >).
     <ul>
       <li>Single Select, you can click on any cell to make the row active</li>
@@ -64,7 +64,7 @@
       (onAngularGridCreated)="angularGridReady1($event.detail)"
       (onGridStateChanged)="grid1StateChanged($event.detail)"
       (onSelectedRowsChanged)="handleSelectedRowsChanged1($event.detail.eventData, $event.detail.args)"
-    >
+      >
     </angular-slickgrid>
   </div>
 
@@ -74,16 +74,18 @@
     <div class="col-sm-3 col-md-4" style="max-width: 215px">
       Pagination:
       <input type="checkbox" (change)="togglePaginationGrid2()" [checked]="isGrid2WithPagination" data-test="toggle-pagination-grid2" />
-      <span style="margin-left: 5px" *ngIf="isGrid2WithPagination">
-        <div class="btn-group" role="group">
-          <button class="btn btn-outline-secondary btn-xs btn-icon px-2" data-test="goto-first-page" (click)="goToGrid2FirstPage()">
-            <i class="mdi mdi-page-first"></i>
-          </button>
-          <button class="btn btn-outline-secondary btn-xs btn-icon px-2" data-test="goto-last-page" (click)="goToGrid2LastPage()">
-            <i class="mdi mdi-page-last"></i>
-          </button>
-        </div>
-      </span>
+      @if (isGrid2WithPagination) {
+        <span style="margin-left: 5px">
+          <div class="btn-group" role="group">
+            <button class="btn btn-outline-secondary btn-xs btn-icon px-2" data-test="goto-first-page" (click)="goToGrid2FirstPage()">
+              <i class="mdi mdi-page-first"></i>
+            </button>
+            <button class="btn btn-outline-secondary btn-xs btn-icon px-2" data-test="goto-last-page" (click)="goToGrid2LastPage()">
+              <i class="mdi mdi-page-last"></i>
+            </button>
+          </div>
+        </span>
+      }
     </div>
     <div class="col-sm-8">
       <div class="alert alert-success">
@@ -101,7 +103,7 @@
       [dataset]="dataset2"
       (onAngularGridCreated)="angularGridReady2($event.detail)"
       (onGridStateChanged)="grid2StateChanged($event.detail)"
-    >
+      >
     </angular-slickgrid>
   </div>
 </div>

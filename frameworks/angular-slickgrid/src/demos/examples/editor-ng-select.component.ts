@@ -26,7 +26,7 @@ import { Subject } from 'rxjs';
 export class EditorNgSelectComponent {
   selectedId = '';
   selectedItem: any;
-  collection?: any[]; // this will be filled by the collection of your column definition
+  collection: any[] = []; // this will be filled by the collection of your column definition
   onItemChanged = new Subject<any>(); // object
 
   onChange(item: any) {

@@ -1,4 +1,4 @@
-import { DatePipe, NgIf } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ChangeDetectorRef, Component, ViewEncapsulation, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -29,7 +29,7 @@ function unescapeAndLowerCase(val: string) {
   styleUrls: ['./example39.component.scss'],
   encapsulation: ViewEncapsulation.None,
   templateUrl: './example39.component.html',
-  imports: [AngularSlickgridModule, DatePipe, FormsModule, NgIf],
+  imports: [AngularSlickgridModule, DatePipe, FormsModule],
 })
 export class Example39Component implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];

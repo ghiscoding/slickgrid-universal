@@ -1,4 +1,4 @@
-import { DatePipe, NgIf } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { ChangeDetectorRef, Component, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { addDay, format as tempoFormat } from '@formkit/tempo';
@@ -31,7 +31,7 @@ const FAKE_SERVER_DELAY = 250;
 
 @Component({
   templateUrl: './example06.component.html',
-  imports: [AngularSlickgridModule, DatePipe, FormsModule, NgIf],
+  imports: [AngularSlickgridModule, DatePipe, FormsModule],
 })
 export class Example6Component implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];

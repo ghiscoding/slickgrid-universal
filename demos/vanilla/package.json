@@ -38,6 +38,6 @@
     "@types/node": "catalog:",
     "sass": "catalog:",
     "typescript": "catalog:",
-    "vite": "catalog:vite7"
+    "vite": "catalog:"
   }
 }

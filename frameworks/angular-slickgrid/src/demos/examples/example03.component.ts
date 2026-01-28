@@ -1,4 +1,4 @@
-import { JsonPipe, NgIf } from '@angular/common';
+import { JsonPipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, type OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
@@ -63,7 +63,7 @@ const taskFormatter: Formatter = (_row, _cell, value) => {
 };
 @Component({
   templateUrl: './example03.component.html',
-  imports: [AngularSlickgridModule, JsonPipe, NgIf],
+  imports: [AngularSlickgridModule, JsonPipe],
 })
 export class Example3Component implements OnInit {
   private _commandQueue: any = [];

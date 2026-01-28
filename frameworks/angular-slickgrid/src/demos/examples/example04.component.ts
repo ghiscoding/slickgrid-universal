@@ -1,4 +1,4 @@
-import { DatePipe, NgIf } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, type OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
@@ -25,7 +25,7 @@ const URL_SAMPLE_COLLECTION_DATA = 'assets/data/collection_500_numbers.json';
 
 @Component({
   templateUrl: './example04.component.html',
-  imports: [AngularSlickgridModule, DatePipe, NgIf],
+  imports: [AngularSlickgridModule, DatePipe],
 })
 export class Example4Component implements OnInit {
   angularGrid!: AngularGridInstance;

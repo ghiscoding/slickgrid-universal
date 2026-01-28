@@ -96,7 +96,7 @@
     "rxjs": "catalog:",
     "sass": "catalog:",
     "typescript": "catalog:",
-    "vite": "catalog:vite7",
+    "vite": "catalog:",
     "vite-tsconfig-paths": "catalog:"
   }
 }

@@ -57,6 +57,6 @@
   "devDependencies": {
     "fflate": "^0.8.2",
     "normalize-path": "^3.0.0",
-    "vite": "catalog:vite7"
+    "vite": "catalog:"
   }
 }

@@ -6,7 +6,7 @@
         style="font-size: 18px"
         target="_blank"
         href="https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example26.component.ts"
-      >
+        >
         <span class="mdi mdi-link-variant"></span> code
       </a>
     </span>
@@ -74,7 +74,7 @@
             data-test="auto-commit"
             [checked]="gridOptions.autoCommitEdit"
             (click)="changeAutoCommit()"
-          />
+            />
           Auto Commit Edit
         </label>
       </span>
@@ -82,8 +82,12 @@
   </div>
 
   <div class="col-sm-6">
-    <div class="alert alert-info" *ngIf="updatedObject"><strong>Updated Item:</strong> {{ updatedObject | json }}</div>
-    <div class="alert alert-warning" *ngIf="alertWarning"><strong>Updated Item:</strong> {{ alertWarning }}</div>
+    @if (updatedObject) {
+      <div class="alert alert-info"><strong>Updated Item:</strong> {{ updatedObject | json }}</div>
+    }
+    @if (alertWarning) {
+      <div class="alert alert-warning"><strong>Updated Item:</strong> {{ alertWarning }}</div>
+    }
   </div>
 
   <div class="col-sm-12">
@@ -96,7 +100,7 @@
       (onCellChange)="onCellChanged($event.detail.eventData, $event.detail.args)"
       (onClick)="onCellClicked($event.detail.eventData, $event.detail.args)"
       (onValidationError)="onCellValidationError($event.detail.eventData, $event.detail.args)"
-    >
+      >
     </angular-slickgrid>
   </div>
 </div>
