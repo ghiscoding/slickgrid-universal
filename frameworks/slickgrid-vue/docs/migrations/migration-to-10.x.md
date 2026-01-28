@@ -114,7 +114,7 @@ columns = [{
 }];
 ```
 
-Below is a list of Enums being deprecated and you should think about migrating them sooner rather than later, or at the minimum use them in your new grids, because they will be removed in the next major release (whenever that happens, probably next year). Please note that the list below is only a summary of all deprecations and replacements (a suggestion is to do a Search on any of these group name prefixes, e.g.: `FieldType.` and start replacing them).
+Below is a list of Enums that you need to replace with their associated string literals. A suggestion is to do a Search on any of these group name prefixes, e.g.: `FieldType.` and start replacing them
 
 | Enum Name   | from `enum`         | to string `type`    | Note |
 | ----------- | ------------------- | ------------------- | ---- |
@@ -184,7 +184,7 @@ columnDefinitions = [{
 
 #### renaming all `text-color-xyz` to `color-xyz`
 
-I decided to deprecate all `text-color-...` and renaming them all to `color-...` which is much shorter and easier to use.
+I decided to remove all `text-color-...` and rename them all to `color-...` which is much shorter and easier to use.
 
 You can do a "Search and Replace" in VSCode via Regular Expressions to replace them all easily:
 
@@ -213,6 +213,8 @@ For example:
 - <span class="mdi mdi-check mdi-22px"></span> Checkmark Icon
 + <span class="mdi mdi-check font-22px"></span> Checkmark Icon
 ```
+
+---
 
 ## What's next?
 
