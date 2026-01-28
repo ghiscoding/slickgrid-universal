@@ -47,9 +47,11 @@
       </div>
     </div>
     <div class="col-sm-3">
-      <div class="alert alert-danger" *ngIf="errorStatus" data-test="error-status">
-        <em><strong>Backend Error:</strong> <span [innerHTML]="errorStatus"></span></em>
-      </div>
+      @if (errorStatus) {
+        <div class="alert alert-danger" data-test="error-status">
+          <em><strong>Backend Error:</strong> <span [innerHTML]="errorStatus"></span></em>
+        </div>
+      }
     </div>
   </div>
 
@@ -78,10 +80,12 @@
         Set Sorting Dynamically
       </button>
       <br />
-      <span *ngIf="metrics">
-        <b>Metrics:</b> {{ metrics.endTime | date: "yyyy-MM-dd hh:mm aaaaa'm'" }} | {{ metrics.executionTime }}ms |
-        {{ metrics.totalItemCount }} items
-      </span>
+      @if (metrics) {
+        <span>
+          <b>Metrics:</b> {{ metrics.endTime | date: "yyyy-MM-dd hh:mm aaaaa'm'" }} | {{ metrics.executionTime }}ms |
+          {{ metrics.totalItemCount }} items
+        </span>
+      }
     </div>
 
     <div class="col-sm-8">

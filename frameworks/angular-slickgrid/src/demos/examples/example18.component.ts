@@ -1,4 +1,3 @@
-import { NgFor } from '@angular/common';
 import { ChangeDetectorRef, Component, type AfterViewInit, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
@@ -24,7 +23,7 @@ const NB_ITEMS = 10_000;
 
 @Component({
   templateUrl: './example18.component.html',
-  imports: [AngularSlickgridModule, FormsModule, NgFor],
+  imports: [AngularSlickgridModule, FormsModule],
 })
 export class Example18Component implements AfterViewInit, OnInit, OnDestroy {
   private _darkMode = false;

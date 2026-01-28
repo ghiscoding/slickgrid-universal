@@ -61,7 +61,7 @@
     "sass": "catalog:",
     "tslib": "catalog:",
     "typescript": "catalog:",
-    "vite": "catalog:vite7",
+    "vite": "catalog:",
     "vite-plugin-sass-dts": "^1.3.35"
   }
 }

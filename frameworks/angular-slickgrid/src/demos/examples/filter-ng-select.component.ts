@@ -27,7 +27,7 @@ import { Subject } from 'rxjs';
 export class FilterNgSelectComponent<T = any> {
   selectedIds = signal<SearchTerm[]>([]);
   selectedItems = signal<T[]>([]);
-  collection?: any[]; // this will be filled by the collection of your column definition
+  collection: any[] = []; // this will be filled by the collection of your column definition
   onItemChanged = new Subject<any>(); // object
 
   onChange(items: any) {

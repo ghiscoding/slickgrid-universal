@@ -39,7 +39,9 @@
         [(ngModel)]="selectedColumn"
         (ngModelChange)="updateFilter()"
       >
-        <option [ngValue]="field" *ngFor="let field of columnDefinitions">{{ field.name }}</option>
+        @for (field of columnDefinitions; track field) {
+          <option [ngValue]="field">{{ field.name }}</option>
+        }
       </select>
     </div>
     <div class="col">
@@ -50,7 +52,9 @@
         [(ngModel)]="selectedOperator"
         (ngModelChange)="updateFilter()"
       >
-        <option [ngValue]="operator" *ngFor="let operator of operatorList">{{ operator }}</option>
+        @for (operator of operatorList; track operator) {
+          <option [ngValue]="operator">{{ operator }}</option>
+        }
       </select>
     </div>
 

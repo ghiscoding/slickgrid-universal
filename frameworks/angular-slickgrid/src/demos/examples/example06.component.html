@@ -125,10 +125,12 @@
         </span>
       </div>
       <br />
-      <div *ngIf="metrics" style="margin: 10px 0px">
-        <b>Metrics:</b> {{ metrics.endTime | date: "yyyy-MM-dd hh:mm aaaaa'm'" }} | {{ metrics.executionTime }}ms |
-        {{ metrics.totalItemCount }} items
-      </div>
+      @if (metrics) {
+        <div style="margin: 10px 0px">
+          <b>Metrics:</b> {{ metrics.endTime | date: "yyyy-MM-dd hh:mm aaaaa'm'" }} | {{ metrics.executionTime }}ms |
+          {{ metrics.totalItemCount }} items
+        </div>
+      }
       <div class="row mb-2">
         <div class="col-md-12">
           <label>Programmatically go to first/last page:</label>

@@ -1,4 +1,3 @@
-import { NgFor } from '@angular/common';
 import { Component, ViewEncapsulation, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
@@ -16,7 +15,7 @@ import {
   encapsulation: ViewEncapsulation.None,
   styleUrls: ['./example21.component.scss'],
   templateUrl: './example21.component.html',
-  imports: [AngularSlickgridModule, FormsModule, NgFor],
+  imports: [AngularSlickgridModule, FormsModule],
 })
 export class Example21Component implements OnInit {
   angularGrid!: AngularGridInstance;

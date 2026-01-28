@@ -48,7 +48,7 @@
   },
   "devDependencies": {
     "@angular-eslint/eslint-plugin": "catalog:",
-    "@angular/core": "^19.2.17",
+    "@angular/core": "^20.3.16",
     "oxlint": "catalog:",
     "tslib": "catalog:",
     "vitest": "catalog:"

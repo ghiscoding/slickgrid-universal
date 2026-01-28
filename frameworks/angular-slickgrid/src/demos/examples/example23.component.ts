@@ -1,4 +1,4 @@
-import { DatePipe, NgFor, NgIf } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { Component, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { addDay, format } from '@formkit/tempo';
@@ -38,7 +38,7 @@ const taskTranslateFormatter: Formatter = (row, cell, value, columnDef, dataCont
 
 @Component({
   templateUrl: './example23.component.html',
-  imports: [NgIf, FormsModule, NgFor, AngularSlickgridModule, DatePipe],
+  imports: [FormsModule, AngularSlickgridModule, DatePipe],
 })
 export class Example23Component implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];

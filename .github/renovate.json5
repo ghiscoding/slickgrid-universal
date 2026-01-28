@@ -25,13 +25,6 @@
         enabled: false,
       },
     },
-    {
-      description: 'Prevent major updates for Vite 6 catalog',
-      matchDepTypes: ['pnpm.catalog.vite6'],
-      major: {
-        enabled: false,
-      },
-    },
   ],
   ignoreDeps: ['lee-dohm/no-response', 'node', 'pnpm', 'typescript'],
   schedule: ['every 4 weeks on friday'],
