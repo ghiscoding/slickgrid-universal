@@ -420,7 +420,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
    */
   protected downloadPdf(pdfBytes: Uint8Array, filename: string): void {
     // create a Blob from the PDF bytes
-    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+    const blob = new Blob([pdfBytes] as BlobPart[], { type: 'application/pdf' });
 
     // when using IE/Edge, then use different download call
     if (typeof (navigator as any).msSaveOrOpenBlob === 'function') {
