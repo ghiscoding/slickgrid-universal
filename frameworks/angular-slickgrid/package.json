@@ -117,6 +117,7 @@
     "sortablejs": "catalog:",
     "tslib": "catalog:",
     "typescript": "~5.9.3",
+    "vite": "catalog:",
     "vitest": "catalog:",
     "yaml": "^2.8.2",
     "zone.js": "~0.16.0"
