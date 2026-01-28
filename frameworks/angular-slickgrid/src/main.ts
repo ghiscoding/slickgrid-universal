@@ -19,7 +19,6 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
   providers: [
-    provideZoneChangeDetection(),
     importProvidersFrom(
       AppRoutingRoutingModule,
       BrowserModule,
@@ -27,14 +26,14 @@ bootstrapApplication(AppComponent, {
       NgSelectModule,
       TabsModule.forRoot(),
       AngularSlickgridModule.forRoot({
-        // add any Global Grid Options/Config you might want
-        // to avoid passing the same options over and over in each grids of your App
+        // add any Angular-Slickgrid global Grid Options/Config you might want
+        // that is to avoid passing the same options over and over in all your grids
         enableAutoResize: true,
         autoResize: {
           container: '#demo-container',
           rightPadding: 10,
         },
-        // we strongly suggest you add DOMPurify as a sanitizer
+        // we strongly suggest you add DOMPurify as a sanitizer for security reasons (XSS, etc.)
         sanitizer: (dirtyHtml) => DOMPurify.sanitize(dirtyHtml, { ADD_ATTR: ['level'], RETURN_TRUSTED_TYPE: true }),
       })
     ),
@@ -47,6 +46,6 @@ bootstrapApplication(AppComponent, {
       loader: provideTranslateHttpLoader({ prefix: './assets/i18n/', suffix: '.json' }),
     }),
     provideHttpClient(withInterceptorsFromDi()),
+    provideZoneChangeDetection(),
   ],
-}) // preserveWhitespaces is now default to False since Angular 6
-  .catch((err) => console.log(err));
+}).catch((err) => console.log(err));
