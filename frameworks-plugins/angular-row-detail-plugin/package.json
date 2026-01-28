@@ -39,7 +39,7 @@
     "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
   },
   "dependencies": {
-    "@ngx-translate/core": "^16.0.4",
+    "@ngx-translate/core": "^17.0.0",
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/event-pub-sub": "workspace:*",
     "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
@@ -48,7 +48,7 @@
   },
   "devDependencies": {
     "@angular-eslint/eslint-plugin": "catalog:",
-    "@angular/core": "^20.3.16",
+    "@angular/core": "^21.1.1",
     "oxlint": "catalog:",
     "tslib": "catalog:",
     "vitest": "catalog:"

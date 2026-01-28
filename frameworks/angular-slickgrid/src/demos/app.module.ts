@@ -1,13 +1,6 @@
 import { LOCATION_INITIALIZED } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { type Injector } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-
-// AoT requires an exported function for factories
-export function createTranslateLoader(http: HttpClient) {
-  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
-}
 
 // use an Initializer Factory as describe here: https://github.com/ngx-translate/core/issues/517#issuecomment-299637956
 export function appInitializerFactory(translate: TranslateService, injector: Injector) {
