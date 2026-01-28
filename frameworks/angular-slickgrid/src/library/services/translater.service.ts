@@ -15,7 +15,7 @@ export class TranslaterService implements UniversalTranslateService {
    * @return {string} current language
    */
   getCurrentLanguage(): string {
-    return this.translateService?.currentLang ?? '';
+    return this.translateService?.getCurrentLang?.() ?? '';
   }
 
   /**

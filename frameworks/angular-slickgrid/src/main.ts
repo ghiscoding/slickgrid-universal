@@ -1,14 +1,15 @@
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { enableProdMode, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
+import { enableProdMode, importProvidersFrom, inject, Injector, provideAppInitializer, provideZoneChangeDetection } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { bootstrapApplication, BrowserModule } from '@angular/platform-browser';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import DOMPurify from 'dompurify';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { AppRoutingRoutingModule } from './demos/app-routing.module';
 import { AppComponent } from './demos/app.component';
+import { appInitializerFactory } from './demos/app.module';
 import { environment } from './demos/environments/environment';
 import { AngularSlickgridModule } from './library/modules/angular-slickgrid.module';
 
@@ -37,8 +38,12 @@ bootstrapApplication(AppComponent, {
         sanitizer: (dirtyHtml) => DOMPurify.sanitize(dirtyHtml, { ADD_ATTR: ['level'], RETURN_TRUSTED_TYPE: true }),
       })
     ),
+    provideAppInitializer(() => {
+      const initializerFn = appInitializerFactory(inject(TranslateService), inject(Injector));
+      return initializerFn();
+    }),
     provideTranslateService({
-      defaultLanguage: 'en',
+      fallbackLang: 'en',
       loader: provideTranslateHttpLoader({ prefix: './assets/i18n/', suffix: '.json' }),
     }),
     provideHttpClient(withInterceptorsFromDi()),
