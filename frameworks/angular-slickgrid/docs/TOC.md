@@ -79,9 +79,9 @@
 
 ## Localization
 
-* [with Custom Locales](localization/Localization-with-Custom-Locales.md)
-* [with ngx-translate](localization/Localization-with-ngx-translate.md)
-  * [Component Sample](localization/Localization---Component-Sample.md)
+* [with Custom Locales](localization/localization-with-custom-locales.md)
+* [with ngx-translate](localization/localization-with-ngx-translate.md)
+  * [Component Sample](localization/localization-component-sample.md)
 
 ## Backend Services
 

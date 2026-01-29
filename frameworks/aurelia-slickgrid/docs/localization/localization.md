@@ -130,18 +130,20 @@ this.gridOptions = {
 The final step is of course the actual translations. There's multiple ways to copy them to your `assets` folder. See below for a few ways:
 1. Manually copy the translation keys/values
 2. Manually copy the JSON files to your `assets` folder
-2. For Aurelia-CLI, you can modify `aurelia.json` file to copy the JSON files to your `assets` folder via a copy scripts.
+3. For Aurelia-CLI, you can modify `aurelia.json` file to copy the JSON files to your `assets` folder via a copy scripts.
    - You can implement something like the [following](https://stackoverflow.com/a/43733694/1212166) (I did not test this one, please report back if this is not accurate)
 ```json
 "copyFiles": {
   "node_modules/aurelia-slickgrid/i18n/*.json": "assets"
 }
 ```
-3. Or modify your `package.json` and add a script to copy the JSON files to your `assets` folder
-   - install NPM packages `cross-env` and `copyfiles` (`npm install copy-files cross-env`)
+4. Or modify your `package.json` and add a script to copy the JSON files to your `assets` folder
+   - install NPM packages `native-copyfiles` (`npm install native-copyfiles`)
    - add a new script in your `package.json`
    - run the below script **once** with `npm run copy:i18n` and you should now have the JSON files in your `src/assets` folder
+
 ```typescript
-"copy:i18n": "cross-env copyfiles -f node_modules/aurelia-slickgrid/i18n/*.json assets/i18n"
+"copy:i18n": "copyfiles -f node_modules/aurelia-slickgrid/i18n/*.json assets/i18n"
 ```
+
 If you want to manually re-create the translation in your own files, the list of translations that you will need are displayed in the [asset i18n](https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/aurelia-slickgrid/src/assets/i18n) translation folder (from that file, you need all translations shown before the 'BILLING', the next few ones are for the demo page only).

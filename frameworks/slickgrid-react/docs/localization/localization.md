@@ -160,10 +160,12 @@ The final step is of course the actual translations. There's multiple ways to co
 }
 ```
 4. Or modify your `package.json` and add a script to copy the JSON files to your `assets` folder
-   - install NPM packages `cross-env` and `copyfiles` (`npm install copy-files cross-env`)
+   - install NPM packages `native-copyfiles` (`npm install native-copyfiles`)
    - add a new script in your `package.json`
    - run the below script **once** with `npm run copy:i18n` and you should now have the JSON files in your `src/assets` folder
-```tsx
-"copy:i18n": "cross-env copyfiles -f node_modules/slickgrid-react/i18n/*.json assets/i18n"
+
+```ts
+"copy:i18n": "copyfiles -f node_modules/slickgrid-react/i18n/*.json assets/i18n"
 ```
+
 If you want to manually re-create the translation in your own files, the list of translations that you will need are displayed in the [asset locales](https://github.com/ghiscoding/slickgrid-universal/tree/master/demos/react/src/assets/locales) translation folder (from that file, you need all translations shown before the 'BILLING', the next few ones are for the demo page only).

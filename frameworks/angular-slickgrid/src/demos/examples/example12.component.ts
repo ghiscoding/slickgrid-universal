@@ -195,7 +195,7 @@ export class Example12Component implements OnInit, OnDestroy {
         // https://ghiscoding.gitbook.io/excel-builder-vanilla/cookbook/fonts-and-colors
         customExcelHeader: (workbook, sheet) => {
           const customTitle =
-            this.translate.currentLang === 'fr'
+            this.translate.getCurrentLang() === 'fr'
               ? 'Titre qui est suffisament long pour être coupé'
               : 'My header that is long enough to wrap';
           const stylesheet = workbook.getStyleSheet();
