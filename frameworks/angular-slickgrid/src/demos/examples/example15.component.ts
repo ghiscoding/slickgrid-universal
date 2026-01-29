@@ -36,7 +36,7 @@ export class Example15Component implements OnInit, OnDestroy {
   selectedLanguage: string;
 
   constructor(private translate: TranslateService) {
-    this.selectedLanguage = this.translate.getFallbackLang() || '';
+    this.selectedLanguage = this.translate.getFallbackLang() || 'en';
   }
 
   angularGridReady(angularGrid: AngularGridInstance) {
