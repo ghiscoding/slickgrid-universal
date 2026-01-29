@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, type OnDestroy, type OnInit } from '@angular/core';
+import { Component, signal, ViewEncapsulation, type OnDestroy, type OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import type { Subscription } from 'rxjs';
@@ -71,13 +71,13 @@ export class Example24Component implements OnInit, OnDestroy {
   gridOptions!: GridOption;
   dataset!: any[];
   hideSubTitle = false;
-  selectedLanguage: string;
+  selectedLanguage = signal('');
 
   constructor(private translate: TranslateService) {
     // always start with English for Cypress E2E tests to be consistent
     const defaultLang = 'en';
     this.translate.use(defaultLang);
-    this.selectedLanguage = defaultLang;
+    this.selectedLanguage.set(defaultLang);
   }
 
   angularGridReady(angularGrid: AngularGridInstance) {
@@ -619,11 +619,10 @@ export class Example24Component implements OnInit, OnDestroy {
   }
 
   switchLanguage() {
-    const nextLanguage = this.selectedLanguage === 'en' ? 'fr' : 'en';
-
+    const nextLanguage = this.selectedLanguage() === 'en' ? 'fr' : 'en';
     this.subscriptions.push(
       this.translate.use(nextLanguage).subscribe(() => {
-        this.selectedLanguage = nextLanguage;
+        this.selectedLanguage.set(nextLanguage);
       })
     );
   }

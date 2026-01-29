@@ -100,6 +100,21 @@ Because of the Angular v21 upgrade, the user (you) will also need to upgrade [`n
 For the complete list of changes, please follow `ngx-translate` migration from their website:
 - https://ngx-translate.org/getting-started/migration-guide/
 
+### Angular Zoneless Mode
+
+Starting with v10, Angular-Slickgrid itself now runs in zoneless mode by default. However, your application can still use `zone.js` if you wish and this is entirely at your discretion. For more information about zoneless Angular, see the official Angular documentation: https://angular.dev/guide/zoneless
+
+### Supporting Both Zone.js and Zoneless Users
+
+Angular-Slickgrid now works out-of-the-box in zoneless Angular apps, but still supports applications using `zone.js`:
+
+- If your app uses `zone.js`, you do not need to change anything, manual change detection (e.g., `markForCheck()`, `detectChanges()`) is still not required.
+- If your app is zoneless, you do not need to add `zone.js` and should follow the zoneless setup instructions above.
+- The library no longer calls `markForCheck()` or `detectChanges()` internally, so UI updates are handled automatically in both modes.
+- If you have custom code that relies on manual change detection, review and update it as needed. For example, I had to use Signal to ensure UI changes were detected in my OData/GraphQL demos when using the `BackendServiceApi` with a `postProcess` callback.
+
+For more details, review the official Angular documentation: https://angular.dev/guide/zoneless
+
 {% hint style="note" %}
 **Info** the changes in the next few lines were all mentioned in the previous "Migration Guide v9.0". So, if you have already made these changes then you could skip the section below.
 {% endhint %}

@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectorRef, Component, type OnDestroy, type OnInit } from '@angular/core';
+import { Component, signal, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { addDay, format as tempoFormat } from '@formkit/tempo';
 import { TranslateService } from '@ngx-translate/core';
@@ -39,23 +39,20 @@ export class Example6Component implements OnInit, OnDestroy {
   columnDefinitions!: Column[];
   gridOptions!: GridOption;
   dataset = [];
-  metrics!: Metrics;
+  metrics = signal<Metrics | undefined>(undefined);
   hideSubTitle = false;
   isWithCursor = false;
   graphqlQuery = '';
-  processing = true;
-  status = { text: 'processing...', class: 'alert alert-danger' };
-  selectedLanguage: string;
+  processing = signal(true);
+  status = signal({ text: 'processing...', class: 'alert alert-danger' });
+  selectedLanguage = signal('');
   serverWaitDelay = FAKE_SERVER_DELAY; // server simulation with default of 250ms but 50ms for Cypress tests
 
-  constructor(
-    private readonly cd: ChangeDetectorRef,
-    private translate: TranslateService
-  ) {
+  constructor(private translate: TranslateService) {
     // always start with English for Cypress E2E tests to be consistent
     const defaultLang = 'en';
     this.translate.use(defaultLang);
-    this.selectedLanguage = defaultLang;
+    this.selectedLanguage.set(defaultLang);
   }
 
   ngOnDestroy() {
@@ -271,9 +268,8 @@ export class Example6Component implements OnInit, OnDestroy {
         preProcess: () => this.displaySpinner(true),
         process: (query) => this.getCustomerApiCall(query),
         postProcess: (result: GraphqlPaginatedResult) => {
-          this.metrics = result.metrics as Metrics;
+          this.metrics.set(result.metrics as Metrics);
           this.displaySpinner(false);
-          this.cd.detectChanges();
         },
       } as GraphqlServiceApi,
     };
@@ -284,10 +280,10 @@ export class Example6Component implements OnInit, OnDestroy {
   }
 
   displaySpinner(isProcessing: boolean) {
-    this.processing = isProcessing;
-    this.status = isProcessing
-      ? { text: 'processing...', class: 'alert alert-danger' }
-      : { text: 'finished', class: 'alert alert-success' };
+    this.processing.set(isProcessing);
+    this.status.set(
+      isProcessing ? { text: 'processing...', class: 'alert alert-danger' } : { text: 'finished', class: 'alert alert-success' }
+    );
   }
 
   /**
@@ -443,10 +439,10 @@ export class Example6Component implements OnInit, OnDestroy {
   }
 
   switchLanguage() {
-    const nextLanguage = this.selectedLanguage === 'en' ? 'fr' : 'en';
+    const nextLanguage = this.selectedLanguage() === 'en' ? 'fr' : 'en';
     this.subscriptions.push(
       this.translate.use(nextLanguage).subscribe(() => {
-        this.selectedLanguage = nextLanguage;
+        this.selectedLanguage.set(nextLanguage);
       })
     );
   }

@@ -40,9 +40,9 @@
 
   <div class="row">
     <div class="col-sm-5">
-      <div [class]="status.class" role="alert" data-test="status">
-        <strong>Status: </strong> {{ status.text }}
-        <span [hidden]="!processing">
+      <div [class]="status()?.class" role="alert" data-test="status">
+        <strong>Status: </strong> {{ status()?.text }}
+        <span [hidden]="!processing()">
           <i class="mdi mdi-sync mdi-spin-1s"></i>
         </span>
       </div>
@@ -77,22 +77,22 @@
           </button>
           <strong>Locale:</strong>
           <span style="font-style: italic" data-test="selected-locale">
-            {{ selectedLanguage + '.json' }}
+            {{ selectedLanguage() + '.json' }}
           </span>
         </div>
       </div>
       <br />
-      @if (metrics) {
+      @if (metrics()) {
         <div style="margin: 10px 0px">
           <b>Metrics:</b>
           <span>
-            <span>{{ metrics.endTime | date: 'dd MMM, h:mm:ssa' }}</span> —
-            <span data-test="itemCount">{{ metrics.itemCount }}</span>
+            <span>{{ metrics()?.endTime | date: 'dd MMM, h:mm:ssa' }}</span> —
+            <span data-test="itemCount">{{ metrics()?.itemCount }}</span>
             of
-            <span data-test="totalItemCount">{{ metrics.totalItemCount }}</span>
+            <span data-test="totalItemCount">{{ metrics()?.totalItemCount }}</span>
             items
           </span>
-          <span class="badge rounded-pill text-bg-primary" [class]="tagDataClass" data-test="data-loaded-tag">All Data Loaded!!!</span>
+          <span class="badge rounded-pill text-bg-primary" [class]="tagDataClass()" data-test="data-loaded-tag">All Data Loaded!!!</span>
         </div>
       }
     </div>
