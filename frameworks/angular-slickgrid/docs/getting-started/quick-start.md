@@ -8,18 +8,20 @@ Install the `Angular-Slickgrid`, and other external packages like `Bootstrap`
 ```bash
 npm install --save angular-slickgrid bootstrap # the last dep is optional
 ```
-#### Important note about `ngx-translate`
-#### Now optional
-`ngx-translate` is now optional as of version `2.10.0`, see more info below at [step 5](#5-installsetup-ngx-translate-for-localization-optional)
-**NOTE** however, please note that `@ngx-translate` is still going to be installed behind the scene just to make DI (dependency injection) build properly because of our use of `@Optional()` but it should be removed by the build tree shaking process once you run a production build. See their version compatibility table below
 
-| Angular Version     | @ngx-translate/core |
-|---------------------|---------------------|
-|  16+                |        15.x         |
-|  13+ (**Ivy only**) |        14.x         |
-|  10-13              |        13.x         |
-|  8-9                |        12.x         |
-|  7                  |        11.x         |
+#### Important note about `ngx-translate`
+
+**NOTE** however, please note that `@ngx-translate` is still going to be installed behind the scene just to make DI (dependency injection) build properly because of our use of `@Optional()`. Since it's optional, it should be removed by the build tree shaking process once you run a production build. See their version compatibility table below:
+
+| Angular Version         | @ngx-translate/core |
+|-------------------------|---------------------|
+|  21+                    |        17.x         |
+|  16 - 19+               |        16.x         |
+|  16 - 17+               |        16.x (15.x)  |
+|  13 - 15 (**Ivy only**) |        14.x         |
+|  10-12                  |        13.x         |
+|  8-9                    |        12.x         |
+|  7                      |        11.x         |
 
 ### 2. Modify the `angular.json` and `tsconfig.app.json` files
 #### previous Angular versions were using `.angular-cli.json`
@@ -136,9 +138,9 @@ The new updated version of `ng-packagr` use strict metadata and you might get er
 ### 5. Install/Setup `ngx-translate` for Localization (optional)
 #### If you don't want to use any Translate Service and use only 1 Locale then take a look at this [demo](https://github.com/ghiscoding/angular-slickgrid-demos/tree/master/bootstrap4-demo-with-locales)
 To provide locales other than English (default locale), you have 2 options that you can go with. If you only use English, there is nothing to do (you can still change some of the texts in the grid via option 1.)
-1. Using [Custom Locale](../localization/Localization-with-Custom-Locales.md), that is when you use **only 1** locale (other than English)... this is a new feature starting from version `2.10.0` and up.
-2. Using [Localization with I18N](../localization/Localization-with-ngx-translate.md), that is when you want to use multiple locales dynamically.
-3. **NOTE** you still need to install `@ngx-translate` (since it is a peer dependency) but it should be removed after doing a production build since it's optional.
+1. Using [Custom Locale](../localization/localization-with-custom-locales.md), that is when you use **only 1** locale (other than English)... this is a new feature starting from version `2.10.0` and up.
+2. Using [Localization with I18N](../localization/localization-with-ngx-translate.md), that is when you want to use multiple locales dynamically.
+3. **NOTE** `@ngx-translate` will still be installed (since it's an internal dependency), but it should be removed after doing a production build because of our usage of `@Optional()`.
 
 ##### Translation Keys
 Also note that every time you want to use a translation key, you simply have to use a property with the `Key` suffix. For example if you wish to have a column definition `name` with a translation, just use the `nameKey: 'TRANSLATE_KEY'` instead of `name`. Below is a list of keys that can be used in the lib

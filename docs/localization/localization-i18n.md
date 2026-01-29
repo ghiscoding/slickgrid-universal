@@ -115,9 +115,8 @@ The final step is of course the actual translations. There's multiple ways to co
 1. Manually copy the translation keys/values
 2. Manually copy the JSON files to your `assets` folder
 3. Or modify your `package.json` and add a script to copy the JSON files to your `assets` folder
-   - install NPM package `copyfiles` (`npm install copy-files`)
+   - install NPM package `native-copyfiles` (`npm install native-copyfiles`)
    - add a new script in your `package.json`
    - run the script **once** with `npm run copy:i18n` and you should now have the JSON files in your `src/assets` folder
-     - visit [copyfiles](https://www.npmjs.com/package/copyfiles) site on how to use it in your npm script
 
 If you want to manually re-create the translation in your own files, the list of translations that you will need are displayed in the asset i18n translation folder (from that file, you need all translations shown before the 'BILLING', the next few ones are for the demo page only).

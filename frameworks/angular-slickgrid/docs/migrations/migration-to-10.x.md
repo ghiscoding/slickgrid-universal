@@ -5,6 +5,7 @@ One of the biggest change in this release is to hide columns by using the `hidde
 #### Major Changes - Quick Summary
 - [`hidden` columns](#hidden-columns)
 - [Row Detail (now optional)](#row-detail-now-optional)
+- [ngx-translate@v17](#ngx-translate-v17x-now-required)
 
 > **Note:** if you come from an earlier version, please make sure to follow each migrations in their respected order (review previous migration guides)
 
@@ -82,7 +83,22 @@ gridOptions = {
 };
 ```
 
----
+### `ngx-translate` v17.x now required
+
+Because of the Angular v21 upgrade, the user (you) will also need to upgrade [`ngx-translate`](https://ngx-translate.org/) to its latest version 17.x.
+
+```diff
+# package.json
+"dependencies": {
+-   "@ngx-translate/core": "^16.0.4",
+-   "@ngx-translate/http-loader": "^16.0.1",
++   "@ngx-translate/core": "^17.0.0",
++   "@ngx-translate/http-loader": "^17.0.0",
+}
+```
+
+For the complete list of changes, please follow `ngx-translate` migration from their website:
+- https://ngx-translate.org/getting-started/migration-guide/
 
 {% hint style="note" %}
 **Info** the changes in the next few lines were all mentioned in the previous "Migration Guide v9.0". So, if you have already made these changes then you could skip the section below.
