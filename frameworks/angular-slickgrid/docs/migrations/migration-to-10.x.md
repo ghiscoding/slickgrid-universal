@@ -111,7 +111,10 @@ Angular-Slickgrid now works out-of-the-box in zoneless Angular apps, but still s
 - If your app uses `zone.js`, you do not need to change anything, manual change detection (e.g., `markForCheck()`, `detectChanges()`) is still not required.
 - If your app is zoneless, you do not need to add `zone.js` and should follow the zoneless setup instructions above.
 - The library no longer calls `markForCheck()` or `detectChanges()` internally, so UI updates are handled automatically in both modes.
-- If you have custom code that relies on manual change detection, review and update it as needed. For example, I had to use Signal to ensure UI changes were detected in my OData/GraphQL demos when using the `BackendServiceApi` with a `postProcess` callback.
+- If you have custom code that relies on manual change detection, review and update it as needed. 
+- For example, I had to use Signal to ensure UI changes were detected in my OData/GraphQL demos when using the `BackendServiceApi` with a `postProcess` callback and you might need changes when using Pagination as well (in my case I switched to Signals).
+
+> **Tip:** In zoneless Angular, always use signals for any state that should update the UI. For example, if you have a property like `selectedLanguage`, declare it as a signal (`selectedLanguage = signal('en')`) and update it with `selectedLanguage.set('fr')`. In your template, use `selectedLanguage()` to display or bind the value. This ensures UI updates are automatic and you never need manual change detection.
 
 For more details, review the official Angular documentation: https://angular.dev/guide/zoneless
 
