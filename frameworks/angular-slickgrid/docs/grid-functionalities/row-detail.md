@@ -183,7 +183,7 @@ Same concept as the preload, we pass an Angular Component to the `viewComponent`
         //  ... row detail options
 
         // View Component to load when row detail data is ready
-        // also make sure that it's part of your App Module `entryComponents` array
+        // also make sure that it's part of your App Module `entryComponents` array  (for `angular-slickgrid` < 10)
         viewComponent: RowDetailViewComponent,
       }
     };
@@ -246,7 +246,7 @@ export class RowDetailViewComponent {
   }
 }
 ```
-###### App Module
+###### App Module (for `angular-slickgrid` < 10)
 Also make sure that it's part of your App Module `entryComponents` array since this will be a dynamically created component.
 
 ```ts

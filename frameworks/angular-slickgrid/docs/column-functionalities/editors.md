@@ -244,7 +244,7 @@ this.columnDefinitions = [
 ```
 
 #### Default Sanitize-Html Options
-If you find that the HTML that you passed is being sanitized and you wish to change it, then you can change the default `sanitizeHtmlOptions` property defined in the Global Grid Options, for more info on how to change these global options, see the [Wiki - Global Grid Options](../grid-functionalities/Global-Options.md). The current defaults are:
+If you find that the HTML that you passed is being sanitized and you wish to change it, then you can change the default `sanitizeHtmlOptions` property defined in the Global Grid Options, for more info on how to change these global options, see the [Wiki - Global Grid Options](../grid-functionalities/global-options.md). The current defaults are:
 
 ```typescript
 sanitizeHtmlOptions: {

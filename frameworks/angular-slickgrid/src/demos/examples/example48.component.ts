@@ -1,7 +1,7 @@
 import { Component, type OnInit } from '@angular/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   Formatters,
   SlickEventHandler,
   type AngularGridInstance,
@@ -14,7 +14,7 @@ const NB_ITEMS = 995;
 @Component({
   templateUrl: './example48.component.html',
   // styles: ['#grid48-1 { .slick-row .slick-cell:first-child { border-right: 1px solid #d4d4d4; } }'],
-  imports: [AngularSlickgridModule],
+  imports: [AngularSlickgridComponent],
 })
 export class Example48Component implements OnInit {
   protected _eventHandler = new SlickEventHandler();

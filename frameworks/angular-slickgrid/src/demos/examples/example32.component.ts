@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, ViewEncapsulation, type OnInit } from '@angular/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   Editors,
   Filters,
   formatNumber,
@@ -44,7 +44,7 @@ const myCustomTitleValidator = (value: any) => {
   templateUrl: './example32.component.html',
   styleUrls: ['./example32.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  imports: [AngularSlickgridModule],
+  imports: [AngularSlickgridComponent],
 })
 export class Example32Component implements OnInit {
   angularGrid!: AngularGridInstance;

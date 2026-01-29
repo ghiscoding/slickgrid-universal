@@ -1,6 +1,6 @@
 import { Component, ViewEncapsulation, type OnInit } from '@angular/core';
 import {
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   Editors,
   Formatters,
   isDefined,
@@ -14,7 +14,7 @@ import {
   templateUrl: './example41.component.html',
   styleUrls: ['./example41.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  imports: [AngularSlickgridModule],
+  imports: [AngularSlickgridComponent],
 })
 export class Example41Component implements OnInit {
   angularGrid!: AngularGridInstance;

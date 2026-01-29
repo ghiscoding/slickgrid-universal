@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import type { ContainerInstance, ContainerService as UniversalContainerService } from '@slickgrid-universal/common';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root', // This ensures it can be injected anywhere
+})
 export class ContainerService implements UniversalContainerService {
   dependencies: ContainerInstance[] = [];
 
