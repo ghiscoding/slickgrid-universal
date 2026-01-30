@@ -48,7 +48,6 @@
     }
   ],
   "scripts": {
-    "are-types-wrong": "pnpx @arethetypeswrong/cli --pack .",
     "react:dev": "tsc --watch",
     "build": "remove dist && tsc && npm run copy-i18n:dist && npm run copy-asset-lib",
     "copy-asset-lib": "copyfiles src/assets/lib/** dist --up 2 --stat",
