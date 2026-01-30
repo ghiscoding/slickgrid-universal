@@ -4,6 +4,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.13.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.12.0...v9.13.0) (2026-01-30)
+
+### Features
+
+* add minus icon for partial row selection ([#2322](https://github.com/ghiscoding/slickgrid-universal/issues/2322)) ([d3dc6e7](https://github.com/ghiscoding/slickgrid-universal/commit/d3dc6e7772243a3d0dd6961680698d05a834ae58)) - by @ghiscoding
+* deprecate `rowSelectionOptions` and rename to `selectionOptions` ([#2325](https://github.com/ghiscoding/slickgrid-universal/issues/2325)) ([ec4d546](https://github.com/ghiscoding/slickgrid-universal/commit/ec4d546b3e0c76edcd12899b16a1f9403550cf0c)) - by @ghiscoding
+* **export:** add new optional PDF Export package ([#2317](https://github.com/ghiscoding/slickgrid-universal/issues/2317)) ([42347f6](https://github.com/ghiscoding/slickgrid-universal/commit/42347f605388d3c080568d8bbe93dcf7c5ed1ff4)) - by @ghiscoding
+* update to latest Aurelia 2 RC.0 ([#2315](https://github.com/ghiscoding/slickgrid-universal/issues/2315)) ([4ea46a6](https://github.com/ghiscoding/slickgrid-universal/commit/4ea46a619e214f5272c364d57d51336c37845035)) - by @ghiscoding
+
+### Bug Fixes
+
+* allow single row selection via click without checkbox column ([#2311](https://github.com/ghiscoding/slickgrid-universal/issues/2311)) ([b2c6594](https://github.com/ghiscoding/slickgrid-universal/commit/b2c659445c5c39b2b76613c113cef833bdd99f97)) - by @ghiscoding
+* **deps:** update all non-major dependencies ([#2292](https://github.com/ghiscoding/slickgrid-universal/issues/2292)) ([21da957](https://github.com/ghiscoding/slickgrid-universal/commit/21da95702f44739a9f1b226e305c18a1fa64000f)) - by @renovate-bot
+* **deps:** update all non-major dependencies ([#2320](https://github.com/ghiscoding/slickgrid-universal/issues/2320)) ([9d9f7ad](https://github.com/ghiscoding/slickgrid-universal/commit/9d9f7ad9c0d2b7b3ee768b8061dfd646dc75bb81)) - by @renovate-bot
+* **deps:** update all non-major dependencies ([#2342](https://github.com/ghiscoding/slickgrid-universal/issues/2342)) ([3b2a921](https://github.com/ghiscoding/slickgrid-universal/commit/3b2a921ff5cae8de5da78f36d7a625fa79eeb557)) - by @renovate-bot
+* double-clicking a checkmark icon should keep current cell selection ([#2312](https://github.com/ghiscoding/slickgrid-universal/issues/2312)) ([1046d2f](https://github.com/ghiscoding/slickgrid-universal/commit/1046d2f6451994ab8eeda7bb87e80297ac038247)) - by @ghiscoding
+* Excel/Text Exports display top/preheader titles w/DraggableGrouping ([#2314](https://github.com/ghiscoding/slickgrid-universal/issues/2314)) ([28817e8](https://github.com/ghiscoding/slickgrid-universal/commit/28817e8055b81ee55c1b3bac17cd7514a3921ff0)) - by @ghiscoding
+* HybridSelectionModelOption should all be optional ([#2293](https://github.com/ghiscoding/slickgrid-universal/issues/2293)) ([1b8f760](https://github.com/ghiscoding/slickgrid-universal/commit/1b8f76060493c43a62e956fb9bf5e0e2feaf4a1f)) - by @ghiscoding
+* only assign CellRangeSelector when Hybrid has `dragToSelect` set ([#2329](https://github.com/ghiscoding/slickgrid-universal/issues/2329)) ([a941819](https://github.com/ghiscoding/slickgrid-universal/commit/a941819649dfa1b54f7887603b930cab27d67c3a)) - by @ghiscoding
+* should stop Draggable service when setting hybrid 'row-click' ([#2313](https://github.com/ghiscoding/slickgrid-universal/issues/2313)) ([0082b2d](https://github.com/ghiscoding/slickgrid-universal/commit/0082b2d532223f03854f9c0a8766e6f2971f3333)) - by @ghiscoding
+* this supports now multiple edge cases when copy pasting from excel to grid ([#2340](https://github.com/ghiscoding/slickgrid-universal/issues/2340)) ([2b4e2ba](https://github.com/ghiscoding/slickgrid-universal/commit/2b4e2baded436a89b9780563485af92bd60ea706)) - by @zewa666
+
 ## [9.12.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.11.0...v9.12.0) (2025-12-29)
 
 ### Features

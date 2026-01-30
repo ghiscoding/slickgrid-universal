@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.13.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.12.0...v9.13.0) (2026-01-30)
+
+### Features
+
+* deprecate `rowSelectionOptions` and rename to `selectionOptions` ([#2325](https://github.com/ghiscoding/slickgrid-universal/issues/2325)) ([ec4d546](https://github.com/ghiscoding/slickgrid-universal/commit/ec4d546b3e0c76edcd12899b16a1f9403550cf0c)) - by @ghiscoding
+* **export:** add new optional PDF Export package ([#2317](https://github.com/ghiscoding/slickgrid-universal/issues/2317)) ([42347f6](https://github.com/ghiscoding/slickgrid-universal/commit/42347f605388d3c080568d8bbe93dcf7c5ed1ff4)) - by @ghiscoding
+
+### Bug Fixes
+
+* allow single row selection via click without checkbox column ([#2311](https://github.com/ghiscoding/slickgrid-universal/issues/2311)) ([b2c6594](https://github.com/ghiscoding/slickgrid-universal/commit/b2c659445c5c39b2b76613c113cef833bdd99f97)) - by @ghiscoding
+* only assign CellRangeSelector when Hybrid has `dragToSelect` set ([#2329](https://github.com/ghiscoding/slickgrid-universal/issues/2329)) ([a941819](https://github.com/ghiscoding/slickgrid-universal/commit/a941819649dfa1b54f7887603b930cab27d67c3a)) - by @ghiscoding
+
 ## [9.12.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.11.0...v9.12.0) (2025-12-29)
 
 ### Features

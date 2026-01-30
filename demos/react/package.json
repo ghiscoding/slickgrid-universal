@@ -1,7 +1,7 @@
 {
   "name": "slickgrid-react-demo",
   "private": true,
-  "version": "9.12.0",
+  "version": "9.13.0",
   "description": "Slickgrid-React demo",
   "keywords": [
     "react",
@@ -29,8 +29,8 @@
     "@slickgrid-universal/excel-export": "workspace:*",
     "@slickgrid-universal/graphql": "workspace:*",
     "@slickgrid-universal/odata": "workspace:*",
-    "@slickgrid-universal/pdf-export": "workspace:*",
     "@slickgrid-universal/pagination-component": "workspace:*",
+    "@slickgrid-universal/pdf-export": "workspace:*",
     "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
     "@slickgrid-universal/rxjs-observable": "workspace:*",
     "@slickgrid-universal/text-export": "workspace:*",
