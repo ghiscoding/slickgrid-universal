@@ -33,10 +33,11 @@
       },
     },
     {
-      // ignore Analog since that will be removed in next major (very soon)
+      description: 'Ignore Analog packages',
       matchPackagePatterns: ['^@analogjs/'],
-      groupName: 'Conventional-Changelog packages',
-      allowedVersion: '2.2.2',
+      groupName: 'Analog packages',
+      allowedVersions: '2.2.2',
+      enabled: false, // This will completely disable updates for Analog packages
     },
   ],
   ignoreDeps: ['lee-dohm/no-response', 'node', 'pnpm', 'typescript'],
