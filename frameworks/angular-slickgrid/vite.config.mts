@@ -1,13 +1,10 @@
 /// <reference types="vitest" />
 
-import angular from '@analogjs/vite-plugin-angular';
 import { configDefaults, defineConfig } from 'vitest/config';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   return {
-    plugins: [angular() as any],
-    oxc: false,
     test: {
       root: './',
       environment: 'jsdom',
@@ -18,8 +15,7 @@ export default defineConfig(({ mode }) => {
       fakeTimers: {
         toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'queueMicrotask'],
       },
-      // globalSetup: 'test/vitest-global-setup.ts',
-      setupFiles: ['./test/test-setup.ts', './test/vitest-pretest.ts', './test/vitest-global-mocks.ts'],
+      setupFiles: ['./test/test-setup.ts'],
       coverage: {
         include: ['**/library/**/*.ts'],
         exclude: [
