@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, ViewEncapsulation, type OnInit } from '@angular/core';
+import { Component, signal, ViewEncapsulation, type OnInit } from '@angular/core';
 import { GraphqlService, type GraphqlResult, type GraphqlServiceApi } from '@slickgrid-universal/graphql';
 import type { Observable } from 'rxjs';
 import {
@@ -41,12 +41,11 @@ export class Example25Component implements OnInit {
   gridOptions!: GridOption;
   dataset = [];
   hideSubTitle = false;
-  metrics!: Metrics;
-
+  metrics = signal<Metrics | undefined>(undefined);
   graphqlQuery = '';
-  processing = true;
-  status = { text: 'processing...', class: 'alert alert-danger' };
-  isDataLoaded = false;
+  processing = signal(true);
+  status = signal({ text: 'processing...', class: 'alert alert-danger' });
+  isDataLoaded = signal(false);
 
   constructor(private http: HttpClient) {}
 
@@ -204,22 +203,22 @@ export class Example25Component implements OnInit {
           datasetName: 'countries', // the only REQUIRED property
         },
         // you can define the onInit callback OR enable the "executeProcessCommandOnInit" flag in the service init
-        preProcess: () => (!this.isDataLoaded ? this.displaySpinner(true) : ''),
+        preProcess: () => (!this.isDataLoaded() ? this.displaySpinner(true) : ''),
         process: (query: string) => this.getCountries(query),
         postProcess: (result: GraphqlResult<Country>) => {
-          this.metrics = result.metrics as Metrics;
+          this.metrics.set(result.metrics as Metrics);
           this.displaySpinner(false);
-          this.isDataLoaded = true;
+          this.isDataLoaded.set(true);
         },
       } as GraphqlServiceApi,
     };
   }
 
   displaySpinner(isProcessing: boolean) {
-    this.processing = isProcessing;
-    this.status = isProcessing
-      ? { text: 'processing...', class: 'alert alert-danger' }
-      : { text: 'finished', class: 'alert alert-success' };
+    this.processing.set(isProcessing);
+    this.status.set(
+      isProcessing ? { text: 'processing...', class: 'alert alert-danger' } : { text: 'finished', class: 'alert alert-success' }
+    );
   }
 
   // --

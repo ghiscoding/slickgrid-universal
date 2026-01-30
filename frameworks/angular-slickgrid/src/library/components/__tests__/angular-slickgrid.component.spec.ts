@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, type ApplicationRef } from '@angular/core';
+import { Component, ElementRef, type ApplicationRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -320,7 +320,6 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
   let mockElementRef: ElementRef;
   let sharedService: SharedService;
   let translate: TranslateService;
-  let mockChangeDetectorRef: ChangeDetectorRef;
   let translaterService: TranslaterServiceStub;
   const containerService = new ContainerService();
 
@@ -366,11 +365,6 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
     });
     translate = TestBed.inject(TranslateService);
 
-    mockChangeDetectorRef = {
-      detectChanges: vi.fn(),
-      markForCheck: vi.fn(),
-    } as unknown as ChangeDetectorRef;
-
     mockElementRef = {
       nativeElement: divContainer,
     } as ElementRef;
@@ -380,7 +374,6 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         new AngularSlickgridComponent(
           angularUtilServiceStub,
           mockAppRef,
-          mockChangeDetectorRef,
           containerService,
           mockElementRef,
           translate as unknown as TranslateService,
@@ -427,7 +420,6 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         new AngularSlickgridComponent(
           angularUtilServiceStub,
           mockAppRef,
-          mockChangeDetectorRef,
           containerService,
           mockElementRef,
           translate as unknown as TranslateService,

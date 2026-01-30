@@ -1,7 +1,6 @@
-import { Component, type OnInit } from '@angular/core';
+import { Component, signal, type OnInit } from '@angular/core';
 import {
   AngularSlickgridModule,
-  ExtensionName,
   Filters,
   Formatters,
   type AngularGridInstance,
@@ -18,15 +17,11 @@ export class Example16Component implements OnInit {
   angularGrid!: AngularGridInstance;
   columnDefinitions!: Column[];
   gridOptions!: GridOption;
-  dataset!: any[];
+  dataset = signal<any[]>([]);
   hideSubTitle = false;
 
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid;
-  }
-
-  get rowMoveInstance() {
-    return this.angularGrid?.extensionService?.getExtensionInstanceByName(ExtensionName.rowMoveManager) ?? {};
   }
 
   ngOnInit(): void {
@@ -100,7 +95,7 @@ export class Example16Component implements OnInit {
         cancelEditOnDrag: true,
         hideRowMoveShadow: false,
         width: 30,
-        onBeforeMoveRows: this.onBeforeMoveRow.bind(this),
+        onBeforeMoveRows: this.onBeforeMoveRows.bind(this),
         onMoveRows: this.onMoveRows.bind(this),
 
         // you can change the move icon position of any extension (RowMove, RowDetail or RowSelector icon)
@@ -140,10 +135,10 @@ export class Example16Component implements OnInit {
         effortDriven: i % 5 === 0,
       };
     }
-    this.dataset = mockDataset;
+    this.dataset.set(mockDataset);
   }
 
-  onBeforeMoveRow(e: MouseEvent | TouchEvent, data: { rows: number[]; insertBefore: number }) {
+  onBeforeMoveRows(e: MouseEvent | TouchEvent, data: { rows: number[]; insertBefore: number }) {
     for (const rowIdx of data.rows) {
       // no point in moving before or after itself
       if (
@@ -208,7 +203,8 @@ export class Example16Component implements OnInit {
 
     // final updated dataset, we need to overwrite the DataView dataset (and our local one) with this new dataset that has a new order
     const finalDataset = left.concat(extractedRows.concat(right));
-    this.dataset = finalDataset; // update dataset and re-render the grid
+    this.angularGrid.slickGrid?.invalidate();
+    this.dataset.set(finalDataset); // assign new array reference to trigger Angular input change detection
   }
 
   hideDurationColumnDynamically() {

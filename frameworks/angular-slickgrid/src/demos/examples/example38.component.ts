@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectorRef, Component, ViewEncapsulation, type OnInit } from '@angular/core';
+import { Component, signal, ViewEncapsulation, type OnInit } from '@angular/core';
 import { GridOdataService, type OdataServiceApi } from '@slickgrid-universal/odata';
 import {
   Aggregators,
@@ -33,18 +33,15 @@ export class Example38Component implements OnInit {
   dataset: any[] = [];
   hideSubTitle = false;
   isPageErrorTest = false;
-  metrics!: Partial<Metrics>;
-  tagDataClass = '';
-  odataQuery = '';
-  processing = false;
-  errorStatus = '';
-  errorStatusClass = 'hidden';
-  status = { text: 'processing...', class: 'alert alert-danger' };
+  metrics = signal<Partial<Metrics> | undefined>(undefined);
+  tagDataClass = signal('');
+  odataQuery = signal('');
+  processing = signal(false);
+  errorStatus = signal('');
+  errorStatusClass = signal('hidden');
+  status = signal({ text: 'processing...', class: 'alert alert-danger' });
 
-  constructor(
-    private readonly cd: ChangeDetectorRef,
-    private http: HttpClient
-  ) {
+  constructor(private http: HttpClient) {
     this.backendService = new GridOdataService();
   }
 
@@ -124,21 +121,20 @@ export class Example38Component implements OnInit {
           version: 4,
         },
         onError: (error: Error) => {
-          this.errorStatus = error.message;
-          this.errorStatusClass = 'visible notification is-light is-danger is-small is-narrow';
+          this.errorStatus.set(error.message);
+          this.errorStatusClass.set('visible notification is-light is-danger is-small is-narrow');
           this.displaySpinner(false, true);
         },
         preProcess: () => {
-          this.errorStatus = '';
-          this.errorStatusClass = 'hidden';
+          this.errorStatus.set('');
+          this.errorStatusClass.set('hidden');
           this.displaySpinner(true);
         },
         process: (query) => this.getCustomerApiCall(query),
         postProcess: (response) => {
-          this.metrics = response.metrics;
+          this.metrics.set(response.metrics);
           this.displaySpinner(false);
           this.getCustomerCallback(response);
-          this.cd.detectChanges();
         },
         // we could use local in-memory Filtering (please note that it only filters against what is currently loaded)
         // that is when we want to avoid reloading the entire dataset every time
@@ -148,20 +144,23 @@ export class Example38Component implements OnInit {
   }
 
   displaySpinner(isProcessing: boolean, isError?: boolean) {
-    this.processing = isProcessing;
+    this.processing.set(isProcessing);
     if (isError) {
-      this.status = { text: 'ERROR!!!', class: 'alert alert-danger' };
+      this.status.set({ text: 'ERROR!!!', class: 'alert alert-danger' });
     } else {
-      this.status = isProcessing ? { text: 'loading', class: 'alert alert-warning' } : { text: 'finished', class: 'alert alert-success' };
+      this.status.set(
+        isProcessing ? { text: 'loading', class: 'alert alert-warning' } : { text: 'finished', class: 'alert alert-success' }
+      );
     }
-    this.cd.detectChanges();
   }
 
   getCustomerCallback(data: { '@odata.count': number; infiniteScrollBottomHit: boolean; metrics: Metrics; query: string; value: any[] }) {
     // totalItems property needs to be filled for pagination to work correctly
     // however we need to force a dirty check, doing a clone object will do just that
     const totalItemCount: number = data['@odata.count'];
-    this.metrics.totalItemCount = totalItemCount;
+    const metrics = { ...this.metrics() };
+    metrics.totalItemCount = totalItemCount;
+    this.metrics.set(metrics);
 
     // even if we're not showing pagination, it is still used behind the scene to fetch next set of data (next page basically)
     // once pagination totalItems is filled, we can update the dataset
@@ -172,13 +171,15 @@ export class Example38Component implements OnInit {
       // initial load not scroll hit yet, full dataset assignment
       this.angularGrid.slickGrid?.scrollTo(0); // scroll back to top to avoid unwanted onScroll end triggered
       this.dataset = data.value;
-      this.metrics.itemCount = data.value.length;
+      const updatedMetrics = { ...this.metrics() };
+      updatedMetrics.itemCount = data.value.length;
+      this.metrics.set(updatedMetrics);
     } else {
       // scroll hit, for better perf we can simply use the DataView directly for better perf (which is better compare to replacing the entire dataset)
       this.angularGrid.dataView?.addItems(data.value);
     }
 
-    this.odataQuery = data['query'];
+    this.odataQuery.set(data['query']);
 
     // NOTE: you can get currently loaded item count via the `onRowCountChanged`slick event, see `refreshMetrics()` below
     // OR you could also calculate it yourself or get it via: `this.sgb.dataView.getItemCount() === totalItemCount`
@@ -196,7 +197,7 @@ export class Example38Component implements OnInit {
    *  in your case the getCustomer() should be a WebAPI function returning a Promise
    */
   getCustomerDataApiMock(query: string): Promise<any> {
-    this.errorStatusClass = 'hidden';
+    this.errorStatusClass.set('hidden');
 
     // the mock is returning a Promise, just like a WebAPI typically does
     return new Promise((resolve) => {
@@ -412,8 +413,10 @@ export class Example38Component implements OnInit {
 
   refreshMetrics(args: OnRowCountChangedEventArgs) {
     if (args?.current >= 0) {
-      this.metrics.itemCount = this.angularGrid.dataView?.getFilteredItemCount() || 0;
-      this.tagDataClass = this.metrics.itemCount === this.metrics.totalItemCount ? 'fully-loaded' : 'partial-load';
+      const metrics = { ...this.metrics() };
+      metrics.itemCount = this.angularGrid.dataView?.getFilteredItemCount() || 0;
+      this.metrics.set(metrics);
+      this.tagDataClass.set(metrics.itemCount === metrics.totalItemCount ? 'fully-loaded' : 'partial-load');
     }
   }
 

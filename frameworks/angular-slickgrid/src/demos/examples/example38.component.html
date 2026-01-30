@@ -40,9 +40,9 @@
 
   <div class="row">
     <div class="col-sm-3">
-      @if (errorStatus) {
+      @if (errorStatus()) {
         <div class="alert alert-danger" data-test="error-status">
-          <em><strong>Backend Error:</strong> <span [innerHTML]="errorStatus"></span></em>
+          <em><strong>Backend Error:</strong> <span [innerHTML]="errorStatus()"></span></em>
         </div>
       }
     </div>
@@ -50,16 +50,16 @@
 
   <div class="row">
     <div class="col-sm-2">
-      <div [class]="status.class" role="alert" data-test="status">
-        <strong>Status: </strong> {{ status.text }}
-        <span [hidden]="!processing">
+      <div [class]="status()?.class" role="alert" data-test="status">
+        <strong>Status: </strong> {{ status()?.text }}
+        <span [hidden]="!processing()">
           <i class="mdi mdi-sync mdi-spin-1s"></i>
         </span>
       </div>
     </div>
     <div class="col-sm-10">
       <div class="alert alert-info" data-test="alert-odata-query">
-        <strong>OData Query:</strong> <span data-test="odata-query-result">{{ odataQuery }}</span>
+        <strong>OData Query:</strong> <span data-test="odata-query-result">{{ odataQuery() }}</span>
       </div>
     </div>
   </div>
@@ -85,17 +85,17 @@
         Group by Gender
       </button>
 
-      @if (metrics) {
+      @if (metrics()) {
         <div class="mt-2" style="margin: 10px 0px">
           <b>Metrics:</b>
           <span>
-            <span>{{ metrics.endTime | date: 'dd MMM, h:mm:ssa' }}</span> —
-            <span data-test="itemCount">{{ metrics.itemCount }}</span>
+            <span>{{ metrics()?.endTime | date: 'dd MMM, h:mm:ssa' }}</span> —
+            <span data-test="itemCount">{{ metrics()?.itemCount }}</span>
             of
-            <span data-test="totalItemCount">{{ metrics.totalItemCount }}</span>
+            <span data-test="totalItemCount">{{ metrics()?.totalItemCount }}</span>
             items
           </span>
-          <span class="badge rounded-pill text-bg-primary" [class]="tagDataClass" data-test="data-loaded-tag">All Data Loaded!!!</span>
+          <span class="badge rounded-pill text-bg-primary" [class]="tagDataClass()" data-test="data-loaded-tag">All Data Loaded!!!</span>
         </div>
       }
     </div>

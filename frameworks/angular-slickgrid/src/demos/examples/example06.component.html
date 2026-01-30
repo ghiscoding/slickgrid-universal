@@ -48,9 +48,9 @@
 
   <div class="row">
     <div class="col-sm-5">
-      <div [class]="status.class" role="alert" data-test="status">
-        <strong>Status: </strong> {{ status.text }}
-        <span [hidden]="!processing">
+      <div [class]="status().class" role="alert" data-test="status">
+        <strong>Status: </strong> {{ status().text }}
+        <span [hidden]="!processing()">
           <i class="mdi mdi-sync mdi-spin-1s"></i>
         </span>
       </div>
@@ -94,7 +94,7 @@
           </button>
           <strong>Locale:</strong>
           <span style="font-style: italic" data-test="selected-locale">
-            {{ selectedLanguage + '.json' }}
+            {{ selectedLanguage() + '.json' }}
           </span>
         </div>
 
@@ -125,10 +125,10 @@
         </span>
       </div>
       <br />
-      @if (metrics) {
+      @if (metrics()) {
         <div style="margin: 10px 0px">
-          <b>Metrics:</b> {{ metrics.endTime | date: "yyyy-MM-dd hh:mm aaaaa'm'" }} | {{ metrics.executionTime }}ms |
-          {{ metrics.totalItemCount }} items
+          <b>Metrics:</b> {{ metrics()?.endTime | date: "yyyy-MM-dd hh:mm aaaaa'm'" }} | {{ metrics()?.executionTime }}ms |
+          {{ metrics()?.totalItemCount }} items
         </div>
       }
       <div class="row mb-2">

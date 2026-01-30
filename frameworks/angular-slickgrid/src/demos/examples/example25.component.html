@@ -51,9 +51,9 @@
 
   <div class="row">
     <div class="col-xs-6 col-sm-3">
-      <div [class]="status.class" role="alert" data-test="status">
-        <strong>Status: </strong> {{ status.text }}
-        <span [hidden]="!processing">
+      <div [class]="status()?.class" role="alert" data-test="status">
+        <strong>Status: </strong> {{ status()?.text }}
+        <span [hidden]="!processing()">
           <i class="mdi mdi-sync mdi-spin-1s"></i>
         </span>
       </div>

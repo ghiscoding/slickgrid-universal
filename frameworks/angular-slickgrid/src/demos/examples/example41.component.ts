@@ -20,7 +20,7 @@ export class Example41Component implements OnInit {
   angularGrid!: AngularGridInstance;
   gridOptions!: GridOption;
   columnDefinitions!: Column[];
-  dataset!: any[];
+  dataset: any[] = [];
   dragHelper?: HTMLElement;
   dragRows: number[] = [];
   dragMode = '';
