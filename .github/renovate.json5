@@ -32,6 +32,12 @@
         enabled: false,
       },
     },
+    {
+      // ignore Analog since that will be removed in next major (very soon)
+      matchPackagePatterns: ['^@analogjs/'],
+      groupName: 'Conventional-Changelog packages',
+      allowedVersion: '2.2.2',
+    },
   ],
   ignoreDeps: ['lee-dohm/no-response', 'node', 'pnpm', 'typescript'],
   schedule: ['every 4 weeks on friday'],
