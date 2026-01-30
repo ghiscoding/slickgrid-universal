@@ -106,9 +106,6 @@
           "options": {
             "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
           }
-        },
-        "test": {
-          "builder": "@analogjs/vitest-angular:test"
         }
       }
     }
