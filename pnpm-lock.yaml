@@ -79,8 +79,8 @@ catalogs:
       specifier: ^4.4.1
       version: 4.4.1
     native-copyfiles:
-      specifier: ^1.3.7
-      version: 1.3.7
+      specifier: ^2.0.1
+      version: 2.0.1
     npm-run-all2:
       specifier: ^8.0.4
       version: 8.0.4
@@ -88,8 +88,8 @@ catalogs:
       specifier: ^1.41.0
       version: 1.41.0
     remove-glob:
-      specifier: ^0.4.10
-      version: 0.4.10
+      specifier: ^1.2.0
+      version: 1.2.0
     rxjs:
       specifier: ^7.8.2
       version: 7.8.2
@@ -212,7 +212,7 @@ importers:
         version: 3.8.0
       remove-glob:
         specifier: 'catalog:'
-        version: 0.4.10
+        version: 1.2.0
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -835,7 +835,7 @@ importers:
         version: 3.0.2(jsdom@27.4.0)
       native-copyfiles:
         specifier: 'catalog:'
-        version: 1.3.7
+        version: 2.0.1
       ng-packagr:
         specifier: ^19.2.2
         version: 19.2.2(@angular/compiler-cli@19.2.18(@angular/compiler@19.2.18)(typescript@5.8.3))(tslib@2.8.1)(typescript@5.8.3)
@@ -847,7 +847,7 @@ importers:
         version: 1.41.0
       remove-glob:
         specifier: 'catalog:'
-        version: 0.4.10
+        version: 1.2.0
       sass:
         specifier: 'catalog:'
         version: 1.97.2
@@ -927,10 +927,10 @@ importers:
         version: 3.3.1
       native-copyfiles:
         specifier: 'catalog:'
-        version: 1.3.7
+        version: 2.0.1
       remove-glob:
         specifier: 'catalog:'
-        version: 0.4.10
+        version: 1.2.0
       tslib:
         specifier: 'catalog:'
         version: 2.8.1
@@ -1015,7 +1015,7 @@ importers:
         version: 17.0.0
       native-copyfiles:
         specifier: 'catalog:'
-        version: 1.3.7
+        version: 2.0.1
       react:
         specifier: ^19.2.3
         version: 19.2.3
@@ -1027,7 +1027,7 @@ importers:
         version: 7.12.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       remove-glob:
         specifier: 'catalog:'
-        version: 0.4.10
+        version: 1.2.0
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -1160,7 +1160,7 @@ importers:
         version: 7.1.2(postcss@8.5.6)
       native-copyfiles:
         specifier: 'catalog:'
-        version: 1.3.7
+        version: 2.0.1
       npm-run-all2:
         specifier: 'catalog:'
         version: 8.0.4
@@ -8791,9 +8791,9 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
-  native-copyfiles@1.3.7:
-    resolution: {integrity: sha512-ZFi2QXlHqCDWcEUQ8DaiyiO8t83VD4PEIZ6nYmW2KwGjVu41jhrm3NgvixvdhV0oauVIscebLGkg4IsUL1H+Og==}
-    engines: {node: ^20.0.0 || >=22.0.0}
+  native-copyfiles@2.0.1:
+    resolution: {integrity: sha512-+cqDrf9dIkajJ/7wES5yVuw08mdMe7DSgbYw5bXY7zSFsSkcP50A+9/3EuxOfMH3xuqoWSCjzhBfNZRzim84xA==}
+    engines: {node: ^22.17.0 || >=24.0.0}
     hasBin: true
 
   natural-compare@1.4.0:
@@ -10070,9 +10070,9 @@ packages:
     resolution: {integrity: sha512-NZQZdC5wOE/H3UT28fVGL+ikOZcEzfMGk/c3iN9UGxzWHMa1op7274oyiUVrAG4B2EuFhus8SvkaYnhvW92p9Q==}
     hasBin: true
 
-  remove-glob@0.4.10:
-    resolution: {integrity: sha512-C9xB1T2r953AsEaYV8oLuj8oqRbcOt0JsRVeQWsfsMLyRrYbBcxOj7uhkCAs2QaNYXUQMLz2pcI5gs8y6/NtkQ==}
-    engines: {node: ^20.0.0 || >=22.0.0}
+  remove-glob@1.2.0:
+    resolution: {integrity: sha512-rjpHF6eqAZ710qVXCQBQegsYzl+rw0fojaVf0+zgURruxjmsy7kKKawyevPt18lP6V1w3/vMGRnH0ojn6ZRdgA==}
+    engines: {node: ^22.17.0 || >=24.0.0}
     hasBin: true
 
   request-progress@3.0.0:
@@ -20698,10 +20698,9 @@ snapshots:
 
   nanoid@3.3.11: {}
 
-  native-copyfiles@1.3.7:
+  native-copyfiles@2.0.1:
     dependencies:
       cli-nano: 1.2.2
-      tinyglobby: 0.2.15
       untildify: 6.0.0
 
   natural-compare@1.4.0: {}
@@ -22169,10 +22168,9 @@ snapshots:
     dependencies:
       jsesc: 3.1.0
 
-  remove-glob@0.4.10:
+  remove-glob@1.2.0:
     dependencies:
       cli-nano: 1.2.2
-      tinyglobby: 0.2.15
 
   request-progress@3.0.0:
     dependencies:
