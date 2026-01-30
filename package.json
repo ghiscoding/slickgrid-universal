@@ -116,7 +116,7 @@
     "jsdom-global": "catalog:",
     "npm-run-all2": "catalog:",
     "oxlint": "catalog:",
-    "prettier": "^3.8.0",
+    "prettier": "^3.8.1",
     "remove-glob": "catalog:",
     "rxjs": "catalog:",
     "sortablejs": "catalog:",
