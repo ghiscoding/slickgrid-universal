@@ -1,5 +1,5 @@
 import { Component, ViewEncapsulation, type OnInit } from '@angular/core';
-import { AngularSlickgridModule, type AngularGridInstance, type Column, type GridOption } from '../../library';
+import { AngularSlickgridComponent, type AngularGridInstance, type Column, type GridOption } from '../../library';
 
 // create a custom Formatter to highlight negative values in red
 let columns1WithHighlightingById: any = {};
@@ -9,7 +9,7 @@ let columns2WithHighlightingById: any = {};
   styleUrls: ['./example07.component.scss'],
   encapsulation: ViewEncapsulation.None,
   templateUrl: './example07.component.html',
-  imports: [AngularSlickgridModule],
+  imports: [AngularSlickgridComponent],
 })
 export class Example7Component implements OnInit {
   columnDefinitions1: Column[] = [];

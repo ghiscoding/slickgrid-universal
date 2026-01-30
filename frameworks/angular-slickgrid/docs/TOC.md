@@ -59,6 +59,7 @@
 * [Export to Excel](grid-functionalities/Export-to-Excel.md)
 * [Export to PDF](grid-functionalities/Export-to-PDF.md)
 * [Export to File (csv/txt)](grid-functionalities/Export-to-Text-File.md)
+* [Load Global Grid Options](grid-functionalities/global-options.md)
 * [Grid Menu](grid-functionalities/grid-menu.md)
 * [Grid State & Presets](grid-functionalities/grid-state-preset.md)
 * [Grouping & Aggregators](grid-functionalities/grouping-and-aggregators.md)

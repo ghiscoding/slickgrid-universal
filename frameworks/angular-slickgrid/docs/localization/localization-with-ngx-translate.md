@@ -22,7 +22,9 @@ In order to use `ngx-translate`, you will have to use `@ngx-translate/core` and 
 |  8-9                    |        12.x         |
 |  7                      |        11.x         |
 
-### Minimal installation (~even if you are not using any other locales~)
+### 1. for `Angular-Slickgrid` <= 9.0
+
+#### Minimal installation (~even if you are not using any other locales~)
 If you use only 1 locale, you can now disregard `ngx-translate` installation completely, head over to the new [Wiki - Providing Custom Locale](localization-with-custom-locales.md) for more details. But if you still wish to install the minimum installation to get `ngx-translate` then continue reading.
 
 ##### Install NPM package
@@ -144,7 +146,79 @@ The new updated version of `ng-packagr` use strict metadata and you might get er
 })
 ```
 
-#### Locales
+### 2. for `Angular-Slickgrid` >= 10.0
+
+#### App Initializer
+The App initializer is useful to fetch all translactions locales asynchronously before any of the component loads. This step is important if you need to fetch translations from JSON assets in an asynchronous step before any other component loads.
+
+You can move the App Initializer to a separate file or simply add it to your `main.ts`
+
+```ts
+// app-initializer.ts
+import { LOCATION_INITIALIZED } from '@angular/common';
+import { type Injector } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+
+// use an Initializer Factory as describe here: https://github.com/ngx-translate/core/issues/517#issuecomment-299637956
+export function appInitializerFactory(translate: TranslateService, injector: Injector) {
+  return () =>
+    new Promise<any>((resolve: any) => {
+      const locationInitialized = injector.get(LOCATION_INITIALIZED, Promise.resolve(null));
+      locationInitialized.then(() => {
+        const langToSet = 'en';
+        translate.setFallbackLang('en');
+        translate.use(langToSet).subscribe({
+          next: () => {
+            // console.info(`Successfully initialized '${langToSet}' language.'`);
+          },
+          error: () => console.error(`Problem with '${langToSet}' language initialization.'`),
+          complete: () => resolve(null),
+        });
+      });
+    });
+}
+```
+
+then use it in your App `main.ts`
+
+```ts
+// main.ts
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { enableProdMode, importProvidersFrom, inject, Injector, provideAppInitializer, provideZoneChangeDetection } from '@angular/core';
+import { provideTranslateService, TranslateService } from '@ngx-translate/core';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
+import { AppComponent } from './demos/app.component';
+import { appInitializerFactory } from './demos/app.initializer';
+import { AngularSlickgridComponent, GridOption } from 'angular-slickgrid';
+
+// define Angular-Slickgrid default grid options that are common to all grids
+const gridOptionConfig: GridOption = {
+  enableAutoResize: true,
+  // ...
+};
+
+bootstrapApplication(AppComponent, {
+  providers: [
+    AngularSlickgridComponent,
+    { provide: 'defaultGridOption', useValue: gridOptionConfig },
+
+    // load your App Initializer to pre-fetch your translations
+    provideAppInitializer(() => {
+      const initializerFn = appInitializerFactory(inject(TranslateService), inject(Injector));
+      return initializerFn();
+    }),
+
+    // configure ngx-translate
+    provideTranslateService({
+      fallbackLang: 'en',
+      loader: provideTranslateHttpLoader({ prefix: './assets/i18n/', suffix: '.json' }),
+    }),
+    provideHttpClient(withInterceptorsFromDi()),
+  ],
+}).catch((err) => console.log(err));
+```
+
+### 3. Locales
 
 The final step is that you need the actual translations. Note that `ngx-translate` does not support multiple files, with that in mind see below for the following options that you have.
 

@@ -1,5 +1,12 @@
 import { Component, type OnInit } from '@angular/core';
-import { AngularSlickgridModule, Formatters, type AngularGridInstance, type Column, type Formatter, type GridOption } from '../../library';
+import {
+  AngularSlickgridComponent,
+  Formatters,
+  type AngularGridInstance,
+  type Column,
+  type Formatter,
+  type GridOption,
+} from '../../library';
 
 interface DataItem {
   id: number;
@@ -32,7 +39,7 @@ const customEnableButtonFormatter: Formatter<DataItem> = (_row: number, _cell: n
 
 @Component({
   templateUrl: './example02.component.html',
-  imports: [AngularSlickgridModule],
+  imports: [AngularSlickgridComponent],
 })
 export class Example2Component implements OnInit {
   angularGrid!: AngularGridInstance;

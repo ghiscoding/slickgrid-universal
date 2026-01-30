@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { AngularSlickRowDetailView } from '@slickgrid-universal/angular-row-detail-plugin';
 import {
   Aggregators,
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   Editors,
   Filters,
   Formatters,
@@ -34,7 +34,7 @@ export interface Item {
 
 @Component({
   templateUrl: './example47.component.html',
-  imports: [AngularSlickgridModule, FormsModule],
+  imports: [AngularSlickgridComponent, FormsModule],
 })
 export class Example47Component implements OnDestroy, OnInit {
   private _darkMode = false;

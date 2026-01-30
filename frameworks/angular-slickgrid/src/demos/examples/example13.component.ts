@@ -4,7 +4,7 @@ import { PdfExportService } from '@slickgrid-universal/pdf-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import {
   Aggregators,
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   Filters,
   Formatters,
   GroupTotalFormatters,
@@ -20,7 +20,7 @@ const NB_ITEMS = 5000;
 
 @Component({
   templateUrl: './example13.component.html',
-  imports: [AngularSlickgridModule],
+  imports: [AngularSlickgridComponent],
 })
 export class Example13Component implements OnInit {
   angularGrid!: AngularGridInstance;

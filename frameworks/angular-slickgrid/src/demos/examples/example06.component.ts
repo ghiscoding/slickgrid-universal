@@ -11,7 +11,7 @@ import {
 } from '@slickgrid-universal/graphql';
 import type { Subscription } from 'rxjs';
 import {
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   Filters,
   Formatters,
   unsubscribeAllObservables,
@@ -31,7 +31,7 @@ const FAKE_SERVER_DELAY = 250;
 
 @Component({
   templateUrl: './example06.component.html',
-  imports: [AngularSlickgridModule, DatePipe, FormsModule],
+  imports: [AngularSlickgridComponent, DatePipe, FormsModule],
 })
 export class Example6Component implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];

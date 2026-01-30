@@ -5,7 +5,7 @@ import { PdfExportService } from '@slickgrid-universal/pdf-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import {
   Aggregators,
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   Editors,
   Filters,
   Formatters,
@@ -23,7 +23,7 @@ const NB_ITEMS = 10_000;
 
 @Component({
   templateUrl: './example18.component.html',
-  imports: [AngularSlickgridModule, FormsModule],
+  imports: [AngularSlickgridComponent, FormsModule],
 })
 export class Example18Component implements AfterViewInit, OnInit, OnDestroy {
   private _darkMode = false;
