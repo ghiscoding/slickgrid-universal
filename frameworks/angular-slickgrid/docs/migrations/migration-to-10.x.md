@@ -6,6 +6,7 @@ One of the biggest change in this release is to hide columns by using the `hidde
 - [`hidden` columns](#hidden-columns)
 - [Row Detail (now optional)](#row-detail-now-optional)
 - [ngx-translate@v17](#ngx-translate-v17x-now-required)
+- [Migrating to Standalone Component](#migrating-to-standalone-component)
 
 > **Note:** if you come from an earlier version, please make sure to follow each migrations in their respected order (review previous migration guides)
 
@@ -99,6 +100,42 @@ Because of the Angular v21 upgrade, the user (you) will also need to upgrade [`n
 
 For the complete list of changes, please follow `ngx-translate` migration from their website:
 - https://ngx-translate.org/getting-started/migration-guide/
+
+### Migrating to Standalone Component
+
+Angular-Slickgrid is now a Standalone Component and the `AngularSlickgridModule` was dropped, this also requires you to make some small changes in your App `main.ts` and in all your components that use Angular-Slickgrid.
+
+```diff
+- import { AngularSlickgridModule } from 'angular-slickgrid';
++ import { AngularSlickgridComponent, GridOption } from 'angular-slickgrid';
+
+// optional global Grid Option
++ const gridOptionConfig: GridOption = {
++   // ...
++   sanitizer: (dirtyHtml) => DOMPurify.sanitize(dirtyHtml, { ADD_ATTR: ['level'], RETURN_TRUSTED_TYPE: true }),
++ };
+
+bootstrapApplication(AppComponent, {
+  providers: [
+    importProvidersFrom(
+-     AngularSlickgridModule.forRoot({
+-       // ...
+-       sanitizer: (dirtyHtml) => DOMPurify.sanitize(dirtyHtml, { ADD_ATTR: ['level'], RETURN_TRUSTED_TYPE: true }),
+-     })
+    ),
++   AngularSlickgridComponent,
++   { provide: 'defaultGridOption', useValue: gridOptionConfig },
+    // ...
+  ],
+});
+
+// ... Component
+@Component({
+  // ...
+- imports: [AngularSlickgridModule],
++ imports: [AngularSlickgridComponent],
+})
+```
 
 {% hint style="note" %}
 **Info** the changes in the next few lines were all mentioned in the previous "Migration Guide v9.0". So, if you have already made these changes then you could skip the section below.
