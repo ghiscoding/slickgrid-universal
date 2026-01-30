@@ -11,6 +11,7 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "isolatedDeclarations": true,
+    "isolatedModules": true,
     "noImplicitReturns": true,
     "rootDir": ".",
     "sourceMap": true,
