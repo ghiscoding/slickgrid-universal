@@ -1,7 +1,7 @@
 {
   "name": "slickgrid-react-demo",
   "private": true,
-  "version": "9.12.0",
+  "version": "9.13.0",
   "description": "Slickgrid-React demo",
   "keywords": [
     "react",
@@ -37,10 +37,10 @@
     "bootstrap": "catalog:",
     "dompurify": "catalog:",
     "i18next": "catalog:",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3",
-    "react-i18next": "^16.5.3",
-    "react-router": "^7.12.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-i18next": "^16.5.4",
+    "react-router": "^7.13.0",
     "slickgrid-react": "workspace:*"
   },
   "peerDependencies": {
@@ -54,7 +54,7 @@
     "@popperjs/core": "catalog:",
     "@types/fnando__sparkline": "catalog:",
     "@types/node": "catalog:",
-    "@types/react": "^19.2.8",
+    "@types/react": "^19.2.10",
     "@types/react-dom": "^19.2.3",
     "@types/sortablejs": "catalog:",
     "@vitejs/plugin-react": "catalog:",
