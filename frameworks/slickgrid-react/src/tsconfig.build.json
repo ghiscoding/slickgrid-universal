@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "target": "es2018",
     "lib": ["es2018", "dom"],
     "typeRoots": ["../types", "../../node_modules/@types"],

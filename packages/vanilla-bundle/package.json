@@ -20,7 +20,6 @@
     "/src"
   ],
   "scripts": {
-    "are-types-wrong": "pnpx @arethetypeswrong/cli --pack .",
     "build": "pnpm run clean && tsc",
     "build:incremental": "tsc --incremental --declaration",
     "clean": "remove dist tsconfig.tsbuildinfo",

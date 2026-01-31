@@ -46,7 +46,6 @@
     "url": "https://ko-fi.com/ghiscoding"
   },
   "scripts": {
-    "are-types-wrong": "pnpx @arethetypeswrong/cli --pack .",
     "clean": "remove dist",
     "vue:dev": "cross-env NODE_ENV=development vite build --watch",
     "vue:dev:init": "vite build",
