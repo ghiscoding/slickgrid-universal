@@ -23,6 +23,7 @@
       "error",
       {
         "type": "element",
+        "prefix": ["app", "angular-slickgrid", "swt", "custom"],
         "style": "kebab-case"
       }
     ],

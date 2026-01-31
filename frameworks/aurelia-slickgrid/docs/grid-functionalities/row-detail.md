@@ -417,6 +417,8 @@ export class MainGrid implements OnInit {
     this.gridOptions = {
       enableRowDetailView: true,
       externalResources: [AureliaSlickRowDetailView], // for v10 and above
+
+      // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
       selectionOptions: {
         selectActiveRow: true
       },

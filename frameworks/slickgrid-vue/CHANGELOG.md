@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.13.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.12.0...v9.13.0) (2026-01-30)
+
+### Features
+
+* deprecate `rowSelectionOptions` and rename to `selectionOptions` ([#2325](https://github.com/ghiscoding/slickgrid-universal/issues/2325)) ([ec4d546](https://github.com/ghiscoding/slickgrid-universal/commit/ec4d546b3e0c76edcd12899b16a1f9403550cf0c)) - by @ghiscoding
+* **export:** add new optional PDF Export package ([#2317](https://github.com/ghiscoding/slickgrid-universal/issues/2317)) ([42347f6](https://github.com/ghiscoding/slickgrid-universal/commit/42347f605388d3c080568d8bbe93dcf7c5ed1ff4)) - by @ghiscoding
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#2320](https://github.com/ghiscoding/slickgrid-universal/issues/2320)) ([9d9f7ad](https://github.com/ghiscoding/slickgrid-universal/commit/9d9f7ad9c0d2b7b3ee768b8061dfd646dc75bb81)) - by @renovate-bot
+* **deps:** update all non-major dependencies ([#2342](https://github.com/ghiscoding/slickgrid-universal/issues/2342)) ([3b2a921](https://github.com/ghiscoding/slickgrid-universal/commit/3b2a921ff5cae8de5da78f36d7a625fa79eeb557)) - by @renovate-bot
+
 ## [9.12.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.11.0...v9.12.0) (2025-12-29)
 
 ### Features
