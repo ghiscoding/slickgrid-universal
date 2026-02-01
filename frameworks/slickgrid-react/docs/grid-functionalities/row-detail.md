@@ -67,7 +67,7 @@ const Example: React.FC = () => {
 
         // Row Detail View is a special case because of its requirement to create extra column definition dynamically
         // so it must be pre-registered before SlickGrid is instantiated, we can do so via this option
-        return [{ name: ExtensionName.rowDetailView, instance: rowDetail }];
+        return [{ name: 'rowDetailView', instance: rowDetail }];
       },
       rowDetailView: {
         // We can load the "process" asynchronously via Fetch, Promise, ...
@@ -123,7 +123,7 @@ Row Detail is an addon (commonly known as a plugin and are opt-in addon), becaus
 ```ts
 function changeDetailViewRowCount() {
   if (reactGridRef.current?.extensionService) {
-    const rowDetailInstance = reactGridRef.current?.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView);
+    const rowDetailInstance = reactGridRef.current?.extensionService.getExtensionInstanceByName('rowDetailView');
     const options = rowDetailInstance.getOptions();
     options.panelRows = detailViewRowCount; // change number of rows dynamically
     rowDetailInstance.setOptions(options);
@@ -139,7 +139,7 @@ Same as previous paragraph, after we get the SlickGrid addon instance, we can ca
 ```ts
 function closeAllRowDetail() {
   if (reactGridRef.current?.extensionService) {
-    const rowDetailInstance = reactGridRef.current?.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView);
+    const rowDetailInstance = reactGridRef.current?.extensionService.getExtensionInstanceByName('rowDetailView');
     rowDetailInstance.collapseAll();
   }
 }
@@ -149,7 +149,7 @@ This requires a bit more work, you can call the method `collapseDetailView(item)
 ```ts
 closeRowDetail(gridRowIndex: number) {
   if (reactGridRef.current?.extensionService) {
-    const rowDetailInstance = reactGridRef.current.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView);
+    const rowDetailInstance = reactGridRef.current.extensionService.getExtensionInstanceByName('rowDetailView');
     const item = reactGridRef.current.gridService.getDataItemByRowIndex(gridRowIndex);
     rowDetailInstance.collapseDetailView(item);
   }
@@ -288,7 +288,7 @@ const Example: React.FC = () => {
 
         // Row Detail View is a special case because of its requirement to create extra column definition dynamically
         // so it must be pre-registered before SlickGrid is instantiated, we can do so via this option
-        return [{ name: ExtensionName.rowDetailView, instance: rowDetail }];
+        return [{ name: 'rowDetailView', instance: rowDetail }];
       },
       rowDetailView: {
         // We can load the "process" asynchronously via Fetch, Promise, ...
@@ -351,7 +351,7 @@ const Example: React.FC = () => {
 
         // Row Detail View is a special case because of its requirement to create extra column definition dynamically
         // so it must be pre-registered before SlickGrid is instantiated, we can do so via this option
-        return [{ name: ExtensionName.rowDetailView, instance: rowDetail }];
+        return [{ name: 'rowDetailView', instance: rowDetail }];
       },
       rowDetailView: {
         // ...
@@ -508,7 +508,7 @@ const Example: React.FC = () => {
   }
 
   function getRowDetailInstance() {
-    return reactGridRef.current?.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView);
+    return reactGridRef.current?.extensionService.getExtensionInstanceByName('rowDetailView');
   }
 
   function defineGrid() {
@@ -528,7 +528,7 @@ const Example: React.FC = () => {
 
         // Row Detail View is a special case because of its requirement to create extra column definition dynamically
         // so it must be pre-registered before SlickGrid is instantiated, we can do so via this option
-        return [{ name: ExtensionName.rowDetailView, instance: rowDetail }];
+        return [{ name: 'rowDetailView', instance: rowDetail }];
       },
       rowDetailView: {
         process: (item: any) => simulateServerAsyncCall(item),

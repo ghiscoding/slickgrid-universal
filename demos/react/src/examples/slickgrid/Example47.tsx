@@ -201,7 +201,7 @@ const Example47: React.FC = () => {
       darkMode,
       preRegisterExternalExtensions: (pubSubService) => {
         const rowDetail = new ReactSlickRowDetailView(pubSubService as EventPubSubService);
-        return [{ name: ExtensionName.rowDetailView, instance: rowDetail }];
+        return [{ name: 'rowDetailView', instance: rowDetail }];
       },
       rowDetailView: {
         process: (item) => simulateServerAsyncCall(item),

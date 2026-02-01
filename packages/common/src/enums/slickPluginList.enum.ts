@@ -1,5 +1,5 @@
 import type { SlickEditorLock } from '../core/index.js';
-import type { ExtensionName } from '../enums/index.js';
+import type { ExtensionName, ExtensionNameTypeString } from '../enums/index.js';
 import type {
   SlickAutoTooltip,
   SlickCellExcelCopyManager,
@@ -40,7 +40,7 @@ export type SlickPluginList =
   | SlickRowDetailView
   | SlickRowMoveManager;
 
-export type InferExtensionByName<T extends ExtensionName> = T extends ExtensionName.autoTooltip
+export type InferExtensionByName<T extends ExtensionName | ExtensionNameTypeString> = T extends ExtensionName.autoTooltip
   ? SlickAutoTooltip
   : T extends ExtensionName.cellExternalCopyManager
     ? SlickCellExcelCopyManager

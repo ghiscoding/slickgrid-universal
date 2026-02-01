@@ -1,7 +1,6 @@
 import { Component, type OnInit } from '@angular/core';
 import {
   AngularSlickgridModule,
-  ExtensionName,
   Filters,
   Formatters,
   type AngularGridInstance,
@@ -26,7 +25,7 @@ export class Example16Component implements OnInit {
   }
 
   get rowMoveInstance() {
-    return this.angularGrid?.extensionService?.getExtensionInstanceByName(ExtensionName.rowMoveManager) ?? {};
+    return this.angularGrid?.extensionService?.getExtensionInstanceByName('rowMoveManager') ?? {};
   }
 
   ngOnInit(): void {

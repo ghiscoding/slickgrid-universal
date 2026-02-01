@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker';
 import { type EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { ReactSlickRowDetailView } from '@slickgrid-universal/react-row-detail-plugin';
 import React, { useEffect, useRef, useState } from 'react';
-import { ExtensionName, SlickgridReact, type Column, type GridOption, type SlickgridReactInstance } from 'slickgrid-react';
+import { SlickgridReact, type Column, type GridOption, type SlickgridReactInstance } from 'slickgrid-react';
 import Example45DetailView, { type Distributor, type OrderData } from './Example45-detail-view.js';
 import { Example45Preload } from './Example45-preload.js';
 
@@ -41,7 +41,7 @@ const Example45: React.FC = () => {
   }, [isUsingInnerGridStatePresets]);
 
   function rowDetailInstance() {
-    return reactGridRef.current?.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView) as ReactSlickRowDetailView;
+    return reactGridRef.current?.extensionService.getExtensionInstanceByName('rowDetailView') as ReactSlickRowDetailView;
   }
 
   function getColumnDefinitions(): Column[] {
@@ -159,7 +159,7 @@ const Example45: React.FC = () => {
       darkMode,
       preRegisterExternalExtensions: (pubSubService) => {
         const rowDetail = new ReactSlickRowDetailView(pubSubService as EventPubSubService);
-        return [{ name: ExtensionName.rowDetailView, instance: rowDetail }];
+        return [{ name: 'rowDetailView', instance: rowDetail }];
       },
       rowDetailView: {
         process: (item) => simulateServerAsyncCall(item),

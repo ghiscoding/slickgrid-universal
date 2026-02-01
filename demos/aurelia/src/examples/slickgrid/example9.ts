@@ -1,7 +1,6 @@
 import { I18N } from '@aurelia/i18n';
 import { resolve } from 'aurelia';
 import {
-  ExtensionName,
   Filters,
   Formatters,
   type AureliaGridInstance,
@@ -297,7 +296,7 @@ export class Example9 {
 
   toggleGridMenu(e: MouseEvent) {
     if (this.aureliaGrid?.extensionService) {
-      const gridMenuInstance = this.aureliaGrid.extensionService.getExtensionInstanceByName(ExtensionName.gridMenu);
+      const gridMenuInstance = this.aureliaGrid.extensionService.getExtensionInstanceByName('gridMenu');
       // open the external button Grid Menu, you can also optionally pass Grid Menu options as 2nd argument
       // for example we want to align our external button on the right without affecting the menu within the grid which will stay aligned on the left
       gridMenuInstance.showGridMenu(e, { dropSide: 'right' });

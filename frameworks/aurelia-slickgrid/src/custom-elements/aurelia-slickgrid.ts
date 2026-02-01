@@ -22,7 +22,6 @@ import {
   BackendUtilityService,
   CollectionService,
   emptyElement,
-  ExtensionName,
   ExtensionService,
   ExtensionUtility,
   FilterFactory,
@@ -1522,8 +1521,8 @@ export class AureliaSlickgridCustomElement {
         ) as AureliaSlickRowDetailView;
         this.slickRowDetailView = rowDetailInstance;
         rowDetailInstance.create(this.columns, this.options);
-        this.extensionService.addExtensionToList(ExtensionName.rowDetailView, {
-          name: ExtensionName.rowDetailView,
+        this.extensionService.addExtensionToList('rowDetailView', {
+          name: 'rowDetailView',
           instance: this.slickRowDetailView,
         });
       }

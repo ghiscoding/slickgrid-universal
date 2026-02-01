@@ -206,3 +206,14 @@ For example:
 
 Wait, are we already talking about the version 11 when version 10 just shipped? That is correct, I'm already thinking about the next major version, which will be in about a year from now. I can already say that the main focus will be around the use of native [CSS anchor positioning](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning) to replace JS code for positioning menus, tooltips, etc... which will help decreasing the build size by using fully native code. CSS anchoring has been around in Chrome for a while but is quite recent in Firefox, so for that reason I'm postponing it for next year.
 
+### Code being `@deprecated` (to be removed in the future, 2027-Q1)
+#### You can already start using these new options and props (shown below) in v9.0 and above.
+
+Deprecating `ExtensionName` enum which will be replaced by its string literal type, for example:
+
+| Enum Name        | from `enum`         | to string `type`    |
+| ---------------- | ------------------- | ------------------- |
+| `ExtensionName`  | `ExtensionName.autoTooltip` | `'autoTooltip'`         |
+|                  | `ExtensionName.draggableGrouping`   | `'draggableGrouping'`          |
+|                  | `ExtensionName.draggableGrouping`   | `'draggableGrouping'`          |
+| ... | ... | ... |
