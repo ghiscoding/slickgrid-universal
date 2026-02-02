@@ -148,8 +148,8 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
   sortService: SortService;
   treeDataService: TreeDataService;
 
-  @Input() customDataView: any;
-  @Input() gridId = '';
+  @Input() readonly customDataView: any;
+  @Input() readonly gridId = '';
   @Input() options: GridOption = {};
 
   @Input()
