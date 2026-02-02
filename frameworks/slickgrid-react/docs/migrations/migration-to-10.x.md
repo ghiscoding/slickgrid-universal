@@ -221,7 +221,7 @@ Deprecating `ExtensionName` enum which will be replaced by its string literal ty
 | ---------------- | ------------------- | ------------------- |
 | `ExtensionName`  | `ExtensionName.autoTooltip` | `'autoTooltip'`         |
 |                  | `ExtensionName.draggableGrouping`   | `'draggableGrouping'`          |
-|                  | `ExtensionName.draggableGrouping`   | `'draggableGrouping'`          |
+|                  | `ExtensionName.rowDetail`   | `'rowDetail'`          |
 | ... | ... | ... |
 
 **Hint** You can use VSCode search & replace, but make sure it's set to Regular Expression pattern
