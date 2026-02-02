@@ -147,6 +147,12 @@ Below is a list of Enums that you need to replace with their associated string l
 |             | `SortDirection.DESC`   | `'DESC'` or `'desc'`  |
 |  | ... | ... |
 
+**Hint** You can use VSCode search & replace, but make sure it's set to Regular Expression pattern
+
+| Search (regex)                      | Replace |
+| ------------------------------ | -------- |
+| `FieldType\.([a-z_]+)(.*)` | `'$1'$2`      |
+
 #### renaming `editorOptions` and `filterOptions` to a more generic `options` property
 
 ```diff
@@ -231,3 +237,9 @@ Deprecating `ExtensionName` enum which will be replaced by its string literal ty
 |                  | `ExtensionName.draggableGrouping`   | `'draggableGrouping'`          |
 |                  | `ExtensionName.draggableGrouping`   | `'draggableGrouping'`          |
 | ... | ... | ... |
+
+**Hint** You can use VSCode search & replace, but make sure it's set to Regular Expression pattern
+
+| Search (regex)                      | Replace |
+| ------------------------------ | -------- |
+| `ExtensionName\.([a-z_]+)(.*)` | `'$1'$2`      |
