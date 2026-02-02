@@ -112,7 +112,7 @@ function defineGrid() {
 }
 
 // function getRowMoveInstance() {
-//   return vueGrid.extensionService.getExtensionInstanceByName(ExtensionName.rowMoveManager);
+//   return vueGrid.extensionService.getExtensionInstanceByName('rowMoveManager');
 // }
 
 function getData(count: number) {

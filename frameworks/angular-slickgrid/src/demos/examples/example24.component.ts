@@ -4,7 +4,6 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import type { Subscription } from 'rxjs';
 import {
   AngularSlickgridComponent,
-  ExtensionName,
   Filters,
   Formatters,
   unsubscribeAllObservables,
@@ -85,11 +84,11 @@ export class Example24Component implements OnInit, OnDestroy {
   }
 
   get cellMenuInstance() {
-    return this.angularGrid?.extensionService?.getExtensionInstanceByName(ExtensionName.cellMenu);
+    return this.angularGrid?.extensionService?.getExtensionInstanceByName('cellMenu');
   }
 
   get contextMenuInstance() {
-    return this.angularGrid?.extensionService?.getExtensionInstanceByName(ExtensionName.contextMenu);
+    return this.angularGrid?.extensionService?.getExtensionInstanceByName('contextMenu');
   }
 
   ngOnInit() {

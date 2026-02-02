@@ -3,7 +3,6 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export';
 // import { TOptions as I18NOptions } from 'i18next';
 import { resolve } from 'aurelia';
 import {
-  ExtensionName,
   Filters,
   Formatters,
   type AureliaGridInstance,
@@ -78,11 +77,11 @@ export class Example24 {
   }
 
   get cellMenuInstance() {
-    return this.aureliaGrid?.extensionService.getExtensionInstanceByName(ExtensionName.cellMenu);
+    return this.aureliaGrid?.extensionService.getExtensionInstanceByName('cellMenu');
   }
 
   get contextMenuInstance() {
-    return this.aureliaGrid?.extensionService.getExtensionInstanceByName(ExtensionName.contextMenu);
+    return this.aureliaGrid?.extensionService.getExtensionInstanceByName('contextMenu');
   }
 
   attached() {

@@ -111,7 +111,7 @@ Row Detail is an addon (commonly known as a plugin and are opt-in addon), becaus
 ```ts
 function changeDetailViewRowCount() {
   if (vueGrid?.extensionService) {
-    const rowDetailInstance = vueGrid.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView);
+    const rowDetailInstance = vueGrid.extensionService.getExtensionInstanceByName('rowDetailView');
     const options = rowDetailInstance.getOptions();
     options.panelRows = detailViewRowCount; // change number of rows dynamically
     rowDetailInstance.setOptions(options);
@@ -127,7 +127,7 @@ Same as previous paragraph, after we get the SlickGrid addon instance, we can ca
 ```ts
 function closeAllRowDetail() {
   if (vueGrid && vueGrid.extensionService) {
-    const rowDetailInstance = vueGrid.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView);
+    const rowDetailInstance = vueGrid.extensionService.getExtensionInstanceByName('rowDetailView');
     rowDetailInstance.collapseAll();
   }
 }
@@ -137,7 +137,7 @@ This requires a bit more work, you can call the method `collapseDetailView(item)
 ```ts
 function closeRowDetail(gridRowIndex: number) {
   if (vueGrid && vueGrid.extensionService) {
-    const rowDetailInstance = vueGrid.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView);
+    const rowDetailInstance = vueGrid.extensionService.getExtensionInstanceByName('rowDetailView');
     const item = vueGrid.gridService.getDataItemByRowIndex(gridRowIndex);
     rowDetailInstance.collapseDetailView(item);
   }

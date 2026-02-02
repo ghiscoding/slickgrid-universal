@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "target": "es2021",
     "lib": ["es2021", "dom"],
     "types": ["node"],
@@ -11,6 +11,7 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "isolatedDeclarations": true,
+    "isolatedModules": true,
     "noImplicitReturns": true,
     "rootDir": ".",
     "sourceMap": true,

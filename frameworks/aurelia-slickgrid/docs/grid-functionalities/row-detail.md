@@ -111,7 +111,7 @@ Row Detail is an addon (commonly known as a plugin and are opt-in addon), becaus
 ```ts
 changeDetailViewRowCount() {
   if (this.aureliaGrid?.extensionService) {
-    const rowDetailInstance = this.aureliaGrid.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView);
+    const rowDetailInstance = this.aureliaGrid.extensionService.getExtensionInstanceByName('rowDetailView');
     const options = rowDetailInstance.getOptions();
     options.panelRows = this.detailViewRowCount; // change number of rows dynamically
     rowDetailInstance.setOptions(options);
@@ -127,7 +127,7 @@ Same as previous paragraph, after we get the SlickGrid addon instance, we can ca
 ```ts
 closeAllRowDetail() {
   if (this.aureliaGrid && this.aureliaGrid.extensionService) {
-    const rowDetailInstance = this.aureliaGrid.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView);
+    const rowDetailInstance = this.aureliaGrid.extensionService.getExtensionInstanceByName('rowDetailView');
     rowDetailInstance.collapseAll();
   }
 }
@@ -137,7 +137,7 @@ This requires a bit more work, you can call the method `collapseDetailView(item)
 ```ts
 closeRowDetail(gridRowIndex: number) {
   if (this.aureliaGrid && this.aureliaGrid.extensionService) {
-    const rowDetailInstance = this.aureliaGrid.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView);
+    const rowDetailInstance = this.aureliaGrid.extensionService.getExtensionInstanceByName('rowDetailView');
     const item = this.aureliaGrid.gridService.getDataItemByRowIndex(gridRowIndex);
     rowDetailInstance.collapseDetailView(item);
   }
@@ -397,7 +397,7 @@ export class MainGrid implements OnInit {
   dataset: Distributor[] = [];
 
   get rowDetailInstance(): SlickRowDetailView {
-    return this.aureliaGrid?.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView);
+    return this.aureliaGrid?.extensionService.getExtensionInstanceByName('rowDetailView');
   }
 
   aureliaGridReady(aureliaGrid: AureliaGridInstance) {
@@ -417,6 +417,8 @@ export class MainGrid implements OnInit {
     this.gridOptions = {
       enableRowDetailView: true,
       externalResources: [AureliaSlickRowDetailView], // for v10 and above
+
+      // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
       selectionOptions: {
         selectActiveRow: true
       },
@@ -424,7 +426,7 @@ export class MainGrid implements OnInit {
         // Row Detail View is a special case because of its requirement to create extra column definition dynamically
         // so it must be pre-registered before SlickGrid is instantiated, we can do so via this option
         const rowDetail = new SlickRowDetailView(pubSubService as EventPubSubService);
-        return [{ name: ExtensionName.rowDetailView, instance: rowDetail }];
+        return [{ name: 'rowDetailView', instance: rowDetail }];
       },
       rowDetailView: {
         process: (item: any) => simulateServerAsyncCall(item),

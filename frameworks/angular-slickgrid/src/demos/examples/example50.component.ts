@@ -2,10 +2,10 @@ import { Component, type OnInit } from '@angular/core';
 import {
   AngularSlickgridComponent,
   Formatters,
-  OnClickEventArgs,
   type AngularGridInstance,
   type Column,
   type GridOption,
+  type OnClickEventArgs,
 } from '../../library';
 
 export interface Customer {

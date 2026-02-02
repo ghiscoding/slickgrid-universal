@@ -14,7 +14,7 @@ const viewContainerRefStub = {
 @Component({ template: `<h4>Loading...</h4>`, standalone: false })
 class TestPreloadComponent {}
 
-@Component({ template: `<h1>{{ title }}</h1>` })
+@Component({ template: `<h1>{{ title }}</h1>`, standalone: false })
 class TestComponent {
   title = '';
 }

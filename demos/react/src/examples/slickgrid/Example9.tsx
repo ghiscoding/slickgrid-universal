@@ -2,7 +2,6 @@ import i18next from 'i18next';
 import React, { useEffect, useRef, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import {
-  ExtensionName,
   Filters,
   Formatters,
   SlickgridReact,
@@ -296,7 +295,7 @@ const Example9: React.FC = () => {
 
   function toggleGridMenu(e: MouseEvent) {
     if (reactGridRef.current?.extensionService) {
-      const gridMenuInstance = reactGridRef.current.extensionService.getExtensionInstanceByName(ExtensionName.gridMenu);
+      const gridMenuInstance = reactGridRef.current.extensionService.getExtensionInstanceByName('gridMenu');
       gridMenuInstance.showGridMenu(e, { dropSide: 'right' });
     }
   }

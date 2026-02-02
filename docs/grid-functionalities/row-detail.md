@@ -68,7 +68,7 @@ export default class Example21 {
         // Row Detail View is a special case because of its requirement to create extra column definition dynamically
         // so it must be pre-registered before SlickGrid is instantiated, we can do so via this option
         this.rowDetail = new SlickRowDetailView(pubSubService);
-        return [{ name: ExtensionName.rowDetailView, instance: this.rowDetail }];
+        return [{ name: 'rowDetailView', instance: this.rowDetail }];
       },
       rowDetailView: {
         // We can load the "process" asynchronously via Fetch, Promise, ...
@@ -181,7 +181,7 @@ This requires a bit more work, you can call the method `collapseDetailView(item)
 ```ts
 closeRowDetail(gridRowIndex: number) {
   if (this.sgb) {
-    const rowDetailInstance = this.sgb.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView);
+    const rowDetailInstance = this.sgb.extensionService.getExtensionInstanceByName('rowDetailView');
     const item = this.sgb.gridService.getDataItemByRowIndex(gridRowIndex);
     rowDetailInstance.collapseDetailView(item);
   }
@@ -234,7 +234,7 @@ export class Example {
         // Row Detail View is a special case because of its requirement to create extra column definition dynamically
         // so it must be pre-registered before SlickGrid is instantiated, we can do so via this option
         const rowDetail = new SlickRowDetailView(pubSubService as EventPubSubService);
-        return [{ name: ExtensionName.rowDetailView, instance: rowDetail }];
+        return [{ name: 'rowDetailView', instance: rowDetail }];
       },
       rowDetailView: {
         // We can load the "process" asynchronously via Fetch, Promise, ...

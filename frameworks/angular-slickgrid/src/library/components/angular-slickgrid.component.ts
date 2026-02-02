@@ -21,7 +21,6 @@ import {
   BackendUtilityService,
   CollectionService,
   emptyElement,
-  ExtensionName,
   ExtensionService,
   ExtensionUtility,
   ExternalResourceConstructor,
@@ -85,7 +84,13 @@ export interface AngularSlickRowDetailView {
 
 @Component({
   selector: 'angular-slickgrid',
-  templateUrl: './angular-slickgrid.component.html',
+  template: `
+    <div id="slickGridContainer-{{ gridId }}" class="gridPane">
+      <ng-container *ngTemplateOutlet="slickgridHeader"></ng-container>
+      <div [attr.id]="gridId" class="slickgrid-container"></div>
+      <ng-container *ngTemplateOutlet="slickgridFooter"></ng-container>
+    </div>
+  `,
   providers: [AngularUtilService, TranslaterService], // make everything transient (non-singleton)
   imports: [NgTemplateOutlet],
 })
@@ -1609,8 +1614,8 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
         ) as AngularSlickRowDetailView;
         this.slickRowDetailView = rowDetailInstance;
         rowDetailInstance.create(this.columns, this.options);
-        this.extensionService.addExtensionToList(ExtensionName.rowDetailView, {
-          name: ExtensionName.rowDetailView,
+        this.extensionService.addExtensionToList('rowDetailView', {
+          name: 'rowDetailView',
           instance: this.slickRowDetailView,
         });
       }

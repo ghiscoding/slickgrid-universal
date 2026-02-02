@@ -231,7 +231,7 @@ export class SlickCellExternalCopyManager {
 
   protected decodeTabularData(grid: SlickGrid, clipText: string): void {
     const columns = grid.getColumns();
-    const clipRows = clipText.replace('\r\n', '\n').split(/[\n\f\r](?=(?:[^"]*"[^"]*")*[^"]*$)/);
+    const clipRows = clipText.replaceAll('\r\n', '\n').split(/[\n\f\r](?=(?:[^"]*"[^"]*")*[^"]*$)/);
 
     // trim trailing CR if present
     if (clipRows[clipRows.length - 1] === '') {
@@ -242,16 +242,14 @@ export class SlickCellExternalCopyManager {
     const clippedRange: any[] = [];
 
     for (const clipRow of clipRows) {
-      if (clipRow.startsWith('"') && clipRow.endsWith('"')) {
-        clippedRange[j++] = [
-          clipRow
-            .replaceAll('\n', this._addonOptions.replaceNewlinesWith || '\n')
-            .replaceAll('\r', '')
-            .replaceAll('"', this._addonOptions.removeDoubleQuotesOnPaste ? '' : '"'),
-        ];
-      } else {
-        clippedRange[j++] = clipRow.split('\t');
-      }
+      const jNext = j++;
+      const splitRegex = /\t(?=(?:[^"]*"[^"]*")*[^"]*$)/;
+      clippedRange[jNext] = clipRow.split(splitRegex).map((item) =>
+        item
+          .replaceAll('\n', this._addonOptions.replaceNewlinesWith || '\n')
+          .replaceAll('\r', '')
+          .replaceAll('"', this._addonOptions.removeDoubleQuotesOnPaste ? '' : '"')
+      );
     }
     const selectedCell = this._grid.getActiveCell();
     const ranges = this._grid.getSelectionModel()?.getSelectedRanges();
