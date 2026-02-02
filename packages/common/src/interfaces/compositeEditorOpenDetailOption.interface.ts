@@ -19,6 +19,9 @@ export interface CompositeEditorSelection {
 }
 
 export interface CompositeEditorOpenDetailOption {
+  /** Defaults to 'dialog', the HTML element type to use for the Composite Editor modal dialog */
+  domElementType?: 'dialog' | 'div';
+
   /**
    * Composite Editor modal header title with support to optional parsing and HTML rendering of any item property pulled from the dataContext, via template {{ }}
    * for example:
@@ -114,7 +117,7 @@ export interface CompositeEditorOpenDetailOption {
   onError?: (error: OnErrorOption) => void;
 
   /** onRendered callback allows the user to optionally execute something after the modal is created and rendered in the DOM (for example add Bootstrap `bs-data-theme="dark"` attribute to the modal element) */
-  onRendered?: (modalElm: HTMLDialogElement) => void;
+  onRendered?: (modalElm: HTMLDialogElement | HTMLDivElement) => void;
 
   /**
    * onSave callback will be triggered (when defined) after user clicked the save/apply button,
