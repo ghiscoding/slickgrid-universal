@@ -179,6 +179,12 @@ Below is a list of Enums being deprecated and you should think about migrating t
 |             | `SortDirection.DESC`   | `'DESC'` or `'desc'`  |
 |  | ... | ... |
 
+**Hint** You can use VSCode search & replace, but make sure it's set to Regular Expression pattern
+
+| Search (regex)                      | Replace |
+| ------------------------------ | -------- |
+| `FieldType\.([a-z_]+)(.*)` | `'$1'$2`      |
+
 
 ##### deprecating `editorOptions` and `filterOptions`, they are being renamed as a more generic `options` name
 
