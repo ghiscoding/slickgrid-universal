@@ -124,11 +124,8 @@ describe('Example 23 - Range Filters', () => {
 
   it('should change the "Finish" date in the picker and expect all rows to be within new dates range', () => {
     cy.get('.date-picker.search-filter.filter-finish').click();
-
     cy.get('[data-vc-date-selected="first"]').should('exist');
-
     cy.get('[data-vc-date-selected="middle"]').should('have.length.gte', 2);
-
     cy.get('[data-vc-date-selected="last"]').should('exist');
   });
 
@@ -137,9 +134,7 @@ describe('Example 23 - Range Filters', () => {
     const newMax = 40;
 
     cy.get('[data-test=clear-filters]').click({ force: true });
-
     cy.get('.search-filter.filter-duration').focus().type(`${newMin}..${newMax}`);
-
     cy.get('#grid23')
       .find('.slick-row')
       .each(($row, idx) => {
