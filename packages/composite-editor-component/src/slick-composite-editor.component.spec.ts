@@ -478,6 +478,26 @@ describe('CompositeEditorService', () => {
       expect(itemDetailsContainerElm[3].classList.contains('editor-middleName')).toBe(true);
     });
 
+    it('should make sure Slick-Composite-Editor is being created as <div> when domElementType is "div"', () => {
+      const copyColumnsMock: Column[] = createNewColumDefinitions(8);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(copyColumnsMock);
+      const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+
+      component = new SlickCompositeEditorComponent();
+      component.init(gridStub, container);
+      component.openDetails({ domElementType: 'div', headerTitle: 'Details' });
+
+      const compositeContainerDivElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContainerDialogElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+
+      expect(component).toBeTruthy();
+      expect(component.constructor).toBeDefined();
+      expect(compositeContainerDivElm).toBeTruthy();
+      expect(compositeContainerDialogElm).toBeFalsy();
+      expect(compositeContainerDivElm.hasAttribute('open')).toBeFalsy(); // <div> doesn't have open attribute
+    });
+
     it('should make sure Slick-Composite-Editor is being created and rendered with 2 columns layout when having more than 8 but less than 15 column definitions', () => {
       const copyColumnsMock: Column[] = createNewColumDefinitions(8);
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(copyColumnsMock);
