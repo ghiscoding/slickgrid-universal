@@ -43,7 +43,7 @@ export class Example19Component implements OnDestroy, OnInit {
     return this.angularGrid.extensions.rowDetailView?.instance || {};
 
     // OR option 2
-    // return this.angularGrid?.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView) || {};
+    // return this.angularGrid?.extensionService.getExtensionInstanceByName('rowDetailView') || {};
   }
 
   ngOnInit(): void {

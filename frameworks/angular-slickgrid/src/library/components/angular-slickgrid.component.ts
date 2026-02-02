@@ -20,7 +20,6 @@ import {
   BackendUtilityService,
   CollectionService,
   emptyElement,
-  ExtensionName,
   ExtensionService,
   ExtensionUtility,
   ExternalResourceConstructor,
@@ -1614,8 +1613,8 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
         ) as AngularSlickRowDetailView;
         this.slickRowDetailView = rowDetailInstance;
         rowDetailInstance.create(this.columns, this.options);
-        this.extensionService.addExtensionToList(ExtensionName.rowDetailView, {
-          name: ExtensionName.rowDetailView,
+        this.extensionService.addExtensionToList('rowDetailView', {
+          name: 'rowDetailView',
           instance: this.slickRowDetailView,
         });
       }

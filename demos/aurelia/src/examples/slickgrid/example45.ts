@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { AureliaSlickRowDetailView } from '@slickgrid-universal/aurelia-row-detail-plugin';
 import { bindable } from 'aurelia';
-import { ExtensionName, type AureliaGridInstance, type Column, type GridOption } from 'aurelia-slickgrid';
+import { type AureliaGridInstance, type Column, type GridOption } from 'aurelia-slickgrid';
 import { Example45DetailView, type Distributor, type OrderData } from './example45-detail-view.js';
 import { Example45Preload } from './example45-preload.js';
 
@@ -22,7 +22,7 @@ export class Example45 {
   hideSubTitle = false;
 
   get rowDetailInstance() {
-    return this.aureliaGrid?.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView) as AureliaSlickRowDetailView;
+    return this.aureliaGrid?.extensionService.getExtensionInstanceByName('rowDetailView') as AureliaSlickRowDetailView;
   }
 
   aureliaGridReady(aureliaGrid: AureliaGridInstance) {

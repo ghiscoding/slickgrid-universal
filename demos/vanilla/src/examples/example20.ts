@@ -2,7 +2,6 @@ import { BindingEventService } from '@slickgrid-universal/binding';
 import {
   createDomElement,
   Editors,
-  ExtensionName,
   Filters,
   Formatters,
   SlickEventHandler,
@@ -177,7 +176,7 @@ export default class Example20 {
         // Row Detail View is a special case because of its requirement to create extra column definition dynamically
         // so it must be pre-registered before SlickGrid is instantiated, we can do so via this option
         this.rowDetail = new SlickRowDetailView(pubSubService);
-        return [{ name: ExtensionName.rowDetailView, instance: this.rowDetail }];
+        return [{ name: 'rowDetailView', instance: this.rowDetail }];
       },
       rowHeight: 33,
       rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"

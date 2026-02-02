@@ -2,7 +2,6 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { useTranslation } from 'i18next-vue';
 import {
-  ExtensionName,
   Filters,
   Formatters,
   SlickgridVue,
@@ -391,11 +390,11 @@ function executeCommand(_e: any, args: any) {
 }
 
 function getCellMenuInstance() {
-  return vueGrid?.extensionService.getExtensionInstanceByName(ExtensionName.cellMenu);
+  return vueGrid?.extensionService.getExtensionInstanceByName('cellMenu');
 }
 
 function getContextMenuInstance() {
-  return vueGrid?.extensionService.getExtensionInstanceByName(ExtensionName.contextMenu);
+  return vueGrid?.extensionService.getExtensionInstanceByName('contextMenu');
 }
 
 function getData(count: number): any[] {

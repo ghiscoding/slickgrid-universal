@@ -1,7 +1,7 @@
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { dequal } from 'dequal/lite';
 import { SlickEventHandler, type SlickDataView, type SlickGrid } from '../core/index.js';
-import { ExtensionName } from '../enums/index.js';
+import { ExtensionName, type ExtensionNameTypeString } from '../enums/index.js';
 import type {
   Column,
   CurrentColumn,
@@ -414,7 +414,7 @@ export class GridStateService {
   resetRowSelectionWhenRequired(): void {
     if (!this.needToPreserveRowSelection() && (this._gridOptions.enableSelection || this._gridOptions.enableCheckboxSelector)) {
       // this also requires the Hybrid Selection OR Row Selection Model to be registered as well
-      if (this.extensionService?.getExtensionByName?.(ExtensionName.hybridSelection)?.instance) {
+      if (this.extensionService?.getExtensionByName?.('hybridSelection')?.instance) {
         this._grid.setSelectedRows([]);
       }
     }
@@ -472,8 +472,8 @@ export class GridStateService {
     );
 
     // Subscribe to ColumnPicker and/or GridMenu for show/hide Columns visibility changes
-    this.bindExtensionAddonEventToGridStateChange(ExtensionName.columnPicker, 'onColumnsChanged');
-    this.bindExtensionAddonEventToGridStateChange(ExtensionName.gridMenu, 'onColumnsChanged');
+    this.bindExtensionAddonEventToGridStateChange('columnPicker', 'onColumnsChanged');
+    this.bindExtensionAddonEventToGridStateChange('gridMenu', 'onColumnsChanged');
 
     // subscribe to Column Resize & Reordering
     this.bindSlickGridColumnChangeEventToGridStateChange('onColumnsReordered', grid);
@@ -573,7 +573,7 @@ export class GridStateService {
    * @param extension name
    * @param event name
    */
-  protected bindExtensionAddonEventToGridStateChange(extensionName: ExtensionName, eventName: string): void {
+  protected bindExtensionAddonEventToGridStateChange(extensionName: ExtensionName | ExtensionNameTypeString, eventName: string): void {
     const extension = this.extensionService?.getExtensionByName?.(extensionName);
     const slickEvent = extension?.instance?.[eventName];
     const isIncludingHiddenProps = !!this._gridOptions.gridStateIncludeHiddenProps;

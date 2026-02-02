@@ -3,7 +3,6 @@ import i18next from 'i18next';
 import React, { useEffect, useRef, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import {
-  ExtensionName,
   Filters,
   Formatters,
   SlickgridReact,
@@ -85,11 +84,11 @@ const Example24: React.FC = () => {
   }
 
   function cellMenuInstance() {
-    return reactGridRef.current?.extensionService.getExtensionInstanceByName(ExtensionName.cellMenu);
+    return reactGridRef.current?.extensionService.getExtensionInstanceByName('cellMenu');
   }
 
   function contextMenuInstance() {
-    return reactGridRef.current?.extensionService.getExtensionInstanceByName(ExtensionName.contextMenu);
+    return reactGridRef.current?.extensionService.getExtensionInstanceByName('contextMenu');
   }
 
   /* Define grid Options and Columns */
