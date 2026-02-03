@@ -1,6 +1,6 @@
-import { copyfiles } from 'native-copyfiles';
 import { exec } from 'node:child_process';
 import { basename } from 'node:path';
+import { copyfiles } from 'native-copyfiles';
 
 /**
  * Special script used by the Watch in Development which will compile TypeScript files with tsc incremental and/or SASS files when changes occurs.
@@ -31,7 +31,7 @@ async function run() {
     for (const changedFile of changedFiles) {
       const fileWithExtension = basename(changedFile);
       const relativeFile = `./src/styles/${fileWithExtension}`;
-      copyfiles([relativeFile, 'dist/styles/sass'], { flat: true }, (err) => {
+      copyfiles([relativeFile], 'dist/styles/sass', { flat: true }, (err) => {
         err ? console.error(err) : console.log(`Copied "${fileWithExtension}" to "dist/styles/sass"`);
       });
     }
