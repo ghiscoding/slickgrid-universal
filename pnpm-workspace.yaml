@@ -54,6 +54,7 @@ onlyBuiltDependencies:
   - cypress
 
 overrides:
+  '@isaacs/brace-expansion': ^5.0.1
   '@angular/build>vite': 'catalog:vite6'
   '@vitejs/plugin-basic-ssl>vite': 'catalog:vite7'
   '@vitest/coverage-v8>vite': 'npm:rolldown-vite@latest'
