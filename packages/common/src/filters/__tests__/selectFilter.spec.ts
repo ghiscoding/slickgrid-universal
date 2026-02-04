@@ -1034,6 +1034,32 @@ describe('SelectFilter', () => {
       });
     }));
 
+  it('should NOT populate the multi-select when "collectionLazy" Promise rejects', () =>
+    new Promise(async (done: any) => {
+      const spyCallback = vi.spyOn(filterArguments, 'callback');
+      const mockCollection = ['male', 'female', 'other'];
+      mockColumn.filter!.collection = undefined;
+      mockColumn.filter!.collectionLazy = () => {
+        return Promise.reject('some error');
+      };
+
+      filterArguments.searchTerms = ['female'];
+      await filter.init(filterArguments);
+      await filter.msInstance?.open(null);
+
+      setTimeout(() => {
+        const msData = filter.msInstance?.getData() || [];
+        const selectDropElm = filter.msInstance?.getDropElement();
+        const filterListElm = selectDropElm?.querySelectorAll<HTMLInputElement>('ul>li input[type=checkbox]');
+        const okBtnElm = selectDropElm?.querySelector('.ms-ok-button') as HTMLButtonElement;
+        okBtnElm?.click();
+        expect(msData.length).toBe(0);
+        expect(filterListElm?.length).toBe(0);
+        filter.msInstance?.close();
+        done();
+      });
+    }));
+
   it('should create the multi-select filter with a default search term when using "collectionLazy" as a Promise with content to simulate http-client', () =>
     new Promise(async (done: any) => {
       const spyCallback = vi.spyOn(filterArguments, 'callback');
