@@ -4,6 +4,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.13.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.12.0...v9.13.0) (2026-01-30)
+
+### Features
+
+* deprecate `rowSelectionOptions` and rename to `selectionOptions` ([#2325](https://github.com/ghiscoding/slickgrid-universal/issues/2325)) ([ec4d546](https://github.com/ghiscoding/slickgrid-universal/commit/ec4d546b3e0c76edcd12899b16a1f9403550cf0c)) - by @ghiscoding
+* **export:** add new optional PDF Export package ([#2317](https://github.com/ghiscoding/slickgrid-universal/issues/2317)) ([42347f6](https://github.com/ghiscoding/slickgrid-universal/commit/42347f605388d3c080568d8bbe93dcf7c5ed1ff4)) - by @ghiscoding
+* update to latest Aurelia 2 RC.0 ([#2315](https://github.com/ghiscoding/slickgrid-universal/issues/2315)) ([4ea46a6](https://github.com/ghiscoding/slickgrid-universal/commit/4ea46a619e214f5272c364d57d51336c37845035)) - by @ghiscoding
+
 ## [9.12.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.11.0...v9.12.0) (2025-12-29)
 
 ### Features

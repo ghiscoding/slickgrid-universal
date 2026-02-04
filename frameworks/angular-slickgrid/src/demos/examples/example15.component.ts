@@ -3,7 +3,7 @@ import { format as tempoFormat } from '@formkit/tempo';
 import { TranslateService } from '@ngx-translate/core';
 import type { Subscription } from 'rxjs';
 import {
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   Filters,
   Formatters,
   unsubscribeAllObservables,
@@ -24,7 +24,7 @@ const NB_ITEMS = 500;
 
 @Component({
   templateUrl: './example15.component.html',
-  imports: [AngularSlickgridModule],
+  imports: [AngularSlickgridComponent],
 })
 export class Example15Component implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];

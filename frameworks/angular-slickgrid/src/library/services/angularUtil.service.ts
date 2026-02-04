@@ -1,4 +1,4 @@
-import { Injectable, ViewContainerRef } from '@angular/core';
+import { Inject, Injectable, ViewContainerRef } from '@angular/core';
 import type { EmbeddedViewRef, EnvironmentInjector, Injector, NgModuleRef, Type } from '@angular/core';
 import type { AngularComponentOutput } from '../models/angularComponentOutput.interface';
 
@@ -13,7 +13,7 @@ interface CreateComponentOption {
 
 @Injectable()
 export class AngularUtilService {
-  constructor(private vcr: ViewContainerRef) {}
+  constructor(@Inject(ViewContainerRef) private vcr: ViewContainerRef) {}
 
   createInteractiveAngularComponent<C>(
     component: Type<C>,

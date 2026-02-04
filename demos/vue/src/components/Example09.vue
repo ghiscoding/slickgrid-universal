@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useTranslation } from 'i18next-vue';
 import {
-  ExtensionName,
   Filters,
   Formatters,
   SlickgridVue,
@@ -281,7 +280,7 @@ function generatePhoneNumber() {
 
 function toggleGridMenu(e: MouseEvent) {
   if (vueGrid?.extensionService) {
-    const gridMenuInstance = vueGrid.extensionService.getExtensionInstanceByName(ExtensionName.gridMenu);
+    const gridMenuInstance = vueGrid.extensionService.getExtensionInstanceByName('gridMenu');
     // open the external button Grid Menu, you can also optionally pass Grid Menu options as 2nd argument
     // for example we want to align our external button on the right without affecting the menu within the grid which will stay aligned on the left
     gridMenuInstance.showGridMenu(e, { dropSide: 'right' });

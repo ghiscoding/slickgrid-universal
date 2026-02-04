@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { faker } from '@faker-js/faker';
 import { VueSlickRowDetailView } from '@slickgrid-universal/vue-row-detail-plugin';
-import { ExtensionName, SlickgridVue, type Column, type GridOption, type SlickgridVueInstance } from 'slickgrid-vue';
+import { SlickgridVue, type Column, type GridOption, type SlickgridVueInstance } from 'slickgrid-vue';
 import { computed, onBeforeMount, onUnmounted, ref, type Ref } from 'vue';
 import Example45Detail, { type Distributor, type OrderData } from './Example45Detail.vue';
 import Example45Preload from './Example45Preload.vue';
@@ -19,9 +19,7 @@ const showSubTitle = ref(true);
 const serverWaitDelay = ref(FAKE_SERVER_DELAY); // server simulation with default of 250ms but 50ms for Cypress tests
 let vueGrid!: SlickgridVueInstance;
 
-const rowDetailInstance = computed(
-  () => vueGrid?.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView) as VueSlickRowDetailView
-);
+const rowDetailInstance = computed(() => vueGrid?.extensionService.getExtensionInstanceByName('rowDetailView') as VueSlickRowDetailView);
 
 onBeforeMount(() => {
   defineGrid();

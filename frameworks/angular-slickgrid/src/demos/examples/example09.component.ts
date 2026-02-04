@@ -2,8 +2,7 @@ import { Component, signal, ViewEncapsulation, type OnDestroy, type OnInit } fro
 import { TranslateService } from '@ngx-translate/core';
 import type { Subscription } from 'rxjs';
 import {
-  AngularSlickgridModule,
-  ExtensionName,
+  AngularSlickgridComponent,
   Filters,
   Formatters,
   unsubscribeAllObservables,
@@ -17,7 +16,7 @@ import {
   templateUrl: './example09.component.html',
   styleUrls: ['./example09.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  imports: [AngularSlickgridModule],
+  imports: [AngularSlickgridComponent],
 })
 export class Example9Component implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
@@ -286,7 +285,7 @@ export class Example9Component implements OnInit, OnDestroy {
 
   toggleGridMenu(e: MouseEvent) {
     if (this.angularGrid && this.angularGrid.extensionService) {
-      const gridMenuInstance = this.angularGrid.extensionService.getExtensionInstanceByName(ExtensionName.gridMenu);
+      const gridMenuInstance = this.angularGrid.extensionService.getExtensionInstanceByName('gridMenu');
       // open the external button Grid Menu, you can also optionally pass Grid Menu options as 2nd argument
       // for example we want to align our external button on the right without affecting the menu within the grid which will stay aligned on the left
       gridMenuInstance.showGridMenu(e, { dropSide: 'right' });

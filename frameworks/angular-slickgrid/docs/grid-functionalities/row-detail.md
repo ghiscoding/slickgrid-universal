@@ -113,7 +113,7 @@ Row Detail is an addon (commonly known as a plugin and are opt-in addon), becaus
 ```ts
 changeDetailViewRowCount() {
   if (this.angularGrid && this.angularGrid.extensionService) {
-    const rowDetailInstance = this.angularGrid.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView);
+    const rowDetailInstance = this.angularGrid.extensionService.getExtensionInstanceByName('rowDetailView');
     const options = rowDetailInstance.getOptions();
     options.panelRows = this.detailViewRowCount; // change number of rows dynamically
     rowDetailInstance.setOptions(options);
@@ -129,7 +129,7 @@ Same as previous paragraph, after we get the SlickGrid addon instance, we can ca
 ```ts
 closeAllRowDetail() {
   if (this.angularGrid && this.angularGrid.extensionService) {
-    const rowDetailInstance = this.angularGrid.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView);
+    const rowDetailInstance = this.angularGrid.extensionService.getExtensionInstanceByName('rowDetailView');
     rowDetailInstance.collapseAll();
   }
 }
@@ -139,7 +139,7 @@ This requires a bit more work, you can call the method `collapseDetailView(item)
 ```ts
 closeRowDetail(gridRowIndex: number) {
   if (this.angularGrid && this.angularGrid.extensionService) {
-    const rowDetailInstance = this.angularGrid.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView);
+    const rowDetailInstance = this.angularGrid.extensionService.getExtensionInstanceByName('rowDetailView');
     const item = this.angularGrid.gridService.getDataItemByRowIndex(gridRowIndex);
     rowDetailInstance.collapseDetailView(item);
   }
@@ -183,7 +183,7 @@ Same concept as the preload, we pass an Angular Component to the `viewComponent`
         //  ... row detail options
 
         // View Component to load when row detail data is ready
-        // also make sure that it's part of your App Module `entryComponents` array
+        // also make sure that it's part of your App Module `entryComponents` array  (for `angular-slickgrid` < 10)
         viewComponent: RowDetailViewComponent,
       }
     };
@@ -246,7 +246,7 @@ export class RowDetailViewComponent {
   }
 }
 ```
-###### App Module
+###### App Module (for `angular-slickgrid` < 10)
 Also make sure that it's part of your App Module `entryComponents` array since this will be a dynamically created component.
 
 ```ts

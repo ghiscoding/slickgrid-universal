@@ -445,16 +445,16 @@ export class SelectFilter implements Filter {
 
     // optional lazy loading of the collection (when select is opened)
     if (this.columnFilter.collectionLazy) {
-      options.lazyData = () => {
+      options.lazyData = (resolve, reject) => {
         const lazyProcess = this.columnFilter.collectionLazy?.(this.columnDef);
-        return new Promise((resolve) =>
-          fetchAsPromise(lazyProcess, this.rxjs).then((collectionData) => {
+        fetchAsPromise(lazyProcess, this.rxjs)
+          .then((collectionData) => {
             // user might want to filter and/or sort certain items of the collection
             collectionData = getCollectionFromObjectWhenEnabled(collectionData, this.columnFilter);
             const { dataCollection } = this.filterSortAndParseCollection(collectionData);
             resolve(dataCollection || []);
           })
-        );
+          .catch((error) => reject(error));
       };
     }
 

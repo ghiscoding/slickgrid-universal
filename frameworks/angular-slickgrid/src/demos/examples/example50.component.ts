@@ -1,11 +1,11 @@
 import { Component, signal, type OnInit } from '@angular/core';
 import {
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   Formatters,
-  OnClickEventArgs,
   type AngularGridInstance,
   type Column,
   type GridOption,
+  type OnClickEventArgs,
 } from '../../library';
 
 export interface Customer {
@@ -27,7 +27,7 @@ export interface OrderData {
 
 @Component({
   templateUrl: './example50.component.html',
-  imports: [AngularSlickgridModule],
+  imports: [AngularSlickgridComponent],
 })
 export class Example50Component implements OnInit {
   angularGrid1!: AngularGridInstance;

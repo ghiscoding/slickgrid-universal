@@ -1,7 +1,7 @@
 import { Component, ViewEncapsulation, type OnInit } from '@angular/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   Filters,
   Formatters,
   type AngularGridInstance,
@@ -18,7 +18,7 @@ const NB_ITEMS = 500;
   templateUrl: './example27.component.html',
   styleUrls: ['example27.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  imports: [AngularSlickgridModule],
+  imports: [AngularSlickgridComponent],
 })
 export class Example27Component implements OnInit {
   angularGrid!: AngularGridInstance;

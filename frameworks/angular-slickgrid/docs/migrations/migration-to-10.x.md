@@ -1,11 +1,14 @@
 ## Cleaner Code / Smaller Code ⚡
 
-One of the biggest change in this release is to hide columns by using the `hidden` column property (used by Column Picker, Grid Menu, etc...). Previously we were removing columns from the original columns array and we then called `setColumns()` to update the grid, but this mean that we had to keep references for all columns and visible columns. With this new release we now keep the full columns array at all time and instead we just change column(s) visibility via their `hidden` column properties by using `grid.updateColumnById('id', { hidden: true })` and finally we update the grid via `grid.updateColumns()`. What I'm trying to emphasis is that you should really stop using `grid.setColumns()`, and if you want to hide some columns when declaring the columns, then just update their `hidden` properties, see more details below...
+One of the biggest change of this release is to hide columns by using the `hidden` column property (now used by Column Picker, Grid Menu, etc...). Previously we were removing columns from the original columns array and we then called `setColumns()` to update the grid, but this meant that we had to keep references for all visbile and non-visible columns. With this new release we now keep the full columns array at all time and instead we just change column(s) visibility via their `hidden` column properties by using `grid.updateColumnById('id', { hidden: true })` and finally we update the grid via `grid.updateColumns()`. What I'm trying to emphasis is that you should really stop using `grid.setColumns()` in v10+, and if you want to hide some columns when declaring the columns, then just update their `hidden` properties, see more details below...
+
+This release fully aligns Angular-Slickgrid with modern Angular patterns, including Angular 21 support, Standalone Components for simplified setup, and zoneless change detection support which allows you to drop the `zone.js` dependency for improved performance and smaller bundle sizes.
 
 #### Major Changes - Quick Summary
 - [`hidden` columns](#hidden-columns)
 - [Row Detail (now optional)](#row-detail-now-optional)
 - [ngx-translate@v17](#ngx-translate-v17x-now-required)
+- [Migrating to Standalone Component](#migrating-to-standalone-component)
 
 > **Note:** if you come from an earlier version, please make sure to follow each migrations in their respected order (review previous migration guides)
 
@@ -15,22 +18,22 @@ One of the biggest change in this release is to hide columns by using the `hidde
 
 _if you're not dynamically hiding columns and you're not using `colspan` or `rowspan` then you won't be impacted by this change._
 
-For years, I had to keep some references in a Shared Service and keep both `shared.allColumns` and `shared.visibleColumns`, for translating locales and also used by Column Picker and Grid Menu to keep track of which columns to hide/show and in which order they were; then later we called `grid.setColumns()` to update the columns in the grid... but that had side effects since SlickGrid never kept the entire column definitions list (until now), but if we just start using `hidden` property on the column(s) to hide some of them, then we are now able to keep the full columns reference at all time, we translate them more easily and we no longer need to use `grid.setColumns()`, instead we'll now use `grid.updateColumnById('gender', { hidden: true })`. If you want to get visible columns, you can now simply call `grid.getVisibleColumns()` which behind the scene is simply doing a `columns.filter(c => !c.hidden)`. This new approach does have side effects for colspan/rowspan though, because previously if we were to hide a column then the next column to the right would previously taking over the spannings, but with the new approach if we hide a column then its spannings will now disappear with it... If you want more details, you can see full explanations of the complete change in the [PR #2281](https://github.com/ghiscoding/slickgrid-universal/pull/2281)
+For years, I had to keep some references in a Shared Service via `shared.allColumns` and `shared.visibleColumns`, for translating locales and that is also being used by Column Picker and Grid Menu to keep track of which columns to hide/show and in which order they were; then later we called `grid.setColumns()` to update the columns in the grid... but that had side effects since SlickGrid never kept the entire column definitions list (until now). However with v10, we simply start using `hidden` property on the column(s) to hide/show some of them, then we are now able to keep the full columns reference at all time. We can translate them more easily and we no longer need to use `grid.setColumns()`, what we'll do instead is to start using `grid.updateColumnById('colId', { hidden: true })`. If you want to get visible columns, you can now simply call `grid.getVisibleColumns()` which behind the scene is simply doing a `columns.filter(c => !c.hidden)`. This new approach does also have side effects for colspan/rowspan, because previously if we were to hide a column then the next column to the right was previously taking over the spannings, but with the new approach if we hide a column then its spannings will now disappear with it (so I had to make code changes to handle that too)... If you want more details, you can see full explanations of the complete change in the [PR #2281](https://github.com/ghiscoding/slickgrid-universal/pull/2281)
 
 ##### New Approach with column `hidden` property
 
 | Before | After |
 | ------- | ------ |
-| `grid.setColumns(visibleCols)` | `grid.updateColumnById('gender', { hidden: true });`  and `grid.updateColumns();` |
+| `grid.setColumns(visibleCols)` | `grid.updateColumnById('colId', { hidden: true });`  and `grid.updateColumns();` |
 | `sharedService.allColumns` | `grid.getColumns()` _... is now including all columns_ |
 | `sharedService.visibleColumns` or `grid.getColumns()`| `grid.getVisibleColumns()` |
 
 ### Grid Functionalities
 
-_Changes that should be transparent to most users, I'm just listing it in case of side effects._
+_following changes should be transparent to most users, I'm just listing them in case of side effects._
 
-1. Reimplementing `SlickCompositeEditorComponent` modal and migrate from a `<div>` to a `<dialog>` which is native code, it has better accessibility (aria) support and a baseline support showing as "widely available".
-2. Reimplementing Grid Menu to use CSS flexbox instead of using `calc(100% - 18px)` which wasn't ideal neither customizable, we could simply use CSS flexbox which is a much better approach to properly align everything.
+1. Reimplementing `SlickCompositeEditorComponent` modal and migrate from a `<div>` to a `<dialog>` which is native code, it has better accessibility (aria) support and a baseline support showing as "widely available". A fallback to `<div>` is also available in case `<dialog>` doens't work for everybody (e.g. it doesn't work in Salesforce LWC, hence the available fallback)
+2. Reimplementing Grid Menu to use CSS flexbox instead of using `calc(100% - 18px)` which wasn't ideal, neither customizable, but the new approach is to simply use CSS flexbox which is a much better approach to properly align everything.
 
 #### Row Detail (now optional)
 
@@ -56,6 +59,8 @@ export class Example {
 
 ### Removed `@deprecated` code
 
+_following changes should be transparent to most users_
+
 1. `applyHtmlCode()` was removed and replaced with `applyHtmlToElement()`
 2. Grid Option `throwWhenFrozenNotAllViewable` was removed and replaced with `invalidColumnFreezeWidthCallback`
 
@@ -65,7 +70,7 @@ export class Example {
 2. drop both `SlickCellSelectionModel`/`SlickRowSelectionModel` and keep only `SlickHybridSelectionModel`
 3. drop both `enableHybridSelection`/`enableRowSelection` merge them into a new `enableSelection` grid option
 
-`SlickHybridSelectionModel` was introduced to merge and allow using both Cell/Row Selections separately and/or together in the same grid. It was introduced in v9.x to test it out and it's now safe to drop the older `SlickCellSelectionModel` / `SlickRowSelectionModel` models. Also since we now have the Hybrid model and it's now accepting options for different selection models, I think it's better to rename `rowSelectionOptions` to `selectionOptions` for that reason.
+`SlickHybridSelectionModel` was previously introduced in order to merge and allow using both Cell/Row Selections separately and/or in combo on the same grid. It was introduced in v9.x to test it out and after testing it for a few months, it's now safe to drop the older `SlickCellSelectionModel` / `SlickRowSelectionModel` models and keep only the hybrid model. Also, since we now have the Hybrid model and it's now accepting options for different selection models, I think it's better to rename `rowSelectionOptions` to `selectionOptions` since it now makes more sense with the hybrid approach.
 
 ```diff
 gridOptions = {
@@ -118,6 +123,42 @@ Angular-Slickgrid now works out-of-the-box in zoneless Angular apps, but still s
 
 For more details, review the official Angular documentation: https://angular.dev/guide/zoneless
 
+### Migrating to Standalone Component
+
+Angular-Slickgrid is now a Standalone Component and the `AngularSlickgridModule` was dropped, this also requires you to make some small changes in your App `main.ts` and in all your components that use Angular-Slickgrid.
+
+```diff
+- import { AngularSlickgridModule } from 'angular-slickgrid';
++ import { AngularSlickgridComponent, GridOption } from 'angular-slickgrid';
+
+// optional global Grid Option
++ const gridOptionConfig: GridOption = {
++   // ...
++   sanitizer: (dirtyHtml) => DOMPurify.sanitize(dirtyHtml, { ADD_ATTR: ['level'], RETURN_TRUSTED_TYPE: true }),
++ };
+
+bootstrapApplication(AppComponent, {
+  providers: [
+    importProvidersFrom(
+-     AngularSlickgridModule.forRoot({
+-       // ...
+-       sanitizer: (dirtyHtml) => DOMPurify.sanitize(dirtyHtml, { ADD_ATTR: ['level'], RETURN_TRUSTED_TYPE: true }),
+-     })
+    ),
++   AngularSlickgridComponent,
++   { provide: 'defaultGridOption', useValue: gridOptionConfig },
+    // ...
+  ],
+});
+
+// ... Component
+@Component({
+  // ...
+- imports: [AngularSlickgridModule],
++ imports: [AngularSlickgridComponent],
+})
+```
+
 {% hint style="note" %}
 **Info** the changes in the next few lines were all mentioned in the previous "Migration Guide v9.0". So, if you have already made these changes then you could skip the section below.
 {% endhint %}
@@ -148,24 +189,30 @@ Below is a list of Enums that you need to replace with their associated string l
 |  | ... | ... |
 | `FieldType`  | `FieldType.boolean` | `'boolean'`         |
 |             | `FieldType.number`   | `'number'`          |
-|             | `FieldType.dateIso`   | `'dateIso'`          |
+|             | `FieldType.dateIso`  | `'dateIso'`          |
 |  | ... | ... |
-| `FileType` | `FileType.csv`      | `'csv'`             |
+| `FileType` | `FileType.csv`       | `'csv'`             |
 |             | `FileType.xlsx`     | `'xlsx'`            |
 |  | ... | ... |
 | `GridStateType`  | `GridStateType.columns` | `'columns'`  |
-|             | `GridStateType.filters`   | `'filters'`   |
-|             | `GridStateType.sorters`   | `'sorters'`   |
+|             | `GridStateType.filters`      | `'filters'`   |
+|             | `GridStateType.sorters`      | `'sorters'`   |
 |  | ... | ... |
 | `OperatorType`  | `OperatorType.greaterThan` | `'>'`  or `'GT'` |    See [Operator](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/enums/operator.type.ts) list for all available operators |
-|             | `OperatorType.lessThanOrEqual`   | `'<='` or `'LE'`  |
-|             | `OperatorType.contains`   | `'Contains'` or `'CONTAINS'`  | Operators are written as PascalCase |
-|             | `OperatorType.equal`   | `'='` or `'EQ'` |
-|             | `OperatorType.rangeExclusive`   | `'RangeExclusive'`  |
+|             | `OperatorType.lessThanOrEqual` | `'<='` or `'LE'`  |
+|             | `OperatorType.contains`        | `'Contains'` or `'CONTAINS'`  | Operators are written as PascalCase |
+|             | `OperatorType.equal`           | `'='` or `'EQ'` |
+|             | `OperatorType.rangeExclusive`  | `'RangeExclusive'`  |
 |  | ... | ... |
-| `SortDirection`  | `SortDirection.ASC` | `'ASC'` or `'asc'`  |
-|             | `SortDirection.DESC`   | `'DESC'` or `'desc'`  |
+| `SortDirection`  | `SortDirection.ASC`       | `'ASC'` or `'asc'`  |
+|             | `SortDirection.DESC`           | `'DESC'` or `'desc'`  |
 |  | ... | ... |
+
+**Hint** You can use VSCode search & replace, but make sure it's set to Regular Expression pattern
+
+| Search (regex)                      | Replace |
+| ------------------------------ | -------- |
+| `FieldType\.([a-z_]+)(.*)` | `'$1'$2`      |
 
 #### renaming `editorOptions` and `filterOptions` to a more generic `options` property
 
@@ -236,7 +283,30 @@ For example:
 
 ---
 
-## What's next?
+## What's next? ...version 11?
 
-Wait, are we already talking about the version 11 when version 10 just shipped? That is correct, I'm already thinking about the next major version, which will be in about a year from now. I can already say that the main focus will be around the use of native [CSS anchor positioning](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning) to replace JS code for positioning menus, tooltips, etc... which will help decreasing the build size by using fully native code. CSS anchoring has been around in Chrome for a while but is quite recent in Firefox, so for that reason I'm postponing it for next year.
+Wait, are we talking already about version 11 when version 10 just shipped? Thats right, I'm already thinking and planning ahead the next major version, which will be in about a year from now. I can already say that the main focus will be around the use of native [CSS anchor positioning](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning) to replace JS code for positioning menus, tooltips, etc... which will help decreasing the build size by using fully native code. CSS anchoring has been around in Chrome for a while but is quite recent in Firefox, so for that reason I'm postponing it for next year.
 
+### Code being `@deprecated` (to be removed in the future, 2027-Q1)
+#### You can already start using these new options and props (shown below) in v10.0 and above.
+
+Deprecating `ExtensionName` enum which will be replaced by its string literal type, for example:
+
+| Enum Name        | from `enum`                       | to string `type`      |
+| ---------------- | --------------------------------- | --------------------- |
+| `ExtensionName`  | `ExtensionName.autoTooltip`       | `'autoTooltip'`       |
+|                  | `ExtensionName.draggableGrouping` | `'draggableGrouping'` |
+|                  | `ExtensionName.rowDetail`         | `'rowDetail'`         |
+| ... | ... | ... |
+
+**Hint** You can use VSCode search & replace, but make sure it's set to Regular Expression pattern
+
+| Search (regex)                 | Replace  |
+| ------------------------------ | -------- |
+| `ExtensionName\.([a-z_]+)(.*)` | `'$1'$2` |
+
+### Potential but Postponed Code Change
+
+Signals are becoming increasingly prevalent in Angular, however Angular-Slickgrid continues to use traditional `@Input`/`@Output` decorators. Users who prefer Signals can still use them by calling signal functions in templates: `[dataset]="dataset()"`. 
+
+For a library component, maintaining compatibility with both approaches is pragmatic and may not require a full migration. If we decide to migrate Angular-Slickgrid to use Signals internally, this change would be deferred to version 11 or later. 

@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, signal, type OnInit } from '@angular/core';
 import { GridOdataService, type OdataOption, type OdataServiceApi } from '@slickgrid-universal/odata';
 import {
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   Filters,
   PaginationMetadata,
   type AngularGridInstance,
@@ -21,7 +21,7 @@ const PERCENT_HTML_ESCAPED = '%25';
 
 @Component({
   templateUrl: './example05.component.html',
-  imports: [AngularSlickgridModule, DatePipe],
+  imports: [AngularSlickgridComponent, DatePipe],
 })
 export class Example5Component implements OnInit {
   angularGrid!: AngularGridInstance;

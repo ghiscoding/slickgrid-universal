@@ -2,7 +2,7 @@ import { Component, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AngularSlickRowDetailView } from '@slickgrid-universal/angular-row-detail-plugin';
 import {
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   Editors,
   Filters,
   Formatters,
@@ -18,7 +18,7 @@ const NB_ITEMS = 1000;
 
 @Component({
   templateUrl: './example19.component.html',
-  imports: [AngularSlickgridModule, FormsModule],
+  imports: [AngularSlickgridComponent, FormsModule],
 })
 export class Example19Component implements OnDestroy, OnInit {
   private _darkMode = false;
@@ -43,7 +43,7 @@ export class Example19Component implements OnDestroy, OnInit {
     return this.angularGrid.extensions.rowDetailView?.instance || {};
 
     // OR option 2
-    // return this.angularGrid?.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView) || {};
+    // return this.angularGrid?.extensionService.getExtensionInstanceByName('rowDetailView') || {};
   }
 
   ngOnInit(): void {

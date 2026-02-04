@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { GraphqlService, type GraphqlPaginatedResult, type GraphqlServiceApi } from '@slickgrid-universal/graphql';
 import { type Subscription } from 'rxjs';
 import {
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   Filters,
   unsubscribeAllObservables,
   type AngularGridInstance,
@@ -29,7 +29,7 @@ function unescapeAndLowerCase(val: string) {
   styleUrls: ['./example39.component.scss'],
   encapsulation: ViewEncapsulation.None,
   templateUrl: './example39.component.html',
-  imports: [AngularSlickgridModule, DatePipe, FormsModule],
+  imports: [AngularSlickgridComponent, DatePipe, FormsModule],
 })
 export class Example39Component implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];

@@ -1,4 +1,4 @@
-import { ExtensionName, Formatters, type Column, type GridOption } from '@slickgrid-universal/common';
+import { Formatters, type Column, type GridOption } from '@slickgrid-universal/common';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options.js';
 import { zeroPadding } from './utilities.js';
@@ -266,7 +266,7 @@ export default class Example01 {
 
   toggleGridMenu(e: MouseEvent) {
     if (this.sgb2?.extensionService) {
-      const gridMenuInstance = this.sgb2.extensionService.getExtensionInstanceByName(ExtensionName.gridMenu);
+      const gridMenuInstance = this.sgb2.extensionService.getExtensionInstanceByName('gridMenu');
       // open the external button Grid Menu, you can also optionally pass Grid Menu options as 2nd argument
       // for example we want to align our external button on the right without affecting the menu within the grid which will stay aligned on the left
       gridMenuInstance.showGridMenu(e, { dropSide: 'right' });

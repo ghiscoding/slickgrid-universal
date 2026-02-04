@@ -26,7 +26,7 @@ export const localeFrench = {
   // ... the rest of the text
 ```
 
-#### 2. Use the Custom Locales
+#### 2. for `Angular-Slickgrid` <= 9.0 - Use the Custom Locales
 ##### Through the `forRoot()` (globally)
 This will literally configure Custom Locales for the entire project, so if you want to do it once, that is the place to do it.
 ```ts
@@ -42,6 +42,7 @@ This will literally configure Custom Locales for the entire project, so if you w
   ]
 });
 ```
+
 ##### Through the Grid Option of any grid
 You can alternatively provide Custom Locales through any grid declaration through the `locales` Grid Options (it's the same as the global one, except that it's per grid)
 
@@ -62,5 +63,52 @@ export class MyGridComponent {
 }
 ```
 
-#### 3. Use the lib (without ngx-translate)
+### 3. for `Angular-Slickgrid` >= 10.x - Use the Custom Locales
+
+##### in your `main.ts` App boostrap
+
+This will literally configure Custom Locales for the entire project, so if you want to do it once, that is the place to do it.
+
+```ts
+import { AngularSlickgridComponent, GridOption } from 'angular-slickgrid';
+
+// optional Grid Option
+const gridOptionConfig: GridOption = {
+    // add any Global Grid Options/Config you might want
+    // ...
+
+    // Provide a custom locales set
+    locales: localeFrench,
+};
+
+bootstrapApplication(AppComponent, {
+  providers: [
+    AngularSlickgridComponent,
+    { provide: 'defaultGridOption', useValue: gridOptionConfig },
+    // ...
+  ],
+}).catch((err) => console.log(err));
+```
+
+##### Through the Grid Option of any grid
+You can alternatively provide Custom Locales through any grid declaration through the `locales` Grid Options (it's the same as the global one, except that it's per grid)
+
+```ts
+import { localeFrench } from 'locales/fr';
+
+export class MyGridComponent {
+  prepareGrid() {
+    this.columnDefinitions = [ /* ... */ ];
+
+    this.gridOptions = {
+      enableAutoResize: true,
+
+      // provide Custom Locale to this grid only
+      locales: localeFrench
+    };
+  }
+}
+```
+
+#### 4. Use the lib (without ngx-translate)
 There's nothing else to do, just use the library without defining or providing TranslateService and you're good to go. Read through the Wiki of the [Quick Start](../getting-started/quick-start.md) for basic grid samples.

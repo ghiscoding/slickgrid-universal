@@ -1,15 +1,6 @@
 <script setup lang="ts">
 import { VueSlickRowDetailView } from '@slickgrid-universal/vue-row-detail-plugin';
-import {
-  Editors,
-  ExtensionName,
-  Filters,
-  Formatters,
-  SlickgridVue,
-  type Column,
-  type GridOption,
-  type SlickgridVueInstance,
-} from 'slickgrid-vue';
+import { Editors, Filters, Formatters, SlickgridVue, type Column, type GridOption, type SlickgridVueInstance } from 'slickgrid-vue';
 import { computed, onBeforeMount, onUnmounted, ref, type Ref } from 'vue';
 import Example19Detail from './Example19Detail.vue';
 import ExampleDetailPreload from './ExampleDetailPreload.vue';
@@ -27,7 +18,7 @@ const message = ref('');
 const serverWaitDelay = ref(FAKE_SERVER_DELAY); // server simulation with default of 250ms but 50ms for Cypress tests
 let vueGrid!: SlickgridVueInstance;
 
-const rowDetailInstance = computed(() => vueGrid?.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView));
+const rowDetailInstance = computed(() => vueGrid?.extensionService.getExtensionInstanceByName('rowDetailView'));
 
 onBeforeMount(() => {
   defineGrid();

@@ -1,6 +1,6 @@
 {
   "name": "slickgrid-vue",
-  "version": "9.12.0",
+  "version": "9.13.0",
   "description": "Slickgrid-Vue",
   "license": "MIT",
   "author": "Ghislain B.",
@@ -46,7 +46,6 @@
     "url": "https://ko-fi.com/ghiscoding"
   },
   "scripts": {
-    "are-types-wrong": "pnpx @arethetypeswrong/cli --pack .",
     "clean": "remove dist",
     "vue:dev": "cross-env NODE_ENV=development vite build --watch",
     "vue:dev:init": "vite build",
@@ -77,6 +76,6 @@
     "vite": "catalog:",
     "vite-plugin-dts": "^4.5.4",
     "vue": "catalog:",
-    "vue-tsc": "^3.2.2"
+    "vue-tsc": "^3.2.4"
   }
 }

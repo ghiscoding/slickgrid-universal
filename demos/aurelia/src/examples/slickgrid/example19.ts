@@ -1,6 +1,6 @@
 import { AureliaSlickRowDetailView } from '@slickgrid-universal/aurelia-row-detail-plugin';
 import { bindable } from 'aurelia';
-import { Editors, ExtensionName, Filters, Formatters, type AureliaGridInstance, type Column, type GridOption } from 'aurelia-slickgrid';
+import { Editors, Filters, Formatters, type AureliaGridInstance, type Column, type GridOption } from 'aurelia-slickgrid';
 import { ExampleDetailPreload } from './example-detail-preload.js';
 import { Example19DetailView } from './example19-detail-view.js';
 
@@ -33,7 +33,7 @@ export class Example19 {
     // return this.extensions.rowDetailView.instance || {};
 
     // OR option 2
-    return this.aureliaGrid?.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView);
+    return this.aureliaGrid?.extensionService.getExtensionInstanceByName('rowDetailView');
   }
 
   attached() {

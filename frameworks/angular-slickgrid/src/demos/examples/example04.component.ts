@@ -4,7 +4,7 @@ import { Component, type OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   Filters,
   Formatters,
   type AngularGridInstance,
@@ -25,7 +25,7 @@ const URL_SAMPLE_COLLECTION_DATA = 'assets/data/collection_500_numbers.json';
 
 @Component({
   templateUrl: './example04.component.html',
-  imports: [AngularSlickgridModule, DatePipe],
+  imports: [AngularSlickgridComponent, DatePipe],
 })
 export class Example4Component implements OnInit {
   angularGrid!: AngularGridInstance;

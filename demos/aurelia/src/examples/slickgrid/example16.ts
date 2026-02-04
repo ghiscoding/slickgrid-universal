@@ -1,12 +1,4 @@
-import {
-  ExtensionName,
-  Filters,
-  Formatters,
-  type AureliaGridInstance,
-  type Column,
-  type GridOption,
-  type OnEventArgs,
-} from 'aurelia-slickgrid';
+import { Filters, Formatters, type AureliaGridInstance, type Column, type GridOption, type OnEventArgs } from 'aurelia-slickgrid';
 
 export class Example16 {
   aureliaGrid!: AureliaGridInstance;
@@ -24,7 +16,7 @@ export class Example16 {
   }
 
   get rowMoveInstance() {
-    return this.aureliaGrid?.extensionService.getExtensionInstanceByName(ExtensionName.rowMoveManager);
+    return this.aureliaGrid?.extensionService.getExtensionInstanceByName('rowMoveManager');
   }
 
   attached() {

@@ -4,7 +4,7 @@ import { Component, signal, ViewEncapsulation, type OnInit } from '@angular/core
 import { GridOdataService, type OdataServiceApi } from '@slickgrid-universal/odata';
 import {
   Aggregators,
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   Filters,
   SortComparers,
   type AngularGridInstance,
@@ -23,7 +23,7 @@ const PERCENT_HTML_ESCAPED = '%25';
   styleUrls: ['./example38.component.scss'],
   encapsulation: ViewEncapsulation.None,
   templateUrl: './example38.component.html',
-  imports: [AngularSlickgridModule, DatePipe],
+  imports: [AngularSlickgridComponent, DatePipe],
 })
 export class Example38Component implements OnInit {
   angularGrid!: AngularGridInstance;

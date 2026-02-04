@@ -3,8 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import type { Subscription } from 'rxjs';
 import {
-  AngularSlickgridModule,
-  ExtensionName,
+  AngularSlickgridComponent,
   Filters,
   Formatters,
   unsubscribeAllObservables,
@@ -61,7 +60,7 @@ const taskTranslateFormatter: Formatter = (row, cell, value, columnDef, dataCont
   templateUrl: './example24.component.html',
   styleUrls: ['./example24.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  imports: [AngularSlickgridModule],
+  imports: [AngularSlickgridComponent],
 })
 export class Example24Component implements OnInit, OnDestroy {
   private _darkModeGrid = false;
@@ -85,11 +84,11 @@ export class Example24Component implements OnInit, OnDestroy {
   }
 
   get cellMenuInstance() {
-    return this.angularGrid?.extensionService?.getExtensionInstanceByName(ExtensionName.cellMenu);
+    return this.angularGrid?.extensionService?.getExtensionInstanceByName('cellMenu');
   }
 
   get contextMenuInstance() {
-    return this.angularGrid?.extensionService?.getExtensionInstanceByName(ExtensionName.contextMenu);
+    return this.angularGrid?.extensionService?.getExtensionInstanceByName('contextMenu');
   }
 
   ngOnInit() {

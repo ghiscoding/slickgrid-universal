@@ -1,6 +1,6 @@
 {
   "name": "slickgrid-react",
-  "version": "9.12.0",
+  "version": "9.13.0",
   "description": "Slickgrid components made available in React",
   "keywords": [
     "react",
@@ -48,7 +48,6 @@
     }
   ],
   "scripts": {
-    "are-types-wrong": "pnpx @arethetypeswrong/cli --pack .",
     "react:dev": "tsc --watch",
     "build": "remove dist && tsc && npm run copy-i18n:dist && npm run copy-asset-lib",
     "copy-asset-lib": "copyfiles src/assets/lib/** dist --up 2 --stat",
@@ -82,16 +81,16 @@
     "@slickgrid-universal/rxjs-observable": "workspace:*",
     "@slickgrid-universal/text-export": "workspace:*",
     "@types/node": "catalog:",
-    "@types/react": "^19.2.8",
+    "@types/react": "^19.2.10",
     "@types/react-dom": "^19.2.3",
     "@types/sortablejs": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "dompurify": "catalog:",
     "globals": "catalog:",
     "native-copyfiles": "catalog:",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3",
-    "react-router": "^7.12.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-router": "^7.13.0",
     "remove-glob": "catalog:",
     "rxjs": "catalog:",
     "sass": "catalog:",

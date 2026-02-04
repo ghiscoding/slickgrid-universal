@@ -5,7 +5,6 @@ import {
   collectionObserver,
   CollectionService,
   emptyElement,
-  ExtensionName,
   ExtensionService,
   ExtensionUtility,
   FilterFactory,
@@ -1475,8 +1474,8 @@ function preRegisterResources() {
       const rowDetailInstance = new RowDetailClass(eventPubSubService) as VueSlickRowDetailView;
       slickRowDetailView = rowDetailInstance;
       rowDetailInstance.create(_columnDefinitions.value, _gridOptions.value as GridOption);
-      extensionService.addExtensionToList(ExtensionName.rowDetailView, {
-        name: ExtensionName.rowDetailView,
+      extensionService.addExtensionToList('rowDetailView', {
+        name: 'rowDetailView',
         instance: slickRowDetailView,
       });
     }
