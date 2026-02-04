@@ -79,8 +79,8 @@ catalogs:
       specifier: ^3.0.2
       version: 3.0.2
     multiple-select-vanilla:
-      specifier: ^4.4.1
-      version: 4.4.1
+      specifier: ^5.0.0
+      version: 5.0.0
     native-copyfiles:
       specifier: ^2.0.1
       version: 2.0.1
@@ -540,7 +540,7 @@ importers:
         version: 3.3.1
       multiple-select-vanilla:
         specifier: 'catalog:'
-        version: 4.4.1
+        version: 5.0.0
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -1238,7 +1238,7 @@ importers:
         version: 2.0.3
       multiple-select-vanilla:
         specifier: 'catalog:'
-        version: 4.4.1
+        version: 5.0.0
       sortablejs:
         specifier: 'catalog:'
         version: 1.15.6
@@ -7526,8 +7526,8 @@ packages:
     resolution: {integrity: sha512-2eznPJP8z2BFLX50tf0LuODrpINqP1RVIm/CObbTcBRITQgmC/TjcREF1NeTBzIcR5XO/ukWo+YHOjBbFwIupg==}
     hasBin: true
 
-  multiple-select-vanilla@4.4.1:
-    resolution: {integrity: sha512-vG8Ea0ovHKrhi1FvpYlnNpDed1I6JzHyFoDtznRTH7A00y/t6MKGSKMs7cNp8mpXUnWb7WZr3/k0naFjg3qeCw==}
+  multiple-select-vanilla@5.0.0:
+    resolution: {integrity: sha512-sdYPD/6C1zgfqFQsCHWUBYsM9+XWAw7Hrdf1EepcAOPxFTnT/wzGdbPTNAdZszf1l/AyHDi6QKhP9bqXiRI2wQ==}
 
   mute-stream@2.0.0:
     resolution: {integrity: sha512-WWdIxpyjEn+FhQJQQv9aQAYlHoNVdzIzUySNV1gHUPDSdZJ3yZn7pAAbQcV7B56Mvu881q9FZV+0Vx2xC44VWA==}
@@ -17260,7 +17260,7 @@ snapshots:
       dns-packet: 5.6.1
       thunky: 1.1.0
 
-  multiple-select-vanilla@4.4.1:
+  multiple-select-vanilla@5.0.0:
     dependencies:
       '@types/trusted-types': 2.0.7
 
