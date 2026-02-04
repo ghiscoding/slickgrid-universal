@@ -218,5 +218,132 @@ describe('Backend Utility Service', () => {
       expect(processSpy).toHaveBeenCalled();
       expect(service.onBackendError).toHaveBeenCalledWith(errorExpected, gridOptionMock.backendServiceApi);
     });
+
+    it('should pass AbortSignal to the process method when executing a Promise-based backend callback', async () => {
+      const now = new Date();
+      const query = `query { users (first:20,offset:0) { totalCount, nodes { id,name,gender,company } } }`;
+      const processResult = { data: { users: { nodes: [] } } };
+
+      const processSpy = vi.spyOn(gridOptionMock.backendServiceApi!, 'process').mockReturnValue(Promise.resolve(processResult));
+
+      service.executeBackendCallback(gridOptionMock.backendServiceApi!, query, {}, now, 10);
+
+      await vi.waitFor(() => {
+        expect(processSpy).toHaveBeenCalledWith(query, { signal: expect.any(AbortSignal) });
+      });
+    });
+
+    it('should abort previous request when a new Promise-based request is triggered', async () => {
+      const now = new Date();
+      const query1 = `query { users (first:20,offset:0) }`;
+      const query2 = `query { users (first:20,offset:20) }`;
+
+      let capturedSignal1: AbortSignal | undefined;
+      const processSpy = vi
+        .spyOn(gridOptionMock.backendServiceApi!, 'process')
+        .mockImplementationOnce((q, opts) => {
+          capturedSignal1 = opts?.signal;
+          return new Promise((resolve) => setTimeout(() => resolve({ data: {} }), 100));
+        })
+        .mockImplementationOnce((q, opts) => {
+          return Promise.resolve({ data: {} });
+        });
+
+      // First request
+      service.executeBackendCallback(gridOptionMock.backendServiceApi!, query1, {}, now, 10);
+
+      // Second request (should abort the first)
+      service.executeBackendCallback(gridOptionMock.backendServiceApi!, query2, {}, now, 10);
+
+      expect(capturedSignal1?.aborted).toBe(true);
+      expect(processSpy).toHaveBeenCalledTimes(2);
+    });
+
+    it('should ignore stale Promise results when a newer request has been triggered', async () => {
+      const now = new Date();
+      const query1 = `query { users { name: "John" } }`;
+      const query2 = `query { users { name: "Jane" } }`;
+      const result1 = { data: { users: [{ name: 'John' }] } };
+      const result2 = { data: { users: [{ name: 'Jane' }] } };
+
+      const executeProcessesSpy = vi.spyOn(service, 'executeBackendProcessesCallback');
+
+      vi.spyOn(gridOptionMock.backendServiceApi!, 'process')
+        .mockImplementationOnce(() => new Promise((resolve) => setTimeout(() => resolve(result1), 100)))
+        .mockImplementationOnce(() => Promise.resolve(result2));
+
+      // First request (will be slow)
+      service.executeBackendCallback(gridOptionMock.backendServiceApi!, query1, {}, now, 10);
+
+      // Second request (completes immediately)
+      service.executeBackendCallback(gridOptionMock.backendServiceApi!, query2, {}, now, 10);
+
+      // Wait for both promises to settle
+      await vi.waitFor(() => {
+        // Only the second result should be processed
+        expect(executeProcessesSpy).toHaveBeenCalledTimes(1);
+        expect(executeProcessesSpy).toHaveBeenCalledWith(now, result2, gridOptionMock.backendServiceApi, 10);
+      });
+    });
+
+    it('should silently ignore AbortError when a Promise-based request is aborted', async () => {
+      const now = new Date();
+      const query = `query { users (first:20,offset:0) }`;
+      const errorCallbackMock = vi.fn();
+      service.onBackendError = vi.fn();
+
+      const abortError = new Error('The operation was aborted');
+      abortError.name = 'AbortError';
+
+      vi.spyOn(gridOptionMock.backendServiceApi!, 'process').mockReturnValue(Promise.reject(abortError));
+
+      service.executeBackendCallback(gridOptionMock.backendServiceApi!, query, {}, now, 10, {
+        errorCallback: errorCallbackMock,
+      });
+
+      await vi.waitFor(() => {
+        // Error callbacks should NOT be called for AbortError
+        expect(errorCallbackMock).not.toHaveBeenCalled();
+        expect(service.onBackendError).not.toHaveBeenCalled();
+      });
+    });
+
+    it('should handle real errors (non-AbortError) in Promise-based requests', async () => {
+      const now = new Date();
+      const query = `query { users (first:20,offset:0) }`;
+      const errorCallbackMock = vi.fn();
+      const realError = new Error('Network error');
+      service.onBackendError = vi.fn();
+
+      vi.spyOn(gridOptionMock.backendServiceApi!, 'process').mockReturnValue(Promise.reject(realError));
+
+      service.executeBackendCallback(gridOptionMock.backendServiceApi!, query, {}, now, 10, {
+        errorCallback: errorCallbackMock,
+      });
+
+      await vi.waitFor(() => {
+        expect(errorCallbackMock).toHaveBeenCalled();
+        expect(service.onBackendError).toHaveBeenCalledWith(realError, gridOptionMock.backendServiceApi);
+      });
+    });
+
+    it('should process successful Promise result when no newer request has been triggered', async () => {
+      const now = new Date();
+      const query = `query { users (first:20,offset:0) }`;
+      const processResult = { data: { users: { nodes: [] } } };
+      const successCallbackMock = vi.fn();
+
+      const executeProcessesSpy = vi.spyOn(service, 'executeBackendProcessesCallback');
+      vi.spyOn(gridOptionMock.backendServiceApi!, 'process').mockReturnValue(Promise.resolve(processResult));
+
+      service.executeBackendCallback(gridOptionMock.backendServiceApi!, query, {}, now, 10, {
+        successCallback: successCallbackMock,
+      });
+
+      await vi.waitFor(() => {
+        expect(executeProcessesSpy).toHaveBeenCalledWith(now, processResult, gridOptionMock.backendServiceApi, 10);
+        expect(successCallbackMock).toHaveBeenCalled();
+      });
+    });
   });
 });

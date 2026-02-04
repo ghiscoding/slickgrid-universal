@@ -85,7 +85,7 @@
 
 ## Backend Services
 
-* [Custom Backend Service](backend-services/Custom-Backend-Service.md)
+* [Custom Backend Service](backend-services/custom-backend-service.md)
 * [OData](backend-services/OData.md)
 * [GraphQL](backend-services/GraphQL.md)
   * [JSON Result Structure](backend-services/graphql/GraphQL-JSON-Result.md)

@@ -11,6 +11,8 @@ export interface BackendCallbacks {
 
 export class BackendUtilityService {
   protected _infiniteScrollBottomHit = false;
+  protected _currentRequestId = 0; // used to track and ignore stale Promise-based results
+  protected _abortController?: AbortController; // used to cancel fetch requests when new filters/sorts are triggered
 
   constructor(protected rxjs?: RxJsFacade | undefined) {}
 
@@ -83,17 +85,30 @@ export class BackendUtilityService {
         extraCallbacks.emitActionChangedCallback.call(this, 'remote');
       }
 
+      // abort any previous fetch requests before starting a new one
+      this._abortController?.abort();
+      this._abortController = new AbortController();
+
       // the processes can be Observables (like HttpClient) or Promises
-      const process = backendServiceApi.process(query);
+      const process = backendServiceApi.process(query, { signal: this._abortController.signal });
       if (process instanceof Promise && process.then) {
+        // increment request counter to track and ignore stale results
+        const requestId = ++this._currentRequestId;
+
         process
           .then((processResult: any) => {
-            this.executeBackendProcessesCallback(startTime, processResult, backendServiceApi, totalItems);
-            extraCallbacks?.successCallback?.call(this, args);
+            // only process if this is still the current request (prevents processing stale results from cancelled filters)
+            if (this._currentRequestId === requestId) {
+              this.executeBackendProcessesCallback(startTime, processResult, backendServiceApi, totalItems);
+              extraCallbacks?.successCallback?.call(this, args);
+            }
           })
           .catch((error: any) => {
-            extraCallbacks?.errorCallback?.call(this, args);
-            this.onBackendError(error, backendServiceApi);
+            // ignore AbortError from cancelled requests
+            if (error.name !== 'AbortError') {
+              extraCallbacks?.errorCallback?.call(this, args);
+              this.onBackendError(error, backendServiceApi);
+            }
           });
       } else if (this.rxjs?.isObservable(process)) {
         const rxjs = this.rxjs as RxJsFacade;
