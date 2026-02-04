@@ -282,3 +282,9 @@ Deprecating `ExtensionName` enum which will be replaced by its string literal ty
 | Search (regex)                      | Replace |
 | ------------------------------ | -------- |
 | `ExtensionName\.([a-z_]+)(.*)` | `'$1'$2`      |
+
+### Potential but Postponed Code Change
+
+Signals are becoming increasingly prevalent in Angular, however Angular-Slickgrid continues to use traditional `@Input`/`@Output` decorators. Users who prefer Signals can still use them by calling signal functions in templates: `[dataset]="dataset()"`. 
+
+For a library component, maintaining compatibility with both approaches is pragmatic and may not require a full migration. If we decide to migrate Angular-Slickgrid to use Signals internally, this change would be deferred to version 11 or later. 
