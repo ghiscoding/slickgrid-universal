@@ -53,7 +53,7 @@ export interface BackendServiceApi {
   preProcess?: () => void;
 
   /** On Processing, we get the query back from the service, and we need to provide a Promise/Observable. For example: this.http.get(myGraphqlUrl) */
-  process: (query: string) => Promise<any> | Observable<any>;
+  process: (query: string, options?: { signal?: AbortSignal }) => Promise<any> | Observable<any>;
 
   /** After executing the query, what action to perform? For example, stop the spinner */
   postProcess?: (response: any) => void;

@@ -30,7 +30,8 @@ backendServiceApi: {
   preProcess?: () => void;
 
   // On Processing, we get the query back from the service, and we need to provide a Promise. For example: this.http.get(myGraphqlUrl)
-  process: (query: string) => Promise<any>;
+  // Note: SlickGrid automatically manages request cancellation via AbortSignal (see "Request Cancellation with AbortSignal" section below)
+  process: (query: string, options?: { signal?: AbortSignal }) => Promise<any>;
 
   // After executing the query, what action to perform? For example, stop the spinner
   postProcess: (response: any) => void;
@@ -141,16 +142,39 @@ export class MyComponent implements OnInit {
 
         // define all the on Event callbacks
         preProcess: () => this.displaySpinner(true),
-        process: (query) => this.getAllCustomers(query),
+        process: (query, options) => this.getAllCustomers(query, options),
         postProcess: (response) => this.displaySpinner(false)
       }
     };
   }
 
   // Web API call
-  getAllCustomers(graphqlQuery) {
+  getAllCustomers(graphqlQuery, options?: { signal?: AbortSignal }) {
     return this.http.post('/api/customers', { query: graphqlQuery });
   }
+}
+```
+
+### Request Cancellation with AbortSignal
+When users trigger rapid filter or sort changes (e.g., typing quickly in a filter), SlickGrid will automatically cancel any pending HTTP requests using the `AbortSignal` API. This prevents stale results from overwriting newer data and improves user experience.
+
+The `process` method receives an optional `options` parameter. If you want to support automatic request cancellation, pass the `signal` from this parameter to your HTTP call. When a new request is triggered, any previous `AbortSignal` will be aborted automatically.
+
+#### How It Works
+1. User types in a filter → sends "Jo" query (request #1)
+2. User types "e" quickly before response arrives → "Joe" query (request #2)
+3. SlickGrid automatically aborts request #1's signal
+4. Request #2's response is processed, request #1's response is ignored
+
+#### Implementation with Angular HttpClient (RxJS Observable)
+```ts
+getAllCustomers(graphqlQuery: string, options?: { signal?: AbortSignal }) {
+  // Angular HttpClient returns Observables (not Promises), so it has its own cancellation mechanism
+  // through RxJS unsubscribe. The AbortSignal parameter is not used here.
+  return this.http.post(`/api/graphql`, graphqlQuery, {
+    reportProgress: true
+  }).toPromise();
+  // For AbortSignal support, use native fetch API instead
 }
 ```
 

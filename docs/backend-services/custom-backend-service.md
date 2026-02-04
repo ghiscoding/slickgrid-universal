@@ -10,35 +10,28 @@ You typically want to implement your service following these TypeScript interfac
 - [backendServiceOption.interface.ts](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/backendServiceOption.interface.ts)
 
 At the end of it, you'll have a Custom Backend Service that will be instantiated just like the GraphQL or OData that I've created, it should look similar to this (also note, try to avoid passing anything in the `constructor` of your Service to keep it usable by everyone)
-```tsx
-const Example: React.FC = () => {
-  const [dataset, setDataset] = useState<any[]>([]);
-  const [columns, setColumns] = useState<Column[]>([]);
-  const [options, setOptions] = useState<GridOption | undefined>(undefined);
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
-  const graphqlService = new GraphqlService();
-
-  useEffect(() => defineGrid(), []);
-
-  function defineGrid() {
-    const gridOptions = {
+```ts
+class MyComponent {
+  gridInit() {
+    this.gridOptions = {
       backendServiceApi: {
         service: new YourCustomBackendService(),
         options: {
           // custom service options that extends "backendServiceOption" interface
         },
-        preProcess: () => !isDataLoaded ? displaySpinner(true) : '',
-        process: (query, options) => getCountries(query, options),
+        preProcess: () => !this.isDataLoaded ? this.displaySpinner(true) : '',
+        process: (query, options) => this.getCountries(query, options),
         postProcess: (result) => {
-          displaySpinner(false);
-          setIsDataLoaded(true);
+          this.displaySpinner(false);
+          this.isDataLoaded = true;
         }
       } as YourCustomBackendServiceApi
     };
   }
 
   // Note: The second parameter contains the AbortSignal for an optional request cancellation
-  function getCountries(query: string, options?: { signal?: AbortSignal }) {
+  getCountries(query: string, options?: { signal?: AbortSignal }) {
+    // You can pass the signal to fetch or other HTTP libraries
     return fetch(`/api/countries?${query}`, {
       signal: options?.signal  // Pass the signal to enable automatic request cancellation
     });
@@ -47,19 +40,14 @@ const Example: React.FC = () => {
 ```
 
 If you need to reference your Service for other purposes then you better instantiated in a separate variable and then just pass it to the `service` property of the `backendServiceApi`.
-```tsx
-const Example: React.FC = () => {
-  const [dataset, setDataset] = useState<any[]>([]);
-  const [columns, setColumns] = useState<Column[]>([]);
-  const [options, setOptions] = useState<GridOption | undefined>(undefined);
-  const myCustomService = new YourCustomBackendService();
+```ts
+class MyComponent {
+  myCustomService = new YourCustomBackendService();
 
-  useEffect(() => defineGrid(), []);
-
-  function defineGrid() {
-    const gridOptions = {
+  gridInit {
+    this.gridOptions = {
         backendServiceApi: {
-          service: myCustomService,
+          service: this.myCustomService,
           // ...
         } as YourCustomBackendServiceApi
     };
@@ -68,6 +56,7 @@ const Example: React.FC = () => {
 ```
 
 If your Service is for a well known DB or API framework, then it might be possible to add your Service to the lib itself, however it should be added to the new monorepo lib [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) in the list of [slickgrid-universal/packages](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages). Since that is a monorepo lib, users will have the ability to use and download only the package they need.
+
 ## Request Cancellation with AbortSignal
 
 SlickGrid automatically supports request cancellation for Promise-based backend services using the standard `AbortSignal` API. This feature prevents stale results from being processed when users rapidly trigger new filter or sort operations.
@@ -92,8 +81,8 @@ process: (query: string, options?: { signal?: AbortSignal }) => Promise<any>
 
 #### Example with Fetch API
 ```ts
-function getCountries(query: string, options?: { signal?: AbortSignal }) {
-  return fetch('/api/countries?q=' + query, {
+process: (query: string, options?: { signal?: AbortSignal }) => {
+  return fetch('/api/data?q=' + query, {
     signal: options?.signal  // This automatically aborts when a new request comes in
   }).then(r => r.json());
 }
@@ -101,8 +90,8 @@ function getCountries(query: string, options?: { signal?: AbortSignal }) {
 
 #### Example with Axios
 ```ts
-function getCountries(query: string, options?: { signal?: AbortSignal }) {
-  return axios.get('/api/countries?q=' + query, {
+process: (query: string, options?: { signal?: AbortSignal }) => {
+  return axios.get('/api/data?q=' + query, {
     signal: options?.signal
   });
 }
@@ -113,8 +102,8 @@ function getCountries(query: string, options?: { signal?: AbortSignal }) {
 If you want to handle cancellation errors explicitly:
 
 ```ts
-function getCountries(query: string, options?: { signal?: AbortSignal }) {
-  return fetch('/api/countries?q=' + query, {
+process: (query: string, options?: { signal?: AbortSignal }) => {
+  return fetch('/api/data?q=' + query, {
     signal: options?.signal
   }).then(r => {
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
