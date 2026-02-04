@@ -30,7 +30,7 @@ catalog:
   i18next-vue: ^5.4.0
   jsdom: ^27.4.0
   jsdom-global: ^3.0.2
-  multiple-select-vanilla: ^4.4.1
+  multiple-select-vanilla: ^5.0.0
   native-copyfiles: ^2.0.1
   npm-run-all2: ^8.0.4
   oxlint: ^1.42.0
