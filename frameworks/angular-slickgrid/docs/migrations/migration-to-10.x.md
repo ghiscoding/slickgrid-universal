@@ -1,6 +1,7 @@
 ## Cleaner Code / Smaller Code ⚡
-
 One of the biggest change in this release is to hide columns by using the `hidden` column property (used by Column Picker, Grid Menu, etc...). Previously we were removing columns from the original columns array and we then called `setColumns()` to update the grid, but this mean that we had to keep references for all columns and visible columns. With this new release we now keep the full columns array at all time and instead we just change column(s) visibility via their `hidden` column properties by using `grid.updateColumnById('id', { hidden: true })` and finally we update the grid via `grid.updateColumns()`. What I'm trying to emphasis is that you should really stop using `grid.setColumns()`, and if you want to hide some columns when declaring the columns, then just update their `hidden` properties, see more details below...
+
+This release fully aligns Angular-Slickgrid with modern Angular patterns, including Angular 21 support, Standalone Components for simplified setup, and zoneless change detection support which allows you to drop the `zone.js` dependency for improved performance and smaller bundle sizes.
 
 #### Major Changes - Quick Summary
 - [`hidden` columns](#hidden-columns)
