@@ -2,7 +2,7 @@ import { Component, ViewEncapsulation, type OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import type { Subscription } from 'rxjs';
-import { AngularSlickgridModule, Editors, Formatters, type AngularGridInstance, type Column, type GridOption } from '../../library';
+import { AngularSlickgridComponent, Editors, Formatters, type AngularGridInstance, type Column, type GridOption } from '../../library';
 
 const NB_ITEMS = 20;
 
@@ -10,7 +10,7 @@ const NB_ITEMS = 20;
   encapsulation: ViewEncapsulation.None,
   styleUrls: ['./example35.component.scss'],
   templateUrl: './example35.component.html',
-  imports: [AngularSlickgridModule],
+  imports: [AngularSlickgridComponent],
 })
 export class Example35Component implements OnInit {
   private subscriptions: Subscription[] = [];

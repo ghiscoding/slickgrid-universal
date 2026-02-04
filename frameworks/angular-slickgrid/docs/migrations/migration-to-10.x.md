@@ -2,10 +2,13 @@
 
 One of the biggest change of this release is to hide columns by using the `hidden` column property (now used by Column Picker, Grid Menu, etc...). Previously we were removing columns from the original columns array and we then called `setColumns()` to update the grid, but this meant that we had to keep references for all visbile and non-visible columns. With this new release we now keep the full columns array at all time and instead we just change column(s) visibility via their `hidden` column properties by using `grid.updateColumnById('id', { hidden: true })` and finally we update the grid via `grid.updateColumns()`. What I'm trying to emphasis is that you should really stop using `grid.setColumns()` in v10+, and if you want to hide some columns when declaring the columns, then just update their `hidden` properties, see more details below...
 
+This release fully aligns Angular-Slickgrid with modern Angular patterns, including Angular 21 support, Standalone Components for simplified setup, and zoneless change detection support which allows you to drop the `zone.js` dependency for improved performance and smaller bundle sizes.
+
 #### Major Changes - Quick Summary
 - [`hidden` columns](#hidden-columns)
 - [Row Detail (now optional)](#row-detail-now-optional)
 - [ngx-translate@v17](#ngx-translate-v17x-now-required)
+- [Migrating to Standalone Component](#migrating-to-standalone-component)
 
 > **Note:** if you come from an earlier version, please make sure to follow each migrations in their respected order (review previous migration guides)
 
@@ -101,6 +104,42 @@ Because of the Angular v21 upgrade, the user (you) will also need to upgrade [`n
 
 For the complete list of changes, please follow `ngx-translate` migration from their website:
 - https://ngx-translate.org/getting-started/migration-guide/
+
+### Migrating to Standalone Component
+
+Angular-Slickgrid is now a Standalone Component and the `AngularSlickgridModule` was dropped, this also requires you to make some small changes in your App `main.ts` and in all your components that use Angular-Slickgrid.
+
+```diff
+- import { AngularSlickgridModule } from 'angular-slickgrid';
++ import { AngularSlickgridComponent, GridOption } from 'angular-slickgrid';
+
+// optional global Grid Option
++ const gridOptionConfig: GridOption = {
++   // ...
++   sanitizer: (dirtyHtml) => DOMPurify.sanitize(dirtyHtml, { ADD_ATTR: ['level'], RETURN_TRUSTED_TYPE: true }),
++ };
+
+bootstrapApplication(AppComponent, {
+  providers: [
+    importProvidersFrom(
+-     AngularSlickgridModule.forRoot({
+-       // ...
+-       sanitizer: (dirtyHtml) => DOMPurify.sanitize(dirtyHtml, { ADD_ATTR: ['level'], RETURN_TRUSTED_TYPE: true }),
+-     })
+    ),
++   AngularSlickgridComponent,
++   { provide: 'defaultGridOption', useValue: gridOptionConfig },
+    // ...
+  ],
+});
+
+// ... Component
+@Component({
+  // ...
+- imports: [AngularSlickgridModule],
++ imports: [AngularSlickgridComponent],
+})
+```
 
 {% hint style="note" %}
 **Info** the changes in the next few lines were all mentioned in the previous "Migration Guide v9.0". So, if you have already made these changes then you could skip the section below.
@@ -247,3 +286,9 @@ Deprecating `ExtensionName` enum which will be replaced by its string literal ty
 | Search (regex)                      | Replace |
 | ------------------------------ | -------- |
 | `ExtensionName\.([a-z_]+)(.*)` | `'$1'$2`      |
+
+### Potential but Postponed Code Change
+
+Signals are becoming increasingly prevalent in Angular, however Angular-Slickgrid continues to use traditional `@Input`/`@Output` decorators. Users who prefer Signals can still use them by calling signal functions in templates: `[dataset]="dataset()"`. 
+
+For a library component, maintaining compatibility with both approaches is pragmatic and may not require a full migration. If we decide to migrate Angular-Slickgrid to use Signals internally, this change would be deferred to version 11 or later. 

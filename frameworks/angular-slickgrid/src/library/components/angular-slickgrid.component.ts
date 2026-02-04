@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
   ApplicationRef,
   ChangeDetectorRef,
@@ -91,7 +92,7 @@ export interface AngularSlickRowDetailView {
     </div>
   `,
   providers: [AngularUtilService, TranslaterService], // make everything transient (non-singleton)
-  standalone: false,
+  imports: [NgTemplateOutlet],
 })
 export class AngularSlickgridComponent<TData = any> implements AfterViewInit, OnDestroy {
   protected _dataset?: TData[] | null;
@@ -152,8 +153,8 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
   sortService: SortService;
   treeDataService: TreeDataService;
 
-  @Input() customDataView: any;
-  @Input() gridId = '';
+  @Input() readonly customDataView: any;
+  @Input() readonly gridId = '';
   @Input() options: GridOption = {};
 
   @Input()
@@ -426,8 +427,8 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
     protected readonly elm: ElementRef,
     @Optional() protected readonly translate: TranslateService,
     @Optional() protected readonly translaterService: TranslaterService,
-    @Inject('config') protected forRootConfig: GridOption,
-    @Inject('externalService') externalServices: ExternalTestingDependencies
+    @Optional() @Inject('defaultGridOption') protected forRootConfig?: GridOption,
+    @Optional() @Inject('externalService') externalServices?: ExternalTestingDependencies
   ) {
     const slickgridConfig = new SlickgridConfig();
 
@@ -1545,12 +1546,12 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
     if (
       options?.pagination &&
       (gridOptions.enablePagination || gridOptions.backendServiceApi) &&
-      (this.forRootConfig.pagination || gridOptions.pagination)
+      (this.forRootConfig?.pagination || gridOptions.pagination)
     ) {
       options.pagination.pageSize =
-        gridOptions.pagination?.pageSize ?? this.forRootConfig.pagination?.pageSize ?? GlobalGridOptions.pagination!.pageSize;
+        gridOptions.pagination?.pageSize ?? this.forRootConfig?.pagination?.pageSize ?? GlobalGridOptions.pagination!.pageSize;
       options.pagination.pageSizes =
-        gridOptions.pagination?.pageSizes ?? this.forRootConfig.pagination?.pageSizes ?? GlobalGridOptions.pagination!.pageSizes;
+        gridOptions.pagination?.pageSizes ?? this.forRootConfig?.pagination?.pageSizes ?? GlobalGridOptions.pagination!.pageSizes;
     }
 
     // also make sure to show the header row if user have enabled filtering

@@ -27,7 +27,7 @@
         "style": "kebab-case"
       }
     ],
-    "@angular-eslint/prefer-standalone": "off",
+    "@angular-eslint/prefer-standalone": "error",
     "typescript/no-unused-expressions": "off",
     "typescript/no-unused-vars": [
       "error",

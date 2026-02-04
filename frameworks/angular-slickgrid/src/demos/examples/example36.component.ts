@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
   Aggregators,
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   Editors,
   Formatters,
   GroupTotalFormatters,
@@ -99,7 +99,7 @@ export class CustomSumAggregator implements Aggregator {
   templateUrl: './example36.component.html',
   styleUrls: ['./example36.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  imports: [AngularSlickgridModule, FormsModule],
+  imports: [AngularSlickgridComponent, FormsModule],
 })
 export class Example36Component implements OnInit {
   columnDefinitions: Column<GroceryItem>[] = [];

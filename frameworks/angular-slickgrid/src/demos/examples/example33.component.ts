@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   Editors,
   Filters,
   Formatters,
@@ -25,7 +25,7 @@ const NB_ITEMS = 1000;
   templateUrl: './example33.component.html',
   styleUrls: ['./example33.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  imports: [FormsModule, NgClass, AngularSlickgridModule],
+  imports: [FormsModule, NgClass, AngularSlickgridComponent],
 })
 export class Example33Component implements OnInit {
   angularGrid!: AngularGridInstance;

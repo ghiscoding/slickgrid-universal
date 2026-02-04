@@ -1,12 +1,19 @@
 import { Component, ViewEncapsulation, type OnInit } from '@angular/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { AngularSlickgridModule, Editors, type AngularGridInstance, type Column, type GridOption, type ItemMetadata } from '../../library';
+import {
+  AngularSlickgridComponent,
+  Editors,
+  type AngularGridInstance,
+  type Column,
+  type GridOption,
+  type ItemMetadata,
+} from '../../library';
 
 @Component({
   styleUrls: ['example43.component.scss'],
   templateUrl: './example43.component.html',
   encapsulation: ViewEncapsulation.None,
-  imports: [AngularSlickgridModule],
+  imports: [AngularSlickgridComponent],
 })
 export class Example43Component implements OnInit {
   columnDefinitions: Column[] = [];

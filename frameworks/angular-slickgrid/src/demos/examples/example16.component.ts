@@ -1,6 +1,6 @@
 import { Component, type OnInit } from '@angular/core';
 import {
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   Filters,
   Formatters,
   type AngularGridInstance,
@@ -11,7 +11,7 @@ import {
 
 @Component({
   templateUrl: './example16.component.html',
-  imports: [AngularSlickgridModule],
+  imports: [AngularSlickgridComponent],
 })
 export class Example16Component implements OnInit {
   angularGrid!: AngularGridInstance;
