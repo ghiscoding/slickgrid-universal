@@ -91,7 +91,7 @@ process: (query: string, options?: { signal?: AbortSignal }) => Promise<any>
 getCountries(query: string, options?: { signal?: AbortSignal }) {
   // Angular HttpClient returns Observables (not Promises), so it has its own cancellation mechanism
   // through RxJS unsubscribe. The AbortSignal parameter is not used here.
-  return this.http.get('/api/countries?q=' + query, {
+  return this.http.get(`/api/countries?q=${query}`, {
     reportProgress: true
   });
 }
@@ -100,7 +100,7 @@ getCountries(query: string, options?: { signal?: AbortSignal }) {
 #### Example with Fetch API (Promise-based)
 ```ts
 getCountries(query: string, options?: { signal?: AbortSignal }) {
-  return fetch('/api/countries?q=' + query, {
+  return fetch(`/api/countries?q=${query}`, {
     signal: options?.signal  // This automatically aborts when a new request comes in
   }).then(r => r.json());
 }

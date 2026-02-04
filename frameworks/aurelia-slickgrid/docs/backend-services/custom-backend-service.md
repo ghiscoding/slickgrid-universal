@@ -82,7 +82,7 @@ process: (query: string, options?: { signal?: AbortSignal }) => Promise<any>
 #### Example with Fetch API
 ```ts
 getCountries(query: string, options?: { signal?: AbortSignal }) {
-  return fetch('/api/countries?q=' + query, {
+  return fetch(`/api/countries?q=${query}`, {
     signal: options?.signal  // This automatically aborts when a new request comes in
   }).then(r => r.json());
 }
@@ -91,7 +91,7 @@ getCountries(query: string, options?: { signal?: AbortSignal }) {
 #### Example with Axios
 ```ts
 getCountries(query: string, options?: { signal?: AbortSignal }) {
-  return axios.get('/api/countries?q=' + query, {
+  return axios.get(`/api/countries?q=${query}`, {
     signal: options?.signal
   });
 }
@@ -103,7 +103,7 @@ If you want to handle cancellation errors explicitly:
 
 ```ts
 getCountries(query: string, options?: { signal?: AbortSignal }) {
-  return fetch('/api/countries?q=' + query, {
+  return fetch(`/api/countries?q=${query}`, {
     signal: options?.signal
   }).then(r => {
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
