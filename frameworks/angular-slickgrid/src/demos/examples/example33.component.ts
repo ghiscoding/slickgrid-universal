@@ -1,4 +1,3 @@
-import { NgClass } from '@angular/common';
 import { Component, signal, ViewEncapsulation, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
@@ -25,7 +24,7 @@ const NB_ITEMS = 1000;
   templateUrl: './example33.component.html',
   styleUrls: ['./example33.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  imports: [FormsModule, NgClass, AngularSlickgridComponent],
+  imports: [FormsModule, AngularSlickgridComponent],
 })
 export class Example33Component implements OnInit {
   angularGrid!: AngularGridInstance;

@@ -1,4 +1,3 @@
-import { NgClass } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, signal, type OnInit } from '@angular/core';
 import { TranslateDirective } from '@ngx-translate/core';
@@ -19,10 +18,10 @@ import { Logger } from './swt-logger.service';
       <div class="slick-pagination-nav">
         <nav aria-label="Page navigation">
           <ul class="pagination">
-            <li class="page-item" [ngClass]="pageNumber === 1 ? 'disabled' : ''">
+            <li class="page-item" [class]="pageNumber === 1 ? 'disabled' : ''">
               <a class="page-link icon-seek-first mdi mdi-page-first" aria-label="First" (click)="changeToFirstPage($event)"> </a>
             </li>
-            <li class="page-item" [ngClass]="pageNumber === 1 ? 'disabled' : ''">
+            <li class="page-item" [class]="pageNumber === 1 ? 'disabled' : ''">
               <a
                 class="page-link icon-seek-prev mdi mdi-chevron-down mdi-rotate-240"
                 aria-label="Previous"
@@ -41,10 +40,10 @@ import { Logger } from './swt-logger.service';
 
         <nav aria-label="Page navigation">
           <ul class="pagination">
-            <li class="page-item" [ngClass]="pageNumber === pageCount ? 'disabled' : ''">
+            <li class="page-item" [class]="pageNumber === pageCount ? 'disabled' : ''">
               <a class="page-link icon-seek-next text-center mdi-chevron-down" aria-label="Next" (click)="changeToNextPage($event)"> </a>
             </li>
-            <li class="page-item" [ngClass]="pageNumber === pageCount ? 'disabled' : ''">
+            <li class="page-item" [class]="pageNumber === pageCount ? 'disabled' : ''">
               <a class="page-link icon-seek-end mdi mdi-page-last" aria-label="Last" (click)="changeToLastPage($event)"> </a>
             </li>
           </ul>
@@ -75,7 +74,7 @@ import { Logger } from './swt-logger.service';
       }
     `,
   ],
-  imports: [NgClass, TranslateDirective],
+  imports: [TranslateDirective],
 })
 export class SwtCommonGridPaginationComponent implements OnInit {
   private logger: Logger;
