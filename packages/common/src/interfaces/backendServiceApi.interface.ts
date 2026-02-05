@@ -1,7 +1,7 @@
 import type { Observable } from '../services/rxjsFacade.js';
 import type { BackendService } from './backendService.interface.js';
 
-export interface BackendServiceApi {
+export interface BackendServiceApi<T = any> {
   /** Default to 500ms, how long to wait until we start querying backend to avoid sending too many requests to backend server. */
   filterTypingDebounce?: number;
 
@@ -38,13 +38,13 @@ export interface BackendServiceApi {
    * INTERNAL USAGE ONLY by Slickgrid-Universal
    * This internal process will be run just before postProcess and is meant to refresh the Dataset & Pagination after a GraphQL call
    */
-  internalPostProcess?: (result: any) => void;
+  internalPostProcess?: (result: T) => void;
 
   /** On error callback, when an error is thrown by the process execution */
   onError?: (e: any) => void;
 
   /** On init (or on page load), what action to perform? */
-  onInit?: (query: string) => Promise<any> | Observable<any>;
+  onInit?: (query: string) => Promise<T> | Observable<T>;
 
   /** When user reaches the end of the current grid scroll position (only works when Infinite Scroll feature is enabled) */
   onScrollEnd?: () => void;
@@ -53,8 +53,8 @@ export interface BackendServiceApi {
   preProcess?: () => void;
 
   /** On Processing, we get the query back from the service, and we need to provide a Promise/Observable. For example: this.http.get(myGraphqlUrl) */
-  process: (query: string) => Promise<any> | Observable<any>;
+  process: (query: string, options?: { signal?: AbortSignal }) => Promise<T> | Observable<T>;
 
   /** After executing the query, what action to perform? For example, stop the spinner */
-  postProcess?: (response: any) => void;
+  postProcess?: (response: T) => void;
 }

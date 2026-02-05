@@ -4,7 +4,7 @@ import type { GraphqlPaginatedResult } from './graphqlPaginatedResult.interface.
 import type { GraphqlResult } from './graphqlResult.interface.js';
 import type { GraphqlServiceOption } from './graphqlServiceOption.interface.js';
 
-export interface GraphqlServiceApi extends BackendServiceApi {
+export interface GraphqlServiceApi<T = any> extends BackendServiceApi {
   /** Backend Service Options */
   options: GraphqlServiceOption;
 
@@ -12,17 +12,21 @@ export interface GraphqlServiceApi extends BackendServiceApi {
   service: GraphqlService;
 
   /** On init (or on page load), what action to perform? */
-  onInit?: (query: string) => Promise<GraphqlResult | GraphqlPaginatedResult> | Observable<GraphqlResult | GraphqlPaginatedResult>;
+  onInit?: (
+    query: string
+  ) => Promise<GraphqlResult<T> | GraphqlPaginatedResult<T>> | Observable<GraphqlResult<T> | GraphqlPaginatedResult<T>>;
 
   /** On Processing, we get the query back from the service, and we need to provide a Promise/Observable. For example: this.http.get(myGraphqlUrl) */
-  process: (query: string) => Promise<GraphqlResult | GraphqlPaginatedResult> | Observable<GraphqlResult | GraphqlPaginatedResult>;
+  process: (
+    query: string
+  ) => Promise<GraphqlResult<T> | GraphqlPaginatedResult<T>> | Observable<GraphqlResult<T> | GraphqlPaginatedResult<T>>;
 
   /** After executing the query, what action to perform? For example, stop the spinner */
-  postProcess?: (response: GraphqlResult | GraphqlPaginatedResult) => void;
+  postProcess?: (response: GraphqlResult<T> | GraphqlPaginatedResult<T>) => void;
 
   /**
    * INTERNAL USAGE ONLY by Slickgrid-Universal
    * This internal process will be run just before postProcess and is meant to refresh the Dataset & Pagination after a GraphQL call
    */
-  internalPostProcess?: (result: GraphqlResult | GraphqlPaginatedResult) => void;
+  internalPostProcess?: (result: GraphqlResult<T> | GraphqlPaginatedResult<T>) => void;
 }

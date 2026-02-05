@@ -157,8 +157,6 @@ prepareGrid() {
 
 ### `i18next` is now optional
 
-The `GridService` has CRUD method events that were sometime returning a single item and other times an array of items, and so for that reason we had to rely on auto-detection code like `onItemAdded.subscribe(item => { const items = Array.isArray(item) ? item : [item] }`. To fix this, I decided to change all the event names to plural and always return an array of items which is a lot more predictable.
-
 ```diff
 // index.tsx
 import i18n from 'i18next';
@@ -211,23 +209,29 @@ Below is a list of Enums being deprecated and you should think about migrating t
 | `FieldType`  | `FieldType.boolean` | `'boolean'`         |
 |             | `FieldType.number`   | `'number'`          |
 |             | `FieldType.dateIso`   | `'dateIso'`          |
-|  | ... | ... |
+| ... | ... | ... |
 | `FileType` | `FileType.csv`      | `'csv'`             |
 |             | `FileType.xlsx`     | `'xlsx'`            |
-|  | ... | ... |
+| ... | ... | ... |
 | `GridStateType`  | `GridStateType.columns` | `'columns'`  |
 |             | `GridStateType.filters`   | `'filters'`   |
 |             | `GridStateType.sorters`   | `'sorters'`   |
-|  | ... | ... |
+| ... | ... | ... |
 | `OperatorType`  | `OperatorType.greaterThan` | `'>'`  or `'GT'` |    See [Operator](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/enums/operator.type.ts) list for all available operators |
 |             | `OperatorType.lessThanOrEqual`   | `'<='` or `'LE'`  |
 |             | `OperatorType.contains`   | `'Contains'` or `'CONTAINS'`  | Operators are written as PascalCase |
 |             | `OperatorType.equal`   | `'='` or `'EQ'` |
 |             | `OperatorType.rangeExclusive`   | `'RangeExclusive'`  |
-|  | ... | ... |
+| ... | ... | ... |
 | `SortDirection`  | `SortDirection.ASC` | `'ASC'` or `'asc'`  |
 |             | `SortDirection.DESC`   | `'DESC'` or `'desc'`  |
-|  | ... | ... |
+| ... | ... | ... |
+
+**Hint** You can use VSCode search & replace, but make sure it's set to Regular Expression pattern
+
+| Search (regex)             | Replace  |
+| -------------------------- | -------- |
+| `FieldType\.([a-z_]+)(.*)` | `'$1'$2` |
 
 ##### deprecating `editorOptions` and `filterOptions`, they are being renamed as a more generic `options` name
 

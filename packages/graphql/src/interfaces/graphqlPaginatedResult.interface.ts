@@ -1,10 +1,10 @@
 import type { CursorPageInfo, Metrics } from '@slickgrid-universal/common';
 
-export interface GraphqlPaginatedResult {
+export interface GraphqlPaginatedResult<T = any> {
   data: {
     [datasetName: string]: {
       /** result set of data objects (array of data) */
-      nodes: any[];
+      nodes: T[];
 
       /** Total count of items in the table (needed for the Pagination to work) */
       totalCount: number;

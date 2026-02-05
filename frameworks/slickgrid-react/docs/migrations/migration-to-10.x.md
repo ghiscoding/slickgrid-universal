@@ -109,31 +109,31 @@ Below is a list of Enums that you need to replace with their associated string l
 | `DelimiterType` | `DelimiterType.comma` | `','` |
 |             | `DelimiterType.colon` | `':'` |
 |             | `DelimiterType.space` | `' '` |
-|  | ... | ... |
+| ... | ... | ... |
 | `EventNamingStyle` | `EventNamingStyle.camelCase` | `'camelCase'` |
 |             | `EventNamingStyle.kebabCase` | `'kebabCase'` |
 |             | `EventNamingStyle.lowerCase` | `'lowerCase'` |
-|  | ... | ... |
+| ... | ... | ... |
 | `FieldType`  | `FieldType.boolean` | `'boolean'`         |
 |             | `FieldType.number`   | `'number'`          |
 |             | `FieldType.dateIso`   | `'dateIso'`          |
-|  | ... | ... |
+| ... | ... | ... |
 | `FileType` | `FileType.csv`      | `'csv'`             |
 |             | `FileType.xlsx`     | `'xlsx'`            |
-|  | ... | ... |
+| ... | ... | ... |
 | `GridStateType`  | `GridStateType.columns` | `'columns'`  |
 |             | `GridStateType.filters`   | `'filters'`   |
 |             | `GridStateType.sorters`   | `'sorters'`   |
-|  | ... | ... |
+| ... | ... | ... |
 | `OperatorType`  | `OperatorType.greaterThan` | `'>'`  or `'GT'` |    See [Operator](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/enums/operator.type.ts) list for all available operators |
 |             | `OperatorType.lessThanOrEqual`   | `'<='` or `'LE'`  |
 |             | `OperatorType.contains`   | `'Contains'` or `'CONTAINS'`  | Operators are written as PascalCase |
 |             | `OperatorType.equal`   | `'='` or `'EQ'` |
 |             | `OperatorType.rangeExclusive`   | `'RangeExclusive'`  |
-|  | ... | ... |
+| ... | ... | ... |
 | `SortDirection`  | `SortDirection.ASC` | `'ASC'` or `'asc'`  |
 |             | `SortDirection.DESC`   | `'DESC'` or `'desc'`  |
-|  | ... | ... |
+| ... | ... | ... |
 
 **Hint** You can use VSCode search & replace, but make sure it's set to Regular Expression pattern
 
