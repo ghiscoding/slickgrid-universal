@@ -270,9 +270,6 @@ export interface Column<T = any> {
   /** PDF export custom options for cell formatting & alignment */
   pdfExportOptions?: PdfExportOption;
 
-  /** PDF export custom options for cell formatting & alignment */
-  pdfExportOptions?: PdfExportOption;
-
   /**
    * Column Editor save format type (e.g. which date format to use when saving after choosing a date from the Date Editor picker)
    * NOTE: this is currently only used by the Date Editor (date picker)
