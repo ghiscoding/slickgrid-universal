@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component, ViewEncapsulation, type OnInit } from '@angular/core';
+import { Component, signal, ViewEncapsulation, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
@@ -35,7 +35,7 @@ export class Example33Component implements OnInit {
   dataset!: any[];
   hideSubTitle = false;
   serverApiDelay = 500;
-  showLazyLoading = false;
+  showLazyLoading = signal(false);
 
   ngOnInit(): void {
     this.initializeGrid();
@@ -306,11 +306,11 @@ export class Example33Component implements OnInit {
           //   });
           // }),
           collectionLazy: () => {
-            this.showLazyLoading = true;
+            this.showLazyLoading.set(true);
 
             return new Promise((resolve) => {
               setTimeout(() => {
-                this.showLazyLoading = false;
+                this.showLazyLoading.set(false);
                 resolve(Array.from(Array((this.dataset || []).length).keys()).map((k) => ({ value: k, label: `Task ${k}` })));
               }, this.serverApiDelay);
             });

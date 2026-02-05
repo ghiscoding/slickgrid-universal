@@ -1,7 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
   ApplicationRef,
-  ChangeDetectorRef,
   Component,
   ContentChild,
   ElementRef,
@@ -422,7 +421,6 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
   constructor(
     protected readonly angularUtilService: AngularUtilService,
     protected readonly appRef: ApplicationRef,
-    protected readonly cd: ChangeDetectorRef,
     protected readonly containerService: ContainerService,
     protected readonly elm: ElementRef,
     @Optional() protected readonly translate: TranslateService,
@@ -913,7 +911,6 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
       change: { newValues: { pageNumber, pageSize }, type: 'pagination' },
       gridState: this.gridStateService.getCurrentGridState(),
     });
-    this.cd.markForCheck();
   }
 
   /**
@@ -1391,7 +1388,6 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
       this.renderPagination();
       this._isPaginationInitialized = true;
     }
-    this.cd.detectChanges();
   }
 
   /** Load the Editor Collection asynchronously and replace the "collection" property when Observable resolves */

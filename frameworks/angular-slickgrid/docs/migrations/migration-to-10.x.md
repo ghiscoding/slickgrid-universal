@@ -105,6 +105,24 @@ Because of the Angular v21 upgrade, the user (you) will also need to upgrade [`n
 For the complete list of changes, please follow `ngx-translate` migration from their website:
 - https://ngx-translate.org/getting-started/migration-guide/
 
+### Angular Zoneless Mode
+
+Starting with v10, Angular-Slickgrid itself now runs in zoneless mode by default. However, your application can still use `zone.js` if you wish and this is entirely at your discretion. For more information about zoneless Angular, see the official Angular documentation: https://angular.dev/guide/zoneless
+
+### Supporting Both Zone.js and Zoneless Users
+
+Angular-Slickgrid now works out-of-the-box in zoneless Angular apps, but still supports applications using `zone.js`:
+
+- If your app uses `zone.js`, you do not need to change anything, manual change detection (e.g., `markForCheck()`, `detectChanges()`) is still not required.
+- If your app is zoneless, you do not need to add `zone.js` and should follow the zoneless setup instructions above.
+- The library no longer calls `markForCheck()` or `detectChanges()` internally, so UI updates are handled automatically in both modes.
+- If you have custom code that relies on manual change detection, review and update it as needed. 
+- For example, I had to use Signal to ensure UI changes were detected in my OData/GraphQL demos when using the `BackendServiceApi` with a `postProcess` callback and you might need changes when using Pagination as well (in my case I switched to Signals).
+
+> **Tip:** In zoneless Angular, always use signals for any state that should update the UI. For example, if you have a property like `selectedLanguage`, declare it as a signal (`selectedLanguage = signal('en')`) and update it with `selectedLanguage.set('fr')`. In your template, use `selectedLanguage()` to display or bind the value. This ensures UI updates are automatic and you never need manual change detection.
+
+For more details, review the official Angular documentation: https://angular.dev/guide/zoneless
+
 ### Migrating to Standalone Component
 
 Angular-Slickgrid is now a Standalone Component and the `AngularSlickgridModule` was dropped, this also requires you to make some small changes in your App `main.ts` and in all your components that use Angular-Slickgrid.
@@ -171,23 +189,23 @@ Below is a list of Enums that you need to replace with their associated string l
 |  | ... | ... |
 | `FieldType`  | `FieldType.boolean` | `'boolean'`         |
 |             | `FieldType.number`   | `'number'`          |
-|             | `FieldType.dateIso`   | `'dateIso'`          |
+|             | `FieldType.dateIso`  | `'dateIso'`          |
 |  | ... | ... |
-| `FileType` | `FileType.csv`      | `'csv'`             |
+| `FileType` | `FileType.csv`       | `'csv'`             |
 |             | `FileType.xlsx`     | `'xlsx'`            |
 |  | ... | ... |
 | `GridStateType`  | `GridStateType.columns` | `'columns'`  |
-|             | `GridStateType.filters`   | `'filters'`   |
-|             | `GridStateType.sorters`   | `'sorters'`   |
+|             | `GridStateType.filters`      | `'filters'`   |
+|             | `GridStateType.sorters`      | `'sorters'`   |
 |  | ... | ... |
 | `OperatorType`  | `OperatorType.greaterThan` | `'>'`  or `'GT'` |    See [Operator](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/enums/operator.type.ts) list for all available operators |
-|             | `OperatorType.lessThanOrEqual`   | `'<='` or `'LE'`  |
-|             | `OperatorType.contains`   | `'Contains'` or `'CONTAINS'`  | Operators are written as PascalCase |
-|             | `OperatorType.equal`   | `'='` or `'EQ'` |
-|             | `OperatorType.rangeExclusive`   | `'RangeExclusive'`  |
+|             | `OperatorType.lessThanOrEqual` | `'<='` or `'LE'`  |
+|             | `OperatorType.contains`        | `'Contains'` or `'CONTAINS'`  | Operators are written as PascalCase |
+|             | `OperatorType.equal`           | `'='` or `'EQ'` |
+|             | `OperatorType.rangeExclusive`  | `'RangeExclusive'`  |
 |  | ... | ... |
-| `SortDirection`  | `SortDirection.ASC` | `'ASC'` or `'asc'`  |
-|             | `SortDirection.DESC`   | `'DESC'` or `'desc'`  |
+| `SortDirection`  | `SortDirection.ASC`       | `'ASC'` or `'asc'`  |
+|             | `SortDirection.DESC`           | `'DESC'` or `'desc'`  |
 |  | ... | ... |
 
 **Hint** You can use VSCode search & replace, but make sure it's set to Regular Expression pattern
@@ -274,18 +292,18 @@ Wait, are we talking already about version 11 when version 10 just shipped? That
 
 Deprecating `ExtensionName` enum which will be replaced by its string literal type, for example:
 
-| Enum Name        | from `enum`         | to string `type`    |
-| ---------------- | ------------------- | ------------------- |
-| `ExtensionName`  | `ExtensionName.autoTooltip` | `'autoTooltip'`         |
-|                  | `ExtensionName.draggableGrouping`   | `'draggableGrouping'`          |
-|                  | `ExtensionName.rowDetail`   | `'rowDetail'`          |
+| Enum Name        | from `enum`                       | to string `type`      |
+| ---------------- | --------------------------------- | --------------------- |
+| `ExtensionName`  | `ExtensionName.autoTooltip`       | `'autoTooltip'`       |
+|                  | `ExtensionName.draggableGrouping` | `'draggableGrouping'` |
+|                  | `ExtensionName.rowDetail`         | `'rowDetail'`         |
 | ... | ... | ... |
 
 **Hint** You can use VSCode search & replace, but make sure it's set to Regular Expression pattern
 
-| Search (regex)                      | Replace |
+| Search (regex)                 | Replace  |
 | ------------------------------ | -------- |
-| `ExtensionName\.([a-z_]+)(.*)` | `'$1'$2`      |
+| `ExtensionName\.([a-z_]+)(.*)` | `'$1'$2` |
 
 ### Potential but Postponed Code Change
 

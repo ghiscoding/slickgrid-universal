@@ -65,7 +65,7 @@
         <i class="mdi mdi-translate"></i>
         Switch Language
       </button>
-      <b>Locale:</b> <span style="font-style: italic" data-test="selected-locale">{{ selectedLanguage + '.json' }}</span>
+      <b>Locale:</b> <span style="font-style: italic" data-test="selected-locale">{{ selectedLanguage() + '.json' }}</span>
 
       <span style="margin-left: 20px">
         <button class="btn btn-outline-secondary btn-sm btn-icon" (click)="exportToFile('csv')">

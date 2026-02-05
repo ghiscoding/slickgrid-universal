@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectorRef, Component, type OnInit } from '@angular/core';
+import { Component, signal, type OnInit } from '@angular/core';
 import { GridOdataService, type OdataOption, type OdataServiceApi } from '@slickgrid-universal/odata';
 import {
   AngularSlickgridComponent,
@@ -29,23 +29,20 @@ export class Example5Component implements OnInit {
   gridOptions!: GridOption;
   dataset = [];
   hideSubTitle = false;
-  metrics!: Metrics;
-  paginationOptions!: Pagination;
+  metrics = signal<Metrics | undefined>(undefined);
+  paginationOptions = signal<Pagination | undefined>(undefined);
 
   isCountEnabled = true;
   isSelectEnabled = false;
   isExpandEnabled = false;
   odataVersion = 2;
   odataQuery = '';
-  processing = true;
-  errorStatus = '';
+  processing = signal(true);
+  errorStatus = signal('');
   isPageErrorTest = false;
-  status = { text: 'processing...', class: 'alert alert-danger' };
+  status = signal({ text: 'processing...', class: 'alert alert-danger' });
 
-  constructor(
-    private readonly cd: ChangeDetectorRef,
-    private http: HttpClient
-  ) {}
+  constructor(private http: HttpClient) {}
 
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid;
@@ -143,32 +140,32 @@ export class Example5Component implements OnInit {
           version: this.odataVersion, // defaults to 2, the query string is slightly different between OData 2 and 4
         },
         onError: (error: Error) => {
-          this.errorStatus = error.message;
+          this.errorStatus.set(error.message);
           this.displaySpinner(false, true);
         },
         preProcess: () => {
-          this.errorStatus = '';
+          this.errorStatus.set('');
           this.displaySpinner(true);
         },
         process: (query) => this.getCustomerApiCall(query),
         postProcess: (response) => {
-          this.metrics = response.metrics;
+          this.metrics.set(response.metrics);
           this.displaySpinner(false);
           this.getCustomerCallback(response);
-          this.cd.detectChanges();
         },
       } as OdataServiceApi,
     };
   }
 
   displaySpinner(isProcessing: boolean, isError?: boolean) {
-    this.processing = isProcessing;
+    this.processing.set(isProcessing);
     if (isError) {
-      this.status = { text: 'ERROR!!!', class: 'alert alert-danger' };
+      this.status.set({ text: 'ERROR!!!', class: 'alert alert-danger' });
     } else {
-      this.status = isProcessing ? { text: 'loading', class: 'alert alert-warning' } : { text: 'finished', class: 'alert alert-success' };
+      this.status.set(
+        isProcessing ? { text: 'loading', class: 'alert alert-warning' } : { text: 'finished', class: 'alert alert-success' }
+      );
     }
-    this.cd.detectChanges();
   }
 
   getCustomerCallback(data: any) {
@@ -178,12 +175,12 @@ export class Example5Component implements OnInit {
     if (this.isCountEnabled) {
       totalItemCount = this.odataVersion === 4 ? data['@odata.count'] : data['d']['__count'];
     }
-    if (this.metrics) {
-      this.metrics.totalItemCount = totalItemCount;
+    if (this.metrics()) {
+      this.metrics.set({ ...this.metrics()!, totalItemCount });
     }
 
     // once pagination totalItems is filled, we can update the dataset
-    this.paginationOptions = { ...this.gridOptions.pagination, totalItems: totalItemCount } as Pagination;
+    this.paginationOptions.set({ ...this.gridOptions.pagination, totalItems: totalItemCount } as Pagination);
     this.dataset = this.odataVersion === 4 ? data.value : data.d.results;
     this.odataQuery = data['query'];
   }

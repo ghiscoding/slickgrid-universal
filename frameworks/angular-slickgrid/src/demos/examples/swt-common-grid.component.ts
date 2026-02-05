@@ -289,7 +289,7 @@ export class SwtCommonGridComponent implements OnInit, AfterViewInit, BackendSer
     }
 
     this.dataset = dataProvider;
-    this.paginationComponent.processing = false;
+    this.paginationComponent.processing.set(false);
     this.logger.info('method [gridData] - END, all data size=' + (rawData && 'size' in rawData ? rawData.size : 0));
 
     // this.gridObj.setSortColumn('excludeType', true);

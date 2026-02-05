@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, type OnInit } from '@angular/core';
+import { Component, signal, type OnInit } from '@angular/core';
 import {
   AngularSlickgridComponent,
   Filters,
@@ -27,11 +27,9 @@ export class Example10Component implements OnInit {
   gridObj2!: any;
   hideSubTitle = false;
   isGrid2WithPagination = true;
-  selectedTitles = '';
-  selectedTitle = '';
-  selectedGrid2IDs!: number[];
-
-  constructor(private cd: ChangeDetectorRef) {}
+  selectedTitles = signal('');
+  selectedTitle = signal('');
+  selectedGrid2IDs = signal<number[]>([]);
 
   ngOnInit(): void {
     this.prepareGrid();
@@ -288,13 +286,13 @@ export class Example10Component implements OnInit {
     console.log('Grid State changed:: ', gridStateChanges.change);
 
     if (gridStateChanges!.gridState!.rowSelection) {
-      this.selectedGrid2IDs = (gridStateChanges!.gridState!.rowSelection.filteredDataContextIds || []) as number[];
-      this.selectedGrid2IDs = this.selectedGrid2IDs.sort((a, b) => a - b); // sort by ID
-      this.selectedTitles = this.selectedGrid2IDs.map((dataContextId) => `Task ${dataContextId}`).join(',');
-      if (this.selectedTitles.length > 293) {
-        this.selectedTitles = this.selectedTitles.substring(0, 293) + '...';
+      const ids = ((gridStateChanges!.gridState!.rowSelection.filteredDataContextIds || []) as number[]).sort((a, b) => a - b);
+      this.selectedGrid2IDs.set(ids);
+      let titles = ids.map((dataContextId) => `Task ${dataContextId}`).join(',');
+      if (titles.length > 293) {
+        titles = titles.substring(0, 293) + '...';
       }
-      this.cd.detectChanges();
+      this.selectedTitles.set(titles);
     }
   }
 
@@ -308,10 +306,11 @@ export class Example10Component implements OnInit {
 
   handleSelectedRowsChanged1(e: Event, args: any) {
     if (Array.isArray(args.rows) && this.gridObj1) {
-      this.selectedTitle = args.rows.map((idx: number) => {
+      const title = args.rows.map((idx: number) => {
         const item = this.gridObj1.getDataItem(idx);
         return item.title || '';
       });
+      this.selectedTitle.set(title);
     }
   }
 

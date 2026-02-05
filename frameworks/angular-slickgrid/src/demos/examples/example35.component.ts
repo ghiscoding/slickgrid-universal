@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, type OnInit } from '@angular/core';
+import { Component, signal, ViewEncapsulation, type OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import type { Subscription } from 'rxjs';
@@ -19,17 +19,17 @@ export class Example35Component implements OnInit {
   columnDefinitions!: Column[];
   dataset!: any[];
   hideSubTitle = false;
-  selectedLanguage = '';
+  selectedLanguage = signal('');
   selectedLanguageFile = '';
-  fetchResult = '';
-  statusClass = 'alert alert-light';
-  statusStyle = 'display: none';
+  fetchResult = signal('');
+  statusClass = signal('alert alert-light');
+  statusStyle = signal('display: none');
 
   constructor(private translate: TranslateService) {
     // always start with English for Cypress E2E tests to be consistent
     const defaultLang = 'en';
     this.translate.use(defaultLang);
-    this.selectedLanguage = defaultLang;
+    this.selectedLanguage.set(defaultLang);
   }
 
   ngOnInit() {
@@ -148,7 +148,7 @@ export class Example35Component implements OnInit {
             })
             .then((response: any) => {
               if (response === false) {
-                this.statusClass = 'alert alert-danger';
+                this.statusClass.set('alert alert-danger');
                 return false;
               }
               if (typeof response === 'object') {
@@ -156,9 +156,9 @@ export class Example35Component implements OnInit {
               }
             })
             .then((json) => {
-              this.statusStyle = 'display: block';
-              this.statusClass = 'alert alert-success';
-              this.fetchResult = json.message;
+              this.statusStyle.set('display: block');
+              this.statusClass.set('alert alert-success');
+              this.fetchResult.set(json.message);
               return true;
             });
         },
@@ -222,9 +222,9 @@ export class Example35Component implements OnInit {
   }
 
   clearStatus() {
-    this.statusClass = 'alert alert-light';
-    this.statusStyle = 'display: none';
-    this.fetchResult = '';
+    this.statusClass.set('alert alert-light');
+    this.statusStyle.set('display: none');
+    this.fetchResult.set('');
   }
 
   toggleSingleMultiRowEdit() {
@@ -242,10 +242,10 @@ export class Example35Component implements OnInit {
   }
 
   switchLanguage() {
-    const nextLanguage = this.selectedLanguage === 'en' ? 'fr' : 'en';
+    const nextLanguage = this.selectedLanguage() === 'en' ? 'fr' : 'en';
     this.subscriptions.push(
       this.translate.use(nextLanguage).subscribe(() => {
-        this.selectedLanguage = nextLanguage;
+        this.selectedLanguage.set(nextLanguage);
       })
     );
   }

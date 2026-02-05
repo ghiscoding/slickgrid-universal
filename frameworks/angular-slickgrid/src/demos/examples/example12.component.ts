@@ -1,4 +1,4 @@
-import { Component, type OnDestroy, type OnInit } from '@angular/core';
+import { Component, signal, type OnDestroy, type OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
@@ -36,7 +36,7 @@ export class Example12Component implements OnInit, OnDestroy {
   columnDefinitions!: Column[];
   gridOptions!: GridOption;
   dataset!: any[];
-  selectedLanguage: string;
+  selectedLanguage = signal('');
   duplicateTitleHeaderCount = 1;
   gridObj: any;
   hideSubTitle = false;
@@ -47,7 +47,7 @@ export class Example12Component implements OnInit, OnDestroy {
     // always start with English for Cypress E2E tests to be consistent
     const defaultLang = 'en';
     this.translate.use(defaultLang);
-    this.selectedLanguage = defaultLang;
+    this.selectedLanguage.set(defaultLang);
   }
 
   ngOnDestroy() {
@@ -307,10 +307,10 @@ export class Example12Component implements OnInit, OnDestroy {
   }
 
   switchLanguage() {
-    const nextLanguage = this.selectedLanguage === 'en' ? 'fr' : 'en';
+    const nextLanguage = this.selectedLanguage() === 'en' ? 'fr' : 'en';
     this.subscriptions.push(
       this.translate.use(nextLanguage).subscribe(() => {
-        this.selectedLanguage = nextLanguage;
+        this.selectedLanguage.set(nextLanguage);
       })
     );
   }

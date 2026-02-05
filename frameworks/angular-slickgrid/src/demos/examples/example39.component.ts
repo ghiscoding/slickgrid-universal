@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectorRef, Component, ViewEncapsulation, type OnDestroy, type OnInit } from '@angular/core';
+import { Component, signal, ViewEncapsulation, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { GraphqlService, type GraphqlPaginatedResult, type GraphqlServiceApi } from '@slickgrid-universal/graphql';
@@ -39,16 +39,15 @@ export class Example39Component implements OnInit, OnDestroy {
   gridOptions!: GridOption;
   dataset: any[] = [];
   hideSubTitle = false;
-  metrics!: Partial<Metrics>;
-  tagDataClass = '';
+  metrics = signal<Partial<Metrics> | undefined>(undefined);
+  tagDataClass = signal('');
   graphqlQuery = '...';
-  processing = false;
-  selectedLanguage: string;
-  status = { text: 'processing...', class: 'alert alert-danger' };
+  processing = signal(false);
+  selectedLanguage = signal('');
+  status = signal({ text: 'processing...', class: 'alert alert-danger' });
   serverWaitDelay = FAKE_SERVER_DELAY; // server simulation with default of 250ms but 50ms for Cypress tests
 
   constructor(
-    private readonly cd: ChangeDetectorRef,
     private http: HttpClient,
     private translate: TranslateService
   ) {
@@ -56,7 +55,7 @@ export class Example39Component implements OnInit, OnDestroy {
     // always start with English for Cypress E2E tests to be consistent
     const defaultLang = 'en';
     this.translate.use(defaultLang);
-    this.selectedLanguage = defaultLang;
+    this.selectedLanguage.set(defaultLang);
   }
 
   ngOnDestroy() {
@@ -166,13 +165,12 @@ export class Example39Component implements OnInit, OnDestroy {
         preProcess: () => this.displaySpinner(true),
         process: (query) => this.getCustomerApiCall(query),
         postProcess: (result: GraphqlPaginatedResult) => {
-          this.metrics = {
+          this.metrics.set({
             endTime: new Date(),
             totalItemCount: result.data[GRAPHQL_QUERY_DATASET_NAME].totalCount || 0,
-          };
+          });
           this.displaySpinner(false);
           this.getCustomerCallback(result);
-          this.cd.detectChanges();
         },
       } as GraphqlServiceApi,
     };
@@ -185,35 +183,26 @@ export class Example39Component implements OnInit, OnDestroy {
   }
 
   displaySpinner(isProcessing: boolean) {
-    this.processing = isProcessing;
-    this.status = isProcessing
-      ? { text: 'processing...', class: 'alert alert-danger' }
-      : { text: 'finished', class: 'alert alert-success' };
+    this.processing.set(isProcessing);
+    this.status.set(
+      isProcessing ? { text: 'processing...', class: 'alert alert-danger' } : { text: 'finished', class: 'alert alert-success' }
+    );
   }
 
   getCustomerCallback(result: any) {
     const { nodes, totalCount } = result.data[GRAPHQL_QUERY_DATASET_NAME];
     if (this.angularGrid) {
-      this.metrics.totalItemCount = totalCount;
-
-      // even if we're not showing pagination, it is still used behind the scene to fetch next set of data (next page basically)
-      // once pagination totalItems is filled, we can update the dataset
-
-      // infinite scroll has an extra data property to determine if we hit an infinite scroll and there's still more data (in that case we need append data)
-      // or if we're on first data fetching (no scroll bottom ever occured yet)
+      const metrics = { ...(this.metrics() ?? {}) };
+      metrics.totalItemCount = totalCount;
       if (!result.infiniteScrollBottomHit) {
-        // initial load not scroll hit yet, full dataset assignment
-        this.angularGrid.slickGrid?.scrollTo(0); // scroll back to top to avoid unwanted onScroll end triggered
+        this.angularGrid.slickGrid?.scrollTo(0);
         this.dataset = nodes;
-        this.metrics.itemCount = nodes.length;
+        metrics.itemCount = nodes.length;
+        this.metrics.set(metrics);
       } else {
-        // scroll hit, for better perf we can simply use the DataView directly for better perf (which is better compare to replacing the entire dataset)
         this.angularGrid.dataView?.addItems(nodes);
       }
-
       // NOTE: you can get currently loaded item count via the `onRowCountChanged`slick event, see `refreshMetrics()` below
-      // OR you could also calculate it yourself or get it via: `this.angularGrid?.dataView.getItemCount() === totalItemCount`
-      // console.log('is data fully loaded: ', this.angularGrid?.dataView?.getItemCount() === totalItemCount);
     }
   }
 
@@ -356,16 +345,18 @@ export class Example39Component implements OnInit, OnDestroy {
 
   refreshMetrics(args: OnRowCountChangedEventArgs) {
     if (args?.current >= 0) {
-      this.metrics.itemCount = this.angularGrid.dataView?.getFilteredItemCount() || 0;
-      this.tagDataClass = this.metrics.itemCount === this.metrics.totalItemCount ? 'fully-loaded' : 'partial-load';
+      const metrics = { ...(this.metrics() ?? {}) };
+      metrics.itemCount = this.angularGrid.dataView?.getFilteredItemCount() || 0;
+      this.metrics.set(metrics);
+      this.tagDataClass.set(metrics.itemCount === metrics.totalItemCount ? 'fully-loaded' : 'partial-load');
     }
   }
 
   switchLanguage() {
-    const nextLanguage = this.selectedLanguage === 'en' ? 'fr' : 'en';
+    const nextLanguage = this.selectedLanguage() === 'en' ? 'fr' : 'en';
     this.subscriptions.push(
       this.translate.use(nextLanguage).subscribe(() => {
-        this.selectedLanguage = nextLanguage;
+        this.selectedLanguage.set(nextLanguage);
       })
     );
     // we could also force a query since we provide a Locale and it changed
