@@ -116,7 +116,7 @@ Angular-Slickgrid now works out-of-the-box in zoneless Angular apps, but still s
 - If your app uses `zone.js`, you do not need to change anything, manual change detection (e.g., `markForCheck()`, `detectChanges()`) is still not required.
 - If your app is zoneless, you do not need to add `zone.js` and should follow the zoneless setup instructions above.
 - The library no longer calls `markForCheck()` or `detectChanges()` internally, so UI updates are handled automatically in both modes.
-- If you have custom code that relies on manual change detection, review and update it as needed. 
+- If you have custom code that relies on manual change detection, review and update it as needed.
 - For example, I had to use Signal to ensure UI changes were detected in my OData/GraphQL demos when using the `BackendServiceApi` with a `postProcess` callback and you might need changes when using Pagination as well (in my case I switched to Signals).
 
 > **Tip:** In zoneless Angular, always use signals for any state that should update the UI. For example, if you have a property like `selectedLanguage`, declare it as a signal (`selectedLanguage = signal('en')`) and update it with `selectedLanguage.set('fr')`. In your template, use `selectedLanguage()` to display or bind the value. This ensures UI updates are automatic and you never need manual change detection.
@@ -182,31 +182,31 @@ Below is a list of Enums that you need to replace with their associated string l
 | `DelimiterType` | `DelimiterType.comma` | `','` |
 |             | `DelimiterType.colon` | `':'` |
 |             | `DelimiterType.space` | `' '` |
-|  | ... | ... |
+| ... | ... | ... |
 | `EventNamingStyle` | `EventNamingStyle.camelCase` | `'camelCase'` |
 |             | `EventNamingStyle.kebabCase` | `'kebabCase'` |
 |             | `EventNamingStyle.lowerCase` | `'lowerCase'` |
-|  | ... | ... |
+| ... | ... | ... |
 | `FieldType`  | `FieldType.boolean` | `'boolean'`         |
 |             | `FieldType.number`   | `'number'`          |
 |             | `FieldType.dateIso`  | `'dateIso'`          |
-|  | ... | ... |
+| ... | ... | ... |
 | `FileType` | `FileType.csv`       | `'csv'`             |
 |             | `FileType.xlsx`     | `'xlsx'`            |
-|  | ... | ... |
+| ... | ... | ... |
 | `GridStateType`  | `GridStateType.columns` | `'columns'`  |
 |             | `GridStateType.filters`      | `'filters'`   |
 |             | `GridStateType.sorters`      | `'sorters'`   |
-|  | ... | ... |
+| ... | ... | ... |
 | `OperatorType`  | `OperatorType.greaterThan` | `'>'`  or `'GT'` |    See [Operator](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/enums/operator.type.ts) list for all available operators |
 |             | `OperatorType.lessThanOrEqual` | `'<='` or `'LE'`  |
 |             | `OperatorType.contains`        | `'Contains'` or `'CONTAINS'`  | Operators are written as PascalCase |
 |             | `OperatorType.equal`           | `'='` or `'EQ'` |
 |             | `OperatorType.rangeExclusive`  | `'RangeExclusive'`  |
-|  | ... | ... |
+| ... | ... | ... |
 | `SortDirection`  | `SortDirection.ASC`       | `'ASC'` or `'asc'`  |
 |             | `SortDirection.DESC`           | `'DESC'` or `'desc'`  |
-|  | ... | ... |
+| ... | ... | ... |
 
 **Hint** You can use VSCode search & replace, but make sure it's set to Regular Expression pattern
 
@@ -307,6 +307,6 @@ Deprecating `ExtensionName` enum which will be replaced by its string literal ty
 
 ### Potential but Postponed Code Change
 
-Signals are becoming increasingly prevalent in Angular, however Angular-Slickgrid continues to use traditional `@Input`/`@Output` decorators. Users who prefer Signals can still use them by calling signal functions in templates: `[dataset]="dataset()"`. 
+Signals are becoming increasingly prevalent in Angular, however Angular-Slickgrid continues to use traditional `@Input`/`@Output` decorators. Users who prefer Signals can still use them by calling signal functions in templates: `[dataset]="dataset()"`.
 
-For a library component, maintaining compatibility with both approaches is pragmatic and may not require a full migration. If we decide to migrate Angular-Slickgrid to use Signals internally, this change would be deferred to version 11 or later. 
+For a library component, maintaining compatibility with both approaches is pragmatic and may not require a full migration. If we decide to migrate Angular-Slickgrid to use Signals internally, this change would be deferred to version 11 or later.
