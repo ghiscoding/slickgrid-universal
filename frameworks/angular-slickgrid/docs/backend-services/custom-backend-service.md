@@ -10,72 +10,60 @@ You typically want to implement your service following these TypeScript interfac
 - [backendServiceOption.interface.ts](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/backendServiceOption.interface.ts)
 
 At the end of it, you'll have a Custom Backend Service that will be instantiated just like the GraphQL or OData that I've created, it should look similar to this (also note, try to avoid passing anything in the `constructor` of your Service to keep it usable by everyone)
-```vue
-<script setup lang="ts">
-import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 'slickgrid-vue';
-import { onBeforeMount, onMounted, onUnmounted, ref, type Ref } from 'vue';
+```ts
+class MyComponent {
+  gridInit() {
+    this.gridOptions = {
+      backendServiceApi: {
+        service: new YourCustomBackendService(),
+        options: {
+          // custom service options that extends "backendServiceOption" interface
+        },
+        preProcess: () => !this.isDataLoaded ? this.displaySpinner(true) : '',
+        process: (query, options) => this.getCountries(query, options),
+        postProcess: (result) => {
+          this.displaySpinner(false);
+          this.isDataLoaded = true;
+        }
+      } as YourCustomBackendServiceApi
+    };
+  }
 
-const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
-const dataset = ref<any[]>([]);
-const isDataLoaded = ref(false);
+  // Note: The second parameter contains the AbortSignal for Promise-based request cancellation.
+  // Since Angular HttpClient returns RxJS Observables, it uses its own cancellation mechanism.
+  // If you want to use AbortSignal, use the Fetch API instead.
+  getCountries(query: string, options?: { signal?: AbortSignal }) {
+    // Using Angular HttpClient (RxJS Observable - has built-in cancellation)
+    return this.http.get(`/api/countries?${query}`, {
+      reportProgress: true
+    });
 
-onBeforeMount(() => {
-  defineGrid();
-});
-
-function defineGrid() {
-  columnDefinitions.value = [/* ... */];
-
-  gridOptions.value = {
-    backendServiceApi: {
-      service: new YourCustomBackendService(),
-      options: {
-        // custom service options that extends "backendServiceOption" interface
-      },
-      preProcess: () => !isDataLoaded.value ? displaySpinner(true) : '',
-      process: (query, options) => getCountries(query, options),
-      postProcess: (result) => {
-        displaySpinner(false);
-        isDataLoaded.value = true;
-      }
-    } as YourCustomBackendServiceApi
-  };
+    // Alternative: Use Fetch API for AbortSignal support
+    // return fetch(`/api/countries?${query}`, {
+    //   signal: options?.signal
+    // }).then(response => response.json());
+  }
 }
-
-// Note: The second parameter contains the AbortSignal for an optional request cancellation
-function getCountries(query: string, options?: { signal?: AbortSignal }) {
-  return fetch(`/api/countries?${query}`, {
-    signal: options?.signal  // Pass the signal to enable automatic request cancellation
-  });
-}
-</script>
 ```
 
-If you need to reference your Service for other purposes then you better instantiate it in a separate variable and then just pass it to the `service` property of the `backendServiceApi`.
-```vue
-<script setup lang="ts">
-import { type Column, type GridOption } from 'slickgrid-vue';
-import { type Ref } from 'vue';
+If you need to reference your Service for other purposes then you better instantiated in a separate variable and then just pass it to the `service` property of the `backendServiceApi`.
+```ts
+class MyComponent {
+  myCustomService = new YourCustomBackendService();
 
-const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
-const dataset = ref<any[]>([]);
-
-const myCustomService = new YourCustomBackendService();
-
-function defineGrid() {
-  gridOptions.value = {
-      backendServiceApi: {
-        service: myCustomService,
-        // ...
-      } as YourCustomBackendServiceApi
-  };
+  gridInit {
+    this.gridOptions = {
+        backendServiceApi: {
+          service: this.myCustomService,
+          // ...
+        } as YourCustomBackendServiceApi
+    };
+  }
 }
-</script>
 ```
 
 If your Service is for a well known DB or API framework, then it might be possible to add your Service to the lib itself, however it should be added to the new monorepo lib [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) in the list of [slickgrid-universal/packages](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages). Since that is a monorepo lib, users will have the ability to use and download only the package they need.
+
 ## Request Cancellation with AbortSignal
 
 SlickGrid automatically supports request cancellation for Promise-based backend services using the standard `AbortSignal` API. This feature prevents stale results from being processed when users rapidly trigger new filter or sort operations.
@@ -98,44 +86,23 @@ All you need to do is accept the optional second parameter in your `process` met
 process: (query: string, options?: { signal?: AbortSignal }) => Promise<any>
 ```
 
-#### Example with Fetch API
+#### Example with Angular HttpClient (RxJS Observable)
 ```ts
-function getCountries(query: string, options?: { signal?: AbortSignal }) {
+getCountries(query: string, options?: { signal?: AbortSignal }) {
+  // Angular HttpClient returns Observables (not Promises), so it has its own cancellation mechanism
+  // through RxJS unsubscribe. The AbortSignal parameter is not used here.
+  return this.http.get(`/api/countries?q=${query}`, {
+    reportProgress: true
+  });
+}
+```
+
+#### Example with Fetch API (Promise-based)
+```ts
+getCountries(query: string, options?: { signal?: AbortSignal }) {
   return fetch(`/api/countries?q=${query}`, {
     signal: options?.signal  // This automatically aborts when a new request comes in
   }).then(r => r.json());
-}
-```
-
-#### Example with Axios
-```ts
-function getCountries(query: string, options?: { signal?: AbortSignal }) {
-  return axios.get(`/api/countries?q=${query}`, {
-    signal: options?.signal
-  });
-}
-```
-
-#### Example with Error Handling
-
-If you want to handle cancellation errors explicitly:
-
-```ts
-function getCountries(query: string, options?: { signal?: AbortSignal }) {
-  return fetch(`/api/countries?q=${query}`, {
-    signal: options?.signal
-  }).then(r => {
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    return r.json();
-  }).catch(error => {
-    // Warning: Aborted requests throw DOMException with name 'AbortError'
-    // SlickGrid handles these automatically, so you can ignore them
-    if (error.name === 'AbortError') {
-      console.log('Request cancelled due to newer filter/sort');
-    } else {
-      throw error;  // Re-throw real errors
-    }
-  });
 }
 ```
 
@@ -145,3 +112,4 @@ function getCountries(query: string, options?: { signal?: AbortSignal }) {
 - **AbortError handling**: When a request is cancelled, it throws an error with `name: 'AbortError'`. SlickGrid handles these automatically
 - **Real errors**: Non-AbortError exceptions are still passed to your error callbacks
 - **Backwards compatible**: Older implementations that don't use the signal parameter will work as before
+- **RxJS/Observable Note**: If you're using Angular HttpClient (which returns Observables), AbortSignal doesn't apply since Observables have their own cancellation mechanism through unsubscribe. If you need AbortSignal support, use the Fetch API instead

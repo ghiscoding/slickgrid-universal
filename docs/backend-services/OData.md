@@ -42,7 +42,8 @@ backendServiceApi: {
   preProcess?: () => void;
 
   // On Processing, we get the query back from the service, and we need to provide a Promise. For example: this.http.get(myGraphqlUrl)
-  process: (query: string) => Promise<any>;
+  // Note: The optional second parameter includes an AbortSignal to cancel pending requests when a new filter/sort is triggered
+  process: (query: string, options?: { signal?: AbortSignal }) => Promise<any>;
 
   // After executing the query, what action to perform? For example, stop the spinner
   postProcess: (response: any) => void;
@@ -99,7 +100,7 @@ export class Example {
           top: defaultPageSize
         } as OdataOption,
         preProcess: () => this.displaySpinner(true),
-        process: (query) => this.getCustomerApiCall(query),
+        process: (query, options) => this.getCustomerApiCall(query, options),
         postProcess: (response) => {
           this.displaySpinner(false);
           this.getCustomerCallback(response);
@@ -108,13 +109,13 @@ export class Example {
     };
   }
 
-  // Web API call
-  getCustomerApiCall(odataQuery) {
+  // Web API call - note the second parameter contains the AbortSignal for request cancellation
+  getCustomerApiCall(odataQuery: string, options?: { signal?: AbortSignal }) {
     // regular Http Client call
     return this.http.createRequest(`/api/customers?${odataQuery}`).then(response => response.json());
 
-    // or with Fetch Client
-    // return this.http.fetch(`/api/customers?${odataQuery}`).then(response => response.json());
+    // or with Fetch Client - supporting AbortSignal for request cancellation
+    // return this.http.fetch(`/api/customers?${odataQuery}`, { signal: options?.signal }).then(response => response.json());
   }
 
   getCustomerCallback(response) {
@@ -132,6 +133,36 @@ export class Example {
     this.sgb.paginationOptions.totalItems = data[countPropName];
     this.sgb.dataset = data.items as Customer[];
   }
+}
+```
+
+### Request Cancellation with AbortSignal
+When users trigger rapid filter or sort changes (e.g., typing quickly in a filter), SlickGrid will automatically cancel any pending HTTP requests using the `AbortSignal` API. This prevents stale results from overwriting newer data and improves user experience.
+
+The `process` method receives an optional `options` parameter. If you want to support automatic request cancellation, pass the `signal` from this parameter to your fetch/HTTP call. When a new request is triggered, any previous `AbortSignal` will be aborted automatically.
+
+#### How It Works
+1. User types in a filter → sends "Jo" query (request #1)
+2. User types "e" quickly before response arrives → "Joe" query (request #2)
+3. SlickGrid automatically aborts request #1's signal
+4. Request #2's response is processed, request #1's response is ignored
+
+#### Implementation Example with Fetch API
+```ts
+getCustomerApiCall(odataQuery: string, options?: { signal?: AbortSignal }) {
+  // Use the signal from options to enable automatic cancellation
+  return fetch(`/api/customers?${odataQuery}`, {
+    signal: options?.signal  // Pass the signal to abort the request
+  }).then(response => response.json());
+}
+```
+
+#### Implementation with Axios
+```ts
+getCustomerApiCall(odataQuery: string, options?: { signal?: AbortSignal }) {
+  return axios.get(`/api/customers?${odataQuery}`, {
+    signal: options?.signal  // Axios supports AbortSignal
+  });
 }
 ```
 

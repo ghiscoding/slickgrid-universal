@@ -157,8 +157,6 @@ prepareGrid() {
 
 ### `i18next` is now optional
 
-The `GridService` has CRUD method events that were sometime returning a single item and other times an array of items, and so for that reason we had to rely on auto-detection code like `onItemAdded.subscribe(item => { const items = Array.isArray(item) ? item : [item] }`. To fix this, I decided to change all the event names to plural and always return an array of items which is a lot more predictable.
-
 ```diff
 // index.tsx
 import i18n from 'i18next';
@@ -228,6 +226,12 @@ Below is a list of Enums being deprecated and you should think about migrating t
 | `SortDirection`  | `SortDirection.ASC` | `'ASC'` or `'asc'`  |
 |             | `SortDirection.DESC`   | `'DESC'` or `'desc'`  |
 |  | ... | ... |
+
+**Hint** You can use VSCode search & replace, but make sure it's set to Regular Expression pattern
+
+| Search (regex)             | Replace  |
+| -------------------------- | -------- |
+| `FieldType\.([a-z_]+)(.*)` | `'$1'$2` |
 
 ##### deprecating `editorOptions` and `filterOptions`, they are being renamed as a more generic `options` name
 

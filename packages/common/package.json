@@ -45,15 +45,15 @@
     "sass-build-task:scss-compile:material-lite": "sass src/styles/slickgrid-theme-material.lite.scss dist/styles/css/slickgrid-theme-material.lite.css --style=compressed --quiet-deps --no-source-map --load-path=node_modules",
     "sass-build-task:scss-compile:salesforce": "sass src/styles/slickgrid-theme-salesforce.scss dist/styles/css/slickgrid-theme-salesforce.css --style=compressed --quiet-deps --no-source-map --load-path=node_modules",
     "sass-build-task:scss-compile:salesforce-lite": "sass src/styles/slickgrid-theme-salesforce.lite.scss dist/styles/css/slickgrid-theme-salesforce.lite.css --style=compressed --quiet-deps --no-source-map --load-path=node_modules",
-    "sass:build": "run-p sass-build-task:scss-compile:* && pnpm run sass:build:postcss",
+    "sass:build": "concurrently --prefix none \"pnpm:sass-build-task:scss-compile:*\" && pnpm run sass:build:postcss",
     "sass:build:postcss": "postcss --no-map --use cssnano --use autoprefixer --dir dist/styles/css dist/styles/css --style=compressed --quiet-deps --no-source-map",
     "sass:copy": "copyfiles \"./src/styles/*.scss\" dist/styles/sass --flat --stat",
     "sass:watch:default": "npm run sass-build-task:scss-compile:default -- --watch",
     "sass:watch:bootstrap": "npm run sass-build-task:scss-compile:bootstrap -- --watch",
     "sass:watch:material": "npm run sass-build-task:scss-compile:material -- --watch",
     "sass:watch:salesforce": "npm run sass-build-task:scss-compile:salesforce -- --watch",
-    "sass:watch": "run-p sass:watch:*",
-    "sass:watch-all": "run-p \"sass-build-task:scss-compile:* --watch\" --"
+    "sass:watch": "concurrently --prefix none \"pnpm:sass:watch:*\"",
+    "sass:watch-all": "concurrently --prefix none \"pnpm:sass-build-task:scss-compile:* --watch\""
   },
   "browserslist": [
     "baseline widely available"
@@ -76,8 +76,8 @@
   "devDependencies": {
     "autoprefixer": "^10.4.23",
     "cssnano": "^7.1.2",
+    "concurrently": "catalog:",
     "native-copyfiles": "catalog:",
-    "npm-run-all2": "catalog:",
     "postcss": "^8.5.6",
     "postcss-cli": "^11.0.1",
     "sass": "catalog:"

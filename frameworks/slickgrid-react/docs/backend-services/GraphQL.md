@@ -30,7 +30,8 @@ backendServiceApi: {
   preProcess?: () => void;
 
   // On Processing, we get the query back from the service, and we need to provide a Promise. For example: http.get(myGraphqlUrl)
-  process: (query: string) => Promise<any>;
+  // Note: SlickGrid automatically manages request cancellation via AbortSignal (see "Request Cancellation with AbortSignal" section below)
+  process: (query: string, options?: { signal?: AbortSignal }) => Promise<any>;
 
   // After executing the query, what action to perform? For example, stop the spinner
   postProcess: (response: any) => void;
@@ -148,16 +149,48 @@ const Example: React.FC = () => {
   }
 
   // Web API call
-  function getAllCustomers(graphqlQuery) {
+  function getAllCustomers(graphqlQuery, options?: { signal?: AbortSignal }) {
     // regular Http Client call
-    return fetch(`/api/customers?${graphqlQuery}`).asGet().send().then(response => response.content);
+    return fetch(`/api/customers?${graphqlQuery}`).then(response => response.json());
 
-    // or with Fetch Client
-    // return fetch(`/api/customers?${graphqlQuery}`).then(response => response.json());
+    // or with Fetch Client - supporting AbortSignal for request cancellation
+    // return fetch(`/api/customers?${graphqlQuery}`, { signal: options?.signal }).then(response => response.json());
   }
 }
 
 export default Example;
+```
+
+### Request Cancellation with AbortSignal
+When users trigger rapid filter or sort changes (e.g., typing quickly in a filter), SlickGrid will automatically cancel any pending HTTP requests using the `AbortSignal` API. This prevents stale results from overwriting newer data and improves user experience.
+
+The `process` method receives an optional `options` parameter. If you want to support automatic request cancellation, pass the `signal` from this parameter to your fetch/HTTP call. When a new request is triggered, any previous `AbortSignal` will be aborted automatically.
+
+#### How It Works
+1. User types in a filter → sends "Jo" query (request #1)
+2. User types "e" quickly before response arrives → "Joe" query (request #2)
+3. SlickGrid automatically aborts request #1's signal
+4. Request #2's response is processed, request #1's response is ignored
+
+#### Implementation with Fetch API
+```ts
+function getAllCustomers(graphqlQuery: string, options?: { signal?: AbortSignal }) {
+  // Use the signal from options to enable automatic cancellation
+  return fetch(`/api/graphql`, {
+    method: 'POST',
+    body: graphqlQuery,
+    signal: options?.signal  // Pass the signal to abort the request
+  }).then(response => response.json());
+}
+```
+
+#### Implementation with Axios
+```ts
+function getAllCustomers(graphqlQuery: string, options?: { signal?: AbortSignal }) {
+  return axios.post(`/api/graphql`, graphqlQuery, {
+    signal: options?.signal  // Axios supports AbortSignal
+  });
+}
 ```
 
 ### Extra Query Arguments

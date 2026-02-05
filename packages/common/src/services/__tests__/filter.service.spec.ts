@@ -649,7 +649,7 @@ describe('FilterService', () => {
 
         expect(spyClear).toHaveBeenCalled();
         expect(filterCountBefore).toBe(2);
-        expect(spyProcess).toHaveBeenCalledWith('filter query string');
+        expect(spyProcess).toHaveBeenCalledWith('filter query string', expect.any(Object));
         expect(service.getColumnFilters()).toEqual({});
         expect(spyFilterChange).not.toHaveBeenCalled();
         expect(spyEmitter).not.toHaveBeenCalled();

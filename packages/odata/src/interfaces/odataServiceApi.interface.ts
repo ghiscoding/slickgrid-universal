@@ -2,7 +2,7 @@ import type { BackendServiceApi } from '@slickgrid-universal/common';
 import type { GridOdataService } from '../services/index.js';
 import type { OdataOption } from './odataOption.interface.js';
 
-export interface OdataServiceApi extends BackendServiceApi {
+export interface OdataServiceApi<T = any> extends BackendServiceApi<T> {
   /** Backend Service Options */
   options?: Partial<OdataOption>;
 
