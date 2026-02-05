@@ -46,8 +46,8 @@ catalog:
   vitest: ^4.0.18
   vue: ^3.5.27
 
-onlyBuiltDependencies:
-  - cypress
+# onlyBuiltDependencies:
+#   - cypress
 
 overrides:
   '@vitest/coverage-v8>vite': 'npm:rolldown-vite@latest'

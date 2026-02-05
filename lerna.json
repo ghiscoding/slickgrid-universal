@@ -2,7 +2,7 @@
   "$schema": "node_modules/@lerna-lite/cli/schemas/lerna-schema.json",
   "version": "9.13.0",
   "npmClient": "pnpm",
-  "loglevel": "verbose",
+  "loglevel": "info",
   "command": {
     "version": {
       "conventionalCommits": true,
