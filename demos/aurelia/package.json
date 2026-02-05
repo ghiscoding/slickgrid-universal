@@ -30,6 +30,7 @@
     "@faker-js/faker": "catalog:",
     "@fnando/sparkline": "catalog:",
     "@formkit/tempo": "catalog:",
+    "jspdf": "catalog:",
     "@popperjs/core": "catalog:",
     "@slickgrid-universal/aurelia-row-detail-plugin": "workspace:*",
     "@slickgrid-universal/common": "workspace:*",
