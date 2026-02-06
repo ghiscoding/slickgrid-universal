@@ -102,8 +102,8 @@ const mockGraphqlService = {
   updatePagination: vi.fn(),
 } as unknown as GraphqlService;
 
-class SlickRowDetailView {
-  static readonly pluginName = 'RowDetailView';
+class ExcelExportService {
+  static readonly pluginName = 'ExcelExportService';
   create = vi.fn();
   init = vi.fn();
 }
@@ -332,6 +332,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         minWidth: 300,
         rightPadding: 0,
       },
+      externalResources: [ExcelExportService],
       backendServiceApi: null,
     } as unknown as GridOption;
     sharedService = new SharedService();
@@ -1748,8 +1749,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         component.columnDefinitions = mockCols;
         component.gridOptions = {
           ...gridOptions,
-          // enableRowDetailView: true,
-          externalResources: [SlickRowDetailView],
+          enableRowDetailView: true,
           presets: { columns: mockColsPresets },
         } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);

@@ -76,6 +76,12 @@ class AngularSlickRowDetailView {
   init = vi.fn();
 }
 
+class ExcelExportService {
+  static readonly pluginName = 'ExcelExportService';
+  create = vi.fn();
+  init = vi.fn();
+}
+
 const backendUtilityServiceStub = {
   addRxJsResource: vi.fn(),
   executeBackendProcessesCallback: vi.fn(),
@@ -352,6 +358,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         minWidth: 300,
         rightPadding: 0,
       },
+      externalResources: [ExcelExportService],
       backendServiceApi: null,
     } as unknown as GridOption;
     vi.spyOn(mockGrid, 'getOptions').mockReturnValue(gridOptions);
