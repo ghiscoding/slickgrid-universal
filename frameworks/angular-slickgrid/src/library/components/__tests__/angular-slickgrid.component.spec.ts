@@ -71,7 +71,7 @@ const angularUtilServiceStub = {
 } as unknown as AngularUtilService;
 
 class AngularSlickRowDetailView {
-  static pluginName = 'AngularSlickRowDetailView';
+  static readonly pluginName = 'AngularSlickRowDetailView';
   create = vi.fn();
   init = vi.fn();
 }
@@ -399,7 +399,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         )
     );
 
-    component.gridId = 'grid1';
+    (component as any).gridId = 'grid1';
     component.columns = [{ id: 'name', field: 'name' }];
     component.dataset = [];
     component.options = { enableExcelExport: false, dataView: null } as unknown as GridOption;
@@ -1783,7 +1783,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         component.columns = mockCols;
         component.options = {
           ...gridOptions,
-          enableRowDetailView: true,
+          // enableRowDetailView: true,
           externalResources: [AngularSlickRowDetailView],
           presets: { columns: mockColsPresets },
         } as GridOption;

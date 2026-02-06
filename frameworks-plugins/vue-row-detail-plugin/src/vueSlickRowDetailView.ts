@@ -29,7 +29,7 @@ export interface CreatedView {
 }
 
 export class VueSlickRowDetailView extends UniversalSlickRowDetailView {
-  static pluginName = 'VueSlickRowDetailView';
+  static readonly pluginName = 'VueSlickRowDetailView';
   protected _component?: any;
   protected _preloadComponent?: any;
   protected _preloadApp?: App<Element>;

@@ -73,7 +73,7 @@ const WARN_NO_PREPARSE_DATE_SIZE = 10000; // data size to warn user when pre-par
 
 export interface VueSlickRowDetailView {
   create(columns: Column[], gridOptions: GridOption): any;
-  init(grid: SlickGrid): void;
+  init(grid: SlickGrid, containerService?: ContainerService): void;
 }
 
 const attrs = useAttrs();
@@ -1438,14 +1438,14 @@ function mergeGridOptions(gridOptions: GridOption): GridOption {
 }
 
 /** initialized & auto-enable external registered resources, e.g. if user registers `ExcelExportService` then let's auto-enable `enableExcelExport:true` */
-function autoEnableInitializedResources(resource: ExternalResource): void {
+function autoEnableInitializedResources(resource: ExternalResource | ExternalResourceConstructor): void {
   if (grid && typeof (resource as ExternalResource).init === 'function') {
     (resource as ExternalResource).init!(grid, containerService);
   }
 
   // auto-enable unless the flag was specifically disabled by the end user
-  if ('className' in (resource as ExternalResource)) {
-    const pluginFlagName = PluginFlagMappings.get((resource as ExternalResource).className!);
+  if ('pluginName' in (resource as ExternalResource)) {
+    const pluginFlagName = PluginFlagMappings.get((resource as ExternalResource).pluginName!);
     if (pluginFlagName && _gridOptions.value[pluginFlagName] !== false) {
       _gridOptions.value[pluginFlagName] = true;
       grid?.setOptions({ [pluginFlagName]: true });
@@ -1471,7 +1471,7 @@ function preRegisterResources() {
   // register all services by executing their init method and providing them with the Grid object
   if (Array.isArray(registeredResources)) {
     for (const resource of registeredResources) {
-      if ((resource as ExternalResource)?.className === 'RxJsResource') {
+      if ((resource as ExternalResource)?.pluginName === 'RxJsResource') {
         registerRxJsResource(resource as RxJsFacade);
       }
     }

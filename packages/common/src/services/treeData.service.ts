@@ -22,6 +22,7 @@ import {
 } from './utilities.js';
 
 export class TreeDataService {
+  readonly pluginName = 'TreeDataService';
   protected _lastToggleStateChange!: Omit<TreeToggleStateChange, 'fromItemId'>;
   protected _currentToggledItems: TreeToggledItem[] = [];
   protected _grid!: SlickGrid;

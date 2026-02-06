@@ -40,7 +40,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
   protected _translaterService: TranslaterService | undefined;
 
   /** ExcelExportService class name which is use to find service instance in the external registered services */
-  readonly className = 'TextExportService';
+  readonly pluginName = 'TextExportService';
 
   constructor() {}
 

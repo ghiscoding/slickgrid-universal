@@ -1580,7 +1580,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     // register all services by executing their init method and providing them with the Grid object
     if (Array.isArray(this._registeredResources)) {
       for (const resource of this._registeredResources) {
-        if ((resource as ExternalResource)?.className === 'RxJsResource') {
+        if ((resource as ExternalResource)?.pluginName === 'RxJsResource') {
           this.registerRxJsResource(resource as RxJsFacade);
         }
       }
@@ -1588,14 +1588,14 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
   }
 
   /** initialized & auto-enable external registered resources, e.g. if user registers `ExcelExportService` then let's auto-enable `enableExcelExport:true` */
-  protected autoEnableInitializedResources(resource: ExternalResource): void {
+  protected autoEnableInitializedResources(resource: ExternalResource | ExternalResourceConstructor): void {
     if (this.grid && typeof (resource as ExternalResource).init === 'function') {
       (resource as ExternalResource).init!(this.grid, this.props.containerService);
     }
 
     // auto-enable unless the flag was specifically disabled by the end user
-    if ('className' in (resource as ExternalResource)) {
-      const pluginFlagName = PluginFlagMappings.get((resource as ExternalResource).className!);
+    if ('pluginName' in (resource as ExternalResource)) {
+      const pluginFlagName = PluginFlagMappings.get((resource as ExternalResource).pluginName!);
       if (pluginFlagName && this.options[pluginFlagName] !== false) {
         this.options[pluginFlagName] = true;
         this.grid?.setOptions({ [pluginFlagName]: true });

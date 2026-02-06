@@ -1511,7 +1511,7 @@ export class SlickVanillaGridBundle<TData = any> {
     // register all services by executing their init method and providing them with the Grid object
     if (Array.isArray(this._registeredResources)) {
       for (const resource of this._registeredResources) {
-        if ((resource as ExternalResource)?.className === 'RxJsResource') {
+        if ((resource as ExternalResource)?.pluginName === 'RxJsResource') {
           this.registerRxJsResource(resource as RxJsFacade);
         }
       }
@@ -1519,14 +1519,14 @@ export class SlickVanillaGridBundle<TData = any> {
   }
 
   /** initialized & auto-enable external registered resources, e.g. if user registers `ExcelExportService` then let's auto-enable `enableExcelExport:true` */
-  protected autoEnableInitializedResources(resource: ExternalResource): void {
+  protected autoEnableInitializedResources(resource: ExternalResource | ExternalResourceConstructor): void {
     if (this.slickGrid && typeof (resource as ExternalResource).init === 'function') {
       (resource as ExternalResource).init!(this.slickGrid, this.universalContainerService);
     }
 
     // auto-enable unless the flag was specifically disabled by the end user
-    if ('className' in (resource as ExternalResource)) {
-      const pluginFlagName = PluginFlagMappings.get((resource as ExternalResource).className!);
+    if ('pluginName' in (resource as ExternalResource)) {
+      const pluginFlagName = PluginFlagMappings.get((resource as ExternalResource).pluginName!);
       if (pluginFlagName && this._gridOptions[pluginFlagName] !== false) {
         this._gridOptions[pluginFlagName] = true;
         this.slickGrid?.setOptions({ [pluginFlagName]: true });

@@ -79,7 +79,7 @@ const WARN_NO_PREPARSE_DATE_SIZE = 10000; // data size to warn user when pre-par
 
 export interface AngularSlickRowDetailView {
   create(columns: Column[], gridOptions: GridOption): any;
-  init(grid: SlickGrid): void;
+  init(grid: SlickGrid, containerService?: ContainerService): void;
 }
 
 @Component({
@@ -1619,14 +1619,14 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
   }
 
   /** initialized & auto-enable external registered resources, e.g. if user registers `ExcelExportService` then let's auto-enable `enableExcelExport:true` */
-  protected autoEnableInitializedResources(resource: ExternalResource): void {
+  protected autoEnableInitializedResources(resource: ExternalResource | ExternalResourceConstructor): void {
     if (this.slickGrid && typeof (resource as ExternalResource).init === 'function') {
       (resource as ExternalResource).init!(this.slickGrid, this.containerService);
     }
 
     // auto-enable unless the flag was specifically disabled by the end user
-    if ('className' in (resource as ExternalResource)) {
-      const pluginFlagName = PluginFlagMappings.get((resource as ExternalResource).className!);
+    if ('pluginName' in (resource as ExternalResource)) {
+      const pluginFlagName = PluginFlagMappings.get((resource as ExternalResource).pluginName!);
       if (pluginFlagName && this.options[pluginFlagName] !== false) {
         this.options[pluginFlagName] = true;
         this.slickGrid?.setOptions({ [pluginFlagName]: true });

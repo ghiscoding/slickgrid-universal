@@ -14,6 +14,8 @@
  * and is just a very simple and basic RxJS Wrapper package (which will depend on the real RxJS package)
  */
 export abstract class RxJsFacade {
+  readonly pluginName = 'RxJsResource';
+
   /**
    * The same Observable instance returned by any call to without a scheduler.
    * This returns the EMPTY constant from RxJS

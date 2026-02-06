@@ -51,7 +51,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     commandShownOverColumnIds: [],
     subMenuOpenByEvent: 'mouseover',
   } as unknown as ContextMenuOption;
-  pluginName: 'ContextMenu' = 'ContextMenu' as const;
+  readonly pluginName = 'ContextMenu';
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(
