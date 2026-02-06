@@ -13,5 +13,7 @@ export interface ExternalResource {
 }
 
 export interface ExternalResourceConstructor {
+  /** optionally provide the Service class name of the resource to make it easier to find even with minified code */
+  className?: string;
   new (...args: any[]): ExternalResource;
 }

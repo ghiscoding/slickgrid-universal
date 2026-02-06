@@ -34,6 +34,7 @@ import {
   HeaderGroupingService,
   isColumnDateType,
   PaginationService,
+  PluginFlagMappings,
   ResizerService,
   SharedService,
   SlickDataView,
@@ -592,15 +593,15 @@ export class SlickVanillaGridBundle<TData = any> {
       this.slickGrid.registerPlugin(this.groupItemMetadataProvider); // register GroupItemMetadataProvider when Grouping is enabled
     }
 
+    // get any possible Services that user want to register
+    this.registerResources();
+
     this.extensionService.bindDifferentExtensions();
     this.bindDifferentHooks(this.slickGrid, this._gridOptions, this.dataView as SlickDataView);
     this._slickgridInitialized = true;
 
     // when it's a frozen grid, we need to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward
     this.sharedService.frozenVisibleColumnId = this.slickGrid.getFrozenColumnId();
-
-    // get any possible Services that user want to register
-    this.registerResources();
 
     // initialize the SlickGrid grid
     this.slickGrid.init();
@@ -1517,12 +1518,26 @@ export class SlickVanillaGridBundle<TData = any> {
     }
   }
 
+  /** initialized & auto-enable external registered resources, e.g. if user registers `ExcelExportService` then let's auto-enable `enableExcelExport:true` */
+  protected autoEnableInitializedResources(resource: ExternalResource): void {
+    if (this.slickGrid && typeof (resource as ExternalResource).init === 'function') {
+      (resource as ExternalResource).init!(this.slickGrid, this.universalContainerService);
+    }
+
+    // auto-enable unless the flag was specifically disabled by the end user
+    if ('className' in (resource as ExternalResource)) {
+      const pluginFlagName = PluginFlagMappings.get((resource as ExternalResource).className!);
+      if (pluginFlagName && this._gridOptions[pluginFlagName] !== false) {
+        this._gridOptions[pluginFlagName] = true;
+        this.slickGrid?.setOptions({ [pluginFlagName]: true });
+      }
+    }
+  }
+
   protected initializeExternalResources(resources: Array<ExternalResource | ExternalResourceConstructor>): void {
     if (Array.isArray(resources)) {
       for (const resource of resources) {
-        if (this.slickGrid && typeof (resource as ExternalResource).init === 'function') {
-          (resource as ExternalResource).init!(this.slickGrid, this.universalContainerService);
-        }
+        this.autoEnableInitializedResources(resource);
       }
     }
   }

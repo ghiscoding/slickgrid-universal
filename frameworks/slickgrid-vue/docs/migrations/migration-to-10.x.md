@@ -98,6 +98,10 @@ gridOptions = {
 };
 ```
 
+### External Resources are now auto-enabled
+
+This change does not require any change from the end user, but it is a change that you should probably be aware of nonetheless. The reason I've implemented that is because I forgot to enable them myself and typically if you wanted to load the resource, ten it's because you also want it enabled. So for example, if your register `ExcelExportService` then the library will now auto-enable the resource with its associated flag which in this case is `enableExcelExport:true`... unless the flag is already is disabled by the user, if so then it will skip that flag. Also just to be clear, the list of auto-enabled external resources is rather small, it will auto-enable the following resources: ExcelExportService, PdfExportService, TextExportService, CompositeEditorComponent and RowDetailView.
+
 ---
 
 {% hint style="note" %}

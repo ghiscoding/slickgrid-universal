@@ -243,12 +243,13 @@ function defineGrid() {
       initialGroupBy: ['duration'],
     },
     darkMode: darkMode.value,
-    enableTextExport: true,
-    enableExcelExport: true,
     excelExportOptions: { sanitizeDataExport: true },
     textExportOptions: { sanitizeDataExport: true },
     externalResources: [excelExportService, pdfExportService, textExportService],
-    enablePdfExport: true,
+    // -- NOTE: registered resources are auto-enabled
+    // enableTextExport: true,
+    // enableExcelExport: true,
+    // enablePdfExport: true,
     pdfExportOptions: {
       repeatHeadersOnEachPage: true, // defaults to true
       documentTitle: 'Grouping Grid',

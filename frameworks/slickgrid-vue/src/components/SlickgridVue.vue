@@ -15,6 +15,7 @@ import {
   HeaderGroupingService,
   isColumnDateType,
   PaginationService,
+  PluginFlagMappings,
   ResizerService,
   SharedService,
   SlickDataView,
@@ -479,14 +480,14 @@ function initialization() {
     grid.registerPlugin(groupItemMetadataProvider); // register GroupItemMetadataProvider when Grouping is enabled
   }
 
+  // get any possible Services that user want to register
+  registerResources();
+
   extensionService.bindDifferentExtensions();
   bindDifferentHooks(grid, _gridOptions.value as GridOption, dataview);
 
   // when it's a frozen grid, we need to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward
   sharedService.frozenVisibleColumnId = grid.getFrozenColumnId();
-
-  // get any possible Services that user want to register
-  registerResources();
 
   // initialize the SlickGrid grid
   grid.init();
@@ -1436,12 +1437,28 @@ function mergeGridOptions(gridOptions: GridOption): GridOption {
   return options;
 }
 
+/** initialized & auto-enable external registered resources, e.g. if user registers `ExcelExportService` then let's auto-enable `enableExcelExport:true` */
+function autoEnableInitializedResources(resource: ExternalResource): void {
+  if (grid && typeof (resource as ExternalResource).init === 'function') {
+    (resource as ExternalResource).init!(grid, containerService);
+  }
+
+  // auto-enable unless the flag was specifically disabled by the end user
+  if ('className' in (resource as ExternalResource)) {
+    const pluginFlagName = PluginFlagMappings.get((resource as ExternalResource).className!);
+    if (pluginFlagName && _gridOptions.value[pluginFlagName] !== false) {
+      _gridOptions.value[pluginFlagName] = true;
+      grid?.setOptions({ [pluginFlagName]: true });
+    }
+  }
+}
+
 function initializeExternalResources(resources: Array<ExternalResource | ExternalResourceConstructor>) {
+  PluginFlagMappings.set('VueSlickRowDetailView', 'enableRowDetailView');
+
   if (Array.isArray(resources)) {
     for (const resource of resources) {
-      if (grid && typeof (resource as ExternalResource).init === 'function') {
-        (resource as ExternalResource).init!(grid, containerService);
-      }
+      autoEnableInitializedResources(resource);
     }
   }
 }

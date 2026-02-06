@@ -14,6 +14,7 @@ import {
   HeaderGroupingService,
   isColumnDateType,
   PaginationService,
+  PluginFlagMappings,
   ResizerService,
   SharedService,
   SlickDataView,
@@ -535,14 +536,14 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
       this.grid.registerPlugin(this.groupItemMetadataProvider); // register GroupItemMetadataProvider when Grouping is enabled
     }
 
+    // get any possible Services that user want to register
+    this.registerResources();
+
     this.extensionService.bindDifferentExtensions();
     this.bindDifferentHooks(this.grid, this._options, this.dataView);
 
     // when it's a frozen grid, we need to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward
     this.sharedService.frozenVisibleColumnId = this.grid.getFrozenColumnId();
-
-    // get any possible Services that user want to register
-    this.registerResources();
 
     // initialize the SlickGrid grid
     this.grid.init();
@@ -1586,12 +1587,28 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     }
   }
 
+  /** initialized & auto-enable external registered resources, e.g. if user registers `ExcelExportService` then let's auto-enable `enableExcelExport:true` */
+  protected autoEnableInitializedResources(resource: ExternalResource): void {
+    if (this.grid && typeof (resource as ExternalResource).init === 'function') {
+      (resource as ExternalResource).init!(this.grid, this.props.containerService);
+    }
+
+    // auto-enable unless the flag was specifically disabled by the end user
+    if ('className' in (resource as ExternalResource)) {
+      const pluginFlagName = PluginFlagMappings.get((resource as ExternalResource).className!);
+      if (pluginFlagName && this.options[pluginFlagName] !== false) {
+        this.options[pluginFlagName] = true;
+        this.grid?.setOptions({ [pluginFlagName]: true });
+      }
+    }
+  }
+
   protected initializeExternalResources(resources: Array<ExternalResource | ExternalResourceConstructor>) {
+    PluginFlagMappings.set('ReactSlickRowDetailView', 'enableRowDetailView');
+
     if (Array.isArray(resources)) {
       for (const resource of resources) {
-        if (this.grid && typeof (resource as ExternalResource).init === 'function') {
-          (resource as ExternalResource).init!(this.grid, this.props.containerService);
-        }
+        this.autoEnableInitializedResources(resource);
       }
     }
   }
