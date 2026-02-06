@@ -44,6 +44,41 @@ export interface MenuItem<O = MenuCallbackArgs> {
   tooltip?: string;
 
   // --
+  // Slot support for custom content injection (cross-framework compatible)
+
+  /**
+   * Slot renderer callback for the entire menu item.
+   * @param item - The menu item object
+   * @param args - The callback args providing access to grid, column, dataContext, etc.
+   * @param event - Optional DOM event (passed during click handling) that allows the renderer to call stopPropagation()
+   * @returns Either an HTML string or an HTMLElement
+   *
+   * @example
+   * // Return HTML string
+   * slotRenderer: (item, args) => `<div>${item.title}</div>`
+   *
+   * // Return HTMLElement with event listeners
+   * slotRenderer: (item, args) => {
+   *   const div = document.createElement('div');
+   *   div.textContent = `${item.title} (Row ${args.dataContext.id})`;
+   *   div.addEventListener('click', () => console.log('clicked'));
+   *   return div;
+   * }
+   *
+   * // Interactive element that prevents menu action
+   * slotRenderer: (item, args, event) => {
+   *   const checkbox = document.createElement('input');
+   *   checkbox.type = 'checkbox';
+   *   checkbox.addEventListener('change', (e) => {
+   *     event?.stopPropagation(); // Stop the menu item click from firing
+   *     console.log('checkbox toggled');
+   *   });
+   *   return checkbox;
+   * }
+   */
+  slotRenderer?: (item: any, args: O, event?: Event) => string | HTMLElement;
+
+  // --
   // action/override callbacks
 
   /** Callback method that user can override the default behavior of showing/hiding an item from the list. */

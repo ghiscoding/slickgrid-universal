@@ -131,6 +131,28 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
   // protected functions
   // ------------------
 
+  /**
+   * Render slot content using a renderer callback.
+   * The renderer receives the menu item and args for full context access.
+   * @param parentElm - The parent element (LI) to insert the slot content into
+   * @param slotRenderer - A callback function that receives (item, args) and returns string or HTMLElement
+   * @param item - The menu item object (passed to callback)
+   * @param args - The callback args providing access to grid, column, dataContext, etc.
+   */
+  protected renderSlotRenderer(
+    parentElm: HTMLElement,
+    slotRenderer: (item: any, args: any) => string | HTMLElement,
+    item: any,
+    args: any
+  ): void {
+    const result = slotRenderer(item, args);
+    if (typeof result === 'string') {
+      parentElm.innerHTML = this.grid.sanitizeHtmlString(result);
+    } else if (result instanceof HTMLElement) {
+      parentElm.appendChild(result);
+    }
+  }
+
   protected addSubMenuTitleWhenExists(item: ExtractMenuType<ExtendableItemTypes, MenuType>, commandOrOptionMenu: HTMLDivElement): void {
     if (item !== 'divider' && (item as MenuCommandItem | MenuOptionItem | GridMenuItem)?.subMenuTitle) {
       const subMenuTitleElm = document.createElement('div');
@@ -288,27 +310,47 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
       }
 
       if (this._camelPluginName !== 'headerButtons') {
-        // Menu plugin can use optional icon & content elements
-        const iconElm = createDomElement('div', { className: `${this._menuCssPrefix}-icon` });
-        commandLiElm.appendChild(iconElm);
-
-        if ((item as MenuCommandItem | MenuOptionItem).iconCssClass) {
-          iconElm.classList.add(...classNameToList((item as MenuCommandItem | MenuOptionItem).iconCssClass));
-        } else if (!(item as MenuCommandItem).commandItems && !(item as MenuOptionItem).optionItems) {
-          iconElm.textContent = '◦';
+        // Check if slot renderer is provided at item level (highest priority)
+        if ((item as MenuCommandItem | MenuOptionItem).slotRenderer) {
+          this.renderSlotRenderer(
+            commandLiElm,
+            (item as MenuCommandItem | MenuOptionItem).slotRenderer!,
+            item as MenuCommandItem | MenuOptionItem,
+            args
+          );
         }
+        // Check if default item renderer is provided at menu level (fallback)
+        else if ((this._addonOptions as any).defaultItemRenderer) {
+          this.renderSlotRenderer(
+            commandLiElm,
+            (this._addonOptions as any).defaultItemRenderer,
+            item as MenuCommandItem | MenuOptionItem,
+            args
+          );
+        }
+        // Default rendering: icon + content
+        else {
+          const iconElm = createDomElement('div', { className: `${this._menuCssPrefix}-icon` });
+          commandLiElm.appendChild(iconElm);
 
-        const textElm = createDomElement(
-          'span',
-          {
-            className: `${this._menuCssPrefix}-content`,
-            textContent: (typeof item === 'object' && (item as MenuCommandItem | MenuOptionItem).title) || '',
-          },
-          commandLiElm
-        );
+          if ((item as MenuCommandItem | MenuOptionItem).iconCssClass) {
+            iconElm.classList.add(...classNameToList((item as MenuCommandItem | MenuOptionItem).iconCssClass));
+          } else if (!(item as MenuCommandItem).commandItems && !(item as MenuOptionItem).optionItems) {
+            iconElm.textContent = '◦';
+          }
 
-        if ((item as MenuCommandItem | MenuOptionItem).textCssClass) {
-          textElm.classList.add(...classNameToList((item as MenuCommandItem | MenuOptionItem).textCssClass));
+          const textElm = createDomElement(
+            'span',
+            {
+              className: `${this._menuCssPrefix}-content`,
+              textContent: (typeof item === 'object' && (item as MenuCommandItem | MenuOptionItem).title) || '',
+            },
+            commandLiElm
+          );
+
+          if ((item as MenuCommandItem | MenuOptionItem).textCssClass) {
+            textElm.classList.add(...classNameToList((item as MenuCommandItem | MenuOptionItem).textCssClass));
+          }
         }
       }
 
@@ -317,8 +359,20 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
       this._bindEventService.bind(
         commandLiElm,
         'click',
-        ((e: DOMMouseOrTouchEvent<HTMLDivElement>) =>
-          itemClickCallback.call(this, e, itemType, item, level, args?.column)) as EventListener,
+        ((e: DOMMouseOrTouchEvent<HTMLDivElement>) => {
+          // If there's a slotRenderer, call it with the event
+          const slotRenderer = (item as MenuCommandItem | MenuOptionItem).slotRenderer || (this._addonOptions as any).defaultItemRenderer;
+          if (slotRenderer) {
+            slotRenderer(item as MenuCommandItem | MenuOptionItem, args, e);
+          }
+
+          // If the click was stopped by an interactive element handler, don't trigger the menu action
+          if (e.defaultPrevented) {
+            return;
+          }
+
+          itemClickCallback.call(this, e, itemType, item, level, args?.column);
+        }) as EventListener,
         undefined,
         eventGroupName
       );

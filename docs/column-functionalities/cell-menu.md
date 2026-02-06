@@ -140,6 +140,11 @@ this.gridOptions = {
 };
 ```
 
+### Custom Menu Item Rendering
+For advanced customization of menu item appearance, you can use the `slotRenderer` or `defaultItemRenderer` callbacks to create custom HTML or HTMLElement content for your menu items. This allows you to add badges, keyboard shortcuts, status indicators, and more.
+
+See [Custom Menu Slots](../../menu-slots.md) for detailed examples and best practices on rendering custom menu item content across all menu types.
+
 ### Override Callback Methods
 What if you want to dynamically disable or hide a Command/Option or even disable the entire menu in certain circumstances? For these cases, you would use the override callback methods, the method must return a `boolean`. The list of override available are the following
 - `menuUsabilityOverride` returning false would make the Cell Menu unavailable to the user
