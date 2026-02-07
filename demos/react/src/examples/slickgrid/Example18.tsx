@@ -245,16 +245,17 @@ const Example18: React.FC = () => {
         initialGroupBy: ['duration'],
       },
       darkMode,
-      enableTextExport: true,
-      enableExcelExport: true,
       excelExportOptions: { sanitizeDataExport: true },
       textExportOptions: { sanitizeDataExport: true },
-      enablePdfExport: true,
       pdfExportOptions: {
         repeatHeadersOnEachPage: true, // defaults to true
         documentTitle: 'Grouping Grid',
       },
       externalResources: [excelExportService, pdfExportService, textExportService],
+      // -- NOTE: registered resources are auto-enabled
+      // enableTextExport: true,
+      // enablePdfExport: true,
+      // enableExcelExport: true,
     };
 
     setColumnDefinitions(columnDefinitions);

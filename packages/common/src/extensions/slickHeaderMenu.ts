@@ -49,7 +49,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     title: '',
     subMenuOpenByEvent: 'mouseover',
   } as unknown as HeaderMenuOption;
-  pluginName: 'HeaderMenu' = 'HeaderMenu' as const;
+  readonly pluginName = 'HeaderMenu';
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(

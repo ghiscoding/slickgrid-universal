@@ -62,8 +62,7 @@ const SELECTOR_CLOSEST_TOOLTIP_ATTR = '[title], [data-slick-tooltip]';
 const DEFAULT_CLASS_NAME = 'slick-custom-tooltip';
 
 export class SlickCustomTooltip {
-  name: 'CustomTooltip' = 'CustomTooltip' as const;
-
+  readonly pluginName = 'CustomTooltip';
   protected _addonOptions?: CustomTooltipOption;
   protected _cellAddonOptions?: CustomTooltipOption;
   protected _cellNodeElm?: HTMLElement;

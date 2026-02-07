@@ -102,6 +102,12 @@ const mockGraphqlService = {
   updatePagination: vi.fn(),
 } as unknown as GraphqlService;
 
+class ExcelExportService {
+  static readonly pluginName = 'ExcelExportService';
+  create = vi.fn();
+  init = vi.fn();
+}
+
 const backendUtilityServiceStub = {
   addRxJsResource: vi.fn(),
   executeBackendProcessesCallback: vi.fn(),
@@ -326,6 +332,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         minWidth: 300,
         rightPadding: 0,
       },
+      externalResources: [ExcelExportService],
       backendServiceApi: null,
     } as unknown as GridOption;
     sharedService = new SharedService();
@@ -1740,7 +1747,11 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
         const setColSpy = vi.spyOn(mockGrid, 'setColumns');
 
         component.columnDefinitions = mockCols;
-        component.gridOptions = { ...gridOptions, enableRowDetailView: true, presets: { columns: mockColsPresets } } as unknown as GridOption;
+        component.gridOptions = {
+          ...gridOptions,
+          enableRowDetailView: true,
+          presets: { columns: mockColsPresets },
+        } as unknown as GridOption;
         component.initialization(divContainer, slickEventHandler);
 
         expect(getAssocColSpy).toHaveBeenCalledWith(mockGrid, mockColsPresets);

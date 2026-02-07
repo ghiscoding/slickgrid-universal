@@ -75,7 +75,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   } = {};
 
   /** ExcelExportService class name which is use to find service instance in the external registered services */
-  readonly className = 'ExcelExportService';
+  readonly pluginName = 'ExcelExportService';
 
   protected get _datasetIdPropName(): string {
     return this._gridOptions?.datasetIdPropertyName ?? 'id';

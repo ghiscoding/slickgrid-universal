@@ -30,7 +30,7 @@ export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
   protected _defaults = {
     buttonCssClass: 'slick-header-button',
   } as HeaderButtonOption;
-  pluginName: 'HeaderButtons' = 'HeaderButtons' as const;
+  readonly pluginName = 'HeaderButtons';
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(

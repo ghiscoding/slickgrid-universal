@@ -2,6 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { Observable, RxJsFacade, Subject, Subscription } from '../rxjsFacade.js';
 
 describe('RxJsFacade Service', () => {
+  it('should return plugin name', () => {
+    expect(new RxJsFacade().pluginName).toBe('RxJsResource');
+  });
+
   it('should throw a not implemented error when calling "EMPTY" getter', () => {
     expect(() => RxJsFacade.prototype.EMPTY).toThrow('RxJS Facade "EMPTY" constant must be implemented');
   });

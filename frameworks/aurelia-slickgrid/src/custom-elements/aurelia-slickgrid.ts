@@ -32,6 +32,7 @@ import {
   HeaderGroupingService,
   isColumnDateType,
   PaginationService,
+  PluginFlagMappings,
   ResizerService,
   SharedService,
   SlickDataView,
@@ -61,7 +62,7 @@ const WARN_NO_PREPARSE_DATE_SIZE = 10000; // data size to warn user when pre-par
 
 export interface AureliaSlickRowDetailView {
   create(columns: Column[], gridOptions: GridOption): any;
-  init(grid: SlickGrid): void;
+  init(grid: SlickGrid, containerService?: ContainerService): void;
 }
 
 @customElement({
@@ -404,14 +405,14 @@ export class AureliaSlickgridCustomElement {
       this.grid.registerPlugin(this.groupItemMetadataProvider); // register GroupItemMetadataProvider when Grouping is enabled
     }
 
+    // get any possible Services that user want to register
+    this.registerResources();
+
     this.extensionService.bindDifferentExtensions();
     this.bindDifferentHooks(this.grid, this.options, this.dataview);
 
     // when it's a frozen grid, we need to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward
     this.sharedService.frozenVisibleColumnId = this.grid.getFrozenColumnId();
-
-    // get any possible Services that user want to register
-    this.registerResources();
 
     // initialize the SlickGrid grid
     this.grid.init();
@@ -1479,12 +1480,28 @@ export class AureliaSlickgridCustomElement {
     this._registeredResources = [];
   }
 
+  /** initialized & auto-enable external registered resources, e.g. if user registers `ExcelExportService` then let's auto-enable `enableExcelExport:true` */
+  protected autoEnableInitializedResources(resource: ExternalResource | ExternalResourceConstructor): void {
+    if (this.grid && typeof (resource as ExternalResource).init === 'function') {
+      (resource as ExternalResource).init!(this.grid, this.containerService);
+    }
+
+    // auto-enable unless the flag was specifically disabled by the end user
+    if ('pluginName' in (resource as ExternalResource)) {
+      const pluginFlagName = PluginFlagMappings.get((resource as ExternalResource).pluginName!);
+      if (pluginFlagName && this.options[pluginFlagName] !== false) {
+        this.options[pluginFlagName] = true;
+        this.grid?.setOptions({ [pluginFlagName]: true });
+      }
+    }
+  }
+
   protected initializeExternalResources(resources: Array<ExternalResource | ExternalResourceConstructor>) {
+    PluginFlagMappings.set('AureliaSlickRowDetailView', 'enableRowDetailView');
+
     if (Array.isArray(resources)) {
       for (const resource of resources) {
-        if (this.grid && typeof (resource as ExternalResource).init === 'function') {
-          (resource as ExternalResource).init!(this.grid, this.containerService);
-        }
+        this.autoEnableInitializedResources(resource);
       }
     }
   }
@@ -1497,7 +1514,7 @@ export class AureliaSlickgridCustomElement {
     // register all services by executing their init method and providing them with the Grid object
     if (Array.isArray(this._registeredResources)) {
       for (const resource of this._registeredResources) {
-        if ((resource as ExternalResource)?.className === 'RxJsResource') {
+        if ((resource as ExternalResource)?.pluginName === 'RxJsResource') {
           this.registerRxJsResource(resource as RxJsFacade);
         }
       }

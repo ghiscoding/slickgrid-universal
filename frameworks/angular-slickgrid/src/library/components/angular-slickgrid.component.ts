@@ -31,6 +31,7 @@ import {
   HeaderGroupingService,
   isColumnDateType,
   PaginationService,
+  PluginFlagMappings,
   ResizerService,
   SharedService,
   SlickDataView,
@@ -78,7 +79,7 @@ const WARN_NO_PREPARSE_DATE_SIZE = 10000; // data size to warn user when pre-par
 
 export interface AngularSlickRowDetailView {
   create(columns: Column[], gridOptions: GridOption): any;
-  init(grid: SlickGrid): void;
+  init(grid: SlickGrid, containerService?: ContainerService): void;
 }
 
 @Component({
@@ -753,15 +754,14 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
       this.slickGrid.registerPlugin(this.groupItemMetadataProvider); // register GroupItemMetadataProvider when Grouping is enabled
     }
 
+    // get any possible Services that user want to register
+    this.registerResources();
+
     this.extensionService.bindDifferentExtensions();
     this.bindDifferentHooks(this.slickGrid, this.options, this.dataView);
 
     // when it's a frozen grid, we need to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward
     this.sharedService.frozenVisibleColumnId = this.slickGrid.getFrozenColumnId();
-
-    // get any possible Services that user want to register
-    this.registerResources();
-
     // initialize the SlickGrid grid
     this.slickGrid.init();
 
@@ -1618,12 +1618,28 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
     }
   }
 
+  /** initialized & auto-enable external registered resources, e.g. if user registers `ExcelExportService` then let's auto-enable `enableExcelExport:true` */
+  protected autoEnableInitializedResources(resource: ExternalResource | ExternalResourceConstructor): void {
+    if (this.slickGrid && typeof (resource as ExternalResource).init === 'function') {
+      (resource as ExternalResource).init!(this.slickGrid, this.containerService);
+    }
+
+    // auto-enable unless the flag was specifically disabled by the end user
+    if ('pluginName' in (resource as ExternalResource)) {
+      const pluginFlagName = PluginFlagMappings.get((resource as ExternalResource).pluginName!);
+      if (pluginFlagName && this.options[pluginFlagName] !== false) {
+        this.options[pluginFlagName] = true;
+        this.slickGrid?.setOptions({ [pluginFlagName]: true });
+      }
+    }
+  }
+
   protected initializeExternalResources(resources: Array<ExternalResource | ExternalResourceConstructor>) {
+    PluginFlagMappings.set('AngularSlickRowDetailView', 'enableRowDetailView');
+
     if (Array.isArray(resources)) {
       for (const resource of resources) {
-        if (this.slickGrid && typeof (resource as ExternalResource).init === 'function') {
-          (resource as ExternalResource).init!(this.slickGrid, this.containerService);
-        }
+        this.autoEnableInitializedResources(resource);
       }
     }
   }

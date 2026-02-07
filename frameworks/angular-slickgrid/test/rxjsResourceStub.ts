@@ -15,7 +15,7 @@ import {
 import { takeUntil } from 'rxjs/operators';
 
 export class RxJsResourceStub implements RxJsFacade {
-  readonly className = 'RxJsResource';
+  readonly pluginName = 'RxJsResource';
 
   /**
    * The same Observable instance returned by any call to without a scheduler.

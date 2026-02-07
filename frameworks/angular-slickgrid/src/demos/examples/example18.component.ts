@@ -280,11 +280,12 @@ export class Example18Component implements OnInit, OnDestroy {
         initialGroupBy: ['duration'],
       },
       darkMode: this._darkMode,
-      enableTextExport: true,
-      enableExcelExport: true,
       excelExportOptions: { sanitizeDataExport: true },
       externalResources: [this.excelExportService, this.pdfExportService, this.textExportService],
-      enablePdfExport: true,
+      // -- NOTE: registered resources are auto-enabled
+      // enableTextExport: true,
+      // enablePdfExport: true,
+      // enableExcelExport: true,
       pdfExportOptions: {
         repeatHeadersOnEachPage: true, // defaults to true
         documentTitle: 'Grouping Grid',

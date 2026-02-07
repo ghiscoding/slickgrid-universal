@@ -25,7 +25,7 @@ import type {
 export class SlickRowMoveManager {
   onBeforeMoveRows: SlickEvent<{ grid: SlickGrid; rows: number[]; insertBefore: number }>;
   onMoveRows: SlickEvent<{ grid: SlickGrid; rows: number[]; insertBefore: number }>;
-  pluginName: 'RowMoveManager' = 'RowMoveManager' as const;
+  readonly pluginName = 'RowMoveManager';
 
   protected _addonOptions!: RowMoveManager;
   protected _canvas!: HTMLElement;

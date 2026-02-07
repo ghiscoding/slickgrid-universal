@@ -31,7 +31,7 @@ export interface CreatedView {
 }
 
 export class AngularSlickRowDetailView extends UniversalSlickRowDetailView {
-  static pluginName = 'AngularSlickRowDetailView';
+  static readonly pluginName = 'AngularSlickRowDetailView';
   rowDetailContainer!: ViewContainerRef;
   protected _preloadComponent: Type<object> | undefined;
   protected _preloadCompRef?: ComponentRef<any>;

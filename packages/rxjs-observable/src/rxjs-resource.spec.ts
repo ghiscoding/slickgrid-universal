@@ -11,7 +11,7 @@ describe('RxJs Resource', () => {
 
   it('should create the service', () => {
     expect(service).toBeTruthy();
-    expect(service.className).toBe('RxJsResource');
+    expect(service.pluginName).toBe('RxJsResource');
   });
 
   it('should be able to create an RxJS Observable', () => {

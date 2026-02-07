@@ -21,6 +21,7 @@ import type { TreeDataService } from './treeData.service.js';
 import { sortPresetColumns } from './utilities.js';
 
 export class GridStateService {
+  readonly pluginName = 'GridStateService';
   protected _eventHandler: SlickEventHandler;
   protected _columns: Column[] = [];
   protected _grid!: SlickGrid;

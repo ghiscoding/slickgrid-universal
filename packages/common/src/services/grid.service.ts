@@ -47,6 +47,7 @@ const HideColumnOptionDefaults: HideColumnOption = {
 const ShowColumnOptionDefaults: ShowColumnOption = { autoResizeColumns: true, triggerEvent: true };
 
 export class GridService {
+  readonly pluginName = 'GridService';
   protected _grid!: SlickGrid;
   protected _rowSelectionPlugin?: SlickHybridSelectionModel;
 

@@ -43,7 +43,7 @@ import { sortByFieldType } from '../sortComparers/sortUtilities.js';
 export class SlickDraggableGrouping {
   columnsGroupBy: Column[] = [];
   onGroupChanged: SlickEvent;
-  pluginName: 'DraggableGrouping' = 'DraggableGrouping' as const;
+  readonly pluginName = 'DraggableGrouping';
 
   protected _addonOptions!: DraggableGrouping;
   protected _bindingEventService: BindingEventService;

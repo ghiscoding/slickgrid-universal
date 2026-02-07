@@ -35,7 +35,7 @@ const noop = () => {};
   where the browser copies/pastes the serialized data.
 */
 export class SlickCellExternalCopyManager {
-  pluginName: 'CellExternalCopyManager' = 'CellExternalCopyManager' as const;
+  readonly pluginName = 'CellExternalCopyManager';
   onCopyCells: SlickEvent<{ ranges: SlickRange[] }>;
   onCopyCancelled: SlickEvent<{ ranges: SlickRange[] }>;
   onPasteCells: SlickEvent<{ ranges: SlickRange[] }>;

@@ -22,7 +22,7 @@ const PRELOAD_CONTAINER_PREFIX = 'container_loading';
 
 @transient()
 export class AureliaSlickRowDetailView extends UniversalSlickRowDetailView {
-  static pluginName = 'AureliaSlickRowDetailView';
+  static readonly pluginName = 'AureliaSlickRowDetailView';
   protected _preloadViewModel?: Constructable;
   protected _preloadController?: ICustomElementController;
   protected _slots: CreatedView[] = [];
