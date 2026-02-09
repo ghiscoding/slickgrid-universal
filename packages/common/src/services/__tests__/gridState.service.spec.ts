@@ -398,6 +398,114 @@ describe('GridStateService', () => {
         ]);
         expect(autoSizeSpy).not.toHaveBeenCalled();
       });
+
+      it('should insert checkbox selector column at the correct position when "enableCheckboxSelector" is enabled', () => {
+        gridOptionMock.enableCheckboxSelector = true;
+        gridOptionMock.checkboxSelector = { columnIndexPosition: 0 } as unknown as CheckboxSelectorOption;
+
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(allColumnsMock);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(allColumnsMock);
+        const setColsSpy = vi.spyOn(gridStub, 'setColumns');
+
+        service.changeColumnsArrangement(presetColumnsMock, false);
+
+        const setColumnsArg = setColsSpy.mock.calls[0][0];
+        expect(setColumnsArg).toEqual(expect.arrayContaining([expect.objectContaining({ id: '_checkbox_selector', field: '_checkbox_selector' })]));
+        // checkbox selector should be present in the output
+        const checkboxIndex = setColumnsArg.findIndex((col: Column) => col.id === '_checkbox_selector');
+        expect(checkboxIndex).toBeGreaterThanOrEqual(0);
+      });
+
+      it('should insert row detail view column at the correct position when "enableRowDetailView" is enabled', () => {
+        gridOptionMock.enableRowDetailView = true;
+        gridOptionMock.rowDetailView = { columnIndexPosition: 0 } as unknown as RowDetailView;
+
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(allColumnsMock);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(allColumnsMock);
+        const setColsSpy = vi.spyOn(gridStub, 'setColumns');
+
+        service.changeColumnsArrangement(presetColumnsMock, false);
+
+        const setColumnsArg = setColsSpy.mock.calls[0][0];
+        expect(setColumnsArg).toEqual(expect.arrayContaining([expect.objectContaining({ id: '_detail_selector', field: '_detail_selector' })]));
+        // row detail should be present in the output
+        const detailIndex = setColumnsArg.findIndex((col: Column) => col.id === '_detail_selector');
+        expect(detailIndex).toBeGreaterThanOrEqual(0);
+      });
+
+      it('should insert row move manager column at the correct position when "enableRowMoveManager" is enabled', () => {
+        gridOptionMock.enableRowMoveManager = true;
+        gridOptionMock.rowMoveManager = { columnIndexPosition: 0 } as unknown as RowMoveManager;
+
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(allColumnsMock);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(allColumnsMock);
+        const setColsSpy = vi.spyOn(gridStub, 'setColumns');
+
+        service.changeColumnsArrangement(presetColumnsMock, false);
+
+        const setColumnsArg = setColsSpy.mock.calls[0][0];
+        expect(setColumnsArg).toEqual(expect.arrayContaining([expect.objectContaining({ id: '_move', field: '_move' })]));
+        // row move should be present in the output
+        const moveIndex = setColumnsArg.findIndex((col: Column) => col.id === '_move');
+        expect(moveIndex).toBeGreaterThanOrEqual(0);
+      });
+
+      it('should insert both checkbox selector and row detail columns when both features are enabled', () => {
+        gridOptionMock.enableCheckboxSelector = true;
+        gridOptionMock.enableRowDetailView = true;
+        gridOptionMock.checkboxSelector = { columnIndexPosition: 0 } as unknown as CheckboxSelectorOption;
+        gridOptionMock.rowDetailView = { columnIndexPosition: 1 } as unknown as RowDetailView;
+
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(allColumnsMock);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(allColumnsMock);
+        const setColsSpy = vi.spyOn(gridStub, 'setColumns');
+
+        service.changeColumnsArrangement(presetColumnsMock, false);
+
+        const setColumnsArg = setColsSpy.mock.calls[0][0];
+        expect(setColumnsArg).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({ id: '_checkbox_selector', field: '_checkbox_selector' }),
+            expect.objectContaining({ id: '_detail_selector', field: '_detail_selector' }),
+          ])
+        );
+        // both dynamic columns should be present in the output
+        const checkboxIndex = setColumnsArg.findIndex((col: Column) => col.id === '_checkbox_selector');
+        const detailIndex = setColumnsArg.findIndex((col: Column) => col.id === '_detail_selector');
+        expect(checkboxIndex).toBeGreaterThanOrEqual(0);
+        expect(detailIndex).toBeGreaterThanOrEqual(0);
+      });
+
+      it('should insert all three dynamic columns (checkbox selector, row detail, and row move) when all features are enabled', () => {
+        gridOptionMock.enableCheckboxSelector = true;
+        gridOptionMock.enableRowDetailView = true;
+        gridOptionMock.enableRowMoveManager = true;
+        gridOptionMock.checkboxSelector = { columnIndexPosition: 0 } as unknown as CheckboxSelectorOption;
+        gridOptionMock.rowDetailView = { columnIndexPosition: 1 } as unknown as RowDetailView;
+        gridOptionMock.rowMoveManager = { columnIndexPosition: 2 } as unknown as RowMoveManager;
+
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(allColumnsMock);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(allColumnsMock);
+        const setColsSpy = vi.spyOn(gridStub, 'setColumns');
+
+        service.changeColumnsArrangement(presetColumnsMock, false);
+
+        const setColumnsArg = setColsSpy.mock.calls[0][0];
+        expect(setColumnsArg).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({ id: '_checkbox_selector', field: '_checkbox_selector' }),
+            expect.objectContaining({ id: '_detail_selector', field: '_detail_selector' }),
+            expect.objectContaining({ id: '_move', field: '_move' }),
+          ])
+        );
+        // all three dynamic columns should be present in the output
+        const checkboxIndex = setColumnsArg.findIndex((col: Column) => col.id === '_checkbox_selector');
+        const detailIndex = setColumnsArg.findIndex((col: Column) => col.id === '_detail_selector');
+        const moveIndex = setColumnsArg.findIndex((col: Column) => col.id === '_move');
+        expect(checkboxIndex).toBeGreaterThanOrEqual(0);
+        expect(detailIndex).toBeGreaterThanOrEqual(0);
+        expect(moveIndex).toBeGreaterThanOrEqual(0);
+      });
     });
 
     describe('bindExtensionAddonEventToGridStateChange tests', () => {
