@@ -197,7 +197,8 @@ export class SlickCellExternalCopyManager {
           cancelChanges: noop,
           commitChanges: noop,
         }) as Editor;
-        editor.loadValue(item);
+
+        editor.loadValue({...item, [columnDef.field]: value});
         const validationResults = editor.validate(undefined, value);
         if (!validationResults.valid) {
           const activeCell = this._grid.getActiveCell()!;

@@ -216,8 +216,8 @@ describe('CellExternalCopyManager', () => {
       const mockItem = { firstName: 'John', lastName: 'Doe' };
       plugin.init(gridStub);
       plugin.setDataItemValueForColumn(mockItem, mockColumns[0], 'some value');
-
-      expect(loadValSpy).toHaveBeenCalledWith(mockItem);
+      const expectedItem = { ...mockItem, firstName: 'some value' };
+      expect(loadValSpy).toHaveBeenCalledWith(expectedItem);
       expect(applyValSpy).toHaveBeenCalledWith(mockItem, 'some value');
     });
 
@@ -231,8 +231,8 @@ describe('CellExternalCopyManager', () => {
       const mockItem = { firstName: 'John', lastName: 'Doe' };
       plugin.init(gridStub);
       plugin.setDataItemValueForColumn(mockItem, mockColumns[0], 'some value');
-
-      expect(loadValSpy).toHaveBeenCalledWith(mockItem);
+      const expectedItem = { ...mockItem, firstName: 'some value' };
+      expect(loadValSpy).toHaveBeenCalledWith(expectedItem);
       expect(applyValSpy).toHaveBeenCalledWith(mockItem, 'some value');
       expect(validationSpy).toHaveBeenCalled();
       expect(notifySpy).toHaveBeenCalledWith(expect.objectContaining({ validationResults }));
