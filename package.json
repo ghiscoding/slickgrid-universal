@@ -26,6 +26,7 @@
     "clean": "remove --glob {demos,frameworks,frameworks-plugins,packages}/*/dist --glob=packages/*/tsconfig.tsbuildinfo --stat",
     "cypress": "cypress open --config-file test/cypress.config.ts",
     "cypress:ci": "cypress run --config-file test/cypress.config.ts",
+    "cypress:install": "pnpm exec cypress install",
     "sass:bundle": "pnpm -r --stream --filter=./packages/common run sass:bundle",
     "build:universal": "tsc --build ./tsconfig.packages.json && pnpm sass:bundle",
     "build:frameworks": "pnpm -r --stream --filter=\"./{demos,frameworks,frameworks-plugins}/**\" run build",

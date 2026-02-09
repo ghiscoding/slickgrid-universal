@@ -39,7 +39,6 @@ import {
   SlickGrid,
   SlickgridConfig,
   SlickGroupItemMetadataProvider,
-  sortPresetColumns,
   SortService,
   TreeDataService,
   unsubscribeAll,
@@ -1410,46 +1409,13 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
     }
   }
 
-  protected insertDynamicPresetColumns(columnId: string, gridPresetColumns: Column[]) {
-    if (this._columnDefinitions) {
-      const columnPosition = this._columnDefinitions.findIndex((c) => c.id === columnId);
-      if (columnPosition >= 0) {
-        const dynColumn = this._columnDefinitions[columnPosition];
-        if (dynColumn?.id === columnId && !gridPresetColumns.some((c) => c.id === columnId)) {
-          columnPosition > 0 ? gridPresetColumns.splice(columnPosition, 0, dynColumn) : gridPresetColumns.unshift(dynColumn);
-        }
-      }
-    }
-  }
-
   /** Load any possible Columns Grid Presets */
   protected loadColumnPresetsWhenDatasetInitialized() {
     // if user entered some Columns "presets", we need to reflect them all in the grid
     if (Array.isArray(this.options.presets?.columns) && this.options.presets.columns.length > 0) {
-      const gridPresetColumns: Column[] = this.gridStateService.getAssociatedGridColumns(this.slickGrid, this.options.presets.columns);
-      if (Array.isArray(gridPresetColumns) && gridPresetColumns.length > 0 && Array.isArray(this._columnDefinitions)) {
-        // make sure that the dynamic columns are included in presets (1.Row Move, 2. Row Selection, 3. Row Detail)
-        if (this.options.enableRowMoveManager) {
-          const rmmColId = this.options?.rowMoveManager?.columnId ?? '_move';
-          this.insertDynamicPresetColumns(rmmColId, gridPresetColumns);
-        }
-        if (this.options.enableCheckboxSelector) {
-          const chkColId = this.options?.checkboxSelector?.columnId ?? '_checkbox_selector';
-          this.insertDynamicPresetColumns(chkColId, gridPresetColumns);
-        }
-        if (this.options.enableRowDetailView) {
-          const rdvColId = this.options?.rowDetailView?.columnId ?? '_detail_selector';
-          this.insertDynamicPresetColumns(rdvColId, gridPresetColumns);
-        }
-
-        // keep copy the original optional `width` properties optionally provided by the user.
-        // We will use this when doing a resize by cell content, if user provided a `width` it won't override it.
-        gridPresetColumns.forEach((col) => (col.originalWidth = col.width));
-
-        // finally sort and set the new presets columns (including checkbox selector if need be)
-        const orderedColumns = sortPresetColumns(this._columnDefinitions, gridPresetColumns);
-        this.slickGrid.setColumns(orderedColumns);
-      }
+      // delegate to GridStateService for centralized column arrangement logic
+      // we pass `false` for triggerAutoSizeColumns to maintain original behavior on preset load
+      this.gridStateService.changeColumnsArrangement(this.options.presets.columns, false);
     }
   }
 
