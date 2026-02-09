@@ -1,9 +1,7 @@
-###### Requires version `2.13.0+`
-
 ## Description
 Most of example that you will find across this library were made with `I18N` (dynamic translation) support. However a few users of the lib only use 1 locale (English or any other locale). Since not all users requires multiple translations, as of version `2.13.0`, it is now possible to use `Aurelia-Slickgrid` without `I18N`. What is the difference with/without `I18N`? Not much, the only difference is that `I18N` is now an optional dependency (thanks to Aurelia [Optional Dependency](https://aurelia.io/docs/fundamentals/cheat-sheet#dependency-injection), via `Optional.of(I18N)`), so if you don't provide `I18N`, it will simply try to use Custom Locales, you can provide your own locales (see instruction below), or if none are provided it will use English locales by default.
 ## Code Sample
-[Demo Component](https://github.com/ghiscoding/aurelia-slickgrid-demos/blob/master/webpack-bs5-demo-with-locales)
+[Demo Component](https://github.com/ghiscoding/aurelia-slickgrid-demos/blob/master/webpack-bs5-demo-with-locales/)
 
 ## Installation
 There are 2 ways of using and defining Custom Locales, see below on how to achieve that.
@@ -13,7 +11,7 @@ There are 2 ways of using and defining Custom Locales, see below on how to achie
 English is the default, if that is the locale you want to use then there's nothing to do, move along...
 
 #### Any other Locales (not English)
-To use any other Locales, you will need to create a TypeScript (or JavaScript) of all the Locale Texts required for the library to work properly (if you forget to define a locale text, it will simply show up in English). For example, if we define a French Locale, it would look like this (for the complete list of required field take a look at the default [French Locale](https://github.com/ghiscoding/aurelia-slickgrid-demos/blob/master/webpack-bs5-demo/src/examples/locales/fr.ts))
+To use any other Locales, you will need to create a TypeScript (or JavaScript) of all the Locale Texts required for the library to work properly (if you forget to define a locale text, it will simply show up in English). For example, if we define a French Locale, it would look like this (for the complete list of required field take a look at the default [French Locale](https://github.com/ghiscoding/aurelia-slickgrid-demos/blob/master/webpack-bs5-demo-with-locales/src/examples/locales/fr.ts))
 ```ts
 // localeFrench.ts or fr.ts
 export const localeFrench = {
