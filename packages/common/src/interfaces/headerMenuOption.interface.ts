@@ -1,8 +1,7 @@
-import type { SlickGrid } from '../core/index.js';
 import type { HeaderMenuLabel } from './headerMenuLabel.interface.js';
-import type { Column } from './index.js';
+import type { MenuOption } from './menuOption.interface.js';
 
-export interface HeaderMenuOption {
+export interface HeaderMenuOption extends MenuOption {
   /** Auto-align drop menu to the left when not enough viewport space to show on the right */
   autoAlign?: boolean;
 
@@ -95,24 +94,4 @@ export interface HeaderMenuOption {
 
   /** Item tooltip. */
   tooltip?: string;
-
-  // --
-  // Methods
-
-  /**
-   * Default slot renderer for all menu items.
-   * This will be used as the default renderer for all items unless overridden by an individual item's `slotRenderer`.
-   * The renderer receives both the menu item and args for full context access.
-   *
-   * @param item - The menu item object (MenuCommandItem or MenuOptionItem)
-   * @param args - The callback args providing access to grid, column, dataContext, etc.
-   * @returns Either an HTML string or an HTMLElement
-   *
-   * @example
-   * defaultItemRenderer: (item, args) => `<div>${item.title}</div>`
-   */
-  defaultItemRenderer?: (item: any, args: any) => string | HTMLElement;
-
-  /** Callback method that user can override the default behavior of enabling/disabling an item from the list. */
-  menuUsabilityOverride?: (args: { grid: SlickGrid; column: Column; menu: HTMLElement }) => boolean;
 }

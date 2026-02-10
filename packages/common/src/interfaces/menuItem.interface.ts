@@ -64,17 +64,6 @@ export interface MenuItem<O = MenuCallbackArgs> {
    *   div.addEventListener('click', () => console.log('clicked'));
    *   return div;
    * }
-   *
-   * // Interactive element that prevents menu action
-   * slotRenderer: (item, args, event) => {
-   *   const checkbox = document.createElement('input');
-   *   checkbox.type = 'checkbox';
-   *   checkbox.addEventListener('change', (e) => {
-   *     event?.stopPropagation(); // Stop the menu item click from firing
-   *     console.log('checkbox toggled');
-   *   });
-   *   return checkbox;
-   * }
    */
   slotRenderer?: (item: any, args: O, event?: Event) => string | HTMLElement;
 

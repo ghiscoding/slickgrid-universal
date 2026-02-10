@@ -29,12 +29,20 @@ import type {
 } from '../interfaces/index.js';
 import type { SharedService } from '../services/shared.service.js';
 
-export type MenuType = 'command' | 'option';
-export type ExtendableItemTypes = HeaderButtonItem | MenuCommandItem | MenuOptionItem | 'divider';
-
 export type ExtractMenuType<A, T> = T extends 'command' ? A : T extends 'option' ? A : A extends 'divider' ? A : never;
+export type MenuType = 'command' | 'option';
+export type MenuCommandOptionItem = MenuCommandItem | MenuOptionItem;
+export type ExtendableItemTypes = HeaderButtonItem | MenuCommandItem | MenuOptionItem | 'divider';
+export type MenuPlugin = CellMenu | ContextMenu | GridMenu | HeaderMenu;
+export type itemEventCallback = (
+  e: DOMMouseOrTouchEvent<HTMLDivElement>,
+  type: MenuType,
+  item: ExtractMenuType<ExtendableItemTypes, MenuType>,
+  level: number,
+  columnDef?: Column
+) => void;
 
-export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderMenu | HeaderButton> {
+export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
   protected _addonOptions: M = {} as unknown as M;
   protected _bindEventService: BindingEventService;
   protected _camelPluginName = '';
@@ -154,11 +162,11 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
   }
 
   protected addSubMenuTitleWhenExists(item: ExtractMenuType<ExtendableItemTypes, MenuType>, commandOrOptionMenu: HTMLDivElement): void {
-    if (item !== 'divider' && (item as MenuCommandItem | MenuOptionItem | GridMenuItem)?.subMenuTitle) {
+    if (item !== 'divider' && (item as MenuCommandOptionItem | GridMenuItem)?.subMenuTitle) {
       const subMenuTitleElm = document.createElement('div');
       subMenuTitleElm.className = 'slick-menu-title';
-      subMenuTitleElm.textContent = (item as MenuCommandItem | MenuOptionItem | GridMenuItem).subMenuTitle as string;
-      const subMenuTitleClass = (item as MenuCommandItem | MenuOptionItem | GridMenuItem).subMenuTitleCssClass as string;
+      subMenuTitleElm.textContent = (item as MenuCommandOptionItem | GridMenuItem).subMenuTitle as string;
+      const subMenuTitleClass = (item as MenuCommandOptionItem | GridMenuItem).subMenuTitleCssClass as string;
       if (subMenuTitleClass) {
         subMenuTitleElm.classList.add(...classNameToList(subMenuTitleClass));
       }
@@ -173,20 +181,8 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
     commandOrOptionMenuElm: HTMLElement,
     commandOrOptionItems: Array<ExtractMenuType<ExtendableItemTypes, MenuType>>,
     args: unknown,
-    itemClickCallback: (
-      e: DOMMouseOrTouchEvent<HTMLDivElement>,
-      type: MenuType,
-      item: ExtractMenuType<ExtendableItemTypes, MenuType>,
-      level: number,
-      columnDef?: Column
-    ) => void,
-    itemMouseoverCallback?: (
-      e: DOMMouseOrTouchEvent<HTMLElement>,
-      type: MenuType,
-      item: ExtractMenuType<ExtendableItemTypes, MenuType>,
-      level: number,
-      columnDef?: Column
-    ) => void
+    itemClickCallback: itemEventCallback,
+    itemMouseoverCallback?: itemEventCallback
   ): void {
     if (args && commandOrOptionItems && menuOptions) {
       for (const item of commandOrOptionItems) {
@@ -239,20 +235,8 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
     commandOrOptionMenuElm: HTMLElement | null,
     item: ExtractMenuType<ExtendableItemTypes, MenuType>,
     args: any,
-    itemClickCallback: (
-      e: DOMMouseOrTouchEvent<HTMLDivElement>,
-      type: MenuType,
-      item: ExtractMenuType<ExtendableItemTypes, MenuType>,
-      level: number,
-      columnDef?: Column
-    ) => void,
-    itemMouseoverCallback?: (
-      e: DOMMouseOrTouchEvent<HTMLElement>,
-      type: MenuType,
-      item: ExtractMenuType<ExtendableItemTypes, MenuType>,
-      level: number,
-      columnDef?: Column
-    ) => void
+    itemClickCallback: itemEventCallback,
+    itemMouseoverCallback?: itemEventCallback
   ): HTMLLIElement | null {
     let commandLiElm: HTMLLIElement | null = null;
 
@@ -288,7 +272,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
         commandOrOptionMenuElm.appendChild(commandLiElm);
       }
 
-      if ((typeof item === 'object' && (item as MenuCommandItem | MenuOptionItem).divider) || item === 'divider') {
+      if ((typeof item === 'object' && (item as MenuCommandOptionItem).divider) || item === 'divider') {
         commandLiElm.classList.add(`${menuCssPrefix}-divider`);
         return commandLiElm;
       }
@@ -297,7 +281,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
         commandLiElm.classList.add(`${menuCssPrefix}-disabled`);
       }
 
-      if ((item as MenuCommandItem | MenuOptionItem).hidden || (item as HeaderButtonItem).showOnHover) {
+      if ((item as MenuCommandOptionItem).hidden || (item as HeaderButtonItem).showOnHover) {
         commandLiElm.classList.add(`${menuCssPrefix}-hidden`);
       }
 
@@ -310,31 +294,18 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
       }
 
       if (this._camelPluginName !== 'headerButtons') {
-        // Check if slot renderer is provided at item level (highest priority)
-        if ((item as MenuCommandItem | MenuOptionItem).slotRenderer) {
-          this.renderSlotRenderer(
-            commandLiElm,
-            (item as MenuCommandItem | MenuOptionItem).slotRenderer!,
-            item as MenuCommandItem | MenuOptionItem,
-            args
-          );
-        }
-        // Check if default item renderer is provided at menu level (fallback)
-        else if ((this._addonOptions as any).defaultItemRenderer) {
-          this.renderSlotRenderer(
-            commandLiElm,
-            (this._addonOptions as any).defaultItemRenderer,
-            item as MenuCommandItem | MenuOptionItem,
-            args
-          );
+        // Check if we have slot renderer on the menu item or a default item renderer
+        const slotRenderer = (item as MenuCommandOptionItem).slotRenderer || (this._addonOptions as MenuPlugin).defaultItemRenderer;
+        if (slotRenderer) {
+          this.renderSlotRenderer(commandLiElm, slotRenderer, item as MenuCommandOptionItem, args);
         }
         // Default rendering: icon + content
         else {
           const iconElm = createDomElement('div', { className: `${this._menuCssPrefix}-icon` });
           commandLiElm.appendChild(iconElm);
 
-          if ((item as MenuCommandItem | MenuOptionItem).iconCssClass) {
-            iconElm.classList.add(...classNameToList((item as MenuCommandItem | MenuOptionItem).iconCssClass));
+          if ((item as MenuCommandOptionItem).iconCssClass) {
+            iconElm.classList.add(...classNameToList((item as MenuCommandOptionItem).iconCssClass));
           } else if (!(item as MenuCommandItem).commandItems && !(item as MenuOptionItem).optionItems) {
             iconElm.textContent = '◦';
           }
@@ -343,13 +314,13 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
             'span',
             {
               className: `${this._menuCssPrefix}-content`,
-              textContent: (typeof item === 'object' && (item as MenuCommandItem | MenuOptionItem).title) || '',
+              textContent: (typeof item === 'object' && (item as MenuCommandOptionItem).title) || '',
             },
             commandLiElm
           );
 
-          if ((item as MenuCommandItem | MenuOptionItem).textCssClass) {
-            textElm.classList.add(...classNameToList((item as MenuCommandItem | MenuOptionItem).textCssClass));
+          if ((item as MenuCommandOptionItem).textCssClass) {
+            textElm.classList.add(...classNameToList((item as MenuCommandOptionItem).textCssClass));
           }
         }
       }
@@ -360,13 +331,13 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
         commandLiElm,
         'click',
         ((e: DOMMouseOrTouchEvent<HTMLDivElement>) => {
-          // If there's a slotRenderer, call it with the event
-          const slotRenderer = (item as MenuCommandItem | MenuOptionItem).slotRenderer || (this._addonOptions as any).defaultItemRenderer;
+          // if there's a slot renderer, call it with the event
+          const slotRenderer = (item as MenuCommandOptionItem).slotRenderer || (this._addonOptions as MenuPlugin).defaultItemRenderer;
           if (slotRenderer) {
-            slotRenderer(item as MenuCommandItem | MenuOptionItem, args, e);
+            slotRenderer(item as MenuCommandOptionItem, args, e);
           }
 
-          // If the click was stopped by an interactive element handler, don't trigger the menu action
+          // if the click was stopped by an interactive element handler, don't trigger the menu action
           if (e.defaultPrevented) {
             return;
           }
@@ -378,10 +349,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
       );
 
       // optionally open sub-menu(s) by mouseover
-      if (
-        (this._addonOptions as CellMenu | ContextMenu | GridMenu | HeaderMenu)?.subMenuOpenByEvent === 'mouseover' &&
-        typeof itemMouseoverCallback === 'function'
-      ) {
+      if ((this._addonOptions as MenuPlugin)?.subMenuOpenByEvent === 'mouseover' && typeof itemMouseoverCallback === 'function') {
         this._bindEventService.bind(
           commandLiElm,
           'mouseover',
@@ -404,7 +372,7 @@ export class MenuBaseClass<M extends CellMenu | ContextMenu | GridMenu | HeaderM
         const chevronElm = document.createElement('span');
         chevronElm.className = 'sub-item-chevron';
         if ((this._addonOptions as any).subItemChevronClass) {
-          chevronElm.classList.add(...classNameToList((this._addonOptions as any).subItemChevronClass));
+          chevronElm.classList.add(...classNameToList((this._addonOptions as MenuPlugin).subItemChevronClass));
         } else {
           chevronElm.textContent = '⮞'; // ⮞ or ▸
         }

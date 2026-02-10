@@ -1,7 +1,8 @@
 import type { ContextMenuLabel } from './contextMenuLabel.interface.js';
-import type { MenuCallbackArgs, MenuCommandItem, MenuOptionItem } from './index.js';
+import type { MenuCommandItem, MenuOptionItem } from './index.js';
+import type { MenuOption } from './menuOption.interface.js';
 
-export interface ContextMenuOption {
+export interface ContextMenuOption extends MenuOption {
   /** Defaults to true, Auto-align dropup or dropdown menu to the left or right depending on grid viewport available space */
   autoAdjustDrop?: boolean;
 
@@ -130,24 +131,4 @@ export interface ContextMenuOption {
 
   /** Defaults to "mouseover", what event type shoud we use to open sub-menu(s), 2 options are available: "mouseover" or "click" */
   subMenuOpenByEvent?: 'mouseover' | 'click';
-
-  // --
-  // action/override callbacks
-
-  /**
-   * Default slot renderer for all menu items.
-   * This will be used as the default renderer for all items unless overridden by an individual item's `slotRenderer`.
-   * The renderer receives both the menu item and args for full context access.
-   *
-   * @param item - The menu item object (MenuCommandItem or MenuOptionItem)
-   * @param args - The callback args providing access to grid, column, dataContext, etc.
-   * @returns Either an HTML string or an HTMLElement
-   *
-   * @example
-   * defaultItemRenderer: (item, args) => `<div>${item.title}</div>`
-   */
-  defaultItemRenderer?: (item: any, args: any) => string | HTMLElement;
-
-  /** Callback method that user can override the default behavior of enabling/disabling an item from the list. */
-  menuUsabilityOverride?: (args: MenuCallbackArgs) => boolean;
 }

@@ -1,7 +1,10 @@
+import { format as tempoFormat } from '@formkit/tempo';
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { Filters, Formatters, type Column, type GridOption } from '@slickgrid-universal/common';
+import { createDomElement, Filters, Formatters, getOffset, type Column, type GridOption } from '@slickgrid-universal/common';
+import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options.js';
+import './example40.scss';
 
 interface ReportItem {
   id: number;
@@ -20,6 +23,7 @@ export default class Example40 {
   gridOptions: GridOption;
   dataset: ReportItem[];
   sgb: SlickVanillaGridBundle<ReportItem>;
+  subTitleStyle = 'display: block';
 
   constructor() {
     this._bindingEventService = new BindingEventService();
@@ -45,11 +49,7 @@ export default class Example40 {
 
   initializeGrid() {
     // This example demonstrates Menu Slot functionality across all menu types:
-    // - SlickHeaderMenu (Title, Duration, Cost, % Complete columns)
-    // - SlickCellMenu (Action column with chevron button)
-    // - SlickContextMenu (right-click context menu)
-    // - SlickGridMenu (grid menu button)
-    // All demonstrate: slotRenderer callbacks (item, args) returning strings or HTMLElements
+    // - SlickHeaderMenu, SlickCellMenu, SlickContextMenu, SlickGridMenu
 
     this.columnDefinitions = [
       {
@@ -67,12 +67,12 @@ export default class Example40 {
                 command: 'sort-asc',
                 title: 'Sort Ascending',
                 positionOrder: 50,
-                // Slot renderer replaces entire menu item content
+                // Slot renderer replaces entire menu item content (can be HTML string or native DOM elements)
                 slotRenderer: () => `
-                  <div style="display: flex; align-items: center;">
-                    <i class="mdi mdi-sort-ascending" style="margin-right: 4px; font-size: 18px;"></i>
-                    <span style="flex: 1;">Sort Ascending</span>
-                    <kbd style="background: #eee; border: 1px solid #ccc; border-radius: 2px; padding: 2px 4px; font-size: 10px; margin-left: 10px; white-space: nowrap; display: inline-flex; align-items: center; height: 18px;">Alt+↑</kbd>
+                  <div class="menu-item">
+                    <i class="mdi mdi-sort-ascending menu-item-icon"></i>
+                    <span class="menu-item-label">Sort Ascending</span>
+                    <kbd class="key-hint">Alt+↑</kbd>
                   </div>
                 `,
               },
@@ -80,13 +80,17 @@ export default class Example40 {
                 command: 'sort-desc',
                 title: 'Sort Descending',
                 positionOrder: 51,
-                slotRenderer: () => `
-                  <div style="display: flex; align-items: center;">
-                    <i class="mdi mdi-sort-descending" style="margin-right: 4px; font-size: 18px;"></i>
-                    <span style="flex: 1;">Sort Descending</span>
-                    <kbd style="background: #eee; border: 1px solid #ccc; border-radius: 2px; padding: 2px 4px; font-size: 10px; margin-left: 10px; white-space: nowrap; display: inline-flex; align-items: center; height: 18px;">Alt+↓</kbd>
-                  </div>
-                `,
+                // Slot renderer using native DOM elements
+                slotRenderer: () => {
+                  const menuItemElm = createDomElement('div', { className: 'menu-item' });
+                  const iconElm = createDomElement('i', { className: 'mdi mdi-sort-descending menu-item-icon' });
+                  const menuItemLabelElm = createDomElement('span', { className: 'menu-item-label', textContent: 'Sort Descending' });
+                  const kbdElm = createDomElement('kbd', { className: 'key-hint', textContent: 'Alt+↓' });
+                  menuItemElm.appendChild(iconElm);
+                  menuItemElm.appendChild(menuItemLabelElm);
+                  menuItemElm.appendChild(kbdElm);
+                  return menuItemElm;
+                },
               },
             ],
           },
@@ -109,10 +113,10 @@ export default class Example40 {
                 positionOrder: 47,
                 // Slot renderer with badge
                 slotRenderer: () => `
-                  <div style="display: flex; align-items: center;">
-                    <i class="mdi mdi-arrow-expand-horizontal" style="margin-right: 4px; font-size: 18px;"></i>
-                    <span style="flex: 1;">Resize by Content</span>
-                    <span style="background: #ff4444; color: white; padding: 2px 4px; border-radius: 3px; font-size: 9px; font-weight: bold; margin-left: 10px; white-space: nowrap; display: inline-flex; align-items: center; height: 18px;">NEW</span>
+                  <div class="menu-item">
+                    <i class="mdi mdi-arrow-expand-horizontal menu-item-icon"></i>
+                    <span class="menu-item-label">Resize by Content</span>
+                    <span class="key-hint danger">NEW</span>
                   </div>
                 `,
               },
@@ -136,10 +140,10 @@ export default class Example40 {
                 positionOrder: 58,
                 // Slot renderer with status indicator
                 slotRenderer: () => `
-                  <div style="display: flex; align-items: center;">
-                    <i class="mdi mdi-sort-variant-off" style="margin-right: 4px; font-size: 18px;"></i>
-                    <span style="flex: 1;">Remove Sort</span>
-                    <span style="width: 6px; height: 6px; border-radius: 50%; display: inline-block; background: #44ff44; box-shadow: 0 0 4px #44ff44; margin-left: 10px;"></span>
+                  <div class="menu-item">
+                    <i class="mdi mdi-sort-variant-off menu-item-icon"></i>
+                    <span class="menu-item-label">Remove Sort</span>
+                    <span class="round-tag"></span>
                   </div>
                 `,
               },
@@ -184,35 +188,31 @@ export default class Example40 {
                 title: 'Advanced Export',
                 // Demo: Native HTMLElement with event listeners using slotRenderer (full DOM control)
                 slotRenderer: (item, _args) => {
-                  const containerDiv = document.createElement('div');
-                  containerDiv.style.cssText = 'display: flex; align-items: center;';
-
-                  const iconDiv = document.createElement('div');
-                  iconDiv.style.cssText =
-                    'width: 18px; height: 18px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 3px; display: flex; align-items: center; justify-content: center; margin-right: 4px; transition: transform 0.2s;';
-                  iconDiv.innerHTML = '<span style="color: white; font-size: 10px;">📊</span>';
-
-                  const textSpan = document.createElement('span');
-                  textSpan.style.cssText = 'flex: 1;';
-                  textSpan.textContent = item.title;
-
-                  const kbdElm = document.createElement('kbd');
-                  kbdElm.style.cssText =
-                    'background: #eee; border: 1px solid #ccc; border-radius: 2px; padding: 2px 4px; font-size: 10px; margin-left: 10px; display: inline-flex; align-items: center; height: 18px;';
-                  kbdElm.textContent = 'Ctrl+E';
-
+                  // you can use `createDomElement()` from Slickgrid for easier DOM element creation
+                  const containerDiv = createDomElement('div', { className: 'menu-item' });
+                  const iconDiv = createDomElement('div', { className: 'advanced-export-icon', textContent: '📊' });
+                  const textSpan = createDomElement('span', { textContent: item.title, style: { flex: '1' } });
+                  const kbdElm = createDomElement('kbd', { className: 'key-hint', textContent: 'Ctrl+E' });
                   containerDiv.appendChild(iconDiv);
                   containerDiv.appendChild(textSpan);
                   containerDiv.appendChild(kbdElm);
 
                   // Add native event listeners for hover effects
                   containerDiv.addEventListener('mouseenter', () => {
-                    iconDiv.style.transform = 'scale(1.1)';
-                    containerDiv.style.backgroundColor = '#f5f5f5';
+                    iconDiv.style.transform = 'scale(1.15)';
+                    iconDiv.style.background = 'linear-gradient(135deg, #d8dcef 0%, #ffffff 100%)';
+                    containerDiv.parentElement!.style.backgroundColor = '#854685';
+                    const div = this.buildChartTooltip(getOffset(containerDiv));
+                    document.body.appendChild(div);
+                    containerDiv.style.color = 'white';
+                    containerDiv.querySelector<HTMLElement>('.key-hint')!.style.color = 'black';
                   });
                   containerDiv.addEventListener('mouseleave', () => {
+                    iconDiv.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
                     iconDiv.style.transform = 'scale(1)';
-                    containerDiv.style.backgroundColor = '';
+                    containerDiv.parentElement!.style.backgroundColor = 'white';
+                    containerDiv.style.color = 'black';
+                    document.querySelector('.export-timestamp')?.remove();
                   });
 
                   return containerDiv;
@@ -228,10 +228,10 @@ export default class Example40 {
                 positionOrder: 55,
                 // Slot renderer with status indicator and beta badge
                 slotRenderer: () => `
-                  <div style="display: flex; align-items: center;">
-                    <i class="mdi mdi-filter" style="margin-right: 4px; font-size: 18px;"></i>
-                    <span style="flex: 1;">Filter Column</span>
-                    <span style="background: #4444ff; color: white; padding: 2px 3px; border-radius: 2px; font-size: 8px; font-weight: bold; margin-left: 10px; white-space: nowrap; display: inline-flex; align-items: center; height: 18px;">BETA</span>
+                  <div class="menu-item">
+                    <i class="mdi mdi-filter menu-item-icon"></i>
+                    <span class="menu-item-label">Filter Column</span>
+                    <span class="key-hint beta">BETA</span>
                   </div>
                 `,
               },
@@ -251,10 +251,18 @@ export default class Example40 {
           menu: {
             commandItems: [
               {
-                command: 'auto-refresh',
-                title: 'Auto Refresh',
+                command: 'recalc',
+                title: 'Recalculate',
                 positionOrder: 45,
                 iconCssClass: 'mdi mdi-refresh',
+                slotRenderer: () => {
+                  return `
+                <div class="menu-item">
+                  <div class="recalc-icon">%</div>
+                  <span class="menu-item-label">Recalculate</span>
+                </div>
+              `;
+                },
               },
             ],
           },
@@ -277,9 +285,9 @@ export default class Example40 {
           // Demo: Menu-level default renderer that applies to all items unless overridden
           defaultItemRenderer: (item, _args) => {
             return `
-            <div style="display: flex; align-items: center;">
+            <div class="menu-item">
               ${item.iconCssClass ? `<i class="${item.iconCssClass}" style="margin-right: 10px; font-size: 18px;"></i>` : '<span style="width: 18px; margin-right: 10px;">◦</span>'}
-              <span style="flex: 1;">${item.title}</span>
+              <span class="menu-item-label">${item.title}</span>
             </div>
           `;
           },
@@ -344,11 +352,9 @@ export default class Example40 {
               positionOrder: 53,
               // Individual slotRenderer overrides the defaultItemRenderer
               slotRenderer: (_item, args) => `
-                <div style="display: flex; align-items: center;">
-                  <div style="width: 18px; height: 18px; background: linear-gradient(135deg, #00c853 0%, #64dd17 100%); border-radius: 3px; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
-                    <span style="color: white; font-size: 10px;">✎</span>
-                  </div>
-                  <span style="flex: 1;">Edit Row #${args.dataContext.id}</span>
+                <div class="menu-item">
+                  <div class="edit-cell-icon">✎</div>
+                  <span class="menu-item-label">Edit Row #${args.dataContext.id}</span>
                 </div>
               `,
               action: (_e, args) => {
@@ -360,11 +366,11 @@ export default class Example40 {
               command: 'delete-row',
               title: 'Delete Row',
               positionOrder: 54,
-              iconCssClass: 'mdi mdi-delete',
-              action: (_e, args) => {
-                if (confirm(`Delete row #${args.dataContext.id}?`)) {
-                  console.log('Delete row:', args.dataContext);
-                  alert(`Deleted row #${args.dataContext.id}`);
+              iconCssClass: 'mdi mdi-delete text-danger',
+              action: (_event, args) => {
+                const dataContext = args.dataContext;
+                if (confirm(`Do you really want to delete row (${args.row! + 1}) with "${dataContext.title}"`)) {
+                  this.sgb?.instances?.gridService.deleteItemById(dataContext.id);
                 }
               },
             },
@@ -389,9 +395,9 @@ export default class Example40 {
         // Demo: Menu-level default renderer for all header menu items
         defaultItemRenderer: (item, _args) => {
           return `
-            <div style="display: flex; align-items: center;">
-              ${item.iconCssClass ? `<i class="${item.iconCssClass}" style="margin-right: 4px; font-size: 18px;"></i>` : ''}
-              <span style="flex: 1;">${item.title}</span>
+            <div class="menu-item">
+              ${item.iconCssClass ? `<i class="${item.iconCssClass} menu-item-icon"></i>` : ''}
+              <span class="menu-item-label">${item.title}</span>
             </div>
           `;
         },
@@ -406,9 +412,9 @@ export default class Example40 {
         // Demo: Menu-level default renderer for context menu items
         defaultItemRenderer: (item, _args) => {
           return `
-            <div style="display: flex; align-items: center;">
-              ${item.iconCssClass ? `<i class="${item.iconCssClass}" style="margin-right: 4px; font-size: 18px;"></i>` : ''}
-              <span style="flex: 1;">${item.title}</span>
+            <div class="menu-item">
+              ${item.iconCssClass ? `<i class="${item.iconCssClass} menu-item-icon"></i>` : ''}
+              <span class="menu-item-label">${item.title}</span>
             </div>
           `;
         },
@@ -419,23 +425,11 @@ export default class Example40 {
             title: 'Edit Cell',
             // Demo: Individual slotRenderer overrides the menu's defaultItemRenderer
             slotRenderer: (item, _args) => {
-              const containerDiv = document.createElement('div');
-              containerDiv.style.cssText = 'display: flex; align-items: center;';
-
-              const iconDiv = document.createElement('div');
-              iconDiv.style.cssText =
-                'width: 18px; height: 18px; background: linear-gradient(135deg, #00c853 0%, #64dd17 100%); border-radius: 3px; display: flex; align-items: center; justify-content: center; margin-right: 4px; transition: all 0.2s;';
-              iconDiv.innerHTML = '<span style="color: white; font-size: 10px;">✎</span>';
-
-              const textSpan = document.createElement('span');
-              textSpan.style.cssText = 'flex: 1;';
-              textSpan.textContent = item.title;
-
-              const kbdElm = document.createElement('kbd');
-              kbdElm.style.cssText =
-                'background: #eee; border: 1px solid #ccc; border-radius: 2px; padding: 2px 4px; font-size: 10px; margin-left: 10px; display: inline-flex; align-items: center; height: 18px;';
-              kbdElm.textContent = 'F2';
-
+              // you can use `createDomElement()` from Slickgrid for easier DOM element creation
+              const containerDiv = createDomElement('div', { className: 'menu-item' });
+              const iconDiv = createDomElement('div', { className: 'edit-cell-icon', textContent: '✎' });
+              const textSpan = createDomElement('span', { textContent: item.title, style: { flex: '1' } });
+              const kbdElm = createDomElement('kbd', { className: 'edit-cell', textContent: 'F2' });
               containerDiv.appendChild(iconDiv);
               containerDiv.appendChild(textSpan);
               containerDiv.appendChild(kbdElm);
@@ -484,7 +478,7 @@ export default class Example40 {
           {
             command: 'delete-row',
             title: 'Delete Row',
-            iconCssClass: 'mdi mdi-delete',
+            iconCssClass: 'mdi mdi-delete text-danger',
             action: () => alert('Delete row'),
           },
         ],
@@ -496,9 +490,9 @@ export default class Example40 {
         // Demo: Menu-level default renderer that applies to all items (can be overridden per item with slotRenderer)
         defaultItemRenderer: (item, _args) => {
           return `
-          <div style="display: flex; align-items: center;">
-            ${item.iconCssClass ? `<i class="${item.iconCssClass}" style="margin-right: 4px; font-size: 18px;"></i>` : ''}
-            <span style="flex: 1;">${item.title}</span>
+          <div class="menu-item">
+            ${item.iconCssClass ? `<i class="${item.iconCssClass} menu-item-icon"></i>` : ''}
+            <span class="menu-item-label">${item.title}</span>
           </div>
         `;
         },
@@ -528,10 +522,10 @@ export default class Example40 {
             iconCssClass: 'mdi mdi-download',
             // Individual slotRenderer overrides the defaultItemRenderer for this item
             slotRenderer: (item, _args) => `
-              <div style="display: flex; align-items: center;">
-                <i class="${item.iconCssClass}" style="margin-right: 4px; font-size: 18px; color: #ff9800;"></i>
-                <span style="flex: 1; color: #ff9800;">${item.title}</span>
-                <span style="background: #ff9800; color: white; padding: 2px 4px; border-radius: 3px; font-size: 9px; font-weight: bold; margin-left: 10px; display: inline-flex; align-items: center; height: 18px;">CUSTOM</span>
+              <div class="menu-item">
+                <i class="${item.iconCssClass} menu-item-icon warn"></i>
+                <span class="menu-item-label warn">${item.title}</span>
+                <span class="key-hint warn">CUSTOM</span>
               </div>
             `,
             action: () => alert('Export to CSV'),
@@ -541,18 +535,38 @@ export default class Example40 {
             title: 'Refresh Data',
             iconCssClass: 'mdi mdi-refresh',
             // Demo: slotRenderer with keyboard shortcut
-            slotRenderer: (item) => `
-              <div style="display: flex; align-items: center;">
-                <i class="${item.iconCssClass}" style="margin-right: 4px; font-size: 18px;"></i>
-                <span style="flex: 1;">${item.title}</span>
-                <kbd style="background: #eee; border: 1px solid #ccc; border-radius: 2px; padding: 2px 4px; font-size: 10px; margin-left: 10px; display: inline-flex; align-items: center; height: 18px;">F5</kbd>
-              </div>
-            `,
+            slotRenderer: (item) => {
+              // you can use `createDomElement()` from Slickgrid for easier DOM element creation
+              const menuItemElm = createDomElement('div', { className: 'menu-item' });
+              const iconElm = createDomElement('i', { className: `${item.iconCssClass} menu-item-icon` });
+              const menuItemLabelElm = createDomElement('span', { className: 'menu-item-label', textContent: item.title });
+              const kbdElm = createDomElement('kbd', { className: 'key-hint', textContent: 'F5' });
+              menuItemElm.appendChild(iconElm);
+              menuItemElm.appendChild(menuItemLabelElm);
+              menuItemElm.appendChild(kbdElm);
+              return menuItemElm;
+            },
             action: () => alert('Refresh data'),
           },
         ],
       },
+
+      // tooltip plugin
+      externalResources: [new SlickCustomTooltip()],
     };
+  }
+
+  /** create a basic chart export tooltip */
+  buildChartTooltip(containerOffset) {
+    const div = createDomElement('div', {
+      className: 'export-timestamp',
+      textContent: `📈 Export timestamp: ${tempoFormat(new Date(), 'YYYY-MM-DD hh:mm:ss a')}`,
+      style: {
+        top: `${containerOffset.top + 35}px`,
+        left: `${containerOffset.left - 70}px`,
+      },
+    });
+    return div;
   }
 
   loadData(count: number): ReportItem[] {
@@ -575,5 +589,10 @@ export default class Example40 {
       };
     }
     return tmpData;
+  }
+
+  toggleSubTitle() {
+    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
+    this.sgb.resizerService.resizeGrid();
   }
 }
