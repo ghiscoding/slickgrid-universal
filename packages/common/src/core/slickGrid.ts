@@ -5855,6 +5855,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             }
           }
           handled = true;
+        } else if (e.key === 'F2' && this._options.editable && !this.currentEditor) {
+          this.makeActiveCellEditable(undefined, undefined, e);
+          handled = true;
         }
       } else if (e.key === 'Tab' && e.shiftKey && !e.ctrlKey && !e.altKey) {
         handled = this.navigatePrev();
