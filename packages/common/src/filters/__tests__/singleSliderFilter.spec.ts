@@ -35,6 +35,7 @@ describe('SingleSliderFilter', () => {
   let mockColumn: Column;
 
   beforeEach(() => {
+    vi.clearAllMocks();
     translateService = new TranslateServiceStub();
     divContainer = document.createElement('div');
     divContainer.innerHTML = template;
@@ -263,6 +264,29 @@ describe('SingleSliderFilter', () => {
 
     expect(filter.getValues()).toEqual(4);
     expect(callbackSpy).toHaveBeenLastCalledWith(undefined, { columnDef: mockColumn, clearFilterTriggered: true, searchTerms: [], shouldTriggerQuery: false });
+  });
+
+  it('should NOT trigger "onHeaderRowMouseEnter" event when calling clear() method since it is a programmatic change', () => {
+    filterArgs.searchTerms = [3];
+
+    filter.init(filterArgs);
+    const rowMouseEnterSpy = vi.spyOn(gridStub.onHeaderRowMouseEnter, 'notify');
+
+    filter.clear();
+
+    expect(filter.getValues()).toBe(0);
+    expect(rowMouseEnterSpy).not.toHaveBeenCalled();
+  });
+
+  it('should trigger "onHeaderRowMouseEnter" event when user interacts with slider via input event', () => {
+    const rowMouseEnterSpy = vi.spyOn(gridStub.onHeaderRowMouseEnter, 'notify');
+
+    filter.init(filterArgs);
+    const filterElm = divContainer.querySelector('.search-filter.slider-container.filter-duration input') as HTMLInputElement;
+    filterElm.value = '15';
+    filterElm.dispatchEvent(new Event('input'));
+
+    expect(rowMouseEnterSpy).toHaveBeenCalledWith({ column: mockColumn, grid: gridStub }, expect.anything());
   });
 
   it('should enableSliderTrackColoring and trigger a change event and expect slider track to have background color', () => {
