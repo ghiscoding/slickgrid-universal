@@ -400,6 +400,8 @@ const Example33: React.FC = () => {
         headerFormatter,
         headerRowFormatter,
         usabilityOverride: (args) => args.cell !== 0 && args?.column?.id !== 'action', // don't show on first/last columns
+        observeAllTooltips: true, // observe all elements with title/data-slick-tooltip attributes (not just SlickGrid elements)
+        observeTooltipContainer: 'body', // defaults to 'body', target a specific container (only works when observeAllTooltips is enabled)
       },
       presets: {
         filters: [{ columnId: 'prerequisites', searchTerms: [1, 3, 5, 7, 9, 12, 15, 18, 21, 25, 28, 29, 30, 32, 34] }],
@@ -463,7 +465,7 @@ const Example33: React.FC = () => {
         id: i,
         title: 'Task ' + i,
         duration: Math.round(Math.random() * 100),
-        description: `This is a sample task description.\nIt can be multiline\r\rAnother line...`,
+        description: i > 500 ? null : `This is a sample task description.\nIt can be multiline\r\rAnother line...`,
         percentComplete: Math.floor(Math.random() * (100 - 5 + 1) + 5),
         start: new Date(randomYear, randomMonth, randomDay),
         finish: randomFinish < new Date() ? '' : randomFinish, // make sure the random date is earlier than today
@@ -573,6 +575,20 @@ const Example33: React.FC = () => {
     reactGridRef.current?.resizerService.resizeGrid(0);
   }
 
+  function setFiltersDynamically(operator: string) {
+    const operatorType = operator === '=' ? '=' : '!=';
+    reactGridRef.current?.filterService.updateFilters(
+      [
+        {
+          columnId: 'desc',
+          operator: operatorType,
+          searchTerms: [''],
+        },
+      ],
+      true
+    );
+  }
+
   return !gridOptions ? (
     ''
   ) : (
@@ -624,6 +640,22 @@ const Example33: React.FC = () => {
             value={serverWaitDelay}
             onInput={($event) => handleServerDelayInputChange($event)}
           />
+          <button
+            className="ms-2 btn btn-outline-secondary btn-sm"
+            data-test="filter-empty-desc"
+            onClick={() => setFiltersDynamically('=')}
+            title="Apply filter to show only empty descriptions"
+          >
+            Filters Empty Description
+          </button>
+          <button
+            className="ms-2 btn btn-outline-secondary btn-sm"
+            data-test="filter-non-empty-desc"
+            onClick={() => setFiltersDynamically('!=')}
+            title="Apply filter to show only non-empty descriptions"
+          >
+            Filters Non-Empty Description
+          </button>
         </div>
         <div className={`alert alert-info is-narrow col ${!showLazyLoading ? 'invisible' : ''}`} data-test="alert-lazy">
           Lazy loading collection...
