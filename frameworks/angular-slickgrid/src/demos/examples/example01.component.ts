@@ -11,7 +11,7 @@ const NB_ITEMS = 995;
 export class Example1Component implements OnDestroy, OnInit {
   private _darkModeGrid1 = false;
   angularGrid1!: AngularGridInstance;
-  grid1ContainerClasses = ['border-bottom-dotted', 'space-bottom']
+  grid1ContainerClasses = ['border-bottom-dotted', 'space-bottom'];
   columnDefinitions1: Column[] = [];
   columnDefinitions2: Column[] = [];
   gridOptions1!: GridOption;
