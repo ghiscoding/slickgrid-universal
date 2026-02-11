@@ -1,3 +1,12 @@
+<style>
+  :host ::ng-deep .border-bottom-dotted {
+    border-bottom: 3px dotted black;
+  }
+
+  :host ::ng-deep .space-bottom {
+    margin-bottom: 20px;
+  }
+</style>
 <div id="demo-container" class="container-fluid">
   <h2>
     Example 1: Basic Grids
@@ -34,6 +43,7 @@
       [columns]="columnDefinitions1"
       [options]="gridOptions1"
       [dataset]="dataset1"
+      [containerClasses]="grid1ContainerClasses"
       (onAngularGridCreated)="angularGridReady1($event.detail)"
     >
     </angular-slickgrid>

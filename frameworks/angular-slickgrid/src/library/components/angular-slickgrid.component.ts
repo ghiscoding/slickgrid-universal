@@ -84,7 +84,7 @@ export interface AngularSlickRowDetailView {
 @Component({
   selector: 'angular-slickgrid',
   template: `
-    <div id="slickGridContainer-{{ gridId }}" class="gridPane">
+    <div id="slickGridContainer-{{ gridId }}" class="gridPane" [class]="containerClasses">
       <ng-container *ngTemplateOutlet="slickgridHeader"></ng-container>
       <div [attr.id]="gridId" class="slickgrid-container"></div>
       <ng-container *ngTemplateOutlet="slickgridFooter"></ng-container>
@@ -155,6 +155,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
   @Input() readonly customDataView: any;
   @Input() readonly gridId = '';
   @Input() options: GridOption = {};
+  @Input() containerClasses?: string[] = undefined;
 
   @Input()
   get paginationOptions(): Pagination | undefined {
