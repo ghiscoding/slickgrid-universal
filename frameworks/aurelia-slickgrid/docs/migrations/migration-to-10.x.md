@@ -1,12 +1,12 @@
 ## Cleaner Code / Smaller Code ⚡
 
-One of the biggest change of this release is to hide columns by using the `hidden` column property (now used by Column Picker, Grid Menu, etc...). Previously we were removing columns from the original columns array and we then called `setColumns()` to update the grid, but this meant that we had to keep references for all visbile and non-visible columns. With this new release we now keep the full columns array at all time and instead we just change column(s) visibility via their `hidden` column properties by using `grid.updateColumnById('id', { hidden: true })` and finally we update the grid via `grid.updateColumns()`. What I'm trying to emphasis is that you should really stop using `grid.setColumns()` in v10+, and if you want to hide some columns when declaring the columns, then just update their `hidden` properties, see more details below...
+One of the biggest change of this release is to hide columns by using the `hidden` column property (now used by Column Picker, Grid Menu, etc...). Previously we were removing columns from the original columns array and we then called `setColumns()` to update the grid, but this meant that we had to keep references for all visible and non-visible columns. With this new release we now keep the full columns array at all time and instead we just change column(s) visibility via their `hidden` column properties by using `grid.updateColumnById('id', { hidden: true })` and finally we update the grid via `grid.updateColumns()`. What I'm trying to emphasis is that you should really stop using `grid.setColumns()` in v10+, and if you want to hide some columns when declaring the columns, then just update their `hidden` properties, see more details below...
 
 #### Major Changes - Quick Summary
 - [`hidden` columns](#hidden-columns)
 - [Row Detail (now optional)](#row-detail-now-optional)
 
-> **Note:** if you come from an earlier version, please make sure to follow each migrations in their respected order (review previous migration guides)
+> **Note:** if you come from an earlier version, please make sure to follow each migrations in their respective order (review previous migration guides)
 
 ### Column Definitions
 
@@ -24,16 +24,16 @@ For years, I had to keep some references in a Shared Service via `shared.allColu
 | `sharedService.allColumns` | `grid.getColumns()` _... is now including all columns_ |
 | `sharedService.visibleColumns` or `grid.getColumns()`| `grid.getVisibleColumns()` |
 
-### Grid Functionalities
+## Grid Functionalities
 
 _following changes should be transparent to most users, I'm just listing them in case of side effects._
 
-1. Reimplementing `SlickCompositeEditorComponent` modal and migrate from a `<div>` to a `<dialog>` which is native code, it has better accessibility (aria) support and a baseline support showing as "widely available". A fallback to `<div>` is also available in case `<dialog>` doens't work for everybody (e.g. it doesn't work in Salesforce LWC, hence the available fallback)
+1. Reimplementing `SlickCompositeEditorComponent` modal and migrating from a `<div>` to a `<dialog>` which is native code, it has better accessibility (aria) support and a baseline support showing as "widely available". A fallback to `<div>` is also available in case `<dialog>` doens't work for everybody (e.g. it doesn't work in Salesforce LWC, hence the available fallback)
 2. Reimplementing Grid Menu to use CSS flexbox instead of using `calc(100% - 18px)` which wasn't ideal, neither customizable, but the new approach is to simply use CSS flexbox which is a much better approach to properly align everything.
 
-#### Row Detail (now optional)
+### Row Detail (now optional)
 
-Since I don't think that Row Detail is being used by everyone, I'm making it an optional plugin (package). This should help decrease build size quite a bit for users who don't require it.
+Since I don't think that Row Detail is being used by everyone, I'm making it an optional plugin (package). This should help decrease build size quite a bit for users who never use it. If however you are one of them using it, then you now need to manually add it as an external resource.
 
 ```diff
 + import { AureliaSlickRowDetailView } from '@slickgrid-universal/aurelia-row-detail-plugin';
@@ -60,7 +60,7 @@ _following changes should be transparent to most users_
 1. `applyHtmlCode()` was removed and replaced with `applyHtmlToElement()`
 2. Grid Option `throwWhenFrozenNotAllViewable` was removed and replaced with `invalidColumnFreezeWidthCallback`
 
-### Selection Models, keep only `SlickHybridSelectionModel`
+### Selection Models, keeping only `SlickHybridSelectionModel`
 
 1. rename `rowSelectionOptions` to `selectionOptions`
 2. drop both `SlickCellSelectionModel`/`SlickRowSelectionModel` and keep only `SlickHybridSelectionModel`
@@ -86,7 +86,7 @@ gridOptions = {
 
 ### External Resources are now auto-enabled
 
-This change does not require any code update from the end user, but it is a change that you should probably be aware of nonetheless. The reason I decided to implement this is because I often forget to enable the associated flag myself and typically if you wanted to load the resource, then it's most probably because you also want it enabled. So for example, if your register `ExcelExportService` then the library will now auto-enable the resource with its associated flag (which in this case is `enableExcelExport:true`)... unless the flag is already is disabled (or enabled) by the user, if so then the assignment will simply be skipped. Also just to be clear, the list of auto-enabled external resources is rather small, it will auto-enable the following resources: ExcelExportService, PdfExportService, TextExportService, CompositeEditorComponent and RowDetailView.
+This change does not require any code update from the end user, but it is a change that you should probably be aware of nonetheless. The reason I decided to implement this is because I often forget myself to enable the associated flag and typically if you wanted to load the resource, then it's most probably because you also want it enabled. So for example, if your register `ExcelExportService` then the library will now auto-enable the resource with its associated flag (which in this case is `enableExcelExport:true`)... unless you already disabled the flag (or enabled) yourself, if so then the internal assignment will simply be skipped and yours will prevail. Also just to be clear, the list of auto-enabled external resources is rather small, it will auto-enable the following resources: (ExcelExportService, PdfExportService, TextExportService, CompositeEditorComponent and RowDetailView).
 
 ---
 
@@ -107,6 +107,12 @@ columns = [{
 ```
 
 Below is a list of Enums that you need to replace with their associated string literals. A suggestion is to do a Search on any of these group name prefixes, e.g.: `FieldType.` and start replacing them
+
+**Hint** You can use VSCode search & replace, but make sure it's set to Regular Expression pattern
+
+| Search (regex)                      | Replace |
+| ------------------------------ | -------- |
+| `FieldType\.([a-z_]+)(.*)` | `'$1'$2`      |
 
 | Enum Name   | from `enum`         | to string `type`    | Note |
 | ----------- | ------------------- | ------------------- | ---- |
@@ -137,12 +143,6 @@ Below is a list of Enums that you need to replace with their associated string l
 | `SortDirection`  | `SortDirection.ASC` | `'ASC'` or `'asc'`  |
 |             | `SortDirection.DESC`   | `'DESC'` or `'desc'`  |
 | ... | ... | ... |
-
-**Hint** You can use VSCode search & replace, but make sure it's set to Regular Expression pattern
-
-| Search (regex)                      | Replace |
-| ------------------------------ | -------- |
-| `FieldType\.([a-z_]+)(.*)` | `'$1'$2`      |
 
 #### renaming `editorOptions` and `filterOptions` to a more generic `options` property
 
@@ -215,12 +215,18 @@ For example:
 
 ## What's next? ...version 11?
 
-Wait, are we talking already about version 11 when version 10 just shipped? Thats right, I'm already thinking and planning ahead the next major version, which will be in about a year from now. I can already say that the main focus will be around the use of native [CSS anchor positioning](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning) to replace JS code for positioning menus, tooltips, etc... which will help decreasing the build size by using fully native code. CSS anchoring has been around in Chrome for a while but is quite recent in Firefox, so for that reason I'm postponing it for next year.
+Wait, are you seriously talking about version 11 akready when version 10 actually just shipped? Thats right, I'm already thinking and planning ahead the next major version, which will be in about a year from now. I can already say that the main focus will be around the use of native [CSS anchor positioning](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning) to replace JS code for positioning menus, tooltips, etc... which will help decreasing the build size by using fully native code. CSS anchoring has been around in Chrome for a while but is quite recent in Firefox, so for that reason I'm postponing it for next year.
 
 ### Code being `@deprecated` (to be removed in the future, 2027-Q1)
 #### You can already start using these new options and props (shown below) in v10.0 and above.
 
 Deprecating `ExtensionName` enum which will be replaced by its string literal type, for example:
+
+**Hint** You can use VSCode search & replace, but make sure it's set to Regular Expression pattern
+
+| Search (regex)                      | Replace |
+| ------------------------------ | -------- |
+| `ExtensionName\.([a-z_]+)(.*)` | `'$1'$2`      |
 
 | Enum Name        | from `enum`         | to string `type`    |
 | ---------------- | ------------------- | ------------------- |
@@ -228,9 +234,3 @@ Deprecating `ExtensionName` enum which will be replaced by its string literal ty
 |                  | `ExtensionName.draggableGrouping`   | `'draggableGrouping'`          |
 |                  | `ExtensionName.rowDetail`   | `'rowDetail'`          |
 | ... | ... | ... |
-
-**Hint** You can use VSCode search & replace, but make sure it's set to Regular Expression pattern
-
-| Search (regex)                      | Replace |
-| ------------------------------ | -------- |
-| `ExtensionName\.([a-z_]+)(.*)` | `'$1'$2`      |
