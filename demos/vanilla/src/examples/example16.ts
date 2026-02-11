@@ -449,6 +449,8 @@ export default class Example16 {
         headerFormatter: this.headerFormatter,
         headerRowFormatter: this.headerRowFormatter,
         usabilityOverride: (args) => args.cell !== 0 && args?.column?.id !== 'action', // don't show on first/last columns
+        observeAllTooltips: true, // observe all elements with title/data-slick-tooltip attributes (not just SlickGrid elements)
+        observeTooltipContainer: '.tooltip-container', // defaults to 'body', target a specific container (only works when observeAllTooltips is enabled)
       },
       presets: {
         filters: [{ columnId: 'prerequisites', searchTerms: [1, 3, 5, 7, 9, 12, 15, 18, 21, 25, 28, 29, 30, 32, 34] }],

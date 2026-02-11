@@ -85,6 +85,8 @@ export class SlickCustomTooltip {
     whiteSpace: 'normal',
     autoHideDelay: 3000,
     persistOnHover: true,
+    observeAllTooltips: false, // global tooltip observation is disabled by default
+    observeTooltipContainer: 'body',
   } as CustomTooltipOption;
   protected _grid!: SlickGrid;
   protected _eventHandler: SlickEventHandler;
@@ -160,6 +162,14 @@ export class SlickCustomTooltip {
       .subscribe(grid.onHeaderMouseOut, this.handleOnMouseLeave.bind(this))
       .subscribe(grid.onHeaderRowMouseLeave, this.handleOnMouseLeave.bind(this))
       .subscribe(grid.onHeaderRowMouseOut, this.handleOnMouseLeave.bind(this));
+
+    // optionally observe all title elements outside the grid
+    if (this._addonOptions?.observeAllTooltips) {
+      const containerSelector = this._addonOptions.observeTooltipContainer || 'body';
+      const scope = containerSelector === 'body' ? document.body : document.querySelector(containerSelector) || grid.getContainerNode();
+      this._bindEventService.bind(scope, 'mouseover', this.handleGlobalMouseOver.bind(this) as EventListener);
+      this._bindEventService.bind(scope, 'mouseout', this.handleGlobalMouseOut.bind(this) as EventListener);
+    }
   }
 
   dispose(): void {
@@ -167,6 +177,53 @@ export class SlickCustomTooltip {
     this.hideTooltip();
     this._cancellablePromise = undefined;
     this._eventHandler.unsubscribeAll();
+    this._bindEventService.unbindAll();
+  }
+
+  protected handleGlobalMouseOver(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+
+    // skip if target is within a SlickGrid cell (to avoid duplicate tooltips)
+    if (target?.closest('.slick-cell, .slick-header-column, .slick-headerrow-column')) {
+      return;
+    }
+
+    // check if target or its closest parent has a title attribute
+    const titleElm = target?.closest(SELECTOR_CLOSEST_TOOLTIP_ATTR) as HTMLElement;
+    if (titleElm) {
+      const tooltipText = findFirstAttribute(titleElm, CLOSEST_TOOLTIP_FILLED_ATTR);
+      if (tooltipText) {
+        this._cellNodeElm = titleElm;
+        this._mouseTarget = titleElm;
+        this._cellType = 'slick-cell'; // use as default type
+
+        // render the tooltip using regular tooltip mode
+        this._cellAddonOptions = { ...this._addonOptions, useRegularTooltip: true };
+        this.renderRegularTooltip(undefined, { row: -1, cell: -1 }, null, {} as Column, {});
+      }
+    } else {
+      // if we moved to an element without title, hide any existing tooltip
+      this.hideTooltip();
+    }
+  }
+
+  protected handleGlobalMouseOut(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    const relatedTarget = event.relatedTarget as HTMLElement;
+
+    // check if we're leaving an element with a title attribute
+    const leavingTitleElm = target?.closest(SELECTOR_CLOSEST_TOOLTIP_ATTR);
+
+    if (leavingTitleElm) {
+      // don't hide if we're moving to the tooltip itself (for persistOnHover support)
+      const enteringTooltip = relatedTarget?.closest('.slick-custom-tooltip');
+      // also don't hide if moving to a child of the same element with title
+      const stayingInSameTitleElm = relatedTarget?.closest(SELECTOR_CLOSEST_TOOLTIP_ATTR) === leavingTitleElm;
+
+      if (!enteringTooltip && !stayingInSameTitleElm) {
+        this.handleOnMouseLeave();
+      }
+    }
   }
 
   protected handleOnMouseLeave(): void {
