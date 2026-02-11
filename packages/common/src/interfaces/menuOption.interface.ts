@@ -1,7 +1,7 @@
 import type { SlickGrid } from '../core/index.js';
-import type { Column } from './index.js';
+import type { Column, GridMenuCommandItemCallbackArgs, HeaderMenuCommandItemCallbackArgs, MenuFromCellCallbackArgs } from './index.js';
 
-export interface MenuOption {
+export interface MenuOption<T extends MenuFromCellCallbackArgs | GridMenuCommandItemCallbackArgs | HeaderMenuCommandItemCallbackArgs> {
   // --
   // Methods
 
@@ -18,14 +18,14 @@ export interface MenuOption {
    * // Return HTML string
    * defaultItemRenderer: (item, args) => `<div>${item.title}</div>`
    *
-   * // Return HTMLElement
+   * // Return HTMLElement (e.g. Cell or Context Menu)
    * defaultItemRenderer: (item, args) => {
    *   const div = document.createElement('div');
    *   div.textContent = `${item.title} (Row ${args.dataContext.id})`;
    *   return div;
    * }
    */
-  defaultItemRenderer?: (item: any, args: any) => string | HTMLElement;
+  defaultItemRenderer?: (item: any, args: T) => string | HTMLElement;
 
   /** Callback method that user can override the default behavior of enabling/disabling an item from the list. */
   menuUsabilityOverride?: (args: { grid: SlickGrid; column: Column; menu: HTMLElement }) => boolean;

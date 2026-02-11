@@ -1,7 +1,14 @@
-import type { Column, GridMenuCallbackArgs, GridMenuCommandItemCallbackArgs, GridMenuLabel, GridOption, MenuCommandItem } from './index.js';
-import type { MenuOption } from './menuOption.interface.js';
+import type {
+  Column,
+  GridMenuCallbackArgs,
+  GridMenuCommandItemCallbackArgs,
+  GridMenuLabel,
+  GridOption,
+  MenuCommandItem,
+  MenuOption,
+} from './index.js';
 
-export interface GridMenuOption extends MenuOption {
+export interface GridMenuOption extends MenuOption<GridMenuCommandItemCallbackArgs> {
   /** Defaults to true, Auto-align drop menu to the left or right depending on grid viewport available space */
   autoAlignSide?: boolean;
 

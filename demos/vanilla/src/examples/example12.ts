@@ -240,7 +240,7 @@ export default class Example12 {
           minValue: 0,
           maxValue: 100,
         },
-      customTooltip: { position: 'center' },
+        customTooltip: { position: 'center' },
       },
       // {
       //   id: 'percentComplete2', name: '% Complete', field: 'analysis.percentComplete', minWidth: 100,

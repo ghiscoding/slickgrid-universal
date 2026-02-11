@@ -1,7 +1,6 @@
-import type { HeaderMenuLabel } from './headerMenuLabel.interface.js';
-import type { MenuOption } from './menuOption.interface.js';
+import type { HeaderMenuCommandItemCallbackArgs, HeaderMenuLabel, MenuOption } from './index.js';
 
-export interface HeaderMenuOption extends MenuOption {
+export interface HeaderMenuOption extends MenuOption<HeaderMenuCommandItemCallbackArgs> {
   /** Auto-align drop menu to the left when not enough viewport space to show on the right */
   autoAlign?: boolean;
 

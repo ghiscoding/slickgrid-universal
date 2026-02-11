@@ -23,7 +23,7 @@ export default class Example40 {
   gridOptions: GridOption;
   dataset: ReportItem[];
   sgb: SlickVanillaGridBundle<ReportItem>;
-  subTitleStyle = 'display: block';
+  subTitleStyle = 'display: none';
 
   constructor() {
     this._bindingEventService = new BindingEventService();
@@ -245,6 +245,7 @@ export default class Example40 {
         field: 'percentComplete',
         sortable: true,
         filterable: true,
+        type: 'number',
         filter: { model: Filters.slider, operator: '>=' },
         // Demo: Header Menu with Slot - showing interactive element (checkbox)
         header: {
@@ -255,14 +256,12 @@ export default class Example40 {
                 title: 'Recalculate',
                 positionOrder: 45,
                 iconCssClass: 'mdi mdi-refresh',
-                slotRenderer: () => {
-                  return `
-                <div class="menu-item">
-                  <div class="recalc-icon">%</div>
-                  <span class="menu-item-label">Recalculate</span>
-                </div>
-              `;
-                },
+                slotRenderer: () => `
+                  <div class="menu-item">
+                    <div class="recalc-icon">%</div>
+                    <span class="menu-item-label">Recalculate</span>
+                  </div>
+                `,
               },
             ],
           },
@@ -285,11 +284,11 @@ export default class Example40 {
           // Demo: Menu-level default renderer that applies to all items unless overridden
           defaultItemRenderer: (item, _args) => {
             return `
-            <div class="menu-item">
-              ${item.iconCssClass ? `<i class="${item.iconCssClass}" style="margin-right: 10px; font-size: 18px;"></i>` : '<span style="width: 18px; margin-right: 10px;">◦</span>'}
-              <span class="menu-item-label">${item.title}</span>
-            </div>
-          `;
+              <div class="menu-item">
+                ${item.iconCssClass ? `<i class="${item.iconCssClass}" style="margin-right: 10px; font-size: 18px;"></i>` : '<span style="width: 18px; margin-right: 10px;">◦</span>'}
+                <span class="menu-item-label">${item.title}</span>
+              </div>
+            `;
           },
           commandItems: [
             {
@@ -353,8 +352,8 @@ export default class Example40 {
               // Individual slotRenderer overrides the defaultItemRenderer
               slotRenderer: (_item, args) => `
                 <div class="menu-item">
-                  <div class="edit-cell-icon">✎</div>
-                  <span class="menu-item-label">Edit Row #${args.dataContext.id}</span>
+                    <div class="edit-cell-icon">✎</div>
+                    <span class="menu-item-label">Edit Row #${args.dataContext.id}</span>
                 </div>
               `,
               action: (_e, args) => {
@@ -490,11 +489,11 @@ export default class Example40 {
         // Demo: Menu-level default renderer that applies to all items (can be overridden per item with slotRenderer)
         defaultItemRenderer: (item, _args) => {
           return `
-          <div class="menu-item">
-            ${item.iconCssClass ? `<i class="${item.iconCssClass} menu-item-icon"></i>` : ''}
-            <span class="menu-item-label">${item.title}</span>
-          </div>
-        `;
+            <div class="menu-item">
+              ${item.iconCssClass ? `<i class="${item.iconCssClass} menu-item-icon"></i>` : ''}
+              <span class="menu-item-label">${item.title}</span>
+            </div>
+          `;
         },
         commandItems: [
           {
