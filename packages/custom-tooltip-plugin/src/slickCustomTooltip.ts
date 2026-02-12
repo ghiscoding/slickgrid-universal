@@ -300,7 +300,7 @@ export class SlickCustomTooltip {
   /** Find the closest tooltip element based on attributes */
   protected findTooltipElement(target: HTMLElement | null): HTMLElement | null {
     if (!target) return null;
-    const targetHasTooltipAttr = target?.hasAttribute('title') || target?.hasAttribute('data-slick-tooltip');
+    const targetHasTooltipAttr = this.hasTooltipAttribute(target);
     return target && findFirstAttribute(target, CLOSEST_TOOLTIP_FILLED_ATTR)
       ? target
       : !targetHasTooltipAttr
@@ -387,8 +387,7 @@ export class SlickCustomTooltip {
     this._mouseTarget = this.findTooltipElement(target);
 
     // if target has tooltip attribute but it's empty, return early to prevent showing parent/cell tooltip
-    const targetHasTooltipAttr = target?.hasAttribute('title') || target?.hasAttribute('data-slick-tooltip');
-    if (targetHasTooltipAttr && !this._mouseTarget) {
+    if (this.hasTooltipAttribute(target) && !this._mouseTarget) {
       return;
     }
     // before doing anything, let's remove any previous tooltip before
@@ -440,11 +439,7 @@ export class SlickCustomTooltip {
               // This should happen whenever we're using custom tooltips (not regular tooltips)
               if (!this._cellAddonOptions?.useRegularTooltip && this._cellNodeElm) {
                 this._cellNodeElm.querySelectorAll('[title]').forEach((elm) => {
-                  const title = elm.getAttribute('title');
-                  if (title) {
-                    elm.setAttribute('data-slick-tooltip', title);
-                    elm.setAttribute('title', '');
-                  }
+                  this.swapTitleAttribute(elm, elm.getAttribute('title') || '');
                 });
               }
             }
@@ -729,12 +724,27 @@ export class SlickCustomTooltip {
     }
   }
 
+  /** Check if element has tooltip attribute (title or data-slick-tooltip) */
+  protected hasTooltipAttribute(element: HTMLElement | null): boolean {
+    return !!element && (element.hasAttribute('title') || element.hasAttribute('data-slick-tooltip'));
+  }
+
   /**
    * Find title element - returns the element itself if it has a non-empty title attribute,
    * otherwise queries for a child element with a title attribute
    */
   protected findElementWithTitle(element: HTMLElement): Element | null {
     return element.hasAttribute('title') && element.getAttribute('title') ? element : element.querySelector('[title]');
+  }
+
+  /** Swap title attribute to data-slick-tooltip and clear title to prevent native browser tooltip */
+  protected swapTitleAttribute(element?: Element | null, tooltipText?: string): void {
+    if (element && tooltipText) {
+      element.setAttribute('data-slick-tooltip', tooltipText);
+      if (element.hasAttribute('title')) {
+        element.setAttribute('title', '');
+      }
+    }
   }
 
   /**
@@ -756,15 +766,10 @@ export class SlickCustomTooltip {
     }
 
     // Swap title to data-slick-tooltip and clear title to prevent native browser tooltip
-    if (titleElm && tooltipText) {
-      titleElm.setAttribute('data-slick-tooltip', tooltipText);
-      if (titleElm.hasAttribute('title')) {
-        titleElm.setAttribute('title', '');
-      }
-      // Also clear cell element's title if it's different (only for grid cells)
-      if (cellWithTitleElm && cellWithTitleElm !== titleElm && cellWithTitleElm.hasAttribute('title')) {
-        cellWithTitleElm.setAttribute('title', '');
-      }
+    this.swapTitleAttribute(titleElm, tooltipText);
+    // Also clear cell element's title if it's different (only for grid cells)
+    if (cellWithTitleElm && cellWithTitleElm !== titleElm) {
+      this.swapTitleAttribute(cellWithTitleElm, cellWithTitleElm.getAttribute('title') || '');
     }
   }
 }
