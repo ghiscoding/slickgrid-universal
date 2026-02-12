@@ -141,8 +141,8 @@ export class SliderFilter implements Filter {
           this._sliderRightInputElm.value = `${highestValue}`;
         }
         this._currentValues = [lowestValue, highestValue];
-        this._sliderLeftInputElm?.dispatchEvent(new Event('change'));
-        this._sliderRightInputElm?.dispatchEvent(new Event('change'));
+        this.slideLeftInputChanged(new Event('change') as DOMEvent<HTMLInputElement>, true);
+        this.slideRightInputChanged(new Event('change') as DOMEvent<HTMLInputElement>, true);
       } else {
         // for compound/single sliders, we'll only change to the lowest value
         if (this._sliderRightInputElm) {
@@ -152,7 +152,7 @@ export class SliderFilter implements Filter {
           this._selectOperatorElm.selectedIndex = 0; // reset to empty Operator when included
         }
         this._currentValue = lowestValue;
-        this._sliderRightInputElm?.dispatchEvent(new Event('change'));
+        this.slideRightInputChanged(new Event('change') as DOMEvent<HTMLInputElement>, true);
       }
 
       const hideSliderNumbers =
@@ -473,7 +473,7 @@ export class SliderFilter implements Filter {
   }
 
   /** handle value change event triggered, trigger filter callback & update "filled" class name */
-  protected onValueChanged(e: Event): void {
+  protected onValueChanged(e: Event, skipTriggerEvent = false): void {
     const sliderRightVal = this.getInputValue(this._sliderRightInputElm);
     let value;
     let searchTerms: SearchTerm[];
@@ -526,7 +526,9 @@ export class SliderFilter implements Filter {
 
     // trigger mouse enter event on the filter for optionally hooked SlickCustomTooltip
     // the minimum requirements for tooltip to work are the columnDef and targetElement
-    this.grid.onHeaderRowMouseEnter.notify({ column: this.columnDef, grid: this.grid }, new SlickEventData(e));
+    if (!skipTriggerEvent) {
+      this.grid.onHeaderRowMouseEnter.notify({ column: this.columnDef, grid: this.grid }, new SlickEventData(e));
+    }
     this._lastSearchValue = value;
   }
 
@@ -536,7 +538,7 @@ export class SliderFilter implements Filter {
     this._sliderRightInputElm?.classList[addRemoveCmd]('focus');
   }
 
-  protected slideLeftInputChanged(e: DOMEvent<HTMLInputElement>): void {
+  protected slideLeftInputChanged(e: DOMEvent<HTMLInputElement>, skipTriggerEvent = false): void {
     const sliderLeftVal = this.getInputValue(this._sliderLeftInputElm);
     const sliderRightVal = this.getInputValue(this._sliderRightInputElm);
 
@@ -563,10 +565,10 @@ export class SliderFilter implements Filter {
       }
     }
 
-    this.sliderLeftOrRightChanged(e, 'left', sliderLeftVal, sliderRightVal);
+    this.sliderLeftOrRightChanged(e, 'left', sliderLeftVal, sliderRightVal, skipTriggerEvent);
   }
 
-  protected slideRightInputChanged(e: DOMEvent<HTMLInputElement>): void {
+  protected slideRightInputChanged(e: DOMEvent<HTMLInputElement>, skipTriggerEvent = false): void {
     const sliderLeftVal = this.getInputValue(this._sliderLeftInputElm);
     const sliderRightVal = this.getInputValue(this._sliderRightInputElm);
 
@@ -581,14 +583,15 @@ export class SliderFilter implements Filter {
       );
     }
 
-    this.sliderLeftOrRightChanged(e, 'right', sliderLeftVal, sliderRightVal);
+    this.sliderLeftOrRightChanged(e, 'right', sliderLeftVal, sliderRightVal, skipTriggerEvent);
   }
 
   protected sliderLeftOrRightChanged(
     e: DOMEvent<HTMLInputElement>,
     side: 'left' | 'right',
     sliderLeftVal: number,
-    sliderRightVal: number
+    sliderRightVal: number,
+    skipTriggerEvent = false
   ): void {
     let triggerEvent = true;
     this.updateTrackFilledColorWhenEnabled();
@@ -624,7 +627,7 @@ export class SliderFilter implements Filter {
     }
 
     // also trigger mouse enter event on the filter in case a SlickCustomTooltip is attached
-    if (triggerEvent) {
+    if (triggerEvent && !skipTriggerEvent) {
       this.grid.onHeaderRowMouseEnter.notify({ column: this.columnDef, grid: this.grid }, new SlickEventData(e));
     }
   }
