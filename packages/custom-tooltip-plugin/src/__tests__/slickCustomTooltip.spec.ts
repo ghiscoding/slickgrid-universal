@@ -1479,6 +1479,61 @@ describe('SlickCustomTooltip plugin', () => {
       expect(tooltipElm.textContent).toBe('Button tooltip from formatter');
     });
 
+    it('should fallback to cell tooltip when useRegularTooltipFromFormatterOnly is enabled but formatter has no tooltip element', () => {
+      const cellNode = document.createElement('div');
+      cellNode.className = 'slick-cell l2 r2';
+      cellNode.setAttribute('title', 'Cell tooltip fallback');
+
+      const mockColumns = [
+        {
+          id: 'action',
+          field: 'action',
+          formatter: () => '<button>No tooltip</button>', // formatter output has no title attribute
+        },
+      ] as Column[];
+      vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+      vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ action: 'test' });
+
+      plugin.init(gridStub, container);
+      plugin.setOptions({ useRegularTooltip: true, useRegularTooltipFromFormatterOnly: true });
+
+      // Hover over the cell - should fallback to cell tooltip since formatter has no tooltip
+      gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
+
+      const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+      expect(tooltipElm).toBeTruthy();
+      expect(tooltipElm.textContent).toBe('Cell tooltip fallback');
+    });
+
+    it('should return null and not show tooltip when useRegularTooltipFromFormatterOnly is enabled but neither formatter nor cell has tooltip', () => {
+      const cellNode = document.createElement('div');
+      cellNode.className = 'slick-cell l2 r2';
+      // No title attribute on cell node
+
+      const mockColumns = [
+        {
+          id: 'action',
+          field: 'action',
+          formatter: () => '<button>No tooltip</button>', // formatter output has no title attribute
+        },
+      ] as Column[];
+      vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+      vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ action: 'test' });
+
+      plugin.init(gridStub, container);
+      plugin.setOptions({ useRegularTooltip: true, useRegularTooltipFromFormatterOnly: true });
+
+      // Hover over the cell - should not show tooltip since neither formatter nor cell has tooltip
+      gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
+
+      const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+      expect(tooltipElm).toBeFalsy();
+    });
+
     it('should clear title attributes from nested elements when using custom formatter tooltip', () => {
       const cellNode = document.createElement('div');
       cellNode.className = 'slick-cell l2 r2';
@@ -1571,6 +1626,33 @@ describe('SlickCustomTooltip plugin', () => {
       expect(tooltipElm.textContent).toBe('Icon tooltip');
 
       htmlContainer.remove();
+    });
+
+    it('should find tooltip on cell node itself when it has a title attribute in grid tooltip mode', () => {
+      const cellNode = document.createElement('div');
+      cellNode.className = 'slick-cell l2 r2';
+      cellNode.setAttribute('title', 'Cell has title directly');
+
+      const mockColumns = [
+        {
+          id: 'name',
+          field: 'name',
+        },
+      ] as Column[];
+      vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+      vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ name: 'test' });
+
+      plugin.init(gridStub, container);
+      plugin.setOptions({ useRegularTooltip: true });
+
+      // Hover over the cell node itself
+      gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
+
+      const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+      expect(tooltipElm).toBeTruthy();
+      expect(tooltipElm.textContent).toBe('Cell has title directly');
     });
   });
 });

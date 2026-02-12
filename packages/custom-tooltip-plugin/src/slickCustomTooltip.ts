@@ -439,8 +439,7 @@ export class SlickCustomTooltip {
               // Clear all title attributes from elements in the cell to prevent native browser tooltips
               // This should happen whenever we're using custom tooltips (not regular tooltips)
               if (!this._cellAddonOptions?.useRegularTooltip && this._cellNodeElm) {
-                const elementsWithTitle = this._cellNodeElm.querySelectorAll('[title]');
-                elementsWithTitle.forEach((elm) => {
+                this._cellNodeElm.querySelectorAll('[title]').forEach((elm) => {
                   const title = elm.getAttribute('title');
                   if (title) {
                     elm.setAttribute('data-slick-tooltip', title);
@@ -551,11 +550,10 @@ export class SlickCustomTooltip {
       } else {
         if (this._cellAddonOptions?.useRegularTooltipFromFormatterOnly) {
           // For nested tooltips in formatters, prioritize formatter output first, then fallback to cell element
-          tmpTitleElm = tmpDiv.querySelector<HTMLDivElement>(SELECTOR_CLOSEST_TOOLTIP_ATTR)
-            ? tmpDiv.querySelector<HTMLDivElement>(SELECTOR_CLOSEST_TOOLTIP_ATTR)
-            : cellElm && findFirstAttribute(cellElm, CLOSEST_TOOLTIP_FILLED_ATTR)
-              ? cellElm
-              : null;
+          tmpTitleElm = tmpDiv.querySelector<HTMLDivElement>(SELECTOR_CLOSEST_TOOLTIP_ATTR);
+          if (!tmpTitleElm) {
+            tmpTitleElm = cellElm && findFirstAttribute(cellElm, CLOSEST_TOOLTIP_FILLED_ATTR) ? cellElm : null;
+          }
         } else {
           tmpTitleElm = findFirstAttribute(cellElm, CLOSEST_TOOLTIP_FILLED_ATTR)
             ? cellElm
@@ -732,6 +730,14 @@ export class SlickCustomTooltip {
   }
 
   /**
+   * Find title element - returns the element itself if it has a non-empty title attribute,
+   * otherwise queries for a child element with a title attribute
+   */
+  protected findElementWithTitle(element: HTMLElement): Element | null {
+    return element.hasAttribute('title') && element.getAttribute('title') ? element : element.querySelector('[title]');
+  }
+
+  /**
    * swap and copy the "title" attribute into a new custom attribute then clear the "title" attribute
    * from the grid div text content so that it won't show also as a 2nd browser tooltip
    */
@@ -741,18 +747,12 @@ export class SlickCustomTooltip {
 
     // Only search for children in grid cells, not in global tooltip elements
     if (!titleElm && this._cellNodeElm && this._isGridTooltip) {
-      titleElm =
-        this._cellNodeElm.hasAttribute('title') && this._cellNodeElm.getAttribute('title')
-          ? this._cellNodeElm
-          : this._cellNodeElm.querySelector('[title]');
+      titleElm = this.findElementWithTitle(this._cellNodeElm);
     }
 
     // For grid cells with inputTitleElm matching cellNodeElm, also check for child elements with title attributes
     if (this._isGridTooltip && inputTitleElm && inputTitleElm === this._cellNodeElm) {
-      cellWithTitleElm =
-        this._cellNodeElm.hasAttribute('title') && this._cellNodeElm.getAttribute('title')
-          ? this._cellNodeElm
-          : this._cellNodeElm.querySelector('[title]');
+      cellWithTitleElm = this.findElementWithTitle(this._cellNodeElm);
     }
 
     // Swap title to data-slick-tooltip and clear title to prevent native browser tooltip
