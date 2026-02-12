@@ -75,7 +75,7 @@ export class ExtensionUtility {
   }
 
   /**
-   * Sort items (by pointers) in an array by a property name
+   * @deprecated Sort items (by pointers) in an array by a property name
    * @param {Array<Object>} items array
    * @param {String} property name to sort with
    */

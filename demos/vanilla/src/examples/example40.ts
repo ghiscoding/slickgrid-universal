@@ -1,6 +1,17 @@
 import { format as tempoFormat } from '@formkit/tempo';
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { createDomElement, Filters, Formatters, getOffset, type Column, type GridOption } from '@slickgrid-universal/common';
+import {
+  Aggregators,
+  createDomElement,
+  Filters,
+  Formatters,
+  getOffset,
+  SortComparers,
+  SortDirectionNumber,
+  type Column,
+  type GridOption,
+  type Grouping,
+} from '@slickgrid-universal/common';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options.js';
@@ -187,11 +198,11 @@ export default class Example40 {
                 command: 'custom-action',
                 title: 'Advanced Export',
                 // Demo: Native HTMLElement with event listeners using slotRenderer (full DOM control)
-                slotRenderer: (item, _args) => {
+                slotRenderer: (cmdItem, _args) => {
                   // you can use `createDomElement()` from Slickgrid for easier DOM element creation
                   const containerDiv = createDomElement('div', { className: 'menu-item' });
                   const iconDiv = createDomElement('div', { className: 'advanced-export-icon', textContent: '📊' });
-                  const textSpan = createDomElement('span', { textContent: item.title, style: { flex: '1' } });
+                  const textSpan = createDomElement('span', { textContent: cmdItem.title, style: { flex: '1' } });
                   const kbdElm = createDomElement('kbd', { className: 'key-hint', textContent: 'Ctrl+E' });
                   containerDiv.appendChild(iconDiv);
                   containerDiv.appendChild(textSpan);
@@ -208,8 +219,8 @@ export default class Example40 {
                     containerDiv.querySelector<HTMLElement>('.key-hint')!.style.color = 'black';
                   });
                   containerDiv.addEventListener('mouseleave', () => {
-                    iconDiv.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
                     iconDiv.style.transform = 'scale(1)';
+                    iconDiv.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
                     containerDiv.parentElement!.style.backgroundColor = 'white';
                     containerDiv.style.color = 'black';
                     document.querySelector('.export-timestamp')?.remove();
@@ -282,11 +293,11 @@ export default class Example40 {
           hideCloseButton: false,
           commandTitle: 'Cell Actions',
           // Demo: Menu-level default renderer that applies to all items unless overridden
-          defaultItemRenderer: (item, _args) => {
+          defaultItemRenderer: (cmdItem, _args) => {
             return `
               <div class="menu-item">
-                ${item.iconCssClass ? `<i class="${item.iconCssClass}" style="margin-right: 10px; font-size: 18px;"></i>` : '<span style="width: 18px; margin-right: 10px;">◦</span>'}
-                <span class="menu-item-label">${item.title}</span>
+                ${cmdItem.iconCssClass ? `<i class="${cmdItem.iconCssClass}" style="margin-right: 10px; font-size: 18px;"></i>` : '<span style="width: 18px; margin-right: 10px;">◦</span>'}
+                <span class="menu-item-label">${cmdItem.title}</span>
               </div>
             `;
           },
@@ -386,17 +397,18 @@ export default class Example40 {
       enableCellNavigation: true,
       enableFiltering: true,
       enableSorting: true,
+      enableGrouping: true,
 
       // Header Menu with slots (already configured in columns above)
       enableHeaderMenu: true,
       headerMenu: {
         hideColumnHideCommand: false,
         // Demo: Menu-level default renderer for all header menu items
-        defaultItemRenderer: (item, _args) => {
+        defaultItemRenderer: (cmdItem, _args) => {
           return `
             <div class="menu-item">
-              ${item.iconCssClass ? `<i class="${item.iconCssClass} menu-item-icon"></i>` : ''}
-              <span class="menu-item-label">${item.title}</span>
+              ${cmdItem.iconCssClass ? `<i class="${cmdItem.iconCssClass} menu-item-icon"></i>` : ''}
+              <span class="menu-item-label">${cmdItem.title}</span>
             </div>
           `;
         },
@@ -408,146 +420,212 @@ export default class Example40 {
       // Context Menu with slot examples
       enableContextMenu: true,
       contextMenu: {
+        // build your command items list
+        // spread built-in commands and optionally filter/sort them however you want
+        commandListBuilder: (builtInItems) => {
+          return [
+            // filter commands if you want
+            // ...builtInItems.filter((x) => x !== 'divider' && x.command !== 'copy' && x.command !== 'clear-grouping'),
+            ...builtInItems,
+            { divider: true, command: '' },
+            {
+              // positionOrder: 60,
+              command: 'edit-cell',
+              title: 'Edit Cell',
+              // Demo: Individual slotRenderer overrides the menu's defaultItemRenderer
+              slotRenderer: (cmdItem, _args) => {
+                // you can use `createDomElement()` from Slickgrid for easier DOM element creation
+                const containerDiv = createDomElement('div', { className: 'menu-item' });
+                const iconDiv = createDomElement('div', { className: 'edit-cell-icon', textContent: '✎' });
+                const textSpan = createDomElement('span', { textContent: cmdItem.title, style: { flex: '1' } });
+                const kbdElm = createDomElement('kbd', { className: 'edit-cell', textContent: 'F2' });
+                containerDiv.appendChild(iconDiv);
+                containerDiv.appendChild(textSpan);
+                containerDiv.appendChild(kbdElm);
+
+                // Native event listeners for interactive effects
+                containerDiv.addEventListener('mouseenter', () => {
+                  iconDiv.style.transform = 'rotate(15deg) scale(1.1)';
+                  iconDiv.style.boxShadow = '0 2px 8px rgba(0,200,83,0.4)';
+                });
+                containerDiv.addEventListener('mouseleave', () => {
+                  iconDiv.style.transform = 'rotate(0deg) scale(1)';
+                  iconDiv.style.boxShadow = 'none';
+                });
+
+                return containerDiv;
+              },
+              action: () => alert('Edit cell'),
+            },
+            { divider: true, command: '' },
+            {
+              command: 'export',
+              title: 'Export',
+              iconCssClass: 'mdi mdi-download',
+              commandItems: [
+                {
+                  command: 'export-excel',
+                  title: 'Export as Excel',
+                  iconCssClass: 'mdi mdi-file-excel-outline text-success',
+                  action: () => alert('Export to Excel'),
+                },
+                {
+                  command: 'export-csv',
+                  title: 'Export as CSV',
+                  iconCssClass: 'mdi mdi-file-document-outline',
+                  action: () => alert('Export to CSV'),
+                },
+                {
+                  command: 'export-pdf',
+                  title: 'Export as PDF',
+                  iconCssClass: 'mdi mdi-file-pdf-outline text-danger',
+                  action: () => alert('Export to PDF'),
+                },
+              ],
+            },
+            { divider: true, command: '' },
+            {
+              command: 'delete-row',
+              title: 'Delete Row',
+              iconCssClass: 'mdi mdi-delete text-danger',
+              action: () => alert('Delete row'),
+            },
+          ];
+          // commandItems.sort((a, b) => (a === 'divider' || b === 'divider' ? 0 : a.title! > b.title! ? -1 : 1));
+          // console.log('initial command items', commandItems);
+          // return commandItems;
+        },
         // Demo: Menu-level default renderer for context menu items
-        defaultItemRenderer: (item, _args) => {
+        defaultItemRenderer: (cmdItem, _args) => {
           return `
             <div class="menu-item">
-              ${item.iconCssClass ? `<i class="${item.iconCssClass} menu-item-icon"></i>` : ''}
-              <span class="menu-item-label">${item.title}</span>
+              ${cmdItem.iconCssClass ? `<i class="${cmdItem.iconCssClass} menu-item-icon"></i>` : ''}
+              <span class="menu-item-label">${cmdItem.title}</span>
             </div>
           `;
         },
-        commandItems: [
-          {
-            positionOrder: 60,
-            command: 'edit-cell',
-            title: 'Edit Cell',
-            // Demo: Individual slotRenderer overrides the menu's defaultItemRenderer
-            slotRenderer: (item, _args) => {
-              // you can use `createDomElement()` from Slickgrid for easier DOM element creation
-              const containerDiv = createDomElement('div', { className: 'menu-item' });
-              const iconDiv = createDomElement('div', { className: 'edit-cell-icon', textContent: '✎' });
-              const textSpan = createDomElement('span', { textContent: item.title, style: { flex: '1' } });
-              const kbdElm = createDomElement('kbd', { className: 'edit-cell', textContent: 'F2' });
-              containerDiv.appendChild(iconDiv);
-              containerDiv.appendChild(textSpan);
-              containerDiv.appendChild(kbdElm);
+        // commandItems: [
+        //   {
+        //     positionOrder: 60,
+        //     command: 'edit-cell',
+        //     title: 'Edit Cell',
+        //     // Demo: Individual slotRenderer overrides the menu's defaultItemRenderer
+        //     slotRenderer: (cmdItem, _args) => {
+        //       // you can use `createDomElement()` from Slickgrid for easier DOM element creation
+        //       const containerDiv = createDomElement('div', { className: 'menu-item' });
+        //       const iconDiv = createDomElement('div', { className: 'edit-cell-icon', textContent: '✎' });
+        //       const textSpan = createDomElement('span', { textContent: cmdItem.title, style: { flex: '1' } });
+        //       const kbdElm = createDomElement('kbd', { className: 'edit-cell', textContent: 'F2' });
+        //       containerDiv.appendChild(iconDiv);
+        //       containerDiv.appendChild(textSpan);
+        //       containerDiv.appendChild(kbdElm);
 
-              // Native event listeners for interactive effects
-              containerDiv.addEventListener('mouseenter', () => {
-                iconDiv.style.transform = 'rotate(15deg) scale(1.1)';
-                iconDiv.style.boxShadow = '0 2px 8px rgba(0,200,83,0.4)';
-              });
-              containerDiv.addEventListener('mouseleave', () => {
-                iconDiv.style.transform = 'rotate(0deg) scale(1)';
-                iconDiv.style.boxShadow = 'none';
-              });
+        //       // Native event listeners for interactive effects
+        //       containerDiv.addEventListener('mouseenter', () => {
+        //         iconDiv.style.transform = 'rotate(15deg) scale(1.1)';
+        //         iconDiv.style.boxShadow = '0 2px 8px rgba(0,200,83,0.4)';
+        //       });
+        //       containerDiv.addEventListener('mouseleave', () => {
+        //         iconDiv.style.transform = 'rotate(0deg) scale(1)';
+        //         iconDiv.style.boxShadow = 'none';
+        //       });
 
-              return containerDiv;
-            },
-            action: () => alert('Edit cell'),
-          },
-          { divider: true, command: '' },
-          {
-            command: 'export',
-            title: 'Export',
-            iconCssClass: 'mdi mdi-download',
-            commandItems: [
-              {
-                command: 'export-excel',
-                title: 'Export as Excel',
-                iconCssClass: 'mdi mdi-file-excel-outline text-success',
-                action: () => alert('Export to Excel'),
-              },
-              {
-                command: 'export-csv',
-                title: 'Export as CSV',
-                iconCssClass: 'mdi mdi-file-document-outline',
-                action: () => alert('Export to CSV'),
-              },
-              {
-                command: 'export-pdf',
-                title: 'Export as PDF',
-                iconCssClass: 'mdi mdi-file-pdf-outline text-danger',
-                action: () => alert('Export to PDF'),
-              },
-            ],
-          },
-          { divider: true, command: '' },
-          {
-            command: 'delete-row',
-            title: 'Delete Row',
-            iconCssClass: 'mdi mdi-delete text-danger',
-            action: () => alert('Delete row'),
-          },
-        ],
+        //       return containerDiv;
+        //     },
+        //     action: () => alert('Edit cell'),
+        //   },
+        //   { divider: true, command: '' },
+        //   {
+        //     command: 'export',
+        //     title: 'Export',
+        //     iconCssClass: 'mdi mdi-download',
+        //     commandItems: [
+        //       {
+        //         command: 'export-excel',
+        //         title: 'Export as Excel',
+        //         iconCssClass: 'mdi mdi-file-excel-outline text-success',
+        //         action: () => alert('Export to Excel'),
+        //       },
+        //       {
+        //         command: 'export-csv',
+        //         title: 'Export as CSV',
+        //         iconCssClass: 'mdi mdi-file-document-outline',
+        //         action: () => alert('Export to CSV'),
+        //       },
+        //       {
+        //         command: 'export-pdf',
+        //         title: 'Export as PDF',
+        //         iconCssClass: 'mdi mdi-file-pdf-outline text-danger',
+        //         action: () => alert('Export to PDF'),
+        //       },
+        //     ],
+        //   },
+        //   { divider: true, command: '' },
+        //   {
+        //     command: 'delete-row',
+        //     title: 'Delete Row',
+        //     iconCssClass: 'mdi mdi-delete text-danger',
+        //     action: () => alert('Delete row'),
+        //   },
+        // ],
       },
 
       // Grid Menu with slot examples (demonstrating defaultItemRenderer at menu level)
       enableGridMenu: true,
       gridMenu: {
         // Demo: Menu-level default renderer that applies to all items (can be overridden per item with slotRenderer)
-        defaultItemRenderer: (item, _args) => {
+        defaultItemRenderer: (cmdItem, _args) => {
           return `
             <div class="menu-item">
-              ${item.iconCssClass ? `<i class="${item.iconCssClass} menu-item-icon"></i>` : ''}
-              <span class="menu-item-label">${item.title}</span>
+              ${cmdItem.iconCssClass ? `<i class="${cmdItem.iconCssClass} menu-item-icon"></i>` : ''}
+              <span class="menu-item-label">${cmdItem.title}</span>
             </div>
           `;
         },
-        commandItems: [
-          {
-            command: 'toggle-filter',
-            title: 'Toggle Filter Row',
-            iconCssClass: 'mdi mdi-filter-outline',
-            action: () => alert('Toggle filter row'),
-          },
-          {
-            command: 'clear-filters',
-            title: 'Clear All Filters',
-            iconCssClass: 'mdi mdi-filter-remove-outline',
-            action: () => alert('Clear filters'),
-          },
-          { divider: true, command: '' },
-          {
-            command: 'export-excel',
-            title: 'Export to Excel',
-            iconCssClass: 'mdi mdi-file-excel-outline',
-            action: () => alert('Export to Excel'),
-          },
-          {
-            command: 'export-csv',
-            title: 'Export to CSV',
-            iconCssClass: 'mdi mdi-download',
-            // Individual slotRenderer overrides the defaultItemRenderer for this item
-            slotRenderer: (item, _args) => `
+        commandListBuilder: (builtInItems) => {
+          return [
+            ...builtInItems,
+            { divider: true, command: '' },
+            {
+              command: 'export-excel',
+              title: 'Export to Excel',
+              iconCssClass: 'mdi mdi-file-excel-outline',
+              action: () => alert('Export to Excel'),
+            },
+            {
+              command: 'export-csv',
+              title: 'Export to CSV',
+              iconCssClass: 'mdi mdi-download',
+              // Individual slotRenderer overrides the defaultItemRenderer for this item
+              slotRenderer: (cmdItem, _args) => `
               <div class="menu-item">
-                <i class="${item.iconCssClass} menu-item-icon warn"></i>
-                <span class="menu-item-label warn">${item.title}</span>
+                <i class="${cmdItem.iconCssClass} menu-item-icon warn"></i>
+                <span class="menu-item-label warn">${cmdItem.title}</span>
                 <span class="key-hint warn">CUSTOM</span>
               </div>
             `,
-            action: () => alert('Export to CSV'),
-          },
-          {
-            command: 'refresh-data',
-            title: 'Refresh Data',
-            iconCssClass: 'mdi mdi-refresh',
-            // Demo: slotRenderer with keyboard shortcut
-            slotRenderer: (item) => {
-              // you can use `createDomElement()` from Slickgrid for easier DOM element creation
-              const menuItemElm = createDomElement('div', { className: 'menu-item' });
-              const iconElm = createDomElement('i', { className: `${item.iconCssClass} menu-item-icon` });
-              const menuItemLabelElm = createDomElement('span', { className: 'menu-item-label', textContent: item.title });
-              const kbdElm = createDomElement('kbd', { className: 'key-hint', textContent: 'F5' });
-              menuItemElm.appendChild(iconElm);
-              menuItemElm.appendChild(menuItemLabelElm);
-              menuItemElm.appendChild(kbdElm);
-              return menuItemElm;
+              action: () => alert('Export to CSV'),
             },
-            action: () => alert('Refresh data'),
-          },
-        ],
+            {
+              command: 'refresh-data',
+              title: 'Refresh Data',
+              iconCssClass: 'mdi mdi-refresh',
+              // Demo: slotRenderer with keyboard shortcut
+              slotRenderer: (cmdItem) => {
+                // you can use `createDomElement()` from Slickgrid for easier DOM element creation
+                const menuItemElm = createDomElement('div', { className: 'menu-item' });
+                const iconElm = createDomElement('i', { className: `${cmdItem.iconCssClass} menu-item-icon` });
+                const menuItemLabelElm = createDomElement('span', { className: 'menu-item-label', textContent: cmdItem.title });
+                const kbdElm = createDomElement('kbd', { className: 'key-hint', textContent: 'F5' });
+                menuItemElm.appendChild(iconElm);
+                menuItemElm.appendChild(menuItemLabelElm);
+                menuItemElm.appendChild(kbdElm);
+                return menuItemElm;
+              },
+              action: () => alert('Refresh data'),
+            },
+          ];
+        },
       },
 
       // tooltip plugin
@@ -566,6 +644,32 @@ export default class Example40 {
       },
     });
     return div;
+  }
+
+  clearGrouping() {
+    this.sgb?.dataView?.setGrouping([]);
+  }
+
+  collapseAllGroups() {
+    this.sgb?.dataView?.collapseAllGroups();
+  }
+
+  expandAllGroups() {
+    this.sgb?.dataView?.expandAllGroups();
+  }
+
+  groupByDuration() {
+    // you need to manually add the sort icon(s) in UI
+    this.sgb?.slickGrid?.setSortColumns([{ columnId: 'duration', sortAsc: true }]);
+    this.sgb?.dataView?.setGrouping({
+      getter: 'duration',
+      formatter: (g) => `Duration: ${g.value} <span class="text-green">(${g.count} items)</span>`,
+      comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
+      aggregators: [new Aggregators.Avg('percentComplete'), new Aggregators.Sum('cost')],
+      aggregateCollapsed: false,
+      lazyTotalsCalculation: true,
+    } as Grouping);
+    this.sgb?.slickGrid?.invalidate(); // invalidate all rows and re-render
   }
 
   loadData(count: number): ReportItem[] {

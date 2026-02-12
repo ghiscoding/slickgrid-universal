@@ -1483,6 +1483,7 @@ describe('GridMenuControl', () => {
               disabled: false,
               command: 'clear-pinning',
               positionOrder: 52,
+              action: expect.any(Function),
             },
           ]);
         });
@@ -1503,6 +1504,7 @@ describe('GridMenuControl', () => {
               disabled: false,
               command: 'clear-filter',
               positionOrder: 50,
+              action: expect.any(Function),
             },
             {
               _orgTitle: '',
@@ -1512,6 +1514,7 @@ describe('GridMenuControl', () => {
               disabled: false,
               command: 'toggle-filter',
               positionOrder: 53,
+              action: expect.any(Function),
             },
             {
               _orgTitle: '',
@@ -1521,6 +1524,7 @@ describe('GridMenuControl', () => {
               disabled: false,
               command: 'refresh-dataset',
               positionOrder: 58,
+              action: expect.any(Function),
             },
           ]);
         });
@@ -1552,6 +1556,7 @@ describe('GridMenuControl', () => {
               disabled: false,
               command: 'clear-filter',
               positionOrder: 50,
+              action: expect.any(Function),
             },
           ]);
         });
@@ -1583,6 +1588,7 @@ describe('GridMenuControl', () => {
               disabled: false,
               command: 'toggle-filter',
               positionOrder: 53,
+              action: expect.any(Function),
             },
           ]);
         });
@@ -1613,6 +1619,7 @@ describe('GridMenuControl', () => {
               disabled: false,
               command: 'toggle-dark-mode',
               positionOrder: 54,
+              action: expect.any(Function),
             },
           ]);
         });
@@ -1644,6 +1651,7 @@ describe('GridMenuControl', () => {
               disabled: false,
               command: 'refresh-dataset',
               positionOrder: 58,
+              action: expect.any(Function),
             },
           ]);
         });
@@ -1664,6 +1672,7 @@ describe('GridMenuControl', () => {
               disabled: false,
               command: 'toggle-preheader',
               positionOrder: 53,
+              action: expect.any(Function),
             },
           ]);
         });
@@ -1703,6 +1712,7 @@ describe('GridMenuControl', () => {
               disabled: false,
               command: 'clear-sorting',
               positionOrder: 51,
+              action: expect.any(Function),
             },
           ]);
         });
@@ -1752,6 +1762,7 @@ describe('GridMenuControl', () => {
               disabled: false,
               command: 'export-csv',
               positionOrder: 55,
+              action: expect.any(Function),
             },
           ]);
         });
@@ -1804,6 +1815,7 @@ describe('GridMenuControl', () => {
               disabled: false,
               command: 'export-excel',
               positionOrder: 56,
+              action: expect.any(Function),
             },
           ]);
         });
@@ -1837,6 +1849,7 @@ describe('GridMenuControl', () => {
               disabled: false,
               command: 'export-pdf',
               positionOrder: 57,
+              action: expect.any(Function),
             },
           ]);
         });
@@ -1867,6 +1880,7 @@ describe('GridMenuControl', () => {
               disabled: false,
               command: 'export-text-delimited',
               positionOrder: 58,
+              action: expect.any(Function),
             },
           ]);
         });

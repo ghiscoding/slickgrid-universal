@@ -9,10 +9,10 @@ Each menu item can define a `slotRenderer` callback function that receives the i
 ### Slot Renderer Callback
 
 ```typescript
-slotRenderer?: (item: any, args: any, event?: Event) => string | HTMLElement
+slotRenderer?: (cmdItem: any, args: any, event?: Event) => string | HTMLElement
 ```
 
-- **item** - The menu item object containing command, title, iconCssClass, etc.
+- **cmdItem** - The menu cmdItem object containing command, title, iconCssClass, etc.
 - **args** - The callback args providing access to grid, column, dataContext, and other context
 - **event** - Optional DOM event passed during click handling (allows `stopPropagation()`)
 
@@ -42,27 +42,27 @@ const menuItem = {
   command: 'notifications',
   title: 'Notifications',
   // Return HTMLElement for more control and event listeners
-  slotRenderer: (item, args) => {
+  slotRenderer: (cmdItem, args) => {
     const container = document.createElement('div');
     container.style.display = 'flex';
     container.style.alignItems = 'center';
-    
+
     const icon = document.createElement('i');
     icon.className = 'mdi mdi-bell';
     icon.style.marginRight = '8px';
-    
+
     const text = document.createElement('span');
-    text.textContent = item.title;
-    
+    text.textContent = cmdItem.title;
+
     const badge = document.createElement('span');
     badge.className = 'badge';
     badge.textContent = '5';
     badge.style.marginLeft = 'auto';
-    
+
     container.appendChild(icon);
     container.appendChild(text);
     container.appendChild(badge);
-    
+
     return container;
   }
 };
@@ -75,11 +75,11 @@ Set a `defaultItemRenderer` at the menu option level to apply to all items (unle
 ```typescript
 const menuOption = {
   // Apply this renderer to all menu items (can be overridden per item)
-  defaultItemRenderer: (item, args) => {
+  defaultItemRenderer: (cmdItem, args) => {
     return `
       <div style="display: flex; align-items: center; gap: 8px;">
-        ${item.iconCssClass ? `<i class="${item.iconCssClass}" style="font-size: 18px;"></i>` : ''}
-        <span style="flex: 1;">${item.title}</span>
+        ${cmdItem.iconCssClass ? `<i class="${cmdItem.iconCssClass}" style="font-size: 18px;"></i>` : ''}
+        <span style="flex: 1;">${cmdItem.title}</span>
       </div>
     `;
   },
@@ -114,7 +114,7 @@ const columnDef = {
   id: 'name',
   header: {
     menu: {
-      defaultItemRenderer: (item, args) => `<div>${item.title}</div>`,
+      defaultItemRenderer: (cmdItem, args) => `<div>${cmdItem.title}</div>`,
       commandItems: [
         {
           command: 'sort',
@@ -132,12 +132,12 @@ const columnDef = {
 const columnDef = {
   id: 'action',
   cellMenu: {
-    defaultItemRenderer: (item, args) => `<div>${item.title}</div>`,
+    defaultItemRenderer: (cmdItem, args) => `<div>${cmdItem.title}</div>`,
     commandItems: [
       {
         command: 'edit',
         title: 'Edit',
-        slotRenderer: (item, args) => `<div>Edit row ${args.dataContext.id}</div>`
+        slotRenderer: (cmdItem, args) => `<div>Edit row ${args.dataContext.id}</div>`
       }
     ]
   }
@@ -149,7 +149,7 @@ const columnDef = {
 const gridOptions = {
   enableContextMenu: true,
   contextMenu: {
-    defaultItemRenderer: (item, args) => `<div>${item.title}</div>`,
+    defaultItemRenderer: (cmdItem, args) => `<div>${cmdItem.title}</div>`,
     commandItems: [
       {
         command: 'export',
@@ -166,7 +166,7 @@ const gridOptions = {
 const gridOptions = {
   enableGridMenu: true,
   gridMenu: {
-    defaultItemRenderer: (item, args) => `<div>${item.title}</div>`,
+    defaultItemRenderer: (cmdItem, args) => `<div>${cmdItem.title}</div>`,
     commandItems: [
       {
         command: 'refresh',
@@ -197,11 +197,11 @@ const menuItem = {
 const menuItem = {
   command: 'with-component',
   title: 'With Angular Component',
-  slotRenderer: (item, args) => {
+  slotRenderer: (cmdItem, args) => {
     // Create a placeholder element
     const placeholder = document.createElement('div');
     placeholder.id = `angular-slot-${Date.now()}`;
-    
+
     // Schedule component creation for after rendering
     setTimeout(() => {
       const element = document.getElementById(placeholder.id);
@@ -210,7 +210,7 @@ const menuItem = {
         element.appendChild(componentRef.location.nativeElement);
       }
     }, 0);
-    
+
     return placeholder;
   }
 };
@@ -222,10 +222,10 @@ const menuItem = {
 const menuItem = {
   command: 'with-react',
   title: 'With React Component',
-  slotRenderer: (item, args) => {
+  slotRenderer: (cmdItem, args) => {
     const container = document.createElement('div');
     container.id = `react-slot-${Date.now()}`;
-    
+
     // Schedule component render for after menu renders
     setTimeout(() => {
       const element = document.getElementById(container.id);
@@ -233,7 +233,7 @@ const menuItem = {
         ReactDOM.render(<MyComponent data={args} />, element);
       }
     }, 0);
-    
+
     return container;
   }
 };
@@ -245,10 +245,10 @@ const menuItem = {
 const menuItem = {
   command: 'with-vue',
   title: 'With Vue Component',
-  slotRenderer: (item, args) => {
+  slotRenderer: (cmdItem, args) => {
     const container = document.createElement('div');
     container.id = `vue-slot-${Date.now()}`;
-    
+
     // Schedule component mount for after menu renders
     setTimeout(() => {
       const element = document.getElementById(container.id);
@@ -258,7 +258,7 @@ const menuItem = {
         element._appInstance = app;
       }
     }, 0);
-    
+
     return container;
   }
 };
@@ -303,7 +303,7 @@ const menuItem = {
 {
   command: 'edit-row',
   title: 'Edit Row',
-  slotRenderer: (item, args) => `
+  slotRenderer: (cmdItem, args) => `
     <div style="display: flex; align-items: center; gap: 8px;">
       <i class="mdi mdi-pencil" style="font-size: 18px;"></i>
       <span>Edit Row #${args.dataContext?.id || 'N/A'}</span>
@@ -317,13 +317,13 @@ const menuItem = {
 {
   command: 'toggle-setting',
   title: 'Auto Refresh',
-  slotRenderer: (item, args, event) => {
+  slotRenderer: (cmdItem, args, event) => {
     const container = document.createElement('label');
     container.style.display = 'flex';
     container.style.alignItems = 'center';
     container.style.gap = '8px';
     container.style.marginRight = 'auto';
-    
+
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.addEventListener('change', (e) => {
@@ -331,10 +331,10 @@ const menuItem = {
       event?.stopPropagation?.();
       console.log('Auto refresh:', checkbox.checked);
     });
-    
+
     const label = document.createElement('span');
-    label.textContent = item.title;
-    
+    label.textContent = cmdItem.title;
+
     container.appendChild(label);
     container.appendChild(checkbox);
     return container;
@@ -347,10 +347,10 @@ const menuItem = {
 {
   command: 'export-excel',
   title: 'Export as Excel',
-  slotRenderer: (item, args) => `
+  slotRenderer: (cmdItem, args) => `
     <div style="display: flex; align-items: center; gap: 8px;">
       <i class="mdi mdi-file-excel-outline"></i>
-      <span style="flex: 1;">${item.title}</span>
+      <span style="flex: 1;">${cmdItem.title}</span>
       <span style="background: #44ff44; color: #000; padding: 2px 4px; border-radius: 3px; font-size: 9px; font-weight: bold;">RECOMMENDED</span>
     </div>
   `
@@ -362,12 +362,12 @@ const menuItem = {
 {
   command: 'advanced-export',
   title: 'Advanced Export',
-  slotRenderer: (item, args) => {
+  slotRenderer: (cmdItem, args) => {
     const container = document.createElement('div');
     container.style.display = 'flex';
     container.style.alignItems = 'center';
     container.style.gap = '8px';
-    
+
     const iconDiv = document.createElement('div');
     iconDiv.style.width = '20px';
     iconDiv.style.height = '20px';
@@ -379,10 +379,10 @@ const menuItem = {
     iconDiv.style.color = 'white';
     iconDiv.style.fontSize = '12px';
     iconDiv.innerHTML = '📊';
-    
+
     const textSpan = document.createElement('span');
-    textSpan.textContent = item.title;
-    
+    textSpan.textContent = cmdItem.title;
+
     container.appendChild(iconDiv);
     container.appendChild(textSpan);
     return container;
@@ -481,7 +481,7 @@ When creating custom renderers, handle potential errors gracefully:
 {
   command: 'safe-render',
   title: 'Safe Render',
-  slotRenderer: (item, args) => {
+  slotRenderer: (cmdItem, args) => {
     try {
       if (args?.dataContext?.status === 'error') {
         return `<div style="color: red;">❌ Error loading</div>`;

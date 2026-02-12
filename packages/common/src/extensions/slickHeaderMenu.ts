@@ -220,7 +220,6 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
         // execute Grid Menu callback with command,
         // we'll also execute optional user defined onCommand callback when provided
-        this.executeHeaderMenuInternalCommands(event, callbackArgs);
         this.pubSubService.publish('onHeaderMenuCommand', callbackArgs);
         if (typeof this.addonOptions?.onCommand === 'function') {
           this.addonOptions.onCommand(event, callbackArgs);
@@ -312,6 +311,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
                   titleKey: `${translationPrefix}UNFREEZE_COLUMNS`,
                   command: cmdUnfreeze,
                   positionOrder: 45,
+                  action: (_e, args) => this.freezeOrUnfreezeColumns(args.column, cmdUnfreeze),
                 });
               }
             } else {
@@ -327,6 +327,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
                   titleKey: `${translationPrefix}FREEZE_COLUMNS`,
                   command: cmdFreeze,
                   positionOrder: 45,
+                  action: (_e, args) => this.freezeOrUnfreezeColumns(args.column, cmdFreeze),
                 });
               }
             }
@@ -347,6 +348,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
                 titleKey: `${translationPrefix}COLUMN_RESIZE_BY_CONTENT`,
                 command: cmdResize,
                 positionOrder: 47,
+                action: (_e, args) => this.pubSubService.publish('onHeaderMenuColumnResizeByContent', { columnId: args.column.id }),
               });
             }
           }
@@ -367,6 +369,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
                 titleKey: `${translationPrefix}SORT_ASCENDING`,
                 command: cmdAscName,
                 positionOrder: 50,
+                action: (e, args) => this.sortColumn(e, args, true),
               });
             }
             if (!cmdExists(cmdDescName)) {
@@ -376,6 +379,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
                 titleKey: `${translationPrefix}SORT_DESCENDING`,
                 command: cmdDescName,
                 positionOrder: 51,
+                action: (e, args) => this.sortColumn(e, args, false),
               });
             }
 
@@ -392,6 +396,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
                 titleKey: `${translationPrefix}REMOVE_SORT`,
                 command: cmdClearSort,
                 positionOrder: 58,
+                action: (e, args) => this.clearColumnSort(e, args),
               });
             }
           }
@@ -444,6 +449,9 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
                 titleKey: `${translationPrefix}REMOVE_FILTER`,
                 command: cmdRemoveFilter,
                 positionOrder: 57,
+                action: (e, args) => {
+                  this.clearColumnFilter(e, args);
+                },
               });
             }
           }
@@ -457,6 +465,12 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
               titleKey: `${translationPrefix}HIDE_COLUMN`,
               command: cmdHideColumn,
               positionOrder: 59,
+              action: (_e, args) => {
+                this.hideColumn(args.column);
+                if (this.sharedService.gridOptions?.enableAutoSizeColumns) {
+                  this.grid.autosizeColumns();
+                }
+              },
             });
           }
 
@@ -517,45 +531,6 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
       const gridOptions = this.grid.getOptions();
       if (gridOptions.enableAutoSizeColumns) {
         this.grid.autosizeColumns();
-      }
-    }
-  }
-
-  /** Execute the Header Menu Commands that was triggered by the onCommand subscribe */
-  protected executeHeaderMenuInternalCommands(
-    event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData,
-    args: MenuCommandItemCallbackArgs
-  ): void {
-    if (args?.command) {
-      switch (args.command) {
-        case 'hide-column':
-          this.hideColumn(args.column);
-          if (this.sharedService.gridOptions?.enableAutoSizeColumns) {
-            this.grid.autosizeColumns();
-          }
-          break;
-        case 'clear-filter':
-          this.clearColumnFilter(event, args);
-          break;
-        case 'clear-sort':
-          this.clearColumnSort(event, args);
-          break;
-        case 'column-resize-by-content':
-          this.pubSubService.publish('onHeaderMenuColumnResizeByContent', { columnId: args.column.id });
-          break;
-        case 'freeze-columns':
-          this.freezeOrUnfreezeColumns(args.column, args.command);
-          break;
-        case 'unfreeze-columns':
-          this.freezeOrUnfreezeColumns(args.column, args.command);
-          break;
-        case 'sort-asc':
-        case 'sort-desc':
-          const isSortingAsc = args.command === 'sort-asc';
-          this.sortColumn(event, args, isSortingAsc);
-          break;
-        default:
-          break;
       }
     }
   }

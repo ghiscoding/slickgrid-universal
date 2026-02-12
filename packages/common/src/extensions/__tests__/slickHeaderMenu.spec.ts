@@ -1107,6 +1107,7 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'FREEZE_COLUMNS',
             command: 'freeze-columns',
             positionOrder: 45,
+            action: expect.any(Function),
           },
           { divider: true, command: '', positionOrder: 48 },
         ]);
@@ -1123,6 +1124,7 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'FREEZE_COLUMNS',
             command: 'freeze-columns',
             positionOrder: 45,
+            action: expect.any(Function),
           },
           { divider: true, command: '', positionOrder: 48 },
         ]);
@@ -1159,6 +1161,7 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'UNFREEZE_COLUMNS',
             command: 'unfreeze-columns',
             positionOrder: 45,
+            action: expect.any(Function),
           },
           { divider: true, command: '', positionOrder: 48 },
         ]);
@@ -1175,6 +1178,7 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'UNFREEZE_COLUMNS',
             command: 'unfreeze-columns',
             positionOrder: 45,
+            action: expect.any(Function),
           },
           { divider: true, command: '', positionOrder: 48 },
         ]);
@@ -1209,6 +1213,7 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'FREEZE_COLUMNS',
             command: 'freeze-columns',
             positionOrder: 45,
+            action: expect.any(Function),
           },
           { divider: true, command: '', positionOrder: 48 },
         ]);
@@ -1250,6 +1255,7 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'FREEZE_COLUMNS',
             command: 'freeze-columns',
             positionOrder: 45,
+            action: expect.any(Function),
           },
           { divider: true, command: '', positionOrder: 48 },
         ]);
@@ -1281,6 +1287,7 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'REMOVE_FILTER',
             command: 'clear-filter',
             positionOrder: 57,
+            action: expect.any(Function),
           },
         ];
         const commandDivElm = gridContainerDiv.querySelector('[data-command="clear-filter"]') as HTMLDivElement;
@@ -1325,9 +1332,18 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'COLUMN_RESIZE_BY_CONTENT',
             command: 'column-resize-by-content',
             positionOrder: 47,
+            action: expect.any(Function),
           },
           { divider: true, command: '', positionOrder: 48 },
-          { _orgTitle: '', iconCssClass: 'mdi mdi-close', title: 'Hide Column', titleKey: 'HIDE_COLUMN', command: 'hide-column', positionOrder: 59 },
+          {
+            _orgTitle: '',
+            iconCssClass: 'mdi mdi-close',
+            title: 'Hide Column',
+            titleKey: 'HIDE_COLUMN',
+            command: 'hide-column',
+            positionOrder: 59,
+            action: expect.any(Function),
+          },
         ];
         const commandDivElm = gridContainerDiv.querySelector('[data-command="column-resize-by-content"]') as HTMLDivElement;
         const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
@@ -1370,6 +1386,7 @@ describe('HeaderMenu Plugin', () => {
             positionOrder: 45,
             title: 'Freeze Columns',
             titleKey: 'FREEZE_COLUMNS',
+            action: expect.any(Function),
           },
           { command: 'show-negative-numbers', cssClass: 'mdi mdi-lightbulb-on', tooltip: 'Highlight negative numbers.' },
           {
@@ -1379,6 +1396,7 @@ describe('HeaderMenu Plugin', () => {
             positionOrder: 47,
             title: 'Resize by Content',
             titleKey: 'COLUMN_RESIZE_BY_CONTENT',
+            action: expect.any(Function),
           },
           { command: '', divider: true, positionOrder: 48 },
           {
@@ -1408,7 +1426,15 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'FILTER_SHORTCUTS',
           },
           { command: '', divider: true, positionOrder: 56 },
-          { _orgTitle: '', command: 'hide-column', iconCssClass: 'mdi mdi-close', positionOrder: 59, title: 'Hide Column', titleKey: 'HIDE_COLUMN' },
+          {
+            _orgTitle: '',
+            command: 'hide-column',
+            iconCssClass: 'mdi mdi-close',
+            positionOrder: 59,
+            title: 'Hide Column',
+            titleKey: 'HIDE_COLUMN',
+            action: expect.any(Function),
+          },
         ];
         const shortcutSubMenuElm = gridContainerDiv.querySelector('[data-command="filter-shortcuts-root-menu"]') as HTMLDivElement;
         shortcutSubMenuElm!.dispatchEvent(new Event('mouseover'));
@@ -1452,9 +1478,18 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'FREEZE_COLUMNS',
             command: 'freeze-columns',
             positionOrder: 45,
+            action: expect.any(Function),
           },
           { divider: true, command: '', positionOrder: 48 },
-          { _orgTitle: '', iconCssClass: 'mdi mdi-close', title: 'Hide Column', titleKey: 'HIDE_COLUMN', command: 'hide-column', positionOrder: 59 },
+          {
+            _orgTitle: '',
+            iconCssClass: 'mdi mdi-close',
+            title: 'Hide Column',
+            titleKey: 'HIDE_COLUMN',
+            command: 'hide-column',
+            positionOrder: 59,
+            action: expect.any(Function),
+          },
         ];
         const commandDivElm = gridContainerDiv.querySelector('[data-command="hide-column"]') as HTMLDivElement;
         const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
@@ -1490,6 +1525,7 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'REMOVE_FILTER',
             command: 'clear-filter',
             positionOrder: 57,
+            action: expect.any(Function),
           },
         ];
         const commandDivElm = gridContainerDiv.querySelector('[data-command="clear-filter"]') as HTMLDivElement;
@@ -1530,6 +1566,7 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'SORT_ASCENDING',
             command: 'sort-asc',
             positionOrder: 50,
+            action: expect.any(Function),
           },
           {
             _orgTitle: '',
@@ -1538,9 +1575,18 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'SORT_DESCENDING',
             command: 'sort-desc',
             positionOrder: 51,
+            action: expect.any(Function),
           },
           { divider: true, command: '', positionOrder: 52 },
-          { _orgTitle: '', iconCssClass: 'mdi mdi-sort-variant-off', title: 'Remove Sort', titleKey: 'REMOVE_SORT', command: 'clear-sort', positionOrder: 58 },
+          {
+            _orgTitle: '',
+            iconCssClass: 'mdi mdi-sort-variant-off',
+            title: 'Remove Sort',
+            titleKey: 'REMOVE_SORT',
+            command: 'clear-sort',
+            positionOrder: 58,
+            action: expect.any(Function),
+          },
         ]);
         expect(commandIconElm.classList.contains('mdi-sort-variant-off')).toBeTruthy();
         expect(commandLabelElm.textContent).toBe('Remove Sort');
@@ -1555,6 +1601,7 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'SORT_ASCENDING',
             command: 'sort-asc',
             positionOrder: 50,
+            action: expect.any(Function),
           },
           {
             _orgTitle: '',
@@ -1563,6 +1610,7 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'SORT_DESCENDING',
             command: 'sort-desc',
             positionOrder: 51,
+            action: expect.any(Function),
           },
           { divider: true, command: '', positionOrder: 52 },
           {
@@ -1572,6 +1620,7 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'REMOVE_SORT',
             command: 'clear-sort',
             positionOrder: 58,
+            action: expect.any(Function),
           },
         ]);
 
@@ -1611,6 +1660,7 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'FREEZE_COLUMNS',
             command: 'freeze-columns',
             positionOrder: 45,
+            action: expect.any(Function),
           },
           { divider: true, command: '', positionOrder: 48 },
         ]);
@@ -1655,6 +1705,7 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'FREEZE_COLUMNS',
             command: 'freeze-columns',
             positionOrder: 45,
+            action: expect.any(Function),
           },
           { divider: true, command: '', positionOrder: 48 },
         ]);
@@ -1695,6 +1746,7 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'SORT_ASCENDING',
             command: 'sort-asc',
             positionOrder: 50,
+            action: expect.any(Function),
           },
           {
             _orgTitle: '',
@@ -1703,9 +1755,18 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'SORT_DESCENDING',
             command: 'sort-desc',
             positionOrder: 51,
+            action: expect.any(Function),
           },
           { divider: true, command: '', positionOrder: 52 },
-          { _orgTitle: '', iconCssClass: 'mdi mdi-sort-variant-off', title: 'Remove Sort', titleKey: 'REMOVE_SORT', command: 'clear-sort', positionOrder: 58 },
+          {
+            _orgTitle: '',
+            iconCssClass: 'mdi mdi-sort-variant-off',
+            title: 'Remove Sort',
+            titleKey: 'REMOVE_SORT',
+            command: 'clear-sort',
+            positionOrder: 58,
+            action: expect.any(Function),
+          },
         ]);
 
         const clickEvent = new Event('click');
@@ -1747,6 +1808,7 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'SORT_ASCENDING',
             command: 'sort-asc',
             positionOrder: 50,
+            action: expect.any(Function),
           },
           {
             _orgTitle: '',
@@ -1755,9 +1817,18 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'SORT_DESCENDING',
             command: 'sort-desc',
             positionOrder: 51,
+            action: expect.any(Function),
           },
           { divider: true, command: '', positionOrder: 52 },
-          { _orgTitle: '', iconCssClass: 'mdi mdi-sort-variant-off', title: 'Remove Sort', titleKey: 'REMOVE_SORT', command: 'clear-sort', positionOrder: 58 },
+          {
+            _orgTitle: '',
+            iconCssClass: 'mdi mdi-sort-variant-off',
+            title: 'Remove Sort',
+            titleKey: 'REMOVE_SORT',
+            command: 'clear-sort',
+            positionOrder: 58,
+            action: expect.any(Function),
+          },
         ]);
 
         const clickEvent = new Event('click');

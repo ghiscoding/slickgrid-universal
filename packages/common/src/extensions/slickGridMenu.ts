@@ -171,7 +171,11 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     // then sort all Grid Menu command items (sorted by pointer, no need to use the return)
     const gridMenuCommandItems = this._userOriginalGridMenu.commandItems;
     const originalCommandItems = this._userOriginalGridMenu && Array.isArray(gridMenuCommandItems) ? gridMenuCommandItems : [];
-    this._addonOptions.commandItems = [...originalCommandItems, ...this.addGridMenuCustomCommands(originalCommandItems)];
+
+    // merge the original commands with the built-in internal commands
+    const initialCommandItems = [...originalCommandItems, ...this.addGridMenuCustomCommands(originalCommandItems)];
+    this._addonOptions.commandItems =
+      (this._addonOptions.commandListBuilder?.(initialCommandItems) as Array<GridMenuItem | 'divider'>) ?? initialCommandItems;
     this.extensionUtility.translateMenuItemsFromTitleKey(this._addonOptions.commandItems || [], 'commandItems');
     this.extensionUtility.sortItems(this._addonOptions.commandItems, 'positionOrder');
 
@@ -555,6 +559,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
             disabled: false,
             command: commandName,
             positionOrder: 52,
+            action: this.clearPinning.bind(this),
           });
         }
       }
@@ -571,6 +576,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
               disabled: false,
               command: commandName,
               positionOrder: 50,
+              action: this.clearFilters.bind(this),
             });
           }
         }
@@ -586,6 +592,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
               disabled: false,
               command: commandName,
               positionOrder: 53,
+              action: this.toggleFilterBar.bind(this),
             });
           }
         }
@@ -601,6 +608,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
               disabled: false,
               command: commandName,
               positionOrder: 58,
+              action: () => this.extensionUtility.refreshBackendDataset(),
             });
           }
         }
@@ -617,6 +625,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
             disabled: false,
             command: commandName,
             positionOrder: 54,
+            action: this.toggleDarkMode.bind(this),
           });
         }
       }
@@ -633,6 +642,10 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
               disabled: false,
               command: commandName,
               positionOrder: 53,
+              action: () => {
+                const showPreHeaderPanel = this.gridOptions?.showPreHeaderPanel ?? false;
+                this.grid.setPreHeaderPanelVisibility(!showPreHeaderPanel);
+              },
             });
           }
         }
@@ -650,6 +663,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
               disabled: false,
               command: commandName,
               positionOrder: 51,
+              action: this.clearSorting.bind(this),
             });
           }
         }
@@ -666,6 +680,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
             disabled: false,
             command: commandName,
             positionOrder: 55,
+            action: this.exportCsv.bind(this),
           });
         }
       }
@@ -681,6 +696,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
             disabled: false,
             command: commandName,
             positionOrder: 56,
+            action: this.exportExcel.bind(this),
           });
         }
       }
@@ -696,6 +712,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
             disabled: false,
             command: commandName,
             positionOrder: 57,
+            action: this.exportPdf.bind(this),
           });
         }
       }
@@ -711,6 +728,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
             disabled: false,
             command: commandName,
             positionOrder: 58,
+            action: this.exportTextDelimited.bind(this),
           });
         }
       }
@@ -728,117 +746,110 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     return gridMenuCommandItems;
   }
 
-  /**
-   * Execute the Grid Menu Custom command callback that was triggered by the onCommand subscribe
-   * These are the default internal custom commands
-   * @param event
-   * @param GridMenuItem args
-   */
-  protected executeGridMenuInternalCustomCommands(_e: Event, args: GridMenuItem): void {
+  protected clearFilters(): void {
+    this.filterService.clearFilters();
+    this.sharedService.dataView.refresh();
+    this.pubSubService.publish('onGridMenuClearAllFilters');
+  }
+
+  protected clearPinning(): void {
+    const newGridOptions = { frozenColumn: -1, frozenRow: -1, frozenBottom: false, enableMouseWheelScrollHandler: false };
+    this.grid.setOptions(newGridOptions);
+    this.sharedService.gridOptions.frozenColumn = newGridOptions.frozenColumn;
+    this.sharedService.gridOptions.frozenRow = newGridOptions.frozenRow;
+    this.sharedService.gridOptions.frozenBottom = newGridOptions.frozenBottom;
+    this.sharedService.gridOptions.enableMouseWheelScrollHandler = newGridOptions.enableMouseWheelScrollHandler;
+
+    // re-update columns to reflect any possible changes
+    this.grid.updateColumns();
+
+    // we also need to autosize columns if the option is enabled
+    const gridOptions = this.gridOptions;
+    if (gridOptions.enableAutoSizeColumns) {
+      this.grid.autosizeColumns();
+    }
+    this.pubSubService.publish('onGridMenuClearAllPinning');
+  }
+
+  protected clearSorting(): void {
+    this.sortService.clearSorting();
+    this.sharedService.dataView.refresh();
+    this.pubSubService.publish('onGridMenuClearAllSorting');
+  }
+
+  protected exportCsv(): void {
     const registeredResources = this.sharedService?.externalRegisteredResources || [];
+    const exportCsvService: TextExportService = registeredResources.find((service: any) => service.className === 'TextExportService');
+    if (exportCsvService?.exportToFile) {
+      exportCsvService.exportToFile({
+        delimiter: ',',
+        format: 'csv',
+      });
+    } else {
+      console.error(
+        `[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu. Example:: this.gridOptions = { enableTextExport: true, externalResources: [new TextExportService()] };`
+      );
+    }
+  }
 
-    if (args?.command) {
-      switch (args.command) {
-        case 'clear-pinning':
-          const newGridOptions = { frozenColumn: -1, frozenRow: -1, frozenBottom: false, enableMouseWheelScrollHandler: false };
-          this.grid.setOptions(newGridOptions);
-          this.sharedService.gridOptions.frozenColumn = newGridOptions.frozenColumn;
-          this.sharedService.gridOptions.frozenRow = newGridOptions.frozenRow;
-          this.sharedService.gridOptions.frozenBottom = newGridOptions.frozenBottom;
-          this.sharedService.gridOptions.enableMouseWheelScrollHandler = newGridOptions.enableMouseWheelScrollHandler;
+  protected exportExcel(): void {
+    const registeredResources = this.sharedService?.externalRegisteredResources || [];
+    const excelService: ExcelExportService | undefined = registeredResources.find(
+      (service: any) => service.className === 'ExcelExportService'
+    );
+    if (excelService?.exportToExcel) {
+      excelService.exportToExcel();
+    } else {
+      console.error(
+        `[Slickgrid-Universal] You must register the ExcelExportService to properly use Export to Excel in the Grid Menu. Example:: this.gridOptions = { enableExcelExport: true, externalResources: [new ExcelExportService()] };`
+      );
+    }
+  }
 
-          // re-update columns to reflect any possible changes
-          this.grid.updateColumns();
+  protected exportPdf(): void {
+    const registeredResources = this.sharedService?.externalRegisteredResources || [];
+    const pdfService: PdfExportService | undefined = registeredResources.find((service: any) => service.className === 'PdfExportService');
+    if (pdfService?.exportToPdf) {
+      pdfService.exportToPdf();
+    } else {
+      console.error(
+        `[Slickgrid-Universal] You must register the PdfExportService to properly use Export to PDF in the Grid Menu. Example:: this.gridOptions = { enablePdfExport: true, externalResources: [new PdfExportService()] };`
+      );
+    }
+  }
 
-          // we also need to autosize columns if the option is enabled
-          const gridOptions = this.gridOptions;
-          if (gridOptions.enableAutoSizeColumns) {
-            this.grid.autosizeColumns();
-          }
-          this.pubSubService.publish('onGridMenuClearAllPinning');
-          break;
-        case 'clear-filter':
-          this.filterService.clearFilters();
-          this.sharedService.dataView.refresh();
-          this.pubSubService.publish('onGridMenuClearAllFilters');
-          break;
-        case 'clear-sorting':
-          this.sortService.clearSorting();
-          this.sharedService.dataView.refresh();
-          this.pubSubService.publish('onGridMenuClearAllSorting');
-          break;
-        case 'export-csv':
-          const exportCsvService: TextExportService = registeredResources.find((service: any) => service.className === 'TextExportService');
-          if (exportCsvService?.exportToFile) {
-            exportCsvService.exportToFile({
-              delimiter: ',',
-              format: 'csv',
-            });
-          } else {
-            console.error(
-              `[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu. Example:: this.gridOptions = { enableTextExport: true, externalResources: [new TextExportService()] };`
-            );
-          }
-          break;
-        case 'export-excel':
-          const excelService: ExcelExportService = registeredResources.find((service: any) => service.className === 'ExcelExportService');
-          if (excelService?.exportToExcel) {
-            excelService.exportToExcel();
-          } else {
-            console.error(
-              `[Slickgrid-Universal] You must register the ExcelExportService to properly use Export to Excel in the Grid Menu. Example:: this.gridOptions = { enableExcelExport: true, externalResources: [new ExcelExportService()] };`
-            );
-          }
-          break;
-        case 'export-pdf':
-          const pdfService: PdfExportService = registeredResources.find((service: any) => service.className === 'PdfExportService');
-          if (pdfService?.exportToPdf) {
-            pdfService.exportToPdf();
-          } else {
-            console.error(
-              `[Slickgrid-Universal] You must register the PdfExportService to properly use Export to PDF in the Grid Menu. Example:: this.gridOptions = { enablePdfExport: true, externalResources: [new PdfExportService()] };`
-            );
-          }
-          break;
-        case 'export-text-delimited':
-          const exportTxtService: TextExportService = registeredResources.find((service: any) => service.className === 'TextExportService');
-          if (exportTxtService?.exportToFile) {
-            exportTxtService.exportToFile({
-              delimiter: '\t',
-              format: 'txt',
-            });
-          } else {
-            console.error(
-              `[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu. Example:: this.gridOptions = { enableTextExport: true, externalResources: [new TextExportService()] };`
-            );
-          }
-          break;
-        case 'toggle-dark-mode':
-          const currentDarkMode = this.sharedService.gridOptions.darkMode;
-          this.grid.setOptions({ darkMode: !currentDarkMode });
-          this.sharedService.gridOptions.darkMode = !currentDarkMode;
-          break;
-        case 'toggle-filter':
-          let showHeaderRow = this.gridOptions?.showHeaderRow ?? false;
-          showHeaderRow = !showHeaderRow; // inverse show header flag
-          this.grid.setHeaderRowVisibility(showHeaderRow);
+  protected exportTextDelimited(): void {
+    const registeredResources = this.sharedService?.externalRegisteredResources || [];
+    const exportTxtService: TextExportService | undefined = registeredResources.find(
+      (service: any) => service.className === 'TextExportService'
+    );
+    if (exportTxtService?.exportToFile) {
+      exportTxtService.exportToFile({
+        delimiter: '\t',
+        format: 'txt',
+      });
+    } else {
+      console.error(
+        `[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu. Example:: this.gridOptions = { enableTextExport: true, externalResources: [new TextExportService()] };`
+      );
+    }
+  }
 
-          // when displaying header row, we'll call "setColumns" which in terms will recreate the header row filters
-          if (showHeaderRow === true) {
-            this.grid.updateColumns();
-            this.grid.scrollColumnIntoView(0); // quick fix to avoid filter being out of sync with horizontal scroll
-          }
-          break;
-        case 'toggle-preheader':
-          const showPreHeaderPanel = this.gridOptions?.showPreHeaderPanel ?? false;
-          this.grid.setPreHeaderPanelVisibility(!showPreHeaderPanel);
-          break;
-        case 'refresh-dataset':
-          this.extensionUtility.refreshBackendDataset();
-          break;
-        default:
-          break;
-      }
+  protected toggleDarkMode(): void {
+    const currentDarkMode = this.sharedService.gridOptions.darkMode;
+    this.grid.setOptions({ darkMode: !currentDarkMode });
+    this.sharedService.gridOptions.darkMode = !currentDarkMode;
+  }
+
+  protected toggleFilterBar(): void {
+    let showHeaderRow = this.gridOptions?.showHeaderRow ?? false;
+    showHeaderRow = !showHeaderRow; // inverse show header flag
+    this.grid.setHeaderRowVisibility(showHeaderRow);
+
+    // when displaying header row, we'll call "setColumns" which in terms will recreate the header row filters
+    if (showHeaderRow === true) {
+      this.grid.updateColumns();
+      this.grid.scrollColumnIntoView(0); // quick fix to avoid filter being out of sync with horizontal scroll
     }
   }
 
@@ -898,7 +909,6 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
         // execute Grid Menu callback with command,
         // we'll also execute optional user defined onCommand callback when provided
-        this.executeGridMenuInternalCustomCommands(event, callbackArgs);
         this.pubSubService.publish('onGridMenuCommand', callbackArgs);
         if (typeof this._addonOptions?.onCommand === 'function') {
           this._addonOptions.onCommand(event, callbackArgs);

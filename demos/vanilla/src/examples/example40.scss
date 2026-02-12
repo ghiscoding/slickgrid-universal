@@ -13,7 +13,7 @@ body {
   .slick-context-menu,
   .slick-grid-menu,
   .slick-header-menu {
-    .slick-menu-item:hover {
+    .slick-menu-item:hover:not(.slick-menu-item-disabled) {
       color: #0a34b5;
     }
   }

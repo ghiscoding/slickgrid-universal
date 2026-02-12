@@ -1,9 +1,41 @@
 import type { SlickGrid } from '../core/index.js';
-import type { Column, GridMenuCommandItemCallbackArgs, HeaderMenuCommandItemCallbackArgs, MenuFromCellCallbackArgs } from './index.js';
+import type {
+  Column,
+  GridMenuCommandItemCallbackArgs,
+  GridMenuItem,
+  HeaderMenuCommandItemCallbackArgs,
+  MenuCommandItem,
+  MenuFromCellCallbackArgs,
+} from './index.js';
 
 export interface MenuOption<T extends MenuFromCellCallbackArgs | GridMenuCommandItemCallbackArgs | HeaderMenuCommandItemCallbackArgs> {
   // --
   // Methods
+
+  /**
+   * Command builder, this function is executed after `commandItems: []` and is also the last call before rendering in the DOM.
+   * You would typically use this **instead** of the `commandItems: []`, since you can use this callback to filter/sort the final commands.
+   *
+   * // for example, you can spread the built-in commands with your own commands
+   * gridOptions: {
+   *   contextMenu: {
+   *     commandListBuilder: (builtInItems) => {
+   *       return [
+   *         ...builtInItems,
+   *         {
+   *           command: 'delete-row',
+   *           title: 'Delete Row',
+   *           iconCssClass: 'mdi mdi-delete text-danger',
+   *           action: () => alert('Delete row'),
+   *         }
+   *       ];
+   *     }
+   *   }
+   * }
+   */
+  commandListBuilder?: (
+    builtInItems: Array<MenuCommandItem | GridMenuItem | 'divider'>
+  ) => Array<MenuCommandItem | GridMenuItem | 'divider'>;
 
   /**
    * Default slot renderer for all menu items.
@@ -16,16 +48,16 @@ export interface MenuOption<T extends MenuFromCellCallbackArgs | GridMenuCommand
    *
    * @example
    * // Return HTML string
-   * defaultItemRenderer: (item, args) => `<div>${item.title}</div>`
+   * defaultItemRenderer: (cmdItem, args) => `<div>${cmdItem.title}</div>`
    *
    * // Return HTMLElement (e.g. Cell or Context Menu)
-   * defaultItemRenderer: (item, args) => {
+   * defaultItemRenderer: (cmdItem, args) => {
    *   const div = document.createElement('div');
-   *   div.textContent = `${item.title} (Row ${args.dataContext.id})`;
+   *   div.textContent = `${cmdItem.title} (Row ${args.dataContext.id})`;
    *   return div;
    * }
    */
-  defaultItemRenderer?: (item: any, args: T) => string | HTMLElement;
+  defaultItemRenderer?: (cmdItem: any, args: T) => string | HTMLElement;
 
   /** Callback method that user can override the default behavior of enabling/disabling an item from the list. */
   menuUsabilityOverride?: (args: { grid: SlickGrid; column: Column; menu: HTMLElement }) => boolean;

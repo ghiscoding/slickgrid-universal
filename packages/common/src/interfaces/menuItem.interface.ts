@@ -16,7 +16,10 @@ export interface MenuItem<O = MenuCallbackArgs> {
   /** CSS class to be added to the menu item icon. */
   iconCssClass?: string;
 
-  /** position order in the list, a lower number will make it on top of the list. Internal commands starts at 50. */
+  /**
+   * position order in the list, a lower number will make it on top of the list. Internal commands starts at 50.
+   * @deprecated @use `commandListBuilder`
+   */
   positionOrder?: number;
 
   /** Optional sub-menu title that will shows up when sub-menu commmands/options list is opened */
@@ -48,7 +51,7 @@ export interface MenuItem<O = MenuCallbackArgs> {
 
   /**
    * Slot renderer callback for the entire menu item.
-   * @param item - The menu item object
+   * @param cmdItem - The menu item object
    * @param args - The callback args providing access to grid, column, dataContext, etc.
    * @param event - Optional DOM event (passed during click handling) that allows the renderer to call stopPropagation()
    * @returns Either an HTML string or an HTMLElement
@@ -65,7 +68,7 @@ export interface MenuItem<O = MenuCallbackArgs> {
    *   return div;
    * }
    */
-  slotRenderer?: (item: any, args: O, event?: Event) => string | HTMLElement;
+  slotRenderer?: (cmdItem: any, args: O, event?: Event) => string | HTMLElement;
 
   // --
   // action/override callbacks

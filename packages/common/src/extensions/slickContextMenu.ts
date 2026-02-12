@@ -4,7 +4,6 @@ import type { SlickEventData, SlickGrid } from '../core/index.js';
 import type { ExtensionUtility } from '../extensions/extensionUtility.js';
 import { copyCellToClipboard } from '../formatters/formatterUtilities.js';
 import type {
-  Column,
   ContextMenu,
   ContextMenuOption,
   MenuCallbackArgs,
@@ -74,9 +73,10 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     this._addonOptions = { ...this._defaults, ...contextMenuOptions };
 
     // merge the original commands with the built-in internal commands
-    const originalCommandItems =
-      this._addonOptions && Array.isArray(this._addonOptions.commandItems) ? this._addonOptions.commandItems : [];
-    this._addonOptions.commandItems = [...originalCommandItems, ...this.addMenuCustomCommands(originalCommandItems)];
+    const originalCommandItems = Array.isArray(this._addonOptions?.commandItems) ? this._addonOptions.commandItems : [];
+    const initialCommandItems = [...originalCommandItems, ...this.addMenuCustomCommands(originalCommandItems)];
+    this._addonOptions.commandItems =
+      (this._addonOptions.commandListBuilder?.(initialCommandItems) as Array<MenuCommandItem | 'divider'>) ?? initialCommandItems;
     this._addonOptions = { ...this._addonOptions };
     this.sharedService.gridOptions.contextMenu = this._addonOptions;
 
@@ -174,7 +174,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
   /** Create Context Menu with Custom Commands (copy cell value, export) */
   protected addMenuCustomCommands(
     originalCommandItems: Array<MenuCommandItem | 'divider'>
-  ): (MenuCommandItem<MenuCommandItemCallbackArgs, MenuCallbackArgs<any>> | 'divider')[] {
+  ): Array<MenuCommandItem<MenuCommandItemCallbackArgs, MenuCallbackArgs<any>> | 'divider'> {
     const menuCommandItems: Array<MenuCommandItem | 'divider'> = [];
     const gridOptions = (this.sharedService && this.sharedService.gridOptions) || {};
     const contextMenu = gridOptions?.contextMenu;
@@ -198,8 +198,8 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
           action: (_e, args) => copyCellToClipboard(args as MenuCommandItemCallbackArgs),
           itemUsabilityOverride: (args: MenuCallbackArgs) => {
             // make sure there's an item to copy before enabling this command
-            const columnDef = args?.column as Column;
-            const dataContext = args?.dataContext;
+            const columnDef = args.column;
+            const dataContext = args.dataContext;
             if (typeof columnDef.queryFieldNameGetterFn === 'function') {
               const cellValue = getCellValueFromQueryFieldGetter(columnDef, dataContext, '');
               if (cellValue !== '' && cellValue !== undefined) {
@@ -229,7 +229,9 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
           positionOrder: 51,
           action: () => {
             const registedServices = this.sharedService?.externalRegisteredResources || [];
-            const excelService: TextExportService = registedServices.find((service: any) => service.className === 'TextExportService');
+            const excelService: TextExportService | undefined = registedServices.find(
+              (service: any) => service.className === 'TextExportService'
+            );
             if (excelService?.exportToFile) {
               excelService.exportToFile({
                 delimiter: ',',
@@ -284,7 +286,9 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
           positionOrder: 53,
           action: () => {
             const registedServices = this.sharedService?.externalRegisteredResources || [];
-            const pdfService: PdfExportService = registedServices.find((service: any) => service.className === 'PdfExportService');
+            const pdfService: PdfExportService | undefined = registedServices.find(
+              (service: any) => service.className === 'PdfExportService'
+            );
             if (pdfService?.exportToPdf) {
               pdfService.exportToPdf();
             } else {
@@ -310,7 +314,9 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
           positionOrder: 54,
           action: () => {
             const registedServices = this.sharedService?.externalRegisteredResources || [];
-            const excelService: TextExportService = registedServices.find((service: any) => service.className === 'TextExportService');
+            const excelService: TextExportService | undefined = registedServices.find(
+              (service: any) => service.className === 'TextExportService'
+            );
             if (excelService?.exportToFile) {
               excelService.exportToFile({
                 delimiter: '\t',
@@ -330,7 +336,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     if (gridOptions && (gridOptions.enableGrouping || gridOptions.enableDraggableGrouping || gridOptions.enableTreeData)) {
       // add a divider (separator) between the top sort commands and the other clear commands
       if (contextMenu && !contextMenu.hideCopyCellValueCommand) {
-        menuCommandItems.push({ divider: true, command: '', positionOrder: 54 });
+        menuCommandItems.push({ divider: true, command: 'divider-1', positionOrder: 54 });
       }
 
       // show context menu: Clear Grouping (except for Tree Data which shouldn't have this feature)
@@ -424,7 +430,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     return menuCommandItems;
   }
 
-  /** sort all menu items by their position order when defined */
+  /** @deprecated sort all menu items by their position order when defined */
   protected sortMenuItems(): void {
     const contextMenu = this.sharedService?.gridOptions?.contextMenu;
     if (contextMenu) {
