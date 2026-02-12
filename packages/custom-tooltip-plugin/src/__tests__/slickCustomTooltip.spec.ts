@@ -41,6 +41,7 @@ const gridStub = {
   getCellFromEvent: vi.fn(),
   getCellNode: vi.fn(),
   getColumns: vi.fn(),
+  getContainerNode: vi.fn(),
   getData: () => dataviewStub,
   getEditorLock: () => getEditorLockMock,
   getOptions: () => gridOptionsMock,
@@ -70,10 +71,14 @@ describe('SlickCustomTooltip plugin', () => {
     divContainer.className = `slickgrid-container ${GRID_UID}`;
     document.body.appendChild(divContainer);
     (getOffset as Mock).mockReturnValue({ top: 0, left: 0, right: 0, bottom: 0 });
+
+    // Register SharedService mock so plugin can access gridOptions
+    container.registerInstance('SharedService', { gridOptions: gridOptionsMock });
   });
 
   afterEach(() => {
     plugin.dispose();
+    delete gridOptionsMock.customTooltip;
     vi.clearAllMocks();
   });
 
@@ -93,6 +98,8 @@ describe('SlickCustomTooltip plugin', () => {
       whiteSpace: 'normal',
       autoHideDelay: 3000,
       persistOnHover: true,
+      observeAllTooltips: false,
+      observeTooltipContainer: '.slickgrid-container',
     };
     plugin.init(gridStub, container);
     plugin.setOptions(mockOptions);
@@ -1085,5 +1092,208 @@ describe('SlickCustomTooltip plugin', () => {
 
     const tooltipStillVisible = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
     expect(tooltipStillVisible).toBeTruthy();
+  });
+
+  describe('observeAllTooltips feature', () => {
+    let mockGridContainer: HTMLDivElement;
+
+    beforeEach(() => {
+      mockGridContainer = document.createElement('div');
+      mockGridContainer.className = 'grid-container';
+      document.body.appendChild(mockGridContainer);
+      vi.spyOn(gridStub, 'getContainerNode').mockReturnValue(mockGridContainer);
+    });
+
+    afterEach(() => {
+      mockGridContainer.remove();
+    });
+
+    it('should NOT create global listeners when observeAllTooltips is false (default)', () => {
+      plugin.init(gridStub, container);
+
+      const button = document.createElement('button');
+      button.title = 'Button tooltip';
+      document.body.appendChild(button);
+
+      const mouseoverEvent = new MouseEvent('mouseover', { bubbles: true });
+      button.dispatchEvent(mouseoverEvent);
+
+      const tooltipElm = document.body.querySelector('.slick-custom-tooltip');
+      expect(tooltipElm).toBeFalsy();
+
+      button.remove();
+    });
+
+    it('should create global listeners on document.body when observeAllTooltips is true with scope=document', () => {
+      gridOptionsMock.customTooltip = { observeAllTooltips: true, observeTooltipContainer: 'body' };
+      plugin.init(gridStub, container);
+
+      const button = document.createElement('button');
+      button.title = 'Button tooltip';
+      document.body.appendChild(button);
+
+      const mouseoverEvent = new MouseEvent('mouseover', { bubbles: true });
+      button.dispatchEvent(mouseoverEvent);
+
+      const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+      expect(tooltipElm).toBeTruthy();
+      expect(tooltipElm.textContent).toBe('Button tooltip');
+
+      button.remove();
+    });
+
+    it('should create global listeners on grid container when observeAllTooltips is true with scope=grid-container', () => {
+      gridOptionsMock.customTooltip = { observeAllTooltips: true, observeTooltipContainer: '.grid-container' };
+      plugin.init(gridStub, container);
+
+      const button = document.createElement('button');
+      button.title = 'Button in container';
+      mockGridContainer.appendChild(button);
+
+      const mouseoverEvent = new MouseEvent('mouseover', { bubbles: true });
+      button.dispatchEvent(mouseoverEvent);
+
+      const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+      expect(tooltipElm).toBeTruthy();
+      expect(tooltipElm.textContent).toBe('Button in container');
+
+      button.remove();
+    });
+
+    it('should show tooltip for element with data-slick-tooltip attribute', () => {
+      gridOptionsMock.customTooltip = { observeAllTooltips: true, observeTooltipContainer: 'body' };
+      plugin.init(gridStub, container);
+
+      const div = document.createElement('div');
+      div.setAttribute('data-slick-tooltip', 'Custom tooltip text');
+      document.body.appendChild(div);
+
+      const mouseoverEvent = new MouseEvent('mouseover', { bubbles: true });
+      div.dispatchEvent(mouseoverEvent);
+
+      const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+      expect(tooltipElm).toBeTruthy();
+      expect(tooltipElm.textContent).toBe('Custom tooltip text');
+
+      div.remove();
+    });
+
+    it('should hide tooltip when mouse leaves the element', () => {
+      gridOptionsMock.customTooltip = { observeAllTooltips: true, observeTooltipContainer: 'body' };
+      plugin.init(gridStub, container);
+
+      const button = document.createElement('button');
+      button.title = 'Button tooltip';
+      document.body.appendChild(button);
+
+      const mouseoverEvent = new MouseEvent('mouseover', { bubbles: true });
+      button.dispatchEvent(mouseoverEvent);
+
+      let tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+      expect(tooltipElm).toBeTruthy();
+
+      const mouseoutEvent = new MouseEvent('mouseout', { bubbles: true, relatedTarget: document.body });
+      Object.defineProperty(mouseoutEvent, 'target', { value: button, enumerable: true });
+      button.dispatchEvent(mouseoutEvent);
+
+      tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+      expect(tooltipElm).toBeFalsy();
+
+      button.remove();
+    });
+
+    it('should NOT show tooltip on grid elements when observeAllTooltips is enabled (to avoid duplicates)', () => {
+      gridOptionsMock.customTooltip = { observeAllTooltips: true, observeTooltipContainer: 'body' };
+      plugin.init(gridStub, container);
+
+      const cellNode = document.createElement('div');
+      cellNode.className = 'slick-cell';
+      cellNode.title = 'Cell tooltip';
+      document.body.appendChild(cellNode);
+
+      const mouseoverEvent = new MouseEvent('mouseover', { bubbles: true });
+      cellNode.dispatchEvent(mouseoverEvent);
+
+      // Should NOT create tooltip via global handler (grid events handle this)
+      const tooltipElm = document.body.querySelector('.slick-custom-tooltip');
+      expect(tooltipElm).toBeFalsy();
+
+      cellNode.remove();
+    });
+
+    it('should hide existing tooltip when moving to element without title attribute', () => {
+      gridOptionsMock.customTooltip = { observeAllTooltips: true, observeTooltipContainer: 'body' };
+      plugin.init(gridStub, container);
+
+      const button = document.createElement('button');
+      button.title = 'Button tooltip';
+      document.body.appendChild(button);
+
+      const mouseoverEvent = new MouseEvent('mouseover', { bubbles: true });
+      button.dispatchEvent(mouseoverEvent);
+
+      let tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+      expect(tooltipElm).toBeTruthy();
+
+      const div = document.createElement('div');
+      document.body.appendChild(div);
+
+      const mouseoverDiv = new MouseEvent('mouseover', { bubbles: true });
+      div.dispatchEvent(mouseoverDiv);
+
+      tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+      expect(tooltipElm).toBeFalsy();
+
+      button.remove();
+      div.remove();
+    });
+
+    it('should NOT hide tooltip when moving to tooltip element itself (persistOnHover)', () => {
+      gridOptionsMock.customTooltip = { observeAllTooltips: true, observeTooltipContainer: 'body', persistOnHover: false };
+      plugin.init(gridStub, container);
+
+      const button = document.createElement('button');
+      button.title = 'Button tooltip';
+      document.body.appendChild(button);
+
+      const mouseoverEvent = new MouseEvent('mouseover', { bubbles: true });
+      button.dispatchEvent(mouseoverEvent);
+
+      const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+      expect(tooltipElm).toBeTruthy();
+
+      const mouseoutEvent = new MouseEvent('mouseout', { bubbles: true, relatedTarget: tooltipElm });
+      Object.defineProperty(mouseoutEvent, 'target', { value: button, enumerable: true });
+      button.dispatchEvent(mouseoutEvent);
+
+      const tooltipStillVisible = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+      expect(tooltipStillVisible).toBeTruthy();
+
+      button.remove();
+    });
+
+    it('should properly clean up global listeners on dispose', () => {
+      gridOptionsMock.customTooltip = { observeAllTooltips: true, observeTooltipContainer: 'body' };
+      plugin.init(gridStub, container);
+
+      const button = document.createElement('button');
+      button.title = 'Button tooltip';
+      document.body.appendChild(button);
+
+      const mouseoverEvent = new MouseEvent('mouseover', { bubbles: true });
+      button.dispatchEvent(mouseoverEvent);
+
+      let tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+      expect(tooltipElm).toBeTruthy();
+
+      plugin.dispose();
+
+      // After dispose, new mouseover should not create tooltip
+      button.dispatchEvent(mouseoverEvent);
+      tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+      expect(tooltipElm).toBeFalsy();
+
+      button.remove();
+    });
   });
 });

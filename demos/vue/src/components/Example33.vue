@@ -12,6 +12,7 @@ import {
   type GridOption,
   type MenuCommandItemCallbackArgs,
   type MultipleSelectOption,
+  type OperatorType,
   type SlickGrid,
   type SlickgridVueInstance,
   type VanillaCalendarOption,
@@ -439,6 +440,8 @@ function defineGrid() {
       headerFormatter,
       headerRowFormatter,
       usabilityOverride: (args) => args.cell !== 0 && args?.column?.id !== 'action', // don't show on first/last columns
+      observeAllTooltips: true, // observe all elements with title/data-slick-tooltip attributes (not just SlickGrid elements)
+      observeTooltipContainer: 'body', // defaults to 'body', target a specific container (only works when observeAllTooltips is enabled)
     },
     presets: {
       filters: [{ columnId: 'prerequisites', searchTerms: [1, 3, 5, 7, 9, 12, 15, 18, 21, 25, 28, 29, 30, 32, 34] }],
@@ -493,7 +496,7 @@ function loadData(itemCount: number): any[] {
       id: i,
       title: 'Task ' + i,
       duration: Math.round(Math.random() * 100),
-      description: `This is a sample task description.\nIt can be multiline\r\rAnother line...`,
+      description: i > 500 ? null : `This is a sample task description.\nIt can be multiline\r\rAnother line...`,
       percentComplete: Math.floor(Math.random() * (100 - 5 + 1) + 5),
       start: new Date(randomYear, randomMonth, randomDay),
       finish: randomFinish < new Date() ? '' : randomFinish, // make sure the random date is earlier than today
@@ -557,6 +560,20 @@ function toggleSubTitle() {
   queueMicrotask(() => vueGrid.resizerService.resizeGrid());
 }
 
+function setFiltersDynamically(operator: string) {
+  const operatorType = operator === '=' ? '=' : '!=';
+  vueGrid.filterService.updateFilters(
+    [
+      {
+        columnId: 'desc',
+        operator: operatorType as OperatorType,
+        searchTerms: [''],
+      },
+    ],
+    true
+  );
+}
+
 function vueGridReady(grid: SlickgridVueInstance) {
   vueGrid = grid;
 }
@@ -596,8 +613,24 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <div class="row">
     <div class="col" style="margin-bottom: 20px">
-      <label for="pinned-rows">Simulated Server Delay (ms): </label>
+      <label for="server-delay">Simulated Server Delay (ms): </label>
       <input id="server-delay" class="ms-1" type="number" data-test="server-delay" style="width: 60px" v-model="serverApiDelay" />
+      <button
+        class="ms-2 btn btn-outline-secondary btn-sm"
+        data-test="filter-empty-desc"
+        @click="setFiltersDynamically('=')"
+        title="Apply filter to show only empty descriptions"
+      >
+        Filters Empty Description
+      </button>
+      <button
+        class="ms-2 btn btn-outline-secondary btn-sm"
+        data-test="filter-non-empty-desc"
+        @click="setFiltersDynamically('!=')"
+        title="Apply filter to show only non-empty descriptions"
+      >
+        Filters Non-Empty Description
+      </button>
     </div>
     <div class="alert alert-info is-narrow col" :class="{ invisible: !showLazyLoading }" data-test="alert-lazy">
       Lazy loading collection...

@@ -407,6 +407,8 @@ export class Example33Component implements OnInit {
         headerFormatter: this.headerFormatter,
         headerRowFormatter: this.headerRowFormatter,
         usabilityOverride: (args) => args.cell !== 0 && args?.column?.id !== 'action', // don't show on first/last columns
+        observeAllTooltips: true, // observe all elements with title/data-slick-tooltip attributes (not just SlickGrid elements)
+        observeTooltipContainer: 'body', // defaults to 'body', target a specific container (only works when observeAllTooltips is enabled)
       },
       presets: {
         filters: [{ columnId: 'prerequisites', searchTerms: [1, 3, 5, 7, 9, 12, 15, 18, 21, 25, 28, 29, 30, 32, 34] }],
@@ -461,7 +463,7 @@ export class Example33Component implements OnInit {
         id: i,
         title: 'Task ' + i,
         duration: Math.round(Math.random() * 100),
-        description: `This is a sample task description.\nIt can be multiline\r\rAnother line...`,
+        description: i > 500 ? null : `This is a sample task description.\nIt can be multiline\r\rAnother line...`,
         percentComplete: Math.floor(Math.random() * (100 - 5 + 1) + 5),
         start: new Date(randomYear, randomMonth, randomDay),
         finish: randomFinish < new Date() ? '' : randomFinish, // make sure the random date is earlier than today
@@ -568,5 +570,19 @@ export class Example33Component implements OnInit {
     const action = this.hideSubTitle ? 'add' : 'remove';
     document.querySelector('.subtitle')?.classList[action]('hidden');
     this.angularGrid.resizerService.resizeGrid(2);
+  }
+
+  setFiltersDynamically(operator: string) {
+    const operatorType = operator === '=' ? '=' : '!=';
+    this.angularGrid.filterService.updateFilters(
+      [
+        {
+          columnId: 'desc',
+          operator: operatorType,
+          searchTerms: [''],
+        },
+      ],
+      true
+    );
   }
 }

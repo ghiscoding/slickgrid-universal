@@ -266,18 +266,36 @@ describe('Example 33 - Regular & Custom Tooltips', () => {
     cy.get('@finish-header').trigger('mouseout');
   });
 
+  it('should mouse over "Filters Empty Description" button and expect global tooltip to show with title text', () => {
+    cy.get('[data-test="filter-empty-desc"]').trigger('mouseover');
+    cy.get('.slick-custom-tooltip').should('be.visible');
+    cy.get('.slick-custom-tooltip .tooltip-body').should('contain', 'Apply filter to show only empty descriptions');
+
+    cy.get('[data-test="filter-empty-desc"]').trigger('mouseout');
+    cy.get('[data-test="server-delay"]').trigger('mouseover'); // trigger mouseover on another element to make sure tooltip is hidden
+    cy.get('.slick-custom-tooltip').should('not.exist');
+  });
+
+  it('should mouse over "Filters Non-Empty Description" button and expect global tooltip to show with title text', () => {
+    cy.get('[data-test="filter-non-empty-desc"]').trigger('mouseover');
+    cy.wait(50);
+
+    cy.get('.slick-custom-tooltip').should('be.visible');
+    cy.get('.slick-custom-tooltip .tooltip-body').should('contain', 'Apply filter to show only non-empty descriptions');
+
+    cy.get('[data-test="filter-non-empty-desc"]').trigger('mouseout');
+    cy.wait(10);
+    cy.get('.slick-custom-tooltip').should('not.exist');
+  });
+
   it('should click Prerequisite editor of 1st row (Task 2) and expect Task1 & 2 to be selected in the multiple-select drop', () => {
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(10)`).as('prereq-cell');
     cy.get('@prereq-cell').should('contain', 'Task 2, Task 1').click();
 
     cy.get('div.ms-drop[data-name=editor-prerequisites]').find('li.selected').should('have.length', 2);
-
     cy.get('div.ms-drop[data-name=editor-prerequisites]').find('li.selected:nth(0) span').should('contain', 'Task 1');
-
     cy.get('div.ms-drop[data-name=editor-prerequisites]').find('li.selected:nth(1) span').should('contain', 'Task 2');
-
     cy.get('div.ms-drop[data-name=editor-prerequisites]').find('.ms-ok-button').click();
-
     cy.get('div.ms-drop[data-name=editor-prerequisites]').should('not.exist');
   });
 });
