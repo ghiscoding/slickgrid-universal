@@ -431,6 +431,24 @@ describe('SliderRangeFilter', () => {
     expect(rowMouseEnterSpy).not.toHaveBeenCalled();
   });
 
+  it('should trigger callback with clearFilterTriggered flag when calling clear() with filterWhileSliding enabled', () => {
+    mockColumn.filter = { operator: '>=', options: { filterWhileSliding: true } as SliderRangeOption };
+    filterArguments.searchTerms = [3, 80];
+    filter.init(filterArguments);
+
+    const callbackSpy = vi.spyOn(filterArguments, 'callback');
+
+    filter.clear();
+
+    expect(filter.currentValues).toEqual([0, 100]);
+    expect(callbackSpy).toHaveBeenCalledWith(expect.anything(), {
+      columnDef: mockColumn,
+      clearFilterTriggered: true,
+      searchTerms: [],
+      shouldTriggerQuery: true,
+    });
+  });
+
   it('should trigger "onHeaderRowMouseEnter" event when user interacts with left slider via input event', () => {
     filter.init(filterArguments);
     const rowMouseEnterSpy = vi.spyOn(gridStub.onHeaderRowMouseEnter, 'notify');

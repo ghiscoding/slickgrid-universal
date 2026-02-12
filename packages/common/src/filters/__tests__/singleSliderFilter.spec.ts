@@ -278,6 +278,37 @@ describe('SingleSliderFilter', () => {
     expect(rowMouseEnterSpy).not.toHaveBeenCalled();
   });
 
+  it('should call slideRightInputChanged with skipTriggerEvent=true when calling clear() on single slider', () => {
+    filterArgs.searchTerms = [3];
+    filter.init(filterArgs);
+
+    const slideRightSpy = vi.spyOn(filter as any, 'slideRightInputChanged');
+    const rowMouseEnterSpy = vi.spyOn(gridStub.onHeaderRowMouseEnter, 'notify');
+
+    filter.clear();
+
+    expect(slideRightSpy).toHaveBeenCalledWith(expect.anything(), true);
+    expect(rowMouseEnterSpy).not.toHaveBeenCalled();
+  });
+
+  it('should trigger callback with clearFilterTriggered flag when calling clear() with filterWhileSliding enabled', () => {
+    mockColumn.filter = { operator: '>=', options: { filterWhileSliding: true } };
+    filterArgs.searchTerms = [3];
+    filter.init(filterArgs);
+
+    const callbackSpy = vi.spyOn(filterArgs, 'callback');
+
+    filter.clear();
+
+    expect(filter.getValues()).toBe(0);
+    expect(callbackSpy).toHaveBeenCalledWith(expect.anything(), {
+      columnDef: mockColumn,
+      clearFilterTriggered: true,
+      searchTerms: [],
+      shouldTriggerQuery: true,
+    });
+  });
+
   it('should trigger "onHeaderRowMouseEnter" event when user interacts with slider via input event', () => {
     const rowMouseEnterSpy = vi.spyOn(gridStub.onHeaderRowMouseEnter, 'notify');
 
