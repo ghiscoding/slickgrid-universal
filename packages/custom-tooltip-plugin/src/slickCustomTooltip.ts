@@ -299,13 +299,16 @@ export class SlickCustomTooltip {
 
   /** Find the closest tooltip element based on attributes */
   protected findTooltipElement(target: HTMLElement | null): HTMLElement | null {
-    if (!target) return null;
-    const targetHasTooltipAttr = this.hasTooltipAttribute(target);
-    return target && findFirstAttribute(target, CLOSEST_TOOLTIP_FILLED_ATTR)
-      ? target
-      : !targetHasTooltipAttr
-        ? (target?.closest(SELECTOR_CLOSEST_TOOLTIP_ATTR) as HTMLElement)
-        : null;
+    if (target) {
+      const targetHasTooltipAttr = this.hasTooltipAttribute(target);
+      if (findFirstAttribute(target, CLOSEST_TOOLTIP_FILLED_ATTR)) {
+        return target;
+      }
+      if (!targetHasTooltipAttr) {
+        return target?.closest(SELECTOR_CLOSEST_TOOLTIP_ATTR) as HTMLElement;
+      }
+    }
+    return null;
   }
 
   /**
@@ -734,7 +737,10 @@ export class SlickCustomTooltip {
    * otherwise queries for a child element with a title attribute
    */
   protected findElementWithTitle(element: HTMLElement): Element | null {
-    return element.hasAttribute('title') && element.getAttribute('title') ? element : element.querySelector('[title]');
+    if (element.hasAttribute('title') && element.getAttribute('title')) {
+      return element;
+    }
+    return element.querySelector('[title]');
   }
 
   /** Swap title attribute to data-slick-tooltip and clear title to prevent native browser tooltip */
