@@ -21,7 +21,7 @@ import { SlickCellExternalCopyManager, SlickHybridSelectionModel } from './index
   where the browser copies/pastes the serialized data.
 */
 export class SlickCellExcelCopyManager {
-  pluginName: 'CellExcelCopyManager' = 'CellExcelCopyManager' as const;
+  readonly pluginName = 'CellExcelCopyManager';
 
   protected _addonOptions!: ExcelCopyBufferOption;
   protected _bindingEventService: BindingEventService;

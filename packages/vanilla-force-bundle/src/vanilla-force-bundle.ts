@@ -5,7 +5,6 @@ import type {
   Column,
   ExtensionService,
   ExtensionUtility,
-  ExternalResource,
   FilterService,
   GridEventService,
   GridOption,
@@ -166,9 +165,7 @@ export class VanillaForceGridBundle extends SlickVanillaGridBundle {
     // register all services by executing their init method and providing them with the Grid object
     if (Array.isArray(this._registeredResources)) {
       for (const resource of this._registeredResources) {
-        if (this.slickGrid && typeof (resource as ExternalResource).init === 'function') {
-          (resource as ExternalResource).init!(this.slickGrid, this.universalContainerService);
-        }
+        this.autoEnableInitializedResources(resource);
       }
     }
   }

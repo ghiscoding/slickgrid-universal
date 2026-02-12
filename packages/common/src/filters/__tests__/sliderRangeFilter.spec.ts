@@ -35,6 +35,7 @@ describe('SliderRangeFilter', () => {
   let mockColumn: Column;
 
   beforeEach(() => {
+    vi.clearAllMocks();
     translateService = new TranslateServiceStub();
     divContainer = document.createElement('div');
     divContainer.innerHTML = template;
@@ -390,6 +391,83 @@ describe('SliderRangeFilter', () => {
 
     expect(filter.currentValues).toEqual([4, 69]);
     expect(callbackSpy).toHaveBeenLastCalledWith(undefined, { columnDef: mockColumn, clearFilterTriggered: true, searchTerms: [], shouldTriggerQuery: false });
+  });
+
+  it('should NOT trigger "onHeaderRowMouseEnter" event when calling clear() method since it is a programmatic change', () => {
+    filterArguments.searchTerms = [3, 80];
+
+    filter.init(filterArguments);
+    const rowMouseEnterSpy = vi.spyOn(gridStub.onHeaderRowMouseEnter, 'notify');
+
+    filter.clear();
+
+    expect(filter.currentValues).toEqual([0, 100]);
+    expect(rowMouseEnterSpy).not.toHaveBeenCalled();
+  });
+
+  it('should call slideLeftInputChanged with skipTriggerEvent=true when calling clear() on double slider', () => {
+    filterArguments.searchTerms = [3, 80];
+    filter.init(filterArguments);
+
+    const slideLeftSpy = vi.spyOn(filter as any, 'slideLeftInputChanged');
+    const rowMouseEnterSpy = vi.spyOn(gridStub.onHeaderRowMouseEnter, 'notify');
+
+    filter.clear();
+
+    expect(slideLeftSpy).toHaveBeenCalledWith(expect.anything(), true);
+    expect(rowMouseEnterSpy).not.toHaveBeenCalled();
+  });
+
+  it('should call slideRightInputChanged with skipTriggerEvent=true when calling clear() on double slider', () => {
+    filterArguments.searchTerms = [3, 80];
+    filter.init(filterArguments);
+
+    const slideRightSpy = vi.spyOn(filter as any, 'slideRightInputChanged');
+    const rowMouseEnterSpy = vi.spyOn(gridStub.onHeaderRowMouseEnter, 'notify');
+
+    filter.clear();
+
+    expect(slideRightSpy).toHaveBeenCalledWith(expect.anything(), true);
+    expect(rowMouseEnterSpy).not.toHaveBeenCalled();
+  });
+
+  it('should trigger callback with clearFilterTriggered flag when calling clear() with filterWhileSliding enabled', () => {
+    mockColumn.filter = { operator: '>=', options: { filterWhileSliding: true } as SliderRangeOption };
+    filterArguments.searchTerms = [3, 80];
+    filter.init(filterArguments);
+
+    const callbackSpy = vi.spyOn(filterArguments, 'callback');
+
+    filter.clear();
+
+    expect(filter.currentValues).toEqual([0, 100]);
+    expect(callbackSpy).toHaveBeenCalledWith(expect.anything(), {
+      columnDef: mockColumn,
+      clearFilterTriggered: true,
+      searchTerms: [],
+      shouldTriggerQuery: true,
+    });
+  });
+
+  it('should trigger "onHeaderRowMouseEnter" event when user interacts with left slider via input event', () => {
+    filter.init(filterArguments);
+    const rowMouseEnterSpy = vi.spyOn(gridStub.onHeaderRowMouseEnter, 'notify');
+
+    const filterElms = divContainer.querySelectorAll<HTMLInputElement>('.search-filter.slider-container.filter-duration input');
+    filterElms[0].value = '15';
+    filterElms[0].dispatchEvent(new Event('input'));
+
+    expect(rowMouseEnterSpy).toHaveBeenCalledWith({ column: mockColumn, grid: gridStub }, expect.anything());
+  });
+
+  it('should trigger "onHeaderRowMouseEnter" event when user interacts with right slider via input event', () => {
+    filter.init(filterArguments);
+    const rowMouseEnterSpy = vi.spyOn(gridStub.onHeaderRowMouseEnter, 'notify');
+    const filterElms = divContainer.querySelectorAll<HTMLInputElement>('.search-filter.slider-container.filter-duration input');
+    filterElms[1].value = '75';
+    filterElms[1].dispatchEvent(new Event('input'));
+
+    expect(rowMouseEnterSpy).toHaveBeenCalledWith({ column: mockColumn, grid: gridStub }, expect.anything());
   });
 
   it('should enableSliderTrackColoring and trigger a change event and expect slider track to have background color', () => {

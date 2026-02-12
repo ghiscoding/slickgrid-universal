@@ -355,9 +355,6 @@ export default class Example03 {
       enableAutoSizeColumns: true,
       enableAutoResize: true,
       enableCellNavigation: true,
-      enablePdfExport: true,
-      enableTextExport: true,
-      enableExcelExport: true,
       excelExportOptions: {
         exportWithFormatter: true,
       },
@@ -367,6 +364,10 @@ export default class Example03 {
         repeatHeadersOnEachPage: true, // defaults to true
       },
       externalResources: [new TextExportService(), this.excelExportService, this.pdfExportService],
+      // -- NOTE: registered resources are auto-enabled
+      // enableTextExport: true,
+      // enablePdfExport: true,
+      // enableExcelExport: true,
       enableFiltering: true,
       selectionOptions: {
         // True (Single Selection), False (Multiple Selections)

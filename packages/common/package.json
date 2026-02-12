@@ -45,7 +45,7 @@
     "sass-build-task:scss-compile:material-lite": "sass src/styles/slickgrid-theme-material.lite.scss dist/styles/css/slickgrid-theme-material.lite.css --style=compressed --quiet-deps --no-source-map --load-path=node_modules",
     "sass-build-task:scss-compile:salesforce": "sass src/styles/slickgrid-theme-salesforce.scss dist/styles/css/slickgrid-theme-salesforce.css --style=compressed --quiet-deps --no-source-map --load-path=node_modules",
     "sass-build-task:scss-compile:salesforce-lite": "sass src/styles/slickgrid-theme-salesforce.lite.scss dist/styles/css/slickgrid-theme-salesforce.lite.css --style=compressed --quiet-deps --no-source-map --load-path=node_modules",
-    "sass:build": "concurrently --prefix none \"pnpm:sass-build-task:scss-compile:*\" && pnpm run sass:build:postcss",
+    "sass:build": "node ensure-sass-dir.mjs && concurrently --prefix none \"pnpm:sass-build-task:scss-compile:*\" && pnpm run sass:build:postcss",
     "sass:build:postcss": "postcss --no-map --use cssnano --use autoprefixer --dir dist/styles/css dist/styles/css --style=compressed --quiet-deps --no-source-map",
     "sass:copy": "copyfiles \"./src/styles/*.scss\" dist/styles/sass --flat --stat",
     "sass:watch:default": "npm run sass-build-task:scss-compile:default -- --watch",
@@ -74,7 +74,7 @@
     "vanilla-calendar-pro": "^3.1.0"
   },
   "devDependencies": {
-    "autoprefixer": "^10.4.23",
+    "autoprefixer": "^10.4.24",
     "concurrently": "catalog:",
     "cssnano": "^7.1.2",
     "native-copyfiles": "catalog:",

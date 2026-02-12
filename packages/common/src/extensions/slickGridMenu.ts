@@ -86,7 +86,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     headerColumnValueExtractor: (columnDef: Column) =>
       getHtmlStringOutput(columnDef.columnPickerLabel || columnDef.name || '', 'innerHTML'),
   } as GridMenuOption;
-  pluginName: 'GridMenu' = 'GridMenu' as const;
+  readonly pluginName = 'GridMenu';
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(

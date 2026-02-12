@@ -1,6 +1,14 @@
 import { Filters } from './filters/index.js';
 import type { Column, EmptyWarning, GridOption, RowDetailView, TreeDataOption } from './interfaces/index.js';
 
+export const PluginFlagMappings: Map<string, keyof GridOption> = new Map<string, keyof GridOption>([
+  ['ExcelExportService', 'enableExcelExport'],
+  ['PdfExportService', 'enablePdfExport'],
+  ['TextExportService', 'enableTextExport'],
+  ['CompositeEditorComponent', 'enableCompositeEditor'],
+  ['RowDetailView', 'enableRowDetailView'],
+]);
+
 /** Global Grid Options Defaults */
 export const GlobalGridOptions: Partial<GridOption> = {
   alwaysShowVerticalScroll: true,
@@ -140,8 +148,6 @@ export const GlobalGridOptions: Partial<GridOption> = {
   enableColumnReorder: true,
   enableColumnResizeOnDoubleClick: true,
   enableContextMenu: true,
-  enableExcelExport: false,
-  enableTextExport: false,
   enableGridMenu: true,
   enableHeaderMenu: true,
   enableMouseHoverHighlightRow: true,

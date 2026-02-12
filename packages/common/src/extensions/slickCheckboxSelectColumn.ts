@@ -25,7 +25,7 @@ const PARTIAL_CHECK_ICON = 'mdi-icon-partial-check';
 const DEFAULT_COLUMN_ID = '_checkbox_selector';
 
 export class SlickCheckboxSelectColumn<T = any> {
-  pluginName = 'CheckboxSelectColumn' as const;
+  readonly pluginName = 'CheckboxSelectColumn';
   protected _defaults = {
     columnId: DEFAULT_COLUMN_ID,
     cssClass: null,

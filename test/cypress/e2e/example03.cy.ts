@@ -296,11 +296,10 @@ describe('Example 03 - Draggable Grouping', () => {
     it('should expand all rows with "Expand All" from context menu and expect all the Groups to be expanded and the Toogle All icon to be collapsed', () => {
       cy.get('.grid3').find('.slick-row .slick-cell:nth(1)').rightclick({ force: true });
 
-      cy.get('.slick-context-menu.dropright .slick-menu-command-list')
-        .find('.slick-menu-item')
-        .find('.slick-menu-content')
-        .contains('Expand all Groups')
-        .click();
+      cy.get('.slick-context-menu .slick-menu-command-list').find('.slick-menu-content').contains('Export in CSV format');
+      cy.get('.slick-context-menu .slick-menu-command-list').find('.slick-menu-content').contains('Export to Excel');
+      cy.get('.slick-context-menu .slick-menu-command-list').find('.slick-menu-content').contains('Export to PDF');
+      cy.get('.slick-context-menu .slick-menu-command-list').find('.slick-menu-content').contains('Expand all Groups').click();
 
       cy.get('.grid3').find('.slick-group-toggle.collapsed').should('have.length', 0);
 

@@ -48,6 +48,7 @@ interface DataSelection {
 }
 
 export class SlickCompositeEditorComponent implements ExternalResource {
+  readonly pluginName = 'CompositeEditorComponent';
   protected _bindEventService: BindingEventService;
   protected _columns: Column[] = [];
   protected _compositeOptions!: CompositeEditorOption;

@@ -15,6 +15,7 @@ import {
   HeaderGroupingService,
   isColumnDateType,
   PaginationService,
+  PluginFlagMappings,
   ResizerService,
   SharedService,
   SlickDataView,
@@ -22,7 +23,6 @@ import {
   SlickGrid,
   SlickgridConfig,
   SlickGroupItemMetadataProvider,
-  sortPresetColumns,
   SortService,
   TreeDataService,
   type AutocompleterEditor,
@@ -72,7 +72,7 @@ const WARN_NO_PREPARSE_DATE_SIZE = 10000; // data size to warn user when pre-par
 
 export interface VueSlickRowDetailView {
   create(columns: Column[], gridOptions: GridOption): any;
-  init(grid: SlickGrid): void;
+  init(grid: SlickGrid, containerService?: ContainerService): void;
 }
 
 const attrs = useAttrs();
@@ -479,14 +479,14 @@ function initialization() {
     grid.registerPlugin(groupItemMetadataProvider); // register GroupItemMetadataProvider when Grouping is enabled
   }
 
+  // get any possible Services that user want to register
+  registerResources();
+
   extensionService.bindDifferentExtensions();
   bindDifferentHooks(grid, _gridOptions.value as GridOption, dataview);
 
   // when it's a frozen grid, we need to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward
   sharedService.frozenVisibleColumnId = grid.getFrozenColumnId();
-
-  // get any possible Services that user want to register
-  registerResources();
 
   // initialize the SlickGrid grid
   grid.init();
@@ -1275,46 +1275,13 @@ function loadEditorCollectionAsync(column: Column) {
   }
 }
 
-function insertDynamicPresetColumns(columnId: string, gridPresetColumns: Column<any>[]) {
-  if (_columnDefinitions.value) {
-    const columnPosition = _columnDefinitions.value.findIndex((c) => c.id === columnId);
-    if (columnPosition >= 0) {
-      const dynColumn = _columnDefinitions.value[columnPosition] as Column;
-      if (dynColumn?.id === columnId && !gridPresetColumns.some((c) => c.id === columnId)) {
-        columnPosition > 0 ? gridPresetColumns.splice(columnPosition, 0, dynColumn) : gridPresetColumns.unshift(dynColumn);
-      }
-    }
-  }
-}
-
 /** Load any possible Columns Grid Presets */
 function loadColumnPresetsWhenDatasetInitialized() {
   // if user entered some Columns "presets", we need to reflect them all in the grid
   if (_gridOptions.value.presets && Array.isArray(_gridOptions.value.presets.columns) && _gridOptions.value.presets.columns.length > 0) {
-    const gridPresetColumns: Column<any>[] = gridStateService.getAssociatedGridColumns(grid!, _gridOptions.value.presets.columns);
-    if (gridPresetColumns && Array.isArray(gridPresetColumns) && gridPresetColumns.length > 0 && Array.isArray(_columnDefinitions.value)) {
-      // make sure that the dynamic columns are included in presets (1.Row Move, 2. Row Selection, 3. Row Detail)
-      if (_gridOptions.value.enableRowMoveManager) {
-        const rmmColId = _gridOptions.value?.rowMoveManager?.columnId ?? '_move';
-        insertDynamicPresetColumns(rmmColId, gridPresetColumns);
-      }
-      if (_gridOptions.value.enableCheckboxSelector) {
-        const chkColId = _gridOptions.value?.checkboxSelector?.columnId ?? '_checkbox_selector';
-        insertDynamicPresetColumns(chkColId, gridPresetColumns);
-      }
-      if (_gridOptions.value.enableRowDetailView) {
-        const rdvColId = _gridOptions.value?.rowDetailView?.columnId ?? '_detail_selector';
-        insertDynamicPresetColumns(rdvColId, gridPresetColumns);
-      }
-
-      // keep copy the original optional `width` properties optionally provided by the user.
-      // We will use this when doing a resize by cell content, if user provided a `width` it won't override it.
-      gridPresetColumns.forEach((col) => (col.originalWidth = col.width));
-
-      // finally sort and set the new presets columns (including checkbox selector if need be)
-      const orderedColumns = sortPresetColumns(_columnDefinitions.value, gridPresetColumns);
-      grid?.setColumns(orderedColumns);
-    }
+    // delegate to GridStateService for centralized column arrangement logic
+    // we pass `false` for triggerAutoSizeColumns to maintain original behavior on preset load
+    gridStateService.changeColumnsArrangement(_gridOptions.value.presets.columns, false);
   }
 }
 
@@ -1436,12 +1403,28 @@ function mergeGridOptions(gridOptions: GridOption): GridOption {
   return options;
 }
 
+/** initialized & auto-enable external registered resources, e.g. if user registers `ExcelExportService` then let's auto-enable `enableExcelExport:true` */
+function autoEnableInitializedResources(resource: ExternalResource | ExternalResourceConstructor): void {
+  if (grid && typeof (resource as ExternalResource).init === 'function') {
+    (resource as ExternalResource).init!(grid, containerService);
+  }
+
+  // auto-enable unless the flag was specifically disabled by the end user
+  if ('pluginName' in (resource as ExternalResource)) {
+    const pluginFlagName = PluginFlagMappings.get((resource as ExternalResource).pluginName!);
+    if (pluginFlagName && _gridOptions.value[pluginFlagName] !== false) {
+      _gridOptions.value[pluginFlagName] = true;
+      grid?.setOptions({ [pluginFlagName]: true });
+    }
+  }
+}
+
 function initializeExternalResources(resources: Array<ExternalResource | ExternalResourceConstructor>) {
+  PluginFlagMappings.set('VueSlickRowDetailView', 'enableRowDetailView');
+
   if (Array.isArray(resources)) {
     for (const resource of resources) {
-      if (grid && typeof (resource as ExternalResource).init === 'function') {
-        (resource as ExternalResource).init!(grid, containerService);
-      }
+      autoEnableInitializedResources(resource);
     }
   }
 }
@@ -1454,7 +1437,7 @@ function preRegisterResources() {
   // register all services by executing their init method and providing them with the Grid object
   if (Array.isArray(registeredResources)) {
     for (const resource of registeredResources) {
-      if ((resource as ExternalResource)?.className === 'RxJsResource') {
+      if ((resource as ExternalResource)?.pluginName === 'RxJsResource') {
         registerRxJsResource(resource as RxJsFacade);
       }
     }

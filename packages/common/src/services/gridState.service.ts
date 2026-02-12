@@ -21,6 +21,7 @@ import type { TreeDataService } from './treeData.service.js';
 import { sortPresetColumns } from './utilities.js';
 
 export class GridStateService {
+  readonly pluginName = 'GridStateService';
   protected _eventHandler: SlickEventHandler;
   protected _columns: Column[] = [];
   protected _grid!: SlickGrid;
@@ -98,26 +99,29 @@ export class GridStateService {
     if (Array.isArray(definedColumns) && definedColumns.length > 0) {
       const newArrangedColumns: Column[] = this.getAssociatedGridColumns(this._grid, definedColumns);
 
-      if (newArrangedColumns && Array.isArray(newArrangedColumns) && newArrangedColumns.length > 0) {
+      if (Array.isArray(newArrangedColumns) && newArrangedColumns.length > 0) {
         // make sure that the checkbox selector is still visible in the list when it is enabled
         if (Array.isArray(this.sharedService.allColumns)) {
           const dynamicAddonColumnByIndexPositionList: { columnId: string; columnIndexPosition: number }[] = [];
 
           // make sure that the dynamic columns are included in presets (1.Row Move, 2. Row Selection, 3. Row Detail)
           if (this._gridOptions.enableRowMoveManager) {
-            const rmmColId = this._gridOptions?.rowMoveManager?.columnId ?? '_move';
-            const columnIndexPosition = this._gridOptions?.rowMoveManager?.columnIndexPosition ?? 0;
-            dynamicAddonColumnByIndexPositionList.push({ columnId: rmmColId, columnIndexPosition });
+            dynamicAddonColumnByIndexPositionList.push({
+              columnId: this._gridOptions?.rowMoveManager?.columnId ?? '_move',
+              columnIndexPosition: this._gridOptions?.rowMoveManager?.columnIndexPosition ?? 0,
+            });
           }
           if (this._gridOptions.enableCheckboxSelector) {
-            const chkColId = this._gridOptions?.checkboxSelector?.columnId ?? '_checkbox_selector';
-            const columnIndexPosition = this._gridOptions?.checkboxSelector?.columnIndexPosition ?? 0;
-            dynamicAddonColumnByIndexPositionList.push({ columnId: chkColId, columnIndexPosition });
+            dynamicAddonColumnByIndexPositionList.push({
+              columnId: this._gridOptions?.checkboxSelector?.columnId ?? '_checkbox_selector',
+              columnIndexPosition: this._gridOptions?.checkboxSelector?.columnIndexPosition ?? 0,
+            });
           }
           if (this._gridOptions.enableRowDetailView) {
-            const rdvColId = this._gridOptions?.rowDetailView?.columnId ?? '_detail_selector';
-            const columnIndexPosition = this._gridOptions?.rowDetailView?.columnIndexPosition ?? 0;
-            dynamicAddonColumnByIndexPositionList.push({ columnId: rdvColId, columnIndexPosition });
+            dynamicAddonColumnByIndexPositionList.push({
+              columnId: this._gridOptions?.rowDetailView?.columnId ?? '_detail_selector',
+              columnIndexPosition: this._gridOptions?.rowDetailView?.columnIndexPosition ?? 0,
+            });
           }
 
           // since some features could have a `columnIndexPosition`, we need to make sure these indexes are respected in the column definitions

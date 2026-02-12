@@ -21,7 +21,7 @@ import type {
 import { SlickCellRangeDecorator } from './index.js';
 
 export class SlickCellRangeSelector {
-  pluginName: 'CellRangeSelector' = 'CellRangeSelector' as const;
+  readonly pluginName = 'CellRangeSelector';
   onBeforeCellRangeSelected: SlickEvent<{ row: number; cell: number }>;
   onCellRangeSelecting: SlickEvent<{ range: SlickRange; selectionMode: string; allowAutoEdit: boolean }>;
   onCellRangeSelected: SlickEvent<{ range: SlickRange; selectionMode: string; allowAutoEdit: boolean }>;

@@ -5,6 +5,7 @@ import type { ExtensionUtility } from '../extensions/extensionUtility.js';
 import type { GridOption } from './../interfaces/index.js';
 
 export class HeaderGroupingService {
+  readonly pluginName = 'HeaderGroupingService';
   protected _eventHandler: SlickEventHandler;
   protected _grid!: SlickGrid;
   protected _subscriptions: EventSubscription[] = [];

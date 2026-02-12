@@ -10,6 +10,7 @@ import {
 } from '@slickgrid-universal/common';
 
 export class SlickEmptyWarningComponent implements ExternalResource {
+  readonly pluginName = 'EmptyWarningComponent';
   protected _grid!: SlickGrid;
   protected _isPreviouslyShown = false;
   protected _translaterService?: TranslaterService | null;

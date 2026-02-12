@@ -27,7 +27,7 @@ export interface CreatedView {
 }
 
 export class ReactSlickRowDetailView extends UniversalSlickRowDetailView {
-  static pluginName = 'ReactSlickRowDetailView';
+  static readonly pluginName = 'ReactSlickRowDetailView';
   protected _component?: any;
   protected _preloadComponent?: any;
   protected _preloadRoot?: Root;

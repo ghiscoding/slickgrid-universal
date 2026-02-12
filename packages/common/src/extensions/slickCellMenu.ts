@@ -33,7 +33,7 @@ import { MenuFromCellBaseClass } from './menuFromCellBaseClass.js';
  *   }];
  */
 export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
-  pluginName: 'CellMenu' = 'CellMenu' as const;
+  readonly pluginName = 'CellMenu';
 
   protected _defaults = {
     autoAdjustDrop: true, // dropup/dropdown

@@ -12,7 +12,7 @@ import type { CellRangeDecoratorOption, CSSStyleDeclarationWritable } from '../i
 export class SlickCellRangeDecorator {
   // --
   // public API
-  pluginName = 'CellRangeDecorator' as const;
+  readonly pluginName = 'CellRangeDecorator';
 
   protected _options: CellRangeDecoratorOption;
   protected _elem?: HTMLDivElement | null;

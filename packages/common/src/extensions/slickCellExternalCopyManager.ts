@@ -35,7 +35,7 @@ const noop = () => {};
   where the browser copies/pastes the serialized data.
 */
 export class SlickCellExternalCopyManager {
-  pluginName: 'CellExternalCopyManager' = 'CellExternalCopyManager' as const;
+  readonly pluginName = 'CellExternalCopyManager';
   onCopyCells: SlickEvent<{ ranges: SlickRange[] }>;
   onCopyCancelled: SlickEvent<{ ranges: SlickRange[] }>;
   onPasteCells: SlickEvent<{ ranges: SlickRange[] }>;
@@ -197,7 +197,7 @@ export class SlickCellExternalCopyManager {
           cancelChanges: noop,
           commitChanges: noop,
         }) as Editor;
-        editor.loadValue(item);
+        editor.loadValue({ ...item, [columnDef.field]: value });
         const validationResults = editor.validate(undefined, value);
         if (!validationResults.valid) {
           const activeCell = this._grid.getActiveCell()!;
