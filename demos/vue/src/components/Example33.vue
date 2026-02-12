@@ -188,8 +188,11 @@ function defineGrid() {
       filterable: true,
       excludeFromExport: true,
       formatter: (_row: number, _cell: number, value: any) => {
-        const button = createDomElement('button', { className: 'btn btn-outline-secondary btn-sm', title: 'This is the button tooltip' });
-        const icon = createDomElement('span', { className: 'mdi mdi-information', title: 'icon tooltip' });
+        const button = createDomElement('button', {
+          className: 'btn btn-outline-secondary btn-icon btn-sm',
+          title: 'This is the button tooltip',
+        });
+        const icon = createDomElement('i', { className: 'mdi mdi-information', title: 'icon tooltip' });
         const text = createDomElement('span', { textContent: 'Hello Task' });
         button.appendChild(icon);
         button.appendChild(text);
@@ -639,21 +642,21 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <label for="server-delay">Simulated Server Delay (ms): </label>
       <input id="server-delay" class="ms-1" type="number" data-test="server-delay" style="width: 60px" v-model="serverApiDelay" />
       <button
-        class="ms-2 btn btn-outline-secondary btn-sm"
+        class="ms-2 btn btn-outline-secondary btn-icon btn-sm"
         data-test="filter-empty-desc"
         @click="setFiltersDynamically('=')"
         title="Apply filter to show only empty descriptions"
       >
-        <span class="mdi mdi-filter" title="icon tooltip for empty descriptions"></span>
+        <i class="mdi mdi-filter" title="icon tooltip for empty descriptions"></i>
         <span>Filters Empty Description</span>
       </button>
       <button
-        class="ms-2 btn btn-outline-secondary btn-sm"
+        class="ms-2 btn btn-outline-secondary btn-icon btn-sm"
         data-test="filter-non-empty-desc"
         @click="setFiltersDynamically('!=')"
         title="Apply filter to show only non-empty descriptions"
       >
-        <span class="mdi mdi-filter" title="icon tooltip for non-empty descriptions"></span>
+        <i class="mdi mdi-filter" title="icon tooltip for non-empty descriptions"></i>
         <span>Filters Non-Empty Description</span>
       </button>
     </div>

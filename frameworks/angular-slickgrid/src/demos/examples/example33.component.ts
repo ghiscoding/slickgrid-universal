@@ -154,8 +154,11 @@ export class Example33Component implements OnInit {
         filterable: true,
         excludeFromExport: true,
         formatter: (_row: number, _cell: number, value: any) => {
-          const button = createDomElement('button', { className: 'btn btn-outline-secondary btn-sm', title: 'This is the button tooltip' });
-          const icon = createDomElement('span', { className: 'mdi mdi-information', title: 'icon tooltip' });
+          const button = createDomElement('button', {
+            className: 'btn btn-outline-secondary btn-icon btn-sm',
+            title: 'This is the button tooltip',
+          });
+          const icon = createDomElement('i', { className: 'mdi mdi-information', title: 'icon tooltip' });
           const text = createDomElement('span', { textContent: 'Hello Task' });
           button.appendChild(icon);
           button.appendChild(text);
