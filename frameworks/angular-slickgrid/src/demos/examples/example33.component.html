@@ -40,7 +40,8 @@
         (click)="setFiltersDynamically('=')"
         title="Apply filter to show only empty descriptions"
       >
-        Filters Empty Description
+        <span class="mdi mdi-filter" title="icon tooltip for empty descriptions"></span>
+        <span>Filters Empty Description</span>
       </button>
       <button
         class="ms-2 btn btn-outline-secondary btn-sm"
@@ -48,7 +49,8 @@
         (click)="setFiltersDynamically('!=')"
         title="Apply filter to show only non-empty descriptions"
       >
-        Filters Non-Empty Description
+        <span class="mdi mdi-filter" title="icon tooltip for non-empty descriptions"></span>
+        <span>Filters Non-Empty Description</span>
       </button>
     </div>
     <div class="alert alert-info is-narrow col" [class]="!showLazyLoading() ? 'invisible' : ''" data-test="alert-lazy">

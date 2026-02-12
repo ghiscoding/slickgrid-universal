@@ -109,6 +109,59 @@ describe('SlickCustomTooltip plugin', () => {
     expect(plugin.getOptions()).toEqual(mockOptions);
   });
 
+  describe('truncateText() helper method', () => {
+    beforeEach(() => {
+      plugin.init(gridStub, container);
+    });
+
+    it('should return original text when maxLength is undefined', () => {
+      const result = (plugin as any).truncateText('hello world', undefined);
+      expect(result).toBe('hello world');
+    });
+
+    it('should return original text when maxLength is 0', () => {
+      const result = (plugin as any).truncateText('hello world', 0);
+      expect(result).toBe('hello world');
+    });
+
+    it('should return original text when text length is less than maxLength', () => {
+      const result = (plugin as any).truncateText('hello', 10);
+      expect(result).toBe('hello');
+    });
+
+    it('should return original text when text length equals maxLength', () => {
+      const result = (plugin as any).truncateText('hello', 5);
+      expect(result).toBe('hello');
+    });
+
+    it('should truncate text and add ellipsis when text exceeds maxLength', () => {
+      const result = (plugin as any).truncateText('hello world', 8);
+      expect(result).toBe('hello...');
+    });
+
+    it('should truncate text with minumum maxLength of 3 (to accommodate ellipsis)', () => {
+      const result = (plugin as any).truncateText('hello', 3);
+      expect(result).toBe('...');
+    });
+
+    it('should handle empty string', () => {
+      const result = (plugin as any).truncateText('', 10);
+      expect(result).toBe('');
+    });
+
+    it('should truncate long text to exact truncation point', () => {
+      const longText = 'The quick brown fox jumps over the lazy dog';
+      const result = (plugin as any).truncateText(longText, 20);
+      expect(result).toBe('The quick brown f...');
+      expect(result.length).toBe(20); // maxLength - 3 + 3 (for '...')
+    });
+
+    it('should preserve text when maxLength is null', () => {
+      const result = (plugin as any).truncateText('hello world', null);
+      expect(result).toBe('hello world');
+    });
+  });
+
   it('should return without creating a tooltip when column definition has "disableTooltip: true" when "onMouseEnter" event is triggered', () => {
     const cellNode = document.createElement('div');
     cellNode.className = 'slick-cell l2 r2';
@@ -890,6 +943,35 @@ describe('SlickCustomTooltip plugin', () => {
     expect(tooltipAfterAutoHide).toBeFalsy();
   });
 
+  it('should clear previous auto-hide timeout when showing new tooltip', () => {
+    const cellNode = document.createElement('div');
+    cellNode.className = 'slick-cell l2 r2';
+    cellNode.setAttribute('title', 'tooltip text');
+    const mockColumns = [{ id: 'firstName', field: 'firstName' }] as Column[];
+    vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+    vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+    vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
+
+    plugin.init(gridStub, container);
+    plugin.setOptions({ useRegularTooltip: false, persistOnHover: false, autoHideDelay: 3000, formatter: () => 'test tooltip' });
+
+    // Set internal state to simulate existing timeout
+    (plugin as any)._cellNodeElm = cellNode;
+    (plugin as any)._cellAddonOptions = plugin.getOptions();
+    (plugin as any)._autoHideTimeout = setTimeout(() => {}, 5000);
+    const oldTimeout = (plugin as any)._autoHideTimeout;
+
+    // Call renderTooltipFormatter directly - this should trigger bindPersistOnHoverEvents
+    // which should clear the previous _autoHideTimeout
+    (plugin as any).renderTooltipFormatter(() => 'test tooltip', { row: 0, cell: 0 }, 'value', mockColumns[0], { firstName: 'John', lastName: 'Doe' });
+
+    // Verify the old timeout was different from the new one
+    const newTimeout = (plugin as any)._autoHideTimeout;
+    expect(oldTimeout).not.toBe(newTimeout);
+    expect(newTimeout).toBeTruthy();
+  });
+
   it('should hide tooltip immediately when persistOnHover is enabled', () => {
     const cellNode = document.createElement('div');
     cellNode.className = 'slick-cell l2 r2';
@@ -1294,6 +1376,201 @@ describe('SlickCustomTooltip plugin', () => {
       expect(tooltipElm).toBeFalsy();
 
       button.remove();
+    });
+
+    // Nested tooltip tests
+    it('should show icon tooltip instead of button tooltip when hovering icon inside button', () => {
+      const cellNode = document.createElement('div');
+      cellNode.className = 'slick-cell l2 r2';
+      const button = document.createElement('button');
+      button.title = 'Button tooltip';
+      const icon = document.createElement('span');
+      icon.title = 'Icon tooltip';
+      button.appendChild(icon);
+      cellNode.appendChild(button);
+
+      const mockColumns = [
+        {
+          id: 'action',
+          field: 'action',
+          formatter: () => '<button title="Button tooltip"><span title="Icon tooltip"></span></button>',
+        },
+      ] as Column[];
+      vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+      vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ action: 'test' });
+
+      plugin.init(gridStub, container);
+      plugin.setOptions({ useRegularTooltip: true });
+
+      // Hover over the icon
+      gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: icon } as any);
+
+      const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+      expect(tooltipElm).toBeTruthy();
+      expect(tooltipElm.textContent).toBe('Icon tooltip');
+    });
+
+    it('should show button tooltip when hovering button with nested icon', () => {
+      const cellNode = document.createElement('div');
+      cellNode.className = 'slick-cell l2 r2';
+      const button = document.createElement('button');
+      button.title = 'Button tooltip';
+      const icon = document.createElement('span');
+      icon.title = 'Icon tooltip';
+      button.appendChild(icon);
+      cellNode.appendChild(button);
+
+      const mockColumns = [
+        {
+          id: 'action',
+          field: 'action',
+          formatter: () => '<button title="Button tooltip"><span title="Icon tooltip"></span></button>',
+        },
+      ] as Column[];
+      vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+      vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ action: 'test' });
+
+      plugin.init(gridStub, container);
+      plugin.setOptions({ useRegularTooltip: true });
+
+      // Hover over the button
+      gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: button } as any);
+
+      const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+      expect(tooltipElm).toBeTruthy();
+      expect(tooltipElm.textContent).toBe('Button tooltip');
+    });
+
+    it('should prioritize formatter tooltip over cell tooltip when useRegularTooltipFromFormatterOnly is enabled with nested elements', () => {
+      const cellNode = document.createElement('div');
+      cellNode.className = 'slick-cell l2 r2';
+      cellNode.setAttribute('title', 'Cell tooltip');
+      const button = document.createElement('button');
+      button.title = 'Button tooltip from formatter';
+      const icon = document.createElement('span');
+      icon.title = 'Icon tooltip from formatter';
+      button.appendChild(icon);
+      cellNode.appendChild(button);
+
+      const mockColumns = [
+        {
+          id: 'action',
+          field: 'action',
+          formatter: () => '<button title="Button tooltip from formatter"><span title="Icon tooltip from formatter"></span></button>',
+        },
+      ] as Column[];
+      vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+      vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ action: 'test' });
+
+      plugin.init(gridStub, container);
+      plugin.setOptions({ useRegularTooltip: true, useRegularTooltipFromFormatterOnly: true });
+
+      // Hover over the button - should show formatter tooltip, not cell tooltip
+      gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: button } as any);
+
+      const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+      expect(tooltipElm).toBeTruthy();
+      expect(tooltipElm.textContent).toBe('Button tooltip from formatter');
+    });
+
+    it('should clear title attributes from nested elements when using custom formatter tooltip', () => {
+      const cellNode = document.createElement('div');
+      cellNode.className = 'slick-cell l2 r2';
+      const button = document.createElement('button');
+      button.title = 'Button tooltip';
+      const icon = document.createElement('span');
+      icon.title = 'Icon tooltip';
+      button.appendChild(icon);
+      cellNode.appendChild(button);
+
+      const mockColumns = [
+        {
+          id: 'action',
+          field: 'action',
+          formatter: () => '<button title="Button tooltip"><span title="Icon tooltip"></span></button>',
+        },
+      ] as Column[];
+      vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+      vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ action: 'test' });
+
+      plugin.init(gridStub, container);
+      plugin.setOptions({
+        useRegularTooltip: false,
+        formatter: () => 'Custom tooltip',
+      });
+
+      gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
+
+      // Title attributes should be cleared to prevent native browser tooltips
+      const titleElements = cellNode.querySelectorAll('[title]');
+      titleElements.forEach((elm) => {
+        expect(elm.getAttribute('title')).toBe('');
+      });
+    });
+
+    it('should clear both cell and child element title attributes when both have titles', () => {
+      const cellNode = document.createElement('div');
+      cellNode.className = 'slick-cell l2 r2';
+      cellNode.setAttribute('title', 'Cell tooltip');
+      const childButton = document.createElement('button');
+      childButton.title = 'Button tooltip';
+      cellNode.appendChild(childButton);
+
+      const mockColumns = [
+        {
+          id: 'action',
+          field: 'action',
+          formatter: () => '<button title="Button tooltip">Click me</button>',
+        },
+      ] as Column[];
+      vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
+      vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ action: 'test' });
+
+      plugin.init(gridStub, container);
+      plugin.setOptions({ useRegularTooltip: true });
+
+      // Hover over the cell node so that when searching for title elements,
+      // cellNode will have title and childButton will also have title
+      gridStub.onMouseEnter.notify({ grid: gridStub } as any, { ...new SlickEventData(), target: cellNode } as any);
+
+      // Both should have their title attributes cleared
+      expect(cellNode.getAttribute('title')).toBe('');
+      expect(childButton.getAttribute('title')).toBe('');
+    });
+
+    it('should handle global tooltip observation with nested elements', () => {
+      gridOptionsMock.customTooltip = { observeAllTooltips: true, observeTooltipContainer: 'body' };
+      plugin.init(gridStub, container);
+
+      const htmlContainer = document.createElement('div');
+      const button = document.createElement('button');
+      button.title = 'Button tooltip';
+      const icon = document.createElement('span');
+      icon.title = 'Icon tooltip';
+      button.appendChild(icon);
+      htmlContainer.appendChild(button);
+      document.body.appendChild(htmlContainer);
+
+      // Hover over the icon
+      const mouseoverEvent = new MouseEvent('mouseover', { bubbles: true });
+      Object.defineProperty(mouseoverEvent, 'target', { value: icon, enumerable: true });
+      htmlContainer.dispatchEvent(mouseoverEvent);
+
+      const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+      expect(tooltipElm).toBeTruthy();
+      expect(tooltipElm.textContent).toBe('Icon tooltip');
+
+      htmlContainer.remove();
     });
   });
 });

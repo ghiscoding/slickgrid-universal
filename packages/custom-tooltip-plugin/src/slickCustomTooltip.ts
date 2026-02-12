@@ -93,6 +93,7 @@ export class SlickCustomTooltip {
   protected _hideTooltipTimeout?: any;
   protected _autoHideTimeout?: any;
   protected _isMouseOverTooltip = false;
+  protected _isGridTooltip = false; // tracks if tooltip is from grid events vs global events
   protected _bindEventService: BindingEventService = new BindingEventService();
 
   constructor() {
@@ -188,22 +189,25 @@ export class SlickCustomTooltip {
       return;
     }
 
-    // check if target or its closest parent has a title attribute
-    const titleElm = target?.closest(SELECTOR_CLOSEST_TOOLTIP_ATTR) as HTMLElement;
+    // Always hide any existing tooltip first to prevent overlapping tooltips
+    this._isGridTooltip = false; // mark as global tooltip event
+    this.hideTooltip();
+
+    // Find element with tooltip
+    const titleElm = this.findTooltipElement(target);
+
     if (titleElm) {
       const tooltipText = findFirstAttribute(titleElm, CLOSEST_TOOLTIP_FILLED_ATTR);
       if (tooltipText) {
         this._cellNodeElm = titleElm;
         this._mouseTarget = titleElm;
         this._cellType = 'slick-cell'; // use as default type
+        this._hasMultipleTooltips = (titleElm?.querySelectorAll(SELECTOR_CLOSEST_TOOLTIP_ATTR).length || 0) > 1;
 
         // render the tooltip using regular tooltip mode
         this._cellAddonOptions = { ...this._addonOptions, useRegularTooltip: true };
         this.renderRegularTooltip(undefined, { row: -1, cell: -1 }, null, {} as Column, {});
       }
-    } else {
-      // if we moved to an element without title, hide any existing tooltip
-      this.hideTooltip();
     }
   }
 
@@ -227,11 +231,11 @@ export class SlickCustomTooltip {
   }
 
   protected handleOnMouseLeave(): void {
+    this._isGridTooltip = false; // reset tooltip type flag
     if (this.addonOptions?.persistOnHover === false) {
       if (this._hideTooltipTimeout) {
         clearTimeout(this._hideTooltipTimeout);
       }
-
       this._hideTooltipTimeout = setTimeout(() => {
         if (!this._isMouseOverTooltip) {
           this.hideTooltip();
@@ -251,15 +255,7 @@ export class SlickCustomTooltip {
     this._observable$?.unsubscribe();
 
     if (this.addonOptions?.persistOnHover === false) {
-      if (this._hideTooltipTimeout) {
-        clearTimeout(this._hideTooltipTimeout);
-        this._hideTooltipTimeout = undefined;
-      }
-      if (this._autoHideTimeout) {
-        clearTimeout(this._autoHideTimeout);
-        this._autoHideTimeout = undefined;
-      }
-
+      this.clearTimeouts();
       this._isMouseOverTooltip = false;
       this._bindEventService.unbindAll();
     }
@@ -280,6 +276,37 @@ export class SlickCustomTooltip {
   // --
   // protected functions
   // ---------------------
+
+  /** Clear all timeouts (hide and auto-hide) */
+  protected clearTimeouts(): void {
+    if (this._hideTooltipTimeout) {
+      clearTimeout(this._hideTooltipTimeout);
+      this._hideTooltipTimeout = undefined;
+    }
+    if (this._autoHideTimeout) {
+      clearTimeout(this._autoHideTimeout);
+      this._autoHideTimeout = undefined;
+    }
+  }
+
+  /** Truncate text if it exceeds maxLength */
+  protected truncateText(text: string, maxLength?: number): string {
+    if (maxLength && text.length > maxLength) {
+      return text.substring(0, maxLength - 3) + '...';
+    }
+    return text;
+  }
+
+  /** Find the closest tooltip element based on attributes */
+  protected findTooltipElement(target: HTMLElement | null): HTMLElement | null {
+    if (!target) return null;
+    const targetHasTooltipAttr = target?.hasAttribute('title') || target?.hasAttribute('data-slick-tooltip');
+    return target && findFirstAttribute(target, CLOSEST_TOOLTIP_FILLED_ATTR)
+      ? target
+      : !targetHasTooltipAttr
+        ? (target?.closest(SELECTOR_CLOSEST_TOOLTIP_ATTR) as HTMLElement)
+        : null;
+  }
 
   /**
    * Async process callback will hide any prior tooltip & then merge the new result with the item `dataContext` under a `__params` property
@@ -303,8 +330,12 @@ export class SlickCustomTooltip {
 
   /** depending on the selector type, execute the necessary handler code */
   protected handleOnHeaderMouseOverByType(event: SlickEventData, args: any, selector: CellType): void {
+    this._isGridTooltip = true; // mark as grid tooltip event
     this._cellType = selector;
-    this._mouseTarget = event.target?.closest(SELECTOR_CLOSEST_TOOLTIP_ATTR);
+
+    // Find element with tooltip
+    const target = event.target as HTMLElement;
+    this._mouseTarget = this.findTooltipElement(target);
 
     // before doing anything, let's remove any previous tooltip before
     // and cancel any opened Promise/Observable when using async
@@ -348,9 +379,18 @@ export class SlickCustomTooltip {
   }
 
   protected async handleOnMouseOver(event: SlickEventData): Promise<void> {
+    this._isGridTooltip = true; // mark as grid tooltip event
     this._cellType = 'slick-cell';
-    this._mouseTarget = event.target?.closest(SELECTOR_CLOSEST_TOOLTIP_ATTR);
 
+    // Find element with tooltip
+    const target = event.target as HTMLElement;
+    this._mouseTarget = this.findTooltipElement(target);
+
+    // if target has tooltip attribute but it's empty, return early to prevent showing parent/cell tooltip
+    const targetHasTooltipAttr = target?.hasAttribute('title') || target?.hasAttribute('data-slick-tooltip');
+    if (targetHasTooltipAttr && !this._mouseTarget) {
+      return;
+    }
     // before doing anything, let's remove any previous tooltip before
     // and cancel any opened Promise/Observable when using async
     this.hideTooltip();
@@ -395,6 +435,19 @@ export class SlickCustomTooltip {
             // when we aren't using regular tooltip and we do have a tooltip formatter, let's render it
             if (typeof this._cellAddonOptions?.formatter === 'function') {
               this.renderTooltipFormatter(this._cellAddonOptions.formatter, cell, cellValue, columnDef, item);
+
+              // Clear all title attributes from elements in the cell to prevent native browser tooltips
+              // This should happen whenever we're using custom tooltips (not regular tooltips)
+              if (!this._cellAddonOptions?.useRegularTooltip && this._cellNodeElm) {
+                const elementsWithTitle = this._cellNodeElm.querySelectorAll('[title]');
+                elementsWithTitle.forEach((elm) => {
+                  const title = elm.getAttribute('title');
+                  if (title) {
+                    elm.setAttribute('data-slick-tooltip', title);
+                    elm.setAttribute('title', '');
+                  }
+                });
+              }
             }
 
             // when tooltip is an Async (delayed, e.g. with a backend API call)
@@ -492,12 +545,17 @@ export class SlickCustomTooltip {
       ) {
         tooltipText = cellElm.textContent?.trim() ?? '';
         if (this._cellAddonOptions?.tooltipTextMaxLength && tooltipText.length > this._cellAddonOptions?.tooltipTextMaxLength) {
-          tooltipText = tooltipText.substring(0, this._cellAddonOptions.tooltipTextMaxLength - 3) + '...';
+          tooltipText = this.truncateText(tooltipText, this._cellAddonOptions.tooltipTextMaxLength);
         }
         tmpTitleElm = cellElm;
       } else {
         if (this._cellAddonOptions?.useRegularTooltipFromFormatterOnly) {
-          tmpTitleElm = tmpDiv.querySelector<HTMLDivElement>(SELECTOR_CLOSEST_TOOLTIP_ATTR);
+          // For nested tooltips in formatters, prioritize formatter output first, then fallback to cell element
+          tmpTitleElm = tmpDiv.querySelector<HTMLDivElement>(SELECTOR_CLOSEST_TOOLTIP_ATTR)
+            ? tmpDiv.querySelector<HTMLDivElement>(SELECTOR_CLOSEST_TOOLTIP_ATTR)
+            : cellElm && findFirstAttribute(cellElm, CLOSEST_TOOLTIP_FILLED_ATTR)
+              ? cellElm
+              : null;
         } else {
           tmpTitleElm = findFirstAttribute(cellElm, CLOSEST_TOOLTIP_FILLED_ATTR)
             ? cellElm
@@ -509,7 +567,12 @@ export class SlickCustomTooltip {
         }
 
         // prettier-ignore
-        if (tmpTitleElm?.style.display === 'none' || (this._hasMultipleTooltips && (!cellElm || cellElm === this._cellNodeElm))) {
+        // When in global tooltip observation mode (cell.row === -1), we always want to show the tooltip from the target element
+        // For grid cells with multiple tooltips, only hide if hovering the cell container itself (not a specific child element)
+        if (
+          tmpTitleElm?.style.display === 'none' ||
+          (cell.row !== -1 && this._hasMultipleTooltips && (!cellElm || cellElm === this._cellNodeElm))
+        ) {
           tooltipText = '';
         } else if (!tooltipText || (typeof formatterOrText === 'function' && this._cellAddonOptions?.useRegularTooltipFromFormatterOnly)) {
           tooltipText = findFirstAttribute(tmpTitleElm, CLOSEST_TOOLTIP_FILLED_ATTR) || '';
@@ -549,10 +612,7 @@ export class SlickCustomTooltip {
     }
 
     let outputText = tooltipText || this.parseFormatterAndSanitize(formatter, cell, value, columnDef, item) || '';
-    outputText =
-      this._cellAddonOptions?.tooltipTextMaxLength && outputText.length > this._cellAddonOptions.tooltipTextMaxLength
-        ? outputText.substring(0, this._cellAddonOptions.tooltipTextMaxLength - 3) + '...'
-        : outputText;
+    outputText = this.truncateText(outputText, this._cellAddonOptions?.tooltipTextMaxLength);
 
     let finalOutputText = '';
     if (!tooltipText || this._cellAddonOptions?.renderRegularTooltipAsHtml) {
@@ -563,7 +623,7 @@ export class SlickCustomTooltip {
       finalOutputText = outputText || '';
       this._tooltipBodyElm.textContent = finalOutputText;
       this._tooltipBodyElm.style.whiteSpace =
-        this._cellAddonOptions?.regularTooltipWhiteSpace ?? (this._defaultOptions.regularTooltipWhiteSpace as string); // use `pre` so that sequences of white space are collapsed. Lines are broken at newline characters
+        this._cellAddonOptions?.regularTooltipWhiteSpace ?? (this._defaultOptions.regularTooltipWhiteSpace as string);
     }
 
     // optional max height/width of the tooltip container
@@ -577,32 +637,33 @@ export class SlickCustomTooltip {
     // when do have text to show, then append the new tooltip to the html body & reposition the tooltip
     if (finalOutputText.toString()) {
       document.body.appendChild(this._tooltipElm);
-
-      if (this.addonOptions?.persistOnHover === false) {
-        this._bindEventService.bind(this._tooltipElm, 'mouseenter', () => {
-          this._isMouseOverTooltip = true;
-          if (this._hideTooltipTimeout) {
-            clearTimeout(this._hideTooltipTimeout);
-            this._hideTooltipTimeout = undefined;
-          }
-        });
-
-        this._bindEventService.bind(this._tooltipElm, 'mouseleave', () => {
-          this._isMouseOverTooltip = false;
-          this.hideTooltip();
-        });
-
-        // Auto-hide tooltip after 3 seconds regardless of mouse position
-        this._autoHideTimeout = setTimeout(() => {
-          this.hideTooltip();
-        }, this.addonOptions?.autoHideDelay);
-      }
-
-      // reposition the tooltip on top of the cell that triggered the mouse over event
+      this.bindPersistOnHoverEvents();
       this.reposition(cell);
-
-      // also clear any "title" attribute to avoid showing a 2nd browser tooltip
       this.swapAndClearTitleAttribute(inputTitleElm, outputText);
+    }
+  }
+
+  /** Bind mouseenter/mouseleave events to tooltip when persistOnHover is disabled */
+  protected bindPersistOnHoverEvents(): void {
+    if (this.addonOptions?.persistOnHover === false && this._tooltipElm) {
+      this._bindEventService.bind(this._tooltipElm, 'mouseenter', () => {
+        this._isMouseOverTooltip = true;
+        if (this._hideTooltipTimeout) {
+          clearTimeout(this._hideTooltipTimeout);
+          this._hideTooltipTimeout = undefined;
+        }
+      });
+
+      this._bindEventService.bind(this._tooltipElm, 'mouseleave', () => {
+        this._isMouseOverTooltip = false;
+        this.hideTooltip();
+      });
+
+      if (this._autoHideTimeout) {
+        clearTimeout(this._autoHideTimeout);
+      }
+      // Auto-hide tooltip after 3 seconds regardless of mouse position
+      this._autoHideTimeout = setTimeout(() => this.hideTooltip(), this.addonOptions?.autoHideDelay);
     }
   }
 
@@ -675,28 +736,33 @@ export class SlickCustomTooltip {
    * from the grid div text content so that it won't show also as a 2nd browser tooltip
    */
   protected swapAndClearTitleAttribute(inputTitleElm?: Element | null, tooltipText?: string): void {
-    // the title attribute might be directly on the slick-cell container element (when formatter returns a result object)
-    // OR in a child element (most commonly as a custom formatter)
+    let titleElm: Element | null | undefined = inputTitleElm;
     let cellWithTitleElm: Element | null | undefined;
-    if (inputTitleElm) {
-      cellWithTitleElm =
-        this._cellNodeElm &&
-        (this._cellNodeElm.hasAttribute('title') && this._cellNodeElm.getAttribute('title')
-          ? this._cellNodeElm
-          : this._cellNodeElm?.querySelector('[title]'));
-    }
-    // prettier-ignore
-    const titleElm = inputTitleElm || (this._cellNodeElm && ((this._cellNodeElm.hasAttribute('title') && this._cellNodeElm.getAttribute('title')) ? this._cellNodeElm : this._cellNodeElm?.querySelector('[title]')));
 
-    // flip tooltip text from `title` to `data-slick-tooltip`
+    // Only search for children in grid cells, not in global tooltip elements
+    if (!titleElm && this._cellNodeElm && this._isGridTooltip) {
+      titleElm =
+        this._cellNodeElm.hasAttribute('title') && this._cellNodeElm.getAttribute('title')
+          ? this._cellNodeElm
+          : this._cellNodeElm.querySelector('[title]');
+    }
+
+    // For grid cells with inputTitleElm matching cellNodeElm, also check for child elements with title attributes
+    if (this._isGridTooltip && inputTitleElm && inputTitleElm === this._cellNodeElm) {
+      cellWithTitleElm =
+        this._cellNodeElm.hasAttribute('title') && this._cellNodeElm.getAttribute('title')
+          ? this._cellNodeElm
+          : this._cellNodeElm.querySelector('[title]');
+    }
+
+    // Swap title to data-slick-tooltip and clear title to prevent native browser tooltip
     if (titleElm && tooltipText) {
-      titleElm.setAttribute('data-slick-tooltip', tooltipText || '');
+      titleElm.setAttribute('data-slick-tooltip', tooltipText);
       if (titleElm.hasAttribute('title')) {
         titleElm.setAttribute('title', '');
       }
-      // targeted element might actually not be the cell element,
-      // so let's also clear the cell element title attribute to avoid showing native + custom tooltips
-      if (cellWithTitleElm?.hasAttribute('title')) {
+      // Also clear cell element's title if it's different (only for grid cells)
+      if (cellWithTitleElm && cellWithTitleElm !== titleElm && cellWithTitleElm.hasAttribute('title')) {
         cellWithTitleElm.setAttribute('title', '');
       }
     }
