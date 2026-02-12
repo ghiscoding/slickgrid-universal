@@ -7607,12 +7607,17 @@ describe('SlickGrid core file', () => {
           { id: 'name', field: 'name', name: 'Name' },
           { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
         ] as Column[];
-        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        grid = new SlickGrid<any, Column>(container, items, columns, {
+          ...defaultOptions,
+          enableCellNavigation: true,
+          editable: true,
+          autoEdit: false,
+        });
         const onKeyDownSpy = vi.spyOn(grid.onKeyDown, 'notify');
         const event = new CustomEvent('keydown');
         const activateEditorSpy = vi.spyOn(grid.getEditorLock(), 'activate');
         Object.defineProperty(event, 'key', { writable: true, value: 'F2' });
-        grid.setActiveCell(0, 1);
+        grid.setActiveCell(0, 1, false);
         container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
 
         expect(onKeyDownSpy).toHaveBeenCalled();
