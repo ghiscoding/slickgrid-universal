@@ -1,6 +1,4 @@
-import type { SlickGrid } from '../core/index.js';
 import type {
-  Column,
   GridMenuCommandItemCallbackArgs,
   GridMenuItem,
   HeaderMenuCommandItemCallbackArgs,
@@ -60,5 +58,5 @@ export interface MenuOption<T extends MenuFromCellCallbackArgs | GridMenuCommand
   defaultItemRenderer?: (cmdItem: any, args: T) => string | HTMLElement;
 
   /** Callback method that user can override the default behavior of enabling/disabling an item from the list. */
-  menuUsabilityOverride?: (args: { grid: SlickGrid; column: Column; menu: HTMLElement }) => boolean;
+  menuUsabilityOverride?: (args: T) => boolean;
 }
