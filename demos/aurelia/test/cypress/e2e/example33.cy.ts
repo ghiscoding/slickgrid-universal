@@ -148,10 +148,10 @@ describe('Example 33 - Regular & Custom Tooltips', () => {
     cy.get('@button-cell').find('button').trigger('mouseout');
 
     // Hover over the icon inside the button and expect its tooltip
-    cy.get('@button-cell').find('span.mdi').trigger('mouseover');
+    cy.get('@button-cell').find('i.mdi').trigger('mouseover');
     cy.get('.slick-custom-tooltip').should('be.visible');
     cy.get('.slick-custom-tooltip').should('contain', 'icon tooltip');
-    cy.get('@button-cell').find('span.mdi').trigger('mouseout');
+    cy.get('@button-cell').find('i.mdi').trigger('mouseout');
   });
 
   it('should mouse over 2nd row Duration and expect a custom tooltip shown with 4 label/value pairs displayed', () => {
@@ -289,10 +289,10 @@ describe('Example 33 - Regular & Custom Tooltips', () => {
     cy.get('[data-test="filter-empty-desc"]').trigger('mouseout');
 
     // Test icon tooltip
-    cy.get('[data-test="filter-empty-desc"] span.mdi').trigger('mouseover');
+    cy.get('[data-test="filter-empty-desc"] i.mdi').trigger('mouseover');
     cy.get('.slick-custom-tooltip').should('be.visible');
     cy.get('.slick-custom-tooltip .tooltip-body').should('contain', 'icon tooltip for empty descriptions');
-    cy.get('[data-test="filter-empty-desc"] span.mdi').trigger('mouseout');
+    cy.get('[data-test="filter-empty-desc"] i.mdi').trigger('mouseout');
 
     // Verify tooltip is hidden when hovering on another element
     cy.get('[data-test="server-delay"]').trigger('mouseover');
@@ -308,11 +308,11 @@ describe('Example 33 - Regular & Custom Tooltips', () => {
     cy.get('[data-test="filter-non-empty-desc"]').trigger('mouseout');
 
     // Test icon tooltip
-    cy.get('[data-test="filter-non-empty-desc"] span.mdi').trigger('mouseover');
+    cy.get('[data-test="filter-non-empty-desc"] i.mdi').trigger('mouseover');
     cy.wait(10);
     cy.get('.slick-custom-tooltip').should('be.visible');
     cy.get('.slick-custom-tooltip .tooltip-body').should('contain', 'icon tooltip for non-empty descriptions');
-    cy.get('[data-test="filter-non-empty-desc"] span.mdi').trigger('mouseout');
+    cy.get('[data-test="filter-non-empty-desc"] i.mdi').trigger('mouseout');
     cy.wait(10);
     cy.get('.slick-custom-tooltip').should('not.exist');
   });
