@@ -21,7 +21,6 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "newLine": "lf",
-    "downlevelIteration": true,
     "outDir": "dist"
   },
   "include": ["src"],
