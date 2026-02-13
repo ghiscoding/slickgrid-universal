@@ -501,10 +501,10 @@ So if we take all of these informations and we want to create our own Custom Edi
 ```ts
 const myCustomTitleValidator: EditorValidator = (value: any, args: EditorArgs) => {
   // you can get the Editor Args which can be helpful, e.g. we can get the Translate Service from it
-  const grid = args && args.grid;
+  const grid = args.grid;
   const columnDef = args.column;
   const dataContext = args.item;
-  const gridOptions = (grid && grid.getOptions) ? grid.getOptions() : {};
+  const gridOptions = grid.getOptions() : {};
   const i18n = gridOptions.i18n;
 
   if (value == null || value === undefined || !value.length) {

@@ -133,7 +133,7 @@ export class Example2Component implements OnInit {
         minWidth: 100,
         formatter: customEnableButtonFormatter,
         onCellClick: (e, args) => {
-          this.toggleCompletedProperty(args && args.dataContext);
+          this.toggleCompletedProperty(args?.dataContext);
         },
       },
     ];

@@ -1,4 +1,4 @@
-## Cleaner Code / Smaller Code ⚡
+## Simplication and Modernization ⚡
 
 One of the biggest change of this release is to hide columns by using the `hidden` column property (now used by Column Picker, Grid Menu, etc...). Previously we were removing columns from the original columns array and we then called `setColumns()` to update the grid, but this meant that we had to keep references for all visible and non-visible columns. With this new release we now keep the full columns array at all time and instead we just change column(s) visibility via their `hidden` column properties by using `grid.updateColumnById('id', { hidden: true })` and finally we update the grid via `grid.updateColumns()`. What I'm trying to emphasis is that you should really stop using `grid.setColumns()` in v10+, and if you want to hide some columns when declaring the columns, then just update their `hidden` properties, see more details below...
 
@@ -64,10 +64,29 @@ gridOptions = {
 };
 ```
 
-### External Resources are now auto-enabled
-
 This change does not require any code update from the end user, but it is a change that you should probably be aware of nonetheless. The reason I decided to implement this is because I often forget myself to enable the associated flag and typically if you wanted to load the resource, then it's most probably because you also want it enabled. So for example, if your register `ExcelExportService` then the library will now auto-enable the resource with its associated flag (which in this case is `enableExcelExport:true`)... unless you already disabled the flag (or enabled) yourself, if so then the internal assignment will simply be skipped and yours will prevail. Also just to be clear, the list of auto-enabled external resources is rather small, it will auto-enable the following resources:
 (ExcelExportService, PdfExportService, TextExportService, CompositeEditorComponent and RowDetailView).
+
+### Menu with Commands
+
+All menu plugins (Cell Menu, Context Menu, Header Menu and Grid Menu) now have a new `commandListBuilder: (items) => items` which now allow you to filter/sort and maybe override built-in commands. With this new feature in place, I'm deprecating all `hide...` properties and also `positionOrder` since you can now do that with the builder. You could also use the `hideCommands` which accepts an array of built-in command names. This well remove huge amount of `hide...` properties (over 30) that keeps increasing anytime a new built-in command gets added (in other words, this will simplify maintenance for both you and me).This well remove huge amount of `hide...` properties (over 30) that keeps increasing anytime a new built-in command gets added (in other words, this will simplify maintenance for both you and me).
+
+These are currently just deprecations in v10.x but it's strongly recommended to start using the `commandListBuilder` and/or `hideCommands` and move away from the deprecated properties which will be removed in v11.x. For example if we want to hide some built-in commands:
+
+```diff
+gridOptions = {
+  gridMenu: {
+-   hideExportCsvCommand: true,
+-   hideTogglePreHeaderCommand: true,
+
+// via command name(s)
++   hideCommands: ['export-csv', 'toggle-preheader'],
+
+// or via builder
++   commandListBuilder: (cmdItems) => [...cmdItems.filter(x => x !== 'divider' && x.command !== 'export-csv' && x.command !== 'toggle-preheader')]
+  }
+}
+```
 
 --- 
 

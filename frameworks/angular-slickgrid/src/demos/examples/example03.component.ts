@@ -37,7 +37,7 @@ const URL_COUNTRY_NAMES = 'assets/data/country_names.json';
 const myCustomTitleValidator: EditorValidator = (value: any, _args?: EditorArguments) => {
   // you can get the Editor Args which can be helpful, e.g. we can get the Translate Service from it
   /*
-  const grid = args && args.grid;
+  const grid = args?.grid;
   const gridOptions = (grid?.getOptions() ?? {}) as GridOption;
   const translate = gridOptions.i18n;
   const columnEditor = args?.column?.editor;

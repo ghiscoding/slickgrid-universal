@@ -497,7 +497,7 @@ function defineGrid() {
       onCommand: (e, args) => executeCommand(e, args),
       onOptionSelected: (_e, args) => {
         // change "Completed" property with new option selected from the Cell Menu
-        const dataContext = args && args.dataContext;
+        const dataContext = args?.dataContext;
         if (dataContext && 'completed' in dataContext) {
           dataContext.completed = args.item.option;
           vueGrid.gridService.updateItem(dataContext);

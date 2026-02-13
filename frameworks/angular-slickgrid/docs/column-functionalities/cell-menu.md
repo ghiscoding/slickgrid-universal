@@ -94,7 +94,8 @@ So if you decide to use the `action` callback, then your code would look like th
 ##### with `action` callback
 ```ts
 this.columnDefinitions = [
-  { id: 'action', field: 'action', name: 'Action',
+  { 
+    id: 'action', field: 'action', name: 'Action',
     cellMenu: {
       commandItems: [
         { command: 'command1', title: 'Command 1', action: (e, args) => console.log(args) },
@@ -111,7 +112,8 @@ The `onCommand` (or `onOptionSelected`) **must** be defined in the Grid Options
 
 ```ts
 this.columnDefinitions = [
-  { id: 'action', field: 'action', name: 'Action',
+  { 
+    id: 'action', field: 'action', name: 'Action',
     cellMenu: {
       commandItems: [
         { command: 'command1', title: 'Command 1' },
@@ -140,6 +142,11 @@ this.gridOptions = {
 };
 ```
 
+### Custom Menu Item Rendering
+For advanced customization of menu item appearance, you can use the `slotRenderer` or `defaultMenuItemRenderer` callbacks to create custom HTML or HTMLElement content for your menu items. This allows you to add badges, keyboard shortcuts, status indicators, and more.
+
+See [Custom Menu Slots](../../menu-slots.md) for detailed examples and best practices on rendering custom menu item content across all menu types.
+
 ### Override Callback Methods
 What if you want to dynamically disable or hide a Command/Option or even disable the entire menu in certain circumstances? For these cases, you would use the override callback methods, the method must return a `boolean`. The list of override available are the following
 - `menuUsabilityOverride` returning false would make the Cell Menu unavailable to the user
@@ -150,12 +157,10 @@ What if you want to dynamically disable or hide a Command/Option or even disable
 For example, say we want the Cell Menu to only be available on the first 20 rows of the grid, we could use the override this way
 ```ts
 this.columnDefinitions = [
-  { id: 'action', field: 'action', name: 'Action',
+  { 
+    id: 'action', field: 'action', name: 'Action',
     cellMenu: {
-      menuUsabilityOverride: (args) => {
-        const dataContext = args && args.dataContext;
-        return (dataContext.id < 21); // say we want to display the menu only from Task 0 to 20
-      },
+      menuUsabilityOverride: (args) => args?.dataContext.id < 21, // say we want to display the menu only from Task 0 to 20
     }
   }
 ];
@@ -164,15 +169,17 @@ this.columnDefinitions = [
 To give another example, with Options this time, we could say that we enable the `n/a` option only when the row is Completed. So we could do it this way
 ```ts
 this.columnDefinitions = [
-  { id: 'action', field: 'action', name: 'Action',
+  { 
+    id: 'action', field: 'action', name: 'Action',
     cellMenu: {
       optionItems: [
-      {
-        option: 0, title: 'n/a', textCssClass: 'italic',
-        // only enable this option when the task is Not Completed
-        itemUsabilityOverride: (args) => {
-          const dataContext = args && args.dataContext;
-          return !dataContext.completed;
+        {
+          option: 0, title: 'n/a', textCssClass: 'italic',
+          // only enable this option when the task is Not Completed
+          itemUsabilityOverride: (args) => {
+            const dataContext = args?.dataContext;
+            return !dataContext.completed;
+          },
         },
         { option: 1, iconCssClass: 'mdi mdi-star-outline yellow', title: 'Low' },
         { option: 2, iconCssClass: 'mdi mdi-star orange', title: 'Medium' },
@@ -187,7 +194,8 @@ this.columnDefinitions = [
 It works exactly like the rest of the library when `enableTranslate` is set, all we have to do is to provide translations with the `Key` suffix, so for example without translations, we would use `title` and that would become `titleKey` with translations, that;'s easy enough. So for example, a list of Options could be defined as follow:
 ```ts
 this.columnDefinitions = [
-  { id: 'action', field: 'action', name: 'Action',
+  { 
+    id: 'action', field: 'action', name: 'Action',
     cellMenu: {
       optionTitleKey: 'OPTIONS', // optionally pass a title to show over the Options
       optionItems: [

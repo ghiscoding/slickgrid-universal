@@ -21,6 +21,8 @@ The Grid Menu also comes, by default, with a list of built-in custom commands (a
 - _Refresh Dataset_, only shown when using Backend Service API (you can hide it with `hideRefreshDatasetCommand: true`)
 
 This section is called Custom Commands because you can also customize this section with your own commands. To do that, you need to fill in 2 properties (an array of `commandItems` and define `onGridMenuCommand` callback) in your Grid Options. For example, `Slickgrid-Universal` is configured by default with these settings (you can overwrite any one of them):
+
+#### Using Static Command Items
 ```ts
 this.gridOptions = {
    enableAutoResize: true,
@@ -71,6 +73,89 @@ this.gridOptions = {
      }
    }
 };
+```
+
+#### Advanced: Dynamic Command List Builder
+For more advanced use cases where you need to dynamically build the command list, use `commandListBuilder`. This callback receives the built-in commands and allows you to filter, sort, or modify the list before it's rendered in the UI, giving you full control over the final command list. This function is executed **after** `commandItems` is processed and is the **last call before rendering** the menu in the DOM.
+
+**When to use `commandListBuilder`:**
+- You want to append/prepend items to the built-in commands
+- You need to filter commands based on runtime conditions
+- You want to sort or reorder commands dynamically
+- You need access to both built-in and custom commands to manipulate the final list
+
+**Note:** You would typically use `commandListBuilder` **instead of** `commandItems` (not both), since the builder gives you full control over the final command list.
+
+```ts
+gridOptions: {
+  gridMenu: {
+    // Build the command list dynamically
+    commandListBuilder: (builtInItems) => {
+      // Example 1: Append custom commands to built-in ones
+      return [
+        ...builtInItems,
+        'divider',
+        {
+          command: 'help',
+          title: 'Help',
+          iconCssClass: 'mdi mdi-help-circle',
+          positionOrder: 99,
+          action: () => window.open('https://example.com/help', '_blank')
+        },
+      ];
+    },
+    onCommand: (e, args) => {
+      if (args.command === 'help') {
+        // command handled via action callback above
+      }
+    }
+  }
+}
+```
+
+**Example: Filter commands based on user permissions**
+```ts
+gridOptions: {
+  gridMenu: {
+    commandListBuilder: (builtInItems) => {
+      // Remove export commands if user doesn't have export permission
+      if (!this.userHasExportPermission) {
+        return builtInItems.filter(item => 
+          item !== 'divider' && 
+          !item.command?.includes('export')
+        );
+      }
+      return builtInItems;
+    }
+  }
+}
+```
+
+**Example: Reorder and customize the command list**
+```ts
+gridOptions: {
+  gridMenu: {
+    commandListBuilder: (builtInItems) => {
+      // Add custom commands at the beginning
+      const customCommands = [
+        {
+          command: 'refresh-cache',
+          title: 'Refresh Cache',
+          iconCssClass: 'mdi mdi-cached',
+          action: () => this.refreshCache()
+        },
+        'divider'
+      ];
+      
+      // Sort built-in items by title
+      const sortedBuiltIn = builtInItems
+        .filter(item => item !== 'divider')
+        .sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+      
+      return [...customCommands, ...sortedBuiltIn];
+    }
+  }
+}
 ```
 
 #### Events

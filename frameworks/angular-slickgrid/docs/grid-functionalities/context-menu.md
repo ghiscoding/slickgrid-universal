@@ -23,7 +23,7 @@ This extensions is wrapped around the new SlickGrid Plugin **SlickContextMenu**
 ### Default Usage
 Technically, the Context Menu is enabled by default (copy, export) and so you don't have anything to do to enjoy it (you could disable it at any time). However, if you want to customize the content of the Context Menu, then continue reading. You can customize the menu with 2 different lists, Commands and/or Options, they can be used separately or at the same time. Also note that even though the code shown below makes a separation between the Commands and Options, you can mix them in the same Context Menu.
 
-#### with Commands
+#### with Commands (Static)
 
 ```ts
 this.gridOptions = {
@@ -63,6 +63,98 @@ this.gridOptions = {
 };
 ```
 
+#### with Commands (Dynamic Builder)
+For advanced scenarios where you need to dynamically build the command list, use `commandListBuilder`. This callback receives the built-in commands and allows you to filter, sort, or modify the list before it's rendered in the UI, giving you full control over the final command list.
+
+```ts
+this.gridOptions = {
+  enableContextMenu: true,
+  contextMenu: {
+    commandListBuilder: (builtInItems) => {
+      // Example: Add custom commands after built-in ones
+      return [
+        ...builtInItems,
+        'divider',
+        {
+          command: 'delete-row',
+          title: 'Delete Row',
+          iconCssClass: 'mdi mdi-delete text-danger',
+          action: (e, args) => {
+            if (confirm(`Delete row ${args.dataContext.id}?`)) {
+              this.gridService.deleteItem(args.dataContext);
+            }
+          }
+        },
+        {
+          command: 'duplicate-row',
+          title: 'Duplicate Row',
+          iconCssClass: 'mdi mdi-content-duplicate',
+          action: (e, args) => {
+            const newItem = { ...args.dataContext, id: this.generateNewId() };
+            this.gridService.addItem(newItem);
+          }
+        }
+      ];
+    },
+    onCommand: (e, args) => {
+      // Handle commands here if not using action callbacks
+      console.log('Command:', args.command);
+    }
+  }
+};
+```
+
+**Example: Filter commands based on row data**
+```ts
+contextMenu: {
+  commandListBuilder: (builtInItems) => {
+    // You can't access row data here, but you can filter/modify built-in items
+    // Use itemUsabilityOverride or itemVisibilityOverride for row-specific logic
+    
+    // Only show export commands
+    return builtInItems.filter(item => 
+      item === 'divider' || item.command?.includes('export')
+    );
+  }
+}
+```
+
+**Example: Sort and reorganize commands**
+```ts
+contextMenu: {
+  commandListBuilder: (builtInItems) => {
+    const customFirst = [
+      {
+        command: 'edit',
+        title: 'Edit Row',
+        iconCssClass: 'mdi mdi-pencil',
+        positionOrder: 0
+      }
+    ];
+    
+    // Sort built-in commands by positionOrder
+    const sorted = [...builtInItems].sort((a, b) => {
+      if (a === 'divider' || b === 'divider') return 0;
+      return (a.positionOrder || 50) - (b.positionOrder || 50);
+    });
+    
+    return [...customFirst, 'divider', ...sorted];
+  }
+}
+```
+
+**When to use `commandListBuilder` vs `commandItems`:**
+- Use `commandItems` for static command lists
+- Use `commandListBuilder` when you need to:
+  - Append/prepend to built-in commands
+  - Filter or modify commands dynamically
+  - Sort or reorder the final command list
+  - Have full control over what gets rendered
+
+**Note:** Typically use `commandListBuilder` **instead of** `commandItems`, not both together.
+
+See the main [Custom Menu Slots](../menu-slots.md) documentation for detailed `commandListBuilder` examples.
+
 #### with Options
 That is when you want to define a list of Options (only 1 list) that the user can choose from and once is selected we would do something (for example change the value of a cell in the grid).
 
@@ -79,7 +171,7 @@ this.gridOptions = {
     // subscribe to Context Menu onOptionSelected event (or use the "action" callback on each option)
     onOptionSelected: (e, args) => {
       // change Priority
-      const dataContext = args && args.dataContext;
+      const dataContext = args?.dataContext;
       if (dataContext && dataContext.hasOwnProperty('priority')) {
         dataContext.priority = args.item.option;
         this.sgb.gridService.updateItem(dataContext);
@@ -139,7 +231,7 @@ For example, say we want the Context Menu to only be available on the first 20 r
 ```ts
 contextMenu: {
   menuUsabilityOverride: (args) => {
-    const dataContext = args && args.dataContext;
+    const dataContext = args?.dataContext;
     return (dataContext.id < 21); // say we want to display the menu only from Task 0 to 20
   },
 },
@@ -153,7 +245,7 @@ contextMenu: {
       option: 0, title: 'n/a', textCssClass: 'italic',
       // only enable this option when the task is Not Completed
       itemUsabilityOverride: (args) => {
-        const dataContext = args && args.dataContext;
+        const dataContext = args?.dataContext;
         return !dataContext.completed;
       },
     },
@@ -176,6 +268,11 @@ contextMenu: {
   ]
 }
 ```
+
+### Custom Menu Item Rendering
+For advanced customization of menu item appearance, you can use the `slotRenderer` or `defaultMenuItemRenderer` callbacks to create custom HTML or HTMLElement content for your menu items. This allows you to add badges, keyboard shortcuts, status indicators, and more.
+
+See [Custom Menu Slots](../menu-slots.md) for detailed examples and best practices on rendering custom menu item content across all menu types.
 
 ### Show Menu only over Certain Columns
 Say you want to show the Context Menu only when the user is over certain columns of the grid. For that, you could use the `commandShownOverColumnIds` (or `optionShownOverColumnIds`) array, by default these arrays are empty and when that is the case then the menu will be accessible from any columns. So if we want to have the Context Menu available only over the first 2 columns, we would have an array of those 2 column ids. For example, the following would show the Context Menu everywhere except the last 2 columns (priority, action) since they are not part of the array.
