@@ -34,7 +34,7 @@ export default class Example40 {
   gridOptions: GridOption;
   dataset: ReportItem[];
   sgb: SlickVanillaGridBundle<ReportItem>;
-  subTitleStyle = 'block';
+  subTitleStyle = 'display: block';
 
   constructor() {
     this._bindingEventService = new BindingEventService();
@@ -42,7 +42,7 @@ export default class Example40 {
 
   attached() {
     this.initializeGrid();
-    this.dataset = this.loadData(1000);
+    this.dataset = this.loadData(2000);
     const gridContainerElm = document.querySelector(`.grid40`) as HTMLDivElement;
 
     this.sgb = new Slicker.GridBundle(

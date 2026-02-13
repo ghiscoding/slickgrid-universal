@@ -140,6 +140,31 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
   // ------------------
 
   /**
+   * add Menu Item Command when not found and also make sure that we have an `action` callback
+   * (could be missing when provided by user) if not use built-in `action` callback when missing
+   * @param originalMenuItems
+   * @param builtInMenuItem
+   * @param showCommand - is command hidden from menu option (deprecated)
+   */
+  protected addMissingCommandOrAction<T extends MenuCommandItem | GridMenuItem>(
+    builtInMenuItem: T | 'divider',
+    targetMenuItems: Array<T | 'divider'>,
+    originalMenuItems?: Array<T | 'divider'>
+  ): void {
+    if (builtInMenuItem !== 'divider') {
+      const cmdName = builtInMenuItem.command;
+      const cmd = (originalMenuItems ?? targetMenuItems).find((item) => item !== 'divider' && item.command === cmdName);
+
+      if (!cmd) {
+        targetMenuItems.push(builtInMenuItem);
+      } else if (!(cmd as T).action) {
+        // action might be missing (custom menu items), if so copy over from built-in
+        (cmd as T).action = builtInMenuItem.action;
+      }
+    }
+  }
+
+  /**
    * Render slot content using a renderer callback.
    * The renderer receives the menu item and args for full context access.
    * @param parentElm - The parent element (LI) to insert the slot content into

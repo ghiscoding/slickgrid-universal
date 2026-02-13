@@ -181,19 +181,16 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
     const commandLabels = this._addonOptions?.commandLabels;
     const dataView = this.sharedService?.dataView;
     const translationPrefix = getTranslationPrefix(gridOptions);
-    const cmdExists = (commandName: string) =>
-      originalCommandItems.some((item) => item !== 'divider' && 'command' in item && item.command === commandName);
 
     // show context menu: Copy (cell value)
     if (contextMenu && !contextMenu.hideCopyCellValueCommand) {
-      const commandName = 'copy';
-      if (!cmdExists(commandName)) {
-        menuCommandItems.push({
+      this.addMissingCommandOrAction(
+        {
           _orgTitle: commandLabels?.copyCellValueCommand || '',
           iconCssClass: contextMenu.iconCopyCellValueCommand || 'mdi mdi-content-copy',
           titleKey: `${translationPrefix}COPY`,
           disabled: false,
-          command: commandName,
+          command: 'copy',
           positionOrder: 50,
           action: (_e, args) => copyCellToClipboard(args as MenuCommandItemCallbackArgs),
           itemUsabilityOverride: (args: MenuCallbackArgs) => {
@@ -212,20 +209,21 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
             }
             return false;
           },
-        });
-      }
+        },
+        menuCommandItems,
+        originalCommandItems
+      );
     }
 
     // show context menu: Export to file
     if (gridOptions?.enableTextExport && contextMenu && !contextMenu.hideExportCsvCommand) {
-      const commandName = 'export-csv';
-      if (!cmdExists(commandName)) {
-        menuCommandItems.push({
+      this.addMissingCommandOrAction(
+        {
           _orgTitle: commandLabels?.exportCsvCommand || '',
           iconCssClass: contextMenu.iconExportCsvCommand || 'mdi mdi-download',
           titleKey: `${translationPrefix}EXPORT_TO_CSV`,
           disabled: false,
-          command: commandName,
+          command: 'export-csv',
           positionOrder: 51,
           action: () => {
             const registedServices = this.sharedService?.externalRegisteredResources || [];
@@ -243,20 +241,21 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
               );
             }
           },
-        });
-      }
+        },
+        menuCommandItems,
+        originalCommandItems
+      );
     }
 
     // show context menu: Export to Excel
     if (gridOptions && gridOptions.enableExcelExport && contextMenu && !contextMenu.hideExportExcelCommand) {
-      const commandName = 'export-excel';
-      if (!cmdExists(commandName)) {
-        menuCommandItems.push({
+      this.addMissingCommandOrAction(
+        {
           _orgTitle: commandLabels?.exportExcelCommand || '',
           iconCssClass: contextMenu.iconExportExcelCommand || 'mdi mdi-file-excel-outline text-success',
           titleKey: `${translationPrefix}EXPORT_TO_EXCEL`,
           disabled: false,
-          command: commandName,
+          command: 'export-excel',
           positionOrder: 52,
           action: () => {
             const registedServices = this.sharedService?.externalRegisteredResources || [];
@@ -269,20 +268,21 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
               );
             }
           },
-        });
-      }
+        },
+        menuCommandItems,
+        originalCommandItems
+      );
     }
 
     // show context menu: Export to PDF
     if (gridOptions && gridOptions.enablePdfExport && contextMenu && !contextMenu.hideExportPdfCommand) {
-      const commandName = 'export-pdf';
-      if (!cmdExists(commandName)) {
-        menuCommandItems.push({
+      this.addMissingCommandOrAction(
+        {
           _orgTitle: commandLabels?.exportPdfCommand || '',
           iconCssClass: contextMenu.iconExportPdfCommand || 'mdi mdi-file-pdf-outline text-danger',
           titleKey: `${translationPrefix}EXPORT_TO_PDF`,
           disabled: false,
-          command: commandName,
+          command: 'export-pdf',
           positionOrder: 53,
           action: () => {
             const registedServices = this.sharedService?.externalRegisteredResources || [];
@@ -297,20 +297,21 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
               );
             }
           },
-        });
-      }
+        },
+        menuCommandItems,
+        originalCommandItems
+      );
     }
 
     // show context menu: export to text file as tab delimited
     if (gridOptions?.enableTextExport && contextMenu && !contextMenu.hideExportTextDelimitedCommand) {
-      const commandName = 'export-text-delimited';
-      if (!cmdExists(commandName)) {
-        menuCommandItems.push({
+      this.addMissingCommandOrAction(
+        {
           _orgTitle: commandLabels?.exportTextDelimitedCommand || '',
           iconCssClass: contextMenu.iconExportTextDelimitedCommand || 'mdi mdi-download',
           titleKey: `${translationPrefix}EXPORT_TO_TAB_DELIMITED`,
           disabled: false,
-          command: commandName,
+          command: 'export-text-delimited',
           positionOrder: 54,
           action: () => {
             const registedServices = this.sharedService?.externalRegisteredResources || [];
@@ -328,8 +329,10 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
               );
             }
           },
-        });
-      }
+        },
+        menuCommandItems,
+        originalCommandItems
+      );
     }
 
     // -- Grouping Commands
@@ -341,14 +344,13 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
 
       // show context menu: Clear Grouping (except for Tree Data which shouldn't have this feature)
       if (gridOptions && !gridOptions.enableTreeData && contextMenu && !contextMenu.hideClearAllGrouping) {
-        const commandName = 'clear-grouping';
-        if (!cmdExists(commandName)) {
-          menuCommandItems.push({
+        this.addMissingCommandOrAction(
+          {
             _orgTitle: commandLabels?.clearGroupingCommand || '',
             iconCssClass: contextMenu.iconClearGroupingCommand || 'mdi mdi-close',
             titleKey: `${translationPrefix}CLEAR_ALL_GROUPING`,
             disabled: false,
-            command: commandName,
+            command: 'clear-grouping',
             positionOrder: 56,
             action: () => {
               dataView.setGrouping([]);
@@ -359,20 +361,21 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
               const groupingArray = dataView && dataView.getGrouping && dataView.getGrouping();
               return Array.isArray(groupingArray) && groupingArray.length > 0;
             },
-          });
-        }
+          },
+          menuCommandItems,
+          originalCommandItems
+        );
       }
 
       // show context menu: Collapse all Groups
       if (gridOptions && contextMenu && !contextMenu.hideCollapseAllGroups) {
-        const commandName = 'collapse-all-groups';
-        if (!cmdExists(commandName)) {
-          menuCommandItems.push({
+        this.addMissingCommandOrAction(
+          {
             _orgTitle: commandLabels?.collapseAllGroupsCommand || '',
             iconCssClass: contextMenu.iconCollapseAllGroupsCommand || 'mdi mdi-arrow-collapse',
             titleKey: `${translationPrefix}COLLAPSE_ALL_GROUPS`,
             disabled: false,
-            command: commandName,
+            command: 'collapse-all-groups',
             positionOrder: 57,
             action: () => {
               if (gridOptions.enableTreeData) {
@@ -390,20 +393,21 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
               const groupingArray = dataView && dataView.getGrouping && dataView.getGrouping();
               return Array.isArray(groupingArray) && groupingArray.length > 0;
             },
-          });
-        }
+          },
+          menuCommandItems,
+          originalCommandItems
+        );
       }
 
       // show context menu: Expand all Groups
       if (gridOptions && contextMenu && !contextMenu.hideExpandAllGroups) {
-        const commandName = 'expand-all-groups';
-        if (!cmdExists(commandName)) {
-          menuCommandItems.push({
+        this.addMissingCommandOrAction(
+          {
             _orgTitle: commandLabels?.expandAllGroupsCommand || '',
             iconCssClass: contextMenu.iconExpandAllGroupsCommand || 'mdi mdi-arrow-expand',
             titleKey: `${translationPrefix}EXPAND_ALL_GROUPS`,
             disabled: false,
-            command: commandName,
+            command: 'expand-all-groups',
             positionOrder: 58,
             action: () => {
               if (gridOptions.enableTreeData) {
@@ -421,8 +425,10 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
               const groupingArray = dataView && dataView.getGrouping && dataView.getGrouping();
               return Array.isArray(groupingArray) && groupingArray.length > 0;
             },
-          });
-        }
+          },
+          menuCommandItems,
+          originalCommandItems
+        );
       }
     }
 

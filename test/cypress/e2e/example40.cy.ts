@@ -357,4 +357,24 @@ describe('Example 40 - Menus with Slots', () => {
     cy.get('.slick-grid-menu .slick-menu-command-list .slick-menu-item:nth(6) .menu-item span').contains('Refresh Data');
     cy.get('.slick-grid-menu .slick-menu-command-list .slick-menu-item:nth(6) .menu-item').find('kbd.key-hint').contains('F5');
   });
+
+  it('should sort ascending "Duration" even though the header menu item was override without an action callback', () => {
+    cy.get('.slick-header-column:nth(1)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
+
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(2) .menu-item').should('contain', 'Sort Ascending').click();
+
+    cy.get('[data-row=0]').children('.slick-cell:nth(1)').should('contain', '0');
+    cy.get('[data-row=1]').children('.slick-cell:nth(1)').should('contain', '0');
+    cy.get('[data-row=2]').children('.slick-cell:nth(1)').should('contain', '0');
+  });
+
+  it('should sort descending "Duration" even though the header menu item was override without an action callback', () => {
+    cy.get('.slick-header-column:nth(1)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
+
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(3) .menu-item').should('contain', 'Sort Descending').click();
+
+    cy.get('[data-row=0]').children('.slick-cell:nth(1)').should('contain', '100');
+    cy.get('[data-row=1]').children('.slick-cell:nth(1)').should('contain', '100');
+    cy.get('[data-row=2]').children('.slick-cell:nth(1)').should('contain', '100');
+  });
 });

@@ -544,193 +544,202 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     const gridOptions = this.gridOptions;
     const translationPrefix = getTranslationPrefix(gridOptions);
     const commandLabels = this._addonOptions?.commandLabels;
-    const cmdExists = (commandName: string) =>
-      originalCommandItems.some((item) => item !== 'divider' && 'command' in item && item.command === commandName);
 
     if (this._addonOptions && this.gridOptions) {
       // show grid menu: Unfreeze Columns/Rows
       if (!this._addonOptions.hideClearFrozenColumnsCommand) {
-        const commandName = 'clear-pinning';
-        if (!cmdExists(commandName)) {
-          gridMenuCommandItems.push({
+        this.addMissingCommandOrAction(
+          {
             iconCssClass: this._addonOptions.iconClearFrozenColumnsCommand || 'mdi mdi-pin-off-outline',
             _orgTitle: commandLabels?.clearFrozenColumnsCommand || '',
             titleKey: `${translationPrefix}${commandLabels?.clearFrozenColumnsCommandKey ?? 'CLEAR_PINNING'}`,
             disabled: false,
-            command: commandName,
+            command: 'clear-pinning',
             positionOrder: 52,
             action: this.clearPinning.bind(this),
-          });
-        }
+          },
+          gridMenuCommandItems,
+          originalCommandItems
+        );
       }
 
       if (this.gridOptions.enableFiltering && !this.sharedService.hideHeaderRowAfterPageLoad) {
         // show grid menu: Clear all Filters
         if (!this._addonOptions.hideClearAllFiltersCommand) {
-          const commandName = 'clear-filter';
-          if (!cmdExists(commandName)) {
-            gridMenuCommandItems.push({
+          this.addMissingCommandOrAction(
+            {
               iconCssClass: this._addonOptions.iconClearAllFiltersCommand || 'mdi mdi-filter-remove-outline',
               _orgTitle: commandLabels?.clearAllFiltersCommand || '',
               titleKey: `${translationPrefix}${commandLabels?.clearAllFiltersCommandKey ?? 'CLEAR_ALL_FILTERS'}`,
               disabled: false,
-              command: commandName,
+              command: 'clear-filter',
               positionOrder: 50,
               action: this.clearFilters.bind(this),
-            });
-          }
+            },
+            gridMenuCommandItems,
+            originalCommandItems
+          );
         }
 
         // show grid menu: toggle filter row
         if (!this._addonOptions.hideToggleFilterCommand) {
-          const commandName = 'toggle-filter';
-          if (!cmdExists(commandName)) {
-            gridMenuCommandItems.push({
+          this.addMissingCommandOrAction(
+            {
               iconCssClass: this._addonOptions.iconToggleFilterCommand || 'mdi mdi-flip-vertical',
               _orgTitle: commandLabels?.toggleFilterCommand || '',
               titleKey: `${translationPrefix}${commandLabels?.toggleFilterCommandKey ?? 'TOGGLE_FILTER_ROW'}`,
               disabled: false,
-              command: commandName,
+              command: 'toggle-filter',
               positionOrder: 53,
               action: this.toggleFilterBar.bind(this),
-            });
-          }
+            },
+            gridMenuCommandItems,
+            originalCommandItems
+          );
         }
 
         // show grid menu: refresh dataset
         if (backendApi && !this._addonOptions.hideRefreshDatasetCommand) {
-          const commandName = 'refresh-dataset';
-          if (!cmdExists(commandName)) {
-            gridMenuCommandItems.push({
+          this.addMissingCommandOrAction(
+            {
               iconCssClass: this._addonOptions.iconRefreshDatasetCommand || 'mdi mdi-sync',
               _orgTitle: commandLabels?.refreshDatasetCommand || '',
               titleKey: `${translationPrefix}${commandLabels?.refreshDatasetCommandKey ?? 'REFRESH_DATASET'}`,
               disabled: false,
-              command: commandName,
+              command: 'refresh-dataset',
               positionOrder: 58,
               action: () => this.extensionUtility.refreshBackendDataset(),
-            });
-          }
+            },
+            gridMenuCommandItems,
+            originalCommandItems
+          );
         }
       }
 
       // show grid menu: toggle dark mode
       if (!this._addonOptions.hideToggleDarkModeCommand) {
-        const commandName = 'toggle-dark-mode';
-        if (!cmdExists(commandName)) {
-          gridMenuCommandItems.push({
+        this.addMissingCommandOrAction(
+          {
             iconCssClass: this._addonOptions.iconToggleDarkModeCommand || 'mdi mdi-brightness-4',
             _orgTitle: commandLabels?.toggleDarkModeCommand || '',
             titleKey: `${translationPrefix}${commandLabels?.toggleDarkModeCommandKey ?? 'TOGGLE_DARK_MODE'}`,
             disabled: false,
-            command: commandName,
+            command: 'toggle-dark-mode',
             positionOrder: 54,
             action: this.toggleDarkMode.bind(this),
-          });
-        }
+          },
+          gridMenuCommandItems,
+          originalCommandItems
+        );
       }
 
       if (this.gridOptions.showPreHeaderPanel) {
         // show grid menu: toggle pre-header row
         if (!this._addonOptions.hideTogglePreHeaderCommand) {
-          const commandName = 'toggle-preheader';
-          if (!cmdExists(commandName)) {
-            gridMenuCommandItems.push({
+          this.addMissingCommandOrAction(
+            {
               iconCssClass: this._addonOptions.iconTogglePreHeaderCommand || 'mdi mdi-flip-vertical',
               _orgTitle: commandLabels?.togglePreHeaderCommand || '',
               titleKey: `${translationPrefix}${commandLabels?.togglePreHeaderCommandKey ?? 'TOGGLE_PRE_HEADER_ROW'}`,
               disabled: false,
-              command: commandName,
+              command: 'toggle-preheader',
               positionOrder: 53,
               action: () => {
                 const showPreHeaderPanel = this.gridOptions?.showPreHeaderPanel ?? false;
                 this.grid.setPreHeaderPanelVisibility(!showPreHeaderPanel);
               },
-            });
-          }
+            },
+            gridMenuCommandItems,
+            originalCommandItems
+          );
         }
       }
 
       if (this.gridOptions.enableSorting) {
         // show grid menu: Clear all Sorting
         if (!this._addonOptions.hideClearAllSortingCommand) {
-          const commandName = 'clear-sorting';
-          if (!cmdExists(commandName)) {
-            gridMenuCommandItems.push({
+          this.addMissingCommandOrAction(
+            {
               iconCssClass: this._addonOptions.iconClearAllSortingCommand || 'mdi mdi-sort-variant-off',
               _orgTitle: commandLabels?.clearAllSortingCommand || '',
               titleKey: `${translationPrefix}${commandLabels?.clearAllSortingCommandKey ?? 'CLEAR_ALL_SORTING'}`,
               disabled: false,
-              command: commandName,
+              command: 'clear-sorting',
               positionOrder: 51,
               action: this.clearSorting.bind(this),
-            });
-          }
+            },
+            gridMenuCommandItems,
+            originalCommandItems
+          );
         }
       }
 
       // show grid menu: Export to file
       if (this.gridOptions.enableTextExport && !this._addonOptions.hideExportCsvCommand) {
-        const commandName = 'export-csv';
-        if (!cmdExists(commandName)) {
-          gridMenuCommandItems.push({
+        this.addMissingCommandOrAction(
+          {
             iconCssClass: this._addonOptions.iconExportCsvCommand || 'mdi mdi-download',
             _orgTitle: commandLabels?.exportCsvCommand || '',
             titleKey: `${translationPrefix}${commandLabels?.exportCsvCommandKey ?? 'EXPORT_TO_CSV'}`,
             disabled: false,
-            command: commandName,
+            command: 'export-csv',
             positionOrder: 55,
             action: this.exportCsv.bind(this),
-          });
-        }
+          },
+          gridMenuCommandItems,
+          originalCommandItems
+        );
       }
 
       // show grid menu: Export to Excel
       if (this.gridOptions.enableExcelExport && !this._addonOptions.hideExportExcelCommand) {
-        const commandName = 'export-excel';
-        if (!cmdExists(commandName)) {
-          gridMenuCommandItems.push({
+        this.addMissingCommandOrAction(
+          {
             iconCssClass: this._addonOptions.iconExportExcelCommand || 'mdi mdi-file-excel-outline text-success',
             _orgTitle: commandLabels?.exportExcelCommand || '',
             titleKey: `${translationPrefix}${commandLabels?.exportExcelCommandKey ?? 'EXPORT_TO_EXCEL'}`,
             disabled: false,
-            command: commandName,
+            command: 'export-excel',
             positionOrder: 56,
             action: this.exportExcel.bind(this),
-          });
-        }
+          },
+          gridMenuCommandItems,
+          originalCommandItems
+        );
       }
 
       // show grid menu: Export to PDF
       if (this.gridOptions.enablePdfExport && !this._addonOptions.hideExportPdfCommand) {
-        const commandName = 'export-pdf';
-        if (!cmdExists(commandName)) {
-          gridMenuCommandItems.push({
+        this.addMissingCommandOrAction(
+          {
             iconCssClass: this._addonOptions.iconExportPdfCommand || 'mdi mdi-file-pdf-outline text-danger',
             _orgTitle: commandLabels?.exportPdfCommand || '',
             titleKey: `${translationPrefix}${commandLabels?.exportPdfCommandKey ?? 'EXPORT_TO_PDF'}`,
             disabled: false,
-            command: commandName,
+            command: 'export-pdf',
             positionOrder: 57,
             action: this.exportPdf.bind(this),
-          });
-        }
+          },
+          gridMenuCommandItems,
+          originalCommandItems
+        );
       }
 
       // show grid menu: export to text file as tab delimited
       if (this.gridOptions.enableTextExport && !this._addonOptions.hideExportTextDelimitedCommand) {
-        const commandName = 'export-text-delimited';
-        if (!cmdExists(commandName)) {
-          gridMenuCommandItems.push({
+        this.addMissingCommandOrAction(
+          {
             iconCssClass: this._addonOptions.iconExportTextDelimitedCommand || 'mdi mdi-download',
             _orgTitle: commandLabels?.exportTextDelimitedCommand || '',
             titleKey: `${translationPrefix}${commandLabels?.exportTextDelimitedCommandKey ?? 'EXPORT_TO_TAB_DELIMITED'}`,
             disabled: false,
-            command: commandName,
+            command: 'export-text-delimited',
             positionOrder: 58,
             action: this.exportTextDelimited.bind(this),
-          });
-        }
+          },
+          gridMenuCommandItems,
+          originalCommandItems
+        );
       }
 
       // add the custom "Commands" title if there are any commands
