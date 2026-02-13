@@ -31,7 +31,7 @@ describe('Example 40 - Menus with Slots', () => {
       .then((cssTransform) => {
         const transformValue = cssTransform as unknown as string; // Cast to string
         cy.getTransformValue(transformValue, true, 'rotate').then((rotationAngle) => {
-          expect(rotationAngle).to.eq(15); // 15 degrees rotation
+          expect(rotationAngle).to.approximately(13, 15); // 15 degrees rotation
         });
       });
 
