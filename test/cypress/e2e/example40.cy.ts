@@ -16,7 +16,7 @@ describe('Example 40 - Menus with Slots', () => {
   });
 
   it('should open Context Menu hover "Duration" column and expect built-in and custom items listed in specific order', () => {
-    cy.get('[data-row="0"] > .slick-cell:nth(2)').rightclick();
+    cy.get('[data-row="0"] > .slick-cell:nth(2)').rightclick({ force: true });
 
     // 1st item
     cy.get('.slick-context-menu .slick-menu-command-list .slick-menu-item:nth(0) .menu-item').find('.edit-cell-icon').contains('✎');
