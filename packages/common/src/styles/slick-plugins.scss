@@ -414,12 +414,12 @@ li.hidden {
   border-radius: var(--slick-menu-border-radius, v.$slick-menu-border-radius);
   min-width: var(--slick-menu-min-width, v.$slick-menu-min-width);
   padding: var(--slick-menu-padding, v.$slick-menu-padding);
+  z-index: var(--slick-header-menu-z-index, v.$slick-header-menu-z-index);
   cursor: default;
   display: inline-block;
   overflow-x: hidden;
   overflow-y: auto;
   resize: both;
-  z-index: 100000;
   @-moz-document url-prefix() {
     /* add right padding to avoid scrollback showing over text, that is for Firefox since WebKit is ok */
     padding: var(--slick-menu-padding-firefox, v.$slick-menu-padding-firefox);

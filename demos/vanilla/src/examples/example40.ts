@@ -5,7 +5,6 @@ import {
   createDomElement,
   Filters,
   Formatters,
-  getOffset,
   SortComparers,
   SortDirectionNumber,
   type Column,
@@ -213,9 +212,7 @@ export default class Example40 {
                     iconDiv.style.transform = 'scale(1.15)';
                     iconDiv.style.background = 'linear-gradient(135deg, #d8dcef 0%, #ffffff 100%)';
                     containerDiv.parentElement!.style.backgroundColor = '#854685';
-                    // containerDiv.parentElement!.title = `📈 Export timestamp: ${tempoFormat(new Date(), 'YYYY-MM-DD hh:mm:ss a')}`;
-                    const div = this.buildChartTooltip(getOffset(containerDiv));
-                    document.body.appendChild(div);
+                    containerDiv.parentElement!.title = `📈 Export timestamp: ${tempoFormat(new Date(), 'YYYY-MM-DD hh:mm:ss a')}`;
                     containerDiv.style.color = 'white';
                     containerDiv.querySelector<HTMLElement>('.key-hint')!.style.color = 'black';
                   });
@@ -556,23 +553,10 @@ export default class Example40 {
 
       // tooltip plugin
       externalResources: [new SlickCustomTooltip()],
-      // customTooltip: {
-      //   observeAllTooltips: true
-      // }
-    };
-  }
-
-  /** create a basic chart export tooltip */
-  buildChartTooltip(containerOffset) {
-    const div = createDomElement('div', {
-      className: 'export-timestamp',
-      textContent: `📈 Export timestamp: ${tempoFormat(new Date(), 'YYYY-MM-DD hh:mm:ss a')}`,
-      style: {
-        top: `${containerOffset.top + 35}px`,
-        left: `${containerOffset.left - 70}px`,
+      customTooltip: {
+        observeAllTooltips: true,
       },
-    });
-    return div;
+    };
   }
 
   clearGrouping() {

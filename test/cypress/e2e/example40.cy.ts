@@ -248,9 +248,9 @@ describe('Example 40 - Menus with Slots', () => {
       'background-color',
       'rgb(133, 70, 133)'
     );
-    cy.get('.export-timestamp').contains(`📈 Export timestamp: ${today}`);
+    cy.get('.slick-custom-tooltip').contains(`📈 Export timestamp: ${today}`);
     cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(0)').trigger('mouseout');
-    cy.get('.export-timestamp').should('not.exist');
+    cy.get('.slick-custom-tooltip').should('not.exist');
     cy.get('body').click();
   });
 
