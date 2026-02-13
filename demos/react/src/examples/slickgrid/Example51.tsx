@@ -1,21 +1,23 @@
 import { format as tempoFormat } from '@formkit/tempo';
-import { BindingEventService } from '@slickgrid-universal/binding';
+import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Aggregators,
   createDomElement,
   Filters,
   Formatters,
+  SlickgridReact,
   SortComparers,
   SortDirectionNumber,
   type Column,
   type GridOption,
   type Grouping,
   type MenuCommandItem,
-} from '@slickgrid-universal/common';
-import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
-import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import { ExampleGridOptions } from './example-grid-options.js';
-import './example40.scss';
+  type SlickgridReactInstance,
+} from 'slickgrid-react';
+import './example51.scss'; // provide custom CSS/SASS styling
+
+const NB_ITEMS = 2000;
 
 interface ReportItem {
   id: number;
@@ -28,41 +30,25 @@ interface ReportItem {
   action?: string;
 }
 
-export default class Example40 {
-  private _bindingEventService: BindingEventService;
-  columnDefinitions: Column<ReportItem>[];
-  gridOptions: GridOption;
-  dataset: ReportItem[];
-  sgb: SlickVanillaGridBundle<ReportItem>;
-  subTitleStyle = 'display: block';
+const Example51: React.FC = () => {
+  const [columnDefinitions, setColumnDefinitions] = useState<Column<ReportItem>[]>([]);
+  const [gridOptions, setGridOptions] = useState<GridOption | undefined>();
+  const [dataset] = useState<ReportItem[]>(loadData(NB_ITEMS));
+  const [hideSubTitle, setHideSubTitle] = useState(false);
 
-  constructor() {
-    this._bindingEventService = new BindingEventService();
+  const reactGridRef = useRef<SlickgridReactInstance | null>(null);
+
+  useEffect(() => {
+    defineGrid();
+  }, []);
+
+  function reactGridReady(reactGrid: SlickgridReactInstance) {
+    reactGridRef.current = reactGrid;
   }
 
-  attached() {
-    this.initializeGrid();
-    this.dataset = this.loadData(2000);
-    const gridContainerElm = document.querySelector(`.grid40`) as HTMLDivElement;
-
-    this.sgb = new Slicker.GridBundle(
-      gridContainerElm,
-      this.columnDefinitions,
-      { ...ExampleGridOptions, ...this.gridOptions },
-      this.dataset
-    );
-  }
-
-  dispose() {
-    this.sgb?.dispose();
-    this._bindingEventService.unbindAll();
-  }
-
-  initializeGrid() {
-    // This example demonstrates Menu Slot functionality across all menu types:
-    // - SlickHeaderMenu, SlickCellMenu, SlickContextMenu, SlickGridMenu
-
-    this.columnDefinitions = [
+  /* Define grid Options and Columns */
+  function defineGrid() {
+    const columnDefinitions: Column[] = [
       {
         id: 'title',
         name: 'Title',
@@ -283,7 +269,8 @@ export default class Example40 {
         minWidth: 70,
         maxWidth: 70,
         cssClass: 'justify-center flex',
-        formatter: () => `<div class="button-style action-btn"><span class="mdi mdi-chevron-down font-22px color-primary"></span></div>`,
+        formatter: () =>
+          `<div class="button-style margin-auto" style="width: 35px;"><span class="mdi mdi-chevron-down text-primary"></span></div>`,
         excludeFromExport: true,
         // Demo: Cell Menu with slot examples (demonstrating defaultMenuItemRenderer at menu level)
         cellMenu: {
@@ -372,7 +359,7 @@ export default class Example40 {
               action: (_event, args) => {
                 const dataContext = args.dataContext;
                 if (confirm(`Do you really want to delete row (${args.row! + 1}) with "${dataContext.title}"`)) {
-                  this.sgb?.instances?.gridService.deleteItemById(dataContext.id);
+                  reactGridRef.current?.gridService.deleteItemById(dataContext.id);
                 }
               },
             },
@@ -381,9 +368,9 @@ export default class Example40 {
       },
     ];
 
-    this.gridOptions = {
+    const gridOptions: GridOption = {
       autoResize: {
-        container: '.demo-container',
+        container: '#demo-container',
       },
       enableAutoResize: true,
       enableCellNavigation: true,
@@ -524,7 +511,7 @@ export default class Example40 {
               slotRenderer: (cmdItem) => `
               <div class="menu-item">
                 <i class="${cmdItem.iconCssClass} menu-item-icon warn"></i>
-                <span class="menu-item-label warn">${cmdItem.title}</span>
+                <span class="menu-item-label warn">${cmdItem.title || ''}</span>
                 <span class="key-hint warn">CUSTOM</span>
               </div>
             `,
@@ -558,24 +545,27 @@ export default class Example40 {
         observeAllTooltips: true,
       },
     };
+
+    setColumnDefinitions(columnDefinitions);
+    setGridOptions(gridOptions);
   }
 
-  clearGrouping() {
-    this.sgb?.dataView?.setGrouping([]);
+  function clearGrouping() {
+    reactGridRef.current?.dataView?.setGrouping([]);
   }
 
-  collapseAllGroups() {
-    this.sgb?.dataView?.collapseAllGroups();
+  function collapseAllGroups() {
+    reactGridRef.current?.dataView?.collapseAllGroups();
   }
 
-  expandAllGroups() {
-    this.sgb?.dataView?.expandAllGroups();
+  function expandAllGroups() {
+    reactGridRef.current?.dataView?.expandAllGroups();
   }
 
-  groupByDuration() {
+  function groupByDuration() {
     // you need to manually add the sort icon(s) in UI
-    this.sgb?.slickGrid?.setSortColumns([{ columnId: 'duration', sortAsc: true }]);
-    this.sgb?.dataView?.setGrouping({
+    reactGridRef.current?.slickGrid?.setSortColumns([{ columnId: 'duration', sortAsc: true }]);
+    reactGridRef.current?.dataView?.setGrouping({
       getter: 'duration',
       formatter: (g) => `Duration: ${g.value} <span class="text-green">(${g.count} items)</span>`,
       comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
@@ -583,10 +573,10 @@ export default class Example40 {
       aggregateCollapsed: false,
       lazyTotalsCalculation: true,
     } as Grouping);
-    this.sgb?.slickGrid?.invalidate(); // invalidate all rows and re-render
+    reactGridRef.current?.slickGrid?.invalidate(); // invalidate all rows and re-render
   }
 
-  loadData(count: number): ReportItem[] {
+  function loadData(count: number): ReportItem[] {
     const tmpData: ReportItem[] = [];
     for (let i = 0; i < count; i++) {
       const randomDuration = Math.round(Math.random() * 100);
@@ -608,8 +598,92 @@ export default class Example40 {
     return tmpData;
   }
 
-  toggleSubTitle() {
-    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
-    this.sgb.resizerService.resizeGrid();
+  function toggleSubTitle() {
+    const newHideSubTitle = !hideSubTitle;
+    setHideSubTitle(newHideSubTitle);
+    const action = newHideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    reactGridRef.current?.resizerService.resizeGrid(0);
   }
-}
+
+  return !gridOptions ? (
+    ''
+  ) : (
+    <div id="demo-container" className="container-fluid">
+      <h2>
+        Example 51: Menus with Slots
+        <span className="float-end font18">
+          see&nbsp;
+          <a
+            target="_blank"
+            href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example51.tsx"
+          >
+            <span className="mdi mdi-link-variant"></span> code
+          </a>
+        </span>
+        <button
+          className="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+          type="button"
+          data-test="toggle-subtitle"
+          onClick={() => toggleSubTitle()}
+        >
+          <span className="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+        </button>
+      </h2>
+
+      <div className="subtitle alert alert-light">
+        <h5 className="mb-2">
+          <span className="mdi mdi-information-outline"></span>
+          <strong>Menu Slots Demo with Custom Renderer</strong>
+        </h5>
+        <p className="mb-2">
+          Click on the menu buttons to see the new <strong>single slot functionality</strong> working across all menu types (Header Menu,
+          Cell Menu, Context Menu, Grid Menu):
+        </p>
+        <p className="mt-2">
+          <small>
+            <strong>Note:</strong> The demo focuses on the custom rendering capability via <code>slotRenderer</code> and
+            <code>defaultMenuItemRenderer</code>, which work across all menu plugins (SlickHeaderMenu, SlickCellMenu, SlickContextMenu,
+            SlickGridMenu). Also note that the keyboard shortcuts displayed in the menus (e.g., <code>Alt+↑</code>, <code>F5</code>) are for
+            demo purposes only and do not actually trigger any actions.
+          </small>
+        </p>
+      </div>
+
+      <section className="row mb-2">
+        <div className="mb-1">
+          <button className="btn btn-outline-secondary btn-sm btn-icon" data-test="clear-grouping-btn" onClick={() => clearGrouping()}>
+            <span>Clear grouping</span>
+          </button>
+          <button className="btn btn-outline-secondary btn-sm btn-icon" data-test="collapse-all-btn" onClick={() => collapseAllGroups()}>
+            <span className="mdi mdi-arrow-collapse"></span>
+            <span>Collapse all groups</span>
+          </button>
+          <button className="btn btn-outline-secondary btn-sm btn-icon" data-test="expand-all-btn" onClick={() => expandAllGroups()}>
+            <span className="mdi mdi-arrow-expand"></span>
+            <span>Expand all groups</span>
+          </button>
+          <button
+            className="btn btn-outline-secondary btn-sm btn-icon"
+            data-test="group-duration-sort-value-btn"
+            onClick={() => groupByDuration()}
+          >
+            Group by Duration
+          </button>
+        </div>
+      </section>
+
+      <div id="grid-container" className="col-sm-12">
+        <SlickgridReact
+          gridId="grid51"
+          columns={columnDefinitions}
+          options={gridOptions}
+          dataset={dataset}
+          onReactGridCreated={($event) => reactGridReady($event.detail)}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default Example51;

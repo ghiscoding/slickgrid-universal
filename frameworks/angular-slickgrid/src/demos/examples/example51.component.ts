@@ -1,21 +1,22 @@
+import { Component, ViewEncapsulation, type OnInit } from '@angular/core';
 import { format as tempoFormat } from '@formkit/tempo';
-import { BindingEventService } from '@slickgrid-universal/binding';
+import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import {
   Aggregators,
+  AngularSlickgridComponent,
   createDomElement,
   Filters,
   Formatters,
   SortComparers,
   SortDirectionNumber,
+  type AngularGridInstance,
   type Column,
   type GridOption,
   type Grouping,
   type MenuCommandItem,
-} from '@slickgrid-universal/common';
-import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
-import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import { ExampleGridOptions } from './example-grid-options.js';
-import './example40.scss';
+} from '../../library';
+
+const NB_ITEMS = 2000;
 
 interface ReportItem {
   id: number;
@@ -28,40 +29,30 @@ interface ReportItem {
   action?: string;
 }
 
-export default class Example40 {
-  private _bindingEventService: BindingEventService;
-  columnDefinitions: Column<ReportItem>[];
-  gridOptions: GridOption;
-  dataset: ReportItem[];
-  sgb: SlickVanillaGridBundle<ReportItem>;
-  subTitleStyle = 'display: block';
+@Component({
+  templateUrl: './example51.component.html',
+  styleUrls: ['example51.component.scss'],
+  imports: [AngularSlickgridComponent],
+  encapsulation: ViewEncapsulation.None,
+})
+export class Example51Component implements OnInit {
+  angularGrid!: AngularGridInstance;
+  columnDefinitions: Column<ReportItem>[] = [];
+  gridOptions!: GridOption;
+  dataset: ReportItem[] = [];
+  hideSubTitle = false;
 
-  constructor() {
-    this._bindingEventService = new BindingEventService();
+  angularGridReady(angularGrid: AngularGridInstance) {
+    this.angularGrid = angularGrid;
   }
 
-  attached() {
-    this.initializeGrid();
-    this.dataset = this.loadData(2000);
-    const gridContainerElm = document.querySelector(`.grid40`) as HTMLDivElement;
-
-    this.sgb = new Slicker.GridBundle(
-      gridContainerElm,
-      this.columnDefinitions,
-      { ...ExampleGridOptions, ...this.gridOptions },
-      this.dataset
-    );
+  ngOnInit(): void {
+    this.prepareGrid();
+    // mock some data (different in each dataset)
+    this.dataset = this.loadData(NB_ITEMS);
   }
 
-  dispose() {
-    this.sgb?.dispose();
-    this._bindingEventService.unbindAll();
-  }
-
-  initializeGrid() {
-    // This example demonstrates Menu Slot functionality across all menu types:
-    // - SlickHeaderMenu, SlickCellMenu, SlickContextMenu, SlickGridMenu
-
+  prepareGrid() {
     this.columnDefinitions = [
       {
         id: 'title',
@@ -283,7 +274,8 @@ export default class Example40 {
         minWidth: 70,
         maxWidth: 70,
         cssClass: 'justify-center flex',
-        formatter: () => `<div class="button-style action-btn"><span class="mdi mdi-chevron-down font-22px color-primary"></span></div>`,
+        formatter: () =>
+          `<div class="button-style margin-auto" style="width: 35px;"><span class="mdi mdi-chevron-down text-primary"></span></div>`,
         excludeFromExport: true,
         // Demo: Cell Menu with slot examples (demonstrating defaultMenuItemRenderer at menu level)
         cellMenu: {
@@ -372,7 +364,7 @@ export default class Example40 {
               action: (_event, args) => {
                 const dataContext = args.dataContext;
                 if (confirm(`Do you really want to delete row (${args.row! + 1}) with "${dataContext.title}"`)) {
-                  this.sgb?.instances?.gridService.deleteItemById(dataContext.id);
+                  this.angularGrid?.gridService.deleteItemById(dataContext.id);
                 }
               },
             },
@@ -383,7 +375,7 @@ export default class Example40 {
 
     this.gridOptions = {
       autoResize: {
-        container: '.demo-container',
+        container: '#demo-container',
       },
       enableAutoResize: true,
       enableCellNavigation: true,
@@ -561,21 +553,21 @@ export default class Example40 {
   }
 
   clearGrouping() {
-    this.sgb?.dataView?.setGrouping([]);
+    this.angularGrid?.dataView?.setGrouping([]);
   }
 
   collapseAllGroups() {
-    this.sgb?.dataView?.collapseAllGroups();
+    this.angularGrid?.dataView?.collapseAllGroups();
   }
 
   expandAllGroups() {
-    this.sgb?.dataView?.expandAllGroups();
+    this.angularGrid?.dataView?.expandAllGroups();
   }
 
   groupByDuration() {
     // you need to manually add the sort icon(s) in UI
-    this.sgb?.slickGrid?.setSortColumns([{ columnId: 'duration', sortAsc: true }]);
-    this.sgb?.dataView?.setGrouping({
+    this.angularGrid?.slickGrid?.setSortColumns([{ columnId: 'duration', sortAsc: true }]);
+    this.angularGrid?.dataView?.setGrouping({
       getter: 'duration',
       formatter: (g) => `Duration: ${g.value} <span class="text-green">(${g.count} items)</span>`,
       comparer: (a, b) => SortComparers.numeric(a.value, b.value, SortDirectionNumber.asc),
@@ -583,7 +575,7 @@ export default class Example40 {
       aggregateCollapsed: false,
       lazyTotalsCalculation: true,
     } as Grouping);
-    this.sgb?.slickGrid?.invalidate(); // invalidate all rows and re-render
+    this.angularGrid?.slickGrid?.invalidate(); // invalidate all rows and re-render
   }
 
   loadData(count: number): ReportItem[] {
@@ -609,7 +601,9 @@ export default class Example40 {
   }
 
   toggleSubTitle() {
-    this.subTitleStyle = this.subTitleStyle === 'display: block' ? 'display: none' : 'display: block';
-    this.sgb.resizerService.resizeGrid();
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    this.angularGrid.resizerService.resizeGrid(0);
   }
 }

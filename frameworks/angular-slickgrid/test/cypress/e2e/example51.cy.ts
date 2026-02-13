@@ -1,15 +1,15 @@
 import { format } from '@formkit/tempo';
 
-describe('Example 40 - Menus with Slots', () => {
+describe('Example 51 - Menus with Slots', () => {
   const fullTitles = ['Title', 'Duration', 'Start', 'Finish', 'Cost', '% Complete', 'Action'];
 
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseUrl')}/example40`);
-    cy.get('h3').should('contain', 'Example 40 - Menus with Slots');
+    cy.visit(`${Cypress.config('baseUrl')}/example51`);
+    cy.get('h2').should('contain', 'Example 51: Menus with Slots');
   });
 
   it('should have exact column titles in the grid', () => {
-    cy.get('.grid40')
+    cy.get('#grid51')
       .find('.slick-header-columns')
       .children()
       .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
@@ -221,7 +221,7 @@ describe('Example 40 - Menus with Slots', () => {
   });
 
   it('should open Header Menu from the "Cost" column and expect first item to have a dynamic tooltip timestamp when hovering', () => {
-    cy.get('.grid40').find('.slick-header-column:nth(4)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
+    cy.get('#grid51').find('.slick-header-column:nth(4)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
 
     // 1st item
     cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(0) .menu-item').find('.advanced-export-icon').contains('📊');

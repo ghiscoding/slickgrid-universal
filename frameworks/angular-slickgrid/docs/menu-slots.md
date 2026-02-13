@@ -4,6 +4,31 @@ All menu plugins (Header Menu, Cell Menu, Context Menu, Grid Menu) support **cro
 
 > **Note:** This documentation covers **how menu items are rendered** (visual presentation). If you need to **dynamically modify which commands appear** in the menu (filtering, sorting, adding/removing items), see the `commandListBuilder` callback documented in [Grid Menu](grid-functionalities/grid-menu.md), [Context Menu](grid-functionalities/context-menu.md), or [Header Menu](grid-functionalities/header-menu-header-buttons.md).
 
+### TypeScript Tip: Type Inference with commandListBuilder
+
+When using `commandListBuilder` to add custom menu items with slotRenderer callbacks, **cast the return value to the appropriate type** to enable proper type parameters in callbacks:
+
+```typescript
+contextMenu: {
+  commandListBuilder: (builtInItems) => {
+    return [
+      ...builtInItems,
+      {
+        command: 'custom-action',
+        title: 'My Action',
+        slotRenderer: (cmdItem, args) => `<div>${cmdItem.title}</div>`,
+      }
+    ] as Array<MenuCommandItem | GridMenuItem | 'divider'>;
+  }
+}
+```
+
+Alternatively, if you only have built-in items and dividers, you can use the simpler cast:
+
+```typescript
+return [...] as Array<MenuCommandItem | 'divider'>;
+```
+
 ### Core Concept
 
 Each menu item can define a `slotRenderer` callback function that receives the item and args, and returns either an HTML string or an HTMLElement. This single API works uniformly across all menu plugins.
@@ -11,7 +36,7 @@ Each menu item can define a `slotRenderer` callback function that receives the i
 ### Slot Renderer Callback
 
 ```typescript
-slotRenderer?: (cmdItem: any, args: any, event?: Event) => string | HTMLElement
+slotRenderer?: (cmdItem: MenuItem, args: MenuCallbackArgs, event?: Event) => string | HTMLElement
 ```
 
 - **cmdItem** - The menu cmdItem object containing command, title, iconCssClass, etc.
