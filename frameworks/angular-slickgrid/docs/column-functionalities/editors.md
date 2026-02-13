@@ -282,7 +282,7 @@ this.columnDefinitions = [
       collection: [{ value: '', label: '' }, { value: true, label: 'true' }, { value: false, label: 'false' }],
       model: Editors.singleSelect,
       elementOptions: {
-        // add any multiple-select.js options (from original or custom version)
+        // add any multiple-select-vanilla options (from original or custom version)
         autoAdjustDropPosition: false, // by default set to True, but you can disable it
         position: 'top'
       }

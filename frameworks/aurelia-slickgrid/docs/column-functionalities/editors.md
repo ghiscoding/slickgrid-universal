@@ -231,7 +231,7 @@ this.columnDefinitions = [
 ```
 
 ### Editor Options (`MultipleSelectOption` interface)
-All the available options that can be provided as editor `options` to your column definitions can be found under this [MultipleSelectOption](https://github.com/ghiscoding/multiple-select-vanilla/blob/main/packages/multiple-select-vanilla/src/models/multipleSelectOption.interface.ts) interface and you should cast your editor `options` to that interface to make sure that you use only valid options of the `multiple-select.js` library.
+All the available options that can be provided as editor `options` to your column definitions can be found under this [MultipleSelectOption](https://github.com/ghiscoding/multiple-select-vanilla/blob/main/packages/multiple-select-vanilla/src/models/multipleSelectOption.interface.ts) interface and you should cast your editor `options` to that interface to make sure that you use only valid options of the `multiple-select-vanilla` library.
 
 ```ts
 editor: {
@@ -351,8 +351,8 @@ this.columnDefinitions = [
 ];
 ```
 
-### `multiple-select.js` Options
-You can use any options from [Multiple-Select.js](http://wenzhixin.net.cn/p/multiple-select) and add them to your editor `options` property. However please note that this is a customized version of the original (all original [lib options](http://wenzhixin.net.cn/p/multiple-select/docs/) are available so you can still consult the original site for all options).
+### `multiple-select-vanilla` Options
+You can use any options from [multiple-select-vanilla](https://github.com/ghiscoding/multiple-select-vanilla) and add them to your editor `options` property. However please note that this is a customized version of the original (all original [lib options](https://ghiscoding.github.io/multiple-select-vanilla/) are available so you can still consult the original site for all options).
 
 Couple of small options were added to suit Aurelia-SlickGrid needs, which is why it points to `aurelia-slickgrid/lib` folder (which is our customized version of the original). This lib is required if you plan to use `multipleSelect` or `singleSelect` Filters. What was customized to (compare to the original) is the following:
 - `okButton` option was added to add an OK button for simpler closing of the dropdown after selecting multiple options.
@@ -378,7 +378,7 @@ this.columnDefinitions = [
       collection: [{ value: '', label: '' }, { value: true, label: 'true' }, { value: false, label: 'false' }],
       model: Editors.singleSelect,
       elementOptions: {
-        // add any multiple-select.js options (from original or custom version)
+        // add any multiple-select-vanilla options (from original or custom version)
         autoAdjustDropPosition: false, // by default set to True, but you can disable it
         position: 'top'
       }

@@ -16,7 +16,7 @@
   - [Collection Async Load](#collection-async-load)
   - [Collection Lazy Load](#collection-lazy-load)
   - [Collection Watch](#collection-watch)
-- [`multiple-select.js` Options](#multiple-selectjs-options)
+- [`multiple-select-vanilla` Options](#multiple-selectjs-options)
   - [Filter Options (`MultipleSelectOption` interface)](#filter-options-multipleselectoption-interface)
   - [Display shorter selected label text](#display-shorter-selected-label-text)
 - [Query against a different field](#query-against-another-field-property)
@@ -36,7 +36,7 @@ Multiple Select (dropdown) filter is useful when we want to filter the grid 1 or
 We use an external lib named [multiple-select-vanilla](https://github.com/ghiscoding/multiple-select-vanilla).
 
 #### Note
-For this filter to work you will need to add [Multiple-Select.js](http://wenzhixin.net.cn/p/multiple-select) to your project. This is a customized version of the original (thought all the original [lib options](http://wenzhixin.net.cn/p/multiple-select/docs/) are available so you can still consult the original site for all options). Couple of small options were added to suit SlickGrid-Universal needs, which is why it points to `slickgrid-universal/dist/lib` folder. This lib is required if you plan to use `multipleSelect` or `singleSelect` Filters. What was customized to (compare to the original)
+For this filter to work you will need to add [multiple-select-vanilla](https://github.com/ghiscoding/multiple-select-vanilla) to your project. This is a customized version of the original (thought all the original [lib options](https://ghiscoding.github.io/multiple-select-vanilla/) are available so you can still consult the original site for all options). Couple of small options were added to suit SlickGrid-Universal needs, which is why it points to `slickgrid-universal/dist/lib` folder. This lib is required if you plan to use `multipleSelect` or `singleSelect` Filters. What was customized to (compare to the original)
 - `okButton` option was added to add an OK button for simpler closing of the dropdown after selecting multiple options.
   - `okButtonText` was also added for locale (i18n)
 - `offsetLeft` option was added to make it possible to offset the dropdown. By default it is set to 0 and is aligned to the left of the select element. This option is particularly helpful when used as the last right column, not to fall off the screen.
@@ -590,7 +590,7 @@ columnDefinitions.value = [
 ```
 
 ### Filter Options (`MultipleSelectOption` interface)
-All the available options that can be provided as filter `options` to your column definitions can be found under this [MultipleSelectOption](https://github.com/ghiscoding/multiple-select-vanilla/blob/main/packages/multiple-select-vanilla/src/models/multipleSelectOption.interface.ts) interface and you should cast your filter `options` to that interface to make sure that you use only valid options of the `multiple-select.js` library.
+All the available options that can be provided as filter `options` to your column definitions can be found under this [MultipleSelectOption](https://github.com/ghiscoding/multiple-select-vanilla/blob/main/packages/multiple-select-vanilla/src/models/multipleSelectOption.interface.ts) interface and you should cast your filter `options` to that interface to make sure that you use only valid options of the `multiple-select-vanilla` library.
 
 ```ts
 filter: {
@@ -613,8 +613,8 @@ gridOptions.value = {
 }
 ```
 
-### Multiple-select.js Options
-You can use any options from [Multiple-Select.js](http://wenzhixin.net.cn/p/multiple-select) and add them to your filter `options` property. However please note that this is a customized version of the original (all original [lib options](http://wenzhixin.net.cn/p/multiple-select/docs/) are available so you can still consult the original site for all options).
+### multiple-select-vanilla Options
+You can use any options from [multiple-select-vanilla](https://github.com/ghiscoding/multiple-select-vanilla) and add them to your filter `options` property. However please note that this is a customized version of the original (all original [lib options](https://ghiscoding.github.io/multiple-select-vanilla/) are available so you can still consult the original site for all options).
 
 Couple of small options were added to suit SlickGrid-Universal needs, which is why we are using a fork [ghiscoding/multiple-select-modified](https://github.com/ghiscoding/multiple-select-modified) folder (which is our customized version of the original). This lib is required if you plan to use `multipleSelect` or `singleSelect` Filters. What was customized to (compare to the original) is the following:
 - `okButton` option was added to add an OK button for simpler closing of the dropdown after selecting multiple options.
@@ -643,7 +643,7 @@ columnDefinitions.value = [
       model: Filters.singleSelect,
       // previously known as `filterOptions` for < 9.0
       options: {
-        // add any multiple-select.js options (from original or custom version)
+        // add any multiple-select-vanilla options (from original or custom version)
         autoAdjustDropPosition: false, // by default set to True, but you can disable it
         position: 'top'
       } as MultipleSelectOption

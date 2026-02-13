@@ -13,7 +13,7 @@
   - [Collection Async Load](#collection-async-load)
   - [Collection Label Prefix/Suffix](#collection-label-prefixsuffix)
   - [Collection Label Render HTML](#collection-label-render-html)
-  - [`multiple-select.js` Options](#multiple-selectjs-options)
+  - [`multiple-select-vanilla` Options](#multiple-selectjs-options)
 - [Editor Options](#editor-options)
 - [Validators](#validators)
    - [Custom Validator](#custom-validator)
@@ -256,7 +256,7 @@ function defineGrid() {
 ```
 
 ### Editor Options (`MultipleSelectOption` interface)
-All the available options that can be provided as editor `options` to your column definitions can be found under this [MultipleSelectOption](https://github.com/ghiscoding/multiple-select-vanilla/blob/main/packages/multiple-select-vanilla/src/models/multipleSelectOption.interface.ts) interface and you should cast your editor `options` to that interface to make sure that you use only valid options of the `multiple-select.js` library.
+All the available options that can be provided as editor `options` to your column definitions can be found under this [MultipleSelectOption](https://github.com/ghiscoding/multiple-select-vanilla/blob/main/packages/multiple-select-vanilla/src/models/multipleSelectOption.interface.ts) interface and you should cast your editor `options` to that interface to make sure that you use only valid options of the `multiple-select-vanilla` library.
 
 ```ts
 editor: {
@@ -417,7 +417,7 @@ function defineGrid() {
         collection: [{ value: '', label: '' }, { value: true, label: 'true' }, { value: false, label: 'false' }],
         model: Editors.singleSelect,
         elementOptions: {
-          // add any multiple-select.js options (from original or custom version)
+          // add any multiple-select-vanilla options (from original or custom version)
           autoAdjustDropPosition: false, // by default set to True, but you can disable it
           position: 'top'
         }
