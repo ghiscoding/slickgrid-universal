@@ -1,6 +1,6 @@
 ## Custom Menu Slots - Rendering
 
-All menu plugins (Header Menu, Cell Menu, Context Menu, Grid Menu) support **cross-framework compatible slot rendering** for custom content injection in menu items. This is achieved through the `slotRenderer` callback at the item level combined with an optional `defaultItemRenderer` at the menu level.
+All menu plugins (Header Menu, Cell Menu, Context Menu, Grid Menu) support **cross-framework compatible slot rendering** for custom content injection in menu items. This is achieved through the `slotRenderer` callback at the item level combined with an optional `defaultMenuItemRenderer` at the menu level.
 
 ### Core Concept
 
@@ -70,12 +70,12 @@ const menuItem = {
 
 ### Default Menu-Level Renderer
 
-Set a `defaultItemRenderer` at the menu option level to apply to all items (unless overridden by individual `slotRenderer`):
+Set a `defaultMenuItemRenderer` at the menu option level to apply to all items (unless overridden by individual `slotRenderer`):
 
 ```typescript
 const menuOption = {
   // Apply this renderer to all menu items (can be overridden per item)
-  defaultItemRenderer: (cmdItem, args) => {
+  defaultMenuItemRenderer: (cmdItem, args) => {
     return `
       <div style="display: flex; align-items: center; gap: 8px;">
         ${cmdItem.iconCssClass ? `<i class="${cmdItem.iconCssClass}" style="font-size: 18px;"></i>` : ''}
@@ -88,12 +88,12 @@ const menuOption = {
       command: 'action-1',
       title: 'Action One',
       iconCssClass: 'mdi mdi-check',
-      // This item uses defaultItemRenderer
+      // This item uses defaultMenuItemRenderer
     },
     {
       command: 'custom',
       title: 'Custom Item',
-      // This item overrides defaultItemRenderer with its own slotRenderer
+      // This item overrides defaultMenuItemRenderer with its own slotRenderer
       slotRenderer: () => `
         <div style="color: #ff6b6b; font-weight: bold;">
           Custom rendering overrides default
@@ -106,7 +106,7 @@ const menuOption = {
 
 ### Menu Types & Configuration
 
-The `slotRenderer` and `defaultItemRenderer` work identically across all menu plugins:
+The `slotRenderer` and `defaultMenuItemRenderer` work identically across all menu plugins:
 
 #### Header Menu
 ```typescript
@@ -114,7 +114,7 @@ const columnDef = {
   id: 'name',
   header: {
     menu: {
-      defaultItemRenderer: (cmdItem, args) => `<div>${cmdItem.title}</div>`,
+      defaultMenuItemRenderer: (cmdItem, args) => `<div>${cmdItem.title}</div>`,
       commandItems: [
         {
           command: 'sort',
@@ -132,7 +132,7 @@ const columnDef = {
 const columnDef = {
   id: 'action',
   cellMenu: {
-    defaultItemRenderer: (cmdItem, args) => `<div>${cmdItem.title}</div>`,
+    defaultMenuItemRenderer: (cmdItem, args) => `<div>${cmdItem.title}</div>`,
     commandItems: [
       {
         command: 'edit',
@@ -149,7 +149,7 @@ const columnDef = {
 const gridOptions = {
   enableContextMenu: true,
   contextMenu: {
-    defaultItemRenderer: (cmdItem, args) => `<div>${cmdItem.title}</div>`,
+    defaultMenuItemRenderer: (cmdItem, args) => `<div>${cmdItem.title}</div>`,
     commandItems: [
       {
         command: 'export',
@@ -166,7 +166,7 @@ const gridOptions = {
 const gridOptions = {
   enableGridMenu: true,
   gridMenu: {
-    defaultItemRenderer: (cmdItem, args) => `<div>${cmdItem.title}</div>`,
+    defaultMenuItemRenderer: (cmdItem, args) => `<div>${cmdItem.title}</div>`,
     commandItems: [
       {
         command: 'refresh',
@@ -395,10 +395,10 @@ const menuItem = {
 - **HTML strings** are inserted via `innerHTML` - ensure content is sanitized if user-provided
 - **HTMLElement objects** are appended directly - safer for dynamic content and allows event listeners
 - **Cross-framework compatible** - works in vanilla JS, Angular, React, Vue, Aurelia using the same API
-- **Priority order** - Item-level `slotRenderer` overrides menu-level `defaultItemRenderer`
+- **Priority order** - Item-level `slotRenderer` overrides menu-level `defaultMenuItemRenderer`
 - **Accessibility** - Include proper ARIA attributes when creating custom elements
 - **Event handling** - Call `event.stopPropagation()` in interactive elements to prevent menu commands from firing
-- **Default fallback** - If neither `slotRenderer` nor `defaultItemRenderer` is provided, the default icon + text rendering is used
+- **Default fallback** - If neither `slotRenderer` nor `defaultMenuItemRenderer` is provided, the default icon + text rendering is used
 - **Performance** - Avoid heavy DOM manipulation inside renderer callbacks (they may be called multiple times)
 - **Event parameter** - The optional `event` parameter is passed during click handling and allows you to control menu behavior
 - **All menus supported** - This API works uniformly across Header Menu, Cell Menu, Context Menu, and Grid Menu

@@ -295,7 +295,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
 
       if (this._camelPluginName !== 'headerButtons') {
         // Check if we have slot renderer on the menu item or a default item renderer
-        const slotRenderer = (item as MenuCommandOptionItem).slotRenderer || (this._addonOptions as MenuPlugin).defaultItemRenderer;
+        const slotRenderer = (item as MenuCommandOptionItem).slotRenderer || (this._addonOptions as MenuPlugin).defaultMenuItemRenderer;
         if (slotRenderer) {
           this.renderSlotRenderer(commandLiElm, slotRenderer, item as MenuCommandOptionItem, args);
         }
@@ -332,7 +332,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
         'click',
         ((e: DOMMouseOrTouchEvent<HTMLDivElement>) => {
           // if there's a slot renderer, call it with the event
-          const slotRenderer = (item as MenuCommandOptionItem).slotRenderer || (this._addonOptions as MenuPlugin).defaultItemRenderer;
+          const slotRenderer = (item as MenuCommandOptionItem).slotRenderer || (this._addonOptions as MenuPlugin).defaultMenuItemRenderer;
           if (slotRenderer) {
             slotRenderer(item as MenuCommandOptionItem, args, e);
           }

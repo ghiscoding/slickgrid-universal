@@ -823,7 +823,7 @@ describe('ContextMenu Plugin', () => {
     describe('with slot renderer', () => {
       beforeEach(() => {
         // Clean up any leftover state from previous tests
-        delete gridOptionsMock.contextMenu!.defaultItemRenderer;
+        delete gridOptionsMock.contextMenu!.defaultMenuItemRenderer;
         gridOptionsMock.contextMenu!.commandItems = [];
         gridOptionsMock.contextMenu!.hideCopyCellValueCommand = true;
       });
@@ -865,7 +865,7 @@ describe('ContextMenu Plugin', () => {
         expect(customSlotElm.textContent).toContain('String: Test Command');
       });
 
-      it('should render menu item with defaultItemRenderer when item has no slotRenderer', () => {
+      it('should render menu item with defaultMenuItemRenderer when item has no slotRenderer', () => {
         const mockDefaultRenderer = vi.fn((item: MenuCommandItem) => {
           const div = document.createElement('div');
           div.className = 'default-renderer-content';
@@ -874,7 +874,7 @@ describe('ContextMenu Plugin', () => {
         });
 
         plugin.dispose();
-        plugin.init({ commandItems: [{ command: 'test-cmd', title: 'Test Command' }], defaultItemRenderer: mockDefaultRenderer });
+        plugin.init({ commandItems: [{ command: 'test-cmd', title: 'Test Command' }], defaultMenuItemRenderer: mockDefaultRenderer });
         gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
@@ -886,7 +886,7 @@ describe('ContextMenu Plugin', () => {
         expect(defaultRendererElm.textContent).toBe('Default: Test Command');
       });
 
-      it('should prioritize item slotRenderer over defaultItemRenderer', () => {
+      it('should prioritize item slotRenderer over defaultMenuItemRenderer', () => {
         const mockSlotRenderer = vi.fn((item: MenuCommandItem) => {
           const div = document.createElement('div');
           div.className = 'slot-prioritized';
@@ -898,7 +898,7 @@ describe('ContextMenu Plugin', () => {
         plugin.dispose();
         plugin.init({
           commandItems: [{ command: 'test-cmd', title: 'Test Command', slotRenderer: mockSlotRenderer }],
-          defaultItemRenderer: mockDefaultRenderer,
+          defaultMenuItemRenderer: mockDefaultRenderer,
         });
         gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
 

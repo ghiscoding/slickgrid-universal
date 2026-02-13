@@ -829,7 +829,7 @@ describe('CellMenu Plugin', () => {
         expect(customSlotElm.textContent).toContain('String: Test Command');
       });
 
-      it('should render menu item with defaultItemRenderer when item has no slotRenderer', () => {
+      it('should render menu item with defaultMenuItemRenderer when item has no slotRenderer', () => {
         const mockDefaultRenderer = vi.fn((item: MenuCommandItem) => {
           const div = document.createElement('div');
           div.className = 'default-renderer-content';
@@ -838,7 +838,7 @@ describe('CellMenu Plugin', () => {
         });
 
         plugin.dispose();
-        plugin.init({ defaultItemRenderer: mockDefaultRenderer });
+        plugin.init({ defaultMenuItemRenderer: mockDefaultRenderer });
         columnsMock[3].cellMenu!.commandItems = [{ command: 'test-cmd', title: 'Test Command' }];
         gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
 
@@ -851,7 +851,7 @@ describe('CellMenu Plugin', () => {
         expect(defaultRendererElm.textContent).toBe('Default: Test Command');
       });
 
-      it('should prioritize item slotRenderer over defaultItemRenderer', () => {
+      it('should prioritize item slotRenderer over defaultMenuItemRenderer', () => {
         const mockSlotRenderer = vi.fn((item: MenuCommandItem) => {
           const div = document.createElement('div');
           div.className = 'slot-prioritized';
@@ -861,7 +861,7 @@ describe('CellMenu Plugin', () => {
         const mockDefaultRenderer = vi.fn();
 
         plugin.dispose();
-        plugin.init({ defaultItemRenderer: mockDefaultRenderer });
+        plugin.init({ defaultMenuItemRenderer: mockDefaultRenderer });
         columnsMock[3].cellMenu!.commandItems = [{ command: 'test-cmd', title: 'Test Command', slotRenderer: mockSlotRenderer }];
         gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
 

@@ -59,7 +59,7 @@ There are 2 callback hooks which are accessible in the Grid Options
 For more info on all the available properties of the custom commands, you can read refer to the doc written in the Grid Menu [implementation](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/extensions/slickHeaderButtons.ts) itself.
 
 ### Custom Menu Item Rendering
-To customize the appearance of menu items with custom HTML, badges, icons, or interactive elements, you can use the `slotRenderer` or `defaultItemRenderer` callbacks.
+To customize the appearance of menu items with custom HTML, badges, icons, or interactive elements, you can use the `slotRenderer` or `defaultMenuItemRenderer` callbacks.
 
 See [Custom Menu Slots](../menu-slots.md) for detailed examples and best practices on rendering custom menu item content.
 

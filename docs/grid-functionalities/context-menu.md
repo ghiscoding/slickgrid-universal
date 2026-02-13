@@ -123,7 +123,7 @@ contextMenu: {
 ```
 
 ### Custom Menu Item Rendering
-For advanced customization of menu item appearance, you can use the `slotRenderer` or `defaultItemRenderer` callbacks to create custom HTML or HTMLElement content for your menu items. This allows you to add badges, keyboard shortcuts, status indicators, and more.
+For advanced customization of menu item appearance, you can use the `slotRenderer` or `defaultMenuItemRenderer` callbacks to create custom HTML or HTMLElement content for your menu items. This allows you to add badges, keyboard shortcuts, status indicators, and more.
 
 See [Custom Menu Slots](../menu-slots.md) for detailed examples and best practices on rendering custom menu item content across all menu types.
 

@@ -1304,7 +1304,7 @@ describe('GridMenuControl', () => {
           expect(customSlotElm?.textContent).toContain('String: Test Command');
         });
 
-        it('should render menu item with defaultItemRenderer when item has no slotRenderer', () => {
+        it('should render menu item with defaultMenuItemRenderer when item has no slotRenderer', () => {
           const mockDefaultRenderer = vi.fn((item: any) => {
             const div = document.createElement('div');
             div.className = 'default-renderer-content';
@@ -1315,7 +1315,7 @@ describe('GridMenuControl', () => {
           control.columns = columnsMock;
           gridOptionsMock.gridMenu = {
             commandItems: [{ command: 'test-cmd', title: 'Test Command' }] as any,
-            defaultItemRenderer: mockDefaultRenderer,
+            defaultMenuItemRenderer: mockDefaultRenderer,
           };
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
           control.init();
@@ -1331,7 +1331,7 @@ describe('GridMenuControl', () => {
           expect(defaultRendererElm?.textContent).toBe('Default: Test Command');
         });
 
-        it('should prioritize item slotRenderer over defaultItemRenderer', () => {
+        it('should prioritize item slotRenderer over defaultMenuItemRenderer', () => {
           const mockSlotRenderer = vi.fn((item: any) => {
             const div = document.createElement('div');
             div.className = 'slot-prioritized';
@@ -1342,7 +1342,7 @@ describe('GridMenuControl', () => {
           control.columns = columnsMock;
           gridOptionsMock.gridMenu = {
             commandItems: [{ command: 'test-cmd', title: 'Test Command', slotRenderer: mockSlotRenderer }] as any,
-            defaultItemRenderer: vi.fn(),
+            defaultMenuItemRenderer: vi.fn(),
           };
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
           control.init();

@@ -46,16 +46,16 @@ export interface MenuOption<T extends MenuFromCellCallbackArgs | GridMenuCommand
    *
    * @example
    * // Return HTML string
-   * defaultItemRenderer: (cmdItem, args) => `<div>${cmdItem.title}</div>`
+   * defaultMenuItemRenderer: (cmdItem, args) => `<div>${cmdItem.title}</div>`
    *
    * // Return HTMLElement (e.g. Cell or Context Menu)
-   * defaultItemRenderer: (cmdItem, args) => {
+   * defaultMenuItemRenderer: (cmdItem, args) => {
    *   const div = document.createElement('div');
    *   div.textContent = `${cmdItem.title} (Row ${args.dataContext.id})`;
    *   return div;
    * }
    */
-  defaultItemRenderer?: (cmdItem: any, args: T) => string | HTMLElement;
+  defaultMenuItemRenderer?: (cmdItem: any, args: T) => string | HTMLElement;
 
   /** Callback method that user can override the default behavior of enabling/disabling an item from the list. */
   menuUsabilityOverride?: (args: T) => boolean;

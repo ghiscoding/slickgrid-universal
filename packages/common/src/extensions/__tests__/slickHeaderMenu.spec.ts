@@ -929,7 +929,7 @@ describe('HeaderMenu Plugin', () => {
         expect(customSlotElm?.textContent).toContain('String: Test Command');
       });
 
-      it('should render menu item with defaultItemRenderer when item has no slotRenderer', () => {
+      it('should render menu item with defaultMenuItemRenderer when item has no slotRenderer', () => {
         const mockDefaultRenderer = vi.fn((item: any) => {
           const div = document.createElement('div');
           div.className = 'default-renderer-content';
@@ -939,7 +939,7 @@ describe('HeaderMenu Plugin', () => {
 
         columnsMock[1].header!.menu = { commandItems: [{ command: 'test-cmd', title: 'Test Command' }] as any };
         plugin.init(columnsMock as any);
-        plugin.addonOptions.defaultItemRenderer = mockDefaultRenderer as any;
+        plugin.addonOptions.defaultMenuItemRenderer = mockDefaultRenderer as any;
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
         gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData, gridStub);
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as any;
@@ -954,7 +954,7 @@ describe('HeaderMenu Plugin', () => {
         expect(defaultRendererElm?.textContent).toBe('Default: Test Command');
       });
 
-      it('should prioritize item slotRenderer over defaultItemRenderer', () => {
+      it('should prioritize item slotRenderer over defaultMenuItemRenderer', () => {
         const mockSlotRenderer = vi.fn((item: any) => {
           const div = document.createElement('div');
           div.className = 'slot-prioritized';
@@ -965,7 +965,7 @@ describe('HeaderMenu Plugin', () => {
 
         columnsMock[1].header!.menu = { commandItems: [{ command: 'test-cmd', title: 'Test Command', slotRenderer: mockSlotRenderer }] as any };
         plugin.init(columnsMock as any);
-        plugin.addonOptions.defaultItemRenderer = mockDefaultRenderer as any;
+        plugin.addonOptions.defaultMenuItemRenderer = mockDefaultRenderer as any;
         gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
         gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData, gridStub);
         const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as any;
