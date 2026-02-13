@@ -104,6 +104,20 @@ export interface CustomTooltipOption<T = any> {
   /** defaults to 3000 milliseconds, delay before hiding the tooltip. Only works in tandem with persistOnHover set to true */
   autoHideDelay?: number;
 
+  /**
+   * defaults to false, when enabled it will observe ALL elements with `title` or `data-slick-tooltip` attributes (not just grid elements).
+   * This is useful for showing custom tooltips on elements outside the grid (e.g., menu items, buttons, etc.)
+   * while still using the SlickCustomTooltip plugin to manage the tooltip display and styling.
+   */
+  observeAllTooltips?: boolean;
+
+  /**
+   * defaults to 'body', CSS selector of the container element to observe when `observeAllTooltips` is enabled.
+   * When defined, it will target only that specific container (e.g., use `'.tooltip-container'` to observe only elements within that container).
+   * NOTE: this option only works in combo with `observeAllTooltips` being enabled.
+   */
+  observeTooltipContainer?: string;
+
   // --
   // callback functions
   // -------------------

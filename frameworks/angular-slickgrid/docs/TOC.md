@@ -49,7 +49,7 @@
 * [Resize by Cell Content](grid-functionalities/Resize-by-Cell-Content.md)
 * [Column Picker](grid-functionalities/Column-Picker.md)
 * [Composite Editor Modal](grid-functionalities/composite-editor-modal.md)
-* [Custom Tooltip](grid-functionalities/Custom-Tooltip-\(plugin\).md)
+* [Custom Tooltip](grid-functionalities/custom-tooltip.md)
 * [Add, Update or Highlight a Datagrid Item](grid-functionalities/add-update-highlight.md)
 * [Dynamically Add CSS Classes to Item Rows](grid-functionalities/dynamic-item-metadata.md)
 * [Column & Row Spanning](grid-functionalities/column-row-spanning.md)
