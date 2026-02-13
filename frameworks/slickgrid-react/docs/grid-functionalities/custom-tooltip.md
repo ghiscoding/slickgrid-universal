@@ -8,6 +8,7 @@
   - [on Column Header (title)](#column-header-custom-tooltip-with-headerformatter) with `headerFormatter`
   - [on Column Header row (filter)](#column-header-custom-tooltip-with-headerrowformatter) with `headerRowFormatter`
   - [with regular `[title]` attribute](#regular-tooltip-with-a-title-attribute)
+  - [Nested/Inner Tooltips](#nestedinner-tooltips) (parent and child element tooltips)
   - [tooltip text length](#regular-tooltip-max-length)
 - [How to delay the opening of a tooltip?](#how-to-delay-the-opening-of-a-tooltip)
   - [delay a tooltip with Formatter](#delay-a-tooltip-with-formatter)
@@ -210,6 +211,21 @@ customTooltip: {
   // if you wish to disable auto-tooltip creation when ellipsis (...) shows up, can use this flag
   // useRegularTooltipFromFormatterOnly: true,
 },
+```
+
+### Nested/Inner Tooltips
+You can have tooltips on both parent and child elements (for example, a button with an icon inside where both have different tooltips). When hovering:
+- **Parent element** (button): shows the parent tooltip
+- **Child element** (icon): shows the child tooltip
+
+Both tooltips can be styled independently using the CSS `data-target-id` attribute. This is useful when you want different tooltip styling for nested elements.
+
+#### HTML Example
+```html
+<button id="my-button" title="Button tooltip">
+  <span id="filter-icon" title="Icon tooltip"></span>
+  Action
+</button>
 ```
 
 #### Regular tooltip max length

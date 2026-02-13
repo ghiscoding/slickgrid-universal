@@ -35,20 +35,22 @@
       <label for="pinned-rows">Simulated Server Delay (ms): </label>
       <input type="number" id="server-delay" data-test="server-delay" style="width: 60px" [(ngModel)]="serverApiDelay" />
       <button
-        class="ms-2 btn btn-outline-secondary btn-sm"
+        class="ms-2 btn btn-outline-secondary btn-icon btn-sm"
         data-test="filter-empty-desc"
         (click)="setFiltersDynamically('=')"
         title="Apply filter to show only empty descriptions"
       >
-        Filters Empty Description
+        <i class="mdi mdi-filter" title="icon tooltip for empty descriptions"></i>
+        <span>Filters Empty Description</span>
       </button>
       <button
-        class="ms-2 btn btn-outline-secondary btn-sm"
+        class="ms-2 btn btn-outline-secondary btn-icon btn-sm"
         data-test="filter-non-empty-desc"
         (click)="setFiltersDynamically('!=')"
         title="Apply filter to show only non-empty descriptions"
       >
-        Filters Non-Empty Description
+        <i class="mdi mdi-filter" title="icon tooltip for non-empty descriptions"></i>
+        <span>Filters Non-Empty Description</span>
       </button>
     </div>
     <div class="alert alert-info is-narrow col" [class]="!showLazyLoading() ? 'invisible' : ''" data-test="alert-lazy">
