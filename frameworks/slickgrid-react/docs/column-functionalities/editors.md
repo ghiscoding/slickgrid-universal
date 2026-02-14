@@ -13,7 +13,7 @@
   - [Collection Async Load](#collection-async-load)
   - [Collection Label Prefix/Suffix](#collection-label-prefixsuffix)
   - [Collection Label Render HTML](#collection-label-render-html)
-  - [`multiple-select.js` Options](#multiple-selectjs-options)
+  - [`multiple-select-vanilla` Options](#multiple-selectjs-options)
 - [Editor Options](#editor-options)
 - [Validators](#validators)
    - [Custom Validator](#custom-validator)
@@ -226,7 +226,7 @@ const columnDefinitions = [
 ```
 
 ### Editor Options (`MultipleSelectOption` interface)
-All the available options that can be provided as editor `options` to your column definitions can be found under this [MultipleSelectOption](https://github.com/ghiscoding/multiple-select-vanilla/blob/main/lib/src/interfaces/multipleSelectOption.interface.ts) and you should cast your editor `options` to that interface to make sure that you use only valid options of the `multiple-select.js` library.
+All the available options that can be provided as editor `options` to your column definitions can be found under this [MultipleSelectOption](https://github.com/ghiscoding/multiple-select-vanilla/blob/main/lib/src/interfaces/multipleSelectOption.interface.ts) and you should cast your editor `options` to that interface to make sure that you use only valid options of the `multiple-select-vanilla` library.
 
 ```tsx
 editor: {
@@ -349,8 +349,8 @@ const columnDefinitions = [
 ];
 ```
 
-### `multiple-select.js` Options
-You can use any options from [Multiple-Select.js](http://wenzhixin.net.cn/p/multiple-select) and add them to your editor `options` property. However please note that this is a customized version of the original (all original [lib options](http://wenzhixin.net.cn/p/multiple-select/docs/) are available so you can still consult the original site for all options).
+### `multiple-select-vanilla` Options
+You can use any options from [multiple-select-vanilla](https://github.com/ghiscoding/multiple-select-vanilla) and add them to your editor `options` property. However please note that this is a customized version of the original (all original [lib options](https://ghiscoding.github.io/multiple-select-vanilla/) are available so you can still consult the original site for all options).
 
 Couple of small options were added to suit slickgrid-react needs, which is why it points to `slickgrid-react/lib` folder (which is our customized version of the original). This lib is required if you plan to use `multipleSelect` or `singleSelect` Filters. What was customized to (compare to the original) is the following:
 - `okButton` option was added to add an OK button for simpler closing of the dropdown after selecting multiple options.
@@ -376,7 +376,7 @@ const columnDefinitions = [
       collection: [{ value: '', label: '' }, { value: true, label: 'true' }, { value: false, label: 'false' }],
       model: Editors.singleSelect,
       elementOptions: {
-        // add any multiple-select.js options (from original or custom version)
+        // add any multiple-select-vanilla options (from original or custom version)
         autoAdjustDropPosition: false, // by default set to True, but you can disable it
         position: 'top'
       }
@@ -447,8 +447,8 @@ So if we take all of these informations and we want to create our own Custom Edi
 ```tsx
 const myCustomTitleValidator: EditorValidator = (value: any, args: EditorArgs) => {
   // you can get the Editor Args which can be helpful, e.g. we can get the Translate Service from it
-  const grid = args && args.grid;
-  const gridOptions = (grid && grid.getOptions) ? grid.getOptions() : {};
+  const grid = args.grid;
+  const gridOptions = grid.getOptions() : {};
   const i18n = gridOptions.i18n;
 
   if (value == null || value === undefined || !value.length) {

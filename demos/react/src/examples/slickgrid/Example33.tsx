@@ -2,6 +2,7 @@ import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import React, { useEffect, useRef, useState } from 'react';
 import {
+  createDomElement,
   Editors,
   Filters,
   Formatters,
@@ -136,6 +137,31 @@ const Example33: React.FC = () => {
           // renderRegularTooltipAsHtml: true, // defaults to false, regular "title" tooltip won't be rendered as html unless specified via this flag (also "\r\n" will be replaced by <br>)
           // maxWidth: 75,
           // maxHeight: 30,
+        },
+      },
+      {
+        id: 'button',
+        name: 'Button Tooltip',
+        field: 'title',
+        width: 100,
+        minWidth: 100,
+        filterable: true,
+        excludeFromExport: true,
+        formatter: (_row: number, _cell: number, value: any) => {
+          const button = createDomElement('button', {
+            className: 'btn btn-outline-secondary btn-icon btn-sm',
+            title: 'This is the button tooltip',
+          });
+          const icon = createDomElement('i', { className: 'mdi mdi-information', title: 'icon tooltip' });
+          const text = createDomElement('span', { textContent: 'Hello Task' });
+          button.appendChild(icon);
+          button.appendChild(text);
+          button.addEventListener('click', () => alert(`Clicked button for ${value}`));
+          return button;
+        },
+        // define tooltip options here OR for the entire grid via the grid options (cell tooltip options will have precedence over grid options)
+        customTooltip: {
+          useRegularTooltip: true, // note regular tooltip will try to find a "title" attribute in the cell formatter (it won't work without a cell formatter)
         },
       },
       {
@@ -400,11 +426,13 @@ const Example33: React.FC = () => {
         headerFormatter,
         headerRowFormatter,
         usabilityOverride: (args) => args.cell !== 0 && args?.column?.id !== 'action', // don't show on first/last columns
+        observeAllTooltips: true, // observe all elements with title/data-slick-tooltip attributes (not just SlickGrid elements)
+        observeTooltipContainer: 'body', // defaults to 'body', target a specific container (only works when observeAllTooltips is enabled)
       },
       presets: {
         filters: [{ columnId: 'prerequisites', searchTerms: [1, 3, 5, 7, 9, 12, 15, 18, 21, 25, 28, 29, 30, 32, 34] }],
       },
-      rowHeight: 33,
+      rowHeight: 38,
       enableFiltering: true,
       selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
@@ -429,7 +457,7 @@ const Example33: React.FC = () => {
         onCommand: (e, args) => executeCommand(e, args),
         onOptionSelected: (_e, args) => {
           // change "Completed" property with new option selected from the Cell Menu
-          const dataContext = args && args.dataContext;
+          const dataContext = args?.dataContext;
           if (dataContext && dataContext.hasOwnProperty('completed')) {
             dataContext.completed = args.item.option;
             reactGridRef.current?.gridService.updateItem(dataContext);
@@ -463,7 +491,7 @@ const Example33: React.FC = () => {
         id: i,
         title: 'Task ' + i,
         duration: Math.round(Math.random() * 100),
-        description: `This is a sample task description.\nIt can be multiline\r\rAnother line...`,
+        description: i > 500 ? null : `This is a sample task description.\nIt can be multiline\r\rAnother line...`,
         percentComplete: Math.floor(Math.random() * (100 - 5 + 1) + 5),
         start: new Date(randomYear, randomMonth, randomDay),
         finish: randomFinish < new Date() ? '' : randomFinish, // make sure the random date is earlier than today
@@ -573,6 +601,20 @@ const Example33: React.FC = () => {
     reactGridRef.current?.resizerService.resizeGrid(0);
   }
 
+  function setFiltersDynamically(operator: string) {
+    const operatorType = operator === '=' ? '=' : '!=';
+    reactGridRef.current?.filterService.updateFilters(
+      [
+        {
+          columnId: 'desc',
+          operator: operatorType,
+          searchTerms: [''],
+        },
+      ],
+      true
+    );
+  }
+
   return !gridOptions ? (
     ''
   ) : (
@@ -624,6 +666,24 @@ const Example33: React.FC = () => {
             value={serverWaitDelay}
             onInput={($event) => handleServerDelayInputChange($event)}
           />
+          <button
+            className="ms-2 btn btn-outline-secondary btn-icon btn-sm"
+            data-test="filter-empty-desc"
+            onClick={() => setFiltersDynamically('=')}
+            title="Apply filter to show only empty descriptions"
+          >
+            <i className="mdi mdi-filter" title="icon tooltip for empty descriptions"></i>
+            <span>Filters Empty Description</span>
+          </button>
+          <button
+            className="ms-2 btn btn-outline-secondary btn-icon btn-sm"
+            data-test="filter-non-empty-desc"
+            onClick={() => setFiltersDynamically('!=')}
+            title="Apply filter to show only non-empty descriptions"
+          >
+            <i className="mdi mdi-filter" title="icon tooltip for non-empty descriptions"></i>
+            <span>Filters Non-Empty Description</span>
+          </button>
         </div>
         <div className={`alert alert-info is-narrow col ${!showLazyLoading ? 'invisible' : ''}`} data-test="alert-lazy">
           Lazy loading collection...

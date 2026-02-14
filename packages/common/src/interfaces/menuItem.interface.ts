@@ -68,7 +68,7 @@ export interface MenuItem<O = MenuCallbackArgs> {
    *   return div;
    * }
    */
-  slotRenderer?: (cmdItem: any, args: O, event?: Event) => string | HTMLElement;
+  slotRenderer?: (cmdItem: MenuItem<O>, args: O, event?: Event) => string | HTMLElement;
 
   // --
   // action/override callbacks

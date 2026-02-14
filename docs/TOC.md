@@ -46,6 +46,7 @@
 * [Resize by Cell Content](grid-functionalities/resize-by-cell-content.md)
 * [Column Picker](grid-functionalities/column-picker.md)
 * [Composite Editor Modal](grid-functionalities/composite-editor-modal.md)
+* [Custom Menu Slots](menu-slots.md)
 * [Custom Tooltip](grid-functionalities/custom-tooltip.md)
 * [Column & Row Spanning](grid-functionalities/column-row-spanning.md)
 * [Context Menu](grid-functionalities/context-menu.md)

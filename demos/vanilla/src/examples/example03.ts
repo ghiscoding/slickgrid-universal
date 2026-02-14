@@ -424,7 +424,7 @@ export default class Example03 {
         onCommand: (e, args) => this.executeCommand(e, args),
         onOptionSelected: (_e, args) => {
           // change "Effort-Driven" property with new option selected from the Cell Menu
-          const dataContext = args && args.dataContext;
+          const dataContext = args?.dataContext;
           if (dataContext && dataContext.hasOwnProperty('effortDriven')) {
             dataContext.effortDriven = args.item.option;
             this.sgb.gridService.updateItem(dataContext);

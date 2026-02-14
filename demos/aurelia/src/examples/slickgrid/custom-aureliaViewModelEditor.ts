@@ -33,7 +33,7 @@ export class CustomAureliaViewModelEditor implements Editor {
   elmBindingContext?: IBindingContext;
 
   constructor(private args: any) {
-    this.grid = args && args.grid;
+    this.grid = args?.grid;
     this.init();
   }
 

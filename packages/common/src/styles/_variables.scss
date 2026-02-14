@@ -455,6 +455,7 @@ $slick-header-menu-button-icon-size:                        22px !default;
 $slick-header-menu-button-padding:                          0px !default;
 $slick-header-menu-button-margin-right:                     3px !default;
 $slick-header-menu-display:                                 none !default; /* can be none or inline-block */
+$slick-header-menu-z-index:                                 8888 !default; /* can be none or inline-block */
 
 /* Checkbox Selector / Row Selection */
 $slick-checkbox-icon-color:                                 $slick-primary-color !default;

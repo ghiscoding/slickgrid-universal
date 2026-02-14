@@ -303,7 +303,7 @@ const Example10: React.FC = () => {
   }
 
   function onGrid1SelectedRowsChanged(_e: Event, args: any) {
-    const grid = args && args.grid;
+    const grid = args?.grid;
     if (Array.isArray(args.rows)) {
       const selectedTitles = args.rows.map((idx: number) => {
         const item = grid.getDataItem(idx);

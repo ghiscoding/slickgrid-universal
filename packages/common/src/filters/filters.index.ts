@@ -58,10 +58,10 @@ export const Filters: Record<string, FilterConstructor> = {
   /** Default Filter, input type text filter */
   inputText: InputFilter,
 
-  /** Multiple Select filter, which uses 3rd party lib "multiple-select.js" */
+  /** Multiple Select filter, which uses 3rd party lib "multiple-select-vanilla" */
   multipleSelect: MultipleSelectFilter,
 
-  /** Single Select filter, which uses 3rd party lib "multiple-select.js" */
+  /** Single Select filter, which uses 3rd party lib "multiple-select-vanilla" */
   singleSelect: SingleSelectFilter,
 
   /** Slider Filter (single value) */

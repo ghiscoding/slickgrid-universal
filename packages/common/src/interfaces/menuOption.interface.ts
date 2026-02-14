@@ -4,6 +4,7 @@ import type {
   HeaderMenuCommandItemCallbackArgs,
   MenuCommandItem,
   MenuFromCellCallbackArgs,
+  MenuItem,
 } from './index.js';
 
 export interface MenuOption<T extends MenuFromCellCallbackArgs | GridMenuCommandItemCallbackArgs | HeaderMenuCommandItemCallbackArgs> {
@@ -55,7 +56,7 @@ export interface MenuOption<T extends MenuFromCellCallbackArgs | GridMenuCommand
    *   return div;
    * }
    */
-  defaultMenuItemRenderer?: (cmdItem: any, args: T) => string | HTMLElement;
+  defaultMenuItemRenderer?: (cmdItem: MenuItem, args: T) => string | HTMLElement;
 
   /** Callback method that user can override the default behavior of enabling/disabling an item from the list. */
   menuUsabilityOverride?: (args: T) => boolean;

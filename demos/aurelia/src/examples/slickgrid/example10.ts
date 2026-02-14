@@ -293,7 +293,7 @@ export class Example10 {
   }
 
   onGrid1SelectedRowsChanged(_e: Event, args: any) {
-    const grid = args && args.grid;
+    const grid = args?.grid;
     if (Array.isArray(args.rows)) {
       this.selectedTitle = args.rows.map((idx: number) => {
         const item = grid.getDataItem(idx);

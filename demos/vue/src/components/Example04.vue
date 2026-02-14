@@ -308,12 +308,12 @@ function setSortingDynamically() {
 }
 
 function refreshMetrics(_e: Event, args: any) {
-  if (args && args.current >= 0) {
+  if (args?.current >= 0) {
     setTimeout(() => {
       metrics.value = {
         startTime: new Date(),
         endTime: new Date(),
-        itemCount: (args && args.current) || 0,
+        itemCount: args?.current || 0,
         totalItemCount: dataset.value.length || 0,
       };
     });

@@ -37,13 +37,13 @@ export const Editors: Record<string, EditorConstructor> = {
    */
   longText: LongTextEditor,
 
-  /** Multiple Select editor (which uses 3rd party lib "multiple-select.js") */
+  /** Multiple Select editor (which uses 3rd party lib "multiple-select-vanilla") */
   multipleSelect: MultipleSelectEditor,
 
   /** Editor with an input of type Password (note that only the text shown in the UI will be masked, the editor value is still plain text) */
   password: InputPasswordEditor,
 
-  /** Single Select editor (which uses 3rd party lib "multiple-select.js") */
+  /** Single Select editor (which uses 3rd party lib "multiple-select-vanilla") */
   singleSelect: SingleSelectEditor,
 
   /** Slider Editor using an input of type "range" */

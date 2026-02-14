@@ -492,7 +492,7 @@ function handleOnCompositeEditorChange(event) {
   // you can also change some editor options
   // not all Editors supports this functionality, so far only these Editors are supported: AutoComplete, Date, Single/Multiple Select
   if (columnDef.id === 'completed') {
-    compositeEditorInstance.changeFormEditorOption('percentComplete', 'filter', true); // multiple-select.js, show filter in dropdown
+    compositeEditorInstance.changeFormEditorOption('percentComplete', 'filter', true); // multiple-select-vanilla, show filter in dropdown
     compositeEditorInstance.changeFormEditorOption('product', 'minLength', 3);         // autocomplete, change minLength char to type
     compositeEditorInstance.changeFormEditorOption('finish', 'displayDateMin', 'today');
   }

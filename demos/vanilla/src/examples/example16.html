@@ -2,7 +2,12 @@
   Example 16 - Regular & Custom Tooltips
   <span class="subtitle">(with Salesforce Theme)</span>
   <span class="d-inline-flex">
-    <button class="button is-small" onclick.trigger="toggleDarkMode()" data-test="toggle-dark-mode">
+    <button
+      class="button is-small"
+      onclick.trigger="toggleDarkMode()"
+      data-test="toggle-dark-mode"
+      title="Toggle between Light and Dark modes"
+    >
       <span class="mdi mdi-theme-light-dark"></span>
       <span> Toggle Light/Dark</span>
     </button>
@@ -19,17 +24,29 @@
   </div>
 </h3>
 
-<div class="columns row mb-3 no-margin">
+<div class="columns row mb-3 no-margin tooltip-container">
   <div class="column">
     <span>
       <label for="server-delay">Simulated Server Delay (ms): </label>
       <input type="number" id="server-delay" class="is-narrow input is-small" data-test="server-delay" value.bind="serverApiDelay" />
     </span>
-    <button class="button is-small" data-test="filter-empty-desc" onclick.trigger="setFiltersDynamically('=')">
-      Filters Empty Description
+    <button
+      class="button is-small"
+      data-test="filter-empty-desc"
+      onclick.trigger="setFiltersDynamically('=')"
+      title="Apply filter to show only empty descriptions"
+    >
+      <span class="mdi mdi-filter" title="icon tooltip for empty descriptions"></span>
+      <span>Filters Empty Description</span>
     </button>
-    <button class="button is-small" data-test="filter-non-empty-desc" onclick.trigger="setFiltersDynamically('!=')">
-      Filters Non-Empty Description
+    <button
+      class="button is-small"
+      data-test="filter-non-empty-desc"
+      onclick.trigger="setFiltersDynamically('!=')"
+      title="Apply filter to show only non-empty descriptions"
+    >
+      <span class="mdi mdi-filter" title="icon tooltip for non-empty descriptions"></span>
+      <span>Filters Non-Empty Description</span>
     </button>
   </div>
   <div class="column invisible is-4" class.bind="notificationContainerClass" data-test="alert-lazy">

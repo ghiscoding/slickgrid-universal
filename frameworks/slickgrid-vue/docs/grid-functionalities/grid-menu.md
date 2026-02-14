@@ -74,6 +74,11 @@ gridOptions.value = {
 };
 ```
 
+#### Advanced: Dynamic Command List Builder
+For more advanced use cases where you need to dynamically build the command list, use `commandListBuilder`. This callback receives the built-in commands and allows you to filter, sort, or modify the list before it's rendered in the UI, giving you full control over the final command list.
+
+See the main [Custom Menu Slots](../menu-slots.md) documentation for detailed `commandListBuilder` examples.
+
 #### Events
 There are multiple events/callback hooks which are accessible from the Grid Options
 - `onBeforeMenuShow`
@@ -105,6 +110,11 @@ gridMenu: {
 ```
 
 For more info on all the available properties of the custom commands, you can read refer to the doc written in the Grid Menu [implementation](https://github.com/6pac/SlickGrid/blob/master/controls/slick.gridmenu.js) itself.
+
+### Custom Menu Item Rendering
+To customize the appearance of menu items with custom HTML, badges, icons, or interactive elements, you can use the `slotRenderer` or `defaultMenuItemRenderer` callbacks.
+
+See [Custom Menu Slots](../menu-slots.md) for detailed examples and best practices on rendering custom menu item content.
 
 ### How to change an icon of all default commands?
 You can change any of the default command icon(s) by changing the `icon[X-command]`, for example, see below for the defaults.

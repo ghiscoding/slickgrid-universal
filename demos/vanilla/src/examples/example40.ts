@@ -5,12 +5,12 @@ import {
   createDomElement,
   Filters,
   Formatters,
-  getOffset,
   SortComparers,
   SortDirectionNumber,
   type Column,
   type GridOption,
   type Grouping,
+  type MenuCommandItem,
 } from '@slickgrid-universal/common';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
@@ -198,11 +198,11 @@ export default class Example40 {
                 command: 'custom-action',
                 title: 'Advanced Export',
                 // Demo: Native HTMLElement with event listeners using slotRenderer (full DOM control)
-                slotRenderer: (cmdItem, _args) => {
+                slotRenderer: (cmdItem) => {
                   // you can use `createDomElement()` from Slickgrid for easier DOM element creation
                   const containerDiv = createDomElement('div', { className: 'menu-item' });
                   const iconDiv = createDomElement('div', { className: 'advanced-export-icon', textContent: '📊' });
-                  const textSpan = createDomElement('span', { textContent: cmdItem.title, style: { flex: '1' } });
+                  const textSpan = createDomElement('span', { textContent: cmdItem.title || '', style: { flex: '1' } });
                   const kbdElm = createDomElement('kbd', { className: 'key-hint', textContent: 'Ctrl+E' });
                   containerDiv.appendChild(iconDiv);
                   containerDiv.appendChild(textSpan);
@@ -213,9 +213,7 @@ export default class Example40 {
                     iconDiv.style.transform = 'scale(1.15)';
                     iconDiv.style.background = 'linear-gradient(135deg, #d8dcef 0%, #ffffff 100%)';
                     containerDiv.parentElement!.style.backgroundColor = '#854685';
-                    // containerDiv.parentElement!.title = `📈 Export timestamp: ${tempoFormat(new Date(), 'YYYY-MM-DD hh:mm:ss a')}`;
-                    const div = this.buildChartTooltip(getOffset(containerDiv));
-                    document.body.appendChild(div);
+                    containerDiv.parentElement!.title = `📈 Export timestamp: ${tempoFormat(new Date(), 'YYYY-MM-DD hh:mm:ss a')}`;
                     containerDiv.style.color = 'white';
                     containerDiv.querySelector<HTMLElement>('.key-hint')!.style.color = 'black';
                   });
@@ -229,7 +227,7 @@ export default class Example40 {
 
                   return containerDiv;
                 },
-                action: (_e, _args) => {
+                action: () => {
                   alert('Custom export action triggered!');
                 },
               },
@@ -292,7 +290,7 @@ export default class Example40 {
           hideCloseButton: false,
           commandTitle: 'Cell Actions',
           // Demo: Menu-level default renderer that applies to all items unless overridden
-          defaultMenuItemRenderer: (cmdItem, _args) => {
+          defaultMenuItemRenderer: (cmdItem) => {
             return `
               <div class="menu-item">
                 ${cmdItem.iconCssClass ? `<i class="${cmdItem.iconCssClass}" style="margin-right: 10px; font-size: 18px;"></i>` : '<span style="width: 18px; margin-right: 10px;">◦</span>'}
@@ -398,7 +396,7 @@ export default class Example40 {
       headerMenu: {
         // hideCommands: ['column-resize-by-content', 'clear-sort'],
         // Demo: Menu-level default renderer for all header menu items
-        defaultMenuItemRenderer: (cmdItem, _args) => {
+        defaultMenuItemRenderer: (cmdItem) => {
           return `
             <div class="menu-item">
               ${cmdItem.iconCssClass ? `<i class="${cmdItem.iconCssClass} menu-item-icon"></i>` : ''}
@@ -426,11 +424,11 @@ export default class Example40 {
               command: 'edit-cell',
               title: 'Edit Cell',
               // Demo: Individual slotRenderer overrides the menu's defaultMenuItemRenderer
-              slotRenderer: (cmdItem, _args) => {
+              slotRenderer: (cmdItem) => {
                 // you can use `createDomElement()` from Slickgrid for easier DOM element creation
                 const containerDiv = createDomElement('div', { className: 'menu-item' });
                 const iconDiv = createDomElement('div', { className: 'edit-cell-icon', textContent: '✎' });
-                const textSpan = createDomElement('span', { textContent: cmdItem.title, style: { flex: '1' } });
+                const textSpan = createDomElement('span', { textContent: cmdItem.title || '', style: { flex: '1' } });
                 const kbdElm = createDomElement('kbd', { className: 'edit-cell', textContent: 'F2' });
                 containerDiv.appendChild(iconDiv);
                 containerDiv.appendChild(textSpan);
@@ -484,10 +482,10 @@ export default class Example40 {
               iconCssClass: 'mdi mdi-delete text-danger',
               action: () => alert('Delete row'),
             },
-          ];
+          ] as Array<MenuCommandItem | 'divider'>;
         },
         // Demo: Menu-level default renderer for context menu items
-        defaultMenuItemRenderer: (cmdItem, _args) => {
+        defaultMenuItemRenderer: (cmdItem) => {
           return `
             <div class="menu-item">
               ${cmdItem.iconCssClass ? `<i class="${cmdItem.iconCssClass} menu-item-icon"></i>` : ''}
@@ -502,7 +500,7 @@ export default class Example40 {
       gridMenu: {
         // hideCommands: ['toggle-preheader', 'toggle-filter'],
         // Demo: Menu-level default renderer that applies to all items (can be overridden per item with slotRenderer)
-        defaultMenuItemRenderer: (cmdItem, _args) => {
+        defaultMenuItemRenderer: (cmdItem) => {
           return `
             <div class="menu-item">
               ${cmdItem.iconCssClass ? `<i class="${cmdItem.iconCssClass} menu-item-icon"></i>` : ''}
@@ -525,7 +523,7 @@ export default class Example40 {
               title: 'Export to CSV',
               iconCssClass: 'mdi mdi-download',
               // Individual slotRenderer overrides the defaultMenuItemRenderer for this item
-              slotRenderer: (cmdItem, _args) => `
+              slotRenderer: (cmdItem) => `
               <div class="menu-item">
                 <i class="${cmdItem.iconCssClass} menu-item-icon warn"></i>
                 <span class="menu-item-label warn">${cmdItem.title}</span>
@@ -543,7 +541,7 @@ export default class Example40 {
                 // you can use `createDomElement()` from Slickgrid for easier DOM element creation
                 const menuItemElm = createDomElement('div', { className: 'menu-item' });
                 const iconElm = createDomElement('i', { className: `${cmdItem.iconCssClass} menu-item-icon` });
-                const menuItemLabelElm = createDomElement('span', { className: 'menu-item-label', textContent: cmdItem.title });
+                const menuItemLabelElm = createDomElement('span', { className: 'menu-item-label', textContent: cmdItem.title || '' });
                 const kbdElm = createDomElement('kbd', { className: 'key-hint', textContent: 'F5' });
                 menuItemElm.appendChild(iconElm);
                 menuItemElm.appendChild(menuItemLabelElm);
@@ -552,29 +550,16 @@ export default class Example40 {
               },
               action: () => alert('Refresh data'),
             },
-          ];
+          ] as Array<MenuCommandItem | 'divider'>;
         },
       },
 
       // tooltip plugin
       externalResources: [new SlickCustomTooltip()],
-      // customTooltip: {
-      //   observeAllTooltips: true
-      // }
-    };
-  }
-
-  /** create a basic chart export tooltip */
-  buildChartTooltip(containerOffset) {
-    const div = createDomElement('div', {
-      className: 'export-timestamp',
-      textContent: `📈 Export timestamp: ${tempoFormat(new Date(), 'YYYY-MM-DD hh:mm:ss a')}`,
-      style: {
-        top: `${containerOffset.top + 35}px`,
-        left: `${containerOffset.left - 70}px`,
+      customTooltip: {
+        observeAllTooltips: true,
       },
-    });
-    return div;
+    };
   }
 
   clearGrouping() {
