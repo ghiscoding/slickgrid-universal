@@ -575,7 +575,11 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
               disabled: false,
               command: 'clear-filter',
               positionOrder: 50,
-              action: this.clearFilters.bind(this),
+              action: () => {
+                this.filterService.clearFilters();
+                this.sharedService.dataView.refresh();
+                this.pubSubService.publish('onGridMenuClearAllFilters');
+              },
             },
             this._addonOptions.hideCommands,
             gridMenuCommandItems,
@@ -630,7 +634,11 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
             disabled: false,
             command: 'toggle-dark-mode',
             positionOrder: 54,
-            action: this.toggleDarkMode.bind(this),
+            action: () => {
+              const currentDarkMode = this.sharedService.gridOptions.darkMode;
+              this.grid.setOptions({ darkMode: !currentDarkMode });
+              this.sharedService.gridOptions.darkMode = !currentDarkMode;
+            },
           },
           this._addonOptions.hideCommands,
           gridMenuCommandItems,
@@ -672,7 +680,11 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
               disabled: false,
               command: 'clear-sorting',
               positionOrder: 51,
-              action: this.clearSorting.bind(this),
+              action: () => {
+                this.sortService.clearSorting();
+                this.sharedService.dataView.refresh();
+                this.pubSubService.publish('onGridMenuClearAllSorting');
+              },
             },
             this._addonOptions.hideCommands,
             gridMenuCommandItems,
@@ -766,45 +778,34 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     return gridMenuCommandItems;
   }
 
-  protected clearFilters(): void {
-    this.filterService.clearFilters();
-    this.sharedService.dataView.refresh();
-    this.pubSubService.publish('onGridMenuClearAllFilters');
-  }
-
   protected clearPinning(): void {
-    const newGridOptions = { frozenColumn: -1, frozenRow: -1, frozenBottom: false, enableMouseWheelScrollHandler: false };
+    // reset frozen props on both SlickGrid options and shared service options
+    const newGridOptions = {
+      frozenColumn: -1,
+      frozenRow: -1,
+      frozenBottom: false,
+      enableMouseWheelScrollHandler: false,
+    } as Partial<GridOption>;
     this.grid.setOptions(newGridOptions);
-    this.sharedService.gridOptions.frozenColumn = newGridOptions.frozenColumn;
-    this.sharedService.gridOptions.frozenRow = newGridOptions.frozenRow;
-    this.sharedService.gridOptions.frozenBottom = newGridOptions.frozenBottom;
-    this.sharedService.gridOptions.enableMouseWheelScrollHandler = newGridOptions.enableMouseWheelScrollHandler;
+    Object.keys(newGridOptions).forEach(
+      (c) => (this.sharedService.gridOptions[c as keyof GridOption] = newGridOptions[c as keyof GridOption])
+    );
 
     // re-update columns to reflect any possible changes
     this.grid.updateColumns();
 
     // we also need to autosize columns if the option is enabled
-    const gridOptions = this.gridOptions;
-    if (gridOptions.enableAutoSizeColumns) {
+    if (this.gridOptions.enableAutoSizeColumns) {
       this.grid.autosizeColumns();
     }
     this.pubSubService.publish('onGridMenuClearAllPinning');
-  }
-
-  protected clearSorting(): void {
-    this.sortService.clearSorting();
-    this.sharedService.dataView.refresh();
-    this.pubSubService.publish('onGridMenuClearAllSorting');
   }
 
   protected exportCsv(): void {
     const registeredResources = this.sharedService?.externalRegisteredResources || [];
     const exportCsvService: TextExportService = registeredResources.find((service: any) => service.className === 'TextExportService');
     if (exportCsvService?.exportToFile) {
-      exportCsvService.exportToFile({
-        delimiter: ',',
-        format: 'csv',
-      });
+      exportCsvService.exportToFile({ delimiter: ',', format: 'csv' });
     } else {
       console.error(
         `[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu. Example:: this.gridOptions = { enableTextExport: true, externalResources: [new TextExportService()] };`
@@ -844,21 +845,12 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       (service: any) => service.className === 'TextExportService'
     );
     if (exportTxtService?.exportToFile) {
-      exportTxtService.exportToFile({
-        delimiter: '\t',
-        format: 'txt',
-      });
+      exportTxtService.exportToFile({ delimiter: '\t', format: 'txt' });
     } else {
       console.error(
         `[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Grid Menu. Example:: this.gridOptions = { enableTextExport: true, externalResources: [new TextExportService()] };`
       );
     }
-  }
-
-  protected toggleDarkMode(): void {
-    const currentDarkMode = this.sharedService.gridOptions.darkMode;
-    this.grid.setOptions({ darkMode: !currentDarkMode });
-    this.sharedService.gridOptions.darkMode = !currentDarkMode;
   }
 
   protected toggleFilterBar(): void {

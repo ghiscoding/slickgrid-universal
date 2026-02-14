@@ -232,10 +232,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
               (service: any) => service.className === 'TextExportService'
             );
             if (excelService?.exportToFile) {
-              excelService.exportToFile({
-                delimiter: ',',
-                format: 'csv',
-              });
+              excelService.exportToFile({ delimiter: ',', format: 'csv' });
             } else {
               throw new Error(
                 `[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Context Menu. Example:: this.gridOptions = { enableTextExport: true, externalResources: [new TextExportService()] };`
@@ -323,10 +320,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
               (service: any) => service.className === 'TextExportService'
             );
             if (excelService?.exportToFile) {
-              excelService.exportToFile({
-                delimiter: '\t',
-                format: 'txt',
-              });
+              excelService.exportToFile({ delimiter: '\t', format: 'txt' });
             } else {
               throw new Error(
                 `[Slickgrid-Universal] You must register the TextExportService to properly use Export to File in the Context Menu. Example:: this.gridOptions = { enableTextExport: true, externalResources: [new TextExportService()] };`

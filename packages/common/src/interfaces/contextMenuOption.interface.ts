@@ -47,7 +47,7 @@ export interface ContextMenuOption extends MenuOption<MenuFromCellCallbackArgs> 
   /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, hide the "Collapse all Groups" command in the menu (Grid Option "enableGrouping: true" has to be enabled) */
   hideCollapseAllGroups?: boolean;
 
-  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, hide the Commands section even when the commandItems array is filled */
+  /** Defaults to false, hide the Commands section even when the commandItems array is filled */
   hideCommandSection?: boolean;
 
   /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Copy Cell Value" command in the menu */
@@ -68,10 +68,10 @@ export interface ContextMenuOption extends MenuOption<MenuFromCellCallbackArgs> 
   /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Export to Text Delimited" command in the menu (Grid Option "enableTextExport: true" has to be enabled) */
   hideExportTextDelimitedCommand?: boolean;
 
-  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to true, do we want to hide the Cell Menu when a scrolling event occurs? */
+  /** Defaults to true, do we want to hide the Cell Menu when a scrolling event occurs? */
   hideMenuOnScroll?: boolean;
 
-  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, Hide the Options section even when the optionItems array is filled */
+  /** Defaults to false, Hide the Options section even when the optionItems array is filled */
   hideOptionSection?: boolean;
 
   /** icon for the "Clear Grouping" command (Grid Option "enableGrouping: true" has to be enabled) */

@@ -16,7 +16,7 @@ export interface HeaderMenuOption extends MenuOption<HeaderMenuCommandItemCallba
    */
   commandLabels?: HeaderMenuLabel;
 
-  /** position order index of the "Filter Shortcuts" menu */
+  /** @deprecated @use `commandListBuilder` to position order index of the "Filter Shortcuts" menu */
   filterShortcutsPositionOrder?: number;
 
   /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Column Resize by Content" command in the Header Menu (Grid Option "enableColumnResizeOnDoubleClick" has to also be enabled) */
@@ -36,12 +36,6 @@ export interface HeaderMenuOption extends MenuOption<HeaderMenuCommandItemCallba
 
   /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide Sort (Asc/Desc & Clear Sort) commands in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
   hideSortCommands?: boolean;
-
-  /**
-   *  @deprecated @use Defaults to false, which will hide the Divider (separator) between the top sort commands and the other clear commands
-   * (Grid Option "enableHeaderMenu" and "enableSorting" have to be enabled)
-   */
-  hideSortCommandsDivider?: boolean;
 
   /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Hide Column" command in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
   hideColumnHideCommand?: boolean;
