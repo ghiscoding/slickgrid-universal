@@ -149,13 +149,13 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
    */
   protected addMissingCommandOrAction<T extends MenuCommandItem | GridMenuItem>(
     builtInMenuItem: T | 'divider',
+    hideCommands: string[] = [],
     targetMenuItems: Array<T | 'divider'>,
-    originalMenuItems: Array<T | 'divider'> | undefined,
-    hideCommands: string[] | undefined
-  ): boolean {
+    originalMenuItems?: Array<T | 'divider'>
+  ): void {
     // remove any commands that the user doesn't want
     let skip = false;
-    if (hideCommands) {
+    if (hideCommands.length) {
       skip = builtInMenuItem !== 'divider' && new Set(hideCommands).has(builtInMenuItem.command);
     }
 
@@ -165,14 +165,11 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
 
       if (!cmd) {
         targetMenuItems.push(builtInMenuItem);
-        return true;
       } else if (!(cmd as T).action) {
         // action might be missing (custom menu items), if so copy over from built-in
         (cmd as T).action = builtInMenuItem.action;
       }
     }
-
-    return false;
   }
 
   /**

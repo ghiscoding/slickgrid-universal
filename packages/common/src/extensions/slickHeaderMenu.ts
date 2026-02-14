@@ -312,9 +312,8 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
                   positionOrder: 45,
                   action: (_e, args) => this.freezeOrUnfreezeColumns(args.column, cmdUnfreeze),
                 },
-                columnHeaderMenuItems,
-                undefined,
-                headerMenuOptions.hideCommands
+                headerMenuOptions.hideCommands,
+                columnHeaderMenuItems
               );
             } else {
               // make sure the "unfreeze-columns" doesn't exist before adding the "freeze-columns"
@@ -331,9 +330,8 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
                   positionOrder: 45,
                   action: (_e, args) => this.freezeOrUnfreezeColumns(args.column, cmdFreeze),
                 },
-                columnHeaderMenuItems,
-                undefined,
-                headerMenuOptions.hideCommands
+                headerMenuOptions.hideCommands,
+                columnHeaderMenuItems
               );
             }
           }
@@ -355,9 +353,8 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
                 positionOrder: 47,
                 action: (_e, args) => this.pubSubService.publish('onHeaderMenuColumnResizeByContent', { columnId: args.column.id }),
               },
-              columnHeaderMenuItems,
-              undefined,
-              headerMenuOptions.hideCommands
+              headerMenuOptions.hideCommands,
+              columnHeaderMenuItems
             );
           }
 
@@ -385,9 +382,8 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
                 positionOrder: 50,
                 action: (e, args) => this.sortColumn(e, args, true),
               },
-              columnHeaderMenuItems,
-              undefined,
-              headerMenuOptions.hideCommands
+              headerMenuOptions.hideCommands,
+              columnHeaderMenuItems
             );
 
             // sort descending command
@@ -400,9 +396,8 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
                 positionOrder: 51,
                 action: (e, args) => this.sortColumn(e, args, false),
               },
-              columnHeaderMenuItems,
-              undefined,
-              headerMenuOptions.hideCommands
+              headerMenuOptions.hideCommands,
+              columnHeaderMenuItems
             );
 
             // add a divider (separator) between the top sort commands and the other clear commands
@@ -420,9 +415,8 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
                   positionOrder: 58,
                   action: (e, args) => this.clearColumnSort(e, args),
                 },
-                columnHeaderMenuItems,
-                undefined,
-                headerMenuOptions.hideCommands
+                headerMenuOptions.hideCommands,
+                columnHeaderMenuItems
               );
             }
           }
@@ -488,9 +482,8 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
                     this.clearColumnFilter(e, args);
                   },
                 },
-                columnHeaderMenuItems,
-                undefined,
-                headerMenuOptions.hideCommands
+                headerMenuOptions.hideCommands,
+                columnHeaderMenuItems
               );
             }
           }
@@ -511,9 +504,8 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
                   }
                 },
               },
-              columnHeaderMenuItems,
-              undefined,
-              headerMenuOptions.hideCommands
+              headerMenuOptions.hideCommands,
+              columnHeaderMenuItems
             );
           }
 

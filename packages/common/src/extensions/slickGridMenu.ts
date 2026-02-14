@@ -558,9 +558,9 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
             positionOrder: 52,
             action: this.clearPinning.bind(this),
           },
+          this._addonOptions.hideCommands,
           gridMenuCommandItems,
-          originalCommandItems,
-          this._addonOptions.hideCommands
+          originalCommandItems
         );
       }
 
@@ -577,9 +577,9 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
               positionOrder: 50,
               action: this.clearFilters.bind(this),
             },
+            this._addonOptions.hideCommands,
             gridMenuCommandItems,
-            originalCommandItems,
-            this._addonOptions.hideCommands
+            originalCommandItems
           );
         }
 
@@ -595,9 +595,9 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
               positionOrder: 53,
               action: this.toggleFilterBar.bind(this),
             },
+            this._addonOptions.hideCommands,
             gridMenuCommandItems,
-            originalCommandItems,
-            this._addonOptions.hideCommands
+            originalCommandItems
           );
         }
 
@@ -613,9 +613,9 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
               positionOrder: 58,
               action: () => this.extensionUtility.refreshBackendDataset(),
             },
+            this._addonOptions.hideCommands,
             gridMenuCommandItems,
-            originalCommandItems,
-            this._addonOptions.hideCommands
+            originalCommandItems
           );
         }
       }
@@ -632,9 +632,9 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
             positionOrder: 54,
             action: this.toggleDarkMode.bind(this),
           },
+          this._addonOptions.hideCommands,
           gridMenuCommandItems,
-          originalCommandItems,
-          this._addonOptions.hideCommands
+          originalCommandItems
         );
       }
 
@@ -654,9 +654,9 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
                 this.grid.setPreHeaderPanelVisibility(!showPreHeaderPanel);
               },
             },
+            this._addonOptions.hideCommands,
             gridMenuCommandItems,
-            originalCommandItems,
-            this._addonOptions.hideCommands
+            originalCommandItems
           );
         }
       }
@@ -674,9 +674,9 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
               positionOrder: 51,
               action: this.clearSorting.bind(this),
             },
+            this._addonOptions.hideCommands,
             gridMenuCommandItems,
-            originalCommandItems,
-            this._addonOptions.hideCommands
+            originalCommandItems
           );
         }
       }
@@ -693,9 +693,9 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
             positionOrder: 55,
             action: this.exportCsv.bind(this),
           },
+          this._addonOptions.hideCommands,
           gridMenuCommandItems,
-          originalCommandItems,
-          this._addonOptions.hideCommands
+          originalCommandItems
         );
       }
 
@@ -711,9 +711,9 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
             positionOrder: 56,
             action: this.exportExcel.bind(this),
           },
+          this._addonOptions.hideCommands,
           gridMenuCommandItems,
-          originalCommandItems,
-          this._addonOptions.hideCommands
+          originalCommandItems
         );
       }
 
@@ -729,9 +729,9 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
             positionOrder: 57,
             action: this.exportPdf.bind(this),
           },
+          this._addonOptions.hideCommands,
           gridMenuCommandItems,
-          originalCommandItems,
-          this._addonOptions.hideCommands
+          originalCommandItems
         );
       }
 
@@ -747,9 +747,9 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
             positionOrder: 58,
             action: this.exportTextDelimited.bind(this),
           },
+          this._addonOptions.hideCommands,
           gridMenuCommandItems,
-          originalCommandItems,
-          this._addonOptions.hideCommands
+          originalCommandItems
         );
       }
 

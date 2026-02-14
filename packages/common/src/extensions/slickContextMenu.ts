@@ -210,9 +210,9 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
             return false;
           },
         },
+        contextMenu.hideCommands,
         menuCommandItems,
-        originalCommandItems,
-        contextMenu.hideCommands
+        originalCommandItems
       );
     }
 
@@ -243,9 +243,9 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
             }
           },
         },
+        contextMenu.hideCommands,
         menuCommandItems,
-        originalCommandItems,
-        contextMenu.hideCommands
+        originalCommandItems
       );
     }
 
@@ -271,9 +271,9 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
             }
           },
         },
+        contextMenu.hideCommands,
         menuCommandItems,
-        originalCommandItems,
-        contextMenu.hideCommands
+        originalCommandItems
       );
     }
 
@@ -301,9 +301,9 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
             }
           },
         },
+        contextMenu.hideCommands,
         menuCommandItems,
-        originalCommandItems,
-        contextMenu.hideCommands
+        originalCommandItems
       );
     }
 
@@ -334,9 +334,9 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
             }
           },
         },
+        contextMenu.hideCommands,
         menuCommandItems,
-        originalCommandItems,
-        contextMenu.hideCommands
+        originalCommandItems
       );
     }
 
@@ -367,9 +367,9 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
               return Array.isArray(groupingArray) && groupingArray.length > 0;
             },
           },
+          contextMenu.hideCommands,
           menuCommandItems,
-          originalCommandItems,
-          contextMenu.hideCommands
+          originalCommandItems
         );
       }
 
@@ -400,9 +400,9 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
               return Array.isArray(groupingArray) && groupingArray.length > 0;
             },
           },
+          contextMenu.hideCommands,
           menuCommandItems,
-          originalCommandItems,
-          contextMenu.hideCommands
+          originalCommandItems
         );
       }
 
@@ -433,9 +433,9 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
               return Array.isArray(groupingArray) && groupingArray.length > 0;
             },
           },
+          contextMenu.hideCommands,
           menuCommandItems,
-          originalCommandItems,
-          contextMenu.hideCommands
+          originalCommandItems
         );
       }
     }
