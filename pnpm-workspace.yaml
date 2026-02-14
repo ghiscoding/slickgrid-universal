@@ -51,6 +51,7 @@ catalog:
   vue: ^3.5.28
 
 overrides:
+  '@isaacs/brace-expansion': ^5.0.1
   '@vitest/coverage-v8>vite': npm:rolldown-vite@latest
   '@vitest/ui>vite': npm:rolldown-vite@latest
   vitest>vite: npm:rolldown-vite@latest
