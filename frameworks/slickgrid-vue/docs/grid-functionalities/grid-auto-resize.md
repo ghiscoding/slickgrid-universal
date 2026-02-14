@@ -76,7 +76,7 @@ User can pause the resizer at any time and later resume the auto-resize. This mi
 ##### Component
 ```vue
 <script setup lang="ts">
-import { Column, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { Column, Filters, Formatters, GridOption, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -104,8 +104,7 @@ function togglePauseResizer() {
 </script>
 
 <template>
-  <button className="btn btn-outline-secondary btn-sm btn-icon"
-    onClick={() => togglePauseResizer()}>
+  <button class="btn btn-outline-secondary btn-sm btn-icon" @click="togglePauseResizer()">
     Pause auto-resize: <b>{resizerPaused}</b>
   </button>
 
@@ -113,9 +112,9 @@ function togglePauseResizer() {
     grid-id="grid1"
     v-model:columns="columnDefinitions"
     v-model:options="gridOptions"
-    v-model:data="dataset"
-    @onVueGridCreated="vueGridReady($event.detail)"
+    v-model:dataset="dataset"
     @onGridStateChanged="gridStateChanged($event.detail)"
+    @onVueGridCreated="vueGridReady($event.detail)"
   />
 </template>
 ```
@@ -187,7 +186,7 @@ It's also possible to let the grid detect a resize by the grid container element
 
 ```vue
 <script setup lang="ts">
-import { Column, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { Column, Filters, Formatters, GridOption, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -216,9 +215,9 @@ function defineGrid() {
       grid-id="grid1"
       v-model:columns="columnDefinitions"
       v-model:options="gridOptions"
-      v-model:data="dataset"
-      @onVueGridCreated="vueGridReady($event.detail)"
+      v-model:dataset="dataset"
       @onGridStateChanged="gridStateChanged($event.detail)"
+      @onVueGridCreated="vueGridReady($event.detail)"
     />
   </div>
 </template>
@@ -231,7 +230,7 @@ You can call `resizeGrid()` method at any point in time by passing dimensions as
 ##### Component
 ```vue
 <script setup lang="ts">
-import { Column, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { Column, Filters, Formatters, GridOption, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();

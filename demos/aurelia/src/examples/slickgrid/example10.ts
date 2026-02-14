@@ -148,7 +148,7 @@ export class Example10 {
     this.gridOptions1 = {
       enableAutoResize: false,
       enableCellNavigation: true,
-      enableRowSelection: true,
+      enableSelection: true,
       enableCheckboxSelector: true,
       enableFiltering: true,
       checkboxSelector: {
@@ -160,7 +160,7 @@ export class Example10 {
         // selectableOverride: (row: number, dataContext: any, grid: SlickGrid) => (dataContext.id % 2 === 1)
       },
       multiSelect: false,
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: true,
       },
@@ -196,12 +196,12 @@ export class Example10 {
         hideInColumnTitleRow: true,
         applySelectOnAllPages: true, // when clicking "Select All", should we apply it to all pages (defaults to true)
       },
-      rowSelectionOptions: {
+      enableSelection: true,
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },
       enableCheckboxSelector: true,
-      enableRowSelection: true,
       gridHeight: 255,
       gridWidth: 800,
       enablePagination: true,
@@ -293,7 +293,7 @@ export class Example10 {
   }
 
   onGrid1SelectedRowsChanged(_e: Event, args: any) {
-    const grid = args && args.grid;
+    const grid = args?.grid;
     if (Array.isArray(args.rows)) {
       this.selectedTitle = args.rows.map((idx: number) => {
         const item = grid.getDataItem(idx);

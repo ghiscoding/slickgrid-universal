@@ -65,10 +65,12 @@ const gridStub = {
   getGridPosition: vi.fn(),
   getOptions: () => gridOptionsMock,
   getUID: () => 'slickgrid12345',
+  getVisibleColumns: vi.fn(),
   registerPlugin: vi.fn(),
   setColumns: vi.fn(),
   setOptions: vi.fn(),
   setSortColumns: vi.fn(),
+  sanitizeHtmlString: (str: string) => str,
   updateColumnHeader: vi.fn(),
   onClick: new SlickEvent(),
   onScroll: new SlickEvent(),
@@ -171,7 +173,7 @@ describe('CellMenu Plugin', () => {
     vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
     vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsMock);
     vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
-    vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock.slice(0, 2));
+    vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columnsMock.slice(0, 2));
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
     plugin = new SlickCellMenu(extensionUtility, pubSubServiceStub, sharedService);
   });
@@ -784,6 +786,169 @@ describe('CellMenu Plugin', () => {
         gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
 
         expect(plugin.menuElement).toBeFalsy();
+      });
+    });
+
+    describe('with slot renderer', () => {
+      it('should render menu item with slotRenderer returning HTMLElement', () => {
+        const mockSlotRenderer = vi.fn((item: MenuCommandItem) => {
+          const div = document.createElement('div');
+          div.className = 'custom-slot-content';
+          div.textContent = `Custom: ${item.title}`;
+          return div;
+        });
+
+        plugin.dispose();
+        plugin.init();
+        columnsMock[3].cellMenu!.commandItems = [{ command: 'test-cmd', title: 'Test Command', slotRenderer: mockSlotRenderer }];
+        gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
+
+        const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
+        const commandListElm = cellMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        const customSlotElm = commandListElm.querySelector('.custom-slot-content') as HTMLDivElement;
+
+        expect(mockSlotRenderer).toHaveBeenCalled();
+        expect(customSlotElm).toBeTruthy();
+        expect(customSlotElm.textContent).toBe('Custom: Test Command');
+      });
+
+      it('should render menu item with slotRenderer returning string', () => {
+        const mockSlotRenderer = vi.fn((item: MenuCommandItem) => `<span class="custom-string">String: ${item.title}</span>`);
+
+        plugin.dispose();
+        plugin.init();
+        columnsMock[3].cellMenu!.commandItems = [{ command: 'test-cmd', title: 'Test Command', slotRenderer: mockSlotRenderer }];
+        gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
+
+        const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
+        const commandListElm = cellMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        const customSlotElm = commandListElm.querySelector('.custom-string') as HTMLDivElement;
+
+        expect(mockSlotRenderer).toHaveBeenCalled();
+        expect(customSlotElm).toBeTruthy();
+        expect(customSlotElm.textContent).toContain('String: Test Command');
+      });
+
+      it('should render menu item with defaultMenuItemRenderer when item has no slotRenderer', () => {
+        const mockDefaultRenderer = vi.fn((item: MenuCommandItem) => {
+          const div = document.createElement('div');
+          div.className = 'default-renderer-content';
+          div.textContent = `Default: ${item.title}`;
+          return div;
+        });
+
+        plugin.dispose();
+        plugin.init({ defaultMenuItemRenderer: mockDefaultRenderer });
+        columnsMock[3].cellMenu!.commandItems = [{ command: 'test-cmd', title: 'Test Command' }];
+        gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
+
+        const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
+        const commandListElm = cellMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        const defaultRendererElm = commandListElm.querySelector('.default-renderer-content') as HTMLDivElement;
+
+        expect(mockDefaultRenderer).toHaveBeenCalled();
+        expect(defaultRendererElm).toBeTruthy();
+        expect(defaultRendererElm.textContent).toBe('Default: Test Command');
+      });
+
+      it('should prioritize item slotRenderer over defaultMenuItemRenderer', () => {
+        const mockSlotRenderer = vi.fn((item: MenuCommandItem) => {
+          const div = document.createElement('div');
+          div.className = 'slot-prioritized';
+          div.textContent = 'Slot renderer prioritized';
+          return div;
+        });
+        const mockDefaultRenderer = vi.fn();
+
+        plugin.dispose();
+        plugin.init({ defaultMenuItemRenderer: mockDefaultRenderer });
+        columnsMock[3].cellMenu!.commandItems = [{ command: 'test-cmd', title: 'Test Command', slotRenderer: mockSlotRenderer }];
+        gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
+
+        const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
+        const commandListElm = cellMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        const slotRendererElm = commandListElm.querySelector('.slot-prioritized') as HTMLDivElement;
+
+        expect(mockSlotRenderer).toHaveBeenCalled();
+        expect(mockDefaultRenderer).not.toHaveBeenCalled();
+        expect(slotRendererElm).toBeTruthy();
+      });
+
+      it('should pass correct arguments (item and args) to slotRenderer callback', () => {
+        const mockSlotRenderer = vi.fn((item: MenuCommandItem, args: any) => {
+          const div = document.createElement('div');
+          div.className = 'renderer-args-test';
+          div.textContent = `Item: ${item.command}, Grid: ${args?.grid ? 'present' : 'missing'}`;
+          return div;
+        });
+
+        plugin.dispose();
+        plugin.init();
+        columnsMock[3].cellMenu!.commandItems = [{ command: 'test-cmd', title: 'Test Command with Args', slotRenderer: mockSlotRenderer }];
+        gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
+
+        expect(mockSlotRenderer).toHaveBeenCalled();
+        const callArgs = mockSlotRenderer.mock.calls[0];
+        expect(callArgs[0].command).toBe('test-cmd');
+        expect(callArgs[1]).toBeDefined();
+        expect(callArgs[1].grid).toBe(gridStub);
+      });
+
+      it('should call slotRenderer with click event as third argument when menu item is clicked', () => {
+        const mockSlotRenderer = vi.fn((item: MenuCommandItem, args: any, event?: Event) => {
+          const div = document.createElement('div');
+          div.className = 'click-test';
+          return div;
+        });
+
+        plugin.dispose();
+        plugin.init();
+        columnsMock[3].cellMenu!.commandItems = [{ command: 'test-cmd', title: 'Test Command', slotRenderer: mockSlotRenderer }];
+        gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
+
+        const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
+        const commandListElm = cellMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        const menuItemElm = commandListElm.querySelector('.slick-menu-item') as HTMLDivElement;
+
+        // Click the menu item
+        menuItemElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true }));
+
+        // Verify slotRenderer was called with the click event as the third argument
+        expect(mockSlotRenderer).toHaveBeenCalledTimes(2); // once for render, once for click
+        const clickCallArgs = mockSlotRenderer.mock.calls[1]; // second call is from click
+        expect(clickCallArgs[2]).toBeDefined();
+        expect(clickCallArgs[2]!.type).toBe('click');
+      });
+
+      it('should not trigger menu action when slotRenderer calls preventDefault on click event', () => {
+        const mockAction = vi.fn();
+        const mockSlotRenderer = vi.fn((item: MenuCommandItem, args: any, event?: Event) => {
+          const div = document.createElement('div');
+          div.className = 'prevent-default-test';
+          const button = document.createElement('button');
+          button.textContent = 'Interactive';
+          button.onclick = (e) => {
+            e.preventDefault(); // Prevent default action
+          };
+          div.appendChild(button);
+          return div;
+        });
+
+        plugin.dispose();
+        plugin.init();
+        columnsMock[3].cellMenu!.commandItems = [{ command: 'test-cmd', title: 'Test Command', slotRenderer: mockSlotRenderer, action: mockAction }];
+        gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
+
+        const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
+        const commandListElm = cellMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        const menuItemElm = commandListElm.querySelector('.slick-menu-item') as HTMLDivElement;
+        const buttonElm = menuItemElm.querySelector('button') as HTMLButtonElement;
+
+        // Click the button inside the slotRenderer, which calls preventDefault
+        buttonElm.click();
+
+        // Verify the action callback was not called because preventDefault was called
+        expect(mockAction).not.toHaveBeenCalled();
       });
     });
 

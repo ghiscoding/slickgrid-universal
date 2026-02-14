@@ -1,6 +1,6 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickEventHandler, type SlickDataView, type SlickEventData, type SlickGrid } from '../core/index.js';
-import { FieldType, SortDirection, SortDirectionNumber, type EmitterType, type SortDirectionString } from '../enums/index.js';
+import { SortDirectionNumber, type EmitterType, type SortDirection } from '../enums/index.js';
 import type {
   Column,
   ColumnSort,
@@ -138,7 +138,7 @@ export class SortService {
         if (sortColumn.sortCol) {
           this._currentLocalSorters.push({
             columnId: sortColumn.sortCol.id,
-            direction: sortColumn.sortAsc ? SortDirection.ASC : SortDirection.DESC,
+            direction: sortColumn.sortAsc ? 'ASC' : 'DESC',
           });
         }
       });
@@ -241,15 +241,14 @@ export class SortService {
     const newSorting = !prevSorting;
 
     this._gridOptions.enableSorting = newSorting;
-    let updatedColumnDefinitions;
     if (isSortingDisabled) {
       if (clearSortingWhenDisabled) {
         this.clearSorting();
       }
       this._eventHandler.unsubscribeAll();
-      updatedColumnDefinitions = this.disableAllSortingCommands(true);
+      this.disableAllSortingCommands(true);
     } else {
-      updatedColumnDefinitions = this.disableAllSortingCommands(false);
+      this.disableAllSortingCommands(false);
       this._eventHandler.subscribe(this._grid.onSort, (e, args) => this.handleLocalOnSort(e, args as SingleColumnSort | MultiColumnSort));
     }
     this._grid.setOptions({ enableSorting: this._gridOptions.enableSorting }, false, true);
@@ -257,7 +256,7 @@ export class SortService {
 
     // reset columns so that it recreate the column headers and remove/add the sort icon hints
     // basically without this, the sort icon hints were still showing up even after disabling the Sorting
-    this._grid.setColumns(updatedColumnDefinitions);
+    this._grid.updateColumns();
   }
 
   /**
@@ -344,14 +343,14 @@ export class SortService {
           }
           sortCols.push({
             columnId: column.id,
-            sortAsc: sorter.direction.toUpperCase() === SortDirection.ASC ? true : false,
+            sortAsc: sorter.direction.toUpperCase() === 'ASC' ? true : false,
             sortCol: column,
           });
 
           // keep current sorters
           this._currentLocalSorters.push({
             columnId: String(column.id),
-            direction: sorter.direction.toUpperCase() as SortDirectionString,
+            direction: sorter.direction.toUpperCase() as SortDirection,
           });
         }
       });
@@ -370,18 +369,18 @@ export class SortService {
       const treeDataOptions = this._gridOptions.treeDataOptions;
       const columnWithTreeData = this._columnDefinitions.find((col: Column) => col.id === treeDataOptions.columnId);
       if (columnWithTreeData) {
-        let sortDirection = SortDirection.ASC;
+        let sortDirection: SortDirection = 'ASC';
         let sortTreeLevelColumn: ColumnSort = { columnId: treeDataOptions.columnId, sortCol: columnWithTreeData, sortAsc: true };
 
         // user could provide a custom sort field id, if so get that column and sort by it
         if (treeDataOptions?.initialSort?.columnId) {
           const initialSortColumnId = treeDataOptions.initialSort.columnId;
           const initialSortColumn = this._columnDefinitions.find((col: Column) => col.id === initialSortColumnId);
-          sortDirection = (treeDataOptions.initialSort.direction || SortDirection.ASC).toUpperCase() as SortDirection;
+          sortDirection = (treeDataOptions.initialSort.direction || 'ASC').toUpperCase() as SortDirection;
           sortTreeLevelColumn = {
             columnId: initialSortColumnId,
             sortCol: initialSortColumn,
-            sortAsc: sortDirection === SortDirection.ASC,
+            sortAsc: sortDirection === 'ASC',
           } as ColumnSort;
         }
 
@@ -495,7 +494,7 @@ export class SortService {
           sortColumns.map((col) => {
             return {
               columnId: col.sortCol?.id ?? 'id',
-              direction: col.sortAsc ? SortDirection.ASC : SortDirection.DESC,
+              direction: col.sortAsc ? 'ASC' : 'DESC',
             };
           })
         );
@@ -558,7 +557,7 @@ export class SortService {
   sortComparer(sortColumn: ColumnSort, dataRow1: any, dataRow2: any, querySortField?: string): number | undefined {
     if (sortColumn?.sortCol) {
       const columnDef = sortColumn.sortCol;
-      const fieldType = columnDef.type || FieldType.string;
+      const fieldType = columnDef.type || 'string';
       const sortDirection = sortColumn.sortAsc ? SortDirectionNumber.asc : SortDirectionNumber.desc;
       let queryFieldName1 = querySortField || columnDef.queryFieldSorter || columnDef.queryField || columnDef.field;
 

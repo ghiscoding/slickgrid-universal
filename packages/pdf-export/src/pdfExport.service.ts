@@ -64,9 +64,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
   protected _translaterService: TranslaterService | undefined;
 
   /** PdfExportService class name which is use to find service instance in the external registered services */
-  readonly className = 'PdfExportService';
-
-  constructor() {}
+  readonly pluginName = 'PdfExportService';
 
   protected get _datasetIdPropName(): string {
     return (this._gridOptions && this._gridOptions.datasetIdPropertyName) || 'id';

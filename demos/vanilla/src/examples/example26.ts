@@ -3,7 +3,6 @@ import { BindingEventService } from '@slickgrid-universal/binding';
 import {
   Aggregators,
   Filters,
-  OperatorType,
   SortComparers,
   type Column,
   type GridOption,
@@ -120,7 +119,7 @@ export default class Example26 {
       enableCellNavigation: true,
       enableFiltering: true,
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+      enableSelection: true,
       enableGrouping: true,
       headerMenu: {
         hideFreezeColumnsCommand: false,
@@ -137,7 +136,7 @@ export default class Example26 {
 
           enableCount: true,
           filterQueryOverride: ({ fieldName, columnDef, columnFilterOperator, searchValues }) => {
-            if (columnFilterOperator === OperatorType.custom && columnDef?.id === 'name') {
+            if (columnFilterOperator === 'Custom' && columnDef?.id === 'name') {
               let matchesSearch = searchValues[0].replace(/\*/g, '.*');
               matchesSearch = matchesSearch.slice(0, 1) + CARET_HTML_ESCAPED + matchesSearch.slice(1);
               matchesSearch = matchesSearch.slice(0, -1) + "$'";

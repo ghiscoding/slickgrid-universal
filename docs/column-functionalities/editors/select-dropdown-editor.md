@@ -6,11 +6,11 @@
   - [Collection Label Prefix/Suffix](#collection-label-prefixsuffix)
   - [Collection Label Render HTML](#collection-label-render-html)
   - [Collection Change Watch](#collection-watch)
-  - [`multiple-select.js` Options](#multiple-selectjs-options)
+  - [`multiple-select-vanilla` Options](#multiple-selectjs-options)
   - See the [Editors - Docs](../Editors.md) for more general info about Editors (validators, event handlers, ...)
 
 ## Select Editors
-The library ships with two select editors: `singleSelectEditor` and the `multipleSelectEditor`. Both support the [multiple-select](https://github.com/ghiscoding/multiple-select-adapted/blob/master/src/multiple-select.js) library, but fallback to the bootstrap form-control style if you decide to exclude this library from your build. These editors will work with a list of foreign key values (custom structure not supported) and can be displayed properly with the [collectionFormatter](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/formatters/collectionFormatter.ts).
+The library ships with two select editors: `singleSelectEditor` and the `multipleSelectEditor`. Both support the [multiple-select-vanilla](https://github.com/ghiscoding/multiple-select-vanilla) library, but fallback to the bootstrap form-control style if you decide to exclude this library from your build. These editors will work with a list of foreign key values (custom structure not supported) and can be displayed properly with the [collectionFormatter](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/formatters/collectionFormatter.ts).
 
 We use an external lib named [multiple-select-vanilla](https://github.com/ghiscoding/multiple-select-vanilla).
 
@@ -199,8 +199,8 @@ this.columnDefinitions = [
 ];
 ```
 
-### `multiple-select.js` Options
-You can use any options from [Multiple-Select.js](http://wenzhixin.net.cn/p/multiple-select) and add them to your editor `options` property. However please note that this is a customized version of the original (all original [lib options](http://wenzhixin.net.cn/p/multiple-select/docs/) are available so you can still consult the original site for all options).
+### `multiple-select-vanilla` Options
+You can use any options from [multiple-select-vanilla](https://github.com/ghiscoding/multiple-select-vanilla) and add them to your editor `options` property. However please note that this is a customized version of the original (all original [lib options](https://ghiscoding.github.io/multiple-select-vanilla/) are available so you can still consult the original site for all options).
 
 Couple of small options were added to suit SlickGrid-Universal needs, which is why it points to `slickgrid-universal/lib` folder (which is our customized version of the original). This lib is required if you plan to use `multipleSelect` or `singleSelect` Filters. What was customized to (compare to the original) is the following:
 - `okButton` option was added to add an OK button for simpler closing of the dropdown after selecting multiple options.
@@ -226,7 +226,7 @@ this.columnDefinitions = [
       collection: [{ value: '', label: '' }, { value: true, label: 'true' }, { value: false, label: 'false' }],
       model: Editors.singleSelect,
       elementOptions: {
-        // add any multiple-select.js options (from original or custom version)
+        // add any multiple-select-vanilla options (from original or custom version)
         autoAdjustDropPosition: false, // by default set to True, but you can disable it
         position: 'top'
       }

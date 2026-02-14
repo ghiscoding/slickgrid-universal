@@ -155,7 +155,6 @@ export class GridBasicComponent implements OnInit {
 }
 ```
 ## Autocomplete - force user input
-##### Requires version `2.6.0+`
 If you want to add the autocomplete functionality but want the user to be able to input a new option, then follow the example below:
 
 ```ts

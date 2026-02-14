@@ -3,7 +3,6 @@ import {
   Editors,
   Filters,
   Formatters,
-  OperatorType,
   SlickGlobalEditorLock,
   SlickgridVue,
   SortComparers,
@@ -42,7 +41,7 @@ let vueGrid!: SlickgridVueInstance;
 // you can create custom validator to pass to an inline editor
 const myCustomTitleValidator: EditorValidator = (value: any) => {
   // you can get the Editor Args which can be helpful, e.g. we can get the Translate Service from it
-  // const grid = args && args.grid;
+  // const grid = args?.grid;
   // const gridOptions = grid.getOptions() as GridOption;
   // const i18n = gridOptions.i18n;
 
@@ -204,7 +203,7 @@ function defineGrid() {
         collectionFilterBy: {
           property: 'value',
           value: 0,
-          operator: OperatorType.notEqual,
+          operator: '!=',
         },
         model: Editors.singleSelect,
         // validator: (value, args) => {
@@ -419,7 +418,7 @@ function defineGrid() {
           separatorBetweenTextLabels: ' ',
         },
         model: Filters.multipleSelect,
-        operator: OperatorType.inContains,
+        operator: 'IN_CONTAINS',
       },
     },
   ];
@@ -757,7 +756,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
   <slickgrid-vue
     v-model:options="gridOptions"
     v-model:columns="columnDefinitions"
-    v-model:data="dataset"
+    v-model:dataset="dataset"
     grid-id="grid3"
     @on-cell-change="onCellChanged($event.detail.eventData, $event.detail.args)"
     @on-click="onCellClicked($event.detail.eventData, $event.detail.args)"

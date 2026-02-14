@@ -1,5 +1,5 @@
 import { dayStart } from '@formkit/tempo';
-import { FieldType, OperatorType, type SearchTerm } from '../enums/index.js';
+import { type FieldType, type SearchTerm } from '../enums/index.js';
 import type { FilterConditionOption } from '../interfaces/index.js';
 import { mapTempoDateFormatWithFieldType, tryParseDate } from '../services/index.js';
 import { testFilterCondition } from './filterUtilities.js';
@@ -8,7 +8,7 @@ import { testFilterCondition } from './filterUtilities.js';
  * Execute Date filter condition check on each cell and use correct date format depending on it's field type (or filterSearchType when that is provided)
  */
 export function executeDateFilterCondition(options: FilterConditionOption, parsedSearchDates: Array<string | Date>): boolean {
-  const filterSearchType = (options && (options.filterSearchType || options.fieldType)) || FieldType.dateIso;
+  const filterSearchType = (options && (options.filterSearchType || options.fieldType)) || 'dateIso';
   const FORMAT = mapTempoDateFormatWithFieldType(filterSearchType);
   const [searchDate1, searchDate2] = parsedSearchDates;
 
@@ -28,10 +28,10 @@ export function executeDateFilterCondition(options: FilterConditionOption, parse
   // having 2 search dates, we assume that it's a date range filtering and we'll compare against both dates
   if (searchDate1 && searchDate2) {
     let operator = options?.operator ?? options.defaultFilterRangeOperator;
-    if (operator !== OperatorType.rangeInclusive && operator !== OperatorType.rangeExclusive) {
+    if (operator !== 'RangeInclusive' && operator !== 'RangeExclusive') {
       operator = options.defaultFilterRangeOperator;
     }
-    const isInclusive = operator === OperatorType.rangeInclusive;
+    const isInclusive = operator === 'RangeInclusive';
     const resultCondition1 = testFilterCondition(isInclusive ? '>=' : '>', dateCellTimestamp, searchDate1.valueOf());
     const resultCondition2 = testFilterCondition(isInclusive ? '<=' : '<', dateCellTimestamp, searchDate2.valueOf());
     return resultCondition1 && resultCondition2;
@@ -47,12 +47,9 @@ export function executeDateFilterCondition(options: FilterConditionOption, parse
  * From our search filter value(s), get the parsed value(s), they are parsed as Date objects.
  * This is called only once per filter before running the actual filter condition check on each cell
  */
-export function getFilterParsedDates(
-  inputSearchTerms: SearchTerm[] | undefined,
-  inputFilterSearchType: (typeof FieldType)[keyof typeof FieldType]
-): Array<Date | string> {
+export function getFilterParsedDates(inputSearchTerms: SearchTerm[] | undefined, inputFilterSearchType: FieldType): Array<Date | string> {
   const searchTerms = (Array.isArray(inputSearchTerms) && inputSearchTerms) || [];
-  const filterSearchType = inputFilterSearchType || FieldType.dateIso;
+  const filterSearchType = inputFilterSearchType || 'dateIso';
   const FORMAT = mapTempoDateFormatWithFieldType(filterSearchType);
   const parsedSearchValues: Array<Date | string> = [];
 

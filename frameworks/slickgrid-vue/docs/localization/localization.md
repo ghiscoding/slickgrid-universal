@@ -81,7 +81,7 @@ For the `Select` Filter, you will use `labelKey` instead of `label`. Anytime a t
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { useTranslation } from 'i18next-vue';
-import { type Column, DelimiterType, Filters, type Formatter, Formatters, GridOption, GridStateChange,SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
+import { type Column, Filters, type Formatter, Formatters, GridOption, GridStateChange,SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, ref } from 'vue';
 
 const { i18next } = useTranslation();
@@ -161,16 +161,20 @@ The final step is of course the actual translations. There's multiple ways to co
 2. Manually copy the JSON files to your `assets` folder
 3. For Vue-CLI, you can modify `vue.json` file to copy the JSON files to your `assets` folder via a copy scripts.
    - You can implement something like the [following](https://stackoverflow.com/a/43733694/1212166) (I did not test this one, please report back if this is not accurate)
+
 ```json
 "copyFiles": {
   "node_modules/slickgrid-vue/i18n/*.json": "assets"
 }
 ```
+
 4. Or modify your `package.json` and add a script to copy the JSON files to your `assets` folder
-   - install NPM packages `cross-env` and `copyfiles` (`npm install copy-files cross-env`)
+   - install NPM packages `copyfiles` (`npm install native-copyfiles`)
    - add a new script in your `package.json`
    - run the below script **once** with `npm run copy:i18n` and you should now have the JSON files in your `src/assets` folder
+
 ```js
-"copy:i18n": "cross-env copyfiles -f node_modules/slickgrid-vue/i18n/*.json assets/i18n"
+"copy:i18n": "copyfiles -f node_modules/slickgrid-vue/i18n/*.json assets/i18n"
 ```
+
 If you want to manually re-create the translation in your own files, the list of translations that you will need are displayed in the [asset locales](https://github.com/ghiscoding/slickgrid-universal/tree/master/demos/vue/src/assets/locales) translation folder (from that file, you need all translations shown before the 'BILLING', the next few ones are for the demo page only).

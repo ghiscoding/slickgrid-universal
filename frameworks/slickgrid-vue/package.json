@@ -1,6 +1,6 @@
 {
   "name": "slickgrid-vue",
-  "version": "9.13.0",
+  "version": "10.0.0-beta.0",
   "description": "Slickgrid-Vue",
   "license": "MIT",
   "author": "Ghislain B.",
@@ -46,7 +46,6 @@
     "url": "https://ko-fi.com/ghiscoding"
   },
   "scripts": {
-    "are-types-wrong": "pnpx @arethetypeswrong/cli --pack .",
     "clean": "remove dist",
     "vue:dev": "cross-env NODE_ENV=development vite build --watch",
     "vue:dev:init": "vite build",
@@ -60,7 +59,6 @@
     "@slickgrid-universal/empty-warning-component": "workspace:*",
     "@slickgrid-universal/event-pub-sub": "workspace:*",
     "@slickgrid-universal/pagination-component": "workspace:*",
-    "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
     "@slickgrid-universal/utils": "workspace:*",
     "dequal": "catalog:",
     "sortablejs": "catalog:"
@@ -75,7 +73,7 @@
     "i18next-vue": "catalog:",
     "sass": "catalog:",
     "typescript": "catalog:",
-    "vite": "catalog:vite7",
+    "vite": "catalog:",
     "vite-plugin-dts": "^4.5.4",
     "vue": "catalog:",
     "vue-tsc": "^3.2.4"

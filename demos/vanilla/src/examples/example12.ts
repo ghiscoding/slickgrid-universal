@@ -1,7 +1,6 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import {
   Editors,
-  EventNamingStyle,
   Filters,
   formatNumber,
   Formatters,
@@ -500,7 +499,7 @@ export default class Example12 {
       autoFixResizeRequiredGoodCount: 1,
       datasetIdPropertyName: 'id',
       darkMode: this._darkMode,
-      eventNamingStyle: EventNamingStyle.lowerCase,
+      eventNamingStyle: 'lowerCase',
       autoAddCustomEditorFormatter: customEditableInputFormatter,
       enableAddRow: true, // <-- this flag is required to work with the (create & clone) modal types
       enableCellNavigation: true,
@@ -525,7 +524,7 @@ export default class Example12 {
       },
       externalResources: [new ExcelExportService(), this.compositeEditorInstance],
       enableFiltering: true,
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },
@@ -535,7 +534,7 @@ export default class Example12 {
       rowHeight: 33,
       headerRowHeight: 35,
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+      enableSelection: true,
       checkboxSelector: {
         applySelectOnAllPages: true,
         hideInFilterHeaderRow: false,
@@ -1082,6 +1081,7 @@ export default class Example12 {
 
     setTimeout(() => {
       this.compositeEditorInstance?.openDetails({
+        // domElementType: 'div', // use as fallback when default <dialog> doesn't work (like in Salesforce LWC), accepts 'div' or 'dialog'
         headerTitle: modalTitle,
         modalType,
         insertOptions: { highlightRow: false }, // disable highlight to avoid flaky tests in Cypress

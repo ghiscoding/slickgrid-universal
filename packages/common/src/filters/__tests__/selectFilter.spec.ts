@@ -5,7 +5,6 @@ import { basicFetchStub } from '../../../../../test/httpClientStub.js';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import type { SlickGrid } from '../../core/index.js';
-import { FieldType, OperatorType } from '../../enums/index.js';
 import type { Column, FilterArguments, GridOption } from '../../interfaces/index.js';
 import { CollectionService } from '../../services/collection.service.js';
 import { Filters } from '../filters.index.js';
@@ -135,17 +134,6 @@ describe('SelectFilter', () => {
     expect(filter.msInstance?.getOptions().minHeight).toBe(255);
   });
 
-  it('should initialize the filter with minHeight define in user filterOptions', () => {
-    mockColumn.filter!.filterOptions = { minHeight: 255 } as MultipleSelectOption;
-    mockColumn.filter!.collection = [
-      { value: 'male', label: 'male' },
-      { value: 'female', label: 'female' },
-    ];
-    filter.init(filterArguments);
-
-    expect(filter.msInstance?.getOptions().minHeight).toBe(255);
-  });
-
   it('should initialize the filter with minHeight define in global default user filter options', () => {
     gridOptionMock.defaultFilterOptions = {
       select: { minHeight: 243 },
@@ -256,7 +244,7 @@ describe('SelectFilter', () => {
     const spyClear = vi.spyOn(filter, 'clear');
 
     mockColumn.filter!.collection = ['male', 'female'];
-    mockColumn.filter!.filterOptions = { showClear: true };
+    mockColumn.filter!.options = { showClear: true };
     filter.init(filterArguments);
     const filterBtnElm = divContainer.querySelector('.ms-parent.ms-filter.search-filter.filter-gender button.ms-choice') as HTMLButtonElement;
     filterBtnElm.click();
@@ -461,7 +449,7 @@ describe('SelectFilter', () => {
       collection: ['other', 'male', 'female'],
       collectionSortBy: {
         sortDesc: true,
-        fieldType: FieldType.string,
+        fieldType: 'string',
       },
     };
 
@@ -487,7 +475,7 @@ describe('SelectFilter', () => {
       collectionSortBy: {
         property: 'value',
         sortDesc: false,
-        fieldType: FieldType.string,
+        fieldType: 'string',
       },
       customStructure: {
         value: 'value',
@@ -509,7 +497,7 @@ describe('SelectFilter', () => {
   it('should create the multi-select filter and filter the string collection when "collectionFilterBy" is set', () => {
     mockColumn.filter = {
       collection: ['other', 'male', 'female'],
-      collectionFilterBy: { operator: OperatorType.equal, value: 'other' },
+      collectionFilterBy: { operator: 'EQ', value: 'other' },
     };
 
     filter.init(filterArguments);
@@ -529,8 +517,8 @@ describe('SelectFilter', () => {
         { value: 'female', description: 'female' },
       ],
       collectionFilterBy: [
-        { property: 'value', operator: OperatorType.notEqual, value: 'other' },
-        { property: 'value', operator: OperatorType.notEqual, value: 'male' },
+        { property: 'value', operator: '!=', value: 'other' },
+        { property: 'value', operator: 'NE', value: 'male' },
       ],
       customStructure: { value: 'value', label: 'description' },
     };
@@ -552,8 +540,8 @@ describe('SelectFilter', () => {
         { value: 'female', description: 'female' },
       ],
       collectionFilterBy: [
-        { property: 'value', operator: OperatorType.equal, value: 'other' },
-        { property: 'value', operator: OperatorType.equal, value: 'male' },
+        { property: 'value', operator: '=', value: 'other' },
+        { property: 'value', operator: 'EQ', value: 'male' },
       ],
       collectionOptions: { filterResultAfterEachPass: 'merge' },
       customStructure: { value: 'value', label: 'description' },
@@ -779,7 +767,7 @@ describe('SelectFilter', () => {
           { value: 'male', labelKey: 'MALE' },
           { value: 'female', labelKey: 'FEMALE' },
         ],
-        filterOptions: { minimumCountSelected: 1 },
+        options: { minimumCountSelected: 1 },
       };
 
       filterArguments.searchTerms = ['male', 'female'];
@@ -838,7 +826,7 @@ describe('SelectFilter', () => {
           { value: 'male', label: 'Male' },
           { value: 'female', label: 'Female' },
         ],
-        filterOptions: { minimumCountSelected: 1 },
+        options: { minimumCountSelected: 1 },
       };
 
       filterArguments.searchTerms = ['male', 'female'];
@@ -1041,6 +1029,32 @@ describe('SelectFilter', () => {
         expect(filterListElm?.length).toBe(3);
         expect(filterListElm?.[1].checked).toBe(true);
         expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: 'IN', searchTerms: ['female'], shouldTriggerQuery: true });
+        filter.msInstance?.close();
+        done();
+      });
+    }));
+
+  it('should NOT populate the multi-select when "collectionLazy" Promise rejects', () =>
+    new Promise(async (done: any) => {
+      const spyCallback = vi.spyOn(filterArguments, 'callback');
+      const mockCollection = ['male', 'female', 'other'];
+      mockColumn.filter!.collection = undefined;
+      mockColumn.filter!.collectionLazy = () => {
+        return Promise.reject('some error');
+      };
+
+      filterArguments.searchTerms = ['female'];
+      await filter.init(filterArguments);
+      await filter.msInstance?.open(null);
+
+      setTimeout(() => {
+        const msData = filter.msInstance?.getData() || [];
+        const selectDropElm = filter.msInstance?.getDropElement();
+        const filterListElm = selectDropElm?.querySelectorAll<HTMLInputElement>('ul>li input[type=checkbox]');
+        const okBtnElm = selectDropElm?.querySelector('.ms-ok-button') as HTMLButtonElement;
+        okBtnElm?.click();
+        expect(msData.length).toBe(0);
+        expect(filterListElm?.length).toBe(0);
         filter.msInstance?.close();
         done();
       });

@@ -4,7 +4,6 @@ import { SlickEvent, SlickEventData, type SlickDataView, type SlickGrid } from '
 import { ExtensionName } from '../../enums/index.js';
 import type { SlickColumnPicker } from '../../extensions/slickColumnPicker.js';
 import type { SlickHybridSelectionModel } from '../../extensions/slickHybridSelectionModel.js';
-import type { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel.js';
 import type {
   BackendService,
   CheckboxSelectorOption,
@@ -82,6 +81,7 @@ const gridStub = {
   getSelectionModel: vi.fn(),
   getSelectedRows: vi.fn(),
   setColumns: vi.fn(),
+  getVisibleColumns: vi.fn(),
   setSelectedRows: vi.fn(),
   onColumnsReordered: new SlickEvent(),
   onColumnsResized: new SlickEvent(),
@@ -113,18 +113,6 @@ const hybridSelectionModelStub = {
   onSelectedRangesChanged: new SlickEvent(),
 } as unknown as SlickHybridSelectionModel;
 
-const rowSelectionModelStub = {
-  pluginName: 'RowSelectionModel',
-  constructor: vi.fn(),
-  init: vi.fn(),
-  destroy: vi.fn(),
-  getSelectedRanges: vi.fn(),
-  setSelectedRanges: vi.fn(),
-  getSelectedRows: vi.fn(),
-  setSelectedRows: vi.fn(),
-  onSelectedRangesChanged: new SlickEvent(),
-} as unknown as SlickRowSelectionModel;
-
 describe('GridStateService', () => {
   let service: GridStateService;
   let sharedService: SharedService;
@@ -133,7 +121,7 @@ describe('GridStateService', () => {
     sharedService = new SharedService();
     service = new GridStateService(extensionServiceStub, filterServiceStub, mockPubSub, sharedService, sortServiceStub, treeDataServiceStub);
     service.init(gridStub);
-    vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(rowSelectionModelStub);
+    vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(hybridSelectionModelStub);
   });
 
   afterEach(() => {
@@ -149,7 +137,7 @@ describe('GridStateService', () => {
 
     beforeEach(() => {
       slickgridEvent = new SlickEvent();
-      gridOptionMock.enableHybridSelection = false;
+      gridOptionMock.enableSelection = false;
     });
 
     afterEach(() => {
@@ -161,7 +149,7 @@ describe('GridStateService', () => {
       const pubSubSpy = vi.spyOn(mockPubSub, 'subscribe');
 
       service.init(gridStub);
-      vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(rowSelectionModelStub);
+      vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(hybridSelectionModelStub);
 
       expect(gridStateSpy).toHaveBeenCalled();
       expect(pubSubSpy).toHaveBeenCalledTimes(7);
@@ -173,7 +161,7 @@ describe('GridStateService', () => {
       const gridStateSpy = vi.spyOn(service, 'subscribeToAllGridChanges');
       const pubSubSpy = vi.spyOn(mockPubSub, 'subscribe');
 
-      gridOptionMock.enableHybridSelection = true;
+      gridOptionMock.enableSelection = true;
       service.init(gridStub);
       vi.spyOn(gridStub, 'getSelectionModel').mockReturnValueOnce(hybridSelectionModelStub);
 
@@ -183,26 +171,52 @@ describe('GridStateService', () => {
     });
 
     describe('getCurrentColumns method', () => {
+      afterEach(() => {
+        vi.clearAllMocks();
+      });
+
       it('should call "getCurrentColumns" and return empty array when no columns is defined', () => {
         const output = service.getCurrentColumns();
         expect(output).toEqual([]);
       });
 
-      it('should call "getCurrentColumns" and return Columns when the method is called', () => {
+      it('should call "getCurrentColumns" and return Columns without "hidden" prop by default when the method is called', () => {
         const columnsMock = [
-          { id: 'field1', field: 'field1', width: 100, cssClass: 'red' },
-          { id: 'field2', field: 'field2', width: 150, headerCssClass: 'blue' },
-          { id: 'field3', field: 'field3' },
+          { id: 'field1', field: 'field1', width: 100, cssClass: 'red', hidden: true },
+          { id: 'field2', field: 'field2', width: 150, headerCssClass: 'blue', hidden: true },
+          { id: 'field3', field: 'field3', hidden: true },
         ] as Column[];
-        const gridSpy = vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+        const getColSpy = vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+        const getVisibleColSpy = vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columnsMock);
 
         const output = service.getCurrentColumns();
 
-        expect(gridSpy).toHaveBeenCalled();
+        expect(getColSpy).not.toHaveBeenCalled();
+        expect(getVisibleColSpy).toHaveBeenCalled();
         expect(output).toEqual([
           { columnId: 'field1', cssClass: 'red', headerCssClass: '', width: 100 },
           { columnId: 'field2', cssClass: '', headerCssClass: 'blue', width: 150 },
           { columnId: 'field3', cssClass: '', headerCssClass: '', width: 0 },
+        ] as CurrentColumn[]);
+      });
+
+      it('should call "getCurrentColumns" and return Columns with "hidden" prop when the method is called with true as argument', () => {
+        const columnsMock = [
+          { id: 'field1', field: 'field1', width: 100, cssClass: 'red', hidden: true },
+          { id: 'field2', field: 'field2', width: 150, headerCssClass: 'blue', hidden: false },
+          { id: 'field3', field: 'field3', hidden: true },
+        ] as Column[];
+        const getColSpy = vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+        const getVisibleColSpy = vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columnsMock);
+
+        const output = service.getCurrentColumns(true);
+
+        expect(getColSpy).toHaveBeenCalled();
+        expect(getVisibleColSpy).not.toHaveBeenCalled();
+        expect(output).toEqual([
+          { columnId: 'field1', cssClass: 'red', headerCssClass: '', width: 100, hidden: true },
+          { columnId: 'field2', cssClass: '', headerCssClass: 'blue', width: 150, hidden: false },
+          { columnId: 'field3', cssClass: '', headerCssClass: '', width: 0, hidden: true },
         ] as CurrentColumn[]);
       });
     });
@@ -225,16 +239,31 @@ describe('GridStateService', () => {
           { id: 'field3', field: 'field3' },
         ] as Column[];
         columnsWithoutCheckboxMock = [
-          { id: 'field2', field: 'field2', width: 150, headerCssClass: 'blue' },
-          { id: 'field1', field: 'field1', width: 100, cssClass: 'red' },
-          { id: 'field3', field: 'field3' },
+          {
+            field: 'field2',
+            headerCssClass: 'blue',
+            id: 'field2',
+            hidden: false,
+            width: 150,
+          },
+          {
+            cssClass: 'red',
+            field: 'field1',
+            hidden: false,
+            id: 'field1',
+            width: 100,
+          },
+          {
+            field: 'field3',
+            hidden: false,
+            id: 'field3',
+          },
         ] as Column[];
         presetColumnsMock = [
           { columnId: 'field2', width: 150, headerCssClass: 'blue' },
           { columnId: 'field1', width: 100, cssClass: 'red' },
           { columnId: 'field3' },
         ] as CurrentColumn[];
-        vi.spyOn(service, 'getAssociatedGridColumns').mockReturnValue([...columnsWithoutCheckboxMock]);
       });
 
       afterEach(() => {
@@ -259,7 +288,7 @@ describe('GridStateService', () => {
 
         service.changeColumnsArrangement(presetColumnsMock);
 
-        expect(setColsSpy).toHaveBeenCalledWith([rowDetailColumnMock, rowMoveColumnMock, rowCheckboxColumnMock, ...columnsWithoutCheckboxMock]);
+        expect(setColsSpy).toHaveBeenCalledWith([...columnsWithoutCheckboxMock]);
         expect(autoSizeSpy).toHaveBeenCalled();
         expect(pubSubSpy).not.toHaveBeenCalledWith('onFullResizeByContentRequested');
       });
@@ -320,6 +349,163 @@ describe('GridStateService', () => {
         expect(setColsSpy).toHaveBeenCalledWith(columnsWithoutCheckboxMock);
         expect(autoSizeSpy).not.toHaveBeenCalled();
       });
+
+      it('should use columns already set in service when method is being called and grid.getColumns() returns an empty array', () => {
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue([]);
+        vi.spyOn(service, 'getColumns').mockReturnValueOnce([
+          { id: 'field1', field: 'field1', width: 100, cssClass: 'red', hidden: true },
+          { id: 'field2', field: 'field2', width: 150, headerCssClass: 'blue', hidden: true },
+          { id: 'field3', field: 'field3', hidden: true },
+        ] as unknown as Column[]);
+        const setColsSpy = vi.spyOn(gridStub, 'setColumns');
+        const autoSizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
+        const presetColumnsMock = [
+          { columnId: 'field2', width: 150, headerCssClass: 'blue' },
+          { columnId: 'field1', width: 100, cssClass: 'red' },
+          { columnId: 'field3' },
+        ] as CurrentColumn[];
+
+        service.changeColumnsArrangement(presetColumnsMock, false);
+
+        expect(setColsSpy).toHaveBeenCalledWith([
+          {
+            cssClass: undefined,
+            field: 'field2',
+            headerCssClass: 'blue',
+            id: 'field2',
+            hidden: false,
+            originalWidth: 150,
+            width: 150,
+          },
+          {
+            cssClass: 'red',
+            field: 'field1',
+            hidden: false,
+            headerCssClass: undefined,
+            id: 'field1',
+            originalWidth: 100,
+            width: 100,
+          },
+          {
+            cssClass: undefined,
+            field: 'field3',
+            hidden: false,
+            headerCssClass: undefined,
+            id: 'field3',
+            originalWidth: undefined,
+            width: undefined,
+          },
+        ]);
+        expect(autoSizeSpy).not.toHaveBeenCalled();
+      });
+
+      it('should insert checkbox selector column at the correct position when "enableCheckboxSelector" is enabled', () => {
+        gridOptionMock.enableCheckboxSelector = true;
+        gridOptionMock.checkboxSelector = { columnIndexPosition: 0 } as unknown as CheckboxSelectorOption;
+
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(allColumnsMock);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(allColumnsMock);
+        const setColsSpy = vi.spyOn(gridStub, 'setColumns');
+
+        service.changeColumnsArrangement(presetColumnsMock, false);
+
+        const setColumnsArg = setColsSpy.mock.calls[0][0];
+        expect(setColumnsArg).toEqual(expect.arrayContaining([expect.objectContaining({ id: '_checkbox_selector', field: '_checkbox_selector' })]));
+        // checkbox selector should be present in the output
+        const checkboxIndex = setColumnsArg.findIndex((col: Column) => col.id === '_checkbox_selector');
+        expect(checkboxIndex).toBeGreaterThanOrEqual(0);
+      });
+
+      it('should insert row detail view column at the correct position when "enableRowDetailView" is enabled', () => {
+        gridOptionMock.enableRowDetailView = true;
+        gridOptionMock.rowDetailView = { columnIndexPosition: 0 } as unknown as RowDetailView;
+
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(allColumnsMock);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(allColumnsMock);
+        const setColsSpy = vi.spyOn(gridStub, 'setColumns');
+
+        service.changeColumnsArrangement(presetColumnsMock, false);
+
+        const setColumnsArg = setColsSpy.mock.calls[0][0];
+        expect(setColumnsArg).toEqual(expect.arrayContaining([expect.objectContaining({ id: '_detail_selector', field: '_detail_selector' })]));
+        // row detail should be present in the output
+        const detailIndex = setColumnsArg.findIndex((col: Column) => col.id === '_detail_selector');
+        expect(detailIndex).toBeGreaterThanOrEqual(0);
+      });
+
+      it('should insert row move manager column at the correct position when "enableRowMoveManager" is enabled', () => {
+        gridOptionMock.enableRowMoveManager = true;
+        gridOptionMock.rowMoveManager = { columnIndexPosition: 0 } as unknown as RowMoveManager;
+
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(allColumnsMock);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(allColumnsMock);
+        const setColsSpy = vi.spyOn(gridStub, 'setColumns');
+
+        service.changeColumnsArrangement(presetColumnsMock, false);
+
+        const setColumnsArg = setColsSpy.mock.calls[0][0];
+        expect(setColumnsArg).toEqual(expect.arrayContaining([expect.objectContaining({ id: '_move', field: '_move' })]));
+        // row move should be present in the output
+        const moveIndex = setColumnsArg.findIndex((col: Column) => col.id === '_move');
+        expect(moveIndex).toBeGreaterThanOrEqual(0);
+      });
+
+      it('should insert both checkbox selector and row detail columns when both features are enabled', () => {
+        gridOptionMock.enableCheckboxSelector = true;
+        gridOptionMock.enableRowDetailView = true;
+        gridOptionMock.checkboxSelector = { columnIndexPosition: 0 } as unknown as CheckboxSelectorOption;
+        gridOptionMock.rowDetailView = { columnIndexPosition: 1 } as unknown as RowDetailView;
+
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(allColumnsMock);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(allColumnsMock);
+        const setColsSpy = vi.spyOn(gridStub, 'setColumns');
+
+        service.changeColumnsArrangement(presetColumnsMock, false);
+
+        const setColumnsArg = setColsSpy.mock.calls[0][0];
+        expect(setColumnsArg).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({ id: '_checkbox_selector', field: '_checkbox_selector' }),
+            expect.objectContaining({ id: '_detail_selector', field: '_detail_selector' }),
+          ])
+        );
+        // both dynamic columns should be present in the output
+        const checkboxIndex = setColumnsArg.findIndex((col: Column) => col.id === '_checkbox_selector');
+        const detailIndex = setColumnsArg.findIndex((col: Column) => col.id === '_detail_selector');
+        expect(checkboxIndex).toBeGreaterThanOrEqual(0);
+        expect(detailIndex).toBeGreaterThanOrEqual(0);
+      });
+
+      it('should insert all three dynamic columns (checkbox selector, row detail, and row move) when all features are enabled', () => {
+        gridOptionMock.enableCheckboxSelector = true;
+        gridOptionMock.enableRowDetailView = true;
+        gridOptionMock.enableRowMoveManager = true;
+        gridOptionMock.checkboxSelector = { columnIndexPosition: 0 } as unknown as CheckboxSelectorOption;
+        gridOptionMock.rowDetailView = { columnIndexPosition: 1 } as unknown as RowDetailView;
+        gridOptionMock.rowMoveManager = { columnIndexPosition: 2 } as unknown as RowMoveManager;
+
+        vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(allColumnsMock);
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(allColumnsMock);
+        const setColsSpy = vi.spyOn(gridStub, 'setColumns');
+
+        service.changeColumnsArrangement(presetColumnsMock, false);
+
+        const setColumnsArg = setColsSpy.mock.calls[0][0];
+        expect(setColumnsArg).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({ id: '_checkbox_selector', field: '_checkbox_selector' }),
+            expect.objectContaining({ id: '_detail_selector', field: '_detail_selector' }),
+            expect.objectContaining({ id: '_move', field: '_move' }),
+          ])
+        );
+        // all three dynamic columns should be present in the output
+        const checkboxIndex = setColumnsArg.findIndex((col: Column) => col.id === '_checkbox_selector');
+        const detailIndex = setColumnsArg.findIndex((col: Column) => col.id === '_detail_selector');
+        const moveIndex = setColumnsArg.findIndex((col: Column) => col.id === '_move');
+        expect(checkboxIndex).toBeGreaterThanOrEqual(0);
+        expect(detailIndex).toBeGreaterThanOrEqual(0);
+        expect(moveIndex).toBeGreaterThanOrEqual(0);
+      });
     });
 
     describe('bindExtensionAddonEventToGridStateChange tests', () => {
@@ -336,7 +522,7 @@ describe('GridStateService', () => {
         const extensionSpy = vi.spyOn(extensionServiceStub, 'getExtensionByName').mockReturnValue(extensionMock as any);
 
         service.init(gridStub);
-        vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(rowSelectionModelStub);
+        vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(hybridSelectionModelStub);
         slickgridEvent.notify({ columns: columnsMock }, new SlickEventData(), gridStub);
 
         expect(gridStateSpy).toHaveBeenCalled();
@@ -360,7 +546,7 @@ describe('GridStateService', () => {
         const gridStateSpy = vi.spyOn(service, 'getCurrentGridState').mockReturnValue(gridStateMock);
 
         service.init(gridStub);
-        vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(rowSelectionModelStub);
+        vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(hybridSelectionModelStub);
         gridStub.onColumnsReordered.notify({ impactedColumns: columnsMock, previousColumnOrder: [], grid: gridStub }, new SlickEventData(), gridStub);
         service.resetColumns();
 
@@ -439,14 +625,14 @@ describe('GridStateService', () => {
 
       // cssClass: red will change to purple and headerCssClass will remain blue when defined in either
       expect(associatedGridColumns).toEqual([
-        { id: 'field1', field: 'field1', width: 100, cssClass: 'purple', headerCssClass: 'custom-hdr' },
-        { id: 'field2', field: 'field2', width: 150, cssClass: undefined, headerCssClass: 'blue' },
-        { id: 'field3', field: 'field3', width: 0, cssClass: undefined, headerCssClass: undefined },
+        { id: 'field1', field: 'field1', width: 100, cssClass: 'purple', hidden: false, headerCssClass: 'custom-hdr' },
+        { id: 'field2', field: 'field2', width: 150, cssClass: undefined, hidden: false, headerCssClass: 'blue' },
+        { id: 'field3', field: 'field3', width: 0, cssClass: undefined, hidden: false, headerCssClass: undefined },
       ]);
       expect(columns).toEqual([
-        { id: 'field1', field: 'field1', width: 100, cssClass: 'purple', headerCssClass: 'custom-hdr' },
-        { id: 'field2', field: 'field2', width: 150, cssClass: undefined, headerCssClass: 'blue' },
-        { id: 'field3', field: 'field3', width: 0, cssClass: undefined, headerCssClass: undefined },
+        { id: 'field1', field: 'field1', width: 100, cssClass: 'purple', hidden: false, headerCssClass: 'custom-hdr' },
+        { id: 'field2', field: 'field2', width: 150, cssClass: undefined, hidden: false, headerCssClass: 'blue' },
+        { id: 'field3', field: 'field3', width: 0, cssClass: undefined, hidden: false, headerCssClass: undefined },
       ]);
     });
   });
@@ -572,7 +758,7 @@ describe('GridStateService', () => {
     });
 
     it('should return null when "enableCheckboxSelector" flag is disabled', () => {
-      const gridOptionsMock = { enableCheckboxSelector: false, enableRowSelection: false, ...pinningMock } as GridOption;
+      const gridOptionsMock = { enableCheckboxSelector: false, enableSelection: false, ...pinningMock } as GridOption;
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
 
       const output = service.getCurrentRowSelections();
@@ -580,7 +766,7 @@ describe('GridStateService', () => {
       expect(output).toBeNull();
     });
 
-    it('should call "getCurrentGridState" method and return the Row Selection when either "enableCheckboxSelector" or "enableRowSelection" flag is enabled', () => {
+    it('should call "getCurrentGridState" method and return the Row Selection when either "enableCheckboxSelector" or "enableSelection" flag is enabled', () => {
       const selectedGridRows = [2];
       const selectedRowIds = [99];
       const gridOptionsMock = { enableCheckboxSelector: true, ...pinningMock } as GridOption;
@@ -633,7 +819,7 @@ describe('GridStateService', () => {
         vi.clearAllMocks();
         service.dispose();
         pinningMock = { frozenBottom: false, frozenColumn: -1, frozenRow: -1 } as CurrentPinning;
-        const gridOptionsMock = { enablePagination: true, enableRowSelection: true, ...pinningMock } as GridOption;
+        const gridOptionsMock = { enablePagination: true, enableSelection: true, ...pinningMock } as GridOption;
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
       });
@@ -842,7 +1028,7 @@ describe('GridStateService', () => {
     });
 
     it('should return true when the "dataView" grid option is a boolean and is set to True', () => {
-      const gridOptionsMock = { dataView: { syncGridSelection: true }, enableRowSelection: true } as GridOption;
+      const gridOptionsMock = { dataView: { syncGridSelection: true }, enableSelection: true } as GridOption;
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
 
       const output = service.needToPreserveRowSelection();
@@ -857,7 +1043,7 @@ describe('GridStateService', () => {
           service: backendServiceStub,
           process: vi.fn(),
         },
-        enableRowSelection: true,
+        enableSelection: true,
       } as GridOption;
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
 
@@ -873,7 +1059,7 @@ describe('GridStateService', () => {
           service: backendServiceStub,
           process: vi.fn(),
         },
-        enableRowSelection: true,
+        enableSelection: true,
       } as GridOption;
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
 
@@ -885,7 +1071,7 @@ describe('GridStateService', () => {
     it('should return true when the "dataView" grid option is provided as an object', () => {
       const gridOptionsMock = {
         dataView: { syncGridSelection: { preserveHidden: true, preserveHiddenOnSelectionChange: false } },
-        enableRowSelection: true,
+        enableSelection: true,
       } as GridOption;
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
 
@@ -959,8 +1145,8 @@ describe('GridStateService', () => {
     });
 
     it('should call the method and call the grid selection reset when the selection extension is used', () => {
-      const extensionMock = { name: ExtensionName.rowSelection, addon: {}, instance: {} as unknown as SlickRowSelectionModel, class: null };
-      const gridOptionsMock = { enableRowSelection: true } as GridOption;
+      const extensionMock = { name: 'hybridSelection', addon: {}, instance: {} as unknown as SlickHybridSelectionModel, class: null };
+      const gridOptionsMock = { enableSelection: true } as GridOption;
       const gridOptionSpy = vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
       const setSelectionSpy = vi.spyOn(gridStub, 'setSelectedRows');
       const extensionSpy = vi.spyOn(extensionServiceStub, 'getExtensionByName').mockReturnValue(extensionMock as any);
@@ -968,14 +1154,14 @@ describe('GridStateService', () => {
       service.resetRowSelectionWhenRequired();
 
       expect(gridOptionSpy).toHaveBeenCalled();
-      expect(extensionSpy).toHaveBeenCalledWith(ExtensionName.rowSelection);
+      expect(extensionSpy).toHaveBeenCalledWith(ExtensionName.hybridSelection);
       expect(setSelectionSpy).toHaveBeenCalled();
     });
 
     it('should call the method and call the grid selection reset when the selection extension is used', () => {
       vi.spyOn(gridStub, 'getSelectionModel').mockReturnValueOnce(hybridSelectionModelStub);
       const extensionMock = { name: ExtensionName.hybridSelection, addon: {}, instance: {} as unknown as SlickHybridSelectionModel, class: null };
-      const gridOptionsMock = { enableHybridSelection: true } as GridOption;
+      const gridOptionsMock = { enableSelection: true } as GridOption;
       const gridOptionSpy = vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
       const setSelectionSpy = vi.spyOn(gridStub, 'setSelectedRows');
       const extensionSpy = vi.spyOn(extensionServiceStub, 'getExtensionByName').mockReturnValue(extensionMock as any);
@@ -1011,7 +1197,7 @@ describe('GridStateService', () => {
 
       vi.spyOn(filterServiceStub, 'getCurrentLocalFilters').mockReturnValue(filterMock);
       vi.spyOn(sortServiceStub, 'getCurrentLocalSorters').mockReturnValue(sorterMock);
-      vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+      vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columnsMock);
     });
 
     it('should trigger a "onGridStateChanged" event when "onFilterChanged" is triggered', () => {

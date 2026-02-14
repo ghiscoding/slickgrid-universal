@@ -2,7 +2,6 @@
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { useTranslation } from 'i18next-vue';
 import {
-  ExtensionName,
   Filters,
   Formatters,
   SlickgridVue,
@@ -391,11 +390,11 @@ function executeCommand(_e: any, args: any) {
 }
 
 function getCellMenuInstance() {
-  return vueGrid?.extensionService.getExtensionInstanceByName(ExtensionName.cellMenu);
+  return vueGrid?.extensionService.getExtensionInstanceByName('cellMenu');
 }
 
 function getContextMenuInstance() {
-  return vueGrid?.extensionService.getExtensionInstanceByName(ExtensionName.contextMenu);
+  return vueGrid?.extensionService.getExtensionInstanceByName('contextMenu');
 }
 
 function getData(count: number): any[] {
@@ -425,7 +424,7 @@ function getContextMenuOptions(): ContextMenu {
     // optionally and conditionally define when the the menu is usable,
     // this should be used with a custom formatter to show/hide/disable the menu
     menuUsabilityOverride: (args) => {
-      const dataContext = args && args.dataContext;
+      const dataContext = args?.dataContext;
       return dataContext.id < 21; // say we want to display the menu only from Task 0 to 20
     },
     // which column to show the command list? when not defined it will be shown over all columns
@@ -456,7 +455,7 @@ function getContextMenuOptions(): ContextMenu {
         },
         // only show command to 'Help' when the task is Not Completed
         itemVisibilityOverride: (args) => {
-          const dataContext = args && args.dataContext;
+          const dataContext = args?.dataContext;
           return !dataContext.completed;
         },
       },
@@ -522,7 +521,7 @@ function getContextMenuOptions(): ContextMenu {
         textCssClass: 'italic',
         // only enable this option when the task is Not Completed
         itemUsabilityOverride: (args) => {
-          const dataContext = args && args.dataContext;
+          const dataContext = args?.dataContext;
           return !dataContext.completed;
         },
         // you can use the 'action' callback and/or subscribe to the 'onCallback' event, they both have the same arguments
@@ -544,7 +543,7 @@ function getContextMenuOptions(): ContextMenu {
         disabled: true,
         // only shown when the task is Not Completed
         itemVisibilityOverride: (args) => {
-          const dataContext = args && args.dataContext;
+          const dataContext = args?.dataContext;
           return !dataContext.completed;
         },
       },
@@ -575,7 +574,7 @@ function getContextMenuOptions(): ContextMenu {
     // subscribe to Context Menu onOptionSelected event (or use the action callback on each option)
     onOptionSelected: (_e: any, args: any) => {
       // change Priority
-      const dataContext = args && args.dataContext;
+      const dataContext = args?.dataContext;
       if (dataContext && 'priority' in dataContext) {
         dataContext.priority = args.item.option;
         vueGrid.gridService.updateItem(dataContext);
@@ -752,7 +751,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
     <slickgrid-vue
       v-model:options="gridOptions"
       v-model:columns="columnDefinitions"
-      v-model:data="dataset"
+      v-model:dataset="dataset"
       grid-id="grid24"
       @onVueGridCreated="vueGridReady($event.detail)"
     >

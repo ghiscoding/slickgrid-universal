@@ -1,0 +1,56 @@
+{
+  "name": "@slickgrid-universal/angular-row-detail-plugin",
+  "version": "10.0.0-beta.0",
+  "description": "Angular Row Detail Plugin for Angular-SlickGrid",
+  "type": "module",
+  "main": "./dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "/dist",
+    "/src"
+  ],
+  "scripts": {
+    "build": "pnpm run clean && tsc",
+    "build:incremental": "tsc --incremental --declaration",
+    "clean": "remove dist tsconfig.tsbuildinfo",
+    "dev": "pnpm build:incremental",
+    "test": "ng test --watch",
+    "test:coverage": "vitest --no-watch --coverage"
+  },
+  "license": "MIT",
+  "author": "Ghislain B.",
+  "homepage": "https://github.com/ghiscoding/slickgrid-universal",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ghiscoding/slickgrid-universal.git",
+    "directory": "packages/angular-row-detail-plugin"
+  },
+  "bugs": {
+    "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
+  },
+  "dependencies": {
+    "@ngx-translate/core": "^17.0.0",
+    "@slickgrid-universal/common": "workspace:*",
+    "@slickgrid-universal/event-pub-sub": "workspace:*",
+    "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
+    "angular-slickgrid": "workspace:*",
+    "rxjs": "catalog:"
+  },
+  "devDependencies": {
+    "@angular-eslint/eslint-plugin": "catalog:",
+    "@angular/core": "^21.1.4",
+    "oxlint": "catalog:",
+    "tslib": "catalog:",
+    "vitest": "catalog:"
+  }
+}

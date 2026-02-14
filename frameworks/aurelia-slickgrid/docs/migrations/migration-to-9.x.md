@@ -183,29 +183,29 @@ Below is a list of Enums being deprecated and you should think about migrating t
 | `FieldType`  | `FieldType.boolean` | `'boolean'`         |
 |             | `FieldType.number`   | `'number'`          |
 |             | `FieldType.dateIso`   | `'dateIso'`          |
-|  | ... | ... |
+| ... | ... | ... |
 | `FileType` | `FileType.csv`      | `'csv'`             |
 |             | `FileType.xlsx`     | `'xlsx'`            |
-|  | ... | ... |
+| ... | ... | ... |
 | `GridStateType`  | `GridStateType.columns` | `'columns'`  |
 |             | `GridStateType.filters`   | `'filters'`   |
 |             | `GridStateType.sorters`   | `'sorters'`   |
-|  | ... | ... |
+| ... | ... | ... |
 | `OperatorType`  | `OperatorType.greaterThan` | `'>'`  or `'GT'` |    See [Operator](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/enums/operator.type.ts) list for all available operators |
 |             | `OperatorType.lessThanOrEqual`   | `'<='` or `'LE'`  |
 |             | `OperatorType.contains`   | `'Contains'` or `'CONTAINS'`  | Operators are written as PascalCase |
 |             | `OperatorType.equal`   | `'='` or `'EQ'` |
 |             | `OperatorType.rangeExclusive`   | `'RangeExclusive'`  |
-|  | ... | ... |
+| ... | ... | ... |
 | `SortDirection`  | `SortDirection.ASC` | `'ASC'` or `'asc'`  |
 |             | `SortDirection.DESC`   | `'DESC'` or `'desc'`  |
-|  | ... | ... |
+| ... | ... | ... |
 
 **Hint** You can use VSCode search & replace, but make sure it's set to Regular Expression pattern
 
-| Search (regex)                      | Replace |
-| ------------------------------ | -------- |
-| `FieldType\.([a-z_]+)(.*)` | `'$1'$2`      |
+| Search (regex)             | Replace  |
+| -------------------------- | -------- |
+| `FieldType\.([a-z_]+)(.*)` | `'$1'$2` |
 
 ##### deprecating `editorOptions` and `filterOptions`, they are being renamed as a more generic `options` name
 
@@ -246,7 +246,7 @@ columnDefinitions = [{
 
 ##### deprecating `text-color-xyz` and renaming them all to `color-xyz`
 
-I decided to deprecate all `text-color-...` and renaming them all to `color-...` which is much simpler to type and use. 
+I decided to deprecate all `text-color-...` and renaming them all to `color-...` which is much simpler to type and use.
 
 You can do a "Search and Replace" in VSCode via Regular Expressions to replace them all easily:
 

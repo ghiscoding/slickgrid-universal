@@ -2,9 +2,10 @@ import type { EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement, emptyElement } from '@slickgrid-universal/utils';
 import { SlickEventHandler, type SlickDataView, type SlickGrid } from '../core/index.js';
 import type { ExtensionUtility } from '../extensions/extensionUtility.js';
-import type { Column, GridOption } from './../interfaces/index.js';
+import type { GridOption } from './../interfaces/index.js';
 
 export class HeaderGroupingService {
+  readonly pluginName = 'HeaderGroupingService';
   protected _eventHandler: SlickEventHandler;
   protected _grid!: SlickGrid;
   protected _subscriptions: EventSubscription[] = [];
@@ -26,11 +27,6 @@ export class HeaderGroupingService {
   /** Getter for the Grid Options pulled through the Grid Object */
   protected get _gridOptions(): GridOption {
     return this._grid?.getOptions() ?? ({} as GridOption);
-  }
-
-  /** Getter for the Column Definitions pulled through the Grid Object */
-  protected get _columnDefinitions(): Column[] {
-    return this._grid?.getColumns() ?? [];
   }
 
   /**
@@ -82,7 +78,7 @@ export class HeaderGroupingService {
 
   /** Create or Render the Pre-Header Row Grouping Titles */
   renderPreHeaderRowGroupingTitles(): void {
-    const colsCount = this._columnDefinitions.length;
+    const colsCount = this._grid.getVisibleColumns().length;
 
     if (this._gridOptions?.frozenColumn !== undefined && this._gridOptions.frozenColumn >= 0) {
       const frozenCol = this._gridOptions.frozenColumn;
@@ -113,9 +109,10 @@ export class HeaderGroupingService {
     let widthTotal = 0;
     const frozenHeaderWidthCalcDifferential = this._gridOptions?.frozenHeaderWidthCalcDifferential ?? 0;
     const isFrozenGrid = this._gridOptions?.frozenColumn !== undefined && this._gridOptions.frozenColumn >= 0;
+    const visibleColumns = this._grid.getVisibleColumns();
 
     for (let i = start; i < end; i++) {
-      colDef = this._columnDefinitions[i];
+      colDef = visibleColumns[i];
       if (colDef) {
         if (lastColumnGroup === colDef.columnGroup && i > 0) {
           widthTotal += colDef.width || 0;
@@ -143,7 +140,7 @@ export class HeaderGroupingService {
   translateHeaderGrouping(): void {
     const currentColumnDefinitions = this._grid.getColumns();
     this.extensionUtility.translateItems(currentColumnDefinitions, 'columnGroupKey', 'columnGroup');
-    this._grid.setColumns(currentColumnDefinitions);
+    this._grid.updateColumns();
     this.renderPreHeaderRowGroupingTitles();
   }
 }

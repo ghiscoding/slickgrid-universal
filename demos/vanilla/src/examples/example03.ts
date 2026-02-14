@@ -355,9 +355,6 @@ export default class Example03 {
       enableAutoSizeColumns: true,
       enableAutoResize: true,
       enableCellNavigation: true,
-      enablePdfExport: true,
-      enableTextExport: true,
-      enableExcelExport: true,
       excelExportOptions: {
         exportWithFormatter: true,
       },
@@ -367,8 +364,12 @@ export default class Example03 {
         repeatHeadersOnEachPage: true, // defaults to true
       },
       externalResources: [new TextExportService(), this.excelExportService, this.pdfExportService],
+      // -- NOTE: registered resources are auto-enabled
+      // enableTextExport: true,
+      // enablePdfExport: true,
+      // enableExcelExport: true,
       enableFiltering: true,
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },
@@ -406,7 +407,7 @@ export default class Example03 {
         grouping: ['duration'],
       },
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+      enableSelection: true,
       checkboxSelector: {
         hideInFilterHeaderRow: false,
         hideInColumnTitleRow: true,
@@ -423,7 +424,7 @@ export default class Example03 {
         onCommand: (e, args) => this.executeCommand(e, args),
         onOptionSelected: (_e, args) => {
           // change "Effort-Driven" property with new option selected from the Cell Menu
-          const dataContext = args && args.dataContext;
+          const dataContext = args?.dataContext;
           if (dataContext && dataContext.hasOwnProperty('effortDriven')) {
             dataContext.effortDriven = args.item.option;
             this.sgb.gridService.updateItem(dataContext);

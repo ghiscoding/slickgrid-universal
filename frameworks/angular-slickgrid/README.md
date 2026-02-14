@@ -112,6 +112,7 @@ Make sure to check out the [Releases](https://github.com/ghiscoding/slickgrid-un
 
 | Angular-Slickgrid | Angular | Migration Guide | Notes | Date |
 | :----------------:|:-------:|-----------------| ------| ---- |
+| 10.x              | >=21.0 | [Migration 10.x](https://ghiscoding.gitbook.io/angular-slickgrid/migrations/migration-to-10.x) | Smaller code, requires Slickgrid-Universal [10.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v10.0.0) | TBD |
 | 9.x               | >=19.0 | [Migration 9.x](https://ghiscoding.gitbook.io/angular-slickgrid/migrations/migration-to-9.x) | ESM-Only, requires Slickgrid-Universal [9.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v9.0.0) | 2025-05-10 |
 | 8.x               | >=18.0 | [Migration 8.x](https://ghiscoding.gitbook.io/angular-slickgrid/migrations/migration-to-8.x) | Modern UI / Dark Mode, requires Slickgrid-Universal [5.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v5.0.0) | 2024-05-22 |
 | 7.x               | >=17.0 | [Migration 7.x](https://ghiscoding.gitbook.io/angular-slickgrid/migrations/migration-to-7.x) | merge SlickGrid into Slickgrid-Universal, <br> requires Slickgrid-Universal [4.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v4.0.2) | 2023-12-15 |

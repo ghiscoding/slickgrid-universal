@@ -1,65 +1,62 @@
 packages:
   - demos/**
   - frameworks/**
+  - frameworks-plugins/**
   - packages/**
   - '!**/dist/**'
 
 catalog:
   '@4tw/cypress-drag-drop': ^2.3.1
-  '@faker-js/faker': ^10.2.0
+  '@angular-eslint/eslint-plugin': ^21.2.0
+  '@faker-js/faker': ^10.3.0
   '@fnando/sparkline': ^0.3.10
   '@formkit/tempo': ^1.0.0
   '@popperjs/core': ^2.11.8
   '@types/fnando__sparkline': ^0.3.7
-  '@types/node': ^24.10.9
+  '@types/node': ^24.10.13
+  '@types/react': ^19.2.14
+  '@types/react-dom': ^19.2.3
   '@types/sortablejs': ^1.15.9
-  '@vitejs/plugin-react': ^5.1.2
-  '@vitejs/plugin-vue': ^6.0.3
+  '@vitejs/plugin-react': ^5.1.4
+  '@vitejs/plugin-vue': ^6.0.4
   '@vitest/coverage-v8': ^4.0.18
   '@vitest/ui': ^4.0.18
   bootstrap: ^5.3.8
   concurrently: ^9.2.1
   cross-env: ^10.1.0
-  cypress: ^15.9.0
+  cypress: ^15.10.0
   cypress-real-events: ^1.15.0
   dequal: ^2.0.3
   dompurify: ^3.3.1
-  globals: ^17.2.0
-  i18next: ^25.8.0
+  globals: ^17.3.0
+  i18next: ^25.8.7
   i18next-vue: ^5.4.0
-  jsdom: ^27.4.0
+  jsdom: ^28.0.0
   jsdom-global: ^3.0.2
-  multiple-select-vanilla: ^4.4.1
+  jspdf: ^4.1.0
+  multiple-select-vanilla: ^5.0.0
   native-copyfiles: ^2.0.1
-  oxlint: ^1.42.0
+  oxlint: ^1.47.0
+  react: ^19.2.4
+  react-dom: ^19.2.4
   remove-glob: ^1.2.0
   rxjs: ^7.8.2
   sass: ^1.97.3
-  sortablejs: ^1.15.6
+  sortablejs: ^1.15.7
   tslib: ^2.8.1
-  typescript: ^5.8.3
-  vite-tsconfig-paths: ^6.0.5
+  typescript: ^5.9.3
+  vite: ^7.3.1
+  vite-tsconfig-paths: ^6.1.1
   vitest: ^4.0.18
-  vue: ^3.5.27
+  vue: ^3.5.28
 
-# named catalog: to reference multiple version of a dependency
-# Can be referenced through "catalog:vite6" or "catalog:vite7"
-catalogs:
-  vite6:
-    vite: ^6.4.1
-  vite7:
-    vite: ^7.3.1
-
-onlyBuiltDependencies:
-  - cypress
+# onlyBuiltDependencies:
+#   - cypress
 
 overrides:
-  '@isaacs/brace-expansion': ^5.0.1
-  '@angular/build>vite': 'catalog:vite6'
-  '@vitejs/plugin-basic-ssl>vite': 'catalog:vite7'
   '@vitest/coverage-v8>vite': 'npm:rolldown-vite@latest'
   '@vitest/ui>vite': 'npm:rolldown-vite@latest'
-  glob: ^13.0.0
+  glob: ^13.0.1
   h3: ^1.15.5
   js-yaml: ^4.1.1
   koa: ^3.1.1

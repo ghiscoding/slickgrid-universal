@@ -171,7 +171,6 @@ $slick-header-resizable-hover-right:                        0 !default;
 $slick-header-resizable-hover-height:                       100% !default;
 $slick-header-resizable-hover-top:                          0 !default;
 $slick-header-resizable-hover-opacity:                      1 !default;
-$slick-header-scroll-width-to-remove:                       16px !default;                        // without this, the header (which doesn't have scrolling) will be wider than the data viewport
 
 /* Frozen pinned rows/columns */
 $slick-frozen-border-bottom:                                1px solid #a5a5a5 !default;
@@ -372,16 +371,14 @@ $slick-column-picker-title-width:                           calc(100% - #{$slick
 $slick-column-picker-z-index:                               9000 !default;
 
 /* Grid Menu - hamburger menu */
-$slick-grid-menu-button-display:                            inline-flex !default;
 $slick-grid-menu-button-padding:                            0 2px !default;
 $slick-grid-menu-label-margin:                              4px !default;
 $slick-grid-menu-label-font-weight:                         normal !default;
 $slick-grid-menu-link-background-color:                     #ffffff !default;
 $slick-grid-menu-icon-btn-color:                            $slick-icon-color !default;
-$slick-grid-menu-icon-font-size:                            $slick-icon-font-size !default;
 $slick-grid-menu-icon-top-margin:                           5px !default;
 $slick-grid-menu-divider-width:                             calc(100% - 10px) !default;
-$slick-gri-menu-item-margin-right:                          6px !default;
+$slick-grid-menu-item-margin-right:                         6px !default;
 
 /* Menu Plugins */
 $slick-menu-bg-color:                                       #ffffff !default;
@@ -458,6 +455,7 @@ $slick-header-menu-button-icon-size:                        22px !default;
 $slick-header-menu-button-padding:                          0px !default;
 $slick-header-menu-button-margin-right:                     3px !default;
 $slick-header-menu-display:                                 none !default; /* can be none or inline-block */
+$slick-header-menu-z-index:                                 8888 !default; /* can be none or inline-block */
 
 /* Checkbox Selector / Row Selection */
 $slick-checkbox-icon-color:                                 $slick-primary-color !default;
@@ -1154,6 +1152,7 @@ $slick-dark-text-color:                                   #d4d4d4 !default;
   --slick-pagination-text-color:                          #cfcfcf;
   --slick-cell-selected-color:                            #474747;
   --slick-row-selected-color:                             #474747;
+  --slick-row-highlight-background-color:                 #505050;
   --slick-scrollbar-color:                                #828282 #424242;
   --slick-sorting-header-color:                           var(--slick-base-dark-text-color);
   --slick-submenu-box-shadow:                             0 1px 3px 1px rgba(146, 152, 163, 0.4);

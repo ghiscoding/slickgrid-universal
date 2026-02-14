@@ -14,7 +14,7 @@ import type {
 
 /** A plugin to add row detail panel. */
 export interface SlickRowDetailView {
-  pluginName: 'RowDetailView';
+  pluginName: string;
 
   /** Initialize the SlickGrid 3rd party plugin */
   init(grid: SlickGrid, containerService?: ContainerService): void;

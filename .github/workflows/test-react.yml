@@ -55,6 +55,9 @@ jobs:
       - name: Slickgrid-React Framework Build
         run: pnpm react:build:framework
 
+      - name: Slickgrid-React Framework-Plugins Build
+        run: pnpm react:build:framework-plugins
+
       - name: Website Dev Build (served for Cypress)
         run: pnpm react:build:demo
 
@@ -65,7 +68,7 @@ jobs:
         run: pnpm react:serve &
 
       - name: Run Cypress E2E tests
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           install: false
           package-manager-cache: false

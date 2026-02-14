@@ -1,7 +1,7 @@
 import { Component, type OnInit } from '@angular/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   Formatters,
   SlickEventHandler,
   type AngularGridInstance,
@@ -14,7 +14,7 @@ const NB_ITEMS = 995;
 @Component({
   templateUrl: './example48.component.html',
   // styles: ['#grid48-1 { .slick-row .slick-cell:first-child { border-right: 1px solid #d4d4d4; } }'],
-  imports: [AngularSlickgridModule],
+  imports: [AngularSlickgridComponent],
 })
 export class Example48Component implements OnInit {
   protected _eventHandler = new SlickEventHandler();
@@ -124,9 +124,10 @@ export class Example48Component implements OnInit {
       externalResources: [new ExcelExportService()],
 
       // enable new hybrid selection model (rows & cells)
-      enableHybridSelection: true,
-      rowSelectionOptions: {
+      enableSelection: true,
+      selectionOptions: {
         rowSelectColumnIds: ['id'],
+        selectionType: 'mixed',
       },
 
       // when using the ExcelCopyBuffer, you can see what the selection range is
@@ -141,8 +142,8 @@ export class Example48Component implements OnInit {
       ...this.gridOptions1,
       // you can also enable checkbox selection & row selection, make sure to use `rowSelectColumnIds: ['id', '_checkbox_selector']`
       enableCheckboxSelector: true,
-      enableRowSelection: true,
-      rowSelectionOptions: {
+      enableSelection: true,
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
 

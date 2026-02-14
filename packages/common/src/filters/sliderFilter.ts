@@ -2,7 +2,7 @@ import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, emptyElement, isDefined, toSentenceCase } from '@slickgrid-universal/utils';
 import { Constants } from '../constants.js';
 import { SlickEventData, type SlickGrid } from '../core/index.js';
-import { OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
+import { type OperatorType, type SearchTerm } from '../enums/index.js';
 import type {
   Column,
   ColumnFilter,
@@ -34,7 +34,7 @@ export class SliderFilter implements Filter {
   protected _lastSearchValue?: number | string;
   protected _shouldTriggerQuery = true;
   protected _sliderOptions!: CurrentSliderOption;
-  protected _operator?: OperatorType | OperatorString;
+  protected _operator?: OperatorType;
   protected _filterElm!: HTMLDivElement;
   protected _argFilterContainerElm!: HTMLElement;
   protected _divContainerFilterElm!: HTMLDivElement;
@@ -73,17 +73,17 @@ export class SliderFilter implements Filter {
   }
 
   /** Getter to know what would be the default operator when none is specified */
-  get defaultOperator(): OperatorType | OperatorString {
+  get defaultOperator(): OperatorType {
     if (this.sliderType === 'compound') {
-      return OperatorType.empty;
+      return '';
     } else if (this.sliderType === 'single') {
-      return OperatorType.greaterThanOrEqual;
+      return 'GE';
     }
-    return this.gridOptions.defaultFilterRangeOperator || OperatorType.rangeInclusive;
+    return this.gridOptions.defaultFilterRangeOperator || 'RangeInclusive';
   }
 
   get filterOptions(): SliderOption | SliderRangeOption {
-    return { ...this.gridOptions.defaultFilterOptions?.slider, ...this.columnFilter?.filterOptions, ...this.columnFilter?.options };
+    return { ...this.gridOptions.defaultFilterOptions?.slider, ...this.columnFilter?.options };
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
@@ -97,12 +97,12 @@ export class SliderFilter implements Filter {
   }
 
   /** Getter for the Filter Operator */
-  get operator(): OperatorType | OperatorString {
+  get operator(): OperatorType {
     return this._operator || (this.columnFilter.operator ?? this.defaultOperator);
   }
 
   /** Setter for the Filter Operator */
-  set operator(operator: OperatorType | OperatorString) {
+  set operator(operator: OperatorType) {
     this._operator = operator;
   }
 
@@ -141,8 +141,8 @@ export class SliderFilter implements Filter {
           this._sliderRightInputElm.value = `${highestValue}`;
         }
         this._currentValues = [lowestValue, highestValue];
-        this._sliderLeftInputElm?.dispatchEvent(new Event('change'));
-        this._sliderRightInputElm?.dispatchEvent(new Event('change'));
+        this.slideLeftInputChanged(new Event('change') as DOMEvent<HTMLInputElement>, true);
+        this.slideRightInputChanged(new Event('change') as DOMEvent<HTMLInputElement>, true);
       } else {
         // for compound/single sliders, we'll only change to the lowest value
         if (this._sliderRightInputElm) {
@@ -152,7 +152,7 @@ export class SliderFilter implements Filter {
           this._selectOperatorElm.selectedIndex = 0; // reset to empty Operator when included
         }
         this._currentValue = lowestValue;
-        this._sliderRightInputElm?.dispatchEvent(new Event('change'));
+        this.slideRightInputChanged(new Event('change') as DOMEvent<HTMLInputElement>, true);
       }
 
       const hideSliderNumbers =
@@ -210,7 +210,7 @@ export class SliderFilter implements Filter {
    * Set value(s) on the DOM element
    * @params searchTerms
    */
-  setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString, triggerChange = false): void {
+  setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType, triggerChange = false): void {
     if (values) {
       let sliderVals: Array<number | string | undefined> = [];
       const term1: SearchTerm | undefined = Array.isArray(values) ? values?.[0] : values;
@@ -473,7 +473,7 @@ export class SliderFilter implements Filter {
   }
 
   /** handle value change event triggered, trigger filter callback & update "filled" class name */
-  protected onValueChanged(e: Event): void {
+  protected onValueChanged(e: Event, skipTriggerEvent = false): void {
     const sliderRightVal = this.getInputValue(this._sliderRightInputElm);
     let value;
     let searchTerms: SearchTerm[];
@@ -501,7 +501,7 @@ export class SliderFilter implements Filter {
         shouldTriggerQuery: this._shouldTriggerQuery,
       });
     } else {
-      const selectedOperator = (this._selectOperatorElm?.value ?? this.operator) as OperatorString;
+      const selectedOperator = (this._selectOperatorElm?.value ?? this.operator) as OperatorType;
       this.updateFilterStyle(value !== '');
 
       // when changing compound operator, we don't want to trigger the filter callback unless the filter input is also provided
@@ -526,7 +526,9 @@ export class SliderFilter implements Filter {
 
     // trigger mouse enter event on the filter for optionally hooked SlickCustomTooltip
     // the minimum requirements for tooltip to work are the columnDef and targetElement
-    this.grid.onHeaderRowMouseEnter.notify({ column: this.columnDef, grid: this.grid }, new SlickEventData(e));
+    if (!skipTriggerEvent) {
+      this.grid.onHeaderRowMouseEnter.notify({ column: this.columnDef, grid: this.grid }, new SlickEventData(e));
+    }
     this._lastSearchValue = value;
   }
 
@@ -536,7 +538,7 @@ export class SliderFilter implements Filter {
     this._sliderRightInputElm?.classList[addRemoveCmd]('focus');
   }
 
-  protected slideLeftInputChanged(e: DOMEvent<HTMLInputElement>): void {
+  protected slideLeftInputChanged(e: DOMEvent<HTMLInputElement>, skipTriggerEvent = false): void {
     const sliderLeftVal = this.getInputValue(this._sliderLeftInputElm);
     const sliderRightVal = this.getInputValue(this._sliderRightInputElm);
 
@@ -563,10 +565,10 @@ export class SliderFilter implements Filter {
       }
     }
 
-    this.sliderLeftOrRightChanged(e, 'left', sliderLeftVal, sliderRightVal);
+    this.sliderLeftOrRightChanged(e, 'left', sliderLeftVal, sliderRightVal, skipTriggerEvent);
   }
 
-  protected slideRightInputChanged(e: DOMEvent<HTMLInputElement>): void {
+  protected slideRightInputChanged(e: DOMEvent<HTMLInputElement>, skipTriggerEvent = false): void {
     const sliderLeftVal = this.getInputValue(this._sliderLeftInputElm);
     const sliderRightVal = this.getInputValue(this._sliderRightInputElm);
 
@@ -581,14 +583,15 @@ export class SliderFilter implements Filter {
       );
     }
 
-    this.sliderLeftOrRightChanged(e, 'right', sliderLeftVal, sliderRightVal);
+    this.sliderLeftOrRightChanged(e, 'right', sliderLeftVal, sliderRightVal, skipTriggerEvent);
   }
 
   protected sliderLeftOrRightChanged(
     e: DOMEvent<HTMLInputElement>,
     side: 'left' | 'right',
     sliderLeftVal: number,
-    sliderRightVal: number
+    sliderRightVal: number,
+    skipTriggerEvent = false
   ): void {
     let triggerEvent = true;
     this.updateTrackFilledColorWhenEnabled();
@@ -624,7 +627,7 @@ export class SliderFilter implements Filter {
     }
 
     // also trigger mouse enter event on the filter in case a SlickCustomTooltip is attached
-    if (triggerEvent) {
+    if (triggerEvent && !skipTriggerEvent) {
       this.grid.onHeaderRowMouseEnter.notify({ column: this.columnDef, grid: this.grid }, new SlickEventData(e));
     }
   }

@@ -1,5 +1,5 @@
 import type { SlickGrid } from '../core/index.js';
-import type { OperatorString, OperatorType, SearchTerm } from '../enums/index.js';
+import type { OperatorType, SearchTerm } from '../enums/index.js';
 import type { CollectionService, RxJsFacade, TranslaterService } from '../services/index.js';
 import type { Column, FilterArguments, FilterCallback } from './index.js';
 
@@ -17,10 +17,10 @@ export interface Filter {
   grid: SlickGrid;
 
   /** The default search operator for the filter when not provided */
-  defaultOperator?: OperatorString | OperatorType;
+  defaultOperator?: OperatorType;
 
   /** The search operator for the filter */
-  operator: OperatorType | OperatorString;
+  operator: OperatorType;
 
   /** You can use "params" to pass any generic arguments to your Filter */
   params?: any | any[];
@@ -44,7 +44,7 @@ export interface Filter {
   getValues?: () => SearchTerm | SearchTerm[] | undefined;
 
   /** Set value(s) on the DOM element */
-  setValues: (values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString, triggerChange?: boolean) => void;
+  setValues: (values: SearchTerm | SearchTerm[], operator?: OperatorType, triggerChange?: boolean) => void;
 }
 
 export interface FilterConstructor {

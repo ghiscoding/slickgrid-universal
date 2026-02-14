@@ -9,7 +9,7 @@ Hook yourself to the Changed event of the bindable grid object.
 
 ```vue
 <script setup lang="ts">
-import { Column, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { Column, Filters, Formatters, GridOption, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -55,12 +55,12 @@ function onMouseEntered(e, args) {
       grid-id='grid3'
       v-model:columns="columnDefinitions"
       v-model:options="gridOptions"
-      v-model:data="dataset"
-      @onvueGridCreated="vueGridReady($event.detail)"
+      v-model:dataset="dataset"
       @onCellChange="onCellChanged($event.detail.eventData, $event.detail.args)"
       @onClick="onCellClicked($event.detail.eventData, $event.detail.args)"
       @onMouseEnter="MouseEntered($event.detail.eventData, $event.detail.args)"
       @onValidationError="onCellValidationError($event.detail.eventData, $event.detail.args)"
+      @onVueGridCreated="vueGridReady($event.detail)"
     />
 </template>
 ```
@@ -76,7 +76,7 @@ Once the `Grid` and `DataView` are ready, see all [Available Events](../events/a
 ##### Component
 ```vue
 <script setup lang="ts">
-import { Column, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { Column, Filters, Formatters, GridOption, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -135,9 +135,9 @@ function vueGridReady(vueGrid: SlickgridVueInstance) {
   <SlickgridVue gridId="grid12"
     v-model:columns="columnDefinitions"
     v-model:options="gridOptions"
-    v-model:data="dataset"
-    @onvueGridCreated="vueGridReady($event.detail)"
+    v-model:dataset="dataset"
     @onGridStateChanged="gridStateChanged($event.detail)"
+    @onVueGridCreated="vueGridReady($event.detail)"
   />
 </template>
 ```

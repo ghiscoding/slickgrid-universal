@@ -3,6 +3,7 @@ import {
   ExtensionName,
   type ColumnReorderFunction,
   type ExtensionList,
+  type ExtensionNameTypeString,
   type InferExtensionByName,
   type SlickControlList,
   type SlickPluginList,
@@ -21,7 +22,6 @@ import {
   SlickHybridSelectionModel,
   SlickRowBasedEdit,
   SlickRowMoveManager,
-  SlickRowSelectionModel,
   type ExtensionUtility,
   type SlickGroupItemMetadataProvider,
 } from '../extensions/index.js';
@@ -47,7 +47,7 @@ export class ExtensionService {
   protected _groupItemMetadataProviderService?: SlickGroupItemMetadataProvider;
   protected _headerMenuPlugin?: SlickHeaderMenu;
   protected _rowMoveManagerPlugin?: SlickRowMoveManager;
-  protected _rowSelectionModel?: SlickHybridSelectionModel | SlickRowSelectionModel;
+  protected _selectionModel?: SlickHybridSelectionModel;
   protected _rowBasedEdit?: SlickRowBasedEdit;
   protected _requireInitExternalExtensions: Array<ExtensionModel<any>> = [];
 
@@ -72,8 +72,6 @@ export class ExtensionService {
 
   /** Dispose of all the controls & plugins */
   dispose(): void {
-    this.sharedService.visibleColumns = [];
-
     // dispose of each control/plugin & reset the list
     if (typeof this._extensionList === 'object') {
       const extensionNames = Object.keys(this._extensionList);
@@ -81,7 +79,9 @@ export class ExtensionService {
       // dispose each extension
       extensionNames.forEach((extensionName) => {
         if (this._extensionList.hasOwnProperty(extensionName)) {
-          const extension = this._extensionList[extensionName as keyof Record<ExtensionName, ExtensionModel<any>>] as ExtensionModel<any>;
+          const extension = this._extensionList[
+            extensionName as keyof Record<ExtensionName | ExtensionNameTypeString, ExtensionModel<any>>
+          ] as ExtensionModel<any>;
           if (typeof extension?.instance?.dispose === 'function') {
             extension.instance.dispose();
           }
@@ -89,7 +89,7 @@ export class ExtensionService {
       });
       // delete the extension from the _extensionList object
       extensionNames.forEach((key) => {
-        delete this._extensionList[key as keyof Record<ExtensionName, ExtensionModel<any>>];
+        delete this._extensionList[key as keyof Record<ExtensionName | ExtensionNameTypeString, ExtensionModel<any>>];
       });
     }
     this._cellMenuPlugin = null as any;
@@ -102,7 +102,7 @@ export class ExtensionService {
     this._groupItemMetadataProviderService = null as any;
     this._headerMenuPlugin = null as any;
     this._rowMoveManagerPlugin = null as any;
-    this._rowSelectionModel = null as any;
+    this._selectionModel = null as any;
     this._extensionCreatedList = null as any;
     this._extensionList = {} as ExtensionList<any>;
   }
@@ -112,7 +112,10 @@ export class ExtensionService {
    * @param {String} name
    * @param {Object} extension
    */
-  addExtensionToList<T = any>(name: ExtensionName, extension: { name: ExtensionName; instance: T }): void {
+  addExtensionToList<T = any>(
+    name: ExtensionName | ExtensionNameTypeString,
+    extension: { name: ExtensionName | ExtensionNameTypeString; instance: T }
+  ): void {
     this._extensionList[name] = extension;
   }
 
@@ -123,14 +126,16 @@ export class ExtensionService {
 
   /** Get only visible columns */
   getVisibleColumns(): Column[] {
-    return this.sharedService.visibleColumns || [];
+    return this.sharedService.slickGrid.getVisibleColumns();
   }
 
   /**
    * Get an Extension that was created by calling its "create" method (there are only 3 extensions which uses this method)
    *  @param name
    */
-  getCreatedExtensionByName<P extends SlickControlList | SlickPluginList = any>(name: ExtensionName): ExtensionModel<P> | undefined {
+  getCreatedExtensionByName<P extends SlickControlList | SlickPluginList = any>(
+    name: ExtensionName | ExtensionNameTypeString
+  ): ExtensionModel<P> | undefined {
     if (this._extensionCreatedList?.hasOwnProperty(name)) {
       return this._extensionCreatedList[name];
     }
@@ -142,7 +147,9 @@ export class ExtensionService {
    * NOTE: it's preferable to @use `getExtensionInstanceByName` if you just want the instance since it will automatically infer the extension.
    * @param name
    */
-  getExtensionByName<P extends SlickControlList | SlickPluginList = any>(name: ExtensionName): ExtensionModel<P> | undefined {
+  getExtensionByName<P extends SlickControlList | SlickPluginList = any>(
+    name: ExtensionName | ExtensionNameTypeString
+  ): ExtensionModel<P> | undefined {
     return this._extensionList?.[name];
   }
 
@@ -150,7 +157,7 @@ export class ExtensionService {
    * Get Extension Instance by its name.
    * @param name
    */
-  getExtensionInstanceByName<T extends ExtensionName>(name: T): InferExtensionByName<T> {
+  getExtensionInstanceByName<T extends ExtensionName | ExtensionNameTypeString>(name: T): InferExtensionByName<T> {
     return this.getExtensionByName(name)?.instance as InferExtensionByName<T>;
   }
 
@@ -181,14 +188,14 @@ export class ExtensionService {
         if (this.gridOptions.rowBasedEditOptions?.onExtensionRegistered) {
           this.gridOptions.rowBasedEditOptions.onExtensionRegistered(this._rowBasedEdit);
         }
-        this._extensionList[ExtensionName.rowBasedEdit] = { name: ExtensionName.rowBasedEdit, instance: this._rowBasedEdit };
+        this._extensionList['rowBasedEdit'] = { name: 'rowBasedEdit', instance: this._rowBasedEdit };
       }
 
       // Auto Tooltip Plugin
       if (this.gridOptions.enableAutoTooltip) {
         const instance = new SlickAutoTooltip(this.gridOptions?.autoTooltipOptions);
         this.sharedService.slickGrid.registerPlugin<SlickAutoTooltip>(instance);
-        this._extensionList[ExtensionName.autoTooltip] = { name: ExtensionName.autoTooltip, instance };
+        this._extensionList['autoTooltip'] = { name: 'autoTooltip', instance };
       }
 
       // Cell External Copy Manager Plugin (Excel Like)
@@ -198,8 +205,8 @@ export class ExtensionService {
         if (this.gridOptions.excelCopyBufferOptions?.onExtensionRegistered) {
           this.gridOptions.excelCopyBufferOptions.onExtensionRegistered(this._cellExcelCopyManagerPlugin);
         }
-        this._extensionList[ExtensionName.cellExternalCopyManager] = {
-          name: ExtensionName.cellExternalCopyManager,
+        this._extensionList['cellExternalCopyManager'] = {
+          name: 'cellExternalCopyManager',
           instance: this._cellExcelCopyManagerPlugin,
         };
       }
@@ -210,30 +217,28 @@ export class ExtensionService {
         if (this.gridOptions.cellMenu?.onExtensionRegistered) {
           this.gridOptions.cellMenu.onExtensionRegistered(this._cellMenuPlugin);
         }
-        this._extensionList[ExtensionName.cellMenu] = { name: ExtensionName.cellMenu, instance: this._cellMenuPlugin };
+        this._extensionList['cellMenu'] = { name: 'cellMenu', instance: this._cellMenuPlugin };
       }
 
       // Hybrid Selection OR Row Selection Plugin
       // this extension should be registered BEFORE the CheckboxSelector, RowDetail or RowMoveManager since it can be use by these 2 plugins
       if (
-        !this._rowSelectionModel &&
-        (this.gridOptions.enableHybridSelection ||
-          this.gridOptions.enableRowSelection ||
+        !this._selectionModel &&
+        (this.gridOptions.enableSelection ||
           this.gridOptions.enableCheckboxSelector ||
           this.gridOptions.enableRowDetailView ||
           this.gridOptions.enableRowMoveManager)
       ) {
-        if (!this._rowSelectionModel || !this.sharedService.slickGrid.getSelectionModel()) {
-          const rowSelectionOptions = this.gridOptions.selectionOptions ?? this.gridOptions.rowSelectionOptions ?? {};
+        if (!this._selectionModel || !this.sharedService.slickGrid.getSelectionModel()) {
+          const selectionOptions = this.gridOptions.selectionOptions ?? {};
           if (this.gridOptions.enableRowMoveManager && this.gridOptions.rowMoveManager?.dragToSelect !== false) {
-            rowSelectionOptions.dragToSelect = true;
+            selectionOptions.dragToSelect = true;
           }
-          const SelectionModelClass = this.gridOptions.enableHybridSelection ? SlickHybridSelectionModel : SlickRowSelectionModel;
-          this._rowSelectionModel = new SelectionModelClass(rowSelectionOptions);
-          this.sharedService.slickGrid.setSelectionModel(this._rowSelectionModel);
+          const selectionType = this.gridOptions.selectionOptions?.selectionType || 'row';
+          this._selectionModel = new SlickHybridSelectionModel({ ...selectionOptions, selectionType });
+          this.sharedService.slickGrid.setSelectionModel(this._selectionModel);
         }
-        const extensionName = this.gridOptions.enableHybridSelection ? ExtensionName.hybridSelection : ExtensionName.rowSelection;
-        this._extensionList[extensionName] = { name: extensionName, instance: this._rowSelectionModel };
+        this._extensionList['hybridSelection'] = { name: 'hybridSelection', instance: this._selectionModel };
       }
 
       // Checkbox Selector Plugin
@@ -241,14 +246,14 @@ export class ExtensionService {
         this._checkboxSelectColumn =
           this._checkboxSelectColumn || new SlickCheckboxSelectColumn(this.pubSubService, this.gridOptions.checkboxSelector);
         this._checkboxSelectColumn.init(this.sharedService.slickGrid);
-        const createdExtension = this.getCreatedExtensionByName(ExtensionName.checkboxSelector); // get the instance from when it was really created earlier
+        const createdExtension = this.getCreatedExtensionByName('checkboxSelector'); // get the instance from when it was really created earlier
         const instance = createdExtension?.instance;
         if (instance) {
           if (this.gridOptions.checkboxSelector?.onExtensionRegistered) {
             this.gridOptions.checkboxSelector.onExtensionRegistered(instance);
           }
-          this._extensionList[ExtensionName.checkboxSelector] = {
-            name: ExtensionName.checkboxSelector,
+          this._extensionList['checkboxSelector'] = {
+            name: 'checkboxSelector',
             instance: this._checkboxSelectColumn,
           };
         }
@@ -260,8 +265,8 @@ export class ExtensionService {
         if (this.gridOptions.columnPicker?.onExtensionRegistered) {
           this.gridOptions.columnPicker.onExtensionRegistered(this._columnPickerControl);
         }
-        this._extensionList[ExtensionName.columnPicker] = {
-          name: ExtensionName.columnPicker,
+        this._extensionList['columnPicker'] = {
+          name: 'columnPicker',
           instance: this._columnPickerControl,
         };
       }
@@ -272,7 +277,7 @@ export class ExtensionService {
         if (this.gridOptions.contextMenu?.onExtensionRegistered) {
           this.gridOptions.contextMenu.onExtensionRegistered(this._contextMenuPlugin);
         }
-        this._extensionList[ExtensionName.contextMenu] = { name: ExtensionName.contextMenu, instance: this._contextMenuPlugin };
+        this._extensionList['contextMenu'] = { name: 'contextMenu', instance: this._contextMenuPlugin };
       }
 
       // Draggable Grouping Plugin
@@ -282,13 +287,13 @@ export class ExtensionService {
           if (this.gridOptions.draggableGrouping?.onExtensionRegistered) {
             this.gridOptions.draggableGrouping.onExtensionRegistered(this._draggleGroupingPlugin);
           }
-          this._extensionList[ExtensionName.contextMenu] = {
-            name: ExtensionName.contextMenu,
+          this._extensionList['contextMenu'] = {
+            name: 'contextMenu',
             instance: this._draggleGroupingPlugin,
           };
         }
-        this._extensionList[ExtensionName.draggableGrouping] = {
-          name: ExtensionName.draggableGrouping,
+        this._extensionList['draggableGrouping'] = {
+          name: 'draggableGrouping',
           instance: this._draggleGroupingPlugin,
         };
       }
@@ -305,7 +310,7 @@ export class ExtensionService {
         if (this.gridOptions.gridMenu?.onExtensionRegistered) {
           this.gridOptions.gridMenu.onExtensionRegistered(this._gridMenuControl);
         }
-        this._extensionList[ExtensionName.gridMenu] = { name: ExtensionName.gridMenu, instance: this._gridMenuControl };
+        this._extensionList['gridMenu'] = { name: 'gridMenu', instance: this._gridMenuControl };
       }
 
       // Header Button Plugin
@@ -314,7 +319,7 @@ export class ExtensionService {
         if (this.gridOptions.headerButton?.onExtensionRegistered) {
           this.gridOptions.headerButton.onExtensionRegistered(headerButtonPlugin);
         }
-        this._extensionList[ExtensionName.headerButton] = { name: ExtensionName.headerButton, instance: headerButtonPlugin };
+        this._extensionList['headerButton'] = { name: 'headerButton', instance: headerButtonPlugin };
       }
 
       // Header Menu Plugin
@@ -329,18 +334,18 @@ export class ExtensionService {
         if (this.gridOptions.headerMenu?.onExtensionRegistered) {
           this.gridOptions.headerMenu.onExtensionRegistered(this._headerMenuPlugin);
         }
-        this._extensionList[ExtensionName.headerMenu] = { name: ExtensionName.headerMenu, instance: this._headerMenuPlugin };
+        this._extensionList['headerMenu'] = { name: 'headerMenu', instance: this._headerMenuPlugin };
       }
 
       // Row Move Manager Plugin
       if (this.gridOptions.enableRowMoveManager) {
         this._rowMoveManagerPlugin = this._rowMoveManagerPlugin || new SlickRowMoveManager(this.pubSubService);
         this._rowMoveManagerPlugin.init(this.sharedService.slickGrid, this.gridOptions.rowMoveManager);
-        const createdExtension = this.getCreatedExtensionByName(ExtensionName.rowMoveManager); // get the instance from when it was really created earlier
+        const createdExtension = this.getCreatedExtensionByName('rowMoveManager'); // get the instance from when it was really created earlier
         const instance = createdExtension?.instance;
         if (instance) {
-          this._extensionList[ExtensionName.rowMoveManager] = {
-            name: ExtensionName.rowMoveManager,
+          this._extensionList['rowMoveManager'] = {
+            name: 'rowMoveManager',
             instance: this._rowMoveManagerPlugin,
           };
         }
@@ -366,30 +371,30 @@ export class ExtensionService {
     // the following 3 features might have `columnIndexPosition` that we need to respect their column order, we will execute them by their sort order further down
     // we push them into a array and we'll process them by their position (if provided, else use same order that they were inserted)
     if (gridOptions.enableCheckboxSelector) {
-      if (!this.getCreatedExtensionByName(ExtensionName.checkboxSelector)) {
+      if (!this.getCreatedExtensionByName('checkboxSelector')) {
         this._checkboxSelectColumn = new SlickCheckboxSelectColumn(this.pubSubService, this.sharedService.gridOptions.checkboxSelector);
         featureWithColumnIndexPositions.push({
-          name: ExtensionName.checkboxSelector,
+          name: 'checkboxSelector',
           instance: this._checkboxSelectColumn,
           columnIndexPosition: gridOptions?.checkboxSelector?.columnIndexPosition ?? featureWithColumnIndexPositions.length,
         });
       }
     }
     if (gridOptions.enableRowMoveManager) {
-      if (!this.getCreatedExtensionByName(ExtensionName.rowMoveManager)) {
+      if (!this.getCreatedExtensionByName('rowMoveManager')) {
         this._rowMoveManagerPlugin = new SlickRowMoveManager(this.pubSubService);
         featureWithColumnIndexPositions.push({
-          name: ExtensionName.rowMoveManager,
+          name: 'rowMoveManager',
           instance: this._rowMoveManagerPlugin,
           columnIndexPosition: gridOptions?.rowMoveManager?.columnIndexPosition ?? featureWithColumnIndexPositions.length,
         });
       }
     }
     if (gridOptions.enableRowBasedEdit) {
-      if (!this.getCreatedExtensionByName(ExtensionName.rowBasedEdit)) {
+      if (!this.getCreatedExtensionByName('rowBasedEdit')) {
         this._rowBasedEdit = new SlickRowBasedEdit(this.extensionUtility, this.pubSubService);
         featureWithColumnIndexPositions.push({
-          name: ExtensionName.rowBasedEdit,
+          name: 'rowBasedEdit',
           instance: this._rowBasedEdit,
           columnIndexPosition: gridOptions?.rowMoveManager?.columnIndexPosition ?? featureWithColumnIndexPositions.length,
         });
@@ -412,14 +417,14 @@ export class ExtensionService {
     this.createExtensionByTheirColumnIndex(featureWithColumnIndexPositions, columns, gridOptions);
 
     if (gridOptions.enableDraggableGrouping) {
-      if (!this.getCreatedExtensionByName(ExtensionName.draggableGrouping)) {
+      if (!this.getCreatedExtensionByName('draggableGrouping')) {
         this._draggleGroupingPlugin = new SlickDraggableGrouping(this.extensionUtility, this.pubSubService, this.sharedService);
         if (this._draggleGroupingPlugin) {
           gridOptions.enableColumnReorder = this._draggleGroupingPlugin.setupColumnReorder.bind(
             this._draggleGroupingPlugin
           ) as ColumnReorderFunction;
-          this._extensionCreatedList[ExtensionName.draggableGrouping] = {
-            name: ExtensionName.draggableGrouping,
+          this._extensionCreatedList['draggableGrouping'] = {
+            name: 'draggableGrouping',
             instance: this._draggleGroupingPlugin,
           };
         }
@@ -429,11 +434,7 @@ export class ExtensionService {
 
   /** Hide a column from the grid */
   hideColumn(column: Column): void {
-    if (typeof this.sharedService?.slickGrid?.getColumns === 'function') {
-      const columnIndex = this.sharedService.slickGrid.getColumnIndex(column.id);
-      this.sharedService.visibleColumns = this.removeColumnByIndex(this.sharedService.slickGrid.getColumns(), columnIndex);
-      this.sharedService.slickGrid.setColumns(this.sharedService.visibleColumns, true);
-    }
+    this.sharedService.slickGrid?.updateColumnById(column.id, { hidden: true }, true);
   }
 
   /** Refresh the dataset through the Backend Service */
@@ -507,8 +508,13 @@ export class ExtensionService {
    * @param locale to use
    * @param new column definitions (optional)
    */
-  translateColumnHeaders(locale?: string, newColumns?: Column[]): void {
-    if (this.sharedService && this.gridOptions?.enableTranslate && !this.translaterService?.translate) {
+  translateColumnHeaders(locale?: string, newColumns?: Column[], updateColumns = true): void {
+    if (
+      this.sharedService &&
+      this.gridOptions &&
+      this.gridOptions.enableTranslate &&
+      (!this.translaterService || !this.translaterService.translate)
+    ) {
       throw new Error(
         '[Slickgrid-Universal] requires a Translate Service to be installed and configured when the grid option "enableTranslate" is enabled.'
       );
@@ -528,8 +534,19 @@ export class ExtensionService {
     this.translateItems(this.sharedService.allColumns, 'nameKey', 'name');
     this.translateItems(this.sharedService.allColumns, 'columnGroupKey', 'columnGroup');
 
-    // re-render the column headers which will indirectly re-translate ColumnPicker/GridMenu
-    this.renderColumnHeaders(columnDefinitions, Array.isArray(newColumns));
+    if (updateColumns) {
+      this.sharedService.slickGrid.updateColumns();
+    }
+
+    // replace Column Picker columns with newer data which includes new translations
+    if (this.gridOptions.enableColumnPicker && this._columnPickerControl) {
+      this._columnPickerControl.translateColumnPicker();
+    }
+
+    // replace the Grid Menu columns array list
+    if (this.gridOptions.enableGridMenu && this._gridMenuControl) {
+      this._gridMenuControl.translateGridMenu();
+    }
   }
 
   /**

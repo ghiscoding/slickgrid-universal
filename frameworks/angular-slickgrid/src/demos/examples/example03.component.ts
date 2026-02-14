@@ -1,14 +1,13 @@
-import { JsonPipe, NgIf } from '@angular/common';
+import { JsonPipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, type OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import {
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   Editors,
   Filters,
   Formatters,
-  OperatorType,
   SlickGlobalEditorLock,
   SortComparers,
   type AngularGridInstance,
@@ -38,7 +37,7 @@ const URL_COUNTRY_NAMES = 'assets/data/country_names.json';
 const myCustomTitleValidator: EditorValidator = (value: any, _args?: EditorArguments) => {
   // you can get the Editor Args which can be helpful, e.g. we can get the Translate Service from it
   /*
-  const grid = args && args.grid;
+  const grid = args?.grid;
   const gridOptions = (grid?.getOptions() ?? {}) as GridOption;
   const translate = gridOptions.i18n;
   const columnEditor = args?.column?.editor;
@@ -64,7 +63,7 @@ const taskFormatter: Formatter = (_row, _cell, value) => {
 };
 @Component({
   templateUrl: './example03.component.html',
-  imports: [AngularSlickgridModule, JsonPipe, NgIf],
+  imports: [AngularSlickgridComponent, JsonPipe],
 })
 export class Example3Component implements OnInit {
   private _commandQueue: any = [];
@@ -249,7 +248,7 @@ export class Example3Component implements OnInit {
           collectionFilterBy: {
             property: 'value',
             value: 0,
-            operator: OperatorType.notEqual,
+            operator: '!=',
           },
           // you could also provide a collection override to filter/sort based on the item dataContext or whatever else
           // collectionOverride: (updatedCollection, args) => {
@@ -470,7 +469,7 @@ export class Example3Component implements OnInit {
             separatorBetweenTextLabels: ' ',
           },
           model: Filters.multipleSelect,
-          operator: OperatorType.inContains,
+          operator: 'IN_CONTAINS',
         },
       },
     ];

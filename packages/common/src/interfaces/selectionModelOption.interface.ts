@@ -3,6 +3,8 @@ import type { OnActiveCellChangedEventArgs, SelectionModel, SlickGrid } from '..
 
 export declare type RowSelectOverride = (data: OnActiveCellChangedEventArgs, selectionModel: SelectionModel, grid: SlickGrid) => boolean;
 
+export type CellSelectionMode = 'SEL' | 'REP';
+
 export type SelectionType =
   /** multiple cell selection */
   | 'cell'
@@ -36,20 +38,6 @@ export interface HybridSelectionModelOption {
   /** function to toggle Row Selection Models */
   rowSelectOverride?: RowSelectOverride | undefined;
 
-  /** Defaults to 'mixed', use a specifc selection type */
+  /** use a specifc selection type, defaults to 'row' when `enableCheckboxSelector` is enabled or 'mixed' when not */
   selectionType?: SelectionType;
-}
-
-export interface RowSelectionModelOption {
-  /** Defaults to True, should we auto-scroll when dragging a row */
-  autoScrollWhenDrag?: boolean;
-
-  /** Defaults to False, should we select when dragging? */
-  dragToSelect?: boolean;
-
-  /** cell range selector */
-  cellRangeSelector?: SlickCellRangeSelector;
-
-  /** defaults to True, do we want to select the active row? */
-  selectActiveRow?: boolean;
 }

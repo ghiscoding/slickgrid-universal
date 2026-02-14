@@ -110,9 +110,10 @@ function defineGrids() {
     externalResources: [new ExcelExportService()],
 
     // enable new hybrid selection model (rows & cells)
-    enableHybridSelection: true,
-    rowSelectionOptions: {
+    enableSelection: true,
+    selectionOptions: {
       rowSelectColumnIds: ['id'],
+      selectionType: 'mixed',
     },
 
     // when using the ExcelCopyBuffer, you can see what the selection range is
@@ -129,8 +130,8 @@ function defineGrids() {
     ...gridOptions1.value,
     // you can also enable checkbox selection & row selection, make sure to use `rowSelectColumnIds: ['id', '_checkbox_selector']`
     enableCheckboxSelector: true,
-    enableRowSelection: true,
-    rowSelectionOptions: {
+    enableSelection: true,
+    selectionOptions: {
       // True (Single Selection), False (Multiple Selections)
       selectActiveRow: false,
 
@@ -189,7 +190,7 @@ function toggleSubTitle() {
 
   <div class="subtitle">
     <code>SlickHybridSelectionModel</code> This Selection Model is an hybrid approach that uses a combination of the row or cell selections
-    depending on certain conditions. Use <code>enableHybridSelection</code> grid option to enable the new Hybrid Selection Model.
+    depending on certain conditions.
     <ul>
       <li>
         1. clicking on the first column (<code>id</code>) will use <code>RowSelectionModel</code> because of our configuration of
@@ -211,7 +212,7 @@ function toggleSubTitle() {
     <SlickgridVue
       v-model:options="gridOptions1!"
       v-model:columns="columnDefinitions1"
-      v-model:data="dataset1"
+      v-model:dataset="dataset1"
       grid-id="grid48-1"
       @onVueGridCreated="vueGrid1Ready($event.detail)"
     >
@@ -231,7 +232,7 @@ function toggleSubTitle() {
   <slickgrid-vue
     v-model:options="gridOptions2!"
     v-model:columns="columnDefinitions2"
-    v-model:data="dataset2"
+    v-model:dataset="dataset2"
     grid-id="grid48-2"
     @onVueGridCreated="vueGrid2Ready($event.detail)"
   >

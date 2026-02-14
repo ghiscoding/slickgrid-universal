@@ -6,7 +6,6 @@ import {
   Filters,
   formatNumber,
   Formatters,
-  OperatorType,
   SlickGlobalEditorLock,
   SortComparers,
   type AutocompleterOption,
@@ -87,11 +86,13 @@ export default class Example11 {
       isUserDefined: false,
       columns: [...this.allColumnIds]
         .map((colId) => ({ columnId: `${colId}` }))
+        // OR the `hidden` props alternative
+        // .map((colId) => ({ columnId: `${colId}`, hidden: false }))
         .filter((col) => col.columnId !== 'product' && col.columnId !== 'countryOfOrigin'), // remove "Product", "Country of Origin"
       filters: [
-        { columnId: 'finish', operator: OperatorType.lessThanOrEqual, searchTerms: [`${this.currentYear}-01-01`] },
-        { columnId: 'completed', operator: OperatorType.equal, searchTerms: [true] },
-        { columnId: 'percentComplete', operator: OperatorType.greaterThan, searchTerms: [50] },
+        { columnId: 'finish', operator: '<=', searchTerms: [`${this.currentYear}-01-01`] },
+        { columnId: 'completed', operator: '=', searchTerms: [true] },
+        { columnId: 'percentComplete', operator: '>', searchTerms: [50] },
       ] as CurrentFilter[],
       sorters: [{ columnId: 'finish', direction: 'desc' }] as CurrentSorter[],
     },
@@ -100,7 +101,11 @@ export default class Example11 {
       value: 'greaterCurrentYear',
       isSelected: false,
       isUserDefined: false,
-      columns: [...this.allColumnIds].map((colId) => ({ columnId: `${colId}` })).filter((col) => col.columnId !== 'cost'), // remove "Cost"
+      columns: [...this.allColumnIds]
+        .map((colId) => ({ columnId: `${colId}` }))
+        // OR the `hidden` props alternative
+        // .map((colId) => ({ columnId: `${colId}`, hidden: false }))
+        .filter((col) => col.columnId !== 'cost'), // remove "Cost"
       filters: [{ columnId: 'finish', operator: '>=', searchTerms: [`${this.currentYear + 1}-01-01`] }],
       sorters: [{ columnId: 'finish', direction: 'asc' }] as CurrentSorter[],
     },
@@ -400,14 +405,14 @@ export default class Example11 {
       },
       externalResources: [new ExcelExportService(), new SlickCustomTooltip()],
       enableFiltering: true,
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },
       rowHeight: 33,
       headerRowHeight: 35,
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+      enableSelection: true,
       checkboxSelector: {
         hideInFilterHeaderRow: false,
         hideInColumnTitleRow: true,
@@ -451,6 +456,10 @@ export default class Example11 {
         ],
         onCommand: (e, args) => this.executeCommand(e, args),
       },
+
+      // the `hidden` props alternative, we could use column "hidden" props, then we could also include it in the saved state
+      // using this flag (below) will result in all columns included in the Grid State including hidden columns
+      // gridStateIncludeHiddenProps: true,
     };
 
     const storedData = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -737,8 +746,7 @@ export default class Example11 {
     }
 
     this.predefinedViews.forEach((viewSelect) => (viewSelect.isSelected = false)); // reset selection
-    const currentGridState = this.sgb.gridStateService.getCurrentGridState();
-    const { columns, filters, sorters, pinning } = currentGridState;
+    const { columns, filters, sorters, pinning } = this.sgb.gridStateService.getCurrentGridState();
 
     const viewName = await prompt('Please provide a name for the new View.');
     if (viewName) {
@@ -792,8 +800,7 @@ export default class Example11 {
       event.stopPropagation();
       return;
     }
-    const currentGridState = this.sgb.gridStateService.getCurrentGridState();
-    const { columns, filters, sorters, pinning } = currentGridState;
+    const { columns, filters, sorters, pinning } = this.sgb.gridStateService.getCurrentGridState();
 
     if (this.currentSelectedViewPreset && filters) {
       const filterName = await prompt(`Update View name or click on OK to continue.`, this.currentSelectedViewPreset.label);
@@ -830,7 +837,11 @@ export default class Example11 {
       this.sgb.gridService.clearPinning();
       this.sgb.filterService.clearFilters();
       this.sgb.sortService.clearSorting();
-      this.sgb.gridStateService.changeColumnsArrangement([...this.columnDefinitions].map((col) => ({ columnId: `${col.id}` })));
+      this.sgb.gridStateService.changeColumnsArrangement(
+        [...this.columnDefinitions].map((col) => ({ columnId: `${col.id}` }))
+        // OR the `hidden` props alternative
+        // [...this.columnDefinitions].map((col) => ({ columnId: `${col.id}`, hidden: false }))
+      );
     }
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.predefinedViews));
     this.currentSelectedViewPreset = selectedView;

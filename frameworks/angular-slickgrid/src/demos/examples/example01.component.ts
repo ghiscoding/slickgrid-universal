@@ -1,16 +1,17 @@
 import { Component, type OnDestroy, type OnInit } from '@angular/core';
-import { AngularSlickgridModule, Formatters, type AngularGridInstance, type Column, type GridOption } from '../../library';
+import { AngularSlickgridComponent, Formatters, type AngularGridInstance, type Column, type GridOption } from '../../library';
 import { zeroPadding } from './utilities';
 
 const NB_ITEMS = 995;
 
 @Component({
   templateUrl: './example01.component.html',
-  imports: [AngularSlickgridModule],
+  imports: [AngularSlickgridComponent],
 })
 export class Example1Component implements OnDestroy, OnInit {
   private _darkModeGrid1 = false;
   angularGrid1!: AngularGridInstance;
+  grid1ContainerClasses = ['border-bottom-dotted', 'space-bottom'];
   columnDefinitions1: Column[] = [];
   columnDefinitions2: Column[] = [];
   gridOptions1!: GridOption;

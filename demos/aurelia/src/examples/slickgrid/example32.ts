@@ -494,13 +494,13 @@ export class Example32 {
       },
       externalResources: [new ExcelExportService()],
       enableFiltering: true,
-      enableRowSelection: true,
+      enableSelection: true,
       enableCheckboxSelector: true,
       checkboxSelector: {
         hideInFilterHeaderRow: false,
         hideInColumnTitleRow: true,
       },
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },
@@ -585,7 +585,7 @@ export class Example32 {
     // just for demo purposes, set it back to its original width
     const columns = this.aureliaGrid.slickGrid.getColumns() as Column[];
     columns.forEach((col) => (col.width = col.originalWidth));
-    this.aureliaGrid.slickGrid.setColumns(columns);
+    this.aureliaGrid.slickGrid.updateColumns();
     this.aureliaGrid.slickGrid.autosizeColumns();
     this.isUsingDefaultResize = true;
   }

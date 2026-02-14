@@ -22,6 +22,7 @@ import {
 } from './utilities.js';
 
 export class TreeDataService {
+  readonly pluginName = 'TreeDataService';
   protected _lastToggleStateChange!: Omit<TreeToggleStateChange, 'fromItemId'>;
   protected _currentToggledItems: TreeToggledItem[] = [];
   protected _grid!: SlickGrid;
@@ -383,7 +384,7 @@ export class TreeDataService {
    * @returns {Object} sort result object that includes both the flat & tree data arrays
    */
   sortHierarchicalDataset<T>(hierarchicalDataset: T[], inputColumnSorts?: ColumnSort | ColumnSort[]): { hierarchical: T[]; flat: any[] } {
-    const columnSorts = inputColumnSorts ?? this.getInitialSort(this.sharedService.allColumns, this.gridOptions);
+    const columnSorts = inputColumnSorts ?? this.getInitialSort(this._grid.getColumns(), this.gridOptions);
     const finalColumnSorts = Array.isArray(columnSorts) ? columnSorts : [columnSorts];
     return this.sortService.sortHierarchicalDataset(hierarchicalDataset, finalColumnSorts);
   }

@@ -150,7 +150,7 @@ const Example10: React.FC = () => {
     const gridOptions1: GridOption = {
       enableAutoResize: false,
       enableCellNavigation: true,
-      enableRowSelection: true,
+      enableSelection: true,
       enableCheckboxSelector: true,
       enableFiltering: true,
       checkboxSelector: {
@@ -162,7 +162,7 @@ const Example10: React.FC = () => {
         // selectableOverride: (row: number, dataContext: any, grid: SlickGrid) => (dataContext.id % 2 === 1)
       },
       multiSelect: false,
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: true,
       },
@@ -198,12 +198,12 @@ const Example10: React.FC = () => {
         hideInColumnTitleRow: true,
         applySelectOnAllPages: true, // when clicking "Select All", should we apply it to all pages (defaults to true)
       },
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+      enableSelection: true,
       gridHeight: 255,
       gridWidth: 800,
       enablePagination: true,
@@ -303,7 +303,7 @@ const Example10: React.FC = () => {
   }
 
   function onGrid1SelectedRowsChanged(_e: Event, args: any) {
-    const grid = args && args.grid;
+    const grid = args?.grid;
     if (Array.isArray(args.rows)) {
       const selectedTitles = args.rows.map((idx: number) => {
         const item = grid.getDataItem(idx);

@@ -4,7 +4,6 @@ import {
   collectionObserver,
   CollectionService,
   emptyElement,
-  EventNamingStyle,
   ExtensionService,
   ExtensionUtility,
   FilterFactory,
@@ -15,6 +14,7 @@ import {
   HeaderGroupingService,
   isColumnDateType,
   PaginationService,
+  PluginFlagMappings,
   ResizerService,
   SharedService,
   SlickDataView,
@@ -34,6 +34,7 @@ import {
   type EventSubscription,
   type ExtensionList,
   type ExternalResource,
+  type ExternalResourceConstructor,
   type Metrics,
   type Observable,
   type Pagination,
@@ -106,7 +107,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
   protected _isPaginationInitialized = false;
   protected _isLocalGrid = true;
   protected _paginationOptions: Pagination | undefined;
-  protected _registeredResources: ExternalResource[] = [];
+  protected _registeredResources: Array<ExternalResource | ExternalResourceConstructor> = [];
   protected _scrollEndCalled = false;
 
   protected get options(): GridOption {
@@ -262,7 +263,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
 
     // initialize and assign all Service Dependencies
     this._eventPubSubService = new EventPubSubService();
-    this._eventPubSubService.eventNamingStyle = EventNamingStyle.camelCase;
+    this._eventPubSubService.eventNamingStyle = 'camelCase';
 
     this.backendUtilityService = new BackendUtilityService();
     this.gridEventService = new GridEventService();
@@ -365,7 +366,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     this._isDatasetHierarchicalInitialized = isInitialized;
   }
 
-  get registeredResources(): ExternalResource[] {
+  get registeredResources(): Array<ExternalResource | ExternalResourceConstructor> {
     return this._registeredResources;
   }
 
@@ -450,7 +451,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
       this._options.enableMouseWheelScrollHandler = true;
     }
 
-    this._eventPubSubService.eventNamingStyle = this._options?.eventNamingStyle ?? EventNamingStyle.camelCase;
+    this._eventPubSubService.eventNamingStyle = this._options?.eventNamingStyle ?? 'camelCase';
     this._eventPubSubService.publish(`onBeforeGridCreate`, true);
 
     // make sure the dataset is initialized (if not it will throw an error that it cannot getLength of null)
@@ -509,7 +510,6 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
 
     // save reference for all columns before they optionally become hidden/visible
     this.sharedService.allColumns = this._columns;
-    this.sharedService.visibleColumns = this._columns;
 
     // after subscribing to potential columns changed, we are ready to create these optional extensions
     // when we did find some to create (RowMove, RowDetail, RowSelections), it will automatically modify column definitions (by previous subscribe)
@@ -535,14 +535,14 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
       this.grid.registerPlugin(this.groupItemMetadataProvider); // register GroupItemMetadataProvider when Grouping is enabled
     }
 
+    // get any possible Services that user want to register
+    this.registerResources();
+
     this.extensionService.bindDifferentExtensions();
     this.bindDifferentHooks(this.grid, this._options, this.dataView);
 
     // when it's a frozen grid, we need to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward
     this.sharedService.frozenVisibleColumnId = this.grid.getFrozenColumnId();
-
-    // get any possible Services that user want to register
-    this.registerResources();
 
     // initialize the SlickGrid grid
     this.grid.init();
@@ -595,10 +595,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
       }
 
       if (this._dataset.length > 0) {
-        if (
-          !this._isDatasetInitialized &&
-          (this._options.enableCheckboxSelector || this._options.enableRowSelection || this._options.enableHybridSelection)
-        ) {
+        if (!this._isDatasetInitialized && (this._options.enableCheckboxSelector || this._options.enableSelection)) {
           this.loadRowSelectionPresetWhenExists();
         }
         this.loadFilterPresetsWhenDatasetInitialized();
@@ -747,8 +744,8 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     if (Array.isArray(this._registeredResources)) {
       while (this._registeredResources.length > 0) {
         const res = this._registeredResources.pop();
-        if (res?.dispose) {
-          res.dispose();
+        if (typeof (res as ExternalResource)?.dispose === 'function') {
+          (res as ExternalResource).dispose!();
         }
       }
     }
@@ -881,10 +878,9 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
           }
         }
 
-        // when column are reordered, we need to update the visibleColumn array
-        this._eventHandler.subscribe(grid.onColumnsReordered, (_e, args) => {
+        // when column are reordered, we need to update SharedService flag
+        this._eventHandler.subscribe(grid.onColumnsReordered, () => {
           this.sharedService.hasColumnsReordered = true;
-          this.sharedService.visibleColumns = args.impactedColumns;
         });
 
         this._eventHandler.subscribe(grid.onSetOptions, (_e, args) => {
@@ -1113,7 +1109,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
       this.grid &&
       !isSyncGridSelectionEnabled &&
       this.options?.backendServiceApi &&
-      (this.options.enableRowSelection || this.options.enableHybridSelection || this.options.enableCheckboxSelector)
+      (this.options.enableSelection || this.options.enableCheckboxSelector)
     ) {
       this.grid.setSelectedRows([]);
     }
@@ -1258,9 +1254,8 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
 
       if (this._options.enableTranslate) {
         this.extensionService.translateColumnHeaders(undefined, newColumns);
-      } else {
-        this.extensionService.renderColumnHeaders(newColumns, true);
       }
+      this.extensionService.renderColumnHeaders(newColumns, true);
 
       if (this._options?.enableAutoSizeColumns) {
         this.grid.autosizeColumns();
@@ -1414,46 +1409,13 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     }
   }
 
-  protected insertDynamicPresetColumns(columnId: string, gridPresetColumns: Column<TData>[]) {
-    if (this._columns) {
-      const columnPosition = this._columns.findIndex((c) => c.id === columnId);
-      if (columnPosition >= 0) {
-        const dynColumn = this._columns[columnPosition];
-        if (dynColumn?.id === columnId && !gridPresetColumns.some((c) => c.id === columnId)) {
-          columnPosition > 0 ? gridPresetColumns.splice(columnPosition, 0, dynColumn) : gridPresetColumns.unshift(dynColumn);
-        }
-      }
-    }
-  }
-
   /** Load any possible Columns Grid Presets */
   protected loadColumnPresetsWhenDatasetInitialized() {
     // if user entered some Columns "presets", we need to reflect them all in the grid
     if (this.grid && this.options.presets && Array.isArray(this.options.presets.columns) && this.options.presets.columns.length > 0) {
-      const gridPresetColumns: Column<TData>[] = this.gridStateService.getAssociatedGridColumns(this.grid, this.options.presets.columns);
-      if (gridPresetColumns && Array.isArray(gridPresetColumns) && gridPresetColumns.length > 0 && Array.isArray(this._columns)) {
-        // make sure that the dynamic columns are included in presets (1.Row Move, 2. Row Selection, 3. Row Detail)
-        if (this.options.enableRowMoveManager) {
-          const rmmColId = this.options?.rowMoveManager?.columnId ?? '_move';
-          this.insertDynamicPresetColumns(rmmColId, gridPresetColumns);
-        }
-        if (this.options.enableCheckboxSelector) {
-          const chkColId = this.options?.checkboxSelector?.columnId ?? '_checkbox_selector';
-          this.insertDynamicPresetColumns(chkColId, gridPresetColumns);
-        }
-        if (this.options.enableRowDetailView) {
-          const rdvColId = this.options?.rowDetailView?.columnId ?? '_detail_selector';
-          this.insertDynamicPresetColumns(rdvColId, gridPresetColumns);
-        }
-
-        // keep copy the original optional `width` properties optionally provided by the user.
-        // We will use this when doing a resize by cell content, if user provided a `width` it won't override it.
-        gridPresetColumns.forEach((col) => (col.originalWidth = col.width));
-
-        // finally set the new presets columns (including checkbox selector if need be)
-        this.grid.setColumns(gridPresetColumns);
-        this.sharedService.visibleColumns = gridPresetColumns;
-      }
+      // delegate to GridStateService for centralized column arrangement logic
+      // we pass `false` for triggerAutoSizeColumns to maintain original behavior on preset load
+      this.gridStateService.changeColumnsArrangement(this.options.presets.columns, false);
     }
   }
 
@@ -1494,8 +1456,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
   protected loadRowSelectionPresetWhenExists() {
     // if user entered some Row Selections "presets"
     const presets = this._options?.presets;
-    const enableRowSelection =
-      this._options && (this._options.enableCheckboxSelector || this._options.enableRowSelection || this._options.enableHybridSelection);
+    const enableRowSelection = this._options && (this._options.enableCheckboxSelector || this._options.enableSelection);
     if (
       enableRowSelection &&
       this.grid?.getSelectionModel() &&
@@ -1565,7 +1526,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
   }
 
   /** Add a register a new external resource, user could also optional dispose all previous resources before pushing any new resources to the resources array list. */
-  registerExternalResources(resources: ExternalResource[], disposePreviousResources = false) {
+  registerExternalResources(resources: Array<ExternalResource | ExternalResourceConstructor>, disposePreviousResources = false) {
     if (disposePreviousResources) {
       this.disposeExternalResources();
     }
@@ -1585,19 +1546,35 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     // register all services by executing their init method and providing them with the Grid object
     if (Array.isArray(this._registeredResources)) {
       for (const resource of this._registeredResources) {
-        if (resource?.className === 'RxJsResource') {
+        if ((resource as ExternalResource)?.pluginName === 'RxJsResource') {
           this.registerRxJsResource(resource as RxJsFacade);
         }
       }
     }
   }
 
-  protected initializeExternalResources(resources: ExternalResource[]) {
+  /** initialized & auto-enable external registered resources, e.g. if user registers `ExcelExportService` then let's auto-enable `enableExcelExport:true` */
+  protected autoEnableInitializedResources(resource: ExternalResource | ExternalResourceConstructor): void {
+    if (this.grid && typeof (resource as ExternalResource).init === 'function') {
+      (resource as ExternalResource).init!(this.grid, this.props.containerService);
+    }
+
+    // auto-enable unless the flag was specifically disabled by the end user
+    if ('pluginName' in (resource as ExternalResource)) {
+      const pluginFlagName = PluginFlagMappings.get((resource as ExternalResource).pluginName!);
+      if (pluginFlagName && this.options[pluginFlagName] !== false) {
+        this.options[pluginFlagName] = true;
+        this.grid?.setOptions({ [pluginFlagName]: true });
+      }
+    }
+  }
+
+  protected initializeExternalResources(resources: Array<ExternalResource | ExternalResourceConstructor>) {
+    PluginFlagMappings.set('ReactSlickRowDetailView', 'enableRowDetailView');
+
     if (Array.isArray(resources)) {
       for (const resource of resources) {
-        if (this.grid && typeof resource.init === 'function') {
-          resource.init(this.grid, this.props.containerService);
-        }
+        this.autoEnableInitializedResources(resource);
       }
     }
   }

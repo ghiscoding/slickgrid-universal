@@ -1,5 +1,5 @@
-import { DatePipe, NgFor, NgIf } from '@angular/common';
-import { Component, type OnDestroy, type OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { Component, signal, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { addDay, format } from '@formkit/tempo';
 import { TranslateService } from '@ngx-translate/core';
@@ -7,10 +7,9 @@ import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import type { Subscription } from 'rxjs';
 import {
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   Filters,
   Formatters,
-  OperatorType,
   unsubscribeAllObservables,
   type AngularGridInstance,
   type Column,
@@ -39,7 +38,7 @@ const taskTranslateFormatter: Formatter = (row, cell, value, columnDef, dataCont
 
 @Component({
   templateUrl: './example23.component.html',
-  imports: [NgIf, FormsModule, NgFor, AngularSlickgridModule, DatePipe],
+  imports: [AngularSlickgridComponent, DatePipe, FormsModule],
 })
 export class Example23Component implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
@@ -48,7 +47,7 @@ export class Example23Component implements OnInit, OnDestroy {
   gridOptions!: GridOption;
   dataset!: any[];
   hideSubTitle = false;
-  selectedLanguage: string;
+  selectedLanguage = signal('');
   metrics!: Metrics;
   filterList = [
     { value: '', label: '' },
@@ -61,7 +60,7 @@ export class Example23Component implements OnInit, OnDestroy {
     // always start with English for Cypress E2E tests to be consistent
     const defaultLang = 'en';
     this.translate.use(defaultLang);
-    this.selectedLanguage = defaultLang;
+    this.selectedLanguage.set(defaultLang);
   }
 
   ngOnDestroy() {
@@ -108,7 +107,7 @@ export class Example23Component implements OnInit, OnDestroy {
         filter: {
           model: Filters.sliderRange,
           maxValue: 100, // or you can use the options as well
-          operator: OperatorType.rangeInclusive, // defaults to inclusive
+          operator: 'RangeInclusive', // defaults to inclusive
           options: {
             hideSliderNumbers: false, // you can hide/show the slider numbers on both side
             min: 0,
@@ -156,7 +155,7 @@ export class Example23Component implements OnInit, OnDestroy {
         filterable: true,
         filter: {
           model: Filters.input,
-          operator: OperatorType.rangeExclusive, // defaults to inclusive
+          operator: 'RangeExclusive', // defaults to inclusive
         },
       },
       {
@@ -181,9 +180,8 @@ export class Example23Component implements OnInit, OnDestroy {
       },
     ];
 
-    const today = new Date();
     const presetLowestDay = format(addDay(new Date(), -2), 'YYYY-MM-DD');
-    const presetHighestDay = format(addDay(new Date(), today.getDate() < 14 ? 28 : 25), 'YYYY-MM-DD');
+    const presetHighestDay = format(addDay(new Date(), 25), 'YYYY-MM-DD');
 
     this.gridOptions = {
       autoResize: {
@@ -267,11 +265,11 @@ export class Example23Component implements OnInit, OnDestroy {
   }
 
   refreshMetrics(_e: Event, args: any) {
-    if (args && args.current >= 0) {
+    if (args?.current >= 0) {
       setTimeout(() => {
         this.metrics = {
           startTime: new Date(),
-          itemCount: (args && args.current) || 0,
+          itemCount: args?.current || 0,
           totalItemCount: this.dataset.length || 0,
         };
       });
@@ -305,8 +303,8 @@ export class Example23Component implements OnInit, OnDestroy {
     switch (filterValue) {
       case 'currentYearTasks':
         filters = [
-          { columnId: 'finish', operator: OperatorType.rangeInclusive, searchTerms: [`${currentYear}-01-01`, `${currentYear}-12-31`] },
-          { columnId: 'completed', operator: OperatorType.equal, searchTerms: [true] },
+          { columnId: 'finish', operator: 'RangeInclusive', searchTerms: [`${currentYear}-01-01`, `${currentYear}-12-31`] },
+          { columnId: 'completed', operator: '=', searchTerms: [true] },
         ];
         break;
       case 'nextYearTasks':
@@ -317,10 +315,10 @@ export class Example23Component implements OnInit, OnDestroy {
   }
 
   switchLanguage() {
-    const nextLanguage = this.selectedLanguage === 'en' ? 'fr' : 'en';
+    const nextLanguage = this.selectedLanguage() === 'en' ? 'fr' : 'en';
     this.subscriptions.push(
       this.translate.use(nextLanguage).subscribe(() => {
-        this.selectedLanguage = nextLanguage;
+        this.selectedLanguage.set(nextLanguage);
       })
     );
   }

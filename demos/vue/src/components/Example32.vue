@@ -486,13 +486,13 @@ function defineGrid() {
     },
     externalResources: [new ExcelExportService()],
     enableFiltering: true,
-    enableRowSelection: true,
+    enableSelection: true,
     enableCheckboxSelector: true,
     checkboxSelector: {
       hideInFilterHeaderRow: false,
       hideInColumnTitleRow: true,
     },
-    rowSelectionOptions: {
+    selectionOptions: {
       // True (Single Selection), False (Multiple Selections)
       selectActiveRow: false,
     },
@@ -537,7 +537,7 @@ function handleDefaultResizeColumns() {
   // just for demo purposes, set it back to its original width
   const columns = vueGrid.slickGrid.getColumns() as Column[];
   columns.forEach((col) => (col.width = col.originalWidth));
-  vueGrid.slickGrid.setColumns(columns);
+  vueGrid.slickGrid.updateColumns();
   vueGrid.slickGrid.autosizeColumns();
   isUsingDefaultResize.value = true;
 }
@@ -985,7 +985,7 @@ function renderItemCallbackWith4Corners(item: any): string {
     <slickgrid-vue
       v-model:options="gridOptions"
       v-model:columns="columnDefinitions"
-      v-model:data="dataset"
+      v-model:dataset="dataset"
       grid-id="grid32"
       @onSelectedRowIdsChanged="handleOnSelectedRowIdsChanged($event.detail.args)"
       @onVueGridCreated="vueGridReady($event.detail)"

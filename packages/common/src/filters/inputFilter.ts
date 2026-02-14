@@ -1,7 +1,7 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, emptyElement, isDefined, toSentenceCase } from '@slickgrid-universal/utils';
 import { type SlickGrid } from '../core/index.js';
-import { FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
+import { type OperatorType, type SearchTerm } from '../enums/index.js';
 import type { Column, ColumnFilter, Filter, FilterArguments, FilterCallback, GridOption, OperatorDetail } from '../interfaces/index.js';
 import { mapOperatorToShorthandDesignation, type TranslaterService } from '../services/index.js';
 import { applyOperatorAltTextWhenExists, buildSelectOperator, compoundOperatorNumeric, compoundOperatorString } from './filterUtilities.js';
@@ -34,8 +34,8 @@ export class InputFilter implements Filter {
   }
 
   /** Getter to know what would be the default operator when none is specified */
-  get defaultOperator(): OperatorType | OperatorString {
-    return OperatorType.empty;
+  get defaultOperator(): OperatorType {
+    return '';
   }
 
   /** Getter of input type (text, number, password) */
@@ -49,12 +49,12 @@ export class InputFilter implements Filter {
   }
 
   /** Getter for the Filter Operator */
-  get operator(): OperatorType | OperatorString {
+  get operator(): OperatorType {
     return this.columnFilter?.operator ?? this.defaultOperator;
   }
 
   /** Setter for the Filter Operator */
-  set operator(operator: OperatorType | OperatorString) {
+  set operator(operator: OperatorType) {
     if (this.columnFilter) {
       this.columnFilter.operator = operator;
     }
@@ -145,7 +145,7 @@ export class InputFilter implements Filter {
   }
 
   /** Set value(s) on the DOM element */
-  setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString, triggerChange = false): void {
+  setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType, triggerChange = false): void {
     const searchValues = Array.isArray(values) ? values : [values];
     let newInputValue: SearchTerm = '';
     for (const value of searchValues) {
@@ -186,7 +186,7 @@ export class InputFilter implements Filter {
    * 3. (operator: 'EndsWith', searchTerms:['John']) should display as "*John"
    * @param operator - operator string
    */
-  protected addOptionalOperatorIntoSearchString(inputValue: SearchTerm, operator: OperatorType | OperatorString): string {
+  protected addOptionalOperatorIntoSearchString(inputValue: SearchTerm, operator: OperatorType): string {
     let searchTermPrefix = '';
     let searchTermSuffix = '';
     let outputValue = inputValue === undefined || inputValue === null ? '' : `${inputValue}`;
@@ -238,7 +238,7 @@ export class InputFilter implements Filter {
 
   /** Get the available operator option values to populate the operator select dropdown list */
   protected getCompoundOperatorOptionValues(): OperatorDetail[] {
-    const type = this.columnDef.type ? this.columnDef.type : FieldType.string;
+    const type = this.columnDef.type ? this.columnDef.type : 'string';
     let operatorList: OperatorDetail[];
     let listType: 'text' | 'numeric' = 'text';
 
@@ -246,10 +246,10 @@ export class InputFilter implements Filter {
       operatorList = this.columnFilter.compoundOperatorList;
     } else {
       switch (type) {
-        case FieldType.string:
-        case FieldType.text:
-        case FieldType.readonly:
-        case FieldType.password:
+        case 'string':
+        case 'text':
+        case 'readonly':
+        case 'password':
           listType = 'text';
           operatorList = compoundOperatorString(this.gridOptions, this.translaterService);
           break;
@@ -360,7 +360,7 @@ export class InputFilter implements Filter {
     } else {
       const eventType = event?.type || '';
       // pull operator from compound or re-evaluate on each keystroke
-      const selectedOperator = (this._selectOperatorElm?.value ?? (!this.isCompoundFilter ? '' : this.operator)) as OperatorString;
+      const selectedOperator = (this._selectOperatorElm?.value ?? (!this.isCompoundFilter ? '' : this.operator)) as OperatorType;
       const value = this.trimValueWhenEnabled(this._filterInputElm.value);
       if ((event?.target as HTMLElement)?.tagName.toLowerCase() !== 'select') {
         this._currentValue = value;

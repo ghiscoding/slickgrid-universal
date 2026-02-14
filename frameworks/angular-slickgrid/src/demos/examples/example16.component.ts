@@ -1,7 +1,6 @@
-import { Component, type OnInit } from '@angular/core';
+import { Component, signal, type OnInit } from '@angular/core';
 import {
-  AngularSlickgridModule,
-  ExtensionName,
+  AngularSlickgridComponent,
   Filters,
   Formatters,
   type AngularGridInstance,
@@ -12,21 +11,17 @@ import {
 
 @Component({
   templateUrl: './example16.component.html',
-  imports: [AngularSlickgridModule],
+  imports: [AngularSlickgridComponent],
 })
 export class Example16Component implements OnInit {
   angularGrid!: AngularGridInstance;
   columnDefinitions!: Column[];
   gridOptions!: GridOption;
-  dataset!: any[];
+  dataset = signal<any[]>([]);
   hideSubTitle = false;
 
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid;
-  }
-
-  get rowMoveInstance() {
-    return this.angularGrid?.extensionService?.getExtensionInstanceByName(ExtensionName.rowMoveManager) ?? {};
   }
 
   ngOnInit(): void {
@@ -84,8 +79,8 @@ export class Example16Component implements OnInit {
         hideInFilterHeaderRow: false,
         hideInColumnTitleRow: true,
       },
-      enableRowSelection: true,
-      rowSelectionOptions: {
+      enableSelection: true,
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },
@@ -100,7 +95,7 @@ export class Example16Component implements OnInit {
         cancelEditOnDrag: true,
         hideRowMoveShadow: false,
         width: 30,
-        onBeforeMoveRows: this.onBeforeMoveRow.bind(this),
+        onBeforeMoveRows: this.onBeforeMoveRows.bind(this),
         onMoveRows: this.onMoveRows.bind(this),
 
         // you can change the move icon position of any extension (RowMove, RowDetail or RowSelector icon)
@@ -140,10 +135,10 @@ export class Example16Component implements OnInit {
         effortDriven: i % 5 === 0,
       };
     }
-    this.dataset = mockDataset;
+    this.dataset.set(mockDataset);
   }
 
-  onBeforeMoveRow(e: MouseEvent | TouchEvent, data: { rows: number[]; insertBefore: number }) {
+  onBeforeMoveRows(e: MouseEvent | TouchEvent, data: { rows: number[]; insertBefore: number }) {
     for (const rowIdx of data.rows) {
       // no point in moving before or after itself
       if (
@@ -208,7 +203,8 @@ export class Example16Component implements OnInit {
 
     // final updated dataset, we need to overwrite the DataView dataset (and our local one) with this new dataset that has a new order
     const finalDataset = left.concat(extractedRows.concat(right));
-    this.dataset = finalDataset; // update dataset and re-render the grid
+    this.angularGrid.slickGrid?.invalidate();
+    this.dataset.set(finalDataset); // assign new array reference to trigger Angular input change detection
   }
 
   hideDurationColumnDynamically() {
@@ -246,7 +242,7 @@ export class Example16Component implements OnInit {
           params: { iconCssClass: 'mdi mdi-pencil pointer' },
           minWidth: 30,
           maxWidth: 30,
-          onCellClick: (clickEvent: Event, args: OnEventArgs) => {
+          onCellClick: (_clickEvent: Event, args: OnEventArgs) => {
             alert(`Technically we should Edit "Task ${args.dataContext.id}"`);
           },
         },
@@ -260,7 +256,7 @@ export class Example16Component implements OnInit {
           params: { iconCssClass: 'mdi mdi-trash-can pointer' },
           minWidth: 30,
           maxWidth: 30,
-          onCellClick: (e: Event, args: OnEventArgs) => {
+          onCellClick: (_e: Event, args: OnEventArgs) => {
             if (confirm('Are you sure?')) {
               this.angularGrid.gridService.deleteItemById(args.dataContext.id);
             }
@@ -268,8 +264,12 @@ export class Example16Component implements OnInit {
         },
       ];
 
-      this.columnDefinitions.splice(0, 0, newCols[0], newCols[1]);
-      this.columnDefinitions = this.columnDefinitions.slice(); // or use spread operator [...cols] to trigger change
+      // NOTE if you use an Extensions (Checkbox Selector, Row Detail, ...) that modifies the column definitions in any way
+      // you MUST use "getAllColumnDefinitions()" from the GridService, using this will be ALL columns including the 1st column that is created internally
+      // for example if you use the Checkbox Selector (row selection), you MUST use the code below
+      const allColumns = this.angularGrid.gridService.getAllColumnDefinitions();
+      allColumns.unshift(newCols[0], newCols[1]);
+      this.columnDefinitions = [...allColumns]; // (or use slice) reassign to column definitions for Aurelia to do dirty checking
     }
   }
 

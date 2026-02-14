@@ -14,19 +14,12 @@ import type {
   TextExportOption,
   TranslaterService,
 } from '@slickgrid-universal/common';
-import {
-  Constants,
-  DelimiterType,
-  // utility functions
-  exportWithFormatterWhenDefined,
-  getTranslationPrefix,
-  htmlDecode,
-} from '@slickgrid-universal/common';
+import { Constants, exportWithFormatterWhenDefined, getTranslationPrefix, htmlDecode } from '@slickgrid-universal/common';
 import { addWhiteSpaces, extend, getHtmlStringOutput, stripTags, titleCase } from '@slickgrid-universal/utils';
 import { TextEncoder } from 'text-encoding-utf-8';
 
 const DEFAULT_EXPORT_OPTIONS: TextExportOption = {
-  delimiter: DelimiterType.comma,
+  delimiter: ',',
   filename: 'export',
   format: 'csv',
   useUtf8WithBom: true,
@@ -47,7 +40,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
   protected _translaterService: TranslaterService | undefined;
 
   /** ExcelExportService class name which is use to find service instance in the external registered services */
-  readonly className = 'TextExportService';
+  readonly pluginName = 'TextExportService';
 
   constructor() {}
 
@@ -96,7 +89,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
    * NOTES: The column position needs to match perfectly the JSON Object position because of the way we are pulling the data,
    * which means that if any column(s) got moved in the UI, it has to be reflected in the JSON array output as well
    *
-   * Example: exportToFile({ format: 'csv', delimiter: DelimiterType.comma })
+   * Example: exportToFile({ format: 'csv', delimiter: ',' })
    */
   exportToFile(options?: TextExportOption): Promise<boolean> {
     if (!this._grid || !this._dataView || !this._pubSubService) {

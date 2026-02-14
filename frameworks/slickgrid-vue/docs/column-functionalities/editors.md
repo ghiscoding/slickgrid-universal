@@ -13,7 +13,7 @@
   - [Collection Async Load](#collection-async-load)
   - [Collection Label Prefix/Suffix](#collection-label-prefixsuffix)
   - [Collection Label Render HTML](#collection-label-render-html)
-  - [`multiple-select.js` Options](#multiple-selectjs-options)
+  - [`multiple-select-vanilla` Options](#multiple-selectjs-options)
 - [Editor Options](#editor-options)
 - [Validators](#validators)
    - [Custom Validator](#custom-validator)
@@ -256,7 +256,7 @@ function defineGrid() {
 ```
 
 ### Editor Options (`MultipleSelectOption` interface)
-All the available options that can be provided as editor `options` to your column definitions can be found under this [MultipleSelectOption](https://github.com/ghiscoding/multiple-select-vanilla/blob/main/packages/multiple-select-vanilla/src/models/multipleSelectOption.interface.ts) interface and you should cast your editor `options` to that interface to make sure that you use only valid options of the `multiple-select.js` library.
+All the available options that can be provided as editor `options` to your column definitions can be found under this [MultipleSelectOption](https://github.com/ghiscoding/multiple-select-vanilla/blob/main/packages/multiple-select-vanilla/src/models/multipleSelectOption.interface.ts) interface and you should cast your editor `options` to that interface to make sure that you use only valid options of the `multiple-select-vanilla` library.
 
 ```ts
 editor: {
@@ -417,7 +417,7 @@ function defineGrid() {
         collection: [{ value: '', label: '' }, { value: true, label: 'true' }, { value: false, label: 'false' }],
         model: Editors.singleSelect,
         elementOptions: {
-          // add any multiple-select.js options (from original or custom version)
+          // add any multiple-select-vanilla options (from original or custom version)
           autoAdjustDropPosition: false, // by default set to True, but you can disable it
           position: 'top'
         }
@@ -498,8 +498,8 @@ So if we take all of these informations and we want to create our own Custom Edi
 ```ts
 const myCustomTitleValidator: EditorValidator = (value: any, args: EditorArgs) => {
   // you can get the Editor Args which can be helpful, e.g. we can get the Translate Service from it
-  const grid = args && args.grid;
-  const gridOptions = (grid && grid.getOptions) ? grid.getOptions() : {};
+  const grid = args.grid;
+  const gridOptions = grid.getOptions() : {};
   const i18n = gridOptions.i18n;
 
   if (value == null || value === undefined || !value.length) {
@@ -543,7 +543,7 @@ With that in mind and the code from the SO answer, we end up with the following 
 
 ```vue
 <script setup lang="ts">
-import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -572,8 +572,8 @@ function setAutoEdit(autoEdit) {
     grid-id="grid1"
     v-model:columns="columnDefinitions"
     v-model:options="gridOptions"
-    v-model:data="dataset"
-    @onvueGridCreated="vueGridReady($event.detail)"
+    v-model:dataset="dataset"
+    @onVueGridCreated="vueGridReady($event.detail)"
   ></slickgrid-vue>
 </template>
 ```
@@ -605,13 +605,13 @@ function onBeforeEditCell($event) {
     grid-id="grid3"
     v-model:columns="columnDefinitions"
     v-model:options="gridOptions"
-    v-model:data="dataset"
-    @onvueGridCreated="vueGridReady(e.detail)"
+    v-model:dataset="dataset"
     @onBeforeEditCell="onBeforeEditCell($event.detail.eventData, $event.detail.args)"
     @onBeforeCellEditorDestroy="onAfterEditCell($event.detail.eventData, $event.detail.args)"
     @onCellChange="onCellChanged(e.detail.eventData, e.detail.args)"
     @onClick="onCellClicked(e.detail.eventData, e.detail.args)"
     @onValidationError="onCellValidationError(e.detail.eventData, e.detail.args)"
+    @onVueGridCreated="vueGridReady(e.detail)"
     ></slickgrid-vue>
 </template>
 ```

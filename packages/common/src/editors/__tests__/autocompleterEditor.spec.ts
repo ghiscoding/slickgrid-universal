@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index.js';
 import * as utils from '../../core/utils.js';
-import { FieldType } from '../../enums/index.js';
 import type { AutocompleterOption, Column, Editor, EditorArguments, GridOption } from '../../interfaces/index.js';
 import { AutocompleterEditor } from '../autocompleterEditor.js';
 import { Editors } from '../index.js';
@@ -129,14 +128,6 @@ describe('AutocompleterEditor', () => {
       expect(editorCount).toBe(1);
     });
 
-    it('should initialize the editor even when user define his own editor options', () => {
-      mockColumn.editor!.editorOptions = { minLength: 3 } as AutocompleterOption;
-      editor = new AutocompleterEditor(editorArguments);
-      const editorCount = divContainer.querySelectorAll('input.editor-text.editor-gender').length;
-
-      expect(editorCount).toBe(1);
-    });
-
     it('should initialize the editor even when user define his own global editor options', () => {
       gridOptionMock.defaultEditorOptions = {
         autocompleter: { minLength: 3 },
@@ -174,7 +165,7 @@ describe('AutocompleterEditor', () => {
     });
 
     it('should call "setValue" with value & apply value flag and expect the DOM element to have same value and also expect the value to be applied to the item object', () => {
-      mockColumn.type = FieldType.object;
+      mockColumn.type = 'object';
       editor = new AutocompleterEditor(editorArguments);
       editor.setValue({ value: 'male', label: 'male' }, true);
 
@@ -380,19 +371,7 @@ describe('AutocompleterEditor', () => {
         expect(output).toBe('Female');
       });
 
-      it('should return loaded value when "forceUserInput" is enabled and loaded value length is lower than minLength defined when calling "serializeValue"', () => {
-        mockColumn.editor!.editorOptions = { forceUserInput: true } as AutocompleterOption;
-        mockItemData = { id: 123, gender: { value: 'male', label: 'Male' }, isActive: true };
-
-        editor = new AutocompleterEditor(editorArguments);
-        editor.loadValue(mockItemData);
-        editor.setValue('F');
-        const output = editor.serializeValue();
-
-        expect(output).toBe('male');
-      });
-
-      it('should return loaded value when "forceUserInput" is enabled via global default editorOptions and loaded value length is lower than minLength defined when calling "serializeValue"', () => {
+      it('should return loaded value when "forceUserInput" is enabled via global defaultEditorOptions and loaded value length is lower than minLength defined when calling "serializeValue"', () => {
         gridOptionMock.defaultEditorOptions = {
           autocompleter: { forceUserInput: true },
         };
@@ -423,8 +402,8 @@ describe('AutocompleterEditor', () => {
         expect(output).toBe('female');
       });
 
-      it('should return an object output when calling "serializeValue" with its column definition set to "FieldType.object" with default label/value', () => {
-        mockColumn.type = FieldType.object;
+      it('should return an object output when calling "serializeValue" with its column definition set to "object" with default label/value', () => {
+        mockColumn.type = 'object';
         mockColumn.editor!.collection = [
           { value: 'm', label: 'Male' },
           { value: 'f', label: 'Female' },
@@ -438,8 +417,8 @@ describe('AutocompleterEditor', () => {
         expect(output).toEqual({ value: 'f', label: 'Female' });
       });
 
-      it('should return an object output when calling "serializeValue" with its column definition set to "FieldType.object" with custom dataKey/labelKey pair', () => {
-        mockColumn.type = FieldType.object;
+      it('should return an object output when calling "serializeValue" with its column definition set to "object" with custom dataKey/labelKey pair', () => {
+        mockColumn.type = 'object';
         mockColumn.editor!.collection = [
           { value: 'm', label: 'Male' },
           { value: 'f', label: 'Female' },
@@ -690,51 +669,12 @@ describe('AutocompleterEditor', () => {
         expect(editor.isValueTouched()).toBe(true);
       });
 
-      it('should initialize the editor with editorOptions and expect the "handleSelect" method to be called when the callback method is triggered', () => {
-        gridOptionMock.autoCommitEdit = true;
-        mockColumn.editor!.collection = [
-          { value: 'm', label: 'Male' },
-          { value: 'f', label: 'Female' },
-        ];
-        mockColumn.editor!.editorOptions = { minLength: 3 } as AutocompleterOption;
-        mockItemData = { id: 123, gender: { value: 'f', label: 'Female' }, isActive: true };
-
-        editor = new AutocompleterEditor(editorArguments);
-        const focusSpy = vi.spyOn(editor, 'focus');
-        const saveSpy = vi.spyOn(editor, 'save');
-        editor.autocompleterOptions.onSelect!({ item: 'fem' }, editor.editorDomElement);
-        vi.runAllTimers(); // fast-forward timer
-
-        // expect(handleSelectSpy).toHaveBeenCalledWith({ item: 'fem' });
-        expect(saveSpy).toHaveBeenCalled();
-        expect(focusSpy).toHaveBeenCalled();
-        expect(editor.isValueTouched()).toBe(true);
-      });
-
       it('should expect the "onSelect" method to be called when defined and the callback method is triggered when user provide his own editor options', () => {
         gridOptionMock.autoCommitEdit = true;
         const mockOnSelect = vi.fn();
         const activeCellMock = { row: 1, cell: 0 };
         vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
         mockColumn.editor!.options = { minLength: 3, onSelectItem: mockOnSelect } as AutocompleterOption;
-
-        editor = new AutocompleterEditor(editorArguments);
-        vi.spyOn(editor, 'save');
-        vi.spyOn(editor, 'handleSelect');
-        editor.autocompleterOptions.onSelect!({ item: 'fem' }, editor.editorDomElement);
-
-        // expect(saveSpy).toHaveBeenCalled();
-        // expect(handleSelectSpy).toHaveBeenCalledWith(event, { item: 'fem' });
-        expect(mockOnSelect).toHaveBeenCalledWith({ item: 'fem' }, activeCellMock.row, activeCellMock.cell, mockColumn, mockItemData);
-        expect(editor.isValueTouched()).toBe(true);
-      });
-
-      it('should expect the "onSelect" method to be called when defined and the callback method is triggered when user provide his own editor options', () => {
-        gridOptionMock.autoCommitEdit = true;
-        const mockOnSelect = vi.fn();
-        const activeCellMock = { row: 1, cell: 0 };
-        vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
-        mockColumn.editor!.editorOptions = { minLength: 3, onSelectItem: mockOnSelect } as AutocompleterOption;
 
         editor = new AutocompleterEditor(editorArguments);
         vi.spyOn(editor, 'save');
@@ -754,7 +694,7 @@ describe('AutocompleterEditor', () => {
         const mockTemplateCallback = () => mockTemplateString;
         mockColumn.editor = {
           collection: ['male', 'female'],
-          editorOptions: {
+          options: {
             showOnFocus: true,
             renderItem: {
               layout: 'fourCorners',
@@ -799,7 +739,7 @@ describe('AutocompleterEditor', () => {
 
       mockColumn.editor = {
         collection: mockCollection,
-        editorOptions: { showOnFocus: true } as AutocompleterOption,
+        options: { showOnFocus: true } as AutocompleterOption,
       };
       editor = new AutocompleterEditor(editorArguments);
 
@@ -823,24 +763,6 @@ describe('AutocompleterEditor', () => {
       mockColumn.editor = {
         collection: mockCollection,
         options: { showOnFocus: true } as AutocompleterOption,
-      };
-      editor = new AutocompleterEditor(editorArguments);
-      const clearSpy = vi.spyOn(editor, 'clear');
-
-      const clearBtnElm = divContainer.querySelector('.btn.btn-clear') as HTMLButtonElement;
-      clearBtnElm.dispatchEvent(new Event('click'));
-
-      expect(clearSpy).toHaveBeenCalled();
-    });
-
-    it('should call "clear" method when clear button is clicked', () => {
-      const mockCollection = [
-        { value: 'male', label: 'Male' },
-        { value: 'unknown', label: 'Unknown' },
-      ];
-      mockColumn.editor = {
-        collection: mockCollection,
-        editorOptions: { showOnFocus: true } as AutocompleterOption,
       };
       editor = new AutocompleterEditor(editorArguments);
       const clearSpy = vi.spyOn(editor, 'clear');
@@ -887,7 +809,7 @@ describe('AutocompleterEditor', () => {
       const event = new (window.window as any).KeyboardEvent('keydown', { key: 'm', bubbles: true, cancelable: true });
 
       mockColumn.editor = {
-        editorOptions: {
+        options: {
           showOnFocus: true,
           fetch: (_, updateCallback) => updateCallback(mockCollection),
         } as AutocompleterOption,

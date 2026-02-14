@@ -70,6 +70,9 @@ jobs:
       - name: Angular-Slickgrid Framework Build
         run: pnpm angular:build:framework
 
+      - name: Angular-Slickgrid Framework-Plugins Build
+        run: pnpm angular:build:framework-plugins
+
       - name: Website Dev Build (served for Cypress)
         run: pnpm angular:build:demo
 
@@ -80,7 +83,7 @@ jobs:
         run: pnpm angular:serve &
 
       - name: Run Cypress E2E tests
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           install: false
           package-manager-cache: false

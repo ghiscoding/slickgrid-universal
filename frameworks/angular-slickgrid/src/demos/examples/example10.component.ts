@@ -1,7 +1,6 @@
-import { NgIf } from '@angular/common';
-import { ChangeDetectorRef, Component, type OnInit } from '@angular/core';
+import { Component, signal, type OnInit } from '@angular/core';
 import {
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   Filters,
   Formatters,
   type AngularGridInstance,
@@ -13,7 +12,7 @@ import {
 @Component({
   templateUrl: './example10.component.html',
   styles: ['.alert { padding: 8px; margin-bottom: 10px }', '.col-sm-1{ max-width: 70px }'],
-  imports: [AngularSlickgridModule, NgIf],
+  imports: [AngularSlickgridComponent],
 })
 export class Example10Component implements OnInit {
   angularGrid1!: AngularGridInstance;
@@ -28,11 +27,9 @@ export class Example10Component implements OnInit {
   gridObj2!: any;
   hideSubTitle = false;
   isGrid2WithPagination = true;
-  selectedTitles = '';
-  selectedTitle = '';
-  selectedGrid2IDs!: number[];
-
-  constructor(private cd: ChangeDetectorRef) {}
+  selectedTitles = signal('');
+  selectedTitle = signal('');
+  selectedGrid2IDs = signal<number[]>([]);
 
   ngOnInit(): void {
     this.prepareGrid();
@@ -160,7 +157,7 @@ export class Example10Component implements OnInit {
       gridWidth: 800,
       enableAutoResize: false,
       enableCellNavigation: true,
-      enableRowSelection: true,
+      enableSelection: true,
       enableCheckboxSelector: true,
       enableFiltering: true,
       checkboxSelector: {
@@ -175,7 +172,7 @@ export class Example10Component implements OnInit {
         // selectableOverride: (row: number, dataContext: any, grid: SlickGrid) => (dataContext.id % 2 === 1)
       },
       multiSelect: false,
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: true,
       },
@@ -208,12 +205,12 @@ export class Example10Component implements OnInit {
         hideInColumnTitleRow: true,
         applySelectOnAllPages: true, // when clicking "Select All", should we apply it to all pages (defaults to true)
       },
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+      enableSelection: true,
       enablePagination: true,
       pagination: {
         pageSizes: [5, 10, 15, 20, 25, 50, 75, 100],
@@ -289,13 +286,13 @@ export class Example10Component implements OnInit {
     console.log('Grid State changed:: ', gridStateChanges.change);
 
     if (gridStateChanges!.gridState!.rowSelection) {
-      this.selectedGrid2IDs = (gridStateChanges!.gridState!.rowSelection.filteredDataContextIds || []) as number[];
-      this.selectedGrid2IDs = this.selectedGrid2IDs.sort((a, b) => a - b); // sort by ID
-      this.selectedTitles = this.selectedGrid2IDs.map((dataContextId) => `Task ${dataContextId}`).join(',');
-      if (this.selectedTitles.length > 293) {
-        this.selectedTitles = this.selectedTitles.substring(0, 293) + '...';
+      const ids = ((gridStateChanges!.gridState!.rowSelection.filteredDataContextIds || []) as number[]).sort((a, b) => a - b);
+      this.selectedGrid2IDs.set(ids);
+      let titles = ids.map((dataContextId) => `Task ${dataContextId}`).join(',');
+      if (titles.length > 293) {
+        titles = titles.substring(0, 293) + '...';
       }
-      this.cd.detectChanges();
+      this.selectedTitles.set(titles);
     }
   }
 
@@ -309,10 +306,11 @@ export class Example10Component implements OnInit {
 
   handleSelectedRowsChanged1(e: Event, args: any) {
     if (Array.isArray(args.rows) && this.gridObj1) {
-      this.selectedTitle = args.rows.map((idx: number) => {
+      const title = args.rows.map((idx: number) => {
         const item = this.gridObj1.getDataItem(idx);
         return item.title || '';
       });
+      this.selectedTitle.set(title);
     }
   }
 

@@ -1,4 +1,4 @@
-import type { FieldType } from '../enums/fieldType.enum.js';
+import type { FieldType } from '../enums/field.type.js';
 import type {
   CellMenu,
   ColumnEditor,
@@ -188,7 +188,7 @@ export interface Column<T = any> {
   filterable?: boolean;
 
   /** Extra option to filter more easily. For example, a "UTC Date" field can use a search format of US Format like ">02/28/2017" */
-  filterSearchType?: (typeof FieldType)[keyof typeof FieldType];
+  filterSearchType?: FieldType;
 
   /** are we allowed to focus on the column? */
   focusable?: boolean;
@@ -265,7 +265,7 @@ export interface Column<T = any> {
    * Column output type (e.g. Date Picker, the output format that we will see in the picker)
    * NOTE: this is currently only used by the Editors/Filters with a Date Picker
    */
-  outputType?: (typeof FieldType)[keyof typeof FieldType];
+  outputType?: FieldType;
 
   /** PDF export custom options for cell formatting & alignment */
   pdfExportOptions?: PdfExportOption;
@@ -274,7 +274,7 @@ export interface Column<T = any> {
    * Column Editor save format type (e.g. which date format to use when saving after choosing a date from the Date Editor picker)
    * NOTE: this is currently only used by the Date Editor (date picker)
    */
-  saveOutputType?: (typeof FieldType)[keyof typeof FieldType];
+  saveOutputType?: FieldType;
 
   /** extra custom generic parameters that could be used by your Formatter/Editor or anything else */
   params?: any | any[];
@@ -370,7 +370,7 @@ export interface Column<T = any> {
   treeTotalsFormatter?: GroupTotalsFormatter;
 
   /** What is the Field Type, this could be used by Formatters/Editors/Filters/... */
-  type?: (typeof FieldType)[keyof typeof FieldType];
+  type?: FieldType;
 
   /** Defaults to false, when enabled it will lead to the column being unselected in the UI */
   unselectable?: boolean;
@@ -388,6 +388,8 @@ export interface Column<T = any> {
 
   /** Width of the column in pixels (number only). */
   width?: number;
+
+  widthOriginal?: number;
 
   /** column width request when resizing */
   widthRequest?: number;

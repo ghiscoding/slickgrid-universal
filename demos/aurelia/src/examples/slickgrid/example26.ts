@@ -4,7 +4,6 @@ import {
   Editors,
   Filters,
   Formatters,
-  OperatorType,
   SlickGlobalEditorLock,
   type AureliaGridInstance,
   type Column,
@@ -198,7 +197,7 @@ export class Example26 {
           collectionFilterBy: {
             property: 'value',
             value: 0,
-            operator: OperatorType.notEqual,
+            operator: '!=',
           },
           model: Editors.singleSelect,
         },

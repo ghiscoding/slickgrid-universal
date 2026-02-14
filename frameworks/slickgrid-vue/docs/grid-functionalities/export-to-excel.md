@@ -38,7 +38,7 @@ You can set certain options for the entire grid, for example if you set `exportW
 ```vue
 <script setup lang="ts">
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -97,7 +97,7 @@ Inside the column definition there are couple of flags you can set in `excelExpo
 ```vue
 <script setup lang="ts">
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -146,18 +146,7 @@ What we can see from the example, is that it will use all Formatters (when exist
 
 ### Custom Column Width
 
-**NOTE** now deprecated, please use [Custom Cell Styling](#custom-cell-styling) instead
-
-You can define a custom Excel column width (the width Excel's own width which is not in pixel). You can define a custom width per column (in your column definitions) and/or for the entire grid (in your grid options).
-
-#### Per Column
-You could set a custom width per column
-```ts
-columnDefinitions.value = [
-  { id: 'firstName', name: 'FirstName', exportColumnWidth: 10, },
-  // ...
-];
-```
+See [Custom Cell Styling](#custom-cell-styling) to define cell width.
 
 #### For the entire Grid
 You could also set a custom width for the entire grid export via the `excelExportOptions`
@@ -193,7 +182,7 @@ The example below shows a title which uses a merged cell from "B1" to "D1" with 
 #### Component
 ```vue
 <script setup lang="ts">
-import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -251,7 +240,7 @@ You can use the export from the Grid Menu and/or you can simply create your own 
 The code below is just an example and it can be configured in many ways, see the `excelExportOptions`.
 ```vue
 <script setup lang="ts">
-import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -297,12 +286,11 @@ If you have lots of data, you might want to show a spinner telling the user that
   <SlickgridVue gridId="grid5"
       v-model:columns="columnDefinitions"
       v-model:options="gridOptions"
-      v-model:data="dataset"
-      paginationOptions={state.paginationOptions}
-      onvueGridCreated={$event => function vueGridReady($event.detail)}
-      onBeforeExportToExcel={() => changeProcessing(true)}
-      onAfterExportToExcel={() => changeProcessing(false)}
-      onGridStateChanged={$event => gridStateChanged($event.detail)}
+      v-model:dataset="dataset"
+      @onBeforeExportToExcel="changeProcessing(true)"
+      @onAfterExportToExcel="changeProcessing(false)"
+      @onGridStateChanged="gridStateChanged($event.detail)"
+      @onVueGridCreated="vueGridReady($event.detail)"
   />
 </template>
 ```

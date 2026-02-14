@@ -1,5 +1,5 @@
-import { DatePipe, NgIf } from '@angular/common';
-import { ChangeDetectorRef, Component, type OnDestroy, type OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { Component, signal, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { addDay, format as tempoFormat } from '@formkit/tempo';
 import { TranslateService } from '@ngx-translate/core';
@@ -11,10 +11,9 @@ import {
 } from '@slickgrid-universal/graphql';
 import type { Subscription } from 'rxjs';
 import {
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   Filters,
   Formatters,
-  OperatorType,
   unsubscribeAllObservables,
   type AngularGridInstance,
   type Column,
@@ -32,7 +31,7 @@ const FAKE_SERVER_DELAY = 250;
 
 @Component({
   templateUrl: './example06.component.html',
-  imports: [AngularSlickgridModule, DatePipe, FormsModule, NgIf],
+  imports: [AngularSlickgridComponent, DatePipe, FormsModule],
 })
 export class Example6Component implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
@@ -40,23 +39,20 @@ export class Example6Component implements OnInit, OnDestroy {
   columnDefinitions!: Column[];
   gridOptions!: GridOption;
   dataset = [];
-  metrics!: Metrics;
+  metrics = signal<Metrics | undefined>(undefined);
   hideSubTitle = false;
   isWithCursor = false;
   graphqlQuery = '';
-  processing = true;
-  status = { text: 'processing...', class: 'alert alert-danger' };
-  selectedLanguage: string;
+  processing = signal(true);
+  status = signal({ text: 'processing...', class: 'alert alert-danger' });
+  selectedLanguage = signal('');
   serverWaitDelay = FAKE_SERVER_DELAY; // server simulation with default of 250ms but 50ms for Cypress tests
 
-  constructor(
-    private readonly cd: ChangeDetectorRef,
-    private translate: TranslateService
-  ) {
+  constructor(private translate: TranslateService) {
     // always start with English for Cypress E2E tests to be consistent
     const defaultLang = 'en';
     this.translate.use(defaultLang);
-    this.selectedLanguage = defaultLang;
+    this.selectedLanguage.set(defaultLang);
   }
 
   ngOnDestroy() {
@@ -180,7 +176,7 @@ export class Example6Component implements OnInit, OnDestroy {
       gridHeight: 200,
       gridWidth: 900,
       compoundOperatorAltTexts: {
-        // where '=' is any of the `OperatorString` type shown above
+        // where '=' is any of the `OperatorType` type shown above
         text: { Custom: { operatorAlt: '%%', descAlt: 'SQL Like' } },
       },
       enableFiltering: true,
@@ -225,13 +221,13 @@ export class Example6Component implements OnInit, OnDestroy {
         ],
         filters: [
           // you can use OperatorType or type them as string, e.g.: operator: 'EQ'
-          { columnId: 'gender', searchTerms: ['male'], operator: OperatorType.equal },
-          // { columnId: 'name', searchTerms: ['John Doe'], operator: OperatorType.contains },
-          { columnId: 'name', searchTerms: ['Joh*oe'], operator: OperatorType.startsWithEndsWith },
+          { columnId: 'gender', searchTerms: ['male'], operator: '=' },
+          // { columnId: 'name', searchTerms: ['John Doe'], operator:  'Contains' },
+          { columnId: 'name', searchTerms: ['Joh*oe'], operator: 'StartsWithEndsWith' },
           { columnId: 'company', searchTerms: ['xyz'], operator: 'IN' },
 
           // use a date range with 2 searchTerms values
-          { columnId: 'finish', searchTerms: [presetLowestDay, presetHighestDay], operator: OperatorType.rangeInclusive },
+          { columnId: 'finish', searchTerms: [presetLowestDay, presetHighestDay], operator: 'RangeInclusive' },
         ],
         sorters: [
           // direction can written as 'asc' (uppercase or lowercase) and/or use the SortDirection type
@@ -253,7 +249,7 @@ export class Example6Component implements OnInit, OnDestroy {
             },
           ],
           filterQueryOverride: ({ fieldName, columnDef, columnFilterOperator, searchValues }) => {
-            if (columnFilterOperator === OperatorType.custom && columnDef?.id === 'name') {
+            if (columnFilterOperator === 'Custom' && columnDef?.id === 'name') {
               // technically speaking GraphQL isn't a database query language like SQL, it's an application query language.
               // What that means is that GraphQL won't let you write arbitrary queries out of the box.
               // It will only support the types of queries defined in your GraphQL schema.
@@ -272,9 +268,8 @@ export class Example6Component implements OnInit, OnDestroy {
         preProcess: () => this.displaySpinner(true),
         process: (query) => this.getCustomerApiCall(query),
         postProcess: (result: GraphqlPaginatedResult) => {
-          this.metrics = result.metrics as Metrics;
+          this.metrics.set(result.metrics as Metrics);
           this.displaySpinner(false);
-          this.cd.detectChanges();
         },
       } as GraphqlServiceApi,
     };
@@ -285,10 +280,10 @@ export class Example6Component implements OnInit, OnDestroy {
   }
 
   displaySpinner(isProcessing: boolean) {
-    this.processing = isProcessing;
-    this.status = isProcessing
-      ? { text: 'processing...', class: 'alert alert-danger' }
-      : { text: 'finished', class: 'alert alert-success' };
+    this.processing.set(isProcessing);
+    this.status.set(
+      isProcessing ? { text: 'processing...', class: 'alert alert-danger' } : { text: 'finished', class: 'alert alert-success' }
+    );
   }
 
   /**
@@ -386,11 +381,11 @@ export class Example6Component implements OnInit, OnDestroy {
 
     // we can Set Filters Dynamically (or different filters) afterward through the FilterService
     this.angularGrid.filterService.updateFilters([
-      { columnId: 'gender', searchTerms: ['female'], operator: OperatorType.equal },
-      { columnId: 'name', searchTerms: ['Jane'], operator: OperatorType.startsWith },
+      { columnId: 'gender', searchTerms: ['female'], operator: '=' },
+      { columnId: 'name', searchTerms: ['Jane'], operator: 'StartsWith' },
       { columnId: 'company', searchTerms: ['acme'], operator: 'IN' },
-      { columnId: 'billingAddressZip', searchTerms: ['11'], operator: OperatorType.greaterThanOrEqual },
-      { columnId: 'finish', searchTerms: [presetLowestDay, presetHighestDay], operator: OperatorType.rangeInclusive },
+      { columnId: 'billingAddressZip', searchTerms: ['11'], operator: '>=' },
+      { columnId: 'finish', searchTerms: [presetLowestDay, presetHighestDay], operator: 'RangeInclusive' },
     ]);
   }
 
@@ -409,13 +404,13 @@ export class Example6Component implements OnInit, OnDestroy {
 
     this.angularGrid.filterService.updateFilters([
       // you can use OperatorType or type them as string, e.g.: operator: 'EQ'
-      { columnId: 'gender', searchTerms: ['male'], operator: OperatorType.equal },
-      // { columnId: 'name', searchTerms: ['John Doe'], operator: OperatorType.contains },
-      { columnId: 'name', searchTerms: ['Joh*oe'], operator: OperatorType.startsWithEndsWith },
+      { columnId: 'gender', searchTerms: ['male'], operator: '=' },
+      // { columnId: 'name', searchTerms: ['John Doe'], operator:  'Contains' },
+      { columnId: 'name', searchTerms: ['Joh*oe'], operator: 'StartsWithEndsWith' },
       { columnId: 'company', searchTerms: ['xyz'], operator: 'IN' },
 
       // use a date range with 2 searchTerms values
-      { columnId: 'finish', searchTerms: [presetLowestDay, presetHighestDay], operator: OperatorType.rangeInclusive },
+      { columnId: 'finish', searchTerms: [presetLowestDay, presetHighestDay], operator: 'RangeInclusive' },
     ]);
     this.angularGrid.sortService.updateSorting([
       // direction can written as 'asc' (uppercase or lowercase) and/or use the SortDirection type
@@ -444,10 +439,10 @@ export class Example6Component implements OnInit, OnDestroy {
   }
 
   switchLanguage() {
-    const nextLanguage = this.selectedLanguage === 'en' ? 'fr' : 'en';
+    const nextLanguage = this.selectedLanguage() === 'en' ? 'fr' : 'en';
     this.subscriptions.push(
       this.translate.use(nextLanguage).subscribe(() => {
-        this.selectedLanguage = nextLanguage;
+        this.selectedLanguage.set(nextLanguage);
       })
     );
   }

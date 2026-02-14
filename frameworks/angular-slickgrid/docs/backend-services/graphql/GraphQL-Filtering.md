@@ -139,14 +139,14 @@ this.gridOptions = {
 
 Column filters may have a `Custom` Operator, that acts as a placeholder for you to define your own logic. To do so, the easiest way is to provide the `filterQueryOverride` callback in the GraphQL Options. This method will be called with `BackendServiceFilterQueryOverrideArgs` to let you decide dynamically on how the filter should be assembled.
 
-E.g. you could listen for a specific column and the active `OperatorType.custom` in order to switch the filter to an SQL LIKE search in GraphQL:
+E.g. you could listen for a specific column and the active `'Custom'` in order to switch the filter to an SQL LIKE search in GraphQL:
 
 > **Note** technically speaking GraphQL isn't a database query language like SQL, it's an application query language. Depending on your configuration, your GraphQL Server might already support regex querying (e.g. Hasura [_regex](https://hasura.io/docs/latest/queries/postgres/filters/text-search-operators/#_regex)) or you could add your own implementation (e.g. see this SO: https://stackoverflow.com/a/37981802/1212166). Just make sure that whatever custom operator that you want to use, is already included in your GraphQL Schema.
 ```ts
 backendServiceApi: {
   options: {
     filterQueryOverride: ({ fieldName, columnDef, columnFilterOperator, searchValues }) => {
-      if (columnFilterOperator === OperatorType.custom && columnDef?.id === 'name') {
+      if (columnFilterOperator === 'Custom' && columnDef?.id === 'name') {
         // the `operator` is a string, make sure to implement this new operator in your GraphQL Schema
         return { field: fieldName, operator: 'Like', value: searchValues[0] };
       }

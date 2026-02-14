@@ -5,6 +5,7 @@ import type {
   ExcelExportOption,
   ExcelGroupValueParserArgs,
   ExternalResource,
+  FileType,
   GetDataValueCallback,
   GetGroupTotalValueCallback,
   GridOption,
@@ -17,9 +18,7 @@ import type {
 } from '@slickgrid-universal/common';
 import {
   Constants,
-  // utility functions
   exportWithFormatterWhenDefined,
-  FileType,
   getColumnFieldType,
   getTranslationPrefix,
   isColumnDateType,
@@ -46,13 +45,13 @@ import { getExcelFormatFromGridFormatter, getGroupTotalValue, useCellFormatByFie
 
 const DEFAULT_EXPORT_OPTIONS: ExcelExportOption = {
   filename: 'export',
-  format: FileType.xlsx,
+  format: 'xlsx',
   htmlDecode: true,
   useStreamingExport: true,
 };
 
 export class ExcelExportService implements ExternalResource, BaseExcelExportService {
-  protected _fileFormat: FileType | 'xls' | 'xlsx' = FileType.xlsx;
+  protected _fileFormat: Extract<FileType, 'xls' | 'xlsx'> = 'xlsx';
   protected _grid!: SlickGrid;
   protected _locales!: Locale;
   protected _groupedColumnHeaders?: Array<KeyTitlePair>;
@@ -76,7 +75,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   } = {};
 
   /** ExcelExportService class name which is use to find service instance in the external registered services */
-  readonly className = 'ExcelExportService';
+  readonly pluginName = 'ExcelExportService';
 
   protected get _datasetIdPropName(): string {
     return this._gridOptions?.datasetIdPropertyName ?? 'id';
@@ -152,7 +151,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
     this._pubSubService?.publish('onBeforeExportToExcel', true);
     this._excelExportOptions = extend(true, {}, { ...DEFAULT_EXPORT_OPTIONS, ...this._gridOptions.excelExportOptions, ...options });
-    this._fileFormat = this._excelExportOptions.format || FileType.xlsx;
+    this._fileFormat = this._excelExportOptions.format || 'xlsx';
     const useStreamingExport = !!this._excelExportOptions.useStreamingExport;
 
     // reset references of detected Excel formats
@@ -199,14 +198,12 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
       let mimeType = this._excelExportOptions?.mimeType;
       if (mimeType === undefined) {
         mimeType =
-          this._fileFormat === FileType.xls
-            ? 'application/vnd.ms-excel'
-            : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+          this._fileFormat === 'xls' ? 'application/vnd.ms-excel' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
       }
 
       const filename = `${this._excelExportOptions.filename}.${this._fileFormat}`;
 
-      if (this._fileFormat === FileType.xlsx && useStreamingExport) {
+      if (this._fileFormat === 'xlsx' && useStreamingExport) {
         try {
           const stream = createExcelFileStream(this._workbook, { chunkSize: 1000 });
           const chunks: Uint8Array[] = [];

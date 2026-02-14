@@ -1,7 +1,7 @@
 import { uniqueArray } from '@slickgrid-universal/utils';
 import type { SlickGrid } from '../core/slickGrid.js';
 import { sortByFieldType } from '../sortComparers/sortUtilities.js';
-import { FieldType, OperatorType, SortDirectionNumber, type FilterMultiplePassType } from './../enums/index.js';
+import { SortDirectionNumber, type FilterMultiplePassType } from './../enums/index.js';
 import type { CollectionFilterBy, CollectionSortBy, Column } from './../interfaces/index.js';
 import { mapTempoDateFormatWithFieldType, tryParseDate } from './dateUtils.js';
 import type { TranslaterService } from './translater.service.js';
@@ -88,19 +88,21 @@ export class CollectionService<T = any> {
 
     if (filterBy) {
       const objectProperty = filterBy.property;
-      const operator = filterBy.operator || OperatorType.equal;
+      const operator = filterBy.operator || 'EQ';
       // just check for undefined since the filter value could be null, 0, '', false etc
       const value = typeof filterBy.value === 'undefined' ? '' : filterBy.value;
 
       switch (operator) {
-        case OperatorType.equal:
+        case '=':
+        case 'EQ':
           if (objectProperty) {
             filteredCollection = collection.filter((item) => item[objectProperty as keyof T] === value);
           } else {
             filteredCollection = collection.filter((item) => item === value);
           }
           break;
-        case OperatorType.contains:
+        case 'Contains':
+        case 'CONTAINS':
           if (objectProperty) {
             filteredCollection = collection.filter((item) => item[objectProperty as keyof T]?.toString().indexOf(value.toString()) !== -1);
           } else {
@@ -109,7 +111,8 @@ export class CollectionService<T = any> {
             );
           }
           break;
-        case OperatorType.notContains:
+        case 'Not_Contains':
+        case 'NOT_CONTAINS':
           if (objectProperty) {
             filteredCollection = collection.filter((item) => item[objectProperty as keyof T]?.toString().indexOf(value.toString()) === -1);
           } else {
@@ -118,7 +121,6 @@ export class CollectionService<T = any> {
             );
           }
           break;
-        case OperatorType.notEqual:
         default:
           if (objectProperty) {
             filteredCollection = collection.filter((item) => item[objectProperty as keyof T] !== value);
@@ -162,7 +164,7 @@ export class CollectionService<T = any> {
               // collection of objects with a property name provided
               const sortDirection = sortBy.sortDesc ? SortDirectionNumber.desc : SortDirectionNumber.asc;
               const objectProperty = sortBy.property;
-              const fieldType = sortBy?.fieldType ?? columnDef?.type ?? FieldType.string;
+              const fieldType = sortBy?.fieldType ?? columnDef?.type ?? 'string';
               const value1 = enableTranslateLabel
                 ? this.translaterService?.translate?.((dataRow1[objectProperty as keyof T] || ' ') as string)
                 : dataRow1[objectProperty as keyof T];
@@ -183,7 +185,7 @@ export class CollectionService<T = any> {
         // collection of objects with a property name provided
         const objectProperty = sortByOptions.property;
         const sortDirection = sortByOptions.sortDesc ? SortDirectionNumber.desc : SortDirectionNumber.asc;
-        const fieldType = sortByOptions?.fieldType ?? columnDef?.type ?? FieldType.string;
+        const fieldType = sortByOptions?.fieldType ?? columnDef?.type ?? 'string';
 
         sortedCollection = collection.sort((dataRow1: T, dataRow2: T) => {
           const value1 = enableTranslateLabel
@@ -200,7 +202,7 @@ export class CollectionService<T = any> {
         });
       } else if (sortByOptions && !sortByOptions.property) {
         const sortDirection = sortByOptions.sortDesc ? SortDirectionNumber.desc : SortDirectionNumber.asc;
-        const fieldType = sortByOptions?.fieldType ?? columnDef?.type ?? FieldType.string;
+        const fieldType = sortByOptions?.fieldType ?? columnDef?.type ?? 'string';
 
         sortedCollection = collection.sort((dataRow1: any, dataRow2: any) => {
           const value1 = enableTranslateLabel
@@ -225,7 +227,7 @@ export class CollectionService<T = any> {
   // -------------------
 
   protected getParseDateInfo(col: Column, preParseDateColumns: boolean | string): ParsingDateDetails | void {
-    const fieldType = col.type || FieldType.string;
+    const fieldType = col.type || 'string';
     const dateFormat = mapTempoDateFormatWithFieldType(fieldType);
 
     if (isColumnDateType(fieldType) && preParseDateColumns) {

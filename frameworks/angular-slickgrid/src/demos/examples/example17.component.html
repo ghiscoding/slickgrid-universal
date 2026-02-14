@@ -45,13 +45,14 @@
 
   <hr />
 
-  <angular-slickgrid
-    *ngIf="gridCreated"
-    gridId="grid17"
-    [columns]="columnDefinitions"
-    [options]="gridOptions"
-    [dataset]="dataset"
-    (onAngularGridCreated)="angularGridReady($event.detail)"
-  >
-  </angular-slickgrid>
+  @if (gridCreated) {
+    <angular-slickgrid
+      gridId="grid17"
+      [columns]="columnDefinitions"
+      [options]="gridOptions"
+      [dataset]="dataset"
+      (onAngularGridCreated)="angularGridReady($event.detail)"
+    >
+    </angular-slickgrid>
+  }
 </div>

@@ -35,7 +35,7 @@ const noop = () => {};
   where the browser copies/pastes the serialized data.
 */
 export class SlickCellExternalCopyManager {
-  pluginName: 'CellExternalCopyManager' = 'CellExternalCopyManager' as const;
+  readonly pluginName = 'CellExternalCopyManager';
   onCopyCells: SlickEvent<{ ranges: SlickRange[] }>;
   onCopyCancelled: SlickEvent<{ ranges: SlickRange[] }>;
   onPasteCells: SlickEvent<{ ranges: SlickRange[] }>;
@@ -90,7 +90,7 @@ export class SlickCellExternalCopyManager {
     const cellSelectionModel = grid.getSelectionModel();
     if (!cellSelectionModel) {
       throw new Error(
-        `Selection model is mandatory for this plugin. Please set a selection model on the grid before adding this plugin: grid.setSelectionModel(new SlickCellSelectionModel())`
+        `Selection model is mandatory for this plugin. Please set a selection model on the grid before adding this plugin: grid.setSelectionModel(new SlickHybridSelectionModel())`
       );
     }
 
@@ -197,7 +197,7 @@ export class SlickCellExternalCopyManager {
           cancelChanges: noop,
           commitChanges: noop,
         }) as Editor;
-        editor.loadValue(item);
+        editor.loadValue({ ...item, [columnDef.field]: value });
         const validationResults = editor.validate(undefined, value);
         if (!validationResults.valid) {
           const activeCell = this._grid.getActiveCell()!;

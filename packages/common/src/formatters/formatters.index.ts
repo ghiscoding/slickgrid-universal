@@ -1,4 +1,3 @@
-import { FieldType } from '../enums/fieldType.enum.js';
 import type { Formatter, IFormatters } from '../interfaces/formatter.interface.js';
 import { getAllDateFieldTypes } from '../services/utilities.js';
 import { arrayObjectToCsvFormatter } from './arrayObjectToCsvFormatter.js';
@@ -69,12 +68,11 @@ const allFormatters: Record<string, Formatter> = {
   treeExport: treeExportFormatter,
 };
 
-// add date Formatters dynamically but exclude "FieldType.date" since that one was created above
+// add date Formatters dynamically but exclude "date" since that one was created above
 // and it has a different implementation
 getAllDateFieldTypes().forEach((dateType) => {
-  const fieldType = FieldType[dateType as keyof typeof FieldType];
-  if (fieldType && fieldType !== FieldType.date) {
-    allFormatters[dateType] = getAssociatedDateFormatter(fieldType, dateType);
+  if (dateType !== 'date') {
+    allFormatters[dateType] = getAssociatedDateFormatter(dateType, dateType);
   }
 });
 

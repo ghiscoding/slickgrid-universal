@@ -1,14 +1,13 @@
-import {
+import type {
+  Column,
+  ColumnFilter,
+  Filter,
+  FilterArguments,
+  FilterCallback,
+  GridOption,
   OperatorType,
-  type Column,
-  type ColumnFilter,
-  type Filter,
-  type FilterArguments,
-  type FilterCallback,
-  type GridOption,
-  type OperatorString,
-  type SearchTerm,
-  type SlickGrid,
+  SearchTerm,
+  SlickGrid,
 } from '../../library';
 
 export class CustomInputFilter implements Filter {
@@ -19,7 +18,7 @@ export class CustomInputFilter implements Filter {
   searchTerms: SearchTerm[] = [];
   columnDef!: Column;
   callback!: FilterCallback;
-  operator: OperatorType | OperatorString = OperatorType.equal;
+  operator: OperatorType = 'EQ';
 
   /** Getter for the Column Filter */
   get columnFilter(): ColumnFilter {

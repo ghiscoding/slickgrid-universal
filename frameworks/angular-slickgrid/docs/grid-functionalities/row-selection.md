@@ -7,7 +7,7 @@
 - [Disable External Button when having Empty Selection](#disable-external-button-when-having-empty-selection)
 - [Change Row Selections](#change-row-selections)
 - Troubleshooting
-  - [Adding a Column dynamically is removing the Row Selection, why is that?](#adding-a-column-dynamically-is-removing-the-row-selection-why-is-that)
+  - [Adding a Column dynamically is removing the Row Selection column, why is that?](#adding-a-column-dynamically-is-removing-the-row-selection-column-why-is-that)
 - [Hybrid Selection Model (cell+row selection)](#hybrid-selection-model-and-drag-fill)
 
 ### Description
@@ -19,7 +19,7 @@ For row selection, you can simply play with couple of grid options (see below) a
 [Demo Page](https://ghiscoding.github.io/angular-slickgrid-demos/#/selection) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-rowselection.component.ts)
 
 ## Single Row Selection
-For a single row selection, you need to have `enableCellNavigation: true`, `enableRowSelection: true` and `multiSelect: false` and as described earlier, subscribe to `onSelectedRowsChanged` (for that you need to bind to `(gridChanged)`).
+For a single row selection, you need to have `enableCellNavigation: true`, `enableSelection: true` (or `enableRowSelection` in <=9.x) and `multiSelect: false` and as described earlier, subscribe to `onSelectedRowsChanged` (for that you need to bind to `(gridChanged)`).
 
 **Note:** if you want to change from Multiple Selections to Single Selection (and vice-versa), you could use the grid options `enableCellNavigation` flag, however this is not possible when using Inline Editors since this flag is required. However, there is no other known ways of toggling dynamically.
 
@@ -39,7 +39,7 @@ this.gridOptions = {
   enableAutoResize: true,
   enableCellNavigation: true,
   enableCheckboxSelector: true,
-  enableRowSelection: true,
+  enableSelection: true, // or `enableRowSelection` in <=9.x
   multiSelect: false,
 }
 
@@ -54,7 +54,7 @@ onSelectedRowsChanged(e, args) {
 ```
 
 ## Multiple Row Selections
-As for multiple row selections, you need to provide an extra grid option of `rowSelectionOptions` which is an object and within it, you need to disable the `selectActiveRow` flag. The other configurations are the same as a Single Selection, which is to enable `enableCheckboxSelector` and `enableRowSelection`. Then as describe earlier, you will subscribe to `onSelectedRowsChanged` (for that you need to bind to `(gridChanged)`).
+As for multiple row selections, you need to provide an extra grid option of `rowSelectionOptions` which is an object and within it, you need to disable the `selectActiveRow` flag. The other configurations are the same as a Single Selection, which is to enable `enableCheckboxSelector` and `enableSelection` (or `enableRowSelection` in <=9.x). Then as describe earlier, you will subscribe to `onSelectedRowsChanged` (for that you need to bind to `(gridChanged)`).
 
 #### View
 ```html
@@ -74,9 +74,12 @@ export class Example1 implements OnInit {
       enableAutoResize: true,
       enableCellNavigation: true,
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+
+      // `enableRowSelection` in <=9.x OR `enableSelection` in >=10.0
+      enableSelection: true,
+
       // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false
       },
@@ -133,7 +136,7 @@ You can use `selectableOverride` to provide custom logic to disable certain rows
 export class Example1 implements OnInit {
   prepareGrid() {
     this.gridOptions = {
-      enableRowSelection: true,
+      enableSelection: true, // or `enableRowSelection` in <=9.x
       enableCheckboxSelector: true,
       checkboxSelector: {
         // you can override the logic for showing (or not) the expand icon
@@ -142,7 +145,7 @@ export class Example1 implements OnInit {
       },
       multiSelect: false,
       // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: true,
       },
@@ -225,16 +228,16 @@ export class Example1 {
 Starting with v9.10.0, you can now use the new Hybrid Selection Model, this new model will allow you to do Cell Selection & Row Selection in the same grid. This wasn't previously doable before that version because SlickGrid only ever allows 1 selection model to be loaded at once and so we had to load either `SlickCellSelectionModel` or `SlickRowSelectionModel` but never both of them at the same time. The new Hybrid Selection Model is merging both of these plugins in a single plugin allowing us to do both type of selections.
 
 > [!NOTE]
-> You can use `enableHybridSelection: true` grid option to enable the new Hybrid Model, this new model will eventually replace both cell/row selection model in the future since there's no need to keep all these models when only 1 is more than enough
+> You can use `{ enableSelection: true, selectionOptions: { selectionType: 'mixed' }}` grid option to enable the new Hybrid Model, this new model will eventually replace both cell/row selection model in the future since there's no need to keep all these models when only 1 is more than enough
 
 For example, we could use the Excel Copy Buffer (Cell Selection) and use `rowSelectColumnIds` (Row Selection)
 
 ```ts
 this.gridOptions = {
   // enable new hybrid selection model (rows & cells)
-  enableHybridSelection: true,
+  enableSelection: true,
   // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
-  rowSelectionOptions: {
+  selectionOptions: {
     selectActiveRow: true,
     rowSelectColumnIds: ['selector'],
   },
@@ -270,7 +273,7 @@ You can also `onDragReplaceCells` event to drag and fill cell values to the exte
 ```ts
 this.gridOptions = {
   // enable new hybrid selection model (rows & cells)
-  enableHybridSelection: true,
+  enableSelection: true,
   // ...
 };
 
@@ -293,7 +296,7 @@ copyDraggedCellRange(args: OnDragReplaceCellsEventArgs) {
 ```
 
 ## Troubleshooting
-### Adding a Column dynamically is removing the Row Selection, why is that?
+### Adding a Column dynamically is removing the Row Selection column, why is that?
 The reason is because the Row Selection (checkbox) plugin is a special column and Angular-Slickgrid is adding an extra column dynamically for the Row Selection checkbox and that is **not** reflected in your local copy of `columnDefinitions`. To address this issue, you need to get the Angular-Slickgrid internal copy of all columns (including the extra columns), you can get it via `getAllColumnDefinitions()` from the Grid Service and then you can use to that array and that will work.
 
 ```html

@@ -422,13 +422,30 @@ function toggleEmployeeIdVisibility() {
     }
   }
 
-  // update column definitions
+  // 1. update column definitions via grid.setColumns()
+  // this will shift colspan/rowspan to the left or right accordingly
   if (showEmployeeId.value) {
     columnDefinitions.value.unshift({ id: 'employeeID', name: 'Employee ID', field: 'employeeID', width: 100 });
   } else {
     columnDefinitions.value.splice(0, 1);
   }
   vueGrid.slickGrid.setColumns(columnDefinitions.value);
+
+  // --- OR ---
+  // 2. OR update via "hidden" column flag & increase/decrease column index accordingly in the metadata
+  // this approach will keep colspan/rowspan "as-is" but will hide the EmployeeID column
+  /*
+    const colDirIdx = showEmployeeId.value ? -1 : 1;
+    for (const row of Object.keys(this.metadata)) {
+      newMetadata[row] = { columns: {} };
+      for (const col of Object.keys((this.metadata as any)[row].columns)) {
+        newMetadata[row].columns[Number(col) + colDirIdx] = (this.metadata as any)[row].columns[col];
+      }
+    }
+    vueGrid.slickGrid?.setOptions({ frozenColumn: showEmployeeId.value ? 0 : 1 });
+    vueGrid.slickGrid?.updateColumnById('employeeID', { hidden: !showEmployeeId.value });
+    vueGrid.slickGrid?.updateColumns();
+    */
 
   // update & remap rowspans
   metadata = newMetadata;
@@ -530,7 +547,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
   <slickgrid-vue
     v-model:options="gridOptions"
     v-model:columns="columnDefinitions"
-    v-model:data="dataset"
+    v-model:dataset="dataset"
     grid-id="grid43"
     @onVueGridCreated="vueGridReady($event.detail)"
   >

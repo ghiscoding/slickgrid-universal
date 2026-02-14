@@ -1,4 +1,4 @@
-/** List of available SlickGrid Extensions (Controls & Plugins) */
+/** @deprecated @use extension name type as string instead (ie: `ExtensionName.cellMenu` => 'cellMenu', `ExtensionName.draggableGrouping` => 'draggableGrouping') */
 export enum ExtensionName {
   autoTooltip = 'autoTooltip',
   cellExternalCopyManager = 'cellExternalCopyManager',
@@ -16,5 +16,23 @@ export enum ExtensionName {
   rowBasedEdit = 'rowBasedEdit',
   rowDetailView = 'rowDetailView',
   rowMoveManager = 'rowMoveManager',
-  rowSelection = 'rowSelection',
 }
+
+/** List of available SlickGrid Extensions (Controls & Plugins) */
+export type ExtensionNameTypeString =
+  | 'autoTooltip'
+  | 'cellExternalCopyManager'
+  | 'cellMenu'
+  | 'checkboxSelector'
+  | 'columnPicker'
+  | 'contextMenu'
+  | 'customTooltip'
+  | 'draggableGrouping'
+  | 'groupItemMetaProvider'
+  | 'gridMenu'
+  | 'headerButton'
+  | 'headerMenu'
+  | 'hybridSelection'
+  | 'rowBasedEdit'
+  | 'rowDetailView'
+  | 'rowMoveManager';

@@ -1,0 +1,61 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "extends": ["../../.oxlintrc.json"],
+  "env": {
+    "es2025": true,
+    "browser": true,
+    "shared-node-browser": true
+  },
+  "plugins": ["oxc", "typescript", "vitest"],
+  "jsPlugins": ["@angular-eslint/eslint-plugin"],
+  "ignorePatterns": ["**/*.spec.ts", "**/*.cy.ts", ".angular/*", "dist/", "coverage/", "test/", "**/environment.*.ts", "**/public_api.ts"],
+  "rules": {
+    "@angular-eslint/no-forward-ref": "error",
+    "@angular-eslint/directive-selector": [
+      "error",
+      {
+        "type": "attribute",
+        "prefix": "app",
+        "style": "camelCase"
+      }
+    ],
+    "@angular-eslint/component-selector": [
+      "error",
+      {
+        "type": "element",
+        "style": "kebab-case"
+      }
+    ],
+    "@angular-eslint/prefer-standalone": "error",
+    "typescript/no-unused-expressions": "off",
+    "typescript/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "destructuredArrayIgnorePattern": "^_",
+        "caughtErrors": "none"
+      }
+    ],
+    "typescript/consistent-type-imports": "off",
+    "import/extensions": [
+      "off",
+      "ignorePackages",
+      {
+        "js": "never",
+        "ts": "never"
+      }
+    ],
+    "naming-convention": [
+      "error",
+      {
+        "selector": "directive",
+        "format": ["camelCase"],
+        "prefix": ["app"]
+      },
+      {
+        "selector": "component",
+        "format": ["kebab-case"]
+      }
+    ]
+  }
+}

@@ -4,7 +4,7 @@ import 'multiple-select-vanilla';
 import type { MultipleSelectOption } from 'multiple-select-vanilla';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index.js';
-import { FieldType, OperatorType } from '../../enums/index.js';
+import { FieldType } from '../../enums/index.js';
 import type { Column, Editor, EditorArguments, GridOption } from '../../interfaces/index.js';
 import { Editors } from '../index.js';
 import { SelectEditor } from '../selectEditor.js';
@@ -249,13 +249,6 @@ describe('SelectEditor', () => {
       const editorCount = document.body.querySelectorAll('select.ms-filter.editor-gender').length;
 
       expect(editorCount).toBe(1);
-    });
-
-    it('should initialize the editor with minHeight define in user editor options', () => {
-      mockColumn.editor!.editorOptions = { minHeight: 255 } as MultipleSelectOption;
-      editor = new SelectEditor(editorArguments, true);
-
-      expect(editor.msInstance?.getOptions().minHeight).toBe(255);
     });
 
     it('should initialize the editor with minHeight define in global default user editor options', () => {
@@ -542,7 +535,7 @@ describe('SelectEditor', () => {
         mockColumn = {
           id: 'age',
           field: 'age',
-          type: FieldType.boolean,
+          type: 'boolean',
           editable: true,
           editor: { model: Editors.multipleSelect },
           editorClass: {} as Editor,
@@ -834,7 +827,7 @@ describe('SelectEditor', () => {
           collection: ['other', 'male', 'female'],
           collectionSortBy: {
             sortDesc: true,
-            fieldType: FieldType.string,
+            fieldType: 'string',
           },
         };
 
@@ -859,7 +852,7 @@ describe('SelectEditor', () => {
           collectionSortBy: {
             property: 'value',
             sortDesc: false,
-            fieldType: FieldType.string,
+            fieldType: 'string',
           },
           customStructure: {
             value: 'value',
@@ -884,7 +877,7 @@ describe('SelectEditor', () => {
         mockColumn.editor = {
           collection: ['other', 'male', 'female'],
           collectionFilterBy: {
-            operator: OperatorType.equal,
+            operator: '=',
             value: 'other',
           },
         };
@@ -906,8 +899,8 @@ describe('SelectEditor', () => {
             { value: 'female', description: 'female' },
           ],
           collectionFilterBy: [
-            { property: 'value', operator: OperatorType.notEqual, value: 'other' },
-            { property: 'value', operator: OperatorType.notEqual, value: 'male' },
+            { property: 'value', operator: '!=', value: 'other' },
+            { property: 'value', operator: 'NE', value: 'male' },
           ],
           customStructure: {
             value: 'value',
@@ -932,8 +925,8 @@ describe('SelectEditor', () => {
             { value: 'female', description: 'female' },
           ],
           collectionFilterBy: [
-            { property: 'value', operator: OperatorType.equal, value: 'other' },
-            { property: 'value', operator: OperatorType.equal, value: 'male' },
+            { property: 'value', operator: '=', value: 'other' },
+            { property: 'value', operator: 'EQ', value: 'male' },
           ],
           collectionOptions: {
             filterResultAfterEachPass: 'merge',

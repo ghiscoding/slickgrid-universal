@@ -16,7 +16,10 @@ export interface MenuItem<O = MenuCallbackArgs> {
   /** CSS class to be added to the menu item icon. */
   iconCssClass?: string;
 
-  /** position order in the list, a lower number will make it on top of the list. Internal commands starts at 50. */
+  /**
+   * position order in the list, a lower number will make it on top of the list. Internal commands starts at 50.
+   * @deprecated @use `commandListBuilder`
+   */
   positionOrder?: number;
 
   /** Optional sub-menu title that will shows up when sub-menu commmands/options list is opened */
@@ -42,6 +45,30 @@ export interface MenuItem<O = MenuCallbackArgs> {
 
   /** Item tooltip to show while hovering the command. */
   tooltip?: string;
+
+  // --
+  // Slot support for custom content injection (cross-framework compatible)
+
+  /**
+   * Slot renderer callback for the entire menu item.
+   * @param cmdItem - The menu item object
+   * @param args - The callback args providing access to grid, column, dataContext, etc.
+   * @param event - Optional DOM event (passed during click handling) that allows the renderer to call stopPropagation()
+   * @returns Either an HTML string or an HTMLElement
+   *
+   * @example
+   * // Return HTML string
+   * slotRenderer: (item, args) => `<div>${item.title}</div>`
+   *
+   * // Return HTMLElement with event listeners
+   * slotRenderer: (item, args) => {
+   *   const div = document.createElement('div');
+   *   div.textContent = `${item.title} (Row ${args.dataContext.id})`;
+   *   div.addEventListener('click', () => console.log('clicked'));
+   *   return div;
+   * }
+   */
+  slotRenderer?: (cmdItem: MenuItem<O>, args: O, event?: Event) => string | HTMLElement;
 
   // --
   // action/override callbacks

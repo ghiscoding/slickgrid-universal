@@ -4,7 +4,6 @@
     "target": "es2022",
     "module": "esnext",
     "sourceMap": true,
-    "downlevelIteration": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "esModuleInterop": true,

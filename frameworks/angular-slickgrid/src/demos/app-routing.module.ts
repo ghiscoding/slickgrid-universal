@@ -1,117 +1,58 @@
-import { NgModule } from '@angular/core';
-import { provideRouter, RouterModule, type Routes } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
-import { Example1Component } from './examples/example01.component';
-import { Example2Component } from './examples/example02.component';
-import { Example3Component } from './examples/example03.component';
-import { Example4Component } from './examples/example04.component';
-import { Example5Component } from './examples/example05.component';
-import { Example6Component } from './examples/example06.component';
-import { Example7Component } from './examples/example07.component';
-import { Example8Component } from './examples/example08.component';
-import { Example9Component } from './examples/example09.component';
-import { Example10Component } from './examples/example10.component';
-import { Example11Component } from './examples/example11.component';
-import { Example12Component } from './examples/example12.component';
-import { Example13Component } from './examples/example13.component';
-import { Example14Component } from './examples/example14.component';
-import { Example15Component } from './examples/example15.component';
-import { Example16Component } from './examples/example16.component';
-import { Example17Component } from './examples/example17.component';
-import { Example18Component } from './examples/example18.component';
-import { Example19Component } from './examples/example19.component';
-import { Example20Component } from './examples/example20.component';
-import { Example21Component } from './examples/example21.component';
-import { Example22Component } from './examples/example22.component';
-import { Example23Component } from './examples/example23.component';
-import { Example24Component } from './examples/example24.component';
-import { Example25Component } from './examples/example25.component';
-import { Example26Component } from './examples/example26.component';
-import { Example27Component } from './examples/example27.component';
-import { Example28Component } from './examples/example28.component';
-import { Example29Component } from './examples/example29.component';
-import { Example30Component } from './examples/example30.component';
-import { Example32Component } from './examples/example32.component';
-import { Example33Component } from './examples/example33.component';
-import { Example34Component } from './examples/example34.component';
-import { Example35Component } from './examples/example35.component';
-import { Example36Component } from './examples/example36.component';
-import { Example37Component } from './examples/example37.component';
-import { Example38Component } from './examples/example38.component';
-import { Example39Component } from './examples/example39.component';
-import { Example40Component } from './examples/example40.component';
-import { Example41Component } from './examples/example41.component';
-import { Example42Component } from './examples/example42.component';
-import { Example43Component } from './examples/example43.component';
-import { Example44Component } from './examples/example44.component';
-import { Example45Component } from './examples/example45.component';
-import { Example46Component } from './examples/example46.component';
-import { Example47Component } from './examples/example47.component';
-import { Example48Component } from './examples/example48.component';
-import { Example49Component } from './examples/example49.component';
-import { Example50Component } from './examples/example50.component';
-import { HomeComponent } from './examples/home.component';
-import { SwtCommonGridTestComponent } from './examples/swt-common-grid-test.component';
+import { type Routes } from '@angular/router';
 
-const routes: Routes = [
-  { path: 'home', component: HomeComponent },
-  { path: 'example01', component: Example1Component },
-  { path: 'example02', component: Example2Component },
-  { path: 'example03', component: Example3Component },
-  { path: 'example04', component: Example4Component },
-  { path: 'example05', component: Example5Component },
-  { path: 'example06', component: Example6Component },
-  { path: 'example07', component: Example7Component },
-  { path: 'example08', component: Example8Component },
-  { path: 'example09', component: Example9Component },
-  { path: 'example10', component: Example10Component },
-  { path: 'example11', component: Example11Component },
-  { path: 'example12', component: Example12Component },
-  { path: 'example13', component: Example13Component },
-  { path: 'example14', component: Example14Component },
-  { path: 'example15', component: Example15Component },
-  { path: 'example16', component: Example16Component },
-  { path: 'example17', component: Example17Component },
-  { path: 'example18', component: Example18Component },
-  { path: 'example19', component: Example19Component },
-  { path: 'example20', component: Example20Component },
-  { path: 'example21', component: Example21Component },
-  { path: 'example22', component: Example22Component },
-  { path: 'example23', component: Example23Component },
-  { path: 'example24', component: Example24Component },
-  { path: 'example25', component: Example25Component },
-  { path: 'example26', component: Example26Component },
-  { path: 'example27', component: Example27Component },
-  { path: 'example28', component: Example28Component },
-  { path: 'example29', component: Example29Component },
-  { path: 'example30', component: Example30Component },
-  { path: 'example31', component: SwtCommonGridTestComponent },
-  { path: 'example32', component: Example32Component },
-  { path: 'example33', component: Example33Component },
-  { path: 'example34', component: Example34Component },
-  { path: 'example35', component: Example35Component },
-  { path: 'example36', component: Example36Component },
-  { path: 'example37', component: Example37Component },
-  { path: 'example38', component: Example38Component },
-  { path: 'example39', component: Example39Component },
-  { path: 'example40', component: Example40Component },
-  { path: 'example41', component: Example41Component },
-  { path: 'example42', component: Example42Component },
-  { path: 'example43', component: Example43Component },
-  { path: 'example44', component: Example44Component },
-  { path: 'example45', component: Example45Component },
-  { path: 'example46', component: Example46Component },
-  { path: 'example47', component: Example47Component },
-  { path: 'example48', component: Example48Component },
-  { path: 'example49', component: Example49Component },
-  { path: 'example50', component: Example50Component },
+export const routes: Routes = [
+  { path: 'home', loadComponent: () => import('./examples/home.component').then((m) => m.HomeComponent) },
+  { path: 'example01', loadComponent: () => import('./examples/example01.component').then((m) => m.Example1Component) },
+  { path: 'example02', loadComponent: () => import('./examples/example02.component').then((m) => m.Example2Component) },
+  { path: 'example03', loadComponent: () => import('./examples/example03.component').then((m) => m.Example3Component) },
+  { path: 'example04', loadComponent: () => import('./examples/example04.component').then((m) => m.Example4Component) },
+  { path: 'example05', loadComponent: () => import('./examples/example05.component').then((m) => m.Example5Component) },
+  { path: 'example06', loadComponent: () => import('./examples/example06.component').then((m) => m.Example6Component) },
+  { path: 'example07', loadComponent: () => import('./examples/example07.component').then((m) => m.Example7Component) },
+  { path: 'example08', loadComponent: () => import('./examples/example08.component').then((m) => m.Example8Component) },
+  { path: 'example09', loadComponent: () => import('./examples/example09.component').then((m) => m.Example9Component) },
+  { path: 'example10', loadComponent: () => import('./examples/example10.component').then((m) => m.Example10Component) },
+  { path: 'example11', loadComponent: () => import('./examples/example11.component').then((m) => m.Example11Component) },
+  { path: 'example12', loadComponent: () => import('./examples/example12.component').then((m) => m.Example12Component) },
+  { path: 'example13', loadComponent: () => import('./examples/example13.component').then((m) => m.Example13Component) },
+  { path: 'example14', loadComponent: () => import('./examples/example14.component').then((m) => m.Example14Component) },
+  { path: 'example15', loadComponent: () => import('./examples/example15.component').then((m) => m.Example15Component) },
+  { path: 'example16', loadComponent: () => import('./examples/example16.component').then((m) => m.Example16Component) },
+  { path: 'example17', loadComponent: () => import('./examples/example17.component').then((m) => m.Example17Component) },
+  { path: 'example18', loadComponent: () => import('./examples/example18.component').then((m) => m.Example18Component) },
+  { path: 'example19', loadComponent: () => import('./examples/example19.component').then((m) => m.Example19Component) },
+  { path: 'example20', loadComponent: () => import('./examples/example20.component').then((m) => m.Example20Component) },
+  { path: 'example21', loadComponent: () => import('./examples/example21.component').then((m) => m.Example21Component) },
+  { path: 'example22', loadComponent: () => import('./examples/example22.component').then((m) => m.Example22Component) },
+  { path: 'example23', loadComponent: () => import('./examples/example23.component').then((m) => m.Example23Component) },
+  { path: 'example24', loadComponent: () => import('./examples/example24.component').then((m) => m.Example24Component) },
+  { path: 'example25', loadComponent: () => import('./examples/example25.component').then((m) => m.Example25Component) },
+  { path: 'example26', loadComponent: () => import('./examples/example26.component').then((m) => m.Example26Component) },
+  { path: 'example27', loadComponent: () => import('./examples/example27.component').then((m) => m.Example27Component) },
+  { path: 'example28', loadComponent: () => import('./examples/example28.component').then((m) => m.Example28Component) },
+  { path: 'example29', loadComponent: () => import('./examples/example29.component').then((m) => m.Example29Component) },
+  { path: 'example30', loadComponent: () => import('./examples/example30.component').then((m) => m.Example30Component) },
+  { path: 'example31', loadComponent: () => import('./examples/swt-common-grid-test.component').then((m) => m.SwtCommonGridTestComponent) },
+  { path: 'example32', loadComponent: () => import('./examples/example32.component').then((m) => m.Example32Component) },
+  { path: 'example33', loadComponent: () => import('./examples/example33.component').then((m) => m.Example33Component) },
+  { path: 'example34', loadComponent: () => import('./examples/example34.component').then((m) => m.Example34Component) },
+  { path: 'example35', loadComponent: () => import('./examples/example35.component').then((m) => m.Example35Component) },
+  { path: 'example36', loadComponent: () => import('./examples/example36.component').then((m) => m.Example36Component) },
+  { path: 'example37', loadComponent: () => import('./examples/example37.component').then((m) => m.Example37Component) },
+  { path: 'example38', loadComponent: () => import('./examples/example38.component').then((m) => m.Example38Component) },
+  { path: 'example39', loadComponent: () => import('./examples/example39.component').then((m) => m.Example39Component) },
+  { path: 'example40', loadComponent: () => import('./examples/example40.component').then((m) => m.Example40Component) },
+  { path: 'example41', loadComponent: () => import('./examples/example41.component').then((m) => m.Example41Component) },
+  { path: 'example42', loadComponent: () => import('./examples/example42.component').then((m) => m.Example42Component) },
+  { path: 'example43', loadComponent: () => import('./examples/example43.component').then((m) => m.Example43Component) },
+  { path: 'example44', loadComponent: () => import('./examples/example44.component').then((m) => m.Example44Component) },
+  { path: 'example45', loadComponent: () => import('./examples/example45.component').then((m) => m.Example45Component) },
+  { path: 'example46', loadComponent: () => import('./examples/example46.component').then((m) => m.Example46Component) },
+  { path: 'example47', loadComponent: () => import('./examples/example47.component').then((m) => m.Example47Component) },
+  { path: 'example48', loadComponent: () => import('./examples/example48.component').then((m) => m.Example48Component) },
+  { path: 'example49', loadComponent: () => import('./examples/example49.component').then((m) => m.Example49Component) },
+  { path: 'example50', loadComponent: () => import('./examples/example50.component').then((m) => m.Example50Component) },
+  { path: 'example51', loadComponent: () => import('./examples/example51.component').then((m) => m.Example51Component) },
   { path: '', redirectTo: '/example34', pathMatch: 'full' },
   { path: '**', redirectTo: '/example34', pathMatch: 'full' },
 ];
-
-@NgModule({
-  imports: [RouterModule.forRoot(routes, { useHash: true }), TranslateModule],
-  exports: [RouterModule, TranslateModule],
-  providers: [provideRouter(routes)],
-})
-export class AppRoutingRoutingModule {}

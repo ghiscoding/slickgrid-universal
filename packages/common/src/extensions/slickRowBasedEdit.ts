@@ -42,7 +42,7 @@ interface ButtonTranslation {
  * Row based edit plugin to add edit/delete buttons to each row and only allow editing rows currently in editmode
  */
 export class SlickRowBasedEdit {
-  pluginName = 'RowBasedEdit' as const;
+  readonly pluginName = 'RowBasedEdit';
 
   protected _addonOptions?: RowBasedEditOptions;
   protected _eventHandler: SlickEventHandler;

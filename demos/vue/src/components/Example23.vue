@@ -6,7 +6,6 @@ import { useTranslation } from 'i18next-vue';
 import {
   Filters,
   Formatters,
-  OperatorType,
   SlickgridVue,
   type Column,
   type CurrentFilter,
@@ -101,7 +100,7 @@ function defineGrid() {
       filter: {
         model: Filters.sliderRange,
         maxValue: 100, // or you can use the options as well
-        operator: OperatorType.rangeInclusive, // defaults to inclusive
+        operator: 'RangeInclusive', // defaults to inclusive
         options: {
           hideSliderNumbers: false, // you can hide/show the slider numbers on both side
           min: 0,
@@ -149,7 +148,7 @@ function defineGrid() {
       filterable: true,
       filter: {
         model: Filters.input,
-        operator: OperatorType.rangeExclusive, // defaults to exclusive
+        operator: 'RangeExclusive', // defaults to exclusive
       },
     },
     {
@@ -280,10 +279,10 @@ function predefinedFilterChanged(newPredefinedFilter: string) {
       filters = [
         {
           columnId: 'finish',
-          operator: OperatorType.rangeInclusive,
+          operator: 'RangeInclusive',
           searchTerms: [`${currentYear}-01-01`, `${currentYear}-12-31`],
         },
-        { columnId: 'completed', operator: OperatorType.equal, searchTerms: [true] },
+        { columnId: 'completed', operator: '=', searchTerms: [true] },
       ];
       break;
     case 'nextYearTasks':
@@ -403,7 +402,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
   <slickgrid-vue
     v-model:options="gridOptions"
     v-model:columns="columnDefinitions"
-    v-model:data="dataset"
+    v-model:dataset="dataset"
     grid-id="grid23"
     @onVueGridCreated="vueGridReady($event.detail)"
   >

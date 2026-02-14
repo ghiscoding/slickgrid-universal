@@ -1,4 +1,4 @@
-import type { OperatorString } from '../enums/index.js';
+import type { OperatorType } from '../enums/index.js';
 
 /** Operator detail alternate texts */
 export interface OperatorDetailAlt {
@@ -8,6 +8,6 @@ export interface OperatorDetailAlt {
 
 /** Operator with its Description */
 export interface OperatorDetail extends OperatorDetailAlt {
-  operator: OperatorString;
+  operator: OperatorType;
   desc: string;
 }

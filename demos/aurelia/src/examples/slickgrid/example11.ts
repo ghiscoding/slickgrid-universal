@@ -134,7 +134,7 @@ export class Example11 {
       editable: true,
       enableColumnPicker: true,
       enableCellNavigation: true,
-      enableRowSelection: true,
+      enableSelection: true,
     };
   }
 

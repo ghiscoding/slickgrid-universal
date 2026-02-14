@@ -31,7 +31,8 @@ async function run() {
     for (const changedFile of changedFiles) {
       const fileWithExtension = basename(changedFile);
       const relativeFile = `./src/styles/${fileWithExtension}`;
-      copyfiles([relativeFile], 'dist/styles/sass', { flat: true }, (err) => {
+      const destination = 'dist/styles/sass';
+      copyfiles(relativeFile, destination, { flat: true }, (err) => {
         err ? console.error(err) : console.log(`Copied "${fileWithExtension}" to "dist/styles/sass"`);
       });
     }

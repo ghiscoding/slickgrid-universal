@@ -65,12 +65,14 @@ function saveCurrentGridState() {
   <SlickgridVue gridId="grid1"
     v-model:columns="columnDefinitions"
     v-model:options="gridOptions"
-    v-model:data="dataset"
-    @onVueGridCreated="vueGridReady($event.detail)"
+    v-model:dataset="dataset"
     @onGridStateChanged="gridStateChanged($event.detail)"
+    @onVueGridCreated="vueGridReady($event.detail)"
   />
 </template>
 ```
+
+> **Note** since v10 you can now pass `true` as the argument to `gridStateService.getCurrentGridState(true)` which will return all columns, not just the visible columns but also include the hidden columns and their "hidden" properties.
 
 ### Using Grid Presets & Filter SearchTerm(s)
 What happens when we use the grid `presets` and a [Filter Default SearchTerms](../column-functionalities/filters/select-filter.md#default-search-terms)? In this case, the `presets` will win over filter `searchTerms`. The cascading order of priorities is the following
@@ -90,12 +92,12 @@ export interface CurrentColumn {
 }
 export interface CurrentFilter {
   columnId: string;
-  operator?: OperatorType | OperatorString;
+  operator?: OperatorType;
   searchTerms?: SearchTerm[];
 }
 export interface CurrentSorter {
   columnId: string;
-  direction: SortDirection | SortDirectionString;
+  direction: SortDirection;
 }
 export interface GridState {
   columns?: CurrentColumn[] | null;
@@ -120,7 +122,7 @@ For example, we can set `presets` on a grid like so:
 **Component**
 ```vue
 <script setup lang="ts">
-import { type Column, Filters, Formatters, GridState, OperatorType, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, GridState, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -188,9 +190,9 @@ function gridStateChanged(gridState) {
   <SlickgridVue gridId="grid1"
     v-model:columns="columnDefinitions"
     v-model:options="gridOptions"
-    v-model:data="dataset"
-    @onVueGridCreated="vueGridReady($event.detail)"
+    v-model:dataset="dataset"
     @onGridStateChanged="gridStateChanged($event.detail)"
+    @onVueGridCreated="vueGridReady($event.detail)"
   />
 </template>
 ```
@@ -199,6 +201,10 @@ function gridStateChanged(gridState) {
 You can show/hide or even change a column position via the `presets`, yes `presets` is that powerful. All you need to do is to pass all Columns that you want to show as part of the `columns` property of `presets`. Typically you already have the entire columns definition since you just defined it, so you can loop through it and just use `map` to list the `columns` according to the structure needed (see [preset structure](grid-state-preset#structure.md)). What you have to know is that whatever array you provide to `presets`, that will equal to what the user will see and also in which order the columns will show (the array order does matter in this case). If a Columns is omitted from that array, then it will be considered to be a hidden column (you can still show it through Grid Menu and/or Column Picker).
 
 So let say that we want to hide the last Column on page load, we can just find the column by it's `id` that you want to hide and pass the new column definition to the `presets` (again make sure to follow the correct preset structure).
+
+#### Option 1
+
+Pass the Grid Presets with an array that has less `presets.columns`, whichever column(s) are missing will be considered hidden columns
 
 ```ts
 columnDefinitions.value = [
@@ -210,7 +216,7 @@ columnDefinitions.value = [
 const mappedColumnDefinitions = columnDefinitions.value.map(col => ({ columnId: col.id, width: col.width }));
 mappedColumnDefinitions.pop();
 
-// then pass it to the presets
+// then pass it to the grid presets (an array of columns minus the last column)
 gridOptions.value = {
   presets: {
     columns: mappedColumnDefinitions
@@ -219,6 +225,11 @@ gridOptions.value = {
 ```
 This would be the easiest way to do it.
 
+#### Option 2
+
+Since v10, the second alternative is to pass all the columns to `presets.columns` with some of them having the `hidden` properties. Both approaches are valid in v10, just choose whichever option you prefer.
+
+###### Summary
 As pointed out earlier, the `presets` requires a specific structure where the `columns` is the list of columns to show/hide with their possible widths. Also worth mentioning again that the position in the array is very important as it defines the position shown in the UI.
 
 ##### Component
@@ -239,4 +250,4 @@ gridOptions.value = {
 };
 ```
 
-You could technically redefine by hand the complete list of `columns` that the `presets` requires. I would personally do it via the Column Definitions looping with `map()`, but go manual is also perfectly fine. You would just re-declare the `columns` again with the `id` and `width` and that would work as well.
+You could technically redefine by hand the complete list of `columns` that the `presets` requires. I would personally do it via the Column Definitions looping with `map()`, but loading them manually is also perfectly fine. You would just re-declare the `columns` again with the `id` and `width` (maybe include the `hidden` prop as well) and that would work as well.

@@ -482,7 +482,7 @@ const Example30: React.FC = () => {
       },
       externalResources: [new ExcelExportService(), new SlickCustomTooltip(), compositeEditorInstanceRef.current!],
       enableFiltering: true,
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },
@@ -490,7 +490,7 @@ const Example30: React.FC = () => {
       showPreHeaderPanel: true,
       preHeaderPanelHeight: 28,
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+      enableSelection: true,
       multiSelect: false,
       checkboxSelector: {
         hideInFilterHeaderRow: false,

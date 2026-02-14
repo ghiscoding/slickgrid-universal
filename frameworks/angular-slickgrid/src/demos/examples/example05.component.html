@@ -47,17 +47,19 @@
       </div>
     </div>
     <div class="col-sm-3">
-      <div class="alert alert-danger" *ngIf="errorStatus" data-test="error-status">
-        <em><strong>Backend Error:</strong> <span [innerHTML]="errorStatus"></span></em>
-      </div>
+      @if (errorStatus()) {
+        <div class="alert alert-danger" data-test="error-status">
+          <em><strong>Backend Error:</strong> <span [innerHTML]="errorStatus()"></span></em>
+        </div>
+      }
     </div>
   </div>
 
   <div class="row">
     <div class="col-sm-2">
-      <div [class]="status.class" role="alert" data-test="status">
-        <strong>Status: </strong> {{ status.text }}
-        <span [hidden]="!processing">
+      <div [class]="status().class" role="alert" data-test="status">
+        <strong>Status: </strong> {{ status().text }}
+        <span [hidden]="!processing()">
           <i class="mdi mdi-sync mdi-spin-1s"></i>
         </span>
       </div>
@@ -78,10 +80,12 @@
         Set Sorting Dynamically
       </button>
       <br />
-      <span *ngIf="metrics">
-        <b>Metrics:</b> {{ metrics.endTime | date: "yyyy-MM-dd hh:mm aaaaa'm'" }} | {{ metrics.executionTime }}ms |
-        {{ metrics.totalItemCount }} items
-      </span>
+      @if (metrics()) {
+        <span>
+          <b>Metrics:</b> {{ metrics()?.endTime | date: "yyyy-MM-dd hh:mm aaaaa'm'" }} | {{ metrics()?.executionTime }}ms |
+          {{ metrics()?.totalItemCount }} items
+        </span>
+      }
     </div>
 
     <div class="col-sm-8">
@@ -142,7 +146,7 @@
     gridId="grid5"
     [columns]="columnDefinitions"
     [options]="gridOptions"
-    [paginationOptions]="paginationOptions"
+    [paginationOptions]="paginationOptions()"
     [dataset]="dataset"
     (onAngularGridCreated)="angularGridReady($event.detail)"
     (onGridStateChanged)="gridStateChanged($event.detail)"

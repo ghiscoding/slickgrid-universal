@@ -11,9 +11,7 @@ import { withTranslation } from 'react-i18next';
 import {
   Filters,
   Formatters,
-  OperatorType,
   SlickgridReact,
-  SortDirection,
   type Column,
   type CursorPageInfo,
   type GridOption,
@@ -222,14 +220,14 @@ const Example6: React.FC = () => {
           { columnId: 'finish', width: 130 },
         ],
         filters: [
-          { columnId: 'gender', searchTerms: ['male'], operator: OperatorType.equal },
-          { columnId: 'name', searchTerms: ['Joh*oe'], operator: OperatorType.startsWithEndsWith },
+          { columnId: 'gender', searchTerms: ['male'], operator: '=' },
+          { columnId: 'name', searchTerms: ['Joh*oe'], operator: 'StartsWithEndsWith' },
           { columnId: 'company', searchTerms: ['xyz'], operator: 'IN' },
-          { columnId: 'finish', searchTerms: [presetLowestDay, presetHighestDay], operator: OperatorType.rangeInclusive },
+          { columnId: 'finish', searchTerms: [presetLowestDay, presetHighestDay], operator: 'RangeInclusive' },
         ],
         sorters: [
           { columnId: 'name', direction: 'asc' },
-          { columnId: 'company', direction: SortDirection.DESC },
+          { columnId: 'company', direction: 'DESC' },
         ],
         pagination: { pageNumber: isWithCursorRef.current ? 1 : 2, pageSize: 20 },
       },
@@ -240,7 +238,7 @@ const Example6: React.FC = () => {
           addLocaleIntoQuery: true,
           extraQueryArguments: [{ field: 'userId', value: 123 }],
           filterQueryOverride: ({ fieldName, columnDef, columnFilterOperator, searchValues }) => {
-            if (columnFilterOperator === OperatorType.custom && columnDef?.id === 'name') {
+            if (columnFilterOperator === 'Custom' && columnDef?.id === 'name') {
               return { field: fieldName, operator: 'Like', value: searchValues[0] };
             }
             return;
@@ -339,11 +337,11 @@ const Example6: React.FC = () => {
     const presetHighestDay = `${currentYear}-02-15`;
 
     reactGridRef.current?.filterService.updateFilters([
-      { columnId: 'gender', searchTerms: ['female'], operator: OperatorType.equal },
-      { columnId: 'name', searchTerms: ['Jane'], operator: OperatorType.startsWith },
+      { columnId: 'gender', searchTerms: ['female'], operator: '=' },
+      { columnId: 'name', searchTerms: ['Jane'], operator: 'StartsWith' },
       { columnId: 'company', searchTerms: ['acme'], operator: 'IN' },
-      { columnId: 'billingAddressZip', searchTerms: ['11'], operator: OperatorType.greaterThanOrEqual },
-      { columnId: 'finish', searchTerms: [presetLowestDay, presetHighestDay], operator: OperatorType.rangeInclusive },
+      { columnId: 'billingAddressZip', searchTerms: ['11'], operator: '>=' },
+      { columnId: 'finish', searchTerms: [presetLowestDay, presetHighestDay], operator: 'RangeInclusive' },
     ]);
   }
 
@@ -360,14 +358,14 @@ const Example6: React.FC = () => {
     const presetHighestDay = `${currentYear}-02-15`;
 
     reactGridRef.current?.filterService.updateFilters([
-      { columnId: 'gender', searchTerms: ['male'], operator: OperatorType.equal },
-      { columnId: 'name', searchTerms: ['Joh*oe'], operator: OperatorType.startsWithEndsWith },
+      { columnId: 'gender', searchTerms: ['male'], operator: '=' },
+      { columnId: 'name', searchTerms: ['Joh*oe'], operator: 'StartsWithEndsWith' },
       { columnId: 'company', searchTerms: ['xyz'], operator: 'IN' },
-      { columnId: 'finish', searchTerms: [presetLowestDay, presetHighestDay], operator: OperatorType.rangeInclusive },
+      { columnId: 'finish', searchTerms: [presetLowestDay, presetHighestDay], operator: 'RangeInclusive' },
     ]);
     reactGridRef.current?.sortService.updateSorting([
       { columnId: 'name', direction: 'asc' },
-      { columnId: 'company', direction: SortDirection.DESC },
+      { columnId: 'company', direction: 'DESC' },
     ]);
     setTimeout(() => {
       reactGridRef.current?.paginationService?.changeItemPerPage(20);

@@ -1,7 +1,6 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import {
   Editors,
-  EventNamingStyle,
   Filters,
   // utilities
   formatNumber,
@@ -544,7 +543,7 @@ export default class Example14 {
     });
 
     this.gridOptions = {
-      eventNamingStyle: EventNamingStyle.lowerCase,
+      eventNamingStyle: 'lowerCase',
       editable: true,
       autoAddCustomEditorFormatter: customEditableInputFormatter,
       enableCellNavigation: true,
@@ -584,14 +583,14 @@ export default class Example14 {
       },
       externalResources: [new SlickCustomTooltip(), new ExcelExportService()],
       enableFiltering: true,
-      enableRowSelection: true,
+      enableSelection: true,
       enableCheckboxSelector: true,
       checkboxSelector: {
         applySelectOnAllPages: true, // already defaults to true
         hideInFilterHeaderRow: false,
         hideInColumnTitleRow: true,
       },
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },
@@ -763,7 +762,7 @@ export default class Example14 {
     // just for demo purposes, set it back to its original width
     const columns = this.sgb.slickGrid?.getColumns() as Column[];
     columns.forEach((col) => (col.width = col.originalWidth));
-    this.sgb.slickGrid?.setColumns(columns);
+    this.sgb.slickGrid?.updateColumns();
     this.sgb.slickGrid?.autosizeColumns();
 
     // simple css class to change selected button in the UI

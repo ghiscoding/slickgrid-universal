@@ -2,7 +2,6 @@ import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index.js';
 import type { SlickHybridSelectionModel } from '../../extensions/slickHybridSelectionModel.js';
-import type { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel.js';
 import type { CellArgs, Column, GridOption, OnEventArgs } from '../../interfaces/index.js';
 import {
   GridService,
@@ -26,27 +25,9 @@ const mockHybridSelectionModel = {
   onSelectedRangesChanged: new SlickEvent(),
 } as unknown as SlickHybridSelectionModel;
 
-const mockRowSelectionModel = {
-  constructor: vi.fn(),
-  init: vi.fn(),
-  destroy: vi.fn(),
-  dispose: vi.fn(),
-  getSelectedRows: vi.fn(),
-  setSelectedRows: vi.fn(),
-  getSelectedRanges: vi.fn(),
-  setSelectedRanges: vi.fn(),
-  onSelectedRangesChanged: new SlickEvent(),
-} as unknown as SlickRowSelectionModel;
-
 vi.mock('../../extensions/slickHybridSelectionModel', () => ({
   SlickHybridSelectionModel: vi.fn().mockImplementation(function () {
     return mockHybridSelectionModel;
-  }),
-}));
-
-vi.mock('../../extensions/slickRowSelectionModel', () => ({
-  SlickRowSelectionModel: vi.fn().mockImplementation(function () {
-    return mockRowSelectionModel;
   }),
 }));
 
@@ -102,6 +83,7 @@ const gridStub = {
   getDataItem: vi.fn(),
   getOptions: vi.fn(),
   getColumns: vi.fn(),
+  getVisibleColumns: vi.fn(),
   getSelectionModel: vi.fn(),
   setSelectionModel: vi.fn(),
   getSelectedRows: vi.fn(),
@@ -113,6 +95,7 @@ const gridStub = {
   setOptions: vi.fn(),
   setSelectedRows: vi.fn(),
   scrollRowIntoView: vi.fn(),
+  updateColumnById: vi.fn(),
   updateColumns: vi.fn(),
   updateRow: vi.fn(),
   validateColumnFreezeWidth: vi.fn(),
@@ -140,7 +123,7 @@ describe('Grid Service', () => {
   vi.spyOn(gridStub, 'getOptions').mockReturnValue(mockGridOptions);
 
   beforeEach(() => {
-    mockGridOptions.enableHybridSelection = false;
+    mockGridOptions.enableSelection = false;
     service = new GridService(
       gridStateServiceStub,
       filterServiceStub,
@@ -162,17 +145,8 @@ describe('Grid Service', () => {
   });
 
   it('should dispose of the service and SlickHybridSelectionModel', () => {
-    vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ enableHybridSelection: true } as GridOption);
+    vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ enableSelection: true } as GridOption);
     const disposeSpy = vi.spyOn(mockHybridSelectionModel, 'dispose');
-
-    service.highlightRow(0, 10);
-    service.dispose();
-
-    expect(disposeSpy).toHaveBeenCalled();
-  });
-
-  it('should dispose of the service and SlickRowSelectionModel', () => {
-    const disposeSpy = vi.spyOn(mockRowSelectionModel, 'dispose');
 
     service.highlightRow(0, 10);
     service.dispose();
@@ -186,12 +160,12 @@ describe('Grid Service', () => {
   });
 
   describe('getAllColumnDefinitions method', () => {
-    it('should call "allColumns" GETTER ', () => {
+    it('should call "grid.getColumns"', () => {
       const mockColumns = [
         { id: 'field1', field: 'field1', width: 100 },
         { id: 'field2', field: 'field2', width: 100 },
       ];
-      const getSpy = vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
+      const getSpy = vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
 
       const output = service.getAllColumnDefinitions();
 
@@ -206,7 +180,7 @@ describe('Grid Service', () => {
         { id: 'field1', field: 'field1', width: 100 },
         { id: 'field2', field: 'field2', width: 100 },
       ];
-      const getSpy = vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(mockColumns);
+      const getSpy = vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(mockColumns);
 
       const output = service.getVisibleColumnDefinitions();
 
@@ -329,7 +303,7 @@ describe('Grid Service', () => {
         { id: 0, user: { firstName: 'John', lastName: 'Doe' } },
         { id: 5, user: { firstName: 'Jane', lastName: 'Doe' } },
       ];
-      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true } as GridOption);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableSelection: true } as GridOption);
       const dataviewSpy = vi
         .spyOn(dataviewStub, 'getRowById')
         .mockReturnValue(undefined as any)
@@ -413,9 +387,9 @@ describe('Grid Service', () => {
       expect(selectSpy).not.toHaveBeenCalled();
     });
 
-    it('should expect the row to be selected when calling "upsertItems" with an item when setting the "selecRow" flag and the grid option "enableRowSelection" is set', () => {
+    it('should expect the row to be selected when calling "upsertItems" with an item when setting the "selecRow" flag and the grid option "enableSelection" is set', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableHybridSelection: true } as GridOption);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableSelection: true } as GridOption);
       const dataviewSpy = vi.spyOn(dataviewStub, 'getRowById');
       const serviceUpsertSpy = vi.spyOn(service, 'upsertItem');
       const serviceHighlightSpy = vi.spyOn(service, 'highlightRow');
@@ -578,7 +552,7 @@ describe('Grid Service', () => {
       expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsUpdated', [mockItem]);
     });
 
-    it('should expect the service to call the "updateItemById" when calling "updateItem" and setting the "selecRow" flag and the grid option "enableRowSelection" is set', () => {
+    it('should expect the service to call the "updateItemById" when calling "updateItem" and setting the "selecRow" flag and the grid option "enableSelection" is set', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
       const getRowIdSpy = vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(mockItem.id);
       const getRowIndexSpy = vi.spyOn(dataviewStub, 'getIdxById').mockReturnValue(mockItem.id);
@@ -621,9 +595,9 @@ describe('Grid Service', () => {
       expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsUpdated', [mockItem]);
     });
 
-    it('should expect the row to be selected when calling "updateItems" with an item when setting the "selecRow" flag and the grid option "enableRowSelection" is set', () => {
+    it('should expect the row to be selected when calling "updateItems" with an item when setting the "selecRow" flag and the grid option "enableSelection" is set', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
-      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true } as GridOption);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableSelection: true } as GridOption);
       const updateSpy = vi.spyOn(dataviewStub, 'updateItems');
       const selectSpy = vi.spyOn(service, 'setSelectedRows');
       const serviceHighlightSpy = vi.spyOn(service, 'highlightRow');
@@ -760,7 +734,7 @@ describe('Grid Service', () => {
         flat: mockFlatDataset as any[],
         hierarchical: mockHierarchical as any[],
       });
-      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableSelection: true, enableTreeData: true } as GridOption);
       vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
       const setItemSpy = vi.spyOn(dataviewStub, 'setItems');
       const updateSpy = vi.spyOn(dataviewStub, 'updateItem');
@@ -791,7 +765,7 @@ describe('Grid Service', () => {
         flat: mockFlatDataset as any[],
         hierarchical: mockHierarchical as any[],
       });
-      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableSelection: true, enableTreeData: true } as GridOption);
       vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
       const setItemSpy = vi.spyOn(dataviewStub, 'setItems');
       const updateSpy = vi.spyOn(dataviewStub, 'updateItems');
@@ -907,10 +881,10 @@ describe('Grid Service', () => {
       expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsAdded', [mockItem]);
     });
 
-    it('should expect the row to be selected when calling "addItem" with an item when setting the "selecRow" flag and the grid option "enableRowSelection" is set', () => {
+    it('should expect the row to be selected when calling "addItem" with an item when setting the "selecRow" flag and the grid option "enableSelection" is set', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
       vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
-      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true } as GridOption);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableSelection: true } as GridOption);
       const addSpy = vi.spyOn(dataviewStub, 'insertItem');
       const selectSpy = vi.spyOn(gridStub, 'setSelectedRows');
       const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
@@ -1112,10 +1086,10 @@ describe('Grid Service', () => {
       expect(pubSubSpy).not.toHaveBeenLastCalledWith('onItemsAdded');
     });
 
-    it('should expect the row to be selected when calling "addItems" with an item when setting the "selecRow" flag and the grid option "enableRowSelection" is set', () => {
+    it('should expect the row to be selected when calling "addItems" with an item when setting the "selecRow" flag and the grid option "enableSelection" is set', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
       vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
-      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true } as GridOption);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableSelection: true } as GridOption);
       const insertSpy = vi.spyOn(dataviewStub, 'insertItems');
       const beginUpdateSpy = vi.spyOn(dataviewStub, 'beginUpdate');
       const endUpdateSpy = vi.spyOn(dataviewStub, 'endUpdate');
@@ -1132,11 +1106,11 @@ describe('Grid Service', () => {
       expect(pubSubSpy).toHaveBeenLastCalledWith('onItemsAdded', [mockItem]);
     });
 
-    it('should expect the row to be selected when calling "addItems" with an item wich is not an array when setting the "selecRow" flag and the grid option "enableRowSelection" is set', () => {
+    it('should expect the row to be selected when calling "addItems" with an item wich is not an array when setting the "selecRow" flag and the grid option "enableSelection" is set', () => {
       const mockItem = { id: 0, user: { firstName: 'John', lastName: 'Doe' } };
       vi.spyOn(dataviewStub, 'getRowById').mockReturnValue(0);
       vi.spyOn(gridStub, 'getOptions').mockReturnValue({
-        enableRowSelection: true,
+        enableSelection: true,
         selectRow: true,
       } as GridOption);
       const addSpy = vi.spyOn(dataviewStub, 'insertItem');
@@ -1196,7 +1170,7 @@ describe('Grid Service', () => {
         flat: mockFlatDataset as any[],
         hierarchical: mockHierarchical as any[],
       });
-      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableSelection: true, enableTreeData: true } as GridOption);
       vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
       const setItemSpy = vi.spyOn(dataviewStub, 'setItems');
       const addSpy = vi.spyOn(dataviewStub, 'addItem');
@@ -1230,7 +1204,7 @@ describe('Grid Service', () => {
         flat: mockFlatDataset as any[],
         hierarchical: mockHierarchical as any[],
       });
-      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableSelection: true, enableTreeData: true } as GridOption);
       vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
       const setItemSpy = vi.spyOn(dataviewStub, 'setItems');
       const addSpy = vi.spyOn(dataviewStub, 'addItem');
@@ -1264,7 +1238,7 @@ describe('Grid Service', () => {
         flat: mockFlatDataset as any[],
         hierarchical: mockHierarchical as any[],
       });
-      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableRowSelection: true, enableTreeData: true } as GridOption);
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableAutoResize: true, enableSelection: true, enableTreeData: true } as GridOption);
       vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
       const setItemSpy = vi.spyOn(dataviewStub, 'setItems');
       const addSpy = vi.spyOn(dataviewStub, 'addItems');
@@ -1399,8 +1373,8 @@ describe('Grid Service', () => {
       expect(selectionSpy).toHaveBeenCalledWith([]);
     });
 
-    it('should remove any row selection when the grid option "enableRowSelection" is enabled', () => {
-      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableRowSelection: true } as GridOption);
+    it('should remove any row selection when the grid option "enableSelection" is enabled', () => {
+      vi.spyOn(gridStub, 'getOptions').mockReturnValue({ enableSelection: true } as GridOption);
       const mockItem = { id: 4, user: { firstName: 'John', lastName: 'Doe' } };
       const selectionSpy = vi.spyOn(service, 'setSelectedRows');
 
@@ -1585,14 +1559,13 @@ describe('Grid Service', () => {
 
     it('should call "clearPinning" and expect SlickGrid "setOptions" and "setColumns" to be called with frozen options being reset', () => {
       const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
-      const setColumnsSpy = vi.spyOn(gridStub, 'setColumns');
+      const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
       sharedService.slickGrid = gridStub;
-      vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
-      vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock.slice(0, 1));
+      vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columnsMock.slice(0, 1));
 
       service.clearPinning();
 
-      expect(setColumnsSpy).toHaveBeenCalled();
+      expect(updateColumnSpy).toHaveBeenCalled();
       expect(setOptionsSpy).toHaveBeenCalledWith({ frozenBottom: false, frozenColumn: -1, frozenRow: -1, enableMouseWheelScrollHandler: false });
     });
 
@@ -1803,12 +1776,12 @@ describe('Grid Service', () => {
         { id: 'field3', field: 'field3' },
       ] as Column[];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-      const setColSpy = vi.spyOn(gridStub, 'setColumns');
+      const updateColumnIdSpy = vi.spyOn(gridStub, 'updateColumnById');
 
       const output = service.hideColumnById('xyz');
 
       expect(output).toBe(-1);
-      expect(setColSpy).not.toHaveBeenCalled();
+      expect(updateColumnIdSpy).not.toHaveBeenCalled();
     });
 
     it('should set new columns minus the column to hide and it should keep new set as the new "visibleColumns"', () => {
@@ -1822,17 +1795,15 @@ describe('Grid Service', () => {
         { id: 'field3', field: 'field3' },
       ] as Column[];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-      const setVisibleSpy = vi.spyOn(SharedService.prototype, 'visibleColumns', 'set');
       const autoSizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
-      const setColsSpy = vi.spyOn(gridStub, 'setColumns');
+      const updateColumnIdSpy = vi.spyOn(gridStub, 'updateColumnById');
       const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       const output = service.hideColumnById('field2');
 
+      expect(updateColumnIdSpy).toHaveBeenCalledWith('field2', { hidden: true }, true);
       expect(output).toBe(1);
       expect(autoSizeSpy).toHaveBeenCalled();
-      expect(setVisibleSpy).toHaveBeenCalledWith(mockWithoutColumns);
-      expect(setColsSpy).toHaveBeenCalledWith(mockWithoutColumns);
       expect(pubSubSpy).toHaveBeenCalledWith('onHideColumns', { columns: mockWithoutColumns });
     });
 
@@ -1842,21 +1813,15 @@ describe('Grid Service', () => {
         { id: 'field2', width: 150 },
         { id: 'field3', field: 'field3' },
       ] as Column[];
-      const mockWithoutColumns = [
-        { id: 'field1', width: 100 },
-        { id: 'field3', field: 'field3' },
-      ] as Column[];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-      const setVisibleSpy = vi.spyOn(SharedService.prototype, 'visibleColumns', 'set');
       const autoSizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
-      const setColsSpy = vi.spyOn(gridStub, 'setColumns');
+      const updateColumnIdSpy = vi.spyOn(gridStub, 'updateColumnById');
       const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       service.hideColumnById('field2', { triggerEvent: false });
 
+      expect(updateColumnIdSpy).toHaveBeenCalledWith('field2', { hidden: true }, true);
       expect(autoSizeSpy).toHaveBeenCalled();
-      expect(setVisibleSpy).toHaveBeenCalledWith(mockWithoutColumns);
-      expect(setColsSpy).toHaveBeenCalledWith(mockWithoutColumns);
       expect(pubSubSpy).not.toHaveBeenCalled();
     });
 
@@ -1866,21 +1831,15 @@ describe('Grid Service', () => {
         { id: 'field2', width: 150 },
         { id: 'field3', field: 'field3' },
       ] as Column[];
-      const mockWithoutColumns = [
-        { id: 'field1', width: 100 },
-        { id: 'field3', field: 'field3' },
-      ] as Column[];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-      const setVisibleSpy = vi.spyOn(SharedService.prototype, 'visibleColumns', 'set');
       const autoSizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
-      const setColsSpy = vi.spyOn(gridStub, 'setColumns');
+      const updateColumnIdSpy = vi.spyOn(gridStub, 'updateColumnById');
       const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
       service.hideColumnById('field2', { autoResizeColumns: false });
 
+      expect(updateColumnIdSpy).toBeCalledWith('field2', { hidden: true }, true);
       expect(autoSizeSpy).not.toHaveBeenCalled();
-      expect(setVisibleSpy).toHaveBeenCalledWith(mockWithoutColumns);
-      expect(setColsSpy).toHaveBeenCalledWith(mockWithoutColumns);
       expect(pubSubSpy).toHaveBeenCalled();
     });
 
@@ -1890,26 +1849,20 @@ describe('Grid Service', () => {
         { id: 'field2', width: 150 },
         { id: 'field3', field: 'field3' },
       ] as Column[];
-      const mockWithoutColumns = [
-        { id: 'field1', width: 100 },
-        { id: 'field3', field: 'field3' },
-      ] as Column[];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-      const setVisibleSpy = vi.spyOn(SharedService.prototype, 'visibleColumns', 'set');
       vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
       const autoSizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
-      const setColsSpy = vi.spyOn(gridStub, 'setColumns');
+      const updateColumnIdSpy = vi.spyOn(gridStub, 'updateColumnById');
 
       service.hideColumnById('field2', { hideFromColumnPicker: true });
 
+      expect(updateColumnIdSpy).toHaveBeenCalledWith('field2', { hidden: true }, true);
       expect(autoSizeSpy).toHaveBeenCalled();
-      expect(setVisibleSpy).toHaveBeenCalledWith(mockWithoutColumns);
       expect(mockColumns).toEqual([
         { id: 'field1', width: 100 },
         { id: 'field2', width: 150, excludeFromColumnPicker: true },
         { id: 'field3', field: 'field3' },
       ]);
-      expect(setColsSpy).toHaveBeenCalledWith(mockWithoutColumns);
     });
 
     it('should set new columns minus the column to hide AND also hide the column from the column picker when "hideFromColumnPicker" is set to False', () => {
@@ -1918,26 +1871,20 @@ describe('Grid Service', () => {
         { id: 'field2', width: 150 },
         { id: 'field3', field: 'field3' },
       ] as Column[];
-      const mockWithoutColumns = [
-        { id: 'field1', width: 100 },
-        { id: 'field3', field: 'field3' },
-      ] as Column[];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
-      const setVisibleSpy = vi.spyOn(SharedService.prototype, 'visibleColumns', 'set');
       vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(mockColumns);
       const autoSizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
-      const setColsSpy = vi.spyOn(gridStub, 'setColumns');
+      const updateColumnIdSpy = vi.spyOn(gridStub, 'updateColumnById');
 
       service.hideColumnById('field2', { autoResizeColumns: false, hideFromGridMenu: true });
 
+      expect(updateColumnIdSpy).toHaveBeenCalledWith('field2', { hidden: true }, true);
       expect(autoSizeSpy).not.toHaveBeenCalled();
-      expect(setVisibleSpy).toHaveBeenCalledWith(mockWithoutColumns);
       expect(mockColumns).toEqual([
         { id: 'field1', width: 100 },
         { id: 'field2', width: 150, excludeFromGridMenu: true },
         { id: 'field3', field: 'field3' },
       ]);
-      expect(setColsSpy).toHaveBeenCalledWith(mockWithoutColumns);
     });
   });
 
@@ -1952,10 +1899,12 @@ describe('Grid Service', () => {
       const autoSizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
       const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
       const hideByIdSpy = vi.spyOn(service, 'hideColumnById');
-      const setColSpy = vi.spyOn(gridStub, 'setColumns');
+      const updateColumnIdSpy = vi.spyOn(gridStub, 'updateColumnById');
+      const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
 
       service.hideColumnByIds(['field2', 'field3']);
 
+      expect(updateColumnIdSpy).toHaveBeenCalledTimes(2);
       expect(hideByIdSpy).toHaveBeenCalledTimes(2);
       expect(hideByIdSpy).toHaveBeenNthCalledWith(1, 'field2', {
         applySetColumns: false,
@@ -1973,7 +1922,7 @@ describe('Grid Service', () => {
       });
       expect(autoSizeSpy).toHaveBeenCalled();
       expect(pubSubSpy).toHaveBeenCalledWith('onHideColumns', { columns: expect.any(Array) });
-      expect(setColSpy).toHaveBeenCalledTimes(1);
+      expect(updateColumnSpy).toHaveBeenCalledTimes(1);
     });
 
     it('should loop through the Ids provided and call hideColumnById on each of them with same options BUT not auto size columns neither trigger when both are disabled', () => {
@@ -1986,10 +1935,12 @@ describe('Grid Service', () => {
       const autoSizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
       const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
       const hideByIdSpy = vi.spyOn(service, 'hideColumnById');
-      const setColSpy = vi.spyOn(gridStub, 'setColumns');
+      const updateColumnIdSpy = vi.spyOn(gridStub, 'updateColumnById');
+      const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
 
       service.hideColumnByIds(['field2', 'field3'], { autoResizeColumns: false, triggerEvent: false });
 
+      expect(updateColumnIdSpy).toHaveBeenCalledTimes(2);
       expect(hideByIdSpy).toHaveBeenCalledTimes(2);
       expect(hideByIdSpy).toHaveBeenNthCalledWith(1, 'field2', {
         applySetColumns: false,
@@ -2007,7 +1958,7 @@ describe('Grid Service', () => {
       });
       expect(autoSizeSpy).not.toHaveBeenCalled();
       expect(pubSubSpy).not.toHaveBeenCalled();
-      expect(setColSpy).toHaveBeenCalledTimes(1);
+      expect(updateColumnSpy).toHaveBeenCalledTimes(1);
     });
 
     it('should loop through the Ids provided and call hideColumnById on each of them with same options and hide from column picker when "hideFromColumnPicker" is enabled', () => {
@@ -2076,16 +2027,13 @@ describe('Grid Service', () => {
       ] as Column[];
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockAllColumns);
       const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
-      const setColSpy = vi.spyOn(gridStub, 'setColumns');
+      const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
 
       service.showColumnByIds(['field2', 'field3']);
 
       expect(pubSubSpy).toHaveBeenCalledWith('onShowColumns', { columns: expect.any(Array) });
-      expect(setColSpy).toHaveBeenCalledTimes(1);
-      expect(setColSpy).toHaveBeenCalledWith([
-        { excludeFromColumnPicker: true, excludeFromGridMenu: true, id: 'field2', width: 150 },
-        { excludeFromColumnPicker: true, excludeFromGridMenu: true, field: 'field3', id: 'field3' },
-      ]);
+      expect(updateColumnSpy).toHaveBeenCalledTimes(1);
+      expect(updateColumnSpy).toHaveBeenCalledWith();
     });
   });
 

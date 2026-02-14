@@ -1,10 +1,10 @@
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
+  createDomElement,
   Editors,
   Filters,
   Formatters,
-  OperatorType,
   type AureliaGridInstance,
   type Column,
   type EditCommand,
@@ -139,6 +139,31 @@ export class Example33 {
           // renderRegularTooltipAsHtml: true, // defaults to false, regular "title" tooltip won't be rendered as html unless specified via this flag (also "\r\n" will be replaced by <br>)
           // maxWidth: 75,
           // maxHeight: 30,
+        },
+      },
+      {
+        id: 'button',
+        name: 'Button Tooltip',
+        field: 'title',
+        width: 100,
+        minWidth: 100,
+        filterable: true,
+        excludeFromExport: true,
+        formatter: (_row, _cell, value) => {
+          const button = createDomElement('button', {
+            className: 'btn btn-outline-secondary btn-icon btn-sm',
+            title: 'This is the button tooltip',
+          });
+          const icon = createDomElement('i', { className: 'mdi mdi-information', title: 'icon tooltip' });
+          const text = createDomElement('span', { textContent: 'Hello Task' });
+          button.appendChild(icon);
+          button.appendChild(text);
+          button.addEventListener('click', () => alert(`Clicked button for ${value}`));
+          return button;
+        },
+        // define tooltip options here OR for the entire grid via the grid options (cell tooltip options will have precedence over grid options)
+        customTooltip: {
+          useRegularTooltip: true, // note regular tooltip will try to find a "title" attribute in the cell formatter (it won't work without a cell formatter)
         },
       },
       {
@@ -320,7 +345,7 @@ export class Example33 {
           collectionOptions: { separatorBetweenTextLabels: ' ' },
           options: { minHeight: 70 } as MultipleSelectOption,
           model: Filters.multipleSelect,
-          operator: OperatorType.inContains,
+          operator: 'IN_CONTAINS',
         },
       },
       {
@@ -403,19 +428,21 @@ export class Example33 {
         headerFormatter: this.headerFormatter,
         headerRowFormatter: this.headerRowFormatter,
         usabilityOverride: (args) => args.cell !== 0 && args?.column?.id !== 'action', // don't show on first/last columns
+        observeAllTooltips: true, // observe all elements with title/data-slick-tooltip attributes (not just SlickGrid elements)
+        observeTooltipContainer: 'body', // defaults to 'body', target a specific container (only works when observeAllTooltips is enabled)
       },
       presets: {
         filters: [{ columnId: 'prerequisites', searchTerms: [1, 3, 5, 7, 9, 12, 15, 18, 21, 25, 28, 29, 30, 32, 34] }],
       },
-      rowHeight: 33,
+      rowHeight: 38,
       enableFiltering: true,
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },
       showCustomFooter: true,
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+      enableSelection: true,
       checkboxSelector: {
         hideInFilterHeaderRow: false,
         hideInColumnTitleRow: true,
@@ -432,7 +459,7 @@ export class Example33 {
         onCommand: (e, args) => this.executeCommand(e, args),
         onOptionSelected: (_e, args) => {
           // change "Completed" property with new option selected from the Cell Menu
-          const dataContext = args && args.dataContext;
+          const dataContext = args?.dataContext;
           if (dataContext && dataContext.hasOwnProperty('completed')) {
             dataContext.completed = args.item.option;
             this.aureliaGrid.gridService.updateItem(dataContext);
@@ -457,7 +484,7 @@ export class Example33 {
         id: i,
         title: 'Task ' + i,
         duration: Math.round(Math.random() * 100),
-        description: `This is a sample task description.\nIt can be multiline\r\rAnother line...`,
+        description: i > 500 ? null : `This is a sample task description.\nIt can be multiline\r\rAnother line...`,
         percentComplete: Math.floor(Math.random() * (100 - 5 + 1) + 5),
         start: new Date(randomYear, randomMonth, randomDay),
         finish: randomFinish < new Date() ? '' : randomFinish, // make sure the random date is earlier than today
@@ -564,5 +591,19 @@ export class Example33 {
     const action = this.hideSubTitle ? 'add' : 'remove';
     document.querySelector('.subtitle')?.classList[action]('hidden');
     this.aureliaGrid.resizerService.resizeGrid(0);
+  }
+
+  setFiltersDynamically(operator: string) {
+    const operatorType = operator === '=' ? '=' : '!=';
+    this.aureliaGrid.filterService.updateFilters(
+      [
+        {
+          columnId: 'desc',
+          operator: operatorType,
+          searchTerms: [''],
+        },
+      ],
+      true
+    );
   }
 }

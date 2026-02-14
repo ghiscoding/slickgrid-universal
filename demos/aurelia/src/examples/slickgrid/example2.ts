@@ -129,7 +129,7 @@ export class Example2 {
         minWidth: 100,
         formatter: customEnableButtonFormatter,
         onCellClick: (_e, args) => {
-          this.toggleCompletedProperty(args && args.dataContext);
+          this.toggleCompletedProperty(args?.dataContext);
         },
       },
     ];

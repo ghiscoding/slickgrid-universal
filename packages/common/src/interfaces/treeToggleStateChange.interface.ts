@@ -1,4 +1,4 @@
-import type { ToggleStateChangeType } from '../enums/toggleStateChangeType.js';
+import type { ToggleStateChangeType } from '../enums/toggleStateChange.type.js';
 import type { TreeToggledItem } from './treeToggledItem.interface.js';
 
 export interface TreeToggleStateChange {

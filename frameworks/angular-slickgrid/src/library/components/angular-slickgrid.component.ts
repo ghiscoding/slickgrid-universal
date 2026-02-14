@@ -1,6 +1,6 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
   ApplicationRef,
-  ChangeDetectorRef,
   Component,
   ContentChild,
   ElementRef,
@@ -16,16 +16,13 @@ import {
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  // utilities
   autoAddEditorFormatterToColumnsWithEditor,
-  // services
   BackendUtilityService,
   CollectionService,
   emptyElement,
-  EventNamingStyle,
-  ExtensionName,
   ExtensionService,
   ExtensionUtility,
+  ExternalResourceConstructor,
   FilterFactory,
   FilterService,
   GridEventService,
@@ -34,6 +31,7 @@ import {
   HeaderGroupingService,
   isColumnDateType,
   PaginationService,
+  PluginFlagMappings,
   ResizerService,
   SharedService,
   SlickDataView,
@@ -69,7 +67,6 @@ import { extend } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 import { Observable } from 'rxjs';
 import { Constants } from '../constants';
-import { SlickRowDetailView } from '../extensions/slickRowDetailView';
 import { GlobalGridOptions } from '../global-grid-options';
 import type { AngularGridInstance, ExternalTestingDependencies, GridOption } from '../models/index';
 import { AngularUtilService } from '../services/angularUtil.service';
@@ -79,11 +76,22 @@ import type { AngularSlickgridOutputs, RegularEventOutput, SlickEventOutput } fr
 
 const WARN_NO_PREPARSE_DATE_SIZE = 10000; // data size to warn user when pre-parse isn't enabled
 
+export interface AngularSlickRowDetailView {
+  create(columns: Column[], gridOptions: GridOption): any;
+  init(grid: SlickGrid, containerService?: ContainerService): void;
+}
+
 @Component({
   selector: 'angular-slickgrid',
-  templateUrl: './angular-slickgrid.component.html',
+  template: `
+    <div id="slickGridContainer-{{ gridId }}" class="gridPane" [class]="containerClasses">
+      <ng-container *ngTemplateOutlet="slickgridHeader"></ng-container>
+      <div [attr.id]="gridId" class="slickgrid-container"></div>
+      <ng-container *ngTemplateOutlet="slickgridFooter"></ng-container>
+    </div>
+  `,
   providers: [AngularUtilService, TranslaterService], // make everything transient (non-singleton)
-  standalone: false,
+  imports: [NgTemplateOutlet],
 })
 export class AngularSlickgridComponent<TData = any> implements AfterViewInit, OnDestroy {
   protected _dataset?: TData[] | null;
@@ -101,7 +109,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
   protected _isPaginationInitialized = false;
   protected _isLocalGrid = true;
   protected _paginationOptions: Pagination | undefined;
-  protected _registeredResources: ExternalResource[] = [];
+  protected _registeredResources: Array<ExternalResource | ExternalResourceConstructor> = [];
   protected _scrollEndCalled = false;
   dataView!: SlickDataView;
   slickGrid!: SlickGrid;
@@ -124,7 +132,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
   slickFooter?: SlickFooterComponent;
   slickPagination?: BasePaginationComponent;
   paginationComponent: BasePaginationComponent | undefined;
-  slickRowDetailView?: SlickRowDetailView;
+  slickRowDetailView?: AngularSlickRowDetailView;
 
   // services
   backendUtilityService!: BackendUtilityService;
@@ -144,9 +152,10 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
   sortService: SortService;
   treeDataService: TreeDataService;
 
-  @Input() customDataView: any;
-  @Input() gridId = '';
+  @Input() readonly customDataView: any;
+  @Input() readonly gridId = '';
   @Input() options: GridOption = {};
+  @Input() containerClasses?: string[] = undefined;
 
   @Input()
   get paginationOptions(): Pagination | undefined {
@@ -403,7 +412,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
     this._isDatasetHierarchicalInitialized = isInitialized;
   }
 
-  get registeredResources(): ExternalResource[] {
+  get registeredResources(): Array<ExternalResource | ExternalResourceConstructor> {
     return this._registeredResources;
   }
 
@@ -413,19 +422,18 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
   constructor(
     protected readonly angularUtilService: AngularUtilService,
     protected readonly appRef: ApplicationRef,
-    protected readonly cd: ChangeDetectorRef,
     protected readonly containerService: ContainerService,
     protected readonly elm: ElementRef,
     @Optional() protected readonly translate: TranslateService,
     @Optional() protected readonly translaterService: TranslaterService,
-    @Inject('config') protected forRootConfig: GridOption,
-    @Inject('externalService') externalServices: ExternalTestingDependencies
+    @Optional() @Inject('defaultGridOption') protected forRootConfig?: GridOption,
+    @Optional() @Inject('externalService') externalServices?: ExternalTestingDependencies
   ) {
     const slickgridConfig = new SlickgridConfig();
 
     // initialize and assign all Service Dependencies
     this._eventPubSubService = externalServices?.eventPubSubService ?? new EventPubSubService(this.elm.nativeElement);
-    this._eventPubSubService.eventNamingStyle = EventNamingStyle.camelCase;
+    this._eventPubSubService.eventNamingStyle = 'camelCase';
 
     this.backendUtilityService = externalServices?.backendUtilityService ?? new BackendUtilityService();
     this.gridEventService = externalServices?.gridEventService ?? new GridEventService();
@@ -609,8 +617,8 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
     if (Array.isArray(this._registeredResources)) {
       while (this._registeredResources.length > 0) {
         const res = this._registeredResources.pop();
-        if (res?.dispose) {
-          res.dispose();
+        if (typeof (res as ExternalResource)?.dispose === 'function') {
+          (res as ExternalResource).dispose!();
         }
       }
     }
@@ -669,7 +677,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
       this.options.enableMouseWheelScrollHandler = true;
     }
 
-    this._eventPubSubService.eventNamingStyle = this.options?.eventNamingStyle ?? EventNamingStyle.camelCase;
+    this._eventPubSubService.eventNamingStyle = this.options?.eventNamingStyle ?? 'camelCase';
     this._eventPubSubService.publish('onBeforeGridCreate', true);
 
     // make sure the dataset is initialized (if not it will throw an error that it cannot getLength of null)
@@ -712,7 +720,6 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
 
     // save reference for all columns before they optionally become hidden/visible
     this.sharedService.allColumns = this._columnDefinitions;
-    this.sharedService.visibleColumns = this._columnDefinitions;
 
     // before certain extentions/plugins potentially adds extra columns not created by the user itself (RowMove, RowDetail, RowSelections)
     // we'll subscribe to the event and push back the change to the user so they always use full column defs array including extra cols
@@ -747,15 +754,14 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
       this.slickGrid.registerPlugin(this.groupItemMetadataProvider); // register GroupItemMetadataProvider when Grouping is enabled
     }
 
+    // get any possible Services that user want to register
+    this.registerResources();
+
     this.extensionService.bindDifferentExtensions();
     this.bindDifferentHooks(this.slickGrid, this.options, this.dataView);
 
     // when it's a frozen grid, we need to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward
     this.sharedService.frozenVisibleColumnId = this.slickGrid.getFrozenColumnId();
-
-    // get any possible Services that user want to register
-    this.registerResources();
-
     // initialize the SlickGrid grid
     this.slickGrid.init();
 
@@ -812,10 +818,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
 
       const datasetLn = this.dataView.getLength() || this._dataset?.length || 0;
       if (datasetLn > 0) {
-        if (
-          !this._isDatasetInitialized &&
-          (this.options.enableCheckboxSelector || this.options.enableRowSelection || this.options.enableHybridSelection)
-        ) {
+        if (!this._isDatasetInitialized && (this.options.enableCheckboxSelector || this.options.enableSelection)) {
           this.loadRowSelectionPresetWhenExists();
         }
         this.loadFilterPresetsWhenDatasetInitialized();
@@ -894,7 +897,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
       this.slickGrid &&
       !isSyncGridSelectionEnabled &&
       this.options?.backendServiceApi &&
-      (this.options.enableRowSelection || this.options.enableHybridSelection || this.options.enableCheckboxSelector)
+      (this.options.enableSelection || this.options.enableCheckboxSelector)
     ) {
       this.slickGrid.setSelectedRows([]);
     }
@@ -908,7 +911,6 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
       change: { newValues: { pageNumber, pageSize }, type: 'pagination' },
       gridState: this.gridStateService.getCurrentGridState(),
     });
-    this.cd.markForCheck();
   }
 
   /**
@@ -1013,9 +1015,8 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
 
     if (this.options.enableTranslate) {
       this.extensionService.translateColumnHeaders(undefined, newColumns);
-    } else {
-      this.extensionService.renderColumnHeaders(newColumns, true);
     }
+    this.extensionService.renderColumnHeaders(newColumns, true);
 
     if (this.options?.enableAutoSizeColumns) {
       this.slickGrid.autosizeColumns();
@@ -1117,10 +1118,9 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
         }
       }
 
-      // when column are reordered, we need to update the visibleColumn array
-      this._eventHandler.subscribe(grid.onColumnsReordered, (_e, args) => {
+      // when column are reordered, we need to update SharedService flag
+      this._eventHandler.subscribe(grid.onColumnsReordered, () => {
         this.sharedService.hasColumnsReordered = true;
-        this.sharedService.visibleColumns = args.impactedColumns;
       });
 
       this._eventHandler.subscribe(grid.onSetOptions, (_e, args) => {
@@ -1388,7 +1388,6 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
       this.renderPagination();
       this._isPaginationInitialized = true;
     }
-    this.cd.detectChanges();
   }
 
   /** Load the Editor Collection asynchronously and replace the "collection" property when Observable resolves */
@@ -1411,46 +1410,13 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
     }
   }
 
-  protected insertDynamicPresetColumns(columnId: string, gridPresetColumns: Column[]) {
-    if (this._columnDefinitions) {
-      const columnPosition = this._columnDefinitions.findIndex((c) => c.id === columnId);
-      if (columnPosition >= 0) {
-        const dynColumn = this._columnDefinitions[columnPosition];
-        if (dynColumn?.id === columnId && !gridPresetColumns.some((c) => c.id === columnId)) {
-          columnPosition > 0 ? gridPresetColumns.splice(columnPosition, 0, dynColumn) : gridPresetColumns.unshift(dynColumn);
-        }
-      }
-    }
-  }
-
   /** Load any possible Columns Grid Presets */
   protected loadColumnPresetsWhenDatasetInitialized() {
     // if user entered some Columns "presets", we need to reflect them all in the grid
     if (Array.isArray(this.options.presets?.columns) && this.options.presets.columns.length > 0) {
-      const gridPresetColumns: Column[] = this.gridStateService.getAssociatedGridColumns(this.slickGrid, this.options.presets.columns);
-      if (Array.isArray(gridPresetColumns) && gridPresetColumns.length > 0 && Array.isArray(this._columnDefinitions)) {
-        // make sure that the dynamic columns are included in presets (1.Row Move, 2. Row Selection, 3. Row Detail)
-        if (this.options.enableRowMoveManager) {
-          const rmmColId = this.options?.rowMoveManager?.columnId ?? '_move';
-          this.insertDynamicPresetColumns(rmmColId, gridPresetColumns);
-        }
-        if (this.options.enableCheckboxSelector) {
-          const chkColId = this.options?.checkboxSelector?.columnId ?? '_checkbox_selector';
-          this.insertDynamicPresetColumns(chkColId, gridPresetColumns);
-        }
-        if (this.options.enableRowDetailView) {
-          const rdvColId = this.options?.rowDetailView?.columnId ?? '_detail_selector';
-          this.insertDynamicPresetColumns(rdvColId, gridPresetColumns);
-        }
-
-        // keep copy the original optional `width` properties optionally provided by the user.
-        // We will use this when doing a resize by cell content, if user provided a `width` it won't override it.
-        gridPresetColumns.forEach((col) => (col.originalWidth = col.width));
-
-        // finally set the new presets columns (including checkbox selector if need be)
-        this.slickGrid.setColumns(gridPresetColumns);
-        this.sharedService.visibleColumns = gridPresetColumns;
-      }
+      // delegate to GridStateService for centralized column arrangement logic
+      // we pass `false` for triggerAutoSizeColumns to maintain original behavior on preset load
+      this.gridStateService.changeColumnsArrangement(this.options.presets.columns, false);
     }
   }
 
@@ -1490,8 +1456,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
   protected loadRowSelectionPresetWhenExists() {
     // if user entered some Row Selections "presets"
     const presets = this.options?.presets;
-    const enableRowSelection =
-      this.options && (this.options.enableCheckboxSelector || this.options.enableRowSelection || this.options.enableHybridSelection);
+    const enableRowSelection = this.options && (this.options.enableCheckboxSelector || this.options.enableSelection);
     if (
       enableRowSelection &&
       this.slickGrid?.getSelectionModel() &&
@@ -1544,12 +1509,12 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
     if (
       options?.pagination &&
       (gridOptions.enablePagination || gridOptions.backendServiceApi) &&
-      (this.forRootConfig.pagination || gridOptions.pagination)
+      (this.forRootConfig?.pagination || gridOptions.pagination)
     ) {
       options.pagination.pageSize =
-        gridOptions.pagination?.pageSize ?? this.forRootConfig.pagination?.pageSize ?? GlobalGridOptions.pagination!.pageSize;
+        gridOptions.pagination?.pageSize ?? this.forRootConfig?.pagination?.pageSize ?? GlobalGridOptions.pagination!.pageSize;
       options.pagination.pageSizes =
-        gridOptions.pagination?.pageSizes ?? this.forRootConfig.pagination?.pageSizes ?? GlobalGridOptions.pagination!.pageSizes;
+        gridOptions.pagination?.pageSizes ?? this.forRootConfig?.pagination?.pageSizes ?? GlobalGridOptions.pagination!.pageSizes;
     }
 
     // also make sure to show the header row if user have enabled filtering
@@ -1573,7 +1538,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
   }
 
   /** Add a register of a new external resource, user could also optional dispose all previous resources before pushing any new resources to the resources array list. */
-  registerExternalResources(resources: ExternalResource[], disposePreviousResources = false) {
+  registerExternalResources(resources: Array<ExternalResource | ExternalResourceConstructor>, disposePreviousResources = false) {
     if (disposePreviousResources) {
       this.disposeExternalResources();
     }
@@ -1593,27 +1558,55 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
     this.registerRxJsResource(new RxJsResource() as RxJsFacade);
 
     if (this.options.enableRowDetailView) {
-      this.slickRowDetailView = new SlickRowDetailView(
-        this.angularUtilService,
-        this.appRef,
-        this._eventPubSubService,
-        this.elm.nativeElement,
-        this.rxjs
-      );
-      this.slickRowDetailView.create(this.columns, this.options);
-      this.extensionService.addExtensionToList(ExtensionName.rowDetailView, {
-        name: ExtensionName.rowDetailView,
-        instance: this.slickRowDetailView,
-      });
+      const RowDetailClass = this._registeredResources.find((res: any) => res.pluginName === 'AngularSlickRowDetailView') as
+        | ExternalResourceConstructor
+        | undefined;
+      if (!RowDetailClass) {
+        throw new Error(
+          '[Angular-Slickgrid] You enabled the Row Detail View feature but you did not provide the "AngularSlickRowDetailView" class as an external resource.'
+        );
+      }
+
+      if (RowDetailClass) {
+        const rowDetailInstance = new RowDetailClass(
+          this.angularUtilService,
+          this.appRef,
+          this._eventPubSubService,
+          this.elm.nativeElement,
+          this.rxjs
+        ) as AngularSlickRowDetailView;
+        this.slickRowDetailView = rowDetailInstance;
+        rowDetailInstance.create(this.columns, this.options);
+        this.extensionService.addExtensionToList('rowDetailView', {
+          name: 'rowDetailView',
+          instance: this.slickRowDetailView,
+        });
+      }
     }
   }
 
-  protected initializeExternalResources(resources: ExternalResource[]) {
+  /** initialized & auto-enable external registered resources, e.g. if user registers `ExcelExportService` then let's auto-enable `enableExcelExport:true` */
+  protected autoEnableInitializedResources(resource: ExternalResource | ExternalResourceConstructor): void {
+    if (this.slickGrid && typeof (resource as ExternalResource).init === 'function') {
+      (resource as ExternalResource).init!(this.slickGrid, this.containerService);
+    }
+
+    // auto-enable unless the flag was specifically disabled by the end user
+    if ('pluginName' in (resource as ExternalResource)) {
+      const pluginFlagName = PluginFlagMappings.get((resource as ExternalResource).pluginName!);
+      if (pluginFlagName && this.options[pluginFlagName] !== false) {
+        this.options[pluginFlagName] = true;
+        this.slickGrid?.setOptions({ [pluginFlagName]: true });
+      }
+    }
+  }
+
+  protected initializeExternalResources(resources: Array<ExternalResource | ExternalResourceConstructor>) {
+    PluginFlagMappings.set('AngularSlickRowDetailView', 'enableRowDetailView');
+
     if (Array.isArray(resources)) {
       for (const resource of resources) {
-        if (this.slickGrid && typeof resource.init === 'function') {
-          resource.init(this.slickGrid, this.containerService);
-        }
+        this.autoEnableInitializedResources(resource);
       }
     }
   }

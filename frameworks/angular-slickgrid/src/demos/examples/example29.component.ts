@@ -1,14 +1,15 @@
-import { NgIf } from '@angular/common';
 import { Component, type OnInit } from '@angular/core';
-import { AngularSlickgridModule, Formatters, type AngularGridInstance, type Column, type GridOption } from '../../library';
+import { AngularSlickgridComponent, Formatters, type AngularGridInstance, type Column, type GridOption } from '../../library';
 
 const NB_ITEMS = 995;
 
 @Component({
   template: `<button (click)="clickMe()">I'm a button from an Angular component (click me)</button>
-    <div *ngIf="clickedTimes">You've clicked me {{ clickedTimes }} time(s)</div>`,
+    @if (clickedTimes) {
+      <div>You've clicked me {{ clickedTimes }} time(s)</div>
+    }`,
   selector: 'custom-footer',
-  imports: [NgIf],
+  imports: [],
 })
 export class CustomFooterComponent {
   clickedTimes = 0;
@@ -20,7 +21,7 @@ export class CustomFooterComponent {
 
 @Component({
   templateUrl: './example29.component.html',
-  imports: [AngularSlickgridModule, CustomFooterComponent],
+  imports: [AngularSlickgridComponent, CustomFooterComponent],
 })
 export class Example29Component implements OnInit {
   angularGrid!: AngularGridInstance;

@@ -307,7 +307,7 @@ When adding a backend API to the `onSave` you can (and should) wrap your code in
 
 ## How to Skip a Mass Change
 ### Mass Change (Mass-Update / Mass-Selection) - Skipping according to certain condition(s)
-The use case would be to skip a change, in silent without any errors shown, if another column or property has value(s) that do not match our condition expectaation. A possible use case could be found under [Example 12](https://github.com/ghiscoding/slickgrid-universal/blob/eb1d5069e10b8b2cb2f14ac964f2c6e2b8f006a9/examples/webpack-demo-vanilla-bundle/src/examples/example12.ts#L949-L956), the use case that we could do is the following: "Do not apply a mass change on the 'Duration' column that is below 5 days if its 'Complexity' column is set to 'Complex' or 'Very Complex'", the code do this use case is shown below. Also note that the 3rd argument of `onSave` (in our case `dataContextOrUpdatedDatasetPreview`) will have the updated dataset but without the change(s) that got skipped
+The use case would be to skip a change, in silent without any errors shown, if another column or property has value(s) that do not match our condition expectaation. A possible use case could be found under [Example 12](https://github.com/ghiscoding/slickgrid-universal/blob/44d9a5230b9cb57f5fecbf6e7b12b8ef9f3ab69d/demos/vanilla/src/examples/example12.ts#L1093-L1101), the use case that we could do is the following: "Do not apply a mass change on the 'Duration' column that is below 5 days if its 'Complexity' column is set to 'Complex' or 'Very Complex'", the code do this use case is shown below. Also note that the 3rd argument of `onSave` (in our case `dataContextOrUpdatedDatasetPreview`) will have the updated dataset but without the change(s) that got skipped
 
 ```ts
 compositeEditorInstance.openDetails({
@@ -481,7 +481,7 @@ const Example: React.FC = () => {
     // you can also change some editor options
     // not all Editors supports this functionality, so far only these Editors are supported: AutoComplete, Date, Single/Multiple Select
     if (columnDef.id === 'completed') {
-      compositeEditorInstance.changeFormEditorOption('percentComplete', 'filter', true); // multiple-select.js, show filter in dropdown
+      compositeEditorInstance.changeFormEditorOption('percentComplete', 'filter', true); // multiple-select-vanilla, show filter in dropdown
       compositeEditorInstance.changeFormEditorOption('product', 'minLength', 3);         // autocomplete, change minLength char to type
       this.compositeEditorInstance.changeFormEditorOption('finish', 'displayDateMin', 'today'); // calendar picker, change minDate to today
     }

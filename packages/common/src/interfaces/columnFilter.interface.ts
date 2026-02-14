@@ -1,4 +1,4 @@
-import type { FieldType, OperatorString, OperatorType, SearchTerm } from '../enums/index.js';
+import type { FieldType, OperatorType, SearchTerm } from '../enums/index.js';
 import type { Observable, Subject } from '../services/rxjsFacade.js';
 import type {
   CollectionCustomStructure,
@@ -36,7 +36,7 @@ export interface ColumnFilter {
   searchTerms?: SearchTerm[] | undefined;
 
   /** Operator to use when filtering (>, >=, EQ, IN, ...) */
-  operator?: OperatorType | OperatorString;
+  operator?: OperatorType;
 
   /** Maximum value of the filter, works only with Filters supporting it (text, number, float, slider) */
   maxValue?: number | string;
@@ -94,12 +94,6 @@ export interface ColumnFilter {
   enableTranslateLabel?: boolean;
 
   /**
-   * @deprecated @use `options` instead.
-   * Options that could be provided to the Filter, example: `{ container: 'body', maxHeight: 250 }`
-   */
-  filterOptions?: any;
-
-  /**
    * Options, typically 3rd party lib options, that could be provided to the Filter, example: `{ container: 'body', maxHeight: 250}`
    *
    * Please note that if you use options that have model interfaces that exists,
@@ -122,7 +116,7 @@ export interface ColumnFilter {
   filterShortcuts?: Array<
     Omit<MenuCommandItem, 'command' | 'divider' | 'action'> & {
       searchTerms: SearchTerm[];
-      operator?: OperatorType | OperatorString;
+      operator?: OperatorType;
     }
   >;
 
@@ -170,7 +164,7 @@ export interface ColumnFilter {
   targetSelector?: string;
 
   /** What is the Field Type that can be used by the Filter (as precedence over the "type" set the column definition) */
-  type?: (typeof FieldType)[keyof typeof FieldType];
+  type?: FieldType;
 
   /** Step value of the filter, works only with Filters supporting it (input text, number, float, range, slider) */
   valueStep?: number | string;

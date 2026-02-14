@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, ViewEncapsulation, type OnInit } from '@angular/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   Editors,
   Filters,
   formatNumber,
@@ -44,7 +44,7 @@ const myCustomTitleValidator = (value: any) => {
   templateUrl: './example32.component.html',
   styleUrls: ['./example32.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  imports: [AngularSlickgridModule],
+  imports: [AngularSlickgridComponent],
 })
 export class Example32Component implements OnInit {
   angularGrid!: AngularGridInstance;
@@ -495,13 +495,13 @@ export class Example32Component implements OnInit {
       },
       externalResources: [new ExcelExportService()],
       enableFiltering: true,
-      enableRowSelection: true,
+      enableSelection: true,
       enableCheckboxSelector: true,
       checkboxSelector: {
         hideInFilterHeaderRow: false,
         hideInColumnTitleRow: true,
       },
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },
@@ -586,7 +586,7 @@ export class Example32Component implements OnInit {
     // just for demo purposes, set it back to its original width
     const columns = this.angularGrid.slickGrid.getColumns() as Column[];
     columns.forEach((col) => (col.width = col.originalWidth));
-    this.angularGrid.slickGrid.setColumns(columns);
+    this.angularGrid.slickGrid.updateColumns();
     this.angularGrid.slickGrid.autosizeColumns();
     this.isUsingDefaultResize = true;
   }

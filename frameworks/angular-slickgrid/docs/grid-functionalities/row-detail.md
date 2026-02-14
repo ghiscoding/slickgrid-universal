@@ -6,7 +6,7 @@
 - [Row Detail - View Component](#row-detail---view-component)
 - [Access Parent Component (grid) from the Child Component (row detail)](#access-parent-component-grid-from-the-child-component-row-detail)
 - Troubleshooting
-  - [Adding a Column dynamically is removing the Row Selection, why is that?](#adding-a-column-dynamically-is-removing-the-row-selection-why-is-that)
+  - [Adding a Column dynamically is removing the Row Selection column, why is that?](#adding-a-column-dynamically-is-removing-the-row-selection-column-why-is-that)
 
 ### Demo
 [Demo Page](https://ghiscoding.github.io/angular-slickgrid-demos/#/rowdetail) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-rowdetail.component.ts)
@@ -25,6 +25,8 @@ A Row Detail allows you to open a detail panel which can contain extra and/or mo
 
 ## Usage
 
+> Starting from version 10, Row Detail is now an optional package and must be installed separately (`@slickgrid-universal/angular-row-detail-plugin`)
+
 ##### View
 ```html
 <angular-slickgrid
@@ -38,6 +40,8 @@ A Row Detail allows you to open a detail panel which can contain extra and/or mo
 
 ##### Component
 ```ts
+import { AngularSlickRowDetailView } from '@slickgrid-universal/angular-row-detail-plugin'; // for v10 and above
+
 @Component({
   templateUrl: './grid-rowdetail.component.html'
 })
@@ -59,9 +63,10 @@ export class GridRowDetailComponent implements OnInit, OnDestroy {
     this.gridOptions = {
       enableRowDetailView: true,
       // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
-      rowSelectionOptions: {
+      selectionOptions: {
         selectActiveRow: true
       },
+      externalResources: [AngularSlickRowDetailView], // for v10 and above
       rowDetailView: {
         // We can load the "process" asynchronously in 2 different ways (httpClient OR even Promise)
         process: (item) => this.http.get(`api/item/${item.id}`),
@@ -108,7 +113,7 @@ Row Detail is an addon (commonly known as a plugin and are opt-in addon), becaus
 ```ts
 changeDetailViewRowCount() {
   if (this.angularGrid && this.angularGrid.extensionService) {
-    const rowDetailInstance = this.angularGrid.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView);
+    const rowDetailInstance = this.angularGrid.extensionService.getExtensionInstanceByName('rowDetailView');
     const options = rowDetailInstance.getOptions();
     options.panelRows = this.detailViewRowCount; // change number of rows dynamically
     rowDetailInstance.setOptions(options);
@@ -124,7 +129,7 @@ Same as previous paragraph, after we get the SlickGrid addon instance, we can ca
 ```ts
 closeAllRowDetail() {
   if (this.angularGrid && this.angularGrid.extensionService) {
-    const rowDetailInstance = this.angularGrid.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView);
+    const rowDetailInstance = this.angularGrid.extensionService.getExtensionInstanceByName('rowDetailView');
     rowDetailInstance.collapseAll();
   }
 }
@@ -134,7 +139,7 @@ This requires a bit more work, you can call the method `collapseDetailView(item)
 ```ts
 closeRowDetail(gridRowIndex: number) {
   if (this.angularGrid && this.angularGrid.extensionService) {
-    const rowDetailInstance = this.angularGrid.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView);
+    const rowDetailInstance = this.angularGrid.extensionService.getExtensionInstanceByName('rowDetailView');
     const item = this.angularGrid.gridService.getDataItemByRowIndex(gridRowIndex);
     rowDetailInstance.collapseDetailView(item);
   }
@@ -178,7 +183,7 @@ Same concept as the preload, we pass an Angular Component to the `viewComponent`
         //  ... row detail options
 
         // View Component to load when row detail data is ready
-        // also make sure that it's part of your App Module `entryComponents` array
+        // also make sure that it's part of your App Module `entryComponents` array  (for `angular-slickgrid` < 10)
         viewComponent: RowDetailViewComponent,
       }
     };
@@ -241,7 +246,7 @@ export class RowDetailViewComponent {
   }
 }
 ```
-###### App Module
+###### App Module (for `angular-slickgrid` < 10)
 Also make sure that it's part of your App Module `entryComponents` array since this will be a dynamically created component.
 
 ```ts
@@ -358,7 +363,7 @@ export class RowDetailViewComponent {
 ```
 
 ## Troubleshooting
-### Adding a Column dynamically is removing the Row Selection, why is that?
+### Adding a Column dynamically is removing the Row Selection column, why is that?
 The reason is because the Row Selection (checkbox) plugin is a special column and Angular-Slickgrid is adding an extra column dynamically for the Row Selection checkbox and that is **not** reflected in your local copy of `columnDefinitions`. To address this issue, you need to get the Angular-Slickgrid internal copy of all columns (including the extra columns), you can get it via `getAllColumnDefinitions()` from the Grid Service and then you can use to that array and that will work.
 
 ```html
@@ -396,6 +401,7 @@ Main Grid Component
 
 ```ts
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { AngularSlickRowDetailView } from '@slickgrid-universal/angular-row-detail-plugin'; // for v10 and above
 import { AngularGridInstance, Column, GridOption, GridState } from 'angular-slickgrid';
 
 @Component({
@@ -427,15 +433,10 @@ export class MainGridComponent implements OnInit {
     this.gridOptions = {
       enableRowDetailView: true,
       // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
-      rowSelectionOptions: {
+      selectionOptions: {
         selectActiveRow: true
       },
-      preRegisterExternalExtensions: (pubSubService) => {
-        // Row Detail View is a special case because of its requirement to create extra column definition dynamically
-        // so it must be pre-registered before SlickGrid is instantiated, we can do so via this option
-        const rowDetail = new SlickRowDetailView(pubSubService as EventPubSubService);
-        return [{ name: ExtensionName.rowDetailView, instance: rowDetail }];
-      },
+      externalResources: [AngularSlickRowDetailView], // for v10 and above
       rowDetailView: {
         process: (item: any) => simulateServerAsyncCall(item),
         loadOnce: false, // IMPORTANT, you can't use loadOnce with inner grid because only HTML template are re-rendered, not JS events

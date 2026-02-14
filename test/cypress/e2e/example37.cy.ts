@@ -160,19 +160,17 @@ describe('Example 37 - Hybrid Selection Model', () => {
     });
 
     it('should click on row 4 and 5 row checkbox and expect 5 full rows to be selected', () => {
-      cy.get('.grid37-2 .slick-row[data-row="4"] .slick-cell.l0.r0').as('task4');
       cy.get('.grid37-2 .slick-row[data-row="4"] .slick-cell.l1.r1').should('contain', '4');
-      cy.get('@task4').click();
+      cy.get('.grid37-2 .slick-row[data-row="4"] input[type=checkbox]').click({ force: true });
       cy.get('.grid37-2 .slick-viewport-top.slick-viewport-left').scrollTo('top');
       cy.get('.grid37-2 .slick-row[data-row="4"] .slick-cell.l0.r0').should('have.class', 'selected');
       cy.get('.grid37-2 .slick-cell.selected').should('have.length', 8 * 1);
 
       // select another row
-      cy.get('.grid37-2 .slick-row[data-row="5"] .slick-cell.l0.r0').as('task5');
       cy.get('.grid37-2 .slick-row[data-row="5"] .slick-cell.l1.r1').should('contain', '5');
-      cy.get('@task5').click();
+      cy.get('.grid37-2 .slick-row[data-row="5"] input[type=checkbox]').click({ force: true });
       cy.get('.grid37-2 .slick-viewport-top.slick-viewport-left').scrollTo('top');
-      cy.get('@task5').should('have.class', 'selected');
+      cy.get('.grid37-2 .slick-row[data-row="5"] .slick-cell.l0.r0').should('have.class', 'selected');
       cy.get('.grid37-2 .slick-cell.selected').should('have.length', 8 * 2);
     });
   });

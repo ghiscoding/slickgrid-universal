@@ -23,7 +23,7 @@ const columnDefinitions = [
     filterable: true,
     filter: {
       model: Filters.input,
-      operator: OperatorType.rangeInclusive // defaults to exclusive
+      operator: 'RangeInclusive' // defaults to exclusive
 
       // or use the string (case sensitive)
       operator: 'RangeInclusive', // defaults to exclusive
@@ -37,7 +37,7 @@ You can use a regular input filter with the 2 dots (..) notation to represent a 
 
 ##### Component
 ```ts
-import { Filters, Formatters, GridOption, OperatorType } from '@slickgrid-universal/common';
+import { Filters, Formatters, GridOption } from '@slickgrid-universal/common';
 
 const Example: React.FC = () => {
   const [dataset, setDataset] = useState<any[]>([]);
@@ -57,7 +57,7 @@ const Example: React.FC = () => {
         // input filter is the default, so you can skip this unless you want to specify the `operator`
         filter: {
           model: 'input',
-          operator: OperatorType.rangeInclusive // defaults to exclusive
+          operator: 'RangeInclusive' // defaults to exclusive
         }
       },
     ]);
@@ -72,7 +72,7 @@ The slider range filter is very useful if you can just want to use the mouse to 
 
 ##### Component
 ```ts
-import { Filters, Formatters, GridOption, SliderRangeOption, OperatorType } from '@slickgrid-universal/commomn';
+import { Filters, Formatters, GridOption, SliderRangeOption } from '@slickgrid-universal/commomn';
 
 const Example: React.FC = () => {
   const [dataset, setDataset] = useState<any[]>([]);
@@ -92,7 +92,7 @@ const Example: React.FC = () => {
         filter: {
           model: Filters.sliderRange,
           maxValue: 100, // or you can use the options as well
-          operator: OperatorType.rangeInclusive, // optional, defaults to exclusive
+          operator: 'RangeInclusive', // optional, defaults to exclusive
           params: { hideSliderNumbers: false }, // you can hide/show the slider numbers on both side
 
           // you can also optionally pass any option of the Slider filter
@@ -140,7 +140,7 @@ The date range filter allows you to search data between 2 dates, it uses the [Va
 > **Note** we use [Tempo](https://tempo.formkit.com/) to parse and format Dates to the chosen format via the `type` option when provided in your column definition.
 
 ##### Component
-import { Filters, Formatters, GridOption, OperatorType, VanillaCalendarOption } from '@slickgrid-universal/common';
+import { Filters, Formatters, GridOption, VanillaCalendarOption } from '@slickgrid-universal/common';
 
 ```typescript
 const Example: React.FC = () => {

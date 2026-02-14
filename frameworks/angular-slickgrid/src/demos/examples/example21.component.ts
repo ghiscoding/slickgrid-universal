@@ -1,13 +1,12 @@
-import { NgFor } from '@angular/common';
 import { Component, ViewEncapsulation, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   Formatters,
   type AngularGridInstance,
   type Column,
   type GridOption,
-  type OperatorString,
+  type OperatorType,
   type SlickDataView,
   type SlickGrid,
 } from '../../library';
@@ -16,7 +15,7 @@ import {
   encapsulation: ViewEncapsulation.None,
   styleUrls: ['./example21.component.scss'],
   templateUrl: './example21.component.html',
-  imports: [AngularSlickgridModule, FormsModule, NgFor],
+  imports: [AngularSlickgridComponent, FormsModule],
 })
 export class Example21Component implements OnInit {
   angularGrid!: AngularGridInstance;
@@ -26,7 +25,7 @@ export class Example21Component implements OnInit {
   gridOptions!: GridOption;
   dataset!: any[];
   hideSubTitle = false;
-  operatorList: OperatorString[] = ['=', '<', '<=', '>', '>=', '<>', 'StartsWith', 'EndsWith'];
+  operatorList: OperatorType[] = ['=', '<', '<=', '>', '>=', '<>', 'StartsWith', 'EndsWith'];
   selectedOperator = '=';
   searchValue = '';
   selectedColumn?: Column;
@@ -108,7 +107,7 @@ export class Example21Component implements OnInit {
       alwaysShowVerticalScroll: false,
       enableColumnPicker: true,
       enableCellNavigation: true,
-      enableRowSelection: true,
+      enableSelection: true,
     };
 
     // mock a dataset
@@ -145,7 +144,7 @@ export class Example21Component implements OnInit {
   updateFilter() {
     this.angularGrid.filterService.updateSingleFilter({
       columnId: `${this.selectedColumn!.id || ''}`,
-      operator: this.selectedOperator as OperatorString,
+      operator: this.selectedOperator as OperatorType,
       searchTerms: [this.searchValue || ''],
     });
   }

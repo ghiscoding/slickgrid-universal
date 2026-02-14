@@ -7,7 +7,7 @@
 - [Disable External Button when having Empty Selection](#disable-external-button-when-having-empty-selection)
 - [Change Row Selections](#change-row-selections)
 - Troubleshooting
-  - [Adding a Column dynamically is removing the Row Selection, why is that?](#adding-a-column-dynamically-is-removing-the-row-selection-why-is-that)
+  - [Adding a Column dynamically is removing the Row Selection column, why is that?](#adding-a-column-dynamically-is-removing-the-row-selection-column-why-is-that)
 - [Hybrid Selection Model (cell+row selection)](#hybrid-selection-model-and-drag-fill)
 
 ### Description
@@ -19,7 +19,7 @@ For row selection, you can simply play with couple of grid options (see below) a
 [Demo Page](https://ghiscoding.github.io/slickgrid-vue-demos/#/Example10) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example10.ts)
 
 ## Single Row Selection
-For a single row selection, you need to have `enableCellNavigation: true`, `enableRowSelection: true` and `multiSelect: false` and as described earlier, subscribe to `onSelectedRowsChanged` (for that you need to bind to `(gridChanged)`). There are 2 ways to choose for the implementation of a row selection, option **1.** is the most common option and is the recommend way of doing it.
+For a single row selection, you need to have `enableCellNavigation: true`, `enableSelection: true` (or `enableRowSelection` in <=9.x) and `multiSelect: false` and as described earlier, subscribe to `onSelectedRowsChanged` (for that you need to bind to `(gridChanged)`). There are 2 ways to choose for the implementation of a row selection, option **1.** is the most common option and is the recommend way of doing it.
 
 ### 1. with Custom Event (preferred way)
 You can also do it through a Custom Event listener since all SlickGrid events are exposed as Custom Events. For more info see [Docs - OnEvents](../events/grid-dataview-events.md)
@@ -27,7 +27,7 @@ You can also do it through a Custom Event listener since all SlickGrid events ar
 #### Component
 ```vue
 <script setup lang="ts">
-import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -47,7 +47,7 @@ function defineGrid() {
     enableAutoResize: true,
     enableCellNavigation: true,
     enableCheckboxSelector: true,
-    enableRowSelection: true,
+    enableSelection: true, // or `enableRowSelection` in <=9.x
     multiSelect: false,
   }
 }
@@ -60,11 +60,11 @@ function handleRowSelection(event, args) {
 <template>
   <SlickgridVue
     grid-id="grid1"
-    columnDefinitions="columnDefinitions1"
-    gridOptions="gridOptions1"}
-    dataset="dataset1"
-    onvueGridCreated="vueGrid1Ready($event.detail)"
-    onSelectedRowsChanged="onGrid1SelectedRowsChanged($event.detail.eventData, $event.detail.args)"
+    v-model:columns="columnDefinitions"
+    v-model:options="gridOptions"
+    v-model:dataset="dataset"
+    @onSelectedRowsChanged="onGrid1SelectedRowsChanged($event.detail.eventData, $event.detail.args)"
+    @onVueGridCreated="vueGridReady($event.detail)"
   />
 </template>
 ```
@@ -78,7 +78,7 @@ function defineGrid() {
   gridOptions.value = {
     enableAutoResize: true,
     enableCellNavigation: true,
-    enableRowSelection: true
+    enableSelection: true // or `enableRowSelection` in <=9.x
   }
 }
 
@@ -96,7 +96,7 @@ function gridObjChanged(grid) {
 ```
 
 ## Multiple Row Selections
-As for multiple row selections, you need to disable `enableCellNavigation` and enable `enableCheckboxSelector` and `enableRowSelection`. Then as describe earlier, you will subscribe to `onSelectedRowsChanged` (for that you need to bind to `(gridChanged)`). There are 2 ways to choose for the implementation of a row selection, option **1.** is the most common option and is the recommend way of doing it.
+As for multiple row selections, you need to disable `enableCellNavigation` and enable `enableCheckboxSelector` and `enableSelection` (or `enableRowSelection` in <=9.x). Then as describe earlier, you will subscribe to `onSelectedRowsChanged` (for that you need to bind to `(gridChanged)`). There are 2 ways to choose for the implementation of a row selection, option **1.** is the most common option and is the recommend way of doing it.
 
 ### 1. with event (preferred way)
 You can also do it through an event since all SlickGrid events are exposed. For more info see [Docs - OnEvents - `3. event`](../events/grid-dataview-events.md)
@@ -104,7 +104,7 @@ You can also do it through an event since all SlickGrid events are exposed. For 
 #### Component
 ```vue
 <script setup lang="ts">
-import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -124,9 +124,12 @@ function defineGrid() {
     enableAutoResize: true,
     enableCellNavigation: true,
     enableCheckboxSelector: true,
-    enableRowSelection: true,
+
+    // `enableRowSelection` in <=9.x OR `enableSelection` in >=10.0
+    enableSelection: true,
+
     // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
-    rowSelectionOptions: {
+    selectionOptions: {
       // True (Single Selection), False (Multiple Selections)
       selectActiveRow: false
     },
@@ -143,9 +146,9 @@ function handleRowSelection(event, args) {
     grid-id="grid1"
     v-model:columns="columnDefinitions1"
     v-model:options="gridOptions1"
-    v-model:data="dataset1"
-    @onVueGridCreated="vueGrid1Ready($event.detail)"
+    v-model:dataset="dataset1"
     @onSelectedRowsChanged="onGrid1SelectedRowsChanged($event.detail.eventData, $event.detail.args)"
+    @onVueGridCreated="vueGrid1Ready($event.detail)"
   />
 </template>
 ```
@@ -155,7 +158,7 @@ It's preferable to use the Custom Event listeners, but if you really wish, you c
 #### Component
 ```vue
 <script setup lang="ts">
-import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -171,9 +174,12 @@ function defineGrid() {
     enableAutoResize: true,
     enableCellNavigation: true,
     enableCheckboxSelector: true,
-    enableRowSelection: true,
+
+    // `enableRowSelection` in <=9.x OR `enableSelection` in >=10.0
+    enableSelection: true,
+
     // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
-    rowSelectionOptions: {
+    selectionOptions: {
       // True (Single Selection), False (Multiple Selections)
       selectActiveRow: false
     },
@@ -202,7 +208,7 @@ SlickGrid is so powerful and customizable, you could if you wish mix the multipl
 #### Component
 ```vue
 <script setup lang="ts">
-import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -235,10 +241,10 @@ function handleSingleRowClick(event, args) {
     grid-id="grid1"
     v-model:columns="columnDefinitions1"
     v-model:options="gridOptions1"
-    v-model:data="dataset1"
-    @onVueGridCreated="vueGrid1Ready($event.detail)"
+    v-model:dataset="dataset1"
     @onClick="onCellClicked($event.detail.eventData, $event.detail.args)"
     @onSelectedRowsChanged="onGrid1SelectedRowsChanged($event.detail.eventData, $event.detail.args)"
+    @onVueGridCreated="vueGrid1Ready($event.detail)"
   />
 </template>
 ```
@@ -249,7 +255,7 @@ You can use `selectableOverride` to provide custom logic to disable certain rows
 #### Component
 ```vue
 <script setup lang="ts">
-import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -262,19 +268,22 @@ onBeforeMount(() => {
 
 function defineGrid() {
   gridOptions.value = {
-    enableRowSelection: true,
     enableCheckboxSelector: true,
     checkboxSelector: {
       // you can override the logic for showing (or not) the expand icon
       // for example, display the expand icon only on every 2nd row
       // selectableOverride: (row: number, dataContext: any, grid: any) => (dataContext.id % 2 === 1)
     },
-    multiSelect: false,
+
+    // `enableRowSelection` in <=9.x OR `enableSelection` in >=10.0
+    enableSelection: true,
+
     // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
-    rowSelectionOptions: {
+    selectionOptions: {
       // True (Single Selection), False (Multiple Selections)
-      selectActiveRow: true,
+      selectActiveRow: false
     },
+    multiSelect: false,
   };
 }
 </script>
@@ -297,10 +306,10 @@ function handleOnSelectedRowsChanged(args) {
     grid-id="grid1"
     v-model:columns="columnDefinitions1"
     v-model:options="gridOptions1"
-    v-model:data="dataset1"
-    @onVueGridCreated="vueGrid1Ready($event.detail)"
+    v-model:dataset="dataset1"
     @onClick="onCellClicked($event.detail.eventData, $event.detail.args)"
     @onSelectedRowsChanged="handleOnSelectedRowsChanged($event.detail.eventData, $event.detail.args)"
+    @onVueGridCreated="vueGrid1Ready($event.detail)"
   />
 </template>
 ```
@@ -323,11 +332,11 @@ function handleOngridStateChanged(gridState) {
     grid-id="grid1"
     v-model:columns="columnDefinitions1"
     v-model:options="gridOptions1"
-    v-model:data="dataset1"
-    @onVueGridCreated="vueGrid1Ready($event.detail)"
+    v-model:dataset="dataset1"
     @onClick="onCellClicked($event.detail.eventData, $event.detail.args)"
     @onGridStateChanged="gridStateChanged($event.detail)"
     @onSelectedRowsChanged="handleOngridStateChanged($event.detail.eventData, $event.detail.args)"
+    @onVueGridCreated="vueGrid1Ready($event.detail)"
   />
 </template>
 ```
@@ -337,7 +346,7 @@ You can change which row(s) are selected by using the built-in SlickGrid method 
 
 ```vue
 <script setup lang="ts">
-import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -368,10 +377,10 @@ function changeRowSelections() {
     grid-id="grid1"
     v-model:columns="columnDefinitions1"
     v-model:options="gridOptions1"
-    v-model:data="dataset1"
-    @onvueGridCreated="vueGrid1Ready($event.detail)"
+    v-model:dataset="dataset1"
     @onClick="onCellClicked($event.detail.eventData, $event.detail.args)"
     @onSelectedRowsChanged="changeRowSelections()"
+    @onVueGridCreated="vueGrid1Ready($event.detail)"
   />
 </template>
 ```
@@ -381,16 +390,16 @@ function changeRowSelections() {
 Starting with v9.10.0, you can now use the new Hybrid Selection Model, this new model will allow you to do Cell Selection & Row Selection in the same grid. This wasn't previously doable before that version because SlickGrid only ever allows 1 selection model to be loaded at once and so we had to load either `SlickCellSelectionModel` or `SlickRowSelectionModel` but never both of them at the same time. The new Hybrid Selection Model is merging both of these plugins in a single plugin allowing us to do both type of selections.
 
 > [!NOTE]
-> You can use `enableHybridSelection: true` grid option to enable the new Hybrid Model, this new model will eventually replace both cell/row selection model in the future since there's no need to keep all these models when only 1 is more than enough
+> You can use `{ enableSelection: true, selectionOptions: { selectionType: 'mixed' }}` grid option to enable the new Hybrid Model, this new model will eventually replace both cell/row selection model in the future since there's no need to keep all these models when only 1 is more than enough
 
 For example, we could use the Excel Copy Buffer (Cell Selection) and use `rowSelectColumnIds` (Row Selection)
 
 ```ts
 gridOptions.value = {
   // enable new hybrid selection model (rows & cells)
-  enableHybridSelection: true,
+  enableSelection: true,
   // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
-  rowSelectionOptions: {
+  selectionOptions: {
     selectActiveRow: true,
     rowSelectColumnIds: ['selector'],
   },
@@ -412,7 +421,7 @@ You can also `onDragReplaceCells` event to drag and fill cell values to the exte
 #### Component
 ```vue
 <script setup lang="ts">
-import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -430,7 +439,7 @@ function defineGrid() {
   // grid options
   gridOptions.value = {
     // enable new hybrid selection model (rows & cells)
-    enableHybridSelection: true,
+    enableSelection: true,
     // ...
   };
 }
@@ -455,7 +464,7 @@ function copyDraggedCellRange(args: OnDragReplaceCellsEventArgs) {
 ```
 
 ## Troubleshooting
-### Adding a Column dynamically is removing the Row Selection, why is that?
+### Adding a Column dynamically is removing the Row Selection column, why is that?
 The reason is because the Row Selection (checkbox) plugin is a special column and slickgrid-vue is adding an extra column dynamically for the Row Selection checkbox and that is **not** reflected in your local copy of `columnDefinitions`. To address this issue, you need to get the slickgrid-vue internal copy of all columns (including the extra columns), you can get it via `getAllColumnDefinitions()` from the Grid Service and then you can use to that array and that will work.
 
 ```vue

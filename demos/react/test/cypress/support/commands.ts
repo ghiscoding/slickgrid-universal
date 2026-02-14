@@ -47,6 +47,7 @@ declare global {
       ): Chainable<HTMLElement | JQuery<HTMLElement>>;
       saveLocalStorage: () => void;
       restoreLocalStorage: () => void;
+      getTransformValue(cssTransformMatrix: string, absoluteValue: boolean, transformType?: 'rotate' | 'scale'): Chainable<number>;
     }
   }
 }
@@ -86,3 +87,35 @@ Cypress.Commands.add('restoreLocalStorage', () => {
     localStorage.setItem(key, LOCAL_STORAGE_MEMORY[key]);
   });
 });
+
+Cypress.Commands.add(
+  'getTransformValue',
+  (
+    cssTransformMatrix: string,
+    absoluteValue: boolean,
+    transformType: 'rotate' | 'scale' = 'rotate' // Default to 'rotate'
+  ): Cypress.Chainable<number> => {
+    if (!cssTransformMatrix || cssTransformMatrix === 'none') {
+      throw new Error('Transform matrix is undefined or none');
+    }
+
+    const cssTransformMatrixIndexes = cssTransformMatrix.split('(')[1].split(')')[0].split(',');
+
+    if (transformType === 'rotate') {
+      const cssTransformScale = Math.sqrt(
+        +cssTransformMatrixIndexes[0] * +cssTransformMatrixIndexes[0] + +cssTransformMatrixIndexes[1] * +cssTransformMatrixIndexes[1]
+      );
+
+      const cssTransformSin = +cssTransformMatrixIndexes[1] / cssTransformScale;
+      const cssTransformAngle = Math.round(Math.asin(cssTransformSin) * (180 / Math.PI));
+
+      return cy.wrap(absoluteValue ? Math.abs(cssTransformAngle) : cssTransformAngle);
+    } else if (transformType === 'scale') {
+      // Assuming scale is based on the first value in the matrix.
+      const scaleValue = +cssTransformMatrixIndexes[0]; // First value typically represents scaling in x direction.
+      return cy.wrap(scaleValue); // Directly return the scale value.
+    }
+
+    throw new Error('Unsupported transform type');
+  }
+);

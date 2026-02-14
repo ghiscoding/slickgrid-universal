@@ -10,4 +10,7 @@ export interface CurrentColumn {
 
   /** Column width */
   width?: number;
+
+  /** when enabled, the "hidden" column property will be included (defaults to false) */
+  hidden?: boolean;
 }

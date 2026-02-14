@@ -4,6 +4,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.0.0-beta.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.12.0...v10.0.0-beta.0) (2026-02-14)
+
+### ⚠ BREAKING CHANGES
+
+* migrate Row/Hybrid Selection flag into a single `enableSelection` flag (#2331)
+
+### Features
+
+* migrate Row/Hybrid Selection flag into a single `enableSelection` flag ([#2331](https://github.com/ghiscoding/slickgrid-universal/issues/2331)) ([5be5e6a](https://github.com/ghiscoding/slickgrid-universal/commit/5be5e6a862ecd024cf43d404769d65c6c1dd335e)) - by @ghiscoding
+
 ## [9.13.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.12.0...v9.13.0) (2026-01-30)
 
 **Note:** Version bump only for package @slickgrid-universal/custom-footer-component

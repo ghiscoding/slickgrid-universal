@@ -21,7 +21,7 @@ This extensions is wrapped around the new SlickGrid Plugin **SlickContextMenu**
 ### Default Usage
 Technically, the Context Menu is enabled by default (copy, export) and so you don't have anything to do to enjoy it (you could disable it at any time). However, if you want to customize the content of the Context Menu, then continue reading. You can customize the menu with 2 different lists, Commands and/or Options, they can be used separately or at the same time. Also note that even though the code shown below makes a separation between the Commands and Options, you can mix them in the same Context Menu.
 
-#### with Commands
+#### with Commands (Static)
 ```ts
 this.gridOptions = {
   enableFiltering: true,
@@ -59,6 +59,98 @@ this.gridOptions = {
   }
 };
 ```
+
+#### with Commands (Dynamic Builder)
+For advanced scenarios where you need to dynamically build the command list, use `commandListBuilder`. This callback receives the built-in commands and allows you to filter, sort, or modify the list before it's rendered in the UI, giving you full control over the final command list.
+
+```ts
+this.gridOptions = {
+  enableContextMenu: true,
+  contextMenu: {
+    commandListBuilder: (builtInItems) => {
+      // Example: Add custom commands after built-in ones
+      return [
+        ...builtInItems,
+        'divider',
+        {
+          command: 'delete-row',
+          title: 'Delete Row',
+          iconCssClass: 'mdi mdi-delete text-danger',
+          action: (e, args) => {
+            if (confirm(`Delete row ${args.dataContext.id}?`)) {
+              this.gridService.deleteItem(args.dataContext);
+            }
+          }
+        },
+        {
+          command: 'duplicate-row',
+          title: 'Duplicate Row',
+          iconCssClass: 'mdi mdi-content-duplicate',
+          action: (e, args) => {
+            const newItem = { ...args.dataContext, id: this.generateNewId() };
+            this.gridService.addItem(newItem);
+          }
+        }
+      ];
+    },
+    onCommand: (e, args) => {
+      // Handle commands here if not using action callbacks
+      console.log('Command:', args.command);
+    }
+  }
+};
+```
+
+**Example: Filter commands based on row data**
+```ts
+contextMenu: {
+  commandListBuilder: (builtInItems) => {
+    // You can't access row data here, but you can filter/modify built-in items
+    // Use itemUsabilityOverride or itemVisibilityOverride for row-specific logic
+    
+    // Only show export commands
+    return builtInItems.filter(item => 
+      item === 'divider' || item.command?.includes('export')
+    );
+  }
+}
+```
+
+**Example: Sort and reorganize commands**
+```ts
+contextMenu: {
+  commandListBuilder: (builtInItems) => {
+    const customFirst = [
+      {
+        command: 'edit',
+        title: 'Edit Row',
+        iconCssClass: 'mdi mdi-pencil',
+        positionOrder: 0
+      }
+    ];
+    
+    // Sort built-in commands by positionOrder
+    const sorted = [...builtInItems].sort((a, b) => {
+      if (a === 'divider' || b === 'divider') return 0;
+      return (a.positionOrder || 50) - (b.positionOrder || 50);
+    });
+    
+    return [...customFirst, 'divider', ...sorted];
+  }
+}
+```
+
+**When to use `commandListBuilder` vs `commandItems`:**
+- Use `commandItems` for static command lists
+- Use `commandListBuilder` when you need to:
+  - Append/prepend to built-in commands
+  - Filter or modify commands dynamically
+  - Sort or reorder the final command list
+  - Have full control over what gets rendered
+
+**Note:** Typically use `commandListBuilder` **instead of** `commandItems`, not both together.
+
+See the main [Custom Menu Slots](../menu-slots.md) documentation for detailed `commandListBuilder` examples.
 
 #### with Options
 That is when you want to define a list of Options (only 1 list) that the user can choose from and once is selected we would do something (for example change the value of a cell in the grid).
@@ -122,6 +214,11 @@ contextMenu: {
 }
 ```
 
+### Custom Menu Item Rendering
+For advanced customization of menu item appearance, you can use the `slotRenderer` or `defaultMenuItemRenderer` callbacks to create custom HTML or HTMLElement content for your menu items. This allows you to add badges, keyboard shortcuts, status indicators, and more.
+
+See [Custom Menu Slots](../menu-slots.md) for detailed examples and best practices on rendering custom menu item content across all menu types.
+
 ### Override Callback Methods
 What if you want to dynamically disable or hide a Command/Option or even disable the entire menu in certain circumstances? For these cases, you would use the override callback methods, the method must return a `boolean`. The list of override available are the following
 - `menuUsabilityOverride` returning false would make the Context Menu unavailable to the user
@@ -141,17 +238,19 @@ contextMenu: {
 To give another example, with Options this time, we could say that we enable the `n/a` option only when the row is Completed. So we could do it this way
 ```ts
 contextMenu: {
-  optionItems: [{
-    option: 0, title: 'n/a', textCssClass: 'italic',
-    // only enable this option when the task is Not Completed
-    itemUsabilityOverride: (args) => {
-      const dataContext = args?.dataContext;
-      return !dataContext.completed;
+  optionItems: [
+    {
+      option: 0, title: 'n/a', textCssClass: 'italic',
+      // only enable this option when the task is Not Completed
+      itemUsabilityOverride: (args) => {
+        const dataContext = args?.dataContext;
+        return !dataContext.completed;
+      },
     },
     { option: 1, iconCssClass: 'mdi mdi-star-outline yellow', title: 'Low' },
     { option: 2, iconCssClass: 'mdi mdi-star orange', title: 'Medium' },
     { option: 3, iconCssClass: 'mdi mdi-star red', title: 'High' },
-  }]
+  ]
 }
 ```
 
@@ -160,11 +259,11 @@ It works exactly like the rest of the library when `enableTranslate` is set, all
 ```ts
 contextMenu: {
   optionTitleKey: 'OPTIONS', // optionally pass a title to show over the Options
-  optionItems: [{
+  optionItems: [
     { option: 1, titleKey: 'LOW', iconCssClass: 'mdi mdi-star-outline yellow' },
     { option: 2, titleKey: 'MEDIUM', iconCssClass: 'mdi mdi-star orange' },
     { option: 3, titleKey: 'HIGH', iconCssClass: 'mdi mdi-star red' },
-  }]
+  ]
 }
 ```
 
@@ -184,25 +283,25 @@ Another set of possible Commands would be related to Grouping, so if you are usi
 All of these internal commands, you can choose to hide them and/or change their icons, the default global options are the following and you can change any of them.
 ```ts
 contextMenu: {
-    autoAdjustDrop: true,
-    autoAlignSide: true,
-    hideCloseButton: true,
-    hideClearAllGrouping: false,
-    hideCollapseAllGroups: false,
-    hideCommandSection: false,
-    hideCopyCellValueCommand: false,
-    hideExpandAllGroups: false,
-    hideExportCsvCommand: false,
-    hideExportExcelCommand: false,
-    hideExportTextDelimitedCommand: true,
-    hideMenuOnScroll: true,
-    hideOptionSection: false,
-    iconCopyCellValueCommand: 'mdi mdi-content-copy',
-    iconExportCsvCommand: 'mdi mdi-download',
-    iconExportExcelCommand: 'mdi mdi-file-excel-outline text-success',
-    iconExportTextDelimitedCommand: 'mdi mdi-download',
-    width: 200,
-  },
+  autoAdjustDrop: true,
+  autoAlignSide: true,
+  hideCloseButton: true,
+  hideClearAllGrouping: false,
+  hideCollapseAllGroups: false,
+  hideCommandSection: false,
+  hideCopyCellValueCommand: false,
+  hideExpandAllGroups: false,
+  hideExportCsvCommand: false,
+  hideExportExcelCommand: false,
+  hideExportTextDelimitedCommand: true,
+  hideMenuOnScroll: true,
+  hideOptionSection: false,
+  iconCopyCellValueCommand: 'mdi mdi-content-copy',
+  iconExportCsvCommand: 'mdi mdi-download',
+  iconExportExcelCommand: 'mdi mdi-file-excel-outline text-success',
+  iconExportTextDelimitedCommand: 'mdi mdi-download',
+  width: 200,
+},
 ```
 
 ### How to Disable the Context Menu?

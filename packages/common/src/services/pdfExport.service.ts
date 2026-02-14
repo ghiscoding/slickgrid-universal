@@ -4,7 +4,7 @@ import type { ContainerService } from '../services/container.service.js';
 
 export abstract class PdfExportService implements ExternalResource {
   /** PdfExportService class name which is use to find service instance in the external registered services */
-  className!: string;
+  pluginName!: string;
 
   /**
    * Initialize the Export Service

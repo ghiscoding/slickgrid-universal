@@ -4,7 +4,6 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
   Filters,
   Formatters,
-  OperatorType,
   SlickgridVue,
   type Column,
   type GridOption,
@@ -90,12 +89,12 @@ function defineGrid() {
         collectionFilterBy: [
           {
             property: 'value',
-            operator: OperatorType.notEqual,
+            operator: '!=',
             value: 360,
           },
           {
             property: 'value',
-            operator: OperatorType.notEqual,
+            operator: '!=',
             value: 365,
           },
         ],
@@ -309,12 +308,12 @@ function setSortingDynamically() {
 }
 
 function refreshMetrics(_e: Event, args: any) {
-  if (args && args.current >= 0) {
+  if (args?.current >= 0) {
     setTimeout(() => {
       metrics.value = {
         startTime: new Date(),
         endTime: new Date(),
-        itemCount: (args && args.current) || 0,
+        itemCount: args?.current || 0,
         totalItemCount: dataset.value.length || 0,
       };
     });
@@ -431,7 +430,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
   <slickgrid-vue
     v-model:options="gridOptions"
     v-model:columns="columnDefinitions"
-    v-model:data="dataset"
+    v-model:dataset="dataset"
     grid-id="grid4"
     @onGridStateChanged="gridStateChanged($event.detail)"
     @onRowCountChanged="refreshMetrics($event.detail.eventData, $event.detail.args)"

@@ -1,5 +1,5 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { arrayRemoveItemByIndex, classNameToList, createDomElement, toKebabCase } from '@slickgrid-universal/utils';
+import { classNameToList, createDomElement, toKebabCase } from '@slickgrid-universal/utils';
 import type { SlickEventData } from '../core/slickCore.js';
 import type { EmitterType } from '../enums/index.js';
 import type { ExtensionUtility } from '../extensions/extensionUtility.js';
@@ -49,7 +49,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     title: '',
     subMenuOpenByEvent: 'mouseover',
   } as unknown as HeaderMenuOption;
-  pluginName: 'HeaderMenu' = 'HeaderMenu' as const;
+  readonly pluginName = 'HeaderMenu';
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
   constructor(
@@ -72,9 +72,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
     // when setColumns is called (could be via toggle filtering/sorting or anything else),
     // we need to recreate header menu items custom commands array before the `onHeaderCellRendered` gets called
-    this._eventHandler.subscribe(this.grid.onBeforeSetColumns, (e, args) => {
-      this.sharedService.gridOptions.headerMenu = this.addHeaderMenuCustomCommands(args.newColumns);
-    });
+    this._eventHandler.subscribe(this.grid.onBeforeSetColumns, (_e, args) => this.recreateHeaderMenu(args.newColumns));
     this._eventHandler.subscribe(this.grid.onHeaderCellRendered, this.handleHeaderCellRendered.bind(this));
     this._eventHandler.subscribe(this.grid.onBeforeHeaderCellDestroy, this.handleBeforeHeaderCellDestroy.bind(this));
     this._eventHandler.subscribe(this.grid.onClick, this.hideMenu.bind(this));
@@ -96,23 +94,18 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
   /** Hide a column from the grid */
   hideColumn(column: Column): void {
-    if (this.grid?.getColumnIndex) {
-      const columnIndex = this.grid.getColumnIndex(column.id);
-      const currentVisibleColumns = this.grid.getColumns();
+    if (this.grid) {
+      // check if column freezing is allowed
+      const isFrozenAllowed = this.grid.validateColumnFreeze(column.id, true);
 
-      // if we're using frozen columns, we need to readjust pinning when the new hidden column is on the left pinning container
-      // we need to do this because SlickGrid freezes by index and has no knowledge of the columns themselves
-      const frozenColumnIndex = this.sharedService.gridOptions.frozenColumn ?? -1;
-      if (frozenColumnIndex >= 0 && frozenColumnIndex >= columnIndex) {
-        this.sharedService.gridOptions.frozenColumn = frozenColumnIndex - 1;
-        this.grid.setOptions({ frozenColumn: this.sharedService.gridOptions.frozenColumn });
+      // when valid, update column hidden prop
+      if (isFrozenAllowed) {
+        this.grid.updateColumnById(column.id, { hidden: true });
+
+        // then proceed with hiding the column in SlickGrid & trigger an event when done
+        this.grid.updateColumns();
+        this.pubSubService.publish('onHideColumns', { columns: this.grid.getVisibleColumns(), hiddenColumn: column });
       }
-
-      // then proceed with hiding the column in SlickGrid & trigger an event when done
-      const visibleColumns = arrayRemoveItemByIndex<Column>(currentVisibleColumns, columnIndex);
-      this.sharedService.visibleColumns = visibleColumns;
-      this.grid.setColumns(visibleColumns, true);
-      this.pubSubService.publish('onHideColumns', { columns: visibleColumns, hiddenColumn: column });
     }
   }
 
@@ -133,7 +126,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
   /** Translate the Header Menu titles, we need to loop through all column definition to re-translate them */
   translateHeaderMenu(): void {
     if (this.sharedService.gridOptions?.headerMenu) {
-      this.resetHeaderMenuTranslations(this.sharedService.visibleColumns);
+      this.resetHeaderMenuTranslations(this.grid.getColumns());
     }
   }
 
@@ -227,7 +220,6 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
         // execute Grid Menu callback with command,
         // we'll also execute optional user defined onCommand callback when provided
-        this.executeHeaderMenuInternalCommands(event, callbackArgs);
         this.pubSubService.publish('onHeaderMenuCommand', callbackArgs);
         if (typeof this.addonOptions?.onCommand === 'function') {
           this.addonOptions.onCommand(event, callbackArgs);
@@ -298,9 +290,8 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
             // so only initialize the header menu without overwrite header buttons
             columnDef.header.menu = { commandItems: [] };
           }
-          const columnHeaderMenuItems: Array<MenuCommandItem | 'divider'> = columnDef?.header?.menu?.commandItems ?? [];
-          const cmdExists = (commandName: string) =>
-            columnHeaderMenuItems.some((item) => item !== 'divider' && 'command' in item && item.command === commandName);
+
+          let columnHeaderMenuItems: Array<MenuCommandItem | 'divider'> = columnDef?.header?.menu?.commandItems ?? [];
 
           // Freeze Column (pinning)
           let hasFrozenOrResizeCommand = false;
@@ -312,30 +303,36 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
               // add unfreeze command
               const cmdUnfreeze = 'unfreeze-columns';
-              if (!cmdExists(cmdUnfreeze)) {
-                columnHeaderMenuItems.push({
+              this.addMissingCommandOrAction(
+                {
                   _orgTitle: commandLabels?.unfreezeColumnsCommand || '',
                   iconCssClass: headerMenuOptions.iconUnfreezeColumns || 'mdi mdi-pin-off-outline',
                   titleKey: `${translationPrefix}UNFREEZE_COLUMNS`,
                   command: cmdUnfreeze,
                   positionOrder: 45,
-                });
-              }
+                  action: (_e, args) => this.freezeOrUnfreezeColumns(args.column, cmdUnfreeze),
+                },
+                headerMenuOptions.hideCommands,
+                columnHeaderMenuItems
+              );
             } else {
               // make sure the "unfreeze-columns" doesn't exist before adding the "freeze-columns"
               this.removeCommandWhenFound(columnHeaderMenuItems, 'unfreeze-columns');
 
               // add freeze command
               const cmdFreeze = 'freeze-columns';
-              if (!cmdExists(cmdFreeze)) {
-                columnHeaderMenuItems.push({
+              this.addMissingCommandOrAction(
+                {
                   _orgTitle: commandLabels?.freezeColumnsCommand || '',
                   iconCssClass: headerMenuOptions.iconFreezeColumns || 'mdi mdi-pin-outline',
                   titleKey: `${translationPrefix}FREEZE_COLUMNS`,
-                  command: cmdFreeze,
+                  command: 'freeze-columns',
                   positionOrder: 45,
-                });
-              }
+                  action: (_e, args) => this.freezeOrUnfreezeColumns(args.column, cmdFreeze),
+                },
+                headerMenuOptions.hideCommands,
+                columnHeaderMenuItems
+              );
             }
           }
 
@@ -343,69 +340,93 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
           if (
             headerMenuOptions &&
             !headerMenuOptions.hideColumnResizeByContentCommand &&
+            !headerMenuOptions.hideCommands?.includes('column-resize-by-content') &&
             this.sharedService.gridOptions.enableColumnResizeOnDoubleClick
           ) {
             hasFrozenOrResizeCommand = true;
-            const cmdResize = 'column-resize-by-content';
-            if (!cmdExists(cmdResize)) {
-              columnHeaderMenuItems.push({
+            this.addMissingCommandOrAction(
+              {
                 _orgTitle: commandLabels?.columnResizeByContentCommand || '',
                 iconCssClass: headerMenuOptions.iconColumnResizeByContentCommand || 'mdi mdi-arrow-expand-horizontal',
                 titleKey: `${translationPrefix}COLUMN_RESIZE_BY_CONTENT`,
-                command: cmdResize,
+                command: 'column-resize-by-content',
                 positionOrder: 47,
-              });
-            }
+                action: (_e, args) => this.pubSubService.publish('onHeaderMenuColumnResizeByContent', { columnId: args.column.id }),
+              },
+              headerMenuOptions.hideCommands,
+              columnHeaderMenuItems
+            );
           }
 
           // add a divider (separator) between the top freeze columns commands and the rest of the commands
           if (hasFrozenOrResizeCommand && !columnHeaderMenuItems.some((item) => item !== 'divider' && item.positionOrder === 48)) {
-            columnHeaderMenuItems.push({ divider: true, command: '', positionOrder: 48 });
+            columnHeaderMenuItems.push({ divider: true, command: 'divider-1', positionOrder: 48 });
           }
 
           // Sorting Commands
-          if (gridOptions.enableSorting && columnDef.sortable && headerMenuOptions && !headerMenuOptions.hideSortCommands) {
-            const cmdAscName = 'sort-asc';
-            const cmdDescName = 'sort-desc';
-            if (!cmdExists(cmdAscName)) {
-              columnHeaderMenuItems.push({
+          if (
+            gridOptions.enableSorting &&
+            columnDef.sortable &&
+            headerMenuOptions &&
+            !headerMenuOptions.hideSortCommands &&
+            // @deprecated use boolean value of addMissingCommandOrAction() in next major instead
+            !(headerMenuOptions.hideCommands?.includes('sort-asc') && headerMenuOptions.hideCommands?.includes('sort-desc'))
+          ) {
+            // sort ascending command
+            this.addMissingCommandOrAction(
+              {
                 _orgTitle: commandLabels?.sortAscCommand || '',
                 iconCssClass: headerMenuOptions.iconSortAscCommand || 'mdi mdi-sort-ascending',
                 titleKey: `${translationPrefix}SORT_ASCENDING`,
-                command: cmdAscName,
+                command: 'sort-asc',
                 positionOrder: 50,
-              });
-            }
-            if (!cmdExists(cmdDescName)) {
-              columnHeaderMenuItems.push({
+                action: (e, args) => this.sortColumn(e, args, true),
+              },
+              headerMenuOptions.hideCommands,
+              columnHeaderMenuItems
+            );
+
+            // sort descending command
+            this.addMissingCommandOrAction(
+              {
                 _orgTitle: commandLabels?.sortDescCommand || '',
                 iconCssClass: headerMenuOptions.iconSortDescCommand || 'mdi mdi-sort-descending',
                 titleKey: `${translationPrefix}SORT_DESCENDING`,
-                command: cmdDescName,
+                command: 'sort-desc',
                 positionOrder: 51,
-              });
-            }
+                action: (e, args) => this.sortColumn(e, args, false),
+              },
+              headerMenuOptions.hideCommands,
+              columnHeaderMenuItems
+            );
 
             // add a divider (separator) between the top sort commands and the other clear commands
             if (!columnHeaderMenuItems.some((item) => item !== 'divider' && item.positionOrder === 52)) {
-              columnHeaderMenuItems.push({ divider: true, command: '', positionOrder: 52 });
+              columnHeaderMenuItems.push({ divider: true, command: 'divider-2', positionOrder: 52 });
             }
 
-            const cmdClearSort = 'clear-sort';
-            if (!headerMenuOptions.hideClearSortCommand && !cmdExists(cmdClearSort)) {
-              columnHeaderMenuItems.push({
-                _orgTitle: commandLabels?.clearSortCommand || '',
-                iconCssClass: headerMenuOptions.iconClearSortCommand || 'mdi mdi-sort-variant-off',
-                titleKey: `${translationPrefix}REMOVE_SORT`,
-                command: cmdClearSort,
-                positionOrder: 58,
-              });
+            if (!headerMenuOptions.hideClearSortCommand) {
+              this.addMissingCommandOrAction(
+                {
+                  _orgTitle: commandLabels?.clearSortCommand || '',
+                  iconCssClass: headerMenuOptions.iconClearSortCommand || 'mdi mdi-sort-variant-off',
+                  titleKey: `${translationPrefix}REMOVE_SORT`,
+                  command: 'clear-sort',
+                  positionOrder: 58,
+                  action: (e, args) => this.clearColumnSort(e, args),
+                },
+                headerMenuOptions.hideCommands,
+                columnHeaderMenuItems
+              );
             }
           }
 
           // Filter Shortcuts via sub-menus
           const cmdShortcutName = 'filter-shortcuts-root-menu';
-          if (columnDef.filter?.filterShortcuts && !cmdExists(cmdShortcutName)) {
+          if (
+            columnDef.filter?.filterShortcuts &&
+            !columnHeaderMenuItems.some((item) => item !== 'divider' && 'command' in item && item.command === cmdShortcutName)
+          ) {
             const shortcutSubItems: MenuCommandItem[] = [];
             columnDef.filter.filterShortcuts.forEach((fs) => {
               // use the Title name as the command key in kebab cas
@@ -437,34 +458,55 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
               hasFrozenOrResizeCommand &&
               !columnHeaderMenuItems.some((item) => item !== 'divider' && item.positionOrder === filterShortcutsPositionOrder + 1)
             ) {
-              columnHeaderMenuItems.push({ divider: true, command: '', positionOrder: filterShortcutsPositionOrder + 1 });
+              columnHeaderMenuItems.push({ divider: true, command: 'divider-3', positionOrder: filterShortcutsPositionOrder + 1 });
             }
           }
 
           // Filtering Commands
-          const cmdRemoveFilter = 'clear-filter';
-          if (gridOptions.enableFiltering && columnDef.filterable && headerMenuOptions && !headerMenuOptions.hideFilterCommand) {
-            if (!headerMenuOptions.hideClearFilterCommand && !cmdExists(cmdRemoveFilter)) {
-              columnHeaderMenuItems.push({
-                _orgTitle: commandLabels?.clearFilterCommand || '',
-                iconCssClass: headerMenuOptions.iconClearFilterCommand || 'mdi mdi-filter-remove-outline',
-                titleKey: `${translationPrefix}REMOVE_FILTER`,
-                command: cmdRemoveFilter,
-                positionOrder: 57,
-              });
+          if (
+            gridOptions.enableFiltering &&
+            columnDef.filterable &&
+            headerMenuOptions &&
+            !headerMenuOptions.hideFilterCommand &&
+            !headerMenuOptions.hideCommands?.includes('clear-filter')
+          ) {
+            if (!headerMenuOptions.hideClearFilterCommand) {
+              this.addMissingCommandOrAction(
+                {
+                  _orgTitle: commandLabels?.clearFilterCommand || '',
+                  iconCssClass: headerMenuOptions.iconClearFilterCommand || 'mdi mdi-filter-remove-outline',
+                  titleKey: `${translationPrefix}REMOVE_FILTER`,
+                  command: 'clear-filter',
+                  positionOrder: 57,
+                  action: (e, args) => {
+                    this.clearColumnFilter(e, args);
+                  },
+                },
+                headerMenuOptions.hideCommands,
+                columnHeaderMenuItems
+              );
             }
           }
 
           // Hide Column Command
-          const cmdHideColumn = 'hide-column';
-          if (headerMenuOptions && !headerMenuOptions.hideColumnHideCommand && !cmdExists(cmdHideColumn)) {
-            columnHeaderMenuItems.push({
-              _orgTitle: commandLabels?.hideColumnCommand || '',
-              iconCssClass: headerMenuOptions.iconColumnHideCommand || 'mdi mdi-close',
-              titleKey: `${translationPrefix}HIDE_COLUMN`,
-              command: cmdHideColumn,
-              positionOrder: 59,
-            });
+          if (headerMenuOptions && !headerMenuOptions.hideColumnHideCommand && !headerMenuOptions.hideCommands?.includes('hide-column')) {
+            this.addMissingCommandOrAction(
+              {
+                _orgTitle: commandLabels?.hideColumnCommand || '',
+                iconCssClass: headerMenuOptions.iconColumnHideCommand || 'mdi mdi-close',
+                titleKey: `${translationPrefix}HIDE_COLUMN`,
+                command: 'hide-column',
+                positionOrder: 59,
+                action: (_e, args) => {
+                  this.hideColumn(args.column);
+                  if (this.sharedService.gridOptions?.enableAutoSizeColumns) {
+                    this.grid.autosizeColumns();
+                  }
+                },
+              },
+              headerMenuOptions.hideCommands,
+              columnHeaderMenuItems
+            );
           }
 
           this.extensionUtility.translateMenuItemsFromTitleKey(columnHeaderMenuItems);
@@ -499,21 +541,15 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
   /** freeze or unfreeze columns command */
   protected freezeOrUnfreezeColumns(column: Column, command: 'freeze-columns' | 'unfreeze-columns'): void {
-    const visibleColumns = [...this.sharedService.visibleColumns];
-    const columnPosition = visibleColumns.findIndex((col) => col.id === column.id);
+    const columnPosition = this.grid.getVisibleColumns().findIndex((col) => col.id === column.id);
     const newGridOptions = {
       frozenColumn: command === 'unfreeze-columns' ? -1 : columnPosition,
       enableMouseWheelScrollHandler: true,
     };
 
-    // to circumvent a bug in SlickGrid core lib, let's keep the columns positions ref and re-apply them after calling setOptions
-    // the bug is highlighted in this issue comment:: https://github.com/6pac/SlickGrid/issues/592#issuecomment-822885069
-    const previousColumns = this.grid.getColumns();
-
     // make sure column freeze is allowed before applying the change
-    if (this.grid.validateColumnFreezeWidth(newGridOptions.frozenColumn, true)) {
+    if (this.grid.validateColumnFreezeWidth(newGridOptions.frozenColumn)) {
       this.grid.setOptions(newGridOptions, false, true); // suppress the setColumns (3rd argument) since we'll do that ourselves
-      let finalVisibleColumns = visibleColumns || [];
 
       // remove the last freeze/unfreeze command called from Header Menu since it will be replaced by the other one when reopening the menu
       const columnHeaderMenuItems: Array<MenuCommandItem | 'divider'> = column?.header?.menu?.commandItems ?? [];
@@ -523,62 +559,13 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
       this.sharedService.gridOptions.enableMouseWheelScrollHandler = newGridOptions.enableMouseWheelScrollHandler;
       this.sharedService.frozenVisibleColumnId = this.grid.getFrozenColumnId();
 
-      if (command === 'freeze-columns') {
-        // to freeze columns, we need to take only the visible columns and we also need to use setColumns() when some of them are hidden
-        // to make sure that we only use the visible columns, not doing this will have the undesired effect of showing back some of the hidden columns
-        // prettier-ignore
-        if (this.sharedService.hasColumnsReordered || (Array.isArray(visibleColumns) && Array.isArray(this.sharedService.allColumns) && visibleColumns.length !== this.sharedService.allColumns.length)) {
-            finalVisibleColumns = visibleColumns;
-          } else {
-            // to circumvent a bug in SlickGrid core lib re-apply same column definitions that were backed up before calling setOptions()
-            finalVisibleColumns = previousColumns;
-          }
-      }
-      this.grid.setColumns(finalVisibleColumns);
+      this.grid.updateColumns();
+      this.recreateHeaderMenu(this.grid.getColumns());
 
       // we also need to autosize columns if the option is enabled
       const gridOptions = this.grid.getOptions();
       if (gridOptions.enableAutoSizeColumns) {
         this.grid.autosizeColumns();
-      }
-    }
-  }
-
-  /** Execute the Header Menu Commands that was triggered by the onCommand subscribe */
-  protected executeHeaderMenuInternalCommands(
-    event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData,
-    args: MenuCommandItemCallbackArgs
-  ): void {
-    if (args?.command) {
-      switch (args.command) {
-        case 'hide-column':
-          this.hideColumn(args.column);
-          if (this.sharedService.gridOptions?.enableAutoSizeColumns) {
-            this.grid.autosizeColumns();
-          }
-          break;
-        case 'clear-filter':
-          this.clearColumnFilter(event, args);
-          break;
-        case 'clear-sort':
-          this.clearColumnSort(event, args);
-          break;
-        case 'column-resize-by-content':
-          this.pubSubService.publish('onHeaderMenuColumnResizeByContent', { columnId: args.column.id });
-          break;
-        case 'freeze-columns':
-          this.freezeOrUnfreezeColumns(args.column, args.command);
-          break;
-        case 'unfreeze-columns':
-          this.freezeOrUnfreezeColumns(args.column, args.command);
-          break;
-        case 'sort-asc':
-        case 'sort-desc':
-          const isSortingAsc = args.command === 'sort-asc';
-          this.sortColumn(event, args, isSortingAsc);
-          break;
-        default:
-          break;
       }
     }
   }
@@ -769,5 +756,9 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
         this.sortService.emitSortChanged(emitterType, currentLocalSorters);
       }
     }
+  }
+
+  protected recreateHeaderMenu(newColumns: Column[]): void {
+    this.sharedService.gridOptions.headerMenu = this.addHeaderMenuCustomCommands(newColumns);
   }
 }

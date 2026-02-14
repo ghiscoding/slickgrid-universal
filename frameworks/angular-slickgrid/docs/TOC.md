@@ -48,18 +48,19 @@
 * [Auto-Resize / Resizer Service](grid-functionalities/grid-auto-resize.md)
 * [Resize by Cell Content](grid-functionalities/Resize-by-Cell-Content.md)
 * [Column Picker](grid-functionalities/Column-Picker.md)
-* [Composite Editor Modal](grid-functionalities/Composite-Editor-Modal.md)
-* [Custom Tooltip](grid-functionalities/Custom-Tooltip-\(plugin\).md)
+* [Composite Editor Modal](grid-functionalities/composite-editor-modal.md)
+* [Custom Tooltip](grid-functionalities/custom-tooltip.md)
 * [Add, Update or Highlight a Datagrid Item](grid-functionalities/add-update-highlight.md)
 * [Dynamically Add CSS Classes to Item Rows](grid-functionalities/dynamic-item-metadata.md)
 * [Column & Row Spanning](grid-functionalities/column-row-spanning.md)
-* [Context Menu](grid-functionalities/Context-Menu.md)
-* [Custom Footer](grid-functionalities/Custom-Footer.md)
+* [Context Menu](grid-functionalities/context-menu.md)
+* [Custom Footer](grid-functionalities/custom-footer.md)
 * [Excel Copy Buffer Plugin](grid-functionalities/excel-copy-buffer.md)
 * [Export to Excel](grid-functionalities/Export-to-Excel.md)
 * [Export to PDF](grid-functionalities/Export-to-PDF.md)
 * [Export to File (csv/txt)](grid-functionalities/Export-to-Text-File.md)
-* [Grid Menu](grid-functionalities/Grid-Menu.md)
+* [Load Global Grid Options](grid-functionalities/global-options.md)
+* [Grid Menu](grid-functionalities/grid-menu.md)
 * [Grid State & Presets](grid-functionalities/grid-state-preset.md)
 * [Grouping & Aggregators](grid-functionalities/grouping-and-aggregators.md)
 * [Header & Footer Slots](grid-functionalities/header-footer-slots.md)
@@ -79,9 +80,9 @@
 
 ## Localization
 
-* [with Custom Locales](localization/Localization-with-Custom-Locales.md)
-* [with ngx-translate](localization/Localization-with-ngx-translate.md)
-  * [Component Sample](localization/Localization---Component-Sample.md)
+* [with Custom Locales](localization/localization-with-custom-locales.md)
+* [with ngx-translate](localization/localization-with-ngx-translate.md)
+  * [Component Sample](localization/localization-component-sample.md)
 
 ## Backend Services
 
@@ -107,3 +108,4 @@
 * [Migration Guide to 7.x (2023-12-15)](migrations/migration-to-7.x.md)
 * [Migration Guide to 8.x (2024-05-23)](migrations/migration-to-8.x.md)
 * [Migration Guide to 9.x (2025-05-10)](migrations/migration-to-9.x.md)
+* [Migration Guide to 10.x (TBD)](migrations/migration-to-10.x.md)

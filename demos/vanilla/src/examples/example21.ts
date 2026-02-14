@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { createDomElement, ExtensionName, SlickEventHandler, type Column, type GridOption } from '@slickgrid-universal/common';
+import { createDomElement, SlickEventHandler, type Column, type GridOption } from '@slickgrid-universal/common';
 import { SlickRowDetailView } from '@slickgrid-universal/row-detail-view-plugin';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options.js';
@@ -140,7 +140,7 @@ export default class Example21 {
         // Row Detail View is a special case because of its requirement to create extra column definition dynamically
         // so it must be pre-registered before SlickGrid is instantiated, we can do so via this option
         this.rowDetail = new SlickRowDetailView(pubSubService);
-        return [{ name: ExtensionName.rowDetailView, instance: this.rowDetail }];
+        return [{ name: 'rowDetailView', instance: this.rowDetail }];
       },
       rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
       rowHeight: 33,

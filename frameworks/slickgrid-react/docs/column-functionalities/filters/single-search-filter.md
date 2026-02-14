@@ -15,7 +15,7 @@ const Example: React.FC = () => {
   const [dataset, setDataset] = useState<any[]>([]);
   const [columns, setColumns] = useState<Column[]>([]);
   const [options, setOptions] = useState<GridOption | undefined>(undefined);
-  const [operatorList, setOperatorList] = useState<OperatorString[]>(['=', '<', '<=', '>', '>=', '<>']);
+  const [operatorList, setOperatorList] = useState<OperatorType[]>(['=', '<', '<=', '>', '>=', '<>']);
   const reactGridRef = useRef();
   const graphqlService = new GraphqlService();
 
@@ -49,7 +49,7 @@ const Example: React.FC = () => {
     const filter = {};
     const filterArg: FilterCallbackArg = {
       columnDef: selectedColumn,
-      operator: selectedOperator as OperatorString, // or fix one yourself like '='
+      operator: selectedOperator as OperatorType, // or fix one yourself like '='
       searchTerms: [searchValue || '']
     };
 

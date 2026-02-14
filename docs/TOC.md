@@ -19,7 +19,6 @@
 * [Editors](column-functionalities/editors.md)
   * [Autocomplete](column-functionalities/editors/autocomplete-editor.md)
   * [Input (text/number)](column-functionalities/editors/input-editor.md)
-  * [old Date Picker (flatpickr)](column-functionalities/editors/Date-Editor-(flatpickr).md)
   * [new Date Picker (vanilla-calendar)](column-functionalities/editors/date-editor-vanilla-calendar.md)
   * [LongText (textarea)](column-functionalities/editors/longtext-editor-textarea.md)
   * [Select Dropdown Editor (single/multiple)](column-functionalities/editors/select-dropdown-editor.md)
@@ -47,6 +46,7 @@
 * [Resize by Cell Content](grid-functionalities/resize-by-cell-content.md)
 * [Column Picker](grid-functionalities/column-picker.md)
 * [Composite Editor Modal](grid-functionalities/composite-editor-modal.md)
+* [Custom Menu Slots](menu-slots.md)
 * [Custom Tooltip](grid-functionalities/custom-tooltip.md)
 * [Column & Row Spanning](grid-functionalities/column-row-spanning.md)
 * [Context Menu](grid-functionalities/context-menu.md)
@@ -96,3 +96,4 @@
 * [Migration Guide to 5.x (2024-05-10)](migrations/migration-to-5.x.md)
 * Versions 6 to 8 were skipped...
 * [Migration Guide to 9.x (2025-05-10)](migrations/migration-to-9.x.md)
+* [Migration Guide to 10.x (TBD)](migrations/migration-to-10.x.md)

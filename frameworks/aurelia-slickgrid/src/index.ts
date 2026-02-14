@@ -5,7 +5,6 @@ import type {
   AureliaViewOutput,
   CreatedView,
   GridOption,
-  RowDetailView,
   ViewModelBindableData,
   ViewModelBindableInputData,
 } from './models/index.js';
@@ -37,7 +36,6 @@ export {
   type AureliaViewOutput,
   type CreatedView,
   type GridOption,
-  type RowDetailView,
   type ViewModelBindableData,
   type ViewModelBindableInputData,
   SlickgridConfig,
@@ -45,4 +43,3 @@ export {
 
 // expose all public classes
 export { AureliaUtilService, TranslaterService, disposeAllSubscriptions } from './services/index.js';
-export { SlickRowDetailView } from './extensions/slickRowDetailView.js';

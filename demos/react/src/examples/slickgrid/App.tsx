@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Routes as BaseRoutes, Link, Navigate, Route, useLocation } from 'react-router';
 import { NavBar } from '../../NavBar.js';
+
 import Example1 from './Example1.js';
 import Example2 from './Example2.js';
 import Example3 from './Example3.js';
@@ -50,6 +51,7 @@ import Example47 from './Example47.js';
 import Example48 from './Example48.js';
 import Example49 from './Example49.js';
 import Example50 from './Example50.js';
+import Example51 from './Example51.js';
 
 const routes: Array<{ path: string; route: string; component: any; title: string }> = [
   { path: 'example1', route: '/example1', component: <Example1 />, title: '1- Basic Grid / 2 Grids' },
@@ -101,6 +103,7 @@ const routes: Array<{ path: string; route: string; component: any; title: string
   { path: 'example48', route: '/example48', component: <Example48 />, title: '48- Hybrid Selection Model' },
   { path: 'example49', route: '/example49', component: <Example49 />, title: '49- Spreadsheet Drag-Fill' },
   { path: 'example50', route: '/example50', component: <Example50 />, title: '50- Master/Detail Grids' },
+  { path: 'example51', route: '/example51', component: <Example51 />, title: '51- Menus with Slots' },
 ];
 
 export default function Routes() {

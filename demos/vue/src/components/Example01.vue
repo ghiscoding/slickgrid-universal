@@ -141,7 +141,7 @@ function toggleDarkModeGrid1() {
     <SlickgridVue
       v-model:options="gridOptions1!"
       v-model:columns="columnDefinitions1"
-      v-model:data="dataset1"
+      v-model:dataset="dataset1"
       grid-id="grid1-1"
       @onVueGridCreated="vueGrid1Ready($event.detail)"
     >
@@ -155,7 +155,7 @@ function toggleDarkModeGrid1() {
   <slickgrid-vue
     v-model:options="gridOptions2!"
     v-model:columns="columnDefinitions2"
-    v-model:data="dataset2"
+    v-model:dataset="dataset2"
     grid-id="grid1-2"
     @on-pagination-changed="paginationChanged($event.detail)"
   >

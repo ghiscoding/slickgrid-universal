@@ -1,7 +1,7 @@
 {
   "name": "aurelia-slickgrid",
   "description": "Slickgrid components made available in Aurelia",
-  "version": "9.13.0",
+  "version": "10.0.0-beta.0",
   "keywords": [
     "aurelia",
     "datagrid",
@@ -38,7 +38,6 @@
     "access": "public"
   },
   "scripts": {
-    "are-types-wrong": "pnpx @arethetypeswrong/cli --pack .",
     "aurelia:dev": "tsc --watch",
     "build": "remove dist && tsc && npm run copy-i18n:dist && npm run copy-asset-lib",
     "copy-asset-lib": "copyfiles src/assets/lib/** dist --up 2 --stat",
@@ -58,7 +57,6 @@
     "@slickgrid-universal/empty-warning-component": "workspace:*",
     "@slickgrid-universal/event-pub-sub": "workspace:*",
     "@slickgrid-universal/pagination-component": "workspace:*",
-    "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
     "@slickgrid-universal/utils": "workspace:*",
     "dequal": "catalog:",
     "sortablejs": "catalog:"

@@ -12,7 +12,7 @@ export class SlickHybridSelectionModel implements SelectionModel<HybridSelection
 
   // --
   // public API
-  pluginName = 'HybridSelectionModel' as const;
+  readonly pluginName = 'HybridSelectionModel';
   onSelectedRangesChanged: SlickEvent<SlickRange[]>;
 
   // --
@@ -133,6 +133,10 @@ export class SlickHybridSelectionModel implements SelectionModel<HybridSelection
 
   getOptions(): HybridSelectionModelOption {
     return this._options;
+  }
+
+  setOptions(options: Partial<HybridSelectionModelOption>): void {
+    this._options = { ...this._options, ...options };
   }
 
   // Region: CellSelectionModel Members

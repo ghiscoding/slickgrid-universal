@@ -1,6 +1,7 @@
 #### index
 - [Grid Options](#grid-options)
 - [Column Definition & Options](#column-definition-and-options)
+- [Custom Column Width](#custom-column-width)
 - [Custom Cell Styling](#custom-cell-styling)
   - [Cell Value Parser](#cell-value-parser)
 - [Cell Format Auto-Detect Disable](#cell-format-auto-detect-disable)
@@ -129,6 +130,10 @@ this.gridOptions = {
   externalResources: [new ExcelExportService()],
 };
 ```
+
+### Custom Column Width
+
+See [Custom Cell Styling](#custom-cell-styling) to define cell width.
 
 ### Styling the Header Titles
 By default the header titles (first row) will be styled as Bold text, however you can choose to style them differently with custom styles as shown below. To find out what styling you can use, you can take a look at Excel Builder-Vanilla [Documentation](https://ghiscoding.gitbook.io/excel-builder-vanilla/cookbook/fonts-and-colors) website. The code shown below is used in [Aurelia-Slickgrid - Example 24](https://ghiscoding.github.io/aurelia-slickgrid-demos/#/slickgrid/example24) if you wish to see the result.
@@ -317,7 +322,6 @@ Below is a preview of the previous customizations shown above
 ![image](https://user-images.githubusercontent.com/643976/208590003-b637dcda-5164-42cc-bfad-e921a22c1837.png)
 
 ### Cell Format Auto-Detect Disable
-##### requires `v3.2.0` or higher
 The system will auto-detect the Excel format to use for Date and Number field types, if for some reason you wish to disable it then you provide the excel export options below
 
 ```ts

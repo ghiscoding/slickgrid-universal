@@ -45,11 +45,12 @@ function defineGrid() {
     gridWidth: 800,
     rowHeight: 33,
     enableCellNavigation: true,
-    enableRowSelection: true,
+    enableSelection: true,
     enableRowMoveManager: true,
-    rowSelectionOptions: {
+    selectionOptions: {
       // True (Single Selection), False (Multiple Selections)
       selectActiveRow: false,
+      selectionType: 'row',
     },
     rowMoveManager: {
       columnIndexPosition: 0,
@@ -245,7 +246,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <slickgrid-vue
         v-model:options="gridOptions"
         v-model:columns="columnDefinitions"
-        v-model:data="dataset"
+        v-model:dataset="dataset"
         grid-id="grid2"
         @onDragInit="handleOnDragInit($event.detail.eventData)"
         @onDragStart="handleOnDragStart($event.detail.eventData)"

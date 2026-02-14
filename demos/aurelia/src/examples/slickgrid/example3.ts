@@ -5,7 +5,6 @@ import {
   Editors,
   Filters,
   Formatters,
-  OperatorType,
   SlickGlobalEditorLock,
   SortComparers,
   type AureliaGridInstance,
@@ -29,7 +28,7 @@ const NB_ITEMS = 100;
 // you can create custom validator to pass to an inline editor
 const myCustomTitleValidator: EditorValidator = (value: any) => {
   // you can get the Editor Args which can be helpful, e.g. we can get the Translate Service from it
-  // const grid = args && args.grid;
+  // const grid = args?.grid;
   // const gridOptions = grid.getOptions() as GridOption;
   // const i18n = gridOptions.i18n;
 
@@ -210,7 +209,7 @@ export class Example3 {
           collectionFilterBy: {
             property: 'value',
             value: 0,
-            operator: OperatorType.notEqual,
+            operator: 'NE',
           },
           model: Editors.singleSelect,
           // validator: (value, args) => {
@@ -433,7 +432,7 @@ export class Example3 {
             separatorBetweenTextLabels: ' ',
           },
           model: Filters.multipleSelect,
-          operator: OperatorType.inContains,
+          operator: 'IN_CONTAINS',
         },
       },
     ];

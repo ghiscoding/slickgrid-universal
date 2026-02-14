@@ -33,7 +33,7 @@ import { MenuFromCellBaseClass } from './menuFromCellBaseClass.js';
  *   }];
  */
 export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
-  pluginName: 'CellMenu' = 'CellMenu' as const;
+  readonly pluginName = 'CellMenu';
 
   protected _defaults = {
     autoAdjustDrop: true, // dropup/dropdown
@@ -62,7 +62,7 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
     this._addonOptions = { ...this._defaults, ...cellMenuOptions };
 
     // sort all menu items by their position order when defined
-    this.sortMenuItems(this.sharedService.allColumns);
+    this.sortMenuItems(this.grid.getColumns());
 
     this._eventHandler.subscribe(this.grid.onClick, this.handleCellClick.bind(this));
 
@@ -74,7 +74,7 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
   /** Translate the Cell Menu titles, we need to loop through all column definition to re-translate all list titles & all commands/options */
   translateCellMenu(): void {
     const gridOptions = this.sharedService?.gridOptions;
-    const columnDefinitions = this.sharedService.allColumns;
+    const columnDefinitions = this.grid.getColumns();
 
     if (gridOptions?.enableTranslate && Array.isArray(columnDefinitions)) {
       columnDefinitions.forEach((columnDef: Column) => {
@@ -152,6 +152,7 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
   // protected functions
   // ------------------
 
+  /** @deprecated Sort items (by pointers) in an array by a property name */
   protected sortMenuItems(columns: Column[]): void {
     // sort both items list
     columns.forEach((columnDef: Column) => {

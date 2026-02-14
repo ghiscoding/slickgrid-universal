@@ -1,12 +1,19 @@
 import { Component, ViewEncapsulation, type OnInit } from '@angular/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { AngularSlickgridModule, Editors, type AngularGridInstance, type Column, type GridOption, type ItemMetadata } from '../../library';
+import {
+  AngularSlickgridComponent,
+  Editors,
+  type AngularGridInstance,
+  type Column,
+  type GridOption,
+  type ItemMetadata,
+} from '../../library';
 
 @Component({
   styleUrls: ['example43.component.scss'],
   templateUrl: './example43.component.html',
   encapsulation: ViewEncapsulation.None,
-  imports: [AngularSlickgridModule],
+  imports: [AngularSlickgridComponent],
 })
 export class Example43Component implements OnInit {
   columnDefinitions: Column[] = [];
@@ -433,13 +440,30 @@ export class Example43Component implements OnInit {
       }
     }
 
-    // update column definitions
+    // 1. update column definitions via grid.setColumns()
+    // this will shift colspan/rowspan to the left or right accordingly
     if (this.showEmployeeId) {
       this.columnDefinitions.unshift({ id: 'employeeID', name: 'Employee ID', field: 'employeeID', width: 100 });
     } else {
       this.columnDefinitions.splice(0, 1);
     }
     this.angularGrid.slickGrid.setColumns(this.columnDefinitions);
+
+    // --- OR ---
+    // 2. OR update via "hidden" column flag & increase/decrease column index accordingly in the metadata
+    // this approach will keep colspan/rowspan "as-is" but will hide the EmployeeID column
+    /*
+    const colDirIdx = this.showEmployeeId ? -1 : 1;
+    for (const row of Object.keys(this.metadata)) {
+      newMetadata[row] = { columns: {} };
+      for (const col of Object.keys((this.metadata as any)[row].columns)) {
+        newMetadata[row].columns[Number(col) + colDirIdx] = (this.metadata as any)[row].columns[col];
+      }
+    }
+    this.angularGrid.slickGrid?.setOptions({ frozenColumn: this.showEmployeeId ? 0 : 1 });
+    this.angularGrid.slickGrid?.updateColumnById('employeeID', { hidden: !this.showEmployeeId });
+    this.angularGrid.slickGrid?.updateColumns();
+    */
 
     // update & remap rowspans
     this.metadata = newMetadata;

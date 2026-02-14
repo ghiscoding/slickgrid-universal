@@ -1,8 +1,8 @@
 {
   "$schema": "node_modules/@lerna-lite/cli/schemas/lerna-schema.json",
-  "version": "9.13.0",
+  "version": "10.0.0-beta.0",
   "npmClient": "pnpm",
-  "loglevel": "verbose",
+  "loglevel": "info",
   "command": {
     "version": {
       "conventionalCommits": true,
@@ -12,7 +12,7 @@
       "commentIssues": "✅ This issue has been resolved and included in version %v 📦<br>🔗 The release notes are available at: [GitHub Release](%u) 🚀",
       "commentPullRequests": "🎉 This pull request is included in version %v 📦<br>🔗 The release notes are available at: [GitHub Release](%u) 🚀",
       "message": "chore(release): publish new version %s",
-      "releaseFooterMessage": "<br>🎉 Another awesome Slickgrid-Universal release 🤖. Star us on GitHub ⭐"
+      "releaseFooterMessage": "<br>🎉 Another great Slickgrid-Universal release 🤖. Star us on GitHub ⭐"
     },
     "publish": {
       "cleanupTempFiles": true,
@@ -20,5 +20,5 @@
     }
   },
   "changelogPreset": "conventionalcommits",
-  "packages": ["demos/*", "frameworks/*", "packages/*"]
+  "packages": ["demos/*", "frameworks/*", "frameworks-plugins/*", "packages/*"]
 }

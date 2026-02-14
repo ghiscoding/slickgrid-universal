@@ -3,6 +3,7 @@
 - [Using CSS Variables](#using-css-variables-instead-of-sass)
 - [Bootstrap & Other Frameworks](#bootstrap-support)
 - [SVG Icons](#svg-icons)
+- [Injecting css classes into grid container](#injecting-css-classes-into-grid-container)
 
 ### CSS/SASS Styles
 Load the default Bootstrap theme style and/or customize it to your taste (customization can applied by using SASS)
@@ -247,4 +248,18 @@ $color-darken-percentage: 6%;
   <span class="color-se-warning"> color-se-warning <i class="mdi mdi-help-circle"></i></span> -
   <span class="color-se-warning-light"> color-se-warning-light <i class="mdi mdi-help-circle"></i></span>
 </div>
+```
+
+### Injecting css classes into grid container
+If you want to inject custom css classes into the inner grids container, you can do so by providing an array of strings to the `containerClasses` property of the Grid.
+
+```html
+<angular-slickgrid
+      gridId="grid1"
+      [columns]="columnDefinitions1"
+      [options]="gridOptions1"
+      [dataset]="dataset1"
+      (onAngularGridCreated)="angularGridReady1($event.detail)"
+      [containerClasses]="myContainerClasses"
+    >
 ```

@@ -1,7 +1,4 @@
 import {
-  DelimiterType,
-  FieldType,
-  FileType,
   Formatters,
   GroupTotalFormatters,
   SortComparers,
@@ -93,16 +90,16 @@ describe('ExportService', () => {
       mockTxtBlob = new Blob(['\uFEFF', ''], { type: `text/plain` });
 
       mockExportCsvOptions = {
-        delimiter: DelimiterType.comma,
+        delimiter: ',',
         filename: 'export',
-        format: FileType.csv,
+        format: 'csv',
         useUtf8WithBom: false,
       };
 
       mockExportTxtOptions = {
-        delimiter: DelimiterType.semicolon,
+        delimiter: ';',
         filename: 'export',
-        format: FileType.txt,
+        format: 'txt',
       };
 
       service = new TextExportService();
@@ -270,7 +267,7 @@ describe('ExportService', () => {
       });
 
       it(`should have the Order exported correctly with multiple formatters and use a different delimiter when "delimiterOverride" is provided`, async () => {
-        mockGridOptions.textExportOptions = { delimiterOverride: DelimiterType.doubleSemicolon };
+        mockGridOptions.textExportOptions = { delimiterOverride: ';;' };
         mockCollection = [{ id: 0, userId: '1E06', firstName: 'John', lastName: 'Z', position: 'SALES_REP', order: 10 }];
         vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         vi.spyOn(dataViewStub, 'getItem').mockReturnValue(null).mockReturnValueOnce(mockCollection[0]);
@@ -603,7 +600,7 @@ describe('ExportService', () => {
           {
             id: 'order',
             field: 'order',
-            type: FieldType.number,
+            type: 'number',
             exportWithFormatter: true,
             formatter: Formatters.multiple,
             params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
@@ -724,7 +721,7 @@ describe('ExportService', () => {
           {
             id: 'order',
             field: 'order',
-            type: FieldType.number,
+            type: 'number',
             exportWithFormatter: true,
             formatter: Formatters.multiple,
             params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
@@ -847,7 +844,7 @@ describe('ExportService', () => {
           {
             id: 'order',
             field: 'order',
-            type: FieldType.number,
+            type: 'number',
             exportWithFormatter: true,
             formatter: Formatters.multiple,
             params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },

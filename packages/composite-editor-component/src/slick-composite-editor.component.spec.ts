@@ -8,7 +8,7 @@ import {
   type GridService,
   type SlickDataView,
   type SlickGrid,
-  type SlickRowSelectionModel,
+  type SlickHybridSelectionModel,
 } from '@slickgrid-universal/common';
 import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { ContainerServiceStub } from '../../../test/containerServiceStub.js';
@@ -114,8 +114,8 @@ const gridStub = {
   setSortColumns: vi.fn(),
 } as unknown as SlickGrid;
 
-const rowSelectionModelStub = {
-  pluginName: 'RowSelectionModel',
+const hybridSelectionModelStub = {
+  pluginName: 'HybridSelectionModel',
   constructor: vi.fn(),
   init: vi.fn(),
   destroy: vi.fn(),
@@ -124,7 +124,7 @@ const rowSelectionModelStub = {
   getSelectedRows: vi.fn(),
   setSelectedRows: vi.fn(),
   onSelectedRangesChanged: new SlickEvent(),
-} as unknown as SlickRowSelectionModel;
+} as unknown as SlickHybridSelectionModel;
 
 function createNewColumDefinitions(count: number) {
   const columnsMock: Column[] = [];
@@ -373,7 +373,7 @@ describe('CompositeEditorService', () => {
       component.init(gridStub, container);
       component.openDetails({ headerTitle: 'Details' });
 
-      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
 
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
@@ -389,7 +389,7 @@ describe('CompositeEditorService', () => {
       component.init(gridStub, container);
       component.openDetails({ headerTitle: 'Details' });
 
-      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
       const compositeHeaderElm = compositeContainerElm.querySelector('.slick-editor-modal-header') as HTMLSelectElement;
       const compositeTitleElm = compositeHeaderElm.querySelector('.slick-editor-modal-title') as HTMLSelectElement;
       const compositeBodyElm = compositeContainerElm.querySelector('.slick-editor-modal-body') as HTMLSelectElement;
@@ -406,6 +406,7 @@ describe('CompositeEditorService', () => {
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
       expect(compositeContainerElm).toBeTruthy();
+      expect(compositeContainerElm.hasAttribute('open')).toBeTruthy();
       expect(compositeHeaderElm).toBeTruthy();
       expect(productNameLabelElm.textContent).toBe('Product'); // regular, without column group
       expect(field3LabelElm.innerHTML).toBe('Group Name - <span class="mdi mdi-alert-circle" title="tooltip text"></span> Field 3'); // with column group
@@ -450,7 +451,7 @@ describe('CompositeEditorService', () => {
       component.init(gridStub, container);
       component.openDetails({ headerTitle: 'Details' });
 
-      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
       const compositeHeaderElm = compositeContainerElm.querySelector('.slick-editor-modal-header') as HTMLSelectElement;
       const compositeTitleElm = compositeHeaderElm.querySelector('.slick-editor-modal-title') as HTMLSelectElement;
       const compositeBodyElm = compositeContainerElm.querySelector('.slick-editor-modal-body') as HTMLSelectElement;
@@ -477,6 +478,26 @@ describe('CompositeEditorService', () => {
       expect(itemDetailsContainerElm[3].classList.contains('editor-middleName')).toBe(true);
     });
 
+    it('should make sure Slick-Composite-Editor is being created as <div> when domElementType is "div"', () => {
+      const copyColumnsMock: Column[] = createNewColumDefinitions(8);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue(copyColumnsMock);
+      const mockProduct = { id: 222, address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
+      vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
+
+      component = new SlickCompositeEditorComponent();
+      component.init(gridStub, container);
+      component.openDetails({ domElementType: 'div', headerTitle: 'Details' });
+
+      const compositeContainerDivElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContainerDialogElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+
+      expect(component).toBeTruthy();
+      expect(component.constructor).toBeDefined();
+      expect(compositeContainerDivElm).toBeTruthy();
+      expect(compositeContainerDialogElm).toBeFalsy();
+      expect(compositeContainerDivElm.hasAttribute('open')).toBeFalsy(); // <div> doesn't have open attribute
+    });
+
     it('should make sure Slick-Composite-Editor is being created and rendered with 2 columns layout when having more than 8 but less than 15 column definitions', () => {
       const copyColumnsMock: Column[] = createNewColumDefinitions(8);
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(copyColumnsMock);
@@ -487,7 +508,7 @@ describe('CompositeEditorService', () => {
       component.init(gridStub, container);
       component.openDetails({ headerTitle: 'Details' });
 
-      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
       const compositeContentElm = compositeContainerElm.querySelector('.slick-editor-modal-content.split-view') as HTMLSelectElement;
       const compositeHeaderElm = compositeContainerElm.querySelector('.slick-editor-modal-header') as HTMLSelectElement;
       const compositeTitleElm = compositeHeaderElm.querySelector('.slick-editor-modal-title') as HTMLSelectElement;
@@ -498,6 +519,7 @@ describe('CompositeEditorService', () => {
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
       expect(compositeContainerElm).toBeTruthy();
+      expect(compositeContainerElm.hasAttribute('open')).toBeTruthy();
       expect(compositeContentElm).toBeTruthy();
       expect(compositeHeaderElm).toBeTruthy();
       expect(compositeTitleElm).toBeTruthy();
@@ -517,7 +539,7 @@ describe('CompositeEditorService', () => {
       component.init(gridStub, container);
       component.openDetails({ headerTitle: 'Details', viewColumnLayout: 'auto' });
 
-      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
       const compositeContentElm = compositeContainerElm.querySelector('.slick-editor-modal-content.triple-split-view') as HTMLSelectElement;
       const compositeHeaderElm = compositeContainerElm.querySelector('.slick-editor-modal-header') as HTMLSelectElement;
       const compositeTitleElm = compositeHeaderElm.querySelector('.slick-editor-modal-title') as HTMLSelectElement;
@@ -549,7 +571,7 @@ describe('CompositeEditorService', () => {
       component.init(gridStub, container);
       component.openDetails({ headerTitle: 'Details', viewColumnLayout: 'auto' });
 
-      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
       const compositeContentElm = compositeContainerElm.querySelector('.slick-editor-modal-content') as HTMLSelectElement;
 
       expect(component).toBeTruthy();
@@ -567,7 +589,7 @@ describe('CompositeEditorService', () => {
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
       component.openDetails({ headerTitle: 'Details' });
-      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
 
       expect(setActiveSpy).toHaveBeenCalledTimes(2);
       expect(setActiveSpy).toHaveBeenCalledWith(4, 0, false);
@@ -583,7 +605,7 @@ describe('CompositeEditorService', () => {
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
       component.openDetails({ headerTitle: 'Details' });
-      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
 
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
@@ -591,7 +613,7 @@ describe('CompositeEditorService', () => {
 
       component.dispose();
 
-      const compositeContainerElm2 = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContainerElm2 = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
       expect(compositeContainerElm2).toBeFalsy();
     });
 
@@ -602,14 +624,14 @@ describe('CompositeEditorService', () => {
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
       component.openDetails({ headerTitle: 'Details', backdrop: null });
-      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
 
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
       expect(compositeContainerElm).toBeTruthy();
       compositeContainerElm.click();
 
-      const compositeContainerElm2 = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContainerElm2 = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
       expect(compositeContainerElm2).toBeFalsy();
     });
 
@@ -621,7 +643,7 @@ describe('CompositeEditorService', () => {
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
       component.openDetails({ headerTitle: 'Details', onBeforeOpen: mockOnBeforeCallback });
-      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
 
       expect(mockOnBeforeCallback).toHaveBeenCalled();
       expect(component).toBeTruthy();
@@ -637,9 +659,9 @@ describe('CompositeEditorService', () => {
       component = new SlickCompositeEditorComponent();
       component.init(gridStub, container);
       component.openDetails({ headerTitle: 'Details', onRendered: mockOnRenderedCallback });
-      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
 
-      expect(mockOnRenderedCallback).toHaveBeenCalledWith(expect.any(HTMLDivElement));
+      expect(mockOnRenderedCallback).toHaveBeenCalledWith(expect.any(HTMLDialogElement));
       expect(component).toBeTruthy();
       expect(component.constructor).toBeDefined();
       expect(compositeContainerElm).toBeTruthy();
@@ -669,7 +691,7 @@ describe('CompositeEditorService', () => {
         grid: gridStub,
       });
 
-      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
       const compositeFooterElm = compositeContainerElm.querySelector('.slick-editor-modal-footer') as HTMLSelectElement;
       const compositeFooterCancelBtnElm = compositeFooterElm.querySelector('.btn-cancel') as HTMLSelectElement;
       const compositeHeaderElm = document.querySelector('.slick-editor-modal-header') as HTMLSelectElement;
@@ -720,7 +742,7 @@ describe('CompositeEditorService', () => {
         grid: gridStub,
       });
 
-      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
       const compositeFooterElm = compositeContainerElm.querySelector('.slick-editor-modal-footer') as HTMLSelectElement;
       const compositeFooterCancelBtnElm = compositeFooterElm.querySelector('.btn-cancel') as HTMLSelectElement;
       const compositeHeaderElm = document.querySelector('.slick-editor-modal-header') as HTMLSelectElement;
@@ -760,7 +782,7 @@ describe('CompositeEditorService', () => {
       component.init(gridStub, container);
       component.openDetails(mockModalOptions);
 
-      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
       const compositeFooterElm = compositeContainerElm.querySelector('.slick-editor-modal-footer') as HTMLSelectElement;
       const compositeFooterCancelBtnElm = compositeFooterElm.querySelector('.btn-cancel') as HTMLSelectElement;
       compositeFooterCancelBtnElm.click();
@@ -781,7 +803,7 @@ describe('CompositeEditorService', () => {
       component.init(gridStub, container);
       component.openDetails({ headerTitle: 'Editing ({{id}}) - {{product.name}}' });
 
-      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
       const compositeTitleElm = compositeContainerElm.querySelector('.slick-editor-modal-title') as HTMLSelectElement;
 
       expect(component).toBeTruthy();
@@ -790,7 +812,7 @@ describe('CompositeEditorService', () => {
 
       component.dispose();
 
-      const compositeContainerElm2 = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContainerElm2 = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
       expect(compositeContainerElm2).toBeFalsy();
       expect(compositeTitleElm.textContent).toBe('Editing (222) - Product ABC');
     });
@@ -803,7 +825,7 @@ describe('CompositeEditorService', () => {
       component.init(gridStub, container);
       component.openDetails({ headerTitle: 'Details' });
 
-      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
       compositeContainerElm.dispatchEvent(
         new (window.window as any).KeyboardEvent('keydown', {
           code: 'Escape',
@@ -819,7 +841,7 @@ describe('CompositeEditorService', () => {
     });
 
     it('should execute "validate" on current Editor when the "Tab" key is typed', () => {
-      const currentEditorMock = { validate: vi.fn() };
+      const currentEditorMock = { validate: vi.fn() } as unknown as Editor;
       const getEditCellSpy = vi.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
       const validateSpy = vi.spyOn(currentEditorMock, 'validate');
 
@@ -827,7 +849,7 @@ describe('CompositeEditorService', () => {
       component.init(gridStub, container);
       component.openDetails({ headerTitle: 'Details' });
 
-      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
       compositeContainerElm.dispatchEvent(
         new (window.window as any).KeyboardEvent('keydown', {
           code: 'Tab',
@@ -850,7 +872,7 @@ describe('CompositeEditorService', () => {
       component.init(gridStub, container);
       component.openDetails({ headerTitle: 'Details' });
 
-      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
       const compositeFooterCancelBtnElm = compositeContainerElm.querySelector('.btn-cancel') as HTMLSelectElement;
       const compositeFooterCloseBtnElm = compositeContainerElm.querySelector('.close') as HTMLSelectElement;
       compositeFooterCancelBtnElm.click();
@@ -873,7 +895,7 @@ describe('CompositeEditorService', () => {
       component.init(gridStub, container);
       component.openDetails({ headerTitle: 'Some Details', showCloseButtonOutside: true });
 
-      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
       const compositeFooterCloseBtnElm = compositeContainerElm.querySelector('.close') as HTMLSelectElement;
       compositeFooterCloseBtnElm.click();
 
@@ -893,7 +915,7 @@ describe('CompositeEditorService', () => {
       component.init(gridStub, container);
       component.openDetails({ headerTitle: 'Details' });
 
-      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
       const compositeFooterSaveBtnElm = compositeContainerElm.querySelector('.btn-save') as HTMLSelectElement;
       compositeFooterSaveBtnElm.click();
 
@@ -919,7 +941,7 @@ describe('CompositeEditorService', () => {
         const mockProduct1 = { id: 222, productName: 'Product 1', address: { zip: 123456 }, price: 12.55 };
         const mockProduct2 = { id: 333, productName: 'Product 2', address: { zip: 456789 }, price: 33.44 };
         const newGridOptions = { ...gridOptionsMock, enableAddRow: true };
-        const currentEditorMock = { validate: vi.fn() };
+        const currentEditorMock = { validate: vi.fn() } as unknown as Editor;
         vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct2);
         vi.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1]);
         vi.spyOn(dataViewStub, 'getItemById').mockReturnValue(null);
@@ -945,7 +967,7 @@ describe('CompositeEditorService', () => {
         });
         const disposeSpy = vi.spyOn(component, 'dispose');
 
-        const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+        const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
         const compositeFooterElm = compositeContainerElm.querySelector('.slick-editor-modal-footer') as HTMLSelectElement;
         const compositeFooterCancelBtnElm = compositeFooterElm.querySelector('.btn-cancel') as HTMLSelectElement;
         const compositeFooterSaveBtnElm = compositeContainerElm.querySelector('.btn-save') as HTMLSelectElement;
@@ -979,7 +1001,7 @@ describe('CompositeEditorService', () => {
         const mockProduct1 = { id: 222, productName: 'Product 1', address: { zip: 123456 }, price: 12.55 };
         const mockProduct2 = { id: 333, productName: 'Product 2', address: { zip: 456789 }, price: 33.44 };
         const newGridOptions = { ...gridOptionsMock, enableAddRow: true };
-        const currentEditorMock = { validate: vi.fn() };
+        const currentEditorMock = { validate: vi.fn() } as unknown as Editor;
         vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct2);
         vi.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1]);
         vi.spyOn(dataViewStub, 'getItemById').mockReturnValue(mockProduct1); // find existing item
@@ -1013,7 +1035,7 @@ describe('CompositeEditorService', () => {
         });
         const disposeSpy = vi.spyOn(component, 'dispose');
 
-        const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+        const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
         const compositeFooterElm = compositeContainerElm.querySelector('.slick-editor-modal-footer') as HTMLSelectElement;
         const compositeFooterCancelBtnElm = compositeFooterElm.querySelector('.btn-cancel') as HTMLSelectElement;
         const compositeFooterSaveBtnElm = compositeContainerElm.querySelector('.btn-save') as HTMLSelectElement;
@@ -1050,7 +1072,7 @@ describe('CompositeEditorService', () => {
         const mockProduct1 = { id: 222, productName: 'Product 1', address: { zip: 123456 }, price: 12.55 };
         const mockProduct2 = { id: 333, productName: 'Product 2', address: { zip: 456789 }, price: 33.44 };
         const newGridOptions = { ...gridOptionsMock, enableAddRow: true };
-        const currentEditorMock = { validate: vi.fn() };
+        const currentEditorMock = { validate: vi.fn() } as unknown as Editor;
         vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct2);
         vi.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1]);
         vi.spyOn(dataViewStub, 'getItemById').mockReturnValue(null);
@@ -1078,7 +1100,7 @@ describe('CompositeEditorService', () => {
         });
         const disposeSpy = vi.spyOn(component, 'dispose');
 
-        const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+        const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
         const compositeFooterElm = compositeContainerElm.querySelector('.slick-editor-modal-footer') as HTMLSelectElement;
         const compositeFooterCancelBtnElm = compositeFooterElm.querySelector('.btn-cancel') as HTMLSelectElement;
         const compositeFooterSaveBtnElm = compositeContainerElm.querySelector('.btn-save') as HTMLSelectElement;
@@ -1123,7 +1145,7 @@ describe('CompositeEditorService', () => {
         const mockProduct1 = { id: 222, productName: 'Product 1', address: { zip: 123456 }, price: 12.55 };
         const mockProduct2 = { id: 333, productName: 'Product 2', address: { zip: 456789 }, price: 33.44 };
         const newGridOptions = { ...gridOptionsMock, enableAddRow: true };
-        const currentEditorMock = { validate: vi.fn() };
+        const currentEditorMock = { validate: vi.fn() } as unknown as Editor;
         vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct2);
         vi.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1]);
         vi.spyOn(dataViewStub, 'getItemById').mockReturnValue(null);
@@ -1151,7 +1173,7 @@ describe('CompositeEditorService', () => {
         });
         const disposeSpy = vi.spyOn(component, 'dispose');
 
-        const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+        const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
         const compositeFooterElm = compositeContainerElm.querySelector('.slick-editor-modal-footer') as HTMLSelectElement;
         const compositeFooterCancelBtnElm = compositeFooterElm.querySelector('.btn-cancel') as HTMLSelectElement;
         const compositeFooterSaveBtnElm = compositeContainerElm.querySelector('.btn-save') as HTMLSelectElement;
@@ -1212,7 +1234,7 @@ describe('CompositeEditorService', () => {
         component.openDetails(mockModalOptions);
         component.editors = { productName: { setValue: vi.fn(), isValueChanged: () => true } as unknown as Editor }; // return True for value changed
 
-        const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+        const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
         const compositeFooterElm = compositeContainerElm.querySelector('.slick-editor-modal-footer') as HTMLSelectElement;
         const compositeFooterSaveBtnElm = compositeFooterElm.querySelector('.btn-save') as HTMLSelectElement;
         const compositeHeaderElm = document.querySelector('.slick-editor-modal-header') as HTMLSelectElement;
@@ -1272,7 +1294,7 @@ describe('CompositeEditorService', () => {
           field3: { setValue: vi.fn(), reset: mockReset2, isValueTouched: () => true } as unknown as Editor,
         }; // return True for value changed
 
-        const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+        const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
         const input1ResetButtonElm = compositeContainerElm.querySelectorAll<HTMLButtonElement>('button.btn-editor-reset')[0];
         const input2ResetButtonElm = compositeContainerElm.querySelectorAll<HTMLButtonElement>('button.btn-editor-reset')[1];
         const compositeHeaderElm = document.querySelector('.slick-editor-modal-header') as HTMLSelectElement;
@@ -1332,7 +1354,7 @@ describe('CompositeEditorService', () => {
           field3: { setValue: vi.fn(), reset: mockReset2, isValueTouched: () => true } as unknown as Editor,
         }; // return True for value changed
 
-        const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+        const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
         const formResetButtonElm = compositeContainerElm.querySelector('.reset-container button') as HTMLButtonElement;
         const compositeHeaderElm = document.querySelector('.slick-editor-modal-header') as HTMLSelectElement;
         const compositeTitleElm = compositeHeaderElm.querySelector('.slick-editor-modal-title') as HTMLSelectElement;
@@ -1391,7 +1413,7 @@ describe('CompositeEditorService', () => {
         component.openDetails(mockModalOptions);
         component.editors = { productName: { setValue: vi.fn(), isValueChanged: () => true } as unknown as Editor }; // return True for value changed
 
-        const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+        const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
         const compositeFooterElm = compositeContainerElm.querySelector('.slick-editor-modal-footer') as HTMLSelectElement;
         const compositeFooterSaveBtnElm = compositeFooterElm.querySelector('.btn-save') as HTMLSelectElement;
         const compositeHeaderElm = document.querySelector('.slick-editor-modal-header') as HTMLSelectElement;
@@ -1455,7 +1477,7 @@ describe('CompositeEditorService', () => {
         component.openDetails(mockModalOptions);
         component.editors = { productName: { setValue: vi.fn(), isValueChanged: () => true } as unknown as Editor }; // return True for value changed
 
-        const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+        const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
         const compositeFooterElm = compositeContainerElm.querySelector('.slick-editor-modal-footer') as HTMLSelectElement;
         const compositeFooterSaveBtnElm = compositeFooterElm.querySelector('.btn-save') as HTMLSelectElement;
         const compositeHeaderElm = document.querySelector('.slick-editor-modal-header') as HTMLSelectElement;
@@ -1509,7 +1531,7 @@ describe('CompositeEditorService', () => {
         component.init(gridStub, container);
         component.openDetails({ headerTitle: 'Details' });
 
-        const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+        const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
         const compositeBodyElm = compositeContainerElm.querySelector('.slick-editor-modal-body') as HTMLSelectElement;
         const productNameDetailContainerElm = compositeBodyElm.querySelector(
           '.item-details-container.editor-productName.slick-col-medium-12'
@@ -1565,7 +1587,7 @@ describe('CompositeEditorService', () => {
         component.init(gridStub, container);
         component.openDetails({ headerTitle: 'Details' });
 
-        const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+        const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
         const compositeBodyElm = compositeContainerElm.querySelector('.slick-editor-modal-body') as HTMLSelectElement;
         const productNameDetailContainerElm = compositeBodyElm.querySelector(
           '.item-details-container.editor-productName.slick-col-medium-12'
@@ -1599,7 +1621,7 @@ describe('CompositeEditorService', () => {
         component.init(gridStub, container);
         component.openDetails({ headerTitle: 'Details' });
 
-        const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+        const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
         const compositeBodyElm = compositeContainerElm.querySelector('.slick-editor-modal-body') as HTMLSelectElement;
         const productNameDetailContainerElm = compositeBodyElm.querySelector(
           '.item-details-container.editor-productName.slick-col-medium-12'
@@ -1675,7 +1697,7 @@ describe('CompositeEditorService', () => {
         component.init(gridStub, container);
         component.openDetails({ headerTitle: 'Details' });
 
-        const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+        const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
         const compositeBodyElm = compositeContainerElm.querySelector('.slick-editor-modal-body') as HTMLSelectElement;
         const productNameDetailContainerElm = compositeBodyElm.querySelector(
           '.item-details-container.editor-productName.slick-col-medium-12'
@@ -1710,7 +1732,7 @@ describe('CompositeEditorService', () => {
         component.init(gridStub, container);
         component.openDetails({ headerTitle: 'Details' });
 
-        const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+        const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
         const compositeBodyElm = compositeContainerElm.querySelector('.slick-editor-modal-body') as HTMLSelectElement;
         const productNameDetailContainerElm = compositeBodyElm.querySelector(
           '.item-details-container.editor-productName.slick-col-medium-12'
@@ -1762,7 +1784,7 @@ describe('CompositeEditorService', () => {
         component.init(gridStub, container);
         component.openDetails({ headerTitle: 'Details' });
 
-        const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+        const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
         const compositeBodyElm = compositeContainerElm.querySelector('.slick-editor-modal-body') as HTMLSelectElement;
         const productNameDetailContainerElm = compositeBodyElm.querySelector(
           '.item-details-container.editor-productName.slick-col-medium-12'
@@ -1786,10 +1808,10 @@ describe('CompositeEditorService', () => {
 
     describe('with Row Selections and Mass Selection Change', () => {
       beforeEach(() => {
-        const newGridOptions = { ...gridOptionsMock, enableRowSelection: true };
+        const newGridOptions = { ...gridOptionsMock, enableSelection: true };
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
-        vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(rowSelectionModelStub);
+        vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(hybridSelectionModelStub);
       });
 
       afterEach(() => {
@@ -1838,7 +1860,7 @@ describe('CompositeEditorService', () => {
         component.init(gridStub, container);
         component.openDetails({ headerTitle: '', modalType: 'auto-mass', headerTitleMassUpdate: 'Mass Update', headerTitleMassSelection: 'Mass Selection' });
 
-        const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+        const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
         const compositeHeaderElm = compositeContainerElm.querySelector('.slick-editor-modal-header') as HTMLSelectElement;
         const compositeTitleElm = compositeHeaderElm.querySelector('.slick-editor-modal-title') as HTMLSelectElement;
         const compositeFooterSaveBtnElm = compositeContainerElm.querySelector('.btn-save') as HTMLSelectElement;
@@ -1859,7 +1881,7 @@ describe('CompositeEditorService', () => {
         component.init(gridStub, container);
         component.openDetails({ headerTitle: '', modalType: 'auto-mass', headerTitleMassUpdate: 'Mass Update', headerTitleMassSelection: 'Mass Selection' });
 
-        const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+        const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
         const compositeHeaderElm = compositeContainerElm.querySelector('.slick-editor-modal-header') as HTMLSelectElement;
         const compositeTitleElm = compositeHeaderElm.querySelector('.slick-editor-modal-title') as HTMLSelectElement;
         const compositeFooterSaveBtnElm = compositeContainerElm.querySelector('.btn-save') as HTMLSelectElement;
@@ -1881,7 +1903,7 @@ describe('CompositeEditorService', () => {
         component = new SlickCompositeEditorComponent();
         component.init(gridStub, container);
         component.openDetails({ headerTitle: '', modalType: 'auto-mass', headerTitleMassUpdate: 'Mass Update', headerTitleMassSelection: 'Mass Selection' });
-        const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+        const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
 
         expect(setActiveSpy).toHaveBeenCalledTimes(2);
         expect(setActiveSpy).toHaveBeenCalledWith(4, 2, false);
@@ -1892,7 +1914,7 @@ describe('CompositeEditorService', () => {
 
       it('should throw an error when no rows are selected', async () => {
         const mockProduct = { id: 222, field3: 'something', address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
-        const currentEditorMock = { validate: vi.fn() };
+        const currentEditorMock = { validate: vi.fn() } as unknown as Editor;
         vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
         vi.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
         vi.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
@@ -1911,7 +1933,7 @@ describe('CompositeEditorService', () => {
         component.init(gridStub, container);
         component.openDetails(mockModalOptions);
 
-        const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+        const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
         const compositeFooterSaveBtnElm = compositeContainerElm.querySelector('.btn-save') as HTMLSelectElement;
         const compositeHeaderElm = document.querySelector('.slick-editor-modal-header') as HTMLSelectElement;
         const compositeTitleElm = compositeHeaderElm.querySelector('.slick-editor-modal-title') as HTMLSelectElement;
@@ -1946,7 +1968,7 @@ describe('CompositeEditorService', () => {
 
       it('should handle saving and grid changes when "Mass Selection" save button is clicked', () => {
         const mockProduct = { id: 222, field3: 'something', address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
-        const currentEditorMock = { validate: vi.fn() };
+        const currentEditorMock = { validate: vi.fn() } as unknown as Editor;
         vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
         vi.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
         vi.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
@@ -1965,7 +1987,7 @@ describe('CompositeEditorService', () => {
         component.openDetails(mockModalOptions);
         const disposeSpy = vi.spyOn(component, 'dispose');
 
-        const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+        const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
         const compositeFooterSaveBtnElm = compositeContainerElm.querySelector('.btn-save') as HTMLSelectElement;
         const compositeHeaderElm = document.querySelector('.slick-editor-modal-header') as HTMLSelectElement;
         const compositeTitleElm = compositeHeaderElm.querySelector('.slick-editor-modal-title') as HTMLSelectElement;
@@ -2009,7 +2031,7 @@ describe('CompositeEditorService', () => {
 
   describe('with Mass Update', () => {
     beforeEach(() => {
-      const newGridOptions = { ...gridOptionsMock, enableRowSelection: true };
+      const newGridOptions = { ...gridOptionsMock, enableSelection: true };
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
     });
@@ -2022,7 +2044,7 @@ describe('CompositeEditorService', () => {
     it('should handle saving and grid changes when "Mass Update" save button is clicked', () => {
       const mockProduct1 = { id: 222, field3: 'something', address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
       const mockProduct2 = { id: 333, field3: 'else', address: { zip: 789123 }, product: { name: 'Product XYZ', price: 33.44 } };
-      const currentEditorMock = { validate: vi.fn() };
+      const currentEditorMock = { validate: vi.fn() } as unknown as Editor;
       vi.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1, mockProduct2]);
       vi.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
       vi.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
@@ -2040,7 +2062,7 @@ describe('CompositeEditorService', () => {
       component.init(gridStub, container);
       component.openDetails(mockModalOptions);
 
-      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
       const compositeFooterSaveBtnElm = compositeContainerElm.querySelector('.btn-save') as HTMLSelectElement;
       const compositeHeaderElm = document.querySelector('.slick-editor-modal-header') as HTMLSelectElement;
       const compositeTitleElm = compositeHeaderElm.querySelector('.slick-editor-modal-title') as HTMLSelectElement;
@@ -2088,7 +2110,7 @@ describe('CompositeEditorService', () => {
     it('should handle saving and grid changes when "Mass Update" save button is clicked and user provides a custom "onSave" async function', async () => {
       const mockProduct1 = { id: 222, field3: 'something', address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
       const mockProduct2 = { id: 333, field3: 'else', address: { zip: 789123 }, product: { name: 'Product XYZ', price: 33.44 } };
-      const currentEditorMock = { validate: vi.fn() };
+      const currentEditorMock = { validate: vi.fn() } as unknown as Editor;
       vi.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1, mockProduct2]);
       vi.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
       vi.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
@@ -2112,7 +2134,7 @@ describe('CompositeEditorService', () => {
       component.init(gridStub, container);
       component.openDetails(mockModalOptions);
 
-      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
       const compositeFooterSaveBtnElm = compositeContainerElm.querySelector('.btn-save') as HTMLSelectElement;
       const compositeHeaderElm = document.querySelector('.slick-editor-modal-header') as HTMLSelectElement;
       const compositeTitleElm = compositeHeaderElm.querySelector('.slick-editor-modal-title') as HTMLSelectElement;
@@ -2155,7 +2177,7 @@ describe('CompositeEditorService', () => {
     it('should handle saving and expect a dataset preview of the change when "shouldPreviewMassChangeDataset" is enabled and grid changes when "Mass Update" save button is clicked and user provides a custom "onSave" async function', async () => {
       const mockProduct1 = { id: 222, field3: 'something', address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
       const mockProduct2 = { id: 333, field3: 'else', address: { zip: 789123 }, product: { name: 'Product XYZ', price: 33.44 } };
-      const currentEditorMock = { validate: vi.fn() };
+      const currentEditorMock = { validate: vi.fn() } as unknown as Editor;
       vi.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1, mockProduct2]);
       vi.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
       vi.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
@@ -2180,7 +2202,7 @@ describe('CompositeEditorService', () => {
       component.init(gridStub, container);
       component.openDetails(mockModalOptions);
 
-      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
       const compositeFooterSaveBtnElm = compositeContainerElm.querySelector('.btn-save') as HTMLSelectElement;
       const compositeHeaderElm = document.querySelector('.slick-editor-modal-header') as HTMLSelectElement;
       const compositeTitleElm = compositeHeaderElm.querySelector('.slick-editor-modal-title') as HTMLSelectElement;
@@ -2226,7 +2248,7 @@ describe('CompositeEditorService', () => {
     it('should show a validation summary when clicking "Mass Update" save button and the custom "onSave" async function throws an error', async () => {
       const mockProduct1 = { id: 222, field3: 'something', address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
       const mockProduct2 = { id: 333, field3: 'else', address: { zip: 789123 }, product: { name: 'Product XYZ', price: 33.44 } };
-      const currentEditorMock = { validate: vi.fn() };
+      const currentEditorMock = { validate: vi.fn() } as unknown as Editor;
       vi.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1, mockProduct2]);
       vi.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
       vi.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
@@ -2241,7 +2263,7 @@ describe('CompositeEditorService', () => {
       component.init(gridStub, container);
       component.openDetails(mockModalOptions);
 
-      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
       const compositeFooterSaveBtnElm = compositeContainerElm.querySelector('.btn-save') as HTMLSelectElement;
       const compositeHeaderElm = document.querySelector('.slick-editor-modal-header') as HTMLSelectElement;
       const compositeTitleElm = compositeHeaderElm.querySelector('.slick-editor-modal-title') as HTMLSelectElement;
@@ -2289,7 +2311,7 @@ describe('CompositeEditorService', () => {
       container.registerInstance('GridService', gridServiceStub);
       container.registerInstance('TranslaterService', translateService);
 
-      const newGridOptions = { ...gridOptionsMock, enableRowSelection: true, enableTranslate: true };
+      const newGridOptions = { ...gridOptionsMock, enableSelection: true, enableTranslate: true };
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
     });
@@ -2310,7 +2332,7 @@ describe('CompositeEditorService', () => {
       component.init(gridStub, container);
       component.openDetails(mockModalOptions);
 
-      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
       const compositeHeaderElm = document.querySelector('.slick-editor-modal-header') as HTMLSelectElement;
       const compositeTitleElm = compositeHeaderElm.querySelector('.slick-editor-modal-title') as HTMLSelectElement;
       const compositeBodyElm = document.querySelector('.slick-editor-modal-body') as HTMLSelectElement;
@@ -2346,7 +2368,7 @@ describe('CompositeEditorService', () => {
       component.init(gridStub, container);
       component.openDetails(mockModalOptions);
 
-      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
       const compositeHeaderElm = document.querySelector('.slick-editor-modal-header') as HTMLSelectElement;
       const compositeTitleElm = compositeHeaderElm.querySelector('.slick-editor-modal-title') as HTMLSelectElement;
       const compositeBodyElm = document.querySelector('.slick-editor-modal-body') as HTMLSelectElement;
@@ -2372,7 +2394,7 @@ describe('CompositeEditorService', () => {
 
     it('should have translated text when handling a saving of grid changes when "Mass Selection" save button is clicked', () => {
       const mockProduct = { id: 222, field3: 'something', address: { zip: 123456 }, productName: 'Product ABC', price: 12.55 };
-      const currentEditorMock = { validate: vi.fn() };
+      const currentEditorMock = { validate: vi.fn() } as unknown as Editor;
       vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockProduct);
       vi.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
       vi.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
@@ -2389,7 +2411,7 @@ describe('CompositeEditorService', () => {
       component.init(gridStub, container);
       component.openDetails(mockModalOptions);
 
-      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
       const compositeHeaderElm = document.querySelector('.slick-editor-modal-header') as HTMLSelectElement;
       const compositeTitleElm = compositeHeaderElm.querySelector('.slick-editor-modal-title') as HTMLSelectElement;
       const compositeBodyElm = document.querySelector('.slick-editor-modal-body') as HTMLSelectElement;
@@ -2433,7 +2455,7 @@ describe('CompositeEditorService', () => {
     it('should have translated text when handling a saving of grid changes when "Mass Update" save button is clicked', () => {
       const mockProduct1 = { id: 222, field3: 'something', address: { zip: 123456 }, product: { name: 'Product ABC', price: 12.55 } };
       const mockProduct2 = { id: 333, field3: 'else', address: { zip: 789123 }, product: { name: 'Product XYZ', price: 33.44 } };
-      const currentEditorMock = { validate: vi.fn() };
+      const currentEditorMock = { validate: vi.fn() } as unknown as Editor;
       vi.spyOn(dataViewStub, 'getItems').mockReturnValue([mockProduct1, mockProduct2]);
       vi.spyOn(gridStub, 'getCellEditor').mockReturnValue(currentEditorMock as any);
       vi.spyOn(currentEditorMock, 'validate').mockReturnValue({ valid: true, msg: null });
@@ -2445,7 +2467,7 @@ describe('CompositeEditorService', () => {
       component.init(gridStub, container);
       component.openDetails(mockModalOptions);
 
-      const compositeContainerElm = document.querySelector('div.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
+      const compositeContainerElm = document.querySelector('dialog.slick-editor-modal.slickgrid_123456') as HTMLSelectElement;
       const compositeHeaderElm = document.querySelector('.slick-editor-modal-header') as HTMLSelectElement;
       const compositeTitleElm = compositeHeaderElm.querySelector('.slick-editor-modal-title') as HTMLSelectElement;
       const compositeBodyElm = document.querySelector('.slick-editor-modal-body') as HTMLSelectElement;

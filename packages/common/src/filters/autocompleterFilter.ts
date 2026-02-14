@@ -19,7 +19,7 @@ import {
 import { Constants } from '../constants.js';
 import { type SlickGrid } from '../core/index.js';
 import { applyHtmlToElement } from '../core/utils.js';
-import { FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
+import { type OperatorType, type SearchTerm } from '../enums/index.js';
 import type {
   AutocompleterOption,
   AutocompleteSearchItem,
@@ -113,14 +113,14 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
   }
 
   get filterOptions(): AutocompleterOption {
-    return { ...this.gridOptions.defaultFilterOptions?.autocompleter, ...this.columnFilter?.filterOptions, ...this.columnFilter?.options };
+    return { ...this.gridOptions.defaultFilterOptions?.autocompleter, ...this.columnFilter?.options };
   }
 
   /** Getter for the Custom Structure if exist */
   get customStructure(): CollectionCustomStructure | undefined {
     let customStructure = this.columnFilter?.customStructure;
     const columnType = this.columnFilter?.type ?? this.columnDef?.type;
-    if (!customStructure && columnType === FieldType.object && this.columnDef?.dataKey && this.columnDef?.labelKey) {
+    if (!customStructure && columnType === 'object' && this.columnDef?.dataKey && this.columnDef?.labelKey) {
       customStructure = {
         label: this.columnDef.labelKey,
         value: this.columnDef.dataKey,
@@ -130,8 +130,8 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
   }
 
   /** Getter to know what would be the default operator when none is specified */
-  get defaultOperator(): OperatorType | OperatorString {
-    return OperatorType.equal;
+  get defaultOperator(): OperatorType {
+    return 'EQ';
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
@@ -145,12 +145,12 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
   }
 
   /** Getter of the Operator to use when doing the filter comparing */
-  get operator(): OperatorType | OperatorString {
+  get operator(): OperatorType {
     return this.columnFilter?.operator ?? this.defaultOperator;
   }
 
   /** Setter for the filter operator */
-  set operator(operator: OperatorType | OperatorString) {
+  set operator(operator: OperatorType) {
     if (this.columnFilter) {
       this.columnFilter.operator = operator;
     }
@@ -265,7 +265,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
   }
 
   /** Set value(s) on the DOM element  */
-  setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString, triggerChange = false): void {
+  setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType, triggerChange = false): void {
     if (values && this._filterElm) {
       this._filterElm.value = values as string;
     }

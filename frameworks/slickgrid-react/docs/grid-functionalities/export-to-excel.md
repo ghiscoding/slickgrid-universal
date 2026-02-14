@@ -12,6 +12,7 @@
 - [UI Sample](#ui-sample)
 
 ### Description
+
 You can Export to Excel, it will create an Excel file with the `.xlsx` default extension (you can also change it to be `.xls`). If you wish to export to CSV or other delimiter like Tab Delimited, you can refer to the other [Wiki - Export to File](Export-to-Text-File.md).
 
 **NOTE:** this is an opt-in Service, you must download the necessary Service from `@slickgrid-universal/excel-export` and instantiate it in your grid options via `externalResources`, see multiple examples below.
@@ -138,30 +139,7 @@ What we can see from the example, is that it will use all Formatters (when exist
 
 ### Custom Column Width
 
-**NOTE** now deprecated, please use [Custom Cell Styling](#custom-cell-styling) instead
-
-You can define a custom Excel column width (the width Excel's own width which is not in pixel). You can define a custom width per column (in your column definitions) and/or for the entire grid (in your grid options).
-
-#### Per Column
-You could set a custom width per column
-```ts
-const columnDefinitions = [
-  { id: 'firstName', name: 'FirstName', exportColumnWidth: 10, },
-  // ...
-];
-```
-
-#### For the entire Grid
-You could also set a custom width for the entire grid export via the `excelExportOptions`
-```ts
-const gridOptions = {
-  // set at the grid option level, meaning all column will evaluate the Formatter (when it has a Formatter defined)
-  excelExportOptions: {
-    customColumnWidth: 15,
-  },
-  externalResources: [new ExcelExportService()],
-};
-```
+See [Custom Cell Styling](#custom-cell-styling) to define cell width.
 
 ### Styling the Header Titles
 By default the header titles (first row) will be styled as Bold text, however you can choose to style them differently with custom styles as shown below. To find out what styling you can use, you can take a look at Excel Builder-Vanilla [Documentation](https://ghiscoding.gitbook.io/excel-builder-vanilla/cookbook/fonts-and-colors) website. The code shown below is used in [Example 24](https://ghiscoding.github.io/slickgrid-react-demos/#/Example24) if you wish to see the result.

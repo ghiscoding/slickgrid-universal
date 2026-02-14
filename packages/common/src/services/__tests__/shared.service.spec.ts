@@ -118,27 +118,6 @@ describe('Shared Service', () => {
     expect(output).toEqual(mockGridOptions);
   });
 
-  it('should call "visibleColumns" GETTER and return all columns', () => {
-    const spy = vi.spyOn(service, 'visibleColumns', 'get').mockReturnValue(mockColumns);
-
-    const columns = service.visibleColumns;
-
-    expect(spy).toHaveBeenCalled();
-    expect(columns).toEqual(mockColumns);
-  });
-
-  it('should call "visibleColumns" SETTER and expect GETTER to return the same', () => {
-    const getSpy = vi.spyOn(service, 'visibleColumns', 'get');
-    const setSpy = vi.spyOn(service, 'visibleColumns', 'set');
-
-    service.visibleColumns = mockColumns;
-    const columns = service.visibleColumns;
-
-    expect(getSpy).toHaveBeenCalled();
-    expect(setSpy).toHaveBeenCalled();
-    expect(columns).toEqual(mockColumns);
-  });
-
   it('should call "hierarchicalDataset" GETTER and return a hierarchical dataset', () => {
     const spy = vi.spyOn(service, 'hierarchicalDataset', 'get').mockReturnValue(mockHierarchicalDataset);
 

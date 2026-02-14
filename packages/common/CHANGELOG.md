@@ -4,6 +4,47 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.0.0-beta.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.12.0...v10.0.0-beta.0) (2026-02-14)
+
+### ⚠ BREAKING CHANGES
+
+* migrate Row/Hybrid Selection flag into a single `enableSelection` flag (#2331)
+* drop Cell/Row Selection Models & keep only HybridSelectionModel (#2330)
+* remove all Deprecated code (#2302)
+* drop OperatorType enums and keep only type literal (#2301)
+* replacing multiple TypeScript `enum` with `type` to decrease build size (#2300)
+* drop FieldType enums and keep only field type literal (#2299)
+* make Row Detail plugin as optional in all framework wrappers (#2291)
+* rewrite Grid Menu using CSS flexbox instead of width and calc() (#2282)
+* switch to column `hidden` property and always keep all columns (#2281)
+
+### Features
+
+* add custom menu slot renderers ([#2375](https://github.com/ghiscoding/slickgrid-universal/issues/2375)) ([7ebbda5](https://github.com/ghiscoding/slickgrid-universal/commit/7ebbda58233bb5ce94b81b5b2b578af0ea6a068d)) - by @ghiscoding
+* auto-enabled external resources with their associated flags ([#2362](https://github.com/ghiscoding/slickgrid-universal/issues/2362)) ([16dd8a7](https://github.com/ghiscoding/slickgrid-universal/commit/16dd8a77dd5d136a5a99321f0fc4c50571fdb0c0)) - by @ghiscoding
+* drop Cell/Row Selection Models & keep only HybridSelectionModel ([#2330](https://github.com/ghiscoding/slickgrid-universal/issues/2330)) ([4398cf4](https://github.com/ghiscoding/slickgrid-universal/commit/4398cf42e03f6971b81db8cea4ed11138c0aa452)) - by @ghiscoding
+* F2 activates cell editor, closes [#2351](https://github.com/ghiscoding/slickgrid-universal/issues/2351) ([#2370](https://github.com/ghiscoding/slickgrid-universal/issues/2370)) ([6e06f9d](https://github.com/ghiscoding/slickgrid-universal/commit/6e06f9dd3e0ff78650683b0641191b94f2a2aa96)) - by @zewa666
+* make Row Detail plugin as optional in all framework wrappers ([#2291](https://github.com/ghiscoding/slickgrid-universal/issues/2291)) ([fa1a14c](https://github.com/ghiscoding/slickgrid-universal/commit/fa1a14c16c987bfaf7725c46e8114b20ea5a505d)) - by @ghiscoding
+* migrate Row/Hybrid Selection flag into a single `enableSelection` flag ([#2331](https://github.com/ghiscoding/slickgrid-universal/issues/2331)) ([5be5e6a](https://github.com/ghiscoding/slickgrid-universal/commit/5be5e6a862ecd024cf43d404769d65c6c1dd335e)) - by @ghiscoding
+* **SlickCompositeEditor:** migrate modal from div to dialog ([#2283](https://github.com/ghiscoding/slickgrid-universal/issues/2283)) ([371c2c6](https://github.com/ghiscoding/slickgrid-universal/commit/371c2c675728f51785485280237572ef5a584eeb)) - by @ghiscoding
+* switch to column `hidden` property and always keep all columns ([#2281](https://github.com/ghiscoding/slickgrid-universal/issues/2281)) ([075c649](https://github.com/ghiscoding/slickgrid-universal/commit/075c64961cb7400500df46b792866d39fba2d9e0)) - by @ghiscoding
+* **tooltip:** add global tooltip observation for non-grid elements ([#2371](https://github.com/ghiscoding/slickgrid-universal/issues/2371)) ([1bbc8de](https://github.com/ghiscoding/slickgrid-universal/commit/1bbc8de895e370843286eadd08574efc552ad8fd)) - by @ghiscoding
+
+### Bug Fixes
+
+* **filters:** prevent tooltip triggers on Slider programmatic updates ([#2372](https://github.com/ghiscoding/slickgrid-universal/issues/2372)) ([5734d59](https://github.com/ghiscoding/slickgrid-universal/commit/5734d59a4acfd5c32571ee2f0839561966b1ee2c)) - by @ghiscoding
+* HybridSelectionModelOption should all be optional ([#2293](https://github.com/ghiscoding/slickgrid-universal/issues/2293)) ([1b8f760](https://github.com/ghiscoding/slickgrid-universal/commit/1b8f76060493c43a62e956fb9bf5e0e2feaf4a1f)) - by @ghiscoding
+* pre-set value for editor validation on paste ([#2368](https://github.com/ghiscoding/slickgrid-universal/issues/2368)) ([2df5cc5](https://github.com/ghiscoding/slickgrid-universal/commit/2df5cc5d529bff41513b05ecb322efc64d234d64)) - by @zewa666
+* remove all Deprecated code ([#2302](https://github.com/ghiscoding/slickgrid-universal/issues/2302)) ([f42c46c](https://github.com/ghiscoding/slickgrid-universal/commit/f42c46cd1f05b5c72c62f552f124b5bfe776f8b0)) - by @ghiscoding
+* **styling:** add missing row highlight assignment for Dark Mode ([6ae55de](https://github.com/ghiscoding/slickgrid-universal/commit/6ae55de071325e37123a4eb32bd57a0d00581a17)) - by @ghiscoding
+
+### Code Refactoring
+
+* drop FieldType enums and keep only field type literal ([#2299](https://github.com/ghiscoding/slickgrid-universal/issues/2299)) ([3858ed0](https://github.com/ghiscoding/slickgrid-universal/commit/3858ed06a9496ddfa94d769ce1d415b68e18c993)) - by @ghiscoding
+* drop OperatorType enums and keep only type literal ([#2301](https://github.com/ghiscoding/slickgrid-universal/issues/2301)) ([5dd0807](https://github.com/ghiscoding/slickgrid-universal/commit/5dd08079460dc9af798ab29527997a6d4b31abdd)) - by @ghiscoding
+* replacing multiple TypeScript `enum` with `type` to decrease build size ([#2300](https://github.com/ghiscoding/slickgrid-universal/issues/2300)) ([ea79395](https://github.com/ghiscoding/slickgrid-universal/commit/ea79395cf663b3abce8e43cf27ba6ffea7cfe113)) - by @ghiscoding
+* rewrite Grid Menu using CSS flexbox instead of width and calc() ([#2282](https://github.com/ghiscoding/slickgrid-universal/issues/2282)) ([2f5141a](https://github.com/ghiscoding/slickgrid-universal/commit/2f5141a12a765510e30a7155a7bf714e3462cfc1)) - by @ghiscoding
+
 ## [9.13.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.12.0...v9.13.0) (2026-01-30)
 
 ### Features
@@ -564,7 +605,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * **core:** add new `preventDragFromKeys` grid option, fixes [#1537](https://github.com/ghiscoding/slickgrid-universal/issues/1537) ([#1538](https://github.com/ghiscoding/slickgrid-universal/issues/1538)) ([803fbee](https://github.com/ghiscoding/slickgrid-universal/commit/803fbee0e4245a421840b7420e9ea617238ad780)) - by @ghiscoding
 * **core:** add optional Top-Header for Drag Grouping & Header Grouping ([#1556](https://github.com/ghiscoding/slickgrid-universal/issues/1556)) ([7d4a769](https://github.com/ghiscoding/slickgrid-universal/commit/7d4a769943d1f96321686e91634efe443b1eb8b2)) - by @ghiscoding
 * **export:** add missing `valueParserCallback` dataContext & new demo ([#1543](https://github.com/ghiscoding/slickgrid-universal/issues/1543)) ([884b6e0](https://github.com/ghiscoding/slickgrid-universal/commit/884b6e0c8f9bbff736517b4b8ab131d7141aaff5)) - by @ghiscoding
-* **filters:** add `OperatorType.custom` for custom backend service ([#1526](https://github.com/ghiscoding/slickgrid-universal/issues/1526)) ([4284d58](https://github.com/ghiscoding/slickgrid-universal/commit/4284d5834ec9955a327043565169b99ede8988f4)) - by @ghiscoding
+* **filters:** add `'Custom'` for custom backend service ([#1526](https://github.com/ghiscoding/slickgrid-universal/issues/1526)) ([4284d58](https://github.com/ghiscoding/slickgrid-universal/commit/4284d5834ec9955a327043565169b99ede8988f4)) - by @ghiscoding
 * **filters:** add a `filterPredicate` option for user customization ([#1528](https://github.com/ghiscoding/slickgrid-universal/issues/1528)) ([cbf64d8](https://github.com/ghiscoding/slickgrid-universal/commit/cbf64d88c2077bcca5bcf7973678d6aa90376a65)) - by @ghiscoding
 * **filters:** add StartsWith/EndsWith (`a*z`) filter combo ([#1530](https://github.com/ghiscoding/slickgrid-universal/issues/1530)) ([51560aa](https://github.com/ghiscoding/slickgrid-universal/commit/51560aa5a9761634004409cdc5cc01b91d7f8790)) - by @ghiscoding
 * **filters:** add StartsWith/EndsWith (`a*z`) to OData/GraphQL ([#1532](https://github.com/ghiscoding/slickgrid-universal/issues/1532)) ([237d6a8](https://github.com/ghiscoding/slickgrid-universal/commit/237d6a8afee147b6c1ecd3227824fa94d5da6753)) - by @ghiscoding

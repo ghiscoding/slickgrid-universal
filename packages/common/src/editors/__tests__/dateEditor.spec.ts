@@ -137,16 +137,6 @@ describe('DateEditor', () => {
       expect(editor.isValueTouched()).toBeFalsy();
     });
 
-    it('should initialize the editor and add a keydown event listener that early exists by default', () => {
-      editor = new DateEditor(editorArguments);
-
-      const event = new KeyboardEvent('keydown', { key: 'Enter' });
-      editor.editorDomElement.dispatchEvent(event);
-
-      expect(editor.columnEditor.editorOptions?.allowInput).toBeFalsy();
-      expect(editor.isValueTouched()).toBeFalsy();
-    });
-
     it('should stop propagation on allowInput when hitting left or right arrow and home and end keys', () => {
       editor = new DateEditor({
         ...editorArguments,
@@ -154,7 +144,7 @@ describe('DateEditor', () => {
           ...editorArguments.column,
           editor: {
             ...editorArguments.column.editor,
-            editorOptions: { ...editorArguments.column?.editor?.editorOptions, allowInput: true },
+            options: { ...editorArguments.column?.editor?.options, allowInput: true },
           },
         },
       });
@@ -222,7 +212,7 @@ describe('DateEditor', () => {
     });
 
     it('should call "setValue" with value & apply value flag and expect the DOM element to have same value and also expect the value to be applied to the item object', () => {
-      mockColumn.type = FieldType.dateIso;
+      mockColumn.type = 'dateIso';
       editor = new DateEditor(editorArguments);
 
       vi.runAllTimers();
@@ -338,7 +328,7 @@ describe('DateEditor', () => {
             editor: {
               ...editorArguments.column.editor,
               alwaysSaveOnEnterKey: true,
-              editorOptions: { ...editorArguments.column.editor?.editorOptions, allowInput: true },
+              options: { ...editorArguments.column.editor?.options, allowInput: true },
             },
           },
         });
@@ -423,7 +413,7 @@ describe('DateEditor', () => {
 
       it('should return the first loaded date when date is loaded multiple times then reset', () => {
         mockItemData = { id: 1, startDate: '02/25/2020', isActive: true };
-        mockColumn.type = FieldType.dateUs;
+        mockColumn.type = 'dateUs';
         const dateMock = '02/25/2020';
 
         editor = new DateEditor(editorArguments);
@@ -450,7 +440,7 @@ describe('DateEditor', () => {
 
       it('should return False when date in the picker is the same as the current date', () => {
         mockItemData = { id: 1, startDate: '2001-01-02', isActive: true };
-        mockColumn.type = FieldType.dateIso;
+        mockColumn.type = 'dateIso';
 
         editor = new DateEditor(editorArguments);
         vi.runAllTimers();
@@ -474,7 +464,7 @@ describe('DateEditor', () => {
 
       it('should return False when input date is invalid', () => {
         mockItemData = { id: 1, startDate: '1900-02-32', isActive: true };
-        mockColumn.type = FieldType.dateUs;
+        mockColumn.type = 'dateUs';
         const dateMock = '1900-02-32';
 
         editor = new DateEditor(editorArguments);
@@ -500,7 +490,7 @@ describe('DateEditor', () => {
     describe('applyValue method', () => {
       it('should apply the value to the startDate property with ISO format when no "outputType" is defined and when it passes validation', () => {
         mockColumn.editor!.validator = null as any;
-        mockColumn.type = FieldType.date;
+        mockColumn.type = 'date';
         mockItemData = { id: 1, startDate: '2001-04-05T11:33:42.000Z', isActive: true };
 
         const newDate = new Date(Date.UTC(2001, 0, 2, 16, 2, 2, 0));
@@ -514,8 +504,8 @@ describe('DateEditor', () => {
 
       it('should apply the value to the startDate property with "outputType" format with a field having dot notation (complex object) that passes validation', () => {
         mockColumn.editor!.validator = null as any;
-        mockColumn.type = FieldType.date;
-        mockColumn.outputType = FieldType.dateTimeShortEuro;
+        mockColumn.type = 'date';
+        mockColumn.outputType = 'dateTimeShortEuro';
         mockColumn.field = 'employee.startDate';
         mockItemData = { id: 1, employee: { startDate: '2001-04-05T11:33:42.000Z' }, isActive: true };
 
@@ -530,8 +520,8 @@ describe('DateEditor', () => {
 
       it('should apply the value to the startDate property with output format defined by "saveOutputType" when it passes validation', () => {
         mockColumn.editor!.validator = null as any;
-        mockColumn.type = FieldType.date;
-        mockColumn.saveOutputType = FieldType.dateTimeIsoAmPm;
+        mockColumn.type = 'date';
+        mockColumn.saveOutputType = 'dateTimeIsoAmPm';
         mockItemData = { id: 1, startDate: '2001-04-05T11:33:42.000Z', isActive: true };
 
         const newDate = new Date(Date.UTC(2001, 0, 2, 16, 2, 2, 0));
@@ -562,7 +552,7 @@ describe('DateEditor', () => {
 
     describe('serializeValue method', () => {
       it('should return serialized value as a date string', () => {
-        mockColumn.type = FieldType.dateIso;
+        mockColumn.type = 'dateIso';
         mockItemData = { id: 1, startDate: '2001-01-02T16:02:02.000+05:00', isActive: true };
 
         editor = new DateEditor(editorArguments);
@@ -596,7 +586,7 @@ describe('DateEditor', () => {
       });
 
       it('should return serialized value as a date string when using a dot (.) notation for complex object', () => {
-        mockColumn.type = FieldType.dateIso;
+        mockColumn.type = 'dateIso';
         mockColumn.field = 'employee.startDate';
         mockItemData = { id: 1, employee: { startDate: '2001-01-02T16:02:02.000+05:00' }, isActive: true };
 
@@ -658,29 +648,6 @@ describe('DateEditor', () => {
 
       it('should not throw any error when date is lower than required "minDate" defined in the "options" and "autoCommitEdit" is enabled', () => {
         mockColumn.editor!.options = { displayDateMin: 'today' };
-        mockItemData = { id: 1, startDate: '500-01-02T11:02:02.000Z', isActive: true };
-        gridOptionMock.autoCommitEdit = true;
-        gridOptionMock.autoEdit = true;
-        gridOptionMock.editable = true;
-
-        editor = new DateEditor(editorArguments);
-        vi.runAllTimers();
-        editor.loadValue(mockItemData);
-        editor.calendarInstance?.show();
-        const editorInputElm = divContainer.querySelector('input.date-picker') as HTMLInputElement;
-        editor.calendarInstance!.onClickDate!({ context: { inputElement: editorInputElm, selectedDates: [] } } as unknown as Calendar, new MouseEvent('click'));
-        editor.calendarInstance!.onChangeToInput!(
-          { context: { inputElement: editorInputElm, selectedDates: [] }, hide: vi.fn() } as unknown as Calendar,
-          new MouseEvent('click')
-        );
-
-        expect(editor.pickerOptions).toBeTruthy();
-        expect(editorInputElm.value).toBe('');
-        expect(editor.serializeValue()).toBe('');
-      });
-
-      it('should not throw any error when date is lower than required "minDate" defined in the "editorOptions" and "autoCommitEdit" is enabled', () => {
-        mockColumn.editor!.editorOptions = { displayDateMin: 'today' };
         mockItemData = { id: 1, startDate: '500-01-02T11:02:02.000Z', isActive: true };
         gridOptionMock.autoCommitEdit = true;
         gridOptionMock.autoEdit = true;
@@ -787,7 +754,7 @@ describe('DateEditor', () => {
       const onCompositeEditorSpy = vi.spyOn(gridStub.onCompositeEditorChange, 'notify').mockReturnValue({
         getReturnValue: () => false,
       } as any);
-      mockColumn.type = FieldType.dateIso;
+      mockColumn.type = 'dateIso';
       editor = new DateEditor(editorArguments);
       vi.runAllTimers();
       editor.setValue('2001-01-02', true);
@@ -943,7 +910,7 @@ describe('DateEditor', () => {
     it('should expect "onCompositeEditorChange" to have been triggered with the new value showing up in its "formValues" object', () => {
       const activeCellMock = { row: 0, cell: 0 };
       const dateMock = '2001-01-02';
-      mockColumn.type = FieldType.dateIso;
+      mockColumn.type = 'dateIso';
       const getCellSpy = vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(activeCellMock);
       const onBeforeEditSpy = vi.spyOn(gridStub.onBeforeEditCell, 'notify').mockReturnValue({
         getReturnValue: () => undefined,

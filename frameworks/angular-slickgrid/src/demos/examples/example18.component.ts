@@ -1,13 +1,11 @@
-import { NgFor } from '@angular/common';
-import { ChangeDetectorRef, Component, type AfterViewInit, type OnDestroy, type OnInit } from '@angular/core';
+import { Component, signal, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { PdfExportService } from '@slickgrid-universal/pdf-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import {
   Aggregators,
-  AngularSlickgridModule,
-  DelimiterType,
+  AngularSlickgridComponent,
   Editors,
   Filters,
   Formatters,
@@ -25,9 +23,9 @@ const NB_ITEMS = 10_000;
 
 @Component({
   templateUrl: './example18.component.html',
-  imports: [AngularSlickgridModule, FormsModule, NgFor],
+  imports: [AngularSlickgridComponent, FormsModule],
 })
-export class Example18Component implements AfterViewInit, OnInit, OnDestroy {
+export class Example18Component implements OnInit, OnDestroy {
   private _darkMode = false;
   angularGrid!: AngularGridInstance;
   columnDefinitions!: Column[];
@@ -39,12 +37,12 @@ export class Example18Component implements AfterViewInit, OnInit, OnDestroy {
   gridOptions!: GridOption;
   hideSubTitle = false;
   processing = false;
-  selectedGroupingFields: Array<string | GroupingGetterFunction> = ['', '', ''];
+  selectedGroupingFields = signal<Array<string | GroupingGetterFunction>>(['', '', '']);
   excelExportService = new ExcelExportService();
   pdfExportService = new PdfExportService();
   textExportService = new TextExportService();
 
-  constructor(private changeDetectorRef: ChangeDetectorRef) {
+  constructor() {
     // define the grid options & columns and then create the grid itself
     this.loadData(NB_ITEMS);
     this.defineGrid();
@@ -56,12 +54,11 @@ export class Example18Component implements AfterViewInit, OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    document.querySelector('.panel-wm-content')!.classList.remove('dark-mode');
-    document.querySelector<HTMLDivElement>('#demo-container')!.dataset.bsTheme = 'light';
-  }
-
-  ngAfterViewInit() {
-    this.changeDetectorRef.detectChanges();
+    document.querySelector('.panel-wm-content')?.classList.remove('dark-mode');
+    const demoContainer = document.querySelector<HTMLDivElement>('#demo-container');
+    if (demoContainer?.dataset) {
+      demoContainer.dataset.bsTheme = 'light';
+    }
   }
 
   angularGridReady(angularGrid: AngularGridInstance) {
@@ -283,11 +280,12 @@ export class Example18Component implements AfterViewInit, OnInit, OnDestroy {
         initialGroupBy: ['duration'],
       },
       darkMode: this._darkMode,
-      enableTextExport: true,
-      enableExcelExport: true,
       excelExportOptions: { sanitizeDataExport: true },
       externalResources: [this.excelExportService, this.pdfExportService, this.textExportService],
-      enablePdfExport: true,
+      // -- NOTE: registered resources are auto-enabled
+      // enableTextExport: true,
+      // enablePdfExport: true,
+      // enableExcelExport: true,
       pdfExportOptions: {
         repeatHeadersOnEachPage: true, // defaults to true
         documentTitle: 'Grouping Grid',
@@ -336,7 +334,7 @@ export class Example18Component implements AfterViewInit, OnInit, OnDestroy {
   }
 
   clearGroupingSelects() {
-    this.selectedGroupingFields.forEach((g, i) => (this.selectedGroupingFields[i] = ''));
+    this.selectedGroupingFields.set(['', '', '']);
   }
 
   collapseAllGroups() {
@@ -362,7 +360,7 @@ export class Example18Component implements AfterViewInit, OnInit, OnDestroy {
 
   exportToCsv(type = 'csv') {
     this.textExportService.exportToFile({
-      delimiter: type === 'csv' ? DelimiterType.comma : DelimiterType.tab,
+      delimiter: type === 'csv' ? ',' : '\t',
       filename: 'myExport',
       format: type === 'csv' ? 'csv' : 'txt',
     });
@@ -394,9 +392,9 @@ export class Example18Component implements AfterViewInit, OnInit, OnDestroy {
 
   groupByFieldName(_fieldName: string, _index: number) {
     this.clearGrouping();
-    if (this.draggableGroupingPlugin && this.draggableGroupingPlugin.setDroppedGroups) {
+    if (this.draggableGroupingPlugin?.setDroppedGroups) {
       // get the field names from Group By select(s) dropdown, but filter out any empty fields
-      const groupedFields = this.selectedGroupingFields.filter((g) => g !== '');
+      const groupedFields = this.selectedGroupingFields().filter((g) => g !== '');
 
       this.showPreHeader();
       this.draggableGroupingPlugin.setDroppedGroups(groupedFields);
@@ -405,13 +403,14 @@ export class Example18Component implements AfterViewInit, OnInit, OnDestroy {
   }
 
   onGroupChanged(change: { caller?: string; groupColumns: Grouping[] }) {
-    // the "caller" property might not be in the SlickGrid core lib yet, reference PR https://github.com/6pac/SlickGrid/pull/303
-    const caller = (change && change.caller) || [];
-    const groups = (change && change.groupColumns) || [];
+    const caller = change?.caller || [];
+    const groups = change?.groupColumns || [];
 
-    if (Array.isArray(this.selectedGroupingFields) && Array.isArray(groups) && groups.length > 0) {
-      // update all Group By select dropdown
-      this.selectedGroupingFields.forEach((g, i) => (this.selectedGroupingFields[i] = (groups[i] && groups[i].getter) || ''));
+    if (Array.isArray(groups) && groups.length > 0) {
+      // assign a new array reference to trigger Angular change detection
+      const newFields = groups.map((g) => g?.getter ?? '');
+      while (newFields.length < 3) newFields.push('');
+      this.selectedGroupingFields.set(newFields);
     } else if (groups.length === 0 && caller === 'remove-group') {
       this.clearGroupingSelects();
     }
@@ -420,6 +419,14 @@ export class Example18Component implements AfterViewInit, OnInit, OnDestroy {
   onCellChanged() {
     // when user changes a cell, we need to advise the DataView for the grouping to update its totals
     this.angularGrid.dataView?.refresh();
+  }
+
+  // helper for updating a single dropdown value in the signal array
+  onDropdownChange(value: string, index: number) {
+    const arr = [...this.selectedGroupingFields()];
+    arr[index] = value;
+    this.selectedGroupingFields.set(arr);
+    this.groupByFieldName(value, index);
   }
 
   showPreHeader() {
@@ -457,19 +464,27 @@ export class Example18Component implements AfterViewInit, OnInit, OnDestroy {
   }
 
   toggleBodyBackground() {
+    const panelContentElm = document.querySelector<HTMLDivElement>('.panel-wm-content');
+    const demoContainer = document.querySelector<HTMLDivElement>('#demo-container');
+    let theme = 'light';
+
     if (this._darkMode) {
-      document.querySelector<HTMLDivElement>('.panel-wm-content')!.classList.add('dark-mode');
-      document.querySelector<HTMLDivElement>('#demo-container')!.dataset.bsTheme = 'dark';
+      panelContentElm?.classList.add('dark-mode');
+      theme = 'dark';
     } else {
-      document.querySelector('.panel-wm-content')!.classList.remove('dark-mode');
-      document.querySelector<HTMLDivElement>('#demo-container')!.dataset.bsTheme = 'light';
+      panelContentElm?.classList.remove('dark-mode');
+      theme = 'light';
+    }
+
+    if (demoContainer?.dataset) {
+      demoContainer.dataset.bsTheme = theme;
     }
   }
 
   toggleSubTitle() {
     this.hideSubTitle = !this.hideSubTitle;
     const action = this.hideSubTitle ? 'add' : 'remove';
-    document.querySelector('.subtitle')?.classList[action]('hidden');
-    this.angularGrid.resizerService.resizeGrid(0);
+    document.querySelector('.subtitle')?.classList?.[action]('hidden');
+    this.angularGrid.resizerService?.resizeGrid(0);
   }
 }

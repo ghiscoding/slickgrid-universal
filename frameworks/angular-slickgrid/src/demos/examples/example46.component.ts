@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import {
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   Filters,
   Formatters,
   type AngularGridInstance,
@@ -41,7 +41,7 @@ const coloredTextFormatter: Formatter = (_row: number, _cell: number, val: any, 
   templateUrl: './example46.component.html',
   styleUrls: ['example46.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  imports: [AngularSlickgridModule, FormsModule],
+  imports: [AngularSlickgridComponent, FormsModule],
 })
 export class Example46Component implements OnInit {
   angularGrid!: AngularGridInstance;
@@ -138,7 +138,7 @@ export class Example46Component implements OnInit {
         sanitizeDataExport: true,
       },
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+      enableSelection: true,
       multiSelect: false,
       checkboxSelector: {
         // columnIndexPosition: 1,

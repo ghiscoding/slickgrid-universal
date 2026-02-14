@@ -16,8 +16,6 @@ import {
   SlickHeaderMenu,
   SlickHybridSelectionModel,
   SlickRowBasedEdit,
-  SlickRowSelectionModel,
-  type SlickCellSelectionModel,
   type SlickCheckboxSelectColumn,
   type SlickRowMoveManager,
 } from '../../extensions/index.js';
@@ -29,44 +27,23 @@ const GRID_UID = 'slickgrid_12345';
 vi.mock('../../extensions/slickDraggableGrouping');
 vi.mock('../../extensions/slickRowBasedEdit');
 
-const mockCellSelectionModel = {
-  pluginName: 'CellSelectionModel',
+const mockHybridSelectionModel = {
+  pluginName: 'HybridSelectionModel',
   constructor: vi.fn(),
   init: vi.fn(),
   destroy: vi.fn(),
+  dispose: vi.fn(),
   getSelectedRanges: vi.fn(),
   setSelectedRanges: vi.fn(),
   getSelectedRows: vi.fn(),
   setSelectedRows: vi.fn(),
-  onSelectedRangesChanged: new SlickEvent(),
-} as unknown as SlickCellSelectionModel;
-vi.mock('../../extensions/slickCellSelectionModel');
-
-const mockHybridSelectionModel = {
-  constructor: vi.fn(),
-  init: vi.fn(),
-  destroy: vi.fn(),
-  dispose: vi.fn(),
+  setOptions: vi.fn(),
   onSelectedRangesChanged: new SlickEvent(),
 } as unknown as SlickHybridSelectionModel;
-
-const mockRowSelectionModel = {
-  constructor: vi.fn(),
-  init: vi.fn(),
-  destroy: vi.fn(),
-  dispose: vi.fn(),
-  onSelectedRangesChanged: new SlickEvent(),
-} as unknown as SlickRowSelectionModel;
 
 vi.mock('../../extensions/slickHybridSelectionModel', () => ({
   SlickHybridSelectionModel: vi.fn().mockImplementation(function () {
     return mockHybridSelectionModel;
-  }),
-}));
-
-vi.mock('../../extensions/slickRowSelectionModel', () => ({
-  SlickRowSelectionModel: vi.fn().mockImplementation(function () {
-    return mockRowSelectionModel;
   }),
 }));
 
@@ -114,6 +91,7 @@ const gridStub = {
   getPluginByName: vi.fn(),
   getPreHeaderPanel: vi.fn(),
   getSelectionModel: vi.fn(),
+  getVisibleColumns: vi.fn(),
   getUID: () => GRID_UID,
   getColumns: vi.fn(),
   setColumns: vi.fn(),
@@ -122,6 +100,8 @@ const gridStub = {
   registerPlugin: vi.fn(),
   setSelectionModel: vi.fn(),
   updateColumnHeader: vi.fn(),
+  updateColumnById: vi.fn(),
+  updateColumns: vi.fn(),
   onActiveCellChanged: new SlickEvent(),
   onBeforeDestroy: new SlickEvent(),
   onBeforeHeaderCellDestroy: new SlickEvent(),
@@ -232,7 +212,7 @@ describe('ExtensionService', () => {
     });
 
     it('should return "visibleColumns" from the SharedService when "getVisibleColumns" method is called', () => {
-      const spy = vi.spyOn(SharedService.prototype, 'visibleColumns', 'get');
+      const spy = vi.spyOn(gridStub, 'getVisibleColumns');
       service.getVisibleColumns();
       expect(spy).toHaveBeenCalled();
     });
@@ -260,11 +240,11 @@ describe('ExtensionService', () => {
 
       it('should return extension addon when method is called with a valid and instantiated addon', () => {
         const instanceMock = { onColumnsChanged: vi.fn() };
-        const extensionMock = { name: ExtensionName.columnPicker, instance: instanceMock as unknown } as ExtensionModel<any>;
+        const extensionMock = { name: 'columnPicker', instance: instanceMock as unknown } as ExtensionModel<any>;
         const spy = vi.spyOn(service, 'getExtensionByName').mockReturnValue(extensionMock);
 
-        const output1 = service.getExtensionInstanceByName(ExtensionName.columnPicker);
-        const output2 = service.getExtensionInstanceByName(ExtensionName.columnPicker);
+        const output1 = service.getExtensionInstanceByName('columnPicker');
+        const output2 = service.getExtensionInstanceByName('columnPicker');
 
         expect(spy).toHaveBeenCalled();
         expect(output1).toEqual(instanceMock);
@@ -298,7 +278,7 @@ describe('ExtensionService', () => {
 
       it('should return undefined when calling "getExtensionByName" method without anything set yet', () => {
         service.bindDifferentExtensions();
-        const output = service.getExtensionByName(ExtensionName.autoTooltip);
+        const output = service.getExtensionByName('autoTooltip');
         expect(output).toEqual(undefined);
       });
 
@@ -323,11 +303,11 @@ describe('ExtensionService', () => {
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
         service.bindDifferentExtensions();
-        const output = service.getExtensionByName<SlickAutoTooltip>(ExtensionName.autoTooltip);
-        const pluginInstance = service.getExtensionInstanceByName(ExtensionName.autoTooltip);
+        const output = service.getExtensionByName<SlickAutoTooltip>('autoTooltip');
+        const pluginInstance = service.getExtensionInstanceByName('autoTooltip');
 
         expect(extSpy).toHaveBeenCalled();
-        expect(output).toEqual({ name: ExtensionName.autoTooltip, instance: pluginInstance } as ExtensionModel<any>);
+        expect(output).toEqual({ name: 'autoTooltip', instance: pluginInstance } as ExtensionModel<any>);
         expect(output!.instance instanceof SlickAutoTooltip).toBe(true);
       });
 
@@ -345,14 +325,14 @@ describe('ExtensionService', () => {
 
         service.createExtensionsBeforeGridCreation(columnsMock, gridOptionsMock);
         service.bindDifferentExtensions();
-        const output = service.getExtensionByName(ExtensionName.rowBasedEdit);
-        const pluginInstance = service.getExtensionInstanceByName(ExtensionName.rowBasedEdit);
+        const output = service.getExtensionByName('rowBasedEdit');
+        const pluginInstance = service.getExtensionInstanceByName('rowBasedEdit');
 
         expect(onRegisteredMock).toHaveBeenCalledWith(expect.any(Object));
         expect(SlickRowBasedEdit).toHaveBeenCalled();
         expect(pluginInstance).toBeTruthy();
         expect(output!.instance).toEqual(pluginInstance);
-        expect(output).toEqual({ name: ExtensionName.rowBasedEdit, instance: pluginInstance } as ExtensionModel<any>);
+        expect(output).toEqual({ name: 'rowBasedEdit', instance: pluginInstance } as ExtensionModel<any>);
       });
 
       it('should throw a custom exception if gridService not ready during row based plugin instantiation', () => {
@@ -390,11 +370,11 @@ describe('ExtensionService', () => {
         const gridSpy = vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
         service.bindDifferentExtensions();
-        const output = service.getExtensionByName(ExtensionName.columnPicker);
-        const pluginInstance = service.getExtensionInstanceByName(ExtensionName.columnPicker);
+        const output = service.getExtensionByName('columnPicker');
+        const pluginInstance = service.getExtensionInstanceByName('columnPicker');
 
         expect(gridSpy).toHaveBeenCalled();
-        expect(output).toEqual({ name: ExtensionName.columnPicker, instance: pluginInstance } as ExtensionModel<any>);
+        expect(output).toEqual({ name: 'columnPicker', instance: pluginInstance } as ExtensionModel<any>);
         expect(output!.instance instanceof SlickColumnPicker).toBe(true);
       });
 
@@ -409,7 +389,7 @@ describe('ExtensionService', () => {
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
         service.bindDifferentExtensions();
-        const output = service.getExtensionByName(ExtensionName.columnPicker);
+        const output = service.getExtensionByName('columnPicker');
 
         expect(onRegisteredMock).toHaveBeenCalledWith(expect.any(Object));
         expect(output!.instance instanceof SlickColumnPicker).toBe(true);
@@ -426,15 +406,15 @@ describe('ExtensionService', () => {
         service.createExtensionsBeforeGridCreation(columnsMock, gridOptionsMock);
         service.bindDifferentExtensions();
 
-        const output = service.getExtensionByName(ExtensionName.draggableGrouping);
-        const pluginInstance = service.getExtensionInstanceByName(ExtensionName.draggableGrouping);
+        const output = service.getExtensionByName('draggableGrouping');
+        const pluginInstance = service.getExtensionInstanceByName('draggableGrouping');
 
         expect(onRegisteredMock).toHaveBeenCalledWith(expect.any(Object));
         expect(output!.instance instanceof SlickDraggableGrouping).toBe(true);
         expect(gridSpy).toHaveBeenCalled();
         expect(pluginInstance).toBeTruthy();
         expect(output!.instance).toEqual(pluginInstance);
-        expect(output).toEqual({ name: ExtensionName.draggableGrouping, instance: pluginInstance } as ExtensionModel<any>);
+        expect(output).toEqual({ name: 'draggableGrouping', instance: pluginInstance } as ExtensionModel<any>);
       });
 
       it('should register the GridMenu addon when "enableGridMenu" is set in the grid options', () => {
@@ -448,28 +428,28 @@ describe('ExtensionService', () => {
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
         service.bindDifferentExtensions();
-        const output = service.getExtensionByName(ExtensionName.gridMenu);
+        const output = service.getExtensionByName('gridMenu');
 
         expect(onRegisteredMock).toHaveBeenCalledWith(expect.any(Object));
         expect(output!.instance instanceof SlickGridMenu).toBe(true);
       });
 
-      it('should register the CheckboxSelector addon when "enableCheckboxSelector" is set in the grid options and enableHybridSelection', () => {
+      it('should register the CheckboxSelector addon when "enableCheckboxSelector" is set in the grid options and enableSelection', () => {
         const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
-        const gridOptionsMock = { enableCheckboxSelector: true, enableHybridSelection: true } as GridOption;
+        const gridOptionsMock = { enableCheckboxSelector: true, enableSelection: true } as GridOption;
         const extCreateSpy = vi.spyOn(mockCheckboxSelectColumn, 'create').mockReturnValueOnce(mockCheckboxSelectColumn);
         const gridSpy = vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
         service.createExtensionsBeforeGridCreation(columnsMock, gridOptionsMock);
         service.bindDifferentExtensions();
-        const rowSelectionInstance = service.getExtensionByName(ExtensionName.hybridSelection);
-        const output = service.getExtensionByName(ExtensionName.checkboxSelector);
+        const rowSelectionInstance = service.getExtensionByName('hybridSelection');
+        const output = service.getExtensionByName('checkboxSelector');
 
         expect(gridSpy).toHaveBeenCalled();
         expect(extCreateSpy).toHaveBeenCalledWith(columnsMock, gridOptionsMock);
         expect(rowSelectionInstance).not.toBeNull();
-        expect(SlickHybridSelectionModel).toHaveBeenCalledWith({});
-        expect(output).toEqual({ name: ExtensionName.checkboxSelector, instance: mockCheckboxSelectColumn as unknown } as ExtensionModel<any>);
+        expect(SlickHybridSelectionModel).toHaveBeenCalledWith({ selectionType: 'row' });
+        expect(output).toEqual({ name: 'checkboxSelector', instance: mockCheckboxSelectColumn as unknown } as ExtensionModel<any>);
       });
 
       it('should register the CheckboxSelector addon when "enableCheckboxSelector" is set in the grid options', () => {
@@ -480,22 +460,22 @@ describe('ExtensionService', () => {
 
         service.createExtensionsBeforeGridCreation(columnsMock, gridOptionsMock);
         service.bindDifferentExtensions();
-        const rowSelectionInstance = service.getExtensionByName(ExtensionName.rowSelection);
-        const output = service.getExtensionByName(ExtensionName.checkboxSelector);
+        const rowSelectionInstance = service.getExtensionByName('hybridSelection');
+        const output = service.getExtensionByName('checkboxSelector');
 
         expect(gridSpy).toHaveBeenCalled();
         expect(extCreateSpy).toHaveBeenCalledWith(columnsMock, gridOptionsMock);
         expect(rowSelectionInstance).not.toBeNull();
-        expect(SlickRowSelectionModel).toHaveBeenCalledWith({});
-        expect(output).toEqual({ name: ExtensionName.checkboxSelector, instance: mockCheckboxSelectColumn as unknown } as ExtensionModel<any>);
+        expect(SlickHybridSelectionModel).toHaveBeenCalledWith({ selectionType: 'row' });
+        expect(output).toEqual({ name: 'checkboxSelector', instance: mockCheckboxSelectColumn as unknown } as ExtensionModel<any>);
       });
 
-      it('should call "onExtensionRegistered" when defined in grid option and enableHybridSelection and the CheckboxSelectColumn plugin gets created', () => {
+      it('should call "onExtensionRegistered" when defined in grid option and enableSelection and the CheckboxSelectColumn plugin gets created', () => {
         const onRegisteredMock = vi.fn();
         const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
         const gridOptionsMock = {
           enableCheckboxSelector: true,
-          enableHybridSelection: true,
+          enableSelection: true,
           checkboxSelector: {
             onExtensionRegistered: onRegisteredMock,
           },
@@ -505,14 +485,14 @@ describe('ExtensionService', () => {
 
         service.createExtensionsBeforeGridCreation(columnsMock, gridOptionsMock);
         service.bindDifferentExtensions();
-        const rowSelectionInstance = service.getExtensionByName(ExtensionName.hybridSelection);
-        const output = service.getExtensionByName(ExtensionName.checkboxSelector);
+        const rowSelectionInstance = service.getExtensionByName('hybridSelection');
+        const output = service.getExtensionByName('checkboxSelector');
 
         expect(gridSpy).toHaveBeenCalled();
         expect(extCreateSpy).toHaveBeenCalledWith(columnsMock, gridOptionsMock);
         expect(rowSelectionInstance).not.toBeNull();
-        expect(SlickHybridSelectionModel).toHaveBeenCalledWith({});
-        expect(output).toEqual({ name: ExtensionName.checkboxSelector, instance: mockCheckboxSelectColumn as unknown } as ExtensionModel<any>);
+        expect(SlickHybridSelectionModel).toHaveBeenCalledWith({ selectionType: 'row' });
+        expect(output).toEqual({ name: 'checkboxSelector', instance: mockCheckboxSelectColumn as unknown } as ExtensionModel<any>);
         expect(onRegisteredMock).toHaveBeenCalledWith(expect.any(Object));
       });
 
@@ -530,33 +510,33 @@ describe('ExtensionService', () => {
 
         service.createExtensionsBeforeGridCreation(columnsMock, gridOptionsMock);
         service.bindDifferentExtensions();
-        const rowSelectionInstance = service.getExtensionByName(ExtensionName.rowSelection);
-        const output = service.getExtensionByName(ExtensionName.checkboxSelector);
+        const rowSelectionInstance = service.getExtensionByName('hybridSelection');
+        const output = service.getExtensionByName('checkboxSelector');
 
         expect(gridSpy).toHaveBeenCalled();
         expect(extCreateSpy).toHaveBeenCalledWith(columnsMock, gridOptionsMock);
         expect(rowSelectionInstance).not.toBeNull();
-        expect(SlickRowSelectionModel).toHaveBeenCalledWith({});
-        expect(output).toEqual({ name: ExtensionName.checkboxSelector, instance: mockCheckboxSelectColumn as unknown } as ExtensionModel<any>);
+        expect(SlickHybridSelectionModel).toHaveBeenCalledWith({ selectionType: 'row' });
+        expect(output).toEqual({ name: 'checkboxSelector', instance: mockCheckboxSelectColumn as unknown } as ExtensionModel<any>);
         expect(onRegisteredMock).toHaveBeenCalledWith(expect.any(Object));
       });
 
       it('should register the RowMoveManager addon when "enableRowMoveManager" is set in the grid options and Hybrid Selection is enabled', () => {
         const columnsMock = [{ id: 'field1', field: 'field1', width: 100, cssClass: 'red' }] as Column[];
-        const gridOptionsMock = { enableRowMoveManager: true, enableHybridSelection: true } as GridOption;
+        const gridOptionsMock = { enableRowMoveManager: true, enableSelection: true } as GridOption;
         const extCreateSpy = vi.spyOn(mockRowMoveManager, 'create').mockReturnValue(mockRowMoveManager);
         const gridSpy = vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
         service.createExtensionsBeforeGridCreation(columnsMock, gridOptionsMock);
         service.bindDifferentExtensions();
-        const hybridSelectionInstance = service.getExtensionByName(ExtensionName.hybridSelection);
-        const output = service.getExtensionByName(ExtensionName.rowMoveManager);
+        const hybridSelectionInstance = service.getExtensionByName('hybridSelection');
+        const output = service.getExtensionByName('rowMoveManager');
 
         expect(gridSpy).toHaveBeenCalled();
         expect(extCreateSpy).toHaveBeenCalledWith(columnsMock, gridOptionsMock);
         expect(hybridSelectionInstance).not.toBeNull();
-        expect(SlickHybridSelectionModel).toHaveBeenCalledWith({ dragToSelect: true });
-        expect(output).toEqual({ name: ExtensionName.rowMoveManager, instance: mockRowMoveManager as unknown } as ExtensionModel<any>);
+        expect(SlickHybridSelectionModel).toHaveBeenCalledWith({ dragToSelect: true, selectionType: 'row' });
+        expect(output).toEqual({ name: 'rowMoveManager', instance: mockRowMoveManager as unknown } as ExtensionModel<any>);
       });
 
       it('should register the RowMoveManager addon when "enableRowMoveManager" is set in the grid options', () => {
@@ -567,36 +547,36 @@ describe('ExtensionService', () => {
 
         service.createExtensionsBeforeGridCreation(columnsMock, gridOptionsMock);
         service.bindDifferentExtensions();
-        const rowSelectionInstance = service.getExtensionByName(ExtensionName.rowSelection);
-        const output = service.getExtensionByName(ExtensionName.rowMoveManager);
+        const rowSelectionInstance = service.getExtensionByName('hybridSelection');
+        const output = service.getExtensionByName('rowMoveManager');
 
         expect(gridSpy).toHaveBeenCalled();
         expect(extCreateSpy).toHaveBeenCalledWith(columnsMock, gridOptionsMock);
         expect(rowSelectionInstance).not.toBeNull();
-        expect(SlickRowSelectionModel).toHaveBeenCalledWith({ dragToSelect: true });
-        expect(output).toEqual({ name: ExtensionName.rowMoveManager, instance: mockRowMoveManager as unknown } as ExtensionModel<any>);
+        expect(SlickHybridSelectionModel).toHaveBeenCalledWith({ dragToSelect: true, selectionType: 'row' });
+        expect(output).toEqual({ name: 'rowMoveManager', instance: mockRowMoveManager as unknown } as ExtensionModel<any>);
       });
 
-      it('should register the RowSelection addon when "enableCheckboxSelector" (false) and "enableRowSelection" (true) are set in the grid options and Hybrid Selection is enabled', () => {
-        const gridOptionsMock = { enableCheckboxSelector: false, enableRowSelection: true, enableHybridSelection: true } as GridOption;
+      it('should register the HybridSelection addon when "enableCheckboxSelector" (false) and "enableSelection" (true) are set in the grid options and Hybrid Selection is enabled', () => {
+        const gridOptionsMock = { enableCheckboxSelector: false, enableSelection: true } as GridOption;
         const gridSpy = vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
         service.bindDifferentExtensions();
-        const output = service.getExtensionByName(ExtensionName.hybridSelection);
+        const output = service.getExtensionByName('hybridSelection');
 
         expect(gridSpy).toHaveBeenCalled();
-        expect(output).toEqual({ name: ExtensionName.hybridSelection, instance: mockHybridSelectionModel } as ExtensionModel<any>);
+        expect(output).toEqual({ name: 'hybridSelection', instance: mockHybridSelectionModel } as ExtensionModel<any>);
       });
 
-      it('should register the RowSelection addon when "enableCheckboxSelector" (false) and "enableRowSelection" (true) are set in the grid options', () => {
-        const gridOptionsMock = { enableCheckboxSelector: false, enableRowSelection: true } as GridOption;
+      it('should register the HybridSelection addon when "enableCheckboxSelector" (false) and "enableSelection" (true) are set in the grid options', () => {
+        const gridOptionsMock = { enableCheckboxSelector: false, enableSelection: true } as GridOption;
         const gridSpy = vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
         service.bindDifferentExtensions();
-        const output = service.getExtensionByName(ExtensionName.rowSelection);
+        const output = service.getExtensionByName('hybridSelection');
 
         expect(gridSpy).toHaveBeenCalled();
-        expect(output).toEqual({ name: ExtensionName.rowSelection, instance: mockRowSelectionModel } as ExtensionModel<any>);
+        expect(output).toEqual({ name: 'hybridSelection', instance: mockHybridSelectionModel } as ExtensionModel<any>);
       });
 
       it('should register the CellMenu addon when "enableCellMenu" is set in the grid options', () => {
@@ -605,15 +585,15 @@ describe('ExtensionService', () => {
         const gridSpy = vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
         service.bindDifferentExtensions();
-        const output = service.getExtensionByName(ExtensionName.cellMenu);
-        const pluginInstance = service.getExtensionInstanceByName(ExtensionName.cellMenu);
+        const output = service.getExtensionByName('cellMenu');
+        const pluginInstance = service.getExtensionInstanceByName('cellMenu');
 
         expect(onRegisteredMock).toHaveBeenCalledWith(expect.any(Object));
         expect(output!.instance instanceof SlickCellMenu).toBe(true);
         expect(gridSpy).toHaveBeenCalled();
         expect(pluginInstance).toBeTruthy();
         expect(output!.instance).toEqual(pluginInstance);
-        expect(output).toEqual({ name: ExtensionName.cellMenu, instance: pluginInstance } as ExtensionModel<any>);
+        expect(output).toEqual({ name: 'cellMenu', instance: pluginInstance } as ExtensionModel<any>);
       });
 
       it('should register the ContextMenu addon when "enableContextMenu" is set in the grid options', () => {
@@ -622,15 +602,15 @@ describe('ExtensionService', () => {
         const gridSpy = vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
         service.bindDifferentExtensions();
-        const output = service.getExtensionByName(ExtensionName.contextMenu);
-        const pluginInstance = service.getExtensionInstanceByName(ExtensionName.contextMenu);
+        const output = service.getExtensionByName('contextMenu');
+        const pluginInstance = service.getExtensionInstanceByName('contextMenu');
 
         expect(onRegisteredMock).toHaveBeenCalledWith(expect.any(Object));
         expect(output!.instance instanceof SlickContextMenu).toBe(true);
         expect(gridSpy).toHaveBeenCalled();
         expect(pluginInstance).toBeTruthy();
         expect(output!.instance).toEqual(pluginInstance);
-        expect(output).toEqual({ name: ExtensionName.contextMenu, instance: pluginInstance } as ExtensionModel<any>);
+        expect(output).toEqual({ name: 'contextMenu', instance: pluginInstance } as ExtensionModel<any>);
       });
 
       it('should register the HeaderButton addon when "enableHeaderButton" is set in the grid options', () => {
@@ -639,15 +619,15 @@ describe('ExtensionService', () => {
         const gridSpy = vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
         service.bindDifferentExtensions();
-        const output = service.getExtensionByName(ExtensionName.headerButton);
-        const pluginInstance = service.getExtensionInstanceByName(ExtensionName.headerButton);
+        const output = service.getExtensionByName('headerButton');
+        const pluginInstance = service.getExtensionInstanceByName('headerButton');
 
         expect(onRegisteredMock).toHaveBeenCalledWith(expect.any(Object));
         expect(output!.instance instanceof SlickHeaderButtons).toBe(true);
         expect(gridSpy).toHaveBeenCalled();
         expect(pluginInstance).toBeTruthy();
         expect(output!.instance).toEqual(pluginInstance);
-        expect(output).toEqual({ name: ExtensionName.headerButton, instance: pluginInstance } as ExtensionModel<any>);
+        expect(output).toEqual({ name: 'headerButton', instance: pluginInstance } as ExtensionModel<any>);
       });
 
       it('should register the HeaderMenu addon when "enableHeaderMenu" is set in the grid options', () => {
@@ -656,33 +636,33 @@ describe('ExtensionService', () => {
         const gridSpy = vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
         service.bindDifferentExtensions();
-        const output = service.getExtensionByName(ExtensionName.headerMenu);
-        const pluginInstance = service.getExtensionInstanceByName(ExtensionName.headerMenu);
+        const output = service.getExtensionByName('headerMenu');
+        const pluginInstance = service.getExtensionInstanceByName('headerMenu');
 
         expect(onRegisteredMock).toHaveBeenCalledWith(expect.any(Object));
         expect(output!.instance instanceof SlickHeaderMenu).toBe(true);
         expect(gridSpy).toHaveBeenCalled();
         expect(pluginInstance).toBeTruthy();
         expect(output!.instance).toEqual(pluginInstance);
-        expect(output).toEqual({ name: ExtensionName.headerMenu, instance: pluginInstance } as ExtensionModel<any>);
+        expect(output).toEqual({ name: 'headerMenu', instance: pluginInstance } as ExtensionModel<any>);
       });
 
       it('should register the ExcelCopyBuffer addon when "enableExcelCopyBuffer" is set in the grid options', () => {
         const onRegisteredMock = vi.fn();
         const gridOptionsMock = { enableExcelCopyBuffer: true, excelCopyBufferOptions: { onExtensionRegistered: onRegisteredMock } } as GridOption;
         const gridSpy = vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-        vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(mockCellSelectionModel);
+        vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(mockHybridSelectionModel);
 
         service.bindDifferentExtensions();
-        const output = service.getExtensionByName(ExtensionName.cellExternalCopyManager);
-        const pluginInstance = service.getExtensionInstanceByName(ExtensionName.cellExternalCopyManager);
+        const output = service.getExtensionByName('cellExternalCopyManager');
+        const pluginInstance = service.getExtensionInstanceByName('cellExternalCopyManager');
 
         expect(onRegisteredMock).toHaveBeenCalledWith(expect.any(Object));
         expect(output!.instance instanceof SlickCellExcelCopyManager).toBe(true);
         expect(gridSpy).toHaveBeenCalled();
         expect(pluginInstance).toBeTruthy();
         expect(output!.instance).toEqual(pluginInstance);
-        expect(output).toEqual({ name: ExtensionName.cellExternalCopyManager, instance: pluginInstance } as ExtensionModel<any>);
+        expect(output).toEqual({ name: 'cellExternalCopyManager', instance: pluginInstance } as ExtensionModel<any>);
       });
     });
 
@@ -731,7 +711,7 @@ describe('ExtensionService', () => {
         ] as Column[];
         const gridOptionsMock = {
           enableCheckboxSelector: true,
-          enableRowSelection: true,
+          enableSelection: true,
           checkboxSelector: { columnIndexPosition: 1 },
           enableRowMoveManager: true,
           rowMoveManager: { columnIndexPosition: 0 },
@@ -763,7 +743,7 @@ describe('ExtensionService', () => {
         ] as Column[];
         const gridOptionsMock = {
           enableCheckboxSelector: true,
-          enableRowSelection: true,
+          enableSelection: true,
           checkboxSelector: { columnIndexPosition: 1 },
           preRegisterExternalExtensions: () => {
             const ext = new ExternalExtension();
@@ -789,19 +769,14 @@ describe('ExtensionService', () => {
         { id: 'field2', width: 150 },
         { id: 'field3', field: 'field3' },
       ] as Column[];
-      const updatedColumnsMock = [
-        { id: 'field1', width: 100 },
-        { id: 'field3', field: 'field3' },
-      ] as Column[];
       sharedService.slickGrid = gridStub;
       vi.spyOn(gridStub, 'getColumnIndex').mockReturnValue(1);
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
-      const setColumnsSpy = vi.spyOn(gridStub, 'setColumns');
+      const updateColIdSpy = vi.spyOn(gridStub, 'updateColumnById');
 
       service.hideColumn(columnsMock[1]);
 
-      expect(sharedService.visibleColumns).toEqual(updatedColumnsMock);
-      expect(setColumnsSpy).toHaveBeenCalledWith(updatedColumnsMock, true);
+      expect(updateColIdSpy).toHaveBeenCalledWith('field2', { hidden: true }, true);
     });
 
     it('should call the refreshBackendDataset method on the GridMenu Extension when service with same method name is called', () => {
@@ -866,7 +841,7 @@ describe('ExtensionService', () => {
     it('should call the translateCellMenu method on the CellMenu Extension when service with same method name is called', () => {
       const gridOptionsMock = { enableCellMenu: true, cellMenu: {} } as GridOption;
       vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-      vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue([]);
+      vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue([]);
 
       service.bindDifferentExtensions();
       const pluginInstance = service.getExtensionInstanceByName(ExtensionName.cellMenu);
@@ -910,7 +885,7 @@ describe('ExtensionService', () => {
     it('should call the translateHeaderMenu method on the HeaderMenu Extension when service with same method name is called', () => {
       const gridOptionsMock = { enableHeaderMenu: true, headerMenu: {} } as GridOption;
       vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-      vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue([]);
+      vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue([]);
 
       service.bindDifferentExtensions();
       const pluginInstance = service.getExtensionInstanceByName(ExtensionName.headerMenu);
@@ -926,11 +901,11 @@ describe('ExtensionService', () => {
         const columnsAfterTranslateMock = [{ id: 'field1', field: 'field1', name: 'Bonjour', nameKey: 'HELLO' }] as Column[];
         vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsBeforeTranslateMock);
         sharedService.allColumns = columnsBeforeTranslateMock;
-        const renderSpy = vi.spyOn(service, 'renderColumnHeaders');
+        const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
 
         service.translateColumnHeaders();
 
-        expect(renderSpy).toHaveBeenCalledWith(columnsAfterTranslateMock, false);
+        expect(updateColumnSpy).toHaveBeenCalledWith();
         expect(columnsBeforeTranslateMock).toEqual(columnsAfterTranslateMock);
       });
 
@@ -939,12 +914,18 @@ describe('ExtensionService', () => {
         const columnsAfterTranslateMock = [{ id: 'field1', field: 'field1', name: 'Hello', nameKey: 'HELLO' }] as Column[];
         vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsBeforeTranslateMock);
         sharedService.allColumns = columnsBeforeTranslateMock;
-        const renderSpy = vi.spyOn(service, 'renderColumnHeaders');
+        const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
+        const gridOptionsMock = { enableColumnPicker: true } as GridOption;
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
+        service.bindDifferentExtensions();
+        const columnPicker = service.getExtensionByName(ExtensionName.columnPicker);
+        const translatePickerSpy = vi.spyOn(columnPicker?.instance, 'translateColumnPicker');
         service.translateColumnHeaders('en');
 
-        expect(renderSpy).toHaveBeenCalledWith(columnsAfterTranslateMock, false);
+        expect(updateColumnSpy).toHaveBeenCalled();
         expect(columnsBeforeTranslateMock).toEqual(columnsAfterTranslateMock);
+        expect(translatePickerSpy).toHaveBeenCalled();
       });
 
       it('should translate items with locale & column definitions provided as arguments to the method', () => {
@@ -952,13 +933,19 @@ describe('ExtensionService', () => {
         const columnsAfterTranslateMock = [{ id: 'field1', field: 'field1', name: 'Hello', nameKey: 'HELLO' }] as Column[];
         const colDefSpy = vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get');
         sharedService.allColumns = columnsBeforeTranslateMock;
-        const renderSpy = vi.spyOn(service, 'renderColumnHeaders');
+        const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
+        const gridOptionsMock = { enableGridMenu: true } as GridOption;
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
 
+        service.bindDifferentExtensions();
+        const gridMenu = service.getExtensionByName(ExtensionName.gridMenu);
+        const translateGMSpy = vi.spyOn(gridMenu?.instance, 'translateGridMenu');
         service.translateColumnHeaders('en', columnsBeforeTranslateMock);
 
         expect(colDefSpy).not.toHaveBeenCalled();
-        expect(renderSpy).toHaveBeenCalledWith(columnsAfterTranslateMock, true);
+        expect(updateColumnSpy).toHaveBeenCalled();
         expect(columnsBeforeTranslateMock).toEqual(columnsAfterTranslateMock);
+        expect(translateGMSpy).toHaveBeenCalled();
       });
     });
 

@@ -1,7 +1,6 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import {
   Filters,
-  OperatorType,
   type Column,
   type CurrentColumn,
   type GridOption,
@@ -141,13 +140,13 @@ export default class Example09 {
         hideInColumnTitleRow: true,
       },
       compoundOperatorAltTexts: {
-        // where '=' is any of the `OperatorString` type shown above
+        // where '=' is any of the `OperatorType` type shown above
         text: { Custom: { operatorAlt: '%%', descAlt: 'SQL Like' } },
       },
       enableCellNavigation: true,
       enableFiltering: true,
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+      enableSelection: true,
       enablePagination: true, // you could optionally disable the Pagination
       pagination: {
         pageSizes: [10, 20, 50, 100, 500, 50000],
@@ -158,8 +157,8 @@ export default class Example09 {
         : {
             // you can also type operator as string, e.g.: operator: 'EQ'
             filters: [
-              // { columnId: 'name', searchTerms: ['w'], operator: OperatorType.startsWith },
-              { columnId: 'gender', searchTerms: ['male'], operator: OperatorType.equal },
+              // { columnId: 'name', searchTerms: ['w'], operator: 'StartsWith' },
+              { columnId: 'gender', searchTerms: ['male'], operator: '=' },
             ],
             sorters: [
               // direction can be written as 'asc' (uppercase or lowercase) and/or use the SortDirection type
@@ -174,7 +173,7 @@ export default class Example09 {
           enableSelect: this.isSelectEnabled,
           enableExpand: this.isExpandEnabled,
           filterQueryOverride: ({ fieldName, columnDef, columnFilterOperator, searchValues }) => {
-            if (columnFilterOperator === OperatorType.custom && columnDef?.id === 'name') {
+            if (columnFilterOperator === 'Custom' && columnDef?.id === 'name') {
               let matchesSearch = searchValues[0].replace(/\*/g, '.*');
               matchesSearch = matchesSearch.slice(0, 1) + CARET_HTML_ESCAPED + matchesSearch.slice(1);
               matchesSearch = matchesSearch.slice(0, -1) + "$'";
@@ -483,7 +482,7 @@ export default class Example09 {
   setFiltersDynamically() {
     // we can Set Filters Dynamically (or different filters) afterward through the FilterService
     this.sgb?.filterService.updateFilters([
-      // { columnId: 'gender', searchTerms: ['male'], operator: OperatorType.equal },
+      // { columnId: 'gender', searchTerms: ['male'], operator: '=' },
       { columnId: 'name', searchTerms: ['A'], operator: 'a*' },
     ]);
   }

@@ -6,7 +6,7 @@
 - [Row Detail - View Component](#row-detail---view-component)
 - [Access Parent Component (grid) from the Child Component (row detail)](#access-parent-component-grid-from-the-child-component-row-detail)
 - Troubleshooting
-  - [Adding a Column dynamically is removing the Row Selection, why is that?](#adding-a-column-dynamically-is-removing-the-row-selection-why-is-that)
+  - [Adding a Column dynamically is removing the Row Selection column, why is that?](#adding-a-column-dynamically-is-removing-the-row-selection-column-why-is-that)
 
 ### Demo
 [Demo Page](https://ghiscoding.github.io/slickgrid-react-demos/#/Example19) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example19.ts)
@@ -30,8 +30,13 @@ There is currently a known problem with Row Detail when loading the Row Detail C
 
 ## Usage
 
+> Starting from version 10, Row Detail is now an optional package and must be installed separately (`@slickgrid-universal/react-row-detail-plugin`)
+
 ##### Component
 ```tsx
+import { ReactSlickRowDetailView } from '@slickgrid-universal/react-row-detail-plugin'; // for v10 and above
+import { SlickRowDetailView } from 'slickgrid-react'; // for v9 and below
+
 const Example: React.FC = () => {
   const [dataset, setDataset] = useState<any[]>([]);
   const [columns, setColumns] = useState<Column[]>([]);
@@ -50,14 +55,19 @@ const Example: React.FC = () => {
     setOptions({
       enableRowDetailView: true,
       // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
-      rowSelectionOptions: {
+      selectionOptions: {
         selectActiveRow: true
       },
       preRegisterExternalExtensions: (pubSubService) => {
+        // for v10 and above
+        const rowDetail = new ReactSlickRowDetailView(pubSubService as EventPubSubService);
+
+        // for v9 and below
+        const rowDetail = new SlickRowDetailView(pubSubService as EventPubSubService);
+
         // Row Detail View is a special case because of its requirement to create extra column definition dynamically
         // so it must be pre-registered before SlickGrid is instantiated, we can do so via this option
-        const rowDetail = new SlickRowDetailView(pubSubService as EventPubSubService);
-        return [{ name: ExtensionName.rowDetailView, instance: rowDetail }];
+        return [{ name: 'rowDetailView', instance: rowDetail }];
       },
       rowDetailView: {
         // We can load the "process" asynchronously via Fetch, Promise, ...
@@ -113,7 +123,7 @@ Row Detail is an addon (commonly known as a plugin and are opt-in addon), becaus
 ```ts
 function changeDetailViewRowCount() {
   if (reactGridRef.current?.extensionService) {
-    const rowDetailInstance = reactGridRef.current?.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView);
+    const rowDetailInstance = reactGridRef.current?.extensionService.getExtensionInstanceByName('rowDetailView');
     const options = rowDetailInstance.getOptions();
     options.panelRows = detailViewRowCount; // change number of rows dynamically
     rowDetailInstance.setOptions(options);
@@ -129,7 +139,7 @@ Same as previous paragraph, after we get the SlickGrid addon instance, we can ca
 ```ts
 function closeAllRowDetail() {
   if (reactGridRef.current?.extensionService) {
-    const rowDetailInstance = reactGridRef.current?.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView);
+    const rowDetailInstance = reactGridRef.current?.extensionService.getExtensionInstanceByName('rowDetailView');
     rowDetailInstance.collapseAll();
   }
 }
@@ -139,7 +149,7 @@ This requires a bit more work, you can call the method `collapseDetailView(item)
 ```ts
 closeRowDetail(gridRowIndex: number) {
   if (reactGridRef.current?.extensionService) {
-    const rowDetailInstance = reactGridRef.current.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView);
+    const rowDetailInstance = reactGridRef.current.extensionService.getExtensionInstanceByName('rowDetailView');
     const item = reactGridRef.current.gridService.getDataItemByRowIndex(gridRowIndex);
     rowDetailInstance.collapseDetailView(item);
   }
@@ -249,6 +259,9 @@ const ExampleDetail: React.FC = (props: Props) => {
 
 ###### Grid Definition
 ```tsx
+import { ReactSlickRowDetailView } from '@slickgrid-universal/react-row-detail-plugin'; // for v10 and above
+import { SlickRowDetailView } from 'slickgrid-react'; // for v9 and below
+
 const Example: React.FC = () => {
   const [dataset, setDataset] = useState<any[]>([]);
   const [columns, setColumns] = useState<Column[]>([]);
@@ -267,10 +280,15 @@ const Example: React.FC = () => {
     setOptions({
       enableRowDetailView: true,
       preRegisterExternalExtensions: (pubSubService) => {
+        // for v10 and above
+        const rowDetail = new ReactSlickRowDetailView(pubSubService as EventPubSubService);
+
+        // for v9 and below
+        const rowDetail = new SlickRowDetailView(pubSubService as EventPubSubService);
+
         // Row Detail View is a special case because of its requirement to create extra column definition dynamically
         // so it must be pre-registered before SlickGrid is instantiated, we can do so via this option
-        const rowDetail = new SlickRowDetailView(pubSubService as EventPubSubService);
-        return [{ name: ExtensionName.rowDetailView, instance: rowDetail }];
+        return [{ name: 'rowDetailView', instance: rowDetail }];
       },
       rowDetailView: {
         // We can load the "process" asynchronously via Fetch, Promise, ...
@@ -304,6 +322,9 @@ const Example: React.FC = () => {
 The Row Detail provides you access to the following references (SlickGrid, DataView, Parent Component and the Addon (3rd party plugin)), however please note that all of these references are available from the start **except** the Parent Component instance, for that one you need to reference it inside your Row Detail Grid Options like so:
 
 ```ts
+import { ReactSlickRowDetailView } from '@slickgrid-universal/react-row-detail-plugin'; // for v10 and above
+import { SlickRowDetailView } from 'slickgrid-react'; // for v9 and below
+
 const Example: React.FC = () => {
   const [dataset, setDataset] = useState<any[]>([]);
   const [columns, setColumns] = useState<Column[]>([]);
@@ -322,10 +343,15 @@ const Example: React.FC = () => {
     setOptions({
       enableRowDetailView: true,
       preRegisterExternalExtensions: (pubSubService) => {
+        // for v10 and above
+        const rowDetail = new ReactSlickRowDetailView(pubSubService as EventPubSubService);
+
+        // for v9 and below
+        const rowDetail = new SlickRowDetailView(pubSubService as EventPubSubService);
+
         // Row Detail View is a special case because of its requirement to create extra column definition dynamically
         // so it must be pre-registered before SlickGrid is instantiated, we can do so via this option
-        const rowDetail = new SlickRowDetailView(pubSubService as EventPubSubService);
-        return [{ name: ExtensionName.rowDetailView, instance: rowDetail }];
+        return [{ name: 'rowDetailView', instance: rowDetail }];
       },
       rowDetailView: {
         // ...
@@ -425,7 +451,7 @@ const Example: React.FC = (props: Props) => {
 ```
 
 ## Troubleshooting
-### Adding a Column dynamically is removing the Row Selection, why is that?
+### Adding a Column dynamically is removing the Row Selection column, why is that?
 The reason is because the Row Selection (checkbox) plugin is a special column and Slickgrid-React is adding an extra column dynamically for the Row Selection checkbox and that is **not** reflected in your local copy of `columnDefinitions`. To address this issue, you need to get the Slickgrid-React internal copy of all columns (including the extra columns), you can get it via `getAllColumnDefinitions()` from the Grid Service and then you can use to that array and that will work.
 
 ```ts
@@ -461,6 +487,8 @@ You can also add an inner grid inside a Row Detail, however there are a few thin
 Main Grid Component
 
 ```tsx
+import { ReactSlickRowDetailView } from '@slickgrid-universal/react-row-detail-plugin'; // for v10 and above
+import { SlickRowDetailView } from 'slickgrid-react'; // for v9 and below
 import React from 'react';
 import { type Column, ExtensionName, type GridOption, SlickgridReact, type SlickgridReactInstance, SlickRowDetailView, } from 'slickgrid-react';
 
@@ -480,7 +508,7 @@ const Example: React.FC = () => {
   }
 
   function getRowDetailInstance() {
-    return reactGridRef.current?.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView);
+    return reactGridRef.current?.extensionService.getExtensionInstanceByName('rowDetailView');
   }
 
   function defineGrid() {
@@ -488,14 +516,19 @@ const Example: React.FC = () => {
     setOptions({
       enableRowDetailView: true,
       // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
-      rowSelectionOptions: {
+      selectionOptions: {
         selectActiveRow: true
       },
       preRegisterExternalExtensions: (pubSubService) => {
+        // for v10 and above
+        const rowDetail = new ReactSlickRowDetailView(pubSubService as EventPubSubService);
+
+        // for v9 and below
+        const rowDetail = new SlickRowDetailView(pubSubService as EventPubSubService);
+
         // Row Detail View is a special case because of its requirement to create extra column definition dynamically
         // so it must be pre-registered before SlickGrid is instantiated, we can do so via this option
-        const rowDetail = new SlickRowDetailView(pubSubService as EventPubSubService);
-        return [{ name: ExtensionName.rowDetailView, instance: rowDetail }];
+        return [{ name: 'rowDetailView', instance: rowDetail }];
       },
       rowDetailView: {
         process: (item: any) => simulateServerAsyncCall(item),
@@ -523,6 +556,8 @@ const Example: React.FC = () => {
 Now, let's define our Inner Grid Component
 
 ```tsx
+import { ReactSlickRowDetailView } from '@slickgrid-universal/react-row-detail-plugin'; // for v10 and above
+import { SlickRowDetailView } from 'slickgrid-react'; // for v9 and below
 import React from 'react';
 import { type Column, type GridOption, type GridState, type RowDetailViewProps, SlickgridReact, type SlickgridReactInstance } from 'slickgrid-react';
 

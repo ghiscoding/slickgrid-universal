@@ -4,8 +4,7 @@ import { PdfExportService } from '@slickgrid-universal/pdf-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import {
   Aggregators,
-  AngularSlickgridModule,
-  DelimiterType,
+  AngularSlickgridComponent,
   Filters,
   Formatters,
   GroupTotalFormatters,
@@ -21,7 +20,7 @@ const NB_ITEMS = 5000;
 
 @Component({
   templateUrl: './example13.component.html',
-  imports: [AngularSlickgridModule],
+  imports: [AngularSlickgridComponent],
 })
 export class Example13Component implements OnInit {
   angularGrid!: AngularGridInstance;
@@ -289,7 +288,7 @@ export class Example13Component implements OnInit {
 
   exportToFile(type = 'csv') {
     this.textExportService.exportToFile({
-      delimiter: type === 'csv' ? DelimiterType.comma : DelimiterType.tab,
+      delimiter: type === 'csv' ? ',' : '\t',
       filename: 'myExport',
       format: type === 'csv' ? 'csv' : 'txt',
     });

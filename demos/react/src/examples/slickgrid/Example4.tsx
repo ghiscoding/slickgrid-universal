@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import {
   Filters,
   Formatters,
-  OperatorType,
   SlickgridReact,
   type Column,
   type GridOption,
@@ -78,12 +77,12 @@ const Example4: React.FC = () => {
         collectionFilterBy: [
           {
             property: 'value',
-            operator: OperatorType.notEqual,
+            operator: '!=',
             value: 360,
           },
           {
             property: 'value',
-            operator: OperatorType.notEqual,
+            operator: '!=',
             value: 365,
           },
         ],

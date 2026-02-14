@@ -6,7 +6,7 @@
 - [Row Detail - View Component](#row-detail---view-component)
 - [Access Parent Component (grid) from the Child Component (row detail)](#access-parent-component-grid-from-the-child-component-row-detail)
 - Troubleshooting
-  - [Adding a Column dynamically is removing the Row Selection, why is that?](#adding-a-column-dynamically-is-removing-the-row-selection-why-is-that)
+  - [Adding a Column dynamically is removing the Row Selection column, why is that?](#adding-a-column-dynamically-is-removing-the-row-selection-column-why-is-that)
 
 ### Demo
 [Demo Page](https://ghiscoding.github.io/slickgrid-vue-demos/#/Example19) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vue/src/components/Example19.ts)
@@ -25,10 +25,13 @@ A Row Detail allows you to open a detail panel which can contain extra and/or mo
 
 ## Usage
 
+> Starting from version 10, Row Detail is now an optional package and must be installed separately (`@slickgrid-universal/vue-row-detail-plugin`)
+
 ##### Component
 ```vue
 <script setup lang="ts">
-import { type Column, Filters, Formatters, GridState, OperatorType, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
+import { VueSlickRowDetailView } from '@slickgrid-universal/vue-row-detail-plugin'; // for v10 and above
+import { type Column, Filters, Formatters, GridState, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -45,15 +48,10 @@ function defineGrid() {
   gridOptions.value = {
     enableRowDetailView: true,
     // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
-    rowSelectionOptions: {
+    selectionOptions: {
       selectActiveRow: true
     },
-    preRegisterExternalExtensions: (pubSubService) => {
-      // Row Detail View is a special case because of its requirement to create extra column definition dynamically
-      // so it must be pre-registered before SlickGrid is instantiated, we can do so via this option
-      const rowDetail = new SlickRowDetailView(pubSubService as EventPubSubService);
-      return [{ name: ExtensionName.rowDetailView, instance: rowDetail }];
-    },
+    externalResources: [VueSlickRowDetailView], // for v10 and above
     rowDetailView: {
       // We can load the "process" asynchronously via Fetch, Promise, ...
       process: (item) => http.get(`api/item/${item.id}`),
@@ -100,7 +98,7 @@ function vueGridReady(vueGrid: SlickgridVueInstance) {
     grid-id="grid40"
     v-model:columns="columnDefinitions"
     v-model:options="gridOptions"
-    v-model:data="dataset"
+    v-model:dataset="dataset"
     @onVueGridCreated="vueGridReady($event.detail)" />
 </template>
 ```
@@ -113,7 +111,7 @@ Row Detail is an addon (commonly known as a plugin and are opt-in addon), becaus
 ```ts
 function changeDetailViewRowCount() {
   if (vueGrid?.extensionService) {
-    const rowDetailInstance = vueGrid.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView);
+    const rowDetailInstance = vueGrid.extensionService.getExtensionInstanceByName('rowDetailView');
     const options = rowDetailInstance.getOptions();
     options.panelRows = detailViewRowCount; // change number of rows dynamically
     rowDetailInstance.setOptions(options);
@@ -129,7 +127,7 @@ Same as previous paragraph, after we get the SlickGrid addon instance, we can ca
 ```ts
 function closeAllRowDetail() {
   if (vueGrid && vueGrid.extensionService) {
-    const rowDetailInstance = vueGrid.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView);
+    const rowDetailInstance = vueGrid.extensionService.getExtensionInstanceByName('rowDetailView');
     rowDetailInstance.collapseAll();
   }
 }
@@ -139,7 +137,7 @@ This requires a bit more work, you can call the method `collapseDetailView(item)
 ```ts
 function closeRowDetail(gridRowIndex: number) {
   if (vueGrid && vueGrid.extensionService) {
-    const rowDetailInstance = vueGrid.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView);
+    const rowDetailInstance = vueGrid.extensionService.getExtensionInstanceByName('rowDetailView');
     const item = vueGrid.gridService.getDataItemByRowIndex(gridRowIndex);
     rowDetailInstance.collapseDetailView(item);
   }
@@ -255,16 +253,12 @@ function callParentMethod(model: Item) {
 ###### Grid Definition
 ```vue
 <script setup lang="ts">
+import { VueSlickRowDetailView } from '@slickgrid-universal/vue-row-detail-plugin'; // for v10 and above
 
 function defineGrid() {
   gridOptions.value = {
     enableRowDetailView: true,
-    preRegisterExternalExtensions: (pubSubService) => {
-      // Row Detail View is a special case because of its requirement to create extra column definition dynamically
-      // so it must be pre-registered before SlickGrid is instantiated, we can do so via this option
-      const rowDetail = new SlickRowDetailView(pubSubService as EventPubSubService);
-      return [{ name: ExtensionName.rowDetailView, instance: rowDetail }];
-    },
+    externalResources: [VueSlickRowDetailView], // for v10 and above
     rowDetailView: {
       // We can load the "process" asynchronously via Fetch, Promise, ...
       process: (item) => http.get(`api/item/${item.id}`),
@@ -288,7 +282,7 @@ function defineGrid() {
   <SlickgridVue gridId="grid40"
     v-model:columns="columnDefinitions"
     v-model:options="gridOptions"
-    v-model:data="dataset"
+    v-model:dataset="dataset"
     @onVueGridCreated="vueGridReady($event.detail)" />
 </template>
 ```
@@ -298,17 +292,13 @@ The Row Detail provides you access to the following references (SlickGrid, DataV
 
 ```ts
 <script setup lang="ts">
+import { VueSlickRowDetailView } from '@slickgrid-universal/vue-row-detail-plugin'; // for v10 and above
 
 function defineGrid() {
   // Parent Component (grid)
   gridOptions.value = {
     enableRowDetailView: true,
-    preRegisterExternalExtensions: (pubSubService) => {
-      // Row Detail View is a special case because of its requirement to create extra column definition dynamically
-      // so it must be pre-registered before SlickGrid is instantiated, we can do so via this option
-      const rowDetail = new SlickRowDetailView(pubSubService as EventPubSubService);
-      return [{ name: ExtensionName.rowDetailView, instance: rowDetail }];
-    },
+    externalResources: [VueSlickRowDetailView], // for v10 and above
     rowDetailView: {
       // ...
       // ViewComponent Template to load when row detail data is ready
@@ -403,7 +393,7 @@ function callParentMethod(model: any) {
 ```
 
 ## Troubleshooting
-### Adding a Column dynamically is removing the Row Selection, why is that?
+### Adding a Column dynamically is removing the Row Selection column, why is that?
 The reason is because the Row Selection (checkbox) plugin is a special column and Slickgrid-Vue is adding an extra column dynamically for the Row Selection checkbox and that is **not** reflected in your local copy of `columnDefinitions`. To address this issue, you need to get the Slickgrid-Vue internal copy of all columns (including the extra columns), you can get it via `getAllColumnDefinitions()` from the Grid Service and then you can use to that array and that will work.
 
 ```ts
@@ -435,7 +425,8 @@ Main Grid Component
 
 ```vue
 <script setup lang="ts">
-import { type Column, Filters, Formatters, GridState, OperatorType, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
+import { VueSlickRowDetailView } from '@slickgrid-universal/vue-row-detail-plugin'; // for v10 and above
+import { type Column, Filters, Formatters, GridState, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -451,15 +442,10 @@ function defineGrid() {
   gridOptions.value = {
     enableRowDetailView: true,
     // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
-    rowSelectionOptions: {
+    selectionOptions: {
       selectActiveRow: true
     },
-    preRegisterExternalExtensions: (pubSubService) => {
-      // Row Detail View is a special case because of its requirement to create extra column definition dynamically
-      // so it must be pre-registered before SlickGrid is instantiated, we can do so via this option
-      const rowDetail = new SlickRowDetailView(pubSubService as EventPubSubService);
-      return [{ name: ExtensionName.rowDetailView, instance: rowDetail }];
-    },
+    externalResources: [VueSlickRowDetailView], // for v10 and above
     rowDetailView: {
       process: (item: any) => simulateServerAsyncCall(item),
       loadOnce: false, // IMPORTANT, you can't use loadOnce with inner grid because only HTML template are re-rendered, not JS events
@@ -476,7 +462,7 @@ function defineGrid() {
     grid-id="grid40"
     v-model:columns="columnDefinitions"
     v-model:options="gridOptions"
-    v-model:data="dataset" />
+    v-model:dataset="dataset" />
 </template>
 ```
 
@@ -553,7 +539,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
         v-if="showGrid"
         v-model:options="innerGridOptions"
         v-model:columns="innerColDefs"
-        v-model:data="innerDataset"
+        v-model:dataset="innerDataset"
         :grid-id="`innergrid-${model.id}`"
         @onBeforeGridDestroy="handleBeforeGridDestroy"
         @onVueGridCreated="vueGridReady($event.detail)"

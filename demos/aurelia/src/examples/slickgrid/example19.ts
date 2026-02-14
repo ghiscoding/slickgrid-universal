@@ -1,5 +1,6 @@
+import { AureliaSlickRowDetailView } from '@slickgrid-universal/aurelia-row-detail-plugin';
 import { bindable } from 'aurelia';
-import { Editors, ExtensionName, Filters, Formatters, type AureliaGridInstance, type Column, type GridOption } from 'aurelia-slickgrid';
+import { Editors, Filters, Formatters, type AureliaGridInstance, type Column, type GridOption } from 'aurelia-slickgrid';
 import { ExampleDetailPreload } from './example-detail-preload.js';
 import { Example19DetailView } from './example19-detail-view.js';
 
@@ -32,7 +33,7 @@ export class Example19 {
     // return this.extensions.rowDetailView.instance || {};
 
     // OR option 2
-    return this.aureliaGrid?.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView);
+    return this.aureliaGrid?.extensionService.getExtensionInstanceByName('rowDetailView');
   }
 
   attached() {
@@ -134,6 +135,7 @@ export class Example19 {
       rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
       darkMode: this._darkMode,
       datasetIdPropertyName: 'rowId', // optionally use a different "id"
+      externalResources: [AureliaSlickRowDetailView],
       rowDetailView: {
         // optionally change the column index position of the icon (defaults to 0)
         // columnIndexPosition: 1,
@@ -171,7 +173,7 @@ export class Example19 {
         // Optionally pass your Parent Component reference to your Child Component (row detail component)
         parentRef: this,
       },
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: true,
       },

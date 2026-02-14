@@ -23,7 +23,7 @@ When used with a local JSON dataset, the Infinite Scroll is a feature that must 
 
 ```vue
 <script setup lang="ts">
-import { type Column, Filters, Formatters, GridState, OperatorType, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, GridState, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -79,10 +79,10 @@ function handleOnSort() {
   <SlickgridVue gridId="grid1"
     v-model:columns="columnDefinitions"
     v-model:options="gridOptions"
-    v-model:data="dataset"
+    v-model:dataset="dataset"
+    @onScroll="handleOnScroll($event.$detail.args)"
+    @onSort="handleOnSort()"
     @onVueGridCreated="vueGridReady($event.detail)"
-    onScroll={$event => handleOnScroll($event.$detail.args)}
-    onSort={$event => handleOnSort())}
   />
 </template>
 ```
@@ -98,7 +98,7 @@ We'll use the OData Backend Service to demo Infinite Scroll with a Backend Servi
 
 ```vue
 <script setup lang="ts">
-import { type Column, Filters, Formatters, GridState, OperatorType, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, GridState, SlickgridVue, SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -178,7 +178,7 @@ function getCustomerCallback(data: { '@odata.count': number; infiniteScrollBotto
   <SlickgridVue gridId="grid1"
     v-model:columns="columnDefinitions"
     v-model:options="gridOptions"
-    v-model:data="dataset"
+    v-model:dataset="dataset"
     @onVueGridCreated="vueGridReady($event.detail)"
   />
 </template>
