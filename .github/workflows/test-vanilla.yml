@@ -62,7 +62,7 @@ jobs:
         run: pnpm vanilla:serve:demo &
 
       - name: Run Cypress E2E tests
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           install: false
           package-manager-cache: false

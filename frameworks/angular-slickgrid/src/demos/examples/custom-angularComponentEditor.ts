@@ -32,7 +32,7 @@ export class CustomAngularComponentEditor implements Editor {
   grid: SlickGrid;
 
   constructor(private args: any) {
-    this.grid = args && args.grid;
+    this.grid = args?.grid;
     this.init();
   }
 

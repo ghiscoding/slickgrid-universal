@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/pdf-export",
-  "version": "9.13.0",
+  "version": "10.0.0-beta.0",
   "description": "PDF Export Service for SlickGrid Universal.",
   "type": "module",
   "main": "./dist/index.js",
@@ -39,7 +39,7 @@
   "dependencies": {
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/utils": "workspace:*",
-    "jspdf": "^4.0.0"
+    "jspdf": "catalog:"
   },
   "devDependencies": {
     "@slickgrid-universal/event-pub-sub": "workspace:*"

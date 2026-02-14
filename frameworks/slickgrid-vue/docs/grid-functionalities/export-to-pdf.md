@@ -143,7 +143,7 @@ You can subscribe to `onBeforeExportToPdf` and `onAfterExportToPdf` events to sh
   <SlickgridVue gridId="grid5"
       v-model:columns="columnDefinitions"
       v-model:options="gridOptions"
-      v-model:data="dataset"
+      v-model:dataset="dataset"
       @onBeforeExportToPdf="changeProcessing(true)"
       @onAfterExportToPdf="changeProcessing(false)"
   />

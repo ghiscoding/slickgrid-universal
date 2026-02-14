@@ -140,6 +140,11 @@ this.gridOptions = {
 };
 ```
 
+### Custom Menu Item Rendering
+For advanced customization of menu item appearance, you can use the `slotRenderer` or `defaultMenuItemRenderer` callbacks to create custom HTML or HTMLElement content for your menu items. This allows you to add badges, keyboard shortcuts, status indicators, and more.
+
+See [Custom Menu Slots](../../menu-slots.md) for detailed examples and best practices on rendering custom menu item content across all menu types.
+
 ### Override Callback Methods
 What if you want to dynamically disable or hide a Command/Option or even disable the entire menu in certain circumstances? For these cases, you would use the override callback methods, the method must return a `boolean`. The list of override available are the following
 - `menuUsabilityOverride` returning false would make the Cell Menu unavailable to the user
@@ -152,10 +157,7 @@ For example, say we want the Cell Menu to only be available on the first 20 rows
 this.columnDefinitions = [
   { id: 'action', field: 'action', name: 'Action',
     cellMenu: {
-      menuUsabilityOverride: (args) => {
-        const dataContext = args && args.dataContext;
-        return (dataContext.id < 21); // say we want to display the menu only from Task 0 to 20
-      },
+      menuUsabilityOverride: (args) => args?.dataContext.id < 21, // say we want to display the menu only from Task 0 to 20
     }
   }
 ];
@@ -167,12 +169,13 @@ this.columnDefinitions = [
   { id: 'action', field: 'action', name: 'Action',
     cellMenu: {
       optionItems: [
-      {
-        option: 0, title: 'n/a', textCssClass: 'italic',
-        // only enable this option when the task is Not Completed
-        itemUsabilityOverride: (args) => {
-          const dataContext = args && args.dataContext;
-          return !dataContext.completed;
+        {
+          option: 0, title: 'n/a', textCssClass: 'italic',
+          // only enable this option when the task is Not Completed
+          itemUsabilityOverride: (args) => {
+            const dataContext = args?.dataContext;
+            return !dataContext.completed;
+          },
         },
         { option: 1, iconCssClass: 'mdi mdi-star-outline yellow', title: 'Low' },
         { option: 2, iconCssClass: 'mdi mdi-star orange', title: 'Medium' },

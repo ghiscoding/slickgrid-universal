@@ -1,7 +1,13 @@
-import { EventNamingStyle } from '@slickgrid-universal/event-pub-sub';
-import { DelimiterType } from './enums/index.js';
 import { Filters } from './filters/index.js';
 import type { Column, EmptyWarning, GridOption, RowDetailView, TreeDataOption } from './interfaces/index.js';
+
+export const PluginFlagMappings: Map<string, keyof GridOption> = new Map<string, keyof GridOption>([
+  ['ExcelExportService', 'enableExcelExport'],
+  ['PdfExportService', 'enablePdfExport'],
+  ['TextExportService', 'enableTextExport'],
+  ['CompositeEditorComponent', 'enableCompositeEditor'],
+  ['RowDetailView', 'enableRowDetailView'],
+]);
 
 /** Global Grid Options Defaults */
 export const GlobalGridOptions: Partial<GridOption> = {
@@ -142,8 +148,6 @@ export const GlobalGridOptions: Partial<GridOption> = {
   enableColumnReorder: true,
   enableColumnResizeOnDoubleClick: true,
   enableContextMenu: true,
-  enableExcelExport: false,
-  enableTextExport: false,
   enableGridMenu: true,
   enableHeaderMenu: true,
   enableMouseHoverHighlightRow: true,
@@ -180,7 +184,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
     repeatHeadersOnEachPage: true,
   },
   textExportOptions: {
-    delimiter: DelimiterType.comma,
+    delimiter: ',',
     exportWithFormatter: false,
     filename: 'export',
     format: 'csv',
@@ -189,7 +193,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
     sanitizeDataExport: true,
     useUtf8WithBom: true,
   },
-  eventNamingStyle: EventNamingStyle.lowerCase,
+  eventNamingStyle: 'lowerCase',
   forceFitColumns: false,
   frozenHeaderWidthCalcDifferential: 1,
   gridMenu: {

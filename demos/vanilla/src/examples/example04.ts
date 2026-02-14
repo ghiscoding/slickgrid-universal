@@ -3,7 +3,6 @@ import {
   Editors,
   Filters,
   Formatters,
-  OperatorType,
   type AutocompleterOption,
   type Column,
   type ColumnEditorDualInput,
@@ -123,7 +122,7 @@ export default class Example04 {
           collectionFilterBy: {
             property: 'value',
             value: 0,
-            operator: OperatorType.notEqual,
+            operator: '!=',
           },
           // collectionOverride: (updatedCollection, args) => {
           //   console.log(args);
@@ -404,7 +403,7 @@ export default class Example04 {
         sanitizeDataExport: true,
       },
       externalResources: [new ExcelExportService()],
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },
@@ -415,7 +414,7 @@ export default class Example04 {
         name: 'Sel', // column name will only show when `hideInColumnTitleRow` is true
         onExtensionRegistered: (instance) => (this.checkboxSelectorInstance = instance),
       },
-      enableRowSelection: true,
+      enableSelection: true,
       frozenColumn: this.frozenColumnCount,
       frozenRow: this.frozenRowCount,
       // frozenBottom: true, // if you want to freeze the bottom instead of the top, you can enable this property

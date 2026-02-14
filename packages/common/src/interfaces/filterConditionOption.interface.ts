@@ -1,14 +1,14 @@
-import type { FieldType, OperatorString, OperatorType, SearchTerm } from '../enums/index.js';
+import type { FieldType, OperatorType, SearchTerm } from '../enums/index.js';
 
 export interface FilterConditionOption {
   /** optional object data key */
   dataKey?: string;
 
   /** pull the grid option default filter in case the "operator" provided is not a range operator or is simply undefined */
-  defaultFilterRangeOperator: OperatorType | OperatorString;
+  defaultFilterRangeOperator: OperatorType;
 
   /** filter operator */
-  operator: OperatorString;
+  operator: OperatorType;
 
   /** cell value */
   cellValue: any;
@@ -17,10 +17,10 @@ export interface FilterConditionOption {
   searchInputLastChar?: string;
 
   /** column field type */
-  fieldType: (typeof FieldType)[keyof typeof FieldType];
+  fieldType: FieldType;
 
   /** filter search field type */
-  filterSearchType?: (typeof FieldType)[keyof typeof FieldType];
+  filterSearchType?: FieldType;
 
   /** should we ignore any accent while filtering text? */
   ignoreAccentOnStringFilterAndSort?: any;

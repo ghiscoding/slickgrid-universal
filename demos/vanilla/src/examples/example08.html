@@ -12,7 +12,17 @@
   </div>
 </h3>
 
-<h4 class="title is-4">Grid 1 <small>(with Header Grouping &amp; Colspan)</small></h4>
+<h4 class="title is-4">
+  Grid 1 <small>(with Header Grouping &amp; ColSpan)</small>
+  <button
+    class="button is-small"
+    onclick.trigger="spreadColspan()"
+    data-test="spread-colspan-button"
+    title="Should we always spread the same visible column count with or without hidden columns?"
+  >
+    <span>Toggle Spreading of ColSpan with/without Hidden Columns</span>
+  </button>
+</h4>
 <div class="grid1"></div>
 
 <div class="title is-4 mb-3 mt-4">

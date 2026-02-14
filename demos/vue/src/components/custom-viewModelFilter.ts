@@ -1,13 +1,12 @@
 import {
   emptyElement,
-  OperatorType,
   type Column,
   type ColumnFilter,
   type Filter,
   type FilterArguments,
   type FilterCallback,
   type GridOption,
-  type OperatorString,
+  type OperatorType,
   type SearchTerm,
   type SlickGrid,
 } from 'slickgrid-vue';
@@ -33,7 +32,7 @@ export class CustomVueComponentFilter implements Filter {
   searchTerms: SearchTerm[] = [];
   columnDef!: Column;
   callback!: FilterCallback;
-  operator: OperatorType | OperatorString = OperatorType.equal;
+  operator: OperatorType = 'EQ';
   selectedItem: any;
 
   /** Get the Collection */

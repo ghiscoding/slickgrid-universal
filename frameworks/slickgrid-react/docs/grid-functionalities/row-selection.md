@@ -7,7 +7,7 @@
 - [Disable External Button when having Empty Selection](#disable-external-button-when-having-empty-selection)
 - [Change Row Selections](#change-row-selections)
 - Troubleshooting
-  - [Adding a Column dynamically is removing the Row Selection, why is that?](#adding-a-column-dynamically-is-removing-the-row-selection-why-is-that)
+  - [Adding a Column dynamically is removing the Row Selection column, why is that?](#adding-a-column-dynamically-is-removing-the-row-selection-column-why-is-that)
 - [Hybrid Selection Model (cell+row selection)](#hybrid-selection-model-and-drag-fill)
 
 ### Description
@@ -19,7 +19,7 @@ For row selection, you can simply play with couple of grid options (see below) a
 [Demo Page](https://ghiscoding.github.io/slickgrid-react-demos/#/Example10) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example10.ts)
 
 ## Single Row Selection
-For a single row selection, you need to have `enableCellNavigation: true`, `enableRowSelection: true` and `multiSelect: false` and as described earlier, subscribe to `onSelectedRowsChanged` (for that you need to bind to `(gridChanged)`). There are 2 ways to choose for the implementation of a row selection, option **1.** is the most common option and is the recommend way of doing it.
+For a single row selection, you need to have `enableCellNavigation: true`, `enableSelection: true` (or `enableRowSelection` in <=9.x) and `multiSelect: false` and as described earlier, subscribe to `onSelectedRowsChanged` (for that you need to bind to `(gridChanged)`). There are 2 ways to choose for the implementation of a row selection, option **1.** is the most common option and is the recommend way of doing it.
 
 ### 1. with Delegate (preferred way)
 You can also do it through a `delegate` since all SlickGrid events are exposed as `delegate`. For more info see [Docs - OnEvents - `3. delegate`](../events/grid-dataview-events.md)
@@ -40,7 +40,7 @@ const Example: React.FC = () => {
       enableAutoResize: true,
       enableCellNavigation: true,
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+      enableSelection: true, // or `enableRowSelection` in <=9.x
       multiSelect: false,
     });
   }
@@ -70,7 +70,7 @@ It's preferable to use the `with delegate`, but if you really wish, you can also
 const options = {
   enableAutoResize: true,
   enableCellNavigation: true,
-  enableRowSelection: true
+  enableSelection: true // or `enableRowSelection` in <=9.x
 }
 
 gridObjChanged(grid) {
@@ -86,7 +86,7 @@ gridObjChanged(grid) {
 ```
 
 ## Multiple Row Selections
-As for multiple row selections, you need to disable `enableCellNavigation` and enable `enableCheckboxSelector` and `enableRowSelection`. Then as describe earlier, you will subscribe to `onSelectedRowsChanged` (for that you need to bind to `(gridChanged)`). There are 2 ways to choose for the implementation of a row selection, option **1.** is the most common option and is the recommend way of doing it.
+As for multiple row selections, you need to disable `enableCellNavigation` and enable `enableCheckboxSelector` and `enableSelection` (or `enableRowSelection` in <=9.x). Then as describe earlier, you will subscribe to `onSelectedRowsChanged` (for that you need to bind to `(gridChanged)`). There are 2 ways to choose for the implementation of a row selection, option **1.** is the most common option and is the recommend way of doing it.
 
 ### 1. with event (preferred way)
 You can also do it through an event since all SlickGrid events are exposed. For more info see [Docs - OnEvents - `3. event`](../events/grid-dataview-events.md)
@@ -103,9 +103,12 @@ const Example: React.FC = () => {
       enableAutoResize: true,
       enableCellNavigation: true,
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+
+      // `enableRowSelection` in <=9.x OR `enableSelection` in >=10.0
+      enableSelection: true,
+
       // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false
       },
@@ -138,9 +141,12 @@ const Example: React.FC = () => {
       enableAutoResize: true,
       enableCellNavigation: true,
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+
+      // `enableRowSelection` in <=9.x OR `enableSelection` in >=10.0
+      enableSelection: true,
+
       // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false
       },
@@ -206,19 +212,22 @@ You can use `selectableOverride` to provide custom logic to disable certain rows
 const Example: React.FC = () => {
   function defineGrid() {
     setOptions({
-      enableRowSelection: true,
       enableCheckboxSelector: true,
       checkboxSelector: {
         // you can override the logic for showing (or not) the expand icon
         // for example, display the expand icon only on every 2nd row
         // selectableOverride: (row: number, dataContext: any, grid: any) => (dataContext.id % 2 === 1)
       },
-      multiSelect: false,
+
+      // `enableRowSelection` in <=9.x OR `enableSelection` in >=10.0
+      enableSelection: true,
+
       // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
-        selectActiveRow: true,
+        selectActiveRow: false
       },
+      multiSelect: false,
     });
   }
 }
@@ -311,16 +320,16 @@ export default Example;
 Starting with v9.10.0, you can now use the new Hybrid Selection Model, this new model will allow you to do Cell Selection & Row Selection in the same grid. This wasn't previously doable before that version because SlickGrid only ever allows 1 selection model to be loaded at once and so we had to load either `SlickCellSelectionModel` or `SlickRowSelectionModel` but never both of them at the same time. The new Hybrid Selection Model is merging both of these plugins in a single plugin allowing us to do both type of selections.
 
 > [!NOTE]
-> You can use `enableHybridSelection: true` grid option to enable the new Hybrid Model, this new model will eventually replace both cell/row selection model in the future since there's no need to keep all these models when only 1 is more than enough
+> You can use `{ enableSelection: true, selectionOptions: { selectionType: 'mixed' }}` grid option to enable the new Hybrid Model, this new model will eventually replace both cell/row selection model in the future since there's no need to keep all these models when only 1 is more than enough
 
 For example, we could use the Excel Copy Buffer (Cell Selection) and use `rowSelectColumnIds` (Row Selection)
 
 ```tsx
 setGridOptions({
   // enable new hybrid selection model (rows & cells)
-  enableHybridSelection: true,
+  enableSelection: true,
   // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
-  rowSelectionOptions: {
+  selectionOptions: {
     selectActiveRow: true,
     rowSelectColumnIds: ['selector'],
   },
@@ -353,7 +362,7 @@ const Example: React.FC = () => {
     // grid options
     setOptions({
       // enable new hybrid selection model (rows & cells)
-      enableHybridSelection: true,
+      enableSelection: true,
       // ...
     });
 
@@ -389,7 +398,7 @@ export default Example;
 ```
 
 ## Troubleshooting
-### Adding a Column dynamically is removing the Row Selection, why is that?
+### Adding a Column dynamically is removing the Row Selection column, why is that?
 The reason is because the Row Selection (checkbox) plugin is a special column and slickgrid-react is adding an extra column dynamically for the Row Selection checkbox and that is **not** reflected in your local copy of `columnDefinitions`. To address this issue, you need to get the slickgrid-react internal copy of all columns (including the extra columns), you can get it via `getAllColumnDefinitions()` from the Grid Service and then you can use to that array and that will work.
 
 ```tsx

@@ -12,7 +12,7 @@ Some users might want to have 1 main single search for filtering the grid data i
 ##### Component
 ```vue
 <script setup lang="ts">
-import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -24,7 +24,7 @@ const searchValue = ref<string>();
 let vueGrid: SlickgridVueInstance;
 let dataView: SlickDataView;
 let gridOptions: GridOption;
-let operatorList: OperatorString[] = ['=', '<', '<=', '>', '>=', '<>'];
+let operatorList: OperatorType[] = ['=', '<', '<=', '>', '>=', '<>'];
 
 onBeforeMount(() => {
   defineGrid();
@@ -58,7 +58,7 @@ function updateFilter() {
   const filter = {};
   const filterArg: FilterCallbackArg = {
     columnDef: selectedColumn,
-    operator: selectedOperator as OperatorString, // or fix one yourself like '='
+    operator: selectedOperator as OperatorType, // or fix one yourself like '='
     searchTerms: [searchValue || '']
   };
 
@@ -118,8 +118,8 @@ function updateFilter() {
       grid-id="grid21"
       v-model:columns="columnDefinitions"
       v-model:options="gridOptions"
-      v-model:data="dataset"
-      @onvueGridCreated="vueGridReady($event.detail)"
+      v-model:dataset="dataset"
+      @onVueGridCreated="vueGridReady($event.detail)"
     ></slickgrid-vue>
   </div>
 </template>

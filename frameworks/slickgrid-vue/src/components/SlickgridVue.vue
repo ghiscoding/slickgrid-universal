@@ -5,8 +5,6 @@ import {
   collectionObserver,
   CollectionService,
   emptyElement,
-  EventNamingStyle,
-  ExtensionName,
   ExtensionService,
   ExtensionUtility,
   FilterFactory,
@@ -17,6 +15,7 @@ import {
   HeaderGroupingService,
   isColumnDateType,
   PaginationService,
+  PluginFlagMappings,
   ResizerService,
   SharedService,
   SlickDataView,
@@ -36,6 +35,7 @@ import {
   type EventSubscription,
   type ExtensionList,
   type ExternalResource,
+  type ExternalResourceConstructor,
   type Metrics,
   type Observable,
   type Pagination,
@@ -62,7 +62,6 @@ import {
   type ComponentPublicInstance,
   type Ref,
 } from 'vue';
-import { SlickRowDetailView } from '../extensions/slickRowDetailView.js';
 import { GlobalGridOptions } from '../global-grid-options.js';
 import type { GridOption, I18Next, SlickgridVueInstance } from '../models/index.js';
 import { ContainerService, disposeAllSubscriptions } from '../services/index.js';
@@ -70,6 +69,11 @@ import { TranslaterI18NextService } from '../services/translaterI18Next.service.
 import type { SlickgridVueProps } from './slickgridVueProps.interface.js';
 
 const WARN_NO_PREPARSE_DATE_SIZE = 10000; // data size to warn user when pre-parsing isn't enabled
+
+export interface VueSlickRowDetailView {
+  create(columns: Column[], gridOptions: GridOption): any;
+  init(grid: SlickGrid, containerService?: ContainerService): void;
+}
 
 const attrs = useAttrs();
 
@@ -103,7 +107,7 @@ let isDatasetHierarchicalInitialized = false;
 let isPaginationInitialized = false;
 let isLocalGrid = true;
 let metrics: Metrics | undefined;
-let registeredResources: ExternalResource[] = [];
+let registeredResources: Array<ExternalResource | ExternalResourceConstructor> = [];
 let scrollEndCalled = false;
 let showPagination = false;
 let subscriptions: Array<EventSubscription> = [];
@@ -112,7 +116,7 @@ let subscriptions: Array<EventSubscription> = [];
 let slickEmptyWarning: SlickEmptyWarningComponent | undefined;
 let slickFooter: SlickFooterComponent | undefined;
 let slickPagination: BasePaginationComponent | undefined;
-let slickRowDetailView: SlickRowDetailView | undefined;
+let slickRowDetailView: VueSlickRowDetailView | undefined;
 
 // initialize and assign all Service Dependencies
 let backendServiceApi: BackendServiceApi | undefined;
@@ -120,7 +124,7 @@ let rxjs: RxJsFacade | undefined;
 const slickgridConfig = new SlickgridConfig();
 const eventHandler = new SlickEventHandler();
 const eventPubSubService = new EventPubSubService();
-eventPubSubService.eventNamingStyle = EventNamingStyle.camelCaseWithExtraOnPrefix;
+eventPubSubService.eventNamingStyle = 'camelCaseWithExtraOnPrefix';
 
 const containerService = new ContainerService();
 const translaterService = new TranslaterI18NextService();
@@ -206,7 +210,7 @@ const _columnDefinitions: Ref<Column[]> = ref([]);
 const columnDefinitionsModel = defineModel<Column[]>('columns', { required: true, default: [] });
 watch(columnDefinitionsModel, (columnDefinitions) => columnDefinitionsChanged(columnDefinitions), { immediate: true });
 
-const dataModel = defineModel<any[]>('data', { required: false }); // technically true but user could use datasetHierarchical instead
+const dataModel = defineModel<any[]>('dataset', { required: false }); // technically true but user could use datasetHierarchical instead
 watch(
   dataModel,
   (newDataset: any[]) => {
@@ -381,7 +385,7 @@ function initialization() {
     _gridOptions.value.enableMouseWheelScrollHandler = true;
   }
 
-  eventPubSubService.eventNamingStyle = _gridOptions.value?.eventNamingStyle ?? EventNamingStyle.camelCaseWithExtraOnPrefix;
+  eventPubSubService.eventNamingStyle = _gridOptions.value?.eventNamingStyle ?? 'camelCaseWithExtraOnPrefix';
   eventPubSubService.publish('onBeforeGridCreate', true);
 
   // make sure the dataset is initialized (if not it will throw an error that it cannot getLength of null)
@@ -440,7 +444,6 @@ function initialization() {
 
   // save reference for all columns before they optionally become hidden/visible
   sharedService.allColumns = _columnDefinitions.value as Column[];
-  sharedService.visibleColumns = _columnDefinitions.value as Column[];
 
   // TODO: revisit later, this conflicts with Grid State (Example 15)
   // before certain extentions/plugins potentially adds extra columns not created by the user itself (RowMove, RowDetail, RowSelections)
@@ -476,14 +479,14 @@ function initialization() {
     grid.registerPlugin(groupItemMetadataProvider); // register GroupItemMetadataProvider when Grouping is enabled
   }
 
+  // get any possible Services that user want to register
+  registerResources();
+
   extensionService.bindDifferentExtensions();
   bindDifferentHooks(grid, _gridOptions.value as GridOption, dataview);
 
   // when it's a frozen grid, we need to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward
   sharedService.frozenVisibleColumnId = grid.getFrozenColumnId();
-
-  // get any possible Services that user want to register
-  registerResources();
 
   // initialize the SlickGrid grid
   grid.init();
@@ -538,10 +541,7 @@ function initialization() {
 
     const datasetLn = dataModel.value?.length || 0;
     if (datasetLn > 0) {
-      if (
-        !isDatasetInitialized &&
-        (_gridOptions.value.enableCheckboxSelector || _gridOptions.value.enableRowSelection || _gridOptions.value.enableHybridSelection)
-      ) {
+      if (!isDatasetInitialized && (_gridOptions.value.enableCheckboxSelector || _gridOptions.value.enableSelection)) {
         loadRowSelectionPresetWhenExists();
       }
       loadFilterPresetsWhenDatasetInitialized();
@@ -677,8 +677,8 @@ function disposeExternalResources() {
   if (Array.isArray(registeredResources)) {
     while (registeredResources.length > 0) {
       const res = registeredResources.pop();
-      if (res?.dispose) {
-        res.dispose();
+      if (typeof (res as ExternalResource)?.dispose === 'function') {
+        (res as ExternalResource).dispose!();
       }
     }
   }
@@ -786,10 +786,9 @@ function bindDifferentHooks(grid: SlickGrid, gridOptions: GridOption, dataView: 
         }
       }
 
-      // when column are reordered, we need to update the visibleColumn array
-      eventHandler.subscribe(grid.onColumnsReordered, (_e, args) => {
+      // when column are reordered, we need to update SharedService flag
+      eventHandler.subscribe(grid.onColumnsReordered, () => {
         sharedService.hasColumnsReordered = true;
-        sharedService.visibleColumns = args.impactedColumns;
       });
 
       eventHandler.subscribe(grid.onSetOptions, (_e, args) => {
@@ -1010,7 +1009,7 @@ function paginationChanged(pagination: PaginationMetadata) {
     grid &&
     !isSyncGridSelectionEnabled &&
     _gridOptions.value?.backendServiceApi &&
-    (_gridOptions.value.enableRowSelection || _gridOptions.value.enableHybridSelection || _gridOptions.value.enableCheckboxSelector)
+    (_gridOptions.value.enableSelection || _gridOptions.value.enableCheckboxSelector)
   ) {
     grid.setSelectedRows([]);
   }
@@ -1161,9 +1160,8 @@ function updateColumnDefinitionsList(newColumns: Column<any>[]) {
 
     if (_gridOptions.value.enableTranslate) {
       extensionService.translateColumnHeaders(undefined, newColumns);
-    } else {
-      extensionService.renderColumnHeaders(newColumns, true);
     }
+    extensionService.renderColumnHeaders(newColumns, true);
 
     if (_gridOptions.value?.enableAutoSizeColumns) {
       grid?.autosizeColumns();
@@ -1277,46 +1275,13 @@ function loadEditorCollectionAsync(column: Column) {
   }
 }
 
-function insertDynamicPresetColumns(columnId: string, gridPresetColumns: Column<any>[]) {
-  if (_columnDefinitions.value) {
-    const columnPosition = _columnDefinitions.value.findIndex((c) => c.id === columnId);
-    if (columnPosition >= 0) {
-      const dynColumn = _columnDefinitions.value[columnPosition] as Column;
-      if (dynColumn?.id === columnId && !gridPresetColumns.some((c) => c.id === columnId)) {
-        columnPosition > 0 ? gridPresetColumns.splice(columnPosition, 0, dynColumn) : gridPresetColumns.unshift(dynColumn);
-      }
-    }
-  }
-}
-
 /** Load any possible Columns Grid Presets */
 function loadColumnPresetsWhenDatasetInitialized() {
   // if user entered some Columns "presets", we need to reflect them all in the grid
   if (_gridOptions.value.presets && Array.isArray(_gridOptions.value.presets.columns) && _gridOptions.value.presets.columns.length > 0) {
-    const gridPresetColumns: Column<any>[] = gridStateService.getAssociatedGridColumns(grid!, _gridOptions.value.presets.columns);
-    if (gridPresetColumns && Array.isArray(gridPresetColumns) && gridPresetColumns.length > 0 && Array.isArray(_columnDefinitions.value)) {
-      // make sure that the dynamic columns are included in presets (1.Row Move, 2. Row Selection, 3. Row Detail)
-      if (_gridOptions.value.enableRowMoveManager) {
-        const rmmColId = _gridOptions.value?.rowMoveManager?.columnId ?? '_move';
-        insertDynamicPresetColumns(rmmColId, gridPresetColumns);
-      }
-      if (_gridOptions.value.enableCheckboxSelector) {
-        const chkColId = _gridOptions.value?.checkboxSelector?.columnId ?? '_checkbox_selector';
-        insertDynamicPresetColumns(chkColId, gridPresetColumns);
-      }
-      if (_gridOptions.value.enableRowDetailView) {
-        const rdvColId = _gridOptions.value?.rowDetailView?.columnId ?? '_detail_selector';
-        insertDynamicPresetColumns(rdvColId, gridPresetColumns);
-      }
-
-      // keep copy the original optional `width` properties optionally provided by the user.
-      // We will use this when doing a resize by cell content, if user provided a `width` it won't override it.
-      gridPresetColumns.forEach((col) => (col.originalWidth = col.width));
-
-      // finally set the new presets columns (including checkbox selector if need be)
-      grid?.setColumns(gridPresetColumns);
-      sharedService.visibleColumns = gridPresetColumns;
-    }
+    // delegate to GridStateService for centralized column arrangement logic
+    // we pass `false` for triggerAutoSizeColumns to maintain original behavior on preset load
+    gridStateService.changeColumnsArrangement(_gridOptions.value.presets.columns, false);
   }
 }
 
@@ -1359,9 +1324,7 @@ function loadLocalGridPagination(dataset?: any[]) {
 function loadRowSelectionPresetWhenExists() {
   // if user entered some Row Selections "presets"
   const presets = _gridOptions.value?.presets;
-  const enableRowSelection =
-    _gridOptions.value &&
-    (_gridOptions.value.enableCheckboxSelector || _gridOptions.value.enableRowSelection || _gridOptions.value.enableHybridSelection);
+  const enableRowSelection = _gridOptions.value && (_gridOptions.value.enableCheckboxSelector || _gridOptions.value.enableSelection);
   if (
     enableRowSelection &&
     grid?.getSelectionModel() &&
@@ -1440,12 +1403,28 @@ function mergeGridOptions(gridOptions: GridOption): GridOption {
   return options;
 }
 
-function initializeExternalResources(resources: ExternalResource[]) {
+/** initialized & auto-enable external registered resources, e.g. if user registers `ExcelExportService` then let's auto-enable `enableExcelExport:true` */
+function autoEnableInitializedResources(resource: ExternalResource | ExternalResourceConstructor): void {
+  if (grid && typeof (resource as ExternalResource).init === 'function') {
+    (resource as ExternalResource).init!(grid, containerService);
+  }
+
+  // auto-enable unless the flag was specifically disabled by the end user
+  if ('pluginName' in (resource as ExternalResource)) {
+    const pluginFlagName = PluginFlagMappings.get((resource as ExternalResource).pluginName!);
+    if (pluginFlagName && _gridOptions.value[pluginFlagName] !== false) {
+      _gridOptions.value[pluginFlagName] = true;
+      grid?.setOptions({ [pluginFlagName]: true });
+    }
+  }
+}
+
+function initializeExternalResources(resources: Array<ExternalResource | ExternalResourceConstructor>) {
+  PluginFlagMappings.set('VueSlickRowDetailView', 'enableRowDetailView');
+
   if (Array.isArray(resources)) {
     for (const resource of resources) {
-      if (grid && typeof resource.init === 'function') {
-        resource.init(grid, containerService);
-      }
+      autoEnableInitializedResources(resource);
     }
   }
 }
@@ -1458,19 +1437,31 @@ function preRegisterResources() {
   // register all services by executing their init method and providing them with the Grid object
   if (Array.isArray(registeredResources)) {
     for (const resource of registeredResources) {
-      if (resource?.className === 'RxJsResource') {
+      if ((resource as ExternalResource)?.pluginName === 'RxJsResource') {
         registerRxJsResource(resource as RxJsFacade);
       }
     }
   }
 
-  if (_gridOptions.value.enableRowDetailView && !registeredResources.some((r) => r instanceof SlickRowDetailView)) {
-    slickRowDetailView = new SlickRowDetailView(eventPubSubService);
-    slickRowDetailView.create(_columnDefinitions.value, _gridOptions.value as GridOption);
-    extensionService.addExtensionToList(ExtensionName.rowDetailView, {
-      name: ExtensionName.rowDetailView,
-      instance: slickRowDetailView,
-    });
+  if (_gridOptions.value.enableRowDetailView) {
+    const RowDetailClass = registeredResources.find((res: any) => res.pluginName === 'VueSlickRowDetailView') as
+      | ExternalResourceConstructor
+      | undefined;
+    if (!RowDetailClass) {
+      throw new Error(
+        '[Slickgrid-Vue] You enabled the Row Detail View feature but you did not provide the "VueSlickRowDetailView" class as an external resource.'
+      );
+    }
+
+    if (RowDetailClass) {
+      const rowDetailInstance = new RowDetailClass(eventPubSubService) as VueSlickRowDetailView;
+      slickRowDetailView = rowDetailInstance;
+      rowDetailInstance.create(_columnDefinitions.value, _gridOptions.value as GridOption);
+      extensionService.addExtensionToList('rowDetailView', {
+        name: 'rowDetailView',
+        instance: slickRowDetailView,
+      });
+    }
   }
 }
 

@@ -4,7 +4,7 @@ import { createDomElement, emptyElement, extend, isDefined } from '@slickgrid-un
 import { Calendar, type Options } from 'vanilla-calendar-pro';
 import { resetDatePicker, setPickerDates, setPickerFocus } from '../commonEditorFilter/commonEditorFilterUtils.js';
 import type { SlickGrid } from '../core/slickGrid.js';
-import { FieldType, OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
+import { type OperatorType, type SearchTerm } from '../enums/index.js';
 import type { Column, ColumnFilter, Filter, FilterArguments, FilterCallback, GridOption, OperatorDetail } from '../interfaces/index.js';
 import { formatDateByFieldType, mapTempoDateFormatWithFieldType } from '../services/dateUtils.js';
 import type { TranslaterService } from '../services/translater.service.js';
@@ -22,7 +22,7 @@ export class DateFilter implements Filter {
   protected _pickerOptions!: Options;
   protected _filterElm!: HTMLDivElement;
   protected _dateInputElm!: HTMLInputElement;
-  protected _operator!: OperatorType | OperatorString;
+  protected _operator!: OperatorType;
   protected _selectOperatorElm?: HTMLSelectElement;
   protected _shouldTriggerQuery = true;
   hasTimePicker = false;
@@ -54,10 +54,8 @@ export class DateFilter implements Filter {
   }
 
   /** Getter to know what would be the default operator when none is specified */
-  get defaultOperator(): OperatorType | OperatorString {
-    return this.inputFilterType === 'compound'
-      ? OperatorType.empty
-      : this.gridOptions.defaultFilterRangeOperator || OperatorType.rangeInclusive;
+  get defaultOperator(): OperatorType {
+    return this.inputFilterType === 'compound' ? '' : this.gridOptions.defaultFilterRangeOperator || 'RangeInclusive';
   }
 
   /** Getter for the date picker options */
@@ -66,11 +64,11 @@ export class DateFilter implements Filter {
   }
 
   get filterOptions(): Options {
-    return { ...this.gridOptions.defaultFilterOptions?.date, ...this.columnFilter?.filterOptions, ...this.columnFilter?.options };
+    return { ...this.gridOptions.defaultFilterOptions?.date, ...this.columnFilter?.options };
   }
 
   /** Getter for the Filter Operator */
-  get operator(): OperatorType | OperatorString {
+  get operator(): OperatorType {
     if (this.inputFilterType === 'compound') {
       return this._operator || this.columnFilter.operator || this.defaultOperator;
     }
@@ -78,7 +76,7 @@ export class DateFilter implements Filter {
   }
 
   /** Setter for the filter operator */
-  set operator(operator: OperatorType | OperatorString) {
+  set operator(operator: OperatorType) {
     if (this.inputFilterType === 'compound') {
       this._operator = operator;
     } else if (this.columnFilter) {
@@ -182,7 +180,7 @@ export class DateFilter implements Filter {
    * Set value(s) on the DOM element
    * @params searchTerms
    */
-  setValues(values?: SearchTerm[] | SearchTerm, operator?: OperatorType | OperatorString, triggerChange = false): void {
+  setValues(values?: SearchTerm[] | SearchTerm, operator?: OperatorType, triggerChange = false): void {
     let pickerValues: any | any[];
 
     if (this.inputFilterType === 'compound') {
@@ -230,16 +228,16 @@ export class DateFilter implements Filter {
   // ------------------
   protected buildDatePickerInput(searchTerms?: SearchTerm | SearchTerm[]): void {
     const columnId = this.columnDef?.id ?? '';
-    const columnFieldType = this.columnFilter.type || this.columnDef.type || FieldType.dateIso;
-    const outputFieldType = this.columnDef.outputType || this.columnFilter.type || this.columnDef.type || FieldType.dateUtc;
+    const columnFieldType = this.columnFilter.type || this.columnDef.type || 'dateIso';
+    const outputFieldType = this.columnDef.outputType || this.columnFilter.type || this.columnDef.type || 'dateUtc';
     const outputFormat = mapTempoDateFormatWithFieldType(outputFieldType);
-    const inputFieldType = this.columnFilter.type || this.columnDef.type || FieldType.dateIso;
+    const inputFieldType = this.columnFilter.type || this.columnDef.type || 'dateIso';
 
     // add the time picker when format is UTC (TZ - ISO8601) or has the 'h' (meaning hours)
     if (outputFormat && this.inputFilterType !== 'range' && (outputFormat === 'ISO8601' || outputFormat.toLowerCase().includes('h'))) {
       this.hasTimePicker = true;
     }
-    const pickerFormat = mapTempoDateFormatWithFieldType(this.hasTimePicker ? FieldType.dateTimeIsoAM_PM : FieldType.dateIso);
+    const pickerFormat = mapTempoDateFormatWithFieldType(this.hasTimePicker ? 'dateTimeIsoAM_PM' : 'dateIso');
 
     // get current locale, if user defined a custom locale just use or get it the Translate Service if it exist else just use English
     // prettier-ignore
@@ -300,7 +298,7 @@ export class DateFilter implements Filter {
             outDates = [firstDate, lastDate];
           } else if (self.context.selectedDates[0]) {
             firstDate = self.context.selectedDates[0];
-            self.context.inputElement.value = formatDateByFieldType(firstDate, FieldType.dateIso, outputFieldType);
+            self.context.inputElement.value = formatDateByFieldType(firstDate, 'dateIso', outputFieldType);
             outDates = self.context.selectedDates;
           } else {
             self.context.inputElement.value = '';
@@ -491,7 +489,7 @@ export class DateFilter implements Filter {
           shouldTriggerQuery: this._shouldTriggerQuery,
         });
       } else if (this.inputFilterType === 'compound' && this._selectOperatorElm) {
-        const selectedOperator = this._selectOperatorElm.value as OperatorString;
+        const selectedOperator = this._selectOperatorElm.value as OperatorType;
         this.updateFilterStyle(!!this._currentValue);
 
         // when changing compound operator, we don't want to trigger the filter callback unless the date input is also provided

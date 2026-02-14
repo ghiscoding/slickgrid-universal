@@ -1,9 +1,8 @@
-import { Component, ViewEncapsulation, type OnDestroy, type OnInit } from '@angular/core';
+import { Component, signal, ViewEncapsulation, type OnDestroy, type OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import type { Subscription } from 'rxjs';
 import {
-  AngularSlickgridModule,
-  ExtensionName,
+  AngularSlickgridComponent,
   Filters,
   Formatters,
   unsubscribeAllObservables,
@@ -17,7 +16,7 @@ import {
   templateUrl: './example09.component.html',
   styleUrls: ['./example09.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  imports: [AngularSlickgridModule],
+  imports: [AngularSlickgridComponent],
 })
 export class Example9Component implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
@@ -26,13 +25,13 @@ export class Example9Component implements OnInit, OnDestroy {
   gridOptions!: GridOption;
   dataset!: any[];
   hideSubTitle = false;
-  selectedLanguage: string;
+  selectedLanguage = signal('');
 
   constructor(private translate: TranslateService) {
     // always start with English for Cypress E2E tests to be consistent
     const defaultLang = 'en';
     this.translate.use(defaultLang);
-    this.selectedLanguage = defaultLang;
+    this.selectedLanguage.set(defaultLang);
   }
 
   ngOnDestroy() {
@@ -276,17 +275,17 @@ export class Example9Component implements OnInit, OnDestroy {
   }
 
   switchLanguage() {
-    const nextLanguage = this.selectedLanguage === 'en' ? 'fr' : 'en';
+    const nextLanguage = this.selectedLanguage() === 'en' ? 'fr' : 'en';
     this.subscriptions.push(
       this.translate.use(nextLanguage).subscribe(() => {
-        this.selectedLanguage = nextLanguage;
+        this.selectedLanguage.set(nextLanguage);
       })
     );
   }
 
   toggleGridMenu(e: MouseEvent) {
     if (this.angularGrid && this.angularGrid.extensionService) {
-      const gridMenuInstance = this.angularGrid.extensionService.getExtensionInstanceByName(ExtensionName.gridMenu);
+      const gridMenuInstance = this.angularGrid.extensionService.getExtensionInstanceByName('gridMenu');
       // open the external button Grid Menu, you can also optionally pass Grid Menu options as 2nd argument
       // for example we want to align our external button on the right without affecting the menu within the grid which will stay aligned on the left
       gridMenuInstance.showGridMenu(e, { dropSide: 'right' });

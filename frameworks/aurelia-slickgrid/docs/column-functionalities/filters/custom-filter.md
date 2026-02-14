@@ -13,7 +13,7 @@ You can also create your own Custom Filter with any html/css you want and/or jQu
 - as mentioned in the description, only html/css and/or jQuery libraries are supported.
   - this mainly mean that Aurelia templates (Views) are not supported (feel free to contribute).
 - SlickGrid uses `table-cell` as CSS for it to display a consistent height for each rows (this keeps the same row height/line-height to always be the same).
-  - all this to say that you might be in a situation were your filter shows in the back of the grid. The best approach to overcome this is to use a modal if you can or if the library support `append to body container`. For example, you can see that `multiple-select.js` support a `container` and is needed for the filter to work as can be seen in the `multipleSelectFilter.ts`
+  - all this to say that you might be in a situation were your filter shows in the back of the grid. The best approach to overcome this is to use a modal if you can or if the library support `append to body container`. For example, you can see that `multiple-select-vanilla` support a `container` and is needed for the filter to work as can be seen in the `multipleSelectFilter.ts`
 
 ### How to use Custom Filter?
 1. You first need to create a `class` using the [Filter interface](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/filter.interface.ts). Make sure to create all necessary public properties and functions.
@@ -47,7 +47,7 @@ You can also create your own Custom Filter with any html/css you want and/or jQu
      searchTerms: SearchTerm[];
      columnDef: Column;
      callback: FilterCallback;
-     operator: OperatorType | OperatorString = OperatorType.equal;
+     operator: OperatorType = 'EQ';
 
      init(args: FilterArguments) {
        // ...logic

@@ -4,7 +4,6 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
   Filters,
   Formatters,
-  OperatorType,
   type AureliaGridInstance,
   type Column,
   type GridOption,
@@ -97,12 +96,12 @@ export class Example4 {
           collectionFilterBy: [
             {
               property: 'value',
-              operator: OperatorType.notEqual,
+              operator: '!=',
               value: 360,
             },
             {
               property: 'value',
-              operator: OperatorType.notEqual,
+              operator: '!=',
               value: 365,
             },
           ],
@@ -313,12 +312,12 @@ export class Example4 {
   }
 
   refreshMetrics(_e: Event, args: any) {
-    if (args && args.current >= 0) {
+    if (args?.current >= 0) {
       setTimeout(() => {
         this.metrics = {
           startTime: new Date(),
           endTime: new Date(),
-          itemCount: (args && args.current) || 0,
+          itemCount: args?.current || 0,
           totalItemCount: this.dataset.length || 0,
         };
       });

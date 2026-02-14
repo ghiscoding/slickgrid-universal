@@ -10,6 +10,7 @@ import type {
   EventSubscription,
   ExtensionList,
   ExternalResource,
+  ExternalResourceConstructor,
   Locale,
   Metrics,
   Pagination,
@@ -21,8 +22,6 @@ import {
   BackendUtilityService,
   CollectionService,
   emptyElement,
-  EventNamingStyle,
-  ExtensionName,
   ExtensionService,
   ExtensionUtility,
   FilterFactory,
@@ -33,6 +32,7 @@ import {
   HeaderGroupingService,
   isColumnDateType,
   PaginationService,
+  PluginFlagMappings,
   ResizerService,
   SharedService,
   SlickDataView,
@@ -53,12 +53,16 @@ import { extend } from '@slickgrid-universal/utils';
 import { bindable, BindingMode, customElement, IContainer, IEventAggregator, IObserverLocator, resolve, type IDisposable } from 'aurelia';
 import { dequal } from 'dequal/lite';
 import { Constants } from '../constants.js';
-import { SlickRowDetailView } from '../extensions/slickRowDetailView.js';
 import { GlobalGridOptions } from '../global-grid-options.js';
 import type { AureliaGridInstance, GridOption } from '../models/index.js';
 import { AureliaUtilService, ContainerService, disposeAllSubscriptions, TranslaterService } from '../services/index.js';
 
 const WARN_NO_PREPARSE_DATE_SIZE = 10000; // data size to warn user when pre-parse isn't enabled
+
+export interface AureliaSlickRowDetailView {
+  create(columns: Column[], gridOptions: GridOption): any;
+  init(grid: SlickGrid, containerService?: ContainerService): void;
+}
 
 @customElement({
   name: 'aurelia-slickgrid',
@@ -95,7 +99,7 @@ export class AureliaSlickgridCustomElement {
   protected _isPaginationInitialized = false;
   protected _isLocalGrid = true;
   protected _paginationOptions: Pagination | undefined;
-  protected _registeredResources: ExternalResource[] = [];
+  protected _registeredResources: Array<ExternalResource | ExternalResourceConstructor> = [];
   protected _scrollEndCalled = false;
 
   backendServiceApi: BackendServiceApi | undefined;
@@ -115,7 +119,7 @@ export class AureliaSlickgridCustomElement {
   slickFooter: SlickFooterComponent | undefined;
   paginationComponent: BasePaginationComponent | undefined;
   slickPagination: BasePaginationComponent | undefined;
-  slickRowDetailView?: SlickRowDetailView;
+  slickRowDetailView?: AureliaSlickRowDetailView;
 
   // services
   backendUtilityService!: BackendUtilityService;
@@ -163,7 +167,7 @@ export class AureliaSlickgridCustomElement {
 
     // initialize and assign all Service Dependencies
     this._eventPubSubService = new EventPubSubService(this.elm);
-    this._eventPubSubService.eventNamingStyle = EventNamingStyle.camelCase;
+    this._eventPubSubService.eventNamingStyle = 'camelCase';
 
     this.backendUtilityService = new BackendUtilityService();
     this.gridEventService = new GridEventService();
@@ -262,7 +266,7 @@ export class AureliaSlickgridCustomElement {
     this._isDatasetHierarchicalInitialized = isInitialized;
   }
 
-  get registeredResources(): ExternalResource[] {
+  get registeredResources(): Array<ExternalResource | ExternalResourceConstructor> {
     return this._registeredResources;
   }
 
@@ -316,7 +320,7 @@ export class AureliaSlickgridCustomElement {
       this.options.enableMouseWheelScrollHandler = true;
     }
 
-    this._eventPubSubService.eventNamingStyle = this.options?.eventNamingStyle ?? EventNamingStyle.camelCase;
+    this._eventPubSubService.eventNamingStyle = this.options?.eventNamingStyle ?? 'camelCase';
     this._eventPubSubService.publish('onBeforeGridCreate', true);
 
     // make sure the dataset is initialized (if not it will throw an error that it cannot getLength of null)
@@ -365,7 +369,6 @@ export class AureliaSlickgridCustomElement {
 
     // save reference for all columns before they optionally become hidden/visible
     this.sharedService.allColumns = this._columns;
-    this.sharedService.visibleColumns = this._columns;
 
     // TODO: revisit later, this conflicts with Grid State (Example 15)
     // before certain extentions/plugins potentially adds extra columns not created by the user itself (RowMove, RowDetail, RowSelections)
@@ -401,14 +404,14 @@ export class AureliaSlickgridCustomElement {
       this.grid.registerPlugin(this.groupItemMetadataProvider); // register GroupItemMetadataProvider when Grouping is enabled
     }
 
+    // get any possible Services that user want to register
+    this.registerResources();
+
     this.extensionService.bindDifferentExtensions();
     this.bindDifferentHooks(this.grid, this.options, this.dataview);
 
     // when it's a frozen grid, we need to keep the frozen column id for reference if we ever show/hide column from ColumnPicker/GridMenu afterward
     this.sharedService.frozenVisibleColumnId = this.grid.getFrozenColumnId();
-
-    // get any possible Services that user want to register
-    this.registerResources();
 
     // initialize the SlickGrid grid
     this.grid.init();
@@ -462,10 +465,7 @@ export class AureliaSlickgridCustomElement {
       }
 
       if (this._dataset.length > 0) {
-        if (
-          !this._isDatasetInitialized &&
-          (this.options.enableCheckboxSelector || this.options.enableRowSelection || this.options.enableHybridSelection)
-        ) {
+        if (!this._isDatasetInitialized && (this.options.enableCheckboxSelector || this.options.enableSelection)) {
           this.loadRowSelectionPresetWhenExists();
         }
         this.loadFilterPresetsWhenDatasetInitialized();
@@ -502,6 +502,7 @@ export class AureliaSlickgridCustomElement {
       // Slick Grid & DataView objects
       dataView: this.dataview,
       slickGrid: this.grid,
+      extensions: this.extensionService?.extensionList,
 
       // public methods
       dispose: this.disposeInstance.bind(this),
@@ -609,8 +610,8 @@ export class AureliaSlickgridCustomElement {
     if (Array.isArray(this._registeredResources)) {
       while (this._registeredResources.length > 0) {
         const res = this._registeredResources.pop();
-        if (res?.dispose) {
-          res.dispose();
+        if (typeof (res as ExternalResource)?.dispose === 'function') {
+          (res as ExternalResource).dispose!();
         }
       }
     }
@@ -784,10 +785,9 @@ export class AureliaSlickgridCustomElement {
           }
         }
 
-        // when column are reordered, we need to update the visibleColumn array
-        this._eventHandler.subscribe(grid.onColumnsReordered, (_e, args) => {
+        // when column are reordered, we need to update SharedService flag
+        this._eventHandler.subscribe(grid.onColumnsReordered, () => {
           this.sharedService.hasColumnsReordered = true;
-          this.sharedService.visibleColumns = args.impactedColumns;
         });
 
         this._eventHandler.subscribe(grid.onSetOptions, (_e, args) => {
@@ -1016,7 +1016,7 @@ export class AureliaSlickgridCustomElement {
       this.grid &&
       !isSyncGridSelectionEnabled &&
       this.options?.backendServiceApi &&
-      (this.options.enableRowSelection || this.options.enableHybridSelection || this.options.enableCheckboxSelector)
+      (this.options.enableSelection || this.options.enableCheckboxSelector)
     ) {
       this.grid.setSelectedRows([]);
     }
@@ -1166,9 +1166,8 @@ export class AureliaSlickgridCustomElement {
 
       if (this.options.enableTranslate) {
         this.extensionService.translateColumnHeaders(undefined, newColumns);
-      } else {
-        this.extensionService.renderColumnHeaders(newColumns, true);
       }
+      this.extensionService.renderColumnHeaders(newColumns, true);
 
       if (this.options?.enableAutoSizeColumns) {
         this.grid.autosizeColumns();
@@ -1306,46 +1305,13 @@ export class AureliaSlickgridCustomElement {
     }
   }
 
-  protected insertDynamicPresetColumns(columnId: string, gridPresetColumns: Column[]) {
-    if (this._columns) {
-      const columnPosition = this._columns.findIndex((c) => c.id === columnId);
-      if (columnPosition >= 0) {
-        const dynColumn = this._columns[columnPosition];
-        if (dynColumn?.id === columnId && !gridPresetColumns.some((c) => c.id === columnId)) {
-          columnPosition > 0 ? gridPresetColumns.splice(columnPosition, 0, dynColumn) : gridPresetColumns.unshift(dynColumn);
-        }
-      }
-    }
-  }
-
   /** Load any possible Columns Grid Presets */
   protected loadColumnPresetsWhenDatasetInitialized() {
     // if user entered some Columns "presets", we need to reflect them all in the grid
     if (this.options.presets && Array.isArray(this.options.presets.columns) && this.options.presets.columns.length > 0) {
-      const gridPresetColumns: Column[] = this.gridStateService.getAssociatedGridColumns(this.grid, this.options.presets.columns);
-      if (gridPresetColumns && Array.isArray(gridPresetColumns) && gridPresetColumns.length > 0 && Array.isArray(this._columns)) {
-        // make sure that the dynamic columns are included in presets (1.Row Move, 2. Row Selection, 3. Row Detail)
-        if (this.options.enableRowMoveManager) {
-          const rmmColId = this.options?.rowMoveManager?.columnId ?? '_move';
-          this.insertDynamicPresetColumns(rmmColId, gridPresetColumns);
-        }
-        if (this.options.enableCheckboxSelector) {
-          const chkColId = this.options?.checkboxSelector?.columnId ?? '_checkbox_selector';
-          this.insertDynamicPresetColumns(chkColId, gridPresetColumns);
-        }
-        if (this.options.enableRowDetailView) {
-          const rdvColId = this.options?.rowDetailView?.columnId ?? '_detail_selector';
-          this.insertDynamicPresetColumns(rdvColId, gridPresetColumns);
-        }
-
-        // keep copy the original optional `width` properties optionally provided by the user.
-        // We will use this when doing a resize by cell content, if user provided a `width` it won't override it.
-        gridPresetColumns.forEach((col) => (col.originalWidth = col.width));
-
-        // finally set the new presets columns (including checkbox selector if need be)
-        this.grid.setColumns(gridPresetColumns);
-        this.sharedService.visibleColumns = gridPresetColumns;
-      }
+      // delegate to GridStateService for centralized column arrangement logic
+      // we pass `false` for triggerAutoSizeColumns to maintain original behavior on preset load
+      this.gridStateService.changeColumnsArrangement(this.options.presets.columns, false);
     }
   }
 
@@ -1388,8 +1354,7 @@ export class AureliaSlickgridCustomElement {
   protected loadRowSelectionPresetWhenExists() {
     // if user entered some Row Selections "presets"
     const presets = this.options?.presets;
-    const enableRowSelection =
-      this.options && (this.options.enableCheckboxSelector || this.options.enableRowSelection || this.options.enableHybridSelection);
+    const enableRowSelection = this.options && (this.options.enableCheckboxSelector || this.options.enableSelection);
     if (
       enableRowSelection &&
       this.grid?.getSelectionModel() &&
@@ -1469,7 +1434,7 @@ export class AureliaSlickgridCustomElement {
   }
 
   /** Add a register of a new external resource, user could also optional dispose all previous resources before pushing any new resources to the resources array list. */
-  registerExternalResources(resources: ExternalResource[], disposePreviousResources = false) {
+  registerExternalResources(resources: Array<ExternalResource | ExternalResourceConstructor>, disposePreviousResources = false) {
     if (disposePreviousResources) {
       this.disposeExternalResources();
     }
@@ -1481,12 +1446,28 @@ export class AureliaSlickgridCustomElement {
     this._registeredResources = [];
   }
 
-  protected initializeExternalResources(resources: ExternalResource[]) {
+  /** initialized & auto-enable external registered resources, e.g. if user registers `ExcelExportService` then let's auto-enable `enableExcelExport:true` */
+  protected autoEnableInitializedResources(resource: ExternalResource | ExternalResourceConstructor): void {
+    if (this.grid && typeof (resource as ExternalResource).init === 'function') {
+      (resource as ExternalResource).init!(this.grid, this.containerService);
+    }
+
+    // auto-enable unless the flag was specifically disabled by the end user
+    if ('pluginName' in (resource as ExternalResource)) {
+      const pluginFlagName = PluginFlagMappings.get((resource as ExternalResource).pluginName!);
+      if (pluginFlagName && this.options[pluginFlagName] !== false) {
+        this.options[pluginFlagName] = true;
+        this.grid?.setOptions({ [pluginFlagName]: true });
+      }
+    }
+  }
+
+  protected initializeExternalResources(resources: Array<ExternalResource | ExternalResourceConstructor>) {
+    PluginFlagMappings.set('AureliaSlickRowDetailView', 'enableRowDetailView');
+
     if (Array.isArray(resources)) {
       for (const resource of resources) {
-        if (this.grid && typeof resource.init === 'function') {
-          resource.init(this.grid, this.containerService);
-        }
+        this.autoEnableInitializedResources(resource);
       }
     }
   }
@@ -1499,19 +1480,35 @@ export class AureliaSlickgridCustomElement {
     // register all services by executing their init method and providing them with the Grid object
     if (Array.isArray(this._registeredResources)) {
       for (const resource of this._registeredResources) {
-        if (resource?.className === 'RxJsResource') {
+        if ((resource as ExternalResource)?.pluginName === 'RxJsResource') {
           this.registerRxJsResource(resource as RxJsFacade);
         }
       }
     }
 
-    if (this.options.enableRowDetailView && !this._registeredResources.some((r) => r instanceof SlickRowDetailView)) {
-      this.slickRowDetailView = new SlickRowDetailView(this.aureliaUtilService, this._eventPubSubService, this.elm as HTMLElement);
-      this.slickRowDetailView.create(this.columns, this.options);
-      this.extensionService.addExtensionToList(ExtensionName.rowDetailView, {
-        name: ExtensionName.rowDetailView,
-        instance: this.slickRowDetailView,
-      });
+    if (this.options.enableRowDetailView) {
+      const RowDetailClass = this._registeredResources.find((res: any) => res.pluginName === 'AureliaSlickRowDetailView') as
+        | ExternalResourceConstructor
+        | undefined;
+      if (!RowDetailClass) {
+        throw new Error(
+          '[Aurelia-Slickgrid] You enabled the Row Detail View feature but you did not provide the "AureliaSlickRowDetailView" class as an external resource.'
+        );
+      }
+
+      if (RowDetailClass) {
+        const rowDetailInstance = new RowDetailClass(
+          this.aureliaUtilService,
+          this._eventPubSubService,
+          this.elm as HTMLElement
+        ) as AureliaSlickRowDetailView;
+        this.slickRowDetailView = rowDetailInstance;
+        rowDetailInstance.create(this.columns, this.options);
+        this.extensionService.addExtensionToList('rowDetailView', {
+          name: 'rowDetailView',
+          instance: this.slickRowDetailView,
+        });
+      }
     }
   }
 

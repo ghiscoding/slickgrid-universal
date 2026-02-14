@@ -4,9 +4,8 @@ import { HttpClient } from '@angular/common/http';
 import { Component, ElementRef, EventEmitter, Input, Output, Renderer2, ViewChild, type AfterViewInit, type OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   type AngularGridInstance,
-  type AngularSlickgridComponent,
   type BackendService,
   type BackendServiceOption,
   type Column,
@@ -49,7 +48,7 @@ const DEFAULT_FILTER_TYPING_DEBOUNCE = 750;
       }
     `,
   ],
-  imports: [AngularSlickgridModule],
+  imports: [AngularSlickgridComponent],
 })
 export class SwtCommonGridComponent implements OnInit, AfterViewInit, BackendService {
   private logger: Logger;
@@ -109,7 +108,7 @@ export class SwtCommonGridComponent implements OnInit, AfterViewInit, BackendSer
     gridHeight: 200,
     enableColumnPicker: true,
     enableCellNavigation: true,
-    enableRowSelection: true,
+    enableSelection: true,
     enableCheckboxSelector: false,
     enableFiltering: true,
     rowHeight: 23,
@@ -290,7 +289,7 @@ export class SwtCommonGridComponent implements OnInit, AfterViewInit, BackendSer
     }
 
     this.dataset = dataProvider;
-    this.paginationComponent.processing = false;
+    this.paginationComponent.processing.set(false);
     this.logger.info('method [gridData] - END, all data size=' + (rawData && 'size' in rawData ? rawData.size : 0));
 
     // this.gridObj.setSortColumn('excludeType', true);

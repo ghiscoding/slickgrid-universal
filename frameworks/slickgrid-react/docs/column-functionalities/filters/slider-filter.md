@@ -112,7 +112,7 @@ Example with range slider:
     model: Filters.sliderRange,
     minValue: 0,        // minimum value on the slider
     maxValue: 100,      // maximum value on the slider
-    operator: OperatorType.rangeInclusive,   // defaults to inclusive
+    operator: 'RangeInclusive',   // defaults to inclusive
     options: {
       hideSliderNumbers: false,              // show/hide the numbers on both sides
       sliderStartValue: 0,                   // left handle starting position

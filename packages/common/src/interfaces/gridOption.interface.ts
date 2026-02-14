@@ -2,7 +2,7 @@ import type { BasePubSubService, EventNamingStyle } from '@slickgrid-universal/e
 import type { MultipleSelectOption } from 'multiple-select-vanilla';
 import type { TrustedHTML } from 'trusted-types/lib';
 import type { DataViewOption, SlickEditorLock } from '../core/index.js';
-import type { ColumnReorderFunction, OperatorString, OperatorType } from '../enums/index.js';
+import type { ColumnReorderFunction, OperatorType } from '../enums/index.js';
 import type { TranslaterService } from '../services/translater.service.js';
 import type {
   AutocompleterOption,
@@ -25,6 +25,7 @@ import type {
   ExcelExportOption,
   ExtensionModel,
   ExternalResource,
+  ExternalResourceConstructor,
   Formatter,
   FormatterOption,
   GridMenu,
@@ -43,7 +44,6 @@ import type {
   RowBasedEditOptions,
   RowDetailView,
   RowMoveManager,
-  RowSelectionModelOption,
   SliderOption,
   SliderRangeOption,
   TextExportOption,
@@ -209,8 +209,8 @@ export interface GridOption<C extends Column = Column> {
    * `compoundOperatorAltTexts: { text: { 'a*': { operatorAlt: 'a..', descAlt: 'my alternate description' } }}`
    */
   compoundOperatorAltTexts?: {
-    text?: { [operator in OperatorString]?: OperatorDetailAlt };
-    numeric?: { [operator in OperatorString]?: OperatorDetailAlt };
+    text?: { [operator in OperatorType]?: OperatorDetailAlt };
+    numeric?: { [operator in OperatorType]?: OperatorDetailAlt };
   };
 
   /** Optionally provide global options to the Composite Editor instead of having to redeclare them every time you want to use it */
@@ -328,7 +328,7 @@ export interface GridOption<C extends Column = Column> {
   defaultFilterPlaceholder?: string;
 
   /** Defaults to 'RangeInclusive', allows to change the default filter range operator */
-  defaultFilterRangeOperator?: OperatorString | OperatorType;
+  defaultFilterRangeOperator?: OperatorType;
 
   /** Default cell Formatter that will be used by the grid */
   defaultFormatter?: Formatter;
@@ -490,9 +490,6 @@ export interface GridOption<C extends Column = Column> {
    */
   enableHtmlRendering?: boolean;
 
-  /** Do we want to enable hybrid selection (cell/row selection)? */
-  enableHybridSelection?: boolean;
-
   /** Do we want to enable a styling effect when hovering any row from the grid? */
   enableMouseHoverHighlightRow?: boolean;
 
@@ -513,8 +510,8 @@ export interface GridOption<C extends Column = Column> {
   /** Defaults to false, when enabled it will make possible to move rows in the grid. */
   enableRowMoveManager?: boolean;
 
-  /** Do we want to enable row selection? */
-  enableRowSelection?: boolean;
+  /** Do we want to enable selection (cell/row selection)? */
+  enableSelection?: boolean;
 
   /** Do we want to enable sorting? */
   enableSorting?: boolean;
@@ -555,8 +552,8 @@ export interface GridOption<C extends Column = Column> {
   /** Some default options to set for the Excel export service */
   excelExportOptions?: ExcelExportOption;
 
-  /** Register any external Resources (Components, Services) like the ExcelExportService, TextExportService, PdfExportService, SlickCompositeEditorComponent, ... */
-  externalResources?: ExternalResource[];
+  /** Register any external Resources (Components, Services) like the ExcelExportService, TextExportService, SlickCompositeEditorComponent, ... */
+  externalResources?: ExternalResource[] | ExternalResourceConstructor[];
 
   /**
    * Some external (optional) extensions might need to be pre-registered, for example SlickRowDetail.
@@ -629,6 +626,13 @@ export interface GridOption<C extends Column = Column> {
 
   /** Grid Menu options (aka hamburger menu) */
   gridMenu?: GridMenu;
+
+  /**
+   * Defaults to false, should we include the "hidden" props when getting current Grid State?
+   * Note: when enabled, it will call `grid.getColumns()` instead of `grid.getVisibleColumns()`
+   * and might return more columns since hidden columns will also be included
+   */
+  gridStateIncludeHiddenProps?: boolean;
 
   /**
    * When using a fixed grid width, can be a number or a string.
@@ -782,10 +786,7 @@ export interface GridOption<C extends Column = Column> {
   rowMoveManager?: RowMoveManager;
 
   /** Cell/Row/Hybrid Selection options */
-  selectionOptions?: HybridSelectionModelOption | RowSelectionModelOption;
-
-  /** @deprecated @use `selectionOptions` */
-  rowSelectionOptions?: HybridSelectionModelOption | RowSelectionModelOption;
+  selectionOptions?: HybridSelectionModelOption;
 
   /**
    * Defaults to "transform", what CSS style to we want to use to render each row top offset (choose between "top" and "transform").
@@ -846,6 +847,14 @@ export interface GridOption<C extends Column = Column> {
   sortColNumberInSeparateSpan?: boolean;
 
   /**
+   * Defaults to false, when doing a colspan and one or more column is hidden in that spanning,
+   * do we want to still spread to the same amount of visible columns or should we simply skip over the hidden columns and have less spanning?
+   * For example, if we have 4 columns (first, last, age, gender) and we have a `colspan: 2` on first cell but "last" column is hidden
+   * then it would spread by 3 columns on ("first" and "age")
+   */
+  spreadHiddenColspan?: boolean;
+
+  /**
    * Defaults to false, which leads to suppress the cell from becoming active when cell as an editor and is clicked.
    * This flag was originally enabled to work properly with (Row Selections & Inline Editors) features but it caused problem when also used with CellExternalCopyManager,
    * however this flag shouldn't be need anymore when editing & using all 3 features and the flag's default is now disabled (false) but user can still change it if needed.
@@ -867,11 +876,6 @@ export interface GridOption<C extends Column = Column> {
   /** When set to true, it will skip the validation check to make sure frozen columns are not wider than the grid visible canvas width */
   skipFreezeColumnValidation?: boolean;
 
-  /**
-   * @deprecated @use `invalidColumnFreezeWidthCallback` Defaults to false, should we throw an error when frozenColumn is wider than the grid viewport width.
-   */
-  throwWhenFrozenNotAllViewable?: boolean;
-
   /** Message to show when the frozen column is invalid and `invalidColumnFreezeWidthCallbackPicker` is enabled */
   invalidColumnFreezePickerMessage?: string;
 
@@ -881,7 +885,7 @@ export interface GridOption<C extends Column = Column> {
    */
   invalidColumnFreezePickerCallback?: (error: string) => void;
 
-  /** Message to show when the frozen column width is invalid and `invalidColumnFreezeWidthCallbackWidth` or `throwWhenFrozenNotAllViewable` is enabled */
+  /** Message to show when the frozen column width is invalid and `invalidColumnFreezeWidthCallbackWidth` is enabled */
   invalidColumnFreezeWidthMessage?: string;
 
   /**

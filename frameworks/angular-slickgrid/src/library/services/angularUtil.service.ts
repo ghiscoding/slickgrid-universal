@@ -1,4 +1,4 @@
-import { Injectable, ViewContainerRef } from '@angular/core';
+import { Inject, Injectable, ViewContainerRef } from '@angular/core';
 import type { EmbeddedViewRef, EnvironmentInjector, Injector, NgModuleRef, Type } from '@angular/core';
 import type { AngularComponentOutput } from '../models/angularComponentOutput.interface';
 
@@ -13,7 +13,7 @@ interface CreateComponentOption {
 
 @Injectable()
 export class AngularUtilService {
-  constructor(private vcr: ViewContainerRef) {}
+  constructor(@Inject(ViewContainerRef) private vcr: ViewContainerRef) {}
 
   createInteractiveAngularComponent<C>(
     component: Type<C>,
@@ -65,18 +65,13 @@ export class AngularUtilService {
     // user could provide data to assign to the component instance
     if (componentRef?.instance && data) {
       Object.assign(componentRef.instance as any, data);
-
-      // NOTE: detectChanges() MUST be done BEFORE returning the DOM element in the next step,
-      // because if we do it only after returning the rootNodes (domElement) then it won't have the instance data yet
-      // and we would have to wait an extra cycle to see the result, this basically helps with Example22
-      componentRef.changeDetectorRef.detectChanges();
     }
 
     // Get DOM element from component
     let domElem: HTMLElement | null = null;
     const viewRef = componentRef.hostView as EmbeddedViewRef<any>;
 
-    // get DOM element from the new dynamic Component, make sure this is read after any data and detectChanges()
+    // get DOM element from the new dynamic Component, make sure this is read after any data
     if (viewRef && Array.isArray(viewRef.rootNodes) && viewRef.rootNodes[0]) {
       domElem = viewRef.rootNodes[0] as HTMLElement;
 

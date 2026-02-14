@@ -4,7 +4,6 @@ import {
   Editors,
   Filters,
   Formatters,
-  OperatorType,
   SlickGlobalEditorLock,
   SlickgridReact,
   SortComparers,
@@ -31,7 +30,7 @@ const NB_ITEMS = 100;
 // you can create custom validator to pass to an inline editor
 const myCustomTitleValidator: EditorValidator = (value: any) => {
   // you can get the Editor Args which can be helpful, e.g. we can get the Translate Service from it
-  // const grid = args && args.grid;
+  // const grid = args?.grid;
   // const gridOptions = grid.getOptions() as GridOption;
   // const i18n = gridOptions.i18n;
 
@@ -197,7 +196,7 @@ const Example3: React.FC = () => {
         collectionFilterBy: {
           property: 'value',
           value: 0,
-          operator: OperatorType.notEqual,
+          operator: '!=',
         },
         model: Editors.singleSelect,
         // validator: (value, args) => {
@@ -418,7 +417,7 @@ const Example3: React.FC = () => {
           separatorBetweenTextLabels: ' ',
         },
         model: Filters.multipleSelect,
-        operator: OperatorType.inContains,
+        operator: 'IN_CONTAINS',
       },
     },
   ]);

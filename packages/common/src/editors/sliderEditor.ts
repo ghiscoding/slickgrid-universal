@@ -76,7 +76,7 @@ export class SliderEditor implements Editor {
   }
 
   get editorOptions(): SliderOption {
-    return { ...this.gridOptions.defaultEditorOptions?.slider, ...this.columnEditor?.editorOptions, ...this.columnEditor?.options };
+    return { ...this.gridOptions.defaultEditorOptions?.slider, ...this.columnEditor?.options };
   }
 
   get hasAutoCommitEdit(): boolean {
@@ -220,8 +220,7 @@ export class SliderEditor implements Editor {
   >(optionName: T, newValue: K): void {
     if (this.columnEditor) {
       this.columnEditor.options ??= {};
-      this.columnEditor.editorOptions ??= {};
-      this.columnEditor.options[optionName] = this.columnEditor.editorOptions[optionName] = newValue;
+      this.columnEditor.options[optionName] = newValue;
       (this._sliderOptions as any)[optionName] = newValue;
 
       switch (optionName) {

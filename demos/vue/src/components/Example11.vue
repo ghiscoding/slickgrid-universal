@@ -109,7 +109,7 @@ function defineGrid() {
     editable: true,
     enableColumnPicker: true,
     enableCellNavigation: true,
-    enableRowSelection: true,
+    enableSelection: true,
   };
 }
 
@@ -279,7 +279,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <li>Adding an item, will always be showing as the 1st item in the grid because that is the best visual place to add it</li>
       <li>Add/Update an item requires a valid Slickgrid Selection Model, you have 2 choices to deal with this:</li>
       <ul>
-        <li>You can enable "enableCheckboxSelector" or "enableRowSelection" to True</li>
+        <li>You can enable "enableCheckboxSelector" or "enableSelection" to True</li>
       </ul>
       <li>Click on any of the buttons below to test this out</li>
       <li>
@@ -340,7 +340,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
   <slickgrid-vue
     v-model:options="gridOptions"
     v-model:columns="columnDefinitions"
-    v-model:data="dataset"
+    v-model:dataset="dataset"
     grid-id="grid11"
     @onVueGridCreated="vueGridReady($event.detail)"
   >

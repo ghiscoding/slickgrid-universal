@@ -1,4 +1,3 @@
-import { FieldType } from '../enums/fieldType.enum.js';
 import type { ISortComparers, SortComparer } from '../interfaces/sorter.interface.js';
 import { getAllDateFieldTypes } from '../services/utilities.js';
 import { booleanSortComparer } from './booleanSortComparer.js';
@@ -24,10 +23,7 @@ function buildAllSortComparers(): ISortComparers {
 
   // Dynamically add date comparers based on available FieldTypes, doing it this way to keep smaller bundle size
   getAllDateFieldTypes().forEach((dateType) => {
-    const fieldType = FieldType[dateType as keyof typeof FieldType];
-    if (fieldType) {
-      comparers[dateType] = getAssociatedDateSortComparer(fieldType);
-    }
+    comparers[dateType] = getAssociatedDateSortComparer(dateType);
   });
   return comparers as unknown as ISortComparers;
 }

@@ -12,6 +12,7 @@ export default defineConfig({
         '**/enums/**',
         '**/interfaces/**',
         '**/models/**',
+        '**/types/**',
         '**/*.d.ts',
         '**/global-grid-options.ts',
         '**/salesforce-global-grid-options.ts',

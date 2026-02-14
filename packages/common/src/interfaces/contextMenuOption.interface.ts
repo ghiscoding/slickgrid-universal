@@ -1,7 +1,7 @@
 import type { ContextMenuLabel } from './contextMenuLabel.interface.js';
-import type { MenuCallbackArgs, MenuCommandItem, MenuOptionItem } from './index.js';
+import type { MenuCommandItem, MenuFromCellCallbackArgs, MenuOption, MenuOptionItem } from './index.js';
 
-export interface ContextMenuOption {
+export interface ContextMenuOption extends MenuOption<MenuFromCellCallbackArgs> {
   /** Defaults to true, Auto-align dropup or dropdown menu to the left or right depending on grid viewport available space */
   autoAdjustDrop?: boolean;
 
@@ -38,34 +38,34 @@ export interface ContextMenuOption {
   /** Defaults to "right", user can optionally force the Cell Menu drop to be aligned to the left or right. */
   dropSide?: 'left' | 'right';
 
-  /** Defaults to false, hide the "Clear Grouping" command in the menu (Grid Option "enableGrouping: true" has to be enabled) */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, hide the "Clear Grouping" command in the menu (Grid Option "enableGrouping: true" has to be enabled) */
   hideClearAllGrouping?: boolean;
 
   /** Defaults to false, hide the Close button on top right */
   hideCloseButton?: boolean;
 
-  /** Defaults to false, hide the "Collapse all Groups" command in the menu (Grid Option "enableGrouping: true" has to be enabled) */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, hide the "Collapse all Groups" command in the menu (Grid Option "enableGrouping: true" has to be enabled) */
   hideCollapseAllGroups?: boolean;
 
   /** Defaults to false, hide the Commands section even when the commandItems array is filled */
   hideCommandSection?: boolean;
 
-  /** Defaults to false, which will hide the "Copy Cell Value" command in the menu */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Copy Cell Value" command in the menu */
   hideCopyCellValueCommand?: boolean;
 
-  /** Defaults to false, hide the "Expand all Groups" command in the menu (Grid Option "enableGrouping: true" has to be enabled) */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, hide the "Expand all Groups" command in the menu (Grid Option "enableGrouping: true" has to be enabled) */
   hideExpandAllGroups?: boolean;
 
-  /** Defaults to false, which will hide the "Export to CSV" command in the menu (Grid Option "enableTextExport: true" has to be enabled) */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Export to CSV" command in the menu (Grid Option "enableTextExport: true" has to be enabled) */
   hideExportCsvCommand?: boolean;
 
-  /** Defaults to false, which will hide the "Export to Excel" command in the menu (Grid Option "enableExcelExport: true" has to be enabled) */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Export to Excel" command in the menu (Grid Option "enableExcelExport: true" has to be enabled) */
   hideExportExcelCommand?: boolean;
 
-  /** Defaults to false, which will hide the "Export to PDF" command in the menu (Grid Option "enablePdfExport: true" has to be enabled) */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Export to PDF" command in the menu (Grid Option "enablePdfExport: true" has to be enabled) */
   hideExportPdfCommand?: boolean;
 
-  /** Defaults to false, which will hide the "Export to Text Delimited" command in the menu (Grid Option "enableTextExport: true" has to be enabled) */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Export to Text Delimited" command in the menu (Grid Option "enableTextExport: true" has to be enabled) */
   hideExportTextDelimitedCommand?: boolean;
 
   /** Defaults to true, do we want to hide the Cell Menu when a scrolling event occurs? */
@@ -130,10 +130,4 @@ export interface ContextMenuOption {
 
   /** Defaults to "mouseover", what event type shoud we use to open sub-menu(s), 2 options are available: "mouseover" or "click" */
   subMenuOpenByEvent?: 'mouseover' | 'click';
-
-  // --
-  // action/override callbacks
-
-  /** Callback method that user can override the default behavior of enabling/disabling an item from the list. */
-  menuUsabilityOverride?: (args: MenuCallbackArgs) => boolean;
 }

@@ -1,7 +1,6 @@
 import type { Column, Formatter, FormatterType, GetDataValueCallback, GridOption, SlickGrid } from '@slickgrid-universal/common';
 import {
   Constants,
-  FieldType,
   Formatters,
   getColumnFieldType,
   getValueFromParamsOrFormatterOptions,
@@ -54,7 +53,7 @@ export function useCellFormatByFieldType(
   let excelFormatId: number | undefined;
   let callback: GetDataValueCallback = getExcelSameInputDataCallback;
 
-  if (fieldType === FieldType.number && autoDetect) {
+  if (fieldType === 'number' && autoDetect) {
     excelFormatId = getExcelFormatFromGridFormatter(stylesheet, excelFormats, columnDef, grid, 'cell').excelFormat.id;
     callback = getExcelNumberCallback;
   }
@@ -199,7 +198,7 @@ export function getExcelFormatFromGridFormatter(
     }
   } else {
     switch (fieldType) {
-      case FieldType.number:
+      case 'number':
         switch (columnDef.formatter) {
           case Formatters.multiple:
             // when formatter is a Formatter.multiple, we need to loop through each of its formatter to find the best possible Excel format

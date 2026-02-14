@@ -8,7 +8,7 @@ import {
 } from '../commonEditorFilter/commonEditorFilterUtils.js';
 import { Constants } from '../constants.js';
 import type { SlickGrid } from '../core/index.js';
-import { OperatorType, type OperatorString, type SearchTerm } from '../enums/index.js';
+import { type OperatorType, type SearchTerm } from '../enums/index.js';
 import type { CollectionService } from '../services/collection.service.js';
 import { buildMsSelectCollectionList, type RxJsFacade, type Subscription, type TranslaterService } from '../services/index.js';
 import { collectionObserver, propertyObserver } from '../services/observers.js';
@@ -96,12 +96,12 @@ export class SelectFilter implements Filter {
   }
 
   /** Getter to know what would be the default operator when none is specified */
-  get defaultOperator(): OperatorType | OperatorString {
-    return this.isMultipleSelect ? OperatorType.in : OperatorType.equal;
+  get defaultOperator(): OperatorType {
+    return this.isMultipleSelect ? 'IN' : 'EQ';
   }
 
   get filterOptions(): MultipleSelectOption {
-    return { ...this.gridOptions.defaultFilterOptions?.select, ...this.columnFilter?.filterOptions, ...this.columnFilter?.options };
+    return { ...this.gridOptions.defaultFilterOptions?.select, ...this.columnFilter?.options };
   }
 
   /** Getter to know if the current filter is a multiple-select (false means it's a single select) */
@@ -118,12 +118,12 @@ export class SelectFilter implements Filter {
   }
 
   /** Getter for the Filter Operator */
-  get operator(): OperatorType | OperatorString {
+  get operator(): OperatorType {
     return this.columnFilter?.operator ?? this.defaultOperator;
   }
 
   /** Setter for the filter operator */
-  set operator(operator: OperatorType | OperatorString) {
+  set operator(operator: OperatorType) {
     if (this.columnFilter) {
       this.columnFilter.operator = operator;
     }
@@ -258,7 +258,7 @@ export class SelectFilter implements Filter {
   }
 
   /** Set value(s) on the DOM element */
-  setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType | OperatorString, triggerChange = false): void {
+  setValues(values: SearchTerm | SearchTerm[], operator?: OperatorType, triggerChange = false): void {
     if (values !== undefined && this._msInstance) {
       values = Array.isArray(values) ? (values.every((x) => isPrimitiveValue(x)) ? values.map(String) : values) : [values];
       this._msInstance.setSelects(values);
@@ -445,16 +445,16 @@ export class SelectFilter implements Filter {
 
     // optional lazy loading of the collection (when select is opened)
     if (this.columnFilter.collectionLazy) {
-      options.lazyData = () => {
+      options.lazyData = (resolve, reject) => {
         const lazyProcess = this.columnFilter.collectionLazy?.(this.columnDef);
-        return new Promise((resolve) =>
-          fetchAsPromise(lazyProcess, this.rxjs).then((collectionData) => {
+        fetchAsPromise(lazyProcess, this.rxjs)
+          .then((collectionData) => {
             // user might want to filter and/or sort certain items of the collection
             collectionData = getCollectionFromObjectWhenEnabled(collectionData, this.columnFilter);
             const { dataCollection } = this.filterSortAndParseCollection(collectionData);
             resolve(dataCollection || []);
           })
-        );
+          .catch((error) => reject(error));
       };
     }
 

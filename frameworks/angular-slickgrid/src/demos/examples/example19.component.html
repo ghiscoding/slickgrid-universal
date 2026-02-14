@@ -62,9 +62,11 @@
         />
       </span>
     </div>
-    <div class="alert alert-{{ flashAlertType }} col-sm-6" *ngIf="message" data-test="flash-msg">
-      {{ message }}
-    </div>
+    @if (message) {
+      <div class="alert alert-{{ flashAlertType }} col-sm-6" data-test="flash-msg">
+        {{ message }}
+      </div>
+    }
   </div>
 
   <hr />

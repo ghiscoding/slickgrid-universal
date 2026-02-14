@@ -3,9 +3,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import { SlickEvent, SlickEventData, type SlickDataView, type SlickGrid } from '../../core/index.js';
 import * as utils from '../../core/utils.js';
-import { DelimiterType } from '../../enums/index.js';
 import { ExtensionUtility } from '../../extensions/extensionUtility.js';
-import type { Column, DOMEvent, GridMenu, GridOption } from '../../interfaces/index.js';
+import type { Column, DOMEvent, GridMenu, GridOption, MenuCommandItem } from '../../interfaces/index.js';
 import {
   BackendUtilityService,
   SharedService,
@@ -58,23 +57,25 @@ const dataViewStub = {
 
 const gridStub = {
   autosizeColumns: vi.fn(),
-  calculateFrozenColumnIndexById: vi.fn(),
   getColumnIndex: vi.fn(),
   getColumns: vi.fn(),
   getContainerNode: vi.fn(),
   getGridPosition: () => ({ width: 10, left: 0 }),
   getOptions: vi.fn(),
   getSelectedRows: vi.fn(),
+  getVisibleColumns: vi.fn(),
   getUID: () => gridUid,
   registerPlugin: vi.fn(),
-  setColumns: vi.fn(),
   setHeaderRowVisibility: vi.fn(),
   setSelectedRows: vi.fn(),
+  updateColumnById: vi.fn(),
+  updateColumns: vi.fn(),
+  sanitizeHtmlString: (str: string) => str,
   setTopPanelVisibility: vi.fn(),
   setPreHeaderPanelVisibility: vi.fn(),
   setOptions: vi.fn(),
   scrollColumnIntoView: vi.fn(),
-  validateSetColumnFreeze: vi.fn(),
+  validateColumnFreeze: vi.fn(),
   onBeforeDestroy: new SlickEvent(),
   onClick: new SlickEvent(),
   onColumnsReordered: new SlickEvent(),
@@ -86,6 +87,9 @@ const template = `<div id="${containerId}" style="height: 800px; width: 600px;">
     <div id="slickGridContainer-${gridId}" class="grid-pane" style="width: 100%;">
       <div id="${gridId}" class="${gridUid} slickgrid-container" style="width: 100%">
         <div class="slick-pane slick-pane-header slick-pane-left">
+          <div class="slick-preheader-container">
+            <div class="slick-preheader-panel slick-state-default slick-header"></div>
+          </div>
           <div class="slick-headerrow"></div>
           <div class="slick-header-left"></div>
         </div>
@@ -183,8 +187,7 @@ describe('GridMenuControl', () => {
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
       vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(gridOptionsMock);
-      vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
-      vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock.slice(0, 1));
+      vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columnsMock);
       vi.spyOn(SharedService.prototype, 'columnDefinitions', 'get').mockReturnValue(columnsMock);
 
       control = new SlickGridMenu(extensionUtility, filterServiceStub, pubSubServiceStub, sharedService, sortServiceStub);
@@ -218,18 +221,18 @@ describe('GridMenuControl', () => {
         expect(control).toBeTruthy();
       });
 
-      it('should query an input checkbox change event and expect it to cancel the uncheck column when "validateSetColumnFreeze()" returns false', () => {
+      it('should query an input checkbox change event and expect it to cancel the uncheck column when "validateColumnFreeze()" returns false', () => {
         const mockRowSelection = [0, 3, 5];
-        vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(false);
+        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(false);
         vi.spyOn(control.eventHandler, 'subscribe');
         vi.spyOn(gridStub, 'getColumnIndex')
           .mockReturnValue(undefined as any)
           .mockReturnValue(1);
         vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue(mockRowSelection);
-        const setColumnSpy = vi.spyOn(gridStub, 'setColumns');
+        const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
         const setSelectionSpy = vi.spyOn(gridStub, 'setSelectedRows');
 
-        gridOptionsMock.enableRowSelection = true;
+        gridOptionsMock.enableSelection = true;
         control.columns = columnsMock;
         control.init();
         control.openGridMenu();
@@ -239,22 +242,22 @@ describe('GridMenuControl', () => {
         inputElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
         expect(control.menuElement!.style.display).toBe('block');
-        expect(setColumnSpy).not.toHaveBeenCalled();
+        expect(updateColumnSpy).not.toHaveBeenCalled();
         expect(setSelectionSpy).not.toHaveBeenCalled();
       });
 
-      it('should query an input checkbox change event and expect it to cancel the uncheck column when "validateSetColumnFreeze()" returns false and Hybrid Selection is enabled', () => {
+      it('should query an input checkbox change event and expect it to cancel the uncheck column when "validateColumnFreeze()" returns false and Hybrid Selection is enabled', () => {
         const mockRowSelection = [0, 3, 5];
-        vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(false);
+        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(false);
         vi.spyOn(control.eventHandler, 'subscribe');
         vi.spyOn(gridStub, 'getColumnIndex')
           .mockReturnValue(undefined as any)
           .mockReturnValue(1);
         vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue(mockRowSelection);
-        const setColumnSpy = vi.spyOn(gridStub, 'setColumns');
+        const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
         const setSelectionSpy = vi.spyOn(gridStub, 'setSelectedRows');
 
-        gridOptionsMock.enableHybridSelection = true;
+        gridOptionsMock.enableSelection = true;
         control.columns = columnsMock;
         control.init();
         control.openGridMenu();
@@ -264,7 +267,7 @@ describe('GridMenuControl', () => {
         inputElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
 
         expect(control.menuElement!.style.display).toBe('block');
-        expect(setColumnSpy).not.toHaveBeenCalled();
+        expect(updateColumnSpy).not.toHaveBeenCalled();
         expect(setSelectionSpy).not.toHaveBeenCalled();
       });
 
@@ -276,9 +279,9 @@ describe('GridMenuControl', () => {
           .mockReturnValue(1);
         vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue(mockRowSelection);
         const setSelectionSpy = vi.spyOn(gridStub, 'setSelectedRows');
-        vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
+        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
 
-        gridOptionsMock.enableRowSelection = true;
+        gridOptionsMock.enableSelection = true;
         control.columns = columnsMock;
         control.init();
         control.openGridMenu();
@@ -301,7 +304,7 @@ describe('GridMenuControl', () => {
           .mockReturnValue(1);
         vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue(mockRowSelection);
 
-        gridOptionsMock.enableRowSelection = true;
+        gridOptionsMock.enableSelection = true;
         gridOptionsMock.showHeaderRow = true;
         gridOptionsMock.gridMenu!.menuWidth = 16;
         gridOptionsMock.gridMenu!.resizeOnShowHeaderRow = true;
@@ -309,10 +312,10 @@ describe('GridMenuControl', () => {
         control.init();
         const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLDivElement;
         buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
-        const headerRowElm = document.querySelector('.slick-headerrow') as HTMLDivElement;
+        const gridMenuContainerElm = document.querySelector('.slick-grid-menu-container') as HTMLDivElement;
 
         expect(control.menuElement!.style.display).toBe('block');
-        expect(headerRowElm.style.width).toBe(`calc(100% - 16px)`);
+        expect(gridMenuContainerElm.style.width).toBe('18px');
 
         // click inside menu shouldn't close it
         control.menuElement!.dispatchEvent(new Event('mousedown', { bubbles: true }));
@@ -333,18 +336,19 @@ describe('GridMenuControl', () => {
           .mockReturnValue(1);
         vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue(mockRowSelection);
 
-        gridOptionsMock.enableHybridSelection = true;
+        gridOptionsMock.enableSelection = true;
         gridOptionsMock.showHeaderRow = true;
         gridOptionsMock.gridMenu!.menuWidth = 16;
         gridOptionsMock.gridMenu!.resizeOnShowHeaderRow = true;
+        gridOptionsMock.gridMenu!.iconButtonContainer = 'preheader';
         control.columns = columnsMock;
         control.init();
         const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLDivElement;
         buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
-        const headerRowElm = document.querySelector('.slick-headerrow') as HTMLDivElement;
+        const gridMenuContainerElm = document.querySelector('.slick-grid-menu-container') as HTMLDivElement;
 
         expect(control.menuElement!.style.display).toBe('block');
-        expect(headerRowElm.style.width).toBe(`calc(100% - 16px)`);
+        expect(gridMenuContainerElm.style.width).toBe('18px');
 
         // click inside menu shouldn't close it
         control.menuElement!.dispatchEvent(new Event('mousedown', { bubbles: true }));
@@ -357,13 +361,12 @@ describe('GridMenuControl', () => {
         expect(control.menuElement).toBeFalsy();
       });
 
-      it('should query an input checkbox change event and expect "readjustFrozenColumnIndexWhenNeeded" method to be called when the grid is detected to be a frozen grid', () => {
+      it('should execute "hideMenu()" when onClick event is triggered', () => {
         const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
         vi.spyOn(gridStub, 'getColumnIndex')
           .mockReturnValue(undefined as any)
           .mockReturnValue(1);
-        const readjustSpy = vi.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
-        vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
+        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
 
         gridOptionsMock.frozenColumn = 0;
         control.columns = columnsMock;
@@ -374,7 +377,6 @@ describe('GridMenuControl', () => {
         control.menuElement!.querySelector('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
 
         expect(handlerSpy).toHaveBeenCalledTimes(4);
-        expect(readjustSpy).toHaveBeenCalledWith(0, columnsMock, columnsMock);
         expect(control.getAllColumns()).toEqual(columnsMock);
         expect(control.getVisibleColumns()).toEqual(columnsMock);
 
@@ -382,28 +384,6 @@ describe('GridMenuControl', () => {
         gridStub.onClick.notify({ row: 1, cell: 2, grid: gridStub }, eventData as any, gridStub);
 
         expect(control.menuElement).toBeFalsy();
-      });
-
-      it('should query an input checkbox change event and expect "readjustFrozenColumnIndexWhenNeeded" method to be called when the grid is detected to be a frozen grid', () => {
-        const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
-        vi.spyOn(gridStub, 'getColumnIndex')
-          .mockReturnValue(undefined as any)
-          .mockReturnValue(1);
-        const readjustSpy = vi.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
-        vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
-
-        gridOptionsMock.frozenColumn = 0;
-        control.columns = columnsMock;
-        control.initEventHandlers();
-        control.init();
-        const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLDivElement;
-        buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
-        control.menuElement!.querySelector('input[type="checkbox"]')!.dispatchEvent(new Event('click', { bubbles: true }));
-
-        expect(handlerSpy).toHaveBeenCalledTimes(4);
-        expect(readjustSpy).toHaveBeenCalledWith(0, columnsMock, columnsMock);
-        expect(control.getAllColumns()).toEqual(columnsMock);
-        expect(control.getVisibleColumns()).toEqual(columnsMock);
       });
 
       it('should expect the Grid Menu to change from the Left side container to the Right side when changing from a regular to a frozen grid via "setOptions"', () => {
@@ -431,8 +411,7 @@ describe('GridMenuControl', () => {
         vi.spyOn(gridStub, 'getColumnIndex')
           .mockReturnValue(undefined as any)
           .mockReturnValue(1);
-        const readjustSpy = vi.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
-        vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
+        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
 
         gridOptionsMock.gridMenu!.headerColumnValueExtractor = (column: Column) => `${column?.columnGroup || ''} - ${column.name}`;
         control.columns = columnsMock;
@@ -445,7 +424,6 @@ describe('GridMenuControl', () => {
         const liElmList = control.menuElement!.querySelectorAll<HTMLLIElement>('li');
 
         expect(handlerSpy).toHaveBeenCalledTimes(4);
-        expect(readjustSpy).toHaveBeenCalledWith(0, columnsMock, columnsMock);
         expect(control.getAllColumns()).toEqual(columnsMock);
         expect(control.getVisibleColumns()).toEqual(columnsMock);
         expect(liElmList[2].textContent).toBe('Billing - Field 3');
@@ -456,8 +434,7 @@ describe('GridMenuControl', () => {
         vi.spyOn(gridStub, 'getColumnIndex')
           .mockReturnValue(undefined as any)
           .mockReturnValue(1);
-        const readjustSpy = vi.spyOn(extensionUtility, 'readjustFrozenColumnIndexWhenNeeded');
-        vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
+        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
 
         gridOptionsMock.gridMenu!.headerColumnValueExtractor = null as any;
         control.columns = columnsMock;
@@ -470,7 +447,6 @@ describe('GridMenuControl', () => {
         const liElmList = control.menuElement!.querySelectorAll<HTMLLIElement>('li');
 
         expect(handlerSpy).toHaveBeenCalledTimes(4);
-        expect(readjustSpy).toHaveBeenCalledWith(0, columnsMock, columnsMock);
         expect(control.getAllColumns()).toEqual(columnsMock);
         expect(control.getVisibleColumns()).toEqual(columnsMock);
         expect(liElmList[2].textContent).toBe('Field 3');
@@ -604,7 +580,7 @@ describe('GridMenuControl', () => {
 
       it('should open the Grid Menu and expect "onColumnsChanged" to be called when defined', () => {
         const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
-        vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
+        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
         const onColChangedMock = vi.fn();
         vi.spyOn(gridStub, 'getColumnIndex')
@@ -634,14 +610,14 @@ describe('GridMenuControl', () => {
         expect(pubSubSpy).toHaveBeenCalledWith('onGridMenuColumnsChanged', expectedCallbackArgs);
       });
 
-      it('should open the grid menu via its hamburger menu and click on "Force Fit Columns" checkbox and expect "setOptions" and "setColumns" to be called with previous visible columns', () => {
+      it('should open the grid menu via its hamburger menu and click on "Force Fit Columns" checkbox and expect "setOptions" and "updateColumns" to be called with previous visible columns', () => {
         const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
         vi.spyOn(gridStub, 'getColumnIndex')
           .mockReturnValue(undefined as any as any)
           .mockReturnValue(1);
         vi.spyOn(control, 'getVisibleColumns').mockReturnValue(columnsMock.slice(1));
         const setOptionSpy = vi.spyOn(gridStub, 'setOptions');
-        const setColumnSpy = vi.spyOn(gridStub, 'setColumns');
+        const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
 
         gridOptionsMock.gridMenu!.hideForceFitButton = false;
         gridOptionsMock.gridMenu!.forceFitTitle = 'Custom Force Fit';
@@ -660,7 +636,7 @@ describe('GridMenuControl', () => {
         expect(inputForcefitElm.dataset.option).toBe('autoresize');
         expect(labelSyncElm.textContent).toBe('Custom Force Fit');
         expect(setOptionSpy).toHaveBeenCalledWith({ forceFitColumns: true });
-        expect(setColumnSpy).toHaveBeenCalledWith(columnsMock.slice(1));
+        expect(updateColumnSpy).toHaveBeenCalled();
       });
 
       it('should open the grid menu via its hamburger menu and click on "syncresize" checkbox and expect "setOptions" to be called with "syncColumnCellResize" property', () => {
@@ -818,7 +794,7 @@ describe('GridMenuControl', () => {
         gridOptionsMock.enableAutoSizeColumns = true;
         const autosizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
-        vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
+        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
 
         control.columns = columnsMock;
         control.init();
@@ -849,7 +825,7 @@ describe('GridMenuControl', () => {
         gridOptionsMock.enableAutoSizeColumns = true;
         const autosizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
-        vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
+        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
 
         control.columns = columnsMock;
         control.init();
@@ -870,7 +846,7 @@ describe('GridMenuControl', () => {
         gridOptionsMock.enableAutoSizeColumns = true;
         const autosizeSpy = vi.spyOn(gridStub, 'autosizeColumns');
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
-        vi.spyOn(gridStub, 'validateSetColumnFreeze').mockReturnValueOnce(true);
+        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
 
         control.columns = columnsMock;
         control.init();
@@ -1274,6 +1250,206 @@ describe('GridMenuControl', () => {
         });
       });
 
+      describe('with slot renderer', () => {
+        beforeEach(() => {
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
+          vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
+          vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columnsMock.slice(0, 1));
+        });
+
+        it('should render menu item with slotRenderer returning HTMLElement', () => {
+          const mockSlotRenderer = vi.fn((item: any) => {
+            const div = document.createElement('div');
+            div.className = 'custom-slot-content';
+            div.textContent = `Custom: ${item.title}`;
+            return div;
+          });
+
+          control.columns = columnsMock;
+          gridOptionsMock.gridMenu = {
+            commandItems: [{ command: 'test-cmd', title: 'Test Command', slotRenderer: mockSlotRenderer }] as any,
+          };
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
+          control.init();
+          control.openGridMenu();
+          const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLButtonElement | null;
+          buttonElm?.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+
+          const commandListElm = control.menuElement?.querySelector('.slick-menu-command-list') as HTMLDivElement | null;
+          const customSlotElm = commandListElm?.querySelector('.custom-slot-content') as HTMLDivElement | null;
+
+          expect(mockSlotRenderer).toHaveBeenCalled();
+          expect(customSlotElm).toBeTruthy();
+          expect(customSlotElm?.textContent).toBe('Custom: Test Command');
+        });
+
+        it('should render menu item with slotRenderer returning string', () => {
+          const mockSlotRenderer = vi.fn((item: any) => `<span class="custom-string">String: ${item.title}</span>`);
+
+          control.columns = columnsMock;
+          gridOptionsMock.gridMenu = {
+            commandItems: [{ command: 'test-cmd', title: 'Test Command', slotRenderer: mockSlotRenderer }] as any,
+          };
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
+          control.init();
+          control.openGridMenu();
+          const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLButtonElement | null;
+          buttonElm?.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+
+          const commandListElm = control.menuElement?.querySelector('.slick-menu-command-list') as HTMLDivElement | null;
+          const customSlotElm = commandListElm?.querySelector('.custom-string') as HTMLDivElement | null;
+
+          expect(mockSlotRenderer).toHaveBeenCalled();
+          expect(customSlotElm).toBeTruthy();
+          expect(customSlotElm?.textContent).toContain('String: Test Command');
+        });
+
+        it('should render menu item with defaultMenuItemRenderer when item has no slotRenderer', () => {
+          const mockDefaultRenderer = vi.fn((item: any) => {
+            const div = document.createElement('div');
+            div.className = 'default-renderer-content';
+            div.textContent = `Default: ${item.title}`;
+            return div;
+          });
+
+          control.columns = columnsMock;
+          gridOptionsMock.gridMenu = {
+            commandItems: [{ command: 'test-cmd', title: 'Test Command' }] as any,
+            defaultMenuItemRenderer: mockDefaultRenderer,
+          };
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
+          control.init();
+          control.openGridMenu();
+          const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLButtonElement | null;
+          buttonElm?.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+
+          const commandListElm = control.menuElement?.querySelector('.slick-menu-command-list') as HTMLDivElement | null;
+          const defaultRendererElm = commandListElm?.querySelector('.default-renderer-content') as HTMLDivElement | null;
+
+          expect(mockDefaultRenderer).toHaveBeenCalled();
+          expect(defaultRendererElm).toBeTruthy();
+          expect(defaultRendererElm?.textContent).toBe('Default: Test Command');
+        });
+
+        it('should prioritize item slotRenderer over defaultMenuItemRenderer', () => {
+          const mockSlotRenderer = vi.fn((item: any) => {
+            const div = document.createElement('div');
+            div.className = 'slot-prioritized';
+            div.textContent = 'Slot renderer prioritized';
+            return div;
+          });
+
+          control.columns = columnsMock;
+          gridOptionsMock.gridMenu = {
+            commandItems: [{ command: 'test-cmd', title: 'Test Command', slotRenderer: mockSlotRenderer }] as any,
+            defaultMenuItemRenderer: vi.fn(),
+          };
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
+          control.init();
+          control.openGridMenu();
+          const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLButtonElement | null;
+          buttonElm?.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+
+          const commandListElm = control.menuElement?.querySelector('.slick-menu-command-list') as HTMLDivElement | null;
+          const slotRendererElm = commandListElm?.querySelector('.slot-prioritized') as HTMLDivElement | null;
+
+          expect(mockSlotRenderer).toHaveBeenCalled();
+          expect(slotRendererElm).toBeTruthy();
+          expect(slotRendererElm?.textContent).toBe('Slot renderer prioritized');
+        });
+
+        it('should pass correct arguments (item and args) to slotRenderer callback', () => {
+          const mockSlotRenderer = vi.fn((item: any, args: any) => {
+            const div = document.createElement('div');
+            div.className = 'renderer-args-test';
+            div.textContent = `Item: ${item.command}, Grid: ${args?.grid ? 'present' : 'missing'}`;
+            return div;
+          });
+
+          control.columns = columnsMock;
+          gridOptionsMock.gridMenu = {
+            commandItems: [{ command: 'test-cmd', title: 'Test Command with Args', slotRenderer: mockSlotRenderer }] as any,
+          };
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
+          control.init();
+          control.openGridMenu();
+          const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLButtonElement | null;
+          buttonElm?.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+
+          expect(mockSlotRenderer).toHaveBeenCalled();
+          const callArgs = mockSlotRenderer.mock.calls[0];
+          expect(callArgs[0].command).toBe('test-cmd');
+          expect(callArgs[1]).toBeDefined();
+          expect(callArgs[1].grid).toBe(gridStub);
+        });
+
+        it('should call slotRenderer with click event as third argument when menu item is clicked', () => {
+          const mockSlotRenderer = vi.fn((item: any, args: any, event?: Event) => {
+            const div = document.createElement('div');
+            div.className = 'click-test';
+            return div;
+          });
+
+          control.columns = columnsMock;
+          gridOptionsMock.gridMenu = {
+            commandItems: [{ command: 'test-cmd', title: 'Test Command', slotRenderer: mockSlotRenderer }] as any,
+          };
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
+          control.init();
+          control.openGridMenu();
+          const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLButtonElement | null;
+          buttonElm?.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+
+          const commandListElm = control.menuElement?.querySelector('.slick-menu-command-list') as HTMLDivElement | null;
+          const menuItemElm = commandListElm?.querySelector('.slick-menu-item') as HTMLDivElement | null;
+
+          // Click the menu item
+          menuItemElm?.dispatchEvent(new Event('click', { bubbles: true, cancelable: true }));
+
+          // Verify slotRenderer was called with the click event as the third argument
+          // GridMenu calls slotRenderer 3 times: init, openMenu, and click
+          expect(mockSlotRenderer).toHaveBeenCalledTimes(3);
+          const clickCallArgs = mockSlotRenderer.mock.calls[2]; // third call is from click
+          expect(clickCallArgs[2]).toBeDefined();
+          expect(clickCallArgs[2]!.type).toBe('click');
+        });
+
+        it('should not trigger menu action when slotRenderer calls preventDefault on click event', () => {
+          const mockAction = vi.fn();
+          const mockSlotRenderer = vi.fn((item: any, args: any, event?: Event) => {
+            const div = document.createElement('div');
+            div.className = 'prevent-default-test';
+            const button = document.createElement('button');
+            button.textContent = 'Interactive';
+            button.onclick = (e) => {
+              e.preventDefault(); // Prevent default action
+            };
+            div.appendChild(button);
+            return div;
+          });
+
+          control.columns = columnsMock;
+          gridOptionsMock.gridMenu = {
+            commandItems: [{ command: 'test-cmd', title: 'Test Command', slotRenderer: mockSlotRenderer, action: mockAction }] as any,
+          };
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
+          control.init();
+          control.openGridMenu();
+          const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLButtonElement | null;
+          buttonElm?.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+
+          const commandListElm = control.menuElement?.querySelector('.slick-menu-command-list') as HTMLDivElement | null;
+          const menuItemElm = commandListElm?.querySelector('.slick-menu-item') as HTMLDivElement | null;
+          const buttonInMenuElm = menuItemElm?.querySelector('button') as HTMLButtonElement | null;
+
+          // Click the button inside the slotRenderer, which calls preventDefault
+          buttonInMenuElm?.click();
+
+          // Verify the action callback was not called because preventDefault was called
+          expect(mockAction).not.toHaveBeenCalled();
+        });
+      });
+
       describe('addGridMenuCustomCommands method', () => {
         beforeEach(() => {
           translateService.use('fr');
@@ -1307,6 +1483,7 @@ describe('GridMenuControl', () => {
               disabled: false,
               command: 'clear-pinning',
               positionOrder: 52,
+              action: expect.any(Function),
             },
           ]);
         });
@@ -1327,6 +1504,7 @@ describe('GridMenuControl', () => {
               disabled: false,
               command: 'clear-filter',
               positionOrder: 50,
+              action: expect.any(Function),
             },
             {
               _orgTitle: '',
@@ -1336,6 +1514,7 @@ describe('GridMenuControl', () => {
               disabled: false,
               command: 'toggle-filter',
               positionOrder: 53,
+              action: expect.any(Function),
             },
             {
               _orgTitle: '',
@@ -1345,6 +1524,36 @@ describe('GridMenuControl', () => {
               disabled: false,
               command: 'refresh-dataset',
               positionOrder: 58,
+              action: expect.any(Function),
+            },
+          ]);
+        });
+
+        it('should have only 1 menu "clear-filter" when all other menus are set in `hideCommands` with "enableFilering" is set', () => {
+          const copyGridOptionsMock: GridOption = {
+            ...gridOptionsMock,
+            enableFiltering: true,
+            showHeaderRow: true,
+            gridMenu: {
+              hideCommands: ['clear-pinning', 'refresh-dataset', 'toggle-filter', 'toggle-dark-mode'],
+              commandLabels: gridOptionsMock.gridMenu!.commandLabels,
+            },
+          };
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          control.columns = columnsMock;
+          control.init();
+          control.init(); // calling 2x register to make sure it doesn't duplicate commands
+          expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
+            {
+              _orgTitle: '',
+              iconCssClass: 'mdi mdi-filter-remove-outline',
+              titleKey: 'CLEAR_ALL_FILTERS',
+              title: 'Supprimer tous les filtres',
+              disabled: false,
+              command: 'clear-filter',
+              positionOrder: 50,
+              action: expect.any(Function),
             },
           ]);
         });
@@ -1376,6 +1585,7 @@ describe('GridMenuControl', () => {
               disabled: false,
               command: 'clear-filter',
               positionOrder: 50,
+              action: expect.any(Function),
             },
           ]);
         });
@@ -1387,6 +1597,7 @@ describe('GridMenuControl', () => {
             showHeaderRow: true,
             gridMenu: {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels,
+              // @deprecated `hideXYZ`, replace by `hideCommands` in next major
               hideClearFrozenColumnsCommand: true,
               hideClearAllFiltersCommand: true,
               hideToggleDarkModeCommand: true,
@@ -1407,6 +1618,7 @@ describe('GridMenuControl', () => {
               disabled: false,
               command: 'toggle-filter',
               positionOrder: 53,
+              action: expect.any(Function),
             },
           ]);
         });
@@ -1416,6 +1628,7 @@ describe('GridMenuControl', () => {
             ...gridOptionsMock,
             gridMenu: {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels,
+              // @deprecated `hideXYZ`, replace by `hideCommands` in next major
               hideClearFrozenColumnsCommand: true,
               hideClearAllFiltersCommand: true,
               hideToggleFilterCommand: true,
@@ -1437,6 +1650,7 @@ describe('GridMenuControl', () => {
               disabled: false,
               command: 'toggle-dark-mode',
               positionOrder: 54,
+              action: expect.any(Function),
             },
           ]);
         });
@@ -1448,6 +1662,7 @@ describe('GridMenuControl', () => {
             showHeaderRow: true,
             gridMenu: {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels,
+              // @deprecated `hideXYZ`, replace by `hideCommands` in next major
               hideClearFrozenColumnsCommand: true,
               hideClearAllFiltersCommand: true,
               hideToggleDarkModeCommand: true,
@@ -1468,6 +1683,7 @@ describe('GridMenuControl', () => {
               disabled: false,
               command: 'refresh-dataset',
               positionOrder: 58,
+              action: expect.any(Function),
             },
           ]);
         });
@@ -1488,6 +1704,7 @@ describe('GridMenuControl', () => {
               disabled: false,
               command: 'toggle-preheader',
               positionOrder: 53,
+              action: expect.any(Function),
             },
           ]);
         });
@@ -1527,6 +1744,7 @@ describe('GridMenuControl', () => {
               disabled: false,
               command: 'clear-sorting',
               positionOrder: 51,
+              action: expect.any(Function),
             },
           ]);
         });
@@ -1576,6 +1794,7 @@ describe('GridMenuControl', () => {
               disabled: false,
               command: 'export-csv',
               positionOrder: 55,
+              action: expect.any(Function),
             },
           ]);
         });
@@ -1628,6 +1847,41 @@ describe('GridMenuControl', () => {
               disabled: false,
               command: 'export-excel',
               positionOrder: 56,
+              action: expect.any(Function),
+            },
+          ]);
+        });
+
+        it('should have the "export-pdf" menu command when "enablePdfExport" is set', () => {
+          const copyGridOptionsMock = {
+            ...gridOptionsMock,
+            enablePdfExport: true,
+            enableExcelExport: false,
+            enableTextExport: false,
+            gridMenu: {
+              commandLabels: gridOptionsMock.gridMenu!.commandLabels,
+              hideClearFrozenColumnsCommand: true,
+              hideExportCsvCommand: true,
+              hideExportExcelCommand: true,
+              hideExportPdfCommand: false,
+              hideToggleDarkModeCommand: true,
+            },
+          } as unknown as GridOption;
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          control.columns = columnsMock;
+          control.init();
+          control.init(); // calling 2x register to make sure it doesn't duplicate commands
+          expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
+            {
+              _orgTitle: '',
+              iconCssClass: 'mdi mdi-file-pdf-outline text-danger',
+              titleKey: 'EXPORT_TO_PDF',
+              title: 'Exporter vers PDF',
+              disabled: false,
+              command: 'export-pdf',
+              positionOrder: 57,
+              action: expect.any(Function),
             },
           ]);
         });
@@ -1691,6 +1945,7 @@ describe('GridMenuControl', () => {
               disabled: false,
               command: 'export-text-delimited',
               positionOrder: 58,
+              action: expect.any(Function),
             },
           ]);
         });
@@ -1721,12 +1976,12 @@ describe('GridMenuControl', () => {
         beforeEach(() => {
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
           vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
-          vi.spyOn(SharedService.prototype, 'visibleColumns', 'get').mockReturnValue(columnsMock.slice(0, 1));
+          vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columnsMock.slice(0, 1));
         });
 
         it('should call "clearFrozenColumns" when the command triggered is "clear-pinning"', () => {
           const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
-          const setColumnsSpy = vi.spyOn(gridStub, 'setColumns');
+          const updateColumnsSpy = vi.spyOn(gridStub, 'updateColumns');
           const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
           const copyGridOptionsMock = {
             ...gridOptionsMock,
@@ -1742,7 +1997,7 @@ describe('GridMenuControl', () => {
           document.querySelector('.slick-grid-menu-button')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
           control.menuElement!.querySelector('.slick-menu-item[data-command=clear-pinning]')!.dispatchEvent(clickEvent);
 
-          expect(setColumnsSpy).toHaveBeenCalled();
+          expect(updateColumnsSpy).toHaveBeenCalled();
           expect(setOptionsSpy).toHaveBeenCalledWith({ frozenColumn: -1, frozenRow: -1, frozenBottom: false, enableMouseWheelScrollHandler: false });
           expect(pubSubSpy).toHaveBeenCalledWith('onGridMenuClearAllPinning');
         });
@@ -1903,7 +2158,7 @@ describe('GridMenuControl', () => {
           document.querySelector('.slick-grid-menu-button')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
           control.menuElement!.querySelector('.slick-menu-item[data-command=export-csv]')!.dispatchEvent(clickEvent);
 
-          expect(exportSpy).toHaveBeenCalledWith({ delimiter: DelimiterType.comma, format: 'csv' });
+          expect(exportSpy).toHaveBeenCalledWith({ delimiter: ',', format: 'csv' });
         });
 
         it('should call "exportToFile" with Text Delimited set when the command triggered is "export-text-delimited"', () => {
@@ -1920,7 +2175,7 @@ describe('GridMenuControl', () => {
           document.querySelector('.slick-grid-menu-button')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
           control.menuElement!.querySelector('.slick-menu-item[data-command=export-text-delimited]')!.dispatchEvent(clickEvent);
 
-          expect(exportSpy).toHaveBeenCalledWith({ delimiter: DelimiterType.tab, format: 'txt' });
+          expect(exportSpy).toHaveBeenCalledWith({ delimiter: '\t', format: 'txt' });
         });
 
         it('should toggle the darkMode grid option when the command triggered is "toggle-dark-mode"', () => {
@@ -1937,8 +2192,8 @@ describe('GridMenuControl', () => {
           expect(copyGridOptionsMock.darkMode).toBeTruthy();
         });
 
-        it('should call the grid "setHeaderRowVisibility" method when the command triggered is "toggle-filter"', () => {
-          let copyGridOptionsMock = {
+        it('should call the grid "setHeaderRowVisibility" method when the command triggered is "toggle-filter" (off to on)', () => {
+          const copyGridOptionsMock = {
             ...gridOptionsMock,
             enableFiltering: true,
             showHeaderRow: false,
@@ -1948,7 +2203,7 @@ describe('GridMenuControl', () => {
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
           const setHeaderSpy = vi.spyOn(gridStub, 'setHeaderRowVisibility');
           const scrollSpy = vi.spyOn(gridStub, 'scrollColumnIntoView');
-          const setColumnSpy = vi.spyOn(gridStub, 'setColumns');
+          const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
 
           control.init();
           control.columns = columnsMock;
@@ -1958,20 +2213,31 @@ describe('GridMenuControl', () => {
 
           expect(setHeaderSpy).toHaveBeenCalledWith(true);
           expect(scrollSpy).toHaveBeenCalledWith(0);
-          expect(setColumnSpy).toHaveBeenCalledTimes(1);
+          expect(updateColumnSpy).toHaveBeenCalledTimes(1);
+        });
 
-          copyGridOptionsMock = { ...gridOptionsMock, enableFiltering: true, showHeaderRow: true, hideToggleFilterCommand: false } as unknown as GridOption;
+        it('should call the grid "setHeaderRowVisibility" method when the command triggered is "toggle-filter" (on to off)', () => {
+          const copyGridOptionsMock = {
+            ...gridOptionsMock,
+            enableFiltering: true,
+            showHeaderRow: true,
+            hideToggleFilterCommand: false,
+          } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          const setHeaderSpy = vi.spyOn(gridStub, 'setHeaderRowVisibility');
+
+          control.init();
+          control.columns = columnsMock;
+          const clickEvent = new Event('click', { bubbles: true, cancelable: true, composed: false });
           document.querySelector('.slick-grid-menu-button')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
           control.menuElement!.querySelector('.slick-menu-item[data-command=toggle-filter]')!.dispatchEvent(clickEvent);
 
           expect(setHeaderSpy).toHaveBeenCalledWith(false);
-          expect(setColumnSpy).toHaveBeenCalledTimes(1); // same as before, so count won't increase
         });
 
-        it('should call the grid "setPreHeaderPanelVisibility" method when the command triggered is "toggle-preheader"', () => {
-          let copyGridOptionsMock = { ...gridOptionsMock, showPreHeaderPanel: true, hideTogglePreHeaderCommand: false } as unknown as GridOption;
+        it('should call the grid "setPreHeaderPanelVisibility" method when the command triggered is "toggle-preheader" (on to off)', () => {
+          const copyGridOptionsMock = { ...gridOptionsMock, showPreHeaderPanel: true, hideTogglePreHeaderCommand: false } as unknown as GridOption;
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
 
@@ -1982,14 +2248,6 @@ describe('GridMenuControl', () => {
           control.menuElement!.querySelector('.slick-menu-item[data-command=toggle-preheader]')!.dispatchEvent(clickEvent);
 
           expect(gridStub.setPreHeaderPanelVisibility).toHaveBeenCalledWith(false);
-
-          copyGridOptionsMock = { ...gridOptionsMock, showPreHeaderPanel: false, hideTogglePreHeaderCommand: false } as unknown as GridOption;
-          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
-          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
-          document.querySelector('.slick-grid-menu-button')!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
-          control.menuElement!.querySelector('.slick-menu-item[data-command=toggle-preheader]')!.dispatchEvent(clickEvent);
-
-          expect(gridStub.setPreHeaderPanelVisibility).toHaveBeenCalledWith(true);
         });
 
         it('should call "refreshBackendDataset" method when the command triggered is "refresh-dataset"', () => {

@@ -18,6 +18,7 @@ const gridStub = {
   getUID: () => 'slickgrid12345',
   registerPlugin: vi.fn(),
   setColumns: vi.fn(),
+  updateColumns: vi.fn(),
   updateColumnHeader: vi.fn(),
   onBeforeHeaderCellDestroy: new SlickEvent(),
   onHeaderCellRendered: new SlickEvent(),

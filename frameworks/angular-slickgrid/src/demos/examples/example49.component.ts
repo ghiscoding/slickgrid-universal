@@ -1,6 +1,6 @@
 import { Component, type OnDestroy, type OnInit } from '@angular/core';
 import {
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   Editors,
   SlickSelectionUtils,
   type AngularGridInstance,
@@ -14,7 +14,7 @@ const NB_ITEMS = 100;
 @Component({
   templateUrl: './example49.component.html',
   styleUrls: ['example49.component.scss'],
-  imports: [AngularSlickgridModule],
+  imports: [AngularSlickgridComponent],
 })
 export class Example49Component implements OnDestroy, OnInit {
   private _darkMode = false;
@@ -78,10 +78,11 @@ export class Example49Component implements OnDestroy, OnInit {
       editorNavigateOnArrows: true, // enable editor navigation using arrow keys
 
       // enable new hybrid selection model (rows & cells)
-      enableHybridSelection: true,
-      rowSelectionOptions: {
-        selectActiveRow: true,
+      enableSelection: true,
+      selectionOptions: {
         rowSelectColumnIds: ['selector'],
+        selectActiveRow: true,
+        selectionType: 'mixed',
       },
 
       // when using the ExcelCopyBuffer, you can see what the selection range is

@@ -5,7 +5,6 @@ import type { AutocompleteItem, AutocompleteResult, AutocompleteSettings } from 
 import { addAutocompleteLoadingByOverridingFetch } from '../commonEditorFilter/commonEditorFilterUtils.js';
 import { applyHtmlToElement, SlickEventData, type SlickGrid } from '../core/index.js';
 import { textValidator } from '../editorValidators/textValidator.js';
-import { FieldType } from '../enums/index.js';
 import type {
   AutocompleterOption,
   AutocompleteSearchItem,
@@ -125,7 +124,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
   get customStructure(): CollectionCustomStructure | undefined {
     let customStructure = this.columnEditor?.customStructure;
     const columnType = this.columnEditor?.type ?? this.columnDef?.type;
-    if (!customStructure && columnType === FieldType.object && this.columnDef?.dataKey && this.columnDef?.labelKey) {
+    if (!customStructure && columnType === 'object' && this.columnDef?.dataKey && this.columnDef?.labelKey) {
       customStructure = {
         label: this.columnDef.labelKey,
         value: this.columnDef.dataKey,
@@ -140,7 +139,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
   }
 
   get editorOptions(): AutocompleterOption {
-    return { ...this.gridOptions.defaultEditorOptions?.autocompleter, ...this.columnEditor?.editorOptions, ...this.columnEditor?.options };
+    return { ...this.gridOptions.defaultEditorOptions?.autocompleter, ...this.columnEditor?.options };
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
@@ -388,13 +387,13 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
       this.customStructure &&
       this._currentValue &&
       this._currentValue.hasOwnProperty(this.valueName) &&
-      this.columnDef?.type !== FieldType.object &&
-      this.columnEditor?.type !== FieldType.object
+      this.columnDef?.type !== 'object' &&
+      this.columnEditor?.type !== 'object'
     ) {
       return this._currentValue[this.valueName];
     } else if (this._currentValue && this._currentValue.value !== undefined) {
       // when object has a "value" property and its column is set as an Object type, we'll return an object with optional custom structure
-      if (this.columnDef?.type === FieldType.object || this.columnEditor?.type === FieldType.object) {
+      if (this.columnDef?.type === 'object' || this.columnEditor?.type === 'object') {
         return {
           [this.labelName]: this._currentValue.label,
           [this.valueName]: this._currentValue.value,

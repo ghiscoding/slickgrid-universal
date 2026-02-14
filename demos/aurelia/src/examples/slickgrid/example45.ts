@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker';
+import { AureliaSlickRowDetailView } from '@slickgrid-universal/aurelia-row-detail-plugin';
 import { bindable } from 'aurelia';
-import { ExtensionName, type AureliaGridInstance, type Column, type GridOption, type SlickRowDetailView } from 'aurelia-slickgrid';
+import { type AureliaGridInstance, type Column, type GridOption } from 'aurelia-slickgrid';
 import { Example45DetailView, type Distributor, type OrderData } from './example45-detail-view.js';
 import { Example45Preload } from './example45-preload.js';
 
@@ -21,7 +22,7 @@ export class Example45 {
   hideSubTitle = false;
 
   get rowDetailInstance() {
-    return this.aureliaGrid?.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView) as SlickRowDetailView;
+    return this.aureliaGrid?.extensionService.getExtensionInstanceByName('rowDetailView') as AureliaSlickRowDetailView;
   }
 
   aureliaGridReady(aureliaGrid: AureliaGridInstance) {
@@ -101,6 +102,7 @@ export class Example45 {
       rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
       darkMode: this._darkMode,
       rowHeight: 33,
+      externalResources: [AureliaSlickRowDetailView],
       rowDetailView: {
         process: (item) => this.simulateServerAsyncCall(item),
         loadOnce: false, // you can't use loadOnce with inner grid because only HTML template are re-rendered, not JS events

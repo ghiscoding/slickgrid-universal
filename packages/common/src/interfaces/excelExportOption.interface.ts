@@ -1,5 +1,5 @@
 import type { ExcelStyleInstruction, Workbook, Worksheet } from '@excel-builder-vanilla/types';
-import type { FileType } from '../enums/fileType.enum.js';
+import type { FileType } from '../enums/file.type.js';
 
 export interface ExcelExportOption {
   /** Defaults to true, when grid is using Grouping, it will show indentation of the text with collapsed/expanded symbol as well */
@@ -21,7 +21,7 @@ export interface ExcelExportOption {
   filename?: string;
 
   /** file type format, .xls/.xlsx (this will provide the extension) */
-  format?: FileType.xls | FileType.xlsx | 'xls' | 'xlsx';
+  format?: Extract<FileType, 'xls' | 'xlsx'>;
 
   /**
    * file MIME type could be provided by the user.

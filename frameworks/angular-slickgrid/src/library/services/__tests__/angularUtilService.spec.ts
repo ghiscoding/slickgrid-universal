@@ -8,13 +8,12 @@ const DOM_PARENT_ID = 'parent-detail';
 
 const viewContainerRefStub = {
   createComponent: vi.fn(),
-  detectChanges: vi.fn(),
 } as unknown as ViewContainerRef;
 
 @Component({ template: `<h4>Loading...</h4>`, standalone: false })
 class TestPreloadComponent {}
 
-@Component({ template: `<h1>{{ title }}</h1>` })
+@Component({ template: `<h1>{{ title }}</h1>`, standalone: false })
 class TestComponent {
   title = '';
 }
@@ -53,7 +52,7 @@ describe('AngularUtilService', () => {
     beforeEach(() => {
       domElm = document.getElementById(DOM_ELEMENT_ID) as HTMLDivElement;
       domParentElm = document.getElementById(DOM_PARENT_ID) as HTMLDivElement;
-      mockComponentFactory = { hostView: { rootNodes: [domElm] }, instance: {}, changeDetectorRef: { detectChanges: vi.fn() } };
+      mockComponentFactory = { hostView: { rootNodes: [domElm] }, instance: {}, changeDetectorRef: {} };
     });
 
     it('should create an Angular Component and add it to the current component DOM tree', () => {

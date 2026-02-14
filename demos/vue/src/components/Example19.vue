@@ -1,14 +1,6 @@
 <script setup lang="ts">
-import {
-  Editors,
-  ExtensionName,
-  Filters,
-  Formatters,
-  SlickgridVue,
-  type Column,
-  type GridOption,
-  type SlickgridVueInstance,
-} from 'slickgrid-vue';
+import { VueSlickRowDetailView } from '@slickgrid-universal/vue-row-detail-plugin';
+import { Editors, Filters, Formatters, SlickgridVue, type Column, type GridOption, type SlickgridVueInstance } from 'slickgrid-vue';
 import { computed, onBeforeMount, onUnmounted, ref, type Ref } from 'vue';
 import Example19Detail from './Example19Detail.vue';
 import ExampleDetailPreload from './ExampleDetailPreload.vue';
@@ -26,7 +18,7 @@ const message = ref('');
 const serverWaitDelay = ref(FAKE_SERVER_DELAY); // server simulation with default of 250ms but 50ms for Cypress tests
 let vueGrid!: SlickgridVueInstance;
 
-const rowDetailInstance = computed(() => vueGrid?.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView));
+const rowDetailInstance = computed(() => vueGrid?.extensionService.getExtensionInstanceByName('rowDetailView'));
 
 onBeforeMount(() => {
   defineGrid();
@@ -129,6 +121,7 @@ function defineGrid() {
     rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
     darkMode: isDarkMode.value,
     datasetIdPropertyName: 'rowId', // optionally use a different "id"
+    externalResources: [VueSlickRowDetailView],
     rowDetailView: {
       // optionally change the column index position of the icon (defaults to 0)
       // columnIndexPosition: 1,
@@ -176,14 +169,14 @@ function defineGrid() {
         return true;
       },
     },
-    rowSelectionOptions: {
+    selectionOptions: {
       // True (Single Selection), False (Multiple Selections)
       selectActiveRow: true,
     },
 
     // You could also enable Row Selection as well, but just make sure to disable `useRowClick: false`
     // enableCheckboxSelector: true,
-    // enableRowSelection: true,
+    // enableSelection: true,
     // checkboxSelector: {
     //   hideInFilterHeaderRow: false,
     //   hideSelectAllCheckbox: true,
@@ -393,7 +386,7 @@ defineExpose({
     <slickgrid-vue
       v-model:options="gridOptions"
       v-model:columns="columnDefinitions"
-      v-model:data="dataset"
+      v-model:dataset="dataset"
       grid-id="grid19"
       @onVueGridCreated="vueGridReady($event.detail)"
     >

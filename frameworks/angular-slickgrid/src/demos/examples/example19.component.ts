@@ -1,15 +1,14 @@
-import { NgIf } from '@angular/common';
 import { Component, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { AngularSlickRowDetailView } from '@slickgrid-universal/angular-row-detail-plugin';
 import {
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   Editors,
   Filters,
   Formatters,
   type AngularGridInstance,
   type Column,
   type GridOption,
-  type SlickRowDetailView,
 } from '../../library';
 import { Example19RowDetailComponent } from './example19-rowdetail.component';
 import { RowDetailPreloadComponent } from './rowdetail-preload.component';
@@ -19,7 +18,7 @@ const NB_ITEMS = 1000;
 
 @Component({
   templateUrl: './example19.component.html',
-  imports: [AngularSlickgridModule, FormsModule, NgIf],
+  imports: [AngularSlickgridComponent, FormsModule],
 })
 export class Example19Component implements OnDestroy, OnInit {
   private _darkMode = false;
@@ -37,14 +36,14 @@ export class Example19Component implements OnDestroy, OnInit {
     this.angularGrid = angularGrid;
   }
 
-  get rowDetailInstance(): SlickRowDetailView {
+  get rowDetailInstance(): AngularSlickRowDetailView {
     // you can get the SlickGrid RowDetail plugin (addon) instance via 2 ways
 
     // option 1
     return this.angularGrid.extensions.rowDetailView?.instance || {};
 
     // OR option 2
-    // return this.angularGrid?.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView) || {};
+    // return this.angularGrid?.extensionService.getExtensionInstanceByName('rowDetailView') || {};
   }
 
   ngOnInit(): void {
@@ -145,6 +144,7 @@ export class Example19Component implements OnDestroy, OnInit {
       rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
       darkMode: this._darkMode,
       datasetIdPropertyName: 'rowId', // optionally use a different "id"
+      externalResources: [AngularSlickRowDetailView],
       rowDetailView: {
         // optionally change the column index position of the icon (defaults to 0)
         // columnIndexPosition: 1,
@@ -192,14 +192,14 @@ export class Example19Component implements OnDestroy, OnInit {
           return true;
         },
       },
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: true,
       },
 
       // You could also enable Row Selection as well, but just make sure to disable `useRowClick: false`
       // enableCheckboxSelector: true,
-      // enableRowSelection: true,
+      // enableSelection: true,
       // checkboxSelector: {
       //   hideInFilterHeaderRow: false,
       //   hideSelectAllCheckbox: true,

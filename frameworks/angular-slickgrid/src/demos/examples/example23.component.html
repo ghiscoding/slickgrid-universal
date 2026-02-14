@@ -51,10 +51,12 @@
 
   <br />
 
-  <span *ngIf="metrics" style="margin-right: 10px">
-    <b>Metrics:</b> {{ metrics.startTime | date: "yyyy-MM-dd hh:mm aaaaa'm'" }} | {{ metrics.itemCount }} of
-    {{ metrics.totalItemCount }} items
-  </span>
+  @if (metrics) {
+    <span style="margin-right: 10px">
+      <b>Metrics:</b> {{ metrics.startTime | date: "yyyy-MM-dd hh:mm aaaaa'm'" }} | {{ metrics.itemCount }} of
+      {{ metrics.totalItemCount }} items
+    </span>
+  }
 
   <form class="row row-cols-lg-auto g-1 align-items-center">
     <div class="col">
@@ -86,7 +88,9 @@
         data-test="select-dynamic-filter"
         (ngModelChange)="usePredefinedFilter($event)"
       >
-        <option [ngValue]="filter.value" *ngFor="let filter of filterList">{{ filter.label }}</option>
+        @for (filter of filterList; track filter) {
+          <option [ngValue]="filter.value">{{ filter.label }}</option>
+        }
       </select>
     </div>
   </form>
@@ -97,7 +101,7 @@
         <i class="mdi mdi-translate"></i>
         Switch Language
       </button>
-      <b>Locale:</b> <span style="font-style: italic" data-test="selected-locale">{{ selectedLanguage + '.json' }}</span>
+      <b>Locale:</b> <span style="font-style: italic" data-test="selected-locale">{{ selectedLanguage() + '.json' }}</span>
     </div>
   </div>
 

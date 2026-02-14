@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Formatters, SlickgridVue, type Column, type GridOption, type OperatorString, type SlickgridVueInstance } from 'slickgrid-vue';
+import { Formatters, SlickgridVue, type Column, type GridOption, type OperatorType, type SlickgridVueInstance } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
 
 const NB_ITEMS = 25;
@@ -7,7 +7,7 @@ const gridOptions = ref<GridOption>();
 const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const showSubTitle = ref(true);
-const operatorList = ref<OperatorString[]>(['=', '<', '<=', '>', '>=', '<>', 'StartsWith', 'EndsWith']);
+const operatorList = ref<OperatorType[]>(['=', '<', '<=', '>', '>=', '<>', 'StartsWith', 'EndsWith']);
 const searchValue = ref('');
 const selectedColumn = ref<Column>();
 const selectedOperator = ref('');
@@ -95,7 +95,7 @@ function defineGrid() {
     alwaysShowVerticalScroll: false,
     enableColumnPicker: true,
     enableCellNavigation: true,
-    enableRowSelection: true,
+    enableSelection: true,
   };
 }
 
@@ -135,7 +135,7 @@ function clearGridSearchInput() {
 function updateFilter() {
   vueGrid?.filterService.updateSingleFilter({
     columnId: `${selectedColumn.value?.id || ''}`,
-    operator: selectedOperator.value as OperatorString,
+    operator: selectedOperator.value as OperatorType,
     searchTerms: [searchValue.value || ''],
   });
 }
@@ -229,7 +229,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
   <slickgrid-vue
     v-model:options="gridOptions"
     v-model:columns="columnDefinitions"
-    v-model:data="dataset"
+    v-model:dataset="dataset"
     grid-id="grid21"
     @onVueGridCreated="vueGridReady($event.detail)"
   >

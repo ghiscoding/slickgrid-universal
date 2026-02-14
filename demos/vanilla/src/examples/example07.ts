@@ -1,5 +1,5 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { Editors, Filters, Formatters, OperatorType, type Column, type GridOption } from '@slickgrid-universal/common';
+import { Editors, Filters, Formatters, type Column, type GridOption } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import DOMPurify from 'dompurify';
@@ -355,7 +355,7 @@ export default class Example07 {
             separatorBetweenTextLabels: ' ',
           },
           model: Filters.multipleSelect,
-          operator: OperatorType.inContains,
+          operator: 'IN_CONTAINS',
         },
       },
     ];
@@ -385,8 +385,8 @@ export default class Example07 {
       externalResources: [new ExcelExportService()],
       enableCellNavigation: true,
       enableCheckboxSelector: true,
-      enableRowSelection: true,
-      rowSelectionOptions: {
+      enableSelection: true,
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },

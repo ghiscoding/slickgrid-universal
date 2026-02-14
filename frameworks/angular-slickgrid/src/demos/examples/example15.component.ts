@@ -1,9 +1,9 @@
-import { Component, type OnDestroy, type OnInit } from '@angular/core';
+import { Component, signal, type OnDestroy, type OnInit } from '@angular/core';
 import { format as tempoFormat } from '@formkit/tempo';
 import { TranslateService } from '@ngx-translate/core';
 import type { Subscription } from 'rxjs';
 import {
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   Filters,
   Formatters,
   unsubscribeAllObservables,
@@ -24,7 +24,7 @@ const NB_ITEMS = 500;
 
 @Component({
   templateUrl: './example15.component.html',
-  imports: [AngularSlickgridModule],
+  imports: [AngularSlickgridComponent],
 })
 export class Example15Component implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
@@ -33,10 +33,10 @@ export class Example15Component implements OnInit, OnDestroy {
   gridOptions!: GridOption;
   dataset!: any[];
   hideSubTitle = false;
-  selectedLanguage: string;
+  selectedLanguage = signal('');
 
   constructor(private translate: TranslateService) {
-    this.selectedLanguage = this.translate.getDefaultLang();
+    this.selectedLanguage.set(this.translate.getFallbackLang() || 'en');
   }
 
   angularGridReady(angularGrid: AngularGridInstance) {
@@ -58,7 +58,7 @@ export class Example15Component implements OnInit, OnDestroy {
     // always start with English for Cypress E2E tests to be consistent
     const defaultLang = 'en';
     this.translate.use(defaultLang);
-    this.selectedLanguage = defaultLang;
+    this.selectedLanguage.set(defaultLang);
   }
 
   /** Clear the Grid State from Local Storage and reset the grid to it's original state */
@@ -270,10 +270,10 @@ export class Example15Component implements OnInit, OnDestroy {
   }
 
   switchLanguage() {
-    const nextLanguage = this.selectedLanguage === 'en' ? 'fr' : 'en';
+    const nextLanguage = this.selectedLanguage() === 'en' ? 'fr' : 'en';
     this.subscriptions.push(
       this.translate.use(nextLanguage).subscribe(() => {
-        this.selectedLanguage = nextLanguage;
+        this.selectedLanguage.set(nextLanguage);
       })
     );
   }

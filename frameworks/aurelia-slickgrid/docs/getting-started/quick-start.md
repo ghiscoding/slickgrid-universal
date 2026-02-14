@@ -55,7 +55,7 @@ export function configure(aurelia) {
 ```
 
 ### 4. Install/Setup `I18N` for Localization (optional)
-#### If you don't want to use any Translate Service and use only 1 Locale then take a look at this [demo](https://github.com/ghiscoding/aurelia-slickgrid-demos/tree/master/webpack-bs3-demo-with-locales)
+#### If you don't want to use any Translate Service and use only 1 Locale then take a look at this [demo](https://github.com/ghiscoding/aurelia-slickgrid-demos/tree/master/webpack-bs5-demo-with-locales)
 To provide locales other than English (default locale), you have 2 options that you can go with. If you only use English, there is nothing to do (you can still change some of the texts in the grid via option 1.)
 1. Using [Custom Locale](../localization/localization-with-custom-locales.md), that is when you use **only 1** locale (other than English)... this is a new feature starting from version `2.10.0` and up.
 2. Using [Localization with I18N](../localization/localization.md), that is when you want to use multiple locales dynamically.
@@ -147,7 +147,7 @@ You might notice that all demos are made with mocked dataset that are embedded i
 
 ### 9. Get Started
 The best way to get started is to clone the [Aurelia-Slickgrid-demos](https://github.com/ghiscoding/aurelia-slickgrid-demos), it has multiple examples and it is also updated frequently since it is used for the GitHub Bootstrap 5 demo page. `Aurelia-Slickgrid` has 2 `Bootstrap` themes, you can see a demo of each one below.
-- [Bootstrap 5 demo](https://ghiscoding.github.io/aurelia-slickgrid) / [examples repo](https://github.com/ghiscoding/aurelia-slickgrid-demos/tree/master/webpack-bs5-demo) (with `I18N` Service)
+- [Bootstrap 5 demo](https://ghiscoding.github.io/aurelia-slickgrid) / [examples repo](https://github.com/ghiscoding/aurelia-slickgrid-demos/tree/master/vite-bs5-demo) (with `I18N` Service)
 - [Bootstrap 5 - examples repo](https://github.com/ghiscoding/aurelia-slickgrid-demos/tree/master/webpack-bs5-demo-with-locales) (**without** `I18N` Service)
 
 ##### All Live Demo Examples have links to the actual code

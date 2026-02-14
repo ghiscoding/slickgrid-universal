@@ -6,7 +6,6 @@ import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
 import { SumAggregator } from '../../aggregators/sumAggregator.js';
 import { Constants } from '../../constants.js';
 import { applyHtmlToElement } from '../../core/utils.js';
-import { FieldType, OperatorType } from '../../enums/index.js';
 import type { Column, GridOption, TreeDataPropNames } from '../../interfaces/index.js';
 import {
   addTreeLevelAndAggregatorsByMutation,
@@ -28,6 +27,7 @@ import {
   mapOperatorByFieldType,
   mapOperatorToShorthandDesignation,
   mapOperatorType,
+  sortPresetColumns,
   thousandSeparatorFormatted,
   unflattenParentChildArrayToTree,
   unsubscribeAll,
@@ -868,18 +868,18 @@ describe('Service/Utilies', () => {
 
   describe('getColumnFieldType() method', () => {
     it('should return field type when type is defined', () => {
-      const result = getColumnFieldType({ type: FieldType.dateIso } as Column);
-      expect(result).toEqual(FieldType.dateIso);
+      const result = getColumnFieldType({ type: 'dateIso' } as Column);
+      expect(result).toEqual('dateIso');
     });
 
     it('should return outputType when both field type and outputType are defined', () => {
-      const result = getColumnFieldType({ outputType: FieldType.number, type: FieldType.dateIso } as Column);
-      expect(result).toEqual(FieldType.number);
+      const result = getColumnFieldType({ outputType: 'number', type: 'dateIso' } as Column);
+      expect(result).toEqual('number');
     });
 
     it('should return string field type when neither type nor outputType are defined', () => {
       const result = getColumnFieldType({ field: 'startDate' } as Column);
-      expect(result).toEqual(FieldType.string);
+      expect(result).toEqual('string');
     });
   });
 
@@ -939,140 +939,140 @@ describe('Service/Utilies', () => {
       vi.clearAllMocks();
     });
 
-    it('should return True when FieldType.date is provided', () => {
-      const result = isColumnDateType(FieldType.date);
+    it('should return True when "date" is provided', () => {
+      const result = isColumnDateType('date');
       expect(result).toBe(true);
     });
 
-    it('should return True when FieldType.dateTime is provided', () => {
-      const result = isColumnDateType(FieldType.dateTime);
+    it('should return True when "dateTime" is provided', () => {
+      const result = isColumnDateType('dateTime');
       expect(result).toBe(true);
     });
 
-    it('should return True when FieldType.dateTimeIso is provided', () => {
-      const result = isColumnDateType(FieldType.dateTimeIso);
+    it('should return True when "dateTimeIso" is provided', () => {
+      const result = isColumnDateType('dateTimeIso');
       expect(result).toBe(true);
     });
 
-    it('should return True when FieldType.dateTimeShortIso is provided', () => {
-      const result = isColumnDateType(FieldType.dateTimeShortIso);
+    it('should return True when "dateTimeShortIso" is provided', () => {
+      const result = isColumnDateType('dateTimeShortIso');
       expect(result).toBe(true);
     });
 
-    it('should return True when FieldType.dateTimeIsoAmPm is provided', () => {
-      const result = isColumnDateType(FieldType.dateTimeIsoAmPm);
+    it('should return True when "dateTimeIsoAmPm" is provided', () => {
+      const result = isColumnDateType('dateTimeIsoAmPm');
       expect(result).toBe(true);
     });
 
-    it('should return True when FieldType.dateTimeIsoAM_PM is provided', () => {
-      const result = isColumnDateType(FieldType.dateTimeIsoAM_PM);
+    it('should return True when "dateTimeIsoAM_PM" is provided', () => {
+      const result = isColumnDateType('dateTimeIsoAM_PM');
       expect(result).toBe(true);
     });
 
-    it('should return True when FieldType.dateEuro is provided', () => {
-      const result = isColumnDateType(FieldType.dateEuro);
+    it('should return True when "dateEuro" is provided', () => {
+      const result = isColumnDateType('dateEuro');
       expect(result).toBe(true);
     });
 
-    it('should return True when FieldType.dateEuroShort is provided', () => {
-      const result = isColumnDateType(FieldType.dateEuroShort);
+    it('should return True when "dateEuroShort" is provided', () => {
+      const result = isColumnDateType('dateEuroShort');
       expect(result).toBe(true);
     });
 
-    it('should return True when FieldType.dateTimeEuro is provided', () => {
-      const result = isColumnDateType(FieldType.dateTimeEuro);
+    it('should return True when "dateTimeEuro" is provided', () => {
+      const result = isColumnDateType('dateTimeEuro');
       expect(result).toBe(true);
     });
 
-    it('should return True when FieldType.dateTimeShortEuro is provided', () => {
-      const result = isColumnDateType(FieldType.dateTimeShortEuro);
+    it('should return True when "dateTimeShortEuro" is provided', () => {
+      const result = isColumnDateType('dateTimeShortEuro');
       expect(result).toBe(true);
     });
 
-    it('should return True when FieldType.dateTimeEuroAmPm is provided', () => {
-      const result = isColumnDateType(FieldType.dateTimeEuroAmPm);
+    it('should return True when "dateTimeEuroAmPm" is provided', () => {
+      const result = isColumnDateType('dateTimeEuroAmPm');
       expect(result).toBe(true);
     });
 
-    it('should return True when FieldType.dateTimeEuroAM_PM is provided', () => {
-      const result = isColumnDateType(FieldType.dateTimeEuroAM_PM);
+    it('should return True when "dateTimeEuroAM_PM" is provided', () => {
+      const result = isColumnDateType('dateTimeEuroAM_PM');
       expect(result).toBe(true);
     });
 
-    it('should return True when FieldType.dateTimeEuroShort is provided', () => {
-      const result = isColumnDateType(FieldType.dateTimeEuroShort);
+    it('should return True when "dateTimeEuroShort" is provided', () => {
+      const result = isColumnDateType('dateTimeEuroShort');
       expect(result).toBe(true);
     });
 
-    it('should return True when FieldType.dateTimeEuroShortAM_PM is provided', () => {
-      const result = isColumnDateType(FieldType.dateTimeEuroShortAM_PM);
+    it('should return True when "dateTimeEuroShortAM_PM" is provided', () => {
+      const result = isColumnDateType('dateTimeEuroShortAM_PM');
       expect(result).toBe(true);
     });
 
-    it('should return True when FieldType.dateTimeEuroShortAmPm is provided', () => {
-      const result = isColumnDateType(FieldType.dateTimeEuroShortAmPm);
+    it('should return True when "dateTimeEuroShortAmPm" is provided', () => {
+      const result = isColumnDateType('dateTimeEuroShortAmPm');
       expect(result).toBe(true);
     });
 
-    it('should return True when FieldType.dateUs is provided', () => {
-      const result = isColumnDateType(FieldType.dateUs);
+    it('should return True when "dateUs" is provided', () => {
+      const result = isColumnDateType('dateUs');
       expect(result).toBe(true);
     });
 
-    it('should return True when FieldType.dateUsShort is provided', () => {
-      const result = isColumnDateType(FieldType.dateUsShort);
+    it('should return True when "dateUsShort" is provided', () => {
+      const result = isColumnDateType('dateUsShort');
       expect(result).toBe(true);
     });
 
-    it('should return True when FieldType.dateTimeUs is provided', () => {
-      const result = isColumnDateType(FieldType.dateTimeUs);
+    it('should return True when "dateTimeUs" is provided', () => {
+      const result = isColumnDateType('dateTimeUs');
       expect(result).toBe(true);
     });
 
-    it('should return True when FieldType.dateTimeShortUs is provided', () => {
-      const result = isColumnDateType(FieldType.dateTimeShortUs);
+    it('should return True when "dateTimeShortUs" is provided', () => {
+      const result = isColumnDateType('dateTimeShortUs');
       expect(result).toBe(true);
     });
 
-    it('should return True when FieldType.dateTimeUsAmPm is provided', () => {
-      const result = isColumnDateType(FieldType.dateTimeUsAmPm);
+    it('should return True when "dateTimeUsAmPm" is provided', () => {
+      const result = isColumnDateType('dateTimeUsAmPm');
       expect(result).toBe(true);
     });
 
-    it('should return True when FieldType.dateTimeUsShortAM_PM is provided', () => {
-      const result = isColumnDateType(FieldType.dateTimeUsShortAM_PM);
+    it('should return True when "dateTimeUsShortAM_PM" is provided', () => {
+      const result = isColumnDateType('dateTimeUsShortAM_PM');
       expect(result).toBe(true);
     });
 
-    it('should return True when FieldType.dateTimeUsAM_PM is provided', () => {
-      const result = isColumnDateType(FieldType.dateTimeUsAM_PM);
+    it('should return True when "dateTimeUsAM_PM" is provided', () => {
+      const result = isColumnDateType('dateTimeUsAM_PM');
       expect(result).toBe(true);
     });
 
-    it('should return True when FieldType.dateTimeUsShort is provided', () => {
-      const result = isColumnDateType(FieldType.dateTimeUsShort);
+    it('should return True when "dateTimeUsShort" is provided', () => {
+      const result = isColumnDateType('dateTimeUsShort');
       expect(result).toBe(true);
     });
 
-    it('should return True when FieldType.dateTimeUsShortAmPm is provided', () => {
-      const result = isColumnDateType(FieldType.dateTimeUsShortAmPm);
+    it('should return True when "dateTimeUsShortAmPm" is provided', () => {
+      const result = isColumnDateType('dateTimeUsShortAmPm');
       expect(result).toBe(true);
     });
 
-    it('should return True when FieldType.dateUtc is provided', () => {
-      const result = isColumnDateType(FieldType.dateUtc);
+    it('should return True when "dateUtc" is provided', () => {
+      const result = isColumnDateType('dateUtc');
       expect(result).toBe(true);
     });
 
-    it('should return True when FieldType.dateIso is provided', () => {
-      const result = isColumnDateType(FieldType.dateIso);
+    it('should return True when "dateIso" is provided', () => {
+      const result = isColumnDateType('dateIso');
       expect(result).toBe(true);
     });
   });
 
   describe('mapOperatorType method', () => {
     it('should return OperatoryType associated to "<"', () => {
-      const expectation = OperatorType.lessThan;
+      const expectation = 'LT';
 
       const output1 = mapOperatorType('<');
       const output2 = mapOperatorType('LT');
@@ -1082,7 +1082,7 @@ describe('Service/Utilies', () => {
     });
 
     it('should return OperatoryType associated to "<="', () => {
-      const expectation = OperatorType.lessThanOrEqual;
+      const expectation = 'LE';
 
       const output1 = mapOperatorType('<=');
       const output2 = mapOperatorType('LE');
@@ -1092,7 +1092,7 @@ describe('Service/Utilies', () => {
     });
 
     it('should return OperatoryType associated to ">"', () => {
-      const expectation = OperatorType.greaterThan;
+      const expectation = 'GT';
 
       const output1 = mapOperatorType('>');
       const output2 = mapOperatorType('GT');
@@ -1102,7 +1102,7 @@ describe('Service/Utilies', () => {
     });
 
     it('should return OperatoryType associated to ">="', () => {
-      const expectation = OperatorType.greaterThanOrEqual;
+      const expectation = 'GE';
 
       const output1 = mapOperatorType('>=');
       const output2 = mapOperatorType('GE');
@@ -1112,7 +1112,7 @@ describe('Service/Utilies', () => {
     });
 
     it('should return OperatoryType associated to "!=", "neq" or "NEQ"', () => {
-      const expectation = OperatorType.notEqual;
+      const expectation = 'NE';
 
       const output1 = mapOperatorType('!=');
       const output2 = mapOperatorType('NE');
@@ -1122,7 +1122,7 @@ describe('Service/Utilies', () => {
     });
 
     it('should return OperatoryType associated to "*", "a*", ".*", "startsWith"', () => {
-      const expectation = OperatorType.startsWith;
+      const expectation = 'StartsWith';
 
       const output1 = mapOperatorType('*');
       const output2 = mapOperatorType('a*');
@@ -1134,7 +1134,7 @@ describe('Service/Utilies', () => {
     });
 
     it('should return OperatoryType associated to "*.", "*z", "endsWith"', () => {
-      const expectation = OperatorType.endsWith;
+      const expectation = 'EndsWith';
 
       const output1 = mapOperatorType('*z');
       const output2 = mapOperatorType('EndsWith');
@@ -1144,7 +1144,7 @@ describe('Service/Utilies', () => {
     });
 
     it('should return OperatoryType associated to "=", "==", "eq" or "EQ"', () => {
-      const expectation = OperatorType.equal;
+      const expectation = 'EQ';
 
       const output1 = mapOperatorType('=');
       const output2 = mapOperatorType('==');
@@ -1156,7 +1156,7 @@ describe('Service/Utilies', () => {
     });
 
     it('should return OperatoryType associated to "in", "IN"', () => {
-      const expectation = OperatorType.in;
+      const expectation = 'IN';
 
       const output1 = mapOperatorType('IN');
 
@@ -1164,7 +1164,7 @@ describe('Service/Utilies', () => {
     });
 
     it('should return OperatoryType associated to "notIn", "NIN", "NOT_IN"', () => {
-      const expectation = OperatorType.notIn;
+      const expectation = 'NOT_IN';
 
       const output1 = mapOperatorType('NIN');
       const output2 = mapOperatorType('NOT_IN');
@@ -1174,7 +1174,7 @@ describe('Service/Utilies', () => {
     });
 
     it('should return OperatoryType associated to "not_contains", "Not_Contains", "notContains"', () => {
-      const expectation = OperatorType.notContains;
+      const expectation = 'Not_Contains';
 
       const output1 = mapOperatorType('<>');
       const output2 = mapOperatorType('Not_Contains');
@@ -1186,7 +1186,7 @@ describe('Service/Utilies', () => {
     });
 
     it('should return default OperatoryType associated to contains', () => {
-      const expectation = OperatorType.contains;
+      const expectation = 'Contains';
 
       const output1 = mapOperatorType('');
       const output2 = mapOperatorType('Contains');
@@ -1201,7 +1201,7 @@ describe('Service/Utilies', () => {
   describe('mapOperatorToShorthandDesignation method', () => {
     it('should return Operator shorthand of ">"', () => {
       const expectation = '>';
-      const output1 = mapOperatorToShorthandDesignation(OperatorType.greaterThan);
+      const output1 = mapOperatorToShorthandDesignation('GT');
       const output2 = mapOperatorToShorthandDesignation('>');
 
       expect(output1).toBe(expectation);
@@ -1210,7 +1210,7 @@ describe('Service/Utilies', () => {
 
     it('should return Operator shorthand of ">="', () => {
       const expectation = '>=';
-      const output1 = mapOperatorToShorthandDesignation(OperatorType.greaterThanOrEqual);
+      const output1 = mapOperatorToShorthandDesignation('GE');
       const output2 = mapOperatorToShorthandDesignation('>=');
 
       expect(output1).toBe(expectation);
@@ -1219,7 +1219,7 @@ describe('Service/Utilies', () => {
 
     it('should return Operator shorthand of "<"', () => {
       const expectation = '<';
-      const output1 = mapOperatorToShorthandDesignation(OperatorType.lessThan);
+      const output1 = mapOperatorToShorthandDesignation('LT');
       const output2 = mapOperatorToShorthandDesignation('<');
 
       expect(output1).toBe(expectation);
@@ -1228,7 +1228,7 @@ describe('Service/Utilies', () => {
 
     it('should return Operator shorthand of "<="', () => {
       const expectation = '<=';
-      const output1 = mapOperatorToShorthandDesignation(OperatorType.lessThanOrEqual);
+      const output1 = mapOperatorToShorthandDesignation('LE');
       const output2 = mapOperatorToShorthandDesignation('<=');
 
       expect(output1).toBe(expectation);
@@ -1237,7 +1237,7 @@ describe('Service/Utilies', () => {
 
     it('should return Operator shorthand of "<>"', () => {
       const expectation = '<>';
-      const output1 = mapOperatorToShorthandDesignation(OperatorType.notEqual);
+      const output1 = mapOperatorToShorthandDesignation('NE');
       const output2 = mapOperatorToShorthandDesignation('<>');
 
       expect(output1).toBe(expectation);
@@ -1246,7 +1246,7 @@ describe('Service/Utilies', () => {
 
     it('should return Operator shorthand of "="', () => {
       const expectation = '=';
-      const output1 = mapOperatorToShorthandDesignation(OperatorType.equal);
+      const output1 = mapOperatorToShorthandDesignation('EQ');
       const output2 = mapOperatorToShorthandDesignation('=');
       const output3 = mapOperatorToShorthandDesignation('==');
       const output4 = mapOperatorToShorthandDesignation('EQ');
@@ -1259,7 +1259,7 @@ describe('Service/Utilies', () => {
 
     it('should return Operator shorthand of "a*" to represent starts with', () => {
       const expectation = 'a*';
-      const output1 = mapOperatorToShorthandDesignation(OperatorType.startsWith);
+      const output1 = mapOperatorToShorthandDesignation('StartsWith');
       const output2 = mapOperatorToShorthandDesignation('a*');
       const output3 = mapOperatorToShorthandDesignation('*');
       const output4 = mapOperatorToShorthandDesignation('StartsWith');
@@ -1272,7 +1272,7 @@ describe('Service/Utilies', () => {
 
     it('should return Operator shorthand of "*z" to represent ends with', () => {
       const expectation = '*z';
-      const output1 = mapOperatorToShorthandDesignation(OperatorType.endsWith);
+      const output1 = mapOperatorToShorthandDesignation('EndsWith');
       const output2 = mapOperatorToShorthandDesignation('*z');
       const output3 = mapOperatorToShorthandDesignation('EndsWith');
 
@@ -1282,88 +1282,88 @@ describe('Service/Utilies', () => {
     });
 
     it('should return same input Operator when no shorthand is found', () => {
-      const output1 = mapOperatorToShorthandDesignation(OperatorType.in);
-      const output2 = mapOperatorToShorthandDesignation(OperatorType.contains);
-      const output3 = mapOperatorToShorthandDesignation(OperatorType.notContains);
-      const output4 = mapOperatorToShorthandDesignation(OperatorType.rangeExclusive);
-      const output5 = mapOperatorToShorthandDesignation(OperatorType.rangeInclusive);
+      const output1 = mapOperatorToShorthandDesignation('IN');
+      const output2 = mapOperatorToShorthandDesignation('Contains');
+      const output3 = mapOperatorToShorthandDesignation('Not_Contains');
+      const output4 = mapOperatorToShorthandDesignation('RangeExclusive');
+      const output5 = mapOperatorToShorthandDesignation('RangeInclusive');
 
-      expect(output1).toBe(OperatorType.in);
-      expect(output2).toBe(OperatorType.contains);
-      expect(output3).toBe(OperatorType.notContains);
-      expect(output4).toBe(OperatorType.rangeExclusive);
-      expect(output5).toBe(OperatorType.rangeInclusive);
+      expect(output1).toBe('IN');
+      expect(output2).toBe('Contains');
+      expect(output3).toBe('Not_Contains');
+      expect(output4).toBe('RangeExclusive');
+      expect(output5).toBe('RangeInclusive');
     });
   });
 
   describe('mapOperatorByFieldType method', () => {
     it('should return default OperatoryType associated to contains', () => {
-      const output1 = mapOperatorByFieldType(FieldType.string);
-      const output2 = mapOperatorByFieldType(FieldType.unknown);
+      const output1 = mapOperatorByFieldType('string');
+      const output2 = mapOperatorByFieldType('unknown');
 
-      expect(output1).toBe(OperatorType.contains);
-      expect(output2).toBe(OperatorType.contains);
+      expect(output1).toBe('Contains');
+      expect(output2).toBe('Contains');
     });
 
     it('should return default OperatoryType associated to equal', () => {
-      const output2 = mapOperatorByFieldType(FieldType.float);
-      const output3 = mapOperatorByFieldType(FieldType.number);
-      const output4 = mapOperatorByFieldType(FieldType.date);
-      const output5 = mapOperatorByFieldType(FieldType.dateIso);
-      const output6 = mapOperatorByFieldType(FieldType.date);
-      const output7 = mapOperatorByFieldType(FieldType.dateUtc);
-      const output8 = mapOperatorByFieldType(FieldType.dateTime);
-      const output9 = mapOperatorByFieldType(FieldType.dateTimeIso);
-      const output10 = mapOperatorByFieldType(FieldType.dateTimeIsoAmPm);
-      const output11 = mapOperatorByFieldType(FieldType.dateTimeIsoAM_PM);
-      const output12 = mapOperatorByFieldType(FieldType.dateEuro);
-      const output13 = mapOperatorByFieldType(FieldType.dateEuroShort);
-      const output14 = mapOperatorByFieldType(FieldType.dateTimeEuro);
-      const output15 = mapOperatorByFieldType(FieldType.dateTimeEuroAmPm);
-      const output16 = mapOperatorByFieldType(FieldType.dateTimeEuroAM_PM);
-      const output17 = mapOperatorByFieldType(FieldType.dateTimeEuroShort);
-      const output18 = mapOperatorByFieldType(FieldType.dateTimeEuroShortAmPm);
-      const output19 = mapOperatorByFieldType(FieldType.dateTimeEuroShortAM_PM);
-      const output20 = mapOperatorByFieldType(FieldType.dateUs);
-      const output21 = mapOperatorByFieldType(FieldType.dateUsShort);
-      const output22 = mapOperatorByFieldType(FieldType.dateTimeUs);
-      const output23 = mapOperatorByFieldType(FieldType.dateTimeUsAmPm);
-      const output24 = mapOperatorByFieldType(FieldType.dateTimeUsAM_PM);
-      const output25 = mapOperatorByFieldType(FieldType.dateTimeUsShort);
-      const output26 = mapOperatorByFieldType(FieldType.dateTimeUsShortAmPm);
-      const output27 = mapOperatorByFieldType(FieldType.dateTimeUsShortAM_PM);
+      const output2 = mapOperatorByFieldType('float');
+      const output3 = mapOperatorByFieldType('number');
+      const output4 = mapOperatorByFieldType('date');
+      const output5 = mapOperatorByFieldType('dateIso');
+      const output6 = mapOperatorByFieldType('date');
+      const output7 = mapOperatorByFieldType('dateUtc');
+      const output8 = mapOperatorByFieldType('dateTime');
+      const output9 = mapOperatorByFieldType('dateTimeIso');
+      const output10 = mapOperatorByFieldType('dateTimeIsoAmPm');
+      const output11 = mapOperatorByFieldType('dateTimeIsoAM_PM');
+      const output12 = mapOperatorByFieldType('dateEuro');
+      const output13 = mapOperatorByFieldType('dateEuroShort');
+      const output14 = mapOperatorByFieldType('dateTimeEuro');
+      const output15 = mapOperatorByFieldType('dateTimeEuroAmPm');
+      const output16 = mapOperatorByFieldType('dateTimeEuroAM_PM');
+      const output17 = mapOperatorByFieldType('dateTimeEuroShort');
+      const output18 = mapOperatorByFieldType('dateTimeEuroShortAmPm');
+      const output19 = mapOperatorByFieldType('dateTimeEuroShortAM_PM');
+      const output20 = mapOperatorByFieldType('dateUs');
+      const output21 = mapOperatorByFieldType('dateUsShort');
+      const output22 = mapOperatorByFieldType('dateTimeUs');
+      const output23 = mapOperatorByFieldType('dateTimeUsAmPm');
+      const output24 = mapOperatorByFieldType('dateTimeUsAM_PM');
+      const output25 = mapOperatorByFieldType('dateTimeUsShort');
+      const output26 = mapOperatorByFieldType('dateTimeUsShortAmPm');
+      const output27 = mapOperatorByFieldType('dateTimeUsShortAM_PM');
 
-      expect(output2).toBe(OperatorType.equal);
-      expect(output3).toBe(OperatorType.equal);
-      expect(output4).toBe(OperatorType.equal);
-      expect(output5).toBe(OperatorType.equal);
-      expect(output6).toBe(OperatorType.equal);
-      expect(output7).toBe(OperatorType.equal);
-      expect(output8).toBe(OperatorType.equal);
-      expect(output9).toBe(OperatorType.equal);
-      expect(output10).toBe(OperatorType.equal);
-      expect(output11).toBe(OperatorType.equal);
-      expect(output12).toBe(OperatorType.equal);
-      expect(output13).toBe(OperatorType.equal);
-      expect(output14).toBe(OperatorType.equal);
-      expect(output15).toBe(OperatorType.equal);
-      expect(output16).toBe(OperatorType.equal);
-      expect(output17).toBe(OperatorType.equal);
-      expect(output18).toBe(OperatorType.equal);
-      expect(output19).toBe(OperatorType.equal);
-      expect(output20).toBe(OperatorType.equal);
-      expect(output21).toBe(OperatorType.equal);
-      expect(output22).toBe(OperatorType.equal);
-      expect(output23).toBe(OperatorType.equal);
-      expect(output24).toBe(OperatorType.equal);
-      expect(output25).toBe(OperatorType.equal);
-      expect(output26).toBe(OperatorType.equal);
-      expect(output27).toBe(OperatorType.equal);
+      expect(output2).toBe('EQ');
+      expect(output3).toBe('EQ');
+      expect(output4).toBe('EQ');
+      expect(output5).toBe('EQ');
+      expect(output6).toBe('EQ');
+      expect(output7).toBe('EQ');
+      expect(output8).toBe('EQ');
+      expect(output9).toBe('EQ');
+      expect(output10).toBe('EQ');
+      expect(output11).toBe('EQ');
+      expect(output12).toBe('EQ');
+      expect(output13).toBe('EQ');
+      expect(output14).toBe('EQ');
+      expect(output15).toBe('EQ');
+      expect(output16).toBe('EQ');
+      expect(output17).toBe('EQ');
+      expect(output18).toBe('EQ');
+      expect(output19).toBe('EQ');
+      expect(output20).toBe('EQ');
+      expect(output21).toBe('EQ');
+      expect(output22).toBe('EQ');
+      expect(output23).toBe('EQ');
+      expect(output24).toBe('EQ');
+      expect(output25).toBe('EQ');
+      expect(output26).toBe('EQ');
+      expect(output27).toBe('EQ');
     });
 
     it('should return default OperatoryType associated to contains', () => {
       const output = mapOperatorByFieldType('' as any);
-      expect(output).toBe(OperatorType.equal);
+      expect(output).toBe('EQ');
     });
   });
 
@@ -1458,7 +1458,28 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('thousandSeparatorFormatted method', () => {
+  describe('sortPresetColumns() method', () => {
+    it('should sort preset columns', () => {
+      const allColumns: Column[] = [
+        { id: 'firstName', field: 'firstName', name: 'First Name', minWidth: 110, width: 300, hidden: true },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', width: 620 },
+        { id: 'age', field: 'age', name: 'age', width: 192, resizable: false },
+      ];
+
+      const results = sortPresetColumns(allColumns, [
+        { id: 'firstName', field: 'firstName' },
+        { id: 'lastName', field: 'lastName' },
+      ]);
+
+      expect(results).toEqual([
+        { field: 'firstName', hidden: false, id: 'firstName', minWidth: 110, name: 'First Name', width: 300 },
+        { field: 'lastName', hidden: false, id: 'lastName', name: 'Last Name', width: 620 },
+        { field: 'age', hidden: true, id: 'age', name: 'age', resizable: false, width: 192 },
+      ]);
+    });
+  });
+
+  describe('thousandSeparatorFormatted() method', () => {
     it('should return original value when input provided is null', () => {
       const input = null as any;
       const output = thousandSeparatorFormatted(input, ',');

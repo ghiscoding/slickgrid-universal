@@ -1,6 +1,6 @@
-import type { MenuCallbackArgs, MenuCommandItem, MenuOptionItem } from './index.js';
+import type { MenuCommandItem, MenuFromCellCallbackArgs, MenuOption, MenuOptionItem } from './index.js';
 
-export interface CellMenuOption {
+export interface CellMenuOption extends Omit<MenuOption<MenuFromCellCallbackArgs>, 'commandListBuilder'> {
   /** Defaults to true, Auto-align dropup or dropdown menu to the left or right depending on grid viewport available space */
   autoAdjustDrop?: boolean;
 
@@ -75,10 +75,4 @@ export interface CellMenuOption {
 
   /** Defaults to "mouseover", what event type shoud we use to open sub-menu(s), 2 options are available: "mouseover" or "click" */
   subMenuOpenByEvent?: 'mouseover' | 'click';
-
-  // --
-  // action/override callbacks
-
-  /** Callback method that user can override the default behavior of enabling/disabling an item from the list. */
-  menuUsabilityOverride?: (args: MenuCallbackArgs) => boolean;
 }

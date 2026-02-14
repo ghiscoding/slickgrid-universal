@@ -161,6 +161,14 @@ describe('Row Selection Model Plugin', () => {
     });
   });
 
+  it('should be able to change model options after init', () => {
+    plugin.init(gridStub);
+    plugin.setOptions({ selectActiveRow: false, selectActiveCell: false });
+
+    expect(plugin.getOptions().selectActiveRow).toBe(false);
+    expect(plugin.getOptions().selectActiveCell).toBe(false);
+  });
+
   it('should create the plugin and set selection type to "cell" and ', () => {
     plugin = new SlickHybridSelectionModel({ selectActiveRow: false, selectionType: 'cell' });
     plugin.init(gridStub);

@@ -6,7 +6,7 @@
 - [Row Detail - View Component](#row-detail---view-component)
 - [Access Parent Component (grid) from the Child Component (row detail)](#access-parent-component-grid-from-the-child-component-row-detail)
 - Troubleshooting
-  - [Adding a Column dynamically is removing the Row Selection, why is that?](#adding-a-column-dynamically-is-removing-the-row-selection-why-is-that)
+  - [Adding a Column dynamically is removing the Row Selection column, why is that?](#adding-a-column-dynamically-is-removing-the-row-selection-column-why-is-that)
 
 ### Demo
 [Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example21) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example21.ts)
@@ -61,14 +61,14 @@ export default class Example21 {
     this.gridOptions = {
       enableRowDetailView: true,
       // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
-      rowSelectionOptions: {
+      selectionOptions: {
         selectActiveRow: true
       },
       preRegisterExternalExtensions: (pubSubService) => {
         // Row Detail View is a special case because of its requirement to create extra column definition dynamically
         // so it must be pre-registered before SlickGrid is instantiated, we can do so via this option
         this.rowDetail = new SlickRowDetailView(pubSubService);
-        return [{ name: ExtensionName.rowDetailView, instance: this.rowDetail }];
+        return [{ name: 'rowDetailView', instance: this.rowDetail }];
       },
       rowDetailView: {
         // We can load the "process" asynchronously via Fetch, Promise, ...
@@ -181,7 +181,7 @@ This requires a bit more work, you can call the method `collapseDetailView(item)
 ```ts
 closeRowDetail(gridRowIndex: number) {
   if (this.sgb) {
-    const rowDetailInstance = this.sgb.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView);
+    const rowDetailInstance = this.sgb.extensionService.getExtensionInstanceByName('rowDetailView');
     const item = this.sgb.gridService.getDataItemByRowIndex(gridRowIndex);
     rowDetailInstance.collapseDetailView(item);
   }
@@ -234,7 +234,7 @@ export class Example {
         // Row Detail View is a special case because of its requirement to create extra column definition dynamically
         // so it must be pre-registered before SlickGrid is instantiated, we can do so via this option
         const rowDetail = new SlickRowDetailView(pubSubService as EventPubSubService);
-        return [{ name: ExtensionName.rowDetailView, instance: rowDetail }];
+        return [{ name: 'rowDetailView', instance: rowDetail }];
       },
       rowDetailView: {
         // We can load the "process" asynchronously via Fetch, Promise, ...

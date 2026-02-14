@@ -86,8 +86,8 @@ export default class Example01 {
       gridHeight: 225,
       gridWidth: 800,
       rowHeight: 33,
-      enableHybridSelection: true,
-      rowSelectionOptions: {
+      enableSelection: true,
+      selectionOptions: {
         selectionType: 'row',
       },
     };

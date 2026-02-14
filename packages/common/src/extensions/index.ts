@@ -1,11 +1,11 @@
 export * from './extensionUtility.js';
+export * from './menuBaseClass.js';
 export * from './slickAutoTooltip.js';
 export * from './slickCellExcelCopyManager.js';
 export * from './slickCellExternalCopyManager.js';
 export * from './slickCellMenu.js';
 export * from './slickCellRangeDecorator.js';
 export * from './slickCellRangeSelector.js';
-export * from './slickCellSelectionModel.js';
 export * from './slickCheckboxSelectColumn.js';
 export * from './slickColumnPicker.js';
 export * from './slickContextMenu.js';
@@ -17,4 +17,3 @@ export * from './slickHeaderMenu.js';
 export * from './slickHybridSelectionModel.js';
 export * from './slickRowBasedEdit.js';
 export * from './slickRowMoveManager.js';
-export * from './slickRowSelectionModel.js';

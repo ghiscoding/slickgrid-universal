@@ -1,7 +1,10 @@
-import type { CompositeEditorModalType } from '../enums/compositeEditorModalType.type.js';
+import type { CompositeEditorModalType } from '../enums/compositeEditorModal.type.js';
 import type { Editor, EditorConstructor } from './editor.interface.js';
 
 export interface CompositeEditorOption {
+  /** Defaults to 'dialog', the HTML element type to use for the Composite Editor modal dialog */
+  domElementType?: 'dialog' | 'div';
+
   /** Defaults to "edit", what is the type of Composite Editor Modal is used? */
   modalType: CompositeEditorModalType;
 

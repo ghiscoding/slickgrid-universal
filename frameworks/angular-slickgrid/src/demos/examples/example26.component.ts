@@ -1,9 +1,9 @@
-import { JsonPipe, NgIf } from '@angular/common';
+import { JsonPipe } from '@angular/common';
 import { Component, ViewEncapsulation, type OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import {
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   AngularUtilService,
   Editors,
   Filters,
@@ -30,7 +30,7 @@ const NB_ITEMS = 100;
   styleUrls: ['./example26.component.scss'],
   encapsulation: ViewEncapsulation.None,
   providers: [AngularUtilService],
-  imports: [AngularSlickgridModule, JsonPipe, NgIf],
+  imports: [AngularSlickgridComponent, JsonPipe],
 })
 export class Example26Component implements OnInit {
   private _commandQueue: any[] = [];

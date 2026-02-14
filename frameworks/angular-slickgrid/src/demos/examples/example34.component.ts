@@ -4,7 +4,7 @@ import { faker } from '@faker-js/faker';
 import sparkline from '@fnando/sparkline';
 import {
   Aggregators,
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   createDomElement,
   deepCopy,
   Filters,
@@ -80,7 +80,7 @@ const historicSparklineFormatter: Formatter = (_row, _cell, _value: string, _col
   templateUrl: './example34.component.html',
   styleUrls: ['./example34.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  imports: [AngularSlickgridModule, FormsModule],
+  imports: [AngularSlickgridComponent, FormsModule],
 })
 export class Example34Component implements OnDestroy, OnInit {
   private _darkMode = false;

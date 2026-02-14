@@ -3,7 +3,6 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export';
 // import { TOptions as I18NOptions } from 'i18next';
 import { resolve } from 'aurelia';
 import {
-  ExtensionName,
   Filters,
   Formatters,
   type AureliaGridInstance,
@@ -78,11 +77,11 @@ export class Example24 {
   }
 
   get cellMenuInstance() {
-    return this.aureliaGrid?.extensionService.getExtensionInstanceByName(ExtensionName.cellMenu);
+    return this.aureliaGrid?.extensionService.getExtensionInstanceByName('cellMenu');
   }
 
   get contextMenuInstance() {
-    return this.aureliaGrid?.extensionService.getExtensionInstanceByName(ExtensionName.contextMenu);
+    return this.aureliaGrid?.extensionService.getExtensionInstanceByName('contextMenu');
   }
 
   attached() {
@@ -429,7 +428,7 @@ export class Example24 {
       // optionally and conditionally define when the the menu is usable,
       // this should be used with a custom formatter to show/hide/disable the menu
       menuUsabilityOverride: (args) => {
-        const dataContext = args && args.dataContext;
+        const dataContext = args?.dataContext;
         return dataContext.id < 21; // say we want to display the menu only from Task 0 to 20
       },
       // which column to show the command list? when not defined it will be shown over all columns
@@ -460,7 +459,7 @@ export class Example24 {
           },
           // only show command to 'Help' when the task is Not Completed
           itemVisibilityOverride: (args) => {
-            const dataContext = args && args.dataContext;
+            const dataContext = args?.dataContext;
             return !dataContext.completed;
           },
         },
@@ -526,7 +525,7 @@ export class Example24 {
           textCssClass: 'italic',
           // only enable this option when the task is Not Completed
           itemUsabilityOverride: (args) => {
-            const dataContext = args && args.dataContext;
+            const dataContext = args?.dataContext;
             return !dataContext.completed;
           },
           // you can use the 'action' callback and/or subscribe to the 'onCallback' event, they both have the same arguments
@@ -548,7 +547,7 @@ export class Example24 {
           disabled: true,
           // only shown when the task is Not Completed
           itemVisibilityOverride: (args) => {
-            const dataContext = args && args.dataContext;
+            const dataContext = args?.dataContext;
             return !dataContext.completed;
           },
         },
@@ -579,7 +578,7 @@ export class Example24 {
       // subscribe to Context Menu onOptionSelected event (or use the action callback on each option)
       onOptionSelected: (_e: any, args: any) => {
         // change Priority
-        const dataContext = args && args.dataContext;
+        const dataContext = args?.dataContext;
         if (dataContext?.hasOwnProperty('priority')) {
           dataContext.priority = args.item.option;
           this.aureliaGrid.gridService.updateItem(dataContext);

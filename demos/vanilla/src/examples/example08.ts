@@ -1,4 +1,4 @@
-import { type Column, type GridOption, type ItemMetadata, type OperatorString } from '@slickgrid-universal/common';
+import { type Column, type GridOption, type ItemMetadata, type OperatorType } from '@slickgrid-universal/common';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { PdfExportService } from '@slickgrid-universal/pdf-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
@@ -16,9 +16,10 @@ export default class Example08 {
   sgb1: SlickVanillaGridBundle;
   sgb2: SlickVanillaGridBundle;
   grid2SearchSelectedColumn: Column;
-  grid2SelectedOperator: OperatorString;
+  grid2SelectedOperator: OperatorType;
   grid2SearchValue: any;
-  operatorList: OperatorString[] = ['=', '<', '<=', '>', '>=', '<>', 'StartsWith', 'EndsWith'];
+  operatorList: OperatorType[] = ['=', '<', '<=', '>', '>=', '<>', 'StartsWith', 'EndsWith'];
+  isColspanSpreading = false;
 
   constructor() {
     this.definedGrid1();
@@ -97,6 +98,7 @@ export default class Example08 {
           getRowMetadata: (item: any, row: number) => this.renderDifferentColspan(item, row),
         },
       },
+      spreadHiddenColspan: this.isColspanSpreading,
     };
   }
 
@@ -251,7 +253,7 @@ export default class Example08 {
   }
 
   selectedOperatorChanged(newOperator: string) {
-    this.grid2SelectedOperator = newOperator as OperatorString;
+    this.grid2SelectedOperator = newOperator as OperatorType;
     this.updateFilter();
   }
 
@@ -265,10 +267,17 @@ export default class Example08 {
     this.updateFilter();
   }
 
+  spreadColspan() {
+    this.isColspanSpreading = !this.isColspanSpreading;
+    this.sgb1.slickGrid?.setOptions({ spreadHiddenColspan: this.isColspanSpreading });
+    this.sgb1.slickGrid?.resetActiveCell();
+    this.sgb1.slickGrid?.invalidate();
+  }
+
   updateFilter() {
     this.sgb2.filterService.updateSingleFilter({
       columnId: `${this.grid2SearchSelectedColumn?.id ?? ''}`,
-      operator: this.grid2SelectedOperator as OperatorString,
+      operator: this.grid2SelectedOperator as OperatorType,
       searchTerms: [this.grid2SearchValue || ''],
     });
   }

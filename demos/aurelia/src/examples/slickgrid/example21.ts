@@ -1,5 +1,5 @@
 import { bindable } from 'aurelia';
-import { Formatters, type AureliaGridInstance, type Column, type GridOption, type OperatorString } from 'aurelia-slickgrid';
+import { Formatters, type AureliaGridInstance, type Column, type GridOption, type OperatorType } from 'aurelia-slickgrid';
 import './example21.scss';
 
 export class Example21 {
@@ -11,7 +11,7 @@ export class Example21 {
   gridOptions!: GridOption;
   dataset: any[] = [];
   hideSubTitle = false;
-  operatorList: OperatorString[] = ['=', '<', '<=', '>', '>=', '<>', 'StartsWith', 'EndsWith'];
+  operatorList: OperatorType[] = ['=', '<', '<=', '>', '>=', '<>', 'StartsWith', 'EndsWith'];
 
   constructor() {
     // define the grid options & columns and then create the grid itself
@@ -99,7 +99,7 @@ export class Example21 {
       alwaysShowVerticalScroll: false,
       enableColumnPicker: true,
       enableCellNavigation: true,
-      enableRowSelection: true,
+      enableSelection: true,
     };
   }
 
@@ -150,7 +150,7 @@ export class Example21 {
   updateFilter() {
     this.aureliaGrid?.filterService.updateSingleFilter({
       columnId: `${this.selectedColumn.id || ''}`,
-      operator: this.selectedOperator as OperatorString,
+      operator: this.selectedOperator as OperatorType,
       searchTerms: [this.searchValue || ''],
     });
   }

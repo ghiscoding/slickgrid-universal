@@ -2,7 +2,6 @@ import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { arrayRemoveItemByIndex, isObjectEmpty } from '@slickgrid-universal/utils';
 import type { SlickDataView, SlickGrid } from '../core/index.js';
 import { SlickHybridSelectionModel } from '../extensions/slickHybridSelectionModel.js';
-import { SlickRowSelectionModel } from '../extensions/slickRowSelectionModel.js';
 import type {
   CellArgs,
   Column,
@@ -48,8 +47,9 @@ const HideColumnOptionDefaults: HideColumnOption = {
 const ShowColumnOptionDefaults: ShowColumnOption = { autoResizeColumns: true, triggerEvent: true };
 
 export class GridService {
+  readonly pluginName = 'GridService';
   protected _grid!: SlickGrid;
-  protected _rowSelectionPlugin?: SlickHybridSelectionModel | SlickRowSelectionModel;
+  protected _rowSelectionPlugin?: SlickHybridSelectionModel;
 
   constructor(
     protected readonly gridStateService: GridStateService,
@@ -88,7 +88,6 @@ export class GridService {
 
   /** Clear all the pinning (frozen) options */
   clearPinning(resetColumns = true): void {
-    const visibleColumns = [...this.sharedService.visibleColumns];
     this.sharedService.slickGrid.setOptions({
       frozenColumn: -1,
       frozenRow: -1,
@@ -98,8 +97,8 @@ export class GridService {
 
     // SlickGrid seems to be somehow resetting the columns to their original positions,
     // so let's re-fix them to the position we kept as reference
-    if (resetColumns && Array.isArray(visibleColumns)) {
-      this.sharedService.slickGrid.setColumns(visibleColumns);
+    if (resetColumns) {
+      this.sharedService.slickGrid.updateColumns();
     }
   }
 
@@ -139,12 +138,12 @@ export class GridService {
    * and also include any extra columns used by some plugins (like Row Selection, Row Detail, ...)
    */
   getAllColumnDefinitions(): Column[] {
-    return this.sharedService.allColumns;
+    return this._grid.getColumns();
   }
 
   /** Get only visible column definitions and also include any extra columns by some plugins (like Row Selection, Row Detail, ...) */
   getVisibleColumnDefinitions(): Column[] {
-    return this.sharedService.visibleColumns;
+    return this._grid.getVisibleColumns();
   }
 
   /**
@@ -238,20 +237,15 @@ export class GridService {
 
       if (colIndexFound >= 0) {
         const visibleColumns = arrayRemoveItemByIndex<Column>(currentColumns, colIndexFound);
+        this._grid.updateColumnById(columnId, { hidden: true }, options.applySetColumns !== false);
 
-        // do we want to apply the new columns in the grid
-        if (options?.applySetColumns) {
-          this.sharedService.visibleColumns = visibleColumns;
-          this._grid.setColumns(visibleColumns);
-        }
-
-        const columnIndexFromAllColumns = this.sharedService.allColumns.findIndex((col) => col.id === columnId);
+        const columnIndexFromAllColumns = this.getAllColumnDefinitions().findIndex((col) => col.id === columnId);
         if (columnIndexFromAllColumns) {
           if (options?.hideFromColumnPicker) {
-            this.sharedService.allColumns[columnIndexFromAllColumns].excludeFromColumnPicker = true;
+            this.getAllColumnDefinitions()[columnIndexFromAllColumns].excludeFromColumnPicker = true;
           }
           if (options?.hideFromGridMenu) {
-            this.sharedService.allColumns[columnIndexFromAllColumns].excludeFromGridMenu = true;
+            this.getAllColumnDefinitions()[columnIndexFromAllColumns].excludeFromGridMenu = true;
           }
         }
 
@@ -270,19 +264,17 @@ export class GridService {
    */
   hideColumnByIds(columnIds: Array<string | number>, options?: HideColumnOption): void {
     if (Array.isArray(columnIds)) {
-      const finalVisibileColumns = this._grid.getColumns().filter((c) => !columnIds.includes(c.id));
+      const finalVisibleColumns = this._grid.getColumns().filter((c) => !columnIds.includes(c.id));
       options = { ...HideColumnOptionDefaults, ...options };
+
+      // hide each column by its id but wait after the for loop to auto resize columns in the grid
       for (const columnId of columnIds) {
-        // hide each column by its id but wait after the for loop to auto resize columns in the grid
         this.hideColumnById(columnId, { ...options, triggerEvent: false, applySetColumns: false, autoResizeColumns: false });
       }
-
-      // after looping through all columns, we can apply the leftover visible columns in the grid & keep shared ref
-      this.sharedService.visibleColumns = finalVisibileColumns;
-      this._grid.setColumns(finalVisibileColumns);
+      this._grid.updateColumns();
 
       // execute common grid commands when enabled
-      this.executeVisibilityCommands(options, ['onHideColumns'], finalVisibileColumns);
+      this.executeVisibilityCommands(options, ['onHideColumns'], finalVisibleColumns);
     }
   }
 
@@ -294,12 +286,13 @@ export class GridService {
   showColumnByIds(columnIds: Array<string | number>, options?: ShowColumnOption): void {
     if (this._grid) {
       options = { ...ShowColumnOptionDefaults, ...options };
-      const columns = this.sharedService.allColumns.filter((c) => columnIds.includes(c.id));
-      this._grid.setColumns(columns);
-      this.sharedService.visibleColumns = columns;
+      this._grid.getColumns().forEach((col) => {
+        this._grid.updateColumnById(col.id, { hidden: !columnIds.includes(col.id) });
+      });
+      this._grid.updateColumns();
 
       // execute common grid commands when enabled
-      this.executeVisibilityCommands(options, ['onShowColumns'], this.sharedService.visibleColumns);
+      this.executeVisibilityCommands(options, ['onShowColumns'], this._grid.getColumns());
     }
   }
 
@@ -327,8 +320,8 @@ export class GridService {
   highlightRow(rowNumber: number | number[], duration?: number): void {
     // create a SelectionModel if there's not one yet
     if (!this._grid.getSelectionModel()) {
-      const SelectionModelClass = this._gridOptions.enableHybridSelection ? SlickHybridSelectionModel : SlickRowSelectionModel;
-      this._rowSelectionPlugin = new SelectionModelClass(this._gridOptions.selectionOptions ?? this._gridOptions.rowSelectionOptions);
+      const selectionType = this._gridOptions.selectionOptions?.selectionType || 'row';
+      this._rowSelectionPlugin = new SlickHybridSelectionModel({ ...this._gridOptions.selectionOptions, selectionType });
       this._grid.setSelectionModel(this._rowSelectionPlugin);
     }
 
@@ -456,7 +449,7 @@ export class GridService {
       rowNumber !== undefined &&
       insertOptions.selectRow &&
       this._gridOptions &&
-      (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection || this._gridOptions.enableHybridSelection)
+      (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableSelection)
     ) {
       this.setSelectedRow(rowNumber);
     }
@@ -534,11 +527,7 @@ export class GridService {
     }
 
     // select the row in the grid
-    if (
-      insertOptions.selectRow &&
-      this._gridOptions &&
-      (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection || this._gridOptions.enableHybridSelection)
-    ) {
+    if (insertOptions.selectRow && this._gridOptions && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableSelection)) {
       this.setSelectedRows(rowNumbers);
     }
 
@@ -624,7 +613,7 @@ export class GridService {
       !isSyncGridSelectionEnabled &&
       this._grid &&
       this._gridOptions &&
-      (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection || this._gridOptions.enableHybridSelection)
+      (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableSelection)
     ) {
       this.setSelectedRows([]);
     }
@@ -741,11 +730,7 @@ export class GridService {
     }
 
     // select the row in the grid
-    if (
-      options.selectRow &&
-      this._gridOptions &&
-      (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection || this._gridOptions.enableHybridSelection)
-    ) {
+    if (options.selectRow && this._gridOptions && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableSelection)) {
       this.setSelectedRows(rowNumbers);
     }
 
@@ -803,7 +788,7 @@ export class GridService {
         rowNumber !== undefined &&
         options.selectRow &&
         this._gridOptions &&
-        (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection || this._gridOptions.enableHybridSelection)
+        (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableSelection)
       ) {
         this.setSelectedRow(rowNumber);
       }
@@ -868,11 +853,7 @@ export class GridService {
     }
 
     // select the row in the grid
-    if (
-      options.selectRow &&
-      this._gridOptions &&
-      (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableRowSelection || this._gridOptions.enableHybridSelection)
-    ) {
+    if (options.selectRow && this._gridOptions && (this._gridOptions.enableCheckboxSelector || this._gridOptions.enableSelection)) {
       this.setSelectedRows(rowNumbers);
     }
 
@@ -944,7 +925,7 @@ export class GridService {
       const sortCols = this.sortService.getCurrentColumnSorts();
       const sortedDatasetResult = this.treeDataService.convertFlatParentChildToTreeDatasetAndSort(
         inputItems || [],
-        this.sharedService.allColumns,
+        this.getAllColumnDefinitions(),
         this._gridOptions,
         sortCols
       );
@@ -962,8 +943,8 @@ export class GridService {
   /** Check wether the grid has the Row Selection enabled */
   protected hasRowSelectionEnabled(): boolean {
     const selectionModel = this._grid.getSelectionModel();
-    const { enableRowSelection, enableHybridSelection, enableCheckboxSelector } = this._gridOptions;
-    const isRowSelectionEnabled = !!(enableRowSelection || enableHybridSelection || enableCheckboxSelector);
+    const { enableSelection, enableCheckboxSelector } = this._gridOptions;
+    const isRowSelectionEnabled = !!(enableSelection || enableCheckboxSelector);
     return isRowSelectionEnabled && !!selectionModel;
   }
 }

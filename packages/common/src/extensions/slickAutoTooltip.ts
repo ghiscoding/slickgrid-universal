@@ -10,7 +10,7 @@ import type { AutoTooltipOption, Column } from '../interfaces/index.js';
  * @param {number}  [options.maxToolTipLength=null]      - The maximum length for a tooltip
  */
 export class SlickAutoTooltip {
-  pluginName = 'AutoTooltips' as const;
+  readonly pluginName = 'AutoTooltips';
 
   protected _addonOptions?: AutoTooltipOption;
   protected _eventHandler: SlickEventHandler;

@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/common",
-  "version": "9.13.0",
+  "version": "10.0.0-beta.0",
   "description": "SlickGrid-Universal Common Code",
   "type": "module",
   "main": "./dist/index.js",
@@ -32,12 +32,11 @@
     "/src"
   ],
   "scripts": {
-    "are-types-wrong": "pnpx @arethetypeswrong/cli --pack .",
     "build": "pnpm run clean && tsc && pnpm run sass:bundle",
-    "sass:bundle": "pnpm run sass:build && pnpm run sass:copy",
     "build:incremental": "tsc --incremental --declaration",
     "clean": "remove dist tsconfig.tsbuildinfo",
     "dev": "node build-watch.mjs",
+    "sass:bundle": "remove dist/styles && pnpm run sass:build && pnpm run sass:copy",
     "sass-build-task:scss-compile:default": "sass src/styles/slickgrid-theme-default.scss dist/styles/css/slickgrid-theme-default.css --style=compressed --quiet-deps --no-source-map --load-path=node_modules",
     "sass-build-task:scss-compile:default-lite": "sass src/styles/slickgrid-theme-default.lite.scss dist/styles/css/slickgrid-theme-default.lite.css --style=compressed --quiet-deps --no-source-map --load-path=node_modules",
     "sass-build-task:scss-compile:bootstrap": "sass src/styles/slickgrid-theme-bootstrap.scss dist/styles/css/slickgrid-theme-bootstrap.css --style=compressed --quiet-deps --no-source-map --load-path=node_modules",
@@ -46,7 +45,7 @@
     "sass-build-task:scss-compile:material-lite": "sass src/styles/slickgrid-theme-material.lite.scss dist/styles/css/slickgrid-theme-material.lite.css --style=compressed --quiet-deps --no-source-map --load-path=node_modules",
     "sass-build-task:scss-compile:salesforce": "sass src/styles/slickgrid-theme-salesforce.scss dist/styles/css/slickgrid-theme-salesforce.css --style=compressed --quiet-deps --no-source-map --load-path=node_modules",
     "sass-build-task:scss-compile:salesforce-lite": "sass src/styles/slickgrid-theme-salesforce.lite.scss dist/styles/css/slickgrid-theme-salesforce.lite.css --style=compressed --quiet-deps --no-source-map --load-path=node_modules",
-    "sass:build": "concurrently --prefix none \"pnpm:sass-build-task:scss-compile:*\" && pnpm run sass:build:postcss",
+    "sass:build": "node ensure-sass-dir.mjs && concurrently --prefix none \"pnpm:sass-build-task:scss-compile:*\" && pnpm run sass:build:postcss",
     "sass:build:postcss": "postcss --no-map --use cssnano --use autoprefixer --dir dist/styles/css dist/styles/css --style=compressed --quiet-deps --no-source-map",
     "sass:copy": "copyfiles \"./src/styles/*.scss\" dist/styles/sass --flat --stat",
     "sass:watch:default": "npm run sass-build-task:scss-compile:default -- --watch",
@@ -60,7 +59,7 @@
     "baseline widely available"
   ],
   "dependencies": {
-    "@excel-builder-vanilla/types": "^4.2.1",
+    "@excel-builder-vanilla/types": "^5.0.0",
     "@formkit/tempo": "catalog:",
     "@slickgrid-universal/binding": "workspace:*",
     "@slickgrid-universal/event-pub-sub": "workspace:*",
@@ -75,7 +74,8 @@
     "vanilla-calendar-pro": "^3.1.0"
   },
   "devDependencies": {
-    "autoprefixer": "^10.4.23",
+    "autoprefixer": "^10.4.24",
+    "concurrently": "catalog:",
     "cssnano": "^7.1.2",
     "concurrently": "catalog:",
     "native-copyfiles": "catalog:",

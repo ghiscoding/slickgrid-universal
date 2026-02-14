@@ -126,7 +126,7 @@ export class MySample {
 
   exportToFile(type = 'csv') {
     this.textExportService.exportToFile({
-      delimiter: (type === 'csv') ? DelimiterType.comma : DelimiterType.tab,
+      delimiter: (type === 'csv') ? ',' : '\t',
       filename: 'myExport',
       format: (type === 'csv') ? 'csv' : 'txt'
     });

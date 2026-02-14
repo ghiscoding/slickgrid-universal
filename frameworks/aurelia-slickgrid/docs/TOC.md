@@ -17,7 +17,6 @@
 * [Editors](column-functionalities/editors.md)
   * [Autocomplete](column-functionalities/editors/autocomplete-editor.md)
   * [Input (text/number)](column-functionalities/editors/input-editor.md)
-  * [old Date Picker (flatpickr)](column-functionalities/editors/date-editor-flatpickr.md)
   * [new Date Picker (vanilla-calendar)](column-functionalities/editors/date-editor-vanilla-calendar.md)
   * [LongText (textarea)](column-functionalities/editors/longtext-editor-textarea.md)
   * [Select Dropdown Editor (single/multiple)](column-functionalities/editors/select-dropdown-editor.md)
@@ -105,3 +104,4 @@
 * [Migration Guide to 7.x (2023-12-15)](migrations/migration-to-7.x.md)
 * [Migration Guide to 8.x (2024-05-10)](migrations/migration-to-8.x.md)
 * [Migration Guide to 9.x (2025-05-10)](migrations/migration-to-9.x.md)
+* [Migration Guide to 10.x (TBD)](migrations/migration-to-10.x.md)

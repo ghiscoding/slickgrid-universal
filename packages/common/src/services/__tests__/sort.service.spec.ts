@@ -92,6 +92,7 @@ const gridStub = {
   setItems: vi.fn(),
   setOptions: vi.fn(),
   setSortColumns: vi.fn(),
+  updateColumns: vi.fn(),
 } as unknown as SlickGrid;
 
 describe('SortService', () => {
@@ -419,7 +420,7 @@ describe('SortService', () => {
     it('should enable pre-parse and expect "preParseSingleDateItem()" being called when "grid.onCellChange" is called', async () => {
       const mockColumns = [
         { id: 'firstName', field: 'firstName' },
-        { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso },
+        { id: 'updatedDate', field: 'updatedDate', type: 'dateIso' },
       ] as Column[];
       const mockData = [
         { firstName: 'John', updatedDate: '2020-01-01' },
@@ -441,7 +442,7 @@ describe('SortService', () => {
     it('should enable pre-parse and expect "preParseSingleDateItem()" being called when PubSub "onItemsAdded" event is called', async () => {
       const mockColumns = [
         { id: 'firstName', field: 'firstName' },
-        { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso },
+        { id: 'updatedDate', field: 'updatedDate', type: 'dateIso' },
       ] as Column[];
       const mockData = [
         { firstName: 'John', updatedDate: '2020-01-01' },
@@ -463,7 +464,7 @@ describe('SortService', () => {
     it('should enable pre-parse and expect "preParseSingleDateItem()" being called when PubSub "onItemsUpdated" event is called', async () => {
       const mockColumns = [
         { id: 'firstName', field: 'firstName' },
-        { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso },
+        { id: 'updatedDate', field: 'updatedDate', type: 'dateIso' },
       ] as Column[];
       const mockData = [
         { firstName: 'John', updatedDate: '2020-01-01' },
@@ -485,7 +486,7 @@ describe('SortService', () => {
     it('should expect Collection Service "preParseByMutationDateItems()" to be called when calling "preParseAllDateItems()"', async () => {
       const mockColumns = [
         { id: 'firstName', field: 'firstName' },
-        { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso },
+        { id: 'updatedDate', field: 'updatedDate', type: 'dateIso' },
       ] as Column[];
       const mockData = [
         { firstName: 'John', updatedDate: '2020-01-01' },
@@ -505,7 +506,7 @@ describe('SortService', () => {
     it('should expect Collection Service "parseSingleDateItem()" to be called when calling "preParseSingleDateItem()"', async () => {
       const mockColumns = [
         { id: 'firstName', field: 'firstName' },
-        { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso },
+        { id: 'updatedDate', field: 'updatedDate', type: 'dateIso' },
       ] as Column[];
       const mockData = [
         { firstName: 'John', updatedDate: '2020-01-01' },
@@ -525,7 +526,7 @@ describe('SortService', () => {
     it('should enable pre-parse and expect "preParseByMutationDateItems()" being called when dataset has Date items not yet being parsed', async () => {
       const mockColumns = [
         { id: 'firstName', field: 'firstName' },
-        { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso },
+        { id: 'updatedDate', field: 'updatedDate', type: 'dateIso' },
       ] as Column[];
       const mockData = [
         { firstName: 'John', updatedDate: '2020-01-01' },
@@ -883,27 +884,27 @@ describe('SortService', () => {
     it('should toggle the Sorting', () => {
       const setOptionSpy = vi.spyOn(gridStub, 'setOptions');
       const disableSpy = vi.spyOn(service, 'disableSortFunctionality');
-      const setColsSpy = vi.spyOn(gridStub, 'setColumns');
+      const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
 
       service.bindLocalOnSort(gridStub);
       service.toggleSortFunctionality();
 
       expect(setOptionSpy).toHaveBeenCalledWith({ enableSorting: false }, false, true);
       expect(disableSpy).toHaveBeenCalledWith(true, true);
-      expect(setColsSpy).toHaveBeenCalled();
+      expect(updateColumnSpy).toHaveBeenCalled();
     });
 
     it('should toggle the Sorting BUT NOT trigger an event when defined as such', () => {
       const setOptionSpy = vi.spyOn(gridStub, 'setOptions');
       const disableSpy = vi.spyOn(service, 'disableSortFunctionality');
-      const setColsSpy = vi.spyOn(gridStub, 'setColumns');
+      const updateColumnSpy = vi.spyOn(gridStub, 'updateColumns');
 
       service.bindLocalOnSort(gridStub);
       service.toggleSortFunctionality(false);
 
       expect(setOptionSpy).toHaveBeenCalledWith({ enableSorting: false }, false, true);
       expect(disableSpy).toHaveBeenCalledWith(true, false);
-      expect(setColsSpy).toHaveBeenCalled();
+      expect(updateColumnSpy).toHaveBeenCalled();
     });
   });
 
@@ -1048,7 +1049,7 @@ describe('SortService', () => {
         { id: 'firstName', field: 'firstName', sortable: true },
         { id: 'lastName', field: 'lastName', sortable: true },
         { id: 'file', field: 'file', name: 'Files', sortable: true },
-        { id: 'updatedDate', field: 'updatedDate', name: 'updatedDate', sortable: true, type: FieldType.dateIso },
+        { id: 'updatedDate', field: 'updatedDate', name: 'updatedDate', sortable: true, type: 'dateIso' },
       ] as Column[];
 
       gridOptionMock.backendServiceApi = {
@@ -1073,7 +1074,7 @@ describe('SortService', () => {
     });
 
     it('should sort the data with a sorter that is a number type', () => {
-      const mockSortedCols = [{ sortCol: { id: 'age', field: 'age', type: FieldType.number }, sortAsc: true }] as ColumnSort[];
+      const mockSortedCols = [{ sortCol: { id: 'age', field: 'age', type: 'number' }, sortAsc: true }] as ColumnSort[];
 
       dataset.sort((row1, row2) => service.sortComparers(mockSortedCols, row1, row2));
 
@@ -1179,7 +1180,7 @@ describe('SortService', () => {
 
     it('should sort the data by updatedDate column when "preParseDateColumns" is set to true', () => {
       const mockSortedCols = [
-        { columnId: 'updatedDate', sortCol: { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso }, sortAsc: true },
+        { columnId: 'updatedDate', sortCol: { id: 'updatedDate', field: 'updatedDate', type: 'dateIso' }, sortAsc: true },
       ] as ColumnSort[];
 
       vi.spyOn(gridStub, 'getOptions').mockReturnValue({ ...gridOptionMock, preParseDateColumns: true });
@@ -1198,7 +1199,7 @@ describe('SortService', () => {
 
     it('should sort the data by updatedDate column when "preParseDateColumns" is set to true', () => {
       const mockSortedCols = [
-        { columnId: 'updatedDate', sortCol: { id: 'updatedDate', field: 'updatedDate', type: FieldType.dateIso }, sortAsc: true },
+        { columnId: 'updatedDate', sortCol: { id: 'updatedDate', field: 'updatedDate', type: 'dateIso' }, sortAsc: true },
       ] as ColumnSort[];
 
       vi.spyOn(gridStub, 'getOptions').mockReturnValue({ ...gridOptionMock, preParseDateColumns: '_' });

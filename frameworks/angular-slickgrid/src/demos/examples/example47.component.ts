@@ -1,8 +1,9 @@
 import { Component, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { AngularSlickRowDetailView } from '@slickgrid-universal/angular-row-detail-plugin';
 import {
   Aggregators,
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   Editors,
   Filters,
   Formatters,
@@ -13,7 +14,6 @@ import {
   type Column,
   type GridOption,
   type Grouping,
-  type SlickRowDetailView,
 } from '../../library';
 import { Example47RowDetailComponent } from './example47-rowdetail.component';
 import { RowDetailPreloadComponent } from './rowdetail-preload.component';
@@ -34,7 +34,7 @@ export interface Item {
 
 @Component({
   templateUrl: './example47.component.html',
-  imports: [AngularSlickgridModule, FormsModule],
+  imports: [AngularSlickgridComponent, FormsModule],
 })
 export class Example47Component implements OnDestroy, OnInit {
   private _darkMode = false;
@@ -57,7 +57,7 @@ export class Example47Component implements OnDestroy, OnInit {
     this.groupByDuration(); // group by duration on page load
   }
 
-  get rowDetailInstance(): SlickRowDetailView {
+  get rowDetailInstance(): AngularSlickRowDetailView {
     // you can get the SlickGrid RowDetail plugin (addon) instance via 2 ways
 
     // option 1
@@ -178,6 +178,7 @@ export class Example47Component implements OnDestroy, OnInit {
       enableRowDetailView: true,
       rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
       darkMode: this._darkMode,
+      externalResources: [AngularSlickRowDetailView],
       rowDetailView: {
         process: (item) => this.simulateServerAsyncCall(item),
         loadOnce: true,
@@ -191,7 +192,7 @@ export class Example47Component implements OnDestroy, OnInit {
         // View Component to load when row detail data is ready
         viewComponent: Example47RowDetailComponent,
       },
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: true,
       },

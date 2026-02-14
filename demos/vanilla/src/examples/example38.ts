@@ -83,10 +83,11 @@ export default class Example38 {
       editorNavigateOnArrows: true, // enable editor navigation using arrow keys
 
       // enable new hybrid selection model (rows & cells)
-      enableHybridSelection: true,
-      rowSelectionOptions: {
-        selectActiveRow: true,
+      enableSelection: true,
+      selectionOptions: {
         rowSelectColumnIds: ['selector'],
+        selectActiveRow: true,
+        selectionType: 'mixed',
       },
 
       // when using the ExcelCopyBuffer, you can see what the selection range is

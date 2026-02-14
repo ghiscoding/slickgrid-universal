@@ -3,3 +3,5 @@ _variables.scss
 _variables-theme-material.scss
 _variables-theme-salesforce.scss
 **/test/vitest-coverage/*.*
+demos/vue/src/router/index.ts
+demos/react/src/examples/slickgrid/App.tsx

@@ -3,7 +3,6 @@ import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import { useTranslation } from 'i18next-vue';
 import {
-  DelimiterType,
   Filters,
   Formatters,
   SlickgridVue,
@@ -166,7 +165,7 @@ function defineGrid() {
       hideInColumnTitleRow: true,
     },
     enableCheckboxSelector: true,
-    enableRowSelection: true,
+    enableSelection: true,
     showCustomFooter: true, // display some metrics in the bottom custom footer
     customFooterOptions: {
       metricTexts: {
@@ -280,7 +279,7 @@ function exportToExcel() {
 
 function exportToFile(type = 'csv') {
   textExportService.exportToFile({
-    delimiter: type === 'csv' ? DelimiterType.comma : DelimiterType.tab,
+    delimiter: type === 'csv' ? ',' : '\t',
     filename: 'myExport',
     format: type === 'csv' ? 'csv' : 'txt',
   });
@@ -406,7 +405,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
   <slickgrid-vue
     v-model:options="gridOptions"
     v-model:columns="columnDefinitions"
-    v-model:data="dataset"
+    v-model:dataset="dataset"
     grid-id="grid12"
     @onGridStateChanged="gridStateChanged($event.detail)"
     @onVueGridCreated="vueGridReady($event.detail)"

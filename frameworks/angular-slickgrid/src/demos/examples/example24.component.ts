@@ -1,10 +1,9 @@
-import { Component, ViewEncapsulation, type OnDestroy, type OnInit } from '@angular/core';
+import { Component, signal, ViewEncapsulation, type OnDestroy, type OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import type { Subscription } from 'rxjs';
 import {
-  AngularSlickgridModule,
-  ExtensionName,
+  AngularSlickgridComponent,
   Filters,
   Formatters,
   unsubscribeAllObservables,
@@ -61,7 +60,7 @@ const taskTranslateFormatter: Formatter = (row, cell, value, columnDef, dataCont
   templateUrl: './example24.component.html',
   styleUrls: ['./example24.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  imports: [AngularSlickgridModule],
+  imports: [AngularSlickgridComponent],
 })
 export class Example24Component implements OnInit, OnDestroy {
   private _darkModeGrid = false;
@@ -71,13 +70,13 @@ export class Example24Component implements OnInit, OnDestroy {
   gridOptions!: GridOption;
   dataset!: any[];
   hideSubTitle = false;
-  selectedLanguage: string;
+  selectedLanguage = signal('');
 
   constructor(private translate: TranslateService) {
     // always start with English for Cypress E2E tests to be consistent
     const defaultLang = 'en';
     this.translate.use(defaultLang);
-    this.selectedLanguage = defaultLang;
+    this.selectedLanguage.set(defaultLang);
   }
 
   angularGridReady(angularGrid: AngularGridInstance) {
@@ -85,11 +84,11 @@ export class Example24Component implements OnInit, OnDestroy {
   }
 
   get cellMenuInstance() {
-    return this.angularGrid?.extensionService?.getExtensionInstanceByName(ExtensionName.cellMenu);
+    return this.angularGrid?.extensionService?.getExtensionInstanceByName('cellMenu');
   }
 
   get contextMenuInstance() {
-    return this.angularGrid?.extensionService?.getExtensionInstanceByName(ExtensionName.contextMenu);
+    return this.angularGrid?.extensionService?.getExtensionInstanceByName('contextMenu');
   }
 
   ngOnInit() {
@@ -359,7 +358,7 @@ export class Example24Component implements OnInit, OnDestroy {
         onCommand: (e, args) => this.executeCommand(e, args),
         onOptionSelected: (e, args) => {
           // change "Completed" property with new option selected from the Cell Menu
-          const dataContext = args && args.dataContext;
+          const dataContext = args?.dataContext;
           if (dataContext && 'completed' in dataContext) {
             dataContext.completed = args.item.option;
             this.angularGrid.gridService.updateItem(dataContext);
@@ -438,7 +437,7 @@ export class Example24Component implements OnInit, OnDestroy {
       // optionally and conditionally define when the the menu is usable,
       // this should be used with a custom formatter to show/hide/disable the menu
       menuUsabilityOverride: (args) => {
-        const dataContext = args && args.dataContext;
+        const dataContext = args?.dataContext;
         return dataContext.id < 21; // say we want to display the menu only from Task 0 to 20
       },
       // which column to show the command list? when not defined it will be shown over all columns
@@ -469,7 +468,7 @@ export class Example24Component implements OnInit, OnDestroy {
           },
           // only show command to 'Help' when the task is Not Completed
           itemVisibilityOverride: (args) => {
-            const dataContext = args && args.dataContext;
+            const dataContext = args?.dataContext;
             return !dataContext.completed;
           },
         },
@@ -535,7 +534,7 @@ export class Example24Component implements OnInit, OnDestroy {
           textCssClass: 'italic',
           // only enable this option when the task is Not Completed
           itemUsabilityOverride: (args) => {
-            const dataContext = args && args.dataContext;
+            const dataContext = args?.dataContext;
             return !dataContext.completed;
           },
           // you can use the 'action' callback and/or subscribe to the 'onCallback' event, they both have the same arguments
@@ -557,7 +556,7 @@ export class Example24Component implements OnInit, OnDestroy {
           disabled: true,
           // only shown when the task is Not Completed
           itemVisibilityOverride: (args) => {
-            const dataContext = args && args.dataContext;
+            const dataContext = args?.dataContext;
             return !dataContext.completed;
           },
         },
@@ -588,7 +587,7 @@ export class Example24Component implements OnInit, OnDestroy {
       // subscribe to Context Menu onOptionSelected event (or use the action callback on each option)
       onOptionSelected: (_e, args) => {
         // change Priority
-        const dataContext = args && args.dataContext;
+        const dataContext = args?.dataContext;
         if ('priority' in dataContext) {
           dataContext.priority = args.item.option;
           this.angularGrid.gridService.updateItem(dataContext);
@@ -619,11 +618,10 @@ export class Example24Component implements OnInit, OnDestroy {
   }
 
   switchLanguage() {
-    const nextLanguage = this.selectedLanguage === 'en' ? 'fr' : 'en';
-
+    const nextLanguage = this.selectedLanguage() === 'en' ? 'fr' : 'en';
     this.subscriptions.push(
       this.translate.use(nextLanguage).subscribe(() => {
-        this.selectedLanguage = nextLanguage;
+        this.selectedLanguage.set(nextLanguage);
       })
     );
   }

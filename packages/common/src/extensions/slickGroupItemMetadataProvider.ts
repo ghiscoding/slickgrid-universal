@@ -28,7 +28,7 @@ import { createDocumentFragmentOrElement } from '../services/utilities.js';
  * If "grid.registerPlugin(...)" is not called, expand & collapse will not work.
  */
 export class SlickGroupItemMetadataProvider implements SlickPlugin {
-  pluginName = 'GroupItemMetadataProvider' as const;
+  readonly pluginName = 'GroupItemMetadataProvider';
   protected _eventHandler: SlickEventHandler;
   protected _grid!: SlickGrid;
   protected _options: GroupItemMetadataProviderOption;

@@ -3,7 +3,6 @@ import {
   Editors,
   Filters,
   Formatters,
-  OperatorType,
   SlickGlobalEditorLock,
   SlickgridVue,
   type Column,
@@ -179,7 +178,7 @@ function defineGrid() {
         collectionFilterBy: {
           property: 'value',
           value: 0,
-          operator: OperatorType.notEqual,
+          operator: '!=',
         },
         model: Editors.singleSelect,
       },
@@ -437,7 +436,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
     grid-id="grid26"
     v-model:options="gridOptions"
     v-model:columns="columnDefinitions"
-    v-model:data="dataset"
+    v-model:dataset="dataset"
     @onCellChange.trigger="onCellChanged($event.detail.eventData, $event.detail.args)"
     @on@click="onCellClicked($event.detail.eventData, $event.detail.args)"
     @onVueGridCreated="vueGridReady($event.detail)"

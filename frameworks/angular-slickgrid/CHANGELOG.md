@@ -4,6 +4,49 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.0.0-beta.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.12.0...v10.0.0-beta.0) (2026-02-14)
+
+### ⚠ BREAKING CHANGES
+
+* **angular:** migrate Angular-Slickgrid to Zoneless (#2341)
+* **angular:** migrate Angular-Slickgrid to Standalone Component (#2339)
+* upgrade to Angular 21 (#2338)
+* migrate Row/Hybrid Selection flag into a single `enableSelection` flag (#2331)
+* drop Cell/Row Selection Models & keep only HybridSelectionModel (#2330)
+* remove all Deprecated code (#2302)
+* drop OperatorType enums and keep only type literal (#2301)
+* replacing multiple TypeScript `enum` with `type` to decrease build size (#2300)
+* rename `v-model:data` to `v-model:dataset` (#2298)
+* make Row Detail plugin as optional in all framework wrappers (#2291)
+* rewrite Grid Menu using CSS flexbox instead of width and calc() (#2282)
+* switch to column `hidden` property and always keep all columns (#2281)
+
+### Features
+
+* add custom menu slot renderers ([#2375](https://github.com/ghiscoding/slickgrid-universal/issues/2375)) ([7ebbda5](https://github.com/ghiscoding/slickgrid-universal/commit/7ebbda58233bb5ce94b81b5b2b578af0ea6a068d)) - by @ghiscoding
+* **angular:** migrate Angular-Slickgrid to Standalone Component ([#2339](https://github.com/ghiscoding/slickgrid-universal/issues/2339)) ([89e8e26](https://github.com/ghiscoding/slickgrid-universal/commit/89e8e261af4a747b9bfd274d3df0953b231edb97)) - by @ghiscoding
+* **angular:** migrate Angular-Slickgrid to Zoneless ([#2341](https://github.com/ghiscoding/slickgrid-universal/issues/2341)) ([f55cbe2](https://github.com/ghiscoding/slickgrid-universal/commit/f55cbe28ce6999fb3933bc55372c22a84df99a15)) - by @ghiscoding
+* auto-enabled external resources with their associated flags ([#2362](https://github.com/ghiscoding/slickgrid-universal/issues/2362)) ([16dd8a7](https://github.com/ghiscoding/slickgrid-universal/commit/16dd8a77dd5d136a5a99321f0fc4c50571fdb0c0)) - by @ghiscoding
+* bind css classes to slickgrid container ([#2369](https://github.com/ghiscoding/slickgrid-universal/issues/2369)) ([a7cd4aa](https://github.com/ghiscoding/slickgrid-universal/commit/a7cd4aa6af3688ebf1ec09140856ea451a6789da)) - by @zewa666
+* drop Cell/Row Selection Models & keep only HybridSelectionModel ([#2330](https://github.com/ghiscoding/slickgrid-universal/issues/2330)) ([4398cf4](https://github.com/ghiscoding/slickgrid-universal/commit/4398cf42e03f6971b81db8cea4ed11138c0aa452)) - by @ghiscoding
+* make Row Detail plugin as optional in all framework wrappers ([#2291](https://github.com/ghiscoding/slickgrid-universal/issues/2291)) ([fa1a14c](https://github.com/ghiscoding/slickgrid-universal/commit/fa1a14c16c987bfaf7725c46e8114b20ea5a505d)) - by @ghiscoding
+* migrate Row/Hybrid Selection flag into a single `enableSelection` flag ([#2331](https://github.com/ghiscoding/slickgrid-universal/issues/2331)) ([5be5e6a](https://github.com/ghiscoding/slickgrid-universal/commit/5be5e6a862ecd024cf43d404769d65c6c1dd335e)) - by @ghiscoding
+* rename `v-model:data` to `v-model:dataset` ([#2298](https://github.com/ghiscoding/slickgrid-universal/issues/2298)) ([34f42f2](https://github.com/ghiscoding/slickgrid-universal/commit/34f42f2d14c9a1b39a2695c8a885ff2bee53d0b5)) - by @ghiscoding
+* switch to column `hidden` property and always keep all columns ([#2281](https://github.com/ghiscoding/slickgrid-universal/issues/2281)) ([075c649](https://github.com/ghiscoding/slickgrid-universal/commit/075c64961cb7400500df46b792866d39fba2d9e0)) - by @ghiscoding
+* **tooltip:** add global tooltip observation for non-grid elements ([#2371](https://github.com/ghiscoding/slickgrid-universal/issues/2371)) ([1bbc8de](https://github.com/ghiscoding/slickgrid-universal/commit/1bbc8de895e370843286eadd08574efc552ad8fd)) - by @ghiscoding
+* upgrade to Angular 21 ([#2338](https://github.com/ghiscoding/slickgrid-universal/issues/2338)) ([012def2](https://github.com/ghiscoding/slickgrid-universal/commit/012def265a4e5cb0738ea211d073df129a2eecd9)) - by @ghiscoding
+
+### Bug Fixes
+
+* **plugin:** SlickCustomTooltip should work with parent+child tooltips ([#2374](https://github.com/ghiscoding/slickgrid-universal/issues/2374)) ([8af7f45](https://github.com/ghiscoding/slickgrid-universal/commit/8af7f45eb19f0a00da2f3de7c729504be7d043eb)) - by @ghiscoding
+* remove all Deprecated code ([#2302](https://github.com/ghiscoding/slickgrid-universal/issues/2302)) ([f42c46c](https://github.com/ghiscoding/slickgrid-universal/commit/f42c46cd1f05b5c72c62f552f124b5bfe776f8b0)) - by @ghiscoding
+
+### Code Refactoring
+
+* drop OperatorType enums and keep only type literal ([#2301](https://github.com/ghiscoding/slickgrid-universal/issues/2301)) ([5dd0807](https://github.com/ghiscoding/slickgrid-universal/commit/5dd08079460dc9af798ab29527997a6d4b31abdd)) - by @ghiscoding
+* replacing multiple TypeScript `enum` with `type` to decrease build size ([#2300](https://github.com/ghiscoding/slickgrid-universal/issues/2300)) ([ea79395](https://github.com/ghiscoding/slickgrid-universal/commit/ea79395cf663b3abce8e43cf27ba6ffea7cfe113)) - by @ghiscoding
+* rewrite Grid Menu using CSS flexbox instead of width and calc() ([#2282](https://github.com/ghiscoding/slickgrid-universal/issues/2282)) ([2f5141a](https://github.com/ghiscoding/slickgrid-universal/commit/2f5141a12a765510e30a7155a7bf714e3462cfc1)) - by @ghiscoding
+
 ## [9.13.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.12.0...v9.13.0) (2026-01-30)
 
 ### Features

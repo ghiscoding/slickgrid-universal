@@ -43,7 +43,7 @@ import { sortByFieldType } from '../sortComparers/sortUtilities.js';
 export class SlickDraggableGrouping {
   columnsGroupBy: Column[] = [];
   onGroupChanged: SlickEvent;
-  pluginName: 'DraggableGrouping' = 'DraggableGrouping' as const;
+  readonly pluginName = 'DraggableGrouping';
 
   protected _addonOptions!: DraggableGrouping;
   protected _bindingEventService: BindingEventService;
@@ -603,9 +603,13 @@ export class SlickDraggableGrouping {
       draggable: '.slick-dropped-grouping',
       dragoverBubble: true,
       onAdd: (evt: SortableEvent) => {
-        const el = evt.item;
+        const el = evt.item as HTMLDivElement;
         if (el.getAttribute('id')?.replace(this._gridUid, '')) {
-          this.handleGroupByDrop(dropzoneElm, Sortable.utils.clone(evt.item));
+          // use Sortable's clone method to properly clone the element but add the missing clone() type definition (it's missing in `@types/sortablejs`)
+          const clonedElm = (Sortable.utils as Sortable.Utils & { clone<T extends HTMLElement>(el: T): T }).clone(
+            evt.item as HTMLDivElement
+          );
+          this.handleGroupByDrop(dropzoneElm, clonedElm);
         }
         el.parentNode?.removeChild(el);
       },

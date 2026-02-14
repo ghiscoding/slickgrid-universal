@@ -3,7 +3,6 @@ import { GridOdataService, type OdataOption, type OdataServiceApi } from '@slick
 import { useEffect, useRef, useState } from 'react';
 import {
   Filters,
-  OperatorType,
   SlickgridReact,
   type Column,
   type GridOption,
@@ -65,13 +64,13 @@ const Example5: React.FC = () => {
         hideInColumnTitleRow: true,
       },
       compoundOperatorAltTexts: {
-        // where '=' is any of the `OperatorString` type shown above
+        // where '=' is any of the `OperatorType` type shown above
         text: { Custom: { operatorAlt: '%%', descAlt: 'SQL Like' } },
       },
       enableCellNavigation: true,
       enableFiltering: true,
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+      enableSelection: true,
       enablePagination: true, // you could optionally disable the Pagination
       pagination: {
         pageSizes: [10, 20, 50, 100, 500, 50000],
@@ -80,7 +79,7 @@ const Example5: React.FC = () => {
       },
       presets: {
         // you can also type operator as string, e.g.: operator: 'EQ'
-        filters: [{ columnId: 'gender', searchTerms: ['male'], operator: OperatorType.equal }],
+        filters: [{ columnId: 'gender', searchTerms: ['male'], operator: '=' }],
         sorters: [
           // direction can be written as 'asc' (uppercase or lowercase) and/or use the SortDirection type
           { columnId: 'name', direction: 'asc' },
@@ -94,7 +93,7 @@ const Example5: React.FC = () => {
           enableSelect: isSelectEnabled,
           enableExpand: isExpandEnabled,
           filterQueryOverride: ({ fieldName, columnDef, columnFilterOperator, searchValues }) => {
-            if (columnFilterOperator === OperatorType.custom && columnDef?.id === 'name') {
+            if (columnFilterOperator === 'Custom' && columnDef?.id === 'name') {
               let matchesSearch = searchValues[0].replace(/\*/g, '.*');
               matchesSearch = matchesSearch.slice(0, 1) + CARET_HTML_ESCAPED + matchesSearch.slice(1);
               matchesSearch = matchesSearch.slice(0, -1) + "$'";
@@ -431,7 +430,7 @@ const Example5: React.FC = () => {
   function setFiltersDynamically() {
     // we can Set Filters Dynamically (or different filters) afterward through the FilterService
     reactGridRef.current?.filterService.updateFilters([
-      // { columnId: 'gender', searchTerms: ['male'], operator: OperatorType.equal },
+      // { columnId: 'gender', searchTerms: ['male'], operator: '=' },
       { columnId: 'name', searchTerms: ['A'], operator: 'a*' },
     ]);
   }

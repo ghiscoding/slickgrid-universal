@@ -1,6 +1,6 @@
-import { Component, type OnInit } from '@angular/core';
+import { Component, signal, type OnInit } from '@angular/core';
 import {
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   Formatters,
   type AngularGridInstance,
   type Column,
@@ -27,7 +27,7 @@ export interface OrderData {
 
 @Component({
   templateUrl: './example50.component.html',
-  imports: [AngularSlickgridModule],
+  imports: [AngularSlickgridComponent],
 })
 export class Example50Component implements OnInit {
   angularGrid1!: AngularGridInstance;
@@ -37,7 +37,7 @@ export class Example50Component implements OnInit {
   gridOptions2!: GridOption;
   dataset1!: Customer[];
   dataset2!: OrderData[];
-  selectedName = '';
+  selectedName = signal('');
 
   ngOnInit(): void {
     this.prepareGrid();
@@ -47,7 +47,7 @@ export class Example50Component implements OnInit {
   angularGridReady1(angularGrid: AngularGridInstance) {
     this.angularGrid1 = angularGrid;
     this.angularGrid1.slickGrid?.setSelectedRows([0]);
-    this.selectedName = `${this.dataset1[0].name} - ${this.dataset1[0].company}`;
+    this.selectedName.set(`${this.dataset1[0].name} - ${this.dataset1[0].company}`);
     this.dataset2 = this.mockDetailData(this.dataset1[0]);
   }
 
@@ -64,8 +64,8 @@ export class Example50Component implements OnInit {
       gridHeight: 225,
       gridWidth: 800,
       rowHeight: 33,
-      enableHybridSelection: true,
-      rowSelectionOptions: {
+      enableSelection: true,
+      selectionOptions: {
         selectionType: 'row',
       },
     };
@@ -97,7 +97,7 @@ export class Example50Component implements OnInit {
     if (item) {
       this.angularGrid1?.slickGrid?.setSelectedRows([args.row]);
       this.dataset2 = this.mockDetailData(item);
-      this.selectedName = `${item.name} - ${item.company}`;
+      this.selectedName.set(`${item.name} - ${item.company}`);
     }
   }
 

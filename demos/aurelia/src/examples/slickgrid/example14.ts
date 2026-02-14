@@ -4,6 +4,7 @@ import { type AureliaGridInstance, type Column, type GridOption, type ItemMetada
 import './example14.scss'; // provide custom CSS/SASS styling
 
 export class Example14 {
+  aureliaGrid1!: AureliaGridInstance;
   aureliaGrid2!: AureliaGridInstance;
   gridObj2: any;
   columnDefinitions1: Column[] = [];
@@ -13,6 +14,7 @@ export class Example14 {
   dataset1: any[] = [];
   dataset2: any[] = [];
   hideSubTitle = false;
+  isColspanSpreading = false;
 
   constructor() {
     this.definedGrid1();
@@ -23,6 +25,10 @@ export class Example14 {
     // populate the dataset once the grid is ready
     this.dataset1 = this.getData(500);
     this.dataset2 = this.getData(500);
+  }
+
+  aureliaGridReady1(aureliaGrid: AureliaGridInstance) {
+    this.aureliaGrid1 = aureliaGrid;
   }
 
   aureliaGridReady2(aureliaGrid: AureliaGridInstance) {
@@ -65,6 +71,7 @@ export class Example14 {
       gridMenu: {
         iconButtonContainer: 'preheader', // we can display the grid menu icon in either the preheader or in the column header (default)
       },
+      spreadHiddenColspan: this.isColspanSpreading,
     };
   }
 
@@ -154,6 +161,13 @@ export class Example14 {
         },
       },
     };
+  }
+
+  spreadColspan() {
+    this.isColspanSpreading = !this.isColspanSpreading;
+    this.aureliaGrid1.slickGrid?.setOptions({ spreadHiddenColspan: this.isColspanSpreading });
+    this.aureliaGrid1.slickGrid?.resetActiveCell();
+    this.aureliaGrid1.slickGrid?.invalidate();
   }
 
   toggleSubTitle() {

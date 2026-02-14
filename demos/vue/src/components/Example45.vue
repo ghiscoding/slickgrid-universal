@@ -1,13 +1,7 @@
 <script setup lang="ts">
 import { faker } from '@faker-js/faker';
-import {
-  ExtensionName,
-  SlickgridVue,
-  type Column,
-  type GridOption,
-  type SlickgridVueInstance,
-  type SlickRowDetailView,
-} from 'slickgrid-vue';
+import { VueSlickRowDetailView } from '@slickgrid-universal/vue-row-detail-plugin';
+import { SlickgridVue, type Column, type GridOption, type SlickgridVueInstance } from 'slickgrid-vue';
 import { computed, onBeforeMount, onUnmounted, ref, type Ref } from 'vue';
 import Example45Detail, { type Distributor, type OrderData } from './Example45Detail.vue';
 import Example45Preload from './Example45Preload.vue';
@@ -25,9 +19,7 @@ const showSubTitle = ref(true);
 const serverWaitDelay = ref(FAKE_SERVER_DELAY); // server simulation with default of 250ms but 50ms for Cypress tests
 let vueGrid!: SlickgridVueInstance;
 
-const rowDetailInstance = computed(
-  () => vueGrid?.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView) as SlickRowDetailView
-);
+const rowDetailInstance = computed(() => vueGrid?.extensionService.getExtensionInstanceByName('rowDetailView') as VueSlickRowDetailView);
 
 onBeforeMount(() => {
   defineGrid();
@@ -103,6 +95,7 @@ function defineGrid() {
     enableRowDetailView: true,
     rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
     rowHeight: 33,
+    externalResources: [VueSlickRowDetailView],
     rowDetailView: {
       process: (item: any) => simulateServerAsyncCall(item),
       loadOnce: false, // you can't use loadOnce with inner grid because only HTML template are re-rendered, not JS events
@@ -343,7 +336,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
     <slickgrid-vue
       v-model:options="gridOptions"
       v-model:columns="columnDefinitions"
-      v-model:data="dataset"
+      v-model:dataset="dataset"
       grid-id="grid45"
       @onVueGridCreated="vueGridReady($event.detail)"
     >

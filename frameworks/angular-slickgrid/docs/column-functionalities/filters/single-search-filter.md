@@ -17,12 +17,16 @@ Some users might want to have 1 main single search for filtering the grid data i
         <label>Single Search: </label>
         <select class="form-control" name="selectedColumn" [(ngModel)]="selectedColumn"
             (ngModelChange)="updateFilter()">
-            <option [ngValue]="field" *ngFor="let field of columnDefinitions">{{field.name}}</option>
+            @for (field of columnDefinitions; track field) {
+              <option [ngValue]="field">{{field.name}}</option>
+            }
         </select>
         <select class="form-control" name="selectedOperator" [(ngModel)]="selectedOperator"
             (ngModelChange)="updateFilter()">
-            <option [ngValue]="operator" *ngFor="let operator of operatorList">{{operator}}</option>
-            </select>
+            @for (operator of operatorList; track operator) {
+              <option [ngValue]="operator">{{operator}}</option>
+            }
+        </select>
 
         <input type="text" class="form-control" name="searchValue" placeholder="search value" autocomplete="off"
                 (input)="updateFilter()" [(ngModel)]="searchValue">
@@ -39,7 +43,7 @@ export class MyComponent {
   columnDefinitions: Column[];
   gridOptions: GridOption;
   dataset: any[];
-  operatorList: OperatorString[] = ['=', '<', '<=', '>', '>=', '<>'];
+  operatorList: OperatorType[] = ['=', '<', '<=', '>', '>=', '<>'];
   selectedOperator = '=';
   searchValue = '';
   selectedColumn: Column;
@@ -54,7 +58,7 @@ export class MyComponent {
       const filter = {};
       const filterArg: FilterCallbackArg = {
         columnDef: this.selectedColumn,
-        operator: this.selectedOperator as OperatorString, // or fix one yourself like '='
+        operator: this.selectedOperator as OperatorType, // or fix one yourself like '='
         searchTerms: [this.searchValue || '']
       };
 

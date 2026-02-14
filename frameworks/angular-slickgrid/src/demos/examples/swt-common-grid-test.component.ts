@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, ViewChild, type AfterViewInit, type OnInit } from '@angular/core';
+import { Component, signal, ViewChild, type AfterViewInit, type OnInit } from '@angular/core';
 import type { FilterChangedArgs, PaginationChangedArgs } from '../../library';
 import { SwtCommonGridPaginationComponent } from './swt-common-grid-pagination.component';
 import { SwtCommonGridComponent } from './swt-common-grid.component';
@@ -17,7 +17,7 @@ import { Logger } from './swt-logger.service';
 })
 export class SwtCommonGridTestComponent implements OnInit, AfterViewInit {
   testurl = 'http://127.0.0.1:8080/grid!display.do?';
-  currentUrl = this.testurl;
+  currentUrl = signal(this.testurl);
 
   @ViewChild('commonGrid1', { static: true }) commonGrid!: SwtCommonGridComponent;
   @ViewChild('commonGridPag1', { static: true }) commonGridPag!: SwtCommonGridPaginationComponent;
@@ -38,55 +38,53 @@ export class SwtCommonGridTestComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.logger.info('method [ngAfterViewInit] - START');
 
-    setTimeout(() => {
+    Promise.resolve().then(() => {
       // Init datagrid example:
-      this.commonGridPag.processing = true;
+      this.commonGridPag.processing.set(true);
 
       // Real HTTP call
-      this.currentUrl = this.testurl + '&currentPage=1';
+      this.currentUrl.set(`${this.testurl}&currentPage=1`);
       /*
-      this.httpClient.get(this.currentUrl).subscribe(
-          (data: any) => {
-              this.commonGrid.CustomGrid(data.suspectManagement.grid.metadata);
-              this.commonGrid.gridData = data.suspectManagement.grid.rows;
-              this.commonGridPag.pageCount = data.suspectManagement.singletons.maxpage;
-              this.commonGridPag.processing = false;
-          }
+      this.httpClient.get(this.currentUrl()).subscribe(
+        (data: any) => {
+          this.commonGrid.CustomGrid(data.suspectManagement.grid.metadata);
+          this.commonGrid.gridData = data.suspectManagement.grid.rows;
+          this.commonGridPag.pageCount = data.suspectManagement.singletons.maxpage;
+          this.commonGridPag.processing = false;
+        }
       );
       */
       this.commonGrid.CustomGrid(data_sample.pagination_samples.grid.metadata);
       this.commonGrid.gridData = data_sample.pagination_samples.grid.rows;
       this.commonGridPag.pageCount = data_sample.pagination_samples.grid.rows.maxpage;
 
-      this.commonGridPag.processing = false;
-    }, 0);
+      this.commonGridPag.processing.set(false);
+    });
     this.logger.info('method [ngAfterViewInit] - END');
   }
 
   filterChanged(_event: FilterChangedArgs) {
-    this.commonGridPag.processing = true;
+    this.commonGridPag.processing.set(true);
     this.updateGridData();
   }
 
   paginationChanged(_event: PaginationChangedArgs) {
-    this.commonGridPag.processing = true;
+    this.commonGridPag.processing.set(true);
     this.updateGridData();
   }
 
   sortChanged(_event: any) {
-    this.commonGridPag.processing = true;
+    this.commonGridPag.processing.set(true);
     this.updateGridData();
   }
 
   updateGridData() {
-    this.currentUrl =
-      this.testurl +
-      '&currentPage=' +
-      this.commonGrid.currentPage +
-      '&selectedSort=' +
-      this.commonGrid.sortedGridColumn +
-      '&selectedFilter=' +
-      this.commonGrid.filteredGridColumns;
+    this.currentUrl.set(
+      `${this.testurl}` +
+        `&currentPage=${this.commonGrid.currentPage}` +
+        `&selectedSort=${this.commonGrid.sortedGridColumn}` +
+        `&selectedFilter=${this.commonGrid.filteredGridColumns}`
+    );
     // Real HTTP call
     /*this.httpClient.get(this.currentUrl).subscribe(
         (data: any) => {

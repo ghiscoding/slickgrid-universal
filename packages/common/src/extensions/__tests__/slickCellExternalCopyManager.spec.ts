@@ -5,7 +5,7 @@ import type { InputEditor } from '../../editors/inputEditor.js';
 import type { SelectionModel } from '../../enums/index.js';
 import type { Column, EditCommand, GridOption, OnEventArgs } from '../../interfaces/index.js';
 import { SlickCellExternalCopyManager } from '../slickCellExternalCopyManager.js';
-import type { SlickCellSelectionModel } from '../slickCellSelectionModel.js';
+import type { SlickHybridSelectionModel } from '../slickHybridSelectionModel.js';
 
 const pubSubServiceStub = {
   publish: vi.fn(),
@@ -60,7 +60,7 @@ const gridStub = {
   onValidationError: new SlickEvent(),
 } as unknown as SlickGrid;
 
-const mockCellSelectionModel = {
+const mockHybridSelectionModel = {
   constructor: vi.fn(),
   init: vi.fn(),
   dispose: vi.fn(),
@@ -69,7 +69,7 @@ const mockCellSelectionModel = {
   getSelectedRows: vi.fn(),
   setSelectedRows: vi.fn(),
   onSelectedRangesChanged: new SlickEvent(),
-} as unknown as SlickCellSelectionModel;
+} as unknown as SlickHybridSelectionModel;
 
 const mockTextEditor = {
   constructor: vi.fn(),
@@ -148,19 +148,19 @@ describe('CellExternalCopyManager', () => {
           plugin.init(gridStub);
         } catch (error: any) {
           expect(error.message).toBe(
-            'Selection model is mandatory for this plugin. Please set a selection model on the grid before adding this plugin: grid.setSelectionModel(new SlickCellSelectionModel())'
+            'Selection model is mandatory for this plugin. Please set a selection model on the grid before adding this plugin: grid.setSelectionModel(new SlickHybridSelectionModel())'
           );
           done();
         }
       }));
 
     it('should focus on the grid after "onSelectedRangesChanged" is triggered', () => {
-      vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(mockCellSelectionModel as any);
+      vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(mockHybridSelectionModel as any);
       const gridFocusSpy = vi.spyOn(gridStub, 'focus');
 
       plugin.init(gridStub);
       const eventData = { ...new SlickEventData(), preventDefault: vi.fn() } as unknown as SlickEventData;
-      mockCellSelectionModel.onSelectedRangesChanged.notify([new SlickRange(0, 0, 0, 0)], eventData, gridStub);
+      mockHybridSelectionModel.onSelectedRangesChanged.notify([new SlickRange(0, 0, 0, 0)], eventData, gridStub);
 
       expect(gridFocusSpy).toHaveBeenCalled();
     });
@@ -217,7 +217,8 @@ describe('CellExternalCopyManager', () => {
       plugin.init(gridStub);
       plugin.setDataItemValueForColumn(mockItem, mockColumns[0], 'some value');
 
-      expect(loadValSpy).toHaveBeenCalledWith(mockItem);
+      const expectedItem = { ...mockItem, firstName: 'some value' };
+      expect(loadValSpy).toHaveBeenCalledWith(expectedItem);
       expect(applyValSpy).toHaveBeenCalledWith(mockItem, 'some value');
     });
 
@@ -226,13 +227,14 @@ describe('CellExternalCopyManager', () => {
       const applyValSpy = vi.spyOn(mockTextEditor, 'applyValue');
       const loadValSpy = vi.spyOn(mockTextEditor, 'loadValue');
       const validationSpy = vi.spyOn(mockTextEditor, 'validate').mockReturnValue(validationResults);
-      vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(mockCellSelectionModel as any);
+      vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(mockHybridSelectionModel as any);
       const notifySpy = vi.spyOn(gridStub.onValidationError, 'notify');
       const mockItem = { firstName: 'John', lastName: 'Doe' };
       plugin.init(gridStub);
       plugin.setDataItemValueForColumn(mockItem, mockColumns[0], 'some value');
 
-      expect(loadValSpy).toHaveBeenCalledWith(mockItem);
+      const expectedItem = { ...mockItem, firstName: 'some value' };
+      expect(loadValSpy).toHaveBeenCalledWith(expectedItem);
       expect(applyValSpy).toHaveBeenCalledWith(mockItem, 'some value');
       expect(validationSpy).toHaveBeenCalled();
       expect(notifySpy).toHaveBeenCalledWith(expect.objectContaining({ validationResults }));

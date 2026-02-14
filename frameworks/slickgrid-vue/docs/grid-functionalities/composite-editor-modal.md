@@ -46,7 +46,7 @@ Note: the new item will be added to the top of the grid by default, if you wish 
 ```vue
 <script setup lang="ts">
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
-import { Column, CompositeEditorModalType, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { Column, CompositeEditorModalType, Filters, Formatters, GridOption, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -122,7 +122,7 @@ Note however that there is a subtle difference compare to the Create Item action
 <script setup lang="ts">
 import { Column, CompositeEditorModalType } from 'slickgrid-vue';
 import { SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
-import { Column, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { Column, Filters, Formatters, GridOption, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -311,7 +311,7 @@ When adding a backend API to the `onSave` you can (and should) wrap your code in
 
 ## How to Skip a Mass Change
 ### Mass Change (Mass-Update / Mass-Selection) - Skipping according to certain condition(s)
-The use case would be to skip a change, in silent without any errors shown, if another column or property has value(s) that do not match our condition expectaation. A possible use case could be found under [Example 12](https://github.com/ghiscoding/slickgrid-universal/blob/eb1d5069e10b8b2cb2f14ac964f2c6e2b8f006a9/examples/webpack-demo-vanilla-bundle/src/examples/example12.ts#L949-L956), the use case that we could do is the following: "Do not apply a mass change on the 'Duration' column that is below 5 days if its 'Complexity' column is set to 'Complex' or 'Very Complex'", the code do this use case is shown below. Also note that the 3rd argument of `onSave` (in our case `dataContextOrUpdatedDatasetPreview`) will have the updated dataset but without the change(s) that got skipped
+The use case would be to skip a change, in silent without any errors shown, if another column or property has value(s) that do not match our condition expectaation. A possible use case could be found under [Example 12](https://github.com/ghiscoding/slickgrid-universal/blob/44d9a5230b9cb57f5fecbf6e7b12b8ef9f3ab69d/demos/vanilla/src/examples/example12.ts#L1093-L1101), the use case that we could do is the following: "Do not apply a mass change on the 'Duration' column that is below 5 days if its 'Complexity' column is set to 'Complex' or 'Very Complex'", the code do this use case is shown below. Also note that the 3rd argument of `onSave` (in our case `dataContextOrUpdatedDatasetPreview`) will have the updated dataset but without the change(s) that got skipped
 
 ```ts
 compositeEditorInstance.openDetails({
@@ -419,7 +419,7 @@ There are multiple options that you can change to change the UI design a bit, he
 ##### Component
 ```vue
 <script setup lang="ts">
-import { Column, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { Column, Filters, Formatters, GridOption, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -468,7 +468,7 @@ The example below shows code sample for all 3 supported editors AutoComplete, Da
 ##### Component
 ```vue
 <script setup lang="ts">
-import { Column, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { Column, Filters, Formatters, GridOption, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -492,7 +492,7 @@ function handleOnCompositeEditorChange(event) {
   // you can also change some editor options
   // not all Editors supports this functionality, so far only these Editors are supported: AutoComplete, Date, Single/Multiple Select
   if (columnDef.id === 'completed') {
-    compositeEditorInstance.changeFormEditorOption('percentComplete', 'filter', true); // multiple-select.js, show filter in dropdown
+    compositeEditorInstance.changeFormEditorOption('percentComplete', 'filter', true); // multiple-select-vanilla, show filter in dropdown
     compositeEditorInstance.changeFormEditorOption('product', 'minLength', 3);         // autocomplete, change minLength char to type
     compositeEditorInstance.changeFormEditorOption('finish', 'displayDateMin', 'today');
   }
@@ -503,16 +503,16 @@ function handleOnCompositeEditorChange(event) {
   <SlickgridVue gridId="grid30"
     v-model:columns="columnDefinitions"
     v-model:options="gridOptions"
-    v-model:data="dataset"
-    @onvueGridCreated="vueGridReady($event.detail)"
+    v-model:dataset="dataset"
     @onBeforeEditCell="handleOnBeforeEditCell($event.detail.eventData, $event.detail.args)"
     @onCellChange="handleOnCellChange($event.detail.eventData, $event.detail.args)"
     @onCompositeEditorChange="handleOnCompositeEditorChange($event.detail.eventData, $event.detail.args)"
-    @onItemsDeleted="handleItemsDeleted($event.detail)"
-    @onGridStateChanged="handleOnGridStateChanged($event.detail)"
     @onFilterChanged="handleReRenderUnsavedStyling()"
+    @onGridStateChanged="handleOnGridStateChanged($event.detail)"
+    @onItemsDeleted="handleItemsDeleted($event.detail)"
     @onPaginationChanged="handleReRenderUnsavedStyling()"
     @onValidationError="handleValidationError($event.detail.eventData, $event.detail.args)"
+    @onVueGridCreated="vueGridReady($event.detail)"
   />
 </template>
 ```
@@ -528,7 +528,7 @@ There are 2 ways to do it
 ##### Component
 ```vue
 <script setup lang="ts">
-import { Column, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { Column, Filters, Formatters, GridOption, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -588,7 +588,7 @@ function handleOnCompositeEditorChange(event) {
 
 ```vue
 <script setup lang="ts">
-import { Column, Filters, Formatters, GridOption, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { Column, Filters, Formatters, GridOption, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();

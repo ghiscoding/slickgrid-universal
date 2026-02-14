@@ -487,7 +487,7 @@ export class Example30 {
       },
       externalResources: [new ExcelExportService(), new SlickCustomTooltip(), this.compositeEditorInstance],
       enableFiltering: true,
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
       },
@@ -495,7 +495,7 @@ export class Example30 {
       showPreHeaderPanel: true,
       preHeaderPanelHeight: 28,
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+      enableSelection: true,
       multiSelect: false,
       checkboxSelector: {
         hideInFilterHeaderRow: false,

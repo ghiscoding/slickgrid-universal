@@ -2,9 +2,25 @@ import type { SlickGrid } from '../core/index.js';
 import type { SlickGridMenu } from '../extensions/slickGridMenu.js';
 import type { Column, GridMenuCommandItemCallbackArgs, GridMenuOption } from './index.js';
 
+export type BuiltInGridMenuCommand =
+  | 'clear-filter'
+  | 'clear-pinning'
+  | 'clear-sorting'
+  | 'export-csv'
+  | 'export-excel'
+  | 'export-pdf'
+  | 'export-text-delimited'
+  | 'refresh-dataset'
+  | 'toggle-dark-mode'
+  | 'toggle-filter'
+  | 'toggle-preheader';
+
 export interface GridMenu extends GridMenuOption {
   // --
   // Events
+
+  /** hide any built-in command from the grid menu */
+  hideCommands?: Array<BuiltInGridMenuCommand>;
 
   /** Fired after extension (control) is registered by SlickGrid */
   onExtensionRegistered?: (plugin: SlickGridMenu) => void;

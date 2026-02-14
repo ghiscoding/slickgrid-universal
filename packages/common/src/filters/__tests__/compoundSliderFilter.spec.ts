@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import { SlickEvent, type SlickGrid } from '../../core/index.js';
 import * as utils from '../../core/utils.js';
-import { FieldType, OperatorType } from '../../enums/index.js';
 import type { Column, FilterArguments, GridOption, SliderOption } from '../../interfaces/index.js';
 import { CompoundSliderFilter } from '../compoundSliderFilter.js';
 import { Filters } from '../index.js';
@@ -81,15 +80,6 @@ describe('CompoundSliderFilter', () => {
 
   it('should initialize the filter with slider value define in user filter options', () => {
     mockColumn.filter!.options = { sliderStartValue: 1 } as SliderOption;
-    filter.init(filterArguments);
-
-    const filterElm = divContainer.querySelector('.search-filter.slider-container.filter-duration input.compound-input') as HTMLInputElement;
-    expect(filterElm.defaultValue).toBe('1');
-    expect(filterElm.value).toBe('1');
-  });
-
-  it('should initialize the filter with slider value define in user filterOptions', () => {
-    mockColumn.filter!.filterOptions = { sliderStartValue: 1 } as SliderOption;
     filter.init(filterArguments);
 
     const filterElm = divContainer.querySelector('.search-filter.slider-container.filter-duration input.compound-input') as HTMLInputElement;
@@ -215,7 +205,7 @@ describe('CompoundSliderFilter', () => {
     const callbackSpy = vi.spyOn(filterArguments, 'callback');
 
     filter.init(filterArguments);
-    filter.setValues(['9'], OperatorType.greaterThanOrEqual);
+    filter.setValues(['9'], '>=');
 
     const filterSelectElm = divContainer.querySelector('.search-filter.filter-duration select') as HTMLInputElement;
     filterSelectElm.dispatchEvent(new Event('change'));
@@ -302,7 +292,7 @@ describe('CompoundSliderFilter', () => {
 
   it('should create the input filter with min/max slider values being set by filter "sliderStartValue" and "sliderEndValue" through the filter params', () => {
     mockColumn.filter = {
-      filterOptions: {
+      options: {
         sliderStartValue: 4,
         sliderEndValue: 69,
       },
@@ -354,7 +344,7 @@ describe('CompoundSliderFilter', () => {
     const callbackSpy = vi.spyOn(filterArguments, 'callback');
     const filterArgs = { ...filterArguments, operator: '<=', searchTerms: [3], grid: gridStub } as FilterArguments;
     mockColumn.filter = {
-      filterOptions: {
+      options: {
         sliderStartValue: 4,
         sliderEndValue: 69,
       },
@@ -368,7 +358,7 @@ describe('CompoundSliderFilter', () => {
   });
 
   it('should enableSliderTrackColoring and trigger a change event and expect slider track to have background color', () => {
-    mockColumn.filter = { filterOptions: { enableSliderTrackColoring: true } };
+    mockColumn.filter = { options: { enableSliderTrackColoring: true } };
     filter.init(filterArguments);
     filter.setValues(['80']);
     const filterElms = divContainer.querySelectorAll<HTMLInputElement>('.search-filter.slider-container.filter-duration input.compound-input');
@@ -480,8 +470,8 @@ describe('CompoundSliderFilter', () => {
       translateService.use('fr');
     });
 
-    it('should have French text translated with operator dropdown options related to numbers when column definition type is FieldType.number', () => {
-      mockColumn.type = FieldType.number;
+    it('should have French text translated with operator dropdown options related to numbers when column definition field type is set to "number"', () => {
+      mockColumn.type = 'number';
       filterArguments.searchTerms = [9];
 
       filter.init(filterArguments);

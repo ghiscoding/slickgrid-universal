@@ -1,6 +1,6 @@
 import { Component, ViewEncapsulation, type OnInit } from '@angular/core';
 import {
-  AngularSlickgridModule,
+  AngularSlickgridComponent,
   Editors,
   Formatters,
   isDefined,
@@ -14,13 +14,13 @@ import {
   templateUrl: './example41.component.html',
   styleUrls: ['./example41.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  imports: [AngularSlickgridModule],
+  imports: [AngularSlickgridComponent],
 })
 export class Example41Component implements OnInit {
   angularGrid!: AngularGridInstance;
   gridOptions!: GridOption;
   columnDefinitions!: Column[];
-  dataset!: any[];
+  dataset: any[] = [];
   dragHelper?: HTMLElement;
   dragRows: number[] = [];
   dragMode = '';
@@ -71,11 +71,12 @@ export class Example41Component implements OnInit {
       gridWidth: 800,
       rowHeight: 33,
       enableCellNavigation: true,
-      enableRowSelection: true,
+      enableSelection: true,
       enableRowMoveManager: true,
-      rowSelectionOptions: {
+      selectionOptions: {
         // True (Single Selection), False (Multiple Selections)
         selectActiveRow: false,
+        selectionType: 'row',
       },
       rowMoveManager: {
         columnIndexPosition: 0,

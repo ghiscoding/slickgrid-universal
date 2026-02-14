@@ -103,7 +103,7 @@ this.gridOptions = {
 ```
 
 #### Date and Time
-The date picker will automatically detect if the `type` or `outputType` has time inside, if it does then it will add a time picker at the bottom of the date picker and also note that the `'='` will also filter the value including that time (and it also includes seconds even if it isn't displayed in the picker). But what if you would like to show a date+time in the grid but filter with only a date? In that case you can show your date with a formatter that includes the time (e.g. `Formatters.dateUsAmPm`) and then make sure to add the output type that the picker will use in the UI but also in its filtering comparison (e.g. `outputType: 'dateUs'`) 
+The date picker will automatically detect if the `type` or `outputType` has time inside, if it does then it will add a time picker at the bottom of the date picker and also note that the `'='` will also filter the value including that time (and it also includes seconds even if it isn't displayed in the picker). But what if you would like to show a date+time in the grid but filter with only a date? In that case you can show your date with a formatter that includes the time (e.g. `Formatters.dateUsAmPm`) and then make sure to add the output type that the picker will use in the UI but also in its filtering comparison (e.g. `outputType: 'dateUs'`)
 
 For example, if we have an input date in UTC format and we want to display a Date ISO format with time to the screen (UI) and the date picker.
 
@@ -154,7 +154,7 @@ this.gridOptions = {
 ```
 
 ### Compound Operator List (custom list)
-Each Compound Filter will try to define the best possible Operator List depending on what Field Type you may have (for example we can have StartsWith Operator on a string but not on a number). If you want to provide your own custom Operator List to a Compound Filter, you can do that via the `compoundOperatorList` property (also note that your Operator must be a valid OperatorType/OperatorString).
+Each Compound Filter will try to define the best possible Operator List depending on what Field Type you may have (for example we can have StartsWith Operator on a string but not on a number). If you want to provide your own custom Operator List to a Compound Filter, you can do that via the `compoundOperatorList` property (also note that your Operator must be a valid OperatorType).
 
 ```ts
 this.columnDefinitions = [
@@ -196,7 +196,7 @@ The texts are separated into 2 groups (`numeric` or `text`) so that the alternat
 ```ts
 this.gridOptions = {
   compoundOperatorAltTexts: {
-    // where '=' is any of the `OperatorString` type shown above
+    // where '=' is any of the `OperatorType` type shown above
     numeric: { '=': { operatorAlt: 'eq', descAlt: 'alternate numeric equal description' } },
     text: { '=': { operatorAlt: 'eq', descAlt: 'alternate text equal description' } }
   },

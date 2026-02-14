@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, test, vi } from 'vitest';
 import { Aggregators } from '../../aggregators/index.js';
 import { SortDirectionNumber } from '../../enums/sortDirectionNumber.enum.js';
-import { SlickRowSelectionModel } from '../../extensions/slickRowSelectionModel.js';
+import { SlickHybridSelectionModel } from '../../extensions/slickHybridSelectionModel.js';
 import type { GridOption, Grouping } from '../../interfaces/index.js';
 import { SortComparers } from '../../sortComparers/index.js';
 import { SlickEventData } from '../slickCore.js';
@@ -1962,7 +1962,7 @@ describe('SlickDatView core file', () => {
       const gridOptions = { enableCellNavigation: true, multiSelect: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
       dv = new SlickDataView({});
       const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
-      grid.setSelectionModel(new SlickRowSelectionModel({ selectActiveRow: false }));
+      grid.setSelectionModel(new SlickHybridSelectionModel({ selectActiveRow: false, selectionType: 'row' }));
       dv.setItems(items);
       dv.setPagingOptions({ dataView: dv, pageNum: 0, pageSize: 4 });
       dv.syncGridSelection(grid, true);
@@ -1995,7 +1995,7 @@ describe('SlickDatView core file', () => {
       const gridOptions = { enableCellNavigation: true, multiSelect: true, devMode: { ownerNodeIndex: 0 } } as GridOption;
       dv = new SlickDataView({});
       const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
-      grid.setSelectionModel(new SlickRowSelectionModel({ selectActiveRow: false }));
+      grid.setSelectionModel(new SlickHybridSelectionModel({ selectActiveRow: false, selectionType: 'row' }));
       dv.setItems(items);
       dv.setPagingOptions({ dataView: dv, pageNum: 0, pageSize: 4 });
       dv.syncGridSelection(grid, false, true);
@@ -2032,7 +2032,7 @@ describe('SlickDatView core file', () => {
       const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
       const setSelectedRowSpy = vi.spyOn(grid, 'setSelectedRows');
       const onSelectedRowIdsSpy = vi.spyOn(dv.onSelectedRowIdsChanged, 'notify');
-      grid.setSelectionModel(new SlickRowSelectionModel({ selectActiveRow: false }));
+      grid.setSelectionModel(new SlickHybridSelectionModel({ selectActiveRow: false, selectionType: 'row' }));
       dv.setItems(items);
       dv.setPagingOptions({ dataView: dv, pageNum: 0, pageSize: 4 });
       dv.syncGridSelection(grid, false, true);
@@ -2081,7 +2081,7 @@ describe('SlickDatView core file', () => {
       const grid = new SlickGrid('#myGrid', dv, columns, gridOptions);
       const setSelectedRowSpy = vi.spyOn(grid, 'setSelectedRows');
       const onSelectedRowIdsSpy = vi.spyOn(dv.onSelectedRowIdsChanged, 'notify');
-      grid.setSelectionModel(new SlickRowSelectionModel({ selectActiveRow: false }));
+      grid.setSelectionModel(new SlickHybridSelectionModel({ selectActiveRow: false, selectionType: 'row' }));
       dv.setItems(items);
       dv.setPagingOptions({ dataView: dv, pageNum: 0, pageSize: 4 });
       dv.syncGridSelection(grid, false, true);

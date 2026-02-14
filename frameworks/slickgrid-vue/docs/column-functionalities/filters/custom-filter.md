@@ -12,7 +12,7 @@ You can also create your own Custom Filter with any html/css you want to use. Vu
 - as mentioned in the description, only html/css and/or JS libraries are supported.
   - this mainly mean that Vue templates (Views) are not supported (feel free to contribute).
 - SlickGrid uses `table-cell` as CSS for it to display a consistent height for each rows (this keeps the same row height/line-height to always be the same).
-  - all this to say that you might be in a situation were your filter shows in the back of the grid. The best approach to overcome this is to use a modal if you can or if the library support `append to body container`. For example, you can see that `multiple-select.js` support a `container` and is needed for the filter to work as can be seen in the [multipleSelectFilter.ts](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/filters/multipleSelectFilter.ts#L26)
+  - all this to say that you might be in a situation were your filter shows in the back of the grid. The best approach to overcome this is to use a modal if you can or if the library support `append to body container`. For example, you can see that `multiple-select-vanilla` support a `container` and is needed for the filter to work as can be seen in the [multipleSelectFilter.ts](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/filters/multipleSelectFilter.ts#L26)
 
 ### How to use Custom Filter?
 1. You first need to create a `class` using the [Filter interface](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/models/filter.interface.ts). Make sure to create all necessary public properties and functions.
@@ -56,7 +56,7 @@ const columnDefinitions: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const $filterElm = ref();
 const callback: FilterCallback;
-const operator: OperatorType | OperatorString = OperatorType.equal;
+const operator: OperatorType = 'EQ';
 
 onBeforeMount(() => {
   defineGrid();

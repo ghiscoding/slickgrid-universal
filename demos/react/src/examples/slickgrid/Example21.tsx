@@ -1,12 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  Formatters,
-  SlickgridReact,
-  type Column,
-  type GridOption,
-  type OperatorString,
-  type SlickgridReactInstance,
-} from 'slickgrid-react';
+import { Formatters, SlickgridReact, type Column, type GridOption, type OperatorType, type SlickgridReactInstance } from 'slickgrid-react';
 import './example21.scss';
 
 const Example21: React.FC = () => {
@@ -14,7 +7,7 @@ const Example21: React.FC = () => {
   const [dataset] = useState<any[]>(getData());
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
   const reactGridRef = useRef<SlickgridReactInstance | null>(null);
-  const [operatorList] = useState<OperatorString[]>(['=', '<', '<=', '>', '>=', '<>', 'StartsWith', 'EndsWith']);
+  const [operatorList] = useState<OperatorType[]>(['=', '<', '<=', '>', '>=', '<>', 'StartsWith', 'EndsWith']);
   const [selectedOperator, setSelectedOperator] = useState('');
   const [searchValue, setSearchValue] = useState('');
   const [selectedColumn, setSelectedColumn] = useState<Column>();
@@ -107,7 +100,7 @@ const Example21: React.FC = () => {
       alwaysShowVerticalScroll: false,
       enableColumnPicker: true,
       enableCellNavigation: true,
-      enableRowSelection: true,
+      enableSelection: true,
     };
 
     setColumnDefinitions(columnDefinitions);
@@ -163,7 +156,7 @@ const Example21: React.FC = () => {
   function updateFilter() {
     reactGridRef.current?.filterService.updateSingleFilter({
       columnId: `${selectedColumn?.id ?? ''}`,
-      operator: selectedOperator as OperatorString,
+      operator: selectedOperator as OperatorType,
       searchTerms: [searchValue || ''],
     });
   }

@@ -10,9 +10,10 @@ export interface MenuFromCellCallbackArgs {
 
   /** Reference to the grid. */
   grid: SlickGrid;
-}
 
-export interface MenuFromCellWithColumnCallbackArgs<T = any> extends MenuFromCellCallbackArgs {
+  /** item data context object */
+  dataContext: any;
+
   /** Cell Column definition */
-  column?: Column<T>;
+  column?: Column;
 }

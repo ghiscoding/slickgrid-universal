@@ -1,5 +1,5 @@
 import type { SlickEditorLock } from '../core/index.js';
-import type { ExtensionName } from '../enums/index.js';
+import type { ExtensionName, ExtensionNameTypeString } from '../enums/index.js';
 import type {
   SlickAutoTooltip,
   SlickCellExcelCopyManager,
@@ -7,7 +7,6 @@ import type {
   SlickCellMenu,
   SlickCellRangeDecorator,
   SlickCellRangeSelector,
-  SlickCellSelectionModel,
   SlickCheckboxSelectColumn,
   SlickColumnPicker,
   SlickContextMenu,
@@ -19,7 +18,6 @@ import type {
   SlickHybridSelectionModel,
   SlickRowBasedEdit,
   SlickRowMoveManager,
-  SlickRowSelectionModel,
 } from '../extensions/index.js';
 import type { SlickRowDetailView } from '../interfaces/index.js';
 
@@ -30,7 +28,6 @@ export type SlickPluginList =
   | SlickCellMenu
   | SlickCellRangeDecorator
   | SlickCellRangeSelector
-  | SlickCellSelectionModel
   | SlickCheckboxSelectColumn
   | SlickContextMenu
   | SlickDraggableGrouping
@@ -41,10 +38,9 @@ export type SlickPluginList =
   | SlickHybridSelectionModel
   | SlickRowBasedEdit
   | SlickRowDetailView
-  | SlickRowMoveManager
-  | SlickRowSelectionModel;
+  | SlickRowMoveManager;
 
-export type InferExtensionByName<T extends ExtensionName> = T extends ExtensionName.autoTooltip
+export type InferExtensionByName<T extends ExtensionName | ExtensionNameTypeString> = T extends ExtensionName.autoTooltip
   ? SlickAutoTooltip
   : T extends ExtensionName.cellExternalCopyManager
     ? SlickCellExcelCopyManager
@@ -72,6 +68,4 @@ export type InferExtensionByName<T extends ExtensionName> = T extends ExtensionN
                           ? SlickRowDetailView
                           : T extends ExtensionName.rowMoveManager
                             ? SlickRowMoveManager
-                            : T extends ExtensionName.rowSelection
-                              ? SlickRowSelectionModel
-                              : any;
+                            : any;

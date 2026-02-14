@@ -1,7 +1,7 @@
 import type { EventSubscription } from '@slickgrid-universal/event-pub-sub';
 import { flatten } from 'un-flatten-tree';
 import { Constants } from '../constants.js';
-import { FieldType, OperatorType, type OperatorString } from '../enums/index.js';
+import { type FieldType, type OperatorType } from '../enums/index.js';
 import type { Aggregator, CancellablePromiseWrapper, Column, GridOption, TreeDataPropNames } from '../interfaces/index.js';
 import type { Observable, RxJsFacade, Subject, Subscription } from './rxjsFacade.js';
 
@@ -441,109 +441,109 @@ export function getTranslationPrefix(gridOptions?: GridOption): string {
 }
 
 /** From a column definition, find column type */
-export function getColumnFieldType(columnDef: Column): (typeof FieldType)[keyof typeof FieldType] {
-  return columnDef.outputType || columnDef.type || FieldType.string;
+export function getColumnFieldType(columnDef: Column): FieldType {
+  return columnDef.outputType || columnDef.type || 'string';
 }
 
 /** Return all Date field types that exists in the library */
-export function getAllDateFieldTypes(): (typeof FieldType)[keyof typeof FieldType][] {
+export function getAllDateFieldTypes(): FieldType[] {
   return [
-    FieldType.date,
-    FieldType.dateTime,
-    FieldType.dateIso,
-    FieldType.dateTimeIso,
-    FieldType.dateTimeShortIso,
-    FieldType.dateTimeIsoAmPm,
-    FieldType.dateTimeIsoAM_PM,
-    FieldType.dateEuro,
-    FieldType.dateEuroShort,
-    FieldType.dateTimeEuro,
-    FieldType.dateTimeShortEuro,
-    FieldType.dateTimeEuroAmPm,
-    FieldType.dateTimeEuroAM_PM,
-    FieldType.dateTimeEuroShort,
-    FieldType.dateTimeEuroShortAmPm,
-    FieldType.dateTimeEuroShortAM_PM,
-    FieldType.dateUs,
-    FieldType.dateUsShort,
-    FieldType.dateTimeUs,
-    FieldType.dateTimeShortUs,
-    FieldType.dateTimeUsAmPm,
-    FieldType.dateTimeUsAM_PM,
-    FieldType.dateTimeUsShort,
-    FieldType.dateTimeUsShortAmPm,
-    FieldType.dateTimeUsShortAM_PM,
-    FieldType.dateUtc,
+    'date',
+    'dateTime',
+    'dateIso',
+    'dateTimeIso',
+    'dateTimeShortIso',
+    'dateTimeIsoAmPm',
+    'dateTimeIsoAM_PM',
+    'dateEuro',
+    'dateEuroShort',
+    'dateTimeEuro',
+    'dateTimeShortEuro',
+    'dateTimeEuroAmPm',
+    'dateTimeEuroAM_PM',
+    'dateTimeEuroShort',
+    'dateTimeEuroShortAmPm',
+    'dateTimeEuroShortAM_PM',
+    'dateUs',
+    'dateUsShort',
+    'dateTimeUs',
+    'dateTimeShortUs',
+    'dateTimeUsAmPm',
+    'dateTimeUsAM_PM',
+    'dateTimeUsShort',
+    'dateTimeUsShortAmPm',
+    'dateTimeUsShortAM_PM',
+    'dateUtc',
   ];
 }
 
 /** Verify if the identified column is of type Date */
-export function isColumnDateType(fieldType?: (typeof FieldType)[keyof typeof FieldType]): boolean {
-  if (getAllDateFieldTypes().includes(fieldType as (typeof FieldType)[keyof typeof FieldType])) {
+export function isColumnDateType(fieldType?: FieldType): boolean {
+  if (getAllDateFieldTypes().includes(fieldType as FieldType)) {
     return true;
   }
   return false;
 }
 
 /**
- * Mapper for query operators (ex.: <= is "le", > is "gt")
+ * Mapper for query operators (ex.: `<=` → `LE`, `>` → `GT`, ...)
  * @param string operator
  * @returns string map
  */
-export function mapOperatorType(operator: OperatorType | OperatorString): OperatorType {
+export function mapOperatorType(operator: OperatorType): OperatorType {
   let map: OperatorType;
 
   switch (operator) {
     case '<':
     case 'LT':
-      map = OperatorType.lessThan;
+      map = 'LT';
       break;
     case '<=':
     case 'LE':
-      map = OperatorType.lessThanOrEqual;
+      map = 'LE';
       break;
     case '>':
     case 'GT':
-      map = OperatorType.greaterThan;
+      map = 'GT';
       break;
     case '>=':
     case 'GE':
-      map = OperatorType.greaterThanOrEqual;
+      map = 'GE';
       break;
     case '!=':
     case 'NE':
-      map = OperatorType.notEqual;
+      map = 'NE';
       break;
     case '*':
     case 'a*':
     case 'StartsWith':
-      map = OperatorType.startsWith;
+      map = 'StartsWith';
       break;
     case '*z':
     case 'EndsWith':
-      map = OperatorType.endsWith;
+      map = 'EndsWith';
       break;
     case '=':
     case '==':
     case 'EQ':
-      map = OperatorType.equal;
+      map = 'EQ';
       break;
     case 'IN':
-      map = OperatorType.in;
+      map = 'IN';
       break;
     case 'NIN':
     case 'NOT_IN':
-      map = OperatorType.notIn;
+      map = 'NOT_IN';
       break;
     case '<>':
     case 'Not_Contains':
     case 'NOT_CONTAINS':
-      map = OperatorType.notContains;
+      map = 'Not_Contains';
       break;
     case 'Contains':
     case 'CONTAINS':
     default:
-      map = OperatorType.contains;
+      map = 'Contains';
       break;
   }
 
@@ -553,44 +553,43 @@ export function mapOperatorType(operator: OperatorType | OperatorString): Operat
 /**
  * Find equivalent short designation of an Operator Type or Operator String.
  * When using a Compound Filter, we use the short designation and so we need the mapped value.
- * For example OperatorType.startsWith short designation is "a*", while OperatorType.greaterThanOrEqual is ">="
+ * For example `StartsWith` short designation is `a*`, then `GE` → `>=`, ...
  */
-export function mapOperatorToShorthandDesignation(operator: OperatorType | OperatorString): OperatorString {
-  let shortOperator: OperatorString = '';
+export function mapOperatorToShorthandDesignation(operator: OperatorType): OperatorType {
+  let shortOperator: OperatorType = '';
 
   switch (operator) {
-    case OperatorType.greaterThan:
+    case 'GT':
     case '>':
       shortOperator = '>';
       break;
-    case OperatorType.greaterThanOrEqual:
+    case 'GE':
     case '>=':
       shortOperator = '>=';
       break;
-    case OperatorType.lessThan:
+    case 'LT':
     case '<':
       shortOperator = '<';
       break;
-    case OperatorType.lessThanOrEqual:
+    case 'LE':
     case '<=':
       shortOperator = '<=';
       break;
-    case OperatorType.notEqual:
+    case 'NE':
     case '<>':
       shortOperator = '<>';
       break;
-    case OperatorType.equal:
     case '=':
     case '==':
     case 'EQ':
       shortOperator = '=';
       break;
-    case OperatorType.startsWith:
+    case 'StartsWith':
     case 'a*':
     case '*':
       shortOperator = 'a*';
       break;
-    case OperatorType.endsWith:
+    case 'EndsWith':
     case '*z':
       shortOperator = '*z';
       break;
@@ -609,24 +608,24 @@ export function mapOperatorToShorthandDesignation(operator: OperatorType | Opera
  * @param operator
  * @returns string map
  */
-export function mapOperatorByFieldType(fieldType: (typeof FieldType)[keyof typeof FieldType]): OperatorType {
+export function mapOperatorByFieldType(fieldType: FieldType): OperatorType {
   let map: OperatorType;
 
   if (isColumnDateType(fieldType)) {
-    map = OperatorType.equal;
+    map = 'EQ';
   } else {
     switch (fieldType) {
-      case FieldType.unknown:
-      case FieldType.string:
-      case FieldType.text:
-      case FieldType.password:
-      case FieldType.readonly:
-        map = OperatorType.contains;
+      case 'unknown':
+      case 'string':
+      case 'text':
+      case 'password':
+      case 'readonly':
+        map = 'Contains';
         break;
-      case FieldType.float:
-      case FieldType.number:
+      case 'float':
+      case 'number':
       default:
-        map = OperatorType.equal;
+        map = 'EQ';
         break;
     }
   }
@@ -690,35 +689,68 @@ export function findOrDefault<T = any>(array: T[], logic: (item: T) => boolean, 
  * @returns {Promise}
  */
 export function fetchAsPromise<T = any>(input?: T[] | Promise<T> | Observable<T> | Subject<T>, rxjs?: RxJsFacade): Promise<T | null> {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     if (Array.isArray(input)) {
       resolve(input as T);
     } else if (input instanceof Promise) {
-      input.then((response: any | any[]) => {
-        if (Array.isArray(response)) {
-          resolve(response as T); // from Promise
-        } else if (response?.status >= 200 && response.status < 300 && typeof response.json === 'function') {
-          if (response.bodyUsed) {
-            const errorMsg =
-              '[SlickGrid-Universal] The response body passed to Fetch was already read. ' +
-              'Either pass the dataset from the Response or clone the response first using response.clone()';
-            console.warn(errorMsg);
-            resolve(null);
+      input
+        .then((response: any | any[]) => {
+          if (Array.isArray(response)) {
+            resolve(response as T); // from Promise
+          } else if (response?.status >= 200 && response.status < 300 && typeof response.json === 'function') {
+            if (response.bodyUsed) {
+              const errorMsg =
+                '[SlickGrid-Universal] The response body passed to Fetch was already read. ' +
+                'Either pass the dataset from the Response or clone the response first using response.clone()';
+              console.warn(errorMsg);
+              resolve(null);
+            } else {
+              resolve((response as Response).json()); // from Fetch
+            }
+          } else if (response?.content) {
+            resolve(response['content'] as T); // from http-client
           } else {
-            resolve((response as Response).json()); // from Fetch
+            resolve(response); // anything we'll just return "as-is"
           }
-        } else if (response?.content) {
-          resolve(response['content'] as T); // from http-client
-        } else {
-          resolve(response); // anything we'll just return "as-is"
-        }
-      });
+        })
+        .catch((error) => reject(error));
     } else if (input && rxjs?.isObservable(input)) {
       resolve(castObservableToPromise(rxjs, input)); // Observable
     } else {
       resolve(null);
     }
   });
+}
+
+/**
+ * Take all the columns defined in the datagrid and also the preset columns,
+ * then sort by the original column definitions unless a different order is specified in the presets which is given precedence
+ * @param allColumns
+ * @param presetColumns
+ * @returns
+ */
+export function sortPresetColumns<T = any>(allColumns: Column<T>[], presetColumns: Column<T>[]): Column<T>[] {
+  // Create a map of preset column IDs with their order
+  const presetColumnMap = new Map(presetColumns.map((col, index) => [col.id, index]));
+
+  // Create a copy of allColumns with sorting metadata
+  return allColumns
+    .map((column, originalIndex) => ({
+      ...column,
+      hidden: !presetColumnMap.has(column.id) || (presetColumns.find((c) => c.id === column.id)?.hidden ?? false),
+      _originalIndex: originalIndex,
+      _presetIndex: presetColumnMap.get(column.id),
+    }))
+    .sort((a, b) => {
+      // If both columns have a preset index, sort by preset order
+      if (a._presetIndex !== undefined && b._presetIndex !== undefined) {
+        return a._presetIndex - b._presetIndex;
+      }
+
+      // If one column is in presets and the other is not, preserve original order
+      return a._originalIndex - b._originalIndex;
+    })
+    .map(({ _originalIndex, _presetIndex, ...column }) => column);
 }
 
 /**

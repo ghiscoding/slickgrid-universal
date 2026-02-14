@@ -177,39 +177,39 @@ describe('formatterUtilities', () => {
 
   describe('getAssociatedDateFormatter method', () => {
     it('should return a Formatter function', () => {
-      const formatterFn = getAssociatedDateFormatter(FieldType.dateIso, '-');
+      const formatterFn = getAssociatedDateFormatter('dateIso', '-');
       const isFunction = typeof formatterFn === 'function';
       expect(isFunction).toBe(true);
     });
 
     it('should return a formatted Date when calling the Formatter function', () => {
-      const formatterFn = getAssociatedDateFormatter(FieldType.dateIso, '-');
+      const formatterFn = getAssociatedDateFormatter('dateIso', '-');
       const gridSpy = vi.spyOn(gridStub, 'getOptions');
 
-      const output = formatterFn(1, 1, '2002-01-01T00:01:01', { type: FieldType.dateIso } as Column, {}, gridStub);
+      const output = formatterFn(1, 1, '2002-01-01T00:01:01', { type: 'dateIso' } as Column, {}, gridStub);
 
       expect(gridSpy).toHaveBeenCalled();
       expect(output).toBe('2002-01-01');
     });
 
     it('should return same unformatted blank Date when calling the Formatter function with a blank date', () => {
-      const formatterFn = getAssociatedDateFormatter(FieldType.dateIso, '-');
+      const formatterFn = getAssociatedDateFormatter('dateIso', '-');
       const gridSpy = vi.spyOn(gridStub, 'getOptions');
 
-      const output = formatterFn(1, 1, '0001-01-01T00:00:00', { type: FieldType.dateIso } as Column, {}, gridStub);
+      const output = formatterFn(1, 1, '0001-01-01T00:00:00', { type: 'dateIso' } as Column, {}, gridStub);
 
       expect(gridSpy).toHaveBeenCalled();
       expect(output).toBe('0001-01-01T00:00:00');
     });
 
     it('should return a formatted Date with a different separator when changing setting the "dateSeparator" in "formatterOptions"', () => {
-      const formatterFn = getAssociatedDateFormatter(FieldType.dateIso, '-');
+      const formatterFn = getAssociatedDateFormatter('dateIso', '-');
       const gridOptions = {
         formatterOptions: { dateSeparator: '.' },
       } as GridOption;
       const gridSpy = (gridStub.getOptions as Mock).mockReturnValue(gridOptions);
 
-      const output = formatterFn(1, 1, '2002-01-01T00:01:01', { type: FieldType.dateIso } as Column, {}, gridStub);
+      const output = formatterFn(1, 1, '2002-01-01T00:01:01', { type: 'dateIso' } as Column, {}, gridStub);
 
       expect(gridSpy).toHaveBeenCalled();
       expect(output).toBe('2002.01.01');
@@ -226,7 +226,7 @@ describe('formatterUtilities', () => {
     it('should throw when missing "params.outputFormat" when calling the Formatter function', () => {
       const formatterFn = getBaseDateFormatter();
 
-      expect(() => formatterFn(1, 1, '2002-01-01T00:01:01', { type: FieldType.dateIso } as Column, {}, gridStub)).toThrow(
+      expect(() => formatterFn(1, 1, '2002-01-01T00:01:01', { type: 'dateIso' } as Column, {}, gridStub)).toThrow(
         '[Slickgrid-Universal] Using the base "Formatter.date" requires "params.outputFormat" defined'
       );
     });
@@ -234,7 +234,7 @@ describe('formatterUtilities', () => {
     it('should return a formatted Date when calling the Formatter function with a defined "params.outputFormat"', () => {
       const formatterFn = getBaseDateFormatter();
       const mockColumn = {
-        type: FieldType.date,
+        type: 'date',
         params: { dateFormat: 'MMM DD, YYYY' },
       } as Column;
 

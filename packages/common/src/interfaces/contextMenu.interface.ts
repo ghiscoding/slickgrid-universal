@@ -2,9 +2,23 @@ import type { SlickEventData } from '../core/slickCore.js';
 import type { SlickContextMenu } from '../extensions/slickContextMenu.js';
 import type { ContextMenuOption, MenuCommandItemCallbackArgs, MenuFromCellCallbackArgs, MenuOptionItemCallbackArgs } from './index.js';
 
+export type BuiltInContextMenuCommand =
+  | 'clear-grouping'
+  | 'collapse-all-groups'
+  | 'copy'
+  | 'divider-1'
+  | 'expand-all-groups'
+  | 'export-csv'
+  | 'export-excel'
+  | 'export-pdf'
+  | 'export-text-delimited';
+
 export interface ContextMenu extends ContextMenuOption {
   // --
   // Events
+
+  /** hide any built-in command from the context menu */
+  hideCommands?: Array<BuiltInContextMenuCommand>;
 
   /** Fired after extension (control) is registered by SlickGrid */
   onExtensionRegistered?: (plugin: SlickContextMenu) => void;

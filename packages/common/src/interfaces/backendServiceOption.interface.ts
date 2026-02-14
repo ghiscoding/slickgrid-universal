@@ -1,5 +1,5 @@
 import type { SlickGrid } from '../core/slickGrid.js';
-import type { OperatorType } from '../enums/operatorType.enum.js';
+import type { OperatorType } from '../enums/operator.type.js';
 import type { Column } from './column.interface.js';
 
 export interface InfiniteScrollOption {

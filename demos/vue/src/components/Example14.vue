@@ -12,6 +12,7 @@ const columnDefinitions2: Ref<Column[]> = ref([]);
 const dataset1 = ref<any[]>([]);
 const dataset2 = ref<any[]>([]);
 const showSubTitle = ref(true);
+let isColspanSpreading = ref(false);
 let vueGrid1!: SlickgridVueInstance;
 let vueGrid2!: SlickgridVueInstance;
 
@@ -59,6 +60,7 @@ function definedGrid1() {
     gridMenu: {
       iconButtonContainer: 'preheader', // we can display the grid menu icon in either the preheader or in the column header (default)
     },
+    spreadHiddenColspan: isColspanSpreading.value,
   };
 }
 
@@ -150,6 +152,13 @@ function renderDifferentColspan(item: any, row: number): ItemMetadata {
   };
 }
 
+function spreadColspan() {
+  isColspanSpreading.value = !isColspanSpreading.value;
+  vueGrid1.slickGrid?.setOptions({ spreadHiddenColspan: isColspanSpreading.value });
+  vueGrid1.slickGrid?.resetActiveCell();
+  vueGrid1.slickGrid?.invalidate();
+}
+
 function toggleSubTitle() {
   showSubTitle.value = !showSubTitle.value;
   const action = showSubTitle.value ? 'remove' : 'add';
@@ -195,12 +204,22 @@ function vueGrid2Ready(grid: SlickgridVueInstance) {
     </ul>
   </div>
 
-  <h3>Grid 1 <small>(with Header Grouping &amp; Colspan)</small></h3>
+  <h3>
+    Grid 1 <small>(with Header Grouping &amp; Colspan)</small>
+    <button
+      class="btn btn-outline-secondary btn-sm btn-icon ms-2"
+      @click="spreadColspan()"
+      data-test="spread-colspan-button"
+      title="Should we always spread the same visible column count with or without hidden columns?"
+    >
+      <span>Toggle Spreading of ColSpan with/without Hidden Columns</span>
+    </button>
+  </h3>
 
   <slickgrid-vue
     v-model:options="gridOptions1!"
     v-model:columns="columnDefinitions1"
-    v-model:data="dataset1"
+    v-model:dataset="dataset1"
     grid-id="grid1"
     @onVueGridCreated="vueGrid1Ready($event.detail)"
   >
@@ -222,7 +241,7 @@ function vueGrid2Ready(grid: SlickgridVueInstance) {
   <slickgrid-vue
     v-model:options="gridOptions2!"
     v-model:columns="columnDefinitions2"
-    v-model:data="dataset2"
+    v-model:dataset="dataset2"
     grid-id="grid2"
     @onVueGridCreated="vueGrid2Ready($event.detail)"
   >

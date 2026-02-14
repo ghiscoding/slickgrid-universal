@@ -7,5 +7,7 @@
   ],
   "typescript.format.semicolons": "insert",
   "vitest.rootConfig": "./test/vitest.config.mts",
-  "typescript.tsdk": "node_modules\\typescript\\lib"
+  "typescript.tsdk": "node_modules\\typescript\\lib",
+  "prettier.prettierPath": "node_modules/prettier/index.cjs",
+  "prettier.configPath": ".prettierrc"
 }

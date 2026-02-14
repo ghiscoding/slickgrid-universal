@@ -1,4 +1,4 @@
-import type { OperatorString } from '../enums/index.js';
+import type { OperatorType } from '../enums/index.js';
 
 /**
  * Compare 2 objects,
@@ -31,7 +31,7 @@ export function compareObjects(o1: any, o2: any, compareKey?: string): boolean {
 }
 
 /** Simple check to see if the given Operator is meant to be used with a collection check */
-export function isCollectionOperator(operator: OperatorString): boolean {
+export function isCollectionOperator(operator: OperatorType): boolean {
   const inputOperator = operator?.toUpperCase() || '';
   switch (inputOperator) {
     case 'IN':
@@ -49,7 +49,7 @@ export function isCollectionOperator(operator: OperatorString): boolean {
 }
 
 /** Execute the test on the filter condition given an operator and both values, returns a boolean */
-export const testFilterCondition = (operator: OperatorString, value1: any, value2: any): boolean => {
+export const testFilterCondition = (operator: OperatorType, value1: any, value2: any): boolean => {
   switch (operator.toUpperCase()) {
     case '<':
     case 'LT':

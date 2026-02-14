@@ -11,16 +11,15 @@ import type {
   GridOption,
   InfiniteScrollOption,
   MultiColumnSort,
-  OperatorString,
+  OperatorType,
   Pagination,
   PaginationChangedArgs,
   PaginationCursorChangedArgs,
-  SharedService,
   SingleColumnSort,
   SlickGrid,
-  SortDirectionString,
+  SortDirection,
 } from '@slickgrid-universal/common';
-import { FieldType, mapOperatorByFieldType, mapOperatorType, OperatorType, SortDirection } from '@slickgrid-universal/common';
+import { mapOperatorByFieldType, mapOperatorType, type FieldType } from '@slickgrid-universal/common';
 import { getHtmlStringOutput, stripTags } from '@slickgrid-universal/utils';
 import type {
   GraphqlCursorPaginationOption,
@@ -62,14 +61,14 @@ export class GraphqlService implements BackendService {
   }
 
   /** Initialization of the service, which acts as a constructor */
-  init(serviceOptions?: GraphqlServiceOption, pagination?: Pagination, grid?: SlickGrid, sharedService?: SharedService): void {
+  init(serviceOptions?: GraphqlServiceOption, pagination?: Pagination, grid?: SlickGrid): void {
     this._grid = grid;
     this.options = serviceOptions || { datasetName: '' };
     this.pagination = pagination;
     this._datasetIdPropName = this._gridOptions.datasetIdPropertyName || 'id';
 
     if (typeof grid?.getColumns === 'function') {
-      this._columns = sharedService?.allColumns ?? grid.getColumns() ?? [];
+      this._columns = grid.getColumns() ?? [];
     }
   }
 
@@ -428,7 +427,7 @@ export class GraphqlService implements BackendService {
         if (fieldName instanceof HTMLElement) {
           fieldName = stripTags(fieldName.innerHTML);
         }
-        const fieldType = columnDef.type || FieldType.string;
+        const fieldType = columnDef.type || 'string';
         let searchTerms = columnFilter?.searchTerms ?? [];
         let fieldSearchValue = Array.isArray(searchTerms) && searchTerms.length === 1 ? searchTerms[0] : '';
         if (typeof fieldSearchValue === 'undefined') {
@@ -465,7 +464,7 @@ export class GraphqlService implements BackendService {
         const comboEndsWith = matches?.[3] || '';
         let operator = columnFilter.operator || matches?.[4];
         searchValue = matches?.[1] || matches?.[5] || '';
-        const lastValueChar = matches?.[6] || operator === '*z' || operator === OperatorType.endsWith ? '*' : '';
+        const lastValueChar = matches?.[6] || operator === '*z' || operator === 'EndsWith' ? '*' : '';
 
         // no need to query if search value is empty
         if (fieldName && searchValue === '' && searchTerms.length === 0) {
@@ -492,23 +491,23 @@ export class GraphqlService implements BackendService {
         } else {
           if (comboStartsWith && comboEndsWith) {
             searchTerms = [comboStartsWith, comboEndsWith];
-            operator = OperatorType.startsWithEndsWith;
+            operator = 'StartsWithEndsWith';
           } else if (
             Array.isArray(searchTerms) &&
             searchTerms.length === 1 &&
             typeof searchTerms[0] === 'string' &&
             searchTerms[0].indexOf('..') >= 0
           ) {
-            if (operator !== OperatorType.rangeInclusive && operator !== OperatorType.rangeExclusive) {
-              operator = this._gridOptions.defaultFilterRangeOperator ?? OperatorType.rangeInclusive;
+            if (operator !== 'RangeInclusive' && operator !== 'RangeExclusive') {
+              operator = this._gridOptions.defaultFilterRangeOperator ?? 'RangeInclusive';
             }
             searchTerms = searchTerms[0].split('..', 2);
             if (searchTerms[0] === '') {
-              operator = operator === OperatorType.rangeInclusive ? '<=' : operator === OperatorType.rangeExclusive ? '<' : operator;
+              operator = operator === 'RangeInclusive' ? '<=' : operator === 'RangeExclusive' ? '<' : operator;
               searchTerms = searchTerms.slice(1);
               searchValue = searchTerms[0];
             } else if (searchTerms[1] === '') {
-              operator = operator === OperatorType.rangeInclusive ? '>=' : operator === OperatorType.rangeExclusive ? '>' : operator;
+              operator = operator === 'RangeInclusive' ? '>=' : operator === 'RangeExclusive' ? '>' : operator;
               searchTerms = searchTerms.slice(0, 1);
               searchValue = searchTerms[0];
             }
@@ -516,7 +515,7 @@ export class GraphqlService implements BackendService {
 
           if (typeof searchValue === 'string') {
             if (operator === '*' || operator === 'a*' || operator === '*z' || lastValueChar === '*') {
-              operator = (operator === '*' || operator === '*z' ? 'EndsWith' : 'StartsWith') as OperatorString;
+              operator = (operator === '*' || operator === '*z' ? 'EndsWith' : 'StartsWith') as OperatorType;
             }
           }
 
@@ -528,7 +527,7 @@ export class GraphqlService implements BackendService {
 
           // No operator and 2 search terms should lead to default range operator.
           if (!operator && Array.isArray(searchTerms) && searchTerms.length === 2 && searchTerms[0] && searchTerms[1]) {
-            operator = this._gridOptions.defaultFilterRangeOperator as OperatorString;
+            operator = this._gridOptions.defaultFilterRangeOperator as OperatorType;
           }
 
           // Range with 1 searchterm should lead to equals for a date field.
@@ -536,9 +535,9 @@ export class GraphqlService implements BackendService {
             (operator === 'RangeInclusive' || operator === 'RangeExclusive') &&
             Array.isArray(searchTerms) &&
             searchTerms.length === 1 &&
-            fieldType === FieldType.date
+            fieldType === 'date'
           ) {
-            operator = OperatorType.equal;
+            operator = 'EQ';
           }
 
           // Normalize all search values
@@ -550,29 +549,29 @@ export class GraphqlService implements BackendService {
           }
 
           // StartsWith + EndsWith combo
-          if (operator === OperatorType.startsWithEndsWith && Array.isArray(searchTerms) && searchTerms.length === 2) {
+          if (operator === 'StartsWithEndsWith' && Array.isArray(searchTerms) && searchTerms.length === 2) {
             // add 2 conditions (StartsWith A + EndsWith B) to the search array
             searchByArray.push({
               field: getHtmlStringOutput(fieldName),
-              operator: OperatorType.startsWith,
+              operator: 'StartsWith',
               value: comboStartsWith,
             });
-            searchByArray.push({ field: getHtmlStringOutput(fieldName), operator: OperatorType.endsWith, value: comboEndsWith });
+            searchByArray.push({ field: getHtmlStringOutput(fieldName), operator: 'EndsWith', value: comboEndsWith });
             continue;
           }
 
           // when having more than 1 search term (we need to create a CSV string for GraphQL "IN" or "NOT IN" filter search)
           if (searchTerms?.length > 1 && (operator === 'IN' || operator === 'NIN' || operator === 'NOT_IN')) {
             searchValue = searchTerms.join(',');
-          } else if (searchTerms?.length === 2 && (operator === OperatorType.rangeExclusive || operator === OperatorType.rangeInclusive)) {
+          } else if (searchTerms?.length === 2 && (operator === 'RangeExclusive' || operator === 'RangeInclusive')) {
             searchByArray.push({
               field: getHtmlStringOutput(fieldName),
-              operator: operator === OperatorType.rangeInclusive ? 'GE' : 'GT',
+              operator: operator === 'RangeInclusive' ? 'GE' : 'GT',
               value: searchTerms[0],
             });
             searchByArray.push({
               field: getHtmlStringOutput(fieldName),
-              operator: operator === OperatorType.rangeInclusive ? 'LE' : 'LT',
+              operator: operator === 'RangeInclusive' ? 'LE' : 'LT',
               value: searchTerms[1],
             });
             continue;
@@ -639,7 +638,7 @@ export class GraphqlService implements BackendService {
     if (!sortColumns && presetSorters) {
       // make the presets the current sorters, also make sure that all direction are in uppercase for GraphQL
       currentSorters = presetSorters;
-      currentSorters.forEach((sorter) => (sorter.direction = sorter.direction.toUpperCase() as SortDirectionString));
+      currentSorters.forEach((sorter) => (sorter.direction = sorter.direction.toUpperCase() as SortDirection));
 
       // display the correct sorting icons on the UI, for that it requires (columnId, sortAsc) properties
       const tmpSorterArray = currentSorters.map((sorter) => {
@@ -654,7 +653,7 @@ export class GraphqlService implements BackendService {
         if (columnDef) {
           return {
             columnId: sorter.columnId,
-            sortAsc: sorter.direction.toUpperCase() === SortDirection.ASC,
+            sortAsc: sorter.direction.toUpperCase() === 'ASC',
           };
         }
         return null;
@@ -672,14 +671,14 @@ export class GraphqlService implements BackendService {
           if (column && column.sortCol) {
             currentSorters.push({
               columnId: column.sortCol.id + '',
-              direction: column.sortAsc ? SortDirection.ASC : SortDirection.DESC,
+              direction: column.sortAsc ? 'ASC' : 'DESC',
             });
 
             const fieldName = (column.sortCol.queryFieldSorter || column.sortCol.queryField || column.sortCol.field || '') + '';
             if (fieldName) {
               graphqlSorters.push({
                 field: fieldName,
-                direction: column.sortAsc ? SortDirection.ASC : SortDirection.DESC,
+                direction: column.sortAsc ? 'ASC' : 'DESC',
               });
             }
           }
@@ -763,20 +762,20 @@ export class GraphqlService implements BackendService {
   }
 
   /** Normalizes the search value according to field type. */
-  protected normalizeSearchValue(fieldType: (typeof FieldType)[keyof typeof FieldType], searchValue: any): any {
+  protected normalizeSearchValue(fieldType: FieldType, searchValue: any): any {
     switch (fieldType) {
-      case FieldType.date:
-      case FieldType.string:
-      case FieldType.text:
-      case FieldType.readonly:
+      case 'date':
+      case 'string':
+      case 'text':
+      case 'readonly':
         if (typeof searchValue === 'string') {
           // escape single quotes by doubling them
           searchValue = searchValue.replace(/'/g, `''`);
         }
         break;
-      case FieldType.integer:
-      case FieldType.number:
-      case FieldType.float:
+      case 'integer':
+      case 'number':
+      case 'float':
         if (typeof searchValue === 'string') {
           // Parse a valid decimal from the string.
 

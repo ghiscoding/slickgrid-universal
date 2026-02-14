@@ -1,6 +1,7 @@
 import type {
   BackendService,
   BasePaginationComponent,
+  ExtensionList,
   ExtensionService,
   FilterService,
   GridEventService,
@@ -22,6 +23,9 @@ export interface AureliaGridInstance {
 
   /** Slick Grid object */
   slickGrid: SlickGrid;
+
+  /** SlickGrid extensions (external controls/plugins) */
+  extensions: ExtensionList<any>;
 
   // --
   // Methods

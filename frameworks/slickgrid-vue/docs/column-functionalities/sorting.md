@@ -18,7 +18,7 @@ To use any of them, you can use the `FieldType` interface or enter a type via a 
 
 ```vue
 <script setup lang="ts">
-import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -93,7 +93,7 @@ You can update/change the Sorting dynamically (on the fly) via the `updateSortin
 ##### Component
 ```vue
 <script setup lang="ts">
-import { type Column, Filters, Formatters, OperatorType, SlickgridVue, SortDirection } from 'slickgrid-vue';
+import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
@@ -122,8 +122,7 @@ function setSortingDynamically() {
 </script>
 
 <template>
-  <button className="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="set-dynamic-sorting"
-    onClick={() => setSortingDynamically()}>
+  <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" @click="setSortingDynamically()">
     Set Sorting Dynamically
   </button>
 
@@ -131,10 +130,10 @@ function setSortingDynamically() {
     grid-id="grid4"
     v-model:columns="columnDefinitions"
     v-model:options="gridOptions"
-    v-model:data="dataset"
+    v-model:dataset="dataset"
     @onGridStateChanged="gridStateChanged($event.detail)"
-    @onvueGridCreated="vueGridReady($event.detail)"
     @onRowCountChanged="refreshMetrics($event.detail.eventData, $event.detail.args)"
+    @onVueGridCreated="vueGridReady($event.detail)"
   ></slickgrid-vue>
 </template>
 ```

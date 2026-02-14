@@ -1,11 +1,10 @@
-import { Component, type OnDestroy, type OnInit } from '@angular/core';
+import { Component, signal, type OnDestroy, type OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import { TextExportService } from '@slickgrid-universal/text-export';
 import type { Subscription } from 'rxjs';
 import {
-  AngularSlickgridModule,
-  DelimiterType,
+  AngularSlickgridComponent,
   Filters,
   Formatters,
   unsubscribeAllObservables,
@@ -29,7 +28,7 @@ const taskTranslateFormatter: Formatter = (row, cell, value, columnDef, dataCont
 
 @Component({
   templateUrl: './example12.component.html',
-  imports: [AngularSlickgridModule],
+  imports: [AngularSlickgridComponent],
 })
 export class Example12Component implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
@@ -37,7 +36,7 @@ export class Example12Component implements OnInit, OnDestroy {
   columnDefinitions!: Column[];
   gridOptions!: GridOption;
   dataset!: any[];
-  selectedLanguage: string;
+  selectedLanguage = signal('');
   duplicateTitleHeaderCount = 1;
   gridObj: any;
   hideSubTitle = false;
@@ -48,7 +47,7 @@ export class Example12Component implements OnInit, OnDestroy {
     // always start with English for Cypress E2E tests to be consistent
     const defaultLang = 'en';
     this.translate.use(defaultLang);
-    this.selectedLanguage = defaultLang;
+    this.selectedLanguage.set(defaultLang);
   }
 
   ngOnDestroy() {
@@ -174,7 +173,7 @@ export class Example12Component implements OnInit, OnDestroy {
         hideInColumnTitleRow: true,
       },
       enableCheckboxSelector: true,
-      enableRowSelection: true,
+      enableSelection: true,
       showCustomFooter: true, // display some metrics in the bottom custom footer
       customFooterOptions: {
         metricTexts: {
@@ -196,7 +195,7 @@ export class Example12Component implements OnInit, OnDestroy {
         // https://ghiscoding.gitbook.io/excel-builder-vanilla/cookbook/fonts-and-colors
         customExcelHeader: (workbook, sheet) => {
           const customTitle =
-            this.translate.currentLang === 'fr'
+            this.translate.getCurrentLang() === 'fr'
               ? 'Titre qui est suffisament long pour être coupé'
               : 'My header that is long enough to wrap';
           const stylesheet = workbook.getStyleSheet();
@@ -295,7 +294,7 @@ export class Example12Component implements OnInit, OnDestroy {
 
   exportToFile(type = 'csv') {
     this.textExportService.exportToFile({
-      delimiter: type === 'csv' ? DelimiterType.comma : DelimiterType.tab,
+      delimiter: type === 'csv' ? ',' : '\t',
       filename: 'myExport',
       format: type === 'csv' ? 'csv' : 'txt',
     });
@@ -308,10 +307,10 @@ export class Example12Component implements OnInit, OnDestroy {
   }
 
   switchLanguage() {
-    const nextLanguage = this.selectedLanguage === 'en' ? 'fr' : 'en';
+    const nextLanguage = this.selectedLanguage() === 'en' ? 'fr' : 'en';
     this.subscriptions.push(
       this.translate.use(nextLanguage).subscribe(() => {
-        this.selectedLanguage = nextLanguage;
+        this.selectedLanguage.set(nextLanguage);
       })
     );
   }

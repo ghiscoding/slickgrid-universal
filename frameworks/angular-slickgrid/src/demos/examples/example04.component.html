@@ -51,10 +51,12 @@
   </div>
 
   <br />
-  <span *ngIf="metrics" style="margin-right: 10px">
-    <b>Metrics:</b> {{ metrics.startTime | date: "yyyy-MM-dd hh:mm aaaaa'm'" }} | {{ metrics.itemCount }} of
-    {{ metrics.totalItemCount }} items
-  </span>
+  @if (metrics) {
+    <span style="margin-right: 10px">
+      <b>Metrics:</b> {{ metrics.startTime | date: "yyyy-MM-dd hh:mm aaaaa'm'" }} | {{ metrics.itemCount }} of
+      {{ metrics.totalItemCount }} items
+    </span>
+  }
   <div class="btn-group" role="group">
     <button class="btn btn-sm btn-outline-secondary btn-icon" data-test="scroll-top-btn" (click)="scrollGridTop()">
       <i class="mdi mdi-arrow-down mdi-rotate-180"></i>

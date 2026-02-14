@@ -70,8 +70,8 @@ function defineGrid() {
       hideInFilterHeaderRow: false,
       hideInColumnTitleRow: true,
     },
-    enableRowSelection: true,
-    rowSelectionOptions: {
+    enableSelection: true,
+    selectionOptions: {
       // True (Single Selection), False (Multiple Selections)
       selectActiveRow: false,
     },
@@ -112,7 +112,7 @@ function defineGrid() {
 }
 
 // function getRowMoveInstance() {
-//   return vueGrid.extensionService.getExtensionInstanceByName(ExtensionName.rowMoveManager);
+//   return vueGrid.extensionService.getExtensionInstanceByName('rowMoveManager');
 // }
 
 function getData(count: number) {
@@ -358,7 +358,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
   <slickgrid-vue
     v-model:options="gridOptions"
     v-model:columns="columnDefinitions"
-    v-model:data="dataset"
+    v-model:dataset="dataset"
     grid-id="grid16"
     @onVueGridCreated="vueGridReady($event.detail)"
   >

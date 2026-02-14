@@ -1,7 +1,7 @@
 {
   "name": "slickgrid-vue-demo",
   "private": true,
-  "version": "9.13.0",
+  "version": "10.0.0-beta.0",
   "type": "module",
   "author": {
     "name": "Ghislain B."
@@ -29,6 +29,7 @@
     "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
     "@slickgrid-universal/rxjs-observable": "workspace:*",
     "@slickgrid-universal/text-export": "workspace:*",
+    "@slickgrid-universal/vue-row-detail-plugin": "workspace:*",
     "bootstrap": "catalog:",
     "dompurify": "catalog:",
     "i18next": "catalog:",
@@ -36,7 +37,7 @@
     "rxjs": "catalog:",
     "slickgrid-vue": "workspace:*",
     "vue": "catalog:",
-    "vue-router": "^4.6.4"
+    "vue-router": "^5.0.2"
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "catalog:",
@@ -46,6 +47,6 @@
     "cypress-real-events": "catalog:",
     "sass": "catalog:",
     "typescript": "catalog:",
-    "vite": "catalog:vite7"
+    "vite": "catalog:"
   }
 }

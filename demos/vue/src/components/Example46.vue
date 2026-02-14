@@ -120,7 +120,7 @@ function defineGrid() {
       sanitizeDataExport: true,
     },
     enableCheckboxSelector: true,
-    enableRowSelection: true,
+    enableSelection: true,
     multiSelect: false,
     checkboxSelector: {
       // columnIndexPosition: 1,

@@ -4,6 +4,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.0.0-beta.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.12.0...v10.0.0-beta.0) (2026-02-14)
+
+### Features
+
+* auto-enabled external resources with their associated flags ([#2362](https://github.com/ghiscoding/slickgrid-universal/issues/2362)) ([16dd8a7](https://github.com/ghiscoding/slickgrid-universal/commit/16dd8a77dd5d136a5a99321f0fc4c50571fdb0c0)) - by @ghiscoding
+* **tooltip:** add global tooltip observation for non-grid elements ([#2371](https://github.com/ghiscoding/slickgrid-universal/issues/2371)) ([1bbc8de](https://github.com/ghiscoding/slickgrid-universal/commit/1bbc8de895e370843286eadd08574efc552ad8fd)) - by @ghiscoding
+
+### Bug Fixes
+
+* **plugin:** SlickCustomTooltip should work with parent+child tooltips ([#2374](https://github.com/ghiscoding/slickgrid-universal/issues/2374)) ([8af7f45](https://github.com/ghiscoding/slickgrid-universal/commit/8af7f45eb19f0a00da2f3de7c729504be7d043eb)) - by @ghiscoding
+
 ## [9.13.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.12.0...v9.13.0) (2026-01-30)
 
 **Note:** Version bump only for package @slickgrid-universal/custom-tooltip-plugin

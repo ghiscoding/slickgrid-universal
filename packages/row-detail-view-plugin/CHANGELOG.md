@@ -4,6 +4,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.0.0-beta.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.12.0...v10.0.0-beta.0) (2026-02-14)
+
+### ⚠ BREAKING CHANGES
+
+* make Row Detail plugin as optional in all framework wrappers (#2291)
+
+### Features
+
+* make Row Detail plugin as optional in all framework wrappers ([#2291](https://github.com/ghiscoding/slickgrid-universal/issues/2291)) ([fa1a14c](https://github.com/ghiscoding/slickgrid-universal/commit/fa1a14c16c987bfaf7725c46e8114b20ea5a505d)) - by @ghiscoding
+
 ## [9.13.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.12.0...v9.13.0) (2026-01-30)
 
 **Note:** Version bump only for package @slickgrid-universal/row-detail-view-plugin

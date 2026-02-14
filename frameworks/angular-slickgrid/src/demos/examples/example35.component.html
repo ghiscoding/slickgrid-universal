@@ -60,12 +60,12 @@
         <i class="mdi mdi-translate"></i>
         Switch Language
       </button>
-      <b>Locale:</b> <span style="font-style: italic" data-test="selected-locale">{{ selectedLanguage + '.json' }}</span>
+      <b>Locale:</b> <span style="font-style: italic" data-test="selected-locale">{{ selectedLanguage() + '.json' }}</span>
     </div>
 
-    <div class="col-sm-4" [class]="statusClass">
+    <div class="col-sm-4" [class]="statusClass()">
       <strong>Status: </strong>
-      <span data-test="fetch-result" [textContent]="fetchResult"></span>
+      <span data-test="fetch-result" [textContent]="fetchResult()"></span>
     </div>
   </div>
 </section>
