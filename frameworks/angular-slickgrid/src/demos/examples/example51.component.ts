@@ -386,7 +386,8 @@ export class Example51Component implements OnInit {
       // Header Menu with slots (already configured in columns above)
       enableHeaderMenu: true,
       headerMenu: {
-        hideColumnHideCommand: false,
+        // hideCommands: ['column-resize-by-content', 'clear-sort'],
+
         // Demo: Menu-level default renderer for all header menu items
         defaultMenuItemRenderer: (cmdItem) => {
           return `
@@ -404,6 +405,8 @@ export class Example51Component implements OnInit {
       // Context Menu with slot examples
       enableContextMenu: true,
       contextMenu: {
+        // hideCommands: ['clear-grouping', 'copy'],
+
         // build your command items list
         // spread built-in commands and optionally filter/sort them however you want
         commandListBuilder: (builtInItems) => {
@@ -489,6 +492,8 @@ export class Example51Component implements OnInit {
       // Grid Menu with slot examples (demonstrating defaultMenuItemRenderer at menu level)
       enableGridMenu: true,
       gridMenu: {
+        // hideCommands: ['toggle-preheader', 'toggle-filter'],
+
         // Demo: Menu-level default renderer that applies to all items (can be overridden per item with slotRenderer)
         defaultMenuItemRenderer: (cmdItem) => {
           return `

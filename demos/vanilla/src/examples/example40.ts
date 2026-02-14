@@ -395,6 +395,7 @@ export default class Example40 {
       enableHeaderMenu: true,
       headerMenu: {
         // hideCommands: ['column-resize-by-content', 'clear-sort'],
+
         // Demo: Menu-level default renderer for all header menu items
         defaultMenuItemRenderer: (cmdItem) => {
           return `
@@ -413,6 +414,7 @@ export default class Example40 {
       enableContextMenu: true,
       contextMenu: {
         // hideCommands: ['clear-grouping', 'copy'],
+
         // build your command items list
         // spread built-in commands and optionally filter/sort them however you want
         commandListBuilder: (builtInItems) => {
@@ -499,6 +501,7 @@ export default class Example40 {
       enableGridMenu: true,
       gridMenu: {
         // hideCommands: ['toggle-preheader', 'toggle-filter'],
+
         // Demo: Menu-level default renderer that applies to all items (can be overridden per item with slotRenderer)
         defaultMenuItemRenderer: (cmdItem) => {
           return `
