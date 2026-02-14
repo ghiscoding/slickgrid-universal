@@ -780,12 +780,12 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
   protected clearPinning(): void {
     // reset frozen props on both SlickGrid options and shared service options
-    const newGridOptions = {
+    const newGridOptions: Partial<GridOption> = {
       frozenColumn: -1,
       frozenRow: -1,
       frozenBottom: false,
       enableMouseWheelScrollHandler: false,
-    } as Partial<GridOption>;
+    };
     this.grid.setOptions(newGridOptions);
     Object.keys(newGridOptions).forEach(
       (c) => (this.sharedService.gridOptions[c as keyof GridOption] = newGridOptions[c as keyof GridOption])
