@@ -1914,6 +1914,7 @@ describe('GridMenuControl', () => {
               title: 'Exporter vers PDF',
               disabled: false,
               command: 'export-pdf',
+              action: expect.any(Function),
               positionOrder: 57,
             },
           ]);
