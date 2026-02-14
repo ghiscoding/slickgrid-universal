@@ -4,6 +4,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.0.0-beta.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.12.0...v10.0.0-beta.0) (2026-02-14)
+
+### ⚠ BREAKING CHANGES
+
+* migrate Row/Hybrid Selection flag into a single `enableSelection` flag (#2331)
+* drop Cell/Row Selection Models & keep only HybridSelectionModel (#2330)
+
+### Features
+
+* auto-enabled external resources with their associated flags ([#2362](https://github.com/ghiscoding/slickgrid-universal/issues/2362)) ([16dd8a7](https://github.com/ghiscoding/slickgrid-universal/commit/16dd8a77dd5d136a5a99321f0fc4c50571fdb0c0)) - by @ghiscoding
+* drop Cell/Row Selection Models & keep only HybridSelectionModel ([#2330](https://github.com/ghiscoding/slickgrid-universal/issues/2330)) ([4398cf4](https://github.com/ghiscoding/slickgrid-universal/commit/4398cf42e03f6971b81db8cea4ed11138c0aa452)) - by @ghiscoding
+* migrate Row/Hybrid Selection flag into a single `enableSelection` flag ([#2331](https://github.com/ghiscoding/slickgrid-universal/issues/2331)) ([5be5e6a](https://github.com/ghiscoding/slickgrid-universal/commit/5be5e6a862ecd024cf43d404769d65c6c1dd335e)) - by @ghiscoding
+* **SlickCompositeEditor:** migrate modal from div to dialog ([#2283](https://github.com/ghiscoding/slickgrid-universal/issues/2283)) ([371c2c6](https://github.com/ghiscoding/slickgrid-universal/commit/371c2c675728f51785485280237572ef5a584eeb)) - by @ghiscoding
+
 ## [9.13.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.12.0...v9.13.0) (2026-01-30)
 
 **Note:** Version bump only for package @slickgrid-universal/composite-editor-component

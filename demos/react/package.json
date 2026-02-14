@@ -1,7 +1,7 @@
 {
   "name": "slickgrid-react-demo",
   "private": true,
-  "version": "9.13.0",
+  "version": "10.0.0-beta.0",
   "description": "Slickgrid-React demo",
   "keywords": [
     "react",

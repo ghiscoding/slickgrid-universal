@@ -1,7 +1,7 @@
 {
   "name": "aurelia-slickgrid-demo",
   "private": true,
-  "version": "9.13.0",
+  "version": "10.0.0-beta.0",
   "description": "Aurelia-Slickgrid demos",
   "keywords": [
     "aurelia",
@@ -30,7 +30,6 @@
     "@faker-js/faker": "catalog:",
     "@fnando/sparkline": "catalog:",
     "@formkit/tempo": "catalog:",
-    "jspdf": "catalog:",
     "@popperjs/core": "catalog:",
     "@slickgrid-universal/aurelia-row-detail-plugin": "workspace:*",
     "@slickgrid-universal/common": "workspace:*",
@@ -47,6 +46,7 @@
     "aurelia-slickgrid": "workspace:*",
     "bootstrap": "catalog:",
     "i18next": "catalog:",
+    "jspdf": "catalog:",
     "rxjs": "catalog:"
   },
   "devDependencies": {

@@ -4,6 +4,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.0.0-beta.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.12.0...v10.0.0-beta.0) (2026-02-14)
+
+### ⚠ BREAKING CHANGES
+
+* drop OperatorType enums and keep only type literal (#2301)
+* replacing multiple TypeScript `enum` with `type` to decrease build size (#2300)
+* drop FieldType enums and keep only field type literal (#2299)
+* switch to column `hidden` property and always keep all columns (#2281)
+
+### Features
+
+* switch to column `hidden` property and always keep all columns ([#2281](https://github.com/ghiscoding/slickgrid-universal/issues/2281)) ([075c649](https://github.com/ghiscoding/slickgrid-universal/commit/075c64961cb7400500df46b792866d39fba2d9e0)) - by @ghiscoding
+
+### Code Refactoring
+
+* drop FieldType enums and keep only field type literal ([#2299](https://github.com/ghiscoding/slickgrid-universal/issues/2299)) ([3858ed0](https://github.com/ghiscoding/slickgrid-universal/commit/3858ed06a9496ddfa94d769ce1d415b68e18c993)) - by @ghiscoding
+* drop OperatorType enums and keep only type literal ([#2301](https://github.com/ghiscoding/slickgrid-universal/issues/2301)) ([5dd0807](https://github.com/ghiscoding/slickgrid-universal/commit/5dd08079460dc9af798ab29527997a6d4b31abdd)) - by @ghiscoding
+* replacing multiple TypeScript `enum` with `type` to decrease build size ([#2300](https://github.com/ghiscoding/slickgrid-universal/issues/2300)) ([ea79395](https://github.com/ghiscoding/slickgrid-universal/commit/ea79395cf663b3abce8e43cf27ba6ffea7cfe113)) - by @ghiscoding
+
 ## [9.13.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.12.0...v9.13.0) (2026-01-30)
 
 **Note:** Version bump only for package @slickgrid-universal/odata
