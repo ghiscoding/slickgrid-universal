@@ -3,7 +3,7 @@ import { testFilterCondition } from './filterUtilities.js';
 
 /**
  * Execute filter condition check on each cell.
- * This is used only by the Select Single/Multiple Filter which uses the "multiple-select.js" 3rd party lib which always provide values as strings
+ * This is used only by the Select Single/Multiple Filter which uses the "multiple-select-vanilla" 3rd party lib which always provide values as strings
  */
 export const executeCollectionSearchFilterCondition: FilterCondition = (options: FilterConditionOption) => {
   // multiple-select will always return text, so we should make our cell values text as well

@@ -152,6 +152,7 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
   // protected functions
   // ------------------
 
+  /** @deprecated Sort items (by pointers) in an array by a property name */
   protected sortMenuItems(columns: Column[]): void {
     // sort both items list
     columns.forEach((columnDef: Column) => {

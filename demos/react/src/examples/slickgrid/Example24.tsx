@@ -347,7 +347,7 @@ const Example24: React.FC = () => {
         onCommand: (_e, args) => executeCommand(_e, args),
         onOptionSelected: (_e, args) => {
           // change "Completed" property with new option selected from the Cell Menu
-          const dataContext = args && args.dataContext;
+          const dataContext = args?.dataContext;
           if (dataContext && dataContext.hasOwnProperty('completed')) {
             dataContext.completed = args.item.option;
             reactGridRef.current?.gridService.updateItem(dataContext);
@@ -428,7 +428,7 @@ const Example24: React.FC = () => {
       // optionally and conditionally define when the the menu is usable,
       // this should be used with a custom formatter to show/hide/disable the menu
       menuUsabilityOverride: (args) => {
-        const dataContext = args && args.dataContext;
+        const dataContext = args?.dataContext;
         return dataContext.id < 21; // say we want to display the menu only from Task 0 to 20
       },
       // which column to show the command list? when not defined it will be shown over all columns
@@ -459,7 +459,7 @@ const Example24: React.FC = () => {
           },
           // only show command to 'Help' when the task is Not Completed
           itemVisibilityOverride: (args) => {
-            const dataContext = args && args.dataContext;
+            const dataContext = args?.dataContext;
             return !dataContext.completed;
           },
         },
@@ -525,7 +525,7 @@ const Example24: React.FC = () => {
           textCssClass: 'italic',
           // only enable this option when the task is Not Completed
           itemUsabilityOverride: (args) => {
-            const dataContext = args && args.dataContext;
+            const dataContext = args?.dataContext;
             return !dataContext.completed;
           },
           // you can use the 'action' callback and/or subscribe to the 'onCallback' event, they both have the same arguments
@@ -547,7 +547,7 @@ const Example24: React.FC = () => {
           disabled: true,
           // only shown when the task is Not Completed
           itemVisibilityOverride: (args) => {
-            const dataContext = args && args.dataContext;
+            const dataContext = args?.dataContext;
             return !dataContext.completed;
           },
         },
@@ -578,7 +578,7 @@ const Example24: React.FC = () => {
       // subscribe to Context Menu onOptionSelected event (or use the action callback on each option)
       onOptionSelected: (_e, args) => {
         // change Priority
-        const dataContext = args && args.dataContext;
+        const dataContext = args?.dataContext;
         if (dataContext && dataContext.hasOwnProperty('priority')) {
           dataContext.priority = args.item.option;
           reactGridRef.current?.gridService.updateItem(dataContext);

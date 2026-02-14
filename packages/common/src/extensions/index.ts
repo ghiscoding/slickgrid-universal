@@ -1,4 +1,5 @@
 export * from './extensionUtility.js';
+export * from './menuBaseClass.js';
 export * from './slickAutoTooltip.js';
 export * from './slickCellExcelCopyManager.js';
 export * from './slickCellExternalCopyManager.js';

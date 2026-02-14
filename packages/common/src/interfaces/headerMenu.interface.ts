@@ -2,6 +2,19 @@ import type { SlickEventData, SlickGrid } from '../core/index.js';
 import type { SlickHeaderMenu } from '../extensions/slickHeaderMenu.js';
 import type { Column, HeaderMenuOption, MenuCommandItem, MenuCommandItemCallbackArgs } from './index.js';
 
+export type BuiltInHeaderMenuCommand =
+  | 'clear-filter'
+  | 'clear-sort'
+  | 'column-resize-by-content'
+  | 'divider-1'
+  | 'divider-2'
+  | 'divider-3'
+  | 'freeze-columns'
+  | 'hide-column'
+  | 'sort-asc'
+  | 'sort-desc'
+  | 'unfreeze-columns';
+
 export interface HeaderMenuCommandItemCallbackArgs {
   /** Column definition */
   column: Column;
@@ -14,6 +27,9 @@ export interface HeaderMenuCommandItemCallbackArgs {
 }
 
 export interface HeaderMenu extends HeaderMenuOption {
+  /** hide any built-in command from the header menu */
+  hideCommands?: Array<BuiltInHeaderMenuCommand>;
+
   // --
   // Events
   // ------------

@@ -55,6 +55,7 @@ const gridStub = {
   getUID: () => 'slickgrid12345',
   getOptions: () => gridOptionsMock,
   registerPlugin: vi.fn(),
+  sanitizeHtmlString: (str: string) => str,
   setColumns: vi.fn(),
   setOptions: vi.fn(),
   setSortColumns: vi.fn(),
@@ -856,6 +857,215 @@ describe('HeaderMenu Plugin', () => {
       });
     });
 
+    describe('with slot renderer', () => {
+      let gridContainerDiv: HTMLDivElement;
+      let headerDiv: HTMLDivElement;
+      let headersDiv: HTMLDivElement;
+      let parentContainer: HTMLDivElement;
+      let eventData: SlickEventData;
+
+      beforeEach(() => {
+        headerDiv = document.createElement('div');
+        headerDiv.className = 'slick-header-column';
+        headersDiv = document.createElement('div');
+        headersDiv.className = 'slick-header-columns';
+        headersDiv.appendChild(headerDiv);
+        gridContainerDiv = document.createElement('div');
+        gridContainerDiv.className = 'slickgrid-container';
+        gridContainerDiv.appendChild(headersDiv);
+        parentContainer = document.createElement('div');
+        parentContainer.appendChild(gridContainerDiv);
+        document.body.appendChild(parentContainer);
+        sharedService.gridContainerElement = parentContainer;
+        vi.spyOn(gridStub, 'getContainerNode').mockReturnValue(gridContainerDiv);
+        vi.spyOn(gridStub, 'getGridPosition').mockReturnValue({ top: 10, bottom: 5, left: 15, right: 22, width: 225 } as any);
+        eventData = { ...new SlickEventData(), preventDefault: vi.fn() } as any;
+      });
+
+      afterEach(() => {
+        parentContainer?.remove();
+      });
+
+      it('should render menu item with slotRenderer returning HTMLElement', () => {
+        const mockSlotRenderer = vi.fn((item: any) => {
+          const div = document.createElement('div');
+          div.className = 'custom-slot-content';
+          div.textContent = `Custom: ${item.title}`;
+          return div;
+        });
+
+        columnsMock[1].header!.menu = { commandItems: [{ command: 'test-cmd', title: 'Test Command', slotRenderer: mockSlotRenderer }] as any };
+        plugin.init(columnsMock as any);
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData, gridStub);
+        const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as any;
+        headerButtonElm?.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+
+        const headerMenuElm = gridContainerDiv.querySelector('.slick-header-menu') as any;
+        const commandListElm = headerMenuElm?.querySelector('.slick-menu-command-list') as any;
+        const customSlotElm = commandListElm?.querySelector('.custom-slot-content') as any;
+
+        expect(mockSlotRenderer).toHaveBeenCalled();
+        expect(customSlotElm).toBeTruthy();
+        expect(customSlotElm?.textContent).toBe('Custom: Test Command');
+      });
+
+      it('should render menu item with slotRenderer returning string', () => {
+        const mockSlotRenderer = vi.fn((item: any) => `<span class="custom-string">String: ${item.title}</span>`);
+
+        columnsMock[1].header!.menu = { commandItems: [{ command: 'test-cmd', title: 'Test Command', slotRenderer: mockSlotRenderer }] as any };
+        plugin.init(columnsMock as any);
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData, gridStub);
+        const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as any;
+        headerButtonElm?.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+
+        const headerMenuElm = gridContainerDiv.querySelector('.slick-header-menu') as any;
+        const commandListElm = headerMenuElm?.querySelector('.slick-menu-command-list') as any;
+        const customSlotElm = commandListElm?.querySelector('.custom-string') as any;
+
+        expect(mockSlotRenderer).toHaveBeenCalled();
+        expect(customSlotElm).toBeTruthy();
+        expect(customSlotElm?.textContent).toContain('String: Test Command');
+      });
+
+      it('should render menu item with defaultMenuItemRenderer when item has no slotRenderer', () => {
+        const mockDefaultRenderer = vi.fn((item: any) => {
+          const div = document.createElement('div');
+          div.className = 'default-renderer-content';
+          div.textContent = `Default: ${item.title}`;
+          return div;
+        });
+
+        columnsMock[1].header!.menu = { commandItems: [{ command: 'test-cmd', title: 'Test Command' }] as any };
+        plugin.init(columnsMock as any);
+        plugin.addonOptions.defaultMenuItemRenderer = mockDefaultRenderer as any;
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData, gridStub);
+        const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as any;
+        headerButtonElm?.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+
+        const headerMenuElm = gridContainerDiv.querySelector('.slick-header-menu') as any;
+        const commandListElm = headerMenuElm?.querySelector('.slick-menu-command-list') as any;
+        const defaultRendererElm = commandListElm?.querySelector('.default-renderer-content') as any;
+
+        expect(mockDefaultRenderer).toHaveBeenCalled();
+        expect(defaultRendererElm).toBeTruthy();
+        expect(defaultRendererElm?.textContent).toBe('Default: Test Command');
+      });
+
+      it('should prioritize item slotRenderer over defaultMenuItemRenderer', () => {
+        const mockSlotRenderer = vi.fn((item: any) => {
+          const div = document.createElement('div');
+          div.className = 'slot-prioritized';
+          div.textContent = 'Slot renderer prioritized';
+          return div;
+        });
+        const mockDefaultRenderer = vi.fn();
+
+        columnsMock[1].header!.menu = { commandItems: [{ command: 'test-cmd', title: 'Test Command', slotRenderer: mockSlotRenderer }] as any };
+        plugin.init(columnsMock as any);
+        plugin.addonOptions.defaultMenuItemRenderer = mockDefaultRenderer as any;
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData, gridStub);
+        const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as any;
+        headerButtonElm?.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+
+        const headerMenuElm = gridContainerDiv.querySelector('.slick-header-menu') as any;
+        const commandListElm = headerMenuElm?.querySelector('.slick-menu-command-list') as any;
+        const slotRendererElm = commandListElm?.querySelector('.slot-prioritized') as any;
+
+        expect(mockSlotRenderer).toHaveBeenCalled();
+        expect(slotRendererElm).toBeTruthy();
+        expect(slotRendererElm?.textContent).toBe('Slot renderer prioritized');
+      });
+
+      it('should pass correct arguments (item and args) to slotRenderer callback', () => {
+        const mockSlotRenderer = vi.fn((item: any, args: any) => {
+          const div = document.createElement('div');
+          div.className = 'renderer-args-test';
+          div.textContent = `Item: ${item.command}, Grid: ${args?.grid ? 'present' : 'missing'}`;
+          return div;
+        });
+
+        columnsMock[1].header!.menu = { commandItems: [{ command: 'test-cmd', title: 'Test Command with Args', slotRenderer: mockSlotRenderer }] as any };
+        plugin.init(columnsMock as any);
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData, gridStub);
+        const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as any;
+        headerButtonElm?.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+
+        expect(mockSlotRenderer).toHaveBeenCalled();
+        const callArgs = mockSlotRenderer.mock.calls[0];
+        expect(callArgs[0].command).toBe('test-cmd');
+        expect(callArgs[1]).toBeDefined();
+        expect(callArgs[1].grid).toBe(gridStub);
+      });
+
+      it('should call slotRenderer with click event as third argument when menu item is clicked', () => {
+        const mockSlotRenderer = vi.fn((item: any, args: any, event?: Event) => {
+          const div = document.createElement('div');
+          div.className = 'click-test';
+          return div;
+        });
+
+        columnsMock[1].header!.menu = { commandItems: [{ command: 'test-cmd', title: 'Test Command', slotRenderer: mockSlotRenderer }] as any };
+        plugin.init(columnsMock as any);
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData, gridStub);
+        const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as any;
+        headerButtonElm?.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+
+        const headerMenuElm = gridContainerDiv.querySelector('.slick-header-menu') as any;
+        const commandListElm = headerMenuElm?.querySelector('.slick-menu-command-list') as any;
+        const menuItemElm = commandListElm?.querySelector('.slick-menu-item') as any;
+
+        // Click the menu item
+        menuItemElm?.dispatchEvent(new Event('click', { bubbles: true, cancelable: true }));
+
+        // Verify slotRenderer was called with the click event as the third argument
+        expect(mockSlotRenderer).toHaveBeenCalledTimes(2); // once for render, once for click
+        const clickCallArgs = mockSlotRenderer.mock.calls[1]; // second call is from click
+        expect(clickCallArgs[2]).toBeDefined();
+        expect(clickCallArgs[2]!.type).toBe('click');
+      });
+
+      it('should not trigger menu action when slotRenderer calls preventDefault on click event', () => {
+        const mockAction = vi.fn();
+        const mockSlotRenderer = vi.fn((item: any, args: any, event?: Event) => {
+          const div = document.createElement('div');
+          div.className = 'prevent-default-test';
+          const button = document.createElement('button');
+          button.textContent = 'Interactive';
+          button.onclick = (e) => {
+            e.preventDefault(); // Prevent default action
+          };
+          div.appendChild(button);
+          return div;
+        });
+
+        columnsMock[1].header!.menu = {
+          commandItems: [{ command: 'test-cmd', title: 'Test Command', slotRenderer: mockSlotRenderer, action: mockAction }] as any,
+        };
+        plugin.init(columnsMock as any);
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData, gridStub);
+        const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as any;
+        headerButtonElm?.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+
+        const headerMenuElm = gridContainerDiv.querySelector('.slick-header-menu') as any;
+        const commandListElm = headerMenuElm?.querySelector('.slick-menu-command-list') as any;
+        const menuItemElm = commandListElm?.querySelector('.slick-menu-item') as any;
+        const buttonElm = menuItemElm?.querySelector('button') as HTMLButtonElement;
+
+        // Click the button inside the slotRenderer, which calls preventDefault
+        buttonElm?.click();
+
+        // Verify the action callback was not called because preventDefault was called
+        expect(mockAction).not.toHaveBeenCalled();
+      });
+    });
+
     describe('Internal Custom Commands', () => {
       let eventData: SlickEventData;
 
@@ -869,6 +1079,61 @@ describe('HeaderMenu Plugin', () => {
 
       afterEach(() => {
         vi.clearAllMocks();
+      });
+
+      it('should expect menu related to Freeze Columns when "hideFreezeColumnsCommand" is disabled and also expect grid "setOptions" method to be called with current column position', async () => {
+        vi.spyOn(gridStub, 'validateColumnFreezeWidth').mockReturnValue(true);
+        const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
+          ...gridOptionsMock,
+          headerMenu: {
+            hideCommands: ['column-resize-by-content', 'hide-column'],
+          },
+        });
+
+        // calling `onBeforeSetColumns` 2x times shouldn't duplicate clear sort menu
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
+        const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
+        headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+
+        const commandDivElm = gridContainerDiv.querySelector('[data-command="freeze-columns"]') as HTMLDivElement;
+        const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
+        const commandLabelElm = commandDivElm.querySelector('.slick-menu-content') as HTMLDivElement;
+        expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
+          {
+            _orgTitle: '',
+            iconCssClass: 'mdi mdi-pin-outline',
+            title: 'Freeze Columns',
+            titleKey: 'FREEZE_COLUMNS',
+            command: 'freeze-columns',
+            positionOrder: 45,
+            action: expect.any(Function),
+          },
+          { divider: true, command: 'divider-1', positionOrder: 48 },
+        ]);
+        expect(commandIconElm.classList.contains('mdi-pin-outline')).toBeTruthy();
+        expect(commandLabelElm.textContent).toBe('Freeze Columns');
+
+        await translateService.use('fr');
+        plugin.translateHeaderMenu();
+        expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
+          {
+            _orgTitle: '',
+            iconCssClass: 'mdi mdi-pin-outline',
+            title: 'Geler les colonnes',
+            titleKey: 'FREEZE_COLUMNS',
+            command: 'freeze-columns',
+            positionOrder: 45,
+            action: expect.any(Function),
+          },
+          { divider: true, command: 'divider-1', positionOrder: 48 },
+        ]);
+
+        commandDivElm.dispatchEvent(new Event('click')); // execute command
+        expect(setOptionsSpy).toHaveBeenCalledWith({ frozenColumn: 1, enableMouseWheelScrollHandler: true }, false, true);
+        expect(gridStub.setColumns).toHaveBeenCalledWith(columnsMock);
       });
 
       it('should expect menu related to Freeze Columns when "hideFreezeColumnsCommand" is disabled and also expect grid "setOptions" method to be called with current column position', async () => {
@@ -897,8 +1162,9 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'FREEZE_COLUMNS',
             command: 'freeze-columns',
             positionOrder: 45,
+            action: expect.any(Function),
           },
-          { divider: true, command: '', positionOrder: 48 },
+          { divider: true, command: 'divider-1', positionOrder: 48 },
         ]);
         expect(commandIconElm.classList.contains('mdi-pin-outline')).toBeTruthy();
         expect(commandLabelElm.textContent).toBe('Freeze Columns');
@@ -913,8 +1179,9 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'FREEZE_COLUMNS',
             command: 'freeze-columns',
             positionOrder: 45,
+            action: expect.any(Function),
           },
-          { divider: true, command: '', positionOrder: 48 },
+          { divider: true, command: 'divider-1', positionOrder: 48 },
         ]);
 
         commandDivElm.dispatchEvent(new Event('click')); // execute command
@@ -927,6 +1194,7 @@ describe('HeaderMenu Plugin', () => {
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
+          // @deprecated `hideXYZ`, replace by `hideCommands` in next major
           headerMenu: { hideFreezeColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
           frozenColumn: 1,
         });
@@ -949,8 +1217,9 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'UNFREEZE_COLUMNS',
             command: 'unfreeze-columns',
             positionOrder: 45,
+            action: expect.any(Function),
           },
-          { divider: true, command: '', positionOrder: 48 },
+          { divider: true, command: 'divider-1', positionOrder: 48 },
         ]);
         expect(commandIconElm.classList.contains('mdi-pin-off-outline')).toBeTruthy();
         expect(commandLabelElm.textContent).toBe('Unfreeze Columns');
@@ -965,8 +1234,9 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'UNFREEZE_COLUMNS',
             command: 'unfreeze-columns',
             positionOrder: 45,
+            action: expect.any(Function),
           },
-          { divider: true, command: '', positionOrder: 48 },
+          { divider: true, command: 'divider-1', positionOrder: 48 },
         ]);
 
         commandDivElm.dispatchEvent(new Event('click')); // execute command
@@ -981,6 +1251,7 @@ describe('HeaderMenu Plugin', () => {
         vi.spyOn(gridStub, 'validateColumnFreezeWidth').mockReturnValue(true);
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
+          // @deprecated `hideXYZ`, replace by `hideCommands` in next major
           headerMenu: { hideFreezeColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
         });
         vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ frozenColumn: -1 } as GridOption);
@@ -999,8 +1270,9 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'FREEZE_COLUMNS',
             command: 'freeze-columns',
             positionOrder: 45,
+            action: expect.any(Function),
           },
-          { divider: true, command: '', positionOrder: 48 },
+          { divider: true, command: 'divider-1', positionOrder: 48 },
         ]);
 
         commandDivElm.dispatchEvent(new Event('click')); // execute command
@@ -1018,6 +1290,7 @@ describe('HeaderMenu Plugin', () => {
         sharedService.hasColumnsReordered = true;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
+          // @deprecated `hideXYZ`, replace by `hideCommands` in next major
           headerMenu: {
             hideFreezeColumnsCommand: false,
             hideColumnHideCommand: true,
@@ -1040,8 +1313,9 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'FREEZE_COLUMNS',
             command: 'freeze-columns',
             positionOrder: 45,
+            action: expect.any(Function),
           },
-          { divider: true, command: '', positionOrder: 48 },
+          { divider: true, command: 'divider-1', positionOrder: 48 },
         ]);
         expect(commandDivElm).toBeFalsy();
       });
@@ -1051,6 +1325,7 @@ describe('HeaderMenu Plugin', () => {
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
           enableFiltering: true,
+          // @deprecated `hideXYZ`, replace by `hideCommands` in next major
           headerMenu: { hideFilterCommand: false, hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
         });
 
@@ -1071,6 +1346,7 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'REMOVE_FILTER',
             command: 'clear-filter',
             positionOrder: 57,
+            action: expect.any(Function),
           },
         ];
         const commandDivElm = gridContainerDiv.querySelector('[data-command="clear-filter"]') as HTMLDivElement;
@@ -1115,9 +1391,18 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'COLUMN_RESIZE_BY_CONTENT',
             command: 'column-resize-by-content',
             positionOrder: 47,
+            action: expect.any(Function),
           },
-          { divider: true, command: '', positionOrder: 48 },
-          { _orgTitle: '', iconCssClass: 'mdi mdi-close', title: 'Hide Column', titleKey: 'HIDE_COLUMN', command: 'hide-column', positionOrder: 59 },
+          { divider: true, command: 'divider-1', positionOrder: 48 },
+          {
+            _orgTitle: '',
+            iconCssClass: 'mdi mdi-close',
+            title: 'Hide Column',
+            titleKey: 'HIDE_COLUMN',
+            command: 'hide-column',
+            positionOrder: 59,
+            action: expect.any(Function),
+          },
         ];
         const commandDivElm = gridContainerDiv.querySelector('[data-command="column-resize-by-content"]') as HTMLDivElement;
         const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
@@ -1160,6 +1445,7 @@ describe('HeaderMenu Plugin', () => {
             positionOrder: 45,
             title: 'Freeze Columns',
             titleKey: 'FREEZE_COLUMNS',
+            action: expect.any(Function),
           },
           { command: 'show-negative-numbers', cssClass: 'mdi mdi-lightbulb-on', tooltip: 'Highlight negative numbers.' },
           {
@@ -1169,8 +1455,9 @@ describe('HeaderMenu Plugin', () => {
             positionOrder: 47,
             title: 'Resize by Content',
             titleKey: 'COLUMN_RESIZE_BY_CONTENT',
+            action: expect.any(Function),
           },
-          { command: '', divider: true, positionOrder: 48 },
+          { divider: true, command: 'divider-1', positionOrder: 48 },
           {
             _orgTitle: '',
             command: 'filter-shortcuts-root-menu',
@@ -1197,8 +1484,16 @@ describe('HeaderMenu Plugin', () => {
             title: 'Filter Shortcuts',
             titleKey: 'FILTER_SHORTCUTS',
           },
-          { command: '', divider: true, positionOrder: 56 },
-          { _orgTitle: '', command: 'hide-column', iconCssClass: 'mdi mdi-close', positionOrder: 59, title: 'Hide Column', titleKey: 'HIDE_COLUMN' },
+          { divider: true, command: 'divider-3', positionOrder: 56 },
+          {
+            _orgTitle: '',
+            command: 'hide-column',
+            iconCssClass: 'mdi mdi-close',
+            positionOrder: 59,
+            title: 'Hide Column',
+            titleKey: 'HIDE_COLUMN',
+            action: expect.any(Function),
+          },
         ];
         const shortcutSubMenuElm = gridContainerDiv.querySelector('[data-command="filter-shortcuts-root-menu"]') as HTMLDivElement;
         shortcutSubMenuElm!.dispatchEvent(new Event('mouseover'));
@@ -1242,9 +1537,18 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'FREEZE_COLUMNS',
             command: 'freeze-columns',
             positionOrder: 45,
+            action: expect.any(Function),
           },
-          { divider: true, command: '', positionOrder: 48 },
-          { _orgTitle: '', iconCssClass: 'mdi mdi-close', title: 'Hide Column', titleKey: 'HIDE_COLUMN', command: 'hide-column', positionOrder: 59 },
+          { divider: true, command: 'divider-1', positionOrder: 48 },
+          {
+            _orgTitle: '',
+            iconCssClass: 'mdi mdi-close',
+            title: 'Hide Column',
+            titleKey: 'HIDE_COLUMN',
+            command: 'hide-column',
+            positionOrder: 59,
+            action: expect.any(Function),
+          },
         ];
         const commandDivElm = gridContainerDiv.querySelector('[data-command="hide-column"]') as HTMLDivElement;
         const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
@@ -1280,6 +1584,7 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'REMOVE_FILTER',
             command: 'clear-filter',
             positionOrder: 57,
+            action: expect.any(Function),
           },
         ];
         const commandDivElm = gridContainerDiv.querySelector('[data-command="clear-filter"]') as HTMLDivElement;
@@ -1320,6 +1625,7 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'SORT_ASCENDING',
             command: 'sort-asc',
             positionOrder: 50,
+            action: expect.any(Function),
           },
           {
             _orgTitle: '',
@@ -1328,9 +1634,18 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'SORT_DESCENDING',
             command: 'sort-desc',
             positionOrder: 51,
+            action: expect.any(Function),
           },
-          { divider: true, command: '', positionOrder: 52 },
-          { _orgTitle: '', iconCssClass: 'mdi mdi-sort-variant-off', title: 'Remove Sort', titleKey: 'REMOVE_SORT', command: 'clear-sort', positionOrder: 58 },
+          { divider: true, command: 'divider-2', positionOrder: 52 },
+          {
+            _orgTitle: '',
+            iconCssClass: 'mdi mdi-sort-variant-off',
+            title: 'Remove Sort',
+            titleKey: 'REMOVE_SORT',
+            command: 'clear-sort',
+            positionOrder: 58,
+            action: expect.any(Function),
+          },
         ]);
         expect(commandIconElm.classList.contains('mdi-sort-variant-off')).toBeTruthy();
         expect(commandLabelElm.textContent).toBe('Remove Sort');
@@ -1345,6 +1660,7 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'SORT_ASCENDING',
             command: 'sort-asc',
             positionOrder: 50,
+            action: expect.any(Function),
           },
           {
             _orgTitle: '',
@@ -1353,8 +1669,9 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'SORT_DESCENDING',
             command: 'sort-desc',
             positionOrder: 51,
+            action: expect.any(Function),
           },
-          { divider: true, command: '', positionOrder: 52 },
+          { divider: true, command: 'divider-2', positionOrder: 52 },
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-sort-variant-off',
@@ -1362,6 +1679,7 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'REMOVE_SORT',
             command: 'clear-sort',
             positionOrder: 58,
+            action: expect.any(Function),
           },
         ]);
 
@@ -1401,8 +1719,9 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'FREEZE_COLUMNS',
             command: 'freeze-columns',
             positionOrder: 45,
+            action: expect.any(Function),
           },
-          { divider: true, command: '', positionOrder: 48 },
+          { divider: true, command: 'divider-1', positionOrder: 48 },
         ]);
 
         commandDivElm.dispatchEvent(new Event('click')); // execute command
@@ -1445,8 +1764,9 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'FREEZE_COLUMNS',
             command: 'freeze-columns',
             positionOrder: 45,
+            action: expect.any(Function),
           },
-          { divider: true, command: '', positionOrder: 48 },
+          { divider: true, command: 'divider-1', positionOrder: 48 },
         ]);
 
         commandDivElm.dispatchEvent(new Event('click')); // execute command
@@ -1485,6 +1805,7 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'SORT_ASCENDING',
             command: 'sort-asc',
             positionOrder: 50,
+            action: expect.any(Function),
           },
           {
             _orgTitle: '',
@@ -1493,9 +1814,18 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'SORT_DESCENDING',
             command: 'sort-desc',
             positionOrder: 51,
+            action: expect.any(Function),
           },
-          { divider: true, command: '', positionOrder: 52 },
-          { _orgTitle: '', iconCssClass: 'mdi mdi-sort-variant-off', title: 'Remove Sort', titleKey: 'REMOVE_SORT', command: 'clear-sort', positionOrder: 58 },
+          { divider: true, command: 'divider-2', positionOrder: 52 },
+          {
+            _orgTitle: '',
+            iconCssClass: 'mdi mdi-sort-variant-off',
+            title: 'Remove Sort',
+            titleKey: 'REMOVE_SORT',
+            command: 'clear-sort',
+            positionOrder: 58,
+            action: expect.any(Function),
+          },
         ]);
 
         const clickEvent = new Event('click');
@@ -1537,6 +1867,7 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'SORT_ASCENDING',
             command: 'sort-asc',
             positionOrder: 50,
+            action: expect.any(Function),
           },
           {
             _orgTitle: '',
@@ -1545,9 +1876,18 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'SORT_DESCENDING',
             command: 'sort-desc',
             positionOrder: 51,
+            action: expect.any(Function),
           },
-          { divider: true, command: '', positionOrder: 52 },
-          { _orgTitle: '', iconCssClass: 'mdi mdi-sort-variant-off', title: 'Remove Sort', titleKey: 'REMOVE_SORT', command: 'clear-sort', positionOrder: 58 },
+          { divider: true, command: 'divider-2', positionOrder: 52 },
+          {
+            _orgTitle: '',
+            iconCssClass: 'mdi mdi-sort-variant-off',
+            title: 'Remove Sort',
+            titleKey: 'REMOVE_SORT',
+            command: 'clear-sort',
+            positionOrder: 58,
+            action: expect.any(Function),
+          },
         ]);
 
         const clickEvent = new Event('click');

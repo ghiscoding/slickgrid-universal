@@ -459,7 +459,7 @@ export class Example33 {
         onCommand: (e, args) => this.executeCommand(e, args),
         onOptionSelected: (_e, args) => {
           // change "Completed" property with new option selected from the Cell Menu
-          const dataContext = args && args.dataContext;
+          const dataContext = args?.dataContext;
           if (dataContext && dataContext.hasOwnProperty('completed')) {
             dataContext.completed = args.item.option;
             this.aureliaGrid.gridService.updateItem(dataContext);

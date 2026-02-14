@@ -52,6 +52,7 @@ export const routes: Routes = [
   { path: 'example48', loadComponent: () => import('./examples/example48.component').then((m) => m.Example48Component) },
   { path: 'example49', loadComponent: () => import('./examples/example49.component').then((m) => m.Example49Component) },
   { path: 'example50', loadComponent: () => import('./examples/example50.component').then((m) => m.Example50Component) },
+  { path: 'example51', loadComponent: () => import('./examples/example51.component').then((m) => m.Example51Component) },
   { path: '', redirectTo: '/example34', pathMatch: 'full' },
   { path: '**', redirectTo: '/example34', pathMatch: 'full' },
 ];

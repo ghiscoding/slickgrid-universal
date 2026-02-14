@@ -1,0 +1,57 @@
+<h3 class="title is-3">
+  Example 40 - Menus with Slots
+  <span class="subtitle">(Custom Menu Item Renderer)</span>
+  <button class="button is-small" type="button" data-test="toggle-subtitle" onclick.trigger="toggleSubTitle()">
+    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+  </button>
+
+  <div class="subtitle code-link">
+    <span class="is-size-6">see</span>
+    <a
+      class="is-size-5"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example40.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </div>
+</h3>
+
+<div class="notification is-info is-light mb-3" style.bind="subTitleStyle">
+  <h4 class="is-size-5 mb-2">
+    <span class="mdi mdi-information-outline"></span>
+    <strong>Menu Slots Demo with Custom Renderer</strong>
+  </h4>
+  <p class="mb-2">
+    Click on the menu buttons to see the new <strong>single slot functionality</strong> working across all menu types (Header Menu, Cell
+    Menu, Context Menu, Grid Menu):
+  </p>
+  <p class="mt-2">
+    <small
+      ><strong>Note:</strong> The demo focuses on the custom rendering capability via <code>slotRenderer</code> and
+      <code>defaultMenuItemRenderer</code>, which work across all menu plugins (SlickHeaderMenu, SlickCellMenu, SlickContextMenu,
+      SlickGridMenu). Also note that the keyboard shortcuts displayed in the menus (e.g., <code>Alt+↑</code>, <code>F5</code>) are for demo
+      purposes only and do not actually trigger any actions.
+    </small>
+  </p>
+</div>
+
+<section class="mb-2">
+  <div class="row mb-1">
+    <button class="button is-small" data-test="clear-grouping-btn" onclick.trigger="clearGrouping()">
+      <span class="mdi mdi-playlist-remove"></span>
+      <span>Clear grouping</span>
+    </button>
+    <button class="button is-small" data-test="collapse-all-btn" onclick.trigger="collapseAllGroups()">
+      <span class="mdi mdi-arrow-collapse"></span>
+      <span>Collapse all groups</span>
+    </button>
+    <button class="button is-small" data-test="expand-all-btn" onclick.trigger="expandAllGroups()">
+      <span class="mdi mdi-arrow-expand"></span>
+      <span>Expand all groups</span>
+    </button>
+    <button class="button is-small" data-test="group-duration-sort-value-btn" onclick.trigger="groupByDuration()">Group by Duration</button>
+  </div>
+</section>
+
+<div class="grid40"></div>

@@ -1,0 +1,75 @@
+<div class="demo51">
+  <h2>
+    <span>Example 51: Menus with Slots</span>
+    <span class="float-end">
+      <a
+        style="font-size: 18px"
+        target="_blank"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example51.ts"
+      >
+        <span class="mdi mdi-link mdi-v-align-sub"></span> code
+      </a>
+    </span>
+    <button
+      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+      type="button"
+      data-test="toggle-subtitle"
+      click.trigger="toggleSubTitle()"
+    >
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+    <button class="btn btn-outline-secondary btn-sm btn-icon" click.trigger="toggleDarkMode()" data-test="toggle-dark-mode">
+      <span class="mdi mdi-theme-light-dark"></span>
+      <span>Toggle Dark Mode</span>
+    </button>
+  </h2>
+
+  <div class="subtitle alert alert-light">
+    <h5 class="mb-2">
+      <span class="mdi mdi-information-outline"></span>
+      <strong>Menu Slots Demo with Custom Renderer</strong>
+    </h5>
+    <p class="mb-2">
+      Click on the menu buttons to see the new <strong>single slot functionality</strong> working across all menu types (Header Menu, Cell
+      Menu, Context Menu, Grid Menu):
+    </p>
+    <p class="mt-2">
+      <small
+        ><strong>Note:</strong> The demo focuses on the custom rendering capability via <code>slotRenderer</code> and
+        <code>defaultMenuItemRenderer</code>, which work across all menu plugins (SlickHeaderMenu, SlickCellMenu, SlickContextMenu,
+        SlickGridMenu). Also note that the keyboard shortcuts displayed in the menus (e.g., <code>Alt+↑</code>, <code>F5</code>) are for
+        demo purposes only and do not actually trigger any actions.
+      </small>
+    </p>
+  </div>
+
+  <section class="row mb-2">
+    <div class="mb-1">
+      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="clear-grouping-btn" click.trigger="clearGrouping()">
+        <span>Clear grouping</span>
+      </button>
+      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="collapse-all-btn" click.trigger="collapseAllGroups()">
+        <span class="mdi mdi-arrow-collapse"></span>
+        <span>Collapse all groups</span>
+      </button>
+      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="expand-all-btn" click.trigger="expandAllGroups()">
+        <span class="mdi mdi-arrow-expand"></span>
+        <span>Expand all groups</span>
+      </button>
+      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="group-duration-sort-value-btn" click.trigger="groupByDuration()">
+        Group by Duration
+      </button>
+    </div>
+  </section>
+
+  <div id="grid-container" class="col-sm-12">
+    <aurelia-slickgrid
+      grid-id="grid51"
+      columns.bind="columnDefinitions"
+      options.bind="gridOptions"
+      dataset.bind="dataset"
+      on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"
+    >
+    </aurelia-slickgrid>
+  </div>
+</div>

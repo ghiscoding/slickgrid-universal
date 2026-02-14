@@ -1,8 +1,6 @@
-import type { SlickGrid } from '../core/index.js';
-import type { HeaderMenuLabel } from './headerMenuLabel.interface.js';
-import type { Column } from './index.js';
+import type { HeaderMenuCommandItemCallbackArgs, HeaderMenuLabel, MenuOption } from './index.js';
 
-export interface HeaderMenuOption {
+export interface HeaderMenuOption extends MenuOption<HeaderMenuCommandItemCallbackArgs> {
   /** Auto-align drop menu to the left when not enough viewport space to show on the right */
   autoAlign?: boolean;
 
@@ -18,34 +16,28 @@ export interface HeaderMenuOption {
    */
   commandLabels?: HeaderMenuLabel;
 
-  /** position order index of the "Filter Shortcuts" menu */
+  /** @deprecated @use `commandListBuilder` to position order index of the "Filter Shortcuts" menu */
   filterShortcutsPositionOrder?: number;
 
-  /** Defaults to false, which will hide the "Column Resize by Content" command in the Header Menu (Grid Option "enableColumnResizeOnDoubleClick" has to also be enabled) */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Column Resize by Content" command in the Header Menu (Grid Option "enableColumnResizeOnDoubleClick" has to also be enabled) */
   hideColumnResizeByContentCommand?: boolean;
 
-  /** Defaults to false, which will hide the "Remove Filter" command in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Remove Filter" command in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
   hideClearFilterCommand?: boolean;
 
-  /** Defaults to false, which will hide the "Remove Sort" command in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Remove Sort" command in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
   hideClearSortCommand?: boolean;
 
-  /** Defaults to false, which will hide the "Clear Filter" command in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Clear Filter" command in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
   hideFilterCommand?: boolean;
 
-  /** Defaults to true (opt-in feature), which will hide the "Freeze Columns" command in the Header Menu */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to true (opt-in feature), which will hide the "Freeze Columns" command in the Header Menu */
   hideFreezeColumnsCommand?: boolean;
 
-  /** Defaults to false, which will hide Sort (Asc/Desc & Clear Sort) commands in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide Sort (Asc/Desc & Clear Sort) commands in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
   hideSortCommands?: boolean;
 
-  /**
-   * Defaults to false, which will hide the Divider (separator) between the top sort commands and the other clear commands
-   * (Grid Option "enableHeaderMenu" and "enableSorting" have to be enabled)
-   */
-  hideSortCommandsDivider?: boolean;
-
-  /** Defaults to false, which will hide the "Hide Column" command in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Hide Column" command in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
   hideColumnHideCommand?: boolean;
 
   /** A CSS class to be added to the menu item icon. */
@@ -95,10 +87,4 @@ export interface HeaderMenuOption {
 
   /** Item tooltip. */
   tooltip?: string;
-
-  // --
-  // Methods
-
-  /** Callback method that user can override the default behavior of enabling/disabling an item from the list. */
-  menuUsabilityOverride?: (args: { grid: SlickGrid; column: Column; menu: HTMLElement }) => boolean;
 }
