@@ -1433,7 +1433,8 @@ describe('ContextMenu Plugin', () => {
           ...gridOptionsMock,
           enableExcelExport: true,
           enableTextExport: false,
-          contextMenu: { hideCopyCellValueCommand: true, hideExportCsvCommand: true, hideExportExcelCommand: false },
+          contextMenu: { hideCommands: ['copy', 'export-csv'] },
+          // contextMenu: { hideCopyCellValueCommand: true, hideExportCsvCommand: true, hideExportExcelCommand: false },
         } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);

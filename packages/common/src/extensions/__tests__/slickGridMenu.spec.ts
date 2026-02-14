@@ -1529,6 +1529,35 @@ describe('GridMenuControl', () => {
           ]);
         });
 
+        it('should have only 1 menu "clear-filter" when all other menus are set in `hideCommands` with "enableFilering" is set', () => {
+          const copyGridOptionsMock: GridOption = {
+            ...gridOptionsMock,
+            enableFiltering: true,
+            showHeaderRow: true,
+            gridMenu: {
+              hideCommands: ['clear-pinning', 'refresh-dataset', 'toggle-filter', 'toggle-dark-mode'],
+              commandLabels: gridOptionsMock.gridMenu!.commandLabels,
+            },
+          };
+          vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+          vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+          control.columns = columnsMock;
+          control.init();
+          control.init(); // calling 2x register to make sure it doesn't duplicate commands
+          expect(SharedService.prototype.gridOptions.gridMenu!.commandItems).toEqual([
+            {
+              _orgTitle: '',
+              iconCssClass: 'mdi mdi-filter-remove-outline',
+              titleKey: 'CLEAR_ALL_FILTERS',
+              title: 'Supprimer tous les filtres',
+              disabled: false,
+              command: 'clear-filter',
+              positionOrder: 50,
+              action: expect.any(Function),
+            },
+          ]);
+        });
+
         it('should have only 1 menu "clear-filter" when all other menus are defined as hidden & when "enableFilering" is set', () => {
           const copyGridOptionsMock = {
             ...gridOptionsMock,
@@ -1568,6 +1597,7 @@ describe('GridMenuControl', () => {
             showHeaderRow: true,
             gridMenu: {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels,
+              // @deprecated `hideXYZ`, replace by `hideCommands` in next major
               hideClearFrozenColumnsCommand: true,
               hideClearAllFiltersCommand: true,
               hideToggleDarkModeCommand: true,
@@ -1598,6 +1628,7 @@ describe('GridMenuControl', () => {
             ...gridOptionsMock,
             gridMenu: {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels,
+              // @deprecated `hideXYZ`, replace by `hideCommands` in next major
               hideClearFrozenColumnsCommand: true,
               hideClearAllFiltersCommand: true,
               hideToggleFilterCommand: true,
@@ -1631,6 +1662,7 @@ describe('GridMenuControl', () => {
             showHeaderRow: true,
             gridMenu: {
               commandLabels: gridOptionsMock.gridMenu!.commandLabels,
+              // @deprecated `hideXYZ`, replace by `hideCommands` in next major
               hideClearFrozenColumnsCommand: true,
               hideClearAllFiltersCommand: true,
               hideToggleDarkModeCommand: true,

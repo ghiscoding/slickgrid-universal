@@ -211,7 +211,8 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
           },
         },
         menuCommandItems,
-        originalCommandItems
+        originalCommandItems,
+        contextMenu.hideCommands
       );
     }
 
@@ -243,7 +244,8 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
           },
         },
         menuCommandItems,
-        originalCommandItems
+        originalCommandItems,
+        contextMenu.hideCommands
       );
     }
 
@@ -270,7 +272,8 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
           },
         },
         menuCommandItems,
-        originalCommandItems
+        originalCommandItems,
+        contextMenu.hideCommands
       );
     }
 
@@ -299,7 +302,8 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
           },
         },
         menuCommandItems,
-        originalCommandItems
+        originalCommandItems,
+        contextMenu.hideCommands
       );
     }
 
@@ -331,14 +335,15 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
           },
         },
         menuCommandItems,
-        originalCommandItems
+        originalCommandItems,
+        contextMenu.hideCommands
       );
     }
 
     // -- Grouping Commands
     if (gridOptions && (gridOptions.enableGrouping || gridOptions.enableDraggableGrouping || gridOptions.enableTreeData)) {
       // add a divider (separator) between the top sort commands and the other clear commands
-      if (contextMenu && !contextMenu.hideCopyCellValueCommand) {
+      if (contextMenu && !contextMenu.hideCopyCellValueCommand && !contextMenu.hideCommands?.includes('copy')) {
         menuCommandItems.push({ divider: true, command: 'divider-1', positionOrder: 54 });
       }
 
@@ -363,7 +368,8 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
             },
           },
           menuCommandItems,
-          originalCommandItems
+          originalCommandItems,
+          contextMenu.hideCommands
         );
       }
 
@@ -395,7 +401,8 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
             },
           },
           menuCommandItems,
-          originalCommandItems
+          originalCommandItems,
+          contextMenu.hideCommands
         );
       }
 
@@ -427,7 +434,8 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
             },
           },
           menuCommandItems,
-          originalCommandItems
+          originalCommandItems,
+          contextMenu.hideCommands
         );
       }
     }

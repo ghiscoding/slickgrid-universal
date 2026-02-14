@@ -38,40 +38,40 @@ export interface ContextMenuOption extends MenuOption<MenuFromCellCallbackArgs> 
   /** Defaults to "right", user can optionally force the Cell Menu drop to be aligned to the left or right. */
   dropSide?: 'left' | 'right';
 
-  /** Defaults to false, hide the "Clear Grouping" command in the menu (Grid Option "enableGrouping: true" has to be enabled) */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, hide the "Clear Grouping" command in the menu (Grid Option "enableGrouping: true" has to be enabled) */
   hideClearAllGrouping?: boolean;
 
   /** Defaults to false, hide the Close button on top right */
   hideCloseButton?: boolean;
 
-  /** Defaults to false, hide the "Collapse all Groups" command in the menu (Grid Option "enableGrouping: true" has to be enabled) */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, hide the "Collapse all Groups" command in the menu (Grid Option "enableGrouping: true" has to be enabled) */
   hideCollapseAllGroups?: boolean;
 
-  /** Defaults to false, hide the Commands section even when the commandItems array is filled */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, hide the Commands section even when the commandItems array is filled */
   hideCommandSection?: boolean;
 
-  /** Defaults to false, which will hide the "Copy Cell Value" command in the menu */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Copy Cell Value" command in the menu */
   hideCopyCellValueCommand?: boolean;
 
-  /** Defaults to false, hide the "Expand all Groups" command in the menu (Grid Option "enableGrouping: true" has to be enabled) */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, hide the "Expand all Groups" command in the menu (Grid Option "enableGrouping: true" has to be enabled) */
   hideExpandAllGroups?: boolean;
 
-  /** Defaults to false, which will hide the "Export to CSV" command in the menu (Grid Option "enableTextExport: true" has to be enabled) */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Export to CSV" command in the menu (Grid Option "enableTextExport: true" has to be enabled) */
   hideExportCsvCommand?: boolean;
 
-  /** Defaults to false, which will hide the "Export to Excel" command in the menu (Grid Option "enableExcelExport: true" has to be enabled) */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Export to Excel" command in the menu (Grid Option "enableExcelExport: true" has to be enabled) */
   hideExportExcelCommand?: boolean;
 
-  /** Defaults to false, which will hide the "Export to PDF" command in the menu (Grid Option "enablePdfExport: true" has to be enabled) */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Export to PDF" command in the menu (Grid Option "enablePdfExport: true" has to be enabled) */
   hideExportPdfCommand?: boolean;
 
-  /** Defaults to false, which will hide the "Export to Text Delimited" command in the menu (Grid Option "enableTextExport: true" has to be enabled) */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Export to Text Delimited" command in the menu (Grid Option "enableTextExport: true" has to be enabled) */
   hideExportTextDelimitedCommand?: boolean;
 
-  /** Defaults to true, do we want to hide the Cell Menu when a scrolling event occurs? */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to true, do we want to hide the Cell Menu when a scrolling event occurs? */
   hideMenuOnScroll?: boolean;
 
-  /** Defaults to false, Hide the Options section even when the optionItems array is filled */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, Hide the Options section even when the optionItems array is filled */
   hideOptionSection?: boolean;
 
   /** icon for the "Clear Grouping" command (Grid Option "enableGrouping: true" has to be enabled) */

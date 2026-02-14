@@ -19,31 +19,31 @@ export interface HeaderMenuOption extends MenuOption<HeaderMenuCommandItemCallba
   /** position order index of the "Filter Shortcuts" menu */
   filterShortcutsPositionOrder?: number;
 
-  /** Defaults to false, which will hide the "Column Resize by Content" command in the Header Menu (Grid Option "enableColumnResizeOnDoubleClick" has to also be enabled) */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Column Resize by Content" command in the Header Menu (Grid Option "enableColumnResizeOnDoubleClick" has to also be enabled) */
   hideColumnResizeByContentCommand?: boolean;
 
-  /** Defaults to false, which will hide the "Remove Filter" command in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Remove Filter" command in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
   hideClearFilterCommand?: boolean;
 
-  /** Defaults to false, which will hide the "Remove Sort" command in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Remove Sort" command in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
   hideClearSortCommand?: boolean;
 
-  /** Defaults to false, which will hide the "Clear Filter" command in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Clear Filter" command in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
   hideFilterCommand?: boolean;
 
-  /** Defaults to true (opt-in feature), which will hide the "Freeze Columns" command in the Header Menu */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to true (opt-in feature), which will hide the "Freeze Columns" command in the Header Menu */
   hideFreezeColumnsCommand?: boolean;
 
-  /** Defaults to false, which will hide Sort (Asc/Desc & Clear Sort) commands in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide Sort (Asc/Desc & Clear Sort) commands in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
   hideSortCommands?: boolean;
 
   /**
-   * Defaults to false, which will hide the Divider (separator) between the top sort commands and the other clear commands
+   *  @deprecated @use Defaults to false, which will hide the Divider (separator) between the top sort commands and the other clear commands
    * (Grid Option "enableHeaderMenu" and "enableSorting" have to be enabled)
    */
   hideSortCommandsDivider?: boolean;
 
-  /** Defaults to false, which will hide the "Hide Column" command in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
+  /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Hide Column" command in the Header Menu (Grid Option "enableHeaderMenu: true" has to be enabled) */
   hideColumnHideCommand?: boolean;
 
   /** A CSS class to be added to the menu item icon. */

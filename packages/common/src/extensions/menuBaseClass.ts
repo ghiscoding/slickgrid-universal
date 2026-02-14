@@ -145,23 +145,34 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
    * @param originalMenuItems
    * @param builtInMenuItem
    * @param showCommand - is command hidden from menu option (deprecated)
+   * @returns - returns true when added to the commands array
    */
   protected addMissingCommandOrAction<T extends MenuCommandItem | GridMenuItem>(
     builtInMenuItem: T | 'divider',
     targetMenuItems: Array<T | 'divider'>,
-    originalMenuItems?: Array<T | 'divider'>
-  ): void {
-    if (builtInMenuItem !== 'divider') {
+    originalMenuItems: Array<T | 'divider'> | undefined,
+    hideCommands: string[] | undefined
+  ): boolean {
+    // remove any commands that the user doesn't want
+    let skip = false;
+    if (hideCommands) {
+      skip = builtInMenuItem !== 'divider' && new Set(hideCommands).has(builtInMenuItem.command);
+    }
+
+    if (builtInMenuItem !== 'divider' && !skip) {
       const cmdName = builtInMenuItem.command;
       const cmd = (originalMenuItems ?? targetMenuItems).find((item) => item !== 'divider' && item.command === cmdName);
 
       if (!cmd) {
         targetMenuItems.push(builtInMenuItem);
+        return true;
       } else if (!(cmd as T).action) {
         // action might be missing (custom menu items), if so copy over from built-in
         (cmd as T).action = builtInMenuItem.action;
       }
     }
+
+    return false;
   }
 
   /**

@@ -1086,6 +1086,61 @@ describe('HeaderMenu Plugin', () => {
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
+          headerMenu: {
+            hideCommands: ['column-resize-by-content', 'hide-column'],
+          },
+        });
+
+        // calling `onBeforeSetColumns` 2x times shouldn't duplicate clear sort menu
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onBeforeSetColumns.notify({ previousColumns: [], newColumns: columnsMock, grid: gridStub }, eventData as any, gridStub);
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
+        const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
+        headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+
+        const commandDivElm = gridContainerDiv.querySelector('[data-command="freeze-columns"]') as HTMLDivElement;
+        const commandIconElm = commandDivElm.querySelector('.slick-menu-icon') as HTMLDivElement;
+        const commandLabelElm = commandDivElm.querySelector('.slick-menu-content') as HTMLDivElement;
+        expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
+          {
+            _orgTitle: '',
+            iconCssClass: 'mdi mdi-pin-outline',
+            title: 'Freeze Columns',
+            titleKey: 'FREEZE_COLUMNS',
+            command: 'freeze-columns',
+            positionOrder: 45,
+            action: expect.any(Function),
+          },
+          { divider: true, command: 'divider-1', positionOrder: 48 },
+        ]);
+        expect(commandIconElm.classList.contains('mdi-pin-outline')).toBeTruthy();
+        expect(commandLabelElm.textContent).toBe('Freeze Columns');
+
+        await translateService.use('fr');
+        plugin.translateHeaderMenu();
+        expect(columnsMock[1].header!.menu!.commandItems!).toEqual([
+          {
+            _orgTitle: '',
+            iconCssClass: 'mdi mdi-pin-outline',
+            title: 'Geler les colonnes',
+            titleKey: 'FREEZE_COLUMNS',
+            command: 'freeze-columns',
+            positionOrder: 45,
+            action: expect.any(Function),
+          },
+          { divider: true, command: 'divider-1', positionOrder: 48 },
+        ]);
+
+        commandDivElm.dispatchEvent(new Event('click')); // execute command
+        expect(setOptionsSpy).toHaveBeenCalledWith({ frozenColumn: 1, enableMouseWheelScrollHandler: true }, false, true);
+        expect(gridStub.setColumns).toHaveBeenCalledWith(columnsMock);
+      });
+
+      it('should expect menu related to Freeze Columns when "hideFreezeColumnsCommand" is disabled and also expect grid "setOptions" method to be called with current column position', async () => {
+        vi.spyOn(gridStub, 'validateColumnFreezeWidth').mockReturnValue(true);
+        const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
+          ...gridOptionsMock,
           headerMenu: { hideFreezeColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
         });
 
@@ -1109,7 +1164,7 @@ describe('HeaderMenu Plugin', () => {
             positionOrder: 45,
             action: expect.any(Function),
           },
-          { divider: true, command: '', positionOrder: 48 },
+          { divider: true, command: 'divider-1', positionOrder: 48 },
         ]);
         expect(commandIconElm.classList.contains('mdi-pin-outline')).toBeTruthy();
         expect(commandLabelElm.textContent).toBe('Freeze Columns');
@@ -1126,7 +1181,7 @@ describe('HeaderMenu Plugin', () => {
             positionOrder: 45,
             action: expect.any(Function),
           },
-          { divider: true, command: '', positionOrder: 48 },
+          { divider: true, command: 'divider-1', positionOrder: 48 },
         ]);
 
         commandDivElm.dispatchEvent(new Event('click')); // execute command
@@ -1139,6 +1194,7 @@ describe('HeaderMenu Plugin', () => {
         const setOptionsSpy = vi.spyOn(gridStub, 'setOptions');
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
+          // @deprecated `hideXYZ`, replace by `hideCommands` in next major
           headerMenu: { hideFreezeColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
           frozenColumn: 1,
         });
@@ -1163,7 +1219,7 @@ describe('HeaderMenu Plugin', () => {
             positionOrder: 45,
             action: expect.any(Function),
           },
-          { divider: true, command: '', positionOrder: 48 },
+          { divider: true, command: 'divider-1', positionOrder: 48 },
         ]);
         expect(commandIconElm.classList.contains('mdi-pin-off-outline')).toBeTruthy();
         expect(commandLabelElm.textContent).toBe('Unfreeze Columns');
@@ -1180,7 +1236,7 @@ describe('HeaderMenu Plugin', () => {
             positionOrder: 45,
             action: expect.any(Function),
           },
-          { divider: true, command: '', positionOrder: 48 },
+          { divider: true, command: 'divider-1', positionOrder: 48 },
         ]);
 
         commandDivElm.dispatchEvent(new Event('click')); // execute command
@@ -1195,6 +1251,7 @@ describe('HeaderMenu Plugin', () => {
         vi.spyOn(gridStub, 'validateColumnFreezeWidth').mockReturnValue(true);
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
+          // @deprecated `hideXYZ`, replace by `hideCommands` in next major
           headerMenu: { hideFreezeColumnsCommand: false, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
         });
         vi.spyOn(gridStub, 'getOptions').mockReturnValueOnce({ frozenColumn: -1 } as GridOption);
@@ -1215,7 +1272,7 @@ describe('HeaderMenu Plugin', () => {
             positionOrder: 45,
             action: expect.any(Function),
           },
-          { divider: true, command: '', positionOrder: 48 },
+          { divider: true, command: 'divider-1', positionOrder: 48 },
         ]);
 
         commandDivElm.dispatchEvent(new Event('click')); // execute command
@@ -1233,6 +1290,7 @@ describe('HeaderMenu Plugin', () => {
         sharedService.hasColumnsReordered = true;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
+          // @deprecated `hideXYZ`, replace by `hideCommands` in next major
           headerMenu: {
             hideFreezeColumnsCommand: false,
             hideColumnHideCommand: true,
@@ -1257,7 +1315,7 @@ describe('HeaderMenu Plugin', () => {
             positionOrder: 45,
             action: expect.any(Function),
           },
-          { divider: true, command: '', positionOrder: 48 },
+          { divider: true, command: 'divider-1', positionOrder: 48 },
         ]);
         expect(commandDivElm).toBeFalsy();
       });
@@ -1267,6 +1325,7 @@ describe('HeaderMenu Plugin', () => {
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue({
           ...gridOptionsMock,
           enableFiltering: true,
+          // @deprecated `hideXYZ`, replace by `hideCommands` in next major
           headerMenu: { hideFilterCommand: false, hideFreezeColumnsCommand: true, hideColumnHideCommand: true, hideColumnResizeByContentCommand: true },
         });
 
@@ -1334,7 +1393,7 @@ describe('HeaderMenu Plugin', () => {
             positionOrder: 47,
             action: expect.any(Function),
           },
-          { divider: true, command: '', positionOrder: 48 },
+          { divider: true, command: 'divider-1', positionOrder: 48 },
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-close',
@@ -1398,7 +1457,7 @@ describe('HeaderMenu Plugin', () => {
             titleKey: 'COLUMN_RESIZE_BY_CONTENT',
             action: expect.any(Function),
           },
-          { command: '', divider: true, positionOrder: 48 },
+          { divider: true, command: 'divider-1', positionOrder: 48 },
           {
             _orgTitle: '',
             command: 'filter-shortcuts-root-menu',
@@ -1425,7 +1484,7 @@ describe('HeaderMenu Plugin', () => {
             title: 'Filter Shortcuts',
             titleKey: 'FILTER_SHORTCUTS',
           },
-          { command: '', divider: true, positionOrder: 56 },
+          { divider: true, command: 'divider-3', positionOrder: 56 },
           {
             _orgTitle: '',
             command: 'hide-column',
@@ -1480,7 +1539,7 @@ describe('HeaderMenu Plugin', () => {
             positionOrder: 45,
             action: expect.any(Function),
           },
-          { divider: true, command: '', positionOrder: 48 },
+          { divider: true, command: 'divider-1', positionOrder: 48 },
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-close',
@@ -1577,7 +1636,7 @@ describe('HeaderMenu Plugin', () => {
             positionOrder: 51,
             action: expect.any(Function),
           },
-          { divider: true, command: '', positionOrder: 52 },
+          { divider: true, command: 'divider-2', positionOrder: 52 },
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-sort-variant-off',
@@ -1612,7 +1671,7 @@ describe('HeaderMenu Plugin', () => {
             positionOrder: 51,
             action: expect.any(Function),
           },
-          { divider: true, command: '', positionOrder: 52 },
+          { divider: true, command: 'divider-2', positionOrder: 52 },
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-sort-variant-off',
@@ -1662,7 +1721,7 @@ describe('HeaderMenu Plugin', () => {
             positionOrder: 45,
             action: expect.any(Function),
           },
-          { divider: true, command: '', positionOrder: 48 },
+          { divider: true, command: 'divider-1', positionOrder: 48 },
         ]);
 
         commandDivElm.dispatchEvent(new Event('click')); // execute command
@@ -1707,7 +1766,7 @@ describe('HeaderMenu Plugin', () => {
             positionOrder: 45,
             action: expect.any(Function),
           },
-          { divider: true, command: '', positionOrder: 48 },
+          { divider: true, command: 'divider-1', positionOrder: 48 },
         ]);
 
         commandDivElm.dispatchEvent(new Event('click')); // execute command
@@ -1757,7 +1816,7 @@ describe('HeaderMenu Plugin', () => {
             positionOrder: 51,
             action: expect.any(Function),
           },
-          { divider: true, command: '', positionOrder: 52 },
+          { divider: true, command: 'divider-2', positionOrder: 52 },
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-sort-variant-off',
@@ -1819,7 +1878,7 @@ describe('HeaderMenu Plugin', () => {
             positionOrder: 51,
             action: expect.any(Function),
           },
-          { divider: true, command: '', positionOrder: 52 },
+          { divider: true, command: 'divider-2', positionOrder: 52 },
           {
             _orgTitle: '',
             iconCssClass: 'mdi mdi-sort-variant-off',

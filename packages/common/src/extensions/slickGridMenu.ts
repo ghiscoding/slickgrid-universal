@@ -559,7 +559,8 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
             action: this.clearPinning.bind(this),
           },
           gridMenuCommandItems,
-          originalCommandItems
+          originalCommandItems,
+          this._addonOptions.hideCommands
         );
       }
 
@@ -577,7 +578,8 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
               action: this.clearFilters.bind(this),
             },
             gridMenuCommandItems,
-            originalCommandItems
+            originalCommandItems,
+            this._addonOptions.hideCommands
           );
         }
 
@@ -594,7 +596,8 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
               action: this.toggleFilterBar.bind(this),
             },
             gridMenuCommandItems,
-            originalCommandItems
+            originalCommandItems,
+            this._addonOptions.hideCommands
           );
         }
 
@@ -611,7 +614,8 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
               action: () => this.extensionUtility.refreshBackendDataset(),
             },
             gridMenuCommandItems,
-            originalCommandItems
+            originalCommandItems,
+            this._addonOptions.hideCommands
           );
         }
       }
@@ -629,7 +633,8 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
             action: this.toggleDarkMode.bind(this),
           },
           gridMenuCommandItems,
-          originalCommandItems
+          originalCommandItems,
+          this._addonOptions.hideCommands
         );
       }
 
@@ -650,7 +655,8 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
               },
             },
             gridMenuCommandItems,
-            originalCommandItems
+            originalCommandItems,
+            this._addonOptions.hideCommands
           );
         }
       }
@@ -669,7 +675,8 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
               action: this.clearSorting.bind(this),
             },
             gridMenuCommandItems,
-            originalCommandItems
+            originalCommandItems,
+            this._addonOptions.hideCommands
           );
         }
       }
@@ -687,7 +694,8 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
             action: this.exportCsv.bind(this),
           },
           gridMenuCommandItems,
-          originalCommandItems
+          originalCommandItems,
+          this._addonOptions.hideCommands
         );
       }
 
@@ -704,7 +712,8 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
             action: this.exportExcel.bind(this),
           },
           gridMenuCommandItems,
-          originalCommandItems
+          originalCommandItems,
+          this._addonOptions.hideCommands
         );
       }
 
@@ -721,7 +730,8 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
             action: this.exportPdf.bind(this),
           },
           gridMenuCommandItems,
-          originalCommandItems
+          originalCommandItems,
+          this._addonOptions.hideCommands
         );
       }
 
@@ -738,7 +748,8 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
             action: this.exportTextDelimited.bind(this),
           },
           gridMenuCommandItems,
-          originalCommandItems
+          originalCommandItems,
+          this._addonOptions.hideCommands
         );
       }
 

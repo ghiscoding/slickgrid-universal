@@ -291,7 +291,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
             columnDef.header.menu = { commandItems: [] };
           }
 
-          const columnHeaderMenuItems: Array<MenuCommandItem | 'divider'> = columnDef?.header?.menu?.commandItems ?? [];
+          let columnHeaderMenuItems: Array<MenuCommandItem | 'divider'> = columnDef?.header?.menu?.commandItems ?? [];
 
           // Freeze Column (pinning)
           let hasFrozenOrResizeCommand = false;
@@ -312,7 +312,9 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
                   positionOrder: 45,
                   action: (_e, args) => this.freezeOrUnfreezeColumns(args.column, cmdUnfreeze),
                 },
-                columnHeaderMenuItems
+                columnHeaderMenuItems,
+                undefined,
+                headerMenuOptions.hideCommands
               );
             } else {
               // make sure the "unfreeze-columns" doesn't exist before adding the "freeze-columns"
@@ -329,7 +331,9 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
                   positionOrder: 45,
                   action: (_e, args) => this.freezeOrUnfreezeColumns(args.column, cmdFreeze),
                 },
-                columnHeaderMenuItems
+                columnHeaderMenuItems,
+                undefined,
+                headerMenuOptions.hideCommands
               );
             }
           }
@@ -338,6 +342,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
           if (
             headerMenuOptions &&
             !headerMenuOptions.hideColumnResizeByContentCommand &&
+            !headerMenuOptions.hideCommands?.includes('column-resize-by-content') &&
             this.sharedService.gridOptions.enableColumnResizeOnDoubleClick
           ) {
             hasFrozenOrResizeCommand = true;
@@ -350,17 +355,26 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
                 positionOrder: 47,
                 action: (_e, args) => this.pubSubService.publish('onHeaderMenuColumnResizeByContent', { columnId: args.column.id }),
               },
-              columnHeaderMenuItems
+              columnHeaderMenuItems,
+              undefined,
+              headerMenuOptions.hideCommands
             );
           }
 
           // add a divider (separator) between the top freeze columns commands and the rest of the commands
           if (hasFrozenOrResizeCommand && !columnHeaderMenuItems.some((item) => item !== 'divider' && item.positionOrder === 48)) {
-            columnHeaderMenuItems.push({ divider: true, command: '', positionOrder: 48 });
+            columnHeaderMenuItems.push({ divider: true, command: 'divider-1', positionOrder: 48 });
           }
 
           // Sorting Commands
-          if (gridOptions.enableSorting && columnDef.sortable && headerMenuOptions && !headerMenuOptions.hideSortCommands) {
+          if (
+            gridOptions.enableSorting &&
+            columnDef.sortable &&
+            headerMenuOptions &&
+            !headerMenuOptions.hideSortCommands &&
+            // @deprecated use boolean value of addMissingCommandOrAction() in next major instead
+            !(headerMenuOptions.hideCommands?.includes('sort-asc') && headerMenuOptions.hideCommands?.includes('sort-desc'))
+          ) {
             // sort ascending command
             this.addMissingCommandOrAction(
               {
@@ -371,7 +385,9 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
                 positionOrder: 50,
                 action: (e, args) => this.sortColumn(e, args, true),
               },
-              columnHeaderMenuItems
+              columnHeaderMenuItems,
+              undefined,
+              headerMenuOptions.hideCommands
             );
 
             // sort descending command
@@ -384,12 +400,14 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
                 positionOrder: 51,
                 action: (e, args) => this.sortColumn(e, args, false),
               },
-              columnHeaderMenuItems
+              columnHeaderMenuItems,
+              undefined,
+              headerMenuOptions.hideCommands
             );
 
             // add a divider (separator) between the top sort commands and the other clear commands
             if (!columnHeaderMenuItems.some((item) => item !== 'divider' && item.positionOrder === 52)) {
-              columnHeaderMenuItems.push({ divider: true, command: '', positionOrder: 52 });
+              columnHeaderMenuItems.push({ divider: true, command: 'divider-2', positionOrder: 52 });
             }
 
             if (!headerMenuOptions.hideClearSortCommand) {
@@ -402,7 +420,9 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
                   positionOrder: 58,
                   action: (e, args) => this.clearColumnSort(e, args),
                 },
-                columnHeaderMenuItems
+                columnHeaderMenuItems,
+                undefined,
+                headerMenuOptions.hideCommands
               );
             }
           }
@@ -444,12 +464,18 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
               hasFrozenOrResizeCommand &&
               !columnHeaderMenuItems.some((item) => item !== 'divider' && item.positionOrder === filterShortcutsPositionOrder + 1)
             ) {
-              columnHeaderMenuItems.push({ divider: true, command: '', positionOrder: filterShortcutsPositionOrder + 1 });
+              columnHeaderMenuItems.push({ divider: true, command: 'divider-3', positionOrder: filterShortcutsPositionOrder + 1 });
             }
           }
 
           // Filtering Commands
-          if (gridOptions.enableFiltering && columnDef.filterable && headerMenuOptions && !headerMenuOptions.hideFilterCommand) {
+          if (
+            gridOptions.enableFiltering &&
+            columnDef.filterable &&
+            headerMenuOptions &&
+            !headerMenuOptions.hideFilterCommand &&
+            !headerMenuOptions.hideCommands?.includes('clear-filter')
+          ) {
             if (!headerMenuOptions.hideClearFilterCommand) {
               this.addMissingCommandOrAction(
                 {
@@ -462,13 +488,15 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
                     this.clearColumnFilter(e, args);
                   },
                 },
-                columnHeaderMenuItems
+                columnHeaderMenuItems,
+                undefined,
+                headerMenuOptions.hideCommands
               );
             }
           }
 
           // Hide Column Command
-          if (headerMenuOptions && !headerMenuOptions.hideColumnHideCommand) {
+          if (headerMenuOptions && !headerMenuOptions.hideColumnHideCommand && !headerMenuOptions.hideCommands?.includes('hide-column')) {
             this.addMissingCommandOrAction(
               {
                 _orgTitle: commandLabels?.hideColumnCommand || '',
@@ -483,7 +511,9 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
                   }
                 },
               },
-              columnHeaderMenuItems
+              columnHeaderMenuItems,
+              undefined,
+              headerMenuOptions.hideCommands
             );
           }
 
