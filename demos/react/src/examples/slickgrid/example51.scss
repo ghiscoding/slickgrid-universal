@@ -26,10 +26,6 @@ body {
   }
 }
 
-kbd {
-  background-color: #eee;
-  color: #202020;
-}
 .key-hint {
   background: #eee;
   border: 1px solid #ccc;
@@ -63,6 +59,11 @@ kbd {
     background: #ff9800;
     border: 1px solid #fba321;
   }
+}
+
+kbd {
+  background-color: #eee;
+  color: #202020;
 }
 
 .edit-cell {
