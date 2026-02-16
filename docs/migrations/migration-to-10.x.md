@@ -4,7 +4,7 @@ One of the biggest change of this release is to hide columns by using the `hidde
 
 #### Major Changes - Quick Summary
 - [`hidden` columns](#hidden-columns)
-- [What's next?](#whats-next-version-11)
+- [What's next?](#whats-next-...version-11)
 
 > **Note:** if you come from an earlier version, please make sure to follow each migrations in their respective order (review previous migration guides)
 
@@ -114,9 +114,11 @@ Below is a list of Enums that you need to replace with their associated string l
 
 **Hint** You can use VSCode search & replace, but make sure it's set to Regular Expression pattern
 
-| Search (regex)                      | Replace |
-| ------------------------------ | -------- |
-| `FieldType\.([a-z_]+)(.*)` | `'$1'$2`      |
+| Search (regex)             | Replace  |
+| -------------------------- | -------- |
+| `FieldType\.([a-z_]+)(.*)` | `'$1'$2` |
+
+Below is the abbreviated list of Enums to update
 
 | Enum Name   | from `enum`         | to string `type`    | Note |
 | ----------- | ------------------- | ------------------- | ---- |
@@ -229,9 +231,11 @@ Deprecating `ExtensionName` enum which will be replaced by its string literal ty
 
 **Hint** You can use VSCode search & replace, but make sure it's set to Regular Expression pattern
 
-| Search (regex)                      | Replace |
+| Search (regex)                 | Replace  |
 | ------------------------------ | -------- |
-| `ExtensionName\.([a-z_]+)(.*)` | `'$1'$2`      |
+| `ExtensionName\.([a-z_]+)(.*)` | `'$1'$2` |
+
+Below is the abbreviated list of Enums to update
 
 | Enum Name        | from `enum`         | to string `type`    |
 | ---------------- | ------------------- | ------------------- |

@@ -9,7 +9,7 @@ Also, this release fully aligns Angular-Slickgrid with modern Angular patterns, 
 - [Row Detail (now optional)](#row-detail-now-optional)
 - [ngx-translate@v17](#ngx-translate-v17x-is-now-required)
 - [Migrating to Standalone Component](#migrating-to-standalone-component)
-- [What's next?](#whats-next-version-11)
+- [What's next?](#whats-next-...version-11)
 
 > **Note:** if you come from an earlier version, please make sure to follow each migrations in their respective order (review previous migration guides)
 
@@ -214,9 +214,11 @@ Below is a list of Enums that you need to replace with their associated string l
 
 **Hint** You can use VSCode search & replace, but make sure it's set to Regular Expression pattern
 
-| Search (regex)                      | Replace |
-| ------------------------------ | -------- |
-| `FieldType\.([a-z_]+)(.*)` | `'$1'$2`      |
+| Search (regex)             | Replace  |
+| -------------------------- | -------- |
+| `FieldType\.([a-z_]+)(.*)` | `'$1'$2` |
+
+Below is the abbreviated list of Enums to update
 
 | Enum Name   | from `enum`         | to string `type`    | Note |
 | ----------- | ------------------- | ------------------- | ---- |
@@ -332,6 +334,8 @@ Deprecating `ExtensionName` enum which will be replaced by its string literal ty
 | Search (regex)                 | Replace  |
 | ------------------------------ | -------- |
 | `ExtensionName\.([a-z_]+)(.*)` | `'$1'$2` |
+
+Below is the abbreviated list of Enums to update
 
 | Enum Name        | from `enum`                       | to string `type`      |
 | ---------------- | --------------------------------- | --------------------- |
