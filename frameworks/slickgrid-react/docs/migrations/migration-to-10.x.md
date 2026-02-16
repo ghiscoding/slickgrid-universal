@@ -90,7 +90,7 @@ gridOptions = {
 This change does not require any code update from the end user, but it is a change that you should probably be aware of nonetheless. The reason I decided to implement this is because I often forget myself to enable the associated flag and typically if you wanted to load the resource, then it's most probably because you also want it enabled. So for example, if your register `ExcelExportService` then the library will now auto-enable the resource with its associated flag (which in this case is `enableExcelExport:true`)... unless you already disabled the flag (or enabled) yourself, if so then the internal assignment will simply be skipped and yours will prevail. Also just to be clear, the list of auto-enabled external resources is rather small, it will auto-enable the following resources:
 (ExcelExportService, PdfExportService, TextExportService, CompositeEditorComponent and RowDetailView).
 
-### Menu with Commands (new Renderer feature)
+### Menu with Commands
 
 All menu plugins (Cell Menu, Context Menu, Header Menu and Grid Menu) now have a new `commandListBuilder: (items) => items` which now allow you to filter/sort and maybe override built-in commands. With this new feature in place, I'm deprecating all `hide...` properties and also `positionOrder` since you can now do that with the builder. You could also use the `hideCommands` which accepts an array of built-in command names. This will remove a large amount of `hide...` properties (about 30) that keeps increasing anytime a new built-in command gets added (in other words, this will simplify maintenance for both you and me).
 
@@ -110,6 +110,8 @@ gridOptions = {
   }
 }
 ```
+
+There's also a new Renderer similar to Slots but implemented with native code so that it works the same way in all frameworks. The usage is actually very similar to how you would use a cell Formatter. You can see a new [Example 51](https://ghiscoding.github.io/slickgrid-react-demos/#/example51) demoing this new feature and the command builder mentioned above.
 
 ---
 
