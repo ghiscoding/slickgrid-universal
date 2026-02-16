@@ -10,14 +10,14 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 * **angular:** migrate Angular-Slickgrid to Zoneless (#2341)
 * **angular:** migrate Angular-Slickgrid to Standalone Component (#2339)
-* upgrade to Angular 21 (#2338)
+* **angular** upgrade to Angular 21 (#2338)
 * migrate Row/Hybrid Selection flag into a single `enableSelection` flag (#2331)
 * drop Cell/Row Selection Models & keep only HybridSelectionModel (#2330)
 * remove all Deprecated code (#2302)
 * drop OperatorType enums and keep only type literal (#2301)
 * replacing multiple TypeScript `enum` with `type` to decrease build size (#2300)
 * drop FieldType enums and keep only field type literal (#2299)
-* rename `v-model:data` to `v-model:dataset` (#2298)
+* **vue** rename `v-model:data` to `v-model:dataset` (#2298)
 * make Row Detail plugin as optional in all framework wrappers (#2291)
 * rewrite Grid Menu using CSS flexbox instead of width and calc() (#2282)
 * switch to column `hidden` property and always keep all columns (#2281)
@@ -33,11 +33,11 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * F2 activates cell editor, closes [#2351](https://github.com/ghiscoding/slickgrid-universal/issues/2351) ([#2370](https://github.com/ghiscoding/slickgrid-universal/issues/2370)) ([6e06f9d](https://github.com/ghiscoding/slickgrid-universal/commit/6e06f9dd3e0ff78650683b0641191b94f2a2aa96)) - by @zewa666
 * make Row Detail plugin as optional in all framework wrappers ([#2291](https://github.com/ghiscoding/slickgrid-universal/issues/2291)) ([fa1a14c](https://github.com/ghiscoding/slickgrid-universal/commit/fa1a14c16c987bfaf7725c46e8114b20ea5a505d)) - by @ghiscoding
 * migrate Row/Hybrid Selection flag into a single `enableSelection` flag ([#2331](https://github.com/ghiscoding/slickgrid-universal/issues/2331)) ([5be5e6a](https://github.com/ghiscoding/slickgrid-universal/commit/5be5e6a862ecd024cf43d404769d65c6c1dd335e)) - by @ghiscoding
-* rename `v-model:data` to `v-model:dataset` ([#2298](https://github.com/ghiscoding/slickgrid-universal/issues/2298)) ([34f42f2](https://github.com/ghiscoding/slickgrid-universal/commit/34f42f2d14c9a1b39a2695c8a885ff2bee53d0b5)) - by @ghiscoding
+* **vue** rename `v-model:data` to `v-model:dataset` ([#2298](https://github.com/ghiscoding/slickgrid-universal/issues/2298)) ([34f42f2](https://github.com/ghiscoding/slickgrid-universal/commit/34f42f2d14c9a1b39a2695c8a885ff2bee53d0b5)) - by @ghiscoding
 * **SlickCompositeEditor:** migrate modal from div to dialog ([#2283](https://github.com/ghiscoding/slickgrid-universal/issues/2283)) ([371c2c6](https://github.com/ghiscoding/slickgrid-universal/commit/371c2c675728f51785485280237572ef5a584eeb)) - by @ghiscoding
 * switch to column `hidden` property and always keep all columns ([#2281](https://github.com/ghiscoding/slickgrid-universal/issues/2281)) ([075c649](https://github.com/ghiscoding/slickgrid-universal/commit/075c64961cb7400500df46b792866d39fba2d9e0)) - by @ghiscoding
 * **tooltip:** add global tooltip observation for non-grid elements ([#2371](https://github.com/ghiscoding/slickgrid-universal/issues/2371)) ([1bbc8de](https://github.com/ghiscoding/slickgrid-universal/commit/1bbc8de895e370843286eadd08574efc552ad8fd)) - by @ghiscoding
-* upgrade to Angular 21 ([#2338](https://github.com/ghiscoding/slickgrid-universal/issues/2338)) ([012def2](https://github.com/ghiscoding/slickgrid-universal/commit/012def265a4e5cb0738ea211d073df129a2eecd9)) - by @ghiscoding
+* **angular** upgrade to Angular 21 ([#2338](https://github.com/ghiscoding/slickgrid-universal/issues/2338)) ([012def2](https://github.com/ghiscoding/slickgrid-universal/commit/012def265a4e5cb0738ea211d073df129a2eecd9)) - by @ghiscoding
 
 ### Bug Fixes
 

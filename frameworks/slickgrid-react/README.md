@@ -89,7 +89,7 @@ export default function Example() {
 
 | Slickgrid-React | React     | Migration Guide | Notes | Date |
 |:---------------:| --------- | --------------- | ----- | ---- |
-| 10.x             | React >=19.0 | [Migration 10.x](https://ghiscoding.gitbook.io/slickgrid-react/migrations/migration-to-10.x)  | Smaller code, requires Slickgrid-Universal [10.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v10.0.0) | TBD |
+| 10.x             | React >=19.0 | [Migration 10.x](https://ghiscoding.gitbook.io/slickgrid-react/migrations/migration-to-10.x)  | Smaller code, requires Slickgrid-Universal [10.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v10.0.0) | 2026-02-28 |
 | 9.x             | React >=19.0 | [Migration 9.x](https://ghiscoding.gitbook.io/slickgrid-react/migrations/migration-to-9.x)  | ESM-Only, requires Slickgrid-Universal [9.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v9.0.0) | 2025-05-10 |
 | 5.x             | React >=18.0 | [Migration 5.x](https://ghiscoding.gitbook.io/slickgrid-react/migrations/migration-to-5.x)  | Modern UI / Dark Mode, requires Slickgrid-Universal [5.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v5.0.0) | 2024-05-10 |
 | 4.x             |        | [Migration 4.x](https://ghiscoding.gitbook.io/slickgrid-react/migrations/migration-to-4.x)  | merge SlickGrid into Slickgrid-Universal,<br> requires Slickgrid-Universal [4.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v4.0.2) | 2023-12-15 |

@@ -78,7 +78,7 @@ const gridOptions = ref<GridOption>({ /*...*/ }); // optional grid options
 
 | Slickgrid-Vue | Vue     | Migration Guide | Notes | Date |
 |:---------------:| --------- | --------------- | ----- | ---- |
-| 10.x            | Vue >=3.5.0 | [Migration 10.x](https://ghiscoding.gitbook.io/slickgrid-vue/migrations/migration-to-10.x)  | Smaller code, requires Slickgrid-Universal [10.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v10.0.0) | TBD |
+| 10.x            | Vue >=3.5.0 | [Migration 10.x](https://ghiscoding.gitbook.io/slickgrid-vue/migrations/migration-to-10.x)  | Smaller code, requires Slickgrid-Universal [10.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v10.0.0) | 2026-02-28 |
 | 9.x             | Vue >=3.5.0 | [Migration 9.x](https://ghiscoding.gitbook.io/slickgrid-vue/migrations/migration-to-9.x)  | ESM-Only, requires Slickgrid-Universal [9.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v9.0.0) | 2025-05-10 |
 
 ### Like it? ⭐ it

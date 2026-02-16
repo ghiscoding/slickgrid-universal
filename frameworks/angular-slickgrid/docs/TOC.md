@@ -108,4 +108,4 @@
 * [Migration Guide to 7.x (2023-12-15)](migrations/migration-to-7.x.md)
 * [Migration Guide to 8.x (2024-05-23)](migrations/migration-to-8.x.md)
 * [Migration Guide to 9.x (2025-05-10)](migrations/migration-to-9.x.md)
-* [Migration Guide to 10.x (TBD)](migrations/migration-to-10.x.md)
+* [Migration Guide to 10.x (2026-02-28)](migrations/migration-to-10.x.md)

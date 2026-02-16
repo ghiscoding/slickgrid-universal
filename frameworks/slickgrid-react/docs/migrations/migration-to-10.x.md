@@ -1,6 +1,6 @@
 ## Simplification and Modernization ⚡
 
-One of the biggest change of this release is to hide columns by using the `hidden` column property (now used by Column Picker, Grid Menu, etc...). Previously we were removing columns from the original columns array and we then called `setColumns()` to update the grid, but this meant that we had to keep references for all visible and non-visible columns. With this new release we now keep the full columns array at all time and instead we just change column(s) visibility via their `hidden` column properties by using `grid.updateColumnById('id', { hidden: true })` and finally we update the grid via `grid.updateColumns()`. What I'm trying to emphasis is that you should really stop using `grid.setColumns()` in v10+, and if you want to hide some columns when declaring the columns, then just update their `hidden` properties, see more details below...
+One of the biggest change of this release is to hide columns by using the `hidden` column property (used by Column Picker, Grid Menu, etc...). Previously we were removing columns from the original columns array and then we were typically calling `setColumns()` to update the grid, but this meant that we had to keep references for all visible and non-visible columns. With this new release we now keep the full columns array at all time and instead we just change column(s) visibility via their `hidden` column properties by using `grid.updateColumnById('id', { hidden: true })` and finally we update the grid via `grid.updateColumns()`. Also, what I'm trying to emphasis is that you should really stop using `grid.setColumns()` in v10+, and if you want to hide some columns when declaring the columns, then just update their `hidden` properties, see more details below...
 
 #### Major Changes - Quick Summary
 - [`hidden` columns](#hidden-columns)
@@ -15,7 +15,7 @@ One of the biggest change of this release is to hide columns by using the `hidde
 
 _if you're not dynamically hiding columns and you're not using `colspan` or `rowspan` then you won't be impacted by this change._
 
-For years, I had to keep some references in a Shared Service via `shared.allColumns` and `shared.visibleColumns`, for translating locales and that is also being used by Column Picker and Grid Menu to keep track of which columns to hide/show and in which order they were; then later we called `grid.setColumns()` to update the columns in the grid... but that had side effects since SlickGrid never kept the entire column definitions list (until now). However with v10, we simply start using `hidden` property on the column(s) to hide/show some of them, then we are now able to keep the full columns reference at all time. We can translate them more easily and we no longer need to use `grid.setColumns()`, what we'll do instead is to start using `grid.updateColumnById('colId', { hidden: true })`. If you want to get visible columns, you can now simply call `grid.getVisibleColumns()` which behind the scene is simply doing a `columns.filter(c => !c.hidden)`. This new approach does also have side effects for colspan/rowspan, because previously if we were to hide a column then the next column to the right was previously taking over the spannings, but with the new approach if we hide a column then its spannings will now disappear with it (so I had to make code changes to handle that too)... If you want more details, you can see full explanations of the complete change in the [PR #2281](https://github.com/ghiscoding/slickgrid-universal/pull/2281)
+For years, I had to keep some references in a Shared Service via `shared.allColumns` and `shared.visibleColumns`, mostly for translating locales which was mostly being used by Column Picker and Grid Menu to keep track of which columns to hide/show and in which order they were; then later we called `grid.setColumns()` to update the columns in the grid... but that had side effects since SlickGrid never kept the entire column definitions list (until now). However with v10, we simply start using `hidden` property on the column(s) to hide/show some of them, then we are now able to keep the full columns reference at all time. We can translate them more easily and we no longer need to use `grid.setColumns()`, what we'll do instead is to start using `grid.updateColumnById('colId', { hidden: true })`. If you want to get visible columns, you can now just call `grid.getVisibleColumns()` which behind the scene is simply filtering `columns.filter(c => !c.hidden)`. This new approach does also have new side effects for colspan/rowspan, because previously if we were to hide a column then previously the column to the right was taking over the spanning, however with the new approach, if we hide a column then its spanning will now disappear with it (so I had to make code changes to handle that too)... If you want more details, you can see full explanations of the complete change in the [PR #2281](https://github.com/ghiscoding/slickgrid-universal/pull/2281)
 
 ##### New Approach with column `hidden` property
 
@@ -85,14 +85,16 @@ gridOptions = {
 };
 ```
 
+### Auto-Enable External Resources
+
 This change does not require any code update from the end user, but it is a change that you should probably be aware of nonetheless. The reason I decided to implement this is because I often forget myself to enable the associated flag and typically if you wanted to load the resource, then it's most probably because you also want it enabled. So for example, if your register `ExcelExportService` then the library will now auto-enable the resource with its associated flag (which in this case is `enableExcelExport:true`)... unless you already disabled the flag (or enabled) yourself, if so then the internal assignment will simply be skipped and yours will prevail. Also just to be clear, the list of auto-enabled external resources is rather small, it will auto-enable the following resources:
 (ExcelExportService, PdfExportService, TextExportService, CompositeEditorComponent and RowDetailView).
 
-### Menu with Commands
+### Menu with Commands (new Renderer feature)
 
-All menu plugins (Cell Menu, Context Menu, Header Menu and Grid Menu) now have a new `commandListBuilder: (items) => items` which now allow you to filter/sort and maybe override built-in commands. With this new feature in place, I'm deprecating all `hide...` properties and also `positionOrder` since you can now do that with the builder. You could also use the `hideCommands` which accepts an array of built-in command names. This well remove huge amount of `hide...` properties (over 30) that keeps increasing anytime a new built-in command gets added (in other words, this will simplify maintenance for both you and me).
+All menu plugins (Cell Menu, Context Menu, Header Menu and Grid Menu) now have a new `commandListBuilder: (items) => items` which now allow you to filter/sort and maybe override built-in commands. With this new feature in place, I'm deprecating all `hide...` properties and also `positionOrder` since you can now do that with the builder. You could also use the `hideCommands` which accepts an array of built-in command names. This will remove a large amount of `hide...` properties (about 30) that keeps increasing anytime a new built-in command gets added (in other words, this will simplify maintenance for both you and me).
 
-These are currently just deprecations in v10.x but it's strongly recommended to start using the `commandListBuilder` and/or `hideCommands` and move away from the deprecated properties which will be removed in v11.x. For example if we want to hide some built-in commands:
+These are currently just deprecations in v10.x but it's strongly recommended to start using the new `commandListBuilder` and/or `hideCommands` and move away from the deprecated properties which will be removed in v11.x (next year). For example if we want to hide some built-in commands:
 
 ```diff
 gridOptions = {
@@ -109,10 +111,10 @@ gridOptions = {
 }
 ```
 
---- 
+---
 
 {% hint style="note" %}
-**Info** the changes in the next few lines were all mentioned in the previous "Migration Guide v9.0". So, if you have already made these changes then you could skip the section below **but** scroll down further to read the last section "What's next? v11?".
+**Info** the changes in the next few lines were all mentioned in the previous ["Migration Guide v9.0"](migration-to-9.x). So, if you have already made these changes then you could skip the section below **but** scroll down further to read the last section ["What's next? v11?"](#whats-next-...version-11).
 {% endhint %}
 
 ### Interfaces / Enums changes
@@ -127,7 +129,7 @@ columns = [{
 }];
 ```
 
-Below is a list of Enums that you need to replace with their associated string literals. A suggestion is to do a Search on any of these group name prefixes, e.g.: `FieldType.` and start replacing them
+Below is a list of Enums that you need to replace with their associated string literals. A suggestion is to do a Search on any of these group name prefixes, e.g.: `FieldType.` and replace them all
 
 **Hint** You can use VSCode search & replace, but make sure it's set to Regular Expression pattern
 
@@ -237,7 +239,7 @@ For example:
 
 ## What's next? ...version 11?
 
-Wait, are you seriously talking about version 11 akready when version 10 actually just shipped? Thats right, I'm already thinking and planning ahead the next major version, which will be in about a year from now. I can already say that the main focus will be around the use of native [CSS anchor positioning](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning) to replace JS code for positioning menus, tooltips, etc... which will help decreasing the build size by using fully native code. CSS anchoring has been around in Chrome for a while but is quite recent in Firefox, so for that reason I'm postponing it for next year.
+Wait, are you seriously talking about version 11 akready when version 10 actually just shipped? Thats right, I'm already thinking and planning ahead the next major version, which will be in about a year from now. I can already say that the main focus will be around the use of native [CSS anchor positioning](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning) to replace JS code for positioning menus, tooltips, etc... which will help decreasing the build size by using fully native code. CSS anchoring has been around in Chrome for a while but is quite recent in Firefox (147), so for that reason I'm postponing it to next year.
 
 ### Code being `@deprecated` (to be removed in the future, 2027-Q1)
 #### You can already start using these new options and props (shown below) in v10.0 and above.
