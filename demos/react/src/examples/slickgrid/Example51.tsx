@@ -614,7 +614,7 @@ const Example51: React.FC = () => {
   return !gridOptions ? (
     ''
   ) : (
-    <div id="demo-container" className="container-fluid">
+    <div id="demo-container grid51-container" className="container-fluid">
       <h2>
         Example 51: Menus with Slots
         <span className="float-end font18">
