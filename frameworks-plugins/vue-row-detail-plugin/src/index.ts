@@ -1,1 +1,1 @@
-export * from './vueSlickRowDetailView.js';
+export * from './vueRowDetailView.js';

@@ -40,7 +40,7 @@ A Row Detail allows you to open a detail panel which can contain extra and/or mo
 
 ##### Component
 ```ts
-import { AngularSlickRowDetailView } from '@slickgrid-universal/angular-row-detail-plugin'; // for v10 and above
+import { AngularRowDetailView } from '@slickgrid-universal/angular-row-detail-plugin'; // for v10 and above
 
 @Component({
   templateUrl: './grid-rowdetail.component.html'
@@ -66,7 +66,7 @@ export class GridRowDetailComponent implements OnInit, OnDestroy {
       selectionOptions: {
         selectActiveRow: true
       },
-      externalResources: [AngularSlickRowDetailView], // for v10 and above
+      externalResources: [AngularRowDetailView], // for v10 and above
       rowDetailView: {
         // We can load the "process" asynchronously in 2 different ways (httpClient OR even Promise)
         process: (item) => this.http.get(`api/item/${item.id}`),
@@ -401,7 +401,7 @@ Main Grid Component
 
 ```ts
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { AngularSlickRowDetailView } from '@slickgrid-universal/angular-row-detail-plugin'; // for v10 and above
+import { AngularRowDetailView } from '@slickgrid-universal/angular-row-detail-plugin'; // for v10 and above
 import { AngularGridInstance, Column, GridOption, GridState } from 'angular-slickgrid';
 
 @Component({
@@ -436,7 +436,7 @@ export class MainGridComponent implements OnInit {
       selectionOptions: {
         selectActiveRow: true
       },
-      externalResources: [AngularSlickRowDetailView], // for v10 and above
+      externalResources: [AngularRowDetailView], // for v10 and above
       rowDetailView: {
         process: (item: any) => simulateServerAsyncCall(item),
         loadOnce: false, // IMPORTANT, you can't use loadOnce with inner grid because only HTML template are re-rendered, not JS events

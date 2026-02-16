@@ -59,7 +59,7 @@ import { AureliaUtilService, ContainerService, disposeAllSubscriptions, Translat
 
 const WARN_NO_PREPARSE_DATE_SIZE = 10000; // data size to warn user when pre-parse isn't enabled
 
-export interface AureliaSlickRowDetailView {
+export interface AureliaRowDetailView {
   create(columns: Column[], gridOptions: GridOption): any;
   init(grid: SlickGrid, containerService?: ContainerService): void;
 }
@@ -119,7 +119,7 @@ export class AureliaSlickgridCustomElement {
   slickFooter: SlickFooterComponent | undefined;
   paginationComponent: BasePaginationComponent | undefined;
   slickPagination: BasePaginationComponent | undefined;
-  slickRowDetailView?: AureliaSlickRowDetailView;
+  slickRowDetailView?: AureliaRowDetailView;
 
   // services
   backendUtilityService!: BackendUtilityService;
@@ -1463,7 +1463,7 @@ export class AureliaSlickgridCustomElement {
   }
 
   protected initializeExternalResources(resources: Array<ExternalResource | ExternalResourceConstructor>) {
-    PluginFlagMappings.set('AureliaSlickRowDetailView', 'enableRowDetailView');
+    PluginFlagMappings.set('AureliaRowDetailView', 'enableRowDetailView'); // map the external Row Detail View resource to its flag
 
     if (Array.isArray(resources)) {
       for (const resource of resources) {
@@ -1487,12 +1487,12 @@ export class AureliaSlickgridCustomElement {
     }
 
     if (this.options.enableRowDetailView) {
-      const RowDetailClass = this._registeredResources.find((res: any) => res.pluginName === 'AureliaSlickRowDetailView') as
+      const RowDetailClass = this._registeredResources.find((res: any) => res.pluginName === 'AureliaRowDetailView') as
         | ExternalResourceConstructor
         | undefined;
       if (!RowDetailClass) {
         throw new Error(
-          '[Aurelia-Slickgrid] You enabled the Row Detail View feature but you did not provide the "AureliaSlickRowDetailView" class as an external resource.'
+          '[Aurelia-Slickgrid] You enabled the Row Detail View feature but you did not provide the "AureliaRowDetailView" class as an external resource.'
         );
       }
 
@@ -1501,7 +1501,7 @@ export class AureliaSlickgridCustomElement {
           this.aureliaUtilService,
           this._eventPubSubService,
           this.elm as HTMLElement
-        ) as AureliaSlickRowDetailView;
+        ) as AureliaRowDetailView;
         this.slickRowDetailView = rowDetailInstance;
         rowDetailInstance.create(this.columns, this.options);
         this.extensionService.addExtensionToList('rowDetailView', {

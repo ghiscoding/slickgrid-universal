@@ -76,7 +76,7 @@ import type { AngularSlickgridOutputs, RegularEventOutput, SlickEventOutput } fr
 
 const WARN_NO_PREPARSE_DATE_SIZE = 10000; // data size to warn user when pre-parse isn't enabled
 
-export interface AngularSlickRowDetailView {
+export interface AngularRowDetailView {
   create(columns: Column[], gridOptions: GridOption): any;
   init(grid: SlickGrid, containerService?: ContainerService): void;
 }
@@ -132,7 +132,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
   slickFooter?: SlickFooterComponent;
   slickPagination?: BasePaginationComponent;
   paginationComponent: BasePaginationComponent | undefined;
-  slickRowDetailView?: AngularSlickRowDetailView;
+  slickRowDetailView?: AngularRowDetailView;
 
   // services
   backendUtilityService!: BackendUtilityService;
@@ -1558,12 +1558,12 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
     this.registerRxJsResource(new RxJsResource() as RxJsFacade);
 
     if (this.options.enableRowDetailView) {
-      const RowDetailClass = this._registeredResources.find((res: any) => res.pluginName === 'AngularSlickRowDetailView') as
+      const RowDetailClass = this._registeredResources.find((res: any) => res.pluginName === 'AngularRowDetailView') as
         | ExternalResourceConstructor
         | undefined;
       if (!RowDetailClass) {
         throw new Error(
-          '[Angular-Slickgrid] You enabled the Row Detail View feature but you did not provide the "AngularSlickRowDetailView" class as an external resource.'
+          '[Angular-Slickgrid] You enabled the Row Detail View feature but you did not provide the "AngularRowDetailView" class as an external resource.'
         );
       }
 
@@ -1574,7 +1574,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
           this._eventPubSubService,
           this.elm.nativeElement,
           this.rxjs
-        ) as AngularSlickRowDetailView;
+        ) as AngularRowDetailView;
         this.slickRowDetailView = rowDetailInstance;
         rowDetailInstance.create(this.columns, this.options);
         this.extensionService.addExtensionToList('rowDetailView', {
@@ -1602,7 +1602,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
   }
 
   protected initializeExternalResources(resources: Array<ExternalResource | ExternalResourceConstructor>) {
-    PluginFlagMappings.set('AngularSlickRowDetailView', 'enableRowDetailView');
+    PluginFlagMappings.set('AngularRowDetailView', 'enableRowDetailView'); // map the external Row Detail View resource to its flag
 
     if (Array.isArray(resources)) {
       for (const resource of resources) {

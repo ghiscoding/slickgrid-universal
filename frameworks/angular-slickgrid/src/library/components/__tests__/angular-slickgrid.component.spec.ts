@@ -70,8 +70,8 @@ const angularUtilServiceStub = {
   createAngularComponentAppendToDom: vi.fn(),
 } as unknown as AngularUtilService;
 
-class AngularSlickRowDetailView {
-  static readonly pluginName = 'AngularSlickRowDetailView';
+class AngularRowDetailView {
+  static readonly pluginName = 'AngularRowDetailView';
   create = vi.fn();
   init = vi.fn();
 }
@@ -1111,7 +1111,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         component.options = { enableRowDetailView: true } as unknown as GridOption;
 
         expect(() => component.initialization(slickEventHandler)).toThrowError(
-          '[Angular-Slickgrid] You enabled the Row Detail View feature but you did not provide the "AngularSlickRowDetailView" class as an external resource.'
+          '[Angular-Slickgrid] You enabled the Row Detail View feature but you did not provide the "AngularRowDetailView" class as an external resource.'
         );
       });
 
@@ -1793,7 +1793,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         component.options = {
           ...gridOptions,
           // enableRowDetailView: true,
-          externalResources: [AngularSlickRowDetailView],
+          externalResources: [AngularRowDetailView],
           presets: { columns: mockColsPresets },
         } as GridOption;
         component.initialization(slickEventHandler);
@@ -1836,7 +1836,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
           enableCheckboxSelector: true,
           enableRowDetailView: true,
           enableRowMoveManager: true,
-          externalResources: [AngularSlickRowDetailView],
+          externalResources: [AngularRowDetailView],
           presets: { columns: mockColsPresets },
         } as unknown as GridOption;
         component.initialization(slickEventHandler);
@@ -1981,7 +1981,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
         vi.spyOn(mockGrid, 'getRenderedRange').mockReturnValue({ bottom: 10, top: 0, leftPx: 0, rightPx: 890 });
 
         component.options.enableRowDetailView = true;
-        component.options.externalResources = [AngularSlickRowDetailView];
+        component.options.externalResources = [AngularRowDetailView];
         component.initialization(slickEventHandler);
         mockDataView.onRowCountChanged.notify({
           current: 2,

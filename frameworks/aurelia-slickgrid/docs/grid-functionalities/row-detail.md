@@ -40,7 +40,7 @@ A Row Detail allows you to open a detail panel which can contain extra and/or mo
 
 ##### Component
 ```ts
-import { AureliaSlickRowDetailView } from '@slickgrid-universal/aurelia-row-detail-plugin'; // for v10 and above
+import { AureliaRowDetailView } from '@slickgrid-universal/aurelia-row-detail-plugin'; // for v10 and above
 import { AureliaGridInstance, GridState } from 'aurelia-slickgrid';
 
 export class GridExample {
@@ -64,7 +64,7 @@ export class GridExample {
       selectionOptions: {
         selectActiveRow: true
       },
-      externalResources: [AureliaSlickRowDetailView], // for v10 and above
+      externalResources: [AureliaRowDetailView], // for v10 and above
       rowDetailView: {
         // We can load the "process" asynchronously in 3 different ways (aurelia-http-client, aurelia-fetch-client OR even Promise)
         process: (item) => this.http.get(`api/item/${item.id}`),
@@ -158,7 +158,7 @@ Most of the time we would get data asynchronously, during that time we can show 
 ```ts
     this.gridOptions = {
       enableRowDetailView: true,
-      externalResources: [AureliaSlickRowDetailView], // for v10 and above
+      externalResources: [AureliaRowDetailView], // for v10 and above
       rowDetailView: {
         //  ... row detail options
 
@@ -175,7 +175,7 @@ Same concept as the preload, we pass an Aurelia ViewModel to the `viewModel` tha
 ```ts
     this.gridOptions = {
       enableRowDetailView: true,
-      externalResources: [AureliaSlickRowDetailView], // for v10 and above
+      externalResources: [AureliaRowDetailView], // for v10 and above
       rowDetailView: {
         //  ... row detail options
 
@@ -257,7 +257,7 @@ The Row Detail provides you access to the following references (SlickGrid, DataV
 // Parent Component (grid)
 this.gridOptions = {
   enableRowDetailView: true,
-  externalResources: [AureliaSlickRowDetailView], // for v10 and above
+  externalResources: [AureliaRowDetailView], // for v10 and above
   rowDetailView: {
     // ...
     // ViewModel Template to load when row detail data is ready
@@ -386,7 +386,7 @@ You can also add an inner grid inside a Row Detail, however there are a few thin
 Main Grid Component
 
 ```ts
-import { AureliaSlickRowDetailView } from '@slickgrid-universal/aurelia-row-detail-plugin'; // for v10 and above
+import { AureliaRowDetailView } from '@slickgrid-universal/aurelia-row-detail-plugin'; // for v10 and above
 import { bindable } from 'aurelia';
 import { type AureliaGridInstance, type Column, ExtensionName, type GridOption, type SlickRowDetailView, } from 'aurelia-slickgrid';
 
@@ -416,7 +416,7 @@ export class MainGrid implements OnInit {
     this.columnDefinitions = [ /*...*/ ];
     this.gridOptions = {
       enableRowDetailView: true,
-      externalResources: [AureliaSlickRowDetailView], // for v10 and above
+      externalResources: [AureliaRowDetailView], // for v10 and above
 
       // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
       selectionOptions: {

@@ -1,5 +1,5 @@
 import { type EventPubSubService } from '@slickgrid-universal/event-pub-sub';
-import { ReactSlickRowDetailView } from '@slickgrid-universal/react-row-detail-plugin';
+import { ReactRowDetailView } from '@slickgrid-universal/react-row-detail-plugin';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Aggregators,
@@ -60,7 +60,7 @@ const Example47: React.FC = () => {
   }
 
   function rowDetailInstance() {
-    return reactGridRef.current?.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView) as ReactSlickRowDetailView;
+    return reactGridRef.current?.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView) as ReactRowDetailView;
   }
 
   const getColumnsDefinition = (): Column<Item>[] => {
@@ -200,7 +200,7 @@ const Example47: React.FC = () => {
       rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
       darkMode,
       preRegisterExternalExtensions: (pubSubService) => {
-        const rowDetail = new ReactSlickRowDetailView(pubSubService as EventPubSubService);
+        const rowDetail = new ReactRowDetailView(pubSubService as EventPubSubService);
         return [{ name: 'rowDetailView', instance: rowDetail }];
       },
       rowDetailView: {

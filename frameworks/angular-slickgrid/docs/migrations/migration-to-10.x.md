@@ -41,13 +41,13 @@ _following changes should be transparent to most users, I'm just listing them in
 Since I don't think that Row Detail is being used by everyone, I'm making it an optional plugin (package). This should help decrease build size quite a bit for users who never use it. If however you are one of them using it, then you now need to manually add it as an external resource.
 
 ```diff
-+ import { AngularSlickRowDetailView } from '@slickgrid-universal/angular-row-detail-plugin';
++ import { AngularRowDetailView } from '@slickgrid-universal/angular-row-detail-plugin';
 
 export class Example {
   defineGrid() {
     this.gridOptions = {
       enableRowDetailView: true,
-+     externalResources: [AngularSlickRowDetailView],
++     externalResources: [AngularRowDetailView],
       rowDetailView: {
         // ...
       }

@@ -34,7 +34,7 @@ There is currently a known problem with Row Detail when loading the Row Detail C
 
 ##### Component
 ```tsx
-import { ReactSlickRowDetailView } from '@slickgrid-universal/react-row-detail-plugin'; // for v10 and above
+import { ReactRowDetailView } from '@slickgrid-universal/react-row-detail-plugin'; // for v10 and above
 import { SlickRowDetailView } from 'slickgrid-react'; // for v9 and below
 
 const Example: React.FC = () => {
@@ -60,7 +60,7 @@ const Example: React.FC = () => {
       },
       preRegisterExternalExtensions: (pubSubService) => {
         // for v10 and above
-        const rowDetail = new ReactSlickRowDetailView(pubSubService as EventPubSubService);
+        const rowDetail = new ReactRowDetailView(pubSubService as EventPubSubService);
 
         // for v9 and below
         const rowDetail = new SlickRowDetailView(pubSubService as EventPubSubService);
@@ -259,7 +259,7 @@ const ExampleDetail: React.FC = (props: Props) => {
 
 ###### Grid Definition
 ```tsx
-import { ReactSlickRowDetailView } from '@slickgrid-universal/react-row-detail-plugin'; // for v10 and above
+import { ReactRowDetailView } from '@slickgrid-universal/react-row-detail-plugin'; // for v10 and above
 import { SlickRowDetailView } from 'slickgrid-react'; // for v9 and below
 
 const Example: React.FC = () => {
@@ -281,7 +281,7 @@ const Example: React.FC = () => {
       enableRowDetailView: true,
       preRegisterExternalExtensions: (pubSubService) => {
         // for v10 and above
-        const rowDetail = new ReactSlickRowDetailView(pubSubService as EventPubSubService);
+        const rowDetail = new ReactRowDetailView(pubSubService as EventPubSubService);
 
         // for v9 and below
         const rowDetail = new SlickRowDetailView(pubSubService as EventPubSubService);
@@ -322,7 +322,7 @@ const Example: React.FC = () => {
 The Row Detail provides you access to the following references (SlickGrid, DataView, Parent Component and the Addon (3rd party plugin)), however please note that all of these references are available from the start **except** the Parent Component instance, for that one you need to reference it inside your Row Detail Grid Options like so:
 
 ```ts
-import { ReactSlickRowDetailView } from '@slickgrid-universal/react-row-detail-plugin'; // for v10 and above
+import { ReactRowDetailView } from '@slickgrid-universal/react-row-detail-plugin'; // for v10 and above
 import { SlickRowDetailView } from 'slickgrid-react'; // for v9 and below
 
 const Example: React.FC = () => {
@@ -344,7 +344,7 @@ const Example: React.FC = () => {
       enableRowDetailView: true,
       preRegisterExternalExtensions: (pubSubService) => {
         // for v10 and above
-        const rowDetail = new ReactSlickRowDetailView(pubSubService as EventPubSubService);
+        const rowDetail = new ReactRowDetailView(pubSubService as EventPubSubService);
 
         // for v9 and below
         const rowDetail = new SlickRowDetailView(pubSubService as EventPubSubService);
@@ -487,7 +487,7 @@ You can also add an inner grid inside a Row Detail, however there are a few thin
 Main Grid Component
 
 ```tsx
-import { ReactSlickRowDetailView } from '@slickgrid-universal/react-row-detail-plugin'; // for v10 and above
+import { ReactRowDetailView } from '@slickgrid-universal/react-row-detail-plugin'; // for v10 and above
 import { SlickRowDetailView } from 'slickgrid-react'; // for v9 and below
 import React from 'react';
 import { type Column, ExtensionName, type GridOption, SlickgridReact, type SlickgridReactInstance, SlickRowDetailView, } from 'slickgrid-react';
@@ -521,7 +521,7 @@ const Example: React.FC = () => {
       },
       preRegisterExternalExtensions: (pubSubService) => {
         // for v10 and above
-        const rowDetail = new ReactSlickRowDetailView(pubSubService as EventPubSubService);
+        const rowDetail = new ReactRowDetailView(pubSubService as EventPubSubService);
 
         // for v9 and below
         const rowDetail = new SlickRowDetailView(pubSubService as EventPubSubService);
@@ -556,7 +556,7 @@ const Example: React.FC = () => {
 Now, let's define our Inner Grid Component
 
 ```tsx
-import { ReactSlickRowDetailView } from '@slickgrid-universal/react-row-detail-plugin'; // for v10 and above
+import { ReactRowDetailView } from '@slickgrid-universal/react-row-detail-plugin'; // for v10 and above
 import { SlickRowDetailView } from 'slickgrid-react'; // for v9 and below
 import React from 'react';
 import { type Column, type GridOption, type GridState, type RowDetailViewProps, SlickgridReact, type SlickgridReactInstance } from 'slickgrid-react';

@@ -1570,7 +1570,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
   }
 
   protected initializeExternalResources(resources: Array<ExternalResource | ExternalResourceConstructor>) {
-    PluginFlagMappings.set('ReactSlickRowDetailView', 'enableRowDetailView');
+    PluginFlagMappings.set('ReactRowDetailView', 'enableRowDetailView'); // map the external Row Detail View resource to its flag
 
     if (Array.isArray(resources)) {
       for (const resource of resources) {

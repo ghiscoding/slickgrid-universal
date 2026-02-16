@@ -1,5 +1,5 @@
 import { type EventPubSubService } from '@slickgrid-universal/event-pub-sub';
-import { ReactSlickRowDetailView } from '@slickgrid-universal/react-row-detail-plugin';
+import { ReactRowDetailView } from '@slickgrid-universal/react-row-detail-plugin';
 import React, { useEffect, useRef, useState } from 'react';
 import { Editors, Filters, Formatters, SlickgridReact, type Column, type GridOption, type SlickgridReactInstance } from 'slickgrid-react';
 import { ExampleDetailPreload } from './Example-detail-preload.js';
@@ -32,7 +32,7 @@ const Example19: React.FC = () => {
   }, []);
 
   function rowDetailInstance() {
-    return reactGridRef.current?.extensionService.getExtensionInstanceByName('rowDetailView') as ReactSlickRowDetailView;
+    return reactGridRef.current?.extensionService.getExtensionInstanceByName('rowDetailView') as ReactRowDetailView;
   }
 
   const getColumnsDefinition = (): Column[] => {
@@ -164,7 +164,7 @@ const Example19: React.FC = () => {
       darkMode,
       datasetIdPropertyName: 'rowId',
       preRegisterExternalExtensions: (pubSubService) => {
-        const rowDetail = new ReactSlickRowDetailView(pubSubService as EventPubSubService);
+        const rowDetail = new ReactRowDetailView(pubSubService as EventPubSubService);
         return [{ name: 'rowDetailView', instance: rowDetail }];
       },
       rowDetailView: {
