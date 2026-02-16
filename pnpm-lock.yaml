@@ -713,10 +713,10 @@ importers:
   frameworks-plugins/aurelia-row-detail-plugin:
     dependencies:
       '@aurelia/kernel':
-        specifier: ^2.0.0-beta.25
+        specifier: ^2.0.0-rc.0
         version: 2.0.0-rc.0
       '@aurelia/runtime-html':
-        specifier: ^2.0.0-beta.25
+        specifier: ^2.0.0-rc.0
         version: 2.0.0-rc.0
       '@slickgrid-universal/common':
         specifier: workspace:*
