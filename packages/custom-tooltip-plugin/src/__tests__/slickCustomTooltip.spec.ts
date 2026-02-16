@@ -1178,11 +1178,15 @@ describe('SlickCustomTooltip plugin', () => {
 
   describe('observeAllTooltips feature', () => {
     let mockGridContainer: HTMLDivElement;
+    let mockGridContainer2: HTMLDivElement;
 
     beforeEach(() => {
       mockGridContainer = document.createElement('div');
+      mockGridContainer2 = document.createElement('div');
       mockGridContainer.className = 'grid-container';
+      mockGridContainer2.className = 'grid-container2';
       document.body.appendChild(mockGridContainer);
+      document.body.appendChild(mockGridContainer2);
       vi.spyOn(gridStub, 'getContainerNode').mockReturnValue(mockGridContainer);
     });
 
@@ -1240,6 +1244,36 @@ describe('SlickCustomTooltip plugin', () => {
       expect(tooltipElm.textContent).toBe('Button in container');
 
       button.remove();
+    });
+
+    it('should create global listeners on grid container when observeAllTooltips is true with 2 scopes "grid-container,grid-container2"', () => {
+      gridOptionsMock.customTooltip = { observeAllTooltips: true, observeTooltipContainer: '.grid-container, .grid-container2' };
+      plugin.init(gridStub, container);
+
+      const button = document.createElement('button');
+      button.title = 'Button in container';
+      mockGridContainer.appendChild(button);
+
+      const mouseoverEvent = new MouseEvent('mouseover', { bubbles: true });
+      button.dispatchEvent(mouseoverEvent);
+
+      const tooltipElm = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+      expect(tooltipElm).toBeTruthy();
+      expect(tooltipElm.textContent).toBe('Button in container');
+      button.remove();
+
+      const button2 = document.createElement('button');
+      button2.title = 'Button in container 2';
+      mockGridContainer2.appendChild(button2);
+
+      const mouseoverEvent2 = new MouseEvent('mouseover', { bubbles: true });
+      button2.dispatchEvent(mouseoverEvent2);
+
+      const tooltipElm2 = document.body.querySelector('.slick-custom-tooltip') as HTMLDivElement;
+      expect(tooltipElm2).toBeTruthy();
+      expect(tooltipElm2.textContent).toBe('Button in container 2');
+
+      button2.remove();
     });
 
     it('should show tooltip for element with data-slick-tooltip attribute', () => {
