@@ -115,7 +115,7 @@ gridOptions = {
 }
 ```
 
-There's also a new Renderer similar to Slots but implemented with native code so that it works the same way in all frameworks. The usage is actually very similar to how you would use a cell Formatter. You can see a new [Example 51](https://ghiscoding.github.io/aurelia-slickgrid-demos/#/example51) demoing this new feature and the command builder mentioned above.
+There's also a new Renderer similar to Slots but implemented with native code so that it works the same way in all frameworks. The usage is actually very similar to how you would use a cell Formatter. You can see a new [Example 51](https://ghiscoding.github.io/angular-slickgrid-demos/#/example51) demoing this new feature and the command builder mentioned above.
 
 ### `ngx-translate` v17.x is now required
 
