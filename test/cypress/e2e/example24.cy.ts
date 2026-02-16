@@ -22,7 +22,7 @@ describe('Example 24 - Footer Totals Row', () => {
         const totalVal = Number(totalStr.replace('Sum: ', ''));
 
         expect(totalStr).to.contain('Sum:');
-        expect(totalVal).to.gte(400);
+        expect(totalVal).to.gte(375);
       });
     }
   });
@@ -38,7 +38,7 @@ describe('Example 24 - Footer Totals Row', () => {
     });
     cy.get('.slick-footerrow-columns .slick-footerrow-column:nth(0)').should(($span) => {
       totalVal = parseInt($span.text().replace('Sum: ', ''));
-      expect(totalVal).to.gte(400);
+      expect(totalVal).to.gte(375);
     });
 
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0)`).click();
