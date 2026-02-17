@@ -38,8 +38,6 @@ Load the default SlickGrid theme style and/or customize it to your taste (custom
 
 Default compiled `css`.
 
-**Note:** If you are also using `Bootstrap-SASS`, then there is no need to include the `bootstrap.css` in the `styles: []` section.
-
 ```vue
 <script setup lang="ts">
 import 'bootstrap/dist/css/bootstrap.min.css';
