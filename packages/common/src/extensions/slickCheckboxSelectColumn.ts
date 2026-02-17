@@ -101,8 +101,10 @@ export class SlickCheckboxSelectColumn<T = any> {
       .subscribe(grid.onSelectedRowsChanged, this.handleSelectedRowsChanged.bind(this))
       .subscribe(grid.onClick, this.handleClick.bind(this))
       .subscribe(grid.onKeyDown, this.handleKeyDown.bind(this))
-      // whenever columns changed, we need to rerender Select All checkbox
-      .subscribe(grid.onAfterSetColumns, this.handleDataViewSelectedIdsChanged.bind(this));
+
+      // whenever columns changed or is (re)created, we need to rerender Select All checkbox
+      .subscribe(grid.onAfterSetColumns, this.handleDataViewSelectedIdsChanged.bind(this))
+      .subscribe(grid.onAfterUpdateColumns, this.handleDataViewSelectedIdsChanged.bind(this));
 
     if (this._isUsingDataView && this._dataView && this._addonOptions.applySelectOnAllPages) {
       this._eventHandler
@@ -182,7 +184,7 @@ export class SlickCheckboxSelectColumn<T = any> {
       this.hideSelectAllFromColumnHeaderFilterRow();
     } else {
       if (!this._addonOptions.hideInColumnTitleRow) {
-        this.renderSelectAllCheckbox(this._isSelectAllChecked, false);
+        this.renderSelectAllCheckbox(this._isSelectAllChecked, this._isPartialSelectAllChecked);
         this._eventHandler.subscribe(this._grid.onHeaderClick, this.handleHeaderClick.bind(this));
       } else {
         this.hideSelectAllFromColumnHeaderTitleRow();

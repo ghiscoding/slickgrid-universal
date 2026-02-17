@@ -1255,4 +1255,36 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
     cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 0).wait(10);
     cy.get('.slick-large-editor-text.editor-title').should('not.be.visible');
   });
+
+  it('should show/hide Title column from column picker and expect Select All to still be rendered', () => {
+    cy.get('.slick-header-column:nth(2)').trigger('mouseover').trigger('contextmenu').invoke('show');
+
+    cy.get('.slick-column-picker .slick-column-picker-list li:not(.hidden):nth(0) .checkbox-label').as('firstPickerLabel');
+    cy.get('@firstPickerLabel').should('have.text', 'Title');
+    cy.get('@firstPickerLabel').click();
+
+    cy.get('[data-id="_checkbox_selector"] .icon-checkbox-container .mdi-icon-check').should('exist');
+
+    cy.get('@firstPickerLabel').click();
+
+    cy.get('[data-id="_checkbox_selector"] .icon-checkbox-container .mdi-icon-check').should('exist');
+    cy.get('.slick-column-picker:visible').find('.close').trigger('click').click();
+  });
+
+  it('should unselect a row then show/hide Title column from column picker and expect Select All to still be rendered and have partial checkbox', () => {
+    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`).click();
+
+    cy.get('.slick-header-column:nth(2)').trigger('mouseover').trigger('contextmenu').invoke('show');
+
+    cy.get('.slick-column-picker .slick-column-picker-list li:not(.hidden):nth(0) .checkbox-label').as('firstPickerLabel');
+    cy.get('@firstPickerLabel').should('have.text', 'Title');
+    cy.get('@firstPickerLabel').click();
+
+    cy.get('[data-id="_checkbox_selector"] .icon-checkbox-container .mdi-icon-partial-check').should('exist');
+
+    cy.get('@firstPickerLabel').click();
+
+    cy.get('[data-id="_checkbox_selector"] .icon-checkbox-container .mdi-icon-partial-check').should('exist');
+    cy.get('.slick-column-picker:visible').find('.close').trigger('click').click();
+  });
 });

@@ -60,6 +60,7 @@ const gridStub = {
   setSelectedRows: vi.fn(),
   updateColumnHeader: vi.fn(),
   onAfterSetColumns: new SlickEvent(),
+  onAfterUpdateColumns: new SlickEvent(),
   onClick: new SlickEvent(),
   onHeaderClick: new SlickEvent(),
   onHeaderRowCellRendered: new SlickEvent(),
@@ -215,6 +216,27 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
 
     expect(plugin).toBeTruthy();
     expect(updateColHeaderSpy).toHaveBeenCalledTimes(2); // 1x for plugin creation, 1x for onAfterSetColumns trigger
+    expect(updateColHeaderSpy).toHaveBeenCalledWith(
+      '_checkbox_selector',
+      plugin.createCheckboxElement(`header-selector${plugin.selectAllUid}`),
+      'Select/Deselect All'
+    );
+  });
+
+  it('should recreate the Select All toggle whenever "onAfterUpdateColumns" grid event is triggered', () => {
+    const updateColHeaderSpy = vi.spyOn(gridStub, 'updateColumnHeader');
+    vi.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(true);
+    vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(false);
+    vi.spyOn(dataViewStub, 'getAllSelectedFilteredIds').mockReturnValueOnce([]);
+    vi.spyOn(dataViewStub, 'getFilteredItems').mockReturnValue([]);
+
+    plugin.init(gridStub);
+    plugin.setOptions({ hideInColumnTitleRow: false, hideInFilterHeaderRow: true, hideSelectAllCheckbox: false });
+
+    gridStub.onAfterUpdateColumns.notify({ columns: [{ id: '_checkbox_selector', field: '_checkbox_selector' }], grid: gridStub });
+
+    expect(plugin).toBeTruthy();
+    expect(updateColHeaderSpy).toHaveBeenCalledTimes(2); // 1x for plugin creation, 1x for onAfterUpdateColumns trigger
     expect(updateColHeaderSpy).toHaveBeenCalledWith(
       '_checkbox_selector',
       plugin.createCheckboxElement(`header-selector${plugin.selectAllUid}`),
