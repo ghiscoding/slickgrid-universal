@@ -81,7 +81,7 @@ _following changes should be transparent to most users_
 2. drop both `SlickCellSelectionModel`/`SlickRowSelectionModel` and keep only `SlickHybridSelectionModel`
 3. drop both `enableHybridSelection`/`enableRowSelection` merge them into a new `enableSelection` grid option
 
-`SlickHybridSelectionModel` was previously introduced in order to merge and allow using both Cell/Row Selections separately and/or in combo on the same grid. It was introduced in v9.x to test it out and after testing it for a few months, it's now safe to drop the older `SlickCellSelectionModel` / `SlickRowSelectionModel` models and keep only the hybrid model. Also, since we now have the Hybrid model and it's now accepting options for different selection models, I think it's better to rename `rowSelectionOptions` to `selectionOptions` since it now makes more sense with the hybrid approach.
+`SlickHybridSelectionModel` was previously introduced in order to merge and allow using both Cell/Row Selections separately and/or in combo on the same grid. It was introduced in v9.x to test it out and after testing it for a few months, it's now safe to drop the older `SlickCellSelectionModel` / `SlickRowSelectionModel` models and keep only the hybrid model (for smaller build & less code to maintain). Also, since we now have the Hybrid model and it's now accepting options for different selection models, I think it's better to rename `rowSelectionOptions` to `selectionOptions` since it now makes more sense with the hybrid approach and you will need to update your code when using Row Selection, see below:
 
 ```diff
 gridOptions = {
@@ -99,16 +99,21 @@ gridOptions = {
 };
 ```
 
-### Auto-Enable External Resources
+### Auto-Enabled External Resources
 
-This change does not require any code update from the end user, but it is a change that you should probably be aware of nonetheless. The reason I decided to implement this is because I often forget myself to enable the associated flag and typically if you wanted to load the resource, then it's most probably because you also want it enabled. So for example, if your register `ExcelExportService` then the library will now auto-enable the resource with its associated flag (which in this case is `enableExcelExport:true`)... unless you already disabled the flag (or enabled) yourself, if so then the internal assignment will simply be skipped and yours will prevail. Also just to be clear, the list of auto-enabled external resources is rather small, it will auto-enable the following resources:
-(ExcelExportService, PdfExportService, TextExportService, CompositeEditorComponent and RowDetailView).
+This change does not require any code change from the end user, but it is a change that you should probably be aware of nonetheless. The reason I decided to implement this, is I often forget myself to enable the resource associated flag and typically if you wanted to load the resource, then it's most probably because you also want it enabled. For example, if your register `ExcelExportService` then the library will now auto-enable the resource with its associated flag (which in this case is `enableExcelExport:true`)... unless you already enabled/disabled the flag yourself, if so then the internal assignment will simply be skipped and yours will prevail. Also just to be clear, the list of auto-enabled external resources is rather small, it will auto-enable the following resources:
+
+- ExcelExportService → `enableExcelExport: true`
+- PdfExportService → `enablePdfExport: true`
+- TextExportService → `enableTextExport: true`
+- CompositeEditorComponent → `enableCompositeEditor: true`
+- RowDetailView → `enableRowDetailView: true`
 
 ### Menu with Commands
 
-All menu plugins (Cell Menu, Context Menu, Header Menu and Grid Menu) now have a new `commandListBuilder: (items) => items` which now allow you to filter/sort and maybe override built-in commands. With this new feature in place, I'm deprecating all `hide...` properties and also `positionOrder` since you can now do that with the builder. You could also use the `hideCommands` which accepts an array of built-in command names. This will remove a large amount of `hide...` properties (about 30) that keeps increasing anytime a new built-in command gets added (in other words, this will simplify maintenance for both you and me).
+All menu plugins (Cell Menu, Context Menu, Header Menu and Grid Menu) now have a new `commandListBuilder: (items) => items` which now allow you to filter/sort and maybe override built-in commands rendering. With this new feature in place, I'm deprecating all `hide...` properties and also `positionOrder` since you can now do that with the builder. You could also use a new `hideCommands` which accepts an array of built-in command names. This will remove a large amount of `hide...` properties (about 30) that keeps increasing anytime a new built-in command gets added (in other words, this will simplify maintenance for both you and me).
 
-These are currently just deprecations in v10.x but it's strongly recommended to start using the new `commandListBuilder` and/or `hideCommands` and move away from the deprecated properties which will be removed in v11.x (next year). For example if we want to hide some built-in commands:
+These are currently just deprecations in v10.x but it's strongly recommended to start using the new `commandListBuilder` and/or `hideCommands` to move away from the deprecated properties which will be removed in v11.x (next year). For example if we want to hide some built-in commands:
 
 ```diff
 gridOptions = {
@@ -125,17 +130,17 @@ gridOptions = {
 }
 ```
 
-There's also a new Renderer similar to Slots but implemented with native code so that it works the same way in all frameworks. The usage is actually very similar to how you would use a cell Formatter. You can see a new [Example 51](https://ghiscoding.github.io/slickgrid-vue-demos/#/example51) demoing this new feature and the command builder mentioned above.
+There's also a new Renderer similar to Slots but implemented with native code so that it works the same way in all frameworks. The usage is actually very similar to how you would use a cell Formatter. You can see a new [Example 51](https://ghiscoding.github.io/slickgrid-vue-demos/#/example51) demoing this new feature and also the command builder mentioned above.
 
 ---
 
 {% hint style="note" %}
-**Info** the changes in the next few lines were all mentioned in the previous ["Migration Guide v9.0"](migration-to-9.x). So, if you have already made these changes then you could skip the section below **but** scroll down further to read the last section ["What's next? v11?"](#whats-next-...version-11).
+**Info** the changes in the next few lines were all mentioned in the previous ["Migration Guide v9.0"](migration-to-9.x). So, if you have already made these changes then you could skip the section below **but** scroll down further to read the last section ["What's next? ...v11?"](#whats-next-...version-11).
 {% endhint %}
 
 ### Interfaces / Enums changes
 
-Removing most Enums and replacing them with string literal types (`type` instead of `enum` because again `type` aren't transpiled and `enum` are). Making this change will help decrease the build size by transpiling a lot less code.
+Removing most Enums and replacing them with string literal types (use `type` instead of `enum` because again `type` aren't transpiled and `enum` are). Making this change will help decrease the build size by transpiling a lot less code.
 
 ```diff
 columns = [{
@@ -272,9 +277,9 @@ Deprecating `ExtensionName` enum which will be replaced by its string literal ty
 
 Below is the abbreviated list of Enums to update
 
-| Enum Name        | from `enum`         | to string `type`    |
-| ---------------- | ------------------- | ------------------- |
-| `ExtensionName`  | `ExtensionName.autoTooltip` | `'autoTooltip'`         |
-|                  | `ExtensionName.draggableGrouping`   | `'draggableGrouping'`          |
-|                  | `ExtensionName.rowDetail`   | `'rowDetail'`          |
+| Enum Name        | from `enum`                 | to string `type`    |
+| ---------------- | --------------------------- | ------------------- |
+| `ExtensionName`  | `ExtensionName.autoTooltip` | `'autoTooltip'`     |
+|                  | `ExtensionName.gridMenu`    | `'gridMenu'`        |
+|                  | `ExtensionName.rowDetail`   | `'rowDetail'`       |
 | ... | ... | ... |
