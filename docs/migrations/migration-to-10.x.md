@@ -66,7 +66,7 @@ gridOptions = {
 
 ### Auto-Enabled External Resources
 
-This change does not require any code change from the end user, but it is a change that you should probably be aware of nonetheless. The reason I decided to implement this, is I often forget myself to enable the resource associated flag and typically if you wanted to load the resource, then it's most probably because you also want it enabled. For example, if your register `ExcelExportService` then the library will now auto-enable the resource with its associated flag (which in this case is `enableExcelExport:true`)... unless you already enabled/disabled the flag yourself, if so then the internal assignment will simply be skipped and yours will prevail. Also just to be clear, the list of auto-enabled external resources is rather small, it will auto-enable the following resources:
+This change does not require any code change from the end user, but it is a change that you should probably be aware of nonetheless. The reason I decided to implement this, is that I often forget myself to enable the resource associated flag and typically if you wanted to load the resource, then it's most probably because you also want it enabled. For example, if your register `ExcelExportService` then the library will now auto-enable the resource with its associated flag (which in this case is `enableExcelExport:true`)... unless you have already enabled/disabled the flag yourself, then in that case the internal assignment will simply be skipped and yours will prevail. Also just to be clear, the list of auto-enabled external resources is rather small, it will auto-enable the following resources:
 
 - ExcelExportService → `enableExcelExport: true`
 - PdfExportService → `enablePdfExport: true`
@@ -76,7 +76,7 @@ This change does not require any code change from the end user, but it is a chan
 
 ### Menu with Commands
 
-All menu plugins (Cell Menu, Context Menu, Header Menu and Grid Menu) now have a new `commandListBuilder: (items) => items` which now allow you to filter/sort and maybe override built-in commands rendering. With this new feature in place, I'm deprecating all `hide...` properties and also `positionOrder` since you can now do that with the builder. You could also use a new `hideCommands` which accepts an array of built-in command names. This will remove a large amount of `hide...` properties (about 30) that keeps increasing anytime a new built-in command gets added (in other words, this will simplify maintenance for both you and me).
+All menu plugins (Cell Menu, Context Menu, Header Menu and Grid Menu) now have a new `commandListBuilder: (items) => items` which is now allowing you to filter/sort and maybe override built-in commands UI. With this new feature in place, I'm deprecating all `hide...` properties and also `positionOrder` since you can now do that with the builder. You could also use a new `hideCommands` which accepts an array of built-in command names. This will remove a large amount of `hide...` properties (about 30) that keeps increasing anytime a new built-in command gets added (in other words, this will simplify maintenance for both you and me).
 
 These are currently just deprecations in v10.x but it's strongly recommended to start using the new `commandListBuilder` and/or `hideCommands` to move away from the deprecated properties which will be removed in v11.x (next year). For example if we want to hide some built-in commands:
 
@@ -86,11 +86,11 @@ gridOptions = {
 -   hideExportCsvCommand: true,
 -   hideTogglePreHeaderCommand: true,
 
-// via command name(s)
+// hide via command name(s)
 +   hideCommands: ['export-csv', 'toggle-preheader'],
 
-// or via builder
-+   commandListBuilder: (cmdItems) => [...cmdItems.filter(x => x !== 'divider' && x.command !== 'export-csv' && x.command !== 'toggle-preheader')]
+// or hide via builder
++   commandListBuilder: (cmdItems) => cmdItems.filter(x => x !== 'divider' && x.command !== 'export-csv' && x.command !== 'toggle-preheader')
   }
 }
 ```
@@ -100,7 +100,7 @@ There's also a new Renderer similar to Slots but implemented with native code so
 ---
 
 {% hint style="note" %}
-**Info** the changes in the next few lines were all mentioned in the previous ["Migration Guide v9.0"](migration-to-9.x). So, if you have already made these changes then you could skip the section below **but** scroll down further to read the last section ["What's next? ...v11?"](#whats-next-...version-11).
+**Info** the changes in the next few lines were all mentioned in the previous ["Migration Guide v9.0"](migration-to-9.x). So, if you have already made these changes then you could skip the section below **but** scroll down further to read the last section ["What's next? ...version 11?"](#whats-next-...version-11).
 {% endhint %}
 
 ### Interfaces / Enums changes
