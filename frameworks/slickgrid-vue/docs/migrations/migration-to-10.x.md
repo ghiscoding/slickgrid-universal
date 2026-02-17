@@ -121,16 +121,16 @@ gridOptions = {
 -   hideExportCsvCommand: true,
 -   hideTogglePreHeaderCommand: true,
 
-// hide via command name(s)
+    // hide via command name(s)
 +   hideCommands: ['export-csv', 'toggle-preheader'],
 
-// or hide via builder
+    // or hide via builder
 +   commandListBuilder: (cmdItems) => cmdItems.filter(x => x !== 'divider' && x.command !== 'export-csv' && x.command !== 'toggle-preheader')
   }
 }
 ```
 
-There's also a new Renderer similar to Slots but implemented with native code so that it works the same way in all frameworks. The usage is actually very similar to how you would use a cell Formatter. You can see a new [Example 51](https://ghiscoding.github.io/slickgrid-vue-demos/#/example51) demoing this new feature and also the command builder mentioned above.
+There's also a new Renderer similar to Slots but implemented with native code to make it cross-platform compatible. The usage is actually very similar to how you would use a cell Formatter. You can see a new [Example 51](https://ghiscoding.github.io/slickgrid-vue-demos/#/example51) demoing this new feature and also the command builder mentioned above.
 
 ---
 
@@ -152,13 +152,13 @@ columns = [{
 
 Below is a list of Enums that you need to replace with their associated string literals. A suggestion is to do a Search on any of these group name prefixes, e.g.: `FieldType.` and replace them all
 
-**Hint** You can use VSCode search & replace, but make sure it's set to Regular Expression pattern
+**Hint** You can use VSCode search & replace, but make sure it's set to Regular Expression search pattern
 
 | Search (regex)             | Replace  |
 | -------------------------- | -------- |
 | `FieldType\.([a-z_]+)(.*)` | `'$1'$2` |
 
-Below is the abbreviated list of Enums to update
+Below is an abbreviated list of Enums to update, make sure to update them all
 
 | Enum Name   | from `enum`         | to string `type`    | Note |
 | ----------- | ------------------- | ------------------- | ---- |
@@ -262,20 +262,20 @@ For example:
 
 ## What's next? ...version 11?
 
-Wait, are you seriously talking about version 11 akready when version 10 actually just shipped? Thats right, I'm already thinking and planning ahead the next major version, which will be in about a year from now. I can already say that the main focus will be around the use of native [CSS anchor positioning](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning) to replace JS code for positioning menus, tooltips, etc... which will help decreasing the build size by using fully native code. CSS anchoring has been around in Chrome for a while but is quite recent in Firefox (147), so for that reason I'm postponing it to next year.
+Wait, are you seriously talking about version 11 akready when version 10 actually just shipped? Thats right, I'm already thinking and planning ahead the next major version, which will be in about a year from now. I can already say that the main focus will be around the use of native [CSS anchor positioning](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning) to replace JS code for positioning menus, tooltips, etc... which will help decreasing the build size by using fully native code. CSS anchoring has been around in Chrome for a while now, but it is quite recent in Firefox (147), so for that reason I'm postponing it to next year. There's also the new [Sanitizer API](https://developer.mozilla.org/en-US/docs/Web/API/Sanitizer) that I'm hoping to see more availability by next year.
 
 ### Code being `@deprecated` (to be removed in the future, 2027-Q1)
 #### You can already start using these new options and props (shown below) in v10.0 and above.
 
 Deprecating `ExtensionName` enum which will be replaced by its string literal type, for example:
 
-**Hint** You can use VSCode search & replace, but make sure it's set to Regular Expression pattern
+**Hint** You can use VSCode search & replace, but make sure it's set to Regular Expression search pattern
 
 | Search (regex)                 | Replace  |
 | ------------------------------ | -------- |
 | `ExtensionName\.([a-z_]+)(.*)` | `'$1'$2` |
 
-Below is the abbreviated list of Enums to update
+Below is an abbreviated list of Enums to update, make sure to update them all
 
 | Enum Name        | from `enum`                 | to string `type`    |
 | ---------------- | --------------------------- | ------------------- |
