@@ -637,6 +637,7 @@ li.hidden {
 
 .ms-choice {
   font-size: var(--slick-header-font-size, v.$slick-header-font-size);
+  outline: 0;
 
   span {
     font-size: var(--slick-multiselect-input-filter-font-size, v.$slick-multiselect-input-filter-font-size);
@@ -745,7 +746,8 @@ li.hidden {
 .slickgrid-container {
   .search-filter {
     :focus {
-      outline-color: var(--slick-focus-color, v.$slick-focus-color);
+      outline: 0;
+      box-shadow: var(--slick-input-focus-box-shadow, v.$slick-input-focus-box-shadow);
     }
   }
 

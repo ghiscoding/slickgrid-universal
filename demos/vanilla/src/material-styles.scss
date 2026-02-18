@@ -133,7 +133,7 @@
           color: var(--slick-dark-text-color);
         }
       }
-      .search-filter.filled:not(.ms-parent-open) .ms-choice {
+      .search-filter.filled:not(.ms-parent-open) .ms-choice:not(:focus) {
         box-shadow: none;
       }
       .search-filter.filled .input-group-append {
