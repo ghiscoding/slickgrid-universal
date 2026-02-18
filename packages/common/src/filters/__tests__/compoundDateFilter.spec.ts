@@ -136,6 +136,7 @@ describe('CompoundDateFilter', () => {
       locale: 'en',
       onChangeToInput: expect.any(Function),
       onClickDate: expect.any(Function),
+      openOnFocus: false,
       onShow: expect.any(Function),
       positionToInput: 'auto',
       sanitizerHTML: expect.any(Function),
@@ -373,6 +374,22 @@ describe('CompoundDateFilter', () => {
     expect(clearSpy).toHaveBeenCalled();
     expect(filterInputElm.value).toBe('');
     expect(spyCallback).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '', searchTerms: null, shouldTriggerQuery: true });
+  });
+
+  it('should show picker when pressing Enter key', () => {
+    filterArguments.searchTerms = ['2000-01-01'];
+    mockColumn.filter!.operator = '<=';
+    const showSpy = vi.spyOn(filter, 'show');
+
+    filter.init(filterArguments);
+    filter.show();
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-finish input.date-picker') as HTMLInputElement;
+    const calendarElm = document.body.querySelector('.vc') as HTMLDivElement;
+
+    expect(calendarElm).toBeTruthy();
+
+    filterInputElm.dispatchEvent(new (window.window as any).KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+    expect(showSpy).toHaveBeenCalled();
   });
 
   it('should create the input filter with a default search terms when passed as a filter argument', () => {
