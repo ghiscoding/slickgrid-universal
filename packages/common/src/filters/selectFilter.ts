@@ -438,8 +438,11 @@ export class SelectFilter implements Filter {
       renderOptionLabelAsHtml: this.columnFilter?.enableRenderHtml ?? false,
       sanitizer: (dirtyHtml: string) => this.grid.sanitizeHtmlString(dirtyHtml),
       // we will subscribe to the onClose event for triggering our callback
-      // also add/remove "filled" class for styling purposes
-      onClose: () => this.onTriggerEvent(),
+      // also add/remove "filled" class for styling purposes & refocus on ms-select parent after closing
+      onClose: () => {
+        this.onTriggerEvent();
+        this._msInstance?.focus();
+      },
       onClear: () => this.clear(),
     } as MultipleSelectOption;
 
