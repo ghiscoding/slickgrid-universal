@@ -190,12 +190,14 @@ describe('SelectFilter', () => {
 
     filter.msInstance?.setSelects(['male']);
     filterOkElm.click();
+    const focusSpy = vi.spyOn(filter.msInstance!, 'focus');
     filter.msInstance?.close();
 
     const filterFilledElms = divContainer.querySelectorAll<HTMLDivElement>('.ms-parent.ms-filter.search-filter.filter-gender.filled');
     expect(filterListElm.length).toBe(2);
     expect(filterFilledElms.length).toBe(1);
     expect(spyCallback).toHaveBeenCalledWith(undefined, { columnDef: mockColumn, operator: 'IN', searchTerms: ['male'], shouldTriggerQuery: true });
+    expect(focusSpy).toHaveBeenCalled();
   });
 
   it('should trigger multiple select change event without choosing an option and expect the callback to be called without search terms and also expect the dropdown list to not have "filled" css class', () => {
