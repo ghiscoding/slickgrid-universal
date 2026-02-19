@@ -1000,9 +1000,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.bindAncestorScrollEvents();
 
       this._bindingEventService.bind(this._container, 'resize', this.resizeCanvas.bind(this));
-      this._viewport.forEach((view) => {
-        this._bindingEventService.bind(view, 'scroll', this.handleScroll.bind(this));
-      });
+      this._bindingEventService.bind(this._viewport, 'scroll', this.handleScroll.bind(this));
 
       if (this._options.enableMouseWheelScrollHandler) {
         this._viewport.forEach((view) => {
@@ -1015,24 +1013,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         });
       }
 
-      this._headerScroller.forEach((el) => {
-        this._bindingEventService.bind(el, 'contextmenu', this.handleHeaderContextMenu.bind(this) as EventListener);
-        this._bindingEventService.bind(el, 'click', this.handleHeaderClick.bind(this) as EventListener);
-      });
-
-      this._headerRowScroller.forEach((scroller) => {
-        this._bindingEventService.bind(scroller, 'scroll', this.handleHeaderRowScroll.bind(this) as EventListener);
-      });
+      this._bindingEventService.bind(this._headerScroller, 'contextmenu', this.handleHeaderContextMenu.bind(this) as EventListener);
+      this._bindingEventService.bind(this._headerScroller, 'click', this.handleHeaderClick.bind(this) as EventListener);
+      this._bindingEventService.bind(this._headerRowScroller, 'scroll', this.handleHeaderRowScroll.bind(this) as EventListener);
 
       if (this._options.createFooterRow) {
-        this._footerRow.forEach((footer) => {
-          this._bindingEventService.bind(footer, 'contextmenu', this.handleFooterContextMenu.bind(this) as EventListener);
-          this._bindingEventService.bind(footer, 'click', this.handleFooterClick.bind(this) as EventListener);
-        });
-
-        this._footerRowScroller.forEach((scroller) => {
-          this._bindingEventService.bind(scroller, 'scroll', this.handleFooterRowScroll.bind(this) as EventListener);
-        });
+        this._bindingEventService.bind(this._footerRow, 'contextmenu', this.handleFooterContextMenu.bind(this) as EventListener);
+        this._bindingEventService.bind(this._footerRow, 'click', this.handleFooterClick.bind(this) as EventListener);
+        this._bindingEventService.bind(this._footerRowScroller, 'scroll', this.handleFooterRowScroll.bind(this) as EventListener);
       }
 
       if (this._options.createTopHeaderPanel) {
@@ -1056,14 +1044,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this._bindingEventService.bind(this._focusSink, 'keydown', this.handleKeyDown.bind(this) as EventListener);
       this._bindingEventService.bind(this._focusSink2, 'keydown', this.handleKeyDown.bind(this) as EventListener);
 
-      this._canvas.forEach((element) => {
-        this._bindingEventService.bind(element, 'keydown', this.handleKeyDown.bind(this) as EventListener);
-        this._bindingEventService.bind(element, 'click', this.handleClick.bind(this) as EventListener);
-        this._bindingEventService.bind(element, 'dblclick', this.handleDblClick.bind(this) as EventListener);
-        this._bindingEventService.bind(element, 'contextmenu', this.handleContextMenu.bind(this) as EventListener);
-        this._bindingEventService.bind(element, 'mouseover', this.handleCellMouseOver.bind(this) as EventListener);
-        this._bindingEventService.bind(element, 'mouseout', this.handleCellMouseOut.bind(this) as EventListener);
-      });
+      this._bindingEventService.bind(this._canvas, 'keydown', this.handleKeyDown.bind(this) as EventListener);
+      this._bindingEventService.bind(this._canvas, 'click', this.handleClick.bind(this) as EventListener);
+      this._bindingEventService.bind(this._canvas, 'dblclick', this.handleDblClick.bind(this) as EventListener);
+      this._bindingEventService.bind(this._canvas, 'contextmenu', this.handleContextMenu.bind(this) as EventListener);
+      this._bindingEventService.bind(this._canvas, 'mouseover', this.handleCellMouseOver.bind(this) as EventListener);
+      this._bindingEventService.bind(this._canvas, 'mouseout', this.handleCellMouseOut.bind(this) as EventListener);
 
       if (Draggable) {
         this.slickDraggableInstance = Draggable({
