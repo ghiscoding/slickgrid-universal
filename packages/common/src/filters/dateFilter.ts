@@ -377,6 +377,7 @@ export class DateFilter implements Filter {
       placeholder,
       readOnly: true,
       dataset: { input: '', columnid: `${columnId}` },
+      tabIndex: 0,
     });
 
     this.calendarInstance = new Calendar(this._dateInputElm, this._pickerOptions);

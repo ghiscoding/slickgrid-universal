@@ -19,6 +19,7 @@ import type {
   OnColumnsChangedArgs,
 } from '../interfaces/index.js';
 import type { SharedService } from '../services/shared.service.js';
+import { wireMenuKeyboardNavigation } from './keyboardNavigation.js';
 
 /**
  * A control to add a Column Picker (right+click on any column header to reveal the column picker)
@@ -229,7 +230,41 @@ export class SlickColumnPicker {
     populateColumnPicker.call(this, this.addonOptions);
     document.body.appendChild(this._menuElm);
 
+    // Reposition menu (this also appends _listElm to _menuElm)
     this.repositionMenu(e);
+
+    // Focus the first menu item BEFORE binding keyboard handler
+    this.focusFirstMenuItem(this._menuElm);
+    // Use shared utility to wire up keyboard navigation with custom onActivate
+    wireMenuKeyboardNavigation(this._menuElm, this._bindEventService, {
+      allItemsSelector: '.slick-column-picker-list li:not(.hidden)',
+      focusedItemSelector: '.slick-column-picker-list li:not(.hidden)',
+      onActivate: (focusedItem) => {
+        // For column picker items, trigger click on the icon-checkbox-container div inside the li
+        if (focusedItem) {
+          const iconContainer = focusedItem.querySelector('.icon-checkbox-container') as HTMLElement;
+          if (iconContainer && typeof iconContainer.click === 'function') {
+            iconContainer.click();
+          }
+        }
+      },
+      onEscape: () => {
+        this.disposeMenu();
+        this.grid.focus();
+      },
+      onTab: (evt) => {
+        evt.preventDefault();
+        evt.stopPropagation();
+      },
+      eventServiceKey: 'column-picker-keyboard',
+    });
+  }
+
+  protected focusFirstMenuItem(menuElm: HTMLElement): void {
+    // Get all column picker items and find the first one that's not hidden
+    const menuItems = Array.from(menuElm.querySelectorAll('.slick-column-picker-list li:not(.hidden)')) as HTMLElement[];
+    const firstMenuItem = menuItems.find((item) => item.offsetParent !== null);
+    firstMenuItem?.focus();
   }
 
   protected repositionMenu(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData): void {

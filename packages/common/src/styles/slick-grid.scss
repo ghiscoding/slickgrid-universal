@@ -82,6 +82,12 @@
     background: var(--slick-header-column-background-hover, v.$slick-header-column-background-hover);
   }
 
+  .slick-header-column:focus,
+  .checkbox-header .icon-checkbox-container:focus {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--slick-focus-outline-color, v.$slick-focus-outline-color);
+  }
+
   .slick-header-column-active {
     background-color: var(--slick-header-column-background-active, v.$slick-header-column-background-active) !important;
   }

@@ -65,13 +65,25 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
         }
       }
 
+      // Track the element that triggered the menu (for focus restoration)
+      const triggerElement = (event.target as HTMLElement) || this.grid.getActiveCellNode();
+      if (triggerElement) {
+        this.setMenuTriggerElement(triggerElement);
+      }
+
       // create 1st parent menu container & reposition it
-      this._menuElm = this.createMenu(commandItems, optionItems);
+      this._menuElm = this.createMenu(triggerElement, commandItems, optionItems);
       if (this._menuElm) {
         this._menuElm.style.top = `${(event.pageY || 0) + 5}px`;
         this._menuElm.style.left = `${event.pageX}px`;
         this._menuElm.style.display = 'block';
         document.body.appendChild(this._menuElm);
+
+        // Focus the first menu item BEFORE binding keyboard handler
+        this.focusFirstMenuItem(this._menuElm);
+
+        // Use base class method to wire up keyboard navigation
+        this.wireMenuKeyboardNavigation(this._menuElm);
       }
 
       // execute optional callback method defined by the user
@@ -95,6 +107,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
    * @returns menu DOM element
    */
   createMenu(
+    triggeredByElm: HTMLElement,
     commandItems: Array<MenuCommandItem | 'divider'>,
     optionItems: Array<MenuOptionItem | 'divider'>,
     level = 0,
@@ -209,6 +222,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
           grid: this.grid,
           level,
         } as MenuCallbackArgs,
+        triggeredByElm,
         this.handleMenuItemCommandClick,
         this.handleMenuItemMouseOver
       );
@@ -244,6 +258,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
           grid: this.grid,
           level,
         } as MenuCallbackArgs,
+        triggeredByElm,
         this.handleMenuItemCommandClick,
         this.handleMenuItemMouseOver
       );
@@ -423,6 +438,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
 
     // creating sub-menu, we'll also pass level & the item object since we might have "subMenuTitle" to show
     const subMenuElm = this.createMenu(
+      e.target as HTMLElement,
       (item as MenuCommandItem)?.commandItems || [],
       (item as MenuOptionItem)?.optionItems || [],
       level + 1,

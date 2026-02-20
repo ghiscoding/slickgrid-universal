@@ -109,6 +109,7 @@ li.hidden {
   li {
     display: flex;
     align-items: center;
+    outline: none;
     width: 100%;
     color: var(--slick-menu-color, v.$slick-menu-color);
     border: var(--slick-column-picker-item-border, v.$slick-column-picker-item-border);
@@ -119,8 +120,11 @@ li.hidden {
     list-style: none outside none;
     margin: 0;
     padding: var(--slick-column-picker-item-padding, v.$slick-column-picker-item-padding);
-    &:hover {
+    &:hover,
+    &:focus {
       border: var(--slick-column-picker-item-hover-border, v.$slick-column-picker-item-hover-border);
+    }
+    &:hover {
       background-color: var(--slick-column-picker-item-hover-color, v.$slick-column-picker-item-hover-color);
     }
     label {
@@ -239,12 +243,18 @@ li.hidden {
 .slick-grid-menu-button {
   border: 0;
   cursor: pointer;
+  outline: none;
   position: absolute;
   right: 0;
   z-index: 2;
   color: var(--slick-grid-menu-icon-btn-color, v.$slick-grid-menu-icon-btn-color);
   padding: var(--slick-grid-menu-button-padding, v.$slick-grid-menu-button-padding);
   margin-top: var(--slick-grid-menu-icon-top-margin, v.$slick-grid-menu-icon-top-margin);
+
+  &:focus,
+  &:focus-visible {
+    outline: 2px solid var(--slick-focus-outline-color, v.$slick-focus-outline-color);
+  }
 }
 
 .slick-grid-menu-list {
@@ -325,6 +335,7 @@ li.hidden {
     display: flex;
     align-items: center;
     margin: 0;
+    outline: none;
     border: var(--slick-menu-item-border, v.$slick-menu-item-border);
     border-radius: var(--slick-menu-item-border-radius, v.$slick-menu-item-border-radius);
     font-size: var(--slick-menu-item-font-size, v.$slick-menu-item-font-size);
@@ -335,8 +346,11 @@ li.hidden {
     width: var(--slick-menu-item-width, v.$slick-menu-item-width);
     white-space: var(--slick-menu-item-white-space, v.$slick-menu-item-white-space);
 
-    &:hover {
+    &:hover,
+    &:focus {
       border: var(--slick-menu-item-hover-border, v.$slick-menu-item-hover-border);
+    }
+    &:hover {
       background-color: var(--slick-menu-item-hover-color, v.$slick-menu-item-hover-color);
     }
 
@@ -502,13 +516,12 @@ li.hidden {
 // ----------------------------------------------
 
 .slick-header-menu-button {
-  background-color: currentColor;
   cursor: pointer;
+  outline: none;
   position: absolute;
   border: var(--slick-header-menu-button-border, v.$slick-header-menu-button-border);
   border-width: var(--slick-header-menu-button-border-width, v.$slick-header-menu-button-border-width);
   padding: var(--slick-header-menu-button-padding, v.$slick-header-menu-button-padding);
-  color: var(--slick-header-menu-button-icon-color, v.$slick-header-menu-button-icon-color);
 
   // The next few items are already defined in the slick-headermenu file and it should stay that way, *unless* you also replace the button image included there.
   bottom: 0;
@@ -517,7 +530,19 @@ li.hidden {
   height: var(--slick-header-menu-button-icon-size, v.$slick-header-menu-button-icon-size);
   width: var(--slick-header-menu-button-icon-size, v.$slick-header-menu-button-icon-size);
 
-  @include svg.generateSvgStyle('slick-header-menu-button-icon-svg', v.$slick-header-menu-button-icon-svg-path);
+  &:focus {
+    box-shadow: 0 0 0 2px var(--slick-focus-outline-color, v.$slick-focus-outline-color);
+    border-radius: 2px;
+  }
+
+  .slick-header-menu-icon {
+    display: inline-block;
+    background-color: currentColor;
+    color: var(--slick-header-menu-button-icon-color, v.$slick-header-menu-button-icon-color);
+    width: 100%;
+    height: 100%;
+    @include svg.generateSvgStyle('slick-header-menu-button-icon-svg', v.$slick-header-menu-button-icon-svg-path);
+  }
 }
 
 .slick-header-column {

@@ -341,6 +341,7 @@ export class SliderFilter implements Filter {
     const sliderNumberClass = hideSliderNumbers ? '' : 'input-group';
     this._divContainerFilterElm = createDomElement('div', {
       className: `${sliderNumberClass} search-filter slick-filter slider-container slider-values filter-${columnId}`.trim(),
+      tabIndex: 0,
     });
 
     this._sliderRangeContainElm.appendChild(this._sliderTrackElm);

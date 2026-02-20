@@ -235,7 +235,7 @@ export const GlobalGridOptions: Partial<GridOption> = {
     iconToggleDarkModeCommand: 'mdi mdi-brightness-4',
     iconToggleFilterCommand: 'mdi mdi-flip-vertical',
     iconTogglePreHeaderCommand: 'mdi mdi-flip-vertical',
-    menuWidth: 16,
+    menuWidth: 18,
     resizeOnShowHeaderRow: true,
     showBulletWhenIconMissing: true,
     subItemChevronClass: 'mdi mdi-chevron-down mdi-rotate-270',

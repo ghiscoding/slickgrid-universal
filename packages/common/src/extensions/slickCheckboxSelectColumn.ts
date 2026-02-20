@@ -351,7 +351,10 @@ export class SlickCheckboxSelectColumn<T = any> {
         const inputId = `header-filter-selector${this._selectAll_UID}`;
         const labelElm = createDomElement('label', { id: 'filter-checkbox-selectall-container', htmlFor: inputId });
         const divElm = createDomElement('div', { className: 'icon-checkbox-container' });
-        divElm.appendChild(createDomElement('input', { id: inputId, type: 'checkbox', ariaChecked: 'false' }));
+        if (this.gridOptions.a11y) {
+          divElm.tabIndex = 0;
+        }
+        divElm.appendChild(createDomElement('input', { id: inputId, type: 'checkbox', ariaChecked: 'false', tabIndex: -1 }));
         divElm.appendChild(createDomElement('div', { className: `mdi ${UNCHECK_ICON}` }));
 
         labelElm.appendChild(divElm);

@@ -294,6 +294,7 @@ export class InputFilter implements Filter {
       className: `form-control filter-${columnId}`,
       value: searchVal,
       dataset: { columnid: `${columnId}` },
+      tabIndex: 0,
     });
 
     // if there's a search term, we will add the "filled" class for styling purposes

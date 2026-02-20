@@ -61,6 +61,7 @@ $slick-container-border-right:                              0 none !default;
 $slick-container-border-bottom:                             1px solid #{$slick-border-color} !default;
 $slick-container-border-left:                               0 none !default;
 $slick-canvas-bg-color:                                     #fff !default;
+$slick-focus-outline-color:                             rgba(53, 53, 53, 0.5) !default;
 
 /* grid */
 $slick-grid-border-color:                                   transparent !default;
@@ -995,6 +996,7 @@ $slick-dark-text-color:                                   #d4d4d4 !default;
   --slick-base-dark-invalid-color:                        #{$slick-dark-base-dark-invalid-color};
   --slick-highlight-color:                                #{$slick-dark-highlight-color};
   --slick-text-color:                                     #{$slick-dark-text-color};
+  --slick-focus-outline-color:                            rgba(224, 224, 224, 0.5);
 
   // Bootstrap body bg-color is "--bs-body-bg: #212529"
   --slick-autocomplete-bg-color:                          var(--slick-base-dark-menu-bg-color);
