@@ -123,7 +123,7 @@
     "cross-env": "catalog:",
     "cypress": "catalog:",
     "cypress-real-events": "catalog:",
-    "eslint-plugin-cypress": "^5.3.0",
+    "eslint-plugin-cypress": "^6.0.0",
     "globals": "catalog:",
     "jsdom": "catalog:",
     "jsdom-global": "catalog:",
