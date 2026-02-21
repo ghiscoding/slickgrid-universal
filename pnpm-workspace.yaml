@@ -33,7 +33,7 @@ catalog:
   i18next-vue: ^5.4.0
   jsdom: ^28.1.0
   jsdom-global: ^3.0.2
-  jspdf: ^4.1.0
+  jspdf: ^4.2.0
   multiple-select-vanilla: ^5.0.0
   native-copyfiles: ^2.0.1
   oxlint: 1.47.0
