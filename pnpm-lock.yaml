@@ -83,12 +83,12 @@ catalogs:
       version: 5.4.0
     jsdom:
       specifier: ^28.1.0
-      version: 28.0.0
+      version: 28.1.0
     jsdom-global:
       specifier: ^3.0.2
       version: 3.0.2
     jspdf:
-      specifier: ^4.1.0
+      specifier: ^4.2.0
       version: 4.2.0
     multiple-select-vanilla:
       specifier: ^5.0.0
@@ -9863,7 +9863,7 @@ snapshots:
       obug: 2.1.1
       std-env: 3.10.0
       tinyrainbow: 3.0.3
-      vitest: 4.0.18(@types/node@24.10.13)(@vitest/ui@4.0.18)(esbuild@0.27.2)(jiti@2.6.1)(jsdom@28.1.0)(less@4.5.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2)
+      vitest: 4.0.18(@types/node@24.10.13)(@vitest/ui@4.0.18)(esbuild@0.27.2)(jiti@2.6.1)(jsdom@28.0.0)(less@4.5.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2)
 
   '@vitest/expect@4.0.18':
     dependencies:
