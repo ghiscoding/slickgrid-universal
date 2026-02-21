@@ -25,6 +25,10 @@
         enabled: false,
       },
     },
+    {
+      packageNames: ['oxlint'],
+      allowedVersions: '1.47.0',
+    },
   ],
   ignoreDeps: ['lee-dohm/no-response', 'node', 'pnpm', 'typescript'],
   schedule: ['every 4 weeks on friday'],
