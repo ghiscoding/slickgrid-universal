@@ -18,7 +18,7 @@
     },
     {
       description: 'Group all Angular dependencies',
-      matchFileNames: ['frameworks/angular-slickgrid/**', 'demos/angular/**', 'angular-row-detail-plugin/**'],
+      matchFileNames: ['frameworks/angular-slickgrid/**', 'demos/angular/**', 'frameworks-plugins/angular-row-detail-plugin/**'],
       groupName: 'Angular dependencies',
       ignoreDeps: ['typescript'],
       major: {
