@@ -591,6 +591,127 @@ describe('SlickGrid core file', () => {
     expect(() => new SlickGrid<any, Column>(null as any, dv, columns, defaultOptions)).toThrow('SlickGrid requires a valid container');
   });
 
+  describe('Accessibility Focus Methods', () => {
+    let columns: Column[];
+    let data: any[];
+
+    beforeEach(() => {
+      columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name' },
+        { id: 'lastName', field: 'lastName', name: 'Last Name' },
+        { id: 'age', field: 'age', name: 'Age' },
+      ];
+      data = [
+        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+      ];
+
+      grid = new SlickGrid<any, Column>('#myGrid', data, columns, { ...defaultOptions, showHeaderRow: true });
+      grid.init();
+
+      // Inject menu button into the rendered header column
+      const headerCol = container.querySelector('.slick-header-column[data-id="lastName"]');
+      if (headerCol) {
+        const menuBtn = document.createElement('button');
+        menuBtn.className = 'slick-header-menu-button';
+        menuBtn.tabIndex = 0;
+        headerCol.appendChild(menuBtn);
+      }
+
+      // Inject filter input into the rendered header row
+      const headerRow = container.querySelector('.slick-headerrow');
+      if (headerRow) {
+        let filterCol = headerRow.querySelector('.slick-headerrow-column');
+        if (!filterCol) {
+          filterCol = document.createElement('div');
+          filterCol.className = 'slick-headerrow-column';
+          headerRow.appendChild(filterCol);
+        }
+        let filterInput = filterCol.querySelector('input');
+        if (!filterInput) {
+          filterInput = document.createElement('input');
+          filterInput.tabIndex = 0;
+          filterInput.className = 'input-filter';
+          Object.defineProperty(filterInput, 'offsetParent', { value: 8, configurable: true });
+          filterCol.appendChild(filterInput);
+        }
+      }
+
+      // Ensure header columns are focusable
+      const headerCols = container.querySelectorAll('.slick-header-column');
+      headerCols.forEach((col) => {
+        (col as HTMLElement).tabIndex = 0;
+      });
+    });
+
+    it('should focus header column by index', () => {
+      const headerCol = container.querySelector('.slick-header-column[data-id="lastName"]') as HTMLElement;
+      headerCol.tabIndex = 0;
+      const focusSpy = vi.spyOn(headerCol, 'focus');
+      grid.focusHeaderColumn(1);
+      expect(focusSpy).toHaveBeenCalled();
+    });
+
+    it('should focus header menu button if visible, else fallback to header column', () => {
+      const headerCol = container.querySelector('.slick-header-column[data-id="lastName"]') as HTMLElement;
+      const menuBtn = headerCol.querySelector('.slick-header-menu-button') as HTMLButtonElement;
+      Object.defineProperty(menuBtn, 'offsetParent', { value: 25, configurable: true });
+      expect(menuBtn).toBeTruthy();
+      const focusSpy = vi.spyOn(menuBtn, 'focus');
+      grid.focusHeaderMenuOrColumn(1);
+      expect(focusSpy).toHaveBeenCalled();
+
+      // Remove menu button, fallback to header column
+      headerCol.removeChild(menuBtn);
+      const colFocusSpy = vi.spyOn(headerCol, 'focus');
+      grid.focusHeaderMenuOrColumn(1);
+      expect(colFocusSpy).toHaveBeenCalled();
+    });
+
+    it('should focus first header row filter if visible, else fallback to grid cell/menu', () => {
+      const headerRow = container.querySelector('.slick-headerrow') as HTMLDivElement;
+      const filterInput = headerRow.querySelector('input');
+      expect(filterInput).toBeTruthy();
+      vi.spyOn(grid, 'getHeaderRow').mockReturnValue(headerRow);
+      const focusSpy = vi.spyOn(filterInput!, 'focus');
+      const result = grid.focusHeaderRowFilter();
+      expect(focusSpy).toHaveBeenCalled();
+      expect(result).toBe(true);
+
+      // Hide filter, should fallback to grid cell
+      filterInput!.style.display = 'none';
+      Object.defineProperty(filterInput!, 'offsetParent', { value: null, configurable: true });
+      const gridCellFocusSpy = vi.spyOn(grid, 'focusGridCell');
+      const result2 = grid.focusHeaderRowFilter();
+      expect(gridCellFocusSpy).toHaveBeenCalled();
+      expect(result2).toBe(false);
+    });
+
+    it('should focus grid cell (active or first cell)', () => {
+      // No active cell, should set active cell to (0,0)
+      const setActiveCellSpy = vi.spyOn(grid, 'setActiveCell');
+      grid.focusGridCell();
+      expect(setActiveCellSpy).toHaveBeenCalledWith(0, 0);
+    });
+
+    it('should focus grid menu button if present, else fallback to last header menu/column', () => {
+      // Add grid menu button
+      const gridMenuBtn = document.createElement('button');
+      gridMenuBtn.className = 'slick-grid-menu-button';
+      gridMenuBtn.tabIndex = 0;
+      container.appendChild(gridMenuBtn);
+      const focusSpy = vi.spyOn(gridMenuBtn, 'focus');
+      grid.focusGridMenu();
+      expect(focusSpy).toHaveBeenCalled();
+
+      // Remove grid menu button, fallback to last header menu/column
+      container.removeChild(gridMenuBtn);
+      const fallbackSpy = vi.spyOn(grid, 'focusHeaderMenuOrColumn');
+      grid.focusGridMenu();
+      expect(fallbackSpy).toHaveBeenCalledWith(columns.length - 1);
+    });
+  });
+
   describe('Row Selections', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
     const data = [

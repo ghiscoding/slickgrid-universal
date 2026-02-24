@@ -938,6 +938,104 @@ describe('HeaderMenu Plugin', () => {
 
         expect(hideMenuSpy).toHaveBeenCalled();
       });
+
+      it('should restore focus to header menu button when repositionSubMenu is called on sub-menu trigger (cover if branch)', () =>
+        new Promise((done: any) => {
+          const onCommandMock = vi.fn();
+          vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(columnsMock);
+          gridOptionsMock.a11y = true;
+          plugin.init({ autoAlign: true });
+          plugin.addonOptions.onCommand = onCommandMock;
+
+          const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
+          gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
+          const headerButtonIconElm = headerDiv.querySelector('.slick-header-menu-icon') as HTMLDivElement;
+          const buttonFocusSpy = vi.spyOn(headerButtonIconElm.parentElement!, 'focus');
+          // Open the main menu
+          headerButtonIconElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+          setTimeout(() => {
+            // Find the sub-menu trigger in the menu
+            const headerMenu1Elm = gridContainerDiv.querySelector('.slick-header-menu.slick-menu-level-0') as HTMLDivElement;
+            const commandList1Elm = headerMenu1Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+            const subCommands1Elm = commandList1Elm.querySelector('[data-command="sub-commands"]') as HTMLDivElement;
+            // Open the sub-menu
+            subCommands1Elm!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+            setTimeout(() => {
+              // Find the sub-menu item definition
+              const subMenuItem = columnsMock[1].header!.menu!.commandItems![1] as MenuCommandItem;
+              subCommands1Elm.classList.add('slick-header-menu-icon');
+              // Call repositionSubMenu on the sub-menu trigger to simulate sub-menu logic
+              plugin.repositionSubMenu({ target: subCommands1Elm } as any, subMenuItem, 0, columnsMock[1]);
+              // Simulate click event on the sub-menu trigger (should now be the correct context)
+              subCommands1Elm.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+
+              // Wait for setTimeout in menuBaseClass to restore focus
+              setTimeout(() => {
+                expect(buttonFocusSpy).toHaveBeenCalled();
+                done();
+              });
+            });
+          });
+        }));
+
+      it('should cover default onActivate in wireMenuKeyboardNavigation', () => {
+        // Create a dummy menu element with a focusable menu item
+        const menuElm = document.createElement('div');
+        const menuItem = document.createElement('div');
+        menuItem.setAttribute('role', 'menuitem');
+        menuItem.tabIndex = 0;
+        menuElm.appendChild(menuItem);
+        document.body.appendChild(menuElm);
+        const clickSpy = vi.spyOn(menuItem, 'dispatchEvent');
+
+        // Wire up keyboard navigation without custom handlers
+        plugin['wireMenuKeyboardNavigation'](menuElm);
+        // Focus the menu item so the handler will trigger
+        menuItem.focus();
+
+        // Simulate Enter keydown
+        const enterEvent = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true });
+        menuElm.dispatchEvent(enterEvent);
+
+        // Should trigger a click event on the menu item
+        expect(clickSpy).toHaveBeenCalledWith(expect.objectContaining({ type: 'click' }));
+        document.body.removeChild(menuElm);
+      });
+
+      it('should cover default onEscape and onTab in wireMenuKeyboardNavigation', () => {
+        // Create a dummy menu element with a focusable menu item
+        const menuElm = document.createElement('div');
+        const menuItem = document.createElement('div');
+        menuItem.setAttribute('role', 'menuitem');
+        menuItem.tabIndex = 0;
+        menuElm.appendChild(menuItem);
+        document.body.appendChild(menuElm);
+        const disposeSpy = vi.spyOn(plugin, 'disposeAllMenus');
+
+        // Wire up keyboard navigation without custom handlers
+        plugin['wireMenuKeyboardNavigation'](menuElm);
+        menuItem.focus();
+
+        // Simulate Escape keydown
+        const escapeEvent = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true });
+        menuElm.dispatchEvent(escapeEvent);
+        expect(disposeSpy).toHaveBeenCalled();
+
+        // Simulate Tab keydown
+        const tabEvent = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true });
+        let preventDefaultCalled = false;
+        let stopPropagationCalled = false;
+        tabEvent.preventDefault = () => {
+          preventDefaultCalled = true;
+        };
+        tabEvent.stopPropagation = () => {
+          stopPropagationCalled = true;
+        };
+        menuElm.dispatchEvent(tabEvent);
+        expect(preventDefaultCalled).toBe(true);
+        expect(stopPropagationCalled).toBe(true);
+        document.body.removeChild(menuElm);
+      });
     });
 
     describe('with slot renderer', () => {
