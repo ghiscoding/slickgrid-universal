@@ -74,6 +74,7 @@ import type {
   OnHeaderCellRenderedEventArgs,
   OnHeaderClickEventArgs,
   OnHeaderContextMenuEventArgs,
+  OnHeaderKeyDownEventArgs,
   OnHeaderMouseEventArgs,
   OnHeaderRowCellRenderedEventArgs,
   OnKeyDownEventArgs,
@@ -179,6 +180,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   onHeaderMouseLeave: SlickEvent<OnHeaderMouseEventArgs>;
   onHeaderMouseOver: SlickEvent<OnHeaderMouseEventArgs>;
   onHeaderMouseOut: SlickEvent<OnHeaderMouseEventArgs>;
+  onHeaderKeyDown: SlickEvent<OnHeaderKeyDownEventArgs>;
   onHeaderRowCellRendered: SlickEvent<OnHeaderRowCellRenderedEventArgs>;
   onHeaderRowMouseEnter: SlickEvent<OnHeaderMouseEventArgs>;
   onHeaderRowMouseLeave: SlickEvent<OnHeaderMouseEventArgs>;
@@ -587,6 +589,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.onHeaderMouseOut = new SlickEvent<OnHeaderMouseEventArgs>('onHeaderMouseOut', externalPubSub);
     this.onHeaderRowMouseOver = new SlickEvent<OnHeaderMouseEventArgs>('onHeaderRowMouseOver', externalPubSub);
     this.onHeaderRowMouseOut = new SlickEvent<OnHeaderMouseEventArgs>('onHeaderRowMouseOut', externalPubSub);
+    this.onHeaderKeyDown = new SlickEvent<OnHeaderKeyDownEventArgs>('onHeaderKeyDown', externalPubSub);
     this.onHeaderRowCellRendered = new SlickEvent<OnHeaderRowCellRenderedEventArgs>('onHeaderRowCellRendered', externalPubSub);
     this.onHeaderRowMouseEnter = new SlickEvent<OnHeaderMouseEventArgs>('onHeaderRowMouseEnter', externalPubSub);
     this.onHeaderRowMouseLeave = new SlickEvent<OnHeaderMouseEventArgs>('onHeaderRowMouseLeave', externalPubSub);
@@ -2111,6 +2114,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       // Add keydown/click event handlers for sortable columns
       this._bindingEventService.bind(header, 'keydown', ((e: KeyboardEvent & { target: HTMLElement }) => {
+        this.triggerEvent(this.onHeaderKeyDown, { event: e, column: Utils.storage.get(e.target, 'column'), grid: this });
         if (e.key === 'Enter' || e.key === ' ') {
           sortCallback(e);
         }

@@ -116,7 +116,9 @@ export class SlickCheckboxSelectColumn<T = any> {
       this.addCheckboxToFilterHeaderRow(grid);
     }
     if (!this._addonOptions.hideInColumnTitleRow) {
-      this._eventHandler.subscribe(this._grid.onHeaderClick, this.handleHeaderClick.bind(this));
+      this._eventHandler
+        .subscribe(this._grid.onHeaderClick, this.handleHeaderClick.bind(this))
+        .subscribe(this._grid.onHeaderKeyDown, (_e, args) => this.handleHeaderKeyDown(args.event, args));
     }
 
     // this also requires the Row Selection Model to be registered as well
@@ -246,7 +248,9 @@ export class SlickCheckboxSelectColumn<T = any> {
     const checkboxElm = createDocumentFragmentOrElement(this.gridOptions);
     const labelElm = createDomElement('label', { className: 'checkbox-selector-label', htmlFor: inputId });
     const divElm = createDomElement('div', { className: 'icon-checkbox-container' });
-    divElm.appendChild(createDomElement('input', { id: inputId, type: 'checkbox', checked: isChecked, ariaChecked: String(isChecked) }));
+    divElm.appendChild(
+      createDomElement('input', { id: inputId, type: 'checkbox', checked: isChecked, ariaChecked: String(isChecked), tabIndex: -1 })
+    );
     divElm.appendChild(createDomElement('div', { className: this.getCheckboxIcon(isChecked, isPartialChecked) }));
     labelElm.appendChild(divElm);
     checkboxElm.appendChild(labelElm);
@@ -362,14 +366,9 @@ export class SlickCheckboxSelectColumn<T = any> {
         this._headerRowNode = args.node;
         this._headerRowNode.classList.add('checkbox-header');
 
-        this._bindEventService.bind(labelElm, 'click', ((e: DOMMouseOrTouchEvent<HTMLInputElement>) => {
-          this.handleHeaderClick(e, args);
-        }) as EventListener);
-        this._bindEventService.bind(divElm, 'keydown', ((e: KeyboardEvent) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            this.handleHeaderClick(e, args);
-          }
-        }) as EventListener);
+        this._bindEventService.bind(labelElm, 'click', ((e: DOMMouseOrTouchEvent<HTMLInputElement>) =>
+          this.handleHeaderClick(e, args)) as EventListener);
+        this._bindEventService.bind(divElm, 'keydown', ((e: KeyboardEvent) => this.handleHeaderKeyDown(e, args)) as EventListener);
       }
     });
   }
@@ -561,6 +560,12 @@ export class SlickCheckboxSelectColumn<T = any> {
         e.preventDefault();
         e.stopImmediatePropagation();
       }
+    }
+  }
+
+  protected handleHeaderKeyDown(e: KeyboardEvent, args: OnHeaderClickEventArgs): void {
+    if (e.key === 'Enter' || e.key === ' ') {
+      this.handleHeaderClick(e, args);
     }
   }
 
