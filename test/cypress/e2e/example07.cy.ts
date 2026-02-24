@@ -369,7 +369,7 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
     cy.get('.slick-cell-menu').should('not.exist');
     cy.get('.grid7')
       .find(`[style="transform: translateY(${GRID_ROW_HEIGHT * 10}px);"] > .slick-cell:nth(3)`)
-      .click();
+      .click({ force: true });
     cy.get('.slick-cell-menu').should('be.visible');
     cy.get('.slick-cell-menu .slick-menu-option-list .slick-menu-item').contains('True').click();
     cy.get('.slick-cell-menu').should('not.exist');

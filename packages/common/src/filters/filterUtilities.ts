@@ -14,7 +14,7 @@ import { fetchAsPromise, getTranslationPrefix } from '../services/utilities.js';
  * @returns {Object} selectElm - Select Dropdown HTML Element
  */
 export function buildSelectOperator(optionValues: OperatorDetail[], grid: SlickGrid): HTMLSelectElement {
-  const selectElm = createDomElement('select', { className: 'form-control' });
+  const selectElm = createDomElement('select', { className: 'form-control', tabIndex: 0 });
 
   for (const option of optionValues) {
     const optionElm = document.createElement('option');

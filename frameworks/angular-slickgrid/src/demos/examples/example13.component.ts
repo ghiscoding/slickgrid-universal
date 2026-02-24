@@ -20,6 +20,7 @@ const NB_ITEMS = 5000;
 
 @Component({
   templateUrl: './example13.component.html',
+  styles: ['.slick-column-name { .btn:focus { outline: 2px solid rgba(53, 53, 53, 0.5); } }'],
   imports: [AngularSlickgridComponent],
 })
 export class Example13Component implements OnInit {

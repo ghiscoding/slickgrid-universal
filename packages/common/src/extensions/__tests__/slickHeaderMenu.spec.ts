@@ -228,7 +228,9 @@ describe('HeaderMenu Plugin', () => {
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
 
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(
-        removeExtraSpaces(`<div class="slick-header-menu-button mdi mdi-chevron-down" aria-label="Header Menu"></div>`)
+        removeExtraSpaces(
+          `<div class="slick-header-menu-button mdi mdi-chevron-down" aria-label="Header Menu"><span class="slick-header-menu-icon"></span></div>`
+        )
       );
     });
 
@@ -241,7 +243,9 @@ describe('HeaderMenu Plugin', () => {
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
 
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(
-        removeExtraSpaces(`<div class="slick-header-menu-button" aria-label="Header Menu" title="some tooltip text"></div>`)
+        removeExtraSpaces(
+          `<div class="slick-header-menu-button" aria-label="Header Menu" title="some tooltip text"><span class="slick-header-menu-icon"></span></div>`
+        )
       );
     });
 
@@ -254,7 +258,9 @@ describe('HeaderMenu Plugin', () => {
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
 
       // add Header Menu which is visible
-      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(`<div class="slick-header-menu-button" aria-label="Header Menu"></div>`));
+      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(
+        removeExtraSpaces(`<div class="slick-header-menu-button" aria-label="Header Menu"><span class="slick-header-menu-icon"></span></div>`)
+      );
 
       gridStub.onBeforeHeaderCellDestroy.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
       expect(headerDiv.innerHTML).toBe('');
@@ -269,7 +275,9 @@ describe('HeaderMenu Plugin', () => {
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
 
       // add Header Menu which is visible
-      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(`<div class="slick-header-menu-button" aria-label="Header Menu"></div>`));
+      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(
+        removeExtraSpaces(`<div class="slick-header-menu-button" aria-label="Header Menu"><span class="slick-header-menu-icon"></span></div>`)
+      );
     });
 
     it('should populate a Header Menu when cell is being rendered and a 2nd button item visibility & usability callbacks returns true', () => {
@@ -283,14 +291,16 @@ describe('HeaderMenu Plugin', () => {
       const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
 
       // add Header Menu which is visible
-      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(`<div class="slick-header-menu-button" aria-label="Header Menu"></div>`));
+      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(
+        removeExtraSpaces(`<div class="slick-header-menu-button" aria-label="Header Menu"><span class="slick-header-menu-icon"></span></div>`)
+      );
       headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
       const commandElm = gridContainerDiv.querySelector('.slick-menu-item') as HTMLDivElement;
 
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(
         removeExtraSpaces(
-          `<li class="slick-menu-item mdi mdi-lightbulb-outline" role="menuitem" data-command="show-positive-numbers">
+          `<li class="slick-menu-item mdi mdi-lightbulb-outline" role="menuitem" tabindex="-1" data-command="show-positive-numbers">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -314,7 +324,7 @@ describe('HeaderMenu Plugin', () => {
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(
         removeExtraSpaces(
-          `<li class="slick-menu-item slick-menu-item-disabled mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+          `<li class="slick-menu-item slick-menu-item-disabled mdi mdi-lightbulb-on" role="menuitem" tabindex="-1" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -340,7 +350,7 @@ describe('HeaderMenu Plugin', () => {
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(
         removeExtraSpaces(
-          `<li class="slick-menu-item slick-menu-item-disabled mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+          `<li class="slick-menu-item slick-menu-item-disabled mdi mdi-lightbulb-on" role="menuitem" tabindex="-1" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -362,7 +372,7 @@ describe('HeaderMenu Plugin', () => {
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(
         removeExtraSpaces(
-          `<li class="slick-menu-item slick-menu-item-hidden mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+          `<li class="slick-menu-item slick-menu-item-hidden mdi mdi-lightbulb-on" role="menuitem" tabindex="-1" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -384,7 +394,7 @@ describe('HeaderMenu Plugin', () => {
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(
         removeExtraSpaces(
-          `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Some Tooltip">
+          `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" tabindex="-1" data-command="show-negative-numbers" title="Some Tooltip">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -409,7 +419,7 @@ describe('HeaderMenu Plugin', () => {
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(
         removeExtraSpaces(
-          `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+          `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" tabindex="-1" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -425,7 +435,7 @@ describe('HeaderMenu Plugin', () => {
         column: columnsMock[0],
         grid: gridStub,
       });
-      expect(headerDiv.querySelector('.slick-header-menu-button')!.innerHTML).toBe('');
+      expect(headerDiv.querySelector('.slick-header-menu-button')!.innerHTML).toBe('<span class="slick-header-menu-icon"></span>');
     });
 
     it('should populate a Header Menu and a 2nd button and expect the "onCommand" handler to be executed when defined', () => {
@@ -444,7 +454,7 @@ describe('HeaderMenu Plugin', () => {
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(
         removeExtraSpaces(
-          `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+          `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" tabindex="-1" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -455,7 +465,7 @@ describe('HeaderMenu Plugin', () => {
         .querySelector('.slick-menu-item.mdi-lightbulb-on')!
         .dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
       expect(onCommandMock).toHaveBeenCalled();
-      expect(headerDiv.querySelector('.slick-header-menu-button')!.innerHTML).toBe('');
+      expect(headerDiv.querySelector('.slick-header-menu-button')!.innerHTML).toBe('<span class="slick-header-menu-icon"></span>');
     });
 
     it('should populate a Header Menu and a 2nd button is "disabled" but still expect the button NOT to be disabled because the "itemUsabilityOverride" has priority over the "disabled" property', () => {
@@ -477,7 +487,7 @@ describe('HeaderMenu Plugin', () => {
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(
         removeExtraSpaces(
-          `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+          `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" tabindex="-1" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -506,7 +516,7 @@ describe('HeaderMenu Plugin', () => {
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(
         removeExtraSpaces(
-          `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+          `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" tabindex="-1" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -563,7 +573,7 @@ describe('HeaderMenu Plugin', () => {
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(
         removeExtraSpaces(
-          `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+          `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" tabindex="-1" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`

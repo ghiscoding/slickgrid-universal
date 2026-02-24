@@ -306,10 +306,11 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
     itemMouseoverCallback?: itemEventCallback
   ): HTMLLIElement | null {
     let commandLiElm: HTMLLIElement | null = null;
+    const isHeaderButton = this._camelPluginName === 'headerButtons';
 
     if (args && item && menuOptions) {
       const level = args?.level || 0;
-      const pluginMiddleName = this._camelPluginName === 'headerButtons' ? '' : '-item';
+      const pluginMiddleName = isHeaderButton ? '' : '-item';
       const menuCssPrefix = `${this._menuCssPrefix}${pluginMiddleName}`;
 
       // run each override functions to know if the item is visible and usable
@@ -356,14 +357,18 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
       }
 
       if (item.cssClass) {
-        commandLiElm.classList.add(...classNameToList(item.cssClass));
+        if (isHeaderButton) {
+          commandLiElm.appendChild(createDomElement('span', { className: item.cssClass }));
+        } else {
+          commandLiElm.classList.add(...classNameToList(item.cssClass));
+        }
       }
 
       if (item.tooltip) {
         commandLiElm.title = item.tooltip;
       }
 
-      if (this._camelPluginName !== 'headerButtons') {
+      if (!isHeaderButton) {
         // Check if we have slot renderer on the menu item or a default item renderer
         const slotRenderer = (item as MenuCommandOptionItem).slotRenderer || (this._addonOptions as MenuPlugin).defaultMenuItemRenderer;
         if (slotRenderer) {
@@ -415,10 +420,10 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
 
             itemClickCallback.call(this, e, itemType, item, level, args?.column);
             setTimeout(() => {
-              if (triggeredByElm.classList.contains('slick-header-menu-icon')) {
+              if (triggeredByElm?.classList.contains('slick-header-menu-icon')) {
                 triggeredByElm = triggeredByElm.parentElement as HTMLElement; // If the click was on the icon, move focus to the header button for better accessibility
               }
-              triggeredByElm.focus(); // Restore focus to the triggering element after click
+              triggeredByElm?.focus(); // Restore focus to the triggering element after click
             });
           }) as EventListener,
           undefined,

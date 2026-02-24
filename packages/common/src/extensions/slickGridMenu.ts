@@ -70,7 +70,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     hideSyncResizeButton: false,
     forceFitTitle: 'Force fit columns',
     marginBottom: 15,
-    menuWidth: 18,
+    menuWidth: 12,
     minHeight: 150,
     contentMinWidth: 0,
     resizeOnShowHeaderRow: false,
@@ -246,28 +246,9 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         gridMenuContainerElm.appendChild(this._gridMenuButtonElm);
         this._headerElm.parentElement.appendChild(gridMenuContainerElm);
 
-        const stopBubbling = (evt: Event) => {
-          evt.preventDefault();
-          evt.stopPropagation();
-        };
-
         // show the Grid Menu when hamburger menu is clicked or activated with keyboard
         this._bindEventService.bind(gridMenuContainerElm, 'click', this.showGridMenu.bind(this) as EventListener);
-        this._bindEventService.bind(gridMenuContainerElm, 'keydown', ((e: KeyboardEvent) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            stopBubbling(e);
-            this.showGridMenu(e as any);
-          } else if (e.key === 'Tab') {
-            stopBubbling(e);
-
-            if (e.shiftKey) {
-              // Shift+Tab from Grid Menu button: focus last visible column header menu button
-              this.grid.focusHeaderMenuOrColumn(this.getVisibleColumns().length - 1);
-            } else {
-              this.grid.focusHeaderRowFilter();
-            }
-          }
-        }) as EventListener);
+        this._bindEventService.bind(gridMenuContainerElm, 'keydown', this.handleKeyDown.bind(this) as EventListener);
       }
 
       this.sharedService.gridOptions.gridMenu = { ...this._defaults, ...this._addonOptions };
@@ -422,8 +403,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   /** show Grid Menu from the click event, which in theory will recreate the grid menu in the DOM */
   showGridMenu(e: MouseEvent | TouchEvent, options?: GridMenuOption): void {
     const targetEvent: MouseEvent | Touch = (e as TouchEvent)?.touches?.[0] ?? e;
-    if (e && typeof e.preventDefault === 'function') e.preventDefault();
-    if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
+    this.stopFullBubbling(e);
 
     // empty the entire menu so that it's recreated every time it opens
     emptyElement(this._menuElm);
@@ -539,8 +519,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
           this.disposeAllMenus();
         },
         onTab: (evt) => {
-          evt.preventDefault();
-          evt.stopPropagation();
+          this.stopFullBubbling(evt);
         },
         eventServiceKey: 'grid-menu-keyboard',
       });
@@ -934,7 +913,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       forceFitTitle: this.extensionUtility.getPickerTitleOutputString('forceFitTitle', 'gridMenu'),
       syncResizeTitle: this.extensionUtility.getPickerTitleOutputString('syncResizeTitle', 'gridMenu'),
       iconCssClass: 'mdi mdi-menu',
-      menuWidth: 20,
+      menuWidth: 12,
       commandItems: [],
       hideClearAllFiltersCommand: false,
       hideRefreshDatasetCommand: false,
@@ -978,6 +957,28 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     }
   }
 
+  protected stopFullBubbling(e: KeyboardEvent | MouseEvent | TouchEvent): void {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  }
+
+  protected handleKeyDown(e: KeyboardEvent): void {
+    if (e.key === 'Enter' || e.key === ' ') {
+      this.stopFullBubbling(e);
+      this.showGridMenu(e as any);
+    } else if (e.key === 'Tab') {
+      this.stopFullBubbling(e);
+      if (e.shiftKey) {
+        // Shift+Tab from Grid Menu button: focus last visible column header menu button
+        this.grid.focusHeaderMenuOrColumn(this.getVisibleColumns().length - 1);
+      } else {
+        this.grid.focusHeaderRowFilter();
+      }
+    }
+  }
+
   protected handleMenuItemCommandClick(
     event: DOMMouseOrTouchEvent<HTMLDivElement>,
     _type: MenuType,
@@ -1015,8 +1016,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         }
 
         // Stop propagation so that it doesn't register as a header click event.
-        if (event && typeof event.preventDefault === 'function') event.preventDefault();
-        if (event && typeof event.stopPropagation === 'function') event.stopPropagation();
+        this.stopFullBubbling(event);
       } else if ((item as GridMenuItem).commandItems) {
         this.repositionSubMenu(event, item, level);
       }
