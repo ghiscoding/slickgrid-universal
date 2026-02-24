@@ -10,6 +10,12 @@ Aurelia SlickGrid Universal provides all core accessibility features, including 
 - Accessible checkboxes and selection
 - Announcements for important grid changes
 
+## Focus Outline Styling
+
+The a11y focus outline can be customized using the SASS variable `$slick-focus-outline-color` or its CSS equivalent `--slick-focus-outline-color` (CSS custom property). This allows you to style the focus indicator to match your application's design.
+
+**Note:** Header filters have their own box shadow styling and are styled separately.
+
 ## Keyboard Navigation
 
 | Key                | Action                                      |

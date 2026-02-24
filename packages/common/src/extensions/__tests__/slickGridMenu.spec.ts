@@ -1079,7 +1079,6 @@ describe('GridMenuControl', () => {
       describe('keyboard navigation (a11y)', () => {
         beforeEach(() => {
           // minimal menu setup
-          gridOptionsMock.a11y = true;
           gridOptionsMock.gridMenu!.commandItems = [
             { command: 'help', title: 'Help', action: vi.fn() },
             { command: 'about', title: 'About', action: vi.fn() },
@@ -1092,7 +1091,6 @@ describe('GridMenuControl', () => {
         });
 
         afterEach(() => {
-          gridOptionsMock.a11y = false;
           control.hideMenu(new Event('click', { bubbles: true, cancelable: true }) as any);
         });
 

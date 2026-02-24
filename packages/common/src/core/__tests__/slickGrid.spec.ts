@@ -5922,7 +5922,7 @@ describe('SlickGrid core file', () => {
       expect(secondItemAgeCell.classList.contains('to-be-deleted-highlight')).toBeFalsy();
     });
 
-    it('should call handleContainerKeyDown and handleGridKeyDown for a11y/keyboard coverage', () => {
+    it('should call handleContainerKeyDown and handleGridKeyDown a11y/keyboard coverage', () => {
       // Use a real DOM structure to avoid infinite recursion
       const testGridInstance = new TestGrid(container, items, columns, { ...defaultOptions, enableCellNavigation: true, autoEditByKeypress: true });
       const headerRowCol = document.createElement('div');

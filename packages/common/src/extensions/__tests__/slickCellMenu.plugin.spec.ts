@@ -922,7 +922,7 @@ describe('CellMenu Plugin', () => {
 
       it('should not trigger menu action when slotRenderer calls preventDefault on click event', () => {
         const mockAction = vi.fn();
-        const mockSlotRenderer = vi.fn((item: MenuCommandItem, args: any, event?: Event) => {
+        const mockSlotRenderer = vi.fn(() => {
           const div = document.createElement('div');
           div.className = 'prevent-default-test';
           const button = document.createElement('button');

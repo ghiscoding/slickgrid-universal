@@ -213,7 +213,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   // settings
   protected _options!: O;
   protected _defaults: BaseGridOption = {
-    a11y: true,
     invalidColumnFreezePickerCallback: (error) => alert(error),
     invalidColumnFreezeWidthCallback: (error) => alert(error),
     invalidColumnFreezeWidthMessage:
@@ -1886,12 +1885,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           dataset: { id: String(m.id) },
           role: 'columnheader',
           className: 'slick-state-default slick-header-column',
+          tabIndex: 0,
         },
         headerTarget
       );
-      if (this._options.a11y) {
-        header.tabIndex = 0;
-      }
       if (m.toolTip) {
         header.title = m.toolTip;
       }

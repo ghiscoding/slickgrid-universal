@@ -254,7 +254,7 @@ describe('HeaderMenu Plugin', () => {
 
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(
         removeExtraSpaces(
-          `<div class="slick-header-menu-button mdi mdi-chevron-down" aria-label="Header Menu"><span class="slick-header-menu-icon"></span></div>`
+          `<div class="slick-header-menu-button mdi mdi-chevron-down" aria-label="Header Menu" tabindex="0"><span class="slick-header-menu-icon"></span></div>`
         )
       );
     });
@@ -269,7 +269,7 @@ describe('HeaderMenu Plugin', () => {
 
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(
         removeExtraSpaces(
-          `<div class="slick-header-menu-button" aria-label="Header Menu" title="some tooltip text"><span class="slick-header-menu-icon"></span></div>`
+          `<div class="slick-header-menu-button" aria-label="Header Menu" tabindex="0" title="some tooltip text"><span class="slick-header-menu-icon"></span></div>`
         )
       );
     });
@@ -284,7 +284,7 @@ describe('HeaderMenu Plugin', () => {
 
       // add Header Menu which is visible
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(
-        removeExtraSpaces(`<div class="slick-header-menu-button" aria-label="Header Menu"><span class="slick-header-menu-icon"></span></div>`)
+        removeExtraSpaces(`<div class="slick-header-menu-button" aria-label="Header Menu" tabindex="0"><span class="slick-header-menu-icon"></span></div>`)
       );
 
       gridStub.onBeforeHeaderCellDestroy.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
@@ -301,7 +301,7 @@ describe('HeaderMenu Plugin', () => {
 
       // add Header Menu which is visible
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(
-        removeExtraSpaces(`<div class="slick-header-menu-button" aria-label="Header Menu"><span class="slick-header-menu-icon"></span></div>`)
+        removeExtraSpaces(`<div class="slick-header-menu-button" aria-label="Header Menu" tabindex="0"><span class="slick-header-menu-icon"></span></div>`)
       );
     });
 
@@ -317,7 +317,7 @@ describe('HeaderMenu Plugin', () => {
 
       // add Header Menu which is visible
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(
-        removeExtraSpaces(`<div class="slick-header-menu-button" aria-label="Header Menu"><span class="slick-header-menu-icon"></span></div>`)
+        removeExtraSpaces(`<div class="slick-header-menu-button" aria-label="Header Menu" tabindex="0"><span class="slick-header-menu-icon"></span></div>`)
       );
       headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
       const commandElm = gridContainerDiv.querySelector('.slick-menu-item') as HTMLDivElement;
@@ -943,7 +943,6 @@ describe('HeaderMenu Plugin', () => {
         new Promise((done: any) => {
           const onCommandMock = vi.fn();
           vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(columnsMock);
-          gridOptionsMock.a11y = true;
           plugin.init({ autoAlign: true });
           plugin.addonOptions.onCommand = onCommandMock;
 

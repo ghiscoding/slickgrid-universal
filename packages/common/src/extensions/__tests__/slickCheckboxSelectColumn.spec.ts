@@ -330,7 +330,6 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     const nodeElm = document.createElement('div');
     nodeElm.className = 'slick-headerrow-column';
     const updateColHeaderSpy = vi.spyOn(gridStub, 'updateColumnHeader');
-    vi.spyOn(gridStub, 'getOptions').mockReturnValue({ a11y: true });
 
     plugin = new SlickCheckboxSelectColumn(pubSubServiceStub, { hideInFilterHeaderRow: false, hideSelectAllCheckbox: false });
     plugin.init(gridStub);

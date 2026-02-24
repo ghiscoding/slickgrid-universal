@@ -11,6 +11,12 @@ SlickGrid Universal is committed to providing accessible data grids for all user
 - **Column Menus & Plugins**: Menus and plugins are accessible via keyboard and screen readers.
 - **Announcements**: Important grid changes (like selection or sorting) are announced to assistive technologies where possible.
 
+## Focus Outline Styling
+
+The a11y focus outline can be customized using the SASS variable `$slick-focus-outline-color` or its CSS equivalent `--slick-focus-outline-color` (CSS custom property). This allows you to style the focus indicator to match your application's design.
+
+**Note:** Header filters have their own box shadow styling and are styled separately.
+
 ## Keyboard Navigation
 
 | Key                | Action                                      |

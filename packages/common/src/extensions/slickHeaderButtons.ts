@@ -105,7 +105,7 @@ export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
         );
 
         // Make header buttons keyboard accessible (tabbable)
-        if (itemElm && !buttonItem.disabled && this.gridOptions.a11y) {
+        if (itemElm && !buttonItem.disabled) {
           itemElm.tabIndex = 0;
         }
 

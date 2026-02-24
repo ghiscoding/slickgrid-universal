@@ -233,10 +233,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         });
 
         // Create button
-        this._gridMenuButtonElm = createDomElement('button', { className: 'slick-grid-menu-button', ariaLabel: 'Grid Menu' });
-        if (this.gridOptions?.a11y) {
-          this._gridMenuButtonElm.tabIndex = 0;
-        }
+        this._gridMenuButtonElm = createDomElement('button', { className: 'slick-grid-menu-button', ariaLabel: 'Grid Menu', tabIndex: 0 });
 
         // Create icon span inside button
         const iconSpan = createDomElement('span', { className: this._addonOptions?.iconCssClass || 'mdi mdi-menu' });

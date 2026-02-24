@@ -77,9 +77,6 @@ export interface DevModeOption {
 export type Sanitizer = ((dirtyHtml: string) => string) | ((dirtyHtml: string) => TrustedHTML);
 
 export interface GridOption<C extends Column = Column> {
-  /** Defaults to true, enables accessibility features */
-  a11y?: boolean;
-
   /** Defaults to true, should we always allow the use of horizontal scrolling? */
   alwaysAllowHorizontalScroll?: boolean;
 

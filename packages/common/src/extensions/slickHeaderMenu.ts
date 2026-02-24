@@ -149,10 +149,11 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
         return;
       }
 
-      const headerButtonDivElm = createDomElement('div', { className: 'slick-header-menu-button', ariaLabel: 'Header Menu' }, args.node);
-      if (this.gridOptions?.a11y) {
-        headerButtonDivElm.tabIndex = 0;
-      }
+      const headerButtonDivElm = createDomElement(
+        'div',
+        { className: 'slick-header-menu-button', ariaLabel: 'Header Menu', tabIndex: 0 },
+        args.node
+      );
 
       // Create icon element inside button container
       const iconElm = createDomElement('span', { className: 'slick-header-menu-icon' });
