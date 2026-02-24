@@ -18,12 +18,16 @@
     },
     {
       description: 'Group all Angular dependencies',
-      matchFileNames: ['frameworks/angular-slickgrid/**', 'demos/angular/**'],
+      matchFileNames: ['frameworks/angular-slickgrid/**', 'demos/angular/**', 'frameworks-plugins/angular-row-detail-plugin/**'],
       groupName: 'Angular dependencies',
       ignoreDeps: ['typescript'],
       major: {
         enabled: false,
       },
+    },
+    {
+      packageNames: ['oxlint'],
+      allowedVersions: '1.47.0',
     },
   ],
   ignoreDeps: ['lee-dohm/no-response', 'node', 'pnpm', 'typescript'],
