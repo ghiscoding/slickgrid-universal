@@ -5869,7 +5869,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       const isTab = !e.shiftKey && !e.ctrlKey && !e.altKey;
       const isShiftTab = e.shiftKey && !e.ctrlKey && !e.altKey;
       if (isTab) {
-        headerRowSelector += ':last-child';
+        headerRowSelector = '.slick-headerrow-column:last-child *[tabIndex="0"]';
       }
 
       if (this._container.querySelector(headerRowSelector) === ancestorHeaderRow) {
