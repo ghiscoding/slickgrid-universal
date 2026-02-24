@@ -477,12 +477,13 @@ export class SlickCheckboxSelectColumn<T = any> {
 
   protected handleHeaderClick(
     e: DOMMouseOrTouchEvent<HTMLDivElement | HTMLInputElement> | SlickEventData | KeyboardEvent,
-    args: OnHeaderClickEventArgs
+    args: OnHeaderClickEventArgs,
+    forceToggle = false
   ): void {
     let inputChkElm: HTMLInputElement | null = e.target as HTMLInputElement | null;
     if (e.target instanceof HTMLDivElement) {
       inputChkElm = (e.target as HTMLDivElement).querySelector<HTMLInputElement>('input[type=checkbox]');
-      if (inputChkElm) {
+      if (inputChkElm && forceToggle) {
         inputChkElm.checked = !inputChkElm.checked;
       }
     }
@@ -565,7 +566,7 @@ export class SlickCheckboxSelectColumn<T = any> {
 
   protected handleHeaderKeyDown(e: KeyboardEvent, args: OnHeaderClickEventArgs): void {
     if (e.key === 'Enter' || e.key === ' ') {
-      this.handleHeaderClick(e, args);
+      this.handleHeaderClick(e, args, true);
     }
   }
 

@@ -5874,11 +5874,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       if (this._container.querySelector(headerRowSelector) === ancestorHeaderRow) {
         this.stopFullBubbling(e);
-        if (isShiftTab) {
-          this.focusGridMenu();
-        } else {
-          this.focusGridCell();
-        }
+        isShiftTab ? this.focusGridMenu() : this.focusGridCell();
       }
     }
   }

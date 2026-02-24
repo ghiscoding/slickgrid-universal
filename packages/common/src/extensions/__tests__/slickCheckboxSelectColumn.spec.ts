@@ -330,6 +330,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     const nodeElm = document.createElement('div');
     nodeElm.className = 'slick-headerrow-column';
     const updateColHeaderSpy = vi.spyOn(gridStub, 'updateColumnHeader');
+    vi.spyOn(gridStub, 'getOptions').mockReturnValue({ a11y: true });
 
     plugin = new SlickCheckboxSelectColumn(pubSubServiceStub, { hideInFilterHeaderRow: false, hideSelectAllCheckbox: false });
     plugin.init(gridStub);
@@ -500,6 +501,23 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
 
     expect(inputCheckboxElm).toBeTruthy();
     expect(setSelectedRowSpy).toHaveBeenCalledWith([], 'click.unselectAll');
+  });
+
+  it('should add Toggle All checkbox in filter header row and expect toggle all to work when triggered by keyboard event (covers header keydown)', () => {
+    const setSelectedRowSpy = vi.spyOn(gridStub, 'setSelectedRows');
+    const nodeElm = document.createElement('div');
+    nodeElm.className = 'slick-headerrow-column';
+
+    plugin = new SlickCheckboxSelectColumn(pubSubServiceStub, { applySelectOnAllPages: false, hideInFilterHeaderRow: false });
+    plugin.init(gridStub);
+
+    gridStub.onHeaderRowCellRendered.notify({ column: { id: '_checkbox_selector', field: '_checkbox_selector' }, node: nodeElm, grid: gridStub });
+    const checkboxContainerElm = nodeElm.querySelector('div.icon-checkbox-container') as HTMLDivElement;
+    const inputCheckboxElm = checkboxContainerElm.querySelector('input[type=checkbox]') as HTMLDivElement;
+    checkboxContainerElm.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+
+    expect(inputCheckboxElm).toBeTruthy();
+    expect(setSelectedRowSpy).toHaveBeenCalledWith([0, 1, 2], 'click.selectAll');
   });
 
   it('should call the "create" method and expect plugin to be created with checkbox column to be created at position 0 when using default', () => {
@@ -969,5 +987,46 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
       plugin.createCheckboxElement(`header-selector${plugin.selectAllUid}`, false, true), // partial select all
       'Select/Deselect All'
     );
+  });
+
+  it('should trigger header keydown event and select all rows when Enter is pressed on header (SlickEvent coverage, with target)', () => {
+    vi.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(false);
+    vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
+    vi.spyOn(gridStub, 'getDataLength').mockReturnValue(3);
+    vi.spyOn(gridStub, 'getDataItem')
+      .mockReturnValue({ firstName: 'John', lastName: 'Doe', age: 30 })
+      .mockReturnValueOnce({ firstName: 'Jane', lastName: 'Doe', age: 28 })
+      .mockReturnValueOnce({ __group: true, __groupTotals: { age: { sum: 58 } } });
+    vi.spyOn(dataViewStub, 'getFilteredItems').mockReturnValue([{ id: 22, firstName: 'John', lastName: 'Doe', age: 30 }]);
+    const setSelectedRowSpy = vi.spyOn(gridStub, 'setSelectedRows');
+    const onToggleEndMock = vi.fn();
+    const onToggleStartMock = vi.fn();
+    const setSelectedIdsSpy = vi.spyOn(dataViewStub, 'setSelectedIds');
+
+    plugin.selectedRowsLookup = { 1: false, 2: true };
+    plugin.init(gridStub);
+    plugin.setOptions({
+      applySelectOnAllPages: true,
+      hideInColumnTitleRow: false,
+      hideInFilterHeaderRow: true,
+      hideSelectAllCheckbox: false,
+      onSelectAllToggleStart: onToggleStartMock,
+      onSelectAllToggleEnd: onToggleEndMock,
+    });
+
+    // Simulate header keydown event with a target
+    const input = document.createElement('input');
+    input.type = 'checkbox';
+    input.checked = true;
+    const event = new KeyboardEvent('keydown', { key: 'Enter' });
+    Object.defineProperty(event, 'target', { value: input });
+    const args = { event, column: { id: '_checkbox_selector' } as Column, grid: gridStub };
+    gridStub.onHeaderKeyDown.notify(args, event);
+
+    expect(plugin).toBeTruthy();
+    expect(setSelectedRowSpy).toHaveBeenCalledWith([0, 2], 'click.selectAll');
+    expect(onToggleStartMock).toHaveBeenCalledWith(expect.anything(), { caller: 'click.selectAll', previousSelectedRows: [] });
+    expect(onToggleEndMock).toHaveBeenCalledWith(expect.anything(), { caller: 'click.selectAll', previousSelectedRows: [], rows: [0, 2] });
+    expect(setSelectedIdsSpy).toHaveBeenCalledWith([22], { isRowBeingAdded: true });
   });
 });
