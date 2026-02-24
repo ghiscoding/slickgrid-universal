@@ -63,6 +63,7 @@ const gridStub = {
   onAfterUpdateColumns: new SlickEvent(),
   onClick: new SlickEvent(),
   onHeaderClick: new SlickEvent(),
+  onHeaderKeyDown: new SlickEvent(),
   onHeaderRowCellRendered: new SlickEvent(),
   onKeyDown: new SlickEvent(),
   onSelectedRowsChanged: new SlickEvent(),
@@ -480,7 +481,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
       formatter: expect.any(Function),
     });
     expect(nameHtmlOutput).toBe(
-      `<label class="checkbox-selector-label" for="header-selector${plugin.selectAllUid}"><div class="icon-checkbox-container"><input id="header-selector${plugin.selectAllUid}" type="checkbox" aria-checked="false"><div class="mdi mdi-icon-uncheck"></div></div></label>`
+      `<label class="checkbox-selector-label" for="header-selector${plugin.selectAllUid}"><div class="icon-checkbox-container"><input id="header-selector${plugin.selectAllUid}" type="checkbox" aria-checked="false" tabindex="-1"><div class="mdi mdi-icon-uncheck"></div></div></label>`
     );
   });
 
@@ -531,7 +532,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     expect(plugin).toBeTruthy();
     expect(mockColumns[0]).toEqual(expect.objectContaining({ ...checkboxColumnMock, formatter: expect.any(Function) }));
     expect(nameHtmlOutput).toBe(
-      `<label class="checkbox-selector-label" for="header-selector${plugin.selectAllUid}"><div class="icon-checkbox-container"><input id="header-selector${plugin.selectAllUid}" type="checkbox" aria-checked="false"><div class="mdi mdi-icon-uncheck"></div></div></label>`
+      `<label class="checkbox-selector-label" for="header-selector${plugin.selectAllUid}"><div class="icon-checkbox-container"><input id="header-selector${plugin.selectAllUid}" type="checkbox" aria-checked="false" tabindex="-1"><div class="mdi mdi-icon-uncheck"></div></div></label>`
     );
   });
 
@@ -560,7 +561,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
       maxWidth: 30,
     });
     expect(nameHtmlOutput).toBe(
-      `<label class="checkbox-selector-label" for="header-selector${plugin.selectAllUid}"><div class="icon-checkbox-container"><input id="header-selector${plugin.selectAllUid}" type="checkbox" aria-checked="false"><div class="mdi mdi-icon-uncheck"></div></div></label>`
+      `<label class="checkbox-selector-label" for="header-selector${plugin.selectAllUid}"><div class="icon-checkbox-container"><input id="header-selector${plugin.selectAllUid}" type="checkbox" aria-checked="false" tabindex="-1"><div class="mdi mdi-icon-uncheck"></div></div></label>`
     );
   });
 
