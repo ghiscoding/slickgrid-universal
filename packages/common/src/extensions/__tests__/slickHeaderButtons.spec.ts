@@ -120,6 +120,7 @@ describe('HeaderButton Plugin', () => {
     it('should populate 1x Header Button when cell is being rendered and a 2nd button item visibility callback returns undefined', () => {
       const headerDiv = document.createElement('div');
       headerDiv.className = 'slick-header-column';
+      vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValueOnce({ ...gridOptionsMock, a11y: true }); // enable a11y to have tabindex="0"
 
       plugin.dispose();
       plugin.init();
@@ -131,7 +132,7 @@ describe('HeaderButton Plugin', () => {
       // add Header Buttons which are visible (only 1x)
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(
         removeExtraSpaces(
-          `<li class="slick-header-button" role="menuitem" tabindex="-1" data-command="show-positive-numbers"><span class="mdi mdi-lightbulb-outline"></span></li>`
+          `<li class="slick-header-button" role="menuitem" tabindex="0" data-command="show-positive-numbers"><span class="mdi mdi-lightbulb-outline"></span></li>`
         )
       );
 
@@ -349,6 +350,31 @@ describe('HeaderButton Plugin', () => {
           <li class="slick-header-button" role="menuitem" tabindex="-1" data-command="show-positive-numbers"><span class="mdi mdi-lightbulb-outline"></span></li>`
         )
       );
+    });
+
+    it('should trigger click and onCommand when pressing Enter key on a header button ', () => {
+      const headerDiv = document.createElement('div');
+      headerDiv.className = 'slick-header-column';
+
+      const onCommandMock = vi.fn();
+      plugin.dispose();
+      plugin.init({ onCommand: onCommandMock });
+      columnsMock[0].header!.buttons![1].itemVisibilityOverride = () => true;
+      columnsMock[0].header!.buttons![1].itemUsabilityOverride = () => true;
+      columnsMock[0].header!.buttons![1].action = vi.fn();
+
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
+      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
+      const buttonElm = headerDiv.querySelector('.slick-header-button[data-command="show-negative-numbers"]') as HTMLLIElement;
+
+      // Simulate keydown event for 'Enter'
+      const keydownEvent = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true });
+      buttonElm.dispatchEvent(keydownEvent);
+
+      expect(columnsMock[0].header!.buttons![1].action).toHaveBeenCalled();
+      expect(onCommandMock).toHaveBeenCalled();
+      expect(pubSubServiceStub.publish).toHaveBeenCalledWith('onHeaderButtonCommand', expect.objectContaining({ command: 'show-negative-numbers' }));
+      expect(gridStub.updateColumnHeader).toHaveBeenCalledWith('field1');
     });
   });
 });

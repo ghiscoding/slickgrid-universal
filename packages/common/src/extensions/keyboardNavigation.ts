@@ -38,61 +38,57 @@ export function bindKeyboardNavigation(
     ((evt: KeyboardEvent) => {
       // Only handle if this is a navigation key
       const isNavigationKey = ['ArrowUp', 'ArrowDown', 'Enter', ' ', 'Escape', 'Tab'].includes(evt.key);
-      if (!isNavigationKey) return;
-
-      // Try to find focused item
-      let focusedItem = containerElm.querySelector(focusedItemSelector) as HTMLElement;
-      if (!focusedItem) {
+      if (!isNavigationKey) {
         return;
       }
 
-      // Get all focusable items, optionally filtered
-      let allItems = Array.from(containerElm.querySelectorAll(allItemsSelector)) as HTMLElement[];
-      if (filterFn) {
-        allItems = allItems.filter(filterFn);
-      }
+      // Try to find focused item
+      let focusedItem = containerElm.querySelector(focusedItemSelector) as HTMLElement;
+      if (focusedItem) {
+        // Get all focusable items, optionally filtered
+        let allItems = Array.from(containerElm.querySelectorAll(allItemsSelector)) as HTMLElement[];
+        if (filterFn) {
+          allItems = allItems.filter(filterFn);
+        }
 
-      const currentIndex = allItems.indexOf(focusedItem);
-      const stopBubbling = () => {
-        evt.preventDefault();
-        evt.stopPropagation();
-      };
+        const currentIndex = allItems.indexOf(focusedItem);
+        const stopBubbling = () => {
+          evt.preventDefault();
+          evt.stopPropagation();
+        };
 
-      switch (evt.key) {
-        case 'Tab':
-          if (onTab) {
-            onTab(evt, focusedItem);
+        switch (evt.key) {
+          case 'Tab':
+            if (onTab) {
+              onTab(evt, focusedItem);
+            }
+            break;
+          case 'ArrowDown': {
+            stopBubbling();
+            const nextIndex = currentIndex < allItems.length - 1 ? currentIndex + 1 : 0;
+            allItems[nextIndex]?.focus();
+            break;
           }
-          break;
-        case 'ArrowDown':
-          stopBubbling();
-          if (currentIndex < allItems.length - 1) {
-            allItems[currentIndex + 1]?.focus();
-          } else {
-            allItems[0]?.focus();
+          case 'ArrowUp': {
+            stopBubbling();
+            const prevIndex = currentIndex > 0 ? currentIndex - 1 : allItems.length - 1;
+            allItems[prevIndex]?.focus();
+            break;
           }
-          break;
-        case 'ArrowUp':
-          stopBubbling();
-          if (currentIndex > 0) {
-            allItems[currentIndex - 1]?.focus();
-          } else {
-            allItems[allItems.length - 1]?.focus();
-          }
-          break;
-        case 'Enter':
-        case ' ':
-          stopBubbling();
-          if (onActivate) {
-            onActivate(focusedItem);
-          }
-          break;
-        case 'Escape':
-          stopBubbling();
-          if (onEscape) {
-            onEscape();
-          }
-          break;
+          case 'Enter':
+          case ' ':
+            stopBubbling();
+            if (onActivate) {
+              onActivate(focusedItem);
+            }
+            break;
+          case 'Escape':
+            stopBubbling();
+            if (onEscape) {
+              onEscape();
+            }
+            break;
+        }
       }
     }) as EventListener,
     undefined,

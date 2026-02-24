@@ -178,6 +178,31 @@ describe('HeaderMenu Plugin', () => {
   });
 
   describe('plugins - Header Menu', () => {
+    it('should restore focus to header menu button after executing a command (accessibility)', () =>
+      new Promise((done: any) => {
+        plugin.dispose();
+        plugin.init();
+        // Render header cell with menu button
+        const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
+        const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
+        // Spy on focus for the button
+        const buttonFocusSpy = vi.spyOn(headerButtonElm, 'focus');
+        // Open the menu
+        headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true }));
+        // Find a real menu command item (e.g., first menu item)
+        setTimeout(() => {
+          const menuItem = document.body.querySelector('.slick-menu-item[data-command="show-positive-numbers"]') as HTMLLIElement;
+          expect(menuItem).toBeTruthy();
+          // Simulate click on the menu item (executes command and closes menu)
+          menuItem.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+          // Wait for setTimeout in menuBaseClass to restore focus
+          setTimeout(() => {
+            expect(buttonFocusSpy).toHaveBeenCalled();
+            done();
+          }, 20);
+        }, 10);
+      }));
     let gridContainerDiv: HTMLDivElement;
     let headerDiv: HTMLDivElement;
     let headersDiv: HTMLDivElement;
@@ -589,6 +614,54 @@ describe('HeaderMenu Plugin', () => {
       bodyElm.dispatchEvent(new Event('mousedown', { bubbles: true }));
       expect(hideMenuSpy).toHaveBeenCalled();
     });
+
+    it('should open the Header Menu when pressing Enter key on the header menu button (a11y)', () => {
+      plugin.dispose();
+      plugin.init();
+      (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => true;
+      (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemUsabilityOverride = () => true;
+
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
+      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
+      const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
+
+      // Simulate keydown event for 'Enter'
+      const keydownEvent = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true });
+      headerButtonElm.dispatchEvent(keydownEvent);
+
+      // The menu should be created and visible
+      const menuElm = document.body.querySelector('.slick-header-menu');
+      expect(menuElm).toBeTruthy();
+      // Optionally, check that the menu contains expected items
+      const commandElm = menuElm?.querySelector('.slick-menu-item[data-command="show-positive-numbers"]');
+      expect(commandElm).toBeTruthy();
+    });
+
+    it('should restore focus to header menu button after executing a command (accessibility)', () =>
+      new Promise((done: any) => {
+        plugin.dispose();
+        plugin.init();
+        // Render header cell with menu button
+        const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
+        const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
+        // Spy on focus for the button
+        const buttonFocusSpy = vi.spyOn(headerButtonElm, 'focus');
+        // Open the menu
+        headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true }));
+        // Find a real menu command item (e.g., first menu item)
+        setTimeout(() => {
+          const menuItem = document.body.querySelector('.slick-menu-item[data-command="show-positive-numbers"]') as HTMLLIElement;
+          expect(menuItem).toBeTruthy();
+          // Simulate click on the menu item (executes command and closes menu)
+          menuItem.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+          // Wait for setTimeout in menuBaseClass to restore focus
+          setTimeout(() => {
+            expect(buttonFocusSpy).toHaveBeenCalled();
+            done();
+          }, 20);
+        }, 10);
+      }));
 
     describe('hideColumn method', () => {
       beforeEach(() => {
