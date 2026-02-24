@@ -40,13 +40,15 @@
 * [Available events](events/available-events.md)
 * [On Events](events/grid-and-dataview-events.md)
 
+## Features
+* [Accessibility (A11y)](features/accessibility.md)
+
 ## Grid Functionalities
 
 * [Auto-Resize / Resizer Service](grid-functionalities/grid-auto-resize.md)
 * [Resize by Cell Content](grid-functionalities/resize-by-cell-content.md)
 * [Column Picker](grid-functionalities/column-picker.md)
 * [Composite Editor Modal](grid-functionalities/composite-editor-modal.md)
-* [Custom Menu Slots](menu-slots.md)
 * [Custom Tooltip](grid-functionalities/custom-tooltip.md)
 * [Column & Row Spanning](grid-functionalities/column-row-spanning.md)
 * [Context Menu](grid-functionalities/context-menu.md)
@@ -59,6 +61,8 @@
 * [Grid State & Presets](grid-functionalities/grid-state-preset.md)
 * [Grouping & Aggregators](grid-functionalities/grouping-aggregators.md)
 * [Header Menu & Header Buttons](grid-functionalities/header-menu-header-buttons.md)
+* [Header & Footer Slots](grid-functionalities/header-footer-slots.md)
+* [Custom Menu Slots](grid-functionalities/menu-slots.md)
 * [Pagination](grid-functionalities/pagination.md)
 * [Infinite Scroll](grid-functionalities/infinite-scroll.md)
 * [Pinning (frozen) of Columns/Rows](grid-functionalities/frozen-columns-rows.md)
