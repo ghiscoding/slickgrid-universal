@@ -5864,7 +5864,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected handleContainerKeyDown(e: KeyboardEvent & { originalEvent: Event }): void {
     if (e.key === 'Tab') {
-      let headerRowSelector = '.slick-headerrow-column';
+      let headerRowSelector = '.slick-headerrow-column *[tabIndex="0"]';
       const ancestorHeaderRow = (e.target as HTMLElement)?.closest(headerRowSelector);
       const isTab = !e.shiftKey && !e.ctrlKey && !e.altKey;
       const isShiftTab = e.shiftKey && !e.ctrlKey && !e.altKey;
