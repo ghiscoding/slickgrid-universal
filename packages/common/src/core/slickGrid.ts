@@ -5863,18 +5863,18 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected handleContainerKeyDown(e: KeyboardEvent & { originalEvent: Event }): void {
-    if (e.key === 'Tab') {
+    if (e.key === 'Tab' && !e.ctrlKey && !e.altKey) {
       let headerRowSelector = '.slick-headerrow-column *[tabIndex="0"]';
       const ancestorHeaderRow = (e.target as HTMLElement)?.closest(headerRowSelector);
-      const isTab = !e.shiftKey && !e.ctrlKey && !e.altKey;
-      const isShiftTab = e.shiftKey && !e.ctrlKey && !e.altKey;
-      if (isTab) {
+      if (!e.shiftKey) {
+        // when using Tab, find last header row filter
         headerRowSelector = '.slick-headerrow-column:last-child *[tabIndex="0"]';
       }
 
       if (this._container.querySelector(headerRowSelector) === ancestorHeaderRow) {
         this.stopFullBubbling(e);
-        isShiftTab ? this.focusGridMenu() : this.focusGridCell();
+        // focus grid menu when Shift+Tab or focus on first cell when using Tab
+        e.shiftKey ? this.focusGridMenu() : this.focusGridCell();
       }
     }
   }
