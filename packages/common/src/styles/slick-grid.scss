@@ -82,7 +82,7 @@
     background: var(--slick-header-column-background-hover, v.$slick-header-column-background-hover);
   }
 
-  .slick-header-column:focus {
+  .slick-header-column:focus-visible {
     outline: none;
     box-shadow: inset 0 0 0 2px var(--slick-focus-outline-color, v.$slick-focus-outline-color);
   }
