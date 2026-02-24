@@ -40,7 +40,12 @@
 * [Available events](events/available-events.md)
 * [On Events](events/grid-and-dataview-events.md)
 
+## Features
+
+* [Accessibility (A11y)](features/accessibility.md)
+
 ## Slick Grid/DataView Objects
+
 * [Slick Grid/DataView Objects](slick-grid-dataview-objects/slickgrid-dataview-objects.md)
 
 ## Grid Functionalities

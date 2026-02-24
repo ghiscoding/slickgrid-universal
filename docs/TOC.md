@@ -41,6 +41,7 @@
 * [On Events](events/grid-and-dataview-events.md)
 
 ## Features
+
 * [Accessibility (A11y)](features/accessibility.md)
 
 ## Grid Functionalities
