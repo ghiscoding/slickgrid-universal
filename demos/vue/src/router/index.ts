@@ -2,9 +2,11 @@ import { defineAsyncComponent } from 'vue';
 import { createRouter, createWebHashHistory, type RouteRecordRaw } from 'vue-router';
 
 import Example01 from '../components/Example01.vue';
+import Home from '../Home.vue';
 
 export const routes: RouteRecordRaw[] = [
   { path: '/', name: 'root', redirect: '/example01' },
+  { path: '/home', name: 'home', component: Home },
   { path: '/example01', name: '1- Basic Grid / 2 Grids', component: Example01 },
   { path: '/example02', name: '2- Formatters', component: defineAsyncComponent(() => import('../components/Example02.vue')) },
   { path: '/example03', name: '3- Editors / Delete', component: defineAsyncComponent(() => import('../components/Example03.vue')) },
