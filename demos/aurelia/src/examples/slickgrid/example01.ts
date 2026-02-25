@@ -3,7 +3,7 @@ import { zeroPadding } from './utilities.js';
 
 const NB_ITEMS = 995;
 
-export class Example1 {
+export class Example01 {
   private _darkModeGrid1 = false;
   aureliaGrid1!: AureliaGridInstance;
   gridOptions1!: GridOption;

@@ -10,7 +10,7 @@ import {
   type SlickgridReactInstance,
   type SliderOption,
 } from 'slickgrid-react';
-import './example9.scss'; // provide custom CSS/SASS styling
+import './example09.scss'; // provide custom CSS/SASS styling
 
 const Example9: React.FC = () => {
   const defaultLang = 'en';

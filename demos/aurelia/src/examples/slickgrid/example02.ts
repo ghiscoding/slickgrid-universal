@@ -29,7 +29,7 @@ const customEnableButtonFormatter: Formatter<DataItem> = (_row: number, _cell: n
     </span>`;
 };
 
-export class Example2 {
+export class Example02 {
   aureliaGrid!: AureliaGridInstance;
   gridOptions!: GridOption;
   columnDefinitions: Column<DataItem>[] = [];

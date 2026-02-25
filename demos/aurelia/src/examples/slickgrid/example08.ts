@@ -1,9 +1,9 @@
 import { I18N } from '@aurelia/i18n';
 import { resolve } from 'aurelia';
 import { Formatters, type AureliaGridInstance, type Column, type GridOption } from 'aurelia-slickgrid';
-import './example8.scss'; // provide custom CSS/SASS styling
+import './example08.scss'; // provide custom CSS/SASS styling
 
-export class Example8 {
+export class Example08 {
   aureliaGrid!: AureliaGridInstance;
   columnDefinitions: Column[] = [];
   gridOptions!: GridOption;
