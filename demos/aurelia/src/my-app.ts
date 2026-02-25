@@ -6,16 +6,16 @@ import template from './my-app.html?raw';
 import './styles.scss';
 
 const myRoutes: Routeable[] = [
-  { path: '', redirectTo: 'example1' },
-  { path: 'example1', component: () => import('./examples/slickgrid/example01.js'), title: '1- Basic Grid / 2 Grids' },
-  { path: 'example2', component: () => import('./examples/slickgrid/example02.js'), title: '2- Formatters' },
-  { path: 'example3', component: () => import('./examples/slickgrid/example03.js'), title: '3- Editors / Delete' },
-  { path: 'example4', component: () => import('./examples/slickgrid/example04.js'), title: '4- Client Side Sort/Filter' },
-  { path: 'example5', component: () => import('./examples/slickgrid/example05.js'), title: '5- Backend OData Service' },
-  { path: 'example6', component: () => import('./examples/slickgrid/example06.js'), title: '6- Backend GraphQL Service' },
-  { path: 'example7', component: () => import('./examples/slickgrid/example07.js'), title: '7- Header Button Plugin' },
-  { path: 'example8', component: () => import('./examples/slickgrid/example08.js'), title: '8- Header Menu Plugin' },
-  { path: 'example9', component: () => import('./examples/slickgrid/example09.js'), title: '9- Grid Menu Control' },
+  { path: '', redirectTo: 'example01' },
+  { path: 'example01', component: () => import('./examples/slickgrid/example01.js'), title: '1- Basic Grid / 2 Grids' },
+  { path: 'example02', component: () => import('./examples/slickgrid/example02.js'), title: '2- Formatters' },
+  { path: 'example03', component: () => import('./examples/slickgrid/example03.js'), title: '3- Editors / Delete' },
+  { path: 'example04', component: () => import('./examples/slickgrid/example04.js'), title: '4- Client Side Sort/Filter' },
+  { path: 'example05', component: () => import('./examples/slickgrid/example05.js'), title: '5- Backend OData Service' },
+  { path: 'example06', component: () => import('./examples/slickgrid/example06.js'), title: '6- Backend GraphQL Service' },
+  { path: 'example07', component: () => import('./examples/slickgrid/example07.js'), title: '7- Header Button Plugin' },
+  { path: 'example08', component: () => import('./examples/slickgrid/example08.js'), title: '8- Header Menu Plugin' },
+  { path: 'example09', component: () => import('./examples/slickgrid/example09.js'), title: '9- Grid Menu Control' },
   { path: 'example10', component: () => import('./examples/slickgrid/example10.js'), title: '10- Row Selection / 2 Grids' },
   { path: 'example11', component: () => import('./examples/slickgrid/example11.js'), title: '11- Add/Update Grid Item' },
   { path: 'example12', component: () => import('./examples/slickgrid/example12.js'), title: '12- Localization (i18n)' },
@@ -62,7 +62,7 @@ const myRoutes: Routeable[] = [
 ];
 @route({
   routes: myRoutes,
-  fallback: 'example1',
+  fallback: 'example01',
 })
 @customElement({ name: 'my-app', template })
 export class MyApp {

@@ -10,7 +10,7 @@ import {
   type SlickGrid,
   type SliderOption,
 } from 'aurelia-slickgrid';
-import './example9.scss'; // provide custom CSS/SASS styling
+import './example09.scss'; // provide custom CSS/SASS styling
 
 export class Example9 {
   aureliaGrid!: AureliaGridInstance;

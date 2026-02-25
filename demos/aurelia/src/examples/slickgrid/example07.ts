@@ -1,5 +1,5 @@
 import type { AureliaGridInstance, Column, GridOption } from 'aurelia-slickgrid';
-import './example7.scss';
+import './example07.scss';
 
 let columns1WithHighlightingById: any = {};
 let columns2WithHighlightingById: any = {};

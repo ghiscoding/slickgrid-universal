@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { SlickgridReact, type Column, type GridOption, type SlickEventData, type SlickgridReactInstance } from 'slickgrid-react';
-import './example7.scss';
+import './example07.scss';
 
 const Example7: React.FC = () => {
   const [gridOptions1, setGridOptions1] = useState<GridOption | undefined>(undefined);

@@ -2,15 +2,15 @@ import { useEffect } from 'react';
 import { Routes as BaseRoutes, Link, Navigate, Route, useLocation } from 'react-router';
 import { NavBar } from '../../NavBar.js';
 
-import Example1 from './Example1.js';
-import Example2 from './Example2.js';
-import Example3 from './Example3.js';
-import Example4 from './Example4.js';
-import Example5 from './Example5.js';
-import Example6 from './Example6.js';
-import Example7 from './Example7.js';
-import Example8 from './Example8.js';
-import Example9 from './Example9.js';
+import Example1 from './Example01.js';
+import Example2 from './Example02.js';
+import Example3 from './Example03.js';
+import Example4 from './Example04.js';
+import Example5 from './Example05.js';
+import Example6 from './Example06.js';
+import Example7 from './Example07.js';
+import Example8 from './Example08.js';
+import Example9 from './Example09.js';
 import Example10 from './Example10.js';
 import Example11 from './Example11.js';
 import Example12 from './Example12.js';
@@ -54,15 +54,15 @@ import Example50 from './Example50.js';
 import Example51 from './Example51.js';
 
 const routes: Array<{ path: string; route: string; component: any; title: string }> = [
-  { path: 'example1', route: '/example1', component: <Example1 />, title: '1- Basic Grid / 2 Grids' },
-  { path: 'example2', route: '/example2', component: <Example2 />, title: '2- Formatters' },
-  { path: 'example3', route: '/example3', component: <Example3 />, title: '3- Editors / Delete' },
-  { path: 'example4', route: '/example4', component: <Example4 />, title: '4- Client Side Sort/Filter' },
-  { path: 'example5', route: '/example5', component: <Example5 />, title: '5- Backend OData Service' },
-  { path: 'example6', route: '/example6', component: <Example6 />, title: '6- Backend GraphQL Service' },
-  { path: 'example7', route: '/example7', component: <Example7 />, title: '7- Header Button Plugin' },
-  { path: 'example8', route: '/example8', component: <Example8 />, title: '8- Header Menu Plugin' },
-  { path: 'example9', route: '/example9', component: <Example9 />, title: '9- Grid Menu Control' },
+  { path: 'example01', route: '/example01', component: <Example1 />, title: '1- Basic Grid / 2 Grids' },
+  { path: 'example02', route: '/example02', component: <Example2 />, title: '2- Formatters' },
+  { path: 'example03', route: '/example03', component: <Example3 />, title: '3- Editors / Delete' },
+  { path: 'example04', route: '/example04', component: <Example4 />, title: '4- Client Side Sort/Filter' },
+  { path: 'example05', route: '/example05', component: <Example5 />, title: '5- Backend OData Service' },
+  { path: 'example06', route: '/example06', component: <Example6 />, title: '6- Backend GraphQL Service' },
+  { path: 'example07', route: '/example07', component: <Example7 />, title: '7- Header Button Plugin' },
+  { path: 'example08', route: '/example08', component: <Example8 />, title: '8- Header Menu Plugin' },
+  { path: 'example09', route: '/example09', component: <Example9 />, title: '9- Grid Menu Control' },
   { path: 'example10', route: '/example10', component: <Example10 />, title: '10- Row Selection / 2 Grids' },
   { path: 'example11', route: '/example11', component: <Example11 />, title: '11- Add/Update Grid Item' },
   { path: 'example12', route: '/example12', component: <Example12 />, title: '12- Localization (i18n)' },

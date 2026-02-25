@@ -2,7 +2,7 @@ import i18next from 'i18next';
 import React, { useEffect, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Formatters, SlickgridReact, type Column, type GridOption } from 'slickgrid-react';
-import './example8.scss'; // provide custom CSS/SASS styling
+import './example08.scss'; // provide custom CSS/SASS styling
 
 const Example8: React.FC = () => {
   const defaultLang = 'en';
