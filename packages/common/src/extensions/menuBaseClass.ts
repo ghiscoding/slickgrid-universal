@@ -55,6 +55,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
   protected _menuPluginCssPrefix = '';
   protected _optionTitleElm?: HTMLSpanElement;
   protected _menuTriggerElement?: HTMLElement; // Track the element that triggered the menu for focus restoration
+  protected _timer?: any;
   pluginName = '';
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
@@ -104,6 +105,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
 
   /** Dispose (destroy) of the plugin */
   dispose(): void {
+    clearTimeout(this._timer);
     this._eventHandler?.unsubscribeAll();
     this._bindEventService.unbindAll();
     this.pubSubService.unsubscribeAll();
@@ -419,7 +421,8 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
             }
 
             itemClickCallback.call(this, e, itemType, item, level, args?.column);
-            setTimeout(() => {
+            clearTimeout(this._timer);
+            this._timer = setTimeout(() => {
               if (triggeredByElm?.classList.contains('slick-header-menu-icon')) {
                 triggeredByElm = triggeredByElm.parentElement as HTMLElement; // If the click was on the icon, move focus to the header button for better accessibility
               }

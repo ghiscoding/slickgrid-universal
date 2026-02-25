@@ -38,11 +38,10 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
   protected _locales!: Locale;
   protected _pubSubService!: PubSubService | null;
   protected _translaterService: TranslaterService | undefined;
+  protected _timer?: any;
 
   /** ExcelExportService class name which is use to find service instance in the external registered services */
   readonly pluginName = 'TextExportService';
-
-  constructor() {}
 
   protected get _datasetIdPropName(): string {
     return (this._gridOptions && this._gridOptions.datasetIdPropertyName) || 'id';
@@ -59,6 +58,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
   }
 
   dispose(): void {
+    clearTimeout(this._timer);
     this._pubSubService?.unsubscribeAll();
   }
 
@@ -109,7 +109,8 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
 
       // trigger a download file
       // wrap it into a setTimeout so that the EventAggregator has enough time to start a pre-process like showing a spinner
-      setTimeout(() => {
+      clearTimeout(this._timer);
+      this._timer = setTimeout(() => {
         const downloadOptions = {
           filename: `${this._exportOptions.filename}.${this._fileFormat}`,
           format: this._fileFormat || 'csv',

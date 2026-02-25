@@ -37,6 +37,7 @@ export class VueSlickRowDetailView extends UniversalSlickRowDetailView {
   protected _subscriptions: EventSubscription[] = [];
   protected _userProcessFn?: (item: any) => Promise<any>;
   protected gridContainerElement!: HTMLElement;
+  protected _timer?: any;
 
   constructor(private readonly eventPubSubService: EventPubSubService) {
     super(eventPubSubService);
@@ -60,6 +61,7 @@ export class VueSlickRowDetailView extends UniversalSlickRowDetailView {
 
   /** Dispose of the RowDetailView Extension */
   dispose() {
+    clearTimeout(this._timer);
     this.disposeAllViewComponents();
     unsubscribeAll(this._subscriptions);
     super.dispose();
@@ -238,7 +240,8 @@ export class VueSlickRowDetailView extends UniversalSlickRowDetailView {
 
   /** Redraw (re-render) all the expanded row detail View Components */
   redrawAllViewComponents(forceRedraw = false) {
-    setTimeout(() => {
+    clearTimeout(this._timer);
+    this._timer = setTimeout(() => {
       this.resetRenderedRows();
       this._views.forEach((view) => {
         if (!view.rendered || forceRedraw) {

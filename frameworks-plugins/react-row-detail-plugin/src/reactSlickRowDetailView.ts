@@ -35,6 +35,7 @@ export class ReactSlickRowDetailView extends UniversalSlickRowDetailView {
   protected _subscriptions: EventSubscription[] = [];
   protected _userProcessFn?: (item: any) => Promise<any>;
   protected gridContainerElement!: HTMLElement;
+  protected _timer?: any;
   _root?: Root;
 
   constructor(private readonly eventPubSubService: EventPubSubService) {
@@ -59,6 +60,7 @@ export class ReactSlickRowDetailView extends UniversalSlickRowDetailView {
 
   /** Dispose of the RowDetailView Extension */
   dispose() {
+    clearTimeout(this._timer);
     this.disposeAllViewComponents();
     unsubscribeAll(this._subscriptions);
     super.dispose();
@@ -227,7 +229,8 @@ export class ReactSlickRowDetailView extends UniversalSlickRowDetailView {
 
   /** Redraw (re-render) all the expanded row detail View Components */
   async redrawAllViewComponents(forceRedraw = false) {
-    setTimeout(() => {
+    clearTimeout(this._timer);
+    this._timer = setTimeout(() => {
       this.resetRenderedRows();
       this._views.forEach((view) => {
         if (!view.rendered || forceRedraw) {

@@ -146,6 +146,7 @@ export class InputEditor implements Editor {
   }
 
   destroy(): void {
+    clearTimeout(this._timer);
     this._bindEventService.unbindAll();
     this._input?.remove?.();
   }

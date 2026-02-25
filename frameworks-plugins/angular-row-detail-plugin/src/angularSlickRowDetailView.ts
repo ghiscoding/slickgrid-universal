@@ -39,6 +39,7 @@ export class AngularSlickRowDetailView extends UniversalSlickRowDetailView {
   protected _viewComponent!: Type<object>;
   protected _subscriptions: EventSubscription[] = [];
   protected _userProcessFn!: (item: any) => Promise<any> | Observable<any> | Subject<any>;
+  protected _timer?: any;
 
   constructor(
     protected readonly angularUtilService: AngularUtilService,
@@ -73,6 +74,7 @@ export class AngularSlickRowDetailView extends UniversalSlickRowDetailView {
 
   /** Dispose of the RowDetailView Extension */
   dispose(): void {
+    clearTimeout(this._timer);
     this.disposeAllViewComponents();
     this._subscriptions = unsubscribeAll(this._subscriptions); // also unsubscribe all RxJS subscriptions
     super.dispose();
@@ -226,9 +228,10 @@ export class AngularSlickRowDetailView extends UniversalSlickRowDetailView {
             ['onFilterChanged', 'onGridMenuColumnsChanged', 'onColumnPickerColumnsChanged'],
             this.redrawAllViewComponents.bind(this, false)
           ),
-          this.eventPubSubService?.subscribe(['onGridMenuClearAllFilters', 'onGridMenuClearAllSorting'], () =>
-            setTimeout(() => this.redrawAllViewComponents())
-          )
+          this.eventPubSubService?.subscribe(['onGridMenuClearAllFilters', 'onGridMenuClearAllSorting'], () => {
+            clearTimeout(this._timer);
+            this._timer = setTimeout(() => this.redrawAllViewComponents());
+          })
         );
       }
     }
