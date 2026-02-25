@@ -22,6 +22,12 @@ export function removeWhitespaces(text: string) {
   return `${text}`.replace(/\s+/g, '');
 }
 
+export function pressKeyTimes(key: 'DOWN' | 'ENTER' | 'TAB' | 'UP', count: number) {
+  for (let i = 0; i < count; i++) {
+    cy.press(Cypress.Keyboard.Keys[key]);
+  }
+}
+
 export function zeroPadding(input: string | number) {
   const number = parseInt(input as string, 10);
   return number < 10 ? `0${number}` : number;
