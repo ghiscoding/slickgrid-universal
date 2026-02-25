@@ -840,7 +840,8 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
   protected exportCsv(): void {
     const registeredResources = this.sharedService?.externalRegisteredResources || [];
-    const exportCsvService: TextExportService = registeredResources.find((service: any) => service.className === 'TextExportService');
+    // prettier-ignore
+    const exportCsvService = registeredResources.find((service) => service.pluginName === 'TextExportService') as TextExportService | undefined;
     if (exportCsvService?.exportToFile) {
       exportCsvService.exportToFile({ delimiter: ',', format: 'csv' });
     } else {
@@ -852,9 +853,8 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
   protected exportExcel(): void {
     const registeredResources = this.sharedService?.externalRegisteredResources || [];
-    const excelService: ExcelExportService | undefined = registeredResources.find(
-      (service: any) => service.className === 'ExcelExportService'
-    );
+    // prettier-ignore
+    const excelService = registeredResources.find((service) => service.pluginName === 'ExcelExportService') as ExcelExportService | undefined;
     if (excelService?.exportToExcel) {
       excelService.exportToExcel();
     } else {
@@ -866,7 +866,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
   protected exportPdf(): void {
     const registeredResources = this.sharedService?.externalRegisteredResources || [];
-    const pdfService: PdfExportService | undefined = registeredResources.find((service: any) => service.className === 'PdfExportService');
+    const pdfService = registeredResources.find((service) => service.pluginName === 'PdfExportService') as PdfExportService | undefined;
     if (pdfService?.exportToPdf) {
       pdfService.exportToPdf();
     } else {
@@ -878,9 +878,8 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
   protected exportTextDelimited(): void {
     const registeredResources = this.sharedService?.externalRegisteredResources || [];
-    const exportTxtService: TextExportService | undefined = registeredResources.find(
-      (service: any) => service.className === 'TextExportService'
-    );
+    // prettier-ignore
+    const exportTxtService = registeredResources.find((service) => service.pluginName === 'TextExportService') as TextExportService | undefined;
     if (exportTxtService?.exportToFile) {
       exportTxtService.exportToFile({ delimiter: '\t', format: 'txt' });
     } else {

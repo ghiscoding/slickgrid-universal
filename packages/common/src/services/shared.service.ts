@@ -1,6 +1,6 @@
 import type { SlickDataView, SlickGrid } from '../core/index.js';
 import type { SlickGroupItemMetadataProvider } from '../extensions/slickGroupItemMetadataProvider.js';
-import type { Column, CurrentPagination, GridOption } from '../interfaces/index.js';
+import type { Column, CurrentPagination, ExternalResource, ExternalResourceConstructor, GridOption } from '../interfaces/index.js';
 
 export class SharedService {
   protected _allColumns!: Column[];
@@ -66,11 +66,11 @@ export class SharedService {
   }
 
   /** Getter to know if user want to hide header row after 1st page load */
-  get externalRegisteredResources(): any[] {
+  get externalRegisteredResources(): Array<ExternalResource | ExternalResourceConstructor> {
     return this._externalRegisteredResources;
   }
   /** Setter for knowing if user want to hide header row after 1st page load */
-  set externalRegisteredResources(externalRegisteredResources: any[]) {
+  set externalRegisteredResources(externalRegisteredResources: Array<ExternalResource | ExternalResourceConstructor>) {
     this._externalRegisteredResources = externalRegisteredResources;
   }
 

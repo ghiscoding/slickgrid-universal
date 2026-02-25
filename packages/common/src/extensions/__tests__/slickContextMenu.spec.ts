@@ -151,17 +151,17 @@ const dataViewStub = {
 } as unknown as SlickDataView;
 
 const excelExportServiceStub = {
-  className: 'ExcelExportService',
+  pluginName: 'ExcelExportService',
   exportToExcel: vi.fn(),
 } as unknown as ExcelExportService;
 
 const pdfExportServiceStub = {
-  className: 'PdfExportService',
+  pluginName: 'PdfExportService',
   exportToPdf: vi.fn(),
 } as unknown as PdfExportService;
 
 const exportServiceStub = {
-  className: 'TextExportService',
+  pluginName: 'TextExportService',
   exportToFile: vi.fn(),
 } as unknown as TextExportService;
 
