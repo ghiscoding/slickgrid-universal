@@ -21,17 +21,17 @@ const gridUid = 'slickgrid_124343';
 const containerId = 'demo-container';
 
 const excelExportServiceStub = {
-  className: 'ExcelExportService',
+  pluginName: 'ExcelExportService',
   exportToExcel: vi.fn(),
 } as unknown as ExcelExportService;
 
 const pdfExportServiceStub = {
-  className: 'PdfExportService',
+  pluginName: 'PdfExportService',
   exportToPdf: vi.fn(),
 } as unknown as PdfExportService;
 
 const textExportServiceStub = {
-  className: 'TextExportService',
+  pluginName: 'TextExportService',
   exportToFile: vi.fn(),
 } as unknown as TextExportService;
 
