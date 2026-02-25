@@ -355,6 +355,23 @@ Below is an abbreviated list of Enums to update, make sure to update them all
 |                  | `ExtensionName.rowDetail`   | `'rowDetail'`       |
 | ... | ... | ... |
 
+Also as mentioned above in the section [Menu with Commands](#menu-with-commands), all menu `hide...` flags are being deprecated in favor of the new `hideCommands: [...]`, for example:
+
+```diff
+gridOptions = {
+  gridMenu: {
+    // @deprecated properties
+-   hideExportCsvCommand: true,
+-   hideTogglePreHeaderCommand: true,
+
+    // hide via command name(s)
++   hideCommands: ['export-csv', 'toggle-preheader'],
+
+    // or hide via builder
++   commandListBuilder: (cmdItems) => cmdItems.filter(x => x !== 'divider' && x.command !== 'export-csv' && x.command !== 'toggle-preheader')
+  }
+}
+```
 ### Potential but Postponed Code Change (Angular)
 
 Signals are becoming increasingly prevalent in Angular, however Angular-Slickgrid continues to use traditional `@Input`/`@Output` decorators. Users who prefer Signals can still use them by calling signal functions in templates: `[dataset]="dataset()"`.
