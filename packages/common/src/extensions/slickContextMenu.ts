@@ -229,7 +229,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
           action: () => {
             const registedServices = this.sharedService?.externalRegisteredResources || [];
             // prettier-ignore
-            const excelService = registedServices.find((service: any) => service.pluginName === 'TextExportService') as TextExportService | undefined;
+            const excelService = registedServices.find((service) => service.pluginName === 'TextExportService') as TextExportService | undefined;
             if (excelService?.exportToFile) {
               excelService.exportToFile({ delimiter: ',', format: 'csv' });
             } else {
@@ -258,7 +258,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
           action: () => {
             const registedServices = this.sharedService?.externalRegisteredResources || [];
             // prettier-ignore
-            const excelService = registedServices.find((service: any) => service.pluginName === 'ExcelExportService') as ExcelExportService | undefined;
+            const excelService = registedServices.find((service) => service.pluginName === 'ExcelExportService') as ExcelExportService | undefined;
             if (excelService?.exportToExcel) {
               excelService.exportToExcel();
             } else {
@@ -287,7 +287,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
           action: () => {
             const registedServices = this.sharedService?.externalRegisteredResources || [];
             // prettier-ignore
-            const pdfService = registedServices.find((service: any) => service.pluginName === 'PdfExportService') as PdfExportService | undefined;
+            const pdfService = registedServices.find((service) => service.pluginName === 'PdfExportService') as PdfExportService | undefined;
             if (pdfService?.exportToPdf) {
               pdfService.exportToPdf();
             } else {
@@ -316,7 +316,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
           action: () => {
             const registedServices = this.sharedService?.externalRegisteredResources || [];
             // prettier-ignore
-            const excelService = registedServices.find((service: any) => service.pluginName === 'TextExportService') as TextExportService | undefined;
+            const excelService = registedServices.find((service) => service.pluginName === 'TextExportService') as TextExportService | undefined;
             if (excelService?.exportToFile) {
               excelService.exportToFile({ delimiter: '\t', format: 'txt' });
             } else {
