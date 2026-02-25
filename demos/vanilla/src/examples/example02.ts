@@ -18,6 +18,7 @@ import { TextExportService } from '@slickgrid-universal/text-export';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options.js';
 import '../material-styles.scss';
+import './example02.scss';
 
 const NB_ITEMS = 5000;
 
@@ -96,6 +97,7 @@ export default class Example02 {
     btn.className = 'button is-small ml-5';
     btn.textContent = 'Click me';
     btn.title = 'simple column header test with a button click listener';
+    btn.tabIndex = 0;
     btn.addEventListener('click', () => alert('Hello World'));
     btn.appendChild(btnLabel);
     nameElementColumn1.appendChild(document.createTextNode('Id '));

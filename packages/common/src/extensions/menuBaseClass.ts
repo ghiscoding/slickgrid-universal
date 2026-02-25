@@ -28,6 +28,7 @@ import type {
   MenuOptionItem,
 } from '../interfaces/index.js';
 import type { SharedService } from '../services/shared.service.js';
+import { wireMenuKeyboardNavigation } from './keyboardNavigation.js';
 
 export type ExtractMenuType<A, T> = T extends 'command' ? A : T extends 'option' ? A : A extends 'divider' ? A : never;
 export type MenuType = 'command' | 'option';
@@ -53,6 +54,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
   protected _menuCssPrefix = '';
   protected _menuPluginCssPrefix = '';
   protected _optionTitleElm?: HTMLSpanElement;
+  protected _menuTriggerElement?: HTMLElement; // Track the element that triggered the menu for focus restoration
   pluginName = '';
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
@@ -120,6 +122,9 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
     // remove all parent menu listeners before removing them from the DOM
     this._bindEventService.unbindAll('parent-menu');
     document.querySelectorAll(`.${this.menuCssClass}${this.gridUidSelector}`).forEach((subElm) => subElm.remove());
+
+    // Restore focus to the trigger element if it exists
+    this._menuTriggerElement?.focus();
   }
 
   /**
@@ -172,6 +177,32 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
     }
   }
 
+  /** Focus the first focusable menu item after menu is opened */
+  protected focusFirstMenuItem(menuElm: HTMLElement): void {
+    // Find the first menu list (direct child with role="menu")
+    const menuList = menuElm.querySelector('[role="menu"]') as HTMLElement;
+    if (menuList) {
+      // Get all menu items and find the first one that's not disabled/divider/hidden
+      const menuItems = Array.from(menuList.querySelectorAll('[role="menuitem"]')) as HTMLElement[];
+      const firstMenuItem = menuItems.find((item) => {
+        // Skip dividers, disabled, and hidden items
+        return (
+          !item.classList.contains('disabled') &&
+          !item.classList.contains('divider') &&
+          !item.classList.contains('slick-menu-item-hidden') &&
+          item.offsetParent !== null
+        );
+      });
+
+      firstMenuItem?.focus();
+    }
+  }
+
+  /** Set the menu trigger element for focus restoration when menu closes */
+  protected setMenuTriggerElement(triggerElement: HTMLElement): void {
+    this._menuTriggerElement = triggerElement;
+  }
+
   /**
    * Render slot content using a renderer callback.
    * The renderer receives the menu item and args for full context access.
@@ -214,6 +245,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
     commandOrOptionMenuElm: HTMLElement,
     commandOrOptionItems: Array<ExtractMenuType<ExtendableItemTypes, MenuType>>,
     args: unknown,
+    triggeredByElm: HTMLElement,
     itemClickCallback: itemEventCallback,
     itemMouseoverCallback?: itemEventCallback
   ): void {
@@ -225,6 +257,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
           commandOrOptionMenuElm,
           item,
           args,
+          triggeredByElm,
           itemClickCallback,
           itemMouseoverCallback
         );
@@ -268,14 +301,16 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
     commandOrOptionMenuElm: HTMLElement | null,
     item: ExtractMenuType<ExtendableItemTypes, MenuType>,
     args: any,
+    triggeredByElm: HTMLElement,
     itemClickCallback: itemEventCallback,
     itemMouseoverCallback?: itemEventCallback
   ): HTMLLIElement | null {
     let commandLiElm: HTMLLIElement | null = null;
+    const isHeaderButton = this._camelPluginName === 'headerButtons';
 
     if (args && item && menuOptions) {
       const level = args?.level || 0;
-      const pluginMiddleName = this._camelPluginName === 'headerButtons' ? '' : '-item';
+      const pluginMiddleName = isHeaderButton ? '' : '-item';
       const menuCssPrefix = `${this._menuCssPrefix}${pluginMiddleName}`;
 
       // run each override functions to know if the item is visible and usable
@@ -298,6 +333,9 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
       }
 
       commandLiElm = createDomElement('li', { className: menuCssPrefix, role: 'menuitem' });
+      if (item !== 'divider' && !(item as MenuCommandOptionItem).divider) {
+        commandLiElm.tabIndex = -1;
+      }
       if (typeof item === 'object' && isDefined((item as never)[itemType])) {
         commandLiElm.dataset[itemType] = (item as never)?.[itemType];
       }
@@ -319,14 +357,18 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
       }
 
       if (item.cssClass) {
-        commandLiElm.classList.add(...classNameToList(item.cssClass));
+        if (isHeaderButton) {
+          commandLiElm.appendChild(createDomElement('span', { className: item.cssClass }));
+        } else {
+          commandLiElm.classList.add(...classNameToList(item.cssClass));
+        }
       }
 
       if (item.tooltip) {
         commandLiElm.title = item.tooltip;
       }
 
-      if (this._camelPluginName !== 'headerButtons') {
+      if (!isHeaderButton) {
         // Check if we have slot renderer on the menu item or a default item renderer
         const slotRenderer = (item as MenuCommandOptionItem).slotRenderer || (this._addonOptions as MenuPlugin).defaultMenuItemRenderer;
         if (slotRenderer) {
@@ -360,26 +402,34 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
 
       // execute command callback on menu item clicked
       const eventGroupName = level > 0 ? 'sub-menu' : 'parent-menu';
-      this._bindEventService.bind(
-        commandLiElm,
-        'click',
-        ((e: DOMMouseOrTouchEvent<HTMLDivElement>) => {
-          // if there's a slot renderer, call it with the event
-          const slotRenderer = (item as MenuCommandOptionItem).slotRenderer || (this._addonOptions as MenuPlugin).defaultMenuItemRenderer;
-          if (slotRenderer) {
-            slotRenderer(item as MenuCommandOptionItem, args, e);
-          }
+      if (commandLiElm) {
+        this._bindEventService.bind(
+          commandLiElm,
+          'click',
+          ((e: DOMMouseOrTouchEvent<HTMLDivElement>) => {
+            // if there's a slot renderer, call it with the event
+            const slotRenderer = (item as MenuCommandOptionItem).slotRenderer || (this._addonOptions as MenuPlugin).defaultMenuItemRenderer;
+            if (slotRenderer) {
+              slotRenderer(item as MenuCommandOptionItem, args, e);
+            }
 
-          // if the click was stopped by an interactive element handler, don't trigger the menu action
-          if (e.defaultPrevented) {
-            return;
-          }
+            // if the click was stopped by an interactive element handler, don't trigger the menu action
+            if (e.defaultPrevented) {
+              return;
+            }
 
-          itemClickCallback.call(this, e, itemType, item, level, args?.column);
-        }) as EventListener,
-        undefined,
-        eventGroupName
-      );
+            itemClickCallback.call(this, e, itemType, item, level, args?.column);
+            setTimeout(() => {
+              if (triggeredByElm?.classList.contains('slick-header-menu-icon')) {
+                triggeredByElm = triggeredByElm.parentElement as HTMLElement; // If the click was on the icon, move focus to the header button for better accessibility
+              }
+              triggeredByElm?.focus(); // Restore focus to the triggering element after click
+            });
+          }) as EventListener,
+          undefined,
+          eventGroupName
+        );
+      }
 
       // optionally open sub-menu(s) by mouseover
       if ((this._addonOptions as MenuPlugin)?.subMenuOpenByEvent === 'mouseover' && typeof itemMouseoverCallback === 'function') {
@@ -415,6 +465,43 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
       }
     }
     return commandLiElm;
+  }
+
+  /**
+   * Wire up keyboard navigation for the menu container using shared utility.
+   * Should be called after menu DOM is created for all non-GridMenu plugins.
+   */
+  protected wireMenuKeyboardNavigation(
+    menuElm: HTMLElement,
+    options?: {
+      onActivate?: (focusedItem: HTMLElement) => void;
+      onEscape?: () => void;
+      onTab?: (evt: KeyboardEvent, focusedItem: HTMLElement) => void;
+      eventServiceKey?: string;
+      allItemsSelector?: string;
+      focusedItemSelector?: string;
+    }
+  ): void {
+    wireMenuKeyboardNavigation(menuElm, this._bindEventService, {
+      ...options,
+      onActivate:
+        options?.onActivate ??
+        ((focusedItem) => {
+          // Default: trigger click on menu item
+          if (focusedItem) {
+            focusedItem.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+          }
+        }),
+      onEscape: options?.onEscape ?? (() => this.disposeAllMenus()),
+      onTab:
+        options?.onTab ??
+        ((evt: KeyboardEvent) => {
+          evt.preventDefault();
+          evt.stopPropagation();
+        }),
+      allItemsSelector: options?.allItemsSelector,
+      focusedItemSelector: options?.focusedItemSelector,
+    });
   }
 
   /**

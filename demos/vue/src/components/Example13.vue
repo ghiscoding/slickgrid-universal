@@ -484,3 +484,10 @@ function vueGridReady(grid: SlickgridVueInstance) {
   >
   </slickgrid-vue>
 </template>
+<style lang="scss">
+.slick-column-name {
+  .btn:focus {
+    outline: 2px solid rgba(53, 53, 53, 0.5);
+  }
+}
+</style>

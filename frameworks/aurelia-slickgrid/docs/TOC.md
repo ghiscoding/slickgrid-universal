@@ -39,7 +39,12 @@
 * [Available events](events/available-events.md)
 * [On Events](events/grid-dataview-events.md)
 
+## Features
+
+* [Accessibility (A11y)](features/accessibility.md)
+
 ## Slick Grid/DataView Objects
+
 * [Slick Grid/DataView Objects](slick-grid-dataview-objects/slickgrid-dataview-objects.md)
 
 ## Grid Functionalities
@@ -62,6 +67,7 @@
 * [Grid State & Presets](grid-functionalities/grid-state-preset.md)
 * [Grouping & Aggregators](grid-functionalities/grouping-aggregators.md)
 * [Header & Footer Slots](grid-functionalities/header-footer-slots.md)
+* [Custom Menu Slots](grid-functionalities/menu-slots.md)
 * [Header Menu & Header Buttons](grid-functionalities/header-menu-header-buttons.md)
 * [Infinite Scroll](grid-functionalities/infinite-scroll.md)
 * [Pinning (frozen) of Columns/Rows](grid-functionalities/frozen-columns-rows.md)

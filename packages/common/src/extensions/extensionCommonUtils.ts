@@ -115,6 +115,15 @@ export function handleColumnPickerItemClick(this: SlickColumnPicker | SlickGridM
     }
     context.onColumnsChanged.notify(callbackArgs, null, context);
   }
+
+  // Restore focus to the triggering <li> if possible (for keyboard accessibility)
+  // Only do this if the event was triggered by keyboard or programmatically (not mouse)
+  // We check for type 'keydown' or if the activeElement is not the li
+  const liElm = event.target?.closest('li');
+  if (liElm && typeof liElm.focus === 'function') {
+    // Use a timeout to allow DOM updates before restoring focus
+    setTimeout(() => liElm?.focus(), 0);
+  }
 }
 
 function togglePickerCheckbox(iconElm: HTMLDivElement | null, checked = false): void {
@@ -135,7 +144,13 @@ function generatePickerCheckbox(
 } {
   const labelElm = createDomElement('label', { className: 'checkbox-picker-label', htmlFor: inputId });
   const divElm = createDomElement('div', { className: 'icon-checkbox-container' });
-  const inputElm = createDomElement('input', { id: inputId, type: 'checkbox', dataset: inputData });
+  const inputElm = createDomElement('input', {
+    id: inputId,
+    type: 'checkbox',
+    dataset: inputData,
+    tabIndex: -1,
+    ariaHidden: 'true',
+  });
   const colInputDivElm = createDomElement('div', { className: `mdi ${checked ? PICKER_CHECK_ICON : PICKER_UNCHECK_ICON}` });
   const labelSpanElm = createDomElement('span', { className: 'checkbox-label' });
   divElm.appendChild(inputElm);
@@ -166,7 +181,7 @@ export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, ad
 
   for (const column of sortedColumns) {
     const columnId = column.id;
-    const columnLiElm = document.createElement('li');
+    const columnLiElm = createDomElement('li', { tabIndex: -1 });
     if ((column.excludeFromColumnPicker && !isGridMenu) || (column.excludeFromGridMenu && isGridMenu)) {
       columnLiElm.className = 'hidden';
     }
@@ -192,7 +207,7 @@ export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, ad
   }
 
   if (!addonOptions?.hideForceFitButton) {
-    const fitLiElm = document.createElement('li');
+    const fitLiElm = createDomElement('li', { tabIndex: -1 });
     const inputId = `${context._gridUid}-${menuPrefix}colpicker-forcefit`;
     const { labelSpanElm } = generatePickerCheckbox(fitLiElm, inputId, { option: 'autoresize' }, context.gridOptions.forceFitColumns);
     labelSpanElm.textContent = addonOptions?.forceFitTitle ?? '';
@@ -200,7 +215,7 @@ export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, ad
   }
 
   if (!addonOptions?.hideSyncResizeButton) {
-    const syncLiElm = document.createElement('li');
+    const syncLiElm = createDomElement('li', { tabIndex: -1 });
     const inputId = `${context._gridUid}-${menuPrefix}colpicker-syncresize`;
     const { labelSpanElm } = generatePickerCheckbox(syncLiElm, inputId, { option: 'syncresize' }, context.gridOptions.forceFitColumns);
     labelSpanElm.textContent = addonOptions?.syncResizeTitle ?? '';

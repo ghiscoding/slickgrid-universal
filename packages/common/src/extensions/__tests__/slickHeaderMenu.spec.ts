@@ -178,6 +178,31 @@ describe('HeaderMenu Plugin', () => {
   });
 
   describe('plugins - Header Menu', () => {
+    it('should restore focus to header menu button after executing a command (accessibility)', () =>
+      new Promise((done: any) => {
+        plugin.dispose();
+        plugin.init();
+        // Render header cell with menu button
+        const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
+        const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
+        // Spy on focus for the button
+        const buttonFocusSpy = vi.spyOn(headerButtonElm, 'focus');
+        // Open the menu
+        headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true }));
+        // Find a real menu command item (e.g., first menu item)
+        setTimeout(() => {
+          const menuItem = document.body.querySelector('.slick-menu-item[data-command="show-positive-numbers"]') as HTMLLIElement;
+          expect(menuItem).toBeTruthy();
+          // Simulate click on the menu item (executes command and closes menu)
+          menuItem.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+          // Wait for setTimeout in menuBaseClass to restore focus
+          setTimeout(() => {
+            expect(buttonFocusSpy).toHaveBeenCalled();
+            done();
+          }, 20);
+        }, 10);
+      }));
     let gridContainerDiv: HTMLDivElement;
     let headerDiv: HTMLDivElement;
     let headersDiv: HTMLDivElement;
@@ -228,7 +253,9 @@ describe('HeaderMenu Plugin', () => {
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
 
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(
-        removeExtraSpaces(`<div class="slick-header-menu-button mdi mdi-chevron-down" aria-label="Header Menu"></div>`)
+        removeExtraSpaces(
+          `<div class="slick-header-menu-button mdi mdi-chevron-down" aria-label="Header Menu" tabindex="0"><span class="slick-header-menu-icon"></span></div>`
+        )
       );
     });
 
@@ -241,7 +268,9 @@ describe('HeaderMenu Plugin', () => {
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
 
       expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(
-        removeExtraSpaces(`<div class="slick-header-menu-button" aria-label="Header Menu" title="some tooltip text"></div>`)
+        removeExtraSpaces(
+          `<div class="slick-header-menu-button" aria-label="Header Menu" tabindex="0" title="some tooltip text"><span class="slick-header-menu-icon"></span></div>`
+        )
       );
     });
 
@@ -254,7 +283,9 @@ describe('HeaderMenu Plugin', () => {
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
 
       // add Header Menu which is visible
-      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(`<div class="slick-header-menu-button" aria-label="Header Menu"></div>`));
+      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(
+        removeExtraSpaces(`<div class="slick-header-menu-button" aria-label="Header Menu" tabindex="0"><span class="slick-header-menu-icon"></span></div>`)
+      );
 
       gridStub.onBeforeHeaderCellDestroy.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
       expect(headerDiv.innerHTML).toBe('');
@@ -269,7 +300,9 @@ describe('HeaderMenu Plugin', () => {
       gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
 
       // add Header Menu which is visible
-      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(`<div class="slick-header-menu-button" aria-label="Header Menu"></div>`));
+      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(
+        removeExtraSpaces(`<div class="slick-header-menu-button" aria-label="Header Menu" tabindex="0"><span class="slick-header-menu-icon"></span></div>`)
+      );
     });
 
     it('should populate a Header Menu when cell is being rendered and a 2nd button item visibility & usability callbacks returns true', () => {
@@ -283,14 +316,16 @@ describe('HeaderMenu Plugin', () => {
       const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
 
       // add Header Menu which is visible
-      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(removeExtraSpaces(`<div class="slick-header-menu-button" aria-label="Header Menu"></div>`));
+      expect(removeExtraSpaces(headerDiv.innerHTML)).toBe(
+        removeExtraSpaces(`<div class="slick-header-menu-button" aria-label="Header Menu" tabindex="0"><span class="slick-header-menu-icon"></span></div>`)
+      );
       headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
       const commandElm = gridContainerDiv.querySelector('.slick-menu-item') as HTMLDivElement;
 
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(
         removeExtraSpaces(
-          `<li class="slick-menu-item mdi mdi-lightbulb-outline" role="menuitem" data-command="show-positive-numbers">
+          `<li class="slick-menu-item mdi mdi-lightbulb-outline" role="menuitem" tabindex="-1" data-command="show-positive-numbers">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -314,7 +349,7 @@ describe('HeaderMenu Plugin', () => {
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(
         removeExtraSpaces(
-          `<li class="slick-menu-item slick-menu-item-disabled mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+          `<li class="slick-menu-item slick-menu-item-disabled mdi mdi-lightbulb-on" role="menuitem" tabindex="-1" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -340,7 +375,7 @@ describe('HeaderMenu Plugin', () => {
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(
         removeExtraSpaces(
-          `<li class="slick-menu-item slick-menu-item-disabled mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+          `<li class="slick-menu-item slick-menu-item-disabled mdi mdi-lightbulb-on" role="menuitem" tabindex="-1" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -362,7 +397,7 @@ describe('HeaderMenu Plugin', () => {
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(
         removeExtraSpaces(
-          `<li class="slick-menu-item slick-menu-item-hidden mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+          `<li class="slick-menu-item slick-menu-item-hidden mdi mdi-lightbulb-on" role="menuitem" tabindex="-1" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -384,7 +419,7 @@ describe('HeaderMenu Plugin', () => {
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(
         removeExtraSpaces(
-          `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Some Tooltip">
+          `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" tabindex="-1" data-command="show-negative-numbers" title="Some Tooltip">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -409,7 +444,7 @@ describe('HeaderMenu Plugin', () => {
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(
         removeExtraSpaces(
-          `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+          `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" tabindex="-1" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -425,7 +460,7 @@ describe('HeaderMenu Plugin', () => {
         column: columnsMock[0],
         grid: gridStub,
       });
-      expect(headerDiv.querySelector('.slick-header-menu-button')!.innerHTML).toBe('');
+      expect(headerDiv.querySelector('.slick-header-menu-button')!.innerHTML).toBe('<span class="slick-header-menu-icon"></span>');
     });
 
     it('should populate a Header Menu and a 2nd button and expect the "onCommand" handler to be executed when defined', () => {
@@ -444,7 +479,7 @@ describe('HeaderMenu Plugin', () => {
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(
         removeExtraSpaces(
-          `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+          `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" tabindex="-1" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -455,7 +490,7 @@ describe('HeaderMenu Plugin', () => {
         .querySelector('.slick-menu-item.mdi-lightbulb-on')!
         .dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
       expect(onCommandMock).toHaveBeenCalled();
-      expect(headerDiv.querySelector('.slick-header-menu-button')!.innerHTML).toBe('');
+      expect(headerDiv.querySelector('.slick-header-menu-button')!.innerHTML).toBe('<span class="slick-header-menu-icon"></span>');
     });
 
     it('should populate a Header Menu and a 2nd button is "disabled" but still expect the button NOT to be disabled because the "itemUsabilityOverride" has priority over the "disabled" property', () => {
@@ -477,7 +512,7 @@ describe('HeaderMenu Plugin', () => {
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(
         removeExtraSpaces(
-          `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+          `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" tabindex="-1" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -506,7 +541,7 @@ describe('HeaderMenu Plugin', () => {
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(
         removeExtraSpaces(
-          `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+          `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" tabindex="-1" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -563,7 +598,7 @@ describe('HeaderMenu Plugin', () => {
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(
         removeExtraSpaces(
-          `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" data-command="show-negative-numbers" title="Highlight negative numbers.">
+          `<li class="slick-menu-item mdi mdi-lightbulb-on" role="menuitem" tabindex="-1" data-command="show-negative-numbers" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -579,6 +614,54 @@ describe('HeaderMenu Plugin', () => {
       bodyElm.dispatchEvent(new Event('mousedown', { bubbles: true }));
       expect(hideMenuSpy).toHaveBeenCalled();
     });
+
+    it('should open the Header Menu when pressing Enter key on the header menu button (a11y)', () => {
+      plugin.dispose();
+      plugin.init();
+      (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => true;
+      (columnsMock[0].header!.menu!.commandItems![1] as MenuCommandItem).itemUsabilityOverride = () => true;
+
+      const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
+      gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
+      const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
+
+      // Simulate keydown event for 'Enter'
+      const keydownEvent = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true });
+      headerButtonElm.dispatchEvent(keydownEvent);
+
+      // The menu should be created and visible
+      const menuElm = document.body.querySelector('.slick-header-menu');
+      expect(menuElm).toBeTruthy();
+      // Optionally, check that the menu contains expected items
+      const commandElm = menuElm?.querySelector('.slick-menu-item[data-command="show-positive-numbers"]');
+      expect(commandElm).toBeTruthy();
+    });
+
+    it('should restore focus to header menu button after executing a command (accessibility)', () =>
+      new Promise((done: any) => {
+        plugin.dispose();
+        plugin.init();
+        // Render header cell with menu button
+        const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
+        gridStub.onHeaderCellRendered.notify({ column: columnsMock[0], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
+        const headerButtonElm = headerDiv.querySelector('.slick-header-menu-button') as HTMLDivElement;
+        // Spy on focus for the button
+        const buttonFocusSpy = vi.spyOn(headerButtonElm, 'focus');
+        // Open the menu
+        headerButtonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true }));
+        // Find a real menu command item (e.g., first menu item)
+        setTimeout(() => {
+          const menuItem = document.body.querySelector('.slick-menu-item[data-command="show-positive-numbers"]') as HTMLLIElement;
+          expect(menuItem).toBeTruthy();
+          // Simulate click on the menu item (executes command and closes menu)
+          menuItem.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+          // Wait for setTimeout in menuBaseClass to restore focus
+          setTimeout(() => {
+            expect(buttonFocusSpy).toHaveBeenCalled();
+            done();
+          }, 20);
+        }, 10);
+      }));
 
     describe('hideColumn method', () => {
       beforeEach(() => {
@@ -854,6 +937,103 @@ describe('HeaderMenu Plugin', () => {
         gridStub.onClick.notify({ row: 1, cell: 2, grid: gridStub }, eventData as any, gridStub);
 
         expect(hideMenuSpy).toHaveBeenCalled();
+      });
+
+      it('should restore focus to header menu button when repositionSubMenu is called on sub-menu trigger (cover if branch)', () =>
+        new Promise((done: any) => {
+          const onCommandMock = vi.fn();
+          vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(columnsMock);
+          plugin.init({ autoAlign: true });
+          plugin.addonOptions.onCommand = onCommandMock;
+
+          const eventData = { ...new SlickEventData(), preventDefault: vi.fn() };
+          gridStub.onHeaderCellRendered.notify({ column: columnsMock[1], node: headerDiv, grid: gridStub }, eventData as any, gridStub);
+          const headerButtonIconElm = headerDiv.querySelector('.slick-header-menu-icon') as HTMLDivElement;
+          const buttonFocusSpy = vi.spyOn(headerButtonIconElm.parentElement!, 'focus');
+          // Open the main menu
+          headerButtonIconElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+          setTimeout(() => {
+            // Find the sub-menu trigger in the menu
+            const headerMenu1Elm = gridContainerDiv.querySelector('.slick-header-menu.slick-menu-level-0') as HTMLDivElement;
+            const commandList1Elm = headerMenu1Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+            const subCommands1Elm = commandList1Elm.querySelector('[data-command="sub-commands"]') as HTMLDivElement;
+            // Open the sub-menu
+            subCommands1Elm!.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+            setTimeout(() => {
+              // Find the sub-menu item definition
+              const subMenuItem = columnsMock[1].header!.menu!.commandItems![1] as MenuCommandItem;
+              subCommands1Elm.classList.add('slick-header-menu-icon');
+              // Call repositionSubMenu on the sub-menu trigger to simulate sub-menu logic
+              plugin.repositionSubMenu({ target: subCommands1Elm } as any, subMenuItem, 0, columnsMock[1]);
+              // Simulate click event on the sub-menu trigger (should now be the correct context)
+              subCommands1Elm.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+
+              // Wait for setTimeout in menuBaseClass to restore focus
+              setTimeout(() => {
+                expect(buttonFocusSpy).toHaveBeenCalled();
+                done();
+              });
+            });
+          });
+        }));
+
+      it('should cover default onActivate in wireMenuKeyboardNavigation', () => {
+        // Create a dummy menu element with a focusable menu item
+        const menuElm = document.createElement('div');
+        const menuItem = document.createElement('div');
+        menuItem.setAttribute('role', 'menuitem');
+        menuItem.tabIndex = 0;
+        menuElm.appendChild(menuItem);
+        document.body.appendChild(menuElm);
+        const clickSpy = vi.spyOn(menuItem, 'dispatchEvent');
+
+        // Wire up keyboard navigation without custom handlers
+        plugin['wireMenuKeyboardNavigation'](menuElm);
+        // Focus the menu item so the handler will trigger
+        menuItem.focus();
+
+        // Simulate Enter keydown
+        const enterEvent = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true });
+        menuElm.dispatchEvent(enterEvent);
+
+        // Should trigger a click event on the menu item
+        expect(clickSpy).toHaveBeenCalledWith(expect.objectContaining({ type: 'click' }));
+        document.body.removeChild(menuElm);
+      });
+
+      it('should cover default onEscape and onTab in wireMenuKeyboardNavigation', () => {
+        // Create a dummy menu element with a focusable menu item
+        const menuElm = document.createElement('div');
+        const menuItem = document.createElement('div');
+        menuItem.setAttribute('role', 'menuitem');
+        menuItem.tabIndex = 0;
+        menuElm.appendChild(menuItem);
+        document.body.appendChild(menuElm);
+        const disposeSpy = vi.spyOn(plugin, 'disposeAllMenus');
+
+        // Wire up keyboard navigation without custom handlers
+        plugin['wireMenuKeyboardNavigation'](menuElm);
+        menuItem.focus();
+
+        // Simulate Escape keydown
+        const escapeEvent = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true });
+        menuElm.dispatchEvent(escapeEvent);
+        expect(disposeSpy).toHaveBeenCalled();
+
+        // Simulate Tab keydown
+        const tabEvent = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true });
+        let preventDefaultCalled = false;
+        let stopPropagationCalled = false;
+        tabEvent.preventDefault = () => {
+          preventDefaultCalled = true;
+        };
+        tabEvent.stopPropagation = () => {
+          stopPropagationCalled = true;
+        };
+        menuElm.dispatchEvent(tabEvent);
+        expect(preventDefaultCalled).toBe(true);
+        expect(stopPropagationCalled).toBe(true);
+        document.body.removeChild(menuElm);
       });
     });
 

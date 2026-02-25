@@ -331,31 +331,31 @@ describe('CellMenu Plugin', () => {
         expect(document.body.querySelector('button.close')!.ariaLabel).toBe('Close'); // JSDOM doesn't support ariaLabel, but we can test attribute this way
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(
           removeExtraSpaces(
-            `<div class="slick-cell-menu slick-menu-level-0 slickgrid12345 dropdown dropleft" style="top: 0px; display: block; left: 0px;" aria-expanded="true">
+            `<div class="slick-cell-menu slick-menu-level-0 slickgrid12345 dropdown dropleft" style="top: 0px; display: block; left: 0px;" data-keyboard-nav-bound="true" aria-expanded="true">
             <div class="slick-menu-command-list" role="menu">
               <div class="slick-command-header no-title with-close">
                 <button aria-label="Close" class="close" type="button" data-dismiss="slick-menu">×</button>
               </div>
-              <li class="slick-menu-item orange" role="menuitem" data-command="command1">
+              <li class="slick-menu-item orange" role="menuitem" tabindex="-1" data-command="command1">
                 <div class="slick-menu-icon">◦</div>
                 <span class="slick-menu-content">Command 1</span>
               </li>
-              <li class="slick-menu-item" role="menuitem" data-command="command2">
+              <li class="slick-menu-item" role="menuitem" tabindex="-1" data-command="command2">
                 <div class="slick-menu-icon">◦</div>
                 <span class="slick-menu-content">Command 2</span>
               </li>
               <li class="slick-menu-item slick-menu-item-divider" role="menuitem"></li>
-              <li class="slick-menu-item red" role="menuitem" data-command="delete-row">
+              <li class="slick-menu-item red" role="menuitem" tabindex="-1" data-command="delete-row">
                 <div class="slick-menu-icon mdi mdi-close"></div>
                 <span class="slick-menu-content bold">Delete Row</span>
               </li>
               <li class="slick-menu-item slick-menu-item-divider" role="menuitem"></li>
-              <li class="slick-menu-item slick-submenu-item" role="menuitem" data-command="sub-commands">
+              <li class="slick-menu-item slick-submenu-item" role="menuitem" tabindex="-1" data-command="sub-commands">
                 <div class="slick-menu-icon"></div>
                 <span class="slick-menu-content">Sub Commands</span>
                 <span class="sub-item-chevron">⮞</span>
               </li>
-              <li class="slick-menu-item slick-submenu-item" role="menuitem" data-command="sub-commands2">
+              <li class="slick-menu-item slick-submenu-item" role="menuitem" tabindex="-1" data-command="sub-commands2">
                 <div class="slick-menu-icon"></div>
                 <span class="slick-menu-content">Sub Commands 2</span>
                 <span class="sub-item-chevron">⮞</span>
@@ -796,7 +796,7 @@ describe('CellMenu Plugin', () => {
           div.className = 'custom-slot-content';
           div.textContent = `Custom: ${item.title}`;
           return div;
-        });
+        }) as any;
 
         plugin.dispose();
         plugin.init();
@@ -813,7 +813,7 @@ describe('CellMenu Plugin', () => {
       });
 
       it('should render menu item with slotRenderer returning string', () => {
-        const mockSlotRenderer = vi.fn((item: MenuCommandItem) => `<span class="custom-string">String: ${item.title}</span>`);
+        const mockSlotRenderer = vi.fn((item: MenuCommandItem) => `<span class="custom-string">String: ${item.title}</span>`) as any;
 
         plugin.dispose();
         plugin.init();
@@ -835,7 +835,7 @@ describe('CellMenu Plugin', () => {
           div.className = 'default-renderer-content';
           div.textContent = `Default: ${item.title}`;
           return div;
-        });
+        }) as any;
 
         plugin.dispose();
         plugin.init({ defaultMenuItemRenderer: mockDefaultRenderer });
@@ -857,7 +857,7 @@ describe('CellMenu Plugin', () => {
           div.className = 'slot-prioritized';
           div.textContent = 'Slot renderer prioritized';
           return div;
-        });
+        }) as any;
         const mockDefaultRenderer = vi.fn();
 
         plugin.dispose();
@@ -880,7 +880,7 @@ describe('CellMenu Plugin', () => {
           div.className = 'renderer-args-test';
           div.textContent = `Item: ${item.command}, Grid: ${args?.grid ? 'present' : 'missing'}`;
           return div;
-        });
+        }) as any;
 
         plugin.dispose();
         plugin.init();
@@ -899,7 +899,7 @@ describe('CellMenu Plugin', () => {
           const div = document.createElement('div');
           div.className = 'click-test';
           return div;
-        });
+        }) as any;
 
         plugin.dispose();
         plugin.init();
@@ -922,7 +922,7 @@ describe('CellMenu Plugin', () => {
 
       it('should not trigger menu action when slotRenderer calls preventDefault on click event', () => {
         const mockAction = vi.fn();
-        const mockSlotRenderer = vi.fn((item: MenuCommandItem, args: any, event?: Event) => {
+        const mockSlotRenderer = vi.fn(() => {
           const div = document.createElement('div');
           div.className = 'prevent-default-test';
           const button = document.createElement('button');
@@ -932,7 +932,7 @@ describe('CellMenu Plugin', () => {
           };
           div.appendChild(button);
           return div;
-        });
+        }) as any;
 
         plugin.dispose();
         plugin.init();
@@ -986,26 +986,26 @@ describe('CellMenu Plugin', () => {
         expect(document.body.querySelector('button.close')!.ariaLabel).toBe('Close'); // JSDOM doesn't support ariaLabel, but we can test attribute this way
         expect(removeExtraSpaces(document.body.innerHTML)).toBe(
           removeExtraSpaces(
-            `<div class="slick-cell-menu slick-menu-level-0 slickgrid12345 dropdown dropright slick-dark-mode" style="top: 0px; display: block; left: 0px;" aria-expanded="true">
+            `<div class="slick-cell-menu slick-menu-level-0 slickgrid12345 dropdown dropright slick-dark-mode" style="top: 0px; display: block; left: 0px;" data-keyboard-nav-bound="true" aria-expanded="true">
             <div class="slick-menu-option-list" role="menu">
               <div class="slick-option-header no-title with-close">
                 <button aria-label="Close" class="close" type="button" data-dismiss="slick-menu">×</button>
               </div>
-              <li class="slick-menu-item purple" role="menuitem" data-option="option1">
+              <li class="slick-menu-item purple" role="menuitem" tabindex="-1" data-option="option1">
                 <div class="slick-menu-icon">◦</div>
                 <span class="slick-menu-content">Option 1</span>
               </li>
-              <li class="slick-menu-item" role="menuitem" data-option="option2">
+              <li class="slick-menu-item" role="menuitem" tabindex="-1" data-option="option2">
                 <div class="slick-menu-icon">◦</div>
                 <span class="slick-menu-content">Option 2</span>
               </li>
               <li class="slick-menu-item slick-menu-item-divider" role="menuitem"></li>
-              <li class="slick-menu-item sky" role="menuitem" data-option="delete-row">
+              <li class="slick-menu-item sky" role="menuitem" tabindex="-1" data-option="delete-row">
                 <div class="slick-menu-icon mdi mdi-checked"></div>
                 <span class="slick-menu-content underline">Delete Row</span>
               </li>
               <li class="slick-menu-item slick-menu-item-divider" role="menuitem"></li>
-              <li class="slick-menu-item slick-submenu-item" role="menuitem" data-option="sub-options">
+              <li class="slick-menu-item slick-submenu-item" role="menuitem" tabindex="-1" data-option="sub-options">
                 <div class="slick-menu-icon"></div>
                 <span class="slick-menu-content">Sub Options</span>
                 <span class="sub-item-chevron">⮞</span>

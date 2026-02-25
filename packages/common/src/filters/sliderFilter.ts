@@ -319,6 +319,7 @@ export class SliderFilter implements Filter {
         min: `${minValue}`,
         max: `${maxValue}`,
         step: `${step}`,
+        tabIndex: 0,
       });
     }
 
@@ -333,6 +334,7 @@ export class SliderFilter implements Filter {
       min: `${minValue}`,
       max: `${maxValue}`,
       step: `${step}`,
+      tabIndex: 0,
     });
 
     // put all DOM elements together to create the final Slider

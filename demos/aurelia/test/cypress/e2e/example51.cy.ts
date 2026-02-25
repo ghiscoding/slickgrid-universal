@@ -316,7 +316,7 @@ describe('Example 51 - Menus with Slots', () => {
   });
 
   it('should open Grid Menu and expect built-in commands first then custom items listed in specific order', () => {
-    cy.get('.slick-grid-menu-button.mdi-menu').click();
+    cy.get('.slick-grid-menu-button .mdi-menu').click();
 
     // 1st item
     cy.get('.slick-grid-menu .slick-menu-command-list .slick-menu-item:nth(0) .menu-item')

@@ -252,10 +252,8 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
 
   describe('French Locale', () => {
     it('should switch locale to French', () => {
-      cy.get('#grid24').find('button.slick-grid-menu-button').trigger('click').click();
-
+      cy.get('[data-test=selected-locale]').should('contain', 'en.json');
       cy.get('[data-test=language-button]').click();
-
       cy.get('[data-test=selected-locale]').should('contain', 'fr.json');
     });
 
@@ -494,10 +492,8 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
     });
 
     it('should switch back locale to English before leaving', () => {
-      cy.get('#grid24').find('button.slick-grid-menu-button').trigger('click').click();
-
+      cy.get('[data-test=selected-locale]').should('contain', 'fr.json');
       cy.get('[data-test=language-button]').click();
-
       cy.get('[data-test=selected-locale]').should('contain', 'en.json');
     });
   });
@@ -694,8 +690,8 @@ describe('Example 24 - Cell Menu & Context Menu Plugins', () => {
       cy.get('.slick-context-menu.slick-menu-level-1.dropleft') // left align
         .find('.slick-menu-item .slick-menu-content')
         .contains('Contact Us')
-        // .should('exist')
-        .trigger('mouseover', { force: true }); // mouseover or click should work
+        .should('exist')
+        .trigger('mouseover'); // mouseover or click should work
 
       cy.get('.slick-context-menu').should('be.visible');
       cy.get('.slick-submenu').should('have.length', 2);

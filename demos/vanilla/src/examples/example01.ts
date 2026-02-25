@@ -97,6 +97,7 @@ export default class Example01 {
       gridHeight: 225,
       gridWidth: 800,
       rowHeight: 33,
+      enableCellNavigation: true,
       gridMenu: {
         // autoResizeColumns: false, // disable auto-resize columns after closing the Grid Menu
         hideToggleDarkModeCommand: false, // disabled command by default

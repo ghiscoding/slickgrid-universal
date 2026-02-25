@@ -842,9 +842,7 @@ describe('Example 12 - Composite Editor Modal', () => {
 
   it('should open Edit Composite Editor from Cell Menu and expect Task 3 on 6th row', () => {
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 6}px);"] > .slick-cell:nth(11)`).click();
-
     cy.get('.slick-menu-item .slick-menu-content').first().should('contain', 'Edit Row').click();
-
     cy.get('.slick-editor-modal-title').should('contain', 'Editing - Task 3');
   });
 
@@ -862,16 +860,14 @@ describe('Example 12 - Composite Editor Modal', () => {
   });
 
   it('should open Clone Composite Editor from Cell Menu and expect Task 3 on 6th row', () => {
-    cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 6}px);"] > .slick-cell:nth(11)`).click();
-
+    cy.get('[data-row="6"] > .slick-cell:nth(11)').click({ force: true });
+    cy.get('.slick-cell-menu').should('be.visible');
     cy.get('.slick-menu-item .slick-menu-content:nth(1)').should('contain', 'Clone Row').click();
-
     cy.get('.slick-editor-modal-title').should('contain', 'Clone - Task 3');
 
     // start date shouldn't be today's month/year
     const today = new Date();
     cy.get('.editor-start .vanilla-picker input').click();
-
     cy.get('.vc:visible .vc-year').should('have.attr', 'data-vc-year').should('not.contain', today.getFullYear());
 
     // clear start date
@@ -879,9 +875,7 @@ describe('Example 12 - Composite Editor Modal', () => {
 
     // reopen start date and expect today's year
     cy.get('.editor-start .vanilla-picker input').click();
-
     cy.get('.vc:visible .vc-year').should('have.attr', 'data-vc-year').should('contain', today.getFullYear());
-
     cy.get('.slick-editor-modal-footer .btn-cancel').click();
   });
 });

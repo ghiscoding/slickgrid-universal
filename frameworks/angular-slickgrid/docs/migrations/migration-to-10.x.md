@@ -2,6 +2,8 @@
 
 One of the biggest change of this release is to hide columns by using the `hidden` column property (used by Column Picker, Grid Menu, etc...). Previously we were removing columns from the original columns array and then we were typically calling `setColumns()` to update the grid, but this meant that we had to keep references for all visible and non-visible columns. With this new release we now keep the full columns array at all time and instead we just change column(s) visibility via their `hidden` column properties by using `grid.updateColumnById('id', { hidden: true })` and finally we update the grid via `grid.updateColumns()`. Also, what I'm trying to emphasis is that you should really stop using `grid.setColumns()` in v10+, and if you want to hide some columns when declaring the columns, then just update their `hidden` properties, see more details below...
 
+This new release also brings significant improvements to accessibility (a11y), making grids more usable for keyboard and screen reader users out of the box. For example, you can now use Tab/Shift+Tab to focus the Header Menu or Grid Menu, and then navigate menu commands with the arrow keys, making keyboard navigation much more intuitive and accessible.
+
 Also, this release fully aligns Angular-Slickgrid with modern Angular patterns, including Angular 21 support, Standalone Components for simplified setup, and zoneless change detection support which allows you to drop the `zone.js` dependency for improved performance and smaller bundle sizes.
 
 #### Major Changes - Quick Summary
@@ -9,6 +11,7 @@ Also, this release fully aligns Angular-Slickgrid with modern Angular patterns, 
 - [Row Detail (now optional)](#row-detail-now-optional)
 - [ngx-translate@v17](#ngx-translate-v17x-is-now-required)
 - [Migrating to Standalone Component](#migrating-to-standalone-component)
+- improvements to accessibility (see above)
 - [What's next?](#whats-next-...version-11)
 
 > **Note:** if you come from an earlier version, please make sure to follow each migrations in their respective order (review previous migration guides)

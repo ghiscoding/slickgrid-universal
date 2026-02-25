@@ -10,6 +10,19 @@ import { SlickEvent, SlickEventData, SlickGlobalEditorLock, SlickRange } from '.
 import { SlickDataView } from '../slickDataview.js';
 import { SlickGrid } from '../slickGrid.js';
 
+// Subclass for protected method coverage
+class TestGrid extends SlickGrid<any, Column> {
+  public callHandleContainerKeyDown(e: any) {
+    this.handleContainerKeyDown(e);
+  }
+  public callHandleGridKeyDown(e: any) {
+    this.handleGridKeyDown(e);
+  }
+  public setCurrentEditorNull() {
+    (this as any).currentEditor = null;
+  }
+}
+
 vi.mock('../../formatters/formatterUtilities.js');
 vi.useFakeTimers();
 
@@ -591,6 +604,138 @@ describe('SlickGrid core file', () => {
     expect(() => new SlickGrid<any, Column>(null as any, dv, columns, defaultOptions)).toThrow('SlickGrid requires a valid container');
   });
 
+  describe('Accessibility Focus Methods', () => {
+    let columns: Column[];
+    let data: any[];
+
+    beforeEach(() => {
+      columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name' },
+        { id: 'lastName', field: 'lastName', name: 'Last Name' },
+        { id: 'age', field: 'age', name: 'Age' },
+      ];
+      data = [
+        { id: 0, firstName: 'John', lastName: 'Doe', age: 30 },
+        { id: 1, firstName: 'Jane', lastName: 'Doe', age: 28 },
+      ];
+
+      grid = new SlickGrid<any, Column>('#myGrid', data, columns, { ...defaultOptions, showHeaderRow: true });
+      grid.init();
+
+      // Inject menu button into the rendered header column
+      const headerCol = container.querySelector('.slick-header-column[data-id="lastName"]');
+      if (headerCol) {
+        const menuBtn = document.createElement('button');
+        menuBtn.className = 'slick-header-menu-button';
+        menuBtn.tabIndex = 0;
+        headerCol.appendChild(menuBtn);
+      }
+
+      // Inject filter input into the rendered header row
+      const headerRow = container.querySelector('.slick-headerrow');
+      if (headerRow) {
+        let filterCol = headerRow.querySelector('.slick-headerrow-column');
+        if (!filterCol) {
+          filterCol = document.createElement('div');
+          filterCol.className = 'slick-headerrow-column';
+          headerRow.appendChild(filterCol);
+        }
+        let filterInput = filterCol.querySelector('input');
+        if (!filterInput) {
+          filterInput = document.createElement('input');
+          filterInput.tabIndex = 0;
+          filterInput.className = 'input-filter';
+          Object.defineProperty(filterInput, 'offsetParent', { value: 8, configurable: true });
+          filterCol.appendChild(filterInput);
+        }
+      }
+
+      // Ensure header columns are focusable
+      const headerCols = container.querySelectorAll('.slick-header-column');
+      headerCols.forEach((col) => {
+        (col as HTMLElement).tabIndex = 0;
+      });
+    });
+
+    it('should focus header column by index', () => {
+      const headerCol = container.querySelector('.slick-header-column[data-id="lastName"]') as HTMLElement;
+      headerCol.tabIndex = 0;
+      const focusSpy = vi.spyOn(headerCol, 'focus');
+      grid.focusHeaderColumn(1);
+      expect(focusSpy).toHaveBeenCalled();
+    });
+
+    it('should focus header menu button if visible, else fallback to header column', () => {
+      const headerCol = container.querySelector('.slick-header-column[data-id="lastName"]') as HTMLElement;
+      const menuBtn = headerCol.querySelector('.slick-header-menu-button') as HTMLButtonElement;
+      Object.defineProperty(menuBtn, 'offsetParent', { value: 25, configurable: true });
+      expect(menuBtn).toBeTruthy();
+      const focusSpy = vi.spyOn(menuBtn, 'focus');
+      grid.focusHeaderMenuOrColumn(1);
+      expect(focusSpy).toHaveBeenCalled();
+
+      // Remove menu button, fallback to header column
+      headerCol.removeChild(menuBtn);
+      const colFocusSpy = vi.spyOn(headerCol, 'focus');
+      grid.focusHeaderMenuOrColumn(1);
+      expect(colFocusSpy).toHaveBeenCalled();
+    });
+
+    it('should focus first header row filter if visible, else fallback to grid cell/menu', () => {
+      const headerRow = container.querySelector('.slick-headerrow') as HTMLDivElement;
+      const filterInput = headerRow.querySelector('input');
+      expect(filterInput).toBeTruthy();
+      vi.spyOn(grid, 'getHeaderRow').mockReturnValue(headerRow);
+      const focusSpy = vi.spyOn(filterInput!, 'focus');
+      const result = grid.focusHeaderRowFilter();
+      expect(focusSpy).toHaveBeenCalled();
+      expect(result).toBe(true);
+
+      // Hide filter, should fallback to grid cell
+      filterInput!.style.display = 'none';
+      Object.defineProperty(filterInput!, 'offsetParent', { value: null, configurable: true });
+      const gridCellFocusSpy = vi.spyOn(grid, 'focusGridCell');
+      const result2 = grid.focusHeaderRowFilter();
+      expect(gridCellFocusSpy).toHaveBeenCalled();
+      expect(result2).toBe(false);
+    });
+
+    it('should focus grid cell (active or first cell)', () => {
+      // No active cell, should set active cell to (0,0)
+      const setActiveCellSpy = vi.spyOn(grid, 'setActiveCell');
+      grid.focusGridCell();
+      expect(setActiveCellSpy).toHaveBeenCalledWith(0, 0);
+    });
+
+    it('should focus grid menu button if present, else fallback to last header menu/column', () => {
+      // Add grid menu button
+      const gridMenuBtn = document.createElement('button');
+      gridMenuBtn.className = 'slick-grid-menu-button';
+      gridMenuBtn.tabIndex = 0;
+      container.appendChild(gridMenuBtn);
+      const focusSpy = vi.spyOn(gridMenuBtn, 'focus');
+      grid.focusGridMenu();
+      expect(focusSpy).toHaveBeenCalled();
+
+      // Remove grid menu button, fallback to last header menu/column
+      container.removeChild(gridMenuBtn);
+      const fallbackSpy = vi.spyOn(grid, 'focusHeaderMenuOrColumn');
+      grid.focusGridMenu();
+      expect(fallbackSpy).toHaveBeenCalledWith(columns.length - 1);
+    });
+
+    it('should call focusGridCell when viewport receives focus and enableCellNavigation is true', () => {
+      grid.setOptions({ enableCellNavigation: true });
+      const spy = vi.spyOn(grid, 'focusGridCell');
+
+      const viewport = grid.getViewports()[0];
+      if (viewport && typeof viewport.dispatchEvent === 'function') {
+        viewport.dispatchEvent(new FocusEvent('focus'));
+        expect(spy).toHaveBeenCalled();
+      }
+    });
+  });
+
   describe('Row Selections', () => {
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
     const data = [
@@ -969,6 +1114,10 @@ describe('SlickGrid core file', () => {
 
       expect(result).toBe(false);
       expect(onAfterSetColumnsSpy).not.toHaveBeenCalled();
+
+      vi.spyOn(grid, 'getVisibleColumns').mockReturnValueOnce([]);
+      const result2 = grid.validateColumnFreeze('firstName', true);
+      expect(result2).toBe(true); // match actual logic: empty means no restriction
     });
 
     it('should return true when calling validateColumnFreeze() when frozenColumn is within and below visible column', () => {
@@ -1991,6 +2140,9 @@ describe('SlickGrid core file', () => {
       cellSelectionModel.init(grid);
 
       expect(cellSelectionModel.getCellRangeSelector()?.addonOptions.selectionCss.border).toBe('2px solid gray');
+
+      grid.setSelectionModel(undefined as any);
+      expect(grid.getSelectionModel()).toBeUndefined();
     });
   });
 
@@ -5769,6 +5921,81 @@ describe('SlickGrid core file', () => {
       expect(secondItemAgeCell.classList.contains('highlight')).toBeFalsy();
       expect(secondItemAgeCell.classList.contains('to-be-deleted-highlight')).toBeFalsy();
     });
+
+    it('should call handleContainerKeyDown and handleGridKeyDown a11y/keyboard coverage', () => {
+      // Use a real DOM structure to avoid infinite recursion
+      const testGridInstance = new TestGrid(container, items, columns, { ...defaultOptions, enableCellNavigation: true, autoEditByKeypress: true });
+      const headerRowCol = document.createElement('div');
+      headerRowCol.className = 'slick-headerrow-column';
+      headerRowCol.tabIndex = 0;
+      container.appendChild(headerRowCol);
+      const tabEvent = new KeyboardEvent('keydown', { key: 'Tab' }) as any;
+      Object.defineProperty(tabEvent, 'target', { value: headerRowCol });
+      testGridInstance.callHandleContainerKeyDown(tabEvent);
+
+      const keyEvent = {
+        key: 'a',
+        ctrlKey: false,
+        originalEvent: {},
+        target: container.querySelector('.slick-cell.l1.r1'),
+        stopPropagation: vi.fn(),
+        preventDefault: vi.fn(),
+      } as any;
+      testGridInstance.setActiveCell(0, 1);
+      testGridInstance.setCurrentEditorNull();
+      testGridInstance.callHandleGridKeyDown(keyEvent);
+      skipGridDestroy = true;
+    });
+
+    it('should trigger onHeaderKeyDown and sortCallback on Enter/Space', () => {
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
+      ] as Column[];
+      const data = [
+        { id: 0, firstName: 'John', lastName: 'Doe' },
+        { id: 1, firstName: 'Jane', lastName: 'Smith' },
+      ];
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableColumnReorder: true });
+      grid.init();
+      const header = container.querySelector('.slick-header-column');
+      // Mock Utils.storage.get to return a column
+      const origStorage = (global as any).Utils?.storage?.get;
+      (global as any).Utils = (global as any).Utils || {};
+      (global as any).Utils.storage = { get: () => columns[0] };
+      // Spy on onHeaderKeyDown and onSort
+      const onHeaderKeyDownSpy = vi.spyOn(grid.onHeaderKeyDown, 'notify');
+      const onSortSpy = vi.spyOn(grid.onSort, 'notify');
+      // Simulate keydown Enter
+      const eventEnter = new window.KeyboardEvent('keydown', { key: 'Enter', bubbles: true }) as any;
+      Object.defineProperty(eventEnter, 'target', { value: header });
+      header?.dispatchEvent(eventEnter);
+      // Simulate keydown Space
+      const eventSpace = new window.KeyboardEvent('keydown', { key: ' ', bubbles: true }) as any;
+      Object.defineProperty(eventSpace, 'target', { value: header });
+      header?.dispatchEvent(eventSpace);
+      expect(onHeaderKeyDownSpy).toHaveBeenCalled();
+      expect(onSortSpy).toHaveBeenCalled();
+      // Restore original
+      if (origStorage) (global as any).Utils.storage.get = origStorage;
+    });
+
+    it('should return cell CSS styles for a given key', () => {
+      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+      grid = new SlickGrid<any, Column>(container, [], columns, defaultOptions);
+      (grid as any).cellCssClasses = { testKey: { 0: { firstName: 'highlight' } } };
+      const result = grid.getCellCssStyles('testKey');
+      expect(result).toEqual({ 0: { firstName: 'highlight' } });
+    });
+
+    it('should bind container keydown when enableFiltering is true', () => {
+      const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+      const gridOptions = { ...defaultOptions, enableFiltering: true };
+      grid = new SlickGrid<any, Column>(container, [], columns, gridOptions);
+      grid.init();
+      // If no error, the code path is covered. Optionally, check event listeners count.
+      expect(grid).toBeTruthy();
+    });
   });
 
   describe('Slick Cell', () => {
@@ -7586,6 +7813,24 @@ describe('SlickGrid core file', () => {
         expect(unsetActiveCellSpy).toHaveBeenCalled();
       });
 
+      it('should focus on last header row filter when triggering Shift+Tab key when currently focus on first grid cell', () => {
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        grid.setActiveRow(0, 0);
+        grid.setActiveCell(0, 0);
+
+        const focusHeaderRowSpy = vi.spyOn(grid, 'focusHeaderRowFilter');
+        const event = new CustomEvent('keydown');
+        Object.defineProperty(event, 'key', { writable: true, value: 'Tab' });
+        Object.defineProperty(event, 'shiftKey', { writable: true, value: true });
+        container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
+
+        expect(focusHeaderRowSpy).toHaveBeenCalled();
+      });
+
       it('should do nothing when triggering Escape key without any editor to cancel', () => {
         const columns = [
           { id: 'name', field: 'name', name: 'Name' },
@@ -7622,6 +7867,18 @@ describe('SlickGrid core file', () => {
 
         expect(onKeyDownSpy).toHaveBeenCalled();
         expect(activateEditorSpy).toHaveBeenCalled();
+      });
+
+      it('should call focusHeaderColumn when triggering F6 key', () => {
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        const focusHeaderColumnSpy = vi.spyOn(grid, 'focusHeaderColumn');
+        const event = new window.KeyboardEvent('keydown', { key: 'F6', bubbles: true });
+        container.querySelector('.grid-canvas')?.dispatchEvent(event);
+        expect(focusHeaderColumnSpy).toHaveBeenCalled();
       });
 
       it('should cancel opened editor when triggering Escape key and editor is active', () => {

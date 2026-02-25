@@ -87,7 +87,7 @@ export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
    * @param {Object} event - The event
    * @param {Object} args - object arguments
    */
-  protected handleHeaderCellRendered(_e: SlickEventData, args: OnHeaderCellRenderedEventArgs): void {
+  protected handleHeaderCellRendered(e: SlickEventData, args: OnHeaderCellRenderedEventArgs): void {
     const column = args.column;
 
     if (column.header?.buttons && Array.isArray(column.header.buttons)) {
@@ -100,13 +100,30 @@ export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
           null,
           buttonItem,
           args,
+          e.target!,
           this.handleButtonClick.bind(this)
         );
+
+        // Make header buttons keyboard accessible (tabbable)
+        if (itemElm && !buttonItem.disabled) {
+          itemElm.tabIndex = 0;
+        }
 
         // Header Button can have an optional handler
         if (itemElm && buttonItem.handler && !buttonItem.disabled) {
           this._bindEventService.bind(itemElm, 'click', ((e: DOMMouseOrTouchEvent<HTMLDivElement>) =>
             buttonItem.handler!.call(this, e)) as EventListener);
+        }
+
+        // Add keyboard handler for Enter/Space to activate button
+        if (itemElm && !buttonItem.disabled) {
+          this._bindEventService.bind(itemElm, 'keydown', ((e: KeyboardEvent) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true });
+              itemElm.dispatchEvent(clickEvent);
+            }
+          }) as EventListener);
         }
 
         if (itemElm) {
