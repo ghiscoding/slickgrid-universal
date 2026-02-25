@@ -69,6 +69,8 @@ gridOptions = {
 };
 ```
 
+## New Features
+
 ### Auto-Enabled External Resources
 
 This change does not require any code change from the end user, but it is nonetheless a change to be aware of. The reason I decided to implement this, is that I often forget to enable the resource associated flag and typically if you load the resource then you probably want to use it, hence auto-enabling the resource seems to make sense. For example, if your register `ExcelExportService` then the library will now auto-enable the resource with its associated flag (which in this case is `enableExcelExport:true`)... unless you have already enabled/disabled the flag yourself, then in that case the internal assignment will simply be skipped and yours will prevail. Also just to be clear, the list of auto-enabled external resources is rather small, it will auto-enable the following resources:
@@ -79,7 +81,7 @@ This change does not require any code change from the end user, but it is noneth
 - CompositeEditorComponent → `enableCompositeEditor: true`
 - RowDetailView → `enableRowDetailView: true`
 
-### Menu with Commands
+### Menu with Commands (slot renderer)
 
 All menu plugins (Cell Menu, Context Menu, Header Menu and Grid Menu) now have a new `commandListBuilder: (items) => items` which is now allowing you to filter/sort and maybe override built-in commands UI. With this new feature in place, I'm deprecating all `hide...` properties and also `positionOrder` since you can now do that with the builder. You could also use a new `hideCommands` which accepts an array of built-in command names. This will remove a large amount of `hide...` properties (about 30) that keeps increasing anytime a new built-in command gets added (in other words, this will simplify maintenance for both you and me).
 
@@ -102,6 +104,20 @@ gridOptions = {
 ```
 
 There's also a new Renderer similar to Slots but implemented with native code to make it cross-platform compatible. The usage is actually very similar to how you would use a cell Formatter. You can see a new [Example 40](https://ghiscoding.github.io/slickgrid-universal/#/example40) demoing this new feature and also the command builder mentioned above.
+
+### Tooltips Outside the Grid
+You can now use the custom tooltip plugin to display tooltips on elements outside the grid (e.g., buttons, dialogs, etc.) by enabling the `observeAllTooltips` option. This allows the plugin to observe elements anywhere in your page that have `title` or `data-slick-tooltip` attributes.
+
+#### Enable Global Tooltip Observation
+```ts
+this.gridOptions = {
+  externalResources: [new SlickCustomTooltip()],
+  customTooltip: {
+    observeAllTooltips: true, // enable tooltip observation outside the grid
+    // observeTooltipContainer: 'body', // <-- you can also define where to observe (defaults to `body`)
+  },
+};
+```
 
 ---
 
@@ -255,7 +271,7 @@ Below is an abbreviated list of Enums to update, make sure to update them all
 |                  | `ExtensionName.rowDetail`   | `'rowDetail'`       |
 | ... | ... | ... |
 
-Also as mentioned above in the section [Menu with Commands](#menu-with-commands), all menu `hide...` flags are being deprecated in favor of the new `hideCommands: [...]`, for example:
+Also as mentioned above in the section [Menu with Commands](#menu-with-commands-slot-renderer), all menu `hide...` flags are being deprecated in favor of the new `hideCommands: [...]`, for example:
 
 ```diff
 gridOptions = {
