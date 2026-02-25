@@ -2868,6 +2868,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param {boolean} shouldDestroyAllElements - do we want to destroy (nullify) all DOM elements as well? This help in avoiding mem leaks
    */
   destroy(shouldDestroyAllElements?: boolean): void {
+    // prettier-ignore
+    [this._columnResizeTimer, this._executionBlockTimer, this._flashCellTimer, this._highlightRowTimer, this.h_editorLoader, this.h_postrender, this.h_postrenderCleanup].forEach(
+      (timer) => clearTimeout(timer)
+    );
     this._bindingEventService.unbindAll();
     this.slickDraggableInstance = this.destroyAllInstances(this.slickDraggableInstance) as null;
     this.slickMouseWheelInstances = this.destroyAllInstances(this.slickMouseWheelInstances) as InteractionBase[];

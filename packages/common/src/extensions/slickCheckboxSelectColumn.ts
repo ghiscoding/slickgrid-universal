@@ -53,6 +53,7 @@ export class SlickCheckboxSelectColumn<T = any> {
   protected _selectableOverride?: SelectableOverrideCallback<T> | number;
   protected _selectAll_UID: number;
   protected _selectedRowsLookup: RowLookup = {};
+  protected _timer?: any;
 
   constructor(
     protected readonly pubSubService: BasePubSubService,
@@ -133,7 +134,8 @@ export class SlickCheckboxSelectColumn<T = any> {
     // user might want to pre-select some rows
     // the setTimeout is because of timing issue with styling (row selection happen but rows aren't highlighted properly)
     if (this.gridOptions.preselectedRows && this._rowSelectionModel && this._grid.getSelectionModel()) {
-      setTimeout(() => this.selectRows(this.gridOptions.preselectedRows || []));
+      clearTimeout(this._timer);
+      this._timer = setTimeout(() => this.selectRows(this.gridOptions.preselectedRows || []));
     }
 
     // user could override the checkbox icon logic from within the options or after instantiating the plugin
@@ -143,6 +145,7 @@ export class SlickCheckboxSelectColumn<T = any> {
   }
 
   dispose(): void {
+    clearTimeout(this._timer);
     this._bindEventService.unbindAll();
     this._eventHandler.unsubscribeAll();
   }

@@ -9,6 +9,7 @@ export class HeaderGroupingService {
   protected _eventHandler: SlickEventHandler;
   protected _grid!: SlickGrid;
   protected _subscriptions: EventSubscription[] = [];
+  protected _timer?: any;
 
   constructor(protected readonly extensionUtility: ExtensionUtility) {
     this._eventHandler = new SlickEventHandler();
@@ -68,12 +69,14 @@ export class HeaderGroupingService {
 
   dispose(): void {
     // unsubscribe all SlickGrid events
+    clearTimeout(this._timer);
     this._eventHandler.unsubscribeAll();
   }
 
   /** call "renderPreHeaderRowGroupingTitles()" with a setTimeout delay */
   delayRenderPreHeaderRowGroupingTitles(delay = 0): void {
-    setTimeout(() => this.renderPreHeaderRowGroupingTitles(), delay);
+    clearTimeout(this._timer);
+    this._timer = setTimeout(() => this.renderPreHeaderRowGroupingTitles(), delay);
   }
 
   /** Create or Render the Pre-Header Row Grouping Titles */

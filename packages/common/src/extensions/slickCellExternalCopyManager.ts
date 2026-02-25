@@ -122,6 +122,7 @@ export class SlickCellExternalCopyManager {
   }
 
   dispose(): void {
+    clearTimeout(this._clearCopyTI);
     this._eventHandler.unsubscribeAll();
   }
 

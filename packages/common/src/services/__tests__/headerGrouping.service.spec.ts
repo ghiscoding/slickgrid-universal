@@ -263,7 +263,7 @@ describe('HeaderGroupingService', () => {
       gridStub.onSetOptions.notify({ grid: gridStub, optionsBefore: { frozenColumn: -1 }, optionsAfter: { frozenColumn: 1 } }, new SlickEventData(), gridStub);
       vi.runAllTimers(); // fast-forward timer
 
-      expect(renderSpy).toHaveBeenCalledTimes(2);
+      expect(renderSpy).toHaveBeenCalledTimes(1);
       expect(setTimeoutSpy).toHaveBeenCalledTimes(2);
       expect(setTimeoutSpy).toHaveBeenLastCalledWith(expect.any(Function), 0);
       expect(divHeaderColumns.length).toBeGreaterThan(2);
@@ -283,7 +283,7 @@ describe('HeaderGroupingService', () => {
       );
       vi.runAllTimers(); // fast-forward timer
 
-      expect(renderSpy).toHaveBeenCalledTimes(2);
+      expect(renderSpy).toHaveBeenCalledTimes(1);
       expect(setTimeoutSpy).toHaveBeenCalledTimes(2);
       expect(setTimeoutSpy).toHaveBeenLastCalledWith(expect.any(Function), 0);
       expect(divHeaderColumns.length).toBeGreaterThan(2);

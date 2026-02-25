@@ -65,6 +65,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   protected _pubSubService: PubSubService | null = null;
   protected _translaterService: TranslaterService | undefined;
   protected _workbook!: Workbook;
+  protected _timer1?: any;
+  protected _timer2?: any;
 
   // references of each detected cell and/or group total formats
   protected _regularCellExcelFormats: {
@@ -108,6 +110,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   }
 
   dispose(): void {
+    clearTimeout(this._timer1);
+    clearTimeout(this._timer2);
     this._pubSubService?.unsubscribeAll();
   }
 
@@ -507,7 +511,10 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
       // Yield to event loop
       if (YIELD_FREQUENCY > 0 && rowNumber > 0 && rowNumber % YIELD_FREQUENCY === 0) {
-        await new Promise((resolve) => setTimeout(resolve, 0));
+        await new Promise((resolve) => {
+          clearTimeout(this._timer1);
+          this._timer1 = setTimeout(resolve, 0);
+        });
       }
     }
 
@@ -555,7 +562,10 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     }
 
     // Use setTimeout(0) - most reliable and often fastest
-    return new Promise((resolve) => setTimeout(resolve, 0));
+    return new Promise((resolve) => {
+      clearTimeout(this._timer2);
+      this._timer2 = setTimeout(resolve, 0);
+    });
   }
 
   /**
