@@ -29,7 +29,7 @@ catalog:
   dequal: ^2.0.3
   dompurify: ^3.3.1
   globals: ^17.3.0
-  i18next: ^25.8.7
+  i18next: ^25.8.13
   i18next-vue: ^5.4.0
   jsdom: ^28.1.0
   jsdom-global: ^3.0.2
@@ -48,7 +48,7 @@ catalog:
   vite: ^7.3.1
   vite-tsconfig-paths: ^6.1.1
   vitest: ^4.0.18
-  vue: ^3.5.28
+  vue: ^3.5.29
 
 overrides:
   '@isaacs/brace-expansion': ^5.0.1
