@@ -333,7 +333,7 @@ For example:
 
 ## What's next? ...version 11?
 
-Wait, are you seriously talking about version 11 akready when version 10 actually just shipped? Thats right, I'm already thinking and planning ahead the next major version, which will be in about a year from now. I can already say that the main focus will be around the use of native [CSS anchor positioning](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning) to replace JS code for positioning menus, tooltips, etc... which will help decreasing the build size by using fully native code. CSS anchoring has been around in Chrome for a while now, but it is quite recent in Firefox (147), so for that reason I'm postponing it to next year. There's also the new [Sanitizer API](https://developer.mozilla.org/en-US/docs/Web/API/Sanitizer) that I'm hoping to see more availability by next year.
+Wait, are you seriously talking about version 11 when version 10 actually just shipped? Thats right, I'm already thinking ahead and planning the next major version, which will be in about a year from now (2027 Q1). I can already say that the main focus will be around the use of native [CSS anchor positioning](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning) to replace JS code for positioning menus, tooltips, etc... which will help decreasing the build size further by using more native code. CSS anchoring has been around for a while in Chrome, but its addition in Firefox(147) is quite recent, so for that reason I'm postponing its usage to next year. There's also the new [Sanitizer API](https://developer.mozilla.org/en-US/docs/Web/API/Sanitizer) that I'm hoping to see more availability by next year.
 
 ### Code being `@deprecated` (to be removed in the future, 2027-Q1)
 #### You can already start using these new options and props (shown below) in v10.0 and above.
@@ -348,11 +348,11 @@ Deprecating `ExtensionName` enum which will be replaced by its string literal ty
 
 Below is an abbreviated list of Enums to update, make sure to update them all
 
-| Enum Name        | from `enum`                       | to string `type`      |
-| ---------------- | --------------------------------- | --------------------- |
-| `ExtensionName`  | `ExtensionName.autoTooltip`       | `'autoTooltip'`       |
-|                  | `ExtensionName.draggableGrouping` | `'draggableGrouping'` |
-|                  | `ExtensionName.rowDetail`         | `'rowDetail'`         |
+| Enum Name        | from `enum`                 | to string `type`    |
+| ---------------- | --------------------------- | ------------------- |
+| `ExtensionName`  | `ExtensionName.autoTooltip` | `'autoTooltip'`     |
+|                  | `ExtensionName.gridMenu`    | `'gridMenu'`        |
+|                  | `ExtensionName.rowDetail`   | `'rowDetail'`       |
 | ... | ... | ... |
 
 ### Potential but Postponed Code Change (Angular)
