@@ -127,7 +127,8 @@ gridOptions = {
 There's also a new Renderer similar to Slots but implemented with native code to make it cross-platform compatible. The usage is actually very similar to how you would use a cell Formatter. You can see a new [Example 51](https://ghiscoding.github.io/slickgrid-react-demos/#/example51) demoing this new feature and also the command builder mentioned above.
 
 ### Tooltips Outside the Grid
-You can now use the custom tooltip plugin to display tooltips on elements outside the grid (e.g., buttons, dialogs, etc.) by enabling the `observeAllTooltips` option. This allows the plugin to observe elements anywhere in your page that have `title` or `data-slick-tooltip` attributes.
+
+You can now use the custom tooltip plugin to display tooltips on elements outside the grid (e.g., buttons, dialogs, etc.) by enabling the `observeAllTooltips` option. This allows the plugin to observe elements anywhere in your page that have `title` or `data-slick-tooltip` attributes. See Custom Tooltip [documentation](../grid-functionalities/custom-tooltip.md)
 
 #### Enable Global Tooltip Observation
 ```ts
