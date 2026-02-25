@@ -17,7 +17,9 @@ This new release also brings significant improvements to accessibility (a11y), m
 
 _if you're not dynamically hiding columns and you're not using `colspan` or `rowspan` then you won't be impacted by this change._
 
-For years, I had to keep some references in a Shared Service via `shared.allColumns` and `shared.visibleColumns`, mostly for translating locales which was mostly being used by Column Picker and Grid Menu to keep track of which columns to hide/show and in which order they were; then later we called `grid.setColumns()` to update the columns in the grid... but that had side effects since SlickGrid never kept the entire column definitions list (until now). However with v10, we simply start using `hidden` property on the column(s) to hide/show some of them, then we are now able to keep the full columns reference at all time. We can translate them more easily and we no longer need to use `grid.setColumns()`, what we'll do instead is to start using `grid.updateColumnById('colId', { hidden: true })`. If you want to get visible columns, you can now just call `grid.getVisibleColumns()` which behind the scene is simply filtering `columns.filter(c => !c.hidden)`. This new approach does also have new side effects for colspan/rowspan, because previously if we were to hide a column then previously the column to the right was taking over the spanning, however with the new approach, if we hide a column then its spanning will now disappear with it (so I had to make code changes to handle that too)... If you want more details, you can see full explanations of the complete change in the [PR #2281](https://github.com/ghiscoding/slickgrid-universal/pull/2281)
+For years, I had to keep some references in a Shared Service via `shared.allColumns` and `shared.visibleColumns`, mostly for translating locales which was mostly being used by Column Picker and Grid Menu to keep track of which columns to hide/show and in which order they were; then later we called `grid.setColumns()` to update the columns in the grid... but that had side effects since SlickGrid never kept the entire column definitions list (until now). However with v10, we simply start using `hidden` property on the column(s) to hide/show some of them, then we are now able to keep the full columns reference at all time. We can translate them more easily and we no longer need to use `grid.setColumns()`, what we'll do instead is to start using `grid.updateColumnById('colId', { hidden: true })`. If you want to get visible columns, you can now just call `grid.getVisibleColumns()` which behind the scene is simply filtering `columns.filter(c => !c.hidden)`. This new approach does also have new side effects for colspan/rowspan, because previously if we were to hide a column then the column to the right was taking over the spanning, however with the new approach, if we hide a column then its spanning will now disappear with it (so I had to make code changes to handle that too)... If you want more details, you can see full explanations of all changes in the [PR #2281](https://github.com/ghiscoding/slickgrid-universal/pull/2281)
+
+**Summary Note** `grid.getColumns()` now includes hidden columns — code that assumed only visible columns are returned you need to filter by `!col.hidden` or switch to `grid.getVisibleColumns()` (see below).
 
 #### New Approach with column `hidden` property
 
@@ -86,6 +88,7 @@ These are currently just deprecations in v10.x but it's strongly recommended to 
 ```diff
 gridOptions = {
   gridMenu: {
+    // @deprecated properties
 -   hideExportCsvCommand: true,
 -   hideTogglePreHeaderCommand: true,
 
