@@ -35,7 +35,7 @@ For years, I had to keep some references in a Shared Service via `shared.allColu
 _following changes should be transparent to most users, I'm just listing them in case of side effects._
 
 1. Reimplementing `SlickCompositeEditorComponent` modal and migrating from a `<div>` to a `<dialog>` which is native code, it has better accessibility (aria) support and a baseline support showing as "widely available". A fallback to `<div>` is also available in case `<dialog>` doens't work for everybody (e.g. it doesn't work in Salesforce LWC, hence the available fallback)
-2. Reimplementing Grid Menu to use CSS flexbox instead of using `calc(100% - 18px)` which wasn't ideal, neither customizable, but the new approach is to simply use CSS flexbox which is a much better approach to properly align everything.
+2. Reimplementing Grid Menu to use CSS flexbox instead of using `calc(100% - 18px)` to position the button which wasn't ideal, neither customizable, but the new approach is to simply use CSS flexbox which is a much better approach to properly align everything.
 
 ### Row Detail (now optional)
 
@@ -92,7 +92,7 @@ gridOptions = {
 
 ### Auto-Enabled External Resources
 
-This change does not require any code change from the end user, but it is a change that you should probably be aware of nonetheless. The reason I decided to implement this, is that I often forget myself to enable the resource associated flag and typically if you wanted to load the resource, then it's most probably because you also want it enabled. For example, if your register `ExcelExportService` then the library will now auto-enable the resource with its associated flag (which in this case is `enableExcelExport:true`)... unless you have already enabled/disabled the flag yourself, then in that case the internal assignment will simply be skipped and yours will prevail. Also just to be clear, the list of auto-enabled external resources is rather small, it will auto-enable the following resources:
+This change does not require any code change from the end user, but it is nonetheless a change to be aware of. The reason I decided to implement this, is that I often forget to enable the resource associated flag and typically if you load the resource then you probably want to use it, hence auto-enabling the resource seems to make sense. For example, if your register `ExcelExportService` then the library will now auto-enable the resource with its associated flag (which in this case is `enableExcelExport:true`)... unless you have already enabled/disabled the flag yourself, then in that case the internal assignment will simply be skipped and yours will prevail. Also just to be clear, the list of auto-enabled external resources is rather small, it will auto-enable the following resources:
 
 - ExcelExportService → `enableExcelExport: true`
 - PdfExportService → `enablePdfExport: true`
