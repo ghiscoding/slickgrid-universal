@@ -2,6 +2,7 @@ import { defineAsyncComponent } from 'vue';
 import { createRouter, createWebHashHistory, type RouteRecordRaw } from 'vue-router';
 
 import Example01 from '../components/Example01.vue';
+import Example39 from '../components/Example39.vue';
 import Home from '../Home.vue';
 
 export const routes: RouteRecordRaw[] = [
@@ -45,7 +46,7 @@ export const routes: RouteRecordRaw[] = [
   { path: '/example36', name: '36- Excel Export Formulas', component: defineAsyncComponent(() => import('../components/Example36.vue')) },
   { path: '/example37', name: '37- Footer Totals Row', component: defineAsyncComponent(() => import('../components/Example37.vue')) },
   { path: '/example38', name: '38- Infinite Scroll with OData', component: defineAsyncComponent(() => import('../components/Example38.vue')) },
-  { path: '/example39', name: '39- Infinite Scroll with GraphQL', component: defineAsyncComponent(() => import('../components/Example39.vue')) },
+  { path: '/example39', name: '39- Infinite Scroll with GraphQL', component: Example39 }, // don't use lazy route for that one because of Cypress test flakiness
   { path: '/example40', name: '40- Infinite Scroll from JSON data', component: defineAsyncComponent(() => import('../components/Example40.vue')) },
   { path: '/example41', name: '41- Drag & Drop', component: defineAsyncComponent(() => import('../components/Example41.vue')) },
   { path: '/example42', name: '42- Custom Pagination', component: defineAsyncComponent(() => import('../components/Example42.vue')) },
