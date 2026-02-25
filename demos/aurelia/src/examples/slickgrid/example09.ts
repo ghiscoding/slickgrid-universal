@@ -12,7 +12,7 @@ import {
 } from 'aurelia-slickgrid';
 import './example09.scss'; // provide custom CSS/SASS styling
 
-export class Example9 {
+export class Example09 {
   aureliaGrid!: AureliaGridInstance;
   columnDefinitions: Column[] = [];
   gridOptions!: GridOption;

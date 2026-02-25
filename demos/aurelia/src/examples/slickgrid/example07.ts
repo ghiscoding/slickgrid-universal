@@ -4,7 +4,7 @@ import './example07.scss';
 let columns1WithHighlightingById: any = {};
 let columns2WithHighlightingById: any = {};
 
-export class Example7 {
+export class Example07 {
   columnDefinitions1: Column[] = [];
   columnDefinitions2: Column[] = [];
   gridOptions1!: GridOption;

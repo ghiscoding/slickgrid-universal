@@ -52,7 +52,7 @@ const taskFormatter = (_row: number, _cell: number, value: any) => {
   return '';
 };
 
-export class Example3 {
+export class Example03 {
   private _commandQueue: EditCommand[] = [];
   aureliaGrid!: AureliaGridInstance;
   gridOptions!: GridOption;

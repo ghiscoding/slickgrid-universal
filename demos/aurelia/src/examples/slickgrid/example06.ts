@@ -23,7 +23,7 @@ const defaultPageSize = 20;
 const GRAPHQL_QUERY_DATASET_NAME = 'users';
 const FAKE_SERVER_DELAY = 250;
 
-export class Example6 {
+export class Example06 {
   isWithCursor = false;
   aureliaGrid!: AureliaGridInstance;
   columnDefinitions: Column[] = [];
