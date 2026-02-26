@@ -120,10 +120,16 @@ export class DateFilter implements Filter {
       }
     }) as EventListener);
 
-    // clear date picker + compound operator when Backspace is pressed
     this._bindEventService.bind(this._dateInputElm, 'keydown', ((e: KeyboardEvent) => {
+      // clear date picker + compound operator when Backspace is pressed
       if (e.key === 'Backspace') {
+        e.preventDefault();
         this.clear(true, false); // clear value but trigger a value change event
+      }
+      // show picker on enter key but make sure it's the input not the operator compound select
+      else if (e.key === 'Enter' && e.target === this._dateInputElm) {
+        e.stopImmediatePropagation();
+        this.show();
       }
     }) as EventListener);
   }
@@ -161,15 +167,11 @@ export class DateFilter implements Filter {
   }
 
   hide(): void {
-    if (typeof this.calendarInstance?.hide === 'function') {
-      this.calendarInstance.hide();
-    }
+    this.calendarInstance?.hide();
   }
 
   show(): void {
-    if (typeof this.calendarInstance?.show === 'function') {
-      this.calendarInstance.show();
-    }
+    this.calendarInstance?.show();
   }
 
   getValues(): string | Date | string[] | Date[] | undefined {
@@ -276,6 +278,7 @@ export class DateFilter implements Filter {
       locale: currentLocale,
       selectedTheme: this.gridOptions?.darkMode ? 'dark' : 'light',
       positionToInput: 'auto',
+      openOnFocus: false,
       sanitizerHTML: (dirtyHtml) => this.grid.sanitizeHtmlString(dirtyHtml),
       selectedWeekends: [],
       type: this.inputFilterType === 'range' ? 'multiple' : 'default',
@@ -374,6 +377,7 @@ export class DateFilter implements Filter {
       placeholder,
       readOnly: true,
       dataset: { input: '', columnid: `${columnId}` },
+      tabIndex: 0,
     });
 
     this.calendarInstance = new Calendar(this._dateInputElm, this._pickerOptions);

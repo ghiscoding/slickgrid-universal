@@ -29,6 +29,10 @@ export interface OnAutosizeColumnsEventArgs extends SlickGridArg {
 export interface OnColumnsEventArgs extends SlickGridArg {
   columns: Column[];
 }
+export interface OnHeaderKeyDownEventArgs extends SlickGridArg {
+  event: KeyboardEvent;
+  column: Column;
+}
 export interface OnBeforeAppendCellEventArgs extends SlickGridArg {
   row: number;
   cell: number;

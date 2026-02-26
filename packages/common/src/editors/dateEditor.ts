@@ -35,6 +35,7 @@ export class DateEditor implements Editor {
   protected _originalDate?: string;
   protected _pickerMergedOptions!: Options;
   protected _lastInputKeyEvent?: KeyboardEvent;
+  protected _timer?: any;
   calendarInstance?: Calendar;
   defaultDate?: string;
   hasTimePicker = false;
@@ -227,6 +228,7 @@ export class DateEditor implements Editor {
   }
 
   destroy(): void {
+    clearTimeout(this._timer);
     queueMicrotaskOrSetTimeout(() => {
       this.hide();
       this.calendarInstance?.destroy();
@@ -489,7 +491,8 @@ export class DateEditor implements Editor {
         this.save();
       }
     }
-    setTimeout(() => (this._lastTriggeredByClearDate = false)); // reset flag after a cycle
+    clearTimeout(this._timer);
+    this._timer = setTimeout(() => (this._lastTriggeredByClearDate = false)); // reset flag after a cycle
   }
 
   protected handleChangeOnCompositeEditor(

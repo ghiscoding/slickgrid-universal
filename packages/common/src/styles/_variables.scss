@@ -61,6 +61,7 @@ $slick-container-border-right:                              0 none !default;
 $slick-container-border-bottom:                             1px solid #{$slick-border-color} !default;
 $slick-container-border-left:                               0 none !default;
 $slick-canvas-bg-color:                                     #fff !default;
+$slick-focus-outline-color:                                 rgba(53, 53, 53, 0.5) !default;
 
 /* grid */
 $slick-grid-border-color:                                   transparent !default;
@@ -159,18 +160,18 @@ $slick-header-padding:                                      $slick-header-paddin
 $slick-header-row-background-color:                         #ffffff !default;
 $slick-header-row-filter-padding:                           4px !default;
 $slick-header-text-color:                                   #333 !default;
-$slick-header-resizable-width:                              7px !default;
-$slick-header-resizable-hover:                              1px solid #d0d0d0 !default;
-$slick-header-resizable-hover-border-bottom:                0 none !default;
-$slick-header-resizable-hover-border-left:                  0 none !default;
+$slick-header-resizable-width:                              4px !default;
+$slick-header-resizable-hover:                              2px solid #7c7c7c !default;
+$slick-header-resizable-hover-border-bottom:                $slick-header-resizable-hover !default;
+$slick-header-resizable-hover-border-left:                  $slick-header-resizable-hover !default;
 $slick-header-resizable-hover-border-right:                 $slick-header-resizable-hover !default;
-$slick-header-resizable-hover-border-top:                   0 none !default;
-$slick-header-resizable-hover-width:                        $slick-header-resizable-width !default;
+$slick-header-resizable-hover-border-top:                   $slick-header-resizable-hover !default;
+$slick-header-resizable-hover-width:                        4px !default;
 $slick-header-resizable-hover-border-radius:                8px !default;
 $slick-header-resizable-hover-right:                        0 !default;
-$slick-header-resizable-hover-height:                       100% !default;
-$slick-header-resizable-hover-top:                          0 !default;
-$slick-header-resizable-hover-opacity:                      1 !default;
+$slick-header-resizable-hover-opacity:                      0.4 !default;
+$slick-header-resizable-hover-height:                       80% !default;
+$slick-header-resizable-hover-top:                          10% !default;
 
 /* Frozen pinned rows/columns */
 $slick-frozen-border-bottom:                                1px solid #a5a5a5 !default;
@@ -371,12 +372,12 @@ $slick-column-picker-title-width:                           calc(100% - #{$slick
 $slick-column-picker-z-index:                               9000 !default;
 
 /* Grid Menu - hamburger menu */
-$slick-grid-menu-button-padding:                            0 2px !default;
+$slick-grid-menu-button-padding:                            4px 0px !default;
 $slick-grid-menu-label-margin:                              4px !default;
 $slick-grid-menu-label-font-weight:                         normal !default;
 $slick-grid-menu-link-background-color:                     #ffffff !default;
 $slick-grid-menu-icon-btn-color:                            $slick-icon-color !default;
-$slick-grid-menu-icon-top-margin:                           5px !default;
+$slick-grid-menu-icon-top-margin:                           0px !default;
 $slick-grid-menu-divider-width:                             calc(100% - 10px) !default;
 $slick-grid-menu-item-margin-right:                         6px !default;
 
@@ -995,6 +996,7 @@ $slick-dark-text-color:                                   #d4d4d4 !default;
   --slick-base-dark-invalid-color:                        #{$slick-dark-base-dark-invalid-color};
   --slick-highlight-color:                                #{$slick-dark-highlight-color};
   --slick-text-color:                                     #{$slick-dark-text-color};
+  --slick-focus-outline-color:                            rgba(224, 224, 224, 0.5);
 
   // Bootstrap body bg-color is "--bs-body-bg: #212529"
   --slick-autocomplete-bg-color:                          var(--slick-base-dark-menu-bg-color);
@@ -1153,6 +1155,10 @@ $slick-dark-text-color:                                   #d4d4d4 !default;
   --slick-cell-selected-color:                            #474747;
   --slick-row-selected-color:                             #474747;
   --slick-row-highlight-background-color:                 #505050;
+  --slick-header-resizable-hover-border-bottom:           2px solid #acacac;
+  --slick-header-resizable-hover-border-top:              2px solid #acacac;
+  --slick-header-resizable-hover-border-left:             2px solid #acacac;
+  --slick-header-resizable-hover-border-right:            2px solid #acacac;
   --slick-scrollbar-color:                                #828282 #424242;
   --slick-sorting-header-color:                           var(--slick-base-dark-text-color);
   --slick-submenu-box-shadow:                             0 1px 3px 1px rgba(146, 152, 163, 0.4);

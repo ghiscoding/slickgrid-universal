@@ -1,12 +1,5 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import {
-  classNameToList,
-  createDomElement,
-  emptyElement,
-  extend,
-  findWidthOrDefault,
-  getHtmlStringOutput,
-} from '@slickgrid-universal/utils';
+import { createDomElement, emptyElement, extend, findWidthOrDefault, getHtmlStringOutput } from '@slickgrid-universal/utils';
 import { SlickEvent, Utils as SlickUtils } from '../core/index.js';
 import {
   addCloseButtomElement,
@@ -77,7 +70,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     hideSyncResizeButton: false,
     forceFitTitle: 'Force fit columns',
     marginBottom: 15,
-    menuWidth: 18,
+    menuWidth: 12,
     minHeight: 150,
     contentMinWidth: 0,
     resizeOnShowHeaderRow: false,
@@ -239,17 +232,20 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
           style: { width: `${gridMenuWidth + buttonPadding}px` },
         });
 
-        this._gridMenuButtonElm = createDomElement('button', { className: 'slick-grid-menu-button', ariaLabel: 'Grid Menu' });
-        if (this._addonOptions?.iconCssClass) {
-          this._gridMenuButtonElm.classList.add(...classNameToList(this._addonOptions.iconCssClass));
-        }
+        // Create button
+        this._gridMenuButtonElm = createDomElement('button', { className: 'slick-grid-menu-button', ariaLabel: 'Grid Menu', tabIndex: 0 });
+
+        // Create icon span inside button
+        const iconSpan = createDomElement('span', { className: this._addonOptions?.iconCssClass || 'mdi mdi-menu' });
+        this._gridMenuButtonElm.appendChild(iconSpan);
 
         // add the grid menu button to the header container
         gridMenuContainerElm.appendChild(this._gridMenuButtonElm);
         this._headerElm.parentElement.appendChild(gridMenuContainerElm);
 
-        // show the Grid Menu when hamburger menu is clicked
-        this._bindEventService.bind(this._gridMenuButtonElm, 'click', this.showGridMenu.bind(this) as EventListener);
+        // show the Grid Menu when hamburger menu is clicked or activated with keyboard
+        this._bindEventService.bind(gridMenuContainerElm, 'click', this.showGridMenu.bind(this) as EventListener);
+        this._bindEventService.bind(gridMenuContainerElm, 'keydown', this.handleKeyDown.bind(this) as EventListener);
       }
 
       this.sharedService.gridOptions.gridMenu = { ...this._defaults, ...this._addonOptions };
@@ -268,6 +264,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
   /** Create the menu or sub-menu(s) but without the column picker which is a separate single process */
   createCommandMenu(
+    triggeredByElm: HTMLElement,
     commandItems: Array<GridMenuItem | 'divider'>,
     level = 0,
     item?: ExtractMenuType<ExtendableItemTypes, MenuType>
@@ -317,7 +314,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       visibleColumns: this.getVisibleColumns(),
       level,
     } as GridMenuEventWithElementCallbackArgs;
-    this._commandMenuElm = this.recreateCommandList(commandItems, menuElm, callbackArgs, item);
+    this._commandMenuElm = this.recreateCommandList(triggeredByElm, commandItems, menuElm, callbackArgs, item);
 
     // increment level for possible next sub-menus if exists
     level++;
@@ -403,7 +400,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   /** show Grid Menu from the click event, which in theory will recreate the grid menu in the DOM */
   showGridMenu(e: MouseEvent | TouchEvent, options?: GridMenuOption): void {
     const targetEvent: MouseEvent | Touch = (e as TouchEvent)?.touches?.[0] ?? e;
-    e.preventDefault();
+    this.stopFullBubbling(e);
 
     // empty the entire menu so that it's recreated every time it opens
     emptyElement(this._menuElm);
@@ -439,7 +436,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         }
       }
 
-      this._menuElm = this.createCommandMenu(this._addonOptions?.commandItems ?? []);
+      this._menuElm = this.createCommandMenu(e.target as HTMLElement, this._addonOptions?.commandItems ?? []);
       this.createColumnPickerContainer();
       updateColumnPickerOrder.call(this);
       this._columnCheckboxes = [];
@@ -484,6 +481,46 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
       // once we have both lists (commandItems + columnPicker), we are ready to reposition the menu since its height/width should be calculated by then
       this.repositionMenu(e as any, this._menuElm, buttonElm, addonOptions);
+
+      // Track the element that triggered the menu (for focus restoration)
+      if (buttonElm) {
+        this.setMenuTriggerElement(buttonElm);
+      }
+
+      // Focus the first available item in either command or column picker section
+      const allItems = this.getAllFocusableMenuItems();
+      if (allItems.length > 0) {
+        allItems[0].focus();
+      }
+      // Use base class method to wire up keyboard navigation
+      this.wireMenuKeyboardNavigation(this._menuElm, {
+        allItemsSelector:
+          '.slick-grid-menu li[tabindex]:not(.slick-menu-item-divider):not(.disabled):not(.slick-menu-item-hidden):not(.hidden)',
+        focusedItemSelector:
+          '.slick-grid-menu li[tabindex]:not(.slick-menu-item-divider):not(.disabled):not(.slick-menu-item-hidden):not(.hidden)',
+        onActivate: (focusedItem: HTMLElement) => {
+          if (focusedItem) {
+            // If it's a column picker item, trigger the checkbox click
+            if (focusedItem.closest('.slick-column-picker-list')) {
+              const iconContainer = focusedItem.querySelector('.icon-checkbox-container') as HTMLElement;
+              if (iconContainer && typeof iconContainer.click === 'function') {
+                iconContainer.click();
+              }
+            } else {
+              // Otherwise, trigger the menu command
+              focusedItem.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+            }
+          }
+        },
+        onEscape: () => {
+          this.disposeAllMenus();
+        },
+        onTab: (evt) => {
+          this.stopFullBubbling(evt);
+        },
+        eventServiceKey: 'grid-menu-keyboard',
+      });
+
       this._isMenuOpen = true;
 
       // execute optional callback method defined by the user
@@ -803,7 +840,8 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
   protected exportCsv(): void {
     const registeredResources = this.sharedService?.externalRegisteredResources || [];
-    const exportCsvService: TextExportService = registeredResources.find((service: any) => service.className === 'TextExportService');
+    // prettier-ignore
+    const exportCsvService = registeredResources.find((service) => service.pluginName === 'TextExportService') as TextExportService | undefined;
     if (exportCsvService?.exportToFile) {
       exportCsvService.exportToFile({ delimiter: ',', format: 'csv' });
     } else {
@@ -815,9 +853,8 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
   protected exportExcel(): void {
     const registeredResources = this.sharedService?.externalRegisteredResources || [];
-    const excelService: ExcelExportService | undefined = registeredResources.find(
-      (service: any) => service.className === 'ExcelExportService'
-    );
+    // prettier-ignore
+    const excelService = registeredResources.find((service) => service.pluginName === 'ExcelExportService') as ExcelExportService | undefined;
     if (excelService?.exportToExcel) {
       excelService.exportToExcel();
     } else {
@@ -829,7 +866,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
   protected exportPdf(): void {
     const registeredResources = this.sharedService?.externalRegisteredResources || [];
-    const pdfService: PdfExportService | undefined = registeredResources.find((service: any) => service.className === 'PdfExportService');
+    const pdfService = registeredResources.find((service) => service.pluginName === 'PdfExportService') as PdfExportService | undefined;
     if (pdfService?.exportToPdf) {
       pdfService.exportToPdf();
     } else {
@@ -841,9 +878,8 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
   protected exportTextDelimited(): void {
     const registeredResources = this.sharedService?.externalRegisteredResources || [];
-    const exportTxtService: TextExportService | undefined = registeredResources.find(
-      (service: any) => service.className === 'TextExportService'
-    );
+    // prettier-ignore
+    const exportTxtService = registeredResources.find((service) => service.pluginName === 'TextExportService') as TextExportService | undefined;
     if (exportTxtService?.exportToFile) {
       exportTxtService.exportToFile({ delimiter: '\t', format: 'txt' });
     } else {
@@ -873,12 +909,28 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       forceFitTitle: this.extensionUtility.getPickerTitleOutputString('forceFitTitle', 'gridMenu'),
       syncResizeTitle: this.extensionUtility.getPickerTitleOutputString('syncResizeTitle', 'gridMenu'),
       iconCssClass: 'mdi mdi-menu',
-      menuWidth: 18,
+      menuWidth: 12,
       commandItems: [],
       hideClearAllFiltersCommand: false,
       hideRefreshDatasetCommand: false,
       hideToggleFilterCommand: false,
     };
+  }
+
+  /** Returns the CSS selectors for all focusable menu items (commands and column picker), skipping dividers/disabled/hidden. */
+  protected getFocusableMenuSelectors(): string[] {
+    return [
+      '.slick-menu-command-list[role="menu"] > li[role="menuitem"]:not(.slick-menu-item-divider):not(.disabled):not(.slick-menu-item-hidden)',
+      '.slick-column-picker-list[role="menu"] > li:not(.hidden)',
+    ];
+  }
+
+  /** Returns all focusable menu items in DOM order, skipping hidden/disabled/dividers. */
+  protected getAllFocusableMenuItems(): HTMLElement[] {
+    const selectors = this.getFocusableMenuSelectors();
+    return Array.from(this._menuElm?.querySelectorAll(selectors.join(',')) ?? []).filter(
+      (item) => (item as HTMLElement).offsetParent !== null
+    ) as HTMLElement[];
   }
 
   /** Mouse down handler when clicking anywhere in the DOM body */
@@ -897,6 +949,28 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         (e.target.className === 'close' && parentMenuElm)
       ) {
         this.hideMenu(e);
+      }
+    }
+  }
+
+  protected stopFullBubbling(e: KeyboardEvent | MouseEvent | TouchEvent): void {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  }
+
+  protected handleKeyDown(e: KeyboardEvent): void {
+    if (e.key === 'Enter' || e.key === ' ') {
+      this.stopFullBubbling(e);
+      this.showGridMenu(e as any);
+    } else if (e.key === 'Tab') {
+      this.stopFullBubbling(e);
+      if (e.shiftKey) {
+        // Shift+Tab from Grid Menu button: focus last visible column header menu button
+        this.grid.focusHeaderMenuOrColumn(this.getVisibleColumns().length - 1);
+      } else {
+        this.grid.focusHeaderRowFilter();
       }
     }
   }
@@ -938,8 +1012,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         }
 
         // Stop propagation so that it doesn't register as a header click event.
-        event.preventDefault();
-        event.stopPropagation();
+        this.stopFullBubbling(event);
       } else if ((item as GridMenuItem).commandItems) {
         this.repositionSubMenu(event, item, level);
       }
@@ -963,6 +1036,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
   /** Re/Create Command List by adding title, close & list of commands */
   recreateCommandList(
+    triggeredByElm: HTMLElement,
     commandItems: Array<GridMenuItem | 'divider'>,
     menuElm: HTMLElement,
     callbackArgs: GridMenuEventWithElementCallbackArgs,
@@ -992,6 +1066,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         commandMenuElm,
         commandItems as Array<ExtractMenuType<ExtendableItemTypes, MenuType>>,
         callbackArgs,
+        triggeredByElm,
         this.handleMenuItemCommandClick,
         this.handleMenuItemMouseOver
       );
@@ -1007,7 +1082,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   ): void {
     // creating sub-menu, we'll also pass level & the item object since we might have "subMenuTitle" to show
     const commandItems = (item as GridMenuItem)?.commandItems || [];
-    const subMenuElm = this.createCommandMenu(commandItems as Array<GridMenuItem | 'divider'>, level + 1, item);
+    const subMenuElm = this.createCommandMenu(e.target as HTMLElement, commandItems as Array<GridMenuItem | 'divider'>, level + 1, item);
     subMenuElm.style.display = 'block';
     document.body.appendChild(subMenuElm);
     this.repositionMenu(e, subMenuElm, this._gridMenuButtonElm, this._addonOptions);

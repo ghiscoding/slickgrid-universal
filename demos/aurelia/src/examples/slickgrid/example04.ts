@@ -20,7 +20,7 @@ function randomBetween(min: number, max: number) {
 }
 const NB_ITEMS = 10500;
 
-export class Example4 {
+export class Example04 {
   aureliaGrid!: AureliaGridInstance;
   columnDefinitions: Column[] = [];
   gridOptions!: GridOption;

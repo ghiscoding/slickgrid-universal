@@ -228,9 +228,8 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
           positionOrder: 51,
           action: () => {
             const registedServices = this.sharedService?.externalRegisteredResources || [];
-            const excelService: TextExportService | undefined = registedServices.find(
-              (service: any) => service.className === 'TextExportService'
-            );
+            // prettier-ignore
+            const excelService = registedServices.find((service) => service.pluginName === 'TextExportService') as TextExportService | undefined;
             if (excelService?.exportToFile) {
               excelService.exportToFile({ delimiter: ',', format: 'csv' });
             } else {
@@ -258,7 +257,8 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
           positionOrder: 52,
           action: () => {
             const registedServices = this.sharedService?.externalRegisteredResources || [];
-            const excelService: ExcelExportService = registedServices.find((service: any) => service.className === 'ExcelExportService');
+            // prettier-ignore
+            const excelService = registedServices.find((service) => service.pluginName === 'ExcelExportService') as ExcelExportService | undefined;
             if (excelService?.exportToExcel) {
               excelService.exportToExcel();
             } else {
@@ -286,9 +286,8 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
           positionOrder: 53,
           action: () => {
             const registedServices = this.sharedService?.externalRegisteredResources || [];
-            const pdfService: PdfExportService | undefined = registedServices.find(
-              (service: any) => service.className === 'PdfExportService'
-            );
+            // prettier-ignore
+            const pdfService = registedServices.find((service) => service.pluginName === 'PdfExportService') as PdfExportService | undefined;
             if (pdfService?.exportToPdf) {
               pdfService.exportToPdf();
             } else {
@@ -316,9 +315,8 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
           positionOrder: 54,
           action: () => {
             const registedServices = this.sharedService?.externalRegisteredResources || [];
-            const excelService: TextExportService | undefined = registedServices.find(
-              (service: any) => service.className === 'TextExportService'
-            );
+            // prettier-ignore
+            const excelService = registedServices.find((service) => service.pluginName === 'TextExportService') as TextExportService | undefined;
             if (excelService?.exportToFile) {
               excelService.exportToFile({ delimiter: '\t', format: 'txt' });
             } else {

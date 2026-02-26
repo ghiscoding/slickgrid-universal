@@ -13,6 +13,7 @@
 - [How to delay the opening of a tooltip?](#how-to-delay-the-opening-of-a-tooltip)
   - [delay a tooltip with Formatter](#delay-a-tooltip-with-formatter)
   - [delay a Regular Tooltip](#delay-a-regular-tooltip)
+- [Tooltips Outside the Grid](#tooltips-outside-the-grid)
 - `customTooltip` options
    - too many to list, consult the [CustomTooltipOption](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/column.interface.ts) interface for all possible options
 - [UI Sample](#ui-sample)
@@ -260,6 +261,58 @@ this.columnDefinitions = [{
   formatter: myFormatter
 }];
 ```
+
+### Tooltips Outside the Grid
+You can use the custom tooltip plugin to display tooltips on elements outside the grid (e.g., menu items, buttons, dialogs, etc.) by enabling the `observeAllTooltips` option. This allows the plugin to observe elements anywhere in your page that have `title` or `data-slick-tooltip` attributes.
+
+#### Enable Global Tooltip Observation
+```ts
+this.gridOptions = {
+  externalResources: [new SlickCustomTooltip()],
+  customTooltip: {
+    observeAllTooltips: true, // enable tooltip observation outside the grid
+    formatter: this.tooltipFormatter,
+  },
+};
+```
+
+#### Observe Specific Container(s)
+If you want to limit tooltip observation to specific container(s), use the `observeTooltipContainer` option:
+
+```ts
+this.gridOptions = {
+  externalResources: [new SlickCustomTooltip()],
+  customTooltip: {
+    observeAllTooltips: true,
+    observeTooltipContainer: '.my-tooltip-container', // observe only within this container
+    formatter: this.tooltipFormatter,
+  },
+};
+```
+
+You can also observe multiple containers by providing a comma-separated string:
+```ts
+customTooltip: {
+  observeAllTooltips: true,
+  observeTooltipContainer: '.container1, .container2, #header-menu', // observe multiple containers
+  formatter: this.tooltipFormatter,
+}
+```
+
+#### Using Tooltips on External Elements
+
+Once enabled, you can use regular `title` attributes or `data-slick-tooltip` on any element:
+
+```html
+<!-- Using standard title attribute -->
+<button title="Click to save">Save</button>
+
+<!-- Using data-slick-tooltip attribute -->
+<span data-slick-tooltip="Custom tooltip text">Info Icon</span>
+```
+
+The styling and positioning will be consistent with your grid tooltips.
+
 ### UI Sample
 The Export to Excel handles all characters quite well, from Latin, to Unicode and even Unicorn emoji, it all works on all browsers (`Chrome`, `Firefox`, even `IE11`, I don't have access to older versions). Here's a demo
 

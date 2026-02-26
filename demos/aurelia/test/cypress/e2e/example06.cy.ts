@@ -12,7 +12,7 @@ function removeSpaces(textS) {
 
 describe('Example 6 - GraphQL Grid', () => {
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseUrl')}/example6`);
+    cy.visit(`${Cypress.config('baseUrl')}/example06`);
     cy.get('h2').should('contain', 'Example 6: Grid with Backend GraphQL Service');
   });
 

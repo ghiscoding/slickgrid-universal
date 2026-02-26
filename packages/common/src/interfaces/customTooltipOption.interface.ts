@@ -114,7 +114,8 @@ export interface CustomTooltipOption<T = any> {
   /**
    * defaults to 'body', CSS selector of the container element to observe when `observeAllTooltips` is enabled.
    * When defined, it will target only that specific container (e.g., use `'.tooltip-container'` to observe only elements within that container).
-   * NOTE: this option only works in combo with `observeAllTooltips` being enabled.
+   * You can also observe multiple containers by providing a comma separate string (e.g. `'.container1, container2'`)
+   * NOTE: this option only works in combo with `observeAllTooltips` which must be enabled.
    */
   observeTooltipContainer?: string;
 

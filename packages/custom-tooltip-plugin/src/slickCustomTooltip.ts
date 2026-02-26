@@ -167,7 +167,7 @@ export class SlickCustomTooltip {
     // optionally observe all title elements outside the grid
     if (this._addonOptions?.observeAllTooltips) {
       const containerSelector = this._addonOptions.observeTooltipContainer || 'body';
-      const scope = containerSelector === 'body' ? document.body : document.querySelector(containerSelector) || grid.getContainerNode();
+      const scope = containerSelector === 'body' ? document.body : document.querySelectorAll(containerSelector) || grid.getContainerNode();
       this._bindEventService.bind(scope, 'mouseover', this.handleGlobalMouseOver.bind(this) as EventListener);
       this._bindEventService.bind(scope, 'mouseout', this.handleGlobalMouseOut.bind(this) as EventListener);
     }

@@ -422,7 +422,7 @@ export class SelectFilter implements Filter {
 
   protected initMultipleSelectTemplate(): void {
     // default options used by this Filter, user can overwrite any of these by passing "otions"
-    const options = {
+    const options: Partial<MultipleSelectOption> = {
       autoAdjustDropHeight: true,
       autoAdjustDropPosition: true,
       autoAdjustDropWidthByTextSize: true,
@@ -435,13 +435,17 @@ export class SelectFilter implements Filter {
       single: true,
       singleRadio: true,
       showSearchClear: true,
+      tabIndex: 0,
       renderOptionLabelAsHtml: this.columnFilter?.enableRenderHtml ?? false,
       sanitizer: (dirtyHtml: string) => this.grid.sanitizeHtmlString(dirtyHtml),
       // we will subscribe to the onClose event for triggering our callback
-      // also add/remove "filled" class for styling purposes
-      onClose: () => this.onTriggerEvent(),
+      // also add/remove "filled" class for styling purposes & refocus on ms-select parent after closing
+      onClose: () => {
+        this.onTriggerEvent();
+        this._msInstance?.focus();
+      },
       onClear: () => this.clear(),
-    } as MultipleSelectOption;
+    };
 
     // optional lazy loading of the collection (when select is opened)
     if (this.columnFilter.collectionLazy) {

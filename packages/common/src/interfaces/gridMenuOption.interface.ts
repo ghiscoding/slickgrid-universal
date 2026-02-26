@@ -150,7 +150,7 @@ export interface GridMenuOption extends MenuOption<GridMenuCommandItemCallbackAr
    */
   maxHeight?: number | string;
 
-  /** Defaults to 16 pixels (only the number), which is the width in pixels of the Grid Menu icon container */
+  /** Defaults to 12 pixels (only the number), which is the width in pixels of the Grid Menu icon container */
   menuWidth?: number;
 
   /**

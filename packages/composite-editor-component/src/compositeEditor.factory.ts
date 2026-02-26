@@ -68,6 +68,7 @@ export function SlickCompositeEditor(
     editors: {},
   } as unknown as CompositeEditorOption;
   options = { ...defaultOptions, ...options };
+  let _timer: any;
 
   /* no operation (empty) function */
   const noop = () => {};
@@ -118,7 +119,8 @@ export function SlickCompositeEditor(
       }
 
       // focus on first input
-      setTimeout(() => {
+      clearTimeout(_timer);
+      _timer = setTimeout(() => {
         if (Array.isArray(editors) && editors.length > 0 && typeof editors[0].focus === 'function') {
           editors[0].focus();
         }
@@ -130,6 +132,7 @@ export function SlickCompositeEditor(
     };
 
     context.destroy = () => {
+      clearTimeout(_timer);
       let tmpEditor = editors.pop();
       while (tmpEditor) {
         tmpEditor?.destroy();

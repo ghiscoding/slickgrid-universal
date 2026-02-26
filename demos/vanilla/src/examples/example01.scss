@@ -3,3 +3,9 @@
 .red {
   color: #ff0000;
 }
+
+.demo1 {
+  .grid1 {
+    --slick-header-menu-display: inline-block;
+  }
+}

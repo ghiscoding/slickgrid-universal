@@ -74,6 +74,7 @@ import type {
   OnHeaderCellRenderedEventArgs,
   OnHeaderClickEventArgs,
   OnHeaderContextMenuEventArgs,
+  OnHeaderKeyDownEventArgs,
   OnHeaderMouseEventArgs,
   OnHeaderRowCellRenderedEventArgs,
   OnKeyDownEventArgs,
@@ -179,6 +180,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   onHeaderMouseLeave: SlickEvent<OnHeaderMouseEventArgs>;
   onHeaderMouseOver: SlickEvent<OnHeaderMouseEventArgs>;
   onHeaderMouseOut: SlickEvent<OnHeaderMouseEventArgs>;
+  onHeaderKeyDown: SlickEvent<OnHeaderKeyDownEventArgs>;
   onHeaderRowCellRendered: SlickEvent<OnHeaderRowCellRenderedEventArgs>;
   onHeaderRowMouseEnter: SlickEvent<OnHeaderMouseEventArgs>;
   onHeaderRowMouseLeave: SlickEvent<OnHeaderMouseEventArgs>;
@@ -586,6 +588,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.onHeaderMouseOut = new SlickEvent<OnHeaderMouseEventArgs>('onHeaderMouseOut', externalPubSub);
     this.onHeaderRowMouseOver = new SlickEvent<OnHeaderMouseEventArgs>('onHeaderRowMouseOver', externalPubSub);
     this.onHeaderRowMouseOut = new SlickEvent<OnHeaderMouseEventArgs>('onHeaderRowMouseOut', externalPubSub);
+    this.onHeaderKeyDown = new SlickEvent<OnHeaderKeyDownEventArgs>('onHeaderKeyDown', externalPubSub);
     this.onHeaderRowCellRendered = new SlickEvent<OnHeaderRowCellRenderedEventArgs>('onHeaderRowCellRendered', externalPubSub);
     this.onHeaderRowMouseEnter = new SlickEvent<OnHeaderMouseEventArgs>('onHeaderRowMouseEnter', externalPubSub);
     this.onHeaderRowMouseLeave = new SlickEvent<OnHeaderMouseEventArgs>('onHeaderRowMouseLeave', externalPubSub);
@@ -1000,8 +1003,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.bindAncestorScrollEvents();
 
       this._bindingEventService.bind(this._container, 'resize', this.resizeCanvas.bind(this));
-      this._viewport.forEach((view) => {
-        this._bindingEventService.bind(view, 'scroll', this.handleScroll.bind(this));
+      this._bindingEventService.bind(this._viewport, 'scroll', this.handleScroll.bind(this));
+      this._bindingEventService.bind(this._viewport, 'focus', () => {
+        this._options.enableCellNavigation && this.focusGridCell();
       });
 
       if (this._options.enableMouseWheelScrollHandler) {
@@ -1015,24 +1019,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         });
       }
 
-      this._headerScroller.forEach((el) => {
-        this._bindingEventService.bind(el, 'contextmenu', this.handleHeaderContextMenu.bind(this) as EventListener);
-        this._bindingEventService.bind(el, 'click', this.handleHeaderClick.bind(this) as EventListener);
-      });
-
-      this._headerRowScroller.forEach((scroller) => {
-        this._bindingEventService.bind(scroller, 'scroll', this.handleHeaderRowScroll.bind(this) as EventListener);
-      });
+      this._bindingEventService.bind(this._headerScroller, 'contextmenu', this.handleHeaderContextMenu.bind(this) as EventListener);
+      this._bindingEventService.bind(this._headerScroller, 'click', this.handleHeaderClick.bind(this) as EventListener);
+      this._bindingEventService.bind(this._headerRowScroller, 'scroll', this.handleHeaderRowScroll.bind(this) as EventListener);
 
       if (this._options.createFooterRow) {
-        this._footerRow.forEach((footer) => {
-          this._bindingEventService.bind(footer, 'contextmenu', this.handleFooterContextMenu.bind(this) as EventListener);
-          this._bindingEventService.bind(footer, 'click', this.handleFooterClick.bind(this) as EventListener);
-        });
-
-        this._footerRowScroller.forEach((scroller) => {
-          this._bindingEventService.bind(scroller, 'scroll', this.handleFooterRowScroll.bind(this) as EventListener);
-        });
+        this._bindingEventService.bind(this._footerRow, 'contextmenu', this.handleFooterContextMenu.bind(this) as EventListener);
+        this._bindingEventService.bind(this._footerRow, 'click', this.handleFooterClick.bind(this) as EventListener);
+        this._bindingEventService.bind(this._footerRowScroller, 'scroll', this.handleFooterRowScroll.bind(this) as EventListener);
       }
 
       if (this._options.createTopHeaderPanel) {
@@ -1053,17 +1047,18 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         );
       }
 
-      this._bindingEventService.bind(this._focusSink, 'keydown', this.handleKeyDown.bind(this) as EventListener);
-      this._bindingEventService.bind(this._focusSink2, 'keydown', this.handleKeyDown.bind(this) as EventListener);
+      this._bindingEventService.bind(this._focusSink, 'keydown', this.handleGridKeyDown.bind(this) as EventListener);
+      this._bindingEventService.bind(this._focusSink2, 'keydown', this.handleGridKeyDown.bind(this) as EventListener);
 
-      this._canvas.forEach((element) => {
-        this._bindingEventService.bind(element, 'keydown', this.handleKeyDown.bind(this) as EventListener);
-        this._bindingEventService.bind(element, 'click', this.handleClick.bind(this) as EventListener);
-        this._bindingEventService.bind(element, 'dblclick', this.handleDblClick.bind(this) as EventListener);
-        this._bindingEventService.bind(element, 'contextmenu', this.handleContextMenu.bind(this) as EventListener);
-        this._bindingEventService.bind(element, 'mouseover', this.handleCellMouseOver.bind(this) as EventListener);
-        this._bindingEventService.bind(element, 'mouseout', this.handleCellMouseOut.bind(this) as EventListener);
-      });
+      this._bindingEventService.bind(this._canvas, 'keydown', this.handleGridKeyDown.bind(this) as EventListener);
+      this._bindingEventService.bind(this._canvas, 'click', this.handleClick.bind(this) as EventListener);
+      this._bindingEventService.bind(this._canvas, 'dblclick', this.handleDblClick.bind(this) as EventListener);
+      this._bindingEventService.bind(this._canvas, 'contextmenu', this.handleContextMenu.bind(this) as EventListener);
+      this._bindingEventService.bind(this._canvas, 'mouseover', this.handleCellMouseOver.bind(this) as EventListener);
+      this._bindingEventService.bind(this._canvas, 'mouseout', this.handleCellMouseOut.bind(this) as EventListener);
+      if (this._options.enableFiltering) {
+        this._bindingEventService.bind(this._container, 'keydown', this.handleContainerKeyDown.bind(this) as EventListener);
+      }
 
       if (Draggable) {
         this.slickDraggableInstance = Draggable({
@@ -1890,6 +1885,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           dataset: { id: String(m.id) },
           role: 'columnheader',
           className: 'slick-state-default slick-header-column',
+          tabIndex: 0,
         },
         headerTarget
       );
@@ -2021,7 +2017,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected setupColumnSort(): void {
     this._headers.forEach((header) => {
-      this._bindingEventService.bind(header, 'click', (e: any) => {
+      const sortCallback = (e: (MouseEvent | KeyboardEvent) & { target: HTMLElement }) => {
         if (this.columnResizeDragging || e.target.classList.contains('slick-resizable-handle')) {
           return;
         }
@@ -2111,7 +2107,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             this.triggerEvent(this.onSort, onSortArgs, e);
           }
         }
-      });
+      };
+
+      // Add keydown/click event handlers for sortable columns
+      this._bindingEventService.bind(header, 'keydown', ((e: KeyboardEvent & { target: HTMLElement }) => {
+        this.triggerEvent(this.onHeaderKeyDown, { event: e, column: Utils.storage.get(e.target, 'column'), grid: this });
+        if (e.key === 'Enter' || e.key === ' ') {
+          sortCallback(e);
+        }
+      }) as EventListener);
+      this._bindingEventService.bind(header, 'click', ((e: MouseEvent & { target: HTMLElement }) => sortCallback(e)) as EventListener);
     });
   }
 
@@ -2863,6 +2868,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param {boolean} shouldDestroyAllElements - do we want to destroy (nullify) all DOM elements as well? This help in avoiding mem leaks
    */
   destroy(shouldDestroyAllElements?: boolean): void {
+    // prettier-ignore
+    [this._columnResizeTimer, this._executionBlockTimer, this._flashCellTimer, this._highlightRowTimer, this.h_editorLoader, this.h_postrender, this.h_postrenderCleanup].forEach(
+      (timer) => clearTimeout(timer)
+    );
     this._bindingEventService.unbindAll();
     this.slickDraggableInstance = this.destroyAllInstances(this.slickDraggableInstance) as null;
     this.slickMouseWheelInstances = this.destroyAllInstances(this.slickMouseWheelInstances) as InteractionBase[];
@@ -3155,7 +3164,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       let columnIndex = 0;
       const vc = this.getVisibleColumns();
       this._headers.forEach((header) => {
-        for (let i = 0; i < header.children.length; i++, columnIndex++) {
+        for (let i = 0, ln = header.children.length; i < ln; i++, columnIndex++) {
           const h = header.children[i] as HTMLElement;
           const col = vc[columnIndex] || {};
           const width = (col.width || 0) - this.headerColumnWidthDiff;
@@ -5721,6 +5730,81 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
   }
 
+  /**
+   * Programmatically focus a header column by index (default: first visible column).
+   * @param index - Column index to focus (defaults to 0)
+   */
+  focusHeaderColumn(index = 0): void {
+    this.getHeaderColumn(index)?.focus();
+  }
+
+  /**
+   * Programmatically focus a header menu (when found) or fallback to header column if menu is not found or not visible.
+   * @param index - Column index to focus (defaults to 0)
+   */
+  focusHeaderMenuOrColumn(index = 0): void {
+    const headerMenuElm = this.getHeaderColumn(index).querySelector<HTMLElement>('.slick-header-menu-button[tabIndex="0"]');
+    if (headerMenuElm && headerMenuElm.offsetParent !== null) {
+      headerMenuElm.focus();
+    } else {
+      this.focusHeaderColumn(index);
+    }
+  }
+
+  /**
+   * Focus on first header row filter element it finds, unless focusOnLast is set to true in which case it will start backward and focus on the last one.
+   * If header row filter isn't shown, it will focus on the first grid cell (or grid menu/header menu if focusOnLast is true) instead.
+   * @param focusOnLast
+   * @returns true when a header row filter element was found and focused otherwise false
+   */
+  focusHeaderRowFilter(focusOnLast = false): boolean {
+    const headerRow = this.getHeaderRow();
+    if (this._options.showHeaderRow && headerRow) {
+      const firstHeaderRow = headerRow instanceof HTMLElement ? headerRow : headerRow[0];
+      const allFilterElms = firstHeaderRow?.querySelectorAll<HTMLElement>('.slick-headerrow-column [tabIndex="0"]') || [];
+      const filterLn = allFilterElms.length;
+      let closestVisibleFilter: HTMLElement | null = null;
+      if (filterLn > 0) {
+        const start = focusOnLast ? filterLn - 1 : 0;
+        const end = focusOnLast ? -1 : filterLn;
+        const step = focusOnLast ? -1 : 1;
+        for (let i = start; i !== end; i += step) {
+          const elm = allFilterElms[i];
+          if (elm.offsetParent !== null) {
+            closestVisibleFilter = elm;
+            break;
+          }
+        }
+      }
+      if (closestVisibleFilter) {
+        (closestVisibleFilter as HTMLElement).focus();
+        return true;
+      }
+    }
+
+    // when header row isn't visible or shown, fallback to focusing on grid cell or grid menu/header menu if focusOnLast is true
+    !focusOnLast ? this.focusGridCell() : this.focusGridMenu();
+    return false;
+  }
+
+  /** focus on the active cell when it exists, otherwise focus on first cell */
+  focusGridCell(): void {
+    this.focus();
+    if (!this.getActiveCell()) {
+      this.setActiveCell(0, 0);
+    }
+  }
+
+  /** focus on grid menu button when enabled or fallback to last header menu or column */
+  focusGridMenu(): void {
+    const gridMenuBtn = this._container?.querySelector<HTMLElement>('.slick-grid-menu-button[tabIndex="0"]');
+    if (gridMenuBtn) {
+      gridMenuBtn.focus();
+    } else {
+      this.focusHeaderMenuOrColumn(this.getColumns().length - 1);
+    }
+  }
+
   // Interactivity
 
   protected handleMouseWheel(e: MouseEvent, _delta: number, deltaX: number, deltaY: number): void {
@@ -5779,7 +5863,24 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.triggerEvent(this.onDragEnd, dd, e);
   }
 
-  protected handleKeyDown(e: KeyboardEvent & { originalEvent: Event }): void {
+  protected handleContainerKeyDown(e: KeyboardEvent & { originalEvent: Event }): void {
+    if (e.key === 'Tab' && !e.ctrlKey && !e.altKey) {
+      let headerRowSelector = '.slick-headerrow-column *[tabIndex="0"]';
+      const ancestorHeaderRow = (e.target as HTMLElement)?.closest(headerRowSelector);
+      if (!e.shiftKey) {
+        // when using Tab, find last header row filter
+        headerRowSelector = '.slick-headerrow-column:last-child *[tabIndex="0"]';
+      }
+
+      if (this._container.querySelector(headerRowSelector) === ancestorHeaderRow) {
+        this.stopFullBubbling(e);
+        // focus grid menu when Shift+Tab or focus on first cell when using Tab
+        e.shiftKey ? this.focusGridMenu() : this.focusGridCell();
+      }
+    }
+  }
+
+  protected handleGridKeyDown(e: KeyboardEvent & { originalEvent: Event; target: HTMLElement }): void {
     const retval = this.triggerEvent(this.onKeyDown, { row: this.activeRow, cell: this.activeCell }, e);
     let handled: boolean | undefined | void = retval.isImmediatePropagationStopped();
 
@@ -5817,7 +5918,17 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
 
     if (!handled) {
-      if (!e.shiftKey && !e.altKey && !e.ctrlKey) {
+      // if Shift+Tab is pressed from the first cell, move focus to the Grid Menu button if present, otherwise last column header menu
+      if (e.key === 'Tab' && e.shiftKey && !e.ctrlKey && !e.altKey) {
+        if (this.activeRow === 0 && this.activeCell === 0) {
+          this.focusHeaderRowFilter(true);
+          handled = true;
+        } else {
+          handled = this.navigatePrev();
+        }
+      }
+
+      if (!e.shiftKey && !e.altKey && !e.ctrlKey && !handled) {
         if (e.key === 'Escape') {
           if (!this.getEditorLock()?.isActive()) {
             return; // no editing mode to cancel, allow bubbling and default processing (exit without cancelling the event)
@@ -5858,9 +5969,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         } else if (e.key === 'F2' && this._options.editable && !this.currentEditor) {
           this.makeActiveCellEditable(undefined, undefined, e);
           handled = true;
+        } else if (e.key === 'F6') {
+          // F6 focuses header row (accessibility pattern)
+          this.focusHeaderColumn();
+          handled = true;
         }
-      } else if (e.key === 'Tab' && e.shiftKey && !e.ctrlKey && !e.altKey) {
-        handled = this.navigatePrev();
       }
     }
 
@@ -5872,8 +5985,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     if (handled) {
       // the event has been handled so don't let parent element (bubbling/propagation) or browser (default) handle it
-      e.stopPropagation();
-      e.preventDefault();
+      this.stopFullBubbling(e);
     }
   }
 
@@ -6062,6 +6174,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     return !(row < 0 || row >= this.getDataLength() || cell < 0 || cell >= this.columns.length);
   }
 
+  protected stopFullBubbling(e: KeyboardEvent | MouseEvent | TouchEvent): void {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  }
+
   /**
    * Returns row and cell indexes by providing x,y coordinates.
    * Coordinates are relative to the top left corner of the grid beginning with the first row (not including the column headers).
@@ -6232,7 +6351,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
   }
 
-  /** @alias `setFocus` */
+  /** focus on the grid */
   focus(): void {
     this.setFocus();
   }

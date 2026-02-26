@@ -15,6 +15,7 @@ import {
   type SlickDataView,
   type SlickGrid,
 } from 'aurelia-slickgrid';
+import './example13.scss';
 
 const NB_ITEMS = 1000;
 

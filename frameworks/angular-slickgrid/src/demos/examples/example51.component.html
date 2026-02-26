@@ -1,62 +1,64 @@
-<h2>
-  Example 51: Menus with Slots
-  <span class="float-end">
-    <a
-      style="font-size: 18px"
-      target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example51.component.ts"
-    >
-      <span class="mdi mdi-link-variant"></span> code
-    </a>
-  </span>
-  <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" (click)="toggleSubTitle()">
-    <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
-  </button>
-</h2>
+<div class="grid51-container">
+  <h2>
+    Example 51: Menus with Slots
+    <span class="float-end">
+      <a
+        style="font-size: 18px"
+        target="_blank"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example51.component.ts"
+      >
+        <span class="mdi mdi-link-variant"></span> code
+      </a>
+    </span>
+    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" (click)="toggleSubTitle()">
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+  </h2>
 
-<div class="subtitle alert alert-light">
-  <h5 class="mb-2">
-    <span class="mdi mdi-information-outline"></span>
-    <strong>Menu Slots Demo with Custom Renderer</strong>
-  </h5>
-  <p class="mb-2">
-    Click on the menu buttons to see the new <strong>single slot functionality</strong> working across all menu types (Header Menu, Cell
-    Menu, Context Menu, Grid Menu):
-  </p>
-  <p class="mt-2">
-    <small
-      ><strong>Note:</strong> The demo focuses on the custom rendering capability via <code>slotRenderer</code> and
-      <code>defaultMenuItemRenderer</code>, which work across all menu plugins (SlickHeaderMenu, SlickCellMenu, SlickContextMenu,
-      SlickGridMenu). Also note that the keyboard shortcuts displayed in the menus (e.g., <code>Alt+↑</code>, <code>F5</code>) are for demo
-      purposes only and do not actually trigger any actions.
-    </small>
-  </p>
-</div>
-
-<section class="row mb-2">
-  <div class="mb-1">
-    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="clear-grouping-btn" (click)="clearGrouping()">
-      <span>Clear grouping</span>
-    </button>
-    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="collapse-all-btn" (click)="collapseAllGroups()">
-      <span class="mdi mdi-arrow-collapse"></span>
-      <span>Collapse all groups</span>
-    </button>
-    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="expand-all-btn" (click)="expandAllGroups()">
-      <span class="mdi mdi-arrow-expand"></span>
-      <span>Expand all groups</span>
-    </button>
-    <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="group-duration-sort-value-btn" (click)="groupByDuration()">
-      Group by Duration
-    </button>
+  <div class="subtitle alert alert-light">
+    <h5 class="mb-2">
+      <span class="mdi mdi-information-outline"></span>
+      <strong>Menu Slots Demo with Custom Renderer</strong>
+    </h5>
+    <p class="mb-2">
+      Click on the menu buttons to see the new <strong>single slot functionality</strong> working across all menu types (Header Menu, Cell
+      Menu, Context Menu, Grid Menu):
+    </p>
+    <p class="mt-2">
+      <small
+        ><strong>Note:</strong> The demo focuses on the custom rendering capability via <code>slotRenderer</code> and
+        <code>defaultMenuItemRenderer</code>, which work across all menu plugins (SlickHeaderMenu, SlickCellMenu, SlickContextMenu,
+        SlickGridMenu). Also note that the keyboard shortcuts displayed in the menus (e.g., <code>Alt+↑</code>, <code>F5</code>) are for
+        demo purposes only and do not actually trigger any actions.
+      </small>
+    </p>
   </div>
-</section>
 
-<angular-slickgrid
-  gridId="grid51"
-  [columns]="columnDefinitions"
-  [options]="gridOptions"
-  [dataset]="dataset"
-  (onAngularGridCreated)="angularGridReady($event.detail)"
->
-</angular-slickgrid>
+  <section class="row mb-2">
+    <div class="mb-1">
+      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="clear-grouping-btn" (click)="clearGrouping()">
+        <span>Clear grouping</span>
+      </button>
+      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="collapse-all-btn" (click)="collapseAllGroups()">
+        <span class="mdi mdi-arrow-collapse"></span>
+        <span>Collapse all groups</span>
+      </button>
+      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="expand-all-btn" (click)="expandAllGroups()">
+        <span class="mdi mdi-arrow-expand"></span>
+        <span>Expand all groups</span>
+      </button>
+      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="group-duration-sort-value-btn" (click)="groupByDuration()">
+        Group by Duration
+      </button>
+    </div>
+  </section>
+
+  <angular-slickgrid
+    gridId="grid51"
+    [columns]="columnDefinitions"
+    [options]="gridOptions"
+    [dataset]="dataset"
+    (onAngularGridCreated)="angularGridReady($event.detail)"
+  >
+  </angular-slickgrid>
+</div>

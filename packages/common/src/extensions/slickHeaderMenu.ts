@@ -118,7 +118,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
   repositionSubMenu(e: DOMMouseOrTouchEvent<HTMLElement> | SlickEventData, item: MenuCommandItem, level: number, columnDef: Column): void {
     // creating sub-menu, we'll also pass level & the item object since we might have "subMenuTitle" to show
-    const subMenuElm = this.createCommandMenu(item.commandItems || [], columnDef, level + 1, item);
+    const subMenuElm = this.createCommandMenu(e.target as HTMLElement, item.commandItems || [], columnDef, level + 1, item);
     document.body.appendChild(subMenuElm);
     this.repositionMenu(e, subMenuElm, undefined, this.addonOptions);
   }
@@ -149,7 +149,15 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
         return;
       }
 
-      const headerButtonDivElm = createDomElement('div', { className: 'slick-header-menu-button', ariaLabel: 'Header Menu' }, args.node);
+      const headerButtonDivElm = createDomElement(
+        'div',
+        { className: 'slick-header-menu-button', ariaLabel: 'Header Menu', tabIndex: 0 },
+        args.node
+      );
+
+      // Create icon element inside button container
+      const iconElm = createDomElement('span', { className: 'slick-header-menu-icon' });
+      headerButtonDivElm.appendChild(iconElm);
 
       if (this.addonOptions.buttonCssClass) {
         headerButtonDivElm.classList.add(...classNameToList(this.addonOptions.buttonCssClass));
@@ -159,10 +167,18 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
         headerButtonDivElm.title = this.addonOptions.tooltip;
       }
 
-      // show the header menu dropdown list of commands
+      // show the header menu dropdown list of commands on click or keyboard activation
       this._bindEventService.bind(headerButtonDivElm, 'click', ((e: DOMMouseOrTouchEvent<HTMLDivElement>) => {
-        this.disposeAllMenus(); // make there's only 1 parent menu opened at a time
+        this.disposeAllMenus(); // make sure there's only 1 parent menu opened at a time
         this.createParentMenu(e, args.column, menu);
+      }) as EventListener);
+
+      this._bindEventService.bind(headerButtonDivElm, 'keydown', ((e: KeyboardEvent) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this.disposeAllMenus(); // make sure there's only 1 parent menu opened at a time
+          this.createParentMenu(e as any, args.column, menu);
+        }
       }) as EventListener);
     }
   }
@@ -587,10 +603,19 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
       }
     }
 
+    // Track the element that triggered the menu (for focus restoration)
+    const triggerElement = e.target as HTMLElement;
+    this.setMenuTriggerElement(triggerElement);
+
     // create 1st parent menu container & reposition it
-    this._menuElm = this.createCommandMenu(menu.commandItems as Array<MenuCommandItem | 'divider'>, columnDef);
+    this._menuElm = this.createCommandMenu(triggerElement, menu.commandItems as Array<MenuCommandItem | 'divider'>, columnDef);
     this.grid.getContainerNode()?.appendChild(this._menuElm);
     this.repositionMenu(e, this._menuElm, undefined, this.addonOptions);
+
+    // Focus the first menu item for keyboard accessibility (do this BEFORE binding keyboard handler)
+    this.focusFirstMenuItem(this._menuElm);
+    // Use base class method to wire up keyboard navigation
+    this.wireMenuKeyboardNavigation(this._menuElm);
 
     // execute optional callback method defined by the user
     this.pubSubService.publish('onHeaderMenuAfterMenuShow', callbackArgs);
@@ -605,6 +630,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
   /** Create the menu or sub-menu(s) but without the column picker which is a separate single process */
   protected createCommandMenu(
+    triggeredByElm: HTMLElement,
     commandItems: Array<MenuCommandItem | 'divider'>,
     columnDef: Column,
     level = 0,
@@ -674,6 +700,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
       commandMenuElm,
       commandItems,
       callbackArgs,
+      triggeredByElm,
       this.handleMenuItemCommandClick,
       this.handleMenuItemMouseOver
     );

@@ -62,6 +62,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
   protected _locales!: Locale;
   protected _pubSubService!: PubSubService | null;
   protected _translaterService: TranslaterService | undefined;
+  protected _timer?: any;
 
   /** PdfExportService class name which is use to find service instance in the external registered services */
   readonly pluginName = 'PdfExportService';
@@ -81,6 +82,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
   }
 
   dispose(): void {
+    clearTimeout(this._timer);
     this._pubSubService?.unsubscribeAll();
   }
 
@@ -122,7 +124,8 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
       this._exportOptions = extend(true, {}, { ...DEFAULT_EXPORT_OPTIONS, ...this._gridOptions.pdfExportOptions, ...options });
 
       // wrap it into a setTimeout so that the EventAggregator has enough time to start a pre-process like showing a spinner
-      setTimeout(() => {
+      clearTimeout(this._timer);
+      this._timer = setTimeout(() => {
         try {
           const columns = this._grid.getColumns() || [];
 

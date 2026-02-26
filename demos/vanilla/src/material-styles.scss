@@ -10,6 +10,7 @@
     $primary-color: #009530;
     $slick-primary-color: #009530;
     --color-primary: #009530;
+    --input-focus-box-shadow: #{0 0 0 2px rgba(#66bb6a, 0.25)};
     --text-color-primary: #009530;
     --slick-primary-color: #009530;
     --slick-header-menu-display: inline-block;
@@ -22,18 +23,17 @@
     --slick-cell-box-shadow: none;
     --slick-cell-active-box-shadow: inset 0 0 0 1px #aaaaaa;
     --slick-form-control-focus-border-color: #00c840;
-    --slick-form-control-focus-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px rgba(102, 187, 106, 0.3);
+    --slick-form-control-focus-box-shadow: var(--input-focus-box-shadow);
     --slick-editor-focus-border-color: #00b93c;
-    --slick-editor-focus-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px rgba(#00a033, 0.3);
+    --slick-editor-focus-box-shadow: var(--input-focus-box-shadow);
     --slick-multiselect-input-focus-border-color: #00c840;
     --slick-focus-color: #00c840;
     --slick-input-focus-border-color: #00c840;
     --slick-text-editor-focus-border-color: #00c840;
     --slick-slider-editor-focus-border-color: #00c840;
     --slick-slider-filter-focus-border-color: #00c840;
-    --input-focus-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px rgba(102, 187, 106, 0.3);
-    --slick-input-focus-box-shadow: #{0 0 6px rgba(102, 187, 106, 0.3)};
-    --slick-multiselect-input-focus-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px rgba(102, 187, 106, 0.3);
+    --slick-input-focus-box-shadow: var(--input-focus-box-shadow);
+    --slick-multiselect-input-focus-box-shadow: var(--input-focus-box-shadow);
     --slick-header-filter-row-border-bottom: 1px solid #d0d0d0;
     --slick-container-border-right: 1px solid #ccc;
     --slick-container-border-top: 1px solid #ccc;
@@ -133,7 +133,7 @@
           color: var(--slick-dark-text-color);
         }
       }
-      .search-filter.filled:not(.ms-parent-open) .ms-choice {
+      .search-filter.filled:not(.ms-parent-open) .ms-choice:not(:focus) {
         box-shadow: none;
       }
       .search-filter.filled .input-group-append {
@@ -153,7 +153,7 @@
       --slick-button-primary-bg-color: #66bb6a;
       --slick-filled-filter-border: 1px solid #438446;
       --slick-form-control-focus-border-color: #438446;
-      --slick-form-control-focus-box-shadow: #{0 0 0 2px rgba(#66bb6a, 0.25)};
+      --slick-form-control-focus-box-shadow: var(--input-focus-box-shadow);
       --slick-cell-active-box-shadow: #{inset 0 0 0 1px #aaaaaa};
       --slick-cell-box-shadow: none;
       --slick-checkbox-icon-color: #66bb6a;
@@ -169,7 +169,7 @@
       --slick-container-border-left: 1px solid #505050;
       --slick-container-border-bottom: 1px solid #505050;
       --slick-pane-top-border-top: 1px solid #505050;
-      --slick-input-focus-box-shadow: #{0 0 0 2px rgba(#66bb6a, 0.25)};
+      --slick-input-focus-box-shadow: var(--input-focus-box-shadow);
       --slick-filled-filter-color: #66bb6a;
       --slick-filled-filter-box-shadow: #{inset 0 0 0 1px #47a04b};
       --slick-filled-filter-focus-box-shadow: #{inset 0 0 0 1px #47a04b, 0 0 0 1px rgba(#66bb6a, 0.25)};
@@ -194,7 +194,7 @@
       --ms-checkbox-color: #66bb6a;
       --ms-checkbox-hover-color: #{color.adjust(#49a54e, $lightness: 13%)};
       --ms-choice-focus-border-color: #66bb6a;
-      --ms-choice-focus-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px rgba(102, 187, 106, 0.3);
+      --ms-choice-focus-box-shadow: var(--input-focus-box-shadow);
       --ms-ok-button-text-color: #66bb6a;
       --ms-ok-button-text-hover-color: #{color.adjust(#66bb6a, $lightness: 5%)};
 

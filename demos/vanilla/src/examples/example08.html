@@ -1,81 +1,83 @@
-<h3 class="title is-3">
-  Example 08 - Column Span &amp; Header Grouping
-  <div class="subtitle code-link">
-    <span class="is-size-6">see</span>
-    <a
-      class="is-size-5"
-      target="_blank"
-      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example08.ts"
+<div class="grid8">
+  <h3 class="title is-3">
+    Example 08 - Column Span &amp; Header Grouping
+    <div class="subtitle code-link">
+      <span class="is-size-6">see</span>
+      <a
+        class="is-size-5"
+        target="_blank"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example08.ts"
+      >
+        <span class="mdi mdi-link-variant"></span> code
+      </a>
+    </div>
+  </h3>
+
+  <h4 class="title is-4">
+    Grid 1 <small>(with Header Grouping &amp; ColSpan)</small>
+    <button
+      class="button is-small"
+      onclick.trigger="spreadColspan()"
+      data-test="spread-colspan-button"
+      title="Should we always spread the same visible column count with or without hidden columns?"
     >
-      <span class="mdi mdi-link-variant"></span> code
-    </a>
+      <span>Toggle Spreading of ColSpan with/without Hidden Columns</span>
+    </button>
+  </h4>
+  <div class="grid1"></div>
+
+  <div class="title is-4 mb-3 mt-4">
+    Grid 2
+    <small>(with Header Grouping &amp; Frozen/Pinned Columns)</small>
   </div>
-</h3>
 
-<h4 class="title is-4">
-  Grid 1 <small>(with Header Grouping &amp; ColSpan)</small>
-  <button
-    class="button is-small"
-    onclick.trigger="spreadColspan()"
-    data-test="spread-colspan-button"
-    title="Should we always spread the same visible column count with or without hidden columns?"
-  >
-    <span>Toggle Spreading of ColSpan with/without Hidden Columns</span>
-  </button>
-</h4>
-<div class="grid1"></div>
+  <div class="column pt-1 px-1">
+    <div class="form-inline flex-container">
+      <div>
+        <label class="my-1 mr-2" for="columnSelect">Single Search:</label>
+        <select
+          id="columnSelect"
+          class="select is-small selected-column"
+          data-test="search-column-list"
+          onchange.trigger="selectedColumnChanged(event.target.value)"
+        ></select>
+      </div>
+      <div>
+        <select
+          class="select is-small selected-operator"
+          data-test="search-operator-list"
+          onchange.trigger="selectedOperatorChanged(event.target.value)"
+        ></select>
+      </div>
 
-<div class="title is-4 mb-3 mt-4">
-  Grid 2
-  <small>(with Header Grouping &amp; Frozen/Pinned Columns)</small>
-</div>
-
-<div class="column pt-1 px-1">
-  <div class="form-inline flex-container">
-    <div>
-      <label class="my-1 mr-2" for="columnSelect">Single Search:</label>
-      <select
-        id="columnSelect"
-        class="select is-small selected-column"
-        data-test="search-column-list"
-        onchange.trigger="selectedColumnChanged(event.target.value)"
-      ></select>
-    </div>
-    <div>
-      <select
-        class="select is-small selected-operator"
-        data-test="search-operator-list"
-        onchange.trigger="selectedOperatorChanged(event.target.value)"
-      ></select>
-    </div>
-
-    <div class="field has-addons">
-      <p class="control">
-        <input
-          type="text"
-          class="input search is-small"
-          data-test="search-value-input"
-          onkeyup.trigger="searchValueChanged(event.target.value)"
-        />
-      </p>
-      <p class="control pointer" onclick.trigger="cleargrid2SearchInput()" data-test="clear-search-input">
-        <a class="button is-static is-small">
-          <span class="mdi mdi-close-thick"></span>
-        </a>
-      </p>
-    </div>
-    <div>&nbsp;&nbsp;</div>
-    <div class="pl-2">
-      <button class="button is-small" onclick.trigger="setFrozenColumns2(-1)" data-test="remove-frozen-column-button">
-        <span class="mdi mdi-close"></span>
-        <span>Remove Frozen Columns</span>
-      </button>
-      <button class="button is-small" onclick.trigger="setFrozenColumns2(2)" data-test="set-3frozen-columns">
-        <span class="mdi mdi-pin-outline"></span>
-        <span>Set 3 Frozen Columns</span>
-      </button>
+      <div class="field has-addons">
+        <p class="control">
+          <input
+            type="text"
+            class="input search is-small"
+            data-test="search-value-input"
+            onkeyup.trigger="searchValueChanged(event.target.value)"
+          />
+        </p>
+        <p class="control pointer" onclick.trigger="cleargrid2SearchInput()" data-test="clear-search-input">
+          <a class="button is-static is-small">
+            <span class="mdi mdi-close-thick"></span>
+          </a>
+        </p>
+      </div>
+      <div>&nbsp;&nbsp;</div>
+      <div class="pl-2">
+        <button class="button is-small" onclick.trigger="setFrozenColumns2(-1)" data-test="remove-frozen-column-button">
+          <span class="mdi mdi-close"></span>
+          <span>Remove Frozen Columns</span>
+        </button>
+        <button class="button is-small" onclick.trigger="setFrozenColumns2(2)" data-test="set-3frozen-columns">
+          <span class="mdi mdi-pin-outline"></span>
+          <span>Set 3 Frozen Columns</span>
+        </button>
+      </div>
     </div>
   </div>
-</div>
 
-<div class="grid2"></div>
+  <div class="grid2"></div>
+</div>

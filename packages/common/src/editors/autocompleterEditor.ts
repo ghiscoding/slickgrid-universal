@@ -44,6 +44,8 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
   protected _lastInputKeyEvent?: KeyboardEvent;
   protected _lastTriggeredByClearInput = false;
   protected _locales: Locale;
+  protected _timer1?: any;
+  protected _timer2?: any;
 
   /** The Editor DOM element */
   protected _editorInputGroupElm!: HTMLDivElement;
@@ -183,6 +185,8 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
   }
 
   destroy(): void {
+    clearTimeout(this._timer1);
+    clearTimeout(this._timer2);
     this._bindEventService.unbindAll();
     if (typeof this._instance?.destroy === 'function') {
       this._instance.destroy();
@@ -519,7 +523,8 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
         this.editorOptions.onSelectItem(item, row, cell, this.args.column, this.args.item);
       }
 
-      setTimeout(() => (this._lastTriggeredByClearInput = false)); // reset flag after a cycle
+      clearTimeout(this._timer1);
+      this._timer1 = setTimeout(() => (this._lastTriggeredByClearInput = false)); // reset flag after a cycle
     }
     return false;
   }
@@ -712,7 +717,8 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     this.columnEditor.onInstantiated?.(this._instance);
 
     if (!this.args.isCompositeEditor) {
-      setTimeout(() => this.focus(), 50);
+      clearTimeout(this._timer2);
+      this._timer2 = setTimeout(() => this.focus(), 50);
     }
   }
 }

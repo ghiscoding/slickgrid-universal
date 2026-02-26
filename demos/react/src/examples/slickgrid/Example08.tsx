@@ -2,7 +2,7 @@ import i18next from 'i18next';
 import React, { useEffect, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 import { Formatters, SlickgridReact, type Column, type GridOption } from 'slickgrid-react';
-import './example8.scss'; // provide custom CSS/SASS styling
+import './example08.scss'; // provide custom CSS/SASS styling
 
 const Example8: React.FC = () => {
   const defaultLang = 'en';
@@ -171,7 +171,7 @@ const Example8: React.FC = () => {
   }
 
   return !gridOptions ? null : (
-    <div id="demo-container" className="container-fluid">
+    <div id="demo-container" className="container-fluid grid8">
       <h2>
         Example 8: Header Menu Plugin
         <span className="float-end font18">

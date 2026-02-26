@@ -21,17 +21,17 @@ const gridUid = 'slickgrid_124343';
 const containerId = 'demo-container';
 
 const excelExportServiceStub = {
-  className: 'ExcelExportService',
+  pluginName: 'ExcelExportService',
   exportToExcel: vi.fn(),
 } as unknown as ExcelExportService;
 
 const pdfExportServiceStub = {
-  className: 'PdfExportService',
+  pluginName: 'PdfExportService',
   exportToPdf: vi.fn(),
 } as unknown as PdfExportService;
 
 const textExportServiceStub = {
-  className: 'TextExportService',
+  pluginName: 'TextExportService',
   exportToFile: vi.fn(),
 } as unknown as TextExportService;
 
@@ -80,6 +80,8 @@ const gridStub = {
   onClick: new SlickEvent(),
   onColumnsReordered: new SlickEvent(),
   onSetOptions: new SlickEvent(),
+  focusHeaderMenuOrColumn: vi.fn(),
+  focusHeaderRowFilter: vi.fn(),
 } as unknown as SlickGrid;
 
 // define a <div> container to simulate the grid container
@@ -1071,6 +1073,183 @@ describe('GridMenuControl', () => {
 
         expect(deleteSpy).toHaveBeenCalled();
         expect(initSpy).toHaveBeenCalled();
+      });
+
+      // --- Keyboard Navigation Accessibility Tests ---
+      describe('keyboard navigation (a11y)', () => {
+        beforeEach(() => {
+          // minimal menu setup
+          gridOptionsMock.gridMenu!.commandItems = [
+            { command: 'help', title: 'Help', action: vi.fn() },
+            { command: 'about', title: 'About', action: vi.fn() },
+          ];
+          control.columns = columnsMock;
+          control.init();
+
+          const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLButtonElement;
+          buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true }));
+        });
+
+        afterEach(() => {
+          control.hideMenu(new Event('click', { bubbles: true, cancelable: true }) as any);
+        });
+
+        function getFirstMenuItem() {
+          return control.menuElement?.querySelector('.slick-menu-item[tabindex]') as HTMLElement;
+        }
+
+        function dispatchKey(key: string) {
+          const menuElm = control.menuElement as HTMLElement;
+          const event = new KeyboardEvent('keydown', { key, bubbles: true });
+          menuElm.dispatchEvent(event);
+        }
+
+        it('should trigger onActivate handler (Enter key) and call menu item action', () => {
+          const firstItem = getFirstMenuItem();
+          expect(firstItem).toBeTruthy();
+          firstItem.focus();
+          // Cast to object to avoid type error if commandItems contains 'divider'
+          const cmd = gridOptionsMock.gridMenu!.commandItems?.[0];
+          const actionSpy = typeof cmd === 'object' && cmd !== null ? (cmd as any).action : undefined;
+          dispatchKey('Enter');
+
+          expect(actionSpy).toHaveBeenCalled();
+        });
+
+        it('should trigger onEscape handler (Escape key) and close the menu', () => {
+          const firstItem = getFirstMenuItem();
+          expect(firstItem).toBeTruthy();
+          firstItem.focus();
+          dispatchKey('Escape');
+
+          // menu should be removed from DOM
+          expect(document.body.contains(control.menuElement!)).toBe(false);
+        });
+
+        it('should trigger onTab handler (Tab key) and prevent event bubbling', () => {
+          const firstItem = getFirstMenuItem();
+          expect(firstItem).toBeTruthy();
+          firstItem.focus();
+          // Spy on stopFullBubbling
+          const stopBubblingSpy = vi.spyOn(control as any, 'stopFullBubbling');
+          dispatchKey('Tab');
+
+          expect(stopBubblingSpy).toHaveBeenCalled();
+        });
+
+        it('should focus and activate a column picker item (cover focus and iconContainer.click)', () => {
+          // Close menu and reset DOM
+          control.hideMenu(new Event('click', { bubbles: true, cancelable: true }) as any);
+          document.body.innerHTML = template;
+          // Setup with at least one column picker item
+          gridOptionsMock.gridMenu!.commandItems = [{ command: 'help', title: 'Help', action: vi.fn() }];
+          control.columns = columnsMock;
+
+          // Open the menu
+          control.init();
+          const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLButtonElement | HTMLDivElement;
+          buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true }));
+
+          // Find the real column picker item and its icon container
+          const colPickerLi = control.menuElement?.querySelector('.slick-column-picker-list li[tabindex]') as HTMLElement;
+          expect(colPickerLi).toBeTruthy();
+          const iconContainer = colPickerLi.querySelector('.icon-checkbox-container') as HTMLElement;
+          expect(iconContainer).toBeTruthy();
+          const clickSpy = vi.spyOn(iconContainer, 'click');
+
+          // Focus the column picker item and dispatch Enter
+          colPickerLi.focus();
+          const menuElm = control.menuElement as HTMLElement;
+          const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true });
+          menuElm.dispatchEvent(event);
+          expect(clickSpy).toHaveBeenCalled();
+        });
+
+        it('should cover focus logic by mocking getAllFocusableMenuItems and spying on mock focus', () => {
+          // Arrange: create a mock element with a focus spy
+          const mockEl = document.createElement('div');
+          mockEl.tabIndex = 0;
+          const focusSpy = vi.spyOn(mockEl, 'focus');
+          // Mock getAllFocusableMenuItems to return our mock element
+          const getAllFocusableMenuItemsSpy = vi.spyOn(control as any, 'getAllFocusableMenuItems').mockReturnValue([mockEl]);
+
+          // Create a button to use as the event target
+          const button = document.createElement('button');
+          button.className = 'slick-grid-menu-button';
+          document.body.appendChild(button);
+          // Create a MouseEvent with the button as target
+          const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true });
+          Object.defineProperty(clickEvent, 'target', { writable: false, configurable: true, value: button });
+
+          // Act: open the menu (should call focus on our mock)
+          control.showGridMenu(clickEvent);
+
+          // Assert: focus was called
+          expect(getAllFocusableMenuItemsSpy).toHaveBeenCalled();
+          expect(focusSpy).toHaveBeenCalled();
+          // Clean up
+          button.remove();
+        });
+
+        it('should call showGridMenu() when Enter key is pressed on menu container', () => {
+          // Arrange
+          const showGridMenuSpy = vi.spyOn(control, 'showGridMenu');
+          const menuContainerElm = document.querySelector('.slick-grid-menu-container') as HTMLElement;
+          // Act: dispatch Enter key on the menu container
+          const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true });
+          menuContainerElm.dispatchEvent(event);
+          // Assert
+          expect(showGridMenuSpy).toHaveBeenCalled();
+        });
+
+        it('should call focusHeaderMenuOrColumn on Shift+Tab', () => {
+          // Arrange: mock getAllFocusableMenuItems to return empty (simulate no focusable items)
+          const getAllFocusableMenuItemsSpy = vi.spyOn(control as any, 'getAllFocusableMenuItems').mockReturnValue([]);
+          const focusHeaderMenuOrColumnSpy = vi.spyOn(control.grid, 'focusHeaderMenuOrColumn');
+          const getVisibleColumnsSpy = vi.spyOn(control, 'getVisibleColumns').mockReturnValue([{}, {}, {}] as Column[]);
+
+          // Create a button to use as the event target
+          const button = document.createElement('button');
+          button.className = 'slick-grid-menu-button';
+          document.body.appendChild(button);
+          const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true });
+          Object.defineProperty(clickEvent, 'target', { writable: false, configurable: true, value: button });
+          control.showGridMenu(clickEvent);
+
+          const menuContainerElm = document.querySelector('.slick-grid-menu-container') as HTMLElement;
+          const event = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, shiftKey: true });
+          menuContainerElm.dispatchEvent(event);
+
+          // Assert
+          expect(getAllFocusableMenuItemsSpy).toHaveBeenCalled();
+          expect(focusHeaderMenuOrColumnSpy).toHaveBeenCalledWith(2); // 3 columns, index 2
+          getVisibleColumnsSpy.mockRestore();
+          button.remove();
+        });
+
+        it('should call focusHeaderRowFilter on Tab', () => {
+          // Arrange: mock getAllFocusableMenuItems to return empty (simulate no focusable items)
+          const getAllFocusableMenuItemsSpy = vi.spyOn(control as any, 'getAllFocusableMenuItems').mockReturnValue([]);
+          const focusHeaderRowFilterSpy = vi.spyOn(control.grid, 'focusHeaderRowFilter');
+
+          // Create a button to use as the event target
+          const button = document.createElement('button');
+          button.className = 'slick-grid-menu-button';
+          document.body.appendChild(button);
+          const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true });
+          Object.defineProperty(clickEvent, 'target', { writable: false, configurable: true, value: button });
+          control.showGridMenu(clickEvent);
+
+          // Use real dispatchEvent only
+          const menuContainerElm = document.querySelector('.slick-grid-menu-container') as HTMLElement;
+          const event = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true });
+          menuContainerElm.dispatchEvent(event);
+
+          // Assert
+          expect(getAllFocusableMenuItemsSpy).toHaveBeenCalled();
+          expect(focusHeaderRowFilterSpy).toHaveBeenCalled();
+          button.remove();
+        });
       });
 
       describe('with sub-menus', () => {

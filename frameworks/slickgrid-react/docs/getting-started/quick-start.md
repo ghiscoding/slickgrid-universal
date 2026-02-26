@@ -28,8 +28,6 @@ Load the default Bootstrap theme style and/or customize it to your taste (custom
 #### CSS
 Default compiled `css`.
 
-**Note:** If you are also using `Bootstrap-SASS`, then there is no need to include the `bootstrap.css` in the `styles: []` section.
-
 ```tsx
 // Bootstrap is optional, you can use any other framework
 import 'bootstrap/dist/css/bootstrap.min.css';

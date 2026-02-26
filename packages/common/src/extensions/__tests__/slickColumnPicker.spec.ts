@@ -28,6 +28,7 @@ const gridStub = {
   updateColumnById: vi.fn(),
   updateColumns: vi.fn(),
   validateColumnFreeze: vi.fn(),
+  focus: vi.fn(),
   onClick: new SlickEvent(),
   onColumnsReordered: new SlickEvent(),
   onHeaderContextMenu: new SlickEvent(),
@@ -546,6 +547,65 @@ describe('ColumnPickerControl', () => {
         expect(control.getVisibleColumns()).toEqual(expectedColumnMocks);
         expect(control.columns).toEqual(expectedColumnMocks);
         expect(col4).toBeTruthy();
+      });
+
+      it('should trigger click on icon-checkbox-container when Enter key is pressed on focused menu item (onActivate)', () => {
+        control.columns = columnsMock;
+        gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData as any, gridStub);
+        const menuElm = control.menuElement!;
+        // Find a real menu item with icon-checkbox-container
+        const li = menuElm.querySelector('.slick-column-picker-list li:not(.hidden)') as HTMLElement;
+        const iconDiv = li?.querySelector('.icon-checkbox-container') as HTMLElement;
+        const clickSpy = iconDiv ? vi.spyOn(iconDiv, 'click') : undefined;
+        // Focus the menu item
+        li.tabIndex = 0;
+        li.focus();
+        expect(document.activeElement).toBe(li);
+        // Dispatch Enter keydown on the menu container
+        const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true });
+        menuElm.dispatchEvent(event);
+        if (clickSpy) {
+          expect(clickSpy).toHaveBeenCalled();
+        } else {
+          throw new Error('icon-checkbox-container not found in menu item');
+        }
+      });
+
+      it('should dispose menu and focus grid when Escape key is pressed (onEscape)', () => {
+        control.columns = columnsMock;
+        gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData as any, gridStub);
+        expect(control.menuElement).toBeTruthy();
+        const disposeSpy = vi.spyOn(control, 'disposeMenu');
+        // Focus a menu item so keyboard nav will work
+        const menuElm = control.menuElement!;
+        const li = menuElm.querySelector('.slick-column-picker-list li:not(.hidden)') as HTMLElement;
+        li.tabIndex = 0;
+        li.focus();
+        expect(document.activeElement).toBe(li);
+        // Dispatch Escape keydown on the menu container
+        const event = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true });
+        menuElm.dispatchEvent(event);
+        expect(disposeSpy).toHaveBeenCalled();
+        expect(gridStub.focus).toHaveBeenCalled();
+      });
+
+      it('should prevent default and stop propagation when Tab key is pressed (onTab)', () => {
+        control.columns = columnsMock;
+        gridStub.onHeaderContextMenu.notify({ column: columnsMock[1], grid: gridStub }, eventData as any, gridStub);
+        const menuElm = control.menuElement!;
+        const li = menuElm.querySelector('.slick-column-picker-list li:not(.hidden)') as HTMLElement;
+        li.tabIndex = 0;
+        li.focus();
+        expect(document.activeElement).toBe(li);
+        const preventDefault = vi.fn();
+        const stopPropagation = vi.fn();
+        // Patch the event prototype to spy on preventDefault/stopPropagation
+        const event = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true });
+        Object.defineProperty(event, 'preventDefault', { value: preventDefault });
+        Object.defineProperty(event, 'stopPropagation', { value: stopPropagation });
+        menuElm.dispatchEvent(event);
+        expect(preventDefault).toHaveBeenCalled();
+        expect(stopPropagation).toHaveBeenCalled();
       });
     });
   });

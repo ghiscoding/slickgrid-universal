@@ -21,7 +21,7 @@ describe('Example 7 - Header Button Plugin', () => {
 
   describe('Grid 1', () => {
     it('should display Example title', () => {
-      cy.visit(`${Cypress.config('baseUrl')}/example7`);
+      cy.visit(`${Cypress.config('baseUrl')}/example07`);
       cy.get('h2').should('contain', 'Example 7: Header Button Plugin');
     });
 
@@ -36,12 +36,12 @@ describe('Example 7 - Header Button Plugin', () => {
 
       cy.get('#grid7-1 .slick-header-columns')
         .children('.slick-header-column:nth(2)')
-        .find('.slick-header-button.mdi-lightbulb-outline.text-warning.faded')
+        .find('.slick-header-button .mdi-lightbulb-outline.text-warning.faded')
         .click();
 
       cy.get('#grid7-1 .slick-header-columns')
         .children('.slick-header-column:nth(2)')
-        .find('.slick-header-button.mdi-lightbulb-outline.text-warning.faded')
+        .find('.slick-header-button .mdi-lightbulb-outline.text-warning.faded')
         .should('not.exist'); // shouldn't be faded anymore
 
       cy.window().then((win) => {
@@ -85,13 +85,13 @@ describe('Example 7 - Header Button Plugin', () => {
 
       cy.get('#grid7-1 .slick-header-columns')
         .children('.slick-header-column:nth(9)')
-        .find('.slick-header-button.slick-header-button-disabled.mdi-lightbulb-outline.text-warning.faded')
+        .find('.slick-header-button.slick-header-button-disabled .mdi-lightbulb-outline.text-warning.faded')
         .should('exist')
         .click();
 
       cy.get('#grid7-1 .slick-header-columns')
         .children('.slick-header-column:nth(9)')
-        .find('.slick-header-button.slick-header-button-disabled.mdi-lightbulb-outline.text-warning.faded')
+        .find('.slick-header-button.slick-header-button-disabled .mdi-lightbulb-outline.text-warning.faded')
         .should('exist'); // should still be faded after previous click
 
       cy.get('#grid7-1 .slick-row').each(($row, index) => {
@@ -181,12 +181,12 @@ describe('Example 7 - Header Button Plugin', () => {
 
       cy.get('#grid7-2 .slick-header-columns')
         .children('.slick-header-column:nth(2)')
-        .find('.slick-header-button.mdi-lightbulb-outline.text-warning.faded')
+        .find('.slick-header-button .mdi-lightbulb-outline.text-warning.faded')
         .click({ force: true });
 
       cy.get('#grid7-2 .slick-header-columns')
         .children('.slick-header-column:nth(2)')
-        .find('.slick-header-button.mdi-lightbulb-outline.text-warning.faded')
+        .find('.slick-header-button .mdi-lightbulb-outline.text-warning.faded')
         .should('not.exist'); // shouldn't be faded anymore
 
       cy.window().then((win) => {
@@ -230,13 +230,13 @@ describe('Example 7 - Header Button Plugin', () => {
 
       cy.get('#grid7-2 .slick-header-columns')
         .children('.slick-header-column:nth(9)')
-        .find('.slick-header-button.slick-header-button-disabled.mdi-lightbulb-outline.text-warning.faded')
+        .find('.slick-header-button.slick-header-button-disabled .mdi-lightbulb-outline.text-warning.faded')
         .should('exist')
         .click({ force: true });
 
       cy.get('#grid7-2 .slick-header-columns')
         .children('.slick-header-column:nth(9)')
-        .find('.slick-header-button.slick-header-button-disabled.mdi-lightbulb-outline.text-warning.faded')
+        .find('.slick-header-button.slick-header-button-disabled .mdi-lightbulb-outline.text-warning.faded')
         .should('exist'); // should still be faded after previous click
 
       cy.get('#grid7-2 .slick-row').each(($row, index) => {

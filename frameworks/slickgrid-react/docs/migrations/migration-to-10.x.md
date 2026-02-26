@@ -2,9 +2,12 @@
 
 One of the biggest change of this release is to hide columns by using the `hidden` column property (used by Column Picker, Grid Menu, etc...). Previously we were removing columns from the original columns array and then we were typically calling `setColumns()` to update the grid, but this meant that we had to keep references for all visible and non-visible columns. With this new release we now keep the full columns array at all time and instead we just change column(s) visibility via their `hidden` column properties by using `grid.updateColumnById('id', { hidden: true })` and finally we update the grid via `grid.updateColumns()`. Also, what I'm trying to emphasis is that you should really stop using `grid.setColumns()` in v10+, and if you want to hide some columns when declaring the columns, then just update their `hidden` properties, see more details below...
 
+This new release also brings significant improvements to accessibility (a11y), making grids more usable for keyboard and screen reader users out of the box. For example, you can now use Tab/Shift+Tab to focus the Header Menu or Grid Menu, and then navigate menu commands with the arrow keys, making keyboard navigation much more intuitive and accessible.
+
 #### Major Changes - Quick Summary
 - [`hidden` columns](#hidden-columns)
 - [Row Detail (now optional)](#row-detail-now-optional)
+- improvements to accessibility (see above)
 - [What's next?](#whats-next-...version-11)
 
 > **Note:** if you come from an earlier version, please make sure to follow each migrations in their respective order (review previous migration guides)
@@ -15,7 +18,9 @@ One of the biggest change of this release is to hide columns by using the `hidde
 
 _if you're not dynamically hiding columns and you're not using `colspan` or `rowspan` then you won't be impacted by this change._
 
-For years, I had to keep some references in a Shared Service via `shared.allColumns` and `shared.visibleColumns`, mostly for translating locales which was mostly being used by Column Picker and Grid Menu to keep track of which columns to hide/show and in which order they were; then later we called `grid.setColumns()` to update the columns in the grid... but that had side effects since SlickGrid never kept the entire column definitions list (until now). However with v10, we simply start using `hidden` property on the column(s) to hide/show some of them, then we are now able to keep the full columns reference at all time. We can translate them more easily and we no longer need to use `grid.setColumns()`, what we'll do instead is to start using `grid.updateColumnById('colId', { hidden: true })`. If you want to get visible columns, you can now just call `grid.getVisibleColumns()` which behind the scene is simply filtering `columns.filter(c => !c.hidden)`. This new approach does also have new side effects for colspan/rowspan, because previously if we were to hide a column then previously the column to the right was taking over the spanning, however with the new approach, if we hide a column then its spanning will now disappear with it (so I had to make code changes to handle that too)... If you want more details, you can see full explanations of the complete change in the [PR #2281](https://github.com/ghiscoding/slickgrid-universal/pull/2281)
+For years, I had to keep some references in a Shared Service via `shared.allColumns` and `shared.visibleColumns`, mostly for translating locales which was mostly being used by Column Picker and Grid Menu to keep track of which columns to hide/show and in which order they were; then later we called `grid.setColumns()` to update the columns in the grid... but that had side effects since SlickGrid never kept the entire column definitions list (until now). However with v10, we simply start using `hidden` property on the column(s) to hide/show some of them, then we are now able to keep the full columns reference at all time. We can translate them more easily and we no longer need to use `grid.setColumns()`, what we'll do instead is to start using `grid.updateColumnById('colId', { hidden: true })`. If you want to get visible columns, you can now just call `grid.getVisibleColumns()` which behind the scene is simply filtering `columns.filter(c => !c.hidden)`. This new approach does also have new side effects for colspan/rowspan, because previously if we were to hide a column then the column to the right was taking over the spanning, however with the new approach, if we hide a column then its spanning will now disappear with it (so I had to make code changes to handle that too)... If you want more details, you can see full explanations of all changes in the [PR #2281](https://github.com/ghiscoding/slickgrid-universal/pull/2281)
+
+**Summary Note** `grid.getColumns()` now includes hidden columns — code that assumed only visible columns will need updates by filtering with `!col.hidden` or simply switch to `grid.getVisibleColumns()` (see below).
 
 ##### New Approach with column `hidden` property
 
@@ -30,11 +35,11 @@ For years, I had to keep some references in a Shared Service via `shared.allColu
 _following changes should be transparent to most users, I'm just listing them in case of side effects._
 
 1. Reimplementing `SlickCompositeEditorComponent` modal and migrating from a `<div>` to a `<dialog>` which is native code, it has better accessibility (aria) support and a baseline support showing as "widely available". A fallback to `<div>` is also available in case `<dialog>` doens't work for everybody (e.g. it doesn't work in Salesforce LWC, hence the available fallback)
-2. Reimplementing Grid Menu to use CSS flexbox instead of using `calc(100% - 18px)` which wasn't ideal, neither customizable, but the new approach is to simply use CSS flexbox which is a much better approach to properly align everything.
+2. Reimplementing Grid Menu to use CSS flexbox instead of using `calc(100% - 18px)` to position the button which wasn't ideal, neither customizable, but the new approach is to simply use CSS flexbox which is a much better approach to properly align everything.
 
 ### Row Detail (now optional)
 
-Since I don't think that Row Detail is being used by everyone, I'm making it an optional plugin (package). This should help decrease build size quite a bit for users who never use it. If however you are one of them using it, then you now need to manually add it as an external resource.
+I don't think that Row Detail is being used by everyone, so I decided to make it an optional plugin (package). This should help decrease build size quite a bit for users who don't require it. If however you are one of them using it, then you now have to register it as an external resource.
 
 ```diff
 + import { ReactRowDetailView } from '@slickgrid-universal/react-row-detail-plugin';
@@ -67,7 +72,7 @@ _following changes should be transparent to most users_
 2. drop both `SlickCellSelectionModel`/`SlickRowSelectionModel` and keep only `SlickHybridSelectionModel`
 3. drop both `enableHybridSelection`/`enableRowSelection` merge them into a new `enableSelection` grid option
 
-`SlickHybridSelectionModel` was previously introduced in order to merge and allow using both Cell/Row Selections separately and/or in combo on the same grid. It was introduced in v9.x to test it out and after testing it for a few months, it's now safe to drop the older `SlickCellSelectionModel` / `SlickRowSelectionModel` models and keep only the hybrid model. Also, since we now have the Hybrid model and it's now accepting options for different selection models, I think it's better to rename `rowSelectionOptions` to `selectionOptions` since it now makes more sense with the hybrid approach.
+`SlickHybridSelectionModel` was previously introduced in order to merge and allow using both Cell/Row Selections separately and/or in combo on the same grid. It was introduced in v9.x to test it out and after testing it for a few months, it's now safe to drop the older `SlickCellSelectionModel` / `SlickRowSelectionModel` models and keep only the hybrid model (for smaller build & less code to maintain). Also, since we now have the Hybrid model and it's now accepting options for different selection models, I think it's better to rename `rowSelectionOptions` to `selectionOptions` since it now makes more sense with the hybrid approach and you will need to update your code when using Row Selection, see below:
 
 ```diff
 gridOptions = {
@@ -85,43 +90,66 @@ gridOptions = {
 };
 ```
 
-### Auto-Enable External Resources
+## New Features
 
-This change does not require any code update from the end user, but it is a change that you should probably be aware of nonetheless. The reason I decided to implement this is because I often forget myself to enable the associated flag and typically if you wanted to load the resource, then it's most probably because you also want it enabled. So for example, if your register `ExcelExportService` then the library will now auto-enable the resource with its associated flag (which in this case is `enableExcelExport:true`)... unless you already disabled the flag (or enabled) yourself, if so then the internal assignment will simply be skipped and yours will prevail. Also just to be clear, the list of auto-enabled external resources is rather small, it will auto-enable the following resources:
-(ExcelExportService, PdfExportService, TextExportService, CompositeEditorComponent and RowDetailView).
+### Auto-Enabled External Resources
 
-### Menu with Commands
+This change does not require any code change from the end user, but it is nonetheless a change to be aware of. The reason I decided to implement this, is that I often forget to enable the resource associated flag and typically if you load the resource then you probably want to use it, hence auto-enabling the resource seems to make sense. For example, if your register `ExcelExportService` then the library will now auto-enable the resource with its associated flag (which in this case is `enableExcelExport:true`)... unless you have already enabled/disabled the flag yourself, then in that case the internal assignment will simply be skipped and yours will prevail. Also just to be clear, the list of auto-enabled external resources is rather small, it will auto-enable the following resources:
 
-All menu plugins (Cell Menu, Context Menu, Header Menu and Grid Menu) now have a new `commandListBuilder: (items) => items` which now allow you to filter/sort and maybe override built-in commands. With this new feature in place, I'm deprecating all `hide...` properties and also `positionOrder` since you can now do that with the builder. You could also use the `hideCommands` which accepts an array of built-in command names. This will remove a large amount of `hide...` properties (about 30) that keeps increasing anytime a new built-in command gets added (in other words, this will simplify maintenance for both you and me).
+- ExcelExportService → `enableExcelExport: true`
+- PdfExportService → `enablePdfExport: true`
+- TextExportService → `enableTextExport: true`
+- CompositeEditorComponent → `enableCompositeEditor: true`
+- RowDetailView → `enableRowDetailView: true`
 
-These are currently just deprecations in v10.x but it's strongly recommended to start using the new `commandListBuilder` and/or `hideCommands` and move away from the deprecated properties which will be removed in v11.x (next year). For example if we want to hide some built-in commands:
+### Menu with Commands (slot renderer)
+
+All menu plugins (Cell Menu, Context Menu, Header Menu and Grid Menu) now have a new `commandListBuilder: (items) => items` which is now allowing you to filter/sort and maybe override built-in commands UI. With this new feature in place, I'm deprecating all `hide...` properties and also `positionOrder` since you can now do that with the builder. You could also use a new `hideCommands` which accepts an array of built-in command names. This will remove a large amount of `hide...` properties (about 30) that keeps increasing anytime a new built-in command gets added (in other words, this will simplify maintenance for both you and me).
+
+These are currently just deprecations in v10.x but it's strongly recommended to start using the new `commandListBuilder` and/or `hideCommands` to move away from the deprecated properties which will be removed in v11.x (next year). For example if we want to hide some built-in commands:
 
 ```diff
 gridOptions = {
   gridMenu: {
+    // @deprecated properties
 -   hideExportCsvCommand: true,
 -   hideTogglePreHeaderCommand: true,
 
-// via command name(s)
+    // hide via command name(s)
 +   hideCommands: ['export-csv', 'toggle-preheader'],
 
-// or via builder
-+   commandListBuilder: (cmdItems) => [...cmdItems.filter(x => x !== 'divider' && x.command !== 'export-csv' && x.command !== 'toggle-preheader')]
+    // or hide via builder
++   commandListBuilder: (cmdItems) => cmdItems.filter(x => x !== 'divider' && x.command !== 'export-csv' && x.command !== 'toggle-preheader')
   }
 }
 ```
 
-There's also a new Renderer similar to Slots but implemented with native code so that it works the same way in all frameworks. The usage is actually very similar to how you would use a cell Formatter. You can see a new [Example 51](https://ghiscoding.github.io/slickgrid-react-demos/#/example51) demoing this new feature and the command builder mentioned above.
+There's also a new Renderer similar to Slots but implemented with native code to make it cross-platform compatible. The usage is actually very similar to how you would use a cell Formatter. You can see a new [Example 51](https://ghiscoding.github.io/slickgrid-react-demos/#/example51) demoing this new feature and also the command builder mentioned above.
+
+### Tooltips Outside the Grid
+
+You can now use the custom tooltip plugin to display tooltips on elements outside the grid (e.g., buttons, dialogs, etc.) by enabling the `observeAllTooltips` option. This allows the plugin to observe elements anywhere in your page that have `title` or `data-slick-tooltip` attributes. See Custom Tooltip [documentation](../grid-functionalities/custom-tooltip.md)
+
+#### Enable Global Tooltip Observation
+```ts
+this.gridOptions = {
+  externalResources: [new SlickCustomTooltip()],
+  customTooltip: {
+    observeAllTooltips: true, // enable tooltip observation outside the grid
+    // observeTooltipContainer: 'body', // <-- you can also define where to observe (defaults to `body`)
+  },
+};
+```
 
 ---
 
 {% hint style="note" %}
-**Info** the changes in the next few lines were all mentioned in the previous ["Migration Guide v9.0"](migration-to-9.x). So, if you have already made these changes then you could skip the section below **but** scroll down further to read the last section ["What's next? v11?"](#whats-next-...version-11).
+**Info** the changes in the next few lines were all mentioned in the previous ["Migration Guide v9.0"](migration-to-9.x). So, if you have already made these changes then you could skip the section below **but** scroll down further to read the last section ["What's next? ...version 11?"](#whats-next-...version-11).
 {% endhint %}
 
 ### Interfaces / Enums changes
 
-Removing most Enums and replacing them with string literal types (`type` instead of `enum` because again `type` aren't transpiled and `enum` are). Making this change will help decrease the build size by transpiling a lot less code.
+Removing most Enums and replacing them with string literal types (use `type` instead of `enum` because again `type` aren't transpiled and `enum` are). Making this change will help decrease the build size by transpiling a lot less code.
 
 ```diff
 columns = [{
@@ -133,13 +161,13 @@ columns = [{
 
 Below is a list of Enums that you need to replace with their associated string literals. A suggestion is to do a Search on any of these group name prefixes, e.g.: `FieldType.` and replace them all
 
-**Hint** You can use VSCode search & replace, but make sure it's set to Regular Expression pattern
+**Hint** You can use VSCode search & replace, but make sure it's set to Regular Expression search pattern
 
 | Search (regex)             | Replace  |
 | -------------------------- | -------- |
 | `FieldType\.([a-z_]+)(.*)` | `'$1'$2` |
 
-Below is the abbreviated list of Enums to update
+Below is an abbreviated list of Enums to update, make sure to update them all
 
 | Enum Name   | from `enum`         | to string `type`    | Note |
 | ----------- | ------------------- | ------------------- | ---- |
@@ -243,24 +271,42 @@ For example:
 
 ## What's next? ...version 11?
 
-Wait, are you seriously talking about version 11 akready when version 10 actually just shipped? Thats right, I'm already thinking and planning ahead the next major version, which will be in about a year from now. I can already say that the main focus will be around the use of native [CSS anchor positioning](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning) to replace JS code for positioning menus, tooltips, etc... which will help decreasing the build size by using fully native code. CSS anchoring has been around in Chrome for a while but is quite recent in Firefox (147), so for that reason I'm postponing it to next year.
+Wait, are you seriously talking about version 11 when version 10 actually just shipped? Thats right, I'm already thinking ahead and planning the next major version, which will be in about a year from now (2027 Q1). I can already say that the main focus will be around the use of native [CSS anchor positioning](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning) to replace JS code for positioning menus, tooltips, etc... which will help decreasing the build size further by using more native code. CSS anchoring has been around for a while in Chrome, but its addition in Firefox(147) is quite recent, so for that reason I'm postponing its usage to next year. There's also the new [Sanitizer API](https://developer.mozilla.org/en-US/docs/Web/API/Sanitizer) that I'm hoping to see more availability by next year.
 
 ### Code being `@deprecated` (to be removed in the future, 2027-Q1)
 #### You can already start using these new options and props (shown below) in v10.0 and above.
 
 Deprecating `ExtensionName` enum which will be replaced by its string literal type, for example:
 
-**Hint** You can use VSCode search & replace, but make sure it's set to Regular Expression pattern
+**Hint** You can use VSCode search & replace, but make sure it's set to Regular Expression search pattern
 
 | Search (regex)                 | Replace  |
 | ------------------------------ | -------- |
 | `ExtensionName\.([a-z_]+)(.*)` | `'$1'$2` |
 
-Below is the abbreviated list of Enums to update
+Below is an abbreviated list of Enums to update, make sure to update them all
 
-| Enum Name        | from `enum`         | to string `type`    |
-| ---------------- | ------------------- | ------------------- |
-| `ExtensionName`  | `ExtensionName.autoTooltip` | `'autoTooltip'`         |
-|                  | `ExtensionName.draggableGrouping`   | `'draggableGrouping'`          |
-|                  | `ExtensionName.rowDetail`   | `'rowDetail'`          |
+| Enum Name        | from `enum`                 | to string `type`    |
+| ---------------- | --------------------------- | ------------------- |
+| `ExtensionName`  | `ExtensionName.autoTooltip` | `'autoTooltip'`     |
+|                  | `ExtensionName.gridMenu`    | `'gridMenu'`        |
+|                  | `ExtensionName.rowDetail`   | `'rowDetail'`       |
 | ... | ... | ... |
+
+Also as mentioned above in the section [Menu with Commands](#menu-with-commands-slot-renderer), all menu `hide...` flags are being deprecated in favor of the new `hideCommands: [...]`, for example:
+
+```diff
+gridOptions = {
+  gridMenu: {
+    // @deprecated properties
+-   hideExportCsvCommand: true,
+-   hideTogglePreHeaderCommand: true,
+
+    // hide via command name(s)
++   hideCommands: ['export-csv', 'toggle-preheader'],
+
+    // or hide via builder
++   commandListBuilder: (cmdItems) => cmdItems.filter(x => x !== 'divider' && x.command !== 'export-csv' && x.command !== 'toggle-preheader')
+  }
+}
+```

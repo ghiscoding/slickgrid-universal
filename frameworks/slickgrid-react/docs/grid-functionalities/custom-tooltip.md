@@ -13,6 +13,7 @@
 - [How to delay the opening of a tooltip?](#how-to-delay-the-opening-of-a-tooltip)
   - [delay a tooltip with Formatter](#delay-a-tooltip-with-formatter)
   - [delay a Regular Tooltip](#delay-a-regular-tooltip)
+- [Tooltips Outside the Grid](#tooltips-outside-the-grid)
 - `customTooltip` options
    - too many to list, consult the [CustomTooltipOption](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/column.interface.ts) interface for all possible options
 - [UI Sample](#ui-sample)
@@ -41,18 +42,18 @@ const Example: React.FC = () => {
   useEffect(() => defineGrid(), []);
 
   function defineGrid() {
-    const columnDefinitions = [{
+    setColumns([{
         id: "title", name: "Title", field: "title", formatter: titleFormatter,
         customTooltip: {
           formatter: tooltipTaskFormatter,
           // ...
         }
-    }];
+    }]);
 
     // make sure to register the plugin in your grid options
-    const gridOptions = {
+    setOptions({
       externalResources: [new SlickCustomTooltip()],
-    };
+    });
   }
 }
 ```
@@ -72,7 +73,7 @@ const Example: React.FC = () => {
   useEffect(() => defineGrid(), []);
 
   function defineGrid() {
-    const gridOptions = {
+    setOptions({
       externalResources: [new SlickCustomTooltip()],
       customTooltip: {
         formatter: tooltipTaskFormatter,
@@ -80,7 +81,7 @@ const Example: React.FC = () => {
         // optionally skip tooltip on some of the column(s) (like 1st column when using row selection)
         usabilityOverride: (args) => (args.cell !== 0 && args?.column?.id !== 'action'), // disable on 1st and also "action" column
       },
-    };
+    });
   }
 }
 ```
@@ -232,11 +233,11 @@ Both tooltips can be styled independently using the CSS `data-target-id` attribu
 By default the custom tooltip text will be limited, and potentially truncated, to 650 characters in order to keep the tooltip with a size that is not too large. You could change the grid option setting with this
 
 ```ts
-const gridOptions = {
+setOptions({
   customTooltip: {
     tooltipTextMaxLength: 650,
   },
-}
+});
 ```
 
 ### How to delay the opening of a tooltip?
@@ -265,7 +266,7 @@ It is possible to also delay a regular tooltip (when using `useRegularTooltip`) 
 
 ```ts
 // define your custom tooltip in a Column Definition OR Grid Options
-const columnDefinitions = [{
+setColumns([{
   id: 'firstName', field: 'firstName', name: 'First Name',
   customTooltip: {
     // 1- loading formatter
@@ -276,7 +277,7 @@ const columnDefinitions = [{
     asyncPostFormatter: `<span title="show this tooltip title text">cell value</span>`, // this will be read as tooltip
   },
   formatter: `<span title="another tooltip title text">cell value</span>`, // this won't be read as tooltip
-}];
+}]);
 ```
 the previous code could be refactored to have only 1 common formatter that is referenced in both cell `formatter` and tooltip `asyncPostFormatter`
 
@@ -286,7 +287,7 @@ the previous code could be refactored to have only 1 common formatter that is re
 const myFormatter = () => `<span title="show this tooltip title text">cell value</span>`;
 
 // define your custom tooltip in a Column Definition OR Grid Options
-const columnDefinitions = [{
+setColumns([{
   id: 'firstName', field: 'firstName', name: 'First Name',
   customTooltip: {
     // 1- loading formatter
@@ -297,8 +298,61 @@ const columnDefinitions = [{
     asyncPostFormatter: myFormatter
   },
   formatter: myFormatter
-}];
+}]);
 ```
+
+### Tooltips Outside the Grid
+You can use the custom tooltip plugin to display tooltips on elements outside the grid (e.g., menu items, buttons, dialogs, etc.) by enabling the `observeAllTooltips` option. This allows the plugin to observe elements anywhere in your page that have `title` or `data-slick-tooltip` attributes.
+
+#### Enable Global Tooltip Observation
+```ts
+setOptions({
+  externalResources: [new SlickCustomTooltip()],
+  customTooltip: {
+    observeAllTooltips: true, // enable tooltip observation outside the grid
+    formatter: tooltipFormatter,
+  },
+});
+```
+
+#### Observe Specific Container(s)
+If you want to limit tooltip observation to specific container(s), use the `observeTooltipContainer` option:
+
+```ts
+setOptions({
+  externalResources: [new SlickCustomTooltip()],
+  customTooltip: {
+    observeAllTooltips: true,
+    observeTooltipContainer: '.my-tooltip-container', // observe only within this container
+    formatter: tooltipFormatter,
+  },
+});
+```
+
+You can also observe multiple containers by providing a comma-separated string:
+```ts
+setOptions({
+  customTooltip: {
+    observeAllTooltips: true,
+    observeTooltipContainer: '.container1, .container2, #header-menu', // observe multiple containers
+    formatter: tooltipFormatter,
+  },
+});
+```
+
+#### Using Tooltips on External Elements
+
+Once enabled, you can use regular `title` attributes or `data-slick-tooltip` on any element:
+
+```html
+<!-- Using standard title attribute -->
+<button title="Click to save">Save</button>
+
+<!-- Using data-slick-tooltip attribute -->
+<span data-slick-tooltip="Custom tooltip text">Info Icon</span>
+```
+
+The styling and positioning will be consistent with your grid tooltips.
 
 ### UI Sample
 The Export to Excel handles all characters quite well, from Latin, to Unicode and even Unicorn emoji, it all works on all browsers (`Chrome`, `Firefox`, even `IE11`, I don't have access to older versions). Here's a demo

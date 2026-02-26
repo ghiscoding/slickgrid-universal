@@ -1,7 +1,11 @@
 # GitHub Copilot Instructions for slickgrid-universal
 
 ## Repository Overview
-This is a monorepo for SlickGrid Universal containing:
+This is a monorepo for SlickGrid Universal, which serves as a framework for grid functionality across multiple platforms. As a framework, stability and backward compatibility are critical:
+- Avoid breaking changes whenever possible. Instead, use deprecations and overloads to phase out old APIs or behaviors, only removing them after a full deprecation cycle.
+- The framework offers a vast selection of options—ensure that any newly added options do not contradict or interfere with existing ones.
+
+The monorepo contains:
 - Core packages in `packages/` (common, plugins, exports, etc.)
 - Framework wrappers in `frameworks/` (Angular, React, Vue, Aurelia)
 - Demo applications in `demos/` for each framework
@@ -27,6 +31,11 @@ This is a monorepo for SlickGrid Universal containing:
 
 ### Code Formatting & Linting
 - **OXLint** is used for linting TypeScript/JavaScript code
+  - There are three `.oxlintrc.json` files for OXLint:
+    - Root base config: `.oxlintrc.json` at the repo root
+    - Angular Slickgrid override: `frameworks/angular-slickgrid/.oxlintrc.json`
+    - Angular Row Detail Plugin override: `frameworks-plugins/angular-row-detail-plugin/.oxlintrc.json`
+  - Check these files for custom rules or exceptions, especially when working in Angular projects.
 - **Prettier** handles code formatting automatically
 - Code should be formatted before committing
 - Run `pnpm lint:fix` to auto-fix linting issues
@@ -70,7 +79,9 @@ When making changes to demos or documentation:
 - Avoid circular dependencies
 
 ## Code Review Focus
-- Maintain backward compatibility
+- Maintain backward compatibility and framework stability
+- Avoid breaking changes; prefer deprecations and overloads until features are fully phased out
 - Consider impact across all 4 framework implementations
+- Ensure new options/settings do not contradict or overlap with existing ones
 - Verify tests pass and coverage remains high
 - Check that examples work in all framework demos

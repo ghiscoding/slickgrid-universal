@@ -82,6 +82,11 @@
     background: var(--slick-header-column-background-hover, v.$slick-header-column-background-hover);
   }
 
+  .slick-header-column:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--slick-focus-outline-color, v.$slick-focus-outline-color);
+  }
+
   .slick-header-column-active {
     background-color: var(--slick-header-column-background-active, v.$slick-header-column-background-active) !important;
   }
@@ -770,9 +775,9 @@
         cursor: col-resize;
         top: 0;
         height: 100%;
-        width: 7px;
+        width: 6px;
         right: 0;
-        z-index: 1;
+        z-index: 4;
 
         &:hover {
           border-bottom: var(--slick-header-resizable-hover-border-bottom, v.$slick-header-resizable-hover-border-bottom);

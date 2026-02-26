@@ -190,7 +190,7 @@ The `GridService` has CRUD method events which were sometime returning a single 
 ### Code being `@deprecated` (to be removed in the future, 2026-Q1)
 #### You can already start using these new options and props (shown below) in v9.0 and above.
 
-When I created the project, I started using a few TypeScript Enums and I thought that was pretty nice, but little did I know that all of these Enums were ending up in the final transpiled JS bundle which ends up taking extra space (but `type` do not) that we could eventually gain back. So in the next major, I'm planning to remove most of these Enums and replace them with string literal types (`type` instead of `enum` because again `type` aren't transpiled and `enum` are). So you should consider using string types as much, and as soon, as possible in all of your new grids and eventually make the changes in your older grids. At the moment, these are all tagged as deprecations and they will only be dropped in the future (not now, but still, you should consider making these changes sooner rather than later), for example:
+When I created the project, I started using a few TypeScript Enums and I thought that was pretty nice, but little did I know that all of these Enums were ending up in the final transpiled JS bundle which ends up taking extra space (but `type` do not) that we could eventually gain back. So in the next major, I'm planning to remove most of these Enums and replace them with string literal types (use `type` instead of `enum` because again `type` aren't transpiled and `enum` are). So you should consider using string types as much, and as soon, as possible in all of your new grids and eventually make the changes in your older grids. At the moment, these are all tagged as deprecations and they will only be dropped in the future (not now, but still, you should consider making these changes sooner rather than later), for example:
 
 ```diff
 columns = [{
@@ -227,7 +227,7 @@ Below is a list of Enums being deprecated and you should think about migrating t
 |             | `SortDirection.DESC`   | `'DESC'` or `'desc'`  |
 | ... | ... | ... |
 
-**Hint** You can use VSCode search & replace, but make sure it's set to Regular Expression pattern
+**Hint** You can use VSCode search & replace, but make sure it's set to Regular Expression search pattern
 
 | Search (regex)             | Replace  |
 | -------------------------- | -------- |

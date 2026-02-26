@@ -48,6 +48,7 @@ import {
   type BackendServiceOption,
   type BasePaginationComponent,
   type Column,
+  type CustomDataView,
   type DataViewOption,
   type EventSubscription,
   type ExternalResource,
@@ -152,8 +153,8 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
   sortService: SortService;
   treeDataService: TreeDataService;
 
-  @Input() readonly customDataView: any;
-  @Input() readonly gridId = '';
+  @Input() customDataView: CustomDataView | undefined;
+  @Input() gridId = '';
   @Input() options: GridOption = {};
   @Input() containerClasses?: string[] = undefined;
 

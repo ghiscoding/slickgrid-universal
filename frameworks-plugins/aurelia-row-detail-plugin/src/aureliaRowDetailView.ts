@@ -29,6 +29,7 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
   protected _subscriptions: EventSubscription[] = [];
   protected _userProcessFn?: (item: any) => Promise<any>;
   protected _viewModel?: Constructable;
+  protected _timer?: any;
 
   constructor(
     protected readonly aureliaUtilService: AureliaUtilService,
@@ -56,6 +57,7 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
 
   /** Dispose of the RowDetailView Extension */
   dispose() {
+    clearTimeout(this._timer);
     this.disposeAllViewSlot();
     unsubscribeAll(this._subscriptions);
     super.dispose();
@@ -207,9 +209,10 @@ export class AureliaRowDetailView extends UniversalSlickRowDetailView {
               ['onFilterChanged', 'onGridMenuColumnsChanged', 'onColumnPickerColumnsChanged'],
               this.redrawAllViewSlots.bind(this, false)
             ),
-            this.eventPubSubService?.subscribe(['onGridMenuClearAllFilters', 'onGridMenuClearAllSorting'], () =>
-              setTimeout(() => this.redrawAllViewSlots())
-            )
+            this.eventPubSubService?.subscribe(['onGridMenuClearAllFilters', 'onGridMenuClearAllSorting'], () => {
+              clearTimeout(this._timer);
+              this._timer = setTimeout(() => this.redrawAllViewSlots());
+            })
           );
         }
       }

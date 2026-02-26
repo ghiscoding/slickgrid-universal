@@ -137,7 +137,8 @@ export class DualInputEditor implements Editor {
       this._bindEventService.bind(this._leftInput, 'input', this.handleChangeOnCompositeEditorDebounce.bind(this) as EventListener);
       this._bindEventService.bind(this._rightInput, 'input', this.handleChangeOnCompositeEditorDebounce.bind(this) as EventListener);
     } else {
-      setTimeout(() => this._leftInput.select(), 50);
+      clearTimeout(this._timer);
+      this._timer = setTimeout(() => this._leftInput.select(), 50);
     }
   }
 
@@ -173,6 +174,7 @@ export class DualInputEditor implements Editor {
 
   destroy(): void {
     // unsubscribe all SlickGrid events
+    clearTimeout(this._timer);
     this._eventHandler.unsubscribeAll();
     this._bindEventService.unbindAll();
     this._leftInput?.remove?.();

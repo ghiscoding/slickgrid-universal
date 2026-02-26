@@ -15,6 +15,7 @@ import {
   type Grouping,
   type SlickgridReactInstance,
 } from 'slickgrid-react';
+import './example13.scss';
 
 const NB_ITEMS = 5000;
 
