@@ -2882,6 +2882,15 @@ describe('SlickGrid core file', () => {
       expect(result).toBeTruthy();
     });
 
+    it('should expect the grid container to have aria attributes set', () => {
+      grid = new SlickGrid<any, Column>(container, items, columns, defaultOptions);
+
+      expect(grid).toBeTruthy();
+      expect(grid._container.getAttribute('role')).toBe('grid');
+      expect(grid._container.getAttribute('aria-colcount')).toBe('1');
+      expect(grid._container.getAttribute('aria-rowcount')).toBe('11');
+    });
+
     it('should return undefined editor when getDataItem() did not find any associated cell item', () => {
       const columns = [
         { id: 'name', field: 'name', name: 'Name' },

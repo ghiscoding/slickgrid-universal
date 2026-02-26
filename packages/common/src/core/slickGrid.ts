@@ -661,6 +661,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this._container.classList.add(this.uid);
     this._container.classList.add('slick-widget');
     this._container.setAttribute('role', 'grid');
+    this._container.setAttribute('aria-colcount', this.columns.length.toString());
+    this._container.setAttribute('aria-rowcount', Array.isArray(this.data) ? this.data.length.toString() : '0');
 
     const containerStyles = getComputedStyle(this._container);
     if (!/relative|absolute|fixed/.test(containerStyles.position)) {
@@ -3438,6 +3440,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       return; // exit early if freeze is invalid
     }
     this.columns = newColumns;
+    this._container.setAttribute('aria-colcount', this.columns.length.toString());
     const updateCols = () => {
       this.updateColumns();
       this.triggerEvent(this.onAfterSetColumns, { newColumns, grid: this });
@@ -4751,6 +4754,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   updateRowCount(): void {
     if (this.initialized) {
       const dataLength = this.getDataLength();
+      this._container.setAttribute('aria-rowcount', dataLength.toString());
 
       // remap all rowspan cache when necessary
       if (dataLength > 0 && dataLength !== this._prevDataLength) {
