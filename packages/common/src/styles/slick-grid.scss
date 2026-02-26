@@ -772,7 +772,6 @@
         position: absolute;
         font-size: 0.1px;
         display: block;
-        cursor: col-resize;
         top: 0;
         height: 100%;
         width: 6px;
@@ -780,6 +779,7 @@
         z-index: 4;
 
         &:hover {
+          cursor: var(--slick-header-resizable-cursor, v.$slick-header-resizable-cursor);
           border-bottom: var(--slick-header-resizable-hover-border-bottom, v.$slick-header-resizable-hover-border-bottom);
           border-left: var(--slick-header-resizable-hover-border-left, v.$slick-header-resizable-hover-border-left);
           border-right: var(--slick-header-resizable-hover-border-right, v.$slick-header-resizable-hover-border-right);
