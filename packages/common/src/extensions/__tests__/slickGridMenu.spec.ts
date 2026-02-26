@@ -4,7 +4,7 @@ import { TranslateServiceStub } from '../../../../../test/translateServiceStub.j
 import { SlickEvent, SlickEventData, type SlickDataView, type SlickGrid } from '../../core/index.js';
 import * as utils from '../../core/utils.js';
 import { ExtensionUtility } from '../../extensions/extensionUtility.js';
-import type { Column, DOMEvent, GridMenu, GridOption, MenuCommandItem } from '../../interfaces/index.js';
+import type { Column, DOMEvent, ExternalResource, GridMenu, GridOption, MenuCommandItem } from '../../interfaces/index.js';
 import {
   BackendUtilityService,
   SharedService,
@@ -20,20 +20,23 @@ const gridId = 'grid1';
 const gridUid = 'slickgrid_124343';
 const containerId = 'demo-container';
 
-const excelExportServiceStub = {
-  pluginName: 'ExcelExportService',
-  exportToExcel: vi.fn(),
-} as unknown as ExcelExportService;
+class ExcelExportServiceStub implements ExternalResource, ExcelExportService {
+  pluginName = 'ExcelExportService';
+  init() {}
+  exportToExcel(_options: any): any {}
+}
 
-const pdfExportServiceStub = {
-  pluginName: 'PdfExportService',
-  exportToPdf: vi.fn(),
-} as unknown as PdfExportService;
+class PdfExportServiceStub implements ExternalResource, PdfExportService {
+  pluginName = 'PdfExportService';
+  init() {}
+  exportToPdf(_options: any): any {}
+}
 
-const textExportServiceStub = {
-  pluginName: 'TextExportService',
-  exportToFile: vi.fn(),
-} as unknown as TextExportService;
+class TextExportServiceStub implements ExternalResource, TextExportService {
+  pluginName = 'TextExportService';
+  init() {}
+  exportToFile(_options: any): any {}
+}
 
 const filterServiceStub = {
   clearFilters: vi.fn(),
@@ -2291,9 +2294,9 @@ describe('GridMenuControl', () => {
         });
 
         it('should call "exportToExcel" when the command triggered is "export-excel"', () => {
-          const excelExportSpy = vi.spyOn(excelExportServiceStub, 'exportToExcel');
+          const excelExportSpy = vi.spyOn(ExcelExportServiceStub.prototype, 'exportToExcel');
           const copyGridOptionsMock = { ...gridOptionsMock, enableExcelExport: true } as unknown as GridOption;
-          vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([excelExportServiceStub]);
+          vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([new ExcelExportServiceStub()]);
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
 
@@ -2308,9 +2311,9 @@ describe('GridMenuControl', () => {
         });
 
         it('should call "exportToPdf" when the command triggered is "export-pdf"', () => {
-          const pdfExportSpy = vi.spyOn(pdfExportServiceStub, 'exportToPdf');
+          const pdfExportSpy = vi.spyOn(PdfExportServiceStub.prototype, 'exportToPdf');
           const copyGridOptionsMock = { ...gridOptionsMock, enablePdfExport: true } as unknown as GridOption;
-          vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([pdfExportServiceStub]);
+          vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([new PdfExportServiceStub()]);
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
 
@@ -2325,9 +2328,9 @@ describe('GridMenuControl', () => {
         });
 
         it('should call "exportToFile" with CSV set when the command triggered is "export-csv"', () => {
-          const exportSpy = vi.spyOn(textExportServiceStub, 'exportToFile');
+          const exportSpy = vi.spyOn(TextExportServiceStub.prototype, 'exportToFile');
           const copyGridOptionsMock = { ...gridOptionsMock, enableTextExport: true } as unknown as GridOption;
-          vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([textExportServiceStub]);
+          vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([new TextExportServiceStub()]);
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
 
@@ -2342,9 +2345,9 @@ describe('GridMenuControl', () => {
         });
 
         it('should call "exportToFile" with Text Delimited set when the command triggered is "export-text-delimited"', () => {
-          const exportSpy = vi.spyOn(textExportServiceStub, 'exportToFile');
+          const exportSpy = vi.spyOn(TextExportServiceStub.prototype, 'exportToFile');
           const copyGridOptionsMock = { ...gridOptionsMock, enableTextExport: true, hideExportTextDelimitedCommand: false } as unknown as GridOption;
-          vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([textExportServiceStub]);
+          vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([new TextExportServiceStub()]);
           vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
           vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
 
