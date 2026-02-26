@@ -775,9 +775,9 @@
         cursor: col-resize;
         top: 0;
         height: 100%;
-        width: 7px;
+        width: 6px;
         right: 0;
-        z-index: 1;
+        z-index: 4;
 
         &:hover {
           border-bottom: var(--slick-header-resizable-hover-border-bottom, v.$slick-header-resizable-hover-border-bottom);
