@@ -26,6 +26,7 @@
       },
     },
     {
+      // blocked by oxlint issue: https://github.com/oxc-project/oxc/issues/19395
       packageNames: ['oxlint'],
       allowedVersions: '1.46.0',
     },
