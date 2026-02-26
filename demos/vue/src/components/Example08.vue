@@ -269,6 +269,9 @@ function vueGridReady(grid: SlickgridVueInstance) {
   $slick-sort-indicator-hint-opacity: 0
 );
 
+.grid8 {
+  --slick-header-menu-display: inline-block;
+}
 blue {
   color: rgb(73, 73, 255);
 }

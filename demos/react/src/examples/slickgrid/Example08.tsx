@@ -171,7 +171,7 @@ const Example8: React.FC = () => {
   }
 
   return !gridOptions ? null : (
-    <div id="demo-container" className="container-fluid">
+    <div id="demo-container" className="container-fluid grid8">
       <h2>
         Example 8: Header Menu Plugin
         <span className="float-end font18">

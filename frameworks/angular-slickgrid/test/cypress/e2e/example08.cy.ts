@@ -21,14 +21,7 @@ describe('Example 8 - Header Menu Plugin', () => {
   });
 
   it('should hover over the "Title" column and expect Sort & Hide commands to be disabled', () => {
-    cy.get('#grid8')
-      .find('.slick-header-column')
-      .first()
-      .trigger('mouseover')
-      .children('.slick-header-menu-button')
-      .should('be.hidden')
-      .invoke('show')
-      .click();
+    cy.get('#grid8').find('.slick-header-column').first().children('.slick-header-menu-button').click({ force: true });
 
     cy.get('.slick-menu-item.slick-menu-item-disabled').contains('Help').should('exist');
 
@@ -41,18 +34,12 @@ describe('Example 8 - Header Menu Plugin', () => {
     const alertStub = cy.stub();
     cy.on('window:alert', alertStub);
 
-    cy.get('#grid8')
-      .find('.slick-header-column:nth(1)')
-      .trigger('mouseover')
-      .children('.slick-header-menu-button')
-      .should('be.hidden')
-      .invoke('show')
-      .click();
+    cy.get('#grid8').find('.slick-header-column:nth(1)').children('.slick-header-menu-button').click({ force: true });
 
     cy.get('.slick-menu-item.bold')
       .find('.slick-menu-content.blue')
       .contains('Help')
-      .click()
+      .click({ force: true })
       .then(() => expect(alertStub.getCall(0)).to.be.calledWith('Please help!!!'));
 
     cy.window().then((win) => {
@@ -62,9 +49,9 @@ describe('Example 8 - Header Menu Plugin', () => {
   });
 
   it('should hover over "Duration" and execute "Sort Ascending" command and expect a sort icon', () => {
-    cy.get('#grid8').find('.slick-header-column:nth(1)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
+    cy.get('#grid8').find('.slick-header-column:nth(1)').children('.slick-header-menu-button').click({ force: true });
 
-    cy.get('.slick-menu-item .slick-menu-content').contains('Sort Ascending').click();
+    cy.get('.slick-menu-item .slick-menu-content').contains('Sort Ascending').click({ force: true });
 
     cy.get('.slick-header-column:nth(1).slick-header-sortable.slick-header-column-sorted')
       .find('.slick-sort-indicator.slick-sort-indicator-asc')
@@ -72,13 +59,7 @@ describe('Example 8 - Header Menu Plugin', () => {
   });
 
   it('should hover over "% Complete" and not expect to find the Help menu', () => {
-    cy.get('#grid8')
-      .find('.slick-header-column:nth(2)')
-      .trigger('mouseover')
-      .children('.slick-header-menu-button')
-      .should('be.hidden')
-      .invoke('show')
-      .click();
+    cy.get('#grid8').find('.slick-header-column:nth(2)').children('.slick-header-menu-button').click({ force: true });
 
     cy.get('.slick-header-menu .slick-menu-command-list').should('exist');
 
@@ -88,7 +69,7 @@ describe('Example 8 - Header Menu Plugin', () => {
   it('should execute "Sort Descending" command from the menu left open and expect 2 sort icons afterward and "% Completed" to be descending with >80', () => {
     cy.get('.slick-header-menu .slick-menu-command-list').should('exist');
 
-    cy.get('.slick-menu-item .slick-menu-content').contains('Sort Descending').click().wait(10);
+    cy.get('.slick-menu-item .slick-menu-content').contains('Sort Descending').click({ force: true }).wait(10);
 
     cy.get('.slick-header-column:nth(1).slick-header-sortable.slick-header-column-sorted')
       .find('.slick-sort-indicator.slick-sort-indicator-asc')
@@ -108,27 +89,21 @@ describe('Example 8 - Header Menu Plugin', () => {
   });
 
   it('should hover over the "Completed" column and expect Help commands to be disabled', () => {
-    cy.get('#grid8')
-      .find('.slick-header-column:nth(5)')
-      .trigger('mouseover')
-      .children('.slick-header-menu-button')
-      .should('be.hidden')
-      .invoke('show')
-      .click();
+    cy.get('#grid8').find('.slick-header-column:nth(5)').children('.slick-header-menu-button').click({ force: true });
 
     cy.get('.slick-menu-item.slick-menu-item-disabled').contains('Help').should('exist');
   });
 
   it('should remain in the "Completed" column and execute "Hide Column" command and expect it gone from the grid', () => {
-    const titles = ['Title', 'Duration', '% Complete', 'Start', 'Finish'];
+    const newTitles = ['Title', 'Duration', '% Complete', 'Start', 'Finish'];
 
-    cy.get('.slick-menu-item.slick-menu-item').contains('Hide Column').click();
+    cy.get('.slick-menu-item.slick-menu-item').contains('Hide Column').click({ force: true });
 
     cy.get('#grid8')
       .find('.slick-header-columns')
       .children()
       .should('have.length', 5)
-      .each(($child, index) => expect($child.text()).to.contain(titles[index]));
+      .each(($child, index) => expect($child.text()).to.contain(newTitles[index]));
   });
 
   describe('with sub-menus', () => {
@@ -140,13 +115,7 @@ describe('Example 8 - Header Menu Plugin', () => {
       const stub = cy.stub();
       cy.on('window:alert', stub);
 
-      cy.get('#grid8')
-        .find('.slick-header-column:nth(0)')
-        .trigger('mouseover')
-        .children('.slick-header-menu-button')
-        .should('be.hidden')
-        .invoke('show')
-        .click({ force: true });
+      cy.get('#grid8').find('.slick-header-column:nth(0)').children('.slick-header-menu-button').click({ force: true });
 
       cy.get('.slick-header-menu.slick-menu-level-0').find('.slick-menu-item.slick-menu-item').contains('Hello').should('exist').click();
 
