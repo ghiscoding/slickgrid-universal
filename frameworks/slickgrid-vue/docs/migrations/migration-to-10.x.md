@@ -43,12 +43,12 @@ _following changes should be transparent to most users, I'm just listing them in
 I don't think that Row Detail is being used by everyone, so I decided to make it an optional plugin (package). This should help decrease build size quite a bit for users who don't require it. If however you are one of them using it, then you now have to register it as an external resource.
 
 ```diff
-+ import { VueSlickRowDetailView } from '@slickgrid-universal/vue-row-detail-plugin';
++ import { VueRowDetailView } from '@slickgrid-universal/vue-row-detail-plugin';
 
 function defineGrid() {
   gridOptions.value = {
     enableRowDetailView: true,
-+   externalResources: [VueSlickRowDetailView],
++   externalResources: [VueRowDetailView],
     rowDetailView: {
       // ...
     }

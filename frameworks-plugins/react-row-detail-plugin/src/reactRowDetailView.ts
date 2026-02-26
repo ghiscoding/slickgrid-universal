@@ -26,8 +26,8 @@ export interface CreatedView {
   rendered?: boolean;
 }
 
-export class ReactSlickRowDetailView extends UniversalSlickRowDetailView {
-  static readonly pluginName = 'ReactSlickRowDetailView';
+export class ReactRowDetailView extends UniversalSlickRowDetailView {
+  static readonly pluginName = 'ReactRowDetailView';
   protected _component?: any;
   protected _preloadComponent?: any;
   protected _preloadRoot?: Root;
@@ -77,7 +77,7 @@ export class ReactSlickRowDetailView extends UniversalSlickRowDetailView {
   }
 
   /** Get the instance of the SlickGrid addon (control or plugin). */
-  getAddonInstance(): ReactSlickRowDetailView | null {
+  getAddonInstance(): ReactRowDetailView | null {
     return this;
   }
 

@@ -1,1 +1,1 @@
-export * from './reactSlickRowDetailView.js';
+export * from './reactRowDetailView.js';

@@ -42,14 +42,14 @@ _following changes should be transparent to most users, I'm just listing them in
 I don't think that Row Detail is being used by everyone, so I decided to make it an optional plugin (package). This should help decrease build size quite a bit for users who don't require it. If however you are one of them using it, then you now have to register it as an external resource.
 
 ```diff
-+ import { ReactSlickRowDetailView } from '@slickgrid-universal/react-row-detail-plugin';
++ import { ReactRowDetailView } from '@slickgrid-universal/react-row-detail-plugin';
 
 const Example: React.FC = () => {
   function defineGrid() {
     setOptions({
       enableRowDetailView: true,
       preRegisterExternalExtensions: (pubSubService) => {
-+       const rowDetail = new ReactSlickRowDetailView(pubSubService as EventPubSubService);
++       const rowDetail = new ReactRowDetailView(pubSubService as EventPubSubService);
         return [{ name: ExtensionName.rowDetailView, instance: rowDetail }];
       },
     });

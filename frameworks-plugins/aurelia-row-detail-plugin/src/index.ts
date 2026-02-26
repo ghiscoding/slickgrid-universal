@@ -1,1 +1,1 @@
-export * from './aureliaSlickRowDetailView.js';
+export * from './aureliaRowDetailView.js';

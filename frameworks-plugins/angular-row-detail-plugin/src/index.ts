@@ -1,1 +1,1 @@
-export * from './angularSlickRowDetailView';
+export * from './angularRowDetailView.js';

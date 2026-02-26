@@ -70,7 +70,7 @@ import type { SlickgridVueProps } from './slickgridVueProps.interface.js';
 
 const WARN_NO_PREPARSE_DATE_SIZE = 10000; // data size to warn user when pre-parsing isn't enabled
 
-export interface VueSlickRowDetailView {
+export interface VueRowDetailView {
   create(columns: Column[], gridOptions: GridOption): any;
   init(grid: SlickGrid, containerService?: ContainerService): void;
 }
@@ -116,7 +116,7 @@ let subscriptions: Array<EventSubscription> = [];
 let slickEmptyWarning: SlickEmptyWarningComponent | undefined;
 let slickFooter: SlickFooterComponent | undefined;
 let slickPagination: BasePaginationComponent | undefined;
-let slickRowDetailView: VueSlickRowDetailView | undefined;
+let slickRowDetailView: VueRowDetailView | undefined;
 
 // initialize and assign all Service Dependencies
 let backendServiceApi: BackendServiceApi | undefined;
@@ -1420,7 +1420,7 @@ function autoEnableInitializedResources(resource: ExternalResource | ExternalRes
 }
 
 function initializeExternalResources(resources: Array<ExternalResource | ExternalResourceConstructor>) {
-  PluginFlagMappings.set('VueSlickRowDetailView', 'enableRowDetailView');
+  PluginFlagMappings.set('VueRowDetailView', 'enableRowDetailView'); // map the external Row Detail View resource to its flag
 
   if (Array.isArray(resources)) {
     for (const resource of resources) {
@@ -1444,17 +1444,17 @@ function preRegisterResources() {
   }
 
   if (_gridOptions.value.enableRowDetailView) {
-    const RowDetailClass = registeredResources.find((res: any) => res.pluginName === 'VueSlickRowDetailView') as
+    const RowDetailClass = registeredResources.find((res: any) => res.pluginName === 'VueRowDetailView') as
       | ExternalResourceConstructor
       | undefined;
     if (!RowDetailClass) {
       throw new Error(
-        '[Slickgrid-Vue] You enabled the Row Detail View feature but you did not provide the "VueSlickRowDetailView" class as an external resource.'
+        '[Slickgrid-Vue] You enabled the Row Detail View feature but you did not provide the "VueRowDetailView" class as an external resource.'
       );
     }
 
     if (RowDetailClass) {
-      const rowDetailInstance = new RowDetailClass(eventPubSubService) as VueSlickRowDetailView;
+      const rowDetailInstance = new RowDetailClass(eventPubSubService) as VueRowDetailView;
       slickRowDetailView = rowDetailInstance;
       rowDetailInstance.create(_columnDefinitions.value, _gridOptions.value as GridOption);
       extensionService.addExtensionToList('rowDetailView', {

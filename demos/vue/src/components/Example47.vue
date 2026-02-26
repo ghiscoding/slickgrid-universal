@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { VueSlickRowDetailView } from '@slickgrid-universal/vue-row-detail-plugin';
+import { VueRowDetailView } from '@slickgrid-universal/vue-row-detail-plugin';
 import {
   Aggregators,
   Editors,
@@ -157,7 +157,7 @@ function defineGrid() {
     enableRowDetailView: true,
     rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
     darkMode: isDarkMode.value,
-    externalResources: [VueSlickRowDetailView],
+    externalResources: [VueRowDetailView],
     rowDetailView: {
       // We can load the "process" asynchronously in 2 different ways (Fetch OR Promise)
       process: (item: any) => simulateServerAsyncCall(item),

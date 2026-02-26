@@ -1,7 +1,7 @@
 import { Component, ViewEncapsulation, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { faker } from '@faker-js/faker';
-import { AngularSlickRowDetailView } from '@slickgrid-universal/angular-row-detail-plugin';
+import { AngularRowDetailView } from '@slickgrid-universal/angular-row-detail-plugin';
 import { AngularSlickgridComponent, type AngularGridInstance, type Column, type GridOption } from '../../library';
 import { Example45DetailComponent, type Distributor, type OrderData } from './example45-detail.component';
 import { RowDetailPreloadComponent } from './rowdetail-preload.component';
@@ -27,7 +27,7 @@ export class Example45Component implements OnDestroy, OnInit {
   isUsingAutoHeight = false;
   serverWaitDelay = FAKE_SERVER_DELAY;
 
-  get rowDetailInstance(): AngularSlickRowDetailView {
+  get rowDetailInstance(): AngularRowDetailView {
     return this.angularGrid.extensions.rowDetailView?.instance || {};
   }
 
@@ -112,7 +112,7 @@ export class Example45Component implements OnDestroy, OnInit {
       rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
       darkMode: this._darkMode,
       rowHeight: 33,
-      externalResources: [AngularSlickRowDetailView],
+      externalResources: [AngularRowDetailView],
       rowDetailView: {
         process: (item: any) => this.simulateServerAsyncCall(item),
         loadOnce: false, // you can't use loadOnce with inner grid because only HTML template are re-rendered, not JS events

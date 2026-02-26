@@ -1,6 +1,6 @@
 import { Component, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AngularSlickRowDetailView } from '@slickgrid-universal/angular-row-detail-plugin';
+import { AngularRowDetailView } from '@slickgrid-universal/angular-row-detail-plugin';
 import {
   Aggregators,
   AngularSlickgridComponent,
@@ -57,7 +57,7 @@ export class Example47Component implements OnDestroy, OnInit {
     this.groupByDuration(); // group by duration on page load
   }
 
-  get rowDetailInstance(): AngularSlickRowDetailView {
+  get rowDetailInstance(): AngularRowDetailView {
     // you can get the SlickGrid RowDetail plugin (addon) instance via 2 ways
 
     // option 1
@@ -178,7 +178,7 @@ export class Example47Component implements OnDestroy, OnInit {
       enableRowDetailView: true,
       rowTopOffsetRenderType: 'top', // RowDetail and/or RowSpan don't render well with "transform", you should use "top"
       darkMode: this._darkMode,
-      externalResources: [AngularSlickRowDetailView],
+      externalResources: [AngularRowDetailView],
       rowDetailView: {
         process: (item) => this.simulateServerAsyncCall(item),
         loadOnce: true,

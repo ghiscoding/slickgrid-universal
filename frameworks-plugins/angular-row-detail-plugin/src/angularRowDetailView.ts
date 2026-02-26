@@ -18,7 +18,7 @@ import type { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickRowDetailView as UniversalSlickRowDetailView } from '@slickgrid-universal/row-detail-view-plugin';
 import { type AngularUtilService, type GridOption } from 'angular-slickgrid';
 import { Observable, type Subject } from 'rxjs';
-import type { RowDetailView } from './interfaces';
+import type { RowDetailView } from './interfaces.js';
 
 const ROW_DETAIL_CONTAINER_PREFIX = 'container_';
 const PRELOAD_CONTAINER_PREFIX = 'container_loading';
@@ -30,8 +30,8 @@ export interface CreatedView {
   rendered?: boolean;
 }
 
-export class AngularSlickRowDetailView extends UniversalSlickRowDetailView {
-  static readonly pluginName = 'AngularSlickRowDetailView';
+export class AngularRowDetailView extends UniversalSlickRowDetailView {
+  static readonly pluginName = 'AngularRowDetailView';
   rowDetailContainer!: ViewContainerRef;
   protected _preloadComponent: Type<object> | undefined;
   protected _preloadCompRef?: ComponentRef<any>;
@@ -91,7 +91,7 @@ export class AngularSlickRowDetailView extends UniversalSlickRowDetailView {
   }
 
   /** Get the instance of the SlickGrid addon (control or plugin). */
-  getAddonInstance(): AngularSlickRowDetailView | null {
+  getAddonInstance(): AngularRowDetailView | null {
     return this;
   }
 
@@ -105,7 +105,7 @@ export class AngularSlickRowDetailView extends UniversalSlickRowDetailView {
    * Create the plugin before the Grid creation, else it will behave oddly.
    * Mostly because the column definitions might change after the grid creation
    */
-  register(rowSelectionPlugin?: SelectionModel): AngularSlickRowDetailView {
+  register(rowSelectionPlugin?: SelectionModel): AngularRowDetailView {
     if (typeof this.gridOptions.rowDetailView?.process === 'function') {
       // we need to keep the user "process" method and replace it with our own execution method
       // we do this because when we get the item detail, we need to call "onAsyncResponse.notify" for the plugin to work
