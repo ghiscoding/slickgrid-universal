@@ -74,7 +74,7 @@
     "vanilla-calendar-pro": "^3.1.0"
   },
   "devDependencies": {
-    "autoprefixer": "^10.4.24",
+    "autoprefixer": "^10.4.27",
     "concurrently": "catalog:",
     "cssnano": "^7.1.2",
     "native-copyfiles": "catalog:",
