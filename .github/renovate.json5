@@ -27,7 +27,7 @@
     },
     {
       packageNames: ['oxlint'],
-      allowedVersions: '1.47.0',
+      allowedVersions: '1.46.0',
     },
   ],
   ignoreDeps: ['lee-dohm/no-response', 'node', 'pnpm', 'typescript'],
