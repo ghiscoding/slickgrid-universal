@@ -1,10 +1,10 @@
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { deepCopy } from '@slickgrid-universal/utils';
-import { afterEach, beforeEach, describe, expect, it, MockedFunction, vi, type Mock } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import { SlickEvent, SlickEventData, type SlickDataView, type SlickGrid } from '../../core/index.js';
 import { ExtensionUtility } from '../../extensions/extensionUtility.js';
-import type { Column, ContextMenu, ElementPosition, Formatter, GridOption, MenuCommandItem, MenuOptionItem } from '../../interfaces/index.js';
+import type { Column, ContextMenu, ElementPosition, ExternalResource, Formatter, GridOption, MenuCommandItem, MenuOptionItem } from '../../interfaces/index.js';
 import {
   BackendUtilityService,
   SharedService,
@@ -150,20 +150,23 @@ const dataViewStub = {
   setItems: vi.fn(),
 } as unknown as SlickDataView;
 
-const excelExportServiceStub = {
-  pluginName: 'ExcelExportService',
-  exportToExcel: vi.fn(),
-} as unknown as ExcelExportService;
+class ExcelExportServiceStub implements ExternalResource, ExcelExportService {
+  pluginName = 'ExcelExportService';
+  init() {}
+  exportToExcel(_options: any): any {}
+}
 
-const pdfExportServiceStub = {
-  pluginName: 'PdfExportService',
-  exportToPdf: vi.fn(),
-} as unknown as PdfExportService;
+class PdfExportServiceStub implements ExternalResource, PdfExportService {
+  pluginName = 'PdfExportService';
+  init() {}
+  exportToPdf(_options: any): any {}
+}
 
-const exportServiceStub = {
-  pluginName: 'TextExportService',
-  exportToFile: vi.fn(),
-} as unknown as TextExportService;
+class TextExportServiceStub implements ExternalResource, TextExportService {
+  pluginName = 'TextExportService';
+  init() {}
+  exportToFile(_options: any): any {}
+}
 
 const pubSubServiceStub = {
   publish: vi.fn(),
@@ -1515,7 +1518,7 @@ describe('ContextMenu Plugin', () => {
       });
 
       it('should call "exportToExcel" when the command triggered is "export-excel"', () => {
-        const excelExportSpy = vi.spyOn(excelExportServiceStub, 'exportToExcel');
+        const excelExportSpy = vi.spyOn(ExcelExportServiceStub.prototype, 'exportToExcel');
         const copyGridOptionsMock = {
           ...gridOptionsMock,
           enableExcelExport: true,
@@ -1524,7 +1527,7 @@ describe('ContextMenu Plugin', () => {
         } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
-        vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([excelExportServiceStub]);
+        vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([new ExcelExportServiceStub()]);
         plugin.dispose();
         plugin.init({ commandItems: [{ command: 'export-excel' }] }); // add fake command to test with .some()
         plugin.init(); // calling init the 2nd time will replace the previous line init+command
@@ -1538,7 +1541,7 @@ describe('ContextMenu Plugin', () => {
       });
 
       it('should call "exportToPdf" when the command triggered is "export-pdf"', () => {
-        const pdfExportSpy = vi.spyOn(pdfExportServiceStub, 'exportToPdf');
+        const pdfExportSpy = vi.spyOn(PdfExportServiceStub.prototype, 'exportToPdf');
         const copyGridOptionsMock = {
           ...gridOptionsMock,
           enableExcelExport: false,
@@ -1548,7 +1551,7 @@ describe('ContextMenu Plugin', () => {
         } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
-        vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([pdfExportServiceStub]);
+        vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([new PdfExportServiceStub()]);
         plugin.dispose();
         plugin.init({ commandItems: [{ command: 'export-pdf' }] }); // add fake command to test with .some()
         plugin.init(); // calling init the 2nd time will replace the previous line init+command
@@ -1562,7 +1565,7 @@ describe('ContextMenu Plugin', () => {
       });
 
       it('should call "exportToFile" with CSV set when the command triggered is "export-csv"', () => {
-        const exportSpy = vi.spyOn(exportServiceStub, 'exportToFile');
+        const exportSpy = vi.spyOn(TextExportServiceStub.prototype, 'exportToFile');
         const copyGridOptionsMock = {
           ...gridOptionsMock,
           enableExcelExport: false,
@@ -1571,7 +1574,7 @@ describe('ContextMenu Plugin', () => {
         } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
-        vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([exportServiceStub]);
+        vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([new TextExportServiceStub()]);
         plugin.dispose();
         plugin.init({ commandItems: [{ command: 'export-csv' }], hideExportCsvCommand: false }); // add fake command to test with .some()
         plugin.init(); // calling init the 2nd time will replace the previous line init+command
@@ -1588,7 +1591,7 @@ describe('ContextMenu Plugin', () => {
       });
 
       it('should call "exportToFile" with Text Delimited set when the command triggered is "export-text-delimited"', () => {
-        const exportSpy = vi.spyOn(exportServiceStub, 'exportToFile');
+        const exportSpy = vi.spyOn(TextExportServiceStub.prototype, 'exportToFile');
         const copyGridOptionsMock = {
           ...gridOptionsMock,
           enableExcelExport: false,
@@ -1597,7 +1600,7 @@ describe('ContextMenu Plugin', () => {
         } as GridOption;
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
-        vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([exportServiceStub]);
+        vi.spyOn(SharedService.prototype, 'externalRegisteredResources', 'get').mockReturnValue([new TextExportServiceStub()]);
         plugin.init({ commandItems: [{ command: 'export-text-delimited' }] }); // add fake command to test with .some()
         plugin.init(); // calling init the 2nd time will replace the previous line init+command
 
