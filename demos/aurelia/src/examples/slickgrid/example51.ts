@@ -134,6 +134,11 @@ export class Example51 {
               },
               { divider: true, command: '', positionOrder: 52 },
               {
+                command: 'clear-filter',
+                iconCssClass: 'mdi mdi-filter-remove-outline',
+                title: 'Remove Filter',
+              },
+              {
                 command: 'clear-sort',
                 title: 'Remove Sort',
                 positionOrder: 58,
@@ -145,6 +150,44 @@ export class Example51 {
                     <span class="round-tag"></span>
                   </div>
                 `,
+              },
+
+              {
+                command: 'hide-column',
+                iconCssClass: 'mdi mdi-close',
+                title: 'Hide Column',
+              },
+              'divider',
+              {
+                command: 'footer-buttons',
+                title: 'Footer Buttons',
+                cssClass: 'slot-menu-container', // add a class to the menu container for styling purposes
+                slotRenderer: () => {
+                  // create a container with 2 buttons to show what is possible
+                  const container = createDomElement('div', { className: 'footer-buttons-container' });
+                  const editBtn = createDomElement('button', {
+                    className: 'footer-btn who-btn btn btn-outline-secondary btn-sm',
+                    textContent: 'Who am I?',
+                  });
+                  const deleteBtn = createDomElement('button', {
+                    className: 'footer-btn update-btn btn btn-outline-secondary btn-sm',
+                    textContent: 'Request Update',
+                  });
+
+                  // add event listeners to buttons (see Context Menu)
+                  // OR use the `action` callback (see below) with `event.target` to delegate events instead of adding individual listeners
+                  container.appendChild(editBtn);
+                  container.appendChild(deleteBtn);
+                  return container;
+                },
+                action: (e, args) => {
+                  if (e.target.classList.contains('who-btn')) {
+                    alert(`I am the "${args.column.name}" column`);
+                  } else if (e.target.classList.contains('update-btn')) {
+                    alert(`is it done yet?`);
+                  }
+                  e.preventDefault(); // prevent menu from closing if needed
+                },
               },
             ],
           },
@@ -271,8 +314,7 @@ export class Example51 {
         minWidth: 70,
         maxWidth: 70,
         cssClass: 'justify-center flex',
-        formatter: () =>
-          `<div class="button-style margin-auto" style="width: 35px;"><span class="mdi mdi-chevron-down text-primary"></span></div>`,
+        formatter: () => `<div class="button-style action-btn"><span class="mdi mdi-chevron-down font-22px color-primary"></span></div>`,
         excludeFromExport: true,
         // Demo: Cell Menu with slot examples (demonstrating defaultMenuItemRenderer at menu level)
         cellMenu: {
@@ -472,6 +514,39 @@ export class Example51 {
               title: 'Delete Row',
               iconCssClass: 'mdi mdi-delete text-danger',
               action: () => alert('Delete row'),
+            },
+            'divider',
+            {
+              command: 'footer-buttons',
+              title: 'Footer Buttons',
+              cssClass: 'slot-menu-container', // add a class to the menu container for styling purposes
+              slotRenderer: (_cmd, args) => {
+                // create a container with 2 buttons to show what is possible
+                const container = createDomElement('div', { className: 'footer-buttons-container' });
+                const editBtn = createDomElement('button', {
+                  className: 'footer-btn edit-btn btn btn-outline-secondary btn-sm',
+                  textContent: 'Edit',
+                });
+                const deleteBtn = createDomElement('button', {
+                  className: 'footer-btn delete-btn btn btn-outline-secondary btn-sm',
+                  textContent: 'Delete',
+                });
+
+                // add event listeners to buttons
+                // OR use the `action` callback (see Header Menu) with `event.target` to delegate events instead of adding individual listeners
+                editBtn.addEventListener('click', (e) => {
+                  e.stopPropagation(); // prevent menu from closing if needed
+                  alert(`Edit action for row #${args.dataContext.id}`);
+                });
+                deleteBtn.addEventListener('click', (e) => {
+                  e.stopPropagation();
+                  alert(`Delete action for row #${args.dataContext.id}`);
+                });
+
+                container.appendChild(editBtn);
+                container.appendChild(deleteBtn);
+                return container;
+              },
             },
           ] as Array<MenuCommandItem | 'divider'>;
         },

@@ -16,7 +16,10 @@ describe('Example 51 - Menus with Slots', () => {
   });
 
   it('should open Context Menu hover "Duration" column and expect built-in and custom items listed in specific order', () => {
-    cy.get('[data-row="0"] > .slick-cell:nth(2)').rightclick({ force: true });
+    const stub = cy.stub();
+    cy.on('window:alert', stub);
+
+    cy.get('[data-row="2"] > .slick-cell:nth(2)').rightclick({ force: true });
 
     // 1st item
     cy.get('.slick-context-menu .slick-menu-command-list .slick-menu-item:nth(0) .menu-item').find('.edit-cell-icon').contains('✎');
@@ -83,6 +86,20 @@ describe('Example 51 - Menus with Slots', () => {
     cy.get('.slick-context-menu .slick-menu-command-list .slick-menu-item:nth(9) .menu-item')
       .find('span.menu-item-label')
       .contains('Delete Row');
+
+    // 11th divider
+    cy.get('.slick-context-menu .slick-menu-command-list .slick-menu-item:nth(10)').should('have.class', 'slick-menu-item-divider');
+
+    // 12th buttons group
+    cy.get('.footer-buttons-container .footer-btn.edit-btn')
+      .contains('Edit')
+      .click()
+      .then(() => expect(stub.getCall(0)).to.be.calledWith('Edit action for row #2'));
+
+    cy.get('.footer-buttons-container .footer-btn.delete-btn')
+      .contains('Delete')
+      .click()
+      .then(() => expect(stub.getCall(1)).to.be.calledWith('Delete action for row #2'));
   });
 
   it('should open Export->Excel context sub-menu', () => {
@@ -169,6 +186,9 @@ describe('Example 51 - Menus with Slots', () => {
   });
 
   it('should open Header Menu from the "Duration" column and expect some commands to have tags on the right side', () => {
+    const stub = cy.stub();
+    cy.on('window:alert', stub);
+
     cy.get('.slick-header-column:nth(1)').trigger('mouseover', { force: true });
     cy.get('.slick-header-column:nth(1)').children('.slick-header-menu-button').invoke('show').click();
 
@@ -218,10 +238,24 @@ describe('Example 51 - Menus with Slots', () => {
     cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(7) .menu-item')
       .find('span.menu-item-label')
       .contains('Hide Column');
+
+    // 9th divider
+    cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(4)').should('have.class', 'slick-menu-item-divider');
+
+    // 10th buttons group
+    cy.get('.footer-buttons-container .footer-btn.who-btn')
+      .contains('Who am I?')
+      .click()
+      .then(() => expect(stub.getCall(0)).to.be.calledWith('I am the "Duration" column'));
+
+    cy.get('.footer-buttons-container .footer-btn.update-btn')
+      .contains('Request Update')
+      .click()
+      .then(() => expect(stub.getCall(1)).to.be.calledWith('is it done yet?'));
   });
 
   it('should open Header Menu from the "Cost" column and expect first item to have a dynamic tooltip timestamp when hovering', () => {
-    cy.get('#grid51').find('.slick-header-column:nth(4)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
+    cy.get('.slick-header-column:nth(4)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
 
     // 1st item
     cy.get('.slick-header-menu .slick-menu-command-list .slick-menu-item:nth(0) .menu-item').find('.advanced-export-icon').contains('📊');
