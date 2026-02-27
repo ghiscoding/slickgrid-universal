@@ -26,6 +26,26 @@
   }
 }
 
+body {
+  .slick-menu-item.slot-menu-container {
+    --slick-menu-item-height: 40px;
+    --slick-menu-item-hover-border: 1px solid transparent;
+    --slick-menu-item-hover-color: transparent !important;
+
+    .footer-buttons-container {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      gap: 10px;
+    }
+
+    .footer-btn {
+      flex: 1;
+      justify-content: center;
+    }
+  }
+}
+
 .key-hint {
   background: #eee;
   border: 1px solid #ccc;
