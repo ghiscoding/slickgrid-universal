@@ -190,7 +190,8 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
         // Skip dividers, disabled, and hidden items
         return (
           !item.classList.contains('disabled') &&
-          !item.classList.contains('divider') &&
+          !item.classList.contains('slick-menu-item-disabled') &&
+          !item.classList.contains('slick-menu-item-divider') &&
           !item.classList.contains('slick-menu-item-hidden') &&
           item.offsetParent !== null
         );
