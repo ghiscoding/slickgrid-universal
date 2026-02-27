@@ -113,21 +113,20 @@ export function wireMenuKeyboardNavigation(
   }
 ): void {
   // Allow all menus, including GridMenu, to use keyboard navigation
-  const defaultSelector = '[role="menuitem"]:not(.slick-menu-item-divider):not(.disabled):not(.slick-menu-item-hidden)';
+  const defaultSelector =
+    '[role="menuitem"]:not(.disabled, .hidden, .slick-menu-item-disabled, .slick-menu-item-divider, .slick-menu-item-hidden)';
   const allItemsSelector = options?.allItemsSelector || defaultSelector;
   const focusedItemSelector = (options?.focusedItemSelector || defaultSelector) + ':focus';
-  if (!menuElm.dataset.keyboardNavBound) {
-    if (typeof bindKeyboardNavigation === 'function') {
-      bindKeyboardNavigation(menuElm, bindEventService, {
-        focusedItemSelector,
-        allItemsSelector,
-        filterFn: (item) => (item as HTMLElement).offsetParent !== null,
-        onActivate: options?.onActivate,
-        onEscape: options?.onEscape,
-        onTab: options?.onTab,
-        eventServiceKey: options?.eventServiceKey ?? 'menu-keyboard',
-      });
-      menuElm.dataset.keyboardNavBound = 'true';
-    }
+  if (!menuElm.dataset.keyboardNavBound && typeof bindKeyboardNavigation === 'function') {
+    bindKeyboardNavigation(menuElm, bindEventService, {
+      focusedItemSelector,
+      allItemsSelector,
+      filterFn: (item) => (item as HTMLElement).offsetParent !== null,
+      onActivate: options?.onActivate,
+      onEscape: options?.onEscape,
+      onTab: options?.onTab,
+      eventServiceKey: options?.eventServiceKey ?? 'menu-keyboard',
+    });
+    menuElm.dataset.keyboardNavBound = 'true';
   }
 }

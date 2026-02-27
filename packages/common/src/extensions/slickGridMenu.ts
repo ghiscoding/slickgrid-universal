@@ -493,11 +493,11 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         allItems[0].focus();
       }
       // Use base class method to wire up keyboard navigation
+      const itemSelector =
+        '.slick-grid-menu li[tabindex]:not(.disabled, .hidden, .slick-menu-item-disabled, .slick-menu-item-divider, .slick-menu-item-hidden)';
       this.wireMenuKeyboardNavigation(this._menuElm, {
-        allItemsSelector:
-          '.slick-grid-menu li[tabindex]:not(.slick-menu-item-divider):not(.disabled):not(.slick-menu-item-hidden):not(.hidden)',
-        focusedItemSelector:
-          '.slick-grid-menu li[tabindex]:not(.slick-menu-item-divider):not(.disabled):not(.slick-menu-item-hidden):not(.hidden)',
+        allItemsSelector: itemSelector,
+        focusedItemSelector: itemSelector,
         onActivate: (focusedItem: HTMLElement) => {
           if (focusedItem) {
             // If it's a column picker item, trigger the checkbox click
