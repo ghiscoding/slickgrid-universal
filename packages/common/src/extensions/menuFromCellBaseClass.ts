@@ -116,17 +116,9 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
     const columnDef = this.grid.getColumns()[this._currentCell];
     const dataContext = this.grid.getDataItem(this._currentRow);
 
-    // to avoid having multiple sub-menu trees opened
-    // we need to somehow keep trace of which parent menu the tree belongs to
-    // and we should keep ref of only the first sub-menu parent, we can use the command name (remove any whitespaces though)
+    // Always use the triggering item's command/option (whitespace removed) as the sub-menu parent id for every level
     const subMenuCommandOrOption = (item as MenuCommandItem)?.command || (item as MenuOptionItem)?.option;
-    let subMenuId = level === 1 && subMenuCommandOrOption ? String(subMenuCommandOrOption).replace(/\s/g, '') : '';
-    if (subMenuId) {
-      this._subMenuParentId = subMenuId;
-    }
-    if (level > 1) {
-      subMenuId = this._subMenuParentId;
-    }
+    const subMenuId = subMenuCommandOrOption ? String(subMenuCommandOrOption).replace(/\s/g, '') : '';
 
     let isColumnOptionAllowed = true;
     let isColumnCommandAllowed = true;
