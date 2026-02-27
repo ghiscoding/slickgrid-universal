@@ -237,6 +237,39 @@ describe('bindKeyboardNavigation', () => {
       });
     }
   });
+
+  it('should focus menu item when hovering over child element using closest()', () => {
+    const menuItems = container.querySelectorAll('[role="menuitem"]');
+    const bindService = {
+      bind: vi.fn(),
+    };
+
+    bindKeyboardNavigation(container, bindService as any, {
+      focusedItemSelector: '[role="menuitem"]:focus',
+      allItemsSelector: '[role="menuitem"]',
+    });
+
+    // Verify mouseover handler is bound
+    const mouseoverCall = bindService.bind.mock.calls.find((call) => call[1] === 'mouseover');
+    expect(mouseoverCall).toBeDefined();
+
+    // Extract and test the handler logic directly
+    const handler = mouseoverCall?.[2] as EventListener;
+    if (handler) {
+      // Create a child element inside a menu item
+      const child = document.createElement('span');
+      child.textContent = 'child content';
+      (menuItems[1] as HTMLElement).appendChild(child);
+
+      const focusSpy = vi.spyOn(menuItems[1] as HTMLElement, 'focus');
+      const mockEvent = new MouseEvent('mouseover', { bubbles: true });
+      Object.defineProperty(mockEvent, 'target', { value: child, configurable: true });
+      handler(mockEvent);
+
+      // Should focus the parent menu item when hovering the child
+      expect(focusSpy).toHaveBeenCalled();
+    }
+  });
 });
 
 describe('wireMenuKeyboardNavigation', () => {

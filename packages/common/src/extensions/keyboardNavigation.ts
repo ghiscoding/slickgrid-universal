@@ -108,8 +108,10 @@ export function bindKeyboardNavigation(
     ((evt: MouseEvent) => {
       const target = evt.target as HTMLElement;
       const allItems = getVisibleItems();
-      if (allItems.includes(target)) {
-        target.focus();
+      // Use closest to find the menu item element even if hovering on children
+      const menuItem = target.closest(allItemsSelector) as HTMLElement;
+      if (menuItem && allItems.includes(menuItem)) {
+        menuItem.focus();
       }
     }) as EventListener,
     undefined,
