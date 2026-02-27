@@ -403,7 +403,7 @@ export class Example51 {
               action: (_event, args) => {
                 const dataContext = args.dataContext;
                 if (confirm(`Do you really want to delete row (${args.row! + 1}) with "${dataContext.title}"`)) {
-                  this.sgb?.instances?.gridService.deleteItemById(dataContext.id);
+                  this.aureliaGrid?.gridService.deleteItemById(dataContext.id);
                 }
               },
             },

@@ -406,7 +406,7 @@ export class Example51Component implements OnInit {
               action: (_event, args) => {
                 const dataContext = args.dataContext;
                 if (confirm(`Do you really want to delete row (${args.row! + 1}) with "${dataContext.title}"`)) {
-                  this.sgb?.instances?.gridService.deleteItemById(dataContext.id);
+                  this.angularGrid?.gridService.deleteItemById(dataContext.id);
                 }
               },
             },
