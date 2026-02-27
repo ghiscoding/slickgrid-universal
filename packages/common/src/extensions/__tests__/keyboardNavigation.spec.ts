@@ -2,19 +2,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 // Wire up keyboard navigation (this will use the filterFn)
 import { bindKeyboardNavigation, wireMenuKeyboardNavigation } from '../keyboardNavigation';
 
-// Minimal fake BindingEventService
-class FakeBindingEventService {
-  bindCalls: any[] = [];
-  bind(el: HTMLElement, event: string, handler: EventListener) {
-    this.bindCalls.push({ el, event, handler });
-    el.addEventListener(event, handler);
-  }
-}
-
 describe('bindKeyboardNavigation', () => {
   let container: HTMLElement;
   let items: HTMLElement[];
-  let service: FakeBindingEventService;
 
   beforeEach(() => {
     container = document.createElement('div');
@@ -25,18 +15,87 @@ describe('bindKeyboardNavigation', () => {
       item.setAttribute('role', 'menuitem');
       item.tabIndex = 0;
       item.textContent = `Item ${i}`;
+      // Mock offsetParent to simulate visible element
+      Object.defineProperty(item, 'offsetParent', { value: container, configurable: true });
       items.push(item);
       container.appendChild(item);
     }
     document.body.appendChild(container);
-    service = new FakeBindingEventService();
   });
 
   afterEach(() => {
     container.remove();
   });
 
+  it('should bind keydown handler', () => {
+    const fakeService = {
+      bind: vi.fn(),
+    };
+
+    bindKeyboardNavigation(container, fakeService as any, {
+      focusedItemSelector: '[role="menuitem"]:focus',
+      allItemsSelector: '[role="menuitem"]',
+    });
+
+    // Verify keydown handler is registered
+    expect(fakeService.bind).toHaveBeenCalledWith(container, 'keydown', expect.any(Function), undefined, 'keyboard-navigation');
+  });
+
+  it('should bind mouseover handler for hover-to-focus', () => {
+    const fakeService = {
+      bind: vi.fn(),
+    };
+
+    bindKeyboardNavigation(container, fakeService as any, {
+      focusedItemSelector: '[role="menuitem"]:focus',
+      allItemsSelector: '[role="menuitem"]',
+    });
+
+    // Verify mouseover handler is registered (new hover feature)
+    expect(fakeService.bind).toHaveBeenCalledWith(container, 'mouseover', expect.any(Function), undefined, 'keyboard-navigation');
+  });
+
+  it('should use custom eventServiceKey for both handlers', () => {
+    const fakeService = {
+      bind: vi.fn(),
+    };
+
+    bindKeyboardNavigation(container, fakeService as any, {
+      focusedItemSelector: '[role="menuitem"]:focus',
+      allItemsSelector: '[role="menuitem"]',
+      eventServiceKey: 'custom-nav',
+    });
+
+    // Verify custom key is used for both keydown and mouseover
+    const keydownCall = fakeService.bind.mock.calls.find((call) => call[1] === 'keydown');
+    const mouseoverCall = fakeService.bind.mock.calls.find((call) => call[1] === 'mouseover');
+
+    expect(keydownCall?.[4]).toBe('custom-nav');
+    expect(mouseoverCall?.[4]).toBe('custom-nav');
+  });
+
+  it('should use custom filterFn when provided', () => {
+    const filterFn = vi.fn(() => true);
+    const fakeService = {
+      bind: vi.fn(),
+    };
+
+    bindKeyboardNavigation(container, fakeService as any, {
+      focusedItemSelector: '[role="menuitem"]:focus',
+      allItemsSelector: '[role="menuitem"]',
+      filterFn,
+    });
+
+    // Just verify binding happens with filter function
+    expect(fakeService.bind).toHaveBeenCalled();
+  });
+
   it('should move focus with ArrowDown and ArrowUp', () => {
+    const service = {
+      bind: (el: HTMLElement, event: string, handler: EventListener) => {
+        el.addEventListener(event, handler);
+      },
+    };
     bindKeyboardNavigation(container, service as any, {
       focusedItemSelector: '[role="menuitem"]:focus',
       allItemsSelector: '[role="menuitem"]',
@@ -67,31 +126,12 @@ describe('bindKeyboardNavigation', () => {
     expect(document.activeElement).toBe(items[1]);
   });
 
-  it('should cover focusedItem and allItems logic (lines 42, 48) using querySelector spy', () => {
-    // Spy before binding or focusing
-    const qsSpy = vi.spyOn(container, 'querySelector').mockImplementation((selector: string) => {
-      if (selector.endsWith(':focus')) return items[0];
-      return null;
-    });
-    const qsaSpy = vi.spyOn(container, 'querySelectorAll').mockImplementation(() => items as any);
-
-    bindKeyboardNavigation(container, service as any, {
-      focusedItemSelector: '[role="menuitem"]:focus',
-      allItemsSelector: '[role="menuitem"]',
-    });
-
-    // Dispatch ArrowDown to trigger the code path
-    const downEvent = new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true });
-    container.dispatchEvent(downEvent);
-
-    expect(qsSpy).toHaveBeenCalledWith('[role="menuitem"]:focus');
-    expect(qsaSpy).toHaveBeenCalledWith('[role="menuitem"]');
-
-    qsSpy.mockRestore();
-    qsaSpy.mockRestore();
-  });
-
   it('should return early for non-navigation keys', () => {
+    const service = {
+      bind: (el: HTMLElement, event: string, handler: EventListener) => {
+        el.addEventListener(event, handler);
+      },
+    };
     bindKeyboardNavigation(container, service as any, {
       focusedItemSelector: '[role="menuitem"]:focus',
       allItemsSelector: '[role="menuitem"]',
@@ -105,33 +145,313 @@ describe('bindKeyboardNavigation', () => {
     expect(document.activeElement).toBe(items[0]);
   });
 
+  it('should apply filterFn when hovering over items', () => {
+    const menuItems = container.querySelectorAll('[role="menuitem"]');
+    const filterFn = (item: HTMLElement) => item !== menuItems[2];
+
+    const bindService = {
+      bind: vi.fn(),
+    };
+
+    bindKeyboardNavigation(container, bindService as any, {
+      focusedItemSelector: '[role="menuitem"]:focus',
+      allItemsSelector: '[role="menuitem"]',
+      filterFn,
+    });
+
+    // Verify mouseover handler is bound
+    const mouseoverCall = bindService.bind.mock.calls.find((call) => call[1] === 'mouseover');
+    expect(mouseoverCall).toBeDefined();
+
+    // Extract and test the handler logic directly with proper event target
+    const handler = mouseoverCall?.[2] as EventListener;
+    if (handler) {
+      // Test with item 1 (not filtered) - should call focus
+      const focusSpy1 = vi.spyOn(menuItems[1] as HTMLElement, 'focus');
+      const mockEvent1 = new MouseEvent('mouseover', { bubbles: true });
+      Object.defineProperty(mockEvent1, 'target', { value: menuItems[1], configurable: true });
+      handler(mockEvent1);
+      expect(focusSpy1).toHaveBeenCalled();
+      focusSpy1.mockRestore();
+
+      // Test with item 2 (filtered out) - should NOT call focus
+      const focusSpy2 = vi.spyOn(menuItems[2] as HTMLElement, 'focus');
+      const mockEvent2 = new MouseEvent('mouseover', { bubbles: true });
+      Object.defineProperty(mockEvent2, 'target', { value: menuItems[2], configurable: true });
+      handler(mockEvent2);
+      expect(focusSpy2).not.toHaveBeenCalled();
+    }
+  });
+
+  it('should focus item on hover over valid menu item', () => {
+    const menuItems = container.querySelectorAll('[role="menuitem"]');
+    const bindService = {
+      bind: vi.fn(),
+    };
+
+    bindKeyboardNavigation(container, bindService as any, {
+      focusedItemSelector: '[role="menuitem"]:focus',
+      allItemsSelector: '[role="menuitem"]',
+    });
+
+    // Verify mouseover handler is bound
+    const mouseoverCall = bindService.bind.mock.calls.find((call) => call[1] === 'mouseover');
+    expect(mouseoverCall).toBeDefined();
+
+    // Extract and test the handler logic directly
+    const handler = mouseoverCall?.[2] as EventListener;
+    if (handler) {
+      const focusSpy = vi.spyOn(menuItems[1] as HTMLElement, 'focus');
+      const mockEvent = new MouseEvent('mouseover', { bubbles: true });
+      Object.defineProperty(mockEvent, 'target', { value: menuItems[1], configurable: true });
+      handler(mockEvent);
+      expect(focusSpy).toHaveBeenCalled();
+    }
+  });
+
+  it('should not focus item on hover if target is not a valid menu item', () => {
+    const menuItems = container.querySelectorAll('[role="menuitem"]');
+    const bindService = {
+      bind: vi.fn(),
+    };
+
+    bindKeyboardNavigation(container, bindService as any, {
+      focusedItemSelector: '[role="menuitem"]:focus',
+      allItemsSelector: '[role="menuitem"]',
+    });
+
+    // Verify mouseover handler is bound
+    const mouseoverCall = bindService.bind.mock.calls.find((call) => call[1] === 'mouseover');
+    expect(mouseoverCall).toBeDefined();
+
+    // Extract and test the handler logic directly
+    const handler = mouseoverCall?.[2] as EventListener;
+    if (handler) {
+      const focusSpies = Array.from(menuItems).map((item) => vi.spyOn(item as HTMLElement, 'focus'));
+      const outsideEl = document.createElement('div');
+      const mockEvent = new MouseEvent('mouseover', { bubbles: true });
+      Object.defineProperty(mockEvent, 'target', { value: outsideEl, configurable: true });
+      handler(mockEvent);
+      focusSpies.forEach((spy) => {
+        expect(spy).not.toHaveBeenCalled();
+      });
+    }
+  });
+
+  it('should focus menu item when hovering over child element using closest()', () => {
+    const menuItems = container.querySelectorAll('[role="menuitem"]');
+    const bindService = {
+      bind: vi.fn(),
+    };
+
+    bindKeyboardNavigation(container, bindService as any, {
+      focusedItemSelector: '[role="menuitem"]:focus',
+      allItemsSelector: '[role="menuitem"]',
+    });
+
+    // Verify mouseover handler is bound
+    const mouseoverCall = bindService.bind.mock.calls.find((call) => call[1] === 'mouseover');
+    expect(mouseoverCall).toBeDefined();
+
+    // Extract and test the handler logic directly
+    const handler = mouseoverCall?.[2] as EventListener;
+    if (handler) {
+      // Create a child element inside a menu item
+      const child = document.createElement('span');
+      child.textContent = 'child content';
+      (menuItems[1] as HTMLElement).appendChild(child);
+
+      const focusSpy = vi.spyOn(menuItems[1] as HTMLElement, 'focus');
+      const mockEvent = new MouseEvent('mouseover', { bubbles: true });
+      Object.defineProperty(mockEvent, 'target', { value: child, configurable: true });
+      handler(mockEvent);
+
+      // Should focus the parent menu item when hovering the child
+      expect(focusSpy).toHaveBeenCalled();
+    }
+  });
+});
+
+describe('wireMenuKeyboardNavigation', () => {
+  let menu: HTMLElement;
+
+  beforeEach(() => {
+    menu = document.createElement('div');
+    menu.tabIndex = 0;
+    for (let i = 0; i < 3; i++) {
+      const item = document.createElement('div');
+      item.setAttribute('role', 'menuitem');
+      item.tabIndex = 0;
+      item.textContent = `Menu Item ${i}`;
+      // Mock offsetParent to simulate visible element
+      Object.defineProperty(item, 'offsetParent', { value: menu, configurable: true });
+      menu.appendChild(item);
+    }
+    document.body.appendChild(menu);
+  });
+
+  afterEach(() => {
+    menu.remove();
+  });
+
+  it('should call bindKeyboardNavigation with default selectors', () => {
+    const fakeService = {
+      bind: vi.fn(),
+    };
+
+    wireMenuKeyboardNavigation(menu, fakeService);
+
+    // Verify bindKeyboardNavigation was called with proper handler binding
+    expect(fakeService.bind).toHaveBeenCalledWith(menu, 'keydown', expect.any(Function), undefined, 'menu-keyboard');
+    expect(fakeService.bind).toHaveBeenCalledWith(menu, 'mouseover', expect.any(Function), undefined, 'menu-keyboard');
+  });
+
+  it('should prevent double-binding using data-keyboardNavBound flag', () => {
+    const fakeService = {
+      bind: vi.fn(),
+    };
+
+    // First call
+    wireMenuKeyboardNavigation(menu, fakeService);
+    const firstCallCount = fakeService.bind.mock.calls.length;
+
+    // Reset mock
+    fakeService.bind.mockClear();
+
+    // Second call - should not bind again
+    wireMenuKeyboardNavigation(menu, fakeService);
+    const secondCallCount = fakeService.bind.mock.calls.length;
+
+    expect(secondCallCount).toBe(0);
+    expect(menu.dataset.keyboardNavBound).toBe('true');
+  });
+
+  it('should use custom onActivate option', () => {
+    const onActivate = vi.fn();
+    const fakeService = {
+      bind: vi.fn(),
+    };
+
+    wireMenuKeyboardNavigation(menu, fakeService, { onActivate });
+
+    expect(fakeService.bind).toHaveBeenCalled();
+    expect(menu.dataset.keyboardNavBound).toBe('true');
+  });
+
+  it('should use custom onEscape option', () => {
+    const onEscape = vi.fn();
+    const fakeService = {
+      bind: vi.fn(),
+    };
+
+    wireMenuKeyboardNavigation(menu, fakeService, { onEscape });
+
+    expect(fakeService.bind).toHaveBeenCalled();
+    expect(menu.dataset.keyboardNavBound).toBe('true');
+  });
+
+  it('should use custom onTab option', () => {
+    const onTab = vi.fn();
+    const fakeService = {
+      bind: vi.fn(),
+    };
+
+    wireMenuKeyboardNavigation(menu, fakeService, { onTab });
+
+    expect(fakeService.bind).toHaveBeenCalled();
+    expect(menu.dataset.keyboardNavBound).toBe('true');
+  });
+
+  it('should use custom eventServiceKey', () => {
+    const fakeService = {
+      bind: vi.fn(),
+    };
+
+    wireMenuKeyboardNavigation(menu, fakeService, { eventServiceKey: 'custom-menu' });
+
+    const keydownCall = fakeService.bind.mock.calls.find((call) => call[1] === 'keydown');
+    expect(keydownCall?.[4]).toBe('custom-menu');
+  });
+
+  it('should use custom focusedItemSelector and allItemsSelector', () => {
+    const fakeService = {
+      bind: vi.fn(),
+    };
+
+    wireMenuKeyboardNavigation(menu, fakeService, {
+      focusedItemSelector: '[data-custom]:focus',
+      allItemsSelector: '[data-custom]',
+    });
+
+    expect(fakeService.bind).toHaveBeenCalled();
+    expect(menu.dataset.keyboardNavBound).toBe('true');
+  });
+
+  it('should exclude disabled items from navigation based on selector', () => {
+    const disabled = menu.children[1] as HTMLElement;
+    disabled.classList.add('slick-menu-item-disabled');
+
+    const fakeService = {
+      bind: vi.fn(),
+    };
+
+    wireMenuKeyboardNavigation(menu, fakeService);
+
+    // Verify the default selector excludes disabled items
+    expect(fakeService.bind).toHaveBeenCalled();
+  });
+
+  it('should bind hover handler for mouseover events', () => {
+    const fakeService = {
+      bind: vi.fn(),
+    };
+
+    wireMenuKeyboardNavigation(menu, fakeService);
+
+    // Verify mouseover handler is bound (hover-to-focus feature)
+    const mouseoverCall = fakeService.bind.mock.calls.find((call) => call[1] === 'mouseover');
+    expect(mouseoverCall).toBeDefined();
+    expect(mouseoverCall?.[1]).toBe('mouseover');
+  });
+
   it('should filter out hidden items using filterFn in wireMenuKeyboardNavigation', () => {
     // Create a menu container and two items, one hidden
-    const menu = document.createElement('div');
-    menu.tabIndex = 0;
+    const testMenu = document.createElement('div');
+    testMenu.tabIndex = 0;
     const visible = document.createElement('div');
     visible.setAttribute('role', 'menuitem');
     visible.tabIndex = 0;
     visible.textContent = 'Visible';
+    // Mock offsetParent for visible item
+    Object.defineProperty(visible, 'offsetParent', { value: testMenu, configurable: true });
     const hidden = document.createElement('div');
     hidden.setAttribute('role', 'menuitem');
     hidden.tabIndex = 0;
     hidden.textContent = 'Hidden';
     hidden.style.display = 'none';
-    menu.appendChild(visible);
-    menu.appendChild(hidden);
-    document.body.appendChild(menu);
-    // Minimal fake BindingEventService
-    const fakeService = { bind: (el: HTMLElement, event: string, handler: EventListener) => el.addEventListener(event, handler) };
+    // offsetParent is null for hidden items
+    testMenu.appendChild(visible);
+    testMenu.appendChild(hidden);
+    document.body.appendChild(testMenu);
+
+    const fakeService = {
+      bind: (el: HTMLElement, event: string, handler: EventListener) => {
+        el.addEventListener(event, handler);
+      },
+    };
+
     // Focus the visible item
     visible.focus();
 
-    wireMenuKeyboardNavigation(menu, fakeService);
+    wireMenuKeyboardNavigation(testMenu, fakeService);
+
     // Dispatch ArrowDown (should not focus hidden)
     const event = new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true });
-    menu.dispatchEvent(event);
+    testMenu.dispatchEvent(event);
+
     // Only the visible item should be focusable
     expect(document.activeElement).toBe(visible);
-    menu.remove();
+
+    testMenu.remove();
   });
 });

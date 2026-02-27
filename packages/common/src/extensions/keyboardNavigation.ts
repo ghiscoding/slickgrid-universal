@@ -32,6 +32,15 @@ export function bindKeyboardNavigation(
 ): void {
   const { focusedItemSelector, allItemsSelector, filterFn, onActivate, onEscape, onTab, eventServiceKey = 'keyboard-navigation' } = options;
 
+  // Helper function to get visible/allowed items
+  const getVisibleItems = () => {
+    let items = Array.from(containerElm.querySelectorAll(allItemsSelector)) as HTMLElement[];
+    if (filterFn) {
+      items = items.filter(filterFn);
+    }
+    return items.filter((item) => item.offsetParent !== null);
+  };
+
   bindEventService.bind(
     containerElm,
     'keydown',
@@ -46,10 +55,7 @@ export function bindKeyboardNavigation(
       let focusedItem = containerElm.querySelector(focusedItemSelector) as HTMLElement;
       if (focusedItem) {
         // Get all focusable items, optionally filtered
-        let allItems = Array.from(containerElm.querySelectorAll(allItemsSelector)) as HTMLElement[];
-        if (filterFn) {
-          allItems = allItems.filter(filterFn);
-        }
+        let allItems = getVisibleItems();
 
         const currentIndex = allItems.indexOf(focusedItem);
         const stopBubbling = () => {
@@ -89,6 +95,23 @@ export function bindKeyboardNavigation(
             }
             break;
         }
+      }
+    }) as EventListener,
+    undefined,
+    eventServiceKey
+  );
+
+  // Handle hover to focus items for better UX
+  bindEventService.bind(
+    containerElm,
+    'mouseover',
+    ((evt: MouseEvent) => {
+      const target = evt.target as HTMLElement;
+      const allItems = getVisibleItems();
+      // Use closest to find the menu item element even if hovering on children
+      const menuItem = target.closest(allItemsSelector) as HTMLElement;
+      if (menuItem && allItems.includes(menuItem)) {
+        menuItem.focus();
       }
     }) as EventListener,
     undefined,
