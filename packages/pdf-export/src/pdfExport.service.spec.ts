@@ -989,13 +989,15 @@ describe('PdfExportService', () => {
 
   describe('PdfExportService Coverage', () => {
     describe('PdfExportService with jsPDF-AutoTable', () => {
-      it('should cover jsPDF-AutoTable branch and pre-header row drawing', async () => {
+      // Helper to create a fresh PdfExportService that sees doc.autoTable
+      async function createAutoTableService() {
         vi.resetModules();
         const autoTableSpy = vi.fn();
+        const setDocumentPropertiesSpy = vi.fn();
         function jsPDFMockWithAutoTable(this: any) {
           this.save = vi.fn();
           this.setFontSize = vi.fn();
-          this.getTextWidth = vi.fn((txt) => txt.length * 6);
+          this.getTextWidth = vi.fn((txt: string) => txt.length * 6);
           this.internal = {
             pageSize: {
               getWidth: () => 595.28,
@@ -1008,9 +1010,43 @@ describe('PdfExportService', () => {
           this.text = vi.fn();
           this.addPage = vi.fn();
           this.autoTable = autoTableSpy;
+          this.setDocumentProperties = setDocumentPropertiesSpy;
         }
         vi.doMock('jspdf', () => ({ __esModule: true, default: jsPDFMockWithAutoTable }));
-        const { PdfExportService: PdfExportServiceWithAutoTable } = await import('./pdfExport.service.js');
+        const { PdfExportService: Svc } = await import('./pdfExport.service.js');
+        return { PdfExportService: Svc, autoTableSpy, setDocumentPropertiesSpy };
+      }
+
+      function createStubs(columns: any[], rowCount = 1, rowFactory?: (idx: number) => any) {
+        const defaultRow = columns.reduce(
+          (acc: any, col: any) => {
+            acc[col.field] = col.field + '_val';
+            return acc;
+          },
+          { id: 1 }
+        );
+        const dataViewStub = {
+          getGrouping: () => [],
+          getLength: () => rowCount,
+          getItem: (idx: number) => (rowFactory ? rowFactory(idx) : defaultRow),
+          getItemMetadata: vi.fn().mockReturnValue({}),
+        };
+        const gridStub = {
+          getColumns: () => columns,
+          getOptions: () => ({ includeColumnHeaders: true }),
+          getData: () => dataViewStub,
+        };
+        const pubSubService = { publish: vi.fn() };
+        const container = { get: () => pubSubService };
+        return { dataViewStub, gridStub, pubSubService, container };
+      }
+
+      afterEach(() => {
+        vi.resetModules();
+      });
+
+      it('should cover jsPDF-AutoTable branch and pre-header row drawing', async () => {
+        const { PdfExportService: PdfExportServiceWithAutoTable, autoTableSpy } = await createAutoTableService();
         const columns = [
           { id: 'col1', field: 'col1', name: 'Col1', columnGroup: 'GroupA' },
           { id: 'col2', field: 'col2', name: 'Col2', columnGroup: 'GroupA' },
@@ -1031,12 +1067,461 @@ describe('PdfExportService', () => {
         const container = { get: () => pubSubService };
         const service = new PdfExportServiceWithAutoTable();
         service.init(gridStub as any, container as any);
-        // Set grouped headers to trigger pre-header row logic
         (service as any)._groupedColumnHeaders = groupedHeaders;
         const result = await service.exportToPdf({ filename: 'autotable-preheader', includeColumnHeaders: true });
         expect(result).toBe(true);
         expect(autoTableSpy).toHaveBeenCalled();
-        vi.resetModules();
+      });
+
+      it('should pass columnStyles with per-column textAlign to autoTable', async () => {
+        const { PdfExportService: Svc, autoTableSpy } = await createAutoTableService();
+        const columns = [
+          { id: 'desc', field: 'desc', name: 'Description', width: 200 },
+          { id: 'amount', field: 'amount', name: 'Amount', width: 100, pdfExportOptions: { textAlign: 'right' } },
+        ];
+        const { gridStub, container } = createStubs(columns);
+        const service = new Svc();
+        service.init(gridStub as any, container as any);
+        await service.exportToPdf({ filename: 'col-styles' });
+
+        expect(autoTableSpy).toHaveBeenCalled();
+        const opts = autoTableSpy.mock.calls[0][0];
+        expect(opts.columnStyles).toBeDefined();
+        // Column 1 (amount) should have halign 'right'
+        expect(opts.columnStyles[1]).toEqual({ halign: 'right' });
+        // Column 0 (desc) uses default 'left', so no entry
+        expect(opts.columnStyles[0]).toBeUndefined();
+      });
+
+      it('should pass empty columnStyles when all columns match global textAlign', async () => {
+        const { PdfExportService: Svc, autoTableSpy } = await createAutoTableService();
+        const columns = [
+          { id: 'col1', field: 'col1', name: 'Col1', width: 100 },
+          { id: 'col2', field: 'col2', name: 'Col2', width: 100 },
+        ];
+        const { gridStub, container } = createStubs(columns);
+        const service = new Svc();
+        service.init(gridStub as any, container as any);
+        await service.exportToPdf({ filename: 'no-col-styles' });
+
+        const opts = autoTableSpy.mock.calls[0][0];
+        expect(opts.columnStyles).toEqual({});
+      });
+
+      it('should handle mixed column alignments correctly', async () => {
+        const { PdfExportService: Svc, autoTableSpy } = await createAutoTableService();
+        const columns = [
+          { id: 'left', field: 'left', name: 'Left', width: 100 },
+          { id: 'right', field: 'right', name: 'Right', width: 100, pdfExportOptions: { textAlign: 'right' } },
+          { id: 'center', field: 'center', name: 'Center', width: 100, pdfExportOptions: { textAlign: 'center' } },
+        ];
+        const { gridStub, container } = createStubs(columns);
+        const service = new Svc();
+        service.init(gridStub as any, container as any);
+        await service.exportToPdf({ filename: 'mixed-align' });
+
+        const opts = autoTableSpy.mock.calls[0][0];
+        expect(opts.columnStyles[0]).toBeUndefined();
+        expect(opts.columnStyles[1]).toEqual({ halign: 'right' });
+        expect(opts.columnStyles[2]).toEqual({ halign: 'center' });
+      });
+
+      it('should offset columnStyles indices by 1 when grid has grouped items', async () => {
+        const { PdfExportService: Svc, autoTableSpy } = await createAutoTableService();
+        const columns = [
+          { id: 'desc', field: 'desc', name: 'Description', width: 200 },
+          { id: 'amount', field: 'amount', name: 'Amount', width: 100, pdfExportOptions: { textAlign: 'right' } },
+        ];
+        const dataViewStub = {
+          getGrouping: () => [{ getter: 'category' }],
+          getLength: () => 1,
+          getItem: () => ({ id: 1, desc: 'Test', amount: '100' }),
+          getItemMetadata: vi.fn().mockReturnValue({}),
+        };
+        const gridStub = {
+          getColumns: () => columns,
+          getOptions: () => ({ includeColumnHeaders: true }),
+          getData: () => dataViewStub,
+        };
+        const pubSubService = { publish: vi.fn() };
+        const container = { get: () => pubSubService };
+        const service = new Svc();
+        service.init(gridStub as any, container as any);
+        await service.exportToPdf({ filename: 'grouped-offset' });
+
+        const opts = autoTableSpy.mock.calls[0][0];
+        // Group offset = 1, so amount (visible index 1) → columnStyles key 2
+        expect(opts.columnStyles[2]).toEqual({ halign: 'right' });
+        expect(opts.columnStyles[1]).toBeUndefined();
+      });
+
+      it('should skip excluded columns in columnStyles indexing', async () => {
+        const { PdfExportService: Svc, autoTableSpy } = await createAutoTableService();
+        const columns = [
+          { id: 'hidden', field: 'hidden', name: 'Hidden', excludeFromExport: true },
+          { id: 'desc', field: 'desc', name: 'Description', width: 200 },
+          { id: 'amount', field: 'amount', name: 'Amount', width: 100, pdfExportOptions: { textAlign: 'right' } },
+        ];
+        const { gridStub, container } = createStubs(columns);
+        const service = new Svc();
+        service.init(gridStub as any, container as any);
+        await service.exportToPdf({ filename: 'skip-excluded' });
+
+        const opts = autoTableSpy.mock.calls[0][0];
+        // 'hidden' is excluded, so visible columns are [desc, amount] → amount is index 1
+        expect(opts.columnStyles[1]).toEqual({ halign: 'right' });
+        expect(opts.columnStyles[0]).toBeUndefined();
+      });
+
+      it('should skip zero-width columns in columnStyles indexing', async () => {
+        const { PdfExportService: Svc, autoTableSpy } = await createAutoTableService();
+        const columns = [
+          { id: 'zeroWidth', field: 'zeroWidth', name: 'Zero', width: 0 },
+          { id: 'desc', field: 'desc', name: 'Description', width: 200 },
+          { id: 'amount', field: 'amount', name: 'Amount', width: 100, pdfExportOptions: { textAlign: 'right' } },
+        ];
+        const { gridStub, container } = createStubs(columns);
+        const service = new Svc();
+        service.init(gridStub as any, container as any);
+        await service.exportToPdf({ filename: 'skip-zero-width' });
+
+        const opts = autoTableSpy.mock.calls[0][0];
+        // zeroWidth is excluded, so visible columns are [desc, amount] → amount is index 1
+        expect(opts.columnStyles[1]).toEqual({ halign: 'right' });
+        expect(opts.columnStyles[0]).toBeUndefined();
+      });
+
+      it('should include didParseCell hook that aligns header cells to match column textAlign', async () => {
+        const { PdfExportService: Svc, autoTableSpy } = await createAutoTableService();
+        const columns = [
+          { id: 'desc', field: 'desc', name: 'Description', width: 200 },
+          { id: 'amount', field: 'amount', name: 'Amount', width: 100, pdfExportOptions: { textAlign: 'right' as const } },
+          { id: 'pct', field: 'pct', name: 'Percent', width: 100, pdfExportOptions: { textAlign: 'center' as const } },
+        ];
+        const { gridStub, container } = createStubs(columns);
+        const service = new Svc();
+        service.init(gridStub as any, container as any);
+        await service.exportToPdf({ filename: 'header-align' });
+
+        const opts = autoTableSpy.mock.calls[0][0];
+        expect(typeof opts.didParseCell).toBe('function');
+
+        // Simulate a header cell for column 1 (amount) — should set halign to 'right'
+        const headerCell1 = { styles: { halign: 'left' } };
+        opts.didParseCell({ section: 'head', row: { index: 0 }, column: { index: 1 }, cell: headerCell1 });
+        expect(headerCell1.styles.halign).toBe('right');
+
+        // Simulate a header cell for column 2 (pct) — should set halign to 'center'
+        const headerCell2 = { styles: { halign: 'left' } };
+        opts.didParseCell({ section: 'head', row: { index: 0 }, column: { index: 2 }, cell: headerCell2 });
+        expect(headerCell2.styles.halign).toBe('center');
+
+        // Simulate a header cell for column 0 (desc) — should NOT change (no override)
+        const headerCell0 = { styles: { halign: 'left' } };
+        opts.didParseCell({ section: 'head', row: { index: 0 }, column: { index: 0 }, cell: headerCell0 });
+        expect(headerCell0.styles.halign).toBe('left');
+
+        // Simulate a body cell for column 1 — should NOT change (only head section is affected)
+        const bodyCell = { styles: { halign: 'left' } };
+        opts.didParseCell({ section: 'body', row: { index: 0 }, column: { index: 1 }, cell: bodyCell });
+        expect(bodyCell.styles.halign).toBe('left');
+      });
+
+      it('should not set didParseCell when no columns have custom textAlign', async () => {
+        const { PdfExportService: Svc, autoTableSpy } = await createAutoTableService();
+        const columns = [
+          { id: 'col1', field: 'col1', name: 'Col1', width: 100 },
+          { id: 'col2', field: 'col2', name: 'Col2', width: 100 },
+        ];
+        const { gridStub, container } = createStubs(columns);
+        const service = new Svc();
+        service.init(gridStub as any, container as any);
+        await service.exportToPdf({ filename: 'no-header-align' });
+
+        const opts = autoTableSpy.mock.calls[0][0];
+        // didParseCell is still set (it's a no-op for default-aligned columns)
+        expect(typeof opts.didParseCell).toBe('function');
+
+        // Calling it on a default column should not change anything
+        const cell = { styles: { halign: 'left' } };
+        opts.didParseCell({ section: 'head', row: { index: 0 }, column: { index: 0 }, cell });
+        expect(cell.styles.halign).toBe('left');
+      });
+
+      it('should include pre-header row in AutoTable head when grouped column headers are present', async () => {
+        const { PdfExportService: Svc, autoTableSpy } = await createAutoTableService();
+        const columns = [
+          { id: 'col1', field: 'col1', name: 'Col1', width: 100, columnGroup: 'Group A' },
+          { id: 'col2', field: 'col2', name: 'Col2', width: 100, columnGroup: 'Group A' },
+          { id: 'col3', field: 'col3', name: 'Col3', width: 100, columnGroup: 'Group B' },
+        ];
+        const dataViewStub = {
+          getGrouping: () => [],
+          getLength: () => 1,
+          getItem: () => ({ id: 1, col1: 'A', col2: 'B', col3: 'C' }),
+          getItemMetadata: vi.fn().mockReturnValue({}),
+        };
+        const gridStub = {
+          getColumns: () => columns,
+          getOptions: () => ({ createPreHeaderPanel: true, showPreHeaderPanel: true }),
+          getData: () => dataViewStub,
+        };
+        const pubSubService = { publish: vi.fn() };
+        const container = { get: () => pubSubService };
+        const service = new Svc();
+        service.init(gridStub as any, container as any);
+        await service.exportToPdf({ filename: 'preheader-autotable' });
+
+        const opts = autoTableSpy.mock.calls[0][0];
+        // head should have 2 rows: pre-header and header
+        expect(opts.head.length).toBe(2);
+        // Pre-header row: Group A spans 2 cols, Group B spans 1
+        const preHeaderRow = opts.head[0];
+        expect(preHeaderRow).toEqual([{ content: 'Group A', colSpan: 2 }, 'Group B']);
+        // Header row: column names
+        expect(opts.head[1]).toEqual(['Col1', 'Col2', 'Col3']);
+      });
+
+      it('should style pre-header row with preHeaderBackgroundColor via didParseCell', async () => {
+        const { PdfExportService: Svc, autoTableSpy } = await createAutoTableService();
+        const columns = [
+          { id: 'col1', field: 'col1', name: 'Col1', width: 100, columnGroup: 'Group A' },
+          { id: 'col2', field: 'col2', name: 'Col2', width: 100, columnGroup: 'Group A' },
+        ];
+        const dataViewStub = {
+          getGrouping: () => [],
+          getLength: () => 1,
+          getItem: () => ({ id: 1, col1: 'A', col2: 'B' }),
+          getItemMetadata: vi.fn().mockReturnValue({}),
+        };
+        const gridStub = {
+          getColumns: () => columns,
+          getOptions: () => ({ createPreHeaderPanel: true, showPreHeaderPanel: true }),
+          getData: () => dataViewStub,
+        };
+        const pubSubService = { publish: vi.fn() };
+        const container = { get: () => pubSubService };
+        const service = new Svc();
+        service.init(gridStub as any, container as any);
+        await service.exportToPdf({
+          filename: 'preheader-colors',
+          preHeaderBackgroundColor: [50, 60, 70],
+          preHeaderTextColor: [200, 210, 220],
+        });
+
+        const opts = autoTableSpy.mock.calls[0][0];
+        expect(typeof opts.didParseCell).toBe('function');
+
+        // Pre-header row (row.index = 0) should get pre-header colors
+        const preHeaderCell = { styles: { fillColor: [0, 0, 0], textColor: [0, 0, 0], halign: 'left' } };
+        opts.didParseCell({ section: 'head', row: { index: 0 }, column: { index: 0 }, cell: preHeaderCell });
+        expect(preHeaderCell.styles.fillColor).toEqual([50, 60, 70]);
+        expect(preHeaderCell.styles.textColor).toEqual([200, 210, 220]);
+        expect(preHeaderCell.styles.halign).toBe('center');
+
+        // Column header row (row.index = 1) should NOT get pre-header colors
+        const headerCell = { styles: { fillColor: [66, 139, 202], textColor: [255, 255, 255], halign: 'left' } };
+        opts.didParseCell({ section: 'head', row: { index: 1 }, column: { index: 0 }, cell: headerCell });
+        expect(headerCell.styles.fillColor).toEqual([66, 139, 202]); // unchanged
+      });
+
+      it('should not include pre-header row when no column groups exist', async () => {
+        const { PdfExportService: Svc, autoTableSpy } = await createAutoTableService();
+        const columns = [
+          { id: 'col1', field: 'col1', name: 'Col1', width: 100 },
+          { id: 'col2', field: 'col2', name: 'Col2', width: 100 },
+        ];
+        const { gridStub, container } = createStubs(columns);
+        const service = new Svc();
+        service.init(gridStub as any, container as any);
+        await service.exportToPdf({ filename: 'no-preheader' });
+
+        const opts = autoTableSpy.mock.calls[0][0];
+        // head should have only 1 row (no pre-header)
+        expect(opts.head.length).toBe(1);
+        expect(opts.head[0]).toEqual(['Col1', 'Col2']);
+      });
+
+      it('should call autoTableOptions callback and use its return value', async () => {
+        const { PdfExportService: Svc, autoTableSpy } = await createAutoTableService();
+        const columns = [{ id: 'col1', field: 'col1', name: 'Col1', width: 100 }];
+        const { gridStub, container } = createStubs(columns);
+        const service = new Svc();
+        service.init(gridStub as any, container as any);
+
+        const callbackSpy = vi.fn((opts: Record<string, unknown>) => {
+          opts.theme = 'striped';
+          opts.margin = { left: 20, right: 20 };
+          return opts;
+        });
+
+        await service.exportToPdf({ filename: 'callback-test', autoTableOptions: callbackSpy });
+
+        expect(callbackSpy).toHaveBeenCalledTimes(1);
+        // Verify the callback received the built options
+        const cbArg = callbackSpy.mock.calls[0][0];
+        expect(cbArg.head).toBeDefined();
+        expect(cbArg.body).toBeDefined();
+        expect(cbArg.columnStyles).toBeDefined();
+        expect(cbArg.styles).toBeDefined();
+
+        // Verify autoTable received the mutated options
+        const finalOpts = autoTableSpy.mock.calls[0][0];
+        expect(finalOpts.theme).toBe('striped');
+        expect(finalOpts.margin).toEqual({ left: 20, right: 20 });
+      });
+
+      it('should allow autoTableOptions callback to override columnStyles', async () => {
+        const { PdfExportService: Svc, autoTableSpy } = await createAutoTableService();
+        const columns = [
+          { id: 'desc', field: 'desc', name: 'Description', width: 200 },
+          { id: 'amount', field: 'amount', name: 'Amount', width: 100, pdfExportOptions: { textAlign: 'right' } },
+        ];
+        const { gridStub, container } = createStubs(columns);
+        const service = new Svc();
+        service.init(gridStub as any, container as any);
+
+        await service.exportToPdf({
+          filename: 'callback-override',
+          autoTableOptions: (opts) => {
+            // Override the auto-built columnStyles
+            opts.columnStyles = { 0: { halign: 'center' }, 1: { halign: 'center' } };
+            return opts;
+          },
+        });
+
+        const finalOpts = autoTableSpy.mock.calls[0][0];
+        expect(finalOpts.columnStyles).toEqual({ 0: { halign: 'center' }, 1: { halign: 'center' } });
+      });
+
+      it('should not call autoTableOptions callback when it is not provided', async () => {
+        const { PdfExportService: Svc, autoTableSpy } = await createAutoTableService();
+        const columns = [{ id: 'col1', field: 'col1', name: 'Col1', width: 100 }];
+        const { gridStub, container } = createStubs(columns);
+        const service = new Svc();
+        service.init(gridStub as any, container as any);
+        await service.exportToPdf({ filename: 'no-callback' });
+
+        // autoTable should still be called with default options
+        expect(autoTableSpy).toHaveBeenCalled();
+        const opts = autoTableSpy.mock.calls[0][0];
+        expect(opts.theme).toBe('grid');
+        expect(opts.margin).toEqual({ left: 40, right: 40 });
+      });
+
+      it('should allow autoTableOptions callback to add didDrawCell hook', async () => {
+        const { PdfExportService: Svc, autoTableSpy } = await createAutoTableService();
+        const columns = [{ id: 'col1', field: 'col1', name: 'Col1', width: 100 }];
+        const { gridStub, container } = createStubs(columns);
+        const service = new Svc();
+        service.init(gridStub as any, container as any);
+
+        const didDrawCell = vi.fn();
+        await service.exportToPdf({
+          filename: 'hook-test',
+          autoTableOptions: (opts) => {
+            opts.didDrawCell = didDrawCell;
+            return opts;
+          },
+        });
+
+        const finalOpts = autoTableSpy.mock.calls[0][0];
+        expect(finalOpts.didDrawCell).toBe(didDrawCell);
+      });
+
+      it('should use custom headerBackgroundColor and headerTextColor in autoTable headStyles', async () => {
+        const { PdfExportService: Svc, autoTableSpy } = await createAutoTableService();
+        const columns = [{ id: 'col1', field: 'col1', name: 'Col1', width: 100 }];
+        const { gridStub, container } = createStubs(columns);
+        const service = new Svc();
+        service.init(gridStub as any, container as any);
+        await service.exportToPdf({
+          filename: 'custom-header-colors',
+          headerBackgroundColor: [200, 50, 50],
+          headerTextColor: [0, 0, 0],
+        });
+
+        const opts = autoTableSpy.mock.calls[0][0];
+        expect(opts.headStyles.fillColor).toEqual([200, 50, 50]);
+        expect(opts.headStyles.textColor).toEqual([0, 0, 0]);
+      });
+
+      it('should use default header colors when no custom colors are provided', async () => {
+        const { PdfExportService: Svc, autoTableSpy } = await createAutoTableService();
+        const columns = [{ id: 'col1', field: 'col1', name: 'Col1', width: 100 }];
+        const { gridStub, container } = createStubs(columns);
+        const service = new Svc();
+        service.init(gridStub as any, container as any);
+        await service.exportToPdf({ filename: 'default-header-colors' });
+
+        const opts = autoTableSpy.mock.calls[0][0];
+        expect(opts.headStyles.fillColor).toEqual([66, 139, 202]);
+        expect(opts.headStyles.textColor).toEqual([255, 255, 255]);
+      });
+
+      it('should use custom alternateRowColor in autoTable alternateRowStyles', async () => {
+        const { PdfExportService: Svc, autoTableSpy } = await createAutoTableService();
+        const columns = [{ id: 'col1', field: 'col1', name: 'Col1', width: 100 }];
+        const { gridStub, container } = createStubs(columns);
+        const service = new Svc();
+        service.init(gridStub as any, container as any);
+        await service.exportToPdf({
+          filename: 'custom-alt-row',
+          alternateRowColor: [230, 240, 255],
+        });
+
+        const opts = autoTableSpy.mock.calls[0][0];
+        expect(opts.alternateRowStyles.fillColor).toEqual([230, 240, 255]);
+      });
+
+      it('should use custom cellPadding in autoTable styles', async () => {
+        const { PdfExportService: Svc, autoTableSpy } = await createAutoTableService();
+        const columns = [{ id: 'col1', field: 'col1', name: 'Col1', width: 100 }];
+        const { gridStub, container } = createStubs(columns);
+        const service = new Svc();
+        service.init(gridStub as any, container as any);
+        await service.exportToPdf({
+          filename: 'custom-padding',
+          cellPadding: 8,
+        });
+
+        const opts = autoTableSpy.mock.calls[0][0];
+        expect(opts.styles.cellPadding).toBe(8);
+      });
+
+      it('should use default cellPadding of 4 when not provided', async () => {
+        const { PdfExportService: Svc, autoTableSpy } = await createAutoTableService();
+        const columns = [{ id: 'col1', field: 'col1', name: 'Col1', width: 100 }];
+        const { gridStub, container } = createStubs(columns);
+        const service = new Svc();
+        service.init(gridStub as any, container as any);
+        await service.exportToPdf({ filename: 'default-padding' });
+
+        const opts = autoTableSpy.mock.calls[0][0];
+        expect(opts.styles.cellPadding).toBe(4);
+      });
+
+      it('should call setDocumentProperties when documentProperties option is provided', async () => {
+        const { PdfExportService: Svc, setDocumentPropertiesSpy } = await createAutoTableService();
+        const columns = [{ id: 'col1', field: 'col1', name: 'Col1', width: 100 }];
+        const { gridStub, container } = createStubs(columns);
+        const service = new Svc();
+        service.init(gridStub as any, container as any);
+        const docProps = { title: 'My Report', author: 'Test User', subject: 'Finance', keywords: 'report,pdf', creator: 'SlickGrid' };
+        await service.exportToPdf({ filename: 'doc-props', documentProperties: docProps });
+
+        expect(setDocumentPropertiesSpy).toHaveBeenCalledWith(docProps);
+      });
+
+      it('should not call setDocumentProperties when documentProperties option is not provided', async () => {
+        const { PdfExportService: Svc, setDocumentPropertiesSpy } = await createAutoTableService();
+        const columns = [{ id: 'col1', field: 'col1', name: 'Col1', width: 100 }];
+        const { gridStub, container } = createStubs(columns);
+        const service = new Svc();
+        service.init(gridStub as any, container as any);
+        await service.exportToPdf({ filename: 'no-doc-props' });
+
+        expect(setDocumentPropertiesSpy).not.toHaveBeenCalled();
       });
     });
 
@@ -2075,6 +2560,244 @@ describe('PdfExportService', () => {
       service.init(gridStub as any, container as any);
       await service.exportToPdf({ filename: 'custom-width-test' });
       // No assertion needed, coverage is enough
+    });
+  });
+
+  describe('Manual fallback styling options', () => {
+    // Helper to create a fresh PdfExportService WITHOUT autoTable (manual fallback)
+    async function createManualService() {
+      vi.resetModules();
+      const setFillColorSpy = vi.fn();
+      const setTextColorSpy = vi.fn();
+      const setDocumentPropertiesSpy = vi.fn();
+      function jsPDFMockManual(this: any) {
+        this.save = vi.fn();
+        this.setFontSize = vi.fn();
+        this.getTextWidth = vi.fn((txt: string) => txt.length * 6);
+        this.internal = {
+          pageSize: {
+            getWidth: () => 595.28,
+            getHeight: () => 841.89,
+          },
+        };
+        this.setFillColor = setFillColorSpy;
+        this.setTextColor = setTextColorSpy;
+        this.rect = vi.fn();
+        this.text = vi.fn();
+        this.addPage = vi.fn();
+        this.setDocumentProperties = setDocumentPropertiesSpy;
+        // No autoTable → forces manual fallback
+      }
+      vi.doMock('jspdf', () => ({ __esModule: true, default: jsPDFMockManual }));
+      const { PdfExportService: Svc } = await import('./pdfExport.service.js');
+      return { PdfExportService: Svc, setFillColorSpy, setTextColorSpy, setDocumentPropertiesSpy };
+    }
+
+    afterEach(() => {
+      vi.resetModules();
+    });
+
+    it('should use custom headerBackgroundColor and headerTextColor in manual header rendering', async () => {
+      const { PdfExportService: Svc, setFillColorSpy, setTextColorSpy } = await createManualService();
+
+      const columns = [{ id: 'col1', field: 'col1', name: 'Col1', width: 100 }];
+      const dataViewStub = {
+        getGrouping: () => [],
+        getLength: () => 1,
+        getItem: () => ({ id: 1, col1: 'A' }),
+        getItemMetadata: vi.fn().mockReturnValue({}),
+      };
+      const gridStub = {
+        getColumns: () => columns,
+        getOptions: () => ({}),
+        getData: () => dataViewStub,
+      };
+      const pubSubService = { publish: vi.fn() };
+      const container = { get: () => pubSubService };
+      const service = new Svc();
+      service.init(gridStub as any, container as any);
+
+      await service.exportToPdf({
+        filename: 'manual-header-colors',
+        headerBackgroundColor: [10, 20, 30],
+        headerTextColor: [200, 200, 200],
+      });
+
+      expect(setFillColorSpy).toHaveBeenCalledWith(10, 20, 30);
+      expect(setTextColorSpy).toHaveBeenCalledWith(200, 200, 200);
+    });
+
+    it('should use custom preHeaderBackgroundColor and preHeaderTextColor in manual pre-header rendering', async () => {
+      const { PdfExportService: Svc, setFillColorSpy, setTextColorSpy } = await createManualService();
+
+      const columns = [
+        { id: 'col1', field: 'col1', name: 'Col1', width: 100, columnGroup: 'GroupA' },
+        { id: 'col2', field: 'col2', name: 'Col2', width: 100, columnGroup: 'GroupA' },
+      ];
+      const dataViewStub = {
+        getGrouping: () => [],
+        getLength: () => 1,
+        getItem: () => ({ id: 1, col1: 'A', col2: 'B' }),
+        getItemMetadata: vi.fn().mockReturnValue({}),
+      };
+      const gridStub = {
+        getColumns: () => columns,
+        getOptions: () => ({ createPreHeaderPanel: true, showPreHeaderPanel: true }),
+        getData: () => dataViewStub,
+      };
+      const pubSubService = { publish: vi.fn() };
+      const container = { get: () => pubSubService };
+      const service = new Svc();
+      service.init(gridStub as any, container as any);
+
+      await service.exportToPdf({
+        filename: 'manual-preheader-colors',
+        preHeaderBackgroundColor: [50, 60, 70],
+        preHeaderTextColor: [100, 110, 120],
+      });
+
+      // Pre-header colors should have been called
+      expect(setFillColorSpy).toHaveBeenCalledWith(50, 60, 70);
+      expect(setTextColorSpy).toHaveBeenCalledWith(100, 110, 120);
+    });
+
+    it('should use custom alternateRowColor in manual fallback alternate row rendering', async () => {
+      const { PdfExportService: Svc, setFillColorSpy } = await createManualService();
+
+      const columns = [{ id: 'col1', field: 'col1', name: 'Col1', width: 100 }];
+      const dataViewStub = {
+        getGrouping: () => [],
+        getLength: () => 3,
+        getItem: (idx: number) => ({ id: idx, col1: `Val${idx}` }),
+        getItemMetadata: vi.fn().mockReturnValue({}),
+      };
+      const gridStub = {
+        getColumns: () => columns,
+        getOptions: () => ({}),
+        getData: () => dataViewStub,
+      };
+      const pubSubService = { publish: vi.fn() };
+      const container = { get: () => pubSubService };
+      const service = new Svc();
+      service.init(gridStub as any, container as any);
+
+      await service.exportToPdf({
+        filename: 'manual-alt-row',
+        alternateRowColor: [220, 230, 240],
+      });
+
+      // Alternate row (row index 1) should use the custom color
+      expect(setFillColorSpy).toHaveBeenCalledWith(220, 230, 240);
+    });
+
+    it('should align header cells according to per-column textAlign in manual fallback', async () => {
+      vi.resetModules();
+      const textSpy = vi.fn();
+      function jsPDFMockManual(this: any) {
+        this.save = vi.fn();
+        this.setFontSize = vi.fn();
+        this.getTextWidth = vi.fn((txt: string) => txt.length * 6);
+        this.internal = {
+          pageSize: {
+            getWidth: () => 595.28,
+            getHeight: () => 841.89,
+          },
+        };
+        this.setFillColor = vi.fn();
+        this.setTextColor = vi.fn();
+        this.rect = vi.fn();
+        this.text = textSpy;
+        this.addPage = vi.fn();
+      }
+      vi.doMock('jspdf', () => ({ __esModule: true, default: jsPDFMockManual }));
+      const { PdfExportService: Svc } = await import('./pdfExport.service.js');
+
+      const columns = [
+        { id: 'desc', field: 'desc', name: 'Description', width: 200 },
+        { id: 'amount', field: 'amount', name: 'Amount', width: 100, pdfExportOptions: { textAlign: 'right' as const } },
+        { id: 'pct', field: 'pct', name: 'Percent', width: 100, pdfExportOptions: { textAlign: 'center' as const } },
+      ];
+      const dataViewStub = {
+        getGrouping: () => [],
+        getLength: () => 1,
+        getItem: () => ({ id: 1, desc: 'A', amount: '100', pct: '50%' }),
+        getItemMetadata: vi.fn().mockReturnValue({}),
+      };
+      const gridStub = {
+        getColumns: () => columns,
+        getOptions: () => ({}),
+        getData: () => dataViewStub,
+      };
+      const pubSubService = { publish: vi.fn() };
+      const container = { get: () => pubSubService };
+      const service = new Svc();
+      service.init(gridStub as any, container as any);
+
+      await service.exportToPdf({ filename: 'manual-header-align' });
+
+      // Find header text calls — the first 3 text calls after rect are headers
+      // Headers: Description (left), Amount (right), Percent (center)
+      const headerCalls = textSpy.mock.calls.filter((call: any[]) => call[0] === 'Description' || call[0] === 'Amount' || call[0] === 'Percent');
+      expect(headerCalls.length).toBeGreaterThanOrEqual(3);
+
+      // Description header should be left-aligned
+      const descCall = headerCalls.find((c: any[]) => c[0] === 'Description');
+      expect(descCall[3].align).toBe('left');
+
+      // Amount header should be right-aligned
+      const amountCall = headerCalls.find((c: any[]) => c[0] === 'Amount');
+      expect(amountCall[3].align).toBe('right');
+
+      // Percent header should be center-aligned
+      const pctCall = headerCalls.find((c: any[]) => c[0] === 'Percent');
+      expect(pctCall[3].align).toBe('center');
+    });
+
+    it('should call setDocumentProperties in manual fallback when documentProperties is provided', async () => {
+      const { PdfExportService: Svc, setDocumentPropertiesSpy } = await createManualService();
+      const columns = [{ id: 'col1', field: 'col1', name: 'Col1', width: 100 }];
+      const dataViewStub = {
+        getGrouping: () => [],
+        getLength: () => 1,
+        getItem: () => ({ id: 1, col1: 'A' }),
+        getItemMetadata: vi.fn().mockReturnValue({}),
+      };
+      const gridStub = {
+        getColumns: () => columns,
+        getOptions: () => ({}),
+        getData: () => dataViewStub,
+      };
+      const pubSubService = { publish: vi.fn() };
+      const container = { get: () => pubSubService };
+      const service = new Svc();
+      service.init(gridStub as any, container as any);
+      const docProps = { title: 'Manual Report', author: 'Jane Doe' };
+      await service.exportToPdf({ filename: 'manual-doc-props', documentProperties: docProps });
+
+      expect(setDocumentPropertiesSpy).toHaveBeenCalledWith(docProps);
+    });
+
+    it('should not call setDocumentProperties in manual fallback when documentProperties is not provided', async () => {
+      const { PdfExportService: Svc, setDocumentPropertiesSpy } = await createManualService();
+      const columns = [{ id: 'col1', field: 'col1', name: 'Col1', width: 100 }];
+      const dataViewStub = {
+        getGrouping: () => [],
+        getLength: () => 1,
+        getItem: () => ({ id: 1, col1: 'A' }),
+        getItemMetadata: vi.fn().mockReturnValue({}),
+      };
+      const gridStub = {
+        getColumns: () => columns,
+        getOptions: () => ({}),
+        getData: () => dataViewStub,
+      };
+      const pubSubService = { publish: vi.fn() };
+      const container = { get: () => pubSubService };
+      const service = new Svc();
+      service.init(gridStub as any, container as any);
+      await service.exportToPdf({ filename: 'no-manual-doc-props' });
+
+      expect(setDocumentPropertiesSpy).not.toHaveBeenCalled();
     });
   });
 });

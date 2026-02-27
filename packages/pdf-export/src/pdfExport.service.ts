@@ -33,6 +33,12 @@ const DEFAULT_EXPORT_OPTIONS: PdfExportOption = {
   dataRowBackgroundOffset: -1,
   headerTextOffset: -10,
   headerBackgroundOffset: -5,
+  headerBackgroundColor: [66, 139, 202],
+  headerTextColor: [255, 255, 255],
+  preHeaderBackgroundColor: [108, 117, 125],
+  preHeaderTextColor: [255, 255, 255],
+  alternateRowColor: [245, 245, 245],
+  cellPadding: 4,
 };
 
 export interface GroupedHeaderSpan {
@@ -158,7 +164,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
 
           // cache resolved export options for each column as a Record by column.id
           const columnExportOptionsCache: Record<string, PdfExportOption> = {};
-          columns.forEach((col) => {
+          columns.forEach((col: Column) => {
             if (col.id) {
               columnExportOptionsCache[col.id] = resolveColumnExportOptions(col, this._exportOptions);
             }
@@ -173,6 +179,11 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
             unit: 'pt',
             format: this._exportOptions.pageSize || 'a4',
           });
+
+          // Set PDF document properties (metadata) if provided
+          if (this._exportOptions.documentProperties) {
+            doc.setDocumentProperties(this._exportOptions.documentProperties);
+          }
 
           let startY = 40;
           if (this._exportOptions.documentTitle) {
@@ -193,30 +204,71 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
 
           // Add table (using jsPDF-AutoTable if available, else fallback to manual)
           if ((doc as any).autoTable) {
-            // For jsPDF-AutoTable, only global options are supported (no per-column)
-            (doc as any).autoTable({
-              head: [headers],
+            // Build per-column styles for AutoTable from each column's pdfExportOptions
+            const visibleColumns = columns.filter((col: Column) => !col.excludeFromExport && (col.width === undefined || col.width > 0));
+            const columnStyles: Record<number, { halign: string }> = {};
+            const groupOffset = this._hasGroupedItems ? 1 : 0;
+            for (const [idx, col] of visibleColumns.entries()) {
+              const colExportOpts = resolveColumnExportOptions(col, this._exportOptions);
+              if (colExportOpts.textAlign && colExportOpts.textAlign !== (this._exportOptions.textAlign || 'left')) {
+                columnStyles[idx + groupOffset] = { halign: colExportOpts.textAlign };
+              }
+            }
+
+            // Build per-column header alignment map for didParseCell hook
+            const headerAlignMap: Record<number, string> = {};
+            for (const [idx, col] of visibleColumns.entries()) {
+              const colExportOpts = resolveColumnExportOptions(col, this._exportOptions);
+              if (colExportOpts.textAlign && colExportOpts.textAlign !== (this._exportOptions.textAlign || 'left')) {
+                headerAlignMap[idx + groupOffset] = colExportOpts.textAlign;
+              }
+            }
+
+            let autoTableOpts: Record<string, unknown> = {
+              head: this._buildAutoTableHead(headers, hasColumnTitlePreHeader, groupByColumnHeader),
               body: data,
               startY,
+              columnStyles,
               styles: {
                 fontSize: this._exportOptions.fontSize || 10,
-                cellPadding: 4,
+                cellPadding: this._exportOptions.cellPadding ?? 4,
                 overflow: 'linebreak',
                 halign: this._exportOptions.textAlign || 'left',
               },
               headStyles: {
                 fontSize: this._exportOptions.headerFontSize || 11,
-                fillColor: [66, 139, 202], // blue header
-                textColor: 255,
+                fillColor: this._exportOptions.headerBackgroundColor ?? [66, 139, 202],
+                textColor: this._exportOptions.headerTextColor ?? [255, 255, 255],
                 halign: this._exportOptions.textAlign || 'left',
                 valign: 'middle',
               },
+              // Align header cells to match their column's textAlign and style pre-header row
+              didParseCell: (data: any) => {
+                // Style pre-header row with distinct colors
+                if (data.section === 'head' && hasColumnTitlePreHeader && data.row.index === 0) {
+                  data.cell.styles.fillColor = this._exportOptions.preHeaderBackgroundColor ?? [108, 117, 125];
+                  data.cell.styles.textColor = this._exportOptions.preHeaderTextColor ?? [255, 255, 255];
+                  data.cell.styles.halign = 'center';
+                }
+                // Align column header cells (last head row) to match their column's textAlign
+                const isColumnHeaderRow = hasColumnTitlePreHeader ? data.row.index === 1 : data.row.index === 0;
+                if (data.section === 'head' && isColumnHeaderRow && headerAlignMap[data.column.index]) {
+                  data.cell.styles.halign = headerAlignMap[data.column.index];
+                }
+              },
               alternateRowStyles: {
-                fillColor: [245, 245, 245], // light gray for odd rows
+                fillColor: this._exportOptions.alternateRowColor ?? [245, 245, 245],
               },
               margin: { left: 40, right: 40 },
               theme: 'grid',
-            });
+            };
+
+            // Allow users to customize AutoTable options via callback
+            if (typeof this._exportOptions.autoTableOptions === 'function') {
+              autoTableOpts = this._exportOptions.autoTableOptions(autoTableOpts);
+            }
+
+            (doc as any).autoTable(autoTableOpts);
           } else {
             // Fallback: manual table rendering (no cell borders)
             // Use cached columnExportOptionsCache for per-column options
@@ -277,8 +329,22 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
               y = this._drawPreHeaderRow(doc, y, colWidths, margin, headerTextOffset, headerBackgroundOffset, groupByColumnHeader);
             }
 
+            // Build per-column header alignment array for manual header drawing
+            const headerAligns: Array<'left' | 'center' | 'right'> = headers.map((_, idx) => {
+              if (this._hasGroupedItems && idx === 0) {
+                return this._exportOptions.textAlign || 'left';
+              }
+              const dataColIdx = this._hasGroupedItems ? idx - 1 : idx;
+              const colDef = columns.filter((col: Column) => !col.excludeFromExport)[dataColIdx];
+              if (colDef?.id) {
+                const colOpt = columnExportOptionsCache[colDef.id];
+                return colOpt?.textAlign || this._exportOptions.textAlign || 'left';
+              }
+              return this._exportOptions.textAlign || 'left';
+            });
+
             // Draw header row
-            y = this._drawHeaderRow(doc, y, headers, colWidths, margin, headerTextOffset, headerBackgroundOffset);
+            y = this._drawHeaderRow(doc, y, headers, colWidths, margin, headerTextOffset, headerBackgroundOffset, headerAligns);
             doc.setFontSize(this._exportOptions.fontSize || 10);
             data.forEach((row, rowIdx) => {
               // Check for page break before drawing row
@@ -292,18 +358,19 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
                     y = this._drawPreHeaderRow(doc, y, colWidths, margin, headerTextOffset, headerBackgroundOffset, groupByColumnHeader);
                   }
                   // Header row
-                  y = this._drawHeaderRow(doc, y, headers, colWidths, margin, headerTextOffset, headerBackgroundOffset);
+                  y = this._drawHeaderRow(doc, y, headers, colWidths, margin, headerTextOffset, headerBackgroundOffset, headerAligns);
                   doc.setFontSize(this._exportOptions.fontSize || 10);
                 }
               }
               // Alternate row background
               if (rowIdx % 2 === 1) {
-                doc.setFillColor(245, 245, 245);
+                const altColor = this._exportOptions.alternateRowColor ?? [245, 245, 245];
+                doc.setFillColor(altColor[0], altColor[1], altColor[2]);
                 // Use first column's dataRowBackgroundOffset for the row
                 // Always use the correct column for background offset (first visible data column)
                 let firstDataColIdx = 0;
                 if (this._hasGroupedItems) firstDataColIdx = 1;
-                const firstColId = columns.filter((col) => !col.excludeFromExport)[firstDataColIdx]?.id;
+                const firstColId = columns.filter((col: Column) => !col.excludeFromExport)[firstDataColIdx]?.id;
                 const colOpt = firstColId ? columnExportOptionsCache[firstColId] : this._exportOptions;
                 doc.rect(
                   margin,
@@ -334,7 +401,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
                     // Group column: no colDef, use default options
                   } else {
                     const dataColIdx = this._hasGroupedItems ? colIdx - 1 : colIdx;
-                    colDef = columns.filter((col) => !col.excludeFromExport)[dataColIdx];
+                    colDef = columns.filter((col: Column) => !col.excludeFromExport)[dataColIdx];
                     if (colDef && colDef.id) {
                       colOpt = columnExportOptionsCache[colDef.id] || this._exportOptions;
                     }
@@ -634,6 +701,41 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
   }
 
   /**
+   * Build the `head` array for jsPDF-AutoTable.
+   * When grouped column headers (pre-header) are present, returns two rows:
+   *   [preHeaderRow, headerRow]
+   * where pre-header cells use `{ content, colSpan }` to span multiple columns.
+   * Otherwise returns a single row: [headerRow]
+   */
+  private _buildAutoTableHead(
+    headers: string[],
+    hasPreHeader: boolean,
+    groupByColumnHeader?: string
+  ): Array<Array<string | { content: string; colSpan: number }>> {
+    if (!hasPreHeader || !this._groupedColumnHeaders || this._groupedColumnHeaders.length === 0) {
+      return [headers];
+    }
+
+    // Build the pre-header row with colSpan cells
+    const preHeaderRow: Array<string | { content: string; colSpan: number }> = [];
+
+    // If grid has grouping (drag & drop), the first column is the group-by column
+    if (this._hasGroupedItems && groupByColumnHeader) {
+      preHeaderRow.push('');
+    }
+
+    for (const group of this._groupedColumnHeaders) {
+      if (group.span > 1) {
+        preHeaderRow.push({ content: group.title, colSpan: group.span });
+      } else {
+        preHeaderRow.push(group.title);
+      }
+    }
+
+    return [preHeaderRow, headers];
+  }
+
+  /**
    * Get all Grouped Header Titles and their keys, translate the title when required.
    * Returns array of { title, span } for each group, in order
    * @param {Array<object>} columns of the grid
@@ -683,8 +785,10 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
     groupByColumnHeader?: string
   ): number {
     doc.setFontSize(this._exportOptions.headerFontSize || 11);
-    doc.setFillColor(108, 117, 125); // #6c757d
-    doc.setTextColor(255, 255, 255);
+    const preHdrBg = this._exportOptions.preHeaderBackgroundColor ?? [108, 117, 125];
+    doc.setFillColor(preHdrBg[0], preHdrBg[1], preHdrBg[2]);
+    const preHdrTxt = this._exportOptions.preHeaderTextColor ?? [255, 255, 255];
+    doc.setTextColor(preHdrTxt[0], preHdrTxt[1], preHdrTxt[2]);
     // colCount is not needed
     const preHeaderWidth = colWidths.reduce((a, b) => a + b, 0);
     doc.rect(margin, y - 14 + headerBackgroundOffset, preHeaderWidth, 20, 'F');
@@ -721,16 +825,26 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
     colWidths: number[],
     margin: number,
     headerTextOffset: number,
-    headerBackgroundOffset: number
+    headerBackgroundOffset: number,
+    headerAligns?: Array<'left' | 'center' | 'right'>
   ): number {
     doc.setFontSize(this._exportOptions.headerFontSize || 11);
-    doc.setFillColor(66, 139, 202);
-    doc.setTextColor(255, 255, 255);
+    const hdrBg = this._exportOptions.headerBackgroundColor ?? [66, 139, 202];
+    doc.setFillColor(hdrBg[0], hdrBg[1], hdrBg[2]);
+    const hdrTxt = this._exportOptions.headerTextColor ?? [255, 255, 255];
+    doc.setTextColor(hdrTxt[0], hdrTxt[1], hdrTxt[2]);
     const headerWidth = colWidths.reduce((a, b) => a + b, 0);
     doc.rect(margin, y - 14 + headerBackgroundOffset, headerWidth, 20, 'F');
     let headerX = margin;
     headers.forEach((header, idx) => {
-      doc.text(String(header), headerX, y + headerTextOffset, { align: 'left', baseline: 'middle' });
+      const align = headerAligns?.[idx] || 'left';
+      let textX = headerX;
+      if (align === 'center') {
+        textX = headerX + colWidths[idx] / 2;
+      } else if (align === 'right') {
+        textX = headerX + colWidths[idx];
+      }
+      doc.text(String(header), textX, y + headerTextOffset, { align, baseline: 'middle' });
       headerX += colWidths[idx];
     });
     return y + 20;
