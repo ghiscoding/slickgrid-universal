@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2020",
     "esModuleInterop": true,
-    "lib": ["es5", "dom"],
+    "lib": ["es2021", "dom"],
     "types": ["@4tw/cypress-drag-drop", "cypress", "node"]
   },
   "include": ["**/*.ts"]
