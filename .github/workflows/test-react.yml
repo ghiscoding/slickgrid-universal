@@ -86,4 +86,4 @@ jobs:
         if: failure()
         with:
           name: cypress-screenshots
-          path: test/cypress/screenshots
+          path: demos/react/test/cypress/screenshots

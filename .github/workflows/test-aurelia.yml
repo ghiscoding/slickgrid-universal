@@ -89,4 +89,4 @@ jobs:
         if: failure()
         with:
           name: cypress-screenshots
-          path: test/cypress/screenshots
+          path: demos/aurelia/test/cypress/screenshots

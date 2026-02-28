@@ -104,4 +104,4 @@ jobs:
         if: failure()
         with:
           name: cypress-screenshots
-          path: test/cypress/screenshots
+          path: frameworks/angular-slickgrid/test/cypress/screenshots
