@@ -1,6 +1,6 @@
 import { JsonPipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, type OnInit } from '@angular/core';
+import { Component, inject, type OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import {
@@ -66,6 +66,8 @@ const taskFormatter: Formatter = (_row, _cell, value) => {
   imports: [AngularSlickgridComponent, JsonPipe],
 })
 export class Example3Component implements OnInit {
+  private http = inject(HttpClient);
+  private translate = inject(TranslateService);
   private _commandQueue: any = [];
   angularGrid!: AngularGridInstance;
   columnDefinitions!: Column[];
@@ -78,11 +80,6 @@ export class Example3Component implements OnInit {
   updatedObject: any;
   selectedLanguage = 'en';
   duplicateTitleHeaderCount = 1;
-
-  constructor(
-    private http: HttpClient,
-    private translate: TranslateService
-  ) {}
 
   ngOnInit() {
     this.prepareGrid();

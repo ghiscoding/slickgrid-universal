@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, signal, ViewChild, type AfterViewInit, type OnInit } from '@angular/core';
+import { Component, inject, signal, ViewChild, type AfterViewInit, type OnInit } from '@angular/core';
 import type { FilterChangedArgs, PaginationChangedArgs } from '../../library';
 import { SwtCommonGridPaginationComponent } from './swt-common-grid-pagination.component';
 import { SwtCommonGridComponent } from './swt-common-grid.component';
@@ -16,6 +16,8 @@ import { Logger } from './swt-logger.service';
   imports: [SwtCommonGridPaginationComponent, SwtCommonGridComponent],
 })
 export class SwtCommonGridTestComponent implements OnInit, AfterViewInit {
+  private httpClient = inject(HttpClient);
+
   testurl = 'http://127.0.0.1:8080/grid!display.do?';
   currentUrl = signal(this.testurl);
 
@@ -24,7 +26,7 @@ export class SwtCommonGridTestComponent implements OnInit, AfterViewInit {
 
   private logger: Logger;
 
-  constructor(private httpClient: HttpClient) {
+  constructor() {
     this.logger = new Logger('test', undefined);
   }
 

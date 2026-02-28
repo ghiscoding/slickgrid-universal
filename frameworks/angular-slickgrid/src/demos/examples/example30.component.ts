@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, ViewEncapsulation, type OnDestroy, type OnInit } from '@angular/core';
+import { Component, inject, ViewEncapsulation, type OnDestroy, type OnInit } from '@angular/core';
 import { SlickCompositeEditor, SlickCompositeEditorComponent } from '@slickgrid-universal/composite-editor-component';
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
@@ -90,6 +90,7 @@ const myCustomTitleValidator = (value: any, args: any) => {
   imports: [AngularSlickgridComponent],
 })
 export class Example30Component implements OnDestroy, OnInit {
+  private http = inject(HttpClient);
   private _darkMode = false;
   angularGrid!: AngularGridInstance;
   compositeEditorInstance!: SlickCompositeEditorComponent;
@@ -111,7 +112,7 @@ export class Example30Component implements OnDestroy, OnInit {
     { value: 4, label: 'Very Complex' },
   ];
 
-  constructor(private http: HttpClient) {
+  constructor() {
     this.compositeEditorInstance = new SlickCompositeEditorComponent();
   }
 

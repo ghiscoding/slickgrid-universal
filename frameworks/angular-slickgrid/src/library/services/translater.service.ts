@@ -1,4 +1,4 @@
-import { Injectable, Optional } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import type { TranslaterService as UniversalTranslateService } from '@slickgrid-universal/common';
 
@@ -8,7 +8,7 @@ import type { TranslaterService as UniversalTranslateService } from '@slickgrid-
  */
 @Injectable()
 export class TranslaterService implements UniversalTranslateService {
-  constructor(@Optional() private readonly translateService: TranslateService) {}
+  private readonly translateService = inject(TranslateService, { optional: true });
 
   /**
    * Method to return the current language used by the App

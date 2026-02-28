@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, signal, type OnInit } from '@angular/core';
+import { Component, inject, signal, type OnInit } from '@angular/core';
 import { GridOdataService, type OdataOption, type OdataServiceApi } from '@slickgrid-universal/odata';
 import {
   AngularSlickgridComponent,
@@ -24,6 +24,8 @@ const PERCENT_HTML_ESCAPED = '%25';
   imports: [AngularSlickgridComponent, DatePipe],
 })
 export class Example5Component implements OnInit {
+  private http = inject(HttpClient);
+
   angularGrid!: AngularGridInstance;
   columnDefinitions!: Column[];
   gridOptions!: GridOption;
@@ -41,8 +43,6 @@ export class Example5Component implements OnInit {
   errorStatus = signal('');
   isPageErrorTest = false;
   status = signal({ text: 'processing...', class: 'alert alert-danger' });
-
-  constructor(private http: HttpClient) {}
 
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid;

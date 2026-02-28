@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, signal, ViewEncapsulation, type OnDestroy, type OnInit } from '@angular/core';
+import { Component, inject, signal, ViewEncapsulation, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { GraphqlService, type GraphqlPaginatedResult, type GraphqlServiceApi } from '@slickgrid-universal/graphql';
@@ -32,6 +32,8 @@ function unescapeAndLowerCase(val: string) {
   imports: [AngularSlickgridComponent, DatePipe, FormsModule],
 })
 export class Example39Component implements OnInit, OnDestroy {
+  private http = inject(HttpClient);
+  private translate = inject(TranslateService);
   private subscriptions: Subscription[] = [];
   angularGrid!: AngularGridInstance;
   backendService!: GraphqlService;
@@ -47,10 +49,7 @@ export class Example39Component implements OnInit, OnDestroy {
   status = signal({ text: 'processing...', class: 'alert alert-danger' });
   serverWaitDelay = FAKE_SERVER_DELAY; // server simulation with default of 250ms but 50ms for Cypress tests
 
-  constructor(
-    private http: HttpClient,
-    private translate: TranslateService
-  ) {
+  constructor() {
     this.backendService = new GraphqlService();
     // always start with English for Cypress E2E tests to be consistent
     const defaultLang = 'en';

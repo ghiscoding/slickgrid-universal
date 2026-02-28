@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, signal, type OnDestroy, type OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, signal, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { addDay, format as tempoFormat } from '@formkit/tempo';
 import { TranslateService } from '@ngx-translate/core';
@@ -34,6 +34,8 @@ const FAKE_SERVER_DELAY = 250;
   imports: [AngularSlickgridComponent, DatePipe, FormsModule],
 })
 export class Example6Component implements OnInit, OnDestroy {
+  private readonly cd = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
   private subscriptions: Subscription[] = [];
   angularGrid!: AngularGridInstance;
   columnDefinitions!: Column[];
@@ -48,7 +50,7 @@ export class Example6Component implements OnInit, OnDestroy {
   selectedLanguage = signal('');
   serverWaitDelay = FAKE_SERVER_DELAY; // server simulation with default of 250ms but 50ms for Cypress tests
 
-  constructor(private translate: TranslateService) {
+  constructor() {
     // always start with English for Cypress E2E tests to be consistent
     const defaultLang = 'en';
     this.translate.use(defaultLang);
