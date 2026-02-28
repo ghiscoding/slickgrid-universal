@@ -1,4 +1,4 @@
-import { Component, type OnInit } from '@angular/core';
+import { Component, inject, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   AngularSlickgridComponent,
@@ -25,6 +25,8 @@ function randomBetween(min: number, max: number): number {
   imports: [AngularSlickgridComponent, FormsModule],
 })
 export class Example42Component implements OnInit {
+  protected readonly angularUtilService = inject(AngularUtilService);
+
   angularGrid!: AngularGridInstance;
   columnDefinitions: Column[] = [];
   dataset: any[] = [];
@@ -33,8 +35,6 @@ export class Example42Component implements OnInit {
   hideSubTitle = false;
   pageSize = 50;
   paginationPosition: 'bottom' | 'top' = 'top';
-
-  constructor(protected readonly angularUtilService: AngularUtilService) {}
 
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid;

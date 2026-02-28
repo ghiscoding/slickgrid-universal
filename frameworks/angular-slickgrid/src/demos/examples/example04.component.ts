@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, type OnInit } from '@angular/core';
+import { Component, inject, type OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
@@ -28,17 +28,14 @@ const URL_SAMPLE_COLLECTION_DATA = 'assets/data/collection_500_numbers.json';
   imports: [AngularSlickgridComponent, DatePipe],
 })
 export class Example4Component implements OnInit {
+  private http = inject(HttpClient);
+  private translate = inject(TranslateService);
   angularGrid!: AngularGridInstance;
   columnDefinitions: Column[] = [];
   gridOptions!: GridOption;
   dataset!: any[];
   hideSubTitle = false;
   metrics!: Metrics;
-
-  constructor(
-    private http: HttpClient,
-    private translate: TranslateService
-  ) {}
 
   ngOnInit(): void {
     this.columnDefinitions = [

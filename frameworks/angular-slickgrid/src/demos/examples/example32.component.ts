@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, ViewEncapsulation, type OnInit } from '@angular/core';
+import { Component, inject, ViewEncapsulation, type OnInit } from '@angular/core';
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 import {
   AngularSlickgridComponent,
@@ -47,6 +47,8 @@ const myCustomTitleValidator = (value: any) => {
   imports: [AngularSlickgridComponent],
 })
 export class Example32Component implements OnInit {
+  private http = inject(HttpClient);
+
   angularGrid!: AngularGridInstance;
   gridOptions!: GridOption;
   columnDefinitions: Column[] = [];
@@ -64,8 +66,6 @@ export class Example32Component implements OnInit {
     { value: 3, label: 'Complex' },
     { value: 4, label: 'Very Complex' },
   ];
-
-  constructor(private http: HttpClient) {}
 
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid;
