@@ -1,6 +1,6 @@
 import { createDomElement, deepMerge } from '@slickgrid-universal/utils';
 import type { SlickGrid, SlickRange } from '../core/index.js';
-import type { CellRangeDecoratorOption, CSSStyleDeclarationWritable } from '../interfaces/index.js';
+import type { CellRangeDecoratorOption } from '../interfaces/index.js';
 
 /**
  * Displays an overlay on top of a given cell range.
@@ -73,21 +73,29 @@ export class SlickCellRangeDecorator {
       this.grid.getActiveCanvasNode()?.appendChild(this._elem);
     }
 
+    // Determine which CSS style to use
     const css = isCopyTo && this._options.copyToSelectionCss ? this._options.copyToSelectionCss : this._options.selectionCss;
-    Object.keys(css).forEach((cssStyleKey) => {
-      if (this._elem!.style[cssStyleKey as CSSStyleDeclarationWritable] !== css[cssStyleKey as CSSStyleDeclarationWritable]) {
-        this._elem!.style[cssStyleKey as CSSStyleDeclarationWritable] = css[cssStyleKey as CSSStyleDeclarationWritable];
+
+    // Apply styles to the element
+    Object.keys(css).forEach((cssStyleKey: string) => {
+      const value = css[cssStyleKey as keyof CSSStyleDeclaration];
+      if (this._elem!.style[cssStyleKey as keyof CSSStyleDeclaration] !== value) {
+        this._elem!.style.setProperty(cssStyleKey, String(value));
       }
     });
+
+    // Get the boxes for the selected cells
     const from = this.grid.getCellNodeBox(range.fromRow, range.fromCell);
     const to = this.grid.getCellNodeBox(range.toRow, range.toCell);
 
+    // Update position and dimensions if both nodes are valid
     if (from && to && this._options?.offset) {
       this._elem.style.top = `${from.top + this._options.offset.top}px`;
       this._elem.style.left = `${from.left + this._options.offset.left}px`;
       this._elem.style.height = `${to.bottom - from.top + this._options.offset.height}px`;
       this._elem.style.width = `${to.right - from.left + this._options.offset.width}px`;
     }
+
     return this._elem;
   }
 }

@@ -25,7 +25,7 @@ export class Example15 {
   gridOptions!: GridOption;
   dataset: any[] = [];
   hideSubTitle = false;
-  selectedLanguage: string;
+  selectedLanguage = '';
 
   constructor(private readonly i18n: I18N = resolve(I18N)) {
     const presets = JSON.parse(localStorage[LOCAL_STORAGE_KEY] || null);

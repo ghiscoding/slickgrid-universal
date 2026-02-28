@@ -22,7 +22,7 @@ function unescapeAndLowerCase(val: string) {
 }
 
 export class Example39 {
-  aureliaGrid: AureliaGridInstance;
+  aureliaGrid!: AureliaGridInstance;
   backendService!: GraphqlService;
   columnDefinitions!: Column[];
   gridOptions!: GridOption;
@@ -32,7 +32,7 @@ export class Example39 {
   graphqlQuery = '...';
   hideSubTitle = false;
   processing = false;
-  selectedLanguage: string;
+  selectedLanguage = '';
   status = { text: 'processing...', class: 'alert alert-danger' };
   serverWaitDelay = FAKE_SERVER_DELAY; // server simulation with default of 250ms but 50ms for Cypress tests
 

@@ -18,6 +18,7 @@
     "forceConsistentCasingInFileNames": true,
     "noEmitHelpers": true,
     "importHelpers": true,
+    "rootDir": "./src",
     "skipLibCheck": true,
     "sourceMap": true,
     "newLine": "lf",

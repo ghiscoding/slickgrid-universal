@@ -7,7 +7,6 @@
     "lib": ["esnext", "dom"],
     "typeRoots": ["../types", "../../node_modules/@types"],
     "declaration": true,
-    "declarationDir": "dist",
     "esModuleInterop": true,
     "inlineSources": true,
     "noImplicitAny": true,
@@ -20,6 +19,7 @@
     "importHelpers": true,
     "jsx": "react-jsx",
     "skipLibCheck": true,
+    "rootDir": "./src",
     "sourceMap": true,
     "newLine": "lf",
     "outDir": "dist"

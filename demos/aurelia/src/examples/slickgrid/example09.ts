@@ -20,7 +20,7 @@ export class Example09 {
   dataView!: SlickDataView;
   gridObj!: SlickGrid;
   hideSubTitle = false;
-  selectedLanguage: string;
+  selectedLanguage = '';
 
   constructor(private readonly i18n: I18N = resolve(I18N)) {
     // define the grid options & columns and then create the grid itself

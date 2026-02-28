@@ -14,8 +14,8 @@ export class Example35 {
   dataset!: any[];
   fetchResult = '';
   hideSubTitle = false;
-  selectedLanguage: string;
-  selectedLanguageFile: string;
+  selectedLanguage = '';
+  selectedLanguageFile = '';
   statusClass = 'alert alert-light';
   statusStyle = 'display: none';
 

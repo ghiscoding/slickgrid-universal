@@ -1,13 +1,14 @@
 {
   "compilerOptions": {
-    "target": "es2021",
-    "lib": ["es5", "dom"],
+    "target": "es2020",
+    "lib": ["es2021", "dom"],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node",
+    "module": "node16",
+    "moduleResolution": "node16",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "types": ["cypress-real-events", "node"],

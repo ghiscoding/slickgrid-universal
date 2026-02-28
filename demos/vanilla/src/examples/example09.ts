@@ -276,7 +276,7 @@ export default class Example09 {
           const filterBy = param.substring('$filter='.length).replace('%20', ' ');
           if (filterBy.includes('matchespattern')) {
             const regex = new RegExp(`matchespattern\\(([a-zA-Z]+),\\s'${CARET_HTML_ESCAPED}(.*?)'\\)`, 'i');
-            const filterMatch = filterBy.match(regex);
+            const filterMatch = filterBy.match(regex) || [];
             const fieldName = filterMatch[1].trim();
             columnFilters[fieldName] = { type: 'matchespattern', term: '^' + filterMatch[2].trim() };
           }

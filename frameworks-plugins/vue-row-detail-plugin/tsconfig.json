@@ -7,7 +7,6 @@
     "lib": ["esnext", "dom"],
     "typeRoots": ["../types", "../../node_modules/@types"],
     "declaration": true,
-    "declarationDir": "dist",
     "esModuleInterop": true,
     "inlineSources": true,
     "noImplicitAny": true,
@@ -21,6 +20,7 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "newLine": "lf",
+    "rootDir": "./src",
     "outDir": "dist"
   },
   "include": ["src"],
