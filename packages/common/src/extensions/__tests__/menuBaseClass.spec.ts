@@ -182,10 +182,6 @@ describe('MenuBaseClass', () => {
       focusedItemSelector: '.slick-submenu-item',
     });
 
-    // Debug: log focused item and parents
-    // eslint-disable-next-line no-console
-    console.log('Focused:', document.activeElement, 'InSubMenu:', item.closest('.slick-submenu'), 'DropRight:', item.closest('.dropright'));
-
     // Simulate ArrowLeft keydown event
     const leftEvent = new window.KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true, cancelable: true });
     item.dispatchEvent(leftEvent);
