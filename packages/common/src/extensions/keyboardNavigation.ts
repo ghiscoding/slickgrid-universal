@@ -63,7 +63,10 @@ export function bindKeyboardNavigation(
       let focusedItem = containerElm.querySelector(focusedItemSelector) as HTMLElement;
       if (focusedItem) {
         // Find the closest menu container (role="menu" or .slick-menu-level-*)
-        const menuContainer = (focusedItem.closest('[role="menu"], .slick-submenu') as HTMLElement) || containerElm;
+        let menuContainer = (focusedItem.closest('[role="menu"], .slick-submenu') as HTMLElement) || containerElm;
+        if (containerElm.classList.contains('slick-grid-menu') && containerElm.classList.contains('slick-menu-level-0')) {
+          menuContainer = containerElm; // if we're at the Grid Menu root, we need to include both Custom Commands & Column Picker items
+        }
         // Get all focusable items, optionally filtered, within the current menu context
         let allItems = getVisibleItems(menuContainer);
 

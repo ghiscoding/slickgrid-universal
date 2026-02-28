@@ -507,11 +507,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
             focusedItem.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
           }
         }),
-      onEscape:
-        options?.onEscape ??
-        (() => {
-          this.disposeAllMenus();
-        }),
+      onEscape: options?.onEscape ?? (() => this.disposeAllMenus()),
       onTab:
         options?.onTab ??
         ((evt: KeyboardEvent) => {
