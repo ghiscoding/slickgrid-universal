@@ -774,6 +774,86 @@ describe('Example 04 - Frozen Grid', () => {
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 210}px);"] > .slick-cell.l4`).should('contain', '2009-05-05');
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 210}px);"] > .slick-cell.l7`).contains(/[United State|Canada]*/);
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 210}px);"] > .slick-cell.l8`).should('contain', 'Action');
+
+      // reset scroll
+      cy.get('.slick-viewport-top.slick-viewport-left').scrollTo(0, 0);
+    });
+  });
+
+  describe('accessibility sub-menus tests', () => {
+    beforeEach(() => {
+      // Open the context menu on a cell to start each test
+      cy.get('[data-row="0"] .slick-cell.l3.r3').rightclick();
+      cy.get('.slick-context-menu.slick-menu-level-0').should('be.visible');
+    });
+
+    it('should open Exports sub-menu with ArrowRight, then Excel sub-menu with ArrowRight, and close with ArrowLeft', () => {
+      // Move down to "Exports" (4th item)
+      cy.focused();
+      cy.press(Cypress.Keyboard.Keys.DOWN);
+      cy.press(Cypress.Keyboard.Keys.DOWN);
+      cy.get('.slick-context-menu.slick-menu-level-0 .slick-submenu-item[data-command="export"]').should('have.focus');
+
+      // Open "Exports" sub-menu with ArrowRight
+      cy.focused().type('{rightarrow}');
+      cy.get('.slick-context-menu.slick-menu-level-1[data-sub-menu-parent="export"]').should('be.visible');
+
+      // Move down to "Excel" (2nd item in sub-menu)
+      cy.focused().type('{downarrow}');
+      cy.get('.slick-context-menu.slick-menu-level-1 .slick-submenu-item[data-command="sub-menu"]').should('have.focus');
+
+      // Open "Excel" sub-menu with ArrowRight
+      cy.focused().type('{rightarrow}');
+      cy.get('.slick-context-menu.slick-menu-level-2[data-sub-menu-parent="sub-menu"]').should('be.visible');
+
+      // Move down to "Excel (xlsx)" (2nd item in Excel sub-menu)
+      cy.focused().type('{downarrow}');
+      cy.get('.slick-context-menu.slick-menu-level-2 .slick-menu-item[data-command="exports-xlsx"]').should('have.focus');
+
+      // Close Excel sub-menu with ArrowLeft
+      cy.focused().type('{leftarrow}');
+      cy.get('.slick-context-menu.slick-menu-level-2').should('not.exist');
+      cy.get('.slick-context-menu.slick-menu-level-1 .slick-submenu-item[data-command="sub-menu"]').should('have.focus');
+
+      // close all context menus
+      cy.get('.slick-context-menu.slick-menu-level-1').type('{esc}');
+    });
+
+    it('should open sub-menus using Enter as well as ArrowRight', () => {
+      // Move down to "Exports"
+      cy.focused();
+      cy.press(Cypress.Keyboard.Keys.DOWN);
+      cy.press(Cypress.Keyboard.Keys.DOWN);
+      cy.get('.slick-context-menu.slick-menu-level-0 .slick-submenu-item[data-command="export"]').should('have.focus');
+
+      // Open "Exports" sub-menu with Enter
+      cy.focused().type('{enter}');
+      cy.get('.slick-context-menu.slick-menu-level-1[data-sub-menu-parent="export"]').should('be.visible');
+
+      // Move down to "Excel"
+      cy.focused().type('{downarrow}');
+      cy.get('.slick-context-menu.slick-menu-level-1 .slick-submenu-item[data-command="sub-menu"]').should('have.focus');
+
+      // Open "Excel" sub-menu with Enter
+      cy.focused().type('{enter}');
+      cy.get('.slick-context-menu.slick-menu-level-2[data-sub-menu-parent="sub-menu"]').should('be.visible');
+
+      // close all context menus
+      cy.get('.slick-context-menu.slick-menu-level-1').type('{esc}');
+    });
+
+    it('should activate a sub-menu leaf item with Enter', () => {
+      // Move down to "Exports"
+      cy.focused();
+      cy.press(Cypress.Keyboard.Keys.DOWN);
+      cy.press(Cypress.Keyboard.Keys.DOWN);
+      cy.press(Cypress.Keyboard.Keys.ENTER);
+      cy.get('.slick-context-menu.slick-menu-level-1[data-sub-menu-parent="export"]').should('be.visible');
+
+      // "Text (tab delimited)" is first item, should have focus
+      cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-item[data-command="exports-txt"]').should('have.focus');
+      // Activate with Enter (add your assertion for the result)
+      cy.focused().type('{enter}');
     });
   });
 });

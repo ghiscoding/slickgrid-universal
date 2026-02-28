@@ -42,6 +42,14 @@ export type itemEventCallback = (
   level: number,
   columnDef?: Column
 ) => void;
+export interface KeyboardNavigationOption {
+  onActivate?: (focusedItem: HTMLElement) => void;
+  onEscape?: () => void;
+  onTab?: (evt: KeyboardEvent, focusedItem: HTMLElement) => void;
+  eventServiceKey?: string;
+  allItemsSelector?: string;
+  focusedItemSelector?: string;
+}
 
 export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
   protected _addonOptions: M = {} as unknown as M;
@@ -123,6 +131,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
 
     // remove all parent menu listeners before removing them from the DOM
     this._bindEventService.unbindAll('parent-menu');
+    this._bindEventService.unbindAll('keyboard-navigation'); // Clean up keyboard/mouse event bindings
     document.querySelectorAll(`.${this.menuCssClass}${this.gridUidSelector}`).forEach((subElm) => subElm.remove());
 
     // Restore focus to the trigger element if it exists
@@ -250,11 +259,12 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
     args: unknown,
     triggeredByElm: HTMLElement,
     itemClickCallback: itemEventCallback,
-    itemMouseoverCallback?: itemEventCallback
+    itemMouseoverCallback?: itemEventCallback,
+    keyboardNavOptions?: KeyboardNavigationOption
   ): void {
     if (args && commandOrOptionItems && menuOptions) {
       for (const item of commandOrOptionItems) {
-        this.populateSingleCommandOrOptionItem(
+        const li = this.populateSingleCommandOrOptionItem(
           itemType,
           menuOptions,
           commandOrOptionMenuElm,
@@ -264,6 +274,19 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
           itemClickCallback,
           itemMouseoverCallback
         );
+        if (li && ((item as MenuCommandItem)?.commandItems || (item as MenuOptionItem)?.optionItems)) {
+          // Use command for MenuCommandItem, option for MenuOptionItem
+          const isCommand = typeof (item as MenuCommandItem).command === 'string';
+          const key = isCommand ? (item as MenuCommandItem).command : (item as MenuOptionItem).option;
+          const keyStr = typeof key === 'string' ? key.replace(/\s/g, '') : String(key);
+          if (keyStr) {
+            const selector = `.slick-submenu[data-sub-menu-parent="${keyStr}"]`;
+            const subMenuElm = document.body.querySelector(selector) as HTMLElement;
+            if (subMenuElm && !subMenuElm.dataset.keyboardNavBound) {
+              this.wireMenuKeyboardNavigation(subMenuElm, keyboardNavOptions);
+            }
+          }
+        }
       }
     }
   }
@@ -422,13 +445,10 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
             }
 
             itemClickCallback.call(this, e, itemType, item, level, args?.column);
-            clearTimeout(this._timer);
-            this._timer = setTimeout(() => {
-              if (triggeredByElm?.classList.contains('slick-header-menu-icon')) {
-                triggeredByElm = triggeredByElm.parentElement as HTMLElement; // If the click was on the icon, move focus to the header button for better accessibility
-              }
-              triggeredByElm?.focus(); // Restore focus to the triggering element after click
-            });
+            if (triggeredByElm?.classList.contains('slick-header-menu-icon')) {
+              triggeredByElm = triggeredByElm.parentElement as HTMLElement; // If the click was on the icon, move focus to the header button for better accessibility
+            }
+            triggeredByElm?.focus(); // Restore focus to the triggering element after click
           }) as EventListener,
           undefined,
           eventGroupName
@@ -474,18 +494,9 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
   /**
    * Wire up keyboard navigation for the menu container using shared utility.
    * Should be called after menu DOM is created for all non-GridMenu plugins.
+   * Handles sub-menu open/close and focus transfer for a11y.
    */
-  protected wireMenuKeyboardNavigation(
-    menuElm: HTMLElement,
-    options?: {
-      onActivate?: (focusedItem: HTMLElement) => void;
-      onEscape?: () => void;
-      onTab?: (evt: KeyboardEvent, focusedItem: HTMLElement) => void;
-      eventServiceKey?: string;
-      allItemsSelector?: string;
-      focusedItemSelector?: string;
-    }
-  ): void {
+  protected wireMenuKeyboardNavigation(menuElm: HTMLElement, options?: KeyboardNavigationOption): void {
     wireMenuKeyboardNavigation(menuElm, this._bindEventService, {
       ...options,
       onActivate:
@@ -505,6 +516,57 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
         }),
       allItemsSelector: options?.allItemsSelector,
       focusedItemSelector: options?.focusedItemSelector,
+      onOpenSubMenu: (focusedItem: HTMLElement) => {
+        // Try to open sub-menu (simulate mouseover/click if needed)
+        const command = focusedItem.dataset.command;
+        let subMenuSelector = '';
+        if (command) {
+          const cmdStr = typeof command === 'string' ? command.replace(/\s/g, '') : String(command);
+          subMenuSelector = `.slick-submenu[data-sub-menu-parent="${cmdStr}"]`;
+        }
+        // Simulate mouseover/click to open sub-menu if not present
+        let subMenuElm = subMenuSelector ? (document.body.querySelector(subMenuSelector) as HTMLElement) : null;
+        if (!subMenuElm) {
+          focusedItem.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, cancelable: true }));
+          // Try again after event
+          if (subMenuSelector) {
+            subMenuElm = document.body.querySelector(subMenuSelector) as HTMLElement;
+          }
+        }
+        // If sub-menu is now present, wire keyboard navigation and focus first item
+        if (subMenuElm) {
+          if (!subMenuElm.dataset.keyboardNavBound) {
+            this.wireMenuKeyboardNavigation(subMenuElm, options);
+          }
+          this.focusFirstMenuItem(subMenuElm!);
+        }
+      },
+      onCloseSubMenu: (focusedItem: HTMLElement) => {
+        // Close the current sub-menu and focus the trigger in the previous menu
+        const currentSubMenu = focusedItem.closest('.slick-submenu');
+        if (currentSubMenu) {
+          // Remove the current sub-menu from the DOM
+          currentSubMenu.remove();
+          // Find the parent menu (the previous menu level)
+          const parentMenu = document.body.querySelector(
+            `.slick-menu-level-${parseInt(currentSubMenu.className.match(/slick-menu-level-(\d+)/)?.[1] || '1', 10) - 1}`
+          );
+          // Find the submenu trigger in the parent menu that matches the data-sub-menu-parent
+          let triggerSelector = '';
+          const subMenuParentId = currentSubMenu.getAttribute('data-sub-menu-parent');
+          if (subMenuParentId) {
+            triggerSelector = `.slick-submenu-item[data-command="${subMenuParentId}"], .slick-submenu-item[data-option="${subMenuParentId}"]`;
+          }
+          let triggerItem = parentMenu && triggerSelector ? (parentMenu.querySelector(triggerSelector) as HTMLElement) : null;
+          // Fallback: focus first menu item if trigger not found
+          if (!triggerItem && parentMenu) {
+            triggerItem = parentMenu.querySelector('.slick-submenu-item, [role="menuitem"]') as HTMLElement;
+          }
+          if (triggerItem) {
+            triggerItem.focus();
+          }
+        }
+      },
     });
   }
 

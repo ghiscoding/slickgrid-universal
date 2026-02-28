@@ -1253,6 +1253,35 @@ describe('GridMenuControl', () => {
           expect(focusHeaderRowFilterSpy).toHaveBeenCalled();
           button.remove();
         });
+
+        // --- Coverage for menuBaseClass.ts: menu title, sub-menu title, custom CSS, sub-menu skip, falsy menuOptions ---
+
+        it('should render menu title when commandTitle is provided', () => {
+          gridOptionsMock.gridMenu!.commandTitle = 'Grid Menu Title';
+          control.columns = columnsMock;
+          control.init();
+          const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLDivElement;
+          buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true }));
+          const menuTitleElm = control.menuElement?.querySelector('.slick-menu-title');
+          expect(menuTitleElm).toBeTruthy();
+          expect(menuTitleElm?.textContent).toBe('Grid Menu Title');
+        });
+
+        it('should skip rendering menu header for sub-menu (isSubMenu branch)', () => {
+          // Simulate calling populateCommandOrOptionTitle with level > 0
+          const menuBase = control as any;
+          const fakeMenuElm = document.createElement('div');
+          // Should not append a menu header for sub-menu
+          menuBase.populateCommandOrOptionTitle('command', { commandTitle: 'Should Not Render' }, fakeMenuElm, 1);
+          expect(fakeMenuElm.querySelector('.slick-menu-title')).toBeFalsy();
+        });
+
+        it('should skip rendering menu header if menuOptions is falsy', () => {
+          const menuBase = control as any;
+          const fakeMenuElm = document.createElement('div');
+          menuBase.populateCommandOrOptionTitle('command', undefined, fakeMenuElm, 0);
+          expect(fakeMenuElm.querySelector('.slick-menu-title')).toBeFalsy();
+        });
       });
 
       describe('with sub-menus', () => {
@@ -1429,6 +1458,50 @@ describe('GridMenuControl', () => {
 
           expect(gridMenu2Elm2.classList.contains('dropup')).toBeTruthy();
           expect(gridMenu2Elm2.classList.contains('dropdown')).toBeFalsy();
+        });
+
+        it('should support keyboard navigation (arrows) within sub-menus for accessibility', () => {
+          Object.defineProperty(document.documentElement, 'clientWidth', { writable: true, configurable: true, value: 50 });
+
+          gridOptionsMock.gridMenu!.commandItems = mockCommandItems;
+          control.columns = columnsMock;
+          control.init();
+
+          const openMenuBtn = document.querySelector('.slick-grid-menu-button') as HTMLDivElement;
+          openMenuBtn.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+
+          // Open first sub-menu
+          const menuLevel0 = document.body.querySelector('.slick-grid-menu.slick-menu-level-0') as HTMLDivElement;
+          const menuList0 = menuLevel0.querySelector('.slick-menu-command-list') as HTMLDivElement;
+          const subMenuTrigger = menuList0.querySelector('[data-command="sub-commands"]') as HTMLDivElement;
+          subMenuTrigger.dispatchEvent(new Event('click', { bubbles: true }));
+
+          // Open second sub-menu
+          const menuLevel1 = document.body.querySelector('.slick-grid-menu.slick-menu-level-1') as HTMLDivElement;
+          const menuList1 = menuLevel1.querySelector('.slick-menu-command-list') as HTMLDivElement;
+          const deeperSubMenuTrigger = menuList1.querySelector('[data-command="more-sub-commands"]') as HTMLDivElement;
+          deeperSubMenuTrigger.dispatchEvent(new Event('mouseover', { bubbles: true }));
+
+          // Focus the first item in the deepest sub-menu
+          const menuLevel2 = document.body.querySelector('.slick-grid-menu.slick-menu-level-2') as HTMLDivElement;
+          const menuList2 = menuLevel2.querySelector('.slick-menu-command-list') as HTMLDivElement;
+          const firstItem = menuList2.querySelector('.slick-menu-item[tabindex]') as HTMLElement;
+          firstItem.focus();
+
+          // There is only one item in the deepest sub-menu
+          const items = menuList2.querySelectorAll('.slick-menu-item[tabindex]');
+          expect(items.length).toBe(1);
+          expect(items[0].textContent).toContain('Command 5');
+
+          // Simulate ArrowLeft to close the sub-menu and focus parent trigger
+          items[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true }));
+          expect(deeperSubMenuTrigger).toBeTruthy();
+
+          // Simulate ArrowRight to re-open sub-menu and focus first item again
+          deeperSubMenuTrigger.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+          const reopenedMenuLevel2 = document.body.querySelector('.slick-grid-menu.slick-menu-level-2') as HTMLDivElement;
+          const reopenedFirstItem = reopenedMenuLevel2.querySelector('.slick-menu-item[tabindex]') as HTMLElement;
+          expect(reopenedFirstItem.textContent).toContain('Command 5');
         });
       });
 

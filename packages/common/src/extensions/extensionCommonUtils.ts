@@ -149,7 +149,6 @@ function generatePickerCheckbox(
     type: 'checkbox',
     dataset: inputData,
     tabIndex: -1,
-    ariaHidden: 'true',
   });
   const colInputDivElm = createDomElement('div', { className: `mdi ${checked ? PICKER_CHECK_ICON : PICKER_UNCHECK_ICON}` });
   const labelSpanElm = createDomElement('span', { className: 'checkbox-label' });

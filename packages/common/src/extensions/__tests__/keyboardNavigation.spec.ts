@@ -455,3 +455,143 @@ describe('wireMenuKeyboardNavigation', () => {
     testMenu.remove();
   });
 });
+
+describe('Sub-menu keyboard navigation', () => {
+  let container: HTMLElement;
+  let parentItem: HTMLElement;
+  let subMenuItem: HTMLElement;
+  let subMenu: HTMLElement;
+  let bindService: any;
+  let onOpenSubMenu: any;
+  let onCloseSubMenu: any;
+
+  beforeEach(() => {
+    container = document.createElement('div');
+    container.tabIndex = 0;
+    parentItem = document.createElement('div');
+    parentItem.setAttribute('role', 'menuitem');
+    parentItem.classList.add('slick-submenu-item', 'dropright');
+    parentItem.tabIndex = 0;
+    parentItem.textContent = 'Parent Item';
+    Object.defineProperty(parentItem, 'offsetParent', { value: container, configurable: true });
+    container.appendChild(parentItem);
+
+    subMenu = document.createElement('div');
+    subMenu.classList.add('slick-submenu');
+    subMenu.tabIndex = 0;
+    Object.defineProperty(subMenu, 'offsetParent', { value: document.body, configurable: true });
+    document.body.appendChild(subMenu);
+
+    subMenuItem = document.createElement('div');
+    subMenuItem.setAttribute('role', 'menuitem');
+    subMenuItem.tabIndex = 0;
+    subMenuItem.textContent = 'SubMenu Item';
+    Object.defineProperty(subMenuItem, 'offsetParent', { value: subMenu, configurable: true });
+    subMenu.appendChild(subMenuItem);
+
+    // Ensure offsetParent is set for all elements in every test
+    Object.defineProperty(parentItem, 'offsetParent', { value: container, configurable: true });
+    Object.defineProperty(subMenu, 'offsetParent', { value: document.body, configurable: true });
+    Object.defineProperty(subMenuItem, 'offsetParent', { value: subMenu, configurable: true });
+
+    bindService = {
+      bind: (el: HTMLElement, event: string, handler: EventListener) => {
+        el.addEventListener(event, handler);
+      },
+    };
+    onOpenSubMenu = vi.fn();
+    onCloseSubMenu = vi.fn();
+
+    bindKeyboardNavigation(container, bindService, {
+      focusedItemSelector: '[role="menuitem"]:focus',
+      allItemsSelector: '[role="menuitem"]',
+      onOpenSubMenu,
+      onCloseSubMenu,
+    });
+  });
+
+  afterEach(() => {
+    container.remove();
+    subMenu.remove();
+  });
+
+  it('should call onOpenSubMenu when ArrowRight is pressed on submenu trigger', () => {
+    document.body.appendChild(container);
+    parentItem.tabIndex = 0;
+    parentItem.focus();
+    if (document.activeElement !== parentItem) {
+      Object.defineProperty(document, 'activeElement', { value: parentItem, configurable: true });
+    }
+    const event = new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true });
+    container.dispatchEvent(event);
+    expect(onOpenSubMenu).toHaveBeenCalledWith(parentItem);
+  });
+
+  it('should call onOpenSubMenu when Enter is pressed on submenu trigger', () => {
+    document.body.appendChild(container);
+    parentItem.tabIndex = 0;
+    parentItem.focus();
+    if (document.activeElement !== parentItem) {
+      Object.defineProperty(document, 'activeElement', { value: parentItem, configurable: true });
+    }
+    const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true });
+    container.dispatchEvent(event);
+    expect(onOpenSubMenu).toHaveBeenCalledWith(parentItem);
+  });
+
+  it('should call onOpenSubMenu when Space is pressed on submenu trigger', () => {
+    document.body.appendChild(container);
+    parentItem.tabIndex = 0;
+    parentItem.focus();
+    if (document.activeElement !== parentItem) {
+      Object.defineProperty(document, 'activeElement', { value: parentItem, configurable: true });
+    }
+    const event = new KeyboardEvent('keydown', { key: ' ', bubbles: true });
+    container.dispatchEvent(event);
+    expect(onOpenSubMenu).toHaveBeenCalledWith(parentItem);
+  });
+
+  it('should call onCloseSubMenu when ArrowLeft is pressed in submenu', () => {
+    parentItem.appendChild(subMenu);
+    container.appendChild(parentItem);
+    document.body.appendChild(container);
+    subMenuItem.tabIndex = 0;
+    subMenuItem.focus();
+    if (document.activeElement !== subMenuItem) {
+      Object.defineProperty(document, 'activeElement', { value: subMenuItem, configurable: true });
+    }
+    const event = new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true });
+    subMenu.dispatchEvent(event);
+    expect(onCloseSubMenu).toHaveBeenCalledWith(subMenuItem);
+  });
+
+  it('should call onCloseSubMenu when ArrowLeft is pressed in dropleft submenu', () => {
+    parentItem.classList.remove('dropright');
+    parentItem.classList.add('dropleft');
+    parentItem.appendChild(subMenu);
+    container.appendChild(parentItem);
+    document.body.appendChild(container);
+    subMenuItem.tabIndex = 0;
+    subMenuItem.focus();
+    if (document.activeElement !== subMenuItem) {
+      Object.defineProperty(document, 'activeElement', { value: subMenuItem, configurable: true });
+    }
+    const event = new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true });
+    subMenu.dispatchEvent(event);
+    expect(onCloseSubMenu).toHaveBeenCalledWith(subMenuItem);
+  });
+
+  it('should not call onOpenSubMenu for ArrowRight if not a submenu trigger', () => {
+    subMenuItem.focus();
+    const event = new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true });
+    container.dispatchEvent(event);
+    expect(onOpenSubMenu).not.toHaveBeenCalled();
+  });
+
+  it('should not call onCloseSubMenu for ArrowLeft if not in submenu', () => {
+    parentItem.focus();
+    const event = new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true });
+    container.dispatchEvent(event);
+    expect(onCloseSubMenu).not.toHaveBeenCalled();
+  });
+});

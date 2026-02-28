@@ -269,17 +269,9 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     level = 0,
     item?: ExtractMenuType<ExtendableItemTypes, MenuType>
   ): HTMLDivElement {
-    // to avoid having multiple sub-menu trees opened
-    // we need to somehow keep trace of which parent menu the tree belongs to
-    // and we should keep ref of only the first sub-menu parent, we can use the command name (remove any whitespaces though)
+    // Always use the triggering item's command (whitespace removed) as the sub-menu parent id for every level
     const subMenuCommand = (item as GridMenuItem)?.command;
-    let subMenuId = level === 1 && subMenuCommand ? subMenuCommand.replace(/\s/g, '') : '';
-    if (subMenuId) {
-      this._subMenuParentId = subMenuId;
-    }
-    if (level > 1) {
-      subMenuId = this._subMenuParentId;
-    }
+    const subMenuId = subMenuCommand ? subMenuCommand.replace(/\s/g, '') : '';
 
     const menuClasses = `${this.menuCssClass} slick-menu-level-${level} ${this._gridUid}`;
     const bodyMenuElm = document.body.querySelector<HTMLDivElement>(
