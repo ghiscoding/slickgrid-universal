@@ -19,7 +19,7 @@ const CARET_HTML_ESCAPED = '%5E';
 const PERCENT_HTML_ESCAPED = '%25';
 
 export class Example38 {
-  aureliaGrid: AureliaGridInstance;
+  aureliaGrid!: AureliaGridInstance;
   backendService: GridOdataService;
   columnDefinitions!: Column[];
   gridOptions!: GridOption;

@@ -17,7 +17,7 @@ import { randomNumber } from './utilities.js';
 const FETCH_SIZE = 50;
 
 export class Example40 {
-  aureliaGrid: AureliaGridInstance;
+  aureliaGrid!: AureliaGridInstance;
   columnDefinitions!: Column[];
   dataset: any[] = [];
   gridOptions!: GridOption;

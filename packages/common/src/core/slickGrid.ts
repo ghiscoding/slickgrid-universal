@@ -26,7 +26,6 @@ import type {
   Column,
   ColumnMetadata,
   ColumnSort,
-  CSSStyleDeclarationWritable,
   CssStyleHash,
   CustomDataView,
   DOMEvent,
@@ -1100,19 +1099,22 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   restoreCssFromHiddenInit(): void {
-    // finish handle display:none on container or container parents
-    // - put values back the way they were
-    let i = 0;
-    if (this._hiddenParents) {
-      this._hiddenParents.forEach((el) => {
-        const old = this.oldProps[i++];
+    // Finish handling display:none on container or container parents
+    // - Put values back the way they were
+    if (this._hiddenParents && this.oldProps) {
+      this._hiddenParents.forEach((el: HTMLElement, index: number) => {
+        const old: CSSStyleDeclaration = this.oldProps[index] as CSSStyleDeclaration;
+
         Object.keys(this.cssShow).forEach((name) => {
           if (this.cssShow) {
-            el.style[name as CSSStyleDeclarationWritable] = (old as any)[name];
+            const value = old[name as keyof CSSStyleDeclaration];
+            el.style.setProperty(name, value != null ? String(value) : '');
           }
         });
       });
-      this._hiddenParents = [];
+
+      // Clear the hidden parents array
+      this._hiddenParents.length = 0; // Correct way to clear the array
     }
   }
 

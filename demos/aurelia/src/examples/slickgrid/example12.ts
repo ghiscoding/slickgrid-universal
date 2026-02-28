@@ -30,7 +30,7 @@ export class Example12 {
   gridOptions!: GridOption;
   columnDefinitions: Column[] = [];
   dataset: any[] = [];
-  selectedLanguage: string;
+  selectedLanguage = '';
   duplicateTitleHeaderCount = 1;
   gridObj!: SlickGrid;
   hideSubTitle = false;
