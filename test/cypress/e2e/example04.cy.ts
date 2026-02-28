@@ -816,7 +816,7 @@ describe('Example 04 - Frozen Grid', () => {
       cy.get('.slick-context-menu.slick-menu-level-1 .slick-submenu-item[data-command="sub-menu"]').should('have.focus');
 
       // close all context menus
-      cy.get('.slick-context-menu.slick-menu-level-1').type('{esc}');
+      cy.get('[data-row="0"] .slick-cell.l0.r0').click();
     });
 
     it('should open sub-menus using Enter as well as ArrowRight', () => {
@@ -839,7 +839,7 @@ describe('Example 04 - Frozen Grid', () => {
       cy.get('.slick-context-menu.slick-menu-level-2[data-sub-menu-parent="sub-menu"]').should('be.visible');
 
       // close all context menus
-      cy.get('.slick-context-menu.slick-menu-level-1').type('{esc}');
+      cy.get('[data-row="0"] .slick-cell.l0.r0').click();
     });
 
     it('should activate a sub-menu leaf item with Enter', () => {
