@@ -20,11 +20,9 @@ describe('Example 01 - Basic Grids', () => {
 
   it('should have 2 grids of size 800 * 225px and 800 * 255px', () => {
     cy.get('.grid1').should('have.css', 'width', '800px');
-
     cy.get('.grid1 > .slickgrid-container').should(($el) => expect(parseInt(`${$el.height()}`, 10)).to.eq(225));
 
     cy.get('.grid2').should('have.css', 'width', '800px');
-
     cy.get('.grid2 > .slickgrid-container').should(($el) => expect(parseInt(`${$el.height()}`, 10)).to.eq(255));
   });
 
@@ -49,9 +47,27 @@ describe('Example 01 - Basic Grids', () => {
   });
 
   it('should have a Grid Preset Filter on 1st Title column and expect all rows to be filtered as well', () => {
-    cy.get('input.search-filter.filter-title')
+    cy.get('.grid2 input.search-filter.filter-title')
       .invoke('val')
       .then((text) => expect(text).to.eq('2'));
+
+    cy.get(`.grid2 [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 122');
+    cy.get(`.grid2 [style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 123');
+    cy.get(`.grid2 [style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 124');
+    cy.get(`.grid2 [style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 125');
+    cy.get(`.grid2 [style="transform: translateY(${GRID_ROW_HEIGHT * 4}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 126');
+  });
+
+  it('should focus on "Title" column filter and expect the grid to stay on Page 2', () => {
+    cy.get('.grid2 input.search-filter.filter-title')
+      .invoke('val')
+      .then((text) => expect(text).to.eq('2'));
+
+    cy.get('.grid2 input.search-filter.filter-title').focus().blur();
+
+    cy.get('[data-test=page-number-input]')
+      .invoke('val')
+      .then((pageNumber) => expect(pageNumber).to.eq('2'));
 
     cy.get(`.grid2 [style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 122');
     cy.get(`.grid2 [style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(0)`).should('contain', 'Task 123');
@@ -142,11 +158,8 @@ describe('Example 01 - Basic Grids', () => {
       .then((pageNumber) => expect(pageNumber).to.eq('2'));
 
     cy.get('[data-test=page-count]').contains('55');
-
     cy.get('[data-test=item-from]').contains('6');
-
     cy.get('[data-test=item-to]').contains('10');
-
     cy.get('[data-test=total-items]').contains('271');
   });
 
