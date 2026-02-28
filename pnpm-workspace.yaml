@@ -13,7 +13,7 @@ catalog:
   '@formkit/tempo': ^1.0.0
   '@popperjs/core': ^2.11.8
   '@types/fnando__sparkline': ^0.3.7
-  '@types/node': ^24.10.13
+  '@types/node': ^24.10.14
   '@types/react': ^19.2.14
   '@types/react-dom': ^19.2.3
   '@types/sortablejs': ^1.15.9
@@ -24,7 +24,7 @@ catalog:
   bootstrap: ^5.3.8
   concurrently: ^9.2.1
   cross-env: ^10.1.0
-  cypress: ^15.10.0
+  cypress: ^15.11.0
   cypress-real-events: ^1.15.0
   dequal: ^2.0.3
   dompurify: ^3.3.1
