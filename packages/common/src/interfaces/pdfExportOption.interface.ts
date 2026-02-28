@@ -41,10 +41,56 @@ export interface PdfExportOption {
   repeatHeadersOnEachPage?: boolean;
   /** Horizontal alignment for all PDF table text ('left', 'center', 'right'). Defaults to 'left'. */
   textAlign?: 'left' | 'center' | 'right';
+  /** Header row background color as RGB tuple, defaults to [66, 139, 202] (Bootstrap-blue) */
+  headerBackgroundColor?: [number, number, number];
+  /** Header row text color as RGB tuple, defaults to [255, 255, 255] (white) */
+  headerTextColor?: [number, number, number];
+  /** Pre-header (grouped columns) row background color as RGB tuple, defaults to [108, 117, 125] */
+  preHeaderBackgroundColor?: [number, number, number];
+  /** Pre-header (grouped columns) row text color as RGB tuple, defaults to [255, 255, 255] (white) */
+  preHeaderTextColor?: [number, number, number];
+  /** Alternate (odd) row background color as RGB tuple, defaults to [245, 245, 245] (light gray) */
+  alternateRowColor?: [number, number, number];
+  /** Cell padding in pt (used by jsPDF-AutoTable), defaults to 4 */
+  cellPadding?: number;
+  /**
+   * Optional PDF document properties (metadata) set via `doc.setDocumentProperties()`.
+   * These appear in the PDF viewer's "Document Properties" dialog.
+   */
+  documentProperties?: {
+    /** PDF document title */
+    title?: string;
+    /** PDF document author */
+    author?: string;
+    /** PDF document subject */
+    subject?: string;
+    /** PDF document keywords (comma-separated string) */
+    keywords?: string;
+    /** PDF document creator (application name) */
+    creator?: string;
+  };
   /**
    * Optional column width in points (pt) for PDF export. jsPDF uses `pt` as its default unit.
    * 1 pt ≈ 1.333 px (1 px ≈ 0.75 pt)
    * Example: width: 72 (pt) ≈ 96 px
    */
   width?: number;
+
+  /**
+   * Optional callback to customize the jsPDF-AutoTable options before the table is rendered.
+   * Receives the fully-built AutoTable options object and must return the (possibly mutated) options.
+   * This is only called when jsPDF-AutoTable is available; the manual fallback path does not use it.
+   *
+   * Use this to add advanced AutoTable features (e.g. `didDrawCell`, `willDrawCell`, custom column widths)
+   * without needing to subclass `PdfExportService`.
+   *
+   * @example
+   * ```ts
+   * autoTableOptions: (opts) => {
+   *   opts.didDrawCell = (data) => { console.log('drew cell', data); };
+   *   return opts;
+   * }
+   * ```
+   */
+  autoTableOptions?: (options: Record<string, unknown>) => Record<string, unknown>;
 }
