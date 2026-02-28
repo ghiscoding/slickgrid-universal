@@ -1,10 +1,12 @@
 {
   "compilerOptions": {
+    "ignoreDeprecations": "6.0",
     "target": "es2020",
     "esModuleInterop": true,
     "lib": ["es2021", "dom"],
-    "types": ["cypress-real-events", "node"],
-    "jsx": "preserve"
+    "types": ["@4tw/cypress-drag-drop", "cypress", "node"],
+    "moduleResolution": "bundler",
+    "skipLibCheck": true
   },
   "include": ["**/*.ts"]
 }

@@ -30,7 +30,7 @@ export default defineConfig({
     specPattern: 'test/cypress/e2e/**/*.cy.ts',
     excludeSpecPattern: process.env.CI ? ['**/node_modules/**', '**/000-*.cy.ts'] : ['**/node_modules/**'],
     testIsolation: false,
-    setupNodeEvents(on, config) {
+    setupNodeEvents(on) {
       on('before:browser:launch', (browser, launchOptions) => {
         if (['chrome', 'edge'].includes(browser.name)) {
           if (browser.isHeadless) {
