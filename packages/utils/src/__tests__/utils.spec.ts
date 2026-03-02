@@ -16,7 +16,7 @@ import {
   isPrimitiveOrHTML,
   isPrimitiveValue,
   parseBoolean,
-  queueMicrotaskOrSetTimeout,
+  queueMicrotaskPolyfill,
   removeAccentFromText,
   setDeepValue,
   titleCase,
@@ -661,18 +661,12 @@ describe('Service/Utilies', () => {
     });
   });
 
-  describe('queueMicrotaskOrSetTimeout() method', () => {
-    it('use queueMicrotask() when available', () =>
+  describe('queueMicrotaskPolyfill() method', () => {
+    it('uses queueMicrotask() when available', () =>
       new Promise((done: any) => {
         const callback = vi.fn();
-
-        // Mock queueMicrotask
         const queueMicrotaskSpy = vi.spyOn(global, 'queueMicrotask');
-
-        // Call the function being tested
-        queueMicrotaskOrSetTimeout(callback);
-
-        // Wait for the callback to be executed
+        queueMicrotaskPolyfill(callback);
         setTimeout(() => {
           expect(queueMicrotaskSpy).toHaveBeenCalledWith(callback);
           expect(callback).toHaveBeenCalledTimes(1);
@@ -681,32 +675,22 @@ describe('Service/Utilies', () => {
         }, 10);
       }));
 
-    it('use setTimeout() fallback when queueMicrotask() is not available', () =>
+    it('uses Promise.resolve().then() fallback when queueMicrotask is not available', () =>
       new Promise((done: any) => {
         const callback = vi.fn();
-
-        // Mock queueMicrotask
-        const queueMicrotaskSpy = vi.spyOn(global, 'queueMicrotask');
-        queueMicrotaskSpy.mockImplementation(() => {
-          // Simulate queueMicrotask throwing an error
-          throw new Error('queueMicrotask not available');
-        });
-
-        // Mock setTimeout
-        const setTimeoutSpy = vi.spyOn(global, 'setTimeout');
-
-        // Call the function being tested
-        queueMicrotaskOrSetTimeout(callback);
-
-        // Assertions
-        expect(queueMicrotaskSpy).toHaveBeenCalledWith(callback);
-        expect(setTimeoutSpy).toHaveBeenCalledWith(expect.any(Function), 0);
-
-        // Wait for the callback to be executed
+        // Remove queueMicrotask
+        const originalQueueMicrotask = global.queueMicrotask;
+        // @ts-ignore
+        delete global.queueMicrotask;
+        // Spy on Promise.resolve().then
+        const promiseThenSpy = vi.spyOn(Promise, 'resolve');
+        queueMicrotaskPolyfill(callback);
         setTimeout(() => {
+          expect(promiseThenSpy).toHaveBeenCalled();
           expect(callback).toHaveBeenCalledTimes(1);
-          queueMicrotaskSpy.mockRestore();
-          setTimeoutSpy.mockRestore();
+          promiseThenSpy.mockRestore();
+          // Restore queueMicrotask
+          global.queueMicrotask = originalQueueMicrotask;
           done();
         }, 10);
       }));

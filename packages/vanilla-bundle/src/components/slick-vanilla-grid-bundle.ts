@@ -53,7 +53,7 @@ import { SlickFooterComponent } from '@slickgrid-universal/custom-footer-compone
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickPaginationComponent } from '@slickgrid-universal/pagination-component';
-import { deepCopy, extend, queueMicrotaskOrSetTimeout } from '@slickgrid-universal/utils';
+import { deepCopy, extend, queueMicrotaskPolyfill } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 import { type SlickerGridInstance } from '../interfaces/slickerGridInstance.interface.js';
 import { UniversalContainerService } from '../services/universalContainer.service.js';
@@ -193,7 +193,7 @@ export class SlickVanillaGridBundle<TData = any> {
 
       // we also need to reset/refresh the Tree Data filters because if we inserted new item(s) then it might not show up without doing this refresh
       // however we need to queue our process until the flat dataset is ready, so we can queue a microtask to execute the DataView refresh only after everything is ready
-      queueMicrotaskOrSetTimeout(() => {
+      queueMicrotaskPolyfill(() => {
         const flatDatasetLn = this.dataView?.getItemCount() ?? 0;
         if (flatDatasetLn > 0 && (flatDatasetLn !== prevFlatDatasetLn || !isDatasetEqual)) {
           this.filterService.refreshTreeDataFilters();
@@ -957,7 +957,7 @@ export class SlickVanillaGridBundle<TData = any> {
         const process = isExecuteCommandOnInit ? (backendApi.process?.(query) ?? null) : (backendApi.onInit?.(query) ?? null);
 
         // wrap this inside a microtask to be executed at the end of the task and avoid timing issue since the gridOptions needs to be ready before running this onInit
-        queueMicrotaskOrSetTimeout(() => {
+        queueMicrotaskPolyfill(() => {
           const backendUtilityService = this.backendUtilityService as BackendUtilityService;
           // keep start time & end timestamps & return it after process execution
           const startTime = new Date();

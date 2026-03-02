@@ -1,5 +1,5 @@
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { deepCopy, extend, queueMicrotaskOrSetTimeout, stripTags } from '@slickgrid-universal/utils';
+import { deepCopy, extend, queueMicrotaskPolyfill, stripTags } from '@slickgrid-universal/utils';
 import { dequal } from 'dequal/lite';
 import { Constants } from '../constants.js';
 import { SlickEvent, SlickEventData, SlickEventHandler, type SlickDataView, type SlickGrid } from '../core/index.js';
@@ -858,7 +858,7 @@ export class FilterService {
       // and we did not have time to convert it to a flat dataset yet (for SlickGrid to use),
       // we would end up calling the pre-filter too early because these pre-filter works only a flat dataset
       // for that use case (like Example 6), we can queue a microtask to be executed at the end of current task
-      queueMicrotaskOrSetTimeout(() => this.refreshTreeDataFilters());
+      queueMicrotaskPolyfill(() => this.refreshTreeDataFilters());
     }
   }
 
