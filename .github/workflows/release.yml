@@ -15,6 +15,10 @@ on:
           - alpha
           - beta
           - next
+      version:
+        description: 'Fixed Version'
+        required: false
+        type: string
 
 permissions:
   contents: write # to be able to publish a GitHub release
@@ -70,17 +74,25 @@ jobs:
       - name: Lerna Version (build query)
         shell: bash
         run: |
-          if ${{inputs.dryrun == true && (inputs.tag == 'alpha' || inputs.tag == 'beta' || inputs.tag == 'next')}}
+          if ${{ inputs.dryrun == true && inputs.version }}
           then
-              echo "LERNA_VERSION_TYPE=🧪 Dry-Run w/Prerelease" >> $GITHUB_ENV
+            echo "LERNA_VERSION_TYPE=🧪 Dry-Run - Fixed Version" >> $GITHUB_ENV
+            echo "LERNA_VERSION_QUERY=lerna version --yes ${{ inputs.version }} --dry-run" >> $GITHUB_ENV
+          elif ${{inputs.dryrun == true && (inputs.tag == 'alpha' || inputs.tag == 'beta' || inputs.tag == 'next')}}
+          then
+              echo "LERNA_VERSION_TYPE=🧪 Dry-Run - Pre-Release" >> $GITHUB_ENV
               echo "LERNA_VERSION_QUERY=lerna version --yes --conventional-prerelease --preid ${{ inputs.tag }} --dry-run" >> $GITHUB_ENV
           elif ${{inputs.dryrun == true}}
           then
               echo "LERNA_VERSION_TYPE=🧪 Dry-Run" >> $GITHUB_ENV
               echo "LERNA_VERSION_QUERY=lerna version --yes --dry-run" >> $GITHUB_ENV
+          elif ${{ inputs.version }}
+          then
+              echo "LERNA_VERSION_TYPE=🚀 Prod Version - Fixed Version" >> $GITHUB_ENV
+              echo "LERNA_VERSION_QUERY=lerna version --yes ${{ inputs.version }}" >> $GITHUB_ENV
           elif ${{inputs.tag == 'alpha' || inputs.tag == 'beta' || inputs.tag == 'next'}}
           then
-              echo "LERNA_VERSION_TYPE=🚀 Prod Version w/Prerelease" >> $GITHUB_ENV
+              echo "LERNA_VERSION_TYPE=🚀 Prod Version - Pre-Release" >> $GITHUB_ENV
               echo "LERNA_VERSION_QUERY=lerna version --yes --conventional-prerelease --preid ${{ inputs.tag }}" >> $GITHUB_ENV
           else
               echo "LERNA_VERSION_TYPE=🚀 Prod Version" >> $GITHUB_ENV
@@ -105,7 +117,7 @@ jobs:
         run: |
           if ${{inputs.dryrun == true && (inputs.tag == 'alpha' || inputs.tag == 'beta' || inputs.tag == 'next')}}
           then
-            echo "LERNA_PUBLISH_TYPE=🧪 Dry-Run w/Prerelease" >> $GITHUB_ENV
+            echo "LERNA_PUBLISH_TYPE=🧪 Dry-Run - Pre-Release" >> $GITHUB_ENV
             echo "LERNA_PUBLISH_QUERY=lerna publish from-package --force-publish --yes --pre-dist-tag ${{ inputs.tag }} --dry-run" >> $GITHUB_ENV
           elif ${{inputs.dryrun == true}}
           then
@@ -113,7 +125,7 @@ jobs:
             echo "LERNA_PUBLISH_QUERY=lerna publish from-package --force-publish --yes --dist-tag latest --dry-run" >> $GITHUB_ENV
           elif [[ "${{ inputs.tag }}" == "alpha" || "${{ inputs.tag }}" == "beta" || "${{ inputs.tag }}" == "next" ]]
           then
-            echo "LERNA_PUBLISH_TYPE=📦 Publish w/Prerelease" >> $GITHUB_ENV
+            echo "LERNA_PUBLISH_TYPE=📦 Publish - Pre-Release" >> $GITHUB_ENV
             echo "LERNA_PUBLISH_QUERY=lerna publish from-package --force-publish --yes --pre-dist-tag ${{ inputs.tag }}" >> $GITHUB_ENV
           else
             echo "LERNA_PUBLISH_TYPE=📦 Publish Latest" >> $GITHUB_ENV
