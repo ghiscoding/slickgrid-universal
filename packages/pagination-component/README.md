@@ -3,7 +3,6 @@
 [![lerna--lite](https://img.shields.io/badge/maintained%20with-lerna--lite-e137ff)](https://github.com/ghiscoding/lerna-lite)
 [![npm](https://img.shields.io/npm/v/@slickgrid-universal/pagination-component.svg)](https://www.npmjs.com/package/@slickgrid-universal/pagination-component)
 [![npm](https://img.shields.io/npm/dy/@slickgrid-universal/pagination-component)](https://www.npmjs.com/package/@slickgrid-universal/pagination-component)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/@slickgrid-universal/pagination-component?color=success&label=gzip)](https://bundlephobia.com/result?p=@slickgrid-universal/pagination-component)
 
 ## Pagination Component
 #### @slickgrid-universal/pagination-component

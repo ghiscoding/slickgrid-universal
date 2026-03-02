@@ -3,7 +3,6 @@
 [![lerna--lite](https://img.shields.io/badge/maintained%20with-lerna--lite-e137ff)](https://github.com/ghiscoding/lerna-lite)
 [![npm](https://img.shields.io/npm/v/@slickgrid-universal/vanilla-bundle.svg)](https://www.npmjs.com/package/@slickgrid-universal/vanilla-bundle)
 [![npm](https://img.shields.io/npm/dy/@slickgrid-universal/vanilla-bundle)](https://www.npmjs.com/package/@slickgrid-universal/vanilla-bundle)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/@slickgrid-universal/vanilla-bundle?color=success&label=gzip)](https://bundlephobia.com/result?p=@slickgrid-universal/vanilla-bundle)
 
 ## Vanilla Bundle
 #### @slickgrid-universal/vanilla-bundle

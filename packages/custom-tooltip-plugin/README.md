@@ -3,7 +3,6 @@
 [![lerna--lite](https://img.shields.io/badge/maintained%20with-lerna--lite-e137ff)](https://github.com/ghiscoding/lerna-lite)
 [![npm](https://img.shields.io/npm/v/@slickgrid-universal/custom-tooltip-plugin.svg)](https://www.npmjs.com/package/@slickgrid-universal/custom-tooltip-plugin)
 [![npm](https://img.shields.io/npm/dy/@slickgrid-universal/custom-tooltip-plugin)](https://www.npmjs.com/package/@slickgrid-universal/custom-tooltip-plugin)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/@slickgrid-universal/custom-tooltip-plugin?color=success&label=gzip)](https://bundlephobia.com/result?p=@slickgrid-universal/custom-tooltip-plugin)
 
 ## Custom Tooltip (plugin)
 #### @slickgrid-universal/custom-tooltip-plugin

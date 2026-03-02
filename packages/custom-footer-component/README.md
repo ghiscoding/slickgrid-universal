@@ -3,7 +3,6 @@
 [![lerna--lite](https://img.shields.io/badge/maintained%20with-lerna--lite-e137ff)](https://github.com/ghiscoding/lerna-lite)
 [![npm](https://img.shields.io/npm/v/@slickgrid-universal/custom-footer-component.svg)](https://www.npmjs.com/package/@slickgrid-universal/custom-footer-component)
 [![npm](https://img.shields.io/npm/dy/@slickgrid-universal/custom-footer-component)](https://www.npmjs.com/package/@slickgrid-universal/custom-footer-component)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/@slickgrid-universal/custom-footer-component?color=success&label=gzip)](https://bundlephobia.com/result?p=@slickgrid-universal/custom-footer-component)
 
 ## Custom Footer Component
 #### @slickgrid-universal/custom-footer-component

@@ -3,7 +3,6 @@
 [![lerna--lite](https://img.shields.io/badge/maintained%20with-lerna--lite-e137ff)](https://github.com/ghiscoding/lerna-lite)
 [![npm](https://img.shields.io/npm/v/@slickgrid-universal/odata.svg)](https://www.npmjs.com/package/@slickgrid-universal/odata)
 [![npm](https://img.shields.io/npm/dy/@slickgrid-universal/odata)](https://www.npmjs.com/package/@slickgrid-universal/odata)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/@slickgrid-universal/odata?color=success&label=gzip)](https://bundlephobia.com/result?p=@slickgrid-universal/odata)
 
 ## Grid OData Service
 #### @slickgrid-universal/odata

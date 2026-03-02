@@ -3,7 +3,6 @@
 [![lerna--lite](https://img.shields.io/badge/maintained%20with-lerna--lite-e137ff)](https://github.com/ghiscoding/lerna-lite)
 [![npm](https://img.shields.io/npm/v/@slickgrid-universal/rxjs-observable.svg)](https://www.npmjs.com/package/@slickgrid-universal/rxjs-observable)
 [![npm](https://img.shields.io/npm/dy/@slickgrid-universal/rxjs-observable)](https://www.npmjs.com/package/@slickgrid-universal/rxjs-observable)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/@slickgrid-universal/rxjs-observable?color=success&label=gzip)](https://bundlephobia.com/result?p=@slickgrid-universal/rxjs-observable)
 
 ## RxJS Observable Service Wrapper
 #### @slickgrid-universal/rxjs-observable

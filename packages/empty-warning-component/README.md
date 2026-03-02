@@ -3,7 +3,6 @@
 [![lerna--lite](https://img.shields.io/badge/maintained%20with-lerna--lite-e137ff)](https://github.com/ghiscoding/lerna-lite)
 [![npm](https://img.shields.io/npm/v/@slickgrid-universal/empty-warning-component.svg)](https://www.npmjs.com/package/@slickgrid-universal/empty-warning-component)
 [![npm](https://img.shields.io/npm/dy/@slickgrid-universal/empty-warning-component)](https://www.npmjs.com/package/@slickgrid-universal/empty-warning-component)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/@slickgrid-universal/empty-warning-component?color=success&label=gzip)](https://bundlephobia.com/result?p=@slickgrid-universal/empty-warning-component)
 
 ## Empty Warning Component
 #### @slickgrid-universal/empty-warning-component

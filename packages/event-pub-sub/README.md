@@ -3,7 +3,6 @@
 [![lerna--lite](https://img.shields.io/badge/maintained%20with-lerna--lite-e137ff)](https://github.com/ghiscoding/lerna-lite)
 [![npm](https://img.shields.io/npm/v/@slickgrid-universal/event-pub-sub.svg)](https://www.npmjs.com/package/@slickgrid-universal/event-pub-sub)
 [![npm](https://img.shields.io/npm/dy/@slickgrid-universal/event-pub-sub)](https://www.npmjs.com/package/@slickgrid-universal/event-pub-sub)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/@slickgrid-universal/event-pub-sub?color=success&label=gzip)](https://bundlephobia.com/result?p=@slickgrid-universal/event-pub-sub)
 
 ## Event PubSub Service
 #### @slickgrid-universal/event-pub-sub
