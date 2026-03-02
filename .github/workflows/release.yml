@@ -77,7 +77,7 @@ jobs:
           if ${{ inputs.dryrun == true && inputs.version }}
           then
             echo "LERNA_VERSION_TYPE=🧪 Dry-Run - Fixed Version" >> $GITHUB_ENV
-            echo "LERNA_VERSION_QUERY=lerna version --yes ${{ inputs.version }} --dry-run" >> $GITHUB_ENV
+            echo "LERNA_VERSION_QUERY=lerna version ${{ inputs.version }} --yes --dry-run" >> $GITHUB_ENV
           elif ${{inputs.dryrun == true && (inputs.tag == 'alpha' || inputs.tag == 'beta' || inputs.tag == 'next')}}
           then
               echo "LERNA_VERSION_TYPE=🧪 Dry-Run - Pre-Release" >> $GITHUB_ENV
@@ -89,7 +89,7 @@ jobs:
           elif ${{ inputs.version }}
           then
               echo "LERNA_VERSION_TYPE=🚀 Prod Version - Fixed Version" >> $GITHUB_ENV
-              echo "LERNA_VERSION_QUERY=lerna version --yes ${{ inputs.version }}" >> $GITHUB_ENV
+              echo "LERNA_VERSION_QUERY=lerna version ${{ inputs.version }} --yes" >> $GITHUB_ENV
           elif ${{inputs.tag == 'alpha' || inputs.tag == 'beta' || inputs.tag == 'next'}}
           then
               echo "LERNA_VERSION_TYPE=🚀 Prod Version - Pre-Release" >> $GITHUB_ENV
