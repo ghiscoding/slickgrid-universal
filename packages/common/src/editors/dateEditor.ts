@@ -1,6 +1,6 @@
 import { parse } from '@formkit/tempo';
 import { BindingEventService } from '@slickgrid-universal/binding';
-import { createDomElement, emptyElement, extend, queueMicrotaskOrSetTimeout, setDeepValue } from '@slickgrid-universal/utils';
+import { createDomElement, emptyElement, extend, queueMicrotaskPolyfill, setDeepValue } from '@slickgrid-universal/utils';
 import { Calendar, type FormatDateString, type Options } from 'vanilla-calendar-pro';
 import { resetDatePicker, setPickerDates, setPickerFocus } from '../commonEditorFilter/commonEditorFilterUtils.js';
 import { SlickEventData, type SlickGrid } from '../core/index.js';
@@ -208,7 +208,7 @@ export class DateEditor implements Editor {
         }
       }) as EventListener);
 
-      queueMicrotaskOrSetTimeout(() => {
+      queueMicrotaskPolyfill(() => {
         this.calendarInstance = new Calendar(this._inputElm, this._pickerMergedOptions);
         this.calendarInstance.init();
         if (!this.args.isCompositeEditor) {
@@ -229,7 +229,7 @@ export class DateEditor implements Editor {
 
   destroy(): void {
     clearTimeout(this._timer);
-    queueMicrotaskOrSetTimeout(() => {
+    queueMicrotaskPolyfill(() => {
       this.hide();
       this.calendarInstance?.destroy();
       emptyElement(this._editorInputGroupElm);

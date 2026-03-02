@@ -269,12 +269,12 @@ export function parseBoolean(input: any): boolean {
   return /(true|1)/i.test(input + '');
 }
 
-/** use `queueMicrotask()` when available, otherwise fallback to `setTimeout` for Salesforce LWC locker service */
-export function queueMicrotaskOrSetTimeout(callback: () => void): void {
-  try {
+/** Use `queueMicrotask()` when available, otherwise fallback to `Promise.resolve().then(callback)` for Salesforce LWC locker service */
+export function queueMicrotaskPolyfill(callback: () => void): void {
+  if (typeof queueMicrotask === 'function') {
     queueMicrotask(callback);
-  } catch {
-    setTimeout(callback, 0);
+  } else {
+    Promise.resolve().then(callback);
   }
 }
 
