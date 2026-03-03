@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, signal, type OnDestroy, type OnInit } from '@angular/core';
+import { Component, inject, signal, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { addDay, format } from '@formkit/tempo';
 import { TranslateService } from '@ngx-translate/core';
@@ -41,6 +41,8 @@ const taskTranslateFormatter: Formatter = (row, cell, value, columnDef, dataCont
   imports: [AngularSlickgridComponent, DatePipe, FormsModule],
 })
 export class Example23Component implements OnInit, OnDestroy {
+  private translate = inject(TranslateService);
+
   private subscriptions: Subscription[] = [];
   angularGrid!: AngularGridInstance;
   columnDefinitions!: Column[];
@@ -56,7 +58,7 @@ export class Example23Component implements OnInit, OnDestroy {
   ];
   selectedPredefinedFilter!: { value: string; label: string };
 
-  constructor(private translate: TranslateService) {
+  constructor() {
     // always start with English for Cypress E2E tests to be consistent
     const defaultLang = 'en';
     this.translate.use(defaultLang);

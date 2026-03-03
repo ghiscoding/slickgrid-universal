@@ -19,12 +19,9 @@ npm install --save angular-slickgrid bootstrap # the last dep is optional
 |  16 - 19+               |        16.x         |
 |  16 - 17+               |        16.x (15.x)  |
 |  13 - 15 (**Ivy only**) |        14.x         |
-|  10-12                  |        13.x         |
-|  8-9                    |        12.x         |
-|  7                      |        11.x         |
 
 ### 2. Modify the `angular.json` and `tsconfig.app.json` files
-#### previous Angular versions were using `.angular-cli.json`
+
 Then modify your `angular.json` file with the following Styles and Scripts:
 
 ```js
@@ -42,16 +39,14 @@ Then modify your `angular.json` file with the following Styles and Scripts:
 Load the default Bootstrap theme style and/or customize it to your taste (either by using SASS or CSS variables)
 
 #### CSS
-Default compiled `css` (if you use the plain Bootstrap Theme CSS, you could simply add it to your `.angular-cli.json` file and be done with it).
-
-**Note:** If you are also using `Bootstrap-SASS`, then there is no need to include the `bootstrap.css` in the `styles: []` section.
+Default CSS compiled (if you use the plain Bootstrap Theme CSS, just add it to your `angular.json` file and that's about it).
 
 ```json
 "styles": [
     "node_modules/bootstrap/dist/css/bootstrap.css",
     "styles.css",
     "node_modules/@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css"
-],
+]
 ```
 
 > **Note** Bootstrap is optional, you can use any other framework, other themes are also available as CSS and SCSS file extensions
@@ -68,7 +63,8 @@ You could also compile the SASS files with your own customization, for that simp
 );
 ```
 
-### 4. for `Angular-Slickgrid` <= 9.0 - Include it in your App Module (or App Config for Standalone)
+### 4. for `Angular-Slickgrid` < 10.0 - Include it in your App Module (or App Config for Standalone)
+
 Below are 2 different setups (with App Module (legacy) or Standalone) but in both cases the `AngularSlickgridModule.forRoot()` is **required**, so make sure to include it. Also note that the GitHub demo is strictly built with an App Module which is considered the legacy approach.
 
 #### App Module (legacy)
@@ -169,9 +165,10 @@ bootstrapApplication(AppComponent, {
 ```
 
 ### 6. Install/Setup `ngx-translate` for Localization (optional)
-#### If you don't want to use any Translate Service and use only 1 Locale then take a look at this [demo](https://github.com/ghiscoding/angular-slickgrid-demos/tree/master/bootstrap4-demo-with-locales)
+#### If you don't want to use any Translate Service and use only 1 Locale then take a look at this [demo](https://github.com/ghiscoding/angular-slickgrid-demos)
+
 To provide locales other than English (default locale), you have 2 options that you can go with. If you only use English, there is nothing to do (you can still change some of the texts in the grid via option 1.)
-1. Using [Custom Locale](../localization/localization-with-custom-locales.md), that is when you use **only 1** locale (other than English)... this is a new feature starting from version `2.10.0` and up.
+1. Using [Custom Locale](../localization/localization-with-custom-locales.md), that is when you use **only 1** locale (other than English)...
 2. Using [Localization with I18N](../localization/localization-with-ngx-translate.md), that is when you want to use multiple locales dynamically.
 3. **NOTE** `@ngx-translate` will still be installed (since it's an internal dependency), but it should be removed after doing a production build because of our usage of `@Optional()`.
 
@@ -238,19 +235,17 @@ define Angular-Slickgrid in your View
 The last step is really to explore all the pages that are available in the documentation, everything you need to use the library should be available in here and so you should visit it often. For example a good starter is to look at the following
 
 - for all the `Grid Options`, take a look at all the [Grid Options](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/gridOption.interface.ts) interface.
-- [Formatters](../column-functionalities/Formatters.md)
-- [Editors](../column-functionalities/Editors.md)
+- [Formatters](../column-functionalities/formatters.md)
+- [Editors](../column-functionalities/editors.md)
 - [Filters](../column-functionalities/filters/select-filter.md)
-- [Grid Menu](../grid-functionalities/Grid-Menu.md)
+- [Grid Menu](../grid-functionalities/grid-menu.md)
 ... and much more, just explore the Documentation through all the available pages.
 
 ### 9. How to load data with `HttpClient`?
-You might notice that all demos are made with mocked dataset that are embedded in each examples, that is mainly for demo purposes, but you might be wondering how to connect this with an `HttpClient`? Easy... just replace the mocked data, assigned to the `dataset` property, by your `HttpClient` call and that's it. The `dataset` property can be changed at any time, which is why you can use local data and/or connect it to a `Promise` or an `Observable` with `HttpClient` (internally it's just a SETTER that refreshes the grid). See [Example 24](https://ghiscoding.github.io/angular-slickgrid-demos/#/gridtabs) for a demo showing how to load a JSON file with `HttpClient`.
+You might notice that all demos are made with mocked dataset that are embedded in each examples, that is mainly for demo purposes, but you might be wondering how to connect this with an `HttpClient`? Easy... just replace the mocked data assignment to the `dataset` property with your `HttpClient` call and that's it. Basically, the `dataset` property can be changed at any time, which is why you can use local data and/or connect it to a `Promise` or an `Observable` with `HttpClient` (internally it's just a SETTER that refreshes the grid). See [Example 22](https://ghiscoding.github.io/angular-slickgrid-demos/#/example22) for a demo showing how to load a JSON file with `HttpClient`.
 
 ### 10. Live Demo - Clone the Examples
-The best way to get started is to clone the [Angular-Slickgrid-demos](https://github.com/ghiscoding/angular-slickgrid-demos), it has multiple examples and it is also updated frequently since it is used for the GitHub Bootstrap 5 demo page. `Angular-Slickgrid` has 3 `Bootstrap` repos, you can see a demo of each ones below.
-- [Bootstrap 5 demo](https://ghiscoding.github.io/angular-slickgrid-bs5-demo) / [examples repo](https://github.com/ghiscoding/angular-slickgrid-demos/tree/master/bootstrap5-demo-with-translate) (using `ngx-translate`)
-- [Bootstrap 5 - examples repo](https://github.com/ghiscoding/angular-slickgrid-demos/tree/master/bootstrap5-demo-with-locales) (single Locale, without using `ngx-translate`)
+The best way to get started is to clone the [Angular-Slickgrid-demos](https://github.com/ghiscoding/angular-slickgrid-demos), it has multiple examples and it is also updated frequently since it is used for the GitHub Bootstrap 5 demo page.
 
 ##### All Live Demo Examples have links to the actual code
 If you would like to see the code to a particular Example, just click on the "see code" which is available in all live examples.
@@ -259,7 +254,7 @@ If you would like to see the code to a particular Example, just click on the "se
 The project supports Content Security Policy (CSP) as long as you provide an optional `sanitizer` in your grid options (we recommend DOMPurify). Review the [CSP Compliance](../developer-guides/csp-compliance.md) documentation for more info.
 
 ### 12. Missing Features compared to SlickGrid?
-What if `Angular-Slickgrid` is missing feature(s) versus the original `SlickGrid`? Fear not and just use the `SlickGrid` and `DataView` objects directly, which are expose from the start through Custom Events. For more info continue reading on [Docs - SlickGrid & DataView objects](../slick-grid-dataview-objects/SlickGrid-&-DataView-Objects.md)
+What if `Angular-Slickgrid` is missing feature(s) versus the original `SlickGrid`? Fear not and just use the `SlickGrid` and `DataView` objects directly, which are expose from the start through Custom Events. For more info continue reading on [Docs - SlickGrid & DataView objects](../slick-grid-dataview-objects)
 
 ### 13. Troubleshooting - Build Errors/Warnings
 Visit the [Troubleshooting](./troubleshooting.md) section for more common errors.

@@ -289,3 +289,7 @@ gridOptions = {
   }
 }
 ```
+
+---
+
+If the project is useful to you, please give it a star ⭐ (on [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal)) umbrella project. I do also like to drink coffee [☕ (Ko-Fi)](https://ko-fi.com/ghiscoding). Happy Coding 🧑‍💻

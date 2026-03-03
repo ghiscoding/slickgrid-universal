@@ -11,7 +11,7 @@ import {
   isDefined,
   isDefinedNumber,
   isPrimitiveOrHTML,
-  queueMicrotaskOrSetTimeout,
+  queueMicrotaskPolyfill,
 } from '@slickgrid-universal/utils';
 import type { SortableEvent, Options as SortableOptions } from 'sortablejs';
 import Sortable from 'sortablejs/modular/sortable.core.esm.js';
@@ -3447,7 +3447,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this.updateColumns();
       this.triggerEvent(this.onAfterSetColumns, { newColumns, grid: this });
     };
-    waitNextCycle ? queueMicrotaskOrSetTimeout(() => updateCols()) : updateCols();
+    waitNextCycle ? queueMicrotaskPolyfill(() => updateCols()) : updateCols();
   }
 
   /** Update columns for when a hidden property has changed but the column list itself has not changed. */

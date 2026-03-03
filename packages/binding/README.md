@@ -3,7 +3,6 @@
 [![lerna--lite](https://img.shields.io/badge/maintained%20with-lerna--lite-e137ff)](https://github.com/ghiscoding/lerna-lite)
 [![npm](https://img.shields.io/npm/v/@slickgrid-universal/binding.svg)](https://www.npmjs.com/package/@slickgrid-universal/binding)
 [![npm](https://img.shields.io/npm/dy/@slickgrid-universal/binding)](https://www.npmjs.com/package/@slickgrid-universal/binding)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/@slickgrid-universal/binding?color=success&label=gzip)](https://bundlephobia.com/result?p=@slickgrid-universal/binding)
 
 ## Binding Engine & Helper
 #### @slickgrid-universal/binding

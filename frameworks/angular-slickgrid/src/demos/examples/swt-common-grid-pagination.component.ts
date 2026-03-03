@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Input, signal, type OnInit } from '@angular/core';
+import { Component, inject, Input, signal, type OnInit } from '@angular/core';
 import { TranslateDirective } from '@ngx-translate/core';
 import { type GridOption } from '../../library';
 import { type SwtCommonGridComponent } from './swt-common-grid.component';
@@ -77,6 +77,7 @@ import { Logger } from './swt-logger.service';
   imports: [TranslateDirective],
 })
 export class SwtCommonGridPaginationComponent implements OnInit {
+  private httpClient = inject(HttpClient);
   private logger: Logger;
 
   private _pageCount = signal(1);
@@ -116,8 +117,8 @@ export class SwtCommonGridPaginationComponent implements OnInit {
     return this._gridPaginationOptions;
   }
 
-  constructor(private httpClient: HttpClient) {
-    this.logger = new Logger('grid-pagination', httpClient);
+  constructor() {
+    this.logger = new Logger('grid-pagination', this.httpClient);
     this.logger.info('method [constructor] - START/END');
   }
 

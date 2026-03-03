@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, type OnInit } from '@angular/core';
+import { Component, inject, type OnInit } from '@angular/core';
 import { TabDirective, TabsetComponent } from 'ngx-bootstrap/tabs';
 import { AngularSlickgridComponent, Filters, type AngularGridInstance, type Column, type GridOption } from '../../library';
 
@@ -10,6 +10,8 @@ const URL_CUSTOMERS = 'assets/data/customers_100.json';
   imports: [TabsetComponent, TabDirective, AngularSlickgridComponent],
 })
 export class Example22Component implements OnInit {
+  private http = inject(HttpClient);
+
   angularGrid2!: AngularGridInstance;
   columnDefinitions1!: Column[];
   columnDefinitions2!: Column[];
@@ -18,8 +20,6 @@ export class Example22Component implements OnInit {
   dataset1!: any[];
   dataset2!: any[];
   hideSubTitle = false;
-
-  constructor(private http: HttpClient) {}
 
   angularGrid2Ready(angularGrid: AngularGridInstance) {
     this.angularGrid2 = angularGrid;

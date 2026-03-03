@@ -1,10 +1,17 @@
 <script setup lang="ts">
 import { useTranslation } from 'i18next-vue';
-import { provide } from 'vue';
+import { onMounted, provide } from 'vue';
 import VueLogo from './assets/vue.svg?url';
 import { routes } from './router/index.js';
 
 provide('i18next', useTranslation().i18next);
+
+onMounted(() => {
+  setTimeout(() => {
+    const linkElm = document.querySelector('.nav-link.active');
+    linkElm?.scrollIntoView({ block: 'nearest' });
+  }, 0);
+});
 </script>
 
 <template>

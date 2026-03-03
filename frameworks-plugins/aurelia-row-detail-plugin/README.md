@@ -2,7 +2,6 @@
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
 [![NPM downloads](https://img.shields.io/npm/dy/@slickgrid-universal/aurelia-row-detail-plugin)](https://npmjs.org/package/@slickgrid-universal/aurelia-row-detail-plugin)
 [![npm](https://img.shields.io/npm/v/@slickgrid-universal/aurelia-row-detail-plugin.svg?logo=npm&logoColor=fff&label=npm)](https://www.npmjs.com/package/@slickgrid-universal/aurelia-row-detail-plugin)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/@slickgrid-universal/aurelia-row-detail-plugin?color=success&label=gzip)](https://bundlephobia.com/result?p=@slickgrid-universal/aurelia-row-detail-plugin)
 
 ## Aurelia-Slickgrid Row Detail plugin
 #### @slickgrid-universal/aurelia-row-detail-plugin

@@ -1,6 +1,6 @@
 You might find yourself re-using the same configurations over and over, in that case we got you covered. You can change any of the global options directly in your App Module through `forRoot` which accept an optional object of Grid Options.
 
-### 1. for `Angular-Slickgrid` <= 9.0 - Include it in your App Module (or App Config for Standalone)
+### 1. for `Angular-Slickgrid` < 10.0 - Include it in your App Module (or App Config for Standalone)
 ```typescript
 import { AngularSlickgridModule } from 'angular-slickgrid';
 

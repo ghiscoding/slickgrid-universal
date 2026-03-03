@@ -3,7 +3,6 @@
 [![lerna--lite](https://img.shields.io/badge/maintained%20with-lerna--lite-e137ff)](https://github.com/ghiscoding/lerna-lite)
 [![npm](https://img.shields.io/npm/v/@slickgrid-universal/composite-editor-component.svg)](https://www.npmjs.com/package/@slickgrid-universal/composite-editor-component)
 [![npm](https://img.shields.io/npm/dy/@slickgrid-universal/composite-editor-component)](https://www.npmjs.com/package/@slickgrid-universal/composite-editor-component)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/@slickgrid-universal/composite-editor-component?color=success&label=gzip)](https://bundlephobia.com/result?p=@slickgrid-universal/composite-editor-component)
 
 ## Composite Editor Component
 #### @slickgrid-universal/composite-editor-component

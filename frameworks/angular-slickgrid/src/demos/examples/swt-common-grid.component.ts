@@ -1,7 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
 /* eslint-disable @angular-eslint/no-output-on-prefix */
 import { HttpClient } from '@angular/common/http';
-import { Component, ElementRef, EventEmitter, Input, Output, Renderer2, ViewChild, type AfterViewInit, type OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  inject,
+  Input,
+  Output,
+  Renderer2,
+  ViewChild,
+  type AfterViewInit,
+  type OnInit,
+} from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
   AngularSlickgridComponent,
@@ -51,6 +62,11 @@ const DEFAULT_FILTER_TYPING_DEBOUNCE = 750;
   imports: [AngularSlickgridComponent],
 })
 export class SwtCommonGridComponent implements OnInit, AfterViewInit, BackendService {
+  private httpClient = inject(HttpClient);
+  private translate = inject(TranslateService);
+  private el = inject(ElementRef);
+  private renderer = inject(Renderer2);
+
   private logger: Logger;
   private defaultPageSize = 20;
 
@@ -153,14 +169,8 @@ export class SwtCommonGridComponent implements OnInit, AfterViewInit, BackendSer
    * @param resizer
    * @param httpClient
    */
-  constructor(
-    private httpClient: HttpClient,
-    private translate: TranslateService,
-    private el: ElementRef,
-    private renderer: Renderer2
-  ) {
-    this.logger = new Logger('grid', httpClient);
-
+  constructor() {
+    this.logger = new Logger('grid', this.httpClient);
     this.logger.info('method [constructor] - START/END');
   }
 

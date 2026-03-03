@@ -4,7 +4,7 @@ One of the biggest change of this release is to hide columns by using the `hidde
 
 This new release also brings significant improvements to accessibility (a11y), making grids more usable for keyboard and screen reader users out of the box. For example, you can now use Tab/Shift+Tab to focus the Header Menu or Grid Menu, and then navigate menu commands with the arrow keys, making keyboard navigation much more intuitive and accessible.
 
-Also, this release fully aligns Angular-Slickgrid with modern Angular patterns, including Angular 21 support, Standalone Components for simplified setup, and zoneless change detection support which allows you to drop the `zone.js` dependency for improved performance and smaller bundle sizes.
+Also, this release fully aligns Angular-Slickgrid with modern Angular patterns, including Angular 21 support, Standalone Components for simplified setup, and Zoneless change detection support which allows you to drop the `zone.js` dependency for improved performance and smaller bundle sizes.
 
 #### Major Changes - Quick Summary
 - [`hidden` columns](#hidden-columns)
@@ -394,3 +394,7 @@ gridOptions = {
 Signals are becoming increasingly prevalent in Angular, however Angular-Slickgrid continues to use traditional `@Input`/`@Output` decorators. Users who prefer Signals can still use them by calling signal functions in templates: `[dataset]="dataset()"`.
 
 For a library component, maintaining compatibility with both approaches is pragmatic and may not require a full migration. If we decide to migrate Angular-Slickgrid to use Signals internally, this change would be deferred to at the minimum version 11 or later.
+
+---
+
+If the project is useful to you, please give it a star ⭐ (on [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal)) umbrella project. I do also like to drink coffee [☕ (Ko-Fi)](https://ko-fi.com/ghiscoding). Happy Coding 🧑‍💻
