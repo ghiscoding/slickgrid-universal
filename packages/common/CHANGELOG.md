@@ -9,14 +9,14 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Features
 
 * add AbortSignal support for Promise-based backend services ([#2358](https://github.com/ghiscoding/slickgrid-universal/issues/2358)) ([6f44a60](https://github.com/ghiscoding/slickgrid-universal/commit/6f44a6022e8eb69aeb93345f60839d7349679cf7)) - by @ghiscoding
-* significant improvement to accessibility (a11y), fixes [#2376](https://github.com/ghiscoding/slickgrid-universal/issues/2376) ([#2393](https://github.com/ghiscoding/slickgrid-universal/issues/2393)) ([402c182](https://github.com/ghiscoding/slickgrid-universal/commit/402c18246de2bc181864eef30aeff0e3814ef29a)) - by @ghiscoding
+* **a11y:** significant improvement to accessibility, fixes [#2376](https://github.com/ghiscoding/slickgrid-universal/issues/2376) ([#2393](https://github.com/ghiscoding/slickgrid-universal/issues/2393)) ([402c182](https://github.com/ghiscoding/slickgrid-universal/commit/402c18246de2bc181864eef30aeff0e3814ef29a)) - by @ghiscoding
 
 ### Bug Fixes
 
 * **a11y:** arrow navigation & focus should work on sub-menus ([#2415](https://github.com/ghiscoding/slickgrid-universal/issues/2415)) ([829e98c](https://github.com/ghiscoding/slickgrid-universal/commit/829e98cba500161ee3efe893b806a1d141e143ab)) - by @ghiscoding
 * **a11y:** hidden & disabled menu items should be skipped ([#2411](https://github.com/ghiscoding/slickgrid-universal/issues/2411)) ([2f40ec7](https://github.com/ghiscoding/slickgrid-universal/commit/2f40ec7881ec08e808e88fec472db384b420278f)) - by @ghiscoding
 * **a11y:** mouse hovering menu items should change current item focus ([#2412](https://github.com/ghiscoding/slickgrid-universal/issues/2412)) ([bbb5b70](https://github.com/ghiscoding/slickgrid-universal/commit/bbb5b70ca471908501deae25b70bb35dab63340f)) - by @ghiscoding
-* add row/column counts ARIA attributes for grid accessibility ([#2404](https://github.com/ghiscoding/slickgrid-universal/issues/2404)) ([05d5ce8](https://github.com/ghiscoding/slickgrid-universal/commit/05d5ce89e10d3933d79f8717e1685110d1539f65)) - by @ghiscoding
+* **a11y:** add row/column counts ARIA attributes for grid accessibility ([#2404](https://github.com/ghiscoding/slickgrid-universal/issues/2404)) ([05d5ce8](https://github.com/ghiscoding/slickgrid-universal/commit/05d5ce89e10d3933d79f8717e1685110d1539f65)) - by @ghiscoding
 * calling Export services from Context/Grid Menu regressed ([#2397](https://github.com/ghiscoding/slickgrid-universal/issues/2397)) ([5ad6eae](https://github.com/ghiscoding/slickgrid-universal/commit/5ad6eaeebfad07764782def5c8d2bc1b6dbfa7c8)) - by @ghiscoding
 * calling grid.updateColumns should recreate SelectAll checkbox ([#2383](https://github.com/ghiscoding/slickgrid-universal/issues/2383)) ([5fc7383](https://github.com/ghiscoding/slickgrid-universal/commit/5fc7383488a92e5c19e33fbdf9f9c6eef80634f3)) - by @ghiscoding
 * **filter:** input filter blur shouldn't change Page 2 ([#2416](https://github.com/ghiscoding/slickgrid-universal/issues/2416)) ([b6e7b85](https://github.com/ghiscoding/slickgrid-universal/commit/b6e7b85c3d97b8fe1ebed942f98a6f42fa99c7d9)) - by @ghiscoding
