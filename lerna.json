@@ -12,21 +12,13 @@
       "commentIssues": "✅ This issue has been resolved and included in version %v 📦<br>🔗 The release notes are available at: [GitHub Release](%u) 🚀",
       "commentPullRequests": "🎉 This pull request is included in version %v 📦<br>🔗 The release notes are available at: [GitHub Release](%u) 🚀",
       "message": "chore(release): publish new version %s",
-      "releaseFooterMessage": "<br>🎉 Another great Slickgrid-Universal release 🤖. Star us on GitHub ⭐"
+      "releaseFooterMessage": "<br>🎉 Another great Slickgrid-Universal release 🤖 Star us on GitHub ⭐"
     },
     "publish": {
       "cleanupTempFiles": true,
-      "stripPackageKeys": [
-        "devDependencies",
-        "scripts"
-      ]
+      "stripPackageKeys": ["devDependencies", "scripts"]
     }
   },
   "changelogPreset": "conventionalcommits",
-  "packages": [
-    "demos/*",
-    "frameworks/*",
-    "frameworks-plugins/*",
-    "packages/*"
-  ]
+  "packages": ["demos/*", "frameworks/*", "frameworks-plugins/*", "packages/*"]
 }
