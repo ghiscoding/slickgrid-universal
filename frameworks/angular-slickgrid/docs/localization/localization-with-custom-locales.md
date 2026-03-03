@@ -26,7 +26,7 @@ export const localeFrench = {
   // ... the rest of the text
 ```
 
-#### 2. for `Angular-Slickgrid` <= 9.0 - Use the Custom Locales
+#### 2. for `Angular-Slickgrid` < 10.0 - Use the Custom Locales
 ##### Through the `forRoot()` (globally)
 This will literally configure Custom Locales for the entire project, so if you want to do it once, that is the place to do it.
 ```ts

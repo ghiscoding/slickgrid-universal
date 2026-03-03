@@ -19,12 +19,9 @@ npm install --save angular-slickgrid bootstrap # the last dep is optional
 |  16 - 19+               |        16.x         |
 |  16 - 17+               |        16.x (15.x)  |
 |  13 - 15 (**Ivy only**) |        14.x         |
-|  10-12                  |        13.x         |
-|  8-9                    |        12.x         |
-|  7                      |        11.x         |
 
 ### 2. Modify the `angular.json` and `tsconfig.app.json` files
-#### previous Angular versions were using `.angular-cli.json`
+
 Then modify your `angular.json` file with the following Styles and Scripts:
 
 ```js
@@ -42,16 +39,14 @@ Then modify your `angular.json` file with the following Styles and Scripts:
 Load the default Bootstrap theme style and/or customize it to your taste (either by using SASS or CSS variables)
 
 #### CSS
-Default compiled `css` (if you use the plain Bootstrap Theme CSS, you could simply add it to your `.angular-cli.json` file and be done with it).
-
-**Note:** If you are also using `Bootstrap-SASS`, then there is no need to include the `bootstrap.css` in the `styles: []` section.
+Default CSS compiled (if you use the plain Bootstrap Theme CSS, just add it to your `angular.json` file and that's about it).
 
 ```json
 "styles": [
     "node_modules/bootstrap/dist/css/bootstrap.css",
     "styles.css",
     "node_modules/@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css"
-],
+]
 ```
 
 > **Note** Bootstrap is optional, you can use any other framework, other themes are also available as CSS and SCSS file extensions
@@ -68,7 +63,8 @@ You could also compile the SASS files with your own customization, for that simp
 );
 ```
 
-### 4. for `Angular-Slickgrid` <= 9.0 - Include it in your App Module (or App Config for Standalone)
+### 4. for `Angular-Slickgrid` < 10.0 - Include it in your App Module (or App Config for Standalone)
+
 Below are 2 different setups (with App Module (legacy) or Standalone) but in both cases the `AngularSlickgridModule.forRoot()` is **required**, so make sure to include it. Also note that the GitHub demo is strictly built with an App Module which is considered the legacy approach.
 
 #### App Module (legacy)

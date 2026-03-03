@@ -6,10 +6,13 @@
 - [Injecting css classes into grid container](#injecting-css-classes-into-grid-container)
 
 ### CSS/SASS Styles
+
 Load the default Bootstrap theme style and/or customize it to your taste (customization can applied by using SASS)
 
 #### CSS
-Default compiled `css` (if you use the plain Bootstrap Theme CSS, you could simply add it to your `.angular-cli.json` file and be done with it)
+
+Default CSS compiled (if you use the plain Bootstrap Theme CSS, just add it to your `angular.json` file and that's about it).
+
 ```json
 "styles": [
     "../node_modules/bootstrap/dist/css/bootstrap.css",
@@ -22,6 +25,7 @@ Default compiled `css` (if you use the plain Bootstrap Theme CSS, you could simp
 > `slickgrid-theme-default.css`, `slickgrid-theme-bootstrap.css`, `slickgrid-theme-material.css`, `slickgrid-theme-salesforce.css`
 
 ### Using built-in Themes
+
 The Material & Salesforce Themes are using SVGs internally for the icons used by the grid. Each built-in Themes have CSS and SASS files associated with each theme. To take benefit of this, just import whichever CSS/SASS file associated with the Theme you wish to use.
 
 ##### with CSS

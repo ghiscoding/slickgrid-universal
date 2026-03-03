@@ -18,11 +18,8 @@ In order to use `ngx-translate`, you will have to use `@ngx-translate/core` and 
 |  16 - 19+               |        16.x         |
 |  16 - 17+               |        16.x (15.x)  |
 |  13 - 15 (**Ivy only**) |        14.x         |
-|  10-12                  |        13.x         |
-|  8-9                    |        12.x         |
-|  7                      |        11.x         |
 
-### 1. for `Angular-Slickgrid` <= 9.0
+### 1. for `Angular-Slickgrid` < 10.0
 
 #### Minimal installation (~even if you are not using any other locales~)
 If you use only 1 locale, you can now disregard `ngx-translate` installation completely, head over to the new [Wiki - Providing Custom Locale](localization-with-custom-locales.md) for more details. But if you still wish to install the minimum installation to get `ngx-translate` then continue reading.
