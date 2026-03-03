@@ -267,7 +267,7 @@ For example:
 
 #### renaming all `mdi-[0-9]px` to `font-[0-9]px`
 
-Since I had 2 CSS utilities that do exactly the same, I'm dropping all `mdi-..px` in favor of `font-..px` because it makes more sense to represent font sizes that also work on any type of elements (not just icons).
+Since I had 2 CSS utilities that do exactly the same, I dropped all `mdi-..px` in favor of `font-..px` because it makes more sense to represent font sizes that also work on any type of elements (not just icons).
 
 You can do a "Search and Replace" in VSCode via Regular Expressions to replace them all easily (**make sure to use `regex` in VSCode Search & Replace**):
 
