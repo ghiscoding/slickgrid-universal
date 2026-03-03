@@ -94,7 +94,7 @@ gridOptions = {
 
 ### Auto-Enabled External Resources
 
-This change does not require any code change from the end user, but it is nonetheless a change to be aware of. The reason I decided to implement this, is that I often forget to enable the resource associated flag and typically if you load the resource then you probably want to use it, hence auto-enabling the resource seems to make sense. For example, if your register `ExcelExportService` then the library will now auto-enable the resource with its associated flag (which in this case is `enableExcelExport:true`)... unless you have already enabled/disabled the flag yourself, then in that case the internal assignment will simply be skipped and yours will prevail. Also just to be clear, the list of auto-enabled external resources is rather small, it will auto-enable the following resources:
+This change does not require any code change from the end user, but it is nonetheless a change to be aware of. The reason I decided to implement this, is that I often forget to enable the resource associated flag and typically if you load the resource then you probably want to use it, hence auto-enabling the resource makes sense. For example, if your register `ExcelExportService` then the library will now auto-enable the resource with its associated flag (which in this case is `enableExcelExport:true`)... unless you have already enabled/disabled the flag yourself, then in that case the internal assignment will simply be skipped and yours will prevail. Also just to be clear, the list of auto-enabled external resources is rather small, it will auto-enable the following resources:
 
 - ExcelExportService → `enableExcelExport: true`
 - PdfExportService → `enablePdfExport: true`
@@ -104,9 +104,9 @@ This change does not require any code change from the end user, but it is noneth
 
 ### Menu with Commands (slot renderer)
 
-All menu plugins (Cell Menu, Context Menu, Header Menu and Grid Menu) now have a new `commandListBuilder: (items) => items` which is now allowing you to filter/sort and maybe override built-in commands UI. With this new feature in place, I'm deprecating all `hide...` properties and also `positionOrder` since you can now do that with the builder. You could also use a new `hideCommands` which accepts an array of built-in command names. This will remove a large amount of `hide...` properties (about 30) that keeps increasing anytime a new built-in command gets added (in other words, this will simplify maintenance for both you and me).
+All menu plugins (Cell Menu, Context Menu, Header Menu and Grid Menu) now have a new `commandListBuilder: (items) => items` which is now allowing you to filter/sort and maybe override built-in commands rendering. With this new feature in place, I'm deprecating all `hide...` properties and also `positionOrder` since you can now do that with the builder. You could also use a new `hideCommands` which accepts an array of built-in command names. This will remove a large amount of `hide...` properties (about 30) that keeps increasing anytime a new built-in command gets added (in other words, this will simplify maintenance for both you and me).
 
-These are currently just deprecations in v10.x but it's strongly recommended to start using the new `commandListBuilder` and/or `hideCommands` to move away from the deprecated properties which will be removed in v11.x (next year). For example if we want to hide some built-in commands:
+Currently tagged as deprecations in v10.x but it's strongly recommended to start using the new `commandListBuilder` and/or `hideCommands` to move away from the deprecated properties which will be removed in v11.x (next year). For example if we want to hide some built-in commands:
 
 ```diff
 gridOptions = {
@@ -135,7 +135,7 @@ You can now use the custom tooltip plugin to display tooltips on elements outsid
 this.gridOptions = {
   externalResources: [new SlickCustomTooltip()],
   customTooltip: {
-    observeAllTooltips: true, // enable tooltip observation outside the grid
+    observeAllTooltips: true, // observe tooltips outside the grid (defaults to false)
     // observeTooltipContainer: 'body', // <-- you can also define where to observe (defaults to `body`)
   },
 };
@@ -271,12 +271,12 @@ For example:
 
 ## What's next? ...version 11?
 
-Wait, are you seriously talking about version 11 when version 10 actually just shipped? Thats right, I'm already thinking ahead and planning the next major version, which will be in about a year from now (2027 Q1). I can already say that the main focus will be around the use of native [CSS anchor positioning](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning) to replace JS code for positioning menus, tooltips, etc... which will help decreasing the build size further by using more native code. CSS anchoring has been around for a while in Chrome, but its addition in Firefox(147) is quite recent, so for that reason I'm postponing its usage to next year. There's also the new [Sanitizer API](https://developer.mozilla.org/en-US/docs/Web/API/Sanitizer) that I'm hoping to see more availability by next year.
+Wait, are you seriously talking about version 11 when version 10 actually just shipped? Thats right, I'm already thinking ahead and planning the next major version, which will be in about a year from now (2027 Q1). I can already say that the main focus will be around the use of native [CSS anchor positioning](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning) to replace JS code for positioning menus, tooltips, etc... which will help decreasing the build size further by using more native code. CSS anchoring has been around for a while in Chrome, but its addition in Firefox(147) is quite recent, so for that reason I'm postponing its usage for next year. There's also the new [Sanitizer API](https://developer.mozilla.org/en-US/docs/Web/API/Sanitizer) (to replace DOMPurify) that I'm hoping to see more availability by next year.
 
 ### Code being `@deprecated` (to be removed in the future, 2027-Q1)
 #### You can already start using these new options and props (shown below) in v10.0 and above.
 
-Deprecating `ExtensionName` enum which will be replaced by its string literal type, for example:
+Deprecating `ExtensionName` enum which will be replaced by its string literal type (which I forgot to deprecate in v9.x, better late than never), for example:
 
 **Hint** You can use VSCode search & replace, but make sure it's set to Regular Expression search pattern
 
@@ -293,7 +293,7 @@ Below is an abbreviated list of Enums to update, make sure to update them all
 |                  | `ExtensionName.rowDetail`   | `'rowDetail'`       |
 | ... | ... | ... |
 
-Also as mentioned above in the section [Menu with Commands](#menu-with-commands-slot-renderer), all menu `hide...` flags are being deprecated in favor of the new `hideCommands: [...]`, for example:
+Also as mentioned above in the section [Menu with Commands](#menu-with-commands-slot-renderer), all menu `hide...` flags are being deprecated in favor of the new `hideCommands: [...]` or the `commandListBuilder`, for example:
 
 ```diff
 gridOptions = {

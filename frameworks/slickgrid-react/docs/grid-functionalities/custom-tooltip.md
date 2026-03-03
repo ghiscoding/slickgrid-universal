@@ -309,7 +309,7 @@ You can use the custom tooltip plugin to display tooltips on elements outside th
 setOptions({
   externalResources: [new SlickCustomTooltip()],
   customTooltip: {
-    observeAllTooltips: true, // enable tooltip observation outside the grid
+    observeAllTooltips: true, // observe tooltips outside the grid (defaults to false)
     formatter: tooltipFormatter,
   },
 });
