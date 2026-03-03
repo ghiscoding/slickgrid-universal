@@ -4,6 +4,37 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.13.0...v10.0.0) (2026-03-03)
+
+> [!NOTE]
+> ### Please visit the [v10.0.0](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v10.0.0) GitHub release for more details about the migration.
+
+### ⚠ BREAKING CHANGES
+*pulled from v10.0.0-beta.0*
+
+* **angular:** migrate Angular-Slickgrid to Zoneless (#2341)
+* **angular:** migrate Angular-Slickgrid to Standalone Component (#2339)
+* upgrade to Angular 21 (#2338)
+* migrate Row/Hybrid Selection flag into a single `enableSelection` flag (#2331)
+* drop Cell/Row Selection Models & keep only HybridSelectionModel (#2330)
+* remove all Deprecated code (#2302)
+* drop OperatorType enums and keep only type literal (#2301)
+* replacing multiple TypeScript `enum` with `type` to decrease build size (#2300)
+* drop FieldType enums and keep only field type literal (#2299)
+* **vue:** rename `v-model:data` to `v-model:dataset` (#2298)
+* make Row Detail plugin as optional in all framework wrappers (#2291)
+* rewrite Grid Menu positioning using CSS flexbox instead of width and calc() (#2282)
+* switch to column `hidden` property and always keep all columns (#2281)
+
+### Features
+
+* add AbortSignal support for Promise-based backend services ([#2358](https://github.com/ghiscoding/slickgrid-universal/issues/2358)) ([6f44a60](https://github.com/ghiscoding/slickgrid-universal/commit/6f44a6022e8eb69aeb93345f60839d7349679cf7)) - by @ghiscoding
+* significant improvement to accessibility (a11y), fixes [#2376](https://github.com/ghiscoding/slickgrid-universal/issues/2376) ([#2393](https://github.com/ghiscoding/slickgrid-universal/issues/2393)) ([402c182](https://github.com/ghiscoding/slickgrid-universal/commit/402c18246de2bc181864eef30aeff0e3814ef29a)) - by @ghiscoding
+
+### Bug Fixes
+
+* **tooltip:** allow observing multiple containers with tooltips ([#2381](https://github.com/ghiscoding/slickgrid-universal/issues/2381)) ([5b2be3b](https://github.com/ghiscoding/slickgrid-universal/commit/5b2be3b19abb591673f00ffba77bec1aa36dd033)) - by @ghiscoding
+
 ## [10.0.0-beta.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.12.0...v10.0.0-beta.0) (2026-02-14)
 
 ### ⚠ BREAKING CHANGES

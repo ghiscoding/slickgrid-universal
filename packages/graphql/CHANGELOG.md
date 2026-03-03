@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.13.0...v10.0.0) (2026-03-03)
+
+### Features
+
+* add AbortSignal support for Promise-based backend services ([#2358](https://github.com/ghiscoding/slickgrid-universal/issues/2358)) ([6f44a60](https://github.com/ghiscoding/slickgrid-universal/commit/6f44a6022e8eb69aeb93345f60839d7349679cf7)) - by @ghiscoding
+
 ## [10.0.0-beta.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.12.0...v10.0.0-beta.0) (2026-02-14)
 
 ### ⚠ BREAKING CHANGES

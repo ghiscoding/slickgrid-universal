@@ -4,6 +4,51 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.13.0...v10.0.0) (2026-03-03)
+
+> [!NOTE]
+> ### Please visit the [v10.0.0](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v10.0.0) GitHub release for more details about the migration.
+
+### ⚠ BREAKING CHANGES
+*pulled from v10.0.0-beta.0*
+
+* **angular:** migrate Angular-Slickgrid to Zoneless (#2341)
+* **angular:** migrate Angular-Slickgrid to Standalone Component (#2339)
+* upgrade to Angular 21 (#2338)
+* migrate Row/Hybrid Selection flag into a single `enableSelection` flag (#2331)
+* drop Cell/Row Selection Models & keep only HybridSelectionModel (#2330)
+* remove all Deprecated code (#2302)
+* drop OperatorType enums and keep only type literal (#2301)
+* replacing multiple TypeScript `enum` with `type` to decrease build size (#2300)
+* drop FieldType enums and keep only field type literal (#2299)
+* **vue:** rename `v-model:data` to `v-model:dataset` (#2298)
+* make Row Detail plugin as optional in all framework wrappers (#2291)
+* rewrite Grid Menu positioning using CSS flexbox instead of width and calc() (#2282)
+* switch to column `hidden` property and always keep all columns (#2281)
+
+### Features
+
+* add AbortSignal support for Promise-based backend services ([#2358](https://github.com/ghiscoding/slickgrid-universal/issues/2358)) ([6f44a60](https://github.com/ghiscoding/slickgrid-universal/commit/6f44a6022e8eb69aeb93345f60839d7349679cf7)) - by @ghiscoding
+* **a11y:** significant improvement to accessibility, fixes [#2376](https://github.com/ghiscoding/slickgrid-universal/issues/2376) ([#2393](https://github.com/ghiscoding/slickgrid-universal/issues/2393)) ([402c182](https://github.com/ghiscoding/slickgrid-universal/commit/402c18246de2bc181864eef30aeff0e3814ef29a)) - by @ghiscoding
+
+### Bug Fixes
+
+* **a11y:** arrow navigation & focus should work on sub-menus ([#2415](https://github.com/ghiscoding/slickgrid-universal/issues/2415)) ([829e98c](https://github.com/ghiscoding/slickgrid-universal/commit/829e98cba500161ee3efe893b806a1d141e143ab)) - by @ghiscoding
+* **a11y:** hidden & disabled menu items should be skipped ([#2411](https://github.com/ghiscoding/slickgrid-universal/issues/2411)) ([2f40ec7](https://github.com/ghiscoding/slickgrid-universal/commit/2f40ec7881ec08e808e88fec472db384b420278f)) - by @ghiscoding
+* **a11y:** mouse hovering menu items should change current item focus ([#2412](https://github.com/ghiscoding/slickgrid-universal/issues/2412)) ([bbb5b70](https://github.com/ghiscoding/slickgrid-universal/commit/bbb5b70ca471908501deae25b70bb35dab63340f)) - by @ghiscoding
+* **a11y:** add row/column counts ARIA attributes for grid accessibility ([#2404](https://github.com/ghiscoding/slickgrid-universal/issues/2404)) ([05d5ce8](https://github.com/ghiscoding/slickgrid-universal/commit/05d5ce89e10d3933d79f8717e1685110d1539f65)) - by @ghiscoding
+* calling Export services from Context/Grid Menu regressed ([#2397](https://github.com/ghiscoding/slickgrid-universal/issues/2397)) ([5ad6eae](https://github.com/ghiscoding/slickgrid-universal/commit/5ad6eaeebfad07764782def5c8d2bc1b6dbfa7c8)) - by @ghiscoding
+* calling grid.updateColumns should recreate SelectAll checkbox ([#2383](https://github.com/ghiscoding/slickgrid-universal/issues/2383)) ([5fc7383](https://github.com/ghiscoding/slickgrid-universal/commit/5fc7383488a92e5c19e33fbdf9f9c6eef80634f3)) - by @ghiscoding
+* **filter:** input filter blur shouldn't change Page 2 ([#2416](https://github.com/ghiscoding/slickgrid-universal/issues/2416)) ([b6e7b85](https://github.com/ghiscoding/slickgrid-universal/commit/b6e7b85c3d97b8fe1ebed942f98a6f42fa99c7d9)) - by @ghiscoding
+* **filters:** open Date via Enter key not Tab for better accessibility ([#2384](https://github.com/ghiscoding/slickgrid-universal/issues/2384)) ([b441c90](https://github.com/ghiscoding/slickgrid-universal/commit/b441c9051935a54ad1a5c8c5e479f64a28e7424a)) - by @ghiscoding
+* **filters:** should refocus on ms-select parent after closing ms-select ([#2386](https://github.com/ghiscoding/slickgrid-universal/issues/2386)) ([86508e0](https://github.com/ghiscoding/slickgrid-universal/commit/86508e076169511dd7d572bfe6b512322c920281)) - by @ghiscoding
+* **styling:** Draggable Grouping dropzone should be full width ([#2409](https://github.com/ghiscoding/slickgrid-universal/issues/2409)) ([4f1b42d](https://github.com/ghiscoding/slickgrid-universal/commit/4f1b42d6a62f659bdab787d1ce570be3e64e2973)) - by @ghiscoding
+* **styling:** Grid Menu icon should use transparent background color ([d5b5f90](https://github.com/ghiscoding/slickgrid-universal/commit/d5b5f901d34a39f0a7673b3fc3771477b9eb6290)) - by @ghiscoding
+* **styling:** improve column resize handle & cursor ([#2405](https://github.com/ghiscoding/slickgrid-universal/issues/2405)) ([0f9379f](https://github.com/ghiscoding/slickgrid-universal/commit/0f9379f8cfab1477b4db3dd3430414bd17b8df8e)) - by @ghiscoding
+* **styling:** ms-select in focus has too much outline highlight ([1d8edd2](https://github.com/ghiscoding/slickgrid-universal/commit/1d8edd226e43ec3ab4af683974bbf36408a0ac40)) - by @ghiscoding
+* **styling:** problem to display resizable handle because of Grid Menu ([#2402](https://github.com/ghiscoding/slickgrid-universal/issues/2402)) ([3491cdc](https://github.com/ghiscoding/slickgrid-universal/commit/3491cdced56d03e1c8d652c734b93bc430736633)) - by @ghiscoding
+* **tooltip:** allow observing multiple containers with tooltips ([#2381](https://github.com/ghiscoding/slickgrid-universal/issues/2381)) ([5b2be3b](https://github.com/ghiscoding/slickgrid-universal/commit/5b2be3b19abb591673f00ffba77bec1aa36dd033)) - by @ghiscoding
+
 ## [10.0.0-beta.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.12.0...v10.0.0-beta.0) (2026-02-14)
 
 ### ⚠ BREAKING CHANGES

@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.13.0...v10.0.0) (2026-03-03)
+
+### Features
+
+* significant improvement to accessibility (a11y), fixes [#2376](https://github.com/ghiscoding/slickgrid-universal/issues/2376) ([#2393](https://github.com/ghiscoding/slickgrid-universal/issues/2393)) ([402c182](https://github.com/ghiscoding/slickgrid-universal/commit/402c18246de2bc181864eef30aeff0e3814ef29a)) - by @ghiscoding
+
 ## [10.0.0-beta.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.12.0...v10.0.0-beta.0) (2026-02-14)
 
 ### ⚠ BREAKING CHANGES

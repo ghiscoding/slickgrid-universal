@@ -53,7 +53,7 @@ You could also compile the SASS files with your own customization, for that simp
 
 ### 4. Install/Setup `I18N` for Localization (optional)
 To provide locales other than English (default locale), you have 2 options that you can go with. If you only use English, there is nothing to do (you can still change some of the texts in the grid via option 1.)
-1. Using [Custom Locale](../localization/localization-with-custom-locales.md), that is when you use **only 1** locale (other than English)... this is a new feature starting from version `2.10.0` and up.
+1. Using [Custom Locale](../localization/localization-with-custom-locales.md), that is when you use **only 1** locale (other than English)...
 2. Using [Localization with I18N](../localization/localization.md), that is when you want to use multiple locales dynamically.
 
 ### 5. Create a basic grid
