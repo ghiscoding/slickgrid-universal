@@ -235,19 +235,17 @@ define Angular-Slickgrid in your View
 The last step is really to explore all the pages that are available in the documentation, everything you need to use the library should be available in here and so you should visit it often. For example a good starter is to look at the following
 
 - for all the `Grid Options`, take a look at all the [Grid Options](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/gridOption.interface.ts) interface.
-- [Formatters](../column-functionalities/Formatters.md)
-- [Editors](../column-functionalities/Editors.md)
+- [Formatters](../column-functionalities/formatters.md)
+- [Editors](../column-functionalities/editors.md)
 - [Filters](../column-functionalities/filters/select-filter.md)
-- [Grid Menu](../grid-functionalities/Grid-Menu.md)
+- [Grid Menu](../grid-functionalities/grid-menu.md)
 ... and much more, just explore the Documentation through all the available pages.
 
 ### 9. How to load data with `HttpClient`?
-You might notice that all demos are made with mocked dataset that are embedded in each examples, that is mainly for demo purposes, but you might be wondering how to connect this with an `HttpClient`? Easy... just replace the mocked data, assigned to the `dataset` property, by your `HttpClient` call and that's it. The `dataset` property can be changed at any time, which is why you can use local data and/or connect it to a `Promise` or an `Observable` with `HttpClient` (internally it's just a SETTER that refreshes the grid). See [Example 24](https://ghiscoding.github.io/angular-slickgrid-demos/#/gridtabs) for a demo showing how to load a JSON file with `HttpClient`.
+You might notice that all demos are made with mocked dataset that are embedded in each examples, that is mainly for demo purposes, but you might be wondering how to connect this with an `HttpClient`? Easy... just replace the mocked data assignment to the `dataset` property with your `HttpClient` call and that's it. Basically, the `dataset` property can be changed at any time, which is why you can use local data and/or connect it to a `Promise` or an `Observable` with `HttpClient` (internally it's just a SETTER that refreshes the grid). See [Example 22](https://ghiscoding.github.io/angular-slickgrid-demos/#/example22) for a demo showing how to load a JSON file with `HttpClient`.
 
 ### 10. Live Demo - Clone the Examples
-The best way to get started is to clone the [Angular-Slickgrid-demos](https://github.com/ghiscoding/angular-slickgrid-demos), it has multiple examples and it is also updated frequently since it is used for the GitHub Bootstrap 5 demo page. `Angular-Slickgrid` has 3 `Bootstrap` repos, you can see a demo of each ones below.
-- [Bootstrap 5 demo](https://ghiscoding.github.io/angular-slickgrid-bs5-demo) / [examples repo](https://github.com/ghiscoding/angular-slickgrid-demos/tree/master/bootstrap5-demo-with-translate) (using `ngx-translate`)
-- [Bootstrap 5 - examples repo](https://github.com/ghiscoding/angular-slickgrid-demos/tree/master/bootstrap5-demo-with-locales) (single Locale, without using `ngx-translate`)
+The best way to get started is to clone the [Angular-Slickgrid-demos](https://github.com/ghiscoding/angular-slickgrid-demos), it has multiple examples and it is also updated frequently since it is used for the GitHub Bootstrap 5 demo page.
 
 ##### All Live Demo Examples have links to the actual code
 If you would like to see the code to a particular Example, just click on the "see code" which is available in all live examples.
@@ -256,7 +254,7 @@ If you would like to see the code to a particular Example, just click on the "se
 The project supports Content Security Policy (CSP) as long as you provide an optional `sanitizer` in your grid options (we recommend DOMPurify). Review the [CSP Compliance](../developer-guides/csp-compliance.md) documentation for more info.
 
 ### 12. Missing Features compared to SlickGrid?
-What if `Angular-Slickgrid` is missing feature(s) versus the original `SlickGrid`? Fear not and just use the `SlickGrid` and `DataView` objects directly, which are expose from the start through Custom Events. For more info continue reading on [Docs - SlickGrid & DataView objects](../slick-grid-dataview-objects/SlickGrid-&-DataView-Objects.md)
+What if `Angular-Slickgrid` is missing feature(s) versus the original `SlickGrid`? Fear not and just use the `SlickGrid` and `DataView` objects directly, which are expose from the start through Custom Events. For more info continue reading on [Docs - SlickGrid & DataView objects](../slick-grid-dataview-objects)
 
 ### 13. Troubleshooting - Build Errors/Warnings
 Visit the [Troubleshooting](./troubleshooting.md) section for more common errors.
