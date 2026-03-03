@@ -203,7 +203,7 @@ gridOptions = {
 }
 ```
 
-There's also a new Renderer similar to Slots but implemented with native code to make it cross-platform compatible. The usage is actually very similar to how you would use a cell Formatter. You can see a new [Example 51](https://ghiscoding.github.io/angular-slickgrid-demos/#/example51) demoing this new feature and also the command builder mentioned above.
+There's also a new Renderer similar to Slots but implemented with native code to make it cross-platform compatible. The usage is actually very similar to how you would use a cell Formatter. You can see a new [Example 51](https://ghiscoding.github.io/angular-slickgrid-demos/#/example51) demoing this new feature and also the command builder mentioned above. Go to [Menu Slots documentation](https://ghiscoding.gitbook.io/angular-slickgrid/grid-functionalities/menu-slots) to read more about this new feature.
 
 ### Tooltips Outside the Grid
 
