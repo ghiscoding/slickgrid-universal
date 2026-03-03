@@ -63,6 +63,8 @@ const menuItem = {
 
 ### Advanced Example - HTMLElement Objects
 
+This approach is safer since it's CSP compliant with its use native HTML Elements. This could also be used to add event listeners or simply use the `action` callback.
+
 ```typescript
 // Create custom element with full DOM control
 const menuItem = {
@@ -205,92 +207,6 @@ const gridOptions = {
 };
 ```
 
-### Framework Integration Examples
-
-#### Vanilla JavaScript
-```typescript
-const menuItem = {
-  command: 'custom',
-  title: 'Action',
-  slotRenderer: () => `
-    <button onclick="console.log('clicked')">Click Me</button>
-  `
-};
-```
-
-#### Angular - Dynamic Components
-```typescript
-// In component class
-const menuItem = {
-  command: 'with-component',
-  title: 'With Angular Component',
-  slotRenderer: (cmdItem, args) => {
-    // Create a placeholder element
-    const placeholder = document.createElement('div');
-    placeholder.id = `angular-slot-${Date.now()}`;
-
-    // Schedule component creation for after rendering
-    setTimeout(() => {
-      const element = document.getElementById(placeholder.id);
-      if (element) {
-        const componentRef = this.viewContainerRef.createComponent(MyComponent);
-        element.appendChild(componentRef.location.nativeElement);
-      }
-    }, 0);
-
-    return placeholder;
-  }
-};
-```
-
-#### React - Using Hooks
-```typescript
-// Define menu item with slotRenderer
-const menuItem = {
-  command: 'with-react',
-  title: 'With React Component',
-  slotRenderer: (cmdItem, args) => {
-    const container = document.createElement('div');
-    container.id = `react-slot-${Date.now()}`;
-
-    // Schedule component render for after menu renders
-    setTimeout(() => {
-      const element = document.getElementById(container.id);
-      if (element) {
-        ReactDOM.render(<MyComponent data={args} />, element);
-      }
-    }, 0);
-
-    return container;
-  }
-};
-```
-
-#### Vue - Using createApp
-```typescript
-// Define menu item with slotRenderer
-const menuItem = {
-  command: 'with-vue',
-  title: 'With Vue Component',
-  slotRenderer: (cmdItem, args) => {
-    const container = document.createElement('div');
-    container.id = `vue-slot-${Date.now()}`;
-
-    // Schedule component mount for after menu renders
-    setTimeout(() => {
-      const element = document.getElementById(container.id);
-      if (element && !element._appInstance) {
-        const app = createApp(MyComponent, { data: args });
-        app.mount(element);
-        element._appInstance = app;
-      }
-    }, 0);
-
-    return container;
-  }
-};
-```
-
 ### Real-World Use Cases
 
 #### 1. Add Keyboard Shortcuts
@@ -421,11 +337,11 @@ const menuItem = {
 
 - **HTML strings** are inserted via `innerHTML` - ensure content is sanitized if user-provided
 - **HTMLElement objects** are appended directly - safer for dynamic content and allows event listeners
-- **Cross-framework compatible** - works in vanilla JS, Angular, React, Vue, Aurelia using the same API
+- **Cross-framework compatible** - works in vanilla JS and any other frameworks using the same API
 - **Priority order** - Item-level `slotRenderer` overrides menu-level `defaultMenuItemRenderer`
 - **Built-in command preservation** - When overriding a built-in command (e.g., `sort-asc`, `sort-desc`, `hide`, etc.) with custom properties like `slotRenderer` or `iconCssClass`, if you don't provide an `action` callback, the library will automatically preserve and use the built-in action for that command. This means you can safely customize the appearance of built-in commands without losing their functionality.
 - **Accessibility** - Include proper ARIA attributes when creating custom elements
-- **Event handling** - Call `event.stopPropagation()` in interactive elements to prevent menu commands from firing
+- **Event handling** - Call `event.stopPropagation()` in interactive elements to prevent menu commands from firing and closing the menu
 - **Default fallback** - If neither `slotRenderer` nor `defaultMenuItemRenderer` is provided, the default icon + text rendering is used
 - **Performance** - Avoid heavy DOM manipulation inside renderer callbacks (they may be called multiple times)
 - **Event parameter** - The optional `event` parameter is passed during click handling and allows you to control menu behavior
