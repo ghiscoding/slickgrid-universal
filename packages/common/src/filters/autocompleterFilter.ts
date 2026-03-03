@@ -388,6 +388,7 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
       className: `form-control search-filter slick-filter filter-${columnId} slick-autocomplete-container`,
       value: (searchTerm ?? '') as string,
       dataset: { columnid: `${columnId}` },
+      tabIndex: 0,
     });
 
     // create the DOM element & add an ID and filter class
