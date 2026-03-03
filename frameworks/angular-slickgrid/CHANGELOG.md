@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.13.0...v10.0.0) (2026-03-03)
+
+### Features
+
+* add AbortSignal support for Promise-based backend services ([#2358](https://github.com/ghiscoding/slickgrid-universal/issues/2358)) ([6f44a60](https://github.com/ghiscoding/slickgrid-universal/commit/6f44a6022e8eb69aeb93345f60839d7349679cf7)) - by @ghiscoding
+* significant improvement to accessibility (a11y), fixes [#2376](https://github.com/ghiscoding/slickgrid-universal/issues/2376) ([#2393](https://github.com/ghiscoding/slickgrid-universal/issues/2393)) ([402c182](https://github.com/ghiscoding/slickgrid-universal/commit/402c18246de2bc181864eef30aeff0e3814ef29a)) - by @ghiscoding
+
+### Bug Fixes
+
+* **angular:** `@Input() readonly` breaks `strictInputAccessModifiers` ([#2398](https://github.com/ghiscoding/slickgrid-universal/issues/2398)) ([cf2f7b6](https://github.com/ghiscoding/slickgrid-universal/commit/cf2f7b6fd6d646f6ab6885f16ea345f1a61dae49)) - by @ghiscoding
+* **tooltip:** allow observing multiple containers with tooltips ([#2381](https://github.com/ghiscoding/slickgrid-universal/issues/2381)) ([5b2be3b](https://github.com/ghiscoding/slickgrid-universal/commit/5b2be3b19abb591673f00ffba77bec1aa36dd033)) - by @ghiscoding
+
 ## [10.0.0-beta.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.12.0...v10.0.0-beta.0) (2026-02-14)
 
 ### ⚠ BREAKING CHANGES

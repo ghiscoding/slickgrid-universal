@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.13.0...v10.0.0) (2026-03-03)
+
+### Bug Fixes
+
+* **tooltip:** allow observing multiple containers with tooltips ([#2381](https://github.com/ghiscoding/slickgrid-universal/issues/2381)) ([5b2be3b](https://github.com/ghiscoding/slickgrid-universal/commit/5b2be3b19abb591673f00ffba77bec1aa36dd033)) - by @ghiscoding
+
 ## [10.0.0-beta.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.12.0...v10.0.0-beta.0) (2026-02-14)
 
 ### Features
