@@ -9,7 +9,7 @@ export class Example08 {
   gridOptions!: GridOption;
   dataset: any[] = [];
   hideSubTitle = false;
-  selectedLanguage: string;
+  selectedLanguage = '';
   visibleColumns: Column[] = [];
 
   constructor(private readonly i18n: I18N = resolve(I18N)) {

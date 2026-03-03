@@ -19,12 +19,12 @@ function randomBetween(min: number, max: number): number {
 
 export class Example42 {
   @bindable() pageSize = 50;
+  aureliaGrid!: AureliaGridInstance;
   columnDefinitions: Column[] = [];
   gridContainerElm!: HTMLDivElement;
   gridOptions!: GridOption;
   dataset: any[] = [];
   paginationPosition: 'bottom' | 'top' = 'top';
-  aureliaGrid: AureliaGridInstance;
   hideSubTitle = false;
   paginationOptions!: Pagination;
 

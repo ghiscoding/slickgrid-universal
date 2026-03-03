@@ -171,16 +171,18 @@ export function stripTags(
   }
 
   function parse_allowable_tags(allowable_tags: string | string[]): Set<string | null> {
-    let tag_set = new Set<string>();
+    let tag_set = new Set<string | null>();
 
     if (typeof allowable_tags === 'string') {
       let match;
       while ((match = ALLOWED_TAGS_REGEX.exec(allowable_tags))) {
         tag_set.add(match[1]);
       }
-    } else if (typeof allowable_tags[Symbol.iterator] === 'function') {
+    } else if (Array.isArray(allowable_tags)) {
+      // Directly create a Set from the array if it's indeed an array
       tag_set = new Set(allowable_tags);
     }
+
     return tag_set;
   }
 

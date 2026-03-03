@@ -6,7 +6,7 @@
  * @namespace Slick
  */
 import type { MergeTypes } from '../enums/index.js';
-import type { CSSStyleDeclarationWritable, DragRange, EditController } from '../interfaces/index.js';
+import type { DragRange, EditController } from '../interfaces/index.js';
 import type { SlickGrid } from './slickGrid.js';
 
 export type Handler<ArgType = any> = (e: SlickEventData<ArgType>, args: ArgType) => void;
@@ -737,7 +737,7 @@ export class Utils {
     if (typeof val === 'function') {
       val = val();
     }
-    el.style[style as CSSStyleDeclarationWritable] = typeof val === 'string' ? val : `${val}px`;
+    el.style.setProperty(style, typeof val === 'string' ? val : `${val}px`);
   }
 
   public static isHidden(el: HTMLElement): boolean {

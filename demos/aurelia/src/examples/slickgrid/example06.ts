@@ -35,7 +35,7 @@ export class Example06 {
   graphqlQuery = '';
   hideSubTitle = false;
   processing = false;
-  selectedLanguage: string;
+  selectedLanguage = '';
   status = { text: '', class: '' };
   serverWaitDelay = FAKE_SERVER_DELAY; // server simulation with default of 250ms but 50ms for Cypress tests
 

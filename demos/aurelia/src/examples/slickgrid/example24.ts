@@ -64,7 +64,7 @@ export class Example24 {
   columnDefinitions: Column[] = [];
   dataset: any[] = [];
   hideSubTitle = false;
-  selectedLanguage: string;
+  selectedLanguage = '';
 
   constructor(private readonly i18n: I18N = resolve(I18N)) {
     // define the grid options & columns and then create the grid itself

@@ -99,7 +99,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
   protected _eventHandler!: SlickEventHandler;
   protected _eventPubSubService!: EventPubSubService;
   protected _hideHeaderRowAfterPageLoad = false;
-  protected _i18next: I18Next | null;
+  protected _i18next: I18Next | null = null;
   protected _isAutosizeColsCalled = false;
   protected _isGridInitialized = false;
   protected _isDatasetInitialized = false;

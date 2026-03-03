@@ -4,11 +4,8 @@
     "emitDecoratorMetadata": true,
     "useDefineForClassFields": true,
     "module": "ESNext",
-    "lib": [
-      "ESNext",
-      "DOM"
-    ],
-    "moduleResolution": "Node",
+    "lib": ["ESNext", "DOM"],
+    "moduleResolution": "bundler",
     "allowJs": true,
     "strict": true,
     "sourceMap": true,
@@ -23,15 +20,8 @@
     "noImplicitReturns": false,
     "skipLibCheck": true,
     "strictPropertyInitialization": false,
-    "types": [
-      "node"
-    ],
-    "typeRoots": [
-      "./node_modules/@types",
-      "../../node_modules/@types"
-    ]
+    "types": ["node"],
+    "typeRoots": ["./node_modules/@types", "../../node_modules/@types"]
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }

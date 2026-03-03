@@ -12,19 +12,13 @@
     "noImplicitReturns": true,
     "esModuleInterop": true,
     "experimentalDecorators": true,
+    "rootDir": "./src",
     "target": "ES2022",
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "lib": [
-      "es2022",
-      "dom"
-    ],
+    "typeRoots": ["node_modules/@types"],
+    "lib": ["es2022", "dom"],
     "module": "es2022",
     "paths": {
-      "sortablejs/modular/sortable.core.esm.js": [
-        "./types/sortablejs.d.ts"
-      ]
+      "sortablejs/modular/sortable.core.esm.js": ["./types/sortablejs.d.ts"]
     },
     "strict": true
   },

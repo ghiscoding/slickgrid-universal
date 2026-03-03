@@ -40,7 +40,7 @@ export class Example23 {
   gridOptions!: GridOption;
   dataset: any[] = [];
   hideSubTitle = false;
-  selectedLanguage: string;
+  selectedLanguage = '';
   metrics!: Metrics;
   filterList = [
     { value: '', label: '' },
