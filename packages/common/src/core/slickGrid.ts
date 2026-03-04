@@ -5766,8 +5766,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   focusHeaderRowFilter(focusOnLast = false): boolean {
     const headerRow = this.getHeaderRow();
     if (this._options.showHeaderRow && headerRow) {
-      const firstHeaderRow = headerRow instanceof HTMLElement ? headerRow : headerRow[0];
-      const allFilterElms = firstHeaderRow?.querySelectorAll<HTMLElement>('.slick-headerrow-column [tabIndex="0"]') || [];
+      const headerRows = headerRow instanceof HTMLElement ? [headerRow] : [...headerRow];
+      const allFilterElms = headerRows.flatMap((row) =>
+        Array.from(row.querySelectorAll<HTMLElement>('.slick-headerrow-column *[tabIndex="0"]'))
+      );
       const filterLn = allFilterElms.length;
       let closestVisibleFilter: HTMLElement | null = null;
       if (filterLn > 0) {
@@ -5871,18 +5873,39 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected handleContainerKeyDown(e: KeyboardEvent & { originalEvent: Event }): void {
     if (e.key === 'Tab' && !e.ctrlKey && !e.altKey) {
-      let headerRowSelector = '.slick-headerrow-column *[tabIndex="0"]';
-      const ancestorHeaderRow = (e.target as HTMLElement)?.closest(headerRowSelector);
-      if (!e.shiftKey) {
-        // when using Tab, find last header row filter
-        headerRowSelector = '.slick-headerrow-column:last-child *[tabIndex="0"]';
-      }
+      const headerRowSelector = '.slick-headerrow-column *[tabIndex="0"]';
+      const allFilterElms = this._container.querySelectorAll(headerRowSelector);
+      const allLeftFilterElms = this._container.querySelectorAll(`.slick-pane-left ${headerRowSelector}`);
+      const allRightFilterElms = this._container.querySelectorAll(`.slick-pane-right ${headerRowSelector}`);
+      const ancestorHeaderRow = e.target instanceof HTMLElement ? e.target.closest(headerRowSelector) : null;
 
-      if (this._container.querySelector(headerRowSelector) === ancestorHeaderRow) {
-        this.stopFullBubbling(e);
-        // focus grid menu when Shift+Tab or focus on first cell when using Tab
-        e.shiftKey ? this.focusGridMenu() : this.focusGridCell();
+      if (allFilterElms.length > 0) {
+        const targetFilterElm = e.shiftKey ? allFilterElms[0] : allFilterElms[allFilterElms.length - 1];
+
+        if (targetFilterElm === ancestorHeaderRow) {
+          // focus grid menu when Shift+Tab OR focus on first cell when using Tab
+          this.stopFullBubbling(e);
+          e.shiftKey ? this.focusGridMenu() : this.focusGridCell();
+        } else if (this._options.frozenColumn! >= 0) {
+          // when using frozen columns
+          const lastLeftFilterElm = allLeftFilterElms[allLeftFilterElms.length - 1];
+          if (e.shiftKey && e.target === allRightFilterElms[0]) {
+            // using Shift+Tab and we're on the first filter element of the right pane, let's focus on last element of the left pane
+            this.focusElementWithoutBubbling(e, lastLeftFilterElm);
+          } else if (!e.shiftKey && e.target === lastLeftFilterElm) {
+            // using frozen columns and we're on the last filter element on the left pane, let's focus on the first element of the right pane
+            this.focusElementWithoutBubbling(e, allRightFilterElms[0]);
+          }
+        }
       }
+    }
+  }
+
+  // focus element and stop event bubbling (for keyboard events)
+  protected focusElementWithoutBubbling(e: KeyboardEvent, target: Element | null): void {
+    if (target) {
+      (target as HTMLElement).focus();
+      this.stopFullBubbling(e);
     }
   }
 

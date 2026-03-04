@@ -2886,9 +2886,9 @@ describe('SlickGrid core file', () => {
       grid = new SlickGrid<any, Column>(container, items, columns, defaultOptions);
 
       expect(grid).toBeTruthy();
-      expect(grid._container.getAttribute('role')).toBe('grid');
-      expect(grid._container.getAttribute('aria-colcount')).toBe('1');
-      expect(grid._container.getAttribute('aria-rowcount')).toBe('11');
+      expect(grid.getContainerNode().getAttribute('role')).toBe('grid');
+      expect(grid.getContainerNode().getAttribute('aria-colcount')).toBe('1');
+      expect(grid.getContainerNode().getAttribute('aria-rowcount')).toBe('11');
     });
 
     it('should return undefined editor when getDataItem() did not find any associated cell item', () => {
@@ -5931,15 +5931,16 @@ describe('SlickGrid core file', () => {
       expect(secondItemAgeCell.classList.contains('to-be-deleted-highlight')).toBeFalsy();
     });
 
-    it('should call handleContainerKeyDown and handleGridKeyDown a11y/keyboard coverage', () => {
+    it('should trigger focusGridCell() when user typed Tab and filter element equals the ancestor header row an', () => {
       // Use a real DOM structure to avoid infinite recursion
       const testGridInstance = new TestGrid(container, items, columns, { ...defaultOptions, enableCellNavigation: true, autoEditByKeypress: true });
-      const headerRowCol = document.createElement('div');
-      headerRowCol.className = 'slick-headerrow-column';
-      headerRowCol.tabIndex = 0;
+      const focusGridCellSpy = vi.spyOn(testGridInstance, 'focusGridCell');
+      const headerRowCol = createDomElement('div', { className: 'slick-headerrow-column' });
+      const inputFilterElm = createDomElement('input', { className: 'slick-filter-input', tabIndex: 0 });
+      headerRowCol.appendChild(inputFilterElm);
       container.appendChild(headerRowCol);
       const tabEvent = new KeyboardEvent('keydown', { key: 'Tab' }) as any;
-      Object.defineProperty(tabEvent, 'target', { value: headerRowCol });
+      Object.defineProperty(tabEvent, 'target', { value: inputFilterElm });
       testGridInstance.callHandleContainerKeyDown(tabEvent);
 
       const keyEvent = {
@@ -5951,9 +5952,129 @@ describe('SlickGrid core file', () => {
         preventDefault: vi.fn(),
       } as any;
       testGridInstance.setActiveCell(0, 1);
-      testGridInstance.setCurrentEditorNull();
       testGridInstance.callHandleGridKeyDown(keyEvent);
       skipGridDestroy = true;
+
+      expect(focusGridCellSpy).toHaveBeenCalled();
+    });
+
+    it('should trigger focusGridMenu() when user typed Shift+Tab and filter element equals the ancestor header row an', () => {
+      // Use a real DOM structure to avoid infinite recursion
+      const testGridInstance = new TestGrid(container, items, columns, { ...defaultOptions, enableCellNavigation: true, autoEditByKeypress: true });
+      const focusGridMenuSpy = vi.spyOn(testGridInstance, 'focusGridMenu');
+      const headerRowCol = createDomElement('div', { className: 'slick-headerrow-column' });
+      const inputFilterElm = createDomElement('input', { className: 'slick-filter-input', tabIndex: 0 });
+      headerRowCol.appendChild(inputFilterElm);
+      container.appendChild(headerRowCol);
+      const tabEvent = new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true }) as any;
+      Object.defineProperty(tabEvent, 'target', { value: inputFilterElm });
+      testGridInstance.callHandleContainerKeyDown(tabEvent);
+
+      const keyEvent = {
+        key: 'a',
+        ctrlKey: false,
+        originalEvent: {},
+        target: container.querySelector('.slick-cell.l1.r1'),
+        stopPropagation: vi.fn(),
+        preventDefault: vi.fn(),
+      } as any;
+      testGridInstance.setActiveCell(0, 1);
+      testGridInstance.callHandleGridKeyDown(keyEvent);
+      skipGridDestroy = true;
+
+      expect(focusGridMenuSpy).toHaveBeenCalled();
+    });
+
+    it('should focus on right pane first filter element when user typed Tab and frozenColumn is set to 0', () => {
+      // Use a real DOM structure to avoid infinite recursion
+      const testGridInstance = new TestGrid(container, items, columns, {
+        ...defaultOptions,
+        enableCellNavigation: true,
+        autoEditByKeypress: true,
+        frozenColumn: 0,
+      });
+      const focusGridMenuSpy = vi.spyOn(testGridInstance, 'focusGridMenu');
+      const headerRowCol1 = createDomElement('div', { className: 'slick-headerrow-column' });
+      const headerRowCol2 = createDomElement('div', { className: 'slick-headerrow-column' });
+      const headerRowCol3 = createDomElement('div', { className: 'slick-headerrow-column' });
+      const headerRowCol4 = createDomElement('div', { className: 'slick-headerrow-column' });
+      const inputFilter1 = createDomElement('input', { className: 'slick-filter-input filter1', tabIndex: 0 });
+      const inputFilter2 = createDomElement('input', { className: 'slick-filter-input filter2', tabIndex: 0 });
+      const inputFilter3 = createDomElement('input', { className: 'slick-filter-input filter3', tabIndex: 0 });
+      const inputFilter4 = createDomElement('input', { className: 'slick-filter-input filter4', tabIndex: 0 });
+      const filter3Spy = vi.spyOn(inputFilter3, 'focus');
+      headerRowCol1.appendChild(inputFilter1);
+      headerRowCol2.appendChild(inputFilter2);
+      headerRowCol3.appendChild(inputFilter3);
+      headerRowCol4.appendChild(inputFilter4);
+      container.querySelector('.slick-pane-left')!.appendChild(headerRowCol1);
+      container.querySelector('.slick-pane-left')!.appendChild(headerRowCol2);
+      container.querySelector('.slick-pane-right')!.appendChild(headerRowCol3);
+      container.querySelector('.slick-pane-right')!.appendChild(headerRowCol4);
+
+      const tabEvent = new KeyboardEvent('keydown', { key: 'Tab', shiftKey: false }) as any;
+      Object.defineProperty(tabEvent, 'target', { value: inputFilter2 });
+      testGridInstance.callHandleContainerKeyDown(tabEvent);
+
+      const keyEvent = {
+        key: 'a',
+        ctrlKey: false,
+        originalEvent: {},
+        target: container.querySelector('.slick-cell.l1.r1'),
+        stopPropagation: vi.fn(),
+        preventDefault: vi.fn(),
+      } as any;
+      testGridInstance.setActiveCell(0, 1);
+      testGridInstance.callHandleGridKeyDown(keyEvent);
+      skipGridDestroy = true;
+
+      expect(filter3Spy).toHaveBeenCalled();
+    });
+
+    it('should focus on right pane first filter element when user typed Shift+Tab and frozenColumn is set to 0', () => {
+      // Use a real DOM structure to avoid infinite recursion
+      const testGridInstance = new TestGrid(container, items, columns, {
+        ...defaultOptions,
+        enableCellNavigation: true,
+        autoEditByKeypress: true,
+        frozenColumn: 0,
+      });
+      const focusGridMenuSpy = vi.spyOn(testGridInstance, 'focusGridMenu');
+      const headerRowCol1 = createDomElement('div', { className: 'slick-headerrow-column' });
+      const headerRowCol2 = createDomElement('div', { className: 'slick-headerrow-column' });
+      const headerRowCol3 = createDomElement('div', { className: 'slick-headerrow-column' });
+      const headerRowCol4 = createDomElement('div', { className: 'slick-headerrow-column' });
+      const inputFilter1 = createDomElement('input', { className: 'slick-filter-input filter1', tabIndex: 0 });
+      const inputFilter2 = createDomElement('input', { className: 'slick-filter-input filter2', tabIndex: 0 });
+      const inputFilter3 = createDomElement('input', { className: 'slick-filter-input filter3', tabIndex: 0 });
+      const inputFilter4 = createDomElement('input', { className: 'slick-filter-input filter4', tabIndex: 0 });
+      const filter3Spy = vi.spyOn(inputFilter2, 'focus');
+      headerRowCol1.appendChild(inputFilter1);
+      headerRowCol2.appendChild(inputFilter2);
+      headerRowCol3.appendChild(inputFilter3);
+      headerRowCol4.appendChild(inputFilter4);
+      container.querySelector('.slick-pane-left')!.appendChild(headerRowCol1);
+      container.querySelector('.slick-pane-left')!.appendChild(headerRowCol2);
+      container.querySelector('.slick-pane-right')!.appendChild(headerRowCol3);
+      container.querySelector('.slick-pane-right')!.appendChild(headerRowCol4);
+
+      const tabEvent = new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true }) as any;
+      Object.defineProperty(tabEvent, 'target', { value: inputFilter3 });
+      testGridInstance.callHandleContainerKeyDown(tabEvent);
+
+      const keyEvent = {
+        key: 'a',
+        ctrlKey: false,
+        originalEvent: {},
+        target: container.querySelector('.slick-cell.l1.r1'),
+        stopPropagation: vi.fn(),
+        preventDefault: vi.fn(),
+      } as any;
+      testGridInstance.setActiveCell(0, 1);
+      testGridInstance.callHandleGridKeyDown(keyEvent);
+      skipGridDestroy = true;
+
+      expect(filter3Spy).toHaveBeenCalled();
     });
 
     it('should trigger onHeaderKeyDown and sortCallback on Enter/Space', () => {
