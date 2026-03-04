@@ -25,7 +25,7 @@ For years, I had to keep some references in a Shared Service via `shared.allColu
 
 | Before | After |
 | ------- | ------ |
-| `grid.setColumns(visibleCols)` | `grid.updateColumnById('colId', { hidden: true });`  and `grid.updateColumns();` |
+| `grid.setColumns(visibleCols)` | `grid.updateColumnById('id', { hidden: true });`  and `grid.updateColumns();` |
 | `sharedService.allColumns` | `grid.getColumns()` _... is now including all columns_ |
 | `sharedService.visibleColumns` or `grid.getColumns()`| `grid.getVisibleColumns()` |
 
@@ -57,7 +57,7 @@ _following changes should be transparent to most users_
 gridOptions = {
 - enableHybridSelection: true,
 - enableRowSelection: true,
-+  enableSelection: true,
++ enableSelection: true,
 
 - rowSelectionOptions: {
 + selectionOptions: {
