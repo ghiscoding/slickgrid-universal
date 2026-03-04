@@ -855,5 +855,22 @@ describe('Example 04 - Frozen Grid', () => {
       // Activate with Enter (add your assertion for the result)
       cy.focused().type('{enter}');
     });
+
+    it('should reapply 3 Frozen Columns and expect to be able to focus on first filter and go left/right between both viewports without problems', () => {
+      cy.get('[data-test="set-3frozen-columns"]').click();
+      cy.get('.slick-headerrow-column.l1 input').focus();
+      cy.press(Cypress.Keyboard.Keys.TAB);
+      cy.get('.slick-headerrow-column.l2 input').should('have.focus');
+      cy.press(Cypress.Keyboard.Keys.TAB);
+      cy.get('.slick-headerrow-column.l3 select').should('have.focus');
+      cy.press(Cypress.Keyboard.Keys.TAB);
+      cy.get('.slick-headerrow-column.l3 input').should('have.focus');
+      cy.press(Cypress.Keyboard.Keys.TAB);
+      cy.get('.slick-headerrow-column.l4 select').should('have.focus');
+      cy.press(Cypress.Keyboard.Keys.TAB);
+      cy.get('.slick-headerrow-column.l4 input').should('have.focus');
+
+      // Shift+Tab dosn't work in Cypress, so we can't go further with tests
+    });
   });
 });
