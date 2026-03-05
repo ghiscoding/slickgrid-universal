@@ -68,7 +68,7 @@ export class Example13 {
 
     this.columnDefinitions = [
       {
-        id: 'id',
+        id: 'num',
         name: nameElementColumn1,
         field: 'num',
         type: 'number',
