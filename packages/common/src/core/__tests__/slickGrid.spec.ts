@@ -7384,7 +7384,7 @@ describe('SlickGrid core file', () => {
       });
     });
 
-    describe('Header Click', () => {
+    describe('Header Events', () => {
       it('should trigger onHeaderClick notify when not column resizing', () => {
         const columns = [
           { id: 'name', field: 'name', name: 'Name' },
@@ -7399,6 +7399,23 @@ describe('SlickGrid core file', () => {
         container.querySelector('.slick-header.slick-header-left')!.dispatchEvent(event);
 
         expect(onHeaderClickSpy).toHaveBeenCalledWith({ column: columns[0], grid }, expect.anything(), grid);
+      });
+
+      it('should call scrollToX() when header right is scrolled', () => {
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+        vi.spyOn(grid, 'getCellFromEvent').mockReturnValue(null);
+        const scrollToXSpy = vi.spyOn(grid, 'scrollToX');
+        const headerColumns = container.querySelectorAll('.slick-header-column');
+        const event = new CustomEvent('scroll');
+        Object.defineProperty(headerColumns[0], 'scrollLeft', { writable: true, value: 100 });
+        Object.defineProperty(event, 'target', { writable: true, value: headerColumns[0] });
+        container.querySelector('.slick-header.slick-header-right')!.dispatchEvent(event);
+
+        expect(scrollToXSpy).toHaveBeenCalledWith(100);
       });
     });
 
