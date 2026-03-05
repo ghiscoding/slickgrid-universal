@@ -324,7 +324,7 @@ describe('HeaderMenu Plugin', () => {
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(
         removeExtraSpaces(
-          `<li class="slick-menu-item slick-menu-item-disabled mdi mdi-lightbulb-on" role="menuitem" tabindex="-1" data-command="show-negative-numbers" title="Highlight negative numbers.">
+          `<li class="slick-menu-item slick-menu-item-disabled mdi mdi-lightbulb-on" role="menuitem" tabindex="-1" data-command="show-negative-numbers" aria-disabled="true" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
@@ -350,7 +350,7 @@ describe('HeaderMenu Plugin', () => {
       expect(commandElm).toBeTruthy();
       expect(removeExtraSpaces(commandElm.outerHTML)).toBe(
         removeExtraSpaces(
-          `<li class="slick-menu-item slick-menu-item-disabled mdi mdi-lightbulb-on" role="menuitem" tabindex="-1" data-command="show-negative-numbers" title="Highlight negative numbers.">
+          `<li class="slick-menu-item slick-menu-item-disabled mdi mdi-lightbulb-on" role="menuitem" tabindex="-1" data-command="show-negative-numbers" aria-disabled="true" title="Highlight negative numbers.">
             <div class="slick-menu-icon">◦</div>
             <span class="slick-menu-content"></span>
           </li>`
