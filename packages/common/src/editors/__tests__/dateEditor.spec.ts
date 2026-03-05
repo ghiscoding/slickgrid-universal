@@ -3,7 +3,6 @@ import type { Calendar } from 'vanilla-calendar-pro';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index.js';
-import { FieldType } from '../../enums/index.js';
 import type { Column, Editor, EditorArguments, GridOption } from '../../interfaces/index.js';
 import { DateEditor } from '../dateEditor.js';
 import { Editors } from '../index.js';
@@ -409,6 +408,23 @@ describe('DateEditor', () => {
         expect(editor.calendarInstance?.context.selectedDates).toEqual([]);
         expect(editor.isValueChanged()).toBe(true);
         expect(editor.isValueTouched()).toBe(true);
+      });
+
+      it('should reset clear-date trigger flag after timeout cycle', () => {
+        mockItemData = { id: 1, startDate: '2001-01-02T11:02:02.000Z', isActive: true };
+
+        editor = new DateEditor(editorArguments);
+        vi.runAllTimers();
+
+        editor.loadValue(mockItemData);
+        const clearBtnElm = divContainer.querySelector('.btn-clear') as HTMLButtonElement;
+
+        clearBtnElm.click();
+
+        // Flag is set synchronously by clear() and should reset in timeout callback
+        expect((editor as any)._lastTriggeredByClearDate).toBe(true);
+        vi.runOnlyPendingTimers();
+        expect((editor as any)._lastTriggeredByClearDate).toBe(false);
       });
 
       it('should return the first loaded date when date is loaded multiple times then reset', () => {
