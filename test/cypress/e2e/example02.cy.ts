@@ -311,7 +311,7 @@ describe('Example 02 - Grouping & Aggregators', () => {
     });
 
     it('should return 497 rows using ">222" (greater than 222)', () => {
-      cy.get('.search-filter.filter-sel').clear().type('>222');
+      cy.get('.search-filter.filter-num').clear().type('>222');
 
       cy.get('.item-count').should('contain', 497);
 
@@ -322,11 +322,11 @@ describe('Example 02 - Grouping & Aggregators', () => {
     });
 
     it('should return 499 rows using "<>311" (not equal to 311)', () => {
-      cy.get('.search-filter.filter-sel').clear().type('<>311');
+      cy.get('.search-filter.filter-num').clear().type('<>311');
 
       cy.get('.item-count').should('contain', 499);
 
-      cy.get('.search-filter.filter-sel').clear().type('!=311');
+      cy.get('.search-filter.filter-num').clear().type('!=311');
 
       cy.get('.item-count').should('contain', 499);
 
@@ -338,11 +338,11 @@ describe('Example 02 - Grouping & Aggregators', () => {
     });
 
     it('should return 1 rows using "=311" or "==311" (equal to 311)', () => {
-      cy.get('.search-filter.filter-sel').clear().type('=311');
+      cy.get('.search-filter.filter-num').clear().type('=311');
 
       cy.get('.item-count').should('contain', 1);
 
-      cy.get('.search-filter.filter-sel').clear().type('==311');
+      cy.get('.search-filter.filter-num').clear().type('==311');
 
       cy.get('.item-count').should('contain', 1);
 

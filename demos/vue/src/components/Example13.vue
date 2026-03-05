@@ -53,7 +53,7 @@ function defineGrid() {
 
   columnDefinitions.value = [
     {
-      id: 'sel',
+      id: 'num',
       name: nameElementColumn1,
       field: 'num',
       type: 'number',
@@ -64,7 +64,6 @@ function defineGrid() {
       resizable: true,
       filterable: true,
       selectable: false,
-      focusable: false,
     },
     {
       id: 'title',

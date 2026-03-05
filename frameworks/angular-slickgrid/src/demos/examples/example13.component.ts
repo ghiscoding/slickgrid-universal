@@ -58,7 +58,7 @@ export class Example13Component implements OnInit {
 
     this.columnDefinitions = [
       {
-        id: 'sel',
+        id: 'num',
         name: nameElementColumn1,
         field: 'num',
         type: 'number',
@@ -69,7 +69,6 @@ export class Example13Component implements OnInit {
         resizable: true,
         filterable: true,
         selectable: false,
-        focusable: false,
       },
       {
         id: 'title',
