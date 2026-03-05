@@ -756,6 +756,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this._headerScrollerL = createDomElement('div', { className: 'slick-header slick-state-default slick-header-left' }, headerContainerL);
     this._headerScrollerR = createDomElement('div', { className: 'slick-header slick-state-default slick-header-right' }, headerContainerR);
 
+    // header scroll position could change when using frozen grid and tabbing on next available header
+    // so we need to make sure that all containers (header, headerrow, toppanel) are all in sync when that happens
+    this._bindingEventService.bind(this._headerScrollerR, 'scroll', (e) => {
+      this.scrollToX((e.target as HTMLElement).scrollLeft);
+    });
+
     // Cache the header scroller containers
     this._headerScroller.push(this._headerScrollerL);
     this._headerScroller.push(this._headerScrollerR);
@@ -1057,9 +1063,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       this._bindingEventService.bind(this._canvas, 'contextmenu', this.handleContextMenu.bind(this) as EventListener);
       this._bindingEventService.bind(this._canvas, 'mouseover', this.handleCellMouseOver.bind(this) as EventListener);
       this._bindingEventService.bind(this._canvas, 'mouseout', this.handleCellMouseOut.bind(this) as EventListener);
-      if (this._options.enableFiltering) {
-        this._bindingEventService.bind(this._container, 'keydown', this.handleContainerKeyDown.bind(this) as EventListener);
-      }
+      this._bindingEventService.bind(this._container, 'keydown', this.handleContainerKeyDown.bind(this) as EventListener);
 
       if (Draggable) {
         this.slickDraggableInstance = Draggable({
@@ -5749,8 +5753,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param index - Column index to focus (defaults to 0)
    */
   focusHeaderMenuOrColumn(index = 0): void {
-    const headerMenuElm = this.getHeaderColumn(index).querySelector<HTMLElement>('.slick-header-menu-button[tabIndex="0"]');
-    if (headerMenuElm && headerMenuElm.offsetParent !== null) {
+    const [headerMenuElm] = this.getVisibleElements(this.getHeaderColumn(index), '.slick-header-menu-button[tabIndex="0"]');
+    if (headerMenuElm) {
       headerMenuElm.focus();
     } else {
       this.focusHeaderColumn(index);
@@ -5778,7 +5782,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         const step = focusOnLast ? -1 : 1;
         for (let i = start; i !== end; i += step) {
           const elm = allFilterElms[i];
-          if (elm.offsetParent !== null) {
+          if (elm && elm.offsetParent !== null) {
             closestVisibleFilter = elm;
             break;
           }
@@ -5871,18 +5875,24 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.triggerEvent(this.onDragEnd, dd, e);
   }
 
+  /** get only visible elemnts from a container and a query selector, e.g. elements with `display: none` will be excluded. */
+  protected getVisibleElements(container: HTMLElement, selector: string): HTMLElement[] {
+    return Array.from(container.querySelectorAll<HTMLElement>(selector)).filter((el) => el.offsetParent !== null);
+  }
+
   protected handleContainerKeyDown(e: KeyboardEvent & { originalEvent: Event }): void {
-    if (e.key === 'Tab' && !e.ctrlKey && !e.altKey) {
-      const headerRowSelector = '.slick-headerrow-column *[tabIndex="0"]';
-      const allFilterElms = this._container.querySelectorAll(headerRowSelector);
-      const allLeftFilterElms = this._container.querySelectorAll(`.slick-pane-left ${headerRowSelector}`);
-      const allRightFilterElms = this._container.querySelectorAll(`.slick-pane-right ${headerRowSelector}`);
-      const ancestorHeaderRow = e.target instanceof HTMLElement ? e.target.closest(headerRowSelector) : null;
+    if (e.target instanceof HTMLElement && e.key === 'Tab' && !e.ctrlKey && !e.altKey) {
+      const isInHeaderRow = e.target.closest('.slick-headerrow-columns');
+      const headerSelector = `.slick-${isInHeaderRow ? 'headerrow-column' : 'header-columns'} *[tabIndex="0"]`;
+      const allFilterElms = this.getVisibleElements(this._container, headerSelector);
+      const allLeftFilterElms = this.getVisibleElements(this._container, `.slick-pane-left ${headerSelector}`);
+      const allRightFilterElms = this.getVisibleElements(this._container, `.slick-pane-right ${headerSelector}`);
+      const ancestorHeaderRow = e.target instanceof HTMLElement ? e.target.closest(headerSelector) : null;
 
       if (allFilterElms.length > 0) {
         const targetFilterElm = e.shiftKey ? allFilterElms[0] : allFilterElms[allFilterElms.length - 1];
 
-        if (targetFilterElm === ancestorHeaderRow) {
+        if (targetFilterElm === ancestorHeaderRow && isInHeaderRow) {
           // focus grid menu when Shift+Tab OR focus on first cell when using Tab
           this.stopFullBubbling(e);
           e.shiftKey ? this.focusGridMenu() : this.focusGridCell();
