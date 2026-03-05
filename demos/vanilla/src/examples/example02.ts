@@ -105,7 +105,7 @@ export default class Example02 {
 
     this.columnDefinitions = [
       {
-        id: 'sel',
+        id: 'num',
         name: nameElementColumn1,
         field: 'num',
         type: 'number',
@@ -116,7 +116,6 @@ export default class Example02 {
         resizable: true,
         filterable: true,
         selectable: false,
-        focusable: false,
       },
       {
         id: 'title',

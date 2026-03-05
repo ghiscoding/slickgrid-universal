@@ -58,7 +58,7 @@ const Example13: React.FC = () => {
 
     const columnDefinitions: Column[] = [
       {
-        id: 'sel',
+        id: 'num',
         name: nameElementColumn1,
         field: 'num',
         type: 'number',
@@ -69,7 +69,6 @@ const Example13: React.FC = () => {
         resizable: true,
         filterable: true,
         selectable: false,
-        focusable: false,
       },
       {
         id: 'title',
