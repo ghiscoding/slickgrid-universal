@@ -542,7 +542,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
         }
       },
       onCloseSubMenu: (focusedItem: HTMLElement) => {
-        // Close the current sub-menu and focus the trigger in the previous menu
+        // Close the current sub-menu, then focus the trigger in the previous menu
         const currentSubMenu = focusedItem.closest('.slick-submenu');
         if (currentSubMenu) {
           // Remove the current sub-menu from the DOM

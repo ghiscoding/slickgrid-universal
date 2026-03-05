@@ -145,6 +145,29 @@ describe('bindKeyboardNavigation', () => {
     expect(document.activeElement).toBe(items[0]);
   });
 
+  it('should call onActivate and not onOpenSubMenu when Enter is pressed on non-submenu item', () => {
+    const onActivate = vi.fn();
+    const onOpenSubMenu = vi.fn();
+    const service = {
+      bind: (el: HTMLElement, event: string, handler: EventListener) => {
+        el.addEventListener(event, handler);
+      },
+    };
+
+    bindKeyboardNavigation(container, service as any, {
+      focusedItemSelector: '[role="menuitem"]:focus',
+      allItemsSelector: '[role="menuitem"]',
+      onActivate,
+      onOpenSubMenu,
+    });
+
+    items[0].focus();
+    container.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+
+    expect(onActivate).toHaveBeenCalledWith(items[0]);
+    expect(onOpenSubMenu).not.toHaveBeenCalled();
+  });
+
   it('should apply filterFn when hovering over items', () => {
     const menuItems = container.querySelectorAll('[role="menuitem"]');
     const filterFn = (item: HTMLElement) => item !== menuItems[2];
@@ -527,6 +550,20 @@ describe('Sub-menu keyboard navigation', () => {
     expect(onOpenSubMenu).toHaveBeenCalledWith(parentItem);
   });
 
+  it('should call onOpenSubMenu when ArrowRight is pressed on dropleft submenu trigger', () => {
+    document.body.appendChild(container);
+    parentItem.classList.remove('dropright');
+    parentItem.classList.add('dropleft');
+    parentItem.tabIndex = 0;
+    parentItem.focus();
+    if (document.activeElement !== parentItem) {
+      Object.defineProperty(document, 'activeElement', { value: parentItem, configurable: true });
+    }
+    const event = new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true });
+    container.dispatchEvent(event);
+    expect(onOpenSubMenu).toHaveBeenCalledWith(parentItem);
+  });
+
   it('should call onOpenSubMenu when Enter is pressed on submenu trigger', () => {
     document.body.appendChild(container);
     parentItem.tabIndex = 0;
@@ -593,5 +630,55 @@ describe('Sub-menu keyboard navigation', () => {
     const event = new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true });
     container.dispatchEvent(event);
     expect(onCloseSubMenu).not.toHaveBeenCalled();
+  });
+
+  it('should call onCloseSubMenu and not onEscape when Escape is pressed in submenu', () => {
+    const localOnCloseSubMenu = vi.fn();
+    const localOnEscape = vi.fn();
+
+    bindKeyboardNavigation(subMenu, bindService, {
+      focusedItemSelector: '[role="menuitem"]:focus',
+      allItemsSelector: '[role="menuitem"]',
+      onCloseSubMenu: localOnCloseSubMenu,
+      onEscape: localOnEscape,
+    });
+
+    subMenuItem.tabIndex = 0;
+    subMenuItem.focus();
+    if (document.activeElement !== subMenuItem) {
+      Object.defineProperty(document, 'activeElement', { value: subMenuItem, configurable: true });
+    }
+
+    const event = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true });
+    subMenu.dispatchEvent(event);
+
+    expect(localOnCloseSubMenu).toHaveBeenCalledWith(subMenuItem);
+    expect(localOnEscape).not.toHaveBeenCalled();
+  });
+
+  it('should call onEscape and not onCloseSubMenu when Escape is pressed in root menu', () => {
+    const localOnCloseSubMenu = vi.fn();
+    const localOnEscape = vi.fn();
+
+    document.body.appendChild(container);
+
+    bindKeyboardNavigation(container, bindService, {
+      focusedItemSelector: '[role="menuitem"]:focus',
+      allItemsSelector: '[role="menuitem"]',
+      onCloseSubMenu: localOnCloseSubMenu,
+      onEscape: localOnEscape,
+    });
+
+    parentItem.tabIndex = 0;
+    parentItem.focus();
+    if (document.activeElement !== parentItem) {
+      Object.defineProperty(document, 'activeElement', { value: parentItem, configurable: true });
+    }
+
+    const event = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true });
+    container.dispatchEvent(event);
+
+    expect(localOnEscape).toHaveBeenCalled();
+    expect(localOnCloseSubMenu).not.toHaveBeenCalled();
   });
 });
