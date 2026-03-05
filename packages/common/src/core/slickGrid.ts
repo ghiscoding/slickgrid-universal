@@ -5819,6 +5819,19 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   // Interactivity
 
+  /** focus element and stop event bubbling (for keyboard events) */
+  protected focusElementWithoutBubbling(e: KeyboardEvent, target: Element | null): void {
+    if (target) {
+      (target as HTMLElement).focus();
+      this.stopFullBubbling(e);
+    }
+  }
+
+  /** get only visible elemnts from a container and a query selector, e.g. elements with `display: none` will be excluded. */
+  protected getVisibleElements(container: HTMLElement, selector: string): HTMLElement[] {
+    return Array.from(container.querySelectorAll<HTMLElement>(selector)).filter((el) => el.offsetParent !== null);
+  }
+
   protected handleMouseWheel(e: MouseEvent, _delta: number, deltaX: number, deltaY: number): void {
     this.scrollHeight = this._viewportScrollContainerY.scrollHeight;
     if (e.shiftKey) {
@@ -5875,11 +5888,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.triggerEvent(this.onDragEnd, dd, e);
   }
 
-  /** get only visible elemnts from a container and a query selector, e.g. elements with `display: none` will be excluded. */
-  protected getVisibleElements(container: HTMLElement, selector: string): HTMLElement[] {
-    return Array.from(container.querySelectorAll<HTMLElement>(selector)).filter((el) => el.offsetParent !== null);
-  }
-
   protected handleContainerKeyDown(e: KeyboardEvent & { originalEvent: Event }): void {
     if (e.target instanceof HTMLElement && e.key === 'Tab' && !e.ctrlKey && !e.altKey) {
       const isInHeaderRow = e.target.closest('.slick-headerrow-columns');
@@ -5908,14 +5916,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           }
         }
       }
-    }
-  }
-
-  // focus element and stop event bubbling (for keyboard events)
-  protected focusElementWithoutBubbling(e: KeyboardEvent, target: Element | null): void {
-    if (target) {
-      (target as HTMLElement).focus();
-      this.stopFullBubbling(e);
     }
   }
 
