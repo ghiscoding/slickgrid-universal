@@ -468,7 +468,6 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         buttonElm = (e.target as HTMLElement).parentElement as HTMLButtonElement; // external grid menu might fall in this last case if wrapped in a span/div
       }
 
-      this._menuElm.ariaExpanded = 'true';
       this._menuElm.appendChild(this._listElm);
 
       // once we have both lists (commandItems + columnPicker), we are ready to reposition the menu since its height/width should be calculated by then

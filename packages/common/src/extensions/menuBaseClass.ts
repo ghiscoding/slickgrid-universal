@@ -371,11 +371,13 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
 
       if ((typeof item === 'object' && (item as MenuCommandOptionItem).divider) || item === 'divider') {
         commandLiElm.classList.add(`${menuCssPrefix}-divider`);
+        commandLiElm.setAttribute('role', 'separator');
         return commandLiElm;
       }
 
       if (item.disabled) {
         commandLiElm.classList.add(`${menuCssPrefix}-disabled`);
+        commandLiElm.ariaDisabled = 'true';
       }
 
       if ((item as MenuCommandOptionItem).hidden || (item as HeaderButtonItem).showOnHover) {
@@ -485,6 +487,8 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
         }
 
         commandLiElm.classList.add('slick-submenu-item');
+        commandLiElm.ariaHasPopup = 'true';
+        commandLiElm.ariaExpanded = 'false';
         commandLiElm.appendChild(chevronElm);
       }
     }
@@ -538,12 +542,13 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
           if (!subMenuElm.dataset.keyboardNavBound) {
             this.wireMenuKeyboardNavigation(subMenuElm, options);
           }
+          focusedItem.ariaExpanded = 'true';
           this.focusFirstMenuItem(subMenuElm!);
         }
       },
       onCloseSubMenu: (focusedItem: HTMLElement) => {
         // Close the current sub-menu, then focus the trigger in the previous menu
-        const currentSubMenu = focusedItem.closest('.slick-submenu');
+        const currentSubMenu = focusedItem.closest<HTMLDivElement>('.slick-submenu');
         if (currentSubMenu) {
           // Remove the current sub-menu from the DOM
           currentSubMenu.remove();
@@ -553,7 +558,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
           );
           // Find the submenu trigger in the parent menu that matches the data-sub-menu-parent
           let triggerSelector = '';
-          const subMenuParentId = currentSubMenu.getAttribute('data-sub-menu-parent');
+          const subMenuParentId = currentSubMenu.dataset.subMenuParent;
           if (subMenuParentId) {
             triggerSelector = `.slick-submenu-item[data-command="${subMenuParentId}"], .slick-submenu-item[data-option="${subMenuParentId}"]`;
           }
@@ -563,6 +568,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
             triggerItem = parentMenu.querySelector('.slick-submenu-item, [role="menuitem"]') as HTMLElement;
           }
           if (triggerItem) {
+            triggerItem.ariaExpanded = 'false';
             triggerItem.focus();
           }
         }

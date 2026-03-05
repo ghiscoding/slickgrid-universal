@@ -654,7 +654,6 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
     }
 
     const menuElm = createDomElement('div', {
-      ariaExpanded: 'true',
       ariaLabel: level > 1 ? 'SubMenu' : 'Header Menu',
       role: 'menu',
       className: menuClasses,
