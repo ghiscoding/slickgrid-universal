@@ -1,7 +1,8 @@
 import type { BindingEventService } from '@slickgrid-universal/binding';
 
 /**
- * Configuration options for keyboard navigation
+ * Configuration options for keyboard navigation,
+ * some ARIA practices can be found here: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/menu_role
  */
 export interface KeyboardNavigationOptions {
   /** CSS selector to find currently focused item (e.g., '[role="menuitem"]:focus' or '.list-item:focus') */
@@ -16,9 +17,9 @@ export interface KeyboardNavigationOptions {
   onEscape?: () => void;
   /** Callback when Tab or Shift+Tab is pressed */
   onTab?: (evt: KeyboardEvent, focusedItem: HTMLElement) => void;
-  /** Callback when ArrowRight is pressed on a submenu item (for dropright submenus) */
+  /** Callback when ArrowRight is pressed on a submenu item to open the submenu */
   onOpenSubMenu?: (focusedItem: HTMLElement) => void;
-  /** Callback when ArrowLeft is pressed in a submenu (for dropleft submenus or to close dropright) */
+  /** Callback when ArrowLeft is pressed in a submenu to close it and return to parent */
   onCloseSubMenu?: (focusedItem: HTMLElement) => void;
   /** Key for binding event service (default: 'keyboard-navigation') */
   eventServiceKey?: string;
@@ -78,8 +79,6 @@ export function bindKeyboardNavigation(
 
         // Precompute context for arrow events
         const isInSubMenu = focusedItem.closest('.slick-submenu');
-        const isDropRight = focusedItem.closest('.dropright');
-        const isDropLeft = focusedItem.closest('.dropleft');
 
         switch (evt.key) {
           case 'Tab':
@@ -100,17 +99,17 @@ export function bindKeyboardNavigation(
             break;
           }
           case 'ArrowRight': {
-            // Only handle if focusedItem is a submenu trigger and submenu is dropright
+            // Open submenu on ArrowRight if focused item is a submenu trigger (standard a11y pattern)
             const isSubMenuTrigger = focusedItem.classList.contains('slick-submenu-item');
-            if (isSubMenuTrigger && isDropRight && typeof options.onOpenSubMenu === 'function') {
+            if (isSubMenuTrigger && typeof options.onOpenSubMenu === 'function') {
               stopBubbling();
               options.onOpenSubMenu(focusedItem);
             }
             break;
           }
           case 'ArrowLeft': {
-            // Only handle if in a submenu and submenu is dropright or dropleft
-            if (isInSubMenu && (isDropRight || isDropLeft) && typeof options.onCloseSubMenu === 'function') {
+            // Close submenu on ArrowLeft if in a submenu, return focus to parent menu item (standard a11y pattern)
+            if (isInSubMenu && typeof options.onCloseSubMenu === 'function') {
               stopBubbling();
               options.onCloseSubMenu(focusedItem);
             }
@@ -119,7 +118,7 @@ export function bindKeyboardNavigation(
           case 'Enter':
           case ' ': {
             const isSubMenuTrigger = focusedItem.classList.contains('slick-submenu-item');
-            if (isSubMenuTrigger && isDropRight && typeof options.onOpenSubMenu === 'function') {
+            if (isSubMenuTrigger && typeof options.onOpenSubMenu === 'function') {
               stopBubbling();
               options.onOpenSubMenu(focusedItem);
             } else {
@@ -132,7 +131,11 @@ export function bindKeyboardNavigation(
           }
           case 'Escape':
             stopBubbling();
-            if (onEscape) {
+            // WAI-ARIA standard: In a submenu, Escape closes the submenu and returns to parent
+            // In the root menu, Escape closes everything
+            if (isInSubMenu && typeof options.onCloseSubMenu === 'function') {
+              options.onCloseSubMenu(focusedItem);
+            } else if (onEscape) {
               onEscape();
             }
             break;
