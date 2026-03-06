@@ -230,15 +230,15 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
               startY,
               columnStyles,
               styles: {
-                fontSize: this._exportOptions.fontSize || 10,
-                cellPadding: this._exportOptions.cellPadding ?? 4,
+                fontSize: this._exportOptions.fontSize!,
+                cellPadding: this._exportOptions.cellPadding!,
                 overflow: 'linebreak',
                 halign: this._exportOptions.textAlign || 'left',
               },
               headStyles: {
-                fontSize: this._exportOptions.headerFontSize || 11,
-                fillColor: this._exportOptions.headerBackgroundColor ?? [66, 139, 202],
-                textColor: this._exportOptions.headerTextColor ?? [255, 255, 255],
+                fontSize: this._exportOptions.headerFontSize!,
+                fillColor: this._exportOptions.headerBackgroundColor!,
+                textColor: this._exportOptions.headerTextColor!,
                 halign: this._exportOptions.textAlign || 'left',
                 valign: 'middle',
               },
@@ -246,8 +246,8 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
               didParseCell: (data: any) => {
                 // Style pre-header row with distinct colors
                 if (data.section === 'head' && hasColumnTitlePreHeader && data.row.index === 0) {
-                  data.cell.styles.fillColor = this._exportOptions.preHeaderBackgroundColor ?? [108, 117, 125];
-                  data.cell.styles.textColor = this._exportOptions.preHeaderTextColor ?? [255, 255, 255];
+                  data.cell.styles.fillColor = this._exportOptions.preHeaderBackgroundColor!;
+                  data.cell.styles.textColor = this._exportOptions.preHeaderTextColor!;
                   data.cell.styles.halign = 'center';
                 }
                 // Align column header cells (last head row) to match their column's textAlign
@@ -257,7 +257,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
                 }
               },
               alternateRowStyles: {
-                fillColor: this._exportOptions.alternateRowColor ?? [245, 245, 245],
+                fillColor: this._exportOptions.alternateRowColor!,
               },
               margin: { left: 40, right: 40 },
               theme: 'grid',
@@ -364,7 +364,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
               }
               // Alternate row background
               if (rowIdx % 2 === 1) {
-                const altColor = this._exportOptions.alternateRowColor ?? [245, 245, 245];
+                const altColor = this._exportOptions.alternateRowColor!;
                 doc.setFillColor(altColor[0], altColor[1], altColor[2]);
                 // Use first column's dataRowBackgroundOffset for the row
                 // Always use the correct column for background offset (first visible data column)

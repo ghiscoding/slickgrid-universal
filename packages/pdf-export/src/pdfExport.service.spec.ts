@@ -1523,6 +1523,38 @@ describe('PdfExportService', () => {
 
         expect(setDocumentPropertiesSpy).not.toHaveBeenCalled();
       });
+
+      it('should include empty group column in AutoTable pre-header when grid has grouping', async () => {
+        const { PdfExportService: Svc, autoTableSpy } = await createAutoTableService();
+        const columns = [
+          { id: 'col1', field: 'col1', name: 'Col1', columnGroup: 'GroupA' },
+          { id: 'col2', field: 'col2', name: 'Col2', columnGroup: 'GroupA' },
+        ];
+        const dataViewStub = {
+          getGrouping: () => [{ getter: 'category' }],
+          getLength: () => 1,
+          getItem: () => ({ id: 1, col1: 'A', col2: 'B' }),
+          getItemMetadata: vi.fn().mockReturnValue({}),
+        };
+        const gridStub = {
+          getColumns: () => columns,
+          getOptions: () => ({ createPreHeaderPanel: true, showPreHeaderPanel: true }),
+          getData: () => dataViewStub,
+        };
+        const pubSubService = { publish: vi.fn() };
+        const container = { get: () => pubSubService };
+        const service = new Svc();
+        service.init(gridStub as any, container as any);
+        const result = await service.exportToPdf({ filename: 'autotable-grouped-preheader' });
+
+        expect(result).toBe(true);
+        expect(autoTableSpy).toHaveBeenCalled();
+        const opts = autoTableSpy.mock.calls[0][0];
+        // Pre-header row should contain 2 rows (pre-header + header)
+        expect(opts.head.length).toBe(2);
+        // First cell of pre-header is an empty string placeholder for the group-by column
+        expect(opts.head[0][0]).toBe('');
+      });
     });
 
     it('should cover link.click and link appendChild in downloadPdf', () => {
@@ -2798,6 +2830,73 @@ describe('PdfExportService', () => {
       await service.exportToPdf({ filename: 'no-manual-doc-props' });
 
       expect(setDocumentPropertiesSpy).not.toHaveBeenCalled();
+    });
+
+    it('should fall back to default textAlign when column has no id in headerAligns', async () => {
+      const { PdfExportService: Svc } = await createManualService();
+      // Column without an id — getColumnHeaders still includes it, but headerAligns fallback (line 343) is hit
+      const columns = [{ field: 'col1', name: 'Col1', width: 100 } as any, { id: 'col2', field: 'col2', name: 'Col2', width: 100 }];
+      const dataViewStub = {
+        getGrouping: () => [],
+        getLength: () => 1,
+        getItem: () => ({ col1: 'A', col2: 'B', id: 1 }),
+        getItemMetadata: vi.fn().mockReturnValue({}),
+      };
+      const gridStub = {
+        getColumns: () => columns,
+        getOptions: () => ({}),
+        getData: () => dataViewStub,
+      };
+      const pubSubService = { publish: vi.fn() };
+      const container = { get: () => pubSubService };
+      const service = new Svc();
+      service.init(gridStub as any, container as any);
+      // Should not throw; the fallback 'left' alignment is used for the id-less column (no textAlign set)
+      const result = await service.exportToPdf({ filename: 'no-id-col' });
+      expect(result).toBe(true);
+    });
+  });
+
+  describe('private _drawPreHeaderRow and _drawHeaderRow direct coverage', () => {
+    function makeDoc() {
+      return {
+        setFontSize: vi.fn(),
+        setFillColor: vi.fn(),
+        setTextColor: vi.fn(),
+        rect: vi.fn(),
+        text: vi.fn(),
+      };
+    }
+
+    it('should use default color/font values in _drawPreHeaderRow when _exportOptions has none', () => {
+      const service = new PdfExportService();
+      const doc = makeDoc();
+      // empty _exportOptions ensures all ?? and || defaults fire
+      (service as any)._exportOptions = {};
+      (service as any)._groupedColumnHeaders = [{ title: 'GroupA', span: 2 }];
+      (service as any)._hasGroupedItems = false;
+      (service as any)._drawPreHeaderRow(doc, 50, [100, 100], 40, -10, 0);
+      // headerFontSize || 11
+      expect(doc.setFontSize).toHaveBeenCalledWith(11);
+      // preHeaderBackgroundColor ?? [108, 117, 125]
+      expect(doc.setFillColor).toHaveBeenCalledWith(108, 117, 125);
+      // preHeaderTextColor ?? [255, 255, 255]
+      expect(doc.setTextColor).toHaveBeenCalledWith(255, 255, 255);
+    });
+
+    it('should use default color values in _drawHeaderRow when _exportOptions has none, and use left align when headerAligns is not provided', () => {
+      const service = new PdfExportService();
+      const doc = makeDoc();
+      (service as any)._exportOptions = {};
+      // no headerAligns argument → || 'left' branch fires
+      (service as any)._drawHeaderRow(doc, 50, ['Col1', 'Col2'], [100, 100], 40, -10, 0);
+      // headerBackgroundColor ?? [66, 139, 202]
+      expect(doc.setFillColor).toHaveBeenCalledWith(66, 139, 202);
+      // headerTextColor ?? [255, 255, 255]
+      expect(doc.setTextColor).toHaveBeenCalledWith(255, 255, 255);
+      // all headers use 'left' because headerAligns is undefined
+      const textCalls = (doc.text as ReturnType<typeof vi.fn>).mock.calls;
+      textCalls.forEach((call: any[]) => expect(call[3].align).toBe('left'));
     });
   });
 });
