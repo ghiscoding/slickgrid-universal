@@ -2138,6 +2138,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const scrollColumnsRight = () => (this._viewportScrollContainerX.scrollLeft += 10);
     const scrollColumnsLeft = () => (this._viewportScrollContainerX.scrollLeft -= 10);
     let prevColumnIds: Array<string | number> = [];
+    let columnMap: Map<string | number, { index: number; hidden: boolean; column: C }>;
 
     let canDragScroll = false;
     const sortableOptions = {
@@ -2173,6 +2174,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           clearInterval(columnScrollTimer);
         }
         prevColumnIds = this.columns.map((c) => c.id);
+
+        // Create a map to track original column positions and hidden state
+        columnMap = new Map();
+        this.columns.forEach((col, idx) => {
+          columnMap.set(col.id, { index: idx, hidden: !!col.hidden, column: col });
+        });
       },
       onEnd: (e) => {
         e.item.classList.remove('slick-header-column-active');
@@ -2191,9 +2198,23 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           reorderedColumns.push(this.columns[this.getColumnIndex(reorderedIds[i])]);
         }
 
+        // Reconstruct final column array: insert hidden columns at their original indices
+        const finalColumns: C[] = [];
+        let visibleIdx = 0;
+        for (let i = 0; i < this.columns.length; i++) {
+          const colInfo = columnMap.get(this.columns[i].id);
+          if (colInfo?.hidden) {
+            // Hidden column: insert at its original position
+            finalColumns.push(colInfo.column);
+          } else {
+            // Visible column: use reordered position
+            finalColumns.push(reorderedColumns[visibleIdx++]);
+          }
+        }
+
         e.stopPropagation();
         if (!this.arrayEquals(prevColumnIds, reorderedIds)) {
-          this.setColumns(reorderedColumns);
+          this.setColumns(finalColumns);
           // reapply previous scroll position since it might move back to x=0 after calling `setColumns()` (especially when `frozenColumn` is set)
           this.scrollToX(prevScrollLeft);
           this.triggerEvent(this.onColumnsReordered, { impactedColumns: this.columns, previousColumnOrder: prevColumnIds });
