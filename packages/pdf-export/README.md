@@ -13,17 +13,25 @@ Export your SlickGrid data to PDF format using [`jsPDF`](https://www.npmjs.com/p
 ### External Dependencies
 
 - [`jsPDF`](https://www.npmjs.com/package/jspdf) to build and export to PDF.
+- [`jspdf-autotable`](https://www.npmjs.com/package/jspdf-autotable) (optional) – renders a proper HTML-style table with borders, padding, and per-column styles. When detected at runtime the service automatically uses it; otherwise it falls back to a simple text-based layout.
 
 ## Installation
 
 ```bash
 npm install @slickgrid-universal/pdf-export
+
+# optional – for enhanced table rendering with borders, per-column styles and more
+npm install jspdf-autotable
 ```
 
 ## Usage
 
 ```typescript
 import { PdfExportService } from '@slickgrid-universal/pdf-export';
+import { jsPDF } from 'jspdf';
+import { applyPlugin } from 'jspdf-autotable';
+
+applyPlugin(jsPDF); // register AutoTable once at startup (if installed)
 
 // Register the service
 const pdfExportService = new PdfExportService();
@@ -61,7 +69,12 @@ See [PdfExportOption](../common/src/interfaces/pdfExportOption.interface.ts) for
 - Support for formatters
 - HTML entity decoding
 - Data sanitization
+- Per-column text alignment
+- Grouped column headers (pre-header row)
+- Customizable header, pre-header, and alternate row colors
+- PDF document properties (metadata)
 - Powered by `jsPDF` (widely used, extensible, and feature-rich)
+- Optional enhanced table rendering via `jspdf-autotable`
 
 ## License
 
