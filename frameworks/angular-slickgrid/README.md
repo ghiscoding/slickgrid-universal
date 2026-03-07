@@ -131,6 +131,7 @@ Angular-Slickgrid uses [`ngx-translate`](https://github.com/ngx-translate/core) 
 
 | Angular Version | @ngx-translate/core |
 |-----------------|---------------------|
+|  21+            |        17.x         |
 |  19+            |        16.x         |
 |  16+            |        15.x         |
 |  13+ (Ivy only) |        14.x         |
