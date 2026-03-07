@@ -186,6 +186,10 @@ const Example2: React.FC = () => {
     return mockDataset;
   }
 
+  function disposeGrid() {
+    reactGrid?.dispose();
+  }
+
   function generatePhoneNumber(): string {
     let phone = '';
     for (let i = 0; i < 10; i++) {
@@ -269,6 +273,9 @@ const Example2: React.FC = () => {
 
       <button className="btn btn-outline-secondary btn-sm btn-icon" onClick={() => togglePauseResizer()}>
         Pause auto-resize: <b>{resizerPaused + ''}</b>
+      </button>
+      <button className="btn btn-outline-secondary btn-sm btn-icon" onClick={() => disposeGrid()}>
+        Dispose Grid
       </button>
 
       <SlickgridReact

@@ -151,7 +151,6 @@ render() {
 
 #### Slickgrid-React Component
   - `onBeforeGridDestroy`
-  - `onAfterGridDestroyed`
   - `onBeforeGridCreate`
   - `onDataviewCreated`
   - `onGridCreated`

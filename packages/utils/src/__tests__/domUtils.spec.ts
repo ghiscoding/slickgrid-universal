@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   calculateAvailableSpace,
   classNameToList,
@@ -108,17 +108,34 @@ describe('Service/domUtilies', () => {
 
       expect(obj).toEqual({ age: 20, elm: null, elms: [null] });
     });
+
+    it('should return when input is not an object', () => {
+      const result = destroyAllElementProps(null);
+
+      expect(result).toBeUndefined();
+    });
   });
 
   describe('emptyElement() method', () => {
     const div = document.createElement('div');
-    div.innerHTML = `<ul><li>Item 1</li><li>Item 2</li></ul>`;
-    document.body.appendChild(div);
+    beforeEach(() => {
+      document.body.innerHTML = '';
+      div.innerHTML = `<ul><li>Item 1</li><li>Item 2</li></ul>`;
+      document.body.appendChild(div);
+    });
 
     it('should empty the DOM element', () => {
       expect(div.outerHTML).toBe('<div><ul><li>Item 1</li><li>Item 2</li></ul></div>');
       emptyElement(div);
       expect(div.outerHTML).toBe('<div></div>');
+      expect(document.body.outerHTML).toBe('<body><div></div></body>');
+    });
+
+    it('should empty the DOM element and remove from DOM when 2nd argument is true', () => {
+      expect(div.outerHTML).toBe('<div><ul><li>Item 1</li><li>Item 2</li></ul></div>');
+      emptyElement(div, true);
+      expect(div.outerHTML).toBe('<div></div>');
+      expect(document.body.outerHTML).toBe('<body></body>');
     });
   });
 

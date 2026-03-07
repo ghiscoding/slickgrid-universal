@@ -171,6 +171,10 @@ export class Example02 {
     };
   }
 
+  disposeGrid() {
+    this.aureliaGrid.dispose();
+  }
+
   getData() {
     // mock a dataset
     const dataset: any[] = [];

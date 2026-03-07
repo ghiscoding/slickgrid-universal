@@ -130,7 +130,6 @@ handleOnHeaderMenuCommand(e) {
 
 #### SlickVanillaGridBundle
   - `onBeforeGridDestroy`
-  - `onAfterGridDestroyed`
   - `onBeforeGridCreate`
   - `onDataviewCreated`
   - `onGridCreated`

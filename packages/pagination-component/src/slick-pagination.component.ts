@@ -10,7 +10,7 @@ import type {
   Subscription,
   TranslaterService,
 } from '@slickgrid-universal/common';
-import { Constants, createDomElement, getTranslationPrefix } from '@slickgrid-universal/common';
+import { Constants, createDomElement, emptyElement, getTranslationPrefix } from '@slickgrid-universal/common';
 
 export class SlickPaginationComponent implements BasePaginationComponent {
   protected _bindingHelper: BindingHelper;
@@ -154,6 +154,7 @@ export class SlickPaginationComponent implements BasePaginationComponent {
   disposeDom(): void {
     this._bindingEventService.unbindAll();
     this._bindingHelper.dispose();
+    emptyElement(this._paginationElement);
     this._paginationElement.remove();
   }
 

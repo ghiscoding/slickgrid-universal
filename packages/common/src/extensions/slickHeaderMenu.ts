@@ -1,5 +1,5 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { classNameToList, createDomElement, toKebabCase } from '@slickgrid-universal/utils';
+import { classNameToList, createDomElement, emptyElement, toKebabCase } from '@slickgrid-universal/utils';
 import type { SlickEventData } from '../core/slickCore.js';
 import type { EmitterType } from '../enums/index.js';
 import type { ExtensionUtility } from '../extensions/extensionUtility.js';
@@ -37,6 +37,7 @@ import { MenuBaseClass, type ExtendableItemTypes, type ExtractMenuType, type Men
  */
 export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
   protected _activeHeaderColumnElm?: HTMLDivElement | null;
+  protected _headerButtonDivElm?: HTMLDivElement | null;
   protected _subMenuParentId = '';
   protected _defaults = {
     autoAlign: true,
@@ -86,9 +87,9 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
 
   /** Dispose (destroy) of the plugin */
   dispose(): void {
+    emptyElement(this._headerButtonDivElm, true);
+    this._headerButtonDivElm = null;
     super.dispose();
-    this._menuElm = this._menuElm || document.body.querySelector(`.slick-header-menu${this.gridUidSelector}`);
-    this._menuElm?.remove();
     this._activeHeaderColumnElm = undefined;
   }
 
@@ -149,31 +150,30 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
         return;
       }
 
-      const headerButtonDivElm = createDomElement(
+      this._headerButtonDivElm = createDomElement(
         'div',
         { className: 'slick-header-menu-button', ariaLabel: 'Header Menu', tabIndex: 0 },
         args.node
       );
 
       // Create icon element inside button container
-      const iconElm = createDomElement('span', { className: 'slick-header-menu-icon' });
-      headerButtonDivElm.appendChild(iconElm);
+      this._headerButtonDivElm.appendChild(createDomElement('span', { className: 'slick-header-menu-icon' }));
 
       if (this.addonOptions.buttonCssClass) {
-        headerButtonDivElm.classList.add(...classNameToList(this.addonOptions.buttonCssClass));
+        this._headerButtonDivElm.classList.add(...classNameToList(this.addonOptions.buttonCssClass));
       }
 
       if (this.addonOptions.tooltip) {
-        headerButtonDivElm.title = this.addonOptions.tooltip;
+        this._headerButtonDivElm.title = this.addonOptions.tooltip;
       }
 
       // show the header menu dropdown list of commands on click or keyboard activation
-      this._bindEventService.bind(headerButtonDivElm, 'click', ((e: DOMMouseOrTouchEvent<HTMLDivElement>) => {
+      this._bindEventService.bind(this._headerButtonDivElm, 'click', ((e: DOMMouseOrTouchEvent<HTMLDivElement>) => {
         this.disposeAllMenus(); // make sure there's only 1 parent menu opened at a time
         this.createParentMenu(e, args.column, menu);
       }) as EventListener);
 
-      this._bindEventService.bind(headerButtonDivElm, 'keydown', ((e: KeyboardEvent) => {
+      this._bindEventService.bind(this._headerButtonDivElm, 'keydown', ((e: KeyboardEvent) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
           this.disposeAllMenus(); // make sure there's only 1 parent menu opened at a time

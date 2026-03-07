@@ -172,7 +172,6 @@ function handleOnHeaderMenuCommand(e) {
 #### Slickgrid-Vue Component
 
 - `onBeforeGridDestroy`
-- `onAfterGridDestroyed`
 - `onBeforeGridCreate`
 - `onDataviewCreated`
 - `onGridCreated`

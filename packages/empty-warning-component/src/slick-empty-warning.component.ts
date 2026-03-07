@@ -1,6 +1,7 @@
 import {
   applyHtmlToElement,
   classNameToList,
+  emptyElement,
   type ContainerService,
   type EmptyWarning,
   type ExternalResource,
@@ -28,10 +29,10 @@ export class SlickEmptyWarningComponent implements ExternalResource {
   }
 
   dispose(): void {
+    emptyElement(this._warningLeftElement);
+    emptyElement(this._warningRightElement);
     this._warningLeftElement?.remove();
     this._warningRightElement?.remove();
-    this._warningLeftElement = null;
-    this._warningRightElement = null;
   }
 
   /**

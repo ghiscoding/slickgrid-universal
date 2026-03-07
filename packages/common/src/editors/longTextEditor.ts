@@ -201,7 +201,7 @@ export class LongTextEditor implements Editor {
   destroy(): void {
     clearTimeout(this._timer);
     this._bindEventService.unbindAll();
-    this._wrapperElm?.remove?.();
+    this._wrapperElm?.remove();
   }
 
   disable(isDisabled = true): void {

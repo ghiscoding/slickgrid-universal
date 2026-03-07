@@ -48,7 +48,6 @@ and `onGridCreated` are a lot less used now since `onAngularGridCreated` now exp
 - `onGridCreated`
 - `onBeforeGridCreate`
 - `onBeforeGridDestroy`
-- `onAfterGridDestroyed`
 
 
 ##### View

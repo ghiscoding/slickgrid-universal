@@ -320,7 +320,6 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
   onDataviewCreated = output<RegularEventOutput<AngularSlickgridOutputs['onDataviewCreated']>>();
   onAngularGridCreated = output<RegularEventOutput<AngularSlickgridOutputs['onAngularGridCreated']>>();
   onBeforeGridDestroy = output<RegularEventOutput<AngularSlickgridOutputs['onBeforeGridDestroy']>>();
-  onAfterGridDestroyed = output<RegularEventOutput<AngularSlickgridOutputs['onAfterGridDestroyed']>>();
   onLanguageChange = output<RegularEventOutput<AngularSlickgridOutputs['onLanguageChange']>>();
 
   @Input()
@@ -549,7 +548,6 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
   ngOnDestroy(): void {
     this._eventPubSubService.publish('onBeforeGridDestroy', this.slickGrid);
     this.destroy();
-    this._eventPubSubService.publish('onAfterGridDestroyed', true);
   }
 
   destroy(shouldEmptyDomElementContainer = false) {
@@ -559,7 +557,8 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
         service.dispose();
       }
     });
-    this.serviceList = [];
+    this.serviceList.length = 0;
+    this._eventPubSubService?.unsubscribeAll();
 
     // dispose backend service when defined and a dispose method exists
     this.backendService?.dispose?.();
@@ -575,7 +574,6 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
     if (this._eventHandler?.unsubscribeAll) {
       this._eventHandler.unsubscribeAll();
     }
-    this._eventPubSubService?.unsubscribeAll();
     if (this.dataView) {
       this.dataView.setItems([]);
       this.dataView.destroy();
@@ -599,11 +597,6 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
       (this.sharedService as any)[prop] = null;
     }
 
-    // we could optionally also empty the content of the grid container DOM element
-    if (shouldEmptyDomElementContainer) {
-      this.emptyGridContainerElm();
-    }
-
     // also unsubscribe all RxJS subscriptions
     this.subscriptions = unsubscribeAll(this.subscriptions);
 
@@ -612,6 +605,11 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
     this._columnDefinitions = [];
     this._angularGridInstances = undefined;
     this.slickGrid = undefined as any;
+
+    // we could optionally also empty the content of the grid container DOM element
+    if (shouldEmptyDomElementContainer) {
+      this.emptyGridContainerElm();
+    }
   }
 
   disposeExternalResources() {

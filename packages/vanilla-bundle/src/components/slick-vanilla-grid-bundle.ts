@@ -428,7 +428,6 @@ export class SlickVanillaGridBundle<TData = any> {
   dispose(shouldEmptyDomElementContainer = false): void {
     this._eventPubSubService?.publish('onBeforeGridDestroy', this.slickGrid);
     this._eventHandler?.unsubscribeAll();
-    this._eventPubSubService?.publish('onAfterGridDestroyed', true);
 
     // dispose the Services
     this.extensionService?.dispose();
@@ -463,11 +462,6 @@ export class SlickVanillaGridBundle<TData = any> {
     this.slickGrid?.destroy(true);
     this.slickGrid = null as any;
 
-    emptyElement(this._gridContainerElm);
-    emptyElement(this._gridParentContainerElm);
-    this._gridContainerElm?.remove();
-    this._gridParentContainerElm?.remove();
-
     if (this.backendServiceApi) {
       for (const prop of Object.keys(this.backendServiceApi)) {
         this.backendServiceApi[prop as keyof BackendServiceApi] = null;
@@ -483,13 +477,18 @@ export class SlickVanillaGridBundle<TData = any> {
     this.datasetHierarchical = undefined;
     this._columns = [];
 
+    this._collectionObservers.forEach((obs) => obs?.disconnect());
+    this._eventPubSubService?.unsubscribeAll();
+    this._slickerGridInstances = null as any;
+
     // we could optionally also empty the content of the grid container DOM element
     if (shouldEmptyDomElementContainer) {
       this.emptyGridContainerElm();
+      emptyElement(this._gridContainerElm);
+      emptyElement(this._gridParentContainerElm);
+      this._gridContainerElm?.remove();
+      this._gridParentContainerElm?.remove();
     }
-    this._collectionObservers.forEach((obs) => obs?.disconnect());
-    this._eventPubSubService?.dispose();
-    this._slickerGridInstances = null as any;
   }
 
   disposeExternalResources(): void {

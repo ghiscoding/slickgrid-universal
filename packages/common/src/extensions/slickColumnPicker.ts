@@ -139,7 +139,6 @@ export class SlickColumnPicker {
   }
 
   disposeMenu(): void {
-    this._bindEventService.unbindAll('parent-menu');
     this._listElm?.remove();
     this._menuElm?.remove();
     this._menuElm = null;

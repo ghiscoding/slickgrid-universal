@@ -191,8 +191,10 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
     if (typeof this._instance?.destroy === 'function') {
       this._instance.destroy();
     }
-    this._inputElm?.remove?.();
-    this._elementCollection = null;
+    if (this._elementCollection) {
+      this._elementCollection.length = 0;
+    }
+    this._inputElm?.remove();
   }
 
   disable(isDisabled = true): void {

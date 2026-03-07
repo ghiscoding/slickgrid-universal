@@ -115,7 +115,7 @@ export class CheckboxEditor implements Editor {
 
   destroy(): void {
     this._bindEventService.unbindAll();
-    this._input?.remove?.();
+    this._input?.remove();
   }
 
   disable(isDisabled = true): void {

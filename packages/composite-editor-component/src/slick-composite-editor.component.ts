@@ -31,7 +31,15 @@ import {
   SlickEventHandler,
   SortDirectionNumber,
 } from '@slickgrid-universal/common';
-import { classNameToList, deepCopy, deepMerge, emptyObject, getHtmlStringOutput, setDeepValue } from '@slickgrid-universal/utils';
+import {
+  classNameToList,
+  deepCopy,
+  deepMerge,
+  emptyElement,
+  emptyObject,
+  getHtmlStringOutput,
+  setDeepValue,
+} from '@slickgrid-universal/utils';
 import { SlickCompositeEditor } from './compositeEditor.factory.js';
 
 const DEFAULT_ON_ERROR = (error: OnErrorOption) => console.log(error.message);
@@ -142,7 +150,7 @@ export class SlickCompositeEditorComponent implements ExternalResource {
 
   /** Dispose of the Component without unsubscribing any events */
   disposeComponent(): void {
-    // protected _editorContainers!: Array<HTMLElement | null>;
+    emptyElement(this._modalElm);
     this._modalBodyTopValidationElm?.remove();
     this._modalSaveButtonElm?.remove();
 

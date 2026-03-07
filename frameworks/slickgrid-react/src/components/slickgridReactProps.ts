@@ -185,7 +185,6 @@ export interface SlickgridReactProps {
   onContextMenuClearGrouping?: ReactRegularEventHandler<void>;
   onContextMenuCollapseAllGroups?: ReactRegularEventHandler<void>;
   onContextMenuExpandAllGroups?: ReactRegularEventHandler<void>;
-  onAfterGridDestroyed?: ReactRegularEventHandler<MenuFromCellCallbackArgs>;
   onBeforeGridDestroy?: ReactRegularEventHandler<MenuFromCellCallbackArgs>;
   onOptionSelected?: ReactRegularEventHandler<MenuCommandItemCallbackArgs | MenuOptionItemCallbackArgs>;
   onColumnPickerColumnsChanged?: ReactRegularEventHandler<OnColumnsChangedArgs>;

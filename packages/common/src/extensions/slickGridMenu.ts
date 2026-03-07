@@ -55,7 +55,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   protected _columnCheckboxes: HTMLInputElement[] = [];
   protected _columnTitleElm!: HTMLDivElement;
   protected _commandMenuElm: HTMLDivElement | null = null;
-  protected _gridMenuButtonElm!: HTMLButtonElement;
+  protected _gridMenuButtonElm: HTMLButtonElement | null = null;
   protected _headerElm: HTMLDivElement | null = null;
   protected _isMenuOpen = false;
   protected _listElm!: HTMLSpanElement;
@@ -184,9 +184,10 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
   deleteMenu(): void {
     this._bindEventService.unbindAll();
-    this._menuElm?.remove();
+    emptyElement(this._gridMenuButtonElm, true);
+    emptyElement(this._menuElm, true);
+    this._gridMenuButtonElm = null as any;
     this._menuElm = null;
-    this._gridMenuButtonElm?.remove();
     if (this._headerElm) {
       // put back grid header original width (fixes width and frozen+gridMenu on left header)
       this._headerElm.style.width = '100%';
@@ -1076,6 +1077,6 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     const subMenuElm = this.createCommandMenu(e.target as HTMLElement, commandItems as Array<GridMenuItem | 'divider'>, level + 1, item);
     subMenuElm.style.display = 'block';
     document.body.appendChild(subMenuElm);
-    this.repositionMenu(e, subMenuElm, this._gridMenuButtonElm, this._addonOptions);
+    this._gridMenuButtonElm && this.repositionMenu(e, subMenuElm, this._gridMenuButtonElm, this._addonOptions);
   }
 }

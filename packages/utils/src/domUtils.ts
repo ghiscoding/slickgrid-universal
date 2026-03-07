@@ -70,28 +70,29 @@ export function classNameToList(className = ''): string[] {
  * if we detect an array then use recursion to go inside it and apply same logic
  * @param obj - object containing 1 or more properties with DOM Elements
  */
-export function destroyAllElementProps(obj: any): void {
-  if (typeof obj === 'object') {
-    Object.keys(obj).forEach((key) => {
-      if (Array.isArray(obj[key])) {
-        destroyAllElementProps(obj[key]);
-      }
-      if (obj[key] instanceof HTMLElement) {
-        obj[key] = null;
-      }
-    });
-  }
+export function destroyAllElementProps(obj: Record<string, any> | null): void {
+  if (!obj || typeof obj !== 'object') return; // Guard clause for null/undefined
+
+  Object.keys(obj).forEach((key) => {
+    if (Array.isArray(obj[key])) {
+      destroyAllElementProps(obj[key]);
+    } else if (obj[key] instanceof HTMLElement) {
+      obj[key] = null; // Nullify HTML elements
+    }
+  });
 }
 
 /**
  * Empty a DOM element by removing all of its DOM element children leaving with an empty element (basically an empty shell)
  * @return {object} element - updated element
  */
-export function emptyElement<T extends Element = Element>(element?: T | null): T | undefined | null {
+export function emptyElement<T extends Element = Element>(element?: T | null, shouldRemove = false): void {
   while (element?.firstChild) {
     element.removeChild(element.firstChild);
   }
-  return element;
+  if (shouldRemove) {
+    element?.remove();
+  }
 }
 
 /**

@@ -128,9 +128,9 @@ export class SliderEditor implements Editor {
 
   destroy(): void {
     this._bindEventService.unbindAll();
+    this._sliderTrackElm?.remove();
     this._inputElm?.remove();
     this._editorElm?.remove();
-    this._sliderTrackElm?.remove();
   }
 
   disable(isDisabled = true): void {
