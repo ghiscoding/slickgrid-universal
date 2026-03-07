@@ -3401,6 +3401,164 @@ describe('SlickGrid core file', () => {
       sortInstance.options.onEnd(dragEvent);
       expect(onColumnsReorderedSpy).not.toHaveBeenCalled();
     });
+
+    it('should preserve hidden columns at their original indices when reordering visible columns', () => {
+      const columnsWithHidden = [
+        { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
+        { id: 'middleName', field: 'middleName', name: 'Middle Name', sortable: true, hidden: true },
+        { id: 'age', field: 'age', name: 'Age', sortable: true },
+      ] as Column[];
+      grid = new SlickGrid<any, Column>(container, data, columnsWithHidden, defaultOptions);
+      const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as any;
+      Object.keys(headerColumnsElm).forEach((prop) => {
+        if (prop.startsWith('Sortable')) {
+          sortInstance = headerColumnsElm[prop];
+        }
+      });
+      const onColumnsReorderedSpy = vi.spyOn(grid.onColumnsReordered, 'notify');
+      const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
+      const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+
+      const dragEvent = new CustomEvent('DragEvent');
+      vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
+      Object.defineProperty(dragEvent, 'originalEvent', { writable: true, value: { pageX: 20 } });
+      Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
+      Object.defineProperty(headerColumnElms[0], 'clientLeft', { writable: true, value: 25 });
+      Object.defineProperty(viewportTopLeft, 'clientLeft', { writable: true, value: 25 });
+      // SortableJS only returns visible columns (firstName, lastName, age)
+      // Simulate moving lastName before firstName: ['lastName', 'firstName', 'age']
+      vi.spyOn(sortInstance, 'toArray').mockReturnValueOnce(['lastName', 'firstName', 'age']);
+
+      sortInstance.options.onStart(dragEvent);
+      sortInstance.options.onEnd(dragEvent);
+
+      const finalColumns = grid.getColumns();
+      // Expected order: lastName, firstName, middleName (hidden stays at index 2), age
+      expect(finalColumns[0].id).toBe('lastName');
+      expect(finalColumns[1].id).toBe('firstName');
+      expect(finalColumns[2].id).toBe('middleName'); // hidden column stays at original position
+      expect(finalColumns[2].hidden).toBe(true);
+      expect(finalColumns[3].id).toBe('age');
+      expect(onColumnsReorderedSpy).toHaveBeenCalled();
+    });
+
+    it('should preserve multiple hidden columns at their original indices when reordering', () => {
+      const columnsWithMultipleHidden = [
+        { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
+        { id: 'middleName', field: 'middleName', name: 'Middle Name', sortable: true, hidden: true },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
+        { id: 'suffix', field: 'suffix', name: 'Suffix', sortable: true, hidden: true },
+        { id: 'age', field: 'age', name: 'Age', sortable: true },
+      ] as Column[];
+      grid = new SlickGrid<any, Column>(container, data, columnsWithMultipleHidden, defaultOptions);
+      const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as any;
+      Object.keys(headerColumnsElm).forEach((prop) => {
+        if (prop.startsWith('Sortable')) {
+          sortInstance = headerColumnsElm[prop];
+        }
+      });
+      const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
+      const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+
+      const dragEvent = new CustomEvent('DragEvent');
+      vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
+      Object.defineProperty(dragEvent, 'originalEvent', { writable: true, value: { pageX: 20 } });
+      Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
+      Object.defineProperty(headerColumnElms[0], 'clientLeft', { writable: true, value: 25 });
+      Object.defineProperty(viewportTopLeft, 'clientLeft', { writable: true, value: 25 });
+      // Simulate reordering visible columns: ['age', 'firstName', 'lastName']
+      vi.spyOn(sortInstance, 'toArray').mockReturnValueOnce(['age', 'firstName', 'lastName']);
+
+      sortInstance.options.onStart(dragEvent);
+      sortInstance.options.onEnd(dragEvent);
+
+      const finalColumns = grid.getColumns();
+      // Expected: age, middleName(hidden at idx 1), firstName, suffix(hidden at idx 3), lastName
+      expect(finalColumns[0].id).toBe('age');
+      expect(finalColumns[1].id).toBe('middleName');
+      expect(finalColumns[1].hidden).toBe(true);
+      expect(finalColumns[2].id).toBe('firstName');
+      expect(finalColumns[3].id).toBe('suffix');
+      expect(finalColumns[3].hidden).toBe(true);
+      expect(finalColumns[4].id).toBe('lastName');
+    });
+
+    it('should handle reordering when hidden column is at the beginning', () => {
+      const columnsWithHiddenFirst = [
+        { id: 'id', field: 'id', name: 'ID', sortable: true, hidden: true },
+        { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
+        { id: 'age', field: 'age', name: 'Age', sortable: true },
+      ] as Column[];
+      grid = new SlickGrid<any, Column>(container, data, columnsWithHiddenFirst, defaultOptions);
+      const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as any;
+      Object.keys(headerColumnsElm).forEach((prop) => {
+        if (prop.startsWith('Sortable')) {
+          sortInstance = headerColumnsElm[prop];
+        }
+      });
+      const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
+      const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+
+      const dragEvent = new CustomEvent('DragEvent');
+      vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
+      Object.defineProperty(dragEvent, 'originalEvent', { writable: true, value: { pageX: 20 } });
+      Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
+      Object.defineProperty(headerColumnElms[0], 'clientLeft', { writable: true, value: 25 });
+      Object.defineProperty(viewportTopLeft, 'clientLeft', { writable: true, value: 25 });
+      // Reorder visible columns: ['lastName', 'age', 'firstName']
+      vi.spyOn(sortInstance, 'toArray').mockReturnValueOnce(['lastName', 'age', 'firstName']);
+
+      sortInstance.options.onStart(dragEvent);
+      sortInstance.options.onEnd(dragEvent);
+
+      const finalColumns = grid.getColumns();
+      // Expected: id(hidden at idx 0), lastName, age, firstName
+      expect(finalColumns[0].id).toBe('id');
+      expect(finalColumns[0].hidden).toBe(true);
+      expect(finalColumns[1].id).toBe('lastName');
+      expect(finalColumns[2].id).toBe('age');
+      expect(finalColumns[3].id).toBe('firstName');
+    });
+
+    it('should handle reordering when hidden column is at the end', () => {
+      const columnsWithHiddenLast = [
+        { id: 'firstName', field: 'firstName', name: 'First Name', sortable: true },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', sortable: true },
+        { id: 'age', field: 'age', name: 'Age', sortable: true },
+        { id: 'metadata', field: 'metadata', name: 'Metadata', sortable: true, hidden: true },
+      ] as Column[];
+      grid = new SlickGrid<any, Column>(container, data, columnsWithHiddenLast, defaultOptions);
+      const headerColumnsElm = document.querySelector('.slick-header-columns.slick-header-columns-left') as any;
+      Object.keys(headerColumnsElm).forEach((prop) => {
+        if (prop.startsWith('Sortable')) {
+          sortInstance = headerColumnsElm[prop];
+        }
+      });
+      const headerColumnElms = document.querySelectorAll<HTMLDivElement>('.slick-header-column');
+      const viewportTopLeft = document.querySelector('.slick-viewport-top.slick-viewport-left') as HTMLDivElement;
+
+      const dragEvent = new CustomEvent('DragEvent');
+      vi.spyOn(viewportTopLeft, 'getBoundingClientRect').mockReturnValue({ left: 25, top: 10, right: 0, bottom: 0 } as DOMRect);
+      Object.defineProperty(dragEvent, 'originalEvent', { writable: true, value: { pageX: 20 } });
+      Object.defineProperty(dragEvent, 'item', { writable: true, value: headerColumnElms[0] });
+      Object.defineProperty(headerColumnElms[0], 'clientLeft', { writable: true, value: 25 });
+      Object.defineProperty(viewportTopLeft, 'clientLeft', { writable: true, value: 25 });
+      // Reorder visible columns: ['age', 'firstName', 'lastName']
+      vi.spyOn(sortInstance, 'toArray').mockReturnValueOnce(['age', 'firstName', 'lastName']);
+
+      sortInstance.options.onStart(dragEvent);
+      sortInstance.options.onEnd(dragEvent);
+
+      const finalColumns = grid.getColumns();
+      // Expected: age, firstName, lastName, metadata(hidden at idx 3)
+      expect(finalColumns[0].id).toBe('age');
+      expect(finalColumns[1].id).toBe('firstName');
+      expect(finalColumns[2].id).toBe('lastName');
+      expect(finalColumns[3].id).toBe('metadata');
+      expect(finalColumns[3].hidden).toBe(true);
+    });
   });
 
   describe('Drag & Drop (Draggable)', () => {

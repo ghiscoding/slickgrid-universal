@@ -79,6 +79,14 @@ const Example1: React.FC = () => {
     setReactGrid1(reactGrid);
   }
 
+  function resetGrid1() {
+    // const cols = reactGrid1.slickGrid?.getColumns() || [];
+    const cols = columnDefinitions1.slice();
+    cols.forEach((c) => (c.hidden = false));
+    reactGrid1?.slickGrid?.setColumns(cols);
+    reactGrid1?.slickGrid?.autosizeColumns();
+  }
+
   function toggleDarkModeGrid1() {
     const isDarkMode = !darkModeGrid1;
     setDarkModeGrid1(isDarkMode);
@@ -126,12 +134,16 @@ const Example1: React.FC = () => {
             <i className="mdi mdi-theme-light-dark"></i>
             <span>Toggle Dark Mode</span>
           </button>
+          <button className="btn btn-outline-secondary btn-sm btn-icon ms-2" onClick={() => resetGrid1()} data-test="reset-grid1">
+            <span className="mdi mdi-alert-rhombus-outline"></span>
+            <span>Reset Grid (display all columns)</span>
+          </button>
         </div>
       </h3>
 
       <div className="grid-container1">
         <SlickgridReact
-          gridId="grid1"
+          gridId="grid1-1"
           columns={columnDefinitions1}
           options={gridOptions1!}
           dataset={dataset1}
@@ -144,7 +156,7 @@ const Example1: React.FC = () => {
       <h3>
         Grid 2 <small>(with local Pagination)</small>
       </h3>
-      <SlickgridReact gridId="grid2" columns={columnDefinitions2} options={gridOptions2!} dataset={dataset2} />
+      <SlickgridReact gridId="grid1-2" columns={columnDefinitions2} options={gridOptions2!} dataset={dataset2} />
     </div>
   );
 };
