@@ -4,6 +4,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.0.0...v10.1.0) (2026-03-07)
+
+### Features
+
+* **pdf-export:** add per-column styles, grouped column headers, configurable colors, document properties, and autoTableOptions callback ([#2413](https://github.com/ghiscoding/slickgrid-universal/issues/2413)) ([f4c86c0](https://github.com/ghiscoding/slickgrid-universal/commit/f4c86c06c493d5ad1dcf34e9ffab617c89c6ee52)) - by @jr01
+
+### Bug Fixes
+
+* **a11y:** add missing tabIndex on the autocomplete filter ([7e7d9c1](https://github.com/ghiscoding/slickgrid-universal/commit/7e7d9c1cc23ed3232bb9c6d318ae202b9b8cee79)) - by @ghiscoding
+* **a11y:** align submenu arrow keys and Escape behavior with ARIA ([#2426](https://github.com/ghiscoding/slickgrid-universal/issues/2426)) ([d99675e](https://github.com/ghiscoding/slickgrid-universal/commit/d99675ef612f5d95d64403094282526289fbde00)) - by @ghiscoding
+* **a11y:** align submenu keyboard navigation and ARIA with WAI-ARIA APG ([#2428](https://github.com/ghiscoding/slickgrid-universal/issues/2428)) ([3fe0881](https://github.com/ghiscoding/slickgrid-universal/commit/3fe088155023d3ce763584f961f43100dd316aa9)) - by @ghiscoding
+* **a11y:** Tabbing on filter elements should work with Frozen Grid ([#2421](https://github.com/ghiscoding/slickgrid-universal/issues/2421)) ([e3c23c7](https://github.com/ghiscoding/slickgrid-universal/commit/e3c23c71d3f52ac05e5a981fb448140e2b1812e1)) - by @ghiscoding
+* **a11y:** Tabbing on header columns should work with Frozen Grid ([#2423](https://github.com/ghiscoding/slickgrid-universal/issues/2423)) ([9d624c5](https://github.com/ghiscoding/slickgrid-universal/commit/9d624c5a06e9f56ab95ac2edfac314f47b5bb6e0)) - by @ghiscoding
+* **aurelia:** update module declarations to ES module syntax for TS 7+ ([#2429](https://github.com/ghiscoding/slickgrid-universal/issues/2429)) ([0d37605](https://github.com/ghiscoding/slickgrid-universal/commit/0d37605974c4bfe6a9bc2b918600769d06dad987)) - by @ghiscoding
+* better grid disposing to decrease detached elements ([#2436](https://github.com/ghiscoding/slickgrid-universal/issues/2436)) ([8cab898](https://github.com/ghiscoding/slickgrid-universal/commit/8cab898168281bf671a2317dcdc7e70c040c60ac)) - by @ghiscoding
+* column reordering shouldn't lose hidden columns, fixes [#2432](https://github.com/ghiscoding/slickgrid-universal/issues/2432) ([#2433](https://github.com/ghiscoding/slickgrid-universal/issues/2433)) ([f11662f](https://github.com/ghiscoding/slickgrid-universal/commit/f11662f066222707ce5040cdacdbd2382bdd7a73)) - by @ghiscoding
+* **deps:** update all non-major dependencies ([#2437](https://github.com/ghiscoding/slickgrid-universal/issues/2437)) ([a168ac6](https://github.com/ghiscoding/slickgrid-universal/commit/a168ac6e9d148625d1d72ee6a75222fe8dc4e99e)) - by @renovate-bot
+* pipe symbol shouldn't be dropped when using Copy Cell, fixes [#2425](https://github.com/ghiscoding/slickgrid-universal/issues/2425) ([#2435](https://github.com/ghiscoding/slickgrid-universal/issues/2435)) ([2751ada](https://github.com/ghiscoding/slickgrid-universal/commit/2751ada0f1bfd423179c0015c9a5cef4fa10b597)) - by @ghiscoding
+
 ## [10.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.13.0...v10.0.0) (2026-03-03)
 
 > [!NOTE]

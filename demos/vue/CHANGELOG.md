@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.0.0...v10.1.0) (2026-03-07)
+
+### Bug Fixes
+
+* better grid disposing to decrease detached elements ([#2436](https://github.com/ghiscoding/slickgrid-universal/issues/2436)) ([8cab898](https://github.com/ghiscoding/slickgrid-universal/commit/8cab898168281bf671a2317dcdc7e70c040c60ac)) - by @ghiscoding
+* column reordering shouldn't lose hidden columns, fixes [#2432](https://github.com/ghiscoding/slickgrid-universal/issues/2432) ([#2433](https://github.com/ghiscoding/slickgrid-universal/issues/2433)) ([f11662f](https://github.com/ghiscoding/slickgrid-universal/commit/f11662f066222707ce5040cdacdbd2382bdd7a73)) - by @ghiscoding
+
 ## [10.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.13.0...v10.0.0) (2026-03-03)
 
 ### Features

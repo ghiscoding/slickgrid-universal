@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/graphql",
-  "version": "10.0.0",
+  "version": "10.1.0",
   "description": "GraphQL Service to sync a grid with a GraphQL backend server",
   "type": "module",
   "main": "./dist/index.js",

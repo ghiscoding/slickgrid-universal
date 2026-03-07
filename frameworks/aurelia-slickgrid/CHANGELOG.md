@@ -4,6 +4,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.0.0...v10.1.0) (2026-03-07)
+
+### Features
+
+* **pdf-export:** add per-column styles, grouped column headers, configurable colors, document properties, and autoTableOptions callback ([#2413](https://github.com/ghiscoding/slickgrid-universal/issues/2413)) ([f4c86c0](https://github.com/ghiscoding/slickgrid-universal/commit/f4c86c06c493d5ad1dcf34e9ffab617c89c6ee52)) - by @jr01
+
+### Bug Fixes
+
+* **aurelia:** update module declarations to ES module syntax for TS 7+ ([#2429](https://github.com/ghiscoding/slickgrid-universal/issues/2429)) ([0d37605](https://github.com/ghiscoding/slickgrid-universal/commit/0d37605974c4bfe6a9bc2b918600769d06dad987)) - by @ghiscoding
+* better grid disposing to decrease detached elements ([#2436](https://github.com/ghiscoding/slickgrid-universal/issues/2436)) ([8cab898](https://github.com/ghiscoding/slickgrid-universal/commit/8cab898168281bf671a2317dcdc7e70c040c60ac)) - by @ghiscoding
+
 ## [10.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.13.0...v10.0.0) (2026-03-03)
 
 > [!NOTE]

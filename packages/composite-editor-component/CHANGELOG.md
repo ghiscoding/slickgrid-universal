@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.0.0...v10.1.0) (2026-03-07)
+
+### Bug Fixes
+
+* better grid disposing to decrease detached elements ([#2436](https://github.com/ghiscoding/slickgrid-universal/issues/2436)) ([8cab898](https://github.com/ghiscoding/slickgrid-universal/commit/8cab898168281bf671a2317dcdc7e70c040c60ac)) - by @ghiscoding
+
 ## [10.0.0](https://github.com/ghiscoding/slickgrid-universal/compare/v9.13.0...v10.0.0) (2026-03-03)
 
 **Note:** Version bump only for package @slickgrid-universal/composite-editor-component
