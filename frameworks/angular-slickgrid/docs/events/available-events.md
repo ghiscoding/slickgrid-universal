@@ -149,7 +149,6 @@ handleOnHeaderMenuCommand(e) {
 
 #### Angular-Slickgrid Component
   - `onBeforeGridDestroy`
-  - `onAfterGridDestroyed`
   - `onBeforeGridCreate`
   - `onDataviewCreated`
   - `onGridCreated`

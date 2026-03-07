@@ -536,20 +536,14 @@ export class AureliaSlickgridCustomElement {
     this._eventPubSubService.publish('onBeforeGridDestroy', this.grid);
     this._eventHandler?.unsubscribeAll();
 
-    // we could optionally also empty the content of the grid container DOM element
-    if (shouldEmptyDomElementContainer) {
-      this.emptyGridContainerElm();
-    }
-
-    this._eventPubSubService.publish('onAfterGridDestroyed', true);
-
     // dispose of all Services
     this.serviceList.forEach((service: any) => {
       if (service?.dispose) {
         service.dispose();
       }
     });
-    this.serviceList = [];
+    this._eventPubSubService.unsubscribeAll();
+    this.serviceList.length = 0;
 
     // dispose backend service when defined and a dispose method exists
     this.backendService?.dispose?.();
@@ -593,6 +587,11 @@ export class AureliaSlickgridCustomElement {
     this._dataset = null;
     this.datasetHierarchical = null;
     this._columns = [];
+
+    // we could optionally also empty the content of the grid container DOM element
+    if (shouldEmptyDomElementContainer) {
+      this.emptyGridContainerElm();
+    }
   }
 
   emptyGridContainerElm() {

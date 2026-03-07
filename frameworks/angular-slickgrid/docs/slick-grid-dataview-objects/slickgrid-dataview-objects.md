@@ -9,7 +9,6 @@ Angular-Slickgrid have the following Event Emitters that you can hook to
 - `onGridCreated`
 - `onBeforeGridCreate`
 - `onBeforeGridDestroy`
-- `onAfterGridDestroyed`
 
 The ones we want to use for our usage would be `onGridCreated` and `onDataviewCreated`, depending on which object you want to obtain.
 

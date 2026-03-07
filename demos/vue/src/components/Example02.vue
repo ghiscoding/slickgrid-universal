@@ -168,6 +168,10 @@ function defineGrid() {
   };
 }
 
+function disposeGrid() {
+  vueGrid.dispose(true);
+}
+
 function generatePhoneNumber() {
   let phone = '';
   for (let i = 0; i < 10; i++) {
@@ -268,9 +272,10 @@ function vueGridReady(grid: SlickgridVueInstance) {
     </ul>
   </div>
 
-  <button class="btn btn-outline-secondary btn-sm btn-icon" @click="togglePauseResizer()">
+  <button class="btn btn-outline-secondary btn-sm btn-icon mx-2" @click="togglePauseResizer()">
     Pause auto-resize: <b>{{ resizerPaused }}</b>
   </button>
+  <button class="btn btn-outline-secondary btn-sm btn-icon" @click="disposeGrid()">Dispose Grid</button>
 
   <slickgrid-vue
     v-model:options="gridOptions"

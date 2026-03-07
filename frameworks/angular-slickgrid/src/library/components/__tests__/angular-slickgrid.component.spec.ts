@@ -544,7 +544,6 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
 
     component.ngOnDestroy();
     expect(pubSubSpy).toHaveBeenNthCalledWith(5, 'onBeforeGridDestroy', expect.any(Object));
-    expect(pubSubSpy).toHaveBeenNthCalledWith(6, 'onAfterGridDestroyed', true);
   });
 
   it('should update column definitions when onPluginColumnsChanged event is triggered with updated columns', () => {

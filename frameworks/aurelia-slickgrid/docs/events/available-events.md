@@ -149,7 +149,6 @@ handleOnHeaderMenuCommand(e) {
 
 #### Aurelia-Slickgrid Component
   - `onBeforeGridDestroy`
-  - `onAfterGridDestroyed`
   - `onBeforeGridCreate`
   - `onDataviewCreated`
   - `onGridCreated`

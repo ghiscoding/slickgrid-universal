@@ -87,11 +87,12 @@ export class ResizerService {
 
   /** Dispose function when service is destroyed */
   dispose(): void {
+    clearInterval(this._intervalId);
+    clearTimeout(this._timer);
+
     // unsubscribe all SlickGrid events
     this._eventHandler?.unsubscribeAll();
     this.pubSubService.unsubscribeAll(this._subscriptions);
-    clearInterval(this._intervalId);
-    clearTimeout(this._timer);
 
     if (this.gridOptions.autoResize?.resizeDetection === 'container' && this._resizeObserver) {
       this._resizeObserver.disconnect();

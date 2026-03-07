@@ -1599,13 +1599,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
   }
 
-  protected unbindAncestorScrollEvents(): void {
-    this._boundAncestors.forEach((ancestor) => {
-      this._bindingEventService.unbindByEventName(ancestor, 'scroll');
-    });
-    this._boundAncestors = [];
-  }
-
   /**
    * Updates an existing column definition and a corresponding header DOM element with the new title and tooltip.
    * @param {Number|String} columnId Column id.
@@ -1804,6 +1797,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected createColumnHeaders(): void {
+    this._bindingEventService.unbindAll('colheaders');
     this._headers.forEach((header) => {
       const columnElements = header.querySelectorAll('.slick-header-column');
       columnElements.forEach((column) => {
@@ -1917,16 +1911,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         header.classList.add(classname);
       }
 
-      this._bindingEventService.bind(header, 'mouseenter', this.handleHeaderMouseEnter.bind(this) as EventListener);
-      this._bindingEventService.bind(header, 'mouseleave', this.handleHeaderMouseLeave.bind(this) as EventListener);
-      this._bindingEventService.bind(header, 'mouseover', this.handleHeaderMouseOver.bind(this) as EventListener);
-      this._bindingEventService.bind(header, 'mouseout', this.handleHeaderMouseOut.bind(this) as EventListener);
+      this._bindingEventService.bind(header, 'mouseenter', this.handleHeaderMouseEnter.bind(this) as EventListener, {}, 'colheaders');
+      this._bindingEventService.bind(header, 'mouseleave', this.handleHeaderMouseLeave.bind(this) as EventListener, {}, 'colheaders');
+      this._bindingEventService.bind(header, 'mouseover', this.handleHeaderMouseOver.bind(this) as EventListener, {}, 'colheaders');
+      this._bindingEventService.bind(header, 'mouseout', this.handleHeaderMouseOut.bind(this) as EventListener, {}, 'colheaders');
 
       Utils.storage.put(header, 'column', m);
 
       if (this._options.enableColumnReorder || m.sortable) {
-        this._bindingEventService.bind(header, 'mouseenter', this.handleHeaderMouseHoverOn.bind(this) as EventListener);
-        this._bindingEventService.bind(header, 'mouseleave', this.handleHeaderMouseHoverOff.bind(this) as EventListener);
+        this._bindingEventService.bind(header, 'mouseenter', this.handleHeaderMouseHoverOn.bind(this) as EventListener, {}, 'colheaders');
+        this._bindingEventService.bind(header, 'mouseleave', this.handleHeaderMouseHoverOff.bind(this) as EventListener, {}, 'colheaders');
       }
 
       if (m.hasOwnProperty('headerCellAttrs') && m.headerCellAttrs instanceof Object) {
@@ -1968,10 +1962,19 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           headerRowCell.classList.add(frozenClasses);
         }
 
-        this._bindingEventService.bind(headerRowCell, 'mouseenter', this.handleHeaderRowMouseEnter.bind(this) as EventListener);
-        this._bindingEventService.bind(headerRowCell, 'mouseleave', this.handleHeaderRowMouseLeave.bind(this) as EventListener);
-        this._bindingEventService.bind(headerRowCell, 'mouseover', this.handleHeaderRowMouseOver.bind(this) as EventListener);
-        this._bindingEventService.bind(headerRowCell, 'mouseout', this.handleHeaderRowMouseOut.bind(this) as EventListener);
+        // prettier-ignore
+        this._bindingEventService.bind(headerRowCell, 'mouseenter', this.handleHeaderRowMouseEnter.bind(this) as EventListener, {}, 'colheaders');
+        // prettier-ignore
+        this._bindingEventService.bind(headerRowCell, 'mouseleave', this.handleHeaderRowMouseLeave.bind(this) as EventListener, {}, 'colheaders');
+        // prettier-ignore
+        this._bindingEventService.bind(headerRowCell, 'mouseover', this.handleHeaderRowMouseOver.bind(this) as EventListener, {}, 'colheaders');
+        this._bindingEventService.bind(
+          headerRowCell,
+          'mouseout',
+          this.handleHeaderRowMouseOut.bind(this) as EventListener,
+          {},
+          'colheaders'
+        );
 
         Utils.storage.put(headerRowCell, 'column', m);
 
@@ -2024,6 +2027,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected setupColumnSort(): void {
+    this._bindingEventService.unbindAll('colsorts');
     this._headers.forEach((header) => {
       const sortCallback = (e: (MouseEvent | KeyboardEvent) & { target: HTMLElement }) => {
         if (this.columnResizeDragging || e.target.classList.contains('slick-resizable-handle')) {
@@ -2118,13 +2122,25 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       };
 
       // Add keydown/click event handlers for sortable columns
-      this._bindingEventService.bind(header, 'keydown', ((e: KeyboardEvent & { target: HTMLElement }) => {
-        this.triggerEvent(this.onHeaderKeyDown, { event: e, column: Utils.storage.get(e.target, 'column'), grid: this });
-        if (e.key === 'Enter' || e.key === ' ') {
-          sortCallback(e);
-        }
-      }) as EventListener);
-      this._bindingEventService.bind(header, 'click', ((e: MouseEvent & { target: HTMLElement }) => sortCallback(e)) as EventListener);
+      this._bindingEventService.bind(
+        header,
+        'keydown',
+        ((e: KeyboardEvent & { target: HTMLElement }) => {
+          this.triggerEvent(this.onHeaderKeyDown, { event: e, column: Utils.storage.get(e.target, 'column'), grid: this });
+          if (e.key === 'Enter' || e.key === ' ') {
+            sortCallback(e);
+          }
+        }) as EventListener,
+        {},
+        'colsorts'
+      );
+      this._bindingEventService.bind(
+        header,
+        'click',
+        ((e: MouseEvent & { target: HTMLElement }) => sortCallback(e)) as EventListener,
+        {},
+        'colsorts'
+      );
     });
   }
 
@@ -2252,6 +2268,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     let lastResizable = -1;
     let frozenLeftColMaxWidth = 0;
 
+    this._bindingEventService.unbindAll('colresizes');
     const children: HTMLElement[] = this.getHeaderChildren();
     const vc = this.getVisibleColumns();
     for (let i = 0; i < children.length; i++) {
@@ -2287,7 +2304,13 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         { className: 'slick-resizable-handle', role: 'separator', ariaOrientation: 'horizontal' },
         colElm
       );
-      this._bindingEventService.bind(resizeableHandle, 'dblclick', this.handleResizeableDoubleClick.bind(this) as EventListener);
+      this._bindingEventService.bind(
+        resizeableHandle,
+        'dblclick',
+        this.handleResizeableDoubleClick.bind(this) as EventListener,
+        {},
+        'colresizes'
+      );
 
       this.slickResizableInstances.push(
         Resizable({
@@ -2885,11 +2908,19 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** Clear all highlight timers that might have been left opened */
   protected clearAllTimers(): void {
-    clearTimeout(this._columnResizeTimer);
-    clearTimeout(this._executionBlockTimer);
-    clearTimeout(this._flashCellTimer);
-    clearTimeout(this._highlightRowTimer);
-    clearTimeout(this.h_editorLoader);
+    [
+      this._columnResizeTimer,
+      this._executionBlockTimer,
+      this._flashCellTimer,
+      this._highlightRowTimer,
+      this.h_editorLoader,
+      this.h_postrender,
+      this.h_postrenderCleanup,
+    ].forEach((timer) => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    });
   }
 
   /**
@@ -2897,101 +2928,44 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    * @param {boolean} shouldDestroyAllElements - do we want to destroy (nullify) all DOM elements as well? This help in avoiding mem leaks
    */
   destroy(shouldDestroyAllElements?: boolean): void {
-    // prettier-ignore
-    [this._columnResizeTimer, this._executionBlockTimer, this._flashCellTimer, this._highlightRowTimer, this.h_editorLoader, this.h_postrender, this.h_postrenderCleanup].forEach(
-      (timer) => clearTimeout(timer)
-    );
-    this._bindingEventService.unbindAll();
+    this.clearAllTimers();
     this.slickDraggableInstance = this.destroyAllInstances(this.slickDraggableInstance) as null;
     this.slickMouseWheelInstances = this.destroyAllInstances(this.slickMouseWheelInstances) as InteractionBase[];
     this.slickResizableInstances = this.destroyAllInstances(this.slickResizableInstances) as InteractionBase[];
     this.getEditorLock()?.cancelCurrentEdit();
+    this.clearInternalDomCaches();
 
     this.triggerEvent(this.onBeforeDestroy, {});
+    this._bindingEventService.unbindAll();
+    this._pubSubService?.unsubscribeAll();
 
     let i = this.plugins.length;
     while (i--) {
       this.unregisterPlugin(this.plugins[i]);
     }
 
-    if (
-      this._options.enableColumnReorder &&
-      typeof this.sortableSideLeftInstance?.destroy === 'function' &&
-      typeof this.sortableSideRightInstance?.destroy === 'function'
-    ) {
-      this.sortableSideLeftInstance.destroy();
+    if (this.sortableSideRightInstance?.el && typeof this.sortableSideRightInstance?.destroy === 'function') {
       this.sortableSideRightInstance.destroy();
     }
-
-    this.unbindAncestorScrollEvents();
-    this._bindingEventService.unbindByEventName(this._container, 'resize');
-    this.removeCssRules();
-
-    this._canvas.forEach((element) => {
-      this._bindingEventService.unbindByEventName(element, 'keydown');
-      this._bindingEventService.unbindByEventName(element, 'click');
-      this._bindingEventService.unbindByEventName(element, 'dblclick');
-      this._bindingEventService.unbindByEventName(element, 'contextmenu');
-      this._bindingEventService.unbindByEventName(element, 'mouseover');
-      this._bindingEventService.unbindByEventName(element, 'mouseout');
-    });
-    this._viewport.forEach((view) => {
-      this._bindingEventService.unbindByEventName(view, 'scroll');
-    });
-
-    this._headerScroller.forEach((el) => {
-      this._bindingEventService.unbindByEventName(el, 'contextmenu');
-      this._bindingEventService.unbindByEventName(el, 'click');
-    });
-
-    this._headerRowScroller.forEach((scroller) => {
-      this._bindingEventService.unbindByEventName(scroller, 'scroll');
-    });
-
-    if (this._footerRow) {
-      this._footerRow.forEach((footer) => {
-        this._bindingEventService.unbindByEventName(footer, 'contextmenu');
-        this._bindingEventService.unbindByEventName(footer, 'click');
-      });
+    if (this.sortableSideLeftInstance?.el && typeof this.sortableSideLeftInstance?.destroy === 'function') {
+      this.sortableSideLeftInstance.destroy();
     }
 
-    if (this._footerRowScroller) {
-      this._footerRowScroller.forEach((scroller) => {
-        this._bindingEventService.unbindByEventName(scroller, 'scroll');
-      });
-    }
-
-    if (this._preHeaderPanelScroller) {
-      this._bindingEventService.unbindByEventName(this._preHeaderPanelScroller, 'scroll');
-    }
-
-    if (this._topHeaderPanelScroller) {
-      this._bindingEventService.unbindByEventName(this._topHeaderPanelScroller, 'scroll');
-    }
-
-    this._bindingEventService.unbindByEventName(this._focusSink, 'keydown');
-    this._bindingEventService.unbindByEventName(this._focusSink2, 'keydown');
-
-    const resizeHandles = this._container.querySelectorAll('.slick-resizable-handle');
-    [].forEach.call(resizeHandles, (handle) => {
-      this._bindingEventService.unbindByEventName(handle, 'dblclick');
-    });
-
-    const headerColumns = this._container.querySelectorAll('.slick-header-column');
-    [].forEach.call(headerColumns, (column) => {
-      this._bindingEventService.unbindByEventName(column, 'mouseenter');
-      this._bindingEventService.unbindByEventName(column, 'mouseleave');
-      this._bindingEventService.unbindByEventName(column, 'mouseover');
-      this._bindingEventService.unbindByEventName(column, 'mouseout');
-    });
+    this._boundAncestors.length = 0; // reset array
 
     emptyElement(this._container);
-    this._container.classList.remove(this.uid);
-    this.clearAllTimers();
+    this.removeCssRules();
 
     if (shouldDestroyAllElements) {
       destroyAllElementProps(this);
     }
+  }
+
+  protected clearInternalDomCaches(): void {
+    this.activeCellNode = null;
+    this.rowsCache = {};
+    this.postProcessedRows = {};
+    this.postProcessedCleanupQueue.length = 0;
   }
 
   /**

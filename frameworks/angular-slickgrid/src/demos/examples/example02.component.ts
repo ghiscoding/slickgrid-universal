@@ -199,6 +199,10 @@ export class Example2Component implements OnInit {
     this.dataset = tmpData;
   }
 
+  disposeGrid() {
+    this.angularGrid.destroy();
+  }
+
   generatePhoneNumber(): string {
     let phone = '';
     for (let i = 0; i < 10; i++) {

@@ -37,9 +37,9 @@ export class EventPubSubService implements BasePubSubService {
   }
 
   dispose(): void {
+    clearTimeout(this._timer);
     this.unsubscribeAll();
     this._subscribedEvents = [];
-    clearTimeout(this._timer);
     this._elementSource?.remove();
     this._elementSource = null as any;
   }

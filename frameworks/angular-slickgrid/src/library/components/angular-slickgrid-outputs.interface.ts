@@ -237,6 +237,5 @@ export interface AngularSlickgridOutputs {
   onDataviewCreated: (e: SlickDataView) => void;
   onAngularGridCreated: (e: AngularGridInstance) => void;
   onBeforeGridDestroy: (e: SlickGrid) => void;
-  onAfterGridDestroyed: (e: boolean) => void;
   onLanguageChange: (lang: string) => void;
 }

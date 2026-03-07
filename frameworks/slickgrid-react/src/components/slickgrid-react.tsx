@@ -672,13 +672,8 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
       this._i18next.off('languageChanged');
     }
 
-    // we could optionally also empty the content of the grid container DOM element
-    if (shouldEmptyDomElementContainer) {
-      this.emptyGridContainerElm();
-    }
-
     this._collectionObservers.forEach((obs) => obs?.disconnect());
-    this._eventPubSubService.publish('onAfterGridDestroyed', true);
+    this._eventPubSubService.unsubscribeAll();
 
     // dispose of all Services
     this.serviceList.forEach((service: any) => {
@@ -728,6 +723,11 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
     }
     this._dataset = null;
     this._columns = [];
+
+    // we could optionally also empty the content of the grid container DOM element
+    if (shouldEmptyDomElementContainer) {
+      this.emptyGridContainerElm();
+    }
   }
 
   emptyGridContainerElm() {

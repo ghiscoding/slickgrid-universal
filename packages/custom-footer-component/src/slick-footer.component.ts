@@ -10,7 +10,7 @@ import type {
   Subscription,
   TranslaterService,
 } from '@slickgrid-universal/common';
-import { applyHtmlToElement, Constants, createDomElement, SlickEventHandler } from '@slickgrid-universal/common';
+import { applyHtmlToElement, Constants, createDomElement, emptyElement, SlickEventHandler } from '@slickgrid-universal/common';
 import { type BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 
 export class SlickFooterComponent {
@@ -97,6 +97,7 @@ export class SlickFooterComponent {
     this.pubSubService.unsubscribeAll(this._subscriptions);
 
     this._bindingHelper.dispose();
+    emptyElement(this._footerElement);
     this._footerElement?.remove();
   }
 

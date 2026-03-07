@@ -251,8 +251,10 @@ export class AutocompleterFilter<T extends AutocompleteItem = any> implements Fi
       // this._filterElm.autocomplete('destroy');
       // this._filterElm.off('input').remove();
     }
-    this._filterElm?.remove?.();
-    this._collection = undefined;
+    this._filterElm?.remove();
+    if (this._collection) {
+      this._collection.length = 0;
+    }
     this._bindEventService.unbindAll();
     this._collectionObservers.forEach((obs) => obs?.disconnect());
 

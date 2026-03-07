@@ -177,8 +177,8 @@ export class DualInputEditor implements Editor {
     clearTimeout(this._timer);
     this._eventHandler.unsubscribeAll();
     this._bindEventService.unbindAll();
-    this._leftInput?.remove?.();
-    this._rightInput?.remove?.();
+    this._leftInput?.remove();
+    this._rightInput?.remove();
   }
 
   createInput(position: 'leftInput' | 'rightInput'): HTMLInputElement {

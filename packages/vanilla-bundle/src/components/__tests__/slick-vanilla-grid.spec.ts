@@ -466,7 +466,6 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
     component.dispose();
     expect(pubSubSpy).toHaveBeenNthCalledWith(5, 'onBeforeGridDestroy', expect.any(Object));
-    expect(pubSubSpy).toHaveBeenNthCalledWith(6, 'onAfterGridDestroyed', true);
   });
 
   // TODO: revisit later, this is conflicting with Grid State & Presets

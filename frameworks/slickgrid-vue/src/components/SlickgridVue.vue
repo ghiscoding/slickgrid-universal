@@ -613,12 +613,8 @@ function disposing(shouldEmptyDomElementContainer = false) {
     i18next.off('languageChanged');
   }
 
-  // we could optionally also empty the content of the grid container DOM element
-  if (shouldEmptyDomElementContainer) {
-    emptyGridContainerElm();
-  }
   collectionObservers.forEach((obs) => obs?.disconnect());
-  eventPubSubService.publish('onAfterGridDestroyed', true);
+  eventPubSubService.unsubscribeAll();
 
   // dispose of all Services
   serviceList.forEach((service: any) => {
@@ -626,7 +622,7 @@ function disposing(shouldEmptyDomElementContainer = false) {
       service.dispose();
     }
   });
-  serviceList = [];
+  serviceList.length = 0;
 
   // dispose backend service when defined and a dispose method exists
   backendService.value?.dispose?.();
@@ -665,6 +661,11 @@ function disposing(shouldEmptyDomElementContainer = false) {
   }
   for (const prop of Object.keys(sharedService)) {
     (sharedService as any)[prop] = null;
+  }
+
+  // we could optionally also empty the content of the grid container DOM element
+  if (shouldEmptyDomElementContainer) {
+    emptyGridContainerElm();
   }
 }
 
