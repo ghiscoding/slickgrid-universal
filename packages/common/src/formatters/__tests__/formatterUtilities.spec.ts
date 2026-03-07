@@ -1,11 +1,11 @@
-import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { type SlickGrid } from '../../core/index.js';
 import { Editors } from '../../editors/index.js';
-import { FieldType } from '../../enums/index.js';
 import type { Column, Formatter, GridOption } from '../../interfaces/index.js';
 import { complexObjectFormatter } from '../complexObjectFormatter.js';
 import {
   autoAddEditorFormatterToColumnsWithEditor,
+  copyCellToClipboard,
   exportWithFormatterWhenDefined,
   getAssociatedDateFormatter,
   getBaseDateFormatter,
@@ -151,7 +151,156 @@ describe('formatterUtilities', () => {
     });
   });
 
-  describe('getValueFromParamsOrGridOptions method', () => {
+  describe('copyCellToClipboard', () => {
+    let clipboardWriteMock;
+    let gridMock;
+
+    beforeEach(() => {
+      clipboardWriteMock = vi.fn();
+      gridMock = {
+        getOptions: vi.fn(() => ({
+          excelExportOptions: {},
+          textExportOptions: {
+            exportWithFormatter: true, // Enable the use of formatter
+          },
+        })),
+      };
+
+      // Mock clipboard API
+      global.navigator = {
+        clipboard: {
+          writeText: clipboardWriteMock,
+        },
+      };
+
+      // Clear all mocks before each test
+      vi.clearAllMocks();
+    });
+
+    it('should copy plain text to the clipboard', async () => {
+      // Define the actual behavior as expected
+      const textToCopy = 'Expected Text';
+
+      const columnDef = {
+        exportWithFormatter: true,
+        formatter: () => textToCopy,
+      };
+
+      // Ensure the original function is functional
+      const result = await copyCellToClipboard({
+        grid: gridMock,
+        cell: 0,
+        row: 0,
+        column: columnDef,
+        dataContext: {}, // Provide necessary dataContext as needed
+      });
+
+      expect(clipboardWriteMock).toHaveBeenCalledWith(textToCopy);
+      expect(result).toBe(textToCopy);
+    });
+
+    it('should copy formatted text to clipboard when formatter is defined', async () => {
+      // Assume this is the output of your real formatter
+      const formattedText = 'Formatted Text';
+
+      const columnDef = {
+        exportWithFormatter: true,
+        formatter: (value) => formattedText, // A mock function simulating formatter
+      };
+
+      const result = await copyCellToClipboard({
+        grid: gridMock,
+        cell: 0,
+        row: 0,
+        column: columnDef,
+        dataContext: {},
+      });
+
+      expect(clipboardWriteMock).toHaveBeenCalledWith(formattedText);
+      expect(result).toBe(formattedText);
+    });
+
+    it('should handle removal of unwanted symbols', async () => {
+      const textWithSymbols = '⮟  Task 21'; // Simulated input with unwanted symbols
+
+      const columnDef = {
+        exportWithFormatter: true,
+        formatter: (value) => textWithSymbols, // A mock function simulating formatter
+      };
+
+      const result = await copyCellToClipboard({
+        grid: gridMock,
+        cell: 0,
+        row: 0,
+        column: columnDef,
+        dataContext: {},
+      });
+
+      expect(clipboardWriteMock).toHaveBeenCalledWith('Task 21');
+      expect(result).toBe('Task 21');
+    });
+
+    it('should handle removal of unwanted symbols', async () => {
+      const textWithSymbols = '·  Task 21'; // Simulated input with unwanted symbols
+
+      const columnDef = {
+        exportWithFormatter: true,
+        formatter: (value) => textWithSymbols, // A mock function simulating formatter
+      };
+
+      const result = await copyCellToClipboard({
+        grid: gridMock,
+        cell: 0,
+        row: 0,
+        column: columnDef,
+        dataContext: {},
+      });
+
+      expect(clipboardWriteMock).toHaveBeenCalledWith('Task 21');
+      expect(result).toBe('Task 21');
+    });
+
+    it('should handle removal of unwanted symbols but keep pipe symbols', async () => {
+      const textWithSymbols = '⮞· |  Task 21'; // Simulated input with unwanted symbols
+
+      const columnDef = {
+        exportWithFormatter: true,
+        formatter: (value) => textWithSymbols, // A mock function simulating formatter
+      };
+
+      const result = await copyCellToClipboard({
+        grid: gridMock,
+        cell: 0,
+        row: 0,
+        column: columnDef,
+        dataContext: {},
+      });
+
+      expect(clipboardWriteMock).toHaveBeenCalledWith('|  Task 21');
+      expect(result).toBe('|  Task 21');
+    });
+
+    it('should handle clipboard write errors gracefully', async () => {
+      clipboardWriteMock.mockRejectedValueOnce(new Error('Clipboard error'));
+
+      const consoleErrorMock = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      const result = await copyCellToClipboard({
+        grid: gridMock,
+        cell: 0,
+        row: 0,
+        column: {},
+        dataContext: {},
+      });
+
+      expect(consoleErrorMock).toHaveBeenCalledWith(expect.stringContaining('Unable to read/write to clipboard'));
+      expect(result).toBe(''); // Assuming it returns an empty string on error
+
+      consoleErrorMock.mockRestore();
+    });
+  });
+
+  describe('getValueFromParamsOrGridOptions function', () => {
     it('should return options found in the Grid Option when not found in Column Definition "params" property', () => {
       const gridOptions = { formatterOptions: { minDecimal: 2 } } as GridOption;
 
@@ -175,7 +324,7 @@ describe('formatterUtilities', () => {
     });
   });
 
-  describe('getAssociatedDateFormatter method', () => {
+  describe('getAssociatedDateFormatter function', () => {
     it('should return a Formatter function', () => {
       const formatterFn = getAssociatedDateFormatter('dateIso', '-');
       const isFunction = typeof formatterFn === 'function';
@@ -216,7 +365,7 @@ describe('formatterUtilities', () => {
     });
   });
 
-  describe('getBaseDateFormatter method', () => {
+  describe('getBaseDateFormatter function', () => {
     it('should return a Formatter function', () => {
       const formatterFn = getBaseDateFormatter();
       const isFunction = typeof formatterFn === 'function';
