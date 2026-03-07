@@ -78,7 +78,7 @@
     "concurrently": "catalog:",
     "cssnano": "^7.1.2",
     "native-copyfiles": "catalog:",
-    "postcss": "^8.5.6",
+    "postcss": "^8.5.8",
     "postcss-cli": "^11.0.1",
     "sass": "catalog:"
   },

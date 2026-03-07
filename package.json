@@ -120,7 +120,7 @@
     "@vitest/coverage-v8": "catalog:",
     "@vitest/ui": "catalog:",
     "concurrently": "catalog:",
-    "conventional-changelog-conventionalcommits": "^9.1.0",
+    "conventional-changelog-conventionalcommits": "^9.3.0",
     "cross-env": "catalog:",
     "cypress": "catalog:",
     "cypress-real-events": "catalog:",
