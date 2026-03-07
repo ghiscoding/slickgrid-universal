@@ -118,10 +118,6 @@ Make sure to check out the [Releases](https://github.com/ghiscoding/slickgrid-un
 | 7.x               | >=17.0 | [Migration 7.x](https://ghiscoding.gitbook.io/angular-slickgrid/migrations/migration-to-7.x) | merge SlickGrid into Slickgrid-Universal, <br> requires Slickgrid-Universal [4.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v4.0.2) | 2023-12-15 |
 | 6.x               | >=16.0 | [Migration 6.x](https://ghiscoding.gitbook.io/angular-slickgrid/migrations/Migration-to-6.x) | removal of jQuery (now uses browser native code),<br> requires Slickgrid-Universal [3.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v3.0.0) | 2023-07-01 |
 | 5.x               | >=14.0 | [Migration 5.x](https://ghiscoding.gitbook.io/angular-slickgrid/migrations/Migration-to-5.x) | removal of jQueryUI, requires Slickgrid-Universal [2.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v2.0.0) | 2022-10-17 |
-| 4.x               | >=13.0 | [Migration 4.x](https://ghiscoding.gitbook.io/angular-slickgrid/migrations/Migration-to-4.x) | for Ivy build only, requires Slickgrid-Universal [1.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v1.1.1) | 2021-12-11 |
-| 3.x               | >=12.0 | [Migration 3.x](https://ghiscoding.gitbook.io/angular-slickgrid/migrations/Migration-to-3.x) | the lib now uses [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) monorepo [v0.19.2](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v0.19.2).<br>Also, IE11 is EOL and no longer supported. | 2021-07-02 |
-| 2.x               | 7-11.x | [Migration 2.x](https://ghiscoding.gitbook.io/angular-slickgrid/migrations/Migration-to-2.x) | support multiple grids on the same page     |
-| 1.x               | 4-6.x  |                 |      |
 
 **Note** For a full compatibility table of every Angular-Slickgrid versions with Slickgrid-Universal, please take a look at the [Versions Compatibility Table - Wiki](https://github.com/ghiscoding/Angular-Slickgrid/wiki/Versions-Compatibility-Table).
 
