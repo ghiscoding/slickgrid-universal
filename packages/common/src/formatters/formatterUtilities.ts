@@ -76,9 +76,8 @@ export async function copyCellToClipboard(args: {
     finalTextToCopy = textToCopy;
     if (typeof textToCopy === 'string') {
       finalTextToCopy = textToCopy
-        .replace(/^([·|⮞|⮟]\s*)|([·|⮞|⮟])\s*/gi, '')
-        // eslint-disable-next-line
-        .replace(/[\u00b7|\u034f]/gi, '')
+        .replace(/^([·⮞⮟]\s*)|([·⮞⮟])\s*/gi, '')
+        .replace(/[\u00b7\u034f]/gi, '') // remove unwanted Unicode characters (if entered directly)
         .trim();
     }
 
