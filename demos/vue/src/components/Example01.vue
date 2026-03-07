@@ -103,6 +103,14 @@ function paginationChanged(changes: PaginationMetadata) {
   console.log('Pagination changed', changes);
 }
 
+function resetGrid1() {
+  // const cols = vueGrid1.slickGrid?.getColumns() || [];
+  const cols = columnDefinitions1.value.slice();
+  cols.forEach((c) => (c.hidden = false));
+  vueGrid1.slickGrid?.setColumns(cols);
+  vueGrid1.slickGrid?.autosizeColumns();
+}
+
 function toggleDarkModeGrid1() {
   _darkModeGrid1 = !_darkModeGrid1;
   if (_darkModeGrid1) {
@@ -132,6 +140,10 @@ function toggleDarkModeGrid1() {
       <button class="btn btn-outline-secondary btn-sm btn-icon ms-2" data-test="toggle-dark-mode" @click="toggleDarkModeGrid1()">
         <i class="mdi mdi-theme-light-dark"></i>
         <span>Toggle Dark Mode</span>
+      </button>
+      <button class="btn btn-outline-secondary btn-sm btn-icon ms-2" @click="resetGrid1()" data-test="reset-grid1">
+        <span class="mdi mdi-alert-rhombus-outline"></span>
+        <span>Reset Grid (display all columns)</span>
       </button>
       <button class="btn btn-outline-secondary btn-sm btn-icon ms-2" @click="updateDataset1()">Randomize Dataset</button>
     </div>

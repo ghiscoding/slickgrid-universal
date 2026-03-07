@@ -73,8 +73,8 @@ export default class Example04 {
   }
 
   dispose() {
-    this.sgb?.dispose();
     this._bindingEventService.unbindAll();
+    this.sgb?.dispose();
   }
 
   initializeGrid() {

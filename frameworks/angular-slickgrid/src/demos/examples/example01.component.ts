@@ -96,6 +96,14 @@ export class Example1Component implements OnDestroy, OnInit {
     return mockDataset;
   }
 
+  resetGrid1() {
+    // const cols = this.angularGrid1.slickGrid?.getColumns() || [];
+    const cols = this.columnDefinitions1.slice();
+    cols.forEach((c) => (c.hidden = false));
+    this.angularGrid1.slickGrid?.setColumns(cols);
+    this.angularGrid1.slickGrid?.autosizeColumns();
+  }
+
   toggleDarkModeGrid1() {
     this._darkModeGrid1 = !this._darkModeGrid1;
     if (this._darkModeGrid1) {

@@ -377,4 +377,72 @@ describe('Example 1 - Basic Grids', () => {
 
     cy.get('#grid1-1').get('.slick-grid-menu:visible').find('.close').click({ force: true });
   });
+
+  describe('1st grid - Reorder visible & hidden Columns', () => {
+    it('should hide "% Complete", then swap "Title" and "Duration" and finally redisplay "% Complete" and still expect the 3rd column', () => {
+      cy.get('[data-test="reset-grid1"]').click();
+      cy.get('#grid1-1 .slick-header-columns')
+        .children()
+        .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
+
+      cy.get('#grid1-1').find('button.slick-grid-menu-button').click({ force: true });
+      cy.get('.slick-grid-menu .slick-column-picker-list').contains('% Complete').click();
+      cy.get('[data-dismiss="slick-grid-menu"]').click();
+
+      cy.get('#grid1-1 .slick-header-columns')
+        .children('.slick-header-column:nth(0)')
+        .contains('Title')
+        .drag('.slick-header-column:nth(1)');
+
+      cy.get('.slick-header-column:nth(1)').contains('Title');
+
+      const hiddenCompleteTitles = ['Duration (days)', 'Title', 'Start', 'Finish', 'Effort Driven'];
+      cy.get('#grid1-1 .slick-header-columns')
+        .children()
+        .each(($child, index) => expect($child.text()).to.eq(hiddenCompleteTitles[index]));
+
+      cy.get('#grid1-1').find('button.slick-grid-menu-button').click({ force: true });
+      cy.get('.slick-grid-menu .slick-column-picker-list').contains('% Complete').click();
+      cy.get('[data-dismiss="slick-grid-menu"]').click();
+
+      const visibleCompleteTitles = ['Duration (days)', 'Title', '% Complete', 'Start', 'Finish', 'Effort Driven'];
+      cy.get('#grid1-1 .slick-header-columns')
+        .children()
+        .each(($child, index) => expect($child.text()).to.eq(visibleCompleteTitles[index]));
+    });
+
+    it('should hide "Title" and "Start" columns, then move "% Complete" after "Finish" then redisplay all columns and expect hidden columns to stay at the same positions', () => {
+      cy.get('[data-test="reset-grid1"]').click();
+      cy.get('#grid1-1 .slick-header-columns')
+        .children()
+        .each(($child, index) => expect($child.text()).to.eq(fullTitles[index]));
+
+      cy.get('#grid1-1').find('button.slick-grid-menu-button').click({ force: true });
+      cy.get('.slick-grid-menu .slick-column-picker-list').contains('Title').click();
+      cy.get('.slick-grid-menu .slick-column-picker-list').contains('Start').click();
+      cy.get('[data-dismiss="slick-grid-menu"]').click();
+
+      cy.get('#grid1-1 .slick-header-columns')
+        .children('.slick-header-column:nth(1)')
+        .contains('% Complete')
+        .drag('.slick-header-column:nth(2)');
+
+      cy.get('.slick-header-column:nth(2)').contains('% Complete');
+
+      const hiddenCompleteTitles = ['Duration (days)', 'Finish', '% Complete', 'Effort Driven'];
+      cy.get('#grid1-1 .slick-header-columns')
+        .children()
+        .each(($child, index) => expect($child.text()).to.eq(hiddenCompleteTitles[index]));
+
+      cy.get('#grid1-1').find('button.slick-grid-menu-button').click({ force: true });
+      cy.get('.slick-grid-menu .slick-column-picker-list').contains('Title').click();
+      cy.get('.slick-grid-menu .slick-column-picker-list').contains('Start').click();
+      cy.get('[data-dismiss="slick-grid-menu"]').click();
+
+      const visibleCompleteTitles = ['Title', 'Duration (days)', 'Finish', 'Start', '% Complete', 'Effort Driven'];
+      cy.get('#grid1-1 .slick-header-columns')
+        .children()
+        .each(($child, index) => expect($child.text()).to.eq(visibleCompleteTitles[index]));
+    });
+  });
 });

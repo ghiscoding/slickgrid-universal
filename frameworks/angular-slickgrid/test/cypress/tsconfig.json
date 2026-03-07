@@ -3,7 +3,7 @@
     "target": "es2020",
     "esModuleInterop": true,
     "lib": ["es2021", "dom"],
-    "types": ["cypress", "node"]
+    "types": ["@4tw/cypress-drag-drop", "cypress", "node"]
   },
   "include": ["**/*.ts"]
 }

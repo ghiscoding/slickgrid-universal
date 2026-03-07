@@ -97,6 +97,14 @@ export class Example01 {
     return mockDataset;
   }
 
+  resetGrid1() {
+    // const cols = this.aureliaGrid1.slickGrid?.getColumns() || [];
+    const cols = this.columnDefinitions1.slice();
+    cols.forEach((c) => (c.hidden = false));
+    this.aureliaGrid1.slickGrid?.setColumns(cols);
+    this.aureliaGrid1.slickGrid?.autosizeColumns();
+  }
+
   toggleDarkModeGrid1() {
     this._darkModeGrid1 = !this._darkModeGrid1;
     if (this._darkModeGrid1) {
