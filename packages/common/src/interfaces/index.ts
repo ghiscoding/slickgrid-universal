@@ -32,7 +32,6 @@ export type * from './compositeEditorOption.interface.js';
 export type * from './contextMenu.interface.js';
 export type * from './contextMenuLabel.interface.js';
 export type * from './contextMenuOption.interface.js';
-export type * from './cssDeclaration.interface.js';
 export type * from './currentColumn.interface.js';
 export type * from './currentFilter.interface.js';
 export type * from './currentPagination.interface.js';

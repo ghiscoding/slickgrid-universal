@@ -26,7 +26,6 @@ import type {
   Column,
   ColumnMetadata,
   ColumnSort,
-  CSSStyleDeclarationWritable,
   CssStyleHash,
   CustomDataView,
   DOMEvent,
@@ -1113,7 +1112,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         Object.keys(this.cssShow).forEach((name) => {
           if (this.cssShow) {
             const value = old[name as keyof CSSStyleDeclaration];
-            el.style[name as CSSStyleDeclarationWritable] = value != null ? String(value) : '';
+            if (name in el.style) {
+              const kebabStyleKey = name.replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`);
+              el.style.setProperty(kebabStyleKey, value != null ? String(value) : '');
+            }
           }
         });
       });

@@ -5,10 +5,10 @@ export interface CellRangeDecoratorOption {
   selectionCssClass: string;
 
   /** CSS styling to add to decorator (for example blue background on cell) */
-  selectionCss: CSSStyleDeclaration;
+  selectionCss: Partial<CSSStyleDeclaration>;
 
   /** CSS styling for drag-fill rangel marker (optional) */
-  copyToSelectionCss: CSSStyleDeclaration;
+  copyToSelectionCss: Partial<CSSStyleDeclaration>;
 
   /** offset to add to the cell range outer box size calculation */
   offset: { top: number; left: number; height: number; width: number };

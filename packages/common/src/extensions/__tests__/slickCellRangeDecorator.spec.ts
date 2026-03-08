@@ -56,6 +56,8 @@ describe('CellRangeDecorator Plugin', () => {
     expect(plugin.addonElement!.style.left).toEqual('');
     expect(plugin.addonElement!.style.height).toEqual('');
     expect(plugin.addonElement!.style.width).toEqual('');
+    expect(plugin.addonElement?.style.border).toBe('2px dashed red');
+    expect(plugin.addonElement?.style.zIndex).toBe('9999');
   });
 
   it('should Show range when called and calculate new position when getCellNodeBox returns a cell position', () => {
@@ -70,12 +72,39 @@ describe('CellRangeDecorator Plugin', () => {
     expect(plugin.addonElement!.style.left).toEqual('31px'); // 26 + 5px
     expect(plugin.addonElement!.style.height).toEqual('20px'); // 12 - 25 + 33px
     expect(plugin.addonElement!.style.width).toEqual('13px'); // 27 - 26 + 12px
+    expect(plugin.addonElement?.style.border).toBe('2px dashed red');
+    expect(plugin.addonElement?.style.zIndex).toBe('9999');
   });
 
   it('should be able to set selection CSS', () => {
+    const setSelectionCss = { border: '2px solid green', zIndex: '9998' } as CSSStyleDeclaration;
     plugin = new SlickCellRangeDecorator(gridStub, { offset: { top: 20, left: 5, width: 12, height: 33 } });
-    plugin.setSelectionCss({ border: '2px solid green', zIndex: '9998' } as CSSStyleDeclaration);
+    plugin.setSelectionCss(setSelectionCss);
 
     expect(plugin.getSelectionCss()).toEqual({ border: '2px solid green', zIndex: '9998' } as CSSStyleDeclaration);
+  });
+
+  it('should be able to define different selection CSS and then override them with setSelectionCss()', () => {
+    const ctorSelectionCss = { border: '3px solid purple', zIndex: '9997' };
+    const setSelectionCss = { border: '2px solid green', zIndex: '9998' } as CSSStyleDeclaration;
+    plugin = new SlickCellRangeDecorator(gridStub, {
+      offset: { top: 20, left: 5, width: 12, height: 33 },
+      selectionCss: ctorSelectionCss,
+    });
+    plugin.setSelectionCss(setSelectionCss);
+
+    expect(plugin.getSelectionCss()).toEqual(setSelectionCss);
+  });
+
+  it('should be able to define different selection CSS', () => {
+    const ctorSelectionCss = { border: '3px solid purple', zIndex: '9997' };
+    plugin = new SlickCellRangeDecorator(gridStub, {
+      offset: { top: 20, left: 5, width: 12, height: 33 },
+      selectionCss: ctorSelectionCss,
+    });
+    plugin.show({ fromCell: 1, fromRow: 2, toCell: 3, toRow: 4 } as SlickRange);
+
+    expect(plugin.addonElement?.style.border).toBe(ctorSelectionCss.border);
+    expect(plugin.addonElement?.style.zIndex).toBe(ctorSelectionCss.zIndex);
   });
 });

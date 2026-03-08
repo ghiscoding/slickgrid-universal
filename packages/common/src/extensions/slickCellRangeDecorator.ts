@@ -1,6 +1,6 @@
-import { createDomElement, deepMerge } from '@slickgrid-universal/utils';
+import { createDomElement, deepMerge, setStyles } from '@slickgrid-universal/utils';
 import type { SlickGrid, SlickRange } from '../core/index.js';
-import type { CellRangeDecoratorOption, CSSStyleDeclarationWritable } from '../interfaces/index.js';
+import type { CellRangeDecoratorOption } from '../interfaces/index.js';
 
 /**
  * Displays an overlay on top of a given cell range.
@@ -16,7 +16,7 @@ export class SlickCellRangeDecorator {
 
   protected _options: CellRangeDecoratorOption;
   protected _elem?: HTMLDivElement | null;
-  protected _selectionCss: CSSStyleDeclaration;
+  protected _selectionCss: Partial<CSSStyleDeclaration>;
   protected _defaults = {
     selectionCssClass: 'slick-range-decorator',
     selectionCss: {
@@ -35,7 +35,7 @@ export class SlickCellRangeDecorator {
     options?: Partial<CellRangeDecoratorOption>
   ) {
     this._options = deepMerge(this._defaults, options);
-    this._selectionCss = options?.selectionCss || ({} as CSSStyleDeclaration);
+    this._selectionCss = this._options?.selectionCss || ({} as Partial<CSSStyleDeclaration>);
   }
 
   get addonOptions(): CellRangeDecoratorOption {
@@ -53,11 +53,11 @@ export class SlickCellRangeDecorator {
 
   init(): void {}
 
-  getSelectionCss(): CSSStyleDeclaration {
+  getSelectionCss(): Partial<CSSStyleDeclaration> {
     return this._selectionCss;
   }
 
-  setSelectionCss(cssProps: CSSStyleDeclaration): void {
+  setSelectionCss(cssProps: Partial<CSSStyleDeclaration>): void {
     this._selectionCss = cssProps;
   }
 
@@ -74,15 +74,10 @@ export class SlickCellRangeDecorator {
     }
 
     // Determine which CSS style to use
-    const css = isCopyTo && this._options.copyToSelectionCss ? this._options.copyToSelectionCss : this._options.selectionCss;
+    const css = isCopyTo && this._options.copyToSelectionCss ? this._options.copyToSelectionCss : this._selectionCss;
 
     // Apply styles to the element
-    Object.keys(css).forEach((cssStyleKey) => {
-      const value = css[cssStyleKey as keyof CSSStyleDeclaration];
-      if (this._elem!.style[cssStyleKey as keyof CSSStyleDeclaration] !== value) {
-        this._elem!.style[cssStyleKey as CSSStyleDeclarationWritable] = value != null ? String(value) : '';
-      }
-    });
+    setStyles(this._elem, css);
 
     // Get the boxes for the selected cells
     const from = this.grid.getCellNodeBox(range.fromRow, range.fromCell);
