@@ -16,6 +16,7 @@ import {
   htmlEncode,
   htmlEncodeWithPadding,
   insertAfterElement,
+  setStyles,
 } from '../domUtils.js';
 
 describe('Service/domUtilies', () => {
@@ -417,6 +418,24 @@ describe('Service/domUtilies', () => {
 
       insertAfterElement(span1, span3);
       expect(div.outerHTML).toBe(`<div class="div-one"><span class="span-one"></span><span class="span-three"></span><span class="span-two"></span></div>`);
+    });
+  });
+
+  describe('setStyles() method', () => {
+    it('should assign CSS style properties', () => {
+      const div = document.createElement('div');
+      setStyles(div, { backgroundColor: 'red', border: '1px solid blue' });
+
+      expect(div.style.backgroundColor).toEqual('red');
+      expect(div.style.border).toEqual('1px solid blue');
+    });
+
+    it('should not assign anything when value is undefined', () => {
+      const div = document.createElement('div');
+      setStyles(div, { backgroundColor: null as any, border: '1px solid blue' });
+
+      expect(div.style.backgroundColor).toEqual('');
+      expect(div.style.border).toEqual('1px solid blue');
     });
   });
 });

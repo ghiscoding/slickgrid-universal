@@ -2,6 +2,16 @@ import type { HtmlElementPosition } from './models/interfaces.js';
 import type { InferDOMType } from './models/types.js';
 import { isDefined } from './utils.js';
 
+export type CSSStyleDeclarationReadonly =
+  | 'length'
+  | 'parentRule'
+  | 'getPropertyPriority'
+  | 'getPropertyValue'
+  | 'item'
+  | 'removeProperty'
+  | 'setProperty';
+export type CSSStyleDeclarationWritable = Omit<CSSStyleDeclaration, CSSStyleDeclarationReadonly>;
+
 /** Calculate available space for each side of the DOM element */
 export function calculateAvailableSpace(element: HTMLElement): { top: number; bottom: number; left: number; right: number } {
   const vh = window.innerHeight || 0;
@@ -52,6 +62,18 @@ export function createDomElement<T extends keyof HTMLElementTagNameMap, K extend
   }
   appendToParent?.appendChild(elm);
   return elm;
+}
+
+export function setStyles<T extends HTMLElement, P extends Partial<CSSStyleDeclarationWritable>>(element: T, styles: P): void {
+  Object.keys(styles).forEach((key) => {
+    const camelStyleKey = key as keyof P;
+    const value = styles[camelStyleKey];
+
+    // Ensure value is valid and assignable to the style property
+    if (value !== undefined && value !== null) {
+      (element.style as unknown as P)[camelStyleKey] = value;
+    }
+  });
 }
 
 /**

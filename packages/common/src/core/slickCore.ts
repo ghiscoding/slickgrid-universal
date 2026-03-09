@@ -5,6 +5,7 @@
  * @module Core
  * @namespace Slick
  */
+import { setStyles } from '@slickgrid-universal/utils';
 import type { MergeTypes } from '../enums/index.js';
 import type { DragRange, EditController } from '../interfaces/index.js';
 import type { SlickGrid } from './slickGrid.js';
@@ -734,11 +735,15 @@ export class Utils {
     Utils.setStyleSize(el, 'width', value);
   }
 
-  public static setStyleSize(el: HTMLElement, style: string, val?: number | string | Function): void {
+  public static setStyleSize<P extends Pick<CSSStyleDeclaration, 'height' | 'width' | 'left' | 'right' | 'top' | 'bottom'>>(
+    el: HTMLElement,
+    style: keyof P,
+    val?: number | string | Function
+  ): void {
     if (typeof val === 'function') {
-      val = val();
+      val = val() as number | string;
     }
-    el.style.setProperty(style, typeof val === 'string' ? val : `${val}px`);
+    setStyles(el, { [style]: typeof val === 'string' ? val : `${val}px` } as P);
   }
 
   public static isHidden(el: HTMLElement): boolean {

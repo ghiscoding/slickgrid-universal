@@ -1,10 +1,8 @@
 {
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
-  "eslint.validate": [
-    "javascript",
-    "typescript"
-  ],
+  "eslint.validate": ["javascript", "typescript"],
+  "typescript.experimental.useTsgo": true,
   "typescript.format.semicolons": "insert",
   "vitest.rootConfig": "./test/vitest.config.mts",
   "typescript.tsdk": "node_modules\\typescript\\lib",

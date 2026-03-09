@@ -12,6 +12,7 @@ import {
   isDefinedNumber,
   isPrimitiveOrHTML,
   queueMicrotaskPolyfill,
+  type CSSStyleDeclarationWritable,
 } from '@slickgrid-universal/utils';
 import type { SortableEvent, Options as SortableOptions } from 'sortablejs';
 import Sortable from 'sortablejs/modular/sortable.core.esm.js';
@@ -1102,23 +1103,20 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     });
   }
 
-  restoreCssFromHiddenInit(): void {
-    // Finish handling display:none on container or container parents
-    // - Put values back the way they were
-    if (this._hiddenParents && this.oldProps) {
-      this._hiddenParents.forEach((el: HTMLElement, index: number) => {
-        const old: CSSStyleDeclaration = this.oldProps[index] as CSSStyleDeclaration;
-
+  restoreCssFromHiddenInit<P extends Partial<CSSStyleDeclarationWritable>>(): void {
+    // finish handle display:none on container or container parents
+    // - put values back the way they were
+    let i = 0;
+    if (this._hiddenParents) {
+      this._hiddenParents.forEach((el) => {
+        const old = this.oldProps[i++];
         Object.keys(this.cssShow).forEach((name) => {
           if (this.cssShow) {
-            const value = old[name as keyof CSSStyleDeclaration];
-            el.style.setProperty(name, value != null ? String(value) : '');
+            (el.style as unknown as P)[name as keyof P] = (old as any)[name];
           }
         });
       });
-
-      // Clear the hidden parents array
-      this._hiddenParents.length = 0; // Correct way to clear the array
+      this._hiddenParents.length = 0;
     }
   }
 
