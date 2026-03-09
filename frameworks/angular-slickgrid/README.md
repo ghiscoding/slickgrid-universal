@@ -41,12 +41,12 @@ interface User {
 }
 
 export class GridComponent implements OnInit {
-  columnDefinitions: Column[] = []; // it could also be `Column<User>[]`
+  columns: Column[] = []; // it could also be `Column<User>[]`
   gridOptions: GridOption;
   dataset: User[] = [];
 
   onInit() {
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'firstName', name: 'First Name', field: 'firstName', sortable: true },
       { id: 'lastName', name: 'Last Name', field: 'lastName', sortable: true },
       { id: 'age', name: 'Age', field: 'age', type: 'number', sortable: true }
@@ -62,7 +62,7 @@ export class GridComponent implements OnInit {
 
 ```html
 <angular-slickgrid gridId="grid2"
-    [columns]="columnDefinitions"
+    [columns]="columns"
     [options]="gridOptions"
     [dataset]="dataset">
 </angular-slickgrid>

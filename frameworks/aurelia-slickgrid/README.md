@@ -50,12 +50,12 @@ interface User {
 }
 
 export class Example {
-  columnDefinitions: Column[] = []; // it could also be `Column<User>[]`
+  columns: Column[] = []; // it could also be `Column<User>[]`
   gridOptions: GridOption;
   dataset: User[] = [];
 
   constructor() {
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'firstName', name: 'First Name', field: 'firstName'},
       { id: 'lastName', name: 'Last Name', field: 'lastName'},
       { id: 'age', name: 'Age', field: 'age' }
@@ -75,7 +75,7 @@ export class Example {
 ```html
 <aurelia-slickgrid
   grid-id="grid2"
-  columns.bind="columnDefinitions"
+  columns.bind="columns"
   options.bind="gridOptions"
   dataset.bind="dataset">
 </aurelia-slickgrid>

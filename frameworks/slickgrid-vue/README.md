@@ -49,7 +49,7 @@ interface User {
 }
 
 // it could also be `Column<User>[]`
-const columnDefinitions: Ref<Column[]> = ref([
+const columns: Ref<Column[]> = ref([
   { id: 'firstName', name: 'First Name', field: 'firstName', sortable: true },
   { id: 'lastName', name: 'Last Name', field: 'lastName', sortable: true },
   { id: 'age', name: 'Age', field: 'age', type: 'number', sortable: true },
@@ -58,15 +58,15 @@ const dataset = ref<User[]>([
   { id: 1, firstName: 'John', lastName: 'Doe', age: 20 },
   { id: 2, firstName: 'Jane', lastName: 'Smith', age: 21 },
 ]);
-const gridOptions = ref<GridOption>({ /*...*/ }); // optional grid options
+const options = ref<GridOption>({ /*...*/ }); // optional grid options
 </script>
 
 <template>
   <slickgrid-vue
     grid-id="grid1"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:dataset="dataset"
-    v-model:options="gridOptions"
+    v-model:options="options"
   ></slickgrid-vue>
 </template>
 ```
