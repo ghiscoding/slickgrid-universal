@@ -87,17 +87,18 @@ export class ResizerService {
 
   /** Dispose function when service is destroyed */
   dispose(): void {
+    // first clear all timers
     clearInterval(this._intervalId);
     clearTimeout(this._timer);
-
-    // unsubscribe all SlickGrid events
-    this._eventHandler?.unsubscribeAll();
-    this.pubSubService.unsubscribeAll(this._subscriptions);
-
     if (this.gridOptions.autoResize?.resizeDetection === 'container' && this._resizeObserver) {
       this._resizeObserver.disconnect();
     }
+
+    // then unsubscribe all SlickGrid events and pub/sub events
     this._bindingEventService.unbindAll();
+    this._eventHandler?.unsubscribeAll();
+    this.pubSubService.unsubscribeAll(this._subscriptions);
+    this._subscriptions.length = 0;
   }
 
   init(grid: SlickGrid, gridParentContainerElm: HTMLElement): void {
