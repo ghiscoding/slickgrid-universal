@@ -76,7 +76,7 @@
   "devDependencies": {
     "autoprefixer": "^10.4.27",
     "concurrently": "catalog:",
-    "cssnano": "^7.1.2",
+    "cssnano": "^7.1.3",
     "native-copyfiles": "catalog:",
     "postcss": "^8.5.8",
     "postcss-cli": "^11.0.1",
