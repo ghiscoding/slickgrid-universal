@@ -372,7 +372,7 @@ Below is an abbreviated list of Enums to update, make sure to update them all
 |                  | `ExtensionName.rowDetail`   | `'rowDetail'`       |
 | ... | ... | ... |
 
-Also as mentioned above in the section [Menu with Commands](#menu-with-commands-slot-renderer), all menu `hide...` flags are being deprecated in favor of the new `hideCommands: [...]` or the `commandListBuilder`, for example:
+Also as mentioned above in the section [Menu with Commands](#menu-with-commands-slot-renderer), all menu `positionOrder` and `hide...` flags are being deprecated in favor of the new `hideCommands: [...]` or the `commandListBuilder`, for example:
 
 ```diff
 gridOptions = {
@@ -397,4 +397,4 @@ For a library component, maintaining compatibility with both approaches is pragm
 
 ---
 
-If the project is useful to you, please give it a star ⭐ (on [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal)) umbrella project. I do also like to drink coffee [☕ (Ko-Fi)](https://ko-fi.com/ghiscoding). Happy Coding 🧑‍💻
+If the project is useful to you, please give it a star ⭐ (on the [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) umbrella project). I do also like to drink coffee [☕ (Ko-Fi)](https://ko-fi.com/ghiscoding). Happy Coding 🧑‍💻

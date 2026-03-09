@@ -8,7 +8,7 @@ Wait, what happened to version 6 to 8?
 
 I'm skipping versions 6-8 and going straight to v9.0 because some of the framework wrappers (Angular-Slickgrid & Aurelia-Slickgrid) were already at v8.x and so the next available major version bump available for every packages was v9.0.
 
-If the project is useful to you, please give it a star ⭐ (on [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal)) umbrella project and perhaps buy me a coffee [☕ (Ko-Fi)](https://ko-fi.com/ghiscoding), thanks in advance.
+If the project is useful to you, please give it a star ⭐ (on the [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) umbrella project) and perhaps buy me a coffee [☕ (Ko-Fi)](https://ko-fi.com/ghiscoding), thanks in advance.
 
 #### Major Changes - Quick Summary
 - minimum requirements bump

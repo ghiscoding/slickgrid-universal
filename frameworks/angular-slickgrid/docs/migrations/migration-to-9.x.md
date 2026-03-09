@@ -4,7 +4,7 @@ This new release is focused around 2 things, it is now shipping ESM-only builds 
 
 The other great thing about having everything under the same project umbrella is that every package will now be released at the same time with the exact same version number across the board. For example, the next version will be released as v9.0 and whenever any new feature/bugfix comes in, then every package will be bumped to v9.1 and so on (no more version discrepancies).
 
-I also decided to align all SlickGrid examples in all frameworks and Angular-Slickgrid turned out to have many example offsets, so just be aware that the example numbering might have changed a little (ie: Row Detail is now Example 19 instead of 21). If the project is useful to you, please give it a star ⭐ (on [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal)) umbrella project and perhaps buy me a coffee [☕ (Ko-Fi)](https://ko-fi.com/ghiscoding), thanks in advance.
+I also decided to align all SlickGrid examples in all frameworks and Angular-Slickgrid turned out to have many example offsets, so just be aware that the example numbering might have changed a little (ie: Row Detail is now Example 19 instead of 21). If the project is useful to you, please give it a star ⭐ (on the [Slickgrid-Universal](https://github.com/ghiscoding/slickgrid-universal) umbrella project) and perhaps buy me a coffee [☕ (Ko-Fi)](https://ko-fi.com/ghiscoding), thanks in advance.
 
 #### Major Changes - Quick Summary
 - minimum requirements bump
