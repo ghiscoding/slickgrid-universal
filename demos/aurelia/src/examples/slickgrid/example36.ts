@@ -94,7 +94,7 @@ class CustomSumAggregator implements Aggregator {
 }
 
 export class Example36 {
-  columnDefinitions: Column<GroceryItem>[] = [];
+  columns: Column<GroceryItem>[] = [];
   gridOptions!: GridOption;
   dataset: GroceryItem[] = [];
   aureliaGrid!: AureliaGridInstance;
@@ -114,7 +114,7 @@ export class Example36 {
   }
 
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'sel',
         name: '#',

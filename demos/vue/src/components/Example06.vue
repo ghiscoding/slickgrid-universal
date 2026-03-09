@@ -24,7 +24,7 @@ const GRAPHQL_QUERY_DATASET_NAME = 'users';
 const LOCAL_STORAGE_KEY = 'gridStateGraphql';
 const FAKE_SERVER_DELAY = 250;
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const column: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const metrics = ref<Metrics>({} as Metrics);
 const showSubTitle = ref(true);
@@ -604,7 +604,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <slickgrid-vue
     v-model:options="gridOptions"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:dataset="dataset"
     grid-id="grid6"
     @onGridStateChanged="gridStateChanged($event.detail)"

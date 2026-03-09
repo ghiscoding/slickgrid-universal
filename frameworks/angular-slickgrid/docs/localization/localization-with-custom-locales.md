@@ -51,7 +51,7 @@ import { localeFrench } from 'locales/fr';
 
 export class MyGridComponent {
   prepareGrid() {
-    this.columnDefinitions = [ /* ... */ ];
+    this.columns = [ /* ... */ ];
 
     this.gridOptions = {
       enableAutoResize: true,
@@ -98,7 +98,7 @@ import { localeFrench } from 'locales/fr';
 
 export class MyGridComponent {
   prepareGrid() {
-    this.columnDefinitions = [ /* ... */ ];
+    this.columns = [ /* ... */ ];
 
     this.gridOptions = {
       enableAutoResize: true,

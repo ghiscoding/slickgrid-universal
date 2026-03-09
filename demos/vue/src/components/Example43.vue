@@ -6,7 +6,7 @@ import { onBeforeMount, ref, type Ref } from 'vue';
 const isEditable = ref(false);
 const excelExportService = new ExcelExportService();
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const column: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const showSubTitle = ref(true);
 const showEmployeeId = ref(true);
@@ -546,7 +546,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <slickgrid-vue
     v-model:options="gridOptions"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:dataset="dataset"
     grid-id="grid43"
     @onVueGridCreated="vueGridReady($event.detail)"

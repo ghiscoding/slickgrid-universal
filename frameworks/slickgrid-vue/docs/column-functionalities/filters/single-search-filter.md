@@ -16,7 +16,7 @@ import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 's
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const column: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const selectedColumn = ref<Column>();
 const selectedOperator = ref<string>();
@@ -116,7 +116,7 @@ function updateFilter() {
 
     <slickgrid-vue
       grid-id="grid21"
-      v-model:columns="columnDefinitions"
+      v-model:columns="columns"
       v-model:options="gridOptions"
       v-model:dataset="dataset"
       @onVueGridCreated="vueGridReady($event.detail)"

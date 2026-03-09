@@ -18,7 +18,7 @@ In order to use the Service, you will need to register it in your grid options v
 
 ##### Example 1  - via Column Definition
 ```ts
-this.columnDefinitions = [
+this.columns = [
   {
     id: "action", name: "Action", field: "action", formatter: fakeButtonFormatter,
     customTooltip: {

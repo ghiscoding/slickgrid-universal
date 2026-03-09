@@ -20,7 +20,7 @@ const defaultPageSize = 20;
 
 export class Example31 {
   aureliaGrid!: AureliaGridInstance;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   gridOptions!: GridOption;
   dataset: any[] = [];
   metrics!: Metrics;
@@ -50,7 +50,7 @@ export class Example31 {
   }
 
   initializeGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'name',
         name: 'Name',
@@ -142,7 +142,7 @@ export class Example31 {
 
   addOtherGender() {
     const newGender = { value: 'other', label: 'other' };
-    const genderColumn = this.columnDefinitions.find((column: Column) => column.id === 'gender');
+    const genderColumn = this.columns.find((column: Column) => column.id === 'gender');
 
     if (genderColumn) {
       let editorCollection = genderColumn.editor!.collection;

@@ -43,7 +43,7 @@ const customEnableButtonFormatter: Formatter<DataItem> = (_row: number, _cell: n
 })
 export class Example2Component implements OnInit {
   angularGrid!: AngularGridInstance;
-  columnDefinitions: Column<DataItem>[] = [];
+  columns: Column<DataItem>[] = [];
   gridOptions!: GridOption;
   dataset!: any[];
   hideSubTitle = false;
@@ -54,7 +54,7 @@ export class Example2Component implements OnInit {
   }
 
   ngOnInit(): void {
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'title', name: 'Title', field: 'title', sortable: true, width: 70 },
       {
         id: 'phone',

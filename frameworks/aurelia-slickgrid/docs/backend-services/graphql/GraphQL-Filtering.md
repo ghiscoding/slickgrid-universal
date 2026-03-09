@@ -46,12 +46,12 @@ import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, } from '@sli
 
 @autoinject()
 export class Example {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
 
   prepareDatagrid(private graphqlService: GraphqlService ) {
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'name', name: 'Name', field: 'name', filterable: true, sortable: true },
       { id: 'company', name: 'Company', field: 'company', filterable: true },
       { id: 'billingStreet', name: 'Billing Address Street', field: 'billing.address.street', filterable: true, sortable: true },

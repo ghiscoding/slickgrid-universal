@@ -4,7 +4,7 @@ See the full list of [Available Events](Available-Events.md) which you can use b
 ```html
 <angular-slickgrid
      gridId="grid2"
-     [columns]="columnDefinitions"
+     [columns]="columns"
      [options]="gridOptions"
      [dataset]="dataset"
      (onAngularGridCreated)="angularGridReady($event.detail)"
@@ -57,7 +57,7 @@ Bind `(onDataviewCreated)` and `(onGridCreated)` if you want to call any `SlickG
   gridId="grid2"
   (onDataviewCreated)="dataviewReady($event)"
   (onGridCreated)="gridReady($event)"
-  [columns]="columnDefinitions"
+  [columns]="columns"
   [options]="gridOptions"
   [dataset]="dataset">
 </angular-slickgrid>
@@ -76,7 +76,7 @@ import { Editors, Formatters, GridExtraUtils } from 'angular-slickgrid';
   templateUrl: './grid-editor.component.html'
 })
 export class GridEditorComponent implements OnInit {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
   dataviewObj: any;
@@ -84,7 +84,7 @@ export class GridEditorComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'delete', field: 'id', formatter: Formatters.deleteIcon, maxWidth: 30 }
       // ...
     ];
@@ -134,7 +134,7 @@ Angular-Slickgrid now also expose the Slick Grid and DataView objects through th
 </span>
 
 <angular-slickgrid gridId="grid2"
-          [columns]="columnDefinitions"
+          [columns]="columns"
           [options]="gridOptions"
           [dataset]="dataset"
           (onAngularGridCreated)="angularGridReady($event.detail)">
@@ -148,7 +148,7 @@ import { AngularGridInstance, Column, GridOption } from 'angular-slickgrid';
 
 export class MyApp {
   angularGrid: AngularGridInstance;
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
   isAutoEdit = true;

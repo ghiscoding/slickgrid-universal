@@ -51,7 +51,7 @@ const Example: React.FC = () => {
 
   return !options ? '' : (
     <SlickgridReact gridId="grid1"
-      columns={columnDefinitions1}
+      columns={columns1}
       options={gridOptions1!}
       dataset={dataset1}
       onReactGridCreated={$event => reactGrid1Ready($event.detail)}
@@ -121,7 +121,7 @@ const Example: React.FC = () => {
 
   return !options ? '' : (
     <SlickgridReact gridId="grid1"
-      columns={columnDefinitions1}
+      columns={columns1}
       options={gridOptions1!}
       dataset={dataset1}
       onReactGridCreated={$event => reactGrid1Ready($event.detail)}
@@ -191,7 +191,7 @@ const Example: React.FC = () => {
 
   return !options ? '' : (
     <SlickgridReact gridId="grid1"
-      columns={columnDefinitions1}
+      columns={columns1}
       options={gridOptions1!}
       dataset={dataset1}
       onReactGridCreated={$event => reactGrid1Ready($event.detail)}
@@ -245,7 +245,7 @@ function handleOnSelectedRowsChanged(args) {
 
 return !options ? '' : (
   <SlickgridReact gridId="grid1"
-    columns={columnDefinitions1}
+    columns={columns1}
     options={gridOptions1!}
     dataset={dataset1}
     onReactGridCreated={$event => reactGrid1Ready($event.detail)}
@@ -268,7 +268,7 @@ function handleOngridStateChanged(gridState) {
 
 return !options ? '' : (
   <SlickgridReact gridId="grid1"
-    columns={columnDefinitions1}
+    columns={columns1}
     options={gridOptions1!}
     dataset={dataset1}
     onReactGridCreated={$event => reactGrid1Ready($event.detail)}
@@ -302,7 +302,7 @@ const Example: React.FC = () => {
 
   return !options ? null : (
     <SlickgridReact gridId="grid1"
-      columns={columnDefinitions1}
+      columns={columns1}
       options={gridOptions1!}
       dataset={dataset1}
       onReactGridCreated={$event => reactGrid1Ready($event.detail)}
@@ -385,7 +385,7 @@ const Example: React.FC = () => {
 
   return !options ? '' : (
       <SlickgridReact gridId="grid1"
-        columns={columnDefinitions1}
+        columns={columns1}
         options={gridOptions1!}
         dataset={dataset1}
         onReactGridCreated={$event => reactGridReady($event.detail)}

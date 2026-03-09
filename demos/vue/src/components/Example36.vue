@@ -31,7 +31,7 @@ interface GroceryItem {
 }
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const column: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const excelExportService = new ExcelExportService();
 const isDataGrouped = ref(false);
@@ -571,7 +571,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <slickgrid-vue
     v-model:options="gridOptions"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:dataset="dataset"
     grid-id="grid36"
     @onCellChange="invalidateAll()"

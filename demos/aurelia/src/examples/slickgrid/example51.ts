@@ -30,7 +30,7 @@ interface ReportItem {
 
 export class Example51 {
   aureliaGrid!: AureliaGridInstance;
-  columnDefinitions: Column<ReportItem>[] = [];
+  columns: Column<ReportItem>[] = [];
   gridOptions!: GridOption;
   dataset!: ReportItem[];
   hideSubTitle = false;
@@ -50,7 +50,7 @@ export class Example51 {
   }
 
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',

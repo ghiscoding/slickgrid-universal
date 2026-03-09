@@ -105,7 +105,7 @@ export default function Example43() {
   });
 
   // the columns field property is type-safe, try to add a different string not representing one of DataItems properties
-  const [columnDefinitions] = useState<Column[]>([
+  const [columns] = useState<Column[]>([
     { id: 'employeeID', name: 'Employee ID', field: 'employeeID', minWidth: 100 },
     { id: 'employeeName', name: 'Employee Name', field: 'employeeName', editor: { model: Editors.text }, minWidth: 120 },
     { id: '9:00', name: '9:00 AM', field: '9:00', editor: { model: Editors.text }, minWidth: 120 },
@@ -554,7 +554,7 @@ export default function Example43() {
 
       <SlickgridReact
         gridId="grid43"
-        columns={columnDefinitions}
+        columns={columns}
         options={gridOptions}
         dataset={dataset}
         onReactGridCreated={($event) => reactGridReady($event.detail)}

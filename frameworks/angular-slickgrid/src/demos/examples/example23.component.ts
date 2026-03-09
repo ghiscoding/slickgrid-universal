@@ -45,7 +45,7 @@ export class Example23Component implements OnInit, OnDestroy {
 
   private subscriptions: Subscription[] = [];
   angularGrid!: AngularGridInstance;
-  columnDefinitions!: Column[];
+  columns!: Column[];
   gridOptions!: GridOption;
   dataset!: any[];
   hideSubTitle = false;
@@ -71,7 +71,7 @@ export class Example23Component implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',

@@ -25,7 +25,7 @@ export class CustomFooterComponent {
 })
 export class Example29Component implements OnInit {
   angularGrid!: AngularGridInstance;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   gridOptions!: GridOption;
   dataset!: any[];
   hideSubTitle = false;
@@ -35,7 +35,7 @@ export class Example29Component implements OnInit {
   }
 
   ngOnInit(): void {
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'title', name: 'Title', field: 'title', sortable: true },
       { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true },
       { id: '%', name: '% Complete', field: 'percentComplete', sortable: true },

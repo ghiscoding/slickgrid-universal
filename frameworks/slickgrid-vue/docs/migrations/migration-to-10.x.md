@@ -63,7 +63,7 @@ Renaming `v-model:data` to `v-model:dataset` so that it aligns with all other fr
 ```diff
 <SlickgridVue
     grid-id="grid1"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
 -   v-model:data="dataset"
 +   v-model:dataset="dataset"
     v-model:options="gridOptions"

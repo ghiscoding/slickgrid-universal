@@ -12,8 +12,8 @@ let columns2WithHighlightingById: any = {};
   imports: [AngularSlickgridComponent],
 })
 export class Example7Component implements OnInit {
-  columnDefinitions1: Column[] = [];
-  columnDefinitions2: Column[] = [];
+  columns1: Column[] = [];
+  columns2: Column[] = [];
   gridOptions1!: GridOption;
   gridOptions2!: GridOption;
   dataset1: any[] = [];
@@ -184,7 +184,7 @@ export class Example7Component implements OnInit {
 
     // when floating to left, you might want to inverse the icon orders
     if (gridNo === 2) {
-      this.columnDefinitions2[0].header?.buttons?.reverse();
+      this.columns2[0].header?.buttons?.reverse();
     }
 
     // Set a button on the second column to demonstrate hover.

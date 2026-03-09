@@ -6,7 +6,7 @@ import './example11-modal.scss';
 
 export default class Example11Modal {
   private _bindingEventService: BindingEventService;
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   sgb: SlickVanillaGridBundle;
   gridContainerElm: HTMLDivElement;
@@ -25,17 +25,12 @@ export default class Example11Modal {
   bind(bindings: any) {
     if (bindings) {
       if (bindings.columnDefinitions) {
-        this.columnDefinitions = bindings.columnDefinitions;
+        this.columns = bindings.columnDefinitions;
         this.gridContainerElm = document.querySelector(`.modal-grid`) as HTMLDivElement;
         this._bindingEventService.bind(this.gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
 
         const dataset = [this.createEmptyItem(bindings.columnDefinitions)];
-        this.sgb = new Slicker.GridBundle(
-          this.gridContainerElm,
-          this.columnDefinitions,
-          { ...ExampleGridOptions, ...this.gridOptions },
-          dataset
-        );
+        this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, dataset);
 
         // force editor to open (top-left)
         setTimeout(() => this.sgb.slickGrid?.gotoCell(0, 0, true), 50);

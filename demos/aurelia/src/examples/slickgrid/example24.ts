@@ -61,7 +61,7 @@ export class Example24 {
   private _darkModeGrid = false;
   aureliaGrid!: AureliaGridInstance;
   gridOptions!: GridOption;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   dataset: any[] = [];
   hideSubTitle = false;
   selectedLanguage = '';
@@ -96,7 +96,7 @@ export class Example24 {
 
   /* Define grid Options and Columns */
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'id', name: '#', field: 'id', maxWidth: 45, sortable: true, filterable: true },
       {
         id: 'title',

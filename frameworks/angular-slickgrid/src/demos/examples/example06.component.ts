@@ -38,7 +38,7 @@ export class Example6Component implements OnInit, OnDestroy {
   private translate = inject(TranslateService);
   private subscriptions: Subscription[] = [];
   angularGrid!: AngularGridInstance;
-  columnDefinitions!: Column[];
+  columns!: Column[];
   gridOptions!: GridOption;
   dataset = [];
   metrics = signal<Metrics | undefined>(undefined);
@@ -63,7 +63,7 @@ export class Example6Component implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'name',
         field: 'name',
@@ -201,7 +201,7 @@ export class Example6Component implements OnInit, OnDestroy {
         ],
         onCommand: (e, args) => {
           if (args.command === 'reset-grid') {
-            this.angularGrid.gridService.resetGrid(this.columnDefinitions);
+            this.angularGrid.gridService.resetGrid(this.columns);
             localStorage[LOCAL_STORAGE_KEY] = null;
           }
         },

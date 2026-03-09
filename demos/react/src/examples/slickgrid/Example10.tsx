@@ -11,8 +11,8 @@ import {
 import './example10.scss'; // provide custom CSS/SASS styling
 
 const Example10: React.FC = () => {
-  const [columnDefinitions1, setColumnDefinitions1] = useState<Column[]>([]);
-  const [columnDefinitions2, setColumnDefinitions2] = useState<Column[]>([]);
+  const [columns1, setColumns1] = useState<Column[]>([]);
+  const [columns2, setColumns2] = useState<Column[]>([]);
   const [dataset1, setDataset1] = useState<any[]>([]);
   const [dataset2, setDataset2] = useState<any[]>([]);
   const [gridOptions1, setGridOptions1] = useState<GridOption | undefined>(undefined);
@@ -41,7 +41,7 @@ const Example10: React.FC = () => {
 
   /* Define grid Options and Columns */
   function defineGrids() {
-    const columnDefinitions1: Column[] = [
+    const columns1: Column[] = [
       { id: 'title', name: 'Title', field: 'title', sortable: true, filterable: true },
       { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true, type: 'number', filterable: true },
       {
@@ -94,7 +94,7 @@ const Example10: React.FC = () => {
       },
     ];
 
-    const columnDefinitions2: Column[] = [
+    const columns2: Column[] = [
       { id: 'title', name: 'Title', field: 'title', sortable: true, filterable: true },
       { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true, type: 'number', filterable: true },
       {
@@ -226,8 +226,8 @@ const Example10: React.FC = () => {
       },
     };
 
-    setColumnDefinitions1(columnDefinitions1);
-    setColumnDefinitions2(columnDefinitions2);
+    setColumns1(columns1);
+    setColumns2(columns2);
     setGridOptions1(gridOptions1);
     setGridOptions2(gridOptions2);
   }
@@ -381,7 +381,7 @@ const Example10: React.FC = () => {
       <div className="overflow-hidden">
         <SlickgridReact
           gridId="grid1"
-          columns={columnDefinitions1}
+          columns={columns1}
           options={gridOptions1!}
           dataset={dataset1}
           onReactGridCreated={($event) => reactGrid1Ready($event.detail)}
@@ -428,7 +428,7 @@ const Example10: React.FC = () => {
       <div className="overflow-hidden">
         <SlickgridReact
           gridId="grid2"
-          columns={columnDefinitions2}
+          columns={columns2}
           options={gridOptions2!}
           dataset={dataset2}
           onReactGridCreated={($event) => reactGrid2Ready($event.detail)}

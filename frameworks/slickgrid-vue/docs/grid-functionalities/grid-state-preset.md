@@ -31,7 +31,7 @@ import { Column, Filters, Formatters, GridOption, GridState, SlickgridVue, Slick
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const column: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 let vueGrid: SlickgridVueInstance;
 
@@ -63,7 +63,7 @@ function saveCurrentGridState() {
 
 <template>
   <SlickgridVue gridId="grid1"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:options="gridOptions"
     v-model:dataset="dataset"
     @onGridStateChanged="gridStateChanged($event.detail)"
@@ -126,7 +126,7 @@ import { type Column, Filters, Formatters, GridState, SlickgridVue, SlickgridVue
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const column: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -188,7 +188,7 @@ function gridStateChanged(gridState) {
 
 <template>
   <SlickgridVue gridId="grid1"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:options="gridOptions"
     v-model:dataset="dataset"
     @onGridStateChanged="gridStateChanged($event.detail)"

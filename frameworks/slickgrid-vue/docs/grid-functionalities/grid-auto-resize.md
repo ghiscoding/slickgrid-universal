@@ -80,7 +80,7 @@ import { Column, Filters, Formatters, GridOption, SlickgridVue, SortDirection } 
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const column: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const resizerPaused = ref(false);
 let vueGrid: SlickgridVueInstance;
@@ -110,7 +110,7 @@ function togglePauseResizer() {
 
   <SlickgridVue
     grid-id="grid1"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:options="gridOptions"
     v-model:dataset="dataset"
     @onGridStateChanged="gridStateChanged($event.detail)"
@@ -190,7 +190,7 @@ import { Column, Filters, Formatters, GridOption, SlickgridVue, SortDirection } 
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const column: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -213,7 +213,7 @@ function defineGrid() {
   <div id="demo-container" style="resize:both; overflow:auto;">
     <SlickgridVue
       grid-id="grid1"
-      v-model:columns="columnDefinitions"
+      v-model:columns="columns"
       v-model:options="gridOptions"
       v-model:dataset="dataset"
       @onGridStateChanged="gridStateChanged($event.detail)"
@@ -234,7 +234,7 @@ import { Column, Filters, Formatters, GridOption, SlickgridVue, SortDirection } 
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const column: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {

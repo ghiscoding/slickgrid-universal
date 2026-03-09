@@ -70,7 +70,7 @@ export class Example3Component implements OnInit {
   private translate = inject(TranslateService);
   private _commandQueue: any = [];
   angularGrid!: AngularGridInstance;
-  columnDefinitions!: Column[];
+  columns!: Column[];
   gridOptions!: GridOption;
   dataset!: any[];
   gridObj: SlickGrid | undefined;
@@ -91,7 +91,7 @@ export class Example3Component implements OnInit {
   }
 
   prepareGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'edit',
         field: 'id',
@@ -505,7 +505,7 @@ export class Example3Component implements OnInit {
 
     // wrap into a timer to simulate a backend async call
     setTimeout(() => {
-      const requisiteColumnDef = this.columnDefinitions.find((column: Column) => column.id === 'prerequisites');
+      const requisiteColumnDef = this.columns.find((column: Column) => column.id === 'prerequisites');
       if (requisiteColumnDef) {
         const filterCollectionAsync = requisiteColumnDef.filter!.collectionAsync;
         const editorCollection = requisiteColumnDef.editor!.collection;
@@ -539,7 +539,7 @@ export class Example3Component implements OnInit {
    * as for the Editor, there's nothing to do since the element is not shown and it will have latest collection next time it shows up
    */
   deleteItem() {
-    const requisiteColumnDef = this.columnDefinitions.find((column: Column) => column.id === 'prerequisites');
+    const requisiteColumnDef = this.columns.find((column: Column) => column.id === 'prerequisites');
     if (requisiteColumnDef) {
       const filterCollectionAsync = requisiteColumnDef.filter!.collectionAsync;
       const filterCollection = requisiteColumnDef.filter!.collection;
@@ -651,8 +651,8 @@ export class Example3Component implements OnInit {
 
     // you can dynamically add your column to your column definitions
     // and then use the spread operator [...cols] OR slice to force Angular to review the changes
-    this.columnDefinitions.push(newCol);
-    this.columnDefinitions = this.columnDefinitions.slice(); // or use spread operator [...cols]
+    this.columns.push(newCol);
+    this.columns = this.columns.slice(); // or use spread operator [...cols]
 
     // NOTE if you use an Extensions (Checkbox Selector, Row Detail, ...) that modifies the column definitions in any way
     // you MUST use "getAllColumnDefinitions()" from the GridService, using this will be ALL columns including the 1st column that is created internally
@@ -660,19 +660,19 @@ export class Example3Component implements OnInit {
     /*
     const allColumns = this.angularGrid.gridService.getAllColumnDefinitions();
     allColumns.push(newCol);
-    this.columnDefinitions = [...allColumns]; // (or use slice) reassign to column definitions for Angular to do dirty checking
+    this.columns = [...allColumns]; // (or use slice) reassign to column definitions for Angular to do dirty checking
     */
   }
 
   dynamicallyRemoveLastColumn() {
-    this.columnDefinitions.pop();
-    this.columnDefinitions = this.columnDefinitions.slice();
+    this.columns.pop();
+    this.columns = this.columns.slice();
 
     /*
     // remove your column the full set of columns
     // and use slice or spread [...] to trigger an Angular dirty change
     allOriginalColumns.pop();
-    this.columnDefinitions = allOriginalColumns.slice();
+    this.columns = allOriginalColumns.slice();
     */
   }
 

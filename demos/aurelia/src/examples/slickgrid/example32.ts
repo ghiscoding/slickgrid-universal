@@ -44,7 +44,7 @@ const myCustomTitleValidator = (value: any) => {
 export class Example32 {
   aureliaGrid!: AureliaGridInstance;
   gridOptions!: GridOption;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   dataset: any[] = [];
   editQueue: any[] = [];
   editedItems: any = {};
@@ -74,7 +74,7 @@ export class Example32 {
   }
 
   initializeGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',
@@ -397,7 +397,7 @@ export class Example32 {
     ];
 
     // add custom Header Menu to all columns except "Action"
-    this.columnDefinitions.forEach((col) => {
+    this.columns.forEach((col) => {
       col.header = {
         menu: {
           commandItems: [
@@ -514,7 +514,7 @@ export class Example32 {
           ? editCommand.prevSerializedValue
           : [editCommand.prevSerializedValue];
         const serializedValues = Array.isArray(editCommand.serializedValue) ? editCommand.serializedValue : [editCommand.serializedValue];
-        const editorColumns = this.columnDefinitions.filter((col) => col.editor !== undefined);
+        const editorColumns = this.columns.filter((col) => col.editor !== undefined);
 
         const modifiedColumns: Column[] = [];
         prevSerializedValues.forEach((_val, index) => {

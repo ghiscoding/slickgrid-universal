@@ -24,7 +24,7 @@ function unescapeAndLowerCase(val: string) {
 export class Example39 {
   aureliaGrid!: AureliaGridInstance;
   backendService!: GraphqlService;
-  columnDefinitions!: Column[];
+  columns!: Column[];
   gridOptions!: GridOption;
   dataset: any[] = [];
   metrics!: Partial<Metrics>;
@@ -53,7 +53,7 @@ export class Example39 {
   }
 
   initializeGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'name',
         field: 'name',

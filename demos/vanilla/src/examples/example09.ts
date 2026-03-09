@@ -21,7 +21,7 @@ const PERCENT_HTML_ESCAPED = '%25';
 
 export default class Example09 {
   private _bindingEventService: BindingEventService;
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   metrics: Metrics;
   sgb: SlickVanillaGridBundle;
@@ -50,7 +50,7 @@ export default class Example09 {
     this._bindingEventService.bind(gridContainerElm, 'ongridstatechanged', this.gridStateChanged.bind(this));
     // this._bindingEventService.bind(gridContainerElm, 'onbeforeexporttoexcel', () => console.log('onBeforeExportToExcel'));
     // this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => console.log('onAfterExportToExcel'));
-    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, []);
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, []);
 
     // you can optionally cancel the Filtering, Sorting or Pagination with code shown below
     // this._bindingEventService.bind(gridContainerElm, 'onbeforesort', (e) => {
@@ -83,7 +83,7 @@ export default class Example09 {
   }
 
   initializeGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'name',
         name: 'Name',

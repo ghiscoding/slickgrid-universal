@@ -114,7 +114,7 @@ const Example34: React.FC = () => {
   }
 
   function defineGrid() {
-    const columnDefinitions: Column[] = [
+    const columns: Column[] = [
       {
         id: 'currency',
         name: 'Currency',
@@ -289,7 +289,7 @@ const Example34: React.FC = () => {
       cellHighlightCssClass: 'changed',
     };
 
-    columnDefinitionsRef.current = columnDefinitions;
+    columnDefinitionsRef.current = columns;
     setGridOptions(gridOptions);
   }
 

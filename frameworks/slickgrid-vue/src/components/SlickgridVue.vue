@@ -368,7 +368,7 @@ function columnDefinitionsChanged(columnDefinitions?: Column[]) {
 function initialization() {
   if (!_gridOptions.value || !columnDefinitionsModel.value) {
     throw new Error(
-      'Using `<Slickgrid-Vue>` requires `v-model:columns="columnDefinitions"` and `v-model:options="gridOptions.value"`, it seems that you might have forgot to provide them since at least of them is undefined.'
+      'Using `<Slickgrid-Vue>` requires `v-model:columns="columns"` and `v-model:options="gridOptions.value"`, it seems that you might have forgot to provide them since at least of them is undefined.'
     );
   }
 

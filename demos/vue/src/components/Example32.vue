@@ -23,7 +23,7 @@ import COUNTRIES_COLLECTION_URL from './data/countries.json?url';
 
 const NB_ITEMS = 400;
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const column: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const editQueue = ref<any[]>([]);
 const editedItems = ref<any>({});
@@ -984,7 +984,7 @@ function renderItemCallbackWith4Corners(item: any): string {
   <div id="smaller-container" style="width: 950px">
     <slickgrid-vue
       v-model:options="gridOptions"
-      v-model:columns="columnDefinitions"
+      v-model:columns="columns"
       v-model:dataset="dataset"
       grid-id="grid32"
       @onSelectedRowIdsChanged="handleOnSelectedRowIdsChanged($event.detail.args)"

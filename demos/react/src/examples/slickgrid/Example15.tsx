@@ -23,7 +23,7 @@ const NB_ITEMS = 500;
 
 const Example15: React.FC = () => {
   const defaultLang = 'en';
-  const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
   const [dataset] = useState<any[]>(getData(NB_ITEMS));
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
   const [selectedLanguage, setSelectedLanguage] = useState<string>(defaultLang);
@@ -90,8 +90,8 @@ const Example15: React.FC = () => {
       gridOptions.presets = gridStatePresets;
     }
 
-    const columnDefinitions = getColumnDefinitions();
-    setColumnDefinitions(columnDefinitions);
+    const columns = getColumnDefinitions();
+    setColumns(columns);
     setGridOptions(gridOptions);
   }
 
@@ -366,7 +366,7 @@ const Example15: React.FC = () => {
 
       <SlickgridReact
         gridId="grid15"
-        columns={columnDefinitions}
+        columns={columns}
         options={gridOptions}
         dataset={dataset}
         onReactGridCreated={($event) => reactGridReady($event.detail)}

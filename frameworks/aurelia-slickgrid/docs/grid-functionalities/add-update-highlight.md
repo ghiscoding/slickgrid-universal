@@ -35,7 +35,7 @@ Please note that you need to provide the `id` by yourself and remember that it h
 import { AureliaGridInstance} from 'aurelia-slickgrid';
 
 export class GridBasicComponent {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
 
@@ -95,7 +95,7 @@ To delete a row, you can use `deleteItem(s)` and the pass the entire object(s) o
 import { AureliaGridInstance} from 'aurelia-slickgrid';
 
 export class GridBasicComponent {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
 
@@ -131,7 +131,7 @@ To update an item, you can use `updateItem(s)` and the pass the entire object(s)
 import { AureliaGridInstance } from 'aurelia-slickgrid';
 
 export class GridBasicComponent {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
 
@@ -166,7 +166,7 @@ Upsert will do an Insert when not found or update if it found the item already e
 import { AureliaGridInstance } from 'aurelia-slickgrid';
 
 export class GridBasicComponent {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
 
@@ -213,7 +213,7 @@ import { AureliaGridInstance } from 'aurelia-slickgrid';
 
 @autoinject ()
 export class GridBasicComponent {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
 

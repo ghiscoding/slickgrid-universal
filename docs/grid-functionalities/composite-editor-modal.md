@@ -54,7 +54,7 @@ example class MyCompositeDemo {
   }
 
   prepareGrid() {
-    this.columnDefinitions = [ /*...*/ ];
+    this.columns = [ /*...*/ ];
 
     this.gridOptions = {
       enableAddRow: true,           // required for Create/Clone
@@ -93,7 +93,7 @@ example class MyCompositeDemo {
   compositeEditorInstance;
 
   prepareGrid() {
-    this.columnDefinitions = [ /*...*/ ];
+    this.columns = [ /*...*/ ];
 
     this.gridOptions = {
       useSalesforceDefaultGridOptions: true,
@@ -158,7 +158,7 @@ example class MyCompositeDemo {
   }
 
   prepareGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'percentComplete', name: '% Complete', field: 'percentComplete',
         type: 'number', sortable: true, filterable: true,
@@ -205,7 +205,7 @@ example class MyCompositeDemo {
   compositeEditorInstance;
 
   prepareGrid() {
-    this.columnDefinitions = [ /*...*/ ];
+    this.columns = [ /*...*/ ];
 
     this.gridOptions = {
       useSalesforceDefaultGridOptions: true,
@@ -403,7 +403,7 @@ export class GridExample {
   compositeEditorInstance: SlickCompositeEditorComponent;
 
   prepareGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'firstName', name: 'First Name', field: 'firstName', sortable: true, filterable: true,
         editor: { model: Editors.text, compositeEditorFormOrder: 1, required: true }, // make this the 2nd input (1)
@@ -562,7 +562,7 @@ export class GridExample {
   }
 
   prepareGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true, type: 'number',
         editor: { model: Editors.float, massUpdate: true, decimal: 2, required: true },
@@ -619,7 +619,7 @@ export class GridExample {
   }
 
   prepareGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true, type: 'number',
         editor: { model: Editors.float, massUpdate: true, decimal: 2, required: true },

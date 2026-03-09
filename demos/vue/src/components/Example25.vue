@@ -30,7 +30,7 @@ export interface Country {
 }
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const column: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const metrics = ref<Metrics>();
 const processing = ref(false);
@@ -342,7 +342,7 @@ function getLanguages(): Promise<GraphqlResult<{ code: string; name: string; nat
 
   <slickgrid-vue
     v-model:options="gridOptions"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:dataset="dataset"
     grid-id="grid25"
     @onVueGridCreated="vueGridReady($event.detail)"

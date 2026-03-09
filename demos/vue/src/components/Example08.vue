@@ -7,7 +7,7 @@ const { i18next } = useTranslation();
 
 const NB_ITEMS = 1000;
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const column: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const showSubTitle = ref(true);
 const selectedLanguage = ref('en');
@@ -250,7 +250,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
     <slickgrid-vue
       v-model:options="gridOptions"
-      v-model:columns="columnDefinitions"
+      v-model:columns="columns"
       v-model:dataset="dataset"
       grid-id="grid8"
       @onVueGridCreated="vueGridReady($event.detail)"

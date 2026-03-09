@@ -13,7 +13,7 @@ export class Example45 {
   @bindable detailViewRowCount = 9;
   @bindable serverWaitDelay = FAKE_SERVER_DELAY;
 
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   gridOptions!: GridOption;
   aureliaGrid!: AureliaGridInstance;
   dataset: Distributor[] = [];
@@ -40,7 +40,7 @@ export class Example45 {
   }
 
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'companyId',
         name: 'ID',

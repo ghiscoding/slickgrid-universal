@@ -85,7 +85,7 @@ const myCustomTitleValidator = (value: any, args: any) => {
 
 const Example30: React.FC = () => {
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
-  const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
   const [dataset] = useState<any[]>(getData(NB_ITEMS));
   const [darkMode, setDarkMode] = useState<boolean>(false);
   const [isCompositeDisabled, setIsCompositeDisabled] = useState(false);
@@ -122,7 +122,7 @@ const Example30: React.FC = () => {
   }
 
   function defineGrid() {
-    const columnDefinitions: Column[] = [
+    const columns: Column[] = [
       {
         id: 'title',
         name: '<span title="Task must always be followed by a number" class="text-warning mdi mdi-alert-outline"></span> Title <span title="Title is always rendered as UPPERCASE" class="mdi mdi-information-outline"></span>',
@@ -503,7 +503,7 @@ const Example30: React.FC = () => {
           ? editCommand.prevSerializedValue
           : [editCommand.prevSerializedValue];
         const serializedValues = Array.isArray(editCommand.serializedValue) ? editCommand.serializedValue : [editCommand.serializedValue];
-        const editorColumns = columnDefinitions?.filter((col) => col.editor !== undefined);
+        const editorColumns = columns?.filter((col) => col.editor !== undefined);
 
         const modifiedColumns: Column[] = [];
         prevSerializedValues.forEach((_val, index) => {
@@ -542,7 +542,7 @@ const Example30: React.FC = () => {
         },
       },
     };
-    setColumnDefinitions(columnDefinitions);
+    setColumns(columns);
     setGridOptions(gridOptions);
   }
 
@@ -1203,7 +1203,7 @@ const Example30: React.FC = () => {
 
       <SlickgridReact
         gridId="grid30"
-        columns={columnDefinitions}
+        columns={columns}
         options={gridOptions}
         dataset={dataset}
         onReactGridCreated={($event) => reactGridReady($event.detail)}

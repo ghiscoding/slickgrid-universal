@@ -20,7 +20,7 @@ function randomBetween(min: number, max: number): number {
 export class Example42 {
   @bindable() pageSize = 50;
   aureliaGrid!: AureliaGridInstance;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   gridContainerElm!: HTMLDivElement;
   gridOptions!: GridOption;
   dataset: any[] = [];
@@ -41,7 +41,7 @@ export class Example42 {
   }
 
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',

@@ -25,7 +25,7 @@ const FETCH_SIZE = 50;
 })
 export class Example40Component implements OnInit {
   angularGrid!: AngularGridInstance;
-  columnDefinitions!: Column[];
+  columns!: Column[];
   dataset: any[] = [];
   hideSubTitle = false;
   gridOptions!: GridOption;
@@ -47,7 +47,7 @@ export class Example40Component implements OnInit {
   }
 
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'title', name: 'Title', field: 'title', sortable: true, minWidth: 100, filterable: true },
       {
         id: 'duration',

@@ -10,7 +10,7 @@ export default class Example38 {
   private _bindingEventService = new BindingEventService();
   private _darkMode = false;
 
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   dataset: any[] = [];
   gridOptions!: GridOption;
   gridContainerElm: HTMLDivElement;
@@ -25,7 +25,7 @@ export default class Example38 {
     this.gridContainerElm = document.querySelector<HTMLDivElement>('.grid38') as HTMLDivElement;
     this.sgb = new Slicker.GridBundle(
       document.querySelector('.grid38') as HTMLDivElement,
-      this.columnDefinitions,
+      this.columns,
       { ...ExampleGridOptions, ...this.gridOptions },
       this.dataset
     );
@@ -46,7 +46,7 @@ export default class Example38 {
 
   /* Define grid Options and Columns */
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'selector',
         name: '',
@@ -56,7 +56,7 @@ export default class Example38 {
     ];
 
     for (let i = 0; i < NB_ITEMS; i++) {
-      this.columnDefinitions.push({
+      this.columns.push({
         id: i,
         name:
           i < 26

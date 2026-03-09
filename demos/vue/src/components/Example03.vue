@@ -34,7 +34,7 @@ const alertWarning = ref();
 const updatedObject = ref();
 const showSubTitle = ref(true);
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const column: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 let vueGrid!: SlickgridVueInstance;
 
@@ -755,7 +755,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <slickgrid-vue
     v-model:options="gridOptions"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:dataset="dataset"
     grid-id="grid3"
     @on-cell-change="onCellChanged($event.detail.eventData, $event.detail.args)"

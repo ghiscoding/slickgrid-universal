@@ -21,7 +21,7 @@ import { randomNumber } from './utilities.js';
 const FETCH_SIZE = 50;
 
 const Example40: React.FC = () => {
-  const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
   const [dataset] = useState<any[]>(loadData(0, FETCH_SIZE));
   const [hideSubTitle, setHideSubTitle] = useState(false);
 
@@ -42,7 +42,7 @@ const Example40: React.FC = () => {
   }
 
   function defineGrid() {
-    const columnDefinitions: Column[] = [
+    const columns: Column[] = [
       { id: 'title', name: 'Title', field: 'title', sortable: true, minWidth: 100, filterable: true },
       {
         id: 'duration',
@@ -116,7 +116,7 @@ const Example40: React.FC = () => {
       externalResources: [new ExcelExportService()],
     };
 
-    setColumnDefinitions(columnDefinitions);
+    setColumns(columns);
     gridOptionsRef.current = gridOptions;
   }
 
@@ -317,7 +317,7 @@ const Example40: React.FC = () => {
 
         <SlickgridReact
           gridId="grid40"
-          columns={columnDefinitions}
+          columns={columns}
           options={gridOptionsRef.current}
           dataset={dataset}
           onReactGridCreated={($event) => reactGridReady($event.detail)}

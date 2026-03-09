@@ -113,7 +113,7 @@
                   (ngModelChange)="onDropdownChange($event, i)"
                 >
                   <option value=""></option>
-                  @for (field of columnDefinitions; track field) {
+                  @for (field of columns; track field) {
                     <option [ngValue]="field.id">{{ field.name }}</option>
                   }
                 </select>
@@ -131,7 +131,7 @@
   <angular-slickgrid
     gridId="grid18"
     [dataset]="dataset"
-    [columns]="columnDefinitions"
+    [columns]="columns"
     [options]="gridOptions"
     (onCellChange)="onCellChanged()"
     (onAngularGridCreated)="angularGridReady($event.detail)"

@@ -30,7 +30,7 @@ export class Example {
     setTimeout(async () => {
       this.sgb = new Slicker.GridBundle(
         shadowObj.gridContainer as HTMLDivElement,
-        this.columnDefinitions,
+        this.columns,
         this.gridOptions,
         this.dataset
       );
@@ -63,7 +63,7 @@ export class Example {
 
   /* Define grid Options and Columns */
   defineGrid(shadowObj) {
-    this.columnDefinitions = [/* ... */];
+    this.columns = [/* ... */];
 
     this.gridOptions = {
       // ...

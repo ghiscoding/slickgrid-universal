@@ -17,7 +17,7 @@ import {
 } from 'slickgrid-react';
 
 const Example18: React.FC = () => {
-  const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
   const [dataset, setDataset] = useState<any[]>([]);
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
   const [durationOrderByCount, setDurationOrderByCount] = useState(false);
@@ -47,7 +47,7 @@ const Example18: React.FC = () => {
 
   /* Define grid Options and Columns */
   function defineGrid() {
-    const columnDefinitions: Column[] = [
+    const columns: Column[] = [
       {
         id: 'title',
         name: 'Title',
@@ -258,7 +258,7 @@ const Example18: React.FC = () => {
       // enableExcelExport: true,
     };
 
-    setColumnDefinitions(columnDefinitions);
+    setColumns(columns);
     setGridOptions(gridOptions);
   }
 
@@ -611,7 +611,7 @@ const Example18: React.FC = () => {
                       onChange={($event) => changeSelectedGroupByField($event, index)}
                     >
                       <option value="''">...</option>
-                      {columnDefinitions.map((column) => (
+                      {columns.map((column) => (
                         <option value={column.id} key={column.id}>
                           {column.name as string}
                         </option>
@@ -631,7 +631,7 @@ const Example18: React.FC = () => {
 
       <SlickgridReact
         gridId="grid18"
-        columns={columnDefinitions}
+        columns={columns}
         options={gridOptions}
         dataset={dataset}
         onReactGridCreated={($event) => reactGridReady($event.detail)}

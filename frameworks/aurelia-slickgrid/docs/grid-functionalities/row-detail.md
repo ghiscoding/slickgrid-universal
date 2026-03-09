@@ -56,7 +56,7 @@ export class GridExample {
 
   /* Define grid Options and Columns */
   defineGrid() {
-    this.columnDefinitions = [ /*...*/ ];
+    this.columns = [ /*...*/ ];
 
     this.gridOptions = {
       enableRowDetailView: true,
@@ -354,7 +354,7 @@ The reason is because the Row Selection (checkbox) plugin is a special column an
 
 ```html
 <aurelia-slickgrid grid-id="grid16"
-    columns.bind="columnDefinitions"
+    columns.bind="columns"
     options.bind="gridOptions"
     dataset.bind="dataset"
     on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)">
@@ -370,7 +370,7 @@ addNewColumn() {
 
   const allColumns = this.aureliaGrid.gridService.getAllColumnDefinitions();
   allColumns.push(newColumn);
-  this.columnDefinitions = allColumns.slice(); // or use spread operator [...cols]
+  this.columns = allColumns.slice(); // or use spread operator [...cols]
 
   // you could also use SlickGrid setColumns() method
   // this.aureliaGrid.slickGrid.setColumns(cols);
@@ -391,7 +391,7 @@ import { bindable } from 'aurelia';
 import { type AureliaGridInstance, type Column, ExtensionName, type GridOption, type SlickRowDetailView, } from 'aurelia-slickgrid';
 
 export class MainGrid implements OnInit {
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   gridOptions!: GridOption;
   aureliaGrid!: AureliaGridInstance;
   dataset: Distributor[] = [];
@@ -413,7 +413,7 @@ export class MainGrid implements OnInit {
   }
 
   defineGrid() {
-    this.columnDefinitions = [ /*...*/ ];
+    this.columns = [ /*...*/ ];
     this.gridOptions = {
       enableRowDetailView: true,
       externalResources: [AureliaRowDetailView], // for v10 and above

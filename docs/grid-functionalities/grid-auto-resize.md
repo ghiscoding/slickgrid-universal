@@ -30,7 +30,7 @@ All you need to do is enable the Grid Option `enableAutoResize: true` and provid
 ```
 
 ```ts
-this.columnDefinitions = [/*...*/];
+this.columns = [/*...*/];
 
 this.gridOptions = {
   autoResize: {
@@ -91,7 +91,7 @@ export class MyComponent {
   attached() {
     this.initializeGrid();
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid2`);
-    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, this.gridOptions, this.dataset);
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, this.gridOptions, this.dataset);
   }
 
   togglePauseResizer() {
@@ -196,7 +196,7 @@ export class MyComponent {
   attached() {
     this.initializeGrid();
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid2`);
-    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, this.gridOptions, this.dataset);
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, this.gridOptions, this.dataset);
   }
 
   togglePauseResizer() {

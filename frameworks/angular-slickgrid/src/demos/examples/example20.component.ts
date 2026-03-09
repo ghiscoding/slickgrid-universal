@@ -21,7 +21,7 @@ import {
 })
 export class Example20Component implements OnInit, OnDestroy {
   angularGrid!: AngularGridInstance;
-  columnDefinitions!: Column[];
+  columns!: Column[];
   gridOptions!: GridOption;
   dataset!: any[];
   frozenColumnCount = 2;
@@ -63,7 +63,7 @@ export class Example20Component implements OnInit, OnDestroy {
   }
 
   prepareDataGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'sel',
         name: '#',

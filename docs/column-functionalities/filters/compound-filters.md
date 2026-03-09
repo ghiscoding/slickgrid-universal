@@ -32,7 +32,7 @@ You can change some of the SASS [variables](https://github.com/ghiscoding/slickg
 Simply set the flag `filterable` to True and use the filter type `Filters.compoundInput`. Here is an example with a full column definition:
 ```ts
 // define you columns, in this demo Effort Driven will use a Select Filter
-this.columnDefinitions = [
+this.columns = [
   { id: 'title', name: 'Title', field: 'title' },
   { id: 'description', name: 'Description', field: 'description', filterable: true },
   { id: 'complete', name: '% Complete', field: 'percentComplete',
@@ -56,7 +56,7 @@ The column definition `type` will affect the list of Operators shown, for exampl
 As any other columns, set the column definition flag `filterable: true` and use the filter type `Filters.compoundDate`. Here is an example with a full column definition:
 ```ts
 // define you columns, in this demo Effort Driven will use a Select Filter
-this.columnDefinitions = [
+this.columns = [
   { id: 'title', name: 'Title', field: 'title' },
   { id: 'description', name: 'Description', field: 'description', filterable: true },
   { id: 'usDateShort', name: 'US Date Short', field: 'usDateShort',
@@ -87,7 +87,7 @@ For example, if we have an input date in UTC format and we want to display a Dat
 
 ```ts
 // define you columns, in this demo Effort Driven will use a Select Filter
-this.columnDefinitions = [
+this.columns = [
   { id: 'title', name: 'Title', field: 'title' },
   { id: 'description', name: 'Description', field: 'description', filterable: true },
   { id: 'utcDate', name: 'UTC Date', field: 'utcDate',
@@ -111,7 +111,7 @@ For example, if we have an input date in UTC format and we want to display a Dat
 
 ```ts
 // define you columns, in this demo Effort Driven will use a Select Filter
-this.columnDefinitions = [
+this.columns = [
   { id: 'title', name: 'Title', field: 'title' },
   { id: 'description', name: 'Description', field: 'description', filterable: true },
   { id: 'utcDate', name: 'UTC Date', field: 'utcDate',
@@ -159,7 +159,7 @@ this.gridOptions = {
 Each Compound Filter will try to define the best possible Operator List depending on what Field Type you may have (for example we can have StartsWith Operator on a string but not on a number). If you want to provide your own custom Operator List to a Compound Filter, you can do that via the `compoundOperatorList` property (also note that your Operator must be a valid OperatorType).
 
 ```ts
-this.columnDefinitions = [
+this.columns = [
   { id: 'title', name: 'Title', field: 'title' },
   { id: 'description', name: 'Description', field: 'description', filterable: true },
   { id: 'utcDate', name: 'UTC Date', field: 'utcDate',
@@ -221,7 +221,7 @@ What will this option do really?
 
 ###### Code
 ```ts
-this.columnDefinitions = [{
+this.columns = [{
   id: 'name', field: 'name',
   filter: {
     model: Filters.compoundInput,

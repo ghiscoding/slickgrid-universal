@@ -6,8 +6,8 @@ import CUSTOMERS_URL from './data/customers_100.json?url';
 const NB_ITEMS = 500;
 const gridOptions1 = ref<GridOption>();
 const gridOptions2 = ref<GridOption>();
-const columnDefinitions1: Ref<Column[]> = ref([]);
-const columnDefinitions2: Ref<Column[]> = ref([]);
+const columns1: Ref<Column[]> = ref([]);
+const columns2: Ref<Column[]> = ref([]);
 const dataset1 = ref<any[]>([]);
 const dataset2 = ref<any[]>([]);
 const showSubTitle = ref(true);
@@ -29,7 +29,7 @@ onBeforeMount(async () => {
 
 // Grid2 definition
 function defineGrid1() {
-  columnDefinitions1.value = [
+  columns1.value = [
     { id: 'title', name: 'Title', field: 'title', sortable: true, minWidth: 100 },
     { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true, minWidth: 100 },
     { id: '%', name: '% Complete', field: 'percentComplete', sortable: true, minWidth: 100 },
@@ -49,7 +49,7 @@ function defineGrid1() {
 
 // Grid2 definition
 function defineGrid2() {
-  columnDefinitions2.value = [
+  columns2.value = [
     { id: 'name', name: 'Name', field: 'name', filterable: true, sortable: true },
     {
       id: 'gender',
@@ -192,7 +192,7 @@ function vueGrid2Ready(grid: SlickgridVueInstance) {
 
         <slickgrid-vue
           v-model:options="gridOptions1!"
-          v-model:columns="columnDefinitions1"
+          v-model:columns="columns1"
           v-model:dataset="dataset1"
           grid-id="grid1"
           @onVueGridCreated="vueGrid1Ready($event.detail)"
@@ -203,7 +203,7 @@ function vueGrid2Ready(grid: SlickgridVueInstance) {
         <h4>Grid 2 - Load a JSON dataset through Fetch-Client</h4>
         <slickgrid-vue
           v-model:options="gridOptions2!"
-          v-model:columns="columnDefinitions2"
+          v-model:columns="columns2"
           v-model:dataset="dataset2"
           grid-id="grid2"
           @onVueGridCreated="vueGrid2Ready($event.detail)"

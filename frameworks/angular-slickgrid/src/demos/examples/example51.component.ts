@@ -37,7 +37,7 @@ interface ReportItem {
 })
 export class Example51Component implements OnInit {
   angularGrid!: AngularGridInstance;
-  columnDefinitions: Column<ReportItem>[] = [];
+  columns: Column<ReportItem>[] = [];
   gridOptions!: GridOption;
   dataset: ReportItem[] = [];
   hideSubTitle = false;
@@ -53,7 +53,7 @@ export class Example51Component implements OnInit {
   }
 
   prepareGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',

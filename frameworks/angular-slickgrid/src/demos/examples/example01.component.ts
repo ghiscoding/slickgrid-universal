@@ -12,8 +12,8 @@ export class Example1Component implements OnDestroy, OnInit {
   private _darkModeGrid1 = false;
   angularGrid1!: AngularGridInstance;
   grid1ContainerClasses = ['border-bottom-dotted', 'space-bottom'];
-  columnDefinitions1: Column[] = [];
-  columnDefinitions2: Column[] = [];
+  columns1: Column[] = [];
+  columns2: Column[] = [];
   gridOptions1!: GridOption;
   gridOptions2!: GridOption;
   dataset1!: any[];
@@ -40,7 +40,7 @@ export class Example1Component implements OnDestroy, OnInit {
   }
 
   prepareGrid() {
-    this.columnDefinitions1 = [
+    this.columns1 = [
       { id: 'title', name: 'Title', field: 'title', sortable: true },
       { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true },
       { id: '%', name: '% Complete', field: 'percentComplete', sortable: true },
@@ -59,7 +59,7 @@ export class Example1Component implements OnDestroy, OnInit {
 
     // copy the same Grid Options and Column Definitions to 2nd grid
     // but also add Pagination in this grid
-    this.columnDefinitions2 = this.columnDefinitions1;
+    this.columns2 = this.columns1;
     this.gridOptions2 = {
       ...this.gridOptions1,
       ...{
@@ -98,7 +98,7 @@ export class Example1Component implements OnDestroy, OnInit {
 
   resetGrid1() {
     // const cols = this.angularGrid1.slickGrid?.getColumns() || [];
-    const cols = this.columnDefinitions1.slice();
+    const cols = this.columns1.slice();
     cols.forEach((c) => (c.hidden = false));
     this.angularGrid1.slickGrid?.setColumns(cols);
     this.angularGrid1.slickGrid?.autosizeColumns();

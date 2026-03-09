@@ -30,7 +30,7 @@ function unescapeAndLowerCase(val: string) {
 
 const Example39: React.FC = () => {
   const defaultLang = 'en';
-  const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
   const [dataset, setDataset] = useState<any[]>([]);
   const [processing, setProcessing] = useState(false);
   const [graphqlQuery, setGraphqlQuery] = useState('');
@@ -54,7 +54,7 @@ const Example39: React.FC = () => {
   }
 
   function defineGrid() {
-    const columnDefinitions: Column[] = [
+    const columns: Column[] = [
       {
         id: 'name',
         field: 'name',
@@ -152,7 +152,7 @@ const Example39: React.FC = () => {
       } as GraphqlServiceApi,
     };
 
-    setColumnDefinitions(columnDefinitions);
+    setColumns(columns);
     gridOptionsRef.current = gridOptions;
   }
 
@@ -501,7 +501,7 @@ const Example39: React.FC = () => {
 
         <SlickgridReact
           gridId="grid39"
-          columns={columnDefinitions}
+          columns={columns}
           options={gridOptionsRef.current}
           dataset={dataset}
           onReactGridCreated={($event) => reactGridReady($event.detail)}

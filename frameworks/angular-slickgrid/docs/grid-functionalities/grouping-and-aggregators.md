@@ -37,7 +37,7 @@ One of the very first thing that you need to do is to provide the `SlickGrid Dat
 ```html
 <angular-slickgrid
     gridId="grid2"
-    [columns]="columnDefinitions"
+    [columns]="columns"
     [options]="gridOptions"
     [dataset]="dataset"
     (onAngularGridCreated)="angularGridReady($event.detail)">
@@ -51,7 +51,7 @@ One of the very first thing that you need to do is to provide the `SlickGrid Dat
   templateUrl: './grid-grouping.component.html'
 })
 export class GridGroupingComponent implements OnInit, OnDestroy {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataviewObj: any;
 
@@ -139,7 +139,7 @@ Note: the Group Total Formatters named as currency will have these extra `params
 ##### ViewModel
 ```typescript
 export class GridGroupingComponent implements OnInit, OnDestroy {
-  this.columnDefinitions = [
+  this.columns = [
       {
         id: 'title', name: 'Title', field: 'title'
       },
@@ -187,7 +187,7 @@ You can also create a custom `groupTotalsFormatter` similarly to a Formatter, ju
 ##### ViewModel
 ```typescript
 defineGrid() {
-  this.columnDefinitions = [
+  this.columns = [
       {
         id: 'cost', name: 'Cost', field: 'cost',
         groupTotalsFormatter: this.sumTotalsFormatter

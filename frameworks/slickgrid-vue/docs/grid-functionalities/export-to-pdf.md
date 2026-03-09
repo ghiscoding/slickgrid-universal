@@ -229,7 +229,7 @@ You can subscribe to `onBeforeExportToPdf` and `onAfterExportToPdf` events to sh
     <i class="mdi mdi-sync mdi-spin"></i>
   </span>
   <SlickgridVue gridId="grid5"
-      v-model:columns="columnDefinitions"
+      v-model:columns="columns"
       v-model:options="gridOptions"
       v-model:dataset="dataset"
       @onBeforeExportToPdf="changeProcessing(true)"

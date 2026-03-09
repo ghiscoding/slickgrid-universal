@@ -101,7 +101,7 @@ import { Column, Formatter, Formatters, GridOption, SlickgridVue, SlickgridVueIn
 import { onBeforeMount, ref, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]); // to avoid type mismatch use `Ref<Column[]>` instead of `ref<Column[]>`
+const column: Ref<Column[]> = ref([]); // to avoid type mismatch use `Ref<Column[]>` instead of `ref<Column[]>`
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -155,7 +155,7 @@ function getData(count: number) {
 <template>
   <SlickgridVue
     grid-id="grid1"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:options="gridOptions"
     v-model:dataset="dataset" />
 </template>

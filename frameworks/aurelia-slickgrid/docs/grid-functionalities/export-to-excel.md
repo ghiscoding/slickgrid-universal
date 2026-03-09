@@ -89,7 +89,7 @@ Inside the column definition there are couple of flags you can set in `excelExpo
 import { ExcelExportService } from '@slickgrid-universal/excel-export';
 
 defineGrid() {
-  this.columnDefinitions = [
+  this.columns = [
     { id: 'id', name: 'ID', field: 'id',
       excludeFromExport: true // skip the "id" column from the export
     },
@@ -160,7 +160,7 @@ The example below shows a title which uses a merged cell from "B1" to "D1" with 
 ```ts
 export class MyExample {
   prepareGrid() {
-    this.columnDefinitions = [];
+    this.columns = [];
 
     this.gridOptions = {
       externalResources: [new ExcelExportService()],
@@ -264,7 +264,7 @@ Internally, the lib will detect the correct Excel cell format for each column, i
 
 ##### ViewModel
 ```ts
-this.columnDefinitions = [
+this.columns = [
   {
     id: 'cost', name: 'Cost', field: 'cost', width: 80,
     type: 'number',
@@ -322,7 +322,7 @@ The system will auto-detect the Excel format to use for Date and Number field ty
 
 ```ts
 // via column
-this.columnDefinitions = [
+this.columns = [
   {
     id: 'cost', name: 'Cost', field: 'cost', type: 'number'
     excelExportOptions: { autoDetectCellFormat: false }
@@ -342,7 +342,7 @@ This is not recommended but if you have no other ways, you can also provide a `v
 > **Note** the original implementation of both `valueParserCallback` had separate arguments but that expanded into way too many arguments than original planned and so I decided to merge them into a single `args` which includes base arguments (`columnDef`, `gridOptions`, `excelFormatId`, `stylesheet`, `dataRowIdx`, and depending on the type you will also have `dataContext` for regular cell OR `groupType` for grouping cell)
 
 ```ts
-this.columnDefinitions = [
+this.columns = [
   {
     id: 'cost', name: 'Cost', field: 'cost', width: 80,
     type: 'number',
@@ -382,7 +382,7 @@ this.columnDefinitions = [
 By using `valueParserCallback`, there a lot of extra customizations that you can do with it. You could even use Excel Formula to do calculation even based on other fields on your item data context, the code below is calculating Sub-Total and Total. It's a lot of code but it shows the real power customization that exist. If you want to go with even more customization, the new [Example 36](https://ghiscoding.github.io/aurelia-slickgrid-demos/#/example36) even shows you how to summarize Groups with Excel Formulas (but be warned, it does take a fair amount of code and logic to implement by yourself)
 
 ```ts
-this.columnDefinitions = [
+this.columns = [
   {
     id: 'cost', name: 'Cost', field: 'cost', width: 80,
     type: 'number',

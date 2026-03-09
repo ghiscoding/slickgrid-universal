@@ -5,8 +5,8 @@ import './example07.scss';
 const Example7: React.FC = () => {
   const [gridOptions1, setGridOptions1] = useState<GridOption | undefined>(undefined);
   const [gridOptions2, setGridOptions2] = useState<GridOption | undefined>(undefined);
-  const [columnDefinitions1, setColumnDefinitions1] = useState<Column[]>([]);
-  const [columnDefinitions2, setColumnDefinitions2] = useState<Column[]>([]);
+  const [columns1, setColumns1] = useState<Column[]>([]);
+  const [columns2, setColumns2] = useState<Column[]>([]);
   const [dataset1, setDataset1] = useState<any[]>([]);
   const [dataset2, setDataset2] = useState<any[]>([]);
   const [hideSubTitle, setHideSubTitle] = useState(false);
@@ -67,8 +67,8 @@ const Example7: React.FC = () => {
 
     const columnDefinitions1 = createColumnDefinitions(1);
     const columnDefinitions2 = createColumnDefinitions(2);
-    setColumnDefinitions1(columnDefinitions1);
-    setColumnDefinitions2(columnDefinitions2);
+    setColumns1(columns1);
+    setColumns2(columns2);
 
     setDataset1(loadData(200, columnDefinitions1));
     setDataset2(loadData(200, columnDefinitions2));
@@ -270,7 +270,7 @@ const Example7: React.FC = () => {
       <h5>Grid 1</h5>
       <SlickgridReact
         gridId="grid7-1"
-        columns={columnDefinitions1}
+        columns={columns1}
         options={gridOptions1}
         dataset={dataset1}
         onReactGridCreated={($event) => reactGrid1Ready($event.detail)}
@@ -283,7 +283,7 @@ const Example7: React.FC = () => {
       </h5>
       <SlickgridReact
         gridId="grid7-2"
-        columns={columnDefinitions2}
+        columns={columns2}
         options={gridOptions2}
         dataset={dataset2}
         onReactGridCreated={($event) => reactGrid2Ready($event.detail)}

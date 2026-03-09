@@ -19,7 +19,7 @@ const NB_ITEMS = 100;
 export class Example49Component implements OnDestroy, OnInit {
   private _darkMode = false;
   angularGrid!: AngularGridInstance;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   gridOptions!: GridOption;
   dataset!: any[];
   hideSubTitle = false;
@@ -40,7 +40,7 @@ export class Example49Component implements OnDestroy, OnInit {
   }
 
   prepareGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'selector',
         name: '',
@@ -50,7 +50,7 @@ export class Example49Component implements OnDestroy, OnInit {
     ];
 
     for (let i = 0; i < NB_ITEMS; i++) {
-      this.columnDefinitions.push({
+      this.columns.push({
         id: i,
         name:
           i < 26

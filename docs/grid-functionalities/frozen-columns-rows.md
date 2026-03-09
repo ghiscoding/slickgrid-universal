@@ -16,13 +16,13 @@ To set a pinning for the entire duration of the grid, simply use the Grid Option
 ##### Component
 ```ts
 export class GridBasicComponent {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
 
   attached(): void {
       // your columns definition
-    this.columnDefinitions = [];
+    this.columns = [];
 
     this.gridOptions = {
       alwaysShowVerticalScroll: false, // disable scroll since we don't want it to show on the left pinned columns
@@ -44,13 +44,13 @@ This is basically the same thing as previous code sample, except that you will s
 ##### Component
 ```ts
 export class GridBasicComponent {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
 
   attached(): void {
       // your columns definition
-    this.columnDefinitions = [];
+    this.columns = [];
 
     this.gridOptions = {
       alwaysShowVerticalScroll: false, // disable scroll since we don't want it to show on the left pinned columns
@@ -100,14 +100,14 @@ You can change the number of pinned columns/rows and even the pinning of columns
 ##### Component
 ```ts
 export class GridBasicComponent {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
   isFrozenBottom = false;
 
   attached(): void {
     // your columns definition
-    this.columnDefinitions = [];
+    this.columns = [];
 
     this.gridOptions = {
       alwaysShowVerticalScroll: false, // disable scroll since we don't want it to show on the left pinned columns

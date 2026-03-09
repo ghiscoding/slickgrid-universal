@@ -48,7 +48,7 @@ export class Example46Component implements OnInit {
   dataViewObj: any;
   gridObj: any;
   gridOptions!: GridOption;
-  columnDefinitions!: Column[];
+  columns!: Column[];
   datasetHierarchical: any[] = [];
   hideSubTitle = false;
   searchString = '';
@@ -63,7 +63,7 @@ export class Example46Component implements OnInit {
   }
 
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'chapterName',
         name: 'Chapter',

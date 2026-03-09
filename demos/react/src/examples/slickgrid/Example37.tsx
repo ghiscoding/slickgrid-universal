@@ -11,7 +11,7 @@ import {
 const NB_ITEMS = 100;
 
 const Example37: React.FC = () => {
-  const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
   const [dataset, setDataset] = useState<any[]>([]);
   const [darkMode, setDarkMode] = useState<boolean>(false);
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
@@ -62,7 +62,7 @@ const Example37: React.FC = () => {
       footerRowHeight: 28,
     };
 
-    setColumnDefinitions(columnDefs);
+    setColumns(columnDefs);
     setGridOptions(gridOptions);
     setDataset(loadData(NB_ITEMS, columnDefs.length));
   }
@@ -167,7 +167,7 @@ const Example37: React.FC = () => {
 
       <SlickgridReact
         gridId="grid37"
-        columns={columnDefinitions}
+        columns={columns}
         options={gridOptions}
         dataset={dataset}
         onReactGridCreated={($event) => reactGridReady($event.detail)}

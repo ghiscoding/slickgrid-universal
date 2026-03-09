@@ -11,8 +11,8 @@ let columns2WithHighlightingById = {};
 
 export default class Example13 {
   private _bindingEventService: BindingEventService;
-  columnDefinitions1: Column[];
-  columnDefinitions2: Column[];
+  columns1: Column[];
+  columns2: Column[];
   gridOptions1: GridOption;
   gridOptions2: GridOption;
   dataset1: any[];
@@ -37,18 +37,8 @@ export default class Example13 {
     const gridContainerElm1 = document.querySelector(`.grid13-1`) as HTMLDivElement;
     const gridContainerElm2 = document.querySelector(`.grid13-2`) as HTMLDivElement;
 
-    this.sgb1 = new Slicker.GridBundle(
-      gridContainerElm1,
-      this.columnDefinitions1,
-      { ...ExampleGridOptions, ...this.gridOptions1 },
-      this.dataset1
-    );
-    this.sgb2 = new Slicker.GridBundle(
-      gridContainerElm2,
-      this.columnDefinitions2,
-      { ...ExampleGridOptions, ...this.gridOptions2 },
-      this.dataset2
-    );
+    this.sgb1 = new Slicker.GridBundle(gridContainerElm1, this.columns1, { ...ExampleGridOptions, ...this.gridOptions1 }, this.dataset1);
+    this.sgb2 = new Slicker.GridBundle(gridContainerElm2, this.columns2, { ...ExampleGridOptions, ...this.gridOptions2 }, this.dataset2);
     document.body.classList.add('material-theme');
   }
 
@@ -60,8 +50,8 @@ export default class Example13 {
   }
 
   initializeGrid() {
-    this.columnDefinitions1 = [];
-    this.columnDefinitions2 = [];
+    this.columns1 = [];
+    this.columns2 = [];
 
     this.gridOptions1 = {
       enableAutoResize: true,
@@ -207,7 +197,7 @@ export default class Example13 {
 
     // when floating to left, you might want to inverse the icon orders
     if (gridNo === 2) {
-      this.columnDefinitions2[0].header?.buttons?.reverse();
+      this.columns2[0].header?.buttons?.reverse();
     }
 
     // Set a button on the second column to demonstrate hover.

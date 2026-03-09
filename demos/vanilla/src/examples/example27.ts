@@ -21,7 +21,7 @@ export default class Example27 {
   private _bindingEventService: BindingEventService;
   private _darkMode = false;
   backendService: GraphqlService;
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset = [];
   metricsEndTime = '';
@@ -58,12 +58,7 @@ export default class Example27 {
     this.initializeGrid();
     const gridContainerElm = document.querySelector(`.grid27`) as HTMLDivElement;
 
-    this.sgb = new Slicker.GridBundle(
-      gridContainerElm,
-      this.columnDefinitions,
-      { ...ExampleGridOptions, ...this.gridOptions },
-      this.dataset
-    );
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
 
     // bind any of the grid events
     this._bindingEventService.bind(gridContainerElm, 'onrowcountchanged', this.refreshMetrics.bind(this) as EventListener);
@@ -79,7 +74,7 @@ export default class Example27 {
   }
 
   initializeGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'name',
         field: 'name',

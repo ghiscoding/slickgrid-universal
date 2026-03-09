@@ -14,7 +14,7 @@ import './example20.scss'; // provide custom CSS/SASS styling
 
 export class Example20 {
   aureliaGrid!: AureliaGridInstance;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   gridObj!: SlickGrid;
   gridOptions!: GridOption;
   frozenColumnCount = 2;
@@ -59,7 +59,7 @@ export class Example20 {
 
   /* Define grid Options and Columns */
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'sel',
         name: '#',

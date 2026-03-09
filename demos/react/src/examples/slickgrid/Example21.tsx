@@ -3,7 +3,7 @@ import { Formatters, SlickgridReact, type Column, type GridOption, type Operator
 import './example21.scss';
 
 const Example21: React.FC = () => {
-  const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
   const [dataset] = useState<any[]>(getData());
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
   const reactGridRef = useRef<SlickgridReactInstance | null>(null);
@@ -27,7 +27,7 @@ const Example21: React.FC = () => {
 
   /* Define grid Options and Columns */
   function defineGrid() {
-    const columnDefinitions: Column[] = [
+    const columns: Column[] = [
       {
         id: 'title',
         name: 'Title',
@@ -103,7 +103,7 @@ const Example21: React.FC = () => {
       enableSelection: true,
     };
 
-    setColumnDefinitions(columnDefinitions);
+    setColumns(columns);
     setGridOptions(gridOptions);
   }
 
@@ -144,7 +144,7 @@ const Example21: React.FC = () => {
 
   function selectedColumnChanged(e: React.ChangeEvent<HTMLSelectElement>) {
     const selectedVal = (e.target as HTMLSelectElement)?.value ?? '';
-    const selectedColumn = columnDefinitions.find((c) => c.id === selectedVal);
+    const selectedColumn = columns.find((c) => c.id === selectedVal);
 
     setSelectedColumn(selectedColumn);
   }
@@ -218,7 +218,7 @@ const Example21: React.FC = () => {
             onChange={($event) => selectedColumnChanged($event)}
           >
             <option value="''">...</option>
-            {columnDefinitions.map((column) => (
+            {columns.map((column) => (
               <option value={column.id} key={column.id}>
                 {column.name as string}
               </option>
@@ -266,7 +266,7 @@ const Example21: React.FC = () => {
 
       <SlickgridReact
         gridId="grid21"
-        columns={columnDefinitions}
+        columns={columns}
         options={gridOptions}
         dataset={dataset}
         onReactGridCreated={($event) => reactGridReady($event.detail)}

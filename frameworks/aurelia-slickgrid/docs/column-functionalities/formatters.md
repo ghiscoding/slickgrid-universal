@@ -95,7 +95,7 @@ To use any of them, you simply need to import `Formatters` from `Slickgrid-Unive
 import { Formatters } from 'aurelia-slickgrid';
 
 export class Example {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
 
@@ -105,7 +105,7 @@ export class Example {
   }
 
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'title', name: 'Title', field: 'title' },
       { id: 'duration', name: 'Duration (days)', field: 'duration' },
       { id: '%', name: '% Complete', field: 'percentComplete', formatter: Formatters.percentComplete },
@@ -124,7 +124,7 @@ What if you want to pass extra arguments that you want to use within the Formatt
 ```ts
 let optionList = ['True', 'False'];
 
-this.columnDefinitions = [
+this.columns = [
   { id: 'title', field: 'title',
     headerTranslate: 'TITLE',
     formatter: myCustomSelectFormatter,
@@ -146,7 +146,7 @@ SlickGrid only has 1 `formatter` property but if you want to use more than 1 For
 // Data Example::
 // data = [{ shipping: { cost: 123.22, address: { zip: 123456 } } }];
 
-this.columnDefinitions = [
+this.columns = [
   {
     id: 'shippingCost', field: 'shipping.cost', name: 'Shipping Cost',
     formatter: Formatters.multiple,
@@ -231,7 +231,7 @@ You can set some defined common Formatter Options in your Grid Options through t
 
 ```ts
 loadGrid() {
-  this.columnDefinitions = [
+  this.columns = [
     // through the column definition "params"
     { id: 'price', field: 'price', params: { thousandSeparator: ',' } },
   ];
@@ -313,7 +313,7 @@ const renderSparklineFormatter: Formatter = (row: number, cell: number, value: a
   }
 
  defineGrid() {
-   this.columnDefinitions = [
+   this.columns = [
       { id: 'title', name: 'Title', field: 'title' },
       { id: "chart", name: "Chart", sortable: false, width: 60,
          formatter: waitingFormatter,

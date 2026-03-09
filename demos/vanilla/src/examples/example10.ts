@@ -29,7 +29,7 @@ const FAKE_SERVER_DELAY = 250;
 export default class Example10 {
   private _bindingEventService: BindingEventService;
   private _darkMode = false;
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset = [];
   metrics: Metrics;
@@ -61,12 +61,7 @@ export default class Example10 {
 
     // this._bindingEventService.bind(gridContainerElm, 'onbeforeexporttoexcel', () => console.log('onBeforeExportToExcel'));
     // this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => console.log('onAfterExportToExcel'));
-    this.sgb = new Slicker.GridBundle(
-      gridContainerElm,
-      this.columnDefinitions,
-      { ...ExampleGridOptions, ...this.gridOptions },
-      this.dataset
-    );
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
     this._bindingEventService.bind(gridContainerElm, 'ongridstatechanged', this.handleOnGridStateChanged.bind(this));
     document.body.classList.add('material-theme');
   }
@@ -83,7 +78,7 @@ export default class Example10 {
   }
 
   initializeGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'name',
         field: 'name',

@@ -18,7 +18,7 @@ import Data from './data/customers_100.json';
 const defaultPageSize = 20;
 
 const Example31: React.FC = () => {
-  const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
   const [dataset, setDataset] = useState<any[]>([]);
   const [isOtherGenderAdded, setIsOtherGenderAdded] = useState(false);
   const [isCountEnabled, setIsCountEnabled] = useState(true);
@@ -47,7 +47,7 @@ const Example31: React.FC = () => {
   }
 
   function defineGrid() {
-    const columnDefinitions: Column[] = [
+    const columns: Column[] = [
       {
         id: 'name',
         name: 'Name',
@@ -136,13 +136,13 @@ const Example31: React.FC = () => {
       externalResources: [new RxJsResource()],
     };
 
-    setColumnDefinitions(columnDefinitions);
+    setColumns(columns);
     gridOptionsRef.current = gridOptions;
   }
 
   function addOtherGender() {
     const newGender = { value: 'other', label: 'other' };
-    const genderColumn = columnDefinitions.find((column: Column) => column.id === 'gender');
+    const genderColumn = columns.find((column: Column) => column.id === 'gender');
 
     if (genderColumn) {
       let editorCollection = genderColumn.editor!.collection;
@@ -617,7 +617,7 @@ const Example31: React.FC = () => {
 
       <SlickgridReact
         gridId="grid31"
-        columns={columnDefinitions}
+        columns={columns}
         options={gridOptionsRef.current}
         dataset={dataset}
         paginationOptions={paginationOptions}

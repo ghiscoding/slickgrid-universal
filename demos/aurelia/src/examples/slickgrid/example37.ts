@@ -6,7 +6,7 @@ export class Example37 {
   private _darkMode = false;
   aureliaGrid!: AureliaGridInstance;
   gridOptions!: GridOption;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   dataset: any[] = [];
   hideSubTitle = false;
   resizerPaused = false;
@@ -40,7 +40,7 @@ export class Example37 {
         editor: { model: Editors.integer },
       });
     }
-    this.columnDefinitions = columnDefs;
+    this.columns = columnDefs;
 
     this.gridOptions = {
       autoEdit: true,
@@ -63,7 +63,7 @@ export class Example37 {
     for (let i = 0; i < itemCount; i++) {
       const d = (datasetTmp[i] = {} as any);
       d.id = i;
-      for (let j = 0; j < this.columnDefinitions.length; j++) {
+      for (let j = 0; j < this.columns.length; j++) {
         d[j] = Math.round(Math.random() * 10);
       }
     }

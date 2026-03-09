@@ -22,7 +22,7 @@ const PERCENT_HTML_ESCAPED = '%25';
 export default class Example26 {
   private _bindingEventService: BindingEventService;
   backendService: GridOdataService;
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   metricsEndTime = '';
   metricsItemCount = 0;
@@ -48,7 +48,7 @@ export default class Example26 {
     this.initializeGrid();
     const gridContainerElm = document.querySelector(`.grid26`) as HTMLDivElement;
 
-    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, []);
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, []);
 
     // bind any of the grid events
     this._bindingEventService.bind(gridContainerElm, 'onrowcountchanged', this.refreshMetrics.bind(this) as EventListener);
@@ -70,7 +70,7 @@ export default class Example26 {
   }
 
   initializeGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'name',
         name: 'Name',

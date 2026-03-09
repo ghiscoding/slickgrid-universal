@@ -96,7 +96,7 @@ class CustomSumAggregator implements Aggregator {
 }
 
 const Example36: React.FC = () => {
-  const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
   const [dataset] = useState<any[]>(getData());
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
   const [taxRate, setTaxRate] = useState(7.5);
@@ -118,7 +118,7 @@ const Example36: React.FC = () => {
   /* Define grid Options and Columns */
   function defineGrid() {
     // the columns field property is type-safe, try to add a different string not representing one of DataItems properties
-    const columnDefinitions: Column[] = [
+    const columns: Column[] = [
       {
         id: 'sel',
         name: '#',
@@ -354,7 +354,7 @@ const Example36: React.FC = () => {
       },
     };
 
-    setColumnDefinitions(columnDefinitions);
+    setColumns(columns);
     setGridOptions(gridOptions);
   }
 
@@ -590,7 +590,7 @@ const Example36: React.FC = () => {
 
       <SlickgridReact
         gridId="grid36"
-        columns={columnDefinitions}
+        columns={columns}
         options={gridOptions}
         dataset={dataset}
         onReactGridCreated={($event) => reactGridReady($event.detail)}

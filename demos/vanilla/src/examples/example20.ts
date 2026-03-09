@@ -36,7 +36,7 @@ export default class Example20 {
   isGridEditable = false;
   detailViewRowCount = 7;
   gridOptions!: GridOption;
-  columnDefinitions!: Column<Item>[];
+  columns!: Column<Item>[];
   dataset!: Item[];
   sgb!: SlickVanillaGridBundle;
   selectedRowString = '';
@@ -70,12 +70,7 @@ export default class Example20 {
     this.dataset = this.mockData(NB_ITEMS);
     this.gridContainerElm = document.querySelector<HTMLDivElement>(`.grid20`) as HTMLDivElement;
 
-    this.sgb = new Slicker.GridBundle(
-      this.gridContainerElm,
-      this.columnDefinitions,
-      { ...ExampleGridOptions, ...this.gridOptions },
-      this.dataset
-    );
+    this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
 
     // add all row detail event listeners
     this.addRowDetailEventHandlers();
@@ -97,7 +92,7 @@ export default class Example20 {
 
   /* Define grid Options and Columns */
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',

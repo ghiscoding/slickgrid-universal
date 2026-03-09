@@ -5,7 +5,7 @@ import './example08.scss'; // provide custom CSS/SASS styling
 
 export class Example08 {
   aureliaGrid!: AureliaGridInstance;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   gridOptions!: GridOption;
   dataset: any[] = [];
   hideSubTitle = false;
@@ -32,7 +32,7 @@ export class Example08 {
   }
 
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'title', name: 'Title', field: 'title', nameKey: 'TITLE' },
       { id: 'duration', name: 'Duration', field: 'duration', nameKey: 'DURATION', sortable: true },
       { id: 'percentComplete', name: '% Complete', field: 'percentComplete', nameKey: 'PERCENT_COMPLETE', sortable: true },
@@ -41,7 +41,7 @@ export class Example08 {
       { id: 'completed', name: 'Completed', field: 'completed', nameKey: 'COMPLETED', formatter: Formatters.checkmarkMaterial },
     ];
 
-    this.columnDefinitions.forEach((columnDef) => {
+    this.columns.forEach((columnDef) => {
       columnDef.header = {
         menu: {
           commandItems: [

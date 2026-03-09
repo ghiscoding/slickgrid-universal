@@ -68,7 +68,7 @@ As you can see, you mainly need to define which service to use (GridODataService
 import { GridOdataService, OdataServiceApi, OdataOption } from '@slickgrid-universal/odata';
 
 export class Example {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset = [];
 
@@ -80,7 +80,7 @@ export class Example {
   }
 
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       // your column definitions
     ];
 

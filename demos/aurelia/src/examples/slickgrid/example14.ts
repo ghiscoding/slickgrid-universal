@@ -7,8 +7,8 @@ export class Example14 {
   aureliaGrid1!: AureliaGridInstance;
   aureliaGrid2!: AureliaGridInstance;
   gridObj2: any;
-  columnDefinitions1: Column[] = [];
-  columnDefinitions2: Column[] = [];
+  columns1: Column[] = [];
+  columns2: Column[] = [];
   gridOptions1!: GridOption;
   gridOptions2!: GridOption;
   dataset1: any[] = [];
@@ -37,7 +37,7 @@ export class Example14 {
   }
 
   definedGrid1() {
-    this.columnDefinitions1 = [
+    this.columns1 = [
       { id: 'title', name: 'Title', field: 'title', sortable: true, columnGroup: 'Common Factor' },
       { id: 'duration', name: 'Duration', field: 'duration', columnGroup: 'Common Factor' },
       { id: 'start', name: 'Start', field: 'start', columnGroup: 'Period' },
@@ -76,7 +76,7 @@ export class Example14 {
   }
 
   definedGrid2() {
-    this.columnDefinitions2 = [
+    this.columns2 = [
       {
         id: 'sel',
         name: '#',

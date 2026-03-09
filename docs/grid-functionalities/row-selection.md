@@ -33,7 +33,7 @@ export class Example1 {
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid3`);
 
     gridContainerElm.addEventListener('onselectedrows', this.handleOnClick.bind(this));
-    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
 
   initializeGrid() {
@@ -94,7 +94,7 @@ export class Example1 {
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid3`);
 
     gridContainerElm.addEventListener('onselectedrows', this.handleOnClick.bind(this));
-    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
 
   initializeGrid() {
@@ -251,7 +251,7 @@ export class Example1 {
     this.initializeGrid();
     this.dataset = this.loadData(500);
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid3`);
-    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
 
   clearRowSelection() {
@@ -309,7 +309,7 @@ export class Example1 {
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid3`);
 
     gridContainerElm.addEventListener('ondragreplacecells', this.handleOnClick.bind(this));
-    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
 
   initializeGrid() {
@@ -348,7 +348,7 @@ const newColumn = { /*...*/ };
 
 const allColumns = this.sgb.gridService.getAllColumnDefinitions();
 allColumns.push(newColumn);
-this.columnDefinitions = allColumns.slice(); // or use spread operator [...cols]
+this.columns = allColumns.slice(); // or use spread operator [...cols]
 
 // you could also use SlickGrid setColumns() method
 // this.sgb.slickGrid.setColumns(cols);

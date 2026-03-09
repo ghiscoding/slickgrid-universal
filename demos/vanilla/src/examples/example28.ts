@@ -19,7 +19,7 @@ const FETCH_SIZE = 50;
 
 export default class Example28 {
   private _bindingEventService: BindingEventService;
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   shouldResetOnSort = false;
   metricsEndTime = '';
@@ -36,7 +36,7 @@ export default class Example28 {
     const gridContainerElm = document.querySelector(`.grid28`) as HTMLDivElement;
     const dataset = this.loadData(0, FETCH_SIZE);
 
-    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, dataset);
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, dataset);
     this.metricsItemCount = FETCH_SIZE;
     this.metricsTotalItemCount = FETCH_SIZE;
 
@@ -54,7 +54,7 @@ export default class Example28 {
   }
 
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'title', name: 'Title', field: 'title', sortable: true, minWidth: 100, filterable: true },
       {
         id: 'duration',

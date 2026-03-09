@@ -13,7 +13,7 @@ const sampleDataRoot = 'assets/data';
 })
 export class Example17Component {
   angularGrid!: AngularGridInstance;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   gridOptions!: GridOption;
   dataset: any[] = [];
   gridCreated = false;
@@ -99,7 +99,7 @@ export class Example17Component {
     };
 
     this.dataset = outputData;
-    this.columnDefinitions = colDefs;
+    this.columns = colDefs;
     this.gridCreated = true;
   }
 

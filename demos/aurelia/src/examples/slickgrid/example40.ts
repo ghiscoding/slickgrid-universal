@@ -18,7 +18,7 @@ const FETCH_SIZE = 50;
 
 export class Example40 {
   aureliaGrid!: AureliaGridInstance;
-  columnDefinitions!: Column[];
+  columns!: Column[];
   dataset: any[] = [];
   gridOptions!: GridOption;
   metrics!: Partial<Metrics>;
@@ -39,7 +39,7 @@ export class Example40 {
   }
 
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'title', name: 'Title', field: 'title', sortable: true, minWidth: 100, filterable: true },
       {
         id: 'duration',

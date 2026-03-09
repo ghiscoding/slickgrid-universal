@@ -11,8 +11,8 @@ export default class Example37 {
 
   gridOptions1!: GridOption;
   gridOptions2!: GridOption;
-  columnDefinitions1!: Column[];
-  columnDefinitions2!: Column[];
+  columns1!: Column[];
+  columns2!: Column[];
   dataset1!: any[];
   dataset2!: any[];
   sgb1!: SlickVanillaGridBundle;
@@ -30,13 +30,13 @@ export default class Example37 {
 
     this.sgb1 = new Slicker.GridBundle(
       document.querySelector('.grid37-1') as HTMLDivElement,
-      this.columnDefinitions1,
+      this.columns1,
       { ...ExampleGridOptions, ...this.gridOptions1 },
       this.dataset1
     );
     this.sgb2 = new Slicker.GridBundle(
       document.querySelector('.grid37-2') as HTMLDivElement,
-      this.columnDefinitions2,
+      this.columns2,
       {
         ...ExampleGridOptions,
         ...this.gridOptions2,
@@ -78,7 +78,7 @@ export default class Example37 {
 
   /* Define grid Options and Columns */
   defineGrids() {
-    this.columnDefinitions1 = [
+    this.columns1 = [
       { id: 'id', name: '#', field: 'id', width: 32, maxWidth: 40, excludeFromHeaderMenu: true },
       { id: 'title', name: 'Title', field: 'title', width: 90, cssClass: 'cell-title' },
       { id: 'complete', name: '% Complete', field: 'percentComplete', sortable: true, width: 90 },
@@ -116,7 +116,7 @@ export default class Example37 {
         formatter: Formatters.checkmarkMaterial,
       },
     ];
-    this.columnDefinitions2 = [...this.columnDefinitions1];
+    this.columns2 = [...this.columns1];
 
     this.gridOptions1 = {
       autoResize: {

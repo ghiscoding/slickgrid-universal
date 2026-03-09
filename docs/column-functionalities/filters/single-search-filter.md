@@ -37,7 +37,7 @@ Some users might want to have 1 main single search for filtering the grid data i
   </form>
 
 <div grid-id="grid21"
-    columns.bind="columnDefinitions"
+    columns.bind="columns"
     options.bind="gridOptions"
     dataset.bind="dataset">
 </div>
@@ -52,7 +52,7 @@ export class MyExample {
 
   grid: SlickGrid;
   dataView: SlickDataView;
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
   operatorList: OperatorType[] = ['=', '<', '<=', '>', '>=', '<>'];

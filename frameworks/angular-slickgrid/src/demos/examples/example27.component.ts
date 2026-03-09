@@ -25,7 +25,7 @@ export class Example27Component implements OnInit {
   dataViewObj: any;
   gridObj: any;
   gridOptions!: GridOption;
-  columnDefinitions!: Column[];
+  columns!: Column[];
   dataset!: any[];
   loadingClass = '';
   hideSubTitle = false;
@@ -42,7 +42,7 @@ export class Example27Component implements OnInit {
   }
 
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',

@@ -17,7 +17,7 @@ By default all the range filters are with exclusive range, which mean between va
 For example
 ```ts
 // your columns definition
-this.columnDefinitions = [
+this.columns = [
   {
     id: 'duration', field: 'duration', name: 'Duration',
     filterable: true,
@@ -40,13 +40,13 @@ You can use a regular input filter with the 2 dots (..) notation to represent a 
 import { Filters, Formatters, GridOption } from '@slickgrid-universal/common';
 
 export class GridBasicComponent {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
 
   attached(): void {
     // your columns definition
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'duration', field: 'duration', name: 'Duration',
         type: 'number', // you can optionally specify that the data are numbers
@@ -75,13 +75,13 @@ The slider range filter is very useful if you can just want to use the mouse to 
 import { Filters, Formatters, GridOption, SliderRangeOption } from '@slickgrid-universal/commomn';
 
 export class GridBasicComponent {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
 
   attached(): void {
     // your columns definition
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'complete', name: '% Complete', field: 'percentComplete', headerKey: 'PERCENT_COMPLETE', minWidth: 120,
         sortable: true,
@@ -144,13 +144,13 @@ import { Filters, Formatters, GridOption, VanillaCalendarOption } from '@slickgr
 
 ```typescript
 export class GridBasicComponent {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
 
   attached(): void {
     // your columns definition
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'finish', name: 'Finish', field: 'finish', headerKey: 'FINISH',
         minWidth: 75, width: 120, exportWithFormatter: true,

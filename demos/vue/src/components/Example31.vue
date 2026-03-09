@@ -19,7 +19,7 @@ import Data from './data/customers_100.json';
 
 const defaultPageSize = 20;
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const column: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const metrics = ref<Metrics>({} as Metrics);
 const paginationOptions = ref<Pagination>();
@@ -541,7 +541,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <slickgrid-vue
     v-model:options="gridOptions"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:pagination="paginationOptions"
     v-model:dataset="dataset"
     grid-id="grid31"

@@ -4,7 +4,7 @@ import './example41.scss';
 export class Example41 {
   aureliaGrid!: AureliaGridInstance;
   gridOptions!: GridOption;
-  columnDefinitions!: Column[];
+  columns!: Column[];
   dataset: any[] = [];
   dragHelper?: HTMLElement;
   dragRows: number[] = [];
@@ -24,7 +24,7 @@ export class Example41 {
 
   /* Define grid Options and Columns */
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'name',
         name: 'Name',

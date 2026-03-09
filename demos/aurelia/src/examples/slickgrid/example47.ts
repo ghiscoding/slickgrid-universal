@@ -42,7 +42,7 @@ export class Example47 {
   dataviewObj!: SlickDataView;
   gridObj!: SlickGrid;
   gridOptions!: GridOption;
-  columnDefinitions: Column<Item>[] = [];
+  columns: Column<Item>[] = [];
   dataset: Item[] = [];
   // extensions!: ExtensionList<any>;
   hideSubTitle = false;
@@ -83,7 +83,7 @@ export class Example47 {
 
   /* Define grid Options and Columns */
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',

@@ -18,7 +18,7 @@ const NB_ITEMS = 500;
 
 export default class Example05 {
   private _bindingEventService: BindingEventService;
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
   sgb: SlickVanillaGridBundle;
@@ -36,7 +36,7 @@ export default class Example05 {
     this.dataset = [];
     const gridContainerElm = document.querySelector('.grid5') as HTMLDivElement;
 
-    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions });
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions });
     this.dataset = this.loadData(NB_ITEMS);
 
     // optionally display only the parent items count on the right footer
@@ -170,7 +170,7 @@ export default class Example05 {
   }
 
   initializeGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',

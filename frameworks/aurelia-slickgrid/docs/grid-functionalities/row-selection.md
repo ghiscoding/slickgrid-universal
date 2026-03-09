@@ -210,7 +210,7 @@ You can change which row(s) are selected by using the built-in SlickGrid method 
 ```html
 <aurelia-slickgrid
       grid-id="grid1"
-      columns.bind="columnDefinitions"
+      columns.bind="columns"
       options.bind="gridOptions"
       dataset.bind="dataset"
       on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)">
@@ -315,7 +315,7 @@ The reason is because the Row Selection (checkbox) plugin is a special column an
 
 ```html
 <aurelia-slickgrid grid-id="grid16"
-    columns.bind="columnDefinitions"
+    columns.bind="columns"
     options.bind="gridOptions"
     dataset.bind="dataset"
     on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)">
@@ -331,7 +331,7 @@ addNewColumn() {
 
   const allColumns = this.aureliaGrid.gridService.getAllColumnDefinitions();
   allColumns.push(newColumn);
-  this.columnDefinitions = allColumns.slice(); // or use spread operator [...cols]
+  this.columns = allColumns.slice(); // or use spread operator [...cols]
 
   // you could also use SlickGrid setColumns() method
   // this.aureliaGrid.slickGrid.setColumns(cols);

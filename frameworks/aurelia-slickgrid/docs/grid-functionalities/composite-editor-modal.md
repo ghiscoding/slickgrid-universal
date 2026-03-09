@@ -54,7 +54,7 @@ example class MyCompositeDemo {
   }
 
   prepareGrid() {
-    this.columnDefinitions = [ /*...*/ ];
+    this.columns = [ /*...*/ ];
 
     this.gridOptions = {
       enableAddRow: true,           // required for Create/Clone
@@ -123,7 +123,7 @@ example class MyCompositeDemo {
   }
 
   prepareGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'percentComplete', name: '% Complete', field: 'percentComplete',
         type: 'number', sortable: true, filterable: true,
@@ -334,7 +334,7 @@ export class GridExample {
   compositeEditorInstance: SlickCompositeEditorComponent;
 
   prepareGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'firstName', name: 'First Name', field: 'firstName', sortable: true, filterable: true,
         editor: { model: Editors.text, compositeEditorFormOrder: 1, required: true }, // make this the 2nd input (1)
@@ -408,7 +408,7 @@ There are multiple options that you can change to change the UI design a bit, he
 ##### View
 ```html
 <aurelia-slickgrid grid-id="grid30"
-                   columns.bind="columnDefinitions"
+                   columns.bind="columns"
                    options.bind="gridOptions"
                    dataset.bind="dataset"
                    on-composite-editor-change.trigger="handleOnCompositeEditorChange($event.detail.eventData, $event.detail.args)">
@@ -455,7 +455,7 @@ The example below shows code sample for all 3 supported editors AutoComplete, Da
 ##### View
 ```html
 <aurelia-slickgrid grid-id="grid30"
-                   columns.bind="columnDefinitions"
+                   columns.bind="columns"
                    options.bind="gridOptions"
                    dataset.bind="dataset"
                    on-composite-editor-change.trigger="handleOnCompositeEditorChange($event.detail.eventData, $event.detail.args)">
@@ -495,7 +495,7 @@ There are 2 ways to do it
 ##### View
 ```html
 <aurelia-slickgrid grid-id="grid30"
-                   columns.bind="columnDefinitions"
+                   columns.bind="columns"
                    options.bind="gridOptions"
                    dataset.bind="dataset"
                    on-composite-editor-change.trigger="handleOnCompositeEditorChange($event.detail.eventData, $event.detail.args)">
@@ -508,7 +508,7 @@ export class GridExample {
   compositeEditorInstance: SlickCompositeEditorComponent;
 
   prepareGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true, type: 'number',
         editor: { model: Editors.float, massUpdate: true, decimal: 2, required: true },
@@ -559,7 +559,7 @@ export class GridExample {
   compositeEditorInstance: SlickCompositeEditorComponent;
 
   prepareGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true, type: 'number',
         editor: { model: Editors.float, massUpdate: true, decimal: 2, required: true },

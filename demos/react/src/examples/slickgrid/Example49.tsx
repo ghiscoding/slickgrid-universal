@@ -13,7 +13,7 @@ import './example49.scss'; // provide custom CSS/SASS styling
 const NB_ITEMS = 100;
 
 const Example49: React.FC = () => {
-  const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>();
   const [darkMode, setDarkMode] = useState<boolean>(false);
   const [dataset] = useState(getData(NB_ITEMS));
@@ -37,7 +37,7 @@ const Example49: React.FC = () => {
 
   /* Define grid Options and Columns */
   function defineGrid() {
-    const columnDefinitions: Column[] = [
+    const columns: Column[] = [
       {
         id: 'selector',
         name: '',
@@ -47,7 +47,7 @@ const Example49: React.FC = () => {
     ];
 
     for (let i = 0; i < NB_ITEMS; i++) {
-      columnDefinitions.push({
+      columns.push({
         id: i,
         name:
           i < 26
@@ -91,7 +91,7 @@ const Example49: React.FC = () => {
       },
     };
 
-    setColumnDefinitions(columnDefinitions);
+    setColumns(columns);
     setGridOptions(gridOptions);
   }
 
@@ -191,7 +191,7 @@ const Example49: React.FC = () => {
       <div id="grid-container" className="col-sm-12">
         <SlickgridReact
           gridId="grid49"
-          columns={columnDefinitions}
+          columns={columns}
           options={gridOptions}
           dataset={dataset}
           onReactGridCreated={($event) => reactGridReady($event.detail)}

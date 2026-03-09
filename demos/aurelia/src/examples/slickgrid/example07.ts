@@ -5,8 +5,8 @@ let columns1WithHighlightingById: any = {};
 let columns2WithHighlightingById: any = {};
 
 export class Example07 {
-  columnDefinitions1: Column[] = [];
-  columnDefinitions2: Column[] = [];
+  columns1: Column[] = [];
+  columns2: Column[] = [];
   gridOptions1!: GridOption;
   gridOptions2!: GridOption;
   dataset1: any[] = [];
@@ -37,8 +37,8 @@ export class Example07 {
   }
 
   defineGrid() {
-    this.columnDefinitions1 = [];
-    this.columnDefinitions2 = [];
+    this.columns1 = [];
+    this.columns2 = [];
 
     this.gridOptions1 = {
       enableAutoResize: true,

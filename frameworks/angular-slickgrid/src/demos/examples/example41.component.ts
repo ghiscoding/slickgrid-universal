@@ -19,7 +19,7 @@ import {
 export class Example41Component implements OnInit {
   angularGrid!: AngularGridInstance;
   gridOptions!: GridOption;
-  columnDefinitions!: Column[];
+  columns!: Column[];
   dataset: any[] = [];
   dragHelper?: HTMLElement;
   dragRows: number[] = [];
@@ -43,7 +43,7 @@ export class Example41Component implements OnInit {
 
   /* Define grid Options and Columns */
   defineGrids() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'name',
         name: 'Name',

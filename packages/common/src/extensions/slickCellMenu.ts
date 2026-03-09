@@ -24,7 +24,7 @@ import { MenuFromCellBaseClass } from './menuFromCellBaseClass.js';
  * You can use it to change the cell data property through a list of Options AND/OR through a list of Commands.
  *
  * To specify a custom button in a column header, extend the column definition like so:
- *   this.columnDefinitions = [{
+ *   this.columns = [{
  *     id: 'myColumn', name: 'My column',
  *     cellMenu: {
  *       // ... cell menu options

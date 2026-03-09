@@ -20,7 +20,7 @@ import './example06.scss';
 import { ExampleGridOptions } from './example-grid-options.js';
 
 export default class Example06 {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   datasetFlat: any[];
   datasetHierarchical: any[] = [];
@@ -39,7 +39,7 @@ export default class Example06 {
     const gridContainerElm = document.querySelector('.grid6') as HTMLDivElement;
     this.sgb = new Slicker.GridBundle(
       gridContainerElm,
-      this.columnDefinitions,
+      this.columns,
       { ...ExampleGridOptions, ...this.gridOptions },
       undefined,
       this.datasetHierarchical
@@ -54,7 +54,7 @@ export default class Example06 {
   }
 
   initializeGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'file',
         name: 'Files',

@@ -28,7 +28,7 @@ const NB_ITEMS = 10_000;
 export class Example18Component implements OnInit, OnDestroy {
   private _darkMode = false;
   angularGrid!: AngularGridInstance;
-  columnDefinitions!: Column[];
+  columns!: Column[];
   dataset!: any[];
   dataviewObj: any;
   draggableGroupingPlugin: any;
@@ -69,7 +69,7 @@ export class Example18Component implements OnInit, OnDestroy {
 
   /* Define grid Options and Columns */
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',

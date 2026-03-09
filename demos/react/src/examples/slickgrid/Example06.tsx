@@ -33,7 +33,7 @@ const FAKE_SERVER_DELAY = 250;
 const Example6: React.FC = () => {
   const defaultLang = 'en';
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
-  const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
   const [dataset] = useState<any[]>([]);
   const [metrics, setMetrics] = useState<Metrics | undefined>(undefined);
   const [processing, setProcessing] = useState<boolean>(false);
@@ -176,10 +176,10 @@ const Example6: React.FC = () => {
   }
 
   function defineGrid() {
-    const columnDefinitions = getColumnsDefinition();
+    const columns = getColumnsDefinition();
     const gridOptions = getGridOptions();
 
-    setColumnDefinitions(columnDefinitions);
+    setColumns(columns);
     setGridOptions(gridOptions);
   }
 
@@ -620,7 +620,7 @@ const Example6: React.FC = () => {
 
       <SlickgridReact
         gridId="grid6"
-        columns={columnDefinitions}
+        columns={columns}
         options={gridOptions}
         dataset={dataset}
         onReactGridCreated={($event) => reactGridReady($event.detail)}

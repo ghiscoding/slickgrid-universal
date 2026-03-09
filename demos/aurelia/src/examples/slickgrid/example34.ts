@@ -78,7 +78,7 @@ export class Example34 {
   private _darkMode = false;
   aureliaGrid!: AureliaGridInstance;
   gridOptions!: GridOption;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   dataset: any[] = [];
   hideSubTitle = false;
   isFullScreen = false;
@@ -111,7 +111,7 @@ export class Example34 {
   /* Define grid Options and Columns */
   defineGrid() {
     // the columns field property is type-safe, try to add a different string not representing one of DataItems properties
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'currency',
         name: 'Currency',
@@ -372,7 +372,7 @@ export class Example34 {
   }
 
   findColumnById(columnName: string): Column {
-    return this.columnDefinitions.find((col) => col?.field === columnName) as Column;
+    return this.columns.find((col) => col?.field === columnName) as Column;
   }
 
   renderCellHighlighting(item: any, column: Column, priceChange: number) {

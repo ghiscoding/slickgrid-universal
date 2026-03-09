@@ -22,8 +22,8 @@ export interface OrderData {
 let vueGrid1!: SlickgridVueInstance;
 const gridOptions1 = ref<GridOption>();
 const gridOptions2 = ref<GridOption>();
-const columnDefinitions1: Ref<Column[]> = ref([]);
-const columnDefinitions2: Ref<Column[]> = ref([]);
+const columns1: Ref<Column[]> = ref([]);
+const columns2: Ref<Column[]> = ref([]);
 const dataset1 = ref<Customer[]>([]);
 const dataset2 = ref<OrderData[]>([]);
 const selectedName = ref('');
@@ -42,7 +42,7 @@ function vueGrid1Ready(vueGrid: SlickgridVueInstance) {
 
 /* Define grid Options and Columns */
 function defineGrids() {
-  columnDefinitions1.value = [
+  columns1.value = [
     { id: 'name', name: 'Customer Name', field: 'name', sortable: true, minWidth: 100, filterable: true },
     { id: 'company', name: 'Company Name', field: 'company', minWidth: 100, sortable: true },
     { id: 'address', name: 'Address', field: 'address', sortable: true, minWidth: 100 },
@@ -58,7 +58,7 @@ function defineGrids() {
     },
   };
 
-  columnDefinitions2.value = [
+  columns2.value = [
     { id: 'orderId', field: 'orderId', name: 'Order ID', sortable: true, width: 50 },
     { id: 'freight', field: 'freight', name: 'Freight', sortable: true, width: 50, type: 'number', formatter: Formatters.dollar },
     { id: 'name', field: 'name', name: 'Ship Company', sortable: true },
@@ -205,7 +205,7 @@ function mockDetailData(c: Customer) {
   <div class="grid-container1">
     <SlickgridVue
       v-model:options="gridOptions1!"
-      v-model:columns="columnDefinitions1"
+      v-model:columns="columns1"
       v-model:dataset="dataset1"
       grid-id="grid50-1"
       @onVueGridCreated="vueGrid1Ready($event.detail)"
@@ -220,6 +220,5 @@ function mockDetailData(c: Customer) {
     <span>Detail Grid - Orders for:</span>
     <span class="fst-italic text-secondary customer-detail">{{ selectedName }}</span>
   </h5>
-  <slickgrid-vue v-model:options="gridOptions2!" v-model:columns="columnDefinitions2" v-model:dataset="dataset2" grid-id="grid50-2">
-  </slickgrid-vue>
+  <slickgrid-vue v-model:options="gridOptions2!" v-model:columns="columns2" v-model:dataset="dataset2" grid-id="grid50-2"> </slickgrid-vue>
 </template>

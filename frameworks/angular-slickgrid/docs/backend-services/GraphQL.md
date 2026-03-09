@@ -109,13 +109,13 @@ import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, } from '@sli
 @Injectable()
 
 export class MyComponent implements OnInit {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
 
   constructor(private http: HttpClient) { }
 
   ngOnInit(): void {
-    this.columnDefinitions = [
+    this.columns = [
       // your column definitions
     ];
 
@@ -229,7 +229,7 @@ You might want to change certain options dynamically, for example passing new se
 ```ts
 export class MyComponent implements OnInit {
   graphqlService: GraphqlService;
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
 
   constructor() {
@@ -241,7 +241,7 @@ export class MyComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.columnDefinitions = [
+    this.columns = [
       // ...
     ];
 

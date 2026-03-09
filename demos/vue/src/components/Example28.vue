@@ -18,7 +18,7 @@ import {
 import { onBeforeMount, ref, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const column: Ref<Column[]> = ref([]);
 const datasetHierarchical = ref<any[]>([]);
 const isExcludingChildWhenFiltering = ref(false);
 const isAutoApproveParentItemWhenTreeColumnIsValid = ref(true);
@@ -581,7 +581,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
   <div id="grid-container" class="col-sm-12">
     <slickgrid-vue
       v-model:options="gridOptions"
-      v-model:columns="columnDefinitions"
+      v-model:columns="columns"
       v-model:hierarchical="datasetHierarchical"
       grid-id="grid28"
       @onVueGridCreated="vueGridReady($event.detail)"

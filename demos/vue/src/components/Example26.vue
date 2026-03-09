@@ -22,7 +22,7 @@ import FilterSelect from './SelectFilterComponent.vue';
 
 const NB_ITEMS = 500;
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const column: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const showSubTitle = ref(true);
 let vueGrid!: SlickgridVueInstance;
@@ -435,7 +435,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
   <slickgrid-vue
     grid-id="grid26"
     v-model:options="gridOptions"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:dataset="dataset"
     @onCellChange.trigger="onCellChanged($event.detail.eventData, $event.detail.args)"
     @on@click="onCellClicked($event.detail.eventData, $event.detail.args)"

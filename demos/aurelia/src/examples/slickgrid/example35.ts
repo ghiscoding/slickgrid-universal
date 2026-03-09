@@ -10,7 +10,7 @@ const NB_ITEMS = 20;
 export class Example35 {
   aureliaGrid!: AureliaGridInstance;
   gridOptions!: GridOption;
-  columnDefinitions!: Column[];
+  columns!: Column[];
   dataset!: any[];
   fetchResult = '';
   hideSubTitle = false;
@@ -36,7 +36,7 @@ export class Example35 {
 
   /* Define grid Options and Columns */
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',

@@ -18,7 +18,7 @@ Filtering is a big part of a data grid, Slickgrid-Universal provides a few built
 You simply need to set the flag `filterable` for each column that you want filtering and then also enable the filters in the Grid Options. Here is an example with a full column definitions:
 ```ts
 // define you columns, in this demo Effort Driven will use a Select Filter
-this.columnDefinitions = [
+this.columns = [
   { id: 'title', name: 'Title', field: 'title' }, // without filter
   { id: 'description', name: 'Description', field: 'description', filterable: true } // with filter
 ];

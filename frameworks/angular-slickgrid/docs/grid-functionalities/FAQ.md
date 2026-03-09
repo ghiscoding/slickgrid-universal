@@ -20,7 +20,7 @@ In cases, where depending on your data you might want to update the options (e.g
 ```html
 <angular-slickgrid
      gridId="grid1"
-     [columns]="columnDefinitions"
+     [columns]="columns"
      [options]="gridOptions"
      [dataset]="dataset"
      (onAngularGridCreated)="angularGridReady($event.detail)">
@@ -33,14 +33,14 @@ import { Component, OnInit} from '@angular/core';
 import { AngularGridInstance } from 'angular-slickgrid';
 
 export class GridBasicComponent implements OnInit {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption = {
     // your initial settings
   };
   dataset: any[];
 
   ngOnInit(): void {
-    this.columnDefinitions = [];
+    this.columns = [];
   }
 
   angularGridReady(angularGrid: AngularGridInstance) {

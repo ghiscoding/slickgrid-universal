@@ -4,7 +4,7 @@ const NB_ITEMS = 995;
 
 export class Example29 {
   gridOptions!: GridOption;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   dataset: any[] = [];
   hideSubTitle = false;
 
@@ -20,7 +20,7 @@ export class Example29 {
 
   /* Define grid Options and Columns */
   defineGrids() {
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'title', name: 'Title', field: 'title', sortable: true, minWidth: 100 },
       { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true, minWidth: 100 },
       { id: '%', name: '% Complete', field: 'percentComplete', sortable: true, minWidth: 100 },

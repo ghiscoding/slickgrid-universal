@@ -8,8 +8,8 @@ let columns2WithHighlightingById: any = {};
 
 const gridOptions1 = ref<GridOption>();
 const gridOptions2 = ref<GridOption>();
-const columnDefinitions1: Ref<Column[]> = ref([]);
-const columnDefinitions2: Ref<Column[]> = ref([]);
+const columns1: Ref<Column[]> = ref([]);
+const columns2: Ref<Column[]> = ref([]);
 const dataset1 = ref<any[]>([]);
 const dataset2 = ref<any[]>([]);
 const showSubTitle = ref(true);
@@ -28,8 +28,8 @@ onBeforeMount(() => {
 
 /* Define grid Options and Columns */
 function defineGrids() {
-  columnDefinitions1.value = [];
-  columnDefinitions2.value = [];
+  columns1.value = [];
+  columns2.value = [];
 
   gridOptions1.value = {
     enableAutoResize: true,
@@ -207,9 +207,9 @@ function loadData(count: number, gridNo: 1 | 2) {
 
   // assign column definitions only once
   if (gridNo === 1) {
-    columnDefinitions1.value = cols;
+    columns1.value = cols;
   } else {
-    columnDefinitions2.value = cols;
+    columns2.value = cols;
   }
 
   return mockDataset;
@@ -277,7 +277,7 @@ function vueGrid2Ready(grid: SlickgridVueInstance) {
 
   <slickgrid-vue
     v-model:options="gridOptions1!"
-    v-model:columns="columnDefinitions1"
+    v-model:columns="columns1"
     v-model:dataset="dataset1"
     grid-id="grid7-1"
     @onVueGridCreated="vueGrid1Ready($event.detail)"
@@ -290,7 +290,7 @@ function vueGrid2Ready(grid: SlickgridVueInstance) {
 
   <slickgrid-vue
     v-model:options="gridOptions2!"
-    v-model:columns="columnDefinitions2"
+    v-model:columns="columns2"
     v-model:dataset="dataset2"
     grid-id="grid7-2"
     @onVueGridCreated="vueGrid2Ready($event.detail)"

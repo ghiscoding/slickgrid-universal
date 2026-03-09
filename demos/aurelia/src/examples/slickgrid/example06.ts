@@ -26,7 +26,7 @@ const FAKE_SERVER_DELAY = 250;
 export class Example06 {
   isWithCursor = false;
   aureliaGrid!: AureliaGridInstance;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   gridOptions!: GridOption;
   dataset: any[] = [];
   metrics!: Metrics;
@@ -58,7 +58,7 @@ export class Example06 {
   }
 
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'name',
         field: 'name',

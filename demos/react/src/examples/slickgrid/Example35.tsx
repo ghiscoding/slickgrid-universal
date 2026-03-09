@@ -21,7 +21,7 @@ function fakeFetch(_input: string | URL | Request, _init?: RequestInit | undefin
 
 const Example35: React.FC = () => {
   const defaultLang = 'en';
-  const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
   const [dataset] = useState<any[]>(getData(NB_ITEMS));
   const [selectedLanguage, setSelectedLanguage] = useState<string>(defaultLang);
   const [statusClass, setStatusClass] = useState('alert alert-light');
@@ -42,7 +42,7 @@ const Example35: React.FC = () => {
 
   /* Define grid Options and Columns */
   function defineGrid() {
-    const columnDefinitions: Column[] = [
+    const columns: Column[] = [
       {
         id: 'title',
         name: 'Title',
@@ -195,7 +195,7 @@ const Example35: React.FC = () => {
       externalResources: [new SlickCustomTooltip()],
     };
 
-    setColumnDefinitions(columnDefinitions);
+    setColumns(columns);
     gridOptionsRef.current = gridOptions;
   }
 
@@ -349,7 +349,7 @@ const Example35: React.FC = () => {
 
       <SlickgridReact
         gridId="grid35"
-        columns={columnDefinitions}
+        columns={columns}
         options={gridOptionsRef.current}
         dataset={dataset}
         onReactGridCreated={($event) => reactGridReady($event.detail)}

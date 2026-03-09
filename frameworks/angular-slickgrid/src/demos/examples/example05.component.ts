@@ -27,7 +27,7 @@ export class Example5Component implements OnInit {
   private http = inject(HttpClient);
 
   angularGrid!: AngularGridInstance;
-  columnDefinitions!: Column[];
+  columns!: Column[];
   gridOptions!: GridOption;
   dataset = [];
   hideSubTitle = false;
@@ -49,7 +49,7 @@ export class Example5Component implements OnInit {
   }
 
   ngOnInit(): void {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'name',
         name: 'Name',

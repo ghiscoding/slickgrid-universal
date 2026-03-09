@@ -11,7 +11,7 @@ export default class Example24 {
   private _darkMode = false;
   private _eventHandler: SlickEventHandler;
 
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   dataset: any[] = [];
   gridOptions!: GridOption;
   gridContainerElm: HTMLDivElement;
@@ -33,7 +33,7 @@ export default class Example24 {
 
     this.sgb = new Slicker.GridBundle(
       document.querySelector('.grid24') as HTMLDivElement,
-      this.columnDefinitions,
+      this.columns,
       { ...ExampleGridOptions, ...this.gridOptions },
       this.dataset
     );
@@ -67,7 +67,7 @@ export default class Example24 {
         editor: { model: Editors.integer },
       });
     }
-    this.columnDefinitions = columnDefs;
+    this.columns = columnDefs;
 
     this.gridOptions = {
       autoEdit: true,
@@ -90,7 +90,7 @@ export default class Example24 {
     for (let i = 0; i < itemCount; i++) {
       const d = (datasetTmp[i] = {} as any);
       d.id = i;
-      for (let j = 0; j < this.columnDefinitions.length; j++) {
+      for (let j = 0; j < this.columns.length; j++) {
         d[j] = Math.round(Math.random() * 10);
       }
     }

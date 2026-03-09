@@ -22,7 +22,7 @@ const NB_ITEMS = 10_000;
 export class Example18 {
   private _darkMode = false;
   aureliaGrid!: AureliaGridInstance;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   dataset: any[] = [];
   dataviewObj!: SlickDataView;
   draggableGroupingPlugin: any;
@@ -55,7 +55,7 @@ export class Example18 {
 
   /* Define grid Options and Columns */
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',

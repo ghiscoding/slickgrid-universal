@@ -21,7 +21,7 @@ const rowCellValueExportFormatter: Formatter = (_row, _cell, value) => value.toF
   imports: [AngularSlickgridComponent, FormsModule],
 })
 export class Example44Component implements OnInit {
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   gridOptions!: GridOption;
   angularGrid!: AngularGridInstance;
   dataLn: number | string = 'loading...';
@@ -83,7 +83,7 @@ export class Example44Component implements OnInit {
   }
 
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'title', name: 'Title', field: 'title', minWidth: 80 },
       {
         id: 'revenueGrowth',

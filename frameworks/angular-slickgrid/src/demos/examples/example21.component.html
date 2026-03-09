@@ -39,7 +39,7 @@
         [(ngModel)]="selectedColumn"
         (ngModelChange)="updateFilter()"
       >
-        @for (field of columnDefinitions; track field) {
+        @for (field of columns; track field) {
           <option [ngValue]="field">{{ field.name }}</option>
         }
       </select>
@@ -85,7 +85,7 @@
 
   <angular-slickgrid
     gridId="grid21"
-    [columns]="columnDefinitions"
+    [columns]="columns"
     [options]="gridOptions"
     [dataset]="dataset"
     (onAngularGridCreated)="angularGridReady($event.detail)"

@@ -38,7 +38,7 @@ export class Example26Component implements OnInit {
 
   private _commandQueue: any[] = [];
   angularGrid!: AngularGridInstance;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   gridOptions!: GridOption;
   dataset!: any[];
   gridObj: any;
@@ -64,7 +64,7 @@ export class Example26Component implements OnInit {
   }
 
   prepareGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',

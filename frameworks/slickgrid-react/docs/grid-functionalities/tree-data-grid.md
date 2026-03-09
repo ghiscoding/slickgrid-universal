@@ -55,7 +55,7 @@ _For the full list of options, refer to the [treeDataOptions](https://github.com
 ###### define your grid
 ```ts
 function defineGrid() {
-  const columnDefinitions: Column[] = [
+  const columns: Column[] = [
     {
       id: 'title', name: 'Title', field: 'title', width: 220, cssClass: 'cell-title',
       filterable: true, sortable: true,
@@ -355,7 +355,7 @@ There is also a new and optional Formatter, `Formatters.treeParseTotals`, that w
 
 #### with `Formatters.treeParseTotals`
 ```ts
-const columnDefinitions: Column[] = [
+const columns: Column[] = [
   {
     id: 'size', name: 'Size', field: 'size', minWidth: 90,
 
@@ -380,7 +380,7 @@ const columnDefinitions: Column[] = [
 
 #### with Custom Formatter
 ```ts
-const columnDefinitions: Column[] = [
+const columns: Column[] = [
   {
     id: 'size', name: 'Size', field: 'size', minWidth: 90,
 

@@ -105,7 +105,7 @@ export interface GraphqlServiceOption extends BackendServiceOption {
 import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, } from '@slickgrid-universal/graphql';
 
 export class Example {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset = [];
 
@@ -115,7 +115,7 @@ export class Example {
   }
 
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       // your column definitions
     ];
 
@@ -215,7 +215,7 @@ You might want to change certain options dynamically, for example passing new se
 ```ts
 export class Example {
   graphqlService: GraphqlService;
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
 
   constructor() {
@@ -223,7 +223,7 @@ export class Example {
   }
 
   activate(): void {
-    this.columnDefinitions = [
+    this.columns = [
       // ...
     ];
 

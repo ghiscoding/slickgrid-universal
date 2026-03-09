@@ -13,8 +13,8 @@ export class Example22Component implements OnInit {
   private http = inject(HttpClient);
 
   angularGrid2!: AngularGridInstance;
-  columnDefinitions1!: Column[];
-  columnDefinitions2!: Column[];
+  columns1!: Column[];
+  columns2!: Column[];
   gridOptions1!: GridOption;
   gridOptions2!: GridOption;
   dataset1!: any[];
@@ -38,7 +38,7 @@ export class Example22Component implements OnInit {
 
   // Grid2 definition
   defineGrid1() {
-    this.columnDefinitions1 = [
+    this.columns1 = [
       { id: 'title', name: 'Title', field: 'title', sortable: true, minWidth: 100 },
       { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true, minWidth: 100 },
       { id: '%', name: '% Complete', field: 'percentComplete', sortable: true, minWidth: 100 },
@@ -58,7 +58,7 @@ export class Example22Component implements OnInit {
 
   // Grid2 definition
   defineGrid2() {
-    this.columnDefinitions2 = [
+    this.columns2 = [
       { id: 'name', name: 'Name', field: 'name', filterable: true, sortable: true },
       {
         id: 'gender',

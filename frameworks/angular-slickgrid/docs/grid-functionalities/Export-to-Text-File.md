@@ -64,7 +64,7 @@ Inside the column definition there are couple of flags you can set and also some
 import { TextExportService } from '@slickgrid-universal/text-export';
 
 defineGrid() {
-  this.columnDefinitions = [
+  this.columns = [
     { id: 'id', name: 'ID', field: 'id',
       excludeFromExport: true // skip the "id" column from the export
     },
@@ -145,7 +145,7 @@ If you have lots of data, you might want to show a spinner telling the user that
 
 <angular-slickgrid gridId="grid2"
                      [dataset]="dataset"
-                     [columns]="columnDefinitions"
+                     [columns]="columns"
                      [options]="gridOptions"
                      (onBeforeExportToTextFile)="processing = true"
                      (onAfterExportToTextFile)="processing = false"

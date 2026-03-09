@@ -20,7 +20,7 @@ import './example13.scss';
 const NB_ITEMS = 5000;
 
 const Example13: React.FC = () => {
-  const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
   const [dataset, setDataset] = useState<any[]>(loadData(NB_ITEMS));
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
   const reactGridRef = useRef<SlickgridReactInstance | null>(null);
@@ -56,7 +56,7 @@ const Example13: React.FC = () => {
     nameElementColumn1.appendChild(document.createTextNode('Id '));
     nameElementColumn1.appendChild(btn);
 
-    const columnDefinitions: Column[] = [
+    const columns: Column[] = [
       {
         id: 'num',
         name: nameElementColumn1,
@@ -226,7 +226,7 @@ const Example13: React.FC = () => {
       },
     };
 
-    setColumnDefinitions(columnDefinitions);
+    setColumns(columns);
     setGridOptions(gridOptions);
   }
 
@@ -508,7 +508,7 @@ const Example13: React.FC = () => {
 
       <SlickgridReact
         gridId="grid13"
-        columns={columnDefinitions}
+        columns={columns}
         options={gridOptions!}
         dataset={dataset}
         onBeforeExportToExcel={() => changeProcessing(true)}

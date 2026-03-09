@@ -8,9 +8,9 @@ export class OdataQueryBuilderService {
   _filterCount = 0;
   _odataOptions: Partial<OdataOption>;
 
-  protected _columnDefinitions: Column[] = [];
-  public set columnDefinitions(columnDefinitions: Column[]) {
-    this._columnDefinitions = columnDefinitions;
+  protected _columns: Column[] = [];
+  public set columns(columns: Column[]) {
+    this._columns = columns;
   }
 
   protected _datasetIdPropName = 'id';
@@ -86,7 +86,7 @@ export class OdataQueryBuilderService {
     }
 
     if (this._odataOptions.enableSelect || this._odataOptions.enableExpand) {
-      const fields = this._columnDefinitions.flatMap((x) => x.fields ?? [x.field]);
+      const fields = this._columns.flatMap((x) => x.fields ?? [x.field]);
       fields.unshift(this._datasetIdPropName);
       const selectExpand = this.buildSelectExpand([...new Set(fields)]);
       if (this._odataOptions.enableSelect) {

@@ -25,7 +25,7 @@ There are a few configuration options you can use
 
 ```ts
 defineGrid() {
-  this.columnDefinitions = [
+  this.columns = [
     { id: 'action', field: 'action', name: 'Action', width: 50, maxWidth: 50 },
     { id: 'firstName', field: 'firstName', name: 'First Name', mindWidth: 100 },
     { id: 'lastName', field: 'lastName', name: 'First Name', mindWidth: 100, resizeExtraWidthPadding: 10 },

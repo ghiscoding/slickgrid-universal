@@ -102,7 +102,7 @@ export default class YourComponent extends LightningElement {
   }
 
   initializeGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'firstName', name: 'First Name', field: 'firstName' },
       { id: 'lastName', name: 'Last Name', field: 'lastName' },
       // ...
@@ -129,7 +129,7 @@ export default class YourComponent extends LightningElement {
 
     // find your HTML slickGrid container & pass it to the Slicker.GridBundle instantiation
     const gridContainerElement = this.template.querySelector(`.user-grid`);
-    this.sgb = new Slicker.GridBundle(gridContainerElement, this.columnDefinitions, this.gridOptions, this.dataset);
+    this.sgb = new Slicker.GridBundle(gridContainerElement, this.columns, this.gridOptions, this.dataset);
   }
 }
 ```

@@ -42,7 +42,7 @@ const myCustomTitleValidator = (value: any) => {
 };
 
 const Example32: React.FC = () => {
-  const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
   const [dataset] = useState<any[]>(loadData(NB_ITEMS));
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
   const [editQueue, setEditQueue] = useState<any[]>([]);
@@ -70,7 +70,7 @@ const Example32: React.FC = () => {
   }
 
   function defineGrid() {
-    const columnDefinitions: Column[] = [
+    const columns: Column[] = [
       {
         id: 'title',
         name: 'Title',
@@ -394,7 +394,7 @@ const Example32: React.FC = () => {
     ];
 
     // add custom Header Menu to all columns except "Action"
-    columnDefinitions.forEach((col) => {
+    columns.forEach((col) => {
       col.header = {
         menu: {
           commandItems: [
@@ -511,7 +511,7 @@ const Example32: React.FC = () => {
           ? editCommand.prevSerializedValue
           : [editCommand.prevSerializedValue];
         const serializedValues = Array.isArray(editCommand.serializedValue) ? editCommand.serializedValue : [editCommand.serializedValue];
-        const editorColumns = columnDefinitions.filter((col) => col.editor !== undefined);
+        const editorColumns = columns.filter((col) => col.editor !== undefined);
 
         const modifiedColumns: Column[] = [];
         prevSerializedValues.forEach((_val, index) => {
@@ -537,7 +537,7 @@ const Example32: React.FC = () => {
       enableCellMenu: true,
     };
 
-    setColumnDefinitions(columnDefinitions);
+    setColumns(columns);
     setGridOptions(gridOptions);
   }
 
@@ -1049,7 +1049,7 @@ const Example32: React.FC = () => {
       <div id="smaller-container" style={{ width: '950px' }}>
         <SlickgridReact
           gridId="grid32"
-          columns={columnDefinitions}
+          columns={columns}
           options={gridOptions}
           dataset={dataset}
           onReactGridCreated={($event) => reactGridReady($event.detail)}

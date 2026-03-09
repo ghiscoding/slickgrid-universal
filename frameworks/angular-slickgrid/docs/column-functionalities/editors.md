@@ -34,7 +34,7 @@ Editors won't work without these 2 flags `enableCellNavigation: true` and `edita
 ### How to use Inline Editors
 Simply call the editor in your column definition with the `Editors` you want, as for example (`editor: { model: Editors.text }`). Here is an example with a full column definition:
 ```ts
-this.columnDefinitions = [
+this.columns = [
   { id: 'title', name: 'Title', field: 'title', editor: { model: Editors.longText } },
   { id: 'duration', name: 'Duration (days)', field: 'duration', type: 'number', editor: { model: Editors.text } },
   { id: 'complete', name: '% Complete', field: 'percentComplete', type: 'number', editor: { model: Editors.integer } },
@@ -63,7 +63,7 @@ this.gridOptions {
 #### Demo with Float Editor and Dollar Currency Formatter
 This probably comes often, so here's all the setting you would need for displaying & editing a dollar currency value with 2 decimal places.
 ```ts
-this.columnDefinitions = [
+this.columns = [
   {
     id: 'cost', name: 'Cost', field: 'cost',
     type: 'float',
@@ -80,7 +80,7 @@ this.columnDefinitions = [
 #### Editor Output Type & Save Output Type
 You could also define an `outputType` and a `saveOutputType` to an inline editor. There is only 1 built-in Editor with this functionality for now which is the `dateEditor`. For example, on a date field, we can call this `outputType: 'dateIso'` (by default it uses `dateUtc` as the output):
 ```typescript
-this.columnDefinitions = [
+this.columns = [
  {
    id: 'start', name: 'Start', field: 'start',
    type: 'date',
@@ -103,7 +103,7 @@ The library ships with two select editors: `singleSelectEditor` and the `multipl
 Here's an example with a `collection`, `collectionFilterBy` and `collectionSortBy`
 
 ```typescript
-this.columnDefinitions = [
+this.columns = [
   {
     id: 'prerequisites', name: 'Prerequisites', field: 'prerequisites',
     editor: {
@@ -141,7 +141,7 @@ You can also load the collection asynchronously, but for that you will have to u
 #### Load the collection through an Http call
 
 ```typescript
-this.columnDefinitions = [
+this.columns = [
     {
     id: 'prerequisites', name: 'Prerequisites', field: 'prerequisites',
     filterable: true,
@@ -164,7 +164,7 @@ For example
 
     // wrap into a timer to simulate a backend async call
     setTimeout(() => {
-      const requisiteColumnDef = this.columnDefinitions.find((column: Column) => column.id === 'prerequisites');
+      const requisiteColumnDef = this.columns.find((column: Column) => column.id === 'prerequisites');
       if (requisiteColumnDef) {
         const collection = requisiteColumnDef.editor.collection;
 
@@ -228,7 +228,7 @@ By default HTML is not rendered and the `label` will simply show HTML as text. B
 **NOTE:** this is currently only used by the Editors that have a `collection` which are the `MultipleSelect` & `SingleSelect` Editors.
 
 ```typescript
-this.columnDefinitions = [
+this.columns = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
@@ -274,7 +274,7 @@ Couple of small options were added to suit Angular-SlickGrid needs, which is why
 
 ##### Code
 ```typescript
-this.columnDefinitions = [
+this.columns = [
   {
     id: 'isActive', name: 'Is Active', field: 'isActive',
     filterable: true,
@@ -340,7 +340,7 @@ export class IntegerEditor implements Editor {
 For Custom Editor class example, take a look at [custom-inputEditor.ts](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/custom-inputEditor.ts)
 
 ```typescript
-this.columnDefinitions = [
+this.columns = [
   {
     id: 'title2', name: 'Title, Custom Editor', field: 'title',
     editor: {
@@ -374,7 +374,7 @@ this.gridOptions = {
 Instead of an inline editor, you might want to simply click on an edit icon that could call a modal window, or a redirect URL, or whatever you wish to do. For that you can use the inline `onCellClick` event and define a callback function for the action (you could also create your [Custom Formatter](../column-functionalities/Formatters.md)).
 - The `Formatters.editIcon` will give you a pen icon, while a `Formatters.deleteIcon` is an "x" icon
 ```typescript
-this.columnDefinitions = [
+this.columns = [
    {
       id: 'edit', field: 'id',
       formatter: Formatters.editIcon,
@@ -408,7 +408,7 @@ You can also use the Slick Grid events as shown below
      (onAngularGridCreated)="angularGridReady($event.detail)"
      (onCellChange)="onCellChanged($event.detail.eventData, $event.detail.args)"
      (onClick)="onCellClicked($event.detail.eventData, $event.detail.args)"
-     [columns]="columnDefinitions" [options]="gridOptions" [dataset]="dataset">
+     [columns]="columns" [options]="gridOptions" [dataset]="dataset">
 </angular-slickgrid>
 ```
 
@@ -444,7 +444,7 @@ You can also use the Slick Grid events as shown below
 Some of the Editors could receive extra options, which is mostly the case for Editors using external dependencies (e.g. `autocompleter`, `date`, `multipleSelect`, ...) you can provide options via the editor `options`, for example
 
 ```ts
-this.columnDefinitions = [{
+this.columns = [{
   id: 'start', name: 'Start Date', field: 'start',
   editor: {
     model: Editors.date,
@@ -545,7 +545,7 @@ With that in mind and the code from the SO answer, we end up with the following 
 #### View
 ```html
 <angular-slickgrid gridId="grid1"
-  [columns]="columnDefinitions"
+  [columns]="columns"
   [options]="gridOptions"
   (onBeforeEditCell)="verifyCellIsEditableBeforeEditing($event.detail.eventData, $event.detail.args)"
   >
@@ -567,7 +567,7 @@ If your grid uses the `autoResize` and you use Editors in your grid on a mobile 
 ```html
 <div id="grid1">
    <angular-slickgrid gridId="grid1"
-         [columns]="columnDefinitions"
+         [columns]="columns"
          [options]="gridOptions"
          [dataset]="dataset"
          (onBeforeEditCell)="onBeforeEditCell($event)"

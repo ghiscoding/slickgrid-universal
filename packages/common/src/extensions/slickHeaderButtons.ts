@@ -18,7 +18,7 @@ import { MenuBaseClass, type ExtendableItemTypes, type ExtractMenuType, type Men
 /**
  * A plugin to add custom buttons to column headers.
  * To specify a custom button in a column header, extend the column definition like so:
- *   this.columnDefinitions = [{
+ *   this.columns = [{
  *     id: 'myColumn', name: 'My column',
  *     header: {
  *       buttons: [{ ...button options... }, { ...button options... }]

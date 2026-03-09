@@ -11,7 +11,7 @@ You can add Header and/or Footer to your grid by using the `#header` and `#foote
 
 ```html
 <aurelia-slickgrid grid-id="grid"
-                    columns.bind="columnDefinitions"
+                    columns.bind="columns"
                     options.bind="gridOptions"
                     dataset.bind="dataset">
   <div au-slot="slickgrid-header" class="custom-header-slot">

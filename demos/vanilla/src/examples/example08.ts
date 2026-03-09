@@ -7,8 +7,8 @@ import { ExampleGridOptions } from './example-grid-options.js';
 import './example08.scss';
 
 export default class Example08 {
-  columnDefinitions1: Column[];
-  columnDefinitions2: Column[];
+  columns1: Column[];
+  columns2: Column[];
   gridOptions1: GridOption;
   gridOptions2: GridOption;
   dataset1: any[] = [];
@@ -32,18 +32,8 @@ export default class Example08 {
     this.dataset2 = this.loadData(500);
     const gridContainerElm1 = document.querySelector(`.grid1`) as HTMLDivElement;
     const gridContainerElm2 = document.querySelector(`.grid2`) as HTMLDivElement;
-    this.sgb1 = new Slicker.GridBundle(
-      gridContainerElm1,
-      this.columnDefinitions1,
-      { ...ExampleGridOptions, ...this.gridOptions1 },
-      this.dataset1
-    );
-    this.sgb2 = new Slicker.GridBundle(
-      gridContainerElm2,
-      this.columnDefinitions2,
-      { ...ExampleGridOptions, ...this.gridOptions2 },
-      this.dataset2
-    );
+    this.sgb1 = new Slicker.GridBundle(gridContainerElm1, this.columns1, { ...ExampleGridOptions, ...this.gridOptions1 }, this.dataset1);
+    this.sgb2 = new Slicker.GridBundle(gridContainerElm2, this.columns2, { ...ExampleGridOptions, ...this.gridOptions2 }, this.dataset2);
     this.populategrid2SearchColumnsDropdown();
     this.populategrid2SearchOperatorDropdown();
   }
@@ -54,7 +44,7 @@ export default class Example08 {
   }
 
   definedGrid1() {
-    this.columnDefinitions1 = [
+    this.columns1 = [
       { id: 'title', name: 'Title', field: 'title', sortable: true, columnGroup: 'Common Factor' },
       { id: 'duration', name: 'Duration', field: 'duration', columnGroup: 'Common Factor' },
       { id: 'start', name: 'Start', field: 'start', columnGroup: 'Period' },
@@ -103,7 +93,7 @@ export default class Example08 {
   }
 
   definedGrid2() {
-    this.columnDefinitions2 = [
+    this.columns2 = [
       {
         id: 'sel',
         name: '#',
@@ -228,7 +218,7 @@ export default class Example08 {
   populategrid2SearchColumnsDropdown() {
     const columnSelect = document.querySelector('.selected-column') as HTMLElement;
 
-    for (const columnDef of this.columnDefinitions2) {
+    for (const columnDef of this.columns2) {
       if (columnDef.id === 'sel') {
         continue;
       }
@@ -237,7 +227,7 @@ export default class Example08 {
       selectOption.label = columnDef.name as string;
       columnSelect.appendChild(selectOption);
     }
-    this.grid2SearchSelectedColumn = this.columnDefinitions2.find((col) => col.id === 'title') as Column;
+    this.grid2SearchSelectedColumn = this.columns2.find((col) => col.id === 'title') as Column;
   }
 
   populategrid2SearchOperatorDropdown() {
@@ -258,7 +248,7 @@ export default class Example08 {
   }
 
   selectedColumnChanged(selectedColumnId: string) {
-    this.grid2SearchSelectedColumn = this.columnDefinitions2.find((col) => col.id === selectedColumnId) as Column;
+    this.grid2SearchSelectedColumn = this.columns2.find((col) => col.id === selectedColumnId) as Column;
     this.updateFilter();
   }
 

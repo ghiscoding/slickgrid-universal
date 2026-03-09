@@ -30,7 +30,7 @@ import COUNTRIES_COLLECTION from './data/countries.json';
 
 const NB_ITEMS = 500;
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const column: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const editQueue = ref<any[]>([]);
 const editedItems = ref<any>({});
@@ -1151,7 +1151,7 @@ function renderItemCallbackWith4Corners(item: any): string {
 
   <slickgrid-vue
     v-model:options="gridOptions"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:dataset="dataset"
     grid-id="grid30"
     @onBeforeEditCell="handleOnBeforeEditCell($event.detail.eventData, $event.detail.args)"

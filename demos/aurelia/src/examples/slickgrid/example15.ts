@@ -21,7 +21,7 @@ const NB_ITEMS = 500;
 
 export class Example15 {
   aureliaGrid!: AureliaGridInstance;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   gridOptions!: GridOption;
   dataset: any[] = [];
   hideSubTitle = false;
@@ -55,7 +55,7 @@ export class Example15 {
 
   /** Clear the Grid State from Local Storage and reset the grid to it's original state */
   clearGridStateFromLocalStorage() {
-    this.aureliaGrid.gridService.resetGrid(this.columnDefinitions);
+    this.aureliaGrid.gridService.resetGrid(this.columns);
     this.aureliaGrid.paginationService!.changeItemPerPage(DEFAULT_PAGE_SIZE);
     setTimeout(() => (localStorage[LOCAL_STORAGE_KEY] = null));
   }
@@ -68,7 +68,7 @@ export class Example15 {
       multiSelectFilterArray.push({ value: i, label: i });
     }
 
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',

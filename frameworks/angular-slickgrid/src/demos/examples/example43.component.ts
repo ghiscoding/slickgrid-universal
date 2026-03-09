@@ -16,7 +16,7 @@ import {
   imports: [AngularSlickgridComponent],
 })
 export class Example43Component implements OnInit {
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   excelExportService = new ExcelExportService();
   angularGrid!: AngularGridInstance;
   gridOptions!: GridOption;
@@ -131,7 +131,7 @@ export class Example43Component implements OnInit {
   }
 
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'employeeID', name: 'Employee ID', field: 'employeeID', minWidth: 100 },
       { id: 'employeeName', name: 'Employee Name', field: 'employeeName', editor: { model: Editors.text }, minWidth: 120 },
       { id: '9:00', name: '9:00 AM', field: '9:00', editor: { model: Editors.text }, minWidth: 120 },
@@ -443,11 +443,11 @@ export class Example43Component implements OnInit {
     // 1. update column definitions via grid.setColumns()
     // this will shift colspan/rowspan to the left or right accordingly
     if (this.showEmployeeId) {
-      this.columnDefinitions.unshift({ id: 'employeeID', name: 'Employee ID', field: 'employeeID', width: 100 });
+      this.columns.unshift({ id: 'employeeID', name: 'Employee ID', field: 'employeeID', width: 100 });
     } else {
-      this.columnDefinitions.splice(0, 1);
+      this.columns.splice(0, 1);
     }
-    this.angularGrid.slickGrid.setColumns(this.columnDefinitions);
+    this.angularGrid.slickGrid.setColumns(this.columns);
 
     // --- OR ---
     // 2. OR update via "hidden" column flag & increase/decrease column index accordingly in the metadata

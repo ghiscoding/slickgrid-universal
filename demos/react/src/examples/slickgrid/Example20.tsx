@@ -14,7 +14,7 @@ import {
 import './example20.scss'; // provide custom CSS/SASS styling
 
 const Example20: React.FC = () => {
-  const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
   const [dataset] = useState<any[]>(getData());
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
   const [frozenColumnCount, setFrozenColumnCount] = useState(2);
@@ -53,7 +53,7 @@ const Example20: React.FC = () => {
 
   /* Define grid Options and Columns */
   function defineGrid() {
-    const columnDefinitions: Column[] = [
+    const columns: Column[] = [
       {
         id: 'sel',
         name: '#',
@@ -257,7 +257,7 @@ const Example20: React.FC = () => {
       headerMenu: { hideFreezeColumnsCommand: false },
     };
 
-    setColumnDefinitions(columnDefinitions);
+    setColumns(columns);
     setGridOptions(gridOptions);
   }
 
@@ -435,7 +435,7 @@ const Example20: React.FC = () => {
 
       <SlickgridReact
         gridId="grid20"
-        columns={columnDefinitions}
+        columns={columns}
         options={gridOptions}
         dataset={dataset}
         onReactGridCreated={($event) => reactGridReady($event.detail)}

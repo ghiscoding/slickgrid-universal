@@ -28,7 +28,7 @@ export class Example28Component implements OnInit {
   dataViewObj: any;
   gridObj: any;
   gridOptions!: GridOption;
-  columnDefinitions!: Column[];
+  columns!: Column[];
   datasetHierarchical: any[] = [];
   hideSubTitle = false;
   isExcludingChildWhenFiltering = false;
@@ -47,7 +47,7 @@ export class Example28Component implements OnInit {
   }
 
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'file',
         name: 'Files',

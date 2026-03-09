@@ -16,7 +16,7 @@
   <div class="grid-container1">
     <angular-slickgrid
       gridId="grid50-1"
-      [columns]="columnDefinitions1"
+      [columns]="columns1"
       [options]="gridOptions1"
       [dataset]="dataset1"
       (onAngularGridCreated)="angularGridReady1($event.detail)"
@@ -32,6 +32,6 @@
     <span class="fst-italic text-secondary customer-detail">{{ selectedName() }}</span>
   </h5>
   <div class="grid-container">
-    <angular-slickgrid gridId="grid50-2" [columns]="columnDefinitions2" [options]="gridOptions2" [dataset]="dataset2"> </angular-slickgrid>
+    <angular-slickgrid gridId="grid50-2" [columns]="columns2" [options]="gridOptions2" [dataset]="dataset2"> </angular-slickgrid>
   </div>
 </div>

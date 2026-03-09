@@ -10,7 +10,7 @@ import {
 import './example41.scss';
 
 const Example41: React.FC = () => {
-  const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
   const [dataset, setDataset] = useState<any[]>(getData());
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
   const [hideSubTitle, setHideSubTitle] = useState(false);
@@ -29,7 +29,7 @@ const Example41: React.FC = () => {
   }
 
   function defineGrid() {
-    const columnDefinitions: Column[] = [
+    const columns: Column[] = [
       {
         id: 'name',
         name: 'Name',
@@ -73,7 +73,7 @@ const Example41: React.FC = () => {
       },
     };
 
-    setColumnDefinitions(columnDefinitions);
+    setColumns(columns);
     setGridOptions(gridOptions);
   }
 
@@ -263,7 +263,7 @@ const Example41: React.FC = () => {
           <div className="col">
             <SlickgridReact
               gridId="grid41"
-              columns={columnDefinitions}
+              columns={columns}
               options={gridOptions}
               dataset={dataset}
               onReactGridCreated={($event) => reactGridReady($event.detail)}

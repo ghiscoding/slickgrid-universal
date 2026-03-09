@@ -22,7 +22,7 @@ You can also create your own Custom Filter with any html/css you want and/or jQu
    1.  Simply set the `columnDefinition.filter.model` to your new custom Filter class and instantiate it with `new` (you can also use dependency injection in the constructor if you wish). Here is an example with a custom input filter:
    ```typescript
    // define you columns, in this demo Effort Driven will use a Select Filter
-   this.columnDefinitions = [
+   this.columns = [
      { id: 'title', name: 'Title', field: 'title' },
      { id: 'description', name: 'Description', field: 'description',
        filterable: true,
@@ -80,7 +80,7 @@ You can also create your own Custom Filter with any html/css you want and/or jQu
    **my-view-model.ts**
    ```typescript
    // define you columns, in this demo Effort Driven will use a Select Filter
-   this.columnDefinitions = [
+   this.columns = [
      { id: 'title', name: 'Title', field: 'title' },
      { id: 'description', name: 'Description', field: 'description',
        filterable: true,

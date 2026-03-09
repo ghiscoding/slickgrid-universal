@@ -90,7 +90,7 @@ export default class Example12 {
   private _bindingEventService: BindingEventService;
   private _darkMode = false;
   compositeEditorInstance: SlickCompositeEditorComponent;
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[] = [];
   isGridEditable = true;
@@ -125,7 +125,7 @@ export default class Example12 {
     this.dataset = this.loadData(500);
     this.gridContainerElm = document.querySelector<HTMLDivElement>(`.grid12`) as HTMLDivElement;
 
-    this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columnDefinitions, {
+    this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columns, {
       ...ExampleGridOptions,
       ...this.gridOptions,
     });
@@ -154,7 +154,7 @@ export default class Example12 {
   }
 
   initializeGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: '<span title="Task must always be followed by a number" class="color-warning-dark mdi mdi-alert-outline"></span> Title <span title="Title is always rendered as UPPERCASE" class="mdi mdi-information-outline"></span>',
@@ -547,7 +547,7 @@ export default class Example12 {
           ? editCommand.prevSerializedValue
           : [editCommand.prevSerializedValue];
         const serializedValues = Array.isArray(editCommand.serializedValue) ? editCommand.serializedValue : [editCommand.serializedValue];
-        const editorColumns = this.columnDefinitions.filter((col) => col.editor !== undefined);
+        const editorColumns = this.columns.filter((col) => col.editor !== undefined);
 
         const modifiedColumns: Column[] = [];
         prevSerializedValues.forEach((_val, index) => {

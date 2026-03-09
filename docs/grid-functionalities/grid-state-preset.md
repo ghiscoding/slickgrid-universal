@@ -39,7 +39,7 @@ export class GridExample {
   attached() {
     const dataset = this.initializeGrid();
     const gridContainerElm = document.querySelector<HTMLDivElement>('.grid1');
-    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, this.gridOptions, dataset);
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, this.gridOptions, dataset);
   }
 
   detached() {
@@ -117,11 +117,11 @@ export class GridExample {
   attached() {
     const dataset = this.initializeGrid();
     const gridContainerElm = document.querySelector<HTMLDivElement>('.grid1');
-    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, this.gridOptions, dataset);
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, this.gridOptions, dataset);
   }
 
   attached() {
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'name', name: 'Name', field: 'name', filterable: true, sortable: true, sortable: true },
       { id: 'duration', name: 'Duration', field: 'duration', filterable: true, sortable: true },
       { id: 'complete', name: '% Complete', field: 'percentComplete', filterable: true, sortable: true },
@@ -174,7 +174,7 @@ export class GridExample {
     const dataset = this.initializeGrid();
     const gridContainerElm = document.querySelector<HTMLDivElement>('.grid1');
     gridContainerElm.addEventListener('ongridstatechanged', this.handleOnGridStateChanged.bind(this));
-    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, this.gridOptions, dataset);
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, this.gridOptions, dataset);
   }
 
   handleOnGridStateChanged(gridState) {
@@ -201,13 +201,13 @@ So let say that we want to hide the last Column on page load, we can just find t
 Pass the Grid Presets with an array that has less `presets.columns`, whichever column(s) are missing will be considered hidden columns
 
 ```ts
-this.columnDefinitions = [
+this.columns = [
   // initial column definitions
 ];
 
 // for example, let's hide last column, we can just use `pop()` to ommit last column
 // and use `map()` to pull only the required field for presets to work
-const mappedColumnDefinitions = this.columnDefinitions.map(col => ({ columnId: col.id, width: col.width }));
+const mappedColumnDefinitions = this.columns.map(col => ({ columnId: col.id, width: col.width }));
 mappedColumnDefinitions.pop();
 
 // then pass it to the grid presets (an array of columns minus the last column)

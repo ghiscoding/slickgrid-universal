@@ -21,7 +21,7 @@ interface ChapterTree extends Chapter {
 }
 
 export default class Example35 {
-  columnDefinitions: Column<Chapter>[];
+  columns: Column<Chapter>[];
   gridOptions: GridOption;
   datasetFlat: Chapter[];
   datasetHierarchical: ChapterTree[] = [];
@@ -36,7 +36,7 @@ export default class Example35 {
     const gridContainerElm = document.querySelector('.grid35') as HTMLDivElement;
     this.sgb = new Slicker.GridBundle(
       gridContainerElm,
-      this.columnDefinitions,
+      this.columns,
       { ...ExampleGridOptions, ...this.gridOptions },
       undefined,
       this.datasetHierarchical
@@ -51,7 +51,7 @@ export default class Example35 {
   }
 
   initializeGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'chapterName',
         name: 'Chapter',

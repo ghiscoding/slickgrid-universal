@@ -21,7 +21,7 @@ import { onBeforeMount, onUnmounted, ref, type Ref } from 'vue';
 const NB_ITEMS = 10_000;
 const darkMode = ref(false);
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const column: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 let draggableGroupingPlugin: any;
 let durationOrderByCount = false;
@@ -552,7 +552,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <slickgrid-vue
     v-model:options="gridOptions"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:dataset="dataset"
     grid-id="grid18"
     @onVueGridCreated="vueGridReady($event.detail)"

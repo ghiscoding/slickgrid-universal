@@ -18,7 +18,7 @@
 <div class="grid-container1">
   <aurelia-slickgrid
     grid-id="grid50-1"
-    columns.bind="columnDefinitions1"
+    columns.bind="columns1"
     options.bind="gridOptions1"
     dataset.bind="dataset1"
     on-aurelia-grid-created.trigger="aureliaGridReady1($event.detail)"
@@ -33,5 +33,4 @@
   <span>Detail Grid - Orders for:</span>
   <span class="fst-italic text-secondary customer-detail">${ selectedName }</span>
 </h5>
-<aurelia-slickgrid grid-id="grid50-2" columns.bind="columnDefinitions2" options.bind="gridOptions2" dataset.bind="dataset2">
-</aurelia-slickgrid>
+<aurelia-slickgrid grid-id="grid50-2" columns.bind="columns2" options.bind="gridOptions2" dataset.bind="dataset2"> </aurelia-slickgrid>

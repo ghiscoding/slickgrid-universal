@@ -35,7 +35,7 @@ export class InputMaskFilter extends InputFilter {
 
     if (!this._inputMask) {
       throw new Error(`[Slickgrid-Universal] The Filters.inputMask requires the mask to be passed in the filter params or the column definition params
-        for example:: this.columnDefinitions: [{ id: 'phone', field: 'phone', filter: { model: Filters.inputMask, params: { mask: '000-000-0000' }}}]`);
+        for example:: this.columns: [{ id: 'phone', field: 'phone', filter: { model: Filters.inputMask, params: { mask: '000-000-0000' }}}]`);
     }
 
     // filter input can only have 1 search term, so we will use the 1st array index if it exist

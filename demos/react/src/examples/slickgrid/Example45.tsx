@@ -11,7 +11,7 @@ const NB_ITEMS = 995;
 
 const Example45: React.FC = () => {
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
-  const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
   const [dataset] = useState<Distributor[]>(getData(NB_ITEMS));
   const [detailViewRowCount, setDetailViewRowCount] = useState<number>(9);
   const [hideSubTitle, setHideSubTitle] = useState(false);
@@ -97,10 +97,10 @@ const Example45: React.FC = () => {
   }
 
   function defineGrid() {
-    const columnDefinitions = getColumnDefinitions();
+    const columns = getColumnDefinitions();
     const gridOptions = getGridOptions();
 
-    setColumnDefinitions(columnDefinitions);
+    setColumns(columns);
     setGridOptions(gridOptions);
   }
 
@@ -371,7 +371,7 @@ const Example45: React.FC = () => {
 
         <SlickgridReact
           gridId="grid45"
-          columns={columnDefinitions}
+          columns={columns}
           options={gridOptions}
           dataset={dataset}
           onReactGridCreated={($event) => (reactGridRef.current = $event.detail)}

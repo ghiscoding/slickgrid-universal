@@ -25,7 +25,7 @@ Please note that you need to provide the `id` by yourself and remember that it h
      (onAngularGridCreated)="angularGridReady($event.detail)"
      (onCellChange)="onCellChanged($event.detail.eventData, $event.detail.args)"
      (onClick)="onCellClicked($event.detail.eventData, $event.detail.args)"
-     [columns]="columnDefinitions" [options]="gridOptions" [dataset]="dataset">
+     [columns]="columns" [options]="gridOptions" [dataset]="dataset">
 </angular-slickgrid>
 ```
 
@@ -35,12 +35,12 @@ import { Component, OnInit} from '@angular/core';
 import { AngularGridInstance } from 'angular-slickgrid';
 
 export class GridBasicComponent implements OnInit {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
 
   ngOnInit(): void {
-    this.columnDefinitions = [];
+    this.columns = [];
   }
 
   angularGridReady(angularGrid: AngularGridInstance) {
@@ -88,7 +88,7 @@ To delete a row, you can use `deleteItem(s)` and the pass the entire object(s) o
 <angular-slickgrid gridId="grid2"
      (onAngularGridCreated)="angularGridReady($event.detail)"
      (onClick)="onCellClicked($event.detail.eventData, $event.detail.args)"
-     [columns]="columnDefinitions"
+     [columns]="columns"
      [options]="gridOptions"
      [dataset]="dataset">
 </angular-slickgrid>
@@ -100,12 +100,12 @@ import { Component, OnInit} from '@angular/core';
 import { AngularGridInstance } from 'angular-slickgrid';
 
 export class GridBasicComponent implements OnInit {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
 
   ngOnInit(): void {
-    this.columnDefinitions = [];
+    this.columns = [];
   }
 
   angularGridReady(angularGrid: AngularGridInstance) {
@@ -143,7 +143,7 @@ import { AngularGridInstance } from 'angular-slickgrid';
 
 @Injectable()
 export class GridBasicComponent implements OnInit {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
 
@@ -152,7 +152,7 @@ export class GridBasicComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.columnDefinitions = [];
+    this.columns = [];
   }
 
   updateItem(upItem) {
@@ -184,7 +184,7 @@ import { AngularGridInstance } from 'angular-slickgrid';
 
 @Injectable()
 export class GridBasicComponent implements OnInit {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
 
@@ -193,7 +193,7 @@ export class GridBasicComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.columnDefinitions = [];
+    this.columns = [];
   }
 
   updateItem(upItem) {
@@ -236,7 +236,7 @@ import { AngularGridInstance } from 'angular-slickgrid';
 
 @Injectable()
 export class GridBasicComponent implements OnInit {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
 
@@ -245,7 +245,7 @@ export class GridBasicComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.columnDefinitions = [];
+    this.columns = [];
   }
 
   updateItem(rowNumber) {

@@ -31,7 +31,7 @@ export class Example15Component implements OnInit, OnDestroy {
 
   private subscriptions: Subscription[] = [];
   angularGrid!: AngularGridInstance;
-  columnDefinitions!: Column[];
+  columns!: Column[];
   gridOptions!: GridOption;
   dataset!: any[];
   hideSubTitle = false;
@@ -65,7 +65,7 @@ export class Example15Component implements OnInit, OnDestroy {
 
   /** Clear the Grid State from Local Storage and reset the grid to it's original state */
   clearGridStateFromLocalStorage() {
-    this.angularGrid.gridService.resetGrid(this.columnDefinitions);
+    this.angularGrid.gridService.resetGrid(this.columns);
     this.angularGrid.paginationService!.changeItemPerPage(DEFAULT_PAGE_SIZE);
     setTimeout(() => (localStorage[LOCAL_STORAGE_KEY] = null));
   }
@@ -78,7 +78,7 @@ export class Example15Component implements OnInit, OnDestroy {
       multiSelectFilterArray.push({ value: i, label: i });
     }
 
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',

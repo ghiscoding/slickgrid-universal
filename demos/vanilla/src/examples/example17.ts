@@ -20,8 +20,8 @@ const NB_ITEMS = 300;
 export default class Example17 {
   gridOptions1: GridOption;
   gridOptions2: GridOption;
-  columnDefinitions1: Column[];
-  columnDefinitions2: Column[];
+  columns1: Column[];
+  columns2: Column[];
   dataset1: any[];
   dataset2: any[];
   sgb1: SlickVanillaGridBundle;
@@ -41,13 +41,13 @@ export default class Example17 {
 
     this.sgb1 = new Slicker.GridBundle(
       document.querySelector(`.grid17-1`) as HTMLDivElement,
-      this.columnDefinitions1,
+      this.columns1,
       { ...ExampleGridOptions, ...this.gridOptions1 },
       this.dataset1
     );
     this.sgb2 = new Slicker.GridBundle(
       document.querySelector(`.grid17-2`) as HTMLDivElement,
-      this.columnDefinitions2,
+      this.columns2,
       { ...ExampleGridOptions, ...this.gridOptions2 },
       this.dataset2
     );
@@ -64,7 +64,7 @@ export default class Example17 {
 
   /* Define grid Options and Columns */
   defineGrids() {
-    this.columnDefinitions1 = [
+    this.columns1 = [
       {
         id: 'sel',
         name: '#',
@@ -135,7 +135,7 @@ export default class Example17 {
     ];
 
     for (let i = 0; i < 30; i++) {
-      this.columnDefinitions1.push({ id: `mock${i}`, name: `Mock${i}`, field: `mock${i}`, width: 90 });
+      this.columns1.push({ id: `mock${i}`, name: `Mock${i}`, field: `mock${i}`, width: 90 });
     }
 
     this.gridOptions1 = {
@@ -162,7 +162,7 @@ export default class Example17 {
     };
 
     // copy the same Grid Options and Column Definitions to 2nd grid
-    this.columnDefinitions2 = this.columnDefinitions1.slice();
+    this.columns2 = this.columns1.slice();
     this.gridOptions2 = {
       ...this.gridOptions1,
       ...{

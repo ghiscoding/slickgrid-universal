@@ -48,7 +48,7 @@ For filters to work properly (default is `string`), make sure to provide a `Fiel
 Simply set the flag `filterable` to True and and enable the filters in the Grid Options. Here is an example with a full column definition:
 ```ts
 // define you columns, in this demo Effort Driven will use a Select Filter
-this.columnDefinitions = [
+this.columns = [
   { id: 'title', name: 'Title', field: 'title' },
   { id: 'description', name: 'Description', field: 'description', filterable: true }
 ];
@@ -63,7 +63,7 @@ this.gridOptions = {
 When using a regular grid with a JSON dataset (that is when Backend Service API is not being used), the filter might not work correctly on cell values that are translated (because it will try to filter against the translation key instead of the actual formatted value). So to avoid this problem, a new extra `params` was added to help resolving this problem, you need to set `useFormatterOuputToFilter: true` and the filter will, has the name suggest, use the output of the Formatter to filter against the translated cell value. Example:
 ```ts
 // define you columns, in this demo Effort Driven will use a Select Filter
-this.columnDefinitions = [
+this.columns = [
   { id: 'title', name: 'Title', field: 'id',
     headerKey: 'TITLE',
     formatter: this.taskTranslateFormatter,  // <-- this could be a custom Formatter or the built-in translateFormatter
@@ -97,7 +97,7 @@ const dataset = [
 
 We can now filter the zip code from the buyer's address using this filter:
 ```ts
-this.columnDefinitions = [
+this.columns = [
   {
     // the zip is a property of a complex object which is under the "buyer" property
     // it will use the "field" property to explode (from "." notation) and find the child value
@@ -119,7 +119,7 @@ Note: the default is different depending on the filter type
 For example if you would want to disable this behavior, you can assign `emptySearchTermReturnAllValues: false`
 ```ts
 // define you columns, in this demo Effort Driven will use a Select Filter
-this.columnDefinitions = [
+this.columns = [
   { 
     id: 'lastName', name: 'Last Name', field: 'lastName',
     filterable: true,
@@ -204,7 +204,7 @@ this.gridOptions = {
 You can provide a custom predicate by using the `filterPredicate` when defining your `filter`, the callback will provide you with 2 arguments (`dataContext` and `searchFilterArgs`). The `searchFilterArgs` has a type of `SearchColumnFilter` interface which will provide you more info about the filter itself (like parsed operator, search terms, column definition, column id and type as well). You can see a live demo at [Example 14](https://ghiscoding.github.io/slickgrid-universal/#/example14) and the associated [lines](https://github.com/ghiscoding/slickgrid-universal/blob/1a2c2ff4b72ac3f51b30b1d3d101e84ed9ec9ece/demos/vanilla/src/examples/example14.ts#L153-L178) of code.
 
 ```ts
-this.columnDefinitions = [
+this.columns = [
   {
     id: 'title', name: 'Title', field: 'title', sortable: true,
     filterable: true,
@@ -249,7 +249,7 @@ User can declare some Filter Shortcuts, that will be added to the Header Menu of
  The shortcuts can be declared via an array that must include at least a `title` (or `titleKey`) a `searchTerms` array and lastly an optional `operator` can also be provided. The available properties of these shortcut is a merge of Header Menu Item interface (except `command` and `action` which are reserved and assigned internally) and of course the 3 properties mentioned above. The declaration is very similar to how we use it when declaring Grid Presets as shown below
 
 ```ts
-this.columnDefinitions = [
+this.columns = [
   {
     id: 'country', name: 'Country', field: 'country',
     filter: {

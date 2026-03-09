@@ -20,7 +20,7 @@ const Footer = () => {
 
 const Example29: React.FC = () => {
   const [dataset] = useState<Column[]>(getData(NB_ITEMS));
-  const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
   const [hideSubTitle, setHideSubTitle] = useState(false);
 
@@ -30,7 +30,7 @@ const Example29: React.FC = () => {
 
   /* Define grid Options and Columns */
   function defineGrids() {
-    const columnDefinitions = [
+    const columns = [
       { id: 'title', name: 'Title', field: 'title', sortable: true, minWidth: 100 },
       { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true, minWidth: 100 },
       { id: '%', name: '% Complete', field: 'percentComplete', sortable: true, minWidth: 100 },
@@ -45,7 +45,7 @@ const Example29: React.FC = () => {
       gridWidth: 800,
     };
 
-    setColumnDefinitions(columnDefinitions);
+    setColumns(columns);
     setGridOptions(gridOptions);
   }
 
@@ -98,14 +98,7 @@ const Example29: React.FC = () => {
 
       <hr />
 
-      <SlickgridReact
-        gridId="grid29"
-        columns={columnDefinitions}
-        options={gridOptions}
-        dataset={dataset}
-        header={<Header />}
-        footer={<Footer />}
-      />
+      <SlickgridReact gridId="grid29" columns={columns} options={gridOptions} dataset={dataset} header={<Header />} footer={<Footer />} />
     </div>
   );
 };

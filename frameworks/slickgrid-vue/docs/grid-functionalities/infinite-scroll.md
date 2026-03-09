@@ -27,7 +27,7 @@ import { type Column, Filters, Formatters, GridState, SlickgridVue, SlickgridVue
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const column: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const scrollEndCalled = ref(false);
 let vueGrid: SlickgridVueInstance;
@@ -77,7 +77,7 @@ function handleOnSort() {
 
 <template>
   <SlickgridVue gridId="grid1"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:options="gridOptions"
     v-model:dataset="dataset"
     @onScroll="handleOnScroll($event.$detail.args)"
@@ -102,7 +102,7 @@ import { type Column, Filters, Formatters, GridState, SlickgridVue, SlickgridVue
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const column: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 let vueGrid: SlickgridVueInstance;
 
@@ -176,7 +176,7 @@ function getCustomerCallback(data: { '@odata.count': number; infiniteScrollBotto
 
 <template>
   <SlickgridVue gridId="grid1"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:options="gridOptions"
     v-model:dataset="dataset"
     @onVueGridCreated="vueGridReady($event.detail)"

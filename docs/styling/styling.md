@@ -104,7 +104,7 @@ The project has a few built-in icons (sort, grouping, row detail, row move, row 
 What if you want to use your own font/SVG library?
 This can be answered in 2 parts:
 1. the built-in icons can only be changed via SASS (or CSS with extra work), see above on how to change them.
-2. for all other area using icons via CSS classes (e.g. all menu plugins), you can use the "lite" Themes and then make sure to update all the menu plugins with the correct CSS classes, for example the global grid options of the Grid Menu is configured with the following CSS classes and you'll want to remap them with the correct CSS classes to fit your need:
+2. for all other areas using icons via CSS classes (e.g. all menu plugins), you can use the "lite" Themes and then make sure to update all the menu plugins with the correct CSS classes, for example the global grid options of the Grid Menu is configured with the following CSS classes and you'll want to remap them with the correct CSS classes to fit your needs:
 
 ```ts
 // default global grid options
@@ -138,7 +138,7 @@ Since SVG can now be colorize via the `color` the same as any other text, there 
 
 **NOTE 1:** The `colors.scss` is **only** included in the Material and Salesforce Themes since those are the only 2 themes currently using SVGs. If you wish to use these colors then simply add the necessary css/scss file.
 
-![image](https://github.com/ghiscoding/slickgrid-universal/assets/643976/986f16af-4e2b-4961-b2b5-32afc780b078)
+![image](https://github.com/user-attachments/assets/716d6b86-d8c9-4517-bd9a-ecf06c3695d3)
 
 ```scss
 // SASS colors

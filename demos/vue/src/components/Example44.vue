@@ -4,7 +4,7 @@ import { SlickgridVue, type Column, type Formatter, type GridOption, type ItemMe
 import { onBeforeMount, ref, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const column: Ref<Column[]> = ref([]);
 let vueGrid!: SlickgridVueInstance;
 const dataLn = ref<number | string>('loading...');
 const scrollToRow = ref(100);
@@ -438,7 +438,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <slickgrid-vue
     v-model:options="gridOptions"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:dataset="dataset"
     grid-id="grid44"
     @onVueGridCreated="vueGridReady($event.detail)"

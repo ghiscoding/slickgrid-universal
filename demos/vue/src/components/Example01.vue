@@ -10,8 +10,8 @@ let _darkModeGrid1 = false;
 let vueGrid1!: SlickgridVueInstance;
 const gridOptions1 = ref<GridOption>();
 const gridOptions2 = ref<GridOption>();
-const columnDefinitions1: Ref<Column[]> = ref([]);
-const columnDefinitions2: Ref<Column[]> = ref([]);
+const columns1: Ref<Column[]> = ref([]);
+const columns2: Ref<Column[]> = ref([]);
 const dataset1 = ref<any[]>([]);
 const dataset2 = ref<any[]>([]);
 
@@ -43,7 +43,7 @@ onUnmounted(() => {
 
 /* Define grid Options and Columns */
 function defineGrids() {
-  columnDefinitions1.value = [
+  columns1.value = [
     { id: 'title', name: 'Title', field: 'title', sortable: true, minWidth: 100 },
     { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true, minWidth: 100 },
     { id: '%', name: '% Complete', field: 'percentComplete', sortable: true, minWidth: 100 },
@@ -62,7 +62,7 @@ function defineGrids() {
 
   // copy the same Grid Options and Column Definitions to 2nd grid
   // but also add Pagination in this grid
-  columnDefinitions2.value = columnDefinitions1.value;
+  columns2.value = columns1.value;
   gridOptions2.value = {
     ...gridOptions1.value,
     ...{
@@ -105,7 +105,7 @@ function paginationChanged(changes: PaginationMetadata) {
 
 function resetGrid1() {
   // const cols = vueGrid1.slickGrid?.getColumns() || [];
-  const cols = columnDefinitions1.value.slice();
+  const cols = columns1.value.slice();
   cols.forEach((c) => (c.hidden = false));
   vueGrid1.slickGrid?.setColumns(cols);
   vueGrid1.slickGrid?.autosizeColumns();
@@ -152,7 +152,7 @@ function toggleDarkModeGrid1() {
   <div class="grid-container1">
     <SlickgridVue
       v-model:options="gridOptions1!"
-      v-model:columns="columnDefinitions1"
+      v-model:columns="columns1"
       v-model:dataset="dataset1"
       grid-id="grid1-1"
       @onVueGridCreated="vueGrid1Ready($event.detail)"
@@ -166,7 +166,7 @@ function toggleDarkModeGrid1() {
 
   <slickgrid-vue
     v-model:options="gridOptions2!"
-    v-model:columns="columnDefinitions2"
+    v-model:columns="columns2"
     v-model:dataset="dataset2"
     grid-id="grid1-2"
     @on-pagination-changed="paginationChanged($event.detail)"
