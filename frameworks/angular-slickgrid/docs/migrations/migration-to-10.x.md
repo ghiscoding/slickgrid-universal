@@ -38,7 +38,7 @@ For years, I had to keep some references in a Shared Service as `shared.allColum
 
 _following changes should be transparent to most users, I'm just listing them in case of side effects._
 
-1. Migrated from a `<div>` to a `<dialog>` in the `SlickCompositeEditorComponent` modal component. The dialog is native code and it has better accessibility (aria) support with a baseline support showing as "widely available". A fallback to `<div>` is also available in case `<dialog>` doens't work for everybody (e.g. it doesn't work in Salesforce LWC, hence the available fallback)
+1. Migrated from a `<div>` to a `<dialog>` in the `SlickCompositeEditorComponent` modal component. The dialog is native code and it has better accessibility (aria) support with a baseline support showing as "widely available". A fallback to `<div>` is also available in case `<dialog>` doesn't work for everybody (e.g. it doesn't work in Salesforce LWC, hence the available fallback)
 2. Remove the use of `calc(100% - 18px)` to position the Grid Menu and simply use CSS flexbox to position the grid menu button which is a much better approach to properly align everything.
 
 ### Row Detail (now optional)
