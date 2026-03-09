@@ -11,7 +11,7 @@ npm install --save angular-slickgrid bootstrap # the last dep is optional
 
 #### Important note about `ngx-translate`
 
-**NOTE** however, please note that `@ngx-translate` is still going to be installed behind the scene just to make DI (dependency injection) build properly because of our use of `@Optional()`. Since it's optional, it should be removed by the build tree shaking process once you run a production build. See their version compatibility table below:
+**NOTE** please note that `@ngx-translate` is still going to be installed behind the scene just to make DI (dependency injection) build properly because of our use of `@Optional()`. Because of this optional usage, I would assume that it will be removed by the build tree shaking process when you run a production build. See their version compatibility table below:
 
 | Angular Version         | @ngx-translate/core |
 |-------------------------|---------------------|
@@ -22,7 +22,7 @@ npm install --save angular-slickgrid bootstrap # the last dep is optional
 
 ### 2. Modify the `angular.json` and `tsconfig.app.json` files
 
-Then modify your `angular.json` file with the following Styles and Scripts:
+For Bootstrap users (or possibly other frameworks), modify your `angular.json` file with the necessary framework Styles and Scripts:
 
 ```js
 "styles": [
@@ -68,6 +68,7 @@ You could also compile the SASS files with your own customization, for that simp
 Below are 2 different setups (with App Module (legacy) or Standalone) but in both cases the `AngularSlickgridModule.forRoot()` is **required**, so make sure to include it. Also note that the GitHub demo is strictly built with an App Module which is considered the legacy approach.
 
 #### App Module (legacy)
+##### This only works with version below v10.0 since v10.0 and above is now purely Standalone
 Include `AngularSlickgridModule` in your App Module (`app.module.ts`)
 **Note**
 Make sure to add the `forRoot` since it will throw an error in the console when missing.
@@ -165,9 +166,9 @@ bootstrapApplication(AppComponent, {
 ```
 
 ### 6. Install/Setup `ngx-translate` for Localization (optional)
-#### If you don't want to use any Translate Service and use only 1 Locale then take a look at this [demo](https://github.com/ghiscoding/angular-slickgrid-demos)
+#### If you don't want to use any Translate Service and use only 1 Locale then take a look at the (Single Locale) demo on the [Angular-Slickgrid-Demos](https://github.com/ghiscoding/angular-slickgrid-demos) repo.
 
-To provide locales other than English (default locale), you have 2 options that you can go with. If you only use English, there is nothing to do (you can still change some of the texts in the grid via option 1.)
+To provide locales other than English (default locale), you have 2 options that you can go with. If you only use English, there is nothing to do (you can still change some of the texts in the grid via option 1 below)
 1. Using [Custom Locale](../localization/localization-with-custom-locales.md), that is when you use **only 1** locale (other than English)...
 2. Using [Localization with I18N](../localization/localization-with-ngx-translate.md), that is when you want to use multiple locales dynamically.
 3. **NOTE** `@ngx-translate` will still be installed (since it's an internal dependency), but it should be removed after doing a production build because of our usage of `@Optional()`.
@@ -189,7 +190,7 @@ And finally, you are now ready to use it in your project, for example let's crea
 import { Column, GridOption } from 'angular-slickgrid';
 
 export class GridBasicComponent {
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   gridOptions: GridOption = {};
   dataset: any[] = [];
 
@@ -198,7 +199,7 @@ export class GridBasicComponent {
   }
 
   prepareGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'title', name: 'Title', field: 'title', sortable: true },
       { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true },
       { id: '%', name: '% Complete', field: 'percentComplete', sortable: true },
@@ -224,7 +225,7 @@ define Angular-Slickgrid in your View
 ```html
 <div class="container">
   <angular-slickgrid gridId="grid1"
-            [columns]="columnDefinitions"
+            [columns]="columns"
             [options]="gridOptions"
             [dataset]="dataset">
   </angular-slickgrid>
@@ -245,16 +246,16 @@ The last step is really to explore all the pages that are available in the docum
 You might notice that all demos are made with mocked dataset that are embedded in each examples, that is mainly for demo purposes, but you might be wondering how to connect this with an `HttpClient`? Easy... just replace the mocked data assignment to the `dataset` property with your `HttpClient` call and that's it. Basically, the `dataset` property can be changed at any time, which is why you can use local data and/or connect it to a `Promise` or an `Observable` with `HttpClient` (internally it's just a SETTER that refreshes the grid). See [Example 22](https://ghiscoding.github.io/angular-slickgrid-demos/#/example22) for a demo showing how to load a JSON file with `HttpClient`.
 
 ### 10. Live Demo - Clone the Examples
-The best way to get started is to clone the [Angular-Slickgrid-demos](https://github.com/ghiscoding/angular-slickgrid-demos), it has multiple examples and it is also updated frequently since it is used for the GitHub Bootstrap 5 demo page.
+The best way to get started is to clone the [Angular-Slickgrid-demos](https://github.com/ghiscoding/angular-slickgrid-demos), it has multiple examples and it is also updated frequently since it is used for the GitHub Bootstrap 5 live demo page.
 
 ##### All Live Demo Examples have links to the actual code
-If you would like to see the code to a particular Example, just click on the "see code" which is available in all live examples.
+If you would like to inspect the code from a particular Example, just click on the "see code" (top right) which is available in all live demo examples.
 
 ### 11. CSP Compliance
 The project supports Content Security Policy (CSP) as long as you provide an optional `sanitizer` in your grid options (we recommend DOMPurify). Review the [CSP Compliance](../developer-guides/csp-compliance.md) documentation for more info.
 
 ### 12. Missing Features compared to SlickGrid?
-What if `Angular-Slickgrid` is missing feature(s) versus the original `SlickGrid`? Fear not and just use the `SlickGrid` and `DataView` objects directly, which are expose from the start through Custom Events. For more info continue reading on [Docs - SlickGrid & DataView objects](../slick-grid-dataview-objects)
+What if `Angular-Slickgrid` is missing feature(s) versus the original `SlickGrid` library? Fear not and just use the `SlickGrid` and `DataView` objects directly, which are exposed through the `onAngularGridCreated` event. For more info continue reading on [Docs - SlickGrid & DataView objects](../slick-grid-dataview-objects)
 
 ### 13. Troubleshooting - Build Errors/Warnings
-Visit the [Troubleshooting](./troubleshooting.md) section for more common errors.
+Visit the [Troubleshooting](troubleshooting.md) section for more common errors.
