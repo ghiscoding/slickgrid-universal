@@ -20,21 +20,8 @@ Again the following dependencies are totally **optional**
 
 ### Install and Start Demo
 
-You can get this working demo by cloning our [Slickgrid-React-Demos](https://github.com/ghiscoding/slickgrid-react-demos/) which is updated on every new release (see [live demo](https://ghiscoding.github.io/slickgrid-react-demos/)).
+You can get this working demo by cloning our [Slickgrid-React-Demos](https://github.com/ghiscoding/slickgrid-react-demos/) and follow the instructions provided.
 
 ```bash
 git clone https://github.com/ghiscoding/slickgrid-react-demos
-cd bootstrap5-i18n-demo
-npm install # OR yarn install
-npm run dev     # OR yarn start
-```
-
-Then open your browser to
-```html
-http://localhost:8080
-```
-
-### Build Demo
-```bash
-run build # OR yarn run build
 ```
