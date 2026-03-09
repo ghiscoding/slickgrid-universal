@@ -5,7 +5,7 @@ import { ref, type Ref } from 'vue';
 
 const gridCreated = ref(false);
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const templateUrl = ref(new URL('./data/users.csv', import.meta.url).href);
 const uploadFileRef = ref('');
@@ -87,7 +87,7 @@ function dynamicallyCreateGrid(csvContent: string) {
   };
 
   dataset.value = outputData;
-  columnDefinitions.value = colDefs;
+  columns.value = colDefs;
   gridCreated.value = true;
 }
 

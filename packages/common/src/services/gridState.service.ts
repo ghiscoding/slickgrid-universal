@@ -390,9 +390,8 @@ export class GridStateService {
     return preservedRowSelection;
   }
 
-  resetColumns(columnDefinitions?: Column[]): void {
-    const columns: Column[] = columnDefinitions || this._columns;
-    const currentColumns: CurrentColumn[] = this.getAssociatedCurrentColumns(columns);
+  resetColumns(columns?: Column[]): void {
+    const currentColumns: CurrentColumn[] = this.getAssociatedCurrentColumns(columns || this._columns);
     const isIncludingHiddenProps = !!this._gridOptions.gridStateIncludeHiddenProps;
 
     this.pubSubService.publish('onGridStateChanged', {

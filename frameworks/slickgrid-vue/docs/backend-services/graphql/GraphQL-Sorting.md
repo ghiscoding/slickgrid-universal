@@ -39,7 +39,7 @@ onBeforeMount(() => {
 });
 
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     { id: 'name', name: 'Name', field: 'name', filterable: true, sortable: true },
     { id: 'company', name: 'Company', field: 'company', filterable: true },
     { id: 'billingStreet', name: 'Billing Address Street', field: 'billing.address.street', filterable: true, sortable: true },

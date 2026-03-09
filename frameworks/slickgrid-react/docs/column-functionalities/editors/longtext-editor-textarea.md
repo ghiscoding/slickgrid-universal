@@ -13,7 +13,7 @@ You can change button texts, textarea size (cols, rows) and also change position
 
 ```ts
 defineGrid() {
-  const columnDefinitions = [
+  const columns = [
     {
       id: 'title', name: 'Title', field: 'title',
       editor: {
@@ -66,7 +66,7 @@ const myCustomTitleValidator = (value, args) => {
 };
 
 defineGrid() {
-  const columnDefinitions = [
+  const columns = [
     {
       id: 'title', name: 'Title', field: 'title',
       editor: {

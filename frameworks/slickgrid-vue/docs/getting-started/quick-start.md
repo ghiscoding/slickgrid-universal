@@ -101,7 +101,7 @@ import { Column, Formatter, Formatters, GridOption, SlickgridVue, SlickgridVueIn
 import { onBeforeMount, ref, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]); // to avoid type mismatch use `Ref<Column[]>` instead of `ref<Column[]>`
+const columns: Ref<Column[]> = ref([]); // to avoid type mismatch use `Ref<Column[]>` instead of `ref<Column[]>`
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -110,7 +110,7 @@ onBeforeMount(() => {
 
 /* Define grid Options and Columns */
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     { id: 'title', name: 'Title', field: 'title', sortable: true, minWidth: 100 },
     { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true, minWidth: 100 },
     { id: '%', name: '% Complete', field: 'percentComplete', sortable: true, minWidth: 100 },

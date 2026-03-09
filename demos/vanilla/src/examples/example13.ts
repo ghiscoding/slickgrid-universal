@@ -121,7 +121,7 @@ export default class Example13 {
   loadData(count: number, gridNo: 1 | 2) {
     // Set up some test columns.
     for (let i = 0; i < 10; i++) {
-      this[`columnDefinitions${gridNo}`].push({
+      this[`columns${gridNo}`].push({
         id: i,
         name: 'Column ' + String.fromCharCode('A'.charCodeAt(0) + i),
         field: i + '',
@@ -165,8 +165,8 @@ export default class Example13 {
     }
 
     // Set multiple buttons on the first column to demonstrate overflow.
-    this[`columnDefinitions${gridNo}`][0].name = 'Resize me!';
-    this[`columnDefinitions${gridNo}`][0].header = {
+    this[`columns${gridNo}`][0].name = 'Resize me!';
+    this[`columns${gridNo}`][0].header = {
       buttons: [
         {
           cssClass: 'mdi mdi-message-text',
@@ -201,8 +201,8 @@ export default class Example13 {
     }
 
     // Set a button on the second column to demonstrate hover.
-    this[`columnDefinitions${gridNo}`][1].name = 'Hover me!';
-    this[`columnDefinitions${gridNo}`][1].header = {
+    this[`columns${gridNo}`][1].name = 'Hover me!';
+    this[`columns${gridNo}`][1].header = {
       buttons: [
         {
           cssClass: 'mdi mdi-help-circle-outline',
@@ -220,7 +220,7 @@ export default class Example13 {
     for (let i = 0; i < count; i++) {
       const d = (mockDataset[i] = {});
       d['id'] = i;
-      for (let j = 0; j < this[`columnDefinitions${gridNo}`].length; j++) {
+      for (let j = 0; j < this[`columns${gridNo}`].length; j++) {
         d[j] = Math.round(Math.random() * 10) - 5;
       }
     }

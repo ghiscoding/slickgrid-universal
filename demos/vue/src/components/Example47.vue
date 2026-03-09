@@ -34,7 +34,7 @@ const FAKE_SERVER_DELAY = 250;
 const NB_ITEMS = 1200;
 const gridOptions = ref<GridOption>();
 const detailViewRowCount = ref(9);
-const columnDefinitions: Ref<Column<Item>[]> = ref([]);
+const columns: Ref<Column<Item>[]> = ref([]);
 const dataset = ref<Item[]>([]);
 const isDarkMode = ref(false);
 const showSubTitle = ref(true);
@@ -57,7 +57,7 @@ onUnmounted(() => {
 
 /* Define grid Options and Columns */
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'title',
       name: 'Title',

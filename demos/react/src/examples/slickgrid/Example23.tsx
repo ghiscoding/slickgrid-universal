@@ -270,7 +270,7 @@ const Example23: React.FC = () => {
 
   // function selectedColumnChanged(e: React.ChangeEvent<HTMLSelectElement>) {
   //   const selectedVal = (e.target as HTMLSelectElement)?.value ?? '';
-  //   const selectedColumn = columnDefinitions.find(c => c.id === selectedVal);
+  //   const selectedColumn = columns.find(c => c.id === selectedVal);
 
   //   setSelectedColumn(selectedColumn);
   // }

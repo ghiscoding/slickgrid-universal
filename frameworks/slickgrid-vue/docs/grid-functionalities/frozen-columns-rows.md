@@ -20,7 +20,7 @@ import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 's
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -28,7 +28,7 @@ onBeforeMount(() => {
 });
 
 function defineGrid() {
-  columnDefinitions.value = [];
+  columns.value = [];
 
   gridOptions.value = {
     alwaysShowVerticalScroll: false, // disable scroll since we don't want it to show on the left pinned columns
@@ -65,7 +65,7 @@ import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 's
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -74,7 +74,7 @@ onBeforeMount(() => {
 
 function defineGrid() {
   // your columns definition
-  columnDefinitions.value = [];
+  columns.value = [];
 
   gridOptions.value = {
     alwaysShowVerticalScroll: false, // disable scroll since we don't want it to show on the left pinned columns
@@ -97,7 +97,7 @@ import { type Column, Filters, Formatters, SlickgridVue, SlickGrid, SortDirectio
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 let gridObj: SlickGrid;
 
@@ -106,7 +106,7 @@ onBeforeMount(() => {
 });
 
 function defineGrid() {
-  columnDefinitions.value = [];
+  columns.value = [];
 
   gridOptions.value = {
     alwaysShowVerticalScroll: false, // disable scroll since we don't want it to show on the left pinned columns

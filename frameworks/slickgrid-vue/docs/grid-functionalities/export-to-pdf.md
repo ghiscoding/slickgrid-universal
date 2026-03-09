@@ -74,7 +74,7 @@ function defineGrid() {
 
 Example — right-aligning a numeric column:
 ```ts
-const columnDefinitions = [
+columns.value = [
   { id: 'description', name: 'Description', field: 'description' },
   {
     id: 'amount',

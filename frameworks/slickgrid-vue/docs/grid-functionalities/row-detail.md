@@ -35,7 +35,7 @@ import { type Column, Filters, Formatters, GridState, SlickgridVue, SlickgridVue
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 let vueGrid: SlickgridVueInstance;
 
@@ -44,7 +44,7 @@ onBeforeMount(() => {
 });
 
 function defineGrid() {
-  const columnDefinitions = [/*...*/];
+  columns.value = [/*...*/];
   gridOptions.value = {
     enableRowDetailView: true,
     // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
@@ -394,7 +394,7 @@ function callParentMethod(model: any) {
 
 ## Troubleshooting
 ### Adding a Column dynamically is removing the Row Selection column, why is that?
-The reason is because the Row Selection (checkbox) plugin is a special column and Slickgrid-Vue is adding an extra column dynamically for the Row Selection checkbox and that is **not** reflected in your local copy of `columnDefinitions`. To address this issue, you need to get the Slickgrid-Vue internal copy of all columns (including the extra columns), you can get it via `getAllColumnDefinitions()` from the Grid Service and then you can use to that array and that will work.
+The reason is because the Row Selection (checkbox) plugin is a special column and Slickgrid-Vue is adding an extra column dynamically for the Row Selection checkbox and that is **not** reflected in your local copy of `columns.value`. To address this issue, you need to get the Slickgrid-Vue internal copy of all columns (including the extra columns), you can get it via `getAllColumnDefinitions()` from the Grid Service and then you can use to that array and that will work.
 
 ```ts
 function vueGridReady(vueGrid: SlickgridVueInstance) {
@@ -409,7 +409,7 @@ addNewColumn() {
   setState((props, state) => {
     return {
       ...state,
-      columnDefinitions: allColumns.slice(); // or use spread operator [...cols]
+      columns: allColumns.slice(); // or use spread operator [...cols]
     };
   }
 }
@@ -430,7 +430,7 @@ import { type Column, Filters, Formatters, GridState, SlickgridVue, SlickgridVue
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -438,7 +438,7 @@ onBeforeMount(() => {
 });
 
 function defineGrid() {
-  const columnDefinitions = [/*...*/];
+  columns.value = [/*...*/];
   gridOptions.value = {
     enableRowDetailView: true,
     // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x

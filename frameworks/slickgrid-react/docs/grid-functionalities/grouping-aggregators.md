@@ -194,7 +194,7 @@ You can also create a custom `groupTotalsFormatter` similarly to a Formatter, ju
 ##### Component
 ```tsx
 function defineGrid() {
-  const columnDefinitions = [
+  const columns = [
     {
       id: 'cost', name: 'Cost', field: 'cost',
       groupTotalsFormatter: sumTotalsFormatter

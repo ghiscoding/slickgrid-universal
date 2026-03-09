@@ -16,7 +16,7 @@ import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 's
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const selectedColumn = ref<Column>();
 const selectedOperator = ref<string>();
@@ -86,7 +86,7 @@ function updateFilter() {
       <div class="col">
         <select class="form-select" data-test="search-column-list" name="selectedColumn" @change="selectedColumnChanged($event)">
           <option value="''">...</option>
-          <option v-for="column in columnDefinitions" :value="column.id" :key="column.id">{{column.name}}</option>
+          <option v-for="column in columns" :value="column.id" :key="column.id">{{column.name}}</option>
         </select>
       </div>
       <div class="col">

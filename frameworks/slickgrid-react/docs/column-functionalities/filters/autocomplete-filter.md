@@ -143,7 +143,7 @@ const Example: React.FC = () => {
 If you want to add the autocomplete functionality but want the user to be able to input a new option, then follow the example below:
 
 ```ts
-const columnDefinitions = [
+const columns = [
   {
     id: 'area',
     name: 'Area',

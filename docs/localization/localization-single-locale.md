@@ -31,7 +31,7 @@ import { localeFrench } from 'locales/fr';
 
 export class MyGrid {
   defineGrid() {
-    const columnDefinitions = [ /* ... */ ];
+    const columns = [ /* ... */ ];
 
     const gridOptions = {
       enableAutoResize: true,

@@ -27,8 +27,8 @@ For a single row selection, you need to have `enableCellNavigation: true`, `enab
 ```html
 <aurelia-slickgrid gridId="grid4"
     grid.bind="gridObj"
-    columnDefinitions.bind="columnDefinitions"
-    gridOptions.bind="gridOptions"
+    columns.bind="columns"
+    options.bind="options"
     dataset.bind="dataset"
     on-selected-rows-changed.trigger="handleRowSelection($event.detail.eventData, $event.detail.args)">
 </aurelia-slickgrid>
@@ -36,7 +36,7 @@ For a single row selection, you need to have `enableCellNavigation: true`, `enab
 
 #### Component
 ```ts
-this.gridOptions = {
+this.options = {
   enableAutoResize: true,
   enableCellNavigation: true,
   enableCheckboxSelector: true,
@@ -61,8 +61,8 @@ As for multiple row selections, you need to provide an extra grid option of `row
 ```html
 <aurelia-slickgrid gridId="grid4"
     grid.bind="gridObj"
-    columnDefinitions.bind="columnDefinitions"
-    gridOptions.bind="gridOptions"
+    columns.bind="columns"
+    options.bind="options"
     dataset.bind="dataset"
     on-selected-rows-changed.trigger="handleRowSelection($event.detail.eventData, $event.detail.args)">
 </aurelia-slickgrid>
@@ -76,7 +76,7 @@ export class Example1 {
     ...
 
     // grid options
-    this.gridOptions = {
+    this.options = {
       enableAutoResize: true,
       enableCellNavigation: true,
       enableCheckboxSelector: true,
@@ -107,7 +107,7 @@ SlickGrid is so powerful and customizable, you could if you wish mix the multipl
 ```typescript
 export class Example1 {
   defineGrid() {
-    this.gridOptions = {
+    this.options = {
       enableAutoResize: true,
       enableCellNavigation: true,
       enableCheckboxSelector: true,
@@ -143,7 +143,7 @@ You can use `selectableOverride` to provide custom logic to disable certain rows
 ```typescript
 export class Example1 implements OnInit {
   prepareGrid() {
-    this.gridOptions = {
+    this.options = {
       enableCheckboxSelector: true,
       checkboxSelector: {
         // you can override the logic for showing (or not) the expand icon
@@ -171,8 +171,8 @@ When having an external button that you want to work only when there's row selec
 ```html
 <button disabled.bind="isMyButtonDisabled">My Button</button>
 <aurelia-slickgrid gridId="grid4"
-    columnDefinitions.bind="columnDefinitions"
-    gridOptions.bind="gridOptions"
+    columns.bind="columns"
+    options.bind="options"
     dataset.bind="dataset"
     on-selected-rows-changed.trigger="handleOnSelectedRowsChanged($event.detail.args)">
 </aurelia-slickgrid>
@@ -188,8 +188,8 @@ handleOnSelectedRowsChanged(args) {
 ```html
 <button disabled.bind="isMyButtonDisabled">My Button</button>
 <aurelia-slickgrid gridId="grid4"
-    columnDefinitions.bind="columnDefinitions"
-    gridOptions.bind="gridOptions"
+    columns.bind="columns"
+    options.bind="options"
     dataset.bind="dataset"
     on-grid-state-service-changed.trigger="handleOngridStateChanged($event.detail.args)">
 </aurelia-slickgrid>
@@ -211,7 +211,7 @@ You can change which row(s) are selected by using the built-in SlickGrid method 
 <aurelia-slickgrid
       grid-id="grid1"
       columns.bind="columns"
-      options.bind="gridOptions"
+      options.bind="options"
       dataset.bind="dataset"
       on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)">
 </aurelia-slickgrid>
@@ -244,7 +244,7 @@ Starting with v9.10.0, you can now use the new Hybrid Selection Model, this new 
 For example, we could use the Excel Copy Buffer (Cell Selection) and use `rowSelectColumnIds` (Row Selection)
 
 ```ts
-this.gridOptions = {
+this.options = {
   // enable new hybrid selection model (rows & cells)
   enableSelection: true,
   // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x
@@ -272,8 +272,8 @@ You can also `onDragReplaceCells` event to drag and fill cell values to the exte
 ```html
 <aurelia-slickgrid gridId="grid4"
     grid.bind="gridObj"
-    columnDefinitions.bind="columnDefinitions"
-    gridOptions.bind="gridOptions"
+    columns.bind="columns"
+    options.bind="options"
     dataset.bind="dataset"
     on-drag-replace-cells.trigger="handleRowSelection($event.detail.eventData, $event.detail.args)">
 </aurelia-slickgrid>
@@ -283,7 +283,7 @@ You can also `onDragReplaceCells` event to drag and fill cell values to the exte
 ```ts
 export class Example {
   definedGrid() {
-    this.gridOptions = {
+    this.options = {
       // enable new hybrid selection model (rows & cells)
       enableSelection: true,
       // ...
@@ -311,12 +311,12 @@ export class Example {
 
 ## Troubleshooting
 ### Adding a Column dynamically is removing the Row Selection column, why is that?
-The reason is because the Row Selection (checkbox) plugin is a special column and Aurelia-Slickgrid is adding an extra column dynamically for the Row Selection checkbox and that is **not** reflected in your local copy of `columnDefinitions`. To address this issue, you need to get the Aurelia-Slickgrid internal copy of all columns (including the extra columns), you can get it via `getAllColumnDefinitions()` from the Grid Service and then you can use to that array and that will work.
+The reason is because the Row Selection (checkbox) plugin is a special column and Aurelia-Slickgrid is adding an extra column dynamically for the Row Selection checkbox and that is **not** reflected in your local copy of `columns`. To address this issue, you need to get the Aurelia-Slickgrid internal copy of all columns (including the extra columns), you can get it via `getAllColumnDefinitions()` from the Grid Service and then you can use to that array and that will work.
 
 ```html
 <aurelia-slickgrid grid-id="grid16"
     columns.bind="columns"
-    options.bind="gridOptions"
+    options.bind="options"
     dataset.bind="dataset"
     on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)">
 </aurelia-slickgrid>

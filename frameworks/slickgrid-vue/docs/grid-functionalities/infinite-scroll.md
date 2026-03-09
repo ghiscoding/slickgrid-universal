@@ -27,7 +27,7 @@ import { type Column, Filters, Formatters, GridState, SlickgridVue, SlickgridVue
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const scrollEndCalled = ref(false);
 let vueGrid: SlickgridVueInstance;
@@ -102,7 +102,7 @@ import { type Column, Filters, Formatters, GridState, SlickgridVue, SlickgridVue
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 let vueGrid: SlickgridVueInstance;
 
@@ -118,7 +118,7 @@ function vueGridReady(vGrid: SlickgridVueInstance) {
 }
 
 function initializeGrid() {
-  columnDefinitions.value = [ /* ... */ ];
+  columns.value = [ /* ... */ ];
 
   gridOptions.value = {
     presets: {

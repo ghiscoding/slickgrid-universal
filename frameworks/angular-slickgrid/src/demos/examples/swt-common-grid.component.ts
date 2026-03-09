@@ -207,7 +207,7 @@ export class SwtCommonGridComponent implements OnInit, AfterViewInit, BackendSer
 
     // check if allcolumns tag contains any children
     if (this.metaData.columns.column) {
-      // set columnsData and columnDefinitions
+      // set columnsData and columns
       this.columnData = this.metaData.columns.column;
 
       for (const colData of this.columnData) {

@@ -74,7 +74,7 @@ const Example: React.FC = () => {
         <select className="form-select" data-test="search-column-list" name="selectedColumn" onChange={($event) => selectedColumnChanged($event)}>
           <option value="''">...</option>
           {
-            columnDefinitions.map((column) =>
+            columns.map((column) =>
               <option value={column.id} key={column.id}>{column.name}</option>
             )
           }

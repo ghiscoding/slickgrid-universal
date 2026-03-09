@@ -68,7 +68,7 @@ By default HTML is not rendered and the `label` will simply show HTML as text. B
 **NOTE:** this is currently only used by the Editors that have a `collection` which are the `MultipleSelect` & `SingleSelect` Editors.
 
 ```typescript
-const columnDefinitions = [
+const columns = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
@@ -165,7 +165,7 @@ const Example: React.FC = () => {
 ### Remote API (basic with object result)
 This is the preferred way of dealing with the AutoComplete, the main reason is because the AutoComplete uses an `<input/>` and that means we can only keep 1 value and if we do then we lose the text label and so using an Object Result makes more sense. Note however that you'll need a bit more code that is because we'll use the `'object'` and so we need to provide a custom `SortComparer` and also a custom `Formatters` and for them to work we also need to provide a `dataKey` (the value) and a `labelKey` (text label) as shown below.
 ```ts
-const columnDefinitions = [
+const columns = [
   {
     id: 'product', name: 'Product', field: 'product',
     dataKey: 'id',
@@ -397,7 +397,7 @@ const Example: React.FC = () => {
 If you want to add the autocomplete functionality but want the user to be able to input a new option, then follow the example below:
 
 ```ts
-const columnDefinitions = [{
+const columns = [{
   id: 'area',
   name: 'Area',
   field: 'area',
@@ -419,7 +419,7 @@ You can also use the `minLength` to limit the autocomplete text to `0` character
 You might want to change the dimensions of the drop container, this 3rd party library has a `customize` method to deal with such a thing. Slickgrid-Universal itself is removing the width using this method, you can however override this method to change the drop container dimensions
 
 ```ts
-const columnDefinitions = [{
+const columns = [{
     id: 'product', name: 'Product', field: 'product', filterable: true,
     editor: {
       model: Editors.autocompleter,

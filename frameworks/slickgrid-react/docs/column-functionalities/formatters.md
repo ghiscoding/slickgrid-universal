@@ -102,7 +102,7 @@ const Example: React.FC = () => {
   useEffect(() => defineGrid(), []);
 
   function defineGrid() {
-    const columnDefinitions = [
+    const columns = [
       { id: 'title', name: 'Title', field: 'title' },
       { id: 'duration', name: 'Duration (days)', field: 'duration' },
       { id: '%', name: '% Complete', field: 'percentComplete', formatter: Formatters.percentComplete },
@@ -121,7 +121,7 @@ What if you want to pass extra arguments that you want to use within the Formatt
 ```ts
 let optionList = ['True', 'False'];
 
-const columnDefinitions = [
+const columns = [
   { id: 'title', field: 'title',
     headerTranslate: 'TITLE',
     formatter: myCustomSelectFormatter,
@@ -143,7 +143,7 @@ SlickGrid only has 1 `formatter` property but if you want to use more than 1 For
 // Data Example::
 // data = [{ shipping: { cost: 123.22, address: { zip: 123456 } } }];
 
-const columnDefinitions = [
+const columns = [
   {
     id: 'shippingCost', field: 'shipping.cost', name: 'Shipping Cost',
     formatter: Formatters.multiple,
@@ -279,7 +279,7 @@ There many built-in Date Formatters that are already available (see [list](#list
 For example, if you wish to display a date like `"March 12, 2025"`, you could add this to your column definition:
 
 ```ts
-const columnDefinitions = [
+const columns = [
   { 
     id: 'finish', name: 'Finish', field: 'finish', 
     type: 'date', 

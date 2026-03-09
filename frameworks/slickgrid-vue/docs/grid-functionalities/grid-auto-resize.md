@@ -25,7 +25,7 @@ All you need to do is enable the Grid Option `enableAutoResize: true` and provid
 
 ```ts
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     // ...
   ];
 
@@ -80,7 +80,7 @@ import { Column, Filters, Formatters, GridOption, SlickgridVue, SortDirection } 
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const resizerPaused = ref(false);
 let vueGrid: SlickgridVueInstance;
@@ -190,7 +190,7 @@ import { Column, Filters, Formatters, GridOption, SlickgridVue, SortDirection } 
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -234,7 +234,7 @@ import { Column, Filters, Formatters, GridOption, SlickgridVue, SortDirection } 
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {

@@ -19,7 +19,7 @@ const Example8: React.FC = () => {
     getData();
   }, []);
 
-  function getColumnDefinitions(): Column[] {
+  function getColumns(): Column[] {
     const columns: Column[] = [
       { id: 'title', name: 'Title', field: 'title', nameKey: 'TITLE' },
       { id: 'duration', name: 'Duration', field: 'duration', nameKey: 'DURATION', sortable: true },
@@ -141,7 +141,7 @@ const Example8: React.FC = () => {
 
   function defineGrid() {
     const gridOptions = getGridOptions();
-    const columns = getColumnDefinitions();
+    const columns = getColumns();
 
     setColumns(columns);
     setGridOptions(gridOptions);

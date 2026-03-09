@@ -73,8 +73,8 @@ To provide locales other than English (default locale), you have 2 options that 
 #### ViewModel
 ```typescript
 export class Example1 {
-  gridOptions;
-  columnDefinitions;
+  gridOptions: GridOption;
+  columns: Column[];
   dataset = [];
 
   constructor() {

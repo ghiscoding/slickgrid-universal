@@ -15,7 +15,7 @@ import { onBeforeMount, ref, type Ref } from 'vue';
 
 const NB_ITEMS = 500;
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const showSubTitle = ref(true);
 const frozenColumnCount = ref(2);
@@ -37,7 +37,7 @@ onBeforeMount(() => {
 
 /* Define grid Options and Columns */
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'sel',
       name: '#',

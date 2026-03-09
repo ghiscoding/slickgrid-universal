@@ -98,7 +98,7 @@ import { Column, Filters, Formatters, SlickgridVue, SortDirection } from 'slickg
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -106,7 +106,7 @@ onBeforeMount(() => {
 });
 
 function defineGrid() {
-  const columnDefinitions = [
+  columns.value = [
     { id: 'title', name: 'Title', field: 'title' },
     { id: 'duration', name: 'Duration (days)', field: 'duration' },
     { id: '%', name: '% Complete', field: 'percentComplete', formatter: Formatters.percentComplete },
@@ -125,7 +125,7 @@ What if you want to pass extra arguments that you want to use within the Formatt
 ```ts
 let optionList = ['True', 'False'];
 
-columnDefinitions.value = [
+columns.value = [
   { id: 'title', field: 'title',
     headerTranslate: 'TITLE',
     formatter: myCustomSelectFormatter,
@@ -147,7 +147,7 @@ SlickGrid only has 1 `formatter` property but if you want to use more than 1 For
 // Data Example::
 // data = [{ shipping: { cost: 123.22, address: { zip: 123456 } } }];
 
-columnDefinitions.value = [
+columns.value = [
   {
     id: 'shippingCost', field: 'shipping.cost', name: 'Shipping Cost',
     formatter: Formatters.multiple,
@@ -231,7 +231,7 @@ You can set some defined common Formatter Options in your Grid Options through t
 
 ```ts
 function loadGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     // through the column definition "params"
     { id: 'price', field: 'price', params: { thousandSeparator: ',' } },
   ];
@@ -283,7 +283,7 @@ There many built-in Date Formatters that are already available (see [list](#list
 For example, if you wish to display a date like `"March 12, 2025"`, you could add this to your column definition:
 
 ```ts
-const columnDefinitions = [
+columns.value = [
   {
     id: 'finish', name: 'Finish', field: 'finish',
     type: 'date',
@@ -313,7 +313,7 @@ const renderSparklineFormatter: Formatter = (row: number, cell: number, value: a
 }
 
 function defineGrid() {
-   columnDefinitions.value = [
+   columns.value = [
       { id: 'title', name: 'Title', field: 'title' },
       { id: "chart", name: "Chart", sortable: false, width: 60,
          formatter: waitingFormatter,
@@ -366,7 +366,7 @@ const vueComponentFormatter: Formatter = (_row: number, _cell: number, _val: any
   return '';
 };
 
-const columnDefinitions: Ref<Column[]> = ([
+const columns: Ref<Column[]> = ([
   {
       id: 'assignee',
       name: 'Assignee with Vue Component',

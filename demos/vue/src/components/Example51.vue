@@ -31,7 +31,7 @@ interface ReportItem {
 }
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column<ReportItem>[]> = ref([]);
+const columns: Ref<Column<ReportItem>[]> = ref([]);
 const dataset = ref<any[]>([]);
 const showSubTitle = ref(true);
 let vueGrid!: SlickgridVueInstance;
@@ -45,7 +45,7 @@ onBeforeMount(() => {
 
 /* Define grid Options and Columns */
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'title',
       name: 'Title',

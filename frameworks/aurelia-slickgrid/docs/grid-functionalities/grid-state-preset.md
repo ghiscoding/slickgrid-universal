@@ -194,13 +194,13 @@ this.columns = [
 
 // for example, let's hide last column, we can just use `pop()` to ommit last column
 // and use `map()` to pull only the required field for presets to work
-const mappedColumnDefinitions = this.columns.map(col => ({ columnId: col.id, width: col.width }));
-mappedColumnDefinitions.pop();
+const mappedColumns = this.columns.map(col => ({ columnId: col.id, width: col.width }));
+mappedColumns.pop();
 
 // then pass it to the grid presets (an array of columns minus the last column)
 this.gridOptions = {
   presets: {
-    columns: mappedColumnDefinitions
+    columns: mappedColumns
   }
 };
 ```

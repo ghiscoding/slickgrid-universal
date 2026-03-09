@@ -210,7 +210,7 @@ export class Example07 {
     }
 
     // assign column definitions only once
-    this[`columnDefinitions${gridNo}`] = cols;
+    this[`columns${gridNo}`] = cols;
 
     return mockDataset;
   }

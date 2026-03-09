@@ -16,7 +16,7 @@ import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 's
 import { onBeforeMount, onMounted, onUnmounted, ref, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const isDataLoaded = ref(false);
 
@@ -25,7 +25,7 @@ onBeforeMount(() => {
 });
 
 function defineGrid() {
-  columnDefinitions.value = [/* ... */];
+  columns.value = [/* ... */];
 
   gridOptions.value = {
     backendServiceApi: {
@@ -59,7 +59,7 @@ import { type Column, type GridOption } from 'slickgrid-vue';
 import { type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 const myCustomService = new YourCustomBackendService();

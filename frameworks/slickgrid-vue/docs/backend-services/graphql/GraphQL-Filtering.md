@@ -46,7 +46,7 @@ import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, } from '@sli
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -54,7 +54,7 @@ onBeforeMount(() => {
 });
 
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     { id: 'name', name: 'Name', field: 'name', filterable: true, sortable: true },
     { id: 'company', name: 'Company', field: 'company', filterable: true },
     { id: 'billingStreet', name: 'Billing Address Street', field: 'billing.address.street', filterable: true, sortable: true },

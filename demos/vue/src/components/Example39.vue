@@ -21,7 +21,7 @@ const { i18next } = useTranslation();
 const GRAPHQL_QUERY_DATASET_NAME = 'users';
 const FAKE_SERVER_DELAY = 250;
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const metrics = ref<Partial<Metrics>>({});
 const tagDataClass = ref('');
@@ -46,7 +46,7 @@ onBeforeMount(() => {
 
 /* Define grid Options and Columns */
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'name',
       field: 'name',

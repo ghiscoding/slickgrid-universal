@@ -19,7 +19,7 @@ describe('formatterUtilities', () => {
   } as unknown as SlickGrid;
 
   describe('autoAddEditorFormatterToColumnsWithEditor', () => {
-    let columnDefinitions: Column[];
+    let columns: Column[];
     const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef) => {
       const isEditableItem = !!columnDef.editor;
       value = value === null || value === undefined ? '' : value;
@@ -29,7 +29,7 @@ describe('formatterUtilities', () => {
     const myItalicFormatter: Formatter = (_row, _cell, value) => (value ? `<i>${value}</i>` : '');
 
     beforeEach(() => {
-      columnDefinitions = [
+      columns = [
         {
           id: 'firstName',
           field: 'firstName',
@@ -64,9 +64,9 @@ describe('formatterUtilities', () => {
     });
 
     it('should have custom editor formatter with correct structure', () => {
-      autoAddEditorFormatterToColumnsWithEditor(columnDefinitions, customEditableInputFormatter);
+      autoAddEditorFormatterToColumnsWithEditor(columns, customEditableInputFormatter);
 
-      expect(columnDefinitions).toEqual([
+      expect(columns).toEqual([
         {
           id: 'firstName',
           field: 'firstName',
@@ -107,10 +107,10 @@ describe('formatterUtilities', () => {
     });
 
     it('should have custom editor formatter with correct structure even if we call it twice', () => {
-      autoAddEditorFormatterToColumnsWithEditor(columnDefinitions, customEditableInputFormatter);
-      autoAddEditorFormatterToColumnsWithEditor(columnDefinitions, customEditableInputFormatter);
+      autoAddEditorFormatterToColumnsWithEditor(columns, customEditableInputFormatter);
+      autoAddEditorFormatterToColumnsWithEditor(columns, customEditableInputFormatter);
 
-      expect(columnDefinitions).toEqual([
+      expect(columns).toEqual([
         {
           id: 'firstName',
           field: 'firstName',

@@ -61,7 +61,7 @@ You can change the `multipleSelect` and `singleSelect` styling with SASS [variab
 Simply set the flag `filterable` to True and and enable the filters in the Grid Options. Here is an example with a full column definition:
 ```ts
 // define you columns, in this demo Effort Driven will use a Select Filter
-const columnDefinitions = [
+const columns = [
   { id: 'title', name: 'Title', field: 'title' },
   { id: 'description', name: 'Description', field: 'description', filterable: true },
   {
@@ -104,7 +104,7 @@ If you also have `presets` in the grid options, then your `searchTerms` will be 
 #### Sample
 ```ts
 // define you columns, in this demo Effort Driven will use a Select Filter
-const columnDefinitions = [
+const columns = [
   { id: 'title', name: 'Title', field: 'title' },
   { id: 'description', name: 'Description', field: 'description', filterable: true },
   {
@@ -125,7 +125,7 @@ const columnDefinitions = [
 For the Select (dropdown) filter, you can fill in the "labelKey" property, if found it will translate it right away. If no `labelKey` is provided nothing will be translated (unless you have `enableTranslateLabel` set to true), else it will use "label"
 ```typescript
 // define you columns, in this demo Effort Driven will use a Select Filter
-const columnDefinitions = [
+const columns = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
@@ -143,7 +143,7 @@ const columnDefinitions = [
 You could also use the `enableTranslateLabel` which will translate regardless of the label key name (so it could be used with `label`, `labelKey` or even a `customStructure` label).
 ```typescript
 // define you columns, in this demo Effort Driven will use a Select Filter
-const columnDefinitions = [
+const columns = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
@@ -162,7 +162,7 @@ const columnDefinitions = [
 What if your select options (collection) have totally different value/label pair? In this case, you can use the `customStructure` to change the property name(s) to use. You can change the label and/or the value, they can be passed independently.
 ```typescript
 // define you columns, in this demo Effort Driven will use a Select Filter
-const columnDefinitions = [
+const columns = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
@@ -189,7 +189,7 @@ What if you want to use `customStructure` and translate the labels? Simply pass 
 
 ```typescript
 // define you columns, in this demo Effort Driven will use a Select Filter
-const columnDefinitions = [
+const columns = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
@@ -221,7 +221,7 @@ Note: the defaults for single & multiple select filters are different
 
 ```ts
 // define you columns, in this demo Effort Driven will use a Select Filter
-const columnDefinitions = [
+const columns = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
@@ -247,7 +247,7 @@ You can also pre-sort or pre-filter the collection given to the multipleSelect/s
 Full example:
 ```typescript
 // define you columns, in this demo Effort Driven will use a Select Filter
-const columnDefinitions = [
+const columns = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
@@ -286,7 +286,7 @@ for (let i = 0; i < 365; i++) {
   multiSelectFilterArray.push({ value: i, label: i, labelSuffix: ' days' });
 }
 
-const columnDefinitions = [
+const columns = [
   {
     id: 'duration', name: 'Duration', field: 'duration',
     formatter: Formatters.checkmarkMaterial,
@@ -313,7 +313,7 @@ However please note that by default the `collectionFilterBy` will **not** merge 
 What if you wanted to merge the results instead? Then in this case, you can change the `filterResultAfterEachPass` flag defined in `collectionOptions
 
 ```typescript
-const columnDefinitions = [
+const columns = [
   {
     id: 'duration', name: 'Duration', field: 'duration',
     filter: {
@@ -338,7 +338,7 @@ What if you want to use `customStructure` and translate the labels? Simply pass 
 
 ```typescript
 // define you columns, in this demo Effort Driven will use a Select Filter
-const columnDefinitions = [
+const columns = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
@@ -365,7 +365,7 @@ const columnDefinitions = [
 You can also pre-sort or pre-filter the collection given to the multipleSelect/singleSelect Filters. Also note that if the `enableTranslateLabel` flag is set to `True`, it will use the translated value to filter or sort the collection. For example:
 ```typescript
 // define you columns, in this demo Effort Driven will use a Select Filter
-const columnDefinitions = [
+const columns = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
@@ -438,7 +438,7 @@ By default HTML is not rendered and the `label` will simply show HTML as text. B
 **NOTE:** this is currently only used by the Filters that have a `collection` which are the `MultipleSelect` & `SingleSelect` Filters.
 
 ```typescript
-const columnDefinitions = [
+const columns = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
@@ -458,7 +458,7 @@ const columnDefinitions = [
 In some cases a blank entry at the beginning of the collection could be useful, the most common example for this is to use the first option as a blank entry to tell our Filter to show everything. So for that we can use the `addBlankEntry` flag in `collectionOptions
 
 ```typescript
-const columnDefinitions = [
+const columns = [
   {
     id: 'duration', name: 'Duration', field: 'duration',
     filter: {
@@ -476,7 +476,7 @@ const columnDefinitions = [
 We can optionally add a custom entry at the beginning of the collection, the most common example for this is to use the first option as a blank entry to tell our Filter to show everything. So for that we can use the `addCustomFirstEntry` or `addCustomLastEntry` flag in `collectionOptions
 
 ```typescript
-const columnDefinitions = [
+const columns = [
   {
     id: 'duration', name: 'Duration', field: 'duration',
     filter: {
@@ -499,7 +499,7 @@ You can also load the collection asynchronously, but for that you will have to u
 #### Load the collection through an Http call
 
 ```ts
-const columnDefinitions = [
+const columns = [
   {
     id: 'prerequisites', name: 'Prerequisites', field: 'prerequisites',
     filterable: true,
@@ -515,7 +515,7 @@ const columnDefinitions = [
 What if my collection is nested under the response object? For that you can use `collectionInsideObjectProperty` to let the filter know how to get the collection.
 
 ```ts
-const columnDefinitions = [
+const columns = [
   {
     id: 'prerequisites', name: 'Prerequisites', field: 'prerequisites',
     filterable: true,
@@ -571,7 +571,7 @@ In some cases, you might have a grid with a lot of columns and loading the colle
 #### Load the collection through an Http callback
 
 ```ts
-const columnDefinitions = [
+const columns = [
     {
     id: 'prerequisites', name: 'Prerequisites', field: 'prerequisites',
     filterable: true,
@@ -587,7 +587,7 @@ const columnDefinitions = [
 We can enable the collection watch via the column filter `enableCollectionWatch` flag, or if you use a `collectionAsync` then this will be enabled by default. The collection watch will basically watch for any changes applied to the collection (any mutation changes like `push`, `pop`, `unshift`, ...) and will also watch for the `filter.collection` array replace, when any changes happens then it will re-render the Select Filter with the updated collection list.
 
 ```ts
-const columnDefinitions = [
+const columns = [
   {
     id: 'title', name: 'Title', field: 'title',
     filterable: true,
@@ -645,7 +645,7 @@ Couple of small options were added to suit SlickGrid-Universal needs, which is w
 
 ##### Code
 ```typescript
-const columnDefinitions = [
+const columns = [
   {
     id: 'isActive', name: 'Is Active', field: 'isActive',
     filterable: true,
@@ -665,7 +665,7 @@ const columnDefinitions = [
 #### Display shorter selected label text
 If we find that our text shown as selected text is too wide, we can choose change that by using `optionLabel` in Custom Structure.
 ```typescript
-const columnDefinitions = [
+const columns = [
   {
     id: 'isActive', name: 'Is Active', field: 'isActive',
     filterable: true,
@@ -702,7 +702,7 @@ What if your grid is displaying a certain `field` but you wish to query against 
 
 ##### Example
 ```ts
-const columnDefinitions = [
+const columns = [
   {
     id: 'salesRepName',
     field: 'salesRepName',          // display in Grid the sales rep name with "field"

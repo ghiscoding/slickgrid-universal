@@ -22,7 +22,7 @@ import { type Column, Filters, Formatters, SlickgridVue, type VanillaCalendarOpt
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -30,7 +30,7 @@ onBeforeMount(() => {
 });
 
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'title', name: 'Title', field: 'title',
       type: 'dateIso', // if your type has hours/minutes, then the date picker will include date+time
@@ -63,7 +63,7 @@ gridOptions.value = {
 You can add a Custom Validator from an external function or inline (inline is shown below and comes from [Example 12](https://ghiscoding.github.io/slickgrid-universal/#/example12))
 ```ts
 function initializeGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'title', name: 'Title', field: 'title',
       editor: {

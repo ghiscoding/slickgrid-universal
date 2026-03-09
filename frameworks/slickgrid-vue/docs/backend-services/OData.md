@@ -71,7 +71,7 @@ import { Column, GridOption, Metrics, PaginationOption } from 'slickgrid-vue';
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const isCountEnabled = ref(false);
 const odataVersion = ref(4);
@@ -83,7 +83,7 @@ onBeforeMount(() => {
 });
 
 function defineGrid() {
-  columnDefinitions.value = [/*...*/];
+  columns.value = [/*...*/];
 
   gridOptions.value = {
     enableFiltering: true,

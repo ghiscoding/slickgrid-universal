@@ -32,7 +32,7 @@ You can alternatively provide Custom Locales through any grid declaration throug
 import { localeFrench } from 'locales/fr';
 
 function defineGrid() {
-  const columnDefinitions = [ /* ... */ ];
+  columns.value = [ /* ... */ ];
 
   const gridOptions = {
     enableAutoResize: true,

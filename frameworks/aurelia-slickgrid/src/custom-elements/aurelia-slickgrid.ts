@@ -84,7 +84,7 @@ export class AureliaSlickgridCustomElement {
   protected _columns: Column[] = [];
   protected _columnsObserver?: ICollectionObserver<'array'>;
   protected _columnsSubscriber: ICollectionSubscriber = {
-    handleCollectionChange: this.columnDefinitionsHandler.bind(this),
+    handleCollectionChange: this.columnsHandler.bind(this),
   };
   protected _currentDatasetLength = 0;
   protected _darkMode = false;
@@ -631,7 +631,7 @@ export class AureliaSlickgridCustomElement {
 
   /** on columnDefinitions assignment and/or .slice() call */
   columnsChanged() {
-    this.columnDefinitionsHandler();
+    this.columnsHandler();
     this.observeColumnDefinitions();
   }
 
@@ -1181,7 +1181,7 @@ export class AureliaSlickgridCustomElement {
   // ------------------
 
   /** handler for when column definitions changes */
-  protected columnDefinitionsHandler() {
+  protected columnsHandler() {
     this._columns = this.columns;
     if (this._isGridInitialized) {
       this.updateColumnDefinitionsList(this.columns);

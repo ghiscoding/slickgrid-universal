@@ -8,7 +8,7 @@ const { i18next } = useTranslation();
 
 const NB_ITEMS = 20;
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const selectedLanguage = ref('');
 const fetchResult = ref('');
@@ -30,7 +30,7 @@ onBeforeMount(() => {
 
 /* Define grid Options and Columns */
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'title',
       name: 'Title',

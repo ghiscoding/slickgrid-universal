@@ -17,7 +17,7 @@ Some users might want to have 1 main single search for filtering the grid data i
         <label>Single Search: </label>
         <select class="form-control" name="selectedColumn" [(ngModel)]="selectedColumn"
             (ngModelChange)="updateFilter()">
-            @for (field of columnDefinitions; track field) {
+            @for (field of columns; track field) {
               <option [ngValue]="field">{{field.name}}</option>
             }
         </select>

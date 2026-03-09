@@ -100,7 +100,7 @@ onBeforeMount(() => {
 // Define grid Options and Columns
 // provide a headerKey for each column and enableTranslate to True in GridOption
 function defineGrid() {
-  const columnDefinitions = [
+  columns.value = [
     { id: 'title', name: 'Title', field: 'title', headerKey: 'TITLE', formatter: this.taskTranslateFormatter, sortable: true, minWidth: 100 },
     { id: 'duration', name: 'Duration (days)', field: 'duration', headerKey: 'DURATION', sortable: true, minWidth: 100 },
     { id: 'start', name: 'Start', field: 'start', headerKey: 'START', formatter: Formatters.dateIso, minWidth: 100 },
@@ -109,7 +109,7 @@ function defineGrid() {
     // OR via your own custom translate formatter
     // { id: 'completed', name: 'Completed', field: 'completed', headerKey: 'COMPLETED', formatter: translateFormatter, sortable: true, minWidth: 100 }
   ];
-  const gridOptions = {
+  gridOptions.value = {
     autoResize: {
       containerId: 'demo-container',
       sidePadding: 15
@@ -134,7 +134,7 @@ const taskTranslateFormatter: Formatter = (row, cell, value, columnDef, dataCont
 #### Using slickgrid-vue Formatters.Translate
 Instead of defining a custom formatter over and over, you could also use the built-in slickgrid-vue `Formatters.translate`. However for the formatter to work, you need to provide the `i18n` Service instance, you can do so using the `params` properties which is made to pass any type of data, however you need to pass it with this structure: `params: { i18n: i18next } `.
 ```ts
-columnDefinitions.value = [
+columns.value = [
   {
     id: 'title',
     name: 'Title',

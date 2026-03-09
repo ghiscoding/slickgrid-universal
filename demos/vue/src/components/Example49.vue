@@ -13,7 +13,7 @@ import { onBeforeMount, onUnmounted, ref, type Ref } from 'vue';
 const NB_ITEMS = 100;
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const isDarkMode = ref(false);
 const showSubTitle = ref(true);
@@ -56,7 +56,7 @@ function defineGrid() {
     });
   }
 
-  columnDefinitions.value = colDefs;
+  columns.value = colDefs;
 
   gridOptions.value = {
     autoResize: {

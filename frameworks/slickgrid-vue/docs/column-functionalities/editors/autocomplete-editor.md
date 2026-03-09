@@ -29,7 +29,7 @@ import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 's
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -37,7 +37,7 @@ onBeforeMount(() => {
 });
 
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'countryOfOrigin', name: 'Country of Origin', field: 'countryOfOrigin',
       formatter: Formatters.complexObject,
@@ -76,7 +76,7 @@ By default HTML is not rendered and the `label` will simply show HTML as text. B
 **NOTE:** this is currently only used by the Editors that have a `collection` which are the `MultipleSelect` & `SingleSelect` Editors.
 
 ```typescript
-columnDefinitions.value = [
+columns.value = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
@@ -139,7 +139,7 @@ import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 's
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -147,7 +147,7 @@ onBeforeMount(() => {
 });
 
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'product', name: 'Product', field: 'product',
       filterable: true,
@@ -179,7 +179,7 @@ function defineGrid() {
 ### Remote API (basic with object result)
 This is the preferred way of dealing with the AutoComplete, the main reason is because the AutoComplete uses an `<input/>` and that means we can only keep 1 value and if we do then we lose the text label and so using an Object Result makes more sense. Note however that you'll need a bit more code that is because we'll use the `'object'` and so we need to provide a custom `SortComparer` and also a custom `Formatters` and for them to work we also need to provide a `dataKey` (the value) and a `labelKey` (text label) as shown below.
 ```ts
-columnDefinitions.value = [
+columns.value = [
   {
     id: 'product', name: 'Product', field: 'product',
     dataKey: 'id',
@@ -216,7 +216,7 @@ import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 's
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -225,7 +225,7 @@ onBeforeMount(() => {
 
 function defineGrid() {
   // your columns definition
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'product', name: 'Product', field: 'product',
       filterable: true,
@@ -284,7 +284,7 @@ import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 's
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -292,7 +292,7 @@ onBeforeMount(() => {
 });
 
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'product', name: 'Product', field: 'product',
       filterable: true,
@@ -377,7 +377,7 @@ import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 's
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -385,7 +385,7 @@ onBeforeMount(() => {
 });
 
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'cityOfOrigin', name: 'City of Origin', field: 'cityOfOrigin',
       filterable: true,
@@ -427,7 +427,7 @@ function defineGrid() {
 If you want to add the autocomplete functionality but want the user to be able to input a new option, then follow the example below:
 
 ```ts
-columnDefinitions.value = [{
+columns.value = [{
   id: 'area',
   name: 'Area',
   field: 'area',
@@ -450,7 +450,7 @@ You can also use the `minLength` to limit the autocomplete text to `0` character
 You might want to change the dimensions of the drop container, this 3rd party library has a `customize` method to deal with such a thing. Slickgrid-Universal itself is removing the width using this method, you can however override this method to change the drop container dimensions
 
 ```ts
-columnDefinitions.value = [{
+columns.value = [{
   id: 'product', name: 'Product', field: 'product', filterable: true,
   editor: {
     model: Editors.autocompleter,

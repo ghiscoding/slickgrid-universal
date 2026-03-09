@@ -17,7 +17,7 @@ import { type Column, Filters, Formatters, SlickgridVue, type VanillaCalendarOpt
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -25,7 +25,7 @@ onBeforeMount(() => {
 });
 
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'title', name: 'Title', field: 'title',
       editor: {
@@ -79,7 +79,7 @@ const myCustomTitleValidator = (value, args) => {
 };
 
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'title', name: 'Title', field: 'title',
       editor: {

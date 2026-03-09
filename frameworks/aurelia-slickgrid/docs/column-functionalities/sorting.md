@@ -96,8 +96,8 @@ You can update/change the Sorting dynamically (on the fly) via the `updateSortin
 </button>
 
 <aurelia-slickgrid grid-id="grid1"
-   columnDefinitions.bind="columnDefinitions"
-   gridOptions.bind="gridOptions"
+   columns.bind="columns"
+   options.bind="gridOptions"
    dataset.bind="dataset"
    on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)">
 </aurelia-slickgrid>

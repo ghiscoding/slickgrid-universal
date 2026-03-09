@@ -31,7 +31,7 @@ interface GroceryItem {
 }
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const excelExportService = new ExcelExportService();
 const isDataGrouped = ref(false);
@@ -175,7 +175,7 @@ function excelRegularCellParser(_data: any, { columnDef, excelFormatId, dataRowI
 
 /* Define grid Options and Columns */
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'sel',
       name: '#',

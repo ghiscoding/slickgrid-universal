@@ -10,7 +10,7 @@ const FAKE_SERVER_DELAY = 250;
 const NB_ITEMS = 995;
 const gridOptions = ref<GridOption>();
 const detailViewRowCount = ref(9);
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<Distributor[]>([]);
 const isDarkMode = ref(false);
 const isUsingAutoHeight = ref(false);
@@ -35,7 +35,7 @@ onUnmounted(() => {
 
 /* Define grid Options and Columns */
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'companyId',
       name: 'ID',

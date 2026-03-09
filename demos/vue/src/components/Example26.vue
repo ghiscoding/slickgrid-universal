@@ -22,7 +22,7 @@ import FilterSelect from './SelectFilterComponent.vue';
 
 const NB_ITEMS = 500;
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const showSubTitle = ref(true);
 let vueGrid!: SlickgridVueInstance;
@@ -45,7 +45,7 @@ onBeforeMount(() => {
 
 /* Define grid Options and Columns */
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'title',
       name: 'Title',

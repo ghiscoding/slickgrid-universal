@@ -28,7 +28,7 @@ const Example: React.FC = () => {
   useEffect(() => defineGrid(), []);
 
   function defineGrid() {
-    const columnDefinitions = [
+    const columns = [
       {
         id: 'title', name: 'Title', field: 'title',
         type: 'dateIso', // if your type has hours/minutes, then the date picker will include date+time
@@ -70,7 +70,7 @@ const Example: React.FC = () => {
   useEffect(() => defineGrid(), []);
 
   function defineGrid() {
-    const columnDefinitions = [
+    const columns = [
       {
         id: 'title', name: 'Title', field: 'title',
         editor: {

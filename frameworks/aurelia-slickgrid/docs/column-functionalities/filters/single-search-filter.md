@@ -18,7 +18,7 @@ Some users might want to have 1 main single search for filtering the grid data i
       </label>
       <select value.bind="selectedColumn"
               class="form-control">
-        <option repeat.for="column of columnDefinitions"
+        <option repeat.for="column of columns"
                 model.bind="column">
           ${column.name}
         </option>

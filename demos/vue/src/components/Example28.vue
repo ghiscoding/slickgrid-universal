@@ -18,7 +18,7 @@ import {
 import { onBeforeMount, ref, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const datasetHierarchical = ref<any[]>([]);
 const isExcludingChildWhenFiltering = ref(false);
 const isAutoApproveParentItemWhenTreeColumnIsValid = ref(true);
@@ -67,7 +67,7 @@ onBeforeMount(() => {
 
 /* Define grid Options and Columns */
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'file',
       name: 'Files',

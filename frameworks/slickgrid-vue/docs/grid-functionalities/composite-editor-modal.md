@@ -50,7 +50,7 @@ import { Column, CompositeEditorModalType, Filters, Formatters, GridOption, Slic
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const compositeEditorInstance = new SlickCompositeEditorComponent();
 
@@ -59,7 +59,7 @@ onBeforeMount(() => {
 });
 
 function defineGrid() {
-  columnDefinitions.value = [ /*...*/ ];
+  columns.value = [ /*...*/ ];
 
   gridOptions.value = {
     enableAddRow: true,           // required for Create/Clone
@@ -126,7 +126,7 @@ import { Column, Filters, Formatters, GridOption, SlickgridVue, SortDirection } 
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const compositeEditorInstance = new SlickCompositeEditorComponent();
 
@@ -135,7 +135,7 @@ onBeforeMount(() => {
 });
 
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'percentComplete', name: '% Complete', field: 'percentComplete',
       type: 'number', sortable: true, filterable: true,
@@ -346,7 +346,7 @@ When using Composite Editor Modal, the inputs will show up with the order that t
 
 ```ts
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'firstName', name: 'First Name', field: 'firstName', sortable: true, filterable: true,
       editor: { model: Editors.text, compositeEditorFormOrder: 1, required: true }, // make this the 2nd input (1)
@@ -423,7 +423,7 @@ import { Column, Filters, Formatters, GridOption, SlickgridVue, SortDirection } 
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const compositeEditorInstance = new SlickCompositeEditorComponent();
 
@@ -472,7 +472,7 @@ import { Column, Filters, Formatters, GridOption, SlickgridVue, SortDirection } 
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const compositeEditorInstance = new SlickCompositeEditorComponent();
 
@@ -532,7 +532,7 @@ import { Column, Filters, Formatters, GridOption, SlickgridVue, SortDirection } 
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -540,7 +540,7 @@ onBeforeMount(() => {
 });
 
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true, type: 'number',
       editor: { model: Editors.float, massUpdate: true, decimal: 2, required: true },
@@ -592,7 +592,7 @@ import { Column, Filters, Formatters, GridOption, SlickgridVue, SortDirection } 
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -600,7 +600,7 @@ onBeforeMount(() => {
 });
 
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true, type: 'number',
       editor: { model: Editors.float, massUpdate: true, decimal: 2, required: true },

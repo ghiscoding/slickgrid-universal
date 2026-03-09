@@ -452,7 +452,7 @@ const Example: React.FC = (props: Props) => {
 
 ## Troubleshooting
 ### Adding a Column dynamically is removing the Row Selection column, why is that?
-The reason is because the Row Selection (checkbox) plugin is a special column and Slickgrid-React is adding an extra column dynamically for the Row Selection checkbox and that is **not** reflected in your local copy of `columnDefinitions`. To address this issue, you need to get the Slickgrid-React internal copy of all columns (including the extra columns), you can get it via `getAllColumnDefinitions()` from the Grid Service and then you can use to that array and that will work.
+The reason is because the Row Selection (checkbox) plugin is a special column and Slickgrid-React is adding an extra column dynamically for the Row Selection checkbox and that is **not** reflected in your local copy of `columns`. To address this issue, you need to get the Slickgrid-React internal copy of all columns (including the extra columns), you can get it via `getAllColumnDefinitions()` from the Grid Service and then you can use to that array and that will work.
 
 ```ts
 const Example: React.FC = () => {

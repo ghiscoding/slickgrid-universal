@@ -32,7 +32,7 @@ const Example9: React.FC = () => {
     reactGridRef.current = reactGrid;
   }
 
-  function getColumnDefinitions(): Column[] {
+  function getColumns(): Column[] {
     return [
       { id: 'title', name: 'Title', field: 'title', nameKey: 'TITLE', filterable: true },
       {
@@ -254,7 +254,7 @@ const Example9: React.FC = () => {
   }
 
   function defineGrid() {
-    const columns = getColumnDefinitions();
+    const columns = getColumns();
     const gridOptions = getGridOptions();
     setColumns(columns);
     setGridOptions(gridOptions);

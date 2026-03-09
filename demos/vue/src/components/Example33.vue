@@ -22,7 +22,7 @@ import { onBeforeMount, ref, type Ref } from 'vue';
 
 const NB_ITEMS = 1000;
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const editCommandQueue = ref<EditCommand[]>([]);
 const serverApiDelay = ref(500);
@@ -83,7 +83,7 @@ onBeforeMount(() => {
 
 /* Define grid Options and Columns */
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'title',
       name: 'Title',

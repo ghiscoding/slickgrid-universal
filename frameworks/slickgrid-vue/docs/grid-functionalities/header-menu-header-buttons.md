@@ -58,7 +58,7 @@ gridOptions.value = {
 For advanced use cases where you need to dynamically build the command list, use `commandListBuilder`. This callback receives the built-in commands and allows you to filter, sort, or modify the list before it's rendered in the UI, giving you full control over the final command list. This is executed **after** `commandItems` and is the **last call before rendering**.
 
 ```ts
-columnDefinitions.value = [
+columns.value = [
   {
     id: 'title',
     name: 'Title',
@@ -183,7 +183,7 @@ gridOptions = {
 You can exclude a column from getting a Header Menu by calling `excludeFromHeaderMenu` in your Column Definition. For example, we don't need it on a column that has an edit icon:
 
 ```ts
-columnDefinitions.value = [
+columns.value = [
   { id: 'edit', formatter: Formatters.editIcon, excludeFromHeaderMenu: true, excludeFromExport: true },
   { id: 'title', name: 'Title', field: 'title', sortable: true },
   { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true },
@@ -195,7 +195,7 @@ You can add Header Menu to 1 column or all columns like shown below. You can als
 
 ```ts
 // add custom Header Menu to all columns except "Action"
-columnDefinitions.value.forEach(col => {
+columns.value.forEach(col => {
   col.header = {
     menu: {
       commandItems: [

@@ -122,7 +122,7 @@ const Example5: React.FC = () => {
     };
   }
 
-  function getColumnDefinitions(): Column[] {
+  function getColumns(): Column[] {
     return [
       {
         id: 'name',
@@ -163,7 +163,7 @@ const Example5: React.FC = () => {
   }
 
   function defineGrid() {
-    const columns = getColumnDefinitions();
+    const columns = getColumns();
     const gridOptions = getGridDefinition();
 
     gridOptionsRef.current = gridOptions;

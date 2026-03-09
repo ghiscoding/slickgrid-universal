@@ -51,7 +51,7 @@ const Example15: React.FC = () => {
 
   /** Clear the Grid State from Local Storage and reset the grid to it's original state */
   function clearGridStateFromLocalStorage() {
-    reactGridRef.current?.gridService.resetGrid(getColumnDefinitions());
+    reactGridRef.current?.gridService.resetGrid(getColumns());
     reactGridRef.current?.paginationService!.changeItemPerPage(DEFAULT_PAGE_SIZE);
     setTimeout(() => (localStorage[LOCAL_STORAGE_KEY] = null));
   }
@@ -90,12 +90,12 @@ const Example15: React.FC = () => {
       gridOptions.presets = gridStatePresets;
     }
 
-    const columns = getColumnDefinitions();
+    const columns = getColumns();
     setColumns(columns);
     setGridOptions(gridOptions);
   }
 
-  function getColumnDefinitions(): Column[] {
+  function getColumns(): Column[] {
     // prepare a multiple-select array to filter with
     const multiSelectFilterArray: any[] = [];
     for (let i = 0; i < NB_ITEMS; i++) {

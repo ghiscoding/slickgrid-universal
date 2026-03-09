@@ -19,7 +19,7 @@ import Data from './data/customers_100.json';
 const CARET_HTML_ESCAPED = '%5E';
 const PERCENT_HTML_ESCAPED = '%25';
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const isPageErrorTest = ref(false);
 const metrics = ref<Partial<Metrics>>({});
@@ -41,7 +41,7 @@ onBeforeMount(() => {
 
 /* Define grid Options and Columns */
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'name',
       name: 'Name',

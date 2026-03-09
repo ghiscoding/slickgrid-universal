@@ -20,7 +20,7 @@ interface ChapterTree extends Chapter {
 }
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const datasetHierarchical = ref<any[]>([]);
 const searchString = ref('');
 const showSubTitle = ref(true);
@@ -45,7 +45,7 @@ onBeforeMount(() => {
 
 /* Define grid Options and Columns */
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'chapterName',
       name: 'Chapter',

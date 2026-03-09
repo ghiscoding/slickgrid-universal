@@ -17,7 +17,7 @@ interface DataItem {
 }
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const resizerPaused = ref(false);
 const showSubTitle = ref(true);
@@ -47,7 +47,7 @@ onBeforeMount(() => {
 
 /* Define grid Options and Columns */
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     { id: 'title', name: 'Title', field: 'title', sortable: true, width: 70 },
     {
       id: 'phone',

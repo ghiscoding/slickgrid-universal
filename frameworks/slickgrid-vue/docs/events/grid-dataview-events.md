@@ -13,7 +13,7 @@ import { Column, Filters, Formatters, GridOption, SlickgridVue, SortDirection } 
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -21,7 +21,7 @@ onBeforeMount(() => {
 });
 
 function defineGrid() {
-  columnDefinitions.value = [/* ... */];
+  columns.value = [/* ... */];
   gridOptions.value = {/* ... */};
 }
 
@@ -80,7 +80,7 @@ import { Column, Filters, Formatters, GridOption, SlickgridVue, SortDirection } 
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -94,7 +94,7 @@ function componentDidUnmount() {
 }
 
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     { id: 'delete', field: 'id', formatter: Formatters.deleteIcon, maxWidth: 30 }
     // ...
   ];

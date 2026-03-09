@@ -44,7 +44,7 @@ const Example45: React.FC = () => {
     return reactGridRef.current?.extensionService.getExtensionInstanceByName('rowDetailView') as ReactRowDetailView;
   }
 
-  function getColumnDefinitions(): Column[] {
+  function getColumns(): Column[] {
     return [
       {
         id: 'companyId',
@@ -97,7 +97,7 @@ const Example45: React.FC = () => {
   }
 
   function defineGrid() {
-    const columns = getColumnDefinitions();
+    const columns = getColumns();
     const gridOptions = getGridOptions();
 
     setColumns(columns);

@@ -10,7 +10,7 @@ You can use and show the Custom Footer with 2 left/right containers and will by 
 
 ```ts
 function defineGrid() {
-  columnDefinitions.value = [ /*...*/ ];
+  columns.value = [ /*...*/ ];
 
   gridOptions.value = {
     // ...

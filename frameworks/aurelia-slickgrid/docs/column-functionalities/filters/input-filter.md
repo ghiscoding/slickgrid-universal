@@ -140,8 +140,8 @@ You can update/change the Filters dynamically (on the fly) via the `updateFilter
 </button>
 
 <aurelia-slickgrid grid-id="grid1"
-   columnDefinitions.bind="columnDefinitions"
-   gridOptions.bind="gridOptions"
+   columns.bind="columns"
+   options.bind="gridOptions"
    dataset.bind="dataset"
    on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)">
 </aurelia-slickgrid>

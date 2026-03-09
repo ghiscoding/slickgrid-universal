@@ -16,7 +16,7 @@ import { type Column, Filters, Formatters, SlickgridVue, SlickgridVueInstance } 
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const isAutoEdit = ref(true);
 let vueGrid: SlickgridVueInstance;

@@ -15,7 +15,7 @@ import CustomPagerComponent from './CustomPagerComponent.vue';
 
 const NB_ITEMS = 5000;
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const showSubTitle = ref(true);
 const pageSize = ref(50);
@@ -29,7 +29,7 @@ onBeforeMount(() => {
 
 /* Define grid Options and Columns */
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'title',
       name: 'Title',

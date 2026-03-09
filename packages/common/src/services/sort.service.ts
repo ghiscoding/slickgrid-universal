@@ -50,7 +50,7 @@ export class SortService {
   }
 
   /** Getter for the Column Definitions pulled through the Grid Object */
-  protected get _columnDefinitions(): Column[] {
+  protected get _columns(): Column[] {
     return this._grid?.getColumns() ?? [];
   }
 
@@ -212,7 +212,7 @@ export class SortService {
             clearSortTriggered: true,
           });
         } else {
-          if (this._columnDefinitions && Array.isArray(this._columnDefinitions) && this._columnDefinitions.length > 0) {
+          if (this._columns && Array.isArray(this._columns) && this._columns.length > 0) {
             this.sortLocalGridByDefaultSortFieldId();
           }
         }
@@ -309,7 +309,7 @@ export class SortService {
           if (col && (!excludedColumnId || (col as SingleColumnSort).columnId !== excludedColumnId)) {
             cols.push({
               columnId: (col as SingleColumnSort).columnId || '',
-              sortCol: this._columnDefinitions[this._grid.getColumnIndex((col as SingleColumnSort).columnId || '')],
+              sortCol: this._columns[this._grid.getColumnIndex((col as SingleColumnSort).columnId || '')],
               sortAsc: (col as SingleColumnSort).sortAsc,
             });
           }
@@ -331,7 +331,7 @@ export class SortService {
       const tmpSorters = this._gridOptions.multiColumnSort ? sorters : sorters.slice(0, 1);
 
       tmpSorters.forEach((sorter: CurrentSorter) => {
-        const column = this._columnDefinitions.find((col: Column) => col.id === sorter.columnId);
+        const column = this._columns.find((col: Column) => col.id === sorter.columnId);
         if (column) {
           if (!column.sortable) {
             let errorMsg =
@@ -367,7 +367,7 @@ export class SortService {
     if (this._gridOptions.enableTreeData && this._gridOptions.treeDataOptions) {
       // first presort it once by tree level
       const treeDataOptions = this._gridOptions.treeDataOptions;
-      const columnWithTreeData = this._columnDefinitions.find((col: Column) => col.id === treeDataOptions.columnId);
+      const columnWithTreeData = this._columns.find((col: Column) => col.id === treeDataOptions.columnId);
       if (columnWithTreeData) {
         let sortDirection: SortDirection = 'ASC';
         let sortTreeLevelColumn: ColumnSort = { columnId: treeDataOptions.columnId, sortCol: columnWithTreeData, sortAsc: true };
@@ -375,7 +375,7 @@ export class SortService {
         // user could provide a custom sort field id, if so get that column and sort by it
         if (treeDataOptions?.initialSort?.columnId) {
           const initialSortColumnId = treeDataOptions.initialSort.columnId;
-          const initialSortColumn = this._columnDefinitions.find((col: Column) => col.id === initialSortColumnId);
+          const initialSortColumn = this._columns.find((col: Column) => col.id === initialSortColumnId);
           sortDirection = (treeDataOptions.initialSort.direction || 'ASC').toUpperCase() as SortDirection;
           sortTreeLevelColumn = {
             columnId: initialSortColumnId,
@@ -431,7 +431,7 @@ export class SortService {
         const sorterData = args.previousSortColumns?.map((cs) => ({
           columnId: cs.columnId,
           sortAsc: cs.sortAsc,
-          sortCol: this._columnDefinitions.find((col) => col.id === cs.columnId) as Column,
+          sortCol: this._columns.find((col) => col.id === cs.columnId) as Column,
         }));
         backendApi?.service?.updateSorters?.(sorterData || []);
       },
@@ -681,10 +681,10 @@ export class SortService {
    * @param {boolean} isDisabling - are we disabling the sort functionality? Defaults to true
    */
   protected disableAllSortingCommands(isDisabling = true): Column[] {
-    const columnDefinitions = this._grid.getColumns();
+    const columns = this._grid.getColumns();
 
     // loop through column definition to hide/show header menu commands
-    columnDefinitions.forEach((col) => {
+    columns.forEach((col) => {
       if (col.sortable !== undefined) {
         col.sortable = !isDisabling;
       }
@@ -710,6 +710,6 @@ export class SortService {
       });
     }
 
-    return columnDefinitions;
+    return columns;
   }
 }

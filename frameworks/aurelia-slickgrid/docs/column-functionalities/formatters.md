@@ -283,7 +283,7 @@ There many built-in Date Formatters that are already available (see [list](#list
 For example, if you wish to display a date like `"March 12, 2025"`, you could add this to your column definition:
 
 ```ts
-const columnDefinitions = [
+const columns = [
   { 
     id: 'finish', name: 'Finish', field: 'finish', 
     type: 'date', 

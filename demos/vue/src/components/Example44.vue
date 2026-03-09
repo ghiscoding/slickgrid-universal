@@ -4,7 +4,7 @@ import { SlickgridVue, type Column, type Formatter, type GridOption, type ItemMe
 import { onBeforeMount, ref, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 let vueGrid!: SlickgridVueInstance;
 const dataLn = ref<number | string>('loading...');
 const scrollToRow = ref(100);
@@ -63,7 +63,7 @@ onBeforeMount(() => {
 
 /* Define grid Options and Columns */
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     { id: 'title', name: 'Title', field: 'title', minWidth: 80 },
     {
       id: 'revenueGrowth',

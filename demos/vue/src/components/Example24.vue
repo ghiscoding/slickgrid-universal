@@ -19,7 +19,7 @@ const { i18next } = useTranslation();
 const NB_ITEMS = 1000;
 const darkMode = ref(false);
 const gridOptions = ref<GridOption>();
-const column: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const selectedLanguage = ref('en');
 const showSubTitle = ref(true);
@@ -84,7 +84,7 @@ onUnmounted(() => {
 
 /* Define grid Options and Columns */
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     { id: 'id', name: '#', field: 'id', maxWidth: 45, sortable: true, filterable: true },
     {
       id: 'title',

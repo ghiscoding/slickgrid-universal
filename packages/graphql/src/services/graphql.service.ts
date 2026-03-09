@@ -81,17 +81,15 @@ export class GraphqlService implements BackendService {
       throw new Error('GraphQL Service requires the "datasetName" property to properly build the GraphQL query');
     }
     // get the column definitions and exclude some if they were tagged as excluded
-    let columnDefinitions = this._columns || [];
-    columnDefinitions = columnDefinitions.filter((column: Column) => !column.excludeFromQuery);
-
+    const columns = (this._columns || []).filter((column: Column) => !column.excludeFromQuery);
     const queryQb = new QueryBuilder(`query ${this.options.operationName ?? ''}`);
     const datasetQb = new QueryBuilder(this.options.datasetName);
     const nodesQb = new QueryBuilder('nodes');
 
     // get all the columnds Ids for the filters to work
     const columnIds: string[] = [];
-    if (Array.isArray(columnDefinitions)) {
-      for (const column of columnDefinitions) {
+    if (Array.isArray(columns)) {
+      for (const column of columns) {
         if (!column.excludeFieldFromQuery) {
           columnIds.push(column.field);
         }
