@@ -83,7 +83,7 @@ This change does not require any code change from the end user, but it is noneth
 
 ### Menu with Commands (slot renderer)
 
-All menu plugins (Cell Menu, Context Menu, Header Menu and Grid Menu) now have a new `commandListBuilder: (items) => items` which is now allowing you to filter/sort and maybe override built-in commands rendering. With this new feature in place, I'm deprecating all `hide...` properties and also `positionOrder` since you can now do that with the builder. You could also use a new `hideCommands` which accepts an array of built-in command names. This will remove a large amount of `hide...` properties (about 30) that keeps increasing anytime a new built-in command gets added (in other words, this will simplify maintenance for both you and me).
+All menu plugins (Cell Menu, Context Menu, Header Menu and Grid Menu) now have a new UI feature `commandListBuilder: (items) => items` which is now allowing you to filter/sort and maybe override built-in commands rendering. With this new feature in place, I can deprecate all `hide...` properties and also `positionOrder` since you can now do this with the new builder. You could also use a new `hideCommands` which accepts an array of built-in command names. This will remove a large amount of `hide...` properties (about 30) that keeps increasing anytime a new built-in command gets added (in other words, this will simplify maintenance for both you and me).
 
 Currently tagged as deprecations in v10.x but it's strongly recommended to start using the new `commandListBuilder` and/or `hideCommands` to move away from the deprecated properties which will be removed in v11.x (next year). For example if we want to hide some built-in commands:
 
@@ -107,7 +107,7 @@ There's also a new Renderer similar to Slots but implemented with native code to
 
 ### Tooltips Outside the Grid
 
-You can now use the custom tooltip plugin to display tooltips on elements outside the grid (e.g., buttons, dialogs, etc.) by enabling the `observeAllTooltips` option. This allows the plugin to observe elements anywhere in your page that have `title` or `data-slick-tooltip` attributes. See Custom Tooltip [documentation](../grid-functionalities/custom-tooltip.md)
+You can now use the custom tooltip plugin to display tooltips on elements outside the grid (e.g., buttons, dialogs, etc.) by enabling the `observeAllTooltips` option. This allows the plugin to observe elements anywhere in your page that have `title` or `data-slick-tooltip` attributes and provide the same UI look & feel across your project. See Custom Tooltip [documentation](../grid-functionalities/custom-tooltip.md)
 
 #### Enable Global Tooltip Observation
 ```ts
