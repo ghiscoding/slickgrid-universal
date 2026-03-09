@@ -59,9 +59,9 @@ export default class Example11Modal {
     };
   }
 
-  createEmptyItem(columnDefinitions: Column[]) {
+  createEmptyItem(columns: Column[]) {
     const emptyObj: any = { id: 0 };
-    columnDefinitions.forEach((column) => {
+    columns.forEach((column) => {
       emptyObj[column.id] = undefined;
     });
 
@@ -90,21 +90,21 @@ export default class Example11Modal {
    * We'll loop through all column definitions and add a Formatter (blue background) when necessary
    * Note however that if there's already a Formatter on that column definition, we need to turn it into a Formatters.multiple
    */
-  autoAddCustomEditorFormatter(columnDefinitions: Column[], customFormatter: Formatter) {
-    if (Array.isArray(columnDefinitions)) {
-      for (const columnDef of columnDefinitions) {
-        if (columnDef.editor) {
-          if (columnDef.formatter && columnDef.formatter !== Formatters.multiple) {
-            const prevFormatter = columnDef.formatter;
-            columnDef.formatter = Formatters.multiple;
-            columnDef.params = { ...columnDef.params, formatters: [prevFormatter, customFormatter] };
-          } else if (columnDef.formatter && columnDef.formatter === Formatters.multiple) {
-            if (!columnDef.params) {
-              columnDef.params = {};
+  autoAddCustomEditorFormatter(columns: Column[], customFormatter: Formatter) {
+    if (Array.isArray(columns)) {
+      for (const column of columns) {
+        if (column.editor) {
+          if (column.formatter && column.formatter !== Formatters.multiple) {
+            const prevFormatter = column.formatter;
+            column.formatter = Formatters.multiple;
+            column.params = { ...column.params, formatters: [prevFormatter, customFormatter] };
+          } else if (column.formatter && column.formatter === Formatters.multiple) {
+            if (!column.params) {
+              column.params = {};
             }
-            columnDef.params.formatters = [...columnDef.params.formatters, customFormatter];
+            column.params.formatters = [...column.params.formatters, customFormatter];
           } else {
-            columnDef.formatter = customFormatter;
+            column.formatter = customFormatter;
           }
         }
       }

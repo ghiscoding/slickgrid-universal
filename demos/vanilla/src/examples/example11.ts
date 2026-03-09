@@ -545,12 +545,12 @@ export default class Example11 {
       case 'modal':
         this.sgb.slickGrid?.getSelectedRows() || [];
         const modalContainerElm = document.querySelector('.modal-container') as HTMLDivElement;
-        const columnDefinitionsClone = deepCopy(this.columns);
-        const massUpdateColumnDefinitions = columnDefinitionsClone?.filter((col: Column) => col.editor?.massUpdate) || [];
+        const columnsClone = deepCopy(this.columns);
+        const massUpdateColumns = columnsClone?.filter((col: Column) => col.editor?.massUpdate) || [];
         const selectedItems = this.sgb.gridService.getSelectedRowsDataItem();
         const selectedIds = selectedItems.map((selectedItem) => selectedItem.id);
         loadComponent(modalContainerElm, exampleModal, Example11Modal, {
-          columnDefinitions: massUpdateColumnDefinitions,
+          columns: massUpdateColumns,
           selectedIds,
           remoteCallback: this.remoteCallbackFn.bind(this),
         });
@@ -563,9 +563,9 @@ export default class Example11 {
    * We'll loop through all column definitions and add a Formatter (blue background) when necessary
    * Note however that if there's already a Formatter on that column definition, we need to turn it into a Formatters.multiple
    */
-  autoAddCustomEditorFormatter(columnDefinitions: Column[], customFormatter: Formatter) {
-    if (Array.isArray(columnDefinitions)) {
-      for (const columnDef of columnDefinitions) {
+  autoAddCustomEditorFormatter(columns: Column[], customFormatter: Formatter) {
+    if (Array.isArray(columns)) {
+      for (const columnDef of columns) {
         if (columnDef.editor) {
           if (columnDef.formatter && columnDef.formatter !== Formatters.multiple) {
             const prevFormatter = columnDef.formatter;
