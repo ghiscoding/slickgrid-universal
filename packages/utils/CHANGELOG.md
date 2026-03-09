@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.1.1](https://github.com/ghiscoding/slickgrid-universal/compare/v10.1.0...v10.1.1) (2026-03-09)
+
+### Bug Fixes
+
+* **styling:** regression caused by using style.setProperty with camelCase ([#2439](https://github.com/ghiscoding/slickgrid-universal/issues/2439)) ([b18291e](https://github.com/ghiscoding/slickgrid-universal/commit/b18291ef7b0dadfd7caf949aae397ac7b23f6002)) - by @ghiscoding
+
 ## [10.1.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.0.0...v10.1.0) (2026-03-07)
 
 ### Bug Fixes

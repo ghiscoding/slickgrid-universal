@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/react-row-detail-plugin",
-  "version": "10.1.0",
+  "version": "10.1.1",
   "description": "React Row Detail Plugin for SlickGrid-React",
   "type": "module",
   "main": "./dist/index.js",
