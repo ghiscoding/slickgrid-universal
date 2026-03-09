@@ -15,7 +15,7 @@ import './example27.scss'; // provide custom CSS/SASS styling
 const NB_ITEMS = 500;
 
 const Example27: React.FC = () => {
-  const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
   const [dataset, setDataset] = useState<any[]>(loadData(NB_ITEMS));
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
   const reactGridRef = useRef<SlickgridReactInstance | null>(null);
@@ -34,7 +34,7 @@ const Example27: React.FC = () => {
 
   /* Define grid Options and Columns */
   function defineGrid() {
-    const columnDefinitions: Column[] = [
+    const columns: Column[] = [
       {
         id: 'title',
         name: 'Title',
@@ -153,7 +153,7 @@ const Example27: React.FC = () => {
       externalResources: [new ExcelExportService()],
     };
 
-    setColumnDefinitions(columnDefinitions);
+    setColumns(columns);
     setGridOptions(gridOptions);
   }
 
@@ -477,7 +477,7 @@ const Example27: React.FC = () => {
       <div id="grid-container" className="col-sm-12">
         <SlickgridReact
           gridId="grid27"
-          columns={columnDefinitions}
+          columns={columns}
           options={gridOptions}
           dataset={dataset}
           onBeforeFilterChange={() => showSpinner()}

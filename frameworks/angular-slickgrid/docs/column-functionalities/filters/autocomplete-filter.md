@@ -21,7 +21,7 @@ If you want to pass the entire list to the AutoComplete (like a JSON file or a W
 
 ```html
 <angular-slickgrid gridId="grid2"
-     [columns]="columnDefinitions"
+     [columns]="columns"
      [options]="gridOptions"
      [dataset]="dataset">
 </angular-slickgrid>
@@ -32,13 +32,13 @@ If you want to pass the entire list to the AutoComplete (like a JSON file or a W
 import { Component, OnInit} from '@angular/core';
 
 export class GridBasicComponent implements OnInit {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
 
   ngOnInit(): void {
       // your columns definition
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'countryOfOrigin', name: 'Country of Origin', field: 'countryOfOrigin',
         formatter: Formatters.complexObject,
@@ -90,7 +90,7 @@ I don't have time to invest in finding how to use JSONP + CORS in Angular, if so
 
 ```html
 <angular-slickgrid gridId="grid2"
-     [columns]="columnDefinitions"
+     [columns]="columns"
      [options]="gridOptions"
      [dataset]="dataset">
 </angular-slickgrid>
@@ -101,13 +101,13 @@ I don't have time to invest in finding how to use JSONP + CORS in Angular, if so
 import { Component, OnInit} from '@angular/core';
 
 export class GridBasicComponent implements OnInit {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
 
   ngOnInit(): void {
       // your columns definition
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'cityOfOrigin', name: 'City of Origin', field: 'cityOfOrigin',
         filterable: true,
@@ -158,7 +158,7 @@ export class GridBasicComponent implements OnInit {
 If you want to add the autocomplete functionality but want the user to be able to input a new option, then follow the example below:
 
 ```ts
-  this.columnDefinitions = [{
+  this.columns = [{
         id: 'area',
         name: 'Area',
         field: 'area',

@@ -47,7 +47,7 @@ A single-value slider combined with an operator dropdown menu. This allows users
 To use any slider filter, set `filterable: true` on your column and define the `filter` object with the desired model:
 
 ```ts
-this.columnDefinitions = [
+this.columns = [
   {
     id: 'duration',
     name: 'Duration',

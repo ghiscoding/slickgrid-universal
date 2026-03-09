@@ -24,7 +24,7 @@ function randomBetween(min: number, max: number): number {
 
 export default class Example25 {
   private _bindingEventService: BindingEventService;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   gridContainerElm: HTMLDivElement;
   gridOptions!: GridOption;
   dataset: any[] = [];
@@ -61,12 +61,7 @@ export default class Example25 {
     this.dataset = this.mockData(NB_ITEMS);
     this.gridContainerElm = document.querySelector<HTMLDivElement>('.grid25') as HTMLDivElement;
 
-    this.sgb = new Slicker.GridBundle(
-      this.gridContainerElm,
-      this.columnDefinitions,
-      { ...ExampleGridOptions, ...this.gridOptions },
-      this.dataset
-    );
+    this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
 
     // bind any of the grid events
     this._bindingEventService.bind(this.gridContainerElm, 'ongridstatechanged', this.gridStateChanged.bind(this));
@@ -87,7 +82,7 @@ export default class Example25 {
 
   /* Define grid Options and Columns */
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',

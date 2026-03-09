@@ -36,13 +36,13 @@ You then need to reference your Custom Pagination class to your grid options.
 import { CustomPager } from './custom-pager';
 
 export class GridBasicComponent {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
 
   mount(): void {
     // your columns definition
-    this.columnDefinitions = [];
+    this.columns = [];
 
     this.gridOptions = {
       // enable pagination and provide a `customPaginationComponent`

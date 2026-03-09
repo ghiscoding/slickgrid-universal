@@ -3,7 +3,7 @@ import { Formatters, SlickGlobalEditorLock, SlickgridVue, type Column, type Grid
 import { onBeforeMount, ref, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 let dragHelper: HTMLElement | null = null;
 const dragRows = ref<number[]>([]);
@@ -20,7 +20,7 @@ onBeforeMount(() => {
 
 /* Define grid Options and Columns */
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'name',
       name: 'Name',
@@ -245,7 +245,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
     <div class="col">
       <slickgrid-vue
         v-model:options="gridOptions"
-        v-model:columns="columnDefinitions"
+        v-model:columns="columns"
         v-model:dataset="dataset"
         grid-id="grid2"
         @onDragInit="handleOnDragInit($event.detail.eventData)"

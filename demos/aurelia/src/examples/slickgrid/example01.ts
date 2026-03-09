@@ -8,8 +8,8 @@ export class Example01 {
   aureliaGrid1!: AureliaGridInstance;
   gridOptions1!: GridOption;
   gridOptions2!: GridOption;
-  columnDefinitions1: Column[] = [];
-  columnDefinitions2: Column[] = [];
+  columns1: Column[] = [];
+  columns2: Column[] = [];
   dataset1: any[] = [];
   dataset2: any[] = [];
   hideSubTitle = false;
@@ -41,7 +41,7 @@ export class Example01 {
 
   /* Define grid Options and Columns */
   defineGrids() {
-    this.columnDefinitions1 = [
+    this.columns1 = [
       { id: 'title', name: 'Title', field: 'title', sortable: true, minWidth: 100 },
       { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true, minWidth: 100 },
       { id: '%', name: '% Complete', field: 'percentComplete', sortable: true, minWidth: 100 },
@@ -60,7 +60,7 @@ export class Example01 {
 
     // copy the same Grid Options and Column Definitions to 2nd grid
     // but also add Pagination in this grid
-    this.columnDefinitions2 = this.columnDefinitions1;
+    this.columns2 = this.columns1;
     this.gridOptions2 = {
       ...this.gridOptions1,
       ...{
@@ -99,7 +99,7 @@ export class Example01 {
 
   resetGrid1() {
     // const cols = this.aureliaGrid1.slickGrid?.getColumns() || [];
-    const cols = this.columnDefinitions1.slice();
+    const cols = this.columns1.slice();
     cols.forEach((c) => (c.hidden = false));
     this.aureliaGrid1.slickGrid?.setColumns(cols);
     this.aureliaGrid1.slickGrid?.autosizeColumns();

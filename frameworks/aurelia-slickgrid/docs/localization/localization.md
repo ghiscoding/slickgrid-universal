@@ -57,7 +57,7 @@ import { Formatters } from 'aurelia-slickgrid';
 @autoinject()
 export class Example {
   gridOptions: GridOption;
-  columnDefinitions: Column[];
+  columns: Column[];
   dataset: any[];
 
   constructor(private i18n: I18N) {
@@ -68,7 +68,7 @@ export class Example {
   // Define grid Options and Columns
   // provide a headerKey for each column and enableTranslate to True in GridOption
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'title', name: 'Title', field: 'title', headerKey: 'TITLE', formatter: this.taskTranslateFormatter, sortable: true, minWidth: 100 },
       { id: 'duration', name: 'Duration (days)', field: 'duration', headerKey: 'DURATION', sortable: true, minWidth: 100 },
       { id: 'start', name: 'Start', field: 'start', headerKey: 'START', formatter: Formatters.dateIso, minWidth: 100 },
@@ -105,7 +105,7 @@ taskTranslateFormatter: Formatter = (row, cell, value, columnDef, dataContext) =
 #### Using Aurelia-Slickgrid Formatters.Translate
 Instead of defining a custom formatter over and over, you could also use the built-in Aurelia-Slickgrid `Formatters.translate`. However for the formatter to work, you need to provide the `i18n` Service instance, you can do so using the `params` properties which is made to pass any type of data, however you need to pass it with this structure: `params: { i18n: this.i18n } `.
 ```typescript
-this.columnDefinitions = [
+this.columns = [
       {
         id: 'title',
         name: 'Title',

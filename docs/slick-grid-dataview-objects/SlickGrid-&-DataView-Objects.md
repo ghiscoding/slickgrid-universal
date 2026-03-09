@@ -3,7 +3,7 @@ In some cases you might want a feature that is not yet available in `Slickgrid-U
 ##### Component
 ```ts
 export class MyApp {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
   isAutoEdit = true;
@@ -14,7 +14,7 @@ export class MyApp {
     this.initializeGrid();
     this.dataset = this.loadData(500);
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid3`);
-    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
 
   /** Change dynamically `autoEdit` grid options */

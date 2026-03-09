@@ -13,8 +13,8 @@ import { onBeforeMount, ref, type Ref } from 'vue';
 const isGrid2WithPagination = ref(true);
 const gridOptions1 = ref<GridOption>();
 const gridOptions2 = ref<GridOption>();
-const columnDefinitions1: Ref<Column[]> = ref([]);
-const columnDefinitions2: Ref<Column[]> = ref([]);
+const columns1: Ref<Column[]> = ref([]);
+const columns2: Ref<Column[]> = ref([]);
 const dataset1 = ref<any[]>([]);
 const dataset2 = ref<any[]>([]);
 const showSubTitle = ref(true);
@@ -33,7 +33,7 @@ onBeforeMount(() => {
 
 /* Define grid Options and Columns */
 function defineGrids() {
-  columnDefinitions1.value = [
+  columns1.value = [
     { id: 'title', name: 'Title', field: 'title', sortable: true, filterable: true },
     { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true, type: 'number', filterable: true },
     {
@@ -86,7 +86,7 @@ function defineGrids() {
     },
   ];
 
-  columnDefinitions2.value = [
+  columns2.value = [
     { id: 'title', name: 'Title', field: 'title', sortable: true, filterable: true },
     { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true, type: 'number', filterable: true },
     {
@@ -375,7 +375,7 @@ function vueGrid2Ready(grid: SlickgridVueInstance) {
 
   <slickgrid-vue
     v-model:options="gridOptions1!"
-    v-model:columns="columnDefinitions1"
+    v-model:columns="columns1"
     v-model:dataset="dataset1"
     grid-id="grid1"
     @onGridStateChanged="grid1StateChanged($event.detail)"
@@ -420,7 +420,7 @@ function vueGrid2Ready(grid: SlickgridVueInstance) {
 
   <slickgrid-vue
     v-model:options="gridOptions2!"
-    v-model:columns="columnDefinitions2"
+    v-model:columns="columns2"
     v-model:dataset="dataset2"
     grid-id="grid2"
     @onGridStateChanged="grid2StateChanged($event.detail)"

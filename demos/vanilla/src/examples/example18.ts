@@ -78,7 +78,7 @@ const historicSparklineFormatter: Formatter = (_row, _cell, _value: string, _col
 
 export default class Example18 {
   private _darkMode = false;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   dataset: any[] = [];
   gridOptions!: GridOption;
   isFullScreen = false;
@@ -99,7 +99,7 @@ export default class Example18 {
     this.dataset = this.getData(NB_ITEMS);
     this.sgb = new Slicker.GridBundle(
       document.querySelector(`.grid18`) as HTMLDivElement,
-      this.columnDefinitions,
+      this.columns,
       { ...ExampleGridOptions, ...this.gridOptions },
       this.dataset
     );
@@ -121,7 +121,7 @@ export default class Example18 {
   /* Define grid Options and Columns */
   defineGrid() {
     // the columns field property is type-safe, try to add a different string not representing one of DataItems properties
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'currency',
         name: 'Currency',
@@ -385,7 +385,7 @@ export default class Example18 {
   }
 
   findColumnById(columnName: string): Column {
-    return this.columnDefinitions.find((col) => col.field === columnName) as Column;
+    return this.columns.find((col) => col.field === columnName) as Column;
   }
 
   renderCellHighlighting(item: any, column: Column, priceChange: number) {

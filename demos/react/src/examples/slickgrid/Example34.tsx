@@ -87,7 +87,7 @@ const Example34: React.FC = () => {
   const [refreshRate, setRefreshRate] = useState(75);
   const [hideSubTitle, setHideSubTitle] = useState(false);
 
-  const columnDefinitionsRef = useRef<Column[]>([]);
+  const columnsRef = useRef<Column[]>([]);
   const minChangePerCycleRef = useRef(minChangePerCycle);
   const maxChangePerCycleRef = useRef(maxChangePerCycle);
   const highlightDurationRef = useRef(highlightDuration);
@@ -114,7 +114,7 @@ const Example34: React.FC = () => {
   }
 
   function defineGrid() {
-    const columnDefinitions: Column[] = [
+    const columns: Column[] = [
       {
         id: 'currency',
         name: 'Currency',
@@ -289,7 +289,7 @@ const Example34: React.FC = () => {
       cellHighlightCssClass: 'changed',
     };
 
-    columnDefinitionsRef.current = columnDefinitions;
+    columnsRef.current = columns;
     setGridOptions(gridOptions);
   }
 
@@ -377,7 +377,7 @@ const Example34: React.FC = () => {
   }
 
   function findColumnById(columnName: string): Column {
-    return columnDefinitionsRef.current.find((col) => col.field === columnName) as Column;
+    return columnsRef.current.find((col) => col.field === columnName) as Column;
   }
 
   function handleRefreshRateChange(elm: HTMLInputElement) {
@@ -588,7 +588,7 @@ const Example34: React.FC = () => {
 
         <SlickgridReact
           gridId="grid34"
-          columns={columnDefinitionsRef.current}
+          columns={columnsRef.current}
           options={gridOptions}
           dataset={dataset}
           onReactGridCreated={($event) => reactGridReady($event.detail)}

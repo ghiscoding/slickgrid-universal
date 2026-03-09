@@ -29,7 +29,7 @@ const NB_ITEMS = 1000;
 })
 export class Example33Component implements OnInit {
   angularGrid!: AngularGridInstance;
-  columnDefinitions!: Column[];
+  columns!: Column[];
   editCommandQueue: EditCommand[] = [];
   gridOptions!: GridOption;
   dataset!: any[];
@@ -49,7 +49,7 @@ export class Example33Component implements OnInit {
   }
 
   initializeGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',

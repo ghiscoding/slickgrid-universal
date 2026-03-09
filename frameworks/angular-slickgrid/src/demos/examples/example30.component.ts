@@ -95,7 +95,7 @@ export class Example30Component implements OnDestroy, OnInit {
   angularGrid!: AngularGridInstance;
   compositeEditorInstance!: SlickCompositeEditorComponent;
   gridOptions!: GridOption;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   dataset: any[] = [];
   editQueue: any[] = [];
   editedItems: any = {};
@@ -133,7 +133,7 @@ export class Example30Component implements OnDestroy, OnInit {
   }
 
   prepareGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: '<span title="Task must always be followed by a number" class="text-warning mdi mdi-alert-outline"></span> Title <span title="Title is always rendered as UPPERCASE" class="mdi mdi-information-outline"></span>',
@@ -515,7 +515,7 @@ export class Example30Component implements OnDestroy, OnInit {
           ? editCommand.prevSerializedValue
           : [editCommand.prevSerializedValue];
         const serializedValues = Array.isArray(editCommand.serializedValue) ? editCommand.serializedValue : [editCommand.serializedValue];
-        const editorColumns = this.columnDefinitions.filter((col) => col.editor !== undefined);
+        const editorColumns = this.columns.filter((col) => col.editor !== undefined);
 
         const modifiedColumns: Column[] = [];
         prevSerializedValues.forEach((_val, index) => {

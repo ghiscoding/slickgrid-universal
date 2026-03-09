@@ -530,7 +530,7 @@ const Example: React.FC = () => {
   }
 
   function defineGrid() {
-    const columnDefinitions = [
+    const columns = [
       {
         id: 'duration', name: 'Duration', field: 'duration', sortable: true, filterable: true, type: 'number',
         editor: { model: Editors.float, massUpdate: true, decimal: 2, required: true },

@@ -24,7 +24,7 @@ import { type Column, Filters, Formatters, SlickgridVue, type VanillaCalendarOpt
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -32,7 +32,7 @@ onBeforeMount(() => {
 });
 
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'countryOfOrigin', name: 'Country of Origin', field: 'countryOfOrigin',
       formatter: Formatters.complexObject,
@@ -88,7 +88,7 @@ import { type Column, Filters, Formatters, SlickgridVue, type VanillaCalendarOpt
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -96,7 +96,7 @@ onBeforeMount(() => {
 });
 
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'cityOfOrigin', name: 'City of Origin', field: 'cityOfOrigin',
       filterable: true,
@@ -156,7 +156,7 @@ function defineGrid() {
 If you want to add the autocomplete functionality but want the user to be able to input a new option, then follow the example below:
 
 ```ts
-columnDefinitions.value = [{
+columns.value = [{
   id: 'area',
   name: 'Area',
   field: 'area',

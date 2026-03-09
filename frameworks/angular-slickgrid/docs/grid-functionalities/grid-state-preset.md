@@ -28,7 +28,7 @@ You can get the `Grid State` at any point in time. However if you wish to save t
 ```html
 <angular-slickgrid
      gridId="grid2"
-     [columns]="columnDefinitions"
+     [columns]="columns"
      [options]="gridOptions"
      [dataset]="dataset"
      (onAngularGridCreated)="angularGridReady($event.detail)"
@@ -115,7 +115,7 @@ export class GridDemoComponent {
   angularGrid: AngularGridInstance;
 
   ngOnInit(): void {
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'name', name: 'Name', field: 'name', filterable: true, sortable: true, sortable: true },
       { id: 'duration', name: 'Duration', field: 'duration', filterable: true, sortable: true },
       { id: 'complete', name: '% Complete', field: 'percentComplete', filterable: true, sortable: true },
@@ -158,7 +158,7 @@ Examples
 ##### View
 ```html
 <angular-slickgrid gridId="grid1"
-         [columns]="columnDefinitions"
+         [columns]="columns"
          [options]="gridOptions"
          [dataset]="dataset"
          (onGridStateChanged)="gridStateChanged($event)">
@@ -180,7 +180,7 @@ export class ExampleComponent implements OnInit {
 ```html
 <angular-slickgrid
      gridId="grid2"
-     [columns]="columnDefinitions"
+     [columns]="columns"
      [options]="gridOptions"
      [dataset]="dataset"
      (onAngularGridCreated)="angularGridReady($event.detail)"
@@ -216,19 +216,19 @@ So let say that we want to hide the last Column on page load, we can just find t
 Pass the Grid Presets with an array that has less `presets.columns`, whichever column(s) are missing will be considered hidden columns
 
 ```ts
-this.columnDefinitions = [
+this.columns = [
   // initial column definitions
 ];
 
 // for example, let's hide last column, we can just use `pop()` to ommit last column
 // and use `map()` to pull only the required field for presets to work
-const mappedColumnDefinitions = this.columnDefinitions.map(col => ({ columnId: col.id, width: col.width }));
-mappedColumnDefinitions.pop();
+const mappedColumns = this.columns.map(col => ({ columnId: col.id, width: col.width }));
+mappedColumns.pop();
 
 // then pass it to the grid presets (an array of columns minus the last column)
 this.gridOptions = {
   presets: {
-    columns: mappedColumnDefinitions
+    columns: mappedColumns
   }
 };
 ```

@@ -8,7 +8,7 @@ import './example32.scss';
 
 export default class Example32 {
   private _bindingEventService: BindingEventService;
-  columnDefinitions: Column[];
+  columns: Column[];
   isEditable = false;
   gridOptions: GridOption;
   dataset: any[] = [];
@@ -122,12 +122,7 @@ export default class Example32 {
     this.dataset = this.loadData();
     this.gridContainerElm = document.querySelector('.grid32') as HTMLDivElement;
 
-    this.sgb = new Slicker.GridBundle(
-      this.gridContainerElm,
-      this.columnDefinitions,
-      { ...ExampleGridOptions, ...this.gridOptions },
-      this.dataset
-    );
+    this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
 
     document.body.classList.add('salesforce-theme');
   }
@@ -139,7 +134,7 @@ export default class Example32 {
   }
 
   initializeGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'employeeID', name: 'Employee ID', field: 'employeeID', minWidth: 100 },
       { id: 'employeeName', name: 'Employee Name', field: 'employeeName', editor: { model: Editors.text }, minWidth: 120 },
       { id: '9:00', name: '9:00 AM', field: '9:00', editor: { model: Editors.text }, minWidth: 120 },
@@ -461,11 +456,11 @@ export default class Example32 {
     // 1. update column definitions via grid.setColumns()
     // this will shift colspan/rowspan to the left or right accordingly
     if (this.showEmployeeId) {
-      this.columnDefinitions.unshift({ id: 'employeeID', name: 'Employee ID', field: 'employeeID', width: 100 });
+      this.columns.unshift({ id: 'employeeID', name: 'Employee ID', field: 'employeeID', width: 100 });
     } else {
-      this.columnDefinitions.splice(0, 1);
+      this.columns.splice(0, 1);
     }
-    this.sgb.slickGrid?.setColumns(this.columnDefinitions);
+    this.sgb.slickGrid?.setColumns(this.columns);
 
     // --- OR ---
     // 2. OR update via "hidden" column flag & increase/decrease column index accordingly in the metadata

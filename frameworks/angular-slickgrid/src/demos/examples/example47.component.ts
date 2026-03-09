@@ -39,7 +39,7 @@ export interface Item {
 export class Example47Component implements OnDestroy, OnInit {
   private _darkMode = false;
   angularGrid!: AngularGridInstance;
-  columnDefinitions: Column<Item>[] = [];
+  columns: Column<Item>[] = [];
   gridOptions!: GridOption;
   dataset: Item[] = [];
   gridObj: any;
@@ -78,7 +78,7 @@ export class Example47Component implements OnDestroy, OnInit {
 
   /* Define grid Options and Columns */
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',

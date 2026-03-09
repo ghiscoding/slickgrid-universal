@@ -24,7 +24,7 @@ interface Status {
 
 const Example5: React.FC = () => {
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
-  const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
   const [dataset, setDataset] = useState<any[]>([]);
   const [paginationOptions, setPaginationOptions] = useState<Pagination | undefined>(undefined);
   const [errorStatus, setErrorStatus] = useState<string>('');
@@ -122,7 +122,7 @@ const Example5: React.FC = () => {
     };
   }
 
-  function getColumnDefinitions(): Column[] {
+  function getColumns(): Column[] {
     return [
       {
         id: 'name',
@@ -163,11 +163,11 @@ const Example5: React.FC = () => {
   }
 
   function defineGrid() {
-    const columnDefinitions = getColumnDefinitions();
+    const columns = getColumns();
     const gridOptions = getGridDefinition();
 
     gridOptionsRef.current = gridOptions;
-    setColumnDefinitions(columnDefinitions);
+    setColumns(columns);
     setGridOptions(gridOptions);
   }
 
@@ -713,7 +713,7 @@ const Example5: React.FC = () => {
 
       <SlickgridReact
         gridId="grid5"
-        columns={columnDefinitions}
+        columns={columns}
         options={gridOptions}
         dataset={dataset}
         paginationOptions={paginationOptions}

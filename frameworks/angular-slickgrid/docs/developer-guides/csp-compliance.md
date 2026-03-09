@@ -26,7 +26,7 @@ this.gridOptions = {
   // you could also optionally use the sanitizerOptions instead
   // sanitizerOptions: { RETURN_TRUSTED_TYPE: true }
 }
-this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, this.gridOptions, this.dataset);
+this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, this.gridOptions, this.dataset);
 ```
 
 with this code in place, we can use the following CSP meta tag (which is what we use in the lib demo, ref: [index.html](https://github.com/ghiscoding/slickgrid-universal/blob/master/examples/vite-demo-vanilla-bundle/index.html#L8-L14))

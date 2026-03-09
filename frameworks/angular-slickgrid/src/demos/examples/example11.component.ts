@@ -23,7 +23,7 @@ export class Example11Component implements OnInit {
   grid!: SlickGrid;
   gridService!: GridService;
   dataView!: SlickDataView;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   gridOptions!: GridOption;
   dataset: any[];
   hideSubTitle = false;
@@ -49,7 +49,7 @@ export class Example11Component implements OnInit {
   }
 
   ngOnInit(): void {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'delete',
         field: 'id',

@@ -4,7 +4,7 @@ import { onBeforeMount, ref, type Ref } from 'vue';
 
 const NB_ITEMS = 25;
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const showSubTitle = ref(true);
 const operatorList = ref<OperatorType[]>(['=', '<', '<=', '>', '>=', '<>', 'StartsWith', 'EndsWith']);
@@ -21,7 +21,7 @@ onBeforeMount(() => {
 
 /* Define grid Options and Columns */
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'title',
       name: 'Title',
@@ -194,7 +194,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
         name="selectedColumn"
         @change="updateFilter()"
       >
-        <option v-for="(column, index) in columnDefinitions" :key="index" :value="column">{{ column.name }}</option>
+        <option v-for="(column, index) in columns" :key="index" :value="column">{{ column.name }}</option>
       </select>
     </div>
     <div class="col">
@@ -228,7 +228,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <slickgrid-vue
     v-model:options="gridOptions"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:dataset="dataset"
     grid-id="grid21"
     @onVueGridCreated="vueGridReady($event.detail)"

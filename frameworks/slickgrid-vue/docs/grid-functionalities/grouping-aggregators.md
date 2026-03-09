@@ -40,7 +40,7 @@ import { type Column, Filters, Formatters, GridState, SlickgridVue, SlickgridVue
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 let vueGrid: SlickgridVuInstance;
 
@@ -62,7 +62,7 @@ function vueGridReady(vueGrid: SlickgridVueInstance) {
 
 <template>
   <SlickgridVue gridId="grid1"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:options="gridOptions"
     v-model:dataset="dataset"
     @onVueGridCreated="vueGridReady($event.detail)"
@@ -152,7 +152,7 @@ import { type Column, Filters, Formatters, GridState, SlickgridVue, SlickgridVue
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -160,7 +160,7 @@ onBeforeMount(() => {
 });
 
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'title', name: 'Title', field: 'title'
     },
@@ -211,7 +211,7 @@ You can also create a custom `groupTotalsFormatter` similarly to a Formatter, ju
 ##### Component
 ```ts
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
       {
         id: 'cost', name: 'Cost', field: 'cost',
         groupTotalsFormatter: sumTotalsFormatter

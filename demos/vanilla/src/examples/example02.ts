@@ -28,7 +28,7 @@ function randomBetween(min: number, max: number) {
 
 export default class Example02 {
   private _bindingEventService: BindingEventService;
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
   commandQueue = [];
@@ -65,12 +65,7 @@ export default class Example02 {
         console.log(`sort: ${window.performance.now() - this.sortStart} ms`); // use console for Cypress tests
       });
     });
-    this.sgb = new Slicker.GridBundle(
-      gridContainerElm,
-      this.columnDefinitions,
-      { ...ExampleGridOptions, ...this.gridOptions },
-      this.dataset
-    );
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
 
     // you could group by duration on page load (must be AFTER the DataView is created, so after GridBundle)
     this.groupByDuration();
@@ -103,7 +98,7 @@ export default class Example02 {
     nameElementColumn1.appendChild(document.createTextNode('Id '));
     nameElementColumn1.appendChild(btn);
 
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'num',
         name: nameElementColumn1,

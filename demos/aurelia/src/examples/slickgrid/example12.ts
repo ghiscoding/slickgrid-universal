@@ -28,7 +28,7 @@ const taskTranslateFormatter: Formatter = (_row, _cell, value, _columnDef, _data
 export class Example12 {
   aureliaGrid!: AureliaGridInstance;
   gridOptions!: GridOption;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   dataset: any[] = [];
   selectedLanguage = '';
   duplicateTitleHeaderCount = 1;
@@ -59,7 +59,7 @@ export class Example12 {
 
   /* Define grid Options and Columns */
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',
@@ -269,8 +269,8 @@ export class Example12 {
       filterable: true,
       params: { useFormatterOuputToFilter: true },
     };
-    this.columnDefinitions.push(newCol);
-    this.columnDefinitions = this.columnDefinitions.slice(); // or use spread operator [...cols]
+    this.columns.push(newCol);
+    this.columns = this.columns.slice(); // or use spread operator [...cols]
 
     // NOTE if you use an Extensions (Checkbox Selector, Row Detail, ...) that modifies the column definitions in any way
     // you MUST use "getAllColumnDefinitions()" from the GridService, using this will be ALL columns including the 1st column that is created internally
@@ -278,7 +278,7 @@ export class Example12 {
     /*
     const allColumns = this.aureliaGrid.gridService.getAllColumnDefinitions();
     allColumns.push(newCol);
-    this.columnDefinitions = [...allColumns]; // (or use slice) reassign to column definitions for Aurelia to do dirty checking
+    this.columns = [...allColumns]; // (or use slice) reassign to column definitions for Aurelia to do dirty checking
     */
   }
 

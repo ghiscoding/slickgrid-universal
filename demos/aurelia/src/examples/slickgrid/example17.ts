@@ -5,7 +5,7 @@ const sampleDataRoot = 'assets/data';
 
 export class Example17 {
   aureliaGrid!: AureliaGridInstance;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   gridOptions!: GridOption;
   gridCreated = false;
   hideSubTitle = false;
@@ -94,8 +94,8 @@ export class Example17 {
     };
 
     this.dataset = outputData;
-    this.columnDefinitions = colDefs;
-    console.log(this.columnDefinitions, this.dataset);
+    this.columns = colDefs;
+    console.log(this.columns, this.dataset);
     this.gridCreated = true;
   }
 

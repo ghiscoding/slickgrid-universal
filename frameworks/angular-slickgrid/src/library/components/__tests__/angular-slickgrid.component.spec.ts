@@ -324,7 +324,7 @@ class TestPaginationComponent implements BasePaginationComponent {
 
 describe('Angular-Slickgrid Custom Component instantiated via Constructor', () => {
   let component: AngularSlickgridComponent;
-  let columnDefinitions: Column[] = [];
+  let columns: Column[] = [];
   let eventPubSubService: EventPubSubService;
   let gridOptions!: GridOption;
   let divContainer: HTMLDivElement;
@@ -342,7 +342,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
     </div>
   <angular-slickgrid
     gridId="grid1"
-    [columns]="columnDefinitions"
+    [columns]="columns"
     [options]="gridOptions"
     [dataset]="dataset">
   </angular-slickgrid>`;
@@ -353,7 +353,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
     divContainer.innerHTML = template;
     divContainer.appendChild(cellDiv);
     document.body.appendChild(divContainer);
-    columnDefinitions = [{ id: 'name', field: 'name' }];
+    columns = [{ id: 'name', field: 'name' }];
     gridOptions = {
       enableExcelExport: false,
       dataView: null,
@@ -489,7 +489,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
 
   it('should keep frozen column index reference (via frozenVisibleColumnId) when grid is a frozen grid', () => {
     vi.spyOn(mockGrid, 'getFrozenColumnId').mockReturnValue('name');
-    component.columns = columnDefinitions;
+    component.columns = columns;
     component.options = gridOptions;
     component.options.frozenColumn = 0;
 

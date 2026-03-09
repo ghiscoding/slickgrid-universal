@@ -25,7 +25,7 @@ const NB_ITEMS = 5000;
 })
 export class Example13Component implements OnInit {
   angularGrid!: AngularGridInstance;
-  columnDefinitions!: Column[];
+  columns!: Column[];
   gridOptions!: GridOption;
   dataset!: any[];
   gridObj: any;
@@ -56,7 +56,7 @@ export class Example13Component implements OnInit {
     nameElementColumn1.appendChild(document.createTextNode('Id '));
     nameElementColumn1.appendChild(btn);
 
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'num',
         name: nameElementColumn1,

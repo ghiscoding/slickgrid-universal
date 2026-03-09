@@ -10,7 +10,7 @@ export const multipleFormatter: Formatter = (row, cell, value, columnDef, dataCo
   const params = columnDef.params || {};
   if (!params.formatters || !Array.isArray(params.formatters)) {
     throw new Error(`[Slickgrid-Universal] The multiple formatter requires the "formatters" to be provided as a column params.
-    For example: this.columnDefinitions = [{ id: title, field: title, formatter: Formatters.multiple, params: { formatters: [Formatters.lowercase, Formatters.uppercase] }`);
+    For example: this.columns = [{ id: title, field: title, formatter: Formatters.multiple, params: { formatters: [Formatters.lowercase, Formatters.uppercase] }`);
   }
   const formatters: Formatter[] = params.formatters;
 

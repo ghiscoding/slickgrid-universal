@@ -25,7 +25,7 @@ interface Status {
 }
 
 const Example38: React.FC = () => {
-  const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
   const [dataset, setDataset] = useState<any[]>([]);
   const [processing, setProcessing] = useState(false);
   const [odataQuery, setOdataQuery] = useState('');
@@ -48,7 +48,7 @@ const Example38: React.FC = () => {
   }
 
   function defineGrid() {
-    const columnDefinitions: Column[] = [
+    const columns: Column[] = [
       {
         id: 'name',
         name: 'Name',
@@ -128,7 +128,7 @@ const Example38: React.FC = () => {
       } as OdataServiceApi,
     };
 
-    setColumnDefinitions(columnDefinitions);
+    setColumns(columns);
     gridOptionsRef.current = gridOptions;
   }
 
@@ -544,7 +544,7 @@ const Example38: React.FC = () => {
 
         <SlickgridReact
           gridId="grid38"
-          columns={columnDefinitions}
+          columns={columns}
           options={gridOptionsRef.current}
           dataset={dataset}
           onReactGridCreated={($event) => reactGridReady($event.detail)}

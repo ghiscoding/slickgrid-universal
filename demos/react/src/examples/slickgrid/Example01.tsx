@@ -15,7 +15,7 @@ const Example1: React.FC = () => {
   const [dataset2] = useState<any[]>(mockData(NB_ITEMS));
 
   /* Define grid Options and Columns */
-  const columnDefinitions1: Column[] = [
+  const columns1: Column[] = [
     { id: 'title', name: 'Title', field: 'title', sortable: true, minWidth: 100 },
     { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true, minWidth: 100 },
     { id: '%', name: '% Complete', field: 'percentComplete', sortable: true, minWidth: 100 },
@@ -23,7 +23,7 @@ const Example1: React.FC = () => {
     { id: 'finish', name: 'Finish', field: 'finish', formatter: Formatters.dateIso },
     { id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven', sortable: true, minWidth: 100 },
   ];
-  const columnDefinitions2: Column[] = [...columnDefinitions1];
+  const columns2: Column[] = [...columns1];
 
   const gridOptions1: GridOption = {
     darkMode: defaultBrowserDarkMode,
@@ -81,7 +81,7 @@ const Example1: React.FC = () => {
 
   function resetGrid1() {
     // const cols = reactGrid1.slickGrid?.getColumns() || [];
-    const cols = columnDefinitions1.slice();
+    const cols = columns1.slice();
     cols.forEach((c) => (c.hidden = false));
     reactGrid1?.slickGrid?.setColumns(cols);
     reactGrid1?.slickGrid?.autosizeColumns();
@@ -144,7 +144,7 @@ const Example1: React.FC = () => {
       <div className="grid-container1">
         <SlickgridReact
           gridId="grid1-1"
-          columns={columnDefinitions1}
+          columns={columns1}
           options={gridOptions1!}
           dataset={dataset1}
           onReactGridCreated={($event) => reactGrid1Ready($event.detail)}
@@ -156,7 +156,7 @@ const Example1: React.FC = () => {
       <h3>
         Grid 2 <small>(with local Pagination)</small>
       </h3>
-      <SlickgridReact gridId="grid1-2" columns={columnDefinitions2} options={gridOptions2!} dataset={dataset2} />
+      <SlickgridReact gridId="grid1-2" columns={columns2} options={gridOptions2!} dataset={dataset2} />
     </div>
   );
 };

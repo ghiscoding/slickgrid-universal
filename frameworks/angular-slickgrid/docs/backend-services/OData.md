@@ -71,7 +71,7 @@ import { GridOdataService, OdataServiceApi, OdataOption } from '@slickgrid-unive
 
 @Injectable()
 export class MyComponent implements OnInit {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset = [];
 
@@ -82,7 +82,7 @@ export class MyComponent implements OnInit {
   }
 
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       // your column definitions
     ];
 

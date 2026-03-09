@@ -13,7 +13,7 @@ const NB_ITEMS = 500;
 export default class Example07 {
   private _bindingEventService: BindingEventService;
   private _darkMode = false;
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
   sgb: SlickVanillaGridBundle;
@@ -49,12 +49,7 @@ export default class Example07 {
     const gridContainerElm = document.querySelector(`.grid7`) as HTMLDivElement;
     this._bindingEventService.bind(gridContainerElm, 'oncellchange', this.handleOnCellChange.bind(this));
     this._bindingEventService.bind(gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
-    this.sgb = new Slicker.GridBundle(
-      gridContainerElm,
-      this.columnDefinitions,
-      { ...ExampleGridOptions, ...this.gridOptions },
-      this.dataset
-    );
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
     document.body.classList.add('material-theme');
   }
 
@@ -67,7 +62,7 @@ export default class Example07 {
   }
 
   initializeGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         nameKey: 'TITLE',
@@ -433,7 +428,7 @@ export default class Example07 {
     // wrap into a timer to simulate a backend async call
     setTimeout(() => {
       // at any time, we can poke the "collection" property and modify it
-      const requisiteColumnDef = this.columnDefinitions.find((column: Column) => column.id === 'prerequisites') as Column;
+      const requisiteColumnDef = this.columns.find((column: Column) => column.id === 'prerequisites') as Column;
       if (requisiteColumnDef) {
         const collectionEditor = requisiteColumnDef.editor!.collection;
         const collectionFilter = requisiteColumnDef.filter!.collection;
@@ -527,7 +522,7 @@ export default class Example07 {
 
   /** Delete last inserted row */
   deleteItem() {
-    const requisiteColumnDef = this.columnDefinitions.find((column: Column) => column.id === 'prerequisites') as Column;
+    const requisiteColumnDef = this.columns.find((column: Column) => column.id === 'prerequisites') as Column;
     if (requisiteColumnDef) {
       const collectionEditor = requisiteColumnDef.editor!.collection;
       const collectionFilter = requisiteColumnDef.filter!.collection;

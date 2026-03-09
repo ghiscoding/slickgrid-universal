@@ -84,11 +84,11 @@ export class GridOdataService implements BackendService {
     this.pagination = pagination;
 
     if (grid?.getColumns) {
-      const tmpColumnDefinitions = grid.getColumns() ?? [];
-      this._columns = tmpColumnDefinitions.filter((column: Column) => !column.excludeFromQuery);
+      const tmpColumns = grid.getColumns() ?? [];
+      this._columns = tmpColumns.filter((column: Column) => !column.excludeFromQuery);
     }
 
-    this._odataService.columnDefinitions = this._columns;
+    this._odataService.columns = this._columns;
     this._odataService.datasetIdPropName = this._gridOptions.datasetIdPropertyName || 'id';
   }
 

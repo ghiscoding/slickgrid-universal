@@ -19,7 +19,7 @@ To use the Cell Menu, you will need to enable it in the Grid Options and also de
 
 #### with Commands
 ```ts
-this.columnDefinitions = [
+this.columns = [
   { id: 'firstName', field: 'firstName', name: 'First Name' },
   { id: 'lastName', field: 'lastName', name: 'Last Name' },
   // ... more column defs
@@ -63,7 +63,7 @@ this.columnDefinitions = [
 #### with Options
 That is when you want to define a list of Options (only 1 list) that the user can choose from and once an option is selected we would do something (for example change the value of a cell in the grid).
 ```ts
-this.columnDefinitions = [
+this.columns = [
   { id: 'firstName', field: 'firstName', name: 'First Name' },
   { id: 'lastName', field: 'lastName', name: 'Last Name' },
   // ... more column defs
@@ -93,7 +93,7 @@ There are 2 ways to execute an action after a Command is clicked (or an Option i
 So if you decide to use the `action` callback, then your code would look like this
 ##### with `action` callback
 ```ts
-this.columnDefinitions = [
+this.columns = [
   { 
     id: 'action', field: 'action', name: 'Action',
     cellMenu: {
@@ -111,7 +111,7 @@ this.columnDefinitions = [
 The `onCommand` (or `onOptionSelected`) **must** be defined in the Grid Options
 
 ```ts
-this.columnDefinitions = [
+this.columns = [
   { 
     id: 'action', field: 'action', name: 'Action',
     cellMenu: {
@@ -156,7 +156,7 @@ What if you want to dynamically disable or hide a Command/Option or even disable
 
 For example, say we want the Cell Menu to only be available on the first 20 rows of the grid, we could use the override this way
 ```ts
-this.columnDefinitions = [
+this.columns = [
   { 
     id: 'action', field: 'action', name: 'Action',
     cellMenu: {
@@ -168,7 +168,7 @@ this.columnDefinitions = [
 
 To give another example, with Options this time, we could say that we enable the `n/a` option only when the row is Completed. So we could do it this way
 ```ts
-this.columnDefinitions = [
+this.columns = [
   { 
     id: 'action', field: 'action', name: 'Action',
     cellMenu: {
@@ -193,7 +193,7 @@ this.columnDefinitions = [
 ### How to add Translations?
 It works exactly like the rest of the library when `enableTranslate` is set, all we have to do is to provide translations with the `Key` suffix, so for example without translations, we would use `title` and that would become `titleKey` with translations, that;'s easy enough. So for example, a list of Options could be defined as follow:
 ```ts
-this.columnDefinitions = [
+this.columns = [
   { 
     id: 'action', field: 'action', name: 'Action',
     cellMenu: {

@@ -51,7 +51,7 @@ const Example: React.FC = () => {
 
   return !options ? '' : (
     <SlickgridReact gridId="grid1"
-      columns={columnDefinitions1}
+      columns={columns1}
       options={gridOptions1!}
       dataset={dataset1}
       onReactGridCreated={$event => reactGrid1Ready($event.detail)}
@@ -121,7 +121,7 @@ const Example: React.FC = () => {
 
   return !options ? '' : (
     <SlickgridReact gridId="grid1"
-      columns={columnDefinitions1}
+      columns={columns1}
       options={gridOptions1!}
       dataset={dataset1}
       onReactGridCreated={$event => reactGrid1Ready($event.detail)}
@@ -191,7 +191,7 @@ const Example: React.FC = () => {
 
   return !options ? '' : (
     <SlickgridReact gridId="grid1"
-      columns={columnDefinitions1}
+      columns={columns1}
       options={gridOptions1!}
       dataset={dataset1}
       onReactGridCreated={$event => reactGrid1Ready($event.detail)}
@@ -245,7 +245,7 @@ function handleOnSelectedRowsChanged(args) {
 
 return !options ? '' : (
   <SlickgridReact gridId="grid1"
-    columns={columnDefinitions1}
+    columns={columns1}
     options={gridOptions1!}
     dataset={dataset1}
     onReactGridCreated={$event => reactGrid1Ready($event.detail)}
@@ -268,7 +268,7 @@ function handleOngridStateChanged(gridState) {
 
 return !options ? '' : (
   <SlickgridReact gridId="grid1"
-    columns={columnDefinitions1}
+    columns={columns1}
     options={gridOptions1!}
     dataset={dataset1}
     onReactGridCreated={$event => reactGrid1Ready($event.detail)}
@@ -302,7 +302,7 @@ const Example: React.FC = () => {
 
   return !options ? null : (
     <SlickgridReact gridId="grid1"
-      columns={columnDefinitions1}
+      columns={columns1}
       options={gridOptions1!}
       dataset={dataset1}
       onReactGridCreated={$event => reactGrid1Ready($event.detail)}
@@ -385,7 +385,7 @@ const Example: React.FC = () => {
 
   return !options ? '' : (
       <SlickgridReact gridId="grid1"
-        columns={columnDefinitions1}
+        columns={columns1}
         options={gridOptions1!}
         dataset={dataset1}
         onReactGridCreated={$event => reactGridReady($event.detail)}
@@ -399,7 +399,7 @@ export default Example;
 
 ## Troubleshooting
 ### Adding a Column dynamically is removing the Row Selection column, why is that?
-The reason is because the Row Selection (checkbox) plugin is a special column and slickgrid-react is adding an extra column dynamically for the Row Selection checkbox and that is **not** reflected in your local copy of `columnDefinitions`. To address this issue, you need to get the slickgrid-react internal copy of all columns (including the extra columns), you can get it via `getAllColumnDefinitions()` from the Grid Service and then you can use to that array and that will work.
+The reason is because the Row Selection (checkbox) plugin is a special column and slickgrid-react is adding an extra column dynamically for the Row Selection checkbox and that is **not** reflected in your local copy of `columns`. To address this issue, you need to get the slickgrid-react internal copy of all columns (including the extra columns), you can get it via `getAllColumnDefinitions()` from the Grid Service and then you can use to that array and that will work.
 
 ```tsx
 function reactGridReady(reactGrid: SlickgridReactInstance) {

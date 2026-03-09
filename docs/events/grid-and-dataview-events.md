@@ -19,7 +19,7 @@ export class GridExample {
 
     gridContainerElm.addEventListener('oncellclicked', this.handleOnCellClicked.bind(this));
     gridContainerElm.addEventListener('oncellchanged', this.handleOnCellChanged.bind(this));
-    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, this.gridOptions, dataset);
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, this.gridOptions, dataset);
   }
 
   handleOnCellClicked(event) {

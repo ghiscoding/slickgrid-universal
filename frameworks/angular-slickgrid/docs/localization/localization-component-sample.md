@@ -17,7 +17,7 @@ import { TranslateService } from '@ngx-translate/core';
 @Injectable()
 export class Example implements OnInit {
   gridOptions: GridOption;
-  columnDefinitions: Column[];
+  columns: Column[];
   dataset: any[];
 
   constructor(private translate: TranslateService) {
@@ -28,7 +28,7 @@ export class Example implements OnInit {
   // Define grid Options and Columns
   // provide a nameKey for each column and enableTranslate to True in GridOption
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'title', name: 'Title', field: 'title', nameKey: 'TITLE', formatter: this.taskTranslateFormatter, sortable: true, minWidth: 100 },
       { id: 'duration', name: 'Duration (days)', field: 'duration', nameKey: 'DURATION', sortable: true, minWidth: 100 },
       { id: 'start', name: 'Start', field: 'start', nameKey: 'START', formatter: Formatters.dateIso, minWidth: 100 },
@@ -70,7 +70,7 @@ Since the cell value is to be translated, the regular filtering might behave dif
 Instead of defining a custom formatter over and over, you could also use the built-in Angular-Slickgrid `Formatters.translate`. However for the formatter to work, you need to provide the `ngx-translate` Service instance, to the Grid Options property `i18n`, as shown below.
 
 ```typescript
-this.columnDefinitions = [
+this.columns = [
   {
     id: 'title',
     name: 'Title',

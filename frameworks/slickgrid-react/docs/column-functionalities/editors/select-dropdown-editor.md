@@ -17,7 +17,7 @@ We use an external lib named [multiple-select-vanilla](https://github.com/ghisco
 Here's an example with a `collection`, `collectionFilterBy` and `collectionSortBy`
 
 ```ts
-const columnDefinitions = [
+const columns = [
   {
     id: 'prerequisites', name: 'Prerequisites', field: 'prerequisites',
     editor: {
@@ -81,7 +81,7 @@ interface ColumnEditor {
 ```
 
 ```ts
-const columnDefinitions = [{
+const columns = [{
   id: 'firstName', name: 'First Name', field: 'user.firstName',
   formatter: Formatters.complexObject, // the complex formatter is necessary, unless you provide a custom formatter
   editor: {
@@ -98,7 +98,7 @@ In some cases you might want to provide a custom collection based on the current
 Let take this example, let say that we want to allow collection values lower than or greater than 50 depending on its item Id, we could do the following
 
 ```ts
-const columnDefinitions = [
+const columns = [
   {
     id: 'prerequisites', name: 'Prerequisites', field: 'prerequisites',
     editor: {
@@ -156,7 +156,7 @@ By default HTML is not rendered and the `label` will simply show HTML as text. B
 **NOTE:** this is currently only used by the Editors that have a `collection` which are the `MultipleSelect` & `SingleSelect` Editors.
 
 ```typescript
-const columnDefinitions = [
+const columns = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
@@ -175,7 +175,7 @@ const columnDefinitions = [
 Sometime you wish that whenever you make a change in your filter collection, you'd like the filter to be updated but it won't do that by default. You could use `enableCollectionWatch` for that purpose which will add a collection observers and re-render the Filter DOM element whenever the collection changes. Also note that using `collectionAsync` will automatically watch for changes, so there's no need to enable this flag for that particular use case.
 
 ```typescript
-const columnDefinitions = [
+const columns = [
   {
     id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
     formatter: Formatters.checkmarkMaterial,
@@ -209,7 +209,7 @@ Couple of small options were added to suit SlickGrid-Universal needs, which is w
 
 ##### Code
 ```typescript
-const columnDefinitions = [
+const columns = [
   {
     id: 'isActive', name: 'Is Active', field: 'isActive',
     filterable: true,

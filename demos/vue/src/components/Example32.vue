@@ -23,7 +23,7 @@ import COUNTRIES_COLLECTION_URL from './data/countries.json?url';
 
 const NB_ITEMS = 400;
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const editQueue = ref<any[]>([]);
 const editedItems = ref<any>({});
@@ -66,7 +66,7 @@ onBeforeMount(() => {
 
 /* Define grid Options and Columns */
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'title',
       name: 'Title',
@@ -389,7 +389,7 @@ function defineGrid() {
   ];
 
   // add custom Header Menu to all columns except "Action"
-  columnDefinitions.value.forEach((col) => {
+  columns.value.forEach((col) => {
     col.header = {
       menu: {
         commandItems: [
@@ -506,7 +506,7 @@ function defineGrid() {
         ? editCommand.prevSerializedValue
         : [editCommand.prevSerializedValue];
       const serializedValues = Array.isArray(editCommand.serializedValue) ? editCommand.serializedValue : [editCommand.serializedValue];
-      const editorColumns = columnDefinitions.value.filter((col) => col.editor !== undefined);
+      const editorColumns = columns.value.filter((col) => col.editor !== undefined);
 
       const modifiedColumns: Column[] = [];
       prevSerializedValues.forEach((_val, index) => {
@@ -984,7 +984,7 @@ function renderItemCallbackWith4Corners(item: any): string {
   <div id="smaller-container" style="width: 950px">
     <slickgrid-vue
       v-model:options="gridOptions"
-      v-model:columns="columnDefinitions"
+      v-model:columns="columns"
       v-model:dataset="dataset"
       grid-id="grid32"
       @onSelectedRowIdsChanged="handleOnSelectedRowIdsChanged($event.detail.args)"

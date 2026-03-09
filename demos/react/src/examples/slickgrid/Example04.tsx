@@ -28,7 +28,7 @@ const Example4: React.FC = () => {
     saveCurrentGridState();
   }, []);
 
-  const columnDefinitions: Column[] = [
+  const columns: Column[] = [
     {
       id: 'title',
       name: 'Title',
@@ -438,7 +438,7 @@ const Example4: React.FC = () => {
 
       <SlickgridReact
         gridId="grid4"
-        columns={columnDefinitions}
+        columns={columns}
         options={gridOptions}
         dataset={dataset}
         onGridStateChanged={($event) => gridStateChanged($event.detail)}

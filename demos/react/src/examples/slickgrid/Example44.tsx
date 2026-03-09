@@ -67,7 +67,7 @@ export default function Example44() {
   const rowCellValueExportFormatter: Formatter = (_row, _cell, value) => value.toFixed(2);
 
   // the columns field property is type-safe, try to add a different string not representing one of DataItems properties
-  const columnDefinitions: Column[] = [
+  const columns: Column[] = [
     { id: 'title', name: 'Title', field: 'title', minWidth: 80 },
     {
       id: 'revenueGrowth',
@@ -473,7 +473,7 @@ export default function Example44() {
 
       <SlickgridReact
         gridId="grid44"
-        columns={columnDefinitions}
+        columns={columns}
         options={gridOptions}
         dataset={dataset}
         onReactGridCreated={($event) => reactGridReady($event.detail)}

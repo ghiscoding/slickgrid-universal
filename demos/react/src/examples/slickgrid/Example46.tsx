@@ -40,7 +40,7 @@ const coloredTextFormatter: Formatter = (_row: number, _cell: number, val: any, 
 const FAKE_SERVER_DELAY = 1000;
 
 const Example46: React.FC = () => {
-  const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>();
   const [datasetHierarchical] = useState(mockDataset());
   const [searchString, setSearchString] = useState('');
@@ -60,7 +60,7 @@ const Example46: React.FC = () => {
 
   /* Define grid Options and Columns */
   function defineGrid() {
-    const columnDefinitions: Column[] = [
+    const columns: Column[] = [
       {
         id: 'chapterName',
         name: 'Chapter',
@@ -171,7 +171,7 @@ const Example46: React.FC = () => {
       },
     };
 
-    setColumnDefinitions(columnDefinitions);
+    setColumns(columns);
     setGridOptions(gridOptions);
   }
 
@@ -425,7 +425,7 @@ const Example46: React.FC = () => {
       <div id="grid-container" className="col-sm-12">
         <SlickgridReact
           gridId="grid46"
-          columns={columnDefinitions}
+          columns={columns}
           options={gridOptions}
           datasetHierarchical={datasetHierarchical}
           onReactGridCreated={($event) => reactGridReady($event.detail)}

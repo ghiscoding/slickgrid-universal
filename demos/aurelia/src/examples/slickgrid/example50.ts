@@ -21,8 +21,8 @@ export class Example50 {
   aureliaGrid1!: AureliaGridInstance;
   gridOptions1!: GridOption;
   gridOptions2!: GridOption;
-  columnDefinitions1: Column[] = [];
-  columnDefinitions2: Column[] = [];
+  columns1: Column[] = [];
+  columns2: Column[] = [];
   dataset1: Customer[] = [];
   dataset2: OrderData[] = [];
   hideSubTitle = false;
@@ -46,7 +46,7 @@ export class Example50 {
 
   /* Define grid Options and Columns */
   defineGrids() {
-    this.columnDefinitions1 = [
+    this.columns1 = [
       { id: 'name', name: 'Customer Name', field: 'name', sortable: true, minWidth: 100, filterable: true },
       { id: 'company', name: 'Company Name', field: 'company', minWidth: 100, sortable: true },
       { id: 'address', name: 'Address', field: 'address', sortable: true, minWidth: 100 },
@@ -64,7 +64,7 @@ export class Example50 {
       },
     };
 
-    this.columnDefinitions2 = [
+    this.columns2 = [
       { id: 'orderId', field: 'orderId', name: 'Order ID', sortable: true, width: 50 },
       { id: 'freight', field: 'freight', name: 'Freight', sortable: true, width: 50, type: 'number', formatter: Formatters.dollar },
       { id: 'name', field: 'name', name: 'Ship Company', sortable: true },

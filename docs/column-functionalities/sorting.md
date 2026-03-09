@@ -19,7 +19,7 @@ To use any of them, you can use the `FieldType` interface or enter a type via a 
 import { FieldType } from '@slickgrid-universal/common';
 
 export class Example {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
 
@@ -29,7 +29,7 @@ export class Example {
   }
 
   defineGrid() {
-    this.columnDefinitions = [
+    columns = [
       { id: 'title', name: 'Title', field: 'title', sortable: true },
       { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true, type: 'number' },
       { id: '%', name: '% Complete', field: 'percentComplete', sortable: true, type: 'float'},
@@ -56,7 +56,7 @@ const dataset = [
 
 We can now filter the zip code from the buyer's address using this filter:
 ```typescript
-this.columnDefinitions = [
+columns = [
   {
     // the zip is a property of a complex object which is under the "buyer" property
     // it will use the "field" property to explode (from "." notation) and find the child value
@@ -69,7 +69,7 @@ this.columnDefinitions = [
 ### Custom Sort Comparer
 If the builtin sort comparer methods are not sufficient for your use case, you could add your own custom Sort Comparer in your Column Definitions as shown below. Note that we are only showing a simple numeric sort, just adjust it to your needs.
 ```ts
-this.columnDefinitions = [{
+columns = [{
   id: 'myField', name: 'My Field',
   sorter: (a, b) => a > b ? 1 : -1,
 }];
@@ -78,7 +78,7 @@ similarly with a complex object
 ```ts
 // data = { user: { firstName: 'John', lastName: 'Doe', fullName: 'John Doe' }, address: { zip: 123456 } }};
 
-this.columnDefinitions = [{
+columns = [{
   id: 'firstName', name: 'First Name', field: 'user.firstName',
   sorter: (a, b) => a.fullName > b.fullName ? 1 : -1,
 }];

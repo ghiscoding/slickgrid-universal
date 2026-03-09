@@ -60,7 +60,7 @@ export class Example {
   // Define grid Options and Columns
   // provide a headerKey for each column and enableTranslate to True in GridOption
   defineGrid() {
-    const columnDefinitions = [
+    const columns = [
       { id: 'title', name: 'Title', field: 'title', headerKey: 'TITLE', formatter: this.taskTranslateFormatter, sortable: true, minWidth: 100 },
       { id: 'duration', name: 'Duration (days)', field: 'duration', headerKey: 'DURATION', sortable: true, minWidth: 100 },
       { id: 'start', name: 'Start', field: 'start', headerKey: 'START', formatter: Formatters.dateIso, minWidth: 100 },
@@ -89,7 +89,7 @@ const taskTranslateFormatter: Formatter = (row, cell, value, columnDef, dataCont
 #### Using Formatters.Translate
 Instead of defining a custom formatter over and over, you could also use the built-in `Formatters.translate`. However for the formatter to work, you need to provide the `i18n` Service instance, you can do so using the `params` properties which is made to pass any type of data, however you need to pass it with this structure: `params: { i18n: i18next } `.
 ```ts
-const columnDefinitions = [
+const columns = [
   {
     id: 'title',
     name: 'Title',

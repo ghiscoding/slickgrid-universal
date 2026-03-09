@@ -5,8 +5,8 @@ import './example07.scss';
 const Example7: React.FC = () => {
   const [gridOptions1, setGridOptions1] = useState<GridOption | undefined>(undefined);
   const [gridOptions2, setGridOptions2] = useState<GridOption | undefined>(undefined);
-  const [columnDefinitions1, setColumnDefinitions1] = useState<Column[]>([]);
-  const [columnDefinitions2, setColumnDefinitions2] = useState<Column[]>([]);
+  const [columns1, setColumns1] = useState<Column[]>([]);
+  const [columns2, setColumns2] = useState<Column[]>([]);
   const [dataset1, setDataset1] = useState<any[]>([]);
   const [dataset2, setDataset2] = useState<any[]>([]);
   const [hideSubTitle, setHideSubTitle] = useState(false);
@@ -65,13 +65,13 @@ const Example7: React.FC = () => {
       },
     });
 
-    const columnDefinitions1 = createColumnDefinitions(1);
-    const columnDefinitions2 = createColumnDefinitions(2);
-    setColumnDefinitions1(columnDefinitions1);
-    setColumnDefinitions2(columnDefinitions2);
+    const columns1 = createColumns(1);
+    const columns2 = createColumns(2);
+    setColumns1(columns1);
+    setColumns2(columns2);
 
-    setDataset1(loadData(200, columnDefinitions1));
-    setDataset2(loadData(200, columnDefinitions2));
+    setDataset1(loadData(200, columns1));
+    setDataset2(loadData(200, columns2));
   }
 
   function handleOnCommand(_e: SlickEventData, args: any, gridNo: 1 | 2) {
@@ -105,12 +105,12 @@ const Example7: React.FC = () => {
     }
   }
 
-  function createColumnDefinitions(gridNo: number) {
+  function createColumns(gridNo: number) {
     // Set up some test columns.
-    const columnDefinitions: any[] = [];
+    const columns: any[] = [];
 
     for (let i = 0; i < 10; i++) {
-      columnDefinitions.push({
+      columns.push({
         id: i,
         name: 'Column ' + String.fromCharCode('A'.charCodeAt(0) + i),
         field: i + '',
@@ -151,8 +151,8 @@ const Example7: React.FC = () => {
     }
 
     // Set multiple buttons on the first column to demonstrate overflow.
-    columnDefinitions[0].name = 'Resize me!';
-    columnDefinitions[0].header = {
+    columns[0].name = 'Resize me!';
+    columns[0].header = {
       buttons: [
         {
           cssClass: 'mdi mdi-message-text',
@@ -183,12 +183,12 @@ const Example7: React.FC = () => {
 
     // when floating to left, you might want to inverse the icon orders
     if (gridNo === 2) {
-      columnDefinitions[0].header?.buttons?.reverse();
+      columns[0].header?.buttons?.reverse();
     }
 
     // Set a button on the second column to demonstrate hover.
-    columnDefinitions[1].name = 'Hover me!';
-    columnDefinitions[1].header = {
+    columns[1].name = 'Hover me!';
+    columns[1].header = {
       buttons: [
         {
           cssClass: 'mdi mdi-help-circle',
@@ -201,17 +201,17 @@ const Example7: React.FC = () => {
       ],
     };
 
-    return columnDefinitions;
+    return columns;
   }
 
-  function loadData(count: number, columnDefinitions: Column[]) {
+  function loadData(count: number, columns: Column[]) {
     // mock a dataset
     const mockDataset: any[] = [];
 
     for (let i = 0; i < count; i++) {
       const d: any = (mockDataset[i] = {});
       d['id'] = i;
-      for (let j = 0; j < columnDefinitions.length; j++) {
+      for (let j = 0; j < columns.length; j++) {
         d[j] = Math.round(Math.random() * 10) - 5;
       }
     }
@@ -270,7 +270,7 @@ const Example7: React.FC = () => {
       <h5>Grid 1</h5>
       <SlickgridReact
         gridId="grid7-1"
-        columns={columnDefinitions1}
+        columns={columns1}
         options={gridOptions1}
         dataset={dataset1}
         onReactGridCreated={($event) => reactGrid1Ready($event.detail)}
@@ -283,7 +283,7 @@ const Example7: React.FC = () => {
       </h5>
       <SlickgridReact
         gridId="grid7-2"
-        columns={columnDefinitions2}
+        columns={columns2}
         options={gridOptions2}
         dataset={dataset2}
         onReactGridCreated={($event) => reactGrid2Ready($event.detail)}

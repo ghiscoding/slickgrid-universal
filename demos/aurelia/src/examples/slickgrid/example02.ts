@@ -32,7 +32,7 @@ const customEnableButtonFormatter: Formatter<DataItem> = (_row: number, _cell: n
 export class Example02 {
   aureliaGrid!: AureliaGridInstance;
   gridOptions!: GridOption;
-  columnDefinitions: Column<DataItem>[] = [];
+  columns: Column<DataItem>[] = [];
   dataset: any[] = [];
   hideSubTitle = false;
   resizerPaused = false;
@@ -50,7 +50,7 @@ export class Example02 {
   /* Define grid Options and Columns */
   defineGrid() {
     // the columns field property is type-safe, try to add a different string not representing one of DataItems properties
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'title', name: 'Title', field: 'title', sortable: true, width: 70 },
       {
         id: 'phone',

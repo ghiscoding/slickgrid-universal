@@ -13,7 +13,7 @@ All you need to do is enable the Grid Option `enableExcelCopyBuffer: true` and g
 
 ##### Component
 ```typescript
-this.columnDefinitions = [
+this.columns = [
   { id: 'title', name: 'Title', field: 'id' },
   { id: 'description', name: 'Description', field: 'description' },
   { id: 'duration', name: 'Duration (days)', field: 'duration', type: 'number' },
@@ -29,7 +29,7 @@ What if you have a date in UTC format in your dataset but your grid shows it as 
 The `exportWithFormatter` can be used in 2 ways, on each column definition independently or for the entire grid through it's grid option.
 ##### `exportWithFormatter` through each Column Definition
 ```typescript
-this.columnDefinitions = [
+this.columns = [
   {
     id: 'start', name: 'Start', field: 'start',
     formatter: Formatters.dateIso,
@@ -49,7 +49,7 @@ this.gridOptions = {
 
 ##### `exportWithFormatter` through Grid Options
 ```typescript
-this.columnDefinitions = [
+this.columns = [
   { id: 'start', name: 'Start', field: 'start', formatter: Formatters.dateIso },
   { id: 'finish', name: 'Finish', field: 'finish', formatter: Formatters.dateIso },
 ];
@@ -67,7 +67,7 @@ In some cases a Formatter can be formed of HTML and that will end up showing in 
 
 ##### `exportWithFormatter` through each Column Definition
 ```typescript
-this.columnDefinitions = [
+this.columns = [
   {
     id: 'title', name: 'Title', field: 'id',
     formatter: Formatters.bold,
@@ -83,7 +83,7 @@ this.gridOptions = {
 
 ##### `exportWithFormatter` through Grid Options
 ```typescript
-this.columnDefinitions = [
+this.columns = [
   { id: 'title', name: 'Title', field: 'id', formatter: Formatters.bold }
 ];
 
@@ -100,7 +100,7 @@ this.gridOptions = {
 If you want to disable pasting values for specific columns you can deactivate it using the denyPaste property on the Column config.
 
 ```typescript
-this.columnDefinitions = [
+this.columns = [
   {
     id: 'colA', name: 'Col A', field: 'col_a',
     formatter: Formatters.bold,

@@ -524,13 +524,13 @@ export class ExtensionService {
       this.translaterService.use(locale as string);
     }
 
-    let columnDefinitions = newColumns;
-    if (!columnDefinitions) {
-      columnDefinitions = this.sharedService.columnDefinitions;
+    let columns = newColumns;
+    if (!columns) {
+      columns = this.sharedService.columnDefinitions;
     }
 
     // translate all column headers & header column group when defined
-    this.translateItems(columnDefinitions, 'nameKey', 'name');
+    this.translateItems(columns, 'nameKey', 'name');
     this.translateItems(this.sharedService.allColumns, 'nameKey', 'name');
     this.translateItems(this.sharedService.allColumns, 'columnGroupKey', 'columnGroup');
 

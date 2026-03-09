@@ -7,8 +7,8 @@ import { onBeforeMount, ref, type Ref } from 'vue';
 const NB_ITEMS = 500;
 const gridOptions1 = ref<GridOption>();
 const gridOptions2 = ref<GridOption>();
-const columnDefinitions1: Ref<Column[]> = ref([]);
-const columnDefinitions2: Ref<Column[]> = ref([]);
+const columns1: Ref<Column[]> = ref([]);
+const columns2: Ref<Column[]> = ref([]);
 const dataset1 = ref<any[]>([]);
 const dataset2 = ref<any[]>([]);
 const showSubTitle = ref(true);
@@ -26,7 +26,7 @@ onBeforeMount(() => {
 });
 
 function definedGrid1() {
-  columnDefinitions1.value = [
+  columns1.value = [
     { id: 'title', name: 'Title', field: 'title', sortable: true, columnGroup: 'Common Factor' },
     { id: 'duration', name: 'Duration', field: 'duration', columnGroup: 'Common Factor' },
     { id: 'start', name: 'Start', field: 'start', columnGroup: 'Period' },
@@ -65,7 +65,7 @@ function definedGrid1() {
 }
 
 function definedGrid2() {
-  columnDefinitions2.value = [
+  columns2.value = [
     {
       id: 'sel',
       name: '#',
@@ -218,7 +218,7 @@ function vueGrid2Ready(grid: SlickgridVueInstance) {
 
   <slickgrid-vue
     v-model:options="gridOptions1!"
-    v-model:columns="columnDefinitions1"
+    v-model:columns="columns1"
     v-model:dataset="dataset1"
     grid-id="grid1"
     @onVueGridCreated="vueGrid1Ready($event.detail)"
@@ -240,7 +240,7 @@ function vueGrid2Ready(grid: SlickgridVueInstance) {
 
   <slickgrid-vue
     v-model:options="gridOptions2!"
-    v-model:columns="columnDefinitions2"
+    v-model:columns="columns2"
     v-model:dataset="dataset2"
     grid-id="grid2"
     @onVueGridCreated="vueGrid2Ready($event.detail)"

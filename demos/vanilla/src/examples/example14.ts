@@ -85,7 +85,7 @@ const customEditableInputFormatter: Formatter = (_row, _cell, value, columnDef, 
 
 export default class Example14 {
   private _bindingEventService: BindingEventService;
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[] = [];
   isGridEditable = true;
@@ -119,7 +119,7 @@ export default class Example14 {
 
     this.sgb = new Slicker.GridBundle(
       this.gridContainerElm,
-      Utilities.deepCopy(this.columnDefinitions),
+      Utilities.deepCopy(this.columns),
       { ...ExampleGridOptions, ...this.gridOptions },
       this.dataset
     );
@@ -142,7 +142,7 @@ export default class Example14 {
   }
 
   initializeGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',
@@ -483,7 +483,7 @@ export default class Example14 {
     ];
 
     // add custom Header Menu to all columns except "Action"
-    this.columnDefinitions.forEach((col) => {
+    this.columns.forEach((col) => {
       col.header = {
         menu: {
           commandItems: [
@@ -604,7 +604,7 @@ export default class Example14 {
           ? editCommand.prevSerializedValue
           : [editCommand.prevSerializedValue];
         const serializedValues = Array.isArray(editCommand.serializedValue) ? editCommand.serializedValue : [editCommand.serializedValue];
-        const editorColumns = this.columnDefinitions.filter((col) => col.editor !== undefined);
+        const editorColumns = this.columns.filter((col) => col.editor !== undefined);
 
         const modifiedColumns: Column[] = [];
         prevSerializedValues.forEach((_val, index) => {

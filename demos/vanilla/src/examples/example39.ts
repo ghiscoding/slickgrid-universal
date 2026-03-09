@@ -26,8 +26,8 @@ export default class Example01 {
   private _bindingEventService: BindingEventService;
 
   gridOptions2!: GridOption;
-  columnDefinitions1!: Column[];
-  columnDefinitions2!: Column[];
+  columns1!: Column[];
+  columns2!: Column[];
   dataset1!: Customer[];
   dataset2!: OrderData[];
   sgb1!: SlickVanillaGridBundle;
@@ -47,12 +47,12 @@ export default class Example01 {
 
     this.sgb1 = new Slicker.GridBundle(
       document.querySelector('.grid39-1') as HTMLDivElement,
-      this.columnDefinitions1,
+      this.columns1,
       { ...ExampleGridOptions, ...this.gridOptions1 },
       this.dataset1
     );
     this.sgb1.slickGrid?.setSelectedRows([0]);
-    this.sgb2 = new Slicker.GridBundle(document.querySelector('.grid39-2') as HTMLDivElement, this.columnDefinitions2, {
+    this.sgb2 = new Slicker.GridBundle(document.querySelector('.grid39-2') as HTMLDivElement, this.columns2, {
       ...ExampleGridOptions,
       ...this.gridOptions2,
     });
@@ -74,7 +74,7 @@ export default class Example01 {
 
   /* Define grid Options and Columns */
   defineGrids() {
-    this.columnDefinitions1 = [
+    this.columns1 = [
       { id: 'name', name: 'Customer Name', field: 'name', sortable: true, minWidth: 100, filterable: true },
       { id: 'company', name: 'Company Name', field: 'company', minWidth: 100, sortable: true },
       { id: 'address', name: 'Address', field: 'address', sortable: true, minWidth: 100 },
@@ -92,7 +92,7 @@ export default class Example01 {
       },
     };
 
-    this.columnDefinitions2 = [
+    this.columns2 = [
       { id: 'orderId', field: 'orderId', name: 'Order ID', sortable: true, width: 50 },
       { id: 'freight', field: 'freight', name: 'Freight', sortable: true, width: 50, type: 'number', formatter: Formatters.dollar },
       { id: 'name', field: 'name', name: 'Ship Company', sortable: true },

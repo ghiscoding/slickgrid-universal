@@ -48,7 +48,7 @@ export default class Example31 {
     this.sgb?.dispose();
 
     const dataRows = csvContent?.split('\n');
-    const columnDefinitions: Column[] = [];
+    const columns: Column[] = [];
     const dataset: any[] = [];
 
     // create column definitions
@@ -60,7 +60,7 @@ export default class Example31 {
         // the 1st row is considered to be the header titles, we can create the column definitions from it
         for (const cellVal of cellValues) {
           const camelFieldName = toCamelCase(cellVal);
-          columnDefinitions.push({
+          columns.push({
             id: camelFieldName,
             name: cellVal,
             field: camelFieldName,
@@ -72,7 +72,7 @@ export default class Example31 {
         // at this point all column defs were created and we can loop through them and
         // we can now start adding data as an object and then simply push it to the dataset array
         cellValues.forEach((cellVal, colIndex) => {
-          dataEntryObj[columnDefinitions[colIndex].id] = cellVal;
+          dataEntryObj[columns[colIndex].id] = cellVal;
         });
 
         // a unique "id" must be provided, if not found then use the row index and push it to the dataset
@@ -98,6 +98,6 @@ export default class Example31 {
     const gridContainerElm = document.createElement('div');
     gridContainerElm.className = 'grid31';
     document.querySelector('.grid-container-zone')!.appendChild(gridContainerElm);
-    this.sgb = new Slicker.GridBundle(gridContainerElm, columnDefinitions, { ...ExampleGridOptions, ...gridOptions }, dataset);
+    this.sgb = new Slicker.GridBundle(gridContainerElm, columns, { ...ExampleGridOptions, ...gridOptions }, dataset);
   }
 }

@@ -17,7 +17,7 @@ const NB_ITEMS = 100;
 export class Example37Component implements OnDestroy, OnInit {
   private _darkMode = false;
   angularGrid!: AngularGridInstance;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   gridOptions!: GridOption;
   dataset!: any[];
   hideSubTitle = false;
@@ -52,7 +52,7 @@ export class Example37Component implements OnDestroy, OnInit {
         editor: { model: Editors.integer },
       });
     }
-    this.columnDefinitions = columnDefs;
+    this.columns = columnDefs;
 
     this.gridOptions = {
       autoEdit: true,
@@ -75,7 +75,7 @@ export class Example37Component implements OnDestroy, OnInit {
     for (let i = 0; i < itemCount; i++) {
       const d = (datasetTmp[i] = {} as any);
       d.id = i;
-      for (let j = 0; j < this.columnDefinitions.length; j++) {
+      for (let j = 0; j < this.columns.length; j++) {
         d[j] = Math.round(Math.random() * 10);
       }
     }

@@ -7,7 +7,7 @@ An input editor is the most common editor, it could be any of these (text, integ
 For editing regular text, you can use `Editors.text` and for numbers then you can use `Editors.integer` or `Editors.float`
 
 ```ts
-this.columnDefinitions = [
+this.columns = [
   {
     id: 'firstName', name: 'First Name', field: 'firstName',
     editor: { model: Editors.text },
@@ -28,7 +28,7 @@ this.columnDefinitions = [
 This is probably a common use case to have an editor for editing currency, below is an exampe of dollar currency format and editiing with 2 decimal places (using any other currency would work too).
 
 ```ts
-this.columnDefinitions = [
+this.columns = [
   {
     id: 'cost', name: 'Cost', field: 'cost',
     type: 'float',

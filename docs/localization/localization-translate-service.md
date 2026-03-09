@@ -73,7 +73,7 @@ export class Example {
   // Define grid Options and Columns
   // provide a headerKey for each column and enableTranslate to True in GridOption
   defineGrid() {
-    const columnDefinitions = [
+    const columns = [
       { id: 'title', name: 'Title', field: 'title', headerKey: 'TITLE', formatter: this.taskTranslateFormatter, sortable: true, minWidth: 100 },
       { id: 'duration', name: 'Duration (days)', field: 'duration', headerKey: 'DURATION', sortable: true, minWidth: 100 },
       { id: 'start', name: 'Start', field: 'start', headerKey: 'START', formatter: Formatters.dateIso, minWidth: 100 },

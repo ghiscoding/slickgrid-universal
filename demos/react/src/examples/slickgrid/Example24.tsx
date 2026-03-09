@@ -60,7 +60,7 @@ const taskTranslateFormatter: Formatter = (_row, _cell, value, _columnDef, _data
 
 const Example24: React.FC = () => {
   const defaultLang = 'en';
-  const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
   const [dataset] = useState<any[]>(getData(1000));
   const [darkMode, setDarkMode] = useState(false);
   const [hideSubTitle, setHideSubTitle] = useState(false);
@@ -93,7 +93,7 @@ const Example24: React.FC = () => {
 
   /* Define grid Options and Columns */
   function defineGrid() {
-    const columnDefinitions: Column[] = [
+    const columns: Column[] = [
       { id: 'id', name: '#', field: 'id', maxWidth: 45, sortable: true, filterable: true },
       {
         id: 'title',
@@ -365,7 +365,7 @@ const Example24: React.FC = () => {
       contextMenu: getContextMenuOptions(),
     };
 
-    setColumnDefinitions(columnDefinitions);
+    setColumns(columns);
     setGridOptions(gridOptions);
   }
 
@@ -758,7 +758,7 @@ const Example24: React.FC = () => {
 
       <SlickgridReact
         gridId="grid24"
-        columns={columnDefinitions}
+        columns={columns}
         options={gridOptions}
         dataset={dataset}
         onReactGridCreated={($event) => reactGridReady($event.detail)}

@@ -36,7 +36,7 @@ const taskTranslateFormatter: Formatter = (_row, _cell, value, _columnDef, _data
 
 export class Example23 {
   aureliaGrid!: AureliaGridInstance;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   gridOptions!: GridOption;
   dataset: any[] = [];
   hideSubTitle = false;
@@ -70,7 +70,7 @@ export class Example23 {
 
   /* Define grid Options and Columns */
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',

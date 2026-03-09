@@ -4,7 +4,7 @@ import { onBeforeMount, ref, type Ref } from 'vue';
 
 const NB_ITEMS = 500;
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const showSubTitle = ref(true);
 let vueGrid!: SlickgridVueInstance;
@@ -17,7 +17,7 @@ onBeforeMount(() => {
 
 /* Define grid Options and Columns */
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     { id: 'title', name: 'Title', field: 'title', filterable: true },
     { id: 'duration', name: 'Duration', field: 'duration', filterable: true, sortable: true },
     { id: '%', name: '% Complete', field: 'percentComplete', filterable: true, sortable: true },
@@ -218,7 +218,7 @@ function disableSorting() {
 }
 
 function addEditDeleteColumns() {
-  if (columnDefinitions.value[0].id !== 'change-symbol') {
+  if (columns.value[0].id !== 'change-symbol') {
     const newCols: Column[] = [
       {
         id: 'change-symbol',
@@ -257,7 +257,7 @@ function addEditDeleteColumns() {
     // for example if you use the Checkbox Selector (row selection), you MUST use the code below
     const allColumns = vueGrid.gridService.getAllColumnDefinitions();
     allColumns.unshift(newCols[0], newCols[1]);
-    columnDefinitions.value = [...allColumns]; // (or use slice) reassign to column definitions for Vue to do dirty checking
+    columns.value = [...allColumns]; // (or use slice) reassign to column definitions for Vue to do dirty checking
   }
 }
 
@@ -357,7 +357,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <slickgrid-vue
     v-model:options="gridOptions"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:dataset="dataset"
     grid-id="grid16"
     @onVueGridCreated="vueGridReady($event.detail)"

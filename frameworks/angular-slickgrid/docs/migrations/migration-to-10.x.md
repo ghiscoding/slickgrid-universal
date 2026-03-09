@@ -284,7 +284,7 @@ Below is an abbreviated list of Enums to update, make sure to update them all
 ```diff
 import { type MultipleSelectOption } from '@slickgrid-universal/common';
 
-columnDefinitions = [{
+columns = [{
   id: 'duration', field: 'duration', name: 'Duration',
   editor: {
 -   editorOptions: {
@@ -303,7 +303,7 @@ columnDefinitions = [{
 // or reuse the same `options`
 + const msOptions = { maxHeight: 250, useSelectOptionLabelToHtml: true } as MultipleSelectOption;
 
-columnDefinitions = [{
+columns = [{
   id: 'duration', field: 'duration', name: 'Duration',
   editor: {
 +   options: msOptions,

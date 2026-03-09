@@ -30,7 +30,7 @@ interface ReportItem {
 
 export default class Example40 {
   private _bindingEventService: BindingEventService;
-  columnDefinitions: Column<ReportItem>[];
+  columns: Column<ReportItem>[];
   gridOptions: GridOption;
   dataset: ReportItem[];
   sgb: SlickVanillaGridBundle<ReportItem>;
@@ -45,12 +45,7 @@ export default class Example40 {
     this.dataset = this.loadData(2000);
     const gridContainerElm = document.querySelector(`.grid40`) as HTMLDivElement;
 
-    this.sgb = new Slicker.GridBundle(
-      gridContainerElm,
-      this.columnDefinitions,
-      { ...ExampleGridOptions, ...this.gridOptions },
-      this.dataset
-    );
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
 
   dispose() {
@@ -62,7 +57,7 @@ export default class Example40 {
     // This example demonstrates Menu Slot functionality across all menu types:
     // - SlickHeaderMenu, SlickCellMenu, SlickContextMenu, SlickGridMenu
 
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',

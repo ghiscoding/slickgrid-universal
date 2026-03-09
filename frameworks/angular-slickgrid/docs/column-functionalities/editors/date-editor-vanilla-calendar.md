@@ -21,7 +21,7 @@ You can use any of the Vanilla-Calendar [settings](https://vanilla-calendar.pro/
 import { type VanillaCalendarOption } from '@slickgrid-universal/common';
 
 prepareGrid() {
-  this.columnDefinitions = [
+  this.columns = [
     {
       id: 'title', name: 'Title', field: 'title',
       type: 'dateIso', // if your type has hours/minutes, then the date picker will include date+time
@@ -55,7 +55,7 @@ this.gridOptions = {
 You can add a Custom Validator from an external function or inline (inline is shown below and comes from [Example 12](https://ghiscoding.github.io/slickgrid-universal/#/example12))
 ```ts
 initializeGrid() {
-  this.columnDefinitions = [
+  this.columns = [
     {
       id: 'title', name: 'Title', field: 'title',
       editor: {

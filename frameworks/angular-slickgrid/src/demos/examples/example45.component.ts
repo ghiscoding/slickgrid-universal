@@ -17,7 +17,7 @@ const NB_ITEMS = 995;
 })
 export class Example45Component implements OnDestroy, OnInit {
   private _darkMode = false;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   gridOptions!: GridOption;
   angularGrid!: AngularGridInstance;
   dataset: Distributor[] = [];
@@ -50,7 +50,7 @@ export class Example45Component implements OnDestroy, OnInit {
   }
 
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'companyId',
         name: 'ID',

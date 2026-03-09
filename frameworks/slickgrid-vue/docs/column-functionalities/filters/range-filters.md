@@ -17,7 +17,7 @@ By default all the range filters are with exclusive range, which mean between va
 For example
 ```ts
 // your columns definition
-columnDefinitions.value = [
+columns.value = [
   {
     id: 'duration', field: 'duration', name: 'Duration',
     filterable: true,
@@ -42,7 +42,7 @@ import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 's
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -51,7 +51,7 @@ onBeforeMount(() => {
 
 function defineGrid() {
   // your columns definition
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'duration', field: 'duration', name: 'Duration',
       type: 'number', // you can optionally specify that the data are numbers
@@ -82,7 +82,7 @@ import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 's
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -91,7 +91,7 @@ onBeforeMount(() => {
 
 function defineGrid() {
   // your columns definition
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'complete', name: '% Complete', field: 'percentComplete', headerKey: 'PERCENT_COMPLETE', minWidth: 120,
       sortable: true,
@@ -159,7 +159,7 @@ import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 's
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -168,7 +168,7 @@ onBeforeMount(() => {
 
 function defineGrid() {
   // your columns definition
-  columnDefinitions = [
+  columns.value = [
     {
       id: 'finish', name: 'Finish', field: 'finish', headerKey: 'FINISH',
       minWidth: 75, width: 120, exportWithFormatter: true,

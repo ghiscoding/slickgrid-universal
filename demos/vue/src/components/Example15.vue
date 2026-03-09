@@ -20,7 +20,7 @@ const DEFAULT_PAGE_SIZE = 25;
 const LOCAL_STORAGE_KEY = 'gridState';
 const NB_ITEMS = 500;
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const showSubTitle = ref(true);
 const selectedLanguage = ref('en');
@@ -54,7 +54,7 @@ function defineGrid(gridStatePresets?: GridState) {
     multiSelectFilterArray.push({ value: i, label: i });
   }
 
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'title',
       name: 'Title',
@@ -205,7 +205,7 @@ function defineGrid(gridStatePresets?: GridState) {
 
 /** Clear the Grid State from Local Storage and reset the grid to it's original state */
 function clearGridStateFromLocalStorage() {
-  vueGrid.gridService.resetGrid(columnDefinitions.value as Column[]);
+  vueGrid.gridService.resetGrid(columns.value as Column[]);
   vueGrid.paginationService!.changeItemPerPage(DEFAULT_PAGE_SIZE);
   setTimeout(() => (localStorage[LOCAL_STORAGE_KEY] = null));
 }
@@ -325,7 +325,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <slickgrid-vue
     v-model:options="gridOptions"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:dataset="dataset"
     grid-id="grid15"
     @onGridStateChanged="gridStateChanged($event.detail)"

@@ -7,7 +7,7 @@ const { i18next } = useTranslation();
 
 const NB_ITEMS = 1000;
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const showSubTitle = ref(true);
 const selectedLanguage = ref('en');
@@ -27,7 +27,7 @@ onBeforeMount(() => {
 
 /* Define grid Options and Columns */
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     { id: 'title', name: 'Title', field: 'title', nameKey: 'TITLE' },
     { id: 'duration', name: 'Duration', field: 'duration', nameKey: 'DURATION', sortable: true },
     { id: 'percentComplete', name: '% Complete', field: 'percentComplete', nameKey: 'PERCENT_COMPLETE', sortable: true },
@@ -36,7 +36,7 @@ function defineGrid() {
     { id: 'completed', name: 'Completed', field: 'completed', nameKey: 'COMPLETED', formatter: Formatters.checkmarkMaterial },
   ];
 
-  columnDefinitions.value.forEach((columnDef) => {
+  columns.value.forEach((columnDef) => {
     columnDef.header = {
       menu: {
         commandItems: [
@@ -250,7 +250,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
     <slickgrid-vue
       v-model:options="gridOptions"
-      v-model:columns="columnDefinitions"
+      v-model:columns="columns"
       v-model:dataset="dataset"
       grid-id="grid8"
       @onVueGridCreated="vueGridReady($event.detail)"

@@ -13,7 +13,7 @@ const defaultPageSize = 20;
 
 export default class Example15 {
   private _bindingEventService: BindingEventService;
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   metrics: Metrics;
   sgb: SlickVanillaGridBundle;
@@ -45,7 +45,7 @@ export default class Example15 {
     this._bindingEventService.bind(gridContainerElm, 'ongridstatechanged', this.gridStateChanged.bind(this));
     // this._bindingEventService.bind(gridContainerElm, 'onbeforeexporttoexcel', () => console.log('onBeforeExportToExcel'));
     // this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => console.log('onAfterExportToExcel'));
-    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, []);
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, []);
   }
 
   dispose() {
@@ -64,7 +64,7 @@ export default class Example15 {
   }
 
   initializeGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'name',
         name: 'Name',
@@ -194,7 +194,7 @@ export default class Example15 {
 
   addOtherGender() {
     const newGender = { value: 'other', label: 'other' };
-    const genderColumn = this.columnDefinitions.find((column: Column) => column.id === 'gender');
+    const genderColumn = this.columns.find((column: Column) => column.id === 'gender');
 
     if (genderColumn) {
       let editorCollection = genderColumn.editor!.collection;

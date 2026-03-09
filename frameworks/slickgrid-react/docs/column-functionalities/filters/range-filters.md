@@ -17,7 +17,7 @@ By default all the range filters are with exclusive range, which mean between va
 For example
 ```ts
 // your columns definition
-const columnDefinitions = [
+const columns = [
   {
     id: 'duration', field: 'duration', name: 'Duration',
     filterable: true,

@@ -35,7 +35,7 @@ You can set or change option of an individual column definition custom tooltip.
 import { SlickCustomTooltip } from '@slickgrid-universal/custom-tooltip-plugin';
 
 function defineGrid() {
-  columnDefinitions.value = [{
+  columns.value = [{
       id: "title", name: "Title", field: "title", formatter: titleFormatter,
       customTooltip: {
         formatter: tooltipTaskFormatter,
@@ -236,7 +236,7 @@ It is possible to also delay a regular tooltip (when using `useRegularTooltip`) 
 ##### tooltip text output will be: "show this tooltip title text"
 ```ts
 // define your custom tooltip in a Column Definition OR Grid Options
-columnDefinitions.value = [{
+columns.value = [{
   id: 'firstName', field: 'firstName', name: 'First Name',
   customTooltip: {
     // 1- loading formatter
@@ -255,7 +255,7 @@ the previous code could be refactored to have only 1 common formatter that is re
 const myFormatter = () => `<span title="show this tooltip title text">cell value</span>`;
 
 // define your custom tooltip in a Column Definition OR Grid Options
-columnDefinitions.value = [{
+columns.value = [{
   id: 'firstName', field: 'firstName', name: 'First Name',
   customTooltip: {
     // 1- loading formatter

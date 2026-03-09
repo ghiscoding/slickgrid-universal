@@ -20,8 +20,8 @@ export class Example48Component implements OnInit {
   protected _eventHandler = new SlickEventHandler();
   angularGrid1!: AngularGridInstance;
   angularGrid2!: AngularGridInstance;
-  columnDefinitions1: Column[] = [];
-  columnDefinitions2: Column[] = [];
+  columns1: Column[] = [];
+  columns2: Column[] = [];
   gridOptions1!: GridOption;
   gridOptions2!: GridOption;
   dataset1!: any[];
@@ -66,7 +66,7 @@ export class Example48Component implements OnInit {
   }
 
   defineGrids() {
-    this.columnDefinitions1 = [
+    this.columns1 = [
       { id: 'id', name: '#', field: 'id', width: 32, maxWidth: 40, excludeFromHeaderMenu: true },
       { id: 'title', name: 'Title', field: 'title', width: 90, cssClass: 'cell-title' },
       { id: 'complete', name: '% Complete', field: 'percentComplete', sortable: true, width: 90 },
@@ -104,7 +104,7 @@ export class Example48Component implements OnInit {
         formatter: Formatters.checkmarkMaterial,
       },
     ];
-    this.columnDefinitions2 = [...this.columnDefinitions1];
+    this.columns2 = [...this.columns1];
 
     this.gridOptions1 = {
       autoResize: {

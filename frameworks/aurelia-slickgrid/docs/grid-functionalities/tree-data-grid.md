@@ -42,7 +42,7 @@ For example, we can see below is that we have a regular flat dataset with items 
 ```html
 <aurelia-slickgrid
     grid-id="gridId"
-    columns.bind="columnDefinitions"
+    columns.bind="columns"
     options.bind="gridOptions"
     dataset.bind="dataset">
 </aurelia-slickgrid>
@@ -65,7 +65,7 @@ _For the full list of options, refer to the [treeDataOptions](https://github.com
 ###### define your grid
 ```ts
 defineGrid() {
-  this.columnDefinitions = [
+  this.columns = [
     {
       id: 'title', name: 'Title', field: 'title', width: 220, cssClass: 'cell-title',
       filterable: true, sortable: true,
@@ -107,7 +107,7 @@ _For the full list of options, refer to the [treeDataOptions](https://github.com
 ```html
 <aurelia-slickgrid
     grid-id="gridId"
-    columns.bind="columnDefinitions"
+    columns.bind="columns"
     options.bind="gridOptions"
     dataset-hierarchical.bind="datasetHierarchical">
 </aurelia-slickgrid>
@@ -132,7 +132,7 @@ this.datasetHierarchical = [
 ###### define your grid
 ```ts
 initializeGrid() {
-  this.columnDefinitions = [
+  this.columns = [
     {
       id: 'file', name: 'Files', field: 'file',
       width: 150, formatter: this.treeFormatter,
@@ -350,7 +350,7 @@ There is also a new and optional Formatter, `Formatters.treeParseTotals`, that w
 
 #### with `Formatters.treeParseTotals`
 ```ts
-this.columnDefinitions = [
+this.columns = [
   {
     id: 'size', name: 'Size', field: 'size', minWidth: 90,
 
@@ -375,7 +375,7 @@ this.columnDefinitions = [
 
 #### with Custom Formatter
 ```ts
-this.columnDefinitions = [
+this.columns = [
   {
     id: 'size', name: 'Size', field: 'size', minWidth: 90,
 

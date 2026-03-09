@@ -56,7 +56,7 @@ export class Example03 {
   private _commandQueue: EditCommand[] = [];
   aureliaGrid!: AureliaGridInstance;
   gridOptions!: GridOption;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   dataset: any[] = [];
   updatedObject: any;
   hideSubTitle = false;
@@ -79,7 +79,7 @@ export class Example03 {
 
   /* Define grid Options and Columns */
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'edit',
         field: 'id',
@@ -464,7 +464,7 @@ export class Example03 {
     // wrap into a timer to simulate a backend async call
     setTimeout(() => {
       // at any time, we can poke the "collection" property and modify it
-      const requisiteColumnDef = this.columnDefinitions.find((column: Column) => column.id === 'prerequisites');
+      const requisiteColumnDef = this.columns.find((column: Column) => column.id === 'prerequisites');
       if (requisiteColumnDef) {
         const collectionEditor = requisiteColumnDef.editor!.collection;
         const collectionFilter = requisiteColumnDef.filter!.collection;
@@ -489,7 +489,7 @@ export class Example03 {
 
   /** Delete last inserted row */
   deleteItem() {
-    const requisiteColumnDef = this.columnDefinitions.find((column: Column) => column.id === 'prerequisites');
+    const requisiteColumnDef = this.columns.find((column: Column) => column.id === 'prerequisites');
     if (requisiteColumnDef) {
       const collectionEditor = requisiteColumnDef.editor!.collection;
       const collectionFilter = requisiteColumnDef.filter!.collection;
@@ -596,7 +596,7 @@ export class Example03 {
 
     // you can dynamically add your column to your column definitions
     // and then use the spread operator [...cols] OR slice to force Aurelia to review the changes
-    this.columnDefinitions.push(newCol);
+    this.columns.push(newCol);
 
     // NOTE if you use an Extensions (Checkbox Selector, Row Detail, ...) that modifies the column definitions in any way
     // you MUST use "getAllColumnDefinitions()" from the GridService, using this will be ALL columns including the 1st column that is created internally
@@ -604,12 +604,12 @@ export class Example03 {
     /*
     const allColumns = this.aureliaGrid.gridService.getAllColumnDefinitions();
     allColumns.push(newCol);
-    this.columnDefinitions = [...allColumns]; // (or use slice) reassign to column definitions for Aurelia to do dirty checking
+    this.columns = [...allColumns]; // (or use slice) reassign to column definitions for Aurelia to do dirty checking
     */
   }
 
   dynamicallyRemoveLastColumn() {
-    this.columnDefinitions.pop();
+    this.columns.pop();
 
     /*
     // remove your column the full set of columns

@@ -24,7 +24,7 @@ You can also create your own Custom Filter with any html/css you want to use. Vu
 <script setup lang="ts">
 function defineGrid() {
   // define you columns, in this demo Effort Driven will use a Select Filter
-  columnDefinitions.value = [
+  columns.value = [
     { id: 'title', name: 'Title', field: 'title' },
     { id: 'description', name: 'Description', field: 'description',
       filterable: true,
@@ -52,7 +52,7 @@ import { type Column, Filters, Formatters, SlickgridVue, type VanillaCalendarOpt
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const $filterElm = ref();
 const callback: FilterCallback;
@@ -86,7 +86,7 @@ import { type Column, Filters, Formatters, SlickgridVue, type VanillaCalendarOpt
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -95,7 +95,7 @@ onBeforeMount(() => {
 
 function defineGrid() {
   // define you columns, in this demo Effort Driven will use a Select Filter
-  columnDefinitions.value = [
+  columns.value = [
     { id: 'title', name: 'Title', field: 'title' },
     { id: 'description', name: 'Description', field: 'description',
       filterable: true,

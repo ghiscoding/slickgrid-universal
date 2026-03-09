@@ -15,8 +15,8 @@ export default class Example01 {
   private _darkModeGrid1 = false;
   gridOptions1!: GridOption;
   gridOptions2!: GridOption;
-  columnDefinitions1!: Column[];
-  columnDefinitions2!: Column[];
+  columns1!: Column[];
+  columns2!: Column[];
   dataset1!: any[];
   dataset2!: any[];
   sgb1!: SlickVanillaGridBundle;
@@ -35,11 +35,11 @@ export default class Example01 {
 
     this.sgb1 = new Slicker.GridBundle(
       document.querySelector(`.grid1`) as HTMLDivElement,
-      this.columnDefinitions1,
+      this.columns1,
       { ...ExampleGridOptions, ...this.gridOptions1 },
       this.dataset1
     );
-    this.sgb2 = new Slicker.GridBundle(document.querySelector(`.grid2`) as HTMLDivElement, this.columnDefinitions2, {
+    this.sgb2 = new Slicker.GridBundle(document.querySelector(`.grid2`) as HTMLDivElement, this.columns2, {
       ...ExampleGridOptions,
       ...this.gridOptions2,
     });
@@ -59,7 +59,7 @@ export default class Example01 {
 
   /* Define grid Options and Columns */
   defineGrids() {
-    this.columnDefinitions1 = [
+    this.columns1 = [
       { id: 'title', name: 'Title', field: 'title', sortable: true, minWidth: 100, filterable: true },
       {
         id: 'duration',
@@ -111,7 +111,7 @@ export default class Example01 {
 
     // copy the same Grid Options and Column Definitions to 2nd grid
     // but also add Pagination in this grid
-    this.columnDefinitions2 = this.columnDefinitions1;
+    this.columns2 = this.columns1;
     this.gridOptions2 = {
       ...this.gridOptions1,
       ...{
@@ -249,7 +249,7 @@ export default class Example01 {
 
   resetGrid1() {
     // const cols = this.sgb1.slickGrid?.getColumns() || [];
-    const cols = this.columnDefinitions1.slice();
+    const cols = this.columns1.slice();
     cols.forEach((c) => (c.hidden = false));
     this.sgb1.slickGrid?.setColumns(cols);
     this.sgb1.slickGrid?.autosizeColumns();

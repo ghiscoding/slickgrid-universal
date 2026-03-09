@@ -65,7 +65,7 @@ As you can see, you mainly need to define which service to use (GridODataService
 ##### View
 ```html
 <aurelia-slickgrid grid-id="grid5"
-                     columns.bind="columnDefinitions"
+                     columns.bind="columns"
                      options.bind="gridOptions"
                      dataset.bind="dataset"
                      pagination-options.bind="paginationOptions"
@@ -82,7 +82,7 @@ import { GridOdataService, OdataServiceApi, OdataOption } from '@slickgrid-unive
 
 @autoinject()
 export class Example {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset = [];
 
@@ -94,7 +94,7 @@ export class Example {
   }
 
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       // your column definitions
     ];
 

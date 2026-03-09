@@ -14,7 +14,7 @@ You can add Header and/or Footer to your grid by using the `#header` and `#foote
   <slickgrid-vue
     grid-id="grid2"
     v-model:options="gridOptions"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:dataset="dataset"
   >
     <template #header>

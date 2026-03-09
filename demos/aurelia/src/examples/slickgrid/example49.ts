@@ -13,7 +13,7 @@ const NB_ITEMS = 100;
 export class Example49 {
   private _darkMode = false;
   aureliaGrid!: AureliaGridInstance;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   gridOptions!: GridOption;
   dataset!: any[];
   hideSubTitle = false;
@@ -38,7 +38,7 @@ export class Example49 {
   }
 
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'selector',
         name: '',
@@ -48,7 +48,7 @@ export class Example49 {
     ];
 
     for (let i = 0; i < NB_ITEMS; i++) {
-      this.columnDefinitions.push({
+      this.columns.push({
         id: i,
         name:
           i < 26

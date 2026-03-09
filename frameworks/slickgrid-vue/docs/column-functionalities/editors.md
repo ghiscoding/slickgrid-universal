@@ -42,7 +42,7 @@ Simply call the editor in your column definition with the `Editors` you want, as
 ```vue
 <script setup lang="ts">
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     { id: 'title', name: 'Title', field: 'title', editor: { model: Editors.longText } },
     { id: 'duration', name: 'Duration (days)', field: 'duration', type: 'number', editor: { model: Editors.text } },
     { id: 'complete', name: '% Complete', field: 'percentComplete', type: 'number', editor: { model: Editors.integer } },
@@ -75,7 +75,7 @@ This probably comes often, so here's all the setting you would need for displayi
 ```vue
 <script setup lang="ts">
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'cost', name: 'Cost', field: 'cost',
       type: 'float',
@@ -96,7 +96,7 @@ You could also define an `outputType` and a `saveOutputType` to an inline editor
 ```vue
 <script setup lang="ts">
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
    {
      id: 'start', name: 'Start', field: 'start',
      type: 'date',
@@ -163,7 +163,7 @@ For Custom Editor class example, take a look at [custom-inputEditor.ts](https://
 ```vue
 <script setup lang="ts">
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'title2', name: 'Title, Custom Editor', field: 'title',
       editor: {
@@ -194,7 +194,7 @@ Instead of an inline editor, you might want to simply click on an edit icon that
 ```vue
 <script setup lang="ts">
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
      {
         id: 'edit', field: 'id',
         formatter: Formatters.editIcon,
@@ -234,7 +234,7 @@ Here's an example with a `collection`, `collectionFilterBy` and `collectionSortB
 ```vue
 <script setup lang="ts">
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'prerequisites', name: 'Prerequisites', field: 'prerequisites',
       editor: {
@@ -276,7 +276,7 @@ You can also load the collection asynchronously, but for that you will have to u
 ```vue
 <script setup lang="ts">
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
       {
       id: 'prerequisites', name: 'Prerequisites', field: 'prerequisites',
       filterable: true,
@@ -302,7 +302,7 @@ function addItem() {
 
   // wrap into a timer to simulate a backend async call
   setTimeout(() => {
-    const requisiteColumnDef = columnDefinitions.find((column: Column) => column.id === 'prerequisites');
+    const requisiteColumnDef = columns.find((column: Column) => column.id === 'prerequisites');
     if (requisiteColumnDef) {
       const editorCollection = requisiteColumnDef.editor.collection;
 
@@ -371,7 +371,7 @@ By default HTML is not rendered and the `label` will simply show HTML as text. B
 ```vue
 <script setup lang="ts">
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'effort-driven', name: 'Effort Driven', field: 'effortDriven',
       formatter: Formatters.checkmarkMaterial,
@@ -409,7 +409,7 @@ Couple of small options were added to suit slickgrid-vue needs, which is why it 
 ```vue
 <script setup lang="ts">
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'isActive', name: 'Is Active', field: 'isActive',
       filterable: true,
@@ -434,7 +434,7 @@ function defineGrid() {
 Some of the Editors could receive extra options, which is mostly the case for Editors using external dependencies (e.g. `autocompleter`, `date`, `multipleSelect`, ...) you can provide options via the editor `options`, for example
 
 ```ts
-columnDefinitions.value = [{
+columns.value = [{
   id: 'start', name: 'Start Date', field: 'start',
   editor: {
     model: Editors.date,
@@ -547,7 +547,7 @@ import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 's
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const isAutoEdit = ref(false);
 let vueGrid: SlickgridVueInstance;
@@ -570,7 +570,7 @@ function setAutoEdit(autoEdit) {
 <template>
   <slickgrid-vue
     grid-id="grid1"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:options="gridOptions"
     v-model:dataset="dataset"
     @onVueGridCreated="vueGridReady($event.detail)"
@@ -603,7 +603,7 @@ function onBeforeEditCell($event) {
 <template>
   <slickgrid-vue
     grid-id="grid3"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:options="gridOptions"
     v-model:dataset="dataset"
     @onBeforeEditCell="onBeforeEditCell($event.detail.eventData, $event.detail.args)"

@@ -10,7 +10,7 @@ const NB_ITEMS = 20;
 
 export default class Example22 {
   gridOptions!: GridOption;
-  columnDefinitions!: Column[];
+  columns!: Column[];
   dataset!: any[];
   sgb!: SlickVanillaGridBundle;
   translateService: TranslateService;
@@ -37,7 +37,7 @@ export default class Example22 {
 
     this.sgb = new Slicker.GridBundle(
       document.querySelector(`.grid1`) as HTMLDivElement,
-      this.columnDefinitions,
+      this.columns,
       { ...ExampleGridOptions, ...this.gridOptions },
       this.dataset
     );
@@ -54,7 +54,7 @@ export default class Example22 {
 
   /* Define grid Options and Columns */
   defineGrids() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',

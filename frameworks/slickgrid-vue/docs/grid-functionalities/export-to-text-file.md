@@ -30,7 +30,7 @@ import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 's
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -74,7 +74,7 @@ Inside the column definition there are couple of flags you can set and also some
 import { TextExportService } from '@slickgrid-universal/text-export';
 
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     { id: 'id', name: 'ID', field: 'id',
       excludeFromExport: true // skip the "id" column from the export
     },
@@ -131,7 +131,7 @@ import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 's
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const textExportService = new TextExportService();
 
@@ -167,7 +167,7 @@ If you have lots of data, you might want to show a spinner telling the user that
   </span>
 
   <SlickgridVue gridId="grid5"
-      v-model:columns="columnDefinitions"
+      v-model:columns="columns"
       v-model:options="gridOptions"
       v-model:dataset="dataset"
       paginationOptions={state.paginationOptions}

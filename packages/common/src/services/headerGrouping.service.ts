@@ -141,8 +141,8 @@ export class HeaderGroupingService {
 
   /** Translate Column Group texts and re-render them afterward. */
   translateHeaderGrouping(): void {
-    const currentColumnDefinitions = this._grid.getColumns();
-    this.extensionUtility.translateItems(currentColumnDefinitions, 'columnGroupKey', 'columnGroup');
+    const currentColumns = this._grid.getColumns();
+    this.extensionUtility.translateItems(currentColumns, 'columnGroupKey', 'columnGroup');
     this._grid.updateColumns();
     this.renderPreHeaderRowGroupingTitles();
   }

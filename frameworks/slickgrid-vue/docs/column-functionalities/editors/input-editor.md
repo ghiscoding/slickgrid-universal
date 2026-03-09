@@ -9,7 +9,7 @@ For editing regular text, you can use `Editors.text` and for numbers then you ca
 ```vue
 <script setup lang="ts">
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'firstName', name: 'First Name', field: 'firstName',
       editor: { model: Editors.text },
@@ -34,7 +34,7 @@ This is probably a common use case to have an editor for editing currency, below
 ```vue
 <script setup lang="ts">
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'cost', name: 'Cost', field: 'cost',
       type: 'float',

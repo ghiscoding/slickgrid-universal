@@ -6,7 +6,7 @@ import { onBeforeMount, ref, type Ref } from 'vue';
 const isEditable = ref(false);
 const excelExportService = new ExcelExportService();
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const showSubTitle = ref(true);
 const showEmployeeId = ref(true);
@@ -113,7 +113,7 @@ onBeforeMount(() => {
 
 /* Define grid Options and Columns */
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     { id: 'employeeID', name: 'Employee ID', field: 'employeeID', minWidth: 100 },
     { id: 'employeeName', name: 'Employee Name', field: 'employeeName', editor: { model: Editors.text }, minWidth: 120 },
     { id: '9:00', name: '9:00 AM', field: '9:00', editor: { model: Editors.text }, minWidth: 120 },
@@ -425,11 +425,11 @@ function toggleEmployeeIdVisibility() {
   // 1. update column definitions via grid.setColumns()
   // this will shift colspan/rowspan to the left or right accordingly
   if (showEmployeeId.value) {
-    columnDefinitions.value.unshift({ id: 'employeeID', name: 'Employee ID', field: 'employeeID', width: 100 });
+    columns.value.unshift({ id: 'employeeID', name: 'Employee ID', field: 'employeeID', width: 100 });
   } else {
-    columnDefinitions.value.splice(0, 1);
+    columns.value.splice(0, 1);
   }
-  vueGrid.slickGrid.setColumns(columnDefinitions.value);
+  vueGrid.slickGrid.setColumns(columns.value);
 
   // --- OR ---
   // 2. OR update via "hidden" column flag & increase/decrease column index accordingly in the metadata
@@ -546,7 +546,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <slickgrid-vue
     v-model:options="gridOptions"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:dataset="dataset"
     grid-id="grid43"
     @onVueGridCreated="vueGridReady($event.detail)"

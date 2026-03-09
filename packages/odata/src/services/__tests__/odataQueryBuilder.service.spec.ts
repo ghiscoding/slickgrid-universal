@@ -102,7 +102,7 @@ describe('OdataService', () => {
 
     describe('enableSelect and enableExpand flags', () => {
       it('should return a query with $select when "enableSelect" is set', () => {
-        service.columnDefinitions = [
+        service.columns = [
           { id: 'id1', field: 'fld1' },
           { id: 'id2', field: 'fld2' },
           { id: 'id3', field: '', fields: ['fld2', 'fld3'] },
@@ -116,7 +116,7 @@ describe('OdataService', () => {
       });
 
       it('should return a query with $select when "enableSelect" is set and a custom "datasetIdPropName" is set', () => {
-        service.columnDefinitions = [{ id: 'id1', field: 'fld1' }];
+        service.columns = [{ id: 'id1', field: 'fld1' }];
         const expectation = `$select=custid,fld1`;
 
         service.options = { enableSelect: true };
@@ -127,7 +127,7 @@ describe('OdataService', () => {
       });
 
       it('should return a query with $expand when "enableExpand" is set', () => {
-        service.columnDefinitions = [
+        service.columns = [
           { id: 'id1', field: 'fld1' },
           { id: 'id2', field: 'nav1/fld1' },
           { id: 'id3', field: 'nav1/fld2' },
@@ -142,7 +142,7 @@ describe('OdataService', () => {
       });
 
       it('should return a query with $select and $expand when "enableSelect" and "enableExpand" are set and no OData version provided, or oData version 2 or 3', () => {
-        service.columnDefinitions = [
+        service.columns = [
           { id: 'id1', field: 'fld1' },
           { id: 'id2', field: 'nav1/fld1' },
           { id: 'id3', field: 'nav1/fld2' },
@@ -165,7 +165,7 @@ describe('OdataService', () => {
       });
 
       it('should return a query with $select and $expand when "enableSelect" and "enableExpand" are set with OData version 4 or higher', () => {
-        service.columnDefinitions = [
+        service.columns = [
           { id: 'id1', field: 'fld1' },
           { id: 'id2', field: 'nav1/fld1' },
           { id: 'id3', field: 'nav1/fld2' },
@@ -184,7 +184,7 @@ describe('OdataService', () => {
       });
 
       it('should return a query with $select and $expand when "enableSelect" and "enableExpand" are set with OData version 4 or higher and selecting both a field and a navigation from a navigation', () => {
-        service.columnDefinitions = [
+        service.columns = [
           { id: 'id', field: 'id' },
           { id: 'id1', field: 'nav/fld1' },
           { id: 'id2', field: 'nav/fld2' },

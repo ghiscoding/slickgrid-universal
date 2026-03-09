@@ -40,7 +40,7 @@ const SELECTOR_CLOSEST_TOOLTIP_ATTR = '[title], [data-slick-tooltip]';
  *
  * Available plugin options (same options are available in both column definition and/or grid options)
  * Example 1  - via Column Definition
- *  this.columnDefinitions = [
+ *  this.columns = [
  *    {
  *      id: "action", name: "Action", field: "action", formatter: fakeButtonFormatter,
  *      customTooltip: {

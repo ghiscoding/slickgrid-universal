@@ -24,7 +24,7 @@ Almost all grids from the demos are using the auto-resize feature, and the featu
 All you need to do is enable the Grid Option `enableAutoResize: true` and provide necessary information in the `autoResize`, at minimum you should provide your container an id or class name.
 
 ```ts
-const columnDefinitions = [
+const columns = [
   // ...
 ];
 

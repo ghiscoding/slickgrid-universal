@@ -34,7 +34,7 @@ const alertWarning = ref();
 const updatedObject = ref();
 const showSubTitle = ref(true);
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 let vueGrid!: SlickgridVueInstance;
 
@@ -73,7 +73,7 @@ onBeforeMount(() => {
 
 /* Define grid Options and Columns */
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'edit',
       field: 'id',
@@ -449,7 +449,7 @@ function addItem() {
   // wrap into a timer to simulate a backend async call
   setTimeout(() => {
     // at any time, we can poke the "collection" property and modify it
-    const requisiteColumnDef = columnDefinitions.value.find((column) => column.id === 'prerequisites');
+    const requisiteColumnDef = columns.value.find((column) => column.id === 'prerequisites');
     console.log('requisiteColumnDef', requisiteColumnDef);
     if (requisiteColumnDef) {
       const collectionEditor = requisiteColumnDef.editor!.collection;
@@ -475,7 +475,7 @@ function addItem() {
 
 /** Delete last inserted row */
 function deleteItem() {
-  const requisiteColumnDef = columnDefinitions.value.find((column) => column.id === 'prerequisites');
+  const requisiteColumnDef = columns.value.find((column) => column.id === 'prerequisites');
   if (requisiteColumnDef) {
     const collectionEditor = requisiteColumnDef.editor!.collection;
     const collectionFilter = requisiteColumnDef.filter!.collection;
@@ -584,7 +584,7 @@ function dynamicallyAddTitleHeader() {
   };
 
   // you can dynamically add your column to your column definitions
-  columnDefinitions.value.push(newCol);
+  columns.value.push(newCol);
 
   // NOTE if you use an Extensions (Checkbox Selector, Row Detail, ...) that modifies the column definitions in any way
   // you MUST use "getAllColumnDefinitions()" from the GridService, using this will be ALL columns including the 1st column that is created internally
@@ -596,7 +596,7 @@ function dynamicallyAddTitleHeader() {
 }
 
 function dynamicallyRemoveLastColumn() {
-  columnDefinitions.value.pop();
+  columns.value.pop();
 
   /*
     // remove your column the full set of columns
@@ -755,7 +755,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <slickgrid-vue
     v-model:options="gridOptions"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:dataset="dataset"
     grid-id="grid3"
     @on-cell-change="onCellChanged($event.detail.eventData, $event.detail.args)"

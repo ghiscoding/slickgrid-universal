@@ -16,7 +16,7 @@ export class Example11 {
   dataView!: SlickDataView;
   grid!: SlickGrid;
   gridService!: GridService;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   gridOptions!: GridOption;
   dataset: any[] = [];
   hideSubTitle = false;
@@ -42,7 +42,7 @@ export class Example11 {
 
   /* Define grid Options and Columns */
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'delete',
         field: 'id',

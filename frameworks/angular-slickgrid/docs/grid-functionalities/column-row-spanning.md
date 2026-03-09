@@ -33,7 +33,7 @@ import type { Column, GridOption, ItemMetadata } from 'angular-slickgrid';
 })
 export class Grid43Component implements OnInit {
   gridOptions: GridOption;
-  columnDefinitions: Column[];
+  columns: Column[];
   dataset: any[] = [];
 
   // metadata can be dynamic too, it doesn't have to be preset
@@ -55,7 +55,7 @@ export class Grid43Component implements OnInit {
   }
 
   defineGrid() {
-    this.columnDefinitions = [ /*...*/ ];
+    this.columns = [ /*...*/ ];
 
     this.gridOptions = {
       enableCellNavigation: true,

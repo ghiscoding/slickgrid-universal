@@ -440,7 +440,7 @@ export class ResizerService {
    * @param {Boolean} recalculateColumnsTotalWidth - defaults to false, do we want to recalculate the necessary total columns width even if it was already calculated?
    */
   resizeColumnsByCellContent(recalculateColumnsTotalWidth = false): void {
-    const columnDefinitions = this._grid.getColumns();
+    const columns = this._grid.getColumns();
     const dataset = this.dataView.getItems() as any[];
     const columnWidths: { [columnId in string | number]: number } = {};
     let reRender = false;
@@ -467,20 +467,20 @@ export class ResizerService {
     // we won't re-evaluate if we already had calculated the total
     if (this._totalColumnsWidthByContent === 0 || recalculateColumnsTotalWidth) {
       // loop through all columns to get their minWidth or width for later usage
-      for (const columnDef of columnDefinitions) {
+      for (const columnDef of columns) {
         columnWidths[columnDef.id] = columnDef.originalWidth ?? columnDef.minWidth ?? 0;
       }
 
       // calculate cell width by reading all data from dataset and also parse through any Formatter(s) when exist
       readItemCount = this.calculateCellWidthByReadingDataset(
-        columnDefinitions,
+        columns,
         columnWidths,
         this.resizeByContentOptions.maxItemToInspectCellContentWidth
       );
 
       // finally loop through all column definitions one last time to apply new calculated `width` on each elligible column
       let totalColsWidth = 0;
-      for (const column of columnDefinitions) {
+      for (const column of columns) {
         const resizeAlwaysRecalculateWidth =
           column.resizeAlwaysRecalculateWidth ?? this.resizeByContentOptions.alwaysRecalculateColumnWidth ?? false;
 
@@ -506,7 +506,7 @@ export class ResizerService {
     this._hasResizedByContentAtLeastOnce = true;
 
     const calculateColumnWidths: { [columnId in string | number]: number | undefined } = {};
-    for (const columnDef of columnDefinitions) {
+    for (const columnDef of columns) {
       calculateColumnWidths[columnDef.id] = columnDef.width;
     }
 
@@ -534,7 +534,7 @@ export class ResizerService {
     maxItemToInspect = 1000,
     columnIndexOverride?: number
   ): number {
-    const columnDefinitions = Array.isArray(columnOrColumns) ? columnOrColumns : [columnOrColumns];
+    const columns = Array.isArray(columnOrColumns) ? columnOrColumns : [columnOrColumns];
     const dataset = this.dataView.getItems() as any[];
     if (!this._singleCharWidth) {
       this._singleCharWidth = this.getAverageCharWidthByFont();
@@ -547,7 +547,7 @@ export class ResizerService {
       if (rowIdx > maxItemToInspect) {
         break;
       }
-      columnDefinitions.forEach((columnDef, colIdx) => {
+      columns.forEach((columnDef, colIdx) => {
         const formattedData = parseFormatterWhenExist(
           columnDef?.formatter,
           rowIdx,
@@ -565,7 +565,7 @@ export class ResizerService {
     }
 
     // After the loop, calculate the pixel width for the largest string per column
-    columnDefinitions.forEach((columnDef) => {
+    columns.forEach((columnDef) => {
       const resizeCellCharWidthInPx = this.resizeByContentOptions.cellCharWidthInPx ?? this._singleCharWidth;
       const charWidthPx = columnDef?.resizeCharWidthInPx ?? resizeCellCharWidthInPx;
       const maxSanitizedText = maxSanitizedTextMap[columnDef.id] || '';
@@ -666,12 +666,12 @@ export class ResizerService {
   }
 
   protected handleSingleColumnResizeByContent(columnId: string): void {
-    const columnDefinitions = this._grid.getColumns();
-    const columnDefIdx = columnDefinitions.findIndex((col) => col.id === columnId);
+    const columns = this._grid.getColumns();
+    const columnDefIdx = columns.findIndex((col) => col.id === columnId);
 
     if (columnDefIdx >= 0) {
       // provide the initial column width by reference to the calculation and the result will also be returned by reference
-      const columnDef = columnDefinitions[columnDefIdx];
+      const columnDef = columns[columnDefIdx];
       const columnWidths = { [columnId]: columnDef.originalWidth ?? columnDef.minWidth ?? 0 };
       columnDef.originalWidth = undefined; // reset original width since we want to recalculate it
       this.calculateCellWidthByReadingDataset(

@@ -8,8 +8,8 @@ const NB_ITEMS = 995;
 const _eventHandler = new SlickEventHandler();
 const gridOptions1 = ref<GridOption>();
 const gridOptions2 = ref<GridOption>();
-const columnDefinitions1: Ref<Column[]> = ref([]);
-const columnDefinitions2: Ref<Column[]> = ref([]);
+const columns1: Ref<Column[]> = ref([]);
+const columns2: Ref<Column[]> = ref([]);
 const dataset1 = ref<any[]>([]);
 const dataset2 = ref<any[]>([]);
 const showSubTitle = ref(true);
@@ -89,8 +89,8 @@ function defineGrids() {
   ];
 
   // assign both column definitions
-  columnDefinitions1.value = colDefs1;
-  columnDefinitions2.value = [...colDefs1];
+  columns1.value = colDefs1;
+  columns2.value = [...colDefs1];
 
   gridOptions1.value = {
     autoResize: {
@@ -211,7 +211,7 @@ function toggleSubTitle() {
   <div class="grid-container1">
     <SlickgridVue
       v-model:options="gridOptions1!"
-      v-model:columns="columnDefinitions1"
+      v-model:columns="columns1"
       v-model:dataset="dataset1"
       grid-id="grid48-1"
       @onVueGridCreated="vueGrid1Ready($event.detail)"
@@ -231,7 +231,7 @@ function toggleSubTitle() {
 
   <slickgrid-vue
     v-model:options="gridOptions2!"
-    v-model:columns="columnDefinitions2"
+    v-model:columns="columns2"
     v-model:dataset="dataset2"
     grid-id="grid48-2"
     @onVueGridCreated="vueGrid2Ready($event.detail)"

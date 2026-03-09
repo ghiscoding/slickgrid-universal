@@ -44,7 +44,7 @@ const Example45DetailView: React.FC<RowDetailViewProps<Distributor, typeof Examp
     };
   }, []);
 
-  const getColumnDefinitions = (): Column[] => {
+  const getColumns = (): Column[] => {
     return [
       { id: 'orderId', field: 'orderId', name: 'Order ID', filterable: true, sortable: true },
       { id: 'shipCity', field: 'shipCity', name: 'Ship City', filterable: true, sortable: true },
@@ -54,10 +54,10 @@ const Example45DetailView: React.FC<RowDetailViewProps<Distributor, typeof Examp
   };
 
   function defineGrid() {
-    const columnDefinitions = getColumnDefinitions();
+    const columns = getColumns();
     const gridOptions = getGridOptions();
 
-    setInnerColDefs(columnDefinitions);
+    setInnerColDefs(columns);
     setInnerGridOptions(gridOptions);
     setShowGrid(true);
   }

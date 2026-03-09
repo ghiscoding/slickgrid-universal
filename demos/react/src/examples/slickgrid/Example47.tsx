@@ -35,7 +35,7 @@ const NB_ITEMS = 1200;
 
 const Example47: React.FC = () => {
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
-  const [columnDefinitions, setColumnDefinitions] = useState<Column<Item>[]>([]);
+  const [columns, setColumns] = useState<Column<Item>[]>([]);
   const [dataset] = useState<Item[]>(loadData());
   const [detailViewRowCount, setDetailViewRowCount] = useState<number>(9);
   const [serverWaitDelay, setServerWaitDelay] = useState<number>(FAKE_SERVER_DELAY);
@@ -156,10 +156,10 @@ const Example47: React.FC = () => {
   };
 
   function defineGrid() {
-    const columnDefinitions = getColumnsDefinition();
+    const columns = getColumnsDefinition();
     const gridOptions = getGridOptions();
 
-    setColumnDefinitions(columnDefinitions);
+    setColumns(columns);
     setGridOptions(gridOptions);
   }
 
@@ -460,7 +460,7 @@ const Example47: React.FC = () => {
 
         <SlickgridReact
           gridId="grid47"
-          columns={columnDefinitions}
+          columns={columns}
           options={gridOptions}
           dataset={dataset}
           onReactGridCreated={($event) => reactGridReady($event.detail)}

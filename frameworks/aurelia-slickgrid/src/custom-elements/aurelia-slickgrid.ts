@@ -84,7 +84,7 @@ export class AureliaSlickgridCustomElement {
   protected _columns: Column[] = [];
   protected _columnsObserver?: ICollectionObserver<'array'>;
   protected _columnsSubscriber: ICollectionSubscriber = {
-    handleCollectionChange: this.columnDefinitionsHandler.bind(this),
+    handleCollectionChange: this.columnsHandler.bind(this),
   };
   protected _currentDatasetLength = 0;
   protected _darkMode = false;
@@ -301,7 +301,7 @@ export class AureliaSlickgridCustomElement {
   initialization(eventHandler: SlickEventHandler) {
     if (!this.options || !this.columns) {
       throw new Error(
-        'Using `<aurelia-slickgrid>` requires `columns.bind="columnDefinitions"`, ' +
+        'Using `<aurelia-slickgrid>` requires `columns.bind="columns"`, ' +
           'it seems that you might have forgot to provide them since at least of them is undefined.'
       );
     }
@@ -375,7 +375,7 @@ export class AureliaSlickgridCustomElement {
     // we'll subscribe to the event and push back the change to the user so they always use full column defs array including extra cols
     // this.subscriptions.push(
     //   this._eventPubSubService.subscribe<{ columns: Column[]; grid: SlickGrid }>('onPluginColumnsChanged', data => {
-    //     this.columnDefinitions = data.columns;
+    //     this.columns = data.columns;
     //     this.columnsChanged();
     //   })
     // );
@@ -631,7 +631,7 @@ export class AureliaSlickgridCustomElement {
 
   /** on columnDefinitions assignment and/or .slice() call */
   columnsChanged() {
-    this.columnDefinitionsHandler();
+    this.columnsHandler();
     this.observeColumnDefinitions();
   }
 
@@ -1181,7 +1181,7 @@ export class AureliaSlickgridCustomElement {
   // ------------------
 
   /** handler for when column definitions changes */
-  protected columnDefinitionsHandler() {
+  protected columnsHandler() {
     this._columns = this.columns;
     if (this._isGridInitialized) {
       this.updateColumnDefinitionsList(this.columns);

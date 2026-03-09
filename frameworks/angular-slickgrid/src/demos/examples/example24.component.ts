@@ -67,7 +67,7 @@ export class Example24Component implements OnInit, OnDestroy {
   private _darkModeGrid = false;
   private subscriptions: Subscription[] = [];
   angularGrid!: AngularGridInstance;
-  columnDefinitions!: Column[];
+  columns!: Column[];
   gridOptions!: GridOption;
   dataset!: any[];
   hideSubTitle = false;
@@ -105,7 +105,7 @@ export class Example24Component implements OnInit, OnDestroy {
   }
 
   prepareGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'id', name: '#', field: 'id', maxWidth: 45, sortable: true, filterable: true },
       {
         id: 'title',

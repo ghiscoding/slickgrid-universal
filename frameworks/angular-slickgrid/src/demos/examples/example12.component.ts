@@ -35,7 +35,7 @@ export class Example12Component implements OnInit, OnDestroy {
 
   private subscriptions: Subscription[] = [];
   angularGrid!: AngularGridInstance;
-  columnDefinitions!: Column[];
+  columns!: Column[];
   gridOptions!: GridOption;
   dataset!: any[];
   selectedLanguage = signal('');
@@ -58,7 +58,7 @@ export class Example12Component implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',
@@ -274,8 +274,8 @@ export class Example12Component implements OnInit, OnDestroy {
       filterable: true,
       params: { useFormatterOuputToFilter: true },
     };
-    this.columnDefinitions.push(newCol);
-    this.columnDefinitions = this.columnDefinitions.slice(); // or use spread operator [...cols]
+    this.columns.push(newCol);
+    this.columns = this.columns.slice(); // or use spread operator [...cols]
 
     // NOTE if you use an Extensions (Checkbox Selector, Row Detail, ...) that modifies the column definitions in any way
     // you MUST use "getAllColumnDefinitions()" from the GridService, using this will be ALL columns including the 1st column that is created internally
@@ -283,7 +283,7 @@ export class Example12Component implements OnInit, OnDestroy {
     /*
     const allColumns = this.angularGrid.gridService.getAllColumnDefinitions();
     allColumns.push(newCol);
-    this.columnDefinitions = [...allColumns]; // (or use slice) reassign to column definitions for Angular to do dirty checking
+    this.columns = [...allColumns]; // (or use slice) reassign to column definitions for Angular to do dirty checking
     */
   }
 

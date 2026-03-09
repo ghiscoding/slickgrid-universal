@@ -18,7 +18,7 @@ Some users might want to have 1 main single search for filtering the grid data i
       </label>
       <select value.bind="selectedColumn"
               class="form-control">
-        <option repeat.for="column of columnDefinitions"
+        <option repeat.for="column of columns"
                 model.bind="column">
           ${column.name}
         </option>
@@ -38,7 +38,7 @@ Some users might want to have 1 main single search for filtering the grid data i
   </form>
 
 <aurelia-slickgrid grid-id="grid21"
-                   columns.bind="columnDefinitions"
+                   columns.bind="columns"
                    options.bind="gridOptions"
                    dataset.bind="dataset"
                    on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)">
@@ -55,7 +55,7 @@ export class MyExample {
   aureliaGrid: AureliaGridInstance;
   grid: SlickGrid;
   dataView: SlickDataView;
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
   operatorList: OperatorType[] = ['=', '<', '<=', '>', '>=', '<>'];

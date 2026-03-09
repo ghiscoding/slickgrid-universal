@@ -14,7 +14,7 @@ import './example09.scss'; // provide custom CSS/SASS styling
 
 const Example9: React.FC = () => {
   const defaultLang = 'en';
-  const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
   const [dataset, setDataset] = useState<any[]>([]);
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
   const [selectedLanguage, setSelectedLanguage] = useState<string>(defaultLang);
@@ -32,7 +32,7 @@ const Example9: React.FC = () => {
     reactGridRef.current = reactGrid;
   }
 
-  function getColumnDefinitions(): Column[] {
+  function getColumns(): Column[] {
     return [
       { id: 'title', name: 'Title', field: 'title', nameKey: 'TITLE', filterable: true },
       {
@@ -254,9 +254,9 @@ const Example9: React.FC = () => {
   }
 
   function defineGrid() {
-    const columnDefinitions = getColumnDefinitions();
+    const columns = getColumns();
     const gridOptions = getGridOptions();
-    setColumnDefinitions(columnDefinitions);
+    setColumns(columns);
     setGridOptions(gridOptions);
   }
 
@@ -381,7 +381,7 @@ const Example9: React.FC = () => {
       </span>
       <SlickgridReact
         gridId="grid9"
-        columns={columnDefinitions}
+        columns={columns}
         dataset={dataset}
         options={gridOptions}
         onReactGridCreated={($event) => reactGridReady($event.detail)}

@@ -57,7 +57,7 @@ _For the full list of options, refer to the [treeDataOptions](https://github.com
 ###### define your grid
 ```ts
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'title', name: 'Title', field: 'title', width: 220, cssClass: 'cell-title',
       filterable: true, sortable: true,
@@ -102,7 +102,7 @@ import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 's
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const datasetHierarchical = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -110,7 +110,7 @@ onBeforeMount(() => {
 });
 
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'file', name: 'Files', field: 'file',
       width: 150, formatter: treeFormatter,
@@ -159,7 +159,7 @@ function getData() {
 <template>
   <SlickgridVue
     grid-id="grid28"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:options="gridOptions"
     v-model:hierarchical="datasetHierarchical"
     @onVueGridCreated="vueGridReady($event.detail)"
@@ -304,7 +304,7 @@ import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 's
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -368,7 +368,7 @@ There is also a new and optional Formatter, `Formatters.treeParseTotals`, that w
 
 #### with `Formatters.treeParseTotals`
 ```ts
-columnDefinitions.value = [
+columns.value = [
   {
     id: 'size', name: 'Size', field: 'size', minWidth: 90,
 
@@ -393,7 +393,7 @@ columnDefinitions.value = [
 
 #### with Custom Formatter
 ```ts
-columnDefinitions.value = [
+columns.value = [
   {
     id: 'size', name: 'Size', field: 'size', minWidth: 90,
 

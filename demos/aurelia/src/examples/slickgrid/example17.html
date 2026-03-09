@@ -54,7 +54,7 @@
   <aurelia-slickgrid
     if="value.bind: gridCreated; cache: false"
     grid-id="grid17"
-    columns.bind="columnDefinitions"
+    columns.bind="columns"
     options.bind="gridOptions"
     dataset.bind="dataset"
     on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"

@@ -21,7 +21,7 @@ const NB_ITEMS = 1000;
 
 export class Example13 {
   aureliaGrid!: AureliaGridInstance;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   gridOptions!: GridOption;
   dataset: any[] = [];
   dataviewObj!: SlickDataView;
@@ -66,7 +66,7 @@ export class Example13 {
     nameElementColumn1.appendChild(document.createTextNode('Id '));
     nameElementColumn1.appendChild(btn);
 
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'num',
         name: nameElementColumn1,

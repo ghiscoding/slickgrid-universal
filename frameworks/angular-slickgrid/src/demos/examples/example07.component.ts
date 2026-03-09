@@ -12,8 +12,8 @@ let columns2WithHighlightingById: any = {};
   imports: [AngularSlickgridComponent],
 })
 export class Example7Component implements OnInit {
-  columnDefinitions1: Column[] = [];
-  columnDefinitions2: Column[] = [];
+  columns1: Column[] = [];
+  columns2: Column[] = [];
   gridOptions1!: GridOption;
   gridOptions2!: GridOption;
   dataset1: any[] = [];
@@ -111,7 +111,7 @@ export class Example7Component implements OnInit {
   loadData(count: number, gridNo: 1 | 2) {
     // Set up some test columns.
     for (let i = 0; i < 10; i++) {
-      (this as any)[`columnDefinitions${gridNo}`].push({
+      (this as any)[`columns${gridNo}`].push({
         id: i,
         name: 'Column ' + String.fromCharCode('A'.charCodeAt(0) + i),
         field: i + '',
@@ -152,8 +152,8 @@ export class Example7Component implements OnInit {
     }
 
     // Set multiple buttons on the first column to demonstrate overflow.
-    (this as any)[`columnDefinitions${gridNo}`][0].name = 'Resize me!';
-    (this as any)[`columnDefinitions${gridNo}`][0].header = {
+    (this as any)[`columns${gridNo}`][0].name = 'Resize me!';
+    (this as any)[`columns${gridNo}`][0].header = {
       buttons: [
         {
           cssClass: 'mdi mdi-message-text',
@@ -184,12 +184,12 @@ export class Example7Component implements OnInit {
 
     // when floating to left, you might want to inverse the icon orders
     if (gridNo === 2) {
-      this.columnDefinitions2[0].header?.buttons?.reverse();
+      this.columns2[0].header?.buttons?.reverse();
     }
 
     // Set a button on the second column to demonstrate hover.
-    (this as any)[`columnDefinitions${gridNo}`][1].name = 'Hover me!';
-    (this as any)[`columnDefinitions${gridNo}`][1].header = {
+    (this as any)[`columns${gridNo}`][1].name = 'Hover me!';
+    (this as any)[`columns${gridNo}`][1].header = {
       buttons: [
         {
           cssClass: 'mdi mdi-help-circle',
@@ -207,7 +207,7 @@ export class Example7Component implements OnInit {
     for (let i = 0; i < count; i++) {
       const d: any = (mockDataset[i] = {});
       d['id'] = i;
-      for (let j = 0; j < (this as any)[`columnDefinitions${gridNo}`].length; j++) {
+      for (let j = 0; j < (this as any)[`columns${gridNo}`].length; j++) {
         d[j] = Math.round(Math.random() * 10) - 5;
       }
     }

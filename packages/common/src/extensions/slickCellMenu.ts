@@ -24,7 +24,7 @@ import { MenuFromCellBaseClass } from './menuFromCellBaseClass.js';
  * You can use it to change the cell data property through a list of Options AND/OR through a list of Commands.
  *
  * To specify a custom button in a column header, extend the column definition like so:
- *   this.columnDefinitions = [{
+ *   this.columns = [{
  *     id: 'myColumn', name: 'My column',
  *     cellMenu: {
  *       // ... cell menu options
@@ -74,10 +74,10 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
   /** Translate the Cell Menu titles, we need to loop through all column definition to re-translate all list titles & all commands/options */
   translateCellMenu(): void {
     const gridOptions = this.sharedService?.gridOptions;
-    const columnDefinitions = this.grid.getColumns();
+    const columns = this.grid.getColumns();
 
-    if (gridOptions?.enableTranslate && Array.isArray(columnDefinitions)) {
-      columnDefinitions.forEach((columnDef: Column) => {
+    if (gridOptions?.enableTranslate && Array.isArray(columns)) {
+      columns.forEach((columnDef: Column) => {
         if (columnDef?.cellMenu && (Array.isArray(columnDef.cellMenu.commandItems) || Array.isArray(columnDef.cellMenu.optionItems))) {
           // get both items list
           const columnCellMenuCommandItems: Array<MenuCommandItem | 'divider'> = columnDef.cellMenu.commandItems || [];

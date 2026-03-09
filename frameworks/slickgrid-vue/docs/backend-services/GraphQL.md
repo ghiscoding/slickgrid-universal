@@ -109,7 +109,7 @@ import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 's
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -117,7 +117,7 @@ onBeforeMount(() => {
 });
 
 function defineGrid() {
-  columnDefinitions.value = [/*...*/];
+  columns.value = [/*...*/];
 
   gridOptions.value = {
     enableFiltering: true,
@@ -253,7 +253,7 @@ import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 's
 import { type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const graphqlService = new GraphqlService();
 
@@ -266,7 +266,7 @@ function vueGridReady(vueGrid: SlickgridvueInstance) {
 }
 
 function defineGrid(): void {
-  columnDefinitions.value = [/* ... */];
+  columns.value = [/* ... */];
 
   gridOptions.value = {
     backendServiceApi: {

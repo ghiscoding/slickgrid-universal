@@ -31,7 +31,7 @@ A Row Detail allows you to open a detail panel which can contain extra and/or mo
 ```html
 <angular-slickgrid
     gridId="grid2"
-    [columns]="columnDefinitions"
+    [columns]="columns"
     [options]="gridOptions"
     [dataset]="dataset"
     (onAngularGridCreated)="angularGridReady($event.detail)">
@@ -46,7 +46,7 @@ import { AngularRowDetailView } from '@slickgrid-universal/angular-row-detail-pl
   templateUrl: './grid-rowdetail.component.html'
 })
 export class GridRowDetailComponent implements OnInit, OnDestroy {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataviewObj: any;
 
@@ -58,7 +58,7 @@ export class GridRowDetailComponent implements OnInit, OnDestroy {
 
   /* Define grid Options and Columns */
   defineGrid() {
-    this.columnDefinitions = [ /*...*/ ];
+    this.columns = [ /*...*/ ];
 
     this.gridOptions = {
       enableRowDetailView: true,
@@ -364,11 +364,11 @@ export class RowDetailViewComponent {
 
 ## Troubleshooting
 ### Adding a Column dynamically is removing the Row Selection column, why is that?
-The reason is because the Row Selection (checkbox) plugin is a special column and Angular-Slickgrid is adding an extra column dynamically for the Row Selection checkbox and that is **not** reflected in your local copy of `columnDefinitions`. To address this issue, you need to get the Angular-Slickgrid internal copy of all columns (including the extra columns), you can get it via `getAllColumnDefinitions()` from the Grid Service and then you can use to that array and that will work.
+The reason is because the Row Selection (checkbox) plugin is a special column and Angular-Slickgrid is adding an extra column dynamically for the Row Selection checkbox and that is **not** reflected in your local copy of `columns`. To address this issue, you need to get the Angular-Slickgrid internal copy of all columns (including the extra columns), you can get it via `getAllColumnDefinitions()` from the Grid Service and then you can use to that array and that will work.
 
 ```html
 <angular-slickgrid gridId="grid17"
-    [columns]="columnDefinitions"
+    [columns]="columns"
     [options]="gridOptions"
     [dataset]="dataset"
     (onAngularGridCreated)="angularGridReady($event.detail)">
@@ -384,7 +384,7 @@ addNewColumn() {
 
   const allColumns = this.angularGrid.gridService.getAllColumnDefinitions();
   allColumns.push(newColumn);
-  this.columnDefinitions = allColumns.slice(); // or use spread operator [...cols]
+  this.columns = allColumns.slice(); // or use spread operator [...cols]
 
   // you could also use SlickGrid setColumns() method
   // this.angularGrid.slickGrid.setColumns(cols);
@@ -410,7 +410,7 @@ import { AngularGridInstance, Column, GridOption, GridState } from 'angular-slic
   encapsulation: ViewEncapsulation.None,
 })
 export class MainGridComponent implements OnInit {
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   gridOptions!: GridOption;
   angularGrid!: AngularGridInstance;
   dataset: Distributor[] = [];
@@ -429,7 +429,7 @@ export class MainGridComponent implements OnInit {
   }
 
   defineGrid() {
-    this.columnDefinitions = [ /*...*/ ];
+    this.columns = [ /*...*/ ];
     this.gridOptions = {
       enableRowDetailView: true,
       // `rowSelectionOptions` in <=9.x OR `selectionOptions` in >=10.x

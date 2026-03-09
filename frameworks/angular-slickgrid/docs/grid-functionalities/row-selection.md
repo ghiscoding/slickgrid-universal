@@ -26,7 +26,7 @@ For a single row selection, you need to have `enableCellNavigation: true`, `enab
 #### View
 ```html
 <angular-slickgrid gridId="grid4"
-      [columns]="columnDefinitions"
+      [columns]="columns"
       [options]="gridOptions"
       [dataset]="dataset"
       (onSelectedRowsChanged)="onSelectedRowsChanged($event.detail.eventData, $event.detail.args)">
@@ -59,7 +59,7 @@ As for multiple row selections, you need to provide an extra grid option of `row
 #### View
 ```html
 <angular-slickgrid gridId="grid4"
-      [columns]="columnDefinitions"
+      [columns]="columns"
       [options]="gridOptions"
       [dataset]="dataset"
       (onSelectedRowsChanged)="onSelectedRowsChanged($event.detail.eventData, $event.detail.args)">
@@ -102,7 +102,7 @@ SlickGrid is so powerful and customizable, you could if you wish mix the multipl
 #### View
 ```html
 <angular-slickgrid gridId="grid4"
-      [columns]="columnDefinitions"
+      [columns]="columns"
       [options]="gridOptions"
       [dataset]="dataset"
       (onSelectedRowsChanged)="onSelectedRowsChanged($event.detail.eventData, $event.detail.args)"
@@ -160,7 +160,7 @@ When having an external button that you want to work only when there's row selec
 ```html
 <button disabled.bind="isMyButtonDisabled">My Button</button>
 <angular-slickgrid gridId="grid2"
-          [columns]="columnDefinitions"
+          [columns]="columns"
           [options]="gridOptions"
           [dataset]="dataset"
           (onSelectedRowsChanged)="handleOnSelectedRowsChanged($event.detail.args)">
@@ -177,7 +177,7 @@ handleOnSelectedRowsChanged(args) {
 ```html
 <button disabled.bind="isMyButtonDisabled">My Button</button>
 <angular-slickgrid gridId="grid2"
-          [columns]="columnDefinitions"
+          [columns]="columns"
           [options]="gridOptions"
           [dataset]="dataset"
           (onGridStateChanged)="handleOngridStateChanged($event.detail.args)">
@@ -198,7 +198,7 @@ You can change which row(s) are selected by using the built-in SlickGrid method 
 
 ```html
 <angular-slickgrid gridId="grid2"
-          [columns]="columnDefinitions"
+          [columns]="columns"
           [options]="gridOptions"
           [dataset]="dataset"
           (onAngularGridCreated)="angularGridReady($event.detail)">
@@ -260,7 +260,7 @@ You can also `onDragReplaceCells` event to drag and fill cell values to the exte
 
 ```html
 <angular-slickgrid gridId="grid4"
-      [columns]="columnDefinitions"
+      [columns]="columns"
       [options]="gridOptions"
       [dataset]="dataset"
       (onSelectedRowsChanged)="onSelectedRowsChanged($event.detail.eventData, $event.detail.args)"
@@ -297,11 +297,11 @@ copyDraggedCellRange(args: OnDragReplaceCellsEventArgs) {
 
 ## Troubleshooting
 ### Adding a Column dynamically is removing the Row Selection column, why is that?
-The reason is because the Row Selection (checkbox) plugin is a special column and Angular-Slickgrid is adding an extra column dynamically for the Row Selection checkbox and that is **not** reflected in your local copy of `columnDefinitions`. To address this issue, you need to get the Angular-Slickgrid internal copy of all columns (including the extra columns), you can get it via `getAllColumnDefinitions()` from the Grid Service and then you can use to that array and that will work.
+The reason is because the Row Selection (checkbox) plugin is a special column and Angular-Slickgrid is adding an extra column dynamically for the Row Selection checkbox and that is **not** reflected in your local copy of `columns`. To address this issue, you need to get the Angular-Slickgrid internal copy of all columns (including the extra columns), you can get it via `getAllColumnDefinitions()` from the Grid Service and then you can use to that array and that will work.
 
 ```html
 <angular-slickgrid gridId="grid17"
-    [columns]="columnDefinitions"
+    [columns]="columns"
     [options]="gridOptions"
     [dataset]="dataset"
     (onAngularGridCreated)="angularGridReady($event.detail)">
@@ -317,7 +317,7 @@ addNewColumn() {
 
   const allColumns = this.angularGrid.gridService.getAllColumnDefinitions();
   allColumns.push(newColumn);
-  this.columnDefinitions = allColumns.slice(); // or use spread operator [...cols]
+  this.columns = allColumns.slice(); // or use spread operator [...cols]
 
   // you could also use SlickGrid setColumns() method
   // this.angularGrid.slickGrid.setColumns(cols);

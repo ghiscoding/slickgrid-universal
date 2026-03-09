@@ -31,14 +31,14 @@ export class Example4Component implements OnInit {
   private http = inject(HttpClient);
   private translate = inject(TranslateService);
   angularGrid!: AngularGridInstance;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   gridOptions!: GridOption;
   dataset!: any[];
   hideSubTitle = false;
   metrics!: Metrics;
 
   ngOnInit(): void {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',

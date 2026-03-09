@@ -102,7 +102,7 @@ export class CustomSumAggregator implements Aggregator {
   imports: [AngularSlickgridComponent, FormsModule],
 })
 export class Example36Component implements OnInit {
-  columnDefinitions: Column<GroceryItem>[] = [];
+  columns: Column<GroceryItem>[] = [];
   gridOptions!: GridOption;
   dataset: GroceryItem[] = [];
   angularGrid!: AngularGridInstance;
@@ -127,7 +127,7 @@ export class Example36Component implements OnInit {
   }
 
   prepareGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'sel',
         name: '#',

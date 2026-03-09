@@ -46,7 +46,7 @@ const customEditableInputFormatter: Formatter<ReportItem> = (_row, _cell, _value
 
 export default class Example04 {
   private _bindingEventService: BindingEventService;
-  columnDefinitions: Column<ReportItem & { action?: string }>[];
+  columns: Column<ReportItem & { action?: string }>[];
   gridOptions: GridOption;
   dataset: any[];
   dataViewObj: SlickDataView;
@@ -69,7 +69,7 @@ export default class Example04 {
     // this._bindingEventService.bind(gridContainerElm, 'onclick', handleOnClick);
     this._bindingEventService.bind(gridContainerElm, 'onvalidationerror', this.handleOnValidationError.bind(this));
     this._bindingEventService.bind(gridContainerElm, 'onitemsdeleted', this.handleOnItemsDeleted.bind(this));
-    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, dataset);
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, dataset);
   }
 
   dispose() {
@@ -79,7 +79,7 @@ export default class Example04 {
 
   initializeGrid() {
     // the columns field property is type-safe, try to add a different string not representing one of DataItems properties
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',

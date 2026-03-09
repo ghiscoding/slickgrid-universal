@@ -5,7 +5,7 @@ import './example43.scss';
 export class Example43 {
   aureliaGrid!: AureliaGridInstance;
   gridOptions!: GridOption;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   dataset: any[] = [];
   isEditable = false;
   hideSubTitle = false;
@@ -118,7 +118,7 @@ export class Example43 {
   /* Define grid Options and Columns */
   defineGrid() {
     // the columns field property is type-safe, try to add a different string not representing one of DataItems properties
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'employeeID', name: 'Employee ID', field: 'employeeID', minWidth: 100 },
       { id: 'employeeName', name: 'Employee Name', field: 'employeeName', editor: { model: Editors.text }, minWidth: 120 },
       { id: '9:00', name: '9:00 AM', field: '9:00', editor: { model: Editors.text }, minWidth: 120 },
@@ -430,11 +430,11 @@ export class Example43 {
     // 1. update column definitions via grid.setColumns()
     // this will shift colspan/rowspan to the left or right accordingly
     if (this.showEmployeeId) {
-      this.columnDefinitions.unshift({ id: 'employeeID', name: 'Employee ID', field: 'employeeID', width: 100 });
+      this.columns.unshift({ id: 'employeeID', name: 'Employee ID', field: 'employeeID', width: 100 });
     } else {
-      this.columnDefinitions.splice(0, 1);
+      this.columns.splice(0, 1);
     }
-    this.aureliaGrid.slickGrid.setColumns(this.columnDefinitions);
+    this.aureliaGrid.slickGrid.setColumns(this.columns);
 
     // --- OR ---
     // 2. OR update via "hidden" column flag & increase/decrease column index accordingly in the metadata

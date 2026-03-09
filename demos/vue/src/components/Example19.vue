@@ -9,7 +9,7 @@ const FAKE_SERVER_DELAY = 250;
 const NB_ITEMS = 500;
 const gridOptions = ref<GridOption>();
 const detailViewRowCount = ref(9);
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const isDarkMode = ref(false);
 const showSubTitle = ref(true);
@@ -34,7 +34,7 @@ onUnmounted(() => {
 
 /* Define grid Options and Columns */
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'title',
       name: 'Title',
@@ -385,7 +385,7 @@ defineExpose({
 
     <slickgrid-vue
       v-model:options="gridOptions"
-      v-model:columns="columnDefinitions"
+      v-model:columns="columns"
       v-model:dataset="dataset"
       grid-id="grid19"
       @onVueGridCreated="vueGridReady($event.detail)"

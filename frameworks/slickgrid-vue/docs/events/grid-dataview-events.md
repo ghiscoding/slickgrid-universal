@@ -13,7 +13,7 @@ import { Column, Filters, Formatters, GridOption, SlickgridVue, SortDirection } 
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -21,7 +21,7 @@ onBeforeMount(() => {
 });
 
 function defineGrid() {
-  columnDefinitions.value = [/* ... */];
+  columns.value = [/* ... */];
   gridOptions.value = {/* ... */};
 }
 
@@ -53,7 +53,7 @@ function onMouseEntered(e, args) {
 <template>
   <SlickgridVue
       grid-id='grid3'
-      v-model:columns="columnDefinitions"
+      v-model:columns="columns"
       v-model:options="gridOptions"
       v-model:dataset="dataset"
       @onCellChange="onCellChanged($event.detail.eventData, $event.detail.args)"
@@ -80,7 +80,7 @@ import { Column, Filters, Formatters, GridOption, SlickgridVue, SortDirection } 
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -94,7 +94,7 @@ function componentDidUnmount() {
 }
 
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     { id: 'delete', field: 'id', formatter: Formatters.deleteIcon, maxWidth: 30 }
     // ...
   ];
@@ -133,7 +133,7 @@ function vueGridReady(vueGrid: SlickgridVueInstance) {
 
 <template>
   <SlickgridVue gridId="grid12"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:options="gridOptions"
     v-model:dataset="dataset"
     @onGridStateChanged="gridStateChanged($event.detail)"

@@ -6,7 +6,7 @@ import './example08.scss'; // provide custom CSS/SASS styling
 
 const Example8: React.FC = () => {
   const defaultLang = 'en';
-  const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
   const [dataset, setDataset] = useState<any[]>([]);
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
   const [selectedLanguage, setSelectedLanguage] = useState<string>(defaultLang);
@@ -19,8 +19,8 @@ const Example8: React.FC = () => {
     getData();
   }, []);
 
-  function getColumnDefinitions(): Column[] {
-    const columnDefinitions: Column[] = [
+  function getColumns(): Column[] {
+    const columns: Column[] = [
       { id: 'title', name: 'Title', field: 'title', nameKey: 'TITLE' },
       { id: 'duration', name: 'Duration', field: 'duration', nameKey: 'DURATION', sortable: true },
       { id: 'percentComplete', name: '% Complete', field: 'percentComplete', nameKey: 'PERCENT_COMPLETE', sortable: true },
@@ -29,7 +29,7 @@ const Example8: React.FC = () => {
       { id: 'completed', name: 'Completed', field: 'completed', nameKey: 'COMPLETED', formatter: Formatters.checkmarkMaterial },
     ];
 
-    columnDefinitions.forEach((columnDef) => {
+    columns.forEach((columnDef) => {
       columnDef.header = {
         menu: {
           commandItems: [
@@ -104,7 +104,7 @@ const Example8: React.FC = () => {
         },
       };
     });
-    return columnDefinitions;
+    return columns;
   }
 
   function getGridOptions(): GridOption {
@@ -141,9 +141,9 @@ const Example8: React.FC = () => {
 
   function defineGrid() {
     const gridOptions = getGridOptions();
-    const columnDefinitions = getColumnDefinitions();
+    const columns = getColumns();
 
-    setColumnDefinitions(columnDefinitions);
+    setColumns(columns);
     setGridOptions(gridOptions);
   }
 
@@ -230,7 +230,7 @@ const Example8: React.FC = () => {
       <span style={{ fontStyle: 'italic' }} data-test="selected-locale">
         {selectedLanguage + '.json'}
       </span>
-      <SlickgridReact gridId="grid8" columns={columnDefinitions} options={gridOptions} dataset={dataset} />
+      <SlickgridReact gridId="grid8" columns={columns} options={gridOptions} dataset={dataset} />
     </div>
   );
 };

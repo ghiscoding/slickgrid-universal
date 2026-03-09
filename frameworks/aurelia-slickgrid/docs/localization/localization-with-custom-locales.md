@@ -46,7 +46,7 @@ import { localeFrench } from 'locales/fr';
 
 export class MyGrid {
   prepareGrid() {
-    this.columnDefinitions = [ /* ... */ ];
+    this.columns = [ /* ... */ ];
 
     this.gridOptions = {
       enableAutoResize: true,

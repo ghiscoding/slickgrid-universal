@@ -30,7 +30,7 @@ import COUNTRIES_COLLECTION from './data/countries.json';
 
 const NB_ITEMS = 500;
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const editQueue = ref<any[]>([]);
 const editedItems = ref<any>({});
@@ -85,7 +85,7 @@ onUnmounted(() => {
 
 /* Define grid Options and Columns */
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'title',
       name: '<span title="Task must always be followed by a number" class="text-warning mdi mdi-alert-outline"></span> Title <span title="Title is always rendered as UPPERCASE" class="mdi mdi-information-outline"></span>',
@@ -467,7 +467,7 @@ function defineGrid() {
         ? editCommand.prevSerializedValue
         : [editCommand.prevSerializedValue];
       const serializedValues = Array.isArray(editCommand.serializedValue) ? editCommand.serializedValue : [editCommand.serializedValue];
-      const editorColumns = columnDefinitions.value.filter((col) => col.editor !== undefined);
+      const editorColumns = columns.value.filter((col) => col.editor !== undefined);
 
       const modifiedColumns: Column[] = [];
       prevSerializedValues.forEach((_val, index) => {
@@ -1151,7 +1151,7 @@ function renderItemCallbackWith4Corners(item: any): string {
 
   <slickgrid-vue
     v-model:options="gridOptions"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:dataset="dataset"
     grid-id="grid30"
     @onBeforeEditCell="handleOnBeforeEditCell($event.detail.eventData, $event.detail.args)"

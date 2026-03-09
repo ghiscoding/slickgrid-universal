@@ -27,7 +27,7 @@ Editors won't work without these 2 flags `enableCellNavigation: true` and `edita
 ### How to use Inline Editors
 Simply call the editor in your column definition with the `Editors` you want, as for example (`editor: { model: Editors.text }`). Here is an example with a full column definition:
 ```ts
-this.columnDefinitions = [
+this.columns = [
   { id: 'title', name: 'Title', field: 'title', editor: { model: Editors.longText } },
   { id: 'duration', name: 'Duration (days)', field: 'duration', type: 'number', editor: { model: Editors.text } },
   { id: 'complete', name: '% Complete', field: 'percentComplete', type: 'number', editor: { model: Editors.integer } },
@@ -57,7 +57,7 @@ this.gridOptions {
 For SalesForce the code is nearly the same, the only difference is to add the `Slicker` prefix, so instead of `Editors.abc` we need to use `Slicker.Editors.abc`, ...
 
 ```ts
-this.columnDefinitions = [
+this.columns = [
   { id: 'title', name: 'Title', field: 'title', editor: { model: Slicker.Editors.longText } },
   { id: 'duration', name: 'Duration (days)', field: 'duration', type: 'number', editor: { model: Slicker.Editors.text } },
   { id: 'complete', name: '% Complete', field: 'percentComplete', type: 'number', editor: { model: Slicker.Editors.integer } },
@@ -81,7 +81,7 @@ this.columnDefinitions = [
 #### Demo with Float Editor and Dollar Currency Formatter
 This probably comes often, so here's all the setting you would need for displaying & editing a dollar currency value with 2 decimal places.
 ```ts
-this.columnDefinitions = [
+this.columns = [
   {
     id: 'cost', name: 'Cost', field: 'cost',
     type: 'float',
@@ -98,7 +98,7 @@ this.columnDefinitions = [
 #### Editor Output Type & Save Output Type
 You could also define an `outputType` and a `saveOutputType` to an inline editor. There is only 1 built-in Editor with this functionality for now which is the `dateEditor`. For example, on a date field, we can call this `outputType: 'dateIso'` (by default it uses `dateUtc` as the output):
 ```typescript
-this.columnDefinitions = [
+this.columns = [
  {
    id: 'start', name: 'Start', field: 'start',
    type: 'date',
@@ -158,7 +158,7 @@ export class IntegerEditor implements Editor {
 ##### Use it in your Column Definition
 
 ```ts
-this.columnDefinitions = [
+this.columns = [
   {
     id: 'title2', name: 'Title, Custom Editor', field: 'title',
     editor: {
@@ -182,7 +182,7 @@ this.gridOptions = {
 Instead of an inline editor, you might want to simply click on an edit icon that could call a modal window, or a redirect URL, or whatever you wish to do. For that you can use the inline `onCellClick` event and define a callback function for the action (you could also create your own [Custom Formatter](../column-functionalities/Formatters.md)).
 - The `Formatters.editIcon` will give you a pen icon, while a `Formatters.deleteIcon` is an "x" icon
 ```typescript
-this.columnDefinitions = [
+this.columns = [
   {
     id: 'edit', field: 'id',
     formatter: Formatters.editIcon,
@@ -213,7 +213,7 @@ export interface OnEventArgs {
 Some of the Editors could receive extra options, which is mostly the case for Editors using external dependencies (e.g. `autocompleter`, `date`, `multipleSelect`, ...) you can provide options via the editor `options`, for example
 
 ```ts
-this.columnDefinitions = [{
+this.columns = [{
   id: 'start', name: 'Start Date', field: 'start',
   editor: {
     model: Editors.date,
@@ -318,7 +318,7 @@ This can be answered by searching on Stack Overflow Stack Overflow and this is t
 
     // gridContainerElm.addEventListener('onclick', handleOnClick);
     gridContainerElm.addEventListener('onbeforeeditcell', this.handleOnBeforeEditVerifyCellIsEditable.bind(this));
-    this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, dataset);
+    this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, dataset);
   }
 
   handleOnBeforeEditVerifyCellIsEditable(event) {
@@ -383,7 +383,7 @@ If your grid uses the `autoResize` and you use Editors in your grid on a mobile 
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid4`);
 
     gridContainerElm.addEventListener('onslickergridcreated', this.handleOnSlickerGridCreated.bind(this));
-    this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, this.gridOptions, dataset);
+    this.slickgridLwc = new Slicker.GridBundle(gridContainerElm, this.columns, this.gridOptions, dataset);
   }
 
   handleOnSlickerGridCreated(event) {

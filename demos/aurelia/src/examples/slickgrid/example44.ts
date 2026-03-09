@@ -9,7 +9,7 @@ const rowCellValueExportFormatter: Formatter = (_row, _cell, value) => value.toF
 export class Example44 {
   aureliaGrid!: AureliaGridInstance;
   gridOptions!: GridOption;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   dataLn: number | string = 'loading...';
   dataset: any[] = [];
   hideSubTitle = false;
@@ -69,7 +69,7 @@ export class Example44 {
   /* Define grid Options and Columns */
   defineGrid() {
     // the columns field property is type-safe, try to add a different string not representing one of DataItems properties
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'title', name: 'Title', field: 'title', minWidth: 80 },
       {
         id: 'revenueGrowth',

@@ -206,9 +206,9 @@ const _paginationOptions = ref<Pagination | undefined>();
 const paginationModel = defineModel<Pagination>('pagination');
 watch(paginationModel, (newPaginationOptions) => paginationOptionsChanged(newPaginationOptions!));
 
-const _columnDefinitions: Ref<Column[]> = ref([]);
-const columnDefinitionsModel = defineModel<Column[]>('columns', { required: true, default: [] });
-watch(columnDefinitionsModel, (columnDefinitions) => columnDefinitionsChanged(columnDefinitions), { immediate: true });
+const _columns: Ref<Column[]> = ref([]);
+const columnsModel = defineModel<Column[]>('columns', { required: true, default: [] });
+watch(columnsModel, (columns) => columnsChanged(columns), { immediate: true });
 
 const dataModel = defineModel<any[]>('dataset', { required: false }); // technically true but user could use datasetHierarchical instead
 watch(
@@ -252,7 +252,7 @@ watch(
       sharedService.hierarchicalDataset = newHierarchicalDataset;
     }
 
-    if (newHierarchicalDataset && _columnDefinitions.value && filterService?.clearFilters) {
+    if (newHierarchicalDataset && _columns.value && filterService?.clearFilters) {
       filterService.clearFilters();
     }
 
@@ -285,7 +285,7 @@ onBeforeUnmount(() => {
 });
 
 onMounted(() => {
-  if (!columnDefinitionsModel.value) {
+  if (!columnsModel.value) {
     throw new Error(
       'Using `<Slickgrid-Vue>` requires `v-model:columns` props, it seems that you might have forgot to provide the missing bindable model.'
     );
@@ -350,25 +350,25 @@ onMounted(() => {
   suggestDateParsingWhenHelpful();
 
   // subscribe to column definitions assignment changes
-  observeColumnDefinitions();
+  observeColumns();
 });
 
-function columnDefinitionsChanged(columnDefinitions?: Column[]) {
-  if (columnDefinitions) {
-    _columnDefinitions.value = columnDefinitions;
+function columnsChanged(columns?: Column[]) {
+  if (columns) {
+    _columns.value = columns;
   }
   if (isGridInitialized) {
-    updateColumnDefinitionsList(_columnDefinitions.value);
+    updateColumnsList(_columns.value);
   }
-  if (_columnDefinitions.value!.length > 0) {
-    copyColumnWidthsReference(_columnDefinitions.value);
+  if (_columns.value!.length > 0) {
+    copyColumnWidthsReference(_columns.value);
   }
 }
 
 function initialization() {
-  if (!_gridOptions.value || !columnDefinitionsModel.value) {
+  if (!_gridOptions.value || !columnsModel.value) {
     throw new Error(
-      'Using `<Slickgrid-Vue>` requires `v-model:columns="columnDefinitions"` and `v-model:options="gridOptions.value"`, it seems that you might have forgot to provide them since at least of them is undefined.'
+      'Using `<Slickgrid-Vue>` requires `v-model:columns="columns"` and `v-model:options="gridOptions.value"`, it seems that you might have forgot to provide them since at least of them is undefined.'
     );
   }
 
@@ -435,29 +435,29 @@ function initialization() {
   // Wrap each editor class in the Factory resolver so consumers of this library.
   // Vue will allow slickgrid to pass its arguments to the editors constructor last
   // when slickgrid creates the editor
-  _columnDefinitions.value = loadSlickGridEditors(columnDefinitionsModel.value || []);
+  _columns.value = loadSlickGridEditors(columnsModel.value || []);
 
   // if the user wants to automatically add a Custom Editor Formatter, we need to call the auto add function again
   if (_gridOptions.value?.autoAddCustomEditorFormatter) {
-    autoAddEditorFormatterToColumnsWithEditor(_columnDefinitions.value as Column[], _gridOptions.value?.autoAddCustomEditorFormatter);
+    autoAddEditorFormatterToColumnsWithEditor(_columns.value as Column[], _gridOptions.value?.autoAddCustomEditorFormatter);
   }
 
   // save reference for all columns before they optionally become hidden/visible
-  sharedService.allColumns = _columnDefinitions.value as Column[];
+  sharedService.allColumns = _columns.value as Column[];
 
   // TODO: revisit later, this conflicts with Grid State (Example 15)
   // before certain extentions/plugins potentially adds extra columns not created by the user itself (RowMove, RowDetail, RowSelections)
   // we'll subscribe to the event and push back the change to the user so they always use full column defs array including extra cols
   // subscriptions.push(
   //   _eventPubSubService.subscribe<{ columns: Column<any>[]; grid: SlickGrid }>('onPluginColumnsChanged', data => {
-  //     columnDefinitions = data.columns;
-  //     columnDefinitionsChanged();
+  //     columns = data.columns;
+  //     columnsChanged();
   //   })
   // );
 
   // after subscribing to potential columns changed, we are ready to create these optional extensions
   // when we did find some to create (RowMove, RowDetail, RowSelections), it will automatically modify column definitions (by previous subscribe)
-  extensionService.createExtensionsBeforeGridCreation(_columnDefinitions.value as Column[], _gridOptions.value as GridOption);
+  extensionService.createExtensionsBeforeGridCreation(_columns.value as Column[], _gridOptions.value as GridOption);
 
   // if user entered some Pinning/Frozen "presets", we need to apply them in the grid options
   if (_gridOptions.value?.presets?.pinning) {
@@ -468,7 +468,7 @@ function initialization() {
   grid = new SlickGrid<any, Column<any>, GridOption<Column<any>>>(
     `#${props.gridId}`,
     dataview,
-    _columnDefinitions.value as Column[],
+    _columns.value as Column[],
     _gridOptions.value as GridOption,
     eventPubSubService
   );
@@ -656,8 +656,8 @@ function disposing(shouldEmptyDomElementContainer = false) {
     }
     backendServiceApi = undefined;
   }
-  for (const prop of Object.keys(columnDefinitionsModel.value)) {
-    (columnDefinitionsModel.value as any)[prop] = null;
+  for (const prop of Object.keys(columnsModel.value)) {
+    (columnsModel.value as any)[prop] = null;
   }
   for (const prop of Object.keys(sharedService)) {
     (sharedService as any)[prop] = null;
@@ -1119,7 +1119,7 @@ function refreshGridData(dataset: any[], totalCount?: number) {
 function showHeaderRow(showing = true) {
   grid?.setHeaderRowVisibility(showing);
   if (showing === true && isGridInitialized) {
-    grid?.setColumns(columnDefinitionsModel.value);
+    grid?.setColumns(columnsModel.value);
   }
   return showing;
 }
@@ -1149,7 +1149,7 @@ function setDarkMode(dark = false) {
  * We will re-render the grid so that the new header and data shows up correctly.
  * If using i18n, we also need to trigger a re-translate of the column headers
  */
-function updateColumnDefinitionsList(newColumns: Column<any>[]) {
+function updateColumnsList(newColumns: Column<any>[]) {
   if (newColumns) {
     // map the Editor model to editorClass and load editor collectionAsync
     newColumns = loadSlickGridEditors(newColumns);
@@ -1176,8 +1176,8 @@ function updateColumnDefinitionsList(newColumns: Column<any>[]) {
  * assignment changes are not triggering on the column definitions, for that
  * we can use our internal array observer for any changes done via (push, pop, shift, ...)
  */
-function observeColumnDefinitions() {
-  collectionObservers.push(collectionObserver(columnDefinitionsModel.value, columnDefinitionsChanged));
+function observeColumns() {
+  collectionObservers.push(collectionObserver(columnsModel.value, columnsChanged));
 }
 
 /**
@@ -1457,7 +1457,7 @@ function preRegisterResources() {
     if (RowDetailClass) {
       const rowDetailInstance = new RowDetailClass(eventPubSubService) as VueRowDetailView;
       slickRowDetailView = rowDetailInstance;
-      rowDetailInstance.create(_columnDefinitions.value, _gridOptions.value as GridOption);
+      rowDetailInstance.create(_columns.value, _gridOptions.value as GridOption);
       extensionService.addExtensionToList('rowDetailView', {
         name: 'rowDetailView',
         instance: slickRowDetailView,
@@ -1580,7 +1580,7 @@ function sortTreeDataset<T>(flatDatasetInput: T[], forceGridRefresh = false): T[
     // we'll also add props, by mutation, required by the TreeDataService on the flat array like `__hasChildren`, `parentId` and anything else to work properly
     sortedDatasetResult = treeDataService.convertFlatParentChildToTreeDatasetAndSort(
       flatDatasetInput,
-      (_columnDefinitions.value || []) as Column[],
+      (_columns.value || []) as Column[],
       _gridOptions.value as GridOption
     );
     sharedService.hierarchicalDataset = sortedDatasetResult.hierarchical;

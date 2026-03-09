@@ -18,7 +18,7 @@ import { onBeforeMount, onMounted, onUnmounted, ref, type Ref } from 'vue';
 
 const NB_ITEMS = 200;
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const isDarkMode = ref(false);
 const isFullScreen = ref(false);
@@ -108,7 +108,7 @@ onUnmounted(() => {
 
 /* Define grid Options and Columns */
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'currency',
       name: 'Currency',
@@ -369,7 +369,7 @@ function stopSimulation() {
 }
 
 function findColumnById(columnName: string): Column {
-  return columnDefinitions.value.find((col) => col?.field === columnName) as Column;
+  return columns.value.find((col) => col?.field === columnName) as Column;
 }
 
 function renderCellHighlighting(item: any, column: Column, priceChange: number) {
@@ -513,7 +513,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
     <slickgrid-vue
       v-model:options="gridOptions"
-      v-model:columns="columnDefinitions"
+      v-model:columns="columns"
       v-model:dataset="dataset"
       grid-id="grid34"
       @onVueGridCreated="vueGridReady($event.detail)"

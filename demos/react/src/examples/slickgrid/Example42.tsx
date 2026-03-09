@@ -18,7 +18,7 @@ function randomBetween(min: number, max: number): number {
 }
 
 const Example42: React.FC = () => {
-  const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
   const [dataset] = useState<any[]>(loadData(NB_ITEMS));
   const [pageSize, setPageSize] = useState(50);
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
@@ -35,7 +35,7 @@ const Example42: React.FC = () => {
   }
 
   function defineGrid() {
-    const columnDefinitions: Column[] = [
+    const columns: Column[] = [
       {
         id: 'title',
         name: 'Title',
@@ -152,7 +152,7 @@ const Example42: React.FC = () => {
       rowHeight: 40,
     };
 
-    setColumnDefinitions(columnDefinitions);
+    setColumns(columns);
     setGridOptions(gridOptions);
   }
 
@@ -243,7 +243,7 @@ const Example42: React.FC = () => {
 
         <SlickgridReact
           gridId="grid42"
-          columns={columnDefinitions}
+          columns={columns}
           options={gridOptions}
           dataset={dataset}
           onReactGridCreated={($event) => reactGridReady($event.detail)}

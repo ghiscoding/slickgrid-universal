@@ -4,7 +4,7 @@ import { onBeforeMount, ref, type Ref } from 'vue';
 
 const NB_ITEMS = 1000;
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const showSubTitle = ref(true);
 let vueGrid!: SlickgridVueInstance;
@@ -17,7 +17,7 @@ onBeforeMount(() => {
 
 /* Define grid Options and Columns */
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'delete',
       field: 'id',
@@ -339,7 +339,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <slickgrid-vue
     v-model:options="gridOptions"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:dataset="dataset"
     grid-id="grid11"
     @onVueGridCreated="vueGridReady($event.detail)"

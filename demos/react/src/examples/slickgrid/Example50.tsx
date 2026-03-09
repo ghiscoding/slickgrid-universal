@@ -34,13 +34,13 @@ const Example50: React.FC = () => {
   const [dataset2, setDataset2] = useState<OrderData[]>(mockDetailData(dataset1[0]));
 
   /* Define grid Options and Columns */
-  const columnDefinitions1: Column[] = [
+  const columns1: Column[] = [
     { id: 'name', name: 'Customer Name', field: 'name', sortable: true, minWidth: 100, filterable: true },
     { id: 'company', name: 'Company Name', field: 'company', minWidth: 100, sortable: true },
     { id: 'address', name: 'Address', field: 'address', sortable: true, minWidth: 100 },
     { id: 'country', name: 'Country', field: 'country', sortable: true },
   ];
-  const columnDefinitions2: Column[] = [
+  const columns2: Column[] = [
     { id: 'orderId', field: 'orderId', name: 'Order ID', sortable: true, width: 50 },
     { id: 'freight', field: 'freight', name: 'Freight', sortable: true, width: 50, type: 'number', formatter: Formatters.dollar },
     { id: 'name', field: 'name', name: 'Ship Company', sortable: true },
@@ -210,7 +210,7 @@ const Example50: React.FC = () => {
       <div className="grid-container1">
         <SlickgridReact
           gridId="grid50-1"
-          columns={columnDefinitions1}
+          columns={columns1}
           options={gridOptions1!}
           dataset={dataset1}
           onReactGridCreated={($event) => reactGrid1Ready($event.detail)}
@@ -224,7 +224,7 @@ const Example50: React.FC = () => {
         <span>Detail Grid - Orders for:</span>
         <span className="fst-italic text-secondary customer-detail ms-2">{selectedName}</span>
       </h5>
-      <SlickgridReact gridId="grid50-2" columns={columnDefinitions2} options={gridOptions2!} dataset={dataset2} />
+      <SlickgridReact gridId="grid50-2" columns={columns2} options={gridOptions2!} dataset={dataset2} />
     </div>
   );
 };

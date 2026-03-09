@@ -20,7 +20,7 @@ import { randomNumber } from './utilities.js';
 
 const FETCH_SIZE = 50;
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const metrics = ref<Partial<Metrics>>({});
 const shouldResetOnSort = ref(false);
@@ -40,7 +40,7 @@ onBeforeMount(() => {
 
 /* Define grid Options and Columns */
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     { id: 'title', name: 'Title', field: 'title', sortable: true, minWidth: 100, filterable: true },
     {
       id: 'duration',
@@ -289,7 +289,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <slickgrid-vue
     v-model:options="gridOptions"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:dataset="dataset"
     grid-id="grid40"
     @onRowCountChanged="handleOnRowCountChanged($event.detail.args)"

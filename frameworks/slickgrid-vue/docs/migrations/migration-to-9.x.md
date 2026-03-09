@@ -120,7 +120,7 @@ The biggest change that you will most probably have to update is the min/max dat
 import { type VanillaCalendarOption } from '@slickgrid-universal/common';
 
 prepareGrid() {
-  columnDefinitions.value = [{
+  columns.value = [{
     id: 'finish', field: 'finish', name: 'Finish',
     editor: {
       model: Editors.date,
@@ -202,7 +202,7 @@ So, in order to make it easier to merge and simplify Editor/Filter options, I'm 
 ```diff
 import { type MultipleSelectOption } from '@slickgrid-universal/common';
 
-columnDefinitions = [{
+columns.value = [{
   id: 'duration', field: 'duration', name: 'Duration',
   editor: {
 -   editorOptions: {

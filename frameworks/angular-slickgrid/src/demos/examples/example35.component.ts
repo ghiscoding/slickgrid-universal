@@ -18,7 +18,7 @@ export class Example35Component implements OnInit {
   private subscriptions: Subscription[] = [];
   angularGrid!: AngularGridInstance;
   gridOptions!: GridOption;
-  columnDefinitions!: Column[];
+  columns!: Column[];
   dataset!: any[];
   hideSubTitle = false;
   selectedLanguage = signal('');
@@ -45,7 +45,7 @@ export class Example35Component implements OnInit {
 
   /* Define grid Options and Columns */
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',

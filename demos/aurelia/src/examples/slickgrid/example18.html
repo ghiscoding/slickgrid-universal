@@ -112,7 +112,7 @@
           <div class="form-group col-md-3 grouping-selects" repeat.for="groupField of selectedGroupingFields">
             <select class="form-select" change.trigger="groupByFieldName()" value.bind="groupField">
               <option model.bind="''">...</option>
-              <option model.bind="column.id" repeat.for="column of columnDefinitions">${column.name}</option>
+              <option model.bind="column.id" repeat.for="column of columns">${column.name}</option>
             </select>
           </div>
         </div>
@@ -127,7 +127,7 @@
 
 <aurelia-slickgrid
   grid-id="grid18"
-  columns.bind="columnDefinitions"
+  columns.bind="columns"
   options.bind="gridOptions"
   dataset.bind="dataset"
   on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"

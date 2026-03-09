@@ -28,7 +28,7 @@ export class Example42Component implements OnInit {
   protected readonly angularUtilService = inject(AngularUtilService);
 
   angularGrid!: AngularGridInstance;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   dataset: any[] = [];
   gridContainerElm!: HTMLDivElement;
   gridOptions!: GridOption;
@@ -49,7 +49,7 @@ export class Example42Component implements OnInit {
 
   /* Define grid Options and Columns */
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',

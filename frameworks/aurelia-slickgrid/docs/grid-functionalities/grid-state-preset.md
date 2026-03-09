@@ -121,7 +121,7 @@ export class GridDemoComponent {
   }
 
   attached() {
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'name', name: 'Name', field: 'name', filterable: true, sortable: true, sortable: true },
       { id: 'duration', name: 'Duration', field: 'duration', filterable: true, sortable: true },
       { id: 'complete', name: '% Complete', field: 'percentComplete', filterable: true, sortable: true },
@@ -164,7 +164,7 @@ Examples
 <aurelia-slickgrid grid-id="grid1" dataview.bind="dataview" grid.bind="gridObj"
     dataset.bind="dataset"
     options.bind="gridOptions"
-    columns.bind="columnDefinitions"
+    columns.bind="columns"
     on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"
     on-grid-state-service-changed.trigger="gridStateChanged($event.detail)">
   </aurelia-slickgrid>
@@ -188,19 +188,19 @@ So let say that we want to hide the last Column on page load, we can just find t
 Pass the Grid Presets with an array that has less `presets.columns`, whichever column(s) are missing will be considered hidden columns
 
 ```ts
-this.columnDefinitions = [
+this.columns = [
   // initial column definitions
 ];
 
 // for example, let's hide last column, we can just use `pop()` to ommit last column
 // and use `map()` to pull only the required field for presets to work
-const mappedColumnDefinitions = this.columnDefinitions.map(col => ({ columnId: col.id, width: col.width }));
-mappedColumnDefinitions.pop();
+const mappedColumns = this.columns.map(col => ({ columnId: col.id, width: col.width }));
+mappedColumns.pop();
 
 // then pass it to the grid presets (an array of columns minus the last column)
 this.gridOptions = {
   presets: {
-    columns: mappedColumnDefinitions
+    columns: mappedColumns
   }
 };
 ```

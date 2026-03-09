@@ -20,7 +20,7 @@ interface ChapterTree extends Chapter {
 }
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const datasetHierarchical = ref<any[]>([]);
 const searchString = ref('');
 const showSubTitle = ref(true);
@@ -45,7 +45,7 @@ onBeforeMount(() => {
 
 /* Define grid Options and Columns */
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'chapterName',
       name: 'Chapter',
@@ -391,7 +391,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
   <div id="grid-container" class="col-sm-12">
     <slickgrid-vue
       v-model:options="gridOptions"
-      v-model:columns="columnDefinitions"
+      v-model:columns="columns"
       v-model:hierarchical="datasetHierarchical"
       grid-id="grid46"
       @onVueGridCreated="vueGridReady($event.detail)"

@@ -5,7 +5,7 @@ import { SlickgridReact, toCamelCase, type Column, type GridOption } from 'slick
 const Example17: React.FC = () => {
   const [gridCreated, setGridCreated] = useState(false);
   const [gridOptions, setGridOptions] = useState<GridOption>();
-  const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
   const [dataset, setDataset] = useState<any[]>([]);
   const templateUrl = new URL('./data/users.csv', import.meta.url).href;
   const [uploadFileRef, setUploadFileRef] = useState('');
@@ -87,7 +87,7 @@ const Example17: React.FC = () => {
     });
 
     setDataset(outputData);
-    setColumnDefinitions(colDefs);
+    setColumns(colDefs);
     setGridCreated(true);
   }
 
@@ -158,7 +158,7 @@ const Example17: React.FC = () => {
       <hr />
 
       <div className="grid-container-zone">
-        {gridCreated && <SlickgridReact gridId="grid17" columns={columnDefinitions} options={gridOptions} dataset={dataset} />}
+        {gridCreated && <SlickgridReact gridId="grid17" columns={columns} options={gridOptions} dataset={dataset} />}
       </div>
     </div>
   );

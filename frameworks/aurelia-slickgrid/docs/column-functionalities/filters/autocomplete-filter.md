@@ -20,7 +20,7 @@ If you want to pass the entire list to the AutoComplete (like a JSON file or a W
 ```html
 <aurelia-slickgrid
     grid-id="gridId"
-    columns.bind="columnDefinitions"
+    columns.bind="columns"
     options.bind="gridOptions"
     dataset.bind="dataset">
 </aurelia-slickgrid>
@@ -29,13 +29,13 @@ If you want to pass the entire list to the AutoComplete (like a JSON file or a W
 ##### Component
 ```typescript
 export class GridBasicComponent {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
 
   attached(): void {
       // your columns definition
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'countryOfOrigin', name: 'Country of Origin', field: 'countryOfOrigin',
         formatter: Formatters.complexObject,
@@ -86,7 +86,7 @@ You could also use external 3rd party Web API (can be JSONP query or regular JSO
 ```html
 <aurelia-slickgrid
     grid-id="gridId"
-    columns.bind="columnDefinitions"
+    columns.bind="columns"
     options.bind="gridOptions"
     dataset.bind="dataset">
 </aurelia-slickgrid>
@@ -95,13 +95,13 @@ You could also use external 3rd party Web API (can be JSONP query or regular JSO
 ##### Component
 ```typescript
 export class GridBasicComponent {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
 
   attached(): void {
       // your columns definition
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'cityOfOrigin', name: 'City of Origin', field: 'cityOfOrigin',
         filterable: true,
@@ -153,7 +153,7 @@ export class GridBasicComponent {
 If you want to add the autocomplete functionality but want the user to be able to input a new option, then follow the example below:
 
 ```ts
-  this.columnDefinitions = [{
+  this.columns = [{
         id: 'area',
         name: 'Area',
         field: 'area',

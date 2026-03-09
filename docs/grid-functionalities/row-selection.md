@@ -33,7 +33,7 @@ export class Example1 {
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid3`);
 
     gridContainerElm.addEventListener('onselectedrows', this.handleOnClick.bind(this));
-    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
 
   initializeGrid() {
@@ -94,7 +94,7 @@ export class Example1 {
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid3`);
 
     gridContainerElm.addEventListener('onselectedrows', this.handleOnClick.bind(this));
-    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
 
   initializeGrid() {
@@ -251,7 +251,7 @@ export class Example1 {
     this.initializeGrid();
     this.dataset = this.loadData(500);
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid3`);
-    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
 
   clearRowSelection() {
@@ -309,7 +309,7 @@ export class Example1 {
     const gridContainerElm = document.querySelector<HTMLDivElement>(`.grid3`);
 
     gridContainerElm.addEventListener('ondragreplacecells', this.handleOnClick.bind(this));
-    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
 
   initializeGrid() {
@@ -341,14 +341,14 @@ export class Example1 {
 
 ## Troubleshooting
 ### Adding a Column dynamically is removing the Row Selection column, why is that?
-The reason is because the Row Selection (checkbox) plugin is a special column and Slickgrid-Universal is adding an extra column dynamically for the Row Selection checkbox and that is **not** reflected in your local copy of `columnDefinitions`. To address this issue, you need to get the Slickgrid-Universal internal copy of all columns (including the extra columns), you can get it via `getAllColumnDefinitions()` from the Grid Service and then you can use to that array and that will work.
+The reason is because the Row Selection (checkbox) plugin is a special column and Slickgrid-Universal is adding an extra column dynamically for the Row Selection checkbox and that is **not** reflected in your local copy of `columns`. To address this issue, you need to get the Slickgrid-Universal internal copy of all columns (including the extra columns), you can get it via `getAllColumnDefinitions()` from the Grid Service and then you can use to that array and that will work.
 
 ```ts
 const newColumn = { /*...*/ };
 
 const allColumns = this.sgb.gridService.getAllColumnDefinitions();
 allColumns.push(newColumn);
-this.columnDefinitions = allColumns.slice(); // or use spread operator [...cols]
+this.columns = allColumns.slice(); // or use spread operator [...cols]
 
 // you could also use SlickGrid setColumns() method
 // this.sgb.slickGrid.setColumns(cols);

@@ -31,7 +31,7 @@
   </div>
   <div class="col">
     <select class="form-select" data-test="search-column-list" name="selectedColumn" value.bind="selectedColumn" id="columnSelect">
-      <option repeat.for="column of columnDefinitions" model.bind="column">${column.name}</option>
+      <option repeat.for="column of columns" model.bind="column">${column.name}</option>
     </select>
   </div>
   <div class="col">
@@ -56,11 +56,5 @@
 
 <hr />
 
-<aurelia-slickgrid
-  grid-id="grid21"
-  columns.bind="columnDefinitions"
-  options.bind="gridOptions"
-  dataset.bind="dataset"
-  instances.bind="aureliaGrid"
->
+<aurelia-slickgrid grid-id="grid21" columns.bind="columns" options.bind="gridOptions" dataset.bind="dataset" instances.bind="aureliaGrid">
 </aurelia-slickgrid>

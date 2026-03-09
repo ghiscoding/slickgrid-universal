@@ -4,7 +4,7 @@ import { onBeforeMount, onMounted, onUnmounted, ref, type Ref } from 'vue';
 
 const NB_ITEMS = 100;
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const isDarkMode = ref(false);
 const showSubTitle = ref(true);
@@ -38,7 +38,7 @@ function defineGrid() {
       editor: { model: Editors.integer },
     });
   }
-  columnDefinitions.value = columnDefs;
+  columns.value = columnDefs;
 
   gridOptions.value = {
     autoEdit: true,
@@ -61,7 +61,7 @@ function loadData(itemCount: number) {
   for (let i = 0; i < itemCount; i++) {
     const d = (datasetTmp[i] = {} as any);
     d.id = i;
-    for (let j = 0; j < columnDefinitions.value.length; j++) {
+    for (let j = 0; j < columns.value.length; j++) {
       d[j] = Math.round(Math.random() * 10);
     }
   }
@@ -152,7 +152,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <slickgrid-vue
     v-model:options="gridOptions"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:dataset="dataset"
     grid-id="grid37"
     @onCellChange="handleOnCellChange($event.detail.eventData, $event.detail.args)"

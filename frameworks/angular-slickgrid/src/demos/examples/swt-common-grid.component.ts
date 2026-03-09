@@ -44,7 +44,7 @@ const DEFAULT_FILTER_TYPING_DEBOUNCE = 750;
     gridId="common-grid"
     #angularSlickGrid
     (onAngularGridCreated)="gridReady($event.detail)"
-    [columns]="columnDefinitions"
+    [columns]="columns"
     [options]="gridOptions"
     [dataset]="dataset"
   >
@@ -78,7 +78,7 @@ export class SwtCommonGridComponent implements OnInit, AfterViewInit, BackendSer
 
   @ViewChild('angularSlickGrid', { static: true }) angularSlickGrid!: AngularSlickgridComponent;
 
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   dataset!: any[];
   gridObj: any;
   dataviewObj: any;
@@ -207,7 +207,7 @@ export class SwtCommonGridComponent implements OnInit, AfterViewInit, BackendSer
 
     // check if allcolumns tag contains any children
     if (this.metaData.columns.column) {
-      // set columnsData and columnDefinitions
+      // set columnsData and columns
       this.columnData = this.metaData.columns.column;
 
       for (const colData of this.columnData) {
@@ -233,12 +233,12 @@ export class SwtCommonGridComponent implements OnInit, AfterViewInit, BackendSer
           width: colData.width,
         };
 
-        this.columnDefinitions.push(col);
+        this.columns.push(col);
         rowData[col.id] = '';
       }
 
       // Columns are not visible, seems to be a bug ? next line fixed it..
-      this.gridObj.setColumns(this.columnDefinitions);
+      this.gridObj.setColumns(this.columns);
       this.angularSlickGrid.showPagination = false;
 
       // Show filters when grid starts; this could be parametrized
@@ -249,7 +249,7 @@ export class SwtCommonGridComponent implements OnInit, AfterViewInit, BackendSer
     // Dummy dataset
     this.dataset = rowData;
 
-    this.logger.info('method [CustomGrid] - END, this.columnDefinitions=', this.columnDefinitions);
+    this.logger.info('method [CustomGrid] - END, this.columns=', this.columns);
   }
 
   /**
@@ -358,7 +358,7 @@ export class SwtCommonGridComponent implements OnInit, AfterViewInit, BackendSer
     }
     timer = setTimeout(() => {
       this.filteredGridColumns = '';
-      for (const column of this.columnDefinitions) {
+      for (const column of this.columns) {
         if (column.field in args.columnFilters) {
           this.filteredGridColumns += args.columnFilters[column.field].searchTerms[0] + '|';
         } else {
@@ -401,8 +401,8 @@ export class SwtCommonGridComponent implements OnInit, AfterViewInit, BackendSer
     this.logger.info('method [onSortChanged] - START');
     this.sortedGridColumn = '';
     const sortDirection = '|' + args!.sortCols![0].sortAsc + '|';
-    for (let idx = 0; idx < this.columnDefinitions.length; idx++) {
-      if (this.columnDefinitions[idx].field === args!.sortCols![0].sortCol.field) {
+    for (let idx = 0; idx < this.columns.length; idx++) {
+      if (this.columns[idx].field === args!.sortCols![0].sortCol.field) {
         this.sortedGridColumn = '' + idx + sortDirection;
       }
     }

@@ -107,7 +107,7 @@ import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, } from '@sli
 
 @autoinject()
 export class Example {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset = [];
 
@@ -119,7 +119,7 @@ export class Example {
   }
 
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       // your column definitions
     ];
 
@@ -244,7 +244,7 @@ import { GraphqlService, GraphqlPaginatedResult, GraphqlServiceApi, } from '@sli
 
 export class Example {
   graphqlService: GraphqlService;
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
 
   constructor() {
@@ -256,7 +256,7 @@ export class Example {
   }
 
   activate(): void {
-    this.columnDefinitions = [
+    this.columns = [
       // ...
     ];
 

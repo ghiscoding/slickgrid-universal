@@ -25,7 +25,7 @@ const NB_ITEMS = 1000;
 export default class Example16 {
   private _bindingEventService: BindingEventService;
   private _darkMode = false;
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
   editCommandQueue: EditCommand[] = [];
@@ -49,12 +49,7 @@ export default class Example16 {
       () => (this.loadingClass = 'mdi mdi-load mdi-spin-1s font-22px')
     );
     this._bindingEventService.bind(gridContainerElm, 'onafterexporttoexcel', () => (this.loadingClass = ''));
-    this.sgb = new Slicker.GridBundle(
-      gridContainerElm,
-      this.columnDefinitions,
-      { ...ExampleGridOptions, ...this.gridOptions },
-      this.dataset
-    );
+    this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
   }
 
   dispose() {
@@ -65,7 +60,7 @@ export default class Example16 {
   }
 
   initializeGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',

@@ -33,7 +33,7 @@
 <div class="grid-container1">
   <aurelia-slickgrid
     grid-id="grid1-1"
-    columns.bind="columnDefinitions1"
+    columns.bind="columns1"
     options.bind="gridOptions1"
     dataset.bind="dataset1"
     on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"
@@ -44,5 +44,4 @@
 <hr />
 
 <h3>Grid 2 <small>(with local Pagination)</small></h3>
-<aurelia-slickgrid grid-id="grid1-2" columns.bind="columnDefinitions2" options.bind="gridOptions2" dataset.bind="dataset2">
-</aurelia-slickgrid>
+<aurelia-slickgrid grid-id="grid1-2" columns.bind="columns2" options.bind="gridOptions2" dataset.bind="dataset2"> </aurelia-slickgrid>

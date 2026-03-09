@@ -18,7 +18,7 @@ function randomBetween(min: number, max: number): number {
 
 export default class Example30 {
   pageSize = 50;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   gridContainerElm: HTMLDivElement;
   gridOptions!: GridOption;
   dataset: any[] = [];
@@ -32,12 +32,7 @@ export default class Example30 {
     // mock some data (different in each dataset)
     this.dataset = this.loadData(NB_ITEMS);
     this.gridContainerElm = document.querySelector<HTMLDivElement>('.grid30') as HTMLDivElement;
-    this.sgb = new Slicker.GridBundle(
-      this.gridContainerElm,
-      this.columnDefinitions,
-      { ...ExampleGridOptions, ...this.gridOptions },
-      this.dataset
-    );
+    this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
     document.body.classList.add('material-theme');
   }
 
@@ -47,7 +42,7 @@ export default class Example30 {
 
   /* Define grid Options and Columns */
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',

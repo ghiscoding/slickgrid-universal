@@ -23,7 +23,7 @@ const taskTranslateFormatter: Formatter = (_row, _cell, value, _columnDef, _data
 
 const Example12: React.FC = () => {
   const defaultLang = 'en';
-  const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
   const [dataset] = useState<any[]>(getData(NB_ITEMS));
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
   const [selectedLanguage, setSelectedLanguage] = useState<string>(defaultLang);
@@ -45,7 +45,7 @@ const Example12: React.FC = () => {
 
   /* Define grid Options and Columns */
   function defineGrid() {
-    const columnDefinitions: Column[] = [
+    const columns: Column[] = [
       {
         id: 'title',
         name: 'Title',
@@ -190,7 +190,7 @@ const Example12: React.FC = () => {
       externalResources: [excelExportService, textExportService],
     };
 
-    setColumnDefinitions(columnDefinitions);
+    setColumns(columns);
     setGridOptions(gridOptions);
   }
 
@@ -229,9 +229,9 @@ const Example12: React.FC = () => {
       filterable: true,
       params: { useFormatterOuputToFilter: true },
     };
-    columnDefinitions.push(newCol);
+    columns.push(newCol);
 
-    setColumnDefinitions(columnDefinitions.slice()); // or use spread operator [...cols]
+    setColumns(columns.slice()); // or use spread operator [...cols]
 
     // NOTE if you use an Extensions (Checkbox Selector, Row Detail, ...) that modifies the column definitions in any way
     // you MUST use "getAllColumnDefinitions()" from the GridService, using this will be ALL columns including the 1st column that is created internally
@@ -239,7 +239,7 @@ const Example12: React.FC = () => {
     /*
     const allColumns = reactGrid.gridService.getAllColumnDefinitions();
     allColumns.push(newCol);
-    columnDefinitions = [...allColumns]; // (or use slice) reassign to column definitions for React to do dirty checking
+    columns = [...allColumns]; // (or use slice) reassign to column definitions for React to do dirty checking
     */
   }
 
@@ -395,7 +395,7 @@ const Example12: React.FC = () => {
       </div>
       <SlickgridReact
         gridId="grid12"
-        columns={columnDefinitions}
+        columns={columns}
         options={gridOptions}
         dataset={dataset}
         onReactGridCreated={($event) => reactGridReady($event.detail)}

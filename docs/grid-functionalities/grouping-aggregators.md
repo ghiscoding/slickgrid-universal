@@ -105,7 +105,7 @@ Note: the Group Total Formatters named as currency will have these extra `params
 ##### ViewModel
 ```typescript
 initializeGrid() {
-  this.columnDefinitions = [
+  this.columns = [
       {
         id: 'title', name: 'Title', field: 'title'
       },
@@ -153,7 +153,7 @@ You can also create a custom `groupTotalsFormatter` similarly to a Formatter, ju
 ##### ViewModel
 ```typescript
 defineGrid() {
-  this.columnDefinitions = [
+  this.columns = [
       {
         id: 'cost', name: 'Cost', field: 'cost',
         groupTotalsFormatter: this.sumTotalsFormatter

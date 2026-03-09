@@ -5,7 +5,7 @@ import CustomFooter from './CustomFooterComponent.vue';
 
 const NB_ITEMS = 995;
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const showSubTitle = ref(true);
 let vueGrid!: SlickgridVueInstance;
@@ -18,7 +18,7 @@ onBeforeMount(() => {
 
 /* Define grid Options and Columns */
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     { id: 'title', name: 'Title', field: 'title', sortable: true, minWidth: 100 },
     { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true, minWidth: 100 },
     { id: '%', name: '% Complete', field: 'percentComplete', sortable: true, minWidth: 100 },
@@ -92,7 +92,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <slickgrid-vue
     v-model:options="gridOptions"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:dataset="dataset"
     grid-id="grid2"
     @onVueGridCreated="vueGridReady($event.detail)"

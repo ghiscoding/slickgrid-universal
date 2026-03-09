@@ -16,7 +16,7 @@ const rowCellValueExportFormatter: Formatter = (_row, _cell, value) => {
 
 export default class Example33 {
   private _bindingEventService: BindingEventService;
-  columnDefinitions: Column[];
+  columns: Column[];
   dataLn: number | string = 0;
   gridOptions: GridOption;
   sgb: SlickVanillaGridBundle;
@@ -74,7 +74,7 @@ export default class Example33 {
     this.loadData(NB_ITEMS);
     this.gridContainerElm = document.querySelector('.grid33') as HTMLDivElement;
 
-    this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columnDefinitions, { ...ExampleGridOptions, ...this.gridOptions });
+    this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions });
 
     document.body.classList.add('material-theme');
   }
@@ -86,7 +86,7 @@ export default class Example33 {
   }
 
   initializeGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'title', name: 'Title', field: 'title', minWidth: 80 },
       {
         id: 'revenueGrowth',

@@ -97,7 +97,7 @@ export class CustomSumAggregator implements Aggregator {
 
 export default class Example23 {
   private _bindingEventService: BindingEventService;
-  columnDefinitions: Column<GroceryItem>[] = [];
+  columns: Column<GroceryItem>[] = [];
   dataset: GroceryItem[] = [];
   gridOptions!: GridOption;
   gridContainerElm: HTMLDivElement;
@@ -122,7 +122,7 @@ export default class Example23 {
 
     this.sgb = new Slicker.GridBundle(
       document.querySelector('.grid23') as HTMLDivElement,
-      this.columnDefinitions,
+      this.columns,
       { ...ExampleGridOptions, ...this.gridOptions },
       this.dataset
     );
@@ -138,7 +138,7 @@ export default class Example23 {
 
   /* Define grid Options and Columns */
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'sel',
         name: '#',

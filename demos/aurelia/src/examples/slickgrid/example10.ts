@@ -7,8 +7,8 @@ export class Example10 {
 
   aureliaGrid1!: AureliaGridInstance;
   aureliaGrid2!: AureliaGridInstance;
-  columnDefinitions1: Column[] = [];
-  columnDefinitions2: Column[] = [];
+  columns1: Column[] = [];
+  columns2: Column[] = [];
   gridOptions1!: GridOption;
   gridOptions2!: GridOption;
   dataset1: any[] = [];
@@ -39,7 +39,7 @@ export class Example10 {
 
   /* Define grid Options and Columns */
   defineGrids() {
-    this.columnDefinitions1 = [
+    this.columns1 = [
       { id: 'title', name: 'Title', field: 'title', sortable: true, filterable: true },
       { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true, type: 'number', filterable: true },
       {
@@ -92,7 +92,7 @@ export class Example10 {
       },
     ];
 
-    this.columnDefinitions2 = [
+    this.columns2 = [
       { id: 'title', name: 'Title', field: 'title', sortable: true, filterable: true },
       { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true, type: 'number', filterable: true },
       {

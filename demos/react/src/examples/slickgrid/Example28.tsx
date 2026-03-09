@@ -18,7 +18,7 @@ import {
 import './example28.scss'; // provide custom CSS/SASS styling
 
 const Example28: React.FC = () => {
-  const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>();
   const [datasetHierarchical, setDatasetHierarchical] = useState(mockDataset());
   const [lastInsertedPopSongId, setLastInsertedPopSongId] = useState<number | undefined>();
@@ -41,7 +41,7 @@ const Example28: React.FC = () => {
 
   /* Define grid Options and Columns */
   function defineGrid() {
-    const columnDefinitions: Column[] = [
+    const columns: Column[] = [
       {
         id: 'file',
         name: 'Files',
@@ -185,7 +185,7 @@ const Example28: React.FC = () => {
       },
     };
 
-    setColumnDefinitions(columnDefinitions);
+    setColumns(columns);
     setGridOptions(gridOptions);
   }
 
@@ -579,7 +579,7 @@ const Example28: React.FC = () => {
       <div id="grid-container" className="col-sm-12">
         <SlickgridReact
           gridId="grid28"
-          columns={columnDefinitions}
+          columns={columns}
           options={gridOptions}
           datasetHierarchical={datasetHierarchical}
           onReactGridCreated={($event) => reactGridReady($event.detail)}

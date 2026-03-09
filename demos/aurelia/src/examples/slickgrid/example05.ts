@@ -18,7 +18,7 @@ const PERCENT_HTML_ESCAPED = '%25';
 
 export class Example05 {
   aureliaGrid!: AureliaGridInstance;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   gridOptions!: GridOption;
   dataset: any[] = [];
   hideSubTitle = false;
@@ -45,7 +45,7 @@ export class Example05 {
   }
 
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'name',
         name: 'Name',

@@ -15,7 +15,7 @@ import {
 })
 export class Example16Component implements OnInit {
   angularGrid!: AngularGridInstance;
-  columnDefinitions!: Column[];
+  columns!: Column[];
   gridOptions!: GridOption;
   dataset = signal<any[]>([]);
   hideSubTitle = false;
@@ -25,7 +25,7 @@ export class Example16Component implements OnInit {
   }
 
   ngOnInit(): void {
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'title', name: 'Title', field: 'title', filterable: true },
       { id: 'duration', name: 'Duration', field: 'duration', filterable: true, sortable: true },
       { id: '%', name: '% Complete', field: 'percentComplete', filterable: true, sortable: true },
@@ -230,7 +230,7 @@ export class Example16Component implements OnInit {
   }
 
   addEditDeleteColumns() {
-    if (this.columnDefinitions[0].id !== 'change-symbol') {
+    if (this.columns[0].id !== 'change-symbol') {
       const newCols = [
         {
           id: 'change-symbol',
@@ -269,7 +269,7 @@ export class Example16Component implements OnInit {
       // for example if you use the Checkbox Selector (row selection), you MUST use the code below
       const allColumns = this.angularGrid.gridService.getAllColumnDefinitions();
       allColumns.unshift(newCols[0], newCols[1]);
-      this.columnDefinitions = [...allColumns]; // (or use slice) reassign to column definitions for Aurelia to do dirty checking
+      this.columns = [...allColumns]; // (or use slice) reassign to column definitions for Aurelia to do dirty checking
     }
   }
 

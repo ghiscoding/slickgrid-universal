@@ -20,7 +20,7 @@ export interface Country {
 }
 
 const Example25: React.FC = () => {
-  const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
   const [dataset] = useState<any[]>([]);
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
   const [status, setStatus] = useState({ text: '', class: '' });
@@ -32,7 +32,7 @@ const Example25: React.FC = () => {
   }, []);
 
   function defineGrid() {
-    const columnDefinitions: Column[] = [
+    const columns: Column[] = [
       { id: 'countryCode', field: 'code', name: 'Code', maxWidth: 90, sortable: true, filterable: true, columnGroup: 'Country' },
       { id: 'countryName', field: 'name', name: 'Name', width: 60, sortable: true, filterable: true, columnGroup: 'Country' },
       { id: 'countryNative', field: 'native', name: 'Native', width: 60, sortable: true, filterable: true, columnGroup: 'Country' },
@@ -195,7 +195,7 @@ const Example25: React.FC = () => {
       } as GraphqlServiceApi,
     };
 
-    setColumnDefinitions(columnDefinitions);
+    setColumns(columns);
     setGridOptions(gridOptions);
   }
 
@@ -348,7 +348,7 @@ const Example25: React.FC = () => {
         </div>
       </div>
 
-      <SlickgridReact gridId="grid25" columns={columnDefinitions} options={gridOptions} dataset={dataset} />
+      <SlickgridReact gridId="grid25" columns={columns} options={gridOptions} dataset={dataset} />
     </div>
   );
 };

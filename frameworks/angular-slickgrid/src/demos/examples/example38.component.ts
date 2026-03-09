@@ -30,7 +30,7 @@ export class Example38Component implements OnInit {
 
   angularGrid!: AngularGridInstance;
   backendService: GridOdataService;
-  columnDefinitions!: Column[];
+  columns!: Column[];
   gridOptions!: GridOption;
   dataset: any[] = [];
   hideSubTitle = false;
@@ -56,7 +56,7 @@ export class Example38Component implements OnInit {
   }
 
   initializeGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'name',
         name: 'Name',

@@ -31,7 +31,7 @@ import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 's
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -60,7 +60,7 @@ function handleRowSelection(event, args) {
 <template>
   <SlickgridVue
     grid-id="grid1"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:options="gridOptions"
     v-model:dataset="dataset"
     @onSelectedRowsChanged="onGrid1SelectedRowsChanged($event.detail.eventData, $event.detail.args)"
@@ -108,7 +108,7 @@ import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 's
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -144,7 +144,7 @@ function handleRowSelection(event, args) {
 <template>
   <SlickgridVue
     grid-id="grid1"
-    v-model:columns="columnDefinitions1"
+    v-model:columns="columns1"
     v-model:options="gridOptions1"
     v-model:dataset="dataset1"
     @onSelectedRowsChanged="onGrid1SelectedRowsChanged($event.detail.eventData, $event.detail.args)"
@@ -162,7 +162,7 @@ import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 's
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -212,7 +212,7 @@ import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 's
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -239,7 +239,7 @@ function handleSingleRowClick(event, args) {
 <template>
   <SlickgridVue
     grid-id="grid1"
-    v-model:columns="columnDefinitions1"
+    v-model:columns="columns1"
     v-model:options="gridOptions1"
     v-model:dataset="dataset1"
     @onClick="onCellClicked($event.detail.eventData, $event.detail.args)"
@@ -259,7 +259,7 @@ import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 's
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -304,7 +304,7 @@ function handleOnSelectedRowsChanged(args) {
 <template>
   <SlickgridVue
     grid-id="grid1"
-    v-model:columns="columnDefinitions1"
+    v-model:columns="columns1"
     v-model:options="gridOptions1"
     v-model:dataset="dataset1"
     @onClick="onCellClicked($event.detail.eventData, $event.detail.args)"
@@ -330,7 +330,7 @@ function handleOngridStateChanged(gridState) {
 <template>
   <SlickgridVue
     grid-id="grid1"
-    v-model:columns="columnDefinitions1"
+    v-model:columns="columns1"
     v-model:options="gridOptions1"
     v-model:dataset="dataset1"
     @onClick="onCellClicked($event.detail.eventData, $event.detail.args)"
@@ -350,7 +350,7 @@ import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 's
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 let vueGrid: SlickgridVueInstance;
 
@@ -375,7 +375,7 @@ function changeRowSelections() {
 <template>
   <SlickgridVue
     grid-id="grid1"
-    v-model:columns="columnDefinitions1"
+    v-model:columns="columns1"
     v-model:options="gridOptions1"
     v-model:dataset="dataset1"
     @onClick="onCellClicked($event.detail.eventData, $event.detail.args)"
@@ -425,7 +425,7 @@ import { type Column, Filters, Formatters, SlickgridVue, SortDirection } from 's
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -465,7 +465,7 @@ function copyDraggedCellRange(args: OnDragReplaceCellsEventArgs) {
 
 ## Troubleshooting
 ### Adding a Column dynamically is removing the Row Selection column, why is that?
-The reason is because the Row Selection (checkbox) plugin is a special column and slickgrid-vue is adding an extra column dynamically for the Row Selection checkbox and that is **not** reflected in your local copy of `columnDefinitions`. To address this issue, you need to get the slickgrid-vue internal copy of all columns (including the extra columns), you can get it via `getAllColumnDefinitions()` from the Grid Service and then you can use to that array and that will work.
+The reason is because the Row Selection (checkbox) plugin is a special column and slickgrid-vue is adding an extra column dynamically for the Row Selection checkbox and that is **not** reflected in your local copy of `columns.value`. To address this issue, you need to get the slickgrid-vue internal copy of all columns (including the extra columns), you can get it via `getAllColumnDefinitions()` from the Grid Service and then you can use to that array and that will work.
 
 ```vue
 <script setup lang="ts">
@@ -478,7 +478,7 @@ function addNewColumn() {
 
   const allColumns = vueGrid.gridService.getAllColumnDefinitions();
   allColumns.push(newColumn);
-  columnDefinitions.value = allColumns.slice(); // or use spread operator [...cols]
+  columns.value = allColumns.slice(); // or use spread operator [...cols]
 
   // you could also use SlickGrid setColumns() method
   // vueGrid.slickGrid.setColumns(cols);

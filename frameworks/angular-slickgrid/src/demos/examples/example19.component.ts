@@ -23,7 +23,7 @@ const NB_ITEMS = 1000;
 export class Example19Component implements OnDestroy, OnInit {
   private _darkMode = false;
   angularGrid!: AngularGridInstance;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   gridOptions!: GridOption;
   dataset: any[] = [];
   detailViewRowCount = 9;
@@ -57,7 +57,7 @@ export class Example19Component implements OnDestroy, OnInit {
 
   /* Define grid Options and Columns */
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',

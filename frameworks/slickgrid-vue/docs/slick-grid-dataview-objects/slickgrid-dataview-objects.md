@@ -16,7 +16,7 @@ import { type Column, Filters, Formatters, SlickgridVue, SlickgridVueInstance } 
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const isAutoEdit = ref(true);
 let vueGrid: SlickgridVueInstance;
@@ -77,7 +77,7 @@ function expandAllGroups() {
     <div class="col-sm-12">
       <SlickgridVue
         grid-id="grid3"
-        v-model:columns="columnDefinitions"
+        v-model:columns="columns"
         v-model:options="gridOptions"
         v-model:dataset="dataset"
         @onCellChange="onCellChanged($event.detail.eventData, $event.detail.args)"
@@ -115,7 +115,7 @@ function setAutoEdit(isAutoEdit) {
 <template>
   <SlickgridVue
     grid-id="grid1"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:options="gridOptions"
     v-model:dataset="dataset"
     @onVueGridCreated="vueGridReady($event.detail)"

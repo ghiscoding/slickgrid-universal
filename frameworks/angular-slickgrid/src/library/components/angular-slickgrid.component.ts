@@ -96,7 +96,7 @@ export interface AngularRowDetailView {
 })
 export class AngularSlickgridComponent<TData = any> implements AfterViewInit, OnDestroy {
   protected _dataset?: TData[] | null;
-  protected _columnDefinitions!: Column[];
+  protected _columns!: Column[];
   protected _currentDatasetLength = 0;
   protected _darkMode = false;
   protected _eventHandler: SlickEventHandler = new SlickEventHandler();
@@ -174,10 +174,10 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
 
   @Input()
   get columns(): Column[] {
-    return this._columnDefinitions;
+    return this._columns;
   }
   set columns(columns: Column[]) {
-    this._columnDefinitions = columns;
+    this._columns = columns;
     if (this._isGridInitialized) {
       this.updateColumnDefinitionsList(columns);
     }
@@ -602,7 +602,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
 
     this._dataset = null;
     this.datasetHierarchical = undefined;
-    this._columnDefinitions = [];
+    this._columns = [];
     this._angularGridInstances = undefined;
     this.slickGrid = undefined as any;
 
@@ -710,28 +710,28 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
     this.preRegisterResources();
 
     // prepare and load all SlickGrid editors, if an async editor is found then we'll also execute it.
-    this._columnDefinitions = this.loadSlickGridEditors(this._columnDefinitions || []);
+    this._columns = this.loadSlickGridEditors(this._columns || []);
 
     // if the user wants to automatically add a Custom Editor Formatter, we need to call the auto add function again
     if (this.options.autoAddCustomEditorFormatter) {
-      autoAddEditorFormatterToColumnsWithEditor(this._columnDefinitions, this.options.autoAddCustomEditorFormatter);
+      autoAddEditorFormatterToColumnsWithEditor(this._columns, this.options.autoAddCustomEditorFormatter);
     }
 
     // save reference for all columns before they optionally become hidden/visible
-    this.sharedService.allColumns = this._columnDefinitions;
+    this.sharedService.allColumns = this._columns;
 
     // before certain extentions/plugins potentially adds extra columns not created by the user itself (RowMove, RowDetail, RowSelections)
     // we'll subscribe to the event and push back the change to the user so they always use full column defs array including extra cols
     this.subscriptions.push(
       this._eventPubSubService.subscribe<{ columns: Column[]; grid: SlickGrid }>('onPluginColumnsChanged', (data) => {
-        this._columnDefinitions = data.columns;
-        this.columnsChange.emit(this._columnDefinitions);
+        this._columns = data.columns;
+        this.columnsChange.emit(this._columns);
       })
     );
 
     // after subscribing to potential columns changed, we are ready to create these optional extensions
     // when we did find some to create (RowMove, RowDetail, RowSelections), it will automatically modify column definitions (by previous subscribe)
-    this.extensionService.createExtensionsBeforeGridCreation(this._columnDefinitions, this.options);
+    this.extensionService.createExtensionsBeforeGridCreation(this._columns, this.options);
 
     // if user entered some Pinning/Frozen "presets", we need to apply them in the grid options
     if (this.options.presets?.pinning) {
@@ -742,7 +742,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
     this.slickGrid = new SlickGrid<TData, Column<TData>, GridOption<Column<TData>>>(
       `#${this.gridId}`,
       this.customDataView || (this.dataView as SlickDataView<TData>),
-      this._columnDefinitions,
+      this._columns,
       this.options,
       this._eventPubSubService
     );
@@ -1707,11 +1707,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
     } else if (Array.isArray(flatDatasetInput) && flatDatasetInput.length > 0) {
       // we need to first convert the flat dataset to a hierarchical dataset and then sort it
       // we'll also add props, by mutation, required by the TreeDataService on the flat array like `__hasChildren`, `parentId` and anything else to work properly
-      sortedDatasetResult = this.treeDataService.convertFlatParentChildToTreeDatasetAndSort(
-        flatDatasetInput,
-        this._columnDefinitions,
-        this.options
-      );
+      sortedDatasetResult = this.treeDataService.convertFlatParentChildToTreeDatasetAndSort(flatDatasetInput, this._columns, this.options);
       this.sharedService.hierarchicalDataset = sortedDatasetResult.hierarchical;
       flatDatasetOutput = sortedDatasetResult.flat;
     }

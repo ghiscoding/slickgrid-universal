@@ -94,7 +94,7 @@ We'll use the OData Backend Service to demo Infinite Scroll with a Backend Servi
 ```ts
 export class Example {
   initializeGrid() {
-    this.columnDefinitions = [ /* ... */ ];
+    this.columns = [ /* ... */ ];
 
     this.gridOptions = {
       presets: {

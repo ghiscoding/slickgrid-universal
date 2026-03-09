@@ -67,7 +67,7 @@ const Example3: React.FC = () => {
   const [reactGrid, setReactGrid] = useState<SlickgridReactInstance>();
   const [hideSubTitle, setHideSubTitle] = useState(false);
 
-  const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([
+  const [columns, setColumns] = useState<Column[]>([
     {
       id: 'edit',
       field: 'id',
@@ -448,7 +448,7 @@ const Example3: React.FC = () => {
     // wrap into a timer to simulate a backend async call
     setTimeout(() => {
       // at any time, we can poke the 'collection' property and modify it
-      const requisiteColumnDef = columnDefinitions?.find((column: Column) => column.id === 'prerequisites');
+      const requisiteColumnDef = columns?.find((column: Column) => column.id === 'prerequisites');
       if (requisiteColumnDef) {
         const collectionEditor = requisiteColumnDef.editor!.collection;
         const collectionFilter = requisiteColumnDef.filter!.collection;
@@ -485,7 +485,7 @@ const Example3: React.FC = () => {
 
   /** Delete last inserted row */
   function deleteItem() {
-    const requisiteColumnDef = columnDefinitions?.find((column: Column) => column.id === 'prerequisites');
+    const requisiteColumnDef = columns?.find((column: Column) => column.id === 'prerequisites');
     if (requisiteColumnDef) {
       const collectionEditor = requisiteColumnDef.editor!.collection;
       const collectionFilter = requisiteColumnDef.filter!.collection;
@@ -592,7 +592,7 @@ const Example3: React.FC = () => {
 
     // you can dynamically add your column to your column definitions
     // and then use the spread operator [...cols] OR slice to force React to review the changes
-    setColumnDefinitions([...columnDefinitions!, newCol]);
+    setColumns([...columns!, newCol]);
 
     // NOTE if you use an Extensions (Checkbox Selector, Row Detail, ...) that modifies the column definitions in any way
     // you MUST use 'getAllColumnDefinitions()' from the GridService, using this will be ALL columns including the 1st column that is created internally
@@ -600,18 +600,18 @@ const Example3: React.FC = () => {
     /*
     const allColumns = reactGrid.gridService.getAllColumnDefinitions();
     allColumns.push(newCol);
-    columnDefinitions = [...allColumns]; // (or use slice) reassign to column definitions for React to do dirty checking
+    columns = [...allColumns]; // (or use slice) reassign to column definitions for React to do dirty checking
     */
   }
 
   function dynamicallyRemoveLastColumn() {
-    columnDefinitions.pop();
-    setColumnDefinitions(columnDefinitions.slice());
+    columns.pop();
+    setColumns(columns.slice());
 
     /*
     // remove your column the full set of columns
     allOriginalColumns.pop();
-    columnDefinitions = allOriginalColumns.slice();
+    columns = allOriginalColumns.slice();
     */
   }
 
@@ -785,7 +785,7 @@ const Example3: React.FC = () => {
       <div className="col-sm-12">
         <SlickgridReact
           gridId="grid3"
-          columns={columnDefinitions}
+          columns={columns}
           options={gridOptions}
           dataset={dataset}
           onReactGridCreated={(e) => {

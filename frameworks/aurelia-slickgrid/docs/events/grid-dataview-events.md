@@ -86,7 +86,7 @@ Bind `dataview.bind` and `grid.bind`
   gridId="grid2"
   dataview.bind="dataviewObj"
   grid.bind="gridObj"
-  columns.bind="columnDefinitions"
+  columns.bind="columns"
   options.bind="gridOptions"
   dataset.bind="dataset">
 </aurelia-slickgrid>
@@ -118,7 +118,7 @@ import { Editors, Formatters, GridExtraUtils } from 'aurelia-slickgrid';
 export class GridEditorComponent {
   @bindable() gridObj: any;
   @bindable() dataviewObj: any;
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
   dataviewObj: any;
@@ -137,7 +137,7 @@ export class GridEditorComponent {
   }
 
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'delete', field: 'id', formatter: Formatters.deleteIcon, maxWidth: 30 }
       // ...
     ];

@@ -22,7 +22,7 @@ export default class Example21 {
   private _views: CreatedView[] = [];
   detailViewRowCount = 9;
   gridOptions!: GridOption;
-  columnDefinitions!: Column<Distributor>[];
+  columns!: Column<Distributor>[];
   dataset!: Distributor[];
   isUsingInnerGridStatePresets = false;
   isUsingAutoHeight = false;
@@ -46,12 +46,7 @@ export default class Example21 {
     this.dataset = this.mockData(NB_ITEMS);
     this.gridContainerElm = document.querySelector<HTMLDivElement>('.grid21') as HTMLDivElement;
 
-    this.sgb = new Slicker.GridBundle(
-      this.gridContainerElm,
-      this.columnDefinitions,
-      { ...ExampleGridOptions, ...this.gridOptions },
-      this.dataset
-    );
+    this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
 
     // add all row detail event listeners
     this.addRowDetailEventHandlers();
@@ -79,7 +74,7 @@ export default class Example21 {
 
   /* Define grid Options and Columns */
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'companyId',
         name: 'ID',

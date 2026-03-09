@@ -41,7 +41,7 @@ For example, we can see below is that we have a regular flat dataset with items 
 ###### View
 ```html
   <angular-slickgrid gridId="grid1"
-                     [columns]="columnDefinitions"
+                     [columns]="columns"
                      [options]="gridOptions"
                      [dataset]="dataset"
                      (onAngularGridCreated)="angularGridReady($event.detail)">
@@ -65,7 +65,7 @@ _For the full list of options, refer to the [treeDataOptions](https://github.com
 ###### define your grid
 ```ts
 defineGrid() {
-  this.columnDefinitions = [
+  this.columns = [
     {
       id: 'title', name: 'Title', field: 'title', width: 220, cssClass: 'cell-title',
       filterable: true, sortable: true,
@@ -106,7 +106,7 @@ _For the full list of options, refer to the [treeDataOptions](https://github.com
 ###### View
 ```html
 <angular-slickgrid gridId="grid1"
-                    [columns]="columnDefinitions"
+                    [columns]="columns"
                     [options]="gridOptions"
                     [datasetHierarchical]="datasetHierarchical"
                     (onAngularGridCreated)="angularGridReady($event.detail)">
@@ -132,7 +132,7 @@ this.datasetHierarchical = [
 ###### define your grid
 ```ts
 initializeGrid() {
-  this.columnDefinitions = [
+  this.columns = [
     {
       id: 'file', name: 'Files', field: 'file',
       width: 150, formatter: this.treeFormatter,
@@ -337,7 +337,7 @@ There is also a new and optional Formatter, `Formatters.treeParseTotals`, that w
 
 #### with `Formatters.treeParseTotals`
 ```ts
-this.columnDefinitions = [
+this.columns = [
   {
     id: 'size', name: 'Size', field: 'size', minWidth: 90,
 
@@ -362,7 +362,7 @@ this.columnDefinitions = [
 
 #### with Custom Formatter
 ```ts
-this.columnDefinitions = [
+this.columns = [
   {
     id: 'size', name: 'Size', field: 'size', minWidth: 90,
 

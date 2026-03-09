@@ -8,7 +8,7 @@ const NB_ITEMS = 100;
 export default class Example19 {
   protected _eventHandler: SlickEventHandler;
 
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   dataset: any[] = [];
   gridOptions!: GridOption;
   gridContainerElm: HTMLDivElement;
@@ -27,7 +27,7 @@ export default class Example19 {
     this.gridContainerElm = document.querySelector<HTMLDivElement>(`.grid19`) as HTMLDivElement;
     this.sgb = new Slicker.GridBundle(
       document.querySelector(`.grid19`) as HTMLDivElement,
-      this.columnDefinitions,
+      this.columns,
       { ...ExampleGridOptions, ...this.gridOptions },
       this.dataset
     );
@@ -79,7 +79,7 @@ export default class Example19 {
 
   /* Define grid Options and Columns */
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'selector',
         name: '',
@@ -88,7 +88,7 @@ export default class Example19 {
       },
     ];
 
-    this.columnDefinitions.push({
+    this.columns.push({
       id: 'approvalDate',
       name: 'Approval Date',
       field: 'approvalDate',
@@ -99,7 +99,7 @@ export default class Example19 {
       exportWithFormatter: true,
     });
     for (let i = 0; i < NB_ITEMS; i++) {
-      this.columnDefinitions.push({
+      this.columns.push({
         id: i,
         name:
           i < 26

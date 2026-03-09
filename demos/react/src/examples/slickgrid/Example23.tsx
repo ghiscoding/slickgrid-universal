@@ -36,7 +36,7 @@ const taskTranslateFormatter: Formatter = (_row, _cell, value, _columnDef, _data
 
 const Example23: React.FC = () => {
   const defaultLang = 'en';
-  const [columnDefinitions, setColumnDefinitions] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
   const [dataset] = useState<any[]>(getData(NB_ITEMS));
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
   const [selectedLanguage, setSelectedLanguage] = useState<string>(defaultLang);
@@ -65,7 +65,7 @@ const Example23: React.FC = () => {
 
   /* Define grid Options and Columns */
   function defineGrid() {
-    const columnDefinitions: Column[] = [
+    const columns: Column[] = [
       {
         id: 'title',
         name: 'Title',
@@ -211,7 +211,7 @@ const Example23: React.FC = () => {
       externalResources: [new SlickCustomTooltip(), new ExcelExportService()],
     };
 
-    setColumnDefinitions(columnDefinitions);
+    setColumns(columns);
     setGridOptions(gridOptions);
   }
 
@@ -270,7 +270,7 @@ const Example23: React.FC = () => {
 
   // function selectedColumnChanged(e: React.ChangeEvent<HTMLSelectElement>) {
   //   const selectedVal = (e.target as HTMLSelectElement)?.value ?? '';
-  //   const selectedColumn = columnDefinitions.find(c => c.id === selectedVal);
+  //   const selectedColumn = columns.find(c => c.id === selectedVal);
 
   //   setSelectedColumn(selectedColumn);
   // }
@@ -461,7 +461,7 @@ const Example23: React.FC = () => {
 
       <SlickgridReact
         gridId="grid23"
-        columns={columnDefinitions}
+        columns={columns}
         options={gridOptions}
         dataset={dataset}
         onReactGridCreated={($event) => reactGridReady($event.detail)}

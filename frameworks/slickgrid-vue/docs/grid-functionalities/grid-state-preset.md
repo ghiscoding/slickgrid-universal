@@ -31,7 +31,7 @@ import { Column, Filters, Formatters, GridOption, GridState, SlickgridVue, Slick
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 let vueGrid: SlickgridVueInstance;
 
@@ -63,7 +63,7 @@ function saveCurrentGridState() {
 
 <template>
   <SlickgridVue gridId="grid1"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:options="gridOptions"
     v-model:dataset="dataset"
     @onGridStateChanged="gridStateChanged($event.detail)"
@@ -126,7 +126,7 @@ import { type Column, Filters, Formatters, GridState, SlickgridVue, SlickgridVue
 import { onBeforeMount, type Ref } from 'vue';
 
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 
 onBeforeMount(() => {
@@ -134,7 +134,7 @@ onBeforeMount(() => {
 });
 
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     { id: 'name', name: 'Name', field: 'name', filterable: true, sortable: true, sortable: true },
     { id: 'duration', name: 'Duration', field: 'duration', filterable: true, sortable: true },
     { id: 'complete', name: '% Complete', field: 'percentComplete', filterable: true, sortable: true },
@@ -188,7 +188,7 @@ function gridStateChanged(gridState) {
 
 <template>
   <SlickgridVue gridId="grid1"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:options="gridOptions"
     v-model:dataset="dataset"
     @onGridStateChanged="gridStateChanged($event.detail)"
@@ -207,19 +207,19 @@ So let say that we want to hide the last Column on page load, we can just find t
 Pass the Grid Presets with an array that has less `presets.columns`, whichever column(s) are missing will be considered hidden columns
 
 ```ts
-columnDefinitions.value = [
+columns.value = [
   // initial column definitions
 ];
 
 // for example, let's hide last column, we can just use `pop()` to ommit last column
 // and use `map()` to pull only the required field for presets to work
-const mappedColumnDefinitions = columnDefinitions.value.map(col => ({ columnId: col.id, width: col.width }));
-mappedColumnDefinitions.pop();
+const mappedColumns = columns.value.map(col => ({ columnId: col.id, width: col.width }));
+mappedColumns.pop();
 
 // then pass it to the grid presets (an array of columns minus the last column)
 gridOptions.value = {
   presets: {
-    columns: mappedColumnDefinitions
+    columns: mappedColumns
   }
 };
 ```

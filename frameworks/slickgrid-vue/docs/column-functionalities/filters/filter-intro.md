@@ -19,7 +19,7 @@ You simply need to set the flag `filterable` for each column that you want filte
 ```ts
 <script setup lang="ts">
 // define you columns, in this demo Effort Driven will use a Select Filter
-columnDefinitions.value = [
+columns.value = [
   { id: 'title', name: 'Title', field: 'title' }, // without filter
   { id: 'description', name: 'Description', field: 'description', filterable: true } // with filter
 ];

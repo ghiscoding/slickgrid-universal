@@ -30,7 +30,7 @@ below we use `mounted`, but it could be totally different dependending on what f
 import { Column, GridOption, Slicker } from '@slickgrid-universal/common';
 
 export class GridBasicComponent {
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   gridOptions: GridOption = {};
 
   constructor() {
@@ -39,7 +39,7 @@ export class GridBasicComponent {
 
   mounted() {
     const container = document.querySelector(`.grid1`) as HTMLDivElement;
-    this.sgb = new Slicker.GridBundle(container, this.columnDefinitions, this.getData());
+    this.sgb = new Slicker.GridBundle(container, this.columns, this.getData());
   }
 
   getData() {
@@ -47,7 +47,7 @@ export class GridBasicComponent {
   }
 
   prepareGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'title', name: 'Title', field: 'title', sortable: true },
       { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true },
       { id: '%', name: '% Complete', field: 'percentComplete', sortable: true },

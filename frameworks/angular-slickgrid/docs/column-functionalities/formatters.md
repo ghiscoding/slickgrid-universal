@@ -92,12 +92,12 @@ To use any of them, you simply need to import `Formatters` from `Slickgrid-Unive
 import { Formatters } from 'angular-slickgrid';
 
 export class GridBasicComponent implements OnInit {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
 
   ngOnInit(): void {
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'title', name: 'Title', field: 'title' },
       { id: 'duration', name: 'Duration (days)', field: 'duration' },
       { id: '%', name: '% Complete', field: 'percentComplete', formatter: Formatters.percentComplete },
@@ -116,7 +116,7 @@ What if you want to pass extra arguments that you want to use within the Formatt
 ```ts
 let optionList = ['True', 'False'];
 
-this.columnDefinitions = [
+this.columns = [
       { id: 'title', field: 'title',
         headerTranslate: 'TITLE',
         formatter: myCustomSelectFormatter,
@@ -137,7 +137,7 @@ SlickGrid only has 1 `formatter` property but if you want to use more than 1 For
 // Data Example::
 // data = [{ shipping: { cost: 123.22, address: { zip: 123456 } } }];
 
-this.columnDefinitions = [
+this.columns = [
   {
     id: 'shippingCost', field: 'shipping.cost', name: 'Shipping Cost',
     formatter: Formatters.multiple,
@@ -222,7 +222,7 @@ You can set some defined common Formatter Options in your Grid Options through t
 
 ```ts
 loadGrid() {
-  this.columnDefinitions = [
+  this.columns = [
     // through the column definition "params"
     { id: 'price', field: 'price', params: { thousandSeparator: ',' } },
   ];
@@ -274,7 +274,7 @@ There many built-in Date Formatters that are already available (see [list](#list
 For example, if you wish to display a date like `"March 12, 2025"`, you could add this to your column definition:
 
 ```ts
-const columnDefinitions = [
+const columns = [
   { 
     id: 'finish', name: 'Finish', field: 'finish', 
     type: 'date', 

@@ -14,7 +14,7 @@ import './example09.scss'; // provide custom CSS/SASS styling
 
 export class Example09 {
   aureliaGrid!: AureliaGridInstance;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   gridOptions!: GridOption;
   dataset: any[] = [];
   dataView!: SlickDataView;
@@ -44,7 +44,7 @@ export class Example09 {
   }
 
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'title', name: 'Title', field: 'title', nameKey: 'TITLE', filterable: true },
       {
         id: 'duration',

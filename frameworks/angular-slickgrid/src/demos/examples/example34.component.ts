@@ -86,7 +86,7 @@ export class Example34Component implements OnDestroy, OnInit {
   private _darkMode = false;
   angularGrid!: AngularGridInstance;
   gridOptions!: GridOption;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   dataset: any[] = [];
   hideSubTitle = false;
   isFullScreen = false;
@@ -121,7 +121,7 @@ export class Example34Component implements OnDestroy, OnInit {
   /* Define grid Options and Columns */
   defineGrid() {
     // the columns field property is type-safe, try to add a different string not representing one of DataItems properties
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'currency',
         name: 'Currency',
@@ -381,7 +381,7 @@ export class Example34Component implements OnDestroy, OnInit {
   }
 
   findColumnById(columnName: string): Column {
-    return this.columnDefinitions.find((col) => col.field === columnName) as Column;
+    return this.columns.find((col) => col.field === columnName) as Column;
   }
 
   renderCellHighlighting(item: any, column: Column, priceChange: number) {

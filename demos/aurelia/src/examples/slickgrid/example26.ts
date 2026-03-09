@@ -26,7 +26,7 @@ export class Example26 {
   private _commandQueue: EditCommand[] = [];
   aureliaGrid!: AureliaGridInstance;
   gridOptions!: GridOption;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   dataset: any[] = [];
   updatedObject: any;
   hideSubTitle = false;
@@ -51,7 +51,7 @@ export class Example26 {
 
   /* Define grid Options and Columns */
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',

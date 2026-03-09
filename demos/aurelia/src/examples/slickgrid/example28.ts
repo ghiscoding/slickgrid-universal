@@ -19,7 +19,7 @@ import './example28.scss'; // provide custom CSS/SASS styling
 export class Example28 {
   aureliaGrid!: AureliaGridInstance;
   gridOptions!: GridOption;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   datasetHierarchical: any[] = [];
   hideSubTitle = false;
   isExcludingChildWhenFiltering = false;
@@ -41,7 +41,7 @@ export class Example28 {
 
   /* Define grid Options and Columns */
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'file',
         name: 'Files',

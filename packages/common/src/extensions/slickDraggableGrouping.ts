@@ -29,7 +29,7 @@ import { sortByFieldType } from '../sortComparers/sortUtilities.js';
  *
  * A plugin to add drop-down menus to column headers.
  * To specify a custom button in a column header, extend the column definition like so:
- *   this.columnDefinitions = [{
+ *   this.columns = [{
  *     id: 'cost', name: 'Cost', field: 'cost',
  *     grouping: {
  *       getter: 'cost',

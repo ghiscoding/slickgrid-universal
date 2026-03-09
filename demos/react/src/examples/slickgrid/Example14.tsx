@@ -8,8 +8,8 @@ const Example14: React.FC = () => {
   const [gridOptions1, setGridOptions1] = useState<GridOption | undefined>(undefined);
   const [gridOptions2, setGridOptions2] = useState<GridOption | undefined>(undefined);
   const [isColspanSpreading, setIsColspanSpreading] = useState<boolean>(false);
-  const [columnDefinitions1, setColumnDefinitions1] = useState<Column[]>([]);
-  const [columnDefinitions2, setColumnDefinitions2] = useState<Column[]>([]);
+  const [columns1, setColumns1] = useState<Column[]>([]);
+  const [columns2, setColumns2] = useState<Column[]>([]);
   const [dataset1, setDataset1] = useState<any[]>([]);
   const [dataset2, setDataset2] = useState<any[]>([]);
   const reactGridRef1 = useRef<SlickgridReactInstance | null>(null);
@@ -32,7 +32,7 @@ const Example14: React.FC = () => {
   }
 
   function defineGrid1() {
-    const columnDefinitions1: Column[] = [
+    const columns1: Column[] = [
       { id: 'title', name: 'Title', field: 'title', sortable: true, columnGroup: 'Common Factor' },
       { id: 'duration', name: 'Duration', field: 'duration', columnGroup: 'Common Factor' },
       { id: 'start', name: 'Start', field: 'start', columnGroup: 'Period' },
@@ -68,12 +68,12 @@ const Example14: React.FC = () => {
       },
     };
 
-    setColumnDefinitions1(columnDefinitions1);
+    setColumns1(columns1);
     setGridOptions1(gridOptions1);
   }
 
   function defineGrid2() {
-    const columnDefinitions2: Column[] = [
+    const columns2: Column[] = [
       {
         id: 'sel',
         name: '#',
@@ -111,7 +111,7 @@ const Example14: React.FC = () => {
       headerMenu: { hideFreezeColumnsCommand: false },
     };
 
-    setColumnDefinitions2(columnDefinitions2);
+    setColumns2(columns2);
     setGridOptions2(gridOptions2);
   }
 
@@ -221,7 +221,7 @@ const Example14: React.FC = () => {
 
       <SlickgridReact
         gridId="grid1"
-        columns={columnDefinitions1}
+        columns={columns1}
         options={gridOptions1}
         dataset={dataset1}
         onReactGridCreated={($event) => reactGrid1Ready($event.detail)}
@@ -252,7 +252,7 @@ const Example14: React.FC = () => {
 
       <SlickgridReact
         gridId="grid2"
-        columns={columnDefinitions2}
+        columns={columns2}
         options={gridOptions2}
         dataset={dataset2}
         onReactGridCreated={($event) => reactGrid2Ready($event.detail)}

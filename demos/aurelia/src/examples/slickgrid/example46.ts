@@ -22,7 +22,7 @@ interface ChapterTree extends Chapter {
 export class Example46 {
   aureliaGrid!: AureliaGridInstance;
   gridOptions!: GridOption;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   datasetHierarchical: any[] = [];
   hideSubTitle = false;
   isExcludingChildWhenFiltering = false;
@@ -45,7 +45,7 @@ export class Example46 {
 
   /* Define grid Options and Columns */
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'chapterName',
         name: 'Chapter',

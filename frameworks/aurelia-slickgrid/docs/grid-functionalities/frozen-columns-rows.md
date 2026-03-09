@@ -16,7 +16,7 @@ To set a pinning for the entire duration of the grid, simply use the Grid Option
 ```html
 <aurelia-slickgrid
     grid-id="gridId"
-    columns.bind="columnDefinitions"
+    columns.bind="columns"
     options.bind="gridOptions"
     dataset.bind="dataset">
 </aurelia-slickgrid>
@@ -25,13 +25,13 @@ To set a pinning for the entire duration of the grid, simply use the Grid Option
 ##### Component
 ```typescript
 export class GridBasicComponent {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
 
   attached(): void {
       // your columns definition
-    this.columnDefinitions = [];
+    this.columns = [];
 
     this.gridOptions = {
       alwaysShowVerticalScroll: false, // disable scroll since we don't want it to show on the left pinned columns
@@ -53,13 +53,13 @@ This is basically the same thing as previous code sample, except that you will s
 ##### Component
 ```typescript
 export class GridBasicComponent {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
 
   attached(): void {
       // your columns definition
-    this.columnDefinitions = [];
+    this.columns = [];
 
     this.gridOptions = {
       alwaysShowVerticalScroll: false, // disable scroll since we don't want it to show on the left pinned columns
@@ -100,7 +100,7 @@ You can change the number of pinned columns/rows and even the pinning of columns
 
 <aurelia-slickgrid
     grid-id="gridId"
-    columns.bind="columnDefinitions"
+    columns.bind="columns"
     options.bind="gridOptions"
     dataset.bind="dataset"
     on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)">
@@ -112,7 +112,7 @@ You can change the number of pinned columns/rows and even the pinning of columns
 import { AureliaGridInstance } from 'aurelia-slickgrid';
 
 export class GridBasicComponent {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
   gridObj: any;
@@ -120,7 +120,7 @@ export class GridBasicComponent {
 
   attached(): void {
     // your columns definition
-    this.columnDefinitions = [];
+    this.columns = [];
 
     this.gridOptions = {
       alwaysShowVerticalScroll: false, // disable scroll since we don't want it to show on the left pinned columns

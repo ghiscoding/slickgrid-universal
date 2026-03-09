@@ -65,7 +65,7 @@ export interface ViewDefinition {
 export default class Example11 {
   private _bindingEventService: BindingEventService;
   allColumnIds = ['title', 'duration', 'cost', 'percentComplete', 'start', 'finish', 'completed', 'product', 'countryOfOrigin', 'action'];
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[] = [];
   currentSelectedViewPreset?: ViewDefinition;
@@ -126,12 +126,7 @@ export default class Example11 {
     this.gridContainerElm = document.querySelector(`.grid11`) as HTMLDivElement;
     this.viewSelectElm = document.querySelector('.selected-view') as HTMLSelectElement;
 
-    this.sgb = new Slicker.GridBundle(
-      this.gridContainerElm,
-      this.columnDefinitions,
-      { ...ExampleGridOptions, ...this.gridOptions },
-      this.dataset
-    );
+    this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
 
     // bind any of the grid events
     this._bindingEventService.bind(this.gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
@@ -147,7 +142,7 @@ export default class Example11 {
   }
 
   initializeGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',
@@ -386,7 +381,7 @@ export default class Example11 {
     ];
 
     // automatically add a Custom Formatter with blue background for any Editable Fields
-    this.autoAddCustomEditorFormatter(this.columnDefinitions, customEditableInputFormatter);
+    this.autoAddCustomEditorFormatter(this.columns, customEditableInputFormatter);
 
     this.gridOptions = {
       autoEdit: true, // true single click (false for double-click)
@@ -550,7 +545,7 @@ export default class Example11 {
       case 'modal':
         this.sgb.slickGrid?.getSelectedRows() || [];
         const modalContainerElm = document.querySelector('.modal-container') as HTMLDivElement;
-        const columnDefinitionsClone = deepCopy(this.columnDefinitions);
+        const columnDefinitionsClone = deepCopy(this.columns);
         const massUpdateColumnDefinitions = columnDefinitionsClone?.filter((col: Column) => col.editor?.massUpdate) || [];
         const selectedItems = this.sgb.gridService.getSelectedRowsDataItem();
         const selectedIds = selectedItems.map((selectedItem) => selectedItem.id);
@@ -838,9 +833,9 @@ export default class Example11 {
       this.sgb.filterService.clearFilters();
       this.sgb.sortService.clearSorting();
       this.sgb.gridStateService.changeColumnsArrangement(
-        [...this.columnDefinitions].map((col) => ({ columnId: `${col.id}` }))
+        [...this.columns].map((col) => ({ columnId: `${col.id}` }))
         // OR the `hidden` props alternative
-        // [...this.columnDefinitions].map((col) => ({ columnId: `${col.id}`, hidden: false }))
+        // [...this.columns].map((col) => ({ columnId: `${col.id}`, hidden: false }))
       );
     }
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.predefinedViews));

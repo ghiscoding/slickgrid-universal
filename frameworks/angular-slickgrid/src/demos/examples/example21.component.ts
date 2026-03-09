@@ -21,7 +21,7 @@ export class Example21Component implements OnInit {
   angularGrid!: AngularGridInstance;
   grid!: SlickGrid;
   dataView!: SlickDataView;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   gridOptions!: GridOption;
   dataset!: any[];
   hideSubTitle = false;
@@ -39,7 +39,7 @@ export class Example21Component implements OnInit {
   }
 
   prepareGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',
@@ -86,7 +86,7 @@ export class Example21Component implements OnInit {
         type: 'number',
       },
     ];
-    this.selectedColumn = this.columnDefinitions[0];
+    this.selectedColumn = this.columns[0];
 
     this.gridOptions = {
       // if you want to disable autoResize and use a fixed width which requires horizontal scrolling

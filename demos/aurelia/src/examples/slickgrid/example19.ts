@@ -14,7 +14,7 @@ export class Example19 {
 
   aureliaGrid!: AureliaGridInstance;
   gridOptions!: GridOption;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   dataset: any[] = [];
   // extensions!: ExtensionList<any>;
   flashAlertType = 'info';
@@ -48,7 +48,7 @@ export class Example19 {
 
   /* Define grid Options and Columns */
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',

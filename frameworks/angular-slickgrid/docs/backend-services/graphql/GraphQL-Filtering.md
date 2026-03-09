@@ -48,12 +48,12 @@ import { Column, GridOption } from 'angular-slickgrid';
   templateUrl: './grid-basic.component.html'
 })
 export class GridBasicComponent implements OnInit {
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
 
   ngOnInit(): void {
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'name', name: 'Name', field: 'name', filterable: true, sortable: true },
       { id: 'company', name: 'Company', field: 'company', filterable: true },
       { id: 'billingStreet', name: 'Billing Address Street', field: 'billing.address.street', filterable: true, sortable: true },

@@ -31,7 +31,7 @@ interface ReportItem {
 }
 
 const Example51: React.FC = () => {
-  const [columnDefinitions, setColumnDefinitions] = useState<Column<ReportItem>[]>([]);
+  const [columns, setColumns] = useState<Column<ReportItem>[]>([]);
   const [gridOptions, setGridOptions] = useState<GridOption | undefined>();
   const [dataset] = useState<ReportItem[]>(loadData(NB_ITEMS));
   const [hideSubTitle, setHideSubTitle] = useState(false);
@@ -48,7 +48,7 @@ const Example51: React.FC = () => {
 
   /* Define grid Options and Columns */
   function defineGrid() {
-    const columnDefinitions: Column[] = [
+    const columns: Column[] = [
       {
         id: 'title',
         name: 'Title',
@@ -626,7 +626,7 @@ const Example51: React.FC = () => {
       },
     };
 
-    setColumnDefinitions(columnDefinitions);
+    setColumns(columns);
     setGridOptions(gridOptions);
   }
 
@@ -756,7 +756,7 @@ const Example51: React.FC = () => {
       <div id="grid-container" className="col-sm-12">
         <SlickgridReact
           gridId="grid51"
-          columns={columnDefinitions}
+          columns={columns}
           options={gridOptions}
           dataset={dataset}
           onReactGridCreated={($event) => reactGridReady($event.detail)}

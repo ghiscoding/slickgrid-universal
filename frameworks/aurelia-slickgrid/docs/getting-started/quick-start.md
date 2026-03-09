@@ -65,7 +65,7 @@ To provide locales other than English (default locale), you have 2 options that 
 ```html
 <aurelia-slickgrid
     grid-id="grid1"
-    columns.bind="columnDefinitions"
+    columns.bind="columns"
     options.bind="gridOptions"
     dataset.bind="dataset">
 </aurelia-slickgrid>
@@ -73,8 +73,8 @@ To provide locales other than English (default locale), you have 2 options that 
 #### ViewModel
 ```typescript
 export class Example1 {
-  gridOptions;
-  columnDefinitions;
+  gridOptions: GridOption;
+  columns: Column[];
   dataset = [];
 
   constructor() {
@@ -89,7 +89,7 @@ export class Example1 {
 
   /* Define grid Options and Columns */
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       { id: 'title', name: 'Title', field: 'title', sortable: true, minWidth: 100 },
       { id: 'duration', name: 'Duration (days)', field: 'duration', sortable: true, minWidth: 100 },
       { id: '%', name: '% Complete', field: 'percentComplete', sortable: true, minWidth: 100 },

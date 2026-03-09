@@ -51,7 +51,7 @@ export class Example32Component implements OnInit {
 
   angularGrid!: AngularGridInstance;
   gridOptions!: GridOption;
-  columnDefinitions: Column[] = [];
+  columns: Column[] = [];
   dataset: any[] = [];
   editQueue: any[] = [];
   editedItems: any = {};
@@ -78,7 +78,7 @@ export class Example32Component implements OnInit {
 
   // Grid2 definition
   defineGrid() {
-    this.columnDefinitions = [
+    this.columns = [
       {
         id: 'title',
         name: 'Title',
@@ -399,7 +399,7 @@ export class Example32Component implements OnInit {
     ];
 
     // add custom Header Menu to all columns except "Action"
-    this.columnDefinitions.forEach((col) => {
+    this.columns.forEach((col) => {
       col.header = {
         menu: {
           commandItems: [
@@ -515,7 +515,7 @@ export class Example32Component implements OnInit {
           ? editCommand.prevSerializedValue
           : [editCommand.prevSerializedValue];
         const serializedValues = Array.isArray(editCommand.serializedValue) ? editCommand.serializedValue : [editCommand.serializedValue];
-        const editorColumns = this.columnDefinitions.filter((col) => col.editor !== undefined);
+        const editorColumns = this.columns.filter((col) => col.editor !== undefined);
 
         const modifiedColumns: Column[] = [];
         prevSerializedValues.forEach((_val, index) => {

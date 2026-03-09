@@ -41,7 +41,7 @@ import { SlickRowDetailView } from '@slickgrid-universal/row-detail-view-plugin'
 
 export default class Example21 {
   gridOptions!: GridOption;
-  columnDefinitions!: Column<Item>[];
+  columns!: Column<Item>[];
   dataset!: Item[];
   rowDetail!: SlickRowDetailView;
   sgb!: SlickVanillaGridBundle;
@@ -52,11 +52,11 @@ export default class Example21 {
     // mock some data (different in each dataset)
     this.dataset = this.mockData(NB_ITEMS);
     this.gridContainerElm = document.querySelector<HTMLDivElement>(`.grid21`) as HTMLDivElement;
-    this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columnDefinitions, this.gridOptions, this.dataset);
+    this.sgb = new Slicker.GridBundle(this.gridContainerElm, this.columns, this.gridOptions, this.dataset);
   }
 
   defineGrid() {
-    this.columnDefinitions = [/*...*/];
+    this.columns = [/*...*/];
 
     this.gridOptions = {
       enableRowDetailView: true,

@@ -28,7 +28,7 @@ import type { Column, GridOption, ItemMetadata } from 'aurelia-slickgrid';
 
 example class MyExample {
   gridOptions: GridOption;
-  columnDefinitions: Column[];
+  columns: Column[];
   dataset: any[];
 
   // metadata can be dynamic too, it doesn't have to be preset
@@ -45,7 +45,7 @@ example class MyExample {
   };
 
   defineGrid() {
-    this.columnDefinitions = [ /*...*/ ];
+    this.columns = [ /*...*/ ];
 
     this.gridOptions.value = {
       enableCellNavigation: true,

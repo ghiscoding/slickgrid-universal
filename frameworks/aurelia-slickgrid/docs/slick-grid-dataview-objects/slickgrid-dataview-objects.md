@@ -22,7 +22,7 @@ Since version `2.x`, we can now access the Slick `Grid` & `DataView` objects dir
 
 <aurelia-slickgrid
       grid-id="grid1"
-      columns.bind="columnDefinitions"
+      columns.bind="columns"
       options.bind="gridOptions"
       dataset.bind="dataset"
       on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)">
@@ -35,7 +35,7 @@ import { AureliaGridInstance, Column, GridOption } from 'aurelia-slickgrid';
 
 export class MyApp {
   aureliaGrid: AureliaGridInstance;
-  columnDefinitions: Column[];
+  columns: Column[];
   gridOptions: GridOption;
   dataset: any[];
   isAutoEdit = true;
@@ -72,7 +72,7 @@ export class MyApp {
 You could also get all the Service instances via the new `instances` bindable property
 ```html
 <aurelia-slickgrid grid-id="grid19"
-    columns.bind="columnDefinitions"
+    columns.bind="columns"
     options.bind="gridOptions"
     dataset.bind="dataset"
     extensions.bind="extensions"

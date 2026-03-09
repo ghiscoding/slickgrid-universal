@@ -19,7 +19,7 @@ const { i18next } = useTranslation();
 
 const NB_ITEMS = 1500;
 const gridOptions = ref<GridOption>();
-const columnDefinitions: Ref<Column[]> = ref([]);
+const columns: Ref<Column[]> = ref([]);
 const dataset = ref<any[]>([]);
 const showSubTitle = ref(true);
 const selectedLanguage = ref('en');
@@ -47,7 +47,7 @@ onBeforeMount(() => {
 
 /* Define grid Options and Columns */
 function defineGrid() {
-  columnDefinitions.value = [
+  columns.value = [
     {
       id: 'title',
       name: 'Title',
@@ -257,8 +257,8 @@ function dynamicallyAddTitleHeader() {
     filterable: true,
     params: { useFormatterOuputToFilter: true },
   };
-  columnDefinitions.value.push(newCol);
-  columnDefinitions.value = columnDefinitions.value.slice(); // or use spread operator [...cols]
+  columns.value.push(newCol);
+  columns.value = columns.value.slice(); // or use spread operator [...cols]
 
   // NOTE if you use an Extensions (Checkbox Selector, Row Detail, ...) that modifies the column definitions in any way
   // you MUST use "getAllColumnDefinitions()" from the GridService, using this will be ALL columns including the 1st column that is created internally
@@ -266,7 +266,7 @@ function dynamicallyAddTitleHeader() {
   /*
     const allColumns = vueGrid.gridService.getAllColumnDefinitions();
     allColumns.push(newCol);
-    columnDefinitions.value = [...allColumns]; // (or use slice) reassign to column definitions for Vue to do dirty checking
+    columns.value = [...allColumns]; // (or use slice) reassign to column definitions for Vue to do dirty checking
     */
 }
 
@@ -404,7 +404,7 @@ function vueGridReady(grid: SlickgridVueInstance) {
 
   <slickgrid-vue
     v-model:options="gridOptions"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:dataset="dataset"
     grid-id="grid12"
     @onGridStateChanged="gridStateChanged($event.detail)"

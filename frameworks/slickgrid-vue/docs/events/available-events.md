@@ -23,7 +23,7 @@ function handleOnCellChange(e, args) {
 <template>
   <SlickgridVue
     grid-id="grid3"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:options="gridOptions"
     v-model:dataset="dataset"
     @onCellChange="handleOnCellChange(e.detail.eventData, e.detail.args)"
@@ -50,7 +50,7 @@ function handleOnHeaderMenuCommand(e) {
 <template>
   <SlickgridVue
     grid-id="grid3"
-    v-model:columns="columnDefinitions"
+    v-model:columns="columns"
     v-model:options="gridOptions"
     v-model:dataset="dataset"
     @onHeaderMenuCommand="handleOnHeaderMenuCommand($event.detail)"

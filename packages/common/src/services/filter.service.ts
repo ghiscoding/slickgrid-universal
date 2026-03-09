@@ -85,7 +85,7 @@ export class FilterService {
   }
 
   /** Getter for the Column Definitions pulled through the Grid Object */
-  protected get _columnDefinitions(): Column[] {
+  protected get _columns(): Column[] {
     return this._grid?.getColumns() ?? [];
   }
 
@@ -271,8 +271,8 @@ export class FilterService {
     this.removeAllColumnFiltersProperties();
 
     // also remove any search terms directly on each column definitions
-    if (Array.isArray(this._columnDefinitions)) {
-      this._columnDefinitions.forEach((columnDef: Column) => {
+    if (Array.isArray(this._columns)) {
+      this._columns.forEach((columnDef: Column) => {
         if (columnDef.filter?.searchTerms) {
           delete columnDef.filter.searchTerms;
         }
@@ -812,7 +812,7 @@ export class FilterService {
    */
   populateColumnFilterSearchTermPresets(filters: CurrentFilter[]): Column[] {
     if (Array.isArray(filters)) {
-      this._columnDefinitions.forEach((columnDef: Column) => {
+      this._columns.forEach((columnDef: Column) => {
         // clear any columnDef searchTerms before applying Presets
         if (columnDef.filter?.searchTerms) {
           delete columnDef.filter.searchTerms;
@@ -835,7 +835,7 @@ export class FilterService {
       // keep reference of the filters
       this._previousFilters = this.extractBasicFilterDetails(this._columnFilters);
     }
-    return this._columnDefinitions;
+    return this._columns;
   }
 
   /**
@@ -1282,10 +1282,10 @@ export class FilterService {
    * @param {boolean} isDisabling - are we disabling the filter functionality? Defaults to true
    */
   protected disableAllFilteringCommands(isDisabling = true): Column[] {
-    const columnDefinitions = this._grid.getColumns();
+    const columns = this._grid.getColumns();
 
     // loop through column definition to hide/show header menu commands
-    columnDefinitions.forEach((col) => {
+    columns.forEach((col) => {
       if (col?.header?.menu) {
         col.header.menu.commandItems?.forEach((menuItem) => {
           if (menuItem && typeof menuItem !== 'string') {
@@ -1311,7 +1311,7 @@ export class FilterService {
       });
     }
 
-    return columnDefinitions;
+    return columns;
   }
 
   /**

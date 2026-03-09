@@ -36,7 +36,7 @@ One of the very first thing that you need to do is to provide the `SlickGrid Dat
 ```html
 <aurelia-slickgrid
    grid-id="grid1"
-   columns.bind="columnDefinitions"
+   columns.bind="columns"
    options.bind="gridOptions" dataset.bind="dataset"
    on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)">
 </aurelia-slickgrid>
@@ -139,7 +139,7 @@ Note: the Group Total Formatters named as currency will have these extra `params
 ##### ViewModel
 ```typescript
 export class Example {
-  this.columnDefinitions = [
+  this.columns = [
     {
       id: 'title', name: 'Title', field: 'title'
     },
@@ -187,7 +187,7 @@ You can also create a custom `groupTotalsFormatter` similarly to a Formatter, ju
 ##### ViewModel
 ```typescript
 defineGrid() {
-  this.columnDefinitions = [
+  this.columns = [
       {
         id: 'cost', name: 'Cost', field: 'cost',
         groupTotalsFormatter: this.sumTotalsFormatter
