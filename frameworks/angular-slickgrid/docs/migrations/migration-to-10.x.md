@@ -4,7 +4,7 @@ One of the biggest change of this release is to hide columns by using the `hidde
 
 This new release also brings significant improvements to accessibility (a11y), making grids more usable for keyboard and screen reader users. For example, you can now use Tab/Shift+Tab to focus the Header Menu or Grid Menu, and then navigate menu commands with the arrow keys, making keyboard navigation much more intuitive and accessible.
 
-As a final touch, this release fully aligns Angular-Slickgrid with modern Angular patterns, including Angular 21 support, Standalone Components for simplified setup, and Zoneless change detection support which allows you to drop the `zone.js` dependency for improved performance and smaller bundle sizes.
+As a final touch, this release tries to align Angular-Slickgrid with more modern Angular patterns, including Angular 21 support, Standalone Components for simplified setup, and Zoneless change detection support which will allow you to drop the `zone.js` dependency for improved performance and smaller bundle size.
 
 #### Major Changes - Quick Summary
 - [`hidden` columns](#hidden-columns)
