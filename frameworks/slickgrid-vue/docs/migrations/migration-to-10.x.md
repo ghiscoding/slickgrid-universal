@@ -108,7 +108,7 @@ gridOptions = {
 
 ### Auto-Enabled External Resources
 
-This change does not require any code change from the end user, but it is nonetheless a change to be aware of. The reason I decided to implement this, is that I often forget to enable the resource associated flag and typically if you load the resource then you probably want to use it, hence auto-enabling the resource makes sense. For example, if your register `ExcelExportService` then the library will now auto-enable the resource with its associated flag (which in this case is `enableExcelExport:true`)... unless you have already enabled/disabled the flag yourself, then in that case the internal assignment will simply be skipped and yours will prevail. Also just to be clear, the list of auto-enabled external resources is rather small, it will auto-enable the following resources:
+This change does not require any code change from the end user, but it is nonetheless a change to be aware of. The reason I decided to implement this one, is that even myself I often forget to enable the resource associated flag and typically if you want to load the resource then it's probably because you want to use it, hence auto-enabling the resource makes sense. For example, if your register `ExcelExportService` then the library will now auto-enable the resource with its associated flag (which in this case is `enableExcelExport:true`)... unless you have already enabled/disabled the flag yourself, then in that case the internal assignment will simply be skipped and yours will prevail. Also just to be clear, the list of auto-enabled external resources is rather small, it will auto-enable the following resources:
 
 - ExcelExportService → `enableExcelExport: true`
 - PdfExportService → `enablePdfExport: true`
