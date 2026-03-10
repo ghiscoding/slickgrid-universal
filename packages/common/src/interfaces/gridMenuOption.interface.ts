@@ -39,7 +39,10 @@ export interface GridMenuOption extends MenuOption<GridMenuCommandItemCallbackAr
   /** Same as "columnTitle", except that it's a translation key which can be used on page load and/or when switching locale */
   columnTitleKey?: string;
 
-  /** Custom sort function for the columns in the grid menu */
+  /** Column list builder is a callback that can be used to filter/sort columns before rendering them in the DOM */
+  columnListBuilder?: (columns: Column[]) => Column[];
+
+  /** @deprecated @use `columnListBuilder` Custom sort function for the columns in the grid menu */
   columnSort?: (item1: Column, item2: Column) => number;
 
   /** Defaults to "left", which side to align the grid menu dropdown? */

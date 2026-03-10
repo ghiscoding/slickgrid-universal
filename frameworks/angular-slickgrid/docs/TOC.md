@@ -52,7 +52,7 @@
 
 * [Auto-Resize / Resizer Service](grid-functionalities/grid-auto-resize.md)
 * [Resize by Cell Content](grid-functionalities/Resize-by-Cell-Content.md)
-* [Column Picker](grid-functionalities/Column-Picker.md)
+* [Column Picker](grid-functionalities/column-picker.md)
 * [Composite Editor Modal](grid-functionalities/composite-editor-modal.md)
 * [Custom Tooltip](grid-functionalities/custom-tooltip.md)
 * [Add, Update or Highlight a Datagrid Item](grid-functionalities/add-update-highlight.md)

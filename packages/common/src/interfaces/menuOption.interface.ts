@@ -12,7 +12,7 @@ export interface MenuOption<T extends MenuFromCellCallbackArgs | GridMenuCommand
   // Methods
 
   /**
-   * Command builder, this function is executed after `commandItems: []` and is also the last call before rendering in the DOM.
+   * Command list builder, this function is executed after built-in commands are added but before rendering them in the DOM.
    * You would typically use this **instead** of the `commandItems: []`, since you can use this callback to filter/sort the final commands.
    *
    * // for example, you can spread the built-in commands with your own commands
