@@ -82,9 +82,9 @@ _following changes should be transparent to most users_
 
 ### Selection Models, keeping only `SlickHybridSelectionModel`
 
-1. rename `rowSelectionOptions` to `selectionOptions`
-2. drop both `SlickCellSelectionModel`/`SlickRowSelectionModel` and keep only `SlickHybridSelectionModel`
-3. drop both `enableHybridSelection`/`enableRowSelection` merge them into a new `enableSelection` grid option
+1. drop both `SlickCellSelectionModel`/`SlickRowSelectionModel` and keep only `SlickHybridSelectionModel`
+2. drop both `enableHybridSelection`/`enableRowSelection` and merge them into a new `enableSelection` grid option
+3. rename `rowSelectionOptions` grid option to `selectionOptions`
 
 `SlickHybridSelectionModel` was previously introduced in order to merge and allow using both Cell/Row Selections separately and/or in combo on the same grid. It was introduced in v9.x to test it out and after testing it for a few months, it's now safe to drop the older `SlickCellSelectionModel` / `SlickRowSelectionModel` models and keep only the hybrid model (for smaller build & less code to maintain). Also, since we now have the Hybrid model and it's now accepting options for different selection models, I think it's better to rename `rowSelectionOptions` to `selectionOptions` since it now makes more sense with the hybrid approach and you will need to update your code when using Row Selection, see below:
 
