@@ -130,7 +130,7 @@ describe('SlickGrid core file', () => {
   });
 
   it('should display a console warning when body zoom level is different than 100%', () => {
-    const consoleWarnSpy = vi.spyOn(global.console, 'warn').mockReturnValue();
+    const consoleWarnSpy = vi.spyOn(console, 'warn').mockReturnValue();
 
     document.body.style.zoom = '90%';
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
@@ -142,7 +142,7 @@ describe('SlickGrid core file', () => {
   });
 
   it('should not display a console warning when body zoom level is 100%', () => {
-    const consoleWarnSpy = vi.spyOn(global.console, 'warn').mockReturnValue();
+    const consoleWarnSpy = vi.spyOn(console, 'warn').mockReturnValue();
 
     document.body.style.zoom = '100%';
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
@@ -154,7 +154,7 @@ describe('SlickGrid core file', () => {
   });
 
   it('should not display a console warning when body zoom is not defined', () => {
-    const consoleWarnSpy = vi.spyOn(global.console, 'warn').mockReturnValue();
+    const consoleWarnSpy = vi.spyOn(console, 'warn').mockReturnValue();
 
     document.body.style.zoom = '';
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
@@ -166,7 +166,7 @@ describe('SlickGrid core file', () => {
   });
 
   it('should display a console warning when Row Detail is enabled with `rowTopOffsetRenderType` is set to "transfrom"', () => {
-    const consoleWarnSpy = vi.spyOn(global.console, 'warn').mockReturnValue();
+    const consoleWarnSpy = vi.spyOn(console, 'warn').mockReturnValue();
 
     document.body.style.zoom = '90%';
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
@@ -186,7 +186,7 @@ describe('SlickGrid core file', () => {
   });
 
   it('should display a console warning when RowSpan is enabled with `rowTopOffsetRenderType` is set to "transfrom"', () => {
-    const consoleWarnSpy = vi.spyOn(global.console, 'warn').mockReturnValue();
+    const consoleWarnSpy = vi.spyOn(console, 'warn').mockReturnValue();
 
     document.body.style.zoom = '90%';
     const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
@@ -1499,7 +1499,7 @@ describe('SlickGrid core file', () => {
     });
 
     it('should define colspan and rowspan but get a warning when enableCellRowSpan is disabled', () => {
-      const consoleWarnSpy = vi.spyOn(global.console, 'warn').mockReturnValue();
+      const consoleWarnSpy = vi.spyOn(console, 'warn').mockReturnValue();
       const columns = [
         { id: 'firstName', field: 'firstName', name: 'First Name' },
         { id: 'lastName', field: 'lastName', name: 'Last Name' },

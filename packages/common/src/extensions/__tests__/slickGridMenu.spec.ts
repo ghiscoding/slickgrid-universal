@@ -169,7 +169,7 @@ describe('GridMenuControl', () => {
   let div;
 
   describe('with I18N Service', () => {
-    const consoleErrorSpy = vi.spyOn(global.console, 'error').mockReturnValue();
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockReturnValue();
     let parentContainer: HTMLDivElement;
 
     beforeEach(() => {

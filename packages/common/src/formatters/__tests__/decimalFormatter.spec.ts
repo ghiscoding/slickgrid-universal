@@ -9,7 +9,7 @@ describe('the Decimal Formatter', () => {
   } as unknown as SlickGrid;
 
   beforeEach(() => {
-    vi.spyOn(global.console, 'warn').mockReturnValue();
+    vi.spyOn(console, 'warn').mockReturnValue();
   });
 
   it('should display an empty string when no value is provided', () => {

@@ -578,7 +578,7 @@ describe('SlickCustomTooltip plugin', () => {
   });
 
   it('should throw an error when trying to create an async tooltip without "asyncPostFormatter" defined', () => {
-    const consoleSpy = vi.spyOn(global.console, 'error').mockReturnValue();
+    const consoleSpy = vi.spyOn(console, 'error').mockReturnValue();
     const cellNode = document.createElement('div');
     cellNode.className = 'slick-cell l2 r2';
     const mockColumns = [{ id: 'firstName', field: 'firstName' }] as Column[];
@@ -638,7 +638,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
-    const consoleSpy = vi.spyOn(global.console, 'error').mockReturnValue();
+    const consoleSpy = vi.spyOn(console, 'error').mockReturnValue();
 
     plugin.init(gridStub, container);
     plugin.addRxJsResource(rxjsResourceStub);

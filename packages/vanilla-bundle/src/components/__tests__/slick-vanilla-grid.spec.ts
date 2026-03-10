@@ -845,7 +845,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
 
     describe('with editors', () => {
       it('should display a console warning when any of the column definition ids include a dot notation', () => {
-        const consoleSpy = vi.spyOn(global.console, 'warn').mockReturnValue();
+        const consoleSpy = vi.spyOn(console, 'warn').mockReturnValue();
         const mockColDefs = [{ id: 'user.gender', field: 'user.gender', editor: { model: Editors.text, collection: ['male', 'female'] } }] as Column[];
 
         component.columnDefinitions = mockColDefs;
@@ -942,7 +942,7 @@ describe('Slick-Vanilla-Grid-Bundle Component instantiated via Constructor', () 
       });
 
       it('should throw an error when Fetch Promise response bodyUsed is true', async () => {
-        const consoleSpy = vi.spyOn(global.console, 'warn').mockReturnValue();
+        const consoleSpy = vi.spyOn(console, 'warn').mockReturnValue();
         const mockCollection = ['male', 'female'];
         const collectionAsync = basicFetchStub('http://invalid-url', { method: 'GET' }, mockCollection);
         const mockColDefs = [{ id: 'gender', field: 'gender', editor: { model: Editors.text, collectionAsync } }] as Column[];
