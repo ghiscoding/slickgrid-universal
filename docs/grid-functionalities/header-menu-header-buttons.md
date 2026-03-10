@@ -54,6 +54,7 @@ this.gridOptions = {
   }
 };
 ```
+
 #### Dynamic Command List Builder
 For advanced use cases where you need to dynamically build the command list, use `commandListBuilder`. This callback receives the built-in commands and allows you to filter, sort, or modify the list before it's rendered in the UI, giving you full control over the final command list. This is executed **after** `commandItems` and is the **last call before rendering**.
 
@@ -93,7 +94,7 @@ header: {
   menu: {
     commandListBuilder: (builtInItems) => {
       const column = this; // column context
-      
+
       // Add filtering option only for filterable columns
       const extraCommands = [];
       if (column.filterable !== false) {
@@ -106,7 +107,7 @@ header: {
           }
         });
       }
-      
+
       return [...builtInItems, ...extraCommands];
     }
   }
@@ -119,11 +120,11 @@ header: {
   menu: {
     commandListBuilder: (builtInItems) => {
       // Filter out sort commands
-      const filtered = builtInItems.filter(item => 
-        item !== 'divider' && 
+      const filtered = builtInItems.filter(item =>
+        item !== 'divider' &&
         !item.command?.includes('sort')
       );
-      
+
       // Add custom commands
       return [
         ...filtered,

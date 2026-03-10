@@ -21,10 +21,12 @@ const gridOptions = {
 #### UI Sample
 ![image](https://user-images.githubusercontent.com/643976/71301681-6cfc3a00-2370-11ea-9c84-be880f345bcd.png)
 
-### How to change the "columnSort" option to sort columns
-The example demonstrates how to use the new alphabetical sorting feature:
+### Use the `columnSort` option to sort columns (deprecated)
+##### now `@deprecated`, use `columnListBuilder` in >= 10.x
 
-```typescript
+The example below demonstrates how to use the new alphabetical sorting feature:
+
+```ts
 columnPicker: {
   // enable the "columnSort" option to sort columns by name
   columnSort: (item1: Column, item2: Column) => {
@@ -32,6 +34,28 @@ columnPicker: {
     const nameB = item2.name?.toString().toLowerCase() || '';
     return nameA.localeCompare(nameB);
   },
-  // ... other grid menu options
+}
+```
+
+### Use the `columnListBuilder` option to filter/sort columns
+
+The `columnListBuilder` is a callback that is executed after reading the built-in columns but before rendering them in the DOM (this is useful to filter or sort columns).
+
+For example:
+
+```ts
+columnPicker: {
+  // enable the "columnSort" option to sort columns by name
+  columnListBuilder: (columns: Column[]) => {
+    // optionally sort columns
+    columns.sort((a, b) => {
+      const nameA = item1.name?.toString().toLowerCase() || '';
+      const nameB = item2.name?.toString().toLowerCase() || '';
+      return nameA.localeCompare(nameB);
+    });
+
+    // optionally filter some columns
+    return columns.filter(c => c.field !== 'gender');
+  },
 }
 ```

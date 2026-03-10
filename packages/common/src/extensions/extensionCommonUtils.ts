@@ -172,15 +172,22 @@ export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, ad
   const menuPrefix = isGridMenu ? 'gridmenu-' : '';
   const grid = context.grid as SlickGrid;
 
-  let sortedColumns = context.columns;
+  let processedColumns = context.columns;
   if (typeof addonOptions?.columnSort === 'function') {
     // create a sorted copy of the columns array based on the "name" property
-    sortedColumns = [...context.columns].sort(addonOptions.columnSort);
+    processedColumns = [...context.columns].sort(addonOptions.columnSort);
   }
 
-  for (const column of sortedColumns) {
+  // execute column list builder to allow user to filter/sort columns
+  if (typeof this.addonOptions.columnListBuilder === 'function') {
+    processedColumns = this.addonOptions.columnListBuilder(processedColumns);
+  }
+
+  for (const column of processedColumns) {
     const columnId = column.id;
     const columnLiElm = createDomElement('li', { tabIndex: -1 });
+
+    // deprecated, let's filter out the exclude columns before `columnListBuilder` above (let's do that in next major v11)
     if ((column.excludeFromColumnPicker && !isGridMenu) || (column.excludeFromGridMenu && isGridMenu)) {
       columnLiElm.className = 'hidden';
     }

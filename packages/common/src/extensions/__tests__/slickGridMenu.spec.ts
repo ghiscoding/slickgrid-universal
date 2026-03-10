@@ -4,7 +4,7 @@ import { TranslateServiceStub } from '../../../../../test/translateServiceStub.j
 import { SlickEvent, SlickEventData, type SlickDataView, type SlickGrid } from '../../core/index.js';
 import * as utils from '../../core/utils.js';
 import { ExtensionUtility } from '../../extensions/extensionUtility.js';
-import type { Column, DOMEvent, ExternalResource, GridMenu, GridOption, MenuCommandItem } from '../../interfaces/index.js';
+import type { Column, DOMEvent, ExternalResource, GridMenu, GridOption } from '../../interfaces/index.js';
 import {
   BackendUtilityService,
   SharedService,
@@ -2558,6 +2558,112 @@ describe('GridMenuControl', () => {
         expect(control.getAllColumns()).toEqual(columnsMock);
         expect(control.getVisibleColumns()).toEqual(columnsMock);
         expect(control.columns).toEqual(columnsMock);
+      });
+    });
+
+    describe('columnListBuilder functionality', () => {
+      beforeEach(() => {
+        control.dispose();
+        document.body.innerHTML = '';
+        div = document.createElement('div');
+        div.innerHTML = template;
+        document.body.appendChild(div);
+        vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
+      });
+
+      afterEach(() => {
+        gridOptionsMock.gridMenu!.columnListBuilder = undefined;
+      });
+
+      it('should filter columns using "columnListBuilder" callback when provided', () => {
+        const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
+
+        // Create columns with names that are not in alphabetical order
+        const originalColumnsMock: Column[] = [
+          { id: 'field1', field: 'field1', name: 'Zebra Field', width: 100 },
+          { id: 'field2', field: 'field2', name: 'Alpha Field', width: 75 },
+          { id: 'field3', field: 'field3', name: 'Beta Field', width: 75 },
+        ];
+        vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(originalColumnsMock);
+
+        // Define the columnListBuilder function to sort alphabetically by name
+        gridOptionsMock.gridMenu!.columnListBuilder = (columns) => {
+          return columns.filter((c) => c.field !== 'field2');
+        };
+        gridOptionsMock.gridMenu!.forceFitTitle = 'Force fit columns';
+
+        control.columns = originalColumnsMock;
+        control.initEventHandlers();
+        control.init();
+        const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLDivElement;
+        buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+
+        // Get the column labels from the menu in the order they appear
+        const liElmList = control.menuElement!.querySelectorAll<HTMLLIElement>('li');
+        const columnLabels: string[] = [];
+
+        // Extract text content from each column item (excluding force fit and sync resize buttons)
+        for (let i = 0; i < Math.min(liElmList.length, originalColumnsMock.length); i++) {
+          const labelSpan = liElmList[i].querySelector('.checkbox-label');
+          if (labelSpan?.textContent && labelSpan.textContent !== 'Force fit columns') {
+            columnLabels.push(labelSpan.textContent.trim()); // add column names but skip forcefit extra checkbox
+          }
+        }
+
+        expect(handlerSpy).toHaveBeenCalledTimes(4);
+
+        // Verify that columns are displayed in alphabetical order: Alpha Field, Beta Field, Zebra Field
+        expect(columnLabels).toEqual(['Zebra Field', 'Beta Field']);
+      });
+
+      it('should sort columns alphabetically by name when "columnListBuilder" function is provided', () => {
+        const handlerSpy = vi.spyOn(control.eventHandler, 'subscribe');
+
+        // Create columns with names that are not in alphabetical order
+        const unsortedColumnsMock: Column[] = [
+          { id: 'field1', field: 'field1', name: 'Zebra Field', width: 100 },
+          { id: 'field2', field: 'field2', name: 'Alpha Field', width: 75 },
+          { id: 'field3', field: 'field3', name: 'Beta Field', width: 75 },
+        ];
+        const sortedColumnsMock: Column[] = [
+          { id: 'field2', field: 'field2', name: 'Alpha Field', width: 75 },
+          { id: 'field3', field: 'field3', name: 'Beta Field', width: 75 },
+          { id: 'field1', field: 'field1', name: 'Zebra Field', width: 100 },
+        ];
+        vi.spyOn(gridStub, 'getColumns').mockReturnValueOnce(unsortedColumnsMock);
+
+        // Define the columnListBuilder function to sort alphabetically by name
+        gridOptionsMock.gridMenu!.columnListBuilder = (columns) => {
+          return columns.sort((col1: Column, col2: Column) => {
+            const nameA = String(col1.name || '').toLowerCase();
+            const nameB = String(col2.name || '').toLowerCase();
+            return nameA.localeCompare(nameB);
+          });
+        };
+        gridOptionsMock.gridMenu!.forceFitTitle = 'Force fit columns';
+
+        control.columns = unsortedColumnsMock;
+        control.initEventHandlers();
+        control.init();
+        const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLDivElement;
+        buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+
+        // Get the column labels from the menu in the order they appear
+        const liElmList = control.menuElement!.querySelectorAll<HTMLLIElement>('li');
+        const columnLabels: string[] = [];
+
+        // Extract text content from each column item (excluding force fit and sync resize buttons)
+        for (let i = 0; i < Math.min(liElmList.length, unsortedColumnsMock.length); i++) {
+          const labelSpan = liElmList[i].querySelector('.checkbox-label');
+          if (labelSpan?.textContent) {
+            columnLabels.push(labelSpan.textContent.trim());
+          }
+        }
+
+        expect(handlerSpy).toHaveBeenCalledTimes(4);
+
+        // Verify that columns are displayed in alphabetical order: Alpha Field, Beta Field, Zebra Field
+        expect(columnLabels).toEqual(sortedColumnsMock.map((c) => c.name));
       });
     });
   });
