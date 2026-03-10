@@ -17,13 +17,10 @@ tsconfig.tsbuildinfo
 
 # Tests, Report & Coverage
 *.spec.ts
-/test
 **/docs
 **/website
 **/node_modules
 **/coverage
 **/vitest-coverage
+**/test
 **/*.tgz
-**/junit.xml
-**/test-report.xml
-**/testresult.xml

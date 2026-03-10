@@ -1,22 +1,11 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
-# compiled output
-/tmp
-/out-tsc
-/.ng_build
-.ng_build
-
 # dependencies
 **/node_modules
 
 # IDEs and editors
-/.idea
-.project
-.classpath
-.c9/
 *.launch
 .settings/
-*.sublime-workspace
 
 # IDE - VSCode
 .angular
@@ -24,19 +13,13 @@
 
 # misc
 .eslintcache
-.jest-cache
-jest-coverage
 .sass-cache
 /connect.lock
-/coverage
 /libpeerconnection.log
 .pnpm-debug.log
 npm-debug.log
 pnpm-debug.log
 lerna-debug.log
-roller-debug.log
-testem.log
-yarn-error.log
 tsconfig.tsbuildinfo
 
 # System Files
@@ -49,16 +32,11 @@ dist-demo
 website
 
 # Tests Report & Coverage
-**/node_modules
 **/coverage
 **/vitest-coverage
 **/cypress-report
 **/dist
 **/*.tgz
-**/junit.xml
-**/test-report.xml
-**/testresult.xml
-**/test-results.xml
 test/cypress/screenshots/*.png
 
 # Environment variables
