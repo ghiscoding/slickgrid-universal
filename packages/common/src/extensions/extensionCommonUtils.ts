@@ -186,6 +186,8 @@ export function populateColumnPicker(this: SlickColumnPicker | SlickGridMenu, ad
   for (const column of processedColumns) {
     const columnId = column.id;
     const columnLiElm = createDomElement('li', { tabIndex: -1 });
+
+    // deprecated, let's filter out the exclude columns before `columnListBuilder` above (let's do that in next major v11)
     if ((column.excludeFromColumnPicker && !isGridMenu) || (column.excludeFromGridMenu && isGridMenu)) {
       columnLiElm.className = 'hidden';
     }
