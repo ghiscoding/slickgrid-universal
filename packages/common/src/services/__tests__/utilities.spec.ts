@@ -1426,7 +1426,7 @@ describe('Service/Utilies', () => {
     });
 
     it('should throw an error when Fetch Promise response bodyUsed is true', async () => {
-      const consoleSpy = vi.spyOn(global.console, 'warn').mockReturnValue();
+      const consoleSpy = vi.spyOn(console, 'warn').mockReturnValue();
       const mockCollection = ['male', 'female'];
       const collectionAsync = basicFetchStub('http://invalid-url', { method: 'GET' }, mockCollection);
 

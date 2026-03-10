@@ -864,7 +864,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
       });
 
       it('should display a console warning when any of the column definition ids include a dot notation', () => {
-        const consoleSpy = vi.spyOn(global.console, 'warn').mockReturnValue();
+        const consoleSpy = vi.spyOn(console, 'warn').mockReturnValue();
         const mockColDefs = [{ id: 'user.gender', field: 'user.gender', editor: { model: Editors.text, collection: ['male', 'female'] } }] as Column[];
 
         component.columns = mockColDefs;

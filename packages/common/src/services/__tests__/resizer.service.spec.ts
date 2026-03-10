@@ -990,7 +990,7 @@ describe('Resizer Service', () => {
 
       it('should try to resize grid when its UI is deemed broken but expect an error shown in the console when "resizeGrid" throws an error', () =>
         new Promise((done: any) => {
-          const consoleSpy = vi.spyOn(global.console, 'log').mockReturnValue();
+          const consoleSpy = vi.spyOn(console, 'log').mockReturnValue();
           const promise = new Promise((_resolve, reject) => setTimeout(() => reject('some error'), 0));
           vi.spyOn(service, 'resizeGrid').mockReturnValue(promise as any);
 

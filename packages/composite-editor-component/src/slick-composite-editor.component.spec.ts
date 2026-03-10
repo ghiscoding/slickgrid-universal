@@ -295,7 +295,7 @@ describe('CompositeEditorService', () => {
     });
 
     it('should show an error in console log when using default onError and the Grid Option flag "enableCellNavigation" is not enabled', () => {
-      const consoleSpy = vi.spyOn(global.console, 'log').mockReturnValue();
+      const consoleSpy = vi.spyOn(console, 'log').mockReturnValue();
       const newGridOptions = { ...gridOptionsMock, enableCellNavigation: false };
       vi.spyOn(gridStub, 'getOptions').mockReturnValue(newGridOptions);
 

@@ -87,7 +87,7 @@ describe('Service/domUtilies', () => {
     });
 
     it('should display a warning when trying to use innerHTML via the method', () => {
-      const consoleWarnSpy = vi.spyOn(global.console, 'warn').mockReturnValue();
+      const consoleWarnSpy = vi.spyOn(console, 'warn').mockReturnValue();
       createDomElement('div', { className: 'red bold', innerHTML: '<input />' });
 
       expect(consoleWarnSpy).toHaveBeenCalledWith(

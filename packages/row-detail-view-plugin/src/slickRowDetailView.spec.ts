@@ -348,7 +348,7 @@ describe('SlickRowDetailView plugin', () => {
   });
 
   it('should trigger "onAsyncResponse" but throw an error when there is no item provided', () => {
-    const consoleSpy = vi.spyOn(global.console, 'error').mockReturnValue();
+    const consoleSpy = vi.spyOn(console, 'error').mockReturnValue();
     const updateItemSpy = vi.spyOn(dataviewStub, 'updateItem');
     const postViewMock = (item: any) => `<span>Post ${item.id}</span>`;
     vi.spyOn(gridStub, 'getOptions').mockReturnValue({ ...gridOptionsMock, rowDetailView: { postTemplate: postViewMock } as any });
