@@ -155,6 +155,7 @@ export class Example43Component implements OnInit {
 
     this.gridOptions = {
       autoResize: {
+        container: '#demo-container',
         bottomPadding: 30,
         rightPadding: 50,
       },
@@ -177,6 +178,9 @@ export class Example43Component implements OnInit {
             return (this.metadata as Record<number, ItemMetadata>)[row];
           },
         },
+      },
+      gridMenu: {
+        hideColumnPicker: true,
       },
       rowTopOffsetRenderType: 'top', // rowspan doesn't render well with 'transform', default is 'top'
     };

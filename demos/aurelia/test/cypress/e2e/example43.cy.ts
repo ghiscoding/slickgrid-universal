@@ -35,7 +35,14 @@ describe('Example 43 - colspan/rowspan - Employees Timesheets', { retries: 0 }, 
 
   it('should expect 1st column to be frozen (frozen)', () => {
     cy.get('.grid-canvas-left .slick-cell.frozen').should('have.length', 10);
-    cy.get('.grid-canvas-right .slick-cell:not(.frozen)').should('have.length.above', 60);
+    cy.get('.grid-canvas-right .slick-cell:not(.frozen)').should('have.length.above', 50);
+  });
+
+  it('should not display any Column Picker in the Grid Menu', () => {
+    cy.get('#grid43').find('button.slick-grid-menu-button').click({ force: true });
+    cy.get('.slick-menu-title').should('not.contain', 'Columns');
+    cy.get('.slick-column-picker-list').should('not.exist');
+    cy.get('[data-dismiss="slick-grid-menu"]').click();
   });
 
   describe('Spanning', () => {

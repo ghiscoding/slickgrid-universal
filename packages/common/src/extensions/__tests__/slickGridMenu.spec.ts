@@ -1078,6 +1078,22 @@ describe('GridMenuControl', () => {
         expect(initSpy).toHaveBeenCalled();
       });
 
+      it('should not create Column Picker section when "hideColumnPicker" is set', () => {
+        gridOptionsMock.gridMenu!.hideColumnPicker = true;
+        vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
+        vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
+
+        control.columns = columnsMock;
+        control.init();
+        control.openGridMenu();
+        const buttonElm = document.querySelector('.slick-grid-menu-button') as HTMLDivElement;
+        buttonElm.dispatchEvent(new Event('click', { bubbles: true, cancelable: true, composed: false }));
+        const pickerListElm = document.querySelector('.slick-column-picker-list') as HTMLDivElement;
+
+        expect(control.menuElement!.style.display).toBe('block');
+        expect(pickerListElm).toBe(null);
+      });
+
       // --- Keyboard Navigation Accessibility Tests ---
       describe('keyboard navigation (a11y)', () => {
         beforeEach(() => {

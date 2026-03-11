@@ -128,6 +128,7 @@ export default function Example43() {
   ]);
   const gridOptions: GridOption = {
     autoResize: {
+      container: '#demo-container',
       bottomPadding: 30,
       rightPadding: 50,
     },
@@ -150,6 +151,9 @@ export default function Example43() {
           return (metadataRef.current as Record<number, ItemMetadata>)[row];
         },
       },
+    },
+    gridMenu: {
+      hideColumnPicker: true,
     },
     rowTopOffsetRenderType: 'top', // rowspan doesn't render well with 'transform', default is 'top'
   };

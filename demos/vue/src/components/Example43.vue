@@ -160,6 +160,9 @@ function defineGrid() {
         },
       },
     },
+    gridMenu: {
+      hideColumnPicker: true,
+    },
     rowTopOffsetRenderType: 'top', // rowspan doesn't render well with 'transform', default is 'top'
   };
 }

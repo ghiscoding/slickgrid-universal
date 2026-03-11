@@ -105,6 +105,8 @@ gridOptions = {
 
 There's also a new Renderer similar to Slots but implemented with native code to make it cross-platform compatible. The usage is actually very similar to how you would use a cell Formatter. You can see a new [Example 40](https://ghiscoding.github.io/slickgrid-universal/#/example40) demoing this new feature and also the command builder mentioned above. Go to [Menu Slots documentation](https://ghiscoding.gitbook.io/slickgrid-universal/grid-functionalities/menu-slots) to read more about this new feature.
 
+> There's also a new `columnListBuilder` which is similar to the other builder but for Columns, it can be useful as well to sort and/or filter columns.
+
 ### Tooltips Outside the Grid
 
 You can now use the custom tooltip plugin to display tooltips on elements outside the grid (e.g., buttons, dialogs, etc.) by enabling the `observeAllTooltips` option. This allows the plugin to observe elements anywhere in your page that have `title` or `data-slick-tooltip` attributes and provide the same UI look & feel across your project. See Custom Tooltip [documentation](../grid-functionalities/custom-tooltip.md)
