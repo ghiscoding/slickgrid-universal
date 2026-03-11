@@ -22,7 +22,7 @@ Technically, it's automatically enabled so just enjoy it, you could optionally d
 ## Customization
 ### Column Picker
 
-The Grid Menu includes, by default, the a "Column Picker" list. This brings an easy way to show/hide certain column(s) from the grid. This functionality implementation comes from the [Column Picker Plugin](column-picker.md) and brought over to the Grid Menu.
+The Grid Menu includes, by default, the "Column Picker" list. This brings an easy way to show/hide certain column(s) from the grid. This functionality implementation comes from the [Column Picker Plugin](column-picker.md) and brought over to the Grid Menu.
 
 #### Hide Column Picker
 
