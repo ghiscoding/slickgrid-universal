@@ -125,6 +125,7 @@ export class Example27Component implements OnInit {
       enableExcelExport: true,
       excelExportOptions: { exportWithFormatter: true, sanitizeDataExport: true },
       externalResources: [new ExcelExportService()],
+      enableCellNavigation: true,
       enableFiltering: true,
       showCustomFooter: true, // display some metrics in the bottom custom footer
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
