@@ -186,41 +186,20 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
 
   /**
    * Handle a keyboard down event on a grouping cell.
-   * Supports Space, ArrowRight (expand), and ArrowLeft (collapse) for a11y consistency.
+   * TODO:  add -/+ handling
    */
   protected handleGridKeyDown(e: SlickEventData): void {
-    if (!this._options.enableExpandCollapse) {
-      return;
+    if (this._options.enableExpandCollapse && e.key === ' ') {
+      const activeCell = this._grid?.getActiveCell();
+      if (activeCell) {
+        const item = this._grid.getDataItem(activeCell.row);
+        if (item instanceof SlickGroup) {
+          this.handleDataViewExpandOrCollapse(item);
+          e.stopImmediatePropagation();
+          e.preventDefault();
+        }
+      }
     }
-
-    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== ' ') {
-      return;
-    }
-
-    // do not intercept keyboard actions while inline editor is active
-    if (this._grid.getEditorLock()?.isActive()) {
-      return;
-    }
-
-    const activeCell = this._grid?.getActiveCell();
-    if (!activeCell) {
-      return;
-    }
-
-    const item = this._grid.getDataItem(activeCell.row);
-    if (!(item instanceof SlickGroup)) {
-      return;
-    }
-
-    const shouldToggle = e.key === ' ' || (e.key === 'ArrowRight' && item.collapsed) || (e.key === 'ArrowLeft' && !item.collapsed);
-
-    if (!shouldToggle) {
-      return;
-    }
-
-    this.handleDataViewExpandOrCollapse(item);
-    e.stopImmediatePropagation();
-    e.preventDefault();
   }
 
   protected handleDataViewExpandOrCollapse(item: any): void {

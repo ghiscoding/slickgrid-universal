@@ -1,5 +1,5 @@
 import type { BasePubSubService, EventSubscription } from '@slickgrid-universal/event-pub-sub';
-import { SlickEventData, SlickEventHandler, type SlickDataView, type SlickGrid } from '../core/index.js';
+import { SlickEventHandler, type SlickDataView, type SlickEventData, type SlickGrid } from '../core/index.js';
 import { type ToggleStateChangeType } from '../enums/index.js';
 import type {
   Column,
@@ -129,57 +129,6 @@ export class TreeDataService {
 
     // subscribe to the SlickGrid event and call the backend execution
     this._eventHandler.subscribe(grid.onClick, this.handleOnCellClick.bind(this));
-    this._eventHandler.subscribe(grid.onKeyDown, (e, args) => {
-      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== ' ') {
-        return;
-      }
-
-      // do not intercept keyboard actions while inline editor is active
-      if (this._grid.getEditorLock()?.isActive()) {
-        return;
-      }
-
-      const row = args?.row ?? this._grid.getActiveCell()?.row;
-      const cell = args?.cell ?? this._grid.getActiveCell()?.cell;
-      if (row === undefined || cell === undefined) {
-        return;
-      }
-
-      const hasChildrenPropName = getTreeDataOptionPropName(this.treeDataOptions, 'hasChildrenPropName');
-      const collapsedPropName = getTreeDataOptionPropName(this.treeDataOptions, 'collapsedPropName');
-      const item = this.dataView.getItem(row);
-      if (!item?.[hasChildrenPropName]) {
-        return;
-      }
-
-      const isCollapsed = !!item[collapsedPropName];
-      const shouldToggle =
-        e.key === ' ' ||
-        (e.key === 'ArrowRight' && isCollapsed) ||
-        (e.key === 'ArrowLeft' && !isCollapsed);
-
-      if (!shouldToggle) {
-        return;
-      }
-
-      const cellGroupToggleElm = this._grid.getActiveCellNode()?.querySelector<HTMLDivElement>('.slick-group-toggle');
-      if (!cellGroupToggleElm) {
-        return;
-      }
-
-      e.preventDefault();
-      e.stopImmediatePropagation();
-
-      const event = new MouseEvent('click', { bubbles: true, cancelable: true });
-      Object.defineProperty(event, 'target', { value: cellGroupToggleElm, enumerable: true });
-      const slickEvent = new SlickEventData(event);
-
-      this.handleOnCellClick(slickEvent, {
-        row,
-        cell,
-        grid: this._grid,
-      } as OnClickEventArgs);
-    });
 
     // when "Clear all Sorting" is triggered by the Grid Menu, we'll resort with `initialSort` when defined (or else by 'id')
     this._subscriptions.push(this.pubSubService.subscribe('onGridMenuClearAllSorting', this.clearSorting.bind(this)));
@@ -511,7 +460,8 @@ export class TreeDataService {
       const lazyLoadingPropName = getTreeDataOptionPropName(this.treeDataOptions, 'lazyLoadingPropName');
 
       if (typeof targetElm?.className === 'string') {
-        if (targetElm.classList.contains('slick-group-toggle')) {
+        const hasToggleClass = targetElm.className.indexOf('toggle') >= 0 || false;
+        if (hasToggleClass) {
           const item = this.dataView.getItem(args.row);
           if (item) {
             item[collapsedPropName] = !item[collapsedPropName]; // toggle the collapsed flag
