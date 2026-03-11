@@ -187,7 +187,7 @@ export default class Example32 {
         },
       },
       gridMenu: {
-        hideColumnPicker: true,
+        hideColumnPickerSection: true,
       },
       rowTopOffsetRenderType: 'top', // rowspan doesn't render well with 'transform', default is 'top'
     };
