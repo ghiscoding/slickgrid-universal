@@ -142,6 +142,7 @@ export class Example43 {
 
     this.gridOptions = {
       autoResize: {
+        container: '#demo-container',
         bottomPadding: 30,
         rightPadding: 50,
       },

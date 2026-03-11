@@ -39,7 +39,7 @@ describe('Example 43 - colspan/rowspan - Employees Timesheets', { retries: 0 }, 
   });
 
   it('should not display any Column Picker in the Grid Menu', () => {
-    cy.get('.grid32').find('button.slick-grid-menu-button').click({ force: true });
+    cy.get('#grid43').find('button.slick-grid-menu-button').click({ force: true });
     cy.get('.slick-menu-title').should('not.contain', 'Columns');
     cy.get('.slick-column-picker-list').should('not.exist');
     cy.get('[data-dismiss="slick-grid-menu"]').click();

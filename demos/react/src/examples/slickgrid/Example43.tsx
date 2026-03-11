@@ -128,6 +128,7 @@ export default function Example43() {
   ]);
   const gridOptions: GridOption = {
     autoResize: {
+      container: '#demo-container',
       bottomPadding: 30,
       rightPadding: 50,
     },
