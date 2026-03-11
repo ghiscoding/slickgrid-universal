@@ -126,7 +126,7 @@ export class ExtensionService {
 
   /** Get only visible columns */
   getVisibleColumns(): Column[] {
-    return this.sharedService.slickGrid.getVisibleColumns();
+    return this.sharedService.slickGrid?.getVisibleColumns();
   }
 
   /**
@@ -163,12 +163,12 @@ export class ExtensionService {
 
   /** Auto-resize all the column in the grid to fit the grid width */
   autoResizeColumns(): void {
-    this.sharedService.slickGrid.autosizeColumns();
+    this.sharedService.slickGrid?.autosizeColumns();
   }
 
   /** Bind/Create different Controls or Plugins after the Grid is created */
   bindDifferentExtensions(): void {
-    if (this.gridOptions) {
+    if (this.gridOptions && this.sharedService.slickGrid) {
       // make sure all columns are translated before creating ColumnPicker/GridMenu Controls
       // this is to avoid having hidden columns not being translated on first load
       if (this.gridOptions.enableTranslate) {
@@ -510,7 +510,7 @@ export class ExtensionService {
    */
   translateColumnHeaders(locale?: string, newColumns?: Column[], updateColumns = true): void {
     if (
-      this.sharedService &&
+      this.sharedService?.slickGrid &&
       this.gridOptions &&
       this.gridOptions.enableTranslate &&
       (!this.translaterService || !this.translaterService.translate)
