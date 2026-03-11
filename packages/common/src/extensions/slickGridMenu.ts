@@ -430,13 +430,15 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       }
 
       this._menuElm = this.createCommandMenu(e.target as HTMLElement, this._addonOptions?.commandItems ?? []);
-      this.createColumnPickerContainer();
-      updateColumnPickerOrder.call(this);
-      this._columnCheckboxes = [];
+      if (!this.addonOptions.hideColumnPicker) {
+        this.createColumnPickerContainer();
+        updateColumnPickerOrder.call(this);
+        this._columnCheckboxes = [];
 
-      // load the column & create column picker list
-      populateColumnPicker.call(this, addonOptions);
-      document.body.appendChild(this._menuElm);
+        // load the column & create column picker list
+        populateColumnPicker.call(this, addonOptions);
+        this._menuElm.appendChild(this._listElm);
+      }
 
       // add dark mode CSS class when enabled
       if (this.gridOptions.darkMode) {
@@ -469,7 +471,8 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         buttonElm = (e.target as HTMLElement).parentElement as HTMLButtonElement; // external grid menu might fall in this last case if wrapped in a span/div
       }
 
-      this._menuElm.appendChild(this._listElm);
+      // append grid menu to the body
+      document.body.appendChild(this._menuElm);
 
       // once we have both lists (commandItems + columnPicker), we are ready to reposition the menu since its height/width should be calculated by then
       this.repositionMenu(e as any, this._menuElm, buttonElm, addonOptions);

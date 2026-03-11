@@ -60,6 +60,9 @@ export interface GridMenuOption extends MenuOption<GridMenuCommandItemCallbackAr
    */
   height?: number | string;
 
+  /** Defaults to false, which will skip the creation of the Column Picker list inside the Grid Menu */
+  hideColumnPicker?: boolean;
+
   /** @deprecated @use `hideCommands` or `commandListBuilder` Defaults to false, which will hide the "Clear all Filters" command in the Grid Menu (Grid Option "enableFiltering: true" has to be enabled) */
   hideClearAllFiltersCommand?: boolean;
 

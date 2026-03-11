@@ -151,6 +151,9 @@ export default function Example43() {
         },
       },
     },
+    gridMenu: {
+      hideColumnPicker: true,
+    },
     rowTopOffsetRenderType: 'top', // rowspan doesn't render well with 'transform', default is 'top'
   };
 

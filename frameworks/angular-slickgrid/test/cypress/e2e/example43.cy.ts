@@ -38,6 +38,13 @@ describe('Example 43 - colspan/rowspan - Employees Timesheets', { retries: 0 }, 
     cy.get('.grid-canvas-right .slick-cell:not(.frozen)').should('have.length.above', 50);
   });
 
+  it('should not display any Column Picker in the Grid Menu', () => {
+    cy.get('.grid32').find('button.slick-grid-menu-button').click({ force: true });
+    cy.get('.slick-menu-title').should('not.contain', 'Columns');
+    cy.get('.slick-column-picker-list').should('not.exist');
+    cy.get('[data-dismiss="slick-grid-menu"]').click();
+  });
+
   describe('Spanning', () => {
     it('should expect "Davolio", "Check Mail", and "Development" to all have rowspan of 2 in morning hours', () => {
       cy.get(`[data-row=0] > .slick-cell.l1.r1.rowspan`).should('contain', 'Davolio');
