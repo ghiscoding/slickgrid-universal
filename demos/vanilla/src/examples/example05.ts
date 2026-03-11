@@ -249,6 +249,7 @@ export default class Example05 {
       },
       enableAutoSizeColumns: true,
       enableAutoResize: true,
+      enableCellNavigation: true,
       enableExcelExport: true,
       textExportOptions: { exportWithFormatter: true },
       excelExportOptions: { exportWithFormatter: true },

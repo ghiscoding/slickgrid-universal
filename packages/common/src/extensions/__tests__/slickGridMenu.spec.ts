@@ -1078,8 +1078,8 @@ describe('GridMenuControl', () => {
         expect(initSpy).toHaveBeenCalled();
       });
 
-      it('should not create Column Picker section when "hideColumnPicker" is set', () => {
-        gridOptionsMock.gridMenu!.hideColumnPicker = true;
+      it('should not create Column Picker section when "hideColumnPickerSection" is set', () => {
+        gridOptionsMock.gridMenu!.hideColumnPickerSection = true;
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(gridOptionsMock);
         vi.spyOn(gridStub, 'validateColumnFreeze').mockReturnValueOnce(true);
 

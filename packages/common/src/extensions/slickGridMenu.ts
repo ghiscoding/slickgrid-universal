@@ -430,7 +430,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       }
 
       this._menuElm = this.createCommandMenu(e.target as HTMLElement, this._addonOptions?.commandItems ?? []);
-      if (!this.addonOptions.hideColumnPicker) {
+      if (!this.addonOptions.hideColumnPickerSection) {
         this.createColumnPickerContainer();
         updateColumnPickerOrder.call(this);
         this._columnCheckboxes = [];

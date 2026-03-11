@@ -9,12 +9,12 @@
 
 ## Grid Menu
 
-The `Grid Menu` (also known as the `Hamburger Menu`) is part of the project and is enabled by default.
+The `Grid Menu` (also known as the "Hamburger Menu") is enabled by default in the project (it's possible to disable it too).
 
 ## How to use it?
 #### It's Enabled by default
 
-Technically, it's enabled by default and so just enjoy it, you could disable it though. You could also customize the content of the Grid Menu, see below for more details.
+Technically, it's automatically enabled so just enjoy it, you could optionally disable it though. You could also customize the content of the Grid Menu, see below for more details.
 
 ### Demo
 [Demo Page](https://ghiscoding.github.io/aurelia-slickgrid-demos/#/example09) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example09.ts)
@@ -22,16 +22,16 @@ Technically, it's enabled by default and so just enjoy it, you could disable it 
 ## Customization
 ### Column Picker
 
-The Grid Menu comes, by default, with a `Column Picker`. This brings an easy way to show/hide certain column(s) from the grid. This functionality was copied from the [Column Picker Plugin](column-picker.md) and brought over to the Grid Menu.
+The Grid Menu includes, by default, the a "Column Picker" list. This brings an easy way to show/hide certain column(s) from the grid. This functionality implementation comes from the [Column Picker Plugin](column-picker.md) and brought over to the Grid Menu.
 
 #### Hide Column Picker
 
-For super large data grid with lots of columns, you could optionally skip the creation of the Column Picker and only keep the "Commands" section.
+For very large data grid with lots of columns to scroll, you could optionally skip the creation of the Column Picker and only keep the "Commands" section.
 
 ```ts
 this.this.gridOptions: {
   gridMenu: {
-    hideColumnPicker: true,
+    hideColumnPickerSection: true,
   }
 }
 ```
@@ -41,9 +41,11 @@ The Grid Menu also comes, by default, with a list of built-in custom commands (a
 - Clear all Filters (you can hide it with `hideClearAllFiltersCommand: true`)
 - Clear all Sorting (you can hide it with `hideClearAllSortingCommand: true`)
 - Toggle the Filter Row (you can hide it with `hideToggleFilterCommand: true`)
-- _Export to CSV_ (you can hide it with `hideExportCsvCommand: true`)
-- _Export to Text Delimited (you can hide it with `hideExportTextDelimitedCommand: true`)
-- _Refresh Dataset_, only shown when using Backend Service API (you can hide it with `hideRefreshDatasetCommand: true`)
+- Export to CSV (you can hide it with `hideExportCsvCommand: true`)
+- Export to Text Delimited (you can hide it with `hideExportTextDelimitedCommand: true`)
+- Refresh Dataset, only shown when using Backend Service API (you can hide it with `hideRefreshDatasetCommand: true`)
+
+> **Note**: all `hide...` and `positionOrder` properties were deprecated in v10 and will be removed in v11, prefer the use of `hideCommands` or the `commandListBuilder` instead (see below).
 
 This section is called Custom Commands because you can also customize this section with your own commands. To do that, you need to fill in 2 properties (an array of `commandItems` and define `onGridMenuCommand` callback) in your Grid Options. For example, `Slickgrid-Universal` is configured by default with these settings (you can overwrite any one of them):
 
@@ -52,7 +54,7 @@ This section is called Custom Commands because you can also customize this secti
 ```ts
 this.gridOptions = {
   enableAutoResize: true,
-  enableGridMenu: true,   // <<-- this will automatically add extra custom commands
+  enableGridMenu: true,
   enableFiltering: true,
   gridMenu: {
     commandTitle: 'Custom Commands',

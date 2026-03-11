@@ -180,7 +180,7 @@ export class Example43Component implements OnInit {
         },
       },
       gridMenu: {
-        hideColumnPicker: true,
+        hideColumnPickerSection: true,
       },
       rowTopOffsetRenderType: 'top', // rowspan doesn't render well with 'transform', default is 'top'
     };
