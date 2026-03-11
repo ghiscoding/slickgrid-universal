@@ -5,7 +5,6 @@ import type { SortableEvent, Options as SortableOptions } from 'sortablejs';
 import Sortable from 'sortablejs/modular/sortable.core.esm.js';
 import { SlickEvent, SlickEventData, SlickEventHandler, type SlickDataView, type SlickGrid } from '../core/index.js';
 import { SortDirectionNumber } from '../enums/index.js';
-import type { ExtensionUtility } from '../extensions/extensionUtility.js';
 import type {
   Column,
   DOMMouseOrTouchEvent,
@@ -17,6 +16,7 @@ import type {
 } from '../interfaces/index.js';
 import type { SharedService } from '../services/shared.service.js';
 import { sortByFieldType } from '../sortComparers/sortUtilities.js';
+import type { ExtensionUtility } from './extensionUtility.js';
 
 /**
  *

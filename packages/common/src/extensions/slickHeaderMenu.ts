@@ -2,7 +2,6 @@ import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { classNameToList, createDomElement, emptyElement, toKebabCase } from '@slickgrid-universal/utils';
 import type { SlickEventData } from '../core/slickCore.js';
 import type { EmitterType } from '../enums/index.js';
-import type { ExtensionUtility } from '../extensions/extensionUtility.js';
 import type {
   Column,
   CurrentSorter,
@@ -21,6 +20,7 @@ import type { FilterService } from '../services/filter.service.js';
 import { getTranslationPrefix } from '../services/index.js';
 import type { SharedService } from '../services/shared.service.js';
 import type { SortService } from '../services/sort.service.js';
+import type { ExtensionUtility } from './extensionUtility.js';
 import { MenuBaseClass, type ExtendableItemTypes, type ExtractMenuType, type MenuType } from './menuBaseClass.js';
 
 /**

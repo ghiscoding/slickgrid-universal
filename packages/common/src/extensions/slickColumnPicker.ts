@@ -1,15 +1,6 @@
-import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement, emptyElement, extend, findWidthOrDefault, getHtmlStringOutput } from '@slickgrid-universal/utils';
-import { SlickEvent, SlickEventHandler, type SlickEventData, type SlickGrid } from '../core/index.js';
-import {
-  addCloseButtomElement,
-  addColumnTitleElementWhenDefined,
-  handleColumnPickerItemClick,
-  populateColumnPicker,
-  updateColumnPickerOrder,
-} from '../extensions/extensionCommonUtils.js';
-import type { ExtensionUtility } from '../extensions/extensionUtility.js';
+import { SlickEvent, type SlickEventData, type SlickGrid } from '../core/index.js';
 import type {
   Column,
   ColumnPicker,
@@ -19,7 +10,9 @@ import type {
   OnColumnsChangedArgs,
 } from '../interfaces/index.js';
 import type { SharedService } from '../services/shared.service.js';
+import type { ExtensionUtility } from './extensionUtility.js';
 import { wireMenuKeyboardNavigation } from './keyboardNavigation.js';
+import { MenuBaseClass } from './menuBaseClass.js';
 
 /**
  * A control to add a Column Picker (right+click on any column header to reveal the column picker)
@@ -33,18 +26,9 @@ import { wireMenuKeyboardNavigation } from './keyboardNavigation.js';
  * @class ColumnPickerControl
  * @constructor
  */
-export class SlickColumnPicker {
+export class SlickColumnPicker extends MenuBaseClass<ColumnPicker> {
   onColumnsChanged: SlickEvent<OnColumnsChangedArgs>;
 
-  protected _areVisibleColumnDifferent = false;
-  protected _bindEventService: BindingEventService;
-  protected _columns: Column[] = [];
-  protected _columnTitleElm!: HTMLDivElement;
-  protected _eventHandler!: SlickEventHandler;
-  protected _gridUid = '';
-  protected _listElm!: HTMLSpanElement;
-  protected _menuElm: HTMLDivElement | null = null;
-  protected _columnCheckboxes: HTMLInputElement[] = [];
   protected _originalPickerOptions!: ColumnPicker;
 
   protected _defaults = {
@@ -60,26 +44,19 @@ export class SlickColumnPicker {
   } as ColumnPickerOption;
 
   /** Constructor of the SlickGrid 3rd party plugin, it can optionally receive options */
-  constructor(
-    protected readonly extensionUtility: ExtensionUtility,
-    protected readonly pubSubService: BasePubSubService,
-    protected readonly sharedService: SharedService
-  ) {
-    this._bindEventService = new BindingEventService();
+  constructor(extensionUtility: ExtensionUtility, pubSubService: BasePubSubService, sharedService: SharedService) {
+    super(extensionUtility, pubSubService, sharedService);
+    this._camelPluginName = 'columnPicker';
+    this._menuPluginCssPrefix = 'slick-column-picker';
     this.onColumnsChanged = new SlickEvent<OnColumnsChangedArgs>('onColumnsChanged');
-    this._eventHandler = new SlickEventHandler();
     this._columns = this.grid?.getColumns() ?? [];
     this._gridUid = this.grid?.getUID() ?? '';
 
     this.init();
   }
 
-  get addonOptions(): ColumnPickerOption {
+  get addonOptions(): ColumnPicker {
     return this.gridOptions.columnPicker || {};
-  }
-
-  get eventHandler(): SlickEventHandler {
-    return this._eventHandler;
   }
 
   get columns(): Column[] {
@@ -98,7 +75,7 @@ export class SlickColumnPicker {
   }
 
   get menuElement(): HTMLDivElement | null {
-    return this._menuElm;
+    return this._menuElm || null;
   }
 
   /** Initialize plugin. */
@@ -121,7 +98,7 @@ export class SlickColumnPicker {
       }
     });
     this._eventHandler.subscribe(this.grid.onHeaderContextMenu, this.handleHeaderContextMenu.bind(this));
-    this._eventHandler.subscribe(this.grid.onColumnsReordered, updateColumnPickerOrder.bind(this));
+    this._eventHandler.subscribe(this.grid.onColumnsReordered, this.updateColumnPickerOrder.bind(this));
     this._eventHandler.subscribe(this.grid.onClick, this.disposeMenu.bind(this));
 
     // Hide the menu on outside click.
@@ -149,14 +126,14 @@ export class SlickColumnPicker {
       className: `slick-column-picker ${this._gridUid}`,
       role: 'menu',
     });
-    updateColumnPickerOrder.call(this);
+    this.updateColumnPickerOrder();
 
     // add Close button and optiona a Column list title
-    addColumnTitleElementWhenDefined.call(this, menuElm);
-    addCloseButtomElement.call(this, menuElm);
+    this.addColumnTitleElementWhenDefined(menuElm);
+    this.addCloseButtomElement(menuElm);
 
     this._listElm = createDomElement('div', { className: 'slick-column-picker-list', role: 'menu' });
-    this._bindEventService.bind(menuElm, 'click', handleColumnPickerItemClick.bind(this) as EventListener, undefined, 'parent-menu');
+    this._bindEventService.bind(menuElm, 'click', this.handleColumnPickerItemClick.bind(this) as EventListener, undefined, 'parent-menu');
 
     document.body.appendChild(menuElm);
 
@@ -225,7 +202,7 @@ export class SlickColumnPicker {
     }
 
     // load the column & create column picker list
-    populateColumnPicker.call(this, this.addonOptions);
+    this.populateColumnPicker(this.addonOptions, this._defaults.headerColumnValueExtractor);
     document.body.appendChild(this._menuElm);
 
     // Reposition menu (this also appends _listElm to _menuElm)
@@ -265,7 +242,7 @@ export class SlickColumnPicker {
     firstMenuItem?.focus();
   }
 
-  protected repositionMenu(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData): void {
+  repositionMenu(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData): void {
     const targetEvent: MouseEvent | Touch = (event as TouchEvent)?.touches?.[0] ?? event;
     if (this._menuElm) {
       // auto-positioned menu left/right by available viewport space
