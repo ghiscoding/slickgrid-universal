@@ -15,7 +15,7 @@ import {
 } from 'aurelia-slickgrid';
 import './example51.scss';
 
-const NB_ITEMS = 2000;
+const NB_ITEMS = 4000;
 
 interface ReportItem {
   id: number;

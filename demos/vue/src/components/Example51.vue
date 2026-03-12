@@ -17,7 +17,7 @@ import {
 } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
 
-const NB_ITEMS = 2000;
+const NB_ITEMS = 4000;
 
 interface ReportItem {
   id: number;
