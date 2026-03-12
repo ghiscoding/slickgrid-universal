@@ -508,9 +508,9 @@ export class ExtensionService {
    * @param locale to use
    * @param new column definitions (optional)
    */
-  translateColumnHeaders(locale?: string, newColumns?: Column[], updateColumns = true): void {
+  translateColumnHeaders(locale?: string, newColumns?: Column[], shouldUpdateColumns = true): void {
     if (
-      this.sharedService?.slickGrid &&
+      this.sharedService &&
       this.gridOptions &&
       this.gridOptions.enableTranslate &&
       (!this.translaterService || !this.translaterService.translate)
@@ -534,8 +534,8 @@ export class ExtensionService {
     this.translateItems(this.sharedService.allColumns, 'nameKey', 'name');
     this.translateItems(this.sharedService.allColumns, 'columnGroupKey', 'columnGroup');
 
-    if (updateColumns) {
-      this.sharedService.slickGrid.updateColumns();
+    if (shouldUpdateColumns) {
+      this.sharedService.slickGrid?.updateColumns();
     }
 
     // replace Column Picker columns with newer data which includes new translations
