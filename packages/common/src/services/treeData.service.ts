@@ -7,6 +7,7 @@ import type {
   GridOption,
   LAZY_TYPES,
   OnClickEventArgs,
+  OnKeyDownEventArgs,
   TreeDataOption,
   TreeToggledItem,
   TreeToggleStateChange,
@@ -129,44 +130,7 @@ export class TreeDataService {
 
     // subscribe to the SlickGrid event and call the backend execution
     this._eventHandler.subscribe(grid.onClick, this.handleOnCellClick.bind(this));
-    this._eventHandler.subscribe(grid.onKeyDown, (e, args) => {
-      if (
-        (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === ' ') &&
-        !this._grid.getEditorLock()?.isActive() // do not intercept keyboard actions while inline editor is active
-      ) {
-        const row = args?.row ?? this._grid.getActiveCell()?.row;
-        const cell = args?.cell ?? this._grid.getActiveCell()?.cell;
-
-        if (row !== undefined && cell !== undefined) {
-          const hasChildrenPropName = getTreeDataOptionPropName(this.treeDataOptions, 'hasChildrenPropName');
-          const collapsedPropName = getTreeDataOptionPropName(this.treeDataOptions, 'collapsedPropName');
-          const item = this.dataView.getItem(row);
-          const isCollapsed = !!item?.[collapsedPropName];
-          const shouldToggle =
-            !!item?.[hasChildrenPropName] &&
-            (e.key === ' ' || (e.key === 'ArrowRight' && isCollapsed) || (e.key === 'ArrowLeft' && !isCollapsed));
-
-          if (shouldToggle) {
-            const cellGroupToggleElm = this._grid.getActiveCellNode()?.querySelector<HTMLDivElement>('.slick-group-toggle');
-            if (cellGroupToggleElm) {
-              e.preventDefault();
-              e.stopImmediatePropagation();
-
-              const clickEvent = {
-                target: cellGroupToggleElm,
-                stopImmediatePropagation: () => e.stopImmediatePropagation(),
-              } as unknown as Event;
-
-              this.handleOnCellClick(clickEvent, {
-                row,
-                cell,
-                grid: this._grid,
-              } as OnClickEventArgs);
-            }
-          }
-        }
-      }
-    });
+    this._eventHandler.subscribe(grid.onKeyDown, this.handleOnKeyDown.bind(this));
 
     // when "Clear all Sorting" is triggered by the Grid Menu, we'll resort with `initialSort` when defined (or else by 'id')
     this._subscriptions.push(this.pubSubService.subscribe('onGridMenuClearAllSorting', this.clearSorting.bind(this)));
@@ -608,6 +572,45 @@ export class TreeDataService {
             } as TreeToggleStateChange);
           }
           event.stopImmediatePropagation();
+        }
+      }
+    }
+  }
+
+  handleOnKeyDown(e: SlickEventData, args: OnKeyDownEventArgs): void {
+    if (
+      (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === ' ') &&
+      !this._grid.getEditorLock()?.isActive() // do not intercept keyboard actions while inline editor is active
+    ) {
+      const row = args?.row ?? this._grid.getActiveCell()?.row;
+      const cell = args?.cell ?? this._grid.getActiveCell()?.cell;
+
+      if (row !== undefined && cell !== undefined) {
+        const hasChildrenPropName = getTreeDataOptionPropName(this.treeDataOptions, 'hasChildrenPropName');
+        const collapsedPropName = getTreeDataOptionPropName(this.treeDataOptions, 'collapsedPropName');
+        const item = this.dataView.getItem(row);
+        const isCollapsed = !!item?.[collapsedPropName];
+        const shouldToggle =
+          !!item?.[hasChildrenPropName] &&
+          (e.key === ' ' || (e.key === 'ArrowRight' && isCollapsed) || (e.key === 'ArrowLeft' && !isCollapsed));
+
+        if (shouldToggle) {
+          const cellGroupToggleElm = this._grid.getActiveCellNode()?.querySelector<HTMLDivElement>('.slick-group-toggle');
+          if (cellGroupToggleElm) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+            const clickEvent = {
+              target: cellGroupToggleElm,
+              stopImmediatePropagation: () => e.stopImmediatePropagation(),
+            } as unknown as Event;
+
+            this.handleOnCellClick(clickEvent, {
+              row,
+              cell,
+              grid: this._grid,
+            } as OnClickEventArgs);
+          }
         }
       }
     }
