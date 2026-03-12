@@ -177,7 +177,7 @@ function defineGrid() {
         ofKey: 'OF',
         lastUpdateKey: 'LAST_UPDATE',
       },
-      dateFormat: 'YYYY-MM-DD hh:mm a',
+      dateFormat: 'YYYY-MM-DD, hh:mm a',
       hideTotalItemCount: false,
       hideLastUpdateTimestamp: false,
     },
