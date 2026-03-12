@@ -100,7 +100,8 @@ describe('Example 16 - Row Move & Checkbox Selector Selector Plugins', () => {
   it('should move "Duration" column to a different position in the grid', () => {
     const expectedTitles = ['', '', 'Title', '% Complete', 'Start', 'Finish', 'Duration', 'Completed', 'Title'];
 
-    cy.get('.slick-header-columns').children('.slick-header-column:nth(3)').contains('Duration').drag('.slick-header-column:nth(6)');
+    cy.get('.slick-header-columns').children('.slick-header-column:nth(3)').contains('Duration');
+    cy.get('.slick-header-columns').children('.slick-header-column:nth(3)').drag('.slick-header-column:nth(6)', { force: true });
 
     cy.get('.slick-header-column:nth(6)').contains('Duration');
 
@@ -371,6 +372,8 @@ describe('Example 16 - Row Move & Checkbox Selector Selector Plugins', () => {
           expect($child).not.to.be.visible;
         }
       });
+
+    cy.get('[data-dismiss="slick-grid-menu"]').click();
   });
 
   it('should open Column Picker and show the "Duration" column back to visible and expect it to have kept its position after toggling filter/sorting', () => {
