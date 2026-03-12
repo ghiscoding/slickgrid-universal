@@ -191,8 +191,8 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
   protected handleGridKeyDown(e: SlickEventData): void {
     if (
       this._options.enableExpandCollapse &&
-      (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === ' ') &&
-      !this._grid.getEditorLock()?.isActive() // do not intercept keyboard actions while inline editor is active
+      !this._grid.getEditorLock()?.isActive() && // do not intercept keyboard actions while inline editor is active
+      (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === ' ')
     ) {
       const activeCell = this._grid?.getActiveCell();
       if (activeCell) {

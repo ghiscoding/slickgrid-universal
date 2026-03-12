@@ -579,8 +579,8 @@ export class TreeDataService {
 
   handleOnKeyDown(e: SlickEventData, args: OnKeyDownEventArgs): void {
     if (
-      (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === ' ') &&
-      !this._grid.getEditorLock()?.isActive() // do not intercept keyboard actions while inline editor is active
+      !this._grid.getEditorLock()?.isActive() && // do not intercept keyboard actions while inline editor is active
+      (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === ' ')
     ) {
       const row = args?.row ?? this._grid.getActiveCell()?.row;
       const cell = args?.cell ?? this._grid.getActiveCell()?.cell;
