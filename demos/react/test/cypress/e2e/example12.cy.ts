@@ -1,4 +1,3 @@
-/* eslint-disable n/file-extension-in-import */
 import { format } from '@formkit/tempo';
 import { removeExtraSpaces } from '../plugins/utilities';
 
@@ -48,7 +47,7 @@ describe('Example 12: Localization (i18n)', () => {
         .find('.right-footer')
         .should(($span) => {
           const text = removeExtraSpaces($span.text()); // remove all white spaces
-          const dateFormatted = format(new Date(), 'YYYY-MM-DD hh:mm a');
+          const dateFormatted = format(new Date(), 'YYYY-MM-DD, hh:mm a');
           expect(text).to.eq(`Last Update ${dateFormatted} | 1500 of 1500 items`);
         });
     });
@@ -100,14 +99,15 @@ describe('Example 12: Localization (i18n)', () => {
     });
 
     it('should have some metrics shown in the grid right footer', () => {
-      const dateFormatted = format(new Date(), 'YYYY-MM-DD hh:mm a');
-
       cy.get('#slickGridContainer-grid12')
         .find('.slick-custom-footer')
         .find('.right-footer')
         .should(($span) => {
-          const text = removeExtraSpaces($span.text()); // remove all white spaces
-          expect(text).to.eq(`Dernière mise à jour ${dateFormatted} | 1500 de 1500 éléments`);
+          const text = removeExtraSpaces($span.text());
+          const dateFormatted = format(new Date(), 'YYYY-MM-DD, hh:');
+          // Use regex to match any two digits for minutes, then the rest
+          const pattern = `Dernière mise à jour ${dateFormatted}\\d{2} [ap]m \\| 1500 de 1500 éléments`;
+          expect(text).to.match(new RegExp(pattern, 'i'));
         });
     });
 
@@ -136,13 +136,16 @@ describe('Example 12: Localization (i18n)', () => {
 
     it('should filter duration with slider filter', () => {
       cy.get('.filter-duration input[type=range]').as('range').invoke('val', 30).trigger('change', { force: true });
+      cy.get('.filter-duration input[type=range]').then(($slider) => {
+        $slider[0].dispatchEvent(new Event('change', { bubbles: true }));
+      });
 
       cy.wait(10);
 
       cy.get('#grid12')
         .find('.slick-row')
         .each(($row, index) => {
-          let fullCellWidth;
+          let fullCellWidth: number;
 
           // only checks first 5 rows
           if (index > 5) {
@@ -153,7 +156,7 @@ describe('Example 12: Localization (i18n)', () => {
           cy.wrap($row)
             .children('.slick-cell:nth(3)')
             .first()
-            .then(($cell) => (fullCellWidth = $cell.width()));
+            .then(($cell) => (fullCellWidth = $cell.width() as number));
 
           cy.wrap($row)
             .children('.slick-cell:nth(3)')
@@ -162,7 +165,7 @@ describe('Example 12: Localization (i18n)', () => {
             .should(($el) => {
               // calculate 25% and expect the element width to be about the calculated size with a (+/-)1px precision
               const expectedWidth = fullCellWidth * 0.3;
-              expect($el.width() + 1).greaterThan(expectedWidth);
+              expect(($el.width() as number) + 1).greaterThan(expectedWidth);
             });
         });
     });

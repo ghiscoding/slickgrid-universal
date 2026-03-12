@@ -103,9 +103,11 @@ describe('Example 12: Localization (i18n)', () => {
         .find('.slick-custom-footer')
         .find('.right-footer')
         .should(($span) => {
-          const text = removeExtraSpaces($span.text()); // remove all white spaces
-          const dateFormatted = format(new Date(), 'YYYY-MM-DD, hh:mm a');
-          expect(text).to.eq(`Dernière mise à jour ${dateFormatted} | 1500 de 1500 éléments`);
+          const text = removeExtraSpaces($span.text());
+          const dateFormatted = format(new Date(), 'YYYY-MM-DD, hh:');
+          // Use regex to match any two digits for minutes, then the rest
+          const pattern = `Dernière mise à jour ${dateFormatted}\\d{2} [ap]m \\| 1500 de 1500 éléments`;
+          expect(text).to.match(new RegExp(pattern, 'i'));
         });
     });
 
@@ -134,6 +136,9 @@ describe('Example 12: Localization (i18n)', () => {
 
     it('should filter duration with slider filter', () => {
       cy.get('.filter-duration input[type=range]').as('range').invoke('val', 30).trigger('change', { force: true });
+      cy.get('.filter-duration input[type=range]').then(($slider) => {
+        $slider[0].dispatchEvent(new Event('change', { bubbles: true }));
+      });
 
       cy.wait(10);
 

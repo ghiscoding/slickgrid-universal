@@ -4,8 +4,9 @@ import { removeWhitespaces } from '../plugins/utilities';
 const currentYear = new Date().getFullYear();
 const presetLowestDay = `${currentYear}-01-01`;
 const presetHighestDay = `${currentYear}-02-15`;
-function removeSpaces(textS) {
-  return `${textS}`.replace(/\s+/g, '');
+
+function removeSpaces(text: string) {
+  return `${text}`.replace(/\s+/g, '');
 }
 
 describe('Example 6 - GraphQL Grid', { retries: 0 }, () => {
@@ -307,7 +308,7 @@ describe('Example 6 - GraphQL Grid', { retries: 0 }, () => {
       .find('option')
       .last()
       .then((element) => {
-        cy.get('.search-filter.filter-name select').select(element.val());
+        cy.get('.search-filter.filter-name select').select(element.val() || '');
       });
 
     cy.get('.search-filter.filter-name').find('input').clear().type('Jo%yn%er');
