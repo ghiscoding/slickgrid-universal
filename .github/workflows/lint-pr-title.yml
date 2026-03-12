@@ -13,6 +13,10 @@ jobs:
     name: conventional-commit
     runs-on: ubuntu-latest
     steps:
+      # avoid calling too many workflows at same time
+      - name: Delay workflow start
+        run: sleep 40 # sec
+
       - uses: amannn/action-semantic-pull-request@v6
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -12,6 +12,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # avoid calling too many workflows at same time
+      - name: Delay workflow start
+        run: sleep 40 # sec
+
       - name: Checkout code
         uses: actions/checkout@v6
 
