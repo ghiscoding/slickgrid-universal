@@ -204,6 +204,8 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
     event.target.ariaChecked = String(isChecked);
     this.togglePickerCheckbox(iconElm, isChecked);
 
+    // when calling setOptions, it will resize with ALL Columns (even the hidden ones)
+    // we can avoid this problem by keeping a reference to the visibleColumns before setOptions and then setColumns after
     if (event.target.dataset.option === 'autoresize') {
       this.grid.setOptions({ forceFitColumns: isChecked });
       this.grid.updateColumns();
@@ -219,6 +221,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
       this._areVisibleColumnDifferent = true;
       const columnId = event.target.dataset.columnid || '';
 
+      // validate that the checkbox changes is allowed before going any further
       const isFrozenAllowed = this.grid.validateColumnFreeze(columnId, true);
       let visibleColumns = this.grid.getVisibleColumns();
 
@@ -235,6 +238,11 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
       this.grid.updateColumns();
       visibleColumns = this.grid.getVisibleColumns();
 
+      // when using row selection, SlickGrid will only apply the "selected" CSS class on the visible columns only
+      // and if the row selection was done prior to the column being shown then that column that was previously hidden (at the time of the row selection)
+      // will not have the "selected" CSS class because it wasn't visible at the time.
+      // To bypass this problem we can simply recall the row selection with the same selection and that will trigger a re-apply of the CSS class
+      // on all columns including the column we just made visible
       if (this.gridOptions.enableSelection && isChecked) {
         const rowSelection = this.grid.getSelectedRows();
         this.grid.setSelectedRows(rowSelection);
@@ -249,8 +257,12 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
         grid: this.grid,
       };
 
+      // Restore focus to the triggering <li> if possible (for keyboard accessibility)
+      // Only do this if the event was triggered by keyboard or programmatically (not mouse)
+      // We check for type 'keydown' or if the activeElement is not the li
       this.pubSubService.publish(`on${titleCase(controlType)}ColumnsChanged`, callbackArgs);
       if (typeof this.columnPickerMenuAddonOptions.onColumnsChanged === 'function') {
+        // Use a timeout to allow DOM updates before restoring focus
         this.columnPickerMenuAddonOptions.onColumnsChanged(event, callbackArgs as never);
       }
       this.onColumnsChanged.notify(callbackArgs, null, this);
@@ -263,7 +275,9 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
   }
 
   /**
-   * Because columns can be reordered, update the columns to reflect the new order while preserving hidden columns placement.
+   * Because columns can be reordered, we have to update the `columns` to reflect the new order, however we can't just take `grid.getColumns()`,
+   * as it does not include columns currently hidden by the picker. We create a new `columns` structure by leaving currently-hidden
+   * columns in their original ordinal position and interleaving the results of the current column sort.
    */
   protected updateColumnPickerOrder(): void {
     const current = this.grid.getColumns().slice(0);
@@ -274,6 +288,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
       ordered[i] = columnIdx === undefined ? this._columns[i] : current.shift();
     }
 
+    // the new set of ordered columns becomes the new set of column picker columns
     this._columns = ordered;
   }
 
@@ -286,9 +301,11 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
 
     let processedColumns = this._columns;
     if (typeof addonOptions?.columnSort === 'function') {
+      // create a sorted copy of the columns array based on the "name" property
       processedColumns = [...this._columns].sort(addonOptions.columnSort);
     }
 
+    // execute column list builder to allow user to filter/sort columns
     if (typeof addonOptions.columnListBuilder === 'function') {
       processedColumns = addonOptions.columnListBuilder(processedColumns);
     }
@@ -297,6 +314,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
       const columnId = column.id;
       const columnLiElm = createDomElement('li', { tabIndex: -1 });
 
+      // deprecated, let's filter out the exclude columns before `columnListBuilder` above (let's do that in next major v11)
       if ((column.excludeFromColumnPicker && !isGridMenu) || (column.excludeFromGridMenu && isGridMenu)) {
         columnLiElm.className = 'hidden';
       }
