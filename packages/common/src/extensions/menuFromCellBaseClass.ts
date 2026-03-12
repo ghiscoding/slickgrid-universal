@@ -1,7 +1,6 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement, findWidthOrDefault, titleCase } from '@slickgrid-universal/utils';
 import type { SlickEventData, SlickGrid } from '../core/index.js';
-import type { ExtensionUtility } from '../extensions/extensionUtility.js';
 import type {
   CellMenu,
   ContextMenu,
@@ -14,6 +13,7 @@ import type {
   MenuOptionItemCallbackArgs,
 } from '../interfaces/index.js';
 import type { SharedService } from '../services/shared.service.js';
+import type { ExtensionUtility } from './extensionUtility.js';
 import { MenuBaseClass, type ExtendableItemTypes, type ExtractMenuType, type MenuType } from './menuBaseClass.js';
 
 export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends MenuBaseClass<M> {

@@ -1,7 +1,6 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { extend } from '@slickgrid-universal/utils';
 import type { SlickEventData, SlickGrid } from '../core/index.js';
-import type { ExtensionUtility } from '../extensions/extensionUtility.js';
 import { copyCellToClipboard } from '../formatters/formatterUtilities.js';
 import type {
   ContextMenu,
@@ -20,6 +19,7 @@ import {
 } from '../services/index.js';
 import type { SharedService } from '../services/shared.service.js';
 import type { TreeDataService } from '../services/treeData.service.js';
+import type { ExtensionUtility } from './extensionUtility.js';
 import { MenuFromCellBaseClass } from './menuFromCellBaseClass.js';
 
 /**

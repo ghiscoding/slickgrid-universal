@@ -1,7 +1,5 @@
-import { BindingEventService } from '@slickgrid-universal/binding';
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { SlickEventHandler, type SlickEventData, type SlickGrid } from '../core/index.js';
-import type { ExtensionUtility } from '../extensions/extensionUtility.js';
+import { type SlickEventData, type SlickEventHandler, type SlickGrid } from '../core/index.js';
 import type {
   Column,
   DOMEvent,
@@ -13,6 +11,7 @@ import type {
   OnHeaderCellRenderedEventArgs,
 } from '../interfaces/index.js';
 import type { SharedService } from '../services/shared.service.js';
+import type { ExtensionUtility } from './extensionUtility.js';
 import { MenuBaseClass, type ExtendableItemTypes, type ExtractMenuType, type MenuType } from './menuBaseClass.js';
 
 /**
@@ -41,8 +40,6 @@ export class SlickHeaderButtons extends MenuBaseClass<HeaderButton> {
     super(extensionUtility, pubSubService, sharedService);
     this._menuCssPrefix = 'slick-header-button';
     this._camelPluginName = 'headerButtons';
-    this._bindEventService = new BindingEventService();
-    this._eventHandler = new SlickEventHandler();
     this.init(sharedService.gridOptions.headerButton);
   }
 

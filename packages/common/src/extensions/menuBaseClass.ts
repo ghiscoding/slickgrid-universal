@@ -8,13 +8,17 @@ import {
   getOffset,
   getOffsetRelativeToParent,
   isDefined,
+  titleCase,
 } from '@slickgrid-universal/utils';
 import { SlickEventHandler, type SlickEventData, type SlickGrid } from '../core/index.js';
-import type { ExtensionUtility } from '../extensions/extensionUtility.js';
+import { applyHtmlToElement } from '../core/utils.js';
 import type {
   CellMenu,
   Column,
+  ColumnPicker,
+  ColumnPickerOption,
   ContextMenu,
+  DOMEvent,
   DOMMouseOrTouchEvent,
   GridMenu,
   GridMenuItem,
@@ -28,6 +32,7 @@ import type {
   MenuOptionItem,
 } from '../interfaces/index.js';
 import type { SharedService } from '../services/shared.service.js';
+import type { ExtensionUtility } from './extensionUtility.js';
 import { wireMenuKeyboardNavigation } from './keyboardNavigation.js';
 
 export type ExtractMenuType<A, T> = T extends 'command' ? A : T extends 'option' ? A : A extends 'divider' ? A : never;
@@ -51,13 +56,20 @@ export interface KeyboardNavigationOption {
   focusedItemSelector?: string;
 }
 
-export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
+export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | ColumnPickerOption> {
+  onColumnsChanged!: any;
+
   protected _addonOptions: M = {} as unknown as M;
+  protected _areVisibleColumnDifferent = false;
   protected _bindEventService: BindingEventService;
   protected _camelPluginName = '';
+  protected _columnCheckboxes: HTMLInputElement[] = [];
+  protected _columns: Column[] = [];
+  protected _columnTitleElm!: HTMLDivElement;
   protected _commandTitleElm?: HTMLSpanElement;
   protected _eventHandler: SlickEventHandler;
   protected _gridUid = '';
+  protected _listElm!: HTMLElement;
   protected _menuElm?: HTMLDivElement | null;
   protected _menuCssPrefix = '';
   protected _menuPluginCssPrefix = '';
@@ -99,6 +111,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
   get gridUid(): string {
     return this._gridUid || (this.grid?.getUID() ?? '');
   }
+
   get gridUidSelector(): string {
     return this.gridUid ? `.${this.gridUid}` : '';
   }
@@ -149,6 +162,183 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
 
   setOptions(newOptions: M): void {
     this._addonOptions = { ...this._addonOptions, ...newOptions };
+  }
+
+  protected get columnPickerMenuAddonOptions(): ColumnPicker | GridMenu {
+    return this.addonOptions as ColumnPicker | GridMenu;
+  }
+
+  /** Create a Close button element and add it to the Menu element */
+  protected addCloseButtomElement(menuElm: HTMLDivElement): void {
+    const dismiss = this._camelPluginName === 'gridMenu' ? 'slick-grid-menu' : 'slick-column-picker';
+    const closePickerButtonElm = createDomElement('button', {
+      type: 'button',
+      className: 'close',
+      ariaLabel: 'Close',
+      textContent: '×',
+      dataset: { dismiss },
+    });
+    menuElm.appendChild(closePickerButtonElm);
+  }
+
+  /** When columnTitle is provided, create a title element for the columns list. */
+  protected addColumnTitleElementWhenDefined(menuElm: HTMLDivElement): void {
+    if (this.columnPickerMenuAddonOptions?.columnTitle) {
+      this._columnTitleElm = createDomElement(
+        'div',
+        { className: 'slick-menu-title', textContent: this.columnPickerMenuAddonOptions.columnTitle },
+        menuElm
+      );
+    }
+  }
+
+  /**
+   * Handle column picker item click for both SlickColumnPicker and SlickGridMenu controls.
+   * @param event - input checkbox event
+   */
+  protected handleColumnPickerItemClick(event: DOMEvent<HTMLInputElement>): void {
+    const controlType = this._camelPluginName || 'columnPicker';
+    const iconContainerElm = event.target?.closest('.icon-checkbox-container') as HTMLDivElement;
+    const iconElm = iconContainerElm?.querySelector<HTMLDivElement>('.mdi');
+    const isChecked = !!event.target.checked;
+    event.target.ariaChecked = String(isChecked);
+    this.togglePickerCheckbox(iconElm, isChecked);
+
+    if (event.target.dataset.option === 'autoresize') {
+      this.grid.setOptions({ forceFitColumns: isChecked });
+      this.grid.updateColumns();
+      return;
+    }
+
+    if (event.target.dataset.option === 'syncresize') {
+      this.grid.setOptions({ syncColumnCellResize: isChecked });
+      return;
+    }
+
+    if (event.target.type === 'checkbox') {
+      this._areVisibleColumnDifferent = true;
+      const columnId = event.target.dataset.columnid || '';
+
+      const isFrozenAllowed = this.grid.validateColumnFreeze(columnId, true);
+      let visibleColumns = this.grid.getVisibleColumns();
+
+      if (!isFrozenAllowed || (visibleColumns.length - 1 < 1 && !isChecked)) {
+        event.target.checked = true;
+        this.togglePickerCheckbox(iconElm, true);
+        return;
+      }
+
+      this.grid.updateColumnById(columnId, { hidden: !isChecked });
+      if (!isChecked && this.gridOptions.enableCellRowSpan) {
+        this.grid.remapAllColumnsRowSpan();
+      }
+      this.grid.updateColumns();
+      visibleColumns = this.grid.getVisibleColumns();
+
+      if (this.gridOptions.enableSelection && isChecked) {
+        const rowSelection = this.grid.getSelectedRows();
+        this.grid.setSelectedRows(rowSelection);
+      }
+
+      const callbackArgs = {
+        columnId,
+        showing: isChecked,
+        allColumns: this.grid.getColumns(),
+        visibleColumns,
+        columns: visibleColumns,
+        grid: this.grid,
+      };
+
+      this.pubSubService.publish(`on${titleCase(controlType)}ColumnsChanged`, callbackArgs);
+      if (typeof this.columnPickerMenuAddonOptions.onColumnsChanged === 'function') {
+        this.columnPickerMenuAddonOptions.onColumnsChanged(event, callbackArgs as never);
+      }
+      this.onColumnsChanged.notify(callbackArgs, null, this);
+    }
+
+    const liElm = event.target?.closest('li');
+    if (liElm && typeof liElm.focus === 'function') {
+      setTimeout(() => liElm?.focus(), 0);
+    }
+  }
+
+  /**
+   * Because columns can be reordered, update the columns to reflect the new order while preserving hidden columns placement.
+   */
+  protected updateColumnPickerOrder(): void {
+    const current = this.grid.getColumns().slice(0);
+    const ordered = new Array(this._columns.length);
+
+    for (let i = 0, ln = ordered.length; i < ln; i++) {
+      const columnIdx = this.grid.getColumnIndex(this._columns[i].id);
+      ordered[i] = columnIdx === undefined ? this._columns[i] : current.shift();
+    }
+
+    this._columns = ordered;
+  }
+
+  protected populateColumnPicker(
+    addonOptions: ColumnPickerOption | GridMenuOption,
+    defaultExtractor?: (column: Column, gridOptions?: GridOption) => string | HTMLElement | DocumentFragment
+  ): void {
+    const isGridMenu = this._camelPluginName === 'gridMenu';
+    const menuPrefix = isGridMenu ? 'gridmenu-' : '';
+
+    let processedColumns = this._columns;
+    if (typeof addonOptions?.columnSort === 'function') {
+      processedColumns = [...this._columns].sort(addonOptions.columnSort);
+    }
+
+    if (typeof addonOptions.columnListBuilder === 'function') {
+      processedColumns = addonOptions.columnListBuilder(processedColumns);
+    }
+
+    for (const column of processedColumns) {
+      const columnId = column.id;
+      const columnLiElm = createDomElement('li', { tabIndex: -1 });
+
+      if ((column.excludeFromColumnPicker && !isGridMenu) || (column.excludeFromGridMenu && isGridMenu)) {
+        columnLiElm.className = 'hidden';
+      }
+
+      const inputId = `${this._gridUid}-${menuPrefix}colpicker-${columnId}`;
+      const isChecked = this.grid.getVisibleColumns().some((col) => col.id === columnId && !col.hidden);
+      const { inputElm, labelElm, labelSpanElm } = this.generatePickerCheckbox(
+        columnLiElm,
+        inputId,
+        { columnid: `${columnId}` },
+        isChecked
+      );
+      this._columnCheckboxes.push(inputElm);
+
+      const headerColumnValueExtractorFn =
+        typeof addonOptions?.headerColumnValueExtractor === 'function' ? addonOptions.headerColumnValueExtractor : defaultExtractor!;
+      const columnLabel = headerColumnValueExtractorFn(column, this.gridOptions);
+
+      applyHtmlToElement(labelSpanElm, columnLabel, this.gridOptions);
+      columnLiElm.appendChild(labelElm);
+      this._listElm.appendChild(columnLiElm);
+    }
+
+    if (!addonOptions.hideForceFitButton || !addonOptions.hideSyncResizeButton) {
+      this._listElm.appendChild(document.createElement('hr'));
+    }
+
+    if (!addonOptions?.hideForceFitButton) {
+      const fitLiElm = createDomElement('li', { tabIndex: -1 });
+      const inputId = `${this._gridUid}-${menuPrefix}colpicker-forcefit`;
+      const { labelSpanElm } = this.generatePickerCheckbox(fitLiElm, inputId, { option: 'autoresize' }, this.gridOptions.forceFitColumns);
+      labelSpanElm.textContent = addonOptions?.forceFitTitle ?? '';
+      this._listElm.appendChild(fitLiElm);
+    }
+
+    if (!addonOptions?.hideSyncResizeButton) {
+      const syncLiElm = createDomElement('li', { tabIndex: -1 });
+      const inputId = `${this._gridUid}-${menuPrefix}colpicker-syncresize`;
+      const { labelSpanElm } = this.generatePickerCheckbox(syncLiElm, inputId, { option: 'syncresize' }, this.gridOptions.forceFitColumns);
+      labelSpanElm.textContent = addonOptions?.syncResizeTitle ?? '';
+      this._listElm.appendChild(syncLiElm);
+    }
   }
 
   // --
@@ -213,6 +403,46 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton> {
   /** Set the menu trigger element for focus restoration when menu closes */
   protected setMenuTriggerElement(triggerElement: HTMLElement): void {
     this._menuTriggerElement = triggerElement;
+  }
+
+  protected togglePickerCheckbox(iconElm: HTMLDivElement | null, checked = false): void {
+    if (iconElm) {
+      iconElm.className = `mdi ${checked ? 'mdi-icon-picker-check' : 'mdi-icon-picker-uncheck'}`;
+    }
+  }
+
+  protected generatePickerCheckbox(
+    columnLiElm: HTMLLIElement,
+    inputId: string,
+    inputData: any,
+    checked = false
+  ): {
+    inputElm: HTMLInputElement;
+    labelElm: HTMLLabelElement;
+    labelSpanElm: HTMLSpanElement;
+  } {
+    const labelElm = createDomElement('label', { className: 'checkbox-picker-label', htmlFor: inputId });
+    const divElm = createDomElement('div', { className: 'icon-checkbox-container' });
+    const inputElm = createDomElement('input', {
+      id: inputId,
+      type: 'checkbox',
+      dataset: inputData,
+      tabIndex: -1,
+    });
+    const colInputDivElm = createDomElement('div', { className: `mdi ${checked ? 'mdi-icon-picker-check' : 'mdi-icon-picker-uncheck'}` });
+    const labelSpanElm = createDomElement('span', { className: 'checkbox-label' });
+    divElm.appendChild(inputElm);
+    divElm.appendChild(colInputDivElm);
+    labelElm.appendChild(divElm);
+    labelElm.appendChild(labelSpanElm);
+    columnLiElm.appendChild(labelElm);
+
+    if (checked) {
+      inputElm.ariaChecked = 'true';
+      inputElm.checked = true;
+    }
+
+    return { inputElm, labelElm, labelSpanElm };
   }
 
   /**

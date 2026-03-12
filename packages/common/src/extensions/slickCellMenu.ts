@@ -1,6 +1,5 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import type { SlickEventData } from '../core/slickCore.js';
-import type { ExtensionUtility } from '../extensions/extensionUtility.js';
 import type {
   CellMenu,
   CellMenuOption,
@@ -12,6 +11,7 @@ import type {
   OnClickEventArgs,
 } from '../interfaces/index.js';
 import type { SharedService } from '../services/shared.service.js';
+import type { ExtensionUtility } from './extensionUtility.js';
 import { MenuFromCellBaseClass } from './menuFromCellBaseClass.js';
 
 /**

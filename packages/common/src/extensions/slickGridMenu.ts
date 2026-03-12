@@ -1,15 +1,6 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { createDomElement, emptyElement, extend, findWidthOrDefault, getHtmlStringOutput } from '@slickgrid-universal/utils';
 import { SlickEvent, Utils as SlickUtils } from '../core/index.js';
-import {
-  addCloseButtomElement,
-  addColumnTitleElementWhenDefined,
-  handleColumnPickerItemClick,
-  populateColumnPicker,
-  updateColumnPickerOrder,
-} from '../extensions/extensionCommonUtils.js';
-import type { ExtensionUtility } from '../extensions/extensionUtility.js';
-import { MenuBaseClass, type ExtendableItemTypes, type ExtractMenuType, type MenuType } from '../extensions/menuBaseClass.js';
 import type {
   Column,
   DOMEvent,
@@ -28,6 +19,8 @@ import { getTranslationPrefix, type PdfExportService } from '../services/index.j
 import type { SharedService } from '../services/shared.service.js';
 import type { SortService } from '../services/sort.service.js';
 import type { TextExportService } from '../services/textExport.service.js';
+import type { ExtensionUtility } from './extensionUtility.js';
+import { MenuBaseClass, type ExtendableItemTypes, type ExtractMenuType, type MenuType } from './menuBaseClass.js';
 
 /**
  * A control to add a Grid Menu with Extra Commands & Column Picker (hambuger menu on top-right of the grid)
@@ -50,15 +43,10 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   onCommand: SlickEvent<GridMenuCommandItemCallbackArgs>;
   onColumnsChanged: SlickEvent<onGridMenuColumnsChangedCallbackArgs>;
 
-  protected _areVisibleColumnDifferent = false;
-  protected _columns: Column[] = [];
-  protected _columnCheckboxes: HTMLInputElement[] = [];
-  protected _columnTitleElm!: HTMLDivElement;
   protected _commandMenuElm: HTMLDivElement | null = null;
   protected _gridMenuButtonElm: HTMLButtonElement | null = null;
   protected _headerElm: HTMLDivElement | null = null;
   protected _isMenuOpen = false;
-  protected _listElm!: HTMLSpanElement;
   protected _subMenuParentId = '';
   protected _originalGridMenu!: GridMenu;
   protected _userOriginalGridMenu!: GridMenu;
@@ -126,7 +114,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
 
   initEventHandlers(): void {
     // when grid columns are reordered then we also need to update/resync our picker column in the same order
-    this._eventHandler.subscribe(this.grid.onColumnsReordered, updateColumnPickerOrder.bind(this));
+    this._eventHandler.subscribe(this.grid.onColumnsReordered, this.updateColumnPickerOrder.bind(this));
     this._eventHandler.subscribe(this.grid.onClick, (e) => this.hideMenu(e as any));
 
     // subscribe to the grid, when it's destroyed, we should also destroy the Grid Menu
@@ -198,7 +186,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
   createColumnPickerContainer(): void {
     if (this._menuElm) {
       // user could pass a title on top of the columns list
-      addColumnTitleElementWhenDefined.call(this, this._menuElm);
+      this.addColumnTitleElementWhenDefined(this._menuElm);
 
       this._listElm = createDomElement('div', { className: 'slick-column-picker-list', role: 'menu' });
 
@@ -206,7 +194,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       this._bindEventService.bind(
         this._menuElm,
         'click',
-        handleColumnPickerItemClick.bind(this) as EventListener,
+        this.handleColumnPickerItemClick.bind(this) as EventListener,
         undefined,
         'parent-menu'
       );
@@ -432,11 +420,11 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       this._menuElm = this.createCommandMenu(e.target as HTMLElement, this._addonOptions?.commandItems ?? []);
       if (!this.addonOptions.hideColumnPickerSection) {
         this.createColumnPickerContainer();
-        updateColumnPickerOrder.call(this);
+        this.updateColumnPickerOrder();
         this._columnCheckboxes = [];
 
         // load the column & create column picker list
-        populateColumnPicker.call(this, addonOptions);
+        this.populateColumnPicker(addonOptions, this._defaults.headerColumnValueExtractor);
         this._menuElm.appendChild(this._listElm);
       }
 
@@ -1046,7 +1034,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
         // prettier-ignore
         const commandMenuHeaderElm = menuElm.querySelector<HTMLDivElement>(`.slick-command-header`) ?? createDomElement('div', { className: 'slick-command-header' });
         commandMenuHeaderElm.classList.add('with-close');
-        addCloseButtomElement.call(this, commandMenuHeaderElm);
+        this.addCloseButtomElement(commandMenuHeaderElm);
         commandMenuElm.appendChild(commandMenuHeaderElm);
       }
 
