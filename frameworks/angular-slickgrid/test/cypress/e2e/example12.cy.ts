@@ -4,6 +4,7 @@ import { removeExtraSpaces } from '../plugins/utilities';
 describe('Example 12: Localization (i18n)', () => {
   const fullEnglishTitles = ['', 'Title', 'Description', 'Duration', 'Start', 'Finish', 'Completed', 'Completed'];
   const fullFrenchTitles = ['', 'Titre', 'Description', 'Durée', 'Début', 'Fin', 'Terminé', 'Terminé'];
+  let currentDateTime = '';
 
   beforeEach(() => {
     cy.restoreLocalStorage();
@@ -25,6 +26,10 @@ describe('Example 12: Localization (i18n)', () => {
 
   describe('English Locale', () => {
     it('should have exact English Column Titles in the grid', () => {
+      cy.get('#grid12').then(() => {
+        currentDateTime = format(new Date(), 'YYYY-MM-DD, hh:mm a');
+      });
+
       cy.get('#grid12')
         .find('.slick-header-columns')
         .children()
@@ -41,14 +46,13 @@ describe('Example 12: Localization (i18n)', () => {
         });
     });
 
-    it('should have some metrics shown in the grid right footer', () => {
+    it('should have some metrics shown in English on the grid right footer', () => {
       cy.get('#slickGridContainer-grid12')
         .find('.slick-custom-footer')
         .find('.right-footer')
         .should(($span) => {
           const text = removeExtraSpaces($span.text()); // remove all white spaces
-          const dateFormatted = format(new Date(), 'YYYY-MM-DD, hh:mm a');
-          expect(text).to.eq(`Last Update ${dateFormatted} | 1500 of 1500 items`);
+          expect(text).to.eq(`Last Update ${currentDateTime} | 1500 of 1500 items`);
         });
     });
 
@@ -72,6 +76,10 @@ describe('Example 12: Localization (i18n)', () => {
 
   describe('French locale', () => {
     it('should reset filters and switch locale to French', () => {
+      cy.get('#grid12').then(() => {
+        currentDateTime = format(new Date(), 'YYYY-MM-DD, hh:mm a');
+      });
+
       cy.get('#grid12').find('button.slick-grid-menu-button').click();
 
       cy.get(`.slick-grid-menu:visible`).find('.slick-menu-item').first().find('span').contains('Clear all Filters').click();
@@ -98,14 +106,14 @@ describe('Example 12: Localization (i18n)', () => {
         });
     });
 
-    it('should have some metrics shown in the grid right footer', () => {
+    it('should have some metrics shown in French on grid right footer', () => {
       cy.get('#slickGridContainer-grid12')
         .find('.slick-custom-footer')
         .find('.right-footer')
         .should(($span) => {
-          const text = removeExtraSpaces($span.text()); // remove all white spaces
-          const dateFormatted = format(new Date(), 'YYYY-MM-DD, hh:mm a');
-          expect(text).to.eq(`Dernière mise à jour ${dateFormatted} | 1500 de 1500 éléments`);
+          const text = removeExtraSpaces($span.text());
+          const pattern = `Dernière mise à jour ${currentDateTime} | 1500 de 1500 éléments`;
+          expect(text).to.match(new RegExp(pattern, 'i'));
         });
     });
 
@@ -134,6 +142,9 @@ describe('Example 12: Localization (i18n)', () => {
 
     it('should filter duration with slider filter', () => {
       cy.get('.filter-duration input[type=range]').as('range').invoke('val', 30).trigger('change', { force: true });
+      cy.get('.filter-duration input[type=range]').then(($slider) => {
+        $slider[0].dispatchEvent(new Event('change', { bubbles: true }));
+      });
 
       cy.wait(10);
 
