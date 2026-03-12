@@ -17,6 +17,8 @@ import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanil
 import { ExampleGridOptions } from './example-grid-options.js';
 import './example40.scss';
 
+const NB_ITEMS = 4000;
+
 interface ReportItem {
   id: number;
   title: string;
@@ -42,7 +44,7 @@ export default class Example40 {
 
   attached() {
     this.initializeGrid();
-    this.dataset = this.loadData(2000);
+    this.dataset = this.loadData(NB_ITEMS);
     const gridContainerElm = document.querySelector(`.grid40`) as HTMLDivElement;
 
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);

@@ -17,7 +17,7 @@ import {
 } from 'slickgrid-react';
 import './example51.scss'; // provide custom CSS/SASS styling
 
-const NB_ITEMS = 2000;
+const NB_ITEMS = 4000;
 
 interface ReportItem {
   id: number;
