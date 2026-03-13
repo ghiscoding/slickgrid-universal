@@ -236,7 +236,7 @@ export class DualInputEditor implements Editor {
 
   focus(): void {
     // always set focus on grid first, then do nothing since we have 2 inputs and we might focus on left/right depending on which is invalid and/or new
-    this.grid.focus();
+    this.grid.focus('internal');
   }
 
   show(): void {

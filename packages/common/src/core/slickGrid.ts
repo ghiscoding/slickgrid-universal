@@ -671,7 +671,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     this._focusSink = createDomElement(
       'div',
-      { tabIndex: 0, style: { position: 'fixed', width: '0px', height: '0px', top: '0px', left: '0px', outline: '0px' } },
+      { tabIndex: -1, style: { position: 'fixed', width: '0px', height: '0px', top: '0px', left: '0px', outline: '0px' } },
       this._container
     );
 
@@ -695,28 +695,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
 
     // Containers used for scrolling frozen columns and rows
-    this._paneHeaderL = createDomElement(
-      'div',
-      { className: 'slick-pane slick-pane-header slick-pane-left', tabIndex: 0 },
-      this._container
-    );
-    this._paneHeaderR = createDomElement(
-      'div',
-      { className: 'slick-pane slick-pane-header slick-pane-right', tabIndex: 0 },
-      this._container
-    );
-    this._paneTopL = createDomElement('div', { className: 'slick-pane slick-pane-top slick-pane-left', tabIndex: 0 }, this._container);
-    this._paneTopR = createDomElement('div', { className: 'slick-pane slick-pane-top slick-pane-right', tabIndex: 0 }, this._container);
-    this._paneBottomL = createDomElement(
-      'div',
-      { className: 'slick-pane slick-pane-bottom slick-pane-left', tabIndex: 0 },
-      this._container
-    );
-    this._paneBottomR = createDomElement(
-      'div',
-      { className: 'slick-pane slick-pane-bottom slick-pane-right', tabIndex: 0 },
-      this._container
-    );
+    this._paneHeaderL = createDomElement('div', { className: 'slick-pane slick-pane-header slick-pane-left' }, this._container);
+    this._paneHeaderR = createDomElement('div', { className: 'slick-pane slick-pane-header slick-pane-right' }, this._container);
+    this._paneTopL = createDomElement('div', { className: 'slick-pane slick-pane-top slick-pane-left' }, this._container);
+    this._paneTopR = createDomElement('div', { className: 'slick-pane slick-pane-top slick-pane-right' }, this._container);
+    this._paneBottomL = createDomElement('div', { className: 'slick-pane slick-pane-bottom slick-pane-left' }, this._container);
+    this._paneBottomR = createDomElement('div', { className: 'slick-pane slick-pane-bottom slick-pane-right' }, this._container);
 
     if (this._options.createPreHeaderPanel) {
       const headerContainer = createDomElement('div', { className: 'slick-preheader-container' }, this._paneHeaderL);
@@ -842,24 +826,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
 
     // Append the viewport containers
-    this._viewportTopL = createDomElement(
-      'div',
-      { className: 'slick-viewport slick-viewport-top slick-viewport-left', tabIndex: 0 },
-      this._paneTopL
-    );
-    this._viewportTopR = createDomElement(
-      'div',
-      { className: 'slick-viewport slick-viewport-top slick-viewport-right', tabIndex: 0 },
-      this._paneTopR
-    );
+    this._viewportTopL = createDomElement('div', { className: 'slick-viewport slick-viewport-top slick-viewport-left' }, this._paneTopL);
+    this._viewportTopR = createDomElement('div', { className: 'slick-viewport slick-viewport-top slick-viewport-right' }, this._paneTopR);
     this._viewportBottomL = createDomElement(
       'div',
-      { className: 'slick-viewport slick-viewport-bottom slick-viewport-left', tabIndex: 0 },
+      { className: 'slick-viewport slick-viewport-bottom slick-viewport-left' },
       this._paneBottomL
     );
     this._viewportBottomR = createDomElement(
       'div',
-      { className: 'slick-viewport slick-viewport-bottom slick-viewport-right', tabIndex: 0 },
+      { className: 'slick-viewport slick-viewport-bottom slick-viewport-right' },
       this._paneBottomR
     );
 
@@ -875,26 +851,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this._activeViewportNode = this._viewportTopL;
 
     // Append the canvas containers
-    this._canvasTopL = createDomElement(
-      'div',
-      { className: 'grid-canvas grid-canvas-top grid-canvas-left', tabIndex: 0 },
-      this._viewportTopL
-    );
-    this._canvasTopR = createDomElement(
-      'div',
-      { className: 'grid-canvas grid-canvas-top grid-canvas-right', tabIndex: 0 },
-      this._viewportTopR
-    );
-    this._canvasBottomL = createDomElement(
-      'div',
-      { className: 'grid-canvas grid-canvas-bottom grid-canvas-left', tabIndex: 0 },
-      this._viewportBottomL
-    );
-    this._canvasBottomR = createDomElement(
-      'div',
-      { className: 'grid-canvas grid-canvas-bottom grid-canvas-right', tabIndex: 0 },
-      this._viewportBottomR
-    );
+    this._canvasTopL = createDomElement('div', { className: 'grid-canvas grid-canvas-top grid-canvas-left' }, this._viewportTopL);
+    this._canvasTopR = createDomElement('div', { className: 'grid-canvas grid-canvas-top grid-canvas-right' }, this._viewportTopR);
+    this._canvasBottomL = createDomElement('div', { className: 'grid-canvas grid-canvas-bottom grid-canvas-left' }, this._viewportBottomL);
+    this._canvasBottomR = createDomElement('div', { className: 'grid-canvas grid-canvas-bottom grid-canvas-right' }, this._viewportBottomR);
 
     // Cache the canvases
     this._canvas = [this._canvasTopL, this._canvasTopR, this._canvasBottomL, this._canvasBottomR];
@@ -5794,7 +5754,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   /** focus on the active cell when it exists, otherwise focus on first cell */
   focusGridCell(): void {
-    this.focus();
+    this.setFocus();
     if (!this.getActiveCell()) {
       this.setActiveCell(0, 0);
     }
@@ -5806,7 +5766,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (gridMenuBtn) {
       gridMenuBtn.focus();
     } else {
-      this.focusHeaderMenuOrColumn(this.getColumns().length - 1);
+      this.focusHeaderMenuOrColumn(this.getVisibleColumns().length - 1);
     }
   }
 
@@ -5915,6 +5875,29 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected handleGridKeyDown(e: KeyboardEvent & { originalEvent: Event; target: HTMLElement }): void {
     const retval = this.triggerEvent(this.onKeyDown, { row: this.activeRow, cell: this.activeCell }, e);
     let handled: boolean | undefined | void = retval.isImmediatePropagationStopped();
+
+    const isGridFocusSinkTarget = e.target === this._focusSink || e.target === this._focusSink2;
+    const isPlainTab = e.key === 'Tab' && !e.ctrlKey && !e.altKey;
+    const isActiveCellZeroZero = this.activeRow === 0 && this.activeCell === 0;
+    const hasGridCellFocus = this.getActiveCell() !== null;
+
+    // Focus sinks are keyboard sentinels around the grid.
+    // Intercept only known sink Tab/Shift+Tab edge cases and route focus to header entry points.
+    // Otherwise, intentionally fall through to regular keyboard navigation below.
+    if (!handled && isGridFocusSinkTarget && isPlainTab) {
+      if (e.target === this._focusSink && !e.shiftKey && !hasGridCellFocus) {
+        this.focusHeaderMenuOrColumn(0);
+        handled = true;
+      } else if (e.target === this._focusSink2 && e.shiftKey && isActiveCellZeroZero) {
+        this.stopFullBubbling(e);
+        if (this._options.showHeaderRow && this.getHeaderRow()) {
+          this.focusHeaderRowFilter(true);
+        } else {
+          this.focusGridMenu();
+        }
+        handled = true;
+      }
+    }
 
     if (!handled) {
       if (this._options.enableCellNavigation && e.ctrlKey && e.key.toLowerCase() === 'c' && !this._options.enableExcelCopyBuffer) {
@@ -6383,8 +6366,20 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
   }
 
-  /** focus on the grid */
-  focus(): void {
+  /**
+   * Focus the grid.
+   * Defaults to `cell`, which focuses the active cell (or first cell when no active cell exists).
+   * @param mode - `cell` focuses active/first grid cell, `header` focuses first header menu/column entry point,
+   * `internal` keeps legacy focus-sink behavior (primarily for internal/editor flows).
+   */
+  focus(mode: 'cell' | 'header' | 'internal' = 'cell'): void {
+    if (mode === 'header') {
+      this.focusHeaderMenuOrColumn(0);
+      return;
+    } else if (mode === 'cell') {
+      this.focusGridCell();
+      return;
+    }
     this.setFocus();
   }
 

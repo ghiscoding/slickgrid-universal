@@ -225,7 +225,7 @@ export class SlickColumnPicker extends MenuBaseClass<ColumnPicker> {
       },
       onEscape: () => {
         this.disposeMenu();
-        this.grid.focus();
+        this.grid.focus('header');
       },
       onTab: (evt) => {
         evt.preventDefault();

@@ -734,6 +734,20 @@ describe('SlickGrid core file', () => {
         expect(spy).toHaveBeenCalled();
       }
     });
+
+    it('should focus first header entry point when calling focus("header")', () => {
+      const focusHeaderMenuOrColumnSpy = vi.spyOn(grid, 'focusHeaderMenuOrColumn');
+      grid.focus('header');
+
+      expect(focusHeaderMenuOrColumnSpy).toHaveBeenCalledWith(0);
+    });
+
+    it('should focus grid cell path when calling focus() without mode', () => {
+      const focusGridCellSpy = vi.spyOn(grid, 'focusGridCell');
+      grid.focus();
+
+      expect(focusGridCellSpy).toHaveBeenCalled();
+    });
   });
 
   describe('Row Selections', () => {
@@ -8223,6 +8237,71 @@ describe('SlickGrid core file', () => {
         expect(onKeyDownSpy).toHaveBeenCalled();
         expect(navigateNextSpy).toHaveBeenCalled();
         expect(unsetActiveCellSpy).toHaveBeenCalled();
+      });
+
+      it('should focus first header entry point when tabbing from leading focus sink', () => {
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, { ...defaultOptions, enableCellNavigation: true, editable: true });
+
+        const focusHeaderMenuSpy = vi.spyOn(grid, 'focusHeaderMenuOrColumn');
+        const navigateNextSpy = vi.spyOn(grid, 'navigateNext');
+        const event = new window.KeyboardEvent('keydown', { key: 'Tab', bubbles: true });
+
+        ((grid as any)._focusSink as HTMLElement).dispatchEvent(event);
+
+        expect(focusHeaderMenuSpy).toHaveBeenCalledWith(0);
+        expect(navigateNextSpy).not.toHaveBeenCalled();
+      });
+
+      it('should focus header-row filter when shift+tabbing from trailing focus sink at first cell', () => {
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, {
+          ...defaultOptions,
+          enableCellNavigation: true,
+          editable: true,
+          showHeaderRow: true,
+        });
+        grid.setActiveRow(0, 0);
+        grid.setActiveCell(0, 0);
+
+        const focusHeaderRowFilterSpy = vi.spyOn(grid, 'focusHeaderRowFilter');
+        const navigatePrevSpy = vi.spyOn(grid, 'navigatePrev');
+        const event = new window.KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true });
+
+        ((grid as any)._focusSink2 as HTMLElement).dispatchEvent(event);
+
+        expect(focusHeaderRowFilterSpy).toHaveBeenCalledWith(true);
+        expect(navigatePrevSpy).not.toHaveBeenCalled();
+      });
+
+      it('should focus grid-menu fallback when shift+tabbing from trailing focus sink and header-row is hidden', () => {
+        const columns = [
+          { id: 'name', field: 'name', name: 'Name' },
+          { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
+        ] as Column[];
+        grid = new SlickGrid<any, Column>(container, items, columns, {
+          ...defaultOptions,
+          enableCellNavigation: true,
+          editable: true,
+          showHeaderRow: false,
+        });
+        grid.setActiveRow(0, 0);
+        grid.setActiveCell(0, 0);
+
+        const focusGridMenuSpy = vi.spyOn(grid, 'focusGridMenu');
+        const focusHeaderRowFilterSpy = vi.spyOn(grid, 'focusHeaderRowFilter');
+        const event = new window.KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true });
+
+        ((grid as any)._focusSink2 as HTMLElement).dispatchEvent(event);
+
+        expect(focusGridMenuSpy).toHaveBeenCalled();
+        expect(focusHeaderRowFilterSpy).not.toHaveBeenCalled();
       });
 
       it('should call navigatePrev() when triggering Enter key', () => {
