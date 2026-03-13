@@ -63,9 +63,9 @@ describe('Example 28 - Tree Data (from a Hierarchical Dataset)', () => {
     });
 
     it('should expect the "pdf" folder to be closed by the collapsed items grid preset with aggregators of Sum(8.8MB) / Avg(2.2MB)', () => {
-      cy.get(`[data-row="${4}"] > .slick-cell:nth(0)`).should('contain', 'pdf');
+      cy.get('[data-row="4"] > .slick-cell:nth(0)').should('contain', 'pdf');
       cy.get(`.slick-group-toggle.collapsed`).should('have.length', 1);
-      cy.get(`[data-row="${4}"] > .slick-cell:nth(3)`).should('contain', 'sum: 8.8 MB / avg: 2.2 MB');
+      cy.get('[data-row="4"] > .slick-cell:nth(3)').should('contain', 'sum: 8.8 MB / avg: 2.2 MB');
 
       defaultGridPresetWithoutPdfDocs.forEach((_colName, rowIdx) => {
         if (rowIdx < defaultGridPresetWithoutPdfDocs.length - 1) {
@@ -75,14 +75,14 @@ describe('Example 28 - Tree Data (from a Hierarchical Dataset)', () => {
     });
 
     it('should have documents folder with aggregation of Sum(14.46MB) / Avg(1.45MB)', () => {
-      cy.get(`[data-row="${1}"] > .slick-cell:nth(0)`).should('contain', 'documents');
-      cy.get(`[data-row="${1}"] > .slick-cell:nth(3)`).should('contain', 'sum: 14.46 MB / avg: 1.45 MB');
-      cy.get(`[data-row="${2}"] > .slick-cell:nth(0)`).should('contain', 'misc');
-      cy.get(`[data-row="${2}"] > .slick-cell:nth(3)`).should('contain', 'sum: 0.4 MB / avg: 0.4 MB');
+      cy.get('[data-row="1"] > .slick-cell:nth(0)').should('contain', 'documents');
+      cy.get('[data-row="1"] > .slick-cell:nth(3)').should('contain', 'sum: 14.46 MB / avg: 1.45 MB');
+      cy.get('[data-row="2"] > .slick-cell:nth(0)').should('contain', 'misc');
+      cy.get('[data-row="2"] > .slick-cell:nth(3)').should('contain', 'sum: 0.4 MB / avg: 0.4 MB');
     });
 
     it('should expand "pdf" folder and expect all folders to be expanded', () => {
-      cy.get(`[data-row="${4}"] > .slick-cell:nth(0) .slick-group-toggle.collapsed`).click();
+      cy.get('[data-row="4"] > .slick-cell:nth(0) .slick-group-toggle.collapsed').click();
 
       cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top', { force: true } as any);
     });
@@ -99,34 +99,33 @@ describe('Example 28 - Tree Data (from a Hierarchical Dataset)', () => {
     it('should have pop songs folder with aggregations of Sum(53.3MB) / Avg(26.65MB)', () => {
       cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('center', { force: true } as any);
 
-      cy.get(`[data-row="${16}"] > .slick-cell:nth(0)`).should('contain', 'music');
-      cy.get(`[data-row="${16}"] > .slick-cell:nth(3)`).should('contain', 'sum: 151.3 MB / avg: 50.43 MB');
-      cy.get(`[data-row="${17}"] > .slick-cell:nth(3)`).should('contain', 'sum: 151.3 MB / avg: 50.43 MB');
+      cy.get('[data-row="16"] > .slick-cell:nth(0)').should('contain', 'music');
+      cy.get('[data-row="16"] > .slick-cell:nth(3)').should('contain', 'sum: 151.3 MB / avg: 50.43 MB');
+      cy.get('[data-row="17"] > .slick-cell:nth(3)').should('contain', 'sum: 151.3 MB / avg: 50.43 MB');
       // next folder is "other" and is empty without aggregations
-      cy.get(`[data-row="${19}"] > .slick-cell:nth(0)`).should('contain', 'pop');
-      cy.get(`[data-row="${19}"] > .slick-cell:nth(3)`).should('contain', 'sum: 53.3 MB / avg: 26.65 MB');
+      cy.get('[data-row="19"] > .slick-cell:nth(0)').should('contain', 'pop');
+      cy.get('[data-row="19"] > .slick-cell:nth(3)').should('contain', 'sum: 53.3 MB / avg: 26.65 MB');
     });
 
     it('should be able to add 2 new pop songs into the Music folder', () => {
       cy.get('[data-test=add-item-btn]').contains('Add New Pop Song').click().click();
 
       cy.get('.slick-group-toggle[level=3]').get('.slick-cell').contains('pop-79.mp3');
-
       cy.get('.slick-group-toggle[level=3]').get('.slick-cell').contains('pop-80.mp3');
 
-      cy.get(`[data-row="${20}"] > .slick-cell:nth(3)`).should('contain', '82 MB');
-      cy.get(`[data-row="${21}"] > .slick-cell:nth(3)`).should('contain', '83 MB');
+      cy.get('[data-row="20"] > .slick-cell:nth(3)').should('contain', '82 MB');
+      cy.get('[data-row="21"] > .slick-cell:nth(3)').should('contain', '83 MB');
     });
 
     it('should have pop songs folder with updated aggregations including new pop songs of Sum(218.3MB) / Avg(54.58MB)', () => {
       cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('bottom', { force: true } as any);
 
-      cy.get(`[data-row="${16}"] > .slick-cell:nth(0)`).should('contain', 'music');
-      cy.get(`[data-row="${16}"] > .slick-cell:nth(3)`).should('contain', 'sum: 316.3 MB / avg: 63.26 MB');
-      cy.get(`[data-row="${17}"] > .slick-cell:nth(3)`).should('contain', 'sum: 316.3 MB / avg: 63.26 MB');
+      cy.get('[data-row="16"] > .slick-cell:nth(0)').should('contain', 'music');
+      cy.get('[data-row="16"] > .slick-cell:nth(3)').should('contain', 'sum: 316.3 MB / avg: 63.26 MB');
+      cy.get('[data-row="17"] > .slick-cell:nth(3)').should('contain', 'sum: 316.3 MB / avg: 63.26 MB');
       // next folder is "other" and is empty without aggregations
-      cy.get(`[data-row="${19}"] > .slick-cell:nth(0)`).should('contain', 'pop');
-      cy.get(`[data-row="${19}"] > .slick-cell:nth(3)`).should('contain', 'sum: 218.3 MB / avg: 54.58 MB');
+      cy.get('[data-row="19"] > .slick-cell:nth(0)').should('contain', 'pop');
+      cy.get('[data-row="19"] > .slick-cell:nth(3)').should('contain', 'sum: 218.3 MB / avg: 54.58 MB');
     });
 
     it('should filter the Files column with the word "map" and expect only 4 rows left', () => {
@@ -228,17 +227,16 @@ describe('Example 28 - Tree Data (from a Hierarchical Dataset)', () => {
     it('should have pop songs folder with updated aggregations including 4 pop songs of Sum(400.3MB) / Avg(66.72MB)', () => {
       cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('bottom', { force: true } as any);
 
-      cy.get(`[data-row="${16}"] > .slick-cell:nth(0)`).should('contain', 'music');
-      cy.get(`[data-row="${16}"] > .slick-cell:nth(3)`).should('contain', 'sum: 400.3 MB / avg: 66.72 MB');
-      cy.get(`[data-row="${17}"] > .slick-cell:nth(3)`).should('contain', 'sum: 400.3 MB / avg: 66.72 MB');
+      cy.get('[data-row="16"] > .slick-cell:nth(0)').should('contain', 'music');
+      cy.get('[data-row="16"] > .slick-cell:nth(3)').should('contain', 'sum: 400.3 MB / avg: 66.72 MB');
+      cy.get('[data-row="17"] > .slick-cell:nth(3)').should('contain', 'sum: 400.3 MB / avg: 66.72 MB');
       // next folder is "other" and is empty without aggregations
-      cy.get(`[data-row="${19}"] > .slick-cell:nth(0)`).should('contain', 'pop');
-      cy.get(`[data-row="${19}"] > .slick-cell:nth(3)`).should('contain', 'sum: 302.3 MB / avg: 60.46 MB');
+      cy.get('[data-row="19"] > .slick-cell:nth(0)').should('contain', 'pop');
+      cy.get('[data-row="19"] > .slick-cell:nth(3)').should('contain', 'sum: 302.3 MB / avg: 60.46 MB');
     });
 
     it('should return 8 rows when filtering the word "pop" music without excluding children', () => {
       cy.get('.search-filter.filter-file').type('pop');
-
       cy.get('.right-footer .item-count').contains('8');
 
       popMusicWith3ExtraSongsWithoutEmpty.forEach((_colName, rowIdx) => {
@@ -250,7 +248,6 @@ describe('Example 28 - Tree Data (from a Hierarchical Dataset)', () => {
 
     it('should return 6 rows when using same filter "pop" music AND selecting checkbox to "Exclude Children when Filtering Tree"', () => {
       cy.get('[data-test="exclude-child-when-filtering"]').check();
-
       cy.get('.right-footer .item-count').contains('6');
 
       popMusicWith3ExtraSongsWithoutEmpty.forEach((_colName, rowIdx) => {
@@ -261,18 +258,15 @@ describe('Example 28 - Tree Data (from a Hierarchical Dataset)', () => {
     });
 
     it('should change filter to the word "music" and expect only 1 row (the music folder) to show up when still Excluding Children from the Tree', () => {
-      cy.get('[data-test=clear-search-string]').click();
-
+      cy.get('button.slick-grid-menu-button').click();
+      cy.get('.slick-grid-menu:visible').find('.slick-menu-item').first().find('span').contains('Clear all Filters').click();
       cy.get('.search-filter.filter-file').type('music');
-
       cy.get('.right-footer .item-count').contains('1');
-
-      cy.get(`[data-row="${0}"] > .slick-cell:nth(0)`).should('contain', 'music');
+      cy.get('[data-row="0"] > .slick-cell:nth(0)').should('contain', 'music');
     });
 
     it('should use same filter "music" and now expect to see 10 rows (entire music folder content) to show up when "Exclude Children when Filtering Tree" becomes uncheck', () => {
       cy.get('[data-test="exclude-child-when-filtering"]').uncheck();
-
       cy.get('.right-footer .item-count').contains('11');
 
       const allMusic = [...popMusicWith3ExtraSongs, 'rock', 'soft.mp3'];
@@ -286,7 +280,6 @@ describe('Example 28 - Tree Data (from a Hierarchical Dataset)', () => {
 
     it('should use same filter "music" and add extra filter of "size >= 50" and expect 1+ songs (>=6 rows) to show up in the grid when "Exclude Children when Filtering Tree" is unchecked and "Skip Other Criteria..." is checked', () => {
       cy.get('.search-filter.filter-size').find('input').type('50');
-
       cy.get('.search-filter.filter-size').find('.input-group-addon.operator select').select('>=');
 
       cy.wait(50)
@@ -317,23 +310,23 @@ describe('Example 28 - Tree Data (from a Hierarchical Dataset)', () => {
     it('should have again the pop songs folder with updated aggregations including 4 pop songs of Sum(400.3MB) / Avg(66.72MB)', () => {
       cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('center', { force: true } as any);
 
-      cy.get(`[data-row="${16}"] > .slick-cell:nth(0)`).should('contain', 'music');
-      cy.get(`[data-row="${16}"] > .slick-cell:nth(3)`).should('contain', 'sum: 400.3 MB / avg: 66.72 MB');
-      cy.get(`[data-row="${17}"] > .slick-cell:nth(3)`).should('contain', 'sum: 400.3 MB / avg: 66.72 MB');
+      cy.get('[data-row="16"] > .slick-cell:nth(0)').should('contain', 'music');
+      cy.get('[data-row="16"] > .slick-cell:nth(3)').should('contain', 'sum: 400.3 MB / avg: 66.72 MB');
+      cy.get('[data-row="17"] > .slick-cell:nth(3)').should('contain', 'sum: 400.3 MB / avg: 66.72 MB');
       // next folder is "other" and is empty without aggregations
-      cy.get(`[data-row="${19}"] > .slick-cell:nth(0)`).should('contain', 'pop');
-      cy.get(`[data-row="${19}"] > .slick-cell:nth(3)`).should('contain', 'sum: 302.3 MB / avg: 60.46 MB');
+      cy.get('[data-row="19"] > .slick-cell:nth(0)').should('contain', 'pop');
+      cy.get('[data-row="19"] > .slick-cell:nth(3)').should('contain', 'sum: 302.3 MB / avg: 60.46 MB');
     });
 
     it('should remove last inserted pop song 81 and expect aggregations to be updated with Sum(316.3MB) / Avg(63.26MB)', () => {
       cy.get('[data-test="remove-item-btn"]').click();
 
-      cy.get(`[data-row="${16}"] > .slick-cell:nth(0)`).should('contain', 'music');
-      cy.get(`[data-row="${16}"] > .slick-cell:nth(3)`).should('contain', 'sum: 316.3 MB / avg: 63.26 MB');
-      cy.get(`[data-row="${17}"] > .slick-cell:nth(3)`).should('contain', 'sum: 316.3 MB / avg: 63.26 MB');
+      cy.get('[data-row="16"] > .slick-cell:nth(0)').should('contain', 'music');
+      cy.get('[data-row="16"] > .slick-cell:nth(3)').should('contain', 'sum: 316.3 MB / avg: 63.26 MB');
+      cy.get('[data-row="17"] > .slick-cell:nth(3)').should('contain', 'sum: 316.3 MB / avg: 63.26 MB');
       // next folder is "other" and is empty without aggregations
-      cy.get(`[data-row="${19}"] > .slick-cell:nth(0)`).should('contain', 'pop');
-      cy.get(`[data-row="${19}"] > .slick-cell:nth(3)`).should('contain', 'sum: 218.3 MB / avg: 54.58 MB');
+      cy.get('[data-row="19"] > .slick-cell:nth(0)').should('contain', 'pop');
+      cy.get('[data-row="19"] > .slick-cell:nth(3)').should('contain', 'sum: 218.3 MB / avg: 54.58 MB');
     });
   });
 
@@ -345,30 +338,30 @@ describe('Example 28 - Tree Data (from a Hierarchical Dataset)', () => {
     it('should have pop songs folder with aggregation reflecting what is displayed, Sum(316.3MB) / Avg(63.26MB)', () => {
       cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('center', { force: true } as any);
 
-      cy.get(`[data-row="${16}"] > .slick-cell:nth(0)`).should('contain', 'music');
-      cy.get(`[data-row="${16}"] > .slick-cell:nth(3)`).should('contain', 'sum: 316.3 MB / avg: 63.26 MB');
-      cy.get(`[data-row="${17}"] > .slick-cell:nth(3)`).should('contain', 'sum: 316.3 MB / avg: 63.26 MB');
+      cy.get('[data-row="16"] > .slick-cell:nth(0)').should('contain', 'music');
+      cy.get('[data-row="16"] > .slick-cell:nth(3)').should('contain', 'sum: 316.3 MB / avg: 63.26 MB');
+      cy.get('[data-row="17"] > .slick-cell:nth(3)').should('contain', 'sum: 316.3 MB / avg: 63.26 MB');
       // next folder is "other" and is empty without aggregations
-      cy.get(`[data-row="${19}"] > .slick-cell:nth(0)`).should('contain', 'pop');
-      cy.get(`[data-row="${19}"] > .slick-cell:nth(3)`).should('contain', 'sum: 218.3 MB / avg: 54.58 MB');
+      cy.get('[data-row="19"] > .slick-cell:nth(0)').should('contain', 'pop');
+      cy.get('[data-row="19"] > .slick-cell:nth(3)').should('contain', 'sum: 218.3 MB / avg: 54.58 MB');
     });
 
     it('should have documents with same Sum as the beginning since auto-recalc is disabled, aggregation should be Sum(14.46MB) / Avg(1.45MB)', () => {
       cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top', { force: true } as any);
 
-      cy.get(`[data-row="${1}"] > .slick-cell:nth(0)`).should('contain', 'documents');
-      cy.get(`[data-row="${1}"] > .slick-cell:nth(3)`).should('contain', 'sum: 14.46 MB / avg: 1.45 MB (total)');
-      cy.get(`[data-row="${2}"] > .slick-cell:nth(0)`).should('contain', 'misc');
-      cy.get(`[data-row="${2}"] > .slick-cell:nth(3)`).should('contain', 'sum: 0.4 MB / avg: 0.4 MB (sub-total)');
+      cy.get('[data-row="1"] > .slick-cell:nth(0)').should('contain', 'documents');
+      cy.get('[data-row="1"] > .slick-cell:nth(3)').should('contain', 'sum: 14.46 MB / avg: 1.45 MB (total)');
+      cy.get('[data-row="2"] > .slick-cell:nth(0)').should('contain', 'misc');
+      cy.get('[data-row="2"] > .slick-cell:nth(3)').should('contain', 'sum: 0.4 MB / avg: 0.4 MB (sub-total)');
     });
 
     it('should retype filter "map" and expect totals to be updated with a lower Sum(6MB) / Avg(3MB) of only what is displayed', () => {
       cy.get('.search-filter.filter-file').type('map');
 
-      cy.get(`[data-row="${0}"] > .slick-cell:nth(0)`).should('contain', 'documents');
-      cy.get(`[data-row="${0}"] > .slick-cell:nth(3)`).should('contain', 'sum: 6 MB / avg: 3 MB (total)');
-      cy.get(`[data-row="${1}"] > .slick-cell:nth(0)`).should('contain', 'pdf');
-      cy.get(`[data-row="${1}"] > .slick-cell:nth(3)`).should('contain', 'sum: 6 MB / avg: 3 MB (sub-total)');
+      cy.get('[data-row="0"] > .slick-cell:nth(0)').should('contain', 'documents');
+      cy.get('[data-row="0"] > .slick-cell:nth(3)').should('contain', 'sum: 6 MB / avg: 3 MB (total)');
+      cy.get('[data-row="1"] > .slick-cell:nth(0)').should('contain', 'pdf');
+      cy.get('[data-row="1"] > .slick-cell:nth(3)').should('contain', 'sum: 6 MB / avg: 3 MB (sub-total)');
 
       cy.get('.right-footer .item-count').contains('4');
       cy.get('.right-footer .total-count').contains('31');
@@ -381,17 +374,17 @@ describe('Example 28 - Tree Data (from a Hierarchical Dataset)', () => {
     it('should type filter "b" and expect totals to be updated with a lower Sum(6MB) / Avg(3MB) of only what is displayed', () => {
       cy.get('.search-filter.filter-file').type('b');
 
-      cy.get(`[data-row="${0}"] > .slick-cell:nth(0)`).should('contain', 'bucket-list.txt');
-      cy.get(`[data-row="${1}"] > .slick-cell:nth(0)`).should('contain', 'documents');
-      cy.get(`[data-row="${1}"] > .slick-cell:nth(3)`).should('contain', 'sum: 4.02 MB / avg: 1.34 MB (total)');
-      cy.get(`[data-row="${2}"] > .slick-cell:nth(0)`).should('contain', 'pdf');
-      cy.get(`[data-row="${2}"] > .slick-cell:nth(3)`).should('contain', 'sum: 2.8 MB / avg: 1.4 MB (sub-total)');
-      cy.get(`[data-row="${3}"] > .slick-cell:nth(0)`).should('contain', 'internet-bill.pdf');
-      cy.get(`[data-row="${3}"] > .slick-cell:nth(3)`).should('contain', '1.3 MB');
-      cy.get(`[data-row="${4}"] > .slick-cell:nth(0)`).should('contain', 'phone-bill.pdf');
-      cy.get(`[data-row="${4}"] > .slick-cell:nth(3)`).should('contain', '1.5 MB');
-      cy.get(`[data-row="${5}"] > .slick-cell:nth(0)`).should('contain', 'zebra.dll');
-      cy.get(`[data-row="${5}"] > .slick-cell:nth(3)`).should('contain', '1.22 MB');
+      cy.get('[data-row="0"] > .slick-cell:nth(0)').should('contain', 'bucket-list.txt');
+      cy.get('[data-row="1"] > .slick-cell:nth(0)').should('contain', 'documents');
+      cy.get('[data-row="1"] > .slick-cell:nth(3)').should('contain', 'sum: 4.02 MB / avg: 1.34 MB (total)');
+      cy.get('[data-row="2"] > .slick-cell:nth(0)').should('contain', 'pdf');
+      cy.get('[data-row="2"] > .slick-cell:nth(3)').should('contain', 'sum: 2.8 MB / avg: 1.4 MB (sub-total)');
+      cy.get('[data-row="3"] > .slick-cell:nth(0)').should('contain', 'internet-bill.pdf');
+      cy.get('[data-row="3"] > .slick-cell:nth(3)').should('contain', '1.3 MB');
+      cy.get('[data-row="4"] > .slick-cell:nth(0)').should('contain', 'phone-bill.pdf');
+      cy.get('[data-row="4"] > .slick-cell:nth(3)').should('contain', '1.5 MB');
+      cy.get('[data-row="5"] > .slick-cell:nth(0)').should('contain', 'zebra.dll');
+      cy.get('[data-row="5"] > .slick-cell:nth(3)').should('contain', '1.22 MB');
 
       cy.get('.right-footer .item-count').contains('6');
       cy.get('.right-footer .total-count').contains('31');
@@ -400,14 +393,14 @@ describe('Example 28 - Tree Data (from a Hierarchical Dataset)', () => {
     it('should type filter "b" again and still expect totals to be updated with a lower Sum(6MB) / Avg(3MB) of only what is displayed', () => {
       cy.get('.search-filter.filter-file').type('i'); // will become "bi"
 
-      cy.get(`[data-row="${0}"] > .slick-cell:nth(0)`).should('contain', 'documents');
-      cy.get(`[data-row="${0}"] > .slick-cell:nth(3)`).should('contain', 'sum: 2.8 MB / avg: 1.4 MB (total)');
-      cy.get(`[data-row="${1}"] > .slick-cell:nth(0)`).should('contain', 'pdf');
-      cy.get(`[data-row="${1}"] > .slick-cell:nth(3)`).should('contain', 'sum: 2.8 MB / avg: 1.4 MB (sub-total)');
-      cy.get(`[data-row="${2}"] > .slick-cell:nth(0)`).should('contain', 'internet-bill.pdf');
-      cy.get(`[data-row="${2}"] > .slick-cell:nth(3)`).should('contain', '1.3 MB');
-      cy.get(`[data-row="${3}"] > .slick-cell:nth(0)`).should('contain', 'phone-bill.pdf');
-      cy.get(`[data-row="${3}"] > .slick-cell:nth(3)`).should('contain', '1.5 MB');
+      cy.get('[data-row="0"] > .slick-cell:nth(0)').should('contain', 'documents');
+      cy.get('[data-row="0"] > .slick-cell:nth(3)').should('contain', 'sum: 2.8 MB / avg: 1.4 MB (total)');
+      cy.get('[data-row="1"] > .slick-cell:nth(0)').should('contain', 'pdf');
+      cy.get('[data-row="1"] > .slick-cell:nth(3)').should('contain', 'sum: 2.8 MB / avg: 1.4 MB (sub-total)');
+      cy.get('[data-row="2"] > .slick-cell:nth(0)').should('contain', 'internet-bill.pdf');
+      cy.get('[data-row="2"] > .slick-cell:nth(3)').should('contain', '1.3 MB');
+      cy.get('[data-row="3"] > .slick-cell:nth(0)').should('contain', 'phone-bill.pdf');
+      cy.get('[data-row="3"] > .slick-cell:nth(3)').should('contain', '1.5 MB');
 
       cy.get('.right-footer .item-count').contains('4');
       cy.get('.right-footer .total-count').contains('31');
@@ -418,17 +411,16 @@ describe('Example 28 - Tree Data (from a Hierarchical Dataset)', () => {
     });
 
     it('should collapse "pdf" folder and filter with "b" again and expect same updated tree totals as earlier collapsed or expanded should still be Sum(2.8MB) / Avg(1.4MB)', () => {
-      cy.get(`[data-row="${4}"] > .slick-cell:nth(0) .slick-group-toggle.expanded`).click();
-
+      cy.get('[data-row="4"] > .slick-cell:nth(0) .slick-group-toggle.expanded').click();
       cy.get('.search-filter.filter-file').type('b');
 
-      cy.get(`[data-row="${0}"] > .slick-cell:nth(0)`).should('contain', 'bucket-list.txt');
-      cy.get(`[data-row="${1}"] > .slick-cell:nth(0)`).should('contain', 'documents');
-      cy.get(`[data-row="${1}"] > .slick-cell:nth(3)`).should('contain', 'sum: 4.02 MB / avg: 1.34 MB (total)');
-      cy.get(`[data-row="${2}"] > .slick-cell:nth(0)`).should('contain', 'pdf');
-      cy.get(`[data-row="${2}"] > .slick-cell:nth(3)`).should('contain', 'sum: 2.8 MB / avg: 1.4 MB (sub-total)');
-      cy.get(`[data-row="${3}"] > .slick-cell:nth(0)`).should('contain', 'zebra.dll');
-      cy.get(`[data-row="${3}"] > .slick-cell:nth(3)`).should('contain', '1.22 MB');
+      cy.get('[data-row="0"] > .slick-cell:nth(0)').should('contain', 'bucket-list.txt');
+      cy.get('[data-row="1"] > .slick-cell:nth(0)').should('contain', 'documents');
+      cy.get('[data-row="1"] > .slick-cell:nth(3)').should('contain', 'sum: 4.02 MB / avg: 1.34 MB (total)');
+      cy.get('[data-row="2"] > .slick-cell:nth(0)').should('contain', 'pdf');
+      cy.get('[data-row="2"] > .slick-cell:nth(3)').should('contain', 'sum: 2.8 MB / avg: 1.4 MB (sub-total)');
+      cy.get('[data-row="3"] > .slick-cell:nth(0)').should('contain', 'zebra.dll');
+      cy.get('[data-row="3"] > .slick-cell:nth(3)').should('contain', '1.22 MB');
 
       cy.get('.right-footer .item-count').contains('4');
       cy.get('.right-footer .total-count').contains('31');
@@ -437,15 +429,14 @@ describe('Example 28 - Tree Data (from a Hierarchical Dataset)', () => {
     it('should clear all filters and collapse all Tree groups (folders) then type "so" and expect updated "music" totals Sum(104.3MB) / Avg(52.15MB)', () => {
       cy.get('[data-test="clear-filters-btn"]').click();
       cy.get('[data-test="collapse-all-btn"]').click();
-
       cy.get('.search-filter.filter-file').type('so');
 
-      cy.get(`[data-row="${0}"] > .slick-cell:nth(0)`).should('contain', 'documents');
-      cy.get(`[data-row="${0}"] > .slick-cell:nth(3)`).should('contain', 'sum: 0.79 MB / avg: 0.79 MB (total)');
-      cy.get(`[data-row="${1}"] > .slick-cell:nth(0)`).should('contain', 'music');
-      cy.get(`[data-row="${1}"] > .slick-cell:nth(3)`).should('contain', 'sum: 104.3 MB / avg: 52.15 MB (total)');
-      cy.get(`[data-row="${2}"] > .slick-cell:nth(0)`).should('contain', 'something.txt');
-      cy.get(`[data-row="${2}"] > .slick-cell:nth(3)`).should('contain', '90 MB');
+      cy.get('[data-row="0"] > .slick-cell:nth(0)').should('contain', 'documents');
+      cy.get('[data-row="0"] > .slick-cell:nth(3)').should('contain', 'sum: 0.79 MB / avg: 0.79 MB (total)');
+      cy.get('[data-row="1"] > .slick-cell:nth(0)').should('contain', 'music');
+      cy.get('[data-row="1"] > .slick-cell:nth(3)').should('contain', 'sum: 104.3 MB / avg: 52.15 MB (total)');
+      cy.get('[data-row="2"] > .slick-cell:nth(0)').should('contain', 'something.txt');
+      cy.get('[data-row="2"] > .slick-cell:nth(3)').should('contain', '90 MB');
 
       cy.get('.right-footer .item-count').contains('3');
       cy.get('.right-footer .total-count').contains('31');
