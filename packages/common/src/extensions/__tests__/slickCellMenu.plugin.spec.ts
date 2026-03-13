@@ -55,6 +55,7 @@ const getEditorLockMock = {
 
 const gridStub = {
   autosizeColumns: vi.fn(),
+  focus: vi.fn(),
   getCellNode: vi.fn(),
   getCellFromEvent: vi.fn(),
   getColumns: vi.fn(),
@@ -819,6 +820,23 @@ describe('CellMenu Plugin', () => {
         gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
 
         expect(plugin.menuElement).toBeFalsy();
+      });
+
+      it('should fallback to grid cell focus after command when active element is outside a grid cell', () => {
+        plugin.dispose();
+        plugin.init();
+        gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
+
+        const externalBtn = document.createElement('button');
+        document.body.appendChild(externalBtn);
+        externalBtn.focus();
+
+        const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
+        const commandListElm = cellMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        commandListElm.querySelector('[data-command="command2"]')!.dispatchEvent(new Event('click'));
+
+        expect(gridStub.focus).toHaveBeenCalledWith('cell');
+        externalBtn.remove();
       });
     });
 

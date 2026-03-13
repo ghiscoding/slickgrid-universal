@@ -696,6 +696,12 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
 
             itemClickCallback.call(this, e, itemType, item, level, args?.column);
             triggeredByElm?.focus(); // Restore focus to the triggering element after click
+
+            // CellMenu commands can re-render the row/cell and detach the original trigger node.
+            // If focus is no longer on a grid cell after command execution, restore cell navigation focus.
+            if (this.pluginName === 'CellMenu' && !(document.activeElement as HTMLElement | null)?.closest('.slick-cell')) {
+              this.grid.focus('cell');
+            }
           }) as EventListener,
           undefined,
           eventGroupName
