@@ -418,4 +418,57 @@ describe('Example 02 - Grouping & Aggregators', () => {
       });
     });
   });
+
+  describe('a11y navigation to expand/collapse', () => {
+    it('should Group by "Duration" and collapse everything, then focus on first cell group "Duration: 0" then type ArrowRight and expect group to expand', () => {
+      cy.get('[data-test="group-duration-sort-value-btn"]').click();
+      cy.get('[data-test="collapse-all-btn"]').click();
+      cy.get('[data-row="0"] > .l0').click();
+      cy.get('[data-row="0"] > .slick-cell:nth(0) .slick-group-title').should('contain', 'Duration: 0');
+      cy.get('[data-row="1"] > .slick-cell:nth(0) .slick-group-title').should('contain', 'Duration: 1');
+      cy.get('[data-row="2"] > .slick-cell:nth(0) .slick-group-title').should('contain', 'Duration: 2');
+
+      cy.press(Cypress.Keyboard.Keys.RIGHT);
+
+      cy.get('[data-row="0"] > .slick-cell:nth(0) .slick-group-title').should('contain', 'Duration: 0');
+      cy.get('[data-row="1"] > .slick-cell:nth(0)').should('not.have.class', '.slick-group-title');
+      cy.get('[data-row="2"] > .slick-cell:nth(0)').should('not.have.class', '.slick-group-title');
+
+      cy.press(Cypress.Keyboard.Keys.LEFT);
+
+      cy.get('[data-row="0"] > .slick-cell:nth(0) .slick-group-title').should('contain', 'Duration: 0');
+      cy.get('[data-row="1"] > .slick-cell:nth(0) .slick-group-title').should('contain', 'Duration: 1');
+      cy.get('[data-row="2"] > .slick-cell:nth(0) .slick-group-title').should('contain', 'Duration: 2');
+    });
+
+    it('should Group by "Duration & Effort-Driven", then focus on first cell group "Duration: 0" then type ArrowRight and expect sub-group to expand', () => {
+      cy.get('[data-test="group-duration-effort-btn"]').click();
+      cy.get('[data-row="0"] > .l0').click();
+      cy.get('[data-row="0"] > .slick-cell:nth(0) .slick-group-title').should('contain', 'Duration: 0');
+      cy.get('[data-row="1"] > .slick-cell:nth(0) .slick-group-title').should('contain', 'Effort-Driven: False');
+      cy.get('[data-row="2"] > .slick-cell:nth(0) .slick-group-title').should('contain', 'Effort-Driven: True');
+
+      cy.press(Cypress.Keyboard.Keys.DOWN);
+      cy.press(Cypress.Keyboard.Keys.RIGHT);
+
+      cy.get('[data-row="0"] > .slick-cell:nth(0) .slick-group-title').should('contain', 'Duration: 0');
+      cy.get('[data-row="1"] > .slick-cell:nth(0) .slick-group-title').should('contain', 'Effort-Driven: False');
+      cy.get('[data-row="2"] > .slick-cell:nth(0)').should('not.have.class', '.slick-group-title');
+    });
+
+    it('should go up then left and expect sub-group to be collapsed and only have parent group "Duration: 0" to be expanded', () => {
+      cy.press(Cypress.Keyboard.Keys.LEFT);
+
+      cy.get('[data-row="0"] > .slick-cell:nth(0) .slick-group-title').should('contain', 'Duration: 0');
+      cy.get('[data-row="1"] > .slick-cell:nth(0) .slick-group-title').should('contain', 'Effort-Driven: False');
+      cy.get('[data-row="2"] > .slick-cell:nth(0) .slick-group-title').should('contain', 'Effort-Driven: True');
+
+      cy.press(Cypress.Keyboard.Keys.UP);
+      cy.press(Cypress.Keyboard.Keys.LEFT);
+
+      cy.get('[data-row="0"] > .slick-cell:nth(0) .slick-group-title').should('contain', 'Duration: 0');
+      cy.get('[data-row="1"] > .slick-cell:nth(0)').should('not.have.class', '.slick-group-title');
+      cy.get('[data-row="2"] > .slick-cell:nth(0)').should('not.have.class', '.slick-group-title');
+    });
+  });
 });

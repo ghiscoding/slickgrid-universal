@@ -114,6 +114,7 @@ const Example27: React.FC = () => {
       },
       enableAutoSizeColumns: true,
       enableAutoResize: true,
+      enableCellNavigation: true,
       enableFiltering: true,
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
       treeDataOptions: {

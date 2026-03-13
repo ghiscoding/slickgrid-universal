@@ -267,6 +267,10 @@ export class Example13Component implements OnInit {
     this.dataviewObj.setGrouping([]);
   }
 
+  clearFilters() {
+    this.angularGrid.filterService.clearFilters();
+  }
+
   collapseAllGroups() {
     this.dataviewObj.collapseAllGroups();
   }

@@ -267,6 +267,10 @@ export class Example13 {
     this.dataviewObj.setGrouping([]);
   }
 
+  clearFilters() {
+    this.aureliaGrid.filterService.clearFilters();
+  }
+
   collapseAllGroups() {
     this.dataviewObj.collapseAllGroups();
   }

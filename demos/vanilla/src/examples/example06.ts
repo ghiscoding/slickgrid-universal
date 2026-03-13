@@ -143,6 +143,7 @@ export default class Example06 {
       },
       enableAutoSizeColumns: true,
       enableAutoResize: true,
+      enableCellNavigation: true,
       enableExcelExport: true,
       excelExportOptions: {
         exportWithFormatter: true,

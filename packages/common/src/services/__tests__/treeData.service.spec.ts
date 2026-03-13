@@ -55,14 +55,18 @@ const dataViewStub = {
 
 const gridStub = {
   autosizeColumns: vi.fn(),
+  getActiveCell: vi.fn(),
+  getActiveCellNode: vi.fn(),
   getColumnIndex: vi.fn(),
   getData: vi.fn(),
   getOptions: () => gridOptionsMock,
   getColumns: vi.fn(),
+  getEditorLock: vi.fn(),
   getSortColumns: vi.fn(),
   invalidate: vi.fn(),
   onLocalSortChanged: vi.fn(),
   onClick: new SlickEvent(),
+  onKeyDown: new SlickEvent(),
   render: vi.fn(),
   setSortColumns: vi.fn(),
 } as unknown as SlickGrid;
@@ -255,7 +259,7 @@ describe('TreeData Service', () => {
 
       service.init(gridStub);
       const eventData = new SlickEventData();
-      div.className = 'toggle';
+      div.className = 'slick-group-toggle';
       Object.defineProperty(eventData, 'target', { writable: true, value: div });
       gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, eventData, gridStub);
 
@@ -273,7 +277,7 @@ describe('TreeData Service', () => {
 
       service.init(gridStub);
       const eventData = new SlickEventData();
-      div.className = 'toggle';
+      div.className = 'slick-group-toggle';
       Object.defineProperty(eventData, 'target', { writable: true, value: div });
       gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, eventData, gridStub);
 
@@ -301,7 +305,7 @@ describe('TreeData Service', () => {
 
       service.init(gridStub);
       const eventData = new SlickEventData();
-      div.className = 'toggle';
+      div.className = 'slick-group-toggle';
       Object.defineProperty(eventData, 'target', { writable: true, value: div });
       service.currentToggledItems = [{ itemId: 123, isCollapsed: true }];
 
@@ -330,7 +334,7 @@ describe('TreeData Service', () => {
 
       service.init(gridStub);
       const eventData = new SlickEventData();
-      div.className = 'toggle';
+      div.className = 'slick-group-toggle';
       Object.defineProperty(eventData, 'target', { writable: true, value: div });
       gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, eventData, gridStub);
 
@@ -364,7 +368,7 @@ describe('TreeData Service', () => {
 
       service.init(gridStub);
       const eventData = new SlickEventData();
-      div.className = 'toggle';
+      div.className = 'slick-group-toggle';
       Object.defineProperty(eventData, 'target', { writable: true, value: div });
       service.currentToggledItems = [{ itemId: 123, isCollapsed: true }];
 
@@ -405,7 +409,7 @@ describe('TreeData Service', () => {
 
       service.init(gridStub);
       const eventData = new SlickEventData();
-      div.className = 'toggle';
+      div.className = 'slick-group-toggle';
       Object.defineProperty(eventData, 'target', { writable: true, value: div });
       service.currentToggledItems = [{ itemId: 123, isCollapsed: true }];
 
@@ -473,7 +477,7 @@ describe('TreeData Service', () => {
 
       service.init(gridStub);
       const eventData = new SlickEventData();
-      div.className = 'toggle';
+      div.className = 'slick-group-toggle';
       Object.defineProperty(eventData, 'target', { writable: true, value: div });
       service.currentToggledItems = [{ itemId: 123, isCollapsed: true }];
 
@@ -542,7 +546,7 @@ describe('TreeData Service', () => {
 
       service.init(gridStub);
       const eventData = new SlickEventData();
-      div.className = 'toggle';
+      div.className = 'slick-group-toggle';
       Object.defineProperty(eventData, 'target', { writable: true, value: div });
       service.currentToggledItems = [{ itemId: 123, isCollapsed: true }];
 
@@ -561,6 +565,76 @@ describe('TreeData Service', () => {
       expect(service.getToggledItems()).toEqual([{ itemId: 123, isCollapsed: false }]);
       expect(SharedService.prototype.hierarchicalDataset![0].file).toBe('myFile.txt');
       expect(pubSubSpy).not.toHaveBeenCalledWith(`onTreeItemToggled`);
+    });
+  });
+
+  describe('onKeyDown subscription', () => {
+    let mockRowData: any;
+    let keyDownEvent: Event;
+    let preventDefaultSpy: any;
+    let stopImmediatePropagationSpy: any;
+
+    beforeEach(() => {
+      mockRowData = { id: 123, file: 'myFile.txt', size: 0.5, __hasChildren: true, __collapsed: false };
+      vi.spyOn(dataViewStub, 'getItem').mockReturnValue(mockRowData);
+      vi.spyOn(gridStub, 'getEditorLock').mockReturnValue({ isActive: () => false } as any);
+
+      const cellNode = document.createElement('div');
+      const toggleElm = document.createElement('span');
+      toggleElm.className = 'slick-group-toggle';
+      cellNode.appendChild(toggleElm);
+      vi.spyOn(gridStub, 'getActiveCellNode').mockReturnValue(cellNode);
+
+      keyDownEvent = new Event('keydown');
+      Object.defineProperty(keyDownEvent, 'key', { writable: true, configurable: true, value: ' ' });
+      preventDefaultSpy = vi.spyOn(keyDownEvent, 'preventDefault');
+      stopImmediatePropagationSpy = vi.spyOn(keyDownEvent, 'stopImmediatePropagation');
+    });
+
+    afterEach(() => {
+      vi.clearAllMocks();
+    });
+
+    it('should toggle a parent item on Space key', () => {
+      const updateItemSpy = vi.spyOn(dataViewStub, 'updateItem');
+      const invalidateSpy = vi.spyOn(gridStub, 'invalidate');
+
+      service.init(gridStub);
+      gridStub.onKeyDown.notify({ row: 0, cell: 0, grid: gridStub }, keyDownEvent, gridStub);
+
+      expect(updateItemSpy).toHaveBeenCalledWith(123, { ...mockRowData, __collapsed: true });
+      expect(invalidateSpy).toHaveBeenCalled();
+      expect(preventDefaultSpy).toHaveBeenCalled();
+      expect(stopImmediatePropagationSpy).toHaveBeenCalled();
+    });
+
+    it('should toggle only when ArrowRight is used on a collapsed parent', () => {
+      const updateItemSpy = vi.spyOn(dataViewStub, 'updateItem');
+      Object.defineProperty(keyDownEvent, 'key', { writable: true, configurable: true, value: 'ArrowRight' });
+
+      service.init(gridStub);
+
+      // 1) already expanded parent should not toggle on ArrowRight
+      mockRowData.__collapsed = false;
+      gridStub.onKeyDown.notify({ row: 0, cell: 0, grid: gridStub }, keyDownEvent, gridStub);
+      expect(updateItemSpy).not.toHaveBeenCalled();
+
+      // 2) collapsed parent should toggle on ArrowRight
+      mockRowData.__collapsed = true;
+      gridStub.onKeyDown.notify({ row: 0, cell: 0, grid: gridStub }, keyDownEvent, gridStub);
+      expect(updateItemSpy).toHaveBeenCalledWith(123, { ...mockRowData, __collapsed: false });
+    });
+
+    it('should not intercept keyboard toggle when editor lock is active', () => {
+      const updateItemSpy = vi.spyOn(dataViewStub, 'updateItem');
+      vi.spyOn(gridStub, 'getEditorLock').mockReturnValue({ isActive: () => true } as any);
+
+      service.init(gridStub);
+      gridStub.onKeyDown.notify({ row: 0, cell: 0, grid: gridStub }, keyDownEvent, gridStub);
+
+      expect(updateItemSpy).not.toHaveBeenCalled();
+      expect(preventDefaultSpy).not.toHaveBeenCalled();
+      expect(stopImmediatePropagationSpy).not.toHaveBeenCalled();
     });
   });
 

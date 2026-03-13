@@ -265,6 +265,10 @@ const Example13: React.FC = () => {
     reactGridRef.current?.dataView.setGrouping([]);
   }
 
+  function clearFilters() {
+    reactGridRef.current?.filterService.clearFilters();
+  }
+
   function collapseAllGroups() {
     reactGridRef.current?.dataView.collapseAllGroups();
   }
@@ -434,7 +438,10 @@ const Example13: React.FC = () => {
             50K rows
           </button>
           <button className="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="clear-grouping-btn" onClick={() => clearGrouping()}>
-            <i className="mdi mdi-close"></i> Clear grouping
+            <i className="mdi mdi-close"></i> Clear Grouping
+          </button>
+          <button className="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="clear-filter-btn" onClick={() => clearFilters()}>
+            <i className="mdi mdi-close"></i> Clear Filters
           </button>
           <button
             className="btn btn-outline-secondary btn-xs btn-icon mx-1"

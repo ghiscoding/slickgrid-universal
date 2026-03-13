@@ -37,6 +37,7 @@ const gridStub = {
   getColumns: vi.fn(),
   getData: () => dataViewStub as SlickDataView,
   getDataItem: vi.fn(),
+  getEditorLock: vi.fn(),
   getOptions: () => gridOptionMock,
   getRenderedRange: vi.fn(),
   getSortColumns: vi.fn(),
@@ -347,6 +348,7 @@ describe('GroupItemMetadataProvider Service', () => {
 
     beforeEach(() => {
       vi.spyOn(gridStub, 'getActiveCell').mockReturnValue(mockActiveCell);
+      vi.spyOn(gridStub, 'getEditorLock').mockReturnValue({ isActive: () => false } as any);
       vi.spyOn(gridStub, 'getRenderedRange').mockReturnValue(mockRange);
       refreshHintSpy = vi.spyOn(dataViewStub, 'setRefreshHints');
       collapseGroupSpy = vi.spyOn(dataViewStub, 'collapseGroup');
@@ -395,6 +397,76 @@ describe('GroupItemMetadataProvider Service', () => {
       expect(collapseGroupSpy).toHaveBeenCalledWith('age');
       expect(preventDefaultSpy).toHaveBeenCalled();
       expect(stopPropagationSpy).toHaveBeenCalled();
+    });
+
+    it('should expect call the DataView expand of the Group with ArrowRight when Group is collapsed', () => {
+      group.groupingKey = 'age';
+      group.collapsed = true;
+      Object.defineProperty(keyDownEvent, 'key', { writable: true, configurable: true, value: 'ArrowRight' });
+
+      service.init(gridStub);
+      gridStub.onKeyDown.notify({ row: 0, cell: 2, grid: gridStub }, keyDownEvent);
+
+      expect(expandGroupSpy).toHaveBeenCalledWith('age');
+      expect(collapseGroupSpy).not.toHaveBeenCalled();
+      expect(preventDefaultSpy).toHaveBeenCalled();
+      expect(stopPropagationSpy).toHaveBeenCalled();
+    });
+
+    it('should not collapse Group with ArrowRight when Group is expanded', () => {
+      group.groupingKey = 'age';
+      group.collapsed = false;
+      Object.defineProperty(keyDownEvent, 'key', { writable: true, configurable: true, value: 'ArrowRight' });
+
+      service.init(gridStub);
+      gridStub.onKeyDown.notify({ row: 0, cell: 2, grid: gridStub }, keyDownEvent);
+
+      expect(expandGroupSpy).not.toHaveBeenCalled();
+      expect(collapseGroupSpy).not.toHaveBeenCalled();
+      expect(preventDefaultSpy).not.toHaveBeenCalled();
+      expect(stopPropagationSpy).not.toHaveBeenCalled();
+    });
+
+    it('should expect call the DataView collapse of the Group with ArrowLeft when Group is expanded', () => {
+      group.groupingKey = 'age';
+      group.collapsed = false;
+      Object.defineProperty(keyDownEvent, 'key', { writable: true, configurable: true, value: 'ArrowLeft' });
+
+      service.init(gridStub);
+      gridStub.onKeyDown.notify({ row: 0, cell: 2, grid: gridStub }, keyDownEvent);
+
+      expect(collapseGroupSpy).toHaveBeenCalledWith('age');
+      expect(expandGroupSpy).not.toHaveBeenCalled();
+      expect(preventDefaultSpy).toHaveBeenCalled();
+      expect(stopPropagationSpy).toHaveBeenCalled();
+    });
+
+    it('should not expand Group with ArrowLeft when Group is collapsed', () => {
+      group.groupingKey = 'age';
+      group.collapsed = true;
+      Object.defineProperty(keyDownEvent, 'key', { writable: true, configurable: true, value: 'ArrowLeft' });
+
+      service.init(gridStub);
+      gridStub.onKeyDown.notify({ row: 0, cell: 2, grid: gridStub }, keyDownEvent);
+
+      expect(collapseGroupSpy).not.toHaveBeenCalled();
+      expect(expandGroupSpy).not.toHaveBeenCalled();
+      expect(preventDefaultSpy).not.toHaveBeenCalled();
+      expect(stopPropagationSpy).not.toHaveBeenCalled();
+    });
+
+    it('should not toggle Group while inline editor is active', () => {
+      group.groupingKey = 'age';
+      group.collapsed = true;
+      vi.spyOn(gridStub, 'getEditorLock').mockReturnValue({ isActive: () => true } as any);
+
+      service.init(gridStub);
+      gridStub.onKeyDown.notify({ row: 0, cell: 2, grid: gridStub }, keyDownEvent);
+
+      expect(expandGroupSpy).not.toHaveBeenCalled();
+      expect(collapseGroupSpy).not.toHaveBeenCalled();
+      expect(preventDefaultSpy).not.toHaveBeenCalled();
+      expect(stopPropagationSpy).not.toHaveBeenCalled();
     });
   });
 });
