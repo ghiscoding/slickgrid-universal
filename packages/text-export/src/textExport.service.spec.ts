@@ -63,6 +63,7 @@ const gridStub = {
   getData: () => dataViewStub,
   getOptions: () => mockGridOptions,
   getColumns: vi.fn(),
+  getVisibleColumns: vi.fn(),
   getGrouping: vi.fn(),
   getParentRowSpanByCell: vi.fn(),
 } as unknown as SlickGrid;
@@ -157,7 +158,7 @@ describe('ExportService', () => {
           },
         ] as Column[];
 
-        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(mockColumns);
       });
 
       it('should throw an error when trying call exportToFile" without a grid and/or dataview object initialized', () =>
@@ -243,7 +244,7 @@ describe('ExportService', () => {
       let mockCollection: any[];
 
       beforeEach(() => {
-        mockGridOptions.textExportOptions = { delimiterOverride: '' };
+        mockGridOptions.textExportOptions = { delimiterOverride: undefined };
       });
 
       it(`should have the Order exported correctly with multiple formatters which have 1 of them returning an object with a text property (instead of simple string)`, async () => {
@@ -452,7 +453,7 @@ describe('ExportService', () => {
       });
     });
 
-    describe('startDownloadFile with some columns having complex object', () => {
+    describe('startDownloadFile with some columns having complex object and hidden columns', () => {
       beforeEach(() => {
         mockColumns = [
           { id: 'id', field: 'id', excludeFromExport: true },
@@ -479,7 +480,7 @@ describe('ExportService', () => {
               "John","Z","SALES_REP"`;
 
         service.init(gridStub, container);
-        await service.exportToFile(mockExportCsvOptions);
+        await service.exportToFile({ ...mockExportCsvOptions, includeHidden: true });
 
         expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
@@ -502,7 +503,7 @@ describe('ExportService', () => {
               "John","Z","SALES_REP"`;
 
         service.init(gridStub, container);
-        await service.exportToFile(mockExportCsvOptions);
+        await service.exportToFile({ ...mockExportCsvOptions, includeHidden: true });
 
         expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
@@ -542,7 +543,7 @@ describe('ExportService', () => {
           },
         ] as Column[];
 
-        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(mockColumns);
       });
 
       afterEach(() => {
@@ -638,7 +639,7 @@ describe('ExportService', () => {
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 20 } },
         };
 
-        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(mockColumns);
         mockCollection = [mockGroup1, mockItem1, mockItem2, { __groupTotals: true, initialized: true, sum: { order: 20 }, group: mockGroup1 }];
         vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         vi.spyOn(dataViewStub, 'getItem')
@@ -759,7 +760,7 @@ describe('ExportService', () => {
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 20 } },
         };
 
-        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(mockColumns);
         mockCollection = [mockGroup1, mockItem1, mockItem2, { __groupTotals: true, initialized: true, sum: { order: 20 }, group: mockGroup1 }];
         vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         vi.spyOn(dataViewStub, 'getItem')
@@ -904,7 +905,7 @@ describe('ExportService', () => {
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 10 } },
         };
 
-        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(mockColumns);
         mockCollection = [
           mockGroup1,
           mockGroup2,
@@ -980,7 +981,7 @@ describe('ExportService', () => {
       beforeEach(() => {
         mockGridOptions.createPreHeaderPanel = true;
         mockGridOptions.showPreHeaderPanel = true;
-        mockGridOptions.textExportOptions = { delimiterOverride: '' };
+        mockGridOptions.textExportOptions = { delimiterOverride: undefined };
         mockColumns = [
           { id: 'id', field: 'id', excludeFromExport: true },
           { id: 'firstName', field: 'firstName', width: 100, formatter: myBoldHtmlFormatter, columnGroup: 'User Profile' },
@@ -1007,7 +1008,7 @@ describe('ExportService', () => {
           },
         ] as Column[];
 
-        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(mockColumns);
         vi.spyOn(dataViewStub, 'getGrouping').mockReturnValue(null as any);
       });
 
@@ -1073,7 +1074,7 @@ describe('ExportService', () => {
               params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
             },
           ] as Column[];
-          vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+          vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(mockColumns);
         });
 
         afterEach(() => {
@@ -1133,7 +1134,7 @@ describe('ExportService', () => {
           { id: 'order', field: 'order', width: 100 },
         ] as Column[];
 
-        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(mockColumns);
       });
 
       afterEach(() => {
@@ -1206,7 +1207,7 @@ describe('ExportService', () => {
           { id: 'order', field: 'order', width: 100 },
         ] as Column[];
 
-        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(mockColumns);
       });
 
       afterEach(() => {

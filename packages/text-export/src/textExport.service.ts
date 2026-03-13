@@ -175,8 +175,13 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
   // protected functions
   // -----------------------
 
+  /** get columns might include hidden columns when `includeHidden` is enabled */
+  protected getColumns(): Column[] {
+    return (this._exportOptions?.includeHidden ? this._grid?.getColumns() : this._grid.getVisibleColumns()) || [];
+  }
+
   protected getDataOutput(): string {
-    const columns = this._grid.getColumns() || [];
+    const columns = this.getColumns();
 
     // Group By text, it could be set in the export options or from translation or if nothing is found then use the English constant text
     let groupByColumnHeader = this._exportOptions.groupingColumnHeaderTitle;

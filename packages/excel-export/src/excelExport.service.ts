@@ -185,7 +185,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         this._gridOptions.excelExportOptions.customExcelHeader(this._workbook, this._sheet);
       }
 
-      const columns = this._grid?.getColumns() || [];
+      const columns = this.getColumns();
       this._sheet.setColumns(this.getColumnStyles(columns));
 
       const currentSheetData = this._sheet.data;
@@ -268,11 +268,16 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   // protected functions
   // -----------------------
 
+  /** get columns might include hidden columns when `includeHidden` is enabled */
+  protected getColumns(): Column[] {
+    return (this._excelExportOptions?.includeHidden ? this._grid?.getColumns() : this._grid.getVisibleColumns()) || [];
+  }
+
   /**
    * Async version of getDataOutput with yielding for UI responsiveness during large dataset processing
    */
   protected async getDataOutputAsync(): Promise<Array<string[] | ExcelColumnMetadata[]>> {
-    const columns = this._grid?.getColumns() || [];
+    const columns = this.getColumns();
 
     // data variable which will hold all the fields data of a row
     const outputData: Array<string[] | ExcelColumnMetadata[]> = [];
