@@ -33,7 +33,7 @@ $slick-editor-grid-cell-border-width-modified:                  1px 7px 1px 1px 
   $slick-cell-active-box-shadow:                                inset 0 0 0 1px #{$slick-highlight-color} !default,
   $slick-cell-border-top:                                       none !default,
   $slick-cell-border-bottom:                                    none !default,
-  $slick-cell-box-shadow:                                       #{0px 1px 0px #dddbda, 0px -1px 0px #dddbda} !default,
+  $slick-cell-box-shadow:                                       #{inset 0px 1px 0px #dddbda, inset 0px -1px 0px #dddbda} !default,
   $slick-cell-font-weight:                                      400 !default,
   $slick-cell-odd-background-color:                             #f3f2f2 !default,
   $slick-cell-text-color:                                       #333 !default,
@@ -127,7 +127,7 @@ $slick-editor-grid-cell-border-width-modified:                  1px 7px 1px 1px 
   $slick-row-selected-color:                                    #ECEBEA !default,
   $slick-row-highlight-background-color:                        #{color.adjust($slick-highlight-color, $lightness: 50%)} !default,
   $slick-row-mouse-hover-color:                                 #f3f2f2 !default,
-  $slick-row-mouse-hover-box-shadow:                            0 0 0 2px #dddbda !default,
+  $slick-row-mouse-hover-box-shadow:                            inset 0 0 0 2px #dddbda !default,
   $slick-pagination-icon-color:                                 $slick-primary-color !default,
   $slick-pagination-button-border-radius:                       2px !default,
   $slick-pagination-page-input-border-radius:                   3px !default,
@@ -154,7 +154,7 @@ $slick-dark-base-dark-menu-bg-color:        #212121;
   --slick-multiselect-icon-checked-color:         #66b8ff;
   --slick-base-dark-menu-bg-color:                #212121;
   --slick-cell-active-box-shadow:                 #{inset 0 0 0 1px #3ca4ff};
-  --slick-cell-box-shadow:                        #{0px 1px 0px #303030, 0px -1px 0px #303030};
+  --slick-cell-box-shadow:                        #{inset 0px 1px 0px #303030, inset 0px -1px 0px #303030};
   --slick-checkbox-icon-container-bg-color:       #2d2d2d;
   --slick-column-picker-icon-color:               #66b8ff;
   --slick-checkbox-icon-color:                    #66b8ff;
@@ -169,5 +169,5 @@ $slick-dark-base-dark-menu-bg-color:        #212121;
   --slick-icon-sort-color:                        #66b8ff;
   --slick-header-filter-row-border-bottom:        2px solid #0389ff;
   --slick-pagination-icon-color:                  #66b8ff;
-  --slick-row-mouse-hover-box-shadow:             0 0 0 2px #3a3a3a;
+  --slick-row-mouse-hover-box-shadow:             inset 0 0 0 2px #3a3a3a;
 }
