@@ -1303,9 +1303,9 @@ li.hidden {
 }
 
 .slick-drag-replace-handle {
-  height: 7px;
-  width: 7px;
-  background: gray;
+  height: var(--slick-drag-selection-handle-size, v.$slick-drag-selection-handle-size);
+  width: var(--slick-drag-selection-handle-size, v.$slick-drag-selection-handle-size);
+  background: var(--slick-drag-selection-handle-color, v.$slick-drag-selection-handle-color);
   position: absolute;
   bottom: 0;
   right: 0;
