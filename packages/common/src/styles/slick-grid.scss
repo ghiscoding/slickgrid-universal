@@ -114,13 +114,15 @@
     color: var(--slick-cell-text-color, v.$slick-cell-text-color);
     font-family: var(--slick-cell-font-family, v.$slick-cell-font-family);
     font-weight: var(--slick-cell-font-weight, v.$slick-cell-font-weight);
+    z-index: 0;
 
     &:hover {
       background-color: var(--slick-row-mouse-hover-color, v.$slick-row-mouse-hover-color);
       box-shadow: var(--slick-row-mouse-hover-box-shadow, v.$slick-row-mouse-hover-box-shadow);
-      z-index: var(--slick-row-mouse-hover-z-index, v.$slick-row-mouse-hover-z-index);
+      z-index: 5;
     }
     &.active {
+      z-index: 10;
       padding: var(--slick-cell-padding, v.$slick-cell-padding);
     }
     &.highlighter {

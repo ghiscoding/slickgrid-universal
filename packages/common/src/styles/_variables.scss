@@ -109,7 +109,6 @@ $slick-pane-top-border-top:                                 none !default;
 /* row */
 $slick-row-mouse-hover-color:                               #eff5fc !default;
 $slick-row-mouse-hover-box-shadow:                          none !default;
-$slick-row-mouse-hover-z-index:                             5 !default;
 $slick-row-selected-color:                                  $slick-cell-selected-color !default;
 $slick-row-highlight-background-color:                      color.adjust($slick-row-selected-color, $lightness: -5%) !default;
 $slick-row-highlight-fade-animation:                        1s linear !default;
