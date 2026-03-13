@@ -327,6 +327,17 @@ describe('CellMenu Plugin', () => {
       expect(createParentMenuSpy).not.toHaveBeenCalled();
     });
 
+    it('should not open Cell Menu on Enter key when current column has no cellMenu', () => {
+      const createParentMenuSpy = vi.spyOn(plugin, 'createParentMenu');
+      vi.spyOn(gridStub, 'getCellNode').mockReturnValue(slickCellElm);
+      const keyEvent = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
+      Object.defineProperty(keyEvent, 'target', { writable: true, configurable: true, value: slickCellElm });
+
+      gridStub.onKeyDown.notify({ cell: 0, row: 1, grid: gridStub } as any, keyEvent, gridStub);
+
+      expect(createParentMenuSpy).not.toHaveBeenCalled();
+    });
+
     it('should not open Cell Menu on non-activation key via onKeyDown event', () => {
       const createParentMenuSpy = vi.spyOn(plugin, 'createParentMenu');
       const keyEvent = new KeyboardEvent('keydown', { key: 'a', bubbles: true, cancelable: true });
