@@ -443,7 +443,7 @@ export class SlickCellRangeSelector {
       return;
     }
 
-    this._grid.focus();
+    this._grid.focus('internal');
 
     const canvasOffset = getOffset(this._canvas);
     let startX = dd.startX - canvasOffset.left;

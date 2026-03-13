@@ -18,6 +18,12 @@ export default class Example37 {
   sgb1!: SlickVanillaGridBundle;
   sgb2!: SlickVanillaGridBundle;
 
+  gridFocus() {
+    this.sgb1.slickGrid?.focus();
+    // this.sgb1.slickGrid?.setActiveCell(0, 0);
+    // this.sgb1.slickGrid?.getCanvasNode()?.focus();
+  }
+
   attached() {
     this._eventHandler = new SlickEventHandler();
 
