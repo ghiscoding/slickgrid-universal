@@ -23,6 +23,7 @@ const DEFAULT_DECIMAL_PLACES = 0;
  */
 export class InputEditor implements Editor {
   protected _bindEventService: BindingEventService;
+  protected _isInternalFocusInProgress = false;
   protected _input!: HTMLInputElement | undefined;
   protected _inputType = 'text';
   protected _isValueTouched = false;
@@ -130,8 +131,10 @@ export class InputEditor implements Editor {
     // listen to focusout or blur to automatically call a save
     if (this.hasAutoCommitEdit && !this.args.isCompositeEditor) {
       this._bindEventService.bind(this._input, ['focusout', 'blur'], () => {
-        this._isValueTouched = true;
-        this.save();
+        if (!this._isInternalFocusInProgress) {
+          this._isValueTouched = true;
+          this.save();
+        }
       });
     }
 
@@ -172,8 +175,10 @@ export class InputEditor implements Editor {
 
   focus(): void {
     // always set focus on grid first so that plugin to copy range (SlickCellExternalCopyManager) would still be able to paste at that position
+    this._isInternalFocusInProgress = true;
     this.grid.focus('internal');
     this._input?.focus();
+    this._isInternalFocusInProgress = false;
   }
 
   getDecimalPlaces(): number {
