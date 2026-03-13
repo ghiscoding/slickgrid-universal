@@ -695,9 +695,6 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
             }
 
             itemClickCallback.call(this, e, itemType, item, level, args?.column);
-            if (triggeredByElm?.classList.contains('slick-header-menu-icon')) {
-              triggeredByElm = triggeredByElm.parentElement as HTMLElement; // If the click was on the icon, move focus to the header button for better accessibility
-            }
             triggeredByElm?.focus(); // Restore focus to the triggering element after click
           }) as EventListener,
           undefined,

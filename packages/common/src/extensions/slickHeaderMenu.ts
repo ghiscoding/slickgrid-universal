@@ -603,8 +603,9 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
       }
     }
 
-    // Track the element that triggered the menu (for focus restoration)
-    const triggerElement = e.target as HTMLElement;
+    // Track the element that triggered the menu (for focus restoration).
+    // Use closest() so that clicking on a child icon resolves to the nearest focusable menu button container.
+    const triggerElement = ((e.target as HTMLElement).closest<HTMLElement>('[class*="-menu-button"]') ?? e.target) as HTMLElement;
     this.setMenuTriggerElement(triggerElement);
 
     // create 1st parent menu container & reposition it
