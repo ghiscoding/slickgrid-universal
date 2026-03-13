@@ -4,11 +4,11 @@ import type {
   CellMenu,
   CellMenuOption,
   Column,
-  DOMMouseOrTouchEvent,
   MenuCommandItem,
   MenuCommandItemCallbackArgs,
   MenuOptionItem,
   OnClickEventArgs,
+  OnKeyDownEventArgs,
 } from '../interfaces/index.js';
 import type { SharedService } from '../services/shared.service.js';
 import type { ExtensionUtility } from './extensionUtility.js';
@@ -65,6 +65,7 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
     this.sortMenuItems(this.grid.getColumns());
 
     this._eventHandler.subscribe(this.grid.onClick, this.handleCellClick.bind(this));
+    this._eventHandler.subscribe(this.grid.onKeyDown, this.handleCellKeyDown.bind(this));
 
     if (this._addonOptions.hideMenuOnScroll) {
       this._eventHandler.subscribe(this.grid.onScroll, this.closeMenu.bind(this));
@@ -105,7 +106,7 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
   // event handlers
   // ------------------
 
-  protected handleCellClick(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData, args: OnClickEventArgs): void {
+  protected handleCellClick(event: SlickEventData, args: OnClickEventArgs): void {
     this.disposeAllMenus(); // make there's only 1 parent menu opened at a time
     const cell = this.grid.getCellFromEvent(event);
 
@@ -144,6 +145,29 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
 
       // Hide the menu on outside click.
       this._bindEventService.bind(document.body, 'mousedown', this.handleBodyMouseDown.bind(this) as EventListener);
+    }
+  }
+
+  /** Open the Cell Menu from root grid cell context on Enter key, sub-menu Enter key presses are handled separately and ignored here. */
+  protected handleCellKeyDown(event: SlickEventData, args: OnKeyDownEventArgs): void {
+    const keyboardEvent = event.getNativeEvent<KeyboardEvent>();
+    const columnDef = this.grid.getColumns()[args.cell];
+
+    // Open Cell Menu on Enter only when this column defines cellMenu and no editor is currently active.
+    if (keyboardEvent?.key === 'Enter' && columnDef?.cellMenu && !this.grid.getEditorLock()?.isActive?.()) {
+      const parentCell = this.grid.getCellNode(args.row, args.cell)?.closest<HTMLDivElement>('.slick-cell');
+      if (parentCell) {
+        this.handleCellClick(
+          {
+            ...keyboardEvent,
+            preventDefault: keyboardEvent.preventDefault.bind(keyboardEvent),
+            stopPropagation: keyboardEvent.stopPropagation.bind(keyboardEvent),
+            defaultPrevented: keyboardEvent.defaultPrevented,
+            target: parentCell,
+          } as unknown as SlickEventData,
+          args
+        );
+      }
     }
   }
 

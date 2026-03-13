@@ -55,6 +55,7 @@ const getEditorLockMock = {
 
 const gridStub = {
   autosizeColumns: vi.fn(),
+  focus: vi.fn(),
   getCellNode: vi.fn(),
   getCellFromEvent: vi.fn(),
   getColumns: vi.fn(),
@@ -73,6 +74,7 @@ const gridStub = {
   sanitizeHtmlString: (str: string) => str,
   updateColumnHeader: vi.fn(),
   onClick: new SlickEvent(),
+  onKeyDown: new SlickEvent(),
   onScroll: new SlickEvent(),
   onSort: new SlickEvent(),
 } as unknown as SlickGrid;
@@ -301,6 +303,49 @@ describe('CellMenu Plugin', () => {
 
       expect(cellMenuElm.classList.contains('dropup')).toBeTruthy();
       expect(cellMenuElm.classList.contains('dropleft')).toBeTruthy();
+    });
+
+    it('should open Cell Menu on Enter key via onKeyDown event', () => {
+      const createParentMenuSpy = vi.spyOn(plugin, 'createParentMenu');
+      vi.spyOn(gridStub, 'getCellNode').mockReturnValue(slickCellElm);
+      const keyEvent = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
+      Object.defineProperty(keyEvent, 'target', { writable: true, configurable: true, value: slickCellElm });
+
+      gridStub.onKeyDown.notify({ cell: 3, row: 1, grid: gridStub } as any, keyEvent, gridStub);
+
+      expect(createParentMenuSpy).toHaveBeenCalled();
+    });
+
+    it('should not open Cell Menu on Enter key when getCellNode returns nothing', () => {
+      const createParentMenuSpy = vi.spyOn(plugin, 'createParentMenu');
+      vi.spyOn(gridStub, 'getCellNode').mockReturnValue(null as any);
+      const keyEvent = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
+      Object.defineProperty(keyEvent, 'target', { writable: true, configurable: true, value: slickCellElm });
+
+      gridStub.onKeyDown.notify({ cell: 3, row: 1, grid: gridStub } as any, keyEvent, gridStub);
+
+      expect(createParentMenuSpy).not.toHaveBeenCalled();
+    });
+
+    it('should not open Cell Menu on Enter key when current column has no cellMenu', () => {
+      const createParentMenuSpy = vi.spyOn(plugin, 'createParentMenu');
+      vi.spyOn(gridStub, 'getCellNode').mockReturnValue(slickCellElm);
+      const keyEvent = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
+      Object.defineProperty(keyEvent, 'target', { writable: true, configurable: true, value: slickCellElm });
+
+      gridStub.onKeyDown.notify({ cell: 0, row: 1, grid: gridStub } as any, keyEvent, gridStub);
+
+      expect(createParentMenuSpy).not.toHaveBeenCalled();
+    });
+
+    it('should not open Cell Menu on non-activation key via onKeyDown event', () => {
+      const createParentMenuSpy = vi.spyOn(plugin, 'createParentMenu');
+      const keyEvent = new KeyboardEvent('keydown', { key: 'a', bubbles: true, cancelable: true });
+      Object.defineProperty(keyEvent, 'target', { writable: true, configurable: true, value: slickCellElm });
+
+      gridStub.onKeyDown.notify({ cell: 3, row: 1, grid: gridStub } as any, keyEvent, gridStub);
+
+      expect(createParentMenuSpy).not.toHaveBeenCalled();
     });
 
     describe('with Command Items', () => {
@@ -786,6 +831,23 @@ describe('CellMenu Plugin', () => {
         gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
 
         expect(plugin.menuElement).toBeFalsy();
+      });
+
+      it('should fallback to grid cell focus after command when active element is outside a grid cell', () => {
+        plugin.dispose();
+        plugin.init();
+        gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
+
+        const externalBtn = document.createElement('button');
+        document.body.appendChild(externalBtn);
+        externalBtn.focus();
+
+        const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
+        const commandListElm = cellMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
+        commandListElm.querySelector('[data-command="command2"]')!.dispatchEvent(new Event('click'));
+
+        expect(gridStub.focus).toHaveBeenCalledWith('cell');
+        externalBtn.remove();
       });
     });
 
