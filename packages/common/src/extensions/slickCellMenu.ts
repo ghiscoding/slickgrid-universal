@@ -151,7 +151,10 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
   /** Open the Cell Menu from root grid cell context on Enter key, sub-menu Enter key presses are handled separately and ignored here. */
   protected handleCellKeyDown(event: SlickEventData, args: OnKeyDownEventArgs): void {
     const keyboardEvent = event.getNativeEvent<KeyboardEvent>();
-    if (keyboardEvent?.key === 'Enter') {
+    const columnDef = this.grid.getColumns()[args.cell];
+
+    // Open Cell Menu on Enter only when this column defines cellMenu and no editor is currently active.
+    if (keyboardEvent?.key === 'Enter' && columnDef?.cellMenu && !this.grid.getEditorLock()?.isActive?.()) {
       const parentCell = this.grid.getCellNode(args.row, args.cell)?.closest<HTMLDivElement>('.slick-cell');
       if (parentCell) {
         this.handleCellClick(
