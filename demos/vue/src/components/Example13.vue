@@ -252,6 +252,10 @@ function clearGrouping() {
   vueGrid.dataView.setGrouping([]);
 }
 
+function clearFilters() {
+  vueGrid.filterService.clearFilters();
+}
+
 function collapseAllGroups() {
   vueGrid.dataView.collapseAllGroups();
 }
@@ -408,7 +412,10 @@ function vueGridReady(grid: SlickgridVueInstance) {
       <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="add-5k-rows-btn" @click="loadData(5000)">5K rows</button>
       <button class="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="add-50k-rows-btn" @click="loadData(50000)">50K rows</button>
       <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="clear-grouping-btn" @click="clearGrouping()">
-        <i class="mdi mdi-close"></i> Clear grouping
+        <i class="mdi mdi-close"></i> Clear Grouping
+      </button>
+      <button class="btn btn-outline-secondary btn-xs btn-icon" data-test="clear-filter-btn" @click="clearFilters()">
+        <i class="mdi mdi-close"></i> Clear Filters
       </button>
       <button class="btn btn-outline-secondary btn-xs btn-icon mx-1" data-test="collapse-all-btn" @click="collapseAllGroups()">
         <i class="mdi mdi-arrow-collapse"></i> Collapse all groups
