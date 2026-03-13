@@ -133,7 +133,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
       clearTimeout(this._timer);
       this._timer = setTimeout(() => {
         try {
-          const columns = this._grid.getColumns() || [];
+          const columns = this.getColumns();
 
           // Group By text, it could be set in the export options or from translation or if nothing is found then use the English constant text
           let groupByColumnHeader = this._exportOptions.groupingColumnHeaderTitle;
@@ -451,6 +451,11 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
   // -----------------------
   // protected functions
   // -----------------------
+
+  /** get columns might include hidden columns when `includeHidden` is enabled */
+  protected getColumns(): Column[] {
+    return (this._grid && this._exportOptions?.includeHidden ? this._grid.getColumns() : this._grid.getVisibleColumns()) || [];
+  }
 
   /**
    * Get all the grid row data and return that as a 2D array

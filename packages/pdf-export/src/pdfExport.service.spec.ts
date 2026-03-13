@@ -63,6 +63,7 @@ const gridStub = {
   getData: () => dataViewStub,
   getOptions: () => mockGridOptions,
   getColumns: vi.fn(),
+  getVisibleColumns: vi.fn(),
   getGrouping: vi.fn(),
   getParentRowSpanByCell: vi.fn(),
 } as unknown as SlickGrid;
@@ -203,7 +204,7 @@ describe('PdfExportService', () => {
           },
         ] as Column[];
 
-        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(mockColumns);
       });
 
       it('should throw an error when trying to call exportToPdf without a grid and/or dataview object initialized', () =>
@@ -293,7 +294,7 @@ describe('PdfExportService', () => {
           },
         ] as Column[];
 
-        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(mockColumns);
       });
 
       it('should export with Order column correctly formatted with multiple formatters', async () => {
@@ -370,7 +371,7 @@ describe('PdfExportService', () => {
       });
     });
 
-    describe('exportToPdf with complex object columns', () => {
+    describe('exportToPdf with complex object columns and hidden columns', () => {
       beforeEach(() => {
         mockColumns = [
           { id: 'id', field: 'id', excludeFromExport: true },
@@ -391,7 +392,7 @@ describe('PdfExportService', () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
-        await service.exportToPdf(mockExportPdfOptions);
+        await service.exportToPdf({ ...mockExportPdfOptions, includeHidden: true });
 
         expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf' }));
       });
@@ -429,7 +430,7 @@ describe('PdfExportService', () => {
           },
         ] as Column[];
 
-        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(mockColumns);
       });
 
       afterEach(() => {
@@ -517,7 +518,7 @@ describe('PdfExportService', () => {
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 20 } },
         };
 
-        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(mockColumns);
         mockCollection = [mockGroup1, mockItem1, mockItem2, { __groupTotals: true, initialized: true, sum: { order: 20 }, group: mockGroup1 }];
         vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         vi.spyOn(dataViewStub, 'getItem')
@@ -681,7 +682,7 @@ describe('PdfExportService', () => {
       pubSubService = { publish: vi.fn() };
       gridStub = {
         getOptions: () => ({}),
-        getColumns: () => [
+        getVisibleColumns: () => [
           { id: 'id', field: 'id', name: 'ID' },
           { id: 'name', field: 'name', name: 'Name' },
         ],
@@ -705,7 +706,7 @@ describe('PdfExportService', () => {
         { id: 'col5', field: 'col5', name: 'Col5', columnGroup: 'GroupC' },
       ];
       const gridStub = {
-        getColumns: () => columns,
+        getVisibleColumns: () => columns,
         getOptions: () => ({
           createPreHeaderPanel: true,
           showPreHeaderPanel: true,
@@ -739,7 +740,7 @@ describe('PdfExportService', () => {
         { id: 'col2', field: 'col2', name: 'Col2', columnGroup: 'GroupA' },
       ];
       const gridStub = {
-        getColumns: () => columns,
+        getVisibleColumns: () => columns,
         getOptions: () => ({ createPreHeaderPanel: true, showPreHeaderPanel: true, includeColumnHeaders: false }),
         getData: () => ({ getGrouping: () => [], getLength: () => 1, getItem: () => ({ id: 1 }), getItemMetadata: vi.fn() }),
       };
@@ -821,7 +822,7 @@ describe('PdfExportService', () => {
         { id: 'col5', field: 'col5', name: 'Col5', columnGroup: 'GroupC' },
       ];
       const gridStub = {
-        getColumns: () => columns,
+        getVisibleColumns: () => columns,
         getOptions: () => ({ createPreHeaderPanel: true, showPreHeaderPanel: true }),
         getData: () => ({ getGrouping: () => [], getLength: () => 1, getItem: () => ({ id: 1 }) }),
       };
@@ -849,7 +850,7 @@ describe('PdfExportService', () => {
         { id: 'col5', field: 'col5', name: 'Col5', columnGroup: 'GroupC' },
       ];
       const gridStub = {
-        getColumns: () => columns,
+        getVisibleColumns: () => columns,
         getOptions: () => ({
           createPreHeaderPanel: true,
           showPreHeaderPanel: true,
@@ -896,7 +897,7 @@ describe('PdfExportService', () => {
         { id: 'col2', field: 'col2', name: 'Col2' },
       ];
       const gridStub = {
-        getColumns: () => columns,
+        getVisibleColumns: () => columns,
         getOptions: () => ({ createPreHeaderPanel: true, showPreHeaderPanel: true }),
         getData: () => ({ getGrouping: () => [], getLength: () => 1, getItem: () => ({ id: 1 }), getItemMetadata: vi.fn() }),
       };
@@ -916,7 +917,7 @@ describe('PdfExportService', () => {
         { id: 'col2', field: 'col2', name: 'Col2WithAVeryLongNameThatShouldBeTruncated', columnGroup: 'GroupAWithAVeryLongNameThatShouldBeTruncated' },
       ];
       const gridStub = {
-        getColumns: () => columns,
+        getVisibleColumns: () => columns,
         getOptions: () => ({ createPreHeaderPanel: true, showPreHeaderPanel: true }),
         getData: () => ({ getGrouping: () => [], getLength: () => 1, getItem: () => ({ id: 1 }), getItemMetadata: vi.fn() }),
       };
@@ -1032,7 +1033,7 @@ describe('PdfExportService', () => {
           getItemMetadata: vi.fn().mockReturnValue({}),
         };
         const gridStub = {
-          getColumns: () => columns,
+          getVisibleColumns: () => columns,
           getOptions: () => ({ includeColumnHeaders: true }),
           getData: () => dataViewStub,
         };
@@ -1059,7 +1060,7 @@ describe('PdfExportService', () => {
           getItemMetadata: vi.fn().mockReturnValue({}),
         };
         const gridStub = {
-          getColumns: () => columns,
+          getVisibleColumns: () => columns,
           getOptions: () => ({ createPreHeaderPanel: true, showPreHeaderPanel: true, includeColumnHeaders: true }),
           getData: () => dataViewStub,
         };
@@ -1139,7 +1140,7 @@ describe('PdfExportService', () => {
           getItemMetadata: vi.fn().mockReturnValue({}),
         };
         const gridStub = {
-          getColumns: () => columns,
+          getVisibleColumns: () => columns,
           getOptions: () => ({ includeColumnHeaders: true }),
           getData: () => dataViewStub,
         };
@@ -1262,7 +1263,7 @@ describe('PdfExportService', () => {
           getItemMetadata: vi.fn().mockReturnValue({}),
         };
         const gridStub = {
-          getColumns: () => columns,
+          getVisibleColumns: () => columns,
           getOptions: () => ({ createPreHeaderPanel: true, showPreHeaderPanel: true }),
           getData: () => dataViewStub,
         };
@@ -1295,7 +1296,7 @@ describe('PdfExportService', () => {
           getItemMetadata: vi.fn().mockReturnValue({}),
         };
         const gridStub = {
-          getColumns: () => columns,
+          getVisibleColumns: () => columns,
           getOptions: () => ({ createPreHeaderPanel: true, showPreHeaderPanel: true }),
           getData: () => dataViewStub,
         };
@@ -1537,7 +1538,7 @@ describe('PdfExportService', () => {
           getItemMetadata: vi.fn().mockReturnValue({}),
         };
         const gridStub = {
-          getColumns: () => columns,
+          getVisibleColumns: () => columns,
           getOptions: () => ({ createPreHeaderPanel: true, showPreHeaderPanel: true }),
           getData: () => dataViewStub,
         };
@@ -1582,7 +1583,7 @@ describe('PdfExportService', () => {
     it('should handle errors thrown during PDF export', async () => {
       const gridStub = {
         getOptions: () => ({}),
-        getColumns: () => [],
+        getVisibleColumns: () => [],
         getData: () => ({ getGrouping: () => [], getLength: () => 1, getItem: () => ({ id: 1 }) }),
       };
       const pubSubService = { publish: vi.fn() };
@@ -1721,7 +1722,7 @@ describe('PdfExportService', () => {
         getItemMetadata: vi.fn().mockReturnValue({}),
       };
       const gridStub = {
-        getColumns: () => columns,
+        getVisibleColumns: () => columns,
         getOptions: () => ({ createPreHeaderPanel: false, showPreHeaderPanel: false, includeColumnHeaders: false }),
         getData: () => dataViewStub,
       };
@@ -1775,7 +1776,7 @@ describe('PdfExportService', () => {
         getItemMetadata: vi.fn().mockReturnValue({}),
       };
       const gridStub = {
-        getColumns: () => columns,
+        getVisibleColumns: () => columns,
         getOptions: () => ({}),
         getData: () => dataViewStub,
       };
@@ -1793,7 +1794,7 @@ describe('PdfExportService', () => {
     it('should resolve false in exportToPdf if error thrown in setTimeout', async () => {
       const columns = [{ id: 'col1', field: 'col1', name: 'Col1' }];
       const gridStub = {
-        getColumns: () => columns,
+        getVisibleColumns: () => columns,
         getOptions: () => ({}),
         getData: () => ({ getGrouping: () => [], getLength: () => 1, getItem: () => ({ id: 1 }) }),
       };
@@ -1820,7 +1821,7 @@ describe('PdfExportService', () => {
       getItemMetadata: vi.fn().mockReturnValue({}),
     };
     const gridStub = {
-      getColumns: () => columns,
+      getVisibleColumns: () => columns,
       getOptions: () => ({ createPreHeaderPanel: false, showPreHeaderPanel: false, includeColumnHeaders: true }),
       getData: () => dataViewStub,
     };
@@ -1846,7 +1847,7 @@ describe('PdfExportService', () => {
       getItemMetadata: vi.fn().mockReturnValue({}),
     };
     const gridStub = {
-      getColumns: () => columns,
+      getVisibleColumns: () => columns,
       getOptions: () => ({ repeatHeadersOnEachPage: true }),
       getData: () => dataViewStub,
     };
@@ -1891,7 +1892,7 @@ describe('PdfExportService', () => {
       { id: 'col2', field: 'col2', name: 'Col2', columnGroup: '' },
     ];
     const gridStub = {
-      getColumns: () => columns,
+      getVisibleColumns: () => columns,
       getOptions: () => ({ createPreHeaderPanel: true, showPreHeaderPanel: true, includeColumnHeaders: true }),
       getData: () => ({ getGrouping: () => [], getLength: () => 1, getItem: (i: number) => ({ id: i }), getItemMetadata: vi.fn() }),
     };
@@ -1911,7 +1912,7 @@ describe('PdfExportService', () => {
       { id: 'col2', field: 'col2', name: 'Col2', columnGroup: 'GroupAWithAVeryLongNameThatExceedsTwentyChars' },
     ];
     const gridStub = {
-      getColumns: () => columns,
+      getVisibleColumns: () => columns,
       getOptions: () => ({ createPreHeaderPanel: true, showPreHeaderPanel: true, includeColumnHeaders: true }),
       getData: () => ({ getGrouping: () => [], getLength: () => 1, getItem: (i: number) => ({ id: i }), getItemMetadata: vi.fn() }),
     };
@@ -1941,7 +1942,7 @@ describe('PdfExportService', () => {
       getItemMetadata: vi.fn().mockReturnValue({}),
     };
     const gridStub = {
-      getColumns: () => columns,
+      getVisibleColumns: () => columns,
       getOptions: () => ({}),
       getData: () => dataViewStub,
     };
@@ -1970,7 +1971,7 @@ describe('PdfExportService', () => {
       getItemMetadata: vi.fn().mockReturnValue({}),
     };
     const gridStub = {
-      getColumns: () => columns,
+      getVisibleColumns: () => columns,
       getOptions: () => ({}),
       getData: () => dataViewStub,
     };
@@ -1991,7 +1992,7 @@ describe('PdfExportService', () => {
       { id: 'col2', field: 'col2', name: 'Col2' },
     ];
     const gridStub = {
-      getColumns: () => columns,
+      getVisibleColumns: () => columns,
       getOptions: () => ({ createPreHeaderPanel: false, showPreHeaderPanel: false, includeColumnHeaders: false }),
       getData: () => ({ getGrouping: () => [], getLength: () => 1, getItem: (i: number) => ({ id: i }), getItemMetadata: vi.fn() }),
     };
@@ -2019,7 +2020,7 @@ describe('PdfExportService', () => {
       getItemMetadata: vi.fn().mockReturnValue({}),
     };
     const gridStub = {
-      getColumns: () => columns,
+      getVisibleColumns: () => columns,
       getOptions: () => ({ repeatHeadersOnEachPage: false }),
       getData: () => dataViewStub,
     };
@@ -2044,7 +2045,7 @@ describe('PdfExportService', () => {
       { title: 'Group2', span: 1 },
     ];
     const gridStub = {
-      getColumns: () => columns,
+      getVisibleColumns: () => columns,
       getOptions: () => ({ createPreHeaderPanel: true, showPreHeaderPanel: true, includeColumnHeaders: true }),
       getData: () => ({ getGrouping: () => [], getLength: () => 1, getItem: (i: number) => ({ id: i }), getItemMetadata: vi.fn() }),
     };
@@ -2066,7 +2067,7 @@ describe('PdfExportService', () => {
       { id: 'col2', field: 'col2', name: 'Col2' },
     ];
     const gridStub = {
-      getColumns: () => columns,
+      getVisibleColumns: () => columns,
       getOptions: () => ({ includeColumnHeaders: true }),
       getData: () => ({ getGrouping: () => [{ getter: 'col1' }], getLength: () => 1, getItem: (i: number) => ({ id: i }), getItemMetadata: vi.fn() }),
     };
@@ -2095,7 +2096,7 @@ describe('PdfExportService', () => {
       getItemMetadata: vi.fn().mockReturnValue({}),
     };
     const gridStub = {
-      getColumns: () => columns,
+      getVisibleColumns: () => columns,
       getOptions: () => ({}),
       getData: () => dataViewStub,
     };
@@ -2145,7 +2146,7 @@ describe('PdfExportService', () => {
     };
     // skip path for row 1, non-skip for row 0
     const gridStub = {
-      getColumns: () => columns,
+      getVisibleColumns: () => columns,
       getOptions: () => gridOptions,
       getData: () => dataViewStub,
       getParentRowSpanByCell: vi.fn().mockImplementation((row, col) => ({ start: row === 1 ? 0 : row })),
@@ -2172,7 +2173,7 @@ describe('PdfExportService', () => {
     ];
     const groupedHeaders = [{ title: 'Group1', span: 2 }];
     const gridStub = {
-      getColumns: () => columns,
+      getVisibleColumns: () => columns,
       getOptions: () => ({ createPreHeaderPanel: true, showPreHeaderPanel: true, includeColumnHeaders: false }),
       getData: () => ({ getGrouping: () => [], getLength: () => 1, getItem: (i: number) => ({ id: i }), getItemMetadata: vi.fn() }),
     };
@@ -2192,7 +2193,7 @@ describe('PdfExportService', () => {
     ];
     const groupedHeaders = [{ title: 'Group1', span: 2 }];
     const gridStub = {
-      getColumns: () => columns,
+      getVisibleColumns: () => columns,
       getOptions: () => ({ createPreHeaderPanel: false, showPreHeaderPanel: false, includeColumnHeaders: true }),
       getData: () => ({ getGrouping: () => [], getLength: () => 1, getItem: (i: number) => ({ id: i }), getItemMetadata: vi.fn() }),
     };
@@ -2212,7 +2213,7 @@ describe('PdfExportService', () => {
     ];
     const groupedHeaders = [{ title: 'ThisIsAVeryLongGroupHeaderTitleThatShouldBeTruncated', span: 2 }];
     const gridStub = {
-      getColumns: () => columns,
+      getVisibleColumns: () => columns,
       getOptions: () => ({ createPreHeaderPanel: true, showPreHeaderPanel: true, includeColumnHeaders: true }),
       getData: () => ({ getGrouping: () => [], getLength: () => 1, getItem: (i: number) => ({ id: i }), getItemMetadata: vi.fn() }),
     };
@@ -2239,7 +2240,7 @@ describe('PdfExportService', () => {
       getItemMetadata: vi.fn().mockReturnValue({}),
     };
     const gridStub = {
-      getColumns: () => columns,
+      getVisibleColumns: () => columns,
       getOptions: () => ({ createPreHeaderPanel: true, showPreHeaderPanel: true, includeColumnHeaders: true }),
       getData: () => dataViewStub,
     };
@@ -2264,7 +2265,7 @@ describe('PdfExportService', () => {
     ];
     const groupedHeaders = [{ title: 'Group1', span: 2 }];
     const gridStub = {
-      getColumns: () => columns,
+      getVisibleColumns: () => columns,
       getOptions: () => ({ createPreHeaderPanel: true, showPreHeaderPanel: true, includeColumnHeaders: true }),
       getData: () => ({ getGrouping: () => [], getLength: () => 1, getItem: (i: number) => ({ id: i }), getItemMetadata: vi.fn() }),
     };
@@ -2284,7 +2285,7 @@ describe('PdfExportService', () => {
     ];
     const groupedHeaders = [{ title: 'Group1', span: 2 }];
     const gridStub = {
-      getColumns: () => columns,
+      getVisibleColumns: () => columns,
       getOptions: () => ({ createPreHeaderPanel: true, showPreHeaderPanel: true, includeColumnHeaders: false }),
       getData: () => ({ getGrouping: () => [], getLength: () => 1, getItem: (i: number) => ({ id: i }), getItemMetadata: vi.fn() }),
     };
@@ -2310,7 +2311,7 @@ describe('PdfExportService', () => {
       getItemMetadata: vi.fn().mockReturnValue({}),
     };
     const gridStub = {
-      getColumns: () => columns,
+      getVisibleColumns: () => columns,
       getOptions: () => ({}),
       getData: () => dataViewStub,
     };
@@ -2336,7 +2337,7 @@ describe('PdfExportService', () => {
         getItemMetadata: vi.fn().mockReturnValue({}),
       };
       const gridStub = {
-        getColumns: () => columns,
+        getVisibleColumns: () => columns,
         getOptions: () => ({ createPreHeaderPanel: false, showPreHeaderPanel: false, includeColumnHeaders: false }),
         getData: () => dataViewStub,
       };
@@ -2361,7 +2362,7 @@ describe('PdfExportService', () => {
         getItemMetadata: vi.fn().mockReturnValue({}),
       };
       const gridStub = {
-        getColumns: () => columns,
+        getVisibleColumns: () => columns,
         getOptions: () => ({ createPreHeaderPanel: false, showPreHeaderPanel: false, includeColumnHeaders: true }),
         getData: () => dataViewStub,
       };
@@ -2386,7 +2387,7 @@ describe('PdfExportService', () => {
         getItemMetadata: vi.fn().mockReturnValue({}),
       };
       const gridStub = {
-        getColumns: () => columns,
+        getVisibleColumns: () => columns,
         getOptions: () => ({ createPreHeaderPanel: false, showPreHeaderPanel: false, includeColumnHeaders: true }),
         getData: () => dataViewStub,
       };
@@ -2411,7 +2412,7 @@ describe('PdfExportService', () => {
         getItemMetadata: vi.fn().mockReturnValue({}),
       };
       const gridStub = {
-        getColumns: () => columns,
+        getVisibleColumns: () => columns,
         getOptions: () => ({ createPreHeaderPanel: false, showPreHeaderPanel: false, includeColumnHeaders: true }),
         getData: () => dataViewStub,
       };
@@ -2436,7 +2437,7 @@ describe('PdfExportService', () => {
         getItemMetadata: vi.fn().mockReturnValue({}),
       };
       const gridStub = {
-        getColumns: () => columns,
+        getVisibleColumns: () => columns,
         getOptions: () => ({ createPreHeaderPanel: false, showPreHeaderPanel: false, includeColumnHeaders: true }),
         getData: () => dataViewStub,
       };
@@ -2486,7 +2487,7 @@ describe('PdfExportService', () => {
     };
     // skip path for row 1, non-skip for row 0
     const gridStub = {
-      getColumns: () => columns,
+      getVisibleColumns: () => columns,
       getOptions: () => gridOptions,
       getData: () => dataViewStub,
       getParentRowSpanByCell: vi.fn().mockImplementation((row, col) => ({ start: row === 1 ? 0 : row })),
@@ -2514,7 +2515,7 @@ describe('PdfExportService', () => {
     ];
     const groupedHeaders = [{ title: 'Group1', span: 2 }];
     const gridStub = {
-      getColumns: () => columns,
+      getVisibleColumns: () => columns,
       getOptions: () => ({ createPreHeaderPanel: true, showPreHeaderPanel: true, includeColumnHeaders: true }),
       getData: () => ({
         getGrouping: () => [{ getter: 'col1' }],
@@ -2545,7 +2546,7 @@ describe('PdfExportService', () => {
       container = { get: (key: string) => (key === 'PubSubService' ? pubSubService : undefined) } as ContainerServiceStub;
       gridStub = {
         getOptions: () => ({}),
-        getColumns: () => [
+        getVisibleColumns: () => [
           { id: 'id', field: 'id', name: 'ID', width: 80, pdfExportOptions: { textAlign: 'center' } },
           { id: 'amount', field: 'amount', name: 'Amount', width: 120, pdfExportOptions: { textAlign: 'right' } },
           { id: 'desc', field: 'desc', name: 'Description', width: 100 },
@@ -2582,7 +2583,7 @@ describe('PdfExportService', () => {
         getItemMetadata: vi.fn(),
       };
       const gridStub = {
-        getColumns: () => columns,
+        getVisibleColumns: () => columns,
         getOptions: () => ({}),
         getData: () => dataViewStub,
       };
@@ -2640,7 +2641,7 @@ describe('PdfExportService', () => {
         getItemMetadata: vi.fn().mockReturnValue({}),
       };
       const gridStub = {
-        getColumns: () => columns,
+        getVisibleColumns: () => columns,
         getOptions: () => ({}),
         getData: () => dataViewStub,
       };
@@ -2673,7 +2674,7 @@ describe('PdfExportService', () => {
         getItemMetadata: vi.fn().mockReturnValue({}),
       };
       const gridStub = {
-        getColumns: () => columns,
+        getVisibleColumns: () => columns,
         getOptions: () => ({ createPreHeaderPanel: true, showPreHeaderPanel: true }),
         getData: () => dataViewStub,
       };
@@ -2704,7 +2705,7 @@ describe('PdfExportService', () => {
         getItemMetadata: vi.fn().mockReturnValue({}),
       };
       const gridStub = {
-        getColumns: () => columns,
+        getVisibleColumns: () => columns,
         getOptions: () => ({}),
         getData: () => dataViewStub,
       };
@@ -2756,7 +2757,7 @@ describe('PdfExportService', () => {
         getItemMetadata: vi.fn().mockReturnValue({}),
       };
       const gridStub = {
-        getColumns: () => columns,
+        getVisibleColumns: () => columns,
         getOptions: () => ({}),
         getData: () => dataViewStub,
       };
@@ -2774,15 +2775,15 @@ describe('PdfExportService', () => {
 
       // Description header should be left-aligned
       const descCall = headerCalls.find((c: any[]) => c[0] === 'Description');
-      expect(descCall[3].align).toBe('left');
+      expect(descCall![3].align).toBe('left');
 
       // Amount header should be right-aligned
       const amountCall = headerCalls.find((c: any[]) => c[0] === 'Amount');
-      expect(amountCall[3].align).toBe('right');
+      expect(amountCall![3].align).toBe('right');
 
       // Percent header should be center-aligned
       const pctCall = headerCalls.find((c: any[]) => c[0] === 'Percent');
-      expect(pctCall[3].align).toBe('center');
+      expect(pctCall![3].align).toBe('center');
     });
 
     it('should call setDocumentProperties in manual fallback when documentProperties is provided', async () => {
@@ -2795,7 +2796,7 @@ describe('PdfExportService', () => {
         getItemMetadata: vi.fn().mockReturnValue({}),
       };
       const gridStub = {
-        getColumns: () => columns,
+        getVisibleColumns: () => columns,
         getOptions: () => ({}),
         getData: () => dataViewStub,
       };
@@ -2819,7 +2820,7 @@ describe('PdfExportService', () => {
         getItemMetadata: vi.fn().mockReturnValue({}),
       };
       const gridStub = {
-        getColumns: () => columns,
+        getVisibleColumns: () => columns,
         getOptions: () => ({}),
         getData: () => dataViewStub,
       };
@@ -2843,7 +2844,7 @@ describe('PdfExportService', () => {
         getItemMetadata: vi.fn().mockReturnValue({}),
       };
       const gridStub = {
-        getColumns: () => columns,
+        getVisibleColumns: () => columns,
         getOptions: () => ({}),
         getData: () => dataViewStub,
       };

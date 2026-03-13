@@ -53,6 +53,8 @@ export interface PdfExportOption {
   alternateRowColor?: [number, number, number];
   /** Cell padding in pt (used by jsPDF-AutoTable), defaults to 4 */
   cellPadding?: number;
+  /** Defaults to false, should we also include hidden properties in the export? */
+  includeHidden?: boolean;
   /**
    * Optional PDF document properties (metadata) set via `doc.setDocumentProperties()`.
    * These appear in the PDF viewer's "Document Properties" dialog.

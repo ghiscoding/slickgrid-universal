@@ -89,6 +89,7 @@ const gridStub = {
   getData: () => dataViewStub,
   getOptions: () => mockGridOptions,
   getColumns: vi.fn(),
+  getVisibleColumns: vi.fn(),
   getGrouping: vi.fn(),
   getParentRowSpanByCell: vi.fn(),
 } as unknown as SlickGrid;
@@ -184,7 +185,7 @@ describe('ExcelExportService', () => {
           },
         ] as Column[];
 
-        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(mockColumns);
       });
 
       afterEach(() => {
@@ -637,7 +638,7 @@ describe('ExcelExportService', () => {
           { id: 'endDate', field: 'endDate', width: 100, formatter: Formatters.dateIso, type: 'dateUtc', outputType: 'dateIso' },
         ] as Column[];
 
-        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(mockColumns);
       });
 
       afterEach(() => {
@@ -694,7 +695,7 @@ describe('ExcelExportService', () => {
       });
     });
 
-    describe('startDownloadFile with some columns having complex object', () => {
+    describe('startDownloadFile with some columns having complex object and hidden columns', () => {
       beforeEach(() => {
         mockGridOptions.excelExportOptions = { sanitizeDataExport: true };
         mockColumns = [
@@ -716,7 +717,7 @@ describe('ExcelExportService', () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
-        await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
+        await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false, includeHidden: true });
 
         expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
@@ -749,7 +750,7 @@ describe('ExcelExportService', () => {
         const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
 
         service.init(gridStub, container);
-        await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false });
+        await service.exportToExcel({ ...mockExportExcelOptions, useStreamingExport: false, includeHidden: true });
 
         expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToExcel', { filename: 'export.xlsx', mimeType: mimeTypeXLSX });
         expect(downloadExcelFile).toHaveBeenCalledWith(
@@ -813,7 +814,7 @@ describe('ExcelExportService', () => {
           },
         ] as Column[];
 
-        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(mockColumns);
       });
 
       it(`should have the LastName header title translated when defined as a "nameKey" and "translater" is set in grid option`, async () => {
@@ -921,7 +922,7 @@ describe('ExcelExportService', () => {
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 20 } },
         };
 
-        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(mockColumns);
         mockCollection = [mockGroup1, mockItem1, mockItem2, { __groupTotals: true, initialized: true, sum: { order: 20 }, group: mockGroup1 }];
         vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         vi.spyOn(dataViewStub, 'getItem')
@@ -1069,7 +1070,7 @@ describe('ExcelExportService', () => {
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 20 } },
         };
 
-        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(mockColumns);
         mockCollection = [mockGroup1, mockItem1, mockItem2, { __groupTotals: true, initialized: true, sum: { order: 20 }, group: mockGroup1 }];
         vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         vi.spyOn(dataViewStub, 'getItem')
@@ -1202,7 +1203,7 @@ describe('ExcelExportService', () => {
           totals: { value: '10', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 20 } },
         };
 
-        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(mockColumns);
         mockCollection = [mockGroup1, mockItem1, mockItem2, { __groupTotals: true, initialized: true, sum: { order: 20 }, group: mockGroup1 }];
         vi.spyOn(dataViewStub, 'getLength').mockReturnValue(mockCollection.length);
         vi.spyOn(dataViewStub, 'getItem')
@@ -1354,7 +1355,7 @@ describe('ExcelExportService', () => {
           totals: { value: '0', __group: true, __groupTotals: true, group: {}, initialized: true, sum: { order: 10 } },
         };
 
-        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(mockColumns);
         mockCollection = [
           mockGroup1,
           mockGroup2,
@@ -1535,7 +1536,7 @@ describe('ExcelExportService', () => {
           },
         ] as Column[];
 
-        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(mockColumns);
         vi.spyOn(dataViewStub, 'getGrouping').mockReturnValue(null as any);
       });
 
@@ -1661,7 +1662,7 @@ describe('ExcelExportService', () => {
               params: { formatters: [myBoldHtmlFormatter, myCustomObjectFormatter] },
             },
           ] as Column[];
-          vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+          vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(mockColumns);
         });
 
         afterEach(() => {
@@ -1739,7 +1740,7 @@ describe('ExcelExportService', () => {
           { id: 'order', field: 'order', width: 100 },
         ] as Column[];
 
-        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(mockColumns);
       });
 
       afterEach(() => {
@@ -1836,7 +1837,7 @@ describe('ExcelExportService', () => {
           { id: 'order', field: 'order', width: 100 },
         ] as Column[];
 
-        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(mockColumns);
       });
 
       afterEach(() => {
@@ -1948,7 +1949,7 @@ describe('ExcelExportService', () => {
         { id: 'duration', name: 'Duration', field: 'duration', width: 100 },
       ] as Column[];
 
-      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(mockColumns);
     });
 
     afterEach(() => {
@@ -2335,7 +2336,7 @@ describe('ExcelExportService', () => {
         { id: 'title', name: 'Title', field: 'title', width: 100 },
       ] as Column[];
 
-      vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(mockColumns);
     });
 
     afterEach(() => {

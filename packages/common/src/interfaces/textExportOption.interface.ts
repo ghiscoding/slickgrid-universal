@@ -25,6 +25,9 @@ export interface TextExportOption {
   /** file type format, .csv/.txt (this will provide the extension) */
   format?: Extract<FileType, 'csv' | 'txt'>;
 
+  /** Defaults to false, should we also include hidden properties in the export? */
+  includeHidden?: boolean;
+
   /** The column header title (at position A0 in Excel) of the Group by column. If nothing is provided it will use "Group By" (which is a translated value of GROUP_BY i18n) */
   groupingColumnHeaderTitle?: string;
 

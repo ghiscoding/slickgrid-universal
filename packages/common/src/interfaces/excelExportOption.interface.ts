@@ -23,6 +23,9 @@ export interface ExcelExportOption {
   /** file type format, .xls/.xlsx (this will provide the extension) */
   format?: Extract<FileType, 'xls' | 'xlsx'>;
 
+  /** Defaults to false, should we also include hidden properties in the export? */
+  includeHidden?: boolean;
+
   /**
    * file MIME type could be provided by the user.
    * - when undefined it will detect the type depending on its extension unless user defines it.
