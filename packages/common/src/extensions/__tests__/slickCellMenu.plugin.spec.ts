@@ -73,6 +73,7 @@ const gridStub = {
   sanitizeHtmlString: (str: string) => str,
   updateColumnHeader: vi.fn(),
   onClick: new SlickEvent(),
+  onKeyDown: new SlickEvent(),
   onScroll: new SlickEvent(),
   onSort: new SlickEvent(),
 } as unknown as SlickGrid;
@@ -301,6 +302,38 @@ describe('CellMenu Plugin', () => {
 
       expect(cellMenuElm.classList.contains('dropup')).toBeTruthy();
       expect(cellMenuElm.classList.contains('dropleft')).toBeTruthy();
+    });
+
+    it('should open Cell Menu on Enter key via onKeyDown event', () => {
+      const createParentMenuSpy = vi.spyOn(plugin, 'createParentMenu');
+      vi.spyOn(gridStub, 'getCellNode').mockReturnValue(slickCellElm);
+      const keyEvent = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
+      Object.defineProperty(keyEvent, 'target', { writable: true, configurable: true, value: slickCellElm });
+
+      gridStub.onKeyDown.notify({ cell: 3, row: 1, grid: gridStub } as any, keyEvent, gridStub);
+
+      expect(createParentMenuSpy).toHaveBeenCalled();
+    });
+
+    it('should not open Cell Menu on Enter key when getCellNode returns nothing', () => {
+      const createParentMenuSpy = vi.spyOn(plugin, 'createParentMenu');
+      vi.spyOn(gridStub, 'getCellNode').mockReturnValue(null as any);
+      const keyEvent = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
+      Object.defineProperty(keyEvent, 'target', { writable: true, configurable: true, value: slickCellElm });
+
+      gridStub.onKeyDown.notify({ cell: 3, row: 1, grid: gridStub } as any, keyEvent, gridStub);
+
+      expect(createParentMenuSpy).not.toHaveBeenCalled();
+    });
+
+    it('should not open Cell Menu on non-activation key via onKeyDown event', () => {
+      const createParentMenuSpy = vi.spyOn(plugin, 'createParentMenu');
+      const keyEvent = new KeyboardEvent('keydown', { key: 'a', bubbles: true, cancelable: true });
+      Object.defineProperty(keyEvent, 'target', { writable: true, configurable: true, value: slickCellElm });
+
+      gridStub.onKeyDown.notify({ cell: 3, row: 1, grid: gridStub } as any, keyEvent, gridStub);
+
+      expect(createParentMenuSpy).not.toHaveBeenCalled();
     });
 
     describe('with Command Items', () => {
