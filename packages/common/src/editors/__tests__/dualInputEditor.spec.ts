@@ -571,6 +571,27 @@ describe('DualInputEditor', () => {
         expect(spyCommit).toHaveBeenCalled();
         expect(spySave).toHaveBeenCalled();
       });
+
+      it('should not autosave when focusout is triggered by internal focus handoff in editor.focus()', () => {
+        mockItemData = { id: 1, range: '3-32', from: 3, to: 32, isActive: true };
+        gridOptionMock.autoCommitEdit = true;
+        const spyCommit = vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
+
+        editor = new DualInputEditor(editorArguments);
+        editor.loadValue(mockItemData);
+        editor.setValues([2, 35]);
+        const spySave = vi.spyOn(editor, 'save');
+        const editorLeftElm = editor.editorDomElement.leftInput;
+
+        vi.mocked(gridStub.focus).mockImplementationOnce(() => {
+          editorLeftElm.dispatchEvent(new (window.window as any).Event('focusout'));
+        });
+
+        editor.focus();
+
+        expect(spyCommit).not.toHaveBeenCalled();
+        expect(spySave).not.toHaveBeenCalled();
+      });
     });
 
     describe('validate method', () => {

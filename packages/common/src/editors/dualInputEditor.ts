@@ -24,6 +24,7 @@ import { getDescendantProperty } from '../services/utilities.js';
 export class DualInputEditor implements Editor {
   protected _bindEventService: BindingEventService;
   protected _eventHandler: SlickEventHandler;
+  protected _isInternalFocusInProgress = false;
   protected _isValueSaveCalled = false;
   protected _lastEventType: string | undefined;
   protected _lastInputKeyEvent?: KeyboardEvent;
@@ -143,21 +144,23 @@ export class DualInputEditor implements Editor {
   }
 
   handleFocusOut(event: DOMEvent<HTMLInputElement>, position: 'leftInput' | 'rightInput'): void {
-    // when clicking outside the editable cell OR when focusing out of it
-    const targetClassNames = event.relatedTarget?.className || '';
+    if (!this._isInternalFocusInProgress) {
+      // when clicking outside the editable cell OR when focusing out of it
+      const targetClassNames = event.relatedTarget?.className || '';
 
-    if (!this.args.isCompositeEditor && targetClassNames.indexOf('dual-editor') === -1 && this._lastEventType !== 'focusout-right') {
-      if (position === 'rightInput' || (position === 'leftInput' && this._lastEventType !== 'focusout-left')) {
-        if (position === 'leftInput') {
-          this._isLeftValueTouched = true;
-        } else {
-          this._isRightValueTouched = true;
+      if (!this.args.isCompositeEditor && targetClassNames.indexOf('dual-editor') === -1 && this._lastEventType !== 'focusout-right') {
+        if (position === 'rightInput' || (position === 'leftInput' && this._lastEventType !== 'focusout-left')) {
+          if (position === 'leftInput') {
+            this._isLeftValueTouched = true;
+          } else {
+            this._isRightValueTouched = true;
+          }
+          this.save();
         }
-        this.save();
       }
+      const side = position === 'leftInput' ? 'left' : 'right';
+      this._lastEventType = `${event?.type}-${side}`;
     }
-    const side = position === 'leftInput' ? 'left' : 'right';
-    this._lastEventType = `${event?.type}-${side}`;
   }
 
   handleKeyDown(event: KeyboardEvent, position: 'leftInput' | 'rightInput'): void {
@@ -236,7 +239,9 @@ export class DualInputEditor implements Editor {
 
   focus(): void {
     // always set focus on grid first, then do nothing since we have 2 inputs and we might focus on left/right depending on which is invalid and/or new
+    this._isInternalFocusInProgress = true;
     this.grid.focus('internal');
+    this._isInternalFocusInProgress = false;
   }
 
   show(): void {

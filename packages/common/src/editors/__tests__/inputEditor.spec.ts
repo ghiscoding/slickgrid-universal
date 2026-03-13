@@ -386,6 +386,27 @@ describe('InputEditor (TextEditor)', () => {
         expect(spyCommit).toHaveBeenCalled();
         expect(spySave).toHaveBeenCalled();
       });
+
+      it('should not autosave when blur is triggered by internal focus handoff in editor.focus()', () => {
+        mockItemData = { id: 1, title: 'task', isActive: true };
+        gridOptionMock.autoCommitEdit = true;
+        const spyCommit = vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit');
+
+        editor = new InputEditor(editorArguments, 'text');
+        editor.loadValue(mockItemData);
+        editor.setValue('task 21');
+        const spySave = vi.spyOn(editor, 'save');
+        const editorElm = editor.editorDomElement as HTMLInputElement;
+
+        vi.mocked(gridStub.focus).mockImplementationOnce(() => {
+          editorElm.dispatchEvent(new (window.window as any).Event('blur'));
+        });
+
+        editor.focus();
+
+        expect(spyCommit).not.toHaveBeenCalled();
+        expect(spySave).not.toHaveBeenCalled();
+      });
     });
 
     describe('validate method', () => {
