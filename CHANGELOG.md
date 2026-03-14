@@ -4,6 +4,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.1.1...v10.2.0) (2026-03-14)
+
+### Features
+
+* add `columnListBuilder` to ColumnPicker/GridMenu ([#2442](https://github.com/ghiscoding/slickgrid-universal/issues/2442)) ([0e439dc](https://github.com/ghiscoding/slickgrid-universal/commit/0e439dcf1c212bfbfa22eb6d93ddbd5b6b6c67d6)) - by @ghiscoding
+* add Grid Menu option to `hideColumnPicker` ([#2445](https://github.com/ghiscoding/slickgrid-universal/issues/2445)) ([afc109f](https://github.com/ghiscoding/slickgrid-universal/commit/afc109fd5974af98eacd42130dd42492fb14389b)) - by @ghiscoding
+* **exports:** exclude hidden cols & add `includeHidden`, fix [#2453](https://github.com/ghiscoding/slickgrid-universal/issues/2453) ([#2455](https://github.com/ghiscoding/slickgrid-universal/issues/2455)) ([4ea7393](https://github.com/ghiscoding/slickgrid-universal/commit/4ea7393b7036c32afa28e7a53c701a30d55fd530)) - by @ghiscoding
+
+### Bug Fixes
+
+* **a11y:** add keyboard Enter key support to open Cell Menu ([77da5b5](https://github.com/ghiscoding/slickgrid-universal/commit/77da5b59129c39ebb93f0c0e95d6830fd93437ea)) - by @ghiscoding
+* **a11y:** add keyboard Enter key support to open Cell Menu ([#2458](https://github.com/ghiscoding/slickgrid-universal/issues/2458)) ([e7bfeaf](https://github.com/ghiscoding/slickgrid-universal/commit/e7bfeaffaca6979bb7aececc6b72ff17f6d185a8)) - by @ghiscoding
+* **a11y:** refine focus sink behavior and explicit grid focus modes ([#2456](https://github.com/ghiscoding/slickgrid-universal/issues/2456)) ([8dadccf](https://github.com/ghiscoding/slickgrid-universal/commit/8dadccfa9c8af2f5c7b599e99b6e403974c77d05)) - by @ghiscoding
+* **a11y:** restore menu focus and simplify keyboard navigation flow ([#2457](https://github.com/ghiscoding/slickgrid-universal/issues/2457)) ([8fe771f](https://github.com/ghiscoding/slickgrid-universal/commit/8fe771ff67a78c581be8ffffd68fd95fa90e13aa)) - by @ghiscoding
+* **a11y:** use spacebar or arrow left/right to open/close Tree/Grouping ([#2448](https://github.com/ghiscoding/slickgrid-universal/issues/2448)) ([7e3b901](https://github.com/ghiscoding/slickgrid-universal/commit/7e3b90125c1514748a6e706ccfd89e35b158be82)) - by @ghiscoding
+* **deps:** update all non-major dependencies ([#2468](https://github.com/ghiscoding/slickgrid-universal/issues/2468)) ([76c11d4](https://github.com/ghiscoding/slickgrid-universal/commit/76c11d422284b564fb6048552b3d32696cdffcb3)) - by @renovate-bot
+* **editors:** prevent recursive focus loops in input editors ([#2459](https://github.com/ghiscoding/slickgrid-universal/issues/2459)) ([2b31157](https://github.com/ghiscoding/slickgrid-universal/commit/2b3115722e16e5be762cca55fde2da16162fbca9)) - by @ghiscoding
+* **styling:** alwyas keep active cell visible during row hover ([#2461](https://github.com/ghiscoding/slickgrid-universal/issues/2461)) ([5ed45aa](https://github.com/ghiscoding/slickgrid-universal/commit/5ed45aac0f512ca480178389a6d6bc7ee4b8ea1e)) - by @ghiscoding
+
 ## [10.1.1](https://github.com/ghiscoding/slickgrid-universal/compare/v10.1.0...v10.1.1) (2026-03-09)
 
 ### Bug Fixes

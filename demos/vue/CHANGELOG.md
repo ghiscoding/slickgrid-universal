@@ -4,6 +4,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.1.1...v10.2.0) (2026-03-14)
+
+### Features
+
+* add Grid Menu option to `hideColumnPicker` ([#2445](https://github.com/ghiscoding/slickgrid-universal/issues/2445)) ([afc109f](https://github.com/ghiscoding/slickgrid-universal/commit/afc109fd5974af98eacd42130dd42492fb14389b)) - by @ghiscoding
+
+### Bug Fixes
+
+* **a11y:** use spacebar or arrow left/right to open/close Tree/Grouping ([#2448](https://github.com/ghiscoding/slickgrid-universal/issues/2448)) ([7e3b901](https://github.com/ghiscoding/slickgrid-universal/commit/7e3b90125c1514748a6e706ccfd89e35b158be82)) - by @ghiscoding
+
 ## [10.1.1](https://github.com/ghiscoding/slickgrid-universal/compare/v10.1.0...v10.1.1) (2026-03-09)
 
 **Note:** Version bump only for package slickgrid-vue-demo

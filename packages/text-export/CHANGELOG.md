@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.1.1...v10.2.0) (2026-03-14)
+
+### Features
+
+* **exports:** exclude hidden cols & add `includeHidden`, fix [#2453](https://github.com/ghiscoding/slickgrid-universal/issues/2453) ([#2455](https://github.com/ghiscoding/slickgrid-universal/issues/2455)) ([4ea7393](https://github.com/ghiscoding/slickgrid-universal/commit/4ea7393b7036c32afa28e7a53c701a30d55fd530)) - by @ghiscoding
+
 ## [10.1.1](https://github.com/ghiscoding/slickgrid-universal/compare/v10.1.0...v10.1.1) (2026-03-09)
 
 **Note:** Version bump only for package @slickgrid-universal/text-export

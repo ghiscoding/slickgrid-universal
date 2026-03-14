@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/aurelia-row-detail-plugin",
-  "version": "10.1.1",
+  "version": "10.2.0",
   "description": "Aurelia Row Detail Plugin for Aurelia-SlickGrid",
   "type": "module",
   "main": "./dist/index.js",
