@@ -57,6 +57,7 @@ overrides:
   '@vitest/coverage-v8>vite': npm:rolldown-vite@latest
   '@vitest/ui>vite': npm:rolldown-vite@latest
   vitest>vite: npm:rolldown-vite@latest
-  hono: ^4.12.7
+  hono: ^4.12.8
   minimatch: ^10.2.4
-  undici: ^7.24.1
+  undici: ^7.24.2
+  yauzl: ^3.2.1
