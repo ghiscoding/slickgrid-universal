@@ -45,12 +45,12 @@
     "pack": "npm pack"
   },
   "peerDependencies": {
-    "aurelia": "^2.0.0-rc.0"
+    "aurelia": "^2.0.0-rc.1"
   },
   "dependencies": {
-    "@aurelia/i18n": "^2.0.0-rc.0",
-    "@aurelia/runtime": "^2.0.0-rc.0",
-    "@aurelia/runtime-html": "^2.0.0-rc.0",
+    "@aurelia/i18n": "^2.0.0-rc.1",
+    "@aurelia/runtime": "^2.0.0-rc.1",
+    "@aurelia/runtime-html": "^2.0.0-rc.1",
     "@formkit/tempo": "catalog:",
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/custom-footer-component": "workspace:*",
@@ -62,7 +62,7 @@
     "sortablejs": "catalog:"
   },
   "devDependencies": {
-    "@aurelia/kernel": "^2.0.0-rc.0",
+    "@aurelia/kernel": "^2.0.0-rc.1",
     "dompurify": "catalog:",
     "native-copyfiles": "catalog:",
     "remove-glob": "catalog:",

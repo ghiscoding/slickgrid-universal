@@ -20,13 +20,13 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@aurelia/fetch-client": "^2.0.0-rc.0",
-    "@aurelia/i18n": "^2.0.0-rc.0",
-    "@aurelia/kernel": "^2.0.0-rc.0",
-    "@aurelia/metadata": "^2.0.0-rc.0",
-    "@aurelia/router": "^2.0.0-rc.0",
-    "@aurelia/runtime": "^2.0.0-rc.0",
-    "@aurelia/runtime-html": "^2.0.0-rc.0",
+    "@aurelia/fetch-client": "^2.0.0-rc.1",
+    "@aurelia/i18n": "^2.0.0-rc.1",
+    "@aurelia/kernel": "^2.0.0-rc.1",
+    "@aurelia/metadata": "^2.0.0-rc.1",
+    "@aurelia/router": "^2.0.0-rc.1",
+    "@aurelia/runtime": "^2.0.0-rc.1",
+    "@aurelia/runtime-html": "^2.0.0-rc.1",
     "@faker-js/faker": "catalog:",
     "@fnando/sparkline": "catalog:",
     "@formkit/tempo": "catalog:",
@@ -42,7 +42,7 @@
     "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
     "@slickgrid-universal/rxjs-observable": "workspace:*",
     "@slickgrid-universal/text-export": "workspace:*",
-    "aurelia": "^2.0.0-rc.0",
+    "aurelia": "^2.0.0-rc.1",
     "aurelia-slickgrid": "workspace:*",
     "bootstrap": "catalog:",
     "i18next": "catalog:",
@@ -50,7 +50,7 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
-    "@aurelia/vite-plugin": "^2.0.0-rc.0",
+    "@aurelia/vite-plugin": "^2.0.0-rc.1",
     "@types/fnando__sparkline": "catalog:",
     "@types/node": "catalog:",
     "@types/sortablejs": "catalog:",

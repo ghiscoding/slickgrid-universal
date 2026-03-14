@@ -39,8 +39,8 @@
     "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
   },
   "dependencies": {
-    "@aurelia/kernel": "^2.0.0-rc.0",
-    "@aurelia/runtime-html": "^2.0.0-rc.0",
+    "@aurelia/kernel": "^2.0.0-rc.1",
+    "@aurelia/runtime-html": "^2.0.0-rc.1",
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/event-pub-sub": "workspace:*",
     "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
