@@ -59,3 +59,4 @@ overrides:
   vitest>vite: npm:rolldown-vite@latest
   hono: ^4.12.7
   minimatch: ^10.2.4
+  undici: ^7.24.1
