@@ -130,7 +130,7 @@ For more details, review the official Angular documentation: [https://angular.de
 
 ### Migrating to Standalone Component
 
-Angular-Slickgrid is now a Standalone Component and the `AngularSlickgridModule` wsa dropped and no longer exists, which mean that you need to make some changes to your App `main.ts` and in all your components that imports Angular-Slickgrid.
+Angular-Slickgrid is now a Standalone Component and the `AngularSlickgridModule` was dropped and no longer exists, which mean that you need to make some changes to your App `main.ts` and in all your components that imports Angular-Slickgrid.
 
 ###### App `main.ts`
 ```diff
