@@ -87,7 +87,7 @@ describe('Example 21 - Row Detail with inner Grid', () => {
       });
 
       it('should go at the bottom end of the grid, then back to top and expect all Row Details to be opened but reset to default', () => {
-        cy.get('.grid21').type('{ctrl}{end}', { release: false });
+        cy.get('.grid21').type('{ctrl}{end}{ctrl}{end}', { release: false });
         cy.get('.grid21').type('{ctrl}{home}', { release: false });
         cy.wait(50);
         // 2nd row detail
@@ -210,7 +210,8 @@ describe('Example 21 - Row Detail with inner Grid', () => {
       });
 
       it('should scroll down by 2 pages down and then scroll back up and no longer the same filters/sorting', () => {
-        cy.get('.grid21 .slick-viewport-top.slick-viewport-left').first().scrollTo(0, 800);
+        cy.get('.grid21 [data-row="0"] .slick-cell.r2.l2').first().click().type('{pagedown}');
+        cy.get('.grid21 .slick-viewport-top.slick-viewport-left').first().scrollTo(0, 2000);
         cy.wait(50);
         cy.get('.grid21 .slick-viewport-top.slick-viewport-left').first().scrollTo(0, 0);
 
@@ -286,7 +287,7 @@ describe('Example 21 - Row Detail with inner Grid', () => {
       });
 
       it('should go to the bottom end of the grid and open row 987', () => {
-        cy.get('.grid21').type('{ctrl}{end}', { release: false });
+        cy.get('.grid21').type('{ctrl}{end}{ctrl}{end}', { release: false });
 
         cy.get('.slick-row[data-row=1001] .detail-view-toggle').first().click();
 
@@ -313,7 +314,7 @@ describe('Example 21 - Row Detail with inner Grid', () => {
       });
 
       it('should go back to the bottom of the grid and still expect row detail 987 to be opened with same filter and no rows inside it', () => {
-        cy.get('.grid21').type('{ctrl}{end}', { release: false });
+        cy.get('.grid21').type('{ctrl}{end}{ctrl}{end}', { release: false });
 
         cy.get('.innergrid-987 .search-filter.filter-orderId').as('orderIdSearch');
         cy.get('@orderIdSearch').clear();
