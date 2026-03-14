@@ -32,6 +32,8 @@ dist-demo
 website
 
 # Tests Report & Coverage
+.jest-cache
+jest-coverage
 **/coverage
 **/vitest-coverage
 **/cypress-report
