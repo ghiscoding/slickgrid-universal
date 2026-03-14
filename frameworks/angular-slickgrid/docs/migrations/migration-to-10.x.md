@@ -38,12 +38,12 @@ For years, I had to keep some references in a Shared Service as `shared.allColum
 
 _following changes should be transparent to most users, I'm just listing them in case of side effects._
 
-1. Migrated from a `<div>` to a `<dialog>` in the `SlickCompositeEditorComponent` modal component. The dialog is native code and it has better accessibility (aria) support with a baseline support showing as "widely available". A fallback to `<div>` is also available in case `<dialog>` doesn't work for everybody (e.g. it doesn't work in Salesforce LWC, hence the available fallback)
-2. Remove the use of `calc(100% - 18px)` to position the Grid Menu and simply use CSS flexbox to position the grid menu button which is a much better approach to properly align everything.
+1. Composite Editor Component, migrated from a `<div>` to a `<dialog>` to create the modal component. The dialog is native code and it has better accessibility (aria) support with a baseline support showing as "widely available". A fallback to `<div>` is also available in case `<dialog>` doesn't work for everybody (e.g. it doesn't work in Salesforce LWC, hence the available fallback)
+2. Grid Menu, replace `calc(100% - 18px)` with flexbox to position the Grid Menu button, which is a much better approach to properly align everything.
 
 ### Row Detail (now optional)
 
-I don't think that Row Detail is being used by everyone, so I decided to make it an optional plugin (package). This should help decrease build size quite a bit for users who don't require it. If however you are one of them using it, then you now have to register it as an external resource.
+Since I don't think that Row Detail is being used by everyone, I decided to make it an optional plugin (package). This should help decrease build size quite a bit for users who don't require it. If however you are one of them using it, then you now have to register it as an external resource.
 
 ```diff
 + import { AngularRowDetailView } from '@slickgrid-universal/angular-row-detail-plugin';
@@ -76,7 +76,7 @@ _following changes should be transparent to most users_
 2. drop both `enableHybridSelection`/`enableRowSelection` and merge them into a new `enableSelection` grid option
 3. rename `rowSelectionOptions` grid option to `selectionOptions`
 
-`SlickHybridSelectionModel` was previously introduced in order to merge and allow using both Cell/Row Selections separately and/or in combo on the same grid. It was introduced in v9.x to test it out and after testing it for a few months, it's now safe to drop the older `SlickCellSelectionModel` / `SlickRowSelectionModel` models and keep only the hybrid model (for smaller build & less code to maintain). Also, since we now have the Hybrid model and it's now accepting options for different selection models, I think it's better to rename `rowSelectionOptions` to `selectionOptions` since it now makes more sense with the hybrid approach and you will need to update your code when using Row Selection, see below:
+`SlickHybridSelectionModel` was previously introduced in order to merge and allow using both Cell/Row Selections separately and/or in combo on the same grid. It was introduced in v9.x for initial testing and after using it for a few months, it's now safe to drop the older `SlickCellSelectionModel` / `SlickRowSelectionModel` models and keep only the hybrid model (for smaller build & less code to maintain). Also, since we now have the Hybrid model and it's now accepting options for different selection models, I think it's better to rename `rowSelectionOptions` to `selectionOptions` since it now makes more sense with the hybrid approach and you will need to update your code when using Row Selection, see below:
 
 ```diff
 gridOptions = {
@@ -122,18 +122,18 @@ Angular-Slickgrid now works out-of-the-box in zoneless Angular apps, but still s
 - If your app uses `zone.js`, you do not need to change anything, manual change detection (e.g., `markForCheck()`, `detectChanges()`) is still not required.
 - The library no longer calls `markForCheck()` or `detectChanges()` internally, so UI updates are handled automatically in both modes.
 - If you have custom code that relies on manual change detection, review and update it as needed.
-- For example, I had to switch to Signal to ensure UI changes were detected in my OData/GraphQL demos when using the `BackendServiceApi` with a `postProcess` callback and you might need to do similar changes when using Pagination as well (in my case I switched to Signals).
+- For example, I had to switch to Signal to ensure UI changes were detected in the OData/GraphQL demos when using the `BackendServiceApi` with a `postProcess` callback and so you might need to do similar changes when using Pagination as well (in my case I switched to Signals).
 
-> **Tip:** In zoneless Angular, always use Signals for any state that should update the UI. For example, if you have a property like `selectedLanguage`, declare it as a signal (`selectedLanguage = signal('en')`) and update it with `selectedLanguage.set('fr')`. In your template, use `selectedLanguage()` to display or bind the value. This ensures UI updates are automatic and you never need manual change detection.
+> **Tip:** In zoneless Angular, always use Signals for any state that should update the UI. For example, if you have a property like `selectedLanguage`, declare it as a Signal (`selectedLanguage = signal('en')`) and update it with `selectedLanguage.set('fr')`. Then in your template, use `selectedLanguage()` to display or bind the value. This ensures UI updates are rendered and you never need manual change detection.
 
 For more details, review the official Angular documentation: [https://angular.dev/guide/zoneless](https://angular.dev/guide/zoneless)
 
 ### Migrating to Standalone Component
 
-Angular-Slickgrid is now a Standalone Component and the `AngularSlickgridModule` no longer exists, which mean that you need to make some changes in your App `main.ts` and in all your components that imports Angular-Slickgrid.
+Angular-Slickgrid is now a Standalone Component and the `AngularSlickgridModule` wsa dropped and no longer exists, which mean that you need to make some changes to your App `main.ts` and in all your components that imports Angular-Slickgrid.
 
+###### App `main.ts`
 ```diff
-// main.ts
 - import { AngularSlickgridModule } from 'angular-slickgrid';
 + import { AngularSlickgridComponent, GridOption } from 'angular-slickgrid';
 
@@ -157,8 +157,10 @@ bootstrapApplication(AppComponent, {
   ],
 });
 ```
+
+###### All your Components
+
 ```diff
-// ... all your Components
 - import { AngularSlickgridModule } from 'angular-slickgrid';
 + import { AngularSlickgridComponent } from 'angular-slickgrid';
 

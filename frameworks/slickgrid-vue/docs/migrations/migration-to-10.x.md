@@ -35,12 +35,12 @@ For years, I had to keep some references in a Shared Service as `shared.allColum
 
 _following changes should be transparent to most users, I'm just listing them in case of side effects._
 
-1. Migrated from a `<div>` to a `<dialog>` in the `SlickCompositeEditorComponent` modal component. The dialog is native code and it has better accessibility (aria) support with a baseline support showing as "widely available". A fallback to `<div>` is also available in case `<dialog>` doesn't work for everybody (e.g. it doesn't work in Salesforce LWC, hence the available fallback)
-2. Remove the use of `calc(100% - 18px)` to position the Grid Menu and simply use CSS flexbox to position the grid menu button which is a much better approach to properly align everything.
+1. Composite Editor Component, migrated from a `<div>` to a `<dialog>` to create the modal component. The dialog is native code and it has better accessibility (aria) support with a baseline support showing as "widely available". A fallback to `<div>` is also available in case `<dialog>` doesn't work for everybody (e.g. it doesn't work in Salesforce LWC, hence the available fallback)
+2. Grid Menu, replace `calc(100% - 18px)` with flexbox to position the Grid Menu button, which is a much better approach to properly align everything.
 
 ### Row Detail (now optional)
 
-I don't think that Row Detail is being used by everyone, so I decided to make it an optional plugin (package). This should help decrease build size quite a bit for users who don't require it. If however you are one of them using it, then you now have to register it as an external resource.
+Since I don't think that Row Detail is being used by everyone, I decided to make it an optional plugin (package). This should help decrease build size quite a bit for users who don't require it. If however you are one of them using it, then you now have to register it as an external resource.
 
 ```diff
 + import { VueRowDetailView } from '@slickgrid-universal/vue-row-detail-plugin';
@@ -86,7 +86,7 @@ _following changes should be transparent to most users_
 2. drop both `enableHybridSelection`/`enableRowSelection` and merge them into a new `enableSelection` grid option
 3. rename `rowSelectionOptions` grid option to `selectionOptions`
 
-`SlickHybridSelectionModel` was previously introduced in order to merge and allow using both Cell/Row Selections separately and/or in combo on the same grid. It was introduced in v9.x to test it out and after testing it for a few months, it's now safe to drop the older `SlickCellSelectionModel` / `SlickRowSelectionModel` models and keep only the hybrid model (for smaller build & less code to maintain). Also, since we now have the Hybrid model and it's now accepting options for different selection models, I think it's better to rename `rowSelectionOptions` to `selectionOptions` since it now makes more sense with the hybrid approach and you will need to update your code when using Row Selection, see below:
+`SlickHybridSelectionModel` was previously introduced in order to merge and allow using both Cell/Row Selections separately and/or in combo on the same grid. It was introduced in v9.x for initial testing and after using it for a few months, it's now safe to drop the older `SlickCellSelectionModel` / `SlickRowSelectionModel` models and keep only the hybrid model (for smaller build & less code to maintain). Also, since we now have the Hybrid model and it's now accepting options for different selection models, I think it's better to rename `rowSelectionOptions` to `selectionOptions` since it now makes more sense with the hybrid approach and you will need to update your code when using Row Selection, see below:
 
 ```diff
 gridOptions = {
