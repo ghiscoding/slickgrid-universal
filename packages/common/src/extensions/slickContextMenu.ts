@@ -220,7 +220,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
       this.addMissingCommandOrAction(
         {
           _orgTitle: commandLabels?.exportCsvCommand || '',
-          iconCssClass: contextMenu.iconExportCsvCommand || 'mdi mdi-download',
+          iconCssClass: contextMenu.iconExportCsvCommand || 'mdi mdi-file-document-outline',
           titleKey: `${translationPrefix}EXPORT_TO_CSV`,
           disabled: false,
           command: 'export-csv',
@@ -307,7 +307,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
       this.addMissingCommandOrAction(
         {
           _orgTitle: commandLabels?.exportTextDelimitedCommand || '',
-          iconCssClass: contextMenu.iconExportTextDelimitedCommand || 'mdi mdi-download',
+          iconCssClass: contextMenu.iconExportTextDelimitedCommand || 'mdi mdi-file-document-outline',
           titleKey: `${translationPrefix}EXPORT_TO_TAB_DELIMITED`,
           disabled: false,
           command: 'export-text-delimited',
