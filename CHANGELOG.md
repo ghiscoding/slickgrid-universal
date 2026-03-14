@@ -21,7 +21,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * **a11y:** use spacebar or arrow left/right to open/close Tree/Grouping ([#2448](https://github.com/ghiscoding/slickgrid-universal/issues/2448)) ([7e3b901](https://github.com/ghiscoding/slickgrid-universal/commit/7e3b90125c1514748a6e706ccfd89e35b158be82)) - by @ghiscoding
 * **deps:** update all non-major dependencies ([#2468](https://github.com/ghiscoding/slickgrid-universal/issues/2468)) ([76c11d4](https://github.com/ghiscoding/slickgrid-universal/commit/76c11d422284b564fb6048552b3d32696cdffcb3)) - by @renovate-bot
 * **editors:** prevent recursive focus loops in input editors ([#2459](https://github.com/ghiscoding/slickgrid-universal/issues/2459)) ([2b31157](https://github.com/ghiscoding/slickgrid-universal/commit/2b3115722e16e5be762cca55fde2da16162fbca9)) - by @ghiscoding
-* **styling:** alwyas keep active cell visible during row hover ([#2461](https://github.com/ghiscoding/slickgrid-universal/issues/2461)) ([5ed45aa](https://github.com/ghiscoding/slickgrid-universal/commit/5ed45aac0f512ca480178389a6d6bc7ee4b8ea1e)) - by @ghiscoding
+* **styling:** always keep active cell visible during row hover ([#2461](https://github.com/ghiscoding/slickgrid-universal/issues/2461)) ([5ed45aa](https://github.com/ghiscoding/slickgrid-universal/commit/5ed45aac0f512ca480178389a6d6bc7ee4b8ea1e)) - by @ghiscoding
 
 ## [10.1.1](https://github.com/ghiscoding/slickgrid-universal/compare/v10.1.0...v10.1.1) (2026-03-09)
 
