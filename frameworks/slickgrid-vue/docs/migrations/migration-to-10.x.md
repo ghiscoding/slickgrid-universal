@@ -120,7 +120,7 @@ This change does not require any code change from the end user, but it is noneth
 
 All menu plugins (Cell Menu, Context Menu, Header Menu and Grid Menu) now have a new UI feature `commandListBuilder: (items) => items` which is now allowing you to filter/sort and maybe override built-in commands rendering. With this new feature in place, I can deprecate all `hide...` properties and also `positionOrder` since you can now do this with the new builder. You could also use a new `hideCommands` which accepts an array of built-in command names. This will remove a large amount of `hide...` properties (about 30) that keeps increasing anytime a new built-in command gets added (in other words, this will simplify maintenance for both you and me).
 
-Currently tagged as deprecations in v10.x but it's strongly recommended to start using the new `commandListBuilder` and/or `hideCommands` to move away from the deprecated properties which will be removed in v11.x (next year). For example if we want to hide some built-in commands:
+The props above are currently tagged as deprecations in v10.x but it's strongly recommended to start using the new `commandListBuilder` and/or `hideCommands` to move away from the deprecated properties which will be removed in v11.x (next year). For example if we want to hide some built-in commands:
 
 ```diff
 gridOptions = {
