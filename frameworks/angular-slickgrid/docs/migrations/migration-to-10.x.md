@@ -94,7 +94,7 @@ gridOptions = {
 };
 ```
 
-## Angular Related Code
+## Angular Related
 
 ### `ngx-translate` v17.x is now required
 
