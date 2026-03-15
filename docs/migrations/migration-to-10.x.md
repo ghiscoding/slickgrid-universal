@@ -34,7 +34,7 @@ For years, I had to keep some references in a Shared Service as `shared.allColum
 _following changes should be transparent to most users, I'm just listing them in case of side effects._
 
 1. Composite Editor Component, migrated from a `<div>` to a `<dialog>` to create the modal component. The dialog element is native code and it has better accessibility (aria) support with current baseline showing as "widely available". A fallback to `<div>` is also available in case `<dialog>` doesn't work for everybody (e.g. it doesn't work in Salesforce LWC, hence the available fallback)
-2. Grid Menu, replace `calc(100% - 18px)` with flexbox to position the Grid Menu button, which is a much better approach to properly align everything.
+2. Grid Menu, replace `calc(100% - 18px)` with CSS flexbox to position the Grid Menu button, which is a much better approach to properly align everything.
 
 ## Changes
 
