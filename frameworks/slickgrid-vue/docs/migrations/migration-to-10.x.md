@@ -98,7 +98,7 @@ gridOptions = {
 + selectionOptions: {
     selectActiveRow: false,
 
-    // type can be: ['cell','row','mixed'] defaults to 'mixed'
+    // optional type can be: ['cell','row','mixed'] defaults to 'mixed'
 +   selectionType: 'mixed',
   }
 };
