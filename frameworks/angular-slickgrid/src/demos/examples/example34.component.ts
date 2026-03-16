@@ -1,7 +1,7 @@
 import { Component, ViewEncapsulation, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { faker } from '@faker-js/faker';
-import sparkline from '@fnando/sparkline';
+import { sparkline } from '@fnando/sparkline';
 import {
   Aggregators,
   AngularSlickgridComponent,
