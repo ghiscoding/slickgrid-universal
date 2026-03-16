@@ -607,13 +607,21 @@ describe('extend()', () => {
   });
 
   describe('works without Array.isArray', () => {
-    const savedIsArray = Array.isArray;
-    Array.isArray = false as any; // don't delete, to preserve enumerability
-    const target: any[] = [];
-    const source = [1, [2], { 3: true }];
+    test('It works without Array.isArray', () => {
+      const savedIsArray = Array.isArray;
+      const target: any[] = [];
+      const source = [1, [2], { 3: true }];
+      let output: any;
 
-    test('It works without Array.isArray', () => expect(extend(true, target, source)).toEqual([1, [2], { 3: true }]));
-    Array.isArray = savedIsArray;
+      try {
+        Array.isArray = false as any; // don't delete, to preserve enumerability
+        output = extend(true, target, source);
+      } finally {
+        Array.isArray = savedIsArray;
+      }
+
+      expect(output).toEqual([1, [2], { 3: true }]);
+    });
   });
 
   describe('non-object target', () => {
