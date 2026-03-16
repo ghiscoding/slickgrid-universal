@@ -2,7 +2,7 @@
 - [Editor Options](#editor-options)
 - [Custom Validator](#custom-validator)
 - [Date Format](#date-format)
-- See the [Editors - Wiki](../Editors.md) for more general info about Editors (validators, event handlers, ...)
+- See the [Editors - Wiki](../editors.md) for more general info about Editors (validators, event handlers, ...)
 
 ### Information
 The Date Editor is provided through an external library named [Vanilla-Calendar-Pro](https://vanilla-calendar.pro) and all options from that library can be added to your `options` (see below), so in order to add things like minimum date, disabling dates, ... just review all the [Vanilla-Calendar-Pro](https://vanilla-calendar.pro/docs/reference/additionally/settings) and then add them into `options`. We use [Tempo](https://tempo.formkit.com/) to parse and format Dates to the chosen format (when `type`, `outputType` and/or `saveType` are provided in your column definition)

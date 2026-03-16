@@ -24,7 +24,7 @@ this.gridOptions = {
 ```
 
 ### Copy & Paste with Cell Formatter
-What if you have a date in UTC format in your dataset but your grid shows it as a Date ISO format? In that case, you are using a Formatter (e.g. `formatter: Formatters.dateIso`) and you wish to use that formatter. Good news, that is supported with and to make is simpler for the implementation, we will use a flag that already exist which is `exportWithFormatter` and is used by the `Export to File` service (for more info, read [Wiki - Export to File](Export-to-Text-File.md)
+What if you have a date in UTC format in your dataset but your grid shows it as a Date ISO format? In that case, you are using a Formatter (e.g. `formatter: Formatters.dateIso`) and you wish to use that formatter. Good news, that is supported with and to make is simpler for the implementation, we will use a flag that already exist which is `exportWithFormatter` and is used by the `Export to File` service (for more info, read [Wiki - Export to File](export-to-text-file.md)
 
 The `exportWithFormatter` can be used in 2 ways, on each column definition independently or for the entire grid through it's grid option.
 ##### `exportWithFormatter` through each Column Definition

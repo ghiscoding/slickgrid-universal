@@ -75,7 +75,7 @@
 * [Row Detail](grid-functionalities/row-detail.md)
 * [Row Selection](grid-functionalities/row-selection.md)
 * [Tree Data Grid](grid-functionalities/tree-data-grid.md)
-* [Row Based Editing Plugin](grid-functionalities/Row-based-edit.md)
+* [Row Based Editing Plugin](grid-functionalities/row-based-edit.md)
 
 ## Developer Guides
 

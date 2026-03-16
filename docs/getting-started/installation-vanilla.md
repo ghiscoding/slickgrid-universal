@@ -97,7 +97,7 @@ You could also compile the SASS files with your own customization, for that simp
 The last step is really to explore all the pages that are available on the documentation website which are often updated. For example a good starter is to look at the following
 - all the `Grid Options` you can take a look at, [Slickgrid-Universal - Grid Options](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/gridOption.interface.ts) interface
 - [Formatters](../column-functionalities/Formatters.md)
-- [Editors](../column-functionalities/Editors.md)
+- [Editors](../column-functionalities/editors.md)
 - [Filters](../column-functionalities/filters/Select-Filter.md)
 - [Grid Menu](../grid-functionalities/Grid-Menu.md)
 ... and much more, just explorer the Documentation through the table of content (on your left)

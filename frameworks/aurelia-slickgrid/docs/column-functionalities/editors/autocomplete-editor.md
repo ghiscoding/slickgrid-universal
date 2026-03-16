@@ -9,7 +9,7 @@
 - [Force User Input](#autocomplete---force-user-input)
 - [How to change drop container dimensions?](#how-to-change-drop-container-dimensions)
 - [Animated Gif Demo](#animated-gif-demo)
-  - See the [Editors - Wiki](../Editors.md) for more general info about Editors (validators, event handlers, ...)
+  - See the [Editors - Wiki](../editors.md) for more general info about Editors (validators, event handlers, ...)
 
 ### Demo
 [Demo Page](https://ghiscoding.github.io/aurelia-slickgrid-demos/#/slickgrid/example3) | [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example3.ts)

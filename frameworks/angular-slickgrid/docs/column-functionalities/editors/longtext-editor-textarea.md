@@ -1,7 +1,7 @@
 ##### index
 - [Editor Options](#editor-options)
 - [Custom Validator](#custom-validator)
-- See the [Editors - Wiki](../Editors.md) for more general info about Editors (validators, event handlers, ...)
+- See the [Editors - Wiki](../editors.md) for more general info about Editors (validators, event handlers, ...)
 
 ### Demo
 [Demo Page](https://ghiscoding.github.io/angular-slickgrid-demos/#/editor) | [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-editor.component.ts) - ("Title" column to be more specific)

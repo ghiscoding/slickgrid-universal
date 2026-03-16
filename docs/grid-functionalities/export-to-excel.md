@@ -13,7 +13,7 @@
 
 ### Description
 
-You can optionally install the Export to Excel resource, it will give you the flexibility of export your grid data to an Excel file with the `.xlsx` default extension (or `.xls`). If you wish to export to CSV or other delimiter like Tab Delimited, then you will want to take a look at the other [Wiki - Export to File](Export-to-Text-File.md).
+You can optionally install the Export to Excel resource, it will give you the flexibility of export your grid data to an Excel file with the `.xlsx` default extension (or `.xls`). If you wish to export to CSV or other delimiter like Tab Delimited, then you will want to take a look at the other [Wiki - Export to File](export-to-text-file.md).
 
 **NOTE:** this is an opt-in Service, you must download the necessary Service from `@slickgrid-universal/excel-export` and instantiate it in your grid options via `externalResources`, see multiple examples below.
 

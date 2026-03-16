@@ -1,7 +1,7 @@
 ##### index
 - [Editor Options](#editor-options)
 - [Custom Validator](#custom-validator)
-- See the [Editors - Wiki](../Editors.md) for more general info about Editors (validators, event handlers, ...)
+- See the [Editors - Wiki](../editors.md) for more general info about Editors (validators, event handlers, ...)
 
 ### Demo
 [Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example12) | [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example12.ts) - ("Title" column to be more specific)

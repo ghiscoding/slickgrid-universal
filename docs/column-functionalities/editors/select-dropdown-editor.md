@@ -7,7 +7,7 @@
   - [Collection Label Render HTML](#collection-label-render-html)
   - [Collection Change Watch](#collection-watch)
   - [`multiple-select-vanilla` Options](#multiple-selectjs-options)
-  - See the [Editors - Docs](../Editors.md) for more general info about Editors (validators, event handlers, ...)
+  - See the [Editors - Docs](../editors.md) for more general info about Editors (validators, event handlers, ...)
 
 ## Select Editors
 The library ships with two select editors: `singleSelectEditor` and the `multipleSelectEditor`. Both support the [multiple-select-vanilla](https://github.com/ghiscoding/multiple-select-vanilla) library, but fallback to the bootstrap form-control style if you decide to exclude this library from your build. These editors will work with a list of foreign key values (custom structure not supported) and can be displayed properly with the [collectionFormatter](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/formatters/collectionFormatter.ts).

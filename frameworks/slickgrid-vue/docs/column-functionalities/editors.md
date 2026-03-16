@@ -617,7 +617,7 @@ function onBeforeEditCell($event) {
 ```
 
 ## Turning individual rows into edit mode
-Using the [Row Based Editing Plugin](../grid-functionalities/Row-based-edit.md) you can let the user toggle either one or multiple rows into edit mode, keep track of cell changes and either discard or save them on an individual basis using a custom `onBeforeRowUpdated` hook.
+Using the [Row Based Editing Plugin](../grid-functionalities/row-based-edit.md) you can let the user toggle either one or multiple rows into edit mode, keep track of cell changes and either discard or save them on an individual basis using a custom `onBeforeRowUpdated` hook.
 
 ## Dynamically change Column Editor
 
