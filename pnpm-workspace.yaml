@@ -19,8 +19,8 @@ catalog:
   '@types/sortablejs': ^1.15.9
   '@vitejs/plugin-react': ^5.2.0
   '@vitejs/plugin-vue': ^6.0.5
-  '@vitest/coverage-v8': ^4.0.18
-  '@vitest/ui': ^4.0.18
+  '@vitest/coverage-v8': ^4.1.0
+  '@vitest/ui': ^4.1.0
   bootstrap: ^5.3.8
   concurrently: ^9.2.1
   cross-env: ^10.1.0
@@ -48,15 +48,15 @@ catalog:
   typescript: ^6.0.1-rc
   vite: ^7.3.1
   vite-tsconfig-paths: ^6.1.1
-  vitest: ^4.0.18
+  vitest: ^4.1.0
   vue: ^3.5.30
 
 overrides:
   '@hono/node-server': ^1.19.11
   '@isaacs/brace-expansion': ^5.0.1
-  '@vitest/coverage-v8>vite': npm:rolldown-vite@latest
-  '@vitest/ui>vite': npm:rolldown-vite@latest
-  vitest>vite: npm:rolldown-vite@latest
+  '@vitest/coverage-v8>vite': ^8.0.0
+  '@vitest/ui>vite': ^8.0.0
+  vitest>vite: ^8.0.0
   hono: ^4.12.8
   minimatch: ^10.2.4
   undici: ^7.24.2
