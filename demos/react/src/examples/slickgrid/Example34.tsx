@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import sparkline from '@fnando/sparkline';
+import { sparkline } from '@fnando/sparkline';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Aggregators,

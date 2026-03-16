@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import sparkline from '@fnando/sparkline';
+import { sparkline } from '@fnando/sparkline';
 import {
   Aggregators,
   createDomElement,
