@@ -54,9 +54,9 @@ catalog:
 overrides:
   '@hono/node-server': ^1.19.11
   '@isaacs/brace-expansion': ^5.0.1
-  '@vitest/coverage-v8>vite': npm:rolldown-vite@latest
-  '@vitest/ui>vite': npm:rolldown-vite@latest
-  vitest>vite: npm:rolldown-vite@latest
+  '@vitest/coverage-v8>vite': ^8.0.0
+  '@vitest/ui>vite': ^8.0.0
+  vitest>vite: ^8.0.0
   hono: ^4.12.8
   minimatch: ^10.2.4
   undici: ^7.24.2
