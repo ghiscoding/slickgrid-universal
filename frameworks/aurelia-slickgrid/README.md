@@ -60,6 +60,7 @@ export class Example {
       { id: 'lastName', name: 'Last Name', field: 'lastName'},
       { id: 'age', name: 'Age', field: 'age' }
     ];
+    this.gridOptions = { /*...*/ }; // optional grid options
   }
 
   attached() {
@@ -67,7 +68,6 @@ export class Example {
       { id: 1, firstName: 'John', lastName: 'Doe', age: 20 },
       { id: 2, firstName: 'Jane', lastName: 'Smith', age: 21 }
     ];
-    this.gridOptions = { /*...*/ }; // optional grid options
   }
 }
 ```

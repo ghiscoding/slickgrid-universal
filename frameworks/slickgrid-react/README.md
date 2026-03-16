@@ -47,7 +47,7 @@ interface User {
 export default function Example() {
   const [columns, setColumns] = useState<Column[]>(); // it could also be `Column<User>[]`
   const [options, setOptions] = useState<GridOption>();
-  const [dataset, setDataset] = useState<User[]>(getData());
+  const [dataset, setDataset] = useState<User[]>([]);
 
   useEffect(() => defineGrid());
 
@@ -57,15 +57,11 @@ export default function Example() {
       { id: 'lastName', name: 'Last Name', field: 'lastName', sortable: true },
       { id: 'age', name: 'Age', field: 'age', type: 'number', sortable: true },
     ]);
-
     setOptions({ /*...*/ }); // optional grid options
-  }
-
-  function getData() {
-    return [
+    setData([
       { id: 1, firstName: 'John', lastName: 'Doe', age: 20 },
       { id: 2, firstName: 'Jane', lastName: 'Smith', age: 21 },
-    ];
+    ]);
   }
 
   return !options ? null : (

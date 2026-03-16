@@ -51,11 +51,11 @@ export class GridComponent implements OnInit {
       { id: 'lastName', name: 'Last Name', field: 'lastName', sortable: true },
       { id: 'age', name: 'Age', field: 'age', type: 'number', sortable: true }
     ];
+    this.gridOptions = { /*...*/ }; // optional grid options
     this.dataset = [
       { id: 1, firstName: 'John', lastName: 'Doe', age: 20 },
       { id: 2, firstName: 'Jane', lastName: 'Smith', age: 21 }
     ];
-    this.gridOptions = { /*...*/ }; // optional grid options
   }
 }
 ```
