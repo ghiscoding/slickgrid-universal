@@ -198,7 +198,6 @@
 
       &.active {
         box-shadow: var(--slick-cell-active-box-shadow, v.$slick-cell-active-box-shadow);
-        border: var(--slick-cell-active-border, v.$slick-cell-active-border);
         z-index: var(--slick-cell-active-z-index, v.$slick-cell-active-z-index);
 
         // We compensate for the all-around border (now 1px at top and left too!)

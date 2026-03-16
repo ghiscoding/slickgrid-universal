@@ -81,9 +81,6 @@ $slick-sorting-header-color:                                #333 !default;
 $slick-placeholder-color:                                   #c9c9c9 !default;
 
 /* cell */
-$slick-cell-active-border:                                  none !default;
-$slick-cell-active-box-shadow:                              inset 0 0 0 1px #aaaaaa !default;
-$slick-cell-active-z-index:                                 6 !default;
 $slick-cell-box-shadow:                                     none !default;
 $slick-cell-display:                                        block !default;
 $slick-cell-text-color:                                     #333 !default;
@@ -93,6 +90,8 @@ $slick-cell-border-top:                                     1px solid #{$slick-b
 $slick-cell-border-right:                                   1px transparent !default;
 $slick-cell-border-bottom:                                  1px transparent !default;
 $slick-cell-border-left:                                    1px transparent !default;
+$slick-cell-active-box-shadow:                              inset 0 0 0 1px #aaaaaa !default;
+$slick-cell-active-z-index:                                 6 !default;
 $slick-cell-even-background-color: 			                    #ffffff !default;
 $slick-cell-odd-background-color:                           color.adjust($slick-grid-cell-color, $lightness: -3%) !default; // for striping every second row
 $slick-cell-odd-active-background-color:                    color.adjust($slick-grid-cell-color, $lightness: -5%) !default;
@@ -1018,7 +1017,7 @@ $slick-dark-text-color:                                   #d4d4d4 !default;
   --slick-cell-even-background-color:                     #141618;
   --slick-cell-odd-background-color:                      #2c3034;
   --slick-cell-text-color:                                #d4d4d4;
-  --slick-cell-border-top:                                1px solid #474747;
+  --slick-cell-border-top:                                0px solid #474747;
   --slick-column-picker-background-color:                 var(--slick-base-dark-menu-bg-color);
   --slick-column-picker-box-shadow:                       0 0 1px #606060;
   --slick-column-picker-border:                           var(--slick-base-dark-menu-border);
