@@ -37,6 +37,7 @@ import { wireMenuKeyboardNavigation } from './keyboardNavigation.js';
 
 export type ExtractMenuType<A, T> = T extends 'command' ? A : T extends 'option' ? A : A extends 'divider' ? A : never;
 export type MenuType = 'command' | 'option';
+/** @deprecated will be dropped in v11 */
 export type MenuCommandOptionItem = MenuCommandItem | MenuOptionItem;
 export type ExtendableItemTypes = HeaderButtonItem | MenuCommandItem | MenuOptionItem | 'divider';
 export type MenuPlugin = CellMenu | ContextMenu | GridMenu | HeaderMenu;
@@ -73,6 +74,8 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
   protected _menuElm?: HTMLDivElement | null;
   protected _menuCssPrefix = '';
   protected _menuPluginCssPrefix = '';
+
+  /** @deprecated will be dropped in v11 */
   protected _optionTitleElm?: HTMLSpanElement;
   protected _menuTriggerElement?: HTMLElement; // Track the element that triggered the menu for focus restoration
   protected _timer?: any;
@@ -498,7 +501,11 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
     }
   }
 
-  /** Construct the Command/Options Items section. */
+  /**
+   * @deprecated
+   * not entirely deprecated, but I just want to rename the function since we'll be deprecating/removing `optionItems` in v11
+   * Construct the Command/Options Items section.
+   */
   protected populateCommandOrOptionItems(
     itemType: MenuType,
     menuOptions: M,
@@ -539,7 +546,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
     }
   }
 
-  /** Add the Command/Options Title when necessary. */
+  /** @deprecated (same as above and rename the function in v11) Add the Command/Options Title when necessary. */
   protected populateCommandOrOptionTitle(itemType: MenuType, menuOptions: M, commandOrOptionMenuElm: HTMLElement, level: number): void {
     if (menuOptions) {
       const isSubMenu = level > 0;
@@ -548,7 +555,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
       const menuHeaderElm =
         this._menuElm?.querySelector(`.slick-${itemType}-header`) ?? createDomElement('div', { className: `slick-${itemType}-header` });
 
-      // user could pass a title on top of the Commands/Options section
+      // 'optionTitle' is deprecated, user could pass a title on top of the Commands/Options section
       const titleProp: 'commandTitle' | 'optionTitle' = `${itemType}Title`;
 
       if (!isSubMenu) {
@@ -568,7 +575,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
     }
   }
 
-  /** Construct the Command/Options Items section. */
+  /** @deprecated (same as above and rename the function in v11) Construct the Command/Options Items section. */
   protected populateSingleCommandOrOptionItem(
     itemType: MenuType,
     menuOptions: M,

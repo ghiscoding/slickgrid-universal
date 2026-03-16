@@ -21,6 +21,6 @@ export interface CellMenu extends CellMenuOption {
   /** SlickGrid Event fired on menu option clicked from the Command items list */
   onCommand?: (e: Event | SlickEventData, args: MenuCommandItemCallbackArgs) => void;
 
-  /** SlickGrid Event fired on menu option selected from the Option items list. */
+  /** @deprecated @use `onCommand` SlickGrid Event fired on menu option selected from the Option items list. */
   onOptionSelected?: (e: Event | SlickEventData, args: MenuOptionItemCallbackArgs) => void;
 }
