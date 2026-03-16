@@ -52,13 +52,13 @@ export interface CellMenuOption extends Omit<MenuOption<MenuFromCellCallbackArgs
    */
   width?: number | string;
 
-  /** Array of Option Items (title, option, disabled, ...) */
+  /** @deprecated @use `commandItems` Array of Option Items (title, option, disabled, ...) */
   optionItems?: Array<MenuOptionItem | 'divider'>;
 
-  /** Optional Title of the Option section, it will be hidden when nothing is provided */
+  /** @deprecated @use `commandItems` Optional Title of the Option section, it will be hidden when nothing is provided */
   optionTitle?: string;
 
-  /** Same as "optionTitle", except that it's a translation key which can be used on page load and/or when switching locale */
+  /** @deprecated @use `commandItems` Same as "optionTitle", except that it's a translation key which can be used on page load and/or when switching locale */
   optionTitleKey?: string;
 
   /**
