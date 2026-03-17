@@ -8,17 +8,16 @@ The easiest is to simply clone the [Slickgrid-Vue-Demos](https://github.com/ghis
 
 Install `Vue`, `Slickgrid-Vue` and any UI framework you wish to install and use, for example `Bootstrap`.
 
-```bash
-npm install --save slickgrid-vue bootstrap
-# or with yarn add
+```sh
+npm install slickgrid-vue
 ```
 
-_Note: `Bootstrap` is totally optional, you can use any other framework (for example Quasar)_
+_Note: `Bootstrap` is totally optional, you can use any other framework (for example Quasar or Vuetify)_
 
 ### 2. Import all necessary dependencies in `main.ts`
 
 ```ts
-// again Bootstrap is optional
+// Bootstrap if installed which is again totally optional
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
 
@@ -31,8 +30,8 @@ createApp(App);
 
 Load the default SlickGrid theme style and/or customize it to your taste (customization requires SASS).
 
-> Note: the default CSS/SASS Theme name is `slickgrid-theme-default` and is as much as possible framework agnostic.
-> It is the recommended Theme even if you use any other UI framework, try this default theme first and tweak it if necessary.
+> Note: the default CSS/SASS Theme name is `slickgrid-theme-default` and is framework agnostic as much as possible.
+> It is the recommended Theme to get started, try this default theme first and tweak it if necessary.
 
 #### CSS
 
@@ -48,12 +47,13 @@ import '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.cs
 </script>
 ```
 
-> **Note** Bootstrap is optional, you can use any other framework, other themes are also available as CSS and SCSS file extensions
-> `slickgrid-theme-default.css`, `slickgrid-theme-bootstrap.css`, `slickgrid-theme-material.css`, `slickgrid-theme-salesforce.css`
+> **Note** Bootstrap is optional, you can use any other UI framework, other themes are also available as CSS and SCSS file extensions.
+> Import the `slickgrid-theme-bootstrap.css` **only** if you are actually using Bootstrap, otherwise prefer the `slickgrid-theme-default.css` default them.
+> Available themes are: `slickgrid-theme-default.css`, `slickgrid-theme-bootstrap.css`, `slickgrid-theme-material.css`, `slickgrid-theme-salesforce.css`
 
 #### SASS (scss)
 
-You could also compile the SASS files with your own customization, for that simply take any of the [\_variables.scss](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) (without the `!default` flag) variable file and make sure to import the Bootstrap Theme afterward or use the new modern SASS approach with the `@use with()`. For example, you could modify your `style.scss` with the following changes:
+You could also compile the SASS files with your own customization, you can simply override any of the SASS [_variables.scss](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) (without the `!default` flag) variable file and make sure to import the Bootstrap Theme afterward or use the new modern SASS approach with the `@use with()`. For example, you could modify your `style.scss` with the following changes:
 
 ```scss
 /* for example, let's change the mouse hover color */
@@ -65,12 +65,12 @@ You could also compile the SASS files with your own customization, for that simp
 
 ### 4. Install/Setup `I18Next` for Localization (optional)
 
-This step is totally optional and will allow you to provide different locales, other than English (which is the default), in your project. You have 2 options to approach this use case. If you only use English, then there is nothing to do (you can still change some of the texts in the grid via option 1.). The 2 approach are as follow:
+This step is totally optional and will can be used to provide multiple different locales, other than English (which is the default), in your project. You have 2 options to approach this use case. If you only use English, then there is nothing to do (you can still change some of the texts in the grid via option 1.). The 2 approach are as follow:
 
-1. Using [Custom Locale](../localization/localization-with-custom-locales.md), that is when you use **only 1** locale (other than English)...
+1. Using [Custom Locale](../localization/localization-with-custom-locales.md), that is when you use a **single locale** (other than English)...
 2. Using [Localization with I18Next](../localization/localization.md), that is when you want to use multiple locales dynamically.
 
-##### add it to your `main.ts`
+##### add `i18n` to your `main.ts`
 
 ```ts
 import i18next from 'i18next';
@@ -91,7 +91,7 @@ provide('i18next', useTranslation().i18next);
 </script>
 ```
 
-> Currently only `i18next` (and `i18next-vue`) is implemented and supported. If anyone is interested in implementing `vue-i18n` then please reach out. Side note, `i18next` is easier to implement and is also being used in a couple of SlickGrid framework ports which help in consistency.
+> Currently only `i18next` (and `i18next-vue`) is implemented and supported. If anyone is interested in implementing `vue-i18n` then please reach out. Side note, `i18next` is easier to implement and is also being used in a few other SlickGrid framework wrappers which does help with consistency.
 
 ### 5. Create a basic grid
 
@@ -108,7 +108,7 @@ onBeforeMount(() => {
   defineGrid();
 });
 
-/* Define grid Options and Columns */
+/* Define Grid Options and Columns */
 function defineGrid() {
   columns.value = [
     { id: 'title', name: 'Title', field: 'title', sortable: true, minWidth: 100 },
@@ -129,26 +129,7 @@ function defineGrid() {
 }
 
 function getData(count: number) {
-  // mock some data, an array of objects
-  const tmpData = [];
-  for (let i = 0; i < count; i++) {
-    const randomYear = 2000 + Math.floor(Math.random() * 10);
-    const randomMonth = Math.floor(Math.random() * 11);
-    const randomDay = Math.floor(Math.random() * 29);
-    const randomPercent = Math.round(Math.random() * 100);
-
-    tmpData[i] = {
-      id: i,
-      title: 'Task ' + i,
-      duration: Math.round(Math.random() * 100) + '',
-      percentComplete: randomPercent,
-      start: `${randomMonth}/${randomDay}/${randomYear}`,
-      finish: `${randomMonth}/${randomDay}/${randomYear + 1}`,
-      effortDriven: i % 5 === 0,
-    };
-  }
-
-  return tmpData;
+  // fetch your data...
 }
 </script>
 
@@ -163,7 +144,7 @@ function getData(count: number) {
 
 ### 6. Explore the Documentation page content
 
-The last step is really to explore all the pages that are available in the documentation, everything you need to use the library should be available in here and so you should visit it often. For example a good starter is to look at the following
+The last step is really to explore all the pages that are available in the documentation, everything you need to use the library should be available in the docs and so you should visit it often. For example a good starter is to look at the following
 
 - for all the `Grid Options`, take a look at all the [Grid Options](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/gridOption.interface.ts) interface.
 - [Formatters](../column-functionalities/formatters.md)
@@ -175,13 +156,13 @@ The last step is really to explore all the pages that are available in the docum
 
 ### 7. Get Started
 
-The best way to get started is to clone the [Slickgrid-Vue-Demos](https://github.com/ghiscoding/slickgrid-vue-demos), it is updated frequently since it is used for the GitHub Bootstrap 4 demo page. `Slickgrid-Vue` has 2 `Bootstrap` themes, you can see a demo of each one below.
+The best way to get started is to clone the [Slickgrid-Vue-Demos](https://github.com/ghiscoding/slickgrid-vue-demos), it is updated frequently since it is used for the GitHub Bootstrap demo page. `Slickgrid-Vue` has 2 project demos available (with/without `i18n`).
 
-- [Bootstrap 5 demo](https://ghiscoding.github.io/slickgrid-vue-demos) / [examples repo](https://github.com/ghiscoding/slickgrid-vue-demos) (with `I18Next` Service)
+- [Slickgrid-Vue-Demos](https://ghiscoding.github.io/slickgrid-vue-demos) / [examples repo](https://github.com/ghiscoding/slickgrid-vue-demos) (with `I18Next` Service)
 
 ##### All Live Demo Examples have links to the actual code
 
-Like to see the code to a particular Example? Just click on the "see code" that is available in every live examples.
+Like to see the code for a particular Example? Just click on the "see code" (top right) link which are available in every live examples.
 
 ### 8. CSP Compliance
 
@@ -204,9 +185,9 @@ What if `Slickgrid-Vue` is missing feature(s) versus the original `SlickGrid`? F
 
 ### 11. Having some issues?
 
-After reading all this HOW TO, what if you have an issue with the grid?
-Please start by searching any related [issues](/ghiscoding/slickgrid-vue/issues). If you can't find anything in the issues log and you made sure to also look through the multiple Documentation pages as well, then go ahead and fill in a [new issue](/ghiscoding/slickgrid-vue/issues/new) and we'll try to help.
+After reading all this Getting Started guide, then what if you have an issue with the grid?
+Please start by searching any related [issues](https://github.com/ghiscoding/slickgrid-universal/issues). If you can't find anything in the issues filder and you also made sure to also look through the multiple Documentation pages as well, then go ahead and fill in a [new issue](https://github.com/ghiscoding/slickgrid-universal/issues/new) and we'll try to help.
 
 ### Final word
 
-This project is Open Source and is, for the most part, mainly done in my spare time. So please be respectful when creating issues (and fill in the issue template) and I will try to help you out. If you like my work, you can also [buy me a coffee](https://ko-fi.com/N4N679OT) ☕️, some part of the code happens when I'm at StarBucks so... That is it, thank you and don't forget to ⭐ the project if you like the lib 😉
+This project is Open Source and is, for the most part, mainly done in my spare time. So please be respectful when creating issues (and fill in the issue template) and I will try to help you out. If you like my work, you can also [buy me a coffee](https://ko-fi.com/ghiscoding) ☕️, some part of the code happens when I'm at StarBucks so... That is it, thank you and don't forget to ⭐ the project if you like the lib 😉

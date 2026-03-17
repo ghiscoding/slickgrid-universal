@@ -37,11 +37,12 @@ import 'styles.css';
 import 'node_modules/@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css';
 ```
 
-> **Note** Bootstrap is optional, you can use any other framework, other themes are also available as CSS and SCSS file extensions
-> `slickgrid-theme-default.css`, `slickgrid-theme-bootstrap.css`, `slickgrid-theme-material.css`, `slickgrid-theme-salesforce.css`
+> **Note** Bootstrap is optional, you can use any other UI framework, other themes are also available as CSS and SCSS file extensions.
+> Import the `slickgrid-theme-bootstrap.css` **only** if you are actually using Bootstrap, otherwise prefer the `slickgrid-theme-default.css` default them.
+> Available themes are: `slickgrid-theme-default.css`, `slickgrid-theme-bootstrap.css`, `slickgrid-theme-material.css`, `slickgrid-theme-salesforce.css`
 
 #### SASS (scss)
-You could also compile the SASS files with your own customization, for that simply take any of the [_variables.scss](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) (without the `!default` flag) variable file and make sure to import the Bootstrap Theme afterward. For example, you could modify your `style.scss` with the following changes:
+You could also compile the SASS files with your own customization, for that, you can simply override any of the SASS [_variables.scss](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) (without the `!default` flag) variable file and make sure to import the Bootstrap Theme afterward. For example, you could modify your `style.scss` with the following changes:
 
 ```scss
 /* for example, let's change the mouse hover color */
@@ -52,8 +53,8 @@ You could also compile the SASS files with your own customization, for that simp
 ```
 
 ### 4. Install/Setup `I18N` for Localization (optional)
-To provide locales other than English (default locale), you have 2 options that you can go with. If you only use English, there is nothing to do (you can still change some of the texts in the grid via option 1.)
-1. Using [Custom Locale](../localization/localization-with-custom-locales.md), that is when you use **only 1** locale (other than English)...
+To provide locales other than English (default locale), you have 2 options that you can go with. If you only use English, there is nothing to do (you can still change some of the texts in the grid via option 1)
+1. Using [Custom Locale](../localization/localization-with-custom-locales.md), that is when you use a **single locale** (other than English)...
 2. Using [Localization with I18N](../localization/localization.md), that is when you want to use multiple locales dynamically.
 
 ### 5. Create a basic grid
@@ -97,25 +98,8 @@ const Example: React.FC = () => {
   }
 
   function getData() {
-    // mock some data, an array of objects
-    const dataset = [];
-    for (let i = 0; i < 1000; i++) {
-      const randomYear = 2000 + Math.floor(Math.random() * 10);
-      const randomMonth = Math.floor(Math.random() * 11);
-      const randomDay = Math.floor((Math.random() * 29));
-      const randomPercent = Math.round(Math.random() * 100);
-
-      dataset[i] = {
-        id: i,
-        title: 'Task ' + i,
-        duration: Math.round(Math.random() * 100) + '',
-        percentComplete: randomPercent,
-        start: `${randomMonth}/${randomDay}/${randomYear}`,
-        finish: `${randomMonth}/${randomDay}/${randomYear}`,
-        effortDriven: (i % 5 === 0)
-      };
-    }
-    setDataset(dataset);
+    // fetch your data...
+    setDataset([/*...*/]);
   }
 
   return !options ? '' : (
@@ -162,8 +146,9 @@ Here's a quick list of some of these optional packages
 What if `Slickgrid-React` is missing feature(s) versus the original `SlickGrid`? Fear not and directly use the `SlickGrid` and `DataView` objects that are expose from the start through Event Emitters. For more info continue reading on the Documentation "SlickGrid & DataView objects" and "Grid & DataView Events"
 
 ### 11. Having some issues?
-After reading all this HOW TO, what if you have an issue with the grid?
-Please start by searching any related [issues](/ghiscoding/slickgrid-react/issues). If you can't find anything in the issues log and you made sure to also look through the multiple documentation available, then go ahead and fill in a [new issue](/ghiscoding/slickgrid-react/issues/new) and we'll try to help.
+
+After reading all this Getting Started guide, then what if you have an issue with the grid?
+Please start by searching any related [issues](https://github.com/ghiscoding/slickgrid-universal/issues). If you can't find anything in the issues filder and you also made sure to also look through the multiple Documentation pages as well, then go ahead and fill in a [new issue](https://github.com/ghiscoding/slickgrid-universal/issues/new) and we'll try to help.
 
 ### Final word
-This project is Open Source and is, for the most part, mainly done in spare time. So please be respectful when creating issues (and fill in the issue template) and I will try to help you out. If you like my work, you can also [buy me a coffee](https://ko-fi.com/N4N679OT) ☕️, some part of the code happens when I'm at StarBucks... That is it, thank you and don't forget to ⭐ it if you like the lib 😉
+This project is Open Source and is, for the most part, mainly done in spare time. So please be respectful when creating issues (and fill in the issue template) and I will try to help you out. If you like my work, you can also [buy me a coffee](https://ko-fi.com/ghiscoding) ☕️, some part of the code happens when I'm at StarBucks... That is it, thank you and don't forget to ⭐ it if you like the lib 😉

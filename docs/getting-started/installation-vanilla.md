@@ -83,7 +83,7 @@ Default compiled `css`, you can load it through HTML or import it in your JS cod
 > **Note** to use a different theme, simply replace the theme suffix, for example `"slickgrid-theme-material.css"` for the Material Theme.
 
 #### SASS (scss)
-You could also compile the SASS files with your own customization, for that simply take any of the [_variables.scss](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) (without the `!default` flag) variable file and make sure to import the Bootstrap Theme afterward. For example, you could modify your `style.scss` with the following changes:
+You could also compile the SASS files with your own customization, for that, you can simply override any of the SASS [_variables.scss](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) (without the `!default` flag) variable file and make sure to import the Bootstrap Theme afterward. For example, you could modify your `style.scss` with the following changes:
 
 ```scss
 /* for example, let's change the mouse hover color */

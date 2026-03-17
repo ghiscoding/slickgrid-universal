@@ -5,13 +5,18 @@
 ### 1. Install NPM Package
 Install the `Angular-Slickgrid`, and other external packages like `Bootstrap`
 (Bootstrap is optional, you can choose other framework if you wish)
-```bash
-npm install --save angular-slickgrid bootstrap # the last dep is optional
+
+```sh
+npm install angular-slickgrid
 ```
 
-#### Important note about `ngx-translate`
+#### Optional `ngx-translate`
 
-**NOTE** please note that `@ngx-translate` is still going to be installed behind the scene just to make DI (dependency injection) build properly because of our use of `@Optional()`. Because of this optional usage, I would assume that it will be removed by the build tree shaking process when you run a production build. See their version compatibility table below:
+`ngx-translate` can be installed for instant locale translation (see [step 6](#step6)).
+
+**NOTE** please note that even if `@ngx-translate` is optional, it will still be installed behind the scene since because even if we use `@Optional()` for DI (dependency injection), it still needs to be installed for that to work. However, because of its optional nature, I would assume that it will be removed by tree shaking after executing a production build.
+
+Below is their `ngx-translate` version compatibility:
 
 | Angular Version         | @ngx-translate/core |
 |-------------------------|---------------------|
@@ -20,7 +25,9 @@ npm install --save angular-slickgrid bootstrap # the last dep is optional
 |  16 - 17+               |        16.x (15.x)  |
 |  13 - 15 (**Ivy only**) |        14.x         |
 
-### 2. Modify the `angular.json` and `tsconfig.app.json` files
+<a name="step2"></a>
+### 2. Add Bootstrap script/css (or any other UI framework)
+##### Modify the `angular.json` and `tsconfig.app.json` files
 
 For Bootstrap users (or possibly other frameworks), modify your `angular.json` file with the necessary framework Styles and Scripts:
 
@@ -39,7 +46,7 @@ For Bootstrap users (or possibly other frameworks), modify your `angular.json` f
 Load the default Bootstrap theme style and/or customize it to your taste (either by using SASS or CSS variables)
 
 #### CSS
-Default CSS compiled (if you use the plain Bootstrap Theme CSS, just add it to your `angular.json` file and that's about it).
+Angular-Slickgrid default CSS compiled (if you use the plain Bootstrap Theme CSS, just add it to your `angular.json` file and that's about it).
 
 ```json
 "styles": [
@@ -49,11 +56,12 @@ Default CSS compiled (if you use the plain Bootstrap Theme CSS, just add it to y
 ]
 ```
 
-> **Note** Bootstrap is optional, you can use any other framework, other themes are also available as CSS and SCSS file extensions
-> `slickgrid-theme-default.css`, `slickgrid-theme-bootstrap.css`, `slickgrid-theme-material.css`, `slickgrid-theme-salesforce.css`
+> **Note** Bootstrap is optional, you can use any other UI framework, other themes are also available as CSS and SCSS file extensions.
+> Import the `slickgrid-theme-bootstrap.css` **only** if you are actually using Bootstrap, otherwise prefer the `slickgrid-theme-default.css` default them.
+> Available themes are: `slickgrid-theme-default.css`, `slickgrid-theme-bootstrap.css`, `slickgrid-theme-material.css`, `slickgrid-theme-salesforce.css`
 
 #### SASS (scss)
-You could also compile the SASS files with your own customization, for that simply take any of the [_variables.scss](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) (without the `!default` flag) variable file and make sure to import the Bootstrap Theme afterward. For example, you could modify your `style.scss` with the following changes:
+You could also compile the SASS files with your own customization, for that, you can simply override any of the SASS [_variables.scss](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) (without the `!default` flag) variable file and make sure to import the Bootstrap Theme afterward. For example, you could modify your `style.scss` with the following changes:
 
 ```scss
 /* for example, let's change the mouse hover color */
@@ -63,9 +71,45 @@ You could also compile the SASS files with your own customization, for that simp
 );
 ```
 
-### 4. for `Angular-Slickgrid` < 10.0 - Include it in your App Module (or App Config for Standalone)
+### 4. for `Angular-Slickgrid` for version `>= 10.x` - Standalone Component
+##### _for version `< 10` (with App Module), see step 5_
 
-Below are 2 different setups (with App Module (legacy) or Standalone) but in both cases the `AngularSlickgridModule.forRoot()` is **required**, so make sure to include it. Also note that the GitHub demo is strictly built with an App Module which is considered the legacy approach.
+```ts
+// App Setup - main.ts
+import { AngularSlickgridComponent, GridOption } from 'angular-slickgrid';
+
+// optional Grid Option
+const gridOptionConfig: GridOption = {
+  enableAutoResize: true,
+  autoResize: {
+    container: '#demo-container',
+    rightPadding: 10,
+  },
+  sanitizer: (dirtyHtml) => DOMPurify.sanitize(dirtyHtml, { ADD_ATTR: ['level'], RETURN_TRUSTED_TYPE: true }),
+};
+
+bootstrapApplication(AppComponent, {
+  providers: [
+    AngularSlickgridComponent,
+    { provide: 'defaultGridOption', useValue: gridOptionConfig },
+    provideAppInitializer(() => {
+      const initializerFn = appInitializerFactory(inject(TranslateService), inject(Injector));
+      return initializerFn();
+    }),
+    provideTranslateService({
+      fallbackLang: 'en',
+      loader: provideTranslateHttpLoader({ prefix: './assets/i18n/', suffix: '.json' }),
+    }),
+    provideHttpClient(withInterceptorsFromDi()),
+    provideZoneChangeDetection(),
+  ],
+}).catch((err) => console.log(err));
+```
+
+### 5. for `Angular-Slickgrid` version `< 10.0`
+##### Include it in your App Module (or App Config for Standalone)
+
+Below are 2 different setups (with App Module (legacy) or Standalone) which in both cases require the `AngularSlickgridModule.forRoot()`, so make sure to include it.
 
 #### App Module (legacy)
 ##### This only works with version below v10.0 since v10.0 and above is now purely Standalone
@@ -123,7 +167,7 @@ export class AppComponent {
     // ...
 ```
 
-#### Angular 7+
+##### `@dynamic` - "Lambda not supported" error
 The new updated version of `ng-packagr` use strict metadata and you might get errors about `Lambda not supported`, to bypass this problem you can add the `@dynamic` comment over the `@NgModule` as shown below:
 ```ts
 // @dynamic
@@ -132,44 +176,12 @@ The new updated version of `ng-packagr` use strict metadata and you might get er
 })
 ```
 
-### 5. for `Angular-Slickgrid` >= 10.x - Standalone Component
-
-```ts
-import { AngularSlickgridComponent, GridOption } from 'angular-slickgrid';
-
-// optional Grid Option
-const gridOptionConfig: GridOption = {
-  enableAutoResize: true,
-  autoResize: {
-    container: '#demo-container',
-    rightPadding: 10,
-  },
-  sanitizer: (dirtyHtml) => DOMPurify.sanitize(dirtyHtml, { ADD_ATTR: ['level'], RETURN_TRUSTED_TYPE: true }),
-};
-
-bootstrapApplication(AppComponent, {
-  providers: [
-    AngularSlickgridComponent,
-    { provide: 'defaultGridOption', useValue: gridOptionConfig },
-    provideAppInitializer(() => {
-      const initializerFn = appInitializerFactory(inject(TranslateService), inject(Injector));
-      return initializerFn();
-    }),
-    provideTranslateService({
-      fallbackLang: 'en',
-      loader: provideTranslateHttpLoader({ prefix: './assets/i18n/', suffix: '.json' }),
-    }),
-    provideHttpClient(withInterceptorsFromDi()),
-    provideZoneChangeDetection(),
-  ],
-}).catch((err) => console.log(err));
-```
-
+<a name="step6"></a>
 ### 6. Install/Setup `ngx-translate` for Localization (optional)
 #### If you don't want to use any Translate Service and use only 1 Locale then take a look at the (Single Locale) demo on the [Angular-Slickgrid-Demos](https://github.com/ghiscoding/angular-slickgrid-demos) repo.
 
 To provide locales other than English (default locale), you have 2 options that you can go with. If you only use English, there is nothing to do (you can still change some of the texts in the grid via option 1 below)
-1. Using [Custom Locale](../localization/localization-with-custom-locales.md), that is when you use **only 1** locale (other than English)...
+1. Using [Custom Locale](../localization/localization-with-custom-locales.md), that is when you use a **single locale** (other than English)...
 2. Using [Localization with I18N](../localization/localization-with-ngx-translate.md), that is when you want to use multiple locales dynamically.
 3. **NOTE** `@ngx-translate` will still be installed (since it's an internal dependency), but it should be removed after doing a production build because of our usage of `@Optional()`.
 
@@ -218,10 +230,14 @@ export class GridBasicComponent {
       { id: 1, title: 'Task 2', duration: 33, percentComplete: 34, start: '2001-01-11', finish: '2001-02-04' },
     ];
   }
+
+  getData() {
+    // fetch your data...
+  }
 }
 ```
 
-define Angular-Slickgrid in your View
+define Angular-Slickgrid in your Component View
 ```html
 <div class="container">
   <angular-slickgrid gridId="grid1"
@@ -259,3 +275,12 @@ What if `Angular-Slickgrid` is missing feature(s) versus the original `SlickGrid
 
 ### 13. Troubleshooting - Build Errors/Warnings
 Visit the [Troubleshooting](troubleshooting.md) section for more common errors.
+
+### 14. Having some issues?
+
+After reading all this Getting Started guide, then what if you have an issue with the grid?
+Please start by searching any related [issues](https://github.com/ghiscoding/slickgrid-universal/issues). If you can't find anything in the issues filder and you also made sure to also look through the multiple Documentation pages as well, then go ahead and fill in a [new issue](https://github.com/ghiscoding/slickgrid-universal/issues/new) and we'll try to help.
+
+### Final word
+
+This project is Open Source and is, for the most part, mainly done in my spare time. So please be respectful when creating issues (and fill in the issue template) and I will try to help you out. If you like my work, you can also [buy me a coffee](https://ko-fi.com/ghiscoding) ☕️, some part of the code happens when I'm at StarBucks so... That is it, thank you and don't forget to ⭐ the project if you like the lib 😉

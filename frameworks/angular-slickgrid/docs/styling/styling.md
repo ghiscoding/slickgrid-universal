@@ -21,8 +21,9 @@ Default CSS compiled (if you use the plain Bootstrap Theme CSS, just add it to y
 ],
 ```
 
-> **Note** Bootstrap is optional, you can use any other framework, other themes are also available as CSS and SCSS file extensions
-> `slickgrid-theme-default.css`, `slickgrid-theme-bootstrap.css`, `slickgrid-theme-material.css`, `slickgrid-theme-salesforce.css`
+> **Note** Bootstrap is optional, you can use any other framework, other themes are also available as CSS and SCSS file extensions.
+> Import the `slickgrid-theme-bootstrap.css` **only** if you are actually using Bootstrap, otherwise prefer the `slickgrid-theme-default.css` default them.
+> Available themes are: `slickgrid-theme-default.css`, `slickgrid-theme-bootstrap.css`, `slickgrid-theme-material.css`, `slickgrid-theme-salesforce.css`
 
 ### Using built-in Themes
 
