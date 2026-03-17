@@ -12,7 +12,7 @@ npm install angular-slickgrid
 
 #### Optional `ngx-translate`
 
-`ngx-translate` can be installed for instant locale translation (see [step 6](#install-setup-ngx-translate-for-localization-optional)).
+`ngx-translate` can be installed for instant locale translation (see [step 6](#id-6.-install-setup-ngx-translate-for-localization-optional)).
 
 **NOTE** please note that even if `@ngx-translate` is in fact optional, it will still be installed behind the scene since because of our use of `@Optional()` for DI (dependency injection). However, because of its optional nature, it's assumed to be removed by tree shaking after a production build.
 
