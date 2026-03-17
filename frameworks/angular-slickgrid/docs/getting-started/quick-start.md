@@ -14,7 +14,7 @@ npm install angular-slickgrid
 
 `ngx-translate` can be installed for instant locale translation (see [step 6](#step6)).
 
-**NOTE** please note that even if `@ngx-translate` is optional, it will still be installed behind the scene since because even if we use `@Optional()` for DI (dependency injection), it still needs to be installed for that to work. However, because of its optional nature, I would assume that it will be removed by tree shaking after executing a production build.
+**NOTE** please note that even if `@ngx-translate` is in fact optional, it will still be installed behind the scene since because of our use of `@Optional()` for DI (dependency injection). However, because of its optional nature, it's assumed to be removed by tree shaking after a production build.
 
 Below is their `ngx-translate` version compatibility:
 
@@ -25,7 +25,7 @@ Below is their `ngx-translate` version compatibility:
 |  16 - 17+               |        16.x (15.x)  |
 |  13 - 15 (**Ivy only**) |        14.x         |
 
-<a name="step2"></a>
+<a id="step2"></a>
 ### 2. Add Bootstrap script/css (or any other UI framework)
 ##### Modify the `angular.json` and `tsconfig.app.json` files
 
@@ -41,7 +41,7 @@ For Bootstrap users (or possibly other frameworks), modify your `angular.json` f
 ],
 ```
 
-<a name="step3"></a>
+<a id="step3"></a>
 ### 3. CSS / SASS Styles
 Load the default Bootstrap theme style and/or customize it to your taste (either by using SASS or CSS variables)
 
@@ -176,7 +176,7 @@ The new updated version of `ng-packagr` use strict metadata and you might get er
 })
 ```
 
-<a name="step6"></a>
+<a id="step6"></a>
 ### 6. Install/Setup `ngx-translate` for Localization (optional)
 #### If you don't want to use any Translate Service and use only 1 Locale then take a look at the (Single Locale) demo on the [Angular-Slickgrid-Demos](https://github.com/ghiscoding/angular-slickgrid-demos) repo.
 

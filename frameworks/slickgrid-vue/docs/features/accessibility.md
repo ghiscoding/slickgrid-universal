@@ -28,6 +28,8 @@ The a11y focus outline can be customized using the SASS variable `$slick-focus-o
 | Ctrl+Home/End      | Jump to first/last cell in grid             |
 | Page Up / Down     | Scroll grid by page                         |
 
+> **Note** cell navigation within the grid requires the grid option `enableCellNavigation: true` to be set.
+
 ## ARIA Roles & Attributes
 
 - `role="grid"` on the grid root
