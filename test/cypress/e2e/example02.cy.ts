@@ -352,12 +352,13 @@ describe('Example 02 - Grouping & Aggregators', () => {
 
   describe('Column Header with HTML Elements', () => {
     it('should trigger an alert when clicking on the 1st column button inside its header', () => {
-      const stub = cy.stub();
-      cy.on('window:alert', stub);
+      cy.window().then((win) => {
+        cy.stub(win, 'alert').as('alertStub');
+      });
 
-      cy.get('button[data-test=col1-hello-btn]')
-        .click({ force: true })
-        .then(() => expect(stub.getCall(0)).to.be.calledWith('Hello World'));
+      cy.get('button[data-test=col1-hello-btn]').click({ force: true });
+
+      cy.get('@alertStub').should('have.been.calledWith', 'Hello World');
     });
 
     it('should open Column Picker and have a "Custom Label" as the 1st column label', () => {
@@ -393,7 +394,7 @@ describe('Example 02 - Grouping & Aggregators', () => {
     });
 
     it('should sort by "Start" date and to wait about 1.5sec', () => {
-      cy.get('[data-id="start"').click();
+      cy.get('[data-id="start"]').click();
       cy.wait(200);
 
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(4)`).should('contain', '01/05/2010');
@@ -403,7 +404,7 @@ describe('Example 02 - Grouping & Aggregators', () => {
     });
 
     it('should sort by "Finish" date without having to wait', () => {
-      cy.get('[data-id="finish"').click();
+      cy.get('[data-id="finish"]').click();
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(5)`).should('contain', '02/05/2010');
       cy.window().then((win) => {
         expect(win.console.log).to.be.calledWithMatch(/sort: [0-9]{2,3}.?[0-9]* ms/);
@@ -411,7 +412,7 @@ describe('Example 02 - Grouping & Aggregators', () => {
     });
 
     it('should sort by "Start" date again but DESC and not have to wait', () => {
-      cy.get('[data-id="start"').click().click();
+      cy.get('[data-id="start"]').click().click();
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(4)`).should('contain', '12/28/2035');
       cy.window().then((win) => {
         expect(win.console.log).to.be.calledWithMatch(/sort: [0-9]{2,3}.?[0-9]* ms/);

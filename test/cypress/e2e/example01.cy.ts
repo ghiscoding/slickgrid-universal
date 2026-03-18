@@ -120,7 +120,7 @@ describe('Example 01 - Basic Grids', () => {
     cy.get('.grid2 .slickgrid-container')
       .should(($grid) => {
         const classes = $grid.prop('className').split(' ');
-        gridUid = classes.find((className) => /slickgrid_.*/.test(className));
+        gridUid = classes.find((className: string) => /slickgrid_.*/.test(className));
         expect(gridUid).to.not.be.null;
       })
       .then(() => {
@@ -171,7 +171,7 @@ describe('Example 01 - Basic Grids', () => {
     cy.get('.grid2 .slickgrid-container')
       .should(($grid) => {
         const classes = $grid.prop('className').split(' ');
-        gridUid = classes.find((className) => /slickgrid_.*/.test(className));
+        gridUid = classes.find((className: string) => /slickgrid_.*/.test(className));
         expect(gridUid).to.not.be.null;
       })
       .then(() => {
@@ -206,7 +206,7 @@ describe('Example 01 - Basic Grids', () => {
     cy.get('.grid1 .slickgrid-container')
       .should(($grid) => {
         const classes = $grid.prop('className').split(' ');
-        gridUid = classes.find((className) => /slickgrid_.*/.test(className));
+        gridUid = classes.find((className: string) => /slickgrid_.*/.test(className));
         expect(gridUid).to.not.be.null;
       })
       .then(() => {
@@ -249,7 +249,7 @@ describe('Example 01 - Basic Grids', () => {
     cy.get('.grid2 .slickgrid-container')
       .should(($grid) => {
         const classes = $grid.prop('className').split(' ');
-        gridUid = classes.find((className) => /slickgrid_.*/.test(className));
+        gridUid = classes.find((className: string) => /slickgrid_.*/.test(className));
         expect(gridUid).to.not.be.null;
       })
       .then(() => {
@@ -365,7 +365,7 @@ describe('Example 01 - Basic Grids', () => {
     cy.get('.grid2 .slickgrid-container')
       .should(($grid) => {
         const classes = $grid.prop('className').split(' ');
-        gridUid = classes.find((className) => /slickgrid_.*/.test(className));
+        gridUid = classes.find((className: string) => /slickgrid_.*/.test(className));
         expect(gridUid).to.not.be.null;
       })
       .then(() => {
@@ -399,7 +399,7 @@ describe('Example 01 - Basic Grids', () => {
     cy.get('.grid1 .slickgrid-container')
       .should(($grid) => {
         const classes = $grid.prop('className').split(' ');
-        gridUid = classes.find((className) => /slickgrid_.*/.test(className));
+        gridUid = classes.find((className: string) => /slickgrid_.*/.test(className));
         expect(gridUid).to.not.be.null;
       })
       .then(() => {
@@ -463,8 +463,10 @@ describe('Example 01 - Basic Grids', () => {
   describe('Grid Menu with sub-menus', () => {
     it('should be able to open Grid Menu and click on Export->Text and expect alert triggered with Text Export', () => {
       const subCommands1 = ['Text', 'Excel'];
-      const stub = cy.stub();
-      cy.on('window:alert', stub);
+
+      cy.window().then((win) => {
+        cy.stub(win, 'alert').as('alertStub');
+      });
 
       cy.get('.grid2').find('button.slick-grid-menu-button').click({ force: true });
 
@@ -478,15 +480,17 @@ describe('Example 01 - Basic Grids', () => {
       cy.get('.slick-grid-menu.slick-menu-level-1 .slick-menu-command-list')
         .find('.slick-menu-item')
         .contains('Text (tab delimited)')
-        .click()
-        .then(() => expect(stub.getCall(0)).to.be.calledWith('Exporting as Text (tab delimited)'));
+        .click();
+
+      cy.get('@alertStub').should('have.been.calledWith', 'Exporting as Text (tab delimited)');
     });
 
     it('should be able to open Grid Menu and click on Export->Excel->xlsx and expect alert triggered with Excel (xlsx) Export', () => {
       const subCommands1 = ['Text', 'Excel'];
       const subCommands2 = ['Excel (csv)', 'Excel (xlsx)'];
-      const stub = cy.stub();
-      cy.on('window:alert', stub);
+      cy.window().then((win) => {
+        cy.stub(win, 'alert').as('alertStub');
+      });
 
       cy.get('.grid2').find('button.slick-grid-menu-button').click({ force: true });
 
@@ -510,11 +514,9 @@ describe('Example 01 - Basic Grids', () => {
         .each(($command, index) => expect($command.text()).to.contain(subCommands2[index]));
       cy.get('.slick-submenu').should('have.length', 2);
 
-      cy.get('.slick-grid-menu.slick-menu-level-2 .slick-menu-command-list')
-        .find('.slick-menu-item')
-        .contains('Excel (xlsx)')
-        .click()
-        .then(() => expect(stub.getCall(0)).to.be.calledWith('Exporting as Excel (xlsx)'));
+      cy.get('.slick-grid-menu.slick-menu-level-2 .slick-menu-command-list').find('.slick-menu-item').contains('Excel (xlsx)').click();
+
+      cy.get('@alertStub').should('have.been.calledWith', 'Exporting as Excel (xlsx)');
       cy.get('.slick-submenu').should('have.length', 0);
     });
 
@@ -523,8 +525,9 @@ describe('Example 01 - Basic Grids', () => {
       const subCommands2 = ['Request update from supplier', '', 'Contact Us'];
       const subCommands2_1 = ['Email us', 'Chat with us', 'Book an appointment'];
 
-      const stub = cy.stub();
-      cy.on('window:alert', stub);
+      cy.window().then((win) => {
+        cy.stub(win, 'alert').as('alertStub');
+      });
 
       cy.get('[data-test="external-gridmenu2-btn"]').click();
 
@@ -559,11 +562,9 @@ describe('Example 01 - Basic Grids', () => {
 
       cy.get('.slick-grid-menu.slick-menu-level-2');
 
-      cy.get('.slick-grid-menu.slick-menu-level-2 .slick-menu-command-list')
-        .find('.slick-menu-item')
-        .contains('Chat with us')
-        .click()
-        .then(() => expect(stub.getCall(0)).to.be.calledWith('Command: contact-chat'));
+      cy.get('.slick-grid-menu.slick-menu-level-2 .slick-menu-command-list').find('.slick-menu-item').contains('Chat with us').click();
+
+      cy.get('@alertStub').should('have.been.calledWith', 'Command: contact-chat');
 
       cy.get('.slick-submenu').should('have.length', 0);
     });

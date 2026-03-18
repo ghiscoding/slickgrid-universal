@@ -607,16 +607,16 @@ describe('Example 12 - Composite Editor Modal', () => {
   });
 
   it('should be able to click on the "Reset Form" button from the (Mass Update) and expect the form to be empty and not be able to Save', () => {
-    const alertStub = cy.stub();
-    cy.on('window:alert', alertStub);
+    cy.window().then((win) => {
+      cy.stub(win, 'alert').as('alertStub');
+    });
 
     cy.get('.item-details-container .modified').should('have.length', 4);
     cy.get('.reset-form').contains('Reset Form').click();
     cy.get('.item-details-container .modified').should('have.length', 0);
 
-    cy.get('.btn-save')
-      .click()
-      .then(() => expect(alertStub.getCall(0)).to.be.calledWith('Sorry we could not detect any changes.'));
+    cy.get('.btn-save').click();
+    cy.get('@alertStub').should('have.been.calledWith', 'Sorry we could not detect any changes.');
 
     cy.get('.btn-cancel').click();
   });
@@ -697,6 +697,10 @@ describe('Example 12 - Composite Editor Modal', () => {
   });
 
   it(`should open the Composite Editor (Mass Update) change "Percent Complete" to 100% and expect "Completed" to become checked and "Finish" date to be today's date`, () => {
+    cy.window().then((win) => {
+      const stub = cy.stub(win, 'confirm').returns(true);
+      cy.wrap(stub).as('confirmStub');
+    });
     const now = new Date();
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const today = changeTimezone(now, tz);
@@ -735,6 +739,10 @@ describe('Example 12 - Composite Editor Modal', () => {
   });
 
   it('should focus on first row and open the Composite Editor (Clone Item) and expect all form inputs to be filled with first row data', () => {
+    cy.window().then((win) => {
+      const stub = cy.stub(win, 'confirm').returns(true);
+      cy.wrap(stub).as('confirmStub');
+    });
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(3)`).click({ force: true });
     cy.get('[data-test="open-modal-clone-btn"]').click();
     cy.get('.slick-editor-modal-title').contains('Clone - Task 8899');
@@ -748,6 +756,10 @@ describe('Example 12 - Composite Editor Modal', () => {
   });
 
   it('should change the "Title" & "Duration" from the Clone form, then click on "Cancel" button and expect no changes in the grid', () => {
+    cy.window().then((win) => {
+      const stub = cy.stub(win, 'confirm').returns(true);
+      cy.wrap(stub).as('confirmStub');
+    });
     cy.get('.slick-editor-modal-title').contains('Clone - Task 8899');
 
     cy.get('textarea').contains('Task 8899').type('Task 9999');
@@ -860,6 +872,10 @@ describe('Example 12 - Composite Editor Modal', () => {
   });
 
   it('should open Clone Composite Editor from Cell Menu and expect Task 3 on 6th row', () => {
+    cy.window().then((win) => {
+      const stub = cy.stub(win, 'confirm').returns(true);
+      cy.wrap(stub).as('confirmStub');
+    });
     cy.get('[data-row="6"] > .slick-cell:nth(11)').click({ force: true });
     cy.get('.slick-cell-menu').should('be.visible');
     cy.get('.slick-menu-item .slick-menu-content:nth(1)').should('contain', 'Clone Row').click();

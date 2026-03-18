@@ -55,8 +55,8 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
   );
 
   function testScroll() {
-    return getScrollDistanceWhenDragOutsideGrid('.grid17-1', 'topLeft', 'right', 0, 1).then((cellScrollDistance) => {
-      return getScrollDistanceWhenDragOutsideGrid('.grid17-2', 'topLeft', 'bottom', 0, 1).then((rowScrollDistance) => {
+    return getScrollDistanceWhenDragOutsideGrid('.grid17-1', 'topLeft', 'right', 0, 1).then((cellScrollDistance: any) => {
+      return getScrollDistanceWhenDragOutsideGrid('.grid17-2', 'topLeft', 'bottom', 0, 1).then((rowScrollDistance: any) => {
         return cy.wrap({
           cell: {
             scrollBefore: cellScrollDistance.scrollLeftBefore,
@@ -72,7 +72,7 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
   }
 
   it('should auto scroll take effect to display the selecting element when dragging', { scrollBehavior: false }, () => {
-    testScroll().then((scrollDistance) => {
+    testScroll().then((scrollDistance: any) => {
       expect(scrollDistance.cell.scrollBefore).to.be.lessThan(scrollDistance.cell.scrollAfter);
       expect(scrollDistance.row.scrollBefore).to.be.lessThan(scrollDistance.row.scrollAfter);
     });
@@ -80,7 +80,7 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
     cy.get('[data-test="is-autoscroll-chk"]').uncheck();
     cy.get('[data-test="set-options-btn"]').click();
 
-    testScroll().then((scrollDistance) => {
+    testScroll().then((scrollDistance: any) => {
       expect(scrollDistance.cell.scrollBefore).to.be.equal(scrollDistance.cell.scrollAfter);
       expect(scrollDistance.row.scrollBefore).to.be.equal(scrollDistance.row.scrollAfter);
     });
@@ -89,7 +89,7 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
     cy.get('[data-test="is-autoscroll-chk"]').should('have.value', 'on');
   });
 
-  function getIntervalUntilRow12Displayed(selector, px, rowNumber = 12) {
+  function getIntervalUntilRow12Displayed(selector: string, px: number, rowNumber = 12) {
     const viewportSelector = `${selector} .slick-viewport:first`;
     cy.getNthCell(0, 1, '', { parentSelector: selector, rowHeight: CELL_HEIGHT }).dragStart();
 
@@ -220,43 +220,43 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
 
   it('should auto scroll to display the selecting element when dragging in frozen grid', { scrollBehavior: false }, () => {
     // top left - to bottomRight
-    getScrollDistanceWhenDragOutsideGrid('.grid17-1', 'topLeft', 'bottomRight', 0, 1).then((result) => {
+    getScrollDistanceWhenDragOutsideGrid('.grid17-1', 'topLeft', 'bottomRight', 0, 1).then((result: any) => {
       expect(result.scrollTopBefore).to.be.equal(result.scrollTopAfter);
       expect(result.scrollLeftBefore).to.be.equal(result.scrollLeftAfter);
     });
-    getScrollDistanceWhenDragOutsideGrid('.grid17-2', 'topLeft', 'bottomRight', 0, 1).then((result) => {
+    getScrollDistanceWhenDragOutsideGrid('.grid17-2', 'topLeft', 'bottomRight', 0, 1).then((result: any) => {
       expect(result.scrollTopBefore).to.be.equal(result.scrollTopAfter);
       expect(result.scrollLeftBefore).to.be.equal(result.scrollLeftAfter);
     });
 
     // top right - to bottomRight
-    getScrollDistanceWhenDragOutsideGrid('.grid17-1', 'topRight', 'bottomRight', 0, 0).then((result) => {
+    getScrollDistanceWhenDragOutsideGrid('.grid17-1', 'topRight', 'bottomRight', 0, 0).then((result: any) => {
       expect(result.scrollTopBefore).to.be.equal(result.scrollTopAfter);
       expect(result.scrollLeftBefore).to.be.lte(result.scrollLeftAfter);
     });
-    getScrollDistanceWhenDragOutsideGrid('.grid17-2', 'topRight', 'bottomRight', 0, 0).then((result) => {
+    getScrollDistanceWhenDragOutsideGrid('.grid17-2', 'topRight', 'bottomRight', 0, 0).then((result: any) => {
       expect(result.scrollTopBefore).to.be.equal(result.scrollTopAfter);
       expect(result.scrollLeftBefore).to.be.lte(result.scrollLeftAfter);
     });
     resetScrollInFrozen();
 
     // bottom left - to bottomRight
-    getScrollDistanceWhenDragOutsideGrid('.grid17-1', 'bottomLeft', 'bottomRight', 0, 1).then((result) => {
+    getScrollDistanceWhenDragOutsideGrid('.grid17-1', 'bottomLeft', 'bottomRight', 0, 1).then((result: any) => {
       expect(result.scrollTopBefore).to.be.lessThan(result.scrollTopAfter);
       expect(result.scrollLeftBefore).to.be.equal(result.scrollLeftAfter);
     });
-    getScrollDistanceWhenDragOutsideGrid('.grid17-2', 'bottomLeft', 'bottomRight', 0, 1).then((result) => {
+    getScrollDistanceWhenDragOutsideGrid('.grid17-2', 'bottomLeft', 'bottomRight', 0, 1).then((result: any) => {
       expect(result.scrollTopBefore).to.be.lessThan(result.scrollTopAfter);
       expect(result.scrollLeftBefore).to.be.equal(result.scrollLeftAfter);
     });
     resetScrollInFrozen();
 
     // bottom right - to bottomRight
-    getScrollDistanceWhenDragOutsideGrid('.grid17-1', 'bottomRight', 'bottomRight', 0, 0).then((result) => {
+    getScrollDistanceWhenDragOutsideGrid('.grid17-1', 'bottomRight', 'bottomRight', 0, 0).then((result: any) => {
       expect(result.scrollTopBefore).to.be.lessThan(result.scrollTopAfter);
       expect(result.scrollLeftBefore).to.be.lessThan(result.scrollLeftAfter);
     });
-    getScrollDistanceWhenDragOutsideGrid('.grid17-2', 'bottomRight', 'bottomRight', 0, 0).then((result) => {
+    getScrollDistanceWhenDragOutsideGrid('.grid17-2', 'bottomRight', 'bottomRight', 0, 0).then((result: any) => {
       expect(result.scrollTopBefore).to.be.lessThan(result.scrollTopAfter);
       expect(result.scrollLeftBefore).to.be.lessThan(result.scrollLeftAfter);
     });
@@ -265,11 +265,11 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
     cy.get('.grid17-2 .slick-viewport-bottom.slick-viewport-right').scrollTo(CELL_WIDTH * 3, CELL_HEIGHT * 3);
 
     // bottom right - to topLeft
-    getScrollDistanceWhenDragOutsideGrid('.grid17-1', 'bottomRight', 'topLeft', 6, 4, 140).then((result) => {
+    getScrollDistanceWhenDragOutsideGrid('.grid17-1', 'bottomRight', 'topLeft', 6, 4, 140).then((result: any) => {
       expect(result.scrollTopBefore).to.be.greaterThan(result.scrollTopAfter);
       expect(result.scrollLeftBefore).to.be.greaterThan(result.scrollLeftAfter);
     });
-    getScrollDistanceWhenDragOutsideGrid('.grid17-2', 'bottomRight', 'topLeft', 6, 4, 140).then((result) => {
+    getScrollDistanceWhenDragOutsideGrid('.grid17-2', 'bottomRight', 'topLeft', 6, 4, 140).then((result: any) => {
       expect(result.scrollTopBefore).to.be.greaterThan(result.scrollTopAfter);
       expect(result.scrollLeftBefore).to.be.greaterThan(result.scrollLeftAfter);
     });
@@ -288,7 +288,7 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
     }
   );
 
-  function testDragInGrouping(selector) {
+  function testDragInGrouping(selector: string) {
     cy.getNthCell(7, 0, 'bottomRight', { parentSelector: selector, rowHeight: CELL_HEIGHT }).dragStart();
     cy.get(`${selector} .slick-viewport:last`)
       .as('viewport')
@@ -327,13 +327,15 @@ describe('Example 17 - Auto-Scroll with Range Selector', () => {
     });
 
     it('should try to set frozen columns wider than possible and expect an error and abort of the execution', () => {
-      const stub = cy.stub();
-      cy.on('window:alert', stub);
+      cy.window().then((win) => {
+        cy.stub(win, 'alert').as('alertStub');
+      });
       cy.get('[data-test="frozen-column-count"]').clear().type('12');
       cy.get('[data-test="set-frozen-columns-btn"]')
         .click()
         .then(() => {
-          expect(stub.getCall(0)).to.be.calledWith(
+          cy.get('@alertStub').should(
+            'have.been.calledWith',
             '[SlickGrid] You are trying to freeze/pin more columns than the grid can support. ' +
               'Make sure to have less columns pinned (on the left) than the actual visible grid width.'
           );

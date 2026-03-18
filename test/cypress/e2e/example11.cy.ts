@@ -824,6 +824,10 @@ describe('Example 11 - Batch Editing', () => {
     });
 
     it('should be able to click on the delete button from the "Action" column of the 2nd row and expect "Task 1" to be delete', () => {
+      cy.window().then((win) => {
+        const stub = cy.stub(win, 'confirm').returns(true);
+        cy.wrap(stub).as('confirmStub');
+      });
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).contains('TASK 0', { matchCase: false });
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).contains('TASK 1', { matchCase: false });
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`).contains('TASK 2', { matchCase: false });
@@ -835,8 +839,6 @@ describe('Example 11 - Batch Editing', () => {
         .find('.mdi-close')
         .click();
 
-      cy.on('window:confirm', () => true);
-
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).contains('TASK 0', { matchCase: false });
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).contains('TASK 2', { matchCase: false });
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 2}px);"] > .slick-cell:nth(1)`).contains('TASK 3', { matchCase: false });
@@ -845,6 +847,9 @@ describe('Example 11 - Batch Editing', () => {
     });
 
     it('should be able to click on the checked 2nd button from the "Action" column of the 2nd row and expect "Task 2" to be completed', () => {
+      cy.window().then((win) => {
+        cy.stub(win, 'alert').as('alertStub');
+      });
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).contains('TASK 0', { matchCase: false });
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(1)`).contains('TASK 2', { matchCase: false });
 
@@ -852,9 +857,7 @@ describe('Example 11 - Batch Editing', () => {
         .find('.mdi-check-underline')
         .click();
 
-      cy.on('window:alert', (str) => {
-        expect(str).to.equal('The "Task 2" is now Completed');
-      });
+      cy.get('@alertStub').should('have.been.calledWith', 'The "Task 2" is now Completed');
 
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(7)`)
         .find('.checkmark-icon')
