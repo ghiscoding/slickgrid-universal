@@ -936,17 +936,20 @@ describe('Example 11 - Batch Editing', () => {
 
     it('should create a new View with current pinning & filters', () => {
       const filterName = 'Custom View Test';
-      const winPromptStub = () => filterName;
 
-      cy.window().then((win) => {
-        (cy.stub(win, 'prompt').callsFake(winPromptStub) as any).as('winPromptStubReturnNonNull');
-      });
+      cy.window()
+        .then((win) => {
+          cy.stub(win, 'prompt').returns(filterName);
+        })
+        .as('windowStub');
 
       cy.get('.action.dropdown').click();
-
       cy.get('.action.dropdown .dropdown-item').contains('Create New View').click();
 
-      cy.get('@winPromptStubReturnNonNull').should('be.calledOnce').and('be.calledWith', 'Please provide a name for the new View.');
+      cy.window().then((win) => {
+        expect(win.prompt).to.be.calledOnce;
+        expect(win.prompt).to.be.calledWith('Please provide a name for the new View.');
+      });
 
       cy.should(() => {
         const savedDefinedFilters = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) as string);
