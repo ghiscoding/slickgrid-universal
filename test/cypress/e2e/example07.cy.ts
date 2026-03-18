@@ -992,8 +992,10 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
     });
 
     it('should open the Cell Menu on 2nd row and delete it', () => {
-      const confirmStub = cy.stub();
-      cy.on('window:confirm', confirmStub);
+      cy.window().then((win) => {
+        const stub = cy.stub(win, 'confirm').returns(true);
+        cy.wrap(stub).as('confirmStub');
+      });
 
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 4');
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(2)`).should('contain', 'Task 8');
@@ -1002,10 +1004,8 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
         .find(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(3)`)
         .click({ force: true });
       cy.get('.slick-cell-menu .slick-menu-command-list .slick-menu-title').contains('Commandes');
-      cy.get('.slick-cell-menu .slick-menu-command-list .slick-menu-content')
-        .contains('Supprimer la ligne')
-        .click()
-        .then(() => expect(confirmStub.getCall(0)).to.be.calledWith('Do you really want to delete row (2) with "Task 8"?'));
+      cy.get('.slick-cell-menu .slick-menu-command-list .slick-menu-content').contains('Supprimer la ligne').click();
+      cy.get('@confirmStub').should('have.been.calledWith', 'Do you really want to delete row (2) with "Task 8"?');
     });
 
     it('should have "1 de 500 éléments" shown as metrics on the right footer shown in French', () => {
@@ -1083,8 +1083,9 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
 
     it('should be able to open Cell Menu and click on Export->Text and expect alert triggered with Text Export', () => {
       const subCommands1 = ['Text (tab delimited)', 'Excel'];
-      const stub = cy.stub();
-      cy.on('window:alert', stub);
+      cy.window().then((win) => {
+        cy.stub(win, 'alert').as('alertStub');
+      });
 
       cy.get('.grid7')
         .find(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(3)`)
@@ -1103,15 +1104,16 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       cy.get('.slick-cell-menu.slick-menu-level-1 .slick-menu-command-list')
         .find('.slick-menu-item .slick-menu-content')
         .contains('Text')
-        .click()
-        .then(() => expect(stub.getCall(0)).to.be.calledWith('Exporting as Text (tab delimited)'));
+        .click();
+      cy.get('@alertStub').should('have.been.calledWith', 'Exporting as Text (tab delimited)');
     });
 
     it('should be able to open Cell Menu and click on Export->Excel-> sub-commands to see 1 cell menu + 1 sub-menu then clicking on Text should call alert action', () => {
       const subCommands1 = ['Text (tab delimited)', 'Excel'];
       const subCommands2 = ['Excel (csv)', 'Excel (xlsx)'];
-      const stub = cy.stub();
-      cy.on('window:alert', stub);
+      cy.window().then((win) => {
+        cy.stub(win, 'alert').as('alertStub');
+      });
 
       cy.get('.grid7')
         .find(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(3)`)
@@ -1143,8 +1145,8 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       cy.get('.slick-cell-menu.slick-menu-level-2 .slick-menu-command-list')
         .find('.slick-menu-item .slick-menu-content')
         .contains('Excel (xlsx)')
-        .click()
-        .then(() => expect(stub.getCall(0)).to.be.calledWith('Exporting as Excel (xlsx)'));
+        .click();
+      cy.get('@alertStub').should('have.been.calledWith', 'Exporting as Excel (xlsx)');
     });
 
     it('should open Export->Excel sub-menu & open again Sub-Options on top and expect sub-menu to be recreated with that Sub-Options list instead of the Export->Excel list', () => {
@@ -1222,8 +1224,9 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       const subCommands2 = ['Request update from supplier', '', 'Contact Us'];
       const subCommands2_1 = ['Email us', 'Chat with us', 'Book an appointment'];
 
-      const stub = cy.stub();
-      cy.on('window:alert', stub);
+      cy.window().then((win) => {
+        cy.stub(win, 'alert').as('alertStub');
+      });
 
       cy.get('.grid7')
         .find(`[style="transform: translateY(${GRID_ROW_HEIGHT * 1}px);"] > .slick-cell:nth(3)`)
@@ -1270,12 +1273,11 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
         .each(($command, index) => expect($command.text()).to.eq(subCommands2_1[index]));
 
       cy.get('.slick-cell-menu.slick-menu-level-2');
-
       cy.get('.slick-cell-menu.slick-menu-level-2 .slick-menu-command-list')
         .find('.slick-menu-item .slick-menu-content')
         .contains('Chat with us')
-        .click()
-        .then(() => expect(stub.getCall(0)).to.be.calledWith('Command: contact-chat'));
+        .click();
+      cy.get('@alertStub').should('have.been.calledWith', 'Command: contact-chat');
     });
 
     it('should be able to show certain defined columns', () => {
@@ -1344,7 +1346,6 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       cy.get('[data-id="_checkbox_selector"] .icon-checkbox-container .mdi-icon-partial-check').should('exist');
 
       cy.get('@firstPickerLabel').click();
-
       cy.get('[data-id="_checkbox_selector"] .icon-checkbox-container .mdi-icon-partial-check').should('exist');
       cy.get('.slick-column-picker:visible').find('.close').trigger('click').click();
     });

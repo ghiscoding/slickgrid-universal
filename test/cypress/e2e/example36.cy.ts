@@ -104,6 +104,10 @@ describe('Example 36 - Row Detail View + Grouping', () => {
   });
 
   it('should re-open the 1st Group and 1st Row Detail of Duration(0) Group and be able to click on the "Delete Row" button and expect row to be deleted from the grid', () => {
+    cy.window().then((win) => {
+      const stub = cy.stub(win, 'confirm').returns(true);
+      cy.wrap(stub).as('confirmStub');
+    });
     cy.get('[data-row="0"] .slick-group-toggle.collapsed').click();
     cy.get('.slick-cell.l1.r1.detail-view-toggle:nth(0)').click().wait(40);
 
@@ -122,9 +126,9 @@ describe('Example 36 - Row Detail View + Grouping', () => {
   });
 
   it('should re-open first Row Details and be able to click on the "Click Me" button and expect an alert message', () => {
-    const stub = cy.stub();
-    cy.on('window:alert', stub);
-    let assigneeName = '';
+    cy.window().then((win) => {
+      cy.stub(win, 'alert').as('alertStub');
+    });
 
     cy.get('.slick-viewport-top.slick-viewport-left').scrollTo('top');
     cy.get('[data-row="1"] > .slick-cell.l2').contains(/Task [0-9]*/);
@@ -140,24 +144,23 @@ describe('Example 36 - Row Detail View + Grouping', () => {
     cy.get('input.assignee')
       .first()
       .invoke('val')
-      .then((val) => (assigneeName = val as string));
-
-    cy.get('[data-test=assignee-btn]')
-      .first()
-      .click()
-      .then(() => expect(stub.getCall(0)).to.be.calledWith(`Assignee is ${assigneeName}`));
+      .then((val) => {
+        const assigneeName = val as string;
+        cy.get('[data-test=assignee-btn]').first().click();
+        cy.get('@alertStub').should('have.been.calledWith', `Assignee is ${assigneeName}`);
+      });
   });
 
   it('should collapse first Group, then re-expand first Group and still expect an alert when clicking on the "Click Me" button inside Row Detail', () => {
-    const stub = cy.stub();
-    cy.on('window:alert', stub);
+    cy.window().then((win) => {
+      const stub = cy.stub(win, 'alert').returns(true);
+      cy.wrap(stub).as('alertStub');
+    });
 
     cy.get('.slick-group-toggle.expanded').first().click();
     cy.wait(50);
     cy.get('.slick-group-toggle.collapsed').first().click();
 
-    let assigneeName = '';
-
     cy.get('.slick-cell + .dynamic-cell-detail')
       .find('h4')
       .contains(/Task [0-9]*/);
@@ -165,27 +168,26 @@ describe('Example 36 - Row Detail View + Grouping', () => {
     cy.get('.dynamic-cell-detail').should('have.length', 1);
     cy.get('.detail label').should('contain', 'Assignee:');
     cy.get('.detail input').should('exist');
+
     cy.get('input.assignee')
       .first()
       .invoke('val')
-      .then((val) => (assigneeName = val as string));
-
-    cy.get('[data-test=assignee-btn]')
-      .first()
-      .click()
-      .then(() => expect(stub.getCall(0)).to.be.calledWith(`Assignee is ${assigneeName}`));
+      .then((val) => {
+        const assigneeName = val as string;
+        cy.get('[data-test=assignee-btn]').first().click();
+        cy.get('@alertStub').should('have.been.calledWith', `Assignee is ${assigneeName}`);
+      });
   });
 
   it('should click on "Collapsed all groups" button, then click on "Expand all groups" button and still expect an alert when clicking on the "Click Me" button inside Row Detail', () => {
-    const stub = cy.stub();
-    cy.on('window:alert', stub);
+    cy.window().then((win) => {
+      cy.stub(win, 'alert').as('alertStub');
+    });
 
     cy.get('[data-test=collapse-all-groups-btn]').click();
     cy.wait(50);
     cy.get('[data-test=expand-all-groups-btn]').click();
 
-    let assigneeName = '';
-
     cy.get('.slick-cell + .dynamic-cell-detail')
       .find('h4')
       .contains(/Task [0-9]*/);
@@ -196,11 +198,10 @@ describe('Example 36 - Row Detail View + Grouping', () => {
     cy.get('input.assignee')
       .first()
       .invoke('val')
-      .then((val) => (assigneeName = val as string));
-
-    cy.get('[data-test=assignee-btn]')
-      .first()
-      .click()
-      .then(() => expect(stub.getCall(0)).to.be.calledWith(`Assignee is ${assigneeName}`));
+      .then((val) => {
+        const assigneeName = val as string;
+        cy.get('[data-test=assignee-btn]').first().click();
+        cy.get('@alertStub').should('have.been.calledWith', `Assignee is ${assigneeName}`);
+      });
   });
 });

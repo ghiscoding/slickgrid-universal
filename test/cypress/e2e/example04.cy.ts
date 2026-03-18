@@ -281,8 +281,10 @@ describe('Example 04 - Frozen Grid', () => {
   });
 
   it('should open the Cell Menu and delete Row 3 and 4 from the Cell Menu', () => {
-    const confirmStub = cy.stub();
-    cy.on('window:confirm', confirmStub);
+    cy.window().then((win) => {
+      const stub = cy.stub(win, 'confirm').returns(true);
+      cy.wrap(stub).as('confirmStub');
+    });
 
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(1)`).should('contain', 'Task 3');
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 4}px);"] > .slick-cell:nth(1)`).should('contain', 'Task 4');
@@ -291,11 +293,9 @@ describe('Example 04 - Frozen Grid', () => {
       .find(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(8)`)
       .contains('Action')
       .click({ force: true });
-    cy.get('.slick-cell-menu .slick-menu-command-list .slick-menu-item')
-      .contains('Delete Row')
-      .click()
-      .then(() => expect(confirmStub.getCall(0)).to.be.calledWith('Do you really want to delete row (4) with "Task 3"?'));
 
+    cy.get('.slick-cell-menu .slick-menu-command-list .slick-menu-item').contains('Delete Row').click();
+    cy.get('@confirmStub').should('have.been.calledWith', 'Do you really want to delete row (4) with "Task 3"?');
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 3}px);"] > .slick-cell:nth(1)`).should('contain', 'Task 4');
   });
 
@@ -364,8 +364,9 @@ describe('Example 04 - Frozen Grid', () => {
 
   it('should be able to open Context Menu and click on Export->Text and expect alert triggered with Text Export', () => {
     const subCommands1 = ['Text', 'Excel'];
-    const stub = cy.stub();
-    cy.on('window:alert', stub);
+    cy.window().then((win) => {
+      cy.stub(win, 'alert').as('alertStub');
+    });
 
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).should('contain', '0');
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).rightclick();
@@ -380,18 +381,16 @@ describe('Example 04 - Frozen Grid', () => {
       .find('.slick-menu-item')
       .each(($command, index) => expect($command.text()).to.contain(subCommands1[index]));
 
-    cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-command-list')
-      .find('.slick-menu-item')
-      .contains('Text')
-      .click()
-      .then(() => expect(stub.getCall(0)).to.be.calledWith('Exporting as Text (tab delimited)'));
+    cy.get('.slick-context-menu.slick-menu-level-1 .slick-menu-command-list').find('.slick-menu-item').contains('Text').click();
+    cy.get('@alertStub').should('have.been.calledWith', 'Exporting as Text (tab delimited)');
   });
 
   it('should be able to open Context Menu and click on Export->Excel-> sub-commands to see 1 context menu + 1 sub-menu then clicking on Text should call alert action', () => {
     const subCommands1 = ['Text', 'Excel'];
     const subCommands2 = ['Excel (csv)', 'Excel (xlsx)'];
-    const stub = cy.stub();
-    cy.on('window:alert', stub);
+    cy.window().then((win) => {
+      cy.stub(win, 'alert').as('alertStub');
+    });
 
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).should('contain', '0');
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).rightclick();
@@ -423,8 +422,8 @@ describe('Example 04 - Frozen Grid', () => {
     cy.get('.slick-context-menu.slick-menu-level-2 .slick-menu-command-list')
       .find('.slick-menu-item .slick-menu-content')
       .contains('Excel (xlsx)')
-      .click()
-      .then(() => expect(stub.getCall(0)).to.be.calledWith('Exporting as Excel (xlsx)'));
+      .click();
+    cy.get('@alertStub').should('have.been.calledWith', 'Exporting as Excel (xlsx)');
   });
 
   it('should open Export->Excel sub-menu & open again Sub-Options on top and expect sub-menu to be recreated with that Sub-Options list instead of the Export->Excel list', () => {
@@ -475,8 +474,9 @@ describe('Example 04 - Frozen Grid', () => {
     const subCommands2 = ['Request update from supplier', '', 'Contact Us'];
     const subCommands2_1 = ['Email us', 'Chat with us', 'Book an appointment'];
 
-    const stub = cy.stub();
-    cy.on('window:alert', stub);
+    cy.window().then((win) => {
+      cy.stub(win, 'alert').as('alertStub');
+    });
 
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).should('contain', '0');
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(2)`).rightclick({ force: true });
@@ -522,8 +522,8 @@ describe('Example 04 - Frozen Grid', () => {
     cy.get('.slick-context-menu.slick-menu-level-2 .slick-menu-command-list')
       .find('.slick-menu-item .slick-menu-content')
       .contains('Chat with us')
-      .click()
-      .then(() => expect(stub.getCall(0)).to.be.calledWith('Command: contact-chat'));
+      .click();
+    cy.get('@alertStub').should('have.been.calledWith', 'Command: contact-chat');
 
     cy.get('.slick-submenu').should('have.length', 0);
   });
@@ -561,8 +561,9 @@ describe('Example 04 - Frozen Grid', () => {
   });
 
   it('should open Column Picker and try unchecked all the columns on the right of the column pinning and expect an error and abort of the execution', () => {
-    const stub = cy.stub();
-    cy.on('window:alert', stub);
+    cy.window().then((win) => {
+      cy.stub(win, 'alert').as('alertStub');
+    });
     cy.get('[data-test=set-3frozen-columns]').click({ force: true });
 
     const leftColumns = ['', 'Title', '% Complete'];
@@ -583,7 +584,8 @@ describe('Example 04 - Frozen Grid', () => {
                 .children('label')
                 .click()
                 .then(() => {
-                  expect(stub.getCall(0)).to.be.calledWith(
+                  cy.get('@alertStub').should(
+                    'have.been.calledWith',
                     '[SlickGrid] Action not allowed and aborted, you need to have at least one or more column on the right section of the column freeze/pining. ' +
                       'You could alternatively "Unfreeze all the columns" before trying again.'
                   );
@@ -597,8 +599,9 @@ describe('Example 04 - Frozen Grid', () => {
   });
 
   it('should also not be able to "Hide Column" via the Header Menu', () => {
-    const alertStub = cy.stub();
-    cy.on('window:alert', alertStub);
+    cy.window().then((win) => {
+      cy.stub(win, 'alert').as('alertStub');
+    });
     const newColumnList = ['', 'Title', '% Complete', 'Action'];
 
     cy.get('.grid4').find('.slick-header-column:nth(3)').trigger('mouseover').children('.slick-header-menu-button').invoke('show').click();
@@ -609,7 +612,8 @@ describe('Example 04 - Frozen Grid', () => {
       .contains('Hide Column')
       .click()
       .then(() => {
-        expect(alertStub.getCall(0)).to.be.calledWith(
+        cy.get('@alertStub').should(
+          'have.been.calledWith',
           '[SlickGrid] Action not allowed and aborted, you need to have at least one or more column on the right section of the column freeze/pining. ' +
             'You could alternatively "Unfreeze all the columns" before trying again.'
         );
@@ -844,6 +848,9 @@ describe('Example 04 - Frozen Grid', () => {
 
     it('should activate a sub-menu leaf item with Enter', () => {
       // Move down to "Exports"
+      cy.window().then((win) => {
+        cy.stub(win, 'alert').as('alertStub');
+      });
       cy.focused();
       cy.press(Cypress.Keyboard.Keys.DOWN);
       cy.press(Cypress.Keyboard.Keys.DOWN);
