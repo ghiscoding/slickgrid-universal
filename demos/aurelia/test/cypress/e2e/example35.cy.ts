@@ -67,6 +67,11 @@ describe('Example 35 - Row Based Editing', () => {
 
   it('should stay in editmode if saving failed', () => {
     cy.reload();
+    cy.window().then((win) => {
+      const stub = cy.stub(win, 'confirm').returns(true);
+      cy.wrap(stub).as('confirmStub');
+      cy.stub(win, 'alert').as('alertStub');
+    });
 
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] .action-btns--edit`).click({ force: true });
 
@@ -88,6 +93,11 @@ describe('Example 35 - Row Based Editing', () => {
 
   it('should save changes on update button click', () => {
     cy.reload();
+    cy.window().then((win) => {
+      const stub = cy.stub(win, 'confirm').returns(true);
+      cy.wrap(stub).as('confirmStub');
+      cy.stub(win, 'alert').as('alertStub');
+    });
 
     cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] .action-btns--edit`).click({ force: true });
 
