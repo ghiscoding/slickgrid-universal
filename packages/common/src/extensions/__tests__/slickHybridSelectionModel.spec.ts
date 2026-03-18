@@ -82,6 +82,7 @@ const gridStub = {
   unregisterPlugin: vi.fn(),
   onActiveCellChanged: new SlickEvent(),
   onClick: new SlickEvent(),
+  onDragInit: new SlickEvent(),
   onKeyDown: new SlickEvent(),
   onCellRangeSelected: new SlickEvent(),
   onBeforeCellRangeSelected: new SlickEvent(),
@@ -611,6 +612,19 @@ describe('Row Selection Model Plugin', () => {
       { fromCell: 0, fromRow: 4, toCell: 2, toRow: 4 },
       { fromCell: 0, fromRow: 1, toCell: 2, toRow: 1 },
     ]);
+  });
+
+  it('should cancel bubbling when no selector is available and "dragToSelect" is disabled and "onDragInit" grid event is triggered', () => {
+    plugin.activeSelectionIsRow = true;
+    plugin.init(gridStub);
+
+    const event = addVanillaEventPropagation(new Event('drag'), ['ctrlKey']);
+    const stopImmediateSpy = vi.spyOn(event, 'stopImmediatePropagation');
+    const preventSpy = vi.spyOn(event, 'preventDefault');
+    gridStub.onDragInit.notify({ offsetX: 0, offsetY: 0, grid: gridStub } as any, event, gridStub);
+
+    expect(stopImmediateSpy).toHaveBeenCalled();
+    expect(preventSpy).toHaveBeenCalled();
   });
 
   describe('with Selector', () => {

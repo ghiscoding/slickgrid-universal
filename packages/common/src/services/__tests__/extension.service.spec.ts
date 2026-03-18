@@ -535,7 +535,7 @@ describe('ExtensionService', () => {
         expect(gridSpy).toHaveBeenCalled();
         expect(extCreateSpy).toHaveBeenCalledWith(columnsMock, gridOptionsMock);
         expect(hybridSelectionInstance).not.toBeNull();
-        expect(SlickHybridSelectionModel).toHaveBeenCalledWith({ dragToSelect: true, selectionType: 'row' });
+        expect(SlickHybridSelectionModel).toHaveBeenCalledWith({ selectionType: 'row' });
         expect(output).toEqual({ name: 'rowMoveManager', instance: mockRowMoveManager as unknown } as ExtensionModel<any>);
       });
 
@@ -553,7 +553,7 @@ describe('ExtensionService', () => {
         expect(gridSpy).toHaveBeenCalled();
         expect(extCreateSpy).toHaveBeenCalledWith(columnsMock, gridOptionsMock);
         expect(rowSelectionInstance).not.toBeNull();
-        expect(SlickHybridSelectionModel).toHaveBeenCalledWith({ dragToSelect: true, selectionType: 'row' });
+        expect(SlickHybridSelectionModel).toHaveBeenCalledWith({ selectionType: 'row' });
         expect(output).toEqual({ name: 'rowMoveManager', instance: mockRowMoveManager as unknown } as ExtensionModel<any>);
       });
 
