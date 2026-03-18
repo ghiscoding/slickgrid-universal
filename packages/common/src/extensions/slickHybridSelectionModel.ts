@@ -91,6 +91,12 @@ export class SlickHybridSelectionModel implements SelectionModel<HybridSelection
             }
       );
       this._options.cellRangeSelector = this._selector;
+    } else if (!this._selector && !this._options.dragToSelect) {
+      // cancel bubbling to avoid text selection while dragging a row
+      this._eventHandler.subscribe(this._grid.onDragInit, (e) => {
+        e.stopImmediatePropagation();
+        e.preventDefault();
+      });
     }
 
     if (grid.hasDataView()) {
@@ -574,7 +580,7 @@ export class SlickHybridSelectionModel implements SelectionModel<HybridSelection
     args: { range: SlickRange; selectionMode: string; allowAutoEdit?: boolean; caller: 'onCellRangeSelecting' | 'onCellRangeSelected' }
   ): boolean {
     if (this._activeSelectionIsRow) {
-      if (!this.gridOptions.multiSelect || (!this._options?.selectActiveRow && this._options.selectionType !== 'row')) {
+      if (!this.gridOptions.multiSelect || (!this._options?.selectActiveRow && !this._options.dragToSelect)) {
         return false;
       }
       this.setSelectedRanges(

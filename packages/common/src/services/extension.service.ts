@@ -231,9 +231,6 @@ export class ExtensionService {
       ) {
         if (!this._selectionModel || !this.sharedService.slickGrid.getSelectionModel()) {
           const selectionOptions = this.gridOptions.selectionOptions ?? {};
-          if (this.gridOptions.enableRowMoveManager && this.gridOptions.rowMoveManager?.dragToSelect !== false) {
-            selectionOptions.dragToSelect = true;
-          }
           const selectionType = this.gridOptions.selectionOptions?.selectionType || 'row';
           this._selectionModel = new SlickHybridSelectionModel({ ...selectionOptions, selectionType });
           this.sharedService.slickGrid.setSelectionModel(this._selectionModel);
