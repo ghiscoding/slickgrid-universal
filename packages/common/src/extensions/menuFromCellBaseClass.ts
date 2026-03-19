@@ -3,6 +3,7 @@ import { createDomElement, findWidthOrDefault, titleCase } from '@slickgrid-univ
 import type { SlickEventData, SlickGrid } from '../core/index.js';
 import type {
   CellMenu,
+  Column,
   ContextMenu,
   DOMMouseOrTouchEvent,
   MenuCallbackArgs,
@@ -31,14 +32,16 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
     super(extensionUtility, pubSubService, sharedService);
   }
 
-  createParentMenu(event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData): HTMLDivElement | undefined {
+  createParentMenu(
+    event: DOMMouseOrTouchEvent<HTMLDivElement> | SlickEventData,
+    cell: { cell: number; row: number }
+  ): HTMLDivElement | undefined {
     this.menuElement?.remove();
     this._menuElm = undefined;
-    const cell = this.grid.getCellFromEvent(event);
 
     if (cell) {
-      this._currentCell = cell.cell ?? 0;
-      this._currentRow = cell.row ?? 0;
+      this._currentCell = cell.cell;
+      this._currentRow = cell.row;
       const commandItems = this._addonOptions?.commandItems || [];
       const optionItems = this._addonOptions?.optionItems || [];
 
@@ -113,8 +116,8 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
     level = 0,
     item?: ExtractMenuType<ExtendableItemTypes, MenuType>
   ): HTMLDivElement | undefined {
-    const columnDef = this.grid.getColumns()[this._currentCell];
-    const dataContext = this.grid.getDataItem(this._currentRow);
+    const columnDef = this.grid.getColumnByIdx(this._currentCell) ?? ({} as Column);
+    const dataContext = this.grid.getDataItem(this._currentRow) ?? {};
 
     // Always use the triggering item's command/option (whitespace removed) as the sub-menu parent id for every level
     const subMenuCommandOrOption = (item as MenuCommandItem)?.command || (item as MenuOptionItem)?.option;
@@ -130,12 +133,12 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
         (this._addonOptions as ContextMenu)?.commandShownOverColumnIds ?? [],
         columnDef.id
       );
-      if (!columnDef || ((!isColumnCommandAllowed || !commandItems.length) && (!isColumnOptionAllowed || !optionItems.length))) {
+      if ((!isColumnCommandAllowed || !commandItems.length) && (!isColumnOptionAllowed || !optionItems.length)) {
         this.hideMenu();
         return;
       }
     } else {
-      if (!columnDef || !columnDef.cellMenu || (!commandItems.length && !optionItems.length)) {
+      if (!columnDef.cellMenu || (!commandItems.length && !optionItems.length)) {
         return;
       }
     }
@@ -356,7 +359,7 @@ export class MenuFromCellBaseClass<M extends CellMenu | ContextMenu> extends Men
 
       const cell = this._currentCell;
       const row = this._currentRow;
-      const columnDef = this.grid.getColumns()[this._currentCell];
+      const columnDef = this.grid.getColumnByIdx(this._currentCell);
       const dataContext = this.grid.getDataItem(this._currentRow);
       const optionOrCommand = (item as any)[type] !== undefined ? (item as any)[type] : '';
 

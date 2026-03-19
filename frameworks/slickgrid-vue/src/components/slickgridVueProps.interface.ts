@@ -35,6 +35,7 @@ import type {
   OnColumnsResizeDblClickEventArgs,
   OnColumnsResizedEventArgs,
   OnCompositeEditorChangeEventArgs,
+  OnContextMenuArgs,
   OnDblClickEventArgs,
   OnDragReplaceCellsEventArgs,
   OnFooterClickEventArgs,
@@ -108,7 +109,7 @@ export interface SlickgridVueProps {
   onOnColumnsResized?: VueSlickEventHandler<OnColumnsResizedEventArgs>;
   onOnColumnsResizeDblClick?: VueSlickEventHandler<OnColumnsResizeDblClickEventArgs>;
   onOnCompositeEditorChange?: VueSlickEventHandler<OnCompositeEditorChangeEventArgs>;
-  onOnContextMenu?: VueSlickEventHandler<{ grid: SlickGrid }>;
+  onOnContextMenu?: VueSlickEventHandler<OnContextMenuArgs>;
   onOnDrag?: VueSlickEventHandler<DragRowMove>;
   onOnDragEnd?: VueSlickEventHandler<DragRowMove>;
   onOnDragInit?: VueSlickEventHandler<DragRowMove>;

@@ -110,6 +110,10 @@ export interface OnDblClickEventArgs extends SlickGridArg {
   row: number;
   cell: number;
 }
+export interface OnContextMenuArgs extends SlickGridArg {
+  row: number;
+  cell: number;
+}
 export interface OnFooterContextMenuEventArgs extends SlickGridArg {
   column: Column;
 }

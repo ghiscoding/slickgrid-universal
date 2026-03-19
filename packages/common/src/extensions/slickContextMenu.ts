@@ -1,14 +1,16 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
 import { extend } from '@slickgrid-universal/utils';
-import type { SlickEventData, SlickGrid } from '../core/index.js';
+import type { SlickEventData } from '../core/index.js';
 import { copyCellToClipboard } from '../formatters/formatterUtilities.js';
 import type {
+  Column,
   ContextMenu,
   ContextMenuOption,
   MenuCallbackArgs,
   MenuCommandItem,
   MenuCommandItemCallbackArgs,
   MenuOptionItem,
+  OnContextMenuArgs,
 } from '../interfaces/index.js';
 import {
   getCellValueFromQueryFieldGetter,
@@ -125,41 +127,33 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
   // event handlers
   // ------------------
 
-  protected handleOnContextMenu(event: SlickEventData, args: { grid: SlickGrid }): void {
+  protected handleOnContextMenu(event: SlickEventData, args: OnContextMenuArgs): void {
     this.disposeAllMenus(); // make there's only 1 parent menu opened at a time
-    const cell = this.grid.getCellFromEvent(event);
 
-    if (cell) {
-      const dataContext = this.grid.getDataItem(cell.row);
-      const columnDef = this.grid.getColumns()[cell.cell];
+    // run the override function (when defined), if the result is false it won't go further
+    const menuArgs = (args || {}) as MenuCommandItemCallbackArgs;
+    menuArgs.cell = args.cell;
+    menuArgs.row = args.row;
+    menuArgs.column = this.grid.getColumnByIdx(args.cell) ?? ({} as Column);
+    menuArgs.dataContext = this.grid.getDataItem(args.row) ?? {};
+    menuArgs.grid = this.grid;
+    if (!this.extensionUtility.runOverrideFunctionWhenExists(this._addonOptions.menuUsabilityOverride, menuArgs)) {
+      return;
+    }
 
-      // run the override function (when defined), if the result is false it won't go further
-      const menuArgs = (args || {}) as MenuCommandItemCallbackArgs;
-      menuArgs.cell = cell.cell;
-      menuArgs.row = cell.row;
-      menuArgs.column = columnDef;
-      menuArgs.dataContext = dataContext;
-      menuArgs.grid = this.grid;
-      if (!this.extensionUtility.runOverrideFunctionWhenExists(this._addonOptions.menuUsabilityOverride, menuArgs)) {
-        return;
-      }
-
-      // create the DOM element
-      this._menuElm = this.createParentMenu(event);
-      if (this._menuElm) {
-        event.preventDefault();
-      }
+    // create the DOM element
+    this._menuElm = this.createParentMenu(event, args);
+    if (this._menuElm) {
+      event.preventDefault();
 
       // add dark mode CSS class when enabled
-      if (this._menuElm && this.gridOptions.darkMode) {
+      if (this.gridOptions.darkMode) {
         this._menuElm.classList.add('slick-dark-mode');
       }
 
       // reposition the menu to where the user clicked
-      if (this._menuElm) {
-        this.repositionMenu(event, this._menuElm, undefined, this._addonOptions);
-        this._menuElm.style.display = 'block';
-      }
+      this.repositionMenu(event, this._menuElm, undefined, this._addonOptions);
+      this._menuElm.style.display = 'block';
 
       // Hide the menu on outside click.
       this._bindEventService.bind(document.body, 'mousedown', this.handleBodyMouseDown.bind(this) as EventListener);
