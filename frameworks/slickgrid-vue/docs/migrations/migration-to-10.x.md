@@ -144,7 +144,7 @@ There's also a new Renderer similar to Slots but implemented with native code to
 
 ##### Menu Options `optionItems` (deprecated)
 
-Menu Options list, using `optionItems` are now deprecated and will be removed in next major v11. That is quite similar to Command List and barely anyone uses it, so let's remove it in v11 and just use `commandItems` instead.
+Menu Options list, using `optionItems` are now deprecated and will be removed in next major v11. That is quite similar to Command List and barely anyone uses it, so let's remove it in v11 and just use `commandItems` instead (see [docs](https://ghiscoding.gitbook.io/slickgrid-vue/column-functionalities/cell-menu#default-usage) for both usages).
 
 ### Tooltips Outside the Grid
 
@@ -333,7 +333,7 @@ gridOptions = {
 
 ##### Menu Options `optionItems` (deprecated)
 
-Menu Options list, using `optionItems` are now deprecated and will be removed in next major v11. That is quite similar to Command List and barely anyone uses it, so let's remove it in v11 and just use `commandItems` instead.
+Menu Options list, using `optionItems` are now deprecated and will be removed in next major v11. That is quite similar to Command List and barely anyone uses it, so let's remove it in v11 and just use `commandItems` instead (see [docs](https://ghiscoding.gitbook.io/slickgrid-vue/column-functionalities/cell-menu#default-usage) for both usages).
 
 ---
 

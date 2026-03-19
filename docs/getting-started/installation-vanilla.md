@@ -99,7 +99,7 @@ The last step is really to explore all the pages that are available on the docum
 - [Formatters](../column-functionalities/Formatters.md)
 - [Editors](../column-functionalities/editors.md)
 - [Filters](../column-functionalities/filters/Select-Filter.md)
-- [Grid Menu](../grid-functionalities/Grid-Menu.md)
+- [Grid Menu](../grid-functionalities/grid-menu.md)
 ... and much more, just explorer the Documentation through the table of content (on your left)
 
 ### 5. Get Started

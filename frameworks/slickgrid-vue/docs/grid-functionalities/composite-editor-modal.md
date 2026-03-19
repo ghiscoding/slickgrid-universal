@@ -97,7 +97,7 @@ You can Clone an existing row/item via the composite editor modal window (basica
 
 Refer to the [Create Item](#create-new-item) section for code sample
 
-Just a side note on the UI, a good way to use this composite editor feature is probably with a [Cell Menu](../column-functionalities/Cell-Menu.md) (aka Action Menu)
+Just a side note on the UI, a good way to use this composite editor feature is probably with a [Cell Menu](../column-functionalities/cell-menu.md) (aka Action Menu)
 
 ![image](https://user-images.githubusercontent.com/643976/106016610-a03dec00-608d-11eb-80bd-1f6e0a404eb5.png)
 
@@ -107,7 +107,7 @@ You can Edit an existing row/item via the composite editor modal window. The set
 
 Refer to the [Create Item](#create-new-item) section for code sample
 
-Similar to the Clone Item, a good way to use this composite editor feature is probably with a [Cell Menu](../column-functionalities/Cell-Menu.md) (aka Action Menu)
+Similar to the Clone Item, a good way to use this composite editor feature is probably with a [Cell Menu](../column-functionalities/cell-menu.md) (aka Action Menu)
 
 ## Mass Update
 Mass Update allows you to apply changes (from the modal form) to the entire dataset, internally it will apply the changes to all the items in the grid via the DataView. However, you could also choose to refresh the grid yourself after calling the backend and if you choose to do that then you'll want to do that via the `onSave` async callback (once backend is done, refresh the grid).
