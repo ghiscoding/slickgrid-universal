@@ -142,6 +142,10 @@ There's also a new Renderer similar to Slots but implemented with native code to
 
 > There's also a new `columnListBuilder` which is similar to the other builder but for Columns, it can be useful as well to sort and/or filter columns.
 
+##### Menu Options `optionItems` (deprecated)
+
+Menu Options list, using `optionItems` are now deprecated and will be removed in next major v11. That is quite similar to Command List and barely anyone uses it, so let's remove it in v11 and just use `commandItems` instead.
+
 ### Tooltips Outside the Grid
 
 You can now use the custom tooltip plugin to display tooltips on elements outside the grid (e.g., buttons, dialogs, etc.) by enabling the `observeAllTooltips` option. This allows the plugin to observe elements anywhere in your page that have `title` or `data-slick-tooltip` attributes and provide the same UI look & feel across your project. See Custom Tooltip [documentation](../grid-functionalities/custom-tooltip.md)
@@ -326,6 +330,10 @@ gridOptions = {
   }
 }
 ```
+
+##### Menu Options `optionItems` (deprecated)
+
+Menu Options list, using `optionItems` are now deprecated and will be removed in next major v11. That is quite similar to Command List and barely anyone uses it, so let's remove it in v11 and just use `commandItems` instead.
 
 ---
 
