@@ -404,7 +404,7 @@ export class SlickCustomTooltip {
 
       if (cell) {
         const item = this.dataView ? this.dataView.getItem(cell.row) : this._grid.getDataItem(cell.row);
-        const columnDef = this._grid.getColumns()[cell.cell];
+        const columnDef = this._grid.getColumnByIdx(cell.cell);
         this._cellNodeElm = this._grid.getCellNode(cell.row, cell.cell) as HTMLDivElement;
 
         if (item && columnDef) {

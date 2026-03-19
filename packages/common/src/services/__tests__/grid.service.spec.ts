@@ -78,6 +78,7 @@ const gridStub = {
   insertItem: vi.fn(),
   invalidate: vi.fn(),
   getFrozenColumnId: vi.fn(),
+  getColumnByIdx: vi.fn(),
   getColumnIndex: vi.fn(),
   getData: () => dataviewStub,
   getDataItem: vi.fn(),
@@ -1647,6 +1648,7 @@ describe('Grid Service', () => {
       const args = { row: 3, cell: 1, grid: gridStub } as CellArgs;
       const mockOutput = { row: 3, cell: 1, columnDef: mockColumns[1], dataContext: mockItem, dataView: dataviewStub, grid: gridStub } as OnEventArgs;
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[1]);
       vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockItem);
 
       const output = service.getColumnFromEventArguments(args);

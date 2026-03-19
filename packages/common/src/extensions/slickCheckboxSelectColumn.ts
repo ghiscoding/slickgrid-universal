@@ -459,7 +459,8 @@ export class SlickCheckboxSelectColumn<T = any> {
 
   protected handleClick(e: SlickEventData, args: { row: number; cell: number; grid: SlickGrid }): void {
     // clicking on a row select checkbox
-    if (this._grid.getColumns()[args.cell].id === this._addonOptions.columnId && (e.target as HTMLInputElement).type === 'checkbox') {
+    const column = this._grid.getColumnByIdx(args.cell);
+    if (column && column.id === this._addonOptions.columnId && (e.target as HTMLInputElement).type === 'checkbox') {
       (e.target as HTMLInputElement).ariaChecked = String((e.target as HTMLInputElement).checked);
 
       // if editing, try to commit
@@ -552,15 +553,14 @@ export class SlickCheckboxSelectColumn<T = any> {
   }
 
   protected handleKeyDown(e: SlickEventData, args: OnKeyDownEventArgs): void {
-    if (e.key === ' ') {
-      if (this._grid.getColumns()[args.cell].id === this._addonOptions.columnId) {
-        // if editing, try to commit
-        if (!this._grid.getEditorLock().isActive() || this._grid.getEditorLock().commitCurrentEdit()) {
-          this.toggleRowSelectionWithEvent(e, args.row);
-        }
-        e.preventDefault();
-        e.stopImmediatePropagation();
+    const column = this._grid.getColumnByIdx(args.cell);
+    if (e.key === ' ' && column && column.id === this._addonOptions.columnId) {
+      // if editing, try to commit
+      if (!this._grid.getEditorLock().isActive() || this._grid.getEditorLock().commitCurrentEdit()) {
+        this.toggleRowSelectionWithEvent(e, args.row);
       }
+      e.preventDefault();
+      e.stopImmediatePropagation();
     }
   }
 

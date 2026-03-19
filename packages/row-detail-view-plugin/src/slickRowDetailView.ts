@@ -735,9 +735,9 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
 
     if (this.checkExpandableOverride(args.row, dataContext, this._grid)) {
       // clicking on a row select checkbox
-      const columnDef = this._grid.getColumns()[args.cell];
+      const column = this._grid.getColumnByIdx(args.cell);
       // prettier-ignore
-      if (this._addonOptions.useRowClick || (columnDef.id === this._addonOptions.columnId && e.target!.classList.contains(this._addonOptions.cssClass || ''))) {
+      if (this._addonOptions.useRowClick || (column && column.id === this._addonOptions.columnId && e.target!.classList.contains(this._addonOptions.cssClass || ''))) {
         // if editing, try to commit
         if (this._grid.getEditorLock().isActive() && !this._grid.getEditorLock().commitCurrentEdit()) {
           e.preventDefault();

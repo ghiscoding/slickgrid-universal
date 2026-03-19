@@ -37,6 +37,7 @@ const gridStub = {
   getCellNode: vi.fn(),
   getCellNodeBox: vi.fn(),
   getColumns: vi.fn(),
+  getColumnByIdx: vi.fn(),
   getDataItem: vi.fn(),
   getDataLength: vi.fn(),
   getSelectedRows: vi.fn(),
@@ -344,6 +345,7 @@ describe('SlickRowMoveManager Plugin', () => {
     mockSlickRow.className = 'slick-row';
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 1, row: mockNewMovedRow });
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[1]);
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(mockSlickRow);
     vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue([2]);
     const setSelectRowSpy = vi.spyOn(gridStub, 'setSelectedRows');
@@ -451,6 +453,7 @@ describe('SlickRowMoveManager Plugin', () => {
     mockSlickRow.className = 'slick-row';
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 1, row: mockNewMovedRow });
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[1]);
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(mockSlickRow);
     vi.spyOn(gridStub, 'getDataLength').mockReturnValue(5);
     vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue([2]);
@@ -505,6 +508,7 @@ describe('SlickRowMoveManager Plugin', () => {
     mockSlickRow.className = 'slick-row';
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 1, row: mockNewMovedRow });
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[1]);
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(mockSlickRow);
     vi.spyOn(gridStub, 'getDataLength').mockReturnValue(5);
     vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue([2]);

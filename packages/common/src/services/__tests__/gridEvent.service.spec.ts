@@ -12,6 +12,7 @@ const dataViewStub = {
 const gridStub = {
   getColumnIndex: vi.fn(),
   getColumns: vi.fn(),
+  getColumnByIdx: vi.fn(),
   getData: () => dataViewStub,
   getDataItem: vi.fn(),
   getOptions: vi.fn(),
@@ -67,7 +68,8 @@ describe('GridEventService', () => {
     });
 
     it('should execute the column "onBeforeEditCell" callback method', () => {
-      const spyGetCols = vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn]);
+      const getColSpy = vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumn);
       const spyGetData = vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockRowData);
       const spyOnChange = vi.spyOn(mockColumn, 'onBeforeEditCell');
 
@@ -78,7 +80,7 @@ describe('GridEventService', () => {
         gridStub
       );
 
-      expect(spyGetCols).toHaveBeenCalled();
+      expect(getColSpy).toHaveBeenCalled();
       expect(spyGetData).toHaveBeenCalled();
       expect(spyOnChange).toHaveBeenCalledWith(expect.any(Event), {
         row: 0,
@@ -123,14 +125,15 @@ describe('GridEventService', () => {
     });
 
     it('should execute the column "onCellChange" callback method', () => {
-      const spyGetCols = vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn]);
+      const spyGetCol = vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumn);
       const spyGetData = vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockRowData);
       const spyOnChange = vi.spyOn(mockColumn, 'onCellChange');
 
       service.bindOnCellChange(gridStub);
       gridStub.onCellChange.notify({ cell: 0, row: 0, grid: gridStub, item: {}, column: {} as Column }, new SlickEventData(new Event('click')), gridStub);
 
-      expect(spyGetCols).toHaveBeenCalled();
+      expect(spyGetCol).toHaveBeenCalled();
       expect(spyGetData).toHaveBeenCalled();
       expect(spyOnChange).toHaveBeenCalledWith(expect.any(Event), {
         row: 0,
@@ -150,15 +153,17 @@ describe('GridEventService', () => {
     beforeEach(() => {
       mockColumn = { id: 'firstName', field: 'firstName', onCellClick: vi.fn() } as Column;
       mockRowData = { firstName: 'John', lastName: 'Doe' };
+      vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumn);
     });
 
     it('should not do anything when no arguments are provided to the event', () => {
-      const spyGetCols = vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn]);
+      const spyGetCol = vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumn);
 
       service.bindOnClick(gridStub);
       gridStub.onClick.notify(undefined as any, new SlickEventData(), gridStub);
 
-      expect(spyGetCols).not.toHaveBeenCalled();
+      expect(spyGetCol).not.toHaveBeenCalled();
     });
 
     it('should not do anything when "cell" property is missing', () => {
@@ -172,14 +177,15 @@ describe('GridEventService', () => {
 
     it('should execute the column "onCellClick" callback method', () => {
       gridStub.getOptions = undefined as any;
-      const spyGetCols = vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn]);
+      vi.spyOn(gridStub, 'getColumns').mockReturnValue([mockColumn]);
+      const spyGetCol = vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumn);
       const spyGetData = vi.spyOn(gridStub, 'getDataItem').mockReturnValue(mockRowData);
       const spyOnChange = vi.spyOn(mockColumn, 'onCellClick');
 
       service.bindOnClick(gridStub);
       gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, new SlickEventData(new Event('click')), gridStub);
 
-      expect(spyGetCols).toHaveBeenCalled();
+      expect(spyGetCol).toHaveBeenCalled();
       expect(spyGetData).toHaveBeenCalled();
       expect(spyOnChange).toHaveBeenCalledWith(expect.any(Event), {
         row: 0,

@@ -105,7 +105,7 @@ export class SlickCellExternalCopyManager {
     if (grid && typeof this._addonOptions?.onBeforePasteCell === 'function') {
       // subscribe to this Slickgrid event of onBeforeEditCell
       this._eventHandler.subscribe(this.onBeforePasteCell, (e, args) => {
-        const column: Column = grid.getColumns()[args.cell];
+        const column = grid.getColumnByIdx(args.cell)!;
         const returnedArgs: OnEventArgs = {
           row: args.row!,
           cell: args.cell,
