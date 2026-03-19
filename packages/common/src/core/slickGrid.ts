@@ -223,6 +223,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       '[SlickGrid] Action not allowed and aborted, you need to have at least one or more column on the right section of the column freeze/pining. ' +
       'You could alternatively "Unfreeze all the columns" before trying again.',
     skipFreezeColumnValidation: false,
+    allowDragFromClosest: 'div.slick-cell.dnd, div.slick-cell.cell-reorder',
     alwaysShowVerticalScroll: false,
     alwaysAllowHorizontalScroll: false,
     explicitInitialization: false,
@@ -1030,10 +1031,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       if (Draggable) {
         this.slickDraggableInstance = Draggable({
           containerElement: this._container,
-          allowDragFrom: `div.slick-cell, div.slick-cell *, div.${this.dragReplaceEl.cssClass}`,
+          allowDragFrom: `div.slick-cell, div.${this.dragReplaceEl.cssClass}`,
           dragFromClassDetectArr: [{ tag: 'dragReplaceHandle', id: this.dragReplaceEl.id }],
           // the slick cell parent must always contain `.dnd` and/or `.cell-reorder` class to be identified as draggable
-          allowDragFromClosest: 'div.slick-cell.dnd, div.slick-cell.cell-reorder',
+          allowDragFromClosest: this._options.allowDragFromClosest,
           preventDragFromKeys: this._options.preventDragFromKeys,
           onDragInit: this.handleDragInit.bind(this),
           onDragStart: this.handleDragStart.bind(this),

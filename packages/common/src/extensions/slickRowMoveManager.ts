@@ -1,5 +1,5 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { createDomElement, findWidthOrDefault, getOffset } from '@slickgrid-universal/utils';
+import { createDomElement, findWidthOrDefault, getOffset, isDefined } from '@slickgrid-universal/utils';
 import { SlickEvent, SlickEventData, SlickEventHandler, Utils as SlickUtils, type SlickGrid } from '../core/index.js';
 import type { UsabilityOverrideFn } from '../enums/usabilityOverrideFn.type.js';
 import type {
@@ -253,78 +253,79 @@ export class SlickRowMoveManager {
   }
 
   protected handleDragStart(event: SlickEventData, dd: DragRowMove): boolean | void {
-    const cell = this._grid.getCellFromEvent(event) || { cell: -1, row: -1 };
-    const currentRow = cell.row;
-    const dataContext = this._grid.getDataItem(currentRow);
+    const cell = this._grid.getCellFromEvent(event);
 
-    if (this.checkUsabilityOverride(currentRow, dataContext, this._grid)) {
-      if (this._addonOptions.cancelEditOnDrag && this._grid.getEditorLock().isActive()) {
-        this._grid.getEditorLock().cancelCurrentEdit();
-      }
-
-      if (this._grid.getEditorLock().isActive() || !this.isHandlerColumn(cell.cell)) {
-        return false;
-      }
-
-      this._dragging = true;
-      event.stopImmediatePropagation();
-
-      // optionally create a shadow element of the row item that we're moving/dragging so that we can see it all the time exactly which row is being dragged
-      if (!this.addonOptions.hideRowMoveShadow) {
-        const slickRowElm = this._grid.getCellNode(cell.row, cell.cell)?.closest<HTMLDivElement>('.slick-row');
-        if (slickRowElm) {
-          dd.clonedSlickRow = slickRowElm.cloneNode(true) as HTMLDivElement;
-          dd.clonedSlickRow.classList.add('slick-reorder-shadow-row');
-          dd.clonedSlickRow.style.display = 'none';
-          dd.clonedSlickRow.style.marginLeft = findWidthOrDefault(this._addonOptions?.rowMoveShadowMarginLeft, '0px');
-          dd.clonedSlickRow.style.marginTop = findWidthOrDefault(this._addonOptions?.rowMoveShadowMarginTop, '0px');
-          dd.clonedSlickRow.style.opacity = `${this._addonOptions?.rowMoveShadowOpacity ?? 0.95}`;
-          dd.clonedSlickRow.style.transform = `scale(${this.addonOptions?.rowMoveShadowScale ?? 0.75})`;
-          this._canvas.appendChild(dd.clonedSlickRow);
+    if (isDefined(cell)) {
+      const dataContext = this._grid.getDataItem(cell.row);
+      if (this.checkUsabilityOverride(cell.row, dataContext, this._grid)) {
+        if (this._addonOptions.cancelEditOnDrag && this._grid.getEditorLock().isActive()) {
+          this._grid.getEditorLock().cancelCurrentEdit();
         }
-      }
 
-      let selectedRows = this._addonOptions.singleRowMove ? [cell.row] : this._grid.getSelectedRows();
-      if (selectedRows.length === 0 || !selectedRows.some((selectedRow) => selectedRow === cell.row)) {
-        selectedRows = [cell.row];
-        if (!this._addonOptions.disableRowSelection) {
-          this._grid.setSelectedRows(selectedRows);
+        if (this._grid.getEditorLock().isActive() || !this.isHandlerColumn(cell.cell)) {
+          return false;
         }
+
+        this._dragging = true;
+        event.stopImmediatePropagation();
+
+        // optionally create a shadow element of the row item that we're moving/dragging so that we can see it all the time exactly which row is being dragged
+        if (!this.addonOptions.hideRowMoveShadow) {
+          const slickRowElm = this._grid.getCellNode(cell.row, cell.cell)?.closest<HTMLDivElement>('.slick-row');
+          if (slickRowElm) {
+            dd.clonedSlickRow = slickRowElm.cloneNode(true) as HTMLDivElement;
+            dd.clonedSlickRow.classList.add('slick-reorder-shadow-row');
+            dd.clonedSlickRow.style.display = 'none';
+            dd.clonedSlickRow.style.marginLeft = findWidthOrDefault(this._addonOptions?.rowMoveShadowMarginLeft, '0px');
+            dd.clonedSlickRow.style.marginTop = findWidthOrDefault(this._addonOptions?.rowMoveShadowMarginTop, '0px');
+            dd.clonedSlickRow.style.opacity = `${this._addonOptions?.rowMoveShadowOpacity ?? 0.95}`;
+            dd.clonedSlickRow.style.transform = `scale(${this.addonOptions?.rowMoveShadowScale ?? 0.75})`;
+            this._canvas.appendChild(dd.clonedSlickRow);
+          }
+        }
+
+        let selectedRows = this._addonOptions.singleRowMove ? [cell.row] : this._grid.getSelectedRows();
+        if (selectedRows.length === 0 || !selectedRows.some((selectedRow) => selectedRow === cell.row)) {
+          selectedRows = [cell.row];
+          if (!this._addonOptions.disableRowSelection) {
+            this._grid.setSelectedRows(selectedRows);
+          }
+        }
+
+        const rowHeight = this.gridOptions.rowHeight as number;
+        dd.selectedRows = selectedRows;
+
+        dd.selectionProxy = createDomElement(
+          'div',
+          {
+            className: 'slick-reorder-proxy',
+            style: {
+              display: 'none',
+              position: 'absolute',
+              zIndex: '99999',
+              width: `${this._canvas.clientWidth}px`,
+              height: `${rowHeight * selectedRows.length}px`,
+            },
+          },
+          this._canvas
+        );
+
+        dd.guide = createDomElement(
+          'div',
+          {
+            className: 'slick-reorder-guide',
+            style: {
+              position: 'absolute',
+              zIndex: '99999',
+              width: `${this._canvas.clientWidth}px`,
+              top: `-1000px`,
+            },
+          },
+          this._canvas
+        );
+
+        dd.insertBefore = -1;
       }
-
-      const rowHeight = this.gridOptions.rowHeight as number;
-      dd.selectedRows = selectedRows;
-
-      dd.selectionProxy = createDomElement(
-        'div',
-        {
-          className: 'slick-reorder-proxy',
-          style: {
-            display: 'none',
-            position: 'absolute',
-            zIndex: '99999',
-            width: `${this._canvas.clientWidth}px`,
-            height: `${rowHeight * selectedRows.length}px`,
-          },
-        },
-        this._canvas
-      );
-
-      dd.guide = createDomElement(
-        'div',
-        {
-          className: 'slick-reorder-guide',
-          style: {
-            position: 'absolute',
-            zIndex: '99999',
-            width: `${this._canvas.clientWidth}px`,
-            top: `-1000px`,
-          },
-        },
-        this._canvas
-      );
-
-      dd.insertBefore = -1;
     }
   }
 
