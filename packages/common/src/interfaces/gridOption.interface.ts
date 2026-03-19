@@ -77,6 +77,9 @@ export interface DevModeOption {
 export type Sanitizer = ((dirtyHtml: string) => string) | ((dirtyHtml: string) => TrustedHTML);
 
 export interface GridOption<C extends Column = Column> {
+  /** query selector to use to allow dragging from closest element, defaults to ` 'div.slick-cell.dnd, div.slick-cell.cell-reorder'` */
+  allowDragFromClosest?: string;
+
   /** Defaults to true, should we always allow the use of horizontal scrolling? */
   alwaysAllowHorizontalScroll?: boolean;
 
