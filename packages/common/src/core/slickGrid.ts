@@ -66,6 +66,7 @@ import type {
   OnColumnsResizeDblClickEventArgs,
   OnColumnsResizedEventArgs,
   OnCompositeEditorChangeEventArgs,
+  OnContextMenuArgs,
   OnDblClickEventArgs,
   OnDragReplaceCellsEventArgs,
   OnFooterClickEventArgs,
@@ -164,7 +165,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   onColumnsResized: SlickEvent<OnColumnsResizedEventArgs>;
   onColumnsResizeDblClick: SlickEvent<OnColumnsResizeDblClickEventArgs>;
   onCompositeEditorChange: SlickEvent<OnCompositeEditorChangeEventArgs>;
-  onContextMenu: SlickEvent<{ grid: SlickGrid }>;
+  onContextMenu: SlickEvent<OnContextMenuArgs>;
   onDblClick: SlickEvent<OnDblClickEventArgs>;
   onDrag: SlickEvent<DragRowMove>;
   onDragInit: SlickEvent<DragRowMove>;
@@ -570,7 +571,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.onColumnsResized = new SlickEvent<OnColumnsResizedEventArgs>('onColumnsResized', externalPubSub);
     this.onColumnsResizeDblClick = new SlickEvent<OnColumnsResizeDblClickEventArgs>('onColumnsResizeDblClick', externalPubSub);
     this.onCompositeEditorChange = new SlickEvent<OnCompositeEditorChangeEventArgs>('onCompositeEditorChange', externalPubSub);
-    this.onContextMenu = new SlickEvent<{ grid: SlickGrid }>('onContextMenu', externalPubSub);
+    this.onContextMenu = new SlickEvent<OnContextMenuArgs>('onContextMenu', externalPubSub);
     this.onDblClick = new SlickEvent<OnDblClickEventArgs>('onDblClick', externalPubSub);
     this.onDrag = new SlickEvent<DragRowMove>('onDrag', externalPubSub);
     this.onDragInit = new SlickEvent<DragRowMove>('onDragInit', externalPubSub);
@@ -1571,7 +1572,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
 
       const columnDef = this.columns[idx];
-      const header: HTMLElement | undefined = this.getColumnByIndex(idx);
+      const header: HTMLElement | undefined = this.getColumnHeaderByIndex(idx);
       if (header) {
         if (title !== undefined) {
           this.columns[idx].name = title;
@@ -3169,19 +3170,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /**
-   * Accepts a columnId string and an ascending boolean. Applies a sort glyph in either ascending or descending form to the header of the column. Note that this does not actually sort the column. It only adds the sort glyph to the header.
-   * @param {String | Number} columnId
-   * @param {Boolean} ascending
+   * Get column header by index
+   * @param {Number} idx - column index
+   * @returns - column header HTML element
    */
-  setSortColumn(columnId: number | string, ascending: boolean): void {
-    this.setSortColumns([{ columnId, sortAsc: ascending }]);
+  getColumnHeaderByIndex(idx: number): HTMLElement | undefined {
+    return this.getColumnByIndex(idx);
   }
 
-  /**
-   * Get column by index
-   * @param {Number} idx - column index
-   * @returns
-   */
+  /** @deprecated @alias `getColumnHeaderByIndex` Get column header by index */
   getColumnByIndex(idx: number): HTMLElement | undefined {
     let result: HTMLElement | undefined;
     this._headers.every((header) => {
@@ -3195,6 +3192,24 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     });
 
     return result;
+  }
+
+  /**
+   * Get column by index
+   * @param {Number} idx - column index
+   * @returns - column object
+   */
+  getColumnByIdx(idx: number): C | null {
+    return this.columns[idx];
+  }
+
+  /**
+   * Accepts a columnId string and an ascending boolean. Applies a sort glyph in either ascending or descending form to the header of the column. Note that this does not actually sort the column. It only adds the sort glyph to the header.
+   * @param {String | Number} columnId
+   * @param {Boolean} ascending
+   */
+  setSortColumn(columnId: number | string, ascending: boolean): void {
+    this.setSortColumns([{ columnId, sortAsc: ascending }]);
   }
 
   /**
@@ -3225,7 +3240,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
       const columnIndex = this.getVisibleColumnIndex(col.columnId);
       if (isDefined(columnIndex)) {
-        const column = this.getColumnByIndex(columnIndex);
+        const column = this.getColumnHeaderByIndex(columnIndex);
         if (column) {
           column.classList.add('slick-header-column-sorted');
           let indicator = column.querySelector('.slick-sort-indicator');
@@ -6054,17 +6069,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   protected handleContextMenu(e: Event & { target: HTMLElement }): void {
-    const cell = e.target.closest('.slick-cell');
-    if (!cell) {
+    // cancel context menu if we have an inline editor opened
+    const cellElm = e.target.closest('.slick-cell');
+    if (this.activeCellNode === cellElm && this.currentEditor !== null) {
       return;
     }
 
-    // are we editing this cell?
-    if (this.activeCellNode === cell && this.currentEditor !== null) {
-      return;
-    }
-
-    this.triggerEvent(this.onContextMenu, {}, e);
+    // get the cell position or return {-1,-1} when opening from the grid but but not over a grid cell (e.g. empty dataset)
+    const cell = this.getCellFromEvent(e) ?? { cell: -1, row: -1 };
+    this.triggerEvent(this.onContextMenu, { row: cell.row, cell: cell.cell }, e);
   }
 
   protected handleDblClick(e: MouseEvent): void {

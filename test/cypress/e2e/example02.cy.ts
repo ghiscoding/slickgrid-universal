@@ -339,14 +339,18 @@ describe('Example 02 - Grouping & Aggregators', () => {
 
     it('should return 1 rows using "=311" or "==311" (equal to 311)', () => {
       cy.get('.search-filter.filter-num').clear().type('=311');
-
       cy.get('.item-count').should('contain', 1);
 
       cy.get('.search-filter.filter-num').clear().type('==311');
-
       cy.get('.item-count').should('contain', 1);
-
       cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).should('contain', 'Task 311');
+    });
+
+    it('should be able to open Context Menu even in empty viewport section but expect "Copy" to be disabled', () => {
+      cy.get('.grid-canvas-top.grid-canvas-left').rightclick('bottomLeft');
+      cy.get('.slick-context-menu .slick-menu-command-list').should('exist');
+      cy.get('.slick-context-menu .slick-menu-command-list .slick-menu-item').first().should('contain', 'Copy');
+      cy.get('.slick-context-menu .slick-menu-command-list .slick-menu-item').first().should('have.class', 'slick-menu-item-disabled');
     });
   });
 

@@ -59,6 +59,7 @@ const gridStub = {
   getCellNode: vi.fn(),
   getCellFromEvent: vi.fn(),
   getColumns: vi.fn(),
+  getColumnByIdx: vi.fn(),
   getColumnIndex: vi.fn(),
   getContainerNode: vi.fn(),
   getDataItem: vi.fn(),
@@ -177,6 +178,7 @@ describe('CellMenu Plugin', () => {
     vi.spyOn(SharedService.prototype, 'allColumns', 'get').mockReturnValue(columnsMock);
     vi.spyOn(gridStub, 'getVisibleColumns').mockReturnValue(columnsMock.slice(0, 2));
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(columnsMock);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(columnsMock[3]);
     plugin = new SlickCellMenu(extensionUtility, pubSubServiceStub, sharedService);
   });
 
@@ -254,7 +256,7 @@ describe('CellMenu Plugin', () => {
 
       plugin.dispose();
       plugin.init();
-      gridStub.onClick.notify(null as any, eventData, gridStub);
+      gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
 
       let cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
       expect(cellMenuElm).toBeTruthy();
@@ -277,7 +279,7 @@ describe('CellMenu Plugin', () => {
 
       plugin.dispose();
       plugin.init();
-      gridStub.onClick.notify(null as any, eventData, gridStub);
+      gridStub.onClick.notify({ cell: 3, row: 1, grid: gridStub }, eventData, gridStub);
 
       const cellMenuElm = document.body.querySelector('.slick-cell-menu.slickgrid12345') as HTMLDivElement;
       expect(cellMenuElm).toBeTruthy();
@@ -1020,6 +1022,7 @@ describe('CellMenu Plugin', () => {
         delete (columnsMock[4].cellMenu!.optionItems![1] as MenuOptionItem).itemVisibilityOverride;
         delete (columnsMock[4].cellMenu!.optionItems![1] as MenuOptionItem).itemUsabilityOverride;
         vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 4, row: 1 });
+        vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(columnsMock[4]);
       });
 
       it('should not populate and automatically return when the Cell Menu item "optionItems" array of the cell menu is undefined', () => {

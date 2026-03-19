@@ -3449,6 +3449,7 @@ describe('SlickGrid core file', () => {
 
       const finalColumns = grid.getColumns();
       // Expected order: lastName, firstName, middleName (hidden stays at index 2), age
+      expect(grid.getColumnByIdx(0)!.id).toBe('lastName');
       expect(finalColumns[0].id).toBe('lastName');
       expect(finalColumns[1].id).toBe('firstName');
       expect(finalColumns[2].id).toBe('middleName'); // hidden column stays at original position
@@ -7435,7 +7436,7 @@ describe('SlickGrid core file', () => {
     });
 
     describe('Cell Context Menu', () => {
-      it('should not trigger onContextMenu event when cannot find closest slick-cell', () => {
+      it('should trigger onContextMenu event when trigger from viewport even if we cannot find closest slick-cell', () => {
         const columns = [
           { id: 'name', field: 'name', name: 'Name' },
           { id: 'age', field: 'age', name: 'Age', editorClass: InputEditor },
@@ -7447,7 +7448,7 @@ describe('SlickGrid core file', () => {
         Object.defineProperty(event, 'target', { writable: true, value: secondRowSlickCells[0] });
         container.querySelector('.grid-canvas-left')!.dispatchEvent(event);
 
-        expect(onContextMenuSpy).not.toHaveBeenCalled();
+        expect(onContextMenuSpy).toHaveBeenCalled();
       });
 
       it('should not trigger onContextMenu event when current cell is active and is editable', () => {

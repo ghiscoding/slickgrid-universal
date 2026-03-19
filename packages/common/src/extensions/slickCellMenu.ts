@@ -108,14 +108,12 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
 
   protected handleCellClick(event: SlickEventData, args: OnClickEventArgs): void {
     this.disposeAllMenus(); // make there's only 1 parent menu opened at a time
-    const cell = this.grid.getCellFromEvent(event);
+    const dataContext = this.grid.getDataItem(args.row) ?? {};
+    const columnDef = this.grid.getColumnByIdx(args.cell) ?? ({} as Column);
 
-    if (cell) {
-      const dataContext = this.grid.getDataItem(cell.row);
-      const columnDef = this.grid.getColumns()[cell.cell];
-
+    if (columnDef && dataContext) {
       // prevent event from bubbling but only on column that has a cell menu defined
-      if (columnDef?.cellMenu && !this.gridOptions.cellMenu?.activateCellOnMenuClick) {
+      if (columnDef.cellMenu && !this.gridOptions.cellMenu?.activateCellOnMenuClick) {
         event.preventDefault();
       }
 
@@ -132,7 +130,7 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
       }
 
       // create the DOM element
-      this._menuElm = this.createParentMenu(event);
+      this._menuElm = this.createParentMenu(event, args);
 
       // reposition the menu to where the user clicked
       if (this._menuElm) {
@@ -141,10 +139,10 @@ export class SlickCellMenu extends MenuFromCellBaseClass<CellMenu> {
         if (this.gridOptions.darkMode) {
           this._menuElm.classList.add('slick-dark-mode');
         }
-      }
 
-      // Hide the menu on outside click.
-      this._bindEventService.bind(document.body, 'mousedown', this.handleBodyMouseDown.bind(this) as EventListener);
+        // Hide the menu on outside click.
+        this._bindEventService.bind(document.body, 'mousedown', this.handleBodyMouseDown.bind(this) as EventListener);
+      }
     }
   }
 

@@ -121,6 +121,7 @@ const gridStub = {
   getCellNode: vi.fn(),
   getCellFromEvent: vi.fn(),
   getColumns: vi.fn(),
+  getColumnByIdx: vi.fn(),
   getColumnIndex: vi.fn(),
   getContainerNode: vi.fn(),
   getDataItem: vi.fn(),
@@ -294,7 +295,7 @@ describe('ContextMenu Plugin', () => {
 
       plugin.dispose();
       plugin.init();
-      gridStub.onContextMenu.notify(null as any, eventData, gridStub);
+      gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
       let contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
       expect(contextMenuElm).toBeTruthy();
@@ -317,10 +318,10 @@ describe('ContextMenu Plugin', () => {
       const actionBtnElm = document.createElement('button');
       slickCellElm.appendChild(actionBtnElm);
       const eventDataCopy = deepCopy(eventData);
-      gridStub.onContextMenu.notify({ grid: gridStub }, eventDataCopy as any, gridStub);
+      gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventDataCopy as any, gridStub);
 
       let contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
-      gridStub.onContextMenu.notify({ grid: gridStub }, eventDataCopy as any, gridStub);
+      gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventDataCopy as any, gridStub);
 
       expect(contextMenuElm).toBeTruthy();
       expect(contextMenuElm.classList.contains('slick-dark-mode')).toBeTruthy();
@@ -342,12 +343,12 @@ describe('ContextMenu Plugin', () => {
       const eventDataCopy = deepCopy(eventData);
       Object.defineProperty(actionBtnElm, 'clientWidth', { writable: true, configurable: true, value: 275 });
       Object.defineProperty(slickCellElm, 'clientWidth', { writable: true, configurable: true, value: 300 });
-      gridStub.onContextMenu.notify({ grid: gridStub }, eventDataCopy as any, gridStub);
+      gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventDataCopy as any, gridStub);
 
       const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
       Object.defineProperty(contextMenuElm, 'clientHeight', { writable: true, configurable: true, value: 300 });
       Object.defineProperty(plugin.menuElement, 'clientWidth', { writable: true, configurable: true, value: 350 });
-      gridStub.onContextMenu.notify({ grid: gridStub }, eventDataCopy as any, gridStub);
+      gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventDataCopy as any, gridStub);
 
       expect(contextMenuElm.classList.contains('dropup')).toBeTruthy();
       expect(contextMenuElm.classList.contains('dropleft')).toBeTruthy();
@@ -364,7 +365,7 @@ describe('ContextMenu Plugin', () => {
         plugin.dispose();
         plugin.init();
         gridOptionsMock.contextMenu!.commandItems = undefined as any;
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
 
@@ -376,7 +377,7 @@ describe('ContextMenu Plugin', () => {
         plugin.init({ commandItems: deepCopy(commandItemsMock) });
         (gridOptionsMock.contextMenu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => true;
         (gridOptionsMock.contextMenu!.commandItems![1] as MenuCommandItem).itemUsabilityOverride = () => true;
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
@@ -422,7 +423,7 @@ describe('ContextMenu Plugin', () => {
         plugin.init({ commandItems: deepCopy(commandItemsMock), commandShownOverColumnIds: ['Age'] });
         (gridOptionsMock.contextMenu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => true;
         (gridOptionsMock.contextMenu!.commandItems![1] as MenuCommandItem).itemUsabilityOverride = () => true;
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
 
@@ -434,7 +435,7 @@ describe('ContextMenu Plugin', () => {
         plugin.init({ commandItems: deepCopy(commandItemsMock) });
         (gridOptionsMock.contextMenu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => undefined as any;
         (gridOptionsMock.contextMenu!.commandItems![1] as MenuCommandItem).itemUsabilityOverride = () => undefined as any;
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const closeBtnElm = contextMenuElm.querySelector('.close') as HTMLButtonElement;
@@ -464,7 +465,7 @@ describe('ContextMenu Plugin', () => {
         plugin.init({ commandItems: deepCopy(commandItemsMock) });
         (gridOptionsMock.contextMenu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => false;
         (gridOptionsMock.contextMenu!.commandItems![1] as MenuCommandItem).itemUsabilityOverride = () => false;
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const closeBtnElm = contextMenuElm.querySelector('.close') as HTMLButtonElement;
@@ -486,7 +487,7 @@ describe('ContextMenu Plugin', () => {
         plugin.init({ commandItems: deepCopy(commandItemsMock) });
         (gridOptionsMock.contextMenu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => true;
         (gridOptionsMock.contextMenu!.commandItems![1] as MenuCommandItem).itemUsabilityOverride = () => false;
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const closeBtnElm = contextMenuElm.querySelector('.close') as HTMLButtonElement;
@@ -507,7 +508,7 @@ describe('ContextMenu Plugin', () => {
         plugin.dispose();
         plugin.init({ commandItems: deepCopy(commandItemsMock), maxHeight: 290 });
         (gridOptionsMock.contextMenu!.commandItems![1] as MenuCommandItem).disabled = true;
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
@@ -524,7 +525,7 @@ describe('ContextMenu Plugin', () => {
         plugin.dispose();
         plugin.init({ commandItems: deepCopy(commandItemsMock), maxWidth: 310 });
         (gridOptionsMock.contextMenu!.commandItems![1] as MenuCommandItem).hidden = true;
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
@@ -541,7 +542,7 @@ describe('ContextMenu Plugin', () => {
         plugin.dispose();
         plugin.init({ commandItems: deepCopy(commandItemsMock) });
         (gridOptionsMock.contextMenu!.commandItems![1] as MenuCommandItem).iconCssClass = 'bold red';
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
@@ -560,7 +561,7 @@ describe('ContextMenu Plugin', () => {
         plugin.init({ commandItems: deepCopy(commandItemsMock) });
         (gridOptionsMock.contextMenu!.commandItems![1] as MenuCommandItem).title = 'Help';
         (gridOptionsMock.contextMenu!.commandItems![1] as MenuCommandItem).iconCssClass = undefined;
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
@@ -578,7 +579,7 @@ describe('ContextMenu Plugin', () => {
         plugin.init({ commandItems: deepCopy(commandItemsMock) });
         (gridOptionsMock.contextMenu!.commandItems![1] as MenuCommandItem).title = 'Help';
         (gridOptionsMock.contextMenu!.commandItems![1] as MenuCommandItem).textCssClass = 'italic blue';
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
@@ -595,7 +596,7 @@ describe('ContextMenu Plugin', () => {
         plugin.dispose();
         plugin.init({ commandItems: deepCopy(commandItemsMock) });
         (gridOptionsMock.contextMenu!.commandItems![1] as MenuCommandItem).tooltip = 'some tooltip';
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
@@ -612,7 +613,7 @@ describe('ContextMenu Plugin', () => {
         plugin.init({ commandTitle: 'The Commands!', commandItems: deepCopy(commandItemsMock) });
         (gridOptionsMock.contextMenu!.commandItems![1] as MenuCommandItem).title = 'Help';
         (gridOptionsMock.contextMenu!.commandItems![1] as MenuCommandItem).textCssClass = 'italic blue';
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
@@ -630,7 +631,7 @@ describe('ContextMenu Plugin', () => {
         translateService.use('fr');
         plugin.translateContextMenu();
 
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
@@ -648,7 +649,7 @@ describe('ContextMenu Plugin', () => {
 
         plugin.dispose();
         plugin.init({ commandItems: deepCopy(commandItemsMock) });
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         let contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const closeBtnElm = contextMenuElm.querySelector('.close') as HTMLButtonElement;
@@ -666,7 +667,7 @@ describe('ContextMenu Plugin', () => {
 
         plugin.dispose();
         plugin.init({ commandItems: deepCopy(commandItemsMock), onBeforeMenuClose: onBeforeSpy });
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
         plugin.closeMenu(new Event('click') as any, {} as any);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
@@ -683,7 +684,7 @@ describe('ContextMenu Plugin', () => {
 
         plugin.dispose();
         plugin.init({ commandItems: deepCopy(commandItemsMock), onBeforeMenuClose: onBeforeSpy });
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
         plugin.closeMenu(new Event('click') as any, {} as any);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
@@ -698,7 +699,7 @@ describe('ContextMenu Plugin', () => {
 
         plugin.dispose();
         plugin.init({ commandItems: deepCopy(commandItemsMock), onBeforeMenuShow: onBeforeSpy });
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
 
@@ -712,7 +713,7 @@ describe('ContextMenu Plugin', () => {
 
         plugin.dispose();
         plugin.init({ commandItems: deepCopy(commandItemsMock), onBeforeMenuClose: () => true, onBeforeMenuShow: onBeforeSpy, onAfterMenuShow: onAfterSpy });
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
@@ -731,7 +732,7 @@ describe('ContextMenu Plugin', () => {
         plugin.init({ commandItems: deepCopy(commandItemsMock) });
         (gridOptionsMock.contextMenu!.commandItems![1] as MenuCommandItem).action = actionMock;
         plugin.addonOptions.subItemChevronClass = 'mdi mdi-chevron-right';
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         let contextMenu1Elm = document.body.querySelector('.slick-context-menu.slickgrid12345.slick-menu-level-0') as HTMLDivElement;
         const commandList1Elm = contextMenu1Elm.querySelector('.slick-menu-command-list') as HTMLDivElement;
@@ -786,7 +787,7 @@ describe('ContextMenu Plugin', () => {
         plugin.dispose();
         plugin.init({ commandItems: deepCopy(commandItemsMock) });
         (gridOptionsMock.contextMenu!.commandItems![1] as MenuCommandItem).action = actionMock;
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
@@ -801,7 +802,7 @@ describe('ContextMenu Plugin', () => {
 
         plugin.dispose();
         plugin.init({ commandItems: deepCopy(commandItemsMock) });
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
         plugin.addonOptions.onCommand = onCommandMock;
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
@@ -817,7 +818,7 @@ describe('ContextMenu Plugin', () => {
         plugin.init({ commandItems: deepCopy(commandItemsMock), menuUsabilityOverride: () => false });
         (gridOptionsMock.contextMenu!.commandItems![1] as MenuCommandItem).itemVisibilityOverride = () => true;
         (gridOptionsMock.contextMenu!.commandItems![1] as MenuCommandItem).itemUsabilityOverride = () => true;
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         expect(plugin.menuElement).toBeFalsy();
       });
@@ -841,7 +842,7 @@ describe('ContextMenu Plugin', () => {
 
         plugin.dispose();
         plugin.init({ commandItems: [{ command: 'test-cmd', title: 'Test Command', slotRenderer: mockSlotRenderer }] });
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
@@ -857,7 +858,7 @@ describe('ContextMenu Plugin', () => {
 
         plugin.dispose();
         plugin.init({ commandItems: [{ command: 'test-cmd', title: 'Test Command', slotRenderer: mockSlotRenderer }] });
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
@@ -878,7 +879,7 @@ describe('ContextMenu Plugin', () => {
 
         plugin.dispose();
         plugin.init({ commandItems: [{ command: 'test-cmd', title: 'Test Command' }], defaultMenuItemRenderer: mockDefaultRenderer });
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
@@ -903,7 +904,7 @@ describe('ContextMenu Plugin', () => {
           commandItems: [{ command: 'test-cmd', title: 'Test Command', slotRenderer: mockSlotRenderer }],
           defaultMenuItemRenderer: mockDefaultRenderer,
         });
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
@@ -924,7 +925,7 @@ describe('ContextMenu Plugin', () => {
 
         plugin.dispose();
         plugin.init({ commandItems: [{ command: 'test-cmd', title: 'Test Command with Args', slotRenderer: mockSlotRenderer }] });
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         expect(mockSlotRenderer).toHaveBeenCalled();
         const callArgs = mockSlotRenderer.mock.calls[0];
@@ -942,7 +943,7 @@ describe('ContextMenu Plugin', () => {
 
         plugin.dispose();
         plugin.init({ commandItems: [{ command: 'test-cmd', title: 'Test Command', slotRenderer: mockSlotRenderer }] });
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
@@ -976,7 +977,7 @@ describe('ContextMenu Plugin', () => {
         plugin.init({
           commandItems: [{ command: 'test-cmd', title: 'Test Command', slotRenderer: mockSlotRenderer, action: mockAction }],
         });
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const commandListElm = contextMenuElm.querySelector('.slick-menu-command-list') as HTMLDivElement;
@@ -1011,6 +1012,7 @@ describe('ContextMenu Plugin', () => {
         vi.spyOn(gridStub, 'getGridPosition').mockReturnValue({ top: 10, bottom: 5, left: 15, right: 22, width: 225 } as ElementPosition);
         vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 1, row: 1 });
         vi.spyOn(gridStub, 'getDataItem').mockReturnValue({ firstName: 'John', lastName: 'Doe', age: 33 });
+        vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(columnsMock[1]);
 
         if (window.document) {
           window.document.createRange = () =>
@@ -1040,7 +1042,7 @@ describe('ContextMenu Plugin', () => {
         gridOptionsMock.contextMenu!.hideCopyCellValueCommand = false;
         plugin.dispose();
         plugin.init({ commandItems: [], hideCopyCellValueCommand: false });
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const closeBtnElm = contextMenuElm.querySelector('.close') as HTMLButtonElement;
@@ -1182,7 +1184,7 @@ describe('ContextMenu Plugin', () => {
         const writeSpy = navigator.clipboard.writeText;
         plugin.dispose();
         plugin.init({ commandItems: [], hideCopyCellValueCommand: false });
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const closeBtnElm = contextMenuElm.querySelector('.close') as HTMLButtonElement;
@@ -1811,7 +1813,7 @@ describe('ContextMenu Plugin', () => {
         plugin.dispose();
         plugin.init({ optionItems: deepCopy(optionItemsMock), onAfterMenuShow: undefined });
         gridOptionsMock.contextMenu!.optionItems = undefined;
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
 
@@ -1823,7 +1825,7 @@ describe('ContextMenu Plugin', () => {
         plugin.init({ optionItems: deepCopy(optionItemsMock) });
         (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).itemVisibilityOverride = () => true;
         (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).itemUsabilityOverride = () => true;
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
@@ -1867,7 +1869,7 @@ describe('ContextMenu Plugin', () => {
         plugin.init({ optionItems: deepCopy(optionItemsMock) });
         (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).itemVisibilityOverride = () => undefined as any;
         (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).itemUsabilityOverride = () => undefined as any;
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const closeBtnElm = contextMenuElm.querySelector('.close') as HTMLButtonElement;
@@ -1897,7 +1899,7 @@ describe('ContextMenu Plugin', () => {
         plugin.init({ optionItems: deepCopy(optionItemsMock), optionShownOverColumnIds: ['Age'] });
         (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).itemVisibilityOverride = () => true;
         (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).itemUsabilityOverride = () => true;
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
 
@@ -1909,7 +1911,7 @@ describe('ContextMenu Plugin', () => {
         plugin.init({ optionItems: deepCopy(optionItemsMock) });
         (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).itemVisibilityOverride = () => false;
         (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).itemUsabilityOverride = () => false;
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const closeBtnElm = contextMenuElm.querySelector('.close') as HTMLButtonElement;
@@ -1931,7 +1933,7 @@ describe('ContextMenu Plugin', () => {
         plugin.init({ optionItems: deepCopy(optionItemsMock) });
         (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).itemVisibilityOverride = () => true;
         (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).itemUsabilityOverride = () => false;
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const closeBtnElm = contextMenuElm.querySelector('.close') as HTMLButtonElement;
@@ -1952,7 +1954,7 @@ describe('ContextMenu Plugin', () => {
         plugin.dispose();
         plugin.init({ optionItems: deepCopy(optionItemsMock) });
         (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).disabled = true;
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
@@ -1968,7 +1970,7 @@ describe('ContextMenu Plugin', () => {
         plugin.dispose();
         plugin.init({ optionItems: deepCopy(optionItemsMock) });
         (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).hidden = true;
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
@@ -1984,7 +1986,7 @@ describe('ContextMenu Plugin', () => {
         plugin.dispose();
         plugin.init({ optionItems: deepCopy(optionItemsMock) });
         (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).iconCssClass = 'underline sky';
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
@@ -2003,7 +2005,7 @@ describe('ContextMenu Plugin', () => {
         plugin.init({ optionItems: deepCopy(optionItemsMock) });
         (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).title = 'Help';
         (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).textCssClass = 'italic blue';
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
@@ -2020,7 +2022,7 @@ describe('ContextMenu Plugin', () => {
         plugin.dispose();
         plugin.init({ optionItems: deepCopy(optionItemsMock) });
         (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).tooltip = 'some tooltip';
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
@@ -2040,7 +2042,7 @@ describe('ContextMenu Plugin', () => {
         plugin.setOptions({ optionTitle: 'The Options!' });
         (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).title = 'Help';
         (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).textCssClass = 'italic blue';
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
@@ -2059,7 +2061,7 @@ describe('ContextMenu Plugin', () => {
         translateService.use('fr');
         plugin.translateContextMenu();
 
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
@@ -2077,7 +2079,7 @@ describe('ContextMenu Plugin', () => {
 
         plugin.dispose();
         plugin.init({ optionItems: deepCopy(optionItemsMock) });
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         let contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const closeBtnElm = contextMenuElm.querySelector('.close') as HTMLButtonElement;
@@ -2097,7 +2099,7 @@ describe('ContextMenu Plugin', () => {
         plugin.init({ optionItems: deepCopy(optionItemsMock) });
         (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).action = actionMock;
         plugin.addonOptions.subItemChevronClass = 'mdi mdi-chevron-right';
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenu1Elm = document.body.querySelector('.slick-context-menu.slickgrid12345.slick-menu-level-0') as HTMLDivElement;
         const optionList1Elm = contextMenu1Elm.querySelector('.slick-menu-option-list') as HTMLDivElement;
@@ -2130,7 +2132,7 @@ describe('ContextMenu Plugin', () => {
         plugin.dispose();
         plugin.init({ optionItems: deepCopy(optionItemsMock) });
         (gridOptionsMock.contextMenu!.optionItems![1] as MenuOptionItem).action = actionMock;
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
@@ -2147,7 +2149,7 @@ describe('ContextMenu Plugin', () => {
         plugin.dispose();
         plugin.init({ optionItems: deepCopy(optionItemsMock), onOptionSelected: onOptionSelectedMock });
         // plugin.setOptions({ onOptionSelected: onOptionSelectedMock });
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;
@@ -2164,7 +2166,7 @@ describe('ContextMenu Plugin', () => {
         plugin.dispose();
         plugin.init({ optionItems: deepCopy(optionItemsMock) });
         plugin.setOptions({ onOptionSelected: onOptionSelectedMock });
-        gridStub.onContextMenu.notify({ grid: gridStub }, eventData, gridStub);
+        gridStub.onContextMenu.notify({ cell: 1, row: 1, grid: gridStub }, eventData, gridStub);
 
         const contextMenuElm = document.body.querySelector('.slick-context-menu.slickgrid12345') as HTMLDivElement;
         const optionListElm = contextMenuElm.querySelector('.slick-menu-option-list') as HTMLDivElement;

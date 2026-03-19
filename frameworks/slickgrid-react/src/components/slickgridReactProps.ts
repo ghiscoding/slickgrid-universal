@@ -37,6 +37,7 @@ import type {
   OnColumnsResizeDblClickEventArgs,
   OnColumnsResizedEventArgs,
   OnCompositeEditorChangeEventArgs,
+  OnContextMenuArgs,
   OnDblClickEventArgs,
   OnDragReplaceCellsEventArgs,
   OnFooterClickEventArgs,
@@ -118,7 +119,7 @@ export interface SlickgridReactProps {
   onColumnsResized?: ReactSlickEventHandler<OnColumnsResizedEventArgs>;
   onColumnsResizeDblClick?: ReactSlickEventHandler<OnColumnsResizeDblClickEventArgs>;
   onCompositeEditorChange?: ReactSlickEventHandler<OnCompositeEditorChangeEventArgs>;
-  onContextMenu?: ReactSlickEventHandler<{ grid: SlickGrid }>;
+  onContextMenu?: ReactSlickEventHandler<OnContextMenuArgs>;
   onDrag?: ReactSlickEventHandler<DragRowMove>;
   onDragEnd?: ReactSlickEventHandler<DragRowMove>;
   onDragInit?: ReactSlickEventHandler<DragRowMove>;

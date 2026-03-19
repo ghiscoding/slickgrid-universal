@@ -34,6 +34,7 @@ import type {
   OnColumnsResizeDblClickEventArgs,
   OnColumnsResizedEventArgs,
   OnCompositeEditorChangeEventArgs,
+  OnContextMenuArgs,
   OnDblClickEventArgs,
   OnDragReplaceCellsEventArgs,
   OnFooterClickEventArgs,
@@ -123,7 +124,7 @@ export interface AngularSlickgridOutputs {
   onColumnsResized: (e: OnColumnsResizedEventArgs) => void;
   onColumnsResizeDblClick: (e: OnColumnsResizeDblClickEventArgs) => void;
   onCompositeEditorChange: (e: OnCompositeEditorChangeEventArgs) => void;
-  onContextMenu: (e: { grid: SlickGrid }) => void;
+  onContextMenu: (e: OnContextMenuArgs) => void;
   onDrag: (e: DragRowMove) => void;
   onDragEnd: (e: DragRowMove) => void;
   onDragInit: (e: DragRowMove) => void;
