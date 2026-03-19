@@ -30,9 +30,6 @@ applyPlugin(jsPDF); // register AutoTable once
 ```
 When `jspdf-autotable` is detected at runtime the service automatically uses it; otherwise it falls back to a simple text-based layout.
 
-### Demo
-[Demo Page](https://ghiscoding.github.io/slickgrid-universal/#/example-pdf) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example-pdf.ts)
-
 ### Grid Menu (hamburger menu)
 The Grid Menu can include an "Export to PDF" command. You can show/hide this option with `hideExportPdfCommand` (defaults to false).
 

@@ -22,7 +22,7 @@ For row selection, you can simply play with couple of grid options (see below) a
 For a single row selection, you need to have `enableCellNavigation: true`, `enableRowSelection: true` and `multiSelect: false` and as described earlier, subscribe to `onSelectedRowsChanged` (for that you need to bind to `(gridChanged)`). There are 2 ways to choose for the implementation of a row selection, option **1.** is the most common option and is the recommend way of doing it.
 
 ### 1. with Event Listener (preferred way)
-You can also do it through a Custom Event listener since all SlickGrid events are exposed as Custom Event. For more info see [Wiki - OnEvents](Grid-&-DataView-Events.md)
+You can also do it through a Custom Event listener since all SlickGrid events are exposed as Custom Event. For more info see [Wiki - OnEvents](grid-dataview-events.md)
 
 #### ViewModel
 ```ts
@@ -83,7 +83,7 @@ gridObjChanged(grid) {
 As for multiple row selections, you need to disable `enableCellNavigation` and enable `enableCheckboxSelector` and `enableRowSelection`. Then as describe earlier, you will subscribe to `onSelectedRowsChanged` (for that you need to bind to `(gridChanged)`). There are 2 ways to choose for the implementation of a row selection, option **1.** is the most common option and is the recommend way of doing it.
 
 ### 1. with Custom Events (preferred way)
-You can also do it through a Custom Event listener since all SlickGrid events are exposed as Custom Events. For more info see [Wiki - OnEvents](Grid-&-DataView-Events.md)
+You can also do it through a Custom Event listener since all SlickGrid events are exposed as Custom Events. For more info see [Wiki - OnEvents](grid-dataview-events.md)
 
 #### ViewModel
 ```ts

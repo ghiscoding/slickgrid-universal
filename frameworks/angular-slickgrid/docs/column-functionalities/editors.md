@@ -26,10 +26,10 @@ Editors won't work without these 2 flags `enableCellNavigation: true` and `edita
 
 ### Demo
 ##### with plain JavaScript/jQuery
-[Demo Page](https://ghiscoding.github.io/angular-slickgrid-demos/#/editor) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-editor.component.ts)
+[Demo Page](https://ghiscoding.github.io/angular-slickgrid-demos/#/example03) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example03.component.ts)
 
 ##### with Angular Component
-[Demo](https://ghiscoding.github.io/angular-slickgrid-demos/#/angular-components) / [Demo Client Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-angular.component.ts)
+[Demo](https://ghiscoding.github.io/angular-slickgrid-demos/#/example26) / [Demo Client Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example26.component.ts)
 
 ### How to use Inline Editors
 Simply call the editor in your column definition with the `Editors` you want, as for example (`editor: { model: Editors.text }`). Here is an example with a full column definition:
@@ -306,7 +306,7 @@ Most users typically want to use `autoEdit` for single click editors or the new 
 
 ## Perform an action after inline edit
 #### Recommended way
-What is ideal is to bind to a SlickGrid Event, for that you can take a look at this [Wiki - On Events](../events//Grid-&-DataView-Events.md)
+What is ideal is to bind to a SlickGrid Event, for that you can take a look at this [Wiki - On Events](../events//grid-dataview-events.md)
 
 #### Not recommended
 You could also, perform an action after the item changed event with `onCellChange`. However, this is not the recommended way, since it would require to add a `onCellChange` on every every single column definition (while you can do with 1 onEvent).
@@ -538,7 +538,7 @@ this.columnDefinition = [
 ## Disabling specific cell edit
 This can be answered by searching on Stack Overflow Stack Overflow and this is the best [answer](https://stackoverflow.com/questions/10491676/disabling-specific-cell-edit-in-slick-grid) found.
 
-Based on that, the only difference in Angular-Slickgrid is that all SlickGrid event needs the `sg` prefix to differentiate SlickGrid Events (`sg` prefix) versus Angular-Slickgrid Events (`asg` prefix). More info can be found in this [Wiki - Grid & DataView Events](../events/Grid-&-DataView-Events.md).
+Based on that, the only difference in Angular-Slickgrid is that all SlickGrid event needs the `sg` prefix to differentiate SlickGrid Events (`sg` prefix) versus Angular-Slickgrid Events (`asg` prefix). More info can be found in this [Wiki - Grid & DataView Events](../events/grid-dataview-events.md).
 
 With that in mind and the code from the SO answer, we end up with the following code.
 

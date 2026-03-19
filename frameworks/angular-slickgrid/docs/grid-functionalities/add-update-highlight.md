@@ -13,7 +13,7 @@ When working with the grid, you might want to Add / Update or Hightlight an item
 **Note:** This is strictly a client side event, you still have to implement any backend change yourself.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/angular-slickgrid-demos/#/additem) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-additem.component.ts)
+[Demo Page](https://ghiscoding.github.io/angular-slickgrid-demos/#/example11) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example11.component.ts)
 
 ## CRUD Methods
 ### Add an Item (row)

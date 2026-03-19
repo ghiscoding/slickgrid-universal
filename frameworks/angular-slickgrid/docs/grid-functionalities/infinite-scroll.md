@@ -4,11 +4,11 @@ Infinite scrolling allows the grid to lazy-load rows from the server (or locally
 In its simplest form, the more the user scrolls down, the more rows will get loaded and appended to the in-memory dataset.
 
 ### Demo
-[JSON Data - Demo Page](https://ghiscoding.github.io/angular-slickgrid-demos/#/infinite-json) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-infinite-json.component.ts)
+[JSON Data - Demo Page](https://ghiscoding.github.io/angular-slickgrid-demos/#/example40) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example40.component.ts)
 
-[OData Backend Service - Demo Page](https://ghiscoding.github.io/angular-slickgrid-demos/#/infinite-odata) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-infinite-odata.component.ts)
+[OData Backend Service - Demo Page](https://ghiscoding.github.io/angular-slickgrid-demos/#/example38) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example38.component.ts)
 
-[GraphQL Backend Service - Demo Page](https://ghiscoding.github.io/angular-slickgrid-demos/#/infinite-graphql) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-infinite-graphql.component.ts)
+[GraphQL Backend Service - Demo Page](https://ghiscoding.github.io/angular-slickgrid-demos/#/example39) / [Demo ViewModel](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example39.component.ts)
 
 > ![WARNING]
 > Pagination Grid Preset (`presets.pagination`) is **not** supported with Infinite Scroll

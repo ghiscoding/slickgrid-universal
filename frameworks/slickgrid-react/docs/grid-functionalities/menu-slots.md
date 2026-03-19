@@ -2,7 +2,7 @@
 
 All menu plugins (Header Menu, Cell Menu, Context Menu, Grid Menu) support **cross-framework compatible slot rendering** for custom content injection in menu items. This is achieved through the `slotRenderer` callback at the item level combined with an optional `defaultMenuItemRenderer` at the menu level.
 
-> **Note:** This documentation covers **how menu items are rendered** (visual presentation). If you need to **dynamically modify which commands appear** in the menu (filtering, sorting, adding/removing items), see the `commandListBuilder` callback documented in [Grid Menu](grid-functionalities/grid-menu.md), [Context Menu](grid-functionalities/context-menu.md), or [Header Menu](grid-functionalities/header-menu-header-buttons.md).
+> **Note:** This documentation covers **how menu items are rendered** (visual presentation). If you need to **dynamically modify which commands appear** in the menu (filtering, sorting, adding/removing items), see the `commandListBuilder` callback documented in [Grid Menu](grid-menu.md), [Context Menu](context-menu.md), or [Header Menu](header-menu-header-buttons.md).
 
 ### TypeScript Tip: Type Inference with commandListBuilder
 

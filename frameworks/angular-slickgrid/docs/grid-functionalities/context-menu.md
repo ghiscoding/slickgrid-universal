@@ -4,16 +4,16 @@
 - [Override Callback Methods](#override-callback-methods)
 - [How to add Translations](#how-to-add-translations)
 - [Default Internal Commands](#default-internal-commands)
-- [Show only over Certain Columns](https://github.com#show-menu-only-over-certain-columns)
+- [Show only over Certain Columns](#show-menu-only-over-certain-columns)
 - [How to Disable Context Menu](#how-to-disable-the-context-menu)
 - [UI Sample](#ui-sample)
 
 ### Demo
 
 #### Context Menu with Grouping
-[Context Menu Demo](https://ghiscoding.github.io/angular-slickgrid-demos/#/context) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-contextmenu.component.ts)
+[Context Menu Demo](https://ghiscoding.github.io/angular-slickgrid-demos/#/example24) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example24.component.ts)
 
-[Grouping Demo](https://ghiscoding.github.io/angular-slickgrid-demos/#/grouping) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-grouping.component.ts)
+[Grouping Demo](https://ghiscoding.github.io/angular-slickgrid-demos/#/example13) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example13.component.ts)
 
 ### Description
 A Context Menu is triggered by a mouse right+click and can show a list of Commands (to execute an action) and/or Options (to change the value of a field). The lib comes with a default list of custom commands (copy cell, export & grouping commands). Also note that the Commands list is following the same structure used in the [Cell Menu](../column-functionalities/cell-menu.md), [Header Menu](header-menu-header-buttons.md) & [Grid Menu](grid-menu.md). Very similar to the [Cell Menu](../column-functionalities/cell-menu.md), they were both created as SlickGrid plugins during the same period, their main difference is that they get triggered differently (mouse right+click vs cell click) and they serve different purposes. The Cell Menu is more oriented on a row action (e.g. delete current row) while the Context Menu is all about actions for the entire grid (e.g. export to Excel).

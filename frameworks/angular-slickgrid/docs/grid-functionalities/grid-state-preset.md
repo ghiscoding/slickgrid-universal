@@ -8,10 +8,10 @@
 ### Demo
 Look at your developer console before leaving the page
 #### Regular grid
-[Demo Page](https://ghiscoding.github.io/angular-slickgrid-demos/#/clientside) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-clientside.component.ts)
+[Demo Page](https://ghiscoding.github.io/angular-slickgrid-demos/#/example04) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example04.component.ts)
 
 #### with Backend Service
-[Demo Page](https://ghiscoding.github.io/angular-slickgrid-demos/#/gridgraphql) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-graphql.component.ts)
+[Demo Page](https://ghiscoding.github.io/angular-slickgrid-demos/#/example06) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example06.component.ts)
 
 ## Descriptions
 #### Grid State

@@ -5,10 +5,10 @@
 
 ### Demo
 ##### with plain JavaScript/jQuery
-[Demo Page](https://ghiscoding.github.io/angular-slickgrid-demos/#/clientside) / [Demo Client Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-clientside.component.ts) / [Custom InputFilter.ts](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example04.component.ts)
+[Demo Page](https://ghiscoding.github.io/angular-slickgrid-demos/#/example04) / [Demo Client Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example04.component.ts) / [Custom InputFilter.ts](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example04.component.ts)
 
 ##### with Angular Component
-[Demo](https://ghiscoding.github.io/angular-slickgrid-demos/#/angular-components) / [Demo Client Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-angular.component.ts)
+[Demo](https://ghiscoding.github.io/angular-slickgrid-demos/#/example26) / [Demo Client Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example26.component.ts)
 
 ### Description
 You can also create your own Custom Filter with any html/css you want and/or jQuery library you wish to use. Latest version now supports Custom Filter with Angular Component, see [Example 22](https://ghiscoding.github.io/angular-slickgrid-demos/#/angular-components)
@@ -21,7 +21,7 @@ You can also create your own Custom Filter with any html/css you want and/or jQu
 
 ### How to use Custom Filter?
 1. You first need to create a `class` using the [Filter interface](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/filter.interface.ts). Make sure to create all necessary public properties and functions.
- - You can see a demo with a [custom-inputFilter.ts](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example04.component.ts) that is used in the [demo - example 4](https://ghiscoding.github.io/angular-slickgrid-demos/#/clientside)
+ - You can see a demo with a [custom-inputFilter.ts](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example04.component.ts) that is used in the [demo - example 4](https://ghiscoding.github.io/angular-slickgrid-demos/#/example04)
 2. Simply set the `columnDefinition.filter.model` to your new custom Filter class and instantiate it with `new` (you can also use dependency injection in the constructor if you wish). Here is an example with a custom input filter:
 ```typescript
 // define you columns, in this demo Effort Driven will use a Select Filter
@@ -107,7 +107,7 @@ this.columnDef.filter.collection.forEach((option: SelectOption) => {
 ```
 
 ## Custom Filter with Angular Components
-You can see them in [Example 22](https://ghiscoding.github.io/angular-slickgrid-demos/#/angular-components) which have both Custom Editors & Filters which uses Angular Components. The 2nd column "Assignee" is the column that uses both (it uses `ng-select` 3rd party lib wrapped in an Angular Components [here](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/filter-ng-select.component.ts)) and you need to create a Custom Filter like [here](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/custom-angularComponentFilter.ts) and use that Custom Filter in your column definition like [here](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-angular.component.ts#L109).
+You can see them in [Example 22](https://ghiscoding.github.io/angular-slickgrid-demos/#/example22) which have both Custom Editors & Filters which uses Angular Components. The 2nd column "Assignee" is the column that uses both (it uses `ng-select` 3rd party lib wrapped in an Angular Components [here](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/filter-ng-select.component.ts)) and you need to create a Custom Filter like [here](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/custom-angularComponentFilter.ts) and use that Custom Filter in your column definition like [here](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example26.component.ts#L109).
 
 Personally I don't find this very straightforward and I don't recommend using Angular Components for Editors/Filters as it adds a lot of boilerplate (compare to 1 step with a jQuery Custom Filter) but if you really wish to go that route, it's now possible following the steps shown below.
 

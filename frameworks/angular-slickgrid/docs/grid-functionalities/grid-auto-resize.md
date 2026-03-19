@@ -17,7 +17,7 @@ Almost all grids from the demos are using the auto-resize feature, and the featu
 
 ### Demo
 
-[Demo Page](https://ghiscoding.github.io/angular-slickgrid-demos/#/resize-by-content) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-resize-by-content.component.ts)
+[Demo Page](https://ghiscoding.github.io/angular-slickgrid-demos/#/example32) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example32.component.ts)
 
 ### Usage
 

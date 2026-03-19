@@ -4,7 +4,7 @@
 - [Custom Commands](#custom-commands)
 - [Dynamic Command List Builder](#advanced-dynamic-command-list-builder)
   - [Custom Menu Item Rendering](#custom-menu-item-rendering)
-  - [Custom Menu Slots](../menu-slots.md)
+  - [Custom Menu Slots](menu-slots.md)
   - [Customize icon for all default commands](#how-to-change-an-icon-of-all-default-commands)
 
 ## Grid Menu

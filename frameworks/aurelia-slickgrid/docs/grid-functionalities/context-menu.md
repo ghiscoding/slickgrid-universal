@@ -4,7 +4,7 @@
 - [Override Callback Methods](#override-callback-methods)
 - [How to add Translations](#how-to-add-translations)
 - [Default Internal Commands](#default-internal-commands)
-- [Show only over Certain Columns](https://github.com#show-menu-only-over-certain-columns)
+- [Show only over Certain Columns](#show-menu-only-over-certain-columns)
 - [How to Disable Context Menu](#how-to-disable-the-context-menu)
 - [UI Sample](#ui-sample)
 

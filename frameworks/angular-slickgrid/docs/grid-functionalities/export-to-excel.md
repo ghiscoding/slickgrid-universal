@@ -17,7 +17,7 @@ You can Export to Excel, it will create an Excel file with the `.xlsx` default e
 **NOTE:** this is an opt-in Service, you must download the necessary Service from `@slickgrid-universal/excel-export` and instantiate it in your grid options via `registerExternalResources`, see multiple examples below.
 
 ### Demo
-[Demo Page](https://ghiscoding.github.io/angular-slickgrid-demos/#/localization) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/grid-localization.component.ts)
+[Demo Page](https://ghiscoding.github.io/angular-slickgrid-demos/#/example12) / [Demo Component](https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example12.component.ts)
 
 ### CSP (Content Security Policy)
 Since we use the library `Excel-Builder-Vanilla`, which itself uses `fflate` as a dependency, that library uses Web Worker when it can which might throw a CSP error.
@@ -144,7 +144,7 @@ this.gridOptions = {
 ```
 
 ### Styling the Header Titles
-By default the header titles (first row) will be styled as Bold text, however you can choose to style them differently with custom styles as shown below. To find out what styling you can use, you can take a look at Excel Builder-Vanilla [Documentation](https://ghiscoding.gitbook.io/excel-builder-vanilla/cookbook/fonts-and-colors) website. The code shown below is used in [Example 26](https://ghiscoding.github.io/angular-slickgrid-demos/#/context) if you wish to see the result.
+By default the header titles (first row) will be styled as Bold text, however you can choose to style them differently with custom styles as shown below. To find out what styling you can use, you can take a look at Excel Builder-Vanilla [Documentation](https://ghiscoding.gitbook.io/excel-builder-vanilla/cookbook/fonts-and-colors) website. The code shown below is used in [Example 26](https://ghiscoding.github.io/angular-slickgrid-demos/#/example26) if you wish to see the result.
 
 ```ts
 this.gridOptions = {
@@ -231,7 +231,7 @@ export class MySample {
 ```
 
 ### Show Loading Process Spinner
-If you have lots of data, you might want to show a spinner telling the user that something is happening. You can use the Event Emitters `(onBeforeExportToExcel)` to start your spinner and then `(onAfterExportToExcel)` to stop the spinner once the process is done. You can see a this [Grouping Example](https://ghiscoding.github.io/angular-slickgrid-demos/#/grouping) demo which has this feature enabled.
+If you have lots of data, you might want to show a spinner telling the user that something is happening. You can use the Event Emitters `(onBeforeExportToExcel)` to start your spinner and then `(onAfterExportToExcel)` to stop the spinner once the process is done. You can see a this [Grouping Example](https://ghiscoding.github.io/angular-slickgrid-demos/#/example13) demo which has this feature enabled.
 
 #### View
 ```html
