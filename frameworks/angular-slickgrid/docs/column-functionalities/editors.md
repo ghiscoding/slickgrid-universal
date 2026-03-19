@@ -7,7 +7,7 @@
 - [Perform an Action after Inline Edit](#perform-an-action-after-inline-edit)
 - [How to prevent Editor from going to the next bottom cell](#how-to-prevent-editor-from-going-to-the-next-bottom-cell)
 - [onClick Action Editor (icon click)](#onclick-action-editor-icon-click)
-- [AutoComplete Editor](editors/AutoComplete-Editor.md)
+- [AutoComplete Editor](editors/autocomplete-editor.md)
 - [Select (single/multi) Editors](editors/select-dropdown-editor.md)
 - [Editor Options](#editor-options)
 - [Validators](#validators)
