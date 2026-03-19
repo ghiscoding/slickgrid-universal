@@ -103,13 +103,13 @@ gridOptions = {
 }
 ```
 
-There's also a new Renderer similar to Slots but implemented with native code to make it cross-platform compatible. The usage is actually very similar to how you would use a cell Formatter. You can see a new [Example 40](https://ghiscoding.github.io/slickgrid-universal/#/example40) demoing this new feature and also the command builder mentioned above. Go to [Menu Slots documentation](https://ghiscoding.gitbook.io/slickgrid-universal/grid-functionalities/menu-slots) to read more about this new feature.
+There's also a new Renderer similar to Slots but implemented with native code to make it cross-platform compatible. The usage is actually very similar to how you would use a cell Formatter. You can see a new [Example 40](https://ghiscoding.github.io/slickgrid-universal/#/example40) demoing this new feature and also the command builder mentioned above. Go to [Menu Slots documentation](../grid-functionalities/menu-slots) to read more about this new feature.
 
 > There's also a new `columnListBuilder` which is similar to the other builder but for Columns, it can be useful as well to sort and/or filter columns.
 
 ##### Menu Options `optionItems` (deprecated)
 
-Menu Options list, using `optionItems` are now deprecated and will be removed in next major v11. That is quite similar to Command List and barely anyone uses it, so let's remove it in v11 and just use `commandItems` instead (see [docs](https://ghiscoding.gitbook.io/slickgrid-universal/column-functionalities/cell-menu#default-usage) for both usages).
+Menu Options list, using `optionItems` are now deprecated and will be removed in next major v11. That is quite similar to Command List and barely anyone uses it, so let's remove it in v11 and just use `commandItems` instead (see [docs](../column-functionalities/cell-menu#default-usage) for both usages).
 
 ### Tooltips Outside the Grid
 
@@ -298,7 +298,7 @@ gridOptions = {
 
 ##### Menu Options `optionItems` (deprecated)
 
-Menu Options list, using `optionItems` are now deprecated and will be removed in next major v11. That is quite similar to Command List and barely anyone uses it, so let's remove it in v11 and just use `commandItems` instead (see [docs](https://ghiscoding.gitbook.io/slickgrid-universal/column-functionalities/cell-menu#default-usage) for both usages).
+Menu Options list, using `optionItems` are now deprecated and will be removed in next major v11. That is quite similar to Command List and barely anyone uses it, so let's remove it in v11 and just use `commandItems` instead (see [docs](../column-functionalities/cell-menu#default-usage) for both usages).
 
 ---
 
