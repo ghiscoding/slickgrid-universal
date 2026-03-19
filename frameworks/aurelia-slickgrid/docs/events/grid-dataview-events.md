@@ -1,4 +1,4 @@
-SlickGrid has a nice amount of events, see the full list of [Available Events](Available-Events.md), which you can use by simply hook a `subscribe` to them (the `subscribe` are a custom `SlickGrid Event`). There are 2 options to get access to all these events (For the first 2 you will have to get access to the `Grid` and the `DataView` objects which are exposed in `Aurelia-Slickgrid`):
+SlickGrid has a nice amount of events, see the full list of [Available Events](available-events.md), which you can use by simply hook a `subscribe` to them (the `subscribe` are a custom `SlickGrid Event`). There are 2 options to get access to all these events (For the first 2 you will have to get access to the `Grid` and the `DataView` objects which are exposed in `Aurelia-Slickgrid`):
 
 **From the list below, the number 1. is by far the easiest and preferred way**
 
@@ -6,7 +6,7 @@ SlickGrid has a nice amount of events, see the full list of [Available Events](A
 2. with `bindable` values, so you can just call `gridChanged` and/or `dataviewChanged`
 
 ### 1. Example with `delegate` Event Dispatch `(asgOnX)`
-#### Event Dispatch is the preferred way to access any of the [Available Events](Available-Events.md)
+#### Event Dispatch is the preferred way to access any of the [Available Events](available-events.md)
 All the Slick Grid events (and DataView) are exposed through Event Dispatch and are available as `(sgOnX)`and that's it.
 
 ##### View

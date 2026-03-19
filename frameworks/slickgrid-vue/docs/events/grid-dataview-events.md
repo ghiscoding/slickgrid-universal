@@ -1,4 +1,4 @@
-SlickGrid has a nice amount of events, see the full list of [Available Events](Available-Events.md), which you can use by simply hook a `subscribe` to them (the `subscribe` are a custom `SlickGrid Event`). There are 2 options to get access to all these events (For the first 2 you will have to get access to the `Grid` and the `DataView` objects which are exposed in `Slickgrid-Vue`):
+SlickGrid has a nice amount of events, see the full list of [Available Events](available-events.md), which you can use by simply hook a `subscribe` to them (the `subscribe` are a custom `SlickGrid Event`). There are 2 options to get access to all these events (For the first 2 you will have to get access to the `Grid` and the `DataView` objects which are exposed in `Slickgrid-Vue`):
 
 **From the list below, the number 1. is by far the easiest and preferred way**
 

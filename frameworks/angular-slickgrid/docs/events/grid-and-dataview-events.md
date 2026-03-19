@@ -1,4 +1,4 @@
-See the full list of [Available Events](Available-Events.md) which you can use by simply hook a `subscribe` to them (the `subscribe` are a custom `SlickGrid Event` and are **NOT** an `RxJS Observable` type but they very similar). You can access them in Slickgrid-Universal by following the documentation below
+See the full list of [Available Events](available-events.md) which you can use by simply hook a `subscribe` to them (the `subscribe` are a custom `SlickGrid Event` and are **NOT** an `RxJS Observable` type but they very similar). You can access them in Slickgrid-Universal by following the documentation below
 
 ##### View
 ```html
@@ -64,7 +64,7 @@ Bind `(onDataviewCreated)` and `(onGridCreated)` if you want to call any `SlickG
 ```
 
 ##### Component
-Once the `Grid` and `DataView` are ready, you can subscribe to any [Available Events](../events/Available-Events.md) and don't forget to **unsubscribe** to avoid unwanted behaviors and memory leak when your component is destroyed. See below for the `gridReady(grid)` and `dataviewReady(dataview)` functions.
+Once the `Grid` and `DataView` are ready, you can subscribe to any [Available Events](../events/available-events.md) and don't forget to **unsubscribe** to avoid unwanted behaviors and memory leak when your component is destroyed. See below for the `gridReady(grid)` and `dataviewReady(dataview)` functions.
 - The example shown below is subscribing to `onClick` and ask the user to confirm a delete, then will delete it from the `DataView`.
 - Technically, the `Grid` and `DataView` are created at the same time by `Angular-Slickgrid`, so it's ok to call the `dataViewObj` within some code of the `gridReady()` function since `DataView` object will already be available at that time.
 
