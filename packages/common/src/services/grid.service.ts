@@ -155,7 +155,7 @@ export class GridService {
    * @return object with columnDef and dataContext
    */
   getColumnFromEventArguments(args: CellArgs): OnEventArgs {
-    if (!args?.grid || !args.grid.getColumns || !args.grid.getDataItem) {
+    if (!args?.grid || !args.grid.getColumnByIdx || !args.grid.getDataItem) {
       throw new Error(
         '[Slickgrid-Universal] To get the column definition and data, we need to have these arguments passed as objects (row, cell, grid)'
       );
@@ -164,7 +164,7 @@ export class GridService {
     return {
       row: args.row,
       cell: args.cell,
-      columnDef: args.grid.getColumns()[args.cell],
+      columnDef: args.grid.getColumnByIdx(args.cell) || ({} as Column),
       dataContext: args.grid.getDataItem(args.row),
       dataView: this._dataView,
       grid: this._grid,

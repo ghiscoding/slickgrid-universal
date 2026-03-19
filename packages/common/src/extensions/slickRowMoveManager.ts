@@ -167,7 +167,7 @@ export class SlickRowMoveManager {
   }
 
   isHandlerColumn(columnIndex: number | string): boolean {
-    return /move|selectAndMove/.test(this._grid.getColumns()[+columnIndex].behavior || '');
+    return /move|selectAndMove/.test(this._grid.getColumnByIdx(+columnIndex)?.behavior || '');
   }
 
   // --

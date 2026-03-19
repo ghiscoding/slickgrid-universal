@@ -1,5 +1,5 @@
 import { SlickEventData, SlickEventHandler, type SlickDataView, type SlickGrid } from '../core/index.js';
-import type { Column, OnEventArgs } from './../interfaces/index.js';
+import type { OnEventArgs } from './../interfaces/index.js';
 
 export class GridEventService {
   protected _eventHandler: SlickEventHandler;
@@ -25,10 +25,10 @@ export class GridEventService {
       if (!e || !args || !grid || args.cell === undefined || !grid.getColumns || !grid.getDataItem) {
         return;
       }
-      const column: Column = grid.getColumns()[args.cell];
+      const column = grid.getColumnByIdx(args.cell);
 
       // if the column definition has a onBeforeEditCell property (a callback function), then run it
-      if (typeof column.onBeforeEditCell === 'function') {
+      if (typeof column?.onBeforeEditCell === 'function') {
         // add to the output gridOptions & dataView since we'll need them inside the AJAX column.onBeforeEditCell
         const returnedArgs: OnEventArgs = {
           row: args.row!,
@@ -54,10 +54,10 @@ export class GridEventService {
       if (!e || !args || !grid || args.cell === undefined || !grid.getColumns || !grid.getDataItem) {
         return;
       }
-      const column: Column = grid.getColumns()[args.cell];
+      const column = grid.getColumnByIdx(args.cell);
 
       // if the column definition has a onCellChange property (a callback function), then run it
-      if (typeof column.onCellChange === 'function') {
+      if (typeof column?.onCellChange === 'function') {
         // add to the output gridOptions & dataView since we'll need them inside the AJAX column.onCellChange
         const returnedArgs: OnEventArgs = {
           row: args.row,
@@ -82,10 +82,10 @@ export class GridEventService {
       if (!e || !args || !grid || args.cell === undefined || !grid.getColumns || !grid.getDataItem) {
         return;
       }
-      const column: Column = grid.getColumns()[args.cell];
+      const column = grid.getColumnByIdx(args.cell);
 
       // if the column definition has a onCellClick property (a callback function), then run it
-      if (typeof column.onCellClick === 'function') {
+      if (typeof column?.onCellClick === 'function') {
         // add to the output gridOptions & dataView since we'll need them inside the AJAX column.onClick
         const returnedArgs: OnEventArgs = {
           row: args.row,

@@ -41,6 +41,7 @@ const gridStub = {
   getCellFromEvent: vi.fn(),
   getCellNode: vi.fn(),
   getColumns: vi.fn(),
+  getColumnByIdx: vi.fn(),
   getContainerNode: vi.fn(),
   getData: () => dataviewStub,
   getEditorLock: () => getEditorLockMock,
@@ -168,6 +169,7 @@ describe('SlickCustomTooltip plugin', () => {
     const mockColumns = [{ id: 'firstName', field: 'firstName', disableTooltip: true }] as Column[];
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -180,6 +182,7 @@ describe('SlickCustomTooltip plugin', () => {
     const mockColumns = [{ id: 'firstName', field: 'firstName', disableTooltip: true }] as Column[];
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -192,6 +195,7 @@ describe('SlickCustomTooltip plugin', () => {
     const mockColumns = [{ id: 'firstName', field: 'firstName', disableTooltip: true }] as Column[];
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -204,6 +208,7 @@ describe('SlickCustomTooltip plugin', () => {
     const mockColumns = [{ id: 'firstName', field: 'firstName', disableTooltip: true }] as Column[];
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -218,6 +223,7 @@ describe('SlickCustomTooltip plugin', () => {
     const mockColumns = [{ id: 'firstName', field: 'firstName' }] as Column[];
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -235,6 +241,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -255,6 +262,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -277,6 +285,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -296,6 +305,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -315,6 +325,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -334,6 +345,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -353,6 +365,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -374,6 +387,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
     const hideColumnSpy = vi.spyOn(plugin, 'hideTooltip');
 
@@ -402,6 +416,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
     const hideColumnSpy = vi.spyOn(plugin, 'hideTooltip');
 
@@ -430,6 +445,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -449,6 +465,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -479,6 +496,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
     (getOffset as Mock)
       .mockReturnValueOnce({ top: 100, left: 333, height: 75, width: 400 }) // mock cell position
@@ -512,6 +530,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
     (getOffset as Mock)
       .mockReturnValueOnce({ top: 100, left: 1030, height: 75, width: 400 }) // mock cell position
@@ -546,6 +565,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -565,6 +585,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -585,6 +606,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -609,6 +631,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -637,6 +660,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
     const consoleSpy = vi.spyOn(console, 'error').mockReturnValue();
 
@@ -665,6 +689,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
     (getOffset as Mock).mockReturnValueOnce({ top: 100, left: 1030, height: 75, width: 400 }); // mock cell position
 
@@ -701,6 +726,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -733,6 +759,7 @@ describe('SlickCustomTooltip plugin', () => {
       vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
       vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
       vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
       plugin.init(gridStub, container);
@@ -764,6 +791,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -787,6 +815,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -814,6 +843,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -841,6 +871,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -868,6 +899,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -896,6 +928,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -920,6 +953,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -951,6 +985,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -980,6 +1015,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -1003,6 +1039,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -1034,6 +1071,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -1061,6 +1099,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -1090,6 +1129,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -1125,6 +1165,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -1156,6 +1197,7 @@ describe('SlickCustomTooltip plugin', () => {
     vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
     vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
 
     plugin.init(gridStub, container);
@@ -1433,6 +1475,7 @@ describe('SlickCustomTooltip plugin', () => {
       vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
       vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
       vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ action: 'test' });
 
       plugin.init(gridStub, container);
@@ -1466,6 +1509,7 @@ describe('SlickCustomTooltip plugin', () => {
       vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
       vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
       vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ action: 'test' });
 
       plugin.init(gridStub, container);
@@ -1500,6 +1544,7 @@ describe('SlickCustomTooltip plugin', () => {
       vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
       vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
       vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ action: 'test' });
 
       plugin.init(gridStub, container);
@@ -1528,6 +1573,7 @@ describe('SlickCustomTooltip plugin', () => {
       vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
       vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
       vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ action: 'test' });
 
       plugin.init(gridStub, container);
@@ -1556,6 +1602,7 @@ describe('SlickCustomTooltip plugin', () => {
       vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
       vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
       vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ action: 'test' });
 
       plugin.init(gridStub, container);
@@ -1588,6 +1635,7 @@ describe('SlickCustomTooltip plugin', () => {
       vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
       vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
       vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ action: 'test' });
 
       plugin.init(gridStub, container);
@@ -1623,6 +1671,7 @@ describe('SlickCustomTooltip plugin', () => {
       vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
       vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
       vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ action: 'test' });
 
       plugin.init(gridStub, container);
@@ -1676,6 +1725,7 @@ describe('SlickCustomTooltip plugin', () => {
       vi.spyOn(gridStub, 'getCellFromEvent').mockReturnValue({ cell: 0, row: 1 });
       vi.spyOn(gridStub, 'getCellNode').mockReturnValue(cellNode);
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+      vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
       vi.spyOn(dataviewStub, 'getItem').mockReturnValue({ name: 'test' });
 
       plugin.init(gridStub, container);

@@ -46,6 +46,7 @@ const gridStub = {
   getCellFromEvent: vi.fn(),
   getCellNode: vi.fn(),
   getColumns: vi.fn(),
+  getColumnByIdx: vi.fn(),
   getDataItem: vi.fn(),
   getData: () => dataviewStub,
   getEditorLock: () => getEditorLockMock,

@@ -36,6 +36,7 @@ const gridStub = {
     { id: 'firstName', field: 'firstName', name: 'First Name' },
     { id: 'lastName', field: 'lastName', name: 'Last Name' },
   ] as Column[]),
+  getColumnByIdx: vi.fn(),
   getData: () => dataViewStub,
   getDataItem: vi.fn(),
   getDataLength: vi.fn(),
@@ -275,11 +276,12 @@ describe('CellExternalCopyManager', () => {
     describe('keyDown handler', () => {
       beforeEach(() => {
         vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
         vi.spyOn(gridStub, 'getDataLength').mockReturnValue(2);
         vi.spyOn(gridStub, 'getData').mockReturnValue([
           { firstName: 'John', lastName: 'Doe', age: 30 },
           { firstName: 'Jane', lastName: 'Doe' },
-        ]);
+        ] as any[]);
         vi.spyOn(gridStub, 'getDataItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' }).mockReturnValueOnce({ firstName: 'Jane', lastName: 'Doe' });
         vi.spyOn(gridStub, 'hasDataView').mockReturnValue(false);
       });

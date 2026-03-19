@@ -45,6 +45,7 @@ const getEditorLockMock = {
 
 const gridStub = {
   getEditorLock: () => getEditorLockMock,
+  getColumnByIdx: vi.fn(),
   getColumns: vi.fn(),
   getData: () => dataViewStub,
   getDataItem: vi.fn(),
@@ -95,6 +96,7 @@ vi.mock('../../extensions/slickHybridSelectionModel', () => ({
 
 describe('SlickCheckboxSelectColumn Plugin', () => {
   let mockColumns: Column[];
+  let newCols: Column[];
   let plugin: SlickCheckboxSelectColumn;
 
   beforeEach(() => {
@@ -103,9 +105,15 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
       { id: 'lastName', field: 'lastName', name: 'Last Name' },
       { id: 'age', field: 'age', name: 'Age' },
     ];
+    newCols = [
+      { id: '_checkbox_selector', toolTip: 'Select/Deselect All', field: '_checkbox_selector' },
+      { id: 'firstName', field: 'firstName', name: 'First Name' },
+    ];
     plugin = new SlickCheckboxSelectColumn(pubSubServiceStub);
     vi.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(false);
     vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
+    vi.spyOn(gridStub, 'getColumns').mockReturnValue(newCols);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(newCols[0]);
   });
 
   afterEach(() => {
@@ -398,6 +406,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
   it('should call "toggleRowSelection" and expect toggled row to be added and called by the "setSelectedRows"', () => {
     vi.spyOn(gridStub, 'getDataItem').mockReturnValue({ firstName: 'John', lastName: 'Doe', age: 30 });
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(mockColumns[0]);
     vi.spyOn(gridStub, 'getSelectedRows').mockReturnValue([1, 2]);
     const setActiveCellSpy = vi.spyOn(gridStub, 'setActiveCell');
     const setSelectedRowSpy = vi.spyOn(gridStub, 'setSelectedRows');
@@ -642,12 +651,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
   });
 
   it('should trigger "onClick" event and expect toggleRowSelection to be called', () => {
-    const newCols = [
-      { id: '_checkbox_selector', toolTip: 'Select/Deselect All', field: '_checkbox_selector' },
-      { id: 'firstName', field: 'firstName', name: 'First Name' },
-    ];
     const toggleRowSpy = vi.spyOn(plugin, 'toggleRowSelectionWithEvent');
-    vi.spyOn(gridStub, 'getColumns').mockReturnValue(newCols);
     plugin.create(newCols, { checkboxSelector: { columnIndexPosition: 0 } });
 
     plugin.init(gridStub);
@@ -668,6 +672,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     const toggleRowSpy = vi.spyOn(plugin, 'toggleRowSelectionWithEvent');
     const onToggleStartMock = vi.fn();
     vi.spyOn(gridStub, 'getSelectedRows').mockReturnValueOnce([1, 2]);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue({ id: '_checkbox_selector', toolTip: 'Select/Deselect All', field: '_checkbox_selector' });
 
     plugin.init(gridStub);
     plugin.setOptions({ onRowToggleStart: onToggleStartMock });
@@ -689,6 +694,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     const toggleRowSpy = vi.spyOn(plugin, 'toggleRowSelectionWithEvent');
     const onToggleEndMock = vi.fn();
     vi.spyOn(gridStub, 'getSelectedRows').mockReturnValueOnce([1, 2]);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue({ id: '_checkbox_selector', toolTip: 'Select/Deselect All', field: '_checkbox_selector' });
 
     plugin.init(gridStub);
     plugin.setOptions({ onRowToggleEnd: onToggleEndMock });
@@ -710,6 +716,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     const toggleRowSpy = vi.spyOn(plugin, 'toggleRowSelectionWithEvent');
     vi.spyOn(gridStub.getEditorLock(), 'isActive').mockReturnValue(true);
     vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(false);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue({ id: '_checkbox_selector', toolTip: 'Select/Deselect All', field: '_checkbox_selector' });
 
     plugin.init(gridStub);
     const checkboxElm = document.createElement('input');
@@ -735,6 +742,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     const keyboardEvent = addVanillaEventPropagation(new Event('keyDown'), '', ' ', checkboxElm);
     const preventDefaultSpy = vi.spyOn(keyboardEvent, 'preventDefault');
     const stopImmediatePropagationSpy = vi.spyOn(keyboardEvent, 'stopImmediatePropagation');
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue({ id: '_checkbox_selector', toolTip: 'Select/Deselect All', field: '_checkbox_selector' });
     gridStub.onKeyDown.notify({ cell: 0, row: 2, grid: gridStub }, keyboardEvent);
 
     expect(plugin).toBeTruthy();
@@ -751,6 +759,7 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     const toggleRowSpy = vi.spyOn(plugin, 'toggleRowSelectionWithEvent');
     vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
     vi.spyOn(gridStub, 'getColumns').mockReturnValue(newCols);
+    vi.spyOn(gridStub, 'getColumnByIdx').mockReturnValue(newCols[0]);
 
     plugin.init(gridStub);
     const checkboxElm = document.createElement('input');
