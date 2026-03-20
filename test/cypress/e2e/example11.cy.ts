@@ -537,7 +537,7 @@ describe('Example 11 - Batch Editing', () => {
         .find('input[type="checkbox"]:checked')
         .should('have.length', 11 - 2);
 
-      cy.get('.slick-column-picker-list li .mdi-icon-picker-uncheck').each(($child, index) => {
+      cy.get('.slick-column-picker-list li .sgi-icon-picker-uncheck').each(($child, index) => {
         if (index < 2) {
           $child.trigger('click');
         }
@@ -1262,7 +1262,7 @@ describe('Example 11 - Batch Editing', () => {
         .find('input[type="checkbox"]:checked')
         .should('have.length', 11 - 1);
 
-      cy.get('.slick-column-picker-list li .mdi-icon-picker-uncheck').each(($child, index) => {
+      cy.get('.slick-column-picker-list li .sgi-icon-picker-uncheck').each(($child, index) => {
         if (index < 1) {
           $child.trigger('click');
         }

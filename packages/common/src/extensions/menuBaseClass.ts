@@ -202,7 +202,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
   protected handleColumnPickerItemClick(event: DOMEvent<HTMLInputElement>): void {
     const controlType = this._camelPluginName || 'columnPicker';
     const iconContainerElm = event.target?.closest('.icon-checkbox-container') as HTMLDivElement;
-    const iconElm = iconContainerElm?.querySelector<HTMLDivElement>('.mdi');
+    const iconElm = iconContainerElm?.querySelector<HTMLDivElement>('.sgi');
     const isChecked = !!event.target.checked;
     event.target.ariaChecked = String(isChecked);
     this.togglePickerCheckbox(iconElm, isChecked);
@@ -428,7 +428,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
 
   protected togglePickerCheckbox(iconElm: HTMLDivElement | null, checked = false): void {
     if (iconElm) {
-      iconElm.className = `mdi ${checked ? 'mdi-icon-picker-check' : 'mdi-icon-picker-uncheck'}`;
+      iconElm.className = `sgi ${checked ? 'sgi-icon-picker-check' : 'sgi-icon-picker-uncheck'}`;
     }
   }
 
@@ -450,7 +450,7 @@ export class MenuBaseClass<M extends MenuPlugin | HeaderButton | ColumnPicker | 
       dataset: inputData,
       tabIndex: -1,
     });
-    const colInputDivElm = createDomElement('div', { className: `mdi ${checked ? 'mdi-icon-picker-check' : 'mdi-icon-picker-uncheck'}` });
+    const colInputDivElm = createDomElement('div', { className: `sgi ${checked ? 'sgi-icon-picker-check' : 'sgi-icon-picker-uncheck'}` });
     const labelSpanElm = createDomElement('span', { className: 'checkbox-label' });
     divElm.appendChild(inputElm);
     divElm.appendChild(colInputDivElm);

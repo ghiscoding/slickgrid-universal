@@ -1326,11 +1326,11 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       cy.get('@firstPickerLabel').should('have.text', 'Title');
       cy.get('@firstPickerLabel').click();
 
-      cy.get('[data-id="_checkbox_selector"] .icon-checkbox-container .mdi-icon-check').should('exist');
+      cy.get('[data-id="_checkbox_selector"] .icon-checkbox-container .sgi-icon-check').should('exist');
 
       cy.get('@firstPickerLabel').click();
 
-      cy.get('[data-id="_checkbox_selector"] .icon-checkbox-container .mdi-icon-check').should('exist');
+      cy.get('[data-id="_checkbox_selector"] .icon-checkbox-container .sgi-icon-check').should('exist');
       cy.get('.slick-column-picker:visible').find('.close').trigger('click').click();
     });
 
@@ -1343,10 +1343,10 @@ describe('Example 07 - Row Move & Checkbox Selector Selector Plugins', () => {
       cy.get('@firstPickerLabel').should('have.text', 'Title');
       cy.get('@firstPickerLabel').click();
 
-      cy.get('[data-id="_checkbox_selector"] .icon-checkbox-container .mdi-icon-partial-check').should('exist');
+      cy.get('[data-id="_checkbox_selector"] .icon-checkbox-container .sgi-icon-partial-check').should('exist');
 
       cy.get('@firstPickerLabel').click();
-      cy.get('[data-id="_checkbox_selector"] .icon-checkbox-container .mdi-icon-partial-check').should('exist');
+      cy.get('[data-id="_checkbox_selector"] .icon-checkbox-container .sgi-icon-partial-check').should('exist');
       cy.get('.slick-column-picker:visible').find('.close').trigger('click').click();
     });
   });

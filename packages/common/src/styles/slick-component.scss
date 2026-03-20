@@ -39,7 +39,6 @@
   }
 }
 
-
 // ----------------------------------------------
 // Slick Empty Data Warning Component
 // ----------------------------------------------
@@ -63,7 +62,6 @@
     column-gap: 5px;
   }
 }
-
 
 // ----------------------------------------------
 // Slick Pagination Component
@@ -157,18 +155,11 @@
         }
 
         // to make button borders overlap
-        &.seek-prev, &.seek-end {
+        &.seek-prev,
+        &.seek-end {
           margin-left: -1px;
         }
 
-        a.icon-seek-first,
-        a.icon-seek-prev,
-        a.icon-seek-next,
-        a.icon-seek-end {
-          background-color: currentColor;
-          height: var(--slick-pagination-icon-size, v.$slick-pagination-icon-size);
-          width: var(--slick-pagination-icon-size, v.$slick-pagination-icon-size);
-        }
         a.icon-seek-first {
           @include svg.generateSvgStyle('slick-pagination-icon-seek-first-svg', v.$slick-pagination-icon-seek-first-svg-path);
         }
@@ -184,7 +175,10 @@
           margin-left: -1px;
         }
 
-        a[class*="icon-seek-"] {
+        a[class*='icon-seek-'] {
+          background-color: currentColor;
+          height: var(--slick-pagination-icon-size, v.$slick-pagination-icon-size);
+          width: var(--slick-pagination-icon-size, v.$slick-pagination-icon-size);
           color: var(--slick-pagination-icon-color, v.$slick-pagination-icon-color);
         }
 
@@ -192,7 +186,7 @@
           cursor: not-allowed;
           background-color: var(--slick-pagination-icon-seek-background-color, v.$slick-pagination-icon-seek-disabled-bg-color);
           border-color: var(--slick-pagination-button-border-disabled-color, v.$slick-pagination-button-border-disabled-color);
-          a[class*="icon-seek-"] {
+          a[class*='icon-seek-'] {
             color: var(--slick-pagination-icon-seek-disabled-color, v.$slick-pagination-icon-seek-disabled-color);
           }
         }

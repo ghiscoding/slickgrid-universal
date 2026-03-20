@@ -154,7 +154,7 @@ export class SlickDraggableGrouping {
           title: this._addonOptions.toggleAllPlaceholderText ?? '',
           style: { display: 'none' },
         });
-        const groupTogglerIconElm = createDomElement('span', { className: 'slick-group-toggle-all-icon' }, this._groupToggler);
+        const groupTogglerIconElm = createDomElement('span', { className: 'sgi slick-group-toggle-all-icon' }, this._groupToggler);
 
         if (this.gridOptions.enableTranslate && this._addonOptions.toggleAllButtonTextKey) {
           this._addonOptions.toggleAllButtonText = this.extensionUtility.translateWhenEnabledAndServiceExist(

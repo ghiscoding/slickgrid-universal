@@ -169,11 +169,11 @@ export class SlickPaginationComponent implements BasePaginationComponent {
     const leftUlElm = createDomElement('ul', { className: 'pagination' }, leftNavElm);
     this._seekFirstElm = createDomElement('li', { className: 'page-item seek-first' }, leftUlElm);
     this._seekFirstElm.appendChild(
-      createDomElement('a', { className: 'page-link icon-seek-first', ariaLabel: 'First Page', role: 'button' })
+      createDomElement('a', { className: 'page-link sgi icon-seek-first', ariaLabel: 'First Page', role: 'button' })
     );
     this._seekPrevElm = createDomElement('li', { className: 'page-item seek-prev' }, leftUlElm);
     this._seekPrevElm.appendChild(
-      createDomElement('a', { className: 'page-link icon-seek-prev', ariaLabel: 'Previous Page', role: 'button' })
+      createDomElement('a', { className: 'page-link sgi icon-seek-prev', ariaLabel: 'Previous Page', role: 'button' })
     );
 
     const pageNumberSectionElm = this.createPageNumberSection();
@@ -182,9 +182,13 @@ export class SlickPaginationComponent implements BasePaginationComponent {
     const rightNavElm = createDomElement('nav', { ariaLabel: 'Page navigation' });
     const rightUlElm = createDomElement('ul', { className: 'pagination' }, rightNavElm);
     this._seekNextElm = createDomElement('li', { className: 'page-item seek-next' }, rightUlElm);
-    this._seekNextElm.appendChild(createDomElement('a', { className: 'page-link icon-seek-next', ariaLabel: 'Next Page', role: 'button' }));
+    this._seekNextElm.appendChild(
+      createDomElement('a', { className: 'page-link sgi icon-seek-next', ariaLabel: 'Next Page', role: 'button' })
+    );
     this._seekEndElm = createDomElement('li', { className: 'page-item seek-end' }, rightUlElm);
-    this._seekEndElm.appendChild(createDomElement('a', { className: 'page-link icon-seek-end', ariaLabel: 'Last Page', role: 'button' }));
+    this._seekEndElm.appendChild(
+      createDomElement('a', { className: 'page-link sgi icon-seek-end', ariaLabel: 'Last Page', role: 'button' })
+    );
 
     // append both navs to container
     paginationElm.appendChild(divNavContainerElm);

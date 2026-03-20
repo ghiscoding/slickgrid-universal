@@ -666,7 +666,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
       if (dataContext[`${this._keyPrefix}isPadding`]) {
         // render nothing
       } else if (dataContext[`${this._keyPrefix}collapsed`]) {
-        let collapsedClasses = `${this._addonOptions.cssClass || ''} expand `;
+        let collapsedClasses = `sgi ${this._addonOptions.cssClass || ''} expand `;
         if (this._addonOptions.collapsedClass) {
           collapsedClasses += this._addonOptions.collapsedClass;
         }
@@ -681,7 +681,7 @@ export class SlickRowDetailView implements ExternalResource, UniversalRowDetailV
         }
 
         // sneaky extra </div> inserted here-----------------v
-        let expandedClasses = `${this._addonOptions.cssClass || ''} collapse `;
+        let expandedClasses = `sgi ${this._addonOptions.cssClass || ''} collapse `;
         if (this._addonOptions.expandedClass) {
           expandedClasses += this._addonOptions.expandedClass;
         }

@@ -52,6 +52,16 @@
   }
 }
 
+/* slickgrid internal icons (used for grouping, tree data, pagination, etc..) */
+.sgi {
+  display: inline-flex;
+  align-items: center;
+  background-color: currentColor;
+  font-size: var(--slick-icon-font-size, v.$slick-icon-font-size);
+  width: 1em;
+  height: 1em;
+}
+
 .slickgrid-container {
   outline: 0;
   position: relative;
@@ -603,7 +613,8 @@
       }
       // fix alignment when slick-cell includes slickgrid icons (align bottom will in fact center the icon & text), for example Tree Data/Grouping
       .slick-group-toggle,
-      .mdi {
+      .mdi,
+      .sgi {
         vertical-align: var(--slick-icon-with-text-valign, v.$slick-icon-with-text-valign);
       }
     }

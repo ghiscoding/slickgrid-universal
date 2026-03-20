@@ -572,7 +572,7 @@ export class AutocompleterEditor<T extends AutocompleteItem = any> implements Ed
       dataset: { clear: '' },
     });
     this._clearButtonElm = createDomElement('button', { type: 'button', className: 'btn btn-default btn-clear' });
-    this._clearButtonElm.appendChild(createDomElement('i', { className: 'icon-clear' }));
+    this._clearButtonElm.appendChild(createDomElement('i', { className: 'sgi icon-clear' }));
     this._inputElm = createDomElement(
       'input',
       {

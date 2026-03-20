@@ -157,7 +157,7 @@ export class SlickHeaderMenu extends MenuBaseClass<HeaderMenu> {
       );
 
       // Create icon element inside button container
-      this._headerButtonDivElm.appendChild(createDomElement('span', { className: 'slick-header-menu-icon' }));
+      this._headerButtonDivElm.appendChild(createDomElement('span', { className: 'sgi slick-header-menu-icon' }));
 
       if (this.addonOptions.buttonCssClass) {
         this._headerButtonDivElm.classList.add(...classNameToList(this.addonOptions.buttonCssClass));
