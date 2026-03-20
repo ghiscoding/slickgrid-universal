@@ -35,7 +35,7 @@ export class App {
     const decodedCookie = decodeURIComponent(document.cookie);
     if (decodedCookie !== 'serve-mode=cypress') {
       const ghStarLinkElm = document.createElement('a');
-      ghStarLinkElm.href = 'https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/aurelia-slickgrid';
+      ghStarLinkElm.href = 'https://github.com/ghiscoding/slickgrid-universal';
       const imgStarElm = document.createElement('img');
       imgStarElm.src = 'https://img.shields.io/github/stars/ghiscoding/slickgrid-universal?style=social';
       const ghButtonContainerElm = document.querySelector('.github-button-container');
