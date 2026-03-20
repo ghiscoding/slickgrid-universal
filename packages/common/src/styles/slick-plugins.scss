@@ -174,15 +174,15 @@ li.hidden {
     border: var(--slick-column-picker-icon-border, v.$slick-column-picker-icon-border);
     border-radius: var(--slick-column-picker-icon-border-radius, v.$slick-column-picker-icon-border-radius);
 
-    div.mdi {
+    div.sgi {
       opacity: 1;
       font-size: var(--slick-column-picker-icon-font-size, v.$slick-column-picker-icon-font-size);
       color: var(--slick-column-picker-icon-color, v.$slick-column-picker-icon-color);
 
-      &.mdi-icon-picker-check {
+      &.sgi-icon-picker-check {
         @include svg.generateSvgStyle('slick-column-picker-icon-checked-svg', v.$slick-column-picker-icon-checked-svg-path);
       }
-      &.mdi-icon-picker-uncheck {
+      &.sgi-icon-picker-uncheck {
         @include svg.generateSvgStyle('slick-column-picker-icon-unchecked-svg', v.$slick-column-picker-icon-unchecked-svg-path);
         opacity: var(--slick-column-picker-unchecked-opacity, v.$slick-column-picker-unchecked-opacity); /* unchecked icon */
 
@@ -540,8 +540,6 @@ li.hidden {
   }
 
   .slick-header-menu-icon {
-    display: inline-block;
-    background-color: currentColor;
     color: var(--slick-header-menu-button-icon-color, v.$slick-header-menu-button-icon-color);
     width: 100%;
     height: 100%;
@@ -568,10 +566,6 @@ li.hidden {
   text-align: center;
 
   .slick-row-move-column {
-    background-color: currentColor;
-    display: block;
-    height: 1em;
-    width: 1em;
     font-size: var(--slick-row-move-plugin-icon-font-size, v.$slick-row-move-plugin-icon-font-size);
     color: var(--slick-row-move-plugin-icon-color, v.$slick-row-move-plugin-icon-color);
     cursor: var(--slick-row-move-plugin-cursor, v.$slick-row-move-plugin-cursor);
@@ -628,18 +622,18 @@ li.hidden {
     border: var(--slick-checkbox-icon-border, v.$slick-checkbox-icon-border);
     border-radius: var(--slick-checkbox-icon-border-radius, v.$slick-checkbox-icon-border-radius);
 
-    div.mdi {
+    div.sgi {
       opacity: 1;
       font-size: var(--slick-checkbox-icon-font-size, v.$slick-checkbox-icon-font-size);
       color: var(--slick-checkbox-icon-color, v.$slick-checkbox-icon-color);
 
-      &.mdi-icon-check {
+      &.sgi-icon-check {
         @include svg.generateSvgStyle('slick-checkbox-icon-checked-svg', v.$slick-checkbox-icon-checked-svg-path);
       }
-      &.mdi-icon-partial-check {
+      &.sgi-icon-partial-check {
         @include svg.generateSvgStyle('slick-checkbox-icon-partial-checked-svg', v.$slick-checkbox-icon-partial-checked-svg-path);
       }
-      &.mdi-icon-uncheck {
+      &.sgi-icon-uncheck {
         @include svg.generateSvgStyle('slick-checkbox-icon-unchecked-svg', v.$slick-checkbox-icon-unchecked-svg-path);
         opacity: var(--slick-checkbox-unchecked-opacity, v.$slick-checkbox-unchecked-opacity); /* unchecked icon */
 
@@ -972,10 +966,6 @@ li.hidden {
 
       .slick-group-toggle-all-icon {
         cursor: pointer;
-        display: inline-block;
-        background-color: currentColor;
-        width: 1em;
-        height: 1em;
         color: var(--slick-draggable-group-toggle-all-icon-color, v.$slick-draggable-group-toggle-all-icon-color);
         font-size: var(--slick-draggable-group-toggle-all-icon-font-size, v.$slick-draggable-group-toggle-all-icon-font-size);
         &.expanded {
@@ -1277,10 +1267,6 @@ li.hidden {
     &.expand,
     &.collapse {
       cursor: pointer;
-      background-color: currentColor;
-      display: inline-block;
-      height: 1em;
-      width: 1em;
       color: var(--slick-detail-view-icon-color, v.$slick-detail-view-icon-color);
       font-size: var(--slick-detail-view-icon-font-size, v.$slick-detail-view-icon-font-size);
       &:hover {

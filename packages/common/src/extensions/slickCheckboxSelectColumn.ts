@@ -19,9 +19,9 @@ export interface RowLookup {
   [row: number]: boolean;
 }
 
-const CHECK_ICON = 'mdi-icon-check';
-const UNCHECK_ICON = 'mdi-icon-uncheck';
-const PARTIAL_CHECK_ICON = 'mdi-icon-partial-check';
+const CHECK_ICON = 'sgi-icon-check';
+const UNCHECK_ICON = 'sgi-icon-uncheck';
+const PARTIAL_CHECK_ICON = 'sgi-icon-partial-check';
 const DEFAULT_COLUMN_ID = '_checkbox_selector';
 
 export class SlickCheckboxSelectColumn<T = any> {
@@ -359,7 +359,7 @@ export class SlickCheckboxSelectColumn<T = any> {
         const labelElm = createDomElement('label', { id: 'filter-checkbox-selectall-container', htmlFor: inputId });
         const divElm = createDomElement('div', { className: 'icon-checkbox-container', tabIndex: 0 });
         divElm.appendChild(createDomElement('input', { id: inputId, type: 'checkbox', ariaChecked: 'false', tabIndex: -1 }));
-        divElm.appendChild(createDomElement('div', { className: `mdi ${UNCHECK_ICON}` }));
+        divElm.appendChild(createDomElement('div', { className: `sgi ${UNCHECK_ICON}` }));
 
         labelElm.appendChild(divElm);
         args.node.appendChild(labelElm);
@@ -418,7 +418,7 @@ export class SlickCheckboxSelectColumn<T = any> {
       : isPartialChecked && !this._addonOptions.hidePartialCheckbox
         ? PARTIAL_CHECK_ICON
         : UNCHECK_ICON;
-    return `mdi ${iconClass}`;
+    return `sgi ${iconClass}`;
   }
 
   protected handleDataViewSelectedIdsChanged(): void {
@@ -446,7 +446,7 @@ export class SlickCheckboxSelectColumn<T = any> {
     }
     if (!this._addonOptions.hideInFilterHeaderRow) {
       const selectAllElm = this.headerRowNode?.querySelector<HTMLInputElement>(`#header-filter-selector${this._selectAll_UID}`);
-      const selectAllIconElm = this.headerRowNode?.querySelector<HTMLInputElement>('.icon-checkbox-container .mdi');
+      const selectAllIconElm = this.headerRowNode?.querySelector<HTMLInputElement>('.icon-checkbox-container .sgi');
       if (selectAllElm) {
         selectAllElm.ariaChecked = String(this._isSelectAllChecked);
         selectAllElm.checked = this._isSelectAllChecked;

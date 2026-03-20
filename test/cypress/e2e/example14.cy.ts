@@ -445,27 +445,27 @@ describe('Example 14 - Columns Resize by Content', () => {
       cy.get('@firstPickerLabel').should('have.text', 'Common Factor - Title');
       cy.get('@firstPickerLabel').click();
 
-      cy.get('#filter-checkbox-selectall-container .mdi-icon-partial-check').should('exist');
+      cy.get('#filter-checkbox-selectall-container .sgi-icon-partial-check').should('exist');
 
       cy.get('@firstPickerLabel').click();
 
-      cy.get('#filter-checkbox-selectall-container .mdi-icon-partial-check').should('exist');
+      cy.get('#filter-checkbox-selectall-container .sgi-icon-partial-check').should('exist');
       cy.get('.slick-column-picker:visible').find('.close').trigger('click').click();
     });
 
     it('should click on Select All then show/hide Title column from column picker and expect Select All to still be rendered with Select All checkbox', () => {
-      cy.get('#filter-checkbox-selectall-container .mdi-icon-partial-check').click();
+      cy.get('#filter-checkbox-selectall-container .sgi-icon-partial-check').click();
       cy.get('.slick-header-column:nth(2)').trigger('mouseover').trigger('contextmenu').invoke('show');
 
       cy.get('.slick-column-picker .slick-column-picker-list li:not(.hidden):nth(0) .checkbox-label').as('firstPickerLabel');
       cy.get('@firstPickerLabel').should('have.text', 'Common Factor - Title');
       cy.get('@firstPickerLabel').click();
 
-      cy.get('#filter-checkbox-selectall-container .mdi-icon-check').should('exist');
+      cy.get('#filter-checkbox-selectall-container .sgi-icon-check').should('exist');
 
       cy.get('@firstPickerLabel').click();
 
-      cy.get('#filter-checkbox-selectall-container .mdi-icon-check').should('exist');
+      cy.get('#filter-checkbox-selectall-container .sgi-icon-check').should('exist');
       cy.get('.slick-column-picker:visible').find('.close').trigger('click').click();
     });
   });

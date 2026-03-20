@@ -90,6 +90,18 @@ gridOptions = {
 };
 ```
 
+#### Internal icons CSS class changes
+
+I found that some of the internal icons were wrongly using the `mdi-` prefix and that is wrong and causes problems when creating new Themes that don't use the MDI icons. This mean that the following CSS classes were renamed. If you are using any of them for E2E tests or for styling reasons, then make sure to update them.
+
+| before | after | component |
+| ------ | ----- | --------- |
+| `mdi-icon-check` | `sgi-icon-check` | Row Selections |
+| `mdi-icon-partial-check` | `sgi-icon-partial-check` | Row Selections |
+| `mdi-icon-uncheck` | `sgi-icon-uncheck` | Row Selections |
+| `mdi-icon-picker-check` | `sgi-icon-picker-check` | Column Picker / Grid Menu |
+| `mdi-icon-picker-uncheck` | `sgi-icon-picker-uncheck` | Column Picker / Grid Menu |
+
 ## New Features
 
 ### Auto-Enabled External Resources

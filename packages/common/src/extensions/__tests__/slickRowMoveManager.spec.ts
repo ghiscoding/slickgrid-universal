@@ -252,7 +252,7 @@ describe('SlickRowMoveManager Plugin', () => {
 
   it('should process the "checkboxSelectionFormatter" and expect necessary Formatter to return regular formatter when usabilityOverride is returning True', () => {
     const iconElm = document.createElement('div');
-    iconElm.className = 'slick-row-move-column';
+    iconElm.className = 'sgi slick-row-move-column';
 
     plugin.init(gridStub);
     plugin.usabilityOverride(() => true);
@@ -271,7 +271,7 @@ describe('SlickRowMoveManager Plugin', () => {
 
   it('should process the "checkboxSelectionFormatter" and expect necessary Formatter to return regular formatter when usabilityOverride is not a function', () => {
     const iconElm = document.createElement('div');
-    iconElm.className = 'slick-row-move-column';
+    iconElm.className = 'sgi slick-row-move-column';
 
     plugin.init(gridStub);
     plugin.usabilityOverride(null as any);

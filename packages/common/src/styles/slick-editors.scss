@@ -103,10 +103,6 @@
         .icon-clear {
           display: flex;
           align-items: center;
-          background-color: currentColor;
-          height: 1em;
-          width: 1em;
-
           @include svg.generateSvgStyle('slick-editor-input-group-clear-btn-icon-svg', v.$slick-editor-input-group-clear-btn-icon-svg-path);
         }
       }
@@ -219,7 +215,8 @@
         color: var(--slick-editor-modal-reset-btn-color, v.$slick-editor-modal-reset-btn-color);
         background-color: var(--slick-editor-modal-reset-btn-bg-color, v.$slick-editor-modal-reset-btn-bg-color);
         float: right;
-        span.mdi {
+        span.mdi,
+        span.sgi {
           margin-right: 5px;
         }
       }
