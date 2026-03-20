@@ -1299,7 +1299,7 @@ describe('SlickRowDetailView plugin', () => {
       plugin.setOptions({ collapsedClass: 'some-collapsed' });
       plugin.expandableOverride(() => true);
       const formattedVal = plugin.getColumnDefinition().formatter!(0, 1, '', mockColumns[0], mockItem, gridStub);
-      expect((formattedVal as HTMLElement).outerHTML).toBe(`<div class="detailView-toggle expand some-collapsed"></div>`);
+      expect((formattedVal as HTMLElement).outerHTML).toBe(`<div class="sgi detailView-toggle expand some-collapsed"></div>`);
     });
 
     it('should execute formatter and expect it to return empty string and render nothing when isPadding is True', () => {
@@ -1325,7 +1325,9 @@ describe('SlickRowDetailView plugin', () => {
       plugin.setOptions({ expandedClass: 'some-expanded', maxRows: 2 });
       plugin.expandableOverride(() => true);
       const formattedVal = plugin.getColumnDefinition().formatter!(0, 1, '', mockColumns[0], mockItem, gridStub);
-      expect(((formattedVal as FormatterResultWithHtml).html as HTMLElement).outerHTML).toBe(`<div class="detailView-toggle collapse some-expanded"></div>`);
+      expect(((formattedVal as FormatterResultWithHtml).html as HTMLElement).outerHTML).toBe(
+        `<div class="sgi detailView-toggle collapse some-expanded"></div>`
+      );
       expect((formattedVal as FormatterResultWithHtml).insertElementAfterTarget!.outerHTML).toBe(
         `<div class="dynamic-cell-detail cellDetailView_123" style="height: 50px; top: 25px;"><div class="detail-container detailViewContainer_123"><div class="innerDetailView_123"><div>Loading...</div></div></div></div>`
       );
@@ -1345,7 +1347,9 @@ describe('SlickRowDetailView plugin', () => {
       plugin.setOptions({ expandedClass: 'some-expanded', maxRows: 2 });
       plugin.expandableOverride(() => true);
       const formattedVal = plugin.getColumnDefinition().formatter!(0, 1, '', mockColumns[0], mockItem, gridStub);
-      expect(((formattedVal as FormatterResultWithHtml).html as HTMLElement).outerHTML).toBe(`<div class="detailView-toggle collapse some-expanded"></div>`);
+      expect(((formattedVal as FormatterResultWithHtml).html as HTMLElement).outerHTML).toBe(
+        `<div class="sgi detailView-toggle collapse some-expanded"></div>`
+      );
       expect((formattedVal as FormatterResultWithHtml).insertElementAfterTarget!.outerHTML).toBe(
         `<div class="dynamic-cell-detail cellDetailView_123" style="height: 50px; top: 25px;"><div class="detail-container detailViewContainer_123"><div class="innerDetailView_123"><div>Loading...</div></div></div></div>`
       );
