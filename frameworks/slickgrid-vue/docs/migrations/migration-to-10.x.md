@@ -13,6 +13,8 @@ This new release also brings significant improvements to accessibility (a11y), m
 
 > **Note:** if you come from an earlier version, please make sure to follow each migrations in their respective order (review previous migration guides)
 
+> **Tip:** An [agent skill guide](migration-to-10.x.skill.yaml) is available to help structure your migration. This provides a quick reference of all major changes, Vue-specific patterns, code examples, and migration checklists.
+
 ### Column Definitions
 
 #### Hidden Columns

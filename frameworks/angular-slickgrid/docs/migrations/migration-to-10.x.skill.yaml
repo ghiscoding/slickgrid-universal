@@ -1,0 +1,105 @@
+name: Migration to SlickGrid v10.x
+description: Migration guide and best practices for upgrading Angular-Slickgrid to version 10.x
+version: 1.0.0
+source: migration-to-10.x.md
+
+objectives:
+  - Help developers understand major breaking changes in v10.x
+  - Guide migration from hidden/visible column management to the new `hidden` property
+  - Explain accessibility improvements and modern Angular patterns
+  - Provide code examples for common migration scenarios
+
+key_topics:
+  - hidden_columns
+  - row_detail_optional
+  - ngx_translate_v17
+  - standalone_components
+  - accessibility_improvements
+  - selection_models
+
+major_changes:
+  - id: hidden_columns
+    title: Hidden Columns Approach
+    description: Replace grid.setColumns() with grid.updateColumnById() using the hidden property
+    before: |
+      grid.setColumns(visibleCols);
+      // Need to maintain separate references for all/visible columns
+    after: |
+      grid.updateColumnById('id', { hidden: true });
+      grid.updateColumns();
+      // All columns always available via grid.getColumns()
+      // Visible columns via grid.getVisibleColumns()
+
+  - id: row_detail
+    title: Row Detail Now Optional
+    description: Row Detail is now a separate optional plugin package
+    action: |
+      import { AngularRowDetailView } from '@slickgrid-universal/angular-row-detail-plugin';
+
+      gridOptions = {
+        enableRowDetailView: true,
+        externalResources: [AngularRowDetailView],
+        rowDetailView: { /* ... */ }
+      };
+
+  - id: selection_models
+    title: Selection Models Consolidation
+    description: Only SlickHybridSelectionModel remains; all others removed
+    changes:
+      - Removed SlickCellSelectionModel and SlickRowSelectionModel
+      - Removed enableHybridSelection and enableRowSelection options
+      - Renamed rowSelectionOptions to selectionOptions
+    before: |
+      gridOptions = {
+        enableHybridSelection: true,
+        enableRowSelection: true,
+        rowSelectionOptions: { selectActiveRow: false }
+      };
+    after: |
+      gridOptions = {
+        enableSelection: true,
+        selectionOptions: {
+          selectActiveRow: false,
+          selectionType: 'mixed'  // 'cell' | 'row' | 'mixed'
+        }
+      };
+
+  - id: deprecated_removal
+    title: Deprecated Code Removed
+    items:
+      - applyHtmlCode() → use applyHtmlToElement()
+      - throwWhenFrozenNotAllViewable option → use invalidColumnFreezeWidthCallback
+
+  - id: angular_modernization
+    title: Angular Modernization
+    description: Support for Angular 21, Standalone Components, and Zoneless change detection
+    features:
+      - ngx-translate v17.x now required
+      - Standalone Component support available
+      - Zoneless change detection support (can remove zone.js dependency)
+
+accessibility_improvements:
+  - Tab/Shift+Tab keyboard navigation for Header Menu and Grid Menu
+  - Arrow key navigation for menu commands
+  - Composite Editor migrated from div to native dialog element
+  - Better ARIA support
+
+migration_checklist:
+  - Review all grid.setColumns() calls and migrate to hidden property approach
+  - Update selection model configuration if using row/cell selection
+  - Register Row Detail plugin if enableRowDetailView is enabled
+  - Update ngx-translate to v17.x
+  - Consider migrating to Standalone Components for new Angular patterns
+  - Test keyboard navigation and accessibility features
+  - Update colspan/rowspan handling if dynamically hiding columns
+  - Review column visibility logic to use grid.getVisibleColumns()
+
+important_notes:
+  - grid.getColumns() now includes hidden columns (use !col.hidden filter or getVisibleColumns())
+  - Always call grid.updateColumns() after updating column properties
+  - Follow previous migration guides if upgrading from versions earlier than v10
+  - Composite Editor now uses dialog instead of div (with fallback support)
+
+related_files:
+  - PR: https://github.com/ghiscoding/slickgrid-universal/pull/2281
+  - Full migration guide: migration-to-10.x.md

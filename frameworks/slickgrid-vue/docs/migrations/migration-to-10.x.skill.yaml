@@ -1,0 +1,183 @@
+name: Migration to Slickgrid-Vue v10.x
+description: Migration guide for upgrading Slickgrid-Vue to version 10.x
+version: 1.0.0
+source: migration-to-10.x.md
+framework: vue
+
+objectives:
+  - Help Vue developers understand breaking changes in v10.x
+  - Guide migration from hidden/visible column management to the new `hidden` property
+  - Explain Vue-specific changes including v-model:data→v-model:dataset rename
+  - Explain Vue-specific Row Detail plugin registration
+  - Provide Vue composition examples for common migration scenarios
+
+key_topics:
+  - hidden_columns
+  - row_detail_optional
+  - vue_model_rename
+  - deprecated_code_removal
+  - selection_models
+  - icon_class_changes
+  - accessibility_improvements
+  - auto_enabled_resources
+  - menu_commands_builder
+
+major_changes:
+  - id: hidden_columns
+    title: Hidden Columns Approach
+    description: Replace grid.setColumns() with grid.updateColumnById() using the hidden property
+    before: |
+      grid.setColumns(visibleCols);
+      // Need to maintain separate references for all/visible columns
+    after: |
+      grid.updateColumnById('id', { hidden: true });
+      grid.updateColumns();
+      // All columns always available via grid.getColumns()
+      // Visible columns via grid.getVisibleColumns()
+
+  - id: row_detail
+    title: Row Detail Now Optional - Vue Pattern
+    description: Row Detail is now a separate optional plugin package for Vue
+    action: |
+      import { VueRowDetailView } from '@slickgrid-universal/vue-row-detail-plugin';
+
+      function defineGrid() {
+        gridOptions.value = {
+          enableRowDetailView: true,
+          externalResources: [VueRowDetailView],
+          rowDetailView: {
+            // ...
+          }
+        };
+      }
+
+  - id: vue_model_rename
+    title: Vue Model Rename - v-model:data to v-model:dataset
+    description: Aligns Vue v-model naming with all other framework wrappers
+    before: |
+      <SlickgridVue
+        grid-id="grid1"
+        v-model:columns="columns"
+        v-model:data="dataset"
+        v-model:options="gridOptions"
+      >
+      </SlickgridVue>
+    after: |
+      <SlickgridVue
+        grid-id="grid1"
+        v-model:columns="columns"
+        v-model:dataset="dataset"
+        v-model:options="gridOptions"
+      >
+      </SlickgridVue>
+    important: This is Vue-specific and required for v10+
+
+  - id: selection_models
+    title: Selection Models Consolidation
+    description: Only SlickHybridSelectionModel remains; all others removed
+    changes:
+      - Removed SlickCellSelectionModel and SlickRowSelectionModel
+      - Removed enableHybridSelection and enableRowSelection options
+      - Renamed rowSelectionOptions to selectionOptions
+    before: |
+      gridOptions = {
+        enableHybridSelection: true,
+        enableRowSelection: true,
+        rowSelectionOptions: { selectActiveRow: false }
+      };
+    after: |
+      gridOptions = {
+        enableSelection: true,
+        selectionOptions: {
+          selectActiveRow: false,
+          selectionType: 'mixed'  // 'cell' | 'row' | 'mixed'
+        }
+      };
+
+  - id: deprecated_removal
+    title: Deprecated Code Removed
+    items:
+      - applyHtmlCode() → use applyHtmlToElement()
+      - throwWhenFrozenNotAllViewable option → use invalidColumnFreezeWidthCallback
+
+  - id: icon_classes
+    title: Internal Icon CSS Class Changes
+    description: Icon classes were renamed from mdi- prefix to sgi- prefix
+    items:
+      - 'mdi-icon-check → sgi-icon-check (Row Selections)'
+      - 'mdi-icon-partial-check → sgi-icon-partial-check (Row Selections)'
+      - 'mdi-icon-uncheck → sgi-icon-uncheck (Row Selections)'
+      - 'mdi-icon-picker-check → sgi-icon-picker-check (Column Picker/Grid Menu)'
+      - 'mdi-icon-picker-uncheck → sgi-icon-picker-uncheck (Column Picker/Grid Menu)'
+    note: Update these if using for E2E tests or styling
+
+grid_functionalities:
+  - id: composite_editor
+    title: Composite Editor Component
+    description: Migrated from div to native dialog element for better accessibility
+    details: Dialog element provides better ARIA support; fallback to div available
+
+  - id: grid_menu
+    title: Grid Menu Layout
+    description: Replaced calc(100% - 18px) with CSS flexbox positioning
+    benefit: Better alignment and more flexible styling approach
+
+accessibility_improvements:
+  - Tab/Shift+Tab keyboard navigation for Header Menu and Grid Menu
+  - Arrow key navigation for menu commands
+  - Composite Editor uses native dialog with better ARIA support
+  - Better overall screen reader compatibility
+
+new_features:
+  - id: auto_enabled_resources
+    title: Auto-Enabled External Resources
+    description: Resources are now automatically enabled based on registration
+    auto_enabled:
+      - ExcelExportService → enableExcelExport
+      - PdfExportService → enablePdfExport
+      - TextExportService → enableTextExport
+      - CompositeEditorComponent → enableCompositeEditor
+      - RowDetailView → enableRowDetailView
+    note: Auto-enable is skipped if you explicitly set the flag
+
+  - id: menu_commands
+    title: Menu with Commands (Command List Builder)
+    description: New commandListBuilder allows filtering/sorting menu items
+    deprecation: hide* properties deprecated in v10, removed in v11
+
+  - id: tooltips
+    title: Tooltips Outside the Grid
+    description: Observe and display tooltips on elements outside the grid
+
+migration_checklist:
+  - Replace all v-model:data with v-model:dataset in SlickgridVue component
+  - Import VueRowDetailView from @slickgrid-universal/vue-row-detail-plugin
+  - Register VueRowDetailView in externalResources if enableRowDetailView is true
+  - Review all grid.setColumns() calls and migrate to hidden property approach
+  - Update selection model configuration if using row/cell selection
+  - Update icon classes from mdi- to sgi- prefix in tests/styling
+  - Check colspan/rowspan handling with hidden columns
+  - Review column visibility logic to use grid.getVisibleColumns()
+  - Update menu configurations to use hideCommands or commandListBuilder
+  - Test keyboard navigation and accessibility features
+  - Verify all v-model bindings work with new property names
+
+important_notes:
+  - grid.getColumns() now includes hidden columns (use !col.hidden filter or getVisibleColumns())
+  - Always call grid.updateColumns() after updating column properties
+  - v-model:dataset is the new standard (aligns with other frameworks)
+  - VueRowDetailView must be provided in externalResources array
+  - Composite Editor now uses dialog instead of div (with fallback support)
+  - commandListBuilder and hideCommands are recommended over deprecated hide* properties
+
+vue_patterns:
+  - Use ref() for reactive state
+  - Use computed() for derived values
+  - externalResources array receives plugin instances
+  - Template uses standard Vue 3 composition API syntax
+
+related_resources:
+  - PR: https://github.com/ghiscoding/slickgrid-universal/pull/2281
+  - Full migration guide: migration-to-10.x.md
+  - Vue Row Detail Plugin: '@slickgrid-universal/vue-row-detail-plugin'
+  - Menu Slots documentation: ../grid-functionalities/menu-slots.md

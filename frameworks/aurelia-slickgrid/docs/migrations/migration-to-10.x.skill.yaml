@@ -1,0 +1,150 @@
+name: Migration to Slickgrid-Aurelia v10.x
+description: Migration guide for upgrading Aurelia-Slickgrid to version 10.x
+version: 1.0.0
+source: migration-to-10.x.md
+framework: aurelia
+
+objectives:
+  - Help Aurelia developers understand breaking changes in v10.x
+  - Guide migration from hidden/visible column management to the new `hidden` property
+  - Explain Aurelia-specific Row Detail plugin registration
+  - Provide code examples for common Aurelia migration scenarios
+
+key_topics:
+  - hidden_columns
+  - row_detail_optional
+  - deprecated_code_removal
+  - selection_models
+  - icon_class_changes
+  - accessibility_improvements
+  - auto_enabled_resources
+  - menu_commands_builder
+
+major_changes:
+  - id: hidden_columns
+    title: Hidden Columns Approach
+    description: Replace grid.setColumns() with grid.updateColumnById() using the hidden property
+    before: |
+      grid.setColumns(visibleCols);
+      // Need to maintain separate references for all/visible columns
+    after: |
+      grid.updateColumnById('id', { hidden: true });
+      grid.updateColumns();
+      // All columns always available via grid.getColumns()
+      // Visible columns via grid.getVisibleColumns()
+
+  - id: row_detail
+    title: Row Detail Now Optional
+    description: Row Detail is now a separate optional plugin package for Aurelia
+    action: |
+      import { AureliaRowDetailView } from '@slickgrid-universal/aurelia-row-detail-plugin';
+
+      export class Example {
+        defineGrid() {
+          this.gridOptions = {
+            enableRowDetailView: true,
+            externalResources: [AureliaRowDetailView],
+            rowDetailView: {
+              // ...
+            }
+          };
+        }
+      }
+
+  - id: selection_models
+    title: Selection Models Consolidation
+    description: Only SlickHybridSelectionModel remains; all others removed
+    changes:
+      - Removed SlickCellSelectionModel and SlickRowSelectionModel
+      - Removed enableHybridSelection and enableRowSelection options
+      - Renamed rowSelectionOptions to selectionOptions
+    before: |
+      gridOptions = {
+        enableHybridSelection: true,
+        enableRowSelection: true,
+        rowSelectionOptions: { selectActiveRow: false }
+      };
+    after: |
+      gridOptions = {
+        enableSelection: true,
+        selectionOptions: {
+          selectActiveRow: false,
+          selectionType: 'mixed'  // 'cell' | 'row' | 'mixed'
+        }
+      };
+
+  - id: deprecated_removal
+    title: Deprecated Code Removed
+    items:
+      - applyHtmlCode() → use applyHtmlToElement()
+      - throwWhenFrozenNotAllViewable option → use invalidColumnFreezeWidthCallback
+
+  - id: icon_classes
+    title: Internal Icon CSS Class Changes
+    description: Icon classes were renamed from mdi- prefix to sgi- prefix
+    items:
+      - 'mdi-icon-check → sgi-icon-check (Row Selections)'
+      - 'mdi-icon-partial-check → sgi-icon-partial-check (Row Selections)'
+      - 'mdi-icon-uncheck → sgi-icon-uncheck (Row Selections)'
+      - 'mdi-icon-picker-check → sgi-icon-picker-check (Column Picker/Grid Menu)'
+      - 'mdi-icon-picker-uncheck → sgi-icon-picker-uncheck (Column Picker/Grid Menu)'
+    note: Update these if using for E2E tests or styling
+
+grid_functionalities:
+  - id: composite_editor
+    title: Composite Editor Component
+    description: Migrated from div to native dialog element for better accessibility
+    details: Dialog element provides better ARIA support; fallback to div available
+
+  - id: grid_menu
+    title: Grid Menu Layout
+    description: Replaced calc(100% - 18px) with CSS flexbox positioning
+    benefit: Better alignment and more flexible styling approach
+
+accessibility_improvements:
+  - Tab/Shift+Tab keyboard navigation for Header Menu and Grid Menu
+  - Arrow key navigation for menu commands
+  - Composite Editor uses native dialog with better ARIA support
+  - Better overall screen reader compatibility
+
+new_features:
+  - id: auto_enabled_resources
+    title: Auto-Enabled External Resources
+    description: Resources are now automatically enabled based on registration
+    auto_enabled:
+      - ExcelExportService → enableExcelExport
+      - PdfExportService → enablePdfExport
+      - TextExportService → enableTextExport
+      - CompositeEditorComponent → enableCompositeEditor
+      - RowDetailView → enableRowDetailView
+    note: Auto-enable is skipped if you explicitly set the flag
+
+  - id: menu_commands
+    title: Menu with Commands (Command List Builder)
+    description: New commandListBuilder allows filtering/sorting menu items
+    deprecation: hide* properties deprecated in v10, removed in v11
+    example_url: ../grid-functionalities/menu-slots.md
+
+migration_checklist:
+  - Update Row Detail imports to use AureliaRowDetailView from @slickgrid-universal/aurelia-row-detail-plugin
+  - Register AureliaRowDetailView in externalResources if enableRowDetailView is true
+  - Review all grid.setColumns() calls and migrate to hidden property approach
+  - Update selection model configuration if using row/cell selection
+  - Update icon classes from mdi- to sgi- prefix in tests/styling
+  - Check colspan/rowspan handling with hidden columns
+  - Review column visibility logic to use grid.getVisibleColumns()
+  - Update menu configurations to use hideCommands or commandListBuilder
+  - Test keyboard navigation and accessibility features
+
+important_notes:
+  - grid.getColumns() now includes hidden columns (use !col.hidden filter or getVisibleColumns())
+  - Always call grid.updateColumns() after updating column properties
+  - AureliaRowDetailView must be an instance (can be passed directly to externalResources array)
+  - Composite Editor now uses dialog instead of div (with fallback support)
+  - commandListBuilder and hideCommands are recommended over deprecated hide* properties
+
+related_resources:
+  - PR: https://github.com/ghiscoding/slickgrid-universal/pull/2281
+  - Full migration guide: migration-to-10.x.md
+  - Aurelia Row Detail Plugin: '@slickgrid-universal/aurelia-row-detail-plugin'
+  - Menu Slots documentation: ../grid-functionalities/menu-slots.md
