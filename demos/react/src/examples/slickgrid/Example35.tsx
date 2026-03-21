@@ -293,7 +293,7 @@ const Example35: React.FC = () => {
               target="_blank"
               href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/example35.scss"
             >
-              example35.scss{' '}
+              example35.scss
             </a>
             )
           </li>
@@ -303,11 +303,11 @@ const Example35: React.FC = () => {
             backend.
             <br />
             The callback needs to return a Promise&lt;boolean&gt; and if the promise resolves to true, then the row will be updated,
-            otherwise it will be cancelled and stays in edit mode. You can try out the later by defining a Duration value{' '}
+            otherwise it will be cancelled and stays in edit mode. You can try out the later by defining a Duration value
             <b>larger than 40</b>.
             <br />
             <small>
-              <span className="has-text-danger">NOTE:</span> You can also combine this with e.g. Batch Editing like shown{' '}
+              <span className="has-text-danger">NOTE:</span> You can also combine this with e.g. Batch Editing like shown
               <a href="#/example30">in Example 30</a>
             </small>
           </li>

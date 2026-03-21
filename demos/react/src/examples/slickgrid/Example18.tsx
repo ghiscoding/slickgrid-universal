@@ -493,7 +493,7 @@ const Example18: React.FC = () => {
       <div className="subtitle">
         <ul>
           <li>
-            This example shows 3 ways of grouping{' '}
+            This example shows 3 ways of grouping
             <a href="https://ghiscoding.gitbook.io/slickgrid-react/grid-functionalities/grouping-aggregators" target="_blank">
               Docs
             </a>

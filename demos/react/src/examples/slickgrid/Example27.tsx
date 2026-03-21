@@ -363,7 +363,7 @@ const Example27: React.FC = () => {
   ) : (
     <div id="demo-container" className="container-fluid">
       <h2>
-        Example 27: Tree Data{' '}
+        Example 27: Tree Data
         <small>
           (from a flat dataset with <code>parentId</code> references)
         </small>

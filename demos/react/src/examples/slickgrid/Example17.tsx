@@ -124,7 +124,7 @@ const Example17: React.FC = () => {
       )}
 
       <div className="my-3">
-        A default CSV file can be download{' '}
+        A default CSV file can be download
         <a id="template-dl" href={templateUrl}>
           here
         </a>

@@ -308,7 +308,7 @@ const Example40: React.FC = () => {
                 {metrics?.endTime ? dateFormatter(metrics.endTime, 'DD MMM, h:mm:ss a') : ''} —
                 <span className="mx-1" data-test="totalItemCount">
                   {metrics.totalItemCount}
-                </span>{' '}
+                </span>
                 items
               </>
             </div>

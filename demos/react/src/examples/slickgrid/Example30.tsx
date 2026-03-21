@@ -1104,7 +1104,7 @@ const Example30: React.FC = () => {
         Composite Editor allows you to Create, Clone, Edit, Mass Update & Mass Selection Changes inside a nice Modal Window.
         <br />
         The modal is simply populated by looping through your column definition list and also uses a lot of the same logic as inline editing
-        (see{' '}
+        (see
         <a href="https://ghiscoding.gitbook.io/slickgrid-react/grid-functionalities/composite-editor-modal" target="_blank">
           Composite Editor - Wiki
         </a>

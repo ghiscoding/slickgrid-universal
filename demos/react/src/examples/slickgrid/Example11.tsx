@@ -306,7 +306,7 @@ const Example11: React.FC = () => {
           </ul>
           <li>Click on any of the buttons below to test this out</li>
           <li>
-            You can change the highlighted color &amp; animation by changing the{' '}
+            You can change the highlighted color &amp; animation by changing the
             <a
               href="https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss"
               target="_blank"
@@ -320,7 +320,7 @@ const Example11: React.FC = () => {
           <li>You can also add CSS class(es) on the fly (or on page load) on rows with certain criteria, (e.g. click on last button)</li>
           <ul>
             <li>
-              Example, click on button "Highlight Rows with Duration over 50" to see row styling changing.{' '}
+              Example, click on button "Highlight Rows with Duration over 50" to see row styling changing.
               <a href="https://ghiscoding.gitbook.io/slickgrid-react/grid-functionalities/dynamic-item-metadata" target="_blank">
                 Wiki doc
               </a>

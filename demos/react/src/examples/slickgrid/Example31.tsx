@@ -556,7 +556,7 @@ const Example31: React.FC = () => {
                 defaultChecked={true}
                 value="2"
                 onChange={() => changeOdataVersion(2)}
-              />{' '}
+              />
               2&nbsp;
             </label>
             <label className="radio-inline control-label" htmlFor="radio4">
@@ -567,7 +567,7 @@ const Example31: React.FC = () => {
                 id="radio4"
                 value="4"
                 onChange={() => changeOdataVersion(4)}
-              />{' '}
+              />
               4
             </label>
           </span>

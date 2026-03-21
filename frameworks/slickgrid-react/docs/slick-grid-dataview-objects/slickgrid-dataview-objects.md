@@ -53,7 +53,7 @@ const Example: React.FC = () => {
               id='radioTrue'
               defaultChecked={isAutoEdit}
               onInput={() => setAutoEdit(true)}
-            />{' '}
+            />
             ON (single-click)
           </label>
           <label className='radio-inline control-label' htmlFor='radioFalse'>
@@ -62,7 +62,7 @@ const Example: React.FC = () => {
               name='inlineRadioOptions'
               id='radioFalse'
               onInput={() => setAutoEdit(false)}
-            />{' '}
+            />
             OFF (double-click)
           </label>
         </span>

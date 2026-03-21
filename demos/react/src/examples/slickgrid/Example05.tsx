@@ -558,7 +558,7 @@ const Example5: React.FC = () => {
               </ul>
               <li>OData Service could be replaced by other Service type in the future (GraphQL or whichever you provide)</li>
               <li>
-                You can also preload a grid with certain "presets" like Filters / Sorters / Pagination{' '}
+                You can also preload a grid with certain "presets" like Filters / Sorters / Pagination
                 <a href="https://ghiscoding.gitbook.io/slickgrid-react/grid-functionalities/grid-state-preset" target="_blank">
                   Wiki - Grid Preset
                 </a>
@@ -621,8 +621,8 @@ const Example5: React.FC = () => {
             <span>
               <>
                 <b>Metrics:</b>
-                {metrics?.endTime ? format(metrics.endTime, 'YYYY-MM-DD HH:mm:ss') : ''}| {metrics.itemCount} of {metrics.totalItemCount}{' '}
-                items{' '}
+                {metrics?.endTime ? format(metrics.endTime, 'YYYY-MM-DD HH:mm:ss') : ''}| {metrics.itemCount} of {metrics.totalItemCount}
+                items
               </>
             </span>
           )}
@@ -639,7 +639,7 @@ const Example5: React.FC = () => {
                 defaultChecked={true}
                 value="2"
                 onChange={() => changeOdataVersion(2)}
-              />{' '}
+              />
               2&nbsp;
             </label>
             <label className="radio-inline control-label" htmlFor="radio4">
@@ -650,7 +650,7 @@ const Example5: React.FC = () => {
                 id="radio4"
                 value="4"
                 onChange={() => changeOdataVersion(4)}
-              />{' '}
+              />
               4
             </label>
           </span>

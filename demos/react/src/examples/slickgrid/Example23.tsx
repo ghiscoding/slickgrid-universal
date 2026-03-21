@@ -382,8 +382,8 @@ const Example23: React.FC = () => {
         <span>
           <>
             <b>Metrics:</b>
-            {metrics.endTime ? format(metrics.endTime, 'YYYY-MM-DD HH:mm:ss') : ''}| {metrics.itemCount} of {metrics.totalItemCount}{' '}
-            items{' '}
+            {metrics.endTime ? format(metrics.endTime, 'YYYY-MM-DD HH:mm:ss') : ''}| {metrics.itemCount} of {metrics.totalItemCount}
+            items
           </>
         </span>
       )}
@@ -452,7 +452,7 @@ const Example23: React.FC = () => {
             <i className="mdi mdi-translate me-1"></i>
             Switch Language
           </button>
-          <b>Locale: </b>{' '}
+          <b>Locale: </b>
           <span style={{ fontStyle: 'italic' }} data-test="selected-locale">
             {selectedLanguage + '.json'}
           </span>

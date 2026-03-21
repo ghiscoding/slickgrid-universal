@@ -702,7 +702,7 @@ const Example3: React.FC = () => {
           <label className="me-1">autoEdit setting:</label>
           <span id="radioAutoEdit">
             <label className="radio-inline control-label me-1" htmlFor="radioTrue">
-              <input type="radio" name="inlineRadioOptions" id="radioTrue" defaultChecked={isAutoEdit} onInput={() => setAutoEdit(true)} />{' '}
+              <input type="radio" name="inlineRadioOptions" id="radioTrue" defaultChecked={isAutoEdit} onInput={() => setAutoEdit(true)} />
               ON (single-click)
             </label>
             <label className="radio-inline control-label" htmlFor="radioFalse">

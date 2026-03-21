@@ -333,24 +333,24 @@ const Example12: React.FC = () => {
           </li>
           <ul>
             <li>
-              What if your select options have totally different value/label pair? In this case, you can use the{' '}
+              What if your select options have totally different value/label pair? In this case, you can use the
               <b>
                 customStructure: <code>&#123;label: 'customLabel', value: 'customValue'&#125;</code>
-              </b>{' '}
+              </b>
               to change the property name(s) to use.'
             </li>
             <li>
               What if you want to use "customStructure" and translation? Simply pass this flag <b>enableTranslateLabel: true</b>
             </li>
             <li>
-              More info on the Select Filter{' '}
+              More info on the Select Filter
               <a href="https://ghiscoding.gitbook.io/slickgrid-react/column-functionalities/filters/select-filter" target="_blank">
                 Wiki page
               </a>
             </li>
           </ul>
           <li>
-            For more info about "Download to File", read the{' '}
+            For more info about "Download to File", read the
             <a href="https://ghiscoding.gitbook.io/slickgrid-react/grid-functionalities/export-to-text-file" target="_blank">
               Wiki page
             </a>

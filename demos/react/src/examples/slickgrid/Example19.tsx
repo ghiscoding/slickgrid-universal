@@ -346,7 +346,7 @@ const Example19: React.FC = () => {
                 Set
               </button>
               <label htmlFor="serverdelay" className="ms-2">
-                Server Delay:{' '}
+                Server Delay:
               </label>
               <input
                 id="serverdelay"

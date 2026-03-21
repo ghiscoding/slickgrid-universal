@@ -380,7 +380,7 @@ const Example4: React.FC = () => {
             Doe")
           </li>
           <li>
-            Custom Filter are now possible, "Description" column below, is a customized InputFilter with different placeholder. See{' '}
+            Custom Filter are now possible, "Description" column below, is a customized InputFilter with different placeholder. See
             <a href="https://ghiscoding.gitbook.io/slickgrid-react/column-functionalities/filters/custom-filter" target="_blank">
               Wiki - Custom Filter
             </a>
@@ -393,8 +393,8 @@ const Example4: React.FC = () => {
         <span>
           <>
             <b>Metrics:</b>
-            {metrics.endTime ? format(metrics.endTime, 'YYYY-MM-DD HH:mm:ss', 'en-US') : ''}| {metrics.itemCount} of{' '}
-            {metrics.totalItemCount} items{' '}
+            {metrics.endTime ? format(metrics.endTime, 'YYYY-MM-DD HH:mm:ss', 'en-US') : ''}| {metrics.itemCount} of
+            {metrics.totalItemCount} items
           </>
         </span>
       )}

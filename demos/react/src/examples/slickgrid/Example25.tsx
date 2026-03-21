@@ -305,7 +305,7 @@ const Example25: React.FC = () => {
           ).
           <ul>
             <li>
-              This Examples uses a Public GraphQL API that you can find at this link{' '}
+              This Examples uses a Public GraphQL API that you can find at this link
               <a href="https://countries.trevorblades.com/" target="_blank">
                 https://countries.trevorblades.com/
               </a>

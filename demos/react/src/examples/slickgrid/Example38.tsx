@@ -531,7 +531,7 @@ const Example38: React.FC = () => {
                   of
                   <span className="mx-1" data-test="totalItemCount">
                     {metricsRef.current.totalItemCount}
-                  </span>{' '}
+                  </span>
                   items
                   <span className={'badge rounded-pill text-bg-primary mx-1 ' + tagDataClass} data-test="data-loaded-tag">
                     All Data Loaded!!!

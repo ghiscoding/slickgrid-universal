@@ -449,7 +449,7 @@ const Example6: React.FC = () => {
             <li>The other operators can be used on column type number for example: "&gt;=100" (greater or equal than 100)</li>
           </ul>
           <li>
-            You can also preload a grid with certain "presets" like Filters / Sorters / Pagination{' '}
+            You can also preload a grid with certain "presets" like Filters / Sorters / Pagination
             <a href="https://ghiscoding.gitbook.io/slickgrid-react/grid-functionalities/grid-state-preset" target="_blank">
               Wiki - Grid Preset
             </a>
@@ -459,7 +459,7 @@ const Example6: React.FC = () => {
             wildcards.
           </li>
           <li>
-            Depending on your configuration, your GraphQL Server might already support regex querying (e.g. Hasura{' '}
+            Depending on your configuration, your GraphQL Server might already support regex querying (e.g. Hasura
             <a href="https://hasura.io/docs/latest/queries/postgres/filters/text-search-operators/#_regex" target="_blank">
               _regex
             </a>
@@ -515,7 +515,7 @@ const Example6: React.FC = () => {
                 Reset Original Presets
               </button>
               <label htmlFor="serverdelay" className="ml-4">
-                Server Delay:{' '}
+                Server Delay:
               </label>
               <input
                 id="serverdelay"
@@ -559,7 +559,7 @@ const Example6: React.FC = () => {
                     defaultChecked={true}
                     value="false"
                     onChange={() => changeIsWithCursor(false)}
-                  />{' '}
+                  />
                   Offset
                 </label>
                 <label className="radio-inline control-label mx-1" htmlFor="radioCursor">
@@ -570,7 +570,7 @@ const Example6: React.FC = () => {
                     id="radioCursor"
                     value="true"
                     onChange={() => changeIsWithCursor(true)}
-                  />{' '}
+                  />
                   Cursor
                 </label>
               </span>
@@ -581,8 +581,8 @@ const Example6: React.FC = () => {
             <span>
               <>
                 <b>Metrics: </b>
-                {metrics.endTime ? tempoFormat(metrics.endTime, 'YYYY-MM-DD HH:mm:ss') : ''}| {metrics.executionTime}ms |{' '}
-                {metrics.totalItemCount} items{' '}
+                {metrics.endTime ? tempoFormat(metrics.endTime, 'YYYY-MM-DD HH:mm:ss') : ''}| {metrics.executionTime}ms |
+                {metrics.totalItemCount} items
               </>
             </span>
           )}

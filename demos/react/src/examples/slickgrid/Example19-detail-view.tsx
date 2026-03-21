@@ -51,7 +51,7 @@ const Example19DetailView: React.FC<RowDetailViewProps<Item, any>> = (props) => 
       <h3>{props.model.title}</h3>
       <div className="row">
         <div className="col-3 detail-label">
-          <label>Assignee:</label>{' '}
+          <label>Assignee:</label>
           <input
             className="form-control"
             value={assignee}

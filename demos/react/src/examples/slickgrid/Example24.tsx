@@ -671,12 +671,12 @@ const Example24: React.FC = () => {
       <div className="subtitle">
         <ul>
           <li>
-            This example demonstrates 2 SlickGrid plugins (<b>SlickCellMenu</b> for plugin Action Menu (see{' '}
+            This example demonstrates 2 SlickGrid plugins (<b>SlickCellMenu</b> for plugin Action Menu (see
             <a href="https://ghiscoding.gitbook.io/slickgrid-react/grid-functionalities/cell-menu" target="_blank">
               Docs
             </a>
             ),
-            <b>SlickContextMenu</b> plugin (see{' '}
+            <b>SlickContextMenu</b> plugin (see
             <a href="https://ghiscoding.gitbook.io/slickgrid-react/grid-functionalities/context-menu" target="_blank">
               Docs
             </a>

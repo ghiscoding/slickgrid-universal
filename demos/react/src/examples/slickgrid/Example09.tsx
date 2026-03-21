@@ -375,7 +375,7 @@ const Example9: React.FC = () => {
         <i className="mdi mdi-translate me-1"></i>
         Switch Language
       </button>
-      <b>Locale:</b>{' '}
+      <b>Locale:</b>
       <span style={{ fontStyle: 'italic' }} data-test="selected-locale">
         {selectedLanguage + '.json'}
       </span>

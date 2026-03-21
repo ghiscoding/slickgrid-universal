@@ -547,7 +547,7 @@ const Example36: React.FC = () => {
         <a href="https://ghiscoding.gitbook.io/slickgrid-react/grid-functionalities/export-to-excel#cell-value-parser" target="_blank">
           Wiki docs
         </a>
-        ). Calculate Totals via Formatters in the UI, but use Excel Formula when exporting via{' '}
+        ). Calculate Totals via Formatters in the UI, but use Excel Formula when exporting via
         <code>excelExportOptions.valueParserCallback</code>
         When Grouped we will also calculate the Group Totals in the UI via Group Formatter and we again use Excel Formula to calculate the
         Group Totals (sum) dynamically. For Grouping we need to use <code>groupTotalsExcelExportOptions.valueParserCallback</code> instead.
