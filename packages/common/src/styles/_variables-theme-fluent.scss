@@ -1,0 +1,132 @@
+/**
+ * This is a bare version of "slickgrid-theme-material.scss",
+ * A few files were removed and aren't included in this styling theme (while they are in original theme)
+ * - (colors, extra-styling, slickgrid-icons, slickgrid-icons-svg-utils, slick-without-bootstrap-min-styling)
+ */
+
+@use 'sass:color';
+
+$primary-color: #0f6cbd;
+$slick-filled-filter-border: 1px solid #{$primary-color} !default;
+$slick-editor-input-group-clear-btn-icon-color: inherit !default;
+$slick-column-picker-icon-checked-svg-path: 'M7.03 13.9 3.56 10a.75.75 0 0 0-1.12 1l4 4.5c.29.32.79.34 1.09.03l10.5-10.5a.75.75 0 0 0-1.06-1.06l-9.94 9.94Z' !default;
+$slick-icon-group-collapsed-svg-path: 'M7.73 4.2a.75.75 0 0 1 1.06.03l5 5.25c.28.3.28.75 0 1.04l-5 5.25a.75.75 0 1 1-1.08-1.04L12.2 10l-4.5-4.73a.75.75 0 0 1 .02-1.06Z' !default;
+$slick-icon-group-expanded-svg-path: 'M15.8 7.73c.28.3.27.78-.03 1.06l-5.25 5a.75.75 0 0 1-1.04 0l-5.25-5a.75.75 0 0 1 1.04-1.08L10 12.2l4.73-4.5a.75.75 0 0 1 1.06.02Z' !default;
+
+@forward './variables' with (
+  $slick-primary-color: $primary-color !default,
+  $slick-highlight-color: #fcfcfc !default,
+  $slick-font-family: inherit !default,
+  $slick-font-size-base-value: 14 !default,
+  $slick-icon-font-size: 16px !default,
+  $slick-checkbox-icon-font-size: 12px !default,
+  $slick-icon-svg-viewbox-size: 20 !default,
+  $slick-checkbox-icon-border: 1px solid #616161 !default,
+  $slick-checkbox-icon-border-radius: 2px !default,
+  $slick-column-picker-icon-unchecked-svg-path: $slick-column-picker-icon-checked-svg-path !default,
+  $slick-checkbox-icon-container-size: 16px !default,
+  $slick-column-picker-opacity-hover: 0.45 !default,
+  $slick-column-picker-unchecked-opacity: 0.25 !default,
+  $slick-checkbox-opacity-hover: 0.45 !default,
+  $slick-checkbox-unchecked-opacity: 0.25 !default,
+  $slick-column-picker-icon-checked-svg-path: $slick-column-picker-icon-checked-svg-path !default,
+  $slick-icon-group-collapsed-svg-path: $slick-icon-group-collapsed-svg-path !default,
+  $slick-icon-group-expanded-svg-path: $slick-icon-group-expanded-svg-path !default,
+  $slick-icon-sort-font-size: 14px !default,
+  $slick-icon-sort-desc-icon-svg-path: 'M3.13 9.16a.5.5 0 1 0 .74.68L9.5 3.67V17.5a.5.5 0 1 0 1 0V3.67l5.63 6.17a.5.5 0 0 0 .74-.68l-6.32-6.92a.75.75 0 0 0-1.1 0L3.13 9.16Z' !default,
+  $slick-icon-sort-asc-icon-svg-path: 'M16.87 10.84a.5.5 0 1 0-.74-.68l-5.63 6.17V2.5a.5.5 0 0 0-1 0v13.83l-5.63-6.17a.5.5 0 0 0-.74.68l6.31 6.91a.75.75 0 0 0 1.11 0l6.32-6.91Z' !default,
+  $slick-icon-sort-position-right: 8px !default,
+  $slick-header-menu-display: inline-block !default,
+  $slick-header-menu-button-icon-svg-path: 'M15.85 7.65c.2.2.2.5 0 .7l-5.46 5.49a.55.55 0 0 1-.78 0L4.15 8.35a.5.5 0 1 1 .7-.7L10 12.8l5.15-5.16c.2-.2.5-.2.7 0Z' !default,
+  $slick-header-menu-button-icon-font-size: 20px !default,
+  $slick-checkbox-icon-checked-svg-path: 'M7.03 13.9 3.56 10a.75.75 0 0 0-1.12 1l4 4.5c.29.32.79.34 1.09.03l10.5-10.5a.75.75 0 0 0-1.06-1.06l-9.94 9.94Z' !default,
+  $slick-checkbox-icon-partial-checked-svg-path: 'M3 6a3 3 0 0 1 3-3h8a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6Z' !default,
+  $slick-checkbox-icon-unchecked-svg-path: '' !default,
+  $slick-row-move-plugin-icon-svg-path: 'M7 5a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm0 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm1 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm5-11a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm1 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm-1 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z' !default,
+  $slick-detail-view-icon-collapse-svg-path: 'M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0ZM6 10c0 .28.22.5.5.5h7a.5.5 0 0 0 0-1h-7a.5.5 0 0 0-.5.5Z' !default,
+  $slick-detail-view-icon-expand-svg-path: 'M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0ZM6 10c0 .28.22.5.5.5h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0-.5.5Z' !default,
+  $slick-pagination-icon-seek-first-svg-path: 'M6 5a.5.5 0 0 0-.5.41v9.09a.5.5 0 0 0 1 .09V5.5A.5.5 0 0 0 6 5Zm7.85.15a.5.5 0 0 0-.63-.06l-.07.06-4.5 4.5a.5.5 0 0 0-.06.63l.06.07 4.5 4.5a.5.5 0 0 0 .76-.63l-.06-.07L9.71 10l4.14-4.15a.5.5 0 0 0 0-.7Z' !default,
+  $slick-pagination-icon-seek-end-svg-path: 'M13.5 5a.5.5 0 0 1 .5.41v9.09a.5.5 0 0 1-1 .09V5.5c0-.28.22-.5.5-.5Zm-7.85.15a.5.5 0 0 1 .63-.06l.07.06 4.5 4.5c.18.17.2.44.06.63l-.06.07-4.5 4.5a.5.5 0 0 1-.76-.63l.06-.07L9.79 10 5.65 5.85a.5.5 0 0 1 0-.7Z' !default,
+  $slick-pagination-icon-seek-next-svg-path: 'M7.65 4.15c.2-.2.5-.2.7 0l5.49 5.46c.21.22.21.57 0 .78l-5.49 5.46a.5.5 0 0 1-.7-.7L12.8 10 7.65 4.85a.5.5 0 0 1 0-.7Z' !default,
+  $slick-pagination-icon-seek-prev-svg-path: 'M12.35 15.85a.5.5 0 0 1-.7 0L6.16 10.4a.55.55 0 0 1 0-.78l5.49-5.46a.5.5 0 1 1 .7.7L7.2 10l5.16 5.15c.2.2.2.5 0 .7Z' !default,
+  $slick-draggable-group-toggle-collapsed-icon-svg-path: $slick-icon-group-collapsed-svg-path !default,
+  $slick-draggable-group-toggle-expanded-icon-svg-path: $slick-icon-group-expanded-svg-path !default,
+  $slick-editor-input-group-clear-btn-icon-svg-path: 'm4.09 4.22.06-.07a.5.5 0 0 1 .63-.06l.07.06L10 9.29l5.15-5.14a.5.5 0 0 1 .63-.06l.07.06c.18.17.2.44.06.63l-.06.07L10.71 10l5.14 5.15c.18.17.2.44.06.63l-.06.07a.5.5 0 0 1-.63.06l-.07-.06L10 10.71l-5.15 5.14a.5.5 0 0 1-.63.06l-.07-.06a.5.5 0 0 1-.06-.63l.06-.07L9.29 10 4.15 4.85a.5.5 0 0 1-.06-.63l.06-.07-.06.07Z' !default,
+  $slick-icon-tree-loading-svg-path: 'M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z' !default,
+  $slick-icon-tree-load-fail-svg-path: $slick-icon-group-collapsed-svg-path !default,
+  $slick-icon-tree-load-fail-color: $primary-color !default,
+  $slick-icon-tree-load-fail-sup-svg-path: 'M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z' !default,
+);
+
+#filter-checkbox-selectall-container,
+.checkbox-selector-label.selectall,
+.slick-cell-checkboxsel {
+  .icon-checkbox-container.checked {
+    border: none;
+    background-color: $primary-color;
+
+    .sgi.sgi-icon-check {
+      color: white;
+    }
+  }
+}
+
+// Dark Mode
+// -----------
+$slick-dark-primary-color: #96c6fa;
+$slick-dark-base-dark-menu-bg-color: #212121;
+$slick-dark-highlight-color: $slick-dark-primary-color;
+$slick-dark-text-color: #d4d4d4;
+
+.ms-dark-mode,
+.ms-drop.ms-dark-mode,
+.slick-dark-mode .ms-dark-mode,
+.slick-dark-mode .slick-submenu,
+.slick-dark-mode .icon-checkbox-container,
+.slick-dark-mode {
+  .slick-dropped-grouping-title {
+    color: white;
+  }
+
+  --slick-primary-color: #96c6fa;
+  --slick-highlight-color: #62abf5;
+  --slick-base-dark-menu-bg-color: #212121;
+  --slick-button-primary-bg-color: #479ef5;
+  --slick-filled-filter-border: 1px solid #62abf5;
+  --slick-form-control-focus-border-color: #62abf5;
+  --slick-cell-box-shadow: none;
+  --slick-checkbox-opacity-hover: 0.7;
+  --slick-checkbox-unchecked-opacity: 0.4;
+  --slick-detail-view-icon-opacity-hover: 0.75;
+  --slick-column-picker-icon-color: #62abf5;
+  --slick-compound-filter-text-color: #479ef5;
+  --slick-draggable-group-sort-icon-color: white;
+  --slick-draggable-group-sort-icon-hover-color: #e0e0e0;
+  --slick-compound-filter-operator-select-border: 1px solid #96c6fa;
+  --slick-header-filter-row-border-bottom: 1px solid #505050;
+  --slick-container-border-right: 1px solid #505050;
+  --slick-container-border-top: 1px solid #505050;
+  --slick-container-border-left: 1px solid #505050;
+  --slick-container-border-bottom: 1px solid #505050;
+  --slick-form-control-focus-border-color: #96c6fa;
+  --slick-form-control-focus-box-shadow: #{0 0 0 2px rgba(#96c6fa, 0.25)};
+  --slick-pane-top-border-top: 1px solid #505050;
+  --slick-filled-filter-color: #96c6fa;
+  --slick-pagination-icon-color: #62abf5;
+  --slick-checkbox-icon-color: #96c6fa;
+  --slick-row-mouse-hover-box-shadow: none;
+  --slick-row-mouse-hover-color: #575757;
+  --slick-cell-selected-color: #474a45;
+  --slick-row-selected-color: #474a45;
+  --slick-checkbox-icon-color: #96c6fa;
+  --slick-checkbox-icon-height: 22px;
+  --slick-checkbox-icon-bg-color: transparent;
+  --slick-checkbox-icon-border: none;
+  --slick-icon-sort-color: #96c6fa;
+  --slick-multiselect-icon-radio-color: #96c6fa;
+  --ms-checkbox-color: #96c6fa;
+  --ms-checkbox-hover-color: #{color.adjust(#62abf5, $lightness: 13%)};
+  --ms-choice-focus-box-shadow: #{0 0 0 2px rgba(#96c6fa, 0.25)};
+  --ms-ok-button-text-color: #96c6fa;
+  --ms-ok-button-text-hover-color: #{color.adjust(#96c6fa, $lightness: 5%)};
+}

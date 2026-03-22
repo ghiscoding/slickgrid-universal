@@ -1,0 +1,42 @@
+import { GridOption } from 'slickgrid-react';
+
+export const baseFluentGridOption: GridOption = {
+  contextMenu: {
+    iconCollapseAllGroupsCommand: 'fui fui-arrow-minimize',
+    iconExpandAllGroupsCommand: 'fui fui-arrow-maximize',
+    iconClearGroupingCommand: 'fui fui-dismiss',
+    iconCopyCellValueCommand: 'fui fui-copy',
+    iconExportCsvCommand: 'fui fui-arrow-download',
+    iconExportExcelCommand: 'fui fui-arrow-download',
+    iconExportPdfCommand: 'fui fui-arrow-download',
+    iconExportTextDelimitedCommand: 'fui fui-arrow-download',
+    subItemChevronClass: 'fui fui-chevron-right',
+  },
+  gridMenu: {
+    iconCssClass: 'fui fui-navigation',
+    iconClearAllFiltersCommand: 'fui fui-filter-dismiss',
+    iconClearAllSortingCommand: 'fui fui-arrow-sort',
+    iconClearFrozenColumnsCommand: 'fui fui-pin-off',
+    iconExportCsvCommand: 'fui fui-arrow-download',
+    iconExportExcelCommand: 'fui fui-arrow-download',
+    iconExportPdfCommand: 'fui fui-arrow-download',
+    iconExportTextDelimitedCommand: 'fui fui-arrow-download',
+    iconRefreshDatasetCommand: 'fui fui-arrow-sync',
+    iconToggleDarkModeCommand: 'fui fui-dark-theme',
+    iconToggleFilterCommand: 'fui fui-split-horizontal',
+    iconTogglePreHeaderCommand: 'fui fui-split-horizontal',
+    subItemChevronClass: 'fui fui-chevron-right',
+  },
+  headerMenu: {
+    iconClearFilterCommand: 'fui fui-filter-dismiss',
+    iconClearSortCommand: 'fui fui-arrow-sort',
+    iconFilterShortcutSubMenu: 'fui fuilter',
+    iconFreezeColumns: 'fui fui-pin',
+    iconUnfreezeColumns: 'fui fui-pin-off',
+    iconSortAscCommand: 'fui fui-sort-arrow-up',
+    iconSortDescCommand: 'fui fui-sort-arrow-down',
+    iconColumnHideCommand: 'fui fui-dismiss',
+    iconColumnResizeByContentCommand: 'fui fui-arrow-bidirection',
+    subItemChevronClass: 'fui fui-chevron-right',
+  },
+};

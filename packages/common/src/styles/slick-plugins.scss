@@ -541,8 +541,7 @@ li.hidden {
 
   .slick-header-menu-icon {
     color: var(--slick-header-menu-button-icon-color, v.$slick-header-menu-button-icon-color);
-    width: 100%;
-    height: 100%;
+    font-size: var(--slick-header-menu-button-icon-font-size, v.$slick-header-menu-button-icon-font-size);
     @include svg.generateSvgStyle('slick-header-menu-button-icon-svg', v.$slick-header-menu-button-icon-svg-path);
   }
 }
@@ -1159,6 +1158,7 @@ li.hidden {
     position: absolute;
     padding: var(--slick-slider-filter-runnable-track-padding, v.$slick-slider-filter-runnable-track-padding);
     height: var(--slick-slider-filter-height, v.$slick-slider-filter-height);
+    margin-top: 0;
   }
 
   /* Slider Editor */
