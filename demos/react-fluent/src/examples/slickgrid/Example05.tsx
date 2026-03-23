@@ -371,14 +371,14 @@ const Example05: React.FC = () => {
       <div className="row mt-2">
         <div className="col-sm-12">
           <Button className="btn-sm btn-icon mx-1" onClick={() => setFrozenColumns(-1)} data-test="remove-frozen-column-button">
-            <i className="fui fui-dismiss"></i> Remove Frozen Columns
+            <i className="fic fic-dismiss"></i> Remove Frozen Columns
           </Button>
           <Button className="btn-sm btn-icon" onClick={() => setFrozenColumns(2)} data-test="set-3frozen-columns">
-            <i className="fui fui-pin"></i> Set 3 Frozen Columns
+            <i className="fic fic-pin"></i> Set 3 Frozen Columns
           </Button>
           <span style={{ marginLeft: '15px' }}>
             <Button className="btn-sm btn-icon" onClick={() => toggleFrozenBottomRows()}>
-              <i className="fui fui-split-horizontal"></i> Toggle Pinned Rows
+              <i className="fic fic-split-horizontal"></i> Toggle Pinned Rows
             </Button>
             <span style={{ fontWeight: 'bold' }}>: {isFrozenBottom ? 'Bottom' : 'Top'}</span>
           </span>

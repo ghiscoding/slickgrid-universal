@@ -78,7 +78,7 @@ const Example04DetailView: React.FC<RowDetailViewProps<Item, any>> = (props) => 
           <label>Finish:</label> <span>{props.model.finish?.toISOString()}</span>
         </div>
         <div className="col-3 detail-label">
-          <label>Effort Driven:</label> <i className={props.model.effortDriven ? 'fui fui-checkmark' : ''}></i>
+          <label>Effort Driven:</label> <i className={props.model.effortDriven ? 'fic fic-checkmark' : ''}></i>
         </div>
       </div>
 
