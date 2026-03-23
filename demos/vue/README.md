@@ -25,3 +25,8 @@ You can get this working demo by cloning our [Slickgrid-Vue-Demos](https://githu
 ```bash
 git clone https://github.com/ghiscoding/slickgrid-vue-demos
 ```
+
+| Stackblitz | Description |
+| ---------- | ----------- |
+| [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/slickgrid-vue-demos) | with I18N Translate |
+| [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/slickgrid-vue-demos/tree/main/single-locale-without-i18n) | Single Locale (_without i18n_) |

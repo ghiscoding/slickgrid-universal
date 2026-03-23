@@ -25,3 +25,8 @@ You can get this working demo by cloning our [Aurelia-Slickgrid-Demos](https://g
 ```bash
 git clone https://github.com/ghiscoding/aurelia-slickgrid-demos
 ```
+
+| Stackblitz | Description |
+| ---------- | ----------- |
+| [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/aurelia-slickgrid-demos) | with I18N Translate |
+| [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/aurelia-slickgrid-demos/tree/master/vite-single-locale) | Single Locale (_without i18n_) |

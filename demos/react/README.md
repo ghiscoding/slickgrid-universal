@@ -25,3 +25,8 @@ You can get this working demo by cloning our [Slickgrid-React-Demos](https://git
 ```bash
 git clone https://github.com/ghiscoding/slickgrid-react-demos
 ```
+
+| Stackblitz | Description |
+| ---------- | ----------- |
+| [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/slickgrid-react-demos) | with I18N Translate |
+| [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/slickgrid-react-demos/tree/main/single-locale-without-i18n) | Single Locale (_without i18n_) |
