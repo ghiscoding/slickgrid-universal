@@ -1155,10 +1155,10 @@ li.hidden {
     height: 100%;
   }
   input.slider-filter-input[type='range'] {
+    margin: 0;
     position: absolute;
     padding: var(--slick-slider-filter-runnable-track-padding, v.$slick-slider-filter-runnable-track-padding);
     height: var(--slick-slider-filter-height, v.$slick-slider-filter-height);
-    margin-top: 0;
   }
 
   /* Slider Editor */

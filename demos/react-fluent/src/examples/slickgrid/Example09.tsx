@@ -315,18 +315,18 @@ const Example09: React.FC = () => {
       <div className="row">
         <div className="col-md-7">
           <Button
-            className="btn-xs btn-icon mx-1"
+            className="btn-icon mx-1"
             data-test="clear-filters-btn"
             onClick={() => reactGridRef.current?.filterService.clearFilters()}
           >
             <span className="fui fui-dismiss me-1"></span>
             <span>Clear Filters</span>
           </Button>
-          <Button onClick={() => collapseAll()} data-test="collapse-all-btn" className="btn-xs btn-icon mx-1">
+          <Button onClick={() => collapseAll()} data-test="collapse-all-btn" className="btn-icon mx-1">
             <span className="fui fui-arrow-minimize me-1"></span>
             <span>Collapse All</span>
           </Button>
-          <Button onClick={() => expandAll()} data-test="expand-all-btn" className="btn-xs btn-icon">
+          <Button onClick={() => expandAll()} data-test="expand-all-btn" className="btn-icon">
             <span className="fui fui-arrow-maximize me-1"></span>
             <span>Expand All</span>
           </Button>

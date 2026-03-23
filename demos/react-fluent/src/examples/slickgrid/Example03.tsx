@@ -464,51 +464,66 @@ const Example03: React.FC = () => {
     <div id="demo-container" className="container-fluid">
       <h2>
         Example 3: Draggable Grouping & Aggregators
-        <Button className="ms-1" onClick={() => toggleDarkMode()} data-test="toggle-dark-mode">
+        <Button size="small" className="ms-1" onClick={() => toggleDarkMode()} data-test="toggle-dark-mode">
           <i className="fui fui-dark-theme me-1"></i>
           <span>Toggle Dark Mode</span>
         </Button>
       </h2>
 
       <form className="form-inline" onSubmit={(e) => e.preventDefault()}>
-        <Button className="btn-icon mx-1" data-test="add-5k-rows-btn" onClick={() => setData(5000)}>
+        <Button size="small" className="btn-icon mx-1" data-test="add-5k-rows-btn" onClick={() => setData(5000)}>
           5K rows
         </Button>
-        <Button className="btn-icon mx-1" data-test="add-50k-rows-btn" onClick={() => setData(50000)}>
+        <Button size="small" className="btn-icon mx-1" data-test="add-50k-rows-btn" onClick={() => setData(50000)}>
           50K rows
         </Button>
-        <Button className="btn-icon mx-1" data-test="clear-grouping-btn" onClick={() => clearGroupsAndSelects()}>
+        <Button size="small" className="btn-icon mx-1" data-test="clear-grouping-btn" onClick={() => clearGroupsAndSelects()}>
           <i className="fui fui-dismiss"></i> Clear grouping
         </Button>
-        <Button className="btn-icon mx-1" data-test="collapse-all-btn" onClick={() => collapseAllGroups()}>
+        <Button size="small" className="btn-icon mx-1" data-test="collapse-all-btn" onClick={() => collapseAllGroups()}>
           <i className="fui fui-arrow-minimize"></i> Collapse all groups
         </Button>
-        <Button className="btn-icon mx-1" data-test="expand-all-btn" onClick={() => expandAllGroups()}>
+        <Button size="small" className="btn-icon mx-1" data-test="expand-all-btn" onClick={() => expandAllGroups()}>
           <i className="fui fui-arrow-maximize"></i> Expand all groups
         </Button>
-        <Button className="btn-icon mx-1" data-test="toggle-draggable-grouping-row" onClick={() => toggleDraggableGroupingRow()}>
+        <Button
+          size="small"
+          className="btn-icon mx-1"
+          data-test="toggle-draggable-grouping-row"
+          onClick={() => toggleDraggableGroupingRow()}
+        >
           Toggle Draggable Grouping Row
         </Button>
-        <Button className="btn-icon mx-1" onClick={() => exportToExcel()}>
+        <Button size="small" className="btn-icon mx-1" onClick={() => exportToExcel()}>
           <i className="fui fui-arrow-download"></i> Export to Excel
         </Button>
-        <Button className="btn-icon mx-1" onClick={() => exportToPdf()}>
+        <Button size="small" className="btn-icon mx-1" onClick={() => exportToPdf()}>
           <i className="fui fui-arrow-download"></i> Export to PDF
         </Button>
-        <Button className="btn-icon mx-1" data-test="group-duration-sort-value-btn" onClick={() => groupByDurationOrderByCount(false)}>
+        <Button
+          size="small"
+          className="btn-icon mx-1"
+          data-test="group-duration-sort-value-btn"
+          onClick={() => groupByDurationOrderByCount(false)}
+        >
           Group by duration &amp; sort groups by value
         </Button>
-        <Button className="btn-icon mx-1" data-test="group-duration-sort-count-btn" onClick={() => groupByDurationOrderByCount(true)}>
+        <Button
+          size="small"
+          className="btn-icon mx-1"
+          data-test="group-duration-sort-count-btn"
+          onClick={() => groupByDurationOrderByCount(true)}
+        >
           Group by duration &amp; sort groups by count
         </Button>
-        <Button className="btn-icon mx-1" data-test="group-duration-effort-btn" onClick={() => groupByDurationEffortDriven()}>
+        <Button size="small" className="btn-icon mx-1" data-test="group-duration-effort-btn" onClick={() => groupByDurationEffortDriven()}>
           Group by Duration then Effort-Driven
         </Button>
-        <Button className="btn-icon mx-1" data-test="set-dynamic-filter" onClick={() => setFiltersDynamically()}>
+        <Button size="small" className="btn-icon mx-1" data-test="set-dynamic-filter" onClick={() => setFiltersDynamically()}>
           <span className="fui fui-filter"></span>
           <span>Set Filters Dynamically</span>
         </Button>
-        <Button className="btn-icon mx-1" data-test="set-dynamic-sorting" onClick={() => setSortingDynamically()}>
+        <Button size="small" className="btn-icon mx-1" data-test="set-dynamic-sorting" onClick={() => setSortingDynamically()}>
           <span className="fui fui-sort-arrow-up"></span>
           <span>Set Sorting Dynamically</span>
         </Button>

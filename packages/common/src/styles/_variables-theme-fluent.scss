@@ -29,6 +29,7 @@ $slick-icon-group-expanded-svg-path: 'M15.8 7.73c.28.3.27.78-.03 1.06l-5.25 5a.7
   $slick-checkbox-opacity-hover: 0.45 !default,
   $slick-checkbox-unchecked-opacity: 0.25 !default,
   $slick-column-picker-icon-checked-svg-path: $slick-column-picker-icon-checked-svg-path !default,
+  $slick-icon-group-font-size: 20px !default,
   $slick-icon-group-collapsed-svg-path: $slick-icon-group-collapsed-svg-path !default,
   $slick-icon-group-expanded-svg-path: $slick-icon-group-expanded-svg-path !default,
   $slick-icon-sort-font-size: 14px !default,
@@ -55,18 +56,26 @@ $slick-icon-group-expanded-svg-path: 'M15.8 7.73c.28.3.27.78-.03 1.06l-5.25 5a.7
   $slick-icon-tree-load-fail-svg-path: $slick-icon-group-collapsed-svg-path !default,
   $slick-icon-tree-load-fail-color: $primary-color !default,
   $slick-icon-tree-load-fail-sup-svg-path: 'M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z' !default,
+  $slick-form-control-focus-border-color: #ccc !default,
+  $slick-form-control-focus-box-shadow: none !default,
 );
 
-#filter-checkbox-selectall-container,
-.checkbox-selector-label.selectall,
-.slick-cell-checkboxsel {
-  .icon-checkbox-container.checked {
-    border: none;
-    background-color: $primary-color;
+.slickgrid-container {
+  #filter-checkbox-selectall-container,
+  .checkbox-selector-label.selectall,
+  .slick-cell-checkboxsel {
+    .icon-checkbox-container.checked {
+      border: none;
+      background-color: $primary-color;
 
-    .sgi.sgi-icon-check {
-      color: white;
+      .sgi.sgi-icon-check {
+        color: white;
+      }
     }
+  }
+
+  .form-control:focus {
+    box-shadow: inset 0 -2px $primary-color !important;
   }
 }
 
@@ -92,7 +101,6 @@ $slick-dark-text-color: #d4d4d4;
   --slick-base-dark-menu-bg-color: #212121;
   --slick-button-primary-bg-color: #479ef5;
   --slick-filled-filter-border: 1px solid #62abf5;
-  --slick-form-control-focus-border-color: #62abf5;
   --slick-cell-box-shadow: none;
   --slick-checkbox-opacity-hover: 0.7;
   --slick-checkbox-unchecked-opacity: 0.4;
@@ -108,7 +116,6 @@ $slick-dark-text-color: #d4d4d4;
   --slick-container-border-left: 1px solid #505050;
   --slick-container-border-bottom: 1px solid #505050;
   --slick-form-control-focus-border-color: #96c6fa;
-  --slick-form-control-focus-box-shadow: #{0 0 0 2px rgba(#96c6fa, 0.25)};
   --slick-pane-top-border-top: 1px solid #505050;
   --slick-filled-filter-color: #96c6fa;
   --slick-pagination-icon-color: #62abf5;

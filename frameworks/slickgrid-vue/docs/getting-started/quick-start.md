@@ -48,8 +48,8 @@ import '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.cs
 ```
 
 > **Note** Bootstrap is optional, you can use any other UI framework, other themes are also available as CSS and SCSS file extensions.
-> Import the `slickgrid-theme-bootstrap.css` **only** if you are actually using Bootstrap, otherwise prefer the `slickgrid-theme-default.css` default them.
-> Available themes are: `slickgrid-theme-default.css`, `slickgrid-theme-bootstrap.css`, `slickgrid-theme-material.css`, `slickgrid-theme-salesforce.css`
+> Import the `slickgrid-theme-bootstrap.css` **only** if you are actually using Bootstrap, otherwise you should prefer using the `slickgrid-theme-default.css` file which is the default theme.
+> Available themes are: `slickgrid-theme-default.css`, `slickgrid-theme-bootstrap.css`, `slickgrid-theme-material.css`, `slickgrid-theme-salesforce.css`, `slickgrid-theme-fluent.css`
 
 #### SASS (scss)
 

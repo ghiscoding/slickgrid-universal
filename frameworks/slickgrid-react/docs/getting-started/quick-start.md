@@ -38,8 +38,8 @@ import 'node_modules/@slickgrid-universal/common/dist/styles/css/slickgrid-theme
 ```
 
 > **Note** Bootstrap is optional, you can use any other UI framework, other themes are also available as CSS and SCSS file extensions.
-> Import the `slickgrid-theme-bootstrap.css` **only** if you are actually using Bootstrap, otherwise prefer the `slickgrid-theme-default.css` default them.
-> Available themes are: `slickgrid-theme-default.css`, `slickgrid-theme-bootstrap.css`, `slickgrid-theme-material.css`, `slickgrid-theme-salesforce.css`
+> Import the `slickgrid-theme-bootstrap.css` **only** if you are actually using Bootstrap, otherwise you should prefer using the `slickgrid-theme-default.css` file which is the default theme.
+> Available themes are: `slickgrid-theme-default.css`, `slickgrid-theme-bootstrap.css`, `slickgrid-theme-material.css`, `slickgrid-theme-salesforce.css`, `slickgrid-theme-fluent.css`
 
 #### SASS (scss)
 You could also compile the SASS files with your own customization, for that, you can simply override any of the SASS [_variables.scss](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) (without the `!default` flag) variable file and make sure to import the Bootstrap Theme afterward. For example, you could modify your `style.scss` with the following changes:

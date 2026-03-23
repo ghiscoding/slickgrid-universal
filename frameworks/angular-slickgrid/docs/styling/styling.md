@@ -22,8 +22,8 @@ Default CSS compiled (if you use the plain Bootstrap Theme CSS, just add it to y
 ```
 
 > **Note** Bootstrap is optional, you can use any other framework, other themes are also available as CSS and SCSS file extensions.
-> Import the `slickgrid-theme-bootstrap.css` **only** if you are actually using Bootstrap, otherwise prefer the `slickgrid-theme-default.css` default them.
-> Available themes are: `slickgrid-theme-default.css`, `slickgrid-theme-bootstrap.css`, `slickgrid-theme-material.css`, `slickgrid-theme-salesforce.css`
+> Import the `slickgrid-theme-bootstrap.css` **only** if you are actually using Bootstrap, otherwise you should prefer using the `slickgrid-theme-default.css` file which is the default theme.
+> Available themes are: `slickgrid-theme-default.css`, `slickgrid-theme-bootstrap.css`, `slickgrid-theme-material.css`, `slickgrid-theme-salesforce.css`, `slickgrid-theme-fluent.css`
 
 ### Using built-in Themes
 
@@ -38,6 +38,7 @@ The Material & Salesforce Themes are using SVGs internally for the icons used by
 @use '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css';
 @use '@slickgrid-universal/common/dist/styles/styles/css/slickgrid-theme-material.css';
 @use '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-salesforce.css';
+@use '@slickgrid-universal/common/dist/styles/css/slickgrid-theme-fluent.css';
 ```
 
 ##### with SASS
@@ -50,8 +51,10 @@ The Material & Salesforce Themes are using SVGs internally for the icons used by
 );
 
 // or other Themes
+@use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-bootstrap.scss';
 @use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-material.scss';
 @use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-salesforce.scss';
+@use '@slickgrid-universal/common/dist/styles/sass/slickgrid-theme-fluent.scss';
 ```
 
 ### Using CSS Variables _(instead of SASS)_

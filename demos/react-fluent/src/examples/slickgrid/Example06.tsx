@@ -340,52 +340,58 @@ const Example06: React.FC = () => {
     <div id="demo-container" className="container-fluid">
       <h2>Example 6: Tree Data</h2>
 
-      <Button className="btn-xs btn-icon" data-test="add-500-rows-btn" onClick={() => setData(500)}>
+      <Button size="small" className="btn-icon" data-test="add-500-rows-btn" onClick={() => setData(500)}>
         500 rows
       </Button>
-      <Button className="btn-xs btn-icon mx-1" data-test="add-75k-rows-btn" onClick={() => setData(75000)}>
+      <Button size="small" className="btn-icon mx-1" data-test="add-75k-rows-btn" onClick={() => setData(75000)}>
         75k rows
       </Button>
-      <Button onClick={() => dynamicallyChangeFilter()} className="btn-xs btn-icon" data-test="change-filter-dynamically">
+      <Button size="small" onClick={() => dynamicallyChangeFilter()} className="btn-icon" data-test="change-filter-dynamically">
         <span className="fui fui-filter me-1"></span>
         <span>Dynamically Change Filter (% complete &lt; 40)</span>
       </Button>
-      <Button onClick={() => collapseAllWithoutEvent()} className="btn-xs btn-icon mx-1" data-test="collapse-all-noevent-btn">
+      <Button size="small" onClick={() => collapseAllWithoutEvent()} className="btn-icon mx-1" data-test="collapse-all-noevent-btn">
         <span className="fui fui-arrow-minimize me-1"></span>
         <span>Collapse All (without triggering event)</span>
       </Button>
-      <Button onClick={() => dynamicallyToggledFirstParent()} className="btn-xs btn-icon" data-test="dynamically-toggle-first-parent-btn">
+      <Button
+        size="small"
+        onClick={() => dynamicallyToggledFirstParent()}
+        className="btn-icon"
+        data-test="dynamically-toggle-first-parent-btn"
+      >
         <span>Dynamically Toggle First Parent</span>
       </Button>
       <Button
+        size="small"
         onClick={() => reapplyToggledItems()}
         data-test="reapply-toggled-items-btn"
-        className="btn-xs btn-icon ms-1"
+        className="btn-icon ms-1"
         disabled={hasNoExpandCollapseChanged}
       >
         <span>Reapply Previous Toggled Items</span>
       </Button>
 
-      <Button onClick={() => addNewRow()} data-test="add-item-btn" className="btn btn-primary btn-xs btn-icon mx-1">
+      <Button size="small" onClick={() => addNewRow()} data-test="add-item-btn" className="btn btn-primary btn-icon mx-1">
         <span className="fui fui-add text-white me-1"></span>
         <span className="text-white">Add New Item to "Task 1" group</span>
       </Button>
-      <Button onClick={() => updateFirstRow()} data-test="update-item-btn" className="btn-xs btn-icon mx-1">
+      <Button size="small" onClick={() => updateFirstRow()} data-test="update-item-btn" className="btn-icon mx-1">
         <span className="fui fui-edit me-1"></span>
         <span>Update 1st Row Item</span>
       </Button>
-      <Button onClick={() => collapseAll()} data-test="collapse-all-btn" className="btn-xs btn-icon">
+      <Button size="small" onClick={() => collapseAll()} data-test="collapse-all-btn" className="btn-icon">
         <span className="fui fui-arrow-minimize me-1"></span>
         <span>Collapse All</span>
       </Button>
-      <Button onClick={() => expandAll()} data-test="expand-all-btn" className="btn-xs btn-icon mx-1">
+      <Button size="small" onClick={() => expandAll()} data-test="expand-all-btn" className="btn-icon mx-1">
         <span className="fui fui-arrow-maximize me-1"></span>
         <span>Expand All</span>
       </Button>
-      <Button onClick={() => logFlatStructure()} className="btn-xs btn-icon">
+      <Button size="small" onClick={() => logFlatStructure()} className="btn-icon">
         <span>Log Flat Structure</span>
       </Button>
-      <Button onClick={() => logHierarchicalStructure()} className="btn-xs btn-icon ms-1">
+      <Button size="small" onClick={() => logHierarchicalStructure()} className="btn-icon ms-1">
         <span>Log Hierarchical Structure</span>
       </Button>
       <div className={loadingClass}></div>

@@ -1,4 +1,4 @@
-# <a href="https://react.dev/" rel="nofollow"><img alt="React" src="https://ghiscoding.github.io/slickgrid-react-demos/assets/react-logo-DuD1bc7a.png" width="80"></a> Slickgrid-React - Bootstrap 5 Demo with i18n
+# <a href="https://react.dev/" rel="nofollow"><img alt="React" src="https://ghiscoding.github.io/slickgrid-react-demos/assets/react-logo-DuD1bc7a.png" width="80"></a> Slickgrid-React - Fluent UI Theme
 
 ## Important Note
 Please note that some of the npm packages installed in these demos are **optional** and are installed **only** for demo purposes. If you don't need the feature then don't install it (remove it from your `package.json`) and you'll end up with a smaller production build.
@@ -28,10 +28,10 @@ git clone https://github.com/ghiscoding/slickgrid-react-demos
 
 [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/slickgrid-react-demos/tree/main/single-locale-fluent-theme)
 
-### All Fluent Icons
+## Available Fluent Icons
 
 ![Fluent Icons](images/fluent-icons.png)
 
-### Fluent Theme Grid demo
+## Fluent Theme Grid demo
 
 ![Fluent SlickGrid](images/fluent-grid.png)
