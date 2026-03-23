@@ -57,6 +57,7 @@ overrides:
   '@vitest/coverage-v8>vite': ^8.0.0
   '@vitest/ui>vite': ^8.0.0
   vitest>vite: ^8.0.0
+  flatted: ^3.4.2
   hono: ^4.12.8
   minimatch: ^10.2.4
   undici: ^7.24.2
