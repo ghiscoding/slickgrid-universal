@@ -249,8 +249,9 @@ export class SlickCheckboxSelectColumn<T = any> {
    */
   createCheckboxElement(inputId: string, isChecked = false, isPartialChecked = false): DocumentFragment | HTMLSpanElement {
     const checkboxElm = createDocumentFragmentOrElement(this.gridOptions);
-    const labelElm = createDomElement('label', { className: 'checkbox-selector-label', htmlFor: inputId });
+    const labelElm = createDomElement('label', { className: 'checkbox-selector-label selectall', htmlFor: inputId });
     const divElm = createDomElement('div', { className: 'icon-checkbox-container' });
+    divElm.classList[isChecked ? 'add' : 'remove']('checked');
     divElm.appendChild(
       createDomElement('input', { id: inputId, type: 'checkbox', checked: isChecked, ariaChecked: String(isChecked), tabIndex: -1 })
     );
@@ -445,14 +446,20 @@ export class SlickCheckboxSelectColumn<T = any> {
       this.renderSelectAllCheckbox(this._isSelectAllChecked, this._isPartialSelectAllChecked);
     }
     if (!this._addonOptions.hideInFilterHeaderRow) {
-      const selectAllElm = this.headerRowNode?.querySelector<HTMLInputElement>(`#header-filter-selector${this._selectAll_UID}`);
-      const selectAllIconElm = this.headerRowNode?.querySelector<HTMLInputElement>('.icon-checkbox-container .sgi');
-      if (selectAllElm) {
-        selectAllElm.ariaChecked = String(this._isSelectAllChecked);
-        selectAllElm.checked = this._isSelectAllChecked;
-      }
-      if (selectAllIconElm) {
-        selectAllIconElm.className = this.getCheckboxIcon(this._isSelectAllChecked, this._isPartialSelectAllChecked);
+      const selectAllContainerElm = this.headerRowNode?.querySelector<HTMLInputElement>('.icon-checkbox-container');
+      const selectAllElm = selectAllContainerElm?.querySelector<HTMLInputElement>(`#header-filter-selector${this._selectAll_UID}`);
+      const selectAllIconElm = selectAllContainerElm?.querySelector<HTMLInputElement>('.sgi');
+
+      if (selectAllContainerElm) {
+        const actionFn = this._isSelectAllChecked ? 'add' : 'remove';
+        selectAllContainerElm.classList[actionFn]('checked');
+        if (selectAllElm) {
+          selectAllElm.ariaChecked = String(this._isSelectAllChecked);
+          selectAllElm.checked = this._isSelectAllChecked;
+        }
+        if (selectAllIconElm) {
+          selectAllIconElm.className = this.getCheckboxIcon(this._isSelectAllChecked, this._isPartialSelectAllChecked);
+        }
       }
     }
   }

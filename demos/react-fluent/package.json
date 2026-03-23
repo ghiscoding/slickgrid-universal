@@ -1,0 +1,59 @@
+{
+  "name": "slickgrid-react-fluent-demo",
+  "private": true,
+  "version": "10.2.0",
+  "description": "Slickgrid-React demo",
+  "keywords": [
+    "react",
+    "datagrid",
+    "datatable",
+    "plugin",
+    "slickgrid"
+  ],
+  "license": "MIT",
+  "author": "Ghislain B.",
+  "scripts": {
+    "react-fluent:dev": "vite",
+    "react-fluent:preview": "vite preview",
+    "build": "pnpm type-check && vite build",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fluentui/react-components": "^9.73.4",
+    "@fluentui/react-icons": "^2.0.321",
+    "@slickgrid-universal/common": "workspace:*",
+    "@slickgrid-universal/event-pub-sub": "workspace:*",
+    "@slickgrid-universal/excel-export": "workspace:*",
+    "@slickgrid-universal/pdf-export": "workspace:*",
+    "@slickgrid-universal/react-row-detail-plugin": "workspace:*",
+    "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
+    "@slickgrid-universal/rxjs-observable": "workspace:*",
+    "@slickgrid-universal/text-export": "workspace:*",
+    "dompurify": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-router": "catalog:",
+    "slickgrid-react": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": ">=19.0.0"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "catalog:",
+    "@fnando/sparkline": "catalog:",
+    "@formkit/tempo": "catalog:",
+    "@popperjs/core": "catalog:",
+    "@types/fnando__sparkline": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@types/sortablejs": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "globals": "catalog:",
+    "rxjs": "catalog:",
+    "sass": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-tsconfig-paths": "catalog:"
+  }
+}

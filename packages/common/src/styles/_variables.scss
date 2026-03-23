@@ -9,9 +9,6 @@
 // import external lib CSS files (without the .css extension)
 @use 'vanilla-calendar-pro/styles/index';
 
-// SASS utils to generate SVGs
-@use './svg-utilities';
-
 /* this is the only variable without $slick prefix and exists so that user could use the same Bootstrap primary color without declaring $slick-primary-color variable (which also exists) */
 /** extra styling when Bootstrap isn't provided */
 $slick-highlight-color:                                     #fcfcfc !default;
@@ -188,6 +185,7 @@ $slick-icon-group-collapsed-svg-path:                       "M8.59,16.58L13.17,1
 $slick-icon-group-expanded-svg-path:                        "M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" !default;
 $slick-icon-group-font-size:                                calc(#{$slick-icon-font-size} + 6px) !default;
 $slick-icon-group-margin-right:                             2px !default;
+$slick-icon-svg-viewbox-size:                               24 !default;
 
 /* Kraaden AutoComplete */
 $slick-autocomplete-bg-color:	                              #ffffff !default;
@@ -455,6 +453,7 @@ $slick-header-menu-button-border-width:                     0px !default;
 $slick-header-menu-button-icon-svg-path:                    "M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" !default;
 $slick-header-menu-button-icon-color:                       $slick-icon-color !default;
 $slick-header-menu-button-icon-size:                        22px !default;
+$slick-header-menu-button-icon-font-size:                   22px !default;
 $slick-header-menu-button-padding:                          0px !default;
 $slick-header-menu-button-margin-right:                     3px !default;
 $slick-header-menu-display:                                 none !default; /* can be none or inline-block */
@@ -883,7 +882,6 @@ $slick-grid-footer-font-style:                              normal !default;
 $slick-grid-footer-font-weight:                             bold !default;
 $slick-grid-footer-justify-content:                         normal !default;
 
-
 /* Custom Footer */
 $slick-footer-bg-color:                                     transparent !default;
 $slick-footer-font-size:                                    $slick-font-size-base !default;
@@ -973,7 +971,7 @@ $slick-empty-data-warning-z-index:                          10 !default;
 
 // add a few Dark Mode SASS variables, just the basic vars
 // Bootstrap default dark body bg-color is "--bs-body-bg: #212529"
-$slick-dark-primary-color:                                color.adjust($slick-primary-color, $lightness: 15%) !default;
+$slick-dark-primary-color:                                #62abf5 !default;
 $slick-dark-base-dark-text-color:                         #d4d4d4 !default;
 $slick-dark-base-dark-menu-bg-color:                      #212529 !default;
 $slick-dark-base-dark-menu-border-color:                  #505050 !default;
@@ -1171,16 +1169,15 @@ $slick-dark-text-color:                                   #d4d4d4 !default;
   --slick-multiselect-input-filter-border:                1px solid #949494;
   --slick-multiselect-input-focus-border-color:           var(--slick-form-control-focus-border-color);
   --slick-multiselect-input-focus-box-shadow:             var(--slick-form-control-focus-box-shadow);
-  --slick-multiselect-option-highlight-bg-color:          var(--slick-base-dark-menu-item-hover-color);
   --slick-multiselect-select-all-label-hover-bg-color:    var(--slick-base-dark-menu-item-hover-color);
   --slick-multiselect-option-highlight-border:            var(--slick-base-dark-menu-item-border);
+  --slick-multiselect-option-highlight-bg-color:          var(--slick-multiselect-select-all-label-hover-bg-color);
   --slick-multiselect-choice-border:                      var(--slick-base-dark-menu-item-border);
   --slick-multiselect-choice-bgcolor:                     var(--slick-base-dark-menu-bg-color);
   --slick-multiselect-drop-background:                    var(--slick-base-dark-menu-bg-color);
   --slick-multiselect-drop-color:                         #bbbbbb;
   --slick-multiselect-drop-hide-radio-hover-bgcolor:      var(--slick-base-dark-menu-item-hover-color);
   --slick-multiselect-dropdown-border:                    1px solid #5d5d5d;
-  --slick-multiselect-option-highlight-bg-color:          var(--slick-multiselect-select-all-label-hover-bg-color);
   --slick-multiselect-ok-button-bg-color:                 #262626;
   --slick-multiselect-ok-button-bg-hover-color:           #373c42;
   --slick-multiselect-ok-button-border-color:             #626262;

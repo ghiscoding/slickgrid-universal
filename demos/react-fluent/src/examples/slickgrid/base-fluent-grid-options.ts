@@ -1,0 +1,42 @@
+import { GridOption } from 'slickgrid-react';
+
+export const baseFluentGridOption: GridOption = {
+  contextMenu: {
+    iconCollapseAllGroupsCommand: 'fic fic-arrow-minimize',
+    iconExpandAllGroupsCommand: 'fic fic-arrow-maximize',
+    iconClearGroupingCommand: 'fic fic-dismiss',
+    iconCopyCellValueCommand: 'fic fic-copy',
+    iconExportCsvCommand: 'fic fic-arrow-download',
+    iconExportExcelCommand: 'fic fic-arrow-download',
+    iconExportPdfCommand: 'fic fic-arrow-download',
+    iconExportTextDelimitedCommand: 'fic fic-arrow-download',
+    subItemChevronClass: 'fic fic-chevron-right',
+  },
+  gridMenu: {
+    iconCssClass: 'fic fic-navigation',
+    iconClearAllFiltersCommand: 'fic fic-filter-dismiss',
+    iconClearAllSortingCommand: 'fic fic-arrow-sort',
+    iconClearFrozenColumnsCommand: 'fic fic-pin-off',
+    iconExportCsvCommand: 'fic fic-arrow-download',
+    iconExportExcelCommand: 'fic fic-arrow-download',
+    iconExportPdfCommand: 'fic fic-arrow-download',
+    iconExportTextDelimitedCommand: 'fic fic-arrow-download',
+    iconRefreshDatasetCommand: 'fic fic-arrow-sync',
+    iconToggleDarkModeCommand: 'fic fic-dark-theme',
+    iconToggleFilterCommand: 'fic fic-split-horizontal',
+    iconTogglePreHeaderCommand: 'fic fic-split-horizontal',
+    subItemChevronClass: 'fic fic-chevron-right',
+  },
+  headerMenu: {
+    iconClearFilterCommand: 'fic fic-filter-dismiss',
+    iconClearSortCommand: 'fic fic-arrow-sort',
+    iconFilterShortcutSubMenu: 'fic ficlter',
+    iconFreezeColumns: 'fic fic-pin',
+    iconUnfreezeColumns: 'fic fic-pin-off',
+    iconSortAscCommand: 'fic fic-sort-arrow-up',
+    iconSortDescCommand: 'fic fic-sort-arrow-down',
+    iconColumnHideCommand: 'fic fic-dismiss',
+    iconColumnResizeByContentCommand: 'fic fic-arrow-bidirection',
+    subItemChevronClass: 'fic fic-chevron-right',
+  },
+};

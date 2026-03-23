@@ -6,7 +6,11 @@ export class NavBar extends React.Component {
     return (
       <div>
         <nav className="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-          <a className="navbar-brand ms-2" href="https://github.com/ghiscoding/slickgrid-react">
+          <a
+            className="navbar-brand ms-2"
+            target="_blank"
+            href="https://github.com/ghiscoding/slickgrid-universal/tree/master/frameworks/slickgrid-react"
+          >
             <i className="mdi mdi-github"></i>
             <span className="ms-2">Slickgrid-React</span>
           </a>
