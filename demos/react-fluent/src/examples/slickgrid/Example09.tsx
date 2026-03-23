@@ -125,6 +125,7 @@ const Example09: React.FC = () => {
       },
       enableAutoSizeColumns: true,
       enableAutoResize: true,
+      enableCellNavigation: true,
       enableExcelExport: true,
       excelExportOptions: {
         exportWithFormatter: true,
@@ -144,6 +145,10 @@ const Example09: React.FC = () => {
         // hideInColumnTitleRow: false,
         onRowToggleStart: (_e, args) => console.log('onBeforeRowToggle', args),
         onSelectAllToggleStart: () => reactGridRef.current?.treeDataService.toggleTreeDataCollapse(false, false),
+      },
+      selectionOptions: {
+        // True (Single Selection), False (Multiple Selections)
+        selectActiveRow: false,
       },
       externalResources: [new ExcelExportService(), new TextExportService()],
       enableFiltering: true,

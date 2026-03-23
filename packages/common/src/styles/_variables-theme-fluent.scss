@@ -28,7 +28,10 @@ $slick-icon-group-expanded-svg-path: 'M15.8 7.73c.28.3.27.78-.03 1.06l-5.25 5a.7
   $slick-column-picker-unchecked-opacity: 0.25 !default,
   $slick-checkbox-opacity-hover: 0.45 !default,
   $slick-checkbox-unchecked-opacity: 0.25 !default,
+  $slick-column-picker-icon-color: $primary-color !default,
   $slick-column-picker-icon-checked-svg-path: $slick-column-picker-icon-checked-svg-path !default,
+  $slick-input-focus-border-color: color.adjust($primary-color, $lightness: 12%) !default,
+  $slick-icon-group-color: $primary-color !default,
   $slick-icon-group-font-size: 20px !default,
   $slick-icon-group-collapsed-svg-path: $slick-icon-group-collapsed-svg-path !default,
   $slick-icon-group-expanded-svg-path: $slick-icon-group-expanded-svg-path !default,
@@ -43,8 +46,10 @@ $slick-icon-group-expanded-svg-path: 'M15.8 7.73c.28.3.27.78-.03 1.06l-5.25 5a.7
   $slick-checkbox-icon-partial-checked-svg-path: 'M3 6a3 3 0 0 1 3-3h8a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6Z' !default,
   $slick-checkbox-icon-unchecked-svg-path: '' !default,
   $slick-row-move-plugin-icon-svg-path: 'M7 5a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm0 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm1 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm5-11a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm1 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm-1 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z' !default,
+  $slick-detail-view-icon-color: $primary-color !default,
   $slick-detail-view-icon-collapse-svg-path: 'M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0ZM6 10c0 .28.22.5.5.5h7a.5.5 0 0 0 0-1h-7a.5.5 0 0 0-.5.5Z' !default,
   $slick-detail-view-icon-expand-svg-path: 'M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0ZM6 10c0 .28.22.5.5.5h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0-.5.5Z' !default,
+  $slick-pagination-icon-color: $primary-color !default,
   $slick-pagination-icon-seek-first-svg-path: 'M6 5a.5.5 0 0 0-.5.41v9.09a.5.5 0 0 0 1 .09V5.5A.5.5 0 0 0 6 5Zm7.85.15a.5.5 0 0 0-.63-.06l-.07.06-4.5 4.5a.5.5 0 0 0-.06.63l.06.07 4.5 4.5a.5.5 0 0 0 .76-.63l-.06-.07L9.71 10l4.14-4.15a.5.5 0 0 0 0-.7Z' !default,
   $slick-pagination-icon-seek-end-svg-path: 'M13.5 5a.5.5 0 0 1 .5.41v9.09a.5.5 0 0 1-1 .09V5.5c0-.28.22-.5.5-.5Zm-7.85.15a.5.5 0 0 1 .63-.06l.07.06 4.5 4.5c.18.17.2.44.06.63l-.06.07-4.5 4.5a.5.5 0 0 1-.76-.63l.06-.07L9.79 10 5.65 5.85a.5.5 0 0 1 0-.7Z' !default,
   $slick-pagination-icon-seek-next-svg-path: 'M7.65 4.15c.2-.2.5-.2.7 0l5.49 5.46c.21.22.21.57 0 .78l-5.49 5.46a.5.5 0 0 1-.7-.7L12.8 10 7.65 4.85a.5.5 0 0 1 0-.7Z' !default,
@@ -75,7 +80,8 @@ $slick-icon-group-expanded-svg-path: 'M15.8 7.73c.28.3.27.78-.03 1.06l-5.25 5a.7
   }
 
   .form-control:focus {
-    box-shadow: inset 0 -2px $primary-color !important;
+    --slick-input-focus-box-shadow: inset 0 -2px #{$primary-color};
+    --slick-form-control-focus-box-shadow: inset 0 -2px #{$primary-color};
   }
 }
 

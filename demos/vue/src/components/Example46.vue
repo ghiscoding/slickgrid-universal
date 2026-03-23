@@ -109,6 +109,7 @@ function defineGrid() {
     },
     enableAutoSizeColumns: true,
     enableAutoResize: true,
+    enableCellNavigation: true,
     enableExcelExport: true,
     excelExportOptions: {
       exportWithFormatter: true,
@@ -128,6 +129,10 @@ function defineGrid() {
       hideInColumnTitleRow: true,
       onRowToggleStart: (e, args) => console.log('onBeforeRowToggle', args),
       onSelectAllToggleStart: () => vueGrid.treeDataService.toggleTreeDataCollapse(false, false),
+    },
+    selectionOptions: {
+      // True (Single Selection), False (Multiple Selections)
+      selectActiveRow: false,
     },
     externalResources: [new ExcelExportService(), new TextExportService()],
     enableFiltering: true,

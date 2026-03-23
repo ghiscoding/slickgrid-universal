@@ -109,6 +109,7 @@ export class Example46 {
       },
       enableAutoSizeColumns: true,
       enableAutoResize: true,
+      enableCellNavigation: true,
       enableExcelExport: true,
       excelExportOptions: {
         exportWithFormatter: true,
@@ -128,6 +129,10 @@ export class Example46 {
         hideInColumnTitleRow: true,
         onRowToggleStart: (e, args) => console.log('onBeforeRowToggle', args),
         onSelectAllToggleStart: () => this.aureliaGrid.treeDataService.toggleTreeDataCollapse(false, false),
+      },
+      selectionOptions: {
+        // True (Single Selection), False (Multiple Selections)
+        selectActiveRow: false,
       },
       externalResources: [new ExcelExportService(), new TextExportService()],
       enableFiltering: true,

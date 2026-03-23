@@ -127,6 +127,9 @@ const Example08: React.FC = () => {
         headerCssClass: 'header-centered',
         cssClass: 'cell-unselectable',
         excludeFromExport: true,
+        excludeFromColumnPicker: true,
+        excludeFromGridMenu: true,
+        excludeFromHeaderMenu: true,
         maxWidth: 30,
       },
       {
