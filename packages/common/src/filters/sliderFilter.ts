@@ -524,7 +524,6 @@ export class SliderFilter implements Filter {
     // reset both flags for next use
     this._clearFilterTriggered = false;
     this._shouldTriggerQuery = true;
-    this.changeBothSliderFocuses(false);
 
     // trigger mouse enter event on the filter for optionally hooked SlickCustomTooltip
     // the minimum requirements for tooltip to work are the columnDef and targetElement
@@ -532,12 +531,6 @@ export class SliderFilter implements Filter {
       this.grid.onHeaderRowMouseEnter.notify({ column: this.columnDef, grid: this.grid }, new SlickEventData(e));
     }
     this._lastSearchValue = value;
-  }
-
-  protected changeBothSliderFocuses(isAddingFocus: boolean): void {
-    const addRemoveCmd = isAddingFocus ? 'add' : 'remove';
-    this._sliderLeftInputElm?.classList[addRemoveCmd]('focus');
-    this._sliderRightInputElm?.classList[addRemoveCmd]('focus');
   }
 
   protected slideLeftInputChanged(e: DOMEvent<HTMLInputElement>, skipTriggerEvent = false): void {
@@ -597,7 +590,6 @@ export class SliderFilter implements Filter {
   ): void {
     let triggerEvent = true;
     this.updateTrackFilledColorWhenEnabled();
-    this.changeBothSliderFocuses(true);
     this._sliderRangeContainElm.title = this.sliderType === 'double' ? `${sliderLeftVal} - ${sliderRightVal}` : `${sliderRightVal}`;
 
     //  left or right value should never be above each others
