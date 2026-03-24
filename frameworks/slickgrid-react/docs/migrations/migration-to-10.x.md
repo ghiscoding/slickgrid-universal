@@ -164,7 +164,7 @@ this.gridOptions = {
 
 ### New Fluent UI Theme
 
-There's a new [Fluent UI](https://react.fluentui.dev/) Styling Theme available for React, you can see a live demo via Stackblitz
+There's also a new [Fluent UI](https://react.fluentui.dev/) Styling Theme available for React, you can see a live demo via Stackblitz. You can use the new theme with `slickgrid-theme-fluent.css` (or `.scss` for SASS)
 
 [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/slickgrid-react-demos/tree/main/react-fluent-ui)
 
