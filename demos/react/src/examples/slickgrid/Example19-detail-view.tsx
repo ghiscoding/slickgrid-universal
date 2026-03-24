@@ -1,10 +1,11 @@
+import { format } from '@formkit/tempo';
 import React, { useState } from 'react';
 import type { RowDetailViewProps } from 'slickgrid-react';
 import './example19-detail-view.scss';
 
 interface Item {
   assignee: string;
-  duration: Date;
+  duration: number;
   percentComplete: number;
   reporter: string;
   start: Date;
@@ -64,7 +65,7 @@ const Example19DetailView: React.FC<RowDetailViewProps<Item, any>> = (props) => 
           <label>Reporter:</label> <span>{props.model.reporter}</span>
         </div>
         <div className="col-3 detail-label">
-          <label>Duration:</label> <span>{props.model.duration?.toISOString?.()}</span>
+          <label>Duration:</label> <span>{props.model.duration || 0}</span>
         </div>
         <div className="col-3 detail-label">
           <label>% Complete:</label> <span>{props.model.percentComplete}</span>
@@ -73,10 +74,10 @@ const Example19DetailView: React.FC<RowDetailViewProps<Item, any>> = (props) => 
 
       <div className="row">
         <div className="col-3 detail-label">
-          <label>Start:</label> <span>{props.model.start?.toISOString()}</span>
+          <label>Start:</label> <span>{props.model.start ? format(props.model.start, 'YYYY-MM-DD') : ''}</span>
         </div>
         <div className="col-3 detail-label">
-          <label>Finish:</label> <span>{props.model.finish?.toISOString()}</span>
+          <label>Finish:</label> <span>{props.model.finish ? format(props.model.finish, 'YYYY-MM-DD') : ''}</span>
         </div>
         <div className="col-3 detail-label">
           <label>Effort Driven:</label> <i className={props.model.effortDriven ? 'mdi mdi-check' : ''}></i>
@@ -90,7 +91,7 @@ const Example19DetailView: React.FC<RowDetailViewProps<Item, any>> = (props) => 
           Find out who is the Assignee
           <small>
             <button
-              className="btn btn-primary btn-sm"
+              className="btn btn-primary btn-sm mx-1"
               onClick={function () {
                 alertAssignee(props.model.assignee);
               }}
@@ -104,7 +105,7 @@ const Example19DetailView: React.FC<RowDetailViewProps<Item, any>> = (props) => 
 
       <div className="col-sm-4">
         <button
-          className="btn btn-primary btn-danger btn-sm"
+          className="btn btn-primary btn-danger btn-sm mx-1"
           onClick={function () {
             deleteRow(props.model);
           }}

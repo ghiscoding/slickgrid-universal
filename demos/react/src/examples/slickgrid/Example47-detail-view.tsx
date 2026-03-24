@@ -1,3 +1,4 @@
+import { format } from '@formkit/tempo';
 import React, { useState } from 'react';
 import type { RowDetailViewProps } from 'slickgrid-react';
 import './example47-detail-view.scss';
@@ -6,7 +7,7 @@ import { showToast } from './utilities.js';
 interface Item {
   id: number;
   assignee: string;
-  duration: Date;
+  duration: number;
   percentComplete: number;
   reporter: string;
   start: Date;
@@ -65,7 +66,7 @@ const Example47DetailView: React.FC<RowDetailViewProps<Item, any>> = (props) => 
           <label>Reporter:</label> <span>{props.model.reporter}</span>
         </div>
         <div className="col-3 detail-label">
-          <label>Duration:</label> <span>{props.model.duration?.toISOString?.()}</span>
+          <label>Duration:</label> <span>{props.model.duration || 0}</span>
         </div>
         <div className="col-3 detail-label">
           <label>% Complete:</label> <span>{props.model.percentComplete}</span>
@@ -74,10 +75,10 @@ const Example47DetailView: React.FC<RowDetailViewProps<Item, any>> = (props) => 
 
       <div className="row">
         <div className="col-3 detail-label">
-          <label>Start:</label> <span>{props.model.start?.toISOString()}</span>
+          <label>Start:</label> <span>{props.model.start ? format(props.model.start, 'YYYY-MM-DD') : ''}</span>
         </div>
         <div className="col-3 detail-label">
-          <label>Finish:</label> <span>{props.model.finish?.toISOString()}</span>
+          <label>Finish:</label> <span>{props.model.finish ? format(props.model.finish, 'YYYY-MM-DD') : ''}</span>
         </div>
         <div className="col-3 detail-label">
           <label>Effort Driven:</label> <i className={props.model.effortDriven ? 'mdi mdi-check' : ''}></i>
