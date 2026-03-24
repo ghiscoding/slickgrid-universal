@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.2.0...v10.3.0) (2026-03-24)
+
+### Features
+
+* create new Ms Fluent UI Theme ([#2491](https://github.com/ghiscoding/slickgrid-universal/issues/2491)) ([31d185a](https://github.com/ghiscoding/slickgrid-universal/commit/31d185aa5c35d8ad4c1d3c479571c702c300a8b6)) - by @ghiscoding
+
+### Bug Fixes
+
+* allow opening Context Menu from anywhere in viewport ([#2485](https://github.com/ghiscoding/slickgrid-universal/issues/2485)) ([572005c](https://github.com/ghiscoding/slickgrid-universal/commit/572005cce3c72534299daafcb39416257dc88676)) - by @ghiscoding
+* **deps:** update all non-major dependencies ([#2494](https://github.com/ghiscoding/slickgrid-universal/issues/2494)) ([cd8c6b2](https://github.com/ghiscoding/slickgrid-universal/commit/cd8c6b2f35d3265900ef1f21805b10c435b4ea18)) - by @renovate-bot
+* **deps:** update all non-major dependencies ([#2496](https://github.com/ghiscoding/slickgrid-universal/issues/2496)) ([123188f](https://github.com/ghiscoding/slickgrid-universal/commit/123188f160d28f0f2140b8d88727bde406f0be27)) - by @renovate-bot
+
 ## [10.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.1.1...v10.2.0) (2026-03-14)
 
 ### Features

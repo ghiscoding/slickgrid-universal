@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.2.0...v10.3.0) (2026-03-24)
+
+### Bug Fixes
+
+* rename internal icons from .mdi to .sgi class (to fix new Theme w/o MDI icon set) ([#2489](https://github.com/ghiscoding/slickgrid-universal/issues/2489)) ([d7222f6](https://github.com/ghiscoding/slickgrid-universal/commit/d7222f6a051fd01b71c108531c477335f4e65804)) - by @ghiscoding
+
 ## [10.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.1.1...v10.2.0) (2026-03-14)
 
 **Note:** Version bump only for package @slickgrid-universal/pagination-component

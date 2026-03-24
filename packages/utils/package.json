@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/utils",
-  "version": "10.2.0",
+  "version": "10.3.0",
   "description": "Common set of small utilities",
   "type": "module",
   "main": "./dist/index.js",

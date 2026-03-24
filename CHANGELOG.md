@@ -4,6 +4,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.2.0...v10.3.0) (2026-03-24)
+
+### Features
+
+* create new Ms Fluent UI Theme ([#2491](https://github.com/ghiscoding/slickgrid-universal/issues/2491)) ([31d185a](https://github.com/ghiscoding/slickgrid-universal/commit/31d185aa5c35d8ad4c1d3c479571c702c300a8b6)) - by @ghiscoding
+
+### Bug Fixes
+
+* allow opening Context Menu from anywhere in viewport ([#2485](https://github.com/ghiscoding/slickgrid-universal/issues/2485)) ([572005c](https://github.com/ghiscoding/slickgrid-universal/commit/572005cce3c72534299daafcb39416257dc88676)) - by @ghiscoding
+* deprecate Menu Options (`optionItems` list) ([#2480](https://github.com/ghiscoding/slickgrid-universal/issues/2480)) ([b8ce0db](https://github.com/ghiscoding/slickgrid-universal/commit/b8ce0db8c0c887f77e4b05f83270a86277a68ee3)) - by @ghiscoding
+* **deps:** update all non-major dependencies ([#2494](https://github.com/ghiscoding/slickgrid-universal/issues/2494)) ([cd8c6b2](https://github.com/ghiscoding/slickgrid-universal/commit/cd8c6b2f35d3265900ef1f21805b10c435b4ea18)) - by @renovate-bot
+* **deps:** update all non-major dependencies ([#2496](https://github.com/ghiscoding/slickgrid-universal/issues/2496)) ([123188f](https://github.com/ghiscoding/slickgrid-universal/commit/123188f160d28f0f2140b8d88727bde406f0be27)) - by @renovate-bot
+* error thrown when dragging from an editor inside a draggable row ([#2487](https://github.com/ghiscoding/slickgrid-universal/issues/2487)) ([0d9bdba](https://github.com/ghiscoding/slickgrid-universal/commit/0d9bdbae3e7c12d63ae2e1d198205512dc3a796a)) - by @ghiscoding
+* **filters:** Slider Filter shouldn't add focus outline w/filter cleared ([#2492](https://github.com/ghiscoding/slickgrid-universal/issues/2492)) ([1cab711](https://github.com/ghiscoding/slickgrid-universal/commit/1cab711a8226a9835dd9ad2a5f72dfd000fd82e7)) - by @ghiscoding
+* rename internal icons from .mdi to .sgi class (to fix new Theme w/o MDI icon set) ([#2489](https://github.com/ghiscoding/slickgrid-universal/issues/2489)) ([d7222f6](https://github.com/ghiscoding/slickgrid-universal/commit/d7222f6a051fd01b71c108531c477335f4e65804)) - by @ghiscoding
+* Row Selection (Select All) not showing in Bootstrap ([#2488](https://github.com/ghiscoding/slickgrid-universal/issues/2488)) ([965ead2](https://github.com/ghiscoding/slickgrid-universal/commit/965ead27fe813d731f9c3ea4ca8b179269c1e0bf)) - by @ghiscoding
+* Row Selection shouldn't do multi-select without `dragToSelect` ([#2483](https://github.com/ghiscoding/slickgrid-universal/issues/2483)) ([3307201](https://github.com/ghiscoding/slickgrid-universal/commit/3307201741e18ddc4df6b7969f88537ad1a8d1c2)) - by @ghiscoding
+* **styling:** always use box-shadow for Active Cell ([#2477](https://github.com/ghiscoding/slickgrid-universal/issues/2477)) ([0952978](https://github.com/ghiscoding/slickgrid-universal/commit/09529787382efe7f4ce266a050a395cccb381e90)) - by @ghiscoding
+
 ## [10.2.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.1.1...v10.2.0) (2026-03-14)
 
 ### Features
