@@ -8,7 +8,7 @@ packages:
 catalog:
   '@4tw/cypress-drag-drop': ^2.3.1
   '@angular-eslint/eslint-plugin': ^21.3.1
-  '@faker-js/faker': ^10.3.0
+  '@faker-js/faker': ^10.4.0
   '@fnando/sparkline': ^0.3.10
   '@formkit/tempo': ^1.0.0
   '@popperjs/core': ^2.11.8
@@ -19,8 +19,8 @@ catalog:
   '@types/sortablejs': ^1.15.9
   '@vitejs/plugin-react': ^5.2.0
   '@vitejs/plugin-vue': ^6.0.5
-  '@vitest/coverage-v8': ^4.1.0
-  '@vitest/ui': ^4.1.0
+  '@vitest/coverage-v8': ^4.1.1
+  '@vitest/ui': ^4.1.1
   bootstrap: ^5.3.8
   concurrently: ^9.2.1
   cross-env: ^10.1.0
@@ -29,7 +29,7 @@ catalog:
   dequal: ^2.0.3
   dompurify: ^3.3.3
   globals: ^17.4.0
-  i18next: ^25.10.3
+  i18next: ^25.10.5
   i18next-vue: ^5.4.0
   jsdom: ^29.0.1
   jsdom-global: ^3.0.2
@@ -39,7 +39,7 @@ catalog:
   oxlint: 1.43.0
   react: ^19.2.4
   react-dom: ^19.2.4
-  react-router: ^7.13.1
+  react-router: ^7.13.2
   remove-glob: ^1.2.0
   rxjs: ^7.8.2
   sass: ^1.98.0
@@ -48,7 +48,7 @@ catalog:
   typescript: ^6.0.1-rc
   vite: ^7.3.1
   vite-tsconfig-paths: ^6.1.1
-  vitest: ^4.1.0
+  vitest: ^4.1.1
   vue: ^3.5.30
 
 overrides:
