@@ -9,6 +9,7 @@ This new release also brings significant improvements to accessibility (a11y), m
 - [Row Detail (now optional)](#row-detail-now-optional)
 - improvements to accessibility (see above)
 - [What's next?](#whats-next-...version-11)
+- [New Fluent UI Theme](#new-fluent-ui-theme)
 
 > **Note:** if you come from an earlier version, please make sure to follow each migrations in their respective order (review previous migration guides)
 
@@ -160,6 +161,12 @@ this.gridOptions = {
   },
 };
 ```
+
+### New Fluent UI Theme
+
+There's a new [Fluent UI](https://react.fluentui.dev/) Styling Theme available for React, you can see a live demo via Stackblitz
+
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/slickgrid-react-demos/tree/main/react-fluent-ui)
 
 ---
 
