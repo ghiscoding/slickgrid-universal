@@ -298,10 +298,10 @@ const Example04: React.FC = () => {
 
         <div className="row">
           <div className="col-sm-6">
-            <Button className="btn-icon mx-1" onClick={changeEditableGrid} data-test="editable-grid-btn">
+            <Button className="mx-1" onClick={changeEditableGrid} data-test="editable-grid-btn">
               Make Grid Editable
             </Button>
-            <Button className="btn-icon" onClick={closeAllRowDetail} data-test="collapse-all-btn">
+            <Button onClick={closeAllRowDetail} data-test="collapse-all-btn">
               Close all Row Details
             </Button>
             &nbsp;&nbsp;
@@ -311,18 +311,13 @@ const Example04: React.FC = () => {
                 id="detailViewRowCount"
                 type="number"
                 value={detailViewRowCount}
-                style={{ height: '26px', width: '40px' }}
+                style={{ height: '24px', width: '40px' }}
                 onInput={($event) => detailViewRowCountChanged(($event.target as HTMLInputElement).value)}
               />
-              <Button
-                className="btn btn-outline-secondary btn-xs btn-icon"
-                style={{ height: '26px' }}
-                onClick={changeDetailViewRowCount}
-                data-test="set-count-btn"
-              >
+              <Button className="mx-1" onClick={changeDetailViewRowCount} data-test="set-count-btn">
                 Set
               </Button>
-              <label htmlFor="serverdelay" className="ms-1">
+              <label htmlFor="serverdelay" className="me-1">
                 Server Delay:
               </label>
               <input
@@ -330,7 +325,7 @@ const Example04: React.FC = () => {
                 type="number"
                 defaultValue={serverWaitDelay}
                 data-test="server-delay"
-                style={{ width: '55px' }}
+                style={{ height: '24px', width: '55px' }}
                 onInput={serverDelayChanged}
                 title="input a fake timer delay to simulate slow server response"
               />

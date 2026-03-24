@@ -319,11 +319,7 @@ const Example09: React.FC = () => {
 
       <div className="row">
         <div className="col-md-7">
-          <Button
-            className="btn-icon mx-1"
-            data-test="clear-filters-btn"
-            onClick={() => reactGridRef.current?.filterService.clearFilters()}
-          >
+          <Button className="btn-icon" data-test="clear-filters-btn" onClick={() => reactGridRef.current?.filterService.clearFilters()}>
             <span className="fic fic-dismiss me-1"></span>
             <span>Clear Filters</span>
           </Button>
@@ -341,7 +337,7 @@ const Example09: React.FC = () => {
               type="number"
               id="server-delay"
               data-test="server-delay"
-              style={{ width: '60px' }}
+              style={{ height: '24px', width: '60px' }}
               value={serverWaitDelay}
               onInput={($event) => handleServerDelayInputChange($event)}
             />

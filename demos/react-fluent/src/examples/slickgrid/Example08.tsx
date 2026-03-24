@@ -538,13 +538,14 @@ const Example08: React.FC = () => {
             Tax Rate (%):
             <input
               type="number"
-              className="narrow input"
+              style={{ height: '26px' }}
+              className="narrow input ms-1"
               step="0.25"
               data-test="taxrate"
               defaultValue={taxRate}
               onInput={($event) => taxRateChanged(($event.target as HTMLInputElement).value)}
             />
-            <Button className="btn-sm btn-icon me-1" onClick={() => updateTaxRate()} data-test="update-btn">
+            <Button className="mx-1" onClick={() => updateTaxRate()} data-test="update-btn">
               Update
             </Button>
           </span>

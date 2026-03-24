@@ -353,22 +353,32 @@ const Example05: React.FC = () => {
         <div className="col-sm-12">
           <span>
             <label htmlFor="">Pinned Rows: </label>
-            <input type="number" defaultValue={frozenRowCount} onInput={($event) => changeFrozenRowCount($event)} />
-            <Button size="small" className="mx-1" onClick={() => updateFrozenRowCount()}>
+            <input
+              type="number"
+              style={{ height: '24px', width: '55px' }}
+              defaultValue={frozenRowCount}
+              onInput={($event) => changeFrozenRowCount($event)}
+            />
+            <Button className="mx-1" onClick={() => updateFrozenRowCount()}>
               Set
             </Button>
           </span>
           <span style={{ marginLeft: '10px' }}>
             <label htmlFor="">Pinned Columns: </label>
-            <input type="number" defaultValue={frozenColumnCount} onInput={($event) => changeFrozenColumnCount($event)} />
-            <Button size="small" className="mx-1" onClick={() => updateFrozenColumnCount()}>
+            <input
+              type="number"
+              style={{ height: '24px', width: '55px' }}
+              defaultValue={frozenColumnCount}
+              onInput={($event) => changeFrozenColumnCount($event)}
+            />
+            <Button className="mx-1" onClick={() => updateFrozenColumnCount()}>
               Set
             </Button>
           </span>
         </div>
       </div>
 
-      <div className="row mt-2 mt-1">
+      <div className="row my-1">
         <div className="col-sm-12">
           <Button className="btn-icon mx-1" onClick={() => setFrozenColumns(-1)} data-test="remove-frozen-column-button">
             <i className="fic fic-dismiss"></i> Remove Frozen Columns
