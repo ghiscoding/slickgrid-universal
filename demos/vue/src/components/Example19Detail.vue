@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { format } from '@formkit/tempo';
 import type { RowDetailViewProps } from 'slickgrid-vue';
 
 interface Item {
@@ -48,7 +49,7 @@ function callParentMethod(model: Item) {
         <label>Reporter:</label> <span>{{ model.reporter }}</span>
       </div>
       <div class="col-3 detail-label">
-        <label>Duration:</label> <span>{{ model.duration?.toISOString?.() }}</span>
+        <label>Duration:</label> <span>{{ model.duration }}</span>
       </div>
       <div class="col-3 detail-label">
         <label>% Complete:</label> <span>{{ model.percentComplete }}</span>
@@ -57,10 +58,10 @@ function callParentMethod(model: Item) {
 
     <div class="row">
       <div class="col-3 detail-label">
-        <label>Start:</label> <span>{{ model.start?.toISOString() }}</span>
+        <label>Start:</label> <span>{{ model.start ? format(model.start, 'YYYY-MM-DD') : '' }}</span>
       </div>
       <div class="col-3 detail-label">
-        <label>Finish:</label> <span>{{ model.finish?.toISOString() }}</span>
+        <label>Finish:</label> <span>{{ model.start ? format(model.start, 'YYYY-MM-DD') : '' }}</span>
       </div>
       <div class="col-3 detail-label"><label>Effort Driven:</label> <i :class="model.effortDriven ? 'mdi mdi-check' : ''"></i></div>
     </div>
