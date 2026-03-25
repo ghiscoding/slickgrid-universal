@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 export const Example45Preload = (props: any) => {
-  const { ref, ...rest } = props;
+  const { ref } = props;
   useEffect(() => {
     return () => {
       console.log('Preload unmounted');
@@ -9,7 +9,7 @@ export const Example45Preload = (props: any) => {
   }, []);
 
   return (
-    <div ref={ref} className="container-fluid d-flex align-items-center" style={{ marginTop: '10px' }} {...rest}>
+    <div ref={ref} className="container-fluid d-flex align-items-center" style={{ marginTop: '10px' }}>
       <i className="mdi mdi-sync mdi-spin font-50px"></i>
       <h4>Loading...</h4>
     </div>
