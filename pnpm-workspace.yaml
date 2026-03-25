@@ -60,5 +60,6 @@ overrides:
   flatted: ^3.4.2
   hono: ^4.12.8
   minimatch: ^10.2.4
-  undici: ^7.24.2
+  picomatch: ^4.0.4
+  undici: ^7.24.6
   yauzl: ^3.2.1
