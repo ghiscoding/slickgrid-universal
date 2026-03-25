@@ -4,7 +4,7 @@
 
 ### 1. Install NPM Package
 Install the `Angular-Slickgrid`, and other external packages like `Bootstrap`
-(Bootstrap is optional, you can choose other framework if you wish)
+(or any other framework UI)
 
 ```sh
 npm install angular-slickgrid
@@ -14,7 +14,7 @@ npm install angular-slickgrid
 
 `ngx-translate` can be installed for instant locale translation (see [step 6](#id-6.-install-setup-ngx-translate-for-localization-optional)).
 
-**NOTE** please note that even if `@ngx-translate` is in fact optional, it will still be installed behind the scene since because of our use of `@Optional()` for DI (dependency injection). However, because of its optional nature, it's assumed to be removed by tree shaking after a production build.
+**NOTE** please note that even if `@ngx-translate` is in fact optional, it will be installed behind the scene nonetheless because of our use of `@Optional()` for DI (dependency injection). It's assumed to be removed by the tree shaking process after a production build.
 
 Below is their `ngx-translate` version compatibility:
 
@@ -23,7 +23,6 @@ Below is their `ngx-translate` version compatibility:
 |  21+                    |        17.x         |
 |  16 - 19+               |        16.x         |
 |  16 - 17+               |        16.x (15.x)  |
-|  13 - 15 (**Ivy only**) |        14.x         |
 
 ### 2. Add Bootstrap script/css (or any other UI framework)
 ##### Modify the `angular.json` and `tsconfig.app.json` files
@@ -31,12 +30,13 @@ Below is their `ngx-translate` version compatibility:
 For Bootstrap users (or possibly other frameworks), modify your `angular.json` file with the necessary framework Styles and Scripts:
 
 ```js
+// optional, install only when using Bootstrap
 "styles": [
-    "node_modules/bootstrap/dist/css/bootstrap.min.css",    // optional, install when you use Bootstrap
+    "node_modules/bootstrap/dist/css/bootstrap.min.css",
     "styles.css"
 ],
 "scripts": [
-    "node_modules/bootstrap/dist/js/bootstrap.js",           // optional, install when you use Bootstrap
+    "node_modules/bootstrap/dist/js/bootstrap.js",
 ],
 ```
 
@@ -58,8 +58,8 @@ Angular-Slickgrid default CSS compiled (if you use the plain Bootstrap Theme CSS
 > Import the `slickgrid-theme-bootstrap.css` **only** if you are actually using Bootstrap, otherwise you should prefer using the `slickgrid-theme-default.css` file which is the default theme.
 > Available themes are: `slickgrid-theme-default.css`, `slickgrid-theme-bootstrap.css`, `slickgrid-theme-material.css`, `slickgrid-theme-salesforce.css`, `slickgrid-theme-fluent.css`
 
-#### SASS (scss)
-You could also compile the SASS files with your own customization, for that, you can simply override any of the SASS [_variables.scss](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) (without the `!default` flag) variable file and make sure to import the Bootstrap Theme afterward. For example, you could modify your `style.scss` with the following changes:
+#### SASS (`.scss`)
+You could also compile the SASS files with your own customization, for that, you can simply override any of the SASS [_variables.scss](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/styles/_variables.scss) (use any of them without the `!default` flag) variable file and make sure to import whichever Theme you choose (like Bootstrap Theme) afterward. For example, you could modify your `style.scss` with the following changes:
 
 ```scss
 /* for example, let's change the mouse hover color */
@@ -110,10 +110,10 @@ bootstrapApplication(AppComponent, {
 Below are 2 different setups (with App Module (legacy) or Standalone) which in both cases require the `AngularSlickgridModule.forRoot()`, so make sure to include it.
 
 #### App Module (legacy)
-##### This only works with version below v10.0 since v10.0 and above is now purely Standalone
+##### This only works with version 9.0 and below, any newer version (v10.0 and above) is now purely Standalone
 Include `AngularSlickgridModule` in your App Module (`app.module.ts`)
-**Note**
-Make sure to add the `forRoot` since it will throw an error in the console when missing.
+
+> **Note:** Make sure to add the `forRoot` since it will throw an error in the console when missing.
 
 ```typescript
 import { AngularSlickgridModule } from 'angular-slickgrid';
@@ -163,6 +163,7 @@ import { Column, GridOption, AngularSlickgridModule } from 'angular-slickgrid';
 })
 export class AppComponent {
     // ...
+}
 ```
 
 ##### `@dynamic` - "Lambda not supported" error
@@ -170,20 +171,20 @@ The new updated version of `ng-packagr` use strict metadata and you might get er
 ```ts
 // @dynamic
 @NgModule({
-  ...
+  // ...
 })
 ```
 
 ### 6. Install/Setup `ngx-translate` for Localization (optional)
-#### If you don't want to use any Translate Service and use only 1 Locale then take a look at the (Single Locale) demo on the [Angular-Slickgrid-Demos](https://github.com/ghiscoding/angular-slickgrid-demos) repo.
+#### If you don't want to use any Translate Service and use only one Locale, then take a look at the (Single Locale) demo on the [Angular-Slickgrid-Demos](https://github.com/ghiscoding/angular-slickgrid-demos) repo.
 
-To provide locales other than English (default locale), you have 2 options that you can go with. If you only use English, there is nothing to do (you can still change some of the texts in the grid via option 1 below)
+To provide locales, other than, English (default locale), you have 2 options that you can go with. If you only use English, there is nothing to do (you can still change some of the texts in the grid via option 1 below)
 1. Using [Custom Locale](../localization/localization-with-custom-locales.md), that is when you use a **single locale** (other than English)...
 2. Using [Localization with I18N](../localization/localization-with-ngx-translate.md), that is when you want to use multiple locales dynamically.
-3. **NOTE** `@ngx-translate` will still be installed (since it's an internal dependency), but it should be removed after doing a production build because of our usage of `@Optional()`.
+3. **NOTE** `@ngx-translate` will be installed in any case (since it's an internal `@Optional` dependency), but it should be removed after doing a production build with tree shaking.
 
 ##### Translation Keys
-Also note that every time you want to use a translation key, you simply have to use a property with the `Key` suffix. For example if you wish to have a column definition `name` with a translation, just use the `nameKey: 'TRANSLATE_KEY'` instead of `name`. Below is a list of keys that can be used in the lib
+Also note that every time you want to use a translation key, you simply have to use a property with the `Key` suffix. For example, if you wish to have a column definition `name` with a translation, just use the `nameKey: 'TRANSLATE_KEY'` instead of `name`. Below is a list of keys that can be used in the lib
 
 | without Translate | with Translate |
 | ----------------- | -------------- |

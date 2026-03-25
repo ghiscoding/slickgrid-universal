@@ -17,7 +17,6 @@ In order to use `ngx-translate`, you will have to use `@ngx-translate/core` and 
 |  21+                    |        17.x         |
 |  16 - 19+               |        16.x         |
 |  16 - 17+               |        16.x (15.x)  |
-|  13 - 15 (**Ivy only**) |        14.x         |
 
 ### 1. for `Angular-Slickgrid` < 10.0
 
