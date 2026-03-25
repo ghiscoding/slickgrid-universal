@@ -16,9 +16,9 @@ interface Item {
   rowId: number;
 }
 
-const Example04DetailView: React.FC<RowDetailViewProps<Item, any>> = (props) => {
+const Example04DetailView: React.FC<RowDetailViewProps<Item, any>> = ({ model, addon, grid, dataView, parentRef }) => {
   // const { ref, ...rest } = props;
-  const [assignee, setAssignee] = useState<string>(props.model?.assignee || '');
+  const [assignee, setAssignee] = useState<string>(model?.assignee || '');
 
   function assigneeChanged(newAssignee: string) {
     setAssignee(newAssignee);
@@ -35,22 +35,22 @@ const Example04DetailView: React.FC<RowDetailViewProps<Item, any>> = (props) => 
   function deleteRow(model: any) {
     if (confirm(`Are you sure that you want to delete ${model.title}?`)) {
       // you first need to collapse all rows (via the 3rd party addon instance)
-      props.addon.collapseAll();
+      addon.collapseAll();
 
       // then you can delete the item from the dataView
-      props.dataView.deleteItem(model.rowId);
+      grid && dataView.deleteItem(model.rowId);
 
-      props.parentRef.showFlashMessage(`Deleted row with ${model.title}`, 'danger');
+      parentRef.showFlashMessage(`Deleted row with ${model.title}`, 'danger');
     }
   }
 
   function callParentMethod(model: any) {
-    props.parentRef.showFlashMessage(`We just called Parent Method from the Row Detail Child Component on ${model.title}`);
+    parentRef.showFlashMessage(`We just called Parent Method from the Row Detail Child Component on ${model.title}`);
   }
 
   return (
     <div className="container-fluid" style={{ marginTop: '10px' }}>
-      <h3>{props.model.title}</h3>
+      <h3>{model.title}</h3>
       <div className="row">
         <div className="col-3 detail-label">
           <label>Assignee:</label>
@@ -61,25 +61,25 @@ const Example04DetailView: React.FC<RowDetailViewProps<Item, any>> = (props) => 
           />
         </div>
         <div className="col-3 detail-label">
-          <label>Reporter:</label> <span>{props.model.reporter}</span>
+          <label>Reporter:</label> <span>{model.reporter}</span>
         </div>
         <div className="col-3 detail-label">
-          <label>Duration:</label> <span>{props.model.duration || 0}</span>
+          <label>Duration:</label> <span>{model.duration || 0}</span>
         </div>
         <div className="col-3 detail-label">
-          <label>% Complete:</label> <span>{props.model.percentComplete}</span>
+          <label>% Complete:</label> <span>{model.percentComplete}</span>
         </div>
       </div>
 
       <div className="row">
         <div className="col-3 detail-label">
-          <label>Start:</label> <span>{props.model.start ? format(props.model.start, 'YYYY-MM-DD') : ''}</span>
+          <label>Start:</label> <span>{model.start ? format(model.start, 'YYYY-MM-DD') : ''}</span>
         </div>
         <div className="col-3 detail-label">
-          <label>Finish:</label> <span>{props.model.finish ? format(props.model.finish, 'YYYY-MM-DD') : ''}</span>
+          <label>Finish:</label> <span>{model.finish ? format(model.finish, 'YYYY-MM-DD') : ''}</span>
         </div>
         <div className="col-3 detail-label">
-          <label>Effort Driven:</label> <i className={props.model.effortDriven ? 'fic fic-checkmark' : ''}></i>
+          <label>Effort Driven:</label> <i className={model.effortDriven ? 'mdi mdi-check' : ''}></i>
         </div>
       </div>
 
@@ -89,7 +89,7 @@ const Example04DetailView: React.FC<RowDetailViewProps<Item, any>> = (props) => 
         <h4>
           Find out who is the Assignee
           <small>
-            <Button appearance="primary" className="ms-1" onClick={() => alertAssignee(props.model.assignee)} data-test="assignee-btn">
+            <Button className="btn btn-primary btn-sm mx-1" onClick={() => alertAssignee(model.assignee)} data-test="assignee-btn">
               Click Me
             </Button>
           </small>
@@ -97,10 +97,10 @@ const Example04DetailView: React.FC<RowDetailViewProps<Item, any>> = (props) => 
       </div>
 
       <div className="col-sm-4">
-        <Button onClick={() => deleteRow(props.model)} data-test="delete-btn">
+        <Button onClick={() => deleteRow(model)} data-test="delete-btn">
           Delete Row
         </Button>
-        <Button className="mx-1" onClick={() => callParentMethod(props.model)} data-test="parent-btn">
+        <Button className="mx-1" onClick={() => callParentMethod(model)} data-test="parent-btn">
           Call Parent Method
         </Button>
       </div>

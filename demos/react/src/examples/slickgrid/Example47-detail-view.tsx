@@ -91,13 +91,7 @@ const Example47DetailView: React.FC<RowDetailViewProps<Item, any>> = (props) => 
         <h4>
           Find out who is the Assignee
           <small>
-            <button
-              className="btn btn-primary btn-sm"
-              onClick={function () {
-                alertAssignee(props.model.assignee);
-              }}
-              data-test="assignee-btn"
-            >
+            <button className="btn btn-primary btn-sm" onClick={() => alertAssignee(props.model.assignee)} data-test="assignee-btn">
               Click Me
             </button>
           </small>
@@ -105,22 +99,10 @@ const Example47DetailView: React.FC<RowDetailViewProps<Item, any>> = (props) => 
       </div>
 
       <div className="col-sm-4">
-        <button
-          className="btn btn-primary btn-danger btn-sm"
-          onClick={function () {
-            deleteRow(props.model);
-          }}
-          data-test="delete-btn"
-        >
+        <button className="btn btn-primary btn-danger btn-sm" onClick={() => deleteRow(props.model)} data-test="delete-btn">
           Delete Row
         </button>
-        <button
-          className="btn btn-outline-secondary btn-sm btn-icon"
-          onClick={function () {
-            showNotification(props.model);
-          }}
-          data-test="parent-btn"
-        >
+        <button className="btn btn-outline-secondary btn-sm btn-icon" onClick={() => showNotification(props.model)} data-test="parent-btn">
           Call Parent Method
         </button>
       </div>
