@@ -226,7 +226,7 @@ import { Component } from '@angular/core';
 })
 export class RowDetailViewComponent {
   model: {
-    duration: Date;
+    duration: number;
     percentComplete: number;
     reporter: string;
     start: Date;
@@ -314,7 +314,7 @@ import { GridRowDetailComponent } from './grid-rowdetail.component';
 })
 export class RowDetailViewComponent {
   model: {
-    duration: Date;
+    duration: number;
     percentComplete: number;
     reporter: string;
     start: Date;

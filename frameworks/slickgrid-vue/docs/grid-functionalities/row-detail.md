@@ -169,7 +169,7 @@ import type { RowDetailViewProps } from 'slickgrid-vue';
 
 interface Item {
   assignee: string;
-  duration: Date;
+  duration: number;
   percentComplete: number;
   reporter: string;
   start: Date;
@@ -347,7 +347,7 @@ import type { RowDetailViewProps } from 'slickgrid-vue';
 
 interface Item {
   assignee: string;
-  duration: Date;
+  duration: number;
   percentComplete: number;
   reporter: string;
   start: Date;

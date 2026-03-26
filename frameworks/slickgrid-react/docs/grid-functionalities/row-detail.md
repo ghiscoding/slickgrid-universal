@@ -187,7 +187,7 @@ import './example19-detail-view.scss';
 
 interface Props {
   model: {
-    duration: Date;
+    duration: number;
     percentComplete: number;
     // ...
   };

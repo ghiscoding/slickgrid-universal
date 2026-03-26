@@ -6,7 +6,7 @@ import { showToast } from './utilities.js';
 interface Item {
   id: number;
   assignee: string;
-  duration: Date;
+  duration: number;
   percentComplete: number;
   reporter: string;
   start: Date;
@@ -50,7 +50,7 @@ function showNotification(model: Item) {
         <label>Reporter:</label> <span>{{ model.reporter }}</span>
       </div>
       <div class="col-3 detail-label">
-        <label>Duration:</label> <span>{{ model.duration || 0 }}</span>
+        <label>Duration:</label> <span>{{ model.duration }}</span>
       </div>
       <div class="col-3 detail-label">
         <label>% Complete:</label> <span>{{ model.percentComplete }}</span>

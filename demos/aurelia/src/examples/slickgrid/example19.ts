@@ -62,8 +62,6 @@ export class Example19 {
         id: 'duration',
         name: 'Duration (days)',
         field: 'duration',
-        formatter: Formatters.decimal,
-        params: { minDecimal: 1, maxDecimal: 2 },
         sortable: true,
         type: 'number',
         minWidth: 90,
@@ -192,7 +190,7 @@ export class Example19 {
       dataset[i] = {
         rowId: i,
         title: 'Task ' + i,
-        duration: Math.ceil(Math.random() * 100),
+        duration: i % 33 === 0 ? null : Math.floor(Math.random() * 100) + 1,
         percentComplete: randomPercent,
         percentComplete2: randomPercent,
         percentCompleteNumber: randomPercent,
