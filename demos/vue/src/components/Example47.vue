@@ -3,7 +3,6 @@ import { VueRowDetailView } from '@slickgrid-universal/vue-row-detail-plugin';
 import {
   Aggregators,
   Editors,
-  ExtensionName,
   Filters,
   Formatters,
   GroupTotalFormatters,
@@ -41,7 +40,7 @@ const showSubTitle = ref(true);
 const serverWaitDelay = ref(FAKE_SERVER_DELAY); // server simulation with default of 250ms but 50ms for Cypress tests
 let vueGrid!: SlickgridVueInstance;
 
-const rowDetailInstance = computed(() => vueGrid?.extensionService.getExtensionInstanceByName(ExtensionName.rowDetailView));
+const rowDetailInstance = computed(() => vueGrid?.extensionService.getExtensionInstanceByName('rowDetailView'));
 
 onBeforeMount(() => {
   defineGrid();

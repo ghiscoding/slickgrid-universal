@@ -7,7 +7,7 @@ import './example47-detail-view.scss';
 interface Item {
   id: number;
   assignee: string;
-  duration: Date;
+  duration: number;
   percentComplete: number;
   reporter: string;
   start: Date;

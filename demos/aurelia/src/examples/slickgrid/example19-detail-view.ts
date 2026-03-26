@@ -5,7 +5,7 @@ import './example19-detail-view.scss';
 
 interface Item {
   assignee: string;
-  duration: Date;
+  duration: number;
   percentComplete: number;
   reporter: string;
   start: Date;

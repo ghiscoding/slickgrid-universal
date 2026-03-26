@@ -221,7 +221,7 @@ import { bindable } from 'aurelia-framework';
 
 export class DetailViewCustomElement {
   @bindable() model: {
-    duration: Date;
+    duration: number;
     percentComplete: number;
     reporter: string;
     start: Date;
@@ -300,7 +300,7 @@ import { GridRowDetailComponent } from './grid-rowdetail.component';
 
 export class DetailViewCustomElement{
   model: {
-    duration: Date;
+    duration: number;
     percentComplete: number;
     reporter: string;
     start: Date;

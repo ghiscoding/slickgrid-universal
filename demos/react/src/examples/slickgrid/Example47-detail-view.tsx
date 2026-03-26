@@ -66,7 +66,7 @@ const Example47DetailView: React.FC<RowDetailViewProps<Item, any>> = (props) => 
           <label>Reporter:</label> <span>{props.model.reporter}</span>
         </div>
         <div className="col-3 detail-label">
-          <label>Duration:</label> <span>{props.model.duration || 0}</span>
+          <label>Duration:</label> <span>{props.model.duration}</span>
         </div>
         <div className="col-3 detail-label">
           <label>% Complete:</label> <span>{props.model.percentComplete}</span>

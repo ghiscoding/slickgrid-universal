@@ -4,7 +4,7 @@ import type { RowDetailViewProps } from 'slickgrid-vue';
 
 interface Item {
   assignee: string;
-  duration: Date;
+  duration: number;
   percentComplete: number;
   reporter: string;
   start: Date;
@@ -58,10 +58,10 @@ function callParentMethod(model: Item) {
 
     <div class="row">
       <div class="col-3 detail-label">
-        <label>Start:</label> <span>{{ model.start ? format(model.start, 'YYYY-MM-DD') : '' }}</span>
+        <label>Start:</label> <span>{{ model.start ? format(props.model.start, 'YYYY-MM-DD') : '' }}</span>
       </div>
       <div class="col-3 detail-label">
-        <label>Finish:</label> <span>{{ model.start ? format(model.start, 'YYYY-MM-DD') : '' }}</span>
+        <label>Finish:</label> <span>{{ model.finish ? format(props.model.finish, 'YYYY-MM-DD') : '' }}</span>
       </div>
       <div class="col-3 detail-label"><label>Effort Driven:</label> <i :class="model.effortDriven ? 'mdi mdi-check' : ''"></i></div>
     </div>
