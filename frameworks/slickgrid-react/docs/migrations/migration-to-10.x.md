@@ -8,8 +8,8 @@ This new release also brings significant improvements to accessibility (a11y), m
 - [`hidden` columns](#hidden-columns)
 - [Row Detail (now optional)](#row-detail-now-optional)
 - improvements to accessibility (see above)
-- [What's next?](#whats-next-...version-11)
 - [New Fluent UI Theme](#new-fluent-ui-theme)
+- [What's next?](#whats-next-...version-11)
 
 > **Note:** if you come from an earlier version, please make sure to follow each migrations in their respective order (review previous migration guides)
 
@@ -147,7 +147,7 @@ There's also a new Renderer similar to Slots but implemented with native code to
 
 Menu Options list, using `optionItems` are now deprecated and will be removed in next major v11. That is quite similar to Command List and barely anyone uses it, so let's remove it in v11 and just use `commandItems` instead (see [docs](../column-functionalities/cell-menu.md#default-usage) for both usages).
 
-### Tooltips Outside the Grid
+### Tooltips outside the Grid
 
 You can now use the custom tooltip plugin to display tooltips on elements outside the grid (e.g., buttons, dialogs, etc.) by enabling the `observeAllTooltips` option. This allows the plugin to observe elements anywhere in your page that have `title` or `data-slick-tooltip` attributes and provide the same UI look & feel across your project. See Custom Tooltip [documentation](../grid-functionalities/custom-tooltip.md)
 
