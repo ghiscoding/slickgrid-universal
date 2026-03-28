@@ -633,6 +633,9 @@ importers:
       '@slickgrid-universal/rxjs-observable':
         specifier: workspace:*
         version: link:../../packages/rxjs-observable
+      '@slickgrid-universal/sql-backend':
+        specifier: workspace:*
+        version: link:../../packages/sql-backend
       '@slickgrid-universal/text-export':
         specifier: workspace:*
         version: link:../../packages/text-export
@@ -1508,6 +1511,15 @@ importers:
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
+
+  packages/sql-backend:
+    dependencies:
+      '@slickgrid-universal/common':
+        specifier: workspace:*
+        version: link:../common
+      '@slickgrid-universal/utils':
+        specifier: workspace:*
+        version: link:../utils
 
   packages/text-export:
     dependencies:

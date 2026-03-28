@@ -1,0 +1,71 @@
+<template>
+  <div class="container-fluid">
+    <h2>
+      Example 52: Grid with SQL Backend Service
+      <span class="float-end">
+        <a
+          style="font-size: 18px"
+          target="_blank"
+          href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/example52.ts"
+        >
+          <span class="mdi mdi-link-variant"></span> code
+        </a>
+      </span>
+    </h2>
+    <div class="subtitle">
+      <ul class="small">
+        <li><span class="red">(*) NO DATA SHOWN</span> - just change Filters/Sorting/Pages and look at the "SQL Query" changing.</li>
+        <li>This example uses the SQL Backend Service.</li>
+        <li>You can also preload a grid with certain "presets" like Filters / Sorters / Pagination.</li>
+        <li>String column also supports operators (>, >=, <, <=, <>, !=, =, ==, *).</li>
+        <li>The (*) can be used as startsWith (ex.: "abc*" => startsWith "abc") / endsWith (ex.: "*xyz" => endsWith "xyz").</li>
+        <li>The other operators can be used on column type number for example: ">=100" (bigger or equal than 100).</li>
+      </ul>
+    </div>
+    <div class="row">
+      <div class="col-sm-5">
+        <div class.bind="statusClass" role="alert" data-test="status">
+          <strong>Status: </strong> ${status}
+          <span if.bind="processing">
+            <i class="mdi mdi-sync mdi-spin-1s"></i>
+          </span>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <button
+              class="btn btn-outline-secondary btn-sm me-1"
+              data-test="clear-filters-sorting"
+              click.delegate="clearAllFiltersAndSorts()"
+            >
+              Clear all Filter & Sorts
+            </button>
+          </div>
+        </div>
+        <div class="row mt-2">
+          <div class="col-md-12">
+            <label for="serverdelay" class="me-2">Server Delay: </label>
+            <input
+              id="serverdelay"
+              type="number"
+              data-test="server-delay"
+              class="form-control form-control-sm d-inline-block w-auto"
+              value.bind="serverWaitDelay"
+              title="input a fake timer delay to simulate slow server response"
+            />
+          </div>
+        </div>
+        <div class="row mt-2">
+          <div class="col-md-12">
+            <div class="alert alert-info" data-test="alert-sql-query">
+              <strong>SQL Query:</strong>
+              <span id="sql-query" data-test="sql-query-result">${sqlQuery}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="grid52"></div>
+      </div>
+    </div>
+  </div>
+</template>
