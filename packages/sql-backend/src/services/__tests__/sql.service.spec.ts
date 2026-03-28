@@ -11,14 +11,10 @@ import {
   type MultiColumnSort,
   type Pagination,
   type SlickGrid,
-  type TranslaterService,
 } from '@slickgrid-universal/common';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { SqlServiceOption } from '../../interfaces/sqlServiceOption.interface.js';
 import { SqlService } from './../sql.service.js';
-
-const DEFAULT_ITEMS_PER_PAGE = 25;
-const DEFAULT_PAGE_SIZE = 20;
 
 function removeSpaces(text: string) {
   // Replace multiple spaces with a single space, trim leading/trailing
