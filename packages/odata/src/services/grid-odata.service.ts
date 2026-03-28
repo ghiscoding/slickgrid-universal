@@ -609,26 +609,23 @@ export class GridOdataService implements BackendService {
         // currentSorters = new Array(this.defaultOptions.orderBy); // when empty, use the default sort
       } else {
         if (sortColumns) {
-          for (const columnDef of sortColumns) {
-            if (columnDef.sortCol) {
-              let fieldName = (columnDef.sortCol.queryFieldSorter || columnDef.sortCol.queryField || columnDef.sortCol.field) + '';
-              let columnFieldName = (columnDef.sortCol.field || columnDef.sortCol.id) + '';
-              let queryField = (columnDef.sortCol.queryFieldSorter || columnDef.sortCol.queryField || columnDef.sortCol.field || '') + '';
+          for (const sortColumn of sortColumns) {
+            if (sortColumn.sortCol) {
+              let queryFieldName =
+                (sortColumn.sortCol.queryFieldSorter || sortColumn.sortCol.queryField || sortColumn.sortCol.field || '') + '';
               if (this._odataService.options.caseType === 'pascalCase') {
-                fieldName = titleCase(fieldName);
-                columnFieldName = titleCase(columnFieldName);
-                queryField = titleCase(queryField);
+                queryFieldName = titleCase(queryFieldName);
               }
 
               currentSorters.push({
-                columnId: columnDef.sortCol.id,
-                direction: columnDef.sortAsc ? 'asc' : 'desc',
+                columnId: sortColumn.sortCol.id,
+                direction: sortColumn.sortAsc ? 'asc' : 'desc',
               });
 
-              if (queryField !== '') {
+              if (queryFieldName !== '') {
                 odataSorters.push({
-                  field: queryField,
-                  direction: columnDef.sortAsc ? 'ASC' : 'DESC',
+                  field: queryFieldName,
+                  direction: sortColumn.sortAsc ? 'ASC' : 'DESC',
                 });
               }
             }

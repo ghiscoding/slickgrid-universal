@@ -40,11 +40,11 @@ export class GraphqlService implements BackendService {
   protected _currentFilters: ColumnFilters | CurrentFilter[] = [];
   protected _currentPagination: CurrentPagination | null = null;
   protected _currentSorters: CurrentSorter[] = [];
-  protected _columns?: Column[] | undefined;
-  protected _grid: SlickGrid | undefined;
+  protected _columns?: Column[];
+  protected _grid?: SlickGrid;
   protected _datasetIdPropName = 'id';
-  options: GraphqlServiceOption | undefined;
-  pagination: Pagination | undefined;
+  options?: GraphqlServiceOption;
+  pagination?: Pagination;
   defaultPaginationOptions: GraphqlPaginationOption = {
     first: DEFAULT_ITEMS_PER_PAGE,
     offset: 0,
@@ -665,18 +665,18 @@ export class GraphqlService implements BackendService {
       // build the orderBy array, it could be multisort, example
       // orderBy:[{field: lastName, direction: ASC}, {field: firstName, direction: DESC}]
       if (Array.isArray(sortColumns) && sortColumns.length > 0) {
-        for (const column of sortColumns) {
-          if (column && column.sortCol) {
+        for (const sortColumn of sortColumns) {
+          if (sortColumn && sortColumn.sortCol) {
             currentSorters.push({
-              columnId: column.sortCol.id + '',
-              direction: column.sortAsc ? 'ASC' : 'DESC',
+              columnId: sortColumn.sortCol.id + '',
+              direction: sortColumn.sortAsc ? 'ASC' : 'DESC',
             });
 
-            const fieldName = (column.sortCol.queryFieldSorter || column.sortCol.queryField || column.sortCol.field || '') + '';
+            const fieldName = (sortColumn.sortCol.queryFieldSorter || sortColumn.sortCol.queryField || sortColumn.sortCol.field || '') + '';
             if (fieldName) {
               graphqlSorters.push({
                 field: fieldName,
-                direction: column.sortAsc ? 'ASC' : 'DESC',
+                direction: sortColumn.sortAsc ? 'ASC' : 'DESC',
               });
             }
           }
