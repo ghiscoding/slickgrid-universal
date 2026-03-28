@@ -6,7 +6,7 @@ const currentYear = new Date().getFullYear();
 const presetLowestDay = `${currentYear}-01-01`;
 const presetHighestDay = `${currentYear}-02-15`;
 
-describe('Example 41 - SQL Grid', () => {
+describe('Example 52 - SQL Grid', () => {
   beforeEach(() => {
     cy.window().then((win) => {
       cy.spy(win.console, 'log');
@@ -14,13 +14,14 @@ describe('Example 41 - SQL Grid', () => {
   });
 
   it('should display Example title', () => {
-    cy.visit(`${Cypress.config('baseUrl')}/example41`);
-    cy.get('h3').should('contain', 'Example 41 - Grid with SQL Backend Service');
+    cy.visit(`${Cypress.config('baseUrl')}/example52`);
+    cy.get('h2').should('contain', 'Example 52: Grid with SQL Backend Service');
   });
 
-  it('should have a grid of size 900 by 275px', () => {
-    cy.get('.grid41').should('have.css', 'width', '900px');
-    cy.get('.grid41 > .slickgrid-container').should(($el) => expect(parseInt(`${$el.height()}`, 10)).to.eq(275));
+  it('should have a grid of size 900 by 200px', () => {
+    cy.get('#slickGridContainer-grid52').should('have.css', 'width', '900px');
+
+    cy.get('#slickGridContainer-grid52 > .slickgrid-container').should(($el) => expect(parseInt(`${$el.height()}`, 10)).to.eq(200));
   });
 
   it('should have SQL query with defined Grid Presets', () => {
@@ -192,7 +193,7 @@ describe('Example 41 - SQL Grid', () => {
   });
 
   it('should hover over the "Name" column header menu and expect all commands be displayed in English', () => {
-    cy.get('.grid41')
+    cy.get('#grid52')
       .find('.slick-header-columns.slick-header-columns-left .slick-header-column')
       .first()
       .trigger('mouseover')

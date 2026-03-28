@@ -22,6 +22,7 @@ export default class Example41 {
   statusClass = 'is-success';
   serverWaitDelay = FAKE_SERVER_DELAY;
   sqlQuery = '';
+  sqlService = new SqlService();
 
   constructor() {
     this._bindingEventService = new BindingEventService();
@@ -33,14 +34,6 @@ export default class Example41 {
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
     this._bindingEventService.bind(gridContainerElm, 'ongridstatechanged', this.handleOnGridStateChanged.bind(this));
     document.body.classList.add('material-theme');
-  }
-
-  updateSqlQuery() {
-    if (this.gridOptions?.backendServiceApi?.service) {
-      this.sqlQuery = this.gridOptions.backendServiceApi.service.buildQuery();
-      const pre = document.getElementById('sql-query');
-      if (pre) pre.textContent = this.sqlQuery;
-    }
   }
 
   clearAllFiltersAndSorts() {
@@ -149,7 +142,6 @@ export default class Example41 {
       autoTooltipOptions: {
         enableForHeaderCells: true,
       },
-      enableAutoResize: false,
       gridHeight: 275,
       gridWidth: 900,
       enableFiltering: true,
@@ -185,7 +177,7 @@ export default class Example41 {
         pagination: { pageNumber: 2, pageSize: 20 },
       },
       backendServiceApi: {
-        service: new SqlService(),
+        service: this.sqlService,
         options: {
           tableName: SQL_TABLE_NAME,
         },
@@ -248,6 +240,14 @@ export default class Example41 {
     });
   }
 
+  updateSqlQuery() {
+    this.sqlQuery = this.sqlService.buildQuery();
+    const pre = document.getElementById('sql-query');
+    if (pre) {
+      pre.textContent = this.sqlQuery;
+    }
+  }
+
   handleOnGridStateChanged(event) {
     if (event?.detail) {
       console.log('Grid State changed:: ', event.detail.change);
@@ -301,11 +301,5 @@ export default class Example41 {
     document.body.classList.toggle('dark-mode');
     this.sgb?.gridOptions && (this.sgb.gridOptions.darkMode = !this.sgb.gridOptions.darkMode);
     this.sgb?.slickGrid?.setOptions({ darkMode: this.sgb?.gridOptions.darkMode });
-  }
-
-  switchLanguage() {
-    // Placeholder for language switching logic
-    // You can implement this if you have a translation service
-    alert('Language switching not implemented in this demo.');
   }
 }

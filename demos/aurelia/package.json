@@ -41,6 +41,7 @@
     "@slickgrid-universal/pdf-export": "workspace:*",
     "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
     "@slickgrid-universal/rxjs-observable": "workspace:*",
+    "@slickgrid-universal/sql-backend": "workspace:*",
     "@slickgrid-universal/text-export": "workspace:*",
     "aurelia": "^2.0.0-rc.1",
     "aurelia-slickgrid": "workspace:*",

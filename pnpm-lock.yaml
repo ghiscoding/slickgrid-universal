@@ -306,6 +306,9 @@ importers:
       '@slickgrid-universal/rxjs-observable':
         specifier: workspace:*
         version: link:../../packages/rxjs-observable
+      '@slickgrid-universal/sql-backend':
+        specifier: workspace:*
+        version: link:../../packages/sql-backend
       '@slickgrid-universal/text-export':
         specifier: workspace:*
         version: link:../../packages/text-export
@@ -409,6 +412,9 @@ importers:
       '@slickgrid-universal/rxjs-observable':
         specifier: workspace:*
         version: link:../../packages/rxjs-observable
+      '@slickgrid-universal/sql-backend':
+        specifier: workspace:*
+        version: link:../../packages/sql-backend
       '@slickgrid-universal/text-export':
         specifier: workspace:*
         version: link:../../packages/text-export
@@ -721,6 +727,9 @@ importers:
       '@slickgrid-universal/rxjs-observable':
         specifier: workspace:*
         version: link:../../packages/rxjs-observable
+      '@slickgrid-universal/sql-backend':
+        specifier: workspace:*
+        version: link:../../packages/sql-backend
       '@slickgrid-universal/text-export':
         specifier: workspace:*
         version: link:../../packages/text-export
@@ -1010,6 +1019,9 @@ importers:
       '@slickgrid-universal/pdf-export':
         specifier: workspace:*
         version: link:../../packages/pdf-export
+      '@slickgrid-universal/sql-backend':
+        specifier: workspace:*
+        version: link:../../packages/sql-backend
       '@slickgrid-universal/text-export':
         specifier: workspace:*
         version: link:../../packages/text-export

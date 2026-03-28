@@ -89,6 +89,7 @@
     "@slickgrid-universal/graphql": "workspace:*",
     "@slickgrid-universal/odata": "workspace:*",
     "@slickgrid-universal/pdf-export": "workspace:*",
+    "@slickgrid-universal/sql-backend": "workspace:*",
     "@slickgrid-universal/text-export": "workspace:*",
     "@types/fnando__sparkline": "catalog:",
     "@types/node": "catalog:",
