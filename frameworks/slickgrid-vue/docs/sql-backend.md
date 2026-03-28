@@ -40,8 +40,8 @@ const gridOptions = {
 | Option              | Type     | Description                                                                 |
 |---------------------|----------|-----------------------------------------------------------------------------|
 | `tableName`         | string   | **Required.** Name of the SQL table to query (e.g., 'users').               |
-| `datasetName`       | string   | (Optional) Schema/database prefix, or legacy dataset name.                   |
-| `totalCountField`   | string   | (Optional) Custom field name for total count column (default: 'total_count').|
+| `datasetName`       | string   | (Optional) Schema/database prefix, or legacy dataset name.                  |
+| `totalCountField`   | string   | (Optional) Custom field name for total count column (default: 'totalCount').|
 
 ## Result Shape
 The SQL backend supports multiple result shapes for maximum compatibility:
@@ -49,8 +49,8 @@ The SQL backend supports multiple result shapes for maximum compatibility:
 ### 1. Array of Rows (Minimal)
 ```json
 [
-  { "id": 1, "name": "John", "total_count": 2 },
-  { "id": 2, "name": "Jane", "total_count": 2 }
+  { "id": 1, "name": "John", "totalCount": 2 },
+  { "id": 2, "name": "Jane", "totalCount": 2 }
 ]
 ```
 
@@ -58,8 +58,8 @@ The SQL backend supports multiple result shapes for maximum compatibility:
 ```json
 {
   "data": [
-    { "id": 1, "name": "John", "total_count": 2 },
-    { "id": 2, "name": "Jane", "total_count": 2 }
+    { "id": 1, "name": "John", "totalCount": 2 },
+    { "id": 2, "name": "Jane", "totalCount": 2 }
   ]
 }
 ```
@@ -68,7 +68,7 @@ The SQL backend supports multiple result shapes for maximum compatibility:
 ```json
 {
   "data": [ ... ],
-  "pagination": { "totalItems": 2 }
+  "pagination": { "totalCount": 2 }
 }
 ```
 
@@ -76,17 +76,17 @@ The SQL backend supports multiple result shapes for maximum compatibility:
 ```json
 {
   "data": [ ... ],
-  "total_count": 2
+  "totalCount": 2
 }
 ```
 
-The service will extract the total count from any of these shapes, prioritizing the `pagination.totalItems` property, then `total_count` (or your custom field), or by inspecting the first row if present.
+The service will extract the total count from any of these shapes, prioritizing the `pagination.totalCount` property, then `totalCount` (or your custom field via `totalCountField` service option), or by inspecting the first row if present.
 
 ## Pagination & Total Count
-For paginated queries, use SQL window functions to include the total count in each row:
+For paginated queries, the SQL query will include the total count in each row:
 
 ```sql
-SELECT id, name, COUNT(*) OVER() AS total_count FROM users LIMIT 10 OFFSET 0;
+SELECT id, name, COUNT(*) OVER() AS 'totalCount' FROM users LIMIT 10 OFFSET 0;
 ```
 
 The backend will extract the total count and provide it to the grid for pagination controls.
@@ -130,10 +130,5 @@ options: {
 
 ## Integration Notes
 - The SQL backend is backend-agnostic: works with any SQL dialect that can provide a total count column.
-- The result shape is minimal and flexible, matching OData/GraphQL conventions.
+- The result shape is minimal and flexible
 - All pagination, filtering, and sorting are handled server-side.
-- For advanced scenarios, see the OData and GraphQL backend docs for patterns that also apply to SQL.
-
----
-
-For more details, see the [OData](./OData.md) and [GraphQL](./GraphQL.md) backend documentation for advanced usage patterns.
