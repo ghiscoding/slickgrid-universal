@@ -802,7 +802,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
             backendApi && backendApiService && typeof backendApiService.getDatasetName === 'function'
               ? backendApiService.getDatasetName()
               : '';
-          if (processResult?.data[datasetName]) {
+          if (!Array.isArray(processResult) && processResult?.data[datasetName]) {
             const data = processResult.data[datasetName].hasOwnProperty('nodes')
               ? (processResult as any).data[datasetName].nodes
               : (processResult as any).data[datasetName];
