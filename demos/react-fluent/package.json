@@ -19,8 +19,8 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@fluentui/react-components": "^9.73.4",
-    "@fluentui/react-icons": "^2.0.321",
+    "@fluentui/react-components": "^9.73.5",
+    "@fluentui/react-icons": "^2.0.323",
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/event-pub-sub": "workspace:*",
     "@slickgrid-universal/excel-export": "workspace:*",
