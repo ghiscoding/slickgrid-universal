@@ -1,10 +1,19 @@
 import type { InfiniteScrollOption, SortDirection } from '@slickgrid-universal/common';
 
+export type IdentifierEscapeStyle = 'doubleQuote' | 'backtick' | 'bracket';
+
 export interface SqlServiceOption {
   /** Name of the SQL table to query (required) */
   tableName: string;
   /** Optional: dataset/schema/database name for multi-database support */
   datasetName?: string;
+  /**
+   * Controls how SQL identifiers (table/schema) are escaped in generated queries.
+   * - 'doubleQuote': "identifier" (PostgreSQL, ANSI SQL, default)
+   * - 'backtick': `identifier` (MySQL)
+   * - 'bracket': [identifier] (MSSQL)
+   */
+  identifierEscapeStyle?: IdentifierEscapeStyle;
   /** Filtering options for WHERE clause */
   filteringOptions?: SqlFilteringOption[];
   /** Sorting options for ORDER BY clause */

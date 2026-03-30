@@ -125,7 +125,7 @@ describe('SqlService', () => {
     });
 
     it('should return a simple SQL query with pagination set and includes all fields', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" LIMIT 10 OFFSET 0`;
       service.init(serviceOptions, paginationOptions, gridStub);
       const query = service.buildQuery();
       expect(removeSpaces(query)).toBe(removeSpaces(expectation));
@@ -139,7 +139,7 @@ describe('SqlService', () => {
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       service.init(serviceOptions, paginationOptions, gridStub);
       const query = service.buildQuery();
-      expect(query.startsWith('SELECT *, COUNT(*) OVER() AS "totalCount" FROM users')).toBe(true);
+      expect(query.startsWith('SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users"')).toBe(true);
     });
 
     it('should exclude a column and expect a query string without it', () => {
@@ -159,7 +159,7 @@ describe('SqlService', () => {
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       service.init({ tableName: 'users' }, paginationOptions, gridStub);
       const query = service.buildQuery();
-      expect(removeSpaces(query)).toBe(removeSpaces('SELECT *, COUNT(*) OVER() AS "totalCount" FROM users LIMIT 10 OFFSET 0'));
+      expect(removeSpaces(query)).toBe(removeSpaces('SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" LIMIT 10 OFFSET 0'));
     });
 
     it('should return a simple query with pagination set and includes at least one field when the column definitions is an empty array', () => {
@@ -167,7 +167,7 @@ describe('SqlService', () => {
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       service.init({ tableName: 'users' }, paginationOptions, gridStub);
       const query = service.buildQuery();
-      expect(removeSpaces(query)).toBe(removeSpaces('SELECT *, COUNT(*) OVER() AS "totalCount" FROM users LIMIT 10 OFFSET 0'));
+      expect(removeSpaces(query)).toBe(removeSpaces('SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" LIMIT 10 OFFSET 0'));
     });
 
     it('should exclude a column and expect a query string without it', () => {
@@ -190,7 +190,7 @@ describe('SqlService', () => {
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       service.init({ tableName: 'users' }, undefined, gridStub);
       const query = service.buildQuery();
-      expect(removeSpaces(query)).toBe(removeSpaces('SELECT field1, COUNT(*) OVER() AS "totalCount" FROM users LIMIT 20 OFFSET 0'));
+      expect(removeSpaces(query)).toBe(removeSpaces('SELECT "field1", COUNT(*) OVER() AS "totalCount" FROM "users" LIMIT 20 OFFSET 0'));
     });
 
     it('should add extra fields from the "fields" property and expect them to be part of the query string', () => {
@@ -233,7 +233,7 @@ describe('SqlService', () => {
       service.init({ tableName: 'users' }, paginationOptions, gridStub);
       // For SQL, if pagination is disabled, LIMIT/OFFSET should be omitted
       const query = service.buildQuery();
-      expect(query).toBe('SELECT *, COUNT(*) OVER() AS "totalCount" FROM users');
+      expect(query).toBe('SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users"');
       gridOptionMock.enablePagination = true; // reset for other tests
     });
 
@@ -246,7 +246,7 @@ describe('SqlService', () => {
       service.init({ tableName: 'users' }, paginationOptions, gridStub);
       service.updatePagination(3, 20);
       const query = service.buildQuery();
-      expect(removeSpaces(query)).toBe(removeSpaces('SELECT *, COUNT(*) OVER() AS "totalCount" FROM users LIMIT 20 OFFSET 40'));
+      expect(removeSpaces(query)).toBe(removeSpaces('SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" LIMIT 20 OFFSET 40'));
     });
 
     it('should make sure the offset pagination is never below zero, even when new page is 0', () => {
@@ -258,7 +258,7 @@ describe('SqlService', () => {
       service.init({ tableName: 'users' }, paginationOptions, gridStub);
       service.updatePagination(0, 20);
       const query = service.buildQuery();
-      expect(removeSpaces(query)).toBe(removeSpaces('SELECT *, COUNT(*) OVER() AS "totalCount" FROM users LIMIT 20 OFFSET 0'));
+      expect(removeSpaces(query)).toBe(removeSpaces('SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" LIMIT 20 OFFSET 0'));
     });
 
     it('should make sure the offset pagination is never below zero, even when new is 1 the offset should remain 0', () => {
@@ -270,7 +270,7 @@ describe('SqlService', () => {
       service.init({ tableName: 'users' }, paginationOptions, gridStub);
       service.updatePagination(1, 20);
       const query = service.buildQuery();
-      expect(removeSpaces(query)).toBe(removeSpaces('SELECT *, COUNT(*) OVER() AS "totalCount" FROM users LIMIT 20 OFFSET 0'));
+      expect(removeSpaces(query)).toBe(removeSpaces('SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" LIMIT 20 OFFSET 0'));
     });
   });
 
@@ -285,7 +285,7 @@ describe('SqlService', () => {
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       service.init({ tableName: 'users' }, paginationOptions, gridStub);
       const query = service.buildQuery();
-      expect(removeSpaces(query)).toBe(removeSpaces('SELECT *, COUNT(*) OVER() AS "totalCount" FROM users LIMIT 10 OFFSET 0'));
+      expect(removeSpaces(query)).toBe(removeSpaces('SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" LIMIT 10 OFFSET 0'));
     });
 
     it('should return a simple query with pagination set and includes at least one field when the column definitions is an empty array', () => {
@@ -293,7 +293,7 @@ describe('SqlService', () => {
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       service.init({ tableName: 'users' }, paginationOptions, gridStub);
       const query = service.buildQuery();
-      expect(removeSpaces(query)).toBe(removeSpaces('SELECT *, COUNT(*) OVER() AS "totalCount" FROM users LIMIT 10 OFFSET 0'));
+      expect(removeSpaces(query)).toBe(removeSpaces('SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" LIMIT 10 OFFSET 0'));
     });
 
     it('should exclude a column and expect a query string without it', () => {
@@ -316,7 +316,7 @@ describe('SqlService', () => {
       vi.spyOn(gridStub, 'getColumns').mockReturnValue(columns);
       service.init({ tableName: 'users' }, undefined, gridStub);
       const query = service.buildQuery();
-      expect(removeSpaces(query)).toBe(removeSpaces('SELECT field1, COUNT(*) OVER() AS "totalCount" FROM users LIMIT 20 OFFSET 0'));
+      expect(removeSpaces(query)).toBe(removeSpaces('SELECT "field1", COUNT(*) OVER() AS "totalCount" FROM "users" LIMIT 20 OFFSET 0'));
     });
 
     it('should add extra fields from the "fields" property and expect them to be part of the query string', () => {
@@ -359,7 +359,7 @@ describe('SqlService', () => {
       service.init({ tableName: 'users' }, paginationOptions, gridStub);
       // For SQL, if pagination is disabled, LIMIT/OFFSET should be omitted
       const query = service.buildQuery();
-      expect(query).toBe('SELECT *, COUNT(*) OVER() AS "totalCount" FROM users');
+      expect(query).toBe('SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users"');
       gridOptionMock.enablePagination = true; // reset for other tests
     });
 
@@ -372,7 +372,7 @@ describe('SqlService', () => {
       service.init({ tableName: 'users' }, paginationOptions, gridStub);
       service.updatePagination(3, 20);
       const query = service.buildQuery();
-      expect(removeSpaces(query)).toBe(removeSpaces('SELECT *, COUNT(*) OVER() AS "totalCount" FROM users LIMIT 20 OFFSET 40'));
+      expect(removeSpaces(query)).toBe(removeSpaces('SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" LIMIT 20 OFFSET 40'));
     });
 
     it('should make sure the offset pagination is never below zero, even when new page is 0', () => {
@@ -384,7 +384,7 @@ describe('SqlService', () => {
       service.init({ tableName: 'users' }, paginationOptions, gridStub);
       service.updatePagination(0, 20);
       const query = service.buildQuery();
-      expect(removeSpaces(query)).toBe(removeSpaces('SELECT *, COUNT(*) OVER() AS "totalCount" FROM users LIMIT 20 OFFSET 0'));
+      expect(removeSpaces(query)).toBe(removeSpaces('SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" LIMIT 20 OFFSET 0'));
     });
 
     it('should make sure the offset pagination is never below zero, even when new is 1 the offset should remain 0', () => {
@@ -396,35 +396,7 @@ describe('SqlService', () => {
       service.init({ tableName: 'users' }, paginationOptions, gridStub);
       service.updatePagination(1, 20);
       const query = service.buildQuery();
-      expect(removeSpaces(query)).toBe(removeSpaces('SELECT *, COUNT(*) OVER() AS "totalCount" FROM users LIMIT 20 OFFSET 0'));
-    });
-  });
-
-  describe('buildFilterQuery method', () => {
-    let service: SqlService;
-    beforeEach(() => {
-      service = new SqlService();
-    });
-
-    it('should return a simple query from a column array', () => {
-      const expectation = 'firstName, lastName';
-      const columns = ['firstName', 'lastName'];
-      const query = service.buildFilterQuery(columns);
-      expect(removeSpaces(query)).toBe(removeSpaces(expectation));
-    });
-
-    it('should ignore dot notation fields (complex objects)', () => {
-      const expectation = 'firstName, lastName';
-      const columns = ['firstName', 'lastName', 'billing.address.street', 'billing.address.zip'];
-      const query = service.buildFilterQuery(columns);
-      expect(removeSpaces(query)).toBe(removeSpaces(expectation));
-    });
-
-    it('should return only valid flat fields when mixed with invalid', () => {
-      const expectation = 'foo, bar';
-      const columns = ['foo', 'bar', '', null as any, undefined as any, 'obj.prop'];
-      const query = service.buildFilterQuery(columns);
-      expect(removeSpaces(query)).toBe(removeSpaces(expectation));
+      expect(removeSpaces(query)).toBe(removeSpaces('SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" LIMIT 20 OFFSET 0'));
     });
   });
 
@@ -500,6 +472,37 @@ describe('SqlService', () => {
     });
   });
 
+  describe('escapeIdentifier', () => {
+    let service: SqlService;
+    beforeEach(() => {
+      service = new SqlService();
+    });
+
+    it('should escape identifiers with double quotes (default)', () => {
+      service.init({ tableName: 'myTable' });
+      expect(service['escapeIdentifier']('foo')).toBe('"foo"');
+      expect(service['escapeIdentifier']('my"Table')).toBe('"my""Table"');
+    });
+
+    it('should escape identifiers with backticks', () => {
+      service.init({ tableName: 'myTable', identifierEscapeStyle: 'backtick' });
+      expect(service['escapeIdentifier']('foo')).toBe('`foo`');
+      expect(service['escapeIdentifier']('my`Table')).toBe('`my``Table`');
+    });
+
+    it('should escape identifiers with brackets', () => {
+      service.init({ tableName: 'myTable', identifierEscapeStyle: 'bracket' });
+      expect(service['escapeIdentifier']('foo')).toBe('[foo]');
+      expect(service['escapeIdentifier']('my]Table')).toBe('[my]]Table]');
+    });
+
+    it('should return empty string for undefined or empty identifier', () => {
+      service.init({ tableName: 'myTable' });
+      expect(service['escapeIdentifier']()).toBe('');
+      expect(service['escapeIdentifier']('')).toBe('');
+    });
+  });
+
   describe('resetPaginationOptions method', () => {
     beforeEach(() => {
       paginationOptions.pageSize = 20;
@@ -524,7 +527,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with the new filter', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE gender = 'female' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" = 'female' LIMIT 10 OFFSET 0`;
       const querySpy = vi.spyOn(service, 'buildQuery');
       const resetSpy = vi.spyOn(service, 'resetPaginationOptions');
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
@@ -566,7 +569,7 @@ describe('SqlService', () => {
 
   describe('processOnPaginationChanged method', () => {
     it('should return a query with the new pagination', () => {
-      const expectation = 'SELECT *, COUNT(*) OVER() AS "totalCount" FROM users LIMIT 20 OFFSET 40';
+      const expectation = 'SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" LIMIT 20 OFFSET 40';
       const querySpy = vi.spyOn(service, 'buildQuery');
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -579,7 +582,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with the new pagination and use pagination size options that was passed to service options when it is not provided as argument to "processOnPaginationChanged"', () => {
-      const expectation = 'SELECT *, COUNT(*) OVER() AS "totalCount" FROM users LIMIT 10 OFFSET 20';
+      const expectation = 'SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" LIMIT 10 OFFSET 20';
       const querySpy = vi.spyOn(service, 'buildQuery');
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -592,7 +595,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with the new pagination and use default pagination size (25) when not provided as argument', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users LIMIT 20 OFFSET 40`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" LIMIT 20 OFFSET 40`;
       const querySpy = vi.spyOn(service, 'buildQuery');
 
       service.init(serviceOptions, undefined, gridStub);
@@ -607,7 +610,7 @@ describe('SqlService', () => {
 
   describe('processOnSortChanged method', () => {
     it('should return a query with the new sorting when using single sort', () => {
-      const expectation = 'SELECT *, COUNT(*) OVER() AS "totalCount" FROM users ORDER BY gender DESC LIMIT 10 OFFSET 0';
+      const expectation = 'SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" ORDER BY "gender" DESC LIMIT 10 OFFSET 0';
       const querySpy = vi.spyOn(service, 'buildQuery');
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockSortChangedArgs = { columnId: 'gender', sortCol: mockColumn, sortAsc: false, multiColumnSort: false } as ColumnSort;
@@ -620,7 +623,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with the multiple new sorting when using multiColumnSort', () => {
-      const expectation = 'SELECT *, COUNT(*) OVER() AS "totalCount" FROM users ORDER BY gender DESC, firstName ASC LIMIT 10 OFFSET 0';
+      const expectation = 'SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" ORDER BY "gender" DESC, "firstName" ASC LIMIT 10 OFFSET 0';
       const querySpy = vi.spyOn(service, 'buildQuery');
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnName = { id: 'firstName', field: 'firstName' } as Column;
@@ -661,7 +664,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with the new filter when filters are passed as a filter trigger by a filter event and is of type ColumnFilters', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE gender = 'female' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" = 'female' LIMIT 10 OFFSET 0`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
         gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female'], operator: 'EQ', type: 'string' },
@@ -675,7 +678,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query without filtering when the filter "searchTerms" property is missing from the search', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" LIMIT 10 OFFSET 0`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
         gender: { columnId: 'gender', columnDef: mockColumn, operator: 'EQ', type: 'string' },
@@ -689,7 +692,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with multiple filters when the filters object has multiple search with Equal & "<>" and they are passed as a filter trigger by a filter event and is of type ColumnFilters', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE gender = 'female' AND company NOT LIKE '%abc%' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" = 'female' AND "company" NOT LIKE '%abc%' LIMIT 10 OFFSET 0`;
       const mockColumnGender = { id: 'gender', field: 'gender' } as Column;
       const mockColumnCompany = { id: 'company', field: 'company' } as Column;
       const mockColumnFilters = {
@@ -705,7 +708,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with multiple filters when the filters object has multiple search with Equal & Not Contains and they are passed as a filter trigger by a filter event and is of type ColumnFilters', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE gender = 'female' AND company NOT LIKE '%abc%' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" = 'female' AND "company" NOT LIKE '%abc%' LIMIT 10 OFFSET 0`;
       const mockColumnGender = { id: 'gender', field: 'gender' } as Column;
       const mockColumnCompany = { id: 'company', field: 'company' } as Column;
       const mockColumnFilters = {
@@ -721,7 +724,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with multiple filters and expect same query string result as previous test even with "isUpdatedByPreset" enabled', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE gender = 'female' AND company LIKE '%abc%' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" = 'female' AND "company" LIKE '%abc%' LIMIT 10 OFFSET 0`;
       const mockColumnGender = { id: 'gender', field: 'gender' } as Column;
       const mockColumnCompany = { id: 'company', field: 'company' } as Column;
       const mockColumnFilters = {
@@ -737,7 +740,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with the new filter when filters are passed as a Grid Preset of type CurrentFilter', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE gender = 'female' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" = 'female' LIMIT 10 OFFSET 0`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockCurrentFilter = { columnDef: mockColumn, columnId: 'gender', operator: 'EQ', searchTerms: ['female'] } as CurrentFilter;
 
@@ -751,7 +754,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with search having the operator StartsWith when search value has the "*" symbol as the last character', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE gender LIKE 'fem%' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" LIKE 'fem%' LIMIT 10 OFFSET 0`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
         gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['fem*'], type: 'string' },
@@ -765,7 +768,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with search having the operator EndsWith when search value has the "*" symbol as the first character', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE gender LIKE '%le' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" LIKE '%le' LIMIT 10 OFFSET 0`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
         gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['*le'], type: 'string' },
@@ -779,7 +782,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with search having the operator EndsWith when the operator was provided as "*z"', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE gender LIKE '%le' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" LIKE '%le' LIMIT 10 OFFSET 0`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
         gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['le*'], operator: '*z', type: 'string' },
@@ -793,7 +796,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with search having the operator StartsWith even when search value last char is "*" symbol but the operator provided is "*z"', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE gender LIKE 'le%' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" LIKE 'le%' LIMIT 10 OFFSET 0`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
         gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['le*'], operator: 'a*', type: 'string' },
@@ -807,7 +810,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with search having the operator EndsWith when the Column Filter was provided as "*z"', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE gender LIKE '%le' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" LIKE '%le' LIMIT 10 OFFSET 0`;
       const mockColumn = { id: 'gender', field: 'gender', filter: { operator: '*z' } } as Column;
       const mockColumnFilters = {
         gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['le'], type: 'string' },
@@ -821,7 +824,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with search having the operator EndsWith when the Column Filter was provided as EndsWith', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE gender LIKE '%le' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" LIKE '%le' LIMIT 10 OFFSET 0`;
       const mockColumn = { id: 'gender', field: 'gender', filter: { operator: 'EndsWith' } } as Column;
       const mockColumnFilters = {
         gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['le'], type: 'string' },
@@ -835,7 +838,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with search having the operator StartsWith when the operator was provided as "a*"', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE gender LIKE 'le%' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" LIKE 'le%' LIMIT 10 OFFSET 0`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
         gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['le'], operator: 'a*', type: 'string' },
@@ -849,7 +852,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with search having the operator StartsWith when the operator was provided as StartsWith', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE gender LIKE 'le%' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" LIKE 'le%' LIMIT 10 OFFSET 0`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
         gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['le'], operator: 'StartsWith', type: 'string' },
@@ -863,7 +866,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with search having the operator StartsWith & EndsWith when search value has the "*" symbol with chars on both side of it', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE name LIKE 'Ca%' AND name LIKE '%le' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "name" LIKE 'Ca%' AND "name" LIKE '%le' LIMIT 10 OFFSET 0`;
       const mockColumn = { id: 'name', field: 'name' } as Column;
       const mockColumnFilters = {
         name: { columnId: 'name', columnDef: mockColumn, searchTerms: ['Ca*le'], type: 'string' },
@@ -877,7 +880,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with search having the operator StartsWithEndsWith when the operator was provided as "a*z"', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE name LIKE 'Ca%' AND name LIKE '%le' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "name" LIKE 'Ca%' AND "name" LIKE '%le' LIMIT 10 OFFSET 0`;
       const mockColumn = { id: 'name', field: 'name' } as Column;
       const mockColumnFilters = {
         name: { columnId: 'name', columnDef: mockColumn, searchTerms: ['Ca*le'], operator: 'a*z', type: 'string' },
@@ -891,7 +894,7 @@ describe('SqlService', () => {
     });
 
     it('should bypass default behavior if filterQueryOverride is defined and does not return undefined', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE name LIKE 'Ca%' AND name LIKE '%le' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "name" LIKE 'Ca%' AND "name" LIKE '%le' LIMIT 10 OFFSET 0`;
       const mockColumn = { id: 'name', field: 'name' } as Column;
       const mockColumnFilters = {
         name: { columnId: 'name', columnDef: mockColumn, searchTerms: ['Ca*le'], operator: 'a*z', type: 'string' },
@@ -906,7 +909,7 @@ describe('SqlService', () => {
     });
 
     it('should continue with default behavior if filterQueryOverride returns undefined', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE name LIKE 'Ca%' AND name LIKE '%le' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "name" LIKE 'Ca%' AND "name" LIKE '%le' LIMIT 10 OFFSET 0`;
       const mockColumn = { id: 'name', field: 'name' } as Column;
       const mockColumnFilters = {
         name: { columnId: 'name', columnDef: mockColumn, searchTerms: ['Ca*le'], operator: 'a*z', type: 'string' },
@@ -921,7 +924,7 @@ describe('SqlService', () => {
     });
 
     it('should continue with default behavior if filterQueryOverride is not provided', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE name LIKE 'Ca%' AND name LIKE '%le' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "name" LIKE 'Ca%' AND "name" LIKE '%le' LIMIT 10 OFFSET 0`;
       const mockColumn = { id: 'name', field: 'name' } as Column;
       const mockColumnFilters = {
         name: { columnId: 'name', columnDef: mockColumn, searchTerms: ['Ca*le'], operator: 'a*z', type: 'string' },
@@ -935,7 +938,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with search having the operator Greater of Equal when the search value was provided as ">=10"', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE age >= 10 LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "age" >= 10 LIMIT 10 OFFSET 0`;
       const mockColumn = { id: 'age', field: 'age', type: 'number' } as Column;
       const mockColumnFilters = {
         age: { columnId: 'age', columnDef: mockColumn, searchTerms: ['>=10'], type: 'number' },
@@ -949,7 +952,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with search NOT having the operator Greater of Equal when the search value was provided as ">=10" but "autoParseInputFilterOperator" is set to false', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE age LIKE '%>=10%' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "age" LIKE '%>=10%' LIMIT 10 OFFSET 0`;
       const mockColumn = { id: 'age', field: 'age', autoParseInputFilterOperator: false } as Column;
       const mockColumnFilters = {
         age: { columnId: 'age', columnDef: mockColumn, searchTerms: ['>=10'], type: 'string' },
@@ -963,7 +966,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with search having a range of exclusive numbers when the search value contains 2 dots (..) to represent a range of numbers', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE duration >= 2 AND duration <= 33 LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "duration" >= 2 AND "duration" <= 33 LIMIT 10 OFFSET 0`;
       const mockColumn = { id: 'duration', field: 'duration', type: 'number' } as Column;
       const mockColumnFilters = {
         duration: { columnId: 'duration', columnDef: mockColumn, searchTerms: ['2..33'], type: 'number' },
@@ -977,7 +980,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query to filter a search value between an inclusive range of numbers using the 2 dots (..) separator, the "RangeInclusive" operator and the range has an unbounded end', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE duration >= 5 LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "duration" >= 5 LIMIT 10 OFFSET 0`;
       const mockColumnDuration = { id: 'duration', field: 'duration', type: 'number' } as Column;
       const mockColumnFilters = {
         duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['5..'], operator: 'RangeInclusive', type: 'number' },
@@ -991,7 +994,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query to filter a search value between an inclusive range of numbers using the 2 dots (..) separator, the "RangeInclusive" operator and the range has an unbounded begin', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE duration <= 5 LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "duration" <= 5 LIMIT 10 OFFSET 0`;
       const mockColumnDuration = { id: 'duration', field: 'duration', type: 'number' } as Column;
       const mockColumnFilters = {
         duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['..5'], operator: 'RangeInclusive', type: 'number' },
@@ -1005,7 +1008,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query to filter a search value between an inclusive range of numbers using the 2 dots (..) separator, the "RangeExclusive" operator and the range has an unbounded end', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE duration > 5 LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "duration" > 5 LIMIT 10 OFFSET 0`;
       const mockColumnDuration = { id: 'duration', field: 'duration', type: 'number' } as Column;
       const mockColumnFilters = {
         duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['5..'], operator: 'RangeExclusive', type: 'number' },
@@ -1019,7 +1022,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query to filter a search value between an inclusive range of numbers using the 2 dots (..) separator, the "RangeExclusive" operator and the range has an unbounded begin', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE duration < 5 LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "duration" < 5 LIMIT 10 OFFSET 0`;
       const mockColumnDuration = { id: 'duration', field: 'duration', type: 'number' } as Column;
       const mockColumnFilters = {
         duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['..5'], operator: 'RangeExclusive', type: 'number' },
@@ -1033,7 +1036,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with search having a range of inclusive numbers when 2 searchTerms numbers are provided and the operator is "RangeInclusive"', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE duration >= 2 AND duration <= 33 LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "duration" >= 2 AND "duration" <= 33 LIMIT 10 OFFSET 0`;
       const mockColumn = { id: 'duration', field: 'duration' } as Column;
       const mockColumnFilters = {
         duration: { columnId: 'duration', columnDef: mockColumn, searchTerms: [2, 33], operator: 'RangeInclusive', type: 'number' },
@@ -1047,7 +1050,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query to filter a search value between an inclusive range of numbers using the 2 dots (..) separator, "defaultFilterRangeOperator" is not set and operator is not set to "RangeInclusive" or "RangeExclusive"', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE duration <= 5 LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "duration" <= 5 LIMIT 10 OFFSET 0`;
       const mockColumnDuration = { id: 'duration', field: 'duration', type: 'number' } as Column;
       const mockColumnFilters = {
         duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['..5'], operator: 'Contains', type: 'number' },
@@ -1062,7 +1065,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query to filter a search value between an exclusive range of numbers using the 2 dots (..) separator, "defaultFilterRangeOperator" is set to "rangeExclusive" and operator is not set to "RangeInclusive" or "RangeExclusive"', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE duration < 5 LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "duration" < 5 LIMIT 10 OFFSET 0`;
       const mockColumnDuration = { id: 'duration', field: 'duration', type: 'number' } as Column;
       const mockColumnFilters = {
         duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['..5'], operator: 'Contains', type: 'number' },
@@ -1077,7 +1080,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with search having a range of exclusive dates when the search value contains 2 dots (..) to represent a range of dates', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE startDate >= '2001-01-01' AND startDate <= '2001-01-31' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "startDate" >= '2001-01-01' AND "startDate" <= '2001-01-31' LIMIT 10 OFFSET 0`;
       const mockColumn = { id: 'startDate', field: 'startDate' } as Column;
       const mockColumnFilters = {
         startDate: { columnId: 'startDate', columnDef: mockColumn, searchTerms: ['2001-01-01..2001-01-31'], type: 'dateIso' },
@@ -1091,7 +1094,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with search having a range of inclusive dates when 2 searchTerms dates are provided and the operator is "RangeInclusive"', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE startDate >= '2001-01-01' AND startDate <= '2001-01-31' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "startDate" >= '2001-01-01' AND "startDate" <= '2001-01-31' LIMIT 10 OFFSET 0`;
       const mockColumn = { id: 'startDate', field: 'startDate' } as Column;
       const mockColumnFilters = {
         startDate: {
@@ -1111,7 +1114,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with a date equal when only 1 searchTerms is provided and even if the operator is set to a range', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE company LIKE '%abc%' AND updatedDate = '2001-01-20' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "company" LIKE '%abc%' AND "updatedDate" = '2001-01-20' LIMIT 10 OFFSET 0`;
       const mockColumnCompany = { id: 'company', field: 'company' } as Column;
       const mockColumnUpdated = { id: 'updatedDate', field: 'updatedDate', type: 'date' } as Column;
       const mockColumnFilters = {
@@ -1133,7 +1136,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with a date operator when only 1 searchTerms', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE company LIKE '%abc%' AND updatedDate >= '2001-01-20' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "company" LIKE '%abc%' AND "updatedDate" >= '2001-01-20' LIMIT 10 OFFSET 0`;
       const mockColumnCompany = { id: 'company', field: 'company' } as Column;
       const mockColumnUpdated = { id: 'updatedDate', field: 'updatedDate', type: 'date' } as Column;
       const mockColumnFilters = {
@@ -1149,7 +1152,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query without any date filtering when searchTerms is an empty array', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE company LIKE '%abc%' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "company" LIKE '%abc%' LIMIT 10 OFFSET 0`;
       const mockColumnCompany = { id: 'company', field: 'company' } as Column;
       const mockColumnUpdated = { id: 'updatedDate', field: 'updatedDate', type: 'date' } as Column;
       const mockColumnFilters = {
@@ -1165,7 +1168,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with a CSV string when the filter operator is IN ', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE gender IN ('female','male') LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" IN ('female','male') LIMIT 10 OFFSET 0`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
         gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female', 'male'], operator: 'IN', type: 'string' },
@@ -1179,7 +1182,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with a CSV string when the filter operator is NOT_IN', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE gender NOT IN ('female','male') LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" NOT IN ('female','male') LIMIT 10 OFFSET 0`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
         gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female', 'male'], operator: 'NOT_IN', type: 'string' },
@@ -1193,7 +1196,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with a CSV string and use the operator from the Column Definition Operator when provided', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE gender NOT IN ('female','male') LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" NOT IN ('female','male') LIMIT 10 OFFSET 0`;
       const mockColumn = { id: 'gender', field: 'gender', filter: { operator: 'NOT_IN' } } as Column;
       const mockColumnFilters = {
         gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female', 'male'], type: 'string' },
@@ -1207,7 +1210,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with mapped operator when no operator was provided but we have a column "type" property', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE gender LIKE '%le%' AND age = 28 LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" LIKE '%le%' AND "age" = 28 LIMIT 10 OFFSET 0`;
       const mockColumnGender = { id: 'gender', field: 'gender', type: 'string' } as Column;
       const mockColumnAge = { id: 'age', field: 'age', type: 'number' } as Column;
       const mockColumnFilters = {
@@ -1223,7 +1226,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with mapped operator when neither operator nor column "type" property exists', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE gender LIKE '%le%' AND city LIKE '%Bali%' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" LIKE '%le%' AND "city" LIKE '%Bali%' LIMIT 10 OFFSET 0`;
       const mockColumnGender = { id: 'gender', field: 'gender' } as Column;
       const mockColumnCity = { id: 'city', field: 'city' } as Column;
       const mockColumnFilters = {
@@ -1239,7 +1242,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with the new filter search value of empty string when searchTerms has an undefined value', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE gender = '' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" = '' LIMIT 10 OFFSET 0`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
         gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: [undefined as any], operator: 'EQ', type: 'string' },
@@ -1253,7 +1256,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query using a different field to query when the column has a "queryField" defined in its definition', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE isMale = 'true' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "isMale" = 'true' LIMIT 10 OFFSET 0`;
       const mockColumn = { id: 'gender', field: 'gender', queryField: 'isMale' } as Column;
       const mockColumnFilters = {
         gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: [true], operator: 'EQ', type: 'string' },
@@ -1267,7 +1270,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query using a different field to query when the column has a "queryFieldFilter" defined in its definition', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE hasPriority = 'female' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "hasPriority" = 'female' LIMIT 10 OFFSET 0`;
       const mockColumn = { id: 'gender', field: 'gender', queryField: 'isAfter', queryFieldFilter: 'hasPriority' } as Column;
       const mockColumnFilters = {
         gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female'], operator: 'EQ', type: 'string' },
@@ -1281,7 +1284,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query using column name that is an HTML Element', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE Gender = 'female' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "Gender" = 'female' LIMIT 10 OFFSET 0`;
       const nameElm = document.createElement('div');
       nameElm.innerHTML = `<span class="text-red">Gender</span>`;
       const mockColumn = { id: 'gender', name: nameElm } as unknown as Column;
@@ -1297,7 +1300,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query using the column "name" property when "field" is not defined in its definition', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE gender = 'female' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" = 'female' LIMIT 10 OFFSET 0`;
       const mockColumn = { id: 'gender', name: 'gender' } as Column;
       const mockColumnFilters = {
         gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female'], operator: 'EQ', type: 'string' },
@@ -1311,7 +1314,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query without any sorting after clearFilters was called', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" LIMIT 10 OFFSET 0`;
       const mockColumn = { id: 'gender', field: 'gender' } as Column;
       const mockColumnFilters = {
         gender: { columnId: 'gender', columnDef: mockColumn, searchTerms: ['female'], operator: 'EQ', type: 'string' },
@@ -1330,20 +1333,20 @@ describe('SqlService', () => {
     describe('Verbatim ColumnFilters', () => {
       describe.each`
         description                                            | verbatim | operator | searchTerms           | expectation
-        ${'Verbatim false, Filter for null'}                   | ${false} | ${'EQ'}  | ${null}               | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM users LIMIT 10 OFFSET 0'}
-        ${'Verbatim true,  Filter for null'}                   | ${true}  | ${'EQ'}  | ${null}               | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE gender IS NULL LIMIT 10 OFFSET 0'}
-        ${'Verbatim false, Empty string'}                      | ${false} | ${'EQ'}  | ${''}                 | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM users LIMIT 10 OFFSET 0'}
-        ${'Verbatim true,  Empty string'}                      | ${true}  | ${'EQ'}  | ${''}                 | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE gender = \'\' LIMIT 10 OFFSET 0'}
-        ${'Verbatim false, Empty list'}                        | ${false} | ${'IN'}  | ${[]}                 | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM users LIMIT 10 OFFSET 0'}
-        ${'Verbatim true,  Empty list'}                        | ${true}  | ${'IN'}  | ${[]}                 | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM users LIMIT 10 OFFSET 0'}
-        ${'Verbatim false, Filter for null (in list)'}         | ${false} | ${'IN'}  | ${[null]}             | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE gender IN (\'\') LIMIT 10 OFFSET 0'}
-        ${'Verbatim true,  Filter for null (in list)'}         | ${true}  | ${'IN'}  | ${[null]}             | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE gender IS NULL LIMIT 10 OFFSET 0'}
-        ${'Verbatim false, Filter for empty string (in list)'} | ${false} | ${'IN'}  | ${['']}               | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE gender IN (\'\') LIMIT 10 OFFSET 0'}
-        ${'Verbatim true,  Filter for empty string (in list)'} | ${true}  | ${'IN'}  | ${['']}               | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE gender = \'\' LIMIT 10 OFFSET 0'}
-        ${'Verbatim false, Filter for female'}                 | ${false} | ${'IN'}  | ${['female']}         | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE gender IN (\'female\') LIMIT 10 OFFSET 0'}
-        ${'Verbatim true,  Filter for female'}                 | ${true}  | ${'IN'}  | ${['female']}         | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE gender = \'female\' LIMIT 10 OFFSET 0'}
-        ${'Verbatim false, Filter for female/male'}            | ${false} | ${'IN'}  | ${['female', 'male']} | ${"SELECT *, COUNT(*) OVER() AS \"totalCount\" FROM users WHERE gender IN ('female','male') LIMIT 10 OFFSET 0"}
-        ${'Verbatim true,  Filter for female/male'}            | ${true}  | ${'IN'}  | ${['female', 'male']} | ${"SELECT *, COUNT(*) OVER() AS \"totalCount\" FROM users WHERE gender IN ('female','male') LIMIT 10 OFFSET 0"}
+        ${'Verbatim false, Filter for null'}                   | ${false} | ${'EQ'}  | ${null}               | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM \"users\" LIMIT 10 OFFSET 0'}
+        ${'Verbatim true,  Filter for null'}                   | ${true}  | ${'EQ'}  | ${null}               | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM \"users\" WHERE \"gender\" IS NULL LIMIT 10 OFFSET 0'}
+        ${'Verbatim false, Empty string'}                      | ${false} | ${'EQ'}  | ${''}                 | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM \"users\" LIMIT 10 OFFSET 0'}
+        ${'Verbatim true,  Empty string'}                      | ${true}  | ${'EQ'}  | ${''}                 | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM \"users\" WHERE \"gender\" = \'\' LIMIT 10 OFFSET 0'}
+        ${'Verbatim false, Empty list'}                        | ${false} | ${'IN'}  | ${[]}                 | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM \"users\" LIMIT 10 OFFSET 0'}
+        ${'Verbatim true,  Empty list'}                        | ${true}  | ${'IN'}  | ${[]}                 | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM \"users\" LIMIT 10 OFFSET 0'}
+        ${'Verbatim false, Filter for null (in list)'}         | ${false} | ${'IN'}  | ${[null]}             | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM \"users\" WHERE \"gender\" IN (\'\') LIMIT 10 OFFSET 0'}
+        ${'Verbatim true,  Filter for null (in list)'}         | ${true}  | ${'IN'}  | ${[null]}             | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM \"users\" WHERE \"gender\" IS NULL LIMIT 10 OFFSET 0'}
+        ${'Verbatim false, Filter for empty string (in list)'} | ${false} | ${'IN'}  | ${['']}               | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM \"users\" WHERE \"gender\" IN (\'\') LIMIT 10 OFFSET 0'}
+        ${'Verbatim true,  Filter for empty string (in list)'} | ${true}  | ${'IN'}  | ${['']}               | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM \"users\" WHERE \"gender\" = \'\' LIMIT 10 OFFSET 0'}
+        ${'Verbatim false, Filter for female'}                 | ${false} | ${'IN'}  | ${['female']}         | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM \"users\" WHERE \"gender\" IN (\'female\') LIMIT 10 OFFSET 0'}
+        ${'Verbatim true,  Filter for female'}                 | ${true}  | ${'IN'}  | ${['female']}         | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM \"users\" WHERE \"gender\" = \'female\' LIMIT 10 OFFSET 0'}
+        ${'Verbatim false, Filter for female/male'}            | ${false} | ${'IN'}  | ${['female', 'male']} | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" IN (\'female\',\'male\') LIMIT 10 OFFSET 0'}
+        ${'Verbatim true,  Filter for female/male'}            | ${true}  | ${'IN'}  | ${['female', 'male']} | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" IN (\'female\',\'male\') LIMIT 10 OFFSET 0'}
       `(`$description`, ({ verbatim, operator, searchTerms, expectation }) => {
         const mockColumn = { id: 'gender', field: 'gender' } as Column;
         let mockColumnFilters: ColumnFilters;
@@ -1382,7 +1385,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with search having a range of exclusive numbers when the search value contains 2 dots (..) to represent a range of numbers', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE duration >= 2 AND duration <= 33 LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "duration" >= 2 AND "duration" <= 33 LIMIT 10 OFFSET 0`;
       const presetFilters = [{ columnId: 'duration', searchTerms: ['2..33'] }] as CurrentFilter[];
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1395,7 +1398,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with a filter with range of numbers with decimals when the preset is a filter range with 2 dots (..) separator and range ends with a fraction', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE duration >= 0.5 AND duration <= 0.88 LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "duration" >= 0.5 AND "duration" <= 0.88 LIMIT 10 OFFSET 0`;
       const presetFilters = [{ columnId: 'duration', searchTerms: ['0.5...88'] }] as CurrentFilter[];
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1408,7 +1411,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with search having a range of inclusive numbers when 2 searchTerms numbers are provided and the operator is "RangeInclusive"', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE duration >= 2 AND duration <= 33 LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "duration" >= 2 AND "duration" <= 33 LIMIT 10 OFFSET 0`;
       const presetFilters = [{ columnId: 'duration', searchTerms: [2, 33], operator: 'RangeInclusive' }] as CurrentFilter[];
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1421,7 +1424,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with search having a range of exclusive numbers when 2 searchTerms numbers are provided without any operator', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE duration >= 2 AND duration <= 33 LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "duration" >= 2 AND "duration" <= 33 LIMIT 10 OFFSET 0`;
       const presetFilters = [{ columnId: 'duration', searchTerms: [2, 33] }] as CurrentFilter[];
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1434,7 +1437,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with search having a range of exclusive dates when the search value contains 2 dots (..) to represent a range of dates', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE startDate >= '2001-01-01' AND startDate <= '2001-01-31' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "startDate" >= '2001-01-01' AND "startDate" <= '2001-01-31' LIMIT 10 OFFSET 0`;
       const presetFilters = [{ columnId: 'startDate', searchTerms: ['2001-01-01..2001-01-31'] }] as CurrentFilter[];
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1447,7 +1450,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with search having a range of inclusive dates when 2 searchTerms dates are provided and the operator is "RangeInclusive"', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE startDate >= '2001-01-01' AND startDate <= '2001-01-31' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "startDate" >= '2001-01-01' AND "startDate" <= '2001-01-31' LIMIT 10 OFFSET 0`;
       const presetFilters = [{ columnId: 'startDate', searchTerms: ['2001-01-01', '2001-01-31'], operator: 'RangeInclusive' }] as CurrentFilter[];
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1460,7 +1463,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with search having a range of exclusive dates when 2 searchTerms dates are provided without any operator', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE startDate >= '2001-01-01' AND startDate <= '2001-01-31' LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "startDate" >= '2001-01-01' AND "startDate" <= '2001-01-31' LIMIT 10 OFFSET 0`;
       const presetFilters = [{ columnId: 'startDate', searchTerms: ['2001-01-01', '2001-01-31'] }] as CurrentFilter[];
 
       service.init(serviceOptions, paginationOptions, gridStub);
@@ -1473,7 +1476,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query to filter a search value with a fraction of a number that is missing a leading 0', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE duration = 0.22 LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "duration" = 0.22 LIMIT 10 OFFSET 0`;
       const mockColumnDuration = { id: 'duration', field: 'duration', type: 'number' } as Column;
       const mockColumnFilters = {
         duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['.22'], type: 'string' },
@@ -1487,7 +1490,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query without invalid characters to filter a search value that does contains invalid characters', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE duration = -22 LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "duration" = -22 LIMIT 10 OFFSET 0`;
       const mockColumnDuration = { id: 'duration', field: 'duration', type: 'float' } as Column;
       const mockColumnFilters = {
         duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['-2a2'], type: 'float' },
@@ -1501,7 +1504,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query without invalid characters to filter a search value with an integer that contains invalid characters', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE duration = 22 LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "duration" = 22 LIMIT 10 OFFSET 0`;
       const mockColumnDuration = { id: 'duration', field: 'duration', type: 'integer' } as Column;
       const mockColumnFilters = {
         duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['22;'], type: 'integer' },
@@ -1515,7 +1518,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query without invalid characters to filter a search value with a number that only has a minus characters', () => {
-      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM users WHERE duration = 0 LIMIT 10 OFFSET 0`;
+      const expectation = `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "duration" = 0 LIMIT 10 OFFSET 0`;
       const mockColumnDuration = { id: 'duration', field: 'duration', type: 'number' } as Column;
       const mockColumnFilters = {
         duration: { columnId: 'duration', columnDef: mockColumnDuration, searchTerms: ['-'], type: 'string' },
@@ -1540,7 +1543,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query with the multiple new sorting when using multiColumnSort', () => {
-      const expectation = 'SELECT *, COUNT(*) OVER() AS "totalCount" FROM users ORDER BY gender DESC, firstName ASC LIMIT 10 OFFSET 0';
+      const expectation = 'SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" ORDER BY "gender" DESC, "firstName" ASC LIMIT 10 OFFSET 0';
       const mockColumnSort = [
         { columnId: 'gender', sortCol: { id: 'gender', field: 'gender' }, sortAsc: false },
         { columnId: 'firstName', sortCol: { id: 'firstName', field: 'firstName' }, sortAsc: true },
@@ -1559,7 +1562,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query when using presets array', () => {
-      const expectation = 'SELECT *, COUNT(*) OVER() AS "totalCount" FROM users ORDER BY company DESC, firstName ASC LIMIT 10 OFFSET 0';
+      const expectation = 'SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" ORDER BY "company" DESC, "firstName" ASC LIMIT 10 OFFSET 0';
       const presets = [
         { columnId: 'company', direction: 'DESC' },
         { columnId: 'firstName', direction: 'ASC' },
@@ -1575,7 +1578,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query string using a different field to query when the column has a "queryField" defined in its definition', () => {
-      const expectation = 'SELECT *, COUNT(*) OVER() AS "totalCount" FROM users ORDER BY gender DESC, firstName ASC LIMIT 10 OFFSET 0';
+      const expectation = 'SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" ORDER BY "gender" DESC, "firstName" ASC LIMIT 10 OFFSET 0';
       const mockColumnSort = [
         { columnId: 'gender', sortCol: { id: 'gender', field: 'gender' }, sortAsc: false },
         { columnId: 'name', sortCol: { id: 'name', field: 'name', queryField: 'firstName' }, sortAsc: true },
@@ -1594,7 +1597,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query string using a different field to query when the column has a "queryFieldSorter" defined in its definition', () => {
-      const expectation = 'SELECT *, COUNT(*) OVER() AS "totalCount" FROM users ORDER BY gender DESC, lastName ASC LIMIT 10 OFFSET 0';
+      const expectation = 'SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" ORDER BY "gender" DESC, "lastName" ASC LIMIT 10 OFFSET 0';
       const mockColumnSort = [
         { columnId: 'gender', sortCol: { id: 'gender', field: 'gender' }, sortAsc: false },
         { columnId: 'name', sortCol: { id: 'name', field: 'name', queryField: 'isAfter', queryFieldSorter: 'lastName' }, sortAsc: true },
@@ -1613,7 +1616,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query without the field sorter when its field property is missing', () => {
-      const expectation = 'SELECT *, COUNT(*) OVER() AS "totalCount" FROM users ORDER BY gender DESC LIMIT 10 OFFSET 0';
+      const expectation = 'SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" ORDER BY "gender" DESC LIMIT 10 OFFSET 0';
       const mockColumnSort = [
         { columnId: 'gender', sortCol: { id: 'gender', field: 'gender' }, sortAsc: false },
         { columnId: 'firstName', sortCol: { id: 'firstName' }, sortAsc: true },
@@ -1632,7 +1635,7 @@ describe('SqlService', () => {
     });
 
     it('should return a query without any sorting after clearSorters was called', () => {
-      const expectation = 'SELECT *, COUNT(*) OVER() AS "totalCount" FROM users LIMIT 10 OFFSET 0';
+      const expectation = 'SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" LIMIT 10 OFFSET 0';
       const mockColumnSort = [
         { columnId: 'gender', sortCol: { id: 'gender', field: 'gender' }, sortAsc: false },
         { columnId: 'firstName', sortCol: { id: 'firstName', field: 'firstName' }, sortAsc: true },
@@ -1774,18 +1777,18 @@ describe('SqlService', () => {
         { field: 'foo', operator: 'Contains', value: 'bar' },
         { field: 'foo', operator: 'NOT_CONTAINS', value: 'baz' },
       ];
-      const where = service['_buildWhereClause']();
+      const where = service['buildWhereClause']();
       expect(where).toContain('LIKE');
       expect(where).toContain('NOT LIKE');
     });
 
     it('should throw in _buildOrderByClause if options, tableName, or columns are missing', () => {
-      expect(() => service['_buildOrderByClause']()).toThrow();
+      expect(() => service['buildOrderByClause']()).toThrow();
       service.options = { tableName: 'users' };
-      expect(() => service['_buildOrderByClause']()).toThrow();
+      expect(() => service['buildOrderByClause']()).toThrow();
       service.options = undefined as any;
       service['_columns'] = [{ id: 'foo', field: 'foo' }];
-      expect(() => service['_buildOrderByClause']()).toThrow();
+      expect(() => service['buildOrderByClause']()).toThrow();
     });
 
     it('should return empty string from _buildOrderByClause if no valid sorters', () => {
@@ -1794,7 +1797,7 @@ describe('SqlService', () => {
       service.options.sortingOptions = [{ field: 'foo', direction: 'ASC' }];
       // simulate dot notation
       service['_columns'][0].field = 'foo.bar';
-      const order = service['_buildOrderByClause']();
+      const order = service['buildOrderByClause']();
       expect(order).toBe('');
     });
 

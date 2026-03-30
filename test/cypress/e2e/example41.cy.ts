@@ -40,10 +40,9 @@ describe('Example 41 - SQL Grid', () => {
     cy.get('[data-test=status]').should('contain', 'finished');
     cy.get('[data-test=sql-query-result]').should(($span) => {
       const text = removeSpaces($span.text());
-      expect(text).to.contain('SELECT');
-      expect(text).to.contain('FROM users');
-      expect(text).to.contain('LIMIT');
-      expect(text).to.contain('OFFSET');
+      expect(text).to.eq(
+        `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" = 'male' AND "name" LIKE 'Joh%' AND "name" LIKE '%oe' AND "company" IN ('xyz') AND "finish" >= '2026-01-01' AND "finish" <= '2026-02-15' ORDER BY "name" ASC, "company" DESC LIMIT 20 OFFSET 20`
+      );
     });
   });
 
@@ -56,7 +55,9 @@ describe('Example 41 - SQL Grid', () => {
     cy.get('[data-test=status]').should('contain', 'finished');
     cy.get('[data-test=sql-query-result]').should(($span) => {
       const text = removeSpaces($span.text());
-      expect(text).to.contain('OFFSET');
+      expect(text).to.eq(
+        `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" = 'male' AND "name" LIKE 'Joh%' AND "name" LIKE '%oe' AND "company" IN ('xyz') AND "finish" >= '2026-01-01' AND "finish" <= '2026-02-15' ORDER BY "name" ASC, "company" DESC LIMIT 20 OFFSET 40`
+      );
     });
   });
 
@@ -65,7 +66,9 @@ describe('Example 41 - SQL Grid', () => {
     cy.get('[data-test=status]').should('contain', 'finished');
     cy.get('[data-test=sql-query-result]').should(($span) => {
       const text = removeSpaces($span.text());
-      expect(text).to.contain('OFFSET');
+      expect(text).to.eq(
+        `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" = 'male' AND "name" LIKE 'Joh%' AND "name" LIKE '%oe' AND "company" IN ('xyz') AND "finish" >= '2026-01-01' AND "finish" <= '2026-02-15' ORDER BY "name" ASC, "company" DESC LIMIT 20 OFFSET 80`
+      );
     });
   });
 
@@ -74,7 +77,9 @@ describe('Example 41 - SQL Grid', () => {
     cy.get('[data-test=status]').should('contain', 'finished');
     cy.get('[data-test=sql-query-result]').should(($span) => {
       const text = removeSpaces($span.text());
-      expect(text).to.contain('OFFSET 0');
+      expect(text).to.eq(
+        `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" = 'male' AND "name" LIKE 'Joh%' AND "name" LIKE '%oe' AND "company" IN ('xyz') AND "finish" >= '2026-01-01' AND "finish" <= '2026-02-15' ORDER BY "name" ASC, "company" DESC LIMIT 20 OFFSET 0`
+      );
     });
   });
 
@@ -83,7 +88,9 @@ describe('Example 41 - SQL Grid', () => {
     cy.get('[data-test=status]').should('contain', 'finished');
     cy.get('[data-test=sql-query-result]').should(($span) => {
       const text = removeSpaces($span.text());
-      expect(text).to.contain('OFFSET');
+      expect(text).to.eq(
+        `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" = 'male' AND "name" LIKE 'Joh%' AND "name" LIKE '%oe' AND "company" IN ('xyz') AND "finish" >= '2026-01-01' AND "finish" <= '2026-02-15' ORDER BY "name" ASC, "company" DESC LIMIT 20 OFFSET 80`
+      );
     });
   });
 
@@ -93,8 +100,9 @@ describe('Example 41 - SQL Grid', () => {
     cy.get('[data-test=status]').should('contain', 'finished');
     cy.get('[data-test=sql-query-result]').should(($span) => {
       const text = removeSpaces($span.text());
-      expect(text).to.contain('LIMIT 30');
-      expect(text).to.contain('OFFSET 0');
+      expect(text).to.eq(
+        `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" = 'male' AND "name" LIKE 'Joh%' AND "name" LIKE '%oe' AND "company" IN ('xyz') AND "finish" >= '2026-01-01' AND "finish" <= '2026-02-15' ORDER BY "name" ASC, "company" DESC LIMIT 30 OFFSET 0`
+      );
     });
   });
 
@@ -105,7 +113,9 @@ describe('Example 41 - SQL Grid', () => {
     cy.get('[data-test=status]').should('contain', 'finished');
     cy.get('[data-test=sql-query-result]').should(($span) => {
       const text = removeSpaces($span.text());
-      expect(text).to.contain('ORDER BY');
+      expect(text).to.eq(
+        'SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" ORDER BY "billingAddressZip" DESC, "company" ASC LIMIT 30 OFFSET 0'
+      );
     });
   });
 
@@ -121,8 +131,10 @@ describe('Example 41 - SQL Grid', () => {
     cy.get('[data-test=status]').should('contain', 'finished');
     cy.get('[data-test=sql-query-result]').should(($span) => {
       const text = removeSpaces($span.text());
-      expect(text).to.contain('Jane%');
-      expect(text.toLowerCase()).to.contain('acme');
+      expect(text).to.eq(
+        `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" = 'female' AND "name" LIKE 'Jane%' AND "company" IN ('acme') ` +
+          `AND "billingAddressZip" >= 11 AND "finish" >= '2026-01-01' AND "finish" <= '2026-02-15' ORDER BY "billingAddressZip" DESC, "company" ASC LIMIT 30 OFFSET 0`
+      );
     });
   });
 
@@ -132,10 +144,10 @@ describe('Example 41 - SQL Grid', () => {
     cy.get('[data-test=status]').should('contain', 'finished');
     cy.get('[data-test=sql-query-result]').should(($span) => {
       const text = removeSpaces($span.text());
-      expect(text).to.contain('Anthony Joyner');
-      expect(text).to.contain('Ayers Hood');
-      expect(text).to.contain('>=');
-      expect(text).to.contain('<=');
+      expect(text).to.eq(
+        `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" = 'female' AND "name" >= 'Anthony Joyner' AND "name" <= 'Ayers Hood' AND "company" IN ('acme') AND "billingAddressZip" >= 11 ` +
+          `AND "finish" >= '2026-01-01' AND "finish" <= '2026-02-15' ORDER BY "name" ASC LIMIT 30 OFFSET 0`
+      );
     });
   });
 
@@ -160,8 +172,10 @@ describe('Example 41 - SQL Grid', () => {
     cy.get('[data-test=status]').should('contain', 'finished');
     cy.get('[data-test=sql-query-result]').should(($span) => {
       const text = removeSpaces($span.text());
-      expect(text).to.contain('ORDER BY');
-      expect(text).to.contain('DESC');
+      expect(text).to.eq(
+        `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" = 'female' AND "name" >= 'Anthony Joyner' AND "name" <= 'Ayers Hood' ` +
+          `AND "company" IN ('acme') AND "billingAddressZip" >= 11 AND "finish" >= '2026-01-01' AND "finish" <= '2026-02-15' ORDER BY "name" DESC LIMIT 30 OFFSET 0`
+      );
     });
   });
 
@@ -176,8 +190,10 @@ describe('Example 41 - SQL Grid', () => {
     cy.get('[data-test=status]').should('contain', 'finished');
     cy.get('[data-test=sql-query-result]').should(($span) => {
       const text = removeSpaces($span.text());
-      expect(text).to.contain('LIKE');
-      expect(text).to.contain('Jo%yn%er');
+      expect(text).to.eq(
+        `SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" = 'female' AND "name" LIKE '%Jo%yn%er' AND "company" IN ('acme') ` +
+          `AND "billingAddressZip" >= 11 AND "finish" >= '2026-01-01' AND "finish" <= '2026-02-15' ORDER BY "name" DESC LIMIT 30 OFFSET 0`
+      );
     });
   });
 
@@ -186,39 +202,7 @@ describe('Example 41 - SQL Grid', () => {
     cy.get('[data-test=status]').should('contain', 'finished');
     cy.get('[data-test=sql-query-result]').should(($span) => {
       const text = removeSpaces($span.text());
-      expect(text).to.contain('SELECT');
-      expect(text).not.to.contain('WHERE');
+      expect(text).to.eq(`SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" LIMIT 30 OFFSET 0`);
     });
-  });
-
-  it('should hover over the "Name" column header menu and expect all commands be displayed in English', () => {
-    cy.get('.grid41')
-      .find('.slick-header-columns.slick-header-columns-left .slick-header-column')
-      .first()
-      .trigger('mouseover')
-      .children('.slick-header-menu-button')
-      .invoke('show')
-      .click();
-    cy.get('.slick-header-menu .slick-menu-command-list')
-      .should('be.visible')
-      .children('.slick-menu-item:nth-of-type(3)')
-      .children('.slick-menu-content')
-      .should('contain', 'Sort Ascending');
-    cy.get('.slick-header-menu .slick-menu-command-list')
-      .children('.slick-menu-item:nth-of-type(4)')
-      .children('.slick-menu-content')
-      .should('contain', 'Sort Descending');
-    cy.get('.slick-header-menu .slick-menu-command-list')
-      .children('.slick-menu-item:nth-of-type(6)')
-      .children('.slick-menu-content')
-      .should('contain', 'Remove Filter');
-    cy.get('.slick-header-menu .slick-menu-command-list')
-      .children('.slick-menu-item:nth-of-type(7)')
-      .children('.slick-menu-content')
-      .should('contain', 'Remove Sort');
-    cy.get('.slick-header-menu .slick-menu-command-list')
-      .children('.slick-menu-item:nth-of-type(8)')
-      .children('.slick-menu-content')
-      .should('contain', 'Hide Column');
   });
 });

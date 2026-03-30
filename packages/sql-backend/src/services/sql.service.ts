@@ -68,23 +68,25 @@ export class SqlService implements BackendService {
     if (!this.options || !this.options.tableName || !Array.isArray(this._columns)) {
       throw new Error('SQL Service requires the "tableName" property and columns to properly build the SQL query');
     }
-    // Use datasetName as schema/database prefix if provided
-    const table = this.options.datasetName ? `${this.options.datasetName}.${this.options.tableName}` : this.options.tableName;
+    // Use datasetName as schema/database prefix if provided, and escape identifiers per DB style
+    const table = this.options.datasetName
+      ? `${this.escapeIdentifier(this.options.datasetName)}.${this.escapeIdentifier(this.options.tableName)}`
+      : this.escapeIdentifier(this.options.tableName);
 
-    // Build the list of fields for SELECT
+    // Build the list of fields for SELECT, escaping identifiers
     let selectFields: string[] = [];
     for (const col of this._columns) {
       // Only flat fields (no dot notation)
       if (typeof col.field === 'string' && !col.field.includes('.')) {
         if (!col.excludeFromQuery && !col.excludeFieldFromQuery) {
-          selectFields.push(col.field);
+          selectFields.push(this.escapeIdentifier(col.field));
         }
       }
       // Add extra fields from the 'fields' property if present (and flat)
       if (Array.isArray(col.fields)) {
         for (const extraField of col.fields) {
           if (typeof extraField === 'string' && !extraField.includes('.')) {
-            selectFields.push(extraField);
+            selectFields.push(this.escapeIdentifier(extraField));
           }
         }
       }
@@ -95,7 +97,8 @@ export class SqlService implements BackendService {
 
     // If all flat fields are included and no extra fields, use SELECT *
     const allFlatCols = this._columns.filter((col) => typeof col.field === 'string' && !col.field.includes('.'));
-    const allIncluded = selectFields.length === allFlatCols.length && allFlatCols.every((col) => selectFields.includes(col.field));
+    const allIncluded =
+      selectFields.length === allFlatCols.length && allFlatCols.every((col) => selectFields.includes(this.escapeIdentifier(col.field)));
     let selectCols = allIncluded && selectFields.length > 0 ? '*' : selectFields.join(', ');
     if (!selectCols || selectCols.trim() === '') {
       selectCols = '*';
@@ -126,23 +129,12 @@ export class SqlService implements BackendService {
 
     // Allow user to customize the total count field name
     const totalCountField = this.options.totalCountField || DEFAULT_TOTAL_COUNT_FIELD;
-    // Add the total count window function
-    const selectWithCount = `${selectCols === '*' ? '*' : selectCols}, COUNT(*) OVER() AS "${totalCountField}"`;
+    // Add the total count window function (escape count field)
+    const selectWithCount = `${selectCols === '*' ? '*' : selectCols}, COUNT(*) OVER() AS ${this.escapeIdentifier(totalCountField)}`;
 
-    const where = this._buildWhereClause();
-    const order = this._buildOrderByClause();
+    const where = this.buildWhereClause();
+    const order = this.buildOrderByClause();
     return `SELECT ${selectWithCount} FROM ${table}${where}${order} ${limit} ${offset}`.trim();
-  }
-
-  /**
-   * Build a comma-separated list of valid, flat (non-dot notation) column names for SQL SELECT.
-   * Ignores empty, null, undefined, or dot notation fields.
-   */
-  buildFilterQuery(columns: (string | null | undefined)[]): string {
-    if (!Array.isArray(columns)) {
-      return '';
-    }
-    return columns.filter((col): col is string => !!col && typeof col === 'string' && !col.includes('.')).join(', ');
   }
 
   /**
@@ -212,14 +204,8 @@ export class SqlService implements BackendService {
    * Returns { pageSize, offset } based on current or default pagination.
    */
   getInitPaginationOptions(): { pageSize: number; offset: number } {
-    let pageSize = this._currentPagination?.pageSize;
-    let pageNumber = this._currentPagination?.pageNumber;
-    if (!pageSize) {
-      pageSize = DEFAULT_PAGE_SIZE;
-    }
-    if (!pageNumber && pageNumber !== 0) {
-      pageNumber = 1;
-    }
+    let pageSize = this._currentPagination?.pageSize ?? DEFAULT_PAGE_SIZE;
+    let pageNumber = this._currentPagination?.pageNumber ?? 1;
     const offset = Math.max(0, (pageNumber - 1) * pageSize);
     return { pageSize, offset };
   }
@@ -552,7 +538,11 @@ export class SqlService implements BackendService {
     return this.buildQuery();
   }
 
-  protected _buildWhereClause(): string {
+  // --
+  // PROTECTED METHODS
+  // --
+
+  protected buildWhereClause(): string {
     // Build WHERE clause from filteringOptions
     const filteringOptions = this.options?.filteringOptions || [];
     if (!Array.isArray(filteringOptions) || filteringOptions.length === 0) {
@@ -562,41 +552,41 @@ export class SqlService implements BackendService {
     const clauses: string[] = [];
     for (const filter of filteringOptions) {
       const { field, operator, value, type } = filter;
-      if (!field || !operator) {
-        continue;
-      }
-      let sqlOperator = operator === 'EQ' ? '=' : operator;
-      if (sqlOperator === 'NOT_CONTAINS') {
-        sqlOperator = 'NOT LIKE';
-      } else if (sqlOperator === 'Contains') {
-        sqlOperator = 'LIKE';
-      }
-      if (sqlOperator === '=' && value === null) {
-        clauses.push(`${field} IS NULL`);
-      } else if (sqlOperator === 'IN' || sqlOperator === 'NOT IN') {
-        if (Array.isArray(value)) {
-          if (value.length === 0) {
-            continue;
+      if (field && operator) {
+        let sqlOperator = operator === 'EQ' ? '=' : operator;
+        if (sqlOperator === 'NOT_CONTAINS') {
+          sqlOperator = 'NOT LIKE';
+        } else if (sqlOperator === 'Contains') {
+          sqlOperator = 'LIKE';
+        }
+        const fieldExpr = this.escapeIdentifier(field);
+        if (sqlOperator === '=' && value === null) {
+          clauses.push(`${fieldExpr} IS NULL`);
+        } else if (sqlOperator === 'IN' || sqlOperator === 'NOT IN') {
+          if (Array.isArray(value)) {
+            if (value.length === 0) {
+              continue;
+            }
+            const inList = value.map((v) => this._escapeSql(v, type)).join(',');
+            clauses.push(`${fieldExpr} ${sqlOperator} (${inList})`);
+          } else {
+            clauses.push(`${fieldExpr} ${sqlOperator} (${this._escapeSql(value, type)})`);
           }
-          const inList = value.map((v) => this._escapeSql(v, type)).join(',');
-          clauses.push(`${field} ${sqlOperator} (${inList})`);
+        } else if (sqlOperator === 'LIKE' || sqlOperator === 'NOT LIKE') {
+          let likeValue = value;
+          if (typeof likeValue === 'string' && !likeValue.includes('%')) {
+            likeValue = `%${likeValue}%`;
+          }
+          clauses.push(`${fieldExpr} ${sqlOperator} ${this._escapeSql(likeValue, type)}`);
         } else {
-          clauses.push(`${field} ${sqlOperator} (${this._escapeSql(value, type)})`);
+          clauses.push(`${fieldExpr} ${sqlOperator} ${this._escapeSql(value, type)}`);
         }
-      } else if (sqlOperator === 'LIKE' || sqlOperator === 'NOT LIKE') {
-        let likeValue = value;
-        if (typeof likeValue === 'string' && !likeValue.includes('%')) {
-          likeValue = `%${likeValue}%`;
-        }
-        clauses.push(`${field} ${sqlOperator} ${this._escapeSql(likeValue, type)}`);
-      } else {
-        clauses.push(`${field} ${sqlOperator} ${this._escapeSql(value, type)}`);
       }
     }
     return clauses.length ? ` WHERE ${clauses.join(' AND ')}` : '';
   }
 
-  protected _buildOrderByClause(): string {
+  protected buildOrderByClause(): string {
     if (!this.options || !this.options.tableName || !Array.isArray(this._columns)) {
       throw new Error('SQL Service requires the "tableName" property to properly build the SQL query');
     }
@@ -611,7 +601,7 @@ export class SqlService implements BackendService {
 
         // Only include flat fields (no dot notation)
         if (!sortField.includes('.')) {
-          return `${sortField} ${s.direction}`;
+          return `${this.escapeIdentifier(sortField)} ${s.direction}`;
         }
         return '';
       })
@@ -651,6 +641,21 @@ export class SqlService implements BackendService {
 
     // Escape single quotes for SQL
     return `'${String(val).replace(/'/g, "''")}'`;
+  }
+
+  /** Escapes SQL identifiers (table, column, etc.) based on the configured escape style. */
+  protected escapeIdentifier(identifier?: string): string {
+    const escapeStyle = this.options?.identifierEscapeStyle || 'doubleQuote';
+    if (!identifier) return '';
+    switch (escapeStyle) {
+      case 'backtick':
+        return `\`${String(identifier).replace(/`/g, '``')}\``;
+      case 'bracket':
+        return `[${String(identifier).replace(/]/g, ']]')}]`;
+      case 'doubleQuote':
+      default:
+        return `"${String(identifier).replace(/"/g, '""')}"`;
+    }
   }
 
   /** Normalizes the search value according to field type. */
