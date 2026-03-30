@@ -501,6 +501,16 @@ describe('SqlService', () => {
       expect(service['escapeIdentifier']()).toBe('');
       expect(service['escapeIdentifier']('')).toBe('');
     });
+
+    it('should escape both datasetName and tableName when both are provided', () => {
+      service.init({ datasetName: 'mySchema', tableName: 'myTable' });
+      // buildQuery will call escapeIdentifier for both datasetName and tableName
+      // We check that the generated query contains both escaped identifiers
+      // Need to provide columns to avoid error
+      (service as any)._columns = [{ field: 'id' }];
+      const query = service.buildQuery();
+      expect(query).toContain('FROM "mySchema"."myTable"');
+    });
   });
 
   describe('resetPaginationOptions method', () => {
