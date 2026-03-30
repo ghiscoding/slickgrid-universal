@@ -926,9 +926,7 @@ describe('Example 12 - Composite Editor Modal', () => {
         cy.get('.grid12 .slick-resizable-handle:nth(0)')
           .trigger('mousedown', { which: 1, force: true })
           .trigger('mousemove', { clientX: $col[0].getBoundingClientRect().right + 80, force: true });
-        cy.get('.grid12 .slick-header-column:nth(2)')
-          .trigger('mousemove', 'right')
-          .trigger('mouseup', { which: 1, force: true });
+        cy.get('.grid12 .slick-header-column:nth(2)').trigger('mousemove', 'right').trigger('mouseup', { which: 1, force: true });
 
         cy.get('.grid12')
           .find('.slick-header-columns:nth(1)')

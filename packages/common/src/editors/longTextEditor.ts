@@ -455,7 +455,7 @@ export class LongTextEditor implements Editor {
   }
 
   /** On every input change event, we'll update the current text length counter */
-  protected handleOnInputChange(event: Event & { clipboardData: DataTransfer; target: HTMLTextAreaElement; }): void {
+  protected handleOnInputChange(event: Event & { clipboardData: DataTransfer; target: HTMLTextAreaElement }): void {
     const compositeEditorOptions = this.args.compositeEditorOptions;
     const maxLength = this.columnEditor?.maxLength;
 
