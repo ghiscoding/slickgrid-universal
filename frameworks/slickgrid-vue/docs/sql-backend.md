@@ -21,7 +21,7 @@ The SQL Backend Service enables Slickgrid-Universal to connect to SQL-based data
 Import and configure the SQL backend service in your grid options. The service expects a SQL query result in a minimal, backend-agnostic shape, supporting both array and object result forms.
 
 ```ts
-import { SqlService, SqlServiceApi, SqlPaginatedResult } from '@slickgrid-universal/sql-backend';
+import { SqlService, SqlServiceApi, SqlPaginatedResult } from '@slickgrid-universal/sql';
 
 const gridOptions = {
   backendServiceApi: {
@@ -151,7 +151,7 @@ options: {
 ## Examples
 ### Basic Integration
 ```ts
-import { SqlService, SqlServiceApi } from '@slickgrid-universal/sql-backend';
+import { SqlService, SqlServiceApi } from '@slickgrid-universal/sql';
 
 type MyRowType = { id: number; name: string; total_count: number };
 
@@ -185,7 +185,7 @@ To update the grid's dataset and pagination after fetching SQL results, use the 
 **Example:**
 
 ```ts
-import { SqlService, SqlServiceApi } from '@slickgrid-universal/sql-backend';
+import { SqlService, SqlServiceApi } from '@slickgrid-universal/sql';
 
 type MyRowType = { id: number; name: string; totalCount: number };
 

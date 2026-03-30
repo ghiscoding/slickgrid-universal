@@ -24,7 +24,7 @@
     "@slickgrid-universal/pdf-export": "workspace:*",
     "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
     "@slickgrid-universal/rxjs-observable": "workspace:*",
-    "@slickgrid-universal/sql-backend": "workspace:*",
+    "@slickgrid-universal/sql": "workspace:*",
     "@slickgrid-universal/text-export": "workspace:*",
     "@slickgrid-universal/vanilla-bundle": "workspace:*",
     "@slickgrid-universal/vanilla-force-bundle": "workspace:*",

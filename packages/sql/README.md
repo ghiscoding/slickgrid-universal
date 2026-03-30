@@ -1,11 +1,11 @@
-# @slickgrid-universal/sql-backend
+# @slickgrid-universal/sql
 
 A SlickGrid Universal backend service for SQL databases. Implements the BackendService interface and generates SQL queries for filtering, sorting, and pagination.
 
 ## Usage
 
 ```ts
-import { SqlService } from '@slickgrid-universal/sql-backend';
+import { SqlService } from '@slickgrid-universal/sql';
 ```
 
 ## Features

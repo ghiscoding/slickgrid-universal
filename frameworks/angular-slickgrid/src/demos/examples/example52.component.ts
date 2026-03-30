@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, signal, type OnDestroy, type OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { SqlResult, SqlService, type SqlServiceApi } from '@slickgrid-universal/sql-backend';
+import { SqlResult, SqlService, type SqlServiceApi } from '@slickgrid-universal/sql';
 import type { Subscription } from 'rxjs';
 import {
   AngularSlickgridComponent,

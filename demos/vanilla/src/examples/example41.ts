@@ -1,6 +1,6 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { Filters, Formatters, type Column, type GridOption, type Metrics } from '@slickgrid-universal/common';
-import { SqlService, type SqlResult, type SqlServiceApi } from '@slickgrid-universal/sql-backend';
+import { SqlService, type SqlResult, type SqlServiceApi } from '@slickgrid-universal/sql';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options.js';
 import './example10.scss';

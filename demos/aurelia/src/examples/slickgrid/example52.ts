@@ -1,4 +1,4 @@
-import { SqlService, type SqlResult, type SqlServiceApi } from '@slickgrid-universal/sql-backend';
+import { SqlService, type SqlResult, type SqlServiceApi } from '@slickgrid-universal/sql';
 import { AureliaGridInstance, Filters, Formatters, Metrics, type Column, type GridOption } from 'aurelia-slickgrid';
 import './example10.scss';
 

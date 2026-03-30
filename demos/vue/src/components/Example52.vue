@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { format as tempoFormat } from '@formkit/tempo';
-import { SqlService, type SqlResult, type SqlServiceApi } from '@slickgrid-universal/sql-backend';
+import { SqlService, type SqlResult, type SqlServiceApi } from '@slickgrid-universal/sql';
 import { Filters, Formatters, SlickgridVue, type Column, type GridOption } from 'slickgrid-vue';
 import { onBeforeMount, ref, type Ref } from 'vue';
 

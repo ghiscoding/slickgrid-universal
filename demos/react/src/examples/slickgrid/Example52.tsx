@@ -1,5 +1,5 @@
 import { format as tempoFormat } from '@formkit/tempo';
-import { SqlService, type SqlResult, type SqlServiceApi } from '@slickgrid-universal/sql-backend';
+import { SqlService, type SqlResult, type SqlServiceApi } from '@slickgrid-universal/sql';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Filters,

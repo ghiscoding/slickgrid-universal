@@ -306,9 +306,9 @@ importers:
       '@slickgrid-universal/rxjs-observable':
         specifier: workspace:*
         version: link:../../packages/rxjs-observable
-      '@slickgrid-universal/sql-backend':
+      '@slickgrid-universal/sql':
         specifier: workspace:*
-        version: link:../../packages/sql-backend
+        version: link:../../packages/sql
       '@slickgrid-universal/text-export':
         specifier: workspace:*
         version: link:../../packages/text-export
@@ -412,9 +412,9 @@ importers:
       '@slickgrid-universal/rxjs-observable':
         specifier: workspace:*
         version: link:../../packages/rxjs-observable
-      '@slickgrid-universal/sql-backend':
+      '@slickgrid-universal/sql':
         specifier: workspace:*
-        version: link:../../packages/sql-backend
+        version: link:../../packages/sql
       '@slickgrid-universal/text-export':
         specifier: workspace:*
         version: link:../../packages/text-export
@@ -639,9 +639,9 @@ importers:
       '@slickgrid-universal/rxjs-observable':
         specifier: workspace:*
         version: link:../../packages/rxjs-observable
-      '@slickgrid-universal/sql-backend':
+      '@slickgrid-universal/sql':
         specifier: workspace:*
-        version: link:../../packages/sql-backend
+        version: link:../../packages/sql
       '@slickgrid-universal/text-export':
         specifier: workspace:*
         version: link:../../packages/text-export
@@ -727,9 +727,9 @@ importers:
       '@slickgrid-universal/rxjs-observable':
         specifier: workspace:*
         version: link:../../packages/rxjs-observable
-      '@slickgrid-universal/sql-backend':
+      '@slickgrid-universal/sql':
         specifier: workspace:*
-        version: link:../../packages/sql-backend
+        version: link:../../packages/sql
       '@slickgrid-universal/text-export':
         specifier: workspace:*
         version: link:../../packages/text-export
@@ -1019,9 +1019,9 @@ importers:
       '@slickgrid-universal/pdf-export':
         specifier: workspace:*
         version: link:../../packages/pdf-export
-      '@slickgrid-universal/sql-backend':
+      '@slickgrid-universal/sql':
         specifier: workspace:*
-        version: link:../../packages/sql-backend
+        version: link:../../packages/sql
       '@slickgrid-universal/text-export':
         specifier: workspace:*
         version: link:../../packages/text-export
@@ -1524,7 +1524,7 @@ importers:
         specifier: 'catalog:'
         version: 7.8.2
 
-  packages/sql-backend:
+  packages/sql:
     dependencies:
       '@slickgrid-universal/common':
         specifier: workspace:*
