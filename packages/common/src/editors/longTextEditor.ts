@@ -1,6 +1,6 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, getOffset, setDeepValue, toSentenceCase, type HtmlElementPosition } from '@slickgrid-universal/utils';
-import { SlickEventData, type SlickGrid } from '../core/index.js';
+import { SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index.js';
 import { textValidator } from '../editorValidators/textValidator.js';
 import type {
   Column,
@@ -27,6 +27,7 @@ import { Constants } from './../constants.js';
  */
 export class LongTextEditor implements Editor {
   protected _bindEventService: BindingEventService;
+  protected _eventHandler: SlickEventHandler;
   protected _defaultTextValue: any;
   protected _isValueTouched = false;
   protected _locales: Locale;
@@ -59,6 +60,7 @@ export class LongTextEditor implements Editor {
     this._locales = this.gridOptions?.locales || Constants.locales;
 
     this._bindEventService = new BindingEventService();
+    this._eventHandler = new SlickEventHandler();
     this.init();
   }
 
@@ -126,6 +128,7 @@ export class LongTextEditor implements Editor {
     containerElm.appendChild(this._wrapperElm);
 
     // use textarea row if defined but don't go over 3 rows with composite editor modal
+    const useColWidth = !this.args.isCompositeEditor && (this.editorOptions?.useColumnWidth ?? false);
     this._textareaElm = createDomElement(
       'textarea',
       {
@@ -134,9 +137,14 @@ export class LongTextEditor implements Editor {
         rows: this.args.isCompositeEditor && textAreaRows > 3 ? 3 : textAreaRows,
         placeholder: this.columnEditor?.placeholder ?? '',
         title: this.columnEditor?.title ?? '',
+        style: useColWidth ? { width: `${this.args.container.offsetWidth}px` } : {},
       },
       this._wrapperElm
     );
+
+    if (useColWidth) {
+      this._eventHandler.subscribe(this.grid.onColumnsResized, this.handleColumnsResized.bind(this));
+    }
 
     const editorFooterElm = createDomElement('div', { className: 'editor-footer' });
     const countContainerElm = createDomElement('span', { className: 'counter' });
@@ -200,6 +208,7 @@ export class LongTextEditor implements Editor {
 
   destroy(): void {
     clearTimeout(this._timer);
+    this._eventHandler.unsubscribeAll();
     this._bindEventService.unbindAll();
     this._wrapperElm?.remove();
   }
@@ -421,6 +430,12 @@ export class LongTextEditor implements Editor {
     this.disable(isCellEditable === false);
   }
 
+  protected handleColumnsResized(): void {
+    if (this._textareaElm) {
+      this._textareaElm.style.width = `${this.args.container.offsetWidth}px`;
+    }
+  }
+
   protected handleKeyDown(e: KeyboardEvent): void {
     const key = e.key;
     this._isValueTouched = true;
@@ -440,7 +455,7 @@ export class LongTextEditor implements Editor {
   }
 
   /** On every input change event, we'll update the current text length counter */
-  protected handleOnInputChange(event: Event & { clipboardData: DataTransfer; target: HTMLTextAreaElement }): void {
+  protected handleOnInputChange(event: Event & { clipboardData: DataTransfer; target: HTMLTextAreaElement; }): void {
     const compositeEditorOptions = this.args.compositeEditorOptions;
     const maxLength = this.columnEditor?.maxLength;
 

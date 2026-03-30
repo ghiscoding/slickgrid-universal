@@ -6,6 +6,13 @@ export interface LongTextEditorOption {
   cols?: number;
 
   /**
+   * Defaults to false, when enabled the editor textarea will use the column width (in pixels) instead of the `cols` setting,
+   * and will also auto-resize the textarea width whenever the column itself gets resized.
+   * Note: this only applies to Inline Editing and will not have any effect when using the Composite Editor modal window.
+   */
+  useColumnWidth?: boolean;
+
+  /**
    * Defaults to 6, that is the number of visible text lines for the textarea control.
    * Note: this only applies to Inline Editing and will not have any effect when using the Composite Editor modal window which will be fixed to 3 rows.
    */
