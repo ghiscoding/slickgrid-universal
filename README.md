@@ -12,10 +12,10 @@
 [![codecov](https://codecov.io/gh/ghiscoding/slickgrid-universal/branch/master/graph/badge.svg)](https://codecov.io/gh/ghiscoding/slickgrid-universal)
 
 ### Documentation
-📘 [Documentation](https://ghiscoding.gitbook.io/slickgrid-universal/) website powered by GitBook for version 4.0+ (_or use the [Wikis](https://github.com/ghiscoding/slickgrid-universal/wiki) for older versions_)
+📘 [Documentation](https://ghiscoding.gitbook.io/slickgrid-universal/) website powered by GitBook for version 4.0+ (_or use the [Wikis](https://github.com/ghiscoding/slickgrid-universal/wiki) docs for older versions_)
 
 ### Live Demo
-[Live Demo](https://ghiscoding.github.io/slickgrid-universal/) website OR see [Available Framework Wrappers](#available-framework-wrappers) table below for more demos.
+[Live Demo](https://ghiscoding.github.io/slickgrid-universal/) website OR take a look at the [Available Framework Wrappers](#available-framework-wrappers) table below for more demos.
 
 Stackblitz links are also available for all supported frameworks (see [table](https://github.com/ghiscoding/slickgrid-universal?tab=readme-ov-file#available-framework-wrappers) below)
 
@@ -30,7 +30,7 @@ If you've used the original SlickGrid in the past, you might be wondering, shoul
 ### Why create this monorepo?
 Below is a list of reasons as to why this project was created and why it is built as a monorepo project:
 1. avoids duplicate code by creating common packages available in Slickgrid-Universal and used by all frameworks
-2. many of the Services are decoupled because most project will never require all of these services all at once
+2. many of the services are decoupled because no project will ever require all the available services all at once
    - OData, GraphQL, Export to (CSV, Excel or PDF), Composite Editor, RxJS, ...
 4. and finally it is framework agnostic
    - you can reuse the same grids and logic in many different frameworks, it's easily transportable
@@ -45,14 +45,14 @@ If you use and like the project, please give it a star ⭐ and/or support me wit
 <a href='https://ko-fi.com/ghiscoding' target='_blank'><img height='36' width='140' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi3.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
 ## Live Demos & Available Framework Wrappers
-The Slickgrid-Universal [live demo](https://ghiscoding.github.io/slickgrid-universal) shows 2 different UI themes (Material Design / Salesforce) and you can also see the Bootstrap theme demoed in all other frameworks with links available in the table shown below. Also please note that even if all the demos are built with [Bootstrap](https://getbootstrap.com/) or [Bulma](https://bulma.io/), you could use any other UI libraries (like Google Material or anything else). The project tries to be agnostic as much as possible and it does so by providing a large set of CSS/SASS variables which are available to customize the UI however you want.
+The Slickgrid-Universal [live demo](https://ghiscoding.github.io/slickgrid-universal) shows 2 different UI themes (Material Design / Salesforce) and you can also see the Bootstrap theme demoed in all other frameworks with links available in the table shown below. Also please note that even if all the demos are built with [Bootstrap](https://getbootstrap.com/) or [Bulma](https://bulma.io/), you could use any other UI libraries (like Google Material, Ms Fluent UI or anything else). The project tries to be agnostic as much as possible and it does so by providing a large set of CSS/SASS variables which are available to customize the UI however you want.
 
-Multiple Themes were created and are available:
-- default (`slickgrid-theme-default.scss`)
-- Bootstrap (`slickgrid-theme-bootstrap.scss`)
-- Material (`slickgrid-theme-material.scss`)
-- Salesforce (`slickgrid-theme-salesforce.scss`)
-- Fluent UI (`slickgrid-theme-fluent.scss`)
+Multiple Themes are available:
+- default (`slickgrid-theme-default.[s]css`)
+- Bootstrap (`slickgrid-theme-bootstrap.[s]css`)
+- Material (`slickgrid-theme-material.[s]css`)
+- Salesforce (`slickgrid-theme-salesforce.[s]css`)
+- Fluent UI (`slickgrid-theme-fluent.[s]css`)
 
 ### Available Framework Wrappers
 
@@ -67,7 +67,7 @@ Multiple Themes were created and are available:
 | <a href="https://webpack.js.org/"><img src="https://webpack.js.org/icon-square-small.9e8aff7a67a5dd20.svg" height="50" alt="WebPack"/></a> | [Slickgrid-Universal-WebPack-Demo](https://github.com/ghiscoding/slickgrid-universal-webpack-demo) | [demo](https://ghiscoding.github.io/slickgrid-universal-webpack-demo) | [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/slickgrid-universal-webpack-demo) | | [docs](https://ghiscoding.gitbook.io/slickgrid-universal/) |
 | <a href="https://vite.dev/" rel="nofollow"><img alt="ViteJS" src="https://ghiscoding.github.io/slickgrid-universal-vite-demo/assets/favicon-C49brna2.svg" width="45"></a> | [Slickgrid-Universal-Vite-Demo](https://github.com/ghiscoding/slickgrid-universal-vite-demo) | [demo](https://ghiscoding.github.io/slickgrid-universal-vite-demo) | [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/slickgrid-universal-vite-demo) | | [docs](https://ghiscoding.gitbook.io/slickgrid-universal/)
 | <a href="https://lwc.dev/" rel="nofollow"><img alt="Salesforce (LWC)" src="https://login.salesforce.com/img/logo214.svg" width="52"></a> | [Slickgrid-Universal/vanilla-force-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle) | n/a | | [zip](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle/dist-grid-bundle-zip) file | [docs](https://ghiscoding.gitbook.io/slickgrid-universal/getting-started/installation-salesforce) |
-| <a href="https://streamlit.io/" rel="nofollow"><img alt="Streamlit" src="https://docs.streamlit.io/logo.svg" width="45"></a> | [streamlit-slickgrid](https://github.com/streamlit/streamlit-slickgrid/) | [demo](https://slickgrid.streamlit.app/) | | | Python wrapper - community driven |
+| <a href="https://streamlit.io/" rel="nofollow"><img alt="Streamlit" src="https://docs.streamlit.io/logo.svg" width="45"></a> | [streamlit-slickgrid](https://github.com/streamlit/streamlit-slickgrid/) | [demo](https://slickgrid.streamlit.app/) | | | Community Python wrapper |
 
 The Slickgrid-Universal [live demo](https://ghiscoding.github.io/slickgrid-universal) is a Vanilla Implementation (which is not associated to any framework) built with [ViteJS](https://vitejs.dev/) and is also being used to run all E2E tests with [Cypress](https://www.cypress.io/) for testing every UI functionalities. The [Vanilla-force-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle), which extends the [vanilla-bundle](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-bundle) package, is what we use in our SalesForce LWC (Lightning Web Component) implementation and this Zip file can also be used as a Standalone script (see [zip](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/vanilla-force-bundle/dist-grid-bundle-zip) file). These were all the original reasons to create the library under a monorepo structure, but above all, it was mainly to avoid code duplication.
 
