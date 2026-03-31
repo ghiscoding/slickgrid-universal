@@ -347,11 +347,11 @@ const Example06: React.FC = () => {
         75k rows
       </Button>
       <Button size="small" onClick={() => dynamicallyChangeFilter()} className="btn-icon" data-test="change-filter-dynamically">
-        <span className="fic fic-filter me-1"></span>
+        <span className="fi fi-filter me-1"></span>
         <span>Dynamically Change Filter (% complete &lt; 40)</span>
       </Button>
       <Button size="small" onClick={() => collapseAllWithoutEvent()} className="btn-icon mx-1" data-test="collapse-all-noevent-btn">
-        <span className="fic fic-arrow-minimize me-1"></span>
+        <span className="fi fi-arrow-minimize me-1"></span>
         <span>Collapse All (without triggering event)</span>
       </Button>
       <Button
@@ -373,19 +373,19 @@ const Example06: React.FC = () => {
       </Button>
 
       <Button size="small" onClick={() => addNewRow()} data-test="add-item-btn" className="btn btn-primary btn-icon mx-1">
-        <span className="fic fic-add text-white me-1"></span>
+        <span className="fi fi-add text-white me-1"></span>
         <span className="text-white">Add New Item to "Task 1" group</span>
       </Button>
       <Button size="small" onClick={() => updateFirstRow()} data-test="update-item-btn" className="btn-icon mx-1">
-        <span className="fic fic-edit me-1"></span>
+        <span className="fi fi-edit me-1"></span>
         <span>Update 1st Row Item</span>
       </Button>
       <Button size="small" onClick={() => collapseAll()} data-test="collapse-all-btn" className="btn-icon">
-        <span className="fic fic-arrow-minimize me-1"></span>
+        <span className="fi fi-arrow-minimize me-1"></span>
         <span>Collapse All</span>
       </Button>
       <Button size="small" onClick={() => expandAll()} data-test="expand-all-btn" className="btn-icon mx-1">
-        <span className="fic fic-arrow-maximize me-1"></span>
+        <span className="fi fi-arrow-maximize me-1"></span>
         <span>Expand All</span>
       </Button>
       <Button size="small" onClick={() => logFlatStructure()} className="btn-icon">

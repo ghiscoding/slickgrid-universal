@@ -244,7 +244,7 @@ const Example02: React.FC = () => {
           excludeFromGridMenu: true,
           excludeFromHeaderMenu: true,
           formatter: Formatters.icon,
-          params: { iconCssClass: 'fic fic-edit' },
+          params: { iconCssClass: 'fi fi-edit' },
           minWidth: 30,
           maxWidth: 30,
           onCellClick: (clickEvent: Event, args: OnEventArgs) => {
@@ -258,7 +258,7 @@ const Example02: React.FC = () => {
           excludeFromGridMenu: true,
           excludeFromHeaderMenu: true,
           formatter: Formatters.icon,
-          params: { iconCssClass: 'fic fic-delete pointer' },
+          params: { iconCssClass: 'fi fi-delete pointer' },
           minWidth: 30,
           maxWidth: 30,
           onCellClick: (e: Event, args: OnEventArgs) => {

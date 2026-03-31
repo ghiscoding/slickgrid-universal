@@ -29,7 +29,7 @@ const priceFormatter: Formatter = (_cell, _row, value, _col, dataContext) => {
   const divElm = document.createElement('div');
   divElm.className = `d-inline-flex align-items-center text-${direction === 'up' ? 'success' : 'danger'}`;
   const spanElm = document.createElement('span');
-  spanElm.className = `fic fic-arrow-${direction}`;
+  spanElm.className = `fi fi-arrow-${direction}`;
   divElm.appendChild(spanElm);
   fragment.appendChild(divElm);
   if (value instanceof HTMLElement) {
@@ -273,9 +273,9 @@ const Example07: React.FC = () => {
       },
       draggableGrouping: {
         dropPlaceHolderText: 'Drop a column header here to group by any of these available columns: Currency, Market or Type',
-        deleteIconCssClass: 'fic fic-dismiss color-danger',
-        sortAscIconCssClass: 'fic fic-arrow-up',
-        sortDescIconCssClass: 'fic fic-arrow-down',
+        deleteIconCssClass: 'fi fi-dismiss color-danger',
+        sortAscIconCssClass: 'fi fi-arrow-up',
+        sortDescIconCssClass: 'fi fi-arrow-down',
       },
       enableDraggableGrouping: true,
       createPreHeaderPanel: true,
@@ -466,7 +466,7 @@ const Example07: React.FC = () => {
       <h2>
         Example 7: Real-Time Trading Platform
         <Button className="btn-sm btn-icon ms-2" onClick={() => toggleDarkMode()} data-test="toggle-dark-mode">
-          <i className="fic fic-dark-theme"></i>
+          <i className="fi fi-dark-theme"></i>
           <span>Toggle Dark Mode</span>
         </Button>
       </h2>
@@ -538,7 +538,7 @@ const Example07: React.FC = () => {
               />
             </span>
             <Button className="btn-sm btn-icon ms-1" onClick={() => toggleFullScreen()}>
-              <li className={isFullScreen ? 'fic fic-arrow-minimize' : 'fic fic-arrow-maximize'}></li> Toggle Full-Screen
+              <li className={isFullScreen ? 'fi fi-arrow-minimize' : 'fi fi-arrow-maximize'}></li> Toggle Full-Screen
             </Button>
           </div>
         </div>
