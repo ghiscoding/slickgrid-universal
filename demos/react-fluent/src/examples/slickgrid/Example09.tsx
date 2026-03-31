@@ -320,15 +320,15 @@ const Example09: React.FC = () => {
       <div className="row">
         <div className="col-md-7">
           <Button className="btn-icon" data-test="clear-filters-btn" onClick={() => reactGridRef.current?.filterService.clearFilters()}>
-            <span className="fic fic-dismiss me-1"></span>
+            <span className="fi fi-dismiss me-1"></span>
             <span>Clear Filters</span>
           </Button>
           <Button onClick={() => collapseAll()} data-test="collapse-all-btn" className="btn-icon mx-1">
-            <span className="fic fic-arrow-minimize me-1"></span>
+            <span className="fi fi-arrow-minimize me-1"></span>
             <span>Collapse All</span>
           </Button>
           <Button onClick={() => expandAll()} data-test="expand-all-btn" className="btn-icon">
-            <span className="fic fic-arrow-maximize me-1"></span>
+            <span className="fi fi-arrow-maximize me-1"></span>
             <span>Expand All</span>
           </Button>
           <span className="ms-1">
