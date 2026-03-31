@@ -44,6 +44,16 @@ const gridOptions = {
 | `totalCountField`         | string   | (Optional) Custom field name for total count column (default: 'totalCount').|
 | `identifierEscapeStyle`   | string   | (Optional) How to escape SQL identifiers: `'doubleQuote'` (default, PostgreSQL/ANSI), `'backtick'` (MySQL), `'bracket'` (MSSQL). |
 
+### Lifecycle Phases
+
+All Backend Services use the 3 following lifecycle phases, see below for the typical usage
+
+| Lifecycle | Usage |
+| --------- | ----- |
+| 1. `preProcess` | typically used to start a loading spinner |
+| 2. `process` | the service produces the SQL query string which you then provide to your backend server |
+| 3. `postProcess` | stop the spinner & update the grid dataset |
+
 ## Escaping SQL Identifiers
 
 The SQL backend automatically escapes table, column, and schema identifiers to prevent SQL injection and ensure compatibility with different SQL dialects. You can control the escaping style using the `identifierEscapeStyle` option:
