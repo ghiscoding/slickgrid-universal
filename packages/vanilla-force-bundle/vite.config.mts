@@ -7,7 +7,7 @@ export default defineConfig({
     minify: true,
     sourcemap: false,
     lib: {
-      entry: path.resolve(__dirname, 'src/index.ts'),
+      entry: path.resolve(import.meta.dirname, 'src/index.ts'),
       name: 'Slicker',
       formats: ['umd'],
       fileName: () => 'bundle/slickgrid-vanilla-bundle.js',

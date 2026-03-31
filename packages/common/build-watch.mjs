@@ -44,6 +44,7 @@ async function compileAllSassThemes() {
   await Promise.all([
     exec('npm run sass-build-task:scss-compile:default'),
     exec('npm run sass-build-task:scss-compile:bootstrap'),
+    exec('npm run sass-build-task:scss-compile:fluent'),
     exec('npm run sass-build-task:scss-compile:material'),
     exec('npm run sass-build-task:scss-compile:salesforce'),
   ]);
