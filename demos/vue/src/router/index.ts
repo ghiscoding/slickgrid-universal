@@ -59,6 +59,7 @@ export const routes: RouteRecordRaw[] = [
   { path: '/example49', name: '49- Spreadsheet Drag-Fill', component: () => import('../components/Example49.vue') },
   { path: '/example50', name: '50- Master/Detail Grids', component: () => import('../components/Example50.vue') },
   { path: '/example51', name: '51- Menus with Slots', component: () => import('../components/Example51.vue') },
+  { path: '/example52', name: '52- SQL Backend Service', component: () => import('../components/Example52.vue') },
 ];
 
 export const router = createRouter({

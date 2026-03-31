@@ -1,7 +1,7 @@
 import { addDay, format } from '@formkit/tempo';
 
-function removeSpaces(textS) {
-  return `${textS}`.replace(/\s+/g, '');
+function removeSpaces(text: string): string {
+  return `${text}`.replace(/\s+/g, '');
 }
 
 const currentYear = new Date().getFullYear();
@@ -311,7 +311,7 @@ describe('Example 10 - GraphQL Grid', () => {
     cy.get('.search-filter.filter-name select')
       .find('option')
       .last()
-      .then((element) => {
+      .then((element: any) => {
         cy.get('.search-filter.filter-name select').select(element.val());
       });
 
