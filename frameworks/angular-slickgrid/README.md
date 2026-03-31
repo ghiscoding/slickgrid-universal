@@ -122,8 +122,6 @@ Make sure to check out the [Releases](https://github.com/ghiscoding/slickgrid-un
 | 6.x               | >=16.0 | [Migration 6.x](https://ghiscoding.gitbook.io/angular-slickgrid/migrations/Migration-to-6.x) | removal of jQuery (now uses browser native code),<br> requires Slickgrid-Universal [3.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v3.0.0) | 2023-07-01 |
 | 5.x               | >=14.0 | [Migration 5.x](https://ghiscoding.gitbook.io/angular-slickgrid/migrations/Migration-to-5.x) | removal of jQueryUI, requires Slickgrid-Universal [2.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v2.0.0) | 2022-10-17 |
 
-**Note** For a full compatibility table of every Angular-Slickgrid versions with Slickgrid-Universal, please take a look at the [Versions Compatibility Table - Wiki](https://github.com/ghiscoding/Angular-Slickgrid/wiki/Versions-Compatibility-Table).
-
 ### ngx-translate Compatibility
 
 Angular-Slickgrid uses [`ngx-translate`](https://github.com/ngx-translate/core) library to support Locales, it is also required that is even when using a single Locale. The reason is because, we use `@Optional() TranslateService` in the lib and for that to work, it requires `ngx-translate` to be installed. Once you run the build and if you are using a single Locale then the tree shaking process should remove these optional dependencies. See their version compatibility table below for more info
@@ -133,7 +131,6 @@ Angular-Slickgrid uses [`ngx-translate`](https://github.com/ngx-translate/core) 
 |  21+            |        17.x         |
 |  19+            |        16.x         |
 |  16+            |        15.x         |
-|  13+ (Ivy only) |        14.x         |
 
 ### Tested with [Vitest](https://vitest.dev/) (Unit Tests) - [Cypress](https://www.cypress.io/) (E2E Tests)
 Slickgrid-Universal & Angular-Slickgrid both have **100%** Unit Test Coverage and also every Angular-Slickgrid Examples are fully tested with [Cypress](https://www.cypress.io/) as E2E tests.
