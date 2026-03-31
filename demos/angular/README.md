@@ -21,6 +21,7 @@ Again the following dependencies are totally **optional**
 | [@slickgrid-universal/odata](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/odata) | [![npm](https://img.shields.io/npm/v/@slickgrid-universal/odata.svg?color=forest)](https://www.npmjs.com/package/@slickgrid-universal/odata) | OData Query Service (support Filter/Sort/Pagination) |
 | [@slickgrid-universal/sql](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/sql) | [![npm](https://img.shields.io/npm/v/@slickgrid-universal/sql.svg?color=forest)](https://www.npmjs.com/package/@slickgrid-universal/sql) | SQL Query Service (support Filter/Sort/Pagination) |
 | [@slickgrid-universal/rxjs-observable](https://github.com/ghiscoding/slickgrid-universal/tree/master/packages/rxjs-observable) | [![npm](https://img.shields.io/npm/v/@slickgrid-universal/rxjs-observable.svg?color=forest)](https://www.npmjs.com/package/@slickgrid-universal/rxjs-observable) | RxJS Observable Service Wrapper |
+
 ---
 
 ### Install and Start Demo
