@@ -43,6 +43,7 @@ const gridStub = {
   navigatePrev: vi.fn(),
   render: vi.fn(),
   onBeforeEditCell: new SlickEvent(),
+  onColumnsResized: new SlickEvent(),
   onCompositeEditorChange: new SlickEvent(),
 } as unknown as SlickGrid;
 
@@ -172,6 +173,27 @@ describe('LongTextEditor', () => {
 
       expect(editor.editorDomElement.cols).toBe(7);
       expect(editor.editorDomElement.rows).toBe(6);
+    });
+
+    it('should initialize the editor using the container (column) width when useColumnWidth is enabled', () => {
+      Object.defineProperty(editorArguments.container, 'clientWidth', { configurable: true, value: 180 });
+      mockColumn.editor!.options = { useColumnWidth: true } as LongTextEditorOption;
+      editor = new LongTextEditor(editorArguments);
+
+      expect(editor.editorDomElement.style.width).toBe('180px');
+    });
+
+    it('should update the textarea width when a column is resized and useColumnWidth is enabled', () => {
+      Object.defineProperty(editorArguments.container, 'clientWidth', { configurable: true, value: 180 });
+      mockColumn.editor!.options = { useColumnWidth: true } as LongTextEditorOption;
+      editor = new LongTextEditor(editorArguments);
+
+      expect(editor.editorDomElement.style.width).toBe('180px');
+
+      Object.defineProperty(editorArguments.container, 'clientWidth', { configurable: true, value: 240 });
+      gridStub.onColumnsResized.notify({ triggeredByColumn: 'title', grid: gridStub });
+
+      expect(editor.editorDomElement.style.width).toBe('240px');
     });
 
     it('should have a placeholder when defined in its column definition', () => {
