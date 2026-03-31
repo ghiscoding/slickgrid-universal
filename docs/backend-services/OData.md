@@ -1,5 +1,6 @@
 ##### index
 - [TypeScript signature](#typescript-signature)
+- [Lifecycle Phases](#lifecycle-phases)
 - [Usage](#grid-definition--call-of-backendserviceapi)
 - [Passing Extra Arguments](#passing-extra-arguments-to-the-query)
 - [OData options](#odata-options)
@@ -25,6 +26,18 @@ All the code below assumes that your Backend Server (probably in C#) will return
   items: [ /* your data */ ]
 }
 ```
+
+### Lifecycle Phases
+
+All backend services follow these three lifecycle phases:
+
+| Phase         | Description                                              |
+|---------------|---------------------------------------------------------|
+| `preProcess`  | Invoked before the query is processed (e.g., show a loading spinner). |
+| `process`     | Generates the OData query string, which is then sent to your backend server. |
+| `postProcess` | Handles the response, updates the grid dataset, and typically stops the loading spinner. |
+
+This structure ensures a consistent flow for data operations: start loading, process the query, and update the grid when data is received.
 
 ### TypeScript Signature
 ```typescript

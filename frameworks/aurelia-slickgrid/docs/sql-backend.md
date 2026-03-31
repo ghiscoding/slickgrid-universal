@@ -4,6 +4,7 @@
 - [Introduction](#introduction)
 - [Usage](#usage)
 - [Options](#options)
+- [Lifecycle Phases](#lifecycle-phases)
 - [Result Shape](#result-shape)
 - [Pagination & Total Count](#pagination--total-count)
 - [Customizing Total Count Field](#customizing-total-count-field)
@@ -43,15 +44,27 @@ const gridOptions = {
 | `datasetName`             | string   | (Optional) Schema/database prefix, or legacy dataset name.                  |
 | `totalCountField`         | string   | (Optional) Custom field name for total count column (default: 'totalCount').|
 | `identifierEscapeStyle`   | string   | (Optional) How to escape SQL identifiers: `'doubleQuote'` (default, PostgreSQL/ANSI), `'backtick'` (MySQL), `'bracket'` (MSSQL). |
+
+### Lifecycle Phases
+
+All backend services follow these three lifecycle phases:
+
+| Phase         | Description      |
+|---------------|----------------- |
+| `preProcess`  | Invoked before the query is processed (e.g., show a loading spinner). |
+| `process`     | Generates the SQL query string, which is then sent to your backend server. |
+| `postProcess` | Handles the response, updates the grid dataset, and typically stops the loading spinner. |
+
+This structure ensures a consistent flow for data operations: start loading, process the query, and update the grid when data is received.
 ## Escaping SQL Identifiers
 
 The SQL backend automatically escapes table, column, and schema identifiers to prevent SQL injection and ensure compatibility with different SQL dialects. You can control the escaping style using the `identifierEscapeStyle` option:
 
-| Style         | Value         | Example Output         | Target Database(s)      |
+| Style         | Value         | Example Output        | Target Database(s)      |
 |-------------- |-------------- |-----------------------|------------------------ |
-| Double Quote  | `doubleQuote` | "myTable"             | PostgreSQL, ANSI SQL    |
-| Backtick      | `backtick`    | `myTable`              | MySQL                  |
-| Bracket       | `bracket`     | [myTable]              | MSSQL                  |
+| Double Quote  | `doubleQuote` | `"myTable"`           | PostgreSQL, ANSI SQL    |
+| Backtick      | `backtick`    | `` `myTable` ``       | MySQL                   |
+| Bracket       | `bracket`     | `[myTable]`           | MSSQL                   |
 
 **Usage Example:**
 
