@@ -329,11 +329,10 @@ export class LongTextEditor implements Editor {
     const calculatedBodyWidth = document.body.offsetWidth || window.innerWidth;
 
     // first defined position will be bottom/right (which will position the editor completely over the cell)
-    const containerStyle = getComputedStyle(this.args.container);
+    // offset left by the container's padding-left so the wrapper aligns with the cell's text content
+    const containerPaddingLeft = parseFloat(getComputedStyle(this.args.container).paddingLeft) || 0;
     let newPositionTop = this.args.container ? containerOffset.top : (parentPosition.top ?? 0);
-    let newPositionLeft = this.args.container
-      ? containerOffset.left + parseFloat(containerStyle.paddingLeft) - 1
-      : (parentPosition.left ?? 0);
+    let newPositionLeft = this.args.container ? containerOffset.left + containerPaddingLeft : (parentPosition.left ?? 0);
 
     // user could explicitely use a "left" position (when user knows his column is completely on the right)
     // or when using "auto" and we detect not enough available space then we'll position to the "left" of the cell
@@ -445,10 +444,10 @@ export class LongTextEditor implements Editor {
     const wrapperStyle = getComputedStyle(this._wrapperElm);
     return (
       container.clientWidth -
-      parseFloat(containerStyle.paddingLeft) -
-      parseFloat(containerStyle.paddingRight) -
-      parseFloat(wrapperStyle.paddingLeft) -
-      parseFloat(wrapperStyle.paddingRight)
+      (parseFloat(containerStyle.paddingLeft) || 0) -
+      (parseFloat(containerStyle.paddingRight) || 0) -
+      (parseFloat(wrapperStyle.paddingLeft) || 0) -
+      (parseFloat(wrapperStyle.paddingRight) || 0)
     );
   }
 
@@ -471,7 +470,7 @@ export class LongTextEditor implements Editor {
   }
 
   /** On every input change event, we'll update the current text length counter */
-  protected handleOnInputChange(event: Event & { clipboardData: DataTransfer; target: HTMLTextAreaElement; }): void {
+  protected handleOnInputChange(event: Event & { clipboardData: DataTransfer; target: HTMLTextAreaElement }): void {
     const compositeEditorOptions = this.args.compositeEditorOptions;
     const maxLength = this.columnEditor?.maxLength;
 

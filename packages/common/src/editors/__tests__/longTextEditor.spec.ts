@@ -176,7 +176,7 @@ describe('LongTextEditor', () => {
     });
 
     it('should initialize the editor using the container (column) width when useColumnWidth is enabled', () => {
-      Object.defineProperty(editorArguments.container, 'offsetWidth', { configurable: true, value: 180 });
+      Object.defineProperty(editorArguments.container, 'clientWidth', { configurable: true, value: 180 });
       mockColumn.editor!.options = { useColumnWidth: true } as LongTextEditorOption;
       editor = new LongTextEditor(editorArguments);
 
@@ -184,13 +184,13 @@ describe('LongTextEditor', () => {
     });
 
     it('should update the textarea width when a column is resized and useColumnWidth is enabled', () => {
-      Object.defineProperty(editorArguments.container, 'offsetWidth', { configurable: true, value: 180 });
+      Object.defineProperty(editorArguments.container, 'clientWidth', { configurable: true, value: 180 });
       mockColumn.editor!.options = { useColumnWidth: true } as LongTextEditorOption;
       editor = new LongTextEditor(editorArguments);
 
       expect(editor.editorDomElement.style.width).toBe('180px');
 
-      Object.defineProperty(editorArguments.container, 'offsetWidth', { configurable: true, value: 240 });
+      Object.defineProperty(editorArguments.container, 'clientWidth', { configurable: true, value: 240 });
       gridStub.onColumnsResized.notify({ triggeredByColumn: 'title', grid: gridStub });
 
       expect(editor.editorDomElement.style.width).toBe('240px');

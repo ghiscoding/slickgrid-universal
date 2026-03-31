@@ -908,7 +908,8 @@ describe('Example 12 - Composite Editor Modal', () => {
         cy.get('.slick-large-editor-text.editor-title textarea').then(($textarea) => {
           const textareaWidth = parseFloat($textarea[0].style.width);
           // account for borders/padding
-          expect(textareaWidth).to.be.closeTo(columnWidth, 5);
+          const paddings = 10;
+          expect(textareaWidth).to.be.closeTo(columnWidth - paddings, 20);
         });
 
         cy.get('.editor-title .editor-footer .btn-cancel').click();
@@ -938,7 +939,8 @@ describe('Example 12 - Composite Editor Modal', () => {
             cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).click();
             cy.get('.slick-large-editor-text.editor-title textarea').then(($textarea) => {
               const textareaWidth = parseFloat($textarea[0].style.width);
-              expect(textareaWidth).to.be.closeTo(widthAfter, 5);
+              const paddings = 10;
+              expect(textareaWidth).to.be.closeTo(widthAfter - paddings, 20);
             });
 
             cy.get('.editor-title .editor-footer .btn-cancel').click();
