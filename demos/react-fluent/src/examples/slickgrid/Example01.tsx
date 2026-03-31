@@ -108,7 +108,7 @@ const Example1: React.FC = () => {
         <div className="column">
           <h3 className="mr-3">Grid 1</h3>
           <Button className="mx-1" onClick={() => toggleDarkModeGrid1()} data-test="toggle-dark-mode">
-            <i className="fic fic-dark-theme"></i>
+            <i className="fi fi-dark-theme"></i>
             <span className="ms-1">Toggle Dark Mode</span>
           </Button>
           <Button onClick={() => resetGrid1()} data-test="reset-grid1">

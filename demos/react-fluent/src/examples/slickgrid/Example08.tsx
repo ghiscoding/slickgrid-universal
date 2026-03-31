@@ -523,7 +523,7 @@ const Example08: React.FC = () => {
       <section className="row mb-2">
         <div className="mb-1">
           <Button className="btn-sm btn-icon me-1" onClick={() => exportToExcel()} data-test="export-excel-btn">
-            <span className="fic fic-arrow-download"></span>
+            <span className="fi fi-arrow-download"></span>
             <span>Export to Excel</span>
           </Button>
           <span>

@@ -519,7 +519,7 @@ export class GraphqlService implements BackendService {
 
           // if we didn't find an Operator but we have a Column Operator inside the Filter (DOM Element), we should use its default Operator
           // multipleSelect is "IN", while singleSelect is "EQ", else don't map any operator
-          if (!operator && columnDef.filter && columnDef.filter.operator) {
+          if (!operator && columnDef.filter?.operator) {
             operator = columnDef.filter.operator;
           }
 

@@ -1,0 +1,103 @@
+<div class="container-fluid">
+  <h2>
+    Example 52: Grid with SQL Backend Service
+    <span class="float-end">
+      <a
+        style="font-size: 18px"
+        target="_blank"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/frameworks/angular-slickgrid/src/demos/examples/example52.component.ts"
+      >
+        <span class="mdi mdi-link-variant"></span> code
+      </a>
+    </span>
+    <button class="ms-2 btn btn-outline-secondary btn-sm btn-icon" type="button" data-test="toggle-subtitle" (click)="toggleSubTitle()">
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+  </h2>
+
+  <div class="subtitle">
+    <ul class="small">
+      <li><span class="red">(*) NO DATA SHOWN</span> - just change Filters/Sorting/Pages and look at the "SQL Query" changing.</li>
+      <li>This example uses the SQL Backend Service.</li>
+      <li>You can also preload a grid with certain "presets" like Filters / Sorters / Pagination.</li>
+    </ul>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-2">
+      <div [class]="status().class" role="alert" data-test="status">
+        <strong>Status: </strong> {{ status().text }}
+        <span [hidden]="!processing()">
+          <i class="mdi mdi-sync mdi-spin-1s"></i>
+        </span>
+      </div>
+    </div>
+    <div class="col-sm-10">
+      <div class="alert alert-info" data-test="alert-sql-query">
+        <strong>SQL Query:</strong> <span data-test="sql-query-result">{{ sqlQuery }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <button
+        class="btn btn-outline-secondary btn-sm btn-icon"
+        data-test="clear-filters-sorting"
+        title="Clear all Filters & Sorts"
+        (click)="clearAllFiltersAndSorts()"
+      >
+        <i class="mdi mdi-filter-remove-outline"></i>
+        Clear all Filter & Sorts
+      </button>
+      <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="set-dynamic-filter" (click)="setFiltersDynamically()">
+        Set Filters Dynamically
+      </button>
+      <button class="btn btn-outline-secondary btn-sm btn-icon" data-test="set-dynamic-sorting" (click)="setSortingDynamically()">
+        Set Sorting Dynamically
+      </button>
+      <button class="btn btn-outline-secondary btn-sm btn-icon mx-1" data-test="reset-presets" (click)="resetToOriginalPresets()">
+        Reset Original Presets
+      </button>
+      <label for="serverdelay" class="ml-4">Server Delay: </label>
+      <input
+        id="serverdelay"
+        type="number"
+        data-test="server-delay"
+        style="width: 55px"
+        [(ngModel)]="serverWaitDelay"
+        title="input a fake timer delay to simulate slow server response"
+      />
+    </div>
+  </div>
+
+  <div class="row my-2">
+    <div class="col-12">
+      @if (metrics()) {
+        <span style="margin: 10px 0px">
+          <b>Metrics:</b> {{ metrics()?.endTime | date: "yyyy-MM-dd hh:mm aaaaa'm'" }} | {{ metrics()?.executionTime }}ms |
+          {{ metrics()?.totalItemCount }} items
+        </span>
+      }
+      <span class="mx-1"> — </span>
+      <label>Programmatically go to first/last page:</label>
+      <div class="btn-group ms-1" role="group">
+        <button class="btn btn-outline-secondary btn-xs btn-icon px-2" data-test="goto-first-page" (click)="goToFirstPage()">
+          <i class="mdi mdi-page-first"></i>
+        </button>
+        <button class="btn btn-outline-secondary btn-xs btn-icon px-2" data-test="goto-last-page" (click)="goToLastPage()">
+          <i class="mdi mdi-page-last icon"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <angular-slickgrid
+    gridId="grid52"
+    [columns]="columns"
+    [options]="gridOptions"
+    [dataset]="dataset"
+    (onAngularGridCreated)="angularGridReady($event.detail)"
+  >
+  </angular-slickgrid>
+</div>

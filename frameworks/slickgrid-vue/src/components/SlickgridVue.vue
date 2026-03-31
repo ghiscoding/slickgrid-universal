@@ -709,7 +709,7 @@ function createBackendApiInternalPostProcessCallback(gridOptions: GridOption) {
           backendApi && backendApiService && typeof backendApiService.getDatasetName === 'function'
             ? backendApiService.getDatasetName()
             : '';
-        if (processResult?.data[datasetName]) {
+        if (!Array.isArray(processResult) && processResult?.data[datasetName]) {
           const data =
             'nodes' in processResult.data[datasetName]
               ? (processResult as any).data[datasetName].nodes

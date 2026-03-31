@@ -1,0 +1,74 @@
+<h3 class="title is-3">
+  Example 41 - Grid with SQL Backend Service
+  <span class="d-inline-flex">
+    <button class="button is-small" onclick.trigger="toggleDarkMode()" data-test="toggle-dark-mode">
+      <span class="mdi mdi-theme-light-dark"></span>
+      <span> Toggle Light/Dark</span>
+    </button>
+  </span>
+  <div class="subtitle code-link">
+    <span class="is-size-6">see</span>
+    <a
+      class="is-size-5"
+      target="_blank"
+      href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/vanilla/src/examples/example41.ts"
+    >
+      <span class="mdi mdi-link-variant"></span> code
+    </a>
+  </div>
+</h3>
+<h6 class="italic content example-details">
+  <span class="text-red">(*) NO DATA SHOWN</span>
+  - just change any of Filters/Sorting/Pages and look at the "SQL Query" changing. This example uses the SQL Backend Service.
+</h6>
+
+<div class="row">
+  <button
+    class="button is-small"
+    data-test="clear-filters-sorting"
+    onclick.trigger="clearAllFiltersAndSorts()"
+    title="Clear all Filters & Sorts"
+  >
+    <span class="mdi mdi-close"></span>
+    <span>Clear all Filter &amp; Sorts</span>
+  </button>
+  <button class="button is-small" data-test="set-dynamic-filter" onclick.trigger="setFiltersDynamically()">Set Filters Dynamically</button>
+  <button class="button is-small" data-test="set-dynamic-sorting" onclick.trigger="setSortingDynamically()">Set Sorting Dynamically</button>
+  <button class="button is-small" data-test="reset-presets" onclick.trigger="resetToOriginalPresets()">Reset Original Presets</button>
+
+  <label for="serverdelay" class="ml-4">Server Delay: </label>
+  <input
+    id="serverdelay"
+    type="number"
+    data-test="server-delay"
+    class="is-narrow input is-small"
+    value.bind="serverWaitDelay"
+    title="input a fake timer delay to simulate slow server response"
+  />
+
+  <div class="row col-md-12 mt-2">
+    <span>
+      <label>Programmatically go to first/last page:</label>
+      <button class="button is-small" data-test="goto-first-page" onclick.trigger="goToFirstPage()">
+        <i class="mdi mdi-page-first"></i>
+      </button>
+      <button class="button is-small" data-test="goto-last-page" onclick.trigger="goToLastPage()">
+        <i class="mdi mdi-page-last"></i>
+      </button>
+    </span>
+  </div>
+</div>
+
+<div class="columns mt-2">
+  <div class="column">
+    <div class="notification is-info is-light" data-test="alert-sql-query">
+      <strong>SQL Query:</strong>
+      <span data-test="sql-query-result" textcontent.bind="sqlQuery"></span>
+    </div>
+  </div>
+  <div class="column is-narrow">
+    <div class.bind="statusClass" data-test="status"><strong>Status:</strong> <span textcontent.bind="status"></span></div>
+  </div>
+</div>
+
+<div class="grid41"></div>

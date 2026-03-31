@@ -55,6 +55,7 @@
     "test": "vitest --config ./test/vitest.config.mts",
     "test:coverage": "vitest --no-watch --coverage --config ./test/vitest.config.mts",
     "test:ui": "vitest --ui --config ./test/vitest.config.mts",
+    "test:watch": "vitest --config ./test/vitest.config.mts --watch",
     "vanilla:build:demo": "pnpm -r --stream --filter=vanilla-demo build:demo",
     "vanilla:serve:demo": "pnpm -r --stream --filter=vanilla-demo preview",
     "angular:install": "pnpm install --filter=angular-slickgrid --filter=./packages",
