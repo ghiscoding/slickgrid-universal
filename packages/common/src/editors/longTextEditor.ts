@@ -137,7 +137,7 @@ export class LongTextEditor implements Editor {
         rows: this.args.isCompositeEditor && textAreaRows > 3 ? 3 : textAreaRows,
         placeholder: this.columnEditor?.placeholder ?? '',
         title: this.columnEditor?.title ?? '',
-        style: useColWidth ? { width: `${this.args.container.offsetWidth}px` } : {},
+        style: useColWidth ? { width: `${this._getContainerInnerWidth()}px` } : {},
       },
       this._wrapperElm
     );
@@ -329,8 +329,11 @@ export class LongTextEditor implements Editor {
     const calculatedBodyWidth = document.body.offsetWidth || window.innerWidth;
 
     // first defined position will be bottom/right (which will position the editor completely over the cell)
+    const containerStyle = getComputedStyle(this.args.container);
     let newPositionTop = this.args.container ? containerOffset.top : (parentPosition.top ?? 0);
-    let newPositionLeft = this.args.container ? containerOffset.left : (parentPosition.left ?? 0);
+    let newPositionLeft = this.args.container
+      ? containerOffset.left + parseFloat(containerStyle.paddingLeft) - 1
+      : (parentPosition.left ?? 0);
 
     // user could explicitely use a "left" position (when user knows his column is completely on the right)
     // or when using "auto" and we detect not enough available space then we'll position to the "left" of the cell
@@ -432,8 +435,21 @@ export class LongTextEditor implements Editor {
 
   protected handleColumnsResized(): void {
     if (this._textareaElm) {
-      this._textareaElm.style.width = `${this.args.container.offsetWidth}px`;
+      this._textareaElm.style.width = `${this._getContainerInnerWidth()}px`;
     }
+  }
+
+  protected _getContainerInnerWidth(): number {
+    const container = this.args.container;
+    const containerStyle = getComputedStyle(container);
+    const wrapperStyle = getComputedStyle(this._wrapperElm);
+    return (
+      container.clientWidth -
+      parseFloat(containerStyle.paddingLeft) -
+      parseFloat(containerStyle.paddingRight) -
+      parseFloat(wrapperStyle.paddingLeft) -
+      parseFloat(wrapperStyle.paddingRight)
+    );
   }
 
   protected handleKeyDown(e: KeyboardEvent): void {
@@ -455,7 +471,7 @@ export class LongTextEditor implements Editor {
   }
 
   /** On every input change event, we'll update the current text length counter */
-  protected handleOnInputChange(event: Event & { clipboardData: DataTransfer; target: HTMLTextAreaElement }): void {
+  protected handleOnInputChange(event: Event & { clipboardData: DataTransfer; target: HTMLTextAreaElement; }): void {
     const compositeEditorOptions = this.args.compositeEditorOptions;
     const maxLength = this.columnEditor?.maxLength;
 
