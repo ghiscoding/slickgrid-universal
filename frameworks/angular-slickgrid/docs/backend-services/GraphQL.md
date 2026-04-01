@@ -1,4 +1,5 @@
 ##### index
+- [Lifecycle Phases](#lifecycle-phases)
 - [Extra Query Arguments](#extra-query-arguments)
 - [Changing/Updating Options Dynamically](#changingupdating-options-dynamically)
 - [GraphQL without Pagination](#graphql-without-pagination)
@@ -19,6 +20,18 @@ You can use it when you need to support **Pagination** (though you could disable
 
 ## Implementation
 To connect a backend service into `Slickgrid-Universal`, you simply need to modify your `gridOptions` and add a declaration of `backendServiceApi`. See below for the signature and an example further down below.
+
+### Lifecycle Phases
+
+All backend services follow these three lifecycle phases:
+
+| Phase         | Description                                              |
+|---------------|---------------------------------------------------------|
+| `preProcess`  | Invoked before the query is processed (e.g., show a loading spinner). |
+| `process`     | Generates the GraphQL query string, which is then sent to your backend server. |
+| `postProcess` | Handles the response, updates the grid dataset, and typically stops the loading spinner. |
+
+This structure ensures a consistent flow for data operations: start loading, process the query, and update the grid when data is received.
 
 ### TypeScript Signature
 ```ts

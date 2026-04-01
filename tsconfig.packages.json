@@ -15,6 +15,7 @@
     { "path": "./packages/pdf-export" },
     { "path": "./packages/row-detail-view-plugin" },
     { "path": "./packages/rxjs-observable" },
+    { "path": "./packages/sql" },
     { "path": "./packages/text-export" },
     { "path": "./packages/utils" },
     { "path": "./packages/vanilla-bundle" },

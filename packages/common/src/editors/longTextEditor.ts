@@ -1,6 +1,6 @@
 import { BindingEventService } from '@slickgrid-universal/binding';
 import { createDomElement, getOffset, setDeepValue, toSentenceCase, type HtmlElementPosition } from '@slickgrid-universal/utils';
-import { SlickEventData, type SlickGrid } from '../core/index.js';
+import { SlickEventData, SlickEventHandler, type SlickGrid } from '../core/index.js';
 import { textValidator } from '../editorValidators/textValidator.js';
 import type {
   Column,
@@ -27,6 +27,7 @@ import { Constants } from './../constants.js';
  */
 export class LongTextEditor implements Editor {
   protected _bindEventService: BindingEventService;
+  protected _eventHandler: SlickEventHandler;
   protected _defaultTextValue: any;
   protected _isValueTouched = false;
   protected _locales: Locale;
@@ -59,6 +60,7 @@ export class LongTextEditor implements Editor {
     this._locales = this.gridOptions?.locales || Constants.locales;
 
     this._bindEventService = new BindingEventService();
+    this._eventHandler = new SlickEventHandler();
     this.init();
   }
 
@@ -126,6 +128,7 @@ export class LongTextEditor implements Editor {
     containerElm.appendChild(this._wrapperElm);
 
     // use textarea row if defined but don't go over 3 rows with composite editor modal
+    const useColWidth = !this.args.isCompositeEditor && (this.editorOptions?.useColumnWidth ?? false);
     this._textareaElm = createDomElement(
       'textarea',
       {
@@ -134,9 +137,14 @@ export class LongTextEditor implements Editor {
         rows: this.args.isCompositeEditor && textAreaRows > 3 ? 3 : textAreaRows,
         placeholder: this.columnEditor?.placeholder ?? '',
         title: this.columnEditor?.title ?? '',
+        style: useColWidth ? { width: `${this._getContainerInnerWidth()}px` } : {},
       },
       this._wrapperElm
     );
+
+    if (useColWidth) {
+      this._eventHandler.subscribe(this.grid.onColumnsResized, this.handleColumnsResized.bind(this));
+    }
 
     const editorFooterElm = createDomElement('div', { className: 'editor-footer' });
     const countContainerElm = createDomElement('span', { className: 'counter' });
@@ -200,6 +208,7 @@ export class LongTextEditor implements Editor {
 
   destroy(): void {
     clearTimeout(this._timer);
+    this._eventHandler.unsubscribeAll();
     this._bindEventService.unbindAll();
     this._wrapperElm?.remove();
   }
@@ -320,8 +329,10 @@ export class LongTextEditor implements Editor {
     const calculatedBodyWidth = document.body.offsetWidth || window.innerWidth;
 
     // first defined position will be bottom/right (which will position the editor completely over the cell)
+    // offset left by the container's padding-left so the wrapper aligns with the cell's text content
+    const containerPaddingLeft = parseFloat(getComputedStyle(this.args.container).paddingLeft) || 0;
     let newPositionTop = this.args.container ? containerOffset.top : (parentPosition.top ?? 0);
-    let newPositionLeft = this.args.container ? containerOffset.left : (parentPosition.left ?? 0);
+    let newPositionLeft = this.args.container ? containerOffset.left + containerPaddingLeft : (parentPosition.left ?? 0);
 
     // user could explicitely use a "left" position (when user knows his column is completely on the right)
     // or when using "auto" and we detect not enough available space then we'll position to the "left" of the cell
@@ -419,6 +430,25 @@ export class LongTextEditor implements Editor {
       })
       .getReturnValue();
     this.disable(isCellEditable === false);
+  }
+
+  protected handleColumnsResized(): void {
+    if (this._textareaElm) {
+      this._textareaElm.style.width = `${this._getContainerInnerWidth()}px`;
+    }
+  }
+
+  protected _getContainerInnerWidth(): number {
+    const container = this.args.container;
+    const containerStyle = getComputedStyle(container);
+    const wrapperStyle = getComputedStyle(this._wrapperElm);
+    return (
+      container.clientWidth -
+      (parseFloat(containerStyle.paddingLeft) || 0) -
+      (parseFloat(containerStyle.paddingRight) || 0) -
+      (parseFloat(wrapperStyle.paddingLeft) || 0) -
+      (parseFloat(wrapperStyle.paddingRight) || 0)
+    );
   }
 
   protected handleKeyDown(e: KeyboardEvent): void {

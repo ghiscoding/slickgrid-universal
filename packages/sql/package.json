@@ -1,0 +1,31 @@
+{
+  "name": "@slickgrid-universal/sql",
+  "version": "0.0.1",
+  "description": "SlickGrid Universal SQL Backend Service (implements BackendService for SQL)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "pnpm run clean && tsc",
+    "build:incremental": "tsc --incremental --declaration",
+    "clean": "remove dist tsconfig.tsbuildinfo",
+    "dev": "pnpm build:incremental"
+  },
+  "keywords": [
+    "slickgrid",
+    "sql",
+    "backend",
+    "service"
+  ],
+  "author": "SlickGrid Universal Team",
+  "license": "MIT",
+  "dependencies": {
+    "@slickgrid-universal/common": "workspace:*",
+    "@slickgrid-universal/utils": "workspace:*"
+  }
+}

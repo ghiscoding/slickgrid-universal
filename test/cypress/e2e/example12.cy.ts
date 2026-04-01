@@ -894,4 +894,57 @@ describe('Example 12 - Composite Editor Modal', () => {
     cy.get('.vc:visible .vc-year').should('have.attr', 'data-vc-year').should('contain', today.getFullYear());
     cy.get('.slick-editor-modal-footer .btn-cancel').click();
   });
+
+  it('should open the "Title" LongText editor and expect its textarea width to match the column width', () => {
+    cy.get('.grid12')
+      .find('.slick-header-columns:nth(1)')
+      .children('.slick-header-column:nth(1)')
+      .should('contain', 'Title')
+      .then(($col) => {
+        const columnWidth = $col[0].getBoundingClientRect().width;
+
+        cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).click();
+
+        cy.get('.slick-large-editor-text.editor-title textarea').then(($textarea) => {
+          const textareaWidth = parseFloat($textarea[0].style.width);
+          // account for borders/padding
+          const paddings = 10;
+          expect(textareaWidth).to.be.closeTo(columnWidth - paddings, 20);
+        });
+
+        cy.get('.editor-title .editor-footer .btn-cancel').click();
+      });
+  });
+
+  it('should resize the "Title" column and expect the textarea width to update accordingly when the editor is reopened', () => {
+    cy.get('.grid12')
+      .find('.slick-header-columns:nth(1)')
+      .children('.slick-header-column:nth(1)')
+      .should('contain', 'Title')
+      .then(($col) => {
+        const widthBefore = $col[0].getBoundingClientRect().width;
+
+        cy.get('.grid12 .slick-resizable-handle:nth(0)')
+          .trigger('mousedown', { which: 1, force: true })
+          .trigger('mousemove', { clientX: $col[0].getBoundingClientRect().right + 80, force: true });
+        cy.get('.grid12 .slick-header-column:nth(2)').trigger('mousemove', 'right').trigger('mouseup', { which: 1, force: true });
+
+        cy.get('.grid12')
+          .find('.slick-header-columns:nth(1)')
+          .children('.slick-header-column:nth(1)')
+          .then(($colAfter) => {
+            const widthAfter = $colAfter[0].getBoundingClientRect().width;
+            expect(widthAfter).to.be.greaterThan(widthBefore);
+
+            cy.get(`[style="transform: translateY(${GRID_ROW_HEIGHT * 0}px);"] > .slick-cell:nth(1)`).click();
+            cy.get('.slick-large-editor-text.editor-title textarea').then(($textarea) => {
+              const textareaWidth = parseFloat($textarea[0].style.width);
+              const paddings = 10;
+              expect(textareaWidth).to.be.closeTo(widthAfter - paddings, 20);
+            });
+
+            cy.get('.editor-title .editor-footer .btn-cancel').click();
+          });
+      });
+  });
 });

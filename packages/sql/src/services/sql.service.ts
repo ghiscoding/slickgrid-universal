@@ -1,0 +1,691 @@
+import type {
+  BackendService,
+  Column,
+  ColumnFilters,
+  CurrentFilter,
+  CurrentPagination,
+  CurrentSorter,
+  FilterChangedArgs,
+  GridOption,
+  MultiColumnSort,
+  OperatorType,
+  Pagination,
+  PaginationChangedArgs,
+  PaginationCursorChangedArgs,
+  SingleColumnSort,
+  SlickGrid,
+  SortDirection,
+} from '@slickgrid-universal/common';
+import { getHtmlStringOutput, stripTags } from '@slickgrid-universal/utils';
+import type { SqlResult } from '../interfaces/sqlResult.interface.js';
+import type { SqlFilteringOption, SqlServiceOption, SqlSortingOption } from '../interfaces/sqlServiceOption.interface.js';
+
+const DEFAULT_TOTAL_COUNT_FIELD = 'totalCount';
+const DEFAULT_ITEMS_PER_PAGE = 25;
+const DEFAULT_PAGE_SIZE = 20;
+
+/**
+ * SqlService implements BackendService for SQL query generation.
+ * This is a basic implementation; extend as needed for your SQL dialect.
+ */
+export class SqlService implements BackendService {
+  protected _currentFilters: ColumnFilters | CurrentFilter[] = [];
+  protected _currentPagination: CurrentPagination | null = null;
+  protected _currentSorters: CurrentSorter[] = [];
+  protected _columns?: any[];
+  protected _grid: SlickGrid | undefined;
+  options?: SqlServiceOption;
+  pagination?: Pagination;
+
+  /** Getter for the Grid Options pulled through the Grid Object */
+  protected get _gridOptions(): GridOption {
+    return this._grid?.getOptions() ?? ({} as GridOption);
+  }
+
+  init(serviceOptions?: SqlServiceOption, pagination?: Pagination, grid?: SlickGrid): void {
+    this.options = serviceOptions || { tableName: '' };
+    this._grid = grid;
+    if (typeof grid?.getColumns === 'function') {
+      this._columns = grid.getColumns() ?? [];
+    }
+    if (pagination) {
+      this._currentPagination = {
+        pageNumber: pagination.pageNumber ?? 1,
+        pageSize: pagination.pageSize ?? DEFAULT_PAGE_SIZE,
+      };
+      // Save the full pagination object for totalItems
+      this.pagination = pagination;
+    } else {
+      this._currentPagination = {
+        pageNumber: 1,
+        pageSize: DEFAULT_PAGE_SIZE,
+      };
+      this.pagination = undefined;
+    }
+  }
+
+  buildQuery(): string {
+    if (!this.options || !this.options.tableName || !Array.isArray(this._columns)) {
+      throw new Error('SQL Service requires the "tableName" property and columns to properly build the SQL query');
+    }
+    // Use datasetName as schema/database prefix if provided, and escape identifiers per DB style
+    const table = this.options.datasetName
+      ? `${this.escapeIdentifier(this.options.datasetName)}.${this.escapeIdentifier(this.options.tableName)}`
+      : this.escapeIdentifier(this.options.tableName);
+
+    // Build the list of fields for SELECT, escaping identifiers
+    let selectFields: string[] = [];
+    for (const col of this._columns) {
+      // Only flat fields (no dot notation)
+      if (typeof col.field === 'string' && !col.field.includes('.')) {
+        if (!col.excludeFromQuery && !col.excludeFieldFromQuery) {
+          selectFields.push(this.escapeIdentifier(col.field));
+        }
+      }
+      // Add extra fields from the 'fields' property if present (and flat)
+      if (Array.isArray(col.fields)) {
+        for (const extraField of col.fields) {
+          if (typeof extraField === 'string' && !extraField.includes('.')) {
+            selectFields.push(this.escapeIdentifier(extraField));
+          }
+        }
+      }
+    }
+
+    // Remove duplicates
+    selectFields = Array.from(new Set(selectFields));
+
+    // If all flat fields are included and no extra fields, use SELECT *
+    const allFlatCols = this._columns.filter((col) => typeof col.field === 'string' && !col.field.includes('.'));
+    const allIncluded =
+      selectFields.length === allFlatCols.length && allFlatCols.every((col) => selectFields.includes(this.escapeIdentifier(col.field)));
+    let selectCols = allIncluded && selectFields.length > 0 ? '*' : selectFields.join(', ');
+    if (!selectCols || selectCols.trim() === '') {
+      selectCols = '*';
+    }
+
+    // Pagination logic
+    let pageSize = this._currentPagination?.pageSize || DEFAULT_PAGE_SIZE;
+    let pageNumber = this._currentPagination?.pageNumber;
+    if (!pageNumber && pageNumber !== 0) {
+      pageNumber = 1;
+    }
+
+    // Infinite scroll: use fetchSize if provided, else pageSize
+    const infiniteScroll = this.options?.infiniteScroll;
+    let effectivePageSize = pageSize;
+    if (infiniteScroll && typeof infiniteScroll === 'object' && typeof infiniteScroll.fetchSize === 'number') {
+      effectivePageSize = infiniteScroll.fetchSize;
+    }
+
+    let limit = '';
+    let offset = '';
+    if (this._gridOptions.enablePagination) {
+      limit = effectivePageSize ? `LIMIT ${effectivePageSize}` : '';
+      // Offset should never be below zero
+      const calcOffset = Math.max(0, ((pageNumber ?? 1) - 1) * (effectivePageSize ?? DEFAULT_ITEMS_PER_PAGE));
+      offset = effectivePageSize ? `OFFSET ${calcOffset}` : '';
+    }
+
+    // Allow user to customize the total count field name
+    const totalCountField = this.options.totalCountField || DEFAULT_TOTAL_COUNT_FIELD;
+    // Add the total count window function (escape count field)
+    const selectWithCount = `${selectCols === '*' ? '*' : selectCols}, COUNT(*) OVER() AS ${this.escapeIdentifier(totalCountField)}`;
+
+    const where = this.buildWhereClause();
+    const order = this.buildOrderByClause();
+    return `SELECT ${selectWithCount} FROM ${table}${where}${order} ${limit} ${offset}`.trim();
+  }
+
+  /**
+   * Post-process the SQL result to extract total count for pagination.
+   * Uses the configured totalCountField option (default: 'totalCount').
+   */
+  postProcess<T = any>(processResult: SqlResult<T> | T[] | { data?: T[]; [key: string]: any }): void {
+    if (this.pagination) {
+      const totalCountField = this.options?.totalCountField || DEFAULT_TOTAL_COUNT_FIELD;
+      // SQL: result is SqlResult<T>
+      if (processResult && Array.isArray((processResult as SqlResult<T>).data) && (processResult as SqlResult<T>).data.length > 0) {
+        const firstRow = (processResult as SqlResult<T>).data[0];
+        if (firstRow && typeof (firstRow as any)[totalCountField] === 'number') {
+          this.pagination.totalItems = (firstRow as any)[totalCountField];
+          return;
+        }
+      }
+      // SQL: result is an array of rows
+      if (Array.isArray(processResult) && processResult.length > 0 && typeof (processResult[0] as any)[totalCountField] === 'number') {
+        this.pagination.totalItems = (processResult[0] as any)[totalCountField];
+        return;
+      }
+      // Fallback: flat totalCount
+      if (typeof (processResult as any)[totalCountField] === 'number') {
+        this.pagination.totalItems = (processResult as any)[totalCountField];
+      }
+    }
+  }
+
+  clearFilters(): void {
+    this._currentFilters = [];
+    this.updateOptions({ filteringOptions: [] });
+  }
+
+  clearSorters(): void {
+    this._currentSorters = [];
+    this.updateOptions({ sortingOptions: [] });
+  }
+
+  /** Get the dataset name */
+  getDatasetName(): string {
+    return this.options?.datasetName || '';
+  }
+
+  /** Get the table name */
+  getTableName(): string {
+    return this.options?.tableName || '';
+  }
+
+  /** Get the Filters that are currently used by the grid */
+  getCurrentFilters(): ColumnFilters | CurrentFilter[] {
+    return this._currentFilters;
+  }
+
+  /** Get the Pagination that is currently used by the grid */
+  getCurrentPagination(): CurrentPagination | null {
+    return this._currentPagination;
+  }
+
+  /** Get the Sorters that are currently used by the grid */
+  getCurrentSorters(): CurrentSorter[] {
+    return this._currentSorters;
+  }
+
+  /**
+   * Returns the initial pagination options for SQL queries.
+   * Returns { pageSize, offset } based on current or default pagination.
+   */
+  getInitPaginationOptions(): { pageSize: number; offset: number } {
+    let pageSize = this._currentPagination?.pageSize ?? DEFAULT_PAGE_SIZE;
+    let pageNumber = this._currentPagination?.pageNumber ?? 1;
+    const offset = Math.max(0, (pageNumber - 1) * pageSize);
+    return { pageSize, offset };
+  }
+
+  /* Reset the pagination options */
+  resetPaginationOptions(): void {
+    if (this._currentPagination) {
+      this._currentPagination.pageNumber = 1;
+    }
+  }
+
+  /**
+   * Update column filters by looping through all columns to inspect filters & update backend service filteringOptions
+   * @param columnFilters
+   */
+  updateFilters(columnFilters: ColumnFilters | CurrentFilter[], isUpdatedByPresetOrDynamically: boolean): void {
+    const filteringOptions: SqlFilteringOption[] = [];
+    if (isUpdatedByPresetOrDynamically) {
+      this._currentFilters = this.castFilterToColumnFilters(columnFilters);
+    }
+
+    for (const columnId in columnFilters) {
+      if (columnId in columnFilters) {
+        const columnFilter = (columnFilters as any)[columnId];
+
+        let columnDef: Column | undefined;
+        if (isUpdatedByPresetOrDynamically && Array.isArray(this._columns)) {
+          columnDef = this._columns.find((col: Column) => col.id === columnFilter.columnId);
+        } else {
+          columnDef = columnFilter.columnDef;
+        }
+        if (!columnDef) {
+          throw new Error('[SQL Service]: Something went wrong in trying to get the column definition');
+        }
+
+        let fieldName =
+          columnDef.filter?.queryField || columnDef.queryFieldFilter || columnDef.queryField || columnDef.field || columnDef.name || '';
+        if (fieldName instanceof HTMLElement) {
+          fieldName = stripTags(fieldName.innerHTML);
+        }
+        const fieldType = columnDef.type || 'string';
+        let searchTerms = (columnFilter?.searchTerms ? [...columnFilter.searchTerms] : null) || [];
+        let fieldSearchValue = Array.isArray(searchTerms) && searchTerms.length === 1 ? searchTerms[0] : '';
+        if (typeof fieldSearchValue === 'undefined') {
+          fieldSearchValue = '';
+        }
+
+        if (!fieldName) {
+          throw new Error(
+            'SQL filter could not find the field name to query the search, your column definition must include a valid "field" or "name" (optionally you can also use the "queryfield").'
+          );
+        }
+
+        if (this.options?.useVerbatimSearchTerms || columnFilter.verbatimSearchTerms) {
+          let vbOperator = columnFilter.operator || '';
+          let vbValue = columnFilter.searchTerms;
+
+          if (Array.isArray(columnFilter.searchTerms)) {
+            if (columnFilter.searchTerms.length === 1) {
+              vbOperator = '=';
+              vbValue = columnFilter.searchTerms[0];
+            } else {
+              vbOperator = 'IN';
+              vbValue = columnFilter.searchTerms;
+            }
+          }
+
+          filteringOptions.push({
+            field: getHtmlStringOutput(fieldName),
+            operator: vbOperator,
+            value: vbValue,
+            type: fieldType,
+          });
+          continue;
+        }
+
+        fieldSearchValue = fieldSearchValue === undefined || fieldSearchValue === null ? '' : `${fieldSearchValue}`;
+
+        // run regex to find possible filter operators unless the user disabled the feature
+        const autoParseInputFilterOperator = columnDef.autoParseInputFilterOperator ?? this._gridOptions.autoParseInputFilterOperator;
+
+        // group (2): comboStartsWith, (3): comboEndsWith, (4): Operator, (1 or 5): searchValue, (6): last char is '*' (meaning starts with, ex.: abc*)
+        const matches =
+          autoParseInputFilterOperator !== false
+            ? fieldSearchValue.match(/^((.*[^\\*\r\n])[*]{1}(.*[^*\r\n]))|^([<>!=*]{0,2})(.*[^<>!=*])([*]?)$/) || []
+            : [fieldSearchValue, '', '', '', '', fieldSearchValue, ''];
+
+        const comboStartsWith = matches?.[2] || '';
+        const comboEndsWith = matches?.[3] || '';
+        let operator = columnFilter.operator || matches?.[4];
+        let searchVal = matches?.[1] || matches?.[5] || '';
+        const lastValueChar = matches?.[6] || operator === '*z' || operator === 'EndsWith' ? '*' : '';
+
+        // no need to query if search value is empty
+        if (fieldName && searchVal === '' && searchTerms.length === 0) {
+          continue;
+        }
+
+        // StartsWith + EndsWith combo
+        if (comboStartsWith && comboEndsWith) {
+          searchTerms = [comboStartsWith, comboEndsWith];
+          operator = 'StartsWithEndsWith';
+        } else if (
+          Array.isArray(searchTerms) &&
+          searchTerms.length === 1 &&
+          typeof searchTerms[0] === 'string' &&
+          searchTerms[0].indexOf('..') >= 0
+        ) {
+          if (operator !== 'RangeInclusive' && operator !== 'RangeExclusive') {
+            operator = this._gridOptions.defaultFilterRangeOperator ?? 'RangeInclusive';
+          }
+          searchTerms = searchTerms[0].split('..', 2);
+          if (searchTerms[0] === '') {
+            operator = operator === 'RangeInclusive' ? '<=' : operator === 'RangeExclusive' ? '<' : operator;
+            searchTerms = searchTerms.slice(1);
+            searchVal = searchTerms[0];
+          } else if (searchTerms[1] === '') {
+            operator = operator === 'RangeInclusive' ? '>=' : operator === 'RangeExclusive' ? '>' : operator;
+            searchTerms = searchTerms.slice(0, 1);
+            searchVal = searchTerms[0];
+          }
+        }
+
+        if (typeof searchVal === 'string') {
+          if (operator === '*' || operator === 'a*' || operator === '*z' || lastValueChar === '*') {
+            operator = (operator === '*' || operator === '*z' ? 'EndsWith' : 'StartsWith') as OperatorType;
+          }
+        }
+
+        // if we didn't find an Operator but we have a Column Operator inside the Filter (DOM Element), we should use its default Operator
+        if (!operator && columnDef.filter?.operator) {
+          operator = columnDef.filter.operator;
+        }
+
+        // No operator and 2 search terms should lead to default range operator.
+        if (!operator && Array.isArray(searchTerms) && searchTerms.length === 2 && searchTerms[0] && searchTerms[1]) {
+          operator = this._gridOptions.defaultFilterRangeOperator as OperatorType;
+        }
+
+        // Range with 1 searchterm should lead to equals for a date field.
+        if (
+          (operator === 'RangeInclusive' || operator === 'RangeExclusive') &&
+          Array.isArray(searchTerms) &&
+          searchTerms.length === 1 &&
+          fieldType === 'date'
+        ) {
+          operator = 'EQ';
+        }
+
+        // if we still don't have an operator find the proper Operator to use according to field type
+        if (!operator) {
+          operator = fieldType === 'number' || fieldType === 'integer' || fieldType === 'float' ? '=' : 'LIKE';
+        }
+
+        // Normalize all search values
+        searchVal = this.normalizeSearchValue(fieldType, searchVal);
+        if (Array.isArray(searchTerms)) {
+          searchTerms.forEach((_part, index) => {
+            searchTerms[index] = this.normalizeSearchValue(fieldType, searchTerms[index]);
+          });
+        }
+
+        // StartsWith + EndsWith combo
+        if (operator === 'StartsWithEndsWith' && Array.isArray(searchTerms) && searchTerms.length === 2) {
+          filteringOptions.push({ field: getHtmlStringOutput(fieldName), operator: 'LIKE', value: `${searchTerms[0]}%`, type: fieldType });
+          filteringOptions.push({ field: getHtmlStringOutput(fieldName), operator: 'LIKE', value: `%${searchTerms[1]}`, type: fieldType });
+          continue;
+        }
+        // IN/NOT IN
+        if (searchTerms?.length > 1 && (operator === 'IN' || operator === 'NIN' || operator === 'NOT_IN')) {
+          filteringOptions.push({
+            field: getHtmlStringOutput(fieldName),
+            operator: operator === 'IN' ? 'IN' : 'NOT IN',
+            value: searchTerms,
+            type: fieldType,
+          });
+          continue;
+        } else if (searchTerms?.length === 2 && (operator === 'RangeExclusive' || operator === 'RangeInclusive')) {
+          filteringOptions.push({
+            field: getHtmlStringOutput(fieldName),
+            operator: operator === 'RangeInclusive' ? '>=' : '>',
+            value: searchTerms[0],
+            type: fieldType,
+          });
+          filteringOptions.push({
+            field: getHtmlStringOutput(fieldName),
+            operator: operator === 'RangeInclusive' ? '<=' : '<',
+            value: searchTerms[1],
+            type: fieldType,
+          });
+          continue;
+        }
+
+        // Always map these string operators
+        if (fieldType === 'string' || fieldType === 'text' || fieldType === 'readonly') {
+          if (operator === '<>' || operator === 'Not_Contains' || operator === 'NOT_CONTAINS') {
+            // prettier-ignore
+            filteringOptions.push({ field: getHtmlStringOutput(fieldName), operator: 'NOT LIKE', value: `%${searchVal}%`, type: fieldType });
+            continue;
+          }
+          if (operator === 'Contains' || operator === 'CONTAINS') {
+            filteringOptions.push({ field: getHtmlStringOutput(fieldName), operator: 'LIKE', value: `%${searchVal}%`, type: fieldType });
+            continue;
+          }
+          if (operator === '*' || operator === '*z' || operator === 'EndsWith') {
+            filteringOptions.push({ field: getHtmlStringOutput(fieldName), operator: 'LIKE', value: `%${searchVal}`, type: fieldType });
+            continue;
+          }
+          if (operator === 'StartsWith' || operator === 'a*' || lastValueChar === '*') {
+            filteringOptions.push({ field: getHtmlStringOutput(fieldName), operator: 'LIKE', value: `${searchVal}%`, type: fieldType });
+            continue;
+          }
+        }
+
+        // Fallback: use field/operator/value
+        filteringOptions.push({ field: getHtmlStringOutput(fieldName), operator: operator ?? '=', value: searchVal, type: fieldType });
+      }
+    }
+
+    this.updateOptions({ filteringOptions });
+  }
+
+  updatePagination(newPage: number, pageSize: number, _cursorArgs?: PaginationCursorChangedArgs): void {
+    const finalPageSize = pageSize || DEFAULT_PAGE_SIZE;
+    this._currentPagination = { pageNumber: newPage, pageSize: finalPageSize };
+    this.updateOptions({ paginationOptions: { pageNumber: newPage, pageSize: finalPageSize } });
+  }
+
+  updateSorters(sortColumns?: Array<SingleColumnSort>, presetSorters?: CurrentSorter[]): void {
+    let currentSorters: CurrentSorter[] = [];
+    const sqlSorters: SqlSortingOption[] = [];
+
+    if (!sortColumns && presetSorters) {
+      // make the presets the current sorters, also make sure that all direction are in uppercase
+      currentSorters = presetSorters.map((sorter) => ({
+        columnId: sorter.columnId,
+        direction: sorter.direction.toUpperCase() as SortDirection,
+      }));
+
+      // display the correct sorting icons on the UI, for that it requires (columnId, sortAsc) properties
+      const tmpSorterArray = currentSorters.map((sorter) => {
+        const columnDef = this._columns?.find((column: Column) => column.id === sorter.columnId);
+        sqlSorters.push({
+          field: columnDef ? (columnDef.queryFieldSorter || columnDef.queryField || columnDef.field) + '' : sorter.columnId + '',
+          direction: sorter.direction,
+        });
+
+        // return only the column(s) found in the Column Definitions ELSE null
+        if (columnDef) {
+          return {
+            columnId: sorter.columnId,
+            sortAsc: sorter.direction.toUpperCase() === 'ASC',
+          };
+        }
+        return null;
+      }) as { columnId: string | number; sortAsc: boolean }[] | null;
+
+      // set the sort icons, but also make sure to filter out null values (that happens when columnDef is not found)
+      if (Array.isArray(tmpSorterArray) && this._grid) {
+        this._grid.setSortColumns(tmpSorterArray.filter((sorter) => sorter) || []);
+      }
+    } else if (sortColumns && !presetSorters) {
+      // build the orderBy array, it could be multisort, example
+      // orderBy:[{field: lastName, direction: ASC}, {field: firstName, direction: DESC}]
+      if (Array.isArray(sortColumns) && sortColumns.length > 0) {
+        for (const sortColumn of sortColumns) {
+          if (sortColumn && sortColumn.sortCol) {
+            currentSorters.push({
+              columnId: String(sortColumn.sortCol.id),
+              direction: sortColumn.sortAsc ? 'ASC' : 'DESC',
+            });
+
+            const fieldName = (sortColumn.sortCol.queryFieldSorter || sortColumn.sortCol.queryField || sortColumn.sortCol.field || '') + '';
+            if (fieldName) {
+              sqlSorters.push({
+                field: fieldName,
+                direction: sortColumn.sortAsc ? 'ASC' : 'DESC',
+              });
+            }
+          }
+        }
+      }
+    }
+
+    // keep current Sorters and update the service options with the new sorting
+    this._currentSorters = currentSorters;
+    this.updateOptions({ sortingOptions: sqlSorters });
+  }
+
+  updateOptions(serviceOptions?: Partial<SqlServiceOption>): void {
+    this.options = {
+      ...this.options,
+      ...serviceOptions,
+      datasetName: this.options?.datasetName || '',
+      tableName: this.options?.tableName || '',
+    };
+  }
+
+  processOnFilterChanged(_event: Event | KeyboardEvent | undefined, args: FilterChangedArgs): string {
+    if (!args || !args.grid) {
+      throw new Error('SQLService: "args" is not populated correctly');
+    }
+    // keep current filters & always save it as an array (columnFilters can be an object when it is dealt by SlickGrid Filter)
+    this._currentFilters = this.castFilterToColumnFilters(args.columnFilters);
+
+    // loop through all columns to inspect filters & set the query
+    this.updateFilters(args.columnFilters, false);
+    this.resetPaginationOptions();
+    return this.buildQuery();
+  }
+
+  processOnPaginationChanged(
+    _event: Event | undefined,
+    args: PaginationChangedArgs | (PaginationCursorChangedArgs & PaginationChangedArgs)
+  ): string {
+    // Use current pageSize if not provided in args
+    const pageSize = args.pageSize ?? this._currentPagination?.pageSize ?? DEFAULT_PAGE_SIZE;
+    this.updatePagination(args.newPage, pageSize);
+    return this.buildQuery();
+  }
+
+  processOnSortChanged(_event: Event | undefined, args: SingleColumnSort | MultiColumnSort): string {
+    if ('sortCols' in args) {
+      // MultiColumnSort: pass the array of SingleColumnSort
+      this.updateSorters(args.sortCols as SingleColumnSort[]);
+    } else {
+      // SingleColumnSort: wrap in array
+      this.updateSorters([args as SingleColumnSort]);
+    }
+    return this.buildQuery();
+  }
+
+  // --
+  // PROTECTED METHODS
+  // --
+
+  protected buildWhereClause(): string {
+    // Build WHERE clause from filteringOptions
+    const filteringOptions = this.options?.filteringOptions || [];
+    if (!Array.isArray(filteringOptions) || filteringOptions.length === 0) {
+      return '';
+    }
+
+    const clauses: string[] = [];
+    for (const filter of filteringOptions) {
+      const { field, operator, value, type } = filter;
+      if (field && operator) {
+        let sqlOperator = operator === 'EQ' ? '=' : operator;
+        if (sqlOperator === 'NOT_CONTAINS') {
+          sqlOperator = 'NOT LIKE';
+        } else if (sqlOperator === 'Contains') {
+          sqlOperator = 'LIKE';
+        }
+        const fieldExpr = this.escapeIdentifier(field);
+        if (sqlOperator === '=' && value === null) {
+          clauses.push(`${fieldExpr} IS NULL`);
+        } else if (sqlOperator === 'IN' || sqlOperator === 'NOT IN') {
+          if (Array.isArray(value)) {
+            if (value.length === 0) {
+              continue;
+            }
+            const inList = value.map((v) => this._escapeSql(v, type)).join(',');
+            clauses.push(`${fieldExpr} ${sqlOperator} (${inList})`);
+          } else {
+            clauses.push(`${fieldExpr} ${sqlOperator} (${this._escapeSql(value, type)})`);
+          }
+        } else if (sqlOperator === 'LIKE' || sqlOperator === 'NOT LIKE') {
+          let likeValue = value;
+          if (typeof likeValue === 'string' && !likeValue.includes('%')) {
+            likeValue = `%${likeValue}%`;
+          }
+          clauses.push(`${fieldExpr} ${sqlOperator} ${this._escapeSql(likeValue, type)}`);
+        } else {
+          clauses.push(`${fieldExpr} ${sqlOperator} ${this._escapeSql(value, type)}`);
+        }
+      }
+    }
+    return clauses.length ? ` WHERE ${clauses.join(' AND ')}` : '';
+  }
+
+  protected buildOrderByClause(): string {
+    if (!this.options || !this.options.tableName || !Array.isArray(this._columns)) {
+      throw new Error('SQL Service requires the "tableName" property to properly build the SQL query');
+    }
+
+    const order = this.options.sortingOptions
+      ?.map((s) => {
+        // Find the column definition by id
+        const colDef = this._columns?.find((col) => col.id === s.field);
+        let sortField = colDef
+          ? String(colDef.queryFieldSorter || colDef.queryField || colDef.field || colDef.id || s.field)
+          : String(s.field);
+
+        // Only include flat fields (no dot notation)
+        if (!sortField.includes('.')) {
+          return `${this.escapeIdentifier(sortField)} ${s.direction}`;
+        }
+        return '';
+      })
+      .join(', ');
+    return order ? ` ORDER BY ${order}` : '';
+  }
+
+  protected castFilterToColumnFilters(columnFilters: ColumnFilters | CurrentFilter[]): CurrentFilter[] {
+    if (Array.isArray(columnFilters)) {
+      // Ensure all columnId are strings for CurrentFilter
+      return columnFilters.map((f) => ({
+        ...f,
+        columnId: String(f.columnId),
+      }));
+    }
+
+    // For object form, ensure columnId is string
+    return Object.keys(columnFilters).map((key) => {
+      const filter = columnFilters[key];
+      return {
+        ...filter,
+        columnId: String(filter.columnId),
+      };
+    });
+  }
+
+  protected _escapeSql(val: any, type?: string): string {
+    if (type === 'number' || type === 'integer' || type === 'float' || typeof val === 'number') {
+      return val.toString();
+    }
+    if (val === null || val === undefined) {
+      return 'NULL';
+    }
+    if (val === '') {
+      return "''";
+    }
+
+    // Escape single quotes for SQL
+    return `'${String(val).replace(/'/g, "''")}'`;
+  }
+
+  /** Escapes SQL identifiers (table, column, etc.) based on the configured escape style. */
+  protected escapeIdentifier(identifier?: string): string {
+    const escapeStyle = this.options?.identifierEscapeStyle || 'doubleQuote';
+    if (!identifier) return '';
+    switch (escapeStyle) {
+      case 'backtick':
+        return `\`${String(identifier).replace(/`/g, '``')}\``;
+      case 'bracket':
+        return `[${String(identifier).replace(/]/g, ']]')}]`;
+      case 'doubleQuote':
+      default:
+        return `"${String(identifier).replace(/"/g, '""')}"`;
+    }
+  }
+
+  /** Normalizes the search value according to field type. */
+  protected normalizeSearchValue(fieldType: string, searchValue: any): any {
+    switch (fieldType) {
+      case 'date':
+      case 'string':
+      case 'text':
+      case 'readonly':
+        if (typeof searchValue === 'string') {
+          // escape single quotes by doubling them
+          searchValue = searchValue.replace(/'/g, `''`);
+        }
+        break;
+      case 'integer':
+      case 'number':
+      case 'float':
+        if (typeof searchValue === 'string') {
+          // Parse a valid decimal from the string.
+          searchValue = searchValue.replace(/\.{2,}/g, '.'); // Replace double dots with single dot
+          searchValue = searchValue.replace(/\.+$/g, ''); // Remove trailing dot(s)
+          searchValue = searchValue.replace(/^\.+/g, '0.'); // Prefix leading dot with 0.
+          searchValue = searchValue.replace(/^-+\.+/g, '-0.'); // Prefix leading dash dot with -0.
+          searchValue = searchValue.replace(/(?!^-)[^\d.]/g, ''); // Remove non valid decimal chars
+          if (searchValue === '' || searchValue === '-') {
+            searchValue = '0';
+          }
+        }
+        break;
+    }
+    return searchValue;
+  }
+}

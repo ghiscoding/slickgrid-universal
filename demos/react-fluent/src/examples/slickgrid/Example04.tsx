@@ -273,7 +273,7 @@ const Example04: React.FC = () => {
         <h2>
           Example 4: Row Detail View
           <Button className="btn-icon ms-1" onClick={toggleDarkMode} data-test="toggle-dark-mode">
-            <i className="fic fic-dark-theme"></i>
+            <i className="fi fi-dark-theme"></i>
             <span>Toggle Dark Mode</span>
           </Button>
         </h2>

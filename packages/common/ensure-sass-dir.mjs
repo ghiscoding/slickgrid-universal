@@ -1,8 +1,6 @@
 import { mkdirSync } from 'node:fs';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { join } from 'node:path';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const distPath = join(__dirname, 'dist', 'styles', 'css');
+const distPath = join(import.meta.dirname, 'dist', 'styles', 'css');
 
 mkdirSync(distPath, { recursive: true });

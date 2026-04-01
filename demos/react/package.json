@@ -34,6 +34,7 @@
     "@slickgrid-universal/react-row-detail-plugin": "workspace:*",
     "@slickgrid-universal/row-detail-view-plugin": "workspace:*",
     "@slickgrid-universal/rxjs-observable": "workspace:*",
+    "@slickgrid-universal/sql": "workspace:*",
     "@slickgrid-universal/text-export": "workspace:*",
     "bootstrap": "catalog:",
     "dompurify": "catalog:",

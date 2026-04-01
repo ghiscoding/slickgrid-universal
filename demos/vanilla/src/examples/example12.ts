@@ -173,7 +173,7 @@ export default class Example12 {
           alwaysSaveOnEnterKey: true,
           maxLength: 12,
           options: {
-            cols: 45,
+            useColumnWidth: true,
             rows: 6,
             buttonTexts: {
               cancel: 'Close',

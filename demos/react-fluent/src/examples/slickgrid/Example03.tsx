@@ -237,9 +237,9 @@ const Example03: React.FC = () => {
       },
       draggableGrouping: {
         dropPlaceHolderText: 'Drop a column header here to group by the column',
-        deleteIconCssClass: 'fic fic-dismiss color-danger',
-        sortAscIconCssClass: 'fic fic-arrow-up',
-        sortDescIconCssClass: 'fic fic-arrow-down',
+        deleteIconCssClass: 'fi fi-dismiss color-danger',
+        sortAscIconCssClass: 'fi fi-arrow-up',
+        sortDescIconCssClass: 'fi fi-arrow-down',
         onGroupChanged: (_e, args) => onGroupChanged(args),
         onExtensionRegistered: (extension) => setDraggableGroupingPlugin(extension),
         initialGroupBy: ['duration'],
@@ -465,7 +465,7 @@ const Example03: React.FC = () => {
       <h2>
         Example 3: Draggable Grouping & Aggregators
         <Button size="small" className="ms-1" onClick={() => toggleDarkMode()} data-test="toggle-dark-mode">
-          <i className="fic fic-dark-theme me-1"></i>
+          <i className="fi fi-dark-theme me-1"></i>
           <span>Toggle Dark Mode</span>
         </Button>
       </h2>
@@ -478,13 +478,13 @@ const Example03: React.FC = () => {
           50K rows
         </Button>
         <Button size="small" className="btn-icon mx-1" data-test="clear-grouping-btn" onClick={() => clearGroupsAndSelects()}>
-          <i className="fic fic-dismiss"></i> Clear grouping
+          <i className="fi fi-dismiss"></i> Clear grouping
         </Button>
         <Button size="small" className="btn-icon mx-1" data-test="collapse-all-btn" onClick={() => collapseAllGroups()}>
-          <i className="fic fic-arrow-minimize"></i> Collapse all groups
+          <i className="fi fi-arrow-minimize"></i> Collapse all groups
         </Button>
         <Button size="small" className="btn-icon mx-1" data-test="expand-all-btn" onClick={() => expandAllGroups()}>
-          <i className="fic fic-arrow-maximize"></i> Expand all groups
+          <i className="fi fi-arrow-maximize"></i> Expand all groups
         </Button>
         <Button
           size="small"
@@ -495,10 +495,10 @@ const Example03: React.FC = () => {
           Toggle Draggable Grouping Row
         </Button>
         <Button size="small" className="btn-icon mx-1" onClick={() => exportToExcel()}>
-          <i className="fic fic-arrow-download"></i> Export to Excel
+          <i className="fi fi-arrow-download"></i> Export to Excel
         </Button>
         <Button size="small" className="btn-icon mx-1" onClick={() => exportToPdf()}>
-          <i className="fic fic-arrow-download"></i> Export to PDF
+          <i className="fi fi-arrow-download"></i> Export to PDF
         </Button>
         <Button
           size="small"
@@ -520,11 +520,11 @@ const Example03: React.FC = () => {
           Group by Duration then Effort-Driven
         </Button>
         <Button size="small" className="btn-icon mx-1" data-test="set-dynamic-filter" onClick={() => setFiltersDynamically()}>
-          <span className="fic fic-filter"></span>
+          <span className="fi fi-filter"></span>
           <span>Set Filters Dynamically</span>
         </Button>
         <Button size="small" className="btn-icon mx-1" data-test="set-dynamic-sorting" onClick={() => setSortingDynamically()}>
-          <span className="fic fic-sort-arrow-up"></span>
+          <span className="fi fi-sort-arrow-up"></span>
           <span>Set Sorting Dynamically</span>
         </Button>
 
