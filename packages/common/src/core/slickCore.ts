@@ -5,7 +5,7 @@
  * @module Core
  * @namespace Slick
  */
-import { setStyles } from '@slickgrid-universal/utils';
+import { setStyles, type CSSStyleDeclarationWritable } from '@slickgrid-universal/utils';
 import type { MergeTypes } from '../enums/index.js';
 import type { DragRange, EditController } from '../interfaces/index.js';
 import type { SlickGrid } from './slickGrid.js';
@@ -735,7 +735,7 @@ export class Utils {
     Utils.setStyleSize(el, 'width', value);
   }
 
-  public static setStyleSize<P extends Pick<CSSStyleDeclaration, 'height' | 'width' | 'left' | 'right' | 'top' | 'bottom'>>(
+  public static setStyleSize<P extends CSSStyleDeclarationWritable>(
     el: HTMLElement,
     style: keyof P,
     val?: number | string | Function
