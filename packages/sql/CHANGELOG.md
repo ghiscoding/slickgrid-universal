@@ -9,13 +9,3 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Features
 
 * create new optional SQL Backend Service package ([#2504](https://github.com/ghiscoding/slickgrid-universal/issues/2504)) ([b506522](https://github.com/ghiscoding/slickgrid-universal/commit/b50652267d335bb0fcd1deb635d1b5e05541705b)) - by @ghiscoding
-
-### Bug Fixes
-
-* **deps:** update all non-major dependencies ([#2513](https://github.com/ghiscoding/slickgrid-universal/issues/2513)) ([bc22b52](https://github.com/ghiscoding/slickgrid-universal/commit/bc22b52c9cfc53df13074a621e1d95f4060adadf)) - by @ghiscoding
-
-## [10.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.2.0...v10.3.0) (2026-03-24)
-
-### Features
-
-* create new Ms Fluent UI Theme ([#2491](https://github.com/ghiscoding/slickgrid-universal/issues/2491)) ([31d185a](https://github.com/ghiscoding/slickgrid-universal/commit/31d185aa5c35d8ad4c1d3c479571c702c300a8b6)) - by @ghiscoding

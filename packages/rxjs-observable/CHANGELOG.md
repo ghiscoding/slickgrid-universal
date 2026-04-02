@@ -4,6 +4,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.3.0...v10.4.0) (2026-04-02)
+
+**Note:** Version bump only for package @slickgrid-universal/rxjs-observable
+
 ## [10.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.2.0...v10.3.0) (2026-03-24)
 
 **Note:** Version bump only for package @slickgrid-universal/rxjs-observable

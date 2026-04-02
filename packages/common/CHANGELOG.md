@@ -4,6 +4,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.3.0...v10.4.0) (2026-04-02)
+
+### Features
+
+* **editors:** add `useColumnWidth` for inline longText editor ([#2506](https://github.com/ghiscoding/slickgrid-universal/issues/2506)) ([3e563be](https://github.com/ghiscoding/slickgrid-universal/commit/3e563be7d63340c417f0dfa622ad10a41a18b695)) - by @zewa666
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#2516](https://github.com/ghiscoding/slickgrid-universal/issues/2516)) ([2fbf34e](https://github.com/ghiscoding/slickgrid-universal/commit/2fbf34e280ff39976e239abe5b2ee81e248ca72f)) - by @renovate-bot
+* **styling:** add missing CSS for new Fluent Theme ([fd3630e](https://github.com/ghiscoding/slickgrid-universal/commit/fd3630ed0205997b6ad9fd769bc02ca91b611134)) - by @ghiscoding
+
 ## [10.3.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.2.0...v10.3.0) (2026-03-24)
 
 ### Features
