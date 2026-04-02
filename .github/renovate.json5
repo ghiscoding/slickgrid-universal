@@ -41,12 +41,12 @@
     },
     // i18next major version - let's wait until our next major
     {
-      packageNames: ['i18next']
-      allowedVersions: '<26.0.0'
+      packageNames: ['i18next'],
+      allowedVersions: '<26.0.0',
     },
     {
-      packageNames: ['react-i18next']
-      allowedVersions: '<17.0.0'
+      packageNames: ['react-i18next'],
+      allowedVersions: '<17.0.0',
     },
   ],
   ignoreDeps: ['lee-dohm/no-response', 'node', 'pnpm', 'typescript'],
