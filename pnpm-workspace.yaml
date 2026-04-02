@@ -57,5 +57,6 @@ overrides:
   '@vitest/coverage-v8>vite': ^8.0.0
   '@vitest/ui>vite': ^8.0.0
   vitest>vite: ^8.0.0
+  lodash: ^4.18.1
   minimatch: ^10.2.5
   picomatch: ^4.0.4
