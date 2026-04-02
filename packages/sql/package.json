@@ -2,13 +2,22 @@
   "name": "@slickgrid-universal/sql",
   "version": "10.4.0",
   "description": "SlickGrid Universal SQL Backend Service (implements BackendService for SQL)",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "type": "module",
+  "main": "./dist/index.js",
   "exports": {
-    ".": "./dist/index.js"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
   },
   "files": [
-    "dist"
+    "/dist",
+    "/src"
   ],
   "scripts": {
     "build": "pnpm run clean && tsc",
@@ -16,16 +25,23 @@
     "clean": "remove dist tsconfig.tsbuildinfo",
     "dev": "pnpm build:incremental"
   },
-  "keywords": [
-    "slickgrid",
-    "sql",
-    "backend",
-    "service"
-  ],
-  "author": "SlickGrid Universal Team",
   "license": "MIT",
+  "author": "Ghislain B.",
+  "homepage": "https://github.com/ghiscoding/slickgrid-universal",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ghiscoding/slickgrid-universal.git",
+    "directory": "packages/sql"
+  },
+  "bugs": {
+    "url": "https://github.com/ghiscoding/slickgrid-universal/issues"
+  },
   "dependencies": {
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/utils": "workspace:*"
+  },
+  "funding": {
+    "type": "ko_fi",
+    "url": "https://ko-fi.com/ghiscoding"
   }
 }
