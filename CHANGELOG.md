@@ -4,6 +4,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.4.2](https://github.com/ghiscoding/slickgrid-universal/compare/v10.4.0...v10.4.2) (2026-04-03)
+
+**Note:** Version bump only for package slickgrid-universal
+
 ## [10.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.3.0...v10.4.0) (2026-04-02)
 
 ### Features
