@@ -224,9 +224,7 @@ const Example10: React.FC = () => {
   }
 
   function displaySpinner(isProcessing: boolean) {
-    const newStatus: Status = isProcessing
-      ? { text: '', type: 'error' }
-      : { text: 'finished', type: 'success' };
+    const newStatus: Status = isProcessing ? { text: '', type: 'error' } : { text: 'finished', type: 'success' };
 
     setStatus(newStatus);
     setProcessing(isProcessing);
@@ -320,21 +318,18 @@ const Example10: React.FC = () => {
 
   return !gridOptions ? null : (
     <div id="demo-container" className="container-fluid">
-      <h2>
-        Example 10: Grid with SQL Backend Service
-      </h2>
+      <h2>Example 10: Grid with SQL Backend Service</h2>
 
       <div style={{ color: status.type === 'error' ? 'red' : 'black' }}>
-          <strong>Status: </strong>
-          {status.text}
-          {processing ? ' processing...' : ''}
+        <strong>Status: </strong>
+        {status.text}
+        {processing ? ' processing...' : ''}
       </div>
-      <br/>
+      <br />
       <div>
         <MessageBar intent="info" data-test="alert-sql-query">
           <MessageBarBody className={styles.messageBarBody}>
-            <strong>SQL Query:</strong>{' '}
-            <span data-test="sql-query-result">{sqlQuery}</span>
+            <strong>SQL Query:</strong> <span data-test="sql-query-result">{sqlQuery}</span>
           </MessageBarBody>
         </MessageBar>
       </div>
@@ -386,7 +381,7 @@ const Example10: React.FC = () => {
         </div>
       </div>
 
-      <br/>
+      <br />
 
       <div className="row my-2">
         <div className="col-12">
@@ -412,7 +407,7 @@ const Example10: React.FC = () => {
         </div>
       </div>
 
-      <br/>
+      <br />
 
       <SlickgridReact
         gridId="grid52"
