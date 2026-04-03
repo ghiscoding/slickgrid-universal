@@ -3,8 +3,6 @@ import { Filters, Formatters, type Column, type GridOption, type Metrics } from 
 import { SqlService, type SqlResult, type SqlServiceApi } from '@slickgrid-universal/sql';
 import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
 import { ExampleGridOptions } from './example-grid-options.js';
-import './example10.scss';
-import '../material-styles.scss';
 
 const defaultPageSize = 20;
 const SQL_TABLE_NAME = 'users';
@@ -12,11 +10,11 @@ const FAKE_SERVER_DELAY = 250;
 
 export default class Example41 {
   private _bindingEventService: BindingEventService;
-  columns: Column[];
-  gridOptions: GridOption;
+  columns: Column[] = [];
+  gridOptions!: GridOption;
   dataset: any[] = [];
-  metrics: Metrics;
-  sgb: SlickVanillaGridBundle;
+  metrics!: Metrics;
+  sgb?: SlickVanillaGridBundle;
   processing = false;
   status = '';
   statusClass = 'is-success';
@@ -32,7 +30,7 @@ export default class Example41 {
     this.initializeGrid();
     const gridContainerElm = document.querySelector('.grid41') as HTMLDivElement;
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
-    this._bindingEventService.bind(gridContainerElm, 'ongridstatechanged', this.handleOnGridStateChanged.bind(this));
+    this._bindingEventService.bind(gridContainerElm, 'ongridstatechanged', this.handleOnGridStateChanged.bind(this) as EventListener);
     document.body.classList.add('material-theme');
   }
 
@@ -209,7 +207,7 @@ export default class Example41 {
     };
   }
 
-  displaySpinner(isProcessing) {
+  displaySpinner(isProcessing: boolean) {
     this.processing = isProcessing;
     this.status = isProcessing ? 'loading...' : 'finished!!';
     this.statusClass = isProcessing ? 'notification is-light is-warning' : 'notification is-light is-success';
@@ -248,7 +246,7 @@ export default class Example41 {
     }
   }
 
-  handleOnGridStateChanged(event) {
+  handleOnGridStateChanged(event: CustomEvent<any>) {
     if (event?.detail) {
       console.log('Grid State changed:: ', event.detail.change);
     }
