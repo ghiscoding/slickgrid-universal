@@ -36,6 +36,7 @@ const routes = [
   { path: 'example07', route: '/example07', element: lazy(() => import('./Example07.js')), title: '7- Real-Time Trading Platform' },
   { path: 'example08', route: '/example08', element: lazy(() => import('./Example08.js')), title: '8- Excel Export Formulas' },
   { path: 'example09', route: '/example09', element: lazy(() => import('./Example09.js')), title: '9- Tree Data with Lazy Loading' },
+  { path: 'example10', route: '/example10', element: lazy(() => import('./Example10.js')), title: '10- SQL Backend Service' },
   {
     path: 'fluent-icons',
     route: '/fluent-icons',
