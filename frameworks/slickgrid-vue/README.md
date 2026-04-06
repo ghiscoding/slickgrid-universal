@@ -81,8 +81,8 @@ const dataset = ref<User[]>([
 
 | Slickgrid-Vue | Vue     | Migration Guide | Notes | Date |
 |:---------------:| --------- | --------------- | ----- | ---- |
-| 10.x            | Vue >=3.5.0 | [Migration 10.x](https://ghiscoding.gitbook.io/slickgrid-vue/migrations/migration-to-10.x)  | modernization and accessibility, requires Slickgrid-Universal [10.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v10.0.0) | 2026-03-02 |
-| 9.x             | Vue >=3.5.0 | [Migration 9.x](https://ghiscoding.gitbook.io/slickgrid-vue/migrations/migration-to-9.x)  | ESM-Only, requires Slickgrid-Universal [9.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v9.0.0) | 2025-05-10 |
+| 10.x            | >=3.5.0 | [Migration 10.x](https://ghiscoding.gitbook.io/slickgrid-vue/migrations/migration-to-10.x)  | modernization and accessibility, requires Slickgrid-Universal [10.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v10.0.0) | 2026-03-02 |
+| 9.x             | >=3.5.0 | [Migration 9.x](https://ghiscoding.gitbook.io/slickgrid-vue/migrations/migration-to-9.x)  | ESM-Only, requires Slickgrid-Universal [9.x](https://github.com/ghiscoding/slickgrid-universal/releases/tag/v9.0.0) | 2025-05-10 |
 
 ### Like it? ⭐ it
 You like **Slickgrid-Vue**? Be sure to upvote ⭐ the project, and perhaps support me with caffeine [☕](https://ko-fi.com/ghiscoding) or sponsor me on GitHub. Any contributions are also very welcome. Thanks
