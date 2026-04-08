@@ -2366,6 +2366,66 @@ describe('ExcelExportService', () => {
       expect(cache.get('id').hasComplexSpanning).toBe(true);
     });
 
+    it('cacheRegularCellExcelFormats should skip a column already cached', () => {
+      service.init(gridStub, container);
+      (service as any)._excelExportOptions = { autoDetectCellFormat: true };
+      (service as any)._workbook = new Workbook();
+      (service as any)._sheet = (service as any)._workbook.createWorksheet({ name: 'Sheet1' });
+      (service as any)._stylesheet = (service as any)._workbook.getStyleSheet();
+      const boldFmt = (service as any)._stylesheet.createFormat({ font: { bold: true } });
+      const strFmt = (service as any)._stylesheet.createFormat({ format: '@' });
+      const numFmt = (service as any)._stylesheet.createFormat({ format: '0' });
+      (service as any)._stylesheetFormats = { boldFormat: boldFmt, stringFormat: strFmt, numberFormat: numFmt };
+
+      const existingParser = vi.fn((v: any) => v);
+      (service as any)._regularCellExcelFormats.id = { excelFormatId: 123, getDataValueParser: existingParser };
+
+      const columns = [{ id: 'id', field: 'id', width: 100 } as Column];
+      const cache = (service as any).preCalculateColumnMetadata(columns);
+      (service as any).cacheRegularCellExcelFormats(columns, cache);
+
+      expect((service as any)._regularCellExcelFormats.id.excelFormatId).toBe(123);
+      expect((service as any)._regularCellExcelFormats.id.getDataValueParser).toBe(existingParser);
+    });
+
+    it('getRawCellValue should return empty string for empty object values', () => {
+      service.init(gridStub, container);
+      const output = (service as any).getRawCellValue({ title: {} }, 'title');
+      expect(output).toBe('');
+    });
+
+    it('readRegularRowData should apply excelExportOptions style and valueParserCallback when cache entry is created', () => {
+      service.init(gridStub, container);
+      const parserSpy = vi.fn((value: any) => value);
+      const localColumns = [
+        {
+          id: 'title',
+          field: 'title',
+          width: 100,
+          excelExportOptions: {
+            style: { font: { italic: true } },
+            valueParserCallback: parserSpy,
+          },
+        },
+      ] as unknown as Column[];
+
+      (service as any)._excelExportOptions = { htmlDecode: true, autoDetectCellFormat: true };
+      (service as any)._workbook = new Workbook();
+      (service as any)._sheet = (service as any)._workbook.createWorksheet({ name: 'Sheet1' });
+      (service as any)._stylesheet = (service as any)._workbook.getStyleSheet();
+      const boldFmt = (service as any)._stylesheet.createFormat({ font: { bold: true } });
+      const strFmt = (service as any)._stylesheet.createFormat({ format: '@' });
+      const numFmt = (service as any)._stylesheet.createFormat({ format: '0' });
+      (service as any)._stylesheetFormats = { boldFormat: boldFmt, stringFormat: strFmt, numberFormat: numFmt };
+
+      const metadataCache = (service as any).preCalculateColumnMetadata(localColumns);
+      const output = (service as any).readRegularRowData(localColumns, 0, { title: 'A' }, 0, metadataCache);
+
+      expect(output[0]).toBe('A');
+      expect((service as any)._regularCellExcelFormats.title.excelFormatId).toBeDefined();
+      expect((service as any)._regularCellExcelFormats.title.getDataValueParser).toBe(parserSpy);
+    });
+
     it('efficientYield should use scheduler.postTask when available', async () => {
       const postTask = vi.fn((cb) => cb());
       (globalThis as any).scheduler = { postTask };
