@@ -557,7 +557,7 @@ describe('PdfExportService', () => {
         // Expanded group
         const expandedGroup = { title: 'Group 2', collapsed: false, level: 0 };
         const expandedRow = service['readGroupedTitleRow'](expandedGroup);
-        expect(expandedRow[0]).toMatch(/^\- /);
+        expect(expandedRow[0]).toMatch(/^- /);
       });
 
       it('should use custom groupCollapsedSymbol and groupExpandedSymbol if provided', () => {
@@ -2149,7 +2149,7 @@ describe('PdfExportService', () => {
       getVisibleColumns: () => columns,
       getOptions: () => gridOptions,
       getData: () => dataViewStub,
-      getParentRowSpanByCell: vi.fn().mockImplementation((row, col) => ({ start: row === 1 ? 0 : row })),
+      getParentRowSpanByCell: vi.fn().mockImplementation((row) => ({ start: row === 1 ? 0 : row })),
     };
     const pubSubService = { publish: vi.fn() };
     const container = { get: () => pubSubService };
@@ -2490,7 +2490,7 @@ describe('PdfExportService', () => {
       getVisibleColumns: () => columns,
       getOptions: () => gridOptions,
       getData: () => dataViewStub,
-      getParentRowSpanByCell: vi.fn().mockImplementation((row, col) => ({ start: row === 1 ? 0 : row })),
+      getParentRowSpanByCell: vi.fn().mockImplementation((row) => ({ start: row === 1 ? 0 : row })),
     };
     const pubSubService = { publish: vi.fn() };
     const container = { get: () => pubSubService };
@@ -2591,8 +2591,9 @@ describe('PdfExportService', () => {
       const container = { get: (key: string) => (key === 'PubSubService' ? pubSubService : undefined) };
       const service = new PdfExportService();
       service.init(gridStub as any, container as any);
-      await service.exportToPdf({ filename: 'custom-width-test' });
-      // No assertion needed, coverage is enough
+      const result = await service.exportToPdf({ filename: 'custom-width-test' });
+
+      expect(result).toBe(true);
     });
   });
 

@@ -1603,7 +1603,7 @@ describe('GridMenuControl', () => {
         });
 
         it('should prioritize item slotRenderer over defaultMenuItemRenderer', () => {
-          const mockSlotRenderer = vi.fn((item: any) => {
+          const mockSlotRenderer = vi.fn(() => {
             const div = document.createElement('div');
             div.className = 'slot-prioritized';
             div.textContent = 'Slot renderer prioritized';
@@ -1655,7 +1655,7 @@ describe('GridMenuControl', () => {
         });
 
         it('should call slotRenderer with click event as third argument when menu item is clicked', () => {
-          const mockSlotRenderer = vi.fn((item: any, args: any, event?: Event) => {
+          const mockSlotRenderer = vi.fn(() => {
             const div = document.createElement('div');
             div.className = 'click-test';
             return div;
@@ -1687,7 +1687,7 @@ describe('GridMenuControl', () => {
 
         it('should not trigger menu action when slotRenderer calls preventDefault on click event', () => {
           const mockAction = vi.fn();
-          const mockSlotRenderer = vi.fn((item: any, args: any, event?: Event) => {
+          const mockSlotRenderer = vi.fn(() => {
             const div = document.createElement('div');
             div.className = 'prevent-default-test';
             const button = document.createElement('button');

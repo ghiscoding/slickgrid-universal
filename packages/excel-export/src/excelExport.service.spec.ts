@@ -1,5 +1,4 @@
 import {
-  FieldType,
   Formatters,
   GroupTotalFormatters,
   SortComparers,

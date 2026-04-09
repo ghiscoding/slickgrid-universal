@@ -4,7 +4,6 @@ import 'multiple-select-vanilla';
 import type { MultipleSelectOption } from 'multiple-select-vanilla';
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index.js';
-import { FieldType } from '../../enums/index.js';
 import type { Column, Editor, EditorArguments, GridOption } from '../../interfaces/index.js';
 import { Editors } from '../index.js';
 import { SelectEditor } from '../selectEditor.js';

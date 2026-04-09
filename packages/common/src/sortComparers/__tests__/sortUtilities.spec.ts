@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { FieldType, SortDirectionNumber } from '../../enums/index.js';
+import { SortDirectionNumber } from '../../enums/index.js';
 import type { Column } from '../../interfaces/index.js';
 import { SortComparers } from '../sortComparers.index.js';
 import { sortByFieldType } from '../sortUtilities.js';

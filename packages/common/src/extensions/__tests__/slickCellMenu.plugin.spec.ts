@@ -916,7 +916,7 @@ describe('CellMenu Plugin', () => {
       });
 
       it('should prioritize item slotRenderer over defaultMenuItemRenderer', () => {
-        const mockSlotRenderer = vi.fn((item: MenuCommandItem) => {
+        const mockSlotRenderer = vi.fn(() => {
           const div = document.createElement('div');
           div.className = 'slot-prioritized';
           div.textContent = 'Slot renderer prioritized';
@@ -959,7 +959,7 @@ describe('CellMenu Plugin', () => {
       });
 
       it('should call slotRenderer with click event as third argument when menu item is clicked', () => {
-        const mockSlotRenderer = vi.fn((item: MenuCommandItem, args: any, event?: Event) => {
+        const mockSlotRenderer = vi.fn(() => {
           const div = document.createElement('div');
           div.className = 'click-test';
           return div;

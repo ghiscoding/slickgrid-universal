@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { FieldType, SortDirectionNumber } from '../../enums/index.js';
+import { SortDirectionNumber } from '../../enums/index.js';
 import { sortByFieldType } from '../sortUtilities.js';
 
 describe('the Date Euro Sorter', () => {

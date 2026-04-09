@@ -1038,8 +1038,6 @@ describe('SelectFilter', () => {
 
   it('should NOT populate the multi-select when "collectionLazy" Promise rejects', () =>
     new Promise(async (done: any) => {
-      const spyCallback = vi.spyOn(filterArguments, 'callback');
-      const mockCollection = ['male', 'female', 'other'];
       mockColumn.filter!.collection = undefined;
       mockColumn.filter!.collectionLazy = () => {
         return Promise.reject('some error');

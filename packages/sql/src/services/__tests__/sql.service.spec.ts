@@ -1343,18 +1343,18 @@ describe('SqlService', () => {
     describe('Verbatim ColumnFilters', () => {
       describe.each`
         description                                            | verbatim | operator | searchTerms           | expectation
-        ${'Verbatim false, Filter for null'}                   | ${false} | ${'EQ'}  | ${null}               | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM \"users\" LIMIT 10 OFFSET 0'}
-        ${'Verbatim true,  Filter for null'}                   | ${true}  | ${'EQ'}  | ${null}               | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM \"users\" WHERE \"gender\" IS NULL LIMIT 10 OFFSET 0'}
-        ${'Verbatim false, Empty string'}                      | ${false} | ${'EQ'}  | ${''}                 | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM \"users\" LIMIT 10 OFFSET 0'}
-        ${'Verbatim true,  Empty string'}                      | ${true}  | ${'EQ'}  | ${''}                 | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM \"users\" WHERE \"gender\" = \'\' LIMIT 10 OFFSET 0'}
-        ${'Verbatim false, Empty list'}                        | ${false} | ${'IN'}  | ${[]}                 | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM \"users\" LIMIT 10 OFFSET 0'}
-        ${'Verbatim true,  Empty list'}                        | ${true}  | ${'IN'}  | ${[]}                 | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM \"users\" LIMIT 10 OFFSET 0'}
-        ${'Verbatim false, Filter for null (in list)'}         | ${false} | ${'IN'}  | ${[null]}             | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM \"users\" WHERE \"gender\" IN (\'\') LIMIT 10 OFFSET 0'}
-        ${'Verbatim true,  Filter for null (in list)'}         | ${true}  | ${'IN'}  | ${[null]}             | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM \"users\" WHERE \"gender\" IS NULL LIMIT 10 OFFSET 0'}
-        ${'Verbatim false, Filter for empty string (in list)'} | ${false} | ${'IN'}  | ${['']}               | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM \"users\" WHERE \"gender\" IN (\'\') LIMIT 10 OFFSET 0'}
-        ${'Verbatim true,  Filter for empty string (in list)'} | ${true}  | ${'IN'}  | ${['']}               | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM \"users\" WHERE \"gender\" = \'\' LIMIT 10 OFFSET 0'}
-        ${'Verbatim false, Filter for female'}                 | ${false} | ${'IN'}  | ${['female']}         | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM \"users\" WHERE \"gender\" IN (\'female\') LIMIT 10 OFFSET 0'}
-        ${'Verbatim true,  Filter for female'}                 | ${true}  | ${'IN'}  | ${['female']}         | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM \"users\" WHERE \"gender\" = \'female\' LIMIT 10 OFFSET 0'}
+        ${'Verbatim false, Filter for null'}                   | ${false} | ${'EQ'}  | ${null}               | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" LIMIT 10 OFFSET 0'}
+        ${'Verbatim true,  Filter for null'}                   | ${true}  | ${'EQ'}  | ${null}               | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" IS NULL LIMIT 10 OFFSET 0'}
+        ${'Verbatim false, Empty string'}                      | ${false} | ${'EQ'}  | ${''}                 | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" LIMIT 10 OFFSET 0'}
+        ${'Verbatim true,  Empty string'}                      | ${true}  | ${'EQ'}  | ${''}                 | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" = \'\' LIMIT 10 OFFSET 0'}
+        ${'Verbatim false, Empty list'}                        | ${false} | ${'IN'}  | ${[]}                 | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" LIMIT 10 OFFSET 0'}
+        ${'Verbatim true,  Empty list'}                        | ${true}  | ${'IN'}  | ${[]}                 | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" LIMIT 10 OFFSET 0'}
+        ${'Verbatim false, Filter for null (in list)'}         | ${false} | ${'IN'}  | ${[null]}             | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" IN (\'\') LIMIT 10 OFFSET 0'}
+        ${'Verbatim true,  Filter for null (in list)'}         | ${true}  | ${'IN'}  | ${[null]}             | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" IS NULL LIMIT 10 OFFSET 0'}
+        ${'Verbatim false, Filter for empty string (in list)'} | ${false} | ${'IN'}  | ${['']}               | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" IN (\'\') LIMIT 10 OFFSET 0'}
+        ${'Verbatim true,  Filter for empty string (in list)'} | ${true}  | ${'IN'}  | ${['']}               | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" = \'\' LIMIT 10 OFFSET 0'}
+        ${'Verbatim false, Filter for female'}                 | ${false} | ${'IN'}  | ${['female']}         | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" IN (\'female\') LIMIT 10 OFFSET 0'}
+        ${'Verbatim true,  Filter for female'}                 | ${true}  | ${'IN'}  | ${['female']}         | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" = \'female\' LIMIT 10 OFFSET 0'}
         ${'Verbatim false, Filter for female/male'}            | ${false} | ${'IN'}  | ${['female', 'male']} | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" IN (\'female\',\'male\') LIMIT 10 OFFSET 0'}
         ${'Verbatim true,  Filter for female/male'}            | ${true}  | ${'IN'}  | ${['female', 'male']} | ${'SELECT *, COUNT(*) OVER() AS "totalCount" FROM "users" WHERE "gender" IN (\'female\',\'male\') LIMIT 10 OFFSET 0'}
       `(`$description`, ({ verbatim, operator, searchTerms, expectation }) => {
