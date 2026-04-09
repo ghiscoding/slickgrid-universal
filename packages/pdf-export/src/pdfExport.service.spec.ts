@@ -2571,29 +2571,30 @@ describe('PdfExportService', () => {
       // There should be a width assignment for colOpt.width (covered by the test setup)
     });
 
-    // it('should use custom colOpt.width when provided', async () => {
-    //   const columns = [
-    //     { id: 'id', field: 'id', name: 'ID', pdfExportOptions: { width: 123 } },
-    //     { id: 'desc', field: 'desc', name: 'Description' },
-    //   ];
-    //   const dataViewStub = {
-    //     getGrouping: () => [],
-    //     getLength: () => 1,
-    //     getItem: () => ({ id: 1, desc: 'Test' }),
-    //     getItemMetadata: vi.fn(),
-    //   };
-    //   const gridStub = {
-    //     getVisibleColumns: () => columns,
-    //     getOptions: () => ({}),
-    //     getData: () => dataViewStub,
-    //   };
-    //   const pubSubService = { publish: vi.fn() };
-    //   const container = { get: (key: string) => (key === 'PubSubService' ? pubSubService : undefined) };
-    //   const service = new PdfExportService();
-    //   service.init(gridStub as any, container as any);
-    //   await service.exportToPdf({ filename: 'custom-width-test' });
-    //   // No assertion needed, coverage is enough
-    // });
+    it('should use custom colOpt.width when provided', async () => {
+      const columns = [
+        { id: 'id', field: 'id', name: 'ID', pdfExportOptions: { width: 123 } },
+        { id: 'desc', field: 'desc', name: 'Description' },
+      ];
+      const dataViewStub = {
+        getGrouping: () => [],
+        getLength: () => 1,
+        getItem: () => ({ id: 1, desc: 'Test' }),
+        getItemMetadata: vi.fn(),
+      };
+      const gridStub = {
+        getVisibleColumns: () => columns,
+        getOptions: () => ({}),
+        getData: () => dataViewStub,
+      };
+      const pubSubService = { publish: vi.fn() };
+      const container = { get: (key: string) => (key === 'PubSubService' ? pubSubService : undefined) };
+      const service = new PdfExportService();
+      service.init(gridStub as any, container as any);
+      const result = await service.exportToPdf({ filename: 'custom-width-test' });
+
+      expect(result).toBe(true);
+    });
   });
 
   describe('Manual fallback styling options', () => {
