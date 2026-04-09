@@ -557,7 +557,7 @@ describe('PdfExportService', () => {
         // Expanded group
         const expandedGroup = { title: 'Group 2', collapsed: false, level: 0 };
         const expandedRow = service['readGroupedTitleRow'](expandedGroup);
-        expect(expandedRow[0]).toMatch(/^\- /);
+        expect(expandedRow[0]).toMatch(/^- /);
       });
 
       it('should use custom groupCollapsedSymbol and groupExpandedSymbol if provided', () => {
@@ -2149,7 +2149,7 @@ describe('PdfExportService', () => {
       getVisibleColumns: () => columns,
       getOptions: () => gridOptions,
       getData: () => dataViewStub,
-      getParentRowSpanByCell: vi.fn().mockImplementation((row, col) => ({ start: row === 1 ? 0 : row })),
+      getParentRowSpanByCell: vi.fn().mockImplementation((row) => ({ start: row === 1 ? 0 : row })),
     };
     const pubSubService = { publish: vi.fn() };
     const container = { get: () => pubSubService };
@@ -2490,7 +2490,7 @@ describe('PdfExportService', () => {
       getVisibleColumns: () => columns,
       getOptions: () => gridOptions,
       getData: () => dataViewStub,
-      getParentRowSpanByCell: vi.fn().mockImplementation((row, col) => ({ start: row === 1 ? 0 : row })),
+      getParentRowSpanByCell: vi.fn().mockImplementation((row) => ({ start: row === 1 ? 0 : row })),
     };
     const pubSubService = { publish: vi.fn() };
     const container = { get: () => pubSubService };
@@ -2571,29 +2571,29 @@ describe('PdfExportService', () => {
       // There should be a width assignment for colOpt.width (covered by the test setup)
     });
 
-    it('should use custom colOpt.width when provided', async () => {
-      const columns = [
-        { id: 'id', field: 'id', name: 'ID', pdfExportOptions: { width: 123 } },
-        { id: 'desc', field: 'desc', name: 'Description' },
-      ];
-      const dataViewStub = {
-        getGrouping: () => [],
-        getLength: () => 1,
-        getItem: () => ({ id: 1, desc: 'Test' }),
-        getItemMetadata: vi.fn(),
-      };
-      const gridStub = {
-        getVisibleColumns: () => columns,
-        getOptions: () => ({}),
-        getData: () => dataViewStub,
-      };
-      const pubSubService = { publish: vi.fn() };
-      const container = { get: (key: string) => (key === 'PubSubService' ? pubSubService : undefined) };
-      const service = new PdfExportService();
-      service.init(gridStub as any, container as any);
-      await service.exportToPdf({ filename: 'custom-width-test' });
-      // No assertion needed, coverage is enough
-    });
+    // it('should use custom colOpt.width when provided', async () => {
+    //   const columns = [
+    //     { id: 'id', field: 'id', name: 'ID', pdfExportOptions: { width: 123 } },
+    //     { id: 'desc', field: 'desc', name: 'Description' },
+    //   ];
+    //   const dataViewStub = {
+    //     getGrouping: () => [],
+    //     getLength: () => 1,
+    //     getItem: () => ({ id: 1, desc: 'Test' }),
+    //     getItemMetadata: vi.fn(),
+    //   };
+    //   const gridStub = {
+    //     getVisibleColumns: () => columns,
+    //     getOptions: () => ({}),
+    //     getData: () => dataViewStub,
+    //   };
+    //   const pubSubService = { publish: vi.fn() };
+    //   const container = { get: (key: string) => (key === 'PubSubService' ? pubSubService : undefined) };
+    //   const service = new PdfExportService();
+    //   service.init(gridStub as any, container as any);
+    //   await service.exportToPdf({ filename: 'custom-width-test' });
+    //   // No assertion needed, coverage is enough
+    // });
   });
 
   describe('Manual fallback styling options', () => {

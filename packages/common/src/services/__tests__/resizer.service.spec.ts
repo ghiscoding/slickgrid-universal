@@ -2,7 +2,6 @@ import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { SlickEvent, type SlickDataView, type SlickGrid } from '../../core/index.js';
 import { Editors } from '../../editors/index.js';
-import { FieldType } from '../../enums/index.js';
 import type { Column, GridOption } from '../../interfaces/index.js';
 import { ResizerService } from '../resizer.service.js';
 

@@ -245,7 +245,7 @@ describe('Backend Utility Service', () => {
           capturedSignal1 = opts?.signal;
           return new Promise((resolve) => setTimeout(() => resolve({ data: {} }), 100));
         })
-        .mockImplementationOnce((q, opts) => {
+        .mockImplementationOnce(() => {
           return Promise.resolve({ data: {} });
         });
 

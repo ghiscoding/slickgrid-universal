@@ -3,7 +3,6 @@ import { of, throwError } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { RxJsResourceStub } from '../../../../../test/rxjsResourceStub.js';
 import { SlickEvent, SlickEventData, type SlickDataView, type SlickEventHandler, type SlickGrid } from '../../core/index.js';
-import { FieldType } from '../../enums/index.js';
 import type {
   BackendService,
   BackendServiceApi,

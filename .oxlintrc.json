@@ -15,7 +15,6 @@
     "test/",
     "**/environment.*.ts",
     "**/public_api.ts",
-    "**/*.spec.ts",
     "!**/cypress/e2e/*.cy.ts"
   ],
   "overrides": [

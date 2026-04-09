@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
+import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { type SlickGrid } from '../../core/index.js';
 import { Editors } from '../../editors/index.js';
 import type { Column, Formatter, GridOption } from '../../interfaces/index.js';
@@ -205,7 +205,7 @@ describe('formatterUtilities', () => {
 
       const columnDef = {
         exportWithFormatter: true,
-        formatter: (value) => formattedText, // A mock function simulating formatter
+        formatter: () => formattedText, // A mock function simulating formatter
       };
 
       const result = await copyCellToClipboard({
@@ -225,7 +225,7 @@ describe('formatterUtilities', () => {
 
       const columnDef = {
         exportWithFormatter: true,
-        formatter: (value) => textWithSymbols, // A mock function simulating formatter
+        formatter: () => textWithSymbols, // A mock function simulating formatter
       };
 
       const result = await copyCellToClipboard({
@@ -245,7 +245,7 @@ describe('formatterUtilities', () => {
 
       const columnDef = {
         exportWithFormatter: true,
-        formatter: (value) => textWithSymbols, // A mock function simulating formatter
+        formatter: () => textWithSymbols, // A mock function simulating formatter
       };
 
       const result = await copyCellToClipboard({
@@ -265,7 +265,7 @@ describe('formatterUtilities', () => {
 
       const columnDef = {
         exportWithFormatter: true,
-        formatter: (value) => textWithSymbols, // A mock function simulating formatter
+        formatter: () => textWithSymbols, // A mock function simulating formatter
       };
 
       const result = await copyCellToClipboard({

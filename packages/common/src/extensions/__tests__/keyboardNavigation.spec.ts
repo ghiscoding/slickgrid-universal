@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 // Wire up keyboard navigation (this will use the filterFn)
-import { bindKeyboardNavigation, wireMenuKeyboardNavigation } from '../keyboardNavigation';
+import { bindKeyboardNavigation, wireMenuKeyboardNavigation } from '../keyboardNavigation.js';
 
 describe('bindKeyboardNavigation', () => {
   let container: HTMLElement;
@@ -336,7 +336,6 @@ describe('wireMenuKeyboardNavigation', () => {
 
     // First call
     wireMenuKeyboardNavigation(menu, fakeService);
-    const firstCallCount = fakeService.bind.mock.calls.length;
 
     // Reset mock
     fakeService.bind.mockClear();

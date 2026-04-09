@@ -891,7 +891,7 @@ describe('ContextMenu Plugin', () => {
       });
 
       it('should prioritize item slotRenderer over defaultMenuItemRenderer', () => {
-        const mockSlotRenderer = vi.fn((item: MenuCommandItem) => {
+        const mockSlotRenderer = vi.fn(() => {
           const div = document.createElement('div');
           div.className = 'slot-prioritized';
           div.textContent = 'Slot renderer prioritized';

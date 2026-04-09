@@ -1,4 +1,4 @@
-import { FieldType, Formatters, GroupTotalFormatters, type Column, type Formatter, type GridOption, type SlickGrid } from '@slickgrid-universal/common';
+import { Formatters, GroupTotalFormatters, type Column, type Formatter, type GridOption, type SlickGrid } from '@slickgrid-universal/common';
 import { type StyleSheet } from 'excel-builder-vanilla';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { getExcelFormatFromGridFormatter, getExcelNumberCallback, getNumericFormatterOptions, useCellFormatByFieldType } from './excelUtils.js';

@@ -802,7 +802,6 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
   });
 
   it('should trigger "onSelectedRowsChanged" event and invalidate row and render with partial checked icon to be called but without "setSelectedRows" when we are not using a DataView & checkSelectableOverride returns True or is not provided', () => {
-    const invalidateRowSpy = vi.spyOn(gridStub, 'invalidateRow');
     const renderSpy = vi.spyOn(gridStub, 'render');
     const updateColumnHeaderSpy = vi.spyOn(gridStub, 'updateColumnHeader');
     const setSelectedRowSpy = vi.spyOn(gridStub, 'setSelectedRows');
@@ -859,7 +858,6 @@ describe('SlickCheckboxSelectColumn Plugin', () => {
     const invalidateRowSpy = vi.spyOn(gridStub, 'invalidateRow');
     const renderSpy = vi.spyOn(gridStub, 'render');
     const updateColumnHeaderSpy = vi.spyOn(gridStub, 'updateColumnHeader');
-    const setSelectedRowSpy = vi.spyOn(gridStub, 'setSelectedRows');
     vi.spyOn(gridStub.getEditorLock(), 'commitCurrentEdit').mockReturnValue(true);
 
     plugin = new SlickCheckboxSelectColumn(pubSubServiceStub, {
