@@ -449,7 +449,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         // if column width is 0px, then we consider that field as a hidden field and should not be part of the export
         if ((columnDef.width === undefined || columnDef.width > 0) && !skippedField) {
           groupedColumnHeaders.push({
-            key: (columnDef.field || columnDef.id) as string,
+            key: String(columnDef.field || columnDef.id),
             title: groupedHeaderTitle || '',
           });
         }
@@ -479,7 +479,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         // if column width is 0, then we consider that field as a hidden field and should not be part of the export
         if ((columnDef.width === undefined || columnDef.width > 0) && !skippedField) {
           columnHeaders.push({
-            key: (columnDef.field || columnDef.id) + '',
+            key: String(columnDef.field || columnDef.id),
             title: headerTitle,
           });
         }
@@ -544,7 +544,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     const hasComplexSpanning = this._gridOptions.enableCellRowSpan || columns.some((col) => col.colspan || col.rowspan);
 
     for (const columnDef of columns) {
-      if (!columnDef.excludeFromExport && columnDef.id != null) {
+      if (!columnDef.excludeFromExport) {
         const fieldType = getColumnFieldType(columnDef);
         const exportOptions = { ...this._excelExportOptions };
         const hasColumnExportWithFormatter = columnDef?.hasOwnProperty('exportWithFormatter');
@@ -564,8 +564,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         // exportWithFormatterWhenDefined can sanitize as well, but we already sanitize later in excel export flow.
         exportOptions.sanitizeDataExport = false;
 
-        const fieldId = String(columnDef.field || columnDef.id || '');
-        let fieldProperty = fieldId;
+        let fieldProperty = String(columnDef.field || columnDef.id);
         if (typeof columnDef.field === 'string' && columnDef.field.indexOf('.') > 0) {
           const props = columnDef.field.split('.');
           fieldProperty = props.length > 0 ? props[0] : columnDef.field;
@@ -761,7 +760,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         if (columnCachedData?.requiresFormatter) {
           itemData = exportWithFormatterWhenDefined(row, col, columnDef, itemObj, this._grid, exportOptions);
         } else {
-          const fieldProperty = columnCachedData?.fieldProperty ?? String(columnDef.field || columnDef.id || '');
+          const fieldProperty = columnCachedData?.fieldProperty ?? String(columnDef.field || columnDef.id);
           itemData = this.getRawCellValue(itemObj, fieldProperty);
         }
 
