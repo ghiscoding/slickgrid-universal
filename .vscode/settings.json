@@ -7,5 +7,6 @@
   "vitest.rootConfig": "./test/vitest.config.mts",
   "typescript.tsdk": "node_modules\\typescript\\lib",
   "prettier.prettierPath": "node_modules/prettier/index.cjs",
-  "prettier.configPath": ".prettierrc"
+  "prettier.configPath": ".prettierrc",
+  "json.schemaDownload.enable": true
 }

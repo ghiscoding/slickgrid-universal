@@ -1,5 +1,5 @@
 {
-  "$schema": "node_modules/@lerna-lite/cli/schemas/lerna-schema.json",
+  "$schema": "https://raw.githubusercontent.com/lerna-lite/lerna-lite/main/packages/cli/schemas/lerna-schema.json",
   "version": "10.4.2",
   "npmClient": "pnpm",
   "loglevel": "info",
@@ -16,17 +16,9 @@
     },
     "publish": {
       "cleanupTempFiles": true,
-      "stripPackageKeys": [
-        "devDependencies",
-        "scripts"
-      ]
+      "stripPackageKeys": ["devDependencies", "scripts"]
     }
   },
   "changelogPreset": "conventionalcommits",
-  "packages": [
-    "demos/*",
-    "frameworks/*",
-    "frameworks-plugins/*",
-    "packages/*"
-  ]
+  "packages": ["demos/*", "frameworks/*", "frameworks-plugins/*", "packages/*"]
 }
