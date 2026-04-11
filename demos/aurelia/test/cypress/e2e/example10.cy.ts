@@ -122,8 +122,7 @@ describe('Example 10 - Multiple Grids with Row Selection', () => {
 
   describe('Pagination', () => {
     it('should Clear all Filters on 2nd Grid', () => {
-      cy.get('#grid2').find('button.slick-grid-menu-button').trigger('click').click();
-
+      cy.get('#grid2').find('button.slick-grid-menu-button').click({ force: true });
       cy.get(`.slick-grid-menu:visible`).find('.slick-menu-item').first().find('span').contains('Clear all Filters').click();
     });
 

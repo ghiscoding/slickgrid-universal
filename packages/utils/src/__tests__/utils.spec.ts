@@ -176,7 +176,7 @@ describe('Service/Utilies', () => {
 
       expect(result.params).toEqual([]);
       expect(result.isAsync).toBe(false);
-      expect(removeExtraSpaces(result.body)).toContain(removeExtraSpaces('return { status: 200, body: "hello world" }'));
+      expect(removeExtraSpaces(result.body)).toContain(removeExtraSpaces('() => ({ status: 200, body: "hello world" })'));
     });
 
     test('ES6 arrow function returning object in brackets minified without spaces', () => {

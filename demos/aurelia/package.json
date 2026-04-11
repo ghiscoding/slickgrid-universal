@@ -52,6 +52,8 @@
   },
   "devDependencies": {
     "@aurelia/vite-plugin": "^2.0.0-rc.1",
+    "@babel/plugin-proposal-decorators": "^7.29.0",
+    "@rolldown/plugin-babel": "^0.2.2",
     "@types/fnando__sparkline": "catalog:",
     "@types/node": "catalog:",
     "@types/sortablejs": "catalog:",
