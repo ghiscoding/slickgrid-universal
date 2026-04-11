@@ -30,15 +30,6 @@
       packageNames: ['oxlint'],
       allowedVersions: '1.43.0',
     },
-    // Vite 8 related, let's wait a bit longer
-    {
-      packageNames: ['@vitejs/plugin-react'],
-      allowedVersions: '<6.0.0',
-    },
-    {
-      packageNames: ['vite'],
-      allowedVersions: '<8.0.0',
-    },
     // i18next major version - let's wait until our next major
     {
       packageNames: ['i18next'],
