@@ -2762,7 +2762,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected createCssRules(): void {
     this._style = document.createElement('style');
-    this._style.nonce = this._options.nonce || '';
+    if (this._options.nonce) {
+      this._style.nonce = this._options.nonce;
+    }
     (this._options.shadowRoot || document.head).appendChild(this._style);
 
     const rowHeight = this._options.rowHeight! - this.cellHeightDiff;
