@@ -165,6 +165,20 @@ describe('SlickGrid core file', () => {
     expect(consoleWarnSpy).not.toHaveBeenCalledWith('[Slickgrid] Zoom level other than 100% is not supported');
   });
 
+  it('should be able to set a nonce in grid option and expect it to be applied to the style element', () => {
+    const columns = [{ id: 'firstName', field: 'firstName', name: 'First Name' }] as Column[];
+    grid = new SlickGrid<any, Column>('#myGrid', [], columns, { ...defaultOptions, alwaysShowVerticalScroll: true, nonce: 'test-nonce' });
+    grid.init();
+
+    expect(grid).toBeTruthy();
+    expect(grid.getData()).toEqual([]);
+
+    const styleElm = document.head.querySelector('style') as HTMLStyleElement | null;
+    expect(styleElm).toBeTruthy();
+    expect(styleElm?.nonce).toBe('test-nonce');
+    expect(styleElm?.getAttribute('nonce')).toBe('test-nonce');
+  });
+
   it('should display a console warning when Row Detail is enabled with `rowTopOffsetRenderType` is set to "transfrom"', () => {
     const consoleWarnSpy = vi.spyOn(console, 'warn').mockReturnValue();
 
@@ -1004,7 +1018,7 @@ describe('SlickGrid core file', () => {
     });
 
     it('should show an alert when frozen column is wider than actual grid width and invalidColumnFreezeWidthCallback is defined', () => {
-      const alertSpy = vi.spyOn(global, 'alert').mockReturnValue();
+      const alertSpy = vi.spyOn(globalThis, 'alert').mockReturnValue();
       const columns = [
         { id: 'firstName', field: 'firstName', name: 'First Name', minWidth: 40, maxWidth: 70 },
         { id: 'lastName', field: 'lastName', name: 'Last Name', minWidth: 40 },
@@ -1033,7 +1047,7 @@ describe('SlickGrid core file', () => {
     });
 
     it('should show an alert when trying to use setOptions with frozen column that is wider than actual grid width and invalidColumnFreezeWidthCallback is defined', () => {
-      const alertSpy = vi.spyOn(global, 'alert').mockReturnValue();
+      const alertSpy = vi.spyOn(globalThis, 'alert').mockReturnValue();
       const columns = [
         { id: 'firstName', field: 'firstName', name: 'First Name' },
         { id: 'lastName', field: 'lastName', name: 'Last Name' },
@@ -1061,7 +1075,7 @@ describe('SlickGrid core file', () => {
     });
 
     it('should show an alert when trying to call setColumn() with less than 1 column on the right section of the column freeze and when invalidColumnFreezePickerCallback is defined', () => {
-      const alertSpy = vi.spyOn(global, 'alert').mockReturnValue();
+      const alertSpy = vi.spyOn(globalThis, 'alert').mockReturnValue();
       const onAfterSetColumnsSpy = vi.spyOn(grid.onAfterSetColumns, 'notify');
       const columns = [
         { id: 'firstName', field: 'firstName', name: 'First Name' },
@@ -6389,9 +6403,9 @@ describe('SlickGrid core file', () => {
       grid.init();
       const header = container.querySelector('.slick-header-column');
       // Mock Utils.storage.get to return a column
-      const origStorage = (global as any).Utils?.storage?.get;
-      (global as any).Utils = (global as any).Utils || {};
-      (global as any).Utils.storage = { get: () => columns[0] };
+      const origStorage = (globalThis as any).Utils?.storage?.get;
+      (globalThis as any).Utils = (globalThis as any).Utils || {};
+      (globalThis as any).Utils.storage = { get: () => columns[0] };
       // Spy on onHeaderKeyDown and onSort
       const onHeaderKeyDownSpy = vi.spyOn(grid.onHeaderKeyDown, 'notify');
       const onSortSpy = vi.spyOn(grid.onSort, 'notify');
@@ -6406,7 +6420,7 @@ describe('SlickGrid core file', () => {
       expect(onHeaderKeyDownSpy).toHaveBeenCalled();
       expect(onSortSpy).toHaveBeenCalled();
       // Restore original
-      if (origStorage) (global as any).Utils.storage.get = origStorage;
+      if (origStorage) (globalThis as any).Utils.storage.get = origStorage;
     });
 
     it('should return cell CSS styles for a given key', () => {
