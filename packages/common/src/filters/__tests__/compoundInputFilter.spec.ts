@@ -251,6 +251,22 @@ describe('CompoundInputFilter', () => {
     expect(callbackSpy).toHaveBeenCalled();
   });
 
+  it('should trigger a backend query when user empties the input after a preset search term was loaded via searchTerms (skipCompoundOperatorFilterWithNullInput=true)', () => {
+    mockColumn.filter!.skipCompoundOperatorFilterWithNullInput = true;
+    mockColumn.type = 'string';
+    filterArguments.searchTerms = ['abc'];
+    const callbackSpy = vi.spyOn(filterArguments, 'callback');
+
+    filter.init(filterArguments);
+    const filterInputElm = divContainer.querySelector('.search-filter.filter-duration input') as HTMLInputElement;
+
+    // simulate truncating the filter (select all + backspace)
+    filterInputElm.value = '';
+    filterInputElm.dispatchEvent(new (window.window as any).Event('keyup', { key: 'Backspace', bubbles: true, cancelable: true }));
+
+    expect(callbackSpy).toHaveBeenCalledWith(expect.anything(), { columnDef: mockColumn, operator: '', searchTerms: null, shouldTriggerQuery: true });
+  });
+
   it('should call "setValues" with extra spaces at the beginning of the searchTerms and trim value when "enableFilterTrimWhiteSpace" is enabled in grid options', () => {
     gridOptionMock.enableFilterTrimWhiteSpace = true;
     mockColumn.type = 'number';
