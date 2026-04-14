@@ -158,6 +158,8 @@ export class InputFilter implements Filter {
       this._currentValue = this._filterInputElm.value;
     }
 
+    this._lastSearchValue = this._currentValue;
+
     // update "filled" CSS class
     this.updateFilterStyle(this.getValues() !== '');
 
@@ -301,6 +303,7 @@ export class InputFilter implements Filter {
     this.updateFilterStyle(!!searchTerm);
     if (searchTerm !== undefined) {
       this._currentValue = searchVal;
+      this._lastSearchValue = this._currentValue; // sync so clearing a preset triggers a backend query
     }
 
     // create the DOM Select dropdown for the Operator
