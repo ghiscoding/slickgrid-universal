@@ -2664,6 +2664,77 @@ describe('SlickGrid core file', () => {
       expect(result).toBe(DEFAULT_GRID_WIDTH + (1000 + 80 * 2) * 2 + 1000); // Left + Right => 800 + (1000 + (defaultColumnWidth * 2)) * 2 + 1000
     });
 
+    it('should remove Grid Menu width from the last header when scrollbar width is collapsed', () => {
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name', width: 80 },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', width: 80 },
+      ] as Column[];
+      grid = new SlickGrid<any, Column>(container, [], columns, {
+        ...defaultOptions,
+        enableGridMenu: true,
+        gridMenu: { menuWidth: 18 },
+      });
+      grid.init();
+
+      const headerElms = container.querySelectorAll<HTMLElement>('.slick-header-columns .slick-header-column');
+      const firstHeaderWidth = parseFloat(headerElms[0].style.width || '0');
+      const lastHeaderWidth = parseFloat(headerElms[1].style.width || '0');
+
+      expect(firstHeaderWidth).toBe(80);
+      expect(lastHeaderWidth).toBe(60);
+      expect(firstHeaderWidth - lastHeaderWidth).toBe(20);
+    });
+
+    it('should only remove last column compensation from header width when scrollbar width is visible', () => {
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name', width: 80 },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', width: 80 },
+      ] as Column[];
+      grid = new SlickGrid<any, Column>(container, [], columns, {
+        ...defaultOptions,
+        enableGridMenu: true,
+        gridMenu: { menuWidth: 18 },
+      });
+      grid.init();
+
+      (grid as any).scrollbarDimensions = { width: 12, height: 12 };
+      (grid as any).createColumnHeaders();
+      (grid as any).applyColumnHeaderWidths();
+
+      const headerElms = container.querySelectorAll<HTMLElement>('.slick-header-columns .slick-header-column');
+      const firstHeaderWidth = parseFloat(headerElms[0].style.width || '0');
+      const lastHeaderWidth = parseFloat(headerElms[1].style.width || '0');
+
+      expect(firstHeaderWidth).toBe(80);
+      expect(lastHeaderWidth).toBe(78);
+      expect(firstHeaderWidth - lastHeaderWidth).toBe(2);
+    });
+
+    it('should use default Grid Menu width fallback when scrollbar width is collapsed and menu width is undefined', () => {
+      const columns = [
+        { id: 'firstName', field: 'firstName', name: 'First Name', width: 80 },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', width: 80 },
+      ] as Column[];
+      grid = new SlickGrid<any, Column>(container, [], columns, {
+        ...defaultOptions,
+        enableGridMenu: true,
+        gridMenu: {},
+      });
+      grid.init();
+
+      (grid as any).scrollbarDimensions = { width: 0, height: 12 };
+      (grid as any).createColumnHeaders();
+      (grid as any).applyColumnHeaderWidths();
+
+      const headerElms = container.querySelectorAll<HTMLElement>('.slick-header-columns .slick-header-column');
+      const firstHeaderWidth = parseFloat(headerElms[0].style.width || '0');
+      const lastHeaderWidth = parseFloat(headerElms[1].style.width || '0');
+
+      expect(firstHeaderWidth).toBe(80);
+      expect(lastHeaderWidth).toBe(60);
+      expect(firstHeaderWidth - lastHeaderWidth).toBe(20);
+    });
+
     it('should define rowspan and test mandatory rows are always rendered', () => {
       const metadata: any = {
         0: { columns: { 0: { colspan: 2, rowspan: 28 } } },

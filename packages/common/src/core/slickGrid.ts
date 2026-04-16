@@ -210,6 +210,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected canvas: HTMLCanvasElement | null = null;
   protected canvas_context: CanvasRenderingContext2D | null = null;
+  protected _lastColumnGridMenuCompensation = 2; // when Grid Menu is enabled, we need to compensate the last column width by 2px to give room for the column resize handle between the last column and the grid menu button
 
   // settings
   protected _options!: O;
@@ -1827,7 +1828,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       }
     }
 
-    for (let i = 0; i < this.columns.length; i++) {
+    for (let i = 0, ln = this.columns.length; i < ln; i++) {
       const m: C = this.columns[i];
       if (!m || m.hidden) {
         continue;
@@ -1860,7 +1861,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       const colNameElm = createDomElement('span', { className: 'slick-column-name' }, header);
       applyHtmlToElement(colNameElm, m.name, this._options);
 
-      Utils.width(header, m.width! - this.headerColumnWidthDiff);
+      let colWidth = m.width! - this.headerColumnWidthDiff;
+      if (this._options.enableGridMenu && i === ln - 1) {
+        // account for 2px border on last column to give room for the column resize handle between the last column and the grid menu button
+        // scrollbar could be hidden or collapsed (e.g. Firefox) but we still have to compensate for the Grid Menu button width
+        colWidth -= this._lastColumnGridMenuCompensation;
+        if (!this.scrollbarDimensions?.width) {
+          colWidth -= this._options.gridMenu?.menuWidth ?? 18;
+        }
+      }
+      Utils.width(header, colWidth);
 
       let classname = m.headerCssClass || null;
       if (classname) {
@@ -3132,7 +3142,15 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         for (let i = 0, ln = header.children.length; i < ln; i++, columnIndex++) {
           const h = header.children[i] as HTMLElement;
           const col = vc[columnIndex] || {};
-          const width = (col.width || 0) - this.headerColumnWidthDiff;
+          let width = (col.width || 0) - this.headerColumnWidthDiff;
+          if (this._options.enableGridMenu && i === ln - 1) {
+            // account for 2px border on last column to give room for the column resize handle between the last column and the grid menu button
+            // scrollbar could be hidden or collapsed (e.g. Firefox) but we still have to compensate for the Grid Menu button width
+            width -= this._lastColumnGridMenuCompensation;
+            if (!this.scrollbarDimensions?.width) {
+              width -= this._options.gridMenu?.menuWidth ?? 18;
+            }
+          }
           if (Utils.width(h) !== width) {
             Utils.width(h, width);
           }

@@ -58,7 +58,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     hideSyncResizeButton: false,
     forceFitTitle: 'Force fit columns',
     marginBottom: 15,
-    menuWidth: 12,
+    menuWidth: 14,
     minHeight: 150,
     contentMinWidth: 0,
     resizeOnShowHeaderRow: false,
@@ -176,11 +176,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
     emptyElement(this._menuElm, true);
     this._gridMenuButtonElm = null as any;
     this._menuElm = null;
-    if (this._headerElm) {
-      // put back grid header original width (fixes width and frozen+gridMenu on left header)
-      this._headerElm.style.width = '100%';
-      this._headerElm.parentElement?.querySelector('.slick-grid-menu-container')?.remove();
-    }
+    this._headerElm?.parentElement?.querySelector('.slick-grid-menu-container')?.remove();
   }
 
   createColumnPickerContainer(): void {
@@ -892,7 +888,7 @@ export class SlickGridMenu extends MenuBaseClass<GridMenu> {
       forceFitTitle: this.extensionUtility.getPickerTitleOutputString('forceFitTitle', 'gridMenu'),
       syncResizeTitle: this.extensionUtility.getPickerTitleOutputString('syncResizeTitle', 'gridMenu'),
       iconCssClass: 'mdi mdi-menu',
-      menuWidth: 12,
+      menuWidth: 16,
       commandItems: [],
       hideClearAllFiltersCommand: false,
       hideRefreshDatasetCommand: false,
