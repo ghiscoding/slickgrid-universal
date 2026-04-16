@@ -4641,8 +4641,8 @@ describe('SlickGrid core file', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: false });
       grid.init();
 
-      // Simulate state for the branch: _isResizingLastColumn && hScrollDist && !vScrollDist
-      (grid as any)._isResizingLastColumn = true;
+      // Simulate state for the branch: _isResizingColumn && hScrollDist && !vScrollDist
+      (grid as any)._isResizingColumn = true;
       (grid as any).lastRenderedScrollLeft = 0;
       (grid as any).lastRenderedScrollTop = 0;
       (grid as any).prevScrollTop = 0;
