@@ -19,9 +19,9 @@ This new release also brings significant improvements to accessibility (a11y), m
 
 _if you're not dynamically hiding columns and you're not using `colspan` or `rowspan` then you might not be impacted as much by this change._
 
-For years, I had to keep some references in a Shared Service as `shared.allColumns` and `shared.visibleColumns`, mostly for translating locales which are being used by Column Picker and Grid Menu to keep track of which columns to hide/show and in which order they were; then later we called `grid.setColumns()` to update the columns in the grid... but that had side effects since SlickGrid never kept the entire column definitions list (up until now). However with v10, we simply start using `hidden` property on the column(s) to hide/show any of them, with this release we now keep the full columns reference at all time. We can translate them more easily and we no longer need to use `grid.setColumns()`, what we'll do instead is to start using `grid.updateColumnById('colId', { hidden: true })`. If you want to get visible columns, you can now just call `grid.getVisibleColumns()` which behind the scene is simply filtering `columns.filter(c => !c.hidden)`. This new approach does also come with new side effects for colspan/rowspan, because previously when we were hiding a column then the column to the right were previously taking over the spanning, but with the new approach, if we hide a column then its spanning will now disappear with the column (so I had to make code changes to handle that too)... If you want more details, you can see the full explanations of all the changes in [PR #2281](https://github.com/ghiscoding/slickgrid-universal/pull/2281)
+For years, I had to keep some references in a Shared Service as `shared.allColumns` and `shared.visibleColumns`, mostly for storing their position order and translating locales which are being used by Column Picker and Grid Menu to keep track of which columns to hide/show and in which order; then later we called `grid.setColumns()` to update the columns in the grid... but that had side effects since SlickGrid never kept the entire column definitions list (up until now). However with v10, we simply toggle the `hidden` property on the column(s) to hide/show any of them, with this release we now keep the full columns reference at all time. We can translate them more easily while keeping their original position and we no longer need to use `grid.setColumns()`, what we'll do instead is to start using `grid.updateColumnById('colId', { hidden: true })`. If you want to get visible columns, you can now just call `grid.getVisibleColumns()` which behind the scene is simply filtering `columns.filter(c => !c.hidden)`. This new approach does also come with new side effects for colspan/rowspan, because previously when we were hiding a column then the column to the right were previously taking over the spanning, but with the new approach, if we hide a column then its spanning will now disappear with the column (so I had to make code changes to handle that too)... If you want more details, you can see the full explanations of all the changes in [PR #2281](https://github.com/ghiscoding/slickgrid-universal/pull/2281)
 
-**Summary Note** `grid.getColumns()` now includes hidden columns — code that assumed only visible columns will need to update filter with `!col.hidden` or simply switch to `grid.getVisibleColumns()` (see below).
+**Summary Note** `grid.getColumns()` now includes hidden columns — code that assumed only visible columns will now need to filter with `!col.hidden` or simply switch to `grid.getVisibleColumns()` (see below).
 
 #### New Approach with column `hidden` property
 
@@ -87,7 +87,7 @@ I found that some of the internal icons were wrongly using the `mdi-` prefix and
 
 ### Auto-Enabled External Resources
 
-This change does not require any code change from the end user, but it is nonetheless a change to be aware of. The reason I decided to implement this one, is that even myself I often forget to enable the resource associated flags and typically if you want to load the resource then it's probably because you want to use it, hence auto-enabling the resource(s) makes sense. For example, if your register `ExcelExportService` then the library will now auto-enable the resource with its associated flag (which in this case is `enableExcelExport:true`)... unless you have already enabled/disabled the flag yourself, then in that case the internal assignment will simply be skipped and yours will prevail. Also just to be clear, the list of auto-enabled external resources is rather small and so it will auto-enable the following resources:
+This change does not require any code change from the end user, but it is nonetheless a change to be aware of. The reason I decided to implement this one, is that I often forget myself to enable the associated resource flags and typically if you want to load the resource then it's probably because you want to use it, hence auto-enabling the resource(s) makes sense. For example, if your register `ExcelExportService` then the library will now auto-enable the resources with their associated flags (which in this case is `enableExcelExport:true`)... unless you have already enabled/disabled the flag yourself, then in that case the internal assignment will simply be skipped and yours will prevail. Also just to be clear, the list of auto-enabled external resources is rather small and so it will auto-enable the following resources:
 
 - ExcelExportService → `enableExcelExport: true`
 - PdfExportService → `enablePdfExport: true`
@@ -121,11 +121,11 @@ There's also a new Renderer similar to Slots but implemented with native code to
 
 > There's also a new `columnListBuilder` which is similar to the other builder but for Columns, it can be useful as well to sort and/or filter columns.
 
-##### Menu Options `optionItems` (deprecated)
+#### Menu Options `optionItems` (deprecated)
 
 Menu Options list, using `optionItems` are now deprecated and will be removed in next major v11. That is quite similar to Command List and barely anyone uses it, so let's remove it in v11 and just use `commandItems` instead (see [docs](../column-functionalities/cell-menu.md#default-usage) for both usages).
 
-### Tooltips Outside the Grid
+### Tooltips Outside the Grid (new feature)
 
 You can now use the custom tooltip plugin to display tooltips on elements outside the grid (e.g., buttons, dialogs, etc.) by enabling the `observeAllTooltips` option. This allows the plugin to observe elements anywhere in your page that have `title` or `data-slick-tooltip` attributes and provide the same UI look & feel across your project. See Custom Tooltip [documentation](../grid-functionalities/custom-tooltip.md)
 
@@ -310,7 +310,7 @@ gridOptions = {
 }
 ```
 
-##### Menu Options `optionItems` (deprecated)
+#### Menu Options `optionItems` (deprecated)
 
 Menu Options list, using `optionItems` are now deprecated and will be removed in next major v11. That is quite similar to Command List and barely anyone uses it, so let's remove it in v11 and just use `commandItems` instead (see [docs](../column-functionalities/cell-menu.md#default-usage) for both usages).
 
