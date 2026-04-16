@@ -210,6 +210,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
   protected canvas: HTMLCanvasElement | null = null;
   protected canvas_context: CanvasRenderingContext2D | null = null;
+  protected _isResizingLastColumn = false;
   protected _lastColumnGridMenuCompensation = 2; // when Grid Menu is enabled, we need to compensate the last column width by 2px to give room for the column resize handle between the last column and the grid menu button
 
   // settings
@@ -244,6 +245,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     asyncEditorLoading: false,
     asyncEditorLoadDelay: 100,
     forceFitColumns: false,
+    autoScrollOnColumnResize: true,
     enableAsyncPostRender: false,
     asyncPostRenderDelay: 50,
     enableAsyncPostRenderCleanup: false,
@@ -1391,8 +1393,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     const oldCanvasWidthR = this.canvasWidthR;
     this.canvasWidth = this.getCanvasWidth();
 
-    if (this._options.createTopHeaderPanel) {
-      Utils.width(this._topHeaderPanel, this._options.topHeaderPanelWidth ?? this.canvasWidth);
+    if (this._options.createTopHeaderPanel && !this._isResizingLastColumn) {
+      const panelWidth = this._options.topHeaderPanelWidth ?? this.canvasWidth;
+      this._topHeaderPanel.style.width = typeof panelWidth === 'string' ? panelWidth : `${panelWidth}px`;
     }
     const widthChanged =
       this.canvasWidth !== oldCanvasWidth || this.canvasWidthL !== oldCanvasWidthL || this.canvasWidthR !== oldCanvasWidthR;
@@ -1429,8 +1432,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           Utils.width(this._footerRowL, this.canvasWidthL);
           Utils.width(this._footerRowR, this.canvasWidthR);
         }
-        if (this._options.createPreHeaderPanel) {
-          Utils.width(this._preHeaderPanel, this._options.preHeaderPanelWidth ?? this.canvasWidth);
+        if (this._options.createPreHeaderPanel && !this._isResizingLastColumn) {
+          const panelWidth = this._options.preHeaderPanelWidth ?? this.canvasWidth;
+          this._preHeaderPanel.style.width = typeof panelWidth === 'string' ? panelWidth : `${panelWidth}px`;
         }
         Utils.width(this._viewportTopL, this.canvasWidthL);
         Utils.width(this._viewportTopR, this.viewportW - this.canvasWidthL);
@@ -1456,8 +1460,9 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           Utils.width(this._footerRowL, this.canvasWidth);
         }
 
-        if (this._options.createPreHeaderPanel) {
-          Utils.width(this._preHeaderPanel, this._options.preHeaderPanelWidth ?? this.canvasWidth);
+        if (this._options.createPreHeaderPanel && !this._isResizingLastColumn) {
+          const panelWidth = this._options.preHeaderPanelWidth ?? this.canvasWidth;
+          this._preHeaderPanel.style.width = typeof panelWidth === 'string' ? panelWidth : `${panelWidth}px`;
         }
         Utils.width(this._viewportTopL, '100%');
 
@@ -2523,12 +2528,24 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             if (this._options.syncColumnCellResize) {
               this.applyColumnWidths();
             }
+
+            // keep drag experience smooth by auto-scrolling when stretching the last visible column
+            if (this._options.autoScrollOnColumnResize && !this._options.forceFitColumns && i === vc.length - 1 && d > 0) {
+              this._isResizingLastColumn = true;
+              this.updateCanvasWidth();
+              const maxScrollLeft = Math.max(0, this._viewportScrollContainerX.scrollWidth - this._viewportScrollContainerX.clientWidth);
+              if (this._viewportScrollContainerX.scrollLeft < maxScrollLeft) {
+                this.scrollToX(maxScrollLeft);
+              }
+            }
+
             this.triggerEvent(this.onColumnsDrag, {
               triggeredByColumn: resizeElms.resizeableElement,
               resizeHandle: resizeElms.resizeableHandleElement,
             });
           },
           onResizeEnd: (_e, resizeElms) => {
+            this._isResizingLastColumn = false;
             resizeElms.resizeableElement.classList.remove('slick-header-column-active');
 
             const triggeredByColumn = resizeElms.resizeableElement.id.replace(this.uid, '');
@@ -2548,6 +2565,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
             }
             this.updateCanvasWidth(true);
             this.render();
+            this.scrollToX(this._viewportScrollContainerX.scrollLeft);
             this.triggerEvent(this.onColumnsResized, { triggeredByColumn });
             clearTimeout(this._columnResizeTimer);
             this._columnResizeTimer = setTimeout(() => (this.columnResizeDragging = false), this._options.columnResizingDelay);
@@ -5436,6 +5454,12 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       const dx = Math.abs(this.lastRenderedScrollLeft - this.scrollLeft);
       const dy = Math.abs(this.lastRenderedScrollTop - this.scrollTop);
       if (dx > 20 || dy > 20) {
+        if (this._isResizingLastColumn && hScrollDist && !vScrollDist) {
+          this.lastRenderedScrollLeft = this.scrollLeft;
+          this.triggerEvent(this.onViewportChanged, {});
+          return true;
+        }
+
         // if rendering is forced or scrolling is small enough to be "easy", just render
         if (this._options.forceSyncScrolling || (dy < this.viewportH && dx < this.viewportW)) {
           this.render();

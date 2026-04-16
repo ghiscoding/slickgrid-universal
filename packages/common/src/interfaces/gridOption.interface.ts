@@ -162,6 +162,9 @@ export interface GridOption<C extends Column = Column> {
   /** Auto-resize options (bottom padding, minHeight, ...)  */
   autoResize?: AutoResizeOption;
 
+  /** Defaults to true, auto-scroll the grid horizontally while stretching the last visible column resize handle. */
+  autoScrollOnColumnResize?: boolean;
+
   /** Auto-tooltip options (enableForCells, enableForHeaderCells, maxToolTipLength) */
   autoTooltipOptions?: AutoTooltipOption;
 
