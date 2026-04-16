@@ -4637,6 +4637,48 @@ describe('SlickGrid core file', () => {
       expect(scrollToXSpy).toHaveBeenCalledWith(400);
     });
 
+    it('should trigger onViewportChanged and return true when resizing last column and only horizontal scroll occurs', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: false });
+      grid.init();
+
+      // Simulate state for the branch: _isResizingLastColumn && hScrollDist && !vScrollDist
+      (grid as any)._isResizingLastColumn = true;
+      (grid as any).lastRenderedScrollLeft = 0;
+      (grid as any).lastRenderedScrollTop = 0;
+      (grid as any).prevScrollTop = 0;
+      (grid as any).scrollTop = 0;
+
+      // Ensure scroll bounds allow scrollLeft = 100
+      (grid as any).canvasWidth = 200;
+      if (!(grid as any)._viewportScrollContainerX) {
+        (grid as any)._viewportScrollContainerX = document.createElement('div');
+      }
+      const viewportX = (grid as any)._viewportScrollContainerX;
+      Object.defineProperty(viewportX, 'scrollWidth', { configurable: true, writable: true, value: 200 });
+      Object.defineProperty(viewportX, 'clientWidth', { configurable: true, writable: true, value: 50 });
+      Object.defineProperty(viewportX, 'scrollLeft', { configurable: true, writable: true, value: 0 });
+
+      // Set prevScrollLeft and scrollLeft right before dispatching scroll event
+      (grid as any).prevScrollLeft = 0;
+      viewportX.scrollLeft = 100;
+      (grid as any).scrollLeft = 100;
+
+      // Stub scrollToX to avoid side effects
+      vi.spyOn(grid as any, 'scrollToX').mockImplementation(() => {});
+
+      const onViewportChangedSpy = vi.spyOn(grid, 'triggerEvent');
+
+      // Dispatch a real scroll event on the viewport element
+      const scrollEvent = new Event('scroll');
+      viewportX.dispatchEvent(scrollEvent);
+      // Call handleScroll to simulate the grid's scroll handler
+      (grid as any).handleScroll(scrollEvent);
+
+      // Should update lastRenderedScrollLeft, trigger onViewportChanged
+      expect((grid as any).lastRenderedScrollLeft).toBe(100);
+      expect(onViewportChangedSpy).toHaveBeenCalledWith(grid.onViewportChanged, expect.anything());
+    });
+
     it('should expect the last column to never be resizable', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: true });
       grid.init();
