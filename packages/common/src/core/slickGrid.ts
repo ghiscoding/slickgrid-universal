@@ -3172,11 +3172,16 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
           const col = vc[columnIndex] || {};
           let width = (col.width || 0) - this.headerColumnWidthDiff;
           if (this._options.enableGridMenu && i === ln - 1) {
-            // account for 2px border on last column to give room for the column resize handle between the last column and the grid menu button
-            // scrollbar could be hidden or collapsed (e.g. Firefox) but we still have to compensate for the Grid Menu button width
-            width -= this._lastColumnGridMenuCompensation;
-            if (!this.scrollbarDimensions?.width) {
-              width -= this._options.gridMenu?.menuWidth ?? 18;
+            // Only apply compensation if columns are at least as wide as the canvas (i.e., horizontal scroll is needed).
+            // This avoids a gap at the end of the last column when columns are smaller than the grid.
+            const totalColumnsWidth = vc.reduce((sum, col) => sum + (col.width || 0), 0);
+            const canvasWidth = this.getViewportInnerWidth();
+            if (totalColumnsWidth >= canvasWidth) {
+              // Compensate for the resize handle and grid menu button (including hidden/collapsed scrollbars)
+              width -= this._lastColumnGridMenuCompensation;
+              if (!this.scrollbarDimensions?.width) {
+                width -= this._options.gridMenu?.menuWidth ?? 18;
+              }
             }
           }
           if (Utils.width(h) !== width) {
