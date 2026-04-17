@@ -2664,10 +2664,10 @@ describe('SlickGrid core file', () => {
       expect(result).toBe(DEFAULT_GRID_WIDTH + (1000 + 80 * 2) * 2 + 1000); // Left + Right => 800 + (1000 + (defaultColumnWidth * 2)) * 2 + 1000
     });
 
-    it('should remove Grid Menu width from the last header when scrollbar width is collapsed', () => {
+    it('should remove Grid Menu width from the last header when scrollbar width is collapsed and columns are wider than canvas', () => {
       const columns = [
-        { id: 'firstName', field: 'firstName', name: 'First Name', width: 80 },
-        { id: 'lastName', field: 'lastName', name: 'Last Name', width: 80 },
+        { id: 'firstName', field: 'firstName', name: 'First Name', width: 800 },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', width: 800 },
       ] as Column[];
       grid = new SlickGrid<any, Column>(container, [], columns, {
         ...defaultOptions,
@@ -2680,8 +2680,8 @@ describe('SlickGrid core file', () => {
       const firstHeaderWidth = parseFloat(headerElms[0].style.width || '0');
       const lastHeaderWidth = parseFloat(headerElms[1].style.width || '0');
 
-      expect(firstHeaderWidth).toBe(80);
-      expect(lastHeaderWidth).toBe(60);
+      expect(firstHeaderWidth).toBe(800);
+      expect(lastHeaderWidth).toBe(780);
       expect(firstHeaderWidth - lastHeaderWidth).toBe(20);
     });
 
@@ -2706,14 +2706,14 @@ describe('SlickGrid core file', () => {
       const lastHeaderWidth = parseFloat(headerElms[1].style.width || '0');
 
       expect(firstHeaderWidth).toBe(80);
-      expect(lastHeaderWidth).toBe(78);
-      expect(firstHeaderWidth - lastHeaderWidth).toBe(2);
+      expect(lastHeaderWidth).toBe(80);
+      expect(firstHeaderWidth - lastHeaderWidth).toBe(0);
     });
 
-    it('should use default Grid Menu width fallback when scrollbar width is collapsed and menu width is undefined', () => {
+    it('should use default Grid Menu width fallback when scrollbar width is collapsed and menu width is undefined and columns are wider than canvas', () => {
       const columns = [
-        { id: 'firstName', field: 'firstName', name: 'First Name', width: 80 },
-        { id: 'lastName', field: 'lastName', name: 'Last Name', width: 80 },
+        { id: 'firstName', field: 'firstName', name: 'First Name', width: 800 },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', width: 800 },
       ] as Column[];
       grid = new SlickGrid<any, Column>(container, [], columns, {
         ...defaultOptions,
@@ -2730,8 +2730,8 @@ describe('SlickGrid core file', () => {
       const firstHeaderWidth = parseFloat(headerElms[0].style.width || '0');
       const lastHeaderWidth = parseFloat(headerElms[1].style.width || '0');
 
-      expect(firstHeaderWidth).toBe(80);
-      expect(lastHeaderWidth).toBe(60);
+      expect(firstHeaderWidth).toBe(800);
+      expect(lastHeaderWidth).toBe(780);
       expect(firstHeaderWidth - lastHeaderWidth).toBe(20);
     });
 
