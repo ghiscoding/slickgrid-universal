@@ -23,6 +23,12 @@ const FluentIconExample: React.FC = () => {
     'fi-code',
     'fi-copy',
     'fi-cut',
+    'fi-database',
+    'fi-database-arrow-down',
+    'fi-database-arrow-up',
+    'fi-database-checkmark',
+    'fi-database-search',
+    'fi-database-warning',
     'fi-delete',
     'fi-dismiss',
     'fi-edit',
@@ -30,6 +36,7 @@ const FluentIconExample: React.FC = () => {
     'fi-filter-dismiss',
     'fi-info',
     'fi-link',
+    'fi-more-horizontal',
     'fi-more-vertical',
     'fi-navigation',
     'fi-pin',
@@ -47,6 +54,7 @@ const FluentIconExample: React.FC = () => {
     'fi-table',
     'fi-table-edit',
     'fi-triangle-right',
+    'fi-warning',
   ]);
 
   return (
