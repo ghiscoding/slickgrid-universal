@@ -18,7 +18,7 @@ catalog:
   '@types/react-dom': ^19.2.3
   '@types/sortablejs': ^1.15.9
   '@vitejs/plugin-react': ^6.0.1
-  '@vitejs/plugin-vue': ^6.0.5
+  '@vitejs/plugin-vue': ^6.0.6
   '@vitest/coverage-v8': ^4.1.4
   '@vitest/ui': ^4.1.4
   bootstrap: ^5.3.8
@@ -26,8 +26,8 @@ catalog:
   cypress: ^15.14.0
   cypress-real-events: ^1.15.0
   dequal: ^2.0.3
-  dompurify: ^3.3.3
-  globals: ^17.4.0
+  dompurify: ^3.4.0
+  globals: ^17.5.0
   i18next: ^25.10.10
   i18next-vue: ^5.4.0
   jsdom: ^29.0.2
@@ -39,7 +39,7 @@ catalog:
   oxlint: 1.43.0
   react: ^19.2.5
   react-dom: ^19.2.5
-  react-router: ^7.14.0
+  react-router: ^7.14.1
   remove-glob: ^1.2.0
   rxjs: ^7.8.2
   sass: ^1.99.0
@@ -51,7 +51,7 @@ catalog:
   vue: ^3.5.32
 
 overrides:
-  '@hono/node-server': ^1.19.13
+  '@hono/node-server': ^1.19.14
   '@isaacs/brace-expansion': ^5.0.1
   lodash: ^4.18.1
   minimatch: ^10.2.5
