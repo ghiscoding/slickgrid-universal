@@ -1,7 +1,7 @@
 {
   "name": "vanilla-demo",
   "private": true,
-  "version": "10.4.2",
+  "version": "10.5.0",
   "scripts": {
     "build": "pnpm type-check && vite build",
     "type-check": "tsc --noEmit",

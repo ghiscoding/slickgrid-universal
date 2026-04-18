@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.5.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.4.2...v10.5.0) (2026-04-18)
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#2537](https://github.com/ghiscoding/slickgrid-universal/issues/2537)) ([ed475a3](https://github.com/ghiscoding/slickgrid-universal/commit/ed475a34bd8432caca9f2858f0a48e6194dfc6c9)) - by @renovate-bot
+
 ## [10.4.2](https://github.com/ghiscoding/slickgrid-universal/compare/v10.4.0...v10.4.2) (2026-04-03)
 
 **Note:** Version bump only for package aurelia-slickgrid-demo

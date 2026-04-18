@@ -4,6 +4,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.5.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.4.2...v10.5.0) (2026-04-18)
+
+### Features
+
+* **styling:** add Fluent Theme icons ([1e719a7](https://github.com/ghiscoding/slickgrid-universal/commit/1e719a7e5db157dcf13132f56881841c1e0c759d)) - by @ghiscoding
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#2537](https://github.com/ghiscoding/slickgrid-universal/issues/2537)) ([ed475a3](https://github.com/ghiscoding/slickgrid-universal/commit/ed475a34bd8432caca9f2858f0a48e6194dfc6c9)) - by @renovate-bot
+
 ## [10.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.3.0...v10.4.0) (2026-04-02)
 
 ### Features

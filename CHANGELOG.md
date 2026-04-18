@@ -4,6 +4,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.5.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.4.2...v10.5.0) (2026-04-18)
+
+### Features
+
+* add `autoScrollOnColumnResize` grid option (default true) ([#2531](https://github.com/ghiscoding/slickgrid-universal/issues/2531)) ([3a98ae7](https://github.com/ghiscoding/slickgrid-universal/commit/3a98ae7e705bd0c0f0683281ecf2bb2b659fa718)) - by @ghiscoding
+* **styling:** add Fluent Theme icons ([1e719a7](https://github.com/ghiscoding/slickgrid-universal/commit/1e719a7e5db157dcf13132f56881841c1e0c759d)) - by @ghiscoding
+
+### Bug Fixes
+
+* column reorder requires  SortableJS fallback for Firefox/Linux ([#2535](https://github.com/ghiscoding/slickgrid-universal/issues/2535)) ([73c034e](https://github.com/ghiscoding/slickgrid-universal/commit/73c034eac055b6037ab134471f110b38048b17bf)) - by @ghiscoding
+* **deps:** update all non-major dependencies ([#2537](https://github.com/ghiscoding/slickgrid-universal/issues/2537)) ([ed475a3](https://github.com/ghiscoding/slickgrid-universal/commit/ed475a34bd8432caca9f2858f0a48e6194dfc6c9)) - by @renovate-bot
+* don't assign empty nonce unless provided as grid option ([#2526](https://github.com/ghiscoding/slickgrid-universal/issues/2526)) ([0ea70cf](https://github.com/ghiscoding/slickgrid-universal/commit/0ea70cf27e8b4f16668987de08f29512c8243794)) - by @ghiscoding
+* **grid:** only apply last column header width compensation when needed ([#2532](https://github.com/ghiscoding/slickgrid-universal/issues/2532)) ([f5717a9](https://github.com/ghiscoding/slickgrid-universal/commit/f5717a9c0e1f7eeb0619d88ac07cdd983a233fce)) - by @ghiscoding
+* properly update lastSearchValue to support presetted filter cleanup ([#2527](https://github.com/ghiscoding/slickgrid-universal/issues/2527)) ([305d0d6](https://github.com/ghiscoding/slickgrid-universal/commit/305d0d6dc27095721b7924e09876b08c98e252eb)) - by @zewa666
+* **styling:** col header resize issue w/collapsable scrollbar Firefox ([#2530](https://github.com/ghiscoding/slickgrid-universal/issues/2530)) ([a69a63e](https://github.com/ghiscoding/slickgrid-universal/commit/a69a63ed55afd7e8a7f7a5099adbc647df59a69f)) - by @ghiscoding
+
+### Performance Improvements
+
+* **excel-export:** use caching to nearly halve export time ([#2520](https://github.com/ghiscoding/slickgrid-universal/issues/2520)) ([de3c733](https://github.com/ghiscoding/slickgrid-universal/commit/de3c733c332ee182dab4dbabe58ae1eaf00cd178)) - by @ghiscoding
+
 ## [10.4.2](https://github.com/ghiscoding/slickgrid-universal/compare/v10.4.0...v10.4.2) (2026-04-03)
 
 **Note:** Version bump only for package slickgrid-universal
