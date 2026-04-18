@@ -24,9 +24,7 @@
   },
   "angularCompilerOptions": {
     "compilationMode": "full",
-    "enableIvy": true,
     "preserveWhitespaces": true,
-    "strictMetadataEmit": true,
     "strictTemplates": true,
     "extendedDiagnostics": {
       "checks": {
