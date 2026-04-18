@@ -2138,7 +2138,10 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
       ghostClass: 'slick-sortable-placeholder',
       draggable: '.slick-header-column',
       dragoverBubble: false,
-      preventOnFilter: false, // allow column to be resized even when they are not orderable
+      // Fixes broken Firefox-Linux dragging
+      forceFallback: /firefox/i.test(navigator.userAgent) && /linux/i.test(navigator.userAgent),
+      // allow column to be resized even when they are not orderable
+      preventOnFilter: false,
       revertClone: true,
       scroll: !this.hasFrozenColumns(), // enable auto-scroll
       // lock unorderable columns by using a combo of filter + onMove
