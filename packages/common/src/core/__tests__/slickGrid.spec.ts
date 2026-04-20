@@ -4769,6 +4769,44 @@ describe('SlickGrid core file', () => {
       document.body.dispatchEvent(upEvt);
     });
 
+    it('should trigger accelerated auto-scroll when resizing column inside grid (non-browser-edge)', () => {
+      grid = new SlickGrid<any, Column>(container, data, columns, {
+        ...defaultOptions,
+        forceFitColumns: false,
+        autoScrollOnColumnResize: true,
+      });
+      grid.init();
+
+      const onColumnsDragSpy = vi.spyOn(grid.onColumnsDrag, 'notify');
+      const viewportX = (grid as any)._viewportScrollContainerX as HTMLDivElement;
+      Object.defineProperty(viewportX, 'scrollWidth', { configurable: true, writable: true, value: 1200 });
+      Object.defineProperty(viewportX, 'clientWidth', { configurable: true, writable: true, value: 800 });
+      Object.defineProperty(viewportX, 'scrollLeft', { configurable: true, writable: true, value: 0 });
+
+      const columnElms = container.querySelectorAll('.slick-header-column');
+      const lastColumnElm = columnElms[3];
+      const resizeHandleElm = lastColumnElm.querySelector('.slick-resizable-handle') as HTMLDivElement;
+
+      const cMouseDownEvent = new CustomEvent('mousedown');
+      const bodyMouseMoveEvent = new CustomEvent('mousemove');
+      Object.defineProperty(bodyMouseMoveEvent, 'target', { writable: true, value: resizeHandleElm });
+      Object.defineProperty(cMouseDownEvent, 'pageX', { writable: true, value: 80 });
+      Object.defineProperty(cMouseDownEvent, 'pageY', { writable: true, value: 12 });
+      Object.defineProperty(bodyMouseMoveEvent, 'pageX', { writable: true, value: 140 });
+      Object.defineProperty(bodyMouseMoveEvent, 'pageY', { writable: true, value: 13 });
+      // Simulate pointer inside grid, not at browser edge
+      Object.defineProperty(bodyMouseMoveEvent, 'clientX', { writable: true, value: 400 });
+
+      resizeHandleElm.dispatchEvent(cMouseDownEvent);
+      container.dispatchEvent(cMouseDownEvent);
+      document.body.dispatchEvent(bodyMouseMoveEvent);
+
+      // Advance timers to trigger the accelerated auto-scroll branch
+      vi.advanceTimersByTime(200);
+      expect(onColumnsDragSpy).toHaveBeenCalled();
+      document.body.dispatchEvent(new CustomEvent('mouseup'));
+    });
+
     it('should trigger onViewportChanged and return true when resizing last column and only horizontal scroll occurs', () => {
       grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, forceFitColumns: false });
       grid.init();
