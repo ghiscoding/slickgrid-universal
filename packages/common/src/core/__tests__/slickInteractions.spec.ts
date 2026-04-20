@@ -235,14 +235,21 @@ describe('MouseWheel class', () => {
 describe('Resizable class', () => {
   let rsz: any;
   let containerElement: HTMLDivElement;
+  let previousPointerEvent: typeof window.PointerEvent | undefined;
 
   beforeEach(() => {
+    previousPointerEvent = (window as any).PointerEvent;
     containerElement = document.createElement('div');
     containerElement.className = 'slick-container';
   });
 
   afterEach(() => {
     rsz?.destroy();
+    if (previousPointerEvent) {
+      (window as any).PointerEvent = previousPointerEvent;
+    } else {
+      delete (window as any).PointerEvent;
+    }
   });
 
   it('should be able to instantiate the class', () => {
@@ -258,7 +265,7 @@ describe('Resizable class', () => {
     expect(() => Resizable({} as any)).toThrow('[SlickResizable] You did not provide a valid html element that will be used for the handle to resize.');
   });
 
-  it('should trigger mousedown and expect a dragInit and a dragStart and drag to all happen since it was triggered by an allowed element and we did move afterward', () => {
+  it('should trigger resize callbacks on start, move and end interactions', () => {
     const resizeSpy = vi.fn();
     const resizeStartSpy = vi.fn();
     const resizeEndSpy = vi.fn();
@@ -272,23 +279,221 @@ describe('Resizable class', () => {
       onResizeEnd: resizeEndSpy,
     });
 
-    const mdEvt = new MouseEvent('mousedown');
-    Object.defineProperty(mdEvt, 'clientX', { writable: true, configurable: true, value: 10 });
-    Object.defineProperty(mdEvt, 'clientY', { writable: true, configurable: true, value: 10 });
-    containerElement.dispatchEvent(mdEvt);
+    const hasPointerEvents = typeof window !== 'undefined' && 'PointerEvent' in window;
 
-    const mmEvt = new MouseEvent('mousemove');
-    const muEvt = new MouseEvent('mouseup');
-    Object.defineProperty(mmEvt, 'clientX', { writable: true, configurable: true, value: 12 });
-    Object.defineProperty(mmEvt, 'clientY', { writable: true, configurable: true, value: 10 });
-    Object.defineProperty(muEvt, 'clientX', { writable: true, configurable: true, value: 12 });
-    Object.defineProperty(muEvt, 'clientY', { writable: true, configurable: true, value: 10 });
-    document.body.dispatchEvent(mmEvt);
-    document.body.dispatchEvent(muEvt);
+    if (hasPointerEvents) {
+      const pointerDownEvt = new Event('pointerdown');
+      Object.defineProperty(pointerDownEvt, 'pointerType', { writable: true, configurable: true, value: 'mouse' });
+      Object.defineProperty(pointerDownEvt, 'button', { writable: true, configurable: true, value: 0 });
+      Object.defineProperty(pointerDownEvt, 'pointerId', { writable: true, configurable: true, value: 1 });
+
+      const pointerMoveEvt = new Event('pointermove');
+      Object.defineProperty(pointerMoveEvt, 'pointerType', { writable: true, configurable: true, value: 'mouse' });
+      Object.defineProperty(pointerMoveEvt, 'pointerId', { writable: true, configurable: true, value: 1 });
+
+      const pointerUpEvt = new Event('pointerup');
+      Object.defineProperty(pointerUpEvt, 'pointerType', { writable: true, configurable: true, value: 'mouse' });
+      Object.defineProperty(pointerUpEvt, 'pointerId', { writable: true, configurable: true, value: 1 });
+
+      containerElement.dispatchEvent(pointerDownEvt);
+      containerElement.dispatchEvent(pointerMoveEvt);
+      containerElement.dispatchEvent(pointerUpEvt);
+    } else {
+      const mdEvt = new MouseEvent('mousedown');
+      Object.defineProperty(mdEvt, 'clientX', { writable: true, configurable: true, value: 10 });
+      Object.defineProperty(mdEvt, 'clientY', { writable: true, configurable: true, value: 10 });
+      containerElement.dispatchEvent(mdEvt);
+
+      const mmEvt = new MouseEvent('mousemove');
+      const muEvt = new MouseEvent('mouseup');
+      Object.defineProperty(mmEvt, 'clientX', { writable: true, configurable: true, value: 12 });
+      Object.defineProperty(mmEvt, 'clientY', { writable: true, configurable: true, value: 10 });
+      Object.defineProperty(muEvt, 'clientX', { writable: true, configurable: true, value: 12 });
+      Object.defineProperty(muEvt, 'clientY', { writable: true, configurable: true, value: 10 });
+      document.body.dispatchEvent(mmEvt);
+      document.body.dispatchEvent(muEvt);
+    }
 
     expect(rsz).toBeTruthy();
-    expect(resizeStartSpy).toHaveBeenCalledWith(mdEvt, { resizeableElement: containerElement, resizeableHandleElement: containerElement });
+    expect(resizeStartSpy).toHaveBeenCalledTimes(1);
     expect(resizeSpy).toHaveBeenCalled();
     expect(resizeEndSpy).toHaveBeenCalled();
+  });
+
+  it('should use pointer events and call resize callbacks with pointer capture', () => {
+    const resizeSpy = vi.fn();
+    const resizeStartSpy = vi.fn();
+    const resizeEndSpy = vi.fn();
+    const setPointerCaptureSpy = vi.fn();
+    const releasePointerCaptureSpy = vi.fn();
+    const hasPointerCaptureSpy = vi.fn().mockReturnValue(true);
+
+    (window as any).PointerEvent = class PointerEventMock extends Event {};
+    (containerElement as any).setPointerCapture = setPointerCaptureSpy;
+    (containerElement as any).releasePointerCapture = releasePointerCaptureSpy;
+    (containerElement as any).hasPointerCapture = hasPointerCaptureSpy;
+
+    rsz = Resizable({
+      resizeableElement: containerElement,
+      resizeableHandleElement: containerElement,
+      onResize: resizeSpy,
+      onResizeStart: resizeStartSpy,
+      onResizeEnd: resizeEndSpy,
+    });
+
+    const pointerDownEvt = new Event('pointerdown');
+    Object.defineProperty(pointerDownEvt, 'pointerType', { writable: true, configurable: true, value: 'mouse' });
+    Object.defineProperty(pointerDownEvt, 'button', { writable: true, configurable: true, value: 0 });
+    Object.defineProperty(pointerDownEvt, 'pointerId', { writable: true, configurable: true, value: 1 });
+
+    const pointerMoveEvt = new Event('pointermove');
+    Object.defineProperty(pointerMoveEvt, 'pointerType', { writable: true, configurable: true, value: 'mouse' });
+    Object.defineProperty(pointerMoveEvt, 'pointerId', { writable: true, configurable: true, value: 1 });
+
+    const pointerUpEvt = new Event('pointerup');
+    Object.defineProperty(pointerUpEvt, 'pointerType', { writable: true, configurable: true, value: 'mouse' });
+    Object.defineProperty(pointerUpEvt, 'pointerId', { writable: true, configurable: true, value: 1 });
+
+    containerElement.dispatchEvent(pointerDownEvt);
+    containerElement.dispatchEvent(pointerMoveEvt);
+    containerElement.dispatchEvent(pointerUpEvt);
+
+    expect(setPointerCaptureSpy).toHaveBeenCalledWith(1);
+    expect(resizeStartSpy).toHaveBeenCalledWith(pointerDownEvt, {
+      resizeableElement: containerElement,
+      resizeableHandleElement: containerElement,
+    });
+    expect(resizeSpy).toHaveBeenCalled();
+    expect(resizeEndSpy).toHaveBeenCalled();
+    expect(hasPointerCaptureSpy).toHaveBeenCalledWith(1);
+    expect(releasePointerCaptureSpy).toHaveBeenCalledWith(1);
+  });
+
+  it('should ignore non-left mouse button with pointer events', () => {
+    const resizeStartSpy = vi.fn();
+
+    (window as any).PointerEvent = class PointerEventMock extends Event {};
+
+    rsz = Resizable({
+      resizeableElement: containerElement,
+      resizeableHandleElement: containerElement,
+      onResizeStart: resizeStartSpy,
+    });
+
+    const pointerDownEvt = new Event('pointerdown');
+    Object.defineProperty(pointerDownEvt, 'pointerType', { writable: true, configurable: true, value: 'mouse' });
+    Object.defineProperty(pointerDownEvt, 'button', { writable: true, configurable: true, value: 1 });
+    Object.defineProperty(pointerDownEvt, 'pointerId', { writable: true, configurable: true, value: 11 });
+
+    containerElement.dispatchEvent(pointerDownEvt);
+
+    expect(resizeStartSpy).not.toHaveBeenCalled();
+  });
+
+  it('should release pointer capture when pointer resize start is cancelled', () => {
+    const resizeStartSpy = vi.fn().mockReturnValue(false);
+    const releasePointerCaptureSpy = vi.fn();
+
+    (window as any).PointerEvent = class PointerEventMock extends Event {};
+    (containerElement as any).releasePointerCapture = releasePointerCaptureSpy;
+
+    rsz = Resizable({
+      resizeableElement: containerElement,
+      resizeableHandleElement: containerElement,
+      onResizeStart: resizeStartSpy,
+    });
+
+    const pointerDownEvt = new Event('pointerdown');
+    Object.defineProperty(pointerDownEvt, 'pointerType', { writable: true, configurable: true, value: 'mouse' });
+    Object.defineProperty(pointerDownEvt, 'button', { writable: true, configurable: true, value: 0 });
+    Object.defineProperty(pointerDownEvt, 'pointerId', { writable: true, configurable: true, value: 3 });
+
+    containerElement.dispatchEvent(pointerDownEvt);
+
+    expect(resizeStartSpy).toHaveBeenCalledTimes(1);
+    expect(releasePointerCaptureSpy).toHaveBeenCalledWith(3);
+  });
+
+  it('should ignore mousedown fallback while a pointer interaction is active', () => {
+    const resizeStartSpy = vi.fn();
+
+    (window as any).PointerEvent = class PointerEventMock extends Event {};
+
+    rsz = Resizable({
+      resizeableElement: containerElement,
+      resizeableHandleElement: containerElement,
+      onResizeStart: resizeStartSpy,
+    });
+
+    const pointerDownEvt = new Event('pointerdown');
+    Object.defineProperty(pointerDownEvt, 'pointerType', { writable: true, configurable: true, value: 'mouse' });
+    Object.defineProperty(pointerDownEvt, 'button', { writable: true, configurable: true, value: 0 });
+    Object.defineProperty(pointerDownEvt, 'pointerId', { writable: true, configurable: true, value: 5 });
+    containerElement.dispatchEvent(pointerDownEvt);
+
+    containerElement.dispatchEvent(new MouseEvent('mousedown'));
+
+    expect(resizeStartSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('should ignore pointer move/up events from a different pointer id', () => {
+    const resizeSpy = vi.fn();
+    const resizeEndSpy = vi.fn();
+
+    (window as any).PointerEvent = class PointerEventMock extends Event {};
+
+    rsz = Resizable({
+      resizeableElement: containerElement,
+      resizeableHandleElement: containerElement,
+      onResize: resizeSpy,
+      onResizeEnd: resizeEndSpy,
+    });
+
+    const pointerDownEvt = new Event('pointerdown');
+    Object.defineProperty(pointerDownEvt, 'pointerType', { writable: true, configurable: true, value: 'mouse' });
+    Object.defineProperty(pointerDownEvt, 'button', { writable: true, configurable: true, value: 0 });
+    Object.defineProperty(pointerDownEvt, 'pointerId', { writable: true, configurable: true, value: 7 });
+    containerElement.dispatchEvent(pointerDownEvt);
+
+    const wrongPointerMoveEvt = new Event('pointermove');
+    Object.defineProperty(wrongPointerMoveEvt, 'pointerType', { writable: true, configurable: true, value: 'mouse' });
+    Object.defineProperty(wrongPointerMoveEvt, 'pointerId', { writable: true, configurable: true, value: 8 });
+    containerElement.dispatchEvent(wrongPointerMoveEvt);
+
+    const wrongPointerUpEvt = new Event('pointerup');
+    Object.defineProperty(wrongPointerUpEvt, 'pointerType', { writable: true, configurable: true, value: 'mouse' });
+    Object.defineProperty(wrongPointerUpEvt, 'pointerId', { writable: true, configurable: true, value: 8 });
+    containerElement.dispatchEvent(wrongPointerUpEvt);
+
+    expect(resizeSpy).not.toHaveBeenCalled();
+    expect(resizeEndSpy).not.toHaveBeenCalled();
+  });
+
+  it('should handle touch pointer move without preventing default', () => {
+    const resizeSpy = vi.fn();
+
+    (window as any).PointerEvent = class PointerEventMock extends Event {};
+
+    rsz = Resizable({
+      resizeableElement: containerElement,
+      resizeableHandleElement: containerElement,
+      onResize: resizeSpy,
+    });
+
+    const pointerDownEvt = new Event('pointerdown');
+    Object.defineProperty(pointerDownEvt, 'pointerType', { writable: true, configurable: true, value: 'touch' });
+    Object.defineProperty(pointerDownEvt, 'button', { writable: true, configurable: true, value: 0 });
+    Object.defineProperty(pointerDownEvt, 'pointerId', { writable: true, configurable: true, value: 9 });
+    containerElement.dispatchEvent(pointerDownEvt);
+
+    const pointerMoveEvt = new Event('pointermove');
+    Object.defineProperty(pointerMoveEvt, 'pointerType', { writable: true, configurable: true, value: 'touch' });
+    Object.defineProperty(pointerMoveEvt, 'pointerId', { writable: true, configurable: true, value: 9 });
+    const preventDefaultSpy = vi.fn();
+    Object.defineProperty(pointerMoveEvt, 'preventDefault', { writable: true, configurable: true, value: preventDefaultSpy });
+    containerElement.dispatchEvent(pointerMoveEvt);
+
+    expect(preventDefaultSpy).not.toHaveBeenCalled();
+    expect(resizeSpy).toHaveBeenCalled();
   });
 });

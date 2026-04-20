@@ -271,21 +271,47 @@ export function Resizable(options: ResizableOption): {
   destroy: () => void;
 } {
   const { resizeableElement, resizeableHandleElement, onResizeStart, onResize, onResizeEnd } = options;
+  const supportsPointerEvents = typeof window !== 'undefined' && 'PointerEvent' in window;
+  let activePointerId: number | undefined;
   if (!resizeableHandleElement || typeof resizeableHandleElement.addEventListener !== 'function') {
     throw new Error('[SlickResizable] You did not provide a valid html element that will be used for the handle to resize.');
   }
 
   function init(): void {
-    // add event listeners on the draggable element
+    if (supportsPointerEvents) {
+      resizeableHandleElement.addEventListener('pointerdown', pointerResizeStartHandler as EventListener);
+    }
+
+    // Keep mouse/touch listeners for backward compatibility and test environments
+    // where interactions are simulated with mousedown/mousemove/mouseup.
     resizeableHandleElement.addEventListener('mousedown', resizeStartHandler);
     resizeableHandleElement.addEventListener('touchstart', resizeStartHandler);
   }
 
   function destroy(): void {
     if (typeof resizeableHandleElement?.removeEventListener === 'function') {
+      if (supportsPointerEvents) {
+        resizeableHandleElement.removeEventListener('pointerdown', pointerResizeStartHandler as EventListener);
+        removePointerListeners();
+      }
+
       resizeableHandleElement.removeEventListener('mousedown', resizeStartHandler);
       resizeableHandleElement.removeEventListener('touchstart', resizeStartHandler);
     }
+  }
+
+  function addPointerListeners(): void {
+    resizeableHandleElement.addEventListener('pointermove', pointerResizingHandler as EventListener);
+    resizeableHandleElement.addEventListener('pointerup', pointerResizeEndHandler as EventListener);
+    resizeableHandleElement.addEventListener('pointercancel', pointerResizeEndHandler as EventListener);
+    resizeableHandleElement.addEventListener('lostpointercapture', pointerResizeEndHandler as EventListener);
+  }
+
+  function removePointerListeners(): void {
+    resizeableHandleElement.removeEventListener('pointermove', pointerResizingHandler as EventListener);
+    resizeableHandleElement.removeEventListener('pointerup', pointerResizeEndHandler as EventListener);
+    resizeableHandleElement.removeEventListener('pointercancel', pointerResizeEndHandler as EventListener);
+    resizeableHandleElement.removeEventListener('lostpointercapture', pointerResizeEndHandler as EventListener);
   }
 
   function executeResizeCallbackWhenDefined(
@@ -301,6 +327,10 @@ export function Resizable(options: ResizableOption): {
   }
 
   function resizeStartHandler(e: MouseEvent | TouchEvent): void {
+    if (supportsPointerEvents && activePointerId !== undefined) {
+      return;
+    }
+
     e.preventDefault();
     const event = (e as TouchEvent).touches ? (e as TouchEvent).changedTouches[0] : e;
     const result = executeResizeCallbackWhenDefined(onResizeStart, event);
@@ -309,6 +339,26 @@ export function Resizable(options: ResizableOption): {
       document.body.addEventListener('mouseup', resizeEndHandler);
       document.body.addEventListener('touchmove', resizingHandler);
       document.body.addEventListener('touchend', resizeEndHandler);
+    }
+  }
+
+  function pointerResizeStartHandler(e: PointerEvent): void {
+    if (e.pointerType === 'mouse' && e.button !== 0) {
+      return;
+    }
+
+    e.preventDefault();
+    activePointerId = e.pointerId;
+    if (typeof resizeableHandleElement.setPointerCapture === 'function') {
+      resizeableHandleElement.setPointerCapture(e.pointerId);
+    }
+
+    const result = executeResizeCallbackWhenDefined(onResizeStart, e);
+    if (result !== false) {
+      addPointerListeners();
+    } else if (typeof resizeableHandleElement.releasePointerCapture === 'function') {
+      resizeableHandleElement.releasePointerCapture(e.pointerId);
+      activePointerId = undefined;
     }
   }
 
@@ -322,6 +372,19 @@ export function Resizable(options: ResizableOption): {
     }
   }
 
+  function pointerResizingHandler(e: PointerEvent): void {
+    if (activePointerId !== undefined && e.pointerId !== activePointerId) {
+      return;
+    }
+
+    if (e.preventDefault && e.pointerType !== 'touch') {
+      e.preventDefault();
+    }
+    if (typeof onResize === 'function') {
+      onResize(e, { resizeableElement, resizeableHandleElement });
+    }
+  }
+
   /** Remove all mouse/touch handlers */
   function resizeEndHandler(e: MouseEvent | TouchEvent): void {
     const event = (e as TouchEvent).touches ? (e as TouchEvent).changedTouches[0] : e;
@@ -330,6 +393,24 @@ export function Resizable(options: ResizableOption): {
     document.body.removeEventListener('mouseup', resizeEndHandler);
     document.body.removeEventListener('touchmove', resizingHandler);
     document.body.removeEventListener('touchend', resizeEndHandler);
+  }
+
+  function pointerResizeEndHandler(e: PointerEvent): void {
+    if (activePointerId !== undefined && e.pointerId !== activePointerId) {
+      return;
+    }
+
+    executeResizeCallbackWhenDefined(onResizeEnd, e);
+    removePointerListeners();
+    if (
+      activePointerId !== undefined &&
+      typeof resizeableHandleElement.hasPointerCapture === 'function' &&
+      resizeableHandleElement.hasPointerCapture(activePointerId) &&
+      typeof resizeableHandleElement.releasePointerCapture === 'function'
+    ) {
+      resizeableHandleElement.releasePointerCapture(activePointerId);
+    }
+    activePointerId = undefined;
   }
 
   // initialize Resizable service by attaching mouse/touch events

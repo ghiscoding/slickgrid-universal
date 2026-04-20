@@ -165,6 +165,12 @@ export interface GridOption<C extends Column = Column> {
   /** Defaults to true, auto-scrolls horizontally to keep the resized column visible (last column scrolls to max for legacy compatibility). */
   autoScrollOnColumnResize?: boolean;
 
+  /** Defaults to 300, delay used when resize auto-scroll continues from the browser/webview left edge after the pointer leaves the page. */
+  autoScrollResizeLeftDelay?: number;
+
+  /** Defaults to 1200, delay used when resize auto-scroll continues from the browser/webview right edge after the pointer leaves the page. */
+  autoScrollResizeRightDelay?: number;
+
   /** Auto-tooltip options (enableForCells, enableForHeaderCells, maxToolTipLength) */
   autoTooltipOptions?: AutoTooltipOption;
 
