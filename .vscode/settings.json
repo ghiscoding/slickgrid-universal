@@ -2,11 +2,13 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "eslint.validate": ["javascript", "typescript"],
-  "typescript.experimental.useTsgo": true,
-  "typescript.format.semicolons": "insert",
+  "js/ts.experimental.useTsgo": true,
+  "js/ts.format.semicolons": "insert",
   "vitest.rootConfig": "./test/vitest.config.mts",
-  "typescript.tsdk": "node_modules\\typescript\\lib",
   "prettier.prettierPath": "node_modules/prettier/index.cjs",
   "prettier.configPath": ".prettierrc",
-  "json.schemaDownload.enable": true
+  "json.schemaDownload.enable": true,
+  "terminal.integrated.autoReplies": {
+    "Terminate batch job (Y/N)": "Y\r"
+  }
 }
