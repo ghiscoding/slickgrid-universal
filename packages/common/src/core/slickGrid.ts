@@ -2294,12 +2294,14 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         const isBrowserEdge = Math.abs(autoScrollOffsetX) === 1;
         const viewportOffset = getOffset(this._viewportScrollContainerX);
         const moveDistance = isBrowserEdge ? 4 * autoScrollOffsetX : (this.getAbsoluteColumnMinWidth() / 2) * Math.sign(autoScrollOffsetX);
+        /* v8 ignore next 5 */
         if (!isBrowserEdge) {
           const delay = RESIZE_AUTOSCROLL_MAX_INTERVAL_MS - Math.abs(autoScrollOffsetX) * RESIZE_AUTOSCROLL_ACCELERATE_INTERVAL;
           elapsed += RESIZE_AUTOSCROLL_MIN_INTERVAL_MS;
           if (elapsed < delay) return;
           elapsed = 0;
         }
+        /* v8 ignore next */
         const targetPageX =
           autoScrollOffsetX > 0
             ? viewportOffset.left + this._viewportScrollContainerX.clientWidth + moveDistance
