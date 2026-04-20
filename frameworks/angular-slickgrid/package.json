@@ -103,7 +103,7 @@
     "jsdom": "catalog:",
     "jsdom-global": "catalog:",
     "native-copyfiles": "catalog:",
-    "ng-packagr": "^21.2.2",
+    "ng-packagr": "^21.2.3",
     "ngx-bootstrap": "^21.0.1",
     "oxlint": "catalog:",
     "remove-glob": "catalog:",
