@@ -5,6 +5,11 @@ packages:
   - packages/**
   - '!**/dist/**'
 
+minimumReleaseAge: 2880
+minimumReleaseAgeExclude:
+  # exclude Lerna-Lite min age since I'm the maintainer
+  - '@lerna-lite/*'
+
 catalog:
   '@4tw/cypress-drag-drop': ^2.3.1
   '@angular-eslint/eslint-plugin': ^21.3.1

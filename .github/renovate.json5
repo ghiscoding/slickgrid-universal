@@ -41,6 +41,11 @@
       allowedVersions: '< 6.0.0',
       description: 'Keep pnpm action at v5 until we migrate to pnpm v11',
     },
+    {
+      // Exclude @lerna-lite/* from minimumReleaseAge since I'm the maintainer of Lerna-Lite
+      matchPackagePatterns: ['^@lerna-lite/'],
+      minimumReleaseAge: '0',
+    },
   ],
   ignoreDeps: ['lee-dohm/no-response', 'node', 'pnpm', 'typescript'],
   schedule: ['every 4 weeks on friday'],
