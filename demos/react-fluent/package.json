@@ -1,7 +1,7 @@
 {
   "name": "slickgrid-react-fluent-demo",
   "private": true,
-  "version": "10.4.0",
+  "version": "10.5.0",
   "description": "Slickgrid-React demo",
   "keywords": [
     "react",
@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@fluentui/react-components": "^9.73.7",
-    "@fluentui/react-icons": "^2.0.323",
+    "@fluentui/react-icons": "^2.0.324",
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/event-pub-sub": "workspace:*",
     "@slickgrid-universal/excel-export": "workspace:*",

@@ -17,16 +17,12 @@
     "typeRoots": ["node_modules/@types"],
     "lib": ["es2022", "dom"],
     "module": "es2022",
-    "paths": {
-      "sortablejs/modular/sortable.core.esm.js": ["./types/sortablejs.d.ts"]
-    },
+    "skipLibCheck": true,
     "strict": true
   },
   "angularCompilerOptions": {
     "compilationMode": "full",
-    "enableIvy": true,
     "preserveWhitespaces": true,
-    "strictMetadataEmit": true,
     "strictTemplates": true,
     "extendedDiagnostics": {
       "checks": {

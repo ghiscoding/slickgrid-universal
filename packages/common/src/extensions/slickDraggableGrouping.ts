@@ -323,6 +323,8 @@ export class SlickDraggableGrouping {
         pull: 'clone',
         put: false,
       },
+      // Fixes broken Firefox-Linux dragging
+      forceFallback: /firefox/i.test(navigator.userAgent) && /linux/i.test(navigator.userAgent),
       revertClone: true,
       // filter: function (_e, target) {
       //   // block column from being able to be dragged if it's already a grouped column

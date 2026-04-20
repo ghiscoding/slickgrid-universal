@@ -1,7 +1,7 @@
 {
   "name": "aurelia-slickgrid-demo",
   "private": true,
-  "version": "10.4.2",
+  "version": "10.5.0",
   "description": "Aurelia-Slickgrid demos",
   "keywords": [
     "aurelia",
@@ -53,7 +53,7 @@
   "devDependencies": {
     "@aurelia/vite-plugin": "^2.0.0-rc.1",
     "@babel/plugin-proposal-decorators": "^7.29.0",
-    "@rolldown/plugin-babel": "^0.2.2",
+    "@rolldown/plugin-babel": "^0.2.3",
     "@types/fnando__sparkline": "catalog:",
     "@types/node": "catalog:",
     "@types/sortablejs": "catalog:",

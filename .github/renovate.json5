@@ -35,6 +35,12 @@
       packageNames: ['react-i18next'],
       allowedVersions: '<17.0.0',
     },
+    {
+      matchManagers: ['github-actions'],
+      matchDepNames: ['pnpm/action-setup'],
+      allowedVersions: '< 6.0.0',
+      description: 'Keep pnpm action at v5 until we migrate to pnpm v11',
+    },
   ],
   ignoreDeps: ['lee-dohm/no-response', 'node', 'pnpm', 'typescript'],
   schedule: ['every 4 weeks on friday'],

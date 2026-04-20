@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.5.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.4.2...v10.5.0) (2026-04-18)
+
+### Performance Improvements
+
+* **excel-export:** use caching to nearly halve export time ([#2520](https://github.com/ghiscoding/slickgrid-universal/issues/2520)) ([de3c733](https://github.com/ghiscoding/slickgrid-universal/commit/de3c733c332ee182dab4dbabe58ae1eaf00cd178)) - by @ghiscoding
+
 ## [10.4.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.3.0...v10.4.0) (2026-04-02)
 
 **Note:** Version bump only for package @slickgrid-universal/excel-export

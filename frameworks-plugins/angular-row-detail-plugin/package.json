@@ -1,6 +1,6 @@
 {
   "name": "@slickgrid-universal/angular-row-detail-plugin",
-  "version": "10.4.2",
+  "version": "10.5.0",
   "description": "Angular Row Detail Plugin for Angular-SlickGrid",
   "type": "module",
   "main": "./dist/index.js",
@@ -48,7 +48,7 @@
   },
   "devDependencies": {
     "@angular-eslint/eslint-plugin": "catalog:",
-    "@angular/core": "^21.2.8",
+    "@angular/core": "^21.2.9",
     "oxlint": "catalog:",
     "tslib": "catalog:",
     "vitest": "catalog:"
