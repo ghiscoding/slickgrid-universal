@@ -3,13 +3,9 @@
   extends: ['config:base', 'group:allNonMajor'],
   labels: ['📦 dependencies', '🤖 bot'],
   dependencyDashboard: true,
-  lockFileMaintenance: {
-    enabled: false,
-  },
   minimumReleaseAge: '2 days',
   // since all PRs touches the pnpm lock file, let's open not more than 2 PRs at the same time
   prConcurrentLimit: 2,
-  pin: false,
   rangeStrategy: 'bump',
   packageRules: [
     {
