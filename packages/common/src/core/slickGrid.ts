@@ -2248,8 +2248,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected setupColumnResize(): void {
     let j: number, k: number, c: C;
     let pageX: number, minPageX: number, maxPageX: number;
-    let firstResizable: number | undefined,
-      lastResizable = -1;
+    let firstResizable: number | undefined;
+    let lastResizable = -1;
     let frozenLeftColMaxWidth = 0;
     let resizeAutoScrollDeltaX = 0;
     // Only these two are needed for auto-scroll state
@@ -2380,7 +2380,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
         if (d < 0) {
           x = d;
-
           for (j = i; j >= 0; j--) {
             c = vc[j];
             if (c && c.resizable && !c.hidden) {
