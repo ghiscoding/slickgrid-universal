@@ -857,6 +857,86 @@ describe('CellExternalCopyManager', () => {
           });
         }));
 
+      it('should set correct bRange toCell (lastDestX) when hidden column sits between pasted columns on execute', () =>
+        new Promise((done: any) => {
+          const hiddenColsMockColumns = [
+            { id: 'firstName', field: 'firstName', name: 'First Name' },
+            { id: 'lastName', field: 'lastName', name: 'Last Name', hidden: true },
+            { id: 'age', field: 'age', name: 'Age' },
+            { id: 'gender', field: 'gender', name: 'Gender' },
+          ] as Column[];
+          vi.spyOn(gridStub, 'getColumns').mockReturnValue(hiddenColsMockColumns);
+          vi.spyOn(gridStub, 'getDataLength').mockReturnValue(2);
+          vi.spyOn(gridStub, 'getDataItem').mockReturnValue({ firstName: 'John', age: 30 });
+          vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValueOnce(null as any);
+
+          const clipboardCommandHandler = (cmd: any) => cmd.execute();
+          const setSelectedRangesSpy = vi.spyOn(mockHybridSelectionModel, 'setSelectedRanges');
+          vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(mockHybridSelectionModel as any);
+
+          plugin.init(gridStub, { clipboardPasteDelay: 1, clearCopySelectionDelay: 1, clipboardCommandHandler });
+
+          vi.spyOn(gridStub, 'getActiveCell').mockReturnValue({ cell: 0, row: 0 });
+          const keyDownCtrlPasteEvent = new Event('keydown');
+          Object.defineProperty(keyDownCtrlPasteEvent, 'ctrlKey', { writable: true, configurable: true, value: true });
+          Object.defineProperty(keyDownCtrlPasteEvent, 'key', { writable: true, configurable: true, value: 'v' });
+          Object.defineProperty(keyDownCtrlPasteEvent, 'isPropagationStopped', { writable: true, configurable: true, value: vi.fn() });
+          Object.defineProperty(keyDownCtrlPasteEvent, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: vi.fn() });
+
+          (navigator.clipboard.readText as Mock).mockResolvedValueOnce('John\t30');
+          gridStub.onKeyDown.notify({ cell: 0, row: 0, grid: gridStub }, keyDownCtrlPasteEvent, gridStub);
+
+          setTimeout(() => {
+            expect(setSelectedRangesSpy).toHaveBeenCalledWith([new SlickRange(0, 0, 0, 2)]);
+            done();
+          });
+        }));
+
+      it('should set correct bRange toCell (lastDestX) on undo when hidden column sits between pasted columns', () =>
+        new Promise((done: any) => {
+          const hiddenColsMockColumns = [
+            { id: 'firstName', field: 'firstName', name: 'First Name' },
+            { id: 'lastName', field: 'lastName', name: 'Last Name', hidden: true },
+            { id: 'age', field: 'age', name: 'Age' },
+          ] as Column[];
+          vi.spyOn(gridStub, 'getColumns').mockReturnValue(hiddenColsMockColumns);
+          vi.spyOn(gridStub, 'getDataLength').mockReturnValue(2);
+          vi.spyOn(gridStub, 'getDataItem').mockReturnValue({ firstName: 'John', age: 30 });
+          vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValueOnce(null as any);
+
+          let clipCommand: any;
+          const clipboardCommandHandler = (cmd: any) => {
+            clipCommand = cmd;
+            cmd.execute();
+          };
+          const setSelectedRangesSpy = vi.spyOn(mockHybridSelectionModel, 'setSelectedRanges');
+          vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(mockHybridSelectionModel as any);
+          const onPasteCellsSpy = vi.fn();
+
+          plugin.init(gridStub, { clipboardPasteDelay: 1, clearCopySelectionDelay: 1, clipboardCommandHandler, onPasteCells: onPasteCellsSpy });
+
+          vi.spyOn(gridStub, 'getActiveCell').mockReturnValue({ cell: 0, row: 0 });
+          const keyDownCtrlPasteEvent = new Event('keydown');
+          Object.defineProperty(keyDownCtrlPasteEvent, 'ctrlKey', { writable: true, configurable: true, value: true });
+          Object.defineProperty(keyDownCtrlPasteEvent, 'key', { writable: true, configurable: true, value: 'v' });
+          Object.defineProperty(keyDownCtrlPasteEvent, 'isPropagationStopped', { writable: true, configurable: true, value: vi.fn() });
+          Object.defineProperty(keyDownCtrlPasteEvent, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: vi.fn() });
+          (navigator.clipboard.readText as Mock).mockResolvedValueOnce('John\t30');
+          gridStub.onKeyDown.notify({ cell: 0, row: 0, grid: gridStub }, keyDownCtrlPasteEvent, gridStub);
+
+          setTimeout(() => {
+            setSelectedRangesSpy.mockClear();
+            onPasteCellsSpy.mockClear();
+
+            clipCommand.undo();
+
+            const expectedRange = new SlickRange(0, 0, 0, 2);
+            expect(setSelectedRangesSpy).toHaveBeenCalledWith([expectedRange]);
+            expect(onPasteCellsSpy).toHaveBeenCalledWith(expect.any(Object), { ranges: [expectedRange] });
+            done();
+          });
+        }));
+
       it('should show a console error when navigator.clipboard fails', () =>
         new Promise((done: any) => {
           const consoleSpy = vi.spyOn(console, 'error').mockReturnValue();
