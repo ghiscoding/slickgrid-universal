@@ -6986,14 +6986,14 @@ describe('SlickGrid core file', () => {
         expect(result5).toEqual({ cell: -1, row: -1 });
       });
 
-      it('should return hidden cells as well since skipping them would add an unwanted offset', () => {
+      it('should skip hidden columns and return last visible column cell when x coordinate falls beyond visible canvas', () => {
         grid = new SlickGrid<any, Column>(container, data, columns, { ...defaultOptions, enableCellNavigation: true });
 
         const result1 = grid.getCellFromPoint(DEFAULT_COLUMN_WIDTH * 5 + 5, DEFAULT_COLUMN_HEIGHT * 5 + 5);
         const result2 = grid.getCellFromPoint(DEFAULT_COLUMN_WIDTH * 6 + 5, DEFAULT_COLUMN_HEIGHT * 6 + 5);
 
-        expect(result1).toEqual({ cell: 5, row: 5 });
-        expect(result2).toEqual({ cell: 6, row: 6 });
+        expect(result1).toEqual({ cell: 4, row: 5 });
+        expect(result2).toEqual({ cell: 4, row: 6 });
       });
     });
 
