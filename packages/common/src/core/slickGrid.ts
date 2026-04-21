@@ -6380,10 +6380,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
 
     let w = 0;
     for (let i = 0; i < this.columns.length && w <= x; i++) {
-      if (this.columns[i]) {
-        w += this.columns[i].width as number;
-        cell++;
+      if (!this.columns[i] || this.columns[i].hidden) {
+        continue;
       }
+      w += this.columns[i].width as number;
+      cell++;
     }
     cell -= 1;
 
