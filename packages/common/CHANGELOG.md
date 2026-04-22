@@ -4,6 +4,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.5.1](https://github.com/ghiscoding/slickgrid-universal/compare/v10.5.0...v10.5.1) (2026-04-22)
+
+### Bug Fixes
+
+* **core:** column resize auto-scroll should work outside browser webview ([#2538](https://github.com/ghiscoding/slickgrid-universal/issues/2538)) ([195bbe9](https://github.com/ghiscoding/slickgrid-universal/commit/195bbe92baa13baef9aa43791babeab2b1b44d68)) - by @ghiscoding
+* **regression:** excelcopybuffer columnvisibility behavior changed in v10 ([#2542](https://github.com/ghiscoding/slickgrid-universal/issues/2542)) ([d626a13](https://github.com/ghiscoding/slickgrid-universal/commit/d626a1349b32aa1c887d15834ae84349c1c7f8af)) - by @zewa666
+
 ## [10.5.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.4.2...v10.5.0) (2026-04-18)
 
 ### Features
