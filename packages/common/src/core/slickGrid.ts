@@ -6384,7 +6384,7 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
         continue;
       }
       w += this.columns[i].width as number;
-      cell++;
+      cell = i + 1;
     }
     cell -= 1;
 
