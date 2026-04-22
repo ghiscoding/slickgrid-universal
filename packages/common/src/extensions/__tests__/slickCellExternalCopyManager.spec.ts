@@ -94,7 +94,7 @@ describe('CellExternalCopyManager', () => {
   const consoleWarnSpy = vi.spyOn(console, 'warn').mockReturnValue();
   const lastNameElm = document.createElement('div');
   lastNameElm.textContent = 'Last Name';
-  const mockEventCallback = () => {};
+  const mockEventCallback = () => { };
   const mockColumns = [
     { id: 'firstName', field: 'firstName', name: 'First Name', editor: { model: Editors.text }, editorClass: Editors.text },
     { id: 'lastName', field: 'lastName', name: lastNameElm },
@@ -853,6 +853,52 @@ describe('CellExternalCopyManager', () => {
             const getDataItemSpy = vi.spyOn(gridStub, 'getDataItem');
             clipCommand.undo();
             expect(getDataItemSpy).toHaveBeenCalled();
+            done();
+          });
+        }));
+
+      it('should not throw when pasted columns exceed grid columns due to multiple trailing hidden columns inflating destW', () =>
+        new Promise((done: any) => {
+          // Paste "John\tDoe" (2 cells) with activeCell=0 into a 4-column grid where the last 2 are hidden:
+          //
+          // | idx | column    | hidden | x | destx | action                             |
+          // |-----|-----------|--------|---|-------|------------------------------------|
+          // |  0  | firstName |        | 0 |   0   | paste "John"                       |
+          // |  1  | lastName  |        | 1 |   1   | paste "Doe"                        |
+          // |  2  | age       |  true  | 2 |   2   | destW++ (2→3), xOffset++           |
+          // |  3  | gender    |  true  | 3 |   3   | destW++ (3→4), xOffset++           |
+          // |  -  | (none)    |        | 4 |   4   | columns[4] === undefined → break   |
+          const hiddenColsMockColumns = [
+            { id: 'firstName', field: 'firstName', name: 'First Name' },
+            { id: 'lastName', field: 'lastName', name: 'Last Name' },
+            { id: 'age', field: 'age', name: 'Age', hidden: true },
+            { id: 'gender', field: 'gender', name: 'Gender', hidden: true },
+          ] as Column[];
+          vi.spyOn(gridStub, 'getColumns').mockReturnValue(hiddenColsMockColumns);
+          vi.spyOn(gridStub, 'getDataLength').mockReturnValue(2);
+          vi.spyOn(gridStub, 'getDataItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
+          vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValueOnce(null as any);
+
+          const clipboardCommandHandler = (cmd: any) => cmd.execute();
+          const setSelectedRangesSpy = vi.spyOn(mockHybridSelectionModel, 'setSelectedRanges');
+          vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(mockHybridSelectionModel as any);
+
+          plugin.init(gridStub, { clipboardPasteDelay: 1, clearCopySelectionDelay: 1, clipboardCommandHandler });
+
+          vi.spyOn(gridStub, 'getActiveCell').mockReturnValue({ cell: 0, row: 0 });
+          const keyDownCtrlPasteEvent = new Event('keydown');
+          Object.defineProperty(keyDownCtrlPasteEvent, 'ctrlKey', { writable: true, configurable: true, value: true });
+          Object.defineProperty(keyDownCtrlPasteEvent, 'key', { writable: true, configurable: true, value: 'v' });
+          Object.defineProperty(keyDownCtrlPasteEvent, 'isPropagationStopped', { writable: true, configurable: true, value: vi.fn() });
+          Object.defineProperty(keyDownCtrlPasteEvent, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: vi.fn() });
+
+          // 2 trailing hidden cols inflate destW to 4, pushing destx out of bounds without the fix
+          (navigator.clipboard.readText as Mock).mockResolvedValueOnce('John\tDoe');
+          expect(() => gridStub.onKeyDown.notify({ cell: 0, row: 0, grid: gridStub }, keyDownCtrlPasteEvent, gridStub)).not.toThrow();
+
+          setTimeout(() => {
+            // only the 2 visible columns (0 and 1) should have been pasted into
+            expect(setSelectedRangesSpy).toHaveBeenCalledWith([new SlickRange(0, 0, 0, 1)]);
             done();
           });
         }));
