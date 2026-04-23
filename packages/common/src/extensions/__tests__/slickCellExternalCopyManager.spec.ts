@@ -94,7 +94,7 @@ describe('CellExternalCopyManager', () => {
   const consoleWarnSpy = vi.spyOn(console, 'warn').mockReturnValue();
   const lastNameElm = document.createElement('div');
   lastNameElm.textContent = 'Last Name';
-  const mockEventCallback = () => { };
+  const mockEventCallback = () => {};
   const mockColumns = [
     { id: 'firstName', field: 'firstName', name: 'First Name', editor: { model: Editors.text }, editorClass: Editors.text },
     { id: 'lastName', field: 'lastName', name: lastNameElm },
@@ -857,26 +857,35 @@ describe('CellExternalCopyManager', () => {
           });
         }));
 
-      it('should not throw when pasted columns exceed grid columns due to multiple trailing hidden columns inflating destW', () =>
+      it('should not throw when pasting multiple rows with a hidden column that inflates destW across row iterations', () =>
         new Promise((done: any) => {
-          // Paste "John\tDoe" (2 cells) with activeCell=0 into a 4-column grid where the last 2 are hidden:
+          // Paste 2 rows x 2 cells into a 3-column grid where column[1] is hidden.
+          // destW starts at 2. On row y=0, the hidden col at destx=1 inflates destW to 3.
+          // On row y=1 the loop starts with destW=3, hits hidden col again (destW→4),
+          // then destx=3 → columns[3] === undefined → break is hit.
           //
-          // | idx | column    | hidden | x | destx | action                             |
-          // |-----|-----------|--------|---|-------|------------------------------------|
-          // |  0  | firstName |        | 0 |   0   | paste "John"                       |
-          // |  1  | lastName  |        | 1 |   1   | paste "Doe"                        |
-          // |  2  | age       |  true  | 2 |   2   | destW++ (2→3), xOffset++           |
-          // |  3  | gender    |  true  | 3 |   3   | destW++ (3→4), xOffset++           |
-          // |  -  | (none)    |        | 4 |   4   | columns[4] === undefined → break   |
+          // y=0:
+          // | x | destx | column    | hidden | action                   |
+          // |---|-------|-----------|--------|--------------------------|
+          // | 0 |   0   | firstName |        | paste "John"             |
+          // | 1 |   1   | lastName  |  true  | destW++ (2→3), xOffset++ |
+          // | 2 |   2   | age       |        | paste "30"               |
+          //
+          // y=1 (destW is now 3, not reset between rows):
+          // | x | destx | column    | hidden | action                           |
+          // |---|-------|-----------|--------|----------------------------------|
+          // | 0 |   0   | firstName |        | paste "Jane"                     |
+          // | 1 |   1   | lastName  |  true  | destW++ (3→4), xOffset++         |
+          // | 2 |   2   | age       |        | paste "25"                       |
+          // | 3 |   3   | (none)    |        | columns[3] === undefined → break |
           const hiddenColsMockColumns = [
             { id: 'firstName', field: 'firstName', name: 'First Name' },
-            { id: 'lastName', field: 'lastName', name: 'Last Name' },
-            { id: 'age', field: 'age', name: 'Age', hidden: true },
-            { id: 'gender', field: 'gender', name: 'Gender', hidden: true },
+            { id: 'lastName', field: 'lastName', name: 'Last Name', hidden: true },
+            { id: 'age', field: 'age', name: 'Age' },
           ] as Column[];
           vi.spyOn(gridStub, 'getColumns').mockReturnValue(hiddenColsMockColumns);
-          vi.spyOn(gridStub, 'getDataLength').mockReturnValue(2);
-          vi.spyOn(gridStub, 'getDataItem').mockReturnValue({ firstName: 'John', lastName: 'Doe' });
+          vi.spyOn(gridStub, 'getDataLength').mockReturnValue(3);
+          vi.spyOn(gridStub, 'getDataItem').mockReturnValue({ firstName: 'John', age: 30 });
           vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValueOnce(null as any);
 
           const clipboardCommandHandler = (cmd: any) => cmd.execute();
@@ -892,13 +901,13 @@ describe('CellExternalCopyManager', () => {
           Object.defineProperty(keyDownCtrlPasteEvent, 'isPropagationStopped', { writable: true, configurable: true, value: vi.fn() });
           Object.defineProperty(keyDownCtrlPasteEvent, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: vi.fn() });
 
-          // 2 trailing hidden cols inflate destW to 4, pushing destx out of bounds without the fix
-          (navigator.clipboard.readText as Mock).mockResolvedValueOnce('John\tDoe');
+          // 2 rows x 2 visible cells; the hidden col between them inflates destW each row, pushing destx out of bounds on row 2
+          (navigator.clipboard.readText as Mock).mockResolvedValueOnce('John\t30\r\nJane\t25');
           expect(() => gridStub.onKeyDown.notify({ cell: 0, row: 0, grid: gridStub }, keyDownCtrlPasteEvent, gridStub)).not.toThrow();
 
           setTimeout(() => {
-            // only the 2 visible columns (0 and 1) should have been pasted into
-            expect(setSelectedRangesSpy).toHaveBeenCalledWith([new SlickRange(0, 0, 0, 1)]);
+            // 2 rows pasted, visible columns are 0 (firstName) and 2 (age)
+            expect(setSelectedRangesSpy).toHaveBeenCalledWith([new SlickRange(0, 0, 1, 2)]);
             done();
           });
         }));
