@@ -857,6 +857,61 @@ describe('CellExternalCopyManager', () => {
           });
         }));
 
+      it('should not throw when pasting multiple rows with a hidden column that inflates destW across row iterations', () =>
+        new Promise((done: any) => {
+          // Paste 2 rows x 2 cells into a 3-column grid where column[1] is hidden.
+          // destW starts at 2. On row y=0, the hidden col at destx=1 inflates destW to 3.
+          // On row y=1 the loop starts with destW=3, hits hidden col again (destW→4),
+          // then destx=3 → columns[3] === undefined → break is hit.
+          //
+          // y=0:
+          // | x | destx | column    | hidden | action                   |
+          // |---|-------|-----------|--------|--------------------------|
+          // | 0 |   0   | firstName |        | paste "John"             |
+          // | 1 |   1   | lastName  |  true  | destW++ (2→3), xOffset++ |
+          // | 2 |   2   | age       |        | paste "30"               |
+          //
+          // y=1 (destW is now 3, not reset between rows):
+          // | x | destx | column    | hidden | action                           |
+          // |---|-------|-----------|--------|----------------------------------|
+          // | 0 |   0   | firstName |        | paste "Jane"                     |
+          // | 1 |   1   | lastName  |  true  | destW++ (3→4), xOffset++         |
+          // | 2 |   2   | age       |        | paste "25"                       |
+          // | 3 |   3   | (none)    |        | columns[3] === undefined → break |
+          const hiddenColsMockColumns = [
+            { id: 'firstName', field: 'firstName', name: 'First Name' },
+            { id: 'lastName', field: 'lastName', name: 'Last Name', hidden: true },
+            { id: 'age', field: 'age', name: 'Age' },
+          ] as Column[];
+          vi.spyOn(gridStub, 'getColumns').mockReturnValue(hiddenColsMockColumns);
+          vi.spyOn(gridStub, 'getDataLength').mockReturnValue(3);
+          vi.spyOn(gridStub, 'getDataItem').mockReturnValue({ firstName: 'John', age: 30 });
+          vi.spyOn(gridStub.getSelectionModel() as SelectionModel, 'getSelectedRanges').mockReturnValueOnce(null as any);
+
+          const clipboardCommandHandler = (cmd: any) => cmd.execute();
+          const setSelectedRangesSpy = vi.spyOn(mockHybridSelectionModel, 'setSelectedRanges');
+          vi.spyOn(gridStub, 'getSelectionModel').mockReturnValue(mockHybridSelectionModel as any);
+
+          plugin.init(gridStub, { clipboardPasteDelay: 1, clearCopySelectionDelay: 1, clipboardCommandHandler });
+
+          vi.spyOn(gridStub, 'getActiveCell').mockReturnValue({ cell: 0, row: 0 });
+          const keyDownCtrlPasteEvent = new Event('keydown');
+          Object.defineProperty(keyDownCtrlPasteEvent, 'ctrlKey', { writable: true, configurable: true, value: true });
+          Object.defineProperty(keyDownCtrlPasteEvent, 'key', { writable: true, configurable: true, value: 'v' });
+          Object.defineProperty(keyDownCtrlPasteEvent, 'isPropagationStopped', { writable: true, configurable: true, value: vi.fn() });
+          Object.defineProperty(keyDownCtrlPasteEvent, 'isImmediatePropagationStopped', { writable: true, configurable: true, value: vi.fn() });
+
+          // 2 rows x 2 visible cells; the hidden col between them inflates destW each row, pushing destx out of bounds on row 2
+          (navigator.clipboard.readText as Mock).mockResolvedValueOnce('John\t30\r\nJane\t25');
+          expect(() => gridStub.onKeyDown.notify({ cell: 0, row: 0, grid: gridStub }, keyDownCtrlPasteEvent, gridStub)).not.toThrow();
+
+          setTimeout(() => {
+            // 2 rows pasted, visible columns are 0 (firstName) and 2 (age)
+            expect(setSelectedRangesSpy).toHaveBeenCalledWith([new SlickRange(0, 0, 1, 2)]);
+            done();
+          });
+        }));
+
       it('should set correct bRange toCell (lastDestX) when hidden column sits between pasted columns on execute', () =>
         new Promise((done: any) => {
           const hiddenColsMockColumns = [

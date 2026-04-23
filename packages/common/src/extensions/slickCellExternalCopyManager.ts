@@ -332,6 +332,10 @@ export class SlickCellExternalCopyManager {
             const destx = activeCell + x;
             const column = columns[destx];
 
+            if (!column) {
+              break; // ran off the end of the columns array (can happen when hidden columns widened destW)
+            }
+
             // paste on hidden column will be skipped, but we need to paste 1 cell further on X axis
             // we'll increase our X and increase the offset`
             if (column.hidden) {
