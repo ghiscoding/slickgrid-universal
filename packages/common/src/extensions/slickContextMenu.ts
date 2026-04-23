@@ -1,7 +1,7 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { extend } from '@slickgrid-universal/utils';
+import { extend, isDefined } from '@slickgrid-universal/utils';
 import type { SlickEventData } from '../core/index.js';
-import { copyCellToClipboard } from '../formatters/formatterUtilities.js';
+import { copyCellToClipboard, getParsedCellValue } from '../formatters/formatterUtilities.js';
 import type {
   Column,
   ContextMenu,
@@ -191,15 +191,13 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
             const columnDef = args.column;
             const dataContext = args.dataContext;
             if (typeof columnDef.queryFieldNameGetterFn === 'function') {
-              const cellValue = getCellValueFromQueryFieldGetter(columnDef, dataContext, '');
-              if (cellValue !== '' && cellValue !== undefined) {
-                return true;
-              }
+              return isDefined(getCellValueFromQueryFieldGetter(columnDef, dataContext, ''));
             } else if (columnDef && dataContext.hasOwnProperty(columnDef.field)) {
-              return (
-                dataContext[columnDef.field] !== '' && dataContext[columnDef.field] !== null && dataContext[columnDef.field] !== undefined
-              );
+              return isDefined(dataContext[columnDef.field]);
+            } else if (isDefined(getParsedCellValue(args))) {
+              return true;
             }
+
             return false;
           },
         },
