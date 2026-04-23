@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vite
 import { TranslateServiceStub } from '../../../../../test/translateServiceStub.js';
 import { SlickEvent, SlickEventData, type SlickDataView, type SlickGrid } from '../../core/index.js';
 import { ExtensionUtility } from '../../extensions/extensionUtility.js';
+import { Formatters } from '../../formatters/index.js';
 import type { Column, ContextMenu, ElementPosition, ExternalResource, Formatter, GridOption, MenuCommandItem, MenuOptionItem } from '../../interfaces/index.js';
 import {
   BackendUtilityService,
@@ -1273,6 +1274,68 @@ describe('ContextMenu Plugin', () => {
         } as GridOption;
         const columnMock = { id: 'firstName', name: 'First Name', field: 'firstName' } as Column;
         const dataContextMock = { id: 123, firstName: 'John', lastName: '·\u034f ⮞   Doe', age: 50 };
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+        vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+        plugin.dispose();
+        plugin.init({ commandItems: [] });
+
+        const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find(
+          (item: MenuCommandItem) => item.command === 'copy'
+        ) as MenuCommandItem;
+        const isCommandUsable = menuItemCommand.itemUsabilityOverride!({
+          cell: 2,
+          row: 2,
+          grid: gridStub,
+          column: columnMock,
+          dataContext: dataContextMock,
+        });
+
+        expect(isCommandUsable).toBe(true);
+      });
+
+      it('should expect "itemUsabilityOverride" callback from the "copy" command to return True when data is a complex object and Formatters.complex is defined in column formatter', () => {
+        const copyGridOptionsMock = {
+          ...gridOptionsMock,
+          enableExcelExport: false,
+          enableTextExport: false,
+          contextMenu: { hideCopyCellValueCommand: false },
+        } as GridOption;
+        const columnMock = { id: 'firstName', name: 'First Name', field: 'user.firstName', formatter: Formatters.complexObject } as Column;
+        const dataContextMock = { id: 123, user: { firstName: 'John', lastName: 'Doe', age: 50 } };
+        vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
+        vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
+        plugin.dispose();
+        plugin.init({ commandItems: [] });
+
+        const menuItemCommand = ((copyGridOptionsMock.contextMenu as ContextMenu).commandItems as MenuCommandItem[]).find(
+          (item: MenuCommandItem) => item.command === 'copy'
+        ) as MenuCommandItem;
+        const isCommandUsable = menuItemCommand.itemUsabilityOverride!({
+          cell: 2,
+          row: 2,
+          grid: gridStub,
+          column: columnMock,
+          dataContext: dataContextMock,
+        });
+
+        expect(isCommandUsable).toBe(true);
+      });
+
+      it('should expect "itemUsabilityOverride" callback from the "copy" command to return True when data is a complex object and Formatters.complex is defined inside params.formatters', () => {
+        const copyGridOptionsMock = {
+          ...gridOptionsMock,
+          enableExcelExport: false,
+          enableTextExport: false,
+          contextMenu: { hideCopyCellValueCommand: false },
+        } as GridOption;
+        const columnMock = {
+          id: 'firstName',
+          name: 'First Name',
+          field: 'user.firstName',
+          formatter: Formatters.multiple,
+          params: { formatters: [Formatters.complexObject] },
+        } as Column;
+        const dataContextMock = { id: 123, user: { firstName: 'John', lastName: 'Doe', age: 50 } };
         vi.spyOn(SharedService.prototype, 'gridOptions', 'get').mockReturnValue(copyGridOptionsMock);
         vi.spyOn(gridStub, 'getOptions').mockReturnValue(copyGridOptionsMock);
         plugin.dispose();

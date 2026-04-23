@@ -10,6 +10,7 @@ import type {
   FormatterResultWithHtml,
   FormatterResultWithText,
   GridOption,
+  MenuCallbackArgs,
   TextExportOption,
 } from '../interfaces/index.js';
 import { mapTempoDateFormatWithFieldType, toUtcDate, tryParseDate } from '../services/dateUtils.js';
@@ -46,48 +47,52 @@ export function autoAddEditorFormatterToColumnsWithEditor(columns: Column[], cus
   }
 }
 
+/** Get the parsed cell value, which will use the formatter if "exportWithFormatter" is set */
+export function getCopyCellValue(args: MenuCallbackArgs): string {
+  // get the value, if "exportWithFormatter" is set then we'll use the formatter output
+  const grid = args?.grid || ({} as SlickGrid);
+  const gridOptions = grid.getOptions() as GridOption;
+  const cell = args?.cell ?? 0;
+  const row = args?.row ?? 0;
+  const columnDef = args?.column;
+  const dataContext = args?.dataContext;
+  const exportOptions = gridOptions && (gridOptions.excelExportOptions || gridOptions.textExportOptions);
+  let textToCopy = exportWithFormatterWhenDefined(row, cell, columnDef, dataContext, grid, exportOptions);
+  if (typeof columnDef.queryFieldNameGetterFn === 'function') {
+    textToCopy = getCellValueFromQueryFieldGetter(columnDef, dataContext, '');
+  }
+
+  // when it's a string, we'll remove any unwanted Tree Data/Grouping symbols from the beginning (if exist) from the string before copying (e.g.: "⮟  Task 21" or "·   Task 2")
+  if (typeof textToCopy === 'string') {
+    textToCopy = textToCopy
+      .replace(/^([·⮞⮟]\s*)|([·⮞⮟])\s*/gi, '')
+      .replace(/[\u00b7\u034f]/gi, '') // remove unwanted Unicode characters (if entered directly)
+      .trim();
+  }
+
+  return textToCopy;
+}
+
 /**
  * Copy active cell content to clipboard. The command will first check if the cell has a Formatter (and exportWithFormatter)
  * @param args
  */
-export async function copyCellToClipboard(args: {
-  grid: SlickGrid;
-  cell?: number;
-  row?: number;
-  column: Column;
-  dataContext?: any;
-}): Promise<string | number> {
-  let finalTextToCopy = '';
+export async function copyCellToClipboard(args: MenuCallbackArgs): Promise<string | number> {
+  let textToCopy = '';
   try {
-    // get the value, if "exportWithFormatter" is set then we'll use the formatter output
     const grid = args?.grid || ({} as SlickGrid);
     const gridOptions = grid.getOptions() as GridOption;
-    const cell = args?.cell ?? 0;
-    const row = args?.row ?? 0;
-    const columnDef = args?.column;
-    const dataContext = args?.dataContext;
-    const exportOptions = gridOptions && (gridOptions.excelExportOptions || gridOptions.textExportOptions);
-    let textToCopy = exportWithFormatterWhenDefined(row, cell, columnDef, dataContext, grid, exportOptions);
-    if (typeof columnDef.queryFieldNameGetterFn === 'function') {
-      textToCopy = getCellValueFromQueryFieldGetter(columnDef, dataContext, '');
-    }
 
-    // when it's a string, we'll remove any unwanted Tree Data/Grouping symbols from the beginning (if exist) from the string before copying (e.g.: "⮟  Task 21" or "·   Task 2")
-    finalTextToCopy = textToCopy;
-    if (typeof textToCopy === 'string') {
-      finalTextToCopy = textToCopy
-        .replace(/^([·⮞⮟]\s*)|([·⮞⮟])\s*/gi, '')
-        .replace(/[\u00b7\u034f]/gi, '') // remove unwanted Unicode characters (if entered directly)
-        .trim();
-    }
+    // get cell to copy
+    textToCopy = getCopyCellValue(args);
 
     // copy to clipboard using override or default browser Clipboard API
     const clipboardOverrideFn = gridOptions.clipboardWriteOverride;
-    clipboardOverrideFn ? clipboardOverrideFn(finalTextToCopy) : await navigator.clipboard.writeText(finalTextToCopy);
+    clipboardOverrideFn ? clipboardOverrideFn(textToCopy) : await navigator.clipboard.writeText(textToCopy);
   } catch (err) {
     console.error(`Unable to read/write to clipboard. Please check your browser settings or permissions. Error: ${err}`);
   }
-  return finalTextToCopy;
+  return textToCopy;
 }
 
 export function retrieveFormatterOptions(

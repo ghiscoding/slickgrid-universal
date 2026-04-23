@@ -1,7 +1,7 @@
 import type { BasePubSubService } from '@slickgrid-universal/event-pub-sub';
-import { extend } from '@slickgrid-universal/utils';
+import { extend, isDefined } from '@slickgrid-universal/utils';
 import type { SlickEventData } from '../core/index.js';
-import { copyCellToClipboard } from '../formatters/formatterUtilities.js';
+import { copyCellToClipboard, getCopyCellValue } from '../formatters/formatterUtilities.js';
 import type {
   Column,
   ContextMenu,
@@ -12,13 +12,7 @@ import type {
   MenuOptionItem,
   OnContextMenuArgs,
 } from '../interfaces/index.js';
-import {
-  getCellValueFromQueryFieldGetter,
-  getTranslationPrefix,
-  type ExcelExportService,
-  type PdfExportService,
-  type TextExportService,
-} from '../services/index.js';
+import { getTranslationPrefix, type ExcelExportService, type PdfExportService, type TextExportService } from '../services/index.js';
 import type { SharedService } from '../services/shared.service.js';
 import type { TreeDataService } from '../services/treeData.service.js';
 import type { ExtensionUtility } from './extensionUtility.js';
@@ -186,22 +180,7 @@ export class SlickContextMenu extends MenuFromCellBaseClass<ContextMenu> {
           command: 'copy',
           positionOrder: 50,
           action: (_e, args) => copyCellToClipboard(args as MenuCommandItemCallbackArgs),
-          itemUsabilityOverride: (args: MenuCallbackArgs) => {
-            // make sure there's an item to copy before enabling this command
-            const columnDef = args.column;
-            const dataContext = args.dataContext;
-            if (typeof columnDef.queryFieldNameGetterFn === 'function') {
-              const cellValue = getCellValueFromQueryFieldGetter(columnDef, dataContext, '');
-              if (cellValue !== '' && cellValue !== undefined) {
-                return true;
-              }
-            } else if (columnDef && dataContext.hasOwnProperty(columnDef.field)) {
-              return (
-                dataContext[columnDef.field] !== '' && dataContext[columnDef.field] !== null && dataContext[columnDef.field] !== undefined
-              );
-            }
-            return false;
-          },
+          itemUsabilityOverride: (args: MenuCallbackArgs) => isDefined(getCopyCellValue(args)),
         },
         contextMenu.hideCommands,
         menuCommandItems,
