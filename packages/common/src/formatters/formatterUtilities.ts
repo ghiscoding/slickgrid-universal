@@ -48,7 +48,7 @@ export function autoAddEditorFormatterToColumnsWithEditor(columns: Column[], cus
 }
 
 /** Get the parsed cell value, which will use the formatter if "exportWithFormatter" is set */
-export function getParsedCellValue(args: MenuCallbackArgs): string {
+export function getCopyCellValue(args: MenuCallbackArgs): string {
   // get the value, if "exportWithFormatter" is set then we'll use the formatter output
   const grid = args?.grid || ({} as SlickGrid);
   const gridOptions = grid.getOptions() as GridOption;
@@ -60,6 +60,14 @@ export function getParsedCellValue(args: MenuCallbackArgs): string {
   let textToCopy = exportWithFormatterWhenDefined(row, cell, columnDef, dataContext, grid, exportOptions);
   if (typeof columnDef.queryFieldNameGetterFn === 'function') {
     textToCopy = getCellValueFromQueryFieldGetter(columnDef, dataContext, '');
+  }
+
+  // when it's a string, we'll remove any unwanted Tree Data/Grouping symbols from the beginning (if exist) from the string before copying (e.g.: "⮟  Task 21" or "·   Task 2")
+  if (typeof textToCopy === 'string') {
+    textToCopy = textToCopy
+      .replace(/^([·⮞⮟]\s*)|([·⮞⮟])\s*/gi, '')
+      .replace(/[\u00b7\u034f]/gi, '') // remove unwanted Unicode characters (if entered directly)
+      .trim();
   }
 
   return textToCopy;
@@ -75,14 +83,8 @@ export async function copyCellToClipboard(args: MenuCallbackArgs): Promise<strin
     const grid = args?.grid || ({} as SlickGrid);
     const gridOptions = grid.getOptions() as GridOption;
 
-    // when it's a string, we'll remove any unwanted Tree Data/Grouping symbols from the beginning (if exist) from the string before copying (e.g.: "⮟  Task 21" or "·   Task 2")
-    textToCopy = getParsedCellValue(args);
-    if (typeof textToCopy === 'string') {
-      textToCopy = textToCopy
-        .replace(/^([·⮞⮟]\s*)|([·⮞⮟])\s*/gi, '')
-        .replace(/[\u00b7\u034f]/gi, '') // remove unwanted Unicode characters (if entered directly)
-        .trim();
-    }
+    // get cell to copy
+    textToCopy = getCopyCellValue(args);
 
     // copy to clipboard using override or default browser Clipboard API
     const clipboardOverrideFn = gridOptions.clipboardWriteOverride;
