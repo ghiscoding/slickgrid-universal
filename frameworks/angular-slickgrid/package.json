@@ -104,7 +104,7 @@
     "jsdom-global": "catalog:",
     "native-copyfiles": "catalog:",
     "ng-packagr": "^21.2.3",
-    "ngx-bootstrap": "^21.0.1",
+    "ngx-bootstrap": "^21.2.0",
     "oxlint": "catalog:",
     "remove-glob": "catalog:",
     "rxjs": "catalog:",
