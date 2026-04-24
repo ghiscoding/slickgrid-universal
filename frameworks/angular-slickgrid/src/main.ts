@@ -32,7 +32,7 @@ const gridOptionConfig: GridOption = {
 
 bootstrapApplication(AppComponent, {
   providers: [
-    importProvidersFrom(BrowserModule, FormsModule, NgSelectModule, RouterModule.forRoot(routes, { useHash: true }), TabsModule.forRoot()),
+    importProvidersFrom(BrowserModule, FormsModule, NgSelectModule, RouterModule.forRoot(routes, { useHash: true }), TabsModule),
     AngularSlickgridComponent,
     { provide: 'defaultGridOption', useValue: gridOptionConfig },
     provideAppInitializer(() => {
