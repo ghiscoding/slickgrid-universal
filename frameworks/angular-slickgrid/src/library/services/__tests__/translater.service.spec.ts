@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { TranslaterService } from '../translater.service.js';
 
@@ -7,19 +7,37 @@ describe('Translater Service', () => {
   let translate: TranslateService;
   let service: TranslaterService;
 
+  class MockTranslateService {
+    private lang = 'en';
+    private translations: Record<string, Record<string, string>> = {};
+    setTranslation(lang: string, translations: Record<string, string>) {
+      this.translations[lang] = translations;
+    }
+    use(lang: string) {
+      this.lang = lang;
+      return Promise.resolve();
+    }
+    getCurrentLang() {
+      return this.lang;
+    }
+    instant(key: string) {
+      return this.translations[this.lang]?.[key] ?? key;
+    }
+  }
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TranslateModule.forRoot()],
+      providers: [{ provide: TranslateService, useClass: MockTranslateService }],
       teardown: { destroyAfterEach: false },
     });
     translate = TestBed.inject(TranslateService);
     service = new TranslaterService(translate);
 
-    translate.setTranslation('fr', {
+    (translate as any).setTranslation('fr', {
       ITEMS: 'éléments',
       OF: 'de',
     });
-    translate.setTranslation('en', {
+    (translate as any).setTranslation('en', {
       ITEMS: 'items',
       OF: 'of',
     });
