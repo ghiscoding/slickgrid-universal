@@ -33,11 +33,11 @@ describe('Translater Service', () => {
     translate = TestBed.inject(TranslateService);
     service = new TranslaterService(translate);
 
-    (translate as any).setTranslation('fr', {
+    translate.setTranslation('fr', {
       ITEMS: 'éléments',
       OF: 'de',
     });
-    (translate as any).setTranslation('en', {
+    translate.setTranslation('en', {
       ITEMS: 'items',
       OF: 'of',
     });
