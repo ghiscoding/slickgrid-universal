@@ -1,6 +1,6 @@
 import { Component, ElementRef, type ApplicationRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import {
   autoAddEditorFormatterToColumnsWithEditor,
   Editors,
@@ -46,7 +46,7 @@ import { type SlickFooterComponent } from '@slickgrid-universal/custom-footer-co
 import { SlickEmptyWarningComponent } from '@slickgrid-universal/empty-warning-component';
 import { EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import type { GraphqlPaginatedResult, GraphqlService, GraphqlServiceApi, GraphqlServiceOption } from '@slickgrid-universal/graphql';
-import { of, throwError } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { MockSlickEvent, MockSlickEventHandler } from '../../../../test/mockSlickEvent.js';
 import { RxJsResourceStub } from '../../../../test/rxjsResourceStub.js';
@@ -69,6 +69,27 @@ const angularUtilServiceStub = {
   createAngularComponent: vi.fn(),
   createAngularComponentAppendToDom: vi.fn(),
 } as unknown as AngularUtilService;
+
+class MockTranslateService {
+  private lang = 'en';
+  private translations: Record<string, Record<string, string>> = {};
+  public onLangChange = new Subject<{ lang: string }>();
+
+  setTranslation(lang: string, translations: Record<string, string>) {
+    this.translations[lang] = translations;
+  }
+  use(lang: string) {
+    this.lang = lang;
+    this.onLangChange.next({ lang });
+    return Promise.resolve();
+  }
+  getCurrentLang() {
+    return this.lang;
+  }
+  instant(key: string) {
+    return this.translations[this.lang]?.[key] ?? key;
+  }
+}
 
 class AngularRowDetailView {
   static readonly pluginName = 'AngularRowDetailView';
@@ -373,7 +394,7 @@ describe('Angular-Slickgrid Custom Component instantiated via Constructor', () =
     sharedService = new SharedService();
     translaterService = new TranslaterServiceStub();
     await TestBed.configureTestingModule({
-      imports: [TranslateModule.forRoot()],
+      providers: [{ provide: TranslateService, useClass: MockTranslateService }],
       teardown: { destroyAfterEach: false },
     });
     translate = TestBed.inject(TranslateService);
