@@ -3474,7 +3474,8 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     }
 
     // check if the selected rows have changed (index order isn't important, so we'll sort them both before comparing them)
-    if (!this.arrayEquals(previousSelectedRows.sort(), this.selectedRows.sort())) {
+    const sortNumbers = (a: number, b: number) => a - b;
+    if (!this.arrayEquals(previousSelectedRows.sort(sortNumbers), this.selectedRows.sort(sortNumbers))) {
       const caller = ne?.detail?.caller ?? 'click';
       // Use Set for faster performance
       const selectedRowsSet = new Set(this.getSelectedRows());
