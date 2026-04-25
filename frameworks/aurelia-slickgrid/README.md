@@ -4,7 +4,6 @@
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
 [![NPM downloads](https://img.shields.io/npm/dy/aurelia-slickgrid)](https://npmjs.org/package/aurelia-slickgrid)
 [![npm](https://img.shields.io/npm/v/aurelia-slickgrid.svg?logo=npm&logoColor=fff&label=npm)](https://www.npmjs.com/package/aurelia-slickgrid)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/aurelia-slickgrid?color=success&label=gzip)](https://bundlephobia.com/result?p=aurelia-slickgrid)
 [![Actions Status](https://github.com/ghiscoding/slickgrid-universal/actions/workflows/test-aurelia.yml/badge.svg)](https://github.com/ghiscoding/slickgrid-universal/actions/workflows/test-aurelia.yml)
 
 ### Brief introduction
