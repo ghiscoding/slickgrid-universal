@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.5.2](https://github.com/ghiscoding/slickgrid-universal/compare/v10.5.1...v10.5.2) (2026-04-25)
+
+### Bug Fixes
+
+* **deps:** update all non-major dependencies ([#2546](https://github.com/ghiscoding/slickgrid-universal/issues/2546)) ([0cfd7f3](https://github.com/ghiscoding/slickgrid-universal/commit/0cfd7f392a8f5a8e433b38d98758cfe7ac47ef94)) - by @renovate-bot
+
 ## [10.5.1](https://github.com/ghiscoding/slickgrid-universal/compare/v10.5.0...v10.5.1) (2026-04-22)
 
 **Note:** Version bump only for package slickgrid-vue-demo

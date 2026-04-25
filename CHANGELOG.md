@@ -4,6 +4,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.5.2](https://github.com/ghiscoding/slickgrid-universal/compare/v10.5.1...v10.5.2) (2026-04-25)
+
+### Bug Fixes
+
+* complex object not copyable from cell context menu ([#2545](https://github.com/ghiscoding/slickgrid-universal/issues/2545)) ([a1f0fdd](https://github.com/ghiscoding/slickgrid-universal/commit/a1f0fdd24d85b82f03d1aa27b0516e0fb7947476)) - by @ghiscoding
+* **deps:** update all non-major dependencies ([#2546](https://github.com/ghiscoding/slickgrid-universal/issues/2546)) ([0cfd7f3](https://github.com/ghiscoding/slickgrid-universal/commit/0cfd7f392a8f5a8e433b38d98758cfe7ac47ef94)) - by @renovate-bot
+* use absolute instead of running index ([#2544](https://github.com/ghiscoding/slickgrid-universal/issues/2544)) ([4e26c41](https://github.com/ghiscoding/slickgrid-universal/commit/4e26c416d1923ea4ba9f630c6c1b48fbc3eb9b77)) - by @zewa666
+
 ## [10.5.1](https://github.com/ghiscoding/slickgrid-universal/compare/v10.5.0...v10.5.1) (2026-04-22)
 
 ### Bug Fixes
