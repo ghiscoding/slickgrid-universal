@@ -273,6 +273,9 @@ export default class Example02 {
       columnPicker: {
         onColumnsChanged: (e, args) => console.log(e, args),
       },
+      groupItemMetadataOption: {
+        toggleByCellClick: true, // enable toggle of group by clicking anywhere on the cell (not just the toggle icon)
+      },
       enableExcelExport: true,
       excelExportOptions: {
         filename: 'my-export',

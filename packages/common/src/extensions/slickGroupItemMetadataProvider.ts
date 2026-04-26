@@ -42,6 +42,7 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
     toggleCssClass: 'slick-group-toggle',
     toggleExpandedCssClass: 'expanded',
     toggleCollapsedCssClass: 'collapsed',
+    toggleByCellClick: false,
     enableExpandCollapse: true,
     groupFormatter: this.defaultGroupCellFormatter.bind(this),
     totalsFormatter: this.defaultTotalsCellFormatter.bind(this),
@@ -67,10 +68,8 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
     return this._grid?.getOptions() || {};
   }
 
-  init(grid: SlickGrid, inputOptions?: GroupItemMetadataProviderOption): void {
+  init(grid: SlickGrid): void {
     this._grid = grid;
-    this._options = { ...this._defaults, ...inputOptions };
-
     this._eventHandler.subscribe(grid.onClick, this.handleGridClick.bind(this));
     this._eventHandler.subscribe(grid.onKeyDown, this.handleGridKeyDown.bind(this));
   }
@@ -177,7 +176,14 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
   protected handleGridClick(e: SlickEventData, args: OnClickEventArgs): void {
     const target = e.target as HTMLElement;
     const item = this._grid?.getDataItem(args.row);
-    if (item instanceof SlickGroup && target.classList.contains(this._options.toggleCssClass || '')) {
+    const toggleCssClass = this._options.toggleCssClass || '';
+    const groupTitleCssClass = this._options.groupTitleCssClass || '';
+    const isElmToggled = this._options?.toggleByCellClick
+      ? target?.classList.contains(toggleCssClass) ||
+        target?.closest('.slick-cell')?.querySelector(`.slick-cell > .${toggleCssClass},.${groupTitleCssClass}`)
+      : target?.classList.contains(toggleCssClass);
+
+    if (item instanceof SlickGroup && isElmToggled) {
       this.handleDataViewExpandOrCollapse(item);
       e.stopImmediatePropagation();
       e.preventDefault();

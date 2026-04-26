@@ -455,14 +455,19 @@ export class TreeDataService {
 
   protected handleOnCellClick(event: Event | SlickEventData, args: OnClickEventArgs): void {
     if (event && args) {
-      const targetElm: any = event.target || {};
+      const targetElm = event.target as HTMLElement | null;
       const collapsedPropName = getTreeDataOptionPropName(this.treeDataOptions, 'collapsedPropName');
       const childrenPropName = getTreeDataOptionPropName(this.treeDataOptions, 'childrenPropName');
       const hasChildrenPropName = getTreeDataOptionPropName(this.treeDataOptions, 'hasChildrenPropName');
       const lazyLoadingPropName = getTreeDataOptionPropName(this.treeDataOptions, 'lazyLoadingPropName');
 
       if (typeof targetElm?.className === 'string') {
-        if (targetElm.classList.contains('slick-group-toggle')) {
+        const isElmToggled = this.treeDataOptions?.toggleByCellClick
+          ? targetElm?.classList.contains('slick-group-toggle') ||
+            targetElm?.closest('.slick-cell')?.querySelector(`.slick-cell > .slick-group-toggle`)
+          : targetElm?.classList.contains('slick-group-toggle');
+
+        if (isElmToggled) {
           const item = this.dataView.getItem(args.row);
           if (item) {
             item[collapsedPropName] = !item[collapsedPropName]; // toggle the collapsed flag

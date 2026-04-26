@@ -566,6 +566,104 @@ describe('TreeData Service', () => {
       expect(SharedService.prototype.hierarchicalDataset![0].file).toBe('myFile.txt');
       expect(pubSubSpy).not.toHaveBeenCalledWith(`onTreeItemToggled`);
     });
+
+    describe('toggleByCellClick option', () => {
+      it('should toggle the "__collapsed" when "toggleByCellClick" is enabled and clicking anywhere on the cell that contains a toggle icon', () => {
+        mockRowData.__collapsed = false;
+        gridOptionsMock.treeDataOptions!.toggleByCellClick = true;
+        vi.spyOn(gridStub, 'getData').mockReturnValue(dataViewStub);
+        const spyGetItem = vi.spyOn(dataViewStub, 'getItem').mockReturnValue(mockRowData);
+        const spyUptItem = vi.spyOn(dataViewStub, 'updateItem');
+        const spyInvalidate = vi.spyOn(gridStub, 'invalidate');
+
+        service.init(gridStub);
+        const eventData = new SlickEventData();
+        // Create a cell with a toggle icon inside
+        const cellElm = document.createElement('div');
+        cellElm.className = 'slick-cell';
+        const toggleIcon = document.createElement('span');
+        toggleIcon.className = 'slick-group-toggle';
+        cellElm.appendChild(toggleIcon);
+        const textElm = document.createElement('span');
+        textElm.textContent = 'Item Text';
+        cellElm.appendChild(textElm);
+
+        // Click on the text (not the toggle icon directly)
+        Object.defineProperty(eventData, 'target', { writable: true, value: textElm });
+        gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, eventData, gridStub);
+
+        expect(spyGetItem).toHaveBeenCalled();
+        expect(spyInvalidate).toHaveBeenCalled();
+        expect(spyUptItem).toHaveBeenCalledWith(123, { ...mockRowData, __collapsed: true });
+      });
+
+      it('should toggle the "__collapsed" when "toggleByCellClick" is enabled and clicking directly on the toggle icon', () => {
+        mockRowData.__collapsed = false;
+        gridOptionsMock.treeDataOptions!.toggleByCellClick = true;
+        vi.spyOn(gridStub, 'getData').mockReturnValue(dataViewStub);
+        const spyGetItem = vi.spyOn(dataViewStub, 'getItem').mockReturnValue(mockRowData);
+        const spyUptItem = vi.spyOn(dataViewStub, 'updateItem');
+        const spyInvalidate = vi.spyOn(gridStub, 'invalidate');
+
+        service.init(gridStub);
+        const eventData = new SlickEventData();
+        div.className = 'slick-group-toggle';
+        Object.defineProperty(eventData, 'target', { writable: true, value: div });
+        gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, eventData, gridStub);
+
+        expect(spyGetItem).toHaveBeenCalled();
+        expect(spyInvalidate).toHaveBeenCalled();
+        expect(spyUptItem).toHaveBeenCalledWith(123, { ...mockRowData, __collapsed: true });
+      });
+
+      it('should NOT toggle the "__collapsed" when "toggleByCellClick" is disabled (false) and clicking on cell text', () => {
+        mockRowData.__collapsed = false;
+        gridOptionsMock.treeDataOptions!.toggleByCellClick = false;
+        vi.spyOn(gridStub, 'getData').mockReturnValue(dataViewStub);
+        const spyGetItem = vi.spyOn(dataViewStub, 'getItem').mockReturnValue(mockRowData);
+        const spyUptItem = vi.spyOn(dataViewStub, 'updateItem');
+        const spyInvalidate = vi.spyOn(gridStub, 'invalidate');
+
+        service.init(gridStub);
+        const eventData = new SlickEventData();
+        // Create a cell with a toggle icon inside
+        const cellElm = document.createElement('div');
+        cellElm.className = 'slick-cell';
+        const toggleIcon = document.createElement('span');
+        toggleIcon.className = 'slick-group-toggle';
+        cellElm.appendChild(toggleIcon);
+        const textElm = document.createElement('span');
+        textElm.textContent = 'Item Text';
+        cellElm.appendChild(textElm);
+
+        // Click on the text (not the toggle icon directly)
+        Object.defineProperty(eventData, 'target', { writable: true, value: textElm });
+        gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, eventData, gridStub);
+
+        expect(spyGetItem).not.toHaveBeenCalled();
+        expect(spyInvalidate).not.toHaveBeenCalled();
+        expect(spyUptItem).not.toHaveBeenCalled();
+      });
+
+      it('should toggle the "__collapsed" when "toggleByCellClick" is disabled (false) and clicking directly on the toggle icon', () => {
+        mockRowData.__collapsed = false;
+        gridOptionsMock.treeDataOptions!.toggleByCellClick = false;
+        vi.spyOn(gridStub, 'getData').mockReturnValue(dataViewStub);
+        const spyGetItem = vi.spyOn(dataViewStub, 'getItem').mockReturnValue(mockRowData);
+        const spyUptItem = vi.spyOn(dataViewStub, 'updateItem');
+        const spyInvalidate = vi.spyOn(gridStub, 'invalidate');
+
+        service.init(gridStub);
+        const eventData = new SlickEventData();
+        div.className = 'slick-group-toggle';
+        Object.defineProperty(eventData, 'target', { writable: true, value: div });
+        gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, eventData, gridStub);
+
+        expect(spyGetItem).toHaveBeenCalled();
+        expect(spyInvalidate).toHaveBeenCalled();
+        expect(spyUptItem).toHaveBeenCalledWith(123, { ...mockRowData, __collapsed: true });
+      });
+    });
   });
 
   describe('onKeyDown subscription', () => {

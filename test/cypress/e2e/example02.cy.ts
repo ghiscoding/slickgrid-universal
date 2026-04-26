@@ -428,7 +428,7 @@ describe('Example 02 - Grouping & Aggregators', () => {
     it('should Group by "Duration" and collapse everything, then focus on first cell group "Duration: 0" then type ArrowRight and expect group to expand', () => {
       cy.get('[data-test="group-duration-sort-value-btn"]').click();
       cy.get('[data-test="collapse-all-btn"]').click();
-      cy.get('[data-row="0"] > .l0').click();
+      cy.get('[data-row="0"] > .l0').focus();
       cy.get('[data-row="0"] > .slick-cell:nth(0) .slick-group-title').should('contain', 'Duration: 0');
       cy.get('[data-row="1"] > .slick-cell:nth(0) .slick-group-title').should('contain', 'Duration: 1');
       cy.get('[data-row="2"] > .slick-cell:nth(0) .slick-group-title').should('contain', 'Duration: 2');
@@ -448,7 +448,7 @@ describe('Example 02 - Grouping & Aggregators', () => {
 
     it('should Group by "Duration & Effort-Driven", then focus on first cell group "Duration: 0" then type ArrowRight and expect sub-group to expand', () => {
       cy.get('[data-test="group-duration-effort-btn"]').click();
-      cy.get('[data-row="0"] > .l0').click();
+      cy.get('[data-row="0"] > .l0').focus();
       cy.get('[data-row="0"] > .slick-cell:nth(0) .slick-group-title').should('contain', 'Duration: 0');
       cy.get('[data-row="1"] > .slick-cell:nth(0) .slick-group-title').should('contain', 'Effort-Driven: False');
       cy.get('[data-row="2"] > .slick-cell:nth(0) .slick-group-title').should('contain', 'Effort-Driven: True');
@@ -472,6 +472,16 @@ describe('Example 02 - Grouping & Aggregators', () => {
       cy.press(Cypress.Keyboard.Keys.LEFT);
 
       cy.get('[data-row="0"] > .slick-cell:nth(0) .slick-group-title').should('contain', 'Duration: 0');
+      cy.get('[data-row="1"] > .slick-cell:nth(0)').should('not.have.class', '.slick-group-title');
+      cy.get('[data-row="2"] > .slick-cell:nth(0)').should('not.have.class', '.slick-group-title');
+    });
+
+    it('should toggle group by clicking anywhere on the group row and expect it to collapse/expand', () => {
+      cy.get('[data-row="0"] > .slick-cell:nth(0) .slick-group-title').should('contain', 'Duration: 0');
+      cy.get('[data-row="1"] > .slick-cell:nth(0) .slick-group-title').should('contain', 'Effort-Driven: False');
+      cy.get('[data-row="2"] > .slick-cell:nth(0) .slick-group-title').should('contain', 'Effort-Driven: True');
+
+      cy.get('[data-row="0"] > .slick-cell.l0').click();
       cy.get('[data-row="1"] > .slick-cell:nth(0)').should('not.have.class', '.slick-group-title');
       cy.get('[data-row="2"] > .slick-cell:nth(0)').should('not.have.class', '.slick-group-title');
     });

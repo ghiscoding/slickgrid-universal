@@ -42,6 +42,9 @@ export interface GroupItemMetadataProviderOption {
   /** Defaults to "collapsed" */
   toggleCollapsedCssClass?: string;
 
+  /** Defaults to False, should we toggle the tree node when clicking on the cell */
+  toggleByCellClick?: boolean;
+
   /** Whether or not we want to enable the group expanding/collapsing */
   enableExpandCollapse?: boolean;
 

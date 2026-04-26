@@ -78,6 +78,9 @@ export interface TreeDataOption extends TreeDataPropNames {
   /** Optional Title Formatter (allows you to format/style the title text differently) */
   titleFormatter?: Formatter;
 
+  /** Defaults to False, should we toggle the tree node when clicking on the cell */
+  toggleByCellClick?: boolean;
+
   /**
    * Lazy load callback that should resolve the data that you're fetching lazily
    * @param {*} node - node item that is being expanded
