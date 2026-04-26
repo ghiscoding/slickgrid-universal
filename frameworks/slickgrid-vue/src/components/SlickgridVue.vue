@@ -36,6 +36,7 @@ import {
   type ExtensionList,
   type ExternalResource,
   type ExternalResourceConstructor,
+  type GroupItemMetadataProviderOption,
   type Metrics,
   type Observable,
   type Pagination,
@@ -420,7 +421,9 @@ function initialization() {
   } as Partial<DataViewOption>;
 
   if (_gridOptions.value.draggableGrouping || _gridOptions.value.enableGrouping) {
-    groupItemMetadataProvider = new SlickGroupItemMetadataProvider(_gridOptions.value.groupItemMetadataOption);
+    groupItemMetadataProvider = new SlickGroupItemMetadataProvider(
+      _gridOptions.value.groupItemMetadataOption as GroupItemMetadataProviderOption | undefined
+    );
     sharedService.groupItemMetadataProvider = groupItemMetadataProvider;
     dataViewOptions = { ...dataViewOptions, groupItemMetadataProvider: groupItemMetadataProvider };
   }
