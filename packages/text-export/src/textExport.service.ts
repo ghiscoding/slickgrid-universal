@@ -16,7 +16,6 @@ import type {
 } from '@slickgrid-universal/common';
 import { Constants, exportWithFormatterWhenDefined, getTranslationPrefix, htmlDecode } from '@slickgrid-universal/common';
 import { addWhiteSpaces, extend, getHtmlStringOutput, stripTags, titleCase } from '@slickgrid-universal/utils';
-import { TextEncoder } from 'text-encoding-utf-8';
 
 const DEFAULT_EXPORT_OPTIONS: TextExportOption = {
   delimiter: ',',
@@ -141,7 +140,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
     // Option #1: we need to make Excel knowing that it's dealing with an UTF-8, A correctly formatted UTF8 file can have a Byte Order Mark as its first three octets
     // reference: http://stackoverflow.com/questions/155097/microsoft-excel-mangles-diacritics-in-csv-files
     // Option#2: use a 3rd party extension to JavaScript encode into UTF-16
-    const outputData = options.format === 'csv' ? new TextEncoder('utf-8').encode(csvContent) : csvContent;
+    const outputData = options.format === 'csv' ? new TextEncoder().encode(csvContent) : csvContent;
 
     // create a Blob object for the download
     const blob = new Blob([options.useUtf8WithBom ? '\uFEFF' : '', outputData as BlobPart], {
