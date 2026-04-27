@@ -38,12 +38,10 @@
   },
   "dependencies": {
     "@slickgrid-universal/common": "workspace:*",
-    "@slickgrid-universal/utils": "workspace:*",
-    "text-encoding-utf-8": "^1.0.2"
+    "@slickgrid-universal/utils": "workspace:*"
   },
   "devDependencies": {
-    "@slickgrid-universal/event-pub-sub": "workspace:*",
-    "@types/text-encoding-utf-8": "^1.0.5"
+    "@slickgrid-universal/event-pub-sub": "workspace:*"
   },
   "funding": {
     "type": "ko_fi",
