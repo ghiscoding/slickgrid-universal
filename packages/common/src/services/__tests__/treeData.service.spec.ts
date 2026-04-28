@@ -567,10 +567,10 @@ describe('TreeData Service', () => {
       expect(pubSubSpy).not.toHaveBeenCalledWith(`onTreeItemToggled`);
     });
 
-    describe('toggleOnTitle option', () => {
-      it('should toggle the "__collapsed" when "toggleOnTitle" is enabled and clicking on the tree node title', () => {
+    describe('toggleOnNodeTitle option', () => {
+      it('should toggle the "__collapsed" when "toggleOnNodeTitle" is enabled and clicking on the tree node title', () => {
         mockRowData.__collapsed = false;
-        gridOptionsMock.treeDataOptions!.toggleOnTitle = true;
+        gridOptionsMock.treeDataOptions!.toggleOnNodeTitle = true;
         vi.spyOn(gridStub, 'getData').mockReturnValue(dataViewStub);
         const spyGetItem = vi.spyOn(dataViewStub, 'getItem').mockReturnValue(mockRowData);
         const spyUptItem = vi.spyOn(dataViewStub, 'updateItem');
@@ -598,9 +598,9 @@ describe('TreeData Service', () => {
         expect(spyUptItem).toHaveBeenCalledWith(123, { ...mockRowData, __collapsed: true });
       });
 
-      it('should toggle the "__collapsed" when "toggleOnTitle" is enabled and clicking directly on the toggle icon', () => {
+      it('should toggle the "__collapsed" when "toggleOnNodeTitle" is enabled and clicking directly on the toggle icon', () => {
         mockRowData.__collapsed = false;
-        gridOptionsMock.treeDataOptions!.toggleOnTitle = true;
+        gridOptionsMock.treeDataOptions!.toggleOnNodeTitle = true;
         vi.spyOn(gridStub, 'getData').mockReturnValue(dataViewStub);
         const spyGetItem = vi.spyOn(dataViewStub, 'getItem').mockReturnValue(mockRowData);
         const spyUptItem = vi.spyOn(dataViewStub, 'updateItem');
@@ -617,9 +617,9 @@ describe('TreeData Service', () => {
         expect(spyUptItem).toHaveBeenCalledWith(123, { ...mockRowData, __collapsed: true });
       });
 
-      it('should NOT toggle the "__collapsed" when "toggleOnTitle" is disabled (false) and clicking on cell text', () => {
+      it('should NOT toggle the "__collapsed" when "toggleOnNodeTitle" is disabled (false) and clicking on cell text', () => {
         mockRowData.__collapsed = false;
-        gridOptionsMock.treeDataOptions!.toggleOnTitle = false;
+        gridOptionsMock.treeDataOptions!.toggleOnNodeTitle = false;
         vi.spyOn(gridStub, 'getData').mockReturnValue(dataViewStub);
         const spyGetItem = vi.spyOn(dataViewStub, 'getItem').mockReturnValue(mockRowData);
         const spyUptItem = vi.spyOn(dataViewStub, 'updateItem');
@@ -646,9 +646,9 @@ describe('TreeData Service', () => {
         expect(spyUptItem).not.toHaveBeenCalled();
       });
 
-      it('should toggle the "__collapsed" when "toggleOnTitle" is disabled (false) and clicking directly on the toggle icon', () => {
+      it('should toggle the "__collapsed" when "toggleOnNodeTitle" is disabled (false) and clicking directly on the toggle icon', () => {
         mockRowData.__collapsed = false;
-        gridOptionsMock.treeDataOptions!.toggleOnTitle = false;
+        gridOptionsMock.treeDataOptions!.toggleOnNodeTitle = false;
         vi.spyOn(gridStub, 'getData').mockReturnValue(dataViewStub);
         const spyGetItem = vi.spyOn(dataViewStub, 'getItem').mockReturnValue(mockRowData);
         const spyUptItem = vi.spyOn(dataViewStub, 'updateItem');

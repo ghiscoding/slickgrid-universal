@@ -42,7 +42,7 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
     toggleCssClass: 'slick-group-toggle',
     toggleExpandedCssClass: 'expanded',
     toggleCollapsedCssClass: 'collapsed',
-    toggleOnTitle: false,
+    toggleOnNodeTitle: false,
     enableExpandCollapse: true,
     groupFormatter: this.defaultGroupCellFormatter.bind(this),
     totalsFormatter: this.defaultTotalsCellFormatter.bind(this),
@@ -153,7 +153,7 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
     // 2. group title span
     const groupTitleElm = createDomElement('span', { className: this._options.groupTitleCssClass || '' });
     groupTitleElm.setAttribute('level', groupLevel);
-    if (this._options?.toggleOnTitle) {
+    if (this._options?.toggleOnNodeTitle) {
       groupTitleElm.classList.add('pointer');
     }
     item.title instanceof HTMLElement || item.title instanceof DocumentFragment
@@ -182,7 +182,7 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
     const toggleCssClass = this._options.toggleCssClass || '';
     const groupTitleCssClass = this._options.groupTitleCssClass || '';
     const isIconClicked = target?.classList.contains(toggleCssClass);
-    const isElmToggled = this._options?.toggleOnTitle
+    const isElmToggled = this._options?.toggleOnNodeTitle
       ? isIconClicked || target?.closest(`.${toggleCssClass},.${groupTitleCssClass}`)
       : isIconClicked;
 

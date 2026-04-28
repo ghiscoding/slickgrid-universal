@@ -206,7 +206,7 @@ export class Example13Component implements OnInit {
       // filterTypingDebounce: 250,
       enableGrouping: true,
       groupItemMetadataOption: {
-        toggleOnTitle: true, // enable toggle of group by clicking anywhere on the cell (not just the toggle icon)
+        toggleOnNodeTitle: true, // enable toggle of group by clicking anywhere on the cell (not just the toggle icon)
       },
       enableTextExport: true,
       gridMenu: {

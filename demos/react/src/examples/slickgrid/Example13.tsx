@@ -207,7 +207,7 @@ const Example13: React.FC = () => {
       // filterTypingDebounce: 250,
       enableGrouping: true,
       groupItemMetadataOption: {
-        toggleOnTitle: true, // enable toggle of group by clicking anywhere on the cell (not just the toggle icon)
+        toggleOnNodeTitle: true, // enable toggle of group by clicking anywhere on the cell (not just the toggle icon)
       },
       enableExcelExport: true,
       enableTextExport: true,

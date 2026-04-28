@@ -43,7 +43,7 @@ export interface GroupItemMetadataProviderOption {
   toggleCollapsedCssClass?: string;
 
   /** Defaults to False, should we toggle the tree node when clicking on the tree node title or toggle icon (tree node must have element with `.slick-tree-title` class name) */
-  toggleOnTitle?: boolean;
+  toggleOnNodeTitle?: boolean;
 
   /** Whether or not we want to enable the group expanding/collapsing */
   enableExpandCollapse?: boolean;

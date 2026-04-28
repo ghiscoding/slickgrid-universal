@@ -137,8 +137,8 @@ describe('Tree Formatter', () => {
     );
   });
 
-  it('should add pointer class to tree title when toggleOnTitle is enabled', () => {
-    mockGridOptions.treeDataOptions!.toggleOnTitle = true;
+  it('should add pointer class to tree title when toggleOnNodeTitle is enabled', () => {
+    mockGridOptions.treeDataOptions!.toggleOnNodeTitle = true;
     const output = treeFormatter(1, 1, dataset[3]['firstName'], {} as Column, dataset[3], gridStub) as FormatterResultWithHtml;
 
     expect(output.addClasses).toBe('slick-tree-level-0');
@@ -147,8 +147,8 @@ describe('Tree Formatter', () => {
     );
   });
 
-  it('should not add pointer class to tree title when toggleOnTitle is not enabled', () => {
-    mockGridOptions.treeDataOptions!.toggleOnTitle = false;
+  it('should not add pointer class to tree title when toggleOnNodeTitle is not enabled', () => {
+    mockGridOptions.treeDataOptions!.toggleOnNodeTitle = false;
     const output = treeFormatter(1, 1, dataset[3]['firstName'], {} as Column, dataset[3], gridStub) as FormatterResultWithHtml;
 
     expect(output.addClasses).toBe('slick-tree-level-0');

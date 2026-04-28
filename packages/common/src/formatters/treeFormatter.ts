@@ -52,7 +52,7 @@ export const treeFormatter: Formatter = (row, cell, value, columnDef, dataContex
     outputValue = parseFormatterWhenExist(treeDataOptions.titleFormatter, row, cell, columnDef, dataContext, grid);
   }
   const treeTitleElm = createDomElement('span', { className: 'slick-tree-title' });
-  if (gridOptions.treeDataOptions?.toggleOnTitle) {
+  if (gridOptions.treeDataOptions?.toggleOnNodeTitle) {
     treeTitleElm.classList.add('pointer');
   }
   applyHtmlToElement(treeTitleElm, outputValue, gridOptions);

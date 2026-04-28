@@ -463,7 +463,9 @@ export class TreeDataService {
 
       if (typeof targetElm?.className === 'string') {
         const isIconClicked = ['slick-group-toggle', 'slick-tree-toggle'].some((cls) => targetElm.classList.contains(cls));
-        const isElmToggled = this.treeDataOptions?.toggleOnTitle ? isIconClicked || targetElm?.closest('.slick-tree-title') : isIconClicked;
+        const isElmToggled = this.treeDataOptions?.toggleOnNodeTitle
+          ? isIconClicked || targetElm?.closest('.slick-tree-title')
+          : isIconClicked;
 
         if (isElmToggled) {
           const item = this.dataView.getItem(args.row);
