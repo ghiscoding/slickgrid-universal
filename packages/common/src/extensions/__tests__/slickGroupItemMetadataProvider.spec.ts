@@ -139,6 +139,28 @@ describe('GroupItemMetadataProvider Service', () => {
       );
     });
 
+    it('should add pointer class to group title when toggleOnTitle is enabled', () => {
+      service.init(gridStub);
+      service.setOptions({ enableExpandCollapse: true, toggleOnTitle: true });
+      const output = service.getOptions().groupFormatter!(0, 0, 'test', mockColumns[0], { title: 'Some Title' }, gridStub) as DocumentFragment;
+      const htmlContent = getHtmlStringOutput(output, 'outerHTML');
+
+      expect(htmlContent).toBe(
+        '<span class="slick-group-toggle expanded" aria-expanded="true" style="margin-left: 0px;"></span><span class="slick-group-title pointer" level="0">Some Title</span>'
+      );
+    });
+
+    it('should not add pointer class to group title when toggleOnTitle is disabled', () => {
+      service.init(gridStub);
+      service.setOptions({ enableExpandCollapse: true, toggleOnTitle: false });
+      const output = service.getOptions().groupFormatter!(0, 0, 'test', mockColumns[0], { title: 'Some Title' }, gridStub) as DocumentFragment;
+      const htmlContent = getHtmlStringOutput(output, 'outerHTML');
+
+      expect(htmlContent).toBe(
+        '<span class="slick-group-toggle expanded" aria-expanded="true" style="margin-left: 0px;"></span><span class="slick-group-title" level="0">Some Title</span>'
+      );
+    });
+
     it('should provide HTMLElement and return same Grouping info formatted with a group level 0 without indentation when calling "defaultGroupCellFormatter" with option "enableExpandCollapse" set to True', () => {
       service.init(gridStub);
       service.setOptions({ enableExpandCollapse: true });
