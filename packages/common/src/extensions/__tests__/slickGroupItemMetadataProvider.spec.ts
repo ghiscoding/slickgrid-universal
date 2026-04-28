@@ -95,7 +95,7 @@ describe('GroupItemMetadataProvider Service', () => {
       toggleCssClass: 'slick-group-toggle',
       toggleExpandedCssClass: 'expanded',
       toggleCollapsedCssClass: 'collapsed',
-      toggleByCellClick: false,
+      toggleOnTitle: false,
       enableExpandCollapse: true,
       groupFormatter: expect.any(Function),
       totalsFormatter: expect.any(Function),
@@ -471,7 +471,7 @@ describe('GroupItemMetadataProvider Service', () => {
     });
   });
 
-  describe('toggleByCellClick option via constructor', () => {
+  describe('toggleOnTitle option via constructor', () => {
     let collapseGroupSpy: any;
     let expandGroupSpy: any;
     let clickEvent: Event;
@@ -494,10 +494,10 @@ describe('GroupItemMetadataProvider Service', () => {
       vi.clearAllMocks();
     });
 
-    it('should expand Group when toggleByCellClick is true and clicking on cell with group title', () => {
+    it('should expand Group when toggleOnTitle is true and clicking on .slick-group-title', () => {
       group.groupingKey = 'age';
       group.collapsed = true;
-      const serviceWithToggle = new SlickGroupItemMetadataProvider({ toggleByCellClick: true });
+      const serviceWithToggle = new SlickGroupItemMetadataProvider({ toggleOnTitle: true });
 
       serviceWithToggle.init(gridStub);
 
@@ -523,10 +523,10 @@ describe('GroupItemMetadataProvider Service', () => {
       serviceWithToggle.dispose();
     });
 
-    it('should collapse Group when toggleByCellClick is true and clicking on cell content', () => {
+    it('should collapse Group when toggleOnTitle is true and clicking on .slick-group-title', () => {
       group.groupingKey = 'age';
       group.collapsed = false;
-      const serviceWithToggle = new SlickGroupItemMetadataProvider({ toggleByCellClick: true });
+      const serviceWithToggle = new SlickGroupItemMetadataProvider({ toggleOnTitle: true });
 
       serviceWithToggle.init(gridStub);
 
@@ -552,10 +552,44 @@ describe('GroupItemMetadataProvider Service', () => {
       serviceWithToggle.dispose();
     });
 
-    it('should NOT expand Group when toggleByCellClick is false and clicking on cell title', () => {
+    it('should NOT toggle Group when toggleOnTitle is true and clicking on non-title cell content', () => {
       group.groupingKey = 'age';
       group.collapsed = true;
-      const serviceWithoutToggle = new SlickGroupItemMetadataProvider({ toggleByCellClick: false });
+      const serviceWithToggle = new SlickGroupItemMetadataProvider({ toggleOnTitle: true });
+
+      serviceWithToggle.init(gridStub);
+
+      // Create a cell structure with group title
+      const cellElm = document.createElement('div');
+      cellElm.className = 'slick-cell';
+      const toggleIcon = document.createElement('span');
+      toggleIcon.className = 'slick-group-toggle';
+      cellElm.appendChild(toggleIcon);
+      const titleElm = document.createElement('span');
+      titleElm.className = 'slick-group-title';
+      titleElm.textContent = 'Group Title';
+      cellElm.appendChild(titleElm);
+      const contentElm = document.createElement('span');
+      contentElm.className = 'other-content';
+      contentElm.textContent = 'Other Content';
+      cellElm.appendChild(contentElm);
+      document.body.appendChild(cellElm);
+
+      // Click on non-title content
+      Object.defineProperty(clickEvent, 'target', { writable: true, configurable: true, value: contentElm });
+      gridStub.onClick.notify({ row: 0, cell: 2, grid: gridStub }, clickEvent);
+
+      expect(expandGroupSpy).not.toHaveBeenCalled();
+      expect(collapseGroupSpy).not.toHaveBeenCalled();
+
+      document.body.removeChild(cellElm);
+      serviceWithToggle.dispose();
+    });
+
+    it('should NOT toggle when toggleOnTitle is false and clicking on .slick-group-title', () => {
+      group.groupingKey = 'age';
+      group.collapsed = true;
+      const serviceWithoutToggle = new SlickGroupItemMetadataProvider({ toggleOnTitle: false });
 
       serviceWithoutToggle.init(gridStub);
 
@@ -581,10 +615,10 @@ describe('GroupItemMetadataProvider Service', () => {
       serviceWithoutToggle.dispose();
     });
 
-    it('should expand Group when toggleByCellClick is false and clicking directly on toggle icon', () => {
+    it('should expand Group when toggleOnTitle is false and clicking on .slick-group-toggle', () => {
       group.groupingKey = 'age';
       group.collapsed = true;
-      const serviceWithoutToggle = new SlickGroupItemMetadataProvider({ toggleByCellClick: false });
+      const serviceWithoutToggle = new SlickGroupItemMetadataProvider({ toggleOnTitle: false });
 
       serviceWithoutToggle.init(gridStub);
 
@@ -599,10 +633,10 @@ describe('GroupItemMetadataProvider Service', () => {
       serviceWithoutToggle.dispose();
     });
 
-    it('should expand Group when toggleByCellClick is true and clicking directly on toggle icon', () => {
+    it('should expand Group when toggleOnTitle is true and clicking on .slick-group-toggle', () => {
       group.groupingKey = 'age';
       group.collapsed = true;
-      const serviceWithToggle = new SlickGroupItemMetadataProvider({ toggleByCellClick: true });
+      const serviceWithToggle = new SlickGroupItemMetadataProvider({ toggleOnTitle: true });
 
       serviceWithToggle.init(gridStub);
 

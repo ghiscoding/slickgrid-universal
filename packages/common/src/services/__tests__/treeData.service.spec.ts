@@ -567,10 +567,10 @@ describe('TreeData Service', () => {
       expect(pubSubSpy).not.toHaveBeenCalledWith(`onTreeItemToggled`);
     });
 
-    describe('toggleByCellClick option', () => {
-      it('should toggle the "__collapsed" when "toggleByCellClick" is enabled and clicking anywhere on the cell that contains a toggle icon', () => {
+    describe('toggleOnTitle option', () => {
+      it('should toggle the "__collapsed" when "toggleOnTitle" is enabled and clicking on the tree node title', () => {
         mockRowData.__collapsed = false;
-        gridOptionsMock.treeDataOptions!.toggleByCellClick = true;
+        gridOptionsMock.treeDataOptions!.toggleOnTitle = true;
         vi.spyOn(gridStub, 'getData').mockReturnValue(dataViewStub);
         const spyGetItem = vi.spyOn(dataViewStub, 'getItem').mockReturnValue(mockRowData);
         const spyUptItem = vi.spyOn(dataViewStub, 'updateItem');
@@ -578,18 +578,19 @@ describe('TreeData Service', () => {
 
         service.init(gridStub);
         const eventData = new SlickEventData();
-        // Create a cell with a toggle icon inside
+        // Create a cell with a toggle icon and title inside
         const cellElm = document.createElement('div');
         cellElm.className = 'slick-cell';
         const toggleIcon = document.createElement('span');
         toggleIcon.className = 'slick-group-toggle';
         cellElm.appendChild(toggleIcon);
-        const textElm = document.createElement('span');
-        textElm.textContent = 'Item Text';
-        cellElm.appendChild(textElm);
+        const titleElm = document.createElement('span');
+        titleElm.className = 'slick-tree-title';
+        titleElm.textContent = 'Item Text';
+        cellElm.appendChild(titleElm);
 
-        // Click on the text (not the toggle icon directly)
-        Object.defineProperty(eventData, 'target', { writable: true, value: textElm });
+        // Click on the tree title
+        Object.defineProperty(eventData, 'target', { writable: true, value: titleElm });
         gridStub.onClick.notify({ cell: 0, row: 0, grid: gridStub }, eventData, gridStub);
 
         expect(spyGetItem).toHaveBeenCalled();
@@ -597,9 +598,9 @@ describe('TreeData Service', () => {
         expect(spyUptItem).toHaveBeenCalledWith(123, { ...mockRowData, __collapsed: true });
       });
 
-      it('should toggle the "__collapsed" when "toggleByCellClick" is enabled and clicking directly on the toggle icon', () => {
+      it('should toggle the "__collapsed" when "toggleOnTitle" is enabled and clicking directly on the toggle icon', () => {
         mockRowData.__collapsed = false;
-        gridOptionsMock.treeDataOptions!.toggleByCellClick = true;
+        gridOptionsMock.treeDataOptions!.toggleOnTitle = true;
         vi.spyOn(gridStub, 'getData').mockReturnValue(dataViewStub);
         const spyGetItem = vi.spyOn(dataViewStub, 'getItem').mockReturnValue(mockRowData);
         const spyUptItem = vi.spyOn(dataViewStub, 'updateItem');
@@ -616,9 +617,9 @@ describe('TreeData Service', () => {
         expect(spyUptItem).toHaveBeenCalledWith(123, { ...mockRowData, __collapsed: true });
       });
 
-      it('should NOT toggle the "__collapsed" when "toggleByCellClick" is disabled (false) and clicking on cell text', () => {
+      it('should NOT toggle the "__collapsed" when "toggleOnTitle" is disabled (false) and clicking on cell text', () => {
         mockRowData.__collapsed = false;
-        gridOptionsMock.treeDataOptions!.toggleByCellClick = false;
+        gridOptionsMock.treeDataOptions!.toggleOnTitle = false;
         vi.spyOn(gridStub, 'getData').mockReturnValue(dataViewStub);
         const spyGetItem = vi.spyOn(dataViewStub, 'getItem').mockReturnValue(mockRowData);
         const spyUptItem = vi.spyOn(dataViewStub, 'updateItem');
@@ -645,9 +646,9 @@ describe('TreeData Service', () => {
         expect(spyUptItem).not.toHaveBeenCalled();
       });
 
-      it('should toggle the "__collapsed" when "toggleByCellClick" is disabled (false) and clicking directly on the toggle icon', () => {
+      it('should toggle the "__collapsed" when "toggleOnTitle" is disabled (false) and clicking directly on the toggle icon', () => {
         mockRowData.__collapsed = false;
-        gridOptionsMock.treeDataOptions!.toggleByCellClick = false;
+        gridOptionsMock.treeDataOptions!.toggleOnTitle = false;
         vi.spyOn(gridStub, 'getData').mockReturnValue(dataViewStub);
         const spyGetItem = vi.spyOn(dataViewStub, 'getItem').mockReturnValue(mockRowData);
         const spyUptItem = vi.spyOn(dataViewStub, 'updateItem');

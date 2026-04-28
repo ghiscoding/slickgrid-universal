@@ -462,10 +462,8 @@ export class TreeDataService {
       const lazyLoadingPropName = getTreeDataOptionPropName(this.treeDataOptions, 'lazyLoadingPropName');
 
       if (typeof targetElm?.className === 'string') {
-        const isElmToggled = this.treeDataOptions?.toggleByCellClick
-          ? targetElm?.classList.contains('slick-group-toggle') ||
-            targetElm?.closest('.slick-cell')?.querySelector(`.slick-cell > .slick-group-toggle`)
-          : targetElm?.classList.contains('slick-group-toggle');
+        const isIconClicked = ['slick-group-toggle', 'slick-tree-toggle'].some((cls) => targetElm.classList.contains(cls));
+        const isElmToggled = this.treeDataOptions?.toggleOnTitle ? isIconClicked || targetElm?.closest('.slick-tree-title') : isIconClicked;
 
         if (isElmToggled) {
           const item = this.dataView.getItem(args.row);
@@ -600,7 +598,8 @@ export class TreeDataService {
           (e.key === ' ' || (e.key === 'ArrowRight' && isCollapsed) || (e.key === 'ArrowLeft' && !isCollapsed));
 
         if (shouldToggle) {
-          const cellGroupToggleElm = this._grid.getActiveCellNode()?.querySelector<HTMLDivElement>('.slick-group-toggle');
+          const cellGroupClassName = '.slick-group-toggle,.slick-tree-toggle';
+          const cellGroupToggleElm = this._grid.getActiveCellNode()?.querySelector<HTMLDivElement>(cellGroupClassName);
           if (cellGroupToggleElm) {
             e.preventDefault();
             e.stopImmediatePropagation();

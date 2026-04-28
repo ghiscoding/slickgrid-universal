@@ -329,7 +329,7 @@ describe('Example 13 - Grouping & Aggregators', () => {
       cy.get('[data-row="1"] > .slick-cell:nth(0) .slick-group-title').should('contain', 'Effort-Driven: False');
       cy.get('[data-row="2"] > .slick-cell:nth(0) .slick-group-title').should('contain', 'Effort-Driven: True');
 
-      cy.get('[data-row="0"] > .slick-cell.l0').click();
+      cy.get('[data-row="0"] > .slick-cell.l0 .slick-group-title').click();
       cy.get('[data-row="1"] > .slick-cell:nth(0)').should('not.have.class', '.slick-group-title');
       cy.get('[data-row="2"] > .slick-cell:nth(0)').should('not.have.class', '.slick-group-title');
     });

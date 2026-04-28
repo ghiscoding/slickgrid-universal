@@ -217,7 +217,7 @@ export class Example13 {
       // filterTypingDebounce: 250,
       enableGrouping: true,
       groupItemMetadataOption: {
-        toggleByCellClick: true, // enable toggle of group by clicking anywhere on the cell (not just the toggle icon)
+        toggleOnTitle: true, // enable toggle of group by clicking anywhere on the cell (not just the toggle icon)
       },
       enableExcelExport: true,
       enableTextExport: true,

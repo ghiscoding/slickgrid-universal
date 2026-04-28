@@ -263,7 +263,7 @@ describe('Example 27 - Tree Data (from a flat dataset with parentId references)'
     cy.get('[data-row="1"] > .slick-cell:nth(0) .slick-tree-title').should('contain', 'Task 1');
     cy.get('[data-row="1"] > .slick-cell:nth(0) .slick-group-toggle').should('have.class', 'collapsed');
 
-    cy.get('[data-row="1"] > .slick-cell.l0').click();
+    cy.get('[data-row="1"] > .slick-cell.l0 .slick-tree-title').click();
     cy.get('[data-row="1"] > .slick-cell:nth(0) .slick-group-toggle').should('have.class', 'expanded');
   });
 });

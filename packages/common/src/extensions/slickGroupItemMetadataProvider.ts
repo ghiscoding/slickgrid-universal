@@ -42,7 +42,7 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
     toggleCssClass: 'slick-group-toggle',
     toggleExpandedCssClass: 'expanded',
     toggleCollapsedCssClass: 'collapsed',
-    toggleByCellClick: false,
+    toggleOnTitle: false,
     enableExpandCollapse: true,
     groupFormatter: this.defaultGroupCellFormatter.bind(this),
     totalsFormatter: this.defaultTotalsCellFormatter.bind(this),
@@ -153,6 +153,9 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
     // 2. group title span
     const groupTitleElm = createDomElement('span', { className: this._options.groupTitleCssClass || '' });
     groupTitleElm.setAttribute('level', groupLevel);
+    if (this._options?.toggleOnTitle) {
+      groupTitleElm.classList.add('pointer');
+    }
     item.title instanceof HTMLElement || item.title instanceof DocumentFragment
       ? groupTitleElm.appendChild(item.title)
       : applyHtmlToElement(groupTitleElm, item.title ?? '', this.gridOptions);
@@ -178,10 +181,10 @@ export class SlickGroupItemMetadataProvider implements SlickPlugin {
     const item = this._grid?.getDataItem(args.row);
     const toggleCssClass = this._options.toggleCssClass || '';
     const groupTitleCssClass = this._options.groupTitleCssClass || '';
-    const isElmToggled = this._options?.toggleByCellClick
-      ? target?.classList.contains(toggleCssClass) ||
-        target?.closest('.slick-cell')?.querySelector(`.slick-cell > .${toggleCssClass},.${groupTitleCssClass}`)
-      : target?.classList.contains(toggleCssClass);
+    const isIconClicked = target?.classList.contains(toggleCssClass);
+    const isElmToggled = this._options?.toggleOnTitle
+      ? isIconClicked || target?.closest(`.${toggleCssClass},.${groupTitleCssClass}`)
+      : isIconClicked;
 
     if (item instanceof SlickGroup && isElmToggled) {
       this.handleDataViewExpandOrCollapse(item);

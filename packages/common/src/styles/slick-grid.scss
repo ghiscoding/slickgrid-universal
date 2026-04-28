@@ -569,13 +569,15 @@
         vertical-align: var(--slick-draggable-group-title-vertical-align, v.$slick-draggable-group-title-vertical-align);
       }
       .slick-group-toggle,
+      .slick-tree-toggle,
       .slick-tree-load-fail {
         cursor: pointer;
         display: inline-block;
         width: 1em;
         height: 1em;
       }
-      .slick-group-toggle {
+      .slick-group-toggle,
+      .slick-tree-toggle {
         color: var(--slick-icon-group-color, v.$slick-icon-group-color);
         font-size: var(--slick-icon-group-font-size, v.$slick-icon-group-font-size);
         margin-right: var(--slick-icon-group-margin-right, v.$slick-icon-group-margin-right);
@@ -613,6 +615,7 @@
       }
       // fix alignment when slick-cell includes slickgrid icons (align bottom will in fact center the icon & text), for example Tree Data/Grouping
       .slick-group-toggle,
+      .slick-tree-toggle,
       .mdi,
       .sgi {
         vertical-align: var(--slick-icon-with-text-valign, v.$slick-icon-with-text-valign);
