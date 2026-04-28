@@ -38,7 +38,12 @@ jobs:
             if [ -d "$dir" ] && [ -f "$dir/package.json" ]; then
               echo "Packing $dir"
               cd "$dir"
-              npm pack ./dist
+              # Check if package has publishConfig.directory set to dist
+              if grep -q '"directory":\s*"dist"' package.json; then
+                npm pack ./dist
+              else
+                npm pack
+              fi
               cd - > /dev/null
             fi
           done
