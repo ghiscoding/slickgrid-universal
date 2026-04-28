@@ -39,7 +39,7 @@ const treeFormatter: Formatter = (_row, _cell, value, _columnDef, dataContext, g
   const data = dataView.getItems();
   const identifierPropName = dataView.getIdPropertyName() || 'id';
   const idx = dataView.getIdxById(dataContext[identifierPropName]) as number;
-  const prefix = this.getFileIcon(value);
+  const prefix = getFileIcon(value);
   const treeLevel = dataContext[treeLevelPropName];
   const exportIndentationLeadingChar = '.';
 
