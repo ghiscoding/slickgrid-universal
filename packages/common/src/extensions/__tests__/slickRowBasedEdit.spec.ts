@@ -604,6 +604,46 @@ describe('Row Based Edit Plugin', () => {
       expect(gridService.deleteItem).toHaveBeenCalled();
     });
 
+    it('should call onAfterDelete with the onCellClick args after deleting the item', () => {
+      const onAfterDeleteSpy = vi.fn();
+      const { onCellClick, gridService } = arrange({ onAfterDelete: onAfterDeleteSpy });
+      const fakeItem = { id: 'test' };
+      const callbackArgs = {
+        row: 0,
+        cell: 0,
+        grid: gridStub,
+        columnDef: {} as Column,
+        dataContext: fakeItem,
+        dataView: gridStub.getData(),
+      };
+
+      onCellClick(createFakeEvent(BTN_ACTION_DELETE), callbackArgs);
+
+      expect(gridService.deleteItem).toHaveBeenCalledWith(fakeItem);
+      expect(onAfterDeleteSpy).toHaveBeenCalledTimes(1);
+      expect(onAfterDeleteSpy).toHaveBeenCalledWith(callbackArgs);
+    });
+
+    it('should call onAfterDelete only after deleteItem is executed', () => {
+      const onAfterDeleteSpy = vi.fn();
+      const { onCellClick, gridService } = arrange({ onAfterDelete: onAfterDeleteSpy });
+      const fakeItem = { id: 'test' };
+
+      onCellClick(createFakeEvent(BTN_ACTION_DELETE), {
+        row: 0,
+        cell: 0,
+        grid: gridStub,
+        columnDef: {} as Column,
+        dataContext: fakeItem,
+        dataView: gridStub.getData(),
+      });
+
+      const deleteCallOrder = (gridService.deleteItem as Mock).mock.invocationCallOrder[0];
+      const callbackCallOrder = onAfterDeleteSpy.mock.invocationCallOrder[0];
+
+      expect(deleteCallOrder).toBeLessThan(callbackCallOrder);
+    });
+
     it('should enter editmode when clicking the edit button', () => {
       const { onCellClick } = arrange();
       const fakeItem = { id: 'test' };
