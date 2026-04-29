@@ -352,6 +352,9 @@ export class SlickRowBasedEdit {
 
       this.toggleEditmode(dataContext, false);
       this._gridService.deleteItem(dataContext);
+      if (typeof this._addonOptions?.onAfterDelete === 'function') {
+        this._addonOptions.onAfterDelete!(args);
+      }
     } else if (target.classList.contains(BTN_ACTION_EDIT) || target.parentElement?.classList.contains(BTN_ACTION_EDIT)) {
       if (!this._addonOptions?.allowMultipleRows && this._editedRows.size > 0) {
         return;
