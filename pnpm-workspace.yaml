@@ -5,9 +5,9 @@ packages:
   - packages/**
   - '!**/dist/**'
 
-minimumReleaseAge: 2880
+minimumReleaseAge: 2880 # 2 days in minutes
 minimumReleaseAgeExclude:
-  # exclude Lerna-Lite min age since I'm the maintainer
+  # exclude packages that I personally maintain and are safe to use on the same day
   - '@lerna-lite/*'
 
 catalog:
