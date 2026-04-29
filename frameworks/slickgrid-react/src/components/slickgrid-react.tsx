@@ -488,7 +488,7 @@ export class SlickgridReact<TData = any> extends React.Component<SlickgridReactP
       let dataViewOptions: Partial<DataViewOption> = { ...this._options.dataView, inlineFilters: dataviewInlineFilters };
 
       if (this._options.draggableGrouping || this._options.enableGrouping) {
-        this.groupItemMetadataProvider = new SlickGroupItemMetadataProvider();
+        this.groupItemMetadataProvider = new SlickGroupItemMetadataProvider(this._options.groupItemMetadataOption);
         this.sharedService.groupItemMetadataProvider = this.groupItemMetadataProvider;
         dataViewOptions = { ...dataViewOptions, groupItemMetadataProvider: this.groupItemMetadataProvider };
       }

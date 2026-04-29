@@ -216,6 +216,9 @@ export class Example13 {
       // you could debounce/throttle the input text filter if you have lots of data
       // filterTypingDebounce: 250,
       enableGrouping: true,
+      groupItemMetadataOption: {
+        toggleOnNodeTitle: true, // enable toggle of group by clicking on the toggle icon or its title (not just the toggle icon)
+      },
       enableExcelExport: true,
       enableTextExport: true,
       excelExportOptions: { sanitizeDataExport: true },

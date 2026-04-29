@@ -485,7 +485,7 @@ export class GridStateService {
 
     // subscribe to Row Selection changes (when enabled)
     if (this._gridOptions.enableSelection || this._gridOptions.enableCheckboxSelector) {
-      this._eventHandler.subscribe(this._dataView.onSelectedRowIdsChanged, (e, args) => {
+      this._eventHandler.subscribe(this._dataView.onSelectedRowIdsChanged, (_e, args) => {
         const previousSelectedRowIndexes = (this._selectedRowIndexes || []).slice();
         const previousSelectedFilteredRowDataContextIds = (this.selectedRowDataContextIds || []).slice();
         this.selectedRowDataContextIds = args.filteredIds;

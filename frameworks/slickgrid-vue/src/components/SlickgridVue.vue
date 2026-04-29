@@ -36,6 +36,7 @@ import {
   type ExtensionList,
   type ExternalResource,
   type ExternalResourceConstructor,
+  type GroupItemMetadataProviderOption,
   type Metrics,
   type Observable,
   type Pagination,
@@ -385,19 +386,19 @@ function initialization() {
     _gridOptions.value.enableMouseWheelScrollHandler = true;
   }
 
-  eventPubSubService.eventNamingStyle = _gridOptions.value?.eventNamingStyle ?? 'camelCaseWithExtraOnPrefix';
+  eventPubSubService.eventNamingStyle = _gridOptions.value.eventNamingStyle ?? 'camelCaseWithExtraOnPrefix';
   eventPubSubService.publish('onBeforeGridCreate', true);
 
   // make sure the dataset is initialized (if not it will throw an error that it cannot getLength of null)
   // dataset.value = dataset.value || dataModel.value || [];
   currentDatasetLength = dataModel.value?.length || 0;
   _gridOptions.value = mergeGridOptions(_gridOptions.value as GridOption);
-  _paginationOptions.value = _gridOptions.value?.pagination;
-  backendServiceApi = _gridOptions.value?.backendServiceApi;
+  _paginationOptions.value = _gridOptions.value.pagination;
+  backendServiceApi = _gridOptions.value.backendServiceApi;
   isLocalGrid = !backendServiceApi; // considered a local grid if it doesn't have a backend service set
 
   // inject the I18Next instance when translation is enabled
-  if (_gridOptions.value?.enableTranslate || _gridOptions.value?.i18n) {
+  if (_gridOptions.value.enableTranslate || _gridOptions.value.i18n) {
     i18next = inject<I18Next | null>('i18next', null);
     if (i18next) {
       translaterService.i18nInstance = i18next;
@@ -409,18 +410,20 @@ function initialization() {
   }
 
   // unless specified, we'll create an internal postProcess callback (currently only available for GraphQL)
-  if (_gridOptions.value?.backendServiceApi && !_gridOptions.value.backendServiceApi?.disableInternalPostProcess) {
+  if (_gridOptions.value.backendServiceApi && !_gridOptions.value.backendServiceApi?.disableInternalPostProcess) {
     createBackendApiInternalPostProcessCallback(_gridOptions.value as GridOption);
   }
 
-  const dataviewInlineFilters = (_gridOptions.value?.dataView && _gridOptions.value.dataView.inlineFilters) || false;
+  const dataviewInlineFilters = (_gridOptions.value.dataView && _gridOptions.value.dataView.inlineFilters) || false;
   let dataViewOptions: Partial<DataViewOption> = {
     ..._gridOptions.value.dataView,
     inlineFilters: dataviewInlineFilters,
   } as Partial<DataViewOption>;
 
-  if (_gridOptions.value?.draggableGrouping || _gridOptions.value?.enableGrouping) {
-    groupItemMetadataProvider = new SlickGroupItemMetadataProvider();
+  if (_gridOptions.value.draggableGrouping || _gridOptions.value.enableGrouping) {
+    groupItemMetadataProvider = new SlickGroupItemMetadataProvider(
+      _gridOptions.value.groupItemMetadataOption as GroupItemMetadataProviderOption | undefined
+    );
     sharedService.groupItemMetadataProvider = groupItemMetadataProvider;
     dataViewOptions = { ...dataViewOptions, groupItemMetadataProvider: groupItemMetadataProvider };
   }
@@ -438,8 +441,8 @@ function initialization() {
   _columns.value = loadSlickGridEditors(columnsModel.value || []);
 
   // if the user wants to automatically add a Custom Editor Formatter, we need to call the auto add function again
-  if (_gridOptions.value?.autoAddCustomEditorFormatter) {
-    autoAddEditorFormatterToColumnsWithEditor(_columns.value as Column[], _gridOptions.value?.autoAddCustomEditorFormatter);
+  if (_gridOptions.value.autoAddCustomEditorFormatter) {
+    autoAddEditorFormatterToColumnsWithEditor(_columns.value as Column[], _gridOptions.value.autoAddCustomEditorFormatter);
   }
 
   // save reference for all columns before they optionally become hidden/visible
@@ -460,7 +463,7 @@ function initialization() {
   extensionService.createExtensionsBeforeGridCreation(_columns.value as Column[], _gridOptions.value as GridOption);
 
   // if user entered some Pinning/Frozen "presets", we need to apply them in the grid options
-  if (_gridOptions.value?.presets?.pinning) {
+  if (_gridOptions.value.presets?.pinning) {
     _gridOptions.value = { ..._gridOptions.value, ..._gridOptions.value.presets.pinning };
   }
 
@@ -500,25 +503,25 @@ function initialization() {
 
   // user could show a custom footer with the data metrics (dataset length and last updated timestamp)
   if (
-    !_gridOptions.value?.enablePagination &&
-    _gridOptions.value?.showCustomFooter &&
-    _gridOptions.value?.customFooterOptions &&
+    !_gridOptions.value.enablePagination &&
+    _gridOptions.value.showCustomFooter &&
+    _gridOptions.value.customFooterOptions &&
     gridContainerElm
   ) {
-    slickFooter = new SlickFooterComponent(grid, _gridOptions.value?.customFooterOptions, eventPubSubService, translaterService);
+    slickFooter = new SlickFooterComponent(grid, _gridOptions.value.customFooterOptions, eventPubSubService, translaterService);
     slickFooter.renderFooter(gridContainerElm as HTMLDivElement);
   }
 
   if (dataview) {
     // load the data in the DataView (unless it's a hierarchical dataset, if so it will be loaded after the initial tree sort)
-    const initialDataset = _gridOptions.value?.enableTreeData ? sortTreeDataset(dataModel.value || []) : dataModel.value;
+    const initialDataset = _gridOptions.value.enableTreeData ? sortTreeDataset(dataModel.value || []) : dataModel.value;
     if (Array.isArray(initialDataset)) {
       dataview.setItems(initialDataset, _gridOptions.value.datasetIdPropertyName ?? 'id');
     }
 
     // if you don't want the items that are not visible (due to being filtered out or being on a different page)
     // to stay selected, pass 'false' to the second arg
-    if (grid?.getSelectionModel() && _gridOptions.value?.dataView && 'syncGridSelection' in _gridOptions.value.dataView) {
+    if (grid?.getSelectionModel() && _gridOptions.value.dataView && 'syncGridSelection' in _gridOptions.value.dataView) {
       // if we are using a Backend Service, we will do an extra flag check, the reason is because it might have some unintended behaviors
       // with the BackendServiceApi because technically the data in the page changes the DataView on every page change.
       let preservedRowSelectionWithBackend = false;
@@ -567,7 +570,7 @@ function initialization() {
 
   // bind the Backend Service API callback functions only after the grid is initialized
   // because the preProcess() and onInit() might get triggered
-  if (_gridOptions.value?.backendServiceApi) {
+  if (_gridOptions.value.backendServiceApi) {
     bindBackendCallbackFunctions(_gridOptions.value as GridOption);
   }
 

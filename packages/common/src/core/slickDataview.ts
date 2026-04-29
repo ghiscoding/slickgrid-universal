@@ -399,7 +399,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   /** Set some Grouping */
   setGrouping(groupingInfo: Grouping | Grouping[]): void {
     if (!this._options.groupItemMetadataProvider) {
-      this._options.groupItemMetadataProvider = new SlickGroupItemMetadataProvider();
+      this._options.groupItemMetadataProvider = new SlickGroupItemMetadataProvider(this._grid?.getOptions().groupItemMetadataOption);
     }
 
     this.groups = [];

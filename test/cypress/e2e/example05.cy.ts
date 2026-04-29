@@ -110,7 +110,7 @@ describe('Example 05 - Tree Data (from a flat dataset with parentId references)'
     cy.get('.grid5 .slickgrid-container')
       .should(($grid) => {
         const classes = $grid.prop('className').split(' ');
-        gridUid = classes.find((className) => /slickgrid_.*/.test(className));
+        gridUid = classes.find((className: string) => /slickgrid_.*/.test(className));
         expect(gridUid).to.not.be.null;
       })
       .then(() => {
@@ -157,7 +157,7 @@ describe('Example 05 - Tree Data (from a flat dataset with parentId references)'
     cy.get('.grid5 .slickgrid-container')
       .should(($grid) => {
         const classes = $grid.prop('className').split(' ');
-        gridUid = classes.find((className) => /slickgrid_.*/.test(className));
+        gridUid = classes.find((className: string) => /slickgrid_.*/.test(className));
         expect(gridUid).to.not.be.null;
       })
       .then(() => {
@@ -218,7 +218,7 @@ describe('Example 05 - Tree Data (from a flat dataset with parentId references)'
     cy.get('.grid5 .slickgrid-container')
       .should(($grid) => {
         const classes = $grid.prop('className').split(' ');
-        gridUid = classes.find((className) => /slickgrid_.*/.test(className));
+        gridUid = classes.find((className: string) => /slickgrid_.*/.test(className));
         expect(gridUid).to.not.be.null;
       })
       .then(() => {
@@ -283,7 +283,14 @@ describe('Example 05 - Tree Data (from a flat dataset with parentId references)'
 
   it('should be able to click on "Dynamically Toggle First Parent" expect only the first parent item to get collapsed', () => {
     cy.get('[data-test=dynamically-toggle-first-parent-btn]').contains('Dynamically Toggle First Parent').click();
-
     cy.get(`.grid5 .slick-group-toggle.expanded`).should('have.length', 0);
+  });
+
+  it('should toggle group by clicking anywhere on the group row and expect it to collapse/expand', () => {
+    cy.get('[data-row="1"] > .slick-cell:nth(0) .slick-tree-title').should('contain', 'Task 1');
+    cy.get('[data-row="1"] > .slick-cell:nth(0) .slick-tree-toggle').should('have.class', 'collapsed');
+
+    cy.get('[data-row="1"] > .slick-cell.l0 .slick-tree-title').click();
+    cy.get('[data-row="1"] > .slick-cell:nth(0) .slick-tree-toggle').should('have.class', 'expanded');
   });
 });

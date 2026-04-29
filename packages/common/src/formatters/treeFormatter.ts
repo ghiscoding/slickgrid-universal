@@ -37,7 +37,8 @@ export const treeFormatter: Formatter = (row, cell, value, columnDef, dataContex
   }
 
   const indentSpacerElm = createDomElement('span', { style: { display: 'inline-block', width: `${indentMarginLeft * treeLevel}px` } });
-  const spanToggleClass = `slick-group-toggle ${toggleClass}`.trim();
+  // @deprecated `.slick-group-toggle` class, to remove in next major version
+  const spanToggleClass = `slick-group-toggle slick-tree-toggle ${toggleClass}`.trim();
   const spanIconElm = createDomElement('div', { className: spanToggleClass, ariaExpanded: String(toggleClass === 'expanded') });
 
   const containerElm = createDocumentFragmentOrElement(gridOptions);
@@ -50,10 +51,13 @@ export const treeFormatter: Formatter = (row, cell, value, columnDef, dataContex
   if (treeDataOptions.titleFormatter) {
     outputValue = parseFormatterWhenExist(treeDataOptions.titleFormatter, row, cell, columnDef, dataContext, grid);
   }
-  const spanTitleElm = createDomElement('span', { className: 'slick-tree-title' });
-  applyHtmlToElement(spanTitleElm, outputValue, gridOptions);
-  spanTitleElm.setAttribute('level', treeLevel);
-  containerElm.appendChild(spanTitleElm);
+  const treeTitleElm = createDomElement('span', { className: 'slick-tree-title' });
+  if (gridOptions.treeDataOptions?.toggleOnNodeTitle) {
+    treeTitleElm.classList.add('pointer');
+  }
+  applyHtmlToElement(treeTitleElm, outputValue, gridOptions);
+  treeTitleElm.setAttribute('level', treeLevel);
+  containerElm.appendChild(treeTitleElm);
 
   return { addClasses: slickTreeLevelClass, html: containerElm };
 };

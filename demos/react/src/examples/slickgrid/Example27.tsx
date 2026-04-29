@@ -119,6 +119,7 @@ const Example27: React.FC = () => {
       enableTreeData: true, // you must enable this flag for the filtering & sorting to work as expected
       treeDataOptions: {
         columnId: 'title',
+        toggleOnNodeTitle: true, // enable toggle of tree by clicking on the toggle icon or its title (not just the toggle icon)
         parentPropName: 'parentId',
         // this is optional, you can define the tree level property name that will be used for the sorting/indentation, internally it will use "__treeLevel"
         levelPropName: 'treeLevel',

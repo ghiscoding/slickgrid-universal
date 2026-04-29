@@ -536,7 +536,7 @@ export class SlickVanillaGridBundle<TData = any> {
       let dataViewOptions: Partial<DataViewOption> = { ...this._gridOptions.dataView, inlineFilters: dataviewInlineFilters };
 
       if (this.gridOptions.draggableGrouping || this.gridOptions.enableGrouping) {
-        this.groupItemMetadataProvider = new SlickGroupItemMetadataProvider();
+        this.groupItemMetadataProvider = new SlickGroupItemMetadataProvider(this._gridOptions.groupItemMetadataOption);
         this.sharedService.groupItemMetadataProvider = this.groupItemMetadataProvider;
         dataViewOptions = { ...dataViewOptions, groupItemMetadataProvider: this.groupItemMetadataProvider };
       }

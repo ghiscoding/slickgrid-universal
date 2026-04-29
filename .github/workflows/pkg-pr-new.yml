@@ -32,4 +32,19 @@ jobs:
         run: pnpm build
 
       - name: Publish
-        run: pnpm dlx pkg-pr-new publish --no-template --pnpm './packages/*' './frameworks/*' './frameworks-plugins/*'
+        run: |
+          # Create tarballs in the correct location for pkg-pr-new
+          for dir in ./packages/* ./frameworks/* ./frameworks-plugins/*; do
+            if [ -d "$dir" ] && [ -f "$dir/package.json" ]; then
+              echo "Packing $dir"
+              cd "$dir"
+              # Check if package has publishConfig.directory set to dist
+              if grep -q '"directory":\s*"dist"' package.json; then
+                npm pack ./dist
+              else
+                npm pack
+              fi
+              cd - > /dev/null
+            fi
+          done
+          pnpm dlx pkg-pr-new publish --no-template --pnpm './packages/*' './frameworks/*' './frameworks-plugins/*'

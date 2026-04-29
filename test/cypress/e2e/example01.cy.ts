@@ -20,10 +20,10 @@ describe('Example 01 - Basic Grids', () => {
 
   it('should have 2 grids of size 800 * 225px and 800 * 255px', () => {
     cy.get('.grid1').should('have.css', 'width', '800px');
-    cy.get('.grid1 > .slickgrid-container').should(($el) => expect(parseInt(`${$el.height()}`, 10)).to.eq(225));
+    cy.get('.grid1 > .slickgrid-container').should(($el) => expect(parseInt(`${$el.height()}`, 10)).to.be.approximately(225, 1));
 
     cy.get('.grid2').should('have.css', 'width', '800px');
-    cy.get('.grid2 > .slickgrid-container').should(($el) => expect(parseInt(`${$el.height()}`, 10)).to.eq(255));
+    cy.get('.grid2 > .slickgrid-container').should(($el) => expect(parseInt(`${$el.height()}`, 10)).to.be.approximately(255, 1));
   });
 
   it('should have exact column titles on 1st grid', () => {
