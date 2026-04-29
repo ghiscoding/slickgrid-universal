@@ -33,7 +33,7 @@ The important thing to understand while working with `SlickGrid` is that Groupin
 
 The Draggable Grouping can be located in either the Top-Header or the Pre-Header as described below.
 
-#### Pre-Heaader
+#### Pre-Header
 Draggable Grouping can be located in either the Pre-Header of the Top-Header, however when it is located in the Pre-Header then the Header Grouping will not be available (because both of them would conflict with each other). Note that prior to the version 5.1 of Slickgrid-Universal, the Pre-Header was the default and only available option.
 
 ```ts
@@ -44,10 +44,14 @@ this.gridOptions = {
   draggableGrouping: {
     // ... any draggable plugin option
   },
+  groupItemMetadataOption: { 
+    // enable toggle of group by clicking on the toggle icon or its title (not just the toggle icon), defaults to false
+    toggleOnNodeTitle: true, 
+  }
 }
 ```
 
-#### Top-Heaader
+#### Top-Header
 ##### requires v5.1 and higher
 This is the preferred section since the Top-Header is on top of all headers (including pre-header) and it will always be the full grid width. Using the Top-Header also frees up the Pre-Header section for the potential use of Header Grouping.
 
@@ -106,30 +110,34 @@ Note: the Group Total Formatters named as currency will have these extra `params
 ```typescript
 initializeGrid() {
   this.columns = [
-      {
-        id: 'title', name: 'Title', field: 'title'
-      },
-      {
-        id: 'duration', name: 'Duration', field: 'duration',
-        type: 'number',
-        groupTotalsFormatter: GroupTotalFormatters.sumTotals,
-        params: { groupFormatterPrefix: 'Total: ' }
-      },
-      {
-        id: 'cost', name: 'Cost', field: 'cost',
-        exportWithFormatter: true,    // for a Dollar Formatter, we also want it to be displayed in the export to file
-        formatter: Formatters.dollar,
-        groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollar,
-        params: { groupFormatterPrefix: '<b>Total</b>: ' /*, groupFormatterSuffix: ' USD'*/ }
-      }
+    {
+      id: 'title', name: 'Title', field: 'title'
+    },
+    {
+      id: 'duration', name: 'Duration', field: 'duration',
+      type: 'number',
+      groupTotalsFormatter: GroupTotalFormatters.sumTotals,
+      params: { groupFormatterPrefix: 'Total: ' }
+    },
+    {
+      id: 'cost', name: 'Cost', field: 'cost',
+      exportWithFormatter: true,    // for a Dollar Formatter, we also want it to be displayed in the export to file
+      formatter: Formatters.dollar,
+      groupTotalsFormatter: GroupTotalFormatters.sumTotalsDollar,
+      params: { groupFormatterPrefix: '<b>Total</b>: ' /*, groupFormatterSuffix: ' USD'*/ }
+    }
   ];
 
-    this.gridOptions = {
-      enableGrouping: true,        // don't forget to enable the grouping
-      exportOptions: {
-        sanitizeDataExport: true   // you can also sanitize the exported data (it will remove any HTML tags)
-      }
-    };
+  this.gridOptions = {
+    enableGrouping: true,        // don't forget to enable the grouping
+    exportOptions: {
+      sanitizeDataExport: true   // you can also sanitize the exported data (it will remove any HTML tags)
+    },
+    groupItemMetadataOption: { 
+      // enable toggle of group by clicking on the toggle icon or its title (not just the toggle icon), defaults to false
+      toggleOnNodeTitle: true, 
+    }
+  };
 }
 ```
 
@@ -218,7 +226,7 @@ To "Clear all Grouping", "Collapse all Groups" and "Expand all Groups", we can s
 
 ### Styling (change icons)
 The current icons are chevron (right/down), however if you wish to use +/- icons. You can simply update the SASS variables to use whichever SVG icon paths. The SASS variables you can change are
-```css
+```scss
 $slick-icon-group-color:                    $slick-primary-color;
 $slick-icon-group-expanded-svg-path:        "M19,19V5H5V19H19M19,3A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2 0 0,1 3,19V5C3,3.89 3.9,3 5,3H19M11,7H13V11H17V13H13V17H11V13H7V11H11V7Z";
 $slick-icon-group-collapsed-svg-path:       "M19,19V5H5V19H19M19,3A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2 0 0,1 3,19V5C3,3.89 3.9,3 5,3H19M17,11V13H7V11H17Z";

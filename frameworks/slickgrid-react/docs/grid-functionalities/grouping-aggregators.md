@@ -48,7 +48,13 @@ const Example: React.FC = () => {
   }
 
   function defineGrid() {
-    // populate the grid
+    setColumns([ /* ... */ ]);
+    setOptions({
+      groupItemMetadataOption: { 
+        // enable toggle of group by clicking on the toggle icon or its title (not just the toggle icon), defaults to false
+        toggleOnNodeTitle: true, 
+      }
+    });
   }
 
   return !options ? null : (
@@ -66,7 +72,7 @@ const Example: React.FC = () => {
 
 The Draggable Grouping can be located in either the Top-Header or the Pre-Header as described below.
 
-#### Pre-Heaader
+#### Pre-Header
 Draggable Grouping can be located in either the Pre-Header of the Top-Header, however when it is located in the Pre-Header then the Header Grouping will not be available (because both of them would conflict with each other). Note that prior to the version 5.1 of Slickgrid-React, the Pre-Header was the default and only available option.
 
 ```ts
@@ -80,7 +86,7 @@ const gridOptions = {
 }
 ```
 
-#### Top-Heaader
+#### Top-Header
 ##### requires v5.1 and higher
 This is the preferred section since the Top-Header is on top of all headers (including pre-header) and it will always be the full grid width. Using the Top-Header also frees up the Pre-Header section for the potential use of Header Grouping.
 
@@ -259,7 +265,7 @@ To "Clear all Grouping", "Collapse all Groups" and "Expand all Groups", we can s
 
 ### Styling (change icons)
 The current icons are chevron (right/down), however if you wish to use +/- icons. You can simply update the SASS variables to use whichever SVG icon paths. The SASS variables you can change are
-```css
+```scss
 $slick-icon-group-color:                    $primary-color;
 $slick-icon-group-expanded-svg-path:        "M19,19V5H5V19H19M19,3A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2 0 0,1 3,19V5C3,3.89 3.9,3 5,3H19M11,7H13V11H17V13H13V17H11V13H7V11H11V7Z";
 $slick-icon-group-collapsed-svg-path:       "M19,19V5H5V19H19M19,3A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2 0 0,1 3,19V5C3,3.89 3.9,3 5,3H19M17,11V13H7V11H17Z";

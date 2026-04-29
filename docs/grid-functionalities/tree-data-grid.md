@@ -61,7 +61,7 @@ initializeGrid() {
       formatter: Formatters.tree, exportCustomFormatter: Formatters.treeExport
     },
     // ...
-  };
+  ];
 
   this.gridOptions = {
     enableFiltering: true,  // <<-- REQUIRED, it won't work without filtering enabled
@@ -80,6 +80,7 @@ initializeGrid() {
         columnId: 'title',         // which column are we using to do the initial sort? it doesn't have to be the tree column, it could be any column
         direction: 'ASC'
       },
+      toggleOnNodeTitle: true,     // enable toggle of tree by clicking on the toggle icon or its title (not just the toggle icon)
     },
   };
 }
@@ -118,7 +119,7 @@ initializeGrid() {
       filterable: true, sortable: true,
     },
     // ...
-  };
+  ];
 
   this.gridOptions = {
     enableFiltering: true,  // <<-- REQUIRED, it won't work without filtering enabled
@@ -126,8 +127,8 @@ initializeGrid() {
 
     treeDataOptions: {
       columnId: 'file',           // the column where you will have the Tree with collapse/expand icons
-      parentPropName: 'files',  // the parent/child key relation in your dataset
-      levelPropName: 'treeLevel',  // optionally, you can define the tree level property name, it nothing is provided it will use "__treeLevel"
+      parentPropName: 'files',    // the parent/child key relation in your dataset
+      levelPropName: 'treeLevel', // optionally, you can define the tree level property name, it nothing is provided it will use "__treeLevel"
 
       // you can optionally sort by a different column and/or sort direction
       // this is the RECOMMENDED approach, unless you are 100% that your original array is already sorted (in most cases it's not)
@@ -135,6 +136,7 @@ initializeGrid() {
         columnId: 'size',         // which column are we using to do the initial sort? it doesn't have to be the tree column, it could be any column
         direction: 'DESC'
       },
+      toggleOnNodeTitle: true,    // enable toggle of tree by clicking on the toggle icon or its title (not just the toggle icon), defaults to false
     },
   };
 }
@@ -150,7 +152,8 @@ this.gridOptions = {
   multiColumnSort: false, // <<-- REQUIRED to be Disabled since multi-column sorting is not currently supported with Tree Data
 
   treeDataOptions: {
-    columnId: 'title',           // the column where you will have the Tree with collapse/expand icons
+    columnId: 'title',        // the column where you will have the Tree with collapse/expand icons
+    toggleOnNodeTitle: true,  // enable toggle of tree by clicking on the toggle icon or its title (requires `.slick-tree-title` CSS class)
     // ...
 
     // we can also add a Custom Formatter just for the title text portion

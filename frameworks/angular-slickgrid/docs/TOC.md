@@ -67,7 +67,7 @@
 * [Load Global Grid Options](grid-functionalities/global-options.md)
 * [Grid Menu](grid-functionalities/grid-menu.md)
 * [Grid State & Presets](grid-functionalities/grid-state-preset.md)
-* [Grouping & Aggregators](grid-functionalities/grouping-and-aggregators.md)
+* [Grouping & Aggregators](grid-functionalities/grouping-aggregators.md)
 * [Header & Footer Slots](grid-functionalities/header-footer-slots.md)
 * [Custom Menu Slots](grid-functionalities/menu-slots.md)
 * [Header Menu & Header Buttons](grid-functionalities/header-menu-header-buttons.md)
