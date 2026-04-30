@@ -192,7 +192,7 @@ export class Example36 {
         },
         excelExportOptions: {
           style: {
-            font: { outline: true, italic: true, color: 'FF215073' },
+            font: { outline: false, italic: true, color: 'FF215073' },
             format: '$0.00', // currency format
           },
           width: 12,
@@ -247,7 +247,7 @@ export class Example36 {
         },
         excelExportOptions: {
           style: {
-            font: { outline: true, italic: true, color: 'FFC65911' },
+            font: { outline: false, italic: true, color: 'FFC65911' },
             format: '$0.00', // currency format
           },
           width: 12,
@@ -287,7 +287,7 @@ export class Example36 {
         },
         excelExportOptions: {
           style: {
-            font: { outline: true, bold: true, color: 'FF005A9E' },
+            font: { outline: false, bold: true, color: 'FF005A9E' },
             format: '$0.00', // currency format
           },
           width: 12,

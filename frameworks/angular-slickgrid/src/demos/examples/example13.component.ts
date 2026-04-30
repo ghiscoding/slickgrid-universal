@@ -153,7 +153,7 @@ export class Example13Component implements OnInit {
         },
         excelExportOptions: {
           style: {
-            font: { outline: true, italic: true },
+            font: { outline: false, italic: true },
             format: '€0.00##;[Red](€0.00##)',
           },
           width: 18,
