@@ -1,41 +1,44 @@
-import { BindingEventService } from '@slickgrid-universal/binding';
+import { Component, inject, ViewEncapsulation, type OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import {
+  AngularSlickgridComponent,
+  AngularUtilService,
   createDomElement,
   CurrentFilter,
   getOffset,
   isDefined,
   OperatorType,
+  SlickGrid,
+  type AngularGridInstance,
   type Column,
   type GridOption,
-} from '@slickgrid-universal/common';
-import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import { ExampleGridOptions } from './example-grid-options.js';
-import '../material-styles.scss';
-import './example42.scss';
+} from '../../library';
 
-export default class Example42 {
-  private _bindingEventService: BindingEventService;
-  columns: Column[];
-  gridOptions: GridOption;
-  dataset: any[];
-  sgb: SlickVanillaGridBundle;
-  excelExportService: ExcelExportService;
+const NB_ITEMS = 2000;
 
-  constructor() {
-    this.excelExportService = new ExcelExportService();
-    this._bindingEventService = new BindingEventService();
-  }
+@Component({
+  templateUrl: './example53.component.html',
+  providers: [AngularUtilService],
+  styleUrls: ['example53.component.scss'],
+  encapsulation: ViewEncapsulation.None,
+  imports: [AngularSlickgridComponent, FormsModule],
+})
+export class Example53Component implements OnInit {
+  protected readonly angularUtilService = inject(AngularUtilService);
 
-  attached() {
-    this.initializeGrid();
-    this.dataset = this.loadData(2000);
-    const gridContainerElm1 = document.querySelector('.grid42') as HTMLDivElement;
+  angularGrid!: AngularGridInstance;
+  columns: Column[] = [];
+  dataset: any[] = [];
+  gridContainerElm!: HTMLDivElement;
+  gridOptions!: GridOption;
+  hideSubTitle = false;
+  pageSize = 50;
+  paginationPosition: 'bottom' | 'top' = 'top';
 
-    this.sgb = new Slicker.GridBundle(gridContainerElm1, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
-    document.body.classList.add('material-theme');
+  angularGridReady(angularGrid: AngularGridInstance) {
+    this.angularGrid = angularGrid;
 
-    const topHeaderElm = this.sgb.slickGrid?.getTopHeaderPanel()!;
+    const topHeaderElm = this.angularGrid.slickGrid?.getTopHeaderPanel()!;
     topHeaderElm.className = 'top-filters';
     topHeaderElm.appendChild(createDomElement('span', { className: 'top-filters-title', textContent: 'Active Filters:' }));
 
@@ -45,20 +48,22 @@ export default class Example42 {
         { column: { id: filter.columnId, name: this.columns.find((col) => col.id === filter.columnId)?.name } },
         filter as CurrentFilter
       );
-      const columnEl = this.sgb.slickGrid!.getContainerNode().querySelector<HTMLDivElement>(`[data-id="${filter.columnId}"]`);
+      const columnEl = this.angularGrid.slickGrid!.getContainerNode().querySelector<HTMLDivElement>(`[data-id="${filter.columnId}"]`);
       if (columnEl) {
         this.toggleFilterStyling(columnEl, filter.columnId, true);
       }
     }
   }
 
-  dispose() {
-    this.sgb?.dispose();
-    this._bindingEventService.unbindAll();
-    document.body.classList.remove('material-theme');
+  ngOnInit(): void {
+    this.defineGrid();
+
+    // mock a dataset
+    this.dataset = this.loadData(NB_ITEMS);
   }
 
-  initializeGrid() {
+  /* Define grid Options and Columns */
+  defineGrid() {
     const columns: Column[] = [
       { id: 'item', name: 'Item', field: 'item', filterable: true, sortable: true, width: 90 },
       { id: 'cost', name: 'Cost', field: 'cost', filterable: true, sortable: true, width: 90, type: 'number' },
@@ -71,7 +76,7 @@ export default class Example42 {
         id: 'itemType',
         name: 'Type',
         field: 'itemType',
-        cssClass: 'flex justify-center',
+        cssClass: 'd-flex justify-content-center',
         filterable: true,
         sortable: true,
         width: 90,
@@ -104,7 +109,7 @@ export default class Example42 {
       autoEdit: true,
       editable: true,
       autoResize: {
-        container: '.demo-container',
+        container: '#demo-container',
         maxWidth: 1250,
       },
       rowHeight: 35,
@@ -130,7 +135,7 @@ export default class Example42 {
     };
   }
 
-  handleOnCommand(e, args) {
+  handleOnCommand(e: Event, args: { command: string; button: any; column: Column; grid: SlickGrid }) {
     const command = args.command;
     const buttonEl = e.target as HTMLSpanElement;
 
@@ -170,7 +175,7 @@ export default class Example42 {
 
   /** create filter badges to show in the top header bar */
   createFilterBadge(args: any, currentFilter: CurrentFilter) {
-    const topHeaderElm = this.sgb.slickGrid?.getTopHeaderPanel()!;
+    const topHeaderElm = this.angularGrid.slickGrid?.getTopHeaderPanel()!;
     topHeaderElm.className = 'top-filters';
 
     // clear previous filter badge
@@ -196,8 +201,8 @@ export default class Example42 {
     });
     close.addEventListener('click', (e) => {
       container.remove();
-      this.sgb.filterService.clearFilterByColumnId(e as any, args.column.id);
-      const columnEl = this.sgb.slickGrid!.getContainerNode().querySelector<HTMLDivElement>(`[data-id="${args.column.id}"]`);
+      this.angularGrid.filterService.clearFilterByColumnId(e as any, args.column.id);
+      const columnEl = this.angularGrid.slickGrid!.getContainerNode().querySelector<HTMLDivElement>(`[data-id="${args.column.id}"]`);
       if (columnEl) {
         this.toggleFilterStyling(columnEl, args.column.id, false);
       }
@@ -246,7 +251,7 @@ export default class Example42 {
     modal.style.left = offset.left + 'px';
 
     // check if we already have a filter value, is so update the custom filter input with same value
-    const currentFilters = this.sgb.filterService.getColumnFilters();
+    const currentFilters = this.angularGrid.filterService.getColumnFilters();
     for (const filter of Object.values(currentFilters)) {
       if (filter.columnId === args.column.id) {
         const operator = filter.operator && filter.operator !== 'Contains' ? filter.operator + ' ' : '';
@@ -274,7 +279,7 @@ export default class Example42 {
     });
 
     // you could use `drawFilterTemplate()` to render default column filters
-    // this.sgb.filterService.drawFilterTemplate(args.column, filterContainer);
+    // this.angularGrid.filterService.drawFilterTemplate(args.column, filterContainer);
   }
 
   handleApplyFilter(columnEl: HTMLDivElement, value: string, args: any, modal: HTMLDivElement) {
@@ -287,7 +292,7 @@ export default class Example42 {
         operator: op,
         searchTerms: [searchTerm],
       };
-      const allFilters = this.sgb.filterService.getColumnFilters();
+      const allFilters = this.angularGrid.filterService.getColumnFilters();
       const allCurrentFilters: CurrentFilter[] = [];
       for (const f of Object.values(allFilters)) {
         allCurrentFilters.push({
@@ -296,17 +301,17 @@ export default class Example42 {
           searchTerms: f.searchTerms,
         });
       }
-      this.sgb.filterService.updateFilters([...allCurrentFilters.filter((f) => f.columnId !== args.column.id), cFilter]);
+      this.angularGrid.filterService.updateFilters([...allCurrentFilters.filter((f) => f.columnId !== args.column.id), cFilter]);
       this.createFilterBadge(args, cFilter);
       this.toggleFilterStyling(columnEl, args.column.id, true);
     } else {
-      this.sgb.filterService.clearFilterByColumnId(null as any, args.column.id);
-      const topHeaderElm = this.sgb.slickGrid?.getTopHeaderPanel()!;
+      this.angularGrid.filterService.clearFilterByColumnId(null as any, args.column.id);
+      const topHeaderElm = this.angularGrid.slickGrid?.getTopHeaderPanel()!;
       topHeaderElm.querySelector(`.top-dropped-filter[data-col-id="${args.column.id}"]`)?.remove();
 
       this.toggleFilterStyling(columnEl, args.column.id, false);
     }
-    this.sgb.slickGrid?.invalidate();
+    this.angularGrid.slickGrid?.invalidate();
     modal.remove();
   }
 
@@ -320,9 +325,16 @@ export default class Example42 {
     } else {
       buttonEl.classList.remove('mdi-filter');
       buttonEl.classList.add('mdi-filter-outline');
-      const topHeaderElm = this.sgb.slickGrid?.getTopHeaderPanel()!;
+      const topHeaderElm = this.angularGrid.slickGrid?.getTopHeaderPanel()!;
       topHeaderElm.querySelector(`.top-dropped-filter.col-${columndId}`)?.remove();
       columnEl.style.color = 'black';
     }
+  }
+
+  toggleSubTitle() {
+    this.hideSubTitle = !this.hideSubTitle;
+    const action = this.hideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    this.angularGrid.resizerService.resizeGrid(0);
   }
 }

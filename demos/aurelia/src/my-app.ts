@@ -58,6 +58,7 @@ const myRoutes: Routeable[] = [
   { path: 'example50', component: () => import('./examples/slickgrid/example50.js'), title: '50- Master/Detail Grids' },
   { path: 'example51', component: () => import('./examples/slickgrid/example51.js'), title: '51- Menus with Slots' },
   { path: 'example52', component: () => import('./examples/slickgrid/example52.js'), title: '52- SQL Backend Service' },
+  { path: 'example53', component: () => import('./examples/slickgrid/example53.js'), title: '53- Custom Filter Bar' },
   { path: 'home', component: () => import('./home-page.js'), title: 'Home' },
 ];
 @route({

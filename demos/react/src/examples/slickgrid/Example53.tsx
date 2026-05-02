@@ -1,64 +1,53 @@
-import { BindingEventService } from '@slickgrid-universal/binding';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   createDomElement,
-  CurrentFilter,
   getOffset,
   isDefined,
-  OperatorType,
+  SlickgridReact,
   type Column,
+  type CurrentFilter,
   type GridOption,
-} from '@slickgrid-universal/common';
-import { ExcelExportService } from '@slickgrid-universal/excel-export';
-import { Slicker, type SlickVanillaGridBundle } from '@slickgrid-universal/vanilla-bundle';
-import { ExampleGridOptions } from './example-grid-options.js';
-import '../material-styles.scss';
-import './example42.scss';
+  type OperatorType,
+  type SlickGrid,
+  type SlickgridReactInstance,
+} from 'slickgrid-react';
+import './example53.scss';
 
-export default class Example42 {
-  private _bindingEventService: BindingEventService;
-  columns: Column[];
-  gridOptions: GridOption;
-  dataset: any[];
-  sgb: SlickVanillaGridBundle;
-  excelExportService: ExcelExportService;
+const NB_ITEMS = 2000;
 
-  constructor() {
-    this.excelExportService = new ExcelExportService();
-    this._bindingEventService = new BindingEventService();
-  }
+const Example53: React.FC = () => {
+  const [columns, setColumns] = useState<Column[]>([]);
+  const [dataset] = useState<any[]>(loadData(NB_ITEMS));
+  const [gridOptions, setGridOptions] = useState<GridOption | undefined>(undefined);
+  const [hideSubTitle, setHideSubTitle] = useState(false);
 
-  attached() {
-    this.initializeGrid();
-    this.dataset = this.loadData(2000);
-    const gridContainerElm1 = document.querySelector('.grid42') as HTMLDivElement;
+  const reactGridRef = useRef<SlickgridReactInstance | null>(null);
 
-    this.sgb = new Slicker.GridBundle(gridContainerElm1, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
-    document.body.classList.add('material-theme');
+  useEffect(() => {
+    defineGrid();
+  }, []);
 
-    const topHeaderElm = this.sgb.slickGrid?.getTopHeaderPanel()!;
+  function reactGridReady(reactGrid: SlickgridReactInstance) {
+    reactGridRef.current = reactGrid;
+
+    const topHeaderElm = reactGrid.slickGrid?.getTopHeaderPanel()!;
     topHeaderElm.className = 'top-filters';
     topHeaderElm.appendChild(createDomElement('span', { className: 'top-filters-title', textContent: 'Active Filters:' }));
 
     // read column preset filters and render in the top header as Active Filters
-    for (const filter of this.gridOptions.presets?.filters || []) {
-      this.createFilterBadge(
-        { column: { id: filter.columnId, name: this.columns.find((col) => col.id === filter.columnId)?.name } },
+    for (const filter of gridOptions?.presets?.filters || []) {
+      createFilterBadge(
+        { column: { id: filter.columnId, name: columns.find((col) => col.id === filter.columnId)?.name } },
         filter as CurrentFilter
       );
-      const columnEl = this.sgb.slickGrid!.getContainerNode().querySelector<HTMLDivElement>(`[data-id="${filter.columnId}"]`);
+      const columnEl = reactGrid.slickGrid!.getContainerNode().querySelector<HTMLDivElement>(`[data-id="${filter.columnId}"]`);
       if (columnEl) {
-        this.toggleFilterStyling(columnEl, filter.columnId, true);
+        toggleFilterStyling(columnEl, filter.columnId, true);
       }
     }
   }
 
-  dispose() {
-    this.sgb?.dispose();
-    this._bindingEventService.unbindAll();
-    document.body.classList.remove('material-theme');
-  }
-
-  initializeGrid() {
+  function defineGrid() {
     const columns: Column[] = [
       { id: 'item', name: 'Item', field: 'item', filterable: true, sortable: true, width: 90 },
       { id: 'cost', name: 'Cost', field: 'cost', filterable: true, sortable: true, width: 90, type: 'number' },
@@ -71,7 +60,7 @@ export default class Example42 {
         id: 'itemType',
         name: 'Type',
         field: 'itemType',
-        cssClass: 'flex justify-center',
+        cssClass: 'd-flex justify-content-center',
         filterable: true,
         sortable: true,
         width: 90,
@@ -88,15 +77,14 @@ export default class Example42 {
               cssClass: 'mdi mdi-filter-outline',
               command: 'toggle-filter',
               tooltip: 'Toggle filter.',
-              action: (e, args) => this.handleOnCommand(e, args), // you can also use the "onCommand" callback in Grid Options
+              action: (e, args) => handleOnCommand(e, args), // you can also use the "onCommand" callback in Grid Options
             },
           ],
         };
       }
     }
-    this.columns = columns;
 
-    this.gridOptions = {
+    const gridOptions: GridOption = {
       enableAutoResize: true,
       enableHeaderButton: true,
       enableHeaderMenu: false,
@@ -104,7 +92,7 @@ export default class Example42 {
       autoEdit: true,
       editable: true,
       autoResize: {
-        container: '.demo-container',
+        container: '#demo-container',
         maxWidth: 1250,
       },
       rowHeight: 35,
@@ -128,18 +116,21 @@ export default class Example42 {
       },
       showCustomFooter: true,
     };
+
+    setColumns(columns);
+    setGridOptions(gridOptions);
   }
 
-  handleOnCommand(e, args) {
+  function handleOnCommand(e: Event, args: { command: string; button: any; column: Column; grid: SlickGrid }) {
     const command = args.command;
     const buttonEl = e.target as HTMLSpanElement;
 
     if (command === 'toggle-filter' && !buttonEl.classList.contains('mdi mdi-filter-outline')) {
-      this.createFilterModal(e, args);
+      createFilterModal(e, args);
     }
   }
 
-  loadData(itemCount: number) {
+  function loadData(itemCount: number) {
     const data: any[] = [];
     for (let i = 0; i < itemCount; i++) {
       const cost = Math.round(Math.random() * 100000) / 100;
@@ -169,8 +160,8 @@ export default class Example42 {
   //
 
   /** create filter badges to show in the top header bar */
-  createFilterBadge(args: any, currentFilter: CurrentFilter) {
-    const topHeaderElm = this.sgb.slickGrid?.getTopHeaderPanel()!;
+  function createFilterBadge(args: any, currentFilter: CurrentFilter) {
+    const topHeaderElm = reactGridRef.current?.slickGrid?.getTopHeaderPanel()!;
     topHeaderElm.className = 'top-filters';
 
     // clear previous filter badge
@@ -196,10 +187,10 @@ export default class Example42 {
     });
     close.addEventListener('click', (e) => {
       container.remove();
-      this.sgb.filterService.clearFilterByColumnId(e as any, args.column.id);
-      const columnEl = this.sgb.slickGrid!.getContainerNode().querySelector<HTMLDivElement>(`[data-id="${args.column.id}"]`);
+      reactGridRef.current?.filterService.clearFilterByColumnId(e as any, args.column.id);
+      const columnEl = reactGridRef.current?.slickGrid!.getContainerNode().querySelector<HTMLDivElement>(`[data-id="${args.column.id}"]`);
       if (columnEl) {
-        this.toggleFilterStyling(columnEl, args.column.id, false);
+        toggleFilterStyling(columnEl, args.column.id, false);
       }
       close.removeEventListener('click', () => {});
     });
@@ -210,7 +201,7 @@ export default class Example42 {
   }
 
   /** create a very basic custom filter modal */
-  createFilterModal(e: any, args: any) {
+  function createFilterModal(e: any, args: any) {
     // remove any other filter modals
     document.body.querySelector('.filter-modal')?.remove();
 
@@ -246,7 +237,7 @@ export default class Example42 {
     modal.style.left = offset.left + 'px';
 
     // check if we already have a filter value, is so update the custom filter input with same value
-    const currentFilters = this.sgb.filterService.getColumnFilters();
+    const currentFilters = reactGridRef.current?.filterService.getColumnFilters() || {};
     for (const filter of Object.values(currentFilters)) {
       if (filter.columnId === args.column.id) {
         const operator = filter.operator && filter.operator !== 'Contains' ? filter.operator + ' ' : '';
@@ -262,22 +253,22 @@ export default class Example42 {
       document.body.querySelectorAll('.filter-modal').forEach((m) => m.remove());
     });
     okButton.addEventListener('click', (_se) => {
-      this.handleApplyFilter(e.target.closest('.slick-header-column') as HTMLDivElement, inputElm.value, args, modal);
+      handleApplyFilter(e.target.closest('.slick-header-column') as HTMLDivElement, inputElm.value, args, modal);
     });
     cancelButton.addEventListener('click', () => {
       modal.remove();
     });
     inputElm.addEventListener('keydown', (event) => {
       if (event.key === 'Enter') {
-        this.handleApplyFilter(e.target.closest('.slick-header-column') as HTMLDivElement, inputElm.value, args, modal);
+        handleApplyFilter(e.target.closest('.slick-header-column') as HTMLDivElement, inputElm.value, args, modal);
       }
     });
 
     // you could use `drawFilterTemplate()` to render default column filters
-    // this.sgb.filterService.drawFilterTemplate(args.column, filterContainer);
+    // reactGridRef.current?.filterService.drawFilterTemplate(args.column, filterContainer);
   }
 
-  handleApplyFilter(columnEl: HTMLDivElement, value: string, args: any, modal: HTMLDivElement) {
+  function handleApplyFilter(columnEl: HTMLDivElement, value: string, args: any, modal: HTMLDivElement) {
     const [_, operator, val] = value.match(/^([<>!=*]{0,2})(.*[^<>!=*])?([*])*$/) || [];
     if (isDefined(val)) {
       const searchTerm = args.column.type === 'number' ? +val : val;
@@ -287,7 +278,7 @@ export default class Example42 {
         operator: op,
         searchTerms: [searchTerm],
       };
-      const allFilters = this.sgb.filterService.getColumnFilters();
+      const allFilters = reactGridRef.current?.filterService.getColumnFilters() || {};
       const allCurrentFilters: CurrentFilter[] = [];
       for (const f of Object.values(allFilters)) {
         allCurrentFilters.push({
@@ -296,22 +287,22 @@ export default class Example42 {
           searchTerms: f.searchTerms,
         });
       }
-      this.sgb.filterService.updateFilters([...allCurrentFilters.filter((f) => f.columnId !== args.column.id), cFilter]);
-      this.createFilterBadge(args, cFilter);
-      this.toggleFilterStyling(columnEl, args.column.id, true);
+      reactGridRef.current?.filterService.updateFilters([...allCurrentFilters.filter((f) => f.columnId !== args.column.id), cFilter]);
+      createFilterBadge(args, cFilter);
+      toggleFilterStyling(columnEl, args.column.id, true);
     } else {
-      this.sgb.filterService.clearFilterByColumnId(null as any, args.column.id);
-      const topHeaderElm = this.sgb.slickGrid?.getTopHeaderPanel()!;
+      reactGridRef.current?.filterService.clearFilterByColumnId(null as any, args.column.id);
+      const topHeaderElm = reactGridRef.current?.slickGrid?.getTopHeaderPanel()!;
       topHeaderElm.querySelector(`.top-dropped-filter[data-col-id="${args.column.id}"]`)?.remove();
 
-      this.toggleFilterStyling(columnEl, args.column.id, false);
+      toggleFilterStyling(columnEl, args.column.id, false);
     }
-    this.sgb.slickGrid?.invalidate();
+    reactGridRef.current?.slickGrid?.invalidate();
     modal.remove();
   }
 
   /** update column filter styling */
-  toggleFilterStyling(columnEl: HTMLDivElement, columndId: number | string, assignFilter?: boolean) {
+  function toggleFilterStyling(columnEl: HTMLDivElement, columndId: number | string, assignFilter?: boolean) {
     const buttonEl = columnEl.querySelector('.slick-header-button .mdi') as HTMLSpanElement;
     if (buttonEl.classList.contains('mdi-filter-outline') || assignFilter) {
       buttonEl.classList.remove('mdi-filter-outline');
@@ -320,9 +311,65 @@ export default class Example42 {
     } else {
       buttonEl.classList.remove('mdi-filter');
       buttonEl.classList.add('mdi-filter-outline');
-      const topHeaderElm = this.sgb.slickGrid?.getTopHeaderPanel()!;
+      const topHeaderElm = reactGridRef.current?.slickGrid?.getTopHeaderPanel()!;
       topHeaderElm.querySelector(`.top-dropped-filter.col-${columndId}`)?.remove();
       columnEl.style.color = 'black';
     }
   }
-}
+
+  function toggleSubTitle() {
+    const newHideSubTitle = !hideSubTitle;
+    setHideSubTitle(newHideSubTitle);
+    const action = newHideSubTitle ? 'add' : 'remove';
+    document.querySelector('.subtitle')?.classList[action]('hidden');
+    reactGridRef.current?.resizerService.resizeGrid(0);
+  }
+
+  return !gridOptions ? (
+    ''
+  ) : (
+    <div className="demo53">
+      <div id="demo-container" className="container-fluid">
+        <h2>
+          Example 53: Custom Filter Bar
+          <span className="float-end font18">
+            see&nbsp;
+            <a
+              target="_blank"
+              href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/react/src/examples/slickgrid/Example53.tsx"
+            >
+              <span className="mdi mdi-link-variant"></span> code
+            </a>
+          </span>
+          <button
+            className="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+            type="button"
+            data-test="toggle-subtitle"
+            onClick={() => toggleSubTitle()}
+          >
+            <span className="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+          </button>
+        </h2>
+
+        <div className="subtitle">
+          Display Custom Filters in the top header bar, which is similar to how the MSSQL Extension does it. Please note that the html code
+          used is not important, what is important though is that we can use <code>filterService.updateFilters()</code>,
+          <code>filterService.getColumnFilters()</code>, <code>filterService.clearFilterByColumnId()</code>. Also note that the demo creates
+          custom filters, but you could also optionally use <code>filterService.drawFilterTemplate()</code> to render the built-in filters
+          in a modal window (see <a href="https://ghiscoding.github.io/slickgrid-universal/#/example07">Example 7</a> which does exactly
+          that).
+        </div>
+
+        <SlickgridReact
+          gridId="grid53"
+          columns={columns}
+          options={gridOptions}
+          dataset={dataset}
+          onReactGridCreated={($event) => reactGridReady($event.detail)}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default Example53;

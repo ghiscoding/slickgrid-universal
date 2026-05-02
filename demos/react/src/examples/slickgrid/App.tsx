@@ -54,6 +54,7 @@ const routes = [
   { path: 'example50', route: '/example50', element: lazy(() => import('./Example50.js')), title: '50- Master/Detail Grids' },
   { path: 'example51', route: '/example51', element: lazy(() => import('./Example51.js')), title: '51- Menus with Slots' },
   { path: 'example52', route: '/example52', element: lazy(() => import('./Example52.js')), title: '52- SQL Backend Service' },
+  { path: 'example53', route: '/example53', element: lazy(() => import('./Example53.js')), title: '53- Custom Filter Bar' },
 ];
 
 export default function Routes() {
