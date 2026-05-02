@@ -1,0 +1,39 @@
+<div class="container-fluid">
+  <h2>
+    Example 53: Custom Filter Bar
+    <span class="float-end">
+      <a
+        style="font-size: 18px"
+        target="_blank"
+        href="https://github.com/ghiscoding/slickgrid-universal/blob/master/demos/aurelia/src/examples/slickgrid/example53.ts"
+      >
+        <span class="mdi mdi-link-variant"></span> code
+      </a>
+    </span>
+    <button
+      class="ms-2 btn btn-outline-secondary btn-sm btn-icon"
+      type="button"
+      data-test="toggle-subtitle"
+      click.trigger="toggleSubTitle()"
+    >
+      <span class="mdi mdi-information-outline" title="Toggle example sub-title details"></span>
+    </button>
+  </h2>
+
+  <div class="subtitle">
+    Display Custom Filters in the top header bar, which is similar to how the MSSQL Extension does it. Please note that the html code used
+    is not important, what is important though is that we can use <code>filterService.updateFilters()</code>,
+    <code>filterService.getColumnFilters()</code>, <code>filterService.clearFilterByColumnId()</code>. Also note that the demo creates
+    custom filters, but you could also optionally use <code>filterService.drawFilterTemplate()</code> to render the built-in filters in a
+    modal window (see <a href="https://ghiscoding.github.io/slickgrid-universal/#/example07">Example 7</a> which does exactly that).
+  </div>
+
+  <aurelia-slickgrid
+    grid-id="grid53"
+    columns.bind="columns"
+    options.bind="gridOptions"
+    dataset.bind="dataset"
+    on-aurelia-grid-created.trigger="aureliaGridReady($event.detail)"
+  >
+  </aurelia-slickgrid>
+</div>

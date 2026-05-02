@@ -1,0 +1,128 @@
+/* 1st grid */
+.grid42 {
+  --slick-header-button-float: left;
+  --slick-header-button-margin: 0px 0 100px 8px;
+}
+
+.top-filters {
+  display: flex;
+  align-items: center;
+  padding: 5px 10px;
+  height: 50px;
+  border: 1px solid #e0e0e0;
+  width: 100%;
+  border-radius: 4px;
+  background-color: #fff;
+
+  .top-filters-title {
+    font-weight: bold;
+    margin-right: 12px;
+  }
+  .top-dropped-filter {
+    display: flex;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.03);
+    border: 1px solid #013861;
+    border-radius: 8px;
+    padding: 0 10px;
+    margin-right: 8px;
+    z-index: 1;
+    height: 35px;
+
+    .filter-value {
+      font-weight: bold;
+      color: #0b99af;
+      margin-left: 4px;
+    }
+
+    .filter-remove {
+      cursor: pointer;
+      display: inline-flex;
+      margin-left: 2px;
+      color: #09798a;
+      font-size: 16px;
+      margin-left: 10px;
+      padding-left: 5px;
+      padding-right: 0px;
+      vertical-align: baseline;
+      &:hover {
+        color: #1690a3;
+      }
+    }
+  }
+}
+
+.filter-modal {
+  position: absolute;
+  z-index: 999;
+  border: 2px solid #9b9b9b;
+  border-radius: 8px;
+  padding: 8px 14px;
+  gap: 4px;
+  background-color: #fafafa;
+  .filter-modal-title {
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+
+  .filter-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 4px;
+    margin-top: 10px;
+
+    button {
+      padding: 4px 8px;
+      border: 1px solid #d3d3d3;
+      border-radius: 4px;
+      background-color: #fff;
+      cursor: pointer;
+      &:hover {
+        background-color: #e0e0e0;
+      }
+    }
+  }
+}
+
+.slick-header-button .mdi-filter {
+  color: #0b99af;
+}
+
+.item-type {
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  width: fit-content;
+  height: 25px;
+  padding: 2px 10px;
+  display: inline-flex;
+  align-items: center;
+
+  &-Food {
+    border: 2px solid #2fa32f;
+    background: rgba(47, 162, 47, 0.1);
+    color: #2fa32f;
+  }
+  &-Toy {
+    border: 2px solid #9931ad;
+    background: rgba(154, 49, 175, 0.1);
+    color: #9931ad;
+  }
+  &-Electronics {
+    border: 2px solid #2980b9;
+    background: rgba(41, 128, 185, 0.1);
+    color: #2980b9;
+  }
+  &-Tool {
+    border: 2px solid #c6ab4a;
+    background: rgba(198, 171, 74, 0.1);
+    color: #c6ab4a;
+  }
+  &-Other {
+    border: 2px solid #7f8c8d;
+    background: rgba(127, 140, 141, 0.1);
+    color: #7f8c8d;
+  }
+}
