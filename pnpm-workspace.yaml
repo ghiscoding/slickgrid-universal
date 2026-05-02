@@ -28,14 +28,14 @@ catalog:
   '@vitest/ui': ^5.0.0-beta.1
   bootstrap: ^5.3.8
   cross-env: ^10.1.0
-  cypress: ^15.14.1
+  cypress: ^15.14.2
   cypress-real-events: ^1.15.0
   dequal: ^2.0.3
   dompurify: ^3.4.1
   globals: ^17.5.0
   i18next: ^25.10.10
   i18next-vue: ^5.4.0
-  jsdom: ^29.0.2
+  jsdom: ^29.1.1
   jsdom-global: ^3.0.2
   jspdf: ^4.2.1
   multiple-select-vanilla: ^5.1.0
@@ -58,7 +58,7 @@ catalog:
 overrides:
   '@hono/node-server': ^1.19.14
   '@isaacs/brace-expansion': ^5.0.1
-  hono: ^4.12.14
+  hono: ^4.12.16
   lodash: ^4.18.1
   minimatch: ^10.2.5
   picomatch: ^4.0.4
