@@ -4,6 +4,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.6.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.5.2...v10.6.0) (2026-05-02)
+
+**Note:** Version bump only for package @slickgrid-universal/angular-row-detail-plugin
+
 ## [10.5.2](https://github.com/ghiscoding/slickgrid-universal/compare/v10.5.1...v10.5.2) (2026-04-25)
 
 **Note:** Version bump only for package @slickgrid-universal/angular-row-detail-plugin

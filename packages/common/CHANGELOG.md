@@ -4,6 +4,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.6.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.5.2...v10.6.0) (2026-05-02)
+
+### Features
+
+* add Grouping/TreeData option to `toggleOnNodeTitle` ([#2552](https://github.com/ghiscoding/slickgrid-universal/issues/2552)) ([3ab60f1](https://github.com/ghiscoding/slickgrid-universal/commit/3ab60f1b3002623a32a2a804190415debe1eac0e)) - by @ghiscoding
+* onAfterDelete hook for rowBasedEditing ([#2557](https://github.com/ghiscoding/slickgrid-universal/issues/2557)) ([d9412ab](https://github.com/ghiscoding/slickgrid-universal/commit/d9412ab9e33e019475a98cf6b270276b27d0de0a)) - by @zewa666
+
+### Bug Fixes
+
+* autoHeight should show horizontal scroll w/necessary, fixes [#2555](https://github.com/ghiscoding/slickgrid-universal/issues/2555) ([#2556](https://github.com/ghiscoding/slickgrid-universal/issues/2556)) ([69e6f15](https://github.com/ghiscoding/slickgrid-universal/commit/69e6f15930067fa5780416e2c3b6cf402084256b)) - by @ghiscoding
+* **deps:** update all non-major dependencies ([#2560](https://github.com/ghiscoding/slickgrid-universal/issues/2560)) ([f234cbf](https://github.com/ghiscoding/slickgrid-universal/commit/f234cbf70e8386f2f68d09f605e44168a565525c)) - by @renovate-bot
+* **styling:** operator select drop should use cross-platform mono font ([15874a9](https://github.com/ghiscoding/slickgrid-universal/commit/15874a9ac15f7204e666e7a82655cf111a5fbcce)) - by @ghiscoding
+
 ## [10.5.2](https://github.com/ghiscoding/slickgrid-universal/compare/v10.5.1...v10.5.2) (2026-04-25)
 
 ### Bug Fixes

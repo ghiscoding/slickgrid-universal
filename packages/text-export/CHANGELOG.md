@@ -4,6 +4,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.6.0](https://github.com/ghiscoding/slickgrid-universal/compare/v10.5.2...v10.6.0) (2026-05-02)
+
+### Bug Fixes
+
+* **text-export:** replace text-encoder-utf8 with native code in Text Export Service ([#2553](https://github.com/ghiscoding/slickgrid-universal/issues/2553)) ([14d7ca0](https://github.com/ghiscoding/slickgrid-universal/commit/14d7ca0563871fb09985897c3700d7ec2745a712)) - by @ghiscoding
+
 ## [10.5.2](https://github.com/ghiscoding/slickgrid-universal/compare/v10.5.1...v10.5.2) (2026-04-25)
 
 **Note:** Version bump only for package @slickgrid-universal/text-export
