@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@fluentui/react-components": "^9.73.8",
-    "@fluentui/react-icons": "^2.0.324",
+    "@fluentui/react-icons": "^2.0.325",
     "@slickgrid-universal/common": "workspace:*",
     "@slickgrid-universal/event-pub-sub": "workspace:*",
     "@slickgrid-universal/excel-export": "workspace:*",
