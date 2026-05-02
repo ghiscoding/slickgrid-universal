@@ -30,9 +30,11 @@ const Example53: React.FC = () => {
   function reactGridReady(reactGrid: SlickgridReactInstance) {
     reactGridRef.current = reactGrid;
 
-    const topHeaderElm = reactGrid.slickGrid?.getTopHeaderPanel()!;
-    topHeaderElm.className = 'top-filters';
-    topHeaderElm.appendChild(createDomElement('span', { className: 'top-filters-title', textContent: 'Active Filters:' }));
+    const topHeaderElm = reactGrid.slickGrid?.getTopHeaderPanel();
+    if (topHeaderElm) {
+      topHeaderElm.className = 'top-filters';
+      topHeaderElm.appendChild(createDomElement('span', { className: 'top-filters-title', textContent: 'Active Filters:' }));
+    }
 
     // read column preset filters and render in the top header as Active Filters
     for (const filter of gridOptions?.presets?.filters || []) {
@@ -161,43 +163,45 @@ const Example53: React.FC = () => {
 
   /** create filter badges to show in the top header bar */
   function createFilterBadge(args: any, currentFilter: CurrentFilter) {
-    const topHeaderElm = reactGridRef.current?.slickGrid?.getTopHeaderPanel()!;
-    topHeaderElm.className = 'top-filters';
+    if (reactGridRef.current) {
+      const topHeaderElm = reactGridRef.current.slickGrid?.getTopHeaderPanel();
+      topHeaderElm.className = 'top-filters';
 
-    // clear previous filter badge
-    topHeaderElm.querySelector(`.top-dropped-filter[data-col-id="${args.column.id}"]`)?.remove();
+      // clear previous filter badge
+      topHeaderElm.querySelector(`.top-dropped-filter[data-col-id="${args.column.id}"]`)?.remove();
 
-    const operator = currentFilter.operator ? `${currentFilter.operator} ` : '';
-    const filterValue =
-      typeof currentFilter.searchTerms?.[0] === 'string' ? `"${currentFilter.searchTerms[0]}"` : currentFilter.searchTerms?.[0];
-    const searchValueElm = createDomElement('span', {
-      className: 'filter-value',
-      textContent: `${operator}${filterValue}`,
-    });
-    const title = createDomElement('div', {
-      className: 'filter-title',
-      textContent: `${args.column.name}: `,
-    });
-    const close = createDomElement('div', {
-      className: 'filter-remove mdi mdi-close-circle color-info',
-    });
-    const container = createDomElement('div', {
-      className: 'top-dropped-filter',
-      dataset: { colId: args.column.id },
-    });
-    close.addEventListener('click', (e) => {
-      container.remove();
-      reactGridRef.current?.filterService.clearFilterByColumnId(e as any, args.column.id);
-      const columnEl = reactGridRef.current?.slickGrid!.getContainerNode().querySelector<HTMLDivElement>(`[data-id="${args.column.id}"]`);
-      if (columnEl) {
-        toggleFilterStyling(columnEl, args.column.id, false);
-      }
-      close.removeEventListener('click', () => {});
-    });
-    container.appendChild(title);
-    container.appendChild(searchValueElm);
-    container.appendChild(close);
-    topHeaderElm?.appendChild(container);
+      const operator = currentFilter.operator ? `${currentFilter.operator} ` : '';
+      const filterValue =
+        typeof currentFilter.searchTerms?.[0] === 'string' ? `"${currentFilter.searchTerms[0]}"` : currentFilter.searchTerms?.[0];
+      const searchValueElm = createDomElement('span', {
+        className: 'filter-value',
+        textContent: `${operator}${filterValue}`,
+      });
+      const title = createDomElement('div', {
+        className: 'filter-title',
+        textContent: `${args.column.name}: `,
+      });
+      const close = createDomElement('div', {
+        className: 'filter-remove mdi mdi-close-circle color-info',
+      });
+      const container = createDomElement('div', {
+        className: 'top-dropped-filter',
+        dataset: { colId: args.column.id },
+      });
+      close.addEventListener('click', (e) => {
+        container.remove();
+        reactGridRef.current?.filterService.clearFilterByColumnId(e as any, args.column.id);
+        const columnEl = reactGridRef.current?.slickGrid!.getContainerNode().querySelector<HTMLDivElement>(`[data-id="${args.column.id}"]`);
+        if (columnEl) {
+          toggleFilterStyling(columnEl, args.column.id, false);
+        }
+        close.removeEventListener('click', () => {});
+      });
+      container.appendChild(title);
+      container.appendChild(searchValueElm);
+      container.appendChild(close);
+      topHeaderElm?.appendChild(container);
+    }
   }
 
   /** create a very basic custom filter modal */
@@ -292,8 +296,7 @@ const Example53: React.FC = () => {
       toggleFilterStyling(columnEl, args.column.id, true);
     } else {
       reactGridRef.current?.filterService.clearFilterByColumnId(null as any, args.column.id);
-      const topHeaderElm = reactGridRef.current?.slickGrid?.getTopHeaderPanel()!;
-      topHeaderElm.querySelector(`.top-dropped-filter[data-col-id="${args.column.id}"]`)?.remove();
+      reactGridRef.current?.slickGrid?.getTopHeaderPanel()?.querySelector(`.top-dropped-filter[data-col-id="${args.column.id}"]`)?.remove();
 
       toggleFilterStyling(columnEl, args.column.id, false);
     }
@@ -311,8 +314,7 @@ const Example53: React.FC = () => {
     } else {
       buttonEl.classList.remove('mdi-filter');
       buttonEl.classList.add('mdi-filter-outline');
-      const topHeaderElm = reactGridRef.current?.slickGrid?.getTopHeaderPanel()!;
-      topHeaderElm.querySelector(`.top-dropped-filter.col-${columndId}`)?.remove();
+      reactGridRef.current?.slickGrid?.getTopHeaderPanel()?.querySelector(`.top-dropped-filter.col-${columndId}`)?.remove();
       columnEl.style.color = 'black';
     }
   }
