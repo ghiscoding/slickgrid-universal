@@ -79,7 +79,7 @@
     "@fnando/sparkline": "catalog:",
     "@formkit/tempo": "catalog:",
     "@gc-utils/fs-extra": "^0.4.0",
-    "@ng-select/ng-select": "^21.8.1",
+    "@ng-select/ng-select": "^21.8.2",
     "@ngx-translate/http-loader": "^17.0.0",
     "@popperjs/core": "catalog:",
     "@slickgrid-universal/angular-row-detail-plugin": "link:../../frameworks-plugins/angular-row-detail-plugin",
