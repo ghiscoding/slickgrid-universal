@@ -1,6 +1,5 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-
 import { readJsonSync, writeJsonSync } from '@gc-utils/fs-extra';
 import { parse } from 'yaml';
 
@@ -17,10 +16,12 @@ const MONOREPO_NAMESPACE = '@slickgrid-universal';
   const mainPkg = readJsonSync(join(cwd, 'package.json'));
   const distPkg = readJsonSync(join(cwd, 'dist', 'package.json'));
   const yamlPath = join(projectRootPath, 'pnpm-workspace.yaml');
+  const repeatChar = (char, count) => char.repeat(count);
 
-  // replace all workspace protocol with current version from "package.json" root into "dist/package.json"
-  console.log('-------------------------------------------------------------------------------------');
-  console.log(`Angular-Slickgrid, replace dist version & all "workspace:*" protocol in "dist/package.json"`);
+  // replace all catalog/workspace protocol with current version from "package.json" root into "dist/package.json"
+  const headerText = `Angular-Slickgrid, replace ("version", "catalog:" and "workspace:*") fields in "dist/package.json"`;
+  console.log(repeatChar('-', headerText.length));
+  console.log(headerText);
 
   console.log(`update "dist/package.json" to { "version": "${mainPkg.version}" }`);
   distPkg.version = mainPkg.version;
@@ -32,7 +33,7 @@ const MONOREPO_NAMESPACE = '@slickgrid-universal';
     // check if it's a `catalog:` protocol
     if (depVersion.startsWith('catalog:')) {
       distPkg.dependencies[depName] = catalog[depName] || catalogs[depVersion]?.[depName] || '';
-      console.log(`transformed '${depVersion}'    → { "${depName}": "${distPkg.dependencies[depName]}" }`);
+      console.log(`transformed "${depVersion}"    → { "${depName}": "${distPkg.dependencies[depName]}" }`);
     }
     // otherwise check if it's a local `workspace:` protocol (if so, find associated local dep's version and replace it)
     else if (depName.startsWith(`${MONOREPO_NAMESPACE}/`) || depVersion.startsWith('workspace:')) {
@@ -49,7 +50,7 @@ const MONOREPO_NAMESPACE = '@slickgrid-universal';
     }
   }
   writeJsonSync(resolve(cwd, 'dist', 'package.json'), distPkg, { spaces: 2 });
-  console.log('-------------------------------------------------------------------------------------\n');
+  console.log(repeatChar('-', headerText.length) + '\n');
 
   process.exit();
 })();
