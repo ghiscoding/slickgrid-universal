@@ -37,9 +37,6 @@ import type {
   EditorArguments,
   EditorConstructor,
   ElementPosition,
-  FormattedDataCacheCompletedEventArgs,
-  FormattedDataCacheMetadata,
-  FormattedDataCacheProgressEventArgs,
   Formatter,
   FormatterResultObject,
   FormatterResultWithHtml,
@@ -184,8 +181,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   onFooterClick: SlickEvent<OnFooterClickEventArgs>;
   onFooterContextMenu: SlickEvent<OnFooterContextMenuEventArgs>;
   onFooterRowCellRendered: SlickEvent<OnFooterRowCellRenderedEventArgs>;
-  onFormattedDataCacheProgress: SlickEvent<FormattedDataCacheProgressEventArgs>;
-  onFormattedDataCacheCompleted: SlickEvent<FormattedDataCacheCompletedEventArgs>;
   onHeaderCellRendered: SlickEvent<OnHeaderCellRenderedEventArgs>;
   onHeaderClick: SlickEvent<OnHeaderClickEventArgs>;
   onHeaderContextMenu: SlickEvent<OnHeaderContextMenuEventArgs>;
@@ -437,12 +432,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   protected _rowSpanIsCached = false;
   protected _colsWithRowSpanCache: { [colIdx: number]: Set<string> } = {};
   protected rowsCache: Record<number, RowCaching> = {};
-  protected formattedDataCache: Record<number, Partial<Record<string, string | number>>> = {};
-  protected formattedCacheMetadata: FormattedDataCacheMetadata = {
-    isPopulating: false,
-    lastProcessedRow: -1,
-    totalFormattedCells: 0,
-  };
   protected renderedRows = 0;
   protected numVisibleRows = 0;
   protected prevScrollTop = 0;
@@ -605,11 +594,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.onFooterClick = new SlickEvent<OnFooterClickEventArgs>('onFooterClick', externalPubSub);
     this.onFooterContextMenu = new SlickEvent<OnFooterContextMenuEventArgs>('onFooterContextMenu', externalPubSub);
     this.onFooterRowCellRendered = new SlickEvent<OnFooterRowCellRenderedEventArgs>('onFooterRowCellRendered', externalPubSub);
-    this.onFormattedDataCacheProgress = new SlickEvent<FormattedDataCacheProgressEventArgs>('onFormattedDataCacheProgress', externalPubSub);
-    this.onFormattedDataCacheCompleted = new SlickEvent<FormattedDataCacheCompletedEventArgs>(
-      'onFormattedDataCacheCompleted',
-      externalPubSub
-    );
     this.onHeaderCellRendered = new SlickEvent<OnHeaderCellRenderedEventArgs>('onHeaderCellRendered', externalPubSub);
     this.onHeaderClick = new SlickEvent<OnHeaderClickEventArgs>('onHeaderClick', externalPubSub);
     this.onHeaderContextMenu = new SlickEvent<OnHeaderContextMenuEventArgs>('onHeaderContextMenu', externalPubSub);
@@ -3582,10 +3566,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     if (!this.validateColumnFreeze(undefined, true)) {
       return; // exit early if freeze is invalid
     }
-
-    // Clear formatted data cache when columns change
-    this.clearFormattedDataCache();
-
     this.columns = newColumns;
     this._container.setAttribute('aria-colcount', this.columns.length.toString());
     const updateCols = () => {
@@ -3770,11 +3750,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     this.updateRowCount();
     if (scrollToTop) {
       this.scrollTo(0);
-    }
-
-    // Start background cache population if enabled
-    if (this._options.enableFormattedDataCache) {
-      this.populateFormattedDataCacheAsync();
     }
   }
 
@@ -4009,11 +3984,27 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
     // look up by id, then index
     const columnOverrides = rowMetadata?.columns && (rowMetadata.columns[column.id] || rowMetadata.columns[this.getColumnIndex(column.id)]);
 
-    return (columnOverrides?.formatter ||
+    const formatter = (columnOverrides?.formatter ||
       rowMetadata?.formatter ||
       column.formatter ||
       this._options.formatterFactory?.getFormatter(column) ||
       this._options.defaultFormatter) as Formatter;
+
+    // Metadata formatters are row-specific and are not cached, so they must bypass the cache wrapper.
+    const canUseDisplayCache =
+      this._options.enableFormattedDataCache && !rowMetadata?.formatter && !columnOverrides?.formatter && this.hasDataView();
+    const dataView = canUseDisplayCache ? this.getData<SlickDataView>() : undefined;
+
+    let resolvedFormatter = formatter;
+    if (typeof dataView?.getCellDisplayValue === 'function') {
+      resolvedFormatter = (rowIdx, cell, value, columnDef, dataContext, grid) => {
+        const cached = dataView.getCellDisplayValue(rowIdx, String(columnDef.id), dataContext as any);
+        const resolvedValue = cached !== undefined ? (cached as any) : formatter(rowIdx, cell, value, columnDef, dataContext, grid);
+        return resolvedValue;
+      };
+    }
+
+    return resolvedFormatter;
   }
 
   protected getEditor(row: number, cell: number): Editor | EditorConstructor | null | undefined {
@@ -7616,29 +7607,6 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
   }
 
   /**
-   * Gets a formatted cell value from the cache if available, otherwise returns the fallback value.
-   * This method is used by export services to avoid re-executing expensive formatters.
-   * @param {number} rowIdx - The row index
-   * @param {string} columnId - The column ID
-   * @param {any} fallbackValue - The fallback value to return if not cached
-   * @returns {any} The cached formatted value or the fallback value
-   */
-  getFormattedCellValue(rowIdx: number, columnId: string, fallbackValue: any): any {
-    if (this._options.enableFormattedDataCache && this.formattedDataCache[rowIdx]?.[columnId] !== undefined) {
-      return this.formattedDataCache[rowIdx][columnId];
-    }
-    return fallbackValue;
-  }
-
-  /**
-   * Gets the current status of the formatted data cache.
-   * @returns {FormattedDataCacheMetadata} The cache metadata
-   */
-  getCacheStatus(): FormattedDataCacheMetadata {
-    return { ...this.formattedCacheMetadata };
-  }
-
-  /**
    * Sets an active cell.
    * @param {number} row - A row index.
    * @param {number} cell - A column index.
@@ -7824,13 +7792,11 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
               execute: () => {
                 editor.applyValue(item, serializedValue);
                 self.updateRow(row);
-                self.invalidateFormattedDataCacheForRow(row);
                 self.triggerEvent(self.onCellChange, { command: 'execute', row, cell, item, column });
               },
               undo: () => {
                 editor.applyValue(item, prevSerializedValue);
                 self.updateRow(row);
-                self.invalidateFormattedDataCacheForRow(row);
                 self.triggerEvent(self.onCellChange, { command: 'undo', row, cell, item, column });
               },
             };
@@ -7924,120 +7890,5 @@ export class SlickGrid<TData = any, C extends Column<TData> = Column<TData>, O e
    */
   sanitizeHtmlString<T extends string | TrustedHTML>(dirtyHtml: unknown): T {
     return runOptionalHtmlSanitizer<T>(dirtyHtml, this._options?.sanitizer);
-  }
-
-  /**
-   * Invalidates the formatted data cache for a specific row.
-   * This is called when a cell value changes to ensure cached formatters are updated.
-   * @param {number} rowIdx - The row index to invalidate
-   */
-  protected invalidateFormattedDataCacheForRow(rowIdx: number): void {
-    if (this._options.enableFormattedDataCache && this.formattedDataCache[rowIdx]) {
-      // Re-cache the row immediately since it's a single row operation
-      this.populateSingleRowCache(rowIdx);
-    }
-  }
-
-  /**
-   * Clears the entire formatted data cache.
-   * This is called when columns change or data is completely replaced.
-   */
-  protected clearFormattedDataCache(): void {
-    if (this._options.enableFormattedDataCache) {
-      this.formattedDataCache = {};
-      this.formattedCacheMetadata = {
-        isPopulating: false,
-        lastProcessedRow: -1,
-        totalFormattedCells: 0,
-      };
-    }
-  }
-
-  /**
-   * Populates the formatted data cache asynchronously in background batches.
-   * This method processes rows in chunks to maintain UI responsiveness.
-   * @param {number} [startRow] - Optional starting row index (defaults to 0)
-   */
-  protected populateFormattedDataCacheAsync(startRow = 0): void {
-    console.log('populate formatted data cache async');
-    if (!this._options.enableFormattedDataCache || this.formattedCacheMetadata.isPopulating) {
-      return;
-    }
-
-    this.formattedCacheMetadata.isPopulating = true;
-    this.formattedCacheMetadata.lastProcessedRow = startRow - 1;
-    this.formattedCacheMetadata.totalFormattedCells = 0;
-    this.formattedCacheMetadata.cacheStartTime = Date.now();
-
-    const processBatch = () => {
-      const batchSize = this._options.formattedDataCacheBatchSize || 300;
-      const totalRows = this.getDataLength();
-      let processedInBatch = 0;
-
-      while (processedInBatch < batchSize && this.formattedCacheMetadata.lastProcessedRow < totalRows - 1) {
-        this.formattedCacheMetadata.lastProcessedRow++;
-        const rowIdx = this.formattedCacheMetadata.lastProcessedRow;
-
-        if (this.populateSingleRowCache(rowIdx)) {
-          processedInBatch++;
-        }
-      }
-
-      // Fire progress event
-      const percentComplete = Math.round(((this.formattedCacheMetadata.lastProcessedRow + 1) / totalRows) * 100);
-      this.onFormattedDataCacheProgress.notify({
-        rowsProcessed: this.formattedCacheMetadata.lastProcessedRow + 1,
-        totalRows,
-        percentComplete,
-      });
-
-      // Continue processing or complete
-      if (this.formattedCacheMetadata.lastProcessedRow < totalRows - 1) {
-        requestAnimationFrame(processBatch);
-      } else {
-        this.formattedCacheMetadata.isPopulating = false;
-        const duration = Date.now() - (this.formattedCacheMetadata.cacheStartTime || 0);
-        this.onFormattedDataCacheCompleted.notify({
-          totalRows,
-          totalFormattedCells: this.formattedCacheMetadata.totalFormattedCells,
-          durationMs: duration,
-        });
-      }
-    };
-
-    requestAnimationFrame(processBatch);
-  }
-
-  /**
-   * Populates the cache for a single row by executing formatters for all columns that have them.
-   * @param {number} rowIdx - The row index to process
-   * @returns {boolean} True if the row was processed, false if skipped
-   */
-  protected populateSingleRowCache(rowIdx: number): boolean {
-    const item = this.getDataItem(rowIdx);
-    if (!item) {
-      return false;
-    }
-
-    // Initialize row cache if needed
-    if (!this.formattedDataCache[rowIdx]) {
-      this.formattedDataCache[rowIdx] = {};
-    }
-
-    // Process each column that has a formatter
-    for (const column of this.columns) {
-      if (column.formatter && typeof column.formatter === 'function') {
-        try {
-          const formattedValue = column.formatter(rowIdx, 0, null, column, item, this as unknown as SlickGrid);
-          this.formattedDataCache[rowIdx][String(column.id)] = formattedValue as any;
-          this.formattedCacheMetadata.totalFormattedCells++;
-        } catch (error) {
-          // If formatter fails, cache undefined to avoid repeated failures
-          this.formattedDataCache[rowIdx][String(column.id)] = undefined;
-        }
-      }
-    }
-
-    return true;
   }
 }

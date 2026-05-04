@@ -397,6 +397,7 @@ export class AureliaSlickgridCustomElement {
       this.options,
       this._eventPubSubService
     );
+    (this.dataview as SlickDataView).setGrid(this.grid);
     this.sharedService.dataView = this.dataview;
     this.sharedService.slickGrid = this.grid;
     this.sharedService.gridContainerElement = this.elm as HTMLDivElement;

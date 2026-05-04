@@ -2,6 +2,7 @@ export interface FormattedDataCacheProgressEventArgs {
   rowsProcessed: number;
   totalRows: number;
   percentComplete: number;
+  elapsedMs: number;
 }
 
 export interface FormattedDataCacheCompletedEventArgs {

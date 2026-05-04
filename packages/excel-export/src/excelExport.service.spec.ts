@@ -2275,6 +2275,152 @@ describe('ExcelExportService', () => {
       expect(out[0]).toBe('&Z');
     });
 
+    it('readRegularRowData should use DataView formatted cache when enabled and cache has value', () => {
+      const svc = new ExcelExportService();
+      const container = new ContainerServiceStub();
+      const fakePubSub: any = { publish: vi.fn(), unsubscribeAll: vi.fn() };
+      container.registerInstance('PubSubService', fakePubSub);
+      const formatterSpy = vi.fn().mockReturnValue('SHOULD_NOT_BE_USED');
+      const dv: any = {
+        getGrouping: vi.fn().mockReturnValue([]),
+        getLength: vi.fn().mockReturnValue(1),
+        getItem: vi.fn().mockReturnValue({ id: 1, name: 'raw-name' }),
+        getItemMetadata: vi.fn().mockReturnValue({}),
+        getFormattedCellValue: vi.fn().mockReturnValue('cached-name'),
+      };
+      const grid: any = {
+        getData: vi.fn().mockReturnValue(dv),
+        getOptions: vi.fn().mockReturnValue({ enableFormattedDataCache: true } as any),
+        getColumns: vi.fn().mockReturnValue([{ id: 'name', field: 'name', width: 50, formatter: formatterSpy, exportWithFormatter: true }]),
+      };
+      svc.init(grid, container);
+      const wb = new Workbook();
+      (svc as any)._workbook = wb;
+      (svc as any)._sheet = wb.createWorksheet({ name: 'Sheet1' });
+      (svc as any)._stylesheet = wb.getStyleSheet();
+      (svc as any)._stylesheetFormats = { boldFormat: (svc as any)._stylesheet.createFormat({ font: { bold: true } }) };
+      (svc as any)._excelExportOptions = {};
+
+      const out = (svc as any).readRegularRowData(grid.getColumns(), 0, { id: 1, name: 'raw-name' }, 0);
+
+      expect(dv.getFormattedCellValue).toHaveBeenCalledWith(0, 'name', undefined);
+      expect(out[0]).toBe('cached-name');
+      expect(formatterSpy).not.toHaveBeenCalled();
+    });
+
+    it('readRegularRowData should fallback to formatter and raw value on cache miss when cache is enabled', () => {
+      const svc = new ExcelExportService();
+      const container = new ContainerServiceStub();
+      const fakePubSub: any = { publish: vi.fn(), unsubscribeAll: vi.fn() };
+      container.registerInstance('PubSubService', fakePubSub);
+      const formatterSpy = vi.fn().mockReturnValue('formatted-name');
+      const dv: any = {
+        getGrouping: vi.fn().mockReturnValue([]),
+        getLength: vi.fn().mockReturnValue(1),
+        getItem: vi.fn().mockReturnValue({ id: 1, name: 'raw-name', code: 'A1' }),
+        getItemMetadata: vi.fn().mockReturnValue({}),
+        getFormattedCellValue: vi.fn().mockReturnValue(undefined),
+      };
+      const grid: any = {
+        getData: vi.fn().mockReturnValue(dv),
+        getOptions: vi.fn().mockReturnValue({ enableFormattedDataCache: true } as any),
+        getColumns: vi.fn().mockReturnValue([
+          { id: 'name', field: 'name', width: 50, formatter: formatterSpy, exportWithFormatter: true },
+          { id: 'code', field: 'code', width: 50 },
+        ]),
+      };
+      svc.init(grid, container);
+      const wb = new Workbook();
+      (svc as any)._workbook = wb;
+      (svc as any)._sheet = wb.createWorksheet({ name: 'Sheet1' });
+      (svc as any)._stylesheet = wb.getStyleSheet();
+      (svc as any)._stylesheetFormats = { boldFormat: (svc as any)._stylesheet.createFormat({ font: { bold: true } }) };
+      (svc as any)._excelExportOptions = {};
+
+      const out = (svc as any).readRegularRowData(grid.getColumns(), 0, { id: 1, name: 'raw-name', code: 'A1' }, 0);
+
+      expect(dv.getFormattedCellValue).toHaveBeenCalledTimes(2);
+      expect(formatterSpy).toHaveBeenCalled();
+      expect(out[0]).toBe('formatted-name');
+      expect(out[1]).toBe('A1');
+    });
+
+    it('readRegularRowData should produce identical output with cache disabled and cache-enabled cache miss', () => {
+      const columns = [
+        { id: 'name', field: 'name', width: 50, formatter: (_r: number, _c: number, val: any) => `<b>${val}</b>`, exportWithFormatter: true },
+        { id: 'code', field: 'code', width: 50 },
+      ];
+      const rowItem = { id: 1, name: 'Alpha', code: 'B2' };
+
+      const createService = (enableFormattedDataCache: boolean, cachedValue: string | undefined) => {
+        const svc = new ExcelExportService();
+        const container = new ContainerServiceStub();
+        const fakePubSub: any = { publish: vi.fn(), unsubscribeAll: vi.fn() };
+        container.registerInstance('PubSubService', fakePubSub);
+        const dv: any = {
+          getGrouping: vi.fn().mockReturnValue([]),
+          getLength: vi.fn().mockReturnValue(1),
+          getItem: vi.fn().mockReturnValue(rowItem),
+          getItemMetadata: vi.fn().mockReturnValue({}),
+          getFormattedCellValue: vi.fn().mockReturnValue(cachedValue),
+        };
+        const grid: any = {
+          getData: vi.fn().mockReturnValue(dv),
+          getOptions: vi.fn().mockReturnValue({ enableFormattedDataCache } as any),
+          getColumns: vi.fn().mockReturnValue(columns),
+        };
+        svc.init(grid, container);
+        const wb = new Workbook();
+        (svc as any)._workbook = wb;
+        (svc as any)._sheet = wb.createWorksheet({ name: 'Sheet1' });
+        (svc as any)._stylesheet = wb.getStyleSheet();
+        (svc as any)._stylesheetFormats = { boldFormat: (svc as any)._stylesheet.createFormat({ font: { bold: true } }) };
+        (svc as any)._excelExportOptions = { sanitizeDataExport: true, htmlDecode: true };
+        return { svc, grid, dv };
+      };
+
+      const off = createService(false, undefined);
+      const onMiss = createService(true, undefined);
+
+      const outputNoCache = (off.svc as any).readRegularRowData(off.grid.getColumns(), 0, rowItem, 0);
+      const outputCacheMiss = (onMiss.svc as any).readRegularRowData(onMiss.grid.getColumns(), 0, rowItem, 0);
+
+      expect(outputCacheMiss).toEqual(outputNoCache);
+      expect(onMiss.dv.getFormattedCellValue).toHaveBeenCalledTimes(2);
+      expect(off.dv.getFormattedCellValue).not.toHaveBeenCalled();
+    });
+
+    it('readRegularRowData should sanitize and htmlDecode cache-hit values before parsing', () => {
+      const svc = new ExcelExportService();
+      const container = new ContainerServiceStub();
+      const fakePubSub: any = { publish: vi.fn(), unsubscribeAll: vi.fn() };
+      container.registerInstance('PubSubService', fakePubSub);
+      const dv: any = {
+        getGrouping: vi.fn().mockReturnValue([]),
+        getLength: vi.fn().mockReturnValue(1),
+        getItem: vi.fn().mockReturnValue({ id: 1, name: 'ignored' }),
+        getItemMetadata: vi.fn().mockReturnValue({}),
+        getFormattedCellValue: vi.fn().mockReturnValue('<b>&amp;Z</b>'),
+      };
+      const grid: any = {
+        getData: vi.fn().mockReturnValue(dv),
+        getOptions: vi.fn().mockReturnValue({ enableFormattedDataCache: true } as any),
+        getColumns: vi.fn().mockReturnValue([{ id: 'name', field: 'name', width: 50 }]),
+      };
+      svc.init(grid, container);
+      const wb = new Workbook();
+      (svc as any)._workbook = wb;
+      (svc as any)._sheet = wb.createWorksheet({ name: 'Sheet1' });
+      (svc as any)._stylesheet = wb.getStyleSheet();
+      (svc as any)._stylesheetFormats = { boldFormat: (svc as any)._stylesheet.createFormat({ font: { bold: true } }) };
+      (svc as any)._excelExportOptions = { sanitizeDataExport: true, htmlDecode: true };
+
+      const out = (svc as any).readRegularRowData(grid.getColumns(), 0, { id: 1, name: 'ignored' }, 0);
+
+      expect(dv.getFormattedCellValue).toHaveBeenCalledWith(0, 'name', undefined);
+      expect(out[0]).toBe('&Z');
+    });
+
     it('readGroupedTotalRows numeric branch returns styled metadata/value', () => {
       const svc = new ExcelExportService();
       const container = new ContainerServiceStub();

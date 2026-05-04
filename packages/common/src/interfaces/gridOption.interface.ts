@@ -484,19 +484,34 @@ export interface GridOption<C extends Column = Column> {
   enableFilterTrimWhiteSpace?: boolean;
 
   /**
-   * Defaults to false, when enabled will pre-format and cache all cell values that have formatters.
+   * Defaults to false, when enabled the DataView will pre-format and cache all formatter results
+   * (both export strings and raw cell display output) for every column that has a formatter.
    * This dramatically improves export performance for large datasets (50K+ rows) by avoiding
-   * repeated formatter execution during export. Cache is populated asynchronously in background
-   * batches to maintain UI responsiveness. Cache is automatically invalidated on data/column changes.
+   * repeated formatter calls during export, and also accelerates UI rendering since SlickGrid reads
+   * the cached output instead of re-invoking formatters on every scroll/render cycle.
+   * Cache is populated asynchronously in background batches to keep the UI responsive.
+   * Cache is automatically invalidated on data/column changes.
+   * NOTE: columns with row-metadata formatter overrides are excluded from the cell display cache
+   * and will always call the live formatter.
    */
   enableFormattedDataCache?: boolean;
 
   /**
-   * Defaults to 300, controls how many rows are processed per batch when populating the formatted data cache.
-   * Higher values process faster but may impact UI responsiveness. Lower values maintain better responsiveness
-   * but take longer to populate the cache. Only used when enableFormattedDataCache is true.
+   * Defaults to 300, acts as a safety cap on the maximum number of rows processed per animation frame when
+   * populating the formatted data cache. In practice the time-based budget (see `formattedDataCacheFrameBudgetMs`)
+   * already limits per-frame work; this cap prevents a single very-slow formatter from holding the main thread
+   * indefinitely within one batch. Only used when `enableFormattedDataCache` is true.
    */
   formattedDataCacheBatchSize?: number;
+
+  /**
+   * Defaults to 8 (ms), controls the maximum wall-clock time the cache population loop may spend inside a
+   * single animation frame before yielding back to the browser. Keeping this well below the ~16ms frame
+   * budget (60 fps) ensures smooth UI even when formatters are expensive. Lower values give better
+   * responsiveness at the cost of a longer overall population time.
+   * Only used when `enableFormattedDataCache` is true.
+   */
+  formattedDataCacheFrameBudgetMs?: number;
 
   /** Do we want to enable Grid Menu (aka hamburger menu) */
   enableGridMenu?: boolean;

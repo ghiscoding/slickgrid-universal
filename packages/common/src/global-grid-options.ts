@@ -119,7 +119,8 @@ export const GlobalGridOptions: Partial<GridOption> = {
   defaultBackendServiceFilterTypingDebounce: 500,
   enableFilterTrimWhiteSpace: false, // do we want to trim white spaces on all Filters?
   enableFormattedDataCache: false, // pre-format and cache cell values for export performance
-  formattedDataCacheBatchSize: 300, // rows per batch when populating formatted data cache
+  formattedDataCacheBatchSize: 300, // max rows per animation frame (safety cap)
+  formattedDataCacheFrameBudgetMs: 8, // ms of main-thread time allowed per animation frame (~half of 60fps budget)
   defaultFilterPlaceholder: '🔎︎',
   defaultFilterRangeOperator: 'RangeInclusive',
   defaultColumnSortFieldId: 'id',

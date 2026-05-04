@@ -116,6 +116,21 @@ describe('ExportService', () => {
       expect(service).toBeTruthy();
     });
 
+    it('startDownloadFile should htmlDecode content before CSV encoding', () => {
+      const encodeSpy = vi.spyOn(TextEncoder.prototype, 'encode');
+
+      service.startDownloadFile({
+        content: 'A &amp; B',
+        filename: 'export.csv',
+        format: 'csv',
+        mimeType: 'text/plain',
+        useUtf8WithBom: false,
+      });
+
+      expect(encodeSpy).toHaveBeenCalledWith('A & B');
+      encodeSpy.mockRestore();
+    });
+
     it('should not have any output since there are no column definitions provided', async () => {
       const pubSubSpy = vi.spyOn(pubSubServiceStub, 'publish');
       const spyUrlCreate = vi.spyOn(URL, 'createObjectURL');
@@ -450,6 +465,59 @@ describe('ExportService', () => {
         expect(pubSubSpy).toHaveBeenNthCalledWith(2, 'onAfterExportToTextFile', optionExpectation);
         expect(spyUrlCreate).toHaveBeenCalledWith(mockCsvBlob);
         expect(spyDownload).toHaveBeenCalledWith({ ...optionExpectation, content: removeMultipleSpaces(contentExpectation) });
+      });
+
+      it('should keep text row output parity for cache-off, cache-miss, and cache-hit', () => {
+        const columns: Column[] = [
+          { id: 'userId', field: 'userId', name: 'User Id', exportCsvForceToKeepAsString: true },
+          { id: 'name', field: 'name', name: 'Name', formatter: (_r, _c, v) => `<b>${v}</b>`, sanitizeDataExport: true },
+        ];
+        const itemObj = { id: 1, userId: '1E06', name: '&amp;Z' };
+
+        const createService = (enableFormattedDataCache: boolean, cachedValue: string | undefined) => {
+          const textService = new TextExportService();
+          const localContainer = new ContainerServiceStub();
+          const fakePubSub: any = { publish: vi.fn(), unsubscribeAll: vi.fn() };
+          localContainer.registerInstance('PubSubService', fakePubSub);
+          const localDataView: any = {
+            getGrouping: vi.fn().mockReturnValue([]),
+            getLength: vi.fn().mockReturnValue(1),
+            getItem: vi.fn().mockReturnValue(itemObj),
+            getItemMetadata: vi.fn().mockReturnValue({}),
+            getFormattedCellValue: vi.fn().mockImplementation((_row: number, columnId: string) => (columnId === 'name' ? cachedValue : undefined)),
+          };
+          const localGrid: any = {
+            getData: vi.fn().mockReturnValue(localDataView),
+            getOptions: vi.fn().mockReturnValue({ enableFormattedDataCache }),
+            getColumns: vi.fn().mockReturnValue(columns),
+            getVisibleColumns: vi.fn().mockReturnValue(columns),
+            getParentRowSpanByCell: vi.fn().mockReturnValue(null),
+          };
+          textService.init(localGrid, localContainer);
+          (textService as any)._exportOptions = { sanitizeDataExport: true };
+          (textService as any)._fileFormat = 'csv';
+          (textService as any)._exportQuoteWrapper = '"';
+          (textService as any)._delimiter = ',';
+          (textService as any)._hasGroupedItems = false;
+          return { textService, localDataView };
+        };
+
+        const { textService: noCacheService } = createService(false, undefined);
+        const noCacheOutput = noCacheService['readRegularRowData'](columns as any, 0, itemObj);
+
+        const { textService: cacheMissService, localDataView: missDataView } = createService(true, undefined);
+        const cacheMissOutput = cacheMissService['readRegularRowData'](columns as any, 0, itemObj);
+
+        const { textService: cacheHitService, localDataView: hitDataView } = createService(true, '<b>&amp;Z</b>');
+        const cacheHitOutput = cacheHitService['readRegularRowData'](columns as any, 0, itemObj);
+
+        expect(noCacheOutput).toBe('="1E06","&amp;Z"');
+        expect(cacheMissOutput).toBe(noCacheOutput);
+        expect(cacheHitOutput).toBe(noCacheOutput);
+        expect(missDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'userId', undefined);
+        expect(missDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'name', undefined);
+        expect(hitDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'userId', undefined);
+        expect(hitDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'name', undefined);
       });
     });
 

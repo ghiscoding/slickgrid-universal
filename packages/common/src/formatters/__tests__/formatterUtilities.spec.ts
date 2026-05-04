@@ -152,8 +152,8 @@ describe('formatterUtilities', () => {
   });
 
   describe('copyCellToClipboard', () => {
-    let clipboardWriteMock;
-    let gridMock;
+    let clipboardWriteMock: any;
+    let gridMock: any;
 
     beforeEach(() => {
       clipboardWriteMock = vi.fn();
@@ -170,8 +170,8 @@ describe('formatterUtilities', () => {
       global.navigator = {
         clipboard: {
           writeText: clipboardWriteMock,
-        },
-      };
+        } as any,
+      } as any;
 
       // Clear all mocks before each test
       vi.clearAllMocks();
@@ -184,7 +184,7 @@ describe('formatterUtilities', () => {
       const columnDef = {
         exportWithFormatter: true,
         formatter: () => textToCopy,
-      };
+      } as unknown as Column;
 
       // Ensure the original function is functional
       const result = await copyCellToClipboard({
@@ -206,7 +206,7 @@ describe('formatterUtilities', () => {
       const columnDef = {
         exportWithFormatter: true,
         formatter: () => formattedText, // A mock function simulating formatter
-      };
+      } as unknown as Column;
 
       const result = await copyCellToClipboard({
         grid: gridMock,
@@ -226,7 +226,7 @@ describe('formatterUtilities', () => {
       const columnDef = {
         exportWithFormatter: true,
         formatter: () => textWithSymbols, // A mock function simulating formatter
-      };
+      } as unknown as Column;
 
       const result = await copyCellToClipboard({
         grid: gridMock,
@@ -246,7 +246,7 @@ describe('formatterUtilities', () => {
       const columnDef = {
         exportWithFormatter: true,
         formatter: () => textWithSymbols, // A mock function simulating formatter
-      };
+      } as unknown as Column;
 
       const result = await copyCellToClipboard({
         grid: gridMock,
@@ -266,7 +266,7 @@ describe('formatterUtilities', () => {
       const columnDef = {
         exportWithFormatter: true,
         formatter: () => textWithSymbols, // A mock function simulating formatter
-      };
+      } as unknown as Column;
 
       const result = await copyCellToClipboard({
         grid: gridMock,
@@ -289,7 +289,7 @@ describe('formatterUtilities', () => {
         grid: gridMock,
         cell: 0,
         row: 0,
-        column: {},
+        column: {} as unknown as Column,
         dataContext: {},
       });
 

@@ -12,8 +12,8 @@ import type {
   SlickGrid,
   TranslaterService,
 } from '@slickgrid-universal/common';
-import { Constants, exportWithFormatterWhenDefined, getTranslationPrefix, htmlDecode } from '@slickgrid-universal/common';
-import { addWhiteSpaces, extend, getHtmlStringOutput, stripTags, titleCase } from '@slickgrid-universal/utils';
+import { Constants, exportWithFormatterWhenDefined, getTranslationPrefix } from '@slickgrid-universal/common';
+import { addWhiteSpaces, extend, getHtmlStringOutput, htmlDecode, stripTags, titleCase } from '@slickgrid-universal/utils';
 import jsPDF from 'jspdf';
 
 const DEFAULT_EXPORT_OPTIONS: PdfExportOption = {
@@ -613,8 +613,17 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
           (prevColspan as number)--;
         }
       } else {
-        // get the output by analyzing if we'll pull the value from the cell or from a formatter
-        let itemData = exportWithFormatterWhenDefined(row, col, columnDef, itemObj, this._grid, colOpt);
+        const columnId = String(columnDef.id);
+
+        // Try cache first when enabled, otherwise keep the existing formatter path.
+        let itemData =
+          this._gridOptions.enableFormattedDataCache && columnDef.id != null
+            ? this._dataView.getFormattedCellValue(row, columnId, undefined)
+            : undefined;
+
+        if (itemData === undefined) {
+          itemData = exportWithFormatterWhenDefined(row, col, columnDef, itemObj, this._grid, colOpt);
+        }
 
         // does the user want to sanitize the output data (remove HTML tags)?
         if (columnDef.sanitizeDataExport || colOpt.sanitizeDataExport) {

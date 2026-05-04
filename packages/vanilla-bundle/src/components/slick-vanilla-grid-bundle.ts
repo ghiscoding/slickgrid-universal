@@ -584,6 +584,7 @@ export class SlickVanillaGridBundle<TData = any> {
       this._gridOptions,
       this._eventPubSubService
     );
+    (this.dataView as SlickDataView<TData>).setGrid(this.slickGrid);
     this.sharedService.dataView = this.dataView as SlickDataView;
     this.sharedService.slickGrid = this.slickGrid as SlickGrid;
     this.sharedService.gridContainerElement = this._gridContainerElm;

@@ -1700,6 +1700,79 @@ describe('PdfExportService', () => {
       const result = service['readRegularRowData'](columns as any, 0, itemObj);
       expect(result.length).toBeGreaterThan(0);
     });
+
+    it('should keep PDF row output parity for cache-off, cache-miss, and cache-hit', () => {
+      const columns: Column[] = [{ id: 'col1', field: 'col1', formatter: (_r, _c, v) => `<b>${v}</b>`, exportWithFormatter: true }];
+      const itemObj = { id: 1, col1: 'Z' };
+
+      const createService = (enableFormattedDataCache: boolean, cachedValue: string | undefined) => {
+        const pdfService = new PdfExportService();
+        const localContainer = new ContainerServiceStub();
+        const fakePubSub: any = { publish: vi.fn(), unsubscribeAll: vi.fn() };
+        localContainer.registerInstance('PubSubService', fakePubSub);
+        const localDataView: any = {
+          getGrouping: vi.fn().mockReturnValue([]),
+          getLength: vi.fn().mockReturnValue(1),
+          getItem: vi.fn().mockReturnValue(itemObj),
+          getItemMetadata: vi.fn().mockReturnValue({}),
+          getFormattedCellValue: vi.fn().mockReturnValue(cachedValue),
+        };
+        const localGrid: any = {
+          getData: vi.fn().mockReturnValue(localDataView),
+          getOptions: vi.fn().mockReturnValue({ enableFormattedDataCache }),
+          getColumns: vi.fn().mockReturnValue(columns),
+          getParentRowSpanByCell: vi.fn().mockReturnValue(null),
+        };
+        pdfService.init(localGrid, localContainer);
+        (pdfService as any)._exportOptions = { htmlDecode: false, sanitizeDataExport: false };
+        return { pdfService, localDataView };
+      };
+
+      const { pdfService: noCacheService } = createService(false, undefined);
+      const noCacheOutput = noCacheService['readRegularRowData'](columns as any, 0, itemObj);
+
+      const { pdfService: cacheMissService, localDataView: missDataView } = createService(true, undefined);
+      const cacheMissOutput = cacheMissService['readRegularRowData'](columns as any, 0, itemObj);
+
+      const { pdfService: cacheHitService, localDataView: hitDataView } = createService(true, '<b>Z</b>');
+      const cacheHitOutput = cacheHitService['readRegularRowData'](columns as any, 0, itemObj);
+
+      expect(noCacheOutput).toEqual(['<b>Z</b>']);
+      expect(cacheMissOutput).toEqual(noCacheOutput);
+      expect(cacheHitOutput).toEqual(noCacheOutput);
+      expect(missDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'col1', undefined);
+      expect(hitDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'col1', undefined);
+    });
+
+    it('should sanitize cache-hit values in readRegularRowData', () => {
+      const columns: Column[] = [{ id: 'col1', field: 'col1', sanitizeDataExport: true }];
+      const itemObj = { id: 1, col1: 'ignored-on-cache-hit' };
+
+      const pdfService = new PdfExportService();
+      const localContainer = new ContainerServiceStub();
+      const fakePubSub: any = { publish: vi.fn(), unsubscribeAll: vi.fn() };
+      localContainer.registerInstance('PubSubService', fakePubSub);
+      const localDataView: any = {
+        getGrouping: vi.fn().mockReturnValue([]),
+        getLength: vi.fn().mockReturnValue(1),
+        getItem: vi.fn().mockReturnValue(itemObj),
+        getItemMetadata: vi.fn().mockReturnValue({}),
+        getFormattedCellValue: vi.fn().mockReturnValue('<b>&amp;Z</b>'),
+      };
+      const localGrid: any = {
+        getData: vi.fn().mockReturnValue(localDataView),
+        getOptions: vi.fn().mockReturnValue({ enableFormattedDataCache: true }),
+        getColumns: vi.fn().mockReturnValue(columns),
+        getParentRowSpanByCell: vi.fn().mockReturnValue(null),
+      };
+
+      pdfService.init(localGrid, localContainer);
+      (pdfService as any)._exportOptions = { htmlDecode: false, sanitizeDataExport: true };
+
+      const output = pdfService['readRegularRowData'](columns as any, 0, itemObj);
+      expect(output).toEqual(['&amp;Z']);
+      expect(localDataView.getFormattedCellValue).toHaveBeenCalledWith(0, 'col1', undefined);
+    });
   });
 
   describe('Additional Edge Case Coverage', () => {

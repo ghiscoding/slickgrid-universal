@@ -746,6 +746,7 @@ export class AngularSlickgridComponent<TData = any> implements AfterViewInit, On
       this.options,
       this._eventPubSubService
     );
+    (this.dataView as SlickDataView<TData>).setGrid(this.slickGrid);
     this.sharedService.dataView = this.dataView;
     this.sharedService.slickGrid = this.slickGrid;
     this.sharedService.gridContainerElement = this.elm.nativeElement as HTMLDivElement;

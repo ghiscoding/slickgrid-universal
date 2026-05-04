@@ -172,6 +172,7 @@ const mockDataView = {
   onRowCountChanged: new MockSlickEvent<OnRowCountChangedEventArgs>(),
   onSetItemsCalled: new MockSlickEvent<OnSetItemsCalledEventArgs>(),
   reSort: vi.fn(),
+  setGrid: vi.fn(),
   setItems: vi.fn(),
   syncGridSelection: vi.fn(),
 } as unknown as SlickDataView;
