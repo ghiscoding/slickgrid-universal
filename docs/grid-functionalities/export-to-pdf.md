@@ -8,6 +8,7 @@
 - [AutoTable Options Callback](#autotable-options-callback)
 - [Export from Button Click](#export-from-a-button-click-event)
 - [Show Loading Process Spinner](#show-loading-process-spinner)
+- [Large Dataset Performance](#large-dataset-performance)
 - [UI Sample](#ui-sample)
 
 ### Description
@@ -221,8 +222,39 @@ export class MyExample {
 }
 ```
 
+### Large Dataset Performance
+For large datasets and formatter-heavy exports, you can improve responsiveness by enabling the DataView formatted cache.
+
+For a combined sorting + export strategy, see [Large Dataset Performance Guide](../developer-guides/large-dataset-performance.md).
+
+```ts
+gridOptions = {
+  enableFormattedDataCache: true,
+  // max rows processed per batch tick (defaults to 300)
+  formattedDataCacheBatchSize: 300,
+  // frame-time budget per batch in ms (defaults to 8)
+  formattedDataCacheFrameBudgetMs: 8,
+  pdfExportOptions: {
+    exportWithFormatter: true,
+  },
+};
+```
+
+Notes:
+- Keep sanitization and html decoding in the export service pipeline.
+- Cache population can run in the background and does not block the UI.
+- onAfterExportToPdf now includes durationMs in the event payload, useful for telemetry/spinners.
+
+```ts
+gridContainerElm.addEventListener('onafterexporttopdf', (e: CustomEvent<any>) => {
+  console.log('Export done in ms:', e.detail?.durationMs);
+});
+```
+
 ### UI Sample
 The Export to PDF supports Unicode, custom formatting, and grouped headers. See the demo for a preview.
 
 ---
 For more advanced options, see the [pdfExportOption.interface.ts](https://github.com/ghiscoding/slickgrid-universal/blob/master/packages/common/src/interfaces/pdfExportOption.interface.ts).
+
+

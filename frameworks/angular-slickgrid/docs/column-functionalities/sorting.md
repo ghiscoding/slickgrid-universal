@@ -144,7 +144,8 @@ Date sorting should work out of the box as long as you provide the correct colum
 - `saveOutputType`: if you already have a `type` and an `outputType` but you wish to save your date (i.e. save to DB) in yet another format
 
 ### Pre-Parse Date Columns for better perf
-##### requires v8.8.0 and higher
+
+For a broader large dataset strategy that also covers export cache tuning, see [Large Dataset Performance Guide](../developer-guides/large-dataset-performance.md).
 
 Sorting very large dataset with dates can be extremely slow when dates formated date strings, the reason is because these strings need to first be parsed and converted to real JS Dates before the Sorting process can actually happen (i.e. US Date Format). However parsing a large dataset can be slow **and** to make it worst, a Sort will revisit the same items over and over which mean that the same date strings will have to be reparsed over and over (for example while trying to Sort a dataset of 100 items, I saw some items being revisit 10 times and I can only imagine that it is exponentially worst with a large dataset).
 

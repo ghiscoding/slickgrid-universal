@@ -75,6 +75,7 @@
 ## Developer Guides
 
 * [CSP Compliance](developer-guides/csp-compliance.md)
+* [Large Dataset Performance](developer-guides/large-dataset-performance.md)
 
 ## Localization
 

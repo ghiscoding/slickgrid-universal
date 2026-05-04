@@ -1596,7 +1596,10 @@ describe('PdfExportService', () => {
       });
       const result = await service.exportToPdf();
       expect(result).toBe(false);
-      expect(pubSubService.publish).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ error: expect.any(Error), durationMs: expect.any(Number) }));
+      expect(pubSubService.publish).toHaveBeenCalledWith(
+        'onAfterExportToPdf',
+        expect.objectContaining({ error: expect.any(Error), durationMs: expect.any(Number) })
+      );
     });
 
     it('should handle downloadPdf with invalid link removal', () => {
@@ -2975,4 +2978,3 @@ describe('PdfExportService', () => {
     });
   });
 });
-
