@@ -483,6 +483,21 @@ export interface GridOption<C extends Column = Column> {
    */
   enableFilterTrimWhiteSpace?: boolean;
 
+  /**
+   * Defaults to false, when enabled will pre-format and cache all cell values that have formatters.
+   * This dramatically improves export performance for large datasets (50K+ rows) by avoiding
+   * repeated formatter execution during export. Cache is populated asynchronously in background
+   * batches to maintain UI responsiveness. Cache is automatically invalidated on data/column changes.
+   */
+  enableFormattedDataCache?: boolean;
+
+  /**
+   * Defaults to 300, controls how many rows are processed per batch when populating the formatted data cache.
+   * Higher values process faster but may impact UI responsiveness. Lower values maintain better responsiveness
+   * but take longer to populate the cache. Only used when enableFormattedDataCache is true.
+   */
+  formattedDataCacheBatchSize?: number;
+
   /** Do we want to enable Grid Menu (aka hamburger menu) */
   enableGridMenu?: boolean;
 

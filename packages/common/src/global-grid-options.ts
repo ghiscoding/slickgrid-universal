@@ -118,6 +118,8 @@ export const GlobalGridOptions: Partial<GridOption> = {
   defaultFilter: Filters.input,
   defaultBackendServiceFilterTypingDebounce: 500,
   enableFilterTrimWhiteSpace: false, // do we want to trim white spaces on all Filters?
+  enableFormattedDataCache: false, // pre-format and cache cell values for export performance
+  formattedDataCacheBatchSize: 300, // rows per batch when populating formatted data cache
   defaultFilterPlaceholder: '🔎︎',
   defaultFilterRangeOperator: 'RangeInclusive',
   defaultColumnSortFieldId: 'id',

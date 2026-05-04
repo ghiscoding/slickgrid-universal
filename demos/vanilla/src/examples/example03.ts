@@ -64,6 +64,8 @@ export default class Example03 {
     this._bindingEventService.bind(gridContainerElm, 'oncellchange', this.handleOnCellChange.bind(this));
     this._bindingEventService.bind(gridContainerElm, 'onvalidationerror', this.handleValidationError.bind(this));
     this._bindingEventService.bind(gridContainerElm, 'onitemsdeleted', this.handleItemsDeleted.bind(this));
+    this._bindingEventService.bind(gridContainerElm, 'onformatteddatacachecompleted', ((e, args) =>
+      console.log('onFormattedDataCacheCompleted', e, args)) as EventListener);
     this._bindingEventService.bind(
       gridContainerElm,
       ['onbeforeexporttoexcel', 'onbeforeexporttopdf'],
@@ -341,6 +343,7 @@ export default class Example03 {
       dataView: {
         useCSPSafeFilter: true,
       },
+      enableFormattedDataCache: true,
       headerMenu: {
         hideFreezeColumnsCommand: false,
       },

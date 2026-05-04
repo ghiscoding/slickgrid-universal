@@ -755,13 +755,42 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
         // -- Read Data & Push to Data Array
         // user might want to export with Formatter, and/or auto-detect Excel format, and/or export as regular cell data
 
-        // for column that are Date type, we'll always export with their associated Date Formatters unless `exportWithFormatter` is specifically set to false
-        const exportOptions = columnCachedData?.exportOptions ?? this._excelExportOptions;
-        if (columnCachedData?.requiresFormatter) {
-          itemData = exportWithFormatterWhenDefined(row, col, columnDef, itemObj, this._grid, exportOptions);
+        // Try cache first if enabled
+        if (this._gridOptions.enableFormattedDataCache) {
+          itemData = this._grid.getFormattedCellValue(dataRowIdx, columnId, undefined);
+          if (itemData !== undefined) {
+            // Cache hit - use cached value
+          } else {
+            // Cache miss - fall back to formatter
+            if (columnCachedData?.requiresFormatter) {
+              itemData = exportWithFormatterWhenDefined(
+                row,
+                col,
+                columnDef,
+                itemObj,
+                this._grid,
+                columnDef.excelExportOptions ?? this._excelExportOptions
+              );
+            } else {
+              const fieldProperty = columnCachedData?.fieldProperty ?? String(columnDef.field || columnDef.id);
+              itemData = this.getRawCellValue(itemObj, fieldProperty);
+            }
+          }
         } else {
-          const fieldProperty = columnCachedData?.fieldProperty ?? String(columnDef.field || columnDef.id);
-          itemData = this.getRawCellValue(itemObj, fieldProperty);
+          // Cache not enabled - use formatter as before
+          if (columnCachedData?.requiresFormatter) {
+            itemData = exportWithFormatterWhenDefined(
+              row,
+              col,
+              columnDef,
+              itemObj,
+              this._grid,
+              columnDef.excelExportOptions ?? this._excelExportOptions
+            );
+          } else {
+            const fieldProperty = columnCachedData?.fieldProperty ?? String(columnDef.field || columnDef.id);
+            itemData = this.getRawCellValue(itemObj, fieldProperty);
+          }
         }
 
         // auto-detect best possible Excel format, unless the user provide his own formatting,

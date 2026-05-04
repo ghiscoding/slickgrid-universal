@@ -65,6 +65,8 @@ export default class Example02 {
         console.log(`sort: ${window.performance.now() - this.sortStart} ms`); // use console for Cypress tests
       });
     });
+    this._bindingEventService.bind(gridContainerElm, 'onformatteddatacachecompleted', ((e, args) =>
+      console.log('onFormattedDataCacheCompleted', e, args)) as EventListener);
     this.sgb = new Slicker.GridBundle(gridContainerElm, this.columns, { ...ExampleGridOptions, ...this.gridOptions }, this.dataset);
 
     // you could group by duration on page load (must be AFTER the DataView is created, so after GridBundle)
@@ -270,6 +272,7 @@ export default class Example02 {
       enablePdfExport: true,
       enableFiltering: true,
       enableGrouping: true,
+      enableFormattedDataCache: true,
       columnPicker: {
         onColumnsChanged: (e, args) => console.log(e, args),
       },
