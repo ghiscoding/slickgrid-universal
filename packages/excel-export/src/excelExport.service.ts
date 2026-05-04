@@ -163,6 +163,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     }
 
     this._pubSubService?.publish('onBeforeExportToExcel', true);
+    const exportStartTime = Date.now();
     this._excelExportOptions = extend(true, {}, { ...DEFAULT_EXPORT_OPTIONS, ...this._gridOptions.excelExportOptions, ...options });
     this._fileFormat = this._excelExportOptions.format || 'xlsx';
     const useStreamingExport = !!this._excelExportOptions.useStreamingExport;
@@ -232,19 +233,19 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
           a.click();
           document.body.removeChild(a);
           URL.revokeObjectURL(url);
-          this._pubSubService?.publish('onAfterExportToExcel', { filename, mimeType });
+          this._pubSubService?.publish('onAfterExportToExcel', { filename, mimeType, durationMs: Date.now() - exportStartTime });
           return true;
         } catch (err) {
           // fallback to legacy export if streaming is not supported
-          return await this.legacyExcelExportAsync(filename, mimeType);
+          return await this.legacyExcelExportAsync(filename, mimeType, exportStartTime);
         }
       } else {
         // fallback to legacy export for non-xlsx or if useStreamingExport is false
-        return await this.legacyExcelExportAsync(filename, mimeType);
+        return await this.legacyExcelExportAsync(filename, mimeType, exportStartTime);
       }
     } /** v8 ignore next */ catch (error) {
       console.error('Excel export failed:', error);
-      this._pubSubService?.publish('onAfterExportToExcel', { error });
+      this._pubSubService?.publish('onAfterExportToExcel', { error, durationMs: Date.now() - exportStartTime });
       return false;
     }
   }
@@ -914,14 +915,15 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
   }
 
   /** Async version of legacy Excel export fallback method */
-  protected async legacyExcelExportAsync(filename: string, mimeType: string): Promise<boolean> {
+  protected async legacyExcelExportAsync(filename: string, mimeType: string, exportStartTime?: number): Promise<boolean> {
+    const startTime = exportStartTime ?? Date.now();
     try {
       await downloadExcelFile(this._workbook, filename, { mimeType });
-      this._pubSubService?.publish(`onAfterExportToExcel`, { filename, mimeType });
+      this._pubSubService?.publish(`onAfterExportToExcel`, { filename, mimeType, durationMs: Date.now() - startTime });
       return true;
     } catch (error) {
       console.error('Legacy Excel export failed:', error);
-      this._pubSubService?.publish('onAfterExportToExcel', { error });
+      this._pubSubService?.publish('onAfterExportToExcel', { error, durationMs: Date.now() - startTime });
       return false;
     }
   }

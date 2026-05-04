@@ -182,6 +182,21 @@ Important behavior rule:
 - because export services currently have no E2E coverage, output-impacting changes must be protected by
   targeted unit tests before rollout
 
+### Sanitization ownership (why it is done in export services)
+
+Cache population intentionally stores pre-sanitized formatter output for export-only columns by calling
+`exportWithFormatterWhenDefined(..., skipSanitization = true)`.
+
+Sanitization is then applied once in each export service's final output pipeline.
+
+This keeps behavior correct and predictable because:
+
+- sanitization policy is an export-time concern (`sanitizeDataExport`, `htmlDecode`, quoting rules)
+- cache entries stay policy-neutral and reusable across export flows
+- no cache variant explosion (sanitized vs unsanitized vs decode combinations)
+- no stale cache risk when export options change after cache warmup
+- single-pass sanitization is preserved on both cache-hit and cache-miss paths
+
 ---
 
 ## Events (fired on `SlickDataView`)

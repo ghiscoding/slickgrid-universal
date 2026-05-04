@@ -127,6 +127,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
 
     return new Promise((resolve) => {
       this._pubSubService?.publish(`onBeforeExportToPdf`, true);
+      const exportStartTime = Date.now();
       this._exportOptions = extend(true, {}, { ...DEFAULT_EXPORT_OPTIONS, ...this._gridOptions.pdfExportOptions, ...options });
 
       // wrap it into a setTimeout so that the EventAggregator has enough time to start a pre-process like showing a spinner
@@ -437,11 +438,18 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
           // Save the PDF
           doc.save(`${this._exportOptions.filename}.pdf`);
 
-          this._pubSubService?.publish(`onAfterExportToPdf`, { filename: `${this._exportOptions.filename}.pdf` });
+          this._pubSubService?.publish(`onAfterExportToPdf`, {
+            filename: `${this._exportOptions.filename}.pdf`,
+            durationMs: Date.now() - exportStartTime,
+          });
           resolve(true);
         } catch (error) {
           console.error('Error exporting to PDF:', error);
-          this._pubSubService?.publish(`onAfterExportToPdf`, { filename: `${this._exportOptions.filename}.pdf`, error });
+          this._pubSubService?.publish(`onAfterExportToPdf`, {
+            filename: `${this._exportOptions.filename}.pdf`,
+            error,
+            durationMs: Date.now() - exportStartTime,
+          });
           resolve(false);
         }
       }, 0);

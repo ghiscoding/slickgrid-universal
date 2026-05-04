@@ -175,7 +175,7 @@ describe('PdfExportService', () => {
       await service.exportToPdf(mockExportPdfOptions);
 
       expect(pubSubSpy).toHaveBeenCalledWith('onBeforeExportToPdf', true);
-      expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf' }));
+      expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf', durationMs: expect.any(Number) }));
     });
 
     describe('exportToPdf method', () => {
@@ -235,7 +235,7 @@ describe('PdfExportService', () => {
         service.init(gridStub, container);
         await service.exportToPdf(mockExportPdfOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf' }));
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf', durationMs: expect.any(Number) }));
       });
 
       it('should call jsPDF with default page size A4 portrait', async () => {
@@ -245,7 +245,7 @@ describe('PdfExportService', () => {
         service.init(gridStub, container);
         await service.exportToPdf(mockExportPdfOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf' }));
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf', durationMs: expect.any(Number) }));
       });
 
       it('should call jsPDF save() with the correct filename (non-IE)', async () => {
@@ -306,7 +306,7 @@ describe('PdfExportService', () => {
         service.init(gridStub, container);
         await service.exportToPdf(mockExportPdfOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf' }));
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf', durationMs: expect.any(Number) }));
       });
 
       it('should have the LastName in uppercase when exportCustomFormatter is defined', async () => {
@@ -318,7 +318,7 @@ describe('PdfExportService', () => {
         service.init(gridStub, container);
         await service.exportToPdf(mockExportPdfOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf' }));
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf', durationMs: expect.any(Number) }));
       });
 
       it('should have the LastName as empty string when item LastName is NULL', async () => {
@@ -330,7 +330,7 @@ describe('PdfExportService', () => {
         service.init(gridStub, container);
         await service.exportToPdf(mockExportPdfOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf' }));
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf', durationMs: expect.any(Number) }));
       });
 
       it('should have the UserId as empty string even when UserId property is not found in the item object', async () => {
@@ -342,7 +342,7 @@ describe('PdfExportService', () => {
         service.init(gridStub, container);
         await service.exportToPdf(mockExportPdfOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf' }));
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf', durationMs: expect.any(Number) }));
       });
 
       it('should sanitize data when sanitizeDataExport is enabled in grid options', async () => {
@@ -355,7 +355,7 @@ describe('PdfExportService', () => {
         service.init(gridStub, container);
         await service.exportToPdf(mockExportPdfOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf' }));
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf', durationMs: expect.any(Number) }));
       });
 
       it('should export with landscape orientation when specified', async () => {
@@ -367,7 +367,7 @@ describe('PdfExportService', () => {
         service.init(gridStub, container);
         await service.exportToPdf({ ...mockExportPdfOptions, pageOrientation: 'landscape' });
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf' }));
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf', durationMs: expect.any(Number) }));
       });
     });
 
@@ -394,7 +394,7 @@ describe('PdfExportService', () => {
         service.init(gridStub, container);
         await service.exportToPdf({ ...mockExportPdfOptions, includeHidden: true });
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf' }));
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf', durationMs: expect.any(Number) }));
       });
     });
 
@@ -447,7 +447,7 @@ describe('PdfExportService', () => {
         service.init(gridStub, container);
         await service.exportToPdf(mockExportPdfOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf' }));
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf', durationMs: expect.any(Number) }));
       });
     });
 
@@ -536,7 +536,7 @@ describe('PdfExportService', () => {
         service.init(gridStub, container);
         await service.exportToPdf(mockExportPdfOptions);
 
-        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf' }));
+        expect(pubSubSpy).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ filename: 'export.pdf', durationMs: expect.any(Number) }));
       });
 
       it('should prepend + to collapsed group title and - to expanded group title by default', () => {
@@ -1596,7 +1596,7 @@ describe('PdfExportService', () => {
       });
       const result = await service.exportToPdf();
       expect(result).toBe(false);
-      expect(pubSubService.publish).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ error: expect.any(Error) }));
+      expect(pubSubService.publish).toHaveBeenCalledWith('onAfterExportToPdf', expect.objectContaining({ error: expect.any(Error), durationMs: expect.any(Number) }));
     });
 
     it('should handle downloadPdf with invalid link removal', () => {
@@ -2975,3 +2975,4 @@ describe('PdfExportService', () => {
     });
   });
 });
+
