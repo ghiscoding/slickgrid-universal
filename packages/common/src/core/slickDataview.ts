@@ -2055,6 +2055,8 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
 
     // 1. Export-only columns: exportCustomFormatter or exportWithFormatter without a cell formatter.
     //    Uses exportWithFormatterWhenDefined since the export formatter differs from the cell formatter.
+    //    Passes skipSanitization=true so that sanitization is deferred to the export service which applies
+    //    it uniformly at the end of processing (avoiding redundant sanitization in the data flow).
     for (let ci = 0; ci < exportOnlyCacheColumns.length; ci++) {
       const entry = exportOnlyCacheColumns[ci];
       try {
@@ -2064,7 +2066,8 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
           entry.column,
           item,
           grid,
-          exportOptions
+          exportOptions,
+          true // skipSanitization=true: export service handles sanitization uniformly at the end
         );
         this.formattedCacheMetadata.totalFormattedCells++;
       } catch {

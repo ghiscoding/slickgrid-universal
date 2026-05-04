@@ -768,7 +768,8 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
               columnDef,
               itemObj,
               this._grid,
-              columnCachedData.exportOptions ?? columnDef.excelExportOptions ?? this._excelExportOptions
+              columnCachedData.exportOptions ?? columnDef.excelExportOptions ?? this._excelExportOptions,
+              true
             );
           } else {
             const fieldProperty = columnCachedData?.fieldProperty ?? String(columnDef.field || columnDef.id);

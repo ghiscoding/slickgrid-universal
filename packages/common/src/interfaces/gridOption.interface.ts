@@ -491,6 +491,8 @@ export interface GridOption<C extends Column = Column> {
    * the cached output instead of re-invoking formatters on every scroll/render cycle.
    * Cache is populated asynchronously in background batches to keep the UI responsive.
    * Cache is automatically invalidated on data/column changes.
+   * IMPORTANT: this cache increases memory usage (it stores precomputed values for many cells),
+   * so it should be enabled selectively for large/formatter-heavy grids and disabled when not needed.
    * NOTE: columns with row-metadata formatter overrides are excluded from the cell display cache
    * and will always call the live formatter.
    */

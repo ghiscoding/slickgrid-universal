@@ -267,6 +267,8 @@ Applies to **all** formatter call sites, not only the cache. Key changes:
 - Feature is **opt-in** - disabled by default, zero overhead when off
 - No breaking changes to any existing API
 - `getCellDisplayValue` third parameter (`item`) is optional - existing callers unaffected
+- Cache uses extra memory to store precomputed formatter output; enable it selectively for
+  large/formatter-heavy grids instead of enabling it globally on every grid.
 
 ---
 

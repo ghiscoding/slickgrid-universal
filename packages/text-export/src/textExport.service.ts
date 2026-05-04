@@ -412,11 +412,11 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
             : undefined;
 
         if (itemData === undefined) {
-          itemData = exportWithFormatterWhenDefined(row, col, columnDef, itemObj, this._grid, this._exportOptions);
+          itemData = exportWithFormatterWhenDefined(row, col, columnDef, itemObj, this._grid, this._exportOptions, true);
         }
 
         // does the user want to sanitize the output data (remove HTML tags)?
-        if (columnDef.sanitizeDataExport || this._exportOptions.sanitizeDataExport) {
+        if ((columnDef.sanitizeDataExport || this._exportOptions.sanitizeDataExport) && typeof itemData === 'string') {
           itemData = stripTags(itemData);
         }
 
@@ -478,10 +478,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
         itemData = totalResult instanceof HTMLElement ? totalResult.textContent || '' : totalResult;
       }
 
-      // does the user want to sanitize the output data (remove HTML tags)?
-      if (columnDef.sanitizeDataExport || this._exportOptions.sanitizeDataExport) {
-        itemData = stripTags(itemData);
-      }
+      // sanitization is already handled by formatter utility
 
       if (format === 'csv') {
         // when CSV we also need to escape double quotes twice, so a double quote " becomes 2x double quotes ""

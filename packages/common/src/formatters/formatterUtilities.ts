@@ -246,6 +246,7 @@ export function getBaseDateFormatter(): Formatter {
  * @param {Object} columnDef - column definition
  * @param {Object} grid - Slick Grid object
  * @param {Object} exportOptions - Excel or Text Export Options
+ * @param {boolean} [skipSanitization=false] - Skip sanitization (useful when export service will handle it)
  * @returns formatted string output or empty string
  */
 export function exportWithFormatterWhenDefined<T = any>(
@@ -254,7 +255,8 @@ export function exportWithFormatterWhenDefined<T = any>(
   columnDef: Column<T>,
   dataContext: T,
   grid: SlickGrid,
-  exportOptions?: TextExportOption | ExcelExportOption
+  exportOptions?: TextExportOption | ExcelExportOption,
+  skipSanitization = false
 ): string {
   let isEvaluatingFormatter = false;
 
@@ -276,6 +278,9 @@ export function exportWithFormatterWhenDefined<T = any>(
   }
 
   const output = parseFormatterWhenExist(formatter, row, col, columnDef, dataContext, grid);
+  if (skipSanitization) {
+    return output;
+  }
   return exportOptions?.sanitizeDataExport && typeof output === 'string' ? stripTags(output) : output;
 }
 

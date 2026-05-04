@@ -622,11 +622,11 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
             : undefined;
 
         if (itemData === undefined) {
-          itemData = exportWithFormatterWhenDefined(row, col, columnDef, itemObj, this._grid, colOpt);
+          itemData = exportWithFormatterWhenDefined(row, col, columnDef, itemObj, this._grid, colOpt, true);
         }
 
         // does the user want to sanitize the output data (remove HTML tags)?
-        if (columnDef.sanitizeDataExport || colOpt.sanitizeDataExport) {
+        if ((columnDef.sanitizeDataExport || colOpt.sanitizeDataExport) && typeof itemData === 'string') {
           itemData = stripTags(itemData);
         }
 
@@ -696,7 +696,7 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
       }
 
       // does the user want to sanitize the output data (remove HTML tags)?
-      if (columnDef.sanitizeDataExport || this._exportOptions.sanitizeDataExport) {
+      if ((columnDef.sanitizeDataExport || this._exportOptions.sanitizeDataExport) && typeof itemData === 'string') {
         itemData = stripTags(itemData);
       }
 
