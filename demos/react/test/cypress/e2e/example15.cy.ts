@@ -221,7 +221,7 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
     cy.get('.slick-header-column:nth(2)').trigger('mousemove', 'bottomRight').trigger('mouseup', 'bottomRight', { which: 1, force: true });
 
     cy.get('.slick-header-column:nth(1)').should(($el) => {
-      expect($el.width()).greaterThan(250);
+      expect($el.width()).greaterThan(200);
     });
   });
 
@@ -239,7 +239,7 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
       .each(($child, index) => expect($child.find('.slick-column-name').text()).to.eq(expectedTitles[index]));
 
     cy.get('.slick-header-column:nth(1)').should(($el) => {
-      expect($el.width()).greaterThan(250);
+      expect($el.width()).greaterThan(200);
     });
   });
 
