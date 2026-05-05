@@ -85,7 +85,6 @@ jobs:
           Cypress_extended: true
 
       - uses: actions/upload-artifact@v7
-        if: failure()
         with:
           name: cypress-screenshots
           path: demos/vue/test/cypress/screenshots
