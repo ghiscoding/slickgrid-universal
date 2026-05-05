@@ -1,5 +1,3 @@
-###### Requires at least version `2.10.x`
-
 ## Description
 Most of example that you will find across this library were made with `ngx-translate` (dynamic translation) support. However a few users of the lib only use 1 locale (English or any other locale). Since not all users requires multiple translations, as of version `2.13.0`, it is now possible to use `Angular-Slickgrid` without `ngx-translate`. What is the difference with/without `ngx-translate`? Not much, the only difference is that `ngx-translate` is now an optional dependency (thanks to Angular [@Optional Dependency](https://angular.io/guide/singleton-services), via `@Optional() TranslateService`), so if you don't provide `ngx-translate`, it will simply try to use Custom Locales, you can provide your own locales (see instruction below), or if none are provided it will use English locales by default.
 

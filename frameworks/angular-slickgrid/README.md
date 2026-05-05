@@ -22,7 +22,7 @@ Available in Stackblitz (Codeflow) below, this can also be used to provide an is
 | [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/angular-slickgrid-demos) | with I18N Translate |
 | [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/ghiscoding/angular-slickgrid-demos/tree/master/standalone-single-locale) | Single Locale (_without i18n_) |
 
-A good starting point is the **[Docs - Quick Start](https://ghiscoding.gitbook.io/angular-slickgrid/getting-started/quick-start)** and/or simply clone the [Angular-Slickgrid Demos](https://github.com/ghiscoding/angular-slickgrid-demos) repository. Please review all documentation and closed issues before opening any new issue, also consider asking installation and/or general questions on [Stack Overflow](https://stackoverflow.com/search?tab=newest&q=slickgrid) unless you think there's a bug with the library.
+A good starting point is the **[Docs - Quick Start](https://ghiscoding.gitbook.io/angular-slickgrid/getting-started/quick-start)** and/or simply clone the [Angular-Slickgrid-Demos](https://github.com/ghiscoding/angular-slickgrid-demos) repository. Please review all documentation and closed issues before opening any new issue, also consider asking installation and/or general questions on [Stack Overflow](https://stackoverflow.com/search?tab=newest&q=slickgrid) unless you think there's a bug with the library.
 
 ```sh
 npm install angular-slickgrid
@@ -123,7 +123,9 @@ Make sure to check out the [Releases](https://github.com/ghiscoding/slickgrid-un
 
 ### ngx-translate Compatibility
 
-Angular-Slickgrid uses [`ngx-translate`](https://github.com/ngx-translate/core) library to support Locales, it is also required that is even when using a single Locale. The reason is because, we use `@Optional() TranslateService` in the lib and for that to work, it requires `ngx-translate` to be installed. Once you run the build and if you are using a single Locale then the tree shaking process should remove these optional dependencies. See their version compatibility table below for more info
+Angular-Slickgrid uses [`ngx-translate`](https://github.com/ngx-translate/core) library to support Locales. See their version compatibility table shown below
+
+**NOTE** please note that even if `@ngx-translate` is in fact optional, it will be installed behind the scene nonetheless because of our use of `@Optional()` for DI (dependency injection). It's assumed to be removed by the tree shaking process after a production build.
 
 | Angular Version | @ngx-translate/core |
 |-----------------|---------------------|
