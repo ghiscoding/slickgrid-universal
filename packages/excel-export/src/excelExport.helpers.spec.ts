@@ -1,7 +1,7 @@
 import type { Column, GridOption } from '@slickgrid-universal/common';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ContainerServiceStub } from '../../../test/containerServiceStub.js';
-import { ExcelExportService } from './excelExport.service';
+import { ExcelExportService } from './excelExport.service.js';
 
 // Minimal shared stubs
 const container = new ContainerServiceStub();
