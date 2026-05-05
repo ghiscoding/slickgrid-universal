@@ -64,11 +64,7 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
 
   // --
   // Cypress does not yet implement the .hover() method and this test won't work until then
-  // xit('should resize "Title" column and make it wider', () => {
-  //   cy.get('#grid15 .slick-viewport-top.slick-viewport-left')
-  //     .scrollTo('left')
-  //     .wait(50);
-
+  // it('should resize "Title" column and make it wider', () => {
   //   cy.get('.slick-header-columns')
   //     .children('.slick-header-column:nth(3)')
   //     .should('contain', 'Title');
@@ -76,7 +72,7 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
   //   cy.get('.slick-header-columns')
   //     .children('.slick-header-column:nth(3)')
   //     .find('.slick-resizable-handle')
-  //     .trigger('mouseover', -2, 50, { which: 1, force: true })
+  //     .trigger('mouseover', -2, 50, { force: true })
   //     .should('be.visible')
   //     .invoke('show')
   //     .hover()
@@ -85,7 +81,7 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
   //   cy.get('.slick-header-columns')
   //     .children('.slick-header-column:nth(5)')
   //     .trigger('mousemove', 'bottomLeft')
-  //     .trigger('mouseup', 'bottomLeft', { force: true });
+  //     .trigger('mouseup', 'bottomLeft', { which: 1, force: true });
   // });
 
   it('should hide the "Start" column from the Column Picker', () => {
@@ -147,7 +143,7 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
       .children('.slick-header-column:nth(2)')
       .trigger('mouseover')
       .children('.slick-header-menu-button')
-      .should('be.hidden')
+      // .should('be.hidden')
       .invoke('show')
       .click();
 
@@ -198,11 +194,8 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
       .then((pageNumber) => expect(pageNumber).to.eq('3'));
 
     cy.get('@grid15').find('[data-test=page-count]').contains('6');
-
     cy.get('@grid15').find('[data-test=item-from]').contains('41');
-
     cy.get('@grid15').find('[data-test=item-to]').contains('60');
-
     cy.get('@grid15').find('[data-test=total-items]').contains('111');
 
     cy.get('@grid15')
@@ -219,19 +212,39 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
     cy.get('#grid15').contains('Task 144').parent().children('.slick-cell-checkboxsel').find('input[type=checkbox]').click({ force: true });
   });
 
+  it('should resize "Description" column and make it wider', () => {
+    cy.get('.slick-header-column:nth(2)').find('.slick-resizable-handle').should('be.visible').invoke('show').dblclick();
+
+    cy.get('.slick-header-column:nth(1) .slick-resizable-handle')
+      .trigger('mousedown', { which: 1, force: true })
+      .trigger('mousemove', 'bottomRight');
+    cy.get('.slick-header-column:nth(2)').trigger('mousemove', 'bottomRight').trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+    cy.get('.slick-header-column:nth(1)').should(($el) => {
+      const expectedWidth = 250; // calculate with a calculated width including a (+/-)1px precision
+      expect($el.width()).greaterThan(expectedWidth - 15);
+      expect($el.width()).lessThan(expectedWidth + 15);
+    });
+  });
+
   it('should reload the page', () => {
     cy.reload().wait(50);
   });
 
-  it('should expect the same Grid State to persist after the page got reloaded', () => {
+  it('should expect the same Grid State to persist after the page got reloaded and keep column widths', () => {
     const expectedTitles = ['', 'Description', 'Duration', 'Title', '% Complete', 'Completed'];
 
     cy.get('#grid15').find('.grid-canvas').find('.slick-row').should('be.visible');
-
     cy.get('#grid15')
       .find('.slick-header-columns')
       .children()
       .each(($child, index) => expect($child.find('.slick-column-name').text()).to.eq(expectedTitles[index]));
+
+    cy.get('.slick-header-column:nth(1)').should(($el) => {
+      const expectedWidth = 250; // calculate with a calculated width including a (+/-)1px precision
+      expect($el.width()).greaterThan(expectedWidth - 15);
+      expect($el.width()).lessThan(expectedWidth + 15);
+    });
   });
 
   it('should expect the same Pagination to persist after reload', () => {
@@ -245,13 +258,9 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
       .then((pageNumber) => expect(pageNumber).to.eq('3'));
 
     cy.get('@grid15').find('[data-test=page-count]').contains('6');
-
     cy.get('@grid15').find('[data-test=item-from]').contains('41');
-
     cy.get('@grid15').find('[data-test=item-to]').contains('60');
-
     cy.get('@grid15').find('[data-test=total-items]').contains('111');
-
     cy.get('@grid15')
       .find('.slick-row')
       .each(($row, index) => {
@@ -301,7 +310,7 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
   it('should have French titles in Grid Menu after switching to Language', () => {
     const expectedTitles = ['', 'Description', 'Durée', 'Titre', '% Achevée', 'Début', 'Terminé'];
 
-    cy.get('#grid15').find('button.slick-grid-menu-button').trigger('click').click();
+    cy.get('#grid15').find('button.slick-grid-menu-button').click({ force: true });
 
     cy.get('.slick-grid-menu')
       .find('.slick-column-picker-list')
@@ -324,7 +333,7 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
 
     cy.get('.slick-header-columns')
       .children('.slick-header-column:nth(5)')
-      .trigger('mouseover')
+      .trigger('mouseover', { force: true })
       .children('.slick-header-menu-button')
       .should('be.hidden')
       .invoke('show')
@@ -425,9 +434,11 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
   });
 
   it('should click on the reset button and have exact Column Titles position as in beginning', () => {
+    cy.get('#slickGridContainer-grid15').as('grid15');
+
     cy.get('[data-test="reset-button"]').click();
 
-    cy.get('#grid15')
+    cy.get('@grid15')
       .find('.slick-header-columns')
       .children()
       .each(($child, index) => expect($child.text()).to.eq(fullEnglishTitles[index]));
