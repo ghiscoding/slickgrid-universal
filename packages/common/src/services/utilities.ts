@@ -730,17 +730,29 @@ export function fetchAsPromise<T = any>(input?: T[] | Promise<T> | Observable<T>
  * @returns
  */
 export function sortPresetColumns<T = any>(allColumns: Column<T>[], presetColumns: Column<T>[]): Column<T>[] {
-  // Create a map of preset column IDs with their order
-  const presetColumnMap = new Map(presetColumns.map((col, index) => [col.id, index]));
+  // Create a map of preset column IDs with their order and properties
+  const presetColumnMap = new Map(presetColumns.map((col, index) => [col.id, { index, column: col }]));
 
   // Create a copy of allColumns with sorting metadata
   return allColumns
-    .map((column, originalIndex) => ({
-      ...column,
-      hidden: !presetColumnMap.has(column.id) || (presetColumns.find((c) => c.id === column.id)?.hidden ?? false),
-      _originalIndex: originalIndex,
-      _presetIndex: presetColumnMap.get(column.id),
-    }))
+    .map((column, originalIndex) => {
+      const presetColumnData = presetColumnMap.get(column.id);
+      const presetColumn = presetColumnData?.column;
+
+      // Merge properties from preset columns with original columns
+      // Preset properties override original properties where they exist
+      return {
+        ...column,
+        ...(presetColumn && {
+          cssClass: presetColumn.cssClass ?? column.cssClass,
+          headerCssClass: presetColumn.headerCssClass ?? column.headerCssClass,
+          width: presetColumn.width ?? column.width,
+        }),
+        hidden: !presetColumnMap.has(column.id) || (presetColumns.find((c) => c.id === column.id)?.hidden ?? false),
+        _originalIndex: originalIndex,
+        _presetIndex: presetColumnData?.index,
+      };
+    })
     .sort((a, b) => {
       // If both columns have a preset index, sort by preset order
       if (a._presetIndex !== undefined && b._presetIndex !== undefined) {

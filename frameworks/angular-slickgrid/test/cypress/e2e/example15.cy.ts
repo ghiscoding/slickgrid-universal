@@ -194,11 +194,8 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
       .then((pageNumber) => expect(pageNumber).to.eq('3'));
 
     cy.get('@grid15').find('[data-test=page-count]').contains('6');
-
     cy.get('@grid15').find('[data-test=item-from]').contains('41');
-
     cy.get('@grid15').find('[data-test=item-to]').contains('60');
-
     cy.get('@grid15').find('[data-test=total-items]').contains('111');
 
     cy.get('@grid15')
@@ -215,19 +212,35 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
     cy.get('#grid15').contains('Task 144').parent().children('.slick-cell-checkboxsel').find('input[type=checkbox]').click({ force: true });
   });
 
+  it('should resize "Description" column and make it wider', () => {
+    cy.get('.slick-header-column:nth(2)').find('.slick-resizable-handle').should('be.visible').invoke('show').dblclick();
+
+    cy.get('.slick-header-column:nth(1) .slick-resizable-handle')
+      .trigger('mousedown', { which: 1, force: true })
+      .trigger('mousemove', 'bottomRight');
+    cy.get('.slick-header-column:nth(2)').trigger('mousemove', 'bottomRight').trigger('mouseup', 'bottomRight', { which: 1, force: true });
+
+    cy.get('.slick-header-column:nth(1)').should(($el) => {
+      expect($el.width()).greaterThan(200);
+    });
+  });
+
   it('should reload the page', () => {
     cy.reload().wait(50);
   });
 
-  it('should expect the same Grid State to persist after the page got reloaded', () => {
+  it('should expect the same Grid State to persist after the page got reloaded and keep column widths', () => {
     const expectedTitles = ['', 'Description', 'Duration', 'Title', '% Complete', 'Completed'];
 
     cy.get('#grid15').find('.grid-canvas').find('.slick-row').should('be.visible');
-
     cy.get('#grid15')
       .find('.slick-header-columns')
       .children()
       .each(($child, index) => expect($child.find('.slick-column-name').text()).to.eq(expectedTitles[index]));
+
+    cy.get('.slick-header-column:nth(1)').should(($el) => {
+      expect($el.width()).greaterThan(200);
+    });
   });
 
   it('should expect the same Pagination to persist after reload', () => {
@@ -241,13 +254,9 @@ describe('Example 15: Grid State & Presets using Local Storage', () => {
       .then((pageNumber) => expect(pageNumber).to.eq('3'));
 
     cy.get('@grid15').find('[data-test=page-count]').contains('6');
-
     cy.get('@grid15').find('[data-test=item-from]').contains('41');
-
     cy.get('@grid15').find('[data-test=item-to]').contains('60');
-
     cy.get('@grid15').find('[data-test=total-items]').contains('111');
-
     cy.get('@grid15')
       .find('.slick-row')
       .each(($row, index) => {
