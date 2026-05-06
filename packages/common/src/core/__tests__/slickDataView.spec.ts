@@ -1424,6 +1424,58 @@ describe('SlickDatView core file', () => {
       });
       expect(dv.getItem(2)).toBeUndefined();
     });
+
+    it('should apply grouping correctly when using dataItemColumnValueExtractor for nested object properties', () => {
+      const mockData = [
+        { id: 1, security: { fullName: 'John Doe' }, role: { name: 'admin' } },
+        { id: 2, security: { fullName: 'Jane Doe' }, role: { name: 'user' } },
+        { id: 3, security: { fullName: 'John Smith' }, role: { name: 'admin' } },
+      ];
+
+      dv = new SlickDataView({});
+      dv.setItems(mockData);
+
+      // Mock grid with dataItemColumnValueExtractor
+      const mockGrid = {
+        getOptions: () => ({
+          dataItemColumnValueExtractor: (item: any, col: any) => {
+            if (col.field === 'role' && item.role) {
+              return item.role.name;
+            }
+            if (col.field === 'fullName' && item.security) {
+              return item.security.fullName;
+            }
+            return item[col.field];
+          },
+        }),
+        getColumns: () => [
+          { id: 'security', field: 'fullName', name: 'Full Name' },
+          { id: 'role', field: 'role', name: 'Role' },
+        ],
+      } as any;
+
+      // Set grid on dataview to enable extractor usage
+      (dv as any)._grid = mockGrid;
+
+      // Group by role using the extractor
+      dv.setGrouping({
+        getter: 'role',
+        formatter: (g) => `Role: ${g.value} <span class="text-green">(${g.count} items)</span>`,
+      } as Grouping);
+
+      // Check that grouping works correctly with extractor
+      expect(dv.getGroups().length).toBe(2); // 'admin' and 'user' groups
+      expect(dv.getGroups()[0].value).toBe('admin');
+      expect(dv.getGroups()[0].count).toBe(2);
+      expect(dv.getGroups()[1].value).toBe('user');
+      expect(dv.getGroups()[1].count).toBe(1);
+
+      // Verify items are grouped correctly
+      const adminGroup = dv.getGroups()[0];
+      expect(adminGroup.rows.length).toBe(2);
+      expect(adminGroup.rows[0].id).toBe(1);
+      expect(adminGroup.rows[1].id).toBe(3);
+    });
   });
 
   describe('Sorting', () => {
