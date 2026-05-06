@@ -118,6 +118,14 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
     clearTimeout(this._timer1);
     clearTimeout(this._timer2);
     this._pubSubService?.unsubscribeAll();
+
+    // Clear critical memory leak references
+    this._grid = null as any;
+    this._dataView = null as any;
+    this._pubSubService = null;
+    this._translaterService = undefined;
+    this._regularCellExcelFormats = {};
+    this._groupTotalExcelFormats = {};
   }
 
   /**

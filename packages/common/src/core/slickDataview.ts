@@ -252,6 +252,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     this.compiledFilterCSPSafe = null;
     this.compiledFilterWithCaching = null;
     this.compiledFilterWithCachingCSPSafe = null;
+    this.clearFormattedDataCache();
     if (this._grid) {
       this._grid.onSelectedRowsChanged?.unsubscribe();
       this._grid.onCellCssStylesChanged?.unsubscribe();

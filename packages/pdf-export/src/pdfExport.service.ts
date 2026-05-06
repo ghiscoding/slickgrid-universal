@@ -86,6 +86,12 @@ export class PdfExportService implements ExternalResource, BasePdfExportService 
   dispose(): void {
     clearTimeout(this._timer);
     this._pubSubService?.unsubscribeAll();
+
+    // Clear critical memory leak references
+    this._grid = null as any;
+    this._dataView = null as any;
+    this._pubSubService = null;
+    this._translaterService = undefined;
   }
 
   /**
