@@ -628,20 +628,8 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     this.updateSingleItem(id, item);
     this.refresh();
 
-    // Re-cache the updated item by its (potentially new) id, and clean up the old id if it changed
-    const gridOptions = this._gridOptions;
-    if (gridOptions?.enableFormattedDataCache) {
-      const newId = item[this.idProperty as keyof T] as DataIdType;
-      if (id !== newId) {
-        // Remove the stale entry for the old id
-        delete this.formattedDataCache[id];
-        delete this.formattedCellCache[id];
-      }
-      const rowIdx = this.getRowById(newId ?? id);
-      if (rowIdx !== undefined) {
-        this.invalidateFormattedDataCacheForRow(rowIdx);
-      }
-    }
+    // Invalidate the formatted cache for the updated item
+    this.invalidateFormattedCacheForUpdatedItem(id, item);
   }
 
   /**
@@ -659,20 +647,8 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     this.refresh();
 
     // Invalidate the formatted cache for every updated item
-    const gridOptions = this._gridOptions;
-    if (gridOptions?.enableFormattedDataCache) {
-      for (let i = 0, l = newItems.length; i < l; i++) {
-        const newId = newItems[i][this.idProperty as keyof T] as DataIdType;
-        // Remove the stale entry for the old id if it changed
-        if (ids[i] !== newId) {
-          delete this.formattedDataCache[ids[i]];
-          delete this.formattedCellCache[ids[i]];
-        }
-        const rowIdx = this.getRowById(newId ?? ids[i]);
-        if (rowIdx !== undefined) {
-          this.invalidateFormattedDataCacheForRow(rowIdx);
-        }
-      }
+    for (let i = 0, l = newItems.length; i < l; i++) {
+      this.invalidateFormattedCacheForUpdatedItem(ids[i], newItems[i]);
     }
   }
 
@@ -738,6 +714,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
       this.items.splice(idx, 1);
       this.updateIdxById(idx);
       this.refresh();
+
       // Clean up cache entries for the deleted item
       delete this.formattedDataCache[id];
       delete this.formattedCellCache[id];
@@ -784,6 +761,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
       // update lookup from front to back
       this.updateIdxById(indexesToDelete[0]);
       this.refresh();
+
       // Clean up cache entries for all deleted items
       for (let i = 0, l = ids.length; i < l; i++) {
         delete this.formattedDataCache[ids[i]];
@@ -1887,6 +1865,30 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     const itemId = item?.[this.idProperty as keyof TData] as DataIdType | undefined;
     if (itemId !== undefined) {
       this.populateSingleRowCache(rowIdx, this.buildCacheContext());
+    }
+  }
+
+  /**
+   * Handles formatted cache cleanup and invalidation for an updated item.
+   * Removes stale cache entries if the item's id changed, and invalidates the row cache.
+   * @param oldId - The previous id of the item
+   * @param item - The updated item
+   */
+  protected invalidateFormattedCacheForUpdatedItem<T extends TData>(oldId: DataIdType, item: T): void {
+    const gridOptions = this._gridOptions;
+    if (!gridOptions?.enableFormattedDataCache) {
+      return;
+    }
+
+    const newId = item[this.idProperty as keyof T] as DataIdType;
+    // Remove the stale entry for the old id if it changed
+    if (oldId !== newId) {
+      delete this.formattedDataCache[oldId];
+      delete this.formattedCellCache[oldId];
+    }
+    const rowIdx = this.getRowById(newId ?? oldId);
+    if (rowIdx !== undefined) {
+      this.invalidateFormattedDataCacheForRow(rowIdx);
     }
   }
 
