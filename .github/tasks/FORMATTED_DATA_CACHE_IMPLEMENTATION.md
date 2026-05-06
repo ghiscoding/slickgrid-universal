@@ -4,6 +4,7 @@
 >
 > Current state:
 > - `SlickDataView` cache infrastructure is implemented.
+> - `SlickDataView` now uses a single `FormattedDataCachePlanner` callback (no per-service consumer registry).
 > - `SlickGrid` cell-display cache integration is implemented.
 > - `ExcelExportService` export-cache integration is implemented.
 > - `PdfExportService` export-cache integration is implemented.
@@ -34,7 +35,7 @@ operations.
 | File | Role |
 |---|---|
 | `packages/common/src/core/slickDataview.ts` | All cache logic lives here |
-| `packages/common/src/core/slickGrid.ts` | `getFormatter()` wraps the resolved formatter to hit `formattedCellCache` first |
+| `packages/common/src/core/slickGrid.ts` | Defines planner + syncs planner into DataView + `getFormatter()` cache wrapper |
 | `packages/excel-export/src/excelExport.service.ts` | Reads `formattedDataCache` via `getFormattedCellValue()` |
 | `packages/pdf-export/src/pdfExport.service.ts` | Reads `formattedDataCache` in regular-row export path before formatter fallback |
 | `packages/text-export/src/textExport.service.ts` | Reads `formattedDataCache` in regular-row export path before formatter fallback |
@@ -74,7 +75,15 @@ protected formattedCacheMetadata: FormattedDataCacheMetadata = {
 };
 ```
 
-### Column classification (built once per population run)
+### Planner-driven column classification (built once per population run)
+
+`SlickGrid` owns a single planner callback (`formattedDataCachePlanner`) that decides per-column
+export cache behavior from the column definition plus grid options (Excel/Text/PDF export options
+and column-level export flags). `SlickGrid` wires this planner into `SlickDataView` via
+`setFormattedDataCachePlanner(...)`.
+
+This replaced the previous multi-consumer registration approach and removes per-service lifecycle
+coordination from export services.
 
 `buildCacheContext()` classifies every column into one of three buckets before the first batch
 runs, so the inner loop does zero branching per cell:
@@ -239,8 +248,8 @@ getCacheStatus(): FormattedDataCacheMetadata
 // Clears both caches and cancels any in-progress background population
 clearFormattedDataCache(): void
 
-// Cancels in-progress population without clearing already-populated entries
-cancelFormattedDataCachePopulation(): void
+// Sets/replaces the planner callback used to classify export-related cache behavior per column
+setFormattedDataCachePlanner(planner?: FormattedDataCachePlanner, forceRefresh?: boolean): void
 
 // Starts (or restarts) background population from the given row index
 populateFormattedDataCacheAsync(startRow?: number): void
@@ -254,10 +263,10 @@ invalidateFormattedDataCacheForRow(rowIdx: number): void
 ## Performance profile
 
 Measured: ~22 s to warm **50,202 rows / 50,000 formatted cells** (mixed formatters).
-The bottleneck is raw formatter execution time � the scheduling and cache infrastructure
+The bottleneck is raw formatter execution time - the scheduling and cache infrastructure
 overhead is minimal.
 
-For the real-world scenario in discussion #1922 (168 cols � 11K rows, `exportWithFormatter: true`
+For the real-world scenario in discussion #1922 (168 cols x 11K rows, `exportWithFormatter: true`
 on every column, complex-object formatters):
 
 - **Scroll jitter**: eliminated after warmup - each visible cell render is two hash lookups
