@@ -12,7 +12,7 @@ import { exportWithFormatterWhenDefined } from '../formatters/formatterUtilities
 import type { CssStyleHash, CustomDataView } from '../interfaces/gridOption.interface.js';
 import type {
   Aggregator,
-  Column,
+  ColumnCacheEntry,
   DataViewHints,
   FormattedDataCacheCompletedEventArgs,
   FormattedDataCacheMetadata,
@@ -32,43 +32,10 @@ import type {
   OnSelectedRowIdsChangedEventArgs,
   OnSetItemsCalledEventArgs,
   PagingInfo,
+  RowCacheContext,
 } from '../interfaces/index.js';
 import { SlickEvent, SlickEventData, SlickGroup, SlickGroupTotals, type BasePubSub, type SlickNonDataItem } from './slickCore.js';
 import type { SlickGrid } from './slickGrid.js';
-
-/** Pre-computed per-batch context passed into populateSingleRowCache to avoid redundant method calls */
-interface ColumnCacheEntry {
-  column: Column;
-  colIdx: number;
-  columnId: string;
-  /** Strip HTML tags from the export string (only used for dualCacheColumns) */
-  sanitizeDataExport: boolean;
-}
-interface RowCacheContext {
-  grid: SlickGrid;
-  /** Grid options hoisted once per batch — avoids getOptions() per row */
-  gridOptions: ReturnType<SlickGrid['getOptions']>;
-  exportOptions: any;
-  /**
-   * Columns needing export cache only: those with `exportCustomFormatter` (uses a different formatter
-   * than the cell display) OR columns with `exportWithFormatter` but no cell `formatter`.
-   */
-  exportOnlyCacheColumns: ColumnCacheEntry[];
-  /**
-   * Columns where the same `formatter` serves both the export cache and the cell display cache.
-   * The formatter is called ONCE per row and the result is post-processed for both caches,
-   * avoiding the duplicate formatter invocation that `exportWithFormatterWhenDefined` would cause.
-   */
-  dualCacheColumns: ColumnCacheEntry[];
-  /** Columns with a cell `formatter` that are NOT in the export cache. */
-  cellOnlyColumns: ColumnCacheEntry[];
-  /** Direct reference to the rows array — avoids getItem() overhead and its redundant group/totals checks */
-  rows: any[];
-  /** Cached idProperty string — avoids a prototype lookup per row */
-  idProperty: string;
-  /** False when no globalItemMetadataProvider / groupItemMetadataProvider is set — skips getItemMetadata() per row */
-  hasMetadataProviders: boolean;
-}
 
 function isLiveDomFormatterResult(
   result: FormatterResultWithHtml | FormatterResultWithText | HTMLElement | DocumentFragment | string | null | undefined
@@ -77,19 +44,19 @@ function isLiveDomFormatterResult(
     return false;
   }
 
-  if (typeof HTMLElement !== 'undefined' && result instanceof HTMLElement) {
-    return true;
-  }
-  if (typeof DocumentFragment !== 'undefined' && result instanceof DocumentFragment) {
+  if (
+    (typeof HTMLElement !== 'undefined' && result instanceof HTMLElement) ||
+    (typeof DocumentFragment !== 'undefined' && result instanceof DocumentFragment)
+  ) {
     return true;
   }
 
   if (typeof result === 'object') {
     const htmlResult = (result as FormatterResultWithHtml).html;
-    if (typeof HTMLElement !== 'undefined' && htmlResult instanceof HTMLElement) {
-      return true;
-    }
-    if (typeof DocumentFragment !== 'undefined' && htmlResult instanceof DocumentFragment) {
+    if (
+      (typeof HTMLElement !== 'undefined' && htmlResult instanceof HTMLElement) ||
+      (typeof DocumentFragment !== 'undefined' && htmlResult instanceof DocumentFragment)
+    ) {
       return true;
     }
   }
@@ -236,10 +203,8 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     this.onSelectedRowIdsChanged = new SlickEvent<OnSelectedRowIdsChangedEventArgs>('onSelectedRowIdsChanged', externalPubSub);
     this.onSetItemsCalled = new SlickEvent<OnSetItemsCalledEventArgs>('onSetItemsCalled', externalPubSub);
     this.onFormattedDataCacheProgress = new SlickEvent<FormattedDataCacheProgressEventArgs>('onFormattedDataCacheProgress', externalPubSub);
-    this.onFormattedDataCacheCompleted = new SlickEvent<FormattedDataCacheCompletedEventArgs>(
-      'onFormattedDataCacheCompleted',
-      externalPubSub
-    );
+    // prettier-ignore
+    this.onFormattedDataCacheCompleted = new SlickEvent<FormattedDataCacheCompletedEventArgs>('onFormattedDataCacheCompleted', externalPubSub);
 
     this._options = extend(true, {}, this.defaults, options);
   }
@@ -1768,6 +1733,57 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     return (intersection || []) as T[];
   }
 
+  syncGridCellCssStyles(grid: SlickGrid, key: string): void {
+    let hashById: any;
+    let inHandler: boolean;
+
+    const storeCellCssStyles = (hash: CssStyleHash) => {
+      hashById = {};
+      if (typeof hash === 'object') {
+        Object.keys(hash).forEach((row) => {
+          if (hash && this.rows[row as any]) {
+            const id = this.rows[row as any][this.idProperty as keyof TData];
+            hashById[id] = hash[row];
+          }
+        });
+      }
+    };
+
+    // since this method can be called after the cell styles have been set,
+    // get the existing ones right away
+    storeCellCssStyles(grid.getCellCssStyles(key));
+
+    const update = () => {
+      if (typeof hashById === 'object') {
+        inHandler = true;
+        this.ensureRowsByIdCache();
+        const newHash: CssStyleHash = {};
+        Object.keys(hashById).forEach((id) => {
+          const row = this.rowsById?.[id];
+          if (isDefined(row)) {
+            newHash[row as number] = hashById[id];
+          }
+        });
+        grid.setCellCssStyles(key, newHash);
+        inHandler = false;
+      }
+    };
+
+    grid.onCellCssStylesChanged.subscribe((_e, args) => {
+      if (inHandler || key !== args.key) {
+        return;
+      }
+      if (args.hash) {
+        storeCellCssStyles(args.hash);
+      } else {
+        grid.onCellCssStylesChanged.unsubscribe();
+        this.onRowsOrCountChanged.unsubscribe(update);
+      }
+    });
+
+    this.onRowsOrCountChanged.subscribe(update.bind(this));
+  }
+
   // --------------------------
   // Formatted Data Cache
   // --------------------------
@@ -2122,56 +2138,5 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     }
 
     return true;
-  }
-
-  syncGridCellCssStyles(grid: SlickGrid, key: string): void {
-    let hashById: any;
-    let inHandler: boolean;
-
-    const storeCellCssStyles = (hash: CssStyleHash) => {
-      hashById = {};
-      if (typeof hash === 'object') {
-        Object.keys(hash).forEach((row) => {
-          if (hash && this.rows[row as any]) {
-            const id = this.rows[row as any][this.idProperty as keyof TData];
-            hashById[id] = hash[row];
-          }
-        });
-      }
-    };
-
-    // since this method can be called after the cell styles have been set,
-    // get the existing ones right away
-    storeCellCssStyles(grid.getCellCssStyles(key));
-
-    const update = () => {
-      if (typeof hashById === 'object') {
-        inHandler = true;
-        this.ensureRowsByIdCache();
-        const newHash: CssStyleHash = {};
-        Object.keys(hashById).forEach((id) => {
-          const row = this.rowsById?.[id];
-          if (isDefined(row)) {
-            newHash[row as number] = hashById[id];
-          }
-        });
-        grid.setCellCssStyles(key, newHash);
-        inHandler = false;
-      }
-    };
-
-    grid.onCellCssStylesChanged.subscribe((_e, args) => {
-      if (inHandler || key !== args.key) {
-        return;
-      }
-      if (args.hash) {
-        storeCellCssStyles(args.hash);
-      } else {
-        grid.onCellCssStylesChanged.unsubscribe();
-        this.onRowsOrCountChanged.unsubscribe(update);
-      }
-    });
-
-    this.onRowsOrCountChanged.subscribe(update.bind(this));
   }
 }
