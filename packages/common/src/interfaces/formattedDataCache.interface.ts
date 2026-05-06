@@ -1,5 +1,5 @@
-import type { SlickGrid } from '../core/slickGrid';
-import type { Column } from './column.interface';
+import type { SlickGrid } from '../core/slickGrid.js';
+import type { Column } from './column.interface.js';
 
 export interface FormattedDataCacheProgressEventArgs {
   rowsProcessed: number;
