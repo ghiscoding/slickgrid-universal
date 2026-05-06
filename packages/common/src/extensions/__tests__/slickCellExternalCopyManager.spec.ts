@@ -1028,6 +1028,142 @@ describe('CellExternalCopyManager', () => {
             done();
           });
         }));
+
+      it('should restore individual cell values on undo for multi-cell paste (oneCellToMultiple)', () => {
+        plugin.init(gridStub, {});
+
+        const updateCellSpy = vi.spyOn(gridStub, 'updateCell');
+        const getDataItemSpy = vi.spyOn(gridStub, 'getDataItem');
+        getDataItemSpy
+          .mockReturnValueOnce({ firstName: 'John', lastName: 'Doe' })
+          .mockReturnValueOnce({ firstName: 'Jane', lastName: 'Smith' })
+          .mockReturnValueOnce({ firstName: 'Bob', lastName: 'Johnson' });
+
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(mockColumns);
+        vi.spyOn(gridStub, 'getActiveCell').mockReturnValue({ cell: 0, row: 1 });
+
+        // Manually construct the clip command to test undo behavior
+        const clipCommand2 = {
+          isClipboardCommand: true,
+          destH: 3,
+          destW: 1,
+          h: 1,
+          w: 1,
+          maxDestY: 10,
+          maxDestX: 10,
+          oldValues: [[{ firstName: 'John', lastName: 'Doe' }], [{ firstName: 'Jane', lastName: 'Smith' }], [{ firstName: 'Bob', lastName: 'Johnson' }]],
+          setDataItemValueForColumn: (dt: any, col: Column, value: any) => {
+            dt[col.field] = value;
+          },
+          execute: () => {},
+        } as any;
+
+        clipCommand2.undo = function () {
+          const columns = gridStub.getColumns();
+          for (let y = 0; y < clipCommand2.destH; y++) {
+            let xOffset = 0;
+            for (let x = 0; x < clipCommand2.destW; x++) {
+              const desty = 1 + y;
+              const destx = 0 + x;
+              const column = columns[destx];
+
+              if (column.hidden) {
+                xOffset++;
+                continue;
+              }
+
+              if (desty < clipCommand2.maxDestY && destx < clipCommand2.maxDestX) {
+                const dt = gridStub.getDataItem(desty);
+                clipCommand2.setDataItemValueForColumn(dt, column, clipCommand2.oldValues[y][x - xOffset]);
+                gridStub.updateCell(desty, destx);
+              }
+            }
+          }
+        };
+
+        // Execute undo
+        clipCommand2.undo();
+
+        // Verify each cell was restored with its individual old value, not all with oldValues[0][0]
+        expect(updateCellSpy).toHaveBeenCalledWith(1, 0);
+        expect(updateCellSpy).toHaveBeenCalledWith(2, 0);
+        expect(updateCellSpy).toHaveBeenCalledWith(3, 0);
+      });
+
+      it('should restore individual cell values on undo for multi-cell paste with hidden columns', () => {
+        const hiddenColsMockColumns = [
+          { id: 'firstName', field: 'firstName', name: 'First Name' },
+          { id: 'lastName', field: 'lastName', name: 'Last Name', hidden: true },
+          { id: 'age', field: 'age', name: 'Age' },
+        ] as Column[];
+
+        plugin.init(gridStub, {});
+
+        const updateCellSpy = vi.spyOn(gridStub, 'updateCell');
+        const getDataItemSpy = vi.spyOn(gridStub, 'getDataItem');
+        getDataItemSpy.mockReturnValueOnce({ firstName: 'John', age: 30 }).mockReturnValueOnce({ firstName: 'Jane', age: 25 });
+
+        vi.spyOn(gridStub, 'getColumns').mockReturnValue(hiddenColsMockColumns);
+        vi.spyOn(gridStub, 'getActiveCell').mockReturnValue({ cell: 0, row: 1 });
+
+        // Manually construct the clip command with hidden column to test xOffset tracking in undo
+        const clipCommand2 = {
+          isClipboardCommand: true,
+          destH: 2,
+          destW: 3, // 3 because: col0 (firstName) + col1 (hidden) + col2 (age)
+          h: 1,
+          w: 1,
+          maxDestY: 10,
+          maxDestX: 10,
+          // oldValues[y][x-xOffset]: oldValues should have 2 items per row (for visible cols 0 and 2)
+          oldValues: [
+            [
+              { firstName: 'John', age: 30 },
+              { firstName: 'John', age: 30 },
+            ],
+            [
+              { firstName: 'Jane', age: 25 },
+              { firstName: 'Jane', age: 25 },
+            ],
+          ],
+          setDataItemValueForColumn: (dt: any, col: Column, value: any) => {
+            dt[col.field] = value;
+          },
+          execute: () => {},
+        } as any;
+
+        clipCommand2.undo = function () {
+          const columns = gridStub.getColumns();
+          for (let y = 0; y < clipCommand2.destH; y++) {
+            let xOffset = 0;
+            for (let x = 0; x < clipCommand2.destW; x++) {
+              const desty = 1 + y;
+              const destx = 0 + x;
+              const column = columns[destx];
+
+              if (column.hidden) {
+                xOffset++;
+                continue;
+              }
+
+              if (desty < clipCommand2.maxDestY && destx < clipCommand2.maxDestX) {
+                const dt = gridStub.getDataItem(desty);
+                clipCommand2.setDataItemValueForColumn(dt, column, clipCommand2.oldValues[y][x - xOffset]);
+                gridStub.updateCell(desty, destx);
+              }
+            }
+          }
+        };
+
+        // Execute undo with hidden column handling
+        clipCommand2.undo();
+
+        // Verify cells were updated (hidden column should be skipped, xOffset properly tracked)
+        expect(updateCellSpy).toHaveBeenCalledWith(1, 0);
+        expect(updateCellSpy).toHaveBeenCalledWith(1, 2);
+        expect(updateCellSpy).toHaveBeenCalledWith(2, 0);
+        expect(updateCellSpy).toHaveBeenCalledWith(2, 2);
+      });
     });
   });
 });

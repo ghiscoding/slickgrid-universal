@@ -382,18 +382,22 @@ export class SlickCellExternalCopyManager {
       },
       undo: () => {
         for (let y = 0; y < clipCommand.destH; y++) {
+          let xOffset = 0;
           for (let x = 0; x < clipCommand.destW; x++) {
             const desty = activeRow + y;
             const destx = activeCell + x;
+            const column = columns[destx];
+
+            if (column.hidden) {
+              xOffset++;
+              continue;
+            }
 
             if (desty < clipCommand.maxDestY && destx < clipCommand.maxDestX) {
               // const nd = this._grid.getCellNode(desty, destx);
               const dt = this._dataWrapper.getDataItem(desty);
-              if (oneCellToMultiple) {
-                this.setDataItemValueForColumn(dt, columns[destx], clipCommand.oldValues[0][0]);
-              } else {
-                this.setDataItemValueForColumn(dt, columns[destx], clipCommand.oldValues[y][x]);
-              }
+              // Always restore from the stored old value for each cell, regardless of oneCellToMultiple
+              this.setDataItemValueForColumn(dt, column, clipCommand.oldValues[y][x - xOffset]);
               this._grid.updateCell(desty, destx);
               this._grid.onCellChange.notify({
                 row: desty,
