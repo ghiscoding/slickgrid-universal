@@ -12,7 +12,7 @@ This guide summarizes the main options to keep large dataset grids responsive wh
 
 Enable the DataView formatted cache to pre-compute formatter output in background batches.
 
-`	s
+```ts
 gridOptions = {
   enableFormattedDataCache: true,
   // max rows processed per batch tick (default: 300)
@@ -24,7 +24,7 @@ gridOptions = {
   },
   // or pdfExportOptions: { exportWithFormatter: true }
 };
-`
+```
 
 Notes:
 
@@ -32,22 +32,56 @@ Notes:
 - Export services sanitize/decode in their own pipeline, once, at export time.
 - Completion events include durationMs and can be used for telemetry/spinners.
 
-`	s
-gridContainerElm.addEventListener('onafterexporttoexcel', (e: CustomEvent<any>) => {
-  console.log('Excel export duration (ms):', e.detail?.durationMs);
-});
+Example: use Vue template events for formatted cache progress/completion
 
-gridContainerElm.addEventListener('onafterexporttopdf', (e: CustomEvent<any>) => {
-  console.log('PDF export duration (ms):', e.detail?.durationMs);
-});
-`
+```vue
+<script setup lang="ts">
+import { ref } from 'vue';
+
+const cacheProgressPct = ref(0);
+const cacheDurationMs = ref(0);
+
+function handleFormattedDataCacheProgress(_e: unknown, args: { percentComplete: number; rowsProcessed: number; totalRows: number }) {
+  cacheProgressPct.value = args.percentComplete;
+  // example: update a progress label or telemetry
+  // console.log(`Cache: ${args.rowsProcessed}/${args.totalRows} (${args.percentComplete}%)`);
+}
+
+function handleFormattedDataCacheCompleted(_e: unknown, args: { durationMs: number; totalRows: number; totalFormattedCells: number }) {
+  cacheDurationMs.value = args.durationMs;
+  console.log('Formatted cache completed:', args);
+}
+
+function handleAfterExportToExcel(e, args) {
+  console.log('Export done in ms:', args?.durationMs);
+}
+
+function handleAfterExportToPdf(e, args) {
+  console.log('Export done in ms:', args?.durationMs);
+}
+</script>
+
+<template>
+  <slickgrid-vue
+      v-model:options="gridOptions"
+      v-model:columns="columns"
+      v-model:dataset="dataset"
+      grid-id="grid30"
+      @onFormattedDataCacheProgress="handleFormattedDataCacheProgress($event.detail.eventData, $event.detail.args)"
+      @onFormattedDataCacheCompleted="handleFormattedDataCacheCompleted($event.detail.eventData, $event.detail.args)"
+      @onAfterExportToExcel="handleAfterExportToExcel($event.detail.eventData, $event.detail.args)"
+      @onAfterExportToPdf="handleAfterExportToPdf($event.detail.eventData, $event.detail.args)"
+  >
+  </slickgrid-vue>
+</template>
+```
 
 ## Sorting Performance (preParseDateColumns)
 
 Date sorting on large datasets can be expensive when values are date strings that need parsing for every comparison.
 Use preParseDateColumns to parse once and sort on Date values afterward.
 
-`	s
+```ts
 gridOptions = {
   // Option 1: prefix mode (keeps original string fields)
   preParseDateColumns: '__',
@@ -55,7 +89,7 @@ gridOptions = {
   // Option 2: overwrite mode (mutates original date fields)
   // preParseDateColumns: true,
 };
-`
+```
 
 Quick guidance:
 
@@ -64,10 +98,10 @@ Quick guidance:
 
 You can also trigger parsing manually when needed:
 
-`	s
-this.sgb.sortService.preParseAllDateItems();
-this.sgb.sortService.preParseSingleDateItem(item);
-`
+```ts
+vueGrid.sortService.preParseAllDateItems();
+vueGrid.sortService.preParseSingleDateItem(item);
+```
 
 ## Related Docs
 

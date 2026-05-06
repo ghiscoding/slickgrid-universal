@@ -32,7 +32,25 @@ Notes:
 - Export services sanitize/decode in their own pipeline, once, at export time.
 - Completion events include `durationMs` and can be used for telemetry/spinners.
 
+Example: use vanilla event listeners for formatted cache progress/completion
+
 ```ts
+let cacheProgressPct = 0;
+let cacheDurationMs = 0;
+
+gridContainerElm.addEventListener('onformatteddatacacheprogress', (e: CustomEvent<any>) => {
+  const args = e.detail;
+  cacheProgressPct = args.percentComplete;
+  // example: update a progress label or telemetry
+  // console.log(`Cache: ${args.rowsProcessed}/${args.totalRows} (${args.percentComplete}%)`);
+});
+
+gridContainerElm.addEventListener('onformatteddatacachecompleted', (e: CustomEvent<any>) => {
+  const args = e.detail;
+  cacheDurationMs = args.durationMs;
+  console.log('Formatted cache completed:', args);
+});
+
 gridContainerElm.addEventListener('onafterexporttoexcel', (e: CustomEvent<any>) => {
   console.log('Excel export duration (ms):', e.detail?.durationMs);
 });

@@ -1,14 +1,14 @@
 import type { SlickGrid } from '../core/slickGrid.js';
 import type { Column } from './column.interface.js';
 
-export interface FormattedDataCacheProgressEventArgs {
+export interface OnFormattedDataCacheProgressEventArgs {
   rowsProcessed: number;
   totalRows: number;
   percentComplete: number;
   elapsedMs: number;
 }
 
-export interface FormattedDataCacheCompletedEventArgs {
+export interface OnFormattedDataCacheCompletedEventArgs {
   totalRows: number;
   totalFormattedCells: number;
   durationMs: number;

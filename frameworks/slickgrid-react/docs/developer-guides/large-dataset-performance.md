@@ -12,7 +12,7 @@ This guide summarizes the main options to keep large dataset grids responsive wh
 
 Enable the DataView formatted cache to pre-compute formatter output in background batches.
 
-`	s
+```tsx
 gridOptions = {
   enableFormattedDataCache: true,
   // max rows processed per batch tick (default: 300)
@@ -24,7 +24,7 @@ gridOptions = {
   },
   // or pdfExportOptions: { exportWithFormatter: true }
 };
-`
+```
 
 Notes:
 
@@ -32,22 +32,55 @@ Notes:
 - Export services sanitize/decode in their own pipeline, once, at export time.
 - Completion events include durationMs and can be used for telemetry/spinners.
 
-`	s
-gridContainerElm.addEventListener('onafterexporttoexcel', (e: CustomEvent<any>) => {
-  console.log('Excel export duration (ms):', e.detail?.durationMs);
-});
+Example: use React event callbacks for formatted cache progress/completion
 
-gridContainerElm.addEventListener('onafterexporttopdf', (e: CustomEvent<any>) => {
-  console.log('PDF export duration (ms):', e.detail?.durationMs);
-});
-`
+```tsx
+import { useState } from 'react';
+
+export function MyComponent() {
+  const [cacheProgressPct, setCacheProgressPct] = useState(0);
+  const [cacheDurationMs, setCacheDurationMs] = useState(0);
+
+  function handleFormattedDataCacheProgress(_e: unknown, args: { percentComplete: number; rowsProcessed: number; totalRows: number }) {
+    setCacheProgressPct(args.percentComplete);
+    // example: update a progress label or telemetry
+    // console.log(`Cache: ${args.rowsProcessed}/${args.totalRows} (${args.percentComplete}%)`);
+  }
+
+  function handleFormattedDataCacheCompleted(_e: unknown, args: { durationMs: number; totalRows: number; totalFormattedCells: number }) {
+    setCacheDurationMs(args.durationMs);
+    console.log('Formatted cache completed:', args);
+  }
+
+  function handleAfterExportToExcel(e, args) {
+    console.log('Export done in ms:', args?.durationMs);
+  }
+
+  function handleAfterExportToPdf(e, args) {
+    console.log('Export done in ms:', args?.durationMs);
+  }
+
+  return (
+    <SlickgridReact
+      gridId="grid30"
+      columns={columns}
+      options={gridOptions}
+      dataset={dataset}
+      onFormattedDataCacheProgress={($event) => handleFormattedDataCacheProgress($event.detail.eventData, $event.detail.args)}
+      onFormattedDataCacheCompleted={($event) => handleFormattedDataCacheCompleted($event.detail.eventData, $event.detail.args)}
+      onAfterExportToExcel={($event) => handleAfterExportToExcel($event.detail.eventData, $event.detail.args)}
+      onAfterExportToPdf={($event) => handleAfterExportToPdf($event.detail.eventData, $event.detail.args)}
+    />
+  );
+}
+```
 
 ## Sorting Performance (preParseDateColumns)
 
 Date sorting on large datasets can be expensive when values are date strings that need parsing for every comparison.
 Use preParseDateColumns to parse once and sort on Date values afterward.
 
-`	s
+```tsx
 gridOptions = {
   // Option 1: prefix mode (keeps original string fields)
   preParseDateColumns: '__',
@@ -55,7 +88,7 @@ gridOptions = {
   // Option 2: overwrite mode (mutates original date fields)
   // preParseDateColumns: true,
 };
-`
+```
 
 Quick guidance:
 
@@ -64,10 +97,10 @@ Quick guidance:
 
 You can also trigger parsing manually when needed:
 
-`	s
-this.sgb.sortService.preParseAllDateItems();
-this.sgb.sortService.preParseSingleDateItem(item);
-`
+```tsx
+reactGrid.current.sortService.preParseAllDateItems();
+reactGrid.current.sortService.preParseSingleDateItem(item);
+```
 
 ## Related Docs
 

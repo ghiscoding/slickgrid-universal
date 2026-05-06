@@ -266,10 +266,22 @@ Notes:
 - Cache population can run in the background and does not block the UI.
 - onAfterExportToExcel now includes durationMs in the event payload, useful for telemetry/spinners.
 
+```html
+<aurelia-slickgrid
+  grid-id="grid30"
+  columns.bind="columns"
+  options.bind="gridOptions"
+  dataset.bind="dataset"
+  on-after-export-to-excel.trigger="handleAfterExportToExcel($event.detail.eventData, $event.detail.args)"
+>
+</aurelia-slickgrid>
+```
 ```ts
-gridContainerElm.addEventListener('onafterexporttoexcel', (e: CustomEvent<any>) => {
-  console.log('Export done in ms:', e.detail?.durationMs);
-});
+export class MyComponent {
+  handleAfterExportToExcel(e, args) {
+    console.log('Export done in ms:', args?.durationMs);
+  }
+}
 ```
 
 ### UI Sample

@@ -292,10 +292,18 @@ Notes:
 - Cache population can run in the background and does not block the UI.
 - onAfterExportToExcel now includes durationMs in the event payload, useful for telemetry/spinners.
 
-```ts
-gridContainerElm.addEventListener('onafterexporttoexcel', (e: CustomEvent<any>) => {
-  console.log('Export done in ms:', e.detail?.durationMs);
-});
+```tsx
+function handleAfterExportToExcel(e, args) {
+  console.log('Export done in ms:', args?.durationMs);
+}
+
+<SlickgridReact
+    gridId="grid30"
+    columns={columns}
+    options={gridOptions}
+    dataset={dataset}
+    onAfterExportToExcel={($event) => handleAfterExportToExcel($event.detail.eventData, $event.detail.args)}
+/>
 ```
 
 ### UI Sample

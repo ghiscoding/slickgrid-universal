@@ -40,6 +40,8 @@ import type {
   OnFooterClickEventArgs,
   OnFooterContextMenuEventArgs,
   OnFooterRowCellRenderedEventArgs,
+  OnFormattedDataCacheCompletedEventArgs,
+  OnFormattedDataCacheProgressEventArgs,
   OnGroupCollapsedEventArgs,
   OnGroupExpandedEventArgs,
   OnHeaderCellRenderedEventArgs,
@@ -155,6 +157,8 @@ export interface AngularSlickgridOutputs {
 
   // SlickDataView Events
   onBeforePagingInfoChanged: (e: PagingInfo) => void;
+  onFormattedDataCacheProgress: (e: OnFormattedDataCacheProgressEventArgs) => void;
+  onFormattedDataCacheCompleted: (e: OnFormattedDataCacheCompletedEventArgs) => void;
   onGroupExpanded: (e: OnGroupExpandedEventArgs) => void;
   onGroupCollapsed: (e: OnGroupCollapsedEventArgs) => void;
   onPagingInfoChanged: (e: PagingInfo) => void;

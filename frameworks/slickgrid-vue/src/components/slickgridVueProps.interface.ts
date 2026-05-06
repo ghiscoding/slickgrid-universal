@@ -41,6 +41,8 @@ import type {
   OnFooterClickEventArgs,
   OnFooterContextMenuEventArgs,
   OnFooterRowCellRenderedEventArgs,
+  OnFormattedDataCacheCompletedEventArgs,
+  OnFormattedDataCacheProgressEventArgs,
   OnGroupCollapsedEventArgs,
   OnGroupExpandedEventArgs,
   OnHeaderCellRenderedEventArgs,
@@ -140,6 +142,8 @@ export interface SlickgridVueProps {
 
   // Slick DataView events
   onOnBeforePagingInfoChanged?: VueSlickEventHandler<PagingInfo>;
+  onOnFormattedDataCacheProgress?: VueSlickEventHandler<OnFormattedDataCacheProgressEventArgs>;
+  onOnFormattedDataCacheCompleted?: VueSlickEventHandler<OnFormattedDataCacheCompletedEventArgs>;
   onOnGroupExpanded?: VueSlickEventHandler<OnGroupExpandedEventArgs>;
   onOnGroupCollapsed?: VueSlickEventHandler<OnGroupCollapsedEventArgs>;
   onOnPagingInfoChanged?: VueSlickEventHandler<PagingInfo>;

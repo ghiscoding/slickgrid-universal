@@ -14,9 +14,7 @@ import type {
   Aggregator,
   ColumnCacheEntry,
   DataViewHints,
-  FormattedDataCacheCompletedEventArgs,
   FormattedDataCacheMetadata,
-  FormattedDataCacheProgressEventArgs,
   Formatter,
   FormatterResultWithHtml,
   FormatterResultWithText,
@@ -24,6 +22,8 @@ import type {
   GroupingFormatterItem,
   ItemMetadata,
   ItemMetadataProvider,
+  OnFormattedDataCacheCompletedEventArgs,
+  OnFormattedDataCacheProgressEventArgs,
   OnGroupCollapsedEventArgs,
   OnGroupExpandedEventArgs,
   OnRowCountChangedEventArgs,
@@ -186,8 +186,8 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
   onRowsOrCountChanged: SlickEvent<OnRowsOrCountChangedEventArgs>;
   onSelectedRowIdsChanged: SlickEvent<OnSelectedRowIdsChangedEventArgs>;
   onSetItemsCalled: SlickEvent<OnSetItemsCalledEventArgs>;
-  onFormattedDataCacheProgress: SlickEvent<FormattedDataCacheProgressEventArgs>;
-  onFormattedDataCacheCompleted: SlickEvent<FormattedDataCacheCompletedEventArgs>;
+  onFormattedDataCacheProgress: SlickEvent<OnFormattedDataCacheProgressEventArgs>;
+  onFormattedDataCacheCompleted: SlickEvent<OnFormattedDataCacheCompletedEventArgs>;
 
   constructor(
     options?: Partial<DataViewOption> | undefined,
@@ -202,9 +202,12 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     this.onRowsOrCountChanged = new SlickEvent<OnRowsOrCountChangedEventArgs>('onRowsOrCountChanged', externalPubSub);
     this.onSelectedRowIdsChanged = new SlickEvent<OnSelectedRowIdsChangedEventArgs>('onSelectedRowIdsChanged', externalPubSub);
     this.onSetItemsCalled = new SlickEvent<OnSetItemsCalledEventArgs>('onSetItemsCalled', externalPubSub);
-    this.onFormattedDataCacheProgress = new SlickEvent<FormattedDataCacheProgressEventArgs>('onFormattedDataCacheProgress', externalPubSub);
+    this.onFormattedDataCacheProgress = new SlickEvent<OnFormattedDataCacheProgressEventArgs>(
+      'onFormattedDataCacheProgress',
+      externalPubSub
+    );
     // prettier-ignore
-    this.onFormattedDataCacheCompleted = new SlickEvent<FormattedDataCacheCompletedEventArgs>('onFormattedDataCacheCompleted', externalPubSub);
+    this.onFormattedDataCacheCompleted = new SlickEvent<OnFormattedDataCacheCompletedEventArgs>('onFormattedDataCacheCompleted', externalPubSub);
 
     this._options = extend(true, {}, this.defaults, options);
   }

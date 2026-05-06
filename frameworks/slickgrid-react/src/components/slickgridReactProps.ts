@@ -43,6 +43,8 @@ import type {
   OnFooterClickEventArgs,
   OnFooterContextMenuEventArgs,
   OnFooterRowCellRenderedEventArgs,
+  OnFormattedDataCacheCompletedEventArgs,
+  OnFormattedDataCacheProgressEventArgs,
   OnGroupCollapsedEventArgs,
   OnGroupExpandedEventArgs,
   OnHeaderCellRenderedEventArgs,
@@ -150,6 +152,8 @@ export interface SlickgridReactProps {
 
   // Slick DataView events
   onBeforePagingInfoChanged?: ReactSlickEventHandler<PagingInfo>;
+  onFormattedDataCacheProgress?: ReactSlickEventHandler<OnFormattedDataCacheProgressEventArgs>;
+  onFormattedDataCacheCompleted?: ReactSlickEventHandler<OnFormattedDataCacheCompletedEventArgs>;
   onGroupExpanded?: ReactSlickEventHandler<OnGroupExpandedEventArgs>;
   onGroupCollapsed?: ReactSlickEventHandler<OnGroupCollapsedEventArgs>;
   onPagingInfoChanged?: ReactSlickEventHandler<PagingInfo>;

@@ -317,10 +317,22 @@ Notes:
 - Cache population can run in the background and does not block the UI.
 - onAfterExportToExcel now includes durationMs in the event payload, useful for telemetry/spinners.
 
-```ts
-gridContainerElm.addEventListener('onafterexporttoexcel', (e: CustomEvent<any>) => {
-  console.log('Export done in ms:', e.detail?.durationMs);
-});
+```vue
+<script setup lang="ts">
+function handleAfterExportToExcel(e, args) {
+  console.log('Export done in ms:', args?.durationMs);
+}
+</script>
+<template>
+  <slickgrid-vue
+      v-model:options="gridOptions"
+      v-model:columns="columns"
+      v-model:dataset="dataset"
+      grid-id="grid30"
+      @onAfterExportToExcel="handleAfterExportToExcel($event.detail.eventData, $event.detail.args)"
+  >
+  </slickgrid-vue>
+</template>
 ```
 
 ### UI Sample

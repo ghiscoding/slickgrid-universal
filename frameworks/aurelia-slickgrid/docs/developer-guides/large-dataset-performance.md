@@ -12,7 +12,7 @@ This guide summarizes the main options to keep large dataset grids responsive wh
 
 Enable the DataView formatted cache to pre-compute formatter output in background batches.
 
-`	s
+```ts
 gridOptions = {
   enableFormattedDataCache: true,
   // max rows processed per batch tick (default: 300)
@@ -24,7 +24,7 @@ gridOptions = {
   },
   // or pdfExportOptions: { exportWithFormatter: true }
 };
-`
+```
 
 Notes:
 
@@ -32,22 +32,56 @@ Notes:
 - Export services sanitize/decode in their own pipeline, once, at export time.
 - Completion events include durationMs and can be used for telemetry/spinners.
 
-`	s
-gridContainerElm.addEventListener('onafterexporttoexcel', (e: CustomEvent<any>) => {
-  console.log('Excel export duration (ms):', e.detail?.durationMs);
-});
+Example: use Aurelia template events for formatted cache progress/completion
 
-gridContainerElm.addEventListener('onafterexporttopdf', (e: CustomEvent<any>) => {
-  console.log('PDF export duration (ms):', e.detail?.durationMs);
-});
-`
+```ts
+export class MyComponent {
+  cacheProgressPct = 0;
+  cacheDurationMs = 0;
+
+  handleFormattedDataCacheProgress(_e: unknown, args: { percentComplete: number; rowsProcessed: number; totalRows: number }) {
+    this.cacheProgressPct = args.percentComplete;
+    // example: update a progress label or telemetry
+    // console.log(`Cache: ${args.rowsProcessed}/${args.totalRows} (${args.percentComplete}%)`);
+  }
+
+  handleFormattedDataCacheCompleted(_e: unknown, args: { durationMs: number; totalRows: number; totalFormattedCells: number }) {
+    this.cacheDurationMs = args.durationMs;
+    console.log('Formatted cache completed:', args);
+  }
+}
+```
+
+```html
+<aurelia-slickgrid
+  grid-id="grid30"
+  columns.bind="columns"
+  options.bind="gridOptions"
+  dataset.bind="dataset"
+  on-formatted-data-cache-progress.trigger="handleFormattedDataCacheProgress($event.detail.eventData, $event.detail.args)"
+  on-formatted-data-cache-completed.trigger="handleFormattedDataCacheCompleted($event.detail.eventData, $event.detail.args)"
+  on-after-export-to-excel.trigger="handleAfterExportToExcel($event.detail.eventData, $event.detail.args)"
+  on-after-export-to-pdf.trigger="handleAfterExportToPdf($event.detail.eventData, $event.detail.args)"
+>
+</aurelia-slickgrid>
+```
+```ts
+export class MyComponent {
+  handleAfterExportToExcel(e, args) {
+    console.log('Export done in ms:', args?.durationMs);
+  }
+  handleAfterExportToPdf(e, args) {
+    console.log('Export done in ms:', args?.durationMs);
+  }
+}
+```
 
 ## Sorting Performance (preParseDateColumns)
 
 Date sorting on large datasets can be expensive when values are date strings that need parsing for every comparison.
 Use preParseDateColumns to parse once and sort on Date values afterward.
 
-`	s
+```ts
 gridOptions = {
   // Option 1: prefix mode (keeps original string fields)
   preParseDateColumns: '__',
@@ -55,7 +89,7 @@ gridOptions = {
   // Option 2: overwrite mode (mutates original date fields)
   // preParseDateColumns: true,
 };
-`
+```
 
 Quick guidance:
 
@@ -64,10 +98,10 @@ Quick guidance:
 
 You can also trigger parsing manually when needed:
 
-`	s
+```ts
 this.sgb.sortService.preParseAllDateItems();
 this.sgb.sortService.preParseSingleDateItem(item);
-`
+```
 
 ## Related Docs
 
