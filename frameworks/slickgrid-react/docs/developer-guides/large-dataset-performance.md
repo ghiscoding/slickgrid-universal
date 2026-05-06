@@ -4,13 +4,13 @@ This guide summarizes the main options to keep large dataset grids responsive wh
 
 ## When To Use What
 
-- Use `enableFormattedDataCache` when exports rely on multiple formatters (`exportWithFormatter: true`) and the dataset is rather large (over 25K rows).
+- Use `enableFormattedDataCache` when the dataset is large (over 25K rows) and you have formatter-heavy columns (`exportWithFormatter: true`). This improves both **export performance** (cache-first reads in export services) and **UI rendering performance** (once the cache is warm, grid re-renders skip formatter execution).
 - Use `preParseDateColumns` when date sorting is slow because date strings are repeatedly parsed.
 - Use both when you have large data with formatter-heavy exports and frequent date sorting.
 
-## Export Performance (Formatted Cache)
+## Export & Rendering Performance (Formatted Cache)
 
-Enable the DataView formatted cache to pre-compute formatter output in background batches.
+Enable the DataView formatted cache to pre-compute formatter output in background batches. Once warm, it benefits both export services (cache-first reads avoid re-running formatters) and UI rendering (grid cell re-renders read from cache instead of calling formatters again).
 
 ```tsx
 gridOptions = {
@@ -29,6 +29,7 @@ gridOptions = {
 Notes:
 
 - Cache population runs in the background and keeps the UI responsive.
+- Once warm, both export services and UI rendering use cached values instead of re-running formatters.
 - Export services sanitize/decode in their own pipeline, once, at export time.
 - Completion events include durationMs and can be used for telemetry/spinners.
 
@@ -74,6 +75,19 @@ export function MyComponent() {
   );
 }
 ```
+
+#### Live Demo Test ([Example 03](https://ghiscoding.github.io/slickgrid-universal/#/example03) with 500K rows)
+
+**Performance Summary (500K rows, 8 columns):**
+- **Cache Population**: ~13 minutes (779,927 ms) for 4M cells
+  - Runs in background with MessageChannel + requestAnimationFrame batching
+  - UI stays responsive during population
+- **Export Time**: 30-35 seconds (consistent regardless of grouping/sorting)
+  - Fast because cache hits eliminate formatter overhead
+  - DataView's built-in filtering handles visible rows automatically
+- **Previous Behavior**: Browser hang (unusable)
+
+_You can try Slickgrid-Universal live demos: [Example 02](https://ghiscoding.github.io/slickgrid-universal/#/example03) and [Example 03](https://ghiscoding.github.io/slickgrid-universal/#/example03) are both enabling the cache when loading more than 10K rows._
 
 ## Sorting Performance (preParseDateColumns)
 
