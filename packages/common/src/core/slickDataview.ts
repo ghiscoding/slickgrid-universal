@@ -15,6 +15,7 @@ import type {
   ColumnCacheEntry,
   DataViewHints,
   FormattedDataCacheMetadata,
+  FormattedDataCachePlanner,
   Formatter,
   FormatterResultWithHtml,
   FormatterResultWithText,
@@ -140,6 +141,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     DataIdType,
     Record<string, FormatterResultWithHtml | FormatterResultWithText | HTMLElement | DocumentFragment | string>
   > = {};
+  protected formattedDataCachePlanner?: FormattedDataCachePlanner;
   protected formattedCacheMetadata: FormattedDataCacheMetadata = {
     isPopulating: false,
     lastProcessedRow: -1,
@@ -1779,6 +1781,20 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     this._gridOptions = grid.getOptions();
   }
 
+  /** Set the planner callback used to decide formatted-cache behavior for each column. */
+  setFormattedDataCachePlanner(planner?: FormattedDataCachePlanner, forceRefresh = false): void {
+    if (!forceRefresh && this.formattedDataCachePlanner === planner) {
+      return;
+    }
+
+    this.formattedDataCachePlanner = planner;
+
+    if (this._gridOptions?.enableFormattedDataCache) {
+      this.clearFormattedDataCache();
+      this.populateFormattedDataCacheAsync();
+    }
+  }
+
   /**
    * Returns the cached formatted cell value if available, otherwise returns the fallback value.
    * Used by export services (e.g. ExcelExportService) to avoid re-executing expensive formatters.
@@ -1944,20 +1960,25 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
       const maxRowsPerFrame = batchCtx.gridOptions.formattedDataCacheBatchSize ?? 300;
       const frameDeadline = performance.now() + frameBudgetMs;
       const totalRows = this.getLength();
+      const lastRowIndex = totalRows - 1;
       let processedInBatch = 0;
+      let rowsUntilDeadlineCheck = 16;
 
-      while (
-        processedInBatch < maxRowsPerFrame &&
-        this.formattedCacheMetadata.lastProcessedRow < totalRows - 1 &&
-        performance.now() < frameDeadline
-      ) {
+      while (processedInBatch < maxRowsPerFrame && this.formattedCacheMetadata.lastProcessedRow < lastRowIndex) {
+        if (--rowsUntilDeadlineCheck === 0) {
+          if (performance.now() >= frameDeadline) {
+            break;
+          }
+          rowsUntilDeadlineCheck = 16;
+        }
+
         this.formattedCacheMetadata.lastProcessedRow++;
         if (this.populateSingleRowCache(this.formattedCacheMetadata.lastProcessedRow, batchCtx)) {
           processedInBatch++;
         }
       }
 
-      const isDone = this.formattedCacheMetadata.lastProcessedRow >= totalRows - 1;
+      const isDone = this.formattedCacheMetadata.lastProcessedRow >= lastRowIndex;
 
       // Fire progress event at most once every 250ms (not every 8ms batch)
       const nowMs = Date.now();
@@ -2007,31 +2028,46 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     const grid = this._grid!;
     const gridOptions = this._gridOptions ?? grid.getOptions();
     const columns = grid.getColumns() ?? [];
-    const exportOptions = gridOptions.excelExportOptions ?? gridOptions.textExportOptions;
-    const exportWithFormatterGlobal = !!(exportOptions as any)?.exportWithFormatter;
-    const sanitizeDataExport = !!(exportOptions as any)?.sanitizeDataExport;
     const exportOnlyCacheColumns: ColumnCacheEntry[] = [];
     const dualCacheColumns: ColumnCacheEntry[] = [];
     const cellOnlyColumns: ColumnCacheEntry[] = [];
+
     for (let ci = 0; ci < columns.length; ci++) {
       const col = columns[ci];
-      const hasExportWithFormatter = Object.prototype.hasOwnProperty.call(col, 'exportWithFormatter')
-        ? !!col.exportWithFormatter
-        : exportWithFormatterGlobal;
-      const needsExportCache = !!(col.exportCustomFormatter || hasExportWithFormatter);
+      const plannerConfig = this.formattedDataCachePlanner?.(col, gridOptions);
+      const needsExportCache = !!plannerConfig?.shouldCacheExport;
+      const canReuseCellFormatterForExport = !!plannerConfig?.useCellFormatterForExport;
+      const sanitizeDataExport = !!plannerConfig?.sanitizeDataExport;
+      const exportOptions = plannerConfig?.exportOptions;
+
       const needsCellCache = !!col.formatter;
-      if (needsExportCache && needsCellCache && !col.exportCustomFormatter) {
+      if (needsExportCache && needsCellCache && !col.exportCustomFormatter && canReuseCellFormatterForExport) {
         // Both caches use the same underlying `formatter` — call it once per row and post-process
         // the result for the export string (avoids the duplicate invocation that
         // exportWithFormatterWhenDefined would cause for this common case).
-        dualCacheColumns.push({ column: col, colIdx: ci, columnId: String(col.id), sanitizeDataExport });
+        dualCacheColumns.push({
+          column: col,
+          colIdx: ci,
+          columnId: String(col.id),
+          field: col.field,
+          formatter: col.formatter,
+          exportOptions,
+          sanitizeDataExport,
+        });
       } else {
         if (needsExportCache) {
           // exportCustomFormatter (different from cell formatter) or exportWithFormatter without formatter
-          exportOnlyCacheColumns.push({ column: col, colIdx: ci, columnId: String(col.id), sanitizeDataExport: false });
+          exportOnlyCacheColumns.push({ column: col, colIdx: ci, columnId: String(col.id), exportOptions, sanitizeDataExport: false });
         }
         if (needsCellCache) {
-          cellOnlyColumns.push({ column: col, colIdx: ci, columnId: String(col.id), sanitizeDataExport: false });
+          cellOnlyColumns.push({
+            column: col,
+            colIdx: ci,
+            columnId: String(col.id),
+            field: col.field,
+            formatter: col.formatter,
+            sanitizeDataExport: false,
+          });
         }
       }
     }
@@ -2039,7 +2075,6 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     return {
       grid,
       gridOptions,
-      exportOptions,
       exportOnlyCacheColumns,
       dualCacheColumns,
       cellOnlyColumns,
@@ -2068,7 +2103,8 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     const formattedDataRowCache = this.formattedDataCache[itemId];
     const formattedCellRowCache = this.formattedCellCache[itemId];
 
-    const { grid, exportOptions, exportOnlyCacheColumns, dualCacheColumns, cellOnlyColumns, hasMetadataProviders } = ctx;
+    const { grid, exportOnlyCacheColumns, dualCacheColumns, cellOnlyColumns, hasMetadataProviders } = ctx;
+    let totalFormattedCells = this.formattedCacheMetadata.totalFormattedCells;
 
     // Only call getItemMetadata when a provider is configured; for plain data rows it always
     // returns null, so skipping it avoids an extra method call per row in the common case.
@@ -2087,10 +2123,10 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
           entry.column,
           item,
           grid,
-          exportOptions,
+          entry.exportOptions,
           true // skipSanitization=true: export service handles sanitization uniformly at the end
         );
-        this.formattedCacheMetadata.totalFormattedCells++;
+        totalFormattedCells++;
       } catch {
         formattedDataRowCache[entry.columnId] = undefined;
       }
@@ -2102,8 +2138,8 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
     for (let ci = 0; ci < dualCacheColumns.length; ci++) {
       const entry = dualCacheColumns[ci];
       try {
-        const cellValue = item[entry.column.field as keyof TData] ?? null;
-        const rawResult = (entry.column.formatter as Formatter)(rowIdx, entry.colIdx, cellValue, entry.column, item, grid);
+        const cellValue = item[entry.field as keyof TData] ?? null;
+        const rawResult = (entry.formatter as Formatter)(rowIdx, entry.colIdx, cellValue, entry.column, item, grid);
 
         // Post-process the raw formatter result into an export string — mirrors parseFormatterWhenExist
         const cellResult = isPrimitiveOrHTML(rawResult)
@@ -2114,7 +2150,7 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
           exportStr = stripTags(exportStr);
         }
         formattedDataRowCache[entry.columnId] = exportStr;
-        this.formattedCacheMetadata.totalFormattedCells++;
+        totalFormattedCells++;
 
         // Store the raw result for cell display (skipped when a metadata formatter overrides this row)
         if (!rowHasMetadataFormatter && !isLiveDomFormatterResult(rawResult as any)) {
@@ -2131,8 +2167,8 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
       for (let ci = 0; ci < cellOnlyColumns.length; ci++) {
         const entry = cellOnlyColumns[ci];
         try {
-          const cellValue = item[entry.column.field as keyof TData] ?? null;
-          const rawResult = (entry.column.formatter as Formatter)(rowIdx, entry.colIdx, cellValue, entry.column, item, grid) as any;
+          const cellValue = item[entry.field as keyof TData] ?? null;
+          const rawResult = (entry.formatter as Formatter)(rowIdx, entry.colIdx, cellValue, entry.column, item, grid) as any;
           if (!isLiveDomFormatterResult(rawResult)) {
             formattedCellRowCache[entry.columnId] = rawResult;
           }
@@ -2141,6 +2177,8 @@ export class SlickDataView<TData extends SlickDataItem = any> implements CustomD
         }
       }
     }
+
+    this.formattedCacheMetadata.totalFormattedCells = totalFormattedCells;
 
     return true;
   }

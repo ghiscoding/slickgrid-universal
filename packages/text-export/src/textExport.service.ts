@@ -31,6 +31,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
   protected _fileFormat: FileType | 'csv' | 'txt' = 'csv';
   protected _lineCarriageReturn = '\n';
   protected _grid!: SlickGrid;
+  protected _dataView!: SlickDataView;
   protected _groupedColumnHeaders?: Array<KeyTitlePair>;
   protected _columnHeaders: Array<KeyTitlePair> = [];
   protected _hasGroupedItems = false;
@@ -44,11 +45,6 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
 
   protected get _datasetIdPropName(): string {
     return (this._gridOptions && this._gridOptions.datasetIdPropertyName) || 'id';
-  }
-
-  /** Getter of SlickGrid DataView object */
-  get _dataView(): SlickDataView {
-    return this._grid?.getData<SlickDataView>();
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
@@ -68,6 +64,7 @@ export class TextExportService implements ExternalResource, BaseTextExportServic
    */
   init(grid: SlickGrid, containerService: ContainerService): void {
     this._grid = grid;
+    this._dataView = grid?.getData<SlickDataView>() || {};
     this._pubSubService = containerService.get<PubSubService>('PubSubService');
 
     // get locales provided by user in main file or else use default English locales via the Constants

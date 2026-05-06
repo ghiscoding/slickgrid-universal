@@ -194,6 +194,15 @@ describe('SlickCore file', () => {
       expect(pubSubServiceStub.publish).toHaveBeenCalledWith('onClick', { eventData: ed, args: { hello: 'world' } }, undefined, expect.any(Function));
     });
 
+    it('should do nothing when addSlickEventPubSubWhenDefined() is called without PubSub', () => {
+      const onClick = new SlickEvent('onClick');
+      const setPubSubSpy = vi.spyOn(onClick, 'setPubSubService');
+
+      Utils.addSlickEventPubSubWhenDefined(undefined as any, { onClick });
+
+      expect(setPubSubSpy).not.toHaveBeenCalled();
+    });
+
     it('should be able to add a PubSub instance to the SlickEvent call notify() and expect PubSub .publish() to be called and the externalize event callback be called also', () => {
       const ed = new SlickEventData();
       const pubSubCopy = { ...pubSubServiceStub };
@@ -399,6 +408,28 @@ describe('SlickCore file', () => {
       elock.activate(ec); // calling 2x shouldn't cause problem
 
       expect(elock.isActive()).toBeTruthy();
+    });
+
+    it('should report inactive/active state when checking without a specific controller', () => {
+      const lock = new SlickEditorLock();
+      expect(lock.isActive()).toBe(false);
+
+      lock.activeEditController = { commitCurrentEdit: vi.fn(), cancelCurrentEdit: vi.fn() } as any;
+      expect(lock.isActive()).toBe(true);
+    });
+
+    describe('parents() function', () => {
+      it('should return all parents when selector is omitted', () => {
+        const container = document.createElement('div');
+        const div = document.createElement('div');
+        const span = document.createElement('span');
+        container.appendChild(div);
+        div.appendChild(span);
+
+        const result = Utils.parents(span) as HTMLElement[];
+
+        expect(result).toEqual([div]);
+      });
     });
 
     it('should throw when trying to call activate() with a second EditController', () => {
@@ -664,6 +695,18 @@ describe('SlickCore file', () => {
 
         expect(result).toEqual([div]);
       });
+
+      it('should stop walking parents when parentNode is missing', () => {
+        const div = document.createElement('div');
+        const span = document.createElement('span');
+        div.appendChild(span);
+
+        const fakeParent: any = { parentNode: null, matches: vi.fn().mockReturnValue(false) };
+        Object.defineProperty(span, 'parentNode', { configurable: true, value: fakeParent });
+
+        const result = Utils.parents(span, '.my-class') as HTMLElement[];
+        expect(result).toEqual([]);
+      });
     });
 
     describe('setStyleSize() function', () => {
@@ -777,6 +820,43 @@ describe('SlickCore file', () => {
           alwaysAllowHorizontalScroll: false,
         });
       });
+
+      it('should do nothing when source object is not an object', () => {
+        const inputObj = { alwaysShowVerticalScroll: true };
+
+        Utils.applyDefaults(inputObj, undefined as any);
+        Utils.applyDefaults(inputObj, 123 as any);
+
+        expect(inputObj).toEqual({ alwaysShowVerticalScroll: true });
+      });
+
+      it('should ignore inherited properties from source object', () => {
+        const proto = { inherited: 'x' };
+        const defaults = Object.create(proto);
+        defaults.ownValue = true;
+        const inputObj: any = {};
+
+        Utils.applyDefaults(inputObj, defaults);
+
+        expect(inputObj).toEqual({ ownValue: true });
+        expect(inputObj.inherited).toBeUndefined();
+      });
+
+      it('should return null when key does not exist for an element', () => {
+        const el = document.createElement('div');
+        const result = Utils.storage.get(el, 'missing');
+        expect(result).toBeNull();
+      });
+    });
+
+    describe('normalRangeOppositeCellFromCopy()', () => {
+      it('should fallback to 0 when target uses end-bound branch but end bounds are undefined', () => {
+        const normRange = { start: { row: 5, cell: 5 }, end: {} };
+        const target = { row: -1, cell: -1 };
+
+        const result = SlickSelectionUtils.normalRangeOppositeCellFromCopy(normRange as any, target);
+        expect(result).toEqual({ row: 0, cell: 0 });
+      });
     });
   });
 
@@ -826,6 +906,14 @@ describe('SlickCore file', () => {
         const resultLeft = SlickSelectionUtils.normalRangeOppositeCellFromCopy(normRange as any, targetLeft);
         expect(resultLeft.cell).toBe(normRange.end.cell);
       });
+
+      it('should fallback to 0 when normalised range has undefined bounds', () => {
+        const normRange = { start: {}, end: {} };
+        const target = { row: 0, cell: 0 };
+
+        const result = SlickSelectionUtils.normalRangeOppositeCellFromCopy(normRange as any, target);
+        expect(result).toEqual({ row: 0, cell: 0 });
+      });
     });
     describe('normaliseDragRange()', () => {
       it('should normalize an already ordered drag range', () => {
@@ -852,6 +940,18 @@ describe('SlickCore file', () => {
         expect(norm.wasDraggedUp).toBe(true);
         // Implementation currently derives wasDraggedLeft from rows as well
         expect(norm.wasDraggedLeft).toBe(true);
+      });
+
+      it('should normalize ranges with missing row/cell values using 0 defaults', () => {
+        const rawRange = { start: {}, end: {} };
+        const norm = SlickSelectionUtils.normaliseDragRange(rawRange as any);
+
+        expect(norm.start).toEqual({ row: undefined, cell: undefined });
+        expect(norm.end).toEqual({ row: undefined, cell: undefined });
+        expect(norm.rowCount).toBe(1);
+        expect(norm.cellCount).toBe(1);
+        expect(norm.wasDraggedUp).toBe(false);
+        expect(norm.wasDraggedLeft).toBe(false);
       });
     });
 

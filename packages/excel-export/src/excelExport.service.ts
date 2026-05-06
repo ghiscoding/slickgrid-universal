@@ -62,6 +62,7 @@ const DEFAULT_EXPORT_OPTIONS: ExcelExportOption = {
 export class ExcelExportService implements ExternalResource, BaseExcelExportService {
   protected _fileFormat: Extract<FileType, 'xls' | 'xlsx'> = 'xlsx';
   protected _grid!: SlickGrid;
+  protected _dataView!: SlickDataView;
   protected _locales!: Locale;
   protected _groupedColumnHeaders?: Array<KeyTitlePair>;
   protected _columnHeaders: Array<KeyTitlePair> = [];
@@ -90,11 +91,6 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
 
   protected get _datasetIdPropName(): string {
     return this._gridOptions?.datasetIdPropertyName ?? 'id';
-  }
-
-  /** Getter of SlickGrid DataView object */
-  get _dataView(): SlickDataView {
-    return this._grid?.getData<SlickDataView>();
   }
 
   /** Getter for the Grid Options pulled through the Grid Object */
@@ -131,6 +127,7 @@ export class ExcelExportService implements ExternalResource, BaseExcelExportServ
    */
   init(grid: SlickGrid, containerService: ContainerService): void {
     this._grid = grid;
+    this._dataView = grid?.getData<SlickDataView>() || {};
     this._pubSubService = containerService.get<PubSubService>('PubSubService');
 
     // get locales provided by user in main file or else use default English locales via the Constants

@@ -2507,6 +2507,87 @@ describe('SlickDatView core file', () => {
           dvFrame.destroy();
         }
       });
+
+      it('should stop current batch when frame deadline is exceeded and schedule another frame', () => {
+        const queuedRafCallbacks: Array<FrameRequestCallback> = [];
+        const rafSpy = vi.spyOn(globalThis, 'requestAnimationFrame').mockImplementation((cb: FrameRequestCallback) => {
+          queuedRafCallbacks.push(cb);
+          return queuedRafCallbacks.length as any;
+        });
+        const perfSpy = vi.spyOn(performance, 'now').mockReturnValue(100);
+        vi.stubGlobal('MessageChannel', undefined as any);
+
+        const dvFrame = new SlickDataView({});
+        const gridFrame = new SlickGrid('#myGrid', dvFrame, columns, {
+          enableCellNavigation: true,
+          devMode: { ownerNodeIndex: 0 },
+          enableFormattedDataCache: true,
+          formattedDataCacheBatchSize: 300,
+          formattedDataCacheFrameBudgetMs: -1,
+        } as any);
+        dvFrame.setGrid(gridFrame);
+        dvFrame.setItems(Array.from({ length: 40 }, (_, i) => ({ id: i + 1, name: `User${i + 1}`, age: i + 1 })));
+
+        try {
+          dvFrame.clearFormattedDataCache();
+          queuedRafCallbacks.length = 0;
+          rafSpy.mockClear();
+          dvFrame.populateFormattedDataCacheAsync();
+          expect(rafSpy).toHaveBeenCalledTimes(1);
+
+          queuedRafCallbacks[0](performance.now());
+
+          expect((dvFrame as any).formattedCacheMetadata.lastProcessedRow).toBeLessThan(39);
+          expect(rafSpy).toHaveBeenCalledTimes(2);
+        } finally {
+          vi.unstubAllGlobals();
+          perfSpy.mockRestore();
+          rafSpy.mockRestore();
+          gridFrame.destroy();
+          dvFrame.destroy();
+        }
+      });
+
+      it('should reset the deadline-check counter and continue processing when within frame budget', () => {
+        const queuedRafCallbacks: Array<FrameRequestCallback> = [];
+        const rafSpy = vi.spyOn(globalThis, 'requestAnimationFrame').mockImplementation((cb: FrameRequestCallback) => {
+          queuedRafCallbacks.push(cb);
+          return queuedRafCallbacks.length as any;
+        });
+        const perfSpy = vi.spyOn(performance, 'now').mockReturnValue(100);
+        vi.stubGlobal('MessageChannel', undefined as any);
+
+        const dvFrame = new SlickDataView({});
+        const gridFrame = new SlickGrid('#myGrid', dvFrame, columns, {
+          enableCellNavigation: true,
+          devMode: { ownerNodeIndex: 0 },
+          enableFormattedDataCache: true,
+          formattedDataCacheBatchSize: 20,
+          formattedDataCacheFrameBudgetMs: 1000,
+        } as any);
+        dvFrame.setGrid(gridFrame);
+        dvFrame.setItems(Array.from({ length: 20 }, (_, i) => ({ id: i + 1, name: `User${i + 1}`, age: i + 1 })));
+
+        try {
+          dvFrame.clearFormattedDataCache();
+          queuedRafCallbacks.length = 0;
+          rafSpy.mockClear();
+          dvFrame.populateFormattedDataCacheAsync();
+          expect(rafSpy).toHaveBeenCalledTimes(1);
+
+          queuedRafCallbacks[0](performance.now());
+
+          // Finished in one frame (counter reached 0 at least once and got reset internally)
+          expect((dvFrame as any).formattedCacheMetadata.lastProcessedRow).toBe(19);
+          expect(rafSpy).toHaveBeenCalledTimes(1);
+        } finally {
+          vi.unstubAllGlobals();
+          perfSpy.mockRestore();
+          rafSpy.mockRestore();
+          gridFrame.destroy();
+          dvFrame.destroy();
+        }
+      });
     });
 
     describe('invalidateFormattedDataCacheForRow()', () => {

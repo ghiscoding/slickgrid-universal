@@ -1560,7 +1560,7 @@ describe('PdfExportService', () => {
 
     it('should cover link.click and link appendChild in downloadPdf', () => {
       service = new PdfExportService();
-      service.init({ getOptions: () => ({}) } as any, container);
+      service.init({ getOptions: () => ({}), getData: () => ({}) } as any, container);
       (navigator as any).msSaveOrOpenBlob = undefined;
       const appendSpy = vi.spyOn(document.body, 'appendChild');
       const clickSpy = vi.fn();
@@ -1611,7 +1611,7 @@ describe('PdfExportService', () => {
         throw new Error('remove error');
       });
       service = new PdfExportService();
-      service.init({ getOptions: () => ({}) } as any, container);
+      service.init({ getOptions: () => ({}), getData: () => ({}) } as any, container);
       expect(() => service['downloadPdf'](new Uint8Array([1, 2, 3]), 'test.pdf')).toThrow('remove error');
       removeSpy.mockRestore();
     });
@@ -1653,7 +1653,7 @@ describe('PdfExportService', () => {
     });
 
     it('should throw error if enableTranslate is true but translaterService is missing', () => {
-      const gridStub = { getOptions: () => ({ enableTranslate: true, translater: undefined }) };
+      const gridStub = { getOptions: () => ({ enableTranslate: true, translater: undefined }), getData: () => ({}) };
       service = new PdfExportService();
       expect(() => service.init(gridStub as any, container)).toThrow('requires a Translate Service');
     });
@@ -1661,7 +1661,7 @@ describe('PdfExportService', () => {
     it('should use msSaveOrOpenBlob for IE/Edge', () => {
       (navigator as any).msSaveOrOpenBlob = vi.fn();
       service = new PdfExportService();
-      service.init({ getOptions: () => ({}) } as any, container);
+      service.init({ getOptions: () => ({}), getData: () => ({}) } as any, container);
       service['downloadPdf'](new Uint8Array([1, 2, 3]), 'test.pdf');
       expect((navigator as any).msSaveOrOpenBlob).toHaveBeenCalled();
     });
@@ -1675,7 +1675,7 @@ describe('PdfExportService', () => {
       const removeSpy = vi.spyOn(document.body, 'removeChild');
       const revokeSpy = vi.spyOn(URL, 'revokeObjectURL');
       service = new PdfExportService();
-      service.init({ getOptions: () => ({}) } as any, container);
+      service.init({ getOptions: () => ({}), getData: () => ({}) } as any, container);
       service['downloadPdf'](new Uint8Array([1, 2, 3]), 'test.pdf');
       expect(appendSpy).toHaveBeenCalled();
       expect(removeSpy).toHaveBeenCalled();
@@ -1835,7 +1835,7 @@ describe('PdfExportService', () => {
 
     it('should handle error in downloadPdf appendChild', () => {
       service = new PdfExportService();
-      service.init({ getOptions: () => ({}) } as any, container);
+      service.init({ getOptions: () => ({}), getData: () => ({}) } as any, container);
       const appendSpy = vi.spyOn(document.body, 'appendChild').mockImplementation(() => {
         throw new Error('append error');
       });
@@ -1959,7 +1959,7 @@ describe('PdfExportService', () => {
     Object.defineProperty(service, '_exportOptions', { value: { htmlDecode: true, sanitizeDataExport: true } });
     (service as any)._hasGroupedItems = false;
     const result = service['readRegularRowData'](columns as any, 0, itemObj);
-    expect(result).toEqual([undefined, '', '', '']); // Only first cell, rest skipped by colspan logic
+    expect(result).toEqual([undefined, '', '', '']); // col1: 'A', col2: '' (colspan=2 skipped), col3 & col4: '' (colspan='*' spans rest)
   });
 
   it('should cover drawHeaders with grouped pre-header, grouped column, and no group title', async () => {
@@ -2190,13 +2190,10 @@ describe('PdfExportService', () => {
   it('should cover rowspan skip logic (rowspan child cell)', async () => {
     class TestPdfExportService extends PdfExportService {
       setMockDataView(mock: any) {
-        (this as any).__dataView = mock;
+        (this as any)._dataView = mock;
       }
       setMockGrid(mock: any) {
         (this as any)._grid = mock;
-      }
-      get _dataView() {
-        return (this as any).__dataView;
       }
       // Always return the persistent gridOptions object
       get _gridOptions() {
@@ -2529,13 +2526,10 @@ describe('PdfExportService', () => {
   it('should cover rowspan logic for both skip and non-skip paths', async () => {
     class TestPdfExportService extends PdfExportService {
       setMockDataView(mock: any) {
-        (this as any).__dataView = mock;
+        (this as any)._dataView = mock;
       }
       setMockGrid(mock: any) {
         (this as any)._grid = mock;
-      }
-      get _dataView() {
-        return (this as any).__dataView;
       }
       get _gridOptions() {
         return gridOptions;

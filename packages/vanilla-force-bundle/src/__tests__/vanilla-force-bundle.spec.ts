@@ -201,6 +201,7 @@ const mockGrid = {
   getEditorLock: () => mockGetEditorLock,
   getUID: () => 'slickgrid_12345',
   getContainerNode: vi.fn(),
+  getData: vi.fn(),
   getFrozenColumnId: vi.fn(),
   getGridPosition: vi.fn(),
   getOptions: vi.fn(),
@@ -302,6 +303,7 @@ describe('Vanilla-Force-Grid-Bundle Component instantiated via Constructor', () 
     translateService = new TranslateServiceStub();
     eventPubSubService = new EventPubSubService(divContainer);
     vi.spyOn(mockGrid, 'getOptions').mockReturnValue(gridOptions);
+    vi.spyOn(mockGrid, 'getData').mockReturnValue(mockDataView as unknown as SlickDataView);
     dataset = [];
 
     component = new VanillaForceGridBundle(divContainer, columnDefinitions, gridOptions, dataset, undefined, {
