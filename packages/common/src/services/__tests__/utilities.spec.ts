@@ -1477,6 +1477,25 @@ describe('Service/Utilies', () => {
         { field: 'age', hidden: true, id: 'age', name: 'age', resizable: false, width: 192 },
       ]);
     });
+
+    it('should merge preset column properties like width, cssClass, and headerCssClass', () => {
+      const allColumns: Column[] = [
+        { id: 'firstName', field: 'firstName', name: 'First Name', width: 300, cssClass: 'original-class' },
+        { id: 'lastName', field: 'lastName', name: 'Last Name', width: 620 },
+        { id: 'age', field: 'age', name: 'age', width: 192 },
+      ];
+
+      const results = sortPresetColumns(allColumns, [
+        { id: 'firstName', field: 'firstName', width: 250, cssClass: 'preset-class', headerCssClass: 'header-preset' },
+        { id: 'lastName', field: 'lastName' },
+      ]);
+
+      expect(results).toEqual([
+        { field: 'firstName', hidden: false, id: 'firstName', name: 'First Name', width: 250, cssClass: 'preset-class', headerCssClass: 'header-preset' },
+        { field: 'lastName', hidden: false, id: 'lastName', name: 'Last Name', width: 620 },
+        { field: 'age', hidden: true, id: 'age', name: 'age', width: 192 },
+      ]);
+    });
   });
 
   describe('thousandSeparatorFormatted() method', () => {

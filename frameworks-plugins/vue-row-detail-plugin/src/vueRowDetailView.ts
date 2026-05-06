@@ -14,7 +14,7 @@ import { type EventPubSubService } from '@slickgrid-universal/event-pub-sub';
 import { SlickRowDetailView as UniversalSlickRowDetailView } from '@slickgrid-universal/row-detail-view-plugin';
 import type { GridOption, ViewModelBindableInputData } from 'slickgrid-vue';
 import { createApp, type App, type ComponentPublicInstance } from 'vue';
-import type { RowDetailView } from './interfaces';
+import type { RowDetailView } from './interfaces.js';
 
 const ROW_DETAIL_CONTAINER_PREFIX = 'container_';
 const PRELOAD_CONTAINER_PREFIX = 'container_loading';
