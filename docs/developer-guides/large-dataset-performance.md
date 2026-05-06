@@ -4,7 +4,7 @@ This guide summarizes the main options to keep large dataset grids responsive wh
 
 ## When To Use What
 
-- Use `enableFormattedDataCache` when exports rely on formatters (`exportWithFormatter: true`) and the dataset is large.
+- Use `enableFormattedDataCache` when exports rely on multiple formatters (`exportWithFormatter: true`) and the dataset is rather large (over 25K rows).
 - Use `preParseDateColumns` when date sorting is slow because date strings are repeatedly parsed.
 - Use both when you have large data with formatter-heavy exports and frequent date sorting.
 
